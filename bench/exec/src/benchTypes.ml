@@ -1,4 +1,0 @@
-type return =
-  | OK
-  | Error
-
