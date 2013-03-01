@@ -1,0 +1,326 @@
+* when a parse error occurs, decorate the exception with the automaton state
+  that was reached? this would allow some people to produce better error
+  messages (Pippijn van Steenhoven). Incompatible change?
+
+* BUG: le Makefile ne fonctionne pas avec -j (email de Florent Hivert)
+
+* projet amusant: si l'automatique est canonique et si on n'a pas trop
+  optimisé le contenu de la pile, alors en cas d'erreur, on doit pouvoir
+  analyser le contenu de la pile pour produire un suffixe de l'entrée qui
+  aurait conduit à une acceptation. Ça trouerait le C** comme message
+  d'explication!
+
+* Les fichiers dans examples/ ne devraient pas être sous QPL mais libres...
+
+* BUG: la directive $type<...> nt donne lieu à un message d'erreur bizarre
+  si le non-terminal nt n'existe pas. (Jacques-Henri.)
+
+* On pourrait rendre moins restrictif le critère qui garantit la terminaison
+  de l'expansion des non-terminaux paramétrés. Il suffirait de vérifier que
+  les paramètres effectifs sont toujours des atomes (symboles terminaux ou
+  non-terminaux), non? (Jacques-Henri.)
+
+* les positions fournies par menhir ne sont pas les mêmes fournies par
+  ocamlyacc (voir messages de Tiphaine Turpin à partir du 30/08/2011). Est-ce un problème? Peut-on documenter quelles sont les
+  positions fournies par Menhir? En particulier, pour une production
+  vide, Menhir utilise _menhir_env.lexer.lex_start_p, c'est-à-dire le
+  début du dernier token lu par le lexer; en principe c'est le token
+  de lookahead donc ça va, mais ça pourrait donner un résultat bizarre
+  si on réduit par défaut une production vide (on alors pour position
+  le début du token précédent?) (BUG?). Par ailleurs, il faut être
+  conscient que si l'action ocamllex se rappelle récursivement, alors
+  _menhir_env.lexer.lex_start_p n'est pas le début du token mais une
+  position quelque part à l'intérieur du token (e.g. après des espaces
+  blancs). SUGGESTION DE SOLUTION: au lieu de paires (startpos, endpos),
+  utiliser un type abstrait d'intervalles, avec un traitement particulier
+  de l'intervalle vide. (Voir mon message du 15/09/2011.)
+
+* BUG: le prologue fourni par le programmeur peut cacher notre exception
+  Error; il suffirait de bouger la ligne "let _eRR = Error" avant le prologue
+  modifier les deux back-ends si besoin
+  ajouter un nouveau champ nonrecvaldefs_to_be_printed_before_prologue...
+
+* BUG: message de Valentin Gatien-Baron du 09/01/2010: le bug de --explain
+  est-il bien le bug connu? peut-on le corriger? ne suffirait-il pas de
+  passer sous silence les conflits qui ont lieu dans une partie inaccessible
+  de l'automate?
+
+* BUG: message de Valentin Gatien-Baron du 09/01/2010: le warning erroné à
+  propos d'un %prec inutile peut-il être évité?
+
+* Lorsqu'on utilise %parameter, si la définition du type token ne
+  dépend pas du(des) paramètre(s) du foncteur, ce serait bon de
+  la générer en dehors du foncteur.
+
+* À chaque fois qu'on applique magic à une fonction, utiliser la
+  syntaxe (magic e : _ -> _). Difficile, en fait, car on applique
+  souvent magic à toute la pile.
+
+* BUG (Jonathan Kimmit): reproduire le prologue après la définition du
+  type token -- c'est fait non?
+
+* Implémenter un test de détection de boucles. Si la grammaire contient une
+  boucle, elle est infiniment ambiguë. Pour le test, calculer tous les
+  nullables, ajouter une production unité A -> B dès qu'il existe une
+  production A -> alpha B beta avec alpha et beta nullables, et regarder
+  ensuite s'il existe un cycle de productions unité.
+
+* Deux idées qu'on avait mises dans le projet Jane Street, et que j'ai
+  suppriméees pour l'instant:
+  - demander à l'interprète de référence de collecter tous les états
+    traversés (de façon cumulative, pour toutes les phrases fournies)
+    et afficher quels états ont été traversés (ou non traversés)
+  - proposer un jeu de phrases qui couvre l'ensemble des états non
+    encore atteints (ou bien l'ensemble des états à conflits non
+    encore atteints).
+
+* Permettre une trace avec autre chose que fprintf stderr
+
+* Permettre trois modes pour --trace: toujours, si variable d'environnement
+  activée, ou jamais
+
+* peut-on éviter d'avoir pour les états des "raw numbers" et des "numbers"
+  totalement différents?
+
+* (petit) BUG: --follow-construction n'affiche pas le contenu des états
+  initiaux (r0)
+
+* Faut-il expliquer les conflits *avant* de bousiller l'automate? (mais
+  cacher les explications des conflits qui vont être résolus)
+
+* pourquoi pas une sortie au format .dot pour l'automate? (avant ou
+  après résolution des conflits?)
+
+* relire la preuve de Pager et comprendre si ce que fait Lr1.grow est correct
+  ou pas; faut-il faire grossir les états existants, ou bien (par exemple) les
+  supprimer et recommencer leur construction?
+
+* regarder du côté de Tattoo (Julien Cervelle)
+
+* que fait/que doit faire la combinaison --tokens-only --depend?
+
+* Préserver dirname/ dans les directives #line émises.
+
+* BUG: Boris (1.- bouclage parser sur une entrée erronée 2.- une lecture
+  trop loin dans le stream, également liée à error).
+
+* Corriger le lexer pour supporter les types variantes polymorphes (tenir
+  compte des crochets carrés et ignorer les crochets anguleux dedans)...
+
+* Supprimer le token error et tout ce qui s'y rapporte. Ajouter une option
+  --list-error-states pour sortir une liste de tous les états dans lesquelles
+  une erreur peut avoir lieu, avec la phrase permettant d'y arriver et éventuellement
+  les tokens de lookahead qui provoquent l'erreur. Ajouter ensuite une option
+  --with-error-messages qui à une phrase erronée (et éventuellement à un token
+  de lookahead) associe un message d'erreur. (Hmm, en fait, on veut plutôt un
+  suffixe de phrase erronée, pour plus de concision et de robustesse.) (Comment
+  garantir qu'on associe au plus un message d'erreur à une paire état-token?)
+  On pourra alors lancer une
+  exception décorée par un message d'erreur approprié. On modifiera --list-error-states
+  pour n'afficher que les erreurs auxquelles aucun message n'est associé. On signalera
+  aussi les cas où plusieurs messages seraient associés à une même erreur, et le cas
+  où une "phrase erronée" ne serait en fait pas erronée. Réfléchir
+  à une bonne technique de resynchronisation?
+
+* Moins ambitieux, annoter l'exception SyntaxError par l'état dans lequel elle a eu
+  lieu, et donner accès à la liste des tokens qui n'auraient pas provoqué d'erreur
+  dans cet état
+
+* Appliquer cette même technique aux conflits? Le programmeur liste une phrase
+  et un token de lookahead, et indique quelle action il veut dans ce cas...
+
+* Réfléchir à GLR
+
+* Faire co-exister l'automate avant et après résolution des conflits;
+  tenter d'expliquer chaque conflit en termes du second, si impossible
+  alors en termes du premier; faire en sorte que les numéros d'états
+  soient les mêmes dans les deux automates; indiquer combien d'états
+  a chacun
+
+* éviter "Warning: 22 conflicts ..." car emacs prend "Warning" pour un
+  nom de fichier; d'après Damien, il devrait suffire que la phrase après
+  les deux points ne commence pas par un nombre.
+
+* ajouter une option -q pour désactiver tous les warnings
+
+* si une variable est inutilisée dans une action sémantique, le
+  warning est affiché dans le code produit.
+
+* trier les warnings par ordre décroissant de numéro de ligne
+  (quand on émet plusieurs warnings d'un coup, par exemple pour
+  les symboles inaccessibles)
+
+* un symbole indéfini pourrait être un warning (et non pas une
+  erreur) si ce symbole est inatteignable
+
+* si je veux que AND soit associatif à gauche, et OR de même,
+  et si je veux interdire que AND et OR soient mélangés sans
+  parenthésage, alors je suis coincé -- je ne peux pas dire
+  cela. Exact?
+
+* songer à un moyen de ne pas encombrer le .conflict avec des
+  conflits similaires? Si le contexte partagé est le même, on
+  peut ne pas l'afficher. On pourrait alors afficher un seul
+  rapport de conflits pour plusieurs états? Cf. message du 24
+  juin de Christian.
+
+* tirer au clair la sémantique des $startpos/$endpos sur les
+  non-terminaux. Vérifier que %inline la préserve.
+
+* BUG: solving a shift/reduce conflict in favor of reduction can
+  cut a path that was required in order to explain another conflict.
+  (see e.g. belloeil.mly)
+  Take priorities into account *during* the construction of the
+  automaton? Is it feasible? Compatible with Pager?
+
+* le fichier .conflicts devrait etre supprime par --explain s'il
+  n'y a aucun conflit
+
+* Allow the user to submit a sentence and check whether it is ambiguous (that is,
+  whether its analysis traverses states with conflicts, and if so,
+  which). Allow the user to submit a set of sentences and check that
+  all conflicts are covered. Allow the user to submit a sentence and
+  run the parser over it.
+
+* dans sample-grammars, il y a des grammaires qui produisent des
+  warnings, mais le Makefile ne vérifie pas que ce sont les bons
+
+* changer la licence et y inclure la documentation (distribuée avec
+  son source)
+
+* pouvoir débrayer certains avertissements (e.g. tokens non utilisés)
+  sur la ligne de commande
+
+* dans le dump de l'automate, rajouter les transitions qui ont
+  ete supprimees par resolution de conflits.
+
+* BUG: l'élimination de %inline change la signification de $startpos
+  et $endpos (qui devient relative à la nouvelle règle)
+
+* corriger OMakefile.shared, ou demander de l'aide aux auteurs de
+  omake
+
+* expliquer aussi les conflits end-of-stream
+
+* Documenter l'emploi d'ocamlbuild et décourager make/omake.
+
+* Lorsqu'on crée un pseudo-lexème pour utiliser dans les
+  directives %prec, la question de savoir s'il est associatif
+  à gauche ou à droite ou pas du tout ne se posera jamais. Donc,
+  pour faire propre, on ne devrait pas autoriser l'emploi de
+  %left, %right, %nonassoc (sauf pour compatibilité arrière,
+  avec warning) mais introduire un nouveau mot-clé %fictitious
+  ou %pseudo ou whatever.
+
+* Autre remarque du même tonneau, si on souhaite choisir un
+  niveau mais pas un statut d'associativité (parce qu'on pense
+  qu'il est inutile), il faudrait pouvoir déclarer %neutral
+  (whatever) et obtenir un niveau au statut non-spécifié (d'où
+  erreur si on tente de consulter ce statut).
+
+* Documenter action vide = unit. Non, ce n'est pas vrai! Ça ne
+  marche pas en présence de %inline. Corriger?
+
+* Prévoir une sortie --ocamlyacc qui affiche la grammaire sans
+  les liaisons des valeurs sémantiques et sans les actions
+  sémantiques?
+
+* Ajouter un mot-clé $lexbuf.
+
+* Permettre aux déclarations %left/right/nonassoc de venir
+  par groupes, en considérant deux groupes distincts comme
+  totalement indépendants? Cela permettrait de spécifier
+  que certaines relations de précédence ne sont *pas*
+  utiles. Il suffirait d'un %cut?
+
+* doc en HTML
+
+* Tester les Makefile sous Windows
+
+* Raccourcir les explications de conflits en éliminant la
+  partie commune aux deux (ou plus) arbres de dérivation
+  que l'on exhibe. Ensuite, faciliter la comparaison entre
+  les deux arbres exhibés en alignant les éléments de frange
+  commune au-delà du chemin de conflit. En fait, il suffirait
+  d'aligner les deux symboles qui sont/engendrent le symbole
+  de lookahead.
+
+* Faire le nécessaire pour empêcher les warnings d'ocaml 3.09
+  sur les valeurs sémantiques nommées et non utilisées? Le
+  problème est que l'erreur est forcément rapportée dans le
+  fichier .ml engendré. Et ça résoudrait le problème du cas
+  où on n'utilise que $startpos(v) et pas v.
+
+* Mettre à jour Error, élaguer Positions et l'utiliser partout.
+
+* Hunt TEMPORARies
+
+* Une fois ocamlweb mis à jour pour nous, intégrer une version
+  de fancy-parser en appendice de la doc.
+
+* Proprifier [Misc]
+
+* Compiler un ensemble de grammaires écrites pour ocalmyacc pour
+  mesurer l'augmentation de la taille du code. (Utiliser -noassert)
+
+* Attribuer à chaque erreur et avertissement un numéro unique
+  pour référence dans la doc. Vérifier que tous sont déclenchés
+  par au moins un fichier du jeu de tests.
+
+* Ajouter une construction pour dire que l'on sait qu'un certain
+  token est non utilisé?
+
+* Il faudrait activer le warning qui recommande d'utiliser --infer
+  dès que la librairie standard est utilisée (et pas seulement lorsque
+  %inline est utilisé).
+
+* Il faudrait marquer une variable comme non utilisée si elle apparaît
+  seulement dans les primitives d'extraction de positions. Problématique.
+
+* Le mot-clef $syntaxerror ne fonctionne pas de façon satisfaisante:
+  lorsque l'action sémantique est évaluée, on a déjà lu le lookahead
+  token, et l'appel à $syntaxerror oblitère celui-ci en le remplaçant
+  par error. On voudrait plutôt insérer le token error devant le
+  lookahead token? Autre problème: en nous ramenant à un état
+  antérieur de l'automate, $syntaxerror peut très bien provoquer
+  une non-terminaison (certes on consomme un token, mais le flot
+  de tokens est infini si le lexer reconnaît eof).
+
+* Would it make sense to allow %start or %type declarations to
+  concern parameterized nonterminals (or applications thereof)?
+
+* The code that checks well-formedness should emit as many
+   error messages as possible and die only at the end.
+
+* Support calls to external functions that are allowed to consume
+   things in the current lexbuf. This could be done as follows:
+
+  + Autoriser des déclarations de pseudo-tokens, de la forme
+      %pseudotoken <ocaml type> MACHIN { ... ocaml code ... }
+    où le code ocaml doit être de type lexbuf -> <ocaml type>.
+
+  + Vérifier que ces tokens ne sont jamais utilisés pour le
+    lookahead (exactement les mêmes conditions que pour le
+    token #). Vérifier qu'ils ne participent jamais à un
+    conflit, même résolu silencieusement.
+
+  + Compiler comme pour le token # (i.e. éviter le lookahead).
+    Lorsqu'on arrive dans l'état qui doit shifter #, au lieu
+    d'effectuer un décalage en appelant le lexer, on appelle
+    le code ocaml. À part ça rien ne change...?
+
+* Implement an external tool that automatically computes FIRST
+   and/or FOLLOW sets and instruments an existing grammar with new
+   error productions (Christian's idea).
+
+* Autoriser %functorparam et %functionparam (cf. requête de Skaller)
+  car ces derniers sont parfois plus flexibles. Ou bien garder seulement
+  %parameter et déclarer le foncteur Make comme récursif, pour pouvoir
+  l'appeler depuis une action sémantique.
+
+* Les actions semantiques ont-elles officiellement le droit de s'appeler
+  (ou d'appeler le foncteur Make) recursivement? Si oui, est-ce que ca
+  fonctionne avec --infer?
+
+* Autoriser le pun foo = foo dans le langage de grammaires?
+

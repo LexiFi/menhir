@@ -1,0 +1,769 @@
+From francois.pottier@inria.fr  Mon Dec  5 11:24:21 2011
+Date: Mon, 5 Dec 2011 11:24:21 +0100 (CET)
+From: ESOP 2012 <esop2012@easychair.org>
+To: François Pottier <francois.pottier@inria.fr>
+Subject: ESOP 2012 author response (paper 66)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Status: RO
+
+Dear François,
+
+Thank you for your submission to ESOP 2012. The ESOP 2012
+review response period is now open and will end Dec. 7 at 12 p.m.
+
+During this time, you will have access to the current
+state of your reviews and have the opportunity to submit a
+response of up to 500 words. Please keep in mind the
+following during this process:
+
+* The response must focus on any factual errors in the
+reviews and any questions posed by the reviewers. It must
+not provide new research results or reformulate the
+presentation.  Try to be as concise and to the point as
+possible.
+
+* The review response period is an opportunity to react to
+the reviews, but not a requirement to do so. Thus, if you
+feel the reviews are accurate and the reviewers have not
+asked any questions, then you should not respond.
+
+* The reviews are as submitted by the PC members, without
+any coordination between them. Thus, there may be
+inconsistencies. Furthermore, these are not the final
+versions of the reviews. The reviews will be updated to take
+into account the discussions at the program committee
+meeting, and we may find it necessary to solicit other
+outside reviews after the review response period.
+
+* The program committee will read your responses carefully
+and take this information into account during the
+discussions. On the other hand, the program committee will
+not directly respond to your responses, either before the
+program committee meeting or in the final versions of the
+reviews.
+
+* Your response will be seen by all PC members who have
+access to the discussion of your paper, so please try to be
+polite and constructive.
+
+The reviews on your paper are attached to this letter. To
+submit your response you should log on the EasyChair Web
+site for ESOP 2012 and select your submission on the menu.
+
+Best wishes,
+               Helmut
+
+----------------------- REVIEW 1 ---------------------
+PAPER: 66
+TITLE: Validating LR(1) Parsers
+AUTHORS: (anonymous)
+
+This paper proposes a fully automated methodology to develop formally
+
+verified LR(1) parsers in Coq. This methodology is based on a parser
+
+generator like "Yacc". In short, the parser generator is instrumented
+
+in order to produce (from a "Yacc"-like source file) :
+
+  - a grammar annotated with actions relating grammar rules to AST
+
+    construction (in a format for the validator described below:
+
+    this grammar is actually very closed to the source file).
+
+  - a LR(1) automaton (in a format for the validator and the automaton
+
+    interpreter described below).
+
+  - some certificate to help the automation of verification process
+
+    (for the validator described below).
+
+
+
+Then, the tools developed in Coq by the authors consist in:
+
+  - an interpreter: roughly, given the automaton, this program reads a
+
+    stream of tokens (computed by an external lexer) and either
+
+    returns an AST, or raises an error (if the stream is not
+
+    recognized by the automaton).
+
+  - a validator: roughly, given the three objects returned by the
+
+    parser generator, if this programs returns true then the
+
+    interpreter of the automaton is a "valid" implementation of the
+
+    grammar (this property of the validator has been proved in Coq).
+
+
+
+The interpreter of the automaton is a "valid" implementation of the
+
+grammar iff:
+
+  - it is sound: all word leading to an AST with the interpreter,
+
+    leads to the same AST with the annotated grammar.
+
+  - and, it is safe: the interpreter, actually encoded in a defensive
+
+    style, does not raise an internal error. In other words, the
+
+    interpreter performs safe accesses to its internal stack.
+
+  - and, it is complete: all words leading to an AST with the grammar,
+
+    leads to the same AST with the interpreter. Actually, as the
+
+    interpreter is deterministic, completeness ensures that the
+
+    *grammar* is not ambiguous (a recognized word leads to a unique
+
+    AST).
+
+
+
+A great feature of this methodology is that the parser generator does
+
+not need to be proved or even safe.  For a given compiler, its output
+
+is checked by the verifier "once for all" at compile time (of the
+
+compiler). The interpreter (extracted in Ocaml) is run at run-time (of
+
+the compiler).
+
+
+
+Actually, while the formal Coq proof of the completeness is not yet
+
+fully achieved, the authors also claim to have formally develop a
+
+parser for C99 using this methodology (and thus, provide a formally
+
+proved parser to CompCert).
+
+
+
+The proposed methodology seems original, flexible, and very scalable as
+
+exemplified by the C99 case study. The paper is very well written and
+
+very convincing. Hence, it seems to be a real breakthrough on the
+
+subject.
+
+
+
+However, the authors have not provided a link to their Coq sources
+
+(neither in the paper, nor in their web pages): this is the only
+
+reason why I only propose a "weak accept". Indeed, the absence of Coq
+
+sources forbids me:
+
+  1. to get a deeper understanding of the definitions translated in
+
+     the paper from Coq to English ;
+
+  2. to check if the claims of the authors about their formalization
+
+     are well-founded.
+
+
+
+--- MAJOR REMARKS ---
+
+
+
+In your conclusion on last page, you assert that it seems difficult to
+
+define an aggressive interpreter instead of the defensive one exposed
+
+in your paper, "even with the help of Sozeau's program extension".
+
+
+
+Actually, I am convinced of (almost) the contrary. You could define an
+
+aggressive version of your interpreter (without the dynamic checks
+
+redundant with the proof) as a refinement of your defensive
+
+interpreter under the precondition that your defensive interpreter do
+
+not raise an internal error. And precisely, Sozeau's program extension
+
+would be a great help to do so. In other words, you could use your
+
+defensive interpreter as a specification of your aggressive one: the
+
+former would appear both in the "precondition" and in the
+
+"postcondition" of the latter. Hence, when defining the aggressive
+
+interpreter, the safety invariant would simply be reformulated as "the
+
+defensive interpreter does not raise an internal error given the
+
+current stack, the current input state, etc".  As the structure of
+
+your aggressive code would be not too far from the defensive version,
+
+the proof obligations generated by Sozeau's program should not be not
+
+too hard to prove.
+
+
+
+I guess that the heavy use of dependent types in your works, makes the
+
+writing of this aggressive interpreter a bit difficult (but no more
+
+difficult than the defensive version that you have already written).
+
+At the end of this review, I provided a very tiny Coq example to
+
+illustrate these ideas.
+
+
+
+In conclusion, the only drawback of the approach sketched above is
+
+some redundancy between the defensive version and the aggressive one
+
+(some code is written twice). But its main advantage is that in the
+
+defensive version, you do not need to worry about "execution
+
+efficiency" and you can focus on "proof simplicity", because you can
+
+optimize "at will" your aggressive version.
+
+
+
+In this approach, the "defensive interpreter" could also be replaced
+
+by a more traditional Coq inductive definition (the semantics of the
+
+automaton as a derivation tree). This would remove from the semantics
+
+the need of internal errors (they would be replaced by inexistence of
+
+some derivations) and the need of "fuel" (but it is still needed of
+
+course in the aggressive interpreter). Hence, "safety" as expressed in
+
+your "safety theorem" would be a consequence of "strong completeness"
+
+(but unambiguity would require an additional proof that the semantics
+
+is deterministic).
+
+
+
+Here appears a couple of questions:
+
+
+
+1. As said above, with an inductive definition, "safety" would be a
+
+consequence of "strong completeness". Could you then "merge" your two
+
+certificates (one for safety, the other for completeness) in a single
+
+one ? Would there be a gain to do so (simpler proof, simpler
+
+certifier) ?
+
+
+
+2. Do you believe that an inductive definition instead of a function
+
+for the semantics would make your proof more complex or more simple ?
+
+(The situation appears unclear to me: you would have less cases with
+
+an inductive definition but in presence of dependent types, you may
+
+have some difficulty to automate "inversion").
+
+
+
+
+
+--- MINOR REMARKS ---
+
+
+
+As the paper is very clear and very well-written, I have only a few
+
+minor remarks on some unclear comments :
+
+- p.7. in the third case of the interpreter. 
+
+
+
+  sentence "This can be thought of as reducing a special production
+
+    $S' \rightarrow S$".
+
+
+
+  I assume that you mean here the grammar is extended with a new axiom
+
+  $S'$ replacing the old one, as it is done p.11 when introducing
+
+  items.
+
+
+
+- p.10. in the 2nd property verified by the "safety validator"
+
+
+
+  sentence "If $k$ is greater that $n$, take $\Sigma_k$ to be the set
+
+  of all states".
+
+
+
+As I understand it, it would be clearer to say here that "$k \leq n$"
+
+because I guess that it is implied by the condition
+
+ "$\alpha$ is a suffix of $pastSymbols(\sigma)incoming(\sigma)$".
+
+
+
+
+
+I have noted a single typo:
+
+ - p. 18.  "In fact, we have proof ..." 
+
+                           ^^^^^^^
+
+  
+
+
+
+
+
+--- COQ JOINT FILE (ANNEX OF "MAJOR REMARKS" ABOVE) ------------------
+
+(* A tiny example showing how to refine a defensive program performing
+
+   dynamic typechecking on its data into an aggressive program where
+
+   these checks are removed under the precondition that it is safe to
+
+   do it.
+
+
+
+   compiled with coq version 8.3pl2. 
+
+*)
+
+Require Import Program.
+
+Open Scope list_scope.
+
+
+
+(* Our "dynamic types" with their semantics *)
+
+Inductive type := NAT | BOOL. 
+
+
+
+Definition sem (t:type) : Set := if t then nat else bool.
+
+
+
+Definition eq_type_dec: forall (x y:type), {x=y} + {x<>y}.
+
+  decide equality. 
+
+Defined.
+
+
+
+(* Our typed values *)
+
+Record data: Set := mkdata { dyntype: type; value: sem dyntype }.
+
+
+
+(* A "safe" cast function. *)
+
+Program Definition cast {t1:type} (t2:_ | t1=t2): sem t1 -> sem t2 :=
+
+  match proj2_sig t2 in (_ = y) return (sem t1) -> (sem y) with
+
+  | eq_refl => fun x => x
+
+  end.
+
+
+
+(* The above "match" destructs a non-informative type (Coq equality). 
+
+   Hence at extraction, "cast" is simply identity. *)
+
+Extraction Inline cast. (* inline identity ! *)
+
+
+
+(* Now, we define a binary operation on homogeneous data *)
+
+Definition op {t: type} :=
+
+  if t return (sem t) -> (sem t) -> (sem t)
+
+  then plus
+
+  else orb.
+
+
+
+(* Now, a defensive version of "op" on data, raising an error on
+
+   heterogeneous data *)
+
+Program Definition def_op (x y:data): option (sem (dyntype x)) :=
+
+  let tx := (dyntype x) in 
+
+  if (eq_type_dec tx (dyntype y)) then
+
+     Some (op (value x) (cast tx (value y)))
+
+  else
+
+     None. 
+
+
+
+(* Our defensive program iterates "def_op" on a list of data.
+
+   If the list is heterogeneous: it raises a dynamic error. *)
+
+Fixpoint defensive (l:list data)
+
+    : forall (acc: data), option (sem (dyntype acc)) :=
+
+  match l with
+
+  | [] => fun acc => Some (value acc)
+
+  | x::l => fun acc => 
+
+    match def_op acc x with
+
+    | Some res => defensive l (mkdata _ res)
+
+    | None => None
+
+    end
+
+  end.
+
+
+
+(* Hence, the extracted code contains many defensive checks...*)
+
+Extraction Inline def_op op eq_type_dec.
+
+Extraction defensive.
+
+
+
+(* Now, we define "aggressive" as refinement of "defensive" (see types
+
+   below), under the precondition that defensive does not raise an
+
+   error.
+
+
+
+   First, we define "aggressive_rec" the recursive part of the
+
+   program, that iterates "l" over "agg_op", which is a monomorphic 
+
+   implementation of "op" selected by "aggressive".
+
+
+
+  N.B: aggressive_rec code does perform tests neither on types, nor on
+
+  errors.  It replaces "dynamic typechecking" by "(proved) safe
+
+  cast".*)
+
+
+
+Program Fixpoint aggressive_rec {t:type} 
+
+  (agg_op: sem t -> sem t -> sem t | forall x y, agg_op x y = op x y) 
+
+  (l: list data) 
+
+  (acc:sem t | defensive l (mkdata _ acc) <> None) 
+
+    : { res | defensive l (mkdata _ acc) = Some res } :=
+
+  match l with
+
+  | [] => acc
+
+  | x::l => aggressive_rec agg_op l (agg_op acc (cast t (value x)))
+
+  end.
+
+
+
+(* Proof obligations of aggressive_rec. *)
+
+Transparent def_op_obligation_1.
+
+
+
+(* a generic script solving the OP *)
+
+Ltac aggressive_rec_OP x t H H0 :=
+
+  generalize H; clear H; simpl; unfold def_op; simpl ;
+
+  case (eq_type_dec t (dyntype x)) ; [
+
+  (* case: t=dyntype x *)
+
+  unfold def_op_obligation_1;
+
+  generalize (dyntype x) (value x); clear x ;
+
+  intros tx vx e; generalize vx; clear vx ;
+
+  case e; intros vx; (try rewrite H0); auto |
+
+  (* absurd case *)
+
+  intros H H1; case H1; auto ].
+
+
+
+Obligation 2. (* safety of the cast *)
+
+  aggressive_rec_OP x t H H0.
+
+Defined.
+
+
+
+Obligation 3. (* precondition of the recursive call *)
+
+  aggressive_rec_OP x t H H0.
+
+Qed.
+
+
+
+Obligation 4. (* postcondition of the result *)
+
+  aggressive_rec_OP x t H H0.
+
+Defined.
+
+
+
+(* The main program "aggressive" *) 
+
+Program Definition aggressive 
+
+  (l: list data) 
+
+  (acc: data | defensive l acc <> None)
+
+    : { res | defensive l acc = Some res } := 
+
+  (if dyntype acc as t return 
+
+      forall (acc:sem t | defensive l (mkdata _ acc) <> None), 
+
+      { res | defensive l (mkdata _ acc) = Some res }
+
+   then fun acc => aggressive_rec (t:=NAT) plus l acc
+
+   else fun acc => aggressive_rec (t:=BOOL) orb l acc
+
+  ) (value acc).
+
+
+
+Obligation 3. (* precondition of internal if *)
+
+  generalize H; case acc; simpl; auto.
+
+Qed.
+
+
+
+(* a trivial technical lemma *)
+
+Lemma unfold_Somedefbysig A (x:option A) (p: { res | x = Some res }):
+
+  x = Some (`p).
+
+Proof. case p; simpl; auto. Qed.
+
+
+
+Obligation 4. (* postcondition of internal if *)
+
+  generalize H; case acc; simpl; clear acc H.
+
+  intros tacc; case tacc; simpl; intros; apply unfold_Somedefbysig.
+
+Qed.
+
+
+
+(* See the extracted code now ! *)
+
+Extraction "aggressive.ml" aggressive.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 66
+TITLE: Validating LR(1) Parsers
+AUTHORS: (anonymous)
+
+The authors approach is to verify certain properties of LR(1) parsers
+with respect to a grammar and semantic actions by means of coq proofs.
+The properties, that they verify are soundness, safety and weak 
+completeness. These properties enable them to show that the inspected
+parser terminates on valid inputs, does not encounter internal errors
+and accepts a finite string if it can be derived from the start symbol.
+Step by step, the authors develop the properties they need together with
+according helper constructions. Finally, they evaluate their approach 
+whith a C parser.
+
+Strong points:
+The paper is well-written. The line of arguements is comprehensible.
+This approach is clearly application motivated, demonstrating the
+usefulness of theorem prooving in software development.
+For me as a parser-generator engineer, this approach tackles a common
+problem -- does this specific implementation of a specific parsing
+algorithm produce something, that has a reliable relation to my grammar?
+Although in this approach, a parser can not be proven to terminate
+on arbitrary input, it is still a leap forward for parser verification.
+
+Weak points:
+Concerning the example section, the authors mention to apply a pre-parser,
+which handles impure concepts like the typedef problem. In my interpretation,
+this still imposes need for correctness proofs, especially as tinkering
+with token-identities as sideeffects of parser-actions appears
+risky when the parser works with a lookahead, i.e. a new type is introduced,
+but has already read another token....
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 66
+TITLE: Validating LR(1) Parsers
+AUTHORS: (anonymous)
+
+The paper presents a method for automatically validating the automata produced
+by parser generators of the LR family. The system has been implemented, and
+shown to impose only a reasonable small cost at compiler-build time. Though
+the overhead at compiler-execution time is still excessive, this is
+understandable.
+
+The reason why I am giving the paper only a weak accept is that while
+most of the paper is clearly written, the two most crucial parts, which deal
+with the validation of safety and completeness, are not (see the comments
+below for pages 9 and 13). Based on past performance, I trust that in the
+implementation, the INRIA team got things right, but in these two crucial
+areas (unlike in the rest of the paper), they haven't proven it to readers.
+
+The discussion on related work is good, though I am not in a position
+to comment on its completeness. The discussion of future work is excellent.
+
+Detailed comments:
+p2 and later: In most compiler texts, SLR and LALR don't need a (1) suffix.
+
+p2: You validate only the automation, but claim correctness of its interpreter
+as well. Where is the support of this claim?
+
+p3: In the dragon book and elsewhere, what you calla "proto-phrase" is called
+a "sentential form".
+
+p4: Why do you assume the token stream is infinite?
+
+p5: I would reorder this list as 1423.
+
+p5: Where did footnotes 1 and 2 disappear to?
+
+p7: Where would I find Remark 1?
+
+p8: You don't introduce the notation "s(sigma, v)".
+
+p9: You don't give us any information about the MEANING of pastSymbols and
+pastStates. For example, do pastSymbols and pastStates need to have the same
+length, and a one-to-one correspondence? If yes, say so. If not, why not?
+
+p10: WHY do you not need to demostrate this claim?
+
+p11: "eenvision" is ambiguous. Do you envision how it should work, or
+just that you need it?
+
+p11: "further on" refers to which subsection?
+
+p11: "recognize alpha2 and peek at a" -> "recognize alpha2 followed by a"
+
+p12: Point 1 would be easier to read if you replaces "a" with e.g. "t".
+The "a" is hard to tell apart from the "alpha" that it descends from.
+
+p12: Point 4: why allow it to be undefined?
+
+p12: Move point 7 first, next to the other text that talks about its contents.
+
+p13: "a a"
+
+p13: a path "into" the oracle tree -> a path "in" the oracle tree.
+And what kind of path are you talking about? Is it a branch, allowed
+to have at most one node on each level? Or can it meander around,
+visiting the same node more than once? Even the description of the actions
+that follows does not clear this up for me, since it does not say how a shift
+updates the path. Does it add more nodes to it, or delete some?
+
+Your point 3 is particularly hard to read, because it is too vague:
+"some" (which?) child, "some" (which?) node, "corresponds" (in what way)
+to the symbol. You also cannot have anything following a production in the
+input stream, since the input stream contains no productions. You mean
+the symbol sequence deriving from the production's right hand side.
+
+p14: point 3: there will be many format last nodes.
+
+I do not see how these operations on paths and invariant on paths (which I do
+not understand, see above) help you, especially in the absence of an actually
+implemented fully automatic oracle. You need a bit more discussion here.
+
+p14: I don't think "the Coq development" means what you think it means.
+I definitely do not know what you mean by "globally unsurprising".
+
+p15: I would have thought the absence of support from later passes of CompCert
+would be sufficient reason not to support K&R style functions; their obsolete
+nature shouldn't matter.
+
+Reference 18 is missing details.
+

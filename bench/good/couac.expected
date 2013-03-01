@@ -1,0 +1,130 @@
+%{
+
+  open Syntax
+
+%}
+%{
+
+  let error i msg =
+    Error.error2 (Parsing.rhs_start_pos i) (Parsing.rhs_end_pos i) msg
+
+%}
+%start grammar
+%token <string> UID
+%token TYPE
+%token TOKEN
+%token START
+%token RIGHT
+%token PREC
+%token <Syntax.offset> PERCENTPERCENT
+%token <Syntax.stretch> OCAMLTYPE
+%token NONASSOC
+%token <string> LID
+%token LEFT
+%token <Syntax.stretch> HEADER
+%token EOF
+%token COLON
+%token BAR
+%token <Syntax.action> ACTION
+
+%type <Syntax.grammar> grammar
+%%
+
+grammar:
+| declarations PERCENTPERCENT rules trailer
+    { List.rev $1, $3, $4 }
+
+trailer:
+| EOF
+    { None }
+| PERCENTPERCENT
+    { Some $1 }
+
+declarations:
+| 
+    { [] }
+| declarations declaration
+    { $2 @ $1 }
+
+declaration:
+| HEADER
+    { [ DCode $1 ] }
+| TOKEN terminals
+    { List.map (fun x -> DToken (None, x)) $2 }
+| TOKEN OCAMLTYPE terminals
+    { List.map (fun x -> DToken (Some $2, x)) $3 }
+| START nonterminals
+    { List.map (fun x -> DStart x) $2 }
+| TYPE OCAMLTYPE symbols
+    { [] }
+| LEFT symbols
+    { [] }
+| RIGHT symbols
+    { [] }
+| NONASSOC symbols
+    { [] }
+
+symbols:
+| 
+    { [] }
+| symbols symbol
+    { $2 :: $1 }
+
+symbol:
+| LID
+    { $1 }
+| UID
+    { $1 }
+
+terminals:
+| 
+    { [] }
+| terminals UID
+    { $2 :: $1 }
+| terminals LID
+    { error 2 "Terminal symbols must begin with an uppercase letter." }
+
+nonterminals:
+| 
+    { [] }
+| nonterminals LID
+    { $2 :: $1 }
+| nonterminals UID
+    { error 2 "Nonterminal start symbols must begin with a lowercase letter." }
+
+rules:
+| 
+    { [] }
+| rules rule
+    { $2 :: $1 }
+
+rule:
+| symbol COLON optional_bar production productions
+    { $1, $4 :: $5 }
+
+optional_bar:
+| 
+    { () }
+| BAR
+    { () }
+
+productions:
+| 
+    { [] }
+| productions BAR production
+    { $3 :: $1 }
+
+production:
+| symbols precedence ACTION
+    { List.rev $1, $3, $2 }
+
+precedence:
+| 
+    { None }
+| PREC symbol
+    { Some $2 }
+
+%%
+
+
+

@@ -1,0 +1,71 @@
+\begin{figure}
+
+.PS
+[
+boxrad=0.1
+
+A: box width 1 height 0.4 \
+   "Instrumented" "parser generator"
+
+line <- from A.w left 0.3
+
+B: box invis "Grammar" with .e at last line.end
+
+C: box invis width 1.2 height 0.16 "LR(1) automaton" \
+   with .w at A.e + (0.3,0.2)
+
+D: box invis width 0.7 height 0.15 "Grammar" \
+   with .w at A.e + (0.3,0)
+
+H: box invis width 0.8 height 0.15 "Certificate" \
+   with .w at A.e + (0.3,-0.2)
+
+E: box thick 2 width 0.8 height 0.3 "Validator" \
+   with .n at D.s + (0.4,-0.5)
+
+arrow from A.e + (0,0.1) to C.w
+arrow from A.e to D.w
+arrow from A.e + (0,-0.1) to H.w
+
+arrow from C.s + (0.35,0) to E.n + (0.2,0)
+arrow from H.s + (0.25,0) to E.n + (-0.1,0)
+#line <- from E.n + (0.05,0) up 0.5
+arrow from D.e right 0.1 then to E.n + (0.05,0)
+arrow from E.w left 0.3
+
+"OK / error~" rjust at last arrow.end
+
+F: box thick 2 height 0.4 "Pushdown" "interpreter" with .w at D.e + (0.8,0)
+
+line <- from F.n up 0.2
+
+"Token stream" above at last line.end
+
+line -> from F.s down 0.2
+
+"Semantic value" below at last line.end
+
+arrow from C.e to F.w + (0,0.1)
+arrow from D.e to F.w
+
+line dashed from F.w + (-0.2,0.5) down 1.7
+
+"{\em Compile-compile time}~~~~~~~" rjust at last line.end
+
+"~~~~~~~{\em Compile-time}" ljust at last line.end
+
+X: box thick 2 width 0.25 height 0.1 at A + (-1.4,-1.2)
+"~~=~\scriptsize \em formally verified in Coq" ljust at X.e
+Y: box width 0.25 height 0.1 with .s at X.n + (0,0.05)
+"~~=~\scriptsize\em not verified, not trusted" ljust at Y.e
+
+
+]
+.PE
+\centerline{\box\graph}
+
+\caption{General architecture.}
+\label{fig-archi}
+
+\end{figure}
+

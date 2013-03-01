@@ -1,0 +1,1104 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\frenchbsetup{StandardItemLabels,CompactItemize=false}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{geometry}
+
+\usepackage{stmaryrd}
+
+\title{Validation d'analyseurs syntaxiques $LR(1)$ :\\
+  {\Large Vers un analyseur syntaxique certifié pour le compilateur CompCert}}
+\author{
+  Jacques-Henri \textsc{Jourdan}\\
+  {\normalsize supervisé par X. \textsc{Leroy} et F. \textsc{Pottier} (Gallium, INRIA Rocquencourt)}}
+\date{Stage de M2 du MPRI du 4 avril au 27 août 2011}
+
+\makeatletter
+\let\verbatim@old\verbatim
+\def\verbatim{%
+\let\verbatim@font@old\verbatim@font%
+\def\verbatim@font{\verbatim@font@old\small}%
+\verbatim@old}
+\makeatother
+
+\begin{document}
+
+\maketitle
+
+\section{Contexte scientifique}
+
+\subsection{CompCert : un compilateur \texttt{C} formellement vérifié}
+
+Le compilateur CompCert~\cite{compcert} est un compilateur réaliste
+d'un large sous-ensemble du langage \texttt{C}, produisant du code
+raisonnablement performant pour les plates-formes PowerPC, ARM et
+x86. Il est écrit en grande partie à l'aide de l'assistant de preuve
+Coq~\cite{coq}, et est fourni avec une preuve formelle de sa validité :
+celle-ci permet de s'assurer que la sémantique du programme source
+\texttt{C} est précisément la même que celle de l'assembleur
+produit. Une application importante d'un tel compilateur sont les7
+logiciels embarqués critiques comme, par exemple, les systèmes de
+commande de vol automatisés dans les avions.
+
+Le compilateur CompCert apporte donc une preuve formelle de
+conservation de sémantique. Cependant, seules les phases de traduction
+de CompCert\texttt{C}, une syntaxe abstraite pour un grand
+sous-ensemble de \texttt{C}, jusqu'à une version abstraite de
+l'assembleur sont formellement prouvées. Les phases de preprocessing,
+d'analyse syntaxique, d'élaboration en amont puis d'assemblage et
+d'édition de liens en aval ne sont pas formellement vérifiées et
+peuvent contenir des bugs.
+
+Le stage a pour but de donner des arguments formels pour la validité
+de l'analyseur syntaxique du compilateur \texttt{C} CompCert.
+
+\subsection{Analyse syntaxique et grammaires}
+
+Une des techniques les plus répandues pour réaliser d'un analyseur
+syntaxique est l'utilisation d'un générateur d'analyseur
+syntaxique. On écrit d'abord la grammaire du langage, puis on
+l'enrichit avec des actions sémantiques. Ensuite, l'utilisation d'un
+générateur d'analyseur syntaxique, comme Menhir~\cite{menhir}, produit
+du code, qu'il faut lui-même compiler. Ce code se représente
+schématiquement comme une fonction qui prend en entrée un flux de
+lexèmes (produits, par exemple, par un analyseur lexical) et produit
+un arbre de syntaxe.
+
+Le rôle d'un générateur d'analyseur syntaxique est d'analyser la
+grammaire afin d'engendrer un analyseur syntaxique efficace (de
+complexité linéaire dans le cas de $LR$), et de taille raisonnable. Il
+est aussi parfois capable de détecter les ambiguïtés dans la grammaire
+pour les signaler à l'utilisateur. Il existe de nombreuses techniques
+pour effectuer ces tâches : très souvent, le générateur d'analyseur
+syntaxique n'est capable de traiter complètement qu'une certaine
+classe de grammaires. Nous nous intéressons à la classe
+$LR(1)$~\cite{lr}, qui est suffisament efficace tout en permettant de
+décrire beaucoup de langages de programmation (mais nous ne nous
+limitons pas aux automates $LR(1)$ canoniques).
+
+Dans le cadre d'un analyseur syntaxique d'un compilateur, il est
+nécessaire de calculer une sortie représentative de l'analyse
+syntaxique effectuée, en plus de déterminer son appartenance au
+langage. Nous avons choisi d'y associer une sémantique que
+l'utilisateur peut choisir. \`A chaque symbole correspond le type de
+ses valeurs sémantiques, et l'utilisateur fourni, pour chaque
+production de la grammaire, une fonction, appelée action sémantique,
+permettant de calculer la valeur sémantique associée au membre gauche
+à partir des valeurs sémantiques associées aux symboles du membre
+droit.
+
+\subsection{Automates $LR(1)$}
+
+Une des méthodes utilisées pour engendrer automatiquement un analyseur
+syntaxique est la construction d'un automate $LR(1)$ pour cette
+grammaire. Il s'agit d'un automate à pile déterministe permettant de
+reconnaître une classe de langages, associés à des grammaires appelées
+grammaires $LR(1)$.
+
+Une grammaire étant donnée, un automate $LR(1)$ est constitué de :
+
+\begin{itemize}
+\item Un ensemble d'états, dont un état initial,
+\item Une table de \emph{goto}, associant un état à certaines paires
+  d'un état et d'un non-terminal,
+\item Une table d'actions, associant une action à toute paire d'un état
+  et d'un terminal.
+\end{itemize}
+
+De plus, pour fonctionner, l'automate manipule :
+
+\begin{itemize}
+\item Un flux d'entrée, lui fournissant des lexèmes sous la forme
+  de paires d'un terminal et d'une valeur sémantique.
+\item Une pile, dont chaque cellule contient un état et une valeur
+  sémantique,
+\end{itemize}
+
+Le mode de fonctionnement de l'automate est le suivant : à chaque
+étape, on consulte un lexème depuis le flux d'entrée (sans le
+consommer). En fonction de l'état au sommet de la pile et du terminal
+lu, la table d'action détermine une action à effectuer. Les actions
+sont de 4 types :
+
+\begin{itemize}
+\item \texttt{Fail} : l'automate s'arrête, car le mot d'entrée est
+  invalide,
+\item \texttt{Shift} : la présence de cette action dans la table
+  est accompagnée d'un état. L'automate empile alors cet état, avec la
+  valeur sémantique du lexème lu, et consomme le lexème.
+\item \texttt{Reduce} : la présence de cette action dans la table est
+  accompagnée d'une production $p$ à réduire. L'automate effectue les
+  opérations suivantes.
+\begin{itemize}
+  \item Il dépile autant de cellules que de symboles dans le membre
+    droit de la production. Soient $s_1, \cdots, s_n$ les valeurs
+    sémantiques ainsi dépilées.
+  \item Il calcule le nouvel état $\sigma$ en lisant la table de
+    \emph{goto}, indexée par l'état au sommet de la pile.
+  \item Il calcule une nouvelle valeur sémantique $s = \llbracket p
+    \rrbracket(s_1, \cdots, s_n)$, où $\llbracket p \rrbracket$ est
+    l'action sémantique associée à $p$.
+  \item Il empile $(\sigma, s)$.
+\end{itemize}
+\item \texttt{Accept} : la pile contient alors exactement une
+  cellule : l'automate a reconnu le flux d'entrée et s'arrête. La
+  valeur sémantique calculée se trouve au sommet de la pile.
+\end{itemize}
+
+On peut alors se poser plusieurs questions :
+
+\begin{itemize}
+\item L'automate est-il sûr ? En effet, plusieurs erreurs internes
+  peuvent se produire :
+  \begin{itemize}
+  \item Lors de la réduction ou l'acceptation, les cellules que l'on
+    souhaiterait dépiler peuvent ne pas être présentes sur la pile, ou
+    les valeurs sémantiques dépilées n'ont pas le bon type.
+  \item La table de \emph{goto} peut être vide à une position où l'on
+    a besoin de lire.
+  \end{itemize}
+\item L'automate termine-t-il toujours ? Cela n'est pas évident, même
+  si l'entrée est finie : il est possible d'avoir des chaînes de
+  réductions infinies.
+\item L'automate est-il correct ? C'est-à-dire, lorsqu'il accepte, la
+  valeur sémantique renvoyée est-elle toujours effectivement associée
+  par la grammaire à l'entrée consommée ?
+\item L'automate est-il complet ? C'est-à-dire, si l'entrée est un mot
+  $\alpha$ pour lequel on sait que le symbole de départ dérive $\alpha$
+  en produisant une valeur sémantique $s$, l'automate accepte-t-il
+  toujours $\alpha$ en retournant $s$ ?
+\end{itemize}
+
+Le but d'un générateur d'analyseur syntaxique $LR(1)$ est de s'assurer
+que l'automate produit termine et est sûr et correct. Lorsqu'il existe
+un automate $LR(1)$ sûr, correct, complet et qui termine, on dit que
+la grammaire est $LR(1)$, et le générateur doit engendrer un automate
+complet et qui termine.
+
+\subsubsection{Fin d'entrée et lexème de \emph{prédiction}}
+
+Un problème apparaît cependant lors de l'interprétation d'un automate
+$LR(1)$. En effet, on voit qu'il est nécessaire de lire un lexème (dit
+de \emph{prédiction}) sur le flux d'entrée avant d'effectuer une
+action. Puisque les actions peuvent ne pas consommer le lexème, il est
+possible qu'il soit encore présent sur l'entrée après
+l'acceptation. Cela signifie que l'automate consulte un lexème après
+la fin de l'entrée. Selon les utilisations, ce lexème n'existe pas,
+n'est pas disponible au moment de l'analyse syntaxique... On peut
+alors choisir l'une des solutions suivantes :
+
+\begin{itemize}
+  \item On peut prendre comme convention que la fin de l'entrée est
+    suivie d'un terminal spécial, noté \verb+#+, qui n'apparaît jamais
+    dans la grammaire.
+  \item On modifie un peu la notion d'automate $LR(1)$ pour éviter ce
+    problème.
+\end{itemize}
+
+L'inconvénient de la première solution est que l'on ne connaît pas
+forcément à l'avance la position de la fin de l'entrée : il peut juste
+s'agir de la fin du premier mot reconnu par la grammaire. Dans
+certaines applications, il est souhaitable de ne pas consulter de
+lexème après cette position : par exemple, si l'application est un
+interprète de commandes interactif, celui-ci doit interpréter la
+commande sans attendre la suivante.
+
+La deuxième solution consiste à introduire une notion \emph{d'action
+ par défaut} : avant de consulter le prochain lexème sur l'entrée,
+l'interprète regarde dans la table d'action s'il existe une action par
+défaut pour l'état courant : dans ce cas, il exécute l'action en
+question sans se préoccuper du lexème de prédiction. Pour être sûr de
+ne pas consulter de lexème après la fin du flux, il est nécessaire de
+s'assurer que l'analyseur syntaxique ne consulte jamais l'entrée avant
+d'accepter ou de réduire une production pouvant se trouver à la fin
+d'un mot de la grammaire (cependant, cette propriété précise n'est pas
+vérifié par la version actuelle du validateur).
+
+C'est cette deuxième solution qui est implémentée dans Menhir, et dans
+notre interprète. Cela réduit le nombre de grammaires ayant un
+automate complet. Cependant, si on connaît la position de la fin de
+l'entrée, il est toujours possible de retrouver toute l'expressivité
+de $LR(1)$, en simulant la première solution : il faut créer un
+nouveau non-terminal de départ $D$ et un terminal \verb+#+, et ajouter
+la production $D \rightarrow D'\verb+#+$, où $D'$ est l'ancien symbole
+de départ.
+
+\section{Approche générale}
+
+Une première approche aurait été de prouver un générateur d'analyseur
+syntaxique complet, comme l'ont fait Barthwal et
+Norrish~\cite{barthwal} : nous aurions alors prouvé correct un
+générateur d'automate, ainsi qu'un interprète. Cependant, nous avons
+choisi une méthode différente : notamment afin d'éviter la
+programmation complexe d'un générateur d'analyseur syntaxique, nous
+utilisons un générateur d'automate non prouvé, comme
+Menhir~\cite{menhir}. Par ailleurs, nous avons programmé et prouvé un
+validateur, qui ne renvoit \verb+true+ que lorsque l'automate produit
+correspond à sa spécification. Il est important de noter qu'une preuve
+du validateur et de l'interprète permet, à elle seule, de fournir des
+garanties suffisantes.
+
+Ce validateur est capable de traiter tous les analyseurs syntaxiques
+utilisant un automate pouvant se décrire avec le formalisme $LR(1)$ :
+ainsi, nous sommes capables de  valider des automates $LR(0)$, $SLR$,
+$LALR(1)$, $LR(1)$, et Pager-$LR(1)$~\cite{pager}, comme ceux de
+Menhir. Au total, notre plateforme représente 3100 lignes de code
+Coq. On distingue 900 lignes de définitions et programmes et 2200
+lignes de validateurs et preuves. Plus précisément, notre travail
+consiste en plusieurs parties :
+
+\begin{itemize}
+\item Un interprète d'automate $LR(1)$ : à partir de la description,
+  sous la forme de modules Coq, d'une grammaire et d'un automate, ce
+  programme Coq exécute l'automate sur un flux d'entrée
+  donné. L'interprète peut échouer de 3 manières différentes :
+  \begin{itemize}
+  \item Soit il s'arrête à cause d'une erreur interne, à cause d'un
+    défaut de l'automate.
+  \item Soit il échoue comme le prévoit l'automate, ce qui, si
+    l'automate est complet, est synonyme de la non acceptation de
+    l'entrée par la grammaire.
+  \item Soit il échoue par ``manque de carburant'' : comme nous le
+    verrons, il est difficile de prouver la terminaison d'un automate
+    $LR(1)$. Les programmes Coq ayant la propriété de tous terminer,
+    il a fallu borner le nombre d'étapes effectuées par l'automate
+    (une très grande borne rend cette situation impossible en
+    pratique).
+  \end{itemize}
+\item Une preuve de correction de l'interprète, débouchant sur le
+  théorème : si l'interprète accepte le mot d'entrée, alors la valeur
+  sémantique calculée est effectivement une valeur sémantique du mot
+  d'entrée, selon la grammaire. Il est notable que ce théorème est
+  vrai pour toute grammaire et tout automate.
+\item Un validateur pour la sûreté de l'automate et une preuve de
+  correction de ce validateur : si le validateur répond \verb+true+,
+  alors l'interprète n'échouera jamais à cause d'une erreur interne.
+\item Un validateur pour la complétude de l'automate et une preuve de
+  correction de ce validateur : si le validateur répond \verb+true+,
+  alors, sur une entrée reconnue par la grammaire, l'interprète
+  terminera et produira la valeur sémantique correspondante (et
+  celle-ci est unique, par déterminisme de l'automate).
+\item Afin de ne pas devoir décrire l'automate directement en Coq à la
+  main, nous avons créé une version modifiée du générateur d'analyseur
+  syntaxique Menhir~\cite{menhir}. \`A partir d'une description d'une
+  grammaire dans le format de Menhir, elle génère sa description en
+  Coq, ainsi que celle de l'automate $LR(1)$ qu'elle calcule. La
+  garantie des théorèmes Coq porte sur la version de la grammaire
+  générée en Coq, dans un format suffisamment clair pour rendre
+  possible une vérification à main si on ne fait pas confiance à cette
+  partie.
+\end{itemize}
+
+Il aurait été possible d'intégrer un validateur directement dans Menhir,
+afin de vérifier l'automate juste avant la génération du code. Bien
+que le code engendré aurait probablement été un peu plus performant,
+cela aurait offert moins de garanties, puisque le front-end et le
+back-end de Menhir n'auraient pas pu être prouvées. De plus,
+l'approche actuelle permet d'avoir un analyseur syntaxique sous la
+forme d'un terme Coq, et donc des théorèmes Coq sur cet analyseur, que
+l'on peut utiliser dans un plus grand développement. Ainsi, par
+exemple, dans un compilateur formellement vérifié, il est envisageable
+de décrire la sémantique du langage directement sur le flux de
+lexèmes, puis de prouver la validité du compilateur tout entier en
+utilisant, entres autres, les théorèmes de l'analyseur
+syntaxique. Finalement, cette approche permet de réutiliser le code et
+les preuves Coq avec d'autres générateurs d'analyseur syntaxique.
+
+\section{Réalisation pratique}
+
+\subsection{Structure du projet}
+
+Le projet est globalement organisé grâce au système de modules de Coq
+: les descriptions d'une grammaire ou d'un automate sont des
+modules. L'interprète, les validateurs et les différentes preuves sont
+des foncteurs paramétrés par une grammaire et un automate. Un dernier
+foncteur, \verb+Main.Make+, instancie tous les précédents et donne un
+accès simple aux théorèmes et définitions principaux.
+
+Afin d'améliorer la lisibilité des descriptions de la grammaire et de
+l'automate, les types utilisés pour identifier les terminaux,
+non-terminaux, productions et états de l'automate sont des types
+abstraits. En pratique, notre version modifiée de Menhir génère des
+types inductifs dotés de nombreux constructeurs. Du point de vue du
+validateur, il est nécessaire de disposer de certaines fonctionnalités
+sur ces types. On demande à chacun d'eux d'être une instance de la
+classe de type \verb+Alphabet+, dont voici la définition :
+
+\begin{verbatim}
+(** Un type comparable a une fonction [compare], qui définit une relation
+   d'ordre. **)
+Class Comparable (A:Type) := {
+  compare : A -> A -> comparison;
+  compare_antisym : forall x y,
+    CompOpp (compare x y) = compare y x;
+  compare_trans : forall x y z c,
+    (compare x y) = c -> (compare y z) = c -> (compare x z) = c
+}.
+
+(** Cas particulier de [Comparable], où l'égalité est l'égalité usuelle. **)
+Class ComparableUsualEq {A:Type} (C: Comparable A) :=
+  compare_eq : forall x y, compare x y = Eq -> x = y.
+
+(** Un type [Finite] dispose d'une liste de tous ses éléments. **)
+Class Finite (A:Type) := {
+  all_list : list A;
+  all_list_forall : forall x:A, In x all_list
+}.
+
+(** Un alphabet est à la fois [ComparableUsualEq] et [Finite]. **)
+Class Alphabet (A:Type) := {
+  AlphabetComparable :> Comparable A;
+  AlphabetComparableUsualEq :> ComparableUsualEq AlphabetComparable;
+  AlphabetFinite :> Finite A
+}.
+\end{verbatim}
+
+La classe \verb+Comparable+ permet d'avoir une égalité décidable sur
+le type ainsi que de pouvoir utiliser les bibliothèques \verb+FSet+ et
+\verb+FMap+ de Coq (pour améliorer les temps de validation), tandis
+que la classe \verb+Finite+ permet, par exemple, de décider une
+propriété qui met en jeu une quantification universelle sur le type.
+
+\subsection{Description de grammaires et d'automates}
+
+\subsubsection{Description d'une grammaire}
+
+La définition d'une grammaire se fait en deux temps : tout d'abord, on
+définit les types des alphabets des non-terminaux et terminaux :
+
+\begin{verbatim}
+Module Type Alphs.
+  Parameters terminal nonterminal : Type.
+  Declare Instance TerminalAlph: Alphabet terminal.
+  Declare Instance NonTerminalAlph: Alphabet nonterminal.
+End Alphs.
+\end{verbatim}
+
+Puis on inclut le module \verb+Symbol+, définissant le type des
+symboles de la grammaire, membre de la classe de types Alphabet :
+
+\begin{verbatim}
+Module Symbol(Import A:Alphs).
+  Inductive symbol :=
+  | T: terminal -> symbol
+  | NT: nonterminal -> symbol.
+
+  Program Instance SymbolAlph : Alphabet symbol :=
+    [...]
+End Symbol.
+\end{verbatim}
+
+On peut finalement décrire la grammaire, en implémentant le type de
+module \verb+Grammar.T+ :
+
+\begin{verbatim}
+Module Type T.
+  Include Alphs.
+  Include Symbol.
+
+  (** [symbol_semantic_type] associe à chaque symbole le type de ses valeurs
+     sémantiques **)
+  Parameter symbol_semantic_type: symbol -> Type.
+
+  (** Le type des identifiants de production. **)
+  Parameter production : Type.
+  Declare Instance ProductionAlph : Alphabet production.
+
+  (** Accesseurs pour les productions : membre gauche, membre droit et
+     action sémantique. **)
+  Parameter prod_lhs: production -> nonterminal.
+  Parameter prod_rhs: production -> list symbol.
+  (** Les action sémantiques ont un type dépendant, et sont sous la
+      forme de fonctions curryfiées :
+     [arrows [ty1;...;tyn] ty] est défini comme [ty1 -> ... -> tyn -> ty] **)
+  Parameter prod_action:
+    forall p:production,
+      arrows
+        (map symbol_semantic_type (prod_rhs p))
+        (symbol_semantic_type (NT (prod_lhs p))).
+
+  (** Le symbole de départ. Il peut être soit un terminal (inutile) ou un
+     non-terminal. **)
+  Parameter start_symbol: symbol.
+End T.
+\end{verbatim}
+
+Ceci permet de définir une notion de lexème (c'est-à-dire un terminal
+et une valeur sémantique du type associé), et le prédicat inductif
+\verb+has_semantic_value+, exprimant qu'un mot dérive d'un symbole
+associé avec une valeur sémantique :
+
+\begin{verbatim}
+Definition token := {t:terminal & symbol_semantic_type (T t)}.
+
+Inductive has_semantic_value:
+  forall (head_symbol:symbol) (word:list token)
+         (semantic_value:symbol_semantic_type head_symbol), Prop :=
+[...].
+\end{verbatim}
+
+\subsubsection{Description d'un automate $LR(1)$}
+
+On commence par définir un petit module, qui contient la grammaire
+correspondante et le type des états non initiaux :
+
+\begin{verbatim}
+Module Type AutInit.
+  Declare Module Gram:Grammar.T.
+  Export Gram.
+
+  Parameter noninitstate : Type.
+  Declare Instance NonInitStateAlph : Alphabet noninitstate.
+End AutInit.
+\end{verbatim}
+
+Nous avons choisi de demander un type pour les états non initiaux de
+l'automate : pour beaucoup d'aspects, l'état initial se comporte
+différemment et nous avons choisi de le séparer. Par construction,
+il y en a un et un seul, et nous le nommons \verb+Init+. Le module
+\verb+Automaton.Types+ définit des types nécessaires à la description
+de l'automate :
+
+\begin{verbatim}
+Module Types(Import Init:AutInit).
+  Inductive state :=
+  | Init: state
+  | Ninit: noninitstate -> state.
+  Program Instance StateAlph : Alphabet state :=
+    [...].
+
+  Inductive action:=
+  | Shift_act: noninitstate -> action
+  | Reduce_act: production -> action
+  | Fail_act: action.
+
+  Inductive default_action :=
+  | Default_reduce_act: production -> default_action
+  | Accept_act: default_action.
+
+  (** Types utilisés pour les annotations de l'automate. **)
+  [...]
+End Types.
+\end{verbatim}
+
+On peut décrire l'automate en implémentant le type de module
+\verb+Automaton.T+ :
+
+\begin{verbatim}
+Module Type T.
+  Include AutInit.
+  Include Types.
+
+  Parameter action_table: state -> default_action + (terminal -> action).
+  Parameter goto_table: state -> nonterminal -> option noninitstate.
+
+  (** Annotations de l'automate pour aider la validation. **)
+  [...]
+End T.
+\end{verbatim}
+
+La description d'un automate contient aussi des annotations nécessaires
+à sa validation. Nous expliquerons ces annotations par la suite.
+
+\subsubsection{Interprète}
+
+L'interprète est défini dans un foncteur paramétré par l'automate.
+L'état de l'automate est stocké dans une pile d'exécution : elle
+contient, dans chaque cellule, une valeur sémantique et un état
+non initial. Pour décrire la pile en Coq, il est nécessaire de
+connaître le type des valeurs sémantiques stockées. On va, pour
+cela, utiliser une annotation sur l'automate : en effet, dans les
+automates engendrés par Menhir, à chaque état est associé un
+symbole. Ce symbole correspond au dernier symbole lu par l'automate
+lorsqu'il se trouve dans cet état. On ajoute donc dans
+\verb+Automaton.T+ :
+
+\begin{verbatim}
+Parameter last_symb_of_non_init_state: noninitstate -> symbol.
+\end{verbatim}
+
+La pile de l'interprète est définie par :
+
+\begin{verbatim}
+Inductive stack :=
+| Nil_stack: stack
+| Cons_stack:
+  forall state_cur: noninitstate,
+    symbol_semantic_type (last_symb_of_non_init_state state_cur) ->
+    stack -> stack.
+\end{verbatim}
+
+\verb+Nil_stack+ correspond implicitement à une pile contenant l'état
+initial en son sommet, et aucune valeur sémantique.
+
+En beaucoup d'endroits, l'interprète peut rencontrer une erreur
+interne, signifiant que l'automate n'est pas sûr. Pour représenter
+ces erreurs, on utilise une monade d'erreur, nommée \verb+result+.
+
+Le programme qui calcule une étape de l'automate peut avoir différents
+résultats, s'il n'échoue pas : soit il rejette l'entrée, soit il
+accepte l'entrée en retournant la valeur sémantique calculée, soit il
+retourne une nouvelle pile et un nouveau tampon d'entrée (un étape de
+calcul a été effectuée, mais ce n'est pas fini) :
+
+\begin{verbatim}
+Inductive step_result :=
+| Fail_sr: step_result
+| Accept_sr: symbol_semantic_type start_symbol -> Stream token -> step_result
+| Progress_sr: stack -> Stream token -> step_result.
+\end{verbatim}
+
+La fonction \verb+step+, qui effectue une étape de calcul, a donc la
+signature :
+
+\begin{verbatim}
+Definition step (stack_cur:stack) (buffer:Stream token):
+  result step_result :=
+  [...].
+\end{verbatim}
+
+Comme il n'est pas possible, en toute généralité, de prouver une borne
+supérieure sur le nombre d'étapes effectuées par un automate pour lire
+un mot (certains automates ne terminent même jamais sur une entrée
+finie), l'interprète utilise un paramètre supplémentaire
+\verb+n_steps+ imposant cette limite et permettant de faire un point
+fixe acceptée par le typeur de Coq. La fonction \verb+parse+,
+implémentant l'interprète, qui itère \verb+step+, peut donc soit
+rejeter l'entrée, soit échouer à cause d'un trop grand nombre d'étapes
+de calcul, soit retourner le résultat final de l'analyse syntaxique :
+
+\begin{verbatim}
+Inductive parse_result :=
+| Fail_pr: parse_result
+| Timeout_pr: parse_result
+| Parsed_pr:
+  symbol_semantic_type start_symbol -> Stream token -> parse_result.
+
+Definition parse (buffer:Stream token) (n_steps:nat):
+  result parse_result :=
+  [...].
+\end{verbatim}
+
+\subsection{Preuves et validation}
+\subsubsection{Correction}
+
+La correction stipule que si l'interprète termine en acceptant
+l'entrée, alors la valeur sémantique retournée et le symbole de départ
+de la grammaire dérivent la partie consommée de l'entrée :
+
+\begin{verbatim}
+Theorem parse_correct buffer n_steps:
+  match parse buffer n_steps with
+    | OK (Parsed_pr sem buffer_new) =>
+      exists word_new,
+        buffer = word_new ++ buffer_new /\
+        has_semantic_value start_symbol word_new sem
+    | OK _ | Err => True
+  end.
+\end{verbatim}
+
+Cette preuve, représentant 202 lignes de Coq, se fait sans aucune
+hypothèse sur l'automate : en effet, des vérifications dynamiques
+dans l'interprète, nécessaires pour le typage, créent nécessairement
+une erreur interne à l'exécution si l'automate effectue une opération
+incorrecte.
+
+Pour démontrer ce théorème, il est nécessaire de maintenir l'invariant
+que les symboles associés aux états de la pile dérivent les lexèmes
+lus depuis le flux d'entrée. On a donc le prédicat inductif suivant,
+qui relie un mot de lexèmes et une pile :
+
+\begin{verbatim}
+Inductive word_has_stack_semantics:
+  forall (word:list token) (stack:stack), Prop :=
+| Nil_stack_whss: word_has_stack_semantics [] Nil_stack
+| Cons_stack_whss:
+  forall (wordq:list token) (stackq:stack),
+    word_has_stack_semantics wordq stackq ->
+
+  forall (wordt:list token) (s:noninitstate) (semantic_valuet:_),
+    has_semantic_value (last_symb_of_non_init_state s) wordt semantic_valuet ->
+
+  word_has_stack_semantics (wordq++wordt) (Cons_stack s semantic_valuet stackq).
+\end{verbatim}
+
+Le lemme suivant énonce la conservation de cet invariant, et permet
+d'établir simplement le théorème précédent :
+
+\begin{verbatim}
+Lemma step_invariant (stack:stack) (buffer:Stream token):
+  forall buffer_tmp,
+  (exists word_old,
+    buffer = word_old ++ buffer_tmp /\
+    word_has_stack_semantics word_old stack) ->
+  match step stack buffer_tmp with
+    | OK (Accept_sr sem buffer_new) =>
+      exists word_new,
+        buffer = word_new ++ buffer_new /\
+        has_semantic_value start_symbol word_new sem
+    | OK (Progress_sr stack_new buffer_new) =>
+      exists word_new,
+        buffer = word_new ++ buffer_new /\
+        word_has_stack_semantics word_new stack_new
+    | Err | OK Fail_sr => True
+  end.
+\end{verbatim}
+
+\subsubsection{Sûreté}
+
+La sûreté permet de s'assurer que l'interprète ne fera jamais d'erreur
+interne. En d'autres termes, la fonction \verb+parse+ ne retourne
+jamais \verb+Err+, la valeur monadique de la monade d'erreur utilisée
+dans l'interprète, associée à une erreur interne. Il reste cependant
+possible que l'analyseur échoue, soit parce que l'automate décide que
+l'entrée est invalide pour la grammaire, soit parce que celui-ci a
+effectué un trop grand nombre d'étapes de calcul.
+
+La preuve de la sûreté se fait après une validation de l'automate :
+grâce à des annotations sur celui-ci, un terme Coq, \verb+is_safe+,
+calcule une valeur booléenne. La propriété de correction du validateur
+énonce que si celui-ci retourne \verb+true+, alors l'automate est sûr :
+
+\begin{verbatim}
+Property is_safe_correct: is_safe = true -> safe.
+\end{verbatim}
+
+Où \verb+safe+ est une notion intermédiaire concernant l'automate,
+trop complexe pour être détaillée ici.
+
+Le théorème de sûreté de l'interprète assure alors que si l'automate
+est sûr, alors l'interprète ne retournera pas d'erreur :
+
+\begin{verbatim}
+Theorem parse_no_err (buffer:Stream token) (n_steps:nat):
+  safe -> parse buffer n_steps <> Err.
+\end{verbatim}
+
+Les annotations sur l'automate sont des informations sur la forme
+possible d'une portion de la pile de l'automate, étant donné l'état au
+sommet de cette portion : un certain nombre de symboles et états
+précédant un état donné dans la pile sont contraints. Les annotations
+à rajouter dans l'automate sont :
+
+\begin{verbatim}
+(** Lorsque l'automate est dans cet état, nous savons que ces symboles sont
+   juste sous le sommet de la pile. La liste est ordonnée de façon à ce que la
+   tête de la liste soit juste sous le sommet de la pile. **)
+Parameter past_symb_of_non_init_state: noninitstate -> list symbol.
+
+(** Lorsque l'automate est dans cet état, les précédents états vérifient ces
+   prédicats. **)
+Parameter past_state_of_non_init_state: noninitstate -> list (state -> bool).
+\end{verbatim}
+
+La proposition \verb+safe+ énonce que que ces contraintes sont
+conservées par les actions de l'automate, et qu'elle sont suffisantes
+pour éviter les erreurs, ce que vérifie naïvement \verb+is_safe+. La
+preuve de sûreté de l'interprète ne fait que prouver que si
+\verb+safe+ est vérifiée, alors ces propriétés de la pile sont
+effectivement conservées lors d'une exécution, et donc qu'elles
+empêchent les erreurs. Le validateur et la preuve de sûreté sont 853
+lignes de Coq.
+
+\subsubsection{Complétude}
+
+La complétude, nettement plus complexe que la sûreté et la
+correction, représente 1150 lignes de Coq. Elle stipule que si un
+mot d'entrée a une valeur sémantique selon la grammaire, alors
+l'analyseur syntaxique accepte ce mot en retournant la valeur
+sémantique en question. Nous avons prouvé une forme faible de la
+complétude : en effet, si l'automate échoue par ``manque de
+carburant'', alors notre théorème n'assure pas que l'entrée est
+invalide. Un ``manque de carburant'' est peu probable, cependant, si
+on choisit une valeur élevée de \verb+n_steps+.
+
+La schéma de validation est proche de la sûreté : grâce à d'autres
+annotations, un validateur produit un booléen. Un théorème de
+correction du validateur montre que si ce booléen est \verb+true+,
+alors un énoncé logique, \verb+complete+, est vrai :
+
+\begin{verbatim}
+Property is_complete_correct: is_complete = true -> complete.
+\end{verbatim}
+
+La preuve de complétude montre que cet énoncé implique la complétude
+de l'analyseur syntaxique :
+
+\begin{verbatim}
+Theorem parse_complete (n_steps:nat) (word:list token)
+                       (buffer_end:Stream token) (sem:symbol_semantic_type) :
+  complete -> has_semantic_value start_symbol word sem ->
+    match parse (word ++ buffer_end) n_steps with
+      | OK Fail_pr => False
+      | OK (Parsed_pr sem_res buffer_end_res) =>
+        sem_res = sem /\ buffer_end_res = buffer_end
+      | _ => True
+    end.
+\end{verbatim}
+
+Étant donnée une preuve de
+\verb+has_semantic_value start_symbol word sem+, sous la forme d'un arbre,
+cette preuve consiste à montrer, en itérant sur les étapes, que
+l'analyse effectue en fait une sorte de parcours en profondeur d'abord
+de cet arbre, en utilisant la pile de l'automate comme pile
+de parcours. L'invariant se formule informellement comme suit : à une
+étape donnée, l'automate se trouve à une position de l'arbre de
+syntaxe concrète. La partie de l'arbre se trouvant à gauche de la
+branche des ancêtres du nœud courant est représentée dans la
+pile. Plus précisément, la pile contient les valeurs sémantiques
+associées aux nœuds directement fils, à gauche de la branche de l'un
+des ancêtres, et de certains des fils du nœud courant. L'autre partie de
+l'arbre, à droite de la branche, correspond à la partie de l'entrée
+qui n'est pas encore lue. Nous avons formalisé cette idée :
+l'invariant est une liste dépendante des ancêtres du nœud courant où
+l'on demande la preuve, à chaque ancêtre, que l'arbre de syntaxe ainsi
+formé est toujours valide (on n'utilise que des productions
+existantes, les valeurs sémantiques correspondent bien à un calcul en
+utilisant les actions sémantiques, ...).
+
+Pour prouver que cet invariant est conservé, il faut utiliser d'autres
+annotations sur l'automate. Nous utilisons les ensembles
+d'\emph{items} associés à chaque état : ils permettent d'associer à
+chaque état les productions partiellement analysées lorsque l'on arrive
+dans cet état, et la position de l'analyse. On rajoute dans le module
+\verb+Automaton.Types+ :
+
+\begin{verbatim}
+(** Nous introduisons la notion de pseudo-production : il s'agit soit d'une
+   production, soit [None]. Intuitivement, [None] correspond à la "production"
+   réduite par une action Accept **)
+Definition pseudoprod := option production.
+
+(** Un terminal de prédiction est soit un terminal, soit #. # est un pseudo-
+   terminal représentant le terminal présent après la fin de l'entrée. **)
+Definition lookaheadterminal := option terminal.
+
+Record item := {
+  (** La pseudo-production de l'item. **)
+  pseudoprod_item: pseudoprod;
+
+  (** La position dans l'item. **)
+  dot_pos_item: nat;
+
+  (** Le symbole de prévision de l'item. **)
+  lookaheads_item: list lookaheadterminal
+}.
+\end{verbatim}
+
+Et dans le module \verb+Automaton.T+ :
+
+\begin{verbatim}
+Parameter items_of_state: state -> list item.
+\end{verbatim}
+
+Le rôle du validateur est alors de vérifier que ces ensembles d'items
+sont cohérents, et que les actions de l'automate sont compatibles avec
+tous les items. Afin de faire cette vérification, il est nécessaire de
+connaître, de plus, les ensembles $FIRST$ et $NULLABLE$ de la
+grammaire. Le validateur ne les calcule pas pour l'instant : nous
+les validons en tant qu'annotations supplémentaires :
+
+\begin{verbatim}
+Parameter nullable_nterm: nonterminal -> bool.
+Parameter first_nterm: nonterminal -> list terminal.
+\end{verbatim}
+
+La conservation de l'invariant est alors prouvée en associant à chaque
+ancêtre un item de l'état correspondant. Les propriétés des ensembles
+d'items et de compatibilité avec les actions de l'automate permettent
+alors de conclure.
+
+\section{L'analyse syntaxique du langage \texttt{C}}
+
+L'adaptation de cette plate-forme à l'analyse syntaxique du langage
+\texttt{C} a posé quelques problèmes. Il a fallu résoudre des problèmes
+d'ambiguïté dans la grammaire, et faire passer à l'échelle le validateur.
+
+\subsection{Ambiguïtés de la grammaire}
+
+Il existe deux ambiguïtés dans la grammaire du standard \texttt{C99}. La
+première, très fréquente dans les langages de programmation, est
+appelée problème du \emph{dangling else}. Le problème est typiquement
+l'analyse syntaxique de la portion de programme suivante :
+
+\begin{verbatim}
+if(a)
+  if(b)
+    foo();
+ else
+   bar();
+\end{verbatim}
+
+La question est de savoir si le \verb+else+ est rattaché au premier ou
+au deuxième \verb+if+. En effet, selon la grammaire officielle, les
+deux sont valables. Le standard précise que cette ambiguïté doit être
+résolue en rattachant le \verb+else+ au \verb+if+ le plus proche
+possible. Pour lever cette ambiguïté sans utiliser de précédence que
+notre validateur ne supporte pas, on peut modifier légèrement la
+grammaire, en dupliquant la partie de la grammaire concernant les
+\emph{statements}. Il faut distinguer les \emph{statements} qui
+ne peuvent contenir directement de \verb+if+ qu'accompagnés de
+\verb+else+ (version sûre), de ceux qui acceptent les deux formes de
+sélection (version dangereuse). Ainsi, dans la construction
+\verb+if(...) S1 else S2+, \verb+S1+ doit être la version sûre.
+
+La deuxième ambiguïté est plus grave : il n'est pas possible, en
+effectuant une analyse syntaxique seule, de déterminer la classe d'un
+identifiant dans le code source. Notamment, il n'est pas possible de
+savoir, sans utiliser tout le contexte, si un identifiant est un nom
+de type ou un nom de variable ou autre chose~\cite{lexerhack}. Cela
+peut poser problème par exemple dans le cas suivant :
+
+\begin{verbatim}
+int f(void) {
+  a*b;
+}
+\end{verbatim}
+
+En effet, si \verb+a+ et \verb+b+ sont des variables globales, alors
+il faut interpréter \verb+a*b+ comme la multiplication de \verb+a+ et
+de \verb+b+, dont le résultat est ignoré. Si, en revanche, \verb+a+
+est un nom de type (défini par \verb+typedef+), alors il faut
+interpréter \verb+a*b+ comme la déclaration de la variable \verb+b+ en
+tant que pointeur sur \verb+a+.
+
+Ce problème est assez classique et la solution courante commence par une
+astuce appelée \emph{lexer hack}. Il s'agit de maintenir une table de
+symboles qui permet à l'analyseur lexical de savoir, lorsque l'on
+voit un identifiant en position non liante, si cet identifiant est un
+nom de type ou un nom de variable : il émet alors un terminal
+différent dans chaque cas. Pour modifier cette table, l'analyseur
+syntaxique appelle des fonctions spéciales dans l'analyseur lexical, à
+chaque fois qu'il observe un identifiant dans une position
+liante. Malheureusement, lorsqu'un identifiant est en position liante,
+on ne peut pas utiliser cet oracle, et cela laisse une ambiguïté dans
+la grammaire. Il s'agit typiquement de l'analyse du code :
+
+\begin{verbatim}
+typedef int a;
+void f(int(a));
+\end{verbatim}
+
+Ici, on peut interpéter la deuxième déclaration comme une fonction
+prenant un argument nommé \verb+a+ et de type \verb+int+, ou prenant un
+argument non nommé et de type \verb+int(a)+ (c'est-à-dire $\verb+a+
+\rightarrow \verb+int+$). Le standard explique que c'est bien cette
+deuxième possibilité qui doit être prise en compte. Mais pour
+lever cette ambiguïté sans utiliser de précédences, il est nécessaire
+de beaucoup modifier la grammaire.
+
+Pour éviter d'ajouter des effets de bords dans l'analyseur syntaxique
+(nécessaires pour le \emph{lexer hack}), et de trop modifier la
+grammaire du standard, nous envisageons de faire une analyse
+syntaxique en deux temps : premièrement, un analyseur syntaxique
+non certifié utilisant une version habituelle du \emph{lexer hack}
+traite le flux de lexèmes et détermine le type de tous les
+identifiants (y compris les lieurs). Ensuite, l'analyseur certifié,
+qui travaille avec une grammaire très proche de la grammaire
+officielle, construit effectivement l'abre de syntaxe. Nous obtenons
+donc un analyseur lexical non prouvé (complexe, car il contient un
+petit analyseur syntaxique), qui fonctionne avec un analyseur
+syntaxique prouvé.
+
+\subsection{Performances}
+
+Notre version légèrement modifiée de la grammaire du standard
+\texttt{C99} utilise 89 terminaux, 75 non-terminaux et 268
+productions. L'automate $LR(1)$ calculé grâce à la méthode de
+Pager~\cite{pager} avec Menhir contient 505 états. Le fichier Coq
+engendré, contenant les description de la grammaire et de l'automate,
+avec ses annotations, fait 6Mo (pour comparaison, le code OCaml généré
+par Menhir pour la même grammaire fait 0,9Mo). La plus grande partie
+du code est la description des items nécessaires à la validation de la
+complétude de l'automate.
+
+Nos premières versions du validateur étaient très lentes : elles ne
+permettaient pas de valider un tel automate, même en plusieurs
+heures. En utilisant de nombreuses optimisations, notamment en
+modifiant notre implémentation pour utiliser les bibliothèques
+\verb+FSet+ et \verb+FMap+ d'ensembles et de dictionnaire efficaces de
+la bibliothèque standard de Coq, nous sommes maintenant capables de
+valider la sûreté en 7 secondes et la complétude en 31
+secondes. Cependant, le temps nécessaire à Coq pour lire et typer ce
+gros fichier font durer le processus de compilation (validation
+comprise) 111 secondes au total. Nous utilisons un processur Core 2 Duo
+à 2.4GHz.
+
+\`A l'écriture de ce document, l'intégration du nouvel analyseur
+syntaxique dans CompCert n'est pas encore finie et ne permet pas
+d'effectuer des mesures de son temps d'exécution. Nous nous attendons
+bien entendu à des performances moins bonnes que l'analyseur actuel :
+l'interprète d'ocamlyacc, l'outil actuellement utilisé, est
+probablement plus performant, et les problèmes d'ambiguïté déjà
+décrits nécessitent d'exécuter deux analyseurs en même
+temps. Cependant, l'analyseur garde une complexité linéaire en la
+taille de l'entrée, et nous pensons obtenir des performances
+raisonnables.
+
+\section{Améliorations possibles}
+
+\subsection{Terminaison}
+
+Un problème des automates $LR(1)$ est qu'ils peuvent réduire une
+production sans consommer de lexème. Si une telle réduction consome 0
+ou 1 symbole sur la pile, alors celle-ci ne diminue pas, et il est
+possible que l'automate effectue une chaîne infinie de réductions,
+sans consomer l'entrée. Ce problème est bien connu dans le monde d'
+l'analyse syntaxique $GLR$
+
+Malgré de nombreux efforts, nous n'avons pas trouvé de moyen simple de
+prouver la terminaison des automates, et nous avons été obligés de
+garder le paramètre \verb+n_steps+ pour forcer la
+terminaison. Curieusement, ce problème est très peu traité dans la
+bibliographie : de nombreux auteurs passent sous silence ce
+point. Par exemple, dans la publication initiale, Knuth~\cite{lr} ne
+fait qu'esquisser une preuve dans le cas où l'entrée est valide,
+tandis que Aho et Ullman~\cite{ahoulman} utilisent des propriétés
+propres à l'automate $LR(1)$ cannonique (que nous ne pouvons pas
+utiliser car nous utilisons une approche de validation).
+
+Il est possible de prouver qu'un automate $LR(1)$ non cannonique
+complet termine si l'entrée est dans le langage, car l'automate
+progresse à chaque étape dans l'arbre de syntaxe.
+
+Nous pensons, sans pouvoir le prouver, avoir trouvé une condition
+suffisante raisonnable à la terminaison : il faudrait que l'automate
+soit correct, sûr et complet, et que la grammaire ne contienne pas de
+boucle (c'est-à-dire un terminal $A$ tel que $A \rightarrow^+ A$) et
+de récursion gauche cachée (c'est-à-dire un terminal $A$ tel que $A
+\rightarrow^+ \alpha A \beta$ avec $\alpha \rightarrow^+
+\varepsilon$).
+
+\subsection{Peut-on lire après la fin de l'entrée ?}
+
+Nous avons expliqué la notion d'action par défaut, et leur but : elles
+permettent d'éviter que l'analyseur syntaxique lise après la fin de
+l'entrée reconnue. Cependant, nous ne prouvons pas qu'une telle
+propriété est vérifiée : en effet, avec la présentation actuelle de
+l'interprète, nous ne pouvons même pas énoncer une telle propriété,
+puisque l'entrée est donnée sous la forme d'un \verb+Stream token+,
+que l'interprète peut reconstituer après la consultation d'un lexème.
+
+Afin de pouvoir énoncer cette propriété, et prouver un tel théorème,
+nous proposons d'inverser le contrôle de l'interprète : avec cette
+présentation, ce n'est plus l'analyseur syntaxique qui demande les
+lexèmes lorsqu'il en a besoin, mais l'analyseur lexical qui appelle
+l'analyseur syntaxique lorsqu'il obtient un nouveau lexème. \`A chaque
+appel, l'analyseur syntaxique fait le maximum de travail possible avec
+les données à sa disposition, et retourne son état courant. Cette
+modification n'est pas très difficile, mais nécessite de revoir une
+bonne partie des preuves. Elle a beaucoup d'autres avantages, comme
+dans le cas d'entrée bloquante, par exemple.
+
+\section{Travaux reliés}
+
+Il est intéressant de s'apercevoir que la question de l'analyse
+syntaxique certifiée est peu étudiée.
+
+Koprowski et Binsztok~\cite{trx} donnent une formalisation en Coq,
+mais utilise des grammaires de type PEG. Leur formalisation souffre
+donc des inconvénients classiques de ce formalisme : performances
+potentiellement inférieures, non détection des ambiguïtés de la grammaire.
+
+Barthwal et Norrish~\cite{barthwal} donnent une formalisation
+utilisant HOL de l'analyse syntaxique $SLR$. Notre approche est
+différente : en utilisant un validateur d'automate, nous permettons
+l'utilisation de formalismes différents comme $LR(0)$, $SLR$,
+$LALR(1)$, $LR(1)$ ou Pager-$LR(1)$. De plus, leur travail est
+notablement plus lourd, et représente quelques 21000 lignes d'HOL,
+représentant 7 mois de travail. Comme nous, ils ne traitenet pas le
+problèe de la terminaison. Leurs énoncés de correction et de
+complétude sont proche des notres.
+
+Pottier et Régis-Gianas~\cite{gadtparsing} présentent une méthode
+originale pour assurer la sûreté d'un analyseur syntaxique $LR$ à
+l'aide de GADT. Nous avons tenté d'utiliser cette méthode pour obtenir
+la sûreté de l'automate directement, sans faire de test à l'exécution
+dans l'interpréteur. Cependant, cela nécessitait l'utilisation lourde
+de type dépendants, et les autres preuves n'étaient plus praticables.
+
+\section*{Conclusion}
+
+Nous avons donc présenté notre système de validation de génération
+d'analyseur syntaxique. Il permet de créer des analyseurs syntaxiques
+certifiés, traitant des grammaires suffisament complexes pour analyser
+du code \texttt{C} avec des performances raisonnables. L'ensemble du
+code et des preuves du validateur et de l'interpréteur est disponible
+à l'adresse
+\verb+http://www.eleves.ens.fr/home/jjourdan/parserValidator.tgz+. Il
+est compatible avec Coq8.3pl1. 
+
+Après un travail d'intégration dans CompCert, ce travail permettra
+de lui apporter un analyseur syntaxique certifié, et contribura ainsi
+à améliorer la confiance que l'on accorde à cet outil.
+
+Il est encore possible d'apporter des améliorations : notamment, afin
+de trouver une autre solution aux problèmes d'ambiguïté, il serait
+possible de formaliser le parsing $GLR$. De plus, les questions du
+preprocessing et de l'analyse lexicale prouvés restent ouvertes.
+
+\section*{Remerciements}
+
+Je tiens particulièrement à remercier Xavier Leroy et François
+Pottier, mes superviseurs, qui m'ont guidé à travers les obstacles que
+j'ai rencontré, ainsi que toute l'équipe Gallium, qui m'a accueillie
+pendant ce stage.
+
+\begin{thebibliography}{99}
+
+\bibitem{compcert}
+  Le compilateur certifié CompCert.
+  \verb+http://compcert.inria.fr/+.
+
+\bibitem{coq}
+  L'assistant de preuves Coq.
+  \verb+http://coq.inria.fr/+.
+
+\bibitem{menhir}
+  Menhir, un générateur d'analyseur syntaxique $LR(1)$.
+  \verb+http://gallium.inria.fr/~fpottier/menhir/+
+
+\bibitem{lr}
+  Donald E. Knuth.
+  On the translation of languages from left to right.
+  \emph{Information \& Control}, 8(6):607-639, December 1965.
+
+\bibitem{pager}
+  David Pager.
+  A practical general method for constructing $LR(k)$ parsers.
+  \emph{Acta Informatica}, 7:249–268, 1977.
+
+\bibitem{ahoulman}
+  A. V. Aho and J. D. Ullman.
+  \emph{The Theory of Parsing, Translation, and Compiling, Vol. 1,
+    Parsing}.
+  Prentice Hall, 1972.
+
+\bibitem{barthwal}
+  Aditi Barthwal and Michael Norrish.
+  Verified, Executable Parsing.
+  In \emph{ESOP'09}.
+
+\bibitem{trx}
+  Adam Koprowski and Henri Binsztok.
+  TRX: A Formally Verified Parser Interpreter.
+  In \emph{ESOP'10}.
+
+\bibitem{lexerhack}
+  Eli Bendersky.
+  The context sensitivity of C’s grammar, revisited.\\
+  \verb+http://eli.thegreenplace.net/2011/05/02/+\\\verb+the-context-sensitivity-of-c's-grammar-revisited/+
+
+\bibitem{gadtparsing}
+  François Pottier and Yann Régis-Gianas.
+  Towards efficient, typed LR parsers.
+  In \emph{ACM Workshop on ML}.
+
+\end{thebibliography}
+
+\end{document}

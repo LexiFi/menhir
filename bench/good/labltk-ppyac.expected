@@ -1,0 +1,46 @@
+File "labltk-ppyac.mly", line 28, characters 7-10:
+Warning: the token EOF is unused.
+%{
+open Code
+%}
+%start code_list
+%token <string> UNDEF
+%token <string> OTHER
+%token <string> IFNDEF
+%token <string> IFDEF
+%token EOF
+%token ENDIF
+%token ELSE
+%token <string> DEFINE
+
+%type <Code.code list> code_list
+%%
+
+code_list:
+| 
+    { [] }
+| code code_list
+    { $1 :: $2 }
+
+code:
+| DEFINE
+    { Define $1 }
+| UNDEF
+    { Undef $1 }
+| IFDEF code_list ELSE code_list ENDIF
+    { Ifdef (true, $1, $2, Some ($4)) }
+| IFNDEF code_list ELSE code_list ENDIF
+    { Ifdef (false, $1, $2, Some ($4)) }
+| IFDEF code_list ENDIF
+    { Ifdef (true, $1, $2, None) }
+| IFNDEF code_list ENDIF
+    { Ifdef (false, $1, $2, None) }
+| OTHER
+    { Line $1 }
+
+%%
+
+
+
+
+

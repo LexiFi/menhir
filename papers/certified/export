@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Ce script crée le fichier PDF et le copie vers ma page Web. La
+# variable $PHOME est supposée déjà définie.
+
+LOCAL=$PHOME/public_html/publis
+REMOTE=yquem.inria.fr:$LOCAL
+
+# Régler $DOC et $NAME.
+source Makefile.local
+
+# Copie directe si le file system souhaité est monté, sinon copie par ssh.
+function copy
+{
+  if [ -d $LOCAL ] ; then
+    /bin/cp --force $1 $LOCAL/$2 ;
+  else
+    scp -p -B -C $1 $REMOTE/$2 ;
+  fi
+}
+
+# Fabrication et copie de la version PDF.
+make -rs clean pdf
+copy $DOC.pdf $NAME.pdf
