@@ -1,0 +1,50 @@
+%{
+open Doc_parsetree
+
+%}
+%start file
+%token <string> VERB
+%token <string> TEXT
+%token <int*int> TERMINATE
+%token RBRACE
+%token <int> OPEN
+%token <string> LBRACE
+%token EOF
+%token <string> DIRECTIVE
+%token <int> CLOSE
+
+%type <Doc_parsetree.comment list> file
+%%
+
+file:
+| EOF
+    { [] }
+| OPEN ftext CLOSE file
+    { 
+      { cmt_start = $1;
+	cmt_end = $3;
+	cmt_content = Ftext (List.rev $2)
+      } :: $4 }
+| TERMINATE file
+    { 
+      { cmt_start = fst $1;
+	cmt_end = snd $1 ;
+	cmt_content = Terminate
+      } :: $2 }
+
+ftext:
+| 
+    { [] }
+| ftext DIRECTIVE
+    { (Directive $2) :: $1 }
+| ftext TEXT
+    { (String $2) :: $1 }
+| ftext LBRACE ftext RBRACE
+    { (Block ($2, List.rev $3)) :: $1 }
+| ftext VERB
+    { (Block ("src", [String $2])) :: $1 }
+
+%%
+
+
+
