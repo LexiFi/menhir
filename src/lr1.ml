@@ -1,5 +1,5 @@
 open Grammar
-open Slr (* artificial dependency; ensures that [Slr] runs first *)
+module S = Slr (* artificial dependency; ensures that [Slr] runs first *)
 
 (* This module constructs an LR(1) automaton by following Pager's method, that
    is, by merging states on the fly when they are weakly compatible. *)
