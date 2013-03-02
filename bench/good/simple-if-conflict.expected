@@ -1,0 +1,24 @@
+%start expression
+%token TRUE
+%token THEN
+%token IF
+%token FALSE
+%token ELSE
+
+%type <bool> expression
+%%
+
+expression:
+| TRUE
+    { true }
+| FALSE
+    { false }
+| IF b = expression THEN e = expression
+    { if b then e else false }
+| IF b = expression THEN e1 = expression ELSE e2 = expression
+    { if b then e1 else e2 }
+
+%%
+
+
+

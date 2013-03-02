@@ -1,0 +1,163 @@
+%{
+
+open Abstract_syntax;;
+
+%}
+%start command
+%token THEN
+%token SEMICOLON
+%token RIGHTPAR
+%token RIGHTBRACE
+%token LET
+%token EOF
+%token ELSE
+%token DIRECTIVE
+%token COMMA
+%token IF
+%token ARROW
+%token OR
+%token AND
+%token NOT
+%token NEQ
+%token LT
+%token LE
+%token GT
+%token GE
+%token EQUAL
+%token PLUS
+%token MINUS
+%token STAR
+%token TRUE
+%token <string> STRING
+%token LEFTPAR
+%token LEFTBRACE
+%token <Numbers.t> INTEGER
+%token <string> IDENT
+%token FUN
+%token FALSE
+%token CONCAT
+%nonassoc IF ARROW 
+%left OR 
+%left AND 
+%left NOT 
+%left NEQ LT LE GT GE EQUAL 
+%left PLUS MINUS 
+%left STAR 
+%nonassoc UMINUS 
+%nonassoc TRUE STRING LEFTPAR LEFTBRACE INTEGER IDENT FUN FALSE CONCAT 
+%left APPLY 
+%type <Abstract_syntax.abstract_command> command
+%%
+
+command:
+| EOF
+    { raise End_of_file }
+| command_aux SEMICOLON
+    { $1 }
+
+command_aux:
+| LET IDENT EQUAL expr
+    { Def($2,$4) }
+| LET LEFTPAR identlist RIGHTPAR EQUAL expr
+    { Deftuple($3,$6) }
+| LET FUN IDENT args EQUAL expr
+    { Deffun($3,$4,$6) }
+| expr
+    { Eval($1) }
+| DIRECTIVE IDENT
+    { Directive($2,"") }
+| DIRECTIVE IDENT STRING
+    { Directive($2,$3) }
+| DIRECTIVE IDENT IDENT
+    { Directive($2,$3) }
+| DIRECTIVE IDENT INTEGER
+    { Directive($2,Numbers.to_string $3) }
+
+identlist:
+| IDENT
+    { [$1] }
+| IDENT COMMA identlist
+    { $1::$3 }
+
+args:
+| IDENT
+    { [$1] }
+| IDENT args
+    { $1::$2 }
+
+expr:
+| IF expr THEN expr ELSE expr %prec IF
+    { If($2,$4,$6) }
+| expr simple_expr %prec APPLY
+    { Apply($1,$2) }
+| FUN IDENT ARROW expr
+    { Fun($2,$4) }
+| expr PLUS expr
+    { Apply(Apply(Var("+"),$1),$3) }
+| expr MINUS expr
+    { Apply(Apply(Var("-"),$1),$3) }
+| MINUS expr %prec UMINUS
+    { Apply(Var("_minus"),$2) }
+| expr STAR expr
+    { Apply(Apply(Var("*"),$1),$3) }
+| expr EQUAL expr
+    { Apply(Apply(Var("="),$1),$3) }
+| expr NEQ expr
+    { Apply(Apply(Var("<>"),$1),$3) }
+| expr GE expr
+    { Apply(Apply(Var(">="),$1),$3) }
+| expr GT expr
+    { Apply(Apply(Var(">"),$1),$3) }
+| expr LE expr
+    { Apply(Apply(Var("<="),$1),$3) }
+| expr LT expr
+    { Apply(Apply(Var("<"),$1),$3) }
+| expr AND expr
+    { Apply(Apply(Var("and"),$1),$3) }
+| expr OR expr
+    { Apply(Apply(Var("or"),$1),$3) }
+| expr CONCAT expr
+    { Apply(Apply(Var("^"),$1),$3) }
+| NOT expr
+    { Apply(Var("not"),$2) }
+| simple_expr
+    { $1 }
+
+simple_expr:
+| IDENT
+    { Var($1) }
+| INTEGER
+    { Integer($1) }
+| TRUE
+    { Bool(true) }
+| FALSE
+    { Bool(false) }
+| STRING
+    { String($1) }
+| LEFTPAR expr RIGHTPAR
+    { $2 }
+| LEFTPAR expr COMMA commalist RIGHTPAR
+    { Tuple($2::$4) }
+| LEFTBRACE RIGHTBRACE
+    { Set([]) }
+| LEFTBRACE semicolonlist RIGHTBRACE
+    { Set($2) }
+
+commalist:
+| expr
+    { [$1] }
+| expr COMMA commalist
+    { $1::$3 }
+
+semicolonlist:
+| expr
+    { [$1] }
+| expr SEMICOLON
+    { [$1] }
+| expr SEMICOLON semicolonlist
+    { $1::$3 }
+
+%%
+
+
+
