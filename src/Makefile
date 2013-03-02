@@ -26,7 +26,7 @@ OCAMLBUILD := ocamlbuild -classic-display -use-ocamlfind -j 0
 # Typing "make" will perform just stage 1. This is enough to ensure that
 # the source code is correct.
 
-everyday: stage1
+everyday: installation.ml stage1
 
 # ----------------------------------------------------------------------------
 # Building MenhirLib.
@@ -85,5 +85,5 @@ stage3:
 # ----------------------------------------------------------------------------
 # Cleaning up.
 
-clean:
+clean::
 	rm -rf .versioncheck _build _stage1 _stage2 _stage3

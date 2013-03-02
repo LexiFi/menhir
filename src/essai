@@ -1,9 +1,11 @@
 #!/bin/bash
 
+make
+make library
 mkdir -p lib
-ln -sf `pwd`/menhirLib.{cmi,cmo,cmx,o} lib
+ln -sf `pwd`/_build/menhirLib.{cmi,cmo,cmx,o} lib
 cd ../demos/calc
 make clean
-make MENHIR=../../src/menhir PGFLAGS="--infer -v --table -lc 1 --comment" INCLUDE="-I ../../src/lib" OLNKFLAGS="menhirLib.cmx" && \
+make MENHIR=../../src/_stage1/menhir.native PGFLAGS="--infer -v --table -lc 1 --comment" INCLUDE="-I ../../src/lib" OLNKFLAGS="menhirLib.cmx" && \
 echo Compilation successful, running ./calc: && \
 ./calc
