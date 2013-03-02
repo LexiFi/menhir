@@ -1,8 +1,13 @@
 .PHONY: clean test expected
 
+# Note that there is potential confusion between src/_stage1/menhir
+# and src/_stage2/menhir. Here, we use the latter (built by "make
+# bootstrap" in the src/ directory). But typing "make" in the src/
+# directory re-builds only the former.
+
 SHELL=/bin/bash
 SRC=../../src
-MENHIR=$(SRC)/menhir --dump --explain --stdlib $(SRC)
+MENHIR=$(SRC)/_stage2/menhir.native --dump --explain --stdlib $(SRC)
 CAMLC           := $(shell if ocamlfind ocamlc -v >/dev/null 2>&1 ; \
                        then echo ocamlfind ocamlc ; \
 		       elif ocamlc.opt -v >/dev/null 2>&1 ; \
@@ -71,12 +76,3 @@ expected:
 clean:
 	rm -f *.ml *.mli *.conflicts *.automaton *.cmi *.cmo *.cmx *.o *.s *.result *~ failed_files
 
-# TEMPORARY
-cliques:
-	rm -f *.dot
-	for i in *.mly ; do \
-	  $(MENHIR) --make-reduction-graphs $$i ; \
-	done
-	for i in *.dot ; do \
-	  echo $$i && circo -Tps $$i -o $$i.ps && gv $$i.ps ; \
-	done
