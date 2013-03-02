@@ -2,12 +2,12 @@
 \let\fpacm\true
 \documentclass[onecolumn,11pt,nocopyrightspace]{sigplanconf}
 \usepackage{amstext}
-\usepackage[OT1]{fontenc}
-\usepackage{graphicx}
+\usepackage[T1]{fontenc}
 \usepackage[latin1]{inputenc}
-\usepackage{type1cm}
+\usepackage{tikz}
 \usepackage{xspace}
 \usepackage{mymacros}
+\def\fppdf{true}
 \usepackage{fppdf}
 \input{macros}
 \input{version}
@@ -130,8 +130,10 @@ the user to define module $T$ and to make sure that it exports a suitable
 out of a grammar specification using the \oonlytokens switch.
 
 \docswitch{\ofixedexc} This switch causes the exception \texttt{Error} to be
-declared equal to \texttt{Parsing.Parse\_error}. This helps increase Menhir's
-compatibility with \ocamlyacc. There is otherwise no reason to use it.
+internally defined as a synonym for \texttt{Parsing.Parse\_error}. This means
+that an exception handler that catches \texttt{Parsing.Parse\_error} will also
+catch the generated parser's \texttt{Error}. This helps increase Menhir's
+compatibility with \ocamlyacc. There is otherwise no reason to use this switch.
 
 \docswitch{\ograph} This switch causes a description of the grammar's
 dependency graph to be written to the file \nt{basename}\dott. The graph's
@@ -148,8 +150,9 @@ especially when advanced features such as \menhir's standard library or
 compiler usually needs to consult a few \texttt{.cm[iox]} files. This means
 that these files must have been created first, requiring \Makefile changes and
 use of the \odepend switch. The file \distrib{demos/Makefile.shared} suggests
-how to deal with this difficulty. Another option is to avoid \make altogether
-and use \ocamlbuild, which has built-in knowledge of \menhir.
+how to deal with this difficulty. A better option is to avoid \make altogether
+and use \ocamlbuild, which has built-in knowledge of \menhir. Using
+\ocamlbuild is also \textbf{strongly recommended}!
 
 % There is a slight catch with \oinfer. The types inferred by \ocamlc are valid
 % in the toplevel context, but can change meaning when inserted into a local
@@ -1071,9 +1074,23 @@ fringe of some partial derivation tree is a \emph{sentential form}.
 \paragraph{Why shifting is legal}
 
 \begin{figure}
-\vspace{5mm}
+\mycommonbaseline
 \begin{center}
-\hskip -3mm\includegraphics{tree1}
+\begin{tikzpicture}[level distance=12mm]
+\node { \nt{expression} }
+  child { node {\basic{IF}} }
+  child { node {\nt{expression}} }
+  child { node {\basic{THEN}} }
+  child { node {\nt{expression}}
+    child { node {\basic{IF}} }
+    child { node {\nt{expression}} }
+    child { node {\basic{THEN}} }
+    child { node {\nt{expression}} }
+    child { node {\basic{ELSE}} }
+    child { node {\nt{expression}} }
+  }
+;
+\end{tikzpicture}
 \end{center}
 \caption{A partial derivation tree that justifies shifting}
 \label{fig:shifting:tree}
@@ -1114,9 +1131,23 @@ token, it makes sense for it to \emph{shift} that token.
 \paragraph{Why reducing is legal}
 
 \begin{figure}
-\vspace{5mm}
+\mycommonbaseline
 \begin{center}
-\hskip -3mm\includegraphics{tree2}
+\begin{tikzpicture}[level distance=12mm]
+\node { \nt{expression} }
+  child { node {\basic{IF}} }
+  child { node {\nt{expression}} }
+  child { node {\basic{THEN}} }
+  child { node {\nt{expression}}
+    child { node {\basic{IF}} }
+    child { node {\nt{expression}} }
+    child { node {\basic{THEN}} }
+    child { node {\nt{expression}} }
+  }
+  child { node {\basic{ELSE}} }
+  child { node {\nt{expression}} }
+;
+\end{tikzpicture}
 \end{center}
 \caption{A partial derivation tree that justifies reducing}
 \label{fig:reducing:tree}
@@ -1164,9 +1195,29 @@ the question: following \basic{UIDENT}, what's the next terminal symbol on the
 fringe?
 
 \begin{figure}
-\vspace{5mm}
+\mycommonbaseline
 \begin{center}
-\hskip -3mm\includegraphics{tree3}
+\begin{tikzpicture}[level distance=12mm,level 1/.style={sibling distance=18mm},
+                                        level 2/.style={sibling distance=18mm},
+                                        level 4/.style={sibling distance=24mm}]]
+\node { \nt{decls} }
+  child { node {\nt{decl}}
+    child { node {\basic{DATA}} }
+    child { node {\basic{UIDENT}} }
+    child { node {\basic{EQUALS}} }
+    child { node {\nt{tycon\_expr}}
+      child { node {\nt{tycon\_item}}
+        child { node {\basic{UIDENT}} }
+        child { node {\nt{opt\_type\_exprs}}
+          child { node {} edge from parent [dashed] }
+        }
+      }
+    }
+  }
+  child { node {\nt{opt\_semi}} }
+  child { node {\nt{decls}} }
+;    
+\end{tikzpicture}
 \end{center}
 \caption{A partial derivation tree that justifies reducing}
 \label{fig:xreducing:tree}
@@ -1832,7 +1883,7 @@ of it into your own \Makefile, or submit suggestions for improvement.
 
 \question{I am unable to write a correct \Makefile for \menhir, and so are
   you.} True enough. Have a look at \ocamlbuild. It has built-in compilation
-rules for \ocaml and \menhir. Maybe that will help.
+rules for \ocaml and \menhir. That should help.
 
 \question{\menhir reports \emph{more} shift/reduce conflicts than
 \ocamlyacc! How come?} \ocamlyacc sometimes merges two states
