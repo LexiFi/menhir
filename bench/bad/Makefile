@@ -1,8 +1,13 @@
 .PHONY: clean test expected
 
+# Note that there is potential confusion between src/_stage1/menhir
+# and src/_stage2/menhir. Here, we use the latter (built by "make
+# bootstrap" in the src/ directory). But typing "make" in the src/
+# directory re-builds only the former.
+
 SHELL=/bin/bash
 SRC=../../src
-MENHIR=$(SRC)/menhir --stdlib $(SRC)
+MENHIR=$(SRC)/_stage2/menhir.native --stdlib $(SRC)
 
 # La convention de nommage des tests multi-grammaires
 # est : /nom/-[1-9].mly
@@ -15,7 +20,7 @@ test: clean $(RESULTS)
 		cat failed_files;		\
 	 fi
 
-%.result: %.mly								     
+%.result: %.mly
 	@ if echo $< | grep -e "-1.mly" &> /dev/null; then				\
 		export BASE=`echo $< | sed s/"-1.mly"/""/`;				\
 		export FILES=`echo $$BASE-[1-9].mly`;					\
@@ -64,6 +69,12 @@ expected:
 	@ cp -f *.expected /tmp/mini-expected >& /dev/null || true
 	@ CREATE_EXPECTED=1 $(MAKE) -s test
 	@ echo "Expected output re-generated."
+
+# Use "make -B foo.expected" to force the reconstruction.
+%.expected:
+	@ echo "Are you sure ? (this will erase $@) [Press ENTER]"
+	@ read
+	@ CREATE_EXPECTED=1 $(MAKE) $*.result
 
 clean:
 	rm -f *.ml *.mli *.conflicts *.automaton *.cmi *.cmo *.cmx *.o *.s *.result *~ failed_files
