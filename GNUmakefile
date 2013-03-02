@@ -6,21 +6,14 @@
 
 SHELL := bash
 
-.PHONY: test bootstrap all package check export godi clean
+.PHONY: all test clean package check export godi
 
 # -------------------------------------------------------------------------
 
-# Compiling.
+# A dummy entry.
 
 all:
-	$(MAKE) $(MFLAGS) -C src -f GNUmakefile
-
-# -------------------------------------------------------------------------
-
-# Bootstraping.
-
-bootstrap:
-	$(MAKE) $(MFLAGS) -C src -f GNUmakefile bootstrap
+	@echo Please go down into src/ if you wish to compile Menhir.
 
 # -------------------------------------------------------------------------
 
@@ -35,9 +28,9 @@ test:
 
 clean:
 	@ for i in bench demos src ; do \
-	  $(MAKE) $(MFLAGS) -C $$i $@ ; \
+	  $(MAKE) -C $$i $@ ; \
 	done
-	$(MAKE) $(MFLAGS) -rs -C doc $@
+	$(MAKE) -rs -C doc $@
 
 # -------------------------------------------------------------------------
 
@@ -73,7 +66,7 @@ GODIVA   := $(GODI_HOME)/bin/godiva
 # This does not include the src/ and doc/ directories, which require
 # special treatment.
 
-DISTRIBUTED_FILES := AUTHORS CHANGES INSTALLATION LICENSE Makefile Makefile.arch demos
+DISTRIBUTED_FILES := AUTHORS CHANGES INSTALLATION LICENSE Makefile demos
 
 # Some source files carry the "library" license, while others carry
 # the regular "source code" license.
@@ -94,7 +87,7 @@ package: clean
 	@ rm -fr $(PACKAGE)
 	@ mkdir -p $(PACKAGE)/src
 	@ cp -fr $(DISTRIBUTED_FILES) $(PACKAGE)
-	@ cp -fr src/*.ml{,i,y,l} src/Makefile src/META $(PACKAGE)/src
+	@ cp -fr src/*.ml{,i,y,l,pack} src/Makefile src/_tags src/META $(PACKAGE)/src
 	@ $(MAKE) -C $(PACKAGE)/demos clean
 # Insert headers.
 	@ echo "-> Inserting headers."
@@ -112,7 +105,7 @@ package: clean
 	@ echo "-> Generating the documentation."
 	@ cp -r doc $(PACKAGE)
 	@ echo '\gdef\menhirversion{$(DATE)}' > $(PACKAGE)/doc/version.tex
-	@ make -rs -C $(PACKAGE)/doc clean pdf
+	@ make -C $(PACKAGE)/doc clean all
 	@ mv $(PACKAGE)/doc/main.pdf $(PACKAGE)/manual.pdf
 	@ mv $(PACKAGE)/doc/menhir.1 $(PACKAGE)/
 	@ rm -rf $(PACKAGE)/doc

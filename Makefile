@@ -12,6 +12,18 @@
 
 # ----------------------------------------------------------------------------
 
+# The following variables must/can be configured.
+
+ifndef PREFIX
+  $(error Please define PREFIX)
+endif
+
+ifndef TARGET
+  TARGET := native
+endif
+
+# ----------------------------------------------------------------------------
+
 # By default, we attempt to use ocamlfind (if present in the PATH), but it it
 # is possible to prevent that externally by setting USE_OCAMLFIND to false.
 
@@ -23,16 +35,18 @@ endif
 
 # A few settings differ on Windows versus Unix.
 
-include Makefile.arch
+ifeq "$(shell ocamlc -config | grep ccomp_type)" "ccomp_type: msvc"
+MENHIREXE    := menhir.exe
+OBJ          := obj
+# LIBSUFFIX    := lib
+else
+MENHIREXE    := menhir
+OBJ          := o
+# LIBSUFFIX    := a
+endif
 
 # ----------------------------------------------------------------------------
 # Installation paths.
-
-# TEMPORARY GODIVA and Linux do not agree on the standard paths...
-
-ifndef PREFIX
-  $(error Please define PREFIX)
-endif
 
 bindir          := ${PREFIX}/bin
 docdir		:= ${PREFIX}/share/doc/menhir
@@ -68,27 +82,29 @@ all:
 	else \
 	  echo "let ocamlfind = false" >> src/installation.ml ; \
 	fi
-	$(MAKE) $(MFLAGS) -C src -f Makefile
-	$(MAKE) $(MFLAGS) -C src -f Makefile $(MENHIRLIB)
+	$(MAKE) -C src library bootstrap
 
 # ----------------------------------------------------------------------------
 # Installation.
+
+# The directory where things have been built (by make all, above).
+BUILDDIR := src/_stage2
 
 install: all
 	mkdir -p $(bindir)
 	mkdir -p $(libdir)
 	mkdir -p $(docdir)
 	mkdir -p $(mandir)
-	install src/$(MENHIREXE) $(bindir)
+	install $(BUILDDIR)/menhir.native $(bindir)/$(MENHIREXE)
 	install -m 644 $(MLYLIB) $(libdir)
 	cp -r $(DOCS) $(docdir)
 	cp -r $(MANS) $(mandir)
-	@cd src && if $(USE_OCAMLFIND) ; then \
+	@if $(USE_OCAMLFIND) ; then \
 	  echo Installing MenhirLib via ocamlfind. ; \
-	  ocamlfind install menhirLib META $(MENHIRLIB) ; \
+	  ocamlfind install menhirLib src/META $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) ; \
 	else \
 	  echo Installing MenhirLib manually. ; \
-	  install -m 644 $(MENHIRLIB) $(libdir) ; \
+	  install -m 644 $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) $(libdir) ; \
 	fi
 
 uninstall:
