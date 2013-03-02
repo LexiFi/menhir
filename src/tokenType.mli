@@ -2,8 +2,6 @@
    the [token] type. In particular, if [--only-tokens] was specified,
    it emits the type definition and exits. *)
 
-open Grammar
-
 (* This is the conventional name of the [token] type, for use by
    the code generator. *)
 
