@@ -2,7 +2,7 @@
     in each of the automaton's states. *)
 
 open Grammar
-open Conflict (* artificial dependency; ensures that [Conflict] runs first *)
+module C = Conflict (* artificial dependency; ensures that [Conflict] runs first *)
 
 (* ------------------------------------------------------------------------ *)
 (* Compute a lower bound on the height of the stack at every state. At the

@@ -1,3 +1,5 @@
+module TT = TokenType (* artificial dependency; ensures that [TokenType] runs first *)
+
 (* Start where [PreFront] left off. *)
 
 let grammar =

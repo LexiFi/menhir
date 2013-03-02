@@ -77,22 +77,6 @@ engine tableFormat tableInterpreter convert
 
 # A list of the modules that must be linked into the Menhir executable.
 
-# Some of these modules have side effects and must be executed in the
-# following order:
-
-# Settings		parses the command line
-# PreFront		reads the grammar description files
-# TokenType		deals with --only-tokens and exits
-# Front			deals with --depend, --infer, --only-preprocess, and exits
-# Grammar		performs a number of analyses of the grammar
-# Lr0			constructs the LR(0) automaton
-# Slr			determines whether the grammar is SLR
-# Lr1			constructs the LR(1) automaton
-# Conflict		performs default conflict resolution and explains conflicts
-# Invariant		performs a number of analyses of the automaton
-# Interpret		deals with --interpret and exits
-# Back			produces the output and exits
-
 MODULES := menhirLib Fix stringSet stringMap mark compressedBitSet	\
            unionFind tarjan patricia misc option	\
            breadth listMonad dot installation version settings time	\
