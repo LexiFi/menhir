@@ -583,15 +583,16 @@ let directive f = function
 let directives =
   pdefs directive nothing nothing
 
-let excdef f def =
-  match def.exceq with
-  | None ->
+let excdef in_intf f def =
+  match in_intf, def.exceq with
+  | _, None
+  | true, Some _ ->
       fprintf f "%s%t%t" def.excname nl nl
-  | Some s ->
+  | false, Some s ->
       fprintf f "%s = %s%t%t" def.excname s nl nl
 
-let excdefs =
-  pdefs excdef exc exc
+let excdefs in_intf =
+  pdefs (excdef in_intf) exc exc
 
 let functorparams intf body b f params =
   match params with
@@ -609,7 +610,7 @@ let structure f p =
     indent 2 (fun f p ->
       fprintf f "%t%a%a%a"
 	nl
-	excdefs p.struct_excdefs
+	(excdefs false) p.struct_excdefs
 	typedefs p.struct_typedefs
 	nonrecvaldefs p.struct_nonrecvaldefs
     )
@@ -629,7 +630,7 @@ let moduledef f d =
 
 let program f p =
   fprintf f "%a%a"
-    excdefs p.excdefs
+    (excdefs false) p.excdefs
     typedefs p.typedefs;
   List.iter (stretch false f) p.prologue;
   fprintf f "%a%a%a"
@@ -642,7 +643,7 @@ let valdecl f (x, ts) =
   fprintf f "val %s: %a" x typ ts.body
 
 let interface f i =
-  fprintf f "%a%a%a%!" excdefs i.excdecls typedefs i.typedecls (list valdecl nl) i.valdecls
+  fprintf f "%a%a%a%!" (excdefs true) i.excdecls typedefs i.typedecls (list valdecl nl) i.valdecls
 
 let program p =
   functorparams false program p X.f p.paramdefs

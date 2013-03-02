@@ -143,6 +143,9 @@ let coq_no_actions =
 let strict =
   ref false
 
+let fixedexc =
+  ref false
+
 type suggestion =
   | SuggestNothing
   | SuggestCompFlags
@@ -163,6 +166,7 @@ let options = Arg.align [
   "--error-recovery", Arg.Set recovery, " Attempt recovery by discarding tokens after errors";
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
+  "--fixed-exception", Arg.Set fixedexc, " Declares Error = Parsing.Parse_error";
   "--follow-construction", Arg.Set follow, " (undocumented)";
   "--graph", Arg.Set graph, " Write grammar's dependency graph to <basename>.dot";
   "--infer", Arg.Set infer, " Invoke ocamlc for ahead of time type inference";
@@ -362,4 +366,7 @@ let coq_no_actions =
 
 let strict =
   !strict
+
+let fixedexc =
+  !fixedexc
 

@@ -154,3 +154,11 @@ val coq_no_actions : bool
 
 val strict: bool
 
+(* This flag causes the exception [Error] should be declared equal to
+   [Parsing.Parse_error]. This is useful when full compatibility with
+   ocamlyacc is desired. In particular, this is used when building
+   Menhir itself, since Menhir is compiled first using ocamlyacc, then
+   using Menhir. *)
+
+val fixedexc: bool
+
