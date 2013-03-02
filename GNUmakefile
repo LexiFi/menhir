@@ -18,6 +18,8 @@ all:
 # -------------------------------------------------------------------------
 
 # Testing.
+# Assumes that "make bootstrap" has been run in src/
+# or that MENHIR is properly set.
 
 test:
 	$(MAKE) -C bench
