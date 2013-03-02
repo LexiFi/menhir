@@ -1,0 +1,4 @@
+type return =
+  | OK
+  | Error
+

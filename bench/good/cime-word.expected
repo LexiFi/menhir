@@ -1,0 +1,108 @@
+%{
+
+  open Words
+  open Word_syntax
+  open String_signatures
+  open Finite_orderings
+
+  let word_power = Listutils.power
+
+%}
+%start precedence_eof
+%start rule_set_eof
+%start word_eof
+%token SEMICOLON
+%token RPAR
+%token POWER
+%token LT
+%token LPAR
+%token <int> INT
+%token <String_signatures.symbol_id> IDENT
+%token GT
+%token EQ
+%token EOF
+%token COMMA
+%token ARROW
+
+%type <String_signatures.symbol_id Orderings_generalities.ordering> precedence_eof
+%type <String_signatures.symbol_id String_rewriting.srs> rule_set_eof
+%type <String_signatures.symbol_id Words.word> word_eof
+%%
+
+word_eof:
+| word EOF
+    { $1 }
+
+word:
+| 
+    { [] }
+| factor word
+    { $1 @ $2 }
+
+factor:
+| IDENT
+    { [$1] }
+| factor POWER expo
+    { word_power $1 $3 }
+| LPAR word RPAR
+    { $2 }
+
+expo:
+| INT
+    { $1 }
+| IDENT
+    { 
+	try
+	  int_of_string(!current_signature#string_of_symbol $1)	  
+	with
+	    _ -> 
+	      raise (Syntax_error "invalid exponent")
+      }
+
+rule_set_eof:
+| rule_set EOF
+    { $1 }
+
+rule_set:
+| 
+    { [] }
+| rule
+    { [$1] }
+| rule SEMICOLON rule_set
+    { $1::$3 }
+
+rule:
+| word ARROW word
+    { ($1,$3) }
+
+precedence_eof:
+| precedence EOF
+    { 
+    let order = identity_ordering (Pervasives.compare : symbol_id -> symbol_id -> int)
+    in 
+    let order = List.fold_left add_list order $1
+    in compare order
+  }
+
+precedence:
+| 
+    { [] }
+| ordered_list
+    { [$1] }
+| ordered_list COMMA precedence
+    { $1::$3 }
+
+ordered_list:
+| IDENT
+    { One($1) }
+| IDENT EQ ordered_list
+    { Eq($1,$3) }
+| IDENT GT ordered_list
+    { Gt($1,$3) }
+| IDENT LT ordered_list
+    { Lt($1,$3) }
+
+%%
+
+
+

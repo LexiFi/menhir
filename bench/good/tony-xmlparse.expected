@@ -1,0 +1,240 @@
+File "tony-xmlparse.mly", line 43, characters 7-14:
+Warning: the token DOCTYPE is unused.
+File "tony-xmlparse.mly", line 49, characters 7-12:
+Warning: the token ERROR is unused.
+File "tony-xmlparse.mly", line 52, characters 7-8:
+Warning: the token S is unused.
+File "tony-xmlparse.mly", line 58, characters 7-14:
+Warning: the token XMLDECL is unused.
+File "tony-xmlparse.mly", line 59, characters 7-14:
+Warning: the token XMLNAME is unused.
+%{
+
+(* Helpers *)
+
+open Xml		(* XML abstract syntax 	*)
+open Error		(* error() 		*)
+open Xmlstate		(* setContext()		*)
+
+let n    = None		(* just to save space 	*)
+
+%}
+%start document
+%token XMLOPEN
+%token XMLNAME
+%token XMLDECL
+%token XMLCLOSE
+%token <string> WORD
+%token VERSION
+%token SYSTEM
+%token <string> STRING
+%token STANDALONE
+%token SLASHCLOSE
+%token S
+%token PUBLIC
+%token <string> PIOPEN
+%token PICLOSE
+%token <string> OPENSLASH
+%token <string> OPEN
+%token <string> NAME
+%token ERROR
+%token EQ
+%token EOF
+%token ENCODING
+%token DTDOPEN
+%token DTDCLOSE
+%token DOCTYPE
+%token COMMENT
+%token CLOSE
+%token <string> CHUNK
+
+%type <Xml.document> document
+%%
+
+document:
+| prolog topelement misc EOF
+    { XML($1,$2,$3) }
+
+topelement:
+| element
+    { setContext DataContext;
+                                              $1
+                                            }
+
+prolog:
+| xmldecl misc
+    { Prolog($1,None    ,$2   ) }
+| xmldecl misc doctype misc
+    { Prolog($1,Some($3),$2@$4) }
+| misc doctype misc
+    { Prolog(n ,Some($2),$1@$3) }
+| misc
+    { Prolog(n ,None    ,$1   ) }
+
+misc:
+| 
+    {     [] }
+| misc pi
+    { $2::$1 }
+| misc CHUNK
+    {     $1 }
+| misc COMMENT
+    {     $1 }
+
+dtdopen:
+| DTDOPEN
+    { setContext DeclContext}
+
+dtdclose:
+| DTDCLOSE
+    { setContext DataContext }
+
+doctype:
+| dtdopen NAME ext markup dtdclose
+    { DTD($2,$3) }
+
+ext:
+| 
+    { None }
+| SYSTEM STRING
+    { Some (DTDsys($2))    }
+| PUBLIC STRING STRING
+    { Some (DTDpub($2,$3)) }
+
+markup:
+| 
+    { None }
+| error
+    { error "DTDs are unsupported" }
+
+element:
+| emptyElemTag
+    { let (n,a) = $1 in
+                                                single n a  
+                                            }
+| sTag content eTag
+    {   let (sn,a) = $1 in
+                                                let  en    = $3 in
+                                                let  c     = $2 in
+                                                  if sn = en then
+                                                  element sn a c 
+                                                  else error ("tag mismatch")
+                                            }
+
+opn:
+| OPEN
+    { setContext ElementContext; $1 }
+
+opnslash:
+| OPENSLASH
+    { setContext ElementContext; $1 }
+
+cls:
+| CLOSE
+    { setContext DataContext  }
+
+slashcls:
+| SLASHCLOSE
+    { setContext DataContext  }
+
+sTag:
+| opn attributes cls
+    { ($1,$2) }
+
+eTag:
+| opnslash cls
+    {  $1     }
+
+emptyElemTag:
+| opn attributes slashcls
+    { ($1,$2) }
+
+attributes:
+| 
+    {     []  }
+| attributes attribute
+    { $2::$1  }
+
+attribute:
+| NAME EQ STRING
+    { ($1,$3) }
+
+content:
+| 
+    { empty                    	}
+| content CHUNK
+    { $1 ^^ chunk $2     	}
+| content element
+    { $1 ^^ $2            	}
+| content pi
+    { match $2 with
+                                              name,strings -> 
+                                                $1 ^^ pi name strings   }
+| content COMMENT
+    { $1                        }
+
+xmlopen:
+| XMLOPEN
+    { setContext DeclContext}
+
+xmlclose:
+| XMLCLOSE
+    { setContext DataContext }
+
+xmlinfo:
+| version encoding sddecl
+    { ($1,$2,Some $3) }
+| version
+    { ($1,n ,None   ) }
+| version encoding
+    { ($1,$2,None   ) }
+| version sddecl
+    { ($1,n ,Some $2) }
+
+xmldecl:
+| xmlopen xmlinfo xmlclose
+    { match $2 with    
+                                              (vers,enc,sa) ->
+                                              Some (XMLDecl(
+                                                    vers,       (* version *)
+                                                    sa,         (* standalone *)
+                                                    enc         (* encoding *)
+                                                   ))
+                                            }
+
+version:
+| VERSION EQ STRING
+    { $3 }
+
+encoding:
+| ENCODING EQ STRING
+    { Some $3 }
+
+sddecl:
+| STANDALONE EQ STRING
+    { match $3 with
+                                            | "yes" -> true
+                                            | "no"  -> false
+                                            | _     -> error "yes/no expected"
+                                            }
+
+piopen:
+| PIOPEN
+    { setContext PiContext; $1}
+
+pi:
+| piopen picontent PICLOSE
+    { setContext DataContext;
+                                                  ($1,List.rev $2)
+                                            }
+
+picontent:
+| 
+    { []        }
+| picontent WORD
+    { $2 :: $1  }
+
+%%
+
+
+

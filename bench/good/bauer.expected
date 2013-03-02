@@ -1,0 +1,91 @@
+Warning: you are using the standard library and/or the %inline keyword. We
+recommend switching on --infer in order to avoid obscure type error messages.
+%{
+  open Prolog
+%}
+%start clauses
+%token <string> VARIABLE
+%token RPARENT
+%token LPARENT
+%token INFERS
+%token <string> IDENTIFIER
+%token EOF
+%token DOT
+%token COMMA
+
+%type <Prolog.clause list> clauses
+%%
+
+clauses:
+| xs0 = loption_separated_nonempty_list_DOT_clause__ EOF
+    {let clauses =
+  let xs = xs0 in
+  ( xs )
+in
+ clauses }
+
+term:
+| name = IDENTIFIER p = option_params_
+    { 
+    let ts = match p with None -> [] | Some l -> l in
+      Struct (name, ts)
+  }
+| v = VARIABLE
+    { Var (0, v) }
+
+params:
+| LPARENT xs00 = loption_separated_nonempty_list_COMMA_term__ RPARENT
+    {let terms =
+  let xs0 = xs00 in
+  let x =
+    let xs = xs0 in
+    ( xs )
+  in
+  ( x )
+in
+ terms }
+
+option_params_:
+| 
+    { None }
+| x = params
+    { Some x }
+
+loption_separated_nonempty_list_DOT_clause__:
+| 
+    { [] }
+| x = separated_nonempty_list_DOT_clause_
+    { x }
+
+loption_separated_nonempty_list_COMMA_term__:
+| 
+    { [] }
+| x = separated_nonempty_list_COMMA_term_
+    { x }
+
+separated_nonempty_list_DOT_clause_:
+| x = clause
+    { [ x ] }
+| x = clause DOT xs = separated_nonempty_list_DOT_clause_
+    { x :: xs }
+
+separated_nonempty_list_COMMA_term_:
+| x = term
+    { [ x ] }
+| x = term COMMA xs = separated_nonempty_list_COMMA_term_
+    { x :: xs }
+
+clause:
+| tm = term INFERS xs0 = loption_separated_nonempty_list_COMMA_term__
+    {let ts =
+  let xs = xs0 in
+  ( xs )
+in
+ (tm, ts) }
+| fact = term
+    { (fact, []) }
+
+%%
+
+
+
