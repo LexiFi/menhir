@@ -1,0 +1,65 @@
+We thank the referees for their detailed comments and suggestions.
+
+Here are answers to some of the issues that were raised.
+
+Reviewer 1:
+> However, the authors have not provided a link to their Coq sources
+
+Indeed, this is an unfortunate omission. The Coq source is now available:
+
+  http://www.eleves.ens.fr/home/jjourdan/parserValidator.tgz
+
+> You assert that it seems difficult to define an aggressive interpreter
+> [...] Actually, I am convinced of (almost) the contrary. [...]
+
+Thank you very much for your suggestion and detailed Coq example. We
+need more time to study it in detail, but it looks good.
+
+> 1. As said above, with an inductive definition, "safety" would be a
+> consequence of "strong completeness". Could you then "merge" your two
+> certificates [...] in a single one ? Would there be a gain?
+
+The "safety" and "completeness" certificates contain different kinds of
+information, so there does not seem to be much to be gained in merging
+them. Also, it could be useful in practice to be able to validate the
+safety of an automaton that is not complete (because there are some
+conflicts).
+
+> 2. Do you believe that an inductive definition instead of a function
+> for the semantics would make your proof more complex or more simple ?
+
+If the definition distinguishes (as we do) between "internal error",
+"input rejected", and "success", then it seems that using an inductive
+definition or a function should not make a profound difference.
+
+If it does not make these distinctions, then it might become difficult
+to establish "safety" and "completeness" independently -- and we think
+it is important to be able to do this.
+
+Reviewer 2:
+> [The pre-parser] still imposes need for correctness proofs [...]
+
+Indeed, we are not very happy about this aspect of our C parser. It would be
+nice to simplify the pre-parser and/or to prove it correct. However, a proof
+requires a specification. We don't know of a formal specification of how the
+typedef-related ambiguities must be resolved: the C standard only gives
+informal natural-language hints.
+
+Reviewer 3:
+> p2: You validate only the automaton, but claim correctness of its interpreter
+> as well. Where is the support of this claim?
+
+The interpreter can be considered a *definition* of the meaning of the
+automaton. We validate the automaton *with respect to* this definition. Since
+the validators are proved correct, in the end, if validation succeeds, then we
+know for sure that the automaton/interpreter combination works as desired.
+
+> p10: WHY do you not need to demostrate this claim?
+
+We assume that the reviewer refers to the claim in the last paragraph, "the
+safety validator is insensitive to which method was used to construct the
+LR(1) automaton". We do not prove any claim of the form "validator X accepts
+every automaton produced by method Y", because this would (at least in some
+cases) require a significant effort, and would thus defeat the point of using
+a *validator*, as opposed to a provably correct *generator*.
+

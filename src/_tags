@@ -1,0 +1,27 @@
+# Tag both parser source files with origin_parser.
+<{yacc-parser,fancy-parser}.mly>:origin_parser
+
+# Menhir needs the Unix library.
+<menhir.{byte,native}>: use_unix
+
+# checkOCamlVersion needs the Str library.
+<checkOCamlVersion.byte>: use_str
+
+<sentenceParser.{ml,mli}>: use_ocamlyacc
+
+# Build and link with -g.
+<**/*.{cmo,cmx}>:debug
+<**/*.byte>:debug
+<**/*.native>:debug
+
+# Every module that is part of MenhirLib must be tagged as such.
+# If you change this list, please also update the files LICENSE
+# and GNUmakefile in the toplevel directory.
+<infiniteArray.cmx>: for-pack(MenhirLib)
+<packedIntArray.cmx>: for-pack(MenhirLib)
+<rowDisplacement.cmx>: for-pack(MenhirLib)
+<engineTypes.cmx>: for-pack(MenhirLib)
+<engine.cmx>: for-pack(MenhirLib)
+<tableFormat.cmx>: for-pack(MenhirLib)
+<tableInterpreter.cmx>: for-pack(MenhirLib)
+<convert.cmx>: for-pack(MenhirLib)

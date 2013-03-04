@@ -1,0 +1,11 @@
+%start a 
+%type <unit> a
+
+%%
+
+a:
+  b { () }
+
+b:
+  a { () }
+

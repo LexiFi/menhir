@@ -1,0 +1,15 @@
+#!/bin/sh
+
+F=ESOP12-Jourdan-et-al
+
+rm -rf $F
+mkdir $F
+cp main.tex figure.pdf figure.ps macros.tex *.sty $F
+for i in *.bib; do
+  sed -e '/URL/d' $i > $F/$i
+done
+#cp main.pdf.good $F/main.pdf
+
+rm $F.zip
+zip -r -j $F.zip $F
+

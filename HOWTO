@@ -1,0 +1,49 @@
+This HOWTO is intended for new Menhir developers, and should explain how
+things work.
+
+For the moment, there is not much information in it.
+
+BUILD INSTRUCTIONS
+------------------
+
+There are two ways of building Menhir: either from scratch, or incrementally.
+
+Building from scratch is performed via the public Makefile, and requires
+defining the PREFIX variable, even if no installation is performed:
+
+  make PREFIX=/usr/local -f Makefile
+
+This is a two-stage process, in which a first version of menhir is built
+using ocamlyacc, and a second version of menhir is built using the menhir
+executable produced by the first stage.
+
+Building incrementally is useful when working on the code. In that case,
+one wishes to recompile incrementally, without going through the bootstrap
+process. This works only if a menhir executable already exists in the src/
+subdirectory. This is done simply by typing:
+
+  make
+
+(or, equivalently, make -f GNUmakefile).
+
+ABOUT THE MODULE ORDERING
+-------------------------
+Some toplevel modules have side effects and must be executed in the
+following order:
+
+Settings		parses the command line
+PreFront		reads the grammar description files
+TokenType		deals with --only-tokens and exits
+Front			deals with --depend, --infer, --only-preprocess, and exits
+Grammar			performs a number of analyses of the grammar
+Lr0			constructs the LR(0) automaton
+Slr			determines whether the grammar is SLR
+Lr1			constructs the LR(1) automaton
+Conflict		performs default conflict resolution and explains conflicts
+Invariant		performs a number of analyses of the automaton
+Interpret		deals with --interpret and exits
+Back			produces the output and exits
+
+A few artificial dependencies have been added in the code in order
+to ensure that this ordering is respected by ocamlbuild.
+
