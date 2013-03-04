@@ -52,3 +52,6 @@ val marrow: typ list -> typ -> typ
 val prefix: string -> string
 val dataprefix: string -> string
 val tvprefix: string -> string
+
+(* Producing an exception re-definition out of its original definition. *)
+val redefine: excdef -> excdef

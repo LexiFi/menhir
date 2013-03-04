@@ -256,6 +256,18 @@ let semantic_action prod =
 
   )
 
+(* 2013/03/01 We produce a table which maps each production to (1) the length
+   of its right-hand side and (2) whether this production accepts.  We encode
+   (2) in the sign bit. This table is used (only) by the Composer. *)
+
+let production_info prod =
+  EIntConst (
+    let length = Production.length prod in
+    let start = Production.is_start prod in
+    let sign = (if start then -1 else 1) in
+    sign * (length + 1)
+  )
+
 (* ------------------------------------------------------------------------ *)
 
 (* Table encodings. *)
@@ -575,6 +587,12 @@ let semantic_action =
     EArray (Production.map semantic_action)
   )
 
+let production_info =
+  define (
+    "production_info",
+    EArray (Production.map production_info)
+  )
+
 (* ------------------------------------------------------------------------ *)
 
 (* When [--trace] is enabled, we need tables that map terminals and
@@ -584,11 +602,10 @@ let stringwrap f x =
   EStringConst (f x)
 
 let reduce_or_accept prod =
-  match Production.classify prod with
-  | Some _ ->
-      "Accepting"
-  | None ->
-      "Reducing production " ^ (Production.print prod)
+  if Production.is_start prod then
+    "Accepting"
+  else
+    "Reducing production " ^ (Production.print prod)
 
 let trace =
   define_and_measure (
@@ -599,6 +616,23 @@ let trace =
 	  EArray (Terminal.map (stringwrap Terminal.print));
 	  EArray (Production.map (stringwrap reduce_or_accept));
 	]
+      ])
+    else
+      EData ("None", [])
+  )
+
+(* When [--compose] is enabled, we need a table that maps terminals to
+   strings. Although we could arrange to share this table so as to not
+   duplicate it when both [--trace] are [--compose] are enabled, it is
+   not really worth the trouble, as [--trace] will never be enabled in
+   production code. *)
+
+let compose =
+  define_and_measure (
+    "compose",
+    if Settings.compose then
+      EData ("Some", [
+	EArray (Terminal.map (stringwrap Terminal.print));
       ])
     else
       EData ("None", [])
@@ -670,7 +704,8 @@ let application = {
       MVar make,
       MStruct {
 	struct_excdefs = [
-	  excredef;
+	  redefine excdef;
+	  redefine composerdef;
 	];
 	struct_typedefs = [
 	  tokendef2;
@@ -687,6 +722,8 @@ let application = {
 	  semantic_action;
 	  define ("recovery", eboolconst Settings.recovery);
 	  trace;
+	  compose;
+	  production_info;
 	];
       }
     );
@@ -755,7 +792,7 @@ let program = {
     Front.grammar.UnparameterizedSyntax.preludes;
 
   excdefs =
-    [ excdef ];
+    [ excdef; composerdef ];
 
   typedefs =
     tokentypedef @

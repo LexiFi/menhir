@@ -584,12 +584,24 @@ let directives =
   pdefs directive nothing nothing
 
 let excdef in_intf f def =
-  match in_intf, def.exceq with
-  | _, None
-  | true, Some _ ->
-      fprintf f "%s%t%t" def.excname nl nl
-  | false, Some s ->
-      fprintf f "%s = %s%t%t" def.excname s nl nl
+  fprintf f "%s" def.excname;
+  begin match in_intf, def.exceq, def.excparam with
+  | _, None, None
+  | true, Some _, None ->
+      (* An equation is not printed if we are in an interface. *)
+      ()
+  | false, Some s, _ ->
+      (* An equation can be printed only if we are in an implementation.
+	 The type of the parameter (if there is one) is then ignored. *)
+      fprintf f " = %s" s
+  | _, None, Some t
+  | true, _, Some t ->
+      (* The type of the parameter is printed if there is no equation
+	 or if we are in an interface (the equation, if there is one,
+	 is then ignored). *)
+      fprintf f " of %a" typ t
+  end;
+  fprintf f "%t%t" nl nl
 
 let excdefs in_intf =
   pdefs (excdef in_intf) exc exc

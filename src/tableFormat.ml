@@ -106,6 +106,11 @@ module type TABLES = sig
 
   exception Error
 
+  (* 2013/03/01 The new [Composer] exception is raised instead of [Error]
+     when [--compose] is set. It carries a suggestion. *)
+
+  exception Composer of EngineTypes.suggestion
+
   (* The parser indicates whether to perform error recovery. *)
 
   val recovery: bool
@@ -115,6 +120,26 @@ module type TABLES = sig
      terminal symbol and a production to a string. *)
 
   val trace: (string array * string array) option
+
+  (* 2013/03/01 The following table maps each production to (1) the length
+     of its right-hand side and (2) whether this production accepts. We
+     encode (2) in the sign bit: a negative sign means that the production
+     is a start production. *)
+
+  (* This information is in a sense redundant with the [semantic_action]
+     table, because each semantic action implicitly contains this
+     information. However, this information is useful when one is in a
+     situation where the semantic action cannot be invoked. *)
+
+  val production_info: int array
+
+  (* 2013/03/01 The following flag indicates whether [--compose] was
+     supplied at construction time. When set, this flag comes with a
+     table that maps a terminal symbol to a string. At the same time,
+     this table tells us how many terminal symbols there are, which is
+     convenient. *)
+
+  val compose: string array option
 
 end
 

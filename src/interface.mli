@@ -2,9 +2,12 @@
 
 (* This is the [Error] exception. *)
 
-val excname: string
 val excdef: IL.excdef
-val excredef: IL.excdef
+
+(* This is the [Composer] exception. This exception is defined/declared
+   only when in [--table] mode. *)
+
+val composerdef: IL.excdef
 
 (* The type of the entry point for the nonterminal start symbol
    [symbol]. *)

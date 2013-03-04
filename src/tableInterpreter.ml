@@ -95,11 +95,48 @@ module Make (T : TableFormat.TABLES)
   exception Error =
 	T.Error
 
+  exception Composer =
+	T.Composer
+
   type semantic_action =
       (state, semantic_value, token) EngineTypes.env -> unit
 	
   let semantic_action prod =
     T.semantic_action.(prod)
+
+  let length prod =
+    let info = T.production_info.(prod) in
+    abs info - 1
+
+  let is_start prod =
+    let info = T.production_info.(prod) in
+    assert (info <> 0);
+    info < 0
+
+  let compose =
+    match T.compose with
+    | None ->
+        None
+    | Some terminals ->
+        (* We provide [iter], not [fold], because ocaml's value restriction
+	   is too strict and does not allow a [match] expression to be
+	   generalized. *)
+        let rec print t =
+	  terminals.(t)
+	and iter (f : terminal -> unit) : unit =
+	  let rec loop t =
+	    if t < eof (* stop before [eof] *) then begin
+	      f t;
+	      loop (t + 1)
+	    end
+	  in
+          assert (error_terminal = 0);
+	  loop 1 (* skip [error] *)
+	and eof =
+	  (* We again assume that [#] is the last terminal symbol. *)
+	  Array.length terminals - 1
+	in
+        Some (print, iter, eof)
   
   let recovery =
     T.recovery

@@ -220,7 +220,9 @@ module Make (T : TABLE) = struct
 
   and initiate env : void =
     assert (env.shifted >= 0);
-    if T.recovery && env.shifted = 0 then begin
+    if T.compose <> None then
+      compose env
+    else if T.recovery && env.shifted = 0 then begin
       Log.discarding_last_token (T.token2terminal env.token);
       discard env;
       env.shifted <- 0;
@@ -292,6 +294,15 @@ module Make (T : TABLE) = struct
       error env
 
     end
+
+  and compose env =
+
+    (* Set up the composer. *)
+    let module C = Composer.Make(T) in
+    (* Run it. *)
+    let suggestion = C.entry env 10 (* TEMPORARY choose fuel *) in
+    (* Raise an exception, which carries the composer's suggestion. *)
+    raise (Composer suggestion)
 
   (* --------------------------------------------------------------------------- *)
 

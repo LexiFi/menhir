@@ -145,3 +145,10 @@ let tvprefix name =
     name
   else
     "ttv_" ^ name
+
+let redefine (def : excdef) : excdef =
+  { def with
+      exceq = Some def.excname;
+      excparam = None
+  }
+

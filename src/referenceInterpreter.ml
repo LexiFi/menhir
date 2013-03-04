@@ -81,6 +81,7 @@ module T = struct
 
   exception Accept of semantic_value
   exception Error
+  exception Composer of suggestion
 
   type semantic_action =
       (state, semantic_value, token) env -> unit
@@ -90,79 +91,102 @@ module T = struct
       
       (* Check whether [prod] is a start production. *)
 
-      match Production.classify prod with
+      if Production.is_start prod then
 
       (* If it is one, accept. Start productions are of the form S' ->
 	 S, where S is a non-terminal symbol, so the desired semantic
 	 value is found within the top cell of the stack. *)
 
-      | Some _ ->
-	  raise (Accept env.stack.semv)
+	raise (Accept env.stack.semv)
 
       (* If it is not, reduce. Pop a suffix of the stack, and use it
 	 to construct a new concrete syntax tree node. *)
 
-      | None ->
+      else begin
 
-	  let n = Production.length prod in
-	  let values : semantic_value array =
-	    Array.make n CstError (* dummy *)
-	  and startp : Lexing.position ref =
-	    ref Lexing.dummy_pos
-	  and endp : Lexing.position ref =
-	    ref Lexing.dummy_pos
-	  in
+	let n = Production.length prod in
+	let values : semantic_value array =
+	  Array.make n CstError (* dummy *)
+	and startp : Lexing.position ref =
+	  ref Lexing.dummy_pos
+	and endp : Lexing.position ref =
+	  ref Lexing.dummy_pos
+	in
 
-	  (* The auxiliary function [pop k stack] pops [k] stack cells
-	     and returns a truncated stack. It also updates the automaton's
-	     current state, and fills in [values], [startp], and [endp]. *)
+	(* The auxiliary function [pop k stack] pops [k] stack cells
+	   and returns a truncated stack. It also updates the automaton's
+	   current state, and fills in [values], [startp], and [endp]. *)
 
-	  let rec pop k stack =
+	let rec pop k stack =
 
-	    if k = 0 then
+	  if k = 0 then
 
-	      (* There are no more stack cells to pop. *)
+	    (* There are no more stack cells to pop. *)
 
-	      stack
+	    stack
 
-	    else begin
+	  else begin
 
-	      (* Fetch a semantic value. *)
+	    (* Fetch a semantic value. *)
 
-	      values.(k - 1) <- stack.semv;
+	    values.(k - 1) <- stack.semv;
 
-	      (* Pop one cell. The stack must be non-empty. As we pop a cell,
-	         change the automaton's current state to the one stored within
-		 the cell. (It is sufficient to do this only when [k] is 1.)
-	         If this is the first (last) cell that we pop, update [endp]
-	         ([startp]). *)
+	    (* Pop one cell. The stack must be non-empty. As we pop a cell,
+	       change the automaton's current state to the one stored within
+	       the cell. (It is sufficient to do this only when [k] is 1.)
+	       If this is the first (last) cell that we pop, update [endp]
+	       ([startp]). *)
 
-	      let next = stack.next in
-	      assert (stack != next);
-	      if k = n then begin
-		endp := stack.endp
-	      end;
-	      if k = 1 then begin
-		env.current <- stack.state;
-		startp := stack.startp
-	      end;
-	      pop (k - 1) next
+	    let next = stack.next in
+	    assert (stack != next);
+	    if k = n then begin
+	      endp := stack.endp
+	    end;
+	    if k = 1 then begin
+	      env.current <- stack.state;
+	      startp := stack.startp
+	    end;
+	    pop (k - 1) next
 
-	    end
+	  end
 
-	  in
-	  let stack = pop n env.stack in
+	in
+	let stack = pop n env.stack in
 
-	  (* Construct and push a new stack cell. The associated semantic
-	     value is a new concrete syntax tree. *)
+	(* Construct and push a new stack cell. The associated semantic
+	   value is a new concrete syntax tree. *)
 
-	  env.stack <- {
-	    state = env.current;
-	    semv = CstNonTerminal (prod, values);
-	    startp = !startp;
-	    endp = !endp;
-	    next = stack
-	  }
+	env.stack <- {
+	  state = env.current;
+	  semv = CstNonTerminal (prod, values);
+	  startp = !startp;
+	  endp = !endp;
+	  next = stack
+	}
+
+      end
+
+  let length : production -> int =
+    Production.length
+
+  let is_start : production -> bool =
+    Production.is_start
+
+  let compose =
+    if Settings.compose then
+      let print : terminal -> string =
+	Terminal.print
+      and iter (f : terminal -> unit) : unit =
+	Terminal.iter (fun t ->
+	  if t <> Terminal.sharp && t <> Terminal.error then
+	    f t
+	)
+      and eof =
+	Terminal.sharp
+      in
+      Some (print, iter, eof)
+    else
+      None
 
   (* The reference interpreter performs error recovery if and only if this
      is requested via [--recovery]. *)
@@ -197,11 +221,10 @@ module T = struct
 
     let reduce_or_accept prod =
       maybe (fun () ->
-	match Production.classify prod with
-	| Some _ ->
-	    fprintf stderr "Accepting"
-	| None ->
-	    fprintf stderr "Reducing production %s" (Production.print prod)
+	if Production.is_start prod then
+	  fprintf stderr "Accepting"
+	else
+	  fprintf stderr "Reducing production %s" (Production.print prod)
       )
 
     let lookahead_token lexbuf tok =

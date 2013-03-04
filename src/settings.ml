@@ -56,6 +56,9 @@ let graph =
 let trace =
   ref false
 
+let compose =
+  ref false
+
 let noprefix =
   ref false
 
@@ -158,6 +161,7 @@ let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
   "--comment", Arg.Set comment, " Include comments in the generated code";
+  "--compose", Arg.Set compose, " (undocumented)";
   "--coq", Arg.Set coq, " (undocumented)";
   "--coq-no-complete", Arg.Set coq_no_complete, " (undocumented)";
   "--coq-no-actions", Arg.Set coq_no_actions, " (undocumented)";
@@ -310,6 +314,9 @@ let graph =
 let trace =
   !trace
 
+let compose =
+  !compose
+
 let recovery =
   !recovery
 
@@ -369,4 +376,20 @@ let strict =
 
 let fixedexc =
   !fixedexc
+
+let () =
+  if compose then begin
+    if construction_mode <> ModeCanonical then begin
+      fprintf stderr "--compose requires --canonical.\n";
+      exit 1
+    end;
+    if not table then begin
+      fprintf stderr "--compose requires --table.\n";
+      exit 1
+    end;
+    if recovery then begin
+      fprintf stderr "--compose and --recovery are incompatible.\n";
+      exit 1
+    end
+  end
 

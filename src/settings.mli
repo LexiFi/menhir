@@ -44,6 +44,13 @@ val graph: bool
 
 val trace: bool
 
+(* Whether the composer should be activated. This is a special error
+   reporting mode, where the LR engine constructs a continuation of
+   the input that would not have caused an error. It requires [--table]
+   and (in principle, at least) [--canonical]. *)
+
+val compose: bool
+
 (* Whether error recovery should be attempted. This consists
    in discarding tokens, after the [error] token has been
    shifted, until a token that can be accepted is found. *)

@@ -5,16 +5,18 @@ open TokenType
 
 (* This is the [Error] exception. *)
 
-let excname =
-  "Error"
-
 let excdef = {
-  excname = excname;
+  excname = "Error";
   exceq = (if Settings.fixedexc then Some "Parsing.Parse_error" else None);
+  excparam = None;
 }
 
-let excredef = {
-  excdef with exceq = Some excname
+(* This is the [Composer] exception. It carries an argument of type [suggestion]. *)
+
+let composerdef = {
+  excname = "Composer";
+  exceq = None;
+  excparam = Some (TypApp ("MenhirLib.EngineTypes.suggestion", []))
 }
 
 (* The type of the entry point for the start symbol [symbol]. *)
@@ -37,7 +39,8 @@ let interface = {
     PreFront.grammar.parameters;
 
   excdecls =
-    [ excdef ];
+    [ excdef ]
+    @ (if Settings.table then [ composerdef ] else [] );
 
   typedecls =
     tokentypedef;

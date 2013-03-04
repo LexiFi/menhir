@@ -87,6 +87,18 @@ type ('state, 'semantic_value, 'token) env = {
 
 (* --------------------------------------------------------------------------- *)
 
+(* The following algebraic data type describes the composer's possible outcomes.
+   The composer may accept, run out of fuel, or become blocked. In either case,
+   the list of terminal symbols that were produced by the composer is returned.
+   Each symbol is presented as a string, which is the symbol's internal name. *)
+
+type suggestion =
+  | Accepted of string list
+  | OutOfFuel of string list
+  | Blocked of string list
+
+(* --------------------------------------------------------------------------- *)
+
 (* This signature describes the parameters that must be supplied to the LR
    engine. *)
 
@@ -187,8 +199,8 @@ module type TABLE = sig
   val action:
     state ->
     terminal ->
-    semantic_value ->
-    ('env -> bool -> terminal -> semantic_value -> state -> 'answer) ->
+    'semantic_value ->
+    ('env -> bool -> terminal -> 'semantic_value -> state -> 'answer) ->
     ('env -> production -> 'answer) ->
     ('env -> 'answer) ->
     'env -> 'answer
@@ -230,11 +242,33 @@ module type TABLE = sig
 
   exception Accept of semantic_value
   exception Error
+  exception Composer of suggestion
 
   type semantic_action =
       (state, semantic_value, token) env -> unit
 
   val semantic_action: production -> semantic_action
+
+  (* 2013/03/01 [length prod] is the length of the right-hand side of the
+     production [prod]. [is_start prod] tells whether [prod] is a start
+     production, i.e., reducing it amounts to accepting. These functions
+     are used (only) by the Composer. *)
+
+  val length: production -> int
+  val is_start: production -> bool
+
+  (* 2013/03/01 The following flag indicates whether the composer should be
+     started when an error is encountered. When this flag is set, it comes
+     with (1) a function that maps terminal symbols to strings; (2) a function
+     that allows iterating over all terminal symbols other than [error] and
+     [#]; (3) the terminal [#]. *)
+
+  val compose: 
+    (
+      (* print: *) (terminal -> string) *
+      (* iter:  *) ((terminal -> unit) -> unit) *
+      (* eof:   *) terminal
+    ) option
 
   (* The LR engine can attempt error recovery. This consists in discarding
      tokens, just after an error has been successfully handled, until a token
