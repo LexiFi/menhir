@@ -480,6 +480,7 @@ module Run (T: sig end) = struct
     fprintf f "Require Import Alphabet.\n";
     fprintf f "Require Grammar.\n";
     fprintf f "Require Automaton.\n\n";
+    fprintf f "Unset Elimination Schemes.\n\n";
     write_grammar f;
     write_automaton f;
     write_theorems f;
