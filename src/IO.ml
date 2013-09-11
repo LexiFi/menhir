@@ -27,6 +27,9 @@ let exhaust channel =
 
 let invoke command =
   let ic = Unix.open_process_in command in
+  (* 20130911 Be careful to read in text mode, so as to avoid newline
+     translation problems (which would manifest themselves on Windows). *)
+  set_binary_mode_in ic false;
   let result = exhaust ic in
   match Unix.close_process_in ic with
   | Unix.WEXITED 0 ->
