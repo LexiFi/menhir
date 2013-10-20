@@ -11,5 +11,5 @@ export TEXINPUTS=.:
 	pdflatex $*
 
 clean:
-	rm -f *.log *.aux *.bbl *.blg *.out *.toc *~
+	rm -f *.log *.aux *.bbl *.blg *.out *.toc *~ main.pdf
 
