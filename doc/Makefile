@@ -8,6 +8,7 @@ export TEXINPUTS=.:
 	pdflatex $*
 	bibtex $*
 	pdflatex $*
+	pdflatex $*
 
 clean:
 	rm -f *.log *.aux *.bbl *.blg *.out *.toc *~
