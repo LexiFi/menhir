@@ -90,7 +90,7 @@ all:
 # The directory where things have been built (by make all, above).
 BUILDDIR := src/_stage2
 
-install: all
+install:
 	mkdir -p $(bindir)
 	mkdir -p $(libdir)
 	mkdir -p $(docdir)
