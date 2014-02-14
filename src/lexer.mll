@@ -326,11 +326,12 @@ and comment openingpos = parse
     { comment openingpos lexbuf }
 
 (* Collect an O'Caml type delimited by angle brackets. Angle brackets can
-   appear as part of O'Caml function types. They might also appear as part
-   of O'Caml variant types, but we ignore that possibility for the moment. *)
+   appear as part of O'Caml function types and variant types, so we must
+   recognize them and *not* treat them as a closing bracket. *)
 
 and ocamltype openingpos = parse
 | "->"
+| "[>"
     { ocamltype openingpos lexbuf }
 | '>'
     { OCAMLTYPE (Stretch.Declared (mk_stretch true openingpos (lexeme_start_p lexbuf) [])) }
