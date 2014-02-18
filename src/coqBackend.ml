@@ -5,10 +5,10 @@ module Run (T: sig end) = struct
 
   let print_term t =
     assert (not (Terminal.pseudo t));
-    sprintf "%s_t" (Terminal.print t)
+    sprintf "%s't" (Terminal.print t)
 
   let print_nterm nt =
-    sprintf "%s_nt" (Nonterminal.print true nt)
+    sprintf "%s'nt" (Nonterminal.print true nt)
 
   let print_symbol = function
     | Symbol.N nt -> sprintf "NT %s" (print_nterm nt)
@@ -39,10 +39,10 @@ module Run (T: sig end) = struct
     Lr1.foldx (fun accu node -> if not (is_final_state node) then f accu node else accu)
 
   let print_nis nis =
-    sprintf "Nis_%d" (Lr1.number nis)
+    sprintf "Nis'%d" (Lr1.number nis)
 
   let print_init init =
-    sprintf "Init_%d" (Lr1.number init)
+    sprintf "Init'%d" (Lr1.number init)
 
   let print_st st =
     match Lr1.incoming_symbol st with
@@ -57,7 +57,7 @@ module Run (T: sig end) = struct
       (ProductionMap.empty, SymbolMap.empty)
 
   let print_prod p =
-    sprintf "Prod_%s_%d" (Nonterminal.print true (Production.nt p)) (ProductionMap.find p prod_ids)
+    sprintf "Prod'%s'%d" (Nonterminal.print true (Production.nt p)) (ProductionMap.find p prod_ids)
 
   let () =
     if not Settings.coq_no_actions then
@@ -369,7 +369,7 @@ module Run (T: sig end) = struct
           let first = ref true in
           Item.Map.iter (fun item lookaheads ->
             let prod, pos = Item.export item in
-	    if Production.is_start prod then begin
+	    if not (Production.is_start prod) then begin
 		if !first then first := false
 		else fprintf f ";\n    ";
 		fprintf f "{| prod_item := %s;\n" (print_prod prod);
