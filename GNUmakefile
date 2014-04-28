@@ -41,9 +41,12 @@ clean:
 export CDPATH=
 
 # Distribution.
-# The version number is automatically set to the current date.
-
+# The version number is automatically set to the current date,
+# unles DATE is defined on the command line.
+ifndef $(DATE)
 DATE     := $(shell /bin/date +%Y%m%d)
+endif
+
 PACKAGE  := menhir-$(DATE)
 CURRENT  := $(shell pwd)
 TARBALL  := $(CURRENT)/$(PACKAGE).tar.gz
@@ -59,7 +62,7 @@ GODIWORK := /home/fpottier/dev/godi-build
 GODISVN  := $(GODIWORK)/trunk/$(GODINAME)
 GODIH    := $(GODI_HOME)/build/$(GODINAME)
 GODIPACK := $(GODIWORK)/pack
-GODIMAP  := $(GODIPACK)/release.4.00.map
+GODIMAP  := $(GODIPACK)/release.4.00.map $(GODIPACK)/release.4.01.map
 GODIURL  := https://godirepo.camlcity.org/godi_admin
 GODIVA   := $(GODI_HOME)/bin/godiva
 
@@ -141,7 +144,7 @@ check:
 
 # Copying to my Web site.
 
-RSYNC   := scp -p -B -C
+RSYNC   := scp -p -C
 TARGET  := yquem.inria.fr:public_html/menhir/
 PAGE    := /home/fpottier/dev/page
 
