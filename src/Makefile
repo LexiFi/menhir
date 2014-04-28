@@ -19,7 +19,7 @@ endif
 # ----------------------------------------------------------------------------
 # Ocamlbuild tool and settings.
 
-OCAMLBUILD := ocamlbuild -classic-display -use-ocamlfind -j 0
+OCAMLBUILD := ocamlbuild -classic-display -j 0
 
 # ----------------------------------------------------------------------------
 # For everyday development.
