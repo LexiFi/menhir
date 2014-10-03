@@ -79,6 +79,7 @@ LIBFILES := \
   src/packedIntArray.{ml,mli} \
   src/rowDisplacement.{ml,mli} \
   src/engineTypes.ml \
+  src/composer.{ml,mli} \
   src/engine.{ml,mli} \
   src/tableFormat.ml \
   src/tableInterpreter.{ml,mli} \
