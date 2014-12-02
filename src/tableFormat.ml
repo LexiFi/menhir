@@ -106,10 +106,6 @@ module type TABLES = sig
 
   exception Error
 
-  (* The parser indicates whether to perform error recovery. *)
-
-  val recovery: bool
-
   (* The parser indicates whether to generate a trace. Generating a
      trace requires two extra tables, which respectively map a
      terminal symbol and a production to a string. *)

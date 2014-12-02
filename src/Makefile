@@ -60,7 +60,7 @@ stage1:
 # Stage 2.
 # Build Menhir using Menhir (from stage 1).
 
-FLAGS := -v -lg 1 -la 1 -lc 1 --comment --infer --error-recovery --stdlib . --strict --fixed-exception
+FLAGS := -v -lg 1 -la 1 -lc 1 --comment --infer --stdlib . --strict --fixed-exception
 
 stage2:
 	@$(OCAMLBUILD) -build-dir _stage2 -tag fancy_parser \

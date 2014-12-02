@@ -55,14 +55,17 @@ first~\cite{aho-86,appel-tiger-98,hopcroft-motwani-ullman-00}. They are also
 invited to have a look at the \distrib{demos} directory in \menhir's
 distribution.
 
-At this stage, potential users should be warned about two facts. First,
-\menhir's feature set is not stable. There is a tension between preserving a
-measure of compatibility with \ocamlyacc, on the one hand, and introducing new
-ideas, on the other hand. Some aspects of the tool, such as the error handling
-and recovery mechanism, are still potentially subject to incompatible
-changes. Second, the present release is \emph{beta}-quality. There is much
-room for improvement in the tool and in this reference manual. Bug reports and
-suggestions are welcome!
+Potential users of Menhir should be warned that \menhir's feature set is not
+completely stable. There is a tension between preserving a measure of
+compatibility with \ocamlyacc, on the one hand, and introducing new ideas, on
+the other hand. Some aspects of the tool, such as the error handling
+mechanism, are still potentially subject to incompatible changes: for
+instance, in the future, the current error handling mechanism (which is based
+on the \error token, see \sref{sec:errors}) could be removed and replaced with
+an entirely different mechanism.
+
+There is room for improvement in the tool and in this reference manual. Bug
+reports and suggestions are welcome!
 
 % ---------------------------------------------------------------------------------------------------------------------
 
@@ -110,13 +113,6 @@ switch.
 
 \docswitch{\odump} This switch causes a description of the automaton
 to be written to the file \nt{basename}\automaton.
-
-\docswitch{\oerrorrecovery} This switch causes error recovery code to be
-generated. Error recovery, also known as re-synchronization, consists in
-dropping tokens off the input stream, after an error has been detected,
-until a token that can be shifted in the current state is found. This
-behavior is made optional because it is seldom exploited and requires
-extra code in the parser. See also \sref{sec:errors}.
 
 \docswitch{\oexplain} This switch causes conflict explanations to be
 written  to the file \nt{basename}\conflicts. See also \sref{sec:conflicts}.
@@ -1553,12 +1549,12 @@ dummy positions.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
-\section{Error handling and recovery}
+\section{Error handling}
 \label{sec:errors}
 
 \paragraph{Error handling}
 
-\menhir's error handling and recovery is inspired by that of \yacc and
+\menhir's error handling mechanism is inspired by that of \yacc and
 \ocamlyacc, but is not identical. A special \error token is made available
 for use within productions. The LR automaton is constructed exactly as if
 \error was a regular terminal symbol. However, \error is never produced
@@ -1577,9 +1573,7 @@ Since the lookahead token is still \error, the automaton remains in error
 handling mode.
 
 When a state that can shift on \error is found, the \error token is shifted.
-At this point, the parser either enters \emph{error recovery} mode, if the
-\oerrorrecovery switch was enabled at compile time, or returns to normal
-mode.
+At this point, the parser returns to normal mode.
 
 When no state that can act on \error is found on the automaton's stack, the
 parser stops and raises the exception \texttt{Error}. This exception carries
@@ -1588,24 +1582,10 @@ lexical analyzer's environment record.
 
 \paragraph{Error recovery}
 
-Error recovery mode is entered immediately after an \error token was
-successfully shifted, and only if \menhir's \oerrorrecovery switch was enabled
-when the parser was produced. In error recovery mode, tokens are repeatedly
+\ocamlyacc offers an error recovery mode, which is entered immediately after
+an \error token was successfully shifted. In this mode, tokens are repeatedly
 taken off the input stream and discarded until an acceptable token is found.
-A token is acceptable if the current state has an action on that token. When
-an acceptable token is found, the parser returns to normal mode and the action
-takes place. Error recovery is also known as \emph{re-synchronization}.
-
-Error recovery mode is peculiar, in that it can cause non-termination if the
-token stream is infinite. In practice, token streams often \emph{are}
-infinite, due to an \ocamllex peculiarity: every \ocamllex-generated analyzer
-that maps the \kw{eof} pattern to an \basic{EOF} token will produce an
-infinite stream of \basic{EOF} tokens, even if the underlying text that is
-being scanned is finite. In order to address this issue, \menhir attributes
-special meaning to the token named \basic{EOF}, if there is one in the grammar
-specification, when \oerrorrecovery is enabled. It checks that every automaton
-state that can be reached when in error recovery mode accepts this token, and
-issues a warning otherwise. This ensures that the parser always terminates.
+This feature is no longer offered by \menhir.
 
 \paragraph{Error-related keywords}
 
@@ -1829,10 +1809,10 @@ The list is roughly sorted by decreasing order of importance.
       semantic actions are deprecated.  The function \verb+parse_error+ is
       deprecated. They are replaced with keywords (\sref{sec:errors}).
 
-\item \menhir's error handling and error recovery mechanisms (\sref{sec:errors}) are inspired
+\item \menhir's error handling mechanism (\sref{sec:errors}) isinspired
       by \ocamlyacc's, but are not guaranteed to be fully
-      compatible. Error recovery, also known as re-synchronization, is now
-      optional.
+      compatible. Error recovery, also known as re-synchronization, is not
+      supported by \menhir.
 
 \item The way in which severe conflicts (\sref{sec:conflicts}) are resolved
       is not guaranteed to be fully compatible with \ocamlyacc.

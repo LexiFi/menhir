@@ -682,7 +682,6 @@ let application = {
 	  lhs;
 	  goto;
 	  semantic_action;
-	  define ("recovery", eboolconst Settings.recovery);
 	  trace;
 	];
       }

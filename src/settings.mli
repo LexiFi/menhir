@@ -44,12 +44,6 @@ val graph: bool
 
 val trace: bool
 
-(* Whether error recovery should be attempted. This consists
-   in discarding tokens, after the [error] token has been
-   shifted, until a token that can be accepted is found. *)
-
-val recovery: bool
-
 (* Whether one should stop and print the grammar after joining and
    expanding the grammar. *)
 
