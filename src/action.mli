@@ -44,9 +44,6 @@ val print: out_channel -> t -> unit
 (** [from_stretch s] builds an action out of a textual piece of code. *)
 val from_stretch: Stretch.t -> t
 
-(** Check whether the keyword $previouserror is used in the action. *)
-val has_previouserror: t -> bool
-
 (** Check whether the keyword $syntaxerror is used in the action. *)
 val has_syntaxerror: t -> bool
 

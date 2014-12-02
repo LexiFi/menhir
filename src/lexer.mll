@@ -60,8 +60,7 @@
       overwrite content ofs '$' '_';
       match keyword with
       | Keyword.Dollar _
-      | Keyword.Position (Keyword.Left, _, _)
-      | Keyword.PreviousError ->
+      | Keyword.Position (Keyword.Left, _, _) ->
 	  ()
       | Keyword.SyntaxError ->
 	  (* $syntaxerror is replaced with
@@ -374,8 +373,7 @@ and action percent openingpos pkeywords = parse
     { let pkeyword = mk_keyword lexbuf w f n id in
       action percent openingpos (pkeyword :: pkeywords) lexbuf }
 | previouserror
-    { let pkeyword = with_cpos lexbuf Keyword.PreviousError in
-      action percent openingpos (pkeyword :: pkeywords) lexbuf }
+    { error1 (lexeme_start_p lexbuf) "$previouserror is no longer supported." }
 | syntaxerror
     { let pkeyword = with_cpos lexbuf Keyword.SyntaxError in
       action percent openingpos (pkeyword :: pkeywords) lexbuf }
@@ -413,8 +411,7 @@ and parentheses openingpos pkeywords = parse
     { let pkeyword = mk_keyword lexbuf w f n id in
       parentheses openingpos (pkeyword :: pkeywords) lexbuf }
 | previouserror
-    { let pkeyword = with_cpos lexbuf Keyword.PreviousError in
-      parentheses openingpos (pkeyword :: pkeywords) lexbuf }
+    { error1 (lexeme_start_p lexbuf) "$previouserror is no longer supported." }
 | syntaxerror
     { let pkeyword = with_cpos lexbuf Keyword.SyntaxError in
       parentheses openingpos (pkeyword :: pkeywords) lexbuf }

@@ -231,7 +231,6 @@ module Make (T : TABLE) = struct
 
   and errorbookkeeping env =
     Log.initiating_error_handling();
-    env.previouserror <- env.shifted;
     env.shifted <- (-1);
     error env
 
@@ -329,7 +328,6 @@ module Make (T : TABLE) = struct
       lexbuf = lexbuf;
       token = token;
       shifted = max_int;
-      previouserror = max_int;
       stack = empty;
       current = s;
     } in

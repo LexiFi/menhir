@@ -67,12 +67,6 @@ type ('state, 'semantic_value, 'token) env = {
 
   mutable shifted: int;
 
-  (* A copy of the value of [shifted] just before the most recent error
-     was detected. This value is not used by the automaton itself, but
-     is made accessible to semantic actions. *)
-
-  mutable previouserror: int;
-
   (* The stack. In [CodeBackend], it is passed around on its own,
      whereas, here, it is accessed via the environment. *)
 

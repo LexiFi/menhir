@@ -34,7 +34,6 @@ type subject =
 type keyword =
   | Dollar of int
   | Position of subject * where * flavor
-  | PreviousError
   | SyntaxError
 
 (* ------------------------------------------------------------------------- *)

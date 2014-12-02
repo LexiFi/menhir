@@ -167,9 +167,6 @@ let rec print f action =
   in
     P.expr action.expr
 
-let has_previouserror action =
-  KeywordSet.mem PreviousError (keywords action)
-
 let has_syntaxerror action =
   KeywordSet.mem SyntaxError (keywords action)
 

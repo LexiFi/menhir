@@ -108,13 +108,11 @@ val destructuretokendef: string -> typ -> bool -> (Terminal.t -> expr) -> valdef
 
 (* Bindings for exotic keywords. *)
 
-(* This provides definitions for the [$startofs], [$endofs], and
-   [$previouserror] keywords, if required by a semantic action. The
-   [ofs] keyword family is defined in terms of the [pos] family by
-   accessing the [pos_cnum] field. The [$previouserror] keyword simply
-   provides access to the current value of [env.previouserror]. *)
+(* This provides definitions for the [$startofs] and [$endofs] keywords, if
+   required by a semantic action. The [ofs] keyword family is defined in terms
+   of the [pos] family by accessing the [pos_cnum] field. *)
 
-val extrabindings: string -> Action.t -> (pattern * expr) list
+val extrabindings: Action.t -> (pattern * expr) list
 
 (* ------------------------------------------------------------------------ *)
 

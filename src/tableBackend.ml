@@ -55,9 +55,6 @@ let fcurrent =
 let flexbuf =
   field "lexbuf"
 
-let fpreviouserror =
-  field "previouserror"
-
 let flex_start_p =
   "Lexing.lex_start_p"
 
@@ -202,7 +199,7 @@ let reducebody prod =
 	  (pat, EVar stack) ::                  (* destructure the stack *)
 	  casts @                               (* perform type casts *)
 	  posbindings @                         (* bind [startp] and [endp] *)
-	  extrabindings fpreviouserror action @ (* add bindings for the weird keywords *)
+	  extrabindings action @                (* add bindings for the weird keywords *)
 	  [ PVar semv, act ],                   (* run the user's code and bind [semv] *)
 
 	  ERecordWrite (

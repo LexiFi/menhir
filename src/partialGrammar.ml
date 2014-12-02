@@ -614,7 +614,6 @@ let check_keywords grammar producers action =
 		 Error.errorp keyword
 		   (Printf.sprintf "%s refers to a nonexistent symbol." id)
 	   | Position (Left, _, _)
-	   | PreviousError
 	   | SyntaxError ->
 	       ()
       ) (Action.pkeywords action)

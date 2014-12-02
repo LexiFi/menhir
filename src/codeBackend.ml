@@ -186,17 +186,6 @@ open Interface
    were the default behavior; however, recall that error recovery is
    disabled unless [--error-recovery] was specified.
 
-   When an error is detected and an error production is reduced, the
-   user might like to know how recent the previous error was, so as
-   (for instance) to suppress diagnostic messages if it was too
-   recent. (yacc and ocamlyacc have their own, hard-wired,
-   idiosyncratic mechanism for that.) We provide access to this
-   information as follows. When a new error is detected and
-   [env.shifted] is set to -1, the previous value of [env.shifted] is
-   saved to [env.previouserror]. Thus, the number of tokens that were
-   shifted between the two errors is recorded. This information is
-   then made available to the user via the $previouserror keyword.
-
    I note that error recovery, case (a) above, can cause the parser to
    enter an infinite loop.  Indeed, the token stream is in principle
    infinite -- for instance, many lexers will return an EOF token
@@ -328,9 +317,6 @@ let fstartp =
 let fendp =
   prefix "endp"
 
-let fpreviouserror =
-  prefix "previouserror"
-
 (* The type variable that represents the stack tail. *)
 
 let tvtail =
@@ -420,14 +406,6 @@ let tracecomment (comment : string) (body : expr) : expr =
 
 let auto2scheme t =
   scheme [ tvtail; tvresult ] t
-
-(* ------------------------------------------------------------------------ *)
-(* Determine whether at least one semantic action mentions $previouserror. *)
-
-let previouserror_required : bool =
-  Production.foldx (fun prod accu ->
-    accu || Action.has_previouserror (Production.action prod)
-  ) false
 
 (* ------------------------------------------------------------------------ *)
 (* Determine whether the [goto] function for nonterminal [nt] will push
@@ -604,7 +582,7 @@ let envtypedef = {
   typename = tcenv;
   typeparams = [];
   typerhs =
-    TDefRecord ([
+    TDefRecord [
 
       (* The lexer itself. *)
 
@@ -635,14 +613,7 @@ let envtypedef = {
 
       field true fshifted tint;
 
-    ] @
-
-    (* If at least one semantic action mentions $previouserror, then we keep
-       track of this information. *)
-
-    insertif previouserror_required (field true fpreviouserror tint)
-
-    );
+    ];
   typeconstraint = None
 }
 
@@ -1146,11 +1117,7 @@ let defaultreductioncomment toks e =
 (* This produces some bookkeeping code that is used when initiating
    error handling.
 
-   First, we copy [env.shifted] to [env.previouserror]. Of course,
-   this is done only if at least one semantic action uses the
-   [$previouserror] keyword.
-
-   Then, we reset the count of tokens shifted since the last error to
+   We reset the count of tokens shifted since the last error to
    -1, so that it becomes zero *after* the error token itself is
    shifted. By convention, when [shifted] is -1, the field [env.token]
    becomes meaningless and one considers that the first token on the
@@ -1163,8 +1130,6 @@ let errorbookkeeping e =
   tracecomment
     "Initiating error handling"
     (blet (
-      concatif previouserror_required 
-	[ PUnit, ERecordWrite (EVar env, fpreviouserror, ERecordAccess (EVar env, fshifted)) ] @
       [ PUnit, ERecordWrite (EVar env, fshifted, EIntConst (-1)) ],
       e
     ))
@@ -1446,7 +1411,7 @@ let reducebody prod =
 	(pat, EVar stack) ::
 	unitbindings @
 	posbindings action @
-	extrabindings fpreviouserror action,
+	extrabindings action,
 
 	(* If the semantic action is susceptible of raising [Error],
 	   use a [let/unless] construct, otherwise use [let]. *)
@@ -1801,8 +1766,7 @@ let initenvdef =
 	      (fstartp, ERecordAccess (EVar lexbuf, "Lexing.lex_start_p"));
 	      (fendp, ERecordAccess (EVar lexbuf, "Lexing.lex_curr_p"));
 	      (fshifted, EMaxInt)
-	    ] @
-	    insertif previouserror_required (fpreviouserror, EMaxInt)
+	    ]
 	    )
 	  )
 	),

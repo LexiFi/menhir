@@ -31,7 +31,6 @@ type subject =
 type keyword =
   | Dollar of int
   | Position of subject * where * flavor
-  | PreviousError
   | SyntaxError
 
 (* This maps a [Position] keyword to the name of the variable that the
