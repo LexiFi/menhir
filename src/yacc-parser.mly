@@ -1,7 +1,7 @@
 /* This is the crude version of the parser. It is meant to be processed
    by ocamlyacc. Its existence is necessary for bootstrapping. It is kept
    in sync with [fancy-parser]. The two parsers accept the same language,
-   but [fancy-parser] performs more refined error recovery. */
+   but [fancy-parser] performs slightly more refined error handling. */
 
 %{
 

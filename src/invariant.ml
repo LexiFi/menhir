@@ -689,49 +689,6 @@ let universal symbol =
   ) true
 
 (* ------------------------------------------------------------------------ *)
-(* Discover which states potentially can do error recovery.
-
-   They are the states whose incoming symbol is [error]. At these
-   states, [env.shifted] is zero, that is, no tokens have been
-   successfully shifted since the last error token was shifted.
-
-   We do not include in this definition the states where [env.shifted]
-   *may be* zero. That would involve adding in all states reachable
-   from the above states via reductions. However, error recovery will
-   never be performed in these states. Indeed, imagine we shift an
-   error token and enter a state that can do error recovery, according
-   to the above definition. If, at this point, we consult the
-   lookahead token [tok] and perform a reduction, then the new state
-   that we reach is, by construction, able to act upon [tok], so no
-   error recovery will be performed at that state, even though
-   [env.shifted] is still zero. However, we must not perform default
-   reductions at states that can do error recovery, otherwise we break
-   this reasoning.
-
-   If the option [--error-recovery] was not provided on the command
-   line, then no states will perform error recovery. This makes things
-   simpler (and saves some code) in the common case where people are
-   not interested in error recovery. This also disables the warning
-   about states that can do error recovery but do not accept the EOF
-   token. *)
-
-let recoverers =
-  if Settings.recovery then
-    Lr1.fold (fun recoverers node ->
-      match Lr1.incoming_symbol node with
-      | Some (Symbol.T tok)
-	when Terminal.equal tok Terminal.error ->
-	  Lr1.NodeSet.add node recoverers
-      | _ ->
-	  recoverers
-    ) Lr1.NodeSet.empty
-  else
-    Lr1.NodeSet.empty
-
-let recoverer node =
-  Lr1.NodeSet.mem node recoverers
-
-(* ------------------------------------------------------------------------ *)
 (* Discover which states can peek at an error. These are the states
    where [env.shifted] may be -1, that is, where an error token may be
    on the stream. These are the states that are targets of a reduce
@@ -782,15 +739,6 @@ let errorpeeker node =
    the lookahead token. This saves code, but can alter the parser's
    behavior in the presence of errors.
 
-   A state that can perform error recovery (that is, a state whose
-   incoming symbol is [error]) never performs a default
-   reduction. This is explained above. Actually, we allow one
-   exception: if the state has a single (reduction) action on "#", as
-   explained in the next paragraph, then we perform this default
-   reduction and do not allow error recovery to take place. Error
-   recovery would not make much sense, since we believe we are at the
-   end of file.
-
    The check for default actions subsumes the check for the case where
    [s] admits a reduce action with lookahead symbol "#". In that case,
    it must be the only possible action -- see
@@ -836,12 +784,9 @@ let (has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) opti
       | Some (_, toks)  as reduction
 	  when SymbolMap.purelynonterminal (Lr1.transitions s) ->
 
-	if TerminalSet.mem Terminal.sharp toks then
+  	  if TerminalSet.mem Terminal.sharp toks then
 	    (* Perform default reduction on "#". *)
 	    reduction
-	  else if recoverer s then
-	    (* Do not perform default reduction. Allow error recovery. *)
-	    None
 	  else begin
 	    (* Perform default reduction, unless [--canonical] has been specified. *)
 	    match Settings.construction_mode with

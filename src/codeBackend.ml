@@ -115,7 +115,7 @@ open Interface
    that branch with a simple [assert false]. TEMPORARY do it *)
 
 (* ------------------------------------------------------------------------ *)
-(* Here is a description of our error recovery mechanism.
+(* Here is a description of our error handling mechanism.
 
    With every state [s], we associate an [error] function.
 
@@ -131,19 +131,9 @@ open Interface
    cells do not physically hold a state, this description is somewhat
    simpler than the truth, but that's the idea.)
 
-   When an error is detected in state [s], one of two things happens
-   (see [initiate]).
-
-      a. If [s] can do error recovery and if no token was successfully
-         shifted since the last [error] token was shifted, then the
-         current token is discarded and the current state remains
-         unchanged, that is, the [action] function associated with [s]
-         is re-entered.
-
-      b. Otherwise, the [error] function associated with [s] is
-         invoked.
-
-   In case (b), immediately before invoking the [error] function, the
+   When an error is detected in state [s], then (see [initiate]) the
+   [error] function associated with [s] is invoked. Immediately
+   before invoking the [error] function, the
    counter [env.shifted] is reset to -1. By convention, this means
    that the current token is discarded and replaced with an [error]
    token. The [error] token transparently inherits the positions
@@ -176,25 +166,7 @@ open Interface
    reduction is unable to handle errors.
 
    I note that a state that can handle [error] and has a default
-   reduction must in fact have a reduction action on [error].
-
-   A state that can perform error recovery (that is, a state whose
-   incoming symbol is [error]) never performs a default reduction. The
-   reason why this is so is given in [Invariant]. A consequence of
-   this decision is that reduction is not performed until error
-   recovery is successful. This behavior could be surprising if it
-   were the default behavior; however, recall that error recovery is
-   disabled unless [--error-recovery] was specified.
-
-   I note that error recovery, case (a) above, can cause the parser to
-   enter an infinite loop.  Indeed, the token stream is in principle
-   infinite -- for instance, many lexers will return an EOF token
-   forever after some finite supply of tokens has been exhausted. If
-   we hit EOF while in error recovery mode, and if EOF is not accepted
-   at the current state, we will keep discarding EOF and asking for a
-   new token. The way out of this situation is to design the grammar
-   in such a way that it cannot happen. We provide a warning to help
-   with this task. *)
+   reduction must in fact have a reduction action on [error]. *)
 
 (* The type of environments. *)
 
@@ -910,38 +882,9 @@ let call_assertfalse =
   EApp (EVar assertfalse, [ EVar "()" ])
 
 (* ------------------------------------------------------------------------ *)
-(* Emit a warning when a state can do error recovery but does not
-   accept EOF. This can lead to non-termination if the end of file
-   is reached while attempting to recover from an error. *)
-
-let check_recoverer covered s =
-  match Terminal.eof with
-  | None ->
-      (* We do not know which token represents the end of file,
-	 so we say nothing. *)
-      ()
-  | Some eof ->
-      if not (TerminalSet.mem eof covered) then
-	(* This state has no (shift or reduce) action at EOF. *)
-	Error.warning []
-	  (Printf.sprintf
-	     "state %d can perform error recovery, but does not accept EOF.\n\
-	      ** Hitting the end of file during error recovery will cause non-termination."
-		  (Lr1.number s))
-
-(* ------------------------------------------------------------------------ *)
 (* Code production for the automaton functions. *)
 
-(* Count how many states actually perform error recovery. This figure
-   is, in general, inferior or equal to the number of states at which
-   [Invariant.recoverer] is true. Indeed, some of these states have a
-   default reduction, while some will accept every token; in either
-   case, error recovery is not performed. *)
-
-let recoverers =
-  ref 0
-
-(* Count how many states actually can peek at an error recovery. This
+(* Count how many states actually can peek at an error token. This
    figure is, in general, inferior or equal to the number of states at
    which [Invariant.errorpeeker] is true, because some of these states
    have a default reduction and will not consult the lookahead
@@ -1146,15 +1089,9 @@ let errorbookkeeping e =
    handle the error token, by a series of reductions followed by a
    shift.
 
-   In the simplest case, the state [s] cannot do error recovery. In
-   that case, we initiate error handling, which is done by first
-   performing the standard bookkeeping described above, then
-   transferring control to the [error] function associated with [s].
-
-   If, on the other hand, [s] can do error recovery, then we check
-   whether any tokens at all were shifted since the last error
-   occurred. If none were, then we discard the current token and
-   transfer control back to the [action] function associated with [s].
+   We initiate error handling by first performing the standard
+   bookkeeping described above, then transferring control to the
+   [error] function associated with [s].
 
    The token is discarded via a call to [discard], followed by
    resetting [env.shifted] to zero, to counter-act the effect of
@@ -1164,30 +1101,7 @@ let initiate covered s =
 
   blet (
     [ assertshifted ],
-
-    if Invariant.recoverer s then begin
-
-      incr recoverers;
-      check_recoverer covered s;
-
-      EIfThenElse (
-	EApp (EVar "Pervasives.(=)", [ ERecordAccess (EVar env, fshifted); EIntConst 0 ]),
-	blet (
-	  trace "Discarding last token read (%s)"
-		[ EApp (EVar print_token, [ ERecordAccess (EVar env, ftoken) ]) ] @
-	  [
-	    PVar token, EApp (EVar discard, [ EVar env ]);
-	    PUnit, ERecordWrite (EVar env, fshifted, EIntConst 0)
-	  ],
-	  call_action s
-	),
-	errorbookkeeping (call_error_via_errorcase magic s)
-      )
-
-    end
-    else
-      errorbookkeeping (call_error_via_errorcase magic s)
-
+    errorbookkeeping (call_error_via_errorcase magic s)
   )
 
 (* This produces the definitions of the [run] and [action] functions
@@ -1196,11 +1110,9 @@ let initiate covered s =
    The [action] function implements the internal case analysis. It
    receives the lookahead token as a parameter. It does not affect the
    input stream. It does not set up exception handlers for dealing
-   with errors. The existence of this internal function is made
-   necessary by the error recovery mechanism (which discards tokens
-   when attempting to resynchronize after an error). In many states,
-   recovery can in fact not be performed, so no self-call to [action]
-   will be generated and [action] will be inlined into [run]. *)
+   with errors. *)
+
+(* TEMPORARY I believe [action] could now be inlined into [run] *)
 
 let rec runactiondef s : valdef list =
 
@@ -1825,10 +1737,8 @@ let program = {
 let () =
   Error.logC 1 (fun f ->
     Printf.fprintf f
-       "%d out of %d states can peek at an error.\n\
-        %d out of %d states can do error recovery.\n"
-       !errorpeekers Lr1.n
-       !recoverers Lr1.n)
+       "%d out of %d states can peek at an error.\n"
+       !errorpeekers Lr1.n)
 
 let () =
   if not !can_die then

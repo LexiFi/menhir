@@ -236,15 +236,7 @@ module Terminal = struct
     Misc.mapi (n-1) f
 
   (* If a token named [EOF] exists, then it is assumed to represent
-     ocamllex's [eof] pattern, which means that the lexer may
-     eventually produce an infinite stream of [EOF] tokens. This,
-     combined with our error recovery mechanism, may lead to
-     non-termination. We provide a warning against this somewhat
-     obscure situation.
-
-     Relying on the token's name is somewhat fragile, but this saves
-     introducing an extra keyword for declaring which token represents
-     [eof], and should not introduce much confusion. *)
+     ocamllex's [eof] pattern. *)
 
   let eof =
     try

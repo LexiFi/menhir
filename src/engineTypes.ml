@@ -230,13 +230,6 @@ module type TABLE = sig
 
   val semantic_action: production -> semantic_action
 
-  (* The LR engine can attempt error recovery. This consists in discarding
-     tokens, just after an error has been successfully handled, until a token
-     that can be successfully handled is found. This mechanism is optional.
-     The following flag enables it. *)
-
-  val recovery: bool
-
   (* The LR engine requires a number of hooks, which are used for logging. *)
 
   (* The comments below indicate the conventional messages that correspond
@@ -275,10 +268,6 @@ module type TABLE = sig
     (* Handling error in state <state> *)
 
     val handling_error: state -> unit
-
-    (* Discarding last token read (<terminal>) *)
-
-    val discarding_last_token: terminal -> unit
 
   end
 

@@ -123,8 +123,8 @@ module Terminal : sig
   (* This is the programmer-defined [EOF] token, if there is one. It
      is recognized based solely on its name, which is fragile, but
      this behavior is documented. This token is assumed to represent
-     [ocamllex]'s [eof] pattern. It is used only in emitting warnings
-     in [--error-recovery] mode. *)
+     [ocamllex]'s [eof] pattern. It is used only by the reference
+     interpreter, and in a rather non-essential way. *)
 
   val eof: t option
 

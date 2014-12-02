@@ -163,7 +163,7 @@ let options = Arg.align [
   "--coq-no-actions", Arg.Set coq_no_actions, " (undocumented)";
   "--depend", Arg.Unit (fun () -> depend := OMPostprocess), " Invoke ocamldep and display dependencies";
   "--dump", Arg.Set dump, " Describe the automaton in <basename>.automaton";
-  "--error-recovery", Arg.Set recovery, " Attempt recovery by discarding tokens after errors";
+  "--error-recovery", Arg.Set recovery, " (no longer supported)";
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
   "--fixed-exception", Arg.Set fixedexc, " Declares Error = Parsing.Parse_error";
@@ -310,8 +310,11 @@ let graph =
 let trace =
   !trace
 
-let recovery =
-  !recovery
+let () =
+  if !recovery then begin
+    fprintf stderr "Error: --error-recovery mode is no longer supported.\n";
+    exit 1
+  end
 
 let noprefix =
   !noprefix

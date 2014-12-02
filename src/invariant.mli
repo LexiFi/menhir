@@ -9,9 +9,8 @@
    need to physically exist on the stack at runtime) and which symbols
    need to keep track of (start or end) positions.
 
-   It also determines which automaton states could potentially perform
-   error recovery, and which states could have to deal with an [error]
-   token. *)
+   It also determines which automaton states could have to deal with an
+   [error] token. *)
 
 open Grammar
 
@@ -89,11 +88,6 @@ val endp: Symbol.t -> bool
 
 (* ------------------------------------------------------------------------- *)
 (* Information about error handling. *)
-
-(* [recoverer s] tells whether state [s] can potentially do error
-   recovery. *)
-
-val recoverer: Lr1.node -> bool
 
 (* [errorpeeker s] tells whether state [s] can potentially peek at an
    error. This is the case if, in state [s], [env.shifted] may be -1,

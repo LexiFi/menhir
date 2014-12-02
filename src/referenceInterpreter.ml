@@ -164,12 +164,6 @@ module T = struct
 	    next = stack
 	  }
 
-  (* The reference interpreter performs error recovery if and only if this
-     is requested via [--recovery]. *)
-
-  let recovery =
-    Settings.recovery
-
   module Log = struct
 
     open Printf
@@ -225,11 +219,6 @@ module T = struct
     let handling_error s =
       maybe (fun () ->
 	fprintf stderr "Handling error in state %d" (Lr1.number s)
-      )
-
-    let discarding_last_token tok =
-      maybe (fun () ->
-	fprintf stderr "Discarding last token read (%s)" (Terminal.print tok)
       )
 
   end

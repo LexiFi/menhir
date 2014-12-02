@@ -101,9 +101,6 @@ module Make (T : TableFormat.TABLES)
   let semantic_action prod =
     T.semantic_action.(prod)
   
-  let recovery =
-    T.recovery
-  
   module Log = struct
     
     open Printf
@@ -160,13 +157,6 @@ module Make (T : TableFormat.TABLES)
       | None ->
 	  ()
     
-    let discarding_last_token token =
-      match T.trace with
-      | Some (terminals, _) ->
-          fprintf stderr "Discarding last token read (%s)\n%!" terminals.(token)
-      | None ->
-	  ()
-
   end
   
 end)
