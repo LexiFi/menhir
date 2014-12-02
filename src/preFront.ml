@@ -57,17 +57,7 @@ let load_partial_grammar filename =
       { (Parser.grammar Lexer.main lexbuf) with ConcreteSyntax.pg_filename = filename }
     in
     Error.file_contents := None;
-
-    (* If there were errors during parsing, stop. This has to be done
-       explicitly here because the parser performs error recovery and
-       does not die at the first error. One could even go further and
-       attempt to work with the grammar in spite of the parse errors,
-       but we choose not to. *)
-
-    if Error.errors () then
-      exit 1
-    else
-      grammar
+    grammar
 
   with Sys_error msg ->
     Error.error [] msg
