@@ -646,7 +646,6 @@ let () =
 
     KeywordSet.iter (function
       | Dollar _
-      | PreviousError
       | SyntaxError ->
 	  ()
       | Position (Left, where, _) ->

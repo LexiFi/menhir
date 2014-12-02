@@ -100,7 +100,6 @@ let actiondef grammar symbol branch =
      right-hand side. *)
 
   let formals =
-    PAnnot (PVar "_previouserror", tint) ::
     PAnnot (PVar "_eRR", texn) ::
     PAnnot (PVar "_startpos", tposition) ::
     PAnnot (PVar "_endpos", tposition) ::

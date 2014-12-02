@@ -69,10 +69,10 @@ module Run (T: sig end) = struct
             | Some _ -> ());
         Production.iterx (fun prod ->
           let act =  Production.action prod in
-          if Action.has_previouserror act || Action.has_syntaxerror act ||
+          if Action.has_syntaxerror act ||
             Action.has_leftstart act || Action.has_leftend act ||
             Action.use_dollar act then
-              Error.error [] ("$previouserror, $syntaxerror, $start, $end, $i are not "^
+              Error.error [] ("$syntaxerror, $start, $end, $i are not "^
                              "supported by the coq back-end"))
       end;
 

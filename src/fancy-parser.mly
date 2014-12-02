@@ -1,6 +1,10 @@
 /* This is the fancy version of the parser, to be processed by menhir.
    It is kept in sync with [Parser], but exercises menhir's features. */
 
+/* As of 2014/12/02, the $previouserror keyword and the --error-recovery
+   mode no longer exists. Thus, we replace all calls to [Error.signal]
+   with calls to [Error.error], and report just one error. */
+
 /* ------------------------------------------------------------------------- */
 /* Imports. */
 
@@ -79,12 +83,11 @@ declaration:
 
 | TOKEN OCAMLTYPE? clist(terminal) error
 | TOKEN OCAMLTYPE? error
-    { Error.signal (Positions.two $startpos $endpos) "\
+    { Error.error (Positions.two $startpos $endpos) "\
 Syntax error in a %token declaration.
 Here are sample valid declarations:
   %token DOT SEMICOLON
-  %token <string> LID UID";
-      []
+  %token <string> LID UID"
     }
 
 | START t = OCAMLTYPE? nts = clist(nonterminal) %prec decl
@@ -100,12 +103,11 @@ Here are sample valid declarations:
 
 | START OCAMLTYPE? clist(nonterminal) error
 | START OCAMLTYPE? error
-    { Error.signal (Positions.two $startpos $endpos) "\
+    { Error.error (Positions.two $startpos $endpos) "\
 Syntax error in a %start declaration.
 Here are sample valid declarations:
   %start expression phrase
-  %start <int> date time";
-      []
+  %start <int> date time"
     }
 
 | TYPE t = OCAMLTYPE ss = clist(actual_parameter) %prec decl
@@ -115,12 +117,11 @@ Here are sample valid declarations:
 | TYPE OCAMLTYPE clist(actual_parameter) error
 | TYPE OCAMLTYPE error
 | TYPE error
-    { Error.signal (Positions.two $startpos $endpos) "\
+    { Error.error (Positions.two $startpos $endpos) "\
 Syntax error in a %type declaration.
 Here are sample valid declarations:
   %type <Syntax.expression> expression
-  %type <int> date time";
-      []
+  %type <int> date time"
     }
 
 | k = priority_keyword ss = clist(symbol) %prec decl
@@ -129,34 +130,26 @@ Here are sample valid declarations:
 
 | priority_keyword clist(symbol) error
 | priority_keyword error
-    { Error.signal (Positions.two $startpos $endpos) "\
+    { Error.error (Positions.two $startpos $endpos) "\
 Syntax error in a precedence declaration.
 Here are sample valid declarations:
   %left PLUS TIMES
   %nonassoc unary_minus
-  %right CONCAT";
-      []
+  %right CONCAT"
     }
 
 | PARAMETER t = OCAMLTYPE
     { [ with_poss $startpos $endpos (DParameter t) ] }
 
 | PARAMETER error
-    { Error.signal (Positions.two $startpos $endpos) "\
+    { Error.error (Positions.two $startpos $endpos) "\
 Syntax error in a %parameter declaration.
 Here is a sample valid declaration:
-  %parameter <X : sig type t end>";
-      []
+  %parameter <X : sig type t end>"
     }
 
-/* This error production should lead to resynchronization on the next %something.
-   The use of $previouserror prevents reporting errors that are too close to one
-   another -- presumably, the second error only means that we failed to properly
-   recover after the first error. */
 | error
-    { if $previouserror >= 3 then
-        Error.signal (Positions.two $startpos $endpos) "Syntax error inside a declaration.";
-      [] }
+    { Error.error (Positions.two $startpos $endpos) "Syntax error inside a declaration." }
 
 /* This production recognizes tokens that are valid in the rules section,
    but not in the declarations section. This is a hint that a %% was
@@ -164,15 +157,9 @@ Here is a sample valid declaration:
 
 | rule_specific_token
     {
-      if $previouserror >= 3 then
-	Error.signal (Positions.two $startpos $endpos)
-	  "Syntax error inside a declaration.\n\
-	   Did you perhaps forget the %% that separates declarations and rules?";
-
-      (* Do not attempt to perform error recovery. There is no way of
-	 forcing the automaton into a state where rules are expected. *)
-
-      exit 1
+      Error.error (Positions.two $startpos $endpos)
+        "Syntax error inside a declaration.\n\
+         Did you perhaps forget the %% that separates declarations and rules?"
     }
 
 priority_keyword:
@@ -250,9 +237,7 @@ rule:
 | error
     /* This error production should lead to resynchronization on the next
        well-formed rule. */
-    { if $previouserror >= 3 then
-        Error.signal (Positions.two $startpos $endpos) "Syntax error inside the definition of a nonterminal symbol.";
-      [] }
+    { Error.error (Positions.two $startpos $endpos) "Syntax error inside the definition of a nonterminal symbol." }
 
 flags:
   /* epsilon */
@@ -296,9 +281,7 @@ production_group:
     /* This error production should lead to resynchronization on the next
        semantic action, unless the end of file is reached before a semantic
        action is found. */
-    { if $previouserror >= 3 then
-        Error.signal (Positions.two $startpos($1) $endpos($1)) "Syntax error inside a production.";
-      [] }
+    { Error.error (Positions.two $startpos($1) $endpos($1)) "Syntax error inside a production." }
 
 %inline precedence:
   PREC symbol = symbol

@@ -192,18 +192,15 @@ let destructuretokendef name codomain bindsemv branch = {
 
 (* Bindings for exotic keywords. *)
 
-(* [extrabindings fpreviouserror action] provides definitions for the
-   [$startofs], [$endofs], and [$previouserror] keywords, if required
-   by a semantic action. The parameter [fpreviouserror] is the name of
-   the [previouserror] field in the environment -- the table-based and
-   code-based back-ends use different names. The parameter [action] is
-   the semantic action within which these keywords might be used. *)
+(* [extrabindings action] provides definitions for the [$startofs] and
+   [$endofs] keywords, if required by a semantic action. The parameter
+   [action] is the semantic action within which these keywords might be
+   used. *)
 
 (* The [ofs] keyword family is defined in terms of the [pos] family by
-   accessing the [pos_cnum] field. The [$previouserror] keyword simply
-   provides access to the current value of [env.previouserror]. *)
+   accessing the [pos_cnum] field. *)
 
-let extrabindings fpreviouserror action =
+let extrabindings action =
   Keyword.KeywordSet.fold (fun keyword bindings ->
     match keyword with
     | Keyword.Dollar _
@@ -213,8 +210,6 @@ let extrabindings fpreviouserror action =
     | Keyword.Position (s, w, (Keyword.FlavorOffset as f)) ->
 	(PVar (Keyword.posvar s w f),
 	 ERecordAccess (EVar (Keyword.posvar s w Keyword.FlavorPosition), "Lexing.pos_cnum")) :: bindings
-    | Keyword.PreviousError ->
-	(PVar "_previouserror", ERecordAccess (EVar env, fpreviouserror)) :: bindings
   ) (Action.keywords action) []
 
 (* ------------------------------------------------------------------------ *)
