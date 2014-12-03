@@ -181,6 +181,9 @@ module Make (T : TABLE) = struct
        contains a new semantic value, and raising [Accept] or [Error] if
        appropriate. *)
 
+    (* If the semantic action terminates normally, it returns a new stack,
+       which we write into [env.stack]. *)
+
     (* If the semantic action raises [Error], we catch it immediately and
        initiate error handling. *)
 
@@ -189,7 +192,7 @@ module Make (T : TABLE) = struct
 
     if (
       try
-	T.semantic_action prod env;
+	env.stack <- T.semantic_action prod env;
 	true
       with Error ->
 	false

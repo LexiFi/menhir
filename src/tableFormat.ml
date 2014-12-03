@@ -98,7 +98,8 @@ module type TABLES = sig
      actions. The calling convention for semantic actions is described in
      [EngineTypes]. *)
     
-  val semantic_action: ((int, Obj.t, token) EngineTypes.env -> unit) array
+  val semantic_action: ((int, Obj.t, token) EngineTypes.env ->
+                        (int, Obj.t)        EngineTypes.stack) array
 
   (* The parser defines its own [Error] exception. This exception can be
      raised by semantic actions and caught by the engine, and raised by the
