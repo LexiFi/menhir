@@ -509,7 +509,9 @@ let datavalparams f = function
   | [] ->
       ()
   | valparam :: valparams ->
-      fprintf f " of %a%a" typ valparam (list typ times) valparams
+      (* [typ1] because [type t = A of  int -> int ] is not allowed by OCaml *)
+      (*                [type t = A of (int -> int)] is allowed *)
+      fprintf f " of %a%a" typ1 valparam (list typ1 times) valparams
 
 let datatypeparams f = function
   | None ->
