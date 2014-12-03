@@ -4,27 +4,10 @@
 # reference interpreter appear to be working correctly. It uses the calc
 # demo for this purpose.
 
-SRC=../src
-BUILD=$SRC/_stage1
-MENHIR=$BUILD/menhir.native
+. ./config.sh
 
-# Make sure Menhir is up-to-date.
-rm -f $SRC/installation.ml
-rm -rf $BUILD
-echo "Building Menhir..."
-if ! make -C $SRC >/dev/null ; then
-  echo "Could not build Menhir. Stop."
-  exit 1
-fi
-echo "Building MenhirLib..."
-if ! make -C $SRC library >/dev/null ; then
-  echo "Could not build MenhirLib. Stop."
-  exit 1
-fi
-
-# Re-install MenhirLib.
-ocamlfind remove menhirLib
-ocamlfind install menhirLib $SRC/META $BUILD/menhirLib.cmi $BUILD/menhirLib.cmo $BUILD/menhirLib.cmx $BUILD/menhirLib.o
+# Make sure Menhir and MenhirLib are up-to-date.
+./build.sh
 
 # Build the parser with the code back-end and run it.
 echo "Building and running (code)..."
