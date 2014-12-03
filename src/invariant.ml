@@ -690,9 +690,8 @@ let universal symbol =
 
 (* ------------------------------------------------------------------------ *)
 (* Discover which states can peek at an error. These are the states
-   where [env.shifted] may be -1, that is, where an error token may be
-   on the stream. These are the states that are targets of a reduce
-   action on [error]. *)
+   where an error token may be on the stream. These are the states
+   that are targets of a reduce action on [error]. *)
 
 (* 2012/08/25 I am optimizing this code, whose original version I found had
    quadratic complexity. The problem is as follows. We can easily iterate over

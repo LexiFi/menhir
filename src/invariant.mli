@@ -90,8 +90,8 @@ val endp: Symbol.t -> bool
 (* Information about error handling. *)
 
 (* [errorpeeker s] tells whether state [s] can potentially peek at an
-   error. This is the case if, in state [s], [env.shifted] may be -1,
-   that is, if an error token may be on the stream. *)
+   error. This is the case if, in state [s], an error token may be on
+   the stream. *)
 
 val errorpeeker: Lr1.node -> bool
 
