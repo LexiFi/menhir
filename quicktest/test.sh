@@ -13,13 +13,19 @@
 echo "Building and running (code)..."
 make clean >/dev/null
 make MENHIR="$MENHIR --trace" >/dev/null
-echo "122 + 2 * 3 + 128" | ./calc > code.out 2> code.err
+for f in *.real.in ; do
+  b=${f%.in}
+  ./calc < $f > $b.code.out 2> $b.code.err
+done
 
 # Build the parser with the table back-end and run it.
 echo "Building and running (table)..."
 make clean >/dev/null
 make MENHIR="$MENHIR --trace --table" >/dev/null
-echo "122 + 2 * 3 + 128" | ./calc > table.out 2> table.err
+for f in *.real.in ; do
+  b=${f%.in}
+  ./calc < $f > $b.table.out 2> $b.table.err
+done
 
 # Run the reference interpreter.
 echo "Running the reference interpreter..."
@@ -27,22 +33,21 @@ echo "INT PLUS INT TIMES INT PLUS INT EOL" | $MENHIR --trace --interpret parser.
 
 echo "Comparing results..."
 
-# Compare the results to the reference outputs.
+# Compare the results to the reference.
 for mode in code table ; do
-  if ! diff -q ref.out $mode.out >/dev/null ; then
-    echo "The $mode parser produces a wrong result!"
-    echo "Expected:"
-    cat ref.out
-    echo "Got:"
-    cat $mode.out
-  fi
-done
-
-# Compare the logs to the reference logs.
-for mode in code table ; do
-  if ! diff -q ref.err $mode.err >/dev/null ; then
-    echo "The $mode parser produces a wrong trace!"
-    diff ref.err $mode.err
+  for f in *.real.in ; do
+    b=${f%.in}
+    if ! diff -q $b.ref.out $b.$mode.out >/dev/null ; then
+      echo "($f) The $mode parser produces a wrong result!"
+      echo "Expected:"
+      cat $b.ref.out
+      echo "Got:"
+      cat $b.$mode.out
+    fi
+  done
+  if ! diff -q $b.ref.err $b.$mode.err >/dev/null ; then
+    echo "($f) The $mode parser produces a wrong trace!"
+    diff $b.ref.err $b.$mode.err
   fi
 done
 
