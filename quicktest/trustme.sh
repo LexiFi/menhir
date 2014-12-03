@@ -19,7 +19,10 @@ for f in *.real.in ; do
 done
 
 # Run the reference interpreter.
-echo "Running the reference interpreter..."
-echo "INT PLUS INT TIMES INT PLUS INT EOL" | $MENHIR --trace --interpret parser.mly > interpret-ref.out 2> interpret-ref.err
+for f in *.ideal.in ; do
+  b=${f%.in}
+  echo "($b) Reconstructing reference output and trace..."
+  $MENHIR --trace --interpret parser.mly < $f > $b.ref.out 2> $b.ref.err
+done
 
 echo "Done."
