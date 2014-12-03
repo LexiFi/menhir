@@ -18,22 +18,6 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* [discard] takes a token off the input stream, queries the lexer
-     for a new one, and stores it into [env.token], overwriting the
-     previous token. If [env.shifted] has not yet reached its limit,
-     it is incremented. *)
-
-  let discard env =
-    let lexbuf = env.lexbuf in
-    let token = env.lexer lexbuf in
-    env.token <- token;
-    Log.lookahead_token lexbuf (T.token2terminal token);
-    let shifted = env.shifted + 1 in
-    if shifted >= 0 then
-      env.shifted <- shifted
-
-  (* --------------------------------------------------------------------------- *)
-
   (* The type [void] is empty. Many of the functions below have return type
      [void]. This guarantees that they never return a value. Instead, they
      must stop by raising an exception: either [Accept] or [Error]. *)
@@ -62,35 +46,55 @@ module Make (T : TABLE) = struct
 
      These two cases are reflected in [CodeBackend.gettoken].
 
-     Here, the code is structured in a slightly different way. It is up to
-     the caller of [run] to indicate whether to discard a token. *)
+     Here, the code is structured in a slightly different way. It is up to the
+     caller of [run] to indicate whether to discard a token, via the parameter
+     [please_discard]. This flag is set when [s] is being entered by shifting
+     a terminal symbol and [s] does not have a default reduction on [#]. *)
 
   let rec run env please_discard : void =
 
     (* Log the fact that we just entered this state. *)
     
-    let s = env.current in
-    Log.state s;
+    Log.state env.current;
 
-    (* If [please_discard] is set, discard a token and fetch the next one. *)
-
-    (* This flag is set when [s] is being entered by shifting a terminal
-       symbol and [s] does not have a default reduction on [#]. *)
+    (* If [please_discard] is set, discard a token and fetch the next one.
+       This is done by jumping to [discard], which itself will jump to
+       [check_for_default_reduction]. If [please_discard] is not set, we skip
+       [discard] and jump directly to [check_for_default_reduction]. *)
 
     if please_discard then
-      discard env;
+      discard env
+    else
+      check_for_default_reduction env
+
+  (* [discard] takes a token off the input stream, queries the lexer
+     for a new one, and stores it into [env.token], overwriting the
+     previous token. If [env.shifted] has not yet reached its limit,
+     it is incremented. *)
+
+  and discard env =
+    let lexbuf = env.lexbuf in
+    let token = env.lexer lexbuf in
+    env.token <- token;
+    Log.lookahead_token lexbuf (T.token2terminal token);
+    let shifted = env.shifted + 1 in
+    if shifted >= 0 then
+      env.shifted <- shifted;
+    check_for_default_reduction env
+
+  and check_for_default_reduction env =
 
     (* Examine what situation we are in. This case analysis is analogous to
        that performed in [CodeBackend.gettoken], in the sub-case where we do
        not have a terminal incoming symbol. *)
 
     T.default_reduction
-      s
-      reduce   (* there is a default reduction; perform it *)
-      continue (* there is none; continue below *)
+      env.current
+      reduce                (* there is a default reduction; perform it *)
+      check_for_error_token (* there is none; continue below *)
       env
 
-  and continue env : void =
+  and check_for_error_token env : void =
 
     (* There is no default reduction. Consult the current lookahead token
        so as to determine which action should be taken. *)
