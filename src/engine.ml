@@ -141,7 +141,6 @@ module Make (T : TABLE) = struct
        determine which action should be taken. *)
 
     let token = env.token in
-    assert (token != error_token);
     T.action
       env.current                    (* determines a row *)
       (T.token2terminal token)       (* determines a column *)
@@ -230,21 +229,17 @@ module Make (T : TABLE) = struct
 
     end
     else
-      errorbookkeeping env
+      initiate env
 
 
   (* --------------------------------------------------------------------------- *)
 
   (* The following functions deal with errors. *)
 
-  (* [initiate] and [errorbookkeeping] initiate error handling. See the functions
-     by the same names in [CodeBackend]. *)
+  (* [initiate] initiates error handling. *)
 
   and initiate env : void =
     assert (env.token != error_token);
-    errorbookkeeping env
-
-  and errorbookkeeping env =
     Log.initiating_error_handling();
     env.token <- error_token;
     error env
