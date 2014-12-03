@@ -123,6 +123,8 @@ end) = struct
     );
 
     G.iter (fun ?style ~label source ->
+      ignore style; (* avoid unused variable warnings *)
+      ignore label;
       G.successors (fun ?style ~label destination ->
 	fprintf f "%s %s %s [ label=\"%s\"%s ] ;\n"
 	  (G.name source)

@@ -249,7 +249,7 @@ module Make (X : Endianness.S) = struct
      [d]. If a binding already exists for [k], it is overridden. *)
 
   let add k d m =
-    fine_add (fun old_binding new_binding -> new_binding) k d m
+    fine_add (fun _old_binding new_binding -> new_binding) k d m
 
   (* [singleton k d] returns a map whose only binding is from [k] to [d]. *)
 
@@ -415,7 +415,7 @@ module Make (X : Endianness.S) = struct
      [m2]. Bindings in [m2] take precedence over those in [m1]. *)
 
   let union m1 m2 =
-    fine_union (fun d d' -> d') m1 m2
+    fine_union (fun _d d' -> d') m1 m2
 
   (* [iter f m] invokes [f k x], in turn, for each binding from key [k] to element [x] in the map [m]. Keys are
      presented to [f] according to some unspecified, but fixed, order. *)
@@ -593,17 +593,6 @@ module Domain = struct
   let singleton x =
     Leaf x
 
-  (* [is_singleton s] returns [Some x] if [s] is a singleton
-     containing [x] as its only element; otherwise, it returns
-     [None]. *)
-
-  let is_singleton = function
-    | Leaf x ->
-	Some x
-    | Empty
-    |	Branch _ ->
-	None
-
   (* [choose s] returns an arbitrarily chosen element of [s], if [s]
      is nonempty, and raises [Not_found] otherwise. *)
 
@@ -670,18 +659,6 @@ module Domain = struct
       strict_add x s
     with Unchanged ->
       s
-
-  (* [make2 x y] creates a set whose elements are [x] and [y]. [x] and [y] need not be distinct. *)
-
-  let make2 x y =
-    add x (Leaf y)
-
-  (* [fine_add] does not make much sense for sets of integers. Better warn the user. *)
-
-  type decision = int -> int -> int
-
-  let fine_add decision x s =
-    assert false
 
   (* [remove x s] returns a set whose elements are all elements of [s], except [x]. *)
 
@@ -767,11 +744,6 @@ module Domain = struct
 
 	  join p s q t
 
-  (* [fine_union] does not make much sense for sets of integers. Better warn the user. *)
-
-  let fine_union decision s1 s2 =
-    assert false
-
   (* [build] is a ``smart constructor''. It builds a [Branch] node with the specified arguments, but ensures
      that the newly created node does not have an [Empty] child. *)
 
@@ -785,48 +757,6 @@ module Domain = struct
 	t0
     |	_, _ ->
 	Branch(p, m, t0, t1)
-
-  (* [diff s t] returns the set difference of [s] and [t], that is, $s\setminus t$. *)
-
-  let rec diff s t =
-    match s, t with
-
-    |	Empty, _
-    |	_, Empty ->
-	s
-
-    |	Leaf x, _ ->
-	if mem x t then Empty else s
-    |	_, Leaf x ->
-	remove x s
-
-    | Branch(p, m, s0, s1), Branch(q, n, t0, t1) ->
-	if (p = q) && (m = n) then
-
-	  (* The trees have the same prefix. Compute the differences of their sub-trees. *)
-
-	  build p m (diff s0 t0) (diff s1 t1)
-
-	else if (X.shorter m n) && (match_prefix q p m) then
-
-	  (* [q] contains [p]. Subtract [t] off a sub-tree of [s]. *)
-
-	  if (q land m) = 0 then
-	    build p m (diff s0 t) s1
-	  else
-	    build p m s0 (diff s1 t)
-
-	else if (X.shorter n m) && (match_prefix p q n) then
-
-	  (* [p] contains [q]. Subtract a sub-tree of [t] off [s]. *)
-
-	  diff s (if (p land n) = 0 then t0 else t1)
-
-	else
-
-	  (* The prefixes disagree. *)
-
-	  s
 
   (* [inter s t] returns the set intersection of [s] and [t], that is, $s\cap t$. *)
 
@@ -937,22 +867,6 @@ module Domain = struct
   let elements s =
     fold (fun tl hd -> tl :: hd) s []
 
-  (* [fold_rev] performs exactly the same job as [fold], but presents elements to [f] in the opposite order. *)
-
-  let rec fold_rev f s accu =
-    match s with
-    | Empty ->
-	accu
-    | Leaf x ->
-	f x accu
-    | Branch (_, _, s0, s1) ->
-	fold_rev f s0 (fold_rev f s1 accu)
-
-  (* [iter2] does not make much sense for sets of integers. Better warn the user. *)
-
-  let rec iter2 f t1 t2 =
-    assert false
-
   (* [iterator s] returns a stateful iterator over the set [s]. That is, if $s = \{ x_1, x_2, \ldots, x_n \}$, where
      $x_1 < x_2 < \ldots < x_n$, then [iterator s] is a function which, when invoked for the $k^{\text{th}}$ time,
      returns [Some]$x_k$, if $k\leq n$, and [None] otherwise. Such a function can be useful when one wishes to
@@ -979,20 +893,6 @@ module Domain = struct
 	  next () in
 
     next
-
-  (* [exists p s] returns [true] if and only if some element of [s] matches the predicate [p]. *)
-
-  exception Exists
-
-  let exists p s =
-    try
-      iter (fun x ->
-	if p x then
-	  raise Exists
-      ) s;
-      false
-    with Exists ->
-      true
 
   (* [compare] is an ordering over sets. *)
 
@@ -1067,40 +967,6 @@ module Domain = struct
       true
     with NotSubset ->
       false
-
-  (* [filter p s] returns the subset of [s] formed by all elements which satisfy the predicate [p]. *)
-
-  let filter predicate s =
-    let modified = ref false in
-
-    let subset = fold (fun element subset ->
-      if predicate element then
-	add element subset
-      else begin
-	modified := true;
-	subset
-      end
-    ) s Empty in
-
-    if !modified then
-      subset
-    else
-      s
-
-  (* [map f s] computes the image of [s] through [f]. *)
-
-  let map f s =
-    fold (fun element accu ->
-      add (f element) accu
-    ) s Empty
-
-  (* [monotone_map] and [endo_map] do not make much sense for sets of integers. Better warn the user. *)
-
-  let monotone_map f s =
-    assert false
-
-  let endo_map f s =
-    assert false
 
 end
 

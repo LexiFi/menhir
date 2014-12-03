@@ -69,7 +69,7 @@ let sharp f line file =
 (* ------------------------------------------------------------------------- *)
 (* Printers of atomic elements. *)
 
-let nothing f =
+let nothing _ =
   ()
 
 let space f =
@@ -115,7 +115,7 @@ let rec list elem sep f = function
   | e :: es ->
       fprintf f "%t%a%a" sep elem e (list elem sep) es
 
-let rec typeparams p0 p1 f = function
+let typeparams p0 p1 f = function
   | [] ->
       ()
   | [ param ] ->
@@ -138,7 +138,6 @@ type subset =
   | AllButFunTryMatchSeq
   | AllButLetFunTryMatch
   | AllButLetFunTryMatchSeq
-  | AllButIfThen
   | AllButIfThenSeq
   | OnlyAppOrAtom
   | OnlyAtom
@@ -156,7 +155,6 @@ let andNotSeq = function
   | AllButLetFunTryMatch
   | AllButLetFunTryMatchSeq ->
       AllButLetFunTryMatchSeq
-  | AllButIfThen
   | AllButIfThenSeq ->
       AllButIfThenSeq
   | OnlyAppOrAtom ->
@@ -216,7 +214,6 @@ let rec member e k =
   | EIfThen _ ->
       begin
 	match k with
-	| AllButIfThen
 	| AllButIfThenSeq
 	| OnlyAppOrAtom
 	| OnlyAtom ->
@@ -306,7 +303,7 @@ and exprk k f e =
 	exprlet k pes f e2
     | ERecordWrite (e1, field, e2) ->
 	fprintf f "%a.%s <- %a" atom e1 field (exprk (andNotSeq k)) e2
-    | EMatch (e, []) ->
+    | EMatch (_, []) ->
 	assert false
     | EMatch (e, brs) ->
 	fprintf f "match %a with%a" expr e (branches k) brs
@@ -574,6 +571,8 @@ let nonrecvaldefs =
 let typedefs =
   pdefs typedef keytyp et
 
+(* unused for now:
+
 let directive f = function
   | DirOpen s ->
       fprintf f "open %s%t%t" s nl nl
@@ -582,6 +581,8 @@ let directive f = function
 
 let directives =
   pdefs directive nothing nothing
+
+*)
 
 let excdef in_intf f def =
   match in_intf, def.exceq with

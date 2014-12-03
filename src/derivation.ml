@@ -270,7 +270,7 @@ and common_forest cforest1 forest2 : cforest * cforest * forest =
    items, because this is convenient for the application that we have in mind,
    but this assumption is really irrelevant. *)
 
-let rec factor forests =
+let factor forests =
   match
     Item.Map.fold (fun item forest accu ->
       match accu with

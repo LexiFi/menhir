@@ -58,7 +58,8 @@ let string_of paren_fun ?paren ?colors t : string =
       "("^ s ^")"
     else s
 
-let rec paren_nt_type ((white, black) as colors) = function
+let rec paren_nt_type colors = function
+  (* [colors] is a pair [white, black] *)
     
     Arrow [] -> 
       "*", false
@@ -93,16 +94,22 @@ and paren_var (white, black) x =
 	  (s, p)
     end
 
-let string_of_nt_type ?paren ?colors t = 
+let string_of_nt_type ?colors t = 
+  (* TEMPORARY note: always called without a [colors] argument! *)
   string_of ?colors paren_nt_type t
 
-let string_of_var ?paren ?colors v = 
+let string_of_var ?colors v = 
+  (* TEMPORARY note: always called without a [colors] argument! *)
   string_of ?colors paren_var v
+
+(* for debugging:
 
 (* [print_env env] returns a string description of the typing environment. *)
 let print_env = 
   List.iter (fun (k, (_, v)) -> 
 	       Printf.eprintf "%s: %s\n" k (string_of_var v))
+
+*)
 
 (* [occurs_check x y] checks that [x] does not occur within [y]. *)
 
@@ -154,8 +161,8 @@ let rec unify_var toplevel x y =
   if not (UnionFind.equivalent x y) then
     let reprx, repry = UnionFind.find x, UnionFind.find y in
       match reprx.structure, repry.structure with
-	  None, Some t    -> occurs_check x y; UnionFind.union x y
-	| Some t, None    -> occurs_check y x; UnionFind.union y x
+	  None, Some _    -> occurs_check x y; UnionFind.union x y
+	| Some _, None    -> occurs_check y x; UnionFind.union y x
 	| None, None      -> UnionFind.union x y
 	| Some t, Some t' -> unify toplevel t t'; UnionFind.union x y
 	    
@@ -254,7 +261,7 @@ let check_grammar p_grammar =
      is implemented by [successors]. Non terminals are indexed using
      [nt].
   *) 
-  let nt, conv, iconv = index_map p_grammar.p_rules in
+  let nt, conv, _iconv = index_map p_grammar.p_rules in
   let parameters, name, branches, positions = 
     (fun n -> (nt n).pr_parameters), (fun n -> (nt n).pr_nt),
     (fun n -> (nt n).pr_branches), (fun n -> (nt n).pr_positions)
@@ -456,11 +463,13 @@ let rec subst_parameter subst = function
 let subst_parameters subst = 
   List.map (subst_parameter subst)
 
+(* TEMPORARY why unused?
 let names_of_p_grammar p_grammar = 
   StringMap.fold (fun tok _ acu -> StringSet.add tok acu) 
     p_grammar.p_tokens StringSet.empty 
     $$ (StringMap.fold (fun nt _ acu -> StringSet.add nt acu)
 	  p_grammar.p_rules)
+*)
 
 let expand p_grammar = 
   (* Check that it is safe to expand this parameterized grammar. *)

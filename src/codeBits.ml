@@ -79,7 +79,7 @@ let rec simplify = function
 
 (* Building a [let] construct, with on-the-fly simplification. *)
 
-let rec blet (bindings, body) =
+let blet (bindings, body) =
   match simplify bindings with
   | [] ->
       body

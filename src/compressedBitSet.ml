@@ -192,7 +192,7 @@ let rec compare s1 s2 =
 	else if ss1 > ss2 then 1
 	else compare qs1 qs2
 
-let rec equal s1 s2 =
+let equal s1 s2 =
   compare s1 s2 = 0
 
 let rec disjoint s1 s2 = 
