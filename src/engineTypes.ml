@@ -57,15 +57,12 @@ type ('state, 'semantic_value, 'token) env = {
 
   lexbuf: Lexing.lexbuf;
 
-  (* The last token that was obtained from the lexer. *)
+  (* The last token that was obtained from the lexer. In principe, this should
+     be a legit token, but the engine disguises the [error] pseudo-token as an
+     illegal inhabitant of this type. Do not use this field unless you know
+     what are doing! *)
 
   mutable token: 'token;
-
-  (* A count of how many tokens were shifted since the beginning, or since
-     the last [error] token was encountered. By convention, if [shifted]
-     is (-1), then the current lookahead token is [error]. *)
-
-  mutable shifted: int;
 
   (* The stack. In [CodeBackend], it is passed around on its own,
      whereas, here, it is accessed via the environment. *)

@@ -26,6 +26,25 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
+  (* OK, OK. I said I would stop using [Obj.magic], yet here we go again.
+     I need to extend the type [T.token] with an extra element, which
+     represents the [error] pseudo-token. I don't want to pay an extra
+     box in memory or an extra field in the [env] record. I don't want
+     to add a branch to the type [T.token] because that would bother the
+     user (that would be an incompatible change) and that would make some
+     exhaustive case analyses appear non-exhaustive. So, here we go. We
+     allocate a dummy box in memory and use its address as a unique value
+     which cannot possibly be confused with a legit inhabitant of the type
+     [token]. (Right?) *)
+
+  let error_token : token =
+    Obj.magic (ref 0xDEADBEEF)
+
+  (* We adopt the convention that we have an [error] token on the input
+     stream if and only if [env.token] is [deadbeef]. *)
+
+  (* --------------------------------------------------------------------------- *)
+
   (* In the code-based back-end, the [run] function is sometimes responsible
      for pushing a new cell on the stack. This is motivated by code sharing
      concerns. In this interpreter, there is no such concern; [run]'s caller
@@ -69,17 +88,13 @@ module Make (T : TABLE) = struct
 
   (* [discard] takes a token off the input stream, queries the lexer
      for a new one, and stores it into [env.token], overwriting the
-     previous token. If [env.shifted] has not yet reached its limit,
-     it is incremented. *)
+     previous token. *)
 
   and discard env =
     let lexbuf = env.lexbuf in
     let token = env.lexer lexbuf in
     env.token <- token;
     Log.lookahead_token lexbuf (T.token2terminal token);
-    let shifted = env.shifted + 1 in
-    if shifted >= 0 then
-      env.shifted <- shifted;
     check_for_default_reduction env
 
   and check_for_default_reduction env =
@@ -100,14 +115,13 @@ module Make (T : TABLE) = struct
        so as to determine which action should be taken. *)
 
     (* Peeking at the first input token, without taking it off the input
-       stream, is normally done by reading [env.token]. However, we check
-       [env.shifted] first: if it is -1, then the lookahead token is the
-       [error] token. *)
+       stream, is done by reading [env.token]. We are careful to first
+       check whether this is the [error] token. *)
 
-    (* Note that, if we just called [discard] above, then the lookahead
-       token cannot be [error]. *)
+    (* Note that, if [please_discard] was true, then we have just called
+       [discard], so the lookahead token cannot be [error]. *)
 
-    if env.shifted = (-1) then begin
+    if env.token == error_token then begin
       Log.resuming_error_handling();
       error env
     end
@@ -127,6 +141,7 @@ module Make (T : TABLE) = struct
        determine which action should be taken. *)
 
     let token = env.token in
+    assert (token != error_token);
     T.action
       env.current                    (* determines a row *)
       (T.token2terminal token)       (* determines a column *)
@@ -226,17 +241,18 @@ module Make (T : TABLE) = struct
      by the same names in [CodeBackend]. *)
 
   and initiate env : void =
-    assert (env.shifted >= 0);
+    assert (env.token != error_token);
     errorbookkeeping env
 
   and errorbookkeeping env =
     Log.initiating_error_handling();
-    env.shifted <- (-1);
+    env.token <- error_token;
     error env
 
   (* [error] handles errors. *)
 
   and error env : void =
+    assert (env.token == error_token);
 
     (* Consult the column associated with the [error] pseudo-token in the
        action table. *)
@@ -327,7 +343,6 @@ module Make (T : TABLE) = struct
       lexer = lexer;
       lexbuf = lexbuf;
       token = token;
-      shifted = max_int;
       stack = empty;
       current = s;
     } in
