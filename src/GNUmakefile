@@ -6,11 +6,11 @@
 
 # ----------------------------------------------------------------------------
 # When developing, the standard library path is the current directory.
-# ocamlfind is not assumed.
+# ocamlfind is assumed.
 
 installation.ml:
 	echo "let libdir = \""`pwd`"/\"" > $@
-	echo "let ocamlfind = false" >> $@
+	echo "let ocamlfind = true" >> $@
 
 # ----------------------------------------------------------------------------
 # Pretty-printing the MenhirLib.Convert API.
