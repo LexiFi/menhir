@@ -12,7 +12,10 @@
 echo "Building and running (code)..."
 make clean >/dev/null
 make MENHIR="$MENHIR --trace" >/dev/null
-echo "122 + 2 * 3 + 128" | ./calc > ref.out 2> ref.err
+for f in *.real.in ; do
+  b=${f%.in}
+  ./calc < $f > $b.ref.out 2> $b.ref.err
+done
 
 # Run the reference interpreter.
 echo "Running the reference interpreter..."
