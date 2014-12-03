@@ -108,64 +108,65 @@ module T = struct
       | None ->
 
 	  let n = Production.length prod in
+
 	  let values : semantic_value array =
 	    Array.make n CstError (* dummy *)
-	  and startp : Lexing.position ref =
+	  and startp =
 	    ref Lexing.dummy_pos
-	  and endp : Lexing.position ref =
+	  and endp=
 	    ref Lexing.dummy_pos
+          and current =
+            ref env.current
+          and stack =
+            ref env.stack
 	  in
 
-	  (* The auxiliary function [pop k stack] pops [k] stack cells
-	     and returns a truncated stack. It also updates the automaton's
-	     current state, and fills in [values], [startp], and [endp]. *)
+	  (* We now enter a loop to pop [k] stack cells and (after that) push
+             a new cell onto the stack. *)
 
-	  let rec pop k stack =
+          (* This loop does not update [env.current]. Instead, the state in
+             the newly pushed stack cell will be used (by our caller) as a
+             basis for a goto transition, and [env.current] will be updated
+             (if necessary) then. *)
 
-	    if k = 0 then
+          for k = n downto 1 do
 
-	      (* There are no more stack cells to pop. *)
+            (* Fetch a semantic value. *)
 
-	      stack
+            values.(k - 1) <- !stack.semv;
 
-	    else begin
+            (* Pop one cell. The stack must be non-empty. As we pop a cell,
+               change the automaton's current state to the one stored within
+               the cell. (It is sufficient to do this only when [k] is 1,
+               since the last write overwrites any and all previous writes.)
+               If this is the first (last) cell that we pop, update [endp]
+               ([startp]). *)
 
-	      (* Fetch a semantic value. *)
+            let next = !stack.next in
+            assert (!stack != next);
+            if k = n then begin
+              endp := !stack.endp
+            end;
+            if k = 1 then begin
+              current := !stack.state;
+              startp := !stack.startp
+            end;
+            stack := next
 
-	      values.(k - 1) <- stack.semv;
+          done;
 
-	      (* Pop one cell. The stack must be non-empty. As we pop a cell,
-	         change the automaton's current state to the one stored within
-		 the cell. (It is sufficient to do this only when [k] is 1.)
-	         If this is the first (last) cell that we pop, update [endp]
-	         ([startp]). *)
+          (* Done popping. *)
 
-	      let next = stack.next in
-	      assert (stack != next);
-	      if k = n then begin
-		endp := stack.endp
-	      end;
-	      if k = 1 then begin
-		env.current <- stack.state;
-		startp := stack.startp
-	      end;
-	      pop (k - 1) next
+          (* Construct and push a new stack cell. The associated semantic
+             value is a new concrete syntax tree. *)
 
-	    end
-
-	  in
-	  let stack = pop n env.stack in
-
-	  (* Construct and push a new stack cell. The associated semantic
-	     value is a new concrete syntax tree. *)
-
-	  {
-	    state = env.current;
-	    semv = CstNonTerminal (prod, values);
-	    startp = !startp;
-	    endp = !endp;
-	    next = stack
-	  }
+          {
+            state = !current;
+            semv = CstNonTerminal (prod, values);
+            startp = !startp;
+            endp = !endp;
+            next = !stack
+          }
 
   module Log = struct
 
