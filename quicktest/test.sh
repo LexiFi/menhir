@@ -29,7 +29,10 @@ done
 
 # Run the reference interpreter.
 echo "Running the reference interpreter..."
-echo "INT PLUS INT TIMES INT PLUS INT EOL" | $MENHIR --trace --interpret parser.mly > interpret.out 2> interpret.err
+for f in *.ideal.in ; do
+  b=${f%.in}
+  $MENHIR --trace --interpret parser.mly < $f > $b.interpret.out 2> $b.interpret.err
+done
 
 echo "Comparing results..."
 
@@ -54,16 +57,21 @@ for f in *.real.in ; do
 done
 
 # Check the results of the reference interpreter.
-if ! diff -q interpret-ref.out interpret.out >/dev/null ; then
-  echo "The reference interpreter produces a wrong result!"
-  echo "Expected:"
-  cat interpret-ref.out
-  echo "Got:"
-  cat interpret.out
-fi
-if ! diff -q interpret-ref.err interpret.err >/dev/null ; then
-  echo "The reference interpreter produces a wrong trace!"
-  diff interpret-ref.err interpret.err
-fi
+for f in *.ideal.in ; do
+  b=${f%.in}
+  echo "($b) Checking output of reference interpreter..."
+  if ! diff -q $b.ref.out $b.interpret.out >/dev/null ; then
+    echo "The reference interpreter produces a wrong result!"
+    echo "Expected:"
+    cat $b.ref.out
+    echo "Got:"
+    cat $b.interpret.out
+  fi
+  echo "($b) Checking trace of reference interpreter..."
+  if ! diff -q $b.ref.err $b.interpret.err >/dev/null ; then
+    echo "The reference interpreter produces a wrong trace!"
+    diff $b.ref.err $b.interpret.err
+  fi
+done
 
 echo "Done."
