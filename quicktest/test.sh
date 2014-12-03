@@ -34,21 +34,23 @@ echo "INT PLUS INT TIMES INT PLUS INT EOL" | $MENHIR --trace --interpret parser.
 echo "Comparing results..."
 
 # Compare the results to the reference.
-for mode in code table ; do
-  for f in *.real.in ; do
-    b=${f%.in}
+for f in *.real.in ; do
+  b=${f%.in}
+  for mode in code table ; do
+    echo "($b) Checking output of $mode parser..."
     if ! diff -q $b.ref.out $b.$mode.out >/dev/null ; then
-      echo "($f) The $mode parser produces a wrong result!"
+      echo "($b) The $mode parser produces a wrong result!"
       echo "Expected:"
       cat $b.ref.out
       echo "Got:"
       cat $b.$mode.out
     fi
+    echo "($b) Checking trace of $mode parser..."
+    if ! diff -q $b.ref.err $b.$mode.err >/dev/null ; then
+      echo "($b) The $mode parser produces a wrong trace!"
+      diff $b.ref.err $b.$mode.err
+    fi
   done
-  if ! diff -q $b.ref.err $b.$mode.err >/dev/null ; then
-    echo "($f) The $mode parser produces a wrong trace!"
-    diff $b.ref.err $b.$mode.err
-  fi
 done
 
 # Check the results of the reference interpreter.

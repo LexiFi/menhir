@@ -9,11 +9,12 @@
 ./build.sh
 
 # Build the parser with the code back-end and run it.
-echo "Building and running (code)..."
+echo "Building (code)..."
 make clean >/dev/null
 make MENHIR="$MENHIR --trace" >/dev/null
 for f in *.real.in ; do
   b=${f%.in}
+  echo "($b) Reconstructing reference output and trace..."
   ./calc < $f > $b.ref.out 2> $b.ref.err
 done
 
