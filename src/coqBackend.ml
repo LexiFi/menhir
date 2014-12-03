@@ -253,7 +253,7 @@ module Run (T: sig end) = struct
 
   let write_init f =
     write_inductive_alphabet f "initstate" (
-      ProductionMap.fold (fun prod node l ->
+      ProductionMap.fold (fun _prod node l ->
 	(print_init node)::l) Lr1.entry []);
     fprintf f "Instance InitStateAlph : Alphabet initstate := _.\n\n"
 

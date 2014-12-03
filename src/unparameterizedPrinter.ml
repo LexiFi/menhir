@@ -98,7 +98,7 @@ let print_tokens mode b g =
 			   (print_assoc prop.tk_associativity) token;
 			 Some v)
 			 
-		   | Some v' -> 
+		   | Some _ -> 
 		       Printf.fprintf b "%s " token;
 		       last_prop
 			 
@@ -182,7 +182,7 @@ let print_rules mode b g =
     StringMap.fold (fun nt r acu -> (nt, r) :: acu) g.rules []
   in
   let ordered_rules =
-    List.sort (fun (nt, r) (nt', r') -> branches_order r r') rules_as_list
+    List.sort (fun (_nt, r) (_nt', r') -> branches_order r r') rules_as_list
   in
   List.iter (fun (nt, r) ->
     Printf.fprintf b "\n%s:\n" (Misc.normalize nt);

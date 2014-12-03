@@ -95,7 +95,7 @@ let pack (a : int array) : t =
 
     for j = 0 to n - 1 do
       let c = ref 0 in
-      for x = 1 to w do
+      for _x = 1 to w do
 	c := (!c lsl k) lor next()
       done;
       s.[j] <- Char.chr !c

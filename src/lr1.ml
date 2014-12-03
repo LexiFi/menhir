@@ -564,7 +564,7 @@ let () =
 
 		end
 
-	    | prod1 :: prod2 :: _ ->
+	    | _prod1 :: _prod2 :: _ ->
 
 		(* This is a shift/reduce/reduce conflict. If the priorities
 		   are such that each individual shift/reduce conflict is solved
@@ -616,7 +616,7 @@ let () =
 	      | []
 	      | [ _ ] ->
 		  ()
-	      | prod1 :: prod2 :: _ ->
+	      | _prod1 :: _prod2 :: _ ->
 
 		  (* There is no transition in addition to the reduction(s). We
 		     have a pure reduce/reduce conflict. Do nothing about it at
@@ -1043,7 +1043,7 @@ let default_conflict_resolution () =
       let has_ambiguity = ref false in
       let toks = ref TerminalSet.empty in
 
-      TerminalMap.iter (fun tok prods ->
+      TerminalMap.iter (fun tok _prods ->
 	node.reductions <- reductions;
 	has_ambiguity := true;
 	toks := TerminalSet.add tok !toks

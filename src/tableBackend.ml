@@ -86,7 +86,7 @@ let entry =
    the semantic action, then it is bound to the semantic value. The
    position variables are always bound. *)
 
-let reducecellparams prod i symbol (next : pattern) : pattern =
+let reducecellparams prod i _symbol (next : pattern) : pattern =
 
   let ids = Production.identifiers prod
   and used = Production.used prod in
@@ -134,7 +134,7 @@ let reducecellcasts prod i symbol casts =
 
 let reducebody prod =
 
-  let nt, rhs = Production.def prod
+  let nt, _rhs = Production.def prod
   and ids = Production.identifiers prod
   and length = Production.length prod in
 

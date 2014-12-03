@@ -260,9 +260,10 @@ let rename nonterminal filename =
 (* A nonterminal is considered public if it is declared using %public
    or %start. *)
 
+(* TEMPORARY why unused?
 let is_public grammar prule =
   prule.pr_public_flag || StringMap.mem prule.pr_nt grammar.p_start_symbols
-
+*)
 (* ------------------------------------------------------------------------- *)
 type symbol_kind =
     
@@ -275,29 +276,29 @@ type symbol_kind =
   (* The symbol is a token. *)
   | Token of token_properties
 
-  (* We do not know yet what does the symbol means. 
+  (* We do not know yet what the symbol means. 
      This is defined in the sequel or it is free in the partial grammar. *)
   | DontKnow of Positions.t
 
 type symbol_table =
     (symbol, symbol_kind) Hashtbl.t
 
-let find_symbol symbols symbol =
+let find_symbol (symbols : symbol_table) symbol =
   Hashtbl.find symbols symbol
 
-let add_in_symbol_table symbols symbol kind =
+let add_in_symbol_table (symbols : symbol_table) symbol kind =
   use_name symbol;
   Hashtbl.add symbols symbol kind;
   symbols
 
-let replace_in_symbol_table symbols symbol kind =
+let replace_in_symbol_table (symbols : symbol_table) symbol kind =
   Hashtbl.replace symbols symbol kind;
   symbols
 
-let empty_symbol_table () =
+let empty_symbol_table () : symbol_table =
   Hashtbl.create 13
 
-let store_symbol symbols symbol kind = 
+let store_symbol (symbols : symbol_table) symbol kind = 
   try
     let sym_info = find_symbol symbols symbol in
       match sym_info, kind with
@@ -361,6 +362,8 @@ let store_private_nonterminal tokens symbols symbol positions =
   non_terminal_is_not_a_token tokens symbol positions;
   store_symbol symbols symbol (PrivateNonTerminal (List.hd positions))
 
+(* for debugging, presumably:
+
 let string_of_kind = function
   | PublicNonTerminal p ->
       Printf.sprintf "public (%s)" (Positions.string_of_pos p)
@@ -386,6 +389,7 @@ let string_of_symbol_table t =
 		    (Printf.sprintf "%s: %s\n" 
 		       (fill_blank k) (string_of_kind v))) t;
     Buffer.contents b
+*)
 
 let is_private_symbol t x = 
   try
@@ -398,6 +402,7 @@ let is_private_symbol t x =
   with Not_found -> 
     false
 
+(* TEMPORARY why unused?
 let is_public_symbol t x = 
   try
     match Hashtbl.find t x with
@@ -408,6 +413,7 @@ let is_public_symbol t x =
 	  false
   with Not_found -> 
     false
+*)
 
 let fold_on_private_symbols f init t = 
   Hashtbl.fold 
@@ -466,7 +472,7 @@ let symbols_of grammar (pgrammar : ConcreteSyntax.grammar) =
   in
     List.fold_left symbols_of_rule (empty_symbol_table ()) pgrammar.pg_rules
 
-let merge_rules tokens symbols pgs = 
+let merge_rules symbols pgs = 
 
   (* Retrieve all the public symbols. *)
   let public_symbols =
@@ -495,7 +501,7 @@ let merge_rules tokens symbols pgs =
 	 else 
 	   (StringSet.add symbol defined, clashes))
   in 
-  let private_symbols, clashes = 
+  let _private_symbols, clashes = 
     List.fold_left detect_private_symbol_clashes (StringSet.empty, StringSet.empty) symbols
   in 
   let rpgs = List.map 
@@ -579,7 +585,7 @@ let join grammar pgrammar =
    bounds and that they are not used when symbols are explicitly
    named. Check also that no two symbols carry the same name. *)
 
-let check_keywords grammar producers action =
+let check_keywords producers action =
   let length = List.length producers in
     List.iter
       (function keyword ->
@@ -589,7 +595,7 @@ let check_keywords grammar producers action =
 	       if i < 1 || i > length then
 		 Error.errorp keyword
 		   (Printf.sprintf "$%d refers to a nonexistent symbol." i);
-	       let ido, param = List.nth producers (i - 1) in
+	       let ido, _ = List.nth producers (i - 1) in
 	       begin
 		 match ido with
 		   | Some { value = id } ->
@@ -603,7 +609,7 @@ let check_keywords grammar producers action =
 	       let found =
 		 ref false 
 	       in
-	       List.iter (fun (ido, param) ->
+	       List.iter (fun (ido, _) ->
 		 match ido with
 		 | Some { value = id' } when id = id' ->
 		     found := true
@@ -635,7 +641,7 @@ let check_parameterized_grammar_is_well_defined grammar =
 	      "the type of the start symbol %s is unspecified." nonterminal);
     ) grammar.p_start_symbols;
 
-  let rec parameter_head_symb = function
+  let parameter_head_symb = function
     | ParameterVar id -> id
     | ParameterApp (id, _) -> id
   in
@@ -708,7 +714,7 @@ let check_parameterized_grammar_is_well_defined grammar =
 		 		 
             ) StringSet.empty producers);
 
-	    check_keywords grammar producers action;
+	    check_keywords producers action;
 
             match sprec with
 
@@ -759,5 +765,5 @@ let join_partial_grammars pgs =
   let grammar = List.fold_left join empty_grammar pgs in
   let symbols = List.map (symbols_of grammar) pgs in
   let tpgs = List.combine symbols pgs in
-  let rules = merge_rules grammar.p_tokens symbols tpgs in 
+  let rules = merge_rules symbols tpgs in 
   check_parameterized_grammar_is_well_defined { grammar with p_rules = rules }

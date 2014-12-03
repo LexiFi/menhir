@@ -33,7 +33,7 @@ let stack_symbols : Lr0.node -> Symbol.t array =
   in
   Misc.tabulate Lr0.n (fun node ->
     Item.Set.fold (fun item accu ->
-      let prod, nt, rhs, pos, length = Item.def item in
+      let _prod, _nt, rhs, pos, _length = Item.def item in
       if pos > Array.length accu then Array.sub rhs 0 pos else accu
     ) (Lr0.items node) dummy
   )
@@ -189,7 +189,7 @@ let stack_states : Lr1.node -> property =
 
 	empty
 
-    | Some symbol ->
+    | Some _symbol ->
 
 	(* If [node] is not a start state, then include the contribution of
 	   every incoming transition. We compute a join over all predecessors.
@@ -629,7 +629,7 @@ let rec require where symbol =
   end
 
 and require_aux where prod =
-  let nt, rhs = Production.def prod in
+  let _nt, rhs = Production.def prod in
   let length = Array.length rhs in
   if length > 0 then
     match where with

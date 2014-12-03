@@ -33,7 +33,7 @@ let make_slr_state (s : Lr0.node) : Lr0.concretelr1state =
   (* Convert this set to a set of LR(1) items. Here, we can use any set of
      tokens as the lookahead set. We use the empty set. *)
 
-  let s = Item.Map.lift (fun item -> TerminalSet.empty) items in
+  let s = Item.Map.lift (fun _item -> TerminalSet.empty) items in
 
   (* Compute the LR(1) closure. *)
 
