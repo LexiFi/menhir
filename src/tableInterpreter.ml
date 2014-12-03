@@ -96,7 +96,8 @@ module Make (T : TableFormat.TABLES)
 	T.Error
 
   type semantic_action =
-      (state, semantic_value, token) EngineTypes.env -> unit
+      (state, semantic_value, token) EngineTypes.env ->
+      (state, semantic_value)        EngineTypes.stack
 	
   let semantic_action prod =
     T.semantic_action.(prod)

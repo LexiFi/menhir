@@ -200,14 +200,16 @@ module type TABLE = sig
      1. fetching whatever semantic values and positions it needs off the stack;
 
      2. popping an appropriate number of cells off the stack, as dictated
-     by the length of the right-hand side of the production; this involves
-     updating [env.stack];
+        by the length of the right-hand side of the production;
 
      3. computing a new semantic value, as well as new start and end positions;
 
      4. pushing a new stack cell, which contains the three values
-     computed in step 3; this again involves updating [env.stack]
-     (only one update is necessary).
+        computed in step 3;
+
+     5. returning the new stack computed in steps 2 and 4. The environment
+        is not affected: the caller of the semantic action is responsible
+        for writing the new stack into [env.stack].
 
      Point 1 is essentially forced upon us: if semantic values were fetched
      off the stack by this interpreter, then the calling convention for
@@ -226,7 +228,7 @@ module type TABLE = sig
   exception Error
 
   type semantic_action =
-      (state, semantic_value, token) env -> unit
+      (state, semantic_value, token) env -> (state, semantic_value) stack
 
   val semantic_action: production -> semantic_action
 
