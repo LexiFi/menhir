@@ -151,7 +151,7 @@ end) = struct
 	      dx.low <- dy.low
 
 	  end
-	  else if (dy.low < dx.low) & dy.stacked then begin
+	  else if (dy.low < dx.low) && dy.stacked then begin
 
 	    (* The first condition above indicates that $y$ has been
 	       visited before $x$, so $(x, y)$ is a backwards or
