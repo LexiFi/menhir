@@ -44,10 +44,6 @@ let def t =
   assert ((pos >= 0) && (pos <= length));
   prod, nt, rhs, pos, length
 
-let nt t =
-  let _, nt, _, _, _ = def t in
-  nt
-
 let startnt t =
   let _, _, rhs, pos, length = def t in
   assert (pos = 0 && length = 1);
@@ -60,7 +56,7 @@ let startnt t =
 (* Printing. *)
 
 let print item =
-  let _, nt, rhs, pos, length = def item in
+  let _, nt, rhs, pos, _ = def item in
   Printf.sprintf "%s -> %s" (Nonterminal.print false nt) (Symbol.printaod 0 pos rhs)
 
 (* Classifying items. *)
@@ -154,7 +150,7 @@ module Closure (L : Lookahead.S) = struct
 
   let () =
     Production.iter (fun prod ->
-      let nt, rhs = Production.def prod in
+      let _nt, rhs = Production.def prod in
       let length = Array.length rhs in
       mapping.(Production.p2i prod) <- Array.init (length+1) (fun pos ->
 
@@ -194,7 +190,7 @@ module Closure (L : Lookahead.S) = struct
 
   let () =
     Production.iter (fun prod ->
-      let nt, rhs = Production.def prod in
+      let _nt, rhs = Production.def prod in
       let length = Array.length rhs in
       Array.iteri (fun pos node ->
 

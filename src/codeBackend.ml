@@ -230,25 +230,6 @@ let statecon s =
 let estatecon s =
   EData (statecon s, [])
 
-let rec begins_with s1 s2 i1 i2 n1 n2 =
-  if i1 = n1 then
-    true
-  else if i2 = n2 then
-    false
-  else if String.unsafe_get s1 i1 = String.unsafe_get s2 i2 then
-    begins_with s1 s2 (i1 + 1) (i2 + 1) n1 n2
-  else
-    false
-
-let begins_with s1 s2 =
-  begins_with s1 s2 0 0 (String.length s1) (String.length s2)
-
-(* This predicate tells whether a data constructor represents a state.
-   It is based on the name, which is inelegant and inefficient. TEMPORARY *)
-
-let is_statecon : string -> bool =
-  begins_with (dataprefix "State")
-
 let pstatecon s =
   PData (statecon s, [])
 
@@ -322,9 +303,6 @@ let insertif condition x =
 
 let var x : expr =
   EVar x
-
-let vars xs =
-  List.map var xs
 
 let pvar x : pattern =
   PVar x
@@ -770,7 +748,7 @@ let reducecellparams prod i holds_state symbol =
      used in the semantic action, then it is dropped using a wildcard
      pattern. *)
 
-  let semvpat t =
+  let semvpat _t =
     if used.(i) then
       PVar ids.(i)
     else
@@ -1078,8 +1056,7 @@ let errorbookkeeping e =
     ))
 
 (* This code is used to indicate that a new error has been detected in
-   state [s]. [covered] is the set of tokens that [s] knows how to
-   handle.
+   state [s].
 
    If I am correct, the count of shifted tokens is never -1
    here. Indeed, that would mean that we first found an error, and
@@ -1097,7 +1074,7 @@ let errorbookkeeping e =
    resetting [env.shifted] to zero, to counter-act the effect of
    [discard], which increments that counter. *)
 
-let initiate covered s =
+let initiate s =
 
   blet (
     [ assertshifted ],
@@ -1112,9 +1089,7 @@ let initiate covered s =
    input stream. It does not set up exception handlers for dealing
    with errors. *)
 
-(* TEMPORARY I believe [action] could now be inlined into [run] *)
-
-let rec runactiondef s : valdef list =
+let runactiondef s : valdef list =
 
   match Invariant.has_default_reduction s with
   | Some (prod, toks) as defred ->
@@ -1180,7 +1155,7 @@ let rec runactiondef s : valdef list =
 	if TerminalSet.subset TerminalSet.universe covered then
 	  branches
 	else
-	  branches @ [ { branchpat = PWildcard; branchbody = initiate covered s } ]
+	  branches @ [ { branchpat = PWildcard; branchbody = initiate s } ]
       in
 
       (* Finally, construct the code for [run] and [action]. The

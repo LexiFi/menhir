@@ -264,7 +264,7 @@ let gcp s1 s2 =
 
 (* [gcps] returns the greatest common prefix of a nonempty list of strings. *)
 
-let rec gcps = function
+let gcps = function
   | [] ->
       assert false
   | s :: ss ->

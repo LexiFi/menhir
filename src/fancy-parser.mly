@@ -83,11 +83,12 @@ declaration:
 
 | TOKEN OCAMLTYPE? clist(terminal) error
 | TOKEN OCAMLTYPE? error
-    { Error.error (Positions.two $startpos $endpos) "\
-Syntax error in a %token declaration.
-Here are sample valid declarations:
-  %token DOT SEMICOLON
-  %token <string> LID UID"
+    { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
+      "Syntax error in a %token declaration.";
+      "Here are sample valid declarations:";
+      "  %token DOT SEMICOLON";
+      "  %token <string> LID UID";
+      ])
     }
 
 | START t = OCAMLTYPE? nts = clist(nonterminal) %prec decl
@@ -103,11 +104,12 @@ Here are sample valid declarations:
 
 | START OCAMLTYPE? clist(nonterminal) error
 | START OCAMLTYPE? error
-    { Error.error (Positions.two $startpos $endpos) "\
-Syntax error in a %start declaration.
-Here are sample valid declarations:
-  %start expression phrase
-  %start <int> date time"
+    { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
+      "Syntax error in a %start declaration.";
+      "Here are sample valid declarations:";
+      "  %start expression phrase";
+      "  %start <int> date time";
+      ])
     }
 
 | TYPE t = OCAMLTYPE ss = clist(actual_parameter) %prec decl
@@ -117,11 +119,12 @@ Here are sample valid declarations:
 | TYPE OCAMLTYPE clist(actual_parameter) error
 | TYPE OCAMLTYPE error
 | TYPE error
-    { Error.error (Positions.two $startpos $endpos) "\
-Syntax error in a %type declaration.
-Here are sample valid declarations:
-  %type <Syntax.expression> expression
-  %type <int> date time"
+    { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
+      "Syntax error in a %type declaration.";
+      "Here are sample valid declarations:";
+      "  %type <Syntax.expression> expression";
+      "  %type <int> date time";
+      ])
     }
 
 | k = priority_keyword ss = clist(symbol) %prec decl
@@ -130,22 +133,24 @@ Here are sample valid declarations:
 
 | priority_keyword clist(symbol) error
 | priority_keyword error
-    { Error.error (Positions.two $startpos $endpos) "\
-Syntax error in a precedence declaration.
-Here are sample valid declarations:
-  %left PLUS TIMES
-  %nonassoc unary_minus
-  %right CONCAT"
+    { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
+      "Syntax error in a precedence declaration.";
+      "Here are sample valid declarations:";
+      "  %left PLUS TIMES";
+      "  %nonassoc unary_minus";
+      "  %right CONCAT";
+      ])
     }
 
 | PARAMETER t = OCAMLTYPE
     { [ with_poss $startpos $endpos (DParameter t) ] }
 
 | PARAMETER error
-    { Error.error (Positions.two $startpos $endpos) "\
-Syntax error in a %parameter declaration.
-Here is a sample valid declaration:
-  %parameter <X : sig type t end>"
+    { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
+      "Syntax error in a %parameter declaration.";
+      "Here is a sample valid declaration:";
+      "  %parameter <X : sig type t end>";
+      ])
     }
 
 | error
