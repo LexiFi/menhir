@@ -125,7 +125,7 @@ let symval symbol x =
   match semvtype symbol with
   | [] ->
       []
-  | [ t ] ->
+  | [ _t ] ->
       [ x ]
   | _ ->
       assert false

@@ -287,7 +287,7 @@ let explain_reduce_item
 
       (* Otherwise, explore the transitions out of this item. *)
 
-      let prod, nt, rhs, pos, length = Item.def item in
+      let prod, _nt, rhs, pos, length = Item.def item in
 
       (* Shift transition, followed only if the symbol matches
 	 the symbol found in the input string. *)
@@ -363,7 +363,7 @@ let () =
 	| Item.Shift (Symbol.T tok, _)
 	  when Terminal.equal tok P.token ->
 	      shift + 1, reduce
-	| Item.Reduce prod
+	| Item.Reduce _
 	  when TerminalSet.mem P.token toks ->
 	    shift, reduce + 1
 	| _ ->
@@ -413,7 +413,7 @@ let () =
 	      let derivation = explain_shift_item P.source P.path item in
 	      Item.Map.add item derivation derivations
 
-	  | Item.Reduce prod
+	  | Item.Reduce _
 	    when TerminalSet.mem P.token toks ->
 
 	      still_looking_for_shift_item,

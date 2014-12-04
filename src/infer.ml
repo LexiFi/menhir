@@ -304,7 +304,7 @@ let depend grammar =
 	  ) dependencies in
 	  if List.length dependencies > 0 then begin
 	    Printf.printf "%s.ml %s.mli:" base base;
-	    List.iter (fun (basename, filename) ->
+	    List.iter (fun (_basename, filename) ->
 	      Printf.printf " %s" filename
 	    ) dependencies;
 	    Printf.printf "\n%!"

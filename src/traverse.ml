@@ -121,7 +121,7 @@ class virtual ['env] map = object (self)
     with NoChange ->
       e
   
-  method evar env x =
+  method evar _env _x =
     raise NoChange
   
   method efun env ps e =
@@ -187,16 +187,16 @@ class virtual ['env] map = object (self)
     else
       ETry (e', bs')
   
-  method eunit env =
+  method eunit _env =
     raise NoChange
   
-  method eintconst env k =
+  method eintconst _env _k =
     raise NoChange
   
-  method emaxint env =
+  method emaxint _env =
     raise NoChange
 
-  method estringconst env s =
+  method estringconst _env _s =
     raise NoChange
   
   method edata env d es =
@@ -270,7 +270,7 @@ class virtual ['env] map = object (self)
     else
       EArrayAccess (e', i)
   
-  method etextual env action =
+  method etextual _env _action =
     raise NoChange
   
   method ecomment env s e =
@@ -404,7 +404,7 @@ class virtual ['env, 'a] fold = object (self)
     | EArrayAccess (e, i) ->
 	self#earrayaccess env accu e i
 
-  method evar (env : 'env) (accu : 'a) x =
+  method evar (_env : 'env) (accu : 'a) _x =
     accu
   
   method efun (env : 'env) (accu : 'a) ps e =
@@ -446,19 +446,19 @@ class virtual ['env, 'a] fold = object (self)
     let accu = self#branches env accu bs in
     accu
   
-  method eunit (env : 'env) (accu : 'a) =
+  method eunit (_env : 'env) (accu : 'a) =
     accu
   
-  method eintconst (env : 'env) (accu : 'a) k =
+  method eintconst (_env : 'env) (accu : 'a) _k =
     accu
   
-  method emaxint (env : 'env) (accu : 'a) =
+  method emaxint (_env : 'env) (accu : 'a) =
     accu
 
-  method estringconst (env : 'env) (accu : 'a) s =
+  method estringconst (_env : 'env) (accu : 'a) _s =
     accu
   
-  method edata (env : 'env) (accu : 'a) d es =
+  method edata (env : 'env) (accu : 'a) _d es =
     let accu = self#exprs env accu es in
     accu
   
@@ -466,7 +466,7 @@ class virtual ['env, 'a] fold = object (self)
     let accu = self#exprs env accu es in
     accu
   
-  method eannot (env : 'env) (accu : 'a) e t =
+  method eannot (env : 'env) (accu : 'a) e _t =
     let accu = self#expr env accu e in
     accu
   
@@ -482,11 +482,11 @@ class virtual ['env, 'a] fold = object (self)
     let accu = self#fields env accu fs in
     accu
   
-  method erecordaccess (env : 'env) (accu : 'a) e f =
+  method erecordaccess (env : 'env) (accu : 'a) e _f =
     let accu = self#expr env accu e in
     accu
   
-  method erecordwrite (env : 'env) (accu : 'a) e f e1 =
+  method erecordwrite (env : 'env) (accu : 'a) e _f e1 =
     let accu = self#expr env accu e in
     let accu = self#expr env accu e1 in
     accu
@@ -495,18 +495,18 @@ class virtual ['env, 'a] fold = object (self)
     let accu = self#exprs env accu es in
     accu
   
-  method earrayaccess (env : 'env) (accu : 'a) e i =
+  method earrayaccess (env : 'env) (accu : 'a) e _i =
     let accu = self#expr env accu e in
     accu
   
-  method etextual (env : 'env) (accu : 'a) action =
+  method etextual (_env : 'env) (accu : 'a) _action =
     accu
   
-  method ecomment (env : 'env) (accu : 'a) s e =
+  method ecomment (env : 'env) (accu : 'a) _s e =
     let accu = self#expr env accu e in
     accu
   
-  method epatcomment (env : 'env) (accu : 'a) s p e =
+  method epatcomment (env : 'env) (accu : 'a) _s _p e =
     let accu = self#expr env accu e in
     accu
   
@@ -516,7 +516,7 @@ class virtual ['env, 'a] fold = object (self)
   method fields (env : 'env) (accu : 'a) fs =
     List.fold_left (self#field env) accu fs
   
-  method field (env : 'env) (accu : 'a) (f, e) =
+  method field (env : 'env) (accu : 'a) (_f, e) =
     let accu = self#expr env accu e in
     accu
   

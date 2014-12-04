@@ -97,7 +97,7 @@ let rename_pkeywords (psym, first_prod, last_prod) phi l =
 		      (* Similarly for $endpos. *)
 		    | Left, WhereEnd   -> last_prod, (used1, true)
 		      (* $i cannot be combined with inlining. *)
-		    | RightDollar i, w -> assert false
+		    | RightDollar _, _ -> assert false
 		    | RightNamed s, w  -> 
 			(* In the host rule, $startpos(x) is changed to 
 			   to $startpos(first_prod) (same thing for $endpos). *)
@@ -118,7 +118,7 @@ let rename_pkeywords (psym, first_prod, last_prod) phi l =
 		      (from_pos, to_pos) :: phi else phi), 
 		   (used1, used2))
 
-	    | x -> pk :: l, phi, (used1, used2))
+	    | _ -> pk :: l, phi, (used1, used2))
 
     ([], phi, (false, false)) l
 		
@@ -159,7 +159,7 @@ let keywords action =
 let pkeywords action = 
   action.pkeywords
 
-let rec print f action = 
+let print f action = 
   let module P = Printer.Make (struct let f = f 
 				      let locate_stretches = None 
 				      let raw_stretch_action = true

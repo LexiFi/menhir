@@ -65,7 +65,6 @@ let tokentypedef, tokenprefix =
 			let f = open_out (Settings.base ^ ".mli")
 			let raw_stretch_action = false
 			let locate_stretches = None 
-			let parenthesize_let_lhs = false
 		      end) 
       in
       P.interface {

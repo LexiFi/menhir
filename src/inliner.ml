@@ -9,7 +9,7 @@ open CodeBits
    checking against it in this way is quite cheap, and lets me sleep
    safely.) *)
 
-class locals table = object(self)
+class locals table = object
 
   method pvar (locals : StringSet.t) (id : string) =
     if Hashtbl.mem table id then StringSet.add id locals else locals
@@ -70,7 +70,7 @@ let inline ({ valdefs = defs } as p : program) =
     object
 	inherit [ StringSet.t, unit ] Traverse.fold
 	inherit locals table
-	method evar locals () id =
+	method! evar locals () id =
 	  visit locals id
     end
   in
@@ -203,7 +203,7 @@ let inline ({ valdefs = defs } as p : program) =
     object (self)
       inherit [ StringSet.t ] Traverse.map as super
       inherit locals table
-      method eapp locals e actuals =
+      method! eapp locals e actuals =
 	match e with
 	| EVar id when
 	    (Hashtbl.mem table id) &&       (* a global identifier *)
