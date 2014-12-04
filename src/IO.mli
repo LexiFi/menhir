@@ -1,9 +1,5 @@
 (* Input-output utilities. *)
 
-(* [exhaust channel] reads all of the data that's available on [channel]. *)
-
-val exhaust: in_channel -> string
-
 (* [invoke command] invokes an external command (which expects no input)
    and returns its output, if the command succeeds. It returns [None] if
    the command fails. *)

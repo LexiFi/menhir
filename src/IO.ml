@@ -1,7 +1,8 @@
 (* Input-output utilities. *)
 
 (* ------------------------------------------------------------------------- *)
-(* [exhaust channel] reads all of the data that's available on [channel]. *)
+(* [exhaust channel] reads all of the data that's available on [channel].
+   It does not assume that the length of the data is known ahead of time. *)
 
 let chunk_size =
   2048
