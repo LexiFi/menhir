@@ -51,12 +51,7 @@ type ('state, 'semantic_value, 'token) env = {
 
   (* The lexer. *)
 
-  lexer: Lexing.lexbuf -> 'token;
-
-  (* The lexing buffer. It is used as an argument to the lexer, and also
-     accessed directly when extracting positions. *)
-
-  lexbuf: Lexing.lexbuf;
+  read: unit -> 'token * Lexing.position * Lexing.position;
 
   (* The last token that was obtained from the lexer, together with its start
      and end positions. In principle, this should be a legit token, but the

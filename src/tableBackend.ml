@@ -52,11 +52,8 @@ let fstack =
 let fcurrent =
   field "current"
 
-let flexbuf =
-  field "lexbuf"
-
-let flex_start_p =
-  "Lexing.lex_start_p"
+let ftriple =
+  field "triple"
 
 let interpreter =
   "MenhirInterpreter"
@@ -157,7 +154,11 @@ let reducebody prod =
       if length > 0 then
 	EVar (Printf.sprintf "_startpos_%s_" ids.(0))
       else
-	ERecordAccess(ERecordAccess (EVar env, flexbuf), flex_start_p)
+        (* Use the start position of the current lookahead token,
+           which is stored in the second component of [env.triple]. *)
+        ELet ([PTuple [PWildcard; PVar "startpos"; PWildcard],
+               ERecordAccess (EVar env, ftriple)],
+              EVar "startpos")
     ) ::
     ( PVar endp,
       if length > 0 then

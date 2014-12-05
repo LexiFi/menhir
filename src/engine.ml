@@ -86,11 +86,8 @@ module Make (T : TABLE) = struct
      previous token. *)
 
   and discard env =
-    let lexbuf = env.lexbuf in
-    let token = env.lexer lexbuf in
-    let startp = lexbuf.Lexing.lex_start_p
-    and endp = lexbuf.Lexing.lex_curr_p in
-    let triple = (token, startp, endp) in
+    let triple = env.read() in
+    let (token, startp, endp) = triple in
     Log.lookahead_token (T.token2terminal token) startp endp;
     let env = { env with triple } in
     check_for_default_reduction env
@@ -310,7 +307,14 @@ module Make (T : TABLE) = struct
       (lexbuf : Lexing.lexbuf)
       : semantic_value =
 
-    (* Pre-apply the lexer to the lexbuf. *)
+    (* Wrap the lexer and lexbuf as a revised lexer. *)
+
+    let read () =
+      let token = lexer lexbuf in
+      let startp = lexbuf.Lexing.lex_start_p
+      and endp = lexbuf.Lexing.lex_curr_p in
+      (token, startp, endp)
+    in
 
     (* Build an empty stack. This is a dummy cell, which is its own
        successor. Its fields other than [next] contain dummy values. *)
@@ -325,20 +329,17 @@ module Make (T : TABLE) = struct
 
     (* Perform an initial call to the lexer. *)
 
-    let token = lexer lexbuf in
-    let startp = lexbuf.Lexing.lex_start_p
-    and endp = lexbuf.Lexing.lex_curr_p in
+    let triple = read() in
 
     (* Log our first lookahead token. *)
 
+    let (token, startp, endp) = triple in
     Log.lookahead_token (T.token2terminal token) startp endp;
 
     (* Build an initial environment. *)
 
-    let triple = (token, startp, endp) in
     let env = {
-      lexer;
-      lexbuf;
+      read;
       triple;
       stack = empty;
       current = s;
