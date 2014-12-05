@@ -13,9 +13,6 @@ module Make (T : TABLE) = struct
 
   include T
 
-  let _eRR : exn =
-    Error
-
   (* --------------------------------------------------------------------------- *)
 
   (* The type [void] is empty. Many of the functions below have return type
@@ -290,7 +287,7 @@ module Make (T : TABLE) = struct
 
       (* The stack is empty. Die. *)
 
-      raise _eRR
+      raise Error
 
     else begin
 
