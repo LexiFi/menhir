@@ -6,7 +6,7 @@
 . ./config.sh
 
 # The time command.
-if which -s gtime ; then
+if which gtime >/dev/null ; then
   TIME=gtime
 else
   TIME=time
