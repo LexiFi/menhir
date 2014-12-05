@@ -1,3 +1,10 @@
+* Update the source code for 4.02
+    change String to Bytes where appropriate
+    replace let/unless with match/exception in a few places
+
+* Update the demos to use ocamlbuild; remove Makefile.shared;
+  remove ocamldep.wrapper? remove OMakefiles
+
 * Changes that could be applied to the code back-end:
     [action] could now be inlined into [run]
     [initiate] and [bookkeeping] could be merged?
@@ -15,10 +22,6 @@
   to produce certain tokens that the parser does not use at all.
 
 * move to a new license (GPL V2?), as per Hongbo Zhang's request.
-
-* when a parse error occurs, decorate the exception with the automaton state
-  that was reached? this would allow some people to produce better error
-  messages (Pippijn van Steenhoven). Incompatible change?
 
 * _stage2/menhir.native --interpret fancy-parser.mly
   crashes with Stack_overflow when the input is just "grammar:\n"
@@ -116,34 +119,6 @@
 * Corriger le lexer pour supporter les types variantes polymorphes (tenir
   compte des crochets carrés et ignorer les crochets anguleux dedans)...
 
-* Supprimer le token error et tout ce qui s'y rapporte. Ajouter une option
-  --list-error-states pour sortir une liste de tous les états dans lesquelles
-  une erreur peut avoir lieu, avec la phrase permettant d'y arriver et éventuellement
-  les tokens de lookahead qui provoquent l'erreur. Ajouter ensuite une option
-  --with-error-messages qui à une phrase erronée (et éventuellement à un token
-  de lookahead) associe un message d'erreur. (Hmm, en fait, on veut plutôt un
-  suffixe de phrase erronée, pour plus de concision et de robustesse.) (Comment
-  garantir qu'on associe au plus un message d'erreur à une paire état-token?)
-  On pourra alors lancer une
-  exception décorée par un message d'erreur approprié. On modifiera --list-error-states
-  pour n'afficher que les erreurs auxquelles aucun message n'est associé. On signalera
-  aussi les cas où plusieurs messages seraient associés à une même erreur, et le cas
-  où une "phrase erronée" ne serait en fait pas erronée. Réfléchir
-  à une bonne technique de resynchronisation?
-
-* Moins ambitieux, annoter l'exception SyntaxError par l'état dans lequel elle a eu
-  lieu, et donner accès à la liste des tokens qui n'auraient pas provoqué d'erreur
-  dans cet état
-
-* Appliquer cette même technique aux conflits? Le programmeur liste une phrase
-  et un token de lookahead, et indique quelle action il veut dans ce cas...
-
-* Faire co-exister l'automate avant et après résolution des conflits;
-  tenter d'expliquer chaque conflit en termes du second, si impossible
-  alors en termes du premier; faire en sorte que les numéros d'états
-  soient les mêmes dans les deux automates; indiquer combien d'états
-  a chacun
-
 * éviter "Warning: 22 conflicts ..." car emacs prend "Warning" pour un
   nom de fichier; d'après Damien, il devrait suffire que la phrase après
   les deux points ne commence pas par un nombre.
@@ -205,9 +180,6 @@
 * BUG: l'élimination de %inline change la signification de $startpos
   et $endpos (qui devient relative à la nouvelle règle)
 
-* corriger OMakefile.shared, ou demander de l'aide aux auteurs de
-  omake
-
 * expliquer aussi les conflits end-of-stream
 
 * Documenter l'emploi d'ocamlbuild et décourager make/omake.
@@ -226,30 +198,9 @@
   (whatever) et obtenir un niveau au statut non-spécifié (d'où
   erreur si on tente de consulter ce statut).
 
-* Documenter action vide = unit. Non, ce n'est pas vrai! Ça ne
-  marche pas en présence de %inline. Corriger?
-
 * Prévoir une sortie --ocamlyacc qui affiche la grammaire sans
   les liaisons des valeurs sémantiques et sans les actions
   sémantiques?
-
-* Ajouter un mot-clé $lexbuf.
-
-* Permettre aux déclarations %left/right/nonassoc de venir
-  par groupes, en considérant deux groupes distincts comme
-  totalement indépendants? Cela permettrait de spécifier
-  que certaines relations de précédence ne sont *pas*
-  utiles. Il suffirait d'un %cut?
-
-* doc en HTML
-
-* Raccourcir les explications de conflits en éliminant la
-  partie commune aux deux (ou plus) arbres de dérivation
-  que l'on exhibe. Ensuite, faciliter la comparaison entre
-  les deux arbres exhibés en alignant les éléments de frange
-  commune au-delà du chemin de conflit. En fait, il suffirait
-  d'aligner les deux symboles qui sont/engendrent le symbole
-  de lookahead.
 
 * Faire le nécessaire pour empêcher les warnings d'ocaml 3.09
   sur les valeurs sémantiques nommées et non utilisées? Le
@@ -257,31 +208,12 @@
   fichier .ml engendré. Et ça résoudrait le problème du cas
   où on n'utilise que $startpos(v) et pas v.
 
-* Mettre à jour Error, élaguer Positions et l'utiliser partout.
-
-* Hunt TEMPORARies
-
-* Une fois ocamlweb mis à jour pour nous, intégrer une version
-  de fancy-parser en appendice de la doc.
-
-* Proprifier [Misc]
-
-* Compiler un ensemble de grammaires écrites pour ocalmyacc pour
-  mesurer l'augmentation de la taille du code. (Utiliser -noassert)
-
-* Attribuer à chaque erreur et avertissement un numéro unique
-  pour référence dans la doc. Vérifier que tous sont déclenchés
-  par au moins un fichier du jeu de tests.
-
 * Ajouter une construction pour dire que l'on sait qu'un certain
   token est non utilisé?
 
 * Il faudrait activer le warning qui recommande d'utiliser --infer
   dès que la librairie standard est utilisée (et pas seulement lorsque
   %inline est utilisé).
-
-* Il faudrait marquer une variable comme non utilisée si elle apparaît
-  seulement dans les primitives d'extraction de positions. Problématique.
 
 * Le mot-clef $syntaxerror ne fonctionne pas de façon satisfaisante:
   lorsque l'action sémantique est évaluée, on a déjà lu le lookahead
@@ -298,27 +230,6 @@
 * The code that checks well-formedness should emit as many
    error messages as possible and die only at the end.
 
-* Support calls to external functions that are allowed to consume
-   things in the current lexbuf. This could be done as follows:
-
-  + Autoriser des déclarations de pseudo-tokens, de la forme
-      %pseudotoken <ocaml type> MACHIN { ... ocaml code ... }
-    où le code ocaml doit être de type lexbuf -> <ocaml type>.
-
-  + Vérifier que ces tokens ne sont jamais utilisés pour le
-    lookahead (exactement les mêmes conditions que pour le
-    token #). Vérifier qu'ils ne participent jamais à un
-    conflit, même résolu silencieusement.
-
-  + Compiler comme pour le token # (i.e. éviter le lookahead).
-    Lorsqu'on arrive dans l'état qui doit shifter #, au lieu
-    d'effectuer un décalage en appelant le lexer, on appelle
-    le code ocaml. À part ça rien ne change...?
-
-* Implement an external tool that automatically computes FIRST
-   and/or FOLLOW sets and instruments an existing grammar with new
-   error productions (Christian's idea).
-
 * Autoriser %functorparam et %functionparam (cf. requête de Skaller)
   car ces derniers sont parfois plus flexibles. Ou bien garder seulement
   %parameter et déclarer le foncteur Make comme récursif, pour pouvoir
@@ -327,6 +238,4 @@
 * Les actions semantiques ont-elles officiellement le droit de s'appeler
   (ou d'appeler le foncteur Make) recursivement? Si oui, est-ce que ca
   fonctionne avec --infer?
-
-* Autoriser le pun foo = foo dans le langage de grammaires?
 
