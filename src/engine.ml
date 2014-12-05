@@ -154,6 +154,8 @@ module Make (T : TABLE) = struct
      (Goto transitions are taken care of within [reduce] below.) The symbol
      can be either an actual token or the [error] pseudo-token. *)
 
+  (* Here, [env.token] CAN be [error_token]. *)
+
   and shift env
       (please_discard : bool)
       (terminal : terminal)
@@ -186,6 +188,8 @@ module Make (T : TABLE) = struct
   (* --------------------------------------------------------------------------- *)
 
   (* This function takes care of reductions. *)
+
+  (* Here, [env.token] CAN be [error_token]. *)
 
   and reduce env (prod : production) : void =
 
@@ -235,10 +239,11 @@ module Make (T : TABLE) = struct
 
   (* The following functions deal with errors. *)
 
-  (* [initiate] initiates error handling. *)
+  (* [initiate] initiates or resumes error handling. *)
+
+  (* Here, [env.token] CAN be [error_token]. *)
 
   and initiate env : void =
-    assert (env.token != error_token);
     Log.initiating_error_handling();
     let env = { env with token = error_token } in
     error env
