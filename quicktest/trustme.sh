@@ -11,7 +11,7 @@
 # Build the parser with the code back-end and run it.
 echo "Building (code)..."
 make -C $CALC clean >/dev/null
-make -C $CALC MENHIR="../$MENHIR --trace" >/dev/null
+make -C $CALC MENHIR="$MENHIR --trace" >/dev/null
 for f in $DATA/*.real.in ; do
   b=${f%.in}
   echo "($b) Reconstructing reference output and trace..."
