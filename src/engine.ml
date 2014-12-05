@@ -69,7 +69,8 @@ module Make (T : TABLE) = struct
 
     (* Log the fact that we just entered this state. *)
     
-    Log.state env.current;
+    if log then
+      Log.state env.current;
 
     (* If [please_discard] is set, discard a token and fetch the next one.
        This is done by jumping to [discard], which itself will jump to
@@ -87,8 +88,10 @@ module Make (T : TABLE) = struct
 
   and discard env =
     let triple = env.read() in
-    let (token, startp, endp) = triple in
-    Log.lookahead_token (T.token2terminal token) startp endp;
+    if log then begin
+      let (token, startp, endp) = triple in
+      Log.lookahead_token (T.token2terminal token) startp endp
+    end;
     let env = { env with triple } in
     check_for_default_reduction env
 
@@ -118,7 +121,8 @@ module Make (T : TABLE) = struct
 
     let (token, _, _) = env.triple in
     if token == error_token then begin
-      Log.resuming_error_handling();
+      if log then
+        Log.resuming_error_handling();
       error env
     end
     else
@@ -153,7 +157,8 @@ module Make (T : TABLE) = struct
 
     (* Log the transition. *)
 
-    Log.shift terminal s';
+    if log then
+      Log.shift terminal s';
 
     (* Push a new cell onto the stack, containing the identity of the
        state that we are leaving. *)
@@ -183,7 +188,8 @@ module Make (T : TABLE) = struct
 
     (* Log a reduction event. *)
 
-    Log.reduce_or_accept prod;
+    if log then
+      Log.reduce_or_accept prod;
 
     (* Invoke the semantic action. The semantic action is responsible for
        truncating the stack and pushing a new cell onto the stack, which

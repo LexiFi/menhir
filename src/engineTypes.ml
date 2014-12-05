@@ -230,6 +230,13 @@ module type TABLE = sig
   (* The comments below indicate the conventional messages that correspond
      to these hooks in the code-based back-end; see [CodeBackend]. *)
 
+  (* If the flag [log] is false, then the logging functions are guaranteed
+     to do nothing, so it is not necessary to call them. If [log] is true,
+     the logging functions may or may not have an effect. This flag is
+     logically superfluous, but saves time in the table-based back-end. *)
+
+  val log : bool
+
   module Log : sig
 
     (* State %d: *)

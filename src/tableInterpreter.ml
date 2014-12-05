@@ -102,6 +102,11 @@ module Make (T : TableFormat.TABLES)
   let semantic_action prod =
     T.semantic_action.(prod)
   
+  (* If [T.trace] is [None], then the logging functions do nothing. *)
+
+  let log =
+    match T.trace with Some _ -> true | None -> false
+
   module Log = struct
     
     open Printf
