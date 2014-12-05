@@ -17,8 +17,7 @@ fi
 
 # Build the parser with the code back-end.
 echo "Building (code)..."
-make -C $GENE clean >/dev/null
-make -C $GENE MENHIR="$MENHIR" >/dev/null
+make -C $GENE MENHIR="$MENHIR" clean all >/dev/null
 
 # Dry run (measures the random generation time).
 echo Dry run:
@@ -32,8 +31,7 @@ cat $GENE/code.time
 
 # Build the parser with the table back-end.
 echo "Building (table)..."
-make -C $GENE clean >/dev/null
-make -C $GENE MENHIR="$MENHIR --table" >/dev/null
+make -C $GENE MENHIR="$MENHIR --table" clean all >/dev/null
 
 # Run the table back-end.
 echo Table back-end:
