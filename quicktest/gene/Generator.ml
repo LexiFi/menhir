@@ -1,37 +1,7 @@
-(* A generator of well-formed arithmetic expressions, for use as test input
-   for the parser. *)
+(* A random generator of well-formed arithmetic expressions, for use as test
+   input for the parser. *)
 
-(* -------------------------------------------------------------------------- *)
-
-(* A tiny library of finite or infinite streams. *)
-
-type 'a stream =
-  unit -> 'a answer
-
-and 'a answer =
-  | Done
-  | More of 'a * 'a stream
-
-let empty () =
-  Done
-
-let cons x ys () =
-  More (x, ys)
-
-let singleton x =
-  cons x empty
-
-let rec (++) xs ys () =
-  match xs() with
-  | More (x, xs) ->
-      More (x, xs ++ ys)
-  | Done ->
-      ys()
-
-(* -------------------------------------------------------------------------- *)
-
-(* A random generator of well-formed arithmetic expressions. *)
-
+open Stream
 open Parser
 
 (* [split n] produces two numbers [n1] and [n2] comprised between [0] and [n]
@@ -47,11 +17,17 @@ let split n =
    and is concatenated with the stream [k] -- this allows an efficient
    formulation that does not use the stream concatenation operator. *)
 
+(* We do not produce divisions because they are of no grammatical
+   interest (we already have multiplication) and they can cause
+   early termination of the parser due to a division by zero (the
+   parser performs evaluation on the fly!). *)
+
 let rec produce n (k : token stream) : token stream =
   if n = 0 then
-    cons (INT 0) k
+    let i = Random.int 10 in
+    cons (INT i) k
   else
-    match Random.int 6 with
+    match Random.int 5 with
     | 0 ->
         (* Parentheses. *)
         cons LPAREN (produce (n - 1) (cons RPAREN k))
@@ -68,12 +44,13 @@ let rec produce n (k : token stream) : token stream =
         let n1, n2 = split (n - 1) in
         produce n1 (cons TIMES (produce n2 k))
     | 4 ->
-        (* Div. *)
-        let n1, n2 = split (n - 1) in
-        produce n1 (cons DIV (produce n2 k))
-    | 5 ->
         (* Unary minus. *)
         cons MINUS (produce (n - 1) k)
     | _ ->
         assert false
+
+(* We finish with an EOL. *)
+
+let produce n : token stream =
+  produce n (singleton EOL)
 
