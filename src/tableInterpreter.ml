@@ -127,7 +127,7 @@ module Make (T : TableFormat.TABLES)
       | None ->
 	  ()
     
-    let lookahead_token startp token endp =
+    let lookahead_token token startp endp =
       match T.trace with
       | Some (terminals, _) ->
           fprintf stderr "Lookahead token is now %s (%d-%d)\n%!"
