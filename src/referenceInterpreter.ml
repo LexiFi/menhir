@@ -168,6 +168,8 @@ module T = struct
             next = !stack
           }
 
+  let log = true
+
   module Log = struct
 
     open Printf
