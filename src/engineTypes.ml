@@ -58,12 +58,12 @@ type ('state, 'semantic_value, 'token) env = {
 
   lexbuf: Lexing.lexbuf;
 
-  (* The last token that was obtained from the lexer. In principle, this
-     should be a legit token, but the engine disguises the [error]
-     pseudo-token as an illegal inhabitant of this type. Do not read this
-     field unless you know what are doing! *)
+  (* The last token that was obtained from the lexer, together with its start
+     and end positions. In principle, this should be a legit token, but the
+     engine disguises the [error] pseudo-token as an illegal inhabitant of the
+     type [token]. Do not read this field unless you know what are doing! *)
 
-  token: 'token;
+  triple: Lexing.position * 'token * Lexing.position;
 
   (* The stack. In [CodeBackend], it is passed around on its own,
      whereas, here, it is accessed via the environment. *)
@@ -255,7 +255,7 @@ module type TABLE = sig
 
     (* Lookahead token is now <terminal> (<pos>-<pos>) *)
 
-    val lookahead_token: Lexing.lexbuf -> terminal -> unit
+    val lookahead_token: Lexing.position -> terminal -> Lexing.position -> unit
 
     (* Initiating error handling *)
 

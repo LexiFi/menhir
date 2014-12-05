@@ -85,14 +85,17 @@ module Make (T : TABLE) = struct
       check_for_default_reduction env
 
   (* [discard] takes a token off the input stream, queries the lexer
-     for a new one, and stores it into [env.token], overwriting the
+     for a new one, and stores it into [env.triple], overwriting the
      previous token. *)
 
   and discard env =
     let lexbuf = env.lexbuf in
     let token = env.lexer lexbuf in
-    let env = { env with token } in
-    Log.lookahead_token lexbuf (T.token2terminal token);
+    let startp = lexbuf.Lexing.lex_start_p
+    and endp = lexbuf.Lexing.lex_curr_p in
+    let triple = (startp, token, endp) in
+    Log.lookahead_token startp (T.token2terminal token) endp;
+    let env = { env with triple } in
     check_for_default_reduction env
 
   and check_for_default_reduction env =
@@ -113,40 +116,31 @@ module Make (T : TABLE) = struct
        so as to determine which action should be taken. *)
 
     (* Peeking at the first input token, without taking it off the input
-       stream, is done by reading [env.token]. We are careful to first
+       stream, is done by reading [env.triple]. We are careful to first
        check whether this is the [error] token. *)
 
     (* Note that, if [please_discard] was true, then we have just called
        [discard], so the lookahead token cannot be [error]. *)
 
-    if env.token == error_token then begin
+    let (_, token, _) = env.triple in
+    if token == error_token then begin
       Log.resuming_error_handling();
       error env
     end
     else
-      action env
 
-  (* --------------------------------------------------------------------------- *)
+      (* We consult the two-dimensional action table, indexed by the
+         current state and the current lookahead token, in order to
+         determine which action should be taken. *)
 
-  (* When [action] is invoked, we know that the current state does not have
-     a default reduction. We also know that the current lookahead token is
-     not [error]: it is a real token, stored in [env.token]. *)
-
-  and action env : void =
-
-    (* We consult the two-dimensional action table, indexed by the
-       current state and the current lookahead token, in order to
-       determine which action should be taken. *)
-
-    let token = env.token in
-    T.action
-      env.current                    (* determines a row *)
-      (T.token2terminal token)       (* determines a column *)
-      (T.token2value token)
-      shift                          (* shift continuation *)
-      reduce                         (* reduce continuation *)
-      initiate                       (* failure continuation *)
-      env
+      T.action
+        env.current                    (* determines a row *)
+        (T.token2terminal token)       (* determines a column *)
+        (T.token2value token)
+        shift                          (* shift continuation *)
+        reduce                         (* reduce continuation *)
+        initiate                       (* failure continuation *)
+        env
 
   (* --------------------------------------------------------------------------- *)
 
@@ -154,7 +148,7 @@ module Make (T : TABLE) = struct
      (Goto transitions are taken care of within [reduce] below.) The symbol
      can be either an actual token or the [error] pseudo-token. *)
 
-  (* Here, [env.token] CAN be [error_token]. *)
+  (* Here, the lookahead token CAN be [error]. *)
 
   and shift env
       (please_discard : bool)
@@ -170,12 +164,12 @@ module Make (T : TABLE) = struct
     (* Push a new cell onto the stack, containing the identity of the
        state that we are leaving. *)
 
-    let lexbuf = env.lexbuf in
+    let (startp, _, endp) = env.triple in
     let stack = {
       state = env.current;
       semv = value;
-      startp = lexbuf.Lexing.lex_start_p;
-      endp = lexbuf.Lexing.lex_curr_p;
+      startp;
+      endp;
       next = env.stack;
     } in
 
@@ -189,7 +183,7 @@ module Make (T : TABLE) = struct
 
   (* This function takes care of reductions. *)
 
-  (* Here, [env.token] CAN be [error_token]. *)
+  (* Here, the lookahead token CAN be [error]. *)
 
   and reduce env (prod : production) : void =
 
@@ -241,17 +235,19 @@ module Make (T : TABLE) = struct
 
   (* [initiate] initiates or resumes error handling. *)
 
-  (* Here, [env.token] CAN be [error_token]. *)
+  (* Here, the lookahead token CAN be [error]. *)
 
   and initiate env : void =
     Log.initiating_error_handling();
-    let env = { env with token = error_token } in
+    let (startp, _, endp) = env.triple in
+    let triple = (startp, error_token, endp) in
+    let env = { env with triple } in
     error env
 
   (* [error] handles errors. *)
 
   and error env : void =
-    assert (env.token == error_token);
+    assert (let (_, token, _) = env.triple in token == error_token);
 
     (* Consult the column associated with the [error] pseudo-token in the
        action table. *)
@@ -323,27 +319,28 @@ module Make (T : TABLE) = struct
     let rec empty = {
       state = s;                          (* dummy *)
       semv = T.error_value;               (* dummy *)
-      startp = lexbuf.Lexing.lex_start_p; (* dummy *)
-      endp = lexbuf.Lexing.lex_curr_p;    (* dummy *)
+      startp = Lexing.dummy_pos;          (* dummy *)
+      endp = Lexing.dummy_pos;            (* dummy *)
       next = empty;
     } in
 
     (* Perform an initial call to the lexer. *)
 
-    let token : token =
-      lexer lexbuf
-    in
+    let token = lexer lexbuf in
+    let startp = lexbuf.Lexing.lex_start_p
+    and endp = lexbuf.Lexing.lex_curr_p in
 
     (* Log our first lookahead token. *)
 
-    Log.lookahead_token lexbuf (T.token2terminal token);
+    Log.lookahead_token startp (T.token2terminal token) endp;
 
     (* Build an initial environment. *)
 
+    let triple = (startp, token, endp) in
     let env = {
-      lexer = lexer;
-      lexbuf = lexbuf;
-      token = token;
+      lexer;
+      lexbuf;
+      triple;
       stack = empty;
       current = s;
     } in
