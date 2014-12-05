@@ -41,12 +41,13 @@ let rec map f xs () =
   | More (x, xs) ->
       More (f x, map f xs)
 
-(* An infinite, imperative stream. *)
+(* A finite or infinite imperative stream. By convention, end-of-stream is
+   signaled via an exception. *)
 
-type 'a infinite_imperative_stream =
+type 'a imperative_stream =
   unit -> 'a
 
-let fresh (xs : 'a stream) : 'a infinite_imperative_stream =
+let fresh (xs : 'a stream) : 'a imperative_stream =
   let r = ref xs in
   fun () ->
     match !r() with
@@ -55,4 +56,19 @@ let fresh (xs : 'a stream) : 'a infinite_imperative_stream =
     | More (x, xs) ->
         r := xs;
         x
+
+(* Beware that [find] will diverge if the stream is infinite. *)
+
+let find (p : 'a -> bool) (xs : 'a imperative_stream) : 'a option =
+  try
+    let rec loop() =
+      let x = xs() in
+      if p x then
+        Some x
+      else
+        loop()
+    in
+    loop()
+  with End_of_file ->
+    None
 
