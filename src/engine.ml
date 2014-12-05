@@ -26,22 +26,20 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* OK, OK. I said I would stop using [Obj.magic], yet here we go again.
-     I need to extend the type [T.token] with an extra element, which
-     represents the [error] pseudo-token. I don't want to pay an extra
-     box in memory or an extra field in the [env] record. I don't want
-     to add a branch to the type [T.token] because that would bother the
-     user (that would be an incompatible change) and that would make some
-     exhaustive case analyses appear non-exhaustive. So, here we go. We
-     allocate a dummy box in memory and use its address as a unique value
-     which cannot possibly be confused with a legit inhabitant of the type
-     [token]. (Right?) *)
+  (* OK, OK. I said I would stop using [Obj.magic], yet here we go again.  I
+     need to extend the type [T.token] with an extra element, which represents
+     the [error] pseudo-token. I don't want to pay an extra box in memory or
+     an extra field in the [env] record. (I have measured the cost of moving
+     from 5 to 6 fields in this record to be 30%. This is more than I
+     expected!) I don't want to add a branch to the type [T.token] because
+     that would bother the user (that would be an incompatible change) and
+     that would make some exhaustive case analyses appear non-exhaustive. So,
+     here we go. We allocate a dummy box in memory and use its address as a
+     unique value which cannot possibly be confused with a legit inhabitant of
+     the type [token]. (Right?) *)
 
   let error_token : token =
     Obj.magic (ref 0xDEADBEEF)
-
-  (* We adopt the convention that we have an [error] token on the input
-     stream if and only if [env.token] is [deadbeef]. *)
 
   (* --------------------------------------------------------------------------- *)
 
