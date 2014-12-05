@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script rebuilds Menhir and MenhirLib from scratch, so as to make sure
 # that we are testing the current development version.

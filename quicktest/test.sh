@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script checks that the code back-end, the table back-end, and the
 # reference interpreter appear to be working correctly. It uses the calc
@@ -11,33 +11,33 @@
 
 # Build the parser with the code back-end and run it.
 echo "Building and running (code)..."
-make clean >/dev/null
-make MENHIR="$MENHIR --trace" >/dev/null
-for f in *.real.in ; do
+make -C $CALC clean >/dev/null
+make -C $CALC MENHIR="../$MENHIR --trace" >/dev/null
+for f in $DATA/*.real.in ; do
   b=${f%.in}
-  ./calc < $f > $b.code.out 2> $b.code.err
+  $CALC/calc < $f > $b.code.out 2> $b.code.err
 done
 
 # Build the parser with the table back-end and run it.
 echo "Building and running (table)..."
-make clean >/dev/null
-make MENHIR="$MENHIR --trace --table" >/dev/null
-for f in *.real.in ; do
+make -C $CALC clean >/dev/null
+make -C $CALC MENHIR="../$MENHIR --trace --table" >/dev/null
+for f in $DATA/*.real.in ; do
   b=${f%.in}
-  ./calc < $f > $b.table.out 2> $b.table.err
+  $CALC/calc < $f > $b.table.out 2> $b.table.err
 done
 
 # Run the reference interpreter.
 echo "Running the reference interpreter..."
-for f in *.ideal.in ; do
+for f in $DATA/*.ideal.in ; do
   b=${f%.in}
-  $MENHIR --trace --interpret parser.mly < $f > $b.interpret.out 2> $b.interpret.err
+  $MENHIR --trace --interpret $CALC/parser.mly < $f > $b.interpret.out 2> $b.interpret.err
 done
 
 echo "Comparing results..."
 
 # Compare the results to the reference.
-for f in *.real.in ; do
+for f in $DATA/*.real.in ; do
   b=${f%.in}
   for mode in code table ; do
     echo "($b) Checking output of $mode parser..."
@@ -57,7 +57,7 @@ for f in *.real.in ; do
 done
 
 # Check the results of the reference interpreter.
-for f in *.ideal.in ; do
+for f in $DATA/*.ideal.in ; do
   b=${f%.in}
   echo "($b) Checking output of reference interpreter..."
   if ! diff -q $b.ref.out $b.interpret.out >/dev/null ; then
