@@ -44,7 +44,8 @@ type ('state, 'semantic_value) stack = {
 
 (* --------------------------------------------------------------------------- *)
 
-(* A parsing environment contains basically all of the automaton's state. *)
+(* A parsing environment contains almost all of the automaton's state.
+   (It contains everything except the current program point.) *)
 
 type ('state, 'semantic_value, 'token) env = {
 
@@ -57,22 +58,22 @@ type ('state, 'semantic_value, 'token) env = {
 
   lexbuf: Lexing.lexbuf;
 
-  (* The last token that was obtained from the lexer. In principe, this should
-     be a legit token, but the engine disguises the [error] pseudo-token as an
-     illegal inhabitant of this type. Do not use this field unless you know
-     what are doing! *)
+  (* The last token that was obtained from the lexer. In principle, this
+     should be a legit token, but the engine disguises the [error]
+     pseudo-token as an illegal inhabitant of this type. Do not read this
+     field unless you know what are doing! *)
 
-  mutable token: 'token;
+  token: 'token;
 
   (* The stack. In [CodeBackend], it is passed around on its own,
      whereas, here, it is accessed via the environment. *)
 
-  mutable stack: ('state, 'semantic_value) stack;
+  stack: ('state, 'semantic_value) stack;
 
   (* The current state. In [CodeBackend], it is passed around on its
      own, whereas, here, it is accessed via the environment. *)
 
-  mutable current: 'state;
+  current: 'state;
 
 }
 

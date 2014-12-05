@@ -93,7 +93,7 @@ module Make (T : TABLE) = struct
   and discard env =
     let lexbuf = env.lexbuf in
     let token = env.lexer lexbuf in
-    env.token <- token;
+    let env = { env with token } in
     Log.lookahead_token lexbuf (T.token2terminal token);
     check_for_default_reduction env
 
@@ -171,17 +171,18 @@ module Make (T : TABLE) = struct
        state that we are leaving. *)
 
     let lexbuf = env.lexbuf in
-    env.stack <- {
+    let stack = {
       state = env.current;
       semv = value;
       startp = lexbuf.Lexing.lex_start_p;
       endp = lexbuf.Lexing.lex_curr_p;
       next = env.stack;
-    };
+    } in
 
     (* Switch to state [s']. *)
 
-    env.current <- s';
+    let current = s' in
+    let env = { env with stack; current } in
     run env please_discard
 
   (* --------------------------------------------------------------------------- *)
@@ -195,12 +196,11 @@ module Make (T : TABLE) = struct
     Log.reduce_or_accept prod;
 
     (* Invoke the semantic action. The semantic action is responsible for
-       truncating the stack, updating the current state, producing a cell that
-       contains a new semantic value, and raising [Accept] or [Error] if
-       appropriate. *)
+       truncating the stack and pushing a new cell onto the stack, which
+       contains a new semantic value. It can raise [Accept] or [Error]. *)
 
     (* If the semantic action terminates normally, it returns a new stack,
-       which we write into [env.stack]. *)
+       which becomes the current stack. *)
 
     (* If the semantic action raises [Error], we catch it immediately and
        initiate error handling. *)
@@ -208,28 +208,29 @@ module Make (T : TABLE) = struct
     (* The apparently weird idiom used here is an encoding for a
        [let/unless] construct, which does not exist in ocaml. *)
 
-    if (
+    let success =
       try
-	env.stack <- T.semantic_action prod env;
-	true
+	Some (T.semantic_action prod env)
       with Error ->
-	false
-    ) then begin
+	None
+    in
+    match success with
+    | Some stack ->
 
-      (* By our convention, the semantic action is responsible for updating
-	 the stack. The state now found in the top stack cell is the return
-	 state. *)
+        (* By our convention, the semantic action has produced an updated
+           stack. The state now found in the top stack cell is the return
+           state. *)
 
-      (* Perform a goto transition. The target state is determined
-	 by consulting the goto table at the return state and at
-	 production [prod]. *)
+        (* Perform a goto transition. The target state is determined
+           by consulting the goto table at the return state and at
+           production [prod]. *)
 
-      env.current <- T.goto env.stack.state prod;
-      run env false
+        let current = T.goto stack.state prod in
+        let env = { env with stack; current } in
+        run env false
 
-    end
-    else
-      initiate env
+    | None ->
+        initiate env
 
 
   (* --------------------------------------------------------------------------- *)
@@ -241,7 +242,7 @@ module Make (T : TABLE) = struct
   and initiate env : void =
     assert (env.token != error_token);
     Log.initiating_error_handling();
-    env.token <- error_token;
+    let env = { env with token = error_token } in
     error env
 
   (* [error] handles errors. *)
@@ -297,8 +298,10 @@ module Make (T : TABLE) = struct
       (* The stack is nonempty. Pop a cell, updating the current state
 	 with that found in the popped cell, and try again. *)
 
-      env.stack <- next;
-      env.current <- cell.state;
+      let env = { env with
+        stack = next;
+        current = cell.state
+      } in
       error env
 
     end
