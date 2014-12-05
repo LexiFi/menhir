@@ -63,7 +63,7 @@ type ('state, 'semantic_value, 'token) env = {
      engine disguises the [error] pseudo-token as an illegal inhabitant of the
      type [token]. Do not read this field unless you know what are doing! *)
 
-  triple: Lexing.position * 'token * Lexing.position;
+  triple: 'token * Lexing.position * Lexing.position;
 
   (* The stack. In [CodeBackend], it is passed around on its own,
      whereas, here, it is accessed via the environment. *)
@@ -255,7 +255,7 @@ module type TABLE = sig
 
     (* Lookahead token is now <terminal> (<pos>-<pos>) *)
 
-    val lookahead_token: Lexing.position -> terminal -> Lexing.position -> unit
+    val lookahead_token: terminal -> Lexing.position -> Lexing.position -> unit
 
     (* Initiating error handling *)
 

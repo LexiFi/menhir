@@ -202,7 +202,7 @@ module T = struct
 	    fprintf stderr "Reducing production %s" (Production.print prod)
       )
 
-    let lookahead_token startp tok endp =
+    let lookahead_token tok startp endp =
       maybe (fun () ->
 	fprintf stderr "Lookahead token is now %s (%d-%d)"
 	  (Terminal.print tok)

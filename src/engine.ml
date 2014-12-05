@@ -90,8 +90,8 @@ module Make (T : TABLE) = struct
     let token = env.lexer lexbuf in
     let startp = lexbuf.Lexing.lex_start_p
     and endp = lexbuf.Lexing.lex_curr_p in
-    let triple = (startp, token, endp) in
-    Log.lookahead_token startp (T.token2terminal token) endp;
+    let triple = (token, startp, endp) in
+    Log.lookahead_token (T.token2terminal token) startp endp;
     let env = { env with triple } in
     check_for_default_reduction env
 
@@ -119,7 +119,7 @@ module Make (T : TABLE) = struct
     (* Note that, if [please_discard] was true, then we have just called
        [discard], so the lookahead token cannot be [error]. *)
 
-    let (_, token, _) = env.triple in
+    let (token, _, _) = env.triple in
     if token == error_token then begin
       Log.resuming_error_handling();
       error env
@@ -161,7 +161,7 @@ module Make (T : TABLE) = struct
     (* Push a new cell onto the stack, containing the identity of the
        state that we are leaving. *)
 
-    let (startp, _, endp) = env.triple in
+    let (_, startp, endp) = env.triple in
     let stack = {
       state = env.current;
       semv = value;
@@ -236,15 +236,15 @@ module Make (T : TABLE) = struct
 
   and initiate env : void =
     Log.initiating_error_handling();
-    let (startp, _, endp) = env.triple in
-    let triple = (startp, error_token, endp) in
+    let (_, startp, endp) = env.triple in
+    let triple = (error_token, startp, endp) in
     let env = { env with triple } in
     error env
 
   (* [error] handles errors. *)
 
   and error env : void =
-    assert (let (_, token, _) = env.triple in token == error_token);
+    assert (let (token, _, _) = env.triple in token == error_token);
 
     (* Consult the column associated with the [error] pseudo-token in the
        action table. *)
@@ -310,6 +310,8 @@ module Make (T : TABLE) = struct
       (lexbuf : Lexing.lexbuf)
       : semantic_value =
 
+    (* Pre-apply the lexer to the lexbuf. *)
+
     (* Build an empty stack. This is a dummy cell, which is its own
        successor. Its fields other than [next] contain dummy values. *)
 
@@ -329,11 +331,11 @@ module Make (T : TABLE) = struct
 
     (* Log our first lookahead token. *)
 
-    Log.lookahead_token startp (T.token2terminal token) endp;
+    Log.lookahead_token (T.token2terminal token) startp endp;
 
     (* Build an initial environment. *)
 
-    let triple = (startp, token, endp) in
+    let triple = (token, startp, endp) in
     let env = {
       lexer;
       lexbuf;
