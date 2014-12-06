@@ -13,13 +13,20 @@ module Make (T : TABLE) = struct
 
   include T
 
+  type dummy =
+      (state, semantic_value, token) env
+  type env =
+      dummy
+
   (* --------------------------------------------------------------------------- *)
 
-  (* The type [void] is empty. Many of the functions below have return type
-     [void]. This guarantees that they never return a value. Instead, they
-     must stop by raising an exception: either [Accept] or [Error]. *)
+  (* A continuation is returned to the user when the parser pauses itself. In
+     normal mode, this happens when the parser wishes to request another token.
+     In error-handling mode, this happens when ... TEMPORARY *)
 
-  type void
+  type result =
+    | InputNeeded of env
+    | Rejected
 
   (* --------------------------------------------------------------------------- *)
 
@@ -65,29 +72,28 @@ module Make (T : TABLE) = struct
      [please_discard]. This flag is set when [s] is being entered by shifting
      a terminal symbol and [s] does not have a default reduction on [#]. *)
 
-  let rec run env please_discard : void =
+  let rec run env please_discard : result =
 
     (* Log the fact that we just entered this state. *)
     
     if log then
       Log.state env.current;
 
-    (* If [please_discard] is set, discard a token and fetch the next one.
-       This is done by jumping to [discard], which itself will jump to
-       [check_for_default_reduction]. If [please_discard] is not set, we skip
-       [discard] and jump directly to [check_for_default_reduction]. *)
+    (* If [please_discard] is set, we discard the current lookahead token and
+       fetch the next one. In order to request a token from the user, we
+       return an [InputNeeded] continuation, which, when invoked by the user,
+       will take us to [discard]. If [please_discard] is not set, we skip this
+       step and jump directly to [check_for_default_reduction]. *)
 
     if please_discard then
-      discard env
+      InputNeeded env
     else
       check_for_default_reduction env
 
-  (* [discard] takes a token off the input stream, queries the lexer
-     for a new one, and stores it into [env.triple], overwriting the
-     previous token. *)
+  (* [discard env triple] stores [triple] into [env.triple], overwriting
+     the previous token. *)
 
-  and discard env =
-    let triple = env.read() in
+  and discard env triple =
     if log then begin
       let (token, startp, endp) = triple in
       Log.lookahead_token (T.token2terminal token) startp endp
@@ -107,7 +113,7 @@ module Make (T : TABLE) = struct
       check_for_error_token (* there is none; continue below *)
       env
 
-  and check_for_error_token env : void =
+  and check_for_error_token env =
 
     (* There is no default reduction. Consult the current lookahead token
        so as to determine which action should be taken. *)
@@ -152,8 +158,7 @@ module Make (T : TABLE) = struct
       (please_discard : bool)
       (terminal : terminal)
       (value : semantic_value)
-      (s' : state)
-      : void =
+      (s' : state) =
 
     (* Log the transition. *)
 
@@ -184,7 +189,7 @@ module Make (T : TABLE) = struct
 
   (* Here, the lookahead token CAN be [error]. *)
 
-  and reduce env (prod : production) : void =
+  and reduce env (prod : production) =
 
     (* Log a reduction event. *)
 
@@ -228,7 +233,6 @@ module Make (T : TABLE) = struct
     | None ->
         initiate env
 
-
   (* --------------------------------------------------------------------------- *)
 
   (* The following functions deal with errors. *)
@@ -237,7 +241,7 @@ module Make (T : TABLE) = struct
 
   (* Here, the lookahead token CAN be [error]. *)
 
-  and initiate env : void =
+  and initiate env =
     Log.initiating_error_handling();
     let (_, startp, endp) = env.triple in
     let triple = (error_token, startp, endp) in
@@ -246,7 +250,7 @@ module Make (T : TABLE) = struct
 
   (* [error] handles errors. *)
 
-  and error env : void =
+  and error env =
     assert (let (token, _, _) = env.triple in token == error_token);
 
     (* Consult the column associated with the [error] pseudo-token in the
@@ -290,7 +294,7 @@ module Make (T : TABLE) = struct
 
       (* The stack is empty. Die. *)
 
-      raise Error
+      Rejected
 
     else begin
 
@@ -307,21 +311,11 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  let entry
+  let start
       (s : state)
-      (lexer : Lexing.lexbuf -> token)
-      (lexbuf : Lexing.lexbuf)
+      (read : unit -> token * Lexing.position * Lexing.position)
       : semantic_value =
-
-    (* Wrap the lexer and lexbuf as a revised lexer. *)
-
-    let read () =
-      let token = lexer lexbuf in
-      let startp = lexbuf.Lexing.lex_start_p
-      and endp = lexbuf.Lexing.lex_curr_p in
-      (token, startp, endp)
-    in
-
+    
     (* Build an empty stack. This is a dummy cell, which is its own
        successor. Its fields other than [next] contain dummy values. *)
 
@@ -345,26 +339,50 @@ module Make (T : TABLE) = struct
     (* Build an initial environment. *)
 
     let env = {
-      read;
       triple;
       stack = empty;
       current = s;
     } in
 
-    (* Run. Catch [Accept], which represents normal termination. Let [Error]
-       escape. *)
+    (* The main loop. *)
+
+    let rec loop result =
+      match result with
+      | InputNeeded env ->
+          let triple = read() in
+          loop (discard env triple)
+      | Rejected ->
+          raise Error
+    in
+
+    (* Catch [Accept], which represents normal termination. Let [Error] escape. *)
 
     try
-
-      (* If ocaml offered a [match/with] construct with zero branches, this is
-	 what we would use here, since the type [void] has zero cases. *)
-
-      let (_ : void) = run env false in
-      assert false (* cannot fail *)
-
+      loop (run env false)
     with
     | Accept v ->
-	v
+	v    
+
+  (* --------------------------------------------------------------------------- *)
+
+  (* Wrapping a lexer and lexbuf as a revised lexer. *)
+
+  let wrap lexer lexbuf : unit -> token * Lexing.position * Lexing.position =
+    fun () ->
+      let token = lexer lexbuf in
+      let startp = lexbuf.Lexing.lex_start_p
+      and endp = lexbuf.Lexing.lex_curr_p in
+      token, startp, endp
+
+  (* --------------------------------------------------------------------------- *)
+
+  let entry
+      (s : state)
+      (lexer : Lexing.lexbuf -> token)
+      (lexbuf : Lexing.lexbuf)
+      : semantic_value =
+
+    start s (wrap lexer lexbuf)
 
 end
 
