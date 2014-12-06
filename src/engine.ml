@@ -327,19 +327,10 @@ module Make (T : TABLE) = struct
       next = empty;
     } in
 
-    (* Perform an initial call to the lexer. *)
-
-    let triple = read() in
-
-    (* Log our first lookahead token. *)
-
-    let (token, startp, endp) = triple in
-    Log.lookahead_token (T.token2terminal token) startp endp;
-
     (* Build an initial environment. *)
 
     let env = {
-      triple;
+      triple = (error_token, Lexing.dummy_pos, Lexing.dummy_pos); (* dummy *)
       stack = empty;
       current = s;
     } in
@@ -358,7 +349,7 @@ module Make (T : TABLE) = struct
     (* Catch [Accept], which represents normal termination. Let [Error] escape. *)
 
     try
-      loop (run env false)
+      loop (run env true)
     with
     | Accept v ->
 	v    
