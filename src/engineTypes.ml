@@ -44,14 +44,10 @@ type ('state, 'semantic_value) stack = {
 
 (* --------------------------------------------------------------------------- *)
 
-(* A parsing environment contains almost all of the automaton's state.
-   (It contains everything except the current program point.) *)
+(* A parsing environment contains all of the parser's state (except for the
+   current program point). *)
 
 type ('state, 'semantic_value, 'token) env = {
-
-  (* The lexer. *)
-
-  read: unit -> 'token * Lexing.position * Lexing.position;
 
   (* The last token that was obtained from the lexer, together with its start
      and end positions. In principle, this should be a legit token, but the
