@@ -953,10 +953,17 @@ let runpushcellunless shiftreduce s e =
    The parameter [defred] tells which default reduction, if any, we
    are about to perform. *)
 
+(* 2014/12/06 New convention regarding initial states (i.e., states
+   which have no incoming symbol). The function [initenv] does not
+   invoke the lexer, so the [run] function for an initial state must
+   do it. (Except in the very special case where the initial state
+   has a default reduction on [#] -- this means the grammar recognizes
+   only the empty word.) *)
+
 let gettoken s defred e =
   match Lr1.incoming_symbol s, defred with
 
-  | Some (Symbol.T _), Some (_, toks)
+  | (Some (Symbol.T _) | None), Some (_, toks)
     when TerminalSet.mem Terminal.sharp toks ->
       assert (TerminalSet.cardinal toks = 1);
 
@@ -967,28 +974,28 @@ let gettoken s defred e =
 
       e
 
-  | Some (Symbol.T _), Some _ ->
+  | (Some (Symbol.T _) | None), Some _ ->
 
       (* There is some other default reduction. Discard the first
 	 input token. *)
 
       blet ([ PWildcard, EApp (EVar discard, [ EVar env ]) ], e)
 
-  | Some (Symbol.T _), None ->
+  | (Some (Symbol.T _) | None), None ->
 
       (* There is no default reduction. Discard the first input token
 	 and peek at the next one. *)
 
       blet ([ PVar token, EApp (EVar discard, [ EVar env ]) ], e)
 
-  | (Some (Symbol.N _) | None), Some _ ->
+  | Some (Symbol.N _), Some _ ->
 
       (* There is some default reduction. Do not peek at the input
 	 token. *)
 
       e
 
-  | (Some (Symbol.N _) | None), None ->
+  | Some (Symbol.N _), None ->
 
       (* There is no default reduction. Peek at the first input token,
 	 without taking it off the input stream. This is normally done
@@ -1628,8 +1635,10 @@ let discarddef = {
 }
 
 (* This is [initenv], used to allocate a fresh parser environment.
-   It performs the very first call to the lexer, and fills in all
-   fields in a straightforward way. *)
+   It fills in all fields in a straightforward way. The [token]
+   field receives a dummy value. It will be overwritten by the
+   first call to [run], which will invoke [discard]. This allows
+   us to invoke the lexer in just one place. *)
 
 let initenvdef =
   let lexer = "lexer"
@@ -1641,17 +1650,15 @@ let initenvdef =
       EAnnot (
 	EFun ( [ PVar lexer; PVar lexbuf ],
 	  blet (
-	    [ PVar token, EApp (EVar lexer, [ EVar lexbuf ]) ] @
-	    trace "Lookahead token is now %s (%d-%d)"
-		  [ EApp (EVar print_token, [ EVar token ]);
-		    ERecordAccess (ERecordAccess (EVar lexbuf, "Lexing.lex_start_p"), "Lexing.pos_cnum");
-		    ERecordAccess (ERecordAccess (EVar lexbuf, "Lexing.lex_curr_p"), "Lexing.pos_cnum") ],
+            (* We do not have a dummy token at hand, so we forge one. *)
+            (* It will be overwritten by the first call to the lexer. *)
+	    [ PVar token, EMagic EUnit ],
 	    ERecord ([
 	      (flexer, EVar lexer);
 	      (flexbuf, EVar lexbuf);
 	      (ftoken, EVar token);
-	      (fstartp, ERecordAccess (EVar lexbuf, "Lexing.lex_start_p"));
-	      (fendp, ERecordAccess (EVar lexbuf, "Lexing.lex_curr_p"));
+	      (fstartp, EVar "Lexing.dummy_pos");
+	      (fendp, EVar "Lexing.dummy_pos");
 	      (fshifted, EMaxInt)
 	    ]
 	    )
