@@ -283,6 +283,10 @@ module type ENGINE = sig
 
   type semantic_value
 
+  (* ------------------------------------------------------------------------- *)
+
+  (* The monolithic interface, where the parser controls the lexer. *)
+
   (* An entry point to the engine requires a start state, a lexer, and a lexing
      buffer. It either succeeds and produces a semantic value, or fails and
      raises [Error]. *)
@@ -294,5 +298,48 @@ module type ENGINE = sig
     (Lexing.lexbuf -> token) ->
     Lexing.lexbuf ->
     semantic_value
+
+  (* ------------------------------------------------------------------------- *)
+
+  (* The incremental interface, where the user controls the lexer and the
+     parser suspends itself when it needs to read a new token. *)
+
+  (* The type [result] represents an intermediate or final result of the
+     parser. An intermediate result can be thought of as a suspension: it
+     records the parser's current state, and allows parsing to be resumed.
+     [InputNeeded] is an intermediate result, and means that the parser
+     wishes to read one token before continuing. [Accepted] and [Rejected]
+     are final results. *)
+
+  type env
+
+  type result = private
+    | InputNeeded of env
+    | Accepted of semantic_value
+    | Rejected
+
+  (* [start] is an entry point. It requires just a start state, and begins
+     the parsing process. It produces a result, which usually will be an
+     [InputNeeded] result. (It could be [Accepted] if this starting state
+     accepts only the empty word. It could be [Rejected] if this starting
+     state accepts no word at all.) It does not raise any exception. *)
+
+  val start:
+    state ->
+    result
+
+  (* [offer] allows the user to resume the parser after it has suspended
+     itself with an [InputNeeded] result. [offer] expects this result, as
+     well as a new token, and produces a new result. It does not raise any
+     exception. *)
+
+  val offer:
+    result ->
+    token * Lexing.position * Lexing.position ->
+    result
+
+  (* The incremental interface is more general than the monolithic one.
+     [entry] can be (and is indeed) implemented by first calling [start],
+     then calling [offer] in a loop, until a final result is obtained. *)
 
 end
