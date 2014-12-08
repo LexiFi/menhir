@@ -343,9 +343,8 @@ module type ENGINE = sig
 
   (* [start s] should really produce a result of type ['a result], for a
      fixed ['a] that depends on the state [s]. We cannot express this, so
-     we use [semantic_value result], which is safe. *)
-
-  (* TEMPORARY maybe [start] should just be removed from this signature *)
+     we use [semantic_value result], which is safe. The table back-end
+     uses [Obj.magic] to produce safe specialized versions of [start]. *)
 
   val start:
     state ->
