@@ -1,4 +1,3 @@
-(* $Id $*)
 (* This module parses ocaml version and confronts it with a user-provided
    version. *)
 
