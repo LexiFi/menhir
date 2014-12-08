@@ -26,6 +26,7 @@ module Make (T : TABLE) = struct
 
   type result =
     | InputNeeded of env
+    | Accepted of semantic_value
     | Rejected
 
   (* --------------------------------------------------------------------------- *)
@@ -90,8 +91,9 @@ module Make (T : TABLE) = struct
     else
       check_for_default_reduction env
 
-  (* [discard env triple] stores [triple] into [env.triple], overwriting
-     the previous token. *)
+  (* [discard env triple] stores [triple] into [env], overwriting the previous
+     token. It is invoked by [offer], which itself is invoked by the user in
+     response to an [InputNeeded] result. *)
 
   and discard env triple =
     if log then begin
@@ -203,20 +205,16 @@ module Make (T : TABLE) = struct
     (* If the semantic action terminates normally, it returns a new stack,
        which becomes the current stack. *)
 
-    (* If the semantic action raises [Error], we catch it immediately and
-       initiate error handling. *)
+    (* If the semantic action raises [Accept], we catch it and produce an
+       [Accepted] result. *)
 
-    (* The apparently weird idiom used here is an encoding for a
-       [let/unless] construct, which does not exist in ocaml. *)
+    (* If the semantic action raises [Error], we catch it and initiate error
+       handling. *)
 
-    let success =
-      try
-	Some (T.semantic_action prod env)
-      with Error ->
-	None
-    in
-    match success with
-    | Some stack ->
+    (* This [match/with/exception] construct requires OCaml 4.02. *)
+
+    match T.semantic_action prod env with
+    | stack ->
 
         (* By our convention, the semantic action has produced an updated
            stack. The state now found in the top stack cell is the return
@@ -230,7 +228,10 @@ module Make (T : TABLE) = struct
         let env = { env with stack; current } in
         run env false
 
-    | None ->
+    | exception Accept v ->
+        Accepted v
+
+    | exception Error ->
         initiate env
 
   (* --------------------------------------------------------------------------- *)
@@ -311,6 +312,26 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
+  (* [offer result triple] is supposed to be invoked by the user in response
+     to [result], which must be an [InputNeeded] result. *)
+
+  (* [offer] checks that the result is indeed of the form [InputNeeded env],
+     then passes control to [discard], resuming the suspended computation.
+     This runtime check prevents the user from passing an environment that
+     does not make sense here. *)
+
+  (* TEMPORARY using a phantom type parameter would be safer / more efficient. *)
+
+  let offer result triple =
+    match result with
+    | InputNeeded env ->
+        discard env triple
+    | _ ->
+        (* User error. *)
+        raise (Invalid_argument "[offer] expects [InputNeeded _]")
+
+  (* TEMPORARY comment *)
+
   let start
       (s : state)
       (read : unit -> token * Lexing.position * Lexing.position)
@@ -339,20 +360,18 @@ module Make (T : TABLE) = struct
 
     let rec loop result =
       match result with
-      | InputNeeded env ->
+      | InputNeeded _ ->
           let triple = read() in
-          loop (discard env triple)
+          loop (offer result triple)
+      | Accepted v ->
+          v
       | Rejected ->
           raise Error
     in
 
-    (* Catch [Accept], which represents normal termination. Let [Error] escape. *)
+    (* Let the exception [Error] escape. *)
 
-    try
-      loop (run env true)
-    with
-    | Accept v ->
-	v    
+    loop (run env true)
 
   (* --------------------------------------------------------------------------- *)
 

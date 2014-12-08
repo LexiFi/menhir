@@ -45,7 +45,7 @@ bootstrap: .versioncheck stage1 stage2 stage3
 .versioncheck:
 	@ echo Checking that Objective Caml is recent enough...
 	@$(OCAMLBUILD) -build-dir _stage1 checkOCamlVersion.byte
-	@ _stage1/checkOCamlVersion.byte --verbose --gt "3.09"
+	@ _stage1/checkOCamlVersion.byte --verbose --gt "4.02"
 	@ touch $@
 
 # ----------------------------------------------------------------------------
