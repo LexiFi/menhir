@@ -315,31 +315,14 @@ module Make (T : TABLE) = struct
 
     end
 
-  (* --------------------------------------------------------------------------- *)
-
   (* End of the nest of tail recursive functions. *)
 
   (* --------------------------------------------------------------------------- *)
+  (* --------------------------------------------------------------------------- *)
 
-  (* [offer result triple] is supposed to be invoked by the user in response
-     to [result], which must be an [InputNeeded] result. *)
+  (* The incremental interface. See [EngineTypes]. *)
 
-  (* [offer] checks that the result is indeed of the form [InputNeeded env],
-     then passes control to [discard], resuming the suspended computation.
-     This runtime check prevents the user from passing an environment that
-     does not make sense here. *)
-
-  (* TEMPORARY using a phantom type parameter would be safer / more efficient. *)
-
-  let offer result triple =
-    match result with
-    | InputNeeded env ->
-        discard env triple
-    | _ ->
-        (* User error. *)
-        raise (Invalid_argument "[offer] expects [InputNeeded _]")
-
-  (* TEMPORARY comment *)
+  (* [start s] begins the parsing process. *)
 
   let start (s : state) : result =
     
@@ -367,27 +350,41 @@ module Make (T : TABLE) = struct
     (* Begin parsing. *)
 
     run env true
+      (* TEMPORARY in principle [please_discard] here should be [false]
+         if the state [s] has a default reduction on [#], that is, if
+         this starting state accepts only the empty word. *)
 
-  (* The main loop. *)
+  (* [offer result triple] is invoked by the user in response to [result],
+     which must be an [InputNeeded] result. *)
 
-  type reader =
-    unit -> token * Lexing.position * Lexing.position
+  (* [offer] checks that the result is indeed of the form [InputNeeded env],
+     then passes control to [discard], resuming the suspended computation.
+     This runtime check prevents the user from passing an environment that
+     does not make sense here. *)
 
-  let rec loop (read : reader) result =
+  (* TEMPORARY using a phantom type parameter would be safer / more efficient. *)
+
+  let offer result triple =
     match result with
-    | InputNeeded _ ->
-        let triple = read() in
-        loop read (offer result triple)
-    | Accepted v ->
-        v
-    | Rejected ->
-        raise Error
+    | InputNeeded env ->
+        discard env triple
+    | _ ->
+        (* User error. *)
+        raise (Invalid_argument "[offer] expects [InputNeeded _]")
+
+  (* --------------------------------------------------------------------------- *)
+  (* --------------------------------------------------------------------------- *)
+
+  (* The traditional interface. See [EngineTypes]. *)
 
   (* --------------------------------------------------------------------------- *)
 
   (* Wrapping a lexer and lexbuf as a reader. *)
 
-  let wrap lexer lexbuf : reader =
+  type reader =
+    unit -> token * Lexing.position * Lexing.position
+
+  let wrap (lexer : Lexing.lexbuf -> token) (lexbuf : Lexing.lexbuf) : reader =
     fun () ->
       let token = lexer lexbuf in
       let startp = lexbuf.Lexing.lex_start_p
@@ -396,12 +393,24 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  let entry
-      (s : state)
-      (lexer : Lexing.lexbuf -> token)
-      (lexbuf : Lexing.lexbuf)
-      : semantic_value =
+  (* The main loop repeatedly calls [read] and [offer] in response to every
+     [InputNeeded] intermediate result. In the end, we obtain an [Accepted]
+     or [Rejected] result, which we report to the user. By convention,
+     acceptance is reported by returning a semantic value, whereas rejection
+     is reported by raising [Error]. *)
 
+  let rec loop (read : reader) (result : result) : semantic_value =
+    match result with
+    | InputNeeded _ ->
+        let triple = read() in
+        let result = offer result triple in
+        loop read result
+    | Accepted v ->
+        v
+    | Rejected ->
+        raise Error
+
+  let entry (s : state) lexer lexbuf : semantic_value =
     loop (wrap lexer lexbuf) (start s)
 
 end
