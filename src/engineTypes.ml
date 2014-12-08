@@ -304,9 +304,11 @@ module type ENGINE = sig
   (* The incremental interface, where the user controls the lexer and the
      parser suspends itself when it needs to read a new token. *)
 
-  (* The type [result] represents an intermediate or final result of the
+  (* The type ['a result] represents an intermediate or final result of the
      parser. An intermediate result can be thought of as a suspension: it
-     records the parser's current state, and allows parsing to be resumed. *)
+     records the parser's current state, and allows parsing to be resumed.
+     The parameter ['a] is the type of the final semantic value that will
+     be produced if the parser succeeds. *)
 
   (* [InputNeeded] is an intermediate result, which means that the parser
      wishes to read one token before continuing. [HandlingError] is also
@@ -316,20 +318,21 @@ module type ENGINE = sig
      opportunity to handle this error in a different manner, if desired.
      [Accepted] and [Rejected] are final results. *)
 
-  (* The type ['a env] is shared by [InputNeeded] and [HandlingError].
-     The phantom type parameter ['a] is instantiated with [input_needed]
+  (* The type [('a, 'pc) env] is shared by [InputNeeded] and [HandlingError].
+     As above, the parameter ['a] is the type of the final semantic value.
+     The phantom type parameter ['pc] is instantiated with [input_needed]
      or [handling_error], as appropriate. This prevents the user from
-     calling [offer] when he/she should call [handle], or vice-versa. *)
+     calling [offer] when she should call [handle], or vice-versa. *)
 
   type input_needed
   type handling_error
 
-  type 'a env
+  type ('a, 'pc) env
 
-  type result =
-    | InputNeeded of input_needed env
-    | HandlingError of handling_error env
-    | Accepted of semantic_value
+  type 'a result =
+    | InputNeeded of ('a, input_needed) env
+    | HandlingError of ('a, handling_error) env
+    | Accepted of 'a
     | Rejected
 
   (* [start] is an entry point. It requires just a start state, and begins
@@ -338,9 +341,15 @@ module type ENGINE = sig
      accepts only the empty word. It could be [Rejected] if this starting
      state accepts no word at all.) It does not raise any exception. *)
 
+  (* [start s] should really produce a result of type ['a result], for a
+     fixed ['a] that depends on the state [s]. We cannot express this, so
+     we use [semantic_value result], which is safe. *)
+
+  (* TEMPORARY maybe [start] should just be removed from this signature *)
+
   val start:
     state ->
-    result
+    semantic_value result
 
   (* [offer] allows the user to resume the parser after it has suspended
      itself with a result of the form [InputNeeded env] result. [offer]
@@ -348,17 +357,17 @@ module type ENGINE = sig
      does not raise any exception. *)
 
   val offer:
-    input_needed env ->
+    ('a, input_needed) env ->
     token * Lexing.position * Lexing.position ->
-    result
+    'a result
 
   (* [handle] allows the user to resume the parser after it has suspended
      itself with a result of the form [HandlingError env]. [handle] expects
      [env] and produces a new result. It does not raise any exception. *)
 
   val handle:
-    handling_error env ->
-    result
+    ('a, handling_error) env ->
+    'a result
 
   (* The incremental interface is more general than the monolithic one.
      [entry] can be (and is indeed) implemented by first calling [start],

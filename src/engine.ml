@@ -16,7 +16,7 @@ module Make (T : TABLE) = struct
   type input_needed
   type handling_error
 
-  type 'a env =
+  type ('a, 'pc) env =
       (state, semantic_value, token) EngineTypes.env
 
   (* --------------------------------------------------------------------------- *)
@@ -24,10 +24,10 @@ module Make (T : TABLE) = struct
   (* The type [result] represents an intermediate or final result of the
      parser. See [EngineTypes]. *)
 
-  type result =
-    | InputNeeded of input_needed env
-    | HandlingError of handling_error env
-    | Accepted of semantic_value
+  type 'a result =
+    | InputNeeded of ('a, input_needed) env
+    | HandlingError of ('a, handling_error) env
+    | Accepted of 'a
     | Rejected
 
   (* --------------------------------------------------------------------------- *)
@@ -75,11 +75,11 @@ module Make (T : TABLE) = struct
      a terminal symbol and [s] does not have a default reduction on [#]. *)
 
   (* The following recursive group of functions are tail recursive, produce a
-     result of type [result], and cannot raise an exception. A semantic action
-     can raise [Accept] or [Error], but these exceptions are immediately caught
-     within [reduce]. *)
+     result of type [semantic_value result], and cannot raise an exception. A
+     semantic action can raise [Accept] or [Error], but these exceptions are
+     immediately caught within [reduce]. *)
 
-  let rec run env please_discard : result =
+  let rec run env please_discard : semantic_value result =
 
     (* Log the fact that we just entered this state. *)
     
@@ -328,7 +328,7 @@ module Make (T : TABLE) = struct
 
   (* [start s] begins the parsing process. *)
 
-  let start (s : state) : result =
+  let start (s : state) : semantic_value result =
     
     (* Build an empty stack. This is a dummy cell, which is its own
        successor. Its fields other than [next] contain dummy values.
@@ -358,19 +358,55 @@ module Make (T : TABLE) = struct
          if the state [s] has a default reduction on [#], that is, if
          this starting state accepts only the empty word. *)
 
-  (* [offer env triple] is invoked by the user in response to a result
-     of the form [InputNeeded env]. The phantom type constraint on [env]
-     ensures that the user cannot pass [offer] an environment that comes
-     from some other source (e.g., a [HandlingError] result). *)
+  (* This restricted version of [Obj.magic] allows casting a final result
+     from [semantic_value result] to ['a result]. It is in general unsafe
+     to do this. *)
 
-  let offer : input_needed env -> token * Lexing.position * Lexing.position -> result =
-    discard
+  let coerce : semantic_value result -> 'a result =
+    Obj.magic
 
-  (* [handle env] is invoked by the user in response to a result of the
-     form [HandlingError env]. *)
+  (* [offer env triple] is invoked by the user in response to a result of the
+     form [InputNeeded env]. [offer] is just a synonym for [discard]. *)
 
-  let handle : handling_error env -> result =
-    error
+  (* [handle env] is invoked by the user in response to a result of the form
+     [HandlingError env]. [handle] is just a synonym for [error]. *)
+
+  (* In reality, [offer] and [handle] accept an environment of type [('a, 'pc)
+     env], where ['a] and ['pc] are unconstrained, since they are phantom type
+     parameters. [offer] and [handle] produce a result of type [semantic_value
+     result] -- where the choice of the type [semantic_value] is forced by the
+     fact that this is the parameter of the exception [Accept]. *)
+
+  (* We change these types in two ways. *)
+
+  (* First, we restrict ['pc] to be [input_needed] in the case of [offer] and
+     [handling_error] in the case of [handle]. This is safe, and prevents the
+     user from providing [offer] with an environment that comes from a
+     [HandlingError] result, or (symmetrically) from providing [handle] with
+     an environment that comes from an [InputNeeded] result. *)
+
+  (* Second, we use [coerce] to change the result type of [offer] and [handle]
+     from [semantic_value result] to ['a result]. This is safe, in this case,
+     because we are careful to give the user access to values of type [(t, _)
+     env] only if [t] is indeed the type of the eventual semantic value for
+     this run. (More precisely, by examining [EngineTypes.ENGINE], one finds
+     that the user can build a value of type [('a, _) env] or ['a result] only
+     if ['a] is [semantic_value]. The table back-end goes further than this
+     and produces versions of [start] composed with a suitable cast, which
+     give the user access to a value of type [t result] where [t] is the type
+     of the start symbol.) *)
+
+  let offer : 'a . ('a, input_needed) env -> token * Lexing.position * Lexing.position -> 'a result =
+    fun env triple -> coerce (discard env triple)
+
+  let handle : 'a . ('a, handling_error) env -> 'a result =
+    fun env -> coerce (error env)
+
+  (* TEMPORARY something really strange is going on here. An application
+     of [Obj.magic] is considered polymorphic if it is bare, but is not
+     accepted if a (monomorphic or quantified) type annotation is added.
+     Eta-expansion (done above) works around the problem, but slows things
+     down. *)
 
   (* --------------------------------------------------------------------------- *)
   (* --------------------------------------------------------------------------- *)
@@ -400,7 +436,12 @@ module Make (T : TABLE) = struct
   (* By convention, acceptance is reported by returning a semantic value, whereas
      rejection is reported by raising [Error]. *)
 
-  let rec loop (read : reader) (result : result) : semantic_value =
+  (* [loop] is polymorphic in ['a]. No cheating is involved in achieving this.
+     All of the cheating resides in the types assigned to [offer] and [handle]
+     above. *)
+
+  let rec loop : 'a . reader -> 'a result -> 'a =
+    fun read result ->
     match result with
     | InputNeeded env ->
         (* The parser needs a token. Request one from the lexer,
