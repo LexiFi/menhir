@@ -61,6 +61,9 @@ let interpreter =
 let entry =
   interpreter ^ ".entry"
 
+let start =
+  interpreter ^ ".start"
+
 (* ------------------------------------------------------------------------ *)
 
 (* Code generation for semantic actions. *)
@@ -699,6 +702,7 @@ let api : IL.valdef list =
   and lexbuf = "lexbuf" in
 
   Lr1.fold_entry (fun _prod state nt t api ->
+    (* The entry point to the monolithic API. *)
     define (
       Nonterminal.print true nt,
       EFun (
@@ -715,6 +719,22 @@ let api : IL.valdef list =
 	  ),
 	  type2scheme (TypTextual t)
 	)
+      )
+    ) ::
+    (* The entry point to the incremental API. *)
+    define (
+      Nonterminal.print true nt ^ "_incremental", (* TEMPORARY *)
+      (* In principle the abstraction [fun () -> ...] should not be
+         necessary, since [start] is a pure function. However, when
+         [--trace] is enabled, [start] will log messages to the
+         standard error channel. *)
+      EFun (
+        [ PUnit ],
+        EApp (
+          EVar start, [
+            EIntConst (Lr1.number state);
+          ]
+        )
       )
     ) ::
     api
