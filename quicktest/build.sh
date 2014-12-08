@@ -24,5 +24,10 @@ fi
 
 # Re-install MenhirLib.
 ocamlfind remove menhirLib
-ocamlfind install menhirLib $SRC/META $BUILD/menhirLib.cmi $BUILD/menhirLib.cmo $BUILD/menhirLib.cmx $BUILD/menhirLib.o
+if ! ocamlfind install menhirLib \
+  $SRC/META $BUILD/menhirLib.cmi $BUILD/menhirLib.cmo \
+  $BUILD/menhirLib.cmx $BUILD/menhirLib.o ; then
+  echo "Could not install MenhirLib. Stop."
+  exit 1
+fi
 

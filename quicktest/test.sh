@@ -7,7 +7,7 @@
 . ./config.sh
 
 # Make sure Menhir and MenhirLib are up-to-date.
-./build.sh
+./build.sh || exit 1
 
 # Build the parser with the code back-end and run it.
 echo "Building and running (code)..."
