@@ -73,6 +73,11 @@ module Make (T : TABLE) = struct
      [please_discard]. This flag is set when [s] is being entered by shifting
      a terminal symbol and [s] does not have a default reduction on [#]. *)
 
+  (* The following recursive group of functions are tail recursive, produce a
+     result of type [result], and cannot raise an exception. A semantic action
+     can raise [Accept] or [Error], but these exceptions are immediately caught
+     within [reduce]. *)
+
   let rec run env please_discard : result =
 
     (* Log the fact that we just entered this state. *)
@@ -312,6 +317,10 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
+  (* End of the nest of tail recursive functions. *)
+
+  (* --------------------------------------------------------------------------- *)
+
   (* [offer result triple] is supposed to be invoked by the user in response
      to [result], which must be an [InputNeeded] result. *)
 
@@ -332,10 +341,7 @@ module Make (T : TABLE) = struct
 
   (* TEMPORARY comment *)
 
-  let start
-      (s : state)
-      (read : unit -> token * Lexing.position * Lexing.position)
-      : semantic_value =
+  let start (s : state) : result =
     
     (* Build an empty stack. This is a dummy cell, which is its own
        successor. Its fields other than [next] contain dummy values.
@@ -358,28 +364,30 @@ module Make (T : TABLE) = struct
       current = s;
     } in
 
-    (* The main loop. *)
+    (* Begin parsing. *)
 
-    let rec loop result =
-      match result with
-      | InputNeeded _ ->
-          let triple = read() in
-          loop (offer result triple)
-      | Accepted v ->
-          v
-      | Rejected ->
-          raise Error
-    in
+    run env true
 
-    (* Let the exception [Error] escape. *)
+  (* The main loop. *)
 
-    loop (run env true)
+  type reader =
+    unit -> token * Lexing.position * Lexing.position
+
+  let rec loop (read : reader) result =
+    match result with
+    | InputNeeded _ ->
+        let triple = read() in
+        loop read (offer result triple)
+    | Accepted v ->
+        v
+    | Rejected ->
+        raise Error
 
   (* --------------------------------------------------------------------------- *)
 
-  (* Wrapping a lexer and lexbuf as a revised lexer. *)
+  (* Wrapping a lexer and lexbuf as a reader. *)
 
-  let wrap lexer lexbuf : unit -> token * Lexing.position * Lexing.position =
+  let wrap lexer lexbuf : reader =
     fun () ->
       let token = lexer lexbuf in
       let startp = lexbuf.Lexing.lex_start_p
@@ -394,7 +402,7 @@ module Make (T : TABLE) = struct
       (lexbuf : Lexing.lexbuf)
       : semantic_value =
 
-    start s (wrap lexer lexbuf)
+    loop (wrap lexer lexbuf) (start s)
 
 end
 
