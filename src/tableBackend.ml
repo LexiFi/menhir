@@ -64,6 +64,9 @@ let entry =
 let start =
   interpreter ^ ".start"
 
+let result t =
+  TypApp (interpreter ^ ".result", [ t ])
+
 (* ------------------------------------------------------------------------ *)
 
 (* Code generation for semantic actions. *)
@@ -730,10 +733,15 @@ let api : IL.valdef list =
          standard error channel. *)
       EFun (
         [ PUnit ],
-        EApp (
-          EVar start, [
-            EIntConst (Lr1.number state);
-          ]
+	EAnnot (
+          EMagic (
+            EApp (
+              EVar start, [
+                EIntConst (Lr1.number state);
+              ]
+            )
+          ),
+          type2scheme (result (TypTextual t))
         )
       )
     ) ::
