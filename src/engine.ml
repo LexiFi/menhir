@@ -20,12 +20,12 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* A continuation is returned to the user when the parser pauses itself. In
-     normal mode, this happens when the parser wishes to request another token.
-     In error-handling mode, this happens when ... TEMPORARY *)
+  (* The type [result] represents an intermediate or final result of the
+     parser. See [EngineTypes]. *)
 
   type result =
     | InputNeeded of env
+    | HandlingError of env
     | Accepted of semantic_value
     | Rejected
 
@@ -132,11 +132,14 @@ module Make (T : TABLE) = struct
     (* Note that, if [please_discard] was true, then we have just called
        [discard], so the lookahead token cannot be [error]. *)
 
+    (* Returning [HandlingError env] is equivalent to calling [error env]
+       directly, except it allows the user to regain control. *)
+
     let (token, _, _) = env.triple in
     if token == error_token then begin
       if log then
         Log.resuming_error_handling();
-      error env
+      HandlingError env
     end
     else
 
@@ -252,7 +255,7 @@ module Make (T : TABLE) = struct
     let (_, startp, endp) = env.triple in
     let triple = (error_token, startp, endp) in
     let env = { env with triple } in
-    error env
+    HandlingError env
 
   (* [error] handles errors. *)
 
@@ -311,7 +314,7 @@ module Make (T : TABLE) = struct
         stack = next;
         current = cell.state
       } in
-      error env
+      HandlingError env
 
     end
 
@@ -372,6 +375,14 @@ module Make (T : TABLE) = struct
         (* User error. *)
         raise (Invalid_argument "[offer] expects [InputNeeded _]")
 
+  let resume result =
+    match result with
+    | HandlingError env ->
+        error env
+    | _ ->
+        (* User error. *)
+        raise (Invalid_argument "[resume] expects [HandlingError _]")
+
   (* --------------------------------------------------------------------------- *)
   (* --------------------------------------------------------------------------- *)
 
@@ -393,21 +404,33 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* The main loop repeatedly calls [read] and [offer] in response to every
-     [InputNeeded] intermediate result. In the end, we obtain an [Accepted]
-     or [Rejected] result, which we report to the user. By convention,
-     acceptance is reported by returning a semantic value, whereas rejection
-     is reported by raising [Error]. *)
+  (* The main loop repeatedly handles intermediate results, until a final result
+     is obtained. This allows implementing the monolithic interface ([entry]) in
+     terms of the incremental interface ([start], [offer], [resume]). *)
+
+  (* By convention, acceptance is reported by returning a semantic value, whereas
+     rejection is reported by raising [Error]. *)
 
   let rec loop (read : reader) (result : result) : semantic_value =
     match result with
     | InputNeeded _ ->
+        (* The parser needs a token. Request one from the lexer,
+           and offer it to the parser, which will produce a new
+           result. Then, repeat. *)
         let triple = read() in
         let result = offer result triple in
         loop read result
+    | HandlingError _ ->
+        (* The parser has suspended itself, but does not need
+           new input. Just resume the parser. Then, repeat. *)
+        let result = resume result in
+        loop read result
     | Accepted v ->
+        (* The parser has succeeded and produced a semantic value.
+           Return this semantic value to the user. *)
         v
     | Rejected ->
+        (* The parser rejects this input. Raise an exception. *)
         raise Error
 
   let entry (s : state) lexer lexbuf : semantic_value =
