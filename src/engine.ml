@@ -338,7 +338,9 @@ module Make (T : TABLE) = struct
       : semantic_value =
     
     (* Build an empty stack. This is a dummy cell, which is its own
-       successor. Its fields other than [next] contain dummy values. *)
+       successor. Its fields other than [next] contain dummy values.
+       Its [next] field WILL be accessed by [error_fail] if an error
+       occurs and is propagated all the way until the stack is empty. *)
 
     let rec empty = {
       state = s;                          (* dummy *)
