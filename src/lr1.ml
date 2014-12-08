@@ -1089,3 +1089,25 @@ let default_conflict_resolution () =
   else if !ambiguities > 1 then
     Error.grammar_warning [] (Printf.sprintf "%d states have an end-of-stream conflict." !ambiguities)
 
+(* ------------------------------------------------------------------------ *)
+(* Define [fold_entry], which in some cases facilitates the use of [entry]. *)
+
+let fold_entry f accu =
+  ProductionMap.fold (fun prod state accu ->
+    let nt : Nonterminal.t =
+      match Production.classify prod with
+      | Some nt ->
+	  nt
+      | None ->
+	  assert false (* this is a start production *)
+    in
+    let t : Stretch.ocamltype =
+      match Nonterminal.ocamltype nt with
+      | Some t ->
+	  t
+      | None ->
+	  assert false (* every start symbol should carry a type *)
+    in
+    f prod state nt t accu
+  ) entry accu
+

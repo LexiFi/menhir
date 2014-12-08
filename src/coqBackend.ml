@@ -260,12 +260,9 @@ module Run (T: sig end) = struct
   let write_start_nt f =
     fprintf f "Definition start_nt (init:initstate) : nonterminal :=\n";
     fprintf f "  match init with\n";
-    ProductionMap.iter (fun prod node ->
-      match Production.rhs prod with
-	| [| Symbol.N startnt |] ->
-	  fprintf f "    | %s => %s\n" (print_init node) (print_nterm startnt)
-	| _ -> assert false
-    ) Lr1.entry;
+    Lr1.fold_entry (fun _prod node startnt _t () ->
+      fprintf f "    | %s => %s\n" (print_init node) (print_nterm startnt)
+    ) ();
     fprintf f "  end.\n\n"
 
   let write_actions f =
@@ -435,9 +432,7 @@ module Run (T: sig end) = struct
         fprintf f "Proof eq_refl true<:Parser.complete_validator () = true.\n\n";
       end;
 
-    ProductionMap.iter (fun prod node ->
-      match Production.rhs prod with
-	| [| Symbol.N startnt |] ->
+    Lr1.fold_entry (fun _prod node startnt _t () ->
 	  let funName = Nonterminal.print true startnt in
 	  fprintf f "Definition %s := Parser.parse safe Aut.%s.\n\n" 
 	    funName (print_init node);
@@ -466,7 +461,7 @@ module Run (T: sig end) = struct
               fprintf f "  end.\n";
               fprintf f "Proof. apply Parser.parse_complete with (init:=Aut.%s); exact complete. Qed.\n\n" (print_init node);
 	    end
-	| _ -> assert false) Lr1.entry
+    ) ()
 
   let write_all f =
     if not Settings.coq_no_actions then

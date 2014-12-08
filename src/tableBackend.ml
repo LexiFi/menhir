@@ -698,24 +698,7 @@ let api : IL.valdef list =
   let lexer = "lexer"
   and lexbuf = "lexbuf" in
 
-  ProductionMap.fold (fun prod state api ->
-
-    let nt : Nonterminal.t =
-      match Production.classify prod with
-      | Some nt ->
-	  nt
-      | None ->
-	  assert false (* this is a start production *)
-    in
-
-    let t : typ =
-      match Nonterminal.ocamltype nt with
-      | Some t ->
-	  TypTextual t
-      | None ->
-	  assert false (* every start symbol should carry a type *)
-    in
-    
+  Lr1.fold_entry (fun _prod state nt t api ->
     define (
       Nonterminal.print true nt,
       EFun (
@@ -730,13 +713,12 @@ let api : IL.valdef list =
 	      ]
 	    )
 	  ),
-	  type2scheme t
+	  type2scheme (TypTextual t)
 	)
       )
     ) ::
     api
-
-  ) Lr1.entry []
+  ) []
 
 (* ------------------------------------------------------------------------ *)
 

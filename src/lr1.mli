@@ -31,6 +31,14 @@ module ImperativeNodeMap : Fix.IMPERATIVE_MAPS with type key = node
 
 val entry: node ProductionMap.t
 
+(* [fold_entry] folds over [entry]. For convenience, it gives access not only
+   to the start production and start state, but also to the nonterminal
+   symbol and to the OCaml type associated with this production. *)
+
+val fold_entry:
+  (Production.index -> node -> Nonterminal.t -> Stretch.ocamltype -> 'a -> 'a) ->
+  'a -> 'a
+
 (* Nodes are numbered sequentially from [0] to [n-1]. *)
 
 val n: int
