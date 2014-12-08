@@ -13,10 +13,11 @@ module Make (T : TABLE) = struct
 
   include T
 
-  type dummy =
-      (state, semantic_value, token) env
-  type env =
-      dummy
+  type input_needed
+  type handling_error
+
+  type 'a env =
+      (state, semantic_value, token) EngineTypes.env
 
   (* --------------------------------------------------------------------------- *)
 
@@ -24,8 +25,8 @@ module Make (T : TABLE) = struct
      parser. See [EngineTypes]. *)
 
   type result =
-    | InputNeeded of env
-    | HandlingError of env
+    | InputNeeded of input_needed env
+    | HandlingError of handling_error env
     | Accepted of semantic_value
     | Rejected
 
@@ -357,31 +358,19 @@ module Make (T : TABLE) = struct
          if the state [s] has a default reduction on [#], that is, if
          this starting state accepts only the empty word. *)
 
-  (* [offer result triple] is invoked by the user in response to [result],
-     which must be an [InputNeeded] result. *)
+  (* [offer env triple] is invoked by the user in response to a result
+     of the form [InputNeeded env]. The phantom type constraint on [env]
+     ensures that the user cannot pass [offer] an environment that comes
+     from some other source (e.g., a [HandlingError] result). *)
 
-  (* [offer] checks that the result is indeed of the form [InputNeeded env],
-     then passes control to [discard], resuming the suspended computation.
-     This runtime check prevents the user from passing an environment that
-     does not make sense here. *)
+  let offer : input_needed env -> token * Lexing.position * Lexing.position -> result =
+    discard
 
-  (* TEMPORARY using a phantom type parameter would be safer / more efficient. *)
+  (* [handle env] is invoked by the user in response to a result of the
+     form [HandlingError env]. *)
 
-  let offer result triple =
-    match result with
-    | InputNeeded env ->
-        discard env triple
-    | _ ->
-        (* User error. *)
-        raise (Invalid_argument "[offer] expects [InputNeeded _]")
-
-  let resume result =
-    match result with
-    | HandlingError env ->
-        error env
-    | _ ->
-        (* User error. *)
-        raise (Invalid_argument "[resume] expects [HandlingError _]")
+  let handle : handling_error env -> result =
+    error
 
   (* --------------------------------------------------------------------------- *)
   (* --------------------------------------------------------------------------- *)
@@ -406,24 +395,24 @@ module Make (T : TABLE) = struct
 
   (* The main loop repeatedly handles intermediate results, until a final result
      is obtained. This allows implementing the monolithic interface ([entry]) in
-     terms of the incremental interface ([start], [offer], [resume]). *)
+     terms of the incremental interface ([start], [offer], [handle]). *)
 
   (* By convention, acceptance is reported by returning a semantic value, whereas
      rejection is reported by raising [Error]. *)
 
   let rec loop (read : reader) (result : result) : semantic_value =
     match result with
-    | InputNeeded _ ->
+    | InputNeeded env ->
         (* The parser needs a token. Request one from the lexer,
            and offer it to the parser, which will produce a new
            result. Then, repeat. *)
         let triple = read() in
-        let result = offer result triple in
+        let result = offer env triple in
         loop read result
-    | HandlingError _ ->
+    | HandlingError env ->
         (* The parser has suspended itself, but does not need
            new input. Just resume the parser. Then, repeat. *)
-        let result = resume result in
+        let result = handle env in
         loop read result
     | Accepted v ->
         (* The parser has succeeded and produced a semantic value.
