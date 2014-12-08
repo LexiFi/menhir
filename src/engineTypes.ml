@@ -306,8 +306,9 @@ module type ENGINE = sig
 
   (* The type [result] represents an intermediate or final result of the
      parser. An intermediate result can be thought of as a suspension: it
-     records the parser's current state, and allows parsing to be resumed.
-     [InputNeeded] is an intermediate result, which means that the parser
+     records the parser's current state, and allows parsing to be resumed. *)
+
+  (* [InputNeeded] is an intermediate result, which means that the parser
      wishes to read one token before continuing. [HandlingError] is also
      an intermediate result, which means that the parser has detected and
      is trying to handle an error. It does not need more input at this
@@ -315,11 +316,19 @@ module type ENGINE = sig
      opportunity to handle this error in a different manner, if desired.
      [Accepted] and [Rejected] are final results. *)
 
-  type env
+  (* The type ['a env] is shared by [InputNeeded] and [HandlingError].
+     The phantom type parameter ['a] is instantiated with [input_needed]
+     or [handling_error], as appropriate. This prevents the user from
+     calling [offer] when he/she should call [handle], or vice-versa. *)
 
-  type result = private
-    | InputNeeded of env
-    | HandlingError of env
+  type input_needed
+  type handling_error
+
+  type 'a env
+
+  type result =
+    | InputNeeded of input_needed env
+    | HandlingError of handling_error env
     | Accepted of semantic_value
     | Rejected
 
@@ -334,26 +343,26 @@ module type ENGINE = sig
     result
 
   (* [offer] allows the user to resume the parser after it has suspended
-     itself with an [InputNeeded] result. [offer] expects this result, as
-     well as a new token, and produces a new result. It does not raise any
-     exception. *)
+     itself with a result of the form [InputNeeded env] result. [offer]
+     expects [env] as well as a new token and produces a new result. It
+     does not raise any exception. *)
 
   val offer:
-    result ->
+    input_needed env ->
     token * Lexing.position * Lexing.position ->
     result
 
-  (* [resume] allows the user to resume the parser after it has suspended
-     itself with a [HandlingError] result. [resume] expects this result
-     and produces a new result. It does not raise any exception. *)
+  (* [handle] allows the user to resume the parser after it has suspended
+     itself with a result of the form [HandlingError env]. [handle] expects
+     [env] and produces a new result. It does not raise any exception. *)
 
-  val resume:
-    result ->
+  val handle:
+    handling_error env ->
     result
 
   (* The incremental interface is more general than the monolithic one.
      [entry] can be (and is indeed) implemented by first calling [start],
-     then calling [offer] and [resume] in a loop, until a final result
+     then calling [offer] and [handle] in a loop, until a final result
      is obtained. *)
 
 end
