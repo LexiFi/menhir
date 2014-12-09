@@ -21,17 +21,60 @@ let excredef = {
   excdef with exceq = Some excname
 }
 
-(* The type of the entry point for the start symbol [symbol]. *)
+(* Finding the type of a start symbol. *)
+
+let ocamltype_of_start_symbol symbol =
+  try
+    TypTextual (StringMap.find symbol PreFront.grammar.types)
+  with Not_found ->
+    (* Every start symbol should have a type. *)
+    assert false
+
+(* The type of the monolithic entry point for the start symbol [symbol]. *)
 
 let entrytypescheme symbol =
-  let ocamltype =
-    try
-      StringMap.find symbol PreFront.grammar.types
-    with Not_found ->
-      (* Every start symbol should have a type. *)
-      assert false
-  in
-  type2scheme (marrow [ arrow tlexbuf ttoken; tlexbuf ] (TypTextual ocamltype))
+  let typ = ocamltype_of_start_symbol symbol in
+  type2scheme (marrow [ arrow tlexbuf ttoken; tlexbuf ] typ)
+
+(* When the table back-end is active, the generated parser contains,
+   as a sub-module, an application of [Engine.Make]. This sub-module
+   is named as follows. *)
+
+let interpreter =
+  "MenhirInterpreter"
+
+let result t =
+  TypApp (interpreter ^ ".result", [ t ])
+
+(* The name of the incremental entry point for the start symbol [symbol]. *)
+
+let incremental symbol =
+  Misc.normalize symbol ^ "_incremental" (* TEMPORARY better idea? *)
+
+(* The type of the incremental entry point for the start symbol [symbol]. *)
+
+let entrytypescheme_incremental symbol =
+  let t = ocamltype_of_start_symbol symbol in
+  type2scheme (marrow [ tunit ] (result t))
+
+(* This is the interface of the generated parser -- only the part
+   that is specific of the table back-end. *)
+
+let table_interface =
+  if Settings.table then [
+    IIModule (
+      interpreter,
+      MTWithType (
+        MTNamedModuleType "MenhirLib.EngineTypes.INCREMENTAL_ENGINE",
+        tctoken, WKDestructive, ttoken
+      )
+    );
+    IIValDecls (
+      StringSet.fold (fun symbol decls ->
+        (incremental symbol, entrytypescheme_incremental symbol) :: decls
+      ) PreFront.grammar.start_symbols []
+    )
+  ] else []
 
 (* This is the interface of the generated parser. *)
 
@@ -44,7 +87,7 @@ let interface = [
         (Misc.normalize symbol, entrytypescheme symbol) :: decls
       ) PreFront.grammar.start_symbols []
     )
-  ])
+  ] @ table_interface)
 ]
 
 (* Writing the interface to a file. *)

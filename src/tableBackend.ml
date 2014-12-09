@@ -55,17 +55,11 @@ let fcurrent =
 let ftriple =
   field "triple"
 
-let interpreter =
-  "MenhirInterpreter"
-
 let entry =
   interpreter ^ ".entry"
 
 let start =
   interpreter ^ ".start"
-
-let result t =
-  TypApp (interpreter ^ ".result", [ t ])
 
 (* ------------------------------------------------------------------------ *)
 
@@ -726,7 +720,8 @@ let api : IL.valdef list =
     ) ::
     (* The entry point to the incremental API. *)
     define (
-      Nonterminal.print true nt ^ "_incremental", (* TEMPORARY *)
+      (* [false] is intentional; [incremental] performs normalization *)
+      incremental (Nonterminal.print false nt),
       (* In principle the abstraction [fun () -> ...] should not be
          necessary, since [start] is a pure function. However, when
          [--trace] is enabled, [start] will log messages to the
