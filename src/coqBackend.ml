@@ -19,7 +19,7 @@ module Run (T: sig end) = struct
       "unit"
     else
       match ty with
-        | None -> raise Not_found
+        | None -> raise Not_found (* fpottier: argh! *)
         | Some t -> match t with
 	    | Stretch.Declared s -> s.Stretch.stretch_content
 	    | Stretch.Inferred _ -> assert false (* We cannot infer coq types *)
