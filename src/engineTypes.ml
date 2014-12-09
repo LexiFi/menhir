@@ -273,19 +273,17 @@ end
 
 (* --------------------------------------------------------------------------- *)
 
-(* This signature describes the LR engine. *)
+(* This signature describes the monolithic (traditional) LR engine. *)
 
-module type ENGINE = sig
+(* In this interface, the parser controls the lexer. *)
+
+module type MONOLITHIC_ENGINE = sig
 
   type state
 
   type token
 
   type semantic_value
-
-  (* ------------------------------------------------------------------------- *)
-
-  (* The monolithic interface, where the parser controls the lexer. *)
 
   (* An entry point to the engine requires a start state, a lexer, and a lexing
      buffer. It either succeeds and produces a semantic value, or fails and
@@ -299,10 +297,22 @@ module type ENGINE = sig
     Lexing.lexbuf ->
     semantic_value
 
-  (* ------------------------------------------------------------------------- *)
+end
 
-  (* The incremental interface, where the user controls the lexer and the
-     parser suspends itself when it needs to read a new token. *)
+(* --------------------------------------------------------------------------- *)
+
+(* This signature describes the incremental LR engine. *)
+
+(* In this interface, the user controls the lexer, and the parser suspends
+   itself when it needs to read a new token. *)
+
+module type INCREMENTAL_ENGINE = sig
+
+  type state
+
+  type token
+
+  type semantic_value
 
   (* The type ['a result] represents an intermediate or final result of the
      parser. An intermediate result can be thought of as a suspension: it
@@ -372,5 +382,20 @@ module type ENGINE = sig
      [entry] can be (and is indeed) implemented by first calling [start],
      then calling [offer] and [handle] in a loop, until a final result
      is obtained. *)
+
+end
+
+(* --------------------------------------------------------------------------- *)
+
+(* This signature describes the LR engine, which combines the monolithic
+   and incremental interfaces. *)
+
+module type ENGINE = sig
+
+  include MONOLITHIC_ENGINE
+  include INCREMENTAL_ENGINE
+    with type state := state
+     and type token := token
+     and type semantic_value := semantic_value
 
 end
