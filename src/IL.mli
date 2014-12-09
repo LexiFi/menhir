@@ -46,6 +46,19 @@ and interface_item =
   | IITypeDecls of typedef list
     (* Value declarations. *)
   | IIValDecls of (string * typescheme) list
+    (* Include directive. *)
+  | IIInclude of module_type
+    (* Submodule. *)
+  | IIModule of string * module_type
+
+and module_type =
+  | MTNamedModuleType of string
+  | MTWithType of module_type * string * with_kind * typ
+  | MTSigEnd of interface
+
+and with_kind =
+  | WKNonDestructive (* = *)
+  | WKDestructive   (* := *)
 
 and excdef = {
 

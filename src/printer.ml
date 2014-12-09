@@ -619,7 +619,6 @@ let structure f p =
     )
   ) p
 
-
 let rec modexpr f = function
   | MVar x ->
       fprintf f "%s" x
@@ -643,9 +642,37 @@ let program f p =
   List.iter (output_string f) p.postlogue
 
 let valdecl f (x, ts) =
-  fprintf f "val %s: %a" x typ ts.body
+  fprintf f "val %s: %a%t%t" x typ ts.body nl nl
 
-let rec interface_item f = function
+let with_kind f = function
+  | WKNonDestructive ->
+      output_string f "="
+  | WKDestructive ->
+      output_string f ":="
+
+let rec module_type f = function
+  | MTNamedModuleType s ->
+      output_string f s
+  | MTWithType (mt, name, wk, t) ->
+      fprintf f "%a%a"
+        module_type mt
+        (indent 2 with_type) (name, wk, t)
+  | MTSigEnd i ->
+      fprintf f "sig%aend" (
+        indent 2 (fun f i ->
+          fprintf f "%t%a"
+            nl
+            interface i
+        )
+      ) i
+
+and with_type f (name, wk, t) =
+  fprintf f "with type %s %a %a"
+    name
+    with_kind wk
+    typ t
+
+and interface_item f = function
   | IIFunctor (params, i) ->
       functorparams true interface i f params
   | IIExcDecls defs ->
@@ -653,7 +680,11 @@ let rec interface_item f = function
   | IITypeDecls defs ->
       typedefs f defs
   | IIValDecls decls ->
-      list valdecl nl f decls
+      pdefs valdecl nothing nothing f decls
+  | IIInclude mt ->
+      fprintf f "include %a%t%t" module_type mt nl nl
+  | IIModule (name, mt) ->
+      fprintf f "module %s : %a%t%t" name module_type mt nl nl
 
 and interface f i =
   list interface_item nothing f i
