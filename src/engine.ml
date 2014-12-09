@@ -32,23 +32,6 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* OK, OK. I said I would stop using [Obj.magic], yet here we go again.  I
-     need to extend the type [T.token] with an extra element, which represents
-     the [error] pseudo-token. I don't want to pay an extra box in memory or
-     an extra field in the [env] record. (I have measured the cost of moving
-     from 5 to 6 fields in this record to be 30%. This is more than I
-     expected!) I don't want to add a branch to the type [T.token] because
-     that would bother the user (that would be an incompatible change) and
-     that would make some exhaustive case analyses appear non-exhaustive. So,
-     here we go. We allocate a dummy box in memory and use its address as a
-     unique value which cannot possibly be confused with a legit inhabitant of
-     the type [token]. (Right?) *)
-
-  let error_token : token =
-    Obj.magic (ref 0xDEADBEEF)
-
-  (* --------------------------------------------------------------------------- *)
-
   (* In the code-based back-end, the [run] function is sometimes responsible
      for pushing a new cell on the stack. This is motivated by code sharing
      concerns. In this interpreter, there is no such concern; [run]'s caller
@@ -106,7 +89,7 @@ module Make (T : TABLE) = struct
       let (token, startp, endp) = triple in
       Log.lookahead_token (T.token2terminal token) startp endp
     end;
-    let env = { env with triple } in
+    let env = { env with error = false; triple } in
     check_for_default_reduction env
 
   and check_for_default_reduction env =
@@ -128,7 +111,7 @@ module Make (T : TABLE) = struct
 
     (* Peeking at the first input token, without taking it off the input
        stream, is done by reading [env.triple]. We are careful to first
-       check whether this is the [error] token. *)
+       check [env.error]. *)
 
     (* Note that, if [please_discard] was true, then we have just called
        [discard], so the lookahead token cannot be [error]. *)
@@ -136,13 +119,13 @@ module Make (T : TABLE) = struct
     (* Returning [HandlingError env] is equivalent to calling [error env]
        directly, except it allows the user to regain control. *)
 
-    let (token, _, _) = env.triple in
-    if token == error_token then begin
+    if env.error then begin
       if log then
         Log.resuming_error_handling();
       HandlingError env
     end
     else
+      let (token, _, _) = env.triple in
 
       (* We consult the two-dimensional action table, indexed by the
          current state and the current lookahead token, in order to
@@ -253,15 +236,13 @@ module Make (T : TABLE) = struct
 
   and initiate env =
     Log.initiating_error_handling();
-    let (_, startp, endp) = env.triple in
-    let triple = (error_token, startp, endp) in
-    let env = { env with triple } in
+    let env = { env with error = true } in
     HandlingError env
 
   (* [error] handles errors. *)
 
   and error env =
-    assert (let (token, _, _) = env.triple in token == error_token);
+    assert env.error;
 
     (* Consult the column associated with the [error] pseudo-token in the
        action table. *)
@@ -346,7 +327,8 @@ module Make (T : TABLE) = struct
     (* Build an initial environment. *)
 
     let env = {
-      triple = (error_token, Lexing.dummy_pos, Lexing.dummy_pos); (* dummy *)
+      error = false;
+      triple = (Obj.magic (), Lexing.dummy_pos, Lexing.dummy_pos); (* dummy *)
       stack = empty;
       current = s;
     } in

@@ -49,10 +49,15 @@ type ('state, 'semantic_value) stack = {
 
 type ('state, 'semantic_value, 'token) env = {
 
+  (* If this flag is true, then the first component of [env.triple] should
+     be ignored, as it has been logically overwritten with the [error]
+     pseudo-token. *)
+
+  error: bool;
+
   (* The last token that was obtained from the lexer, together with its start
-     and end positions. In principle, this should be a legit token, but the
-     engine disguises the [error] pseudo-token as an illegal inhabitant of the
-     type [token]. Do not read this field unless you know what are doing! *)
+     and end positions. Warning: before the first call to the lexer has taken
+     place, a dummy (and possibly invalid) token is stored here. *)
 
   triple: 'token * Lexing.position * Lexing.position;
 
