@@ -308,11 +308,7 @@ end
 
 module type INCREMENTAL_ENGINE = sig
 
-  type state
-
   type token
-
-  type semantic_value
 
   (* The type ['a result] represents an intermediate or final result of the
      parser. An intermediate result can be thought of as a suspension: it
@@ -345,21 +341,6 @@ module type INCREMENTAL_ENGINE = sig
     | Accepted of 'a
     | Rejected
 
-  (* [start] is an entry point. It requires just a start state, and begins
-     the parsing process. It produces a result, which usually will be an
-     [InputNeeded] result. (It could be [Accepted] if this starting state
-     accepts only the empty word. It could be [Rejected] if this starting
-     state accepts no word at all.) It does not raise any exception. *)
-
-  (* [start s] should really produce a result of type ['a result], for a
-     fixed ['a] that depends on the state [s]. We cannot express this, so
-     we use [semantic_value result], which is safe. The table back-end
-     uses [Obj.magic] to produce safe specialized versions of [start]. *)
-
-  val start:
-    state ->
-    semantic_value result
-
   (* [offer] allows the user to resume the parser after it has suspended
      itself with a result of the form [InputNeeded env] result. [offer]
      expects [env] as well as a new token and produces a new result. It
@@ -385,17 +366,49 @@ module type INCREMENTAL_ENGINE = sig
 
 end
 
+module type INCREMENTAL_ENGINE_START = sig
+
+  (* [start] is an entry point. It requires just a start state, and begins
+     the parsing process. It produces a result, which usually will be an
+     [InputNeeded] result. (It could be [Accepted] if this starting state
+     accepts only the empty word. It could be [Rejected] if this starting
+     state accepts no word at all.) It does not raise any exception. *)
+
+  (* [start s] should really produce a result of type ['a result], for a
+     fixed ['a] that depends on the state [s]. We cannot express this, so
+     we use [semantic_value result], which is safe. The table back-end
+     uses [Obj.magic] to produce safe specialized versions of [start]. *)
+
+  type state
+  type semantic_value
+  type 'a result
+
+  val start:
+    state ->
+    semantic_value result
+
+end
+
 (* --------------------------------------------------------------------------- *)
 
 (* This signature describes the LR engine, which combines the monolithic
    and incremental interfaces. *)
 
+(* The [start] function is set apart because we do not wish to publish
+   it as part of the generated [parser.mli] file. Instead, the table
+   back-end will publish specialized versions of it, with a suitable
+   type cast. *)
+
 module type ENGINE = sig
 
   include MONOLITHIC_ENGINE
+
   include INCREMENTAL_ENGINE
+    with type token := token
+
+  include INCREMENTAL_ENGINE_START
     with type state := state
-     and type token := token
      and type semantic_value := semantic_value
+     and type 'a result := 'a result
 
 end
