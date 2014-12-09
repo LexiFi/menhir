@@ -1102,11 +1102,7 @@ let fold_entry f accu =
 	  assert false (* this is a start production *)
     in
     let t : Stretch.ocamltype =
-      match Nonterminal.ocamltype nt with
-      | Some t ->
-	  t
-      | None ->
-	  assert false (* every start symbol should carry a type *)
+      Nonterminal.ocamltype_of_start_symbol nt
     in
     f prod state nt t accu
   ) entry accu

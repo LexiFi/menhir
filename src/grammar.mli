@@ -46,6 +46,11 @@ module Nonterminal : sig
 
   val ocamltype: t -> Stretch.ocamltype option
 
+  (* A start symbol always has a type. This allows us to define
+     a simplified version of [ocamltype] for start symbols. *)
+
+  val ocamltype_of_start_symbol: t -> Stretch.ocamltype
+
   (* Iteration over nonterminals. The order in which elements are
      examined, and the order of [map]'s output list, correspond to the
      numeric indices produced by [n2i] above. *)
