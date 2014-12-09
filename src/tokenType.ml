@@ -67,12 +67,11 @@ let tokentypedef, tokenprefix =
 			let locate_stretches = None 
 		      end) 
       in
-      P.interface {
-        paramdecls = PreFront.grammar.parameters;
-        excdecls = [];
-	typedecls = [ tokentypedef ];
-	valdecls = []
-      };
+      P.interface [
+        IIFunctor (PreFront.grammar.parameters, [
+	  IITypeDecls [ tokentypedef ]
+        ])
+      ];
       let module P = 
 	Printer.Make (struct 
 			let f = open_out (Settings.base ^ ".ml")

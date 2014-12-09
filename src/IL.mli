@@ -34,21 +34,18 @@ type program = {
 
   } 
 
-and interface = {
+and interface =
+  interface_item list
 
-    (* Functor parameters. *)
-    paramdecls: Stretch.t list;
-
-    (* Exception definitions. *)
-    excdecls: excdef list;
-    
+and interface_item =
+    (* Functor. Called [Make]. No functor if no parameters. Very ad hoc! *)
+  | IIFunctor of Stretch.t list * interface
+    (* Exception declarations. *)
+  | IIExcDecls of excdef list
     (* Algebraic data type declarations (mutually recursive). *)
-    typedecls: typedef list;
-
+  | IITypeDecls of typedef list
     (* Value declarations. *)
-    valdecls: (string * typescheme) list
-
-  } 
+  | IIValDecls of (string * typescheme) list
 
 and excdef = {
 
