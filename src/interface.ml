@@ -3,6 +3,10 @@ open IL
 open CodeBits
 open TokenType
 
+(* In this module, we use [PreFront], not [Grammar], in order to avoid
+   a circularity. [Interface] is used by [Infer], which runs before
+   [Grammar]. *)
+
 (* This is the [Error] exception. *)
 
 let excname =
