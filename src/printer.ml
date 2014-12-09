@@ -645,14 +645,24 @@ let program f p =
 let valdecl f (x, ts) =
   fprintf f "val %s: %a" x typ ts.body
 
-let interface f i =
-  fprintf f "%a%a%a%!" (excdefs true) i.excdecls typedefs i.typedecls (list valdecl nl) i.valdecls
+let rec interface_item f = function
+  | IIFunctor (params, i) ->
+      functorparams true interface i f params
+  | IIExcDecls defs ->
+      excdefs true f defs
+  | IITypeDecls defs ->
+      typedefs f defs
+  | IIValDecls decls ->
+      list valdecl nl f decls
+
+and interface f i =
+  list interface_item nothing f i
 
 let program p =
   functorparams false program p X.f p.paramdefs
 
 let interface i =
-  functorparams true interface i X.f i.paramdecls
+  interface X.f i
 
 let expr e =
   expr X.f e

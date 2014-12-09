@@ -35,23 +35,17 @@ let entrytypescheme symbol =
 
 (* This is the interface of the generated parser. *)
 
-let interface = {
-
-  paramdecls =
-    PreFront.grammar.parameters;
-
-  excdecls =
-    [ excdef ];
-
-  typedecls =
-    tokentypedef;
-
-  valdecls =
-    StringSet.fold (fun symbol decls ->
-      (Misc.normalize symbol, entrytypescheme symbol) :: decls
-    ) PreFront.grammar.start_symbols []
-
-} 
+let interface = [
+  IIFunctor (PreFront.grammar.parameters, [
+    IIExcDecls [ excdef ];
+    IITypeDecls tokentypedef;
+    IIValDecls (
+      StringSet.fold (fun symbol decls ->
+        (Misc.normalize symbol, entrytypescheme symbol) :: decls
+      ) PreFront.grammar.start_symbols []
+    )
+  ])
+]
 
 (* Writing the interface to a file. *)
 
