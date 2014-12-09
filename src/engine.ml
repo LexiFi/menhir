@@ -326,9 +326,17 @@ module Make (T : TABLE) = struct
 
     (* Build an initial environment. *)
 
+    (* Unfortunately, there is no type-safe way of constructing a
+       dummy token. Tokens carry semantic values, which in general
+       we cannot manufacture. This instance of [Obj.magic] could
+       be avoided by adopting a different representation (e.g., no
+       [env.error] field, and an option in the first component of
+       [env.triple]), but I like this representation better. *)
+
+    let dummy_token = Obj.magic () in
     let env = {
       error = false;
-      triple = (Obj.magic (), Lexing.dummy_pos, Lexing.dummy_pos); (* dummy *)
+      triple = (dummy_token, Lexing.dummy_pos, Lexing.dummy_pos); (* dummy *)
       stack = empty;
       current = s;
     } in
