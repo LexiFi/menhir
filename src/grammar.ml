@@ -127,6 +127,14 @@ module Nonterminal = struct
     with Not_found ->
       None
 
+  let ocamltype_of_start_symbol nt =
+    match ocamltype nt with
+    | Some typ ->
+        typ
+    | None ->
+        (* Every start symbol has a type. *)
+        assert false
+
   let tabulate f =
     Array.get (Array.init n f)
 
