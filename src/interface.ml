@@ -65,7 +65,7 @@ let table_interface =
     IIModule (
       interpreter,
       MTWithType (
-        MTNamedModuleType "MenhirLib.EngineTypes.INCREMENTAL_ENGINE",
+        MTNamedModuleType "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE",
         tctoken, WKDestructive, ttoken
       )
     );
