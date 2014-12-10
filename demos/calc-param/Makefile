@@ -1,3 +1,7 @@
+# Find Menhir.
+ifndef MENHIR
+  MENHIR := $(shell ../find-menhir.sh)
+endif
 # Add --table on the next line to use Menhir's table-based back-end.
 PGFLAGS         := --infer
 GENERATED       := parser.ml parser.mli lexer.ml tokens.ml tokens.mli
