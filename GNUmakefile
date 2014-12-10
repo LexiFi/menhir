@@ -81,6 +81,7 @@ LIBFILES := \
   src/infiniteArray.{ml,mli} \
   src/packedIntArray.{ml,mli} \
   src/rowDisplacement.{ml,mli} \
+  src/IncrementalEngine.ml \
   src/engineTypes.ml \
   src/engine.{ml,mli} \
   src/tableFormat.ml \
