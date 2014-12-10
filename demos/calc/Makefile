@@ -1,8 +1,23 @@
-# Add --table on the next line to use Menhir's table-based back-end.
-PGFLAGS         := --infer
-GENERATED       := parser.ml parser.mli lexer.ml
-MODULES         := parser lexer calc
-EXECUTABLE      := calc
-OCAMLDEPWRAPPER := ../ocamldep.wrapper
-include ../Makefile.shared
-include ../Makefile.auto
+.PHONY: all clean test
+
+# Find Menhir.
+ifndef MENHIR
+  MENHIR := $(shell ../find-menhir.sh)
+endif
+
+MENHIRFLAGS     := --infer
+
+OCAMLBUILD      := ocamlbuild -use-ocamlfind -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS)"
+
+MAIN            := calc
+
+all:
+	$(OCAMLBUILD) $(MAIN).native
+
+clean:
+	$(OCAMLBUILD) -clean
+
+test: all
+	@echo "The following command should print 42:"
+	echo "(1 + 2 * 10) * 2" | ./$(MAIN).native
+
