@@ -5,9 +5,13 @@ ifndef MENHIR
   MENHIR := $(shell ../find-menhir.sh)
 endif
 
-MENHIRFLAGS     := --infer
+# We use the table back-end, and link against menhirLib.
+# We assume that menhirLib has been installed in such a
+# way that ocamlfind knows about it.
 
-OCAMLBUILD      := ocamlbuild -use-ocamlfind -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS)"
+MENHIRFLAGS     := --infer --table
+
+OCAMLBUILD      := ocamlbuild -use-ocamlfind -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS)" -package menhirLib
 
 MAIN            := calc
 
