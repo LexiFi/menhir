@@ -65,8 +65,10 @@ let table_interface =
     IIModule (
       interpreter,
       MTWithType (
-        MTNamedModuleType "MenhirLib.EngineTypes.INCREMENTAL_ENGINE",
-        tctoken, WKDestructive, ttoken
+        MTNamedModuleType "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE",
+        "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
+        WKDestructive,
+        ttoken
       )
     );
     IIValDecls (
