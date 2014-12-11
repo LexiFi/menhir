@@ -60,7 +60,7 @@ let () =
   Random.init seed
 
 let () =
-  let tks : token stream = produce 5000000 in
+  let tks : token stream = produce 10000000 in
   let tks = fresh (map wrap tks) in
   if !dry_run then begin
     let _ = find (fun _ -> false) tks in
