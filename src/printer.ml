@@ -50,7 +50,7 @@ let rawnl f =
 
 let nl f =
   rawnl f;
-  output f whitespace 0 !indentation
+  output_substring f whitespace 0 !indentation
 
 let indent ofs producer f x =
   let old_indentation = !indentation in
@@ -380,7 +380,7 @@ and stretch raw f stretch =
       output_string f content;
       line := !line + stretch.Stretch.stretch_linecount;
       sharp f (!line + 2) basename;
-      output f whitespace 0 !indentation
+      output_substring f whitespace 0 !indentation
   | None ->
       output_string f (if raw then raw_content else content)
 
