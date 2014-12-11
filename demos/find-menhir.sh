@@ -8,13 +8,7 @@
 # A normal user does not need this script. One can
 # assume that Menhir has been installed.
 
-# First attempt: find Menhir in the PATH.
-if which menhir >/dev/null ; then
-  echo menhir
-  exit 0
-fi
-
-# Second attempt: find Menhir in the src directory
+# First attempt: find Menhir in the src directory
 # of the Menhir distribution.
 # This loop assumes that we are somewhere within
 # the Menhir distribution, so by going up, we will
@@ -25,6 +19,12 @@ done
 LOCAL=src/_stage1/menhir.native
 if ls $LOCAL >/dev/null 2>/dev/null ; then
   echo `pwd`/$LOCAL
+  exit 0
+fi
+
+# Second attempt: find Menhir in the PATH.
+if which menhir >/dev/null ; then
+  echo menhir
   exit 0
 fi
 
