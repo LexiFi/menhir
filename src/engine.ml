@@ -343,10 +343,12 @@ module Make (T : TABLE) = struct
 
     (* Begin parsing. *)
 
+    (* The parameter [please_discard] here is [true], which means we know
+       that we must read at least one token. This claim relies on the fact
+       that we have ruled out the two special cases where a start symbol
+       recognizes the empty language or the singleton language {epsilon}. *)
+
     run env true
-      (* TEMPORARY in principle [please_discard] here should be [false]
-         if the state [s] has a default reduction on [#], that is, if
-         this starting state accepts only the empty word. *)
 
   (* [offer env triple] is invoked by the user in response to a result of the
      form [InputNeeded env]. [offer] is just a synonym for [discard]. *)
