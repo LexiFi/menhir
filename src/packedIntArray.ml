@@ -74,7 +74,7 @@ let pack (a : int array) : t =
     in
 
     let s =
-      String.create n
+      Bytes.create n
     in
 
     (* Define a reader for the source array. The reader might run off
@@ -98,12 +98,12 @@ let pack (a : int array) : t =
       for _x = 1 to w do
 	c := (!c lsl k) lor next()
       done;
-      s.[j] <- Char.chr !c
+      Bytes.set s j (Char.chr !c)
     done;
 
     (* Done. *)
 
-    k, s
+    k, Bytes.unsafe_to_string s
 
   end
   else begin (* k > 8 *)
@@ -120,7 +120,7 @@ let pack (a : int array) : t =
     in
 
     let s =
-      String.create n
+      Bytes.create n
     in
 
     (* Fill up the string. *)
@@ -128,14 +128,14 @@ let pack (a : int array) : t =
     for i = 0 to m - 1 do
       let v = ref a.(i) in
       for x = 1 to w do
-	s.[(i + 1) * w - x] <- Char.chr (!v land 255);
+	Bytes.set s ((i + 1) * w - x) (Char.chr (!v land 255));
 	v := !v lsr 8
       done
     done;
 
     (* Done. *)
 
-    k, s
+    k, Bytes.unsafe_to_string s
 
   end
 
