@@ -796,14 +796,8 @@ let compute (basecase : bool) : (bool array) * (Symbol.t -> bool) =
   );
   property, symbol_has_property
 
-let () =
-  let nonempty, _ = compute true in
-  for nt = Nonterminal.start to Nonterminal.n - 1 do
-    if not nonempty.(nt) then
-      Error.grammar_warning
-	(Nonterminal.positions nt)
-	(Printf.sprintf "%s generates the empty language." (Nonterminal.print false nt))
-  done
+let (nonempty : bool array), _ =
+  compute true
 
 let (nullable : bool array), (nullable_symbol : Symbol.t -> bool) =
   compute false
@@ -848,6 +842,34 @@ let () =
     first.(nt) <- updated;
     TerminalSet.compare original updated <> 0
   )
+
+(* ------------------------------------------------------------------------ *)
+
+let () =
+  (* If a start symbol generates the empty language or generates
+     the language {epsilon}, report an error. In principle, this
+     could be just a warning. However, in [Engine], in the function
+     [start], it is convenient to assume that neither of these
+     situations can arise. This means that at least one token must
+     be read. *)
+  StringSet.iter (fun symbol ->
+    let nt = Nonterminal.lookup symbol in
+    if not nonempty.(nt) then
+      Error.error
+	(Nonterminal.positions nt)
+	(Printf.sprintf "%s generates the empty language." (Nonterminal.print false nt));
+    if TerminalSet.is_empty first.(nt) then
+      Error.error
+	(Nonterminal.positions nt)
+	(Printf.sprintf "%s generates the language {epsilon}." (Nonterminal.print false nt))
+  ) Front.grammar.start_symbols;
+  (* If a nonterminal symbol generates the empty language, issue a warning. *)
+  for nt = Nonterminal.start to Nonterminal.n - 1 do
+    if not nonempty.(nt) then
+      Error.grammar_warning
+	(Nonterminal.positions nt)
+	(Printf.sprintf "%s generates the empty language." (Nonterminal.print false nt));
+  done
 
 (* ------------------------------------------------------------------------ *)
 (* Dump the analysis results. *)
