@@ -8,6 +8,11 @@ open IL
 let tunit =
   TypApp ("unit", [])
 
+(* The Boolean type. *)
+
+let tbool =
+  TypApp ("bool", [])
+
 (* The integer type. *)
 
 let tint =

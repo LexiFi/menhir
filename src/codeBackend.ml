@@ -131,26 +131,22 @@ open Interface
    cells do not physically hold a state, this description is somewhat
    simpler than the truth, but that's the idea.)
 
-   When an error is detected in state [s], then (see [initiate]) the
-   [error] function associated with [s] is invoked. Immediately
-   before invoking the [error] function, the
-   counter [env.shifted] is reset to -1. By convention, this means
-   that the current token is discarded and replaced with an [error]
-   token. The [error] token transparently inherits the positions
-   associated with the underlying concrete token.
+   When an error is detected in state [s], then (see [initiate]) the [error]
+   function associated with [s] is invoked. Immediately before invoking the
+   [error] function, the flag [env.error] is set.  By convention, this means
+   that the current token is discarded and replaced with an [error] token. The
+   [error] token transparently inherits the positions associated with the
+   underlying concrete token.
 
    Whenever we attempt to consult the current token, we check whether
-   [env.shifted] is -1 and, if that is the case, resume error handling
+   [env.error] is set and, if that is the case, resume error handling
    by calling the [error] function associated with the current state.
    This allows a series of reductions to correctly take place when the
    lookahead token is [error]. In many states, though, it is possible
-   to statically prove that [env.shifted] cannot be -1. In that case,
-   we produce a lookup of [env.token] without checking [env.shifted].
+   to statically prove that [env.error] cannot be set. In that case,
+   we produce a lookup of [env.token] without checking [env.error].
 
-   The counter [env.shifted] is incremented when a token is
-   shifted. In particular, immediately after the [error] token is
-   shifted, [env.shifted] is zero. The increment is conditional, so as
-   to avoid overflow. It is performed inside [discard].
+   The flag [env.error] is cleared when a token is shifted.
 
    States with default reductions perform a reduction regardless of
    the current lookahead token, which can be either [error] or a
@@ -261,8 +257,8 @@ let flexbuf =
 let ftoken =
   prefix "token"
 
-let fshifted =
-  prefix "shifted"
+let ferror =
+  prefix "error"
 
 let fstartp =
   prefix "startp"
@@ -313,18 +309,11 @@ let magic e : expr =
 let nomagic e =
   e
 
-(* [env.shifted] is either [-1], which means that we have an [error] token
-   at the head of the token stream, or a nonnegative number. (The code in
-   [discard], which increments [env.shifted], takes care to avoid overflow.)
-   
-   The following assertion checks that [env.shifted] is not [-1], that is,
-   it is greater than or equal to [0]. Prior to 2011/01/24, two forms of
-   this test co-existed, but it seems more uniform to have just one form. *)
+(* The following assertion checks that [env.error] is [false]. *)
 
-let assertshifted : pattern * expr =
+let assertnoerror : pattern * expr =
   PUnit,
-  EApp (EVar "assert",
-	[ EApp (EVar "Pervasives.(<>)", [ ERecordAccess (EVar env, fshifted); EIntConst (-1) ]) ])
+  EApp (EVar "assert", [ EApp (EVar "not", [ ERecordAccess (EVar env, ferror) ]) ])
 
 let etuple = function
   | [] ->
@@ -543,7 +532,7 @@ let envtypedef = {
       field false flexbuf tlexbuf;
 
       (* The last token that was read from the lexer. This is the
-	 head of the token stream, unless [env.shifted] is [-1]. *)
+	 head of the token stream, unless [env.error] is set. *)
 
       field true ftoken ttoken;
 
@@ -555,13 +544,13 @@ let envtypedef = {
 
       field true fendp tposition;
 
-      (* How many tokens were successfully shifted since the last
-	 [error] token was shifted. When this counter is -1, the head
+      (* A flag which tells whether we currently have an [error] token
+         at the head of the stream. When this flag is set, the head
 	 of the token stream is the [error] token, and the contents of
 	 the [token] field is irrelevant. The token following [error]
 	 is obtained by invoking the lexer again. *)
 
-      field true fshifted tint;
+      field true ferror tbool;
 
     ];
   typeconstraint = None
@@ -1001,18 +990,18 @@ let gettoken s defred e =
       (* There is no default reduction. Peek at the first input token,
 	 without taking it off the input stream. This is normally done
 	 by reading [env.token], unless the token might be [error]:
-	 then, we check [env.shifted] first. *)
+	 then, we check [env.error] first. *)
 
       if Invariant.errorpeeker s then begin
 	incr errorpeekers;
 	EIfThenElse (
-	  EApp (EVar "Pervasives.(=)", [ ERecordAccess (EVar env, fshifted); EIntConst (-1) ]),
+	  ERecordAccess (EVar env, ferror),
 	  tracecomment "Resuming error handling" (call_error_via_errorcase magic s),
 	  blet ([ PVar token, ERecordAccess (EVar env, ftoken) ], e)
         )
       end
       else
-	blet ([ assertshifted;
+	blet ([ assertnoerror;
 		PVar token, ERecordAccess (EVar env, ftoken) ], e)
 
 (* This produces the definition of a [run] function. *)
@@ -1043,30 +1032,25 @@ let defaultreductioncomment toks e =
     e
   )
 
-(* This produces some bookkeeping code that is used when initiating
-   error handling.
-
-   We reset the count of tokens shifted since the last error to
-   -1, so that it becomes zero *after* the error token itself is
-   shifted. By convention, when [shifted] is -1, the field [env.token]
-   becomes meaningless and one considers that the first token on the
-   input stream is [error]. As a result, the next peek at the
-   lookahead token will cause error handling to be resumed. The next
-   call to [discard] will take the [error] token off the input stream
-   and increment [env.shifted] to zero. *)
+(* This produces some bookkeeping code that is used when initiating error
+   handling. We set the flag [env.error]. By convention, the field [env.token]
+   becomes meaningless and one considers that the first token on the input
+   stream is [error]. As a result, the next peek at the lookahead token will
+   cause error handling to be resumed. The next call to [discard] will take
+   the [error] token off the input stream and clear [env.error]. *)
 
 let errorbookkeeping e =
   tracecomment
     "Initiating error handling"
     (blet (
-      [ PUnit, ERecordWrite (EVar env, fshifted, EIntConst (-1)) ],
+      [ PUnit, ERecordWrite (EVar env, ferror, EVar "true") ],
       e
     ))
 
 (* This code is used to indicate that a new error has been detected in
    state [s].
 
-   If I am correct, the count of shifted tokens is never -1
+   If I am correct, [env.error] is never set
    here. Indeed, that would mean that we first found an error, and
    then signaled another error before being able to shift the first
    error token. My understanding is that this cannot happen: when the
@@ -1076,16 +1060,12 @@ let errorbookkeeping e =
 
    We initiate error handling by first performing the standard
    bookkeeping described above, then transferring control to the
-   [error] function associated with [s].
-
-   The token is discarded via a call to [discard], followed by
-   resetting [env.shifted] to zero, to counter-act the effect of
-   [discard], which increments that counter. *)
+   [error] function associated with [s]. *)
 
 let initiate s =
 
   blet (
-    [ assertshifted ],
+    [ assertnoerror ],
     errorbookkeeping (call_error_via_errorcase magic s)
   )
 
@@ -1592,8 +1572,7 @@ let printtokendef =
    query the lexer for a new one. The code queries the lexer for a new
    token and stores it into [env.token], overwriting the previous
    token. It also stores the start and positions of the new token.
-   Last, if [env.shifted] has not yet reached its limit, then it is
-   incremented.
+   Last, [env.error] is cleared.
 
    We use the lexer's [lex_start_p] and [lex_curr_p] fields to extract
    the start and end positions of the token that we just read. In
@@ -1607,8 +1586,7 @@ let discarddef = {
   valpublic = false;
   valpat = PVar discard;
   valval =
-    let lexbuf = "lexbuf"
-    and shifted = "shifted" in
+    let lexbuf = "lexbuf" in
     EAnnot (
       EFun (
 	[ PVar env ],
@@ -1622,11 +1600,7 @@ let discarddef = {
 		[ EApp (EVar print_token, [ EVar token ]);
 		  ERecordAccess (ERecordAccess (EVar env, fstartp), "Lexing.pos_cnum");
 		  ERecordAccess (ERecordAccess (EVar env, fendp), "Lexing.pos_cnum") ] @ [
-	  PVar shifted, EApp (EVar "Pervasives.(+)", [ ERecordAccess (EVar env, fshifted); EIntConst 1 ]);
-	  PUnit, EIfThen (
-		    EApp (EVar "Pervasives.(>=)", [ EVar shifted; EIntConst 0 ]),
-		      ERecordWrite (EVar env, fshifted, EVar shifted)
-		  )
+	  PUnit, ERecordWrite (EVar env, ferror, EVar "false")
 	  ],
 	  EVar token
 	)
@@ -1660,7 +1634,7 @@ let initenvdef =
 	      (ftoken, EVar token);
 	      (fstartp, EVar "Lexing.dummy_pos");
 	      (fendp, EVar "Lexing.dummy_pos");
-	      (fshifted, EMaxInt)
+	      (ferror, EVar "false")
 	    ]
 	    )
 	  )

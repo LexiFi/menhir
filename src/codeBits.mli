@@ -6,6 +6,7 @@ open IL
 (* Standard types. *)
 
 val tunit: typ
+val tbool: typ
 val tint: typ
 val tstring: typ
 val texn: typ
