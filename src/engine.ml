@@ -340,13 +340,6 @@ module Make (T : TABLE) = struct
          if the state [s] has a default reduction on [#], that is, if
          this starting state accepts only the empty word. *)
 
-  (* This restricted version of [Obj.magic] allows casting a final result
-     from [semantic_value result] to ['a result]. It is in general unsafe
-     to do this. *)
-
-  let coerce : semantic_value result -> 'a result =
-    Obj.magic
-
   (* [offer env triple] is invoked by the user in response to a result of the
      form [InputNeeded env]. [offer] is just a synonym for [discard]. *)
 
@@ -367,28 +360,31 @@ module Make (T : TABLE) = struct
      [HandlingError] result, or (symmetrically) from providing [handle] with
      an environment that comes from an [InputNeeded] result. *)
 
-  (* Second, we use [coerce] to change the result type of [offer] and [handle]
-     from [semantic_value result] to ['a result]. This is safe, in this case,
-     because we are careful to give the user access to values of type [(t, _)
-     env] only if [t] is indeed the type of the eventual semantic value for
-     this run. (More precisely, by examining [EngineTypes.ENGINE], one finds
-     that the user can build a value of type [('a, _) env] or ['a result] only
-     if ['a] is [semantic_value]. The table back-end goes further than this
-     and produces versions of [start] composed with a suitable cast, which
-     give the user access to a value of type [t result] where [t] is the type
-     of the start symbol.) *)
+  (* Second, we change the result type of [offer] and [handle] from
+     [semantic_value result] to ['a result]. This is safe, in this case,
+     because we give the user access to values of type [(t, _) env] only if
+     [t] is indeed the type of the eventual semantic value for this run. (More
+     precisely, by examining the signatures [INCREMENTAL_ENGINE] and
+     [INCREMENTAL_ENGINE_START], one finds that the user can build a value of
+     type [('a, _) env] or ['a result] only if ['a] is [semantic_value]. The
+     table back-end goes further than this and produces versions of [start]
+     composed with a suitable cast, which give the user access to a value of
+     type [t result] where [t] is the type of the start symbol.) *)
 
+  (* The unsafe type cast is performed in two steps, due to the strange
+     interaction between type annotations and the relaxed value restriction.
+     If the two steps are merged, the type annotation is pushed inwards and
+     prevents generalization! This is a standard workaround, says Jacques. *)
+
+  let offer =
+    Obj.magic discard
   let offer : 'a . ('a, input_needed) env -> token * Lexing.position * Lexing.position -> 'a result =
-    fun env triple -> coerce (discard env triple)
+    offer
 
+  let handle =
+    Obj.magic error
   let handle : 'a . ('a, handling_error) env -> 'a result =
-    fun env -> coerce (error env)
-
-  (* TEMPORARY something really strange is going on here. An application
-     of [Obj.magic] is considered polymorphic if it is bare, but is not
-     accepted if a (monomorphic or quantified) type annotation is added.
-     Eta-expansion (done above) works around the problem, but slows things
-     down. *)
+    handle
 
   (* --------------------------------------------------------------------------- *)
   (* --------------------------------------------------------------------------- *)
