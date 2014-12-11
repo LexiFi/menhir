@@ -330,7 +330,7 @@ let check_grammar p_grammar =
        n with n > 0 is the number of parameters of the clique.
     *)
   let unseen = -1 in
-  let marked_components = Array.create n unseen in
+  let marked_components = Array.make n unseen in
     
   let flexible_arrow args =
     let ty = Arrow (List.map (fun _ -> fresh_flexible_variable ()) args) in

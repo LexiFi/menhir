@@ -173,7 +173,7 @@ let rec explore (state : Item.Set.t) : node =
     InfiniteArray.set _transitions k (SymbolMap.map (fun symbolic_state ->
       let (k : node) = explore (Item.Map.domain symbolic_state) in
       let lookahead : SymbolicLookahead.t array =
-	Array.create (Item.Map.cardinal symbolic_state) SymbolicLookahead.empty in
+	Array.make (Item.Map.cardinal symbolic_state) SymbolicLookahead.empty in
       let (_ : int) = Item.Map.fold (fun _ s i ->
 	lookahead.(i) <- s;
 	i+1

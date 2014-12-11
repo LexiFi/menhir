@@ -37,7 +37,7 @@ let tabulateb n f =
   ) 0 a
 
 let tabulatef number fold n dummy f =
-  let a = Array.create n dummy in
+  let a = Array.make n dummy in
   let () = fold (fun () element ->
     a.(number element) <- f element
   ) () in
@@ -105,7 +105,7 @@ let separated_list_to_string printer separator list =
 
 let index_map string_map = 
   let n = StringMap.cardinal string_map in
-  let a = Array.create n None in
+  let a = Array.make n None in
   let conv, _ = StringMap.fold 
     (fun k v (conv, idx) ->
        a.(idx) <- Some (k, v);

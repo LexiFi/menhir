@@ -227,7 +227,7 @@ let queue : node Queue.t =
    newly found state. *)
 
 let map : node list array =
-  Array.create Lr0.n []
+  Array.make Lr0.n []
 
 (* A counter that allows assigning raw numbers to nodes. *)
 
