@@ -240,8 +240,6 @@ rule:
       ]
     }
 | error
-    /* This error production should lead to resynchronization on the next
-       well-formed rule. */
     { Error.error (Positions.two $startpos $endpos) "Syntax error inside the definition of a nonterminal symbol." }
 
 flags:
@@ -283,9 +281,6 @@ production_group:
     }
 | error ACTION precedence?
 | error EOF
-    /* This error production should lead to resynchronization on the next
-       semantic action, unless the end of file is reached before a semantic
-       action is found. */
     { Error.error (Positions.two $startpos($1) $endpos($1)) "Syntax error inside a production." }
 
 %inline precedence:
