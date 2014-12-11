@@ -1043,7 +1043,7 @@ let errorbookkeeping e =
   tracecomment
     "Initiating error handling"
     (blet (
-      [ PUnit, ERecordWrite (EVar env, ferror, EVar "true") ],
+      [ PUnit, ERecordWrite (EVar env, ferror, etrue) ],
       e
     ))
 
@@ -1600,7 +1600,7 @@ let discarddef = {
 		[ EApp (EVar print_token, [ EVar token ]);
 		  ERecordAccess (ERecordAccess (EVar env, fstartp), "Lexing.pos_cnum");
 		  ERecordAccess (ERecordAccess (EVar env, fendp), "Lexing.pos_cnum") ] @ [
-	  PUnit, ERecordWrite (EVar env, ferror, EVar "false")
+	  PUnit, ERecordWrite (EVar env, ferror, efalse)
 	  ],
 	  EVar token
 	)
@@ -1634,7 +1634,7 @@ let initenvdef =
 	      (ftoken, EVar token);
 	      (fstartp, EVar "Lexing.dummy_pos");
 	      (fendp, EVar "Lexing.dummy_pos");
-	      (ferror, EVar "false")
+	      (ferror, efalse)
 	    ]
 	    )
 	  )
