@@ -242,12 +242,12 @@ let is_valid_nonterminal_character = function
       false
 
 let restrict filename =
-  let m = String.copy (Filename.chop_suffix filename (if Settings.coq then ".vy" else ".mly")) in
-  for i = 0 to String.length m - 1 do
-    if not (is_valid_nonterminal_character m.[i]) then
-      m.[i] <- '_'
+  let m = Bytes.of_string (Filename.chop_suffix filename (if Settings.coq then ".vy" else ".mly")) in
+  for i = 0 to Bytes.length m - 1 do
+    if not (is_valid_nonterminal_character (Bytes.get m i)) then
+      Bytes.set m i '_'
   done;
-  m
+  Bytes.unsafe_to_string m
 
 let rename nonterminal filename = 
   let name = restrict filename ^ "_" ^ nonterminal in
