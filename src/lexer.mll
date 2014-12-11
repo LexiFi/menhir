@@ -23,7 +23,7 @@
       pos_bol = pos.pos_cnum;
     }
 
-  (* Extracts a chunk out of the source file. *)    
+  (* Extracts a chunk out of the source file. *)
 
   let chunk ofs1 ofs2 =
     let contents = Error.get_file_contents() in
@@ -39,11 +39,11 @@
     String.sub contents ofs1 len
 
   (* Overwrites an old character with a new one at a specified
-     offset in a string. *)
+     offset in a [bytes] buffer. *)
 
   let overwrite content offset c1 c2 =
-    assert (content.[offset] = c1);
-    content.[offset] <- c2
+    assert (Bytes.get content offset = c1);
+    Bytes.set content offset c2
 
   (* Creates a stretch. *)
 
@@ -51,7 +51,7 @@
     let ofs1 = pos1.pos_cnum
     and ofs2 = pos2.pos_cnum in
     let raw_content = chunk ofs1 ofs2 in
-    let content = String.copy raw_content in
+    let content = Bytes.of_string raw_content in
     (* Turn our keywords into valid Objective Caml identifiers
        by replacing '$', '(', and ')' with '_'. Bloody. *)
     List.iter (function { value = keyword; position = pos } ->
@@ -66,7 +66,7 @@
 	  (* $syntaxerror is replaced with
 	     (raise _eRR) *)
           let source = "(raise _eRR)" in
-          String.blit source 0 content ofs (String.length source)
+          Bytes.blit_string source 0 content ofs (String.length source)
       | Keyword.Position (subject, where, _) ->
 	  let ofslpar =
 	    match where with
@@ -85,6 +85,8 @@
 	  | Keyword.RightNamed id ->
 	      overwrite content (ofslpar + 1 + String.length id) ')' '_'
     ) pkeywords;
+    (* Done modifying [content] in place. *)
+    let content = Bytes.to_string content in
     (* Add whitespace so that the column numbers match those of the source file.
        If requested, add parentheses so that the semantic action can be inserted
        into other code without ambiguity. *)
