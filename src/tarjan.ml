@@ -67,7 +67,7 @@ end) = struct
        [data option], because we have no meaningful initial value of
        type [data] at hand. *)
 
-    let table = Array.create G.n None in
+    let table = Array.make G.n None in
 
     (* Initialize the array. *)
 

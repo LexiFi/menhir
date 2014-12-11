@@ -142,7 +142,7 @@ module Closure (L : Lookahead.S) = struct
     ref 0
 
   let mapping : node array array =
-    Array.create Production.n [||]
+    Array.make Production.n [||]
 
   let item2node item =
     let prod, pos = export item in

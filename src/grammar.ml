@@ -691,10 +691,10 @@ end
    The forward reference graph is unused but can be printed on demand. *)
 
 let forward : NonterminalSet.t array =
-  Array.create Nonterminal.n NonterminalSet.empty
+  Array.make Nonterminal.n NonterminalSet.empty
 
 let backward : NonterminalSet.t array =
-  Array.create Nonterminal.n NonterminalSet.empty
+  Array.make Nonterminal.n NonterminalSet.empty
 
 let () =
   Array.iter (fun (nt1, rhs) ->
@@ -881,10 +881,10 @@ let follow : TerminalSet.t array Lazy.t =
       Array.make Nonterminal.n TerminalSet.empty
 
     and forward : NonterminalSet.t array =
-      Array.create Nonterminal.n NonterminalSet.empty
+      Array.make Nonterminal.n NonterminalSet.empty
 
     and backward : NonterminalSet.t array =
-      Array.create Nonterminal.n NonterminalSet.empty
+      Array.make Nonterminal.n NonterminalSet.empty
 
     in
 

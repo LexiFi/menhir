@@ -60,7 +60,7 @@ end) = struct
   (* Mapping of LR(0) state numbers to lists of nodes. *)
 
   let map : node list array =
-    Array.create Lr0.n []
+    Array.make Lr0.n []
 
   (* Exploring a state. This creates a new node, if necessary, and
      enqueues it for further exploration. *)
