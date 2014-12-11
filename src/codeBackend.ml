@@ -959,7 +959,7 @@ let runpushcellunless shiftreduce s e =
    invoke the lexer, so the [run] function for an initial state must
    do it. (Except in the very special case where the initial state
    has a default reduction on [#] -- this means the grammar recognizes
-   only the empty word.) *)
+   only the empty word. We have ruled out this case.) *)
 
 let gettoken s defred e =
   match Lr1.incoming_symbol s, defred with
