@@ -9,7 +9,7 @@ let flags () =
   (* -inline 1000 *)
   flag ["ocaml"; "compile"; "native"] (S [A "-inline"; A "1000"]);
   (* nazi warnings *)
-  flag ["ocaml"; "compile"; "my_warnings"] (S[A "-w"; A "@1..49-3-4-9-33-41-44"])
+  flag ["ocaml"; "compile"; "my_warnings"] (S[A "-w"; A "@1..49-4-9-33-41-44"])
 
 (* ---------------------------------------------------------------------------- *)
 
