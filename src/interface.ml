@@ -84,10 +84,10 @@ let table_interface =
 
 let interface = [
   IIFunctor (PreFront.grammar.parameters, [
-    IIComment "This exception is raised by the monolithic API functions.";
-    IIExcDecls [ excdef ];
     IIComment "The type of tokens.";
     IITypeDecls tokentypedef;
+    IIComment "This exception is raised by the monolithic API functions.";
+    IIExcDecls [ excdef ];
     IIComment "The monolithic API.";
     IIValDecls (
       StringSet.fold (fun symbol decls ->
