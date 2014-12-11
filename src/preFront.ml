@@ -19,21 +19,9 @@ let read_whole_file filename =
      whole file. And the standard library function [Buffer.add_channel] uses
      [really_input] internally, so we cannot use it either. Bummer. *)
 
-  let block_size = 16384 in
-  let b = Buffer.create block_size in
-  let s = Bytes.create block_size in
-
-  let rec loop () =
-    let read = input channel s 0 block_size in
-    if read > 0 then begin
-      Buffer.add_subbytes b s 0 read;
-      loop()
-    end
-  in
-
-  loop();
+  let s = IO.exhaust channel in
   close_in channel;
-  Buffer.contents b
+  s
 
 let load_partial_grammar filename =
   let validExt = if Settings.coq then ".vy" else ".mly" in
