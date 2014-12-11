@@ -230,7 +230,7 @@ let rec smapa f accu = function
 
 let normalize s =
   let s = Bytes.of_string s in
-  let n = String.length s in
+  let n = Bytes.length s in
   for i = 0 to n - 1 do
     match Bytes.get s i with
     | '('
