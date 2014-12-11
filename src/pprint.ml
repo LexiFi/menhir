@@ -25,7 +25,7 @@ end
 module ChannelOutput : OUTPUT with type channel = out_channel = struct
   type channel = out_channel
   let char = output_char
-  let substring = output
+  let substring = output_substring
 end
 
 module BufferOutput : OUTPUT with type channel = Buffer.t = struct
