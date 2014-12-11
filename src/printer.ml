@@ -685,6 +685,8 @@ and interface_item f = function
       fprintf f "include %a%t%t" module_type mt nl nl
   | IIModule (name, mt) ->
       fprintf f "module %s : %a%t%t" name module_type mt nl nl
+  | IIComment comment ->
+      fprintf f "(* %s *)%t" comment nl
 
 and interface f i =
   list interface_item nothing f i

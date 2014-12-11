@@ -50,6 +50,8 @@ and interface_item =
   | IIInclude of module_type
     (* Submodule. *)
   | IIModule of string * module_type
+    (* Comment. *)
+  | IIComment of string
 
 and module_type =
   | MTNamedModuleType of string

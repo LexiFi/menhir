@@ -62,6 +62,7 @@ let entrytypescheme_incremental symbol =
 
 let table_interface =
   if Settings.table then [
+    IIComment "The incremental API.";
     IIModule (
       interpreter,
       MTWithType (
@@ -71,6 +72,7 @@ let table_interface =
         ttoken
       )
     );
+    IIComment "The entry points to the incremental API.";
     IIValDecls (
       StringSet.fold (fun symbol decls ->
         (incremental symbol, entrytypescheme_incremental symbol) :: decls
@@ -82,8 +84,11 @@ let table_interface =
 
 let interface = [
   IIFunctor (PreFront.grammar.parameters, [
+    IIComment "This exception is raised by the monolithic API functions.";
     IIExcDecls [ excdef ];
+    IIComment "The type of tokens.";
     IITypeDecls tokentypedef;
+    IIComment "The monolithic API.";
     IIValDecls (
       StringSet.fold (fun symbol decls ->
         (Misc.normalize symbol, entrytypescheme symbol) :: decls
