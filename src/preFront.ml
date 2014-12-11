@@ -21,12 +21,12 @@ let read_whole_file filename =
 
   let block_size = 16384 in
   let b = Buffer.create block_size in
-  let s = String.create block_size in
+  let s = Bytes.create block_size in
 
   let rec loop () =
     let read = input channel s 0 block_size in
     if read > 0 then begin
-      Buffer.add_substring b s 0 read;
+      Buffer.add_subbytes b s 0 read;
       loop()
     end
   in
