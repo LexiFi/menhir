@@ -229,18 +229,18 @@ let rec smapa f accu = function
 	x' :: xs'
 
 let normalize s =
-  let s = String.copy s in
+  let s = Bytes.of_string s in
   let n = String.length s in
   for i = 0 to n - 1 do
-    match s.[i] with
+    match Bytes.get s i with
     | '('
     | ')'
     | ',' ->
-	s.[i] <- '_'
+	Bytes.set s i '_'
     | _ ->
 	()
   done;
-  s
+  Bytes.unsafe_to_string s
 
 (* [postincrement r] increments [r] and returns its original value. *)
 
