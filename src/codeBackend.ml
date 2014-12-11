@@ -702,11 +702,12 @@ let errortypescheme s =
 let can_die =
   ref false
 
-(* A code pattern for an exception handling construct where both
-   alternatives are in tail position. Concrete syntax for this would
-   be [let x = e in e1 unless Error -> e2]. Since Objective Caml does
-   not support this construct, we emulate it using a combination of
-   [try/with], [match/with], and an [option] value. *)
+(* A code pattern for an exception handling construct where both alternatives
+   are in tail position. Concrete syntax in OCaml 4.02 is [match e with x ->
+   e1 | exception Error -> e2]. Earlier versions of OCaml do not support this
+   construct. We continue to emulate it using a combination of [try/with],
+   [match/with], and an [option] value. It is used only in a very rare case
+   anyway. *)
 
 let letunless e x e1 e2 =
   EMatch (
