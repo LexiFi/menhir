@@ -82,10 +82,16 @@ let table_interface =
 
 (* This is the interface of the generated parser. *)
 
+let tokentypedef =
+  match tokentypedef with
+  | [] ->
+      []
+  | _ ->
+      [ IIComment "The type of tokens."; IITypeDecls tokentypedef ]
+
 let interface = [
-  IIFunctor (PreFront.grammar.parameters, [
-    IIComment "The type of tokens.";
-    IITypeDecls tokentypedef;
+  IIFunctor (PreFront.grammar.parameters,
+    tokentypedef @ [
     IIComment "This exception is raised by the monolithic API functions.";
     IIExcDecls [ excdef ];
     IIComment "The monolithic API.";
