@@ -38,15 +38,14 @@ open Interface
    difference in terms of code size, and makes our life easier, so we
    do not attempt to eliminate this redundancy.)
 
-   The first thing in [run] is to discard a token, if the state was
-   entered through a shift transition, and to peek at the lookahead
-   token. When the current token is to be discarded, the [discard]
-   function is invoked. It discards the current token, invokes the
-   lexer to obtain a new token, and returns the latter. When we only
-   wish to peek at the current token, without discarding it, we simply
-   read [env.token]. (We have to be careful in cases where the current
-   lookahead token might be [error], since, in those cases,
-   [env.token] is meaningless; see below.)
+   The first thing in [run] is to discard a token, if the state was entered
+   through a shift transition, and to peek at the lookahead token. When the
+   current token is to be discarded, the [discard] function is invoked. It
+   discards the current token, invokes the lexer to obtain a new token, and
+   returns an updated environment. When we only wish to peek at the current
+   token, without discarding it, we simply read [env.token]. (We have to be
+   careful in cases where the current lookahead token might be [error],
+   since, in those cases, [env.token] is meaningless; see below.)
 
    Once the lookahead token is obtained, [run] performs a case analysis of
    the lookahead token. Each branch performs one of the following. In shift
@@ -525,15 +524,15 @@ let envtypedef = {
       (* The last token that was read from the lexer. This is the
 	 head of the token stream, unless [env.error] is set. *)
 
-      field true ftoken ttoken;
+      field false ftoken ttoken;
 
       (* The start position of the above token. *)
 
-      field true fstartp tposition;
+      field false fstartp tposition;
 
       (* The end position of the above token. *)
 
-      field true fendp tposition;
+      field false fendp tposition;
 
       (* A flag which tells whether we currently have an [error] token
          at the head of the stream. When this flag is set, the head
@@ -946,14 +945,20 @@ let gettoken s defred e =
       (* There is some other default reduction. Discard the first
 	 input token. *)
 
-      blet ([ PWildcard, EApp (EVar discard, [ EVar env ]) ], e)
+      blet ([
+        PVar env, EApp (EVar discard, [ EVar env ])
+        (* Note that we do not read [env.token]. *)
+      ], e)
 
   | (Some (Symbol.T _) | None), None ->
 
       (* There is no default reduction. Discard the first input token
 	 and peek at the next one. *)
 
-      blet ([ PVar token, EApp (EVar discard, [ EVar env ]) ], e)
+      blet ([
+        PVar env, EApp (EVar discard, [ EVar env ]);
+        PVar token, ERecordAccess (EVar env, ftoken)
+      ], e)
 
   | Some (Symbol.N _), Some _ ->
 
@@ -1007,6 +1012,10 @@ let defaultreductioncomment toks e =
    stream is [error]. As a result, the next peek at the lookahead token will
    cause error handling to be resumed. The next call to [discard] will take
    the [error] token off the input stream and clear [env.error]. *)
+
+(* It seems convenient for [env.error] to be a mutable field, as this allows
+   us to generate compact code. Re-allocating the whole record would produce
+   less compact code. And speed is not an issue in this error-handling code. *)
 
 let errorbookkeeping e =
   tracecomment
@@ -1533,32 +1542,48 @@ let printtokendef =
    the case when the lexer calls itself recursively, instead of simply
    recognizing an atomic pattern and returning immediately). However,
    we are 100% compatible with ocamlyacc here, and there is no better
-   solution anyway. *)
+   solution anyway.
+
+   As of 2014/12/12, we re-allocate the environment record instead of
+   updating it. Perhaps surprisingly, this makes the code TWICE FASTER
+   overall. The write barrier is really costly! *)
+
+let discardbody =
+  let lexer = "lexer"
+  and lexbuf = "lexbuf"
+  and startp = "startp"
+  and endp = "endp" in
+  EFun (
+    [ PVar env ],
+    blet ([
+      PVar lexer, ERecordAccess (EVar env, flexer);
+      PVar lexbuf, ERecordAccess (EVar env, flexbuf);
+      PVar token, EApp (EVar lexer, [ EVar lexbuf ]);
+      PVar startp, ERecordAccess (EVar lexbuf, "Lexing.lex_start_p");
+      PVar endp, ERecordAccess (EVar lexbuf, "Lexing.lex_curr_p")
+    ] @
+      trace "Lookahead token is now %s (%d-%d)"
+            [ EApp (EVar print_token, [ EVar token ]);
+              ERecordAccess (EVar startp, "Lexing.pos_cnum");
+              ERecordAccess (EVar endp, "Lexing.pos_cnum") ],
+      ERecord [
+        flexer, EVar lexer;
+        flexbuf, EVar lexbuf;
+        ftoken, EVar token;
+        fstartp, EVar startp;
+        fendp, EVar endp;
+        ferror, efalse
+      ]
+    )
+  )
 
 let discarddef = {
   valpublic = false;
   valpat = PVar discard;
   valval =
-    let lexbuf = "lexbuf" in
     EAnnot (
-      EFun (
-	[ PVar env ],
-	blet ([
-	  PVar lexbuf, ERecordAccess (EVar env, flexbuf);
-	  PVar token, EApp (ERecordAccess (EVar env, flexer), [ EVar lexbuf ]);
-	  PUnit, ERecordWrite (EVar env, ftoken, EVar token);
-	  PUnit, ERecordWrite (EVar env, fstartp, ERecordAccess (EVar lexbuf, "Lexing.lex_start_p"));
-	  PUnit, ERecordWrite (EVar env, fendp, ERecordAccess (EVar lexbuf, "Lexing.lex_curr_p")) ] @
-	  trace "Lookahead token is now %s (%d-%d)"
-		[ EApp (EVar print_token, [ EVar token ]);
-		  ERecordAccess (ERecordAccess (EVar env, fstartp), "Lexing.pos_cnum");
-		  ERecordAccess (ERecordAccess (EVar env, fendp), "Lexing.pos_cnum") ] @ [
-	  PUnit, ERecordWrite (EVar env, ferror, efalse)
-	  ],
-	  EVar token
-	)
-      ),
-      type2scheme (arrow tenv ttoken)
+      discardbody,
+      type2scheme (arrow tenv tenv)
     )
 }
 
