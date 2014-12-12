@@ -24,13 +24,12 @@ open Interface
    export do not expect an environment as a parameter; they create a
    fresh one when invoked.
 
-   Every state [s] is translated to a [run] function.
-   To a first approximation, the only parameter of the [run]
-   function, besides [env], is the stack. However, in some cases
-   (consult the predicate [runpushes]), the top stack cell is not yet
-   allocated when [run s] is called. The cell's contents are passed as
-   extra parameters, and it is [run]'s responsibility to allocate that
-   cell.
+   Every state [s] is translated to a [run] function. To a first
+   approximation, the only parameter of the [run] function, besides [env],
+   is the stack. However, in some cases (consult the predicate [runpushes]),
+   the top stack cell is not yet allocated when [run s] is called. The
+   cell's contents are passed as extra parameters, and it is [run]'s
+   responsibility to allocate that cell.
 
    (When [run] is the target of a shift transition, the position
    parameters [startp] and [endp] are redundant with the [env]
@@ -49,14 +48,13 @@ open Interface
    lookahead token might be [error], since, in those cases,
    [env.token] is meaningless; see below.)
 
-   Once the lookahead token is obtained,
-   [run] performs a case analysis of the lookahead token. Each
-   branch performs one of the following. In shift branches, control is
-   dispatched to another [run] function, with appropriate parameters,
-   typically the current stack plus the information that should go
-   into the new top stack cell (a state, a semantic value, locations).
-   In reduce branches, a [reduce] function is invoked. In the default
-   branch, error handling is initiated (see below).
+   Once the lookahead token is obtained, [run] performs a case analysis of
+   the lookahead token. Each branch performs one of the following. In shift
+   branches, control is dispatched to another [run] function, with
+   appropriate parameters, typically the current stack plus the information
+   that should go into the new top stack cell (a state, a semantic value,
+   locations).  In reduce branches, a [reduce] function is invoked. In the
+   default branch, error handling is initiated (see below).
 
    The [reduce] function associated with production [prod] pops as
    many stack cells as necessary, retrieving semantic values and the
@@ -591,10 +589,10 @@ let celltype tailtype holds_state symbol _ =
 
 (* Types for stacks. 
 
-   [stacktype s] is the type of the stack at state
-   [s]. [reducestacktype prod] is the type of the stack when about to
-   reduce production [prod]. [gotostacktype nt] is the type of the
-   stack when the [goto] function associated with [nt] is called.
+   [stacktype s] is the type of the stack at state [s]. [reducestacktype prod]
+   is the type of the stack when about to reduce production [prod].
+   [gotostacktype nt] is the type of the stack when the [goto]
+   function associated with [nt] is called.
 
    In all cases, the tail (that is, the unknown part) of the stack is
    represented by [ttail], currently a type variable.
@@ -1021,17 +1019,16 @@ let errorbookkeeping e =
 (* This code is used to indicate that a new error has been detected in
    state [s].
 
-   If I am correct, [env.error] is never set
-   here. Indeed, that would mean that we first found an error, and
-   then signaled another error before being able to shift the first
-   error token. My understanding is that this cannot happen: when the
-   first error is signaled, we end up at a state that is willing to
-   handle the error token, by a series of reductions followed by a
-   shift.
+   If I am correct, [env.error] is never set here. Indeed, that would mean
+   that we first found an error, and then signaled another error before
+   being able to shift the first error token. My understanding is that this
+   cannot happen: when the first error is signaled, we end up at a state
+   that is willing to handle the error token, by a series of reductions
+   followed by a shift.
 
-   We initiate error handling by first performing the standard
-   bookkeeping described above, then transferring control to the
-   [error] function associated with [s]. *)
+   We initiate error handling by first performing the standard bookkeeping
+   described above, then transferring control to the [error] function
+   associated with [s]. *)
 
 let initiate s =
 
@@ -1053,15 +1050,15 @@ let rundef s : valdef =
          stack cell is allocated. The contents of the top stack
          cell are passed do [reduce] as extra parameters. *)
 
-	runheader s (
-          runpushcellunless (shiftreduce prod) s (
-	    gettoken s defred (
-	      defaultreductioncomment toks (
-		call_reduce prod s
-	      )
-	    )
-	  )
-	)
+      runheader s (
+        runpushcellunless (shiftreduce prod) s (
+          gettoken s defred (
+            defaultreductioncomment toks (
+              call_reduce prod s
+            )
+          )
+        )
+      )
 
   | None ->
 
@@ -1108,21 +1105,20 @@ let rundef s : valdef =
 	  branches @ [ { branchpat = PWildcard; branchbody = initiate s } ]
       in
 
-      (* Finally, construct the code for [run]. The
-	 former pushes things onto the stack, obtains the lookahead
-	 token, then performs
-	 the main case analysis on the lookahead token. *)
+      (* Finally, construct the code for [run]. The former pushes things
+         onto the stack, obtains the lookahead token, then performs the main
+         case analysis on the lookahead token. *)
 
-	runheader s (
-	  runpushcell s (
-	    gettoken s None (
-              EMatch (
-                EVar token,
-                branches
-              )
-	    )
+      runheader s (
+	runpushcell s (
+	  gettoken s None (
+            EMatch (
+              EVar token,
+              branches
+            )
 	  )
 	)
+      )
 
 (* This is the body of the [reduce] function associated with
    production [prod]. *)
@@ -1311,11 +1307,11 @@ let gotobody nt =
 
   | [ branch ] ->
 
-      (* If there is only one branch, no case analysis is required.
-	 This optimization is not strictly necessary if GADTs are used
-	 by the compiler to prove that the case analysis is
-	 exhaustive. It does improve readability, though, and is also
-	 useful if the compiler does not have GADTs. *)
+      (* If there is only one branch, no case analysis is required. This
+	 optimization is not strictly necessary if GADTs are used by the
+	 compiler to prove that the case analysis is exhaustive. It does
+	 improve readability, though, and is also useful if the compiler
+	 does not have GADTs. *)
 
       EPatComment (
         "State should be ",
@@ -1467,12 +1463,12 @@ let errorcasedef =
 (* ------------------------------------------------------------------------ *)
 (* Code production for the entry points. *)
 
-(* This is the entry point associated with a start state [s]. By
-   convention, it is named after the nonterminal [nt] that corresponds
-   to this state. This is a public definition.
+(* This is the entry point associated with a start state [s]. By convention,
+   it is named after the nonterminal [nt] that corresponds to this state.
+   This is a public definition.
 
-   The code initializes a parser environment, an empty stack, and
-   invokes [run]. *)
+   The code initializes a parser environment, an empty stack, and invokes
+   [run]. *)
 
 let entrydef s = 
   let nt = Item.startnt (Lr1.start2item s) in
