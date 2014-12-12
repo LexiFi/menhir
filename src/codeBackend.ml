@@ -250,12 +250,6 @@ let ftoken =
 let ferror =
   prefix "error"
 
-let fstartp =
-  prefix "startp"
-
-let fendp =
-  prefix "endp"
-
 (* The type variable that represents the stack tail. *)
 
 let tvtail =
@@ -335,6 +329,23 @@ let tracecomment (comment : string) (body : expr) : expr =
 
 let auto2scheme t =
   scheme [ tvtail; tvresult ] t
+
+(* ------------------------------------------------------------------------ *)
+(* Accessing the positions of the current token. *)
+
+(* There are two ways we can go about this. We can read the positions
+   from the lexbuf immediately after we request a new token, or we can
+   wait until we need the positions and read them at that point. As of
+   2014/12/12, we switch to the latter approach. The speed difference
+   in a micro-benchmark is not measurable, but this allows us to save
+   two fields in the [env] record, which should be a good thing, as it
+   implies less frequent minor collections. *)
+
+let getstartp =
+  ERecordAccess (ERecordAccess (EVar env, flexbuf), "Lexing.lex_start_p")
+
+let getendp =
+  ERecordAccess (ERecordAccess (EVar env, flexbuf), "Lexing.lex_curr_p")
 
 (* ------------------------------------------------------------------------ *)
 (* Determine whether the [goto] function for nonterminal [nt] will push
@@ -525,14 +536,6 @@ let envtypedef = {
 	 head of the token stream, unless [env.error] is set. *)
 
       field false ftoken ttoken;
-
-      (* The start position of the above token. *)
-
-      field false fstartp tposition;
-
-      (* The end position of the above token. *)
-
-      field false fendp tposition;
 
       (* A flag which tells whether we currently have an [error] token
          at the head of the stream. When this flag is set, the head
@@ -874,8 +877,8 @@ let shiftbranchbody s tok s' =
       assert (Symbol.equal (Symbol.T tok) symbol);
       insertif holds_state (estatecon s) @
       tokval tok (EVar semv) @
-      insertif (Invariant.startp symbol) (ERecordAccess (EVar env, fstartp)) @
-      insertif (Invariant.endp symbol) (ERecordAccess (EVar env, fendp))
+      insertif (Invariant.startp symbol) getstartp @
+      insertif (Invariant.endp symbol) getendp
     ) [] (Invariant.stack s')
   in
 
@@ -1207,14 +1210,14 @@ let reducebody prod =
 	if length > 0 then
 	  EVar (Printf.sprintf "_startpos_%s_" ids.(0))
         else
-          ERecordAccess (EVar env, fstartp)
+          getstartp
       ) @
     insertif bind_endp
       ( PVar endp,
 	if length > 0 then
 	  EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1))
         else
-          if bind_startp then EVar startp else ERecordAccess (EVar env, fstartp)
+          if bind_startp then EVar startp else getstartp
       )
   in
 
@@ -1550,28 +1553,22 @@ let printtokendef =
 
 let discardbody =
   let lexer = "lexer"
-  and lexbuf = "lexbuf"
-  and startp = "startp"
-  and endp = "endp" in
+  and lexbuf = "lexbuf" in
   EFun (
     [ PVar env ],
     blet ([
       PVar lexer, ERecordAccess (EVar env, flexer);
       PVar lexbuf, ERecordAccess (EVar env, flexbuf);
       PVar token, EApp (EVar lexer, [ EVar lexbuf ]);
-      PVar startp, ERecordAccess (EVar lexbuf, "Lexing.lex_start_p");
-      PVar endp, ERecordAccess (EVar lexbuf, "Lexing.lex_curr_p")
     ] @
       trace "Lookahead token is now %s (%d-%d)"
             [ EApp (EVar print_token, [ EVar token ]);
-              ERecordAccess (EVar startp, "Lexing.pos_cnum");
-              ERecordAccess (EVar endp, "Lexing.pos_cnum") ],
+              ERecordAccess (ERecordAccess (EVar lexbuf, "Lexing.lex_start_p"), "Lexing.pos_cnum");
+              ERecordAccess (ERecordAccess (EVar lexbuf, "Lexing.lex_curr_p"), "Lexing.pos_cnum") ],
       ERecord [
         flexer, EVar lexer;
         flexbuf, EVar lexbuf;
         ftoken, EVar token;
-        fstartp, EVar startp;
-        fendp, EVar endp;
         ferror, efalse
       ]
     )
@@ -1610,8 +1607,6 @@ let initenvdef =
 	      (flexer, EVar lexer);
 	      (flexbuf, EVar lexbuf);
 	      (ftoken, EVar token);
-	      (fstartp, EVar "Lexing.dummy_pos");
-	      (fendp, EVar "Lexing.dummy_pos");
 	      (ferror, efalse)
 	    ]
 	    )
