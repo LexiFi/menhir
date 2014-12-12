@@ -24,8 +24,8 @@ open Interface
    export do not expect an environment as a parameter; they create a
    fresh one when invoked.
 
-   Every state [s] is translated to a [run] function and an [action]
-   function. To a first approximation, the only parameter of the [run]
+   Every state [s] is translated to a [run] function.
+   To a first approximation, the only parameter of the [run]
    function, besides [env], is the stack. However, in some cases
    (consult the predicate [runpushes]), the top stack cell is not yet
    allocated when [run s] is called. The cell's contents are passed as
@@ -49,10 +49,8 @@ open Interface
    lookahead token might be [error], since, in those cases,
    [env.token] is meaningless; see below.)
 
-   Once the lookahead token is obtained, [run] calls [action]. The
-   parameters of [action] are the stack and the lookahead token.
-
-   [action] performs a case analysis of the lookahead token. Each
+   Once the lookahead token is obtained,
+   [run] performs a case analysis of the lookahead token. Each
    branch performs one of the following. In shift branches, control is
    dispatched to another [run] function, with appropriate parameters,
    typically the current stack plus the information that should go
@@ -192,11 +190,6 @@ let initenv =
 
 let run s =
   prefix (Printf.sprintf "run%d" (Lr1.number s))
-
-(* The [action] function associated with a state [s]. *)
-
-let action s =
-  prefix (Printf.sprintf "action%d" (Lr1.number s))
 
 (* The [goto] function associated with a nonterminal [nt]. *)
 
@@ -634,12 +627,6 @@ let runtypescheme s =
     )
   )
 
-(* The type of the [action] function. The top stack cell is not
-   curried. There is an additional parameter of type [token]. *)
-
-let actiontypescheme s =
-  auto2scheme (marrow [ tenv; stacktype s; ttoken ] tresult)
-
 (* The type of the [goto] function. The top stack cell is curried. *)
 
 let gototypescheme nt =
@@ -774,14 +761,6 @@ let runparams magic var s =
 let call_run s actuals =
   EApp (EVar (run s), actuals)
 
-(* Calls to [action]. *)
-
-let actionparams var =
-  [ var env; var stack; var token ]
-
-let call_action s =
-   EApp (EVar (action s), actionparams var)
-
 (* The parameters to [reduce]. When shiftreduce optimization is in
    effect, the top stack cell is not allocated, so extra parameters
    are required. Note that [shiftreduce prod] and
@@ -863,7 +842,7 @@ let errorpeekers =
 
 (* Code for calling the reduction function for token [prod] upon
    finding a token within [toks]. This produces a branch, to be
-   inserted in an [action] function for state [s]. *)
+   inserted in a [run] function for state [s]. *)
 
 let reducebranch toks prod s =
   {
@@ -874,7 +853,7 @@ let reducebranch toks prod s =
   } 
 
 (* Code for shifting from state [s] to state [s'] via the token [tok].
-   This produces a branch, to be inserted in an [action] function for
+   This produces a branch, to be inserted in a [run] function for
    state [s].
 
    The callee, [run s'], is responsible for taking the current token
@@ -1004,9 +983,9 @@ let gettoken s defred e =
 	blet ([ assertnoerror;
 		PVar token, ERecordAccess (EVar env, ftoken) ], e)
 
-(* This produces the definition of a [run] function. *)
+(* This produces the header of a [run] function. *)
 
-let rundef s body =
+let runheader s body =
   let body =
     tracecomment (Printf.sprintf "State %d:" (Lr1.number s)) body
   in {
@@ -1014,14 +993,6 @@ let rundef s body =
     valpat = PVar (run s);
     valval = EAnnot (EFun (runparams nomagic pvar s, body), runtypescheme s)
   }
-
-(* This produces the definition of an [action] function. *)
-
-let actiondef s body = {
-  valpublic = false;
-  valpat = PVar (action s);
-  valval = EAnnot (EFun (actionparams pvar, body), actiontypescheme s)
-} 
 
 (* This produces the comment attached with a default reduction. *)
 
@@ -1069,28 +1040,20 @@ let initiate s =
     errorbookkeeping (call_error_via_errorcase magic s)
   )
 
-(* This produces the definitions of the [run] and [action] functions
-   associated with state [s].
+(* This produces the body of the [run] function for state [s]. *)
 
-   The [action] function implements the internal case analysis. It
-   receives the lookahead token as a parameter. It does not affect the
-   input stream. It does not set up exception handlers for dealing
-   with errors. *)
-
-let runactiondef s : valdef list =
+let rundef s : valdef =
 
   match Invariant.has_default_reduction s with
   | Some (prod, toks) as defred ->
 
-      (* Perform reduction without looking ahead. In this case,
-	 no separate [action] function is required.
+      (* Perform reduction without looking ahead.
 
 	 If shiftreduce optimization is being performed, then no
          stack cell is allocated. The contents of the top stack
          cell are passed do [reduce] as extra parameters. *)
 
-      [
-	rundef s (
+	runheader s (
           runpushcellunless (shiftreduce prod) s (
 	    gettoken s defred (
 	      defaultreductioncomment toks (
@@ -1099,7 +1062,6 @@ let runactiondef s : valdef list =
 	    )
 	  )
 	)
-      ]
 
   | None ->
 
@@ -1146,26 +1108,21 @@ let runactiondef s : valdef list =
 	  branches @ [ { branchpat = PWildcard; branchbody = initiate s } ]
       in
 
-      (* Finally, construct the code for [run] and [action]. The
+      (* Finally, construct the code for [run]. The
 	 former pushes things onto the stack, obtains the lookahead
-	 token, and calls the [action] function. The latter performs
+	 token, then performs
 	 the main case analysis on the lookahead token. *)
 
-      [
-	rundef s (
+	runheader s (
 	  runpushcell s (
 	    gettoken s None (
-	      call_action s
+              EMatch (
+                EVar token,
+                branches
+              )
 	    )
 	  )
-	);
-	actiondef s (
-	  EMatch (
-	    EVar token,
-	    branches
-	  )
 	)
-      ]
 
 (* This is the body of the [reduce] function associated with
    production [prod]. *)
@@ -1669,7 +1626,7 @@ let program = {
       entrydef s :: defs
     ) Lr1.entry (
     Lr1.fold (fun defs s ->
-      runactiondef s @ errordef s :: defs
+      rundef s :: errordef s :: defs
     ) (
     Nonterminal.foldx (fun nt defs ->
       gotodef nt :: defs
