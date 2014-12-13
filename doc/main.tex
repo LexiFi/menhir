@@ -258,7 +258,8 @@ is optional.
 
 \docswitch{\otable} This switch causes \menhir to use its table-based
 back-end, as opposed to its (default) code-based back-end. When \otable is
-used, \menhir produces significantly more compact, slightly slower parsers.
+used, \menhir produces significantly more compact and somewhat slower parsers.
+See \sref{sec:qa} for a speed comparison.
 
 The table-based back-end produces rather compact tables, which are analogous
 to those produced by \yacc, \bison, or \ocamlyacc. These tables are not quite
@@ -1849,6 +1850,18 @@ The list is roughly sorted by decreasing order of importance.
 % ---------------------------------------------------------------------------------------------------------------------
 
 \section{Questions and Answers}
+\label{sec:qa}
+
+$\mathstrut$ % Ensure correct indentation of the first question. Ugly.
+
+\vspace{-\baselineskip}
+
+\question{Is \menhir faster than \ocamlyacc? What is the speed difference
+  between \texttt{menhir} and \texttt{menhir -{}-table}?} A (not quite
+scientific) benchmark suggests that the parsers produced by \ocamlyacc and
+\texttt{menhir -{}-table} have comparable speed, whereas those produced by
+\texttt{menhir} are between 2 and 4 times faster. This benchmark excludes the
+time spent in the lexer and in the semantic actions.
 
 \question{Turning on \oinfer broke my \Makefile! What should I do?}
 Look at \distrib{demos/Makefile.shared}. It is meant to be re-used
@@ -1874,6 +1887,7 @@ fact, to a simpler, revised API. In the revised API, there are no lexing
 buffers, and a lexer is just a function from unit to tokens. Converters are
 provided within \menhirlibconvert. This can be useful, for instance, for
 users of \texttt{ulex}, the Unicode lexer generator.
+% TEMPORARY the incremental interface does not mention lexbufs
 
 % ---------------------------------------------------------------------------------------------------------------------
 
