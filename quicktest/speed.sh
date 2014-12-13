@@ -15,6 +15,9 @@ fi
 # Make sure Menhir and MenhirLib are up-to-date.
 ./build.sh
 
+# Remove any stale performance measurements.
+rm -f gene/*.time
+
 # Build the parser with the code back-end.
 echo "Building (code)..."
 make -C $GENE MENHIR="$MENHIR" clean all >/dev/null
@@ -48,5 +51,21 @@ if ! diff -q $GENE/code.out $GENE/table.out ; then
   exit 1
 fi
 
+# Optionally, measure ocamlyacc's performance.
+
+if true; then
+
+  # Build the parser with ocamlyacc.
+  echo "Building (ocamlyacc)..."
+  make -C $GENE OCAMLBUILD="ocamlbuild -use-ocamlfind" clean all >/dev/null
+
+  # Run the ocamlyacc parser.
+  echo ocamlyacc:
+  $TIME -f "%U" $GENE/gene.native > $GENE/ocamlyacc.out 2> $GENE/ocamlyacc.time
+  cat $GENE/ocamlyacc.time
+
+fi
+
 # Compute some statistics.
 ocaml speed.ml
+
