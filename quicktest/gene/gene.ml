@@ -38,8 +38,21 @@ let print_token_stream =
 let dry_run =
   ref false
 
+(* [--seed] allows the random seed to be set via the command line. *)
+
+let seed =
+  ref 61112962
+
+(* [--size] allows the size of the randomly-generated expression to be
+   set via the command line. *)
+
+let size =
+  ref 10000000
+
 let options = Arg.align [
   "--dry-run", Arg.Set dry_run, "Run only the generator, not the parser";
+  "--seed", Arg.Set_int seed, sprintf "<seed> Set the random seed (%d)" !seed;
+  "--size", Arg.Set_int size, sprintf "<size> Set the size of the test (%d)" !size;
 ]
 
 let usage =
@@ -56,11 +69,10 @@ let wrap token =
   (token, Lexing.dummy_pos, Lexing.dummy_pos)
 
 let () =
-  let seed = 61112962 in
-  Random.init seed
+  Random.init !seed
 
 let () =
-  let tks : token stream = produce 10000000 in
+  let tks : token stream = produce !size in
   let tks = fresh (map wrap tks) in
   if !dry_run then begin
     let _ = find (fun _ -> false) tks in
