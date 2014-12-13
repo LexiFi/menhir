@@ -7,27 +7,28 @@
 %left TIMES DIV         /* medium precedence */
 %nonassoc UMINUS        /* highest precedence */
 
-%start <int> main
+%start main
+%type<int> main
 
 %%
 
 main:
-| e = expr EOL
-    { e }
+| expr EOL
+    { $1 }
 
 expr:
-| i = INT
-    { i }
-| LPAREN e = expr RPAREN
-    { e }
-| e1 = expr PLUS e2 = expr
-    { e1 + e2 }
-| e1 = expr MINUS e2 = expr
-    { e1 - e2 }
-| e1 = expr TIMES e2 = expr
-    { e1 * e2 }
-| e1 = expr DIV e2 = expr
-    { e1 / e2 }
-| MINUS e = expr %prec UMINUS
-    { - e }
+| INT
+    { $1 }
+| LPAREN expr RPAREN
+    { $2 }
+| expr PLUS expr
+    { $1 + $3 }
+| expr MINUS expr
+    { $1 - $3 }
+| expr TIMES expr
+    { $1 * $3 }
+| expr DIV expr
+    { $1 / $3 }
+| MINUS expr %prec UMINUS
+    { - $2 }
 

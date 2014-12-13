@@ -7,7 +7,9 @@ ifndef MENHIR
   MENHIR   := $(shell $(READLINK) -f ../../src/_stage1/menhir.native) \
 	      --table
 endif
-OCAMLBUILD := ocamlbuild -use-ocamlfind -menhir "$(MENHIR)"
+ifndef OCAMLBUILD
+  OCAMLBUILD := ocamlbuild -use-ocamlfind -use-menhir -menhir "$(MENHIR)"
+endif
 
 all:
 	$(OCAMLBUILD) gene.native
