@@ -1,6 +1,6 @@
 open Printf
 
-(* Read one floating-point in a file. *)
+(* Read one floating-point number in a file. *)
 let read f =
   let c = open_in f in
   let s = input_line c in
