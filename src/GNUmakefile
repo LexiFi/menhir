@@ -15,9 +15,12 @@ installation.ml:
 # ----------------------------------------------------------------------------
 # Pretty-printing the MenhirLib.Convert API.
 
-api: convert.mli.html
+api: convert.mli.html IncrementalEngine.ml.html
 
 %.mli.html: %.mli
+	caml2html -nf $<
+
+%.ml.html: %.ml
 	caml2html -nf $<
 
 clean::

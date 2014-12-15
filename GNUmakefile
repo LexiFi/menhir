@@ -148,6 +148,7 @@ check:
 RSYNC   := scp -p -C
 TARGET  := yquem.inria.fr:public_html/menhir/
 PAGE    := /home/fpottier/dev/page
+API     := convert.mli.html IncrementalEngine.ml.html
 
 export:
 # Copier l'archive et la doc vers yquem.
@@ -155,7 +156,7 @@ export:
 	$(RSYNC) $(PACKAGE)/manual.pdf $(TARGET)
 	$(RSYNC) CHANGES $(TARGET)
 # Copier l'API vers la page Web.
-	cd src && $(RSYNC) convert.mli.html $(TARGET)
+	cd src && $(RSYNC) $(API) $(TARGET)
 # Mettre à jour la page Web de Menhir avec le nouveau numéro de version.
 	cd $(PAGE) && \
 	  sed --in-place=.bak "s/menhir-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/$(PACKAGE)/" menhir.xml && \
