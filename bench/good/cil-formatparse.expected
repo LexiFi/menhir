@@ -80,6 +80,8 @@ File "cil-formatparse.mly", line 269, characters 10-14:
 Warning: the token THEN is unused.
 File "cil-formatparse.mly", line 242, characters 19-26:
 Warning: the token TYPEDEF is unused.
+File "cil-formatparse.mly", line 338, characters 0-10:
+Warning: symbol initialize is unreachable from any of the start symbol(s).
 %{
 open Cil
 open Pretty
@@ -273,7 +275,6 @@ type maybeInit =
 
 %}
 %start expression
-%start initialize
 %start instr
 %start lval
 %start offset
@@ -442,10 +443,6 @@ type maybeInit =
 %type <(Cil.attributes -> (string * Cil.formatArg) list -> Cil.typ) * (Cil.typ -> Cil.formatArg list option)> type_spec
 %type <((string * Cil.formatArg) list -> Cil.typ) * (Cil.typ -> Cil.formatArg list option)> typename
 %%
-
-initialize:
-| 
-    {  }
 
 expression:
 | ARG_e
