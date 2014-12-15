@@ -307,7 +307,7 @@ type maybeInit =
 %left	DOT ARROW LPAREN LBRACE
 %nonassoc IDENT QUEST CST_INT
 
-%start initialize expression typename offset lval instr stmt stmt_list
+%start expression typename offset lval instr stmt stmt_list
 
 
 %type <unit> initialize
