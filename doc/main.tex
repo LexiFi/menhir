@@ -1755,7 +1755,161 @@ channel.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
-\section{A comparison with \ocamlyacc}
+\section{Generated API}
+
+\newcommand{\mystartsymbol}{\texttt{main}\xspace}
+\newcommand{\mystartsymboltype}{\texttt{thing}\xspace}
+
+When \menhir processes a grammar specification, say \texttt{parser.mly}, it
+produces one \ocaml module, \texttt{Parser}, whose code resides in the file
+\texttt{parser.ml} and whose signature resides in the file
+\texttt{parser.mli}. We now review this signature.
+We assume that the grammar specification has just one start symbol
+\mystartsymbol, whose \ocaml type is \mystartsymboltype. 
+
+% On passe sous silence la définition du type token, qui peut être absente
+% ou présente, et est expliquée ailleurs.
+
+\subsection{Monolithic API}
+\label{sec:monolithic}
+
+The monolithic API consists in just one parsing function, named after the
+start symbol:
+\begin{verbatim}
+  val main: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> thing
+\end{verbatim}
+% On ne montre pas la définition de l'exception Error.
+This function expects two arguments, namely: a lexer, which typically is produced by
+\ocamllex and has type \verb+Lexing.lexbuf -> token+; and a lexing buffer,
+which has type \verb+Lexing.lexbuf+. This API is compatible with
+\ocamlyacc. (For information on using \menhir without \ocamllex, please
+consult \sref{sec:qa}.)
+%
+This API is ``monolithic'' in the sense that there is just one function, which
+does everything: it pulls tokens from the lexer, parses, and eventually
+returns a semantic value (or fails by throwing the exception \texttt{Error}).
+
+\subsection{Incremental API}
+\label{sec:incremental}
+
+If \otable is set, \menhir offers an incremental API in addition to the
+monolithic API. In this API, control is inverted. The parser does not have
+access to the lexer. Instead, when the parser needs the next token, it stops
+and returns its current state to the user. The user is then responsible for
+obtaining this token (typically by invoking the lexer) and resuming the parser
+from that state.
+
+This API is ``incremental'' in the sense that the user has access to a
+sequence of the intermediate states of the parser. Assuming that semantic
+values are immutable, a parser state is a persistent data structure: it can be
+stored and used multiple times, if desired. This enables applications such as
+``live parsing'', where a buffer is continously parsed while it is being
+edited. The parser can be re-started in the middle of the buffer whenever the
+user edits a character. Because two successive parser states share most of
+their data in memory, a list of $n$ successive parser states occupies only
+$O(n)$ space in memory.
+
+% One could point out that semantic actions should be side-effect free.
+% But that is an absolute requirement. Semantic actions can have side
+% effects, if the user knows what they are doing.
+
+In this API, the parser is started by invoking \verb+main_incremental+,
+where \mystartsymbol is the name of the start symbol:
+\begin{verbatim}
+  val main_incremental: unit -> thing MenhirInterpreter.result
+\end{verbatim}
+
+The sub-module \menhirinterpreter is also part of the incremental API.
+Its declaration, which appears in the file \texttt{parser.mli}, is as
+follows:
+\begin{verbatim}
+  module MenhirInterpreter : MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE
+    with type token := token
+\end{verbatim}
+The signature \verb+INCREMENTAL_ENGINE+, defined in the module
+\menhirlibincrementalengine, contains the following elements.
+Please keep in mind that, from the outside, these elements should be referred
+to with an appropriate prefix: e.g., the type \verb+result+ should be referred
+to as \verb+MenhirInterpreter.result+, or
+\verb+Parser.MenhirInterpreter.result+, depending on which modules the user
+chooses to open.
+
+\begin{verbatim}
+  type 'a result =
+    | InputNeeded of ('a, input_needed) env
+    | HandlingError of ('a, handling_error) env
+    | Accepted of 'a
+    | Rejected
+\end{verbatim}
+
+The type \verb+'a result+ represents an intermediate or
+final result of the parser. An intermediate result is a suspension: it records
+the parser's current state, and allows parsing to be resumed. The parameter
+\verb+'a+ is the type of the semantic value that will eventually be produced
+if the parser succeeds.
+
+\verb+Accepted+ and \verb+Rejected+ are final results. \verb+Accepted+ carries
+a semantic value.
+
+\verb+InputNeeded+ is an intermediate result. It means that the parser wishes
+to read one token before continuing.
+
+\verb+HandlingError+ is also an intermediate result. It means that the parser
+has detected an error and is currently handling it, in several steps. It does
+not need more input at this point. The parser suspends itself at this point
+only in order to give the user an opportunity to handle this error in a
+different manner, if desired.
+
+\begin{verbatim}
+  type ('a, 'pc) env
+\end{verbatim}
+
+The abstract type \verb+('a, 'pc) env+ represents the current state of the
+parser. (That is, it contains the current state and stack of the LR
+automaton.) Assuming that semantic values are immutable, it is a persistent
+data structure: it can be stored and used multiple times, if desired. The
+parameter \verb+'a+ is the type of the semantic value that will eventually be
+produced if the parser succeeds. The parameter \verb+'pc+ prevents confusion
+between several kinds of intermediate results.
+
+\begin{verbatim}
+  val offer:
+    ('a, input_needed) env ->
+    token * Lexing.position * Lexing.position ->
+    'a result
+\end{verbatim}
+
+The function \verb+offer+ allows the user to resume the parser after the
+parser has suspended itself with a result of the form \verb+InputNeeded env+.
+This function expects the parser state \verb+env+ as well as a new token
+(together with the start and end positions of this token). It produces a new
+result, which again can be an intermediate result or a final result. It does
+not raise any exception. (The exception \texttt{Error} is used only in the
+monolithic API.)
+
+\begin{verbatim}
+   val handle:
+    ('a, handling_error) env ->
+    'a result
+\end{verbatim}
+
+The function \verb+handle+ allows the user to resume the parser after the
+parser has suspended itself with a result of the form \verb+HandlingError env+.
+This function expects just the parser state \verb+env+. It produces a new
+result. It does not raise any exception.
+
+The incremental API subsumes the monolithic API. Indeed, \verb+main+ can
+be (and is in fact) implemented by first calling \verb+main_incremental+, then
+calling \verb+offer+ and \verb+handle+ in a loop, until a final result is
+obtained.
+
+At this time, because the type \verb+('a, 'pc) env+ is opaque, the state of
+the parser cannot be inspected by the user. We plan to offer an inspection API
+in the near future.
+
+% ---------------------------------------------------------------------------------------------------------------------
+
+\section{Comparison with \ocamlyacc}
 
 Here is an incomplete list of the differences between \ocamlyacc and \menhir.
 The list is roughly sorted by decreasing order of importance.
@@ -1777,6 +1931,8 @@ The list is roughly sorted by decreasing order of importance.
 \item \menhir explains conflicts (\sref{sec:conflicts}) in terms of the grammar,
       not just in terms of the automaton. \menhir's explanations are believed
       to be understandable by mere humans.
+
+\item \menhir offers an incremental API (in \otable mode only).
 
 \item \menhir offers an interpreter (\sref{sec:interpret}) that helps debug
       grammars interactively.
@@ -1881,13 +2037,16 @@ while \ocamlyacc only reports one. Of course, the two conflicts are
 very similar, so fixing one will usually fix the other as well.
 
 \question{I do not use \ocamllex. Is there an API that does not involve lexing
-  buffers?} Like \ocamlyacc, \menhir produces parsers whose API is intended
-for use with \ocamllex. However, it is possible to convert them, after the
-fact, to a simpler, revised API. In the revised API, there are no lexing
-buffers, and a lexer is just a function from unit to tokens. Converters are
-provided within \menhirlibconvert. This can be useful, for instance, for
-users of \texttt{ulex}, the Unicode lexer generator.
-% TEMPORARY the incremental interface does not mention lexbufs
+  buffers?} Like \ocamlyacc, \menhir produces parsers whose monolithic API
+(\sref{sec:monolithic}) is intended for use with \ocamllex. However, it is
+possible to convert them, after the fact, to a simpler, revised API. In the
+revised API, there are no lexing buffers, and a lexer is just a function from
+unit to tokens. Converters are provided by the library module
+\menhirlibconvert. This can be useful, for instance, for users of
+\texttt{ulex}, the Unicode lexer generator. Also, please note that \menhir's
+incremental API (\sref{sec:incremental}) does not mention the type
+\verb+Lexing.lexbuf+. In this API, the parser expects to be supplied with
+triples of a token and start/end positions of type \verb+Lexing.position+.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
@@ -1929,7 +2088,8 @@ has GADTs, but, as the saying goes, ``if it ain't broken, don't fix it''.
 \menhir's interpreter (\ointerpret) and table-based back-end (\otable) were
 implemented by Guillaume Bau, Raja Boujbel, and François Pottier. The project
 was generously funded by Jane Street Capital, LLC through the ``OCaml Summer
-Project'' initiative.
+Project'' initiative. Frédéric Bour provided motivation and an initial
+implementation for the incremental API.
 
 % ---------------------------------------------------------------------------------------------------------------------
 % Bibliography.
