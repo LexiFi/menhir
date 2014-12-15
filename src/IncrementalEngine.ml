@@ -8,18 +8,22 @@ module type INCREMENTAL_ENGINE = sig
   type token
 
   (* The type ['a result] represents an intermediate or final result of the
-     parser. An intermediate result can be thought of as a suspension: it
-     records the parser's current state, and allows parsing to be resumed.
-     The parameter ['a] is the type of the final semantic value that will
-     be produced if the parser succeeds. *)
+     parser. An intermediate result is a suspension: it records the parser's
+     current state, and allows parsing to be resumed. The parameter ['a] is
+     the type of the semantic value that will eventually be produced if the
+     parser succeeds. *)
 
-  (* [InputNeeded] is an intermediate result, which means that the parser
-     wishes to read one token before continuing. [HandlingError] is also
-     an intermediate result, which means that the parser has detected and
-     is trying to handle an error. It does not need more input at this
-     point; it is suspending itself only in order to give the user an
-     opportunity to handle this error in a different manner, if desired.
-     [Accepted] and [Rejected] are final results. *)
+  (* [Accepted] and [Rejected] are final results. [Accepted] carries a
+     semantic value. *)
+
+  (* [InputNeeded] is an intermediate result. It means that the parser wishes
+     to read one token before continuing. *)
+
+  (* [HandlingError] is also an intermediate result. It means that the parser
+     has detected an error and is currently handling it, in several steps. It
+     does not need more input at this point. The parser suspends itself at
+     this point only in order to give the user an opportunity to handle this
+     error in a different manner, if desired. *)
 
   (* The type [('a, 'pc) env] is shared by [InputNeeded] and [HandlingError].
      As above, the parameter ['a] is the type of the final semantic value.
@@ -39,9 +43,9 @@ module type INCREMENTAL_ENGINE = sig
     | Rejected
 
   (* [offer] allows the user to resume the parser after it has suspended
-     itself with a result of the form [InputNeeded env] result. [offer]
-     expects [env] as well as a new token and produces a new result. It
-     does not raise any exception. *)
+     itself with a result of the form [InputNeeded env]. [offer] expects [env]
+     as well as a new token and produces a new result. It does not raise any
+     exception. *)
 
   val offer:
     ('a, input_needed) env ->
@@ -55,10 +59,5 @@ module type INCREMENTAL_ENGINE = sig
   val handle:
     ('a, handling_error) env ->
     'a result
-
-  (* The incremental interface is more general than the monolithic one.
-     [entry] can be (and is indeed) implemented by first calling [start],
-     then calling [offer] and [handle] in a loop, until a final result
-     is obtained. *)
 
 end
