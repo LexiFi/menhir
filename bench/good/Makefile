@@ -51,7 +51,7 @@ test: clean $(RESULTS)
 	fi;								\
 	if test -e $*.expected; then					\
 	  if diff $@ $*.expected >& /dev/null; then			\
-	    if $(MENHIR) $$CMD >& $*.out; then				\
+	    if $(MENHIR) --explain $$CMD >& $*.out; then		\
 	      echo "[OK] $$FILES";					\
 	    else							\
 	      if ! grep $* 00KNOWN_FAILURES >& /dev/null; then (	\
