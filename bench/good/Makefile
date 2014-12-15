@@ -54,12 +54,17 @@ test: clean $(RESULTS)
 	  if diff $@ $*.expected >& /dev/null; then			\
 	    if $(MENHIR) $$CMD >& $*.out; then				\
 	      echo "[OK] $$FILES";					\
-	    else (							\
-	      echo "-> [KO] $$FILES:";					\
-	      echo "   menhir --only-preprocess succeeded,"; 		\
-	      echo "   but menhir failed."; 				\
-	      echo "   cat $*.out";					\
-	    ) | tee -a failures; 					\
+	    else							\
+	      if ! grep $* 00KNOWN_FAILURES >& /dev/null; then (	\
+	        echo "-> [KO] $$FILES:";				\
+	        echo "   menhir --only-preprocess succeeded,"; 		\
+	        echo "   but menhir failed."; 				\
+	        echo "   cat $*.out";					\
+	      ) | tee -a failures; 					\
+	      else                                                      \
+	        echo "-> [KO] $$FILES:";				\
+	        echo "   known failure.";				\
+	      fi;							\
 	    fi;								\
 	  else (							\
 	    echo "-> [KO] $$FILES:";					\
