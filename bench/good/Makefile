@@ -14,8 +14,8 @@ CAMLC           := $(shell if ocamlfind ocamlc -v >/dev/null 2>&1 ; \
                        then echo ocamlc.opt ; \
 		       else echo ocamlc ; fi)
 
-# La convention de nommage des tests multi-grammaires
-# est : /nom/-[1-9].mly
+# Some tests involve several input files. The naming convention for
+# these tests is /name/-[1-9].mly.
 TESTS=$(shell ls | egrep '*([1]|[^2-9]).mly')
 RESULTS=$(TESTS:.mly=.result)
 
@@ -24,42 +24,49 @@ test: clean $(RESULTS)
 	  echo WARNINGS: ; \
 	  cat warnings; \
 	fi
-	@ if test -e failures; then		\
-		echo FAILURES: ;		\
-		cat failures;		\
-		exit 1;				\
-	 fi
+	@ if test -e failures; then \
+	  echo FAILURES: ; \
+	  cat failures;	\
+	  exit 1; \
+	fi
 
 # The file %.result   stores the output of menhir --only-preprocess.
 # The file %.expected stores its expected output.
+# The file %.out      stores the output of menhir.
+#   (There is presently no expected output file.)
 
 %.result: %.mly
+# Single-file or multi-file test?
 	@ if echo $< | grep -e "-1.mly" &> /dev/null; then		\
-		export BASE=`echo $< | sed s/"-1.mly"/""/`;		\
-		export FILES=`echo $$BASE-[1-9].mly`;			\
-		export CMD="$$FILES --base $$BASE";			\
+	  export BASE=`echo $< | sed s/"-1.mly"/""/`;			\
+	  export FILES=`echo $$BASE-[1-9].mly`;				\
+	  export CMD="$$FILES --base $$BASE";				\
 	else								\
-		export FILES="$<";					\
-		export BASE=`echo $< | sed s/".mly"/""/`;		\
-		export CMD="$<";					\
+	  export FILES="$<";						\
+	  export BASE=`echo $< | sed s/".mly"/""/`;			\
+	  export CMD="$<";						\
 	fi;								\
 	$(SHELL) -c '$(MENHIR) --only-preprocess $$CMD >& $@';		\
 	if [ x$$CREATE_EXPECTED == x"1" ]; then				\
-		cp $@ $*.expected;					\
+	  cp $@ $*.expected;						\
 	fi;								\
 	if test -e $*.expected; then					\
-	   if diff $@ $*.expected >& /dev/null; then			\
-		if $(MENHIR) $$CMD >& /dev/null; then			\
-			echo "[OK] $$FILES";				\
-		else							\
-			echo "-> [KO] $$FILES:" | tee -a failures;			\
-			echo "        menhir --only-preprocess succeeded," | tee -a failures; \
-			echo "        but menhir failed." | tee -a failures; \
-		fi;							\
-	   else								\
-		echo "-> [KO] $$FILES:" | tee -a failures;		\
-		echo "        menhir --only-preprocess produced unexpected output."; \
-	   fi;								\
+	  if diff $@ $*.expected >& /dev/null; then			\
+	    if $(MENHIR) $$CMD >& $*.out; then				\
+	      echo "[OK] $$FILES";					\
+	    else (							\
+	      echo "-> [KO] $$FILES:";					\
+	      echo "   menhir --only-preprocess succeeded,"; 		\
+	      echo "   but menhir failed."; 				\
+	      echo "   cat $*.out";					\
+	    ) | tee -a failures; 					\
+	    fi;								\
+	  else (							\
+	    echo "-> [KO] $$FILES:";					\
+	    echo "   menhir --only-preprocess produced wrong output."; 	\
+	    echo "   diff $*.expected $@";				\
+	  ) | tee -a failures;						\
+	  fi;								\
 	else								\
 	  echo "Warning: missing file: $*.expected" | tee -a warnings; 	\
 	fi;								\
