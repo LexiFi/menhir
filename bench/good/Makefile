@@ -26,6 +26,9 @@ test: clean $(RESULTS)
 		exit 1;				\
 	 fi
 
+# The file %.result   stores the output of menhir --only-preprocess.
+# The file %.expected stores its expected output.
+
 %.result: %.mly
 	@ if echo $< | grep -e "-1.mly" &> /dev/null; then		\
 		export BASE=`echo $< | sed s/"-1.mly"/""/`;		\
@@ -45,7 +48,7 @@ test: clean $(RESULTS)
 		if $(MENHIR) $$CMD >& /dev/null; then			\
 			echo "[OK] $$FILES";				\
 		else							\
-			echo "-> [KO] menhir failed on $$FILES";		\
+			echo "-> [KO] menhir failed on $$FILES";	\
 			export FAILED_FILES="$$FAILED_FILES $$FILES";	\
 		fi;							\
 	   else								\
@@ -53,16 +56,7 @@ test: clean $(RESULTS)
 		echo "  $$FILES" >> failed_files;			\
 	   fi;								\
 	else								\
-	  if echo $< | grep -e "-should-compile" &> /dev/null; then     \
-	     $(SHELL) -c '$(MENHIR) $$CMD >& $@';	                \
-	     if $(CAMLC) -c $$BASE.mli; $(CAMLC) -c $$BASE.ml; then     \
-		echo "[OK] $$FILES";					\
-	     else                                                       \
-                echo "-> [KO] menhir back-end failed on $$FILES";	\
-	     fi;                                                        \
-          else                                                          \
-	     echo "[OK] $$FILES";					\
-          fi;                                                           \
+	  echo "Warning: missing file $*.expected"; 			\
 	fi;								\
 
 expected:
