@@ -1,0 +1,50 @@
+%{ %}
+%start goal
+%token R_BRACKET
+%token NEW
+%token L_BRACKET
+%token <string> INTEGER_LITERAL
+%token EOF
+%token ASSIGN
+
+%type <unit> goal
+%%
+
+goal:
+| assignment EOF
+    { }
+
+primary:
+| INTEGER_LITERAL
+    { }
+| array_access
+    { }
+
+primary_not_name:
+| array_access
+    { }
+| NEW L_BRACKET expression R_BRACKET
+    { }
+
+array_access:
+| expression L_BRACKET primary_not_name R_BRACKET
+    { }
+
+expression:
+| primary
+    { }
+| assignment
+    { }
+
+assignment:
+| left_hand_side ASSIGN expression
+    { }
+
+left_hand_side:
+| primary_not_name
+    { }
+
+%%
+
+
+
