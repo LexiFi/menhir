@@ -72,7 +72,7 @@ let table_interface =
         ttoken
       )
     );
-    IIComment "The entry points to the incremental API.";
+    IIComment "The entry point(s) to the incremental API.";
     IIValDecls (
       StringSet.fold (fun symbol decls ->
         (incremental symbol, entrytypescheme_incremental symbol) :: decls
