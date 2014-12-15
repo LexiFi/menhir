@@ -16,7 +16,7 @@ CAMLC           := $(shell if ocamlfind ocamlc -v >/dev/null 2>&1 ; \
 
 # Some tests involve several input files. The naming convention for
 # these tests is /name/-[1-9].mly.
-TESTS=$(shell ls | egrep '*([1]|[^2-9]).mly')
+TESTS=$(shell ls *.mly | egrep '*([1]|[^2-9]).mly')
 RESULTS=$(TESTS:.mly=.opp.out)
 
 test: clean $(RESULTS)
