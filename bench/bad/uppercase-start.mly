@@ -1,5 +1,5 @@
-%token bla
 %token FOO
+%start Bla
 
 %%
 
