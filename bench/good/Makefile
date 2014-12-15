@@ -33,7 +33,7 @@ test: clean $(RESULTS)
 # The file %.result   stores the output of menhir --only-preprocess.
 # The file %.expected stores its expected output.
 # The file %.out      stores the output of menhir.
-#   (There is presently no expected output file.)
+# The file %.exp      stores its expected output.
 
 %.result: %.mly
 	@ if echo $< | grep -e "-1.mly" &> /dev/null; then		\
@@ -52,7 +52,21 @@ test: clean $(RESULTS)
 	if test -e $*.expected; then					\
 	  if diff $@ $*.expected >& /dev/null; then			\
 	    if $(MENHIR) --explain $$CMD >& $*.out; then		\
-	      echo "[OK] $$FILES";					\
+	      if [ x$$CREATE_EXPECTED == x"1" ]; then			\
+		cp $*.out $*.exp;					\
+	      fi;							\
+	      if test -e $*.exp; then					\
+	        if ! diff $*.exp $*.out >& /dev/null; then (		\
+		  echo "-> [KO] $$FILES:";				\
+		  echo "   menhir produced wrong output.";		\
+	          echo "   diff $*.exp $*.out";				\
+	        ) | tee -a failures;					\
+	        else							\
+	          echo "[OK] $$FILES";					\
+	        fi;							\
+	      else							\
+	        echo "Warning: missing file: $*.exp" | tee -a warnings; \
+	      fi;							\
 	    else							\
 	      if ! grep $* 00KNOWN_FAILURES >& /dev/null; then (	\
 	        echo "-> [KO] $$FILES:";				\
@@ -84,5 +98,7 @@ expected:
 	@ echo "Expected output re-generated."
 
 clean:
-	rm -f *.ml *.mli *.conflicts *.automaton *.cmi *.cmo *.cmx *.o *.s *.result *~ failures warnings
+	rm -f *~
+	rm -f *.ml *.mli *.conflicts *.automaton
+	rm -f *.result *.out failures warnings
 
