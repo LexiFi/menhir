@@ -2,4 +2,4 @@
 %start<int> a
 %%
 
-a: {}
+a: A {}

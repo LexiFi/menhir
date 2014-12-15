@@ -5,4 +5,4 @@
 
 %public a: T {}
 
-s: {}
+s: T {}

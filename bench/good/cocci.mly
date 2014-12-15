@@ -109,7 +109,6 @@ module P = Parse_aux
 %left TPlus TMinus
 %left TMul TDiv TMod 
 
-%start reinit
 %type <unit> reinit
 
 %start minus_main 

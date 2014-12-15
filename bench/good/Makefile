@@ -36,7 +36,6 @@ test: clean $(RESULTS)
 #   (There is presently no expected output file.)
 
 %.result: %.mly
-# Single-file or multi-file test?
 	@ if echo $< | grep -e "-1.mly" &> /dev/null; then		\
 	  export BASE=`echo $< | sed s/"-1.mly"/""/`;			\
 	  export FILES=`echo $$BASE-[1-9].mly`;				\
@@ -59,7 +58,7 @@ test: clean $(RESULTS)
 	        echo "-> [KO] $$FILES:";				\
 	        echo "   menhir --only-preprocess succeeded,"; 		\
 	        echo "   but menhir failed."; 				\
-	        echo "   cat $*.out";					\
+	        echo "   more $*.out";					\
 	      ) | tee -a failures; 					\
 	      else                                                      \
 	        echo "-> [KO] $$FILES:";				\
@@ -79,8 +78,8 @@ test: clean $(RESULTS)
 expected:
 	@ echo "Are you sure ? (this will erase *.expected) [Press ENTER]"
 	@ read
-	@ mkdir -p /tmp/mini-expected
-	@ cp *.expected /tmp/mini-expected >& /dev/null || true
+	@ mkdir -p /tmp/menhir-expected
+	@ cp *.expected /tmp/menhir-expected >& /dev/null || true
 	@ CREATE_EXPECTED=1 $(MAKE) -s test
 	@ echo "Expected output re-generated."
 

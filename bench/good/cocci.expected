@@ -1,3 +1,5 @@
+File "cocci.mly", line 137, characters 0-6:
+Warning: symbol reinit is unreachable from any of the start symbol(s).
 Warning: you are using the standard library and/or the %inline keyword. We
 recommend switching on --infer in order to avoid obscure type error messages.
 %{
@@ -21,7 +23,6 @@ module P = Parse_aux
 %start minus_main
 %start never_used
 %start plus_main
-%start reinit
 %start rule_name
 %token <Data.clt> Tvolatile
 %token <Data.clt> Tvoid
@@ -186,10 +187,6 @@ module P = Parse_aux
 %type <string * Ast_cocci.dependency list * string option> rule_name
 %%
 
-reinit:
-| 
-    { }
-
 meta_main:
 | m = metadec
     { m (!Ast0.rule_name) }
@@ -200,11 +197,17 @@ struct_or_union:
 | u = Tunion
     { P.clt2mcode Ast.Union u }
 
-option_eexpr_:
+loption_pure_decl_statement_list_:
 | 
-    { None }
-| x = eexpr
-    { Some x }
+    { [] }
+| x = pure_decl_statement_list
+    { x }
+
+loption_plus_function_decl_statement_or_expression_:
+| 
+    { [] }
+| x = plus_function_decl_statement_or_expression
+    { x }
 
 loption_minus_function_decl_statement_or_expression_:
 | 
@@ -292,6 +295,12 @@ list_iso_xstatement_dots_TEllipsis___:
 | 
     { [] }
 | x = iso_xstatement_dots_TEllipsis__ xs = list_iso_xstatement_dots_TEllipsis___
+    { x :: xs }
+
+list_iso_single_statement__:
+| 
+    { [] }
+| x = iso_single_statement_ xs = list_iso_single_statement__
     { x :: xs }
 
 minus_main:
@@ -1039,12 +1048,6 @@ filespec:
 	  (Ast0.FILEINFO(P.id2mcode $1,
 			 P.id2mcode $2))] }
 
-list_iso_single_statement__:
-| 
-    { [] }
-| x = iso_single_statement_ xs = list_iso_single_statement__
-    { x :: xs }
-
 list_iso_dexpr__:
 | 
     { [] }
@@ -1588,28 +1591,6 @@ mzl_ctype_:
 | a = TMid0 b = ctype
     { (P.clt2mcode "|" a, b) }
 
-opt_dot_start_end_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list_:
-| start = fun_exp_decl_statement_list
-    { function dot_builder -> [start] }
-| r = opt_dot_start_end_pattern_fun_exp_decl_statement_list_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__fun_exp_decl_statement_list_opt_dot_end_dots_TEllipsis_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list__
-    { function dot_builder -> r (dot_builder "...") }
-
-opt_dot_start_end_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_exp_decl_statement_list_:
-| start = exp_decl_statement_list
-    { function dot_builder -> [start] }
-| r = opt_dot_start_end_pattern_exp_decl_statement_list_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__exp_decl_statement_list_opt_dot_end_dots_TEllipsis_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_exp_decl_statement_list__
-    { function dot_builder -> r (dot_builder "...") }
-
-required_dot_start_with_ender_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list_:
-| start = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ finish = no_dot_start_dots_TEllipsis_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list_
-    { (function dot_builder ->
-       (dot_builder "..." start) :: (finish (dot_builder "..."))) }
-
-required_dot_start_with_ender_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_pure_decl_statement_list_:
-| start = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ finish = no_dot_start_dots_TEllipsis_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_pure_decl_statement_list_
-    { (function dot_builder ->
-       (dot_builder "..." start) :: (finish (dot_builder "..."))) }
-
 option_whenppdecs_:
 | 
     { None }
@@ -1622,23 +1603,11 @@ option_whenexp_:
 | x = whenexp
     { Some x }
 
-nonempty_list_fun_decl_statement_:
-| x = fun_decl_statement
-    { [ x ] }
-| x = fun_decl_statement xs = nonempty_list_fun_decl_statement_
-    { x :: xs }
-
-nonempty_list_decl_statement_:
-| x = decl_statement
-    { [ x ] }
-| x = decl_statement xs = nonempty_list_decl_statement_
-    { x :: xs }
-
-nonempty_list_TMul_:
-| x = TMul
-    { [ x ] }
-| x = TMul xs = nonempty_list_TMul_
-    { x :: xs }
+option_eexpr_:
+| 
+    { None }
+| x = eexpr
+    { Some x }
 
 fninfo:
 | 
@@ -2586,6 +2555,86 @@ comma_list_ctype_:
 | separated_nonempty_list_TComma_ctype_
     { $1 }
 
+opt_dot_start_end_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list_:
+| start = fun_exp_decl_statement_list
+    { function dot_builder -> [start] }
+| r = opt_dot_start_end_pattern_fun_exp_decl_statement_list_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__fun_exp_decl_statement_list_opt_dot_end_dots_TEllipsis_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list__
+    { function dot_builder -> r (dot_builder "...") }
+
+opt_dot_start_end_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_exp_decl_statement_list_:
+| start = exp_decl_statement_list
+    { function dot_builder -> [start] }
+| r = opt_dot_start_end_pattern_exp_decl_statement_list_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__exp_decl_statement_list_opt_dot_end_dots_TEllipsis_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_exp_decl_statement_list__
+    { function dot_builder -> r (dot_builder "...") }
+
+required_dot_start_with_ender_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list_:
+| start = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ finish = no_dot_start_dots_TEllipsis_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list_
+    { (function dot_builder ->
+       (dot_builder "..." start) :: (finish (dot_builder "..."))) }
+
+required_dot_start_with_ender_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_pure_decl_statement_list_:
+| start = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ finish = no_dot_start_dots_TEllipsis_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_pure_decl_statement_list_
+    { (function dot_builder ->
+       (dot_builder "..." start) :: (finish (dot_builder "..."))) }
+
+no_dot_start_dots_TEllipsis_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list_:
+| 
+    { function dot_builder -> [] }
+| e = fun_exp_decl_statement_list
+    { function dot_builder -> [e] }
+| g = fun_exp_decl_statement_list d = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ r = no_dot_start_dots_TEllipsis_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list_
+    { function dot_builder -> g::(dot_builder d)::(r dot_builder) }
+
+no_dot_start_dots_TEllipsis_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_pure_decl_statement_list_:
+| 
+    { function dot_builder -> [] }
+| e = pure_decl_statement_list
+    { function dot_builder -> [e] }
+| g = exp_decl_statement_list d = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ r = no_dot_start_dots_TEllipsis_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_pure_decl_statement_list_
+    { function dot_builder -> g::(dot_builder d)::(r dot_builder) }
+
+whens_pre_post_decl_statement_or_expression_rule_elem_statement_:
+| TWhen TNotEq w = pre_post_decl_statement_or_expression TLineEnd
+    { Ast0.WhenNot w }
+| TWhen TEq w = rule_elem_statement TLineEnd
+    { Ast0.WhenAlways w }
+
+no_dot_start_end_exp_decl_statement_list_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__:
+| g = exp_decl_statement_list dg = list_pair_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__exp_decl_statement_list__
+    { function dot_builder ->
+      g :: (List.concat(List.map (function (d,g) -> [dot_builder d;g]) dg)) }
+
+no_dot_start_end_dexpr_edots_when_TEllipsis_eexpr__:
+| g = dexpr dg = list_pair_edots_when_TEllipsis_eexpr__dexpr__
+    { function dot_builder ->
+      g :: (List.concat(List.map (function (d,g) -> [dot_builder d;g]) dg)) }
+
+xstatement_dots_TEllipsis_:
+| b = statement_dots_TEllipsis_
+    { Ast0.wrap(Ast0.DOTS(b (P.mkdots "..."))) }
+
+never_used:
+| TPragma
+    { () }
+
+nonempty_list_fun_decl_statement_:
+| x = fun_decl_statement
+    { [ x ] }
+| x = fun_decl_statement xs = nonempty_list_fun_decl_statement_
+    { x :: xs }
+
+nonempty_list_decl_statement_:
+| x = decl_statement
+    { [ x ] }
+| x = decl_statement xs = nonempty_list_decl_statement_
+    { x :: xs }
+
+nonempty_list_TMul_:
+| x = TMul
+    { [ x ] }
+| x = TMul xs = nonempty_list_TMul_
+    { x :: xs }
+
 opt_dot_start_end_pattern_fun_exp_decl_statement_list_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__fun_exp_decl_statement_list_opt_dot_end_dots_TEllipsis_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list__:
 | g = fun_exp_decl_statement_list d = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_
     { function dot_builder -> [g; (dot_builder d)] }
@@ -2618,22 +2667,6 @@ opt_dot_end_dots_TEllipsis_exp_decl_statement_list_pre_post_decl_statement_or_ex
 | g = exp_decl_statement_list d = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ r = opt_dot_end_dots_TEllipsis_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_exp_decl_statement_list_
     { function dot_builder -> g :: (dot_builder d) :: (r dot_builder) }
 
-no_dot_start_dots_TEllipsis_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list_:
-| 
-    { function dot_builder -> [] }
-| e = fun_exp_decl_statement_list
-    { function dot_builder -> [e] }
-| g = fun_exp_decl_statement_list d = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ r = no_dot_start_dots_TEllipsis_fun_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_fun_exp_decl_statement_list_
-    { function dot_builder -> g::(dot_builder d)::(r dot_builder) }
-
-no_dot_start_dots_TEllipsis_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_pure_decl_statement_list_:
-| 
-    { function dot_builder -> [] }
-| e = pure_decl_statement_list
-    { function dot_builder -> [e] }
-| g = exp_decl_statement_list d = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ r = no_dot_start_dots_TEllipsis_exp_decl_statement_list_pre_post_decl_statement_or_expression_rule_elem_statement_pure_decl_statement_list_
-    { function dot_builder -> g::(dot_builder d)::(r dot_builder) }
-
 edots_when_TEllipsis_struct_decl_:
 | d = TEllipsis
     { (d,None) }
@@ -2655,42 +2688,6 @@ edots_when_TEllipsis_eexpr_:
 dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_:
 | d = TEllipsis w = list_whens_pre_post_decl_statement_or_expression_rule_elem_statement__
     { (d,w) }
-
-whens_pre_post_decl_statement_or_expression_rule_elem_statement_:
-| TWhen TNotEq w = pre_post_decl_statement_or_expression TLineEnd
-    { Ast0.WhenNot w }
-| TWhen TEq w = rule_elem_statement TLineEnd
-    { Ast0.WhenAlways w }
-
-no_dot_start_end_exp_decl_statement_list_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__:
-| g = exp_decl_statement_list dg = list_pair_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__exp_decl_statement_list__
-    { function dot_builder ->
-      g :: (List.concat(List.map (function (d,g) -> [dot_builder d;g]) dg)) }
-
-no_dot_start_end_dexpr_edots_when_TEllipsis_eexpr__:
-| g = dexpr dg = list_pair_edots_when_TEllipsis_eexpr__dexpr__
-    { function dot_builder ->
-      g :: (List.concat(List.map (function (d,g) -> [dot_builder d;g]) dg)) }
-
-xstatement_dots_TEllipsis_:
-| b = statement_dots_TEllipsis_
-    { Ast0.wrap(Ast0.DOTS(b (P.mkdots "..."))) }
-
-never_used:
-| TPragma
-    { () }
-
-loption_pure_decl_statement_list_:
-| 
-    { [] }
-| x = pure_decl_statement_list
-    { x }
-
-loption_plus_function_decl_statement_or_expression_:
-| 
-    { [] }
-| x = plus_function_decl_statement_or_expression
-    { x }
 
 iso_main:
 | TIsoExpression e1 = dexpr el = list_iso_dexpr__ EOF

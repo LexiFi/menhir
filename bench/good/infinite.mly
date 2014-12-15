@@ -1,7 +1,11 @@
 %token A
-%start <unit> infinite
+%start <unit> dummy
 
 %%
+
+dummy:
+  A { () }
+| A infinite { () }
 
 infinite:
   A infinite

@@ -1,8 +1,10 @@
 %token A
 %type<unit> s
-%start s
+%start<unit> dummy
 
 %%
+
+dummy: A {}
 
 s: b s {}
 
