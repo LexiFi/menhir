@@ -4,7 +4,7 @@ all: main.pdf
 
 export TEXINPUTS=.:
 
-%.pdf: %.tex
+%.pdf: %.tex $(wildcard *.tex)
 	pdflatex $*
 	bibtex $*
 	pdflatex $*
