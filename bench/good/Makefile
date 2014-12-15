@@ -20,9 +20,13 @@ TESTS=$(shell ls | egrep '*([1]|[^2-9]).mly')
 RESULTS=$(TESTS:.mly=.result)
 
 test: clean $(RESULTS)
-	@ if test -e failed_files; then		\
-		echo FAILED ON: ;		\
-		cat failed_files;		\
+	@ if test -e warnings; then \
+	  echo WARNINGS: ; \
+	  cat warnings; \
+	fi
+	@ if test -e failures; then		\
+		echo FAILURES: ;		\
+		cat failures;		\
 		exit 1;				\
 	 fi
 
@@ -48,15 +52,16 @@ test: clean $(RESULTS)
 		if $(MENHIR) $$CMD >& /dev/null; then			\
 			echo "[OK] $$FILES";				\
 		else							\
-			echo "-> [KO] menhir failed on $$FILES";	\
-			export FAILED_FILES="$$FAILED_FILES $$FILES";	\
+			echo "-> [KO] $$FILES:" | tee -a failures;			\
+			echo "        menhir --only-preprocess succeeded," | tee -a failures; \
+			echo "        but menhir failed." | tee -a failures; \
 		fi;							\
 	   else								\
-		echo "-> [KO] menhir front-end failed on $$FILES";	\
-		echo "  $$FILES" >> failed_files;			\
+		echo "-> [KO] $$FILES:" | tee -a failures;		\
+		echo "        menhir --only-preprocess produced unexpected output."; \
 	   fi;								\
 	else								\
-	  echo "Warning: missing file $*.expected"; 			\
+	  echo "Warning: missing file: $*.expected" | tee -a warnings; 	\
 	fi;								\
 
 expected:
@@ -68,5 +73,5 @@ expected:
 	@ echo "Expected output re-generated."
 
 clean:
-	rm -f *.ml *.mli *.conflicts *.automaton *.cmi *.cmo *.cmx *.o *.s *.result *~ failed_files
+	rm -f *.ml *.mli *.conflicts *.automaton *.cmi *.cmo *.cmx *.o *.s *.result *~ failures warnings
 
