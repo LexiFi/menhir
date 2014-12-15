@@ -84,7 +84,7 @@ declaration:
 | TOKEN OCAMLTYPE? clist(terminal) error
 | TOKEN OCAMLTYPE? error
     { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
-      "Syntax error in a %token declaration.";
+      "syntax error in a %token declaration.";
       "Here are sample valid declarations:";
       "  %token DOT SEMICOLON";
       "  %token <string> LID UID";
@@ -105,7 +105,7 @@ declaration:
 | START OCAMLTYPE? clist(nonterminal) error
 | START OCAMLTYPE? error
     { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
-      "Syntax error in a %start declaration.";
+      "syntax error in a %start declaration.";
       "Here are sample valid declarations:";
       "  %start expression phrase";
       "  %start <int> date time";
@@ -120,7 +120,7 @@ declaration:
 | TYPE OCAMLTYPE error
 | TYPE error
     { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
-      "Syntax error in a %type declaration.";
+      "syntax error in a %type declaration.";
       "Here are sample valid declarations:";
       "  %type <Syntax.expression> expression";
       "  %type <int> date time";
@@ -134,7 +134,7 @@ declaration:
 | priority_keyword clist(symbol) error
 | priority_keyword error
     { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
-      "Syntax error in a precedence declaration.";
+      "syntax error in a precedence declaration.";
       "Here are sample valid declarations:";
       "  %left PLUS TIMES";
       "  %nonassoc unary_minus";
@@ -147,14 +147,14 @@ declaration:
 
 | PARAMETER error
     { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
-      "Syntax error in a %parameter declaration.";
+      "syntax error in a %parameter declaration.";
       "Here is a sample valid declaration:";
       "  %parameter <X : sig type t end>";
       ])
     }
 
 | error
-    { Error.error (Positions.two $startpos $endpos) "Syntax error inside a declaration." }
+    { Error.error (Positions.two $startpos $endpos) "syntax error inside a declaration." }
 
 /* This production recognizes tokens that are valid in the rules section,
    but not in the declarations section. This is a hint that a %% was
@@ -163,7 +163,7 @@ declaration:
 | rule_specific_token
     {
       Error.error (Positions.two $startpos $endpos)
-        "Syntax error inside a declaration.\n\
+        "syntax error inside a declaration.\n\
          Did you perhaps forget the %% that separates declarations and rules?"
     }
 
@@ -240,7 +240,7 @@ rule:
       ]
     }
 | error
-    { Error.error (Positions.two $startpos $endpos) "Syntax error inside the definition of a nonterminal symbol." }
+    { Error.error (Positions.two $startpos $endpos) "syntax error inside the definition of a nonterminal symbol." }
 
 flags:
   /* epsilon */
@@ -281,7 +281,7 @@ production_group:
     }
 | error ACTION precedence?
 | error EOF
-    { Error.error (Positions.two $startpos($1) $endpos($1)) "Syntax error inside a production." }
+    { Error.error (Positions.two $startpos($1) $endpos($1)) "syntax error inside a production." }
 
 %inline precedence:
   PREC symbol = symbol
