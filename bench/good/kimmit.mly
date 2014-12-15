@@ -4,4 +4,4 @@
 %token<int> X
 %start<unit> s
 %%
-s: {}
+s: X {}
