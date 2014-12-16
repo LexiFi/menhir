@@ -28,3 +28,8 @@ val exhaust: in_channel -> string
 
 val invoke: string -> string option
 
+(* [read_whole_file filename] reads the file [filename] in text mode and
+   returns its contents as a string. *)
+
+val read_whole_file: string -> string
+
