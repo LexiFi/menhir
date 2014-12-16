@@ -1,9 +1,13 @@
-module TT = TokenType (* artificial dependency; ensures that [TokenType] runs first *)
-
 (* Start where [PreFront] left off. *)
 
 let grammar =
   PreFront.grammar
+
+(* If [--only-tokens] was specified on the command line, produce
+   the definition of the [token] type and stop. *)
+
+let () =
+  TokenType.produce_tokentype grammar
 
 (* Perform reachability analysis. *)
 

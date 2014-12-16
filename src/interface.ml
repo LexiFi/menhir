@@ -59,7 +59,7 @@ let entrytypescheme_incremental symbol =
 (* This is the interface of the generated parser -- only the part
    that is specific of the table back-end. *)
 
-let table_interface =
+let table_interface grammar =
   if Settings.table then [
     IIComment "The incremental API.";
     IIModule (
@@ -75,42 +75,43 @@ let table_interface =
     IIValDecls (
       StringSet.fold (fun symbol decls ->
         (incremental symbol, entrytypescheme_incremental symbol) :: decls
-      ) PreFront.grammar.start_symbols []
+      ) grammar.start_symbols []
     )
   ] else []
 
 (* This is the interface of the generated parser. *)
 
-let tokentypedef =
-  match TokenType.tokentypedef with
+let tokentypedef grammar =
+  match TokenType.tokentypedef grammar with
   | [] ->
       []
-  | _ ->
-      [ IIComment "The type of tokens."; IITypeDecls TokenType.tokentypedef ]
+  | def ->
+      [ IIComment "The type of tokens."; IITypeDecls def ]
 
-let interface = [
-  IIFunctor (PreFront.grammar.parameters,
-    tokentypedef @ [
+let interface grammar = [
+  IIFunctor (grammar.parameters,
+    tokentypedef grammar @ [
     IIComment "This exception is raised by the monolithic API functions.";
     IIExcDecls [ excdef ];
     IIComment "The monolithic API.";
     IIValDecls (
       StringSet.fold (fun symbol decls ->
         (Misc.normalize symbol, entrytypescheme symbol) :: decls
-      ) PreFront.grammar.start_symbols []
+      ) grammar.start_symbols []
     )
-  ] @ table_interface)
+  ] @ table_interface grammar)
 ]
 
 (* Writing the interface to a file. *)
 
 let write () =
+  assert (Settings.token_type_mode <> Settings.TokenTypeOnly);
   let mli = open_out (Settings.base ^ ".mli") in
   let module P = Printer.Make (struct
     let f = mli
     let locate_stretches = None
     let raw_stretch_action = false
   end) in
-  P.interface interface;
+  P.interface (interface PreFront.grammar);
   close_out mli
 

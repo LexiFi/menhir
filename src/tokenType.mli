@@ -13,10 +13,16 @@ val ttoken: IL.typ
 
 val tlexer: IL.typ
 
+(* If we were asked to only produce a type definition, then
+   [produce_tokentype_and_stop] does so and stops Menhir.
+   Otherwise, it does nothing. *)
+
+val produce_tokentype: UnparameterizedSyntax.grammar -> unit
+
 (* This is the definition of the type of tokens, for use by the
    code generator. *)
 
-val tokentypedef: IL.typedef list
+val tokentypedef: UnparameterizedSyntax.grammar -> IL.typedef list
 
 (* This function prefixes the name of a token with an appropriate
    Objective Caml module name, if necessary. *)

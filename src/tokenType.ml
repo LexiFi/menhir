@@ -14,9 +14,10 @@ open CodeBits
 let tctoken =
   "token"
 
-(* This is the definition of the type of tokens. *)
+(* This is the definition of the type of tokens. (Regardless of
+   [Settings.token_type_mode], which is examined below.) *)
 
-let tokentypedef =
+let tokentypedef grammar =
   let datadefs =
     StringMap.fold (fun token properties defs ->
 
@@ -38,7 +39,7 @@ let tokentypedef =
 	} :: defs
       else
 	defs
-    ) PreFront.grammar.tokens []
+    ) grammar.tokens []
   in
   {
     typename = tctoken;
@@ -47,12 +48,10 @@ let tokentypedef =
     typeconstraint = None
   }
 
-(* Consult the command line options to determine what to do.
-   If we were asked to only produce a type definition, then
-   do so and stop. Otherwise, tell the code generator whether
-   it should produce a type definition as part of the code. *)
+(* If we were asked to only produce a type definition, then
+   do so and stop. *)
 
-let tokentypedef, tokenprefix =
+let produce_tokentype grammar =
   match Settings.token_type_mode with
   | Settings.TokenTypeOnly ->
 
@@ -68,8 +67,8 @@ let tokentypedef, tokenprefix =
 		      end) 
       in
       P.interface [
-        IIFunctor (PreFront.grammar.parameters, [
-	  IITypeDecls [ tokentypedef ]
+        IIFunctor (grammar.parameters, [
+	  IITypeDecls [ tokentypedef grammar ]
         ])
       ];
       let module P = 
@@ -80,22 +79,44 @@ let tokentypedef, tokenprefix =
 		      end) 
       in
       P.program {
-        paramdefs = PreFront.grammar.parameters;
+        paramdefs = grammar.parameters;
         prologue = [];
         excdefs = [];
-	typedefs = [ tokentypedef ];
+	typedefs = [ tokentypedef grammar ];
         nonrecvaldefs = [];
 	valdefs = [];
 	moduledefs = [];
         postlogue = [];
       };
       exit 0
-  | Settings.CodeOnly m ->
-      [],
-      (fun id -> m ^ "." ^ id)
+
+  | Settings.CodeOnly _
   | Settings.TokenTypeAndCode ->
-      [ tokentypedef ],
-      (fun id -> id)
+      ()
+
+(* Redefine [tokentypedef], and define [tokenprefix], so as to tell the code
+   generator whether it should include a definition of the token type in the
+   code and how the token type is called. *)
+
+let tokentypedef grammar =
+  match Settings.token_type_mode with
+  | Settings.CodeOnly _ ->
+      []
+  | Settings.TokenTypeAndCode ->
+      [ tokentypedef grammar ]
+  | Settings.TokenTypeOnly ->
+      (* This should not happen, as [produce_tokentype] should
+         have been called first. *)
+      assert false
+
+let tokenprefix id =
+  match Settings.token_type_mode with
+  | Settings.CodeOnly m ->
+      m ^ "." ^ id
+  | Settings.TokenTypeAndCode ->
+      id
+  | Settings.TokenTypeOnly ->
+      id (* irrelevant, really *)
 
 (* Redefine the name of the [token] type to take a possible
    prefix into account. *)

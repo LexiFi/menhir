@@ -1631,7 +1631,7 @@ let program = {
     [ excdef ];
 
   typedefs =
-    tokentypedef @
+    tokentypedef Front.grammar @
     [ envtypedef; statetypedef ];
 
   nonrecvaldefs =
