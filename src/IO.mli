@@ -10,6 +10,12 @@ val try_finally : (unit -> 'a) -> (unit -> unit) -> 'a
 
 val moving_away: string -> (unit -> 'a) -> 'a
 
+(* [with_file filename creation action] creates the file [filename] by
+   running [creation], then runs [action], and ensures that the file
+   is removed in the end. *)
+
+val with_file: string -> (unit -> unit) -> (unit -> 'a) -> 'a
+
 (* [exhaust channel] reads all of the data that's available on [channel].
    It does not assume that the length of the data is known ahead of time.
    It does not close the channel. *)
@@ -21,11 +27,4 @@ val exhaust: in_channel -> string
    the command fails. *)
 
 val invoke: string -> string option
-
-(* [winvoke writers command cleaners] invokes each of the [writer]
-   functions, invokes the command [command], and runs each of the
-   [cleaner] functions. Then, it either returns the command's output,
-   if the command succeeded, or exits, otherwise. *)
-
-val winvoke: (unit -> unit) list -> string -> (unit -> unit) list -> string
 

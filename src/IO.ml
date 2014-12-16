@@ -30,6 +30,15 @@ let moving_away filename action =
     action()
 
 (* ------------------------------------------------------------------------- *)
+(* [with_file filename creation action] creates the file [filename] by
+   running [creation], then runs [action], and ensures that the file
+   is removed in the end. *)
+
+let with_file filename creation action =
+  creation();
+  try_finally action (fun () -> Sys.remove filename)
+
+(* ------------------------------------------------------------------------- *)
 (* [exhaust channel] reads all of the data that's available on [channel].
    It does not assume that the length of the data is known ahead of time.
    It does not close the channel. *)
@@ -67,27 +76,4 @@ let invoke command =
       Some result
   | _ ->
       None
-
-(* ------------------------------------------------------------------------- *)
-(* [winvoke writers command cleaners] invokes each of the [writer]
-   functions, invokes the command [command], and runs each of the
-   [cleaner] functions. Then, it either returns the command's output,
-   if the command succeeded, or exits, otherwise. *)
-
-let winvoke writers command cleaners =
-  let call action =
-    action ()
-  in
-  List.iter call writers;
-  let output = invoke command in
-  List.iter call cleaners;
-
-  (* Stop if the command failed. Otherwise, return its output. *)
-
-  match output with
-  | None ->
-      (* Presumably, the command printed an error message for us. *)
-      exit 1
-  | Some output ->
-      output
 
