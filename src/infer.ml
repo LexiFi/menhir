@@ -208,24 +208,6 @@ let remove filename () =
   Sys.remove filename
 
 (* ------------------------------------------------------------------------- *)
-(* Moving away and restoring a file. *)
-
-let mover filename =
-  if Sys.file_exists filename then
-    let newname =
-      filename ^ ".moved_by_menhir"
-    in
-    let moveaway () =
-      Sys.rename filename newname
-    and restore () =
-      Sys.rename newname filename
-    in
-    moveaway, restore
-  else
-    let nothing () = () in
-    nothing, nothing
-
-(* ------------------------------------------------------------------------- *)
 (* Running ocamldep on the program. *)
 
 type entry =
@@ -244,17 +226,19 @@ let depend grammar =
      are done. There is no reason why dependency analysis should
      destroy existing files. *)
 
-  let moveml, restoreml =
-    mover mlname
-  and movemli, restoremli =
-    mover mliname
+  let ocamldep_command =
+    Printf.sprintf "%s %s %s"
+      Settings.ocamldep (Filename.quote mlname) (Filename.quote mliname)
   in
 
   let output =
-    IO.winvoke
-      [ moveml; movemli; write grammar; Interface.write ]
-      (Printf.sprintf "%s %s %s" Settings.ocamldep (Filename.quote mlname) (Filename.quote mliname))
-      [ remove mlname; remove mliname; restoreml; restoremli ]
+    IO.moving_away mlname (fun () ->
+    IO.moving_away mliname (fun () ->
+     IO.winvoke
+       [ write grammar; Interface.write ]
+       ocamldep_command
+       [ remove mlname; remove mliname ]
+    ))
   in
 
   (* Echo ocamldep's output. *)
