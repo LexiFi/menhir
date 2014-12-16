@@ -1,8 +1,14 @@
 (* Input-output utilities. *)
 
-(* [try/finally] *)
+(* [try/finally] has the same semantics as in Java. *)
 
 val try_finally : (unit -> 'a) -> (unit -> unit) -> 'a
+
+(* [moving_away filename action] moves the file [filename] away (if it exists),
+   performs [action], then moves the file back into place (if it was moved
+   away). *)
+
+val moving_away: string -> (unit -> 'a) -> 'a
 
 (* [exhaust channel] reads all of the data that's available on [channel].
    It does not assume that the length of the data is known ahead of time.

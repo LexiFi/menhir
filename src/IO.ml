@@ -1,7 +1,7 @@
 (* Input-output utilities. *)
 
 (* ------------------------------------------------------------------------- *)
-(* [try/finally]. *)
+(* [try/finally] has the same semantics as in Java. *)
 
 let try_finally action handler =
   let result =
@@ -13,6 +13,21 @@ let try_finally action handler =
   in
   handler();
   result
+
+(* ------------------------------------------------------------------------- *)
+(* [moving_away filename action] moves the file [filename] away (if it exists),
+   performs [action], then moves the file back into place (if it was moved
+   away). *)
+
+let moving_away filename action =
+  if Sys.file_exists filename then
+    let newname = filename ^ ".moved_by_menhir" in
+    Sys.rename filename newname;
+    try_finally action (fun () ->
+      Sys.rename newname filename
+    )
+  else
+    action()
 
 (* ------------------------------------------------------------------------- *)
 (* [exhaust channel] reads all of the data that's available on [channel].
