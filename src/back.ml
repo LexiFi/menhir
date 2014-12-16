@@ -47,7 +47,7 @@ let () =
 (* Write the interface file. *)
 
 let () =
-  Interface.write()
+  Interface.write Front.grammar ()
 
 let () =
   Time.tick "Printing"

@@ -233,7 +233,7 @@ let depend grammar =
       IO.moving_away mlname (fun () ->
       IO.moving_away mliname (fun () ->
       IO.with_file mlname (write grammar) (fun () ->
-      IO.with_file mliname Interface.write (fun () ->
+      IO.with_file mliname (Interface.write grammar) (fun () ->
       IO.invoke ocamldep_command
     )))))
   in

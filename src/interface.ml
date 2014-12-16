@@ -2,10 +2,6 @@ open UnparameterizedSyntax
 open IL
 open CodeBits
 
-(* In this module, we use [PreFront], not [Grammar], in order to avoid
-   a circularity. [Interface] is used by [Infer], which runs before
-   [Grammar]. *)
-
 (* This is the [Error] exception. *)
 
 let excname =
@@ -22,17 +18,17 @@ let excredef = {
 
 (* Finding the type of a start symbol. *)
 
-let ocamltype_of_start_symbol symbol =
+let ocamltype_of_start_symbol grammar symbol =
   try
-    TypTextual (StringMap.find symbol PreFront.grammar.types)
+    TypTextual (StringMap.find symbol grammar.types)
   with Not_found ->
     (* Every start symbol should have a type. *)
     assert false
 
 (* The type of the monolithic entry point for the start symbol [symbol]. *)
 
-let entrytypescheme symbol =
-  let typ = ocamltype_of_start_symbol symbol in
+let entrytypescheme grammar symbol =
+  let typ = ocamltype_of_start_symbol grammar symbol in
   type2scheme (marrow [ arrow tlexbuf TokenType.ttoken; tlexbuf ] typ)
 
 (* When the table back-end is active, the generated parser contains,
@@ -52,8 +48,8 @@ let incremental symbol =
 
 (* The type of the incremental entry point for the start symbol [symbol]. *)
 
-let entrytypescheme_incremental symbol =
-  let t = ocamltype_of_start_symbol symbol in
+let entrytypescheme_incremental grammar symbol =
+  let t = ocamltype_of_start_symbol grammar symbol in
   type2scheme (marrow [ tunit ] (result t))
 
 (* This is the interface of the generated parser -- only the part
@@ -74,7 +70,7 @@ let table_interface grammar =
     IIComment "The entry point(s) to the incremental API.";
     IIValDecls (
       StringSet.fold (fun symbol decls ->
-        (incremental symbol, entrytypescheme_incremental symbol) :: decls
+        (incremental symbol, entrytypescheme_incremental grammar symbol) :: decls
       ) grammar.start_symbols []
     )
   ] else []
@@ -96,7 +92,7 @@ let interface grammar = [
     IIComment "The monolithic API.";
     IIValDecls (
       StringSet.fold (fun symbol decls ->
-        (Misc.normalize symbol, entrytypescheme symbol) :: decls
+        (Misc.normalize symbol, entrytypescheme grammar symbol) :: decls
       ) grammar.start_symbols []
     )
   ] @ table_interface grammar)
@@ -104,7 +100,7 @@ let interface grammar = [
 
 (* Writing the interface to a file. *)
 
-let write () =
+let write grammar () =
   assert (Settings.token_type_mode <> Settings.TokenTypeOnly);
   let mli = open_out (Settings.base ^ ".mli") in
   let module P = Printer.Make (struct
@@ -112,6 +108,6 @@ let write () =
     let locate_stretches = None
     let raw_stretch_action = false
   end) in
-  P.interface (interface PreFront.grammar);
+  P.interface (interface grammar);
   close_out mli
 

@@ -1496,7 +1496,7 @@ let entrydef s =
 		   EMagic (EApp (EVar (run s), [ EVar env; EUnit ]))
 		 )
 	       ),
-               entrytypescheme (Nonterminal.print true nt)
+               entrytypescheme Front.grammar (Nonterminal.print true nt)
              )
   } 
 

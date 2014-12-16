@@ -8,7 +8,7 @@ val excredef: IL.excdef
 
 (* The type of the entry point for the start symbol [nt]. *)
 
-val entrytypescheme: string -> IL.typescheme
+val entrytypescheme: UnparameterizedSyntax.grammar -> string -> IL.typescheme
 
 (* The name of the interpreter sub-module, when the table back-end
    is used. *)
@@ -23,12 +23,7 @@ val result: IL.typ -> IL.typ
 
 val incremental: string -> string
 
-(* The type of the incremental entry point for the start symbol [symbol]. *)
+(* This writes the interface of the generated parser to the [.mli] file. *)
 
-val entrytypescheme_incremental: string -> IL.typescheme
-
-(* This writes the interface of the generated parser to the [.mli]
-   file. *)
-
-val write: unit -> unit
+val write: UnparameterizedSyntax.grammar -> unit -> unit
 
