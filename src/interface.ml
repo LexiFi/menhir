@@ -1,7 +1,6 @@
 open UnparameterizedSyntax
 open IL
 open CodeBits
-open TokenType
 
 (* In this module, we use [PreFront], not [Grammar], in order to avoid
    a circularity. [Interface] is used by [Infer], which runs before
@@ -34,7 +33,7 @@ let ocamltype_of_start_symbol symbol =
 
 let entrytypescheme symbol =
   let typ = ocamltype_of_start_symbol symbol in
-  type2scheme (marrow [ arrow tlexbuf ttoken; tlexbuf ] typ)
+  type2scheme (marrow [ arrow tlexbuf TokenType.ttoken; tlexbuf ] typ)
 
 (* When the table back-end is active, the generated parser contains,
    as a sub-module, an application of [Engine.Make]. This sub-module
@@ -69,7 +68,7 @@ let table_interface =
         MTNamedModuleType "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE",
         "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
         WKDestructive,
-        ttoken
+        TokenType.ttoken
       )
     );
     IIComment "The entry point(s) to the incremental API.";
@@ -83,11 +82,11 @@ let table_interface =
 (* This is the interface of the generated parser. *)
 
 let tokentypedef =
-  match tokentypedef with
+  match TokenType.tokentypedef with
   | [] ->
       []
   | _ ->
-      [ IIComment "The type of tokens."; IITypeDecls tokentypedef ]
+      [ IIComment "The type of tokens."; IITypeDecls TokenType.tokentypedef ]
 
 let interface = [
   IIFunctor (PreFront.grammar.parameters,
