@@ -1,5 +1,9 @@
 (* Input-output utilities. *)
 
+(* [try/finally] *)
+
+val try_finally : (unit -> 'a) -> (unit -> unit) -> 'a
+
 (* [exhaust channel] reads all of the data that's available on [channel].
    It does not assume that the length of the data is known ahead of time.
    It does not close the channel. *)

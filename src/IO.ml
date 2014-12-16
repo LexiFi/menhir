@@ -1,6 +1,20 @@
 (* Input-output utilities. *)
 
 (* ------------------------------------------------------------------------- *)
+(* [try/finally]. *)
+
+let try_finally action handler =
+  let result =
+    try
+      action()
+    with e ->
+      handler();
+      raise e
+  in
+  handler();
+  result
+
+(* ------------------------------------------------------------------------- *)
 (* [exhaust channel] reads all of the data that's available on [channel].
    It does not assume that the length of the data is known ahead of time.
    It does not close the channel. *)
