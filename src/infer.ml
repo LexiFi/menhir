@@ -181,14 +181,14 @@ let program grammar =
      it or to its data constructors. *)
 
   {
-    paramdefs = PreFront.grammar.parameters;
-    prologue = PreFront.grammar.preludes;
+    paramdefs = grammar.parameters;
+    prologue = grammar.preludes;
     excdefs = [];
-    typedefs = tokentypedef PreFront.grammar;
+    typedefs = tokentypedef grammar;
     nonrecvaldefs = [ begindef; def; enddef ];
     moduledefs = [];
     valdefs = [];
-    postlogue = PreFront.grammar.postludes
+    postlogue = grammar.postludes
   }
 
 (* ------------------------------------------------------------------------- *)
