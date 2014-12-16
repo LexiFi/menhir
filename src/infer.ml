@@ -204,9 +204,6 @@ let write grammar () =
   P.program (program grammar);
   close_out ml
 
-let remove filename () =
-  Sys.remove filename
-
 (* ------------------------------------------------------------------------- *)
 (* Running ocamldep on the program. *)
 
@@ -231,14 +228,14 @@ let depend grammar =
       Settings.ocamldep (Filename.quote mlname) (Filename.quote mliname)
   in
 
-  let output =
-    IO.moving_away mlname (fun () ->
-    IO.moving_away mliname (fun () ->
-     IO.winvoke
-       [ write grammar; Interface.write ]
-       ocamldep_command
-       [ remove mlname; remove mliname ]
-    ))
+  let output : string =
+    Option.project (
+      IO.moving_away mlname (fun () ->
+      IO.moving_away mliname (fun () ->
+      IO.with_file mlname (write grammar) (fun () ->
+      IO.with_file mliname Interface.write (fun () ->
+      IO.invoke ocamldep_command
+    )))))
   in
 
   (* Echo ocamldep's output. *)
@@ -308,11 +305,15 @@ let infer grammar =
 
   (* Invoke ocamlc to do type inference for us. *)
 
+  let ocamlc_command =
+    Printf.sprintf "%s -c -i %s" Settings.ocamlc (Filename.quote mlname)
+  in
+
   let output =
-    IO.winvoke
-      [ write grammar ]
-      (Printf.sprintf "%s -c -i %s" Settings.ocamlc (Filename.quote mlname))
-      [ remove mlname ]
+    Option.project (
+      IO.with_file mlname (write grammar) (fun () ->
+        IO.invoke ocamlc_command
+    ))
   in
 
   (* Make sense out of ocamlc's output. *)
