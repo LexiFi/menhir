@@ -18,3 +18,9 @@ let fold f o accu =
   | Some x ->
       f x accu
 
+let project = function
+  | Some x ->
+      x
+  | None ->
+      (* Presumably, an error message has already been printed. *)
+      exit 1
