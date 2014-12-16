@@ -1,5 +1,4 @@
 open Printf
-open Syntax
 
 let read_whole_file filename =
 

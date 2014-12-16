@@ -2,5 +2,5 @@
 
 (* Everything is in [Back]. *)
 
-open Back
+module B = Back (* artificial dependency *)
 

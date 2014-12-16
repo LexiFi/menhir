@@ -1,5 +1,4 @@
 open Printf
-open Lexing
 
 (* TEMPORARY Vérifier que les messages d'erreur sont standardisés au
    maximum, localisés au maximum. Supprimer autant de fonctions que

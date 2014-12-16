@@ -3,7 +3,6 @@
 (* TEMPORARY clean up and write an .mli file *)
 
 open Syntax
-open Misc
 open Positions
 
 let app p ps =

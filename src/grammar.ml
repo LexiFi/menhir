@@ -1,6 +1,5 @@
 open UnparameterizedSyntax
 open Syntax
-open Stretch
 open Positions
 
 (* ------------------------------------------------------------------------ *)

@@ -1,5 +1,4 @@
 open Positions
-open Misc
 open Syntax
 open Stretch
 open UnparameterizedSyntax

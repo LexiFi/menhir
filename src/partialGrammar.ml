@@ -1,7 +1,6 @@
 (* $Id: partialGrammar.ml,v 1.63 2006/10/22 14:07:57 fpottier Exp $ *)
 open Misc
 open Syntax
-open Stretch
 open ConcreteSyntax
 open InternalSyntax
 open Positions

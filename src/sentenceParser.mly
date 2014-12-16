@@ -4,12 +4,6 @@
 /* A sentence is a pair of an optional non-terminal start symbol and a list
    of terminal symbols. */
 
-%{
-
- open Grammar
-   
-%}
-
 %token COLON EOF EOL
 %token<Grammar.Terminal.t> TERMINAL
 %token<Grammar.Nonterminal.t> NONTERMINAL

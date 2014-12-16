@@ -1,5 +1,4 @@
 open UnparameterizedSyntax
-open Syntax
 
 let rec visit grammar visited symbol =
   try
