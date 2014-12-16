@@ -24,8 +24,8 @@ let () =
   | Settings.OMNone ->
       ()
 
-(* If [--infer] was specified on the command line, perform
-   type inference and stop. *)
+(* If [--infer] was specified on the command line, perform type inference.
+   The OCaml type of every nonterminal is then known. *)
 
 let grammar =
   if Settings.infer then
