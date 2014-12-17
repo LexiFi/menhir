@@ -10,7 +10,6 @@
 
 %{
 
-open Keyword
 open ConcreteSyntax
 open Syntax
 open Positions
