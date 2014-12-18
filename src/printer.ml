@@ -515,22 +515,34 @@ and scheme f scheme =
 (* ------------------------------------------------------------------------- *)
 (* Toplevel definition printer. *)
 
-let datavalparams f = function
-  | [] ->
-      ()
-  | valparam :: valparams ->
-      (* [typ1] because [type t = A of  int -> int ] is not allowed by OCaml *)
-      (*                [type t = A of (int -> int)] is allowed *)
-      fprintf f " of %a%a" typ1 valparam (list typ1 times) valparams
+(* The tuple of the arguments of a data constructor. *)
 
-let datatypeparams f = function
-  | None ->
-      ()
-  | Some typs ->
-      fprintf f "(* %a*)" (list typ space) typs (* TEMPORARY not great *)
+let datavalparams f params =
+  (* [typ1] because [type t = A of  int -> int ] is not allowed by OCaml *)
+  (*                [type t = A of (int -> int)] is allowed *)
+  seplist typ1 times f params
 
-let datadef f def =
-  fprintf f "  | %s%a%a" def.dataname datavalparams def.datavalparams datatypeparams def.datatypeparams
+(* A data constructor definition. *)
+
+let datadef typename f def =
+  fprintf f "  | %s" def.dataname;
+  match def.datavalparams, def.datatypeparams with
+  | [], None ->
+      (* | A *)
+      ()
+  | _ :: _, None ->
+      (* | A of t * u *)
+      fprintf f " of %a"
+        datavalparams def.datavalparams
+  | [], Some indices ->
+      (* | A : (v, w) ty *)
+      fprintf f " : %a %s"
+        (typeparams typ0 typ) indices typename
+  | _ :: _, Some indices ->
+      (* | A : t * u -> (v, w) ty *)
+      fprintf f " : %a -> %a %s"
+        datavalparams def.datavalparams
+        (typeparams typ0 typ) indices typename
 
 let fielddef f def =
   fprintf f "  %s%s: %a"
@@ -538,15 +550,15 @@ let fielddef f def =
     def.fieldname
     scheme def.fieldtype
 
-let typerhs f = function
+let typerhs typename f = function
   | TDefRecord [] ->
       assert false
-  | TDefRecord (field :: fields) ->
-      fprintf f " = {%t%a%a%t}" nl fielddef field (list fielddef seminl) fields nl
+  | TDefRecord (_ :: _ as fields) ->
+      fprintf f " = {%t%a%t}" nl (seplist fielddef seminl) fields nl
   | TDefSum [] ->
       ()
   | TDefSum defs ->
-      fprintf f " = %a" (list datadef nl) defs
+      fprintf f " = %a" (list (datadef typename) nl) defs
   | TAbbrev t ->
       fprintf f " = %a" typ t
 
@@ -560,7 +572,7 @@ let typedef f def =
   fprintf f "%a%s%a%a%t%t"
     (typeparams typevar typevar) def.typeparams
     def.typename
-    typerhs def.typerhs
+    (typerhs def.typename) def.typerhs
     typeconstraint def.typeconstraint
     nl nl
 
