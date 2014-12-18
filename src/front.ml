@@ -66,7 +66,7 @@ let () =
    the definition of the [token] type and stop. *)
 
 let () =
-  TokenType.produce_tokentype grammar
+  TokenType.produce_tokentypes grammar
 
 (* ------------------------------------------------------------------------- *)
 

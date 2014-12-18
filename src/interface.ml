@@ -75,18 +75,29 @@ let table_interface grammar =
     )
   ] else []
 
-(* This is the interface of the generated parser. *)
+(* Inserting comments into the definitions of the types of tokens. Not pretty. *)
 
-let tokentypedef grammar =
-  match TokenType.tokentypedef grammar with
+let tokentypedefs grammar =
+  let defs = TokenType.tokentypedefs grammar in
+  match defs with
   | [] ->
       []
-  | def ->
-      [ IIComment "The type of tokens."; IITypeDecls def ]
+  | [_] ->
+      [ IIComment "The type of tokens."; IITypeDecls defs ]
+  | [ def1; def2 ] ->
+      [ IIComment "The type of tokens.";
+        IITypeDecls [def1];
+        IIComment "The indexed type of terminal symbols.";
+        IITypeDecls [def2];
+      ]
+  | _ ->
+      assert false
+
+(* This is the interface of the generated parser. *)
 
 let interface grammar = [
   IIFunctor (grammar.parameters,
-    tokentypedef grammar @ [
+    tokentypedefs grammar @ [
     IIComment "This exception is raised by the monolithic API functions.";
     IIExcDecls [ excdef ];
     IIComment "The monolithic API.";

@@ -14,6 +14,18 @@ open CodeBits
 let tctoken =
   "token"
 
+(* This is the conventional name of the token GADT, which describes
+   the tokens. Same setup as above. *)
+
+let tctokengadt =
+  "terminal"
+
+(* This is the conventional name of the data constructors of
+   the token GADT. *)
+
+let ttokengadtdata token =
+  "T_" ^ token
+
 (* This is the definition of the type of tokens. (Regardless of
    [Settings.token_type_mode], which is examined below.) *)
 
@@ -48,16 +60,58 @@ let tokentypedef grammar =
     typeconstraint = None
   }
 
+(* This is the definition of the token GADT. Here, the data
+   constructors have no value argument, but have a type index. *)
+
+let tokengadtdef grammar =
+  let datadefs =
+    StringMap.fold (fun token properties defs ->
+      if properties.tk_is_declared then
+	let index =
+	  match properties.tk_ocamltype with
+	  | None ->
+	      tunit
+	  | Some t ->
+	      TypTextual t
+	in
+	{
+	  dataname = ttokengadtdata token;
+	  datavalparams = [];
+	  datatypeparams = Some [ index ]
+	} :: defs
+      else
+	defs
+    ) grammar.tokens []
+  in
+  {
+    typename = tctokengadt;
+    typeparams = [ "_" ];
+    typerhs = TDefSum datadefs;
+    typeconstraint = None
+  }
+
+(* The token type is always needed. The token GADT is needed only in
+   [--table] mode. This ensures that, when [--table] is off, we remain
+   compatible with old versions of OCaml, without GADTs. *)
+
+let typedefs grammar =
+  if Settings.table then
+    [ tokentypedef grammar; tokengadtdef grammar ]
+  else
+    [ tokentypedef grammar ]
+
 (* If we were asked to only produce a type definition, then
    do so and stop. *)
 
-let produce_tokentype grammar =
+let produce_tokentypes grammar =
   match Settings.token_type_mode with
   | Settings.TokenTypeOnly ->
 
       (* Create both an .mli file and an .ml file. This is made
 	 necessary by the fact that the two can be different
 	 when there are functor parameters. *)
+
+      let decls = typedefs grammar in
 
       let module P = 
 	Printer.Make (struct 
@@ -68,7 +122,7 @@ let produce_tokentype grammar =
       in
       P.interface [
         IIFunctor (grammar.parameters, [
-	  IITypeDecls [ tokentypedef grammar ]
+	  IITypeDecls decls
         ])
       ];
       let module P = 
@@ -82,7 +136,7 @@ let produce_tokentype grammar =
         paramdefs = grammar.parameters;
         prologue = [];
         excdefs = [];
-	typedefs = [ tokentypedef grammar ];
+	typedefs = decls;
         nonrecvaldefs = [];
 	valdefs = [];
 	moduledefs = [];
@@ -94,16 +148,16 @@ let produce_tokentype grammar =
   | Settings.TokenTypeAndCode ->
       ()
 
-(* Redefine [tokentypedef], and define [tokenprefix], so as to tell the code
-   generator whether it should include a definition of the token type in the
-   code and how the token type is called. *)
+(* Define [tokentypedefs], and define [tokenprefix], so as to tell the code
+   generator whether it should include a definition of the token types in the
+   code and how the token types are called. *)
 
-let tokentypedef grammar =
+let tokentypedefs grammar =
   match Settings.token_type_mode with
   | Settings.CodeOnly _ ->
       []
   | Settings.TokenTypeAndCode ->
-      [ tokentypedef grammar ]
+      typedefs grammar
   | Settings.TokenTypeOnly ->
       (* This should not happen, as [produce_tokentype] should
          have been called first. *)
@@ -127,8 +181,9 @@ let tctoken =
 let ttoken =
   TypApp (tctoken, [])
 
-(* The type of lexers. *)
+let tctokengadt =
+  tokenprefix tctokengadt
 
-let tlexer =
-  TypArrow (tlexbuf, ttoken)
+let ttokengadt a =
+  TypApp (tctokengadt, [ a ])
 

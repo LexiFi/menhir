@@ -758,7 +758,7 @@ let program = {
     [ excdef ];
 
   typedefs =
-    tokentypedef Front.grammar @
+    tokentypedefs Front.grammar @
     [ tokendef1 ];
 
   nonrecvaldefs =

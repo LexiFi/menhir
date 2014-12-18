@@ -509,6 +509,11 @@ let statetypedef = {
   typeconstraint = None
 }
 
+(* The type of lexers. *)
+
+let tlexer =
+  TypArrow (tlexbuf, ttoken)
+
 (* This is the type of parser environments. *)
 
 let field modifiable name t =
@@ -1631,7 +1636,7 @@ let program = {
     [ excdef ];
 
   typedefs =
-    tokentypedef Front.grammar @
+    tokentypedefs Front.grammar @
     [ envtypedef; statetypedef ];
 
   nonrecvaldefs =
