@@ -455,8 +455,11 @@ and pat2 f = function
 and pat f p =
   pat2 f p
 
-and typevar f v =
-  fprintf f "'%s" v
+and typevar f = function
+  | "_" ->
+      fprintf f "_"
+  | v ->
+      fprintf f "'%s" v
 
 and typ0 f = function
   | TypTextual (Stretch.Declared ocamltype) ->

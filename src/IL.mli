@@ -79,7 +79,7 @@ and typedef = {
 
     (* Type parameters. This is a list of type variable names,
        without the leading quote, which will be added by the
-       pretty-printer. *)
+       pretty-printer. Can also be "_". *)
     typeparams: string list;
 
     (* Data constructors. *)
@@ -127,7 +127,7 @@ and typ =
   (* Textual Objective Caml type. *)
   | TypTextual of Stretch.ocamltype
 
-  (* Type variable, without its leading quote. *)
+  (* Type variable, without its leading quote. Can also be "_". *)
   | TypVar of string
 
   (* Application of an algebraic data type constructor. *)
