@@ -97,7 +97,17 @@ let rename_pkeywords (psym, first_prod, last_prod) phi l =
 		      (* Similarly for $endpos. *)
 		    | Left, WhereEnd   -> last_prod, (used1, true)
 		      (* $i cannot be combined with inlining. *)
-		    | RightDollar _, _ -> assert false
+		    | RightDollar i, _ ->
+                        (* This error message is not great, especially without
+                           a location, but that's better than [assert false]. *)
+                        let msg =
+                          Printf.sprintf "$%s%s($%d) in an %%inline definition is not supported.\n\
+                                          Please replace $%d with an appropriate name."
+                            (match where with WhereStart -> "start" | WhereEnd -> "end")
+                            (match flavor with FlavorOffset -> "ofs" | FlavorPosition -> "pos")
+                            i i
+                        in
+                        Error.error [] msg
 		    | RightNamed s, w  -> 
 			(* In the host rule, $startpos(x) is changed to 
 			   to $startpos(first_prod) (same thing for $endpos). *)
