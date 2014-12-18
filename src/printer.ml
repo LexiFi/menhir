@@ -536,11 +536,11 @@ let datadef typename f def =
         datavalparams def.datavalparams
   | [], Some indices ->
       (* | A : (v, w) ty *)
-      fprintf f " : %a %s"
+      fprintf f " : %a%s"
         (typeparams typ0 typ) indices typename
   | _ :: _, Some indices ->
       (* | A : t * u -> (v, w) ty *)
-      fprintf f " : %a -> %a %s"
+      fprintf f " : %a -> %a%s"
         datavalparams def.datavalparams
         (typeparams typ0 typ) indices typename
 
