@@ -158,9 +158,9 @@ let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
   "--comment", Arg.Set comment, " Include comments in the generated code";
-  "--coq", Arg.Set coq, " (undocumented)";
-  "--coq-no-complete", Arg.Set coq_no_complete, " (undocumented)";
-  "--coq-no-actions", Arg.Set coq_no_actions, " (undocumented)";
+  "--coq", Arg.Set coq, " Generate a formally verified parser, in Coq";
+  "--coq-no-complete", Arg.Set coq_no_complete, " Do not generate a proof of completeness";
+  "--coq-no-actions", Arg.Set coq_no_actions, " Ignore semantic actions in the Coq output";
   "--depend", Arg.Unit (fun () -> depend := OMPostprocess), " Invoke ocamldep and display dependencies";
   "--dump", Arg.Set dump, " Describe the automaton in <basename>.automaton";
   "--error-recovery", Arg.Set recovery, " (no longer supported)";
