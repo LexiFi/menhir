@@ -109,19 +109,31 @@ let bar f =
 (* ------------------------------------------------------------------------- *)
 (* List printers. *)
 
+(* A list with a separator in front of every element. *)
+
 let rec list elem sep f = function
   | [] ->
       ()
   | e :: es ->
       fprintf f "%t%a%a" sep elem e (list elem sep) es
 
+(* A list with a separator between elements. *)
+
+let seplist elem sep f = function
+  | [] ->
+      ()
+  | e :: es ->
+      fprintf f "%a%a" elem e (list elem sep) es
+
+(* OCaml type parameters. *)
+
 let typeparams p0 p1 f = function
   | [] ->
       ()
   | [ param ] ->
       fprintf f "%a " p0 param
-  | param :: params ->
-      fprintf f "(%a%a) " p1 param (list p1 comma) params
+  | _ :: _ as params ->
+      fprintf f "(%a) " (seplist p1 comma) params
 
 (* ------------------------------------------------------------------------- *)
 (* Expression printer. *)
@@ -334,8 +346,8 @@ and exprk k f e =
 	var f d
     | EData (d, [ arg ]) ->
 	fprintf f "%s %a" d atom arg
-    | EData (d, arg :: args) ->
-	fprintf f "%s (%a%a)" d app arg (list app comma) args
+    | EData (d, (_ :: _ :: _ as args)) ->
+	fprintf f "%s (%a)" d (seplist app comma) args
     | EVar v ->
 	var f v
     | ETextual action ->
@@ -355,8 +367,8 @@ and exprk k f e =
 	assert false
     | ETuple [ e ] ->
 	atom f e
-    | ETuple (e :: es) ->
-	fprintf f "(%a%a)" app e (list app comma) es
+    | ETuple (_ :: _ :: _ as es) ->
+	fprintf f "(%a)" (seplist app comma) es
     | EAnnot (e, s) ->
 	(* TEMPORARY current ocaml does not support type schemes here; drop quantifiers, if any *)
 	fprintf f "(%a : %a)" app e typ s.body (* should be scheme s *)
@@ -423,8 +435,8 @@ and pat0 f = function
       assert false
   | PTuple [ p ] ->
       pat0 f p
-  | PTuple (p :: ps) ->
-      fprintf f "(%a%a)" pat1 p (list pat1 comma) ps
+  | PTuple (_ :: _ :: _ as ps) ->
+      fprintf f "(%a)" (seplist pat1 comma) ps
   | PAnnot (p, t) ->
       fprintf f "(%a : %a)" pat p typ t
   | PRecord fps ->
@@ -435,8 +447,8 @@ and pat0 f = function
 and pat1 f = function
   | PData (d, [ arg ]) ->
       fprintf f "%s %a" d pat0 arg
-  | PData (d, arg :: args) ->
-      fprintf f "%s (%a%a)" d pat1 arg (list pat1 comma) args
+  | PData (d, (_ :: _ :: _ as args)) ->
+      fprintf f "%s (%a)" d (seplist pat1 comma) args
   | PTuple [ p ] ->
       pat1 f p
   | p ->
@@ -445,8 +457,8 @@ and pat1 f = function
 and pat2 f = function
   | POr [] ->
       assert false
-  | POr (p :: ps) ->
-      fprintf f "%a%a" pat2 p (list pat2 bar) ps
+  | POr (_ :: _ as ps) ->
+      fprintf f "%a" (seplist pat2 bar) ps
   | PTuple [ p ] ->
       pat2 f p
   | p ->
@@ -479,10 +491,8 @@ and typ0 f = function
 and typ1 f = function
   | TypTuple [] ->
       assert false
-  | TypTuple [ t ] ->
-      typ1 f t
-  | TypTuple (t :: ts) ->
-      fprintf f "%a%a" typ0 t (list typ0 times) ts
+  | TypTuple (_ :: _ as ts) ->
+      seplist typ0 times f ts
   | t ->
       typ0 f t
 
