@@ -80,8 +80,8 @@ let () =
 
 (* ------------------------------------------------------------------------- *)
 
-(* If [--depend] was specified on the command line, perform dependency
-   analysis and stop. *)
+(* If [--depend] or [--raw-depend] was specified on the command line,
+   perform dependency analysis and stop. *)
 
 let () =
   match Settings.depend with
@@ -91,37 +91,12 @@ let () =
   | Settings.OMNone ->
       ()
 
-(* [--depend] is really a strange hack: we are expected to be able to predict
-   the dependencies exhibited by the [.ml] and [.mli] files produced by
-   Menhir, *without* actually producing these files, because we cannot yet
-   produce them. (If [--infer] is enabled, producing these files would require
-   consulting certain [.cmi] files that may not exist yet.) *)
-
-(* Remarks. 1- If [make] was not brain-dead, we would not have to do this in
-   the first place. A good compilation manager should be able to mix the
-   production of targets and the dependency analysis. Apparently, by this
-   definition, [ocamlbuild] is brain-dead too: it uses [menhir --raw-depend].
-
-   2- We are able to do this because we can produce mock [.ml] and [.mli]
-   files that exhibit the same dependencies as the real ones. This allows us
-   to run [ocamldep] on these mock files and obtain correct depdendency
-   information. Traditionally, our mock [.mli] file was in fact the final
-   [.mli] file, and our mock [.ml] file contained just the semantic actions
-   and nothing else. (But see 4- below.)
-
-   3- If both [--depend] and [--infer] are enabled, we must effectively ignore
-   [--infer] and perform the dependency computation without attempting to
-   perform type inference. Indeed, as mentioned above, that would require
-   consulting certain [.cmi] files that may not exist yet.
-
-   4- As of 2014/12/17, we would like to produce as part of the [.mli] file
-   a type [nonterminal] which lists all nonterminal symbols together with
-   their OCaml type. This typically requires [--infer]. Thus, this implies
-   that the mock [.mli] file can no longer be the same as the final [.mli]
-   file; the mock cannot contain the type [nonterminal]. As a result, maybe
-   the dependencies (computed based on the mock) will be incomplete. Which
-   would be a problem (failure to build). I am not sure at the moment how
-   to address this problem. *)
+(* The purpose of [--depend] and [--raw-depend] is to support [--infer].
+   Indeed, [--infer] is implemented by producing a mock [.ml] file (which
+   contains just the semantic actions) and invoking [ocamlc]. This requires
+   certain [.cmi] files to exist. So, [--depend] is a way for us to announce
+   which [.cmi] files we need. It is implemented by producing the mock [.ml]
+   file and running [ocamldep] on it. *)
 
 (* ------------------------------------------------------------------------- *)
 

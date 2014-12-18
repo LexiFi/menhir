@@ -242,11 +242,10 @@ let depend grammar =
 
   print_string output;
 
-  (* If [--raw-depend] was specified on the command line, stop here.
-     This option is used by omake, which performs its own
-     postprocessing of [ocamldep]'s output. For normal [make] users,
-     who use [--depend], some postprocessing is required, which is
-     performed below. *)
+  (* If [--raw-depend] was specified on the command line, stop here.  This
+     option is used by omake and by ocamlbuild, which performs their own
+     postprocessing of [ocamldep]'s output. For normal [make] users, who use
+     [--depend], some postprocessing is required, which is performed below. *)
 
   begin match Settings.depend with
   | Settings.OMNone ->
