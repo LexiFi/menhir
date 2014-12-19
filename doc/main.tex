@@ -382,6 +382,7 @@ grammar specification files, the order in which they are copied to the \ml
 file is unspecified.
 
 \subsubsection{Parameters}
+\label{sec:parameter}
 
 A declaration of the form:
 \begin{quote}
@@ -434,6 +435,7 @@ Associativity status and priority levels allow shift/reduce conflicts to be
 silently resolved (\sref{sec:conflicts}).
 
 \subsubsection{Types}
+\label{sec:type}
 
 A declaration of the form:
 \begin{quote}
@@ -445,6 +447,7 @@ For start symbols, providing an \ocaml type is mandatory, but is usually done as
 the quality of \ocaml's type error messages.
 
 \subsubsection{Start symbols}
+\label{sec:start}
 
 A declaration of the form:
 \begin{quote}
@@ -1914,33 +1917,41 @@ in the near future.
 \section{Coq back-end}
 \label{sec:coq}
 
-Using the Coq proof assistant, \menhir is able to generate formally verified
-parsers~\cite{jourdan-leroy-pottier-12}. This feature is has been used to
-produce a certified parser for the CompCert certified C
+\menhir is able to generate a parser that whose correctness can be formally
+verified using the Coq proof assistant~\cite{jourdan-leroy-pottier-12}. This
+feature is used to construct the parser of the CompCert certified C
 compiler~\cite{compcert}.
 
-When used with the
-\ocoq option, menhir expects a file whose name ends in \texttt{.vy}, and generates
-a \texttt{.v} file. Like an \texttt{.mly} file, a \texttt{.vy} file a grammar
-specification, with embedded semantic actions. The difference is that the
-semantic actions in a \texttt{.vy} file are expressed in Coq instead
-of \ocaml. \texttt{.vy} files use the same syntax as \texttt{.mly}
-files. There are however, several additional restrictions:
+Setting the \ocoq switch on the command line enables the Coq back-end.  When
+this switch is set, \menhir expects an input file whose name ends
+in \texttt{.vy}, and generates a Coq file, whose name ends
+in \texttt{.v}.
 
+Like a \texttt{.mly} file, a \texttt{.vy} file is a grammar specification,
+with embedded semantic actions. The main difference is that the semantic
+actions in a \texttt{.vy} file are expressed in Coq instead
+of \ocaml. A \texttt{.vy} file otherwise uses the same syntax as
+a \texttt{.mly} file. There are however several restrictions:
+%
 \begin{itemize}
-\item Error handling is not supported: thus, the use of
-  \verb+$syntaxerror+ or the \error token is not supported.
-\item Location information is not propagated: the input file cannot
-  contain any \verb+$start*+ or \verb+$end*+ special keywords.
-\item \dparameter is not supported.
-\item \dinline is not supported.
-\item The standard library is not supported.
-\item As the type inference algorithm of Coq is rather unpredictable,
-  every nonterminal symbol has to be annotated with either the \dtype
-  or the \dstart keyword.
-\item If the proof of completeness has not been deactivated via
-  \ocoqnocomplete, the grammar cannot contains conflicts, even
-  benign. The reason is that there is no simple formal specification
+\item The error handling mechanism (\sref{sec:errors}) is absent.
+      The \verb+$syntaxerror+ keyword and the \error token are not supported.
+\item Location information is not propagated. The \verb+$start*+ and \verb+$end*+
+      keywords (\fref{fig:pos}) are not supported.
+\item \dparameter (\sref{sec:parameter}) is not supported.
+\item \dinline (\sref{sec:inline}) is not supported.
+\item The standard library (\sref{sec:library}) is not supported, of course,
+      since its semantic actions are expressed in \ocaml. If desired, the user can define
+      an analogous library, whose semantic actions are expressed in Coq.
+\item Because Coq's type inference algorithm is rather unpredictable,
+      the Coq type of every nonterminal symbol must be provided via a
+      \dtype or \dstart declaration (\sref{sec:type}, \sref{sec:start}).
+\item Unless the proof of completeness has been deactivated (see
+  \ocoqnocomplete below), the grammar must not have a conflict.
+  That is, the grammar must be LR(1). Conflict resolution via
+  priority and associativity declarations (\sref{sec:assoc})
+  is not supported.
+  The reason is that there is no simple formal specification
   of how conflict resolution should work.
 \end{itemize}
 
