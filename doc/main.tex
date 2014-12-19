@@ -1914,13 +1914,18 @@ in the near future.
 \section{Coq back-end}
 \label{sec:coq}
 
-Using the Coq proof assistant, \menhir is able to generate formally
-verified parsers~\cite{jourdan-leroy-pottier-12}: when used with the
-\ocoq option, menhir shall be given a \texttt{.vy}, and will generate
-a \texttt{.v} file. This file contains both a description of the
-grammar and semantic actions in the Coq language. \texttt{.vy} files
-use the same syntax as \texttt{.mly} files. There are however, several
-additional restrictions:
+Using the Coq proof assistant, \menhir is able to generate formally verified
+parsers~\cite{jourdan-leroy-pottier-12}. This feature is has been used to
+produce a certified parser for the CompCert certified C
+compiler~\cite{compcert}.
+
+When used with the
+\ocoq option, menhir expects a file whose name ends in \texttt{.vy}, and generates
+a \texttt{.v} file. Like an \texttt{.mly} file, a \texttt{.vy} file a grammar
+specification, with embedded semantic actions. The difference is that the
+semantic actions in a \texttt{.vy} file are expressed in Coq instead
+of \ocaml. \texttt{.vy} files use the same syntax as \texttt{.mly}
+files. There are however, several additional restrictions:
 
 \begin{itemize}
 \item Error handling is not supported: thus, the use of
@@ -1989,7 +1994,7 @@ function. Two theorems are provided, \verb+entry_point_correct+ and
 \verb+entry_point_complete+.
 
 Parsers generated with the Coq back-end need to be compiled with
-libraries: those can be found in the CompCert tree, under the
+libraries: those can be found in the CompCert tree~\cite{compcert}, under the
 \verb+cparser/validator+ subdirectory. Additionnally, CompCert can be
 used as an example if one wants to use menhir to generate formally
 verified parsers in another project.
