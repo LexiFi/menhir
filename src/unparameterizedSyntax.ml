@@ -44,5 +44,28 @@ type grammar =
       rules	           : rule StringMap.t;
     }
 
-let nonterminals grammar =
+(* [nonterminals grammar] is a list of all nonterminal symbols in the
+   grammar [grammar]. *)
+
+let nonterminals grammar : nonterminal list =
   StringMap.fold (fun nt _ rules -> nt :: rules) grammar.rules []
+
+(* [ocamltype_of_symbol grammar symbol] produces the OCaml type
+   of the symbol [symbol] in the grammar [grammar], if it is known. *)
+
+let ocamltype_of_symbol grammar symbol : Stretch.ocamltype option =
+  try
+    Some (StringMap.find symbol grammar.types)
+  with Not_found ->
+    None
+
+(* [ocamltype_of_start_symbol grammar symbol] produces the OCaml type
+   of the start symbol [symbol] in the grammar [grammar]. *)
+
+let ocamltype_of_start_symbol grammar symbol : Stretch.ocamltype =
+  try
+    StringMap.find symbol grammar.types
+  with Not_found ->
+    (* Every start symbol should have a type. *)
+    assert false
+

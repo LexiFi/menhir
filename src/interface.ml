@@ -16,19 +16,10 @@ let excredef = {
   excdef with exceq = Some excname
 }
 
-(* Finding the type of a start symbol. *)
-
-let ocamltype_of_start_symbol grammar symbol =
-  try
-    TypTextual (StringMap.find symbol grammar.types)
-  with Not_found ->
-    (* Every start symbol should have a type. *)
-    assert false
-
 (* The type of the monolithic entry point for the start symbol [symbol]. *)
 
 let entrytypescheme grammar symbol =
-  let typ = ocamltype_of_start_symbol grammar symbol in
+  let typ = TypTextual (ocamltype_of_start_symbol grammar symbol) in
   type2scheme (marrow [ arrow tlexbuf TokenType.ttoken; tlexbuf ] typ)
 
 (* When the table back-end is active, the generated parser contains,
@@ -49,8 +40,34 @@ let incremental symbol =
 (* The type of the incremental entry point for the start symbol [symbol]. *)
 
 let entrytypescheme_incremental grammar symbol =
-  let t = ocamltype_of_start_symbol grammar symbol in
+  let t = TypTextual (ocamltype_of_start_symbol grammar symbol) in
   type2scheme (marrow [ tunit ] (result t))
+
+(* Inserting comments into the definitions of the types of tokens. Not pretty. *)
+
+let tokentypedefs grammar =
+  let defs = TokenType.tokentypedefs grammar in
+  match defs with
+  | [] ->
+      []
+  | [_] ->
+      [ IIComment "The type of tokens."; IITypeDecls defs ]
+  | def1 :: def2 :: _ ->
+      [ IIComment "The type of tokens.";
+        IITypeDecls [def1];
+        IIComment "The indexed type of terminal symbols.";
+        IITypeDecls [def2];
+      ]
+
+let nonterminalgadtdef grammar =
+  let defs = NonterminalType.nonterminalgadtdef grammar in
+  match defs with
+  | [] ->
+      []
+  | def :: _ ->
+      [ IIComment "The indexed type of nonterminal symbols.";
+        IITypeDecls [def]
+      ]
 
 (* This is the interface of the generated parser -- only the part
    that is specific of the table back-end. *)
@@ -75,29 +92,12 @@ let table_interface grammar =
     )
   ] else []
 
-(* Inserting comments into the definitions of the types of tokens. Not pretty. *)
-
-let tokentypedefs grammar =
-  let defs = TokenType.tokentypedefs grammar in
-  match defs with
-  | [] ->
-      []
-  | [_] ->
-      [ IIComment "The type of tokens."; IITypeDecls defs ]
-  | [ def1; def2 ] ->
-      [ IIComment "The type of tokens.";
-        IITypeDecls [def1];
-        IIComment "The indexed type of terminal symbols.";
-        IITypeDecls [def2];
-      ]
-  | _ ->
-      assert false
-
 (* This is the interface of the generated parser. *)
 
 let interface grammar = [
   IIFunctor (grammar.parameters,
-    tokentypedefs grammar @ [
+    tokentypedefs grammar @
+    nonterminalgadtdef grammar @ [
     IIComment "This exception is raised by the monolithic API functions.";
     IIExcDecls [ excdef ];
     IIComment "The monolithic API.";

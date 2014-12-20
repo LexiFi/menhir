@@ -4,6 +4,7 @@ open IL
 open Interface
 open Printf
 open TokenType
+open NonterminalType
 open CodePieces
 
 module Run (T : sig end) = struct
@@ -759,6 +760,7 @@ let program = {
 
   typedefs =
     tokentypedefs Front.grammar @
+    nonterminalgadtdef Front.grammar @
     [ tokendef1 ];
 
   nonrecvaldefs =
