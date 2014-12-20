@@ -43,3 +43,6 @@ type grammar =
       tokens	           : Syntax.token_properties StringMap.t;
       rules	           : rule StringMap.t;
     }
+
+let nonterminals grammar =
+  StringMap.fold (fun nt _ rules -> nt :: rules) grammar.rules []

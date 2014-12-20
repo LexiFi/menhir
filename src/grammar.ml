@@ -72,7 +72,7 @@ module Nonterminal = struct
     StringSet.fold (fun symbol ss -> (symbol ^ "'") :: ss) Front.grammar.start_symbols []
 
   let original_nonterminals =
-    StringMap.fold (fun nt _ rules -> nt :: rules) Front.grammar.rules []
+    nonterminals Front.grammar
   
   let start =
     List.length new_start_nonterminals
