@@ -1988,9 +1988,7 @@ for each terminal symbol. A~terminal symbol per se does not carry a the
 semantic value. We also define the type \verb+token+ of tokens, i.e.,
 dependent pairs of a terminal symbol and a semantic value of an appropriate
 type for this symbol. We model the lexer as an object of type
-\verb+Stream.Stream token+, i.e., a stream of tokens.
-% fp: should that be \verb+Streams.Stream token+ ?
-% fp: clarify whether this is an infinite stream or a possibly infinite stream
+\verb+Streamq.Stream token+, i.e., an infinite stream of tokens.
 
 The proof of termination of an LR(1) parser in the case of invalid input seems
 far from obvious. We did not find such a proof in the literature. In an
@@ -2024,12 +2022,17 @@ parser was given an infinite amount of fuel, as suggested above. The outcome
 the input stream. It carries the semantic value that has been constructed for
 this prefix, as well as the remainder of the input stream.
 
-For each start symbol \verb+entry_point+ of the grammar, \menhir generates a
-parsing function \verb+entry_point+ of type
-\verb+nat -> Stream token -> parse_result typ+, where \verb+typ+ is the type
-of the semantic values for the symbol \verb+entry_point+.
-% fp: ça ne colle pas avec le type parse_result ci-dessus, qui semble 
+For each entry point \verb+entry+ of the grammar, \menhir generates a
+parsing function \verb+entry+ of type
+\verb+nat -> Stream token -> parse_result+.
+% fp: ça ne colle pas avec le type parse_result ci-dessus, qui semble
 % être paramétré implicitement par init, mais pas par typ.
+
+% jh: ok. J'ai enlevé typ. Je suis un peu embêté, parce que init est
+% en réalité de type initstate, mais je n'ai pas envie d'en parler
+% dans la doc. Tout ce qui importe, c'est que le premier paramètre de
+% Parsed_pr a un type compatible avec le type que l'utilisateur a
+% donné.
 
 Two theorems are provided, named \verb+entry_point_correct+ and
 \verb+entry_point_complete+. The correctness theorem states that, if a word (a
@@ -2038,15 +2041,26 @@ to the grammar) and the semantic value that is constructed by the parser is
 valid as well (with respect to the grammar). The completeness theorem states
 that if a word (a prefix of the input stream) is valid (with respect to the
 grammar), then (given sufficient fuel) it is accepted by the parser.
-% fp: vérifier que je n'ai pas écrit de bêtises.
+Note that those theorems imply that the grammar is non-ambiguous, this
+is proved by Parser.unambiguous.
 
-% Noter que les théorèmes implique(raient) (si on prouvait que le
-% parser termine toujours) que la grammaire est non ambiguë. Pas
-% très intéressant. Ce serait plus intéressant d'avoir un certificat
-% comme quoi la grammaire est bien LR(1)...
+% fp: Noter que les théorèmes implique(raient) (si on prouvait que le
+% parser termine toujours) que la grammaire est non ambiguë. Pas très
+% intéressant. Ce serait plus intéressant d'avoir un certificat comme
+% quoi la grammaire est bien LR(1)...
+
+% jh: Pas besoin de prouver la terminaison pour la non-ambiguïté, car
+% les cas de non-terminaison ne concernent que les entrées invalides.
+% Je ne sais pas ce que c'est qu'un certificat comme quoi la grammaire
+% est LR(1), en pratique...
 
 % On pourrait aussi souhaiter un théorème comme quoi le parser ne lit
 % pas le stream trop loin...
+
+% jh: pour vraiment prouver cela, il faudrait inverser le
+% controle. Sinon, comme résultat un peu moins fort, dans la version
+% actuelle, on renvoie le stream restant, et on prouve qu'il
+% correspond bien à la fin du Stream.
 
 The parsers produced by \menhir's Coq back-end must be linked with a Coq
 library, which can be found in the CompCert tree~\cite{compcert}, in the
