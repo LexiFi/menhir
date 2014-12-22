@@ -15,9 +15,20 @@ val tnonterminalgadt: IL.typ -> IL.typ
 
 val nonterminalgadtdef: UnparameterizedSyntax.grammar -> IL.typedef list
 
-(* When in [--depend] mode, we are asked to produce a mock [.mli] file before
-   [--infer] has run, which means that we are usually not able to construct
-   the definition of the [nonterminal] GADT. This implies that the mock [.mli]
-   file is a subset of the final [.mli] file. It is not clear at this point
-   whether this can cause a problem. *)
+(* When in [--(raw-)depend] mode, we are asked to produce a mock [.mli] file
+   before [--infer] has run, which means that we are usually not able to
+   construct the definition of the [nonterminal] GADT. This implies that the
+   mock [.mli] file is a subset of the final [.mli] file. I believe that, when
+   working with [ocamlbuild], this is not a problem. In fact, the mock [.mli]
+   file could just as well be empty or absent, and things would still work: in
+   principle, it is enough for us to publish which files we need in order to
+   be able to type-check the real [.ml] file used by [--infer].  However, when
+   working with [make], which is unable to mix the production of targets and
+   the computation of dependencies, we additionally need to predict which
+   files one will need in order to compile the real [.mli] and [.ml] files.
+   Here, the fact that the mock [.mli] file is incomplete could in theory be a
+   problem, leading to incomplete dependencies. The problem does not lie in
+   the line [parser.ml parser.mli: ...] that we add; it lies in the lines
+   produced by [ocamldep] itself, where the line [parser.cmi: ...] is missing
+   some dependencies. *)
 
