@@ -94,9 +94,11 @@ let () =
 (* The purpose of [--depend] and [--raw-depend] is to support [--infer].
    Indeed, [--infer] is implemented by producing a mock [.ml] file (which
    contains just the semantic actions) and invoking [ocamlc]. This requires
-   certain [.cmi] files to exist. So, [--depend] is a way for us to announce
-   which [.cmi] files we need. It is implemented by producing the mock [.ml]
-   file and running [ocamldep] on it. *)
+   certain [.cmi] files to exist. So, [--(raw-)depend] is a way for us to
+   announce which [.cmi] files we need. It is implemented by producing the
+   mock [.ml] file and running [ocamldep] on it. We also produce a mock
+   [.mli] file, even though in principle it should be unnecessary -- see
+   comment in [nonterminalType.mli]. *)
 
 (* ------------------------------------------------------------------------- *)
 
