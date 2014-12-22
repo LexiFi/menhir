@@ -96,6 +96,21 @@ the \obase switch \emph{must} be used.
 
 \docswitch{\ocoq} This switch causes \menhir to produce Coq code. See \sref{sec:coq}.
 
+\docswitch{\ocoqnoactions} (Used in conjunction with \ocoq.) This switch
+causes the semantic actions present in the \texttt{.vy} file to be ignored and
+replaced with \verb+tt+, the unique inhabitant of Coq's \verb+unit+ type. This
+feature can be used to test the Coq back-end with a standard grammar, i.e., a
+grammar that contains \ocaml semantic actions. Just rename the file from
+\texttt{.mly} to \texttt{.vy} and set this switch.
+
+\docswitch{\ocoqnocomplete} (Used in conjunction with \ocoq.) This switch
+disables the generation of the proof of completeness of the parser
+(\sref{sec:coq}). This can be necessary because the proof of completeness is
+possible only if the grammar has no conflict (not even a benign one, in the
+sense of \sref{sec:conflicts:benign}). This can be desirable also because, for
+a complex grammar, completeness may require a heavy certificate and its
+validation by Coq may take time.
+
 \docswitch{\odepend} This switch causes \menhir to generate dependency information
 for use in conjunction with \make. When invoked in this mode, \menhir does not
 generate a parser. Instead, it examines the grammar specification and prints a
@@ -946,6 +961,7 @@ declarations, or severe, if it cannot. Benign conflicts are not reported.
 Severe conflicts are reported and, if the \oexplain switch is on, explained.
 
 \subsection{When is a conflict benign?}
+\label{sec:conflicts:benign}
 
 A shift/reduce conflict involves a single token (the one that one might wish
 to shift) and one or more productions (those that one might wish to
@@ -1751,6 +1767,7 @@ ACCEPT
   EOL
 ]
 \end{verbatim}
+%$
 The concrete syntax tree displayed by \menhir is skewed towards the left,
 as desired.
 
@@ -1941,13 +1958,14 @@ a \texttt{.mly} file. There are however several restrictions:
 \item \dparameter (\sref{sec:parameter}) is not supported.
 \item \dinline (\sref{sec:inline}) is not supported.
 \item The standard library (\sref{sec:library}) is not supported, of course,
-      since its semantic actions are expressed in \ocaml. If desired, the user can define
+      because its semantic actions are expressed in \ocaml. If desired, the user can define
       an analogous library, whose semantic actions are expressed in Coq.
 \item Because Coq's type inference algorithm is rather unpredictable,
       the Coq type of every nonterminal symbol must be provided via a
       \dtype or \dstart declaration (\sref{sec:type}, \sref{sec:start}).
-\item Unless the proof of completeness has been deactivated (see
-  \ocoqnocomplete below), the grammar must not have a conflict.
+\item Unless the proof of completeness has been deactivated using
+  \ocoqnocomplete, the grammar must not have a conflict
+  (not even a benign one, in the sense of \sref{sec:conflicts:benign}).
   That is, the grammar must be LR(1). Conflict resolution via
   priority and associativity declarations (\sref{sec:assoc})
   is not supported.
@@ -1965,60 +1983,76 @@ The generated file contains several modules:
   while establishing the soundness and completeness of the parser.
 \end{itemize}
 
-The type of the terminal symbols is an inductive type, with one constructor for
-each terminal symbol. but it does not contains the semantic values: we also
-define the type \verb+token+, which is a dependant pair of a terminal
-and a semantic value of the corresponding type. Thus, we model the
-lexer by an object of type \verb+Stream.Stream token+.
+The type of the terminal symbols is an inductive type, with one constructor
+for each terminal symbol. A~terminal symbol per se does not carry a the
+semantic value. We also define the type \verb+token+ of tokens, i.e.,
+dependent pairs of a terminal symbol and a semantic value of an appropriate
+type for this symbol. We model the lexer as an object of type
+\verb+Stream.Stream token+, i.e., a stream of tokens.
+% fp: should that be \verb+Streams.Stream token+ ?
+% fp: clarify whether this is an infinite stream or a possibly infinite stream
 
-The proof of termination of an $LR(1)$ parser in the case of invalid
-input is far from obvious, and we did not find one in the
-literature. This question is generally not considered important, and
-we decided to leave it not formally proved. This is why we use the
-``fuel'' technique: there is an additionnal parameter of type
-\verb+nat+ that indicate the maximum number of steps the parser is
-allowed to perform. In practice, one can use the usuall trick of
-passing the OCaml value defined by \verb+let rec inf = S inf+, after
-extraction.
+The proof of termination of an LR(1) parser in the case of invalid input seems
+far from obvious. We did not find such a proof in the literature. In an
+application such as CompCert~\cite{compcert}, this question is not considered
+crucial. For this reason, we did not formally establish the termination of the
+parser. Instead, we use the ``fuel'' technique. The parser takes an additional
+parameter of type \verb+nat+ that indicates the maximum number of steps the
+parser is allowed to perform. In practice, after extracting the code to
+\ocaml, one can use the standard trick of passing an infinite amount of fuel,
+defined in \ocaml by \verb+let rec inf = S inf+.
 
-The parsing can have three different outcomes, represented by the type
+Parsing can have three different outcomes, represented by the type
 \verb+parse_result+:
-
+%
 \begin{verbatim}
-Inductive parse_result :=
-| Fail_pr: parse_result
-| Timeout_pr: parse_result
-| Parsed_pr: symbol_semantic_type (NT (start_nt init)) -> Stream token -> parse_result.
+  Inductive parse_result :=
+  | Fail_pr:    parse_result
+  | Timeout_pr: parse_result
+  | Parsed_pr:
+      symbol_semantic_type (NT (start_nt init)) ->
+      Stream token ->
+      parse_result.
 \end{verbatim}
 
-\verb+Fail_pr+ means parsing has failed because of a parsing error
-(that is, if the completeness has been proved, the input is not
-valid).  \verb+Timeout_pr+ means the fuel parameter has been
-exhausted. This cannot happen if given an infinite
-fuel. \verb+Parsed_pr+ corresponds to the success case: it contains
-the parsed semantic value and the remaining stream of tokens.
+The outcome \verb+Fail_pr+ means that parsing has failed because of a syntax
+error. (If the completeness of the parser with respect to the grammar has been
+proved, this implies that the input is invalid). The outcome \verb+Timeout_pr+
+means that the fuel has been exhausted. Of course, this cannot happen if the
+parser was given an infinite amount of fuel, as suggested above. The outcome
+\verb+Parsed_pr+ means that the parser has succeeded in parsing a prefix of
+the input stream. It carries the semantic value that has been constructed for
+this prefix, as well as the remainder of the input stream.
 
-For each entry point \verb+entry_point+ of the grammar of type
-\verb+typ+, menhir generates a function \verb+entry_point+ of type
-\verb+nat -> Stream token -> parse_result typ+: this is the parsing
-function. Two theorems are provided, \verb+entry_point_correct+ and
-\verb+entry_point_complete+.
+For each start symbol \verb+entry_point+ of the grammar, \menhir generates a
+parsing function \verb+entry_point+ of type
+\verb+nat -> Stream token -> parse_result typ+, where \verb+typ+ is the type
+of the semantic values for the symbol \verb+entry_point+.
+% fp: ça ne colle pas avec le type parse_result ci-dessus, qui semble 
+% être paramétré implicitement par init, mais pas par typ.
 
-Parsers generated with the Coq back-end need to be compiled with
-libraries: those can be found in the CompCert tree~\cite{compcert}, under the
-\verb+cparser/validator+ subdirectory. Additionnally, CompCert can be
-used as an example if one wants to use menhir to generate formally
-verified parsers in another project.
+Two theorems are provided, named \verb+entry_point_correct+ and
+\verb+entry_point_complete+. The correctness theorem states that, if a word (a
+prefix of the input stream) is accepted, then this word is valid (with respect
+to the grammar) and the semantic value that is constructed by the parser is
+valid as well (with respect to the grammar). The completeness theorem states
+that if a word (a prefix of the input stream) is valid (with respect to the
+grammar), then (given sufficient fuel) it is accepted by the parser.
+% fp: vérifier que je n'ai pas écrit de bêtises.
 
-Option \ocoqnocomplete can be passed to \menhir in order to avoid
-generated proofs of completeness: they are incompatible with conflicts
-(even benign ones), and, for complex grammars, completeness can use
-heavy certificates and its validation can take time.
+% Noter que les théorèmes implique(raient) (si on prouvait que le
+% parser termine toujours) que la grammaire est non ambiguë. Pas
+% très intéressant. Ce serait plus intéressant d'avoir un certificat
+% comme quoi la grammaire est bien LR(1)...
 
-\ocoqnoactions can be used to test the Coq back-end with a standard
-\menhir grammar, written for \ocaml: it just ignores all the semantic
-actions, replacing them by the unique inhabitant of the \verb+unit+
-type.
+% On pourrait aussi souhaiter un théorème comme quoi le parser ne lit
+% pas le stream trop loin...
+
+The parsers produced by \menhir's Coq back-end must be linked with a Coq
+library, which can be found in the CompCert tree~\cite{compcert}, in the
+\verb+cparser/validator+ subdirectory. Additionnally, CompCert can be used as
+an example if one wishes to use \menhir to generate a formally verified parser
+as part of some other project.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
@@ -2048,6 +2082,9 @@ The list is roughly sorted by decreasing order of importance.
 \item \menhir offers an incremental API (in \otable mode only) (\sref{sec:incremental}). This
           means that the state of the parser can be saved at any point (at no
           cost) and that parsing can later be resumed from a saved state.
+
+\item In \ocoq mode, \menhir produces a parser whose correctness and
+  completeness with respect to the grammar can be checked by Coq (\sref{sec:coq}).
 
 \item \menhir offers an interpreter (\sref{sec:interpret}) that helps debug
       grammars interactively.
@@ -2195,6 +2232,9 @@ parsers~\cite{pottier-regis-gianas-typed-lr} are not implemented in \menhir.
 In the beginning, we did not implement them because the \ocaml compiler did
 not at the time offer generalized algebraic data types (GADTs). Today, \ocaml
 has GADTs, but, as the saying goes, ``if it ain't broken, don't fix it''.
+
+The main ideas behind the Coq back-end are described in a paper by Jourdan,
+Pottier and Leroy~\cite{jourdan-leroy-pottier-12}.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
