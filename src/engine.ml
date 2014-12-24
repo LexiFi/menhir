@@ -454,5 +454,44 @@ module Make (T : TABLE) = struct
   let entry (s : state) lexer lexbuf : semantic_value =
     loop (wrap lexer lexbuf) (start s)
 
+  (* --------------------------------------------------------------------------- *)
+
+  (* Stack inspection. *)
+
+  (* This code offers a (read-only) view of the stack as a stream of elements.
+     Each element contains a pair of a (non-initial) state and a semantic value
+     associated with (the incoming symbol of) this state. *)
+
+  type element =
+      state * semantic_value * Lexing.position * Lexing.position
+
+  let rec view cell current : element stream =
+    lazy (
+      (* The stack is empty iff the top stack cell is its own successor. In
+         that case, the current state [current] should be an initial state
+         (which has no incoming symbol).
+         We do not allow the user to inspect this state. *)
+      let next = cell.next in
+      if next == cell then
+        Nil
+      else
+        (* Construct an element containing the current state [current] as well
+           as the semantic value contained in the top stack cell. This semantic
+           value is associated with the incoming symbol of this state, so it
+           makes sense to pair them together. In the typed API, this state will
+           have type ['a state] and the semantic value will have type ['a], for
+           some type ['a]. *)
+        let element = (
+          current,
+          cell.semv,
+          cell.startp,
+          cell.endp
+        ) in
+        Cons (element, view next cell.state)
+    )
+
+  let view env : element stream =
+    view env.stack env.current
+
 end
 
