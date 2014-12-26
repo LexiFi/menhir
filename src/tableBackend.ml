@@ -5,6 +5,7 @@ open Interface
 open Printf
 open TokenType
 open NonterminalType
+open SymbolType
 open CodePieces
 
 module Run (T : sig end) = struct
@@ -747,20 +748,24 @@ let api : IL.valdef list =
 
 (* Let's put everything together. *)
 
+let grammar =
+  Front.grammar
+
 let program = {
 
   paramdefs =
-    Front.grammar.UnparameterizedSyntax.parameters;
+    grammar.UnparameterizedSyntax.parameters;
 
   prologue =
-    Front.grammar.UnparameterizedSyntax.preludes;
+    grammar.UnparameterizedSyntax.preludes;
 
   excdefs =
     [ excdef ];
 
   typedefs =
-    tokentypedefs Front.grammar @
-    nonterminalgadtdef Front.grammar @
+    tokentypedefs grammar @
+    nonterminalgadtdef grammar @
+    symbolgadtdef grammar @
     [ tokendef1 ];
 
   nonrecvaldefs =
@@ -773,7 +778,7 @@ let program = {
     api;
 
   postlogue =
-    Front.grammar.UnparameterizedSyntax.postludes
+    grammar.UnparameterizedSyntax.postludes
 
 }
 

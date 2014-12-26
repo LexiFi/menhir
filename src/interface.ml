@@ -69,6 +69,16 @@ let nonterminalgadtdef grammar =
         IITypeDecls [def]
       ]
 
+let symbolgadtdef grammar =
+  let defs = SymbolType.symbolgadtdef grammar in
+  match defs with
+  | [] ->
+      []
+  | def :: _ ->
+      [ IIComment "The indexed type of (terminal and nonterminal) symbols.";
+        IITypeDecls [def]
+      ]
+
 (* This is the interface of the generated parser -- only the part
    that is specific of the table back-end. *)
 
@@ -97,7 +107,8 @@ let table_interface grammar =
 let interface grammar = [
   IIFunctor (grammar.parameters,
     tokentypedefs grammar @
-    nonterminalgadtdef grammar @ [
+    nonterminalgadtdef grammar @
+    symbolgadtdef grammar @ [
     IIComment "This exception is raised by the monolithic API functions.";
     IIExcDecls [ excdef ];
     IIComment "The monolithic API.";
