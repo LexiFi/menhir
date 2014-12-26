@@ -1624,19 +1624,22 @@ let initenvdef =
 (* ------------------------------------------------------------------------ *)
 (* Here is complete code for the parser. *)
 
+let grammar =
+  Front.grammar
+
 let program = {
 
   paramdefs =
-    Front.grammar.UnparameterizedSyntax.parameters;
+    grammar.UnparameterizedSyntax.parameters;
 
   prologue =
-    Front.grammar.UnparameterizedSyntax.preludes;
+    grammar.UnparameterizedSyntax.preludes;
 
   excdefs =
     [ excdef ];
 
   typedefs =
-    tokentypedefs Front.grammar @
+    filter_typedefs (tokentypedefs grammar) @
     [ envtypedef; statetypedef ];
 
   nonrecvaldefs =
@@ -1662,7 +1665,7 @@ let program = {
     [];
 	
   postlogue =
-    Front.grammar.UnparameterizedSyntax.postludes
+    grammar.UnparameterizedSyntax.postludes
 
 } 
 

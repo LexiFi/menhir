@@ -40,12 +40,15 @@ let nonterminalgadtdef grammar =
           } :: defs
         ) [] (nonterminals grammar)
       in
-      [{
-        typename = tcnonterminalgadt;
-        typeparams = [ "_" ];
-        typerhs = TDefSum datadefs;
-        typeconstraint = None
-      }]
+      [
+        IIComment "The indexed type of nonterminal symbols.";
+        IITypeDecls [{
+          typename = tcnonterminalgadt;
+          typeparams = [ "_" ];
+          typerhs = TDefSum datadefs;
+          typeconstraint = None
+        }]
+      ]
     with MissingOCamlType ->
       (* If the type of some nonterminal symbol is unknown, give up
          on the whole thing. *)

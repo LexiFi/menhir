@@ -53,12 +53,15 @@ let tokentypedef grammar =
 	defs
     ) grammar.tokens []
   in
-  {
-    typename = tctoken;
-    typeparams = [];
-    typerhs = TDefSum datadefs;
-    typeconstraint = None
-  }
+  [
+    IIComment "The type of tokens.";
+    IITypeDecls [{
+      typename = tctoken;
+      typeparams = [];
+      typerhs = TDefSum datadefs;
+      typeconstraint = None
+    }]
+  ]
 
 (* This is the definition of the token GADT. Here, the data
    constructors have no value argument, but have a type index. *)
@@ -83,12 +86,15 @@ let tokengadtdef grammar =
 	defs
     ) grammar.tokens []
   in
-  {
-    typename = tctokengadt;
-    typeparams = [ "_" ];
-    typerhs = TDefSum datadefs;
-    typeconstraint = None
-  }
+  [
+    IIComment "The indexed type of terminal symbols.";
+    IITypeDecls [{
+      typename = tctokengadt;
+      typeparams = [ "_" ];
+      typerhs = TDefSum datadefs;
+      typeconstraint = None
+    }]
+  ]
 
 (* The token type is always needed. The token GADT is needed only in
    [--table] mode. This ensures that, when [--table] is off, we remain
@@ -96,9 +102,9 @@ let tokengadtdef grammar =
 
 let typedefs grammar =
   if Settings.table then
-    [ tokentypedef grammar; tokengadtdef grammar ]
+    tokentypedef grammar @ tokengadtdef grammar
   else
-    [ tokentypedef grammar ]
+    tokentypedef grammar
 
 (* If we were asked to only produce a type definition, then
    do so and stop. *)
@@ -111,7 +117,7 @@ let produce_tokentypes grammar =
 	 necessary by the fact that the two can be different
 	 when there are functor parameters. *)
 
-      let decls = typedefs grammar in
+      let items = typedefs grammar in
 
       let module P = 
 	Printer.Make (struct 
@@ -121,9 +127,7 @@ let produce_tokentypes grammar =
 		      end) 
       in
       P.interface [
-        IIFunctor (grammar.parameters, [
-	  IITypeDecls decls
-        ])
+        IIFunctor (grammar.parameters, items)
       ];
       let module P = 
 	Printer.Make (struct 
@@ -136,7 +140,7 @@ let produce_tokentypes grammar =
         paramdefs = grammar.parameters;
         prologue = [];
         excdefs = [];
-	typedefs = decls;
+	typedefs = filter_typedefs items;
         nonrecvaldefs = [];
 	valdefs = [];
 	moduledefs = [];

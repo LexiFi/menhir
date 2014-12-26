@@ -53,3 +53,8 @@ val marrow: typ list -> typ -> typ
 val prefix: string -> string
 val dataprefix: string -> string
 val tvprefix: string -> string
+
+(* Projecting interface items to typedefs. Any interface items other
+   than typedefs are lost. *)
+val filter_typedefs: interface_item list -> typedef list
+

@@ -41,10 +41,11 @@ let symbolgadtdef grammar =
         } ::
         []
       in
-      [{
-        typename = tcsymbolgadt;
-        typeparams = [ a ];
-        typerhs = TDefSum datadefs;
-        typeconstraint = None
-      }]
-
+      [ IIComment "The indexed type of terminal and nonterminal symbols.";
+        IITypeDecls [{
+          typename = tcsymbolgadt;
+          typeparams = [ a ];
+          typerhs = TDefSum datadefs;
+          typeconstraint = None
+        }]
+      ]

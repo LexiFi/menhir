@@ -150,3 +150,15 @@ let tvprefix name =
     name
   else
     "ttv_" ^ name
+
+(* ------------------------------------------------------------------------ *)
+
+let filter_typedefs (items : interface_item list) : typedef list =
+  List.flatten (List.map (fun item ->
+    match item with
+    | IITypeDecls defs ->
+        defs
+    | _ ->
+        []
+  ) items)
+

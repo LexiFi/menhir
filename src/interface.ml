@@ -43,42 +43,6 @@ let entrytypescheme_incremental grammar symbol =
   let t = TypTextual (ocamltype_of_start_symbol grammar symbol) in
   type2scheme (marrow [ tunit ] (result t))
 
-(* Inserting comments into the definitions of the types of tokens. Not pretty. *)
-
-let tokentypedefs grammar =
-  let defs = TokenType.tokentypedefs grammar in
-  match defs with
-  | [] ->
-      []
-  | [_] ->
-      [ IIComment "The type of tokens."; IITypeDecls defs ]
-  | def1 :: def2 :: _ ->
-      [ IIComment "The type of tokens.";
-        IITypeDecls [def1];
-        IIComment "The indexed type of terminal symbols.";
-        IITypeDecls [def2];
-      ]
-
-let nonterminalgadtdef grammar =
-  let defs = NonterminalType.nonterminalgadtdef grammar in
-  match defs with
-  | [] ->
-      []
-  | def :: _ ->
-      [ IIComment "The indexed type of nonterminal symbols.";
-        IITypeDecls [def]
-      ]
-
-let symbolgadtdef grammar =
-  let defs = SymbolType.symbolgadtdef grammar in
-  match defs with
-  | [] ->
-      []
-  | def :: _ ->
-      [ IIComment "The indexed type of (terminal and nonterminal) symbols.";
-        IITypeDecls [def]
-      ]
-
 (* This is the interface of the generated parser -- only the part
    that is specific of the table back-end. *)
 
@@ -106,9 +70,9 @@ let table_interface grammar =
 
 let interface grammar = [
   IIFunctor (grammar.parameters,
-    tokentypedefs grammar @
-    nonterminalgadtdef grammar @
-    symbolgadtdef grammar @ [
+    TokenType.tokentypedefs grammar @
+    NonterminalType.nonterminalgadtdef grammar @
+    SymbolType.symbolgadtdef grammar @ [
     IIComment "This exception is raised by the monolithic API functions.";
     IIExcDecls [ excdef ];
     IIComment "The monolithic API.";

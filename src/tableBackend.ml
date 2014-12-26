@@ -763,9 +763,9 @@ let program = {
     [ excdef ];
 
   typedefs =
-    tokentypedefs grammar @
-    nonterminalgadtdef grammar @
-    symbolgadtdef grammar @
+    filter_typedefs (tokentypedefs grammar) @
+    filter_typedefs (nonterminalgadtdef grammar) @
+    filter_typedefs (symbolgadtdef grammar) @
     [ tokendef1 ];
 
   nonrecvaldefs =
