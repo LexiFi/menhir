@@ -16,7 +16,7 @@ open Positions
 %token <string Positions.located> LID UID 
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
-%token <string Lazy.t> PERCENTPERCENT
+%token <Stretch.t Lazy.t> PERCENTPERCENT
 %token <Syntax.action> ACTION
 %start grammar
 %type <ConcreteSyntax.grammar> grammar

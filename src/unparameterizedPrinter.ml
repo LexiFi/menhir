@@ -142,7 +142,7 @@ let print_branch mode f branch =
   Printf.fprintf f "}\n"
 
 let print_trailers b g =
-  List.iter (Printf.fprintf b "%s\n") g.postludes
+  List.iter (fun stretch -> Printf.fprintf b "%s\n" stretch.stretch_raw_content) g.postludes
 
 let branches_order r r' = 
   let branch_order b b' = 

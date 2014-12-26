@@ -481,6 +481,6 @@ module Run (T: sig end) = struct
     write_theorems f;
 
     if not Settings.coq_no_actions then
-      List.iter (fprintf f "\n\n%s")
+      List.iter (fun stretch -> fprintf f "\n\n%s" stretch.Stretch.stretch_raw_content)
         Front.grammar.UnparameterizedSyntax.postludes
 end

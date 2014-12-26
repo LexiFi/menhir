@@ -264,12 +264,17 @@ rule main = parse
 | "%inline"
     { INLINE }
 | "%%"
-    { (* The token [PERCENTPERCENT] carries a string that contains
+    { (* The token [PERCENTPERCENT] carries a stretch that contains
          everything that follows %% in the input file. This string
-         is created lazily: the parser may or may not need it. *)
-      let ofs1 = lexeme_end lexbuf in
-      let ofs2 = String.length (Error.get_file_contents()) in
-      PERCENTPERCENT (lazy (chunk ofs1 ofs2)) }
+         must be created lazily. The parser decides (based on the
+         context) whether this stretch is needed. If it is indeed
+         needed, then constructing this stretch drives the lexer
+         to the end of the file. *)
+      PERCENTPERCENT (lazy (
+        let openingpos = lexeme_end_p lexbuf in
+        let closingpos = finish lexbuf in
+        mk_stretch openingpos closingpos false []
+      )) }
 | ":"
     { COLON }
 | ","
@@ -498,3 +503,15 @@ and char = parse
 | ""
    { () } 
 
+(* Read until the end of the file. This is used after finding a %%
+   that marks the end of the grammar specification. We update the
+   current position as we go. This allows us to build a stretch
+   for the trailer. *)
+
+and finish = parse
+| newline
+    { update_loc lexbuf; finish lexbuf }
+| eof
+    { lexeme_start_p lexbuf }
+| _
+    { finish lexbuf }

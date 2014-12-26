@@ -30,7 +30,7 @@ type program = {
     valdefs: valdef list;
 		
     (* Raw Objective Caml postlogue. *)
-    postlogue: string list;
+    postlogue: Stretch.t list;
 
   } 
 

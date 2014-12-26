@@ -665,7 +665,7 @@ let program f p =
     nonrecvaldefs p.nonrecvaldefs
     (list moduledef nothing) p.moduledefs
     valdefs p.valdefs;
-  List.iter (output_string f) p.postlogue
+  List.iter (stretch false f) p.postlogue
 
 let valdecl f (x, ts) =
   fprintf f "val %s: %a%t%t" x typ ts.body nl nl

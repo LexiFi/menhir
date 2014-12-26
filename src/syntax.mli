@@ -17,11 +17,10 @@ type identifier =
 type filename = 
     string
 
-(* A trailer is also a source file fragment. It is represented
-   simply as a string. *)
+(* A trailer is a source file fragment. *)
 
 type trailer =
-    string
+    Stretch.t
 
 (* Objective Caml semantic actions are represented as stretches. *)
 
