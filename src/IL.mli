@@ -1,40 +1,6 @@
 (* Abstract syntax of the language used for code production. *)
 
-type program = {
-
-    (* The structure of programs is pretty ad hoc: the following components
-       must be printed in this order -- so there is no way for a module
-       definition to follow a recursive value definition, for instance.
-       This is tolerable for the time being, but may have to change in the
-       future. *)
-
-    (* Functor parameters. *)
-    paramdefs: Stretch.t list;
-
-    (* Raw Objective Caml prologue. *)
-    prologue: Stretch.t list;
-
-    (* Exception definitions. *)
-    excdefs: excdef list;
-    
-    (* Algebraic data type definitions (mutually recursive). *)
-    typedefs: typedef list;
-
-    (* Value definitions (not mutually recursive). *)
-    nonrecvaldefs: valdef list;
-
-    (* Module definitions. *)
-    moduledefs: moduledef list;
-
-    (* Function definitions (mutually recursive). *)
-    valdefs: valdef list;
-		
-    (* Raw Objective Caml postlogue. *)
-    postlogue: Stretch.t list;
-
-  } 
-
-and interface =
+type interface =
   interface_item list
 
 and interface_item =
@@ -255,20 +221,6 @@ and pattern =
   (* Type annotation. *)
   | PAnnot of pattern * typ
 
-(* Module definitions. *)
-
-and moduledef = {
-
-  (* The name of the module that is being defined. *)
-
-  modulename: string;
-
-  (* The module expression to which it is being bound. *)
-
-  modulerhs: modexpr;
-
-}
-
 (* Module expressions. *)
 
 and modexpr =
@@ -277,6 +229,9 @@ and modexpr =
     | MApp of modexpr * modexpr
 
 (* Structures. *)
+
+and program =
+    structure
 
 and structure =
     structure_item list
@@ -294,3 +249,4 @@ and structure_item =
   | SIStretch of Stretch.t list
     (* Sub-module definition. *)
   | SIModuleDef of string * modexpr
+

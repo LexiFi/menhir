@@ -18,7 +18,7 @@ end
 
 (* Here is the inliner. *)
 
-let inline ({ valdefs = defs } as p : program) =
+let inline_valdefs (defs : valdef list) : valdef list =
 
   (* Create a table of all global definitions. *)
 
@@ -267,10 +267,41 @@ let inline ({ valdefs = defs } as p : program) =
   
   Time.tick "Inlining";
 
-  { p with valdefs = valdefs }
+  valdefs
+
+(* Dumb recursive traversal. *)
+
+let rec inline_structure_item item =
+  match item with
+  | SIValDefs (true, defs) ->
+      (* A nest of recursive definitions. Act on it. *)
+      SIValDefs (true, inline_valdefs defs)
+  | SIFunctor (params, s) ->
+      SIFunctor (params, inline_structure s)
+  | SIModuleDef (name, e) ->
+      SIModuleDef (name, inline_modexpr e)
+  | SIExcDefs _
+  | SITypeDefs _
+  | SIValDefs (false, _)
+  | SIStretch _ ->
+      item
+
+and inline_structure s =
+  List.map inline_structure_item s
+
+and inline_modexpr = function
+  | MVar x ->
+      MVar x
+  | MStruct s ->
+      MStruct (inline_structure s)
+  | MApp (e1, e2) ->
+      MApp (inline_modexpr e1, inline_modexpr e2)
 
 (* The external entry point. *)
 
-let inline p =
-  if Settings.code_inlining then inline p else p
+let inline (p : program) : program =
+  if Settings.code_inlining then
+    inline_structure p
+  else
+    p
 

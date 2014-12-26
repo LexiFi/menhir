@@ -658,10 +658,10 @@ and modexpr f = function
   | MApp (e1, e2) ->
       fprintf f "%a (%a)" modexpr e1 modexpr e2
 
-let moduledef f d =
-  fprintf f "module %s = %a%t%t" d.modulename modexpr d.modulerhs nl nl
-
+(* TEMPORARY
 let program f p =
+  functorparams false program p X.f p.paramdefs;
+
   fprintf f "%a%a"
     (excdefs false) p.excdefs
     typedefs p.typedefs;
@@ -671,6 +671,7 @@ let program f p =
     (list moduledef nothing) p.moduledefs
     (valdefs true) p.valdefs;
   List.iter (stretch false f) p.postlogue
+*)
 
 let valdecl f (x, ts) =
   fprintf f "val %s: %a%t%t" x typ ts.body nl nl
@@ -718,8 +719,8 @@ and interface_item f = function
 and interface f i =
   list interface_item nothing f i
 
-let program p =
-  functorparams false program p X.f p.paramdefs;
+let program s =
+  structure X.f s;
   flush X.f
 
 let interface i =

@@ -136,16 +136,11 @@ let produce_tokentypes grammar =
 			let locate_stretches = None 
 		      end) 
       in
-      P.program {
-        paramdefs = grammar.parameters;
-        prologue = [];
-        excdefs = [];
-	typedefs = filter_typedefs items;
-        nonrecvaldefs = [];
-	valdefs = [];
-	moduledefs = [];
-        postlogue = [];
-      };
+      P.program [
+        SIFunctor (grammar.parameters, [
+          SITypeDefs (filter_typedefs items)
+        ])
+      ];
       exit 0
 
   | Settings.CodeOnly _

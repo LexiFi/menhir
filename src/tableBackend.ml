@@ -658,12 +658,8 @@ let tokendef2 = {
    exception [Error], which is defined at toplevel, is re-defined
    within the functor argument: [exception Error = Error]. *)
 
-let application = {
+let application =
 
-  modulename =
-    interpreter;
-
-  modulerhs =
     MApp (
       MVar make,
       MStruct [
@@ -682,9 +678,7 @@ let application = {
 	  trace;
 	])
       ]
-    );
-
-}
+    )
 
 (* ------------------------------------------------------------------------ *)
 
@@ -744,39 +738,35 @@ let api : IL.valdef list =
 
 (* Let's put everything together. *)
 
+open UnparameterizedSyntax
+
 let grammar =
   Front.grammar
 
-let program = {
+let program =
+ 
+  [ SIFunctor (grammar.parameters, [
 
-  paramdefs =
-    grammar.UnparameterizedSyntax.parameters;
+    SIExcDefs [ excdef ];
 
-  prologue =
-    grammar.UnparameterizedSyntax.preludes;
+    SITypeDefs (
+      filter_typedefs (tokentypedefs grammar) @
+      filter_typedefs (nonterminalgadtdef grammar) @
+      filter_typedefs (symbolgadtdef grammar) @
+      [ tokendef1 ]
+    );
 
-  excdefs =
-    [ excdef ];
+    SIStretch grammar.preludes;
 
-  typedefs =
-    filter_typedefs (tokentypedefs grammar) @
-    filter_typedefs (nonterminalgadtdef grammar) @
-    filter_typedefs (symbolgadtdef grammar) @
-    [ tokendef1 ];
+    SIValDefs (false, [ excvaldef ]);
 
-  nonrecvaldefs =
-    [ excvaldef ];
+    SIModuleDef (interpreter, application);
 
-  moduledefs =
-    [ application ];
+    SIValDefs (false, api);
 
-  valdefs =
-    api;
+    SIStretch grammar.postludes;
 
-  postlogue =
-    grammar.UnparameterizedSyntax.postludes
-
-}
+  ])]
 
 let () =
   Time.tick "Producing abstract syntax"

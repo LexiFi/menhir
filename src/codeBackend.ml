@@ -1624,50 +1624,46 @@ let initenvdef =
 (* ------------------------------------------------------------------------ *)
 (* Here is complete code for the parser. *)
 
+open UnparameterizedSyntax
+
 let grammar =
   Front.grammar
 
-let program = {
+let program =
 
-  paramdefs =
-    grammar.UnparameterizedSyntax.parameters;
+  [ SIFunctor (grammar.parameters, [
 
-  prologue =
-    grammar.UnparameterizedSyntax.preludes;
+    SIExcDefs [ excdef ];
 
-  excdefs =
-    [ excdef ];
+    SITypeDefs (
+      filter_typedefs (tokentypedefs grammar) @
+        [ envtypedef; statetypedef ]
+    );
 
-  typedefs =
-    filter_typedefs (tokentypedefs grammar) @
-    [ envtypedef; statetypedef ];
+    SIStretch grammar.preludes;
 
-  nonrecvaldefs =
-    [ excvaldef ];
+    SIValDefs (false, [ excvaldef ]);
 
-  valdefs =
-    ProductionMap.fold (fun _ s defs ->
-      entrydef s :: defs
-    ) Lr1.entry (
-    Lr1.fold (fun defs s ->
-      rundef s :: errordef s :: defs
-    ) (
-    Nonterminal.foldx (fun nt defs ->
-      gotodef nt :: defs
-    ) (Production.fold (fun prod defs ->
-      if Invariant.ever_reduced prod then
-	reducedef prod :: defs
-      else
-	defs
-    ) [ discarddef; initenvdef; printtokendef; assertfalsedef; errorcasedef ])));
+    SIValDefs (true,
+      ProductionMap.fold (fun _ s defs ->
+        entrydef s :: defs
+      ) Lr1.entry (
+      Lr1.fold (fun defs s ->
+        rundef s :: errordef s :: defs
+      ) (
+      Nonterminal.foldx (fun nt defs ->
+        gotodef nt :: defs
+      ) (Production.fold (fun prod defs ->
+        if Invariant.ever_reduced prod then
+          reducedef prod :: defs
+        else
+          defs
+      ) [ discarddef; initenvdef; printtokendef; assertfalsedef; errorcasedef ])))
+    );
 
-  moduledefs =
-    [];
-	
-  postlogue =
-    grammar.UnparameterizedSyntax.postludes
+    SIStretch grammar.postludes;
 
-} 
+  ])]
 
 (* ------------------------------------------------------------------------ *)
 (* We are done! *)

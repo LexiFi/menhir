@@ -180,16 +180,12 @@ let program grammar =
      tokens, because, in principle, the semantic actions may refer to
      it or to its data constructors. *)
 
-  {
-    paramdefs = grammar.parameters;
-    prologue = grammar.preludes;
-    excdefs = [];
-    typedefs = filter_typedefs (tokentypedefs grammar);
-    nonrecvaldefs = [ begindef; def; enddef ];
-    moduledefs = [];
-    valdefs = [];
-    postlogue = grammar.postludes
-  }
+  [ SIFunctor (grammar.parameters, [
+    SITypeDefs (filter_typedefs (tokentypedefs grammar));
+    SIStretch grammar.preludes;
+    SIValDefs (false, [ begindef; def; enddef ]);
+    SIStretch grammar.postludes;
+  ])]
 
 (* ------------------------------------------------------------------------- *)
 (* Writing the program associated with a grammar to a file. *)
