@@ -669,7 +669,7 @@ let application = {
       MStruct [
         SIExcDefs [ excredef ];
         SITypeDefs [ tokendef2 ];
-        SINonRecValDefs [
+        SIValDefs (false, [
 	  token2terminal;
 	  define ("error_terminal", EIntConst (Terminal.t2i Terminal.error));
 	  token2value;
@@ -680,7 +680,7 @@ let application = {
 	  goto;
 	  semantic_action;
 	  trace;
-	]
+	])
       ]
     );
 

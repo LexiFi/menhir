@@ -282,12 +282,14 @@ and structure =
     structure_item list
 
 and structure_item =
+    (* Functor. Called [Make]. No functor if no parameters. Very ad hoc! *)
+  | SIFunctor of Stretch.t list * structure
     (* Exception definitions. *)
   | SIExcDefs of excdef list
     (* Algebraic data type definitions (mutually recursive). *)
   | SITypeDefs of typedef list
-    (* Value definitions (not mutually recursive). *)
-  | SINonRecValDefs of valdef list
+    (* Value definitions (mutually recursive or not, as per the flag). *)
+  | SIValDefs of bool * valdef list
     (* Raw OCaml code. *)
   | SIStretch of Stretch.t list
     (* Sub-module definition. *)

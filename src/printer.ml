@@ -589,11 +589,8 @@ let valdef f = function
   | { valpat = p; valval = e } ->
       fprintf f "%a =%a%t%t" pat p (indent 2 expr) e nl nl
 
-let valdefs =
-  pdefs valdef letrec et
-
-let nonrecvaldefs =
-  pdefs valdef letnonrec et
+let valdefs recursive =
+  pdefs valdef (if recursive then letrec else letnonrec) et
 
 let typedefs =
   pdefs typedef keytyp et
@@ -635,12 +632,16 @@ let functorparams intf body b f params =
 	nl
 
 let rec structure_item f = function
+  | SIFunctor ([], s) ->
+      structure f s
+  | SIFunctor (_ :: _ as params, s) ->
+      functorparams false structure s f params
   | SIExcDefs defs ->
       excdefs false f defs
   | SITypeDefs defs ->
       typedefs f defs
-  | SINonRecValDefs defs ->
-      nonrecvaldefs f defs
+  | SIValDefs (recursive, defs) ->
+      valdefs recursive f defs
   | SIStretch stretches ->
       List.iter (stretch false f) stretches
   | SIModuleDef (name, rhs) ->
@@ -666,9 +667,9 @@ let program f p =
     typedefs p.typedefs;
   List.iter (stretch false f) p.prologue;
   fprintf f "%a%a%a"
-    nonrecvaldefs p.nonrecvaldefs
+    (valdefs false) p.nonrecvaldefs
     (list moduledef nothing) p.moduledefs
-    valdefs p.valdefs;
+    (valdefs true) p.valdefs;
   List.iter (stretch false f) p.postlogue
 
 let valdecl f (x, ts) =
@@ -697,7 +698,9 @@ and with_type f (name, wk, t) =
     typ t
 
 and interface_item f = function
-  | IIFunctor (params, i) ->
+  | IIFunctor ([], i) ->
+      interface f i
+  | IIFunctor (_ :: _ as params, i) ->
       functorparams true interface i f params
   | IIExcDecls defs ->
       excdefs true f defs
