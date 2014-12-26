@@ -294,9 +294,13 @@ rule main = parse
 | "%{"
     { savestart lexbuf (fun lexbuf ->
         let openingpos = lexeme_end_p lexbuf in
-        let closingpos, _ = action true openingpos [] lexbuf in
-	(* TEMPORARY if keyword list nonempty, issue an error *)
-        HEADER (mk_stretch false openingpos closingpos [])
+        let closingpos, pkeywords = action true openingpos [] lexbuf in
+        begin match pkeywords with
+        | [] ->
+            HEADER (mk_stretch false openingpos closingpos [])
+        | { value = _; position = pos } :: _ ->
+            Error.error [pos] "A Menhir keyword cannot be used in an OCaml header."
+        end
       ) }
 | "{"
     { savestart lexbuf (fun lexbuf ->
