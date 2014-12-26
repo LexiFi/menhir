@@ -305,10 +305,6 @@ rule main = parse
 	let stretch = mk_stretch true openingpos closingpos pkeywords in
         ACTION (Action.from_stretch stretch)
       ) }
-(* TEMPORARY comprendre si la différence entre header et action est bien
-             justifiée et si certains choix comme le parenthésage et le
-             traitement des keywords ne pourraient pas être effectués
-             plus loin. *)
 | eof
     { EOF }
 | _
