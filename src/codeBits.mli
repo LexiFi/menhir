@@ -54,7 +54,7 @@ val prefix: string -> string
 val dataprefix: string -> string
 val tvprefix: string -> string
 
-(* Projecting interface items to typedefs. Any interface items other
-   than typedefs are lost. *)
-val filter_typedefs: interface_item list -> typedef list
+(* Converting an interface to a structure. Only exception and type definitions
+   go through. *)
+val interface_to_structure: interface -> structure
 

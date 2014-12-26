@@ -13,7 +13,7 @@ val tnonterminalgadt: IL.typ -> IL.typ
    information, or because [--infer] has been set and inference has been
    performed already. This definition is produced only in [--table] mode. *)
 
-val nonterminalgadtdef: UnparameterizedSyntax.grammar -> IL.interface_item list
+val nonterminalgadtdef: UnparameterizedSyntax.grammar -> IL.interface
 
 (* When in [--(raw-)depend] mode, we are asked to produce a mock [.mli] file
    before [--infer] has run, which means that we are usually not able to

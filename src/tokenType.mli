@@ -38,7 +38,7 @@ val tokenprefix: string -> string
    the type [token] when not in [--table] mode, and the types [token] and
    [terminal] when in [--table] mode. *)
 
-val tokentypedefs: UnparameterizedSyntax.grammar -> IL.interface_item list
+val tokentypedefs: UnparameterizedSyntax.grammar -> IL.interface
 
 (* If [--only-tokens] is set, then [produce_tokentypes] writes the type
    definitions to the [.ml] and [.mli] files and stops Menhir. Otherwise,

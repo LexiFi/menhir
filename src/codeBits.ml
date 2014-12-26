@@ -153,14 +153,21 @@ let tvprefix name =
 
 (* ------------------------------------------------------------------------ *)
 
-let filter_typedefs (items : interface_item list) : typedef list =
-  (* TEMPORARY ideally, should not flatten, as this turns a nonrecursive
-     definition into a recursive one *)
-  List.flatten (List.map (fun item ->
-    match item with
-    | IITypeDecls defs ->
-        defs
-    | _ ->
-        []
-  ) items)
+(* Converting an interface to a structure. Only exception and type definitions
+   go through. *)
+
+let interface_item_to_structure_item = function
+  | IIExcDecls defs ->
+      [ SIExcDefs defs ]
+  | IITypeDecls defs ->
+      [ SITypeDefs defs ]
+  | IIFunctor (_, _)
+  | IIValDecls _
+  | IIInclude _ 
+  | IIModule (_, _)
+  | IIComment _ ->
+      []
+
+let interface_to_structure i =
+  List.flatten (List.map interface_item_to_structure_item i)
 

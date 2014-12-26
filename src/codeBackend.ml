@@ -1631,18 +1631,19 @@ let grammar =
 
 let program =
 
-  [ SIFunctor (grammar.parameters, [
+  [ SIFunctor (grammar.parameters,
 
-    SIExcDefs [ excdef ];
+    SIExcDefs [ excdef ] ::
 
-    SITypeDefs (
-      filter_typedefs (tokentypedefs grammar) @
-        [ envtypedef; statetypedef ]
-    );
+    interface_to_structure (
+      tokentypedefs grammar
+    ) @
 
-    SIStretch grammar.preludes;
+    SITypeDefs [ envtypedef; statetypedef ] ::
 
-    SIValDefs (false, [ excvaldef ]);
+    SIStretch grammar.preludes ::
+
+    SIValDefs (false, [ excvaldef ]) ::
 
     SIValDefs (true,
       ProductionMap.fold (fun _ s defs ->
@@ -1659,11 +1660,11 @@ let program =
         else
           defs
       ) [ discarddef; initenvdef; printtokendef; assertfalsedef; errorcasedef ])))
-    );
+    ) ::
 
-    SIStretch grammar.postludes;
+    SIStretch grammar.postludes ::
 
-  ])]
+  [])]
 
 (* ------------------------------------------------------------------------ *)
 (* We are done! *)

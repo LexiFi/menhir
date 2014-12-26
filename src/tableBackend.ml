@@ -745,28 +745,29 @@ let grammar =
 
 let program =
  
-  [ SIFunctor (grammar.parameters, [
+  [ SIFunctor (grammar.parameters,
 
-    SIExcDefs [ excdef ];
+    SIExcDefs [ excdef ] ::
 
-    SITypeDefs (
-      filter_typedefs (tokentypedefs grammar) @
-      filter_typedefs (nonterminalgadtdef grammar) @
-      filter_typedefs (symbolgadtdef grammar) @
-      [ tokendef1 ]
-    );
+    interface_to_structure (
+      tokentypedefs grammar @
+      nonterminalgadtdef grammar @
+      symbolgadtdef grammar
+    ) @
 
-    SIStretch grammar.preludes;
+    SITypeDefs [ tokendef1 ] ::
 
-    SIValDefs (false, [ excvaldef ]);
+    SIStretch grammar.preludes ::
 
-    SIModuleDef (interpreter, application);
+    SIValDefs (false, [ excvaldef ]) ::
 
-    SIValDefs (false, api);
+    SIModuleDef (interpreter, application) ::
 
-    SIStretch grammar.postludes;
+    SIValDefs (false, api) ::
 
-  ])]
+    SIStretch grammar.postludes ::
+
+  [])]
 
 let () =
   Time.tick "Producing abstract syntax"

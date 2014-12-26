@@ -117,7 +117,7 @@ let produce_tokentypes grammar =
 	 necessary by the fact that the two can be different
 	 when there are functor parameters. *)
 
-      let items = typedefs grammar in
+      let i = typedefs grammar in
 
       let module P = 
 	Printer.Make (struct 
@@ -127,7 +127,7 @@ let produce_tokentypes grammar =
 		      end) 
       in
       P.interface [
-        IIFunctor (grammar.parameters, items)
+        IIFunctor (grammar.parameters, i)
       ];
       let module P = 
 	Printer.Make (struct 
@@ -137,9 +137,9 @@ let produce_tokentypes grammar =
 		      end) 
       in
       P.program [
-        SIFunctor (grammar.parameters, [
-          SITypeDefs (filter_typedefs items)
-        ])
+        SIFunctor (grammar.parameters,
+          interface_to_structure i
+        )
       ];
       exit 0
 
