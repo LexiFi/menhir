@@ -666,14 +666,10 @@ let application = {
   modulerhs =
     MApp (
       MVar make,
-      MStruct {
-	struct_excdefs = [
-	  excredef;
-	];
-	struct_typedefs = [
-	  tokendef2;
-	];
-	struct_nonrecvaldefs = [
+      MStruct [
+        SIExcDefs [ excredef ];
+        SITypeDefs [ tokendef2 ];
+        SINonRecValDefs [
 	  token2terminal;
 	  define ("error_terminal", EIntConst (Terminal.t2i Terminal.error));
 	  token2value;
@@ -684,8 +680,8 @@ let application = {
 	  goto;
 	  semantic_action;
 	  trace;
-	];
-      }
+	]
+      ]
     );
 
 }

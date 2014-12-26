@@ -276,19 +276,16 @@ and modexpr =
     | MStruct of structure
     | MApp of modexpr * modexpr
 
-(* Structures. This is somewhat redundant with the structure of programs,
-   but will do for now. *)
+(* Structures. *)
 
-and structure = {
+and structure =
+    structure_item list
 
-  (* Exception definitions. *)
-  struct_excdefs: excdef list;
-    
-  (* Algebraic data type definitions (mutually recursive). *)
-  struct_typedefs: typedef list;
-
-  (* Value definitions (not mutually recursive). *)
-  struct_nonrecvaldefs: valdef list;
-
-}
+and structure_item =
+    (* Exception definitions. *)
+  | SIExcDefs of excdef list
+    (* Algebraic data type definitions (mutually recursive). *)
+  | SITypeDefs of typedef list
+    (* Value definitions (not mutually recursive). *)
+  | SINonRecValDefs of valdef list
 

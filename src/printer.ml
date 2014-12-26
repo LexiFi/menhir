@@ -620,22 +620,28 @@ let functorparams intf body b f params =
 	(indent 2 body) b
 	nl nl nl
 
-let structure f p =
-  fprintf f "struct%aend" (
-    indent 2 (fun f p ->
-      fprintf f "%t%a%a%a"
-	nl
-	(excdefs false) p.struct_excdefs
-	typedefs p.struct_typedefs
-	nonrecvaldefs p.struct_nonrecvaldefs
-    )
-  ) p
+let structure_item f = function
+  | SIExcDefs defs ->
+      excdefs false f defs
+  | SITypeDefs defs ->
+      typedefs f defs
+  | SINonRecValDefs defs ->
+      nonrecvaldefs f defs
+
+let structure f s =
+  list structure_item nothing f s
 
 let rec modexpr f = function
   | MVar x ->
       fprintf f "%s" x
   | MStruct s ->
-      structure f s
+      fprintf f "struct%aend" (
+        indent 2 (fun f s ->
+          fprintf f "%t%a"
+            nl
+            structure s
+        )
+      ) s
   | MApp (e1, e2) ->
       fprintf f "%a (%a)" modexpr e1 modexpr e2
 
