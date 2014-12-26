@@ -288,4 +288,7 @@ and structure_item =
   | SITypeDefs of typedef list
     (* Value definitions (not mutually recursive). *)
   | SINonRecValDefs of valdef list
-
+    (* Raw OCaml code. *)
+  | SIStretch of Stretch.t list
+    (* Sub-module definition. *)
+  | SIModuleDef of string * modexpr

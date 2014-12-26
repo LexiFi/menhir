@@ -593,7 +593,7 @@ let valdefs =
   pdefs valdef letrec et
 
 let nonrecvaldefs =
-  pdefs valdef letnonrec letnonrec
+  pdefs valdef letnonrec et
 
 let typedefs =
   pdefs typedef keytyp et
@@ -634,18 +634,22 @@ let functorparams intf body b f params =
 	(if intf then sigend body else structend body) b
 	nl
 
-let structure_item f = function
+let rec structure_item f = function
   | SIExcDefs defs ->
       excdefs false f defs
   | SITypeDefs defs ->
       typedefs f defs
   | SINonRecValDefs defs ->
       nonrecvaldefs f defs
+  | SIStretch stretches ->
+      List.iter (stretch false f) stretches
+  | SIModuleDef (name, rhs) ->
+      fprintf f "module %s = %a%t%t" name modexpr rhs nl nl
 
-let structure f s =
+and structure f s =
   list structure_item nothing f s
 
-let rec modexpr f = function
+and modexpr f = function
   | MVar x ->
       fprintf f "%s" x
   | MStruct s ->
