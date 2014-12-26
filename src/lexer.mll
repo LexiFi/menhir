@@ -90,10 +90,17 @@
     let ofs1 = pos1.pos_cnum
     and ofs2 = pos2.pos_cnum in
     let raw_content : string = chunk ofs1 ofs2 in
-    (* Transform the keywords. *)
-    let content : bytes = Bytes.of_string raw_content in
-    transform_keywords ofs1 pkeywords content;
-    let content : string = Bytes.to_string content in
+    (* Transform the keywords, if there are any. (This explicit test
+       allows saving one string copy and keeping just one live copy.) *)
+    let content : string =
+      match pkeywords with
+      | [] ->
+          raw_content
+      | _ :: _ ->
+        let content : bytes = Bytes.of_string raw_content in
+        transform_keywords ofs1 pkeywords content;
+        Bytes.unsafe_to_string content
+    in
     (* Add whitespace so that the column numbers match those of the source file.
        If requested, add parentheses so that the semantic action can be inserted
        into other code without ambiguity. *)
