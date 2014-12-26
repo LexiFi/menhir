@@ -458,7 +458,7 @@ and pat2 f = function
   | POr [] ->
       assert false
   | POr (_ :: _ as ps) ->
-      fprintf f "%a" (seplist pat2 bar) ps
+      seplist pat2 bar f ps
   | PTuple [ p ] ->
       pat2 f p
   | p ->
@@ -609,16 +609,30 @@ let excdef in_intf f def =
 let excdefs in_intf =
   pdefs (excdef in_intf) exc exc
 
+let block format body f b =
+  fprintf f format (
+    indent 2 (fun f b ->
+      nl f;
+      body f b
+    )
+  ) b
+
+let structend body f b =
+  block "struct%aend" body f b
+
+let sigend body f b =
+  block "sig%aend" body f b
+
 let functorparams intf body b f params =
   match params with
   | [] ->
-      fprintf f "%a%!" body b
+      body f b
   | _ ->
-      fprintf f "module Make%a%t%s%t%a%t%tend%t%!"
+      fprintf f "module Make%a%t%s %a%t"
 	(list (stretch false) nl) params
-	nl (if intf then ": sig" else "= struct") nl
-	(indent 2 body) b
-	nl nl nl
+	nl (if intf then ":" else "=")
+	(if intf then sigend body else structend body) b
+	nl
 
 let structure_item f = function
   | SIExcDefs defs ->
@@ -635,13 +649,7 @@ let rec modexpr f = function
   | MVar x ->
       fprintf f "%s" x
   | MStruct s ->
-      fprintf f "struct%aend" (
-        indent 2 (fun f s ->
-          fprintf f "%t%a"
-            nl
-            structure s
-        )
-      ) s
+      structend structure f s
   | MApp (e1, e2) ->
       fprintf f "%a (%a)" modexpr e1 modexpr e2
 
@@ -676,13 +684,7 @@ let rec module_type f = function
         module_type mt
         (indent 2 with_type) (name, wk, t)
   | MTSigEnd i ->
-      fprintf f "sig%aend" (
-        indent 2 (fun f i ->
-          fprintf f "%t%a"
-            nl
-            interface i
-        )
-      ) i
+      sigend interface f i
 
 and with_type f (name, wk, t) =
   fprintf f "with type %s %a %a"
@@ -710,12 +712,15 @@ and interface f i =
   list interface_item nothing f i
 
 let program p =
-  functorparams false program p X.f p.paramdefs
+  functorparams false program p X.f p.paramdefs;
+  flush X.f
 
 let interface i =
-  interface X.f i
+  interface X.f i;
+  flush X.f
 
 let expr e =
-  expr X.f e
+  expr X.f e;
+  flush X.f
 
 end
