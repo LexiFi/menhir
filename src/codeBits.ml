@@ -154,6 +154,8 @@ let tvprefix name =
 (* ------------------------------------------------------------------------ *)
 
 let filter_typedefs (items : interface_item list) : typedef list =
+  (* TEMPORARY ideally, should not flatten, as this turns a nonrecursive
+     definition into a recursive one *)
   List.flatten (List.map (fun item ->
     match item with
     | IITypeDecls defs ->
