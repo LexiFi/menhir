@@ -35,7 +35,10 @@ let result t =
 (* The name of the incremental entry point for the start symbol [symbol]. *)
 
 let incremental symbol =
-  Misc.normalize symbol ^ "_incremental" (* TEMPORARY better idea? *)
+  (* This convention is not great. A name clash with a non-incremental
+     entry point is possible if there exists a nonterminal symbol whose name
+     ends with [_incremental]. It would be preferable to introduce a sub-module. *)
+  Misc.normalize symbol ^ "_incremental"
 
 (* The type of the incremental entry point for the start symbol [symbol]. *)
 
