@@ -30,14 +30,6 @@
     let len = ofs2 - ofs1 in
     String.sub contents ofs1 len
 
-  (* Extracts a chunk out of the source file, delimited by
-     one position and extending to the end of the file. *)
-
-  let echunk ofs1 =
-    let contents = Error.get_file_contents() in
-    let len = String.length contents - ofs1 in
-    String.sub contents ofs1 len
-
   (* Overwrites an old character with a new one at a specified
      offset in a [bytes] buffer. *)
 
@@ -45,15 +37,11 @@
     assert (Bytes.get content offset = c1);
     Bytes.set content offset c2
 
-  (* Creates a stretch. *)
+  (* In-place transformation of keywords. We turn our keywords into
+     valid OCaml identifiers by replacing '$', '(', and ')' with '_'.
+     Bloody. *)
 
-  let mk_stretch parenthesize pos1 pos2 pkeywords = 
-    let ofs1 = pos1.pos_cnum
-    and ofs2 = pos2.pos_cnum in
-    let raw_content = chunk ofs1 ofs2 in
-    let content = Bytes.of_string raw_content in
-    (* Turn our keywords into valid Objective Caml identifiers
-       by replacing '$', '(', and ')' with '_'. Bloody. *)
+  let transform_keywords ofs1 (pkeywords : Keyword.keyword located list) (content : bytes) =
     List.iter (function { value = keyword; position = pos } ->
       let pos = start_of_position pos in
       let ofs = pos.pos_cnum - ofs1 in
@@ -84,9 +72,28 @@
 	      overwrite content (ofslpar + 2 + String.length (string_of_int i)) ')' '_'
 	  | Keyword.RightNamed id ->
 	      overwrite content (ofslpar + 1 + String.length id) ')' '_'
-    ) pkeywords;
-    (* Done modifying [content] in place. *)
-    let content = Bytes.to_string content in
+    ) pkeywords
+
+  (* In an OCaml header, there should be no keywords. This is just a sanity check. *)
+
+  let no_keywords pkeywords =
+    match pkeywords with
+    | [] ->
+        ()
+    | { value = _; position = pos } :: _ ->
+        Error.error [pos] "A Menhir keyword cannot be used in an OCaml header."
+
+  (* Creates a stretch. *)
+
+  let mk_stretch pos1 pos2 parenthesize pkeywords = 
+    (* Read the specified chunk of the file. *)
+    let ofs1 = pos1.pos_cnum
+    and ofs2 = pos2.pos_cnum in
+    let raw_content : string = chunk ofs1 ofs2 in
+    (* Transform the keywords. *)
+    let content : bytes = Bytes.of_string raw_content in
+    transform_keywords ofs1 pkeywords content;
+    let content : string = Bytes.to_string content in
     (* Add whitespace so that the column numbers match those of the source file.
        If requested, add parentheses so that the semantic action can be inserted
        into other code without ambiguity. *)
@@ -250,8 +257,12 @@ rule main = parse
 | "%inline"
     { INLINE }
 | "%%"
-    { let ofs = lexeme_end lexbuf in
-      PERCENTPERCENT (lazy (echunk ofs)) }
+    { (* The token [PERCENTPERCENT] carries a string that contains
+         everything that follows %% in the input file. This string
+         is created lazily: the parser may or may not need it. *)
+      let ofs1 = lexeme_end lexbuf in
+      let ofs2 = String.length (Error.get_file_contents()) in
+      PERCENTPERCENT (lazy (chunk ofs1 ofs2)) }
 | ":"
     { COLON }
 | ","
@@ -295,18 +306,14 @@ rule main = parse
     { savestart lexbuf (fun lexbuf ->
         let openingpos = lexeme_end_p lexbuf in
         let closingpos, pkeywords = action true openingpos [] lexbuf in
-        begin match pkeywords with
-        | [] ->
-            HEADER (mk_stretch false openingpos closingpos [])
-        | { value = _; position = pos } :: _ ->
-            Error.error [pos] "A Menhir keyword cannot be used in an OCaml header."
-        end
+        no_keywords pkeywords;
+        HEADER (mk_stretch openingpos closingpos false [])
       ) }
 | "{"
     { savestart lexbuf (fun lexbuf ->
         let openingpos = lexeme_end_p lexbuf in
         let closingpos, pkeywords = action false openingpos [] lexbuf in
-	let stretch = mk_stretch true openingpos closingpos pkeywords in
+	let stretch = mk_stretch openingpos closingpos true pkeywords in
         ACTION (Action.from_stretch stretch)
       ) }
 | eof
@@ -335,7 +342,7 @@ and ocamltype openingpos = parse
 | "[>"
     { ocamltype openingpos lexbuf }
 | '>'
-    { OCAMLTYPE (Stretch.Declared (mk_stretch true openingpos (lexeme_start_p lexbuf) [])) }
+    { OCAMLTYPE (Stretch.Declared (mk_stretch openingpos (lexeme_start_p lexbuf) true [])) }
 | "(*"
     { ocamlcomment (lexeme_start_p lexbuf) lexbuf; ocamltype openingpos lexbuf }
 | newline
