@@ -598,19 +598,6 @@ let nonrecvaldefs =
 let typedefs =
   pdefs typedef keytyp et
 
-(* unused for now:
-
-let directive f = function
-  | DirOpen s ->
-      fprintf f "open %s%t%t" s nl nl
-  | DirInclude s ->
-      fprintf f "include %s%t%t" s nl nl
-
-let directives =
-  pdefs directive nothing nothing
-
-*)
-
 let excdef in_intf f def =
   match in_intf, def.exceq with
   | _, None

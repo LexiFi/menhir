@@ -255,10 +255,6 @@ and pattern =
   (* Type annotation. *)
   | PAnnot of pattern * typ
 
-and directive =
-  | DirOpen of string
-  | DirInclude of string
-
 (* Module definitions. *)
 
 and moduledef = {
