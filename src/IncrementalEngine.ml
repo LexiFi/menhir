@@ -60,4 +60,32 @@ module type INCREMENTAL_ENGINE = sig
     ('a, handling_error) env ->
     'a result
 
+  (* The abstract type ['a lr1state] describes the non-initial states of the
+     LR(1) automaton. The index ['a] represents the type of the semantic value
+     associated with this state's incoming symbol. *)
+
+  type 'a lr1state
+
+  (* An element is a pair of a non-initial state [s] and a semantic value [v]
+     associated with the incoming symbol of this state. The idea is, the value
+     [v] was pushed onto the stack just before the state [s] was entered. Thus,
+     for some type ['a], the type [s] has type ['a lr1state] and the value [v]
+     has type ['a]. In other words, the type [element] is an existential type. *)
+
+  type element =
+    | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
+
+  (* A stream is a list whose elements are produced on demand. *)
+
+  type 'a stream =
+      'a head Lazy.t
+
+  and 'a head =
+    | Nil
+    | Cons of 'a * 'a stream
+
+  (* We offer a read-only view of the parser's state as a stream of elements. *)
+
+  val view: (_, _) env -> element stream
+
 end

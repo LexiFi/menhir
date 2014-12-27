@@ -456,14 +456,41 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
+  (* The type ['a lr1state] describes the (non-initial) states of the LR(1)
+     automaton. The index ['a] represents the type of the semantic value
+     associated with the state's incoming symbol. *)
+
+  (* The type ['a lr1state] is defined as an alias for [state], which itself
+     is usually defined as [int] (see [TableInterpreter]). So, ['a lr1state]
+     is technically a phantom type, but should really be thought of as a GADT
+     whose data constructors happen to be represented as integers. It is
+     presented to the user as an abstract type (see [IncrementalEngine]). *)
+
+  type 'a lr1state =
+      state
+
+  (* --------------------------------------------------------------------------- *)
+
   (* Stack inspection. *)
 
-  (* This code offers a (read-only) view of the stack as a stream of elements.
-     Each element contains a pair of a (non-initial) state and a semantic value
-     associated with (the incoming symbol of) this state. *)
+  (* We offer a read-only view of the parser's state as a stream of elements.
+     Each element contains a pair of a (non-initial) state and a semantic
+     value associated with (the incoming symbol of) this state. Note that the
+     type [element] is an existential type. *)
+
+  type 'a stream =
+      'a head Lazy.t
+
+  and 'a head =
+    | Nil
+    | Cons of 'a * 'a stream
 
   type element =
-      state * semantic_value * Lexing.position * Lexing.position
+    | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
+
+  (* If [current] is the current state and [cell] is the top stack cell,
+     then [view cell current] is a view of the parser's state as a stream
+     of elements. *)
 
   let rec view cell current : element stream =
     lazy (
@@ -478,10 +505,12 @@ module Make (T : TABLE) = struct
         (* Construct an element containing the current state [current] as well
            as the semantic value contained in the top stack cell. This semantic
            value is associated with the incoming symbol of this state, so it
-           makes sense to pair them together. In the typed API, this state will
-           have type ['a state] and the semantic value will have type ['a], for
-           some type ['a]. *)
-        let element = (
+           makes sense to pair them together. The state has type ['a state] and
+           the semantic value has type ['a], for some type ['a]. Here, the OCaml
+           type-checker thinks ['a] is [semantic_value] and considers this code
+           well-typed. Outside, we will use magic to provide the user with a way
+           of inspecting states and recovering the value of ['a]. *)
+        let element = Element (
           current,
           cell.semv,
           cell.startp,

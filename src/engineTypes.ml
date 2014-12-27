@@ -3,17 +3,6 @@
 
 (* --------------------------------------------------------------------------- *)
 
-(* A vanilla type of streams (lazy lists). *)
-
-type 'a stream =
-    'a head Lazy.t
-
-and 'a head =
-  | Nil
-  | Cons of 'a * 'a stream
-
-(* --------------------------------------------------------------------------- *)
-
 (* It would be nice if we could keep the structure of stacks and environments
    hidden. However, stacks and environments must be accessible to semantic
    actions, so the following data structure definitions must be public. *)
@@ -365,13 +354,6 @@ module type ENGINE = sig
     with type state := state
      and type semantic_value := semantic_value
      and type 'a result := 'a result
-
-  (* TEMPORARY move/comment *)
-
-  type element =
-      state * semantic_value * Lexing.position * Lexing.position
-
-  val view: ('a, 'pc) env -> element stream
 
 end
 
