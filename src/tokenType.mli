@@ -33,6 +33,11 @@ val tokendata: string -> string
 
 val ttokengadt: IL.typ -> IL.typ
 
+(* [tokengadtdata] maps the name of a token to a data constructor of the token
+   GADT. *)
+
+val tokengadtdata: string -> string
+
 (* These are the definitions of the types of tokens, for use by the code
    generators. This can be a list of zero, one, or two types. Indeed, this
    list is empty when [--external-tokens] is set. Otherwise, it contains just

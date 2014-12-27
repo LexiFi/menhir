@@ -189,3 +189,6 @@ let tctokengadt =
 let ttokengadt a =
   TypApp (tctokengadt, [ a ])
 
+let tokengadtdata token =
+  tokenprefix (ttokengadtdata token)
+
