@@ -7,6 +7,11 @@
 
 val tnonterminalgadt: IL.typ -> IL.typ
 
+(* [tnonterminalgadtdata nt] is the conventional name of the data constructor
+   associated with the non-terminal symbol [nt]. *)
+
+val tnonterminalgadtdata: string -> string
+
 (* This is the definition of the [nonterminal] GADT, for use by the code
    generators. This definition can be constructed only if the type of every
    nonterminal symbol is known, either because the user has provided this

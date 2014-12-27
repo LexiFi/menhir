@@ -66,7 +66,16 @@ let table_interface grammar =
       StringSet.fold (fun symbol decls ->
         (incremental symbol, entrytypescheme_incremental grammar symbol) :: decls
       ) grammar.start_symbols []
-    )
+    );
+    (* TEMPORARY comment *)
+    IIValDecls [
+      let ty =
+        arrow (TypApp (interpreter ^ ".lr1state", [ TypVar "a" ]))
+              (TypApp ("symbol", [ TypVar "a" ]))
+      in
+      (* TEMPORARY code sharing with tableBackend *)
+      "symbol", type2scheme ty
+    ]
   ] else []
 
 (* This is the interface of the generated parser. *)

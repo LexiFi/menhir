@@ -10,7 +10,7 @@ let tcsymbolgadt =
 let tsymbolgadt a =
   TypApp (tcsymbolgadt, [ a ])
 
-(* The conventional name of the data constructors. *)
+(* The conventional names of the data constructors. *)
 
 let dataT =
   "T"

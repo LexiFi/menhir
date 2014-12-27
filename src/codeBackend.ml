@@ -897,7 +897,7 @@ let shiftbranch s tok s' =
   assert (not (Terminal.pseudo tok));
   {
     branchpat =
-      PData (tokenprefix (Terminal.print tok), tokval tok (PVar semv));
+      PData (tokendata (Terminal.print tok), tokval tok (PVar semv));
     branchbody =
       shiftbranchbody s tok s'
   }

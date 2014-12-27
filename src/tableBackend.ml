@@ -62,6 +62,9 @@ let entry =
 let start =
   interpreter ^ ".start"
 
+let lr1state =
+  interpreter ^ ".lr1state"
+
 (* ------------------------------------------------------------------------ *)
 
 (* Code generation for semantic actions. *)
@@ -736,6 +739,92 @@ let api : IL.valdef list =
 
 (* ------------------------------------------------------------------------ *)
 
+(* Constructing representations of symbols. *)
+
+(* [eterminal t] is a value of type ['a terminal] (for some ['a]) that
+   encodes the terminal symbol [t]. It is just a data constructor of
+   the terminal GADT. *)
+
+let eterminal (t : Terminal.t) : expr =
+  EData (tokengadtdata (Terminal.print t), [])
+
+(* [enonterminal nt] is a value of type ['a nonterminal] (for some
+   ['a]) that encodes the nonterminal symbol [nt]. It is just a data
+   constructor of the nonterminal GADT. *)
+
+let enonterminal (nt : Nonterminal.t) : expr =
+  EData (tnonterminalgadtdata (Nonterminal.print false nt), [])
+
+(* [esymbol symbol] is a value of type ['a symbol] (for some ['a])
+   that encodes the symbol [symbol]. It is built by applying the
+   injection [T] or [N] to the terminal or nonterminal encoding. *)
+
+let esymbol (symbol : Symbol.t) : expr =
+  match symbol with
+  | Symbol.T t ->
+      EData (dataT, [ eterminal t ])
+  | Symbol.N nt ->
+      EData (dataN, [ enonterminal nt ])
+
+(* The type [MenhirInterpreter.lr1state] is known (to us) to be an
+   alias for [int], so we can pattern match on it. To the user,
+   though, it will be an abstract type. *)
+
+let tlr1state a : typ =
+  TypApp (lr1state, [a])
+
+(* Produce a function [symbol] that maps a state of type ['a lr1state]
+   (represented as an integer value) to a value of type ['a symbol]. *)
+
+(* TEMPORARY maybe subject to a switch, so as to reduce table size *)
+
+let incoming_symbol_def = {
+  valpublic = true;
+  valpat = PVar "symbol";
+  valval =
+    EAnnot (
+      EFun ([ PVar state ],
+	EMatch (EVar state,
+          (* A default branch is used to ensure exhaustiveness. *)
+          let default =
+            { branchpat =
+                PWildcard;
+              branchbody =
+                EComment ("This state does not exist.",
+                  EApp (EVar "assert", [ efalse ])
+                )
+            }
+          in
+          (* One branch per LR(1) state. *)
+	  Lr1.fold (fun branches node ->
+            let branchpat =
+              pint (Lr1.number node)
+            in
+            let branchbody =
+	      match Lr1.incoming_symbol node with
+	      | None ->
+                  (* This function must not be applied to an initial state.
+                     We will be careful not to expose the initial states
+                     as inhabitants of the type ['a lr1state]. *)
+                  EComment ("This is an initial state.",
+                    EApp (EVar "assert", [ efalse ])
+                  )
+              | Some symbol ->
+                  (* To a non-initial state, we associate a representation
+                     of its incoming symbol. *)
+                  EMagic (esymbol symbol)
+            in
+	    { branchpat; branchbody } :: branches
+	  ) [default]
+	)
+      ),
+      let a = TypVar "a" in
+      type2scheme (arrow (tlr1state a) (tsymbolgadt a))
+    )
+}
+
+(* ------------------------------------------------------------------------ *)
+
 (* Let's put everything together. *)
 
 open UnparameterizedSyntax
@@ -764,6 +853,8 @@ let program =
     SIModuleDef (interpreter, application) ::
 
     SIValDefs (false, api) ::
+
+    SIValDefs (false, [incoming_symbol_def]) ::
 
     SIStretch grammar.postludes ::
 

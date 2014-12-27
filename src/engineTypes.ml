@@ -349,6 +349,7 @@ module type ENGINE = sig
 
   include IncrementalEngine.INCREMENTAL_ENGINE
     with type token := token
+     and type 'a lr1state = state (* useful for us; hidden from the end user *)
 
   include INCREMENTAL_ENGINE_START
     with type state := state

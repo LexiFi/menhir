@@ -12,11 +12,59 @@ let rec length xs =
   | I.Cons (_, xs) ->
       1 + length xs
 
+(* Folding over a stream. *)
+
+let rec foldr f xs accu =
+  match Lazy.force xs with
+  | I.Nil ->
+      accu
+  | I.Cons (x, xs) ->
+      f x (foldr f xs accu)
+
 (* A measure of the stack height. Used as a primitive way of
    testing the [view] function. *)
 
 let height env =
   length (I.view env)
+
+(* Printing an element. *)
+
+let print_element e : string =
+  match e with
+  | I.Element (s, v, _, _) ->
+      let sy = Parser.symbol s in
+      let open Parser in
+      match sy with
+      | T T_TIMES ->
+          "*"
+      | T T_RPAREN ->
+          ")"
+      | T T_PLUS ->
+          "+"
+      | T T_MINUS ->
+          "-"
+      | T T_LPAREN ->
+          "("
+      | T T_INT ->
+          string_of_int v
+      | N N_expr ->
+          string_of_int v
+      | N N_main ->
+          string_of_int v
+      | T T_EOL ->
+          ""
+      | T T_DIV ->
+          "/"
+
+(* Printing a stack. *)
+
+let print env : string =
+  let b = Buffer.create 80 in
+  foldr (fun e () ->
+    Buffer.add_string b (print_element e);
+    Buffer.add_char b ' ';
+  ) (I.view env) ();
+  Buffer.contents b
 
 (* Define the loop which drives the parser. At each iteration,
    we analyze a result produced by the parser, and act in an
@@ -26,8 +74,10 @@ let rec loop linebuf (result : int I.result) =
   match result with
   | I.InputNeeded env ->
       (* TEMPORARY *)
-      if false then
-        Printf.fprintf stderr "Stack height: %d\n%!" (height env); 
+      if true then begin
+        Printf.fprintf stderr "Stack height: %d\n%!" (height env);
+        Printf.fprintf stderr "Stack view:\n%s\n%!" (print env)
+      end;
       (* The parser needs a token. Request one from the lexer,
          and offer it to the parser, which will produce a new
          result. Then, repeat. *)

@@ -143,13 +143,13 @@ let tokval tok x =
    its semantic value. *)
 
 let tokpat tok =
-  PData (TokenType.tokenprefix (Terminal.print tok), tokval tok PWildcard)
+  PData (TokenType.tokendata (Terminal.print tok), tokval tok PWildcard)
 
 (* [tokpatv tok] is a pattern that matches the token [tok], and binds
    its semantic value, if it has one, to the variable [semv]. *)
 
 let tokpatv tok =
-  PData (TokenType.tokenprefix (Terminal.print tok), tokval tok (PVar semv))
+  PData (TokenType.tokendata (Terminal.print tok), tokval tok (PVar semv))
 
 (* [tokspat toks] is a pattern that matches any token in the set [toks],
    without binding its semantic value. *)
