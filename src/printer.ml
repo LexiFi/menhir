@@ -614,28 +614,13 @@ let block format body f b =
     )
   ) b
 
-let structend body f b =
-  block "struct%aend" body f b
-
-let sigend body f b =
-  block "sig%aend" body f b
-
-let functorparams intf body b f params =
-  match params with
-  | [] ->
-      body f b
-  | _ ->
-      fprintf f "module Make%a%t%s %a%t"
-	(list (stretch false) nl) params
-	nl (if intf then ":" else "=")
-	(if intf then sigend body else structend body) b
-	nl
-
 let rec structure_item f = function
   | SIFunctor ([], s) ->
       structure f s
   | SIFunctor (_ :: _ as params, s) ->
-      functorparams false structure s f params
+      fprintf f "module Make%a%t= %a%t"
+	(list (stretch false) nl) params nl
+	structend s nl
   | SIExcDefs defs ->
       excdefs false f defs
   | SITypeDefs defs ->
@@ -647,6 +632,9 @@ let rec structure_item f = function
   | SIModuleDef (name, rhs) ->
       fprintf f "module %s = %a%t%t" name modexpr rhs nl nl
 
+and structend f s =
+  block "struct%aend" structure f s
+
 and structure f s =
   list structure_item nothing f s
 
@@ -654,24 +642,9 @@ and modexpr f = function
   | MVar x ->
       fprintf f "%s" x
   | MStruct s ->
-      structend structure f s
+      structend f s
   | MApp (e1, e2) ->
       fprintf f "%a (%a)" modexpr e1 modexpr e2
-
-(* TEMPORARY
-let program f p =
-  functorparams false program p X.f p.paramdefs;
-
-  fprintf f "%a%a"
-    (excdefs false) p.excdefs
-    typedefs p.typedefs;
-  List.iter (stretch false f) p.prologue;
-  fprintf f "%a%a%a"
-    (valdefs false) p.nonrecvaldefs
-    (list moduledef nothing) p.moduledefs
-    (valdefs true) p.valdefs;
-  List.iter (stretch false f) p.postlogue
-*)
 
 let valdecl f (x, ts) =
   fprintf f "val %s: %a%t%t" x typ ts.body nl nl
@@ -690,7 +663,7 @@ let rec module_type f = function
         module_type mt
         (indent 2 with_type) (name, wk, t)
   | MTSigEnd i ->
-      sigend interface f i
+      sigend f i
 
 and with_type f (name, wk, t) =
   fprintf f "with type %s %a %a"
@@ -702,7 +675,9 @@ and interface_item f = function
   | IIFunctor ([], i) ->
       interface f i
   | IIFunctor (_ :: _ as params, i) ->
-      functorparams true interface i f params
+      fprintf f "module Make%a%t: %a%t"
+	(list (stretch false) nl) params nl
+	sigend i nl
   | IIExcDecls defs ->
       excdefs true f defs
   | IITypeDecls defs ->
@@ -715,6 +690,9 @@ and interface_item f = function
       fprintf f "module %s : %a%t%t" name module_type mt nl nl
   | IIComment comment ->
       fprintf f "(* %s *)%t" comment nl
+
+and sigend f i =
+  block "sig%aend" interface f i
 
 and interface f i =
   list interface_item nothing f i
