@@ -180,6 +180,9 @@ let tctoken =
 let ttoken =
   TypApp (tctoken, [])
 
+let tokendata =
+  tokenprefix
+
 let tctokengadt =
   tokenprefix tctokengadt
 

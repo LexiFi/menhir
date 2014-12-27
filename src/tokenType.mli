@@ -20,17 +20,18 @@
 
 val ttoken: IL.typ
 
+(* [tokendata] maps the name of a token to a data constructor of the [token]
+   type. (If [--external-tokens] is set, then it prefixes its argument with an
+   appropriate OCaml module name. Otherwise, it is the identity.) *)
+
+val tokendata: string -> string
+
 (* This is the conventional name of the [terminal] type, a.k.a. the token
    GADT. This is an indexed type (i.e., it has one type parameter). Its data
    constructors carry zero value arguments. If [--external-tokens] is set,
    this type is qualified. *)
 
 val ttokengadt: IL.typ -> IL.typ
-
-(* If [--external-tokens] is set, then [tokenprefix] prefixes its argument
-   with an appropriate OCaml module name. Otherwise, it is the identity. *)
-
-val tokenprefix: string -> string
 
 (* These are the definitions of the types of tokens, for use by the code
    generators. This can be a list of zero, one, or two types. Indeed, this
