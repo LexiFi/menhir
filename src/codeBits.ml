@@ -111,6 +111,11 @@ let etrue : expr =
 let eboolconst b =
   if b then etrue else efalse
 
+(* Integer constants as patterns. *)
+
+let pint k : pattern =
+  PData (string_of_int k, [])
+
 (* These help build function types. *)
 
 let arrow typ body : typ =

@@ -43,6 +43,10 @@ val etrue: expr
 val efalse: expr
 val eboolconst: bool -> expr
 
+(* Integer constants as patterns. *)
+
+val pint: int -> pattern
+
 (* These help build function types. *)
 
 val arrow: typ -> typ -> typ
