@@ -3,6 +3,21 @@
 module I =
   Parser.MenhirInterpreter
 
+(* The length of a stream. *)
+
+let rec length xs =
+  match Lazy.force xs with
+  | I.Nil ->
+      0
+  | I.Cons (_, xs) ->
+      1 + length xs
+
+(* A measure of the stack height. Used as a primitive way of
+   testing the [view] function. *)
+
+let height env =
+  length (I.view env)
+
 (* Define the loop which drives the parser. At each iteration,
    we analyze a result produced by the parser, and act in an
    appropriate manner. *)
@@ -10,6 +25,9 @@ module I =
 let rec loop linebuf (result : int I.result) =
   match result with
   | I.InputNeeded env ->
+      (* TEMPORARY *)
+      if false then
+        Printf.fprintf stderr "Stack height: %d\n%!" (height env); 
       (* The parser needs a token. Request one from the lexer,
          and offer it to the parser, which will produce a new
          result. Then, repeat. *)
