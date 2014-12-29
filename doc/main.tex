@@ -114,7 +114,7 @@ validation by Coq may take time.
 \docswitch{\odepend} This switch causes \menhir to generate dependency information
 for use in conjunction with \make. When invoked in this mode, \menhir does not
 generate a parser. Instead, it examines the grammar specification and prints a
-list of prerequisites for the targets \nt{basename}\texttt{.cm[oix]},
+list of prerequisites for the targets \nt{basename}\texttt{.cm[iox]},
 \nt{basename}\texttt{.ml}, and \nt{basename}\texttt{.mli}. This list is intended
 to be textually included within a \Makefile. It is important to note that
 \nt{basename}\texttt{.ml} and \nt{basename}\texttt{.mli} can have
@@ -336,10 +336,10 @@ must be fully qualified.
    \sepspacelist{\nt{declaration}}
    \percentpercent
    \sepspacelist{\nt{rule}}
-   \optional{\percentpercent \textit{Objective Caml code}} \\
+   \optional{\percentpercent \textit{OCaml code}} \\
 
 \nt{declaration} \is
-   \dheader{\textit{Objective Caml code}} \\
+   \dheader{\textit{OCaml code}} \\
 && \dparameter \ocamlparam \\
 && \dtoken \optional{\ocamltype} \sepspacelist{\nt{uid}} \\
 && \dnonassoc \sepspacelist{\nt{uid}} \\
@@ -1825,7 +1825,7 @@ This API is ``incremental'' in the sense that the user has access to a
 sequence of the intermediate states of the parser. Assuming that semantic
 values are immutable, a parser state is a persistent data structure: it can be
 stored and used multiple times, if desired. This enables applications such as
-``live parsing'', where a buffer is continously parsed while it is being
+``live parsing'', where a buffer is continuously parsed while it is being
 edited. The parser can be re-started in the middle of the buffer whenever the
 user edits a character. Because two successive parser states share most of
 their data in memory, a list of $n$ successive parser states occupies only
@@ -1941,7 +1941,7 @@ compiler~\cite{compcert}.
 
 Setting the \ocoq switch on the command line enables the Coq back-end.  When
 this switch is set, \menhir expects an input file whose name ends
-in \texttt{.vy}, and generates a Coq file, whose name ends
+in \texttt{.vy} and generates a Coq file whose name ends
 in \texttt{.v}.
 
 Like a \texttt{.mly} file, a \texttt{.vy} file is a grammar specification,
@@ -1988,7 +1988,7 @@ for each terminal symbol. A~terminal symbol per se does not carry a the
 semantic value. We also define the type \verb+token+ of tokens, i.e.,
 dependent pairs of a terminal symbol and a semantic value of an appropriate
 type for this symbol. We model the lexer as an object of type
-\verb+Streamq.Stream token+, i.e., an infinite stream of tokens.
+\verb+Streams.Stream token+, i.e., an infinite stream of tokens.
 
 The proof of termination of an LR(1) parser in the case of invalid input seems
 far from obvious. We did not find such a proof in the literature. In an
@@ -2001,7 +2001,10 @@ parser is allowed to perform. In practice, after extracting the code to
 defined in \ocaml by \verb+let rec inf = S inf+.
 
 Parsing can have three different outcomes, represented by the type
-\verb+parse_result+:
+\verb+parse_result+.
+%
+(This definition is implicitly parameterized over the initial
+state~\verb+init+. We omit the details here.)
 %
 \begin{verbatim}
   Inductive parse_result :=
@@ -2023,12 +2026,10 @@ the input stream. It carries the semantic value that has been constructed for
 this prefix, as well as the remainder of the input stream.
 
 For each entry point \verb+entry+ of the grammar, \menhir generates a
-parsing function \verb+entry+ of type
+parsing function \verb+entry+, whose type is
 \verb+nat -> Stream token -> parse_result+.
-% fp: ça ne colle pas avec le type parse_result ci-dessus, qui semble
-% être paramétré implicitement par init, mais pas par typ.
 
-% jh: ok. J'ai enlevé typ. Je suis un peu embêté, parce que init est
+% jh: Je suis un peu embêté, parce que init est
 % en réalité de type initstate, mais je n'ai pas envie d'en parler
 % dans la doc. Tout ce qui importe, c'est que le premier paramètre de
 % Parsed_pr a un type compatible avec le type que l'utilisateur a
@@ -2041,20 +2042,27 @@ to the grammar) and the semantic value that is constructed by the parser is
 valid as well (with respect to the grammar). The completeness theorem states
 that if a word (a prefix of the input stream) is valid (with respect to the
 grammar), then (given sufficient fuel) it is accepted by the parser.
-Note that those theorems imply that the grammar is non-ambiguous, this
-is proved by Parser.unambiguous.
 
-% fp: Noter que les théorèmes implique(raient) (si on prouvait que le
-% parser termine toujours) que la grammaire est non ambiguë. Pas très
-% intéressant. Ce serait plus intéressant d'avoir un certificat comme
-% quoi la grammaire est bien LR(1)...
+These results imply that the grammar is unambiguous: for every input, there is
+at most one valid interpretation. This is proved by another generated theorem,
+named \verb+unambiguous+.
 
-% jh: Pas besoin de prouver la terminaison pour la non-ambiguïté, car
+% jh: Pas besoin de prouver la terminaison pour avoir la non-ambiguïté, car
 % les cas de non-terminaison ne concernent que les entrées invalides.
-% Je ne sais pas ce que c'est qu'un certificat comme quoi la grammaire
-% est LR(1), en pratique...
+% fp: bien vu!
 
-% On pourrait aussi souhaiter un théorème comme quoi le parser ne lit
+% fp: ce serait intéressant d'avoir un certificat comme quoi la grammaire est
+% bien LR(1), mais peut-être qu'on s'en fout. C'est bien de savoir qu'elle
+% est non-ambiguë.
+
+% jh: Je ne sais pas ce que c'est qu'un certificat comme quoi la grammaire
+% est LR(1), en pratique...
+% fp: Ce serait une preuve d'un théorème, exprimé uniquement en termes de
+% la grammaire, comme quoi la grammaire est LR(1). Il y a une définition
+% de cette propriété dans le textbook de Aho et Ullman, si je me rappelle
+% bien. Mais peu importe.
+
+% fp: On pourrait aussi souhaiter un théorème comme quoi le parser ne lit
 % pas le stream trop loin...
 
 % jh: pour vraiment prouver cela, il faudrait inverser le
@@ -2064,7 +2072,7 @@ is proved by Parser.unambiguous.
 
 The parsers produced by \menhir's Coq back-end must be linked with a Coq
 library, which can be found in the CompCert tree~\cite{compcert}, in the
-\verb+cparser/validator+ subdirectory. Additionnally, CompCert can be used as
+\verb+cparser/validator+ subdirectory. Additionally, CompCert can be used as
 an example if one wishes to use \menhir to generate a formally verified parser
 as part of some other project.
 
@@ -2132,7 +2140,7 @@ The list is roughly sorted by decreasing order of importance.
       semantic actions are deprecated.  The function \verb+parse_error+ is
       deprecated. They are replaced with keywords (\sref{sec:errors}).
 
-\item \menhir's error handling mechanism (\sref{sec:errors}) isinspired
+\item \menhir's error handling mechanism (\sref{sec:errors}) is inspired
       by \ocamlyacc's, but are not guaranteed to be fully
       compatible. Error recovery, also known as re-synchronization, is not
       supported by \menhir.
@@ -2272,3 +2280,18 @@ Coq proofs that come with it.
 \bibliography{english}
 
 \end{document}
+
+% LocalWords:  Yann Régis Gianas Regis inria Menhir filename mly basename Coq
+% LocalWords:  coq vy tt Coq's iox Menhir's nonterminal graphviz nullable calc
+% LocalWords:  inline postprocessed postprocessing ocamlc bytecode linkpkg cmo
+% LocalWords:  menhirLib ocamlopt cmx qa ocamlrun runtime uid productiongroups
+% LocalWords:  prec Actuals parameterization Parameterizing ds actuals plist xs
+% LocalWords:  loption LPAREN RPAREN Inlining inlined inlining lp ioption bool
+% LocalWords:  boption sep nonassociative multi basicshiftreduce lookahead decl
+% LocalWords:  UIDENT LIDENT decls tycon expr exprs basiceos basiceosdump lex
+% LocalWords:  curr Lexing lexbuf pos cnum startpos endpos startofs endofs LALR
+% LocalWords:  syntaxerror whitespace EOL cst API lexing MenhirInterpreter pc
+% LocalWords:  InputNeeded HandlingError env CompCert Aut se nat init cparser
+% LocalWords:  validator subdirectory EBNF reentrant eos typecheck menhir ulex
+% LocalWords:  DeRemer Pennello's Tarjan Yao Dencker Dürre Heuft Bau Raja LLC
+% LocalWords:  Acknowledgements Boujbel Frédéric Bour
