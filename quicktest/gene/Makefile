@@ -16,3 +16,4 @@ all:
 
 clean:
 	$(OCAMLBUILD) -clean
+	rm -f gene.{code,table,ocamlyacc}

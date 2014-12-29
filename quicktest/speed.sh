@@ -12,6 +12,9 @@ else
   TIME=time
 fi
 
+# Testing ocamlyacc is optional.
+test_ocamlyacc=false
+
 # Make sure Menhir and MenhirLib are up-to-date.
 ./build.sh
 
@@ -21,24 +24,33 @@ rm -f gene/*.time
 # Build the parser with the code back-end.
 echo "Building (code)..."
 make -C $GENE MENHIR="$MENHIR" clean all >/dev/null
-
-# Dry run (measures the random generation time).
-echo Dry run:
-$TIME -f "%U" $GENE/gene.native --dry-run 2> $GENE/dry.time
-cat $GENE/dry.time
-
-# Run the code back-end.
-echo Code back-end:
-$TIME -f "%U" $GENE/gene.native > $GENE/code.out 2> $GENE/code.time
-cat $GENE/code.time
+cp -RH $GENE/gene.native $GENE/gene.code
 
 # Build the parser with the table back-end.
 echo "Building (table)..."
 make -C $GENE MENHIR="$MENHIR --table" clean all >/dev/null
+cp -RH $GENE/gene.native $GENE/gene.table
+
+# (Optionally) Build the parser with ocamlyacc.
+if $test_ocamlyacc; then
+  echo "Building (ocamlyacc)..."
+  make -C $GENE OCAMLBUILD="ocamlbuild -use-ocamlfind" clean all >/dev/null
+  cp -RH $GENE/gene.native $GENE/gene.ocamlyacc
+fi
+
+# Dry run (measures the random generation time).
+echo Dry run:
+$TIME -f "%U" $GENE/gene.code --dry-run 2> $GENE/dry.time
+cat $GENE/dry.time
+
+# Run the code back-end.
+echo Code back-end:
+$TIME -f "%U" $GENE/gene.code > $GENE/code.out 2> $GENE/code.time
+cat $GENE/code.time
 
 # Run the table back-end.
 echo Table back-end:
-$TIME -f "%U" $GENE/gene.native > $GENE/table.out 2> $GENE/table.time
+$TIME -f "%U" $GENE/gene.table > $GENE/table.out 2> $GENE/table.time
 cat $GENE/table.time
 
 # Avoid a gross mistake.
@@ -51,19 +63,12 @@ if ! diff -q $GENE/code.out $GENE/table.out ; then
   exit 1
 fi
 
-# Optionally, measure ocamlyacc's performance.
+# (Optionally) Run the ocamlyacc parser.
 
-if false; then
-
-  # Build the parser with ocamlyacc.
-  echo "Building (ocamlyacc)..."
-  make -C $GENE OCAMLBUILD="ocamlbuild -use-ocamlfind" clean all >/dev/null
-
-  # Run the ocamlyacc parser.
+if $test_ocamlyacc; then
   echo ocamlyacc:
-  $TIME -f "%U" $GENE/gene.native > $GENE/ocamlyacc.out 2> $GENE/ocamlyacc.time
+  $TIME -f "%U" $GENE/gene.ocamlyacc > $GENE/ocamlyacc.out 2> $GENE/ocamlyacc.time
   cat $GENE/ocamlyacc.time
-
 fi
 
 # Compute some statistics.
