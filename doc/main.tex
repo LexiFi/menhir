@@ -1836,6 +1836,9 @@ $O(n)$ space in memory.
 % But that is an absolute requirement. Semantic actions can have side
 % effects, if the user knows what they are doing.
 
+% TEMPORARY actually, live parsing also requires a way of performing
+% error recovery, up to a complete parse... as in Merlin.
+
 In this API, the parser is started by invoking \verb+main_incremental+,
 where \mystartsymbol is the name of the start symbol:
 \begin{verbatim}
@@ -1843,7 +1846,7 @@ where \mystartsymbol is the name of the start symbol:
 \end{verbatim}
 
 The sub-module \menhirinterpreter is also part of the incremental API.
-Its declaration, which appears in the file \texttt{parser.mli}, is as
+Its declaration, which appears in the generated file \texttt{parser.mli}, is as
 follows:
 \begin{verbatim}
   module MenhirInterpreter : MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE
@@ -1858,9 +1861,10 @@ to as \verb+MenhirInterpreter.result+, or
 chooses to open.
 
 \begin{verbatim}
-  type 'a result =
-    | InputNeeded of ('a, input_needed) env
-    | HandlingError of ('a, handling_error) env
+  type 'a result = private
+    | InputNeeded of env
+    | AboutToReduce of env * production
+    | HandlingError of env
     | Accepted of 'a
     | Rejected
 \end{verbatim}
@@ -1877,58 +1881,68 @@ a semantic value.
 \verb+InputNeeded+ is an intermediate result. It means that the parser wishes
 to read one token before continuing.
 
-\verb+HandlingError+ is also an intermediate result. It means that the parser
-has detected an error and is currently handling it, in several steps. It does
-not need more input at this point. The parser suspends itself at this point
-only in order to give the user an opportunity to handle this error in a
-different manner, if desired.
+\verb+AboutToReduce+ is an intermediate result: it means that the parser is
+about to perform a reduction step. \verb+HandlingError+ is also an
+intermediate result: it means that the parser has detected an error and is
+about to handle it. (Error handling is typically performed in several steps,
+so the next result is likely to be \verb+HandlingError+ again.) In these two
+cases, the parser does not need more input. The parser suspends itself at this
+point only in order to give the user an opportunity to observe the parser's
+transitions and possibly handle errors in a different manner, if desired.
 
 \begin{verbatim}
-  type ('a, 'pc) env
+  type env
 \end{verbatim}
 
-The abstract type \verb+('a, 'pc) env+ represents the current state of the
+The abstract type \verb+env+ represents the current state of the
 parser. (That is, it contains the current state and stack of the LR
 automaton.) Assuming that semantic values are immutable, it is a persistent
-data structure: it can be stored and used multiple times, if desired. The
-parameter \verb+'a+ is the type of the semantic value that will eventually be
-produced if the parser succeeds. The parameter \verb+'pc+ prevents confusion
-between several kinds of intermediate results.
+data structure: it can be stored and used multiple times, if desired.
+
+\begin{verbatim}
+  type production
+\end{verbatim}
+
+The abstract type \verb+production+ represents a production of the grammar.
 
 \begin{verbatim}
   val offer:
-    ('a, input_needed) env ->
+    'a result ->
     token * Lexing.position * Lexing.position ->
     'a result
 \end{verbatim}
 
 The function \verb+offer+ allows the user to resume the parser after the
 parser has suspended itself with a result of the form \verb+InputNeeded env+.
-This function expects the parser state \verb+env+ as well as a new token
+This function expects the previous result \verb+result+ as well as a new token
 (together with the start and end positions of this token). It produces a new
 result, which again can be an intermediate result or a final result. It does
 not raise any exception. (The exception \texttt{Error} is used only in the
 monolithic API.)
 
 \begin{verbatim}
-   val handle:
-    ('a, handling_error) env ->
+  val resume:
+    'a result ->
     'a result
 \end{verbatim}
 
-The function \verb+handle+ allows the user to resume the parser after the
-parser has suspended itself with a result of the form \verb+HandlingError env+.
-This function expects just the parser state \verb+env+. It produces a new
+The function \verb+resume+ allows the user to resume the parser after the
+parser has suspended itself with a result of the form
+\verb+AboutToReduce (env, prod)+ or \verb+HandlingError env+.
+This function expects just the previous result \verb+result+. It produces a new
 result. It does not raise any exception.
 
 The incremental API subsumes the monolithic API. Indeed, \verb+main+ can
-be (and is in fact) implemented by first calling \verb+main_incremental+, then
-calling \verb+offer+ and \verb+handle+ in a loop, until a final result is
+be (and is in fact) implemented by first using \verb+main_incremental+, then
+calling \verb+offer+ and \verb+resume+ in a loop, until a final result is
 obtained.
 
-At this time, because the type \verb+('a, 'pc) env+ is opaque, the state of
-the parser cannot be inspected by the user. We plan to offer an inspection API
-in the near future.
+At this time, because the type \verb+env+ is opaque, the state of the parser
+cannot be inspected by the user. We plan to offer an inspection API in the
+near future.
+
+% TEMPORARY view
+% TEMPORARY symbol
 
 % ---------------------------------------------------------------------------------------------------------------------
 

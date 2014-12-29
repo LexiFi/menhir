@@ -30,12 +30,6 @@ module type INCREMENTAL_ENGINE = sig
      point only in order to give the user an opportunity to handle this error
      in a different manner, if desired. *)
 
-  (* The type [('a, 'pc) env] is shared by [InputNeeded] and [HandlingError].
-     As above, the parameter ['a] is the type of the final semantic value.
-     The phantom type parameter ['pc] is instantiated with [input_needed]
-     or [handling_error], as appropriate. This prevents the user from
-     calling [offer] when she should call [handle], or vice-versa. *)
-
   type env
 
   type production
