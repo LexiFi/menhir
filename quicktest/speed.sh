@@ -53,7 +53,7 @@ fi
 
 # Optionally, measure ocamlyacc's performance.
 
-if true; then
+if false; then
 
   # Build the parser with ocamlyacc.
   echo "Building (ocamlyacc)..."
