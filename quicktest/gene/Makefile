@@ -1,4 +1,4 @@
-.PHONY: all clean
+.PHONY: all clean realclean
 
 # Build an absolute path for Menhir.
 # This is useful because ocamlbuild descends into _build.
@@ -16,4 +16,6 @@ all:
 
 clean:
 	$(OCAMLBUILD) -clean
+
+realclean:
 	rm -f gene.{code,table,ocamlyacc}
