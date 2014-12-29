@@ -14,6 +14,7 @@ module Make (T : TABLE) = struct
   include T
 
   type input_needed
+  type about_to_reduce
   type handling_error
 
   type ('a, 'pc) env =
@@ -26,6 +27,7 @@ module Make (T : TABLE) = struct
 
   type 'a result =
     | InputNeeded of ('a, input_needed) env
+    | AboutToReduce of ('a, about_to_reduce) env * production
     | HandlingError of ('a, handling_error) env
     | Accepted of 'a
     | Rejected
@@ -100,7 +102,7 @@ module Make (T : TABLE) = struct
 
     T.default_reduction
       env.current
-      reduce                (* there is a default reduction; perform it *)
+      announce_reduce       (* there is a default reduction; perform it *)
       check_for_error_token (* there is none; continue below *)
       env
 
@@ -136,7 +138,7 @@ module Make (T : TABLE) = struct
         (T.token2terminal token)       (* determines a column *)
         (T.token2value token)
         shift                          (* shift continuation *)
-        reduce                         (* reduce continuation *)
+        announce_reduce                (* reduce continuation *)
         initiate                       (* failure continuation *)
         env
 
@@ -179,7 +181,13 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* This function takes care of reductions. *)
+  (* The function [announce_reduce] stops the parser and returns a result
+     which allows the parser to be resumed by calling [reduce]. *)
+
+  and announce_reduce env (prod : production) =
+    AboutToReduce (env, prod)
+
+  (* The function [reduce] takes care of reductions. *)
 
   (* Here, the lookahead token CAN be [error]. *)
 
@@ -273,6 +281,9 @@ module Make (T : TABLE) = struct
 
     Log.handling_error env.current;
     reduce env prod
+      (* Intentionally calling [reduce] instead of [announce_reduce].
+         It does not seem very useful, and it could be confusing, to
+         expose the reduction steps taken during error handling. *)
 
   and error_fail env =
 
@@ -356,21 +367,24 @@ module Make (T : TABLE) = struct
   (* [handle env] is invoked by the user in response to a result of the form
      [HandlingError env]. [handle] is just a synonym for [error]. *)
 
-  (* In reality, [offer] and [handle] accept an environment of type [('a, 'pc)
-     env], where ['a] and ['pc] are unconstrained, since they are phantom type
-     parameters. [offer] and [handle] produce a result of type [semantic_value
+  (* [reduce env prod] is invoked by the user in response to a result of the
+     form [AboutToReduce (env, prod)]. *)
+
+  (* In reality, [offer], [handle] and [reduce] accept an environment of type
+     [('a, 'pc) env], where ['a] and ['pc] are unconstrained, since they are
+     phantom type parameters. They produce a result of type [semantic_value
      result] -- where the choice of the type [semantic_value] is forced by the
      fact that this is the parameter of the exception [Accept]. *)
 
   (* We change these types in two ways. *)
 
-  (* First, we restrict ['pc] to be [input_needed] in the case of [offer] and
-     [handling_error] in the case of [handle]. This is safe, and prevents the
-     user from providing [offer] with an environment that comes from a
-     [HandlingError] result, or (symmetrically) from providing [handle] with
-     an environment that comes from an [InputNeeded] result. *)
+  (* First, we restrict ['pc] to be [input_needed] in the case of [offer],
+     [handling_error] in the case of [handle], and [about_to_reduce] in the
+     case of [reduce]. This is safe, and prevents the user from providing
+     [offer] with an environment that comes from a [HandlingError] result,
+     etc. This is important: it guarantees that the LR invariant holds. *)
 
-  (* Second, we change the result type of [offer] and [handle] from
+  (* Second, we change the result type of [offer], [handle] and [reduce] from
      [semantic_value result] to ['a result]. This is safe, in this case,
      because we give the user access to values of type [(t, _) env] only if
      [t] is indeed the type of the eventual semantic value for this run. (More
@@ -396,6 +410,11 @@ module Make (T : TABLE) = struct
   let handle : 'a . ('a, handling_error) env -> 'a result =
     handle
 
+  let reduce =
+    Obj.magic reduce
+  let reduce : 'a. ('a, about_to_reduce) env -> production -> 'a result =
+    reduce
+
   (* --------------------------------------------------------------------------- *)
   (* --------------------------------------------------------------------------- *)
 
@@ -419,7 +438,7 @@ module Make (T : TABLE) = struct
 
   (* The main loop repeatedly handles intermediate results, until a final result
      is obtained. This allows implementing the monolithic interface ([entry]) in
-     terms of the incremental interface ([start], [offer], [handle]). *)
+     terms of the incremental interface ([start], [offer], [handle], [reduce]). *)
 
   (* By convention, acceptance is reported by returning a semantic value, whereas
      rejection is reported by raising [Error]. *)
@@ -438,9 +457,13 @@ module Make (T : TABLE) = struct
         let triple = read() in
         let result = offer env triple in
         loop read result
-    | HandlingError env ->
+    | AboutToReduce (env, prod) ->
         (* The parser has suspended itself, but does not need
            new input. Just resume the parser. Then, repeat. *)
+        let result = reduce env prod in
+        loop read result
+    | HandlingError env ->
+        (* Same scheme as above. *)
         let result = handle env in
         loop read result
     | Accepted v ->

@@ -32,12 +32,16 @@ module type INCREMENTAL_ENGINE = sig
      calling [offer] when she should call [handle], or vice-versa. *)
 
   type input_needed
+  type about_to_reduce
   type handling_error
 
   type ('a, 'pc) env
 
+  type production
+
   type 'a result =
     | InputNeeded of ('a, input_needed) env
+    | AboutToReduce of ('a, about_to_reduce) env * production
     | HandlingError of ('a, handling_error) env
     | Accepted of 'a
     | Rejected
