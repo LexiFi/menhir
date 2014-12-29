@@ -19,11 +19,16 @@ module type INCREMENTAL_ENGINE = sig
   (* [InputNeeded] is an intermediate result. It means that the parser wishes
      to read one token before continuing. *)
 
-  (* [HandlingError] is also an intermediate result. It means that the parser
-     has detected an error and is currently handling it, in several steps. It
-     does not need more input at this point. The parser suspends itself at
-     this point only in order to give the user an opportunity to handle this
-     error in a different manner, if desired. *)
+  (* [AboutToReduce] is an intermediate result. It means that the parser is
+     about to perform a reduction step. It does not need more input at this
+     point. The parser suspends itself at this point only in order to give the
+     user an opportunity to observe this reduction step. *)
+
+  (* [HandlingError] is an intermediate result. It means that the parser has
+     detected an error and is currently handling it, in several steps. It does
+     not need more input at this point. The parser suspends itself at this
+     point only in order to give the user an opportunity to handle this error
+     in a different manner, if desired. *)
 
   (* The type [('a, 'pc) env] is shared by [InputNeeded] and [HandlingError].
      As above, the parameter ['a] is the type of the final semantic value.
@@ -31,37 +36,34 @@ module type INCREMENTAL_ENGINE = sig
      or [handling_error], as appropriate. This prevents the user from
      calling [offer] when she should call [handle], or vice-versa. *)
 
-  type input_needed
-  type about_to_reduce
-  type handling_error
-
-  type ('a, 'pc) env
+  type env
 
   type production
 
-  type 'a result =
-    | InputNeeded of ('a, input_needed) env
-    | AboutToReduce of ('a, about_to_reduce) env * production
-    | HandlingError of ('a, handling_error) env
+  type 'a result = private
+    | InputNeeded of env
+    | AboutToReduce of env * production
+    | HandlingError of env
     | Accepted of 'a
     | Rejected
 
   (* [offer] allows the user to resume the parser after it has suspended
-     itself with a result of the form [InputNeeded env]. [offer] expects [env]
-     as well as a new token and produces a new result. It does not raise any
-     exception. *)
+     itself with a result of the form [InputNeeded env]. [offer] expects the
+     old result as well as a new token and produces a new result. It does not
+     raise any exception. *)
 
   val offer:
-    ('a, input_needed) env ->
+    'a result ->
     token * Lexing.position * Lexing.position ->
     'a result
 
-  (* [handle] allows the user to resume the parser after it has suspended
-     itself with a result of the form [HandlingError env]. [handle] expects
-     [env] and produces a new result. It does not raise any exception. *)
+  (* [resume] allows the user to resume the parser after it has suspended
+     itself with a result of the form [AboutToReduce (env, prod)] or
+     [HandlingError env]. [resume] expects the old result and produces a new
+     result. It does not raise any exception. *)
 
-  val handle:
-    ('a, handling_error) env ->
+  val resume:
+    'a result ->
     'a result
 
   (* The abstract type ['a lr1state] describes the non-initial states of the
@@ -90,6 +92,6 @@ module type INCREMENTAL_ENGINE = sig
 
   (* We offer a read-only view of the parser's state as a stream of elements. *)
 
-  val view: (_, _) env -> element stream
+  val view: env -> element stream
 
 end

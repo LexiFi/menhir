@@ -13,11 +13,7 @@ module Make (T : TABLE) = struct
 
   include T
 
-  type input_needed
-  type about_to_reduce
-  type handling_error
-
-  type ('a, 'pc) env =
+  type env =
       (state, semantic_value, token) EngineTypes.env
 
   (* --------------------------------------------------------------------------- *)
@@ -25,10 +21,15 @@ module Make (T : TABLE) = struct
   (* The type [result] represents an intermediate or final result of the
      parser. See [EngineTypes]. *)
 
+  (* The type [result] is presented to the user as a private type (see
+     [IncrementalEngine]). This prevents the user from manufacturing results
+     (i.e., continuations) that do not make sense. (Such continuations could
+     potentially violate the LR invariant and lead to crashes.) *)
+
   type 'a result =
-    | InputNeeded of ('a, input_needed) env
-    | AboutToReduce of ('a, about_to_reduce) env * production
-    | HandlingError of ('a, handling_error) env
+    | InputNeeded of env
+    | AboutToReduce of env * production
+    | HandlingError of env
     | Accepted of 'a
     | Rejected
 
@@ -187,7 +188,8 @@ module Make (T : TABLE) = struct
   and announce_reduce env (prod : production) =
     AboutToReduce (env, prod)
 
-  (* The function [reduce] takes care of reductions. *)
+  (* The function [reduce] takes care of reductions. It is invoked by
+     [resume] after an [AboutToReduce] event has been produced. *)
 
   (* Here, the lookahead token CAN be [error]. *)
 
@@ -361,59 +363,46 @@ module Make (T : TABLE) = struct
 
     run env true
 
-  (* [offer env triple] is invoked by the user in response to a result of the
-     form [InputNeeded env]. [offer] is just a synonym for [discard]. *)
+  (* [offer result triple] is invoked by the user in response to a result
+     of the form [InputNeeded env]. It checks that [result] is indeed of
+     this form, and invokes [discard]. *)
 
-  (* [handle env] is invoked by the user in response to a result of the form
-     [HandlingError env]. [handle] is just a synonym for [error]. *)
+  (* [resume result] is invoked by the user in response to a result of the
+     form [AboutToReduce (env, prod)] or [HandlingError env]. It checks
+     that [result] is indeed of this form, and invokes [reduce] or [error],
+     as appropriate. *)
 
-  (* [reduce env prod] is invoked by the user in response to a result of the
-     form [AboutToReduce (env, prod)]. *)
+  (* In reality, [offer] and [resume] accept an argument of type
+     [semantic_value result] and produce a result of the same type. The choice
+     of [semantic_value] is forced by the fact that this is the parameter of
+     the exception [Accept]. *)
 
-  (* In reality, [offer], [handle] and [reduce] accept an environment of type
-     [('a, 'pc) env], where ['a] and ['pc] are unconstrained, since they are
-     phantom type parameters. They produce a result of type [semantic_value
-     result] -- where the choice of the type [semantic_value] is forced by the
-     fact that this is the parameter of the exception [Accept]. *)
+  (* We change this as follows. *)
 
-  (* We change these types in two ways. *)
-
-  (* First, we restrict ['pc] to be [input_needed] in the case of [offer],
-     [handling_error] in the case of [handle], and [about_to_reduce] in the
-     case of [reduce]. This is safe, and prevents the user from providing
-     [offer] with an environment that comes from a [HandlingError] result,
-     etc. This is important: it guarantees that the LR invariant holds. *)
-
-  (* Second, we change the result type of [offer], [handle] and [reduce] from
+  (* We change the argument and result type of [offer] and [resume] from
      [semantic_value result] to ['a result]. This is safe, in this case,
-     because we give the user access to values of type [(t, _) env] only if
-     [t] is indeed the type of the eventual semantic value for this run. (More
+     because we give the user access to values of type [t result] only if [t]
+     is indeed the type of the eventual semantic value for this run. (More
      precisely, by examining the signatures [INCREMENTAL_ENGINE] and
      [INCREMENTAL_ENGINE_START], one finds that the user can build a value of
-     type [('a, _) env] or ['a result] only if ['a] is [semantic_value]. The
-     table back-end goes further than this and produces versions of [start]
-     composed with a suitable cast, which give the user access to a value of
-     type [t result] where [t] is the type of the start symbol.) *)
+     type ['a result] only if ['a] is [semantic_value]. The table back-end
+     goes further than this and produces versions of [start] composed with a
+     suitable cast, which give the user access to a value of type [t result]
+     where [t] is the type of the start symbol.) *)
 
-  (* The unsafe type cast is performed in two steps, due to the strange
-     interaction between type annotations and the relaxed value restriction.
-     If the two steps are merged, the type annotation is pushed inwards and
-     prevents generalization! This is a standard workaround, says Jacques. *)
+  let offer : 'a . 'a result -> token * Lexing.position * Lexing.position -> 'a result = function
+    | InputNeeded env ->
+        Obj.magic discard env
+    | _ ->
+        raise (Invalid_argument "offer expects InputNeeded")
 
-  let offer =
-    Obj.magic discard
-  let offer : 'a . ('a, input_needed) env -> token * Lexing.position * Lexing.position -> 'a result =
-    offer
-
-  let handle =
-    Obj.magic error
-  let handle : 'a . ('a, handling_error) env -> 'a result =
-    handle
-
-  let reduce =
-    Obj.magic reduce
-  let reduce : 'a. ('a, about_to_reduce) env -> production -> 'a result =
-    reduce
+  let resume : 'a . 'a result -> 'a result = function
+    | HandlingError env ->
+        Obj.magic error env
+    | AboutToReduce (env, prod) ->
+        Obj.magic reduce env prod
+    | _ ->
+        raise (Invalid_argument "resume expects HandlingError | AboutToReduce")
 
   (* --------------------------------------------------------------------------- *)
   (* --------------------------------------------------------------------------- *)
@@ -450,21 +439,18 @@ module Make (T : TABLE) = struct
   let rec loop : 'a . reader -> 'a result -> 'a =
     fun read result ->
     match result with
-    | InputNeeded env ->
+    | InputNeeded _ ->
         (* The parser needs a token. Request one from the lexer,
            and offer it to the parser, which will produce a new
            result. Then, repeat. *)
         let triple = read() in
-        let result = offer env triple in
+        let result = offer result triple in
         loop read result
-    | AboutToReduce (env, prod) ->
+    | AboutToReduce _
+    | HandlingError _ ->
         (* The parser has suspended itself, but does not need
            new input. Just resume the parser. Then, repeat. *)
-        let result = reduce env prod in
-        loop read result
-    | HandlingError env ->
-        (* Same scheme as above. *)
-        let result = handle env in
+        let result = resume result in
         loop read result
     | Accepted v ->
         (* The parser has succeeded and produced a semantic value.

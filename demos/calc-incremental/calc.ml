@@ -84,7 +84,10 @@ let rec loop linebuf (result : int I.result) =
       let token = Lexer.token linebuf in
       let startp = linebuf.Lexing.lex_start_p
       and endp = linebuf.Lexing.lex_curr_p in
-      let result = I.offer env (token, startp, endp) in
+      let result = I.offer result (token, startp, endp) in
+      loop linebuf result
+  | I.AboutToReduce _ ->
+      let result = I.resume result in
       loop linebuf result
   | I.HandlingError env ->
       (* The parser has suspended itself because of a syntax error. Stop. *)
