@@ -38,39 +38,46 @@ if $test_ocamlyacc; then
   cp -RH $GENE/gene.native $GENE/gene.ocamlyacc
 fi
 
-# Dry run (measures the random generation time).
-echo Dry run:
-$TIME -f "%U" $GENE/gene.code --dry-run 2> $GENE/dry.time
-cat $GENE/dry.time
+# A loop with several test sizes.
 
-# Run the code back-end.
-echo Code back-end:
-$TIME -f "%U" $GENE/gene.code > $GENE/code.out 2> $GENE/code.time
-cat $GENE/code.time
+for size in 1000000 5000000 10000000 ; do
+  echo "Test size: $size"
 
-# Run the table back-end.
-echo Table back-end:
-$TIME -f "%U" $GENE/gene.table > $GENE/table.out 2> $GENE/table.time
-cat $GENE/table.time
+  # Dry run (measures the random generation time).
+  echo Dry run:
+  $TIME -f "%U" $GENE/gene.code --size $size --dry-run 2> $GENE/dry.time
+  cat $GENE/dry.time
 
-# Avoid a gross mistake.
-if ! diff -q $GENE/code.out $GENE/table.out ; then
-  echo CAUTION: the code and table back-ends disagree!
-  echo Code:
-  cat $GENE/code.out
-  echo Table:
-  cat $GENE/table.out
-  exit 1
-fi
+  # Run the code back-end.
+  echo Code back-end:
+  $TIME -f "%U" $GENE/gene.code --size $size > $GENE/code.out 2> $GENE/code.time
+  cat $GENE/code.time
 
-# (Optionally) Run the ocamlyacc parser.
+  # Run the table back-end.
+  echo Table back-end:
+  $TIME -f "%U" $GENE/gene.table --size $size > $GENE/table.out 2> $GENE/table.time
+  cat $GENE/table.time
 
-if $test_ocamlyacc; then
-  echo ocamlyacc:
-  $TIME -f "%U" $GENE/gene.ocamlyacc > $GENE/ocamlyacc.out 2> $GENE/ocamlyacc.time
-  cat $GENE/ocamlyacc.time
-fi
+  # Avoid a gross mistake.
+  if ! diff -q $GENE/code.out $GENE/table.out ; then
+    echo CAUTION: the code and table back-ends disagree!
+    echo Code:
+    cat $GENE/code.out
+    echo Table:
+    cat $GENE/table.out
+    exit 1
+  fi
 
-# Compute some statistics.
-ocaml speed.ml
+  # (Optionally) Run the ocamlyacc parser.
+
+  if $test_ocamlyacc; then
+    echo ocamlyacc:
+    $TIME -f "%U" $GENE/gene.ocamlyacc --size $size > $GENE/ocamlyacc.out 2> $GENE/ocamlyacc.time
+    cat $GENE/ocamlyacc.time
+  fi
+
+  # Compute some statistics.
+  ocaml speed.ml
+
+done
 
