@@ -40,7 +40,7 @@ fi
 
 # A loop with several test sizes.
 
-for size in 1000000 5000000 10000000 50000000 ; do
+for size in 1000000 5000000 10000000 ; do
   echo "Test size: $size"
 
   # Dry run (measures the random generation time).
