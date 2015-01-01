@@ -1797,7 +1797,8 @@ We assume that the grammar specification has just one start symbol
 \label{sec:monolithic}
 
 The monolithic API consists in just one parsing function, named after the
-start symbol:
+start symbol. The generated file \texttt{parser.mli} contains the following
+declaration:
 \begin{verbatim}
   val main: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> thing
 \end{verbatim}
@@ -1839,10 +1840,14 @@ $O(n)$ space in memory.
 % TEMPORARY actually, live parsing also requires a way of performing
 % error recovery, up to a complete parse... as in Merlin.
 
-In this API, the parser is started by invoking \verb+main_incremental+,
-where \mystartsymbol is the name of the start symbol:
+In this API, the parser is started by invoking
+\texttt{Incremental.\mystartsymbol}.  (Recall that we assume \mystartsymbol is
+the name of the start symbol.) The generated file \texttt{parser.mli} contains
+the following declaration:
 \begin{verbatim}
-  val main_incremental: unit -> thing MenhirInterpreter.result
+  module Incremental : sig
+    val main: unit -> thing MenhirInterpreter.result
+  end
 \end{verbatim}
 
 The sub-module \menhirinterpreter is also part of the incremental API.
@@ -1932,10 +1937,10 @@ parser has suspended itself with a result of the form
 This function expects just the previous result \verb+result+. It produces a new
 result. It does not raise any exception.
 
-The incremental API subsumes the monolithic API. Indeed, \verb+main+ can
-be (and is in fact) implemented by first using \verb+main_incremental+, then
-calling \verb+offer+ and \verb+resume+ in a loop, until a final result is
-obtained.
+The incremental API subsumes the monolithic API. Indeed, \mystartsymbol can be
+(and is in fact) implemented by first using
+\texttt{Incremental.\mystartsymbol}, then calling \verb+offer+ and
+\verb+resume+ in a loop, until a final result is obtained.
 
 At this time, because the type \verb+env+ is opaque, the state of the parser
 cannot be inspected by the user. We plan to offer an inspection API in the

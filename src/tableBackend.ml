@@ -687,7 +687,9 @@ let application =
 
 (* ------------------------------------------------------------------------ *)
 
-(* The client API invokes the interpreter with an appropriate start state. *)
+(* The client APIs invoke the interpreter with an appropriate start state.
+   The monolithic API calls [entry] (see [Engine]), while the incremental
+   API calls [start]. *)
 
 (* An entry point to the monolithic API. *)
 
@@ -713,11 +715,19 @@ let monolithic_entry_point state nt t =
     )
   )
 
+(* The whole monolithic API. *)
+
+let monolithic_api : IL.valdef list =
+  Lr1.fold_entry (fun _prod state nt t api ->
+    monolithic_entry_point state nt t ::
+    api
+  ) []
+
 (* An entry point to the incremental API. *)
 
 let incremental_entry_point state nt t =
   define (
-    incremental (Nonterminal.print true nt),
+    Nonterminal.print true nt,
     (* In principle the abstraction [fun () -> ...] should not be
        necessary, since [start] is a pure function. However, when
        [--trace] is enabled, [start] will log messages to the
@@ -737,9 +747,10 @@ let incremental_entry_point state nt t =
     )
   )
 
-let api : IL.valdef list =
+(* The whole incremental API. *)
+
+let incremental_api : IL.valdef list =
   Lr1.fold_entry (fun _prod state nt t api ->
-    monolithic_entry_point state nt t ::
     incremental_entry_point state nt t ::
     api
   ) []
@@ -859,7 +870,11 @@ let program =
 
     SIModuleDef (interpreter, application) ::
 
-    SIValDefs (false, api) ::
+    SIValDefs (false, monolithic_api) ::
+
+    SIModuleDef (incremental, MStruct [
+      SIValDefs (false, incremental_api)
+    ]) ::
 
     listiflazy Settings.inspection (fun () ->
 

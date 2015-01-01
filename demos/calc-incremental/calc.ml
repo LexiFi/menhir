@@ -107,7 +107,7 @@ let rec loop linebuf (result : int I.result) =
 let process (line : string) =
   let linebuf = Lexing.from_string line in
   try
-    loop linebuf (Parser.main_incremental())
+    loop linebuf (Parser.Incremental.main())
   with
   | Lexer.Error msg ->
       Printf.fprintf stderr "%s%!" msg

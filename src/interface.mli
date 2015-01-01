@@ -19,9 +19,9 @@ val interpreter: string
 
 val result: IL.typ -> IL.typ
 
-(* The name of the incremental entry point for the start symbol [symbol]. *)
+(* The name of the sub-module that contains the incremental entry points. *)
 
-val incremental: string -> string
+val incremental: string
 
 (* This writes the interface of the generated parser to the [.mli] file. *)
 

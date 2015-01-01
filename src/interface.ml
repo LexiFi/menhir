@@ -40,13 +40,10 @@ let result t =
 
 (* -------------------------------------------------------------------------- *)
 
-(* The name of the incremental entry point for the start symbol [symbol]. *)
+(* The name of the sub-module that contains the incremental entry points. *)
 
-let incremental symbol =
-  (* This convention is not great. A name clash with a non-incremental
-     entry point is possible if there exists a nonterminal symbol whose name
-     ends with [_incremental]. It would be preferable to introduce a sub-module. *)
-  Misc.normalize symbol ^ "_incremental"
+let incremental =
+  "Incremental"
 
 (* The type of the incremental entry point for the start symbol [symbol]. *)
 
@@ -93,11 +90,13 @@ let incremental_api grammar () =
   ) ::
 
   IIComment "The entry point(s) to the incremental API." ::
-  IIValDecls (
-    StringSet.fold (fun symbol decls ->
-      (incremental symbol, entrytypescheme_incremental grammar symbol) :: decls
-    ) grammar.start_symbols []
-  ) ::
+  IIModule (incremental, MTSigEnd [
+    IIValDecls (
+      StringSet.fold (fun symbol decls ->
+        (symbol, entrytypescheme_incremental grammar symbol) :: decls
+      ) grammar.start_symbols []
+    )
+  ]) ::
 
   []
 
