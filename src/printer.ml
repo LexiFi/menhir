@@ -569,25 +569,30 @@ let typeconstraint f = function
       fprintf f "%tconstraint %a = %a" nl typ t1 typ t2
 
 let typedef f def =
-  fprintf f "%a%s%a%a%t%t"
+  fprintf f "%a%s%a%a"
     (typeparams typevar typevar) def.typeparams
     def.typename
     (typerhs def.typename) def.typerhs
     typeconstraint def.typeconstraint
-    nl nl
 
 let rec pdefs pdef sep1 sep2 f = function
   | [] ->
       ()
+  | [ def ] ->
+      fprintf f "%t%a" sep1 pdef def
   | def :: defs ->
-      fprintf f "%t%a%a" sep1 pdef def (pdefs pdef sep2 sep2) defs
+      fprintf f "%t%a%t%t%a"
+        sep1 pdef def
+        (* Separate two successive items with two newlines. *)
+        nl nl
+        (pdefs pdef sep2 sep2) defs
 
 let valdef f = function
   | { valpat = PVar id; valval = EAnnot (e, ts) } ->
       (* TEMPORARY current ocaml does not support type schemes here; drop quantifiers, if any *)
-      fprintf f "%s : %a =%a%t%t" id typ ts.body (* scheme ts *) (indent 2 expr) e nl nl
+      fprintf f "%s : %a =%a" id typ ts.body (* scheme ts *) (indent 2 expr) e
   | { valpat = p; valval = e } ->
-      fprintf f "%a =%a%t%t" pat p (indent 2 expr) e nl nl
+      fprintf f "%a =%a" pat p (indent 2 expr) e
 
 let valdefs recursive =
   pdefs valdef (if recursive then letrec else letnonrec) et
@@ -599,38 +604,48 @@ let excdef in_intf f def =
   match in_intf, def.exceq with
   | _, None
   | true, Some _ ->
-      fprintf f "%s%t%t" def.excname nl nl
+      fprintf f "%s" def.excname
   | false, Some s ->
-      fprintf f "%s = %s%t%t" def.excname s nl nl
+      fprintf f "%s = %s" def.excname s
 
 let excdefs in_intf =
   pdefs (excdef in_intf) exc exc
 
 let block format body f b =
-  fprintf f format (
-    indent 2 (fun f b ->
-      nl f;
-      body f b
-    )
+  fprintf f format (fun f b ->
+    indent 2 body f b;
+    nl f
   ) b
 
-let rec structure_item f = function
+(* Convention: each structure (or interface) item prints a newline before and
+   after itself. *)
+
+let rec structure_item f item =
+  match item with
   | SIFunctor ([], s) ->
       structure f s
-  | SIFunctor (_ :: _ as params, s) ->
-      fprintf f "module Make%a%t= %a%t"
-	(list (stretch false) nl) params nl
-	structend s nl
-  | SIExcDefs defs ->
-      excdefs false f defs
-  | SITypeDefs defs ->
-      typedefs f defs
-  | SIValDefs (recursive, defs) ->
-      valdefs recursive f defs
   | SIStretch stretches ->
       List.iter (stretch false f) stretches
-  | SIModuleDef (name, rhs) ->
-      fprintf f "module %s = %a%t%t" name modexpr rhs nl nl
+  | _ ->
+    nl f;
+    begin match item with
+    | SIFunctor (params, s) ->
+        fprintf f "module Make%a%t= %a"
+          (list (stretch false) nl) params
+          nl
+          structend s
+    | SIExcDefs defs ->
+        excdefs false f defs
+    | SITypeDefs defs ->
+        typedefs f defs
+    | SIValDefs (recursive, defs) ->
+        valdefs recursive f defs
+    | SIStretch _ ->
+        assert false (* already handled above *)
+    | SIModuleDef (name, rhs) ->
+        fprintf f "module %s = %a" name modexpr rhs
+    end;
+    nl f
 
 and structend f s =
   block "struct%aend" structure f s
@@ -647,7 +662,7 @@ and modexpr f = function
       fprintf f "%a (%a)" modexpr e1 modexpr e2
 
 let valdecl f (x, ts) =
-  fprintf f "val %s: %a%t%t" x typ ts.body nl nl
+  fprintf f "val %s: %a" x typ ts.body
 
 let with_kind f = function
   | WKNonDestructive ->
@@ -671,25 +686,31 @@ and with_type f (name, wk, t) =
     with_kind wk
     typ t
 
-and interface_item f = function
+and interface_item f item =
+  match item with
   | IIFunctor ([], i) ->
       interface f i
-  | IIFunctor (_ :: _ as params, i) ->
-      fprintf f "module Make%a%t: %a%t"
-	(list (stretch false) nl) params nl
-	sigend i nl
-  | IIExcDecls defs ->
-      excdefs true f defs
-  | IITypeDecls defs ->
-      typedefs f defs
-  | IIValDecls decls ->
-      pdefs valdecl nothing nothing f decls
-  | IIInclude mt ->
-      fprintf f "include %a%t%t" module_type mt nl nl
-  | IIModule (name, mt) ->
-      fprintf f "module %s : %a%t%t" name module_type mt nl nl
-  | IIComment comment ->
-      fprintf f "(* %s *)%t" comment nl
+  | _ ->
+    nl f;
+    begin match item with
+    | IIFunctor (params, i) ->
+        fprintf f "module Make%a%t: %a"
+          (list (stretch false) nl) params nl
+          sigend i
+    | IIExcDecls defs ->
+        excdefs true f defs
+    | IITypeDecls defs ->
+        typedefs f defs
+    | IIValDecls decls ->
+        pdefs valdecl nothing nothing f decls
+    | IIInclude mt ->
+        fprintf f "include %a" module_type mt
+    | IIModule (name, mt) ->
+        fprintf f "module %s : %a" name module_type mt
+    | IIComment comment ->
+        fprintf f "(* %s *)" comment
+    end;
+    nl f
 
 and sigend f i =
   block "sig%aend" interface f i
