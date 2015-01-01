@@ -3,6 +3,20 @@
 
 open IL
 
+(* A list subject to a condition. *)
+
+let listif condition xs =
+  if condition then
+    xs
+  else
+    []
+
+let elementif condition x =
+  if condition then
+    [ x ]
+  else
+    []
+
 (* The unit type. *)
 
 let tunit =

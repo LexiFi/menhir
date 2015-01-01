@@ -269,18 +269,6 @@ let tresult =
 (* ------------------------------------------------------------------------ *)
 (* Helpers for code production. *)
 
-let concatif condition xs =
-  if condition then
-    xs
-  else
-    []
-
-let insertif condition x =
-  if condition then
-    [ x ]
-  else
-    []
-
 let var x : expr =
   EVar x
 
@@ -588,10 +576,10 @@ let curryif flag t =
 let celltype tailtype holds_state symbol _ =
   TypTuple (
     tailtype ::
-    insertif holds_state tstate @
+    elementif holds_state tstate @
     semvtype symbol @
-    insertif (Invariant.startp symbol) tposition @
-    insertif (Invariant.endp symbol) tposition
+    elementif (Invariant.startp symbol) tposition @
+    elementif (Invariant.endp symbol) tposition
   )
 
 (* Types for stacks. 
@@ -708,10 +696,10 @@ let letunless e x e1 e2 =
    [run]. *)
 
 let runcellparams var holds_state symbol =
-  insertif holds_state (var state) @
+  elementif holds_state (var state) @
   symval symbol (var semv) @
-  insertif (Invariant.startp symbol) (var startp) @
-  insertif (Invariant.endp symbol) (var endp)
+  elementif (Invariant.startp symbol) (var startp) @
+  elementif (Invariant.endp symbol) (var endp)
 
 (* The contents of a stack cell, exposed as individual parameters, again.
    The choice of identifiers is suitable for use in the definition of a
@@ -737,10 +725,10 @@ let reducecellparams prod i holds_state symbol =
       PWildcard
   in
 
-  insertif holds_state (if i = 0 then PVar state else PWildcard) @
+  elementif holds_state (if i = 0 then PVar state else PWildcard) @
   symvalt symbol semvpat @
-  insertif (Invariant.startp symbol) (PVar (Printf.sprintf "_startpos_%s_" ids.(i))) @
-  insertif (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i)))
+  elementif (Invariant.startp symbol) (PVar (Printf.sprintf "_startpos_%s_" ids.(i))) @
+  elementif (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i)))
 
 (* The contents of a stack cell, exposed as individual parameters,
    again. The choice of identifiers is suitable for use in the
@@ -750,10 +738,10 @@ let errorcellparams (i, pat) holds_state symbol _ =
   i + 1,
   ptuple (
     pat ::
-    insertif holds_state (if i = 0 then PVar state else PWildcard) @
+    elementif holds_state (if i = 0 then PVar state else PWildcard) @
     symval symbol PWildcard @
-    insertif (Invariant.startp symbol) PWildcard @
-    insertif (Invariant.endp symbol) PWildcard
+    elementif (Invariant.startp symbol) PWildcard @
+    elementif (Invariant.endp symbol) PWildcard
   )
 
 (* Calls to [run]. *)
@@ -761,7 +749,7 @@ let errorcellparams (i, pat) holds_state symbol _ =
 let runparams magic var s =
   var env ::
   magic (var stack) ::
-  concatif (runpushes s) (Invariant.fold_top (runcellparams var) [] (Invariant.stack s))
+  listif (runpushes s) (Invariant.fold_top (runcellparams var) [] (Invariant.stack s))
 
 let call_run s actuals =
   EApp (EVar (run s), actuals)
@@ -775,12 +763,12 @@ let call_run s actuals =
 let reduceparams prod =
   PVar env ::
   PVar stack ::
-  concatif (shiftreduce prod) (
+  listif (shiftreduce prod) (
     Invariant.fold_top
       (reducecellparams prod (Production.length prod - 1))
     [] (Invariant.prodstack prod)
   ) @
-  insertif (reduce_expects_state_param prod) (PVar state)
+  elementif (reduce_expects_state_param prod) (PVar state)
 
 (* Calls to [reduce]. One must specify the production [prod] as well
    as the current state [s]. *)
@@ -789,10 +777,10 @@ let call_reduce prod s =
   let actuals =
     (EVar env) ::
     (EMagic (EVar stack)) ::
-    concatif (shiftreduce prod)
+    listif (shiftreduce prod)
       (Invariant.fold_top (runcellparams var) [] (Invariant.stack s))
       (* compare with [runpushcell s] *) @
-    insertif (reduce_expects_state_param prod) (estatecon s)
+    elementif (reduce_expects_state_param prod) (estatecon s)
   in
   EApp (EVar (reduce prod), actuals)
 
@@ -880,10 +868,10 @@ let shiftbranchbody s tok s' =
     (EMagic (EVar stack)) ::
     Invariant.fold_top (fun holds_state symbol ->
       assert (Symbol.equal (Symbol.T tok) symbol);
-      insertif holds_state (estatecon s) @
+      elementif holds_state (estatecon s) @
       tokval tok (EVar semv) @
-      insertif (Invariant.startp symbol) getstartp @
-      insertif (Invariant.endp symbol) getendp
+      elementif (Invariant.startp symbol) getstartp @
+      elementif (Invariant.endp symbol) getendp
     ) [] (Invariant.stack s')
   in
 
@@ -1210,14 +1198,14 @@ let reducebody prod =
     and bind_endp =
       Action.has_leftend action || Invariant.endp symbol
     in
-    insertif bind_startp
+    elementif bind_startp
       ( PVar startp,
 	if length > 0 then
 	  EVar (Printf.sprintf "_startpos_%s_" ids.(0))
         else
           getstartp
       ) @
-    insertif bind_endp
+    elementif bind_endp
       ( PVar endp,
 	if length > 0 then
 	  EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1))

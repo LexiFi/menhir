@@ -3,6 +3,11 @@
 
 open IL
 
+(* A list subject to a condition. *)
+
+val listif: bool -> 'a list -> 'a list
+val elementif: bool -> 'a -> 'a list
+
 (* Standard types. *)
 
 val tunit: typ
