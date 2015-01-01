@@ -27,6 +27,15 @@ for f in $DATA/*.real.in ; do
   $CALC/calc < $f > $b.table.out 2> $b.table.err
 done
 
+# Build the parser with the table back-end (with --inspection) and run it.
+echo "Building and running (inspection)..."
+make -C $CALC MENHIR="$MENHIR --trace --table --inspection" clean >/dev/null
+make -C $CALC MENHIR="$MENHIR --trace --table --inspection"       >/dev/null
+for f in $DATA/*.real.in ; do
+  b=${f%.in}
+  $CALC/calc < $f > $b.inspection.out 2> $b.inspection.err
+done
+
 # Run the reference interpreter.
 echo "Running the reference interpreter..."
 for f in $DATA/*.ideal.in ; do
@@ -39,7 +48,7 @@ echo "Comparing results..."
 # Compare the results to the reference.
 for f in $DATA/*.real.in ; do
   b=${f%.in}
-  for mode in code table ; do
+  for mode in code table inspection ; do
     echo "($b) Checking output of $mode parser..."
     if ! diff -q $b.ref.out $b.$mode.out >/dev/null ; then
       echo "($b) The $mode parser produces a wrong result!"
