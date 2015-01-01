@@ -46,56 +46,64 @@ let entrytypescheme_incremental grammar symbol =
   let t = TypTextual (ocamltype_of_start_symbol grammar symbol) in
   type2scheme (marrow [ tunit ] (result t))
 
-(* This is the interface of the generated parser -- only the part
-   that is specific of the table back-end. *)
-
-let table_interface grammar =
-  if Settings.table then [
-    IIComment "The incremental API.";
-    IIModule (
-      interpreter,
-      MTWithType (
-        MTNamedModuleType "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE",
-        "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
-        WKDestructive,
-        TokenType.ttoken
-      )
-    );
-    IIComment "The entry point(s) to the incremental API.";
-    IIValDecls (
-      StringSet.fold (fun symbol decls ->
-        (incremental symbol, entrytypescheme_incremental grammar symbol) :: decls
-      ) grammar.start_symbols []
-    );
-    (* TEMPORARY comment *)
-    IIValDecls [
-      let ty =
-        arrow (TypApp (interpreter ^ ".lr1state", [ TypVar "a" ]))
-              (TypApp ("symbol", [ TypVar "a" ]))
-      in
-      (* TEMPORARY code sharing with tableBackend *)
-      "symbol", type2scheme ty
-    ]
-  ] else []
-
 (* This is the interface of the generated parser. *)
 
 let interface grammar = [
   IIFunctor (grammar.parameters,
-    TokenType.tokentypedef grammar @ [
-    IIComment "This exception is raised by the monolithic API functions.";
-    IIExcDecls [ excdef ];
-    IIComment "The monolithic API.";
+
+    (* The monolithic (traditional) API: the type [token], the exception
+       [Error], and the parser's entry points. *)
+
+    TokenType.tokentypedef grammar @
+
+    IIComment "This exception is raised by the monolithic API functions." ::
+    IIExcDecls [ excdef ] ::
+
+    IIComment "The monolithic API." ::
     IIValDecls (
       StringSet.fold (fun symbol decls ->
         (Misc.normalize symbol, entrytypescheme grammar symbol) :: decls
       ) grammar.start_symbols []
-    )
+    ) ::
+
+    (* The incremental engine and API. *)
+
+    listif Settings.table [
+      IIComment "The incremental API.";
+      IIModule (
+        interpreter,
+        MTWithType (
+          MTNamedModuleType "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE",
+          "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
+          WKDestructive,
+          TokenType.ttoken
+        )
+      );
+      IIComment "The entry point(s) to the incremental API.";
+      IIValDecls (
+        StringSet.fold (fun symbol decls ->
+          (incremental symbol, entrytypescheme_incremental grammar symbol) :: decls
+        ) grammar.start_symbols []
+      )
     ] @
-    TokenType.tokengadtdef grammar @
-    NonterminalType.nonterminalgadtdef grammar @
-    SymbolType.symbolgadtdef grammar @
-    table_interface grammar
+
+    (* The inspection API. *)
+
+    listif Settings.table (
+      TokenType.tokengadtdef grammar @
+      NonterminalType.nonterminalgadtdef grammar @
+      SymbolType.symbolgadtdef grammar @
+      (* TEMPORARY emit a comment *)
+      IIValDecls [
+        let ty =
+          arrow (TypApp (interpreter ^ ".lr1state", [ TypVar "a" ]))
+                (TypApp ("symbol", [ TypVar "a" ]))
+        in
+        (* TEMPORARY code sharing with tableBackend *)
+        "symbol", type2scheme ty
+      ] ::
+      []
+    )
   )
 ]
 
