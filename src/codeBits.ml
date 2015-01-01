@@ -17,6 +17,12 @@ let elementif condition x =
   else
     []
 
+let listiflazy condition xs =
+  if condition then
+    xs()
+  else
+    []
+
 (* The unit type. *)
 
 let tunit =

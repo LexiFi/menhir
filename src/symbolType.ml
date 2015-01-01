@@ -21,6 +21,7 @@ let dataN =
 (* The definition of the symbol GADT. *)
 
 let symbolgadtdef grammar =
+  assert Settings.table;
   (* This definition can be produced only if we are successfully able
      to construct the nonterminal GADT. *)
   match NonterminalType.nonterminalgadtdef grammar with

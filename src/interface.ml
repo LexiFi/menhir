@@ -68,7 +68,7 @@ let interface grammar = [
 
     (* The incremental engine and API. *)
 
-    listif Settings.table [
+    listiflazy Settings.table (fun () -> [
       IIComment "The incremental API.";
       IIModule (
         interpreter,
@@ -85,11 +85,11 @@ let interface grammar = [
           (incremental symbol, entrytypescheme_incremental grammar symbol) :: decls
         ) grammar.start_symbols []
       )
-    ] @
+    ]) @
 
     (* The inspection API. *)
 
-    listif Settings.table (
+    listiflazy Settings.table (fun () ->
       TokenType.tokengadtdef grammar @
       NonterminalType.nonterminalgadtdef grammar @
       SymbolType.symbolgadtdef grammar @

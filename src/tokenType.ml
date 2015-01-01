@@ -71,37 +71,35 @@ let tokentypedef grammar =
    GADTs. *)
 
 let tokengadtdef grammar =
-  if Settings.table then
-    let datadefs =
-      StringMap.fold (fun token properties defs ->
-        if properties.tk_is_declared then
-          let index =
-            match properties.tk_ocamltype with
-            | None ->
-                tunit
-            | Some t ->
-                TypTextual t
-          in
-          {
-            dataname = ttokengadtdata token;
-            datavalparams = [];
-            datatypeparams = Some [ index ]
-          } :: defs
-        else
-          defs
-      ) grammar.tokens []
-    in
-    [
-      IIComment "The indexed type of terminal symbols.";
-      IITypeDecls [{
-        typename = tctokengadt;
-        typeparams = [ "_" ];
-        typerhs = TDefSum datadefs;
-        typeconstraint = None
-      }]
-    ]
-  else
-    []
+  assert Settings.table;
+  let datadefs =
+    StringMap.fold (fun token properties defs ->
+      if properties.tk_is_declared then
+        let index =
+          match properties.tk_ocamltype with
+          | None ->
+              tunit
+          | Some t ->
+              TypTextual t
+        in
+        {
+          dataname = ttokengadtdata token;
+          datavalparams = [];
+          datatypeparams = Some [ index ]
+        } :: defs
+      else
+        defs
+    ) grammar.tokens []
+  in
+  [
+    IIComment "The indexed type of terminal symbols.";
+    IITypeDecls [{
+      typename = tctokengadt;
+      typeparams = [ "_" ];
+      typerhs = TDefSum datadefs;
+      typeconstraint = None
+    }]
+  ]
 
 (* If we were asked to only produce a type definition, then
    do so and stop. *)
@@ -116,7 +114,9 @@ let produce_tokentypes grammar =
 
       let i =
         tokentypedef grammar @
-        tokengadtdef grammar
+        listiflazy Settings.table (fun () ->
+          tokengadtdef grammar
+        )
       in
 
       let module P = 

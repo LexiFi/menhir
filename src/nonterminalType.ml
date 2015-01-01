@@ -22,37 +22,34 @@ let tnonterminalgadtdata nt =
 exception MissingOCamlType
 
 let nonterminalgadtdef grammar =
-  if Settings.table then
-    try
-      let datadefs =
-        List.fold_left (fun defs nt ->
-          let index =
-            match ocamltype_of_symbol grammar nt with
-            | Some t ->
-                TypTextual t
-            | None ->
-                raise MissingOCamlType
-          in
-          {
-            dataname = tnonterminalgadtdata nt;
-            datavalparams = [];
-            datatypeparams = Some [ index ]
-          } :: defs
-        ) [] (nonterminals grammar)
-      in
-      [
-        IIComment "The indexed type of nonterminal symbols.";
-        IITypeDecls [{
-          typename = tcnonterminalgadt;
-          typeparams = [ "_" ];
-          typerhs = TDefSum datadefs;
-          typeconstraint = None
-        }]
-      ]
-    with MissingOCamlType ->
-      (* If the type of some nonterminal symbol is unknown, give up
-         on the whole thing. *)
-      []
-  else
+  assert Settings.table;
+  try
+    let datadefs =
+      List.fold_left (fun defs nt ->
+        let index =
+          match ocamltype_of_symbol grammar nt with
+          | Some t ->
+              TypTextual t
+          | None ->
+              raise MissingOCamlType
+        in
+        {
+          dataname = tnonterminalgadtdata nt;
+          datavalparams = [];
+          datatypeparams = Some [ index ]
+        } :: defs
+      ) [] (nonterminals grammar)
+    in
+    [
+      IIComment "The indexed type of nonterminal symbols.";
+      IITypeDecls [{
+        typename = tcnonterminalgadt;
+        typeparams = [ "_" ];
+        typerhs = TDefSum datadefs;
+        typeconstraint = None
+      }]
+    ]
+  with MissingOCamlType ->
+    (* If the type of some nonterminal symbol is unknown, give up
+       on the whole thing. *)
     []
-

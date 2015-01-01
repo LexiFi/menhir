@@ -3,10 +3,16 @@
 
 open IL
 
-(* A list subject to a condition. *)
+(* A list subject to a condition. (Be careful, though: the list is
+   of course constructed even if the condition is false.) *)
 
 val listif: bool -> 'a list -> 'a list
 val elementif: bool -> 'a -> 'a list
+
+(* A lazy version of [listif], where the list is constructed only
+   if the condition is true. *)
+
+val listiflazy: bool -> (unit -> 'a list) -> 'a list
 
 (* Standard types. *)
 
