@@ -9,7 +9,7 @@ endif
 # We assume that menhirLib has been installed in such a
 # way that ocamlfind knows about it.
 
-MENHIRFLAGS     := --infer --table
+MENHIRFLAGS     := --infer --table --inspection
 
 OCAMLBUILD      := ocamlbuild -use-ocamlfind -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS)" -package menhirLib
 

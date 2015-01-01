@@ -20,33 +20,27 @@ let dataN =
 
 (* The definition of the symbol GADT. *)
 
-let symbolgadtdef grammar =
-  assert Settings.table;
-  (* This definition can be produced only if we are successfully able
-     to construct the nonterminal GADT. *)
-  match NonterminalType.nonterminalgadtdef grammar with
-  | [] ->
-      []
-  | _ :: _ ->
-      let a = "a" in
-      let datadefs =
-        {
-          dataname = dataT;
-          datavalparams = [ TokenType.ttokengadt (TypVar a) ];
-          datatypeparams = Some [ TypVar a ]
-        } ::
-        {
-          dataname = dataN;
-          datavalparams = [ NonterminalType.tnonterminalgadt (TypVar a) ];
-          datatypeparams = Some [ TypVar a ]
-        } ::
-        []
-      in
-      [ IIComment "The indexed type of terminal and nonterminal symbols.";
-        IITypeDecls [{
-          typename = tcsymbolgadt;
-          typeparams = [ a ];
-          typerhs = TDefSum datadefs;
-          typeconstraint = None
-        }]
-      ]
+let symbolgadtdef () =
+  assert Settings.inspection;
+  let a = "a" in
+  let datadefs =
+    {
+      dataname = dataT;
+      datavalparams = [ TokenType.ttokengadt (TypVar a) ];
+      datatypeparams = Some [ TypVar a ]
+    } ::
+    {
+      dataname = dataN;
+      datavalparams = [ NonterminalType.tnonterminalgadt (TypVar a) ];
+      datatypeparams = Some [ TypVar a ]
+    } ::
+    []
+  in
+  [ IIComment "The indexed type of terminal and nonterminal symbols.";
+    IITypeDecls [{
+      typename = tcsymbolgadt;
+      typeparams = [ a ];
+      typerhs = TDefSum datadefs;
+      typeconstraint = None
+    }]
+  ]

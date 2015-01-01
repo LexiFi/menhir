@@ -16,7 +16,8 @@ val tnonterminalgadtdata: string -> string
    generators. This definition can be constructed only if the type of every
    nonterminal symbol is known, either because the user has provided this
    information, or because [--infer] has been set and inference has been
-   performed already. This definition is produced only in [--table] mode. *)
+   performed already. This definition is produced only in [--inspection]
+   mode. *)
 
 val nonterminalgadtdef: UnparameterizedSyntax.grammar -> IL.interface
 

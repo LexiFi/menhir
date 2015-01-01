@@ -131,6 +131,11 @@ val interpret_show_cst : bool
 
 val table : bool
 
+(* Whether to generate the inspection API (which requires GADTs, and
+   requires producing more tables). *)
+
+val inspection : bool
+
 (* Whether to generate a coq description of the grammar and automaton. *)
 
 val coq : bool

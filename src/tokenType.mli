@@ -5,9 +5,9 @@
    which describes the tokens. A token contains a tag (a terminal symbol)
    and possibly a semantic value. *)
 
-(* In addition to that, in [--table] mode only, we produce a GADT which
-   describes the terminal symbols. A terminal symbol is just a tag; it
-   does not carry a semantic value. *)
+(* In addition to that, in [--inspection] mode only, we produce a GADT which
+   describes the terminal symbols. A terminal symbol is just a tag; it does
+   not carry a semantic value. *)
 
 (* In this module, we also deal with [--only-tokens] and [--external-tokens].
    If [--only-tokens] is specified on the command line, [produce_tokentypes]
@@ -41,8 +41,8 @@ val tokengadtdata: string -> string
 (* The definitions of the token type and of the token GADT, for use by the
    code generators. Each of these lists may define zero or one type. Indeed,
    both lists are empty when [--external-tokens] is set. Otherwise, only the
-   type [token] is defined when not in [--table] mode, and both [token] and
-   [terminal] are defined when in [--table] mode. *)
+   type [token] is defined always, and the type [terminal] is defined only in
+   [--inspection] mode. *)
 
 val tokentypedef: UnparameterizedSyntax.grammar -> IL.interface
 val tokengadtdef: UnparameterizedSyntax.grammar -> IL.interface

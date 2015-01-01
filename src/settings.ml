@@ -173,7 +173,7 @@ let options = Arg.align [
   "--follow-construction", Arg.Set follow, " (undocumented)";
   "--graph", Arg.Set graph, " Write grammar's dependency graph to <basename>.dot";
   "--infer", Arg.Set infer, " Invoke ocamlc for ahead of time type inference";
-  "--inspection", Arg.Set inspection, " Generate an inspection API (requires --table)";
+  "--inspection", Arg.Set inspection, " Generate the inspection API (requires --table)";
   "--interpret", Arg.Set interpret, " Interpret the sentences provided on stdin";
   "--interpret-show-cst", Arg.Set interpret_show_cst, " Show a concrete syntax tree upon acceptance";
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";

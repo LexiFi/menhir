@@ -66,12 +66,12 @@ let tokentypedef grammar =
 (* This is the definition of the token GADT. Here, the data
    constructors have no value argument, but have a type index. *)
 
-(* The token GADT is produced only in [--table] mode. This ensures that, when
-   [--table] is off, we remain compatible with old versions of OCaml, without
-   GADTs. *)
+(* The token GADT is produced only when [Settings.inspection] is true. Thus,
+   when [Settings.inspection] is false, we remain compatible with old versions
+   of OCaml, without GADTs. *)
 
 let tokengadtdef grammar =
-  assert Settings.table;
+  assert Settings.inspection;
   let datadefs =
     StringMap.fold (fun token properties defs ->
       if properties.tk_is_declared then
@@ -114,7 +114,7 @@ let produce_tokentypes grammar =
 
       let i =
         tokentypedef grammar @
-        listiflazy Settings.table (fun () ->
+        listiflazy Settings.inspection (fun () ->
           tokengadtdef grammar
         )
       in

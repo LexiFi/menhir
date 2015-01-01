@@ -22,9 +22,10 @@ let tnonterminalgadtdata nt =
 exception MissingOCamlType
 
 let nonterminalgadtdef grammar =
-  assert Settings.table;
-  try
-    let datadefs =
+  assert Settings.inspection;
+  let comment, datadefs =
+    try
+      "The indexed type of nonterminal symbols.",
       List.fold_left (fun defs nt ->
         let index =
           match ocamltype_of_symbol grammar nt with
@@ -39,17 +40,21 @@ let nonterminalgadtdef grammar =
           datatypeparams = Some [ index ]
         } :: defs
       ) [] (nonterminals grammar)
-    in
-    [
-      IIComment "The indexed type of nonterminal symbols.";
-      IITypeDecls [{
-        typename = tcnonterminalgadt;
-        typeparams = [ "_" ];
-        typerhs = TDefSum datadefs;
-        typeconstraint = None
-      }]
-    ]
-  with MissingOCamlType ->
-    (* If the type of some nonterminal symbol is unknown, give up
-       on the whole thing. *)
-    []
+    with MissingOCamlType ->
+      (* If the type of some nonterminal symbol is unknown, give up
+         and define ['a nonterminal] as an abstract type. This is
+         useful when we are in [--(raw)-depend] mode and we do not
+         wish to fail. Instead, we produce a mock [.mli] file that
+         is an approximation of the real [.mli] file. *)
+      "The indexed type of nonterminal symbols (mock!).",
+      []
+  in
+  [
+    IIComment comment;
+    IITypeDecls [{
+      typename = tcnonterminalgadt;
+      typeparams = [ "_" ];
+      typerhs = TDefSum datadefs;
+      typeconstraint = None
+    }]
+  ]

@@ -778,8 +778,6 @@ let tlr1state a : typ =
 (* Produce a function [symbol] that maps a state of type ['a lr1state]
    (represented as an integer value) to a value of type ['a symbol]. *)
 
-(* TEMPORARY maybe subject to a switch, so as to reduce table size *)
-
 let incoming_symbol_def = {
   valpublic = true;
   valpat = PVar "symbol";
@@ -858,13 +856,19 @@ let program =
 
     SIValDefs (false, api) ::
 
-    interface_to_structure (
-      tokengadtdef grammar @
-      nonterminalgadtdef grammar @
-      symbolgadtdef grammar
-    ) @
+    listiflazy Settings.inspection (fun () ->
 
-    SIValDefs (false, [incoming_symbol_def]) ::
+      interface_to_structure (
+        tokengadtdef grammar @
+        nonterminalgadtdef grammar @
+        symbolgadtdef()
+      ) @
+
+      SIValDefs (false, [incoming_symbol_def]) ::
+
+      []
+
+    ) @
 
     SIStretch grammar.postludes ::
 
