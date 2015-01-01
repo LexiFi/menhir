@@ -131,6 +131,9 @@ let interpret_show_cst =
 let table = 
   ref false
 
+let inspection =
+  ref false
+
 let coq = 
   ref false
 
@@ -170,6 +173,7 @@ let options = Arg.align [
   "--follow-construction", Arg.Set follow, " (undocumented)";
   "--graph", Arg.Set graph, " Write grammar's dependency graph to <basename>.dot";
   "--infer", Arg.Set infer, " Invoke ocamlc for ahead of time type inference";
+  "--inspection", Arg.Set inspection, " Generate an inspection API (requires --table)";
   "--interpret", Arg.Set interpret, " Interpret the sentences provided on stdin";
   "--interpret-show-cst", Arg.Set interpret_show_cst, " Show a concrete syntax tree upon acceptance";
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
@@ -357,6 +361,15 @@ let interpret_show_cst =
 
 let table = 
   !table
+
+let inspection =
+  !inspection
+
+let () =
+  if inspection && not table then begin
+    fprintf stderr "Error: --inspection requires --table.\n";
+    exit 1
+  end
 
 let coq = 
   !coq
