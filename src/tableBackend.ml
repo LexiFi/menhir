@@ -689,53 +689,58 @@ let application =
 
 (* The client API invokes the interpreter with an appropriate start state. *)
 
+(* An entry point to the monolithic API. *)
+
+let monolithic_entry_point state nt t =
+  define (
+    Nonterminal.print true nt,
+    let lexer = "lexer"
+    and lexbuf = "lexbuf" in
+    EFun (
+      [ PVar lexer; PVar lexbuf ],
+      EAnnot (
+        EMagic (
+          EApp (
+            EVar entry, [
+              EIntConst (Lr1.number state);
+              EVar lexer;
+              EVar lexbuf
+            ]
+          )
+        ),
+        type2scheme (TypTextual t)
+      )
+    )
+  )
+
+(* An entry point to the incremental API. *)
+
+let incremental_entry_point state nt t =
+  define (
+    incremental (Nonterminal.print true nt),
+    (* In principle the abstraction [fun () -> ...] should not be
+       necessary, since [start] is a pure function. However, when
+       [--trace] is enabled, [start] will log messages to the
+       standard error channel. *)
+    EFun (
+      [ PUnit ],
+      EAnnot (
+        EMagic (
+          EApp (
+            EVar start, [
+              EIntConst (Lr1.number state);
+            ]
+          )
+        ),
+        type2scheme (result (TypTextual t))
+      )
+    )
+  )
+
 let api : IL.valdef list =
-
-  let lexer = "lexer"
-  and lexbuf = "lexbuf" in
-
   Lr1.fold_entry (fun _prod state nt t api ->
-    (* The entry point to the monolithic API. *)
-    define (
-      Nonterminal.print true nt,
-      EFun (
-	[ PVar lexer; PVar lexbuf ],
-	EAnnot (
-	  EMagic (
-	    EApp (
-	      EVar entry, [
-		EIntConst (Lr1.number state);
-		EVar lexer;
-		EVar lexbuf
-	      ]
-	    )
-	  ),
-	  type2scheme (TypTextual t)
-	)
-      )
-    ) ::
-    (* The entry point to the incremental API. *)
-    define (
-      (* [false] is intentional; [incremental] performs normalization *)
-      incremental (Nonterminal.print false nt),
-      (* In principle the abstraction [fun () -> ...] should not be
-         necessary, since [start] is a pure function. However, when
-         [--trace] is enabled, [start] will log messages to the
-         standard error channel. *)
-      EFun (
-        [ PUnit ],
-	EAnnot (
-          EMagic (
-            EApp (
-              EVar start, [
-                EIntConst (Lr1.number state);
-              ]
-            )
-          ),
-          type2scheme (result (TypTextual t))
-        )
-      )
-    ) ::
+    monolithic_entry_point state nt t ::
+    incremental_entry_point state nt t ::
     api
   ) []
 
