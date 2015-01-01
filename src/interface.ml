@@ -82,9 +82,7 @@ let table_interface grammar =
 
 let interface grammar = [
   IIFunctor (grammar.parameters,
-    TokenType.tokentypedefs grammar @
-    NonterminalType.nonterminalgadtdef grammar @
-    SymbolType.symbolgadtdef grammar @ [
+    TokenType.tokentypedef grammar @ [
     IIComment "This exception is raised by the monolithic API functions.";
     IIExcDecls [ excdef ];
     IIComment "The monolithic API.";
@@ -93,7 +91,12 @@ let interface grammar = [
         (Misc.normalize symbol, entrytypescheme grammar symbol) :: decls
       ) grammar.start_symbols []
     )
-  ] @ table_interface grammar)
+    ] @
+    TokenType.tokengadtdef grammar @
+    NonterminalType.nonterminalgadtdef grammar @
+    SymbolType.symbolgadtdef grammar @
+    table_interface grammar
+  )
 ]
 
 (* Writing the interface to a file. *)

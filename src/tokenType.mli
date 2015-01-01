@@ -15,7 +15,7 @@
    then the list [tokentypedefs] is empty, and [tokenprefix] produces a
    nontrivial prefix. *)
 
-(* This is the conventional name of the [token] type, for use by the code
+(* The conventional name of the [token] type, for use by the code
    generators. If [--external-tokens] is set, this type is qualified. *)
 
 val ttoken: IL.typ
@@ -26,10 +26,10 @@ val ttoken: IL.typ
 
 val tokendata: string -> string
 
-(* This is the conventional name of the [terminal] type, a.k.a. the token
-   GADT. This is an indexed type (i.e., it has one type parameter). Its data
-   constructors carry zero value arguments. If [--external-tokens] is set,
-   this type is qualified. *)
+(* The conventional name of the [terminal] type, a.k.a. the token GADT. This
+   is an indexed type (i.e., it has one type parameter). Its data constructors
+   carry zero value arguments. If [--external-tokens] is set, this type is
+   qualified. *)
 
 val ttokengadt: IL.typ -> IL.typ
 
@@ -38,13 +38,14 @@ val ttokengadt: IL.typ -> IL.typ
 
 val tokengadtdata: string -> string
 
-(* These are the definitions of the types of tokens, for use by the code
-   generators. This can be a list of zero, one, or two types. Indeed, this
-   list is empty when [--external-tokens] is set. Otherwise, it contains just
-   the type [token] when not in [--table] mode, and the types [token] and
-   [terminal] when in [--table] mode. *)
+(* The definitions of the token type and of the token GADT, for use by the
+   code generators. Each of these lists may define zero or one type. Indeed,
+   both lists are empty when [--external-tokens] is set. Otherwise, only the
+   type [token] is defined when not in [--table] mode, and both [token] and
+   [terminal] are defined when in [--table] mode. *)
 
-val tokentypedefs: UnparameterizedSyntax.grammar -> IL.interface
+val tokentypedef: UnparameterizedSyntax.grammar -> IL.interface
+val tokengadtdef: UnparameterizedSyntax.grammar -> IL.interface
 
 (* If [--only-tokens] is set, then [produce_tokentypes] writes the type
    definitions to the [.ml] and [.mli] files and stops Menhir. Otherwise,

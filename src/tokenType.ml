@@ -66,45 +66,42 @@ let tokentypedef grammar =
 (* This is the definition of the token GADT. Here, the data
    constructors have no value argument, but have a type index. *)
 
+(* The token GADT is produced only in [--table] mode. This ensures that, when
+   [--table] is off, we remain compatible with old versions of OCaml, without
+   GADTs. *)
+
 let tokengadtdef grammar =
-  let datadefs =
-    StringMap.fold (fun token properties defs ->
-      if properties.tk_is_declared then
-	let index =
-	  match properties.tk_ocamltype with
-	  | None ->
-	      tunit
-	  | Some t ->
-	      TypTextual t
-	in
-	{
-	  dataname = ttokengadtdata token;
-	  datavalparams = [];
-	  datatypeparams = Some [ index ]
-	} :: defs
-      else
-	defs
-    ) grammar.tokens []
-  in
-  [
-    IIComment "The indexed type of terminal symbols.";
-    IITypeDecls [{
-      typename = tctokengadt;
-      typeparams = [ "_" ];
-      typerhs = TDefSum datadefs;
-      typeconstraint = None
-    }]
-  ]
-
-(* The token type is always needed. The token GADT is needed only in
-   [--table] mode. This ensures that, when [--table] is off, we remain
-   compatible with old versions of OCaml, without GADTs. *)
-
-let typedefs grammar =
   if Settings.table then
-    tokentypedef grammar @ tokengadtdef grammar
+    let datadefs =
+      StringMap.fold (fun token properties defs ->
+        if properties.tk_is_declared then
+          let index =
+            match properties.tk_ocamltype with
+            | None ->
+                tunit
+            | Some t ->
+                TypTextual t
+          in
+          {
+            dataname = ttokengadtdata token;
+            datavalparams = [];
+            datatypeparams = Some [ index ]
+          } :: defs
+        else
+          defs
+      ) grammar.tokens []
+    in
+    [
+      IIComment "The indexed type of terminal symbols.";
+      IITypeDecls [{
+        typename = tctokengadt;
+        typeparams = [ "_" ];
+        typerhs = TDefSum datadefs;
+        typeconstraint = None
+      }]
+    ]
   else
-    tokentypedef grammar
+    []
 
 (* If we were asked to only produce a type definition, then
    do so and stop. *)
@@ -117,7 +114,10 @@ let produce_tokentypes grammar =
 	 necessary by the fact that the two can be different
 	 when there are functor parameters. *)
 
-      let i = typedefs grammar in
+      let i =
+        tokentypedef grammar @
+        tokengadtdef grammar
+      in
 
       let module P = 
 	Printer.Make (struct 
@@ -147,16 +147,25 @@ let produce_tokentypes grammar =
   | Settings.TokenTypeAndCode ->
       ()
 
-(* Define [tokentypedefs], and define [tokenprefix], so as to tell the code
-   generator whether it should include a definition of the token types in the
-   code and how the token types are called. *)
+(* Define [tokentypedef] and [tokengadtdef], [tokenprefix]. *)
 
-let tokentypedefs grammar =
+let tokentypedef grammar =
   match Settings.token_type_mode with
   | Settings.CodeOnly _ ->
       []
   | Settings.TokenTypeAndCode ->
-      typedefs grammar
+      tokentypedef grammar
+  | Settings.TokenTypeOnly ->
+      (* This should not happen, as [produce_tokentype] should
+         have been called first. *)
+      assert false
+
+let tokengadtdef grammar =
+  match Settings.token_type_mode with
+  | Settings.CodeOnly _ ->
+      []
+  | Settings.TokenTypeAndCode ->
+      tokengadtdef grammar
   | Settings.TokenTypeOnly ->
       (* This should not happen, as [produce_tokentype] should
          have been called first. *)

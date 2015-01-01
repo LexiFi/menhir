@@ -181,7 +181,7 @@ let program grammar =
      it or to its data constructors. *)
 
   [ SIFunctor (grammar.parameters,
-    interface_to_structure (tokentypedefs grammar) @
+    interface_to_structure (tokentypedef grammar) @
     SIStretch grammar.preludes ::
     SIValDefs (false, [ begindef; def; enddef ]) ::
     SIStretch grammar.postludes ::

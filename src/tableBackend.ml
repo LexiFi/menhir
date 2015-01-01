@@ -668,6 +668,8 @@ let application =
       MStruct [
         SIExcDefs [ excredef ];
         SITypeDefs [ tokendef2 ];
+        (* This is a non-recursive definition, so none of the names
+           defined here are visible in the semantic actions. *)
         SIValDefs (false, [
 	  token2terminal;
 	  define ("error_terminal", EIntConst (Terminal.t2i Terminal.error));
@@ -839,12 +841,14 @@ let program =
     SIExcDefs [ excdef ] ::
 
     interface_to_structure (
-      tokentypedefs grammar @
-      nonterminalgadtdef grammar @
-      symbolgadtdef grammar
+      tokentypedef grammar
     ) @
 
     SITypeDefs [ tokendef1 ] ::
+
+    (* In order to avoid hiding user-defined identifiers, only the
+       exception [Error] and the type [token] should be defined (at
+       top level, with non-mangled names) above this line. *)
 
     SIStretch grammar.preludes ::
 
@@ -853,6 +857,12 @@ let program =
     SIModuleDef (interpreter, application) ::
 
     SIValDefs (false, api) ::
+
+    interface_to_structure (
+      tokengadtdef grammar @
+      nonterminalgadtdef grammar @
+      symbolgadtdef grammar
+    ) @
 
     SIValDefs (false, [incoming_symbol_def]) ::
 

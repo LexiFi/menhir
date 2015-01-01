@@ -1636,7 +1636,7 @@ let program =
     SIExcDefs [ excdef ] ::
 
     interface_to_structure (
-      tokentypedefs grammar
+      tokentypedef grammar
     ) @
 
     SITypeDefs [ envtypedef; statetypedef ] ::
