@@ -32,9 +32,8 @@ let height env =
 let print_element e : string =
   match e with
   | I.Element (s, v, _, _) ->
-      let sy = Parser.symbol s in
-      let open Parser in
-      match sy with
+      let open Parser.Inspection in
+      match symbol s with
       | T T_TIMES ->
           "*"
       | T T_RPAREN ->

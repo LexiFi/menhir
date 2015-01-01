@@ -876,19 +876,21 @@ let program =
       SIValDefs (false, incremental_api)
     ]) ::
 
-    listiflazy Settings.inspection (fun () ->
+    listiflazy Settings.inspection (fun () -> [
+      SIModuleDef (inspection, MStruct (
 
-      interface_to_structure (
-        tokengadtdef grammar @
-        nonterminalgadtdef grammar @
-        symbolgadtdef()
-      ) @
+        interface_to_structure (
+          tokengadtdef grammar @
+          nonterminalgadtdef grammar @
+          symbolgadtdef()
+        ) @
 
-      SIValDefs (false, [incoming_symbol_def]) ::
+        SIValDefs (false, [incoming_symbol_def]) ::
 
-      []
+        []
 
-    ) @
+      ))
+    ]) @
 
     SIStretch grammar.postludes ::
 

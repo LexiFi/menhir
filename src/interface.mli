@@ -23,6 +23,10 @@ val result: IL.typ -> IL.typ
 
 val incremental: string
 
+(* The name of the sub-module that contains the inspection API. *)
+
+val inspection: string
+
 (* This writes the interface of the generated parser to the [.mli] file. *)
 
 val write: UnparameterizedSyntax.grammar -> unit -> unit

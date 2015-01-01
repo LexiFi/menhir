@@ -53,6 +53,13 @@ let entrytypescheme_incremental grammar symbol =
 
 (* -------------------------------------------------------------------------- *)
 
+(* The name of the sub-module that contains the inspection API. *)
+
+let inspection =
+  "Inspection"
+
+(* -------------------------------------------------------------------------- *)
+
 (* The monolithic (traditional) API: the type [token], the exception [Error],
    and the parser's entry points. *)
 
@@ -106,20 +113,26 @@ let incremental_api grammar () =
 
 let inspection_api grammar () =
 
-  TokenType.tokengadtdef grammar @
-  NonterminalType.nonterminalgadtdef grammar @
-  SymbolType.symbolgadtdef() @
+  IIComment "The inspection API." ::
+  IIModule (inspection, MTSigEnd (
 
-  (* TEMPORARY emit a comment *)
-  IIValDecls [
-    let ty =
-      arrow (TypApp (interpreter ^ ".lr1state", [ TypVar "a" ]))
-            (TypApp ("symbol", [ TypVar "a" ]))
-    in
-    (* TEMPORARY code sharing with tableBackend *)
-    "symbol", type2scheme ty
-  ] ::
+    TokenType.tokengadtdef grammar @
+    NonterminalType.nonterminalgadtdef grammar @
+    SymbolType.symbolgadtdef() @
 
+    IIComment "This function maps a state to its incoming symbol." ::
+    IIValDecls [
+      let ty =
+        arrow (TypApp (interpreter ^ ".lr1state", [ TypVar "a" ]))
+              (TypApp ("symbol", [ TypVar "a" ]))
+      in
+      (* TEMPORARY code sharing with tableBackend *)
+      "symbol", type2scheme ty
+    ] ::
+
+    []
+
+  )) ::
   []
 
 (* -------------------------------------------------------------------------- *)
