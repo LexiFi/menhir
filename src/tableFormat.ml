@@ -1,5 +1,5 @@
 (* This signature defines the format of the parse tables. It is used as
-   an argument to [TableInterpreter]. *)
+   an argument to [TableInterpreter.Make]. *)
 
 module type TABLES = sig
 
@@ -112,6 +112,21 @@ module type TABLES = sig
      terminal symbol and a production to a string. *)
 
   val trace: (string array * string array) option
+
+end
+
+(* This signature defines the format of the tables that are produced (in
+   addition to the above) when [--inspection] is enabled. It is used as an
+   argument to [TableInterpreter.Inspection]. *)
+
+module type INSPECTION_TABLES = sig
+
+  type xsymbol
+
+  (* The definition (i.e. left-hand side and right-hand side) of every
+     (non-start) production. *)
+
+  val production_defs: (xsymbol * xsymbol list) option array
 
 end
 

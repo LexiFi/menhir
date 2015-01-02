@@ -23,6 +23,9 @@ let tableInterpreter =
 let make =
   tableInterpreter ^ ".Make"
 
+let make_inspection =
+  tableInterpreter ^ ".MakeInspection"
+
 let accept =
   tableInterpreter ^ ".Accept"
 
@@ -67,6 +70,9 @@ let lr1state =
 
 let basics =
   "Basics" (* name of an internal sub-module *)
+
+let more =
+  "More" (* name of an internal sub-module *)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -899,17 +905,32 @@ let program =
     listiflazy Settings.inspection (fun () -> [
       SIModuleDef (inspection, MStruct (
 
-        interface_to_structure (
-          tokengadtdef grammar @
-          nonterminalgadtdef grammar @
-          symbolgadtdef() @
-          xsymboldef()
-        ) @
+        (* Define the internal sub-module [more], which contains type
+           definitions. Then, include this sub-module. This sub-module is used
+           again below, as part of the application of the functor
+           [TableInterpreter.MakeInspection]. *)
+
+        SIModuleDef (more, MStruct (
+          interface_to_structure (
+            tokengadtdef grammar @
+            nonterminalgadtdef grammar @
+            symbolgadtdef() @
+            xsymboldef()
+          )
+        )) ::
+
+        SIInclude (MVar more) ::
 
         SIValDefs (false, [
-          incoming_symbol_def();
-          production_defs()
+          incoming_symbol_def()
         ]) ::
+
+        SIInclude (MApp (MVar make_inspection, MStruct [
+          SIInclude (MVar more);
+          SIValDefs (false, [
+            production_defs()
+          ])
+        ])) ::
 
         []
 

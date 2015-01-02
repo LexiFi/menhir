@@ -213,3 +213,11 @@ let interface_item_to_structure_item = function
 let interface_to_structure i =
   List.flatten (List.map interface_item_to_structure_item i)
 
+(* Constructing a named module type together with a list of "with type"
+   constraints. *)
+
+let with_types wk name tys =
+  List.fold_left (fun mt (name, ty) ->
+    MTWithType (mt, name, wk, ty)
+  ) (MTNamedModuleType name) tys
+

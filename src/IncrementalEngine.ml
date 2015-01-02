@@ -89,3 +89,18 @@ module type INCREMENTAL_ENGINE = sig
   val view: env -> element stream
 
 end
+
+(* TEMPORARY comment/document *)
+
+module type INSPECTION = sig
+
+  type xsymbol
+
+  type production
+
+  val lhs: production -> xsymbol
+
+  val rhs: production -> xsymbol list
+
+end
+

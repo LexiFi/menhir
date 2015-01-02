@@ -166,3 +166,26 @@ module Make (T : TableFormat.TABLES)
   end
   
 end)
+
+(* This functor constructs the inspection API. *)
+
+module MakeInspection (T : TableFormat.INSPECTION_TABLES) = struct
+
+  let production_def prod =
+    assert (0 <= prod && prod < Array.length T.production_defs);
+    match T.production_defs.(prod) with
+    | None ->
+        (* should not happen; means [prod] is a start production *)
+        assert false
+    | Some data ->
+        data
+
+  let lhs prod =
+    let lhs, _ = production_def prod in
+    lhs
+
+  let rhs prod =
+    let _, rhs = production_def prod in
+    rhs
+
+end

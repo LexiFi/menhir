@@ -84,12 +84,12 @@ let incremental_api grammar () =
   IIComment "The incremental API." ::
   IIModule (
     interpreter,
-    MTWithType (
-      MTNamedModuleType "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE",
-      "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
-      WKDestructive,
-      TokenType.ttoken
-    )
+    with_types WKDestructive
+      "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE"
+      [
+        "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
+        TokenType.ttoken
+      ]
   ) ::
 
   IIComment "The entry point(s) to the incremental API." ::
@@ -126,6 +126,14 @@ let inspection_api grammar () =
       (* TEMPORARY code sharing with tableBackend *)
       "symbol", type2scheme ty
     ] ::
+
+    IIInclude (
+      with_types WKDestructive
+        "MenhirLib.IncrementalEngine.INSPECTION" [
+          "xsymbol", TypApp ("xsymbol", []); (* TEMPORARY *)
+          "production", tint (* TEMPORARY *)
+        ]
+    ) ::
 
     []
 
