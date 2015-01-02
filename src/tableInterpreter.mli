@@ -16,6 +16,7 @@ module Make (T : TableFormat.TABLES)
 : EngineTypes.ENGINE with type state = int
                            and type token = T.token
 			   and type semantic_value = Obj.t
+                           and type production = int
 
 (* This functor is also invoked inside the generated parser. It
    constructs the inspection API on top of the inspection tables. *)

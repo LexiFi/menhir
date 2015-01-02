@@ -130,8 +130,8 @@ let inspection_api grammar () =
     IIInclude (
       with_types WKDestructive
         "MenhirLib.IncrementalEngine.INSPECTION" [
-          "xsymbol", TypApp ("xsymbol", []); (* TEMPORARY *)
-          "production", tint (* TEMPORARY *)
+          SymbolType.tcxsymbol, SymbolType.txsymbol;
+          "production", TypApp ("MenhirInterpreter.production", [])
         ]
     ) ::
 

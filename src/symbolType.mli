@@ -16,6 +16,7 @@ val symbolgadtdef: unit -> IL.interface
    GADT above. Thus, it is not parameterized. *)
 
 val dataX: string
+val tcxsymbol: string
 val txsymbol: IL.typ
 val xsymboldef: unit -> IL.interface
 
