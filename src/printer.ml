@@ -78,8 +78,11 @@ let space f =
 let comma f =
   output_string f ", "
 
+let semi f =
+  output_char f ';'
+
 let seminl f =
-  output_char f ';';
+  semi f;
   nl f
 
 let times f =
@@ -378,9 +381,9 @@ and exprk k f e =
     | ERecordAccess (e, field) ->
 	fprintf f "%a.%s" atom e field
     | ERecord fs ->
-	fprintf f "{%a}" (indent 2 (list field nothing)) fs
+	fprintf f "{%a%t}" (indent 2 (seplist field nl)) fs nl
     | EArray fs ->
-	fprintf f "[|%a|]" (indent 2 (list array_field nothing)) fs
+	fprintf f "[|%a%t|]" (indent 2 (seplist array_field nl)) fs nl
     | EArrayAccess (e, i) ->
 	fprintf f "%a.(%a)" atom e expr i
   else
@@ -411,19 +414,13 @@ and branch k f br =
   fprintf f "%a ->%a" pat br.branchpat (indent 4 (exprk k)) br.branchbody
 
 and field f (label, e) =
-  fprintf f "%s = %a%t" label app e seminl
+  fprintf f "%s = %a%t" label app e semi
 
-and fpats f fps =
-  list fpat nothing f fps
-
-and fpat f = function
-  | (_, PWildcard) ->
-      () (* in a record pattern, fields can be omitted *)
-  | (label, p) ->
-      fprintf f "%s = %a%t" label pat p seminl
+and fpat f (label, p) =
+  fprintf f "%s = %a%t" label pat p semi
 
 and array_field f e =
-  fprintf f "%a%t" app e seminl
+  fprintf f "%a%t" app e semi
 
 and pat0 f = function
   | PUnit ->
@@ -443,7 +440,9 @@ and pat0 f = function
   | PAnnot (p, t) ->
       fprintf f "(%a : %a)" pat p typ t
   | PRecord fps ->
-      fprintf f "{%a}" (indent 2 fpats) fps
+      (* In a record pattern, fields can be omitted. *)
+      let fps = List.filter (function (_, PWildcard) -> false | _ -> true) fps in
+      fprintf f "{%a%t}" (indent 2 (seplist fpat nl)) fps nl
   | p ->
       fprintf f "(%a)" pat p
 
