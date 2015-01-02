@@ -119,6 +119,7 @@ let inspection_api grammar () =
     TokenType.tokengadtdef grammar @
     NonterminalType.nonterminalgadtdef grammar @
     SymbolType.symbolgadtdef() @
+    SymbolType.xsymboldef() @
 
     IIComment "This function maps a state to its incoming symbol." ::
     IIValDecls [

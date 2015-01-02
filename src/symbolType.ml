@@ -1,5 +1,7 @@
 open IL
 
+(* -------------------------------------------------------------------------- *)
+
 (* The symbol GADT is the union of the terminal and nonterminal GADTs. *)
 
 (* The conventional name of the symbol GADT. *)
@@ -40,6 +42,40 @@ let symbolgadtdef () =
     IITypeDecls [{
       typename = tcsymbolgadt;
       typeparams = [ a ];
+      typerhs = TDefSum datadefs;
+      typeconstraint = None
+    }]
+  ]
+
+(* -------------------------------------------------------------------------- *)
+
+(* We also need an existentially quantified version of the type ['a symbol].
+   This type is not parameterized. *)
+
+let tcxsymbol =
+  "xsymbol"
+
+let txsymbol =
+  TypApp (tcxsymbol, [])
+
+let dataX =
+  "X"
+
+let xsymboldef () =
+  assert Settings.inspection;
+  let a = "a" in
+  let datadefs =
+    {
+      dataname = dataX;
+      datavalparams = [ tsymbolgadt (TypVar a) ];
+      datatypeparams = Some []
+    } ::
+    []
+  in
+  [ IIComment "The (non-indexed) type of terminal and nonterminal symbols.";
+    IITypeDecls [{
+      typename = tcxsymbol;
+      typeparams = [];
       typerhs = TDefSum datadefs;
       typeconstraint = None
     }]

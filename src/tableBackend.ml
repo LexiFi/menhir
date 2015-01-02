@@ -882,7 +882,8 @@ let program =
         interface_to_structure (
           tokengadtdef grammar @
           nonterminalgadtdef grammar @
-          symbolgadtdef()
+          symbolgadtdef() @
+          xsymboldef()
         ) @
 
         SIValDefs (false, [incoming_symbol_def]) ::
