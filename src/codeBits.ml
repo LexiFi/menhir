@@ -131,6 +131,23 @@ let etrue : expr =
 let eboolconst b =
   if b then etrue else efalse
 
+(* Option constructors. *)
+
+let enone =
+  EData ("None", [])
+
+let esome e =
+  EData ("Some", [e])
+
+(* List constructors. *)
+
+let rec elist xs =
+  match xs with
+  | [] ->
+      EData ("[]", [])
+  | x :: xs ->
+      EData ("::", [ x; elist xs ])
+
 (* Integer constants as patterns. *)
 
 let pint k : pattern =

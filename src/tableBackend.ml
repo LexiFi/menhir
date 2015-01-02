@@ -784,6 +784,13 @@ let esymbol (symbol : Symbol.t) : expr =
   | Symbol.N nt ->
       EData (dataN, [ enonterminal nt ])
 
+(* [xsymbol symbol] is a value of type [xsymbol] that encodes the
+   symbol [symbol]. It is built by applying the injection [X] (an
+   existential quantifier) to [esymbol symbol]. *)
+
+let xsymbol (symbol : Symbol.t) : expr =
+  EData (dataX, [ esymbol symbol ])
+
 (* The type [MenhirInterpreter.lr1state] is known (to us) to be an
    alias for [int], so we can pattern match on it. To the user,
    though, it will be an abstract type. *)
@@ -794,7 +801,7 @@ let tlr1state a : typ =
 (* Produce a function [symbol] that maps a state of type ['a lr1state]
    (represented as an integer value) to a value of type ['a symbol]. *)
 
-let incoming_symbol_def = {
+let incoming_symbol_def () = {
   valpublic = true;
   valpat = PVar "symbol";
   valval =
@@ -838,6 +845,34 @@ let incoming_symbol_def = {
       type2scheme (arrow (tlr1state a) (tsymbolgadt a))
     )
 }
+
+(* ------------------------------------------------------------------------ *)
+
+(* A table that maps a production (i.e., an integer index) to its definition
+   (i.e., its left-hand and right-hand sides). This table concerns ordinary
+   productions only, as opposed to the start productions, whose existence is
+   not exposed to the user. *)
+
+let production_def prod =
+  if Production.is_start prod then
+    enone
+  else
+    esome (ETuple [
+      (* The production's left-hand side. This is always a nonterminal symbol,
+         of course. For simplicity, we encode it at type [xsymbol], even though
+         we could in principle use an existentially-quantified type of
+         nonterminal symbols. *)
+      xsymbol (Symbol.N (Production.nt prod));
+      (* The production's right-hand side. This is a list of symbols. *)
+      elist (List.map xsymbol (Array.to_list (Production.rhs prod)))
+    ])
+
+let production_defs () =
+  assert Settings.inspection;
+  define (
+    "production_defs",
+    EArray (Production.map production_def)
+  )
 
 (* ------------------------------------------------------------------------ *)
 
@@ -886,7 +921,10 @@ let program =
           xsymboldef()
         ) @
 
-        SIValDefs (false, [incoming_symbol_def]) ::
+        SIValDefs (false, [
+          incoming_symbol_def();
+          production_defs()
+        ]) ::
 
         []
 

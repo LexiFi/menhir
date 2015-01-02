@@ -346,6 +346,9 @@ and exprk k f e =
 	var f d
     | EData (d, [ arg ]) ->
 	fprintf f "%s %a" d atom arg
+    | EData ("::", [ arg1; arg2 ]) ->
+        (* Special case for infix cons. *)
+        fprintf f "%a :: %a" atom arg1 atom arg2
     | EData (d, (_ :: _ :: _ as args)) ->
 	fprintf f "%s (%a)" d (seplist app comma) args
     | EVar v ->

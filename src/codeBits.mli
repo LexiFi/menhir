@@ -54,6 +54,15 @@ val etrue: expr
 val efalse: expr
 val eboolconst: bool -> expr
 
+(* Option constructors. *)
+
+val enone: expr
+val esome: expr -> expr
+
+(* List constructors. *)
+
+val elist: expr list -> expr
+
 (* Integer constants as patterns. *)
 
 val pint: int -> pattern

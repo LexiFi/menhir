@@ -15,6 +15,7 @@ val symbolgadtdef: unit -> IL.interface
 (* The type [xsymbol] is an existentially quantified version of the symbol
    GADT above. Thus, it is not parameterized. *)
 
+val dataX: string
 val txsymbol: IL.typ
 val xsymboldef: unit -> IL.interface
 
