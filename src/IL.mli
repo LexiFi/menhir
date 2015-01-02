@@ -21,7 +21,7 @@ and interface_item =
 
 and module_type =
   | MTNamedModuleType of string
-  | MTWithType of module_type * string * with_kind * typ
+  | MTWithType of module_type * string list * string * with_kind * typ
   | MTSigEnd of interface
 
 and with_kind =

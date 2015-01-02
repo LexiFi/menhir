@@ -1,5 +1,6 @@
 (* The symbol GADT is the union of the terminal and nonterminal GADTs. *)
 
+val tcsymbolgadt: string
 val tsymbolgadt: IL.typ -> IL.typ
 
 (* The conventional names of the data constructors. *)

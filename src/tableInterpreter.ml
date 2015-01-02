@@ -171,6 +171,9 @@ end)
 
 module MakeInspection (T : TableFormat.INSPECTION_TABLES) = struct
 
+  let symbol =
+    T.symbol
+
   let production_def prod =
     assert (0 <= prod && prod < Array.length T.production_defs);
     match T.production_defs.(prod) with

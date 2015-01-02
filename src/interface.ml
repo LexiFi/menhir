@@ -34,6 +34,27 @@ let interpreter =
 let result t =
   TypApp (interpreter ^ ".result", [ t ])
 
+let raw_lr1state =
+  "lr1state"
+
+let lr1state =
+  interpreter ^ "." ^ raw_lr1state
+
+let tlr1state a : typ =
+  TypApp (lr1state, [a])
+
+(* This interface item is a re-definition of the type [lr1state] as
+   an abbreviation for [MenhirInterpreter.lr1state]. *)
+
+let lr1state_redef =
+  let a = "a" in
+  IITypeDecls [{
+    typename = raw_lr1state;
+    typeparams = [ a ];
+    typerhs = TAbbrev (tlr1state (TypVar a));
+    typeconstraint = None
+  }]
+
 (* -------------------------------------------------------------------------- *)
 
 (* The name of the sub-module that contains the incremental entry points. *)
@@ -87,6 +108,7 @@ let incremental_api grammar () =
     with_types WKDestructive
       "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE"
       [
+        [],
         "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
         TokenType.ttoken
       ]
@@ -109,29 +131,29 @@ let incremental_api grammar () =
 
 let inspection_api grammar () =
 
+  let a = "a" in
+
   IIComment "The inspection API." ::
   IIModule (inspection, MTSigEnd (
+
+    (* Define the types [terminal], [nonterminal], [symbol], [xsymbol]. *)
 
     TokenType.tokengadtdef grammar @
     NonterminalType.nonterminalgadtdef grammar @
     SymbolType.symbolgadtdef() @
     SymbolType.xsymboldef() @
 
-    IIComment "This function maps a state to its incoming symbol." ::
-    IIValDecls [
-      let ty =
-        arrow (TypApp (interpreter ^ ".lr1state", [ TypVar "a" ]))
-              (TypApp ("symbol", [ TypVar "a" ]))
-      in
-      (* TEMPORARY code sharing with tableBackend *)
-      "symbol", type2scheme ty
-    ] ::
+    (* Include the signature that lists the inspection functions, with
+       appropriate type instantiations. *)
 
+    IIComment "The inspection functions." ::
     IIInclude (
       with_types WKDestructive
         "MenhirLib.IncrementalEngine.INSPECTION" [
-          SymbolType.tcxsymbol, SymbolType.txsymbol;
-          "production", TypApp ("MenhirInterpreter.production", [])
+          [ a ], "lr1state", tlr1state (TypVar a);
+          [], "production", TypApp ("MenhirInterpreter.production", []);
+          [ a ], SymbolType.tcsymbolgadt, SymbolType.tsymbolgadt (TypVar a);
+          [], SymbolType.tcxsymbol, SymbolType.txsymbol;
         ]
     ) ::
 

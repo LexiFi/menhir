@@ -217,7 +217,7 @@ let interface_to_structure i =
    constraints. *)
 
 let with_types wk name tys =
-  List.fold_left (fun mt (name, ty) ->
-    MTWithType (mt, name, wk, ty)
+  List.fold_left (fun mt (params, name, ty) ->
+    MTWithType (mt, params, name, wk, ty)
   ) (MTNamedModuleType name) tys
 

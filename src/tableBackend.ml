@@ -65,9 +65,6 @@ let entry =
 let start =
   interpreter ^ ".start"
 
-let lr1state =
-  interpreter ^ ".lr1state"
-
 let basics =
   "Basics" (* name of an internal sub-module *)
 
@@ -776,15 +773,12 @@ let esymbol (symbol : Symbol.t) : expr =
 let xsymbol (symbol : Symbol.t) : expr =
   EData (dataX, [ esymbol symbol ])
 
-(* The type [MenhirInterpreter.lr1state] is known (to us) to be an
-   alias for [int], so we can pattern match on it. To the user,
-   though, it will be an abstract type. *)
-
-let tlr1state a : typ =
-  TypApp (lr1state, [a])
-
 (* Produce a function [symbol] that maps a state of type ['a lr1state]
    (represented as an integer value) to a value of type ['a symbol]. *)
+
+(* The type [MenhirInterpreter.lr1state] is known (to us) to be an alias for
+   [int], so we can pattern match on it. To the user, though, it will be an
+   abstract type. *)
 
 let incoming_symbol_def () = {
   valpublic = true;
@@ -912,6 +906,7 @@ let program =
 
         SIModuleDef (more, MStruct (
           interface_to_structure (
+            lr1state_redef ::
             tokengadtdef grammar @
             nonterminalgadtdef grammar @
             symbolgadtdef() @
@@ -921,13 +916,10 @@ let program =
 
         SIInclude (MVar more) ::
 
-        SIValDefs (false, [
-          incoming_symbol_def()
-        ]) ::
-
         SIInclude (MApp (MVar make_inspection, MStruct [
           SIInclude (MVar more);
           SIValDefs (false, [
+            incoming_symbol_def();
             production_defs()
           ])
         ])) ::

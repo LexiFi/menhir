@@ -94,9 +94,15 @@ end
 
 module type INSPECTION = sig
 
-  type xsymbol
+  type 'a lr1state
 
   type production
+
+  type 'a symbol
+
+  type xsymbol
+
+  val symbol: 'a lr1state -> 'a symbol
 
   val lhs: production -> xsymbol
 

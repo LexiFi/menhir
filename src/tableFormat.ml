@@ -121,7 +121,13 @@ end
 
 module type INSPECTION_TABLES = sig
 
+  type 'a lr1state
+  type 'a symbol
   type xsymbol
+
+  (* This function maps a state to its incoming symbol. *)
+
+  val symbol: 'a lr1state -> 'a symbol
 
   (* The definition (i.e. left-hand side and right-hand side) of every
      (non-start) production. *)

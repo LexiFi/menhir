@@ -24,6 +24,8 @@ module Make (T : TableFormat.TABLES)
 module MakeInspection (T : TableFormat.INSPECTION_TABLES)
 
 : IncrementalEngine.INSPECTION
-  with type xsymbol := T.xsymbol
+  with type 'a lr1state := 'a T.lr1state
+   and type 'a symbol := 'a T.symbol
+   and type xsymbol := T.xsymbol
    and type production := int
 

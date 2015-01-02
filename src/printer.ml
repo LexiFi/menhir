@@ -677,16 +677,16 @@ let with_kind f = function
 let rec module_type f = function
   | MTNamedModuleType s ->
       output_string f s
-  | MTWithType (mt, name, wk, t) ->
+  | MTWithType (mt, params, name, wk, t) ->
       fprintf f "%a%a"
         module_type mt
-        (indent 2 with_type) (name, wk, t)
+        (indent 2 with_type) (params, name, wk, t)
   | MTSigEnd i ->
       sigend f i
 
-and with_type f (name, wk, t) =
-  fprintf f "with type %s %a %a"
-    name
+and with_type f (params, name, wk, t) =
+  fprintf f "with type %a %a %a"
+    typ (TypApp (name, List.map (fun v -> TypVar v) params))
     with_kind wk
     typ t
 
