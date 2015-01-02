@@ -65,6 +65,9 @@ let start =
 let lr1state =
   interpreter ^ ".lr1state"
 
+let basics =
+  "Basics" (* name of an internal sub-module *)
+
 (* ------------------------------------------------------------------------ *)
 
 (* Code generation for semantic actions. *)
@@ -636,38 +639,14 @@ let token2value =
 
 (* We are now ready to apply the functor [TableInterpreter.Make]. *)
 
-(* The type [token], which was defined at toplevel, must be defined again
-   in the functor argument. We would like to write [type token = token], but
-   that is not valid ocaml. The usual workaround involves a dummy type. *)
-
-let jeton =
-  prefix "jeton"
-
-let tokendef1 = {
-  typename = jeton;
-  typeparams = [];
-  typerhs = TAbbrev ttoken;
-  typeconstraint = None;
-}
-
-let tokendef2 = {
-  typename = "token"; (* not [TokenType.tctoken], as it might carry an undesired prefix *)
-  typeparams = [];
-  typerhs = TAbbrev (TypApp (jeton, []));
-  typeconstraint = None;
-}
-
-(* Here is the application of [TableInterpreter.Make]. Note that the
-   exception [Error], which is defined at toplevel, is re-defined
-   within the functor argument: [exception Error = Error]. *)
-
 let application =
 
     MApp (
       MVar make,
       MStruct [
-        SIExcDefs [ excredef ];
-        SITypeDefs [ tokendef2 ];
+        (* The internal sub-module [basics] contains the definitions of the
+           exception [Error] and of the type [token]. *)
+        SIInclude (MVar basics);
         (* This is a non-recursive definition, so none of the names
            defined here are visible in the semantic actions. *)
         SIValDefs (false, [
@@ -887,13 +866,19 @@ let program =
  
   [ SIFunctor (grammar.parameters,
 
-    SIExcDefs [ excdef ] ::
+    (* Define the internal sub-module [basics], which contains the definitions
+       of the exception [Error] and of the type [token]. Then, include this
+       sub-module. This sub-module is used again below, as part of the
+       application of the functor [TableInterpreter.Make]. *)
 
-    interface_to_structure (
-      tokentypedef grammar
-    ) @
+    SIModuleDef (basics, MStruct (
+      SIExcDefs [ excdef ] ::
+      interface_to_structure (
+        tokentypedef grammar
+      )
+    )) ::
 
-    SITypeDefs [ tokendef1 ] ::
+    SIInclude (MVar basics) ::
 
     (* In order to avoid hiding user-defined identifiers, only the
        exception [Error] and the type [token] should be defined (at

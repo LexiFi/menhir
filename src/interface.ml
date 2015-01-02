@@ -14,10 +14,6 @@ let excdef = {
   exceq = (if Settings.fixedexc then Some "Parsing.Parse_error" else None);
 }
 
-let excredef = {
-  excdef with exceq = Some excname
-}
-
 (* -------------------------------------------------------------------------- *)
 
 (* The type of the monolithic entry point for the start symbol [symbol]. *)

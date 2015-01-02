@@ -4,7 +4,6 @@
 
 val excname: string
 val excdef: IL.excdef
-val excredef: IL.excdef
 
 (* The type of the entry point for the start symbol [nt]. *)
 
