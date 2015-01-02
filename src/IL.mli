@@ -249,4 +249,5 @@ and structure_item =
   | SIStretch of Stretch.t list
     (* Sub-module definition. *)
   | SIModuleDef of string * modexpr
-
+    (* Module inclusion. *)
+  | SIInclude of modexpr

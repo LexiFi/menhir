@@ -646,6 +646,8 @@ let rec structure_item f item =
         assert false (* already handled above *)
     | SIModuleDef (name, rhs) ->
         fprintf f "module %s = %a" name modexpr rhs
+    | SIInclude e ->
+        fprintf f "include %a" modexpr e
     end;
     nl f
 

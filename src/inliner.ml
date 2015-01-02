@@ -280,6 +280,8 @@ let rec inline_structure_item item =
       SIFunctor (params, inline_structure s)
   | SIModuleDef (name, e) ->
       SIModuleDef (name, inline_modexpr e)
+  | SIInclude e ->
+      SIInclude (inline_modexpr e)
   | SIExcDefs _
   | SITypeDefs _
   | SIValDefs (false, _)
