@@ -162,7 +162,6 @@ and expr =
 
   | EUnit
   | EIntConst of int
-  | EMaxInt
   | EStringConst of string
   | EData of string * expr list
   | ETuple of expr list

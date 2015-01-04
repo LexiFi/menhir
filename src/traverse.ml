@@ -88,8 +88,6 @@ class virtual ['env] map = object (self)
           self#eunit env
       | EIntConst k ->
           self#eintconst env k
-      | EMaxInt ->
-	  self#emaxint env
       | EStringConst s ->
           self#estringconst env s
       | EData (d, es) ->
@@ -193,9 +191,6 @@ class virtual ['env] map = object (self)
   method eintconst _env _k =
     raise NoChange
   
-  method emaxint _env =
-    raise NoChange
-
   method estringconst _env _s =
     raise NoChange
   
@@ -373,8 +368,6 @@ class virtual ['env, 'a] fold = object (self)
         self#eunit env accu
     | EIntConst k ->
         self#eintconst env accu k
-    | EMaxInt ->
-        self#emaxint env accu
     | EStringConst s ->
         self#estringconst env accu s
     | EData (d, es) ->
@@ -452,9 +445,6 @@ class virtual ['env, 'a] fold = object (self)
   method eintconst (_env : 'env) (accu : 'a) _k =
     accu
   
-  method emaxint (_env : 'env) (accu : 'a) =
-    accu
-
   method estringconst (_env : 'env) (accu : 'a) _s =
     accu
   

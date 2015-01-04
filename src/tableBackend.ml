@@ -327,7 +327,6 @@ let div a b =
 
 let rec size unboxed = function
   | EIntConst _
-  | EMaxInt
   | ETuple []
   | EData (_, []) ->
       if unboxed then 0 else 1
