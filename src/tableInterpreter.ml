@@ -191,4 +191,13 @@ module MakeInspection (T : TableFormat.INSPECTION_TABLES) = struct
     let _, rhs = production_def prod in
     rhs
 
+  (* This is a copy of [Item.export]. *)
+
+  let export t =
+    (t lsr 7, t mod 128)
+
+  let items s =
+    let core = PackedIntArray.get T.lr0_core s in
+    List.map export T.lr0_items.(core)
+
 end

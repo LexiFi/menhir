@@ -854,6 +854,37 @@ let production_defs () =
 
 (* ------------------------------------------------------------------------ *)
 
+(* A table that maps an LR(1) state to its LR(0) core. *)
+
+let lr0_core () =
+  assert Settings.inspection;
+  define_and_measure (
+    "lr0_core",
+    marshal1 (Lr1.map (fun (node : Lr1.node) ->
+      Lr0.core (Lr1.state node)
+    ))
+  )
+
+(* A table that maps an LR(0) state to a set of LR(0) items. *)
+
+let encode_lr0_item item =
+  EIntConst (Item.marshal item)
+
+let lr0_items () =
+  assert Settings.inspection;
+  define_and_measure (
+    "lr0_items",
+    EArray (Array.to_list (Array.init Lr0.n (fun (node : Lr0.node) ->
+      elist (List.map encode_lr0_item (Item.Set.elements (Lr0.items node)))
+    )))
+  )
+
+(* TEMPORARY these lists share suffixes, which in principle could be
+   physically shared. Or perhaps we could use some form of packed
+   array? *)
+
+(* ------------------------------------------------------------------------ *)
+
 (* Let's put everything together. *)
 
 open UnparameterizedSyntax
@@ -905,7 +936,6 @@ let program =
 
         SIModuleDef (more, MStruct (
           interface_to_structure (
-            lr1state_redef ::
             tokengadtdef grammar @
             nonterminalgadtdef grammar @
             symbolgadtdef() @
@@ -915,13 +945,20 @@ let program =
 
         SIInclude (MVar more) ::
 
-        SIInclude (MApp (MVar make_inspection, MStruct [
-          SIInclude (MVar more);
-          SIValDefs (false, [
-            incoming_symbol_def();
-            production_defs()
-          ])
-        ])) ::
+        SIInclude (MApp (MVar make_inspection, MStruct (
+          SIInclude (MVar more) ::
+          interface_to_structure [
+            lr1state_redef;
+          ] @
+          SIValDefs (false,
+            incoming_symbol_def() ::
+            production_defs() ::
+            lr0_core() ::
+            lr0_items() ::
+            []
+          ) ::
+          []
+        ))) ::
 
         []
 

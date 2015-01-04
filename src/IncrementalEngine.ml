@@ -108,5 +108,7 @@ module type INSPECTION = sig
 
   val rhs: production -> xsymbol list
 
+  val items: 'a lr1state -> (production * int) list
+
 end
 

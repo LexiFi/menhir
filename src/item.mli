@@ -8,6 +8,12 @@ type t
 val import: Production.index * int -> t
 val export: t -> Production.index * int
 
+(* An item can be encoded as an integer. This is used in the table
+   back-end only. The decoding function (really a copy of [export])
+   is in [TableInterpreter]. *)
+
+val marshal: t -> int
+
 (* Comparison. *)
 
 val equal: t -> t -> bool

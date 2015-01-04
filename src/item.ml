@@ -11,6 +11,9 @@ open Grammar
    the bullet position and the rest (usually 24 bits) for the
    production index. These widths could be adjusted. *)
 
+(* The function [export] is duplicated in [TableInterpreter]. Do not
+   modify it; or modify it here and there in a consistent manner. *)
+
 type t = int
 
 let import (prod, pos) =
@@ -19,6 +22,9 @@ let import (prod, pos) =
 
 let export t =
   (Production.i2p (t lsr 7), t mod 128)
+
+let marshal (item : t) : int =
+  item
 
 (* Comparison. *)
 

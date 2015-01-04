@@ -119,13 +119,15 @@ end
    addition to the above) when [--inspection] is enabled. It is used as an
    argument to [TableInterpreter.Inspection]. *)
 
+(* TEMPORARY comment/document *)
+
 module type INSPECTION_TABLES = sig
 
   type 'a lr1state
   type 'a symbol
   type xsymbol
 
-  (* This function maps a state to its incoming symbol. *)
+  (* A mapping of every (non-initial) state to its incoming symbol. *)
 
   val symbol: 'a lr1state -> 'a symbol
 
@@ -133,6 +135,16 @@ module type INSPECTION_TABLES = sig
      (non-start) production. *)
 
   val production_defs: (xsymbol * xsymbol list) option array
+
+  (* A mapping of every (non-initial) state to its LR(0) core. *)
+
+  val lr0_core: PackedIntArray.t
+
+  (* A mapping of every LR(0) state to its set of LR(0) items.
+     Each item is represented in its packed form (see [Item])
+     as an integer. *)
+
+  val lr0_items: int list array
 
 end
 
