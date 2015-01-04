@@ -75,7 +75,21 @@ let rec loop linebuf (result : int I.result) =
       (* TEMPORARY *)
       if true then begin
         Printf.fprintf stderr "Stack height: %d\n%!" (height env);
-        Printf.fprintf stderr "Stack view:\n%s\n%!" (print env)
+        Printf.fprintf stderr "Stack view:\n%s\n%!" (print env);
+        begin match Lazy.force (I.view env) with
+        | I.Nil ->
+            ()
+        | I.Cons (I.Element (current, _, _, _), _) ->
+            Printf.fprintf stderr "Current state: %d\n%!" (Obj.magic current);
+            let items : (I.production * int) list = Parser.Inspection.items current in
+            Printf.fprintf stderr "#Items: %d\n%!" (List.length items);
+            List.iter (fun (prod, index) ->
+              let _lhs : Parser.Inspection.xsymbol = Parser.Inspection.lhs prod in
+              let _rhs : Parser.Inspection.xsymbol list = Parser.Inspection.rhs prod in
+              (* TEMPORARY print item *)
+              ()
+            ) items
+        end
       end;
       (* The parser needs a token. Request one from the lexer,
          and offer it to the parser, which will produce a new
