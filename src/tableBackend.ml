@@ -848,7 +848,7 @@ let production_def prod =
 
 let production_defs () =
   assert Settings.inspection;
-  define (
+  define_and_measure (
     "production_defs",
     EArray (Production.map production_def)
   )
