@@ -910,13 +910,15 @@ let program =
 
     SIInclude (MVar basics) ::
 
+    SIValDefs (false, [ excvaldef ]) ::
+
     (* In order to avoid hiding user-defined identifiers, only the
        exception [Error] and the type [token] should be defined (at
-       top level, with non-mangled names) above this line. *)
+       top level, with non-mangled names) above this line. We also
+       define the value [_eRR] above this line so that we do not
+       have a problem if a user prelude hides the name [Error]. *)
 
     SIStretch grammar.preludes ::
-
-    SIValDefs (false, [ excvaldef ]) ::
 
     SIModuleDef (interpreter, application) ::
 

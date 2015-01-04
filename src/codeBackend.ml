@@ -1623,6 +1623,8 @@ let program =
 
     SIExcDefs [ excdef ] ::
 
+    SIValDefs (false, [ excvaldef ]) ::
+
     interface_to_structure (
       tokentypedef grammar
     ) @
@@ -1630,8 +1632,6 @@ let program =
     SITypeDefs [ envtypedef; statetypedef ] ::
 
     SIStretch grammar.preludes ::
-
-    SIValDefs (false, [ excvaldef ]) ::
 
     SIValDefs (true,
       ProductionMap.fold (fun _ s defs ->
