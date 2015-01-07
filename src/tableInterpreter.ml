@@ -184,8 +184,8 @@ module MakeInspection (T : TableFormat.INSPECTION_TABLES) = struct
         data
 
   let lhs prod =
-    let lhs, _ = production_def prod in
-    lhs
+    let nt = PackedIntArray.get T.lhs prod in
+    T.nonterminal nt
 
   let rhs prod =
     let _, rhs = production_def prod in

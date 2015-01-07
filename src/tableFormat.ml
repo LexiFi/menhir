@@ -129,6 +129,9 @@ module type INSPECTION_TABLES = sig
 
   val lhs: PackedIntArray.t
 
+  val terminal: int -> xsymbol
+  val nonterminal: int -> xsymbol
+
   (* A mapping of every (non-initial) state to its incoming symbol. *)
 
   val symbol: 'a lr1state -> 'a symbol
