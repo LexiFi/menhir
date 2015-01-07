@@ -70,8 +70,19 @@ let tokentypedef grammar =
    when [Settings.inspection] is false, we remain compatible with old versions
    of OCaml, without GADTs. *)
 
+(* Although the [token] type does not include the [error] token (because this
+   token is never produced by the lexer), the token GADT must include the
+   [error] token (because this GADT must describe all of the tokens that are
+   allowed to appear in a production). *)
+
 let tokengadtdef grammar =
   assert Settings.inspection;
+  let errordata = {
+    dataname = ttokengadtdata "error";
+    datavalparams = [];
+    datatypeparams = Some [ tunit ]
+      (* the [error] token has a semantic value of type [unit] *)
+  } in
   let datadefs =
     StringMap.fold (fun token properties defs ->
       if properties.tk_is_declared then
@@ -89,7 +100,7 @@ let tokengadtdef grammar =
         } :: defs
       else
         defs
-    ) grammar.tokens []
+    ) grammar.tokens [errordata]
   in
   [
     IIComment "The indexed type of terminal symbols.";
