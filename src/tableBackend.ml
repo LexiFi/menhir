@@ -862,18 +862,15 @@ let incoming_symbol_def () =
 (* ------------------------------------------------------------------------ *)
 
 (* A table that maps a production (i.e., an integer index) to its definition
-   (i.e., its right-hand side). This table concerns ordinary productions only,
-   as opposed to the start productions, whose existence is not exposed to the
-   user. We deal with the start productions by considering they have an empty
-   right-hand side. *)
+   (i.e., its right-hand side). In principle, we use this table only for
+   ordinary productions, as opposed to the start productions, whose existence
+   is not exposed to the user. However, it is simpler (and not costly) to
+   include all productions in this table. *)
 
 let production_def prod =
   elist (
-    if Production.is_start prod then
-      []
-    else
-      (* The production's right-hand side. This is a list of symbols. *)
-      List.map xsymbol (Array.to_list (Production.rhs prod))
+    (* The production's right-hand side. This is a list of symbols. *)
+    List.map xsymbol (Array.to_list (Production.rhs prod))
   )
 
 let production_defs () =
