@@ -68,6 +68,9 @@ let start =
 let basics =
   "Basics" (* name of an internal sub-module *)
 
+let tables =
+  "Tables" (* name of an internal sub-module *)
+
 let more =
   "More" (* name of an internal sub-module *)
 
@@ -639,35 +642,6 @@ let token2value =
 
 (* ------------------------------------------------------------------------ *)
 
-(* We are now ready to apply the functor [TableInterpreter.Make]. *)
-
-let application =
-
-    MApp (
-      MVar make,
-      MStruct [
-        (* The internal sub-module [basics] contains the definitions of the
-           exception [Error] and of the type [token]. *)
-        SIInclude (MVar basics);
-        (* This is a non-recursive definition, so none of the names
-           defined here are visible in the semantic actions. *)
-        SIValDefs (false, [
-	  token2terminal;
-	  define ("error_terminal", EIntConst (Terminal.t2i Terminal.error));
-	  token2value;
-	  default_reduction;
-	  error;
-	  action;
-	  lhs;
-	  goto;
-	  semantic_action;
-	  trace;
-	])
-      ]
-    )
-
-(* ------------------------------------------------------------------------ *)
-
 (* The client APIs invoke the interpreter with an appropriate start state.
    The monolithic API calls [entry] (see [Engine]), while the incremental
    API calls [start]. *)
@@ -920,7 +894,35 @@ let program =
 
     SIStretch grammar.preludes ::
 
-    SIModuleDef (interpreter, application) ::
+    (* Define the tables. *)
+
+    SIModuleDef (tables,
+      MStruct [
+        (* The internal sub-module [basics] contains the definitions of the
+           exception [Error] and of the type [token]. *)
+        SIInclude (MVar basics);
+        (* This is a non-recursive definition, so none of the names
+           defined here are visible in the semantic actions. *)
+        SIValDefs (false, [
+          token2terminal;
+          define ("error_terminal", EIntConst (Terminal.t2i Terminal.error));
+          token2value;
+          default_reduction;
+          error;
+          action;
+          lhs;
+          goto;
+          semantic_action;
+          trace;
+        ])
+      ]
+    ) ::
+
+    (* Apply the functor [TableInterpreter.Make] to the tables. *)
+
+    SIModuleDef (interpreter,
+      MApp (MVar make, MVar tables)
+    ) ::
 
     SIValDefs (false, monolithic_api) ::
 
