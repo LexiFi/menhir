@@ -746,6 +746,38 @@ let esymbol (symbol : Symbol.t) : expr =
 let xsymbol (symbol : Symbol.t) : expr =
   EData (dataX, [ esymbol symbol ])
 
+(* ------------------------------------------------------------------------ *)
+
+(* Produce a function that maps a terminal (represented as an integer code)
+   to its representation as an [xsymbol]. Include [error] but not [#], i.e.,
+   include all of the symbols which can appear in a production. *)
+
+let terminal () =
+  assert Settings.inspection;
+  let t = "t" in
+  define (
+    "terminal",
+    EAnnot (
+      EFun ([ PVar t ],
+	EMatch (EVar t,
+	  Terminal.mapx (fun tok ->
+	    { branchpat = pint (Terminal.t2i tok);
+	      branchbody = xsymbol (Symbol.T tok) }
+	  ) @ [
+            { branchpat = PWildcard;
+              branchbody =
+                EComment ("This terminal symbol does not exist.",
+                  EApp (EVar "assert", [ efalse ])
+                ) }
+          ]
+	)
+      ),
+      type2scheme (arrow tint txsymbol)
+    )
+  )
+
+(* ------------------------------------------------------------------------ *)
+
 (* Produce a function [symbol] that maps a state of type ['a lr1state]
    (represented as an integer value) to a value of type ['a symbol]. *)
 
@@ -955,6 +987,10 @@ let program =
             lr1state_redef;
           ] @
           SIInclude (MVar tables) :: (* only for [lhs] *)
+          SIValDefs (false,
+            terminal() ::
+            []
+          ) ::
           SIValDefs (false,
             incoming_symbol_def() ::
             production_defs() ::
