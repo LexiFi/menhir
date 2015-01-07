@@ -748,9 +748,9 @@ let xsymbol (symbol : Symbol.t) : expr =
 
 (* ------------------------------------------------------------------------ *)
 
-(* Produce a function that maps a terminal (represented as an integer code)
-   to its representation as an [xsymbol]. Include [error] but not [#], i.e.,
-   include all of the symbols which can appear in a production. *)
+(* Produce a function that maps a terminal symbol (represented as an integer
+   code) to its representation as an [xsymbol]. Include [error] but not [#],
+   i.e., include all of the symbols which can appear in a production. *)
 
 let terminal () =
   assert Settings.inspection;
@@ -767,6 +767,35 @@ let terminal () =
             { branchpat = PWildcard;
               branchbody =
                 EComment ("This terminal symbol does not exist.",
+                  EApp (EVar "assert", [ efalse ])
+                ) }
+          ]
+	)
+      ),
+      type2scheme (arrow tint txsymbol)
+    )
+  )
+
+(* ------------------------------------------------------------------------ *)
+
+(* Produce a function that maps a (non-start) nonterminal symbol (represented
+   as an integer code) to its representation as an [xsymbol]. *)
+
+let nonterminal () =
+  assert Settings.inspection;
+  let nt = "nt" in
+  define (
+    "nonterminal",
+    EAnnot (
+      EFun ([ PVar nt ],
+	EMatch (EVar nt,
+	  Nonterminal.foldx (fun nt branches ->
+	    { branchpat = pint (Nonterminal.n2i nt);
+	      branchbody = xsymbol (Symbol.N nt) } :: branches
+	  ) [
+            { branchpat = PWildcard;
+              branchbody =
+                EComment ("This nonterminal symbol does not exist.",
                   EApp (EVar "assert", [ efalse ])
                 ) }
           ]
@@ -989,6 +1018,7 @@ let program =
           SIInclude (MVar tables) :: (* only for [lhs] *)
           SIValDefs (false,
             terminal() ::
+            nonterminal() ::
             []
           ) ::
           SIValDefs (false,
