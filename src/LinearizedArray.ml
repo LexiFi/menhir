@@ -1,3 +1,8 @@
+(* The [entry] array contains offsets into the [data] array. It has [n+1]
+   elements if the original (unencoded) array has [n] elements. The value
+   of [entry.(n)] is the length of the [data] array. This convention is
+   natural and allows avoiding a special case. *)
+
 type 'a t =
   (* data: *)   'a array *
   (* entry: *) int array
@@ -6,11 +11,13 @@ let make (a : 'a array array) : 'a t =
   let n = Array.length a in
   (* Build the entry array. *)
   let size = ref 0 in
-  let entry = Array.init n (fun i ->
+  let entry = Array.init (n + 1) (fun i ->
     let s = !size in
-    size := s + Array.length a.(i);
+    if i < n then
+      size := s + Array.length a.(i);
     s
   ) in
+  assert (entry.(n) = !size);
   (* Build the data array. *)
   let i = ref 0
   and j = ref 0 in
@@ -28,18 +35,8 @@ let make (a : 'a array array) : 'a t =
 let length ((_, entry) : 'a t) : int =
   Array.length entry
 
-(* This auxiliary function conceptually extends the array [entry]
-   to the case where [i] is [n]. *)
-let _entry (data, entry) i =
-  let n = Array.length entry in
-  assert (0 <= i && i <= n);
-  if i < n then
-    entry.(i)
-  else
-    Array.length data
-
-let row_length ((_, entry) as la : 'a t) i : int =
-  _entry la (i + 1) - entry.(i)
+let row_length ((_, entry) : 'a t) i : int =
+  entry.(i + 1) - entry.(i)
 
 let read ((data, entry) as la : 'a t) i j : 'a =
   assert (0 <= j && j < row_length la i);
@@ -55,6 +52,6 @@ let rec read_interval data i j =
   else
     data.(i) :: read_interval data (i + 1) j
 
-let read_row ((data, entry) as la : 'a t) i : 'a list =
-  read_interval data entry.(i) (_entry la (i + 1))
+let read_row ((data, entry) : 'a t) i : 'a list =
+  read_interval data entry.(i) entry.(i + 1)
 
