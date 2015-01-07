@@ -54,6 +54,8 @@ let print_element e : string =
           ""
       | T T_DIV ->
           "/"
+      | T T_error ->
+          "error"
 
 (* Printing a stack. *)
 
