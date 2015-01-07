@@ -864,16 +864,17 @@ let incoming_symbol_def () =
 (* A table that maps a production (i.e., an integer index) to its definition
    (i.e., its right-hand side). This table concerns ordinary productions only,
    as opposed to the start productions, whose existence is not exposed to the
-   user. *)
+   user. We deal with the start productions by considering they have an empty
+   right-hand side. *)
 
 let production_def prod =
-  if Production.is_start prod then
-    enone
-  else
-    esome (
+  elist (
+    if Production.is_start prod then
+      []
+    else
       (* The production's right-hand side. This is a list of symbols. *)
-      elist (List.map xsymbol (Array.to_list (Production.rhs prod)))
-    )
+      List.map xsymbol (Array.to_list (Production.rhs prod))
+  )
 
 let production_defs () =
   assert Settings.inspection;

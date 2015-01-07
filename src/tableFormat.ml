@@ -139,7 +139,7 @@ module type INSPECTION_TABLES = sig
   (* The definition (i.e. left-hand side and right-hand side) of every
      (non-start) production. *)
 
-  val production_defs: (xsymbol list) option array
+  val production_defs: xsymbol list array
 
   (* A mapping of every (non-initial) state to its LR(0) core. *)
 

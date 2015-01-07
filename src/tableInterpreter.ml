@@ -174,21 +174,12 @@ module MakeInspection (T : TableFormat.INSPECTION_TABLES) = struct
   let symbol =
     T.symbol
 
-  let production_def prod =
-    assert (0 <= prod && prod < Array.length T.production_defs);
-    match T.production_defs.(prod) with
-    | None ->
-        (* should not happen; means [prod] is a start production *)
-        assert false
-    | Some data ->
-        data
-
   let lhs prod =
     let nt = PackedIntArray.get T.lhs prod in
     T.nonterminal nt
 
   let rhs prod =
-    production_def prod
+    T.production_defs.(prod)
 
   (* This is a copy of [Item.export]. *)
 
