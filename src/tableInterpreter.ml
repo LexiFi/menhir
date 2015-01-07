@@ -188,8 +188,7 @@ module MakeInspection (T : TableFormat.INSPECTION_TABLES) = struct
     T.nonterminal nt
 
   let rhs prod =
-    let _, rhs = production_def prod in
-    rhs
+    production_def prod
 
   (* This is a copy of [Item.export]. *)
 

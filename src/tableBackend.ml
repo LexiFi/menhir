@@ -862,23 +862,18 @@ let incoming_symbol_def () =
 (* ------------------------------------------------------------------------ *)
 
 (* A table that maps a production (i.e., an integer index) to its definition
-   (i.e., its left-hand and right-hand sides). This table concerns ordinary
-   productions only, as opposed to the start productions, whose existence is
-   not exposed to the user. *)
+   (i.e., its right-hand side). This table concerns ordinary productions only,
+   as opposed to the start productions, whose existence is not exposed to the
+   user. *)
 
 let production_def prod =
   if Production.is_start prod then
     enone
   else
-    esome (ETuple [
-      (* The production's left-hand side. This is always a nonterminal symbol,
-         of course. For simplicity, we encode it at type [xsymbol], even though
-         we could in principle use an existentially-quantified type of
-         nonterminal symbols. *)
-      xsymbol (Symbol.N (Production.nt prod));
+    esome (
       (* The production's right-hand side. This is a list of symbols. *)
       elist (List.map xsymbol (Array.to_list (Production.rhs prod)))
-    ])
+    )
 
 let production_defs () =
   assert Settings.inspection;
