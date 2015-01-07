@@ -127,6 +127,8 @@ module type INSPECTION_TABLES = sig
   type 'a symbol
   type xsymbol
 
+  val lhs: PackedIntArray.t
+
   (* A mapping of every (non-initial) state to its incoming symbol. *)
 
   val symbol: 'a lr1state -> 'a symbol

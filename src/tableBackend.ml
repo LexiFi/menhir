@@ -954,6 +954,7 @@ let program =
           interface_to_structure [
             lr1state_redef;
           ] @
+          SIInclude (MVar tables) :: (* only for [lhs] *)
           SIValDefs (false,
             incoming_symbol_def() ::
             production_defs() ::
