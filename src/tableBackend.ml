@@ -779,10 +779,10 @@ let xsymbol (symbol : Symbol.t) : expr =
    [int], so we can pattern match on it. To the user, though, it will be an
    abstract type. *)
 
-let incoming_symbol_def () = {
-  valpublic = true;
-  valpat = PVar "symbol";
-  valval =
+let incoming_symbol_def () =
+  assert Settings.inspection;
+  define (
+    "symbol",
     EAnnot (
       EFun ([ PVar state ],
 	EMatch (EVar state,
@@ -822,7 +822,7 @@ let incoming_symbol_def () = {
       let a = TypVar "a" in
       type2scheme (arrow (tlr1state a) (tsymbolgadt a))
     )
-}
+  )
 
 (* ------------------------------------------------------------------------ *)
 
