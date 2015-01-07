@@ -315,6 +315,20 @@ let encode_Error =                  (* 0 *)
 let encode_NoError =                (* 1 *)
   1
 
+(* Encodings of terminal and nonterminal symbols in the production table. *)
+
+let encode_terminal tok =
+  (Terminal.t2i tok) lsl 1          (*  t | 0 *)
+
+let encode_nonterminal nt =
+  (Nonterminal.n2i nt) lsl 1 lor 1  (* nt | 1 *)
+
+let encode_symbol = function
+  | Symbol.T tok ->
+      encode_terminal tok
+  | Symbol.N nt ->
+      encode_nonterminal nt
+
 (* ------------------------------------------------------------------------ *)
 
 (* Statistics. *)
@@ -880,6 +894,24 @@ let production_defs () =
     EArray (Production.map production_def)
   )
 
+let production_defs2 () =
+  assert Settings.inspection;
+  let productions : int list list = Production.map (fun prod ->
+    List.map encode_symbol (Array.to_list (Production.rhs prod))
+  ) in
+  let productions : int array array =
+    Array.of_list (List.map Array.of_list productions)
+  in
+  let productions : int LinearizedArray.t =
+    LinearizedArray.make productions
+  in
+  let (data, entry) = productions in
+  define_and_measure (
+    "production_defs2",
+    ETuple [ marshal1 (Array.to_list data); marshal1 (Array.to_list entry) ]
+  )
+
+
 (* ------------------------------------------------------------------------ *)
 
 (* A table that maps an LR(1) state to its LR(0) core. *)
@@ -1017,6 +1049,7 @@ let program =
           SIValDefs (false,
             incoming_symbol_def() ::
             production_defs() ::
+            production_defs2() ::
             lr0_core() ::
             lr0_items() ::
             []
