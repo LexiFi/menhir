@@ -153,5 +153,7 @@ module type INSPECTION_TABLES = sig
 
   val lr0_items: int list array
 
+  val lr0_items2: PackedIntArray.t * PackedIntArray.t
+
 end
 

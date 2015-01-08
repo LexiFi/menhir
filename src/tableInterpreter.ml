@@ -197,8 +197,23 @@ module MakeInspection (T : TableFormat.INSPECTION_TABLES) = struct
   let export t =
     (t lsr 7, t mod 128)
 
+  let items2 s =
+    let core = PackedIntArray.get T.lr0_core s in
+    (* TEMPORARY share code with [rhs] above *)
+    let (data, entry) = T.lr0_items2 in
+    let items : int list =
+      LinearizedArray.read_row_via
+        (PackedIntArray.get data)
+        (PackedIntArray.get entry)
+        core
+    in
+    List.map export items
+
   let items s =
     let core = PackedIntArray.get T.lr0_core s in
-    List.map export T.lr0_items.(core)
+    let answer1 = List.map export T.lr0_items.(core) in
+    let answer2 = items2 s in
+    assert (answer1 = answer2);
+    answer1
 
 end

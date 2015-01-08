@@ -931,6 +931,18 @@ let lr0_items () =
    physically shared. Or perhaps we could use some form of packed
    array? *)
 
+let lr0_items2 () =
+  assert Settings.inspection;
+  let items : int array array =
+    Array.init Lr0.n (fun node ->
+      Array.map Item.marshal (Array.of_list (Item.Set.elements (Lr0.items node)))
+    )
+  in
+  define_and_measure (
+    "lr0_items2",
+    linearize_and_marshal1 items
+  )
+
 (* ------------------------------------------------------------------------ *)
 
 (* Let's put everything together. *)
@@ -1039,6 +1051,7 @@ let program =
             rhs() ::
             lr0_core() ::
             lr0_items() ::
+            lr0_items2() ::
             []
           ) ::
           []
