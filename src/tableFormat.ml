@@ -147,13 +147,12 @@ module type INSPECTION_TABLES = sig
 
   val lr0_core: PackedIntArray.t
 
-  (* A mapping of every LR(0) state to its set of LR(0) items.
-     Each item is represented in its packed form (see [Item])
-     as an integer. *)
+  (* A mapping of every LR(0) state to its set of LR(0) items. Each item is
+     represented in its packed form (see [Item]) as an integer. Thus the
+     mapping is an array of arrays of integers, which is linearized and
+     packed, like [rhs]. *)
 
-  val lr0_items: int list array
-
-  val lr0_items2: PackedIntArray.t * PackedIntArray.t
+  val lr0_items: PackedIntArray.t * PackedIntArray.t
 
 end
 

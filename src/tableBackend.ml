@@ -915,23 +915,7 @@ let lr0_core () =
 
 (* A table that maps an LR(0) state to a set of LR(0) items. *)
 
-let encode_lr0_item item =
-  EIntConst (Item.marshal item)
-
 let lr0_items () =
-  assert Settings.inspection;
-  define_and_measure (
-    "lr0_items",
-    EArray (Array.to_list (Array.init Lr0.n (fun (node : Lr0.node) ->
-      elist (List.map encode_lr0_item (Item.Set.elements (Lr0.items node)))
-    )))
-  )
-
-(* TEMPORARY these lists share suffixes, which in principle could be
-   physically shared. Or perhaps we could use some form of packed
-   array? *)
-
-let lr0_items2 () =
   assert Settings.inspection;
   let items : int array array =
     Array.init Lr0.n (fun node ->
@@ -939,7 +923,7 @@ let lr0_items2 () =
     )
   in
   define_and_measure (
-    "lr0_items2",
+    "lr0_items",
     linearize_and_marshal1 items
   )
 
@@ -1051,7 +1035,6 @@ let program =
             rhs() ::
             lr0_core() ::
             lr0_items() ::
-            lr0_items2() ::
             []
           ) ::
           []
