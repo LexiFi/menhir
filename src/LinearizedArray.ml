@@ -38,20 +38,30 @@ let length ((_, entry) : 'a t) : int =
 let row_length ((_, entry) : 'a t) i : int =
   entry.(i + 1) - entry.(i)
 
+let row_length_via get_entry i =
+  get_entry (i + 1) - get_entry i
+
 let read ((data, entry) as la : 'a t) i j : 'a =
   assert (0 <= j && j < row_length la i);
   data.(entry.(i) + j)
+
+let read_via get_data get_entry i j =
+  assert (0 <= j && j < row_length_via get_entry i);
+  get_data (get_entry i + j)
 
 let write ((data, entry) as la : 'a t) i j (v : 'a) : unit =
   assert (0 <= j && j < row_length la i);
   data.(entry.(i) + j) <- v
 
-let rec read_interval data i j =
+let rec read_interval_via get_data i j =
   if i = j then
     []
   else
-    data.(i) :: read_interval data (i + 1) j
+    get_data i :: read_interval_via get_data (i + 1) j
+
+let read_row_via get_data get_entry i =
+  read_interval_via get_data (get_entry i) (get_entry (i + 1))
 
 let read_row ((data, entry) : 'a t) i : 'a list =
-  read_interval data entry.(i) entry.(i + 1)
+  read_row_via (Array.get data) (Array.get entry) i
 

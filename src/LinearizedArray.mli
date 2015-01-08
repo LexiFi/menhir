@@ -36,3 +36,24 @@ val row_length: 'a t -> int -> int
 
 val read_row: 'a t -> int -> 'a list
 
+(* The following variants read the linearized array via accessors
+   [get_data : int -> 'a] and [get_entry : int -> int]. *)
+
+val row_length_via:
+  (* get_entry: *) (int -> int) ->
+  (* i: *)         int ->
+                   int
+
+val read_via:
+  (* get_data: *)  (int -> 'a) ->
+  (* get_entry: *) (int -> int) ->
+  (* i: *)         int ->
+  (* j: *)         int ->
+                   'a
+
+val read_row_via:
+  (* get_data: *)  (int -> 'a) ->
+  (* get_entry: *) (int -> int) ->
+  (* i: *)         int ->
+                   'a list
+
