@@ -18,15 +18,3 @@ module Make (T : TableFormat.TABLES)
 			   and type semantic_value = Obj.t
                            and type production = int
 
-(* This functor is also invoked inside the generated parser. It
-   constructs the inspection API on top of the inspection tables. *)
-
-module MakeInspection (T : TableFormat.INSPECTION_TABLES
-                       with type 'a lr1state = int)
-
-: IncrementalEngine.INSPECTION
-  with type 'a lr1state := 'a T.lr1state
-   and type 'a symbol := 'a T.symbol
-   and type xsymbol := T.xsymbol
-   and type production := int
-

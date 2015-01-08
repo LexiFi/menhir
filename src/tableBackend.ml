@@ -24,7 +24,7 @@ let make =
   tableInterpreter ^ ".Make"
 
 let make_inspection =
-  tableInterpreter ^ ".MakeInspection"
+  menhirlib ^ ".InspectionTableInterpreter.Make"
 
 let accept =
   tableInterpreter ^ ".Accept"
@@ -1020,7 +1020,7 @@ let program =
         SIInclude (MVar more) ::
 
         SIInclude (MApp (MVar make_inspection, MStruct (
-          (* This module must satisfy [INSPECTION_TABLES]. *)
+          (* This module must satisfy [InspectionTableFormat.TABLES]. *)
           (* [lr1state] *)
           interface_to_structure [
             lr1state_redef;

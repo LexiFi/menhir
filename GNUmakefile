@@ -85,6 +85,8 @@ LIBFILES := \
   src/IncrementalEngine.ml \
   src/engineTypes.ml \
   src/engine.{ml,mli} \
+  src/inspectionTableFormat.ml \
+  src/inspectionTableInterpreter.{ml,mli} \
   src/tableFormat.ml \
   src/tableInterpreter.{ml,mli} \
   src/convert.{ml,mli}
