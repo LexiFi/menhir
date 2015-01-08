@@ -175,10 +175,25 @@ module MakeInspection (T : TableFormat.INSPECTION_TABLES) = struct
     T.symbol
 
   let lhs prod =
-    let nt = PackedIntArray.get T.lhs prod in
+    let nt : int = PackedIntArray.get T.lhs prod in
     T.nonterminal nt
 
+  let decode_symbol symbol =
+    let kind = symbol land 1 in
+    (if kind = 0 then T.terminal else T.nonterminal) (symbol lsr 1)
+
+  let rhs2 prod =
+    let (data, entry) = T.production_defs2 in
+    let rhs : int list =
+      LinearizedArray.read_row_via
+        (PackedIntArray.get data)
+        (PackedIntArray.get entry)
+        prod
+    in
+    List.map decode_symbol rhs
+
   let rhs prod =
+    let _ = rhs2 prod in
     T.production_defs.(prod)
 
   (* This is a copy of [Item.export]. *)

@@ -127,7 +127,7 @@ module type INSPECTION_TABLES = sig
   type 'a symbol
   type xsymbol
 
-  val lhs: PackedIntArray.t
+  val lhs: PackedIntArray.t (* or: could include TABLES *)
 
   val terminal: int -> xsymbol
   val nonterminal: int -> xsymbol
@@ -140,6 +140,8 @@ module type INSPECTION_TABLES = sig
      (non-start) production. *)
 
   val production_defs: xsymbol list array
+  val production_defs2: PackedIntArray.t * PackedIntArray.t
+    (* packed linearized array *)
 
   (* A mapping of every (non-initial) state to its LR(0) core. *)
 
