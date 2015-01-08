@@ -136,12 +136,12 @@ module type INSPECTION_TABLES = sig
 
   val symbol: 'a lr1state -> 'a symbol
 
-  (* The definition (i.e. left-hand side and right-hand side) of every
-     (non-start) production. *)
+  (* The right-hand side of every production. This a linearized array
+     of arrays of integers, whose [data] and [entry] components have
+     been packed. The encoding of symbols as integers in described in
+     [TableBackend]. *)
 
-  val production_defs: xsymbol list array
-  val production_defs2: PackedIntArray.t * PackedIntArray.t
-    (* packed linearized array *)
+  val rhs: PackedIntArray.t * PackedIntArray.t
 
   (* A mapping of every (non-initial) state to its LR(0) core. *)
 

@@ -294,6 +294,7 @@ module Production : sig
   val iter: (index -> unit) -> unit
   val fold: (index -> 'a -> 'a) -> 'a -> 'a
   val map: (index -> 'a) -> 'a list
+  val amap: (index -> 'a) -> 'a array
 
   (* Iteration over all productions, except the start productions. *)
 

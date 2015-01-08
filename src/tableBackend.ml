@@ -415,6 +415,13 @@ let marshal11 (table : int array) =
   assert (bits = 1);
   EStringConst text
 
+(* [linearize_and_marshal1] marshals an array of integer arrays (of possibly
+   different lengths). *)
+
+let linearize_and_marshal1 (table : int array array) =
+  let data, entry = MenhirLib.LinearizedArray.make table in
+  ETuple [ marshal1 data; marshal1 entry ]
+
 (* [marshal2] marshals a two-dimensional table. *)
 
 let marshal2 name m n (matrix : int list list) =
@@ -875,42 +882,23 @@ let incoming_symbol_def () =
 
 (* ------------------------------------------------------------------------ *)
 
-(* A table that maps a production (i.e., an integer index) to its definition
-   (i.e., its right-hand side). In principle, we use this table only for
-   ordinary productions, as opposed to the start productions, whose existence
-   is not exposed to the user. However, it is simpler (and not costly) to
-   include all productions in this table. *)
+(* A table that maps a production (i.e., an integer index) to the production's
+   right-hand side. In principle, we use this table for ordinary productions
+   only, as opposed to the start productions, whose existence is not exposed
+   to the user. However, it is simpler (and not really costly) to include all
+   productions in this table. *)
 
-let production_def prod =
-  elist (
-    (* The production's right-hand side. This is a list of symbols. *)
-    List.map xsymbol (Array.to_list (Production.rhs prod))
-  )
-
-let production_defs () =
+let rhs () =
   assert Settings.inspection;
-  define_and_measure (
-    "production_defs",
-    EArray (Production.map production_def)
-  )
-
-let production_defs2 () =
-  assert Settings.inspection;
-  let productions : int list list = Production.map (fun prod ->
-    List.map encode_symbol (Array.to_list (Production.rhs prod))
-  ) in
   let productions : int array array =
-    Array.of_list (List.map Array.of_list productions)
+    Production.amap (fun prod ->
+      Array.map encode_symbol (Production.rhs prod)
+    )
   in
-  let productions : int MenhirLib.LinearizedArray.t =
-    MenhirLib.LinearizedArray.make productions
-  in
-  let (data, entry) = productions in
   define_and_measure (
-    "production_defs2",
-    ETuple [ marshal1 (Array.to_list data); marshal1 (Array.to_list entry) ]
+    "rhs",
+    linearize_and_marshal1 productions
   )
-
 
 (* ------------------------------------------------------------------------ *)
 
@@ -1048,8 +1036,7 @@ let program =
           ) ::
           SIValDefs (false,
             incoming_symbol_def() ::
-            production_defs() ::
-            production_defs2() ::
+            rhs() ::
             lr0_core() ::
             lr0_items() ::
             []
