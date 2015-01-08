@@ -79,6 +79,7 @@ DISTRIBUTED_FILES := AUTHORS CHANGES INSTALLATION LICENSE Makefile demos
 LIBFILES := \
   src/standard.mly \
   src/infiniteArray.{ml,mli} \
+  src/LinearizedArray.{ml,mli} \
   src/packedIntArray.{ml,mli} \
   src/rowDisplacement.{ml,mli} \
   src/IncrementalEngine.ml \

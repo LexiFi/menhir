@@ -902,8 +902,8 @@ let production_defs2 () =
   let productions : int array array =
     Array.of_list (List.map Array.of_list productions)
   in
-  let productions : int LinearizedArray.t =
-    LinearizedArray.make productions
+  let productions : int MenhirLib.LinearizedArray.t =
+    MenhirLib.LinearizedArray.make productions
   in
   let (data, entry) = productions in
   define_and_measure (
