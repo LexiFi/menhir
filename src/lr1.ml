@@ -845,6 +845,12 @@ let conflicts f =
   ) conflict_nodes
 
 let incoming_symbol node =
+  (* Instead of reading [node.incoming_symbol], we could return
+     [Lr0.incoming_symbol (Lr0.core node.state)].
+     We could then get rid of the field [node.incoming_symbol].
+     However, this field is also used in the construction of the
+     table [incoming], so we would have to change the code that
+     builds this table. TEMPORARY do it! *)
   node.incoming_symbol
 
 let predecessors node =

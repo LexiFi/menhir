@@ -142,7 +142,7 @@ let rec explore (symbol : Symbol.t option) (state : Item.Set.t) : node =
   (* Find out whether this state was already explored. *)
 
   try
-    Hashtbl.find map state in
+    Hashtbl.find map state
   with Not_found ->
 
     (* If not, create a new node. *)
