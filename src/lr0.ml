@@ -142,11 +142,7 @@ let rec explore (symbol : Symbol.t option) (state : Item.Set.t) : node =
   (* Find out whether this state was already explored. *)
 
   try
-
-    let k = Hashtbl.find map state in
-    assert (InfiniteArray.get incoming k = symbol);
-    k
-
+    Hashtbl.find map state in
   with Not_found ->
 
     (* If not, create a new node. *)
