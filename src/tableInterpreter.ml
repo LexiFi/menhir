@@ -193,8 +193,10 @@ module MakeInspection (T : TableFormat.INSPECTION_TABLES) = struct
     List.map decode_symbol rhs
 
   let rhs prod =
-    let _ = rhs2 prod in
-    T.production_defs.(prod)
+    let answer1 : T.xsymbol list = rhs2 prod in
+    let answer2 : T.xsymbol list = T.production_defs.(prod) in
+    assert (Printf.fprintf stderr "I AM HERE\n%!"; answer1 = answer2);
+    answer2
 
   (* This is a copy of [Item.export]. *)
 
