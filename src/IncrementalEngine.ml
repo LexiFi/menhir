@@ -102,7 +102,7 @@ module type INSPECTION = sig
 
   type xsymbol
 
-  val symbol: 'a lr1state -> 'a symbol
+  val incoming_symbol: 'a lr1state -> 'a symbol
 
   val lhs: production -> xsymbol
 

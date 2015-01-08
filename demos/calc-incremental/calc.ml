@@ -33,7 +33,7 @@ let print_element e : string =
   match e with
   | I.Element (s, v, _, _) ->
       let open Parser.Inspection in
-      match symbol s with
+      match incoming_symbol s with
       | T T_TIMES ->
           "*"
       | T T_RPAREN ->

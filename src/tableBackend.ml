@@ -828,17 +828,17 @@ let nonterminal () =
 
 (* ------------------------------------------------------------------------ *)
 
-(* Produce a function [symbol] that maps a state of type ['a lr1state]
+(* Produce a function [incoming_symbol] that maps a state of type ['a lr1state]
    (represented as an integer value) to a value of type ['a symbol]. *)
 
 (* The type [MenhirInterpreter.lr1state] is known (to us) to be an alias for
    [int], so we can pattern match on it. To the user, though, it will be an
    abstract type. *)
 
-let incoming_symbol_def () =
+let incoming_symbol () =
   assert Settings.inspection;
   define (
-    "symbol",
+    "incoming_symbol",
     EAnnot (
       EFun ([ PVar state ],
 	EMatch (EVar state,
@@ -1020,18 +1020,19 @@ let program =
         SIInclude (MVar more) ::
 
         SIInclude (MApp (MVar make_inspection, MStruct (
-          SIInclude (MVar more) ::
+          (* This module must satisfy [INSPECTION_TABLES]. *)
+          (* [lr1state] *)
           interface_to_structure [
             lr1state_redef;
           ] @
-          SIInclude (MVar tables) :: (* only for [lhs] *)
+          (* [symbol], [xsymbol]. *)
+          SIInclude (MVar more) ::
+          (* [lhs] *)
+          SIInclude (MVar tables) ::
           SIValDefs (false,
             terminal() ::
             nonterminal() ::
-            []
-          ) ::
-          SIValDefs (false,
-            incoming_symbol_def() ::
+            incoming_symbol() ::
             rhs() ::
             lr0_core() ::
             lr0_items() ::
