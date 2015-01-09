@@ -853,60 +853,6 @@ let lr0_incoming () =
 
 (* ------------------------------------------------------------------------ *)
 
-(* Produce a function [incoming_symbol] that maps a state of type ['a lr1state]
-   (represented as an integer value) to a value of type ['a symbol]. *)
-
-(* The type [MenhirInterpreter.lr1state] is known (to us) to be an alias for
-   [int], so we can pattern match on it. To the user, though, it will be an
-   abstract type. *)
-
-let incoming_symbol () =
-  assert Settings.inspection;
-  define (
-    "incoming_symbol",
-    EAnnot (
-      EFun ([ PVar state ],
-	EMatch (EVar state,
-          (* A default branch is used to ensure exhaustiveness. *)
-          let default =
-            { branchpat =
-                PWildcard;
-              branchbody =
-                EComment ("This state does not exist.",
-                  EApp (EVar "assert", [ efalse ])
-                )
-            }
-          in
-          (* One branch per LR(1) state. *)
-	  Lr1.fold (fun branches node ->
-            let branchpat =
-              pint (Lr1.number node)
-            in
-            let branchbody =
-	      match Lr1.incoming_symbol node with
-	      | None ->
-                  (* This function must not be applied to an initial state.
-                     We will be careful not to expose the initial states
-                     as inhabitants of the type ['a lr1state]. *)
-                  EComment ("This is an initial state.",
-                    EApp (EVar "assert", [ efalse ])
-                  )
-              | Some symbol ->
-                  (* To a non-initial state, we associate a representation
-                     of its incoming symbol. *)
-                  EMagic (esymbol symbol)
-            in
-	    { branchpat; branchbody } :: branches
-	  ) [default]
-	)
-      ),
-      let a = TypVar "a" in
-      type2scheme (arrow (tlr1state a) (tsymbolgadt a))
-    )
-  )
-
-(* ------------------------------------------------------------------------ *)
-
 (* A table that maps a production (i.e., an integer index) to the production's
    right-hand side. In principle, we use this table for ordinary productions
    only, as opposed to the start productions, whose existence is not exposed
@@ -1057,7 +1003,6 @@ let program =
           SIValDefs (false,
             terminal() ::
             nonterminal() ::
-            incoming_symbol() ::
             lr0_incoming() ::
             rhs() ::
             lr0_core() ::

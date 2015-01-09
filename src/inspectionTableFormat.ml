@@ -5,12 +5,13 @@
 
 module type TABLES = sig
 
-  (* These types are used in the types of the functions that follow.
-     In the generated [.ml] file, ['a lr1state] will be implemented
-     e.g. as [int], whereas the types ['a symbol] and [xsymbol] are
-     (generated) algebraic data types. *)
+  (* The type ['a lr1state] describes an LR(1) state and will be defined
+     internally as [int]. The types ['a symbol] and [xsymbol] are (generated)
+     algebraic data types. These types must appear here because they serve to
+     describe the argument and/or result of [InspectionTableInterpreter.Make]. *)
 
   type 'a lr1state
+
   type 'a symbol
 
   type xsymbol = 
@@ -22,10 +23,6 @@ module type TABLES = sig
 
   val    terminal: int -> xsymbol
   val nonterminal: int -> xsymbol
-
-  (* A mapping of every (non-initial) state to its incoming symbol. *)
-
-  val incoming_symbol: 'a lr1state -> 'a symbol
 
   (* The left-hand side of every production. (Same as in [TableFormat.TABLES].) *)
 
