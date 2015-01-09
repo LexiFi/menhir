@@ -12,7 +12,9 @@ module type TABLES = sig
 
   type 'a lr1state
   type 'a symbol
-  type xsymbol
+
+  type xsymbol = 
+    | X : 'a symbol -> xsymbol
 
   (* Some of the tables that follow use encodings of (terminal and
      nonterminal) symbols as integers. So, we need functions that
@@ -46,6 +48,10 @@ module type TABLES = sig
      packed, like [rhs]. *)
 
   val lr0_items: PackedIntArray.t * PackedIntArray.t
+
+  (* A mapping of every LR(0) state to its incoming symbol, if it has one. *)
+
+  val lr0_incoming: PackedIntArray.t
 
 end
 

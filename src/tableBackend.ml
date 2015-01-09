@@ -317,17 +317,26 @@ let encode_NoError =                (* 1 *)
 
 (* Encodings of terminal and nonterminal symbols in the production table. *)
 
+let encode_no_symbol =
+  0                                          (* 0 | 0 *)
+
 let encode_terminal tok =
-  (Terminal.t2i tok) lsl 1          (*  t | 0 *)
+  (Terminal.t2i tok + 1) lsl 1          (*  t + 1 | 0 *)
 
 let encode_nonterminal nt =
-  (Nonterminal.n2i nt) lsl 1 lor 1  (* nt | 1 *)
+  ((Nonterminal.n2i nt) lsl 1) lor 1        (* nt | 1 *)
 
 let encode_symbol = function
   | Symbol.T tok ->
       encode_terminal tok
   | Symbol.N nt ->
       encode_nonterminal nt
+
+let encode_symbol_option = function
+  | None ->
+      encode_no_symbol
+  | Some symbol ->
+      encode_symbol symbol
 
 (* ------------------------------------------------------------------------ *)
 
@@ -415,6 +424,14 @@ let marshal11 (table : int array) =
   assert (bits = 1);
   EStringConst text
 
+(* List-based versions of the above functions. *)
+
+let marshal1_list (table : int list) =
+  marshal1 (Array.of_list table)
+
+let marshal11_list (table : int list) =
+  marshal11 (Array.of_list table)
+
 (* [linearize_and_marshal1] marshals an array of integer arrays (of possibly
    different lengths). *)
 
@@ -449,12 +466,6 @@ let marshal2 name m n (matrix : int list list) =
     marshal1 displacement;
     marshal1 data;
   ]
-
-let marshal1 (table : int list) =
-  marshal1 (Array.of_list table)
-
-let marshal11 (table : int list) =
-  marshal11 (Array.of_list table)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -567,7 +578,7 @@ let error =
     "error",
     ETuple [
       EIntConst (Terminal.n - 1);
-      marshal11 (
+      marshal11_list (
 	List.flatten (
 	  Lr1.map (fun node ->
 	    Terminal.mapx (fun t ->
@@ -582,7 +593,7 @@ let error =
 let default_reduction =
   define_and_measure (
     "default_reduction",
-    marshal1 (
+    marshal1_list (
       Lr1.map (fun node ->
 	default_reduction node
       )
@@ -593,7 +604,7 @@ let lhs =
   define_and_measure (
     "lhs",
     marshal1 (
-      Production.map (fun prod ->
+      Production.amap (fun prod ->
 	Nonterminal.n2i (Production.nt prod)
       )
     )
@@ -828,6 +839,20 @@ let nonterminal () =
 
 (* ------------------------------------------------------------------------ *)
 
+(* Produce a mapping of every LR(0) state to its incoming symbol (encoded as
+   an integer value). (Note that the initial states do not have one.) *)
+
+let lr0_incoming () =
+  assert Settings.inspection;
+  define_and_measure (
+    "lr0_incoming",
+    marshal1 (Array.init Lr0.n (fun node ->
+      encode_symbol_option (Lr0.incoming_symbol node)
+    ))
+  )
+
+(* ------------------------------------------------------------------------ *)
+
 (* Produce a function [incoming_symbol] that maps a state of type ['a lr1state]
    (represented as an integer value) to a value of type ['a symbol]. *)
 
@@ -908,7 +933,7 @@ let lr0_core () =
   assert Settings.inspection;
   define_and_measure (
     "lr0_core",
-    marshal1 (Lr1.map (fun (node : Lr1.node) ->
+    marshal1_list (Lr1.map (fun (node : Lr1.node) ->
       Lr0.core (Lr1.state node)
     ))
   )
@@ -1033,6 +1058,7 @@ let program =
             terminal() ::
             nonterminal() ::
             incoming_symbol() ::
+            lr0_incoming() ::
             rhs() ::
             lr0_core() ::
             lr0_items() ::
