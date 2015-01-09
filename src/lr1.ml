@@ -40,11 +40,6 @@ type node = {
 
     mutable predecessors: node list;
 
-    (* If a node has any incoming transitions, then they all carry
-       the same symbol. This is it. *)
-
-    mutable incoming_symbol: Symbol.t option;
-
     (* Transient marks are used during construction and traversal. *)
 
     mutable mark: Mark.t;
@@ -253,7 +248,6 @@ let create (state : Lr0.lr1state) : node =
     number = 0; (* temporary placeholder *)
     mark = Mark.none;
     predecessors = [];
-    incoming_symbol = None;
     forbid_default_reduction = false;
   } in
 
@@ -661,13 +655,6 @@ let () =
          edges that carry distinct symbols. *)
 
       SymbolMap.iter (fun symbol son ->
-        begin
-	  match son.incoming_symbol with
-	  | None ->
-	      son.incoming_symbol <- Some symbol
-	  | Some symbol' ->
-	      assert (Symbol.equal symbol symbol')
-	end;
 	son.predecessors <- node :: son.predecessors;
 	visit (Some symbol) son
       ) node.transitions
@@ -714,6 +701,13 @@ let bfs =
   B.search
 
 (* ------------------------------------------------------------------------ *)
+(* The incoming symbol of a node can be computed by going through its LR(0)
+   core. For this reason, we do not need to explicitly record it here. *)
+
+let incoming_symbol node =
+  Lr0.incoming_symbol (Lr0.core node.state)
+
+(* ------------------------------------------------------------------------ *)
 (* Iteration over all nodes. *)
 
 let fold f accu =
@@ -727,13 +721,13 @@ let map f =
 
 let foldx f =
   fold (fun accu node ->
-          match node.incoming_symbol with
+          match incoming_symbol node with
             | None -> accu
             | Some _ -> f accu node)
 
 let iterx f =
   iter (fun node -> 
-    match node.incoming_symbol with 
+    match incoming_symbol node with 
       | None -> () 
       | Some _ -> f node)
  
@@ -843,15 +837,6 @@ let conflicts f =
   List.iter (fun node ->
     f node.conflict_tokens node
   ) conflict_nodes
-
-let incoming_symbol node =
-  (* Instead of reading [node.incoming_symbol], we could return
-     [Lr0.incoming_symbol (Lr0.core node.state)].
-     We could then get rid of the field [node.incoming_symbol].
-     However, this field is also used in the construction of the
-     table [incoming], so we would have to change the code that
-     builds this table. TEMPORARY do it! *)
-  node.incoming_symbol
 
 let predecessors node =
   node.predecessors
