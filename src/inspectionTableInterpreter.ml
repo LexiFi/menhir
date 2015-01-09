@@ -11,6 +11,9 @@ end) = struct
 
   open T
 
+  (* This should be the only place in the whole library (and generator!)
+     where these types are defined. *)
+
   type 'a symbol =
     | T : 'a terminal -> 'a symbol
     | N : 'a nonterminal -> 'a symbol
@@ -29,15 +32,10 @@ module Make (
       with type 'a lr1state = int
 ) = struct
 
-  type 'a symbol = 'a T.symbol =
-    | T : 'a T.terminal -> 'a symbol
-    | N : 'a T.nonterminal -> 'a symbol
+  (* Including [T] is an easy way of inheriting the definitions of the types
+     [symbol] and [xsymbol]. *)
 
-  (* The type [xsymbol] is an existentially quantified version of the type
-     ['a symbol]. *)
-
-  type xsymbol = T.xsymbol =
-    | X : 'a symbol -> xsymbol
+  include T
 
   (* This auxiliary function decodes a packed linearized array, as created by
      [TableBackend.linearize_and_marshal1]. Here, we read a row all at once. *)
