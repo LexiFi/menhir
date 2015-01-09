@@ -90,25 +90,63 @@ module type INCREMENTAL_ENGINE = sig
 
 end
 
-(* TEMPORARY comment/document *)
+(* This signature describes the inspection API that is made available to the
+   user when [--inspection] is used. *)
 
 module type INSPECTION = sig
 
+  (* The type ['a lr1state] is meant to be the same as in [INCREMENTAL_ENGINE]. *)
+
   type 'a lr1state
+
+  (* The type [production] is meant to be the same as in [INCREMENTAL_ENGINE].
+     It represents a production of the grammar. A production can be examined
+     via the functions [lhs] and [rhs] below. *)
 
   type production
 
+  (* An LR(0) item is a pair of a production [prod] and a valid index [i] into
+     this production. That is, if the length of [rhs prod] is [n], then [i] is
+     comprised between 0 and [n], inclusive. *)
+
+  type item = private
+      production * int
+
+  (* The type ['a symbol] represents a (terminal or nonterminal) symbol of the
+     grammar. It is generated. The index ['a] represents the type of the
+     semantic values associated with this symbol. *)
+
   type 'a symbol
 
-  type xsymbol
+  (* The type [xsymbol] is an existentially quantified version of the type
+     ['a symbol]. *)
+
+  type xsymbol = 
+    | X : 'a symbol -> xsymbol
+
+  (* [incoming_symbol s] is the incoming symbol of the state [s], that is,
+     the symbol that the parser must recognize before (has recognized when)
+     it enters the state [s]. This function gives access to the semantic
+     value [v] stored in a stack element [Element (s, v, _, _)]. Indeed,
+     by case analysis on the symbol [incoming_symbol s], one discovers the
+     type ['a] of the value [v]. *)
 
   val incoming_symbol: 'a lr1state -> 'a symbol
 
+  (* [lhs prod] is the left-hand side of the production [prod]. This is
+     always a non-terminal symbol. *)
+
   val lhs: production -> xsymbol
+
+  (* [rhs prod] is the right-hand side of the production [prod]. This is
+     a (possibly empty) sequence of (terminal or nonterminal) symbols. *)
 
   val rhs: production -> xsymbol list
 
-  val items: 'a lr1state -> (production * int) list
+  (* [items s] is the set of the LR(0) items in the LR(0) core of the LR(1)
+     state [s]. This set is presented as a list, in an arbitrary order. *)
+
+  val items: 'a lr1state -> item list
 
 end
 

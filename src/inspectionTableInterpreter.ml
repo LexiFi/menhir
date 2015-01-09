@@ -59,7 +59,10 @@ module Make (
      items are then decoded by the function [export] below, which is
      essentially a copy of [Item.export]. *)
 
-  let export t =
+  type item =
+      int * int
+
+  let export t : item =
     (t lsr 7, t mod 128)
 
   let items s =
