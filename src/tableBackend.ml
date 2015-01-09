@@ -5,7 +5,6 @@ open Interface
 open Printf
 open TokenType
 open NonterminalType
-open SymbolType
 open CodePieces
 
 module Run (T : sig end) = struct
@@ -22,6 +21,9 @@ let tableInterpreter =
 
 let make =
   tableInterpreter ^ ".Make"
+
+let make_symbol =
+  menhirlib ^ ".InspectionTableInterpreter.Symbols"
 
 let make_inspection =
   menhirlib ^ ".InspectionTableInterpreter.Make"
@@ -764,6 +766,12 @@ let enonterminal (nt : Nonterminal.t) : expr =
    that encodes the symbol [symbol]. It is built by applying the
    injection [T] or [N] to the terminal or nonterminal encoding. *)
 
+let dataT =
+  "T"
+
+let dataN =
+  "N"
+
 let esymbol (symbol : Symbol.t) : expr =
   match symbol with
   | Symbol.T t ->
@@ -774,6 +782,9 @@ let esymbol (symbol : Symbol.t) : expr =
 (* [xsymbol symbol] is a value of type [xsymbol] that encodes the
    symbol [symbol]. It is built by applying the injection [X] (an
    existential quantifier) to [esymbol symbol]. *)
+
+let dataX =
+  "X"
 
 let xsymbol (symbol : Symbol.t) : expr =
   EData (dataX, [ esymbol symbol ])
@@ -789,22 +800,19 @@ let terminal () =
   let t = "t" in
   define (
     "terminal",
-    EAnnot (
-      EFun ([ PVar t ],
-	EMatch (EVar t,
-	  Terminal.mapx (fun tok ->
-	    { branchpat = pint (Terminal.t2i tok);
-	      branchbody = xsymbol (Symbol.T tok) }
-	  ) @ [
-            { branchpat = PWildcard;
-              branchbody =
-                EComment ("This terminal symbol does not exist.",
-                  EApp (EVar "assert", [ efalse ])
-                ) }
-          ]
-	)
-      ),
-      type2scheme (arrow tint txsymbol)
+    EFun ([ PVar t ],
+      EMatch (EVar t,
+        Terminal.mapx (fun tok ->
+          { branchpat = pint (Terminal.t2i tok);
+            branchbody = xsymbol (Symbol.T tok) }
+        ) @ [
+          { branchpat = PWildcard;
+            branchbody =
+              EComment ("This terminal symbol does not exist.",
+                EApp (EVar "assert", [ efalse ])
+              ) }
+        ]
+      )
     )
   )
 
@@ -818,22 +826,19 @@ let nonterminal () =
   let nt = "nt" in
   define (
     "nonterminal",
-    EAnnot (
-      EFun ([ PVar nt ],
-	EMatch (EVar nt,
-	  Nonterminal.foldx (fun nt branches ->
-	    { branchpat = pint (Nonterminal.n2i nt);
-	      branchbody = xsymbol (Symbol.N nt) } :: branches
-	  ) [
-            { branchpat = PWildcard;
-              branchbody =
-                EComment ("This nonterminal symbol does not exist.",
-                  EApp (EVar "assert", [ efalse ])
-                ) }
-          ]
-	)
-      ),
-      type2scheme (arrow tint txsymbol)
+    EFun ([ PVar nt ],
+      EMatch (EVar nt,
+        Nonterminal.foldx (fun nt branches ->
+          { branchpat = pint (Nonterminal.n2i nt);
+            branchbody = xsymbol (Symbol.N nt) } :: branches
+        ) [
+          { branchpat = PWildcard;
+            branchbody =
+              EComment ("This nonterminal symbol does not exist.",
+                EApp (EVar "assert", [ efalse ])
+              ) }
+        ]
+      )
     )
   )
 
@@ -996,11 +1001,10 @@ let program =
           ] @
           (* [terminal], [nonterminal]. *)
           SIInclude (MVar more) ::
-          (* [symbol], [xsymbol]. *)
-          interface_to_structure (
-            symbolgadtdef() @
-            xsymboldef()
-          ) @
+          (* This functor application builds the types [symbol] and [xsymbol]
+             in terms of the types [terminal] and [nonterminal]. This saves
+             us the trouble of generating these definitions. *)
+          SIInclude (MApp (MVar make_symbol, MVar more)) ::
           (* [lhs] *)
           SIInclude (MVar tables) ::
           SIValDefs (false,

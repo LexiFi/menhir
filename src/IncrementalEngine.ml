@@ -90,10 +90,44 @@ module type INCREMENTAL_ENGINE = sig
 
 end
 
+(* This signature is a fragment of the inspection API that is made available
+   to the user when [--inspection] is used. This fragment contains type
+   definitions for symbols. *)
+
+module type SYMBOLS = sig
+
+  (* The type ['a terminal] represents a terminal symbol. The type ['a
+     nonterminal] represents a nonterminal symbol. In both cases, the index
+     ['a] represents the type of the semantic values associated with this
+     symbol. The concrete definitions of these types are generated. *)
+
+  type 'a terminal
+  type 'a nonterminal
+
+  (* The type ['a symbol] represents a terminal or nonterminal symbol. It is
+     the disjoint union of the types ['a terminal] and ['a nonterminal]. *)
+
+  type 'a symbol =
+    | T : 'a terminal -> 'a symbol
+    | N : 'a nonterminal -> 'a symbol
+
+  (* The type [xsymbol] is an existentially quantified version of the type
+     ['a symbol]. This type is useful in situations where the index ['a]
+     is not statically known. *)
+
+  type xsymbol = 
+    | X : 'a symbol -> xsymbol
+
+end
+
 (* This signature describes the inspection API that is made available to the
    user when [--inspection] is used. *)
 
 module type INSPECTION = sig
+
+  (* The types of symbols are described above. *)
+
+  include SYMBOLS
 
   (* The type ['a lr1state] is meant to be the same as in [INCREMENTAL_ENGINE]. *)
 
@@ -111,23 +145,6 @@ module type INSPECTION = sig
 
   type item =
       production * int
-
-  (* The type ['a symbol] represents a (terminal or nonterminal) symbol of the
-     grammar. It is generated. The index ['a] represents the type of the
-     semantic values associated with this symbol. *)
-
-  type 'a terminal
-  type 'a nonterminal
-
-  type 'a symbol =
-    | T : 'a terminal -> 'a symbol
-    | N : 'a nonterminal -> 'a symbol
-
-  (* The type [xsymbol] is an existentially quantified version of the type
-     ['a symbol]. *)
-
-  type xsymbol = 
-    | X : 'a symbol -> xsymbol
 
   (* [incoming_symbol s] is the incoming symbol of the state [s], that is,
      the symbol that the parser must recognize before (has recognized when)

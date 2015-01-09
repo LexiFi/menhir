@@ -5,22 +5,14 @@
 
 module type TABLES = sig
 
-  (* The type ['a lr1state] describes an LR(1) state and will be defined
-     internally as [int]. The types ['a symbol] and [xsymbol] are (generated)
-     algebraic data types. These types must appear here because they serve to
-     describe the argument and/or result of [InspectionTableInterpreter.Make]. *)
+  (* The types of symbols. *)
+
+  include IncrementalEngine.SYMBOLS
+
+  (* The type ['a lr1state] describes an LR(1) state. The generated parser defines
+     it internally as [int]. *)
 
   type 'a lr1state
-
-  type 'a terminal
-  type 'a nonterminal
-
-  type 'a symbol =
-    | T : 'a terminal -> 'a symbol
-    | N : 'a nonterminal -> 'a symbol
-
-  type xsymbol = 
-    | X : 'a symbol -> xsymbol
 
   (* Some of the tables that follow use encodings of (terminal and
      nonterminal) symbols as integers. So, we need functions that

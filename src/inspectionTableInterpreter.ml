@@ -1,3 +1,29 @@
+(* -------------------------------------------------------------------------- *)
+
+(* The type functor. *)
+
+module Symbols (T : sig
+
+  type 'a terminal
+  type 'a nonterminal
+
+end) = struct
+
+  open T
+
+  type 'a symbol =
+    | T : 'a terminal -> 'a symbol
+    | N : 'a nonterminal -> 'a symbol
+
+  type xsymbol = 
+    | X : 'a symbol -> xsymbol
+
+end
+
+(* -------------------------------------------------------------------------- *)
+
+(* The code functor. *)
+
 module Make (
   T : InspectionTableFormat.TABLES
       with type 'a lr1state = int
