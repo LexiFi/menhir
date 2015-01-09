@@ -12,7 +12,12 @@ module type TABLES = sig
 
   type 'a lr1state
 
-  type 'a symbol
+  type 'a terminal
+  type 'a nonterminal
+
+  type 'a symbol =
+    | T : 'a terminal -> 'a symbol
+    | N : 'a nonterminal -> 'a symbol
 
   type xsymbol = 
     | X : 'a symbol -> xsymbol

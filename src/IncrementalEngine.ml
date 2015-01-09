@@ -109,14 +109,19 @@ module type INSPECTION = sig
      this production. That is, if the length of [rhs prod] is [n], then [i] is
      comprised between 0 and [n], inclusive. *)
 
-  type item = private
+  type item =
       production * int
 
   (* The type ['a symbol] represents a (terminal or nonterminal) symbol of the
      grammar. It is generated. The index ['a] represents the type of the
      semantic values associated with this symbol. *)
 
-  type 'a symbol
+  type 'a terminal
+  type 'a nonterminal
+
+  type 'a symbol =
+    | T : 'a terminal -> 'a symbol
+    | N : 'a nonterminal -> 'a symbol
 
   (* The type [xsymbol] is an existentially quantified version of the type
      ['a symbol]. *)

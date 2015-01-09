@@ -3,6 +3,16 @@ module Make (
       with type 'a lr1state = int
 ) = struct
 
+  type 'a symbol = 'a T.symbol =
+    | T : 'a T.terminal -> 'a symbol
+    | N : 'a T.nonterminal -> 'a symbol
+
+  (* The type [xsymbol] is an existentially quantified version of the type
+     ['a symbol]. *)
+
+  type xsymbol = T.xsymbol =
+    | X : 'a symbol -> xsymbol
+
   (* This auxiliary function decodes a packed linearized array, as created by
      [TableBackend.linearize_and_marshal1]. Here, we read a row all at once. *)
 

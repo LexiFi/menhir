@@ -5,6 +5,7 @@
    type (i.e., it has one type parameter). Its data constructors carry zero
    value arguments. *)
 
+val tcnonterminalgadt: string
 val tnonterminalgadt: IL.typ -> IL.typ
 
 (* [tnonterminalgadtdata nt] is the conventional name of the data constructor

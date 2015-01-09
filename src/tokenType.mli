@@ -31,6 +31,7 @@ val tokendata: string -> string
    carry zero value arguments. If [--external-tokens] is set, this type is
    qualified. *)
 
+val tctokengadt: string
 val ttokengadt: IL.typ -> IL.typ
 
 (* [tokengadtdata] maps the name of a token to a data constructor of the token

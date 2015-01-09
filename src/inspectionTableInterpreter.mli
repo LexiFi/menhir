@@ -7,7 +7,7 @@ module Make (T : InspectionTableFormat.TABLES
 
 : IncrementalEngine.INSPECTION
   with type 'a lr1state := 'a T.lr1state
-   and type 'a symbol := 'a T.symbol
-   and type xsymbol := T.xsymbol
+   and type 'a terminal := 'a T.terminal
+   and type 'a nonterminal := 'a T.nonterminal
    and type production := int
 

@@ -83,7 +83,7 @@ let rec loop linebuf (result : int I.result) =
             ()
         | I.Cons (I.Element (current, _, _, _), _) ->
             Printf.fprintf stderr "Current state: %d\n%!" (Obj.magic current);
-            let items : (I.production * int) list = Parser.Inspection.items current in
+            let items : Parser.Inspection.item list = Parser.Inspection.items current in
             Printf.fprintf stderr "#Items: %d\n%!" (List.length items);
             List.iter (fun (prod, index) ->
               let _lhs : Parser.Inspection.xsymbol = Parser.Inspection.lhs prod in

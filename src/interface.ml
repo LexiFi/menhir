@@ -136,12 +136,10 @@ let inspection_api grammar () =
   IIComment "The inspection API." ::
   IIModule (inspection, MTSigEnd (
 
-    (* Define the types [terminal], [nonterminal], [symbol], [xsymbol]. *)
+    (* Define the types [terminal] and [nonterminal]. *)
 
     TokenType.tokengadtdef grammar @
     NonterminalType.nonterminalgadtdef grammar @
-    SymbolType.symbolgadtdef() @
-    SymbolType.xsymboldef() @
 
     (* Include the signature that lists the inspection functions, with
        appropriate type instantiations. *)
@@ -152,8 +150,8 @@ let inspection_api grammar () =
         "MenhirLib.IncrementalEngine.INSPECTION" [
           [ a ], "lr1state", tlr1state (TypVar a);
           [], "production", TypApp ("MenhirInterpreter.production", []);
-          [ a ], SymbolType.tcsymbolgadt, SymbolType.tsymbolgadt (TypVar a);
-          [], SymbolType.tcxsymbol, SymbolType.txsymbol;
+          [ a ], TokenType.tctokengadt, TokenType.ttokengadt (TypVar a);
+          [ a ], NonterminalType.tcnonterminalgadt, NonterminalType.tnonterminalgadt (TypVar a)
         ]
     ) ::
 

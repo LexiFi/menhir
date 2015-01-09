@@ -982,9 +982,7 @@ let program =
         SIModuleDef (more, MStruct (
           interface_to_structure (
             tokengadtdef grammar @
-            nonterminalgadtdef grammar @
-            symbolgadtdef() @
-            xsymboldef()
+            nonterminalgadtdef grammar
           )
         )) ::
 
@@ -996,8 +994,13 @@ let program =
           interface_to_structure [
             lr1state_redef;
           ] @
-          (* [symbol], [xsymbol]. *)
+          (* [terminal], [nonterminal]. *)
           SIInclude (MVar more) ::
+          (* [symbol], [xsymbol]. *)
+          interface_to_structure (
+            symbolgadtdef() @
+            xsymboldef()
+          ) @
           (* [lhs] *)
           SIInclude (MVar tables) ::
           SIValDefs (false,
