@@ -115,7 +115,7 @@ let inspection_api grammar () =
 (* The incremental API. *)
 
 let incremental_engine () : module_type =
-  with_types WKDestructive
+  with_types WKNonDestructive
     "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE"
     [
       [],

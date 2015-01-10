@@ -3,6 +3,15 @@
 module I =
   Parser.MenhirInterpreter
 
+(* TEMPORARY *)
+
+module Essai = (I : sig 
+  include MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE
+  include MenhirLib.IncrementalEngine.INSPECTION
+    with type 'a lr1state := 'a lr1state
+    with type production := production
+end)
+
 (* The length of a stream. *)
 
 let rec length xs =
