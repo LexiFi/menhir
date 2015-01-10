@@ -100,19 +100,16 @@ let monolithic_api grammar =
 
 (* The incremental API. *)
 
-let incremental_api grammar () =
+let incremental_engine () : module_type =
+  with_types WKDestructive
+    "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE"
+    [
+      [],
+      "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
+      TokenType.ttoken
+    ]
 
-  IIComment "The incremental API." ::
-  IIModule (
-    interpreter,
-    with_types WKDestructive
-      "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE"
-      [
-        [],
-        "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
-        TokenType.ttoken
-      ]
-  ) ::
+let incremental_entry_points grammar : interface =
 
   IIComment "The entry point(s) to the incremental API." ::
   IIModule (incremental, MTSigEnd [
@@ -124,6 +121,19 @@ let incremental_api grammar () =
   ]) ::
 
   []
+
+let incremental_api grammar () : interface =
+
+  IIModule (
+    interpreter,
+    MTSigEnd (
+      IIComment "The incremental API." ::
+      IIInclude (incremental_engine()) ::
+      []
+    )
+  ) ::
+
+  incremental_entry_points grammar
 
 (* -------------------------------------------------------------------------- *)
 

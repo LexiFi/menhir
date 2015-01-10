@@ -963,12 +963,6 @@ let program =
       MApp (MVar make, MVar tables)
     ) ::
 
-    SIValDefs (false, monolithic_api) ::
-
-    SIModuleDef (incremental, MStruct [
-      SIValDefs (false, incremental_api)
-    ]) ::
-
     listiflazy Settings.inspection (fun () -> [
       SIModuleDef (inspection, MStruct (
 
@@ -1015,7 +1009,14 @@ let program =
         []
 
       ))
+
     ]) @
+
+    SIValDefs (false, monolithic_api) ::
+
+    SIModuleDef (incremental, MStruct [
+      SIValDefs (false, incremental_api)
+    ]) ::
 
     SIStretch grammar.postludes ::
 
