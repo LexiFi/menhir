@@ -30,7 +30,7 @@ let height env =
 (* Printing a symbol. *)
 
 let print_symbol symbol =
-  let open Parser.Inspection in
+  let open I in
   match symbol with
   | X (T T_TIMES) ->
       "*"
@@ -56,10 +56,7 @@ let print_symbol symbol =
       "error"
 
 module P =
-  Printers.Make(struct
-    include Parser.MenhirInterpreter
-    include Parser.Inspection
-  end) (struct
+  Printers.Make(I) (struct
     let arrow = " -> "
     let dot = "."
     let space = " "
@@ -71,12 +68,12 @@ module P =
 let print_element e =
   match e with
   | I.Element (s, v, _, _) ->
-    print_symbol (Parser.Inspection.X (Parser.Inspection.incoming_symbol s))
+    print_symbol (I.X (I.incoming_symbol s))
 
 let print_element e : string =
   match e with
   | I.Element (s, v, _, _) ->
-      let open Parser.Inspection in
+      let open I in
       match incoming_symbol s with
       | T T_TIMES ->
           "*"
@@ -121,7 +118,7 @@ let dump env =
       ()
   | I.Cons (I.Element (current, _, _, _), _) ->
       Printf.fprintf stderr "Current state: %d\n%!" (Obj.magic current);
-      let items = Parser.Inspection.items current in
+      let items = I.items current in
       Printf.fprintf stderr "#Items: %d\n%!" (List.length items);
       List.iter (fun item ->
         Printf.fprintf stderr "%s\n%!" (P.print_item item)

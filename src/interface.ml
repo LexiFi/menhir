@@ -34,26 +34,11 @@ let interpreter =
 let result t =
   TypApp (interpreter ^ ".result", [ t ])
 
-let raw_lr1state =
-  "lr1state"
-
 let lr1state =
-  interpreter ^ "." ^ raw_lr1state
+  "lr1state"
 
 let tlr1state a : typ =
   TypApp (lr1state, [a])
-
-(* This interface item is a re-definition of the type [lr1state] as
-   an abbreviation for [MenhirInterpreter.lr1state]. *)
-
-let lr1state_redef =
-  let a = "a" in
-  IITypeDecls [{
-    typename = raw_lr1state;
-    typeparams = [ a ];
-    typerhs = TAbbrev (tlr1state (TypVar a));
-    typeconstraint = None
-  }]
 
 (* -------------------------------------------------------------------------- *)
 
@@ -98,6 +83,35 @@ let monolithic_api grammar =
 
 (* -------------------------------------------------------------------------- *)
 
+(* The inspection API. *)
+
+let inspection_api grammar () =
+
+  let a = "a" in
+
+  (* Define the types [terminal] and [nonterminal]. *)
+
+  TokenType.tokengadtdef grammar @
+  NonterminalType.nonterminalgadtdef grammar @
+
+  (* Include the signature that lists the inspection functions, with
+     appropriate type instantiations. *)
+
+  IIComment "The inspection API." ::
+  IIInclude (
+    with_types WKDestructive
+      "MenhirLib.IncrementalEngine.INSPECTION" [
+        [ a ], "lr1state", tlr1state (TypVar a);
+        [], "production", TypApp ("production", []);
+        [ a ], TokenType.tctokengadt, TokenType.ttokengadt (TypVar a);
+        [ a ], NonterminalType.tcnonterminalgadt, NonterminalType.tnonterminalgadt (TypVar a)
+      ]
+  ) ::
+
+  []
+
+(* -------------------------------------------------------------------------- *)
+
 (* The incremental API. *)
 
 let incremental_engine () : module_type =
@@ -129,46 +143,13 @@ let incremental_api grammar () : interface =
     MTSigEnd (
       IIComment "The incremental API." ::
       IIInclude (incremental_engine()) ::
-      []
+      listiflazy Settings.inspection (inspection_api grammar)
     )
   ) ::
 
+  (* The entry points must come after the incremental API, because
+     their type refers to the type [result]. *)
   incremental_entry_points grammar
-
-(* -------------------------------------------------------------------------- *)
-
-(* The inspection API. *)
-
-let inspection_api grammar () =
-
-  let a = "a" in
-
-  IIComment "The inspection API." ::
-  IIModule (inspection, MTSigEnd (
-
-    (* Define the types [terminal] and [nonterminal]. *)
-
-    TokenType.tokengadtdef grammar @
-    NonterminalType.nonterminalgadtdef grammar @
-
-    (* Include the signature that lists the inspection functions, with
-       appropriate type instantiations. *)
-
-    IIComment "The inspection functions." ::
-    IIInclude (
-      with_types WKDestructive
-        "MenhirLib.IncrementalEngine.INSPECTION" [
-          [ a ], "lr1state", tlr1state (TypVar a);
-          [], "production", TypApp ("MenhirInterpreter.production", []);
-          [ a ], TokenType.tctokengadt, TokenType.ttokengadt (TypVar a);
-          [ a ], NonterminalType.tcnonterminalgadt, NonterminalType.tnonterminalgadt (TypVar a)
-        ]
-    ) ::
-
-    []
-
-  )) ::
-  []
 
 (* -------------------------------------------------------------------------- *)
 
@@ -177,8 +158,7 @@ let inspection_api grammar () =
 let interface grammar = [
   IIFunctor (grammar.parameters,
     monolithic_api grammar @
-    listiflazy Settings.table (incremental_api grammar) @
-    listiflazy Settings.inspection (inspection_api grammar)
+    listiflazy Settings.table (incremental_api grammar)
   )
 ]
 

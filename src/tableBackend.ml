@@ -16,11 +16,8 @@ module Run (T : sig end) = struct
 let menhirlib =
   "MenhirLib"
 
-let tableInterpreter =
-  menhirlib ^ ".TableInterpreter"
-
-let make =
-  tableInterpreter ^ ".Make"
+let make_engine =
+  menhirlib ^ ".TableInterpreter.Make"
 
 let make_symbol =
   menhirlib ^ ".InspectionTableInterpreter.Symbols"
@@ -64,14 +61,22 @@ let entry =
 let start =
   interpreter ^ ".start"
 
+(* The following are names of internal sub-modules. *)
+
 let basics =
-  "Basics" (* name of an internal sub-module *)
+  "Basics"
 
 let tables =
-  "Tables" (* name of an internal sub-module *)
+  "Tables"
 
-let more =
-  "More" (* name of an internal sub-module *)
+let symbols =
+  "Symbols"
+
+let shared =
+  "Shared"
+
+let ti =
+  "TI"
 
 (* ------------------------------------------------------------------------ *)
 
@@ -934,11 +939,23 @@ let program =
 
     (* Define the tables. *)
 
+    SIModuleDef (shared,
+      MStruct [
+        SIValDefs (false, [
+          lhs;
+        ])
+      ]
+    ) ::
+
     SIModuleDef (tables,
       MStruct [
         (* The internal sub-module [basics] contains the definitions of the
            exception [Error] and of the type [token]. *)
         SIInclude (MVar basics);
+        (* The internal sub-module [shared] contains the tables that are
+           used both in normal mode and in [--inspection] mode. *)
+        SIInclude (MVar shared);
+
         (* This is a non-recursive definition, so none of the names
            defined here are visible in the semantic actions. *)
         SIValDefs (false, [
@@ -949,7 +966,7 @@ let program =
           error;
           start_def;
           action;
-          lhs;
+          (* [lhs] is part of [shared] *)
           goto;
           semantic_action;
           trace;
@@ -957,43 +974,40 @@ let program =
       ]
     ) ::
 
-    (* Apply the functor [TableInterpreter.Make] to the tables. *)
+    SIModuleDef (interpreter, MStruct (
 
-    SIModuleDef (interpreter,
-      MApp (MVar make, MVar tables)
-    ) ::
+      (* Apply the functor [TableInterpreter.Make] to the tables. *)
+      SIModuleDef (ti, MApp (MVar make_engine, MVar tables)) ::
+      SIInclude (MVar ti) ::
 
-    listiflazy Settings.inspection (fun () -> [
-      SIModuleDef (inspection, MStruct (
+      listiflazy Settings.inspection (fun () ->
 
-        (* Define the internal sub-module [more], which contains type
+        (* Define the internal sub-module [symbols], which contains type
            definitions. Then, include this sub-module. This sub-module is used
            again below, as part of the application of the functor
            [TableInterpreter.MakeInspection]. *)
 
-        SIModuleDef (more, MStruct (
+        SIModuleDef (symbols, MStruct (
           interface_to_structure (
             tokengadtdef grammar @
             nonterminalgadtdef grammar
           )
         )) ::
 
-        SIInclude (MVar more) ::
+        SIInclude (MVar symbols) ::
 
         SIInclude (MApp (MVar make_inspection, MStruct (
           (* This module must satisfy [InspectionTableFormat.TABLES]. *)
           (* [lr1state] *)
-          interface_to_structure [
-            lr1state_redef;
-          ] @
+          SIInclude (MVar ti) ::
           (* [terminal], [nonterminal]. *)
-          SIInclude (MVar more) ::
+          SIInclude (MVar symbols) ::
           (* This functor application builds the types [symbol] and [xsymbol]
              in terms of the types [terminal] and [nonterminal]. This saves
              us the trouble of generating these definitions. *)
-          SIInclude (MApp (MVar make_symbol, MVar more)) ::
+          SIInclude (MApp (MVar make_symbol, MVar symbols)) ::
           (* [lhs] *)
-          SIInclude (MVar tables) ::
+          SIInclude (MVar shared) ::
           SIValDefs (false,
             terminal() ::
             nonterminal() ::
@@ -1008,9 +1022,9 @@ let program =
 
         []
 
-      ))
+      )
 
-    ]) @
+    )) ::
 
     SIValDefs (false, monolithic_api) ::
 
