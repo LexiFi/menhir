@@ -300,6 +300,7 @@ module Production : sig
 
   val iterx: (index -> unit) -> unit
   val foldx: (index -> 'a -> 'a) -> 'a -> 'a
+  val mapx: (index -> 'a) -> 'a list
 
   (* This maps a (user) non-terminal start symbol to the corresponding
      start production. *)

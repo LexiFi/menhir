@@ -98,7 +98,9 @@ module Make (T : TableFormat.TABLES)
       (state, semantic_value)        EngineTypes.stack
 	
   let semantic_action prod =
-    T.semantic_action.(prod)
+    (* Indexing into the array [T.semantic_action] is off by [T.start],
+       because the start productions do not have entries in this array. *)
+    T.semantic_action.(prod - T.start)
   
   (* If [T.trace] is [None], then the logging functions do nothing. *)
 

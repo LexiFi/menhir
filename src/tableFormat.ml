@@ -101,7 +101,8 @@ module type TABLES = sig
 
   (* A one-dimensional semantic action table maps productions to semantic
      actions. The calling convention for semantic actions is described in
-     [EngineTypes]. *)
+     [EngineTypes]. This table contains ONLY NON-START PRODUCTIONS, so the
+     indexing is off by [start]. Be careful. *)
     
   val semantic_action: ((int, Obj.t, token) EngineTypes.env ->
                         (int, Obj.t)        EngineTypes.stack) array

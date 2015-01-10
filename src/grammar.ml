@@ -587,6 +587,9 @@ module Production = struct
   let foldx f accu =
     Misc.foldij start n f accu
 
+  let mapx f =
+    Misc.mapij start n f
+
   (* Printing a production. *)
 
   let print prod =

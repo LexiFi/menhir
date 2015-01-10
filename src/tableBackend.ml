@@ -228,53 +228,39 @@ let reducebody prod =
     ) :: []
   in
 
-  (* Is this is one of the start productions? *)
+  (* This cannot be one of the start productions. *)
+  assert (not (Production.is_start prod));
 
-  match Production.classify prod with
-  | Some nt ->
+  (* This is a regular production. Perform a reduction. *)
 
-      (* This is a start production. Raise [Accept]. *)
+  let action =
+    Production.action prod
+  in
+  let act =
+    EAnnot (Action.to_il_expr action, type2scheme (semvtypent nt))
+  in
 
-      EComment (
-        sprintf "Accepting %s" (Nonterminal.print false nt),
-        blet (
-  	  [ pat, EVar stack ],
-	  ERaise (EData ("Not_found", [])) (* TEMPORARY *)
-	)
-      )
+  EComment (
+    Production.print prod,
+    blet (
+      (pat, EVar stack) ::                  (* destructure the stack *)
+      casts @                               (* perform type casts *)
+      posbindings @                         (* bind [startp] and [endp] *)
+      extrabindings action @                (* add bindings for the weird keywords *)
+      [ PVar semv, act ],                   (* run the user's code and bind [semv] *)
 
-  | None ->
+      (* Return a new stack, onto which we have pushed a new stack cell. *)
 
-      (* This is a regular production. Perform a reduction. *)
+      ERecord [                             (* the new stack cell *)
+        fstate, EVar state;                 (* the current state after popping; it will be updated by [goto] *)
+        fsemv, ERepr (EVar semv);           (* the newly computed semantic value *)
+        fstartp, EVar startp;               (* the newly computed start and end positions *)
+        fendp, EVar endp;
+        fnext, EVar stack;                  (* this is the stack after popping *)
+      ]
 
-      let action =
-	Production.action prod
-      in
-      let act =
-	EAnnot (Action.to_il_expr action, type2scheme (semvtypent nt))
-      in
-
-      EComment (
-        Production.print prod,
-        blet (
-	  (pat, EVar stack) ::                  (* destructure the stack *)
-	  casts @                               (* perform type casts *)
-	  posbindings @                         (* bind [startp] and [endp] *)
-	  extrabindings action @                (* add bindings for the weird keywords *)
-	  [ PVar semv, act ],                   (* run the user's code and bind [semv] *)
-
-          (* Return a new stack, onto which we have pushed a new stack cell. *)
-
-          ERecord [                             (* the new stack cell *)
-            fstate, EVar state;                 (* the current state after popping; it will be updated by [goto] *)
-            fsemv, ERepr (EVar semv);           (* the newly computed semantic value *)
-            fstartp, EVar startp;               (* the newly computed start and end positions *)
-            fendp, EVar endp;
-            fnext, EVar stack;                  (* this is the stack after popping *)
-          ]
-
-	)
-      )
+    )
+  )
 
 let semantic_action prod =
   EFun (
@@ -620,7 +606,8 @@ let lhs =
 let semantic_action =
   define (
     "semantic_action",
-    EArray (Production.map semantic_action)
+    (* Non-start productions only. *)
+    EArray (Production.mapx semantic_action)
   )
 
 (* ------------------------------------------------------------------------ *)
