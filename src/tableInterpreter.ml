@@ -7,8 +7,6 @@
    here, as it ensures that each parser gets its own, distinct [Error]
    exception. This is consistent with the code-based back-end. *)
 
-exception Accept of Obj.t
-
 (* This functor is invoked by the generated parser. *)
 
 module Make (T : TableFormat.TABLES)
@@ -48,6 +46,9 @@ module Make (T : TableFormat.TABLES)
       nodefred env
     else
       defred env (code - 1)
+
+  let is_start prod =
+    prod < T.start
   
   (* This auxiliary function helps access a compressed, two-dimensional
      matrix, like the action and goto tables. *)
@@ -88,9 +89,6 @@ module Make (T : TableFormat.TABLES)
     let code = unmarshal2 T.goto state (PackedIntArray.get T.lhs prod) in
     (* code = 1 + state *)
     code - 1
-
-  exception Accept =
-	Accept
 
   exception Error =
 	T.Error

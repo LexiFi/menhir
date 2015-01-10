@@ -28,9 +28,6 @@ let make_symbol =
 let make_inspection =
   menhirlib ^ ".InspectionTableInterpreter.Make"
 
-let accept =
-  tableInterpreter ^ ".Accept"
-
 let engineTypes =
   menhirlib ^ ".EngineTypes"
 
@@ -75,6 +72,54 @@ let tables =
 
 let more =
   "More" (* name of an internal sub-module *)
+
+(* ------------------------------------------------------------------------ *)
+
+(* Statistics. *)
+
+(* Integer division, rounded up. *)
+
+let div a b =
+  if a mod b = 0 then a / b else a / b + 1
+
+(* [size] provides a rough measure of the size of its argument, in words.
+   The [unboxed] parameter is true if we have already counted 1 for the
+   pointer to the object. *)
+
+let rec size unboxed = function
+  | EIntConst _
+  | ETuple []
+  | EData (_, []) ->
+      if unboxed then 0 else 1
+  | EStringConst s ->
+      1 + div (String.length s * 8) Sys.word_size
+  | ETuple es
+  | EData (_, es)
+  | EArray es ->
+      1 + List.length es + List.fold_left (fun s e -> s + size true e) 0 es
+  | _ ->
+      assert false (* not implemented *)
+
+let size =
+  size false
+
+(* Optionally, print a measure of each of the tables that we are defining. *)
+
+let define (name, expr) = {
+  valpublic = true;
+  valpat = PVar name;
+  valval = expr
+}
+
+let define_and_measure (x, e) =
+  Error.logC 1 (fun f ->
+    fprintf f
+      "The %s table occupies roughly %d bytes.\n"
+      x
+      (size e * (Sys.word_size / 8))
+  );
+  define (x, e)
+
 
 (* ------------------------------------------------------------------------ *)
 
@@ -194,7 +239,7 @@ let reducebody prod =
         sprintf "Accepting %s" (Nonterminal.print false nt),
         blet (
   	  [ pat, EVar stack ],
-	  ERaise (EData (accept, [ EVar ids.(0) ]))
+	  ERaise (EData ("Not_found", [])) (* TEMPORARY *)
 	)
       )
 
@@ -268,6 +313,14 @@ let semantic_action prod =
 
   )
 
+(* Export the number of start productions. *)
+
+let start_def =
+  define (
+    "start",
+    EIntConst Production.start
+  )
+
 (* ------------------------------------------------------------------------ *)
 
 (* Table encodings. *)
@@ -339,54 +392,6 @@ let encode_symbol_option = function
       encode_no_symbol
   | Some symbol ->
       encode_symbol symbol
-
-(* ------------------------------------------------------------------------ *)
-
-(* Statistics. *)
-
-(* Integer division, rounded up. *)
-
-let div a b =
-  if a mod b = 0 then a / b else a / b + 1
-
-(* [size] provides a rough measure of the size of its argument, in words.
-   The [unboxed] parameter is true if we have already counted 1 for the
-   pointer to the object. *)
-
-let rec size unboxed = function
-  | EIntConst _
-  | ETuple []
-  | EData (_, []) ->
-      if unboxed then 0 else 1
-  | EStringConst s ->
-      1 + div (String.length s * 8) Sys.word_size
-  | ETuple es
-  | EData (_, es)
-  | EArray es ->
-      1 + List.length es + List.fold_left (fun s e -> s + size true e) 0 es
-  | _ ->
-      assert false (* not implemented *)
-
-let size =
-  size false
-
-(* Optionally, print a measure of each of the tables that we are defining. *)
-
-let define (name, expr) = {
-  valpublic = true;
-  valpat = PVar name;
-  valval = expr
-}
-
-let define_and_measure (x, e) =
-  Error.logC 1 (fun f ->
-    fprintf f
-      "The %s table occupies roughly %d bytes.\n"
-      x
-      (size e * (Sys.word_size / 8))
-  );
-  define (x, e)
-
 
 (* ------------------------------------------------------------------------ *)
 
@@ -955,6 +960,7 @@ let program =
           token2value;
           default_reduction;
           error;
+          start_def;
           action;
           lhs;
           goto;

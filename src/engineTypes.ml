@@ -189,6 +189,10 @@ module type TABLE = sig
 
   val goto: state -> production -> state
 
+  (* [is_start prod] tells whether the production [prod] is a start production. *)
+
+  val is_start: production -> bool
+
   (* By convention, a semantic action is responsible for:
 
      1. fetching whatever semantic values and positions it needs off the stack;
@@ -210,15 +214,8 @@ module type TABLE = sig
      semantic actions would be variadic: not all semantic actions would have
      the same number of arguments. The rest follows rather naturally. *)
 
-  (* If production [prod] is an accepting production, then the semantic action
-     is responsible for raising exception [Accept], instead of returning
-     normally. This convention allows us to not distinguish between regular
-     productions and accepting productions. All we have to do is catch that
-     exception at top level. *)
-
   (* Semantic actions are allowed to raise [Error]. *)
 
-  exception Accept of semantic_value
   exception Error
 
   type semantic_action =

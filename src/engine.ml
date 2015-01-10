@@ -62,8 +62,8 @@ module Make (T : TABLE) = struct
 
   (* The following recursive group of functions are tail recursive, produce a
      result of type [semantic_value result], and cannot raise an exception. A
-     semantic action can raise [Accept] or [Error], but these exceptions are
-     immediately caught within [reduce]. *)
+     semantic action can raise [Error], but this exception is immediately
+     caught within [reduce]. *)
 
   let rec run env please_discard : semantic_value result =
 
@@ -185,13 +185,22 @@ module Make (T : TABLE) = struct
   (* The function [announce_reduce] stops the parser and returns a result
      which allows the parser to be resumed by calling [reduce]. *)
 
+  (* Only ordinary productions are exposed to the user. Start productions
+     are not exposed to the user. Reducing a start production simply leads
+     to the successful termination of the parser. *)
+
   and announce_reduce env (prod : production) =
-    AboutToReduce (env, prod)
+    if T.is_start prod then
+      accept env prod
+    else
+      AboutToReduce (env, prod)
 
   (* The function [reduce] takes care of reductions. It is invoked by
      [resume] after an [AboutToReduce] event has been produced. *)
 
   (* Here, the lookahead token CAN be [error]. *)
+
+  (* The production [prod] CANNOT be a start production. *)
 
   and reduce env (prod : production) =
 
@@ -202,13 +211,10 @@ module Make (T : TABLE) = struct
 
     (* Invoke the semantic action. The semantic action is responsible for
        truncating the stack and pushing a new cell onto the stack, which
-       contains a new semantic value. It can raise [Accept] or [Error]. *)
+       contains a new semantic value. It can raise [Error]. *)
 
     (* If the semantic action terminates normally, it returns a new stack,
        which becomes the current stack. *)
-
-    (* If the semantic action raises [Accept], we catch it and produce an
-       [Accepted] result. *)
 
     (* If the semantic action raises [Error], we catch it and initiate error
        handling. *)
@@ -230,11 +236,17 @@ module Make (T : TABLE) = struct
         let env = { env with stack; current } in
         run env false
 
-    | exception Accept v ->
-        Accepted v
-
     | exception Error ->
         initiate env
+
+  and accept env prod =
+    (* Log an accept event. *)
+    if log then
+      Log.reduce_or_accept prod;
+    (* Extract the semantic value out of the stack. *)
+    let v = env.stack.semv in
+    (* Finish. *)
+    Accepted v
 
   (* --------------------------------------------------------------------------- *)
 
@@ -375,7 +387,7 @@ module Make (T : TABLE) = struct
   (* In reality, [offer] and [resume] accept an argument of type
      [semantic_value result] and produce a result of the same type. The choice
      of [semantic_value] is forced by the fact that this is the parameter of
-     the exception [Accept]. *)
+     the result [Accepted]. *)
 
   (* We change this as follows. *)
 

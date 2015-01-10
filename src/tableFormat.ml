@@ -94,6 +94,11 @@ module type TABLES = sig
 
   val goto: PackedIntArray.t * PackedIntArray.t
 
+  (* The number of start productions. A production [prod] is a start production
+     if and only if [prod < start] holds. *)
+
+  val start: int
+
   (* A one-dimensional semantic action table maps productions to semantic
      actions. The calling convention for semantic actions is described in
      [EngineTypes]. *)

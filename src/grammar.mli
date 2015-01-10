@@ -324,6 +324,11 @@ module Production : sig
 
   val is_start: index -> bool
 
+  (* The integer [start] is published so as to allow the table back-end
+     to produce code for [is_start]. It should not be used otherwise. *)
+
+  val start: int
+
   (* This produces a string representation of a production. It should
      never be applied to a start production, as we do not wish users
      to become aware of the existence of these extra productions. *)
