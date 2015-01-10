@@ -55,67 +55,23 @@ let print_symbol symbol =
   | X (T T_error) ->
       "error"
 
-(* Printing a list of symbols. An optional dot is printed at offset
-   [dot] into the list [symbols], if this offset lies between [0] and
-   the length of the list (included). *)
-
-let rec print_symbols print_symbol print_dot dot symbols =
-  let rec loop dot symbols =
-    if dot = 0 then begin
-      print_dot();
-      loop (-1) symbols
-    end
-    else begin
-      match symbols with
-      | [] ->
-          ()
-      | symbol :: symbols ->
-          print_symbol symbol;
-          loop (dot - 1) symbols
-    end
-  in
-  loop dot symbols
-
-(* Printing a production. *)
-
-let print_production print_symbol print_arrow print_dot dot (lhs, rhs) =
-  print_symbol lhs;
-  print_arrow();
-  print_symbols print_symbol print_dot dot rhs
-
-(* Printing an item. *)
-
-let print_item print_symbol print_arrow print_dot (prod, dot) =
-  let open Parser.Inspection in
-  print_production print_symbol print_arrow print_dot dot (lhs prod, rhs prod)
-
-let print_production print_symbol print_arrow prod =
-  let print_dot () = () in
-  print_item print_symbol print_arrow print_dot (prod, -1)
-
-(* B. *)
-
-let wrap b f x =
-  Buffer.add_string b (f x)
-
-let with_buffer print_symbol print_arrow print_dot f x =
-  let b = Buffer.create 128 in
-  f (wrap b print_symbol) (wrap b print_arrow) (wrap b print_dot) x;
-  Buffer.contents b
-
-let print_item print_symbol print_arrow print_dot item =
-  with_buffer print_symbol print_arrow print_dot print_item item
-
-let print_arrow () =
-  " ->"
-
-let print_dot () =
-  " ."
-
-let print_item =
-  print_item print_symbol print_arrow print_dot
+module P =
+  Printers.Make(struct
+    include Parser.MenhirInterpreter
+    include Parser.Inspection
+  end) (struct
+    let arrow = " -> "
+    let dot = "."
+    let space = " "
+    let print_symbol = print_symbol
+  end)
 
 (* Printing an element. *)
+
+let print_element e =
+  match e with
+  | I.Element (s, v, _, _) ->
+    print_symbol (Parser.Inspection.X (Parser.Inspection.incoming_symbol s))
 
 let print_element e : string =
   match e with
@@ -155,9 +111,7 @@ let print env : string =
   ) (I.view env) ();
   Buffer.contents b
 
-(* Define the loop which drives the parser. At each iteration,
-   we analyze a result produced by the parser, and act in an
-   appropriate manner. *)
+(* Debugging. *)
 
 let dump env =
   Printf.fprintf stderr "Stack height: %d\n%!" (height env);
@@ -167,17 +121,21 @@ let dump env =
       ()
   | I.Cons (I.Element (current, _, _, _), _) ->
       Printf.fprintf stderr "Current state: %d\n%!" (Obj.magic current);
-      let items : Parser.Inspection.item list = Parser.Inspection.items current in
+      let items = Parser.Inspection.items current in
       Printf.fprintf stderr "#Items: %d\n%!" (List.length items);
       List.iter (fun item ->
-        Printf.fprintf stderr "%s\n" (print_item item)
+        Printf.fprintf stderr "%s\n%!" (P.print_item item)
       ) items
-  end
+  end;
+  print_newline()
+
+(* Define the loop which drives the parser. At each iteration,
+   we analyze a result produced by the parser, and act in an
+   appropriate manner. *)
 
 let rec loop linebuf (result : int I.result) =
   match result with
   | I.InputNeeded env ->
-      (* TEMPORARY *)
       dump env;
       (* The parser needs a token. Request one from the lexer,
          and offer it to the parser, which will produce a new
