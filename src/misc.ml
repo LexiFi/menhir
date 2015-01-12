@@ -166,14 +166,19 @@ let foldij start n f accu =
 let foldi n f accu =
   foldij 0 n f accu
 
-(* [mapi n f] produces the list [ f 0; ... f (n-1) ]. *)
+(* [mapij start n f] produces the list [ f start; ... f (n-1) ]. *)
 
-let mapi n f =
+let mapij start n f =
   List.rev (
-    foldi n (fun i accu ->
+    foldij start n (fun i accu ->
       f i :: accu
     ) []
   )
+
+(* [mapi n f] produces the list [ f 0; ... f (n-1) ]. *)
+
+let mapi n f =
+  mapij 0 n f
 
 (* [qfold f accu q] repeatedly takes an element [x] off the queue [q]
    and applies [f] to the accumulator and to [x], until [q] becomes

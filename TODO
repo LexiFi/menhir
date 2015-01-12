@@ -22,8 +22,10 @@
 
 * Suite des patchs de Frédéric Bour.
     API d'inspection complète.
+      Expose nullable/first?
     Librairie(s) pour la gestion des erreurs.
     Librairie pour la complétion du parsing.
+      Need a way of feeding the parser a nonterminal symbol.
     Peut-on faire un noyau de Merlin indépendant de la grammaire?
 
 * Meilleurs messages d'erreur de syntaxe.
@@ -80,11 +82,6 @@
   utiliser un type abstrait d'intervalles, avec un traitement particulier
   de l'intervalle vide. (Voir mon message du 15/09/2011.)
 
-* BUG: le prologue fourni par le programmeur peut cacher notre exception
-  Error; il suffirait de bouger la ligne "let _eRR = Error" avant le prologue
-  modifier les deux back-ends si besoin
-  ajouter un nouveau champ nonrecvaldefs_to_be_printed_before_prologue...
-
 * BUG: message de Valentin Gatien-Baron du 09/01/2010: le bug de --explain
   est-il bien le bug connu? peut-on le corriger? ne suffirait-il pas de
   passer sous silence les conflits qui ont lieu dans une partie inaccessible
@@ -100,9 +97,6 @@
 * À chaque fois qu'on applique magic à une fonction, utiliser la
   syntaxe (magic e : _ -> _). Difficile, en fait, car on applique
   souvent magic à toute la pile.
-
-* BUG (Jonathan Kimmit): reproduire le prologue après la définition du
-  type token -- c'est fait non?
 
 * Implémenter un test de détection de boucles. Si la grammaire contient une
   boucle, elle est infiniment ambiguë. Pour le test, calculer tous les
@@ -195,9 +189,6 @@
   all conflicts are covered. Allow the user to submit a sentence and
   run the parser over it.
 
-* dans sample-grammars, il y a des grammaires qui produisent des
-  warnings, mais le Makefile ne vérifie pas que ce sont les bons
-
 * changer la licence et y inclure la documentation (distribuée avec
   son source)
 
@@ -244,28 +235,4 @@
 * Il faudrait activer le warning qui recommande d'utiliser --infer
   dès que la librairie standard est utilisée (et pas seulement lorsque
   %inline est utilisé).
-
-* Le mot-clef $syntaxerror ne fonctionne pas de façon satisfaisante:
-  lorsque l'action sémantique est évaluée, on a déjà lu le lookahead
-  token, et l'appel à $syntaxerror oblitère celui-ci en le remplaçant
-  par error. On voudrait plutôt insérer le token error devant le
-  lookahead token? Autre problème: en nous ramenant à un état
-  antérieur de l'automate, $syntaxerror peut très bien provoquer
-  une non-terminaison (certes on consomme un token, mais le flot
-  de tokens est infini si le lexer reconnaît eof).
-
-* Would it make sense to allow %start or %type declarations to
-  concern parameterized nonterminals (or applications thereof)?
-
-* The code that checks well-formedness should emit as many
-   error messages as possible and die only at the end.
-
-* Autoriser %functorparam et %functionparam (cf. requête de Skaller)
-  car ces derniers sont parfois plus flexibles. Ou bien garder seulement
-  %parameter et déclarer le foncteur Make comme récursif, pour pouvoir
-  l'appeler depuis une action sémantique.
-
-* Les actions semantiques ont-elles officiellement le droit de s'appeler
-  (ou d'appeler le foncteur Make) recursivement? Si oui, est-ce que ca
-  fonctionne avec --infer?
 

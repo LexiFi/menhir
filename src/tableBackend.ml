@@ -5,7 +5,6 @@ open Interface
 open Printf
 open TokenType
 open NonterminalType
-open SymbolType
 open CodePieces
 
 module Run (T : sig end) = struct
@@ -17,17 +16,14 @@ module Run (T : sig end) = struct
 let menhirlib =
   "MenhirLib"
 
-let tableInterpreter =
-  menhirlib ^ ".TableInterpreter"
+let make_engine =
+  menhirlib ^ ".TableInterpreter.Make"
 
-let make =
-  tableInterpreter ^ ".Make"
+let make_symbol =
+  menhirlib ^ ".InspectionTableInterpreter.Symbols"
 
 let make_inspection =
-  tableInterpreter ^ ".MakeInspection"
-
-let accept =
-  tableInterpreter ^ ".Accept"
+  menhirlib ^ ".InspectionTableInterpreter.Make"
 
 let engineTypes =
   menhirlib ^ ".EngineTypes"
@@ -65,11 +61,70 @@ let entry =
 let start =
   interpreter ^ ".start"
 
-let basics =
-  "Basics" (* name of an internal sub-module *)
+(* The following are names of internal sub-modules. *)
 
-let more =
-  "More" (* name of an internal sub-module *)
+let basics =
+  "Basics"
+
+let tables =
+  "Tables"
+
+let symbols =
+  "Symbols"
+
+let shared =
+  "Shared"
+
+let ti =
+  "TI"
+
+(* ------------------------------------------------------------------------ *)
+
+(* Statistics. *)
+
+(* Integer division, rounded up. *)
+
+let div a b =
+  if a mod b = 0 then a / b else a / b + 1
+
+(* [size] provides a rough measure of the size of its argument, in words.
+   The [unboxed] parameter is true if we have already counted 1 for the
+   pointer to the object. *)
+
+let rec size unboxed = function
+  | EIntConst _
+  | ETuple []
+  | EData (_, []) ->
+      if unboxed then 0 else 1
+  | EStringConst s ->
+      1 + div (String.length s * 8) Sys.word_size
+  | ETuple es
+  | EData (_, es)
+  | EArray es ->
+      1 + List.length es + List.fold_left (fun s e -> s + size true e) 0 es
+  | _ ->
+      assert false (* not implemented *)
+
+let size =
+  size false
+
+(* Optionally, print a measure of each of the tables that we are defining. *)
+
+let define (name, expr) = {
+  valpublic = true;
+  valpat = PVar name;
+  valval = expr
+}
+
+let define_and_measure (x, e) =
+  Error.logC 1 (fun f ->
+    fprintf f
+      "The %s table occupies roughly %d bytes.\n"
+      x
+      (size e * (Sys.word_size / 8))
+  );
+  define (x, e)
+
 
 (* ------------------------------------------------------------------------ *)
 
@@ -178,53 +233,39 @@ let reducebody prod =
     ) :: []
   in
 
-  (* Is this is one of the start productions? *)
+  (* This cannot be one of the start productions. *)
+  assert (not (Production.is_start prod));
 
-  match Production.classify prod with
-  | Some nt ->
+  (* This is a regular production. Perform a reduction. *)
 
-      (* This is a start production. Raise [Accept]. *)
+  let action =
+    Production.action prod
+  in
+  let act =
+    EAnnot (Action.to_il_expr action, type2scheme (semvtypent nt))
+  in
 
-      EComment (
-        sprintf "Accepting %s" (Nonterminal.print false nt),
-        blet (
-  	  [ pat, EVar stack ],
-	  ERaise (EData (accept, [ EVar ids.(0) ]))
-	)
-      )
+  EComment (
+    Production.print prod,
+    blet (
+      (pat, EVar stack) ::                  (* destructure the stack *)
+      casts @                               (* perform type casts *)
+      posbindings @                         (* bind [startp] and [endp] *)
+      extrabindings action @                (* add bindings for the weird keywords *)
+      [ PVar semv, act ],                   (* run the user's code and bind [semv] *)
 
-  | None ->
+      (* Return a new stack, onto which we have pushed a new stack cell. *)
 
-      (* This is a regular production. Perform a reduction. *)
+      ERecord [                             (* the new stack cell *)
+        fstate, EVar state;                 (* the current state after popping; it will be updated by [goto] *)
+        fsemv, ERepr (EVar semv);           (* the newly computed semantic value *)
+        fstartp, EVar startp;               (* the newly computed start and end positions *)
+        fendp, EVar endp;
+        fnext, EVar stack;                  (* this is the stack after popping *)
+      ]
 
-      let action =
-	Production.action prod
-      in
-      let act =
-	EAnnot (Action.to_il_expr action, type2scheme (semvtypent nt))
-      in
-
-      EComment (
-        Production.print prod,
-        blet (
-	  (pat, EVar stack) ::                  (* destructure the stack *)
-	  casts @                               (* perform type casts *)
-	  posbindings @                         (* bind [startp] and [endp] *)
-	  extrabindings action @                (* add bindings for the weird keywords *)
-	  [ PVar semv, act ],                   (* run the user's code and bind [semv] *)
-
-          (* Return a new stack, onto which we have pushed a new stack cell. *)
-
-          ERecord [                             (* the new stack cell *)
-            fstate, EVar state;                 (* the current state after popping; it will be updated by [goto] *)
-            fsemv, ERepr (EVar semv);           (* the newly computed semantic value *)
-            fstartp, EVar startp;               (* the newly computed start and end positions *)
-            fendp, EVar endp;
-            fnext, EVar stack;                  (* this is the stack after popping *)
-          ]
-
-	)
-      )
+    )
+  )
 
 let semantic_action prod =
   EFun (
@@ -261,6 +302,14 @@ let semantic_action prod =
 	EApp (EVar "assert", [ EData ("false", []) ])
       )
 
+  )
+
+(* Export the number of start productions. *)
+
+let start_def =
+  define (
+    "start",
+    EIntConst Production.start
   )
 
 (* ------------------------------------------------------------------------ *)
@@ -312,53 +361,28 @@ let encode_Error =                  (* 0 *)
 let encode_NoError =                (* 1 *)
   1
 
-(* ------------------------------------------------------------------------ *)
+(* Encodings of terminal and nonterminal symbols in the production table. *)
 
-(* Statistics. *)
+let encode_no_symbol =
+  0                                          (* 0 | 0 *)
 
-(* Integer division, rounded up. *)
+let encode_terminal tok =
+  (Terminal.t2i tok + 1) lsl 1          (*  t + 1 | 0 *)
 
-let div a b =
-  if a mod b = 0 then a / b else a / b + 1
+let encode_nonterminal nt =
+  ((Nonterminal.n2i nt) lsl 1) lor 1        (* nt | 1 *)
 
-(* [size] provides a rough measure of the size of its argument, in words.
-   The [unboxed] parameter is true if we have already counted 1 for the
-   pointer to the object. *)
+let encode_symbol = function
+  | Symbol.T tok ->
+      encode_terminal tok
+  | Symbol.N nt ->
+      encode_nonterminal nt
 
-let rec size unboxed = function
-  | EIntConst _
-  | ETuple []
-  | EData (_, []) ->
-      if unboxed then 0 else 1
-  | EStringConst s ->
-      1 + div (String.length s * 8) Sys.word_size
-  | ETuple es
-  | EData (_, es)
-  | EArray es ->
-      1 + List.length es + List.fold_left (fun s e -> s + size true e) 0 es
-  | _ ->
-      assert false (* not implemented *)
-
-let size =
-  size false
-
-(* Optionally, print a measure of each of the tables that we are defining. *)
-
-let define (name, expr) = {
-  valpublic = true;
-  valpat = PVar name;
-  valval = expr
-}
-
-let define_and_measure (x, e) =
-  Error.logC 1 (fun f ->
-    fprintf f
-      "The %s table occupies roughly %d bytes.\n"
-      x
-      (size e * (Sys.word_size / 8))
-  );
-  define (x, e)
-
+let encode_symbol_option = function
+  | None ->
+      encode_no_symbol
+  | Some symbol ->
+      encode_symbol symbol
 
 (* ------------------------------------------------------------------------ *)
 
@@ -398,6 +422,21 @@ let marshal11 (table : int array) =
   assert (bits = 1);
   EStringConst text
 
+(* List-based versions of the above functions. *)
+
+let marshal1_list (table : int list) =
+  marshal1 (Array.of_list table)
+
+let marshal11_list (table : int list) =
+  marshal11 (Array.of_list table)
+
+(* [linearize_and_marshal1] marshals an array of integer arrays (of possibly
+   different lengths). *)
+
+let linearize_and_marshal1 (table : int array array) =
+  let data, entry = MenhirLib.LinearizedArray.make table in
+  ETuple [ marshal1 data; marshal1 entry ]
+
 (* [marshal2] marshals a two-dimensional table. *)
 
 let marshal2 name m n (matrix : int list list) =
@@ -425,12 +464,6 @@ let marshal2 name m n (matrix : int list list) =
     marshal1 displacement;
     marshal1 data;
   ]
-
-let marshal1 (table : int list) =
-  marshal1 (Array.of_list table)
-
-let marshal11 (table : int list) =
-  marshal11 (Array.of_list table)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -543,7 +576,7 @@ let error =
     "error",
     ETuple [
       EIntConst (Terminal.n - 1);
-      marshal11 (
+      marshal11_list (
 	List.flatten (
 	  Lr1.map (fun node ->
 	    Terminal.mapx (fun t ->
@@ -558,7 +591,7 @@ let error =
 let default_reduction =
   define_and_measure (
     "default_reduction",
-    marshal1 (
+    marshal1_list (
       Lr1.map (fun node ->
 	default_reduction node
       )
@@ -569,7 +602,7 @@ let lhs =
   define_and_measure (
     "lhs",
     marshal1 (
-      Production.map (fun prod ->
+      Production.amap (fun prod ->
 	Nonterminal.n2i (Production.nt prod)
       )
     )
@@ -578,7 +611,8 @@ let lhs =
 let semantic_action =
   define (
     "semantic_action",
-    EArray (Production.map semantic_action)
+    (* Non-start productions only. *)
+    EArray (Production.mapx semantic_action)
   )
 
 (* ------------------------------------------------------------------------ *)
@@ -635,35 +669,6 @@ let token2value =
 	| Some _ ->
 	    EVar semv
       )
-    )
-
-(* ------------------------------------------------------------------------ *)
-
-(* We are now ready to apply the functor [TableInterpreter.Make]. *)
-
-let application =
-
-    MApp (
-      MVar make,
-      MStruct [
-        (* The internal sub-module [basics] contains the definitions of the
-           exception [Error] and of the type [token]. *)
-        SIInclude (MVar basics);
-        (* This is a non-recursive definition, so none of the names
-           defined here are visible in the semantic actions. *)
-        SIValDefs (false, [
-	  token2terminal;
-	  define ("error_terminal", EIntConst (Terminal.t2i Terminal.error));
-	  token2value;
-	  default_reduction;
-	  error;
-	  action;
-	  lhs;
-	  goto;
-	  semantic_action;
-	  trace;
-	])
-      ]
     )
 
 (* ------------------------------------------------------------------------ *)
@@ -758,6 +763,12 @@ let enonterminal (nt : Nonterminal.t) : expr =
    that encodes the symbol [symbol]. It is built by applying the
    injection [T] or [N] to the terminal or nonterminal encoding. *)
 
+let dataT =
+  "T"
+
+let dataN =
+  "N"
+
 let esymbol (symbol : Symbol.t) : expr =
   match symbol with
   | Symbol.T t ->
@@ -769,87 +780,97 @@ let esymbol (symbol : Symbol.t) : expr =
    symbol [symbol]. It is built by applying the injection [X] (an
    existential quantifier) to [esymbol symbol]. *)
 
+let dataX =
+  "X"
+
 let xsymbol (symbol : Symbol.t) : expr =
   EData (dataX, [ esymbol symbol ])
 
-(* Produce a function [symbol] that maps a state of type ['a lr1state]
-   (represented as an integer value) to a value of type ['a symbol]. *)
+(* ------------------------------------------------------------------------ *)
 
-(* The type [MenhirInterpreter.lr1state] is known (to us) to be an alias for
-   [int], so we can pattern match on it. To the user, though, it will be an
-   abstract type. *)
+(* Produce a function that maps a terminal symbol (represented as an integer
+   code) to its representation as an [xsymbol]. Include [error] but not [#],
+   i.e., include all of the symbols which can appear in a production. *)
 
-let incoming_symbol_def () = {
-  valpublic = true;
-  valpat = PVar "symbol";
-  valval =
-    EAnnot (
-      EFun ([ PVar state ],
-	EMatch (EVar state,
-          (* A default branch is used to ensure exhaustiveness. *)
-          let default =
-            { branchpat =
-                PWildcard;
-              branchbody =
-                EComment ("This state does not exist.",
-                  EApp (EVar "assert", [ efalse ])
-                )
-            }
-          in
-          (* One branch per LR(1) state. *)
-	  Lr1.fold (fun branches node ->
-            let branchpat =
-              pint (Lr1.number node)
-            in
-            let branchbody =
-	      match Lr1.incoming_symbol node with
-	      | None ->
-                  (* This function must not be applied to an initial state.
-                     We will be careful not to expose the initial states
-                     as inhabitants of the type ['a lr1state]. *)
-                  EComment ("This is an initial state.",
-                    EApp (EVar "assert", [ efalse ])
-                  )
-              | Some symbol ->
-                  (* To a non-initial state, we associate a representation
-                     of its incoming symbol. *)
-                  EMagic (esymbol symbol)
-            in
-	    { branchpat; branchbody } :: branches
-	  ) [default]
-	)
-      ),
-      let a = TypVar "a" in
-      type2scheme (arrow (tlr1state a) (tsymbolgadt a))
+let terminal () =
+  assert Settings.inspection;
+  let t = "t" in
+  define (
+    "terminal",
+    EFun ([ PVar t ],
+      EMatch (EVar t,
+        Terminal.mapx (fun tok ->
+          { branchpat = pint (Terminal.t2i tok);
+            branchbody = xsymbol (Symbol.T tok) }
+        ) @ [
+          { branchpat = PWildcard;
+            branchbody =
+              EComment ("This terminal symbol does not exist.",
+                EApp (EVar "assert", [ efalse ])
+              ) }
+        ]
+      )
     )
-}
+  )
 
 (* ------------------------------------------------------------------------ *)
 
-(* A table that maps a production (i.e., an integer index) to its definition
-   (i.e., its left-hand and right-hand sides). This table concerns ordinary
-   productions only, as opposed to the start productions, whose existence is
-   not exposed to the user. *)
+(* Produce a function that maps a (non-start) nonterminal symbol (represented
+   as an integer code) to its representation as an [xsymbol]. *)
 
-let production_def prod =
-  if Production.is_start prod then
-    enone
-  else
-    esome (ETuple [
-      (* The production's left-hand side. This is always a nonterminal symbol,
-         of course. For simplicity, we encode it at type [xsymbol], even though
-         we could in principle use an existentially-quantified type of
-         nonterminal symbols. *)
-      xsymbol (Symbol.N (Production.nt prod));
-      (* The production's right-hand side. This is a list of symbols. *)
-      elist (List.map xsymbol (Array.to_list (Production.rhs prod)))
-    ])
+let nonterminal () =
+  assert Settings.inspection;
+  let nt = "nt" in
+  define (
+    "nonterminal",
+    EFun ([ PVar nt ],
+      EMatch (EVar nt,
+        Nonterminal.foldx (fun nt branches ->
+          { branchpat = pint (Nonterminal.n2i nt);
+            branchbody = xsymbol (Symbol.N nt) } :: branches
+        ) [
+          { branchpat = PWildcard;
+            branchbody =
+              EComment ("This nonterminal symbol does not exist.",
+                EApp (EVar "assert", [ efalse ])
+              ) }
+        ]
+      )
+    )
+  )
 
-let production_defs () =
+(* ------------------------------------------------------------------------ *)
+
+(* Produce a mapping of every LR(0) state to its incoming symbol (encoded as
+   an integer value). (Note that the initial states do not have one.) *)
+
+let lr0_incoming () =
   assert Settings.inspection;
   define_and_measure (
-    "production_defs",
-    EArray (Production.map production_def)
+    "lr0_incoming",
+    marshal1 (Array.init Lr0.n (fun node ->
+      encode_symbol_option (Lr0.incoming_symbol node)
+    ))
+  )
+
+(* ------------------------------------------------------------------------ *)
+
+(* A table that maps a production (i.e., an integer index) to the production's
+   right-hand side. In principle, we use this table for ordinary productions
+   only, as opposed to the start productions, whose existence is not exposed
+   to the user. However, it is simpler (and not really costly) to include all
+   productions in this table. *)
+
+let rhs () =
+  assert Settings.inspection;
+  let productions : int array array =
+    Production.amap (fun prod ->
+      Array.map encode_symbol (Production.rhs prod)
+    )
+  in
+  define_and_measure (
+    "rhs",
+    linearize_and_marshal1 productions
   )
 
 (* ------------------------------------------------------------------------ *)
@@ -860,28 +881,24 @@ let lr0_core () =
   assert Settings.inspection;
   define_and_measure (
     "lr0_core",
-    marshal1 (Lr1.map (fun (node : Lr1.node) ->
+    marshal1_list (Lr1.map (fun (node : Lr1.node) ->
       Lr0.core (Lr1.state node)
     ))
   )
 
 (* A table that maps an LR(0) state to a set of LR(0) items. *)
 
-let encode_lr0_item item =
-  EIntConst (Item.marshal item)
-
 let lr0_items () =
   assert Settings.inspection;
+  let items : int array array =
+    Array.init Lr0.n (fun node ->
+      Array.map Item.marshal (Array.of_list (Item.Set.elements (Lr0.items node)))
+    )
+  in
   define_and_measure (
     "lr0_items",
-    EArray (Array.to_list (Array.init Lr0.n (fun (node : Lr0.node) ->
-      elist (List.map encode_lr0_item (Item.Set.elements (Lr0.items node)))
-    )))
+    linearize_and_marshal1 items
   )
-
-(* TEMPORARY these lists share suffixes, which in principle could be
-   physically shared. Or perhaps we could use some form of packed
-   array? *)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -910,49 +927,92 @@ let program =
 
     SIInclude (MVar basics) ::
 
+    SIValDefs (false, [ excvaldef ]) ::
+
     (* In order to avoid hiding user-defined identifiers, only the
        exception [Error] and the type [token] should be defined (at
-       top level, with non-mangled names) above this line. *)
+       top level, with non-mangled names) above this line. We also
+       define the value [_eRR] above this line so that we do not
+       have a problem if a user prelude hides the name [Error]. *)
 
     SIStretch grammar.preludes ::
 
-    SIValDefs (false, [ excvaldef ]) ::
+    (* Define the tables. *)
 
-    SIModuleDef (interpreter, application) ::
+    SIModuleDef (shared,
+      MStruct [
+        SIValDefs (false, [
+          lhs;
+        ])
+      ]
+    ) ::
 
-    SIValDefs (false, monolithic_api) ::
+    SIModuleDef (tables,
+      MStruct [
+        (* The internal sub-module [basics] contains the definitions of the
+           exception [Error] and of the type [token]. *)
+        SIInclude (MVar basics);
+        (* The internal sub-module [shared] contains the tables that are
+           used both in normal mode and in [--inspection] mode. *)
+        SIInclude (MVar shared);
 
-    SIModuleDef (incremental, MStruct [
-      SIValDefs (false, incremental_api)
-    ]) ::
+        (* This is a non-recursive definition, so none of the names
+           defined here are visible in the semantic actions. *)
+        SIValDefs (false, [
+          token2terminal;
+          define ("error_terminal", EIntConst (Terminal.t2i Terminal.error));
+          token2value;
+          default_reduction;
+          error;
+          start_def;
+          action;
+          (* [lhs] is part of [shared] *)
+          goto;
+          semantic_action;
+          trace;
+        ])
+      ]
+    ) ::
 
-    listiflazy Settings.inspection (fun () -> [
-      SIModuleDef (inspection, MStruct (
+    SIModuleDef (interpreter, MStruct (
 
-        (* Define the internal sub-module [more], which contains type
+      (* Apply the functor [TableInterpreter.Make] to the tables. *)
+      SIModuleDef (ti, MApp (MVar make_engine, MVar tables)) ::
+      SIInclude (MVar ti) ::
+
+      listiflazy Settings.inspection (fun () ->
+
+        (* Define the internal sub-module [symbols], which contains type
            definitions. Then, include this sub-module. This sub-module is used
            again below, as part of the application of the functor
            [TableInterpreter.MakeInspection]. *)
 
-        SIModuleDef (more, MStruct (
+        SIModuleDef (symbols, MStruct (
           interface_to_structure (
             tokengadtdef grammar @
-            nonterminalgadtdef grammar @
-            symbolgadtdef() @
-            xsymboldef()
+            nonterminalgadtdef grammar
           )
         )) ::
 
-        SIInclude (MVar more) ::
+        SIInclude (MVar symbols) ::
 
         SIInclude (MApp (MVar make_inspection, MStruct (
-          SIInclude (MVar more) ::
-          interface_to_structure [
-            lr1state_redef;
-          ] @
+          (* This module must satisfy [InspectionTableFormat.TABLES]. *)
+          (* [lr1state] *)
+          SIInclude (MVar ti) ::
+          (* [terminal], [nonterminal]. *)
+          SIInclude (MVar symbols) ::
+          (* This functor application builds the types [symbol] and [xsymbol]
+             in terms of the types [terminal] and [nonterminal]. This saves
+             us the trouble of generating these definitions. *)
+          SIInclude (MApp (MVar make_symbol, MVar symbols)) ::
+          (* [lhs] *)
+          SIInclude (MVar shared) ::
           SIValDefs (false,
-            incoming_symbol_def() ::
-            production_defs() ::
+            terminal() ::
+            nonterminal() ::
+            lr0_incoming() ::
+            rhs() ::
             lr0_core() ::
             lr0_items() ::
             []
@@ -962,8 +1022,15 @@ let program =
 
         []
 
-      ))
-    ]) @
+      )
+
+    )) ::
+
+    SIValDefs (false, monolithic_api) ::
+
+    SIModuleDef (incremental, MStruct [
+      SIValDefs (false, incremental_api)
+    ]) ::
 
     SIStretch grammar.postludes ::
 

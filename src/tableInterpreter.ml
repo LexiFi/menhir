@@ -1,16 +1,3 @@
-(* This module instantiates the generic [Engine] with a thin decoding layer
-   for the generated tables. Like [Engine], it is part of [MenhirLib]. *)
-
-(* The exception [Accept] is pre-declared here: this obviates the need
-   for generating its definition. The exception [Error] is declared
-   within the generated parser. This is preferable to pre-declaring it
-   here, as it ensures that each parser gets its own, distinct [Error]
-   exception. This is consistent with the code-based back-end. *)
-
-exception Accept of Obj.t
-
-(* This functor is invoked by the generated parser. *)
-
 module Make (T : TableFormat.TABLES)
 
 = Engine.Make (struct
@@ -48,6 +35,9 @@ module Make (T : TableFormat.TABLES)
       nodefred env
     else
       defred env (code - 1)
+
+  let is_start prod =
+    prod < T.start
   
   (* This auxiliary function helps access a compressed, two-dimensional
      matrix, like the action and goto tables. *)
@@ -89,9 +79,6 @@ module Make (T : TableFormat.TABLES)
     (* code = 1 + state *)
     code - 1
 
-  exception Accept =
-	Accept
-
   exception Error =
 	T.Error
 
@@ -100,7 +87,9 @@ module Make (T : TableFormat.TABLES)
       (state, semantic_value)        EngineTypes.stack
 	
   let semantic_action prod =
-    T.semantic_action.(prod)
+    (* Indexing into the array [T.semantic_action] is off by [T.start],
+       because the start productions do not have entries in this array. *)
+    T.semantic_action.(prod - T.start)
   
   (* If [T.trace] is [None], then the logging functions do nothing. *)
 
@@ -167,37 +156,3 @@ module Make (T : TableFormat.TABLES)
   
 end)
 
-(* This functor constructs the inspection API. *)
-
-module MakeInspection (T : TableFormat.INSPECTION_TABLES) = struct
-
-  let symbol =
-    T.symbol
-
-  let production_def prod =
-    assert (0 <= prod && prod < Array.length T.production_defs);
-    match T.production_defs.(prod) with
-    | None ->
-        (* should not happen; means [prod] is a start production *)
-        assert false
-    | Some data ->
-        data
-
-  let lhs prod =
-    let lhs, _ = production_def prod in
-    lhs
-
-  let rhs prod =
-    let _, rhs = production_def prod in
-    rhs
-
-  (* This is a copy of [Item.export]. *)
-
-  let export t =
-    (t lsr 7, t mod 128)
-
-  let items s =
-    let core = PackedIntArray.get T.lr0_core s in
-    List.map export T.lr0_items.(core)
-
-end

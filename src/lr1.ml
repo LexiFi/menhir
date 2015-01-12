@@ -40,11 +40,6 @@ type node = {
 
     mutable predecessors: node list;
 
-    (* If a node has any incoming transitions, then they all carry
-       the same symbol. This is it. *)
-
-    mutable incoming_symbol: Symbol.t option;
-
     (* Transient marks are used during construction and traversal. *)
 
     mutable mark: Mark.t;
@@ -253,7 +248,6 @@ let create (state : Lr0.lr1state) : node =
     number = 0; (* temporary placeholder *)
     mark = Mark.none;
     predecessors = [];
-    incoming_symbol = None;
     forbid_default_reduction = false;
   } in
 
@@ -420,6 +414,26 @@ let () =
   Error.logA 1 (fun f -> Printf.fprintf f "Built an LR(1) automaton with %d states.\n" !num)
 
 (* ------------------------------------------------------------------------ *)
+
+(* A mapping of symbols to lists of nodes that admit this incoming
+   symbol. This mapping is constructed by [visit] below. *)
+
+let incoming : node list SymbolMap.t ref =
+  ref SymbolMap.empty
+
+let lookup_incoming symbol =
+  try
+    SymbolMap.find symbol !incoming
+  with Not_found ->
+    []
+
+let record_incoming osymbol target =
+  Option.iter (fun symbol ->
+    let targets = lookup_incoming symbol in
+    incoming := SymbolMap.add symbol (target :: targets) !incoming
+  ) osymbol
+
+(* ------------------------------------------------------------------------ *)
 (* We now perform one depth-first traversal of the automaton,
    recording predecessor edges, numbering nodes, sorting nodes
    according to their incoming symbol, building reduction tables, and
@@ -454,22 +468,17 @@ let reduce_reduce =
 let silently_solved =
   ref 0
 
-(* A mapping of symbols to lists of nodes that admit this incoming
-   symbol. *)
-
-let incoming : node list SymbolMap.t ref =
-  ref SymbolMap.empty
-
 (* Go ahead. *)
 
 let () =
 
   let marked = Mark.fresh() in
 
-  let rec visit node =
+  let rec visit osymbol node =
     if not (Mark.same node.mark marked) then begin
       node.mark <- marked;
       nodes := node :: !nodes;
+      record_incoming osymbol node;
 
       (* Number this node. *)
 
@@ -646,36 +655,19 @@ let () =
          edges that carry distinct symbols. *)
 
       SymbolMap.iter (fun symbol son ->
-        begin
-	  match son.incoming_symbol with
-	  | None ->
-	      son.incoming_symbol <- Some symbol;
-	      let others =
-		try
-		  SymbolMap.find symbol !incoming
-		with Not_found ->
-		  []
-	      in
-	      incoming := SymbolMap.add symbol (son :: others) !incoming
-	  | Some symbol' ->
-	      assert (Symbol.equal symbol symbol')
-	end;
 	son.predecessors <- node :: son.predecessors;
-	visit son
+	visit (Some symbol) son
       ) node.transitions
     end
   in
   
-  ProductionMap.iter (fun _ node -> visit node) entry
+  ProductionMap.iter (fun _ node -> visit None node) entry
 
 let nodes =
   List.rev !nodes (* list is now sorted by increasing node numbers *)
 
 let conflict_nodes =
   !conflict_nodes
-
-let incoming =
-  !incoming
 
 let () =
   if !silently_solved = 1 then
@@ -709,6 +701,13 @@ let bfs =
   B.search
 
 (* ------------------------------------------------------------------------ *)
+(* The incoming symbol of a node can be computed by going through its LR(0)
+   core. For this reason, we do not need to explicitly record it here. *)
+
+let incoming_symbol node =
+  Lr0.incoming_symbol (Lr0.core node.state)
+
+(* ------------------------------------------------------------------------ *)
 (* Iteration over all nodes. *)
 
 let fold f accu =
@@ -722,13 +721,13 @@ let map f =
 
 let foldx f =
   fold (fun accu node ->
-          match node.incoming_symbol with
+          match incoming_symbol node with
             | None -> accu
             | Some _ -> f accu node)
 
 let iterx f =
   iter (fun node -> 
-    match node.incoming_symbol with 
+    match incoming_symbol node with 
       | None -> () 
       | Some _ -> f node)
  
@@ -803,13 +802,8 @@ let reverse_dfs goal =
    provided. *)
 
 let targets f accu symbol =
-  let targets =
-    try
-      SymbolMap.find symbol incoming
-    with Not_found ->
-      (* There are no incoming transitions on the start symbols. *)
-      []
-  in
+  (* There are no incoming transitions on the start symbols. *)
+  let targets = lookup_incoming symbol in
   List.fold_left (fun accu target ->
     f accu target.predecessors target
   ) accu targets
@@ -843,9 +837,6 @@ let conflicts f =
   List.iter (fun node ->
     f node.conflict_tokens node
   ) conflict_nodes
-
-let incoming_symbol node =
-  node.incoming_symbol
 
 let predecessors node =
   node.predecessors

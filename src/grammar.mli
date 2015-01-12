@@ -294,11 +294,13 @@ module Production : sig
   val iter: (index -> unit) -> unit
   val fold: (index -> 'a -> 'a) -> 'a -> 'a
   val map: (index -> 'a) -> 'a list
+  val amap: (index -> 'a) -> 'a array
 
   (* Iteration over all productions, except the start productions. *)
 
   val iterx: (index -> unit) -> unit
   val foldx: (index -> 'a -> 'a) -> 'a -> 'a
+  val mapx: (index -> 'a) -> 'a list
 
   (* This maps a (user) non-terminal start symbol to the corresponding
      start production. *)
@@ -322,6 +324,11 @@ module Production : sig
      is not needed. *)
 
   val is_start: index -> bool
+
+  (* The integer [start] is published so as to allow the table back-end
+     to produce code for [is_start]. It should not be used otherwise. *)
+
+  val start: int
 
   (* This produces a string representation of a production. It should
      never be applied to a start production, as we do not wish users

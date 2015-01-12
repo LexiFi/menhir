@@ -117,6 +117,10 @@ val iteri: int -> (int -> unit) -> unit
 val foldi: int -> (int -> 'a -> 'a) -> 'a -> 'a
 val foldij: int -> int -> (int -> 'a -> 'a) -> 'a -> 'a
 
+(* [mapij start n f] produces the list [ f start; ... f (n-1) ]. *)
+
+val mapij: int -> int -> (int -> 'a) -> 'a list
+
 (* [mapi n f] produces the list [ f 0; ... f (n-1) ]. *)
 
 val mapi: int -> (int -> 'a) -> 'a list

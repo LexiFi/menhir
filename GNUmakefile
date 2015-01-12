@@ -79,11 +79,14 @@ DISTRIBUTED_FILES := AUTHORS CHANGES INSTALLATION LICENSE Makefile demos
 LIBFILES := \
   src/standard.mly \
   src/infiniteArray.{ml,mli} \
+  src/LinearizedArray.{ml,mli} \
   src/packedIntArray.{ml,mli} \
   src/rowDisplacement.{ml,mli} \
   src/IncrementalEngine.ml \
   src/engineTypes.ml \
   src/engine.{ml,mli} \
+  src/inspectionTableFormat.ml \
+  src/inspectionTableInterpreter.{ml,mli} \
   src/tableFormat.ml \
   src/tableInterpreter.{ml,mli} \
   src/convert.{ml,mli}

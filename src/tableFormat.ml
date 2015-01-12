@@ -94,9 +94,15 @@ module type TABLES = sig
 
   val goto: PackedIntArray.t * PackedIntArray.t
 
+  (* The number of start productions. A production [prod] is a start production
+     if and only if [prod < start] holds. *)
+
+  val start: int
+
   (* A one-dimensional semantic action table maps productions to semantic
      actions. The calling convention for semantic actions is described in
-     [EngineTypes]. *)
+     [EngineTypes]. This table contains ONLY NON-START PRODUCTIONS, so the
+     indexing is off by [start]. Be careful. *)
     
   val semantic_action: ((int, Obj.t, token) EngineTypes.env ->
                         (int, Obj.t)        EngineTypes.stack) array
@@ -112,39 +118,6 @@ module type TABLES = sig
      terminal symbol and a production to a string. *)
 
   val trace: (string array * string array) option
-
-end
-
-(* This signature defines the format of the tables that are produced (in
-   addition to the above) when [--inspection] is enabled. It is used as an
-   argument to [TableInterpreter.Inspection]. *)
-
-(* TEMPORARY comment/document *)
-
-module type INSPECTION_TABLES = sig
-
-  type 'a lr1state
-  type 'a symbol
-  type xsymbol
-
-  (* A mapping of every (non-initial) state to its incoming symbol. *)
-
-  val symbol: 'a lr1state -> 'a symbol
-
-  (* The definition (i.e. left-hand side and right-hand side) of every
-     (non-start) production. *)
-
-  val production_defs: (xsymbol * xsymbol list) option array
-
-  (* A mapping of every (non-initial) state to its LR(0) core. *)
-
-  val lr0_core: PackedIntArray.t
-
-  (* A mapping of every LR(0) state to its set of LR(0) items.
-     Each item is represented in its packed form (see [Item])
-     as an integer. *)
-
-  val lr0_items: int list array
 
 end
 

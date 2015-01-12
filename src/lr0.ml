@@ -132,9 +132,12 @@ let _reductions : (SymbolicLookahead.t * Production.index) list InfiniteArray.t 
 let map : (Item.Set.t, node) Hashtbl.t =
   Hashtbl.create 50021
 
+let incoming : Symbol.t option InfiniteArray.t =
+  InfiniteArray.make None
+
 (* The automaton is built depth-first. *)
 
-let rec explore (state : Item.Set.t) : node =
+let rec explore (symbol : Symbol.t option) (state : Item.Set.t) : node =
 
   (* Find out whether this state was already explored. *)
 
@@ -148,6 +151,10 @@ let rec explore (state : Item.Set.t) : node =
     n := k + 1;
     InfiniteArray.set states k state;
     Hashtbl.add map state k;
+
+    (* Record its incoming symbol. *)
+
+    InfiniteArray.set incoming k symbol;
 
     (* Build a symbolic version of the current state, where each item
        is associated with a distinct lookahead set variable, numbered
@@ -170,8 +177,8 @@ let rec explore (state : Item.Set.t) : node =
        dropping the symbolic lookahead information, explore the
        transitions to further LR(0) states. *)
 
-    InfiniteArray.set _transitions k (SymbolMap.map (fun symbolic_state ->
-      let (k : node) = explore (Item.Map.domain symbolic_state) in
+    InfiniteArray.set _transitions k (SymbolMap.mapi (fun symbol symbolic_state ->
+      let (k : node) = explore (Some symbol) (Item.Map.domain symbolic_state) in
       let lookahead : SymbolicLookahead.t array =
 	Array.make (Item.Map.cardinal symbolic_state) SymbolicLookahead.empty in
       let (_ : int) = Item.Map.fold (fun _ s i ->
@@ -194,7 +201,7 @@ let start prod : Item.Set.t =
 
 let entry : node ProductionMap.t =
   ProductionMap.start (fun prod ->
-    explore (start prod)
+    explore None (start prod)
   )
 
 let () =
@@ -212,6 +219,9 @@ let () =
 
 let items node : Item.Set.t =
   InfiniteArray.get states node
+
+let incoming_symbol node : Symbol.t option =
+  InfiniteArray.get incoming node
 
 (* ------------------------------------------------------------------------ *)
 (* Help for building the LR(1) automaton. *)

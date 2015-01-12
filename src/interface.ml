@@ -34,26 +34,11 @@ let interpreter =
 let result t =
   TypApp (interpreter ^ ".result", [ t ])
 
-let raw_lr1state =
-  "lr1state"
-
 let lr1state =
-  interpreter ^ "." ^ raw_lr1state
+  "lr1state"
 
 let tlr1state a : typ =
   TypApp (lr1state, [a])
-
-(* This interface item is a re-definition of the type [lr1state] as
-   an abbreviation for [MenhirInterpreter.lr1state]. *)
-
-let lr1state_redef =
-  let a = "a" in
-  IITypeDecls [{
-    typename = raw_lr1state;
-    typeparams = [ a ];
-    typerhs = TAbbrev (tlr1state (TypVar a));
-    typeconstraint = None
-  }]
 
 (* -------------------------------------------------------------------------- *)
 
@@ -98,21 +83,47 @@ let monolithic_api grammar =
 
 (* -------------------------------------------------------------------------- *)
 
-(* The incremental API. *)
+(* The inspection API. *)
 
-let incremental_api grammar () =
+let inspection_api grammar () =
 
-  IIComment "The incremental API." ::
-  IIModule (
-    interpreter,
+  let a = "a" in
+
+  (* Define the types [terminal] and [nonterminal]. *)
+
+  TokenType.tokengadtdef grammar @
+  NonterminalType.nonterminalgadtdef grammar @
+
+  (* Include the signature that lists the inspection functions, with
+     appropriate type instantiations. *)
+
+  IIComment "The inspection API." ::
+  IIInclude (
     with_types WKDestructive
-      "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE"
-      [
-        [],
-        "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
-        TokenType.ttoken
+      "MenhirLib.IncrementalEngine.INSPECTION" [
+        [ a ], "lr1state", tlr1state (TypVar a);
+        [], "production", TypApp ("production", []);
+        [ a ], TokenType.tctokengadt, TokenType.ttokengadt (TypVar a);
+        [ a ], NonterminalType.tcnonterminalgadt, NonterminalType.tnonterminalgadt (TypVar a)
       ]
   ) ::
+
+  []
+
+(* -------------------------------------------------------------------------- *)
+
+(* The incremental API. *)
+
+let incremental_engine () : module_type =
+  with_types WKNonDestructive
+    "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE"
+    [
+      [],
+      "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
+      TokenType.ttoken
+    ]
+
+let incremental_entry_points grammar : interface =
 
   IIComment "The entry point(s) to the incremental API." ::
   IIModule (incremental, MTSigEnd [
@@ -125,42 +136,20 @@ let incremental_api grammar () =
 
   []
 
-(* -------------------------------------------------------------------------- *)
+let incremental_api grammar () : interface =
 
-(* The inspection API. *)
+  IIModule (
+    interpreter,
+    MTSigEnd (
+      IIComment "The incremental API." ::
+      IIInclude (incremental_engine()) ::
+      listiflazy Settings.inspection (inspection_api grammar)
+    )
+  ) ::
 
-let inspection_api grammar () =
-
-  let a = "a" in
-
-  IIComment "The inspection API." ::
-  IIModule (inspection, MTSigEnd (
-
-    (* Define the types [terminal], [nonterminal], [symbol], [xsymbol]. *)
-
-    TokenType.tokengadtdef grammar @
-    NonterminalType.nonterminalgadtdef grammar @
-    SymbolType.symbolgadtdef() @
-    SymbolType.xsymboldef() @
-
-    (* Include the signature that lists the inspection functions, with
-       appropriate type instantiations. *)
-
-    IIComment "The inspection functions." ::
-    IIInclude (
-      with_types WKDestructive
-        "MenhirLib.IncrementalEngine.INSPECTION" [
-          [ a ], "lr1state", tlr1state (TypVar a);
-          [], "production", TypApp ("MenhirInterpreter.production", []);
-          [ a ], SymbolType.tcsymbolgadt, SymbolType.tsymbolgadt (TypVar a);
-          [], SymbolType.tcxsymbol, SymbolType.txsymbol;
-        ]
-    ) ::
-
-    []
-
-  )) ::
-  []
+  (* The entry points must come after the incremental API, because
+     their type refers to the type [result]. *)
+  incremental_entry_points grammar
 
 (* -------------------------------------------------------------------------- *)
 
@@ -169,8 +158,7 @@ let inspection_api grammar () =
 let interface grammar = [
   IIFunctor (grammar.parameters,
     monolithic_api grammar @
-    listiflazy Settings.table (incremental_api grammar) @
-    listiflazy Settings.inspection (inspection_api grammar)
+    listiflazy Settings.table (incremental_api grammar)
   )
 ]
 

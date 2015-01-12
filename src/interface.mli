@@ -18,12 +18,6 @@ val interpreter: string
 
 val result: IL.typ -> IL.typ
 
-(* The type ['a lr1state], defined by the interpreter sub-module. *)
-
-val lr1state: string
-val tlr1state: IL.typ -> IL.typ
-val lr1state_redef: IL.interface_item
-
 (* The name of the sub-module that contains the incremental entry points. *)
 
 val incremental: string

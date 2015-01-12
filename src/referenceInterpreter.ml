@@ -79,94 +79,84 @@ module T = struct
 
   open MenhirLib.EngineTypes
 
-  exception Accept of semantic_value
   exception Error
 
   (* By convention, a semantic action returns a new stack. It does not
      affect [env]. *)
+
+  let is_start =
+    Production.is_start
 
   type semantic_action =
       (state, semantic_value, token) env -> (state, semantic_value) stack
 
   let semantic_action (prod : production) : semantic_action =
     fun env ->
-      
-      (* Check whether [prod] is a start production. *)
+      assert (not (Production.is_start prod));
 
-      match Production.classify prod with
+      (* Reduce. Pop a suffix of the stack, and use it to construct a
+	 new concrete syntax tree node. *)
 
-      (* If it is one, accept. Start productions are of the form S' ->
-	 S, where S is a non-terminal symbol, so the desired semantic
-	 value is found within the top cell of the stack. *)
+      let n = Production.length prod in
 
-      | Some _ ->
-	  raise (Accept env.stack.semv)
+      let values : semantic_value array =
+        Array.make n CstError (* dummy *)
+      and startp =
+        ref Lexing.dummy_pos
+      and endp=
+        ref Lexing.dummy_pos
+      and current =
+        ref env.current
+      and stack =
+        ref env.stack
+      in
 
-      (* If it is not, reduce. Pop a suffix of the stack, and use it
-	 to construct a new concrete syntax tree node. *)
+      (* We now enter a loop to pop [k] stack cells and (after that) push
+         a new cell onto the stack. *)
 
-      | None ->
+      (* This loop does not update [env.current]. Instead, the state in
+         the newly pushed stack cell will be used (by our caller) as a
+         basis for a goto transition, and [env.current] will be updated
+         (if necessary) then. *)
 
-	  let n = Production.length prod in
+      for k = n downto 1 do
 
-	  let values : semantic_value array =
-	    Array.make n CstError (* dummy *)
-	  and startp =
-	    ref Lexing.dummy_pos
-	  and endp=
-	    ref Lexing.dummy_pos
-          and current =
-            ref env.current
-          and stack =
-            ref env.stack
-	  in
+        (* Fetch a semantic value. *)
 
-	  (* We now enter a loop to pop [k] stack cells and (after that) push
-             a new cell onto the stack. *)
+        values.(k - 1) <- !stack.semv;
 
-          (* This loop does not update [env.current]. Instead, the state in
-             the newly pushed stack cell will be used (by our caller) as a
-             basis for a goto transition, and [env.current] will be updated
-             (if necessary) then. *)
+        (* Pop one cell. The stack must be non-empty. As we pop a cell,
+           change the automaton's current state to the one stored within
+           the cell. (It is sufficient to do this only when [k] is 1,
+           since the last write overwrites any and all previous writes.)
+           If this is the first (last) cell that we pop, update [endp]
+           ([startp]). *)
 
-          for k = n downto 1 do
+        let next = !stack.next in
+        assert (!stack != next);
+        if k = n then begin
+          endp := !stack.endp
+        end;
+        if k = 1 then begin
+          current := !stack.state;
+          startp := !stack.startp
+        end;
+        stack := next
 
-            (* Fetch a semantic value. *)
+      done;
 
-            values.(k - 1) <- !stack.semv;
+      (* Done popping. *)
 
-            (* Pop one cell. The stack must be non-empty. As we pop a cell,
-               change the automaton's current state to the one stored within
-               the cell. (It is sufficient to do this only when [k] is 1,
-               since the last write overwrites any and all previous writes.)
-               If this is the first (last) cell that we pop, update [endp]
-               ([startp]). *)
+      (* Construct and push a new stack cell. The associated semantic
+         value is a new concrete syntax tree. *)
 
-            let next = !stack.next in
-            assert (!stack != next);
-            if k = n then begin
-              endp := !stack.endp
-            end;
-            if k = 1 then begin
-              current := !stack.state;
-              startp := !stack.startp
-            end;
-            stack := next
-
-          done;
-
-          (* Done popping. *)
-
-          (* Construct and push a new stack cell. The associated semantic
-             value is a new concrete syntax tree. *)
-
-          {
-            state = !current;
-            semv = CstNonTerminal (prod, values);
-            startp = !startp;
-            endp = !endp;
-            next = !stack
-          }
+      {
+        state = !current;
+        semv = CstNonTerminal (prod, values);
+        startp = !startp;
+        endp = !endp;
+        next = !stack
+      }
 
   let log = true
 

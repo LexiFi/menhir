@@ -576,6 +576,9 @@ module Production = struct
   let map f =
     Misc.mapi n f
 
+  let amap f =
+    Array.init n f
+
   let iterx f =
     for prod = start to n - 1 do
       f prod
@@ -583,6 +586,9 @@ module Production = struct
 
   let foldx f accu =
     Misc.foldij start n f accu
+
+  let mapx f =
+    Misc.mapij start n f
 
   (* Printing a production. *)
 
