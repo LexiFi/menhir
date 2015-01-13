@@ -1,7 +1,8 @@
 module Make
   (E : MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE)
   (I : MenhirLib.IncrementalEngine.INSPECTION
-   with type 'a lr1state = 'a E.lr1state)
+   with type 'a lr1state = 'a E.lr1state
+   with type production = E.production)
   (User : sig
     val arrow: string (* should include space on both sides *)
     val dot: string
@@ -73,21 +74,12 @@ module Make
   let buffer_element_as_symbol =
     into_buffer print_element_as_symbol
 
-  (* Folding over a stream. *)
-
-  let rec foldr f xs accu =
-    match Lazy.force xs with
-    | E.Nil ->
-        accu
-    | E.Cons (x, xs) ->
-        f x (foldr f xs accu)
-
   (* Printing a stack or an environment. These functions are parameterized
      over an element printer. [print_element_as_symbol] can be used for
      this purpose; but the user can define other printers if desired. *)
 
   let buffer_stack buffer_element b stack =
-    foldr (fun element () ->
+    E.foldr (fun element () ->
       buffer_element b element;
       out b space
     ) stack ()

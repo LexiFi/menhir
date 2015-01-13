@@ -84,6 +84,14 @@ module type INCREMENTAL_ENGINE = sig
     | Nil
     | Cons of 'a * 'a stream
 
+  (* The length of a stream. *)
+
+  val length: 'a stream -> int
+
+  (* Folding over a stream. *)
+
+  val foldr: ('a -> 'b -> 'b) -> 'a stream -> 'b -> 'b
+
   (* We offer a view of the parser's state as a stream of elements. *)
 
   val view: env -> element stream

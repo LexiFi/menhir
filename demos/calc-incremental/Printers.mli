@@ -1,7 +1,8 @@
 module Make
   (E : MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE)
   (I : MenhirLib.IncrementalEngine.INSPECTION
-   with type 'a lr1state = 'a E.lr1state)
+   with type 'a lr1state = 'a E.lr1state
+   with type production = E.production)
   (User : sig
     val arrow: string (* should include space on both sides *)
     val dot: string
@@ -21,6 +22,10 @@ module Make
      this purpose; but the user can define other printers if desired. *)
 
   val buffer_stack: (Buffer.t -> E.element -> unit) -> Buffer.t -> E.element E.stream -> unit
+  val print_stack: (E.element -> string) -> E.element E.stream -> string
+
+  val buffer_env: (Buffer.t -> E.element -> unit) -> Buffer.t -> E.env -> unit
+  val print_env: (E.element -> string) -> E.env -> string
 
   (* Printing an item. *)
 
