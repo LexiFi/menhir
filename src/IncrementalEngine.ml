@@ -180,3 +180,15 @@ module type INSPECTION = sig
 
 end
 
+(* This signature combines the incremental API and the inspection API. *)
+
+module type EVERYTHING = sig
+
+  include INCREMENTAL_ENGINE
+
+  include INSPECTION
+    with type 'a lr1state := 'a lr1state
+    with type production := production
+
+end
+

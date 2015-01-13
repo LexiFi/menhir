@@ -1,8 +1,5 @@
 module Make
-  (E : MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE)
-  (I : MenhirLib.IncrementalEngine.INSPECTION
-   with type 'a lr1state = 'a E.lr1state
-   with type production = E.production)
+  (I : MenhirLib.IncrementalEngine.EVERYTHING)
   (User : sig
     val arrow: string (* should include space on both sides *)
     val dot: string
@@ -14,18 +11,18 @@ module Make
   (* Printing an element as a symbol. This prints just the symbol
      that this element represents; nothing more. *)
 
-  val buffer_element_as_symbol: Buffer.t -> E.element -> unit
-  val print_element_as_symbol: E.element -> string
+  val buffer_element_as_symbol: Buffer.t -> I.element -> unit
+  val print_element_as_symbol: I.element -> string
 
   (* Printing a stack or an environment. These functions are parameterized
      over an element printer. [print_element_as_symbol] can be used for
      this purpose; but the user can define other printers if desired. *)
 
-  val buffer_stack: (Buffer.t -> E.element -> unit) -> Buffer.t -> E.element E.stream -> unit
-  val print_stack: (E.element -> string) -> E.element E.stream -> string
+  val buffer_stack: (Buffer.t -> I.element -> unit) -> Buffer.t -> I.element I.stream -> unit
+  val print_stack: (I.element -> string) -> I.element I.stream -> string
 
-  val buffer_env: (Buffer.t -> E.element -> unit) -> Buffer.t -> E.env -> unit
-  val print_env: (E.element -> string) -> E.env -> string
+  val buffer_env: (Buffer.t -> I.element -> unit) -> Buffer.t -> I.env -> unit
+  val print_env: (I.element -> string) -> I.env -> string
 
   (* Printing an item. *)
 

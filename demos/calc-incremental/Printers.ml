@@ -1,8 +1,5 @@
 module Make
-  (E : MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE)
-  (I : MenhirLib.IncrementalEngine.INSPECTION
-   with type 'a lr1state = 'a E.lr1state
-   with type production = E.production)
+  (I : MenhirLib.IncrementalEngine.EVERYTHING)
   (User : sig
     val arrow: string (* should include space on both sides *)
     val dot: string
@@ -68,7 +65,7 @@ module Make
 
   let print_element_as_symbol element =
     match element with
-    | E.Element (s, _, _, _) ->
+    | I.Element (s, _, _, _) ->
         print_symbol (I.X (I.incoming_symbol s))
 
   let buffer_element_as_symbol =
@@ -79,13 +76,13 @@ module Make
      this purpose; but the user can define other printers if desired. *)
 
   let buffer_stack buffer_element b stack =
-    E.foldr (fun element () ->
+    I.foldr (fun element () ->
       buffer_element b element;
       out b space
     ) stack ()
 
   let buffer_env buffer_element b env =
-    buffer_stack buffer_element b (E.view env)
+    buffer_stack buffer_element b (I.view env)
 
   let print_stack print_element stack =
     with_buffer (buffer_stack (into_buffer print_element)) stack

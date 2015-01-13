@@ -3,22 +3,7 @@
 module I =
   Parser.MenhirInterpreter
 
-(* TEMPORARY *)
-
-module Essai = (I : sig 
-  include MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE
-  include MenhirLib.IncrementalEngine.INSPECTION
-    with type 'a lr1state := 'a lr1state
-    with type production := production
-end)
-
-(* A measure of the stack height. Used as a primitive way of
-   testing the [view] function. *)
-
-let height env =
-  I.length (I.view env)
-
-(* Printing a symbol. *)
+(* A custom symbol printer. *)
 
 let print_symbol symbol =
   let open I in
@@ -47,14 +32,14 @@ let print_symbol symbol =
       "error"
 
 module P =
-  Printers.Make(I)(I) (struct
+  Printers.Make(I) (struct
     let arrow = " -> "
     let dot = "."
     let space = " "
     let print_symbol = print_symbol
   end)
 
-(* Printing an element. *)
+(* A custom element printer. *)
 
 let print_element e : string =
   match e with
@@ -87,7 +72,7 @@ let print_element e : string =
 (* Debugging. *)
 
 let dump env =
-  Printf.fprintf stderr "Stack height: %d\n%!" (height env);
+  Printf.fprintf stderr "Stack height: %d\n%!" (I.length (I.view env));
   Printf.fprintf stderr "Stack view:\n%s\n%!" (P.print_env print_element env);
   begin match Lazy.force (I.view env) with
   | I.Nil ->
