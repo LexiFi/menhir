@@ -31,14 +31,6 @@ let print_symbol symbol =
   | X (T T_error) ->
       "error"
 
-module P =
-  Printers.Make(I) (struct
-    let arrow = " -> "
-    let dot = "."
-    let space = " "
-    let print_symbol = print_symbol
-  end)
-
 (* A custom element printer. *)
 
 let print_element e : string =
@@ -69,18 +61,27 @@ let print_element e : string =
       | T T_error ->
           "error"
 
+(* TEMPORARY comment *)
+
+module P =
+  Printers.Make(I) (struct
+    let arrow = " -> "
+    let dot = "."
+    let space = " "
+    let print_symbol = print_symbol
+    let print_element = Some print_element
+  end)
+
 (* Debugging. *)
 
 let dump env =
-  Printf.fprintf stderr "Stack height: %d\n%!" (I.length (I.view env));
-  Printf.fprintf stderr "Stack view:\n%s\n%!" (P.print_env print_element env);
+  Printf.fprintf stderr "Stack view:\n%s\n%!" (P.print_env env);
   begin match Lazy.force (I.view env) with
   | I.Nil ->
       ()
   | I.Cons (I.Element (current, _, _, _), _) ->
       Printf.fprintf stderr "Current state: %d\n%!" (Obj.magic current);
       let items = I.items current in
-      Printf.fprintf stderr "#Items: %d\n%!" (List.length items);
       List.iter (fun item ->
         Printf.fprintf stderr "%s\n%!" (P.print_item item)
       ) items

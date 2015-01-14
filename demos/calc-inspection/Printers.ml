@@ -5,6 +5,7 @@ module Make
     val dot: string
     val space: string
     val print_symbol: I.xsymbol -> string
+    val print_element: (I.element -> string) option
   end)
 = struct
 
@@ -71,24 +72,36 @@ module Make
   let buffer_element_as_symbol =
     into_buffer print_element_as_symbol
 
-  (* Printing a stack or an environment. These functions are parameterized
-     over an element printer. [print_element_as_symbol] can be used for
-     this purpose; but the user can define other printers if desired. *)
+  (* Some of the functions that follow need an element printer. They use
+     [print_element] if provided by the user; otherwise they use
+     [print_element_as_symbol]. *)
 
-  let buffer_stack buffer_element b stack =
+  let print_element =
+    match print_element with
+    | Some print_element ->
+        print_element
+    | None ->
+        print_element_as_symbol
+
+  let buffer_element =
+    into_buffer print_element
+
+  (* Printing a stack or an environment. *)
+
+  let buffer_stack b stack =
     I.foldr (fun element () ->
       buffer_element b element;
       out b space
     ) stack ()
 
-  let buffer_env buffer_element b env =
-    buffer_stack buffer_element b (I.view env)
+  let buffer_env b env =
+    buffer_stack b (I.view env)
 
-  let print_stack print_element stack =
-    with_buffer (buffer_stack (into_buffer print_element)) stack
+  let print_stack stack =
+    with_buffer buffer_stack stack
 
-  let print_env print_element env =
-    with_buffer (buffer_env (into_buffer print_element)) env
+  let print_env env =
+    with_buffer buffer_env env
 
 end
 

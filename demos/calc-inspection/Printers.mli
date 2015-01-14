@@ -5,6 +5,7 @@ module Make
     val dot: string
     val space: string
     val print_symbol: I.xsymbol -> string
+    val print_element: (I.element -> string) option
   end)
 : sig
 
@@ -14,15 +15,15 @@ module Make
   val buffer_element_as_symbol: Buffer.t -> I.element -> unit
   val print_element_as_symbol: I.element -> string
 
-  (* Printing a stack or an environment. These functions are parameterized
-     over an element printer. [print_element_as_symbol] can be used for
-     this purpose; but the user can define other printers if desired. *)
+  (* Printing a stack or an environment. These functions need an element
+     printer. They use [print_element] if provided by the user; otherwise
+     they use [print_element_as_symbol]. *)
 
-  val buffer_stack: (Buffer.t -> I.element -> unit) -> Buffer.t -> I.element I.stream -> unit
-  val print_stack: (I.element -> string) -> I.element I.stream -> string
+  val buffer_stack: Buffer.t -> I.element I.stream -> unit
+  val print_stack: I.element I.stream -> string
 
-  val buffer_env: (Buffer.t -> I.element -> unit) -> Buffer.t -> I.env -> unit
-  val print_env: (I.element -> string) -> I.env -> string
+  val buffer_env: Buffer.t -> I.env -> unit
+  val print_env: I.env -> string
 
   (* Printing an item. *)
 
