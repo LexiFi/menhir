@@ -95,7 +95,7 @@ module Make
     ) stack ()
 
   let buffer_env b env =
-    buffer_stack b (I.view env)
+    buffer_stack b (I.stack env)
 
   let print_stack stack =
     with_buffer buffer_stack stack

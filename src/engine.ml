@@ -531,11 +531,14 @@ module Make (T : TABLE) = struct
   type element =
     | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
 
+  type stack =
+    element stream
+
   (* If [current] is the current state and [cell] is the top stack cell,
-     then [view cell current] is a view of the parser's state as a stream
+     then [stack cell current] is a view of the parser's state as a stream
      of elements. *)
 
-  let rec view cell current : element stream =
+  let rec stack cell current : element stream =
     lazy (
       (* The stack is empty iff the top stack cell is its own successor. In
          that case, the current state [current] should be an initial state
@@ -559,11 +562,11 @@ module Make (T : TABLE) = struct
           cell.startp,
           cell.endp
         ) in
-        Cons (element, view next cell.state)
+        Cons (element, stack next cell.state)
     )
 
-  let view env : element stream =
-    view env.stack env.current
+  let stack env : element stream =
+    stack env.stack env.current
 
 end
 

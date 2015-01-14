@@ -75,8 +75,8 @@ module P =
 (* Debugging. *)
 
 let dump env =
-  Printf.fprintf stderr "Stack view:\n%s\n%!" (P.print_env env);
-  begin match Lazy.force (I.view env) with
+  Printf.fprintf stderr "Stack:\n%s\n%!" (P.print_env env);
+  begin match Lazy.force (I.stack env) with
   | I.Nil ->
       ()
   | I.Cons (I.Element (current, _, _, _), _) ->

@@ -19,8 +19,8 @@ module Make
      printer. They use [print_element] if provided by the user; otherwise
      they use [print_element_as_symbol]. *)
 
-  val buffer_stack: Buffer.t -> I.element I.stream -> unit
-  val print_stack: I.element I.stream -> string
+  val buffer_stack: Buffer.t -> I.stack -> unit
+  val print_stack: I.stack -> string
 
   val buffer_env: Buffer.t -> I.env -> unit
   val print_env: I.env -> string

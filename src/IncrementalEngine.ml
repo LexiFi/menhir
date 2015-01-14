@@ -66,15 +66,6 @@ module type INCREMENTAL_ENGINE = sig
 
   type 'a lr1state
 
-  (* An element is a pair of a non-initial state [s] and a semantic value [v]
-     associated with the incoming symbol of this state. The idea is, the value
-     [v] was pushed onto the stack just before the state [s] was entered. Thus,
-     for some type ['a], the type [s] has type ['a lr1state] and the value [v]
-     has type ['a]. In other words, the type [element] is an existential type. *)
-
-  type element =
-    | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
-
   (* A stream is a list whose elements are produced on demand. *)
 
   type 'a stream =
@@ -92,12 +83,27 @@ module type INCREMENTAL_ENGINE = sig
 
   val foldr: ('a -> 'b -> 'b) -> 'a stream -> 'b -> 'b
 
-  (* The parser's state can be viewed as a stream of elements. This stream is
-     empty if the parser is in an initial state; otherwise, it is non-empty.
-     The parser's current LR(1) state is the one found in the top element of
-     this stream. *)
+  (* An element is a pair of a non-initial state [s] and a semantic value [v]
+     associated with the incoming symbol of this state. The idea is, the value
+     [v] was pushed onto the stack just before the state [s] was entered. Thus,
+     for some type ['a], the type [s] has type ['a lr1state] and the value [v]
+     has type ['a]. In other words, the type [element] is an existential type. *)
 
-  val view: env -> element stream
+  type element =
+    | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
+
+  (* The parser's stack is (or, more precisely, can be viewed as) a stream of
+     elements. *)
+
+  type stack =
+    element stream
+
+  (* The parser's stack, a stream of elements, can be examined. This stream is
+     empty if the parser is in an initial state; otherwise, it is non-empty.
+     The LR(1) automaton's current state is the one found in the top element
+     of the stack. *)
+
+  val stack: env -> stack
 
 end
 
