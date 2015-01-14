@@ -92,7 +92,10 @@ module type INCREMENTAL_ENGINE = sig
 
   val foldr: ('a -> 'b -> 'b) -> 'a stream -> 'b -> 'b
 
-  (* We offer a view of the parser's state as a stream of elements. *)
+  (* The parser's state can be viewed as a stream of elements. This stream is
+     empty if the parser is in an initial state; otherwise, it is non-empty.
+     The parser's current LR(1) state is the one found in the top element of
+     this stream. *)
 
   val view: env -> element stream
 
