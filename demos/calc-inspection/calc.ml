@@ -65,17 +65,16 @@ let print_element e : string =
 
 module P =
   Printers.Make(I) (struct
-    let arrow = " -> "
-    let dot = "."
-    let space = " "
-    let print_symbol = print_symbol
-    let print_element = Some print_element
+    let print s = Printf.fprintf stderr "%s" s
+    let print_symbol s = print (print_symbol s)
+    let print_element = Some (fun s -> print (print_element s))
   end)
 
 (* Debugging. *)
 
 let dump env =
-  Printf.fprintf stderr "Stack:\n%s\n%!" (P.print_env env);
+  P.print_stack (I.stack env);
+  Printf.fprintf stderr "\n%!";
   begin match Lazy.force (I.stack env) with
   | I.Nil ->
       ()
@@ -83,7 +82,8 @@ let dump env =
       Printf.fprintf stderr "Current state: %d\n%!" (Obj.magic current);
       let items = I.items current in
       List.iter (fun item ->
-        Printf.fprintf stderr "%s\n%!" (P.print_item item)
+        P.print_item item;
+        Printf.fprintf stderr "\n%!"
       ) items
   end;
   print_newline()

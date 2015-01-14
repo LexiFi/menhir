@@ -1,66 +1,49 @@
 module Make
   (I : MenhirLib.IncrementalEngine.EVERYTHING)
   (User : sig
-    val arrow: string (* should include space on both sides *)
-    val dot: string
-    val space: string
-    val print_symbol: I.xsymbol -> string
-    val print_element: (I.element -> string) option
+    val print: string -> unit
+    val print_symbol: I.xsymbol -> unit
+    val print_element: (I.element -> unit) option
   end)
 = struct
 
+  let arrow = " -> "
+  let dot = "."
+  let space = " "
+
   open User
-
-  (* Buffer and string utilities. *)
-
-  let out =
-    Buffer.add_string
-
-  let with_buffer f x =
-    let b = Buffer.create 128 in
-    f b x;
-    Buffer.contents b
-
-  let into_buffer f b x =
-    out b (f x)
 
   (* Printing a list of symbols. An optional dot is printed at offset
      [i] into the list [symbols], if this offset lies between [0] and
      the length of the list (included). *)
 
-  let rec buffer_symbols b i symbols =
+  let rec print_symbols i symbols =
     if i = 0 then begin
-      out b dot;
-      out b space;
-      buffer_symbols b (-1) symbols
+      print dot;
+      print space;
+      print_symbols (-1) symbols
     end
     else begin
       match symbols with
       | [] ->
           ()
       | symbol :: symbols ->
-          out b (print_symbol symbol);
-          out b space;
-          buffer_symbols b (i - 1) symbols
+          print_symbol symbol;
+          print space;
+          print_symbols (i - 1) symbols
     end
 
   (* Printing an item. *)
 
-  let buffer_item b (prod, i) =
-    out b (print_symbol (I.lhs prod));
-    out b arrow;
-    buffer_symbols b i (I.rhs prod)
+  let print_item (prod, i) =
+    print_symbol (I.lhs prod);
+    print arrow;
+    print_symbols i (I.rhs prod)
 
   (* Printing a production (without a dot). *)
 
-  let buffer_production b prod =
-    buffer_item b (prod, -1)
-
-  let print_item =
-    with_buffer buffer_item
-
-  let print_production =
-    with_buffer buffer_production
+  let print_production prod =
+    print_item (prod, -1)
 
   (* Printing an element as a symbol. *)
 
@@ -68,9 +51,6 @@ module Make
     match element with
     | I.Element (s, _, _, _) ->
         print_symbol (I.X (I.incoming_symbol s))
-
-  let buffer_element_as_symbol =
-    into_buffer print_element_as_symbol
 
   (* Some of the functions that follow need an element printer. They use
      [print_element] if provided by the user; otherwise they use
@@ -83,25 +63,13 @@ module Make
     | None ->
         print_element_as_symbol
 
-  let buffer_element =
-    into_buffer print_element
-
-  (* Printing a stack or an environment. *)
-
-  let buffer_stack b stack =
-    I.foldr (fun element () ->
-      buffer_element b element;
-      out b space
-    ) stack ()
-
-  let buffer_env b env =
-    buffer_stack b (I.stack env)
+  (* Printing a stack as a list of symbols. *)
 
   let print_stack stack =
-    with_buffer buffer_stack stack
-
-  let print_env env =
-    with_buffer buffer_env env
+    I.foldr (fun element () ->
+      print_element element;
+      print space
+    ) stack ()
 
 end
 

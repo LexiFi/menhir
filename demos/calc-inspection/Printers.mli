@@ -1,39 +1,45 @@
 module Make
+
   (I : MenhirLib.IncrementalEngine.EVERYTHING)
+
   (User : sig
-    val arrow: string (* should include space on both sides *)
-    val dot: string
-    val space: string
-    val print_symbol: I.xsymbol -> string
-    val print_element: (I.element -> string) option
+
+    (* [print s] is supposed to send the string [s] to some output channel. *)
+
+    val print: string -> unit
+
+    (* [print_symbol s] is supposed to print a representation of the symbol [s]. *)
+
+    val print_symbol: I.xsymbol -> unit
+
+    (* [print_element e] is supposed to print a representation of the element [e].
+       This function is optional; if it is not provided, [print_element_as_symbol]
+       (defined below) is used instead. *)
+
+    val print_element: (I.element -> unit) option
+
   end)
+
 : sig
 
   (* Printing an element as a symbol. This prints just the symbol
      that this element represents; nothing more. *)
 
-  val buffer_element_as_symbol: Buffer.t -> I.element -> unit
-  val print_element_as_symbol: I.element -> string
+  val print_element_as_symbol: I.element -> unit
 
-  (* Printing a stack or an environment. These functions need an element
-     printer. They use [print_element] if provided by the user; otherwise
-     they use [print_element_as_symbol]. *)
+  (* Printing a stack as a list of elements. This function needs an element
+     printer. It uses [print_element] if provided by the user; otherwise
+     it uses [print_element_as_symbol]. *)
 
-  val buffer_stack: Buffer.t -> I.stack -> unit
-  val print_stack: I.stack -> string
-
-  val buffer_env: Buffer.t -> I.env -> unit
-  val print_env: I.env -> string
+  val print_stack: I.stack -> unit
 
   (* Printing an item. *)
 
-  val buffer_item: Buffer.t -> I.item -> unit
-  val print_item: I.item -> string
+  val print_item: I.item -> unit
 
   (* Printing a production. *)
 
-  val buffer_production: Buffer.t -> I.production -> unit
-  val print_production: I.production -> string
+  val print_production: I.production -> unit
 
 end
 
