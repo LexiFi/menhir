@@ -33,13 +33,19 @@ module Make
 
   val print_stack: I.stack -> unit
 
-  (* Printing an item. *)
+  (* Printing an item. (Ending with a newline.) *)
 
   val print_item: I.item -> unit
 
-  (* Printing a production. *)
+  (* Printing a production. (Ending with a newline.) *)
 
   val print_production: I.production -> unit
+
+  (* Printing the current LR(1) state. The current state is first displayed
+     as a number; then the list of its LR(0) items is printed. (Ending with
+     a newline.) *)
+
+  val print_current_state: I.env -> unit
 
 end
 

@@ -10,6 +10,7 @@ module Make
   let arrow = " -> "
   let dot = "."
   let space = " "
+  let newline = "\n"
 
   open User
 
@@ -32,18 +33,6 @@ module Make
           print space;
           print_symbols (i - 1) symbols
     end
-
-  (* Printing an item. *)
-
-  let print_item (prod, i) =
-    print_symbol (I.lhs prod);
-    print arrow;
-    print_symbols i (I.rhs prod)
-
-  (* Printing a production (without a dot). *)
-
-  let print_production prod =
-    print_item (prod, -1)
 
   (* Printing an element as a symbol. *)
 
@@ -70,6 +59,32 @@ module Make
       print_element element;
       print space
     ) stack ()
+
+  (* Printing an item. *)
+
+  let print_item (prod, i) =
+    print_symbol (I.lhs prod);
+    print arrow;
+    print_symbols i (I.rhs prod);
+    print newline
+
+  (* Printing a production (without a dot). *)
+
+  let print_production prod =
+    print_item (prod, -1)
+
+  (* Printing the current LR(1) state. *)
+
+  let print_current_state env =
+    print "Current LR(1) state: ";
+    match Lazy.force (I.stack env) with
+    | I.Nil ->
+        print "<some initial state>";
+        print newline
+    | I.Cons (I.Element (current, _, _, _), _) ->
+        print (string_of_int (Obj.magic current)); (* TEMPORARY safe conversion needed *)
+        print newline;
+        List.iter print_item (I.items current)
 
 end
 

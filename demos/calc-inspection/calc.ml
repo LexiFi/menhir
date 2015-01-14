@@ -75,18 +75,8 @@ module P =
 let dump env =
   P.print_stack (I.stack env);
   Printf.fprintf stderr "\n%!";
-  begin match Lazy.force (I.stack env) with
-  | I.Nil ->
-      ()
-  | I.Cons (I.Element (current, _, _, _), _) ->
-      Printf.fprintf stderr "Current state: %d\n%!" (Obj.magic current);
-      let items = I.items current in
-      List.iter (fun item ->
-        P.print_item item;
-        Printf.fprintf stderr "\n%!"
-      ) items
-  end;
-  print_newline()
+  P.print_current_state env;
+  Printf.fprintf stderr "\n%!"
 
 (* The loop which drives the parser. At each iteration, we analyze a
    result produced by the parser, and act in an appropriate manner. *)
