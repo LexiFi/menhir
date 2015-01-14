@@ -3,40 +3,7 @@
 module I =
   Parser.MenhirInterpreter
 
-(* TEMPORARY *)
-
-module Essai = (I : sig 
-  include MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE
-  include MenhirLib.IncrementalEngine.INSPECTION
-    with type 'a lr1state := 'a lr1state
-    with type production := production
-end)
-
-(* The length of a stream. *)
-
-let rec length xs =
-  match Lazy.force xs with
-  | I.Nil ->
-      0
-  | I.Cons (_, xs) ->
-      1 + length xs
-
-(* Folding over a stream. *)
-
-let rec foldr f xs accu =
-  match Lazy.force xs with
-  | I.Nil ->
-      accu
-  | I.Cons (x, xs) ->
-      f x (foldr f xs accu)
-
-(* A measure of the stack height. Used as a primitive way of
-   testing the [view] function. *)
-
-let height env =
-  length (I.view env)
-
-(* Printing a symbol. *)
+(* A custom symbol printer. *)
 
 let print_symbol symbol =
   let open I in
@@ -72,12 +39,7 @@ module P =
     let print_symbol = print_symbol
   end)
 
-(* Printing an element. *)
-
-let print_element e =
-  match e with
-  | I.Element (s, v, _, _) ->
-    print_symbol (I.X (I.incoming_symbol s))
+(* A custom element printer. *)
 
 let print_element e : string =
   match e with
@@ -107,21 +69,11 @@ let print_element e : string =
       | T T_error ->
           "error"
 
-(* Printing a stack. *)
-
-let print env : string =
-  let b = Buffer.create 80 in
-  foldr (fun e () ->
-    Buffer.add_string b (print_element e);
-    Buffer.add_char b ' ';
-  ) (I.view env) ();
-  Buffer.contents b
-
 (* Debugging. *)
 
 let dump env =
-  Printf.fprintf stderr "Stack height: %d\n%!" (height env);
-  Printf.fprintf stderr "Stack view:\n%s\n%!" (print env);
+  Printf.fprintf stderr "Stack height: %d\n%!" (I.length (I.view env));
+  Printf.fprintf stderr "Stack view:\n%s\n%!" (P.print_env print_element env);
   begin match Lazy.force (I.view env) with
   | I.Nil ->
       ()

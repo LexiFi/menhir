@@ -84,6 +84,14 @@ module type INCREMENTAL_ENGINE = sig
     | Nil
     | Cons of 'a * 'a stream
 
+  (* The length of a stream. *)
+
+  val length: 'a stream -> int
+
+  (* Folding over a stream. *)
+
+  val foldr: ('a -> 'b -> 'b) -> 'a stream -> 'b -> 'b
+
   (* We offer a view of the parser's state as a stream of elements. *)
 
   val view: env -> element stream
@@ -169,6 +177,18 @@ module type INSPECTION = sig
      state [s]. This set is presented as a list, in an arbitrary order. *)
 
   val items: 'a lr1state -> item list
+
+end
+
+(* This signature combines the incremental API and the inspection API. *)
+
+module type EVERYTHING = sig
+
+  include INCREMENTAL_ENGINE
+
+  include INSPECTION
+    with type 'a lr1state := 'a lr1state
+    with type production := production
 
 end
 
