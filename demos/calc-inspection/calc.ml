@@ -3,6 +3,90 @@
 module I =
   Parser.MenhirInterpreter
 
+(* A custom symbol printer. *)
+
+let print_symbol symbol =
+  let open I in
+  match symbol with
+  | X (T T_TIMES) ->
+      "*"
+  | X (T T_RPAREN) ->
+      ")"
+  | X (T T_PLUS) ->
+      "+"
+  | X (T T_MINUS) ->
+      "-"
+  | X (T T_LPAREN) ->
+      "("
+  | X (T T_INT) ->
+      "INT"
+  | X (N N_expr) ->
+      "expr"
+  | X (N N_main) ->
+      "main"
+  | X (T T_EOL) ->
+      "EOL"
+  | X (T T_DIV) ->
+      "/"
+  | X (T T_error) ->
+      "error"
+
+module P =
+  Printers.Make(I) (struct
+    let arrow = " -> "
+    let dot = "."
+    let space = " "
+    let print_symbol = print_symbol
+  end)
+
+(* A custom element printer. *)
+
+let print_element e : string =
+  match e with
+  | I.Element (s, v, _, _) ->
+      let open I in
+      match incoming_symbol s with
+      | T T_TIMES ->
+          "*"
+      | T T_RPAREN ->
+          ")"
+      | T T_PLUS ->
+          "+"
+      | T T_MINUS ->
+          "-"
+      | T T_LPAREN ->
+          "("
+      | T T_INT ->
+          string_of_int v
+      | N N_expr ->
+          string_of_int v
+      | N N_main ->
+          string_of_int v
+      | T T_EOL ->
+          ""
+      | T T_DIV ->
+          "/"
+      | T T_error ->
+          "error"
+
+(* Debugging. *)
+
+let dump env =
+  Printf.fprintf stderr "Stack height: %d\n%!" (I.length (I.view env));
+  Printf.fprintf stderr "Stack view:\n%s\n%!" (P.print_env print_element env);
+  begin match Lazy.force (I.view env) with
+  | I.Nil ->
+      ()
+  | I.Cons (I.Element (current, _, _, _), _) ->
+      Printf.fprintf stderr "Current state: %d\n%!" (Obj.magic current);
+      let items = I.items current in
+      Printf.fprintf stderr "#Items: %d\n%!" (List.length items);
+      List.iter (fun item ->
+        Printf.fprintf stderr "%s\n%!" (P.print_item item)
+      ) items
+  end;
+  print_newline()
+
 (* The loop which drives the parser. At each iteration, we analyze a
    result produced by the parser, and act in an appropriate manner. *)
 
@@ -12,6 +96,7 @@ module I =
 let rec loop lexbuf (result : int I.result) =
   match result with
   | I.InputNeeded env ->
+      dump env;
       (* The parser needs a token. Request one from the lexer,
          and offer it to the parser, which will produce a new
          result. Then, repeat. *)
@@ -21,6 +106,7 @@ let rec loop lexbuf (result : int I.result) =
       let result = I.offer result (token, startp, endp) in
       loop lexbuf result
   | I.AboutToReduce (env, prod) ->
+      dump env;
       let result = I.resume result in
       loop lexbuf result
   | I.HandlingError env ->
