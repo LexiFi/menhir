@@ -68,10 +68,49 @@ module Make
     print_symbols i (I.rhs prod);
     print newline
 
+  (* Printing a list of symbols (public version). *)
+
+  let print_symbols symbols =
+    print_symbols (-1) symbols
+
   (* Printing a production (without a dot). *)
 
   let print_production prod =
     print_item (prod, -1)
+
+  (* The past of an LR(0) item is the first part of the right-hand side,
+     up to the point. We represent it as a reversed list, right to left.
+     Thus, the past corresponds to a prefix of the stack. *)
+
+  let rec take n xs =
+    match n, xs with
+    | 0, _ ->
+        []
+    | _, [] ->
+        (* [n] is too large *)
+        assert false
+    | _, x :: xs ->
+        x :: take (n - 1) xs
+
+  let past (prod, index) =
+    let rhs = I.rhs prod in
+    List.rev (take index rhs)
+
+  (* The LR(0) items that form the core of an LR(1) state have compatible
+     pasts. If we pick the one with the longest past, we obtain the past
+     of this state, i.e., the longest statically known prefix of the stack
+     in this state. *)
+
+  let past s =
+    let (max_index, max_past) =
+      List.fold_left (fun ((max_index, max_past) as accu) ((_, index) as item) ->
+        if max_index < index then
+          index, past item
+        else
+          accu
+      ) (0, []) (I.items s)
+    in
+    max_past
 
   (* Printing the current LR(1) state. *)
 

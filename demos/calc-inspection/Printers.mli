@@ -22,6 +22,10 @@ module Make
 
 : sig
 
+  (* Printing a list of symbols. *)
+
+  val print_symbols: I.xsymbol list -> unit
+
   (* Printing an element as a symbol. This prints just the symbol
      that this element represents; nothing more. *)
 
@@ -46,6 +50,9 @@ module Make
      a newline.) *)
 
   val print_current_state: I.env -> unit
+
+  (* TEMPORARY move and document *)
+  val past: 'a I.lr1state -> I.xsymbol list
 
 end
 
