@@ -405,7 +405,10 @@ A declaration of the form:
 \dparameter \ocamlparam
 \end{quote}
 causes the entire parser to become parameterized over the \ocaml module
-\nt{uid}, that is, to become an \ocaml functor. If a single specification file
+\nt{uid}, that is, to become an \ocaml functor. The directory
+\distrib{demos/calc-param} contains a demo that illustrates the use of this switch.
+
+If a single specification file
 contains multiple \dparameter declarations, their order is preserved, so that
 the module name \nt{uid} introduced by one declaration is effectively in scope
 in the declarations that follow. When two \dparameter declarations originate
@@ -1822,6 +1825,9 @@ access to the lexer. Instead, when the parser needs the next token, it stops
 and returns its current state to the user. The user is then responsible for
 obtaining this token (typically by invoking the lexer) and resuming the parser
 from that state.
+%
+The directory \distrib{demos/calc-incremental} contains a demo that
+illustrates the use of the incremental API.
 
 This API is ``incremental'' in the sense that the user has access to a
 sequence of the intermediate states of the parser. Assuming that semantic
@@ -1946,8 +1952,11 @@ At this time, because the type \verb+env+ is opaque, the state of the parser
 cannot be inspected by the user. We plan to offer an inspection API in the
 near future.
 
-% TEMPORARY view
+% TEMPORARY stack
 % TEMPORARY symbol
+
+% TEMPORARY document the inspection API
+% The directory \distrib{demos/calc-inspection} contains a demo that illustrates the use of the inspection API.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
@@ -2069,8 +2078,7 @@ grammar), then (given sufficient fuel) it is accepted by the parser.
 
 These results imply that the grammar is unambiguous: for every input, there is
 at most one valid interpretation. This is proved by another generated theorem,
-named \verb+unambiguous+.
-% TEMPORARY clarifier où est ce théorème et comment il s'appelle
+named \verb+Parser.unambiguous+.
 
 % jh: Pas besoin de prouver la terminaison pour avoir la non-ambiguïté, car
 % les cas de non-terminaison ne concernent que les entrées invalides.

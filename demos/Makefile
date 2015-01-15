@@ -1,4 +1,4 @@
-DEMOS := calc calc-two calc-param calc-incremental
+DEMOS := calc calc-two calc-param calc-incremental calc-inspection
 
 .PHONY: all clean
 
