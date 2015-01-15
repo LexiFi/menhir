@@ -3,6 +3,31 @@
 module I =
   Parser.MenhirInterpreter
 
+(* A dummy token generator. *)
+
+let dummy_token (type a) (symbol : a I.terminal) : Parser.token =
+  let open I in
+  let open Parser in
+  match symbol with
+  | T_TIMES ->
+      TIMES
+  | T_RPAREN ->
+      RPAREN
+  | T_PLUS ->
+      PLUS
+  | T_MINUS ->
+      MINUS
+  | T_LPAREN ->
+      LPAREN
+  | T_INT ->
+      INT 0
+  | T_EOL ->
+      EOL
+  | T_DIV ->
+      DIV
+  | T_error ->
+      assert false
+
 (* A custom symbol printer. *)
 
 let print_symbol symbol =
