@@ -47,5 +47,11 @@ module type TABLES = sig
 
   val lr0_incoming: PackedIntArray.t
 
+  (* A table that tells which non-terminal symbols are nullable. *)
+
+  val nullable: string
+    (* Like the [error] bitmap, this is the second component
+       of a packed int array of bit width 1. *)
+
 end
 
