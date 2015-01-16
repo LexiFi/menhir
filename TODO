@@ -24,7 +24,7 @@
 
 * Suite des patchs de Frédéric Bour.
     API d'inspection complète.
-      Expose nullable/first?
+      Expose FIRST?
     Librairie(s) pour la gestion des erreurs.
     Librairie pour la complétion du parsing.
       Need a way of feeding the parser a nonterminal symbol.
@@ -53,12 +53,11 @@
   to produce certain tokens that the parser does not use at all.
 
 * move to a new license (GPL V2?), as per Hongbo Zhang's request.
+* Les fichiers dans demos/ ne devraient pas être sous QPL mais libres...
 
 * _stage2/menhir.native --interpret fancy-parser.mly
   crashes with Stack_overflow when the input is just "grammar:\n"
   ... it seems to loop now ...
-
-* Les fichiers dans examples/ ne devraient pas être sous QPL mais libres...
 
 * BUG: la directive $type<...> nt donne lieu à un message d'erreur bizarre
   si le non-terminal nt n'existe pas. (Jacques-Henri.)
@@ -92,42 +91,18 @@
 * BUG: message de Valentin Gatien-Baron du 09/01/2010: le warning erroné à
   propos d'un %prec inutile peut-il être évité?
 
-* Lorsqu'on utilise %parameter, si la définition du type token ne
-  dépend pas du(des) paramètre(s) du foncteur, ce serait bon de
-  la générer en dehors du foncteur.
-
-* À chaque fois qu'on applique magic à une fonction, utiliser la
-  syntaxe (magic e : _ -> _). Difficile, en fait, car on applique
-  souvent magic à toute la pile.
-
 * Implémenter un test de détection de boucles. Si la grammaire contient une
   boucle, elle est infiniment ambiguë. Pour le test, calculer tous les
   nullables, ajouter une production unité A -> B dès qu'il existe une
   production A -> alpha B beta avec alpha et beta nullables, et regarder
   ensuite s'il existe un cycle de productions unité.
 
-* Deux idées qu'on avait mises dans le projet Jane Street, et que j'ai
-  suppriméees pour l'instant:
-  - demander à l'interprète de référence de collecter tous les états
-    traversés (de façon cumulative, pour toutes les phrases fournies)
-    et afficher quels états ont été traversés (ou non traversés)
-  - proposer un jeu de phrases qui couvre l'ensemble des états non
-    encore atteints (ou bien l'ensemble des états à conflits non
-    encore atteints).
-
-* Permettre une trace avec autre chose que fprintf stderr
-
-* Permettre trois modes pour --trace: toujours, si variable d'environnement
-  activée, ou jamais
+* Permettre une trace avec autre chose que fprintf stderr. Cela permettrait
+  au programmeur (par exemple) de décider à runtime s'il veut afficher ou
+  non la trace.
 
 * (petit) BUG: --follow-construction n'affiche pas le contenu des états
   initiaux (r0)
-
-* Faut-il expliquer les conflits *avant* de bousiller l'automate? (mais
-  cacher les explications des conflits qui vont être résolus)
-
-* pourquoi pas une sortie au format .dot pour l'automate? (avant ou
-  après résolution des conflits?)
 
 * relire la preuve de Pager et comprendre si ce que fait Lr1.grow est correct
   ou pas; faut-il faire grossir les états existants, ou bien (par exemple) les
@@ -140,9 +115,6 @@
 * BUG: Boris (1.- bouclage parser sur une entrée erronée 2.- une lecture
   trop loin dans le stream, également liée à error).
 
-* Corriger le lexer pour supporter les types variantes polymorphes (tenir
-  compte des crochets carrés et ignorer les crochets anguleux dedans)...
-
 * éviter "Warning: 22 conflicts ..." car emacs prend "Warning" pour un
   nom de fichier; d'après Damien, il devrait suffire que la phrase après
   les deux points ne commence pas par un nombre.
@@ -151,24 +123,6 @@
 
 * si une variable est inutilisée dans une action sémantique, le
   warning est affiché dans le code produit.
-
-* trier les warnings par ordre décroissant de numéro de ligne
-  (quand on émet plusieurs warnings d'un coup, par exemple pour
-  les symboles inaccessibles)
-
-* un symbole indéfini pourrait être un warning (et non pas une
-  erreur) si ce symbole est inatteignable
-
-* si je veux que AND soit associatif à gauche, et OR de même,
-  et si je veux interdire que AND et OR soient mélangés sans
-  parenthésage, alors je suis coincé -- je ne peux pas dire
-  cela. Exact?
-
-* songer à un moyen de ne pas encombrer le .conflict avec des
-  conflits similaires? Si le contexte partagé est le même, on
-  peut ne pas l'afficher. On pourrait alors afficher un seul
-  rapport de conflits pour plusieurs états? Cf. message du 24
-  juin de Christian.
 
 * tirer au clair la sémantique des $startpos/$endpos sur les
   non-terminaux. Vérifier que %inline la préserve.
@@ -185,20 +139,9 @@
 * le fichier .conflicts devrait etre supprime par --explain s'il
   n'y a aucun conflit
 
-* Allow the user to submit a sentence and check whether it is ambiguous (that is,
-  whether its analysis traverses states with conflicts, and if so,
-  which). Allow the user to submit a set of sentences and check that
-  all conflicts are covered. Allow the user to submit a sentence and
-  run the parser over it.
-
-* changer la licence et y inclure la documentation (distribuée avec
-  son source)
-
-* pouvoir débrayer certains avertissements (e.g. tokens non utilisés)
-  sur la ligne de commande
-
 * dans le dump de l'automate, rajouter les transitions qui ont
-  ete supprimees par resolution de conflits.
+  ete supprimees par resolution de conflits. Afficher aussi les
+  réductions par défaut?
 
 * BUG: l'élimination de %inline change la signification de $startpos
   et $endpos (qui devient relative à la nouvelle règle)
@@ -230,9 +173,6 @@
   problème est que l'erreur est forcément rapportée dans le
   fichier .ml engendré. Et ça résoudrait le problème du cas
   où on n'utilise que $startpos(v) et pas v.
-
-* Ajouter une construction pour dire que l'on sait qu'un certain
-  token est non utilisé?
 
 * Il faudrait activer le warning qui recommande d'utiliser --infer
   dès que la librairie standard est utilisée (et pas seulement lorsque
