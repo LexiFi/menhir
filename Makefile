@@ -95,7 +95,7 @@ install:
 	mkdir -p $(libdir)
 	mkdir -p $(docdir)
 	mkdir -p $(mandir)
-	install $(BUILDDIR)/menhir.native $(bindir)/$(MENHIREXE)
+	install $(BUILDDIR)/menhir.$(TARGET) $(bindir)/$(MENHIREXE)
 	install -m 644 $(MLYLIB) $(libdir)
 	cp -r $(DOCS) $(docdir)
 	cp -r $(MANS) $(mandir)
