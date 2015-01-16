@@ -169,6 +169,9 @@ module Terminal = struct
      Pseudo-tokens (used in %prec declarations, but never
      declared using %token) are filtered out. *)
 
+  (* In principle, the number of the [error] token is irrelevant.
+     It is currently 0, but we do not rely on that. *)
+
   let (n : int), (name : string array), (map : int StringMap.t) =
     let tokens = tokens Front.grammar in
     match tokens with
