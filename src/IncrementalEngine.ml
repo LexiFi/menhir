@@ -183,7 +183,8 @@ module type INSPECTION = sig
   val rhs: production -> xsymbol list
 
   (* [items s] is the set of the LR(0) items in the LR(0) core of the LR(1)
-     state [s]. This set is presented as a list, in an arbitrary order. *)
+     state [s]. This set is not epsilon-closed. This set is presented as a
+     list, in an arbitrary order. *)
 
   val items: 'a lr1state -> item list
 

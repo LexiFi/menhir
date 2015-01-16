@@ -122,7 +122,7 @@ package: clean
 	@ $(MAKE) -C src api
 # Create the tarball.
 	@ echo "-> Tarball creation."
-	tar --exclude=.svn -cvz -f $(TARBALL) $(PACKAGE)
+	tar --exclude=.gitignore -cvz -f $(TARBALL) $(PACKAGE)
 	@ echo "-> Package $(PACKAGE).tar.gz is ready."
 
 check:

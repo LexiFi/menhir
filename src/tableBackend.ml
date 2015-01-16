@@ -902,6 +902,23 @@ let lr0_items () =
 
 (* ------------------------------------------------------------------------ *)
 
+(* A table that tells which nonterminal symbols are nullable.
+   (For simplicity, this table includes the start symbols.) *)
+
+let nullable () =
+  assert Settings.inspection;
+  let nullable : int list =
+    Nonterminal.map (fun nt ->
+      if Analysis.nullable nt then 1 else 0
+    )
+  in
+  define_and_measure (
+    "nullable",
+    marshal11_list nullable
+  )
+
+(* ------------------------------------------------------------------------ *)
+
 (* Let's put everything together. *)
 
 open UnparameterizedSyntax
@@ -1015,6 +1032,7 @@ let program =
             rhs() ::
             lr0_core() ::
             lr0_items() ::
+            nullable() ::
             []
           ) ::
           []

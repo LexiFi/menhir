@@ -15,7 +15,7 @@ all:
 	$(OCAMLBUILD) $(MAIN).native
 
 clean:
-	rm -f *~
+	rm -f *~ .*~
 	$(OCAMLBUILD) -clean
 
 test: all

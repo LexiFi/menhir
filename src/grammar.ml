@@ -1092,6 +1092,8 @@ let rec convert = function
 
 module Analysis = struct
 
+  let nullable = Array.get nullable
+
   let nullable_first_rhs = nullable_first_rhs
 
   let explain_first_rhs (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
