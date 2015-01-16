@@ -107,12 +107,14 @@ let dump env =
    result produced by the parser, and act in an appropriate manner. *)
 
 (* [lexbuf] is the lexing buffer. [result] is the last result produced
-   by the parser. *)
+   by the parser. [checkpoint] is the last [InputNeeded] that was
+   produced by the parser. *)
 
-let rec loop lexbuf (result : int I.result) =
+let rec loop lexbuf (checkpoint : int I.result option) (result : int I.result) =
   match result with
   | I.InputNeeded env ->
       dump env;
+      let checkpoint = Some result in
       (* The parser needs a token. Request one from the lexer,
          and offer it to the parser, which will produce a new
          result. Then, repeat. *)
@@ -120,11 +122,11 @@ let rec loop lexbuf (result : int I.result) =
       let startp = lexbuf.Lexing.lex_start_p
       and endp = lexbuf.Lexing.lex_curr_p in
       let result = I.offer result (token, startp, endp) in
-      loop lexbuf result
+      loop lexbuf checkpoint result
   | I.AboutToReduce (env, prod) ->
       dump env;
       let result = I.resume result in
-      loop lexbuf result
+      loop lexbuf checkpoint result
   | I.HandlingError env ->
       (* The parser has suspended itself because of a syntax error. Stop. *)
       Printf.fprintf stderr
@@ -143,7 +145,7 @@ let rec loop lexbuf (result : int I.result) =
 let process (line : string) =
   let lexbuf = Lexing.from_string line in
   try
-    loop lexbuf (Parser.Incremental.main())
+    loop lexbuf None (Parser.Incremental.main())
   with
   | Lexer.Error msg ->
       Printf.fprintf stderr "%s%!" msg
