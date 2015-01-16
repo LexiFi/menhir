@@ -44,6 +44,24 @@ type grammar =
       rules	           : rule StringMap.t;
     }
 
+(* [tokens grammar] is a list of all (real) tokens in the grammar
+   [grammar]. The special tokens "#" and "error" are not included.
+   Pseudo-tokens (used in %prec declarations, but never declared
+   using %token) are filtered out. *)
+
+let tokens grammar =
+  StringMap.fold (fun token properties tokens ->
+    if properties.tk_is_declared then token :: tokens else tokens
+  ) grammar.tokens []
+
+(* [typed_tokens grammar] is analogous, but includes the OCaml type
+   of each token. *)
+
+let typed_tokens grammar =
+  StringMap.fold (fun token properties tokens ->
+    if properties.tk_is_declared then (token, properties.tk_ocamltype) :: tokens else tokens
+  ) grammar.tokens []
+
 (* [nonterminals grammar] is a list of all nonterminal symbols in the
    grammar [grammar]. *)
 

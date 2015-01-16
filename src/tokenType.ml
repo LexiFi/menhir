@@ -2,7 +2,6 @@
    the [token] type. In particular, if [--only-tokens] was specified,
    it emits the type definition and exits. *)
 
-open Syntax
 open UnparameterizedSyntax
 open IL
 open CodeBits
@@ -31,27 +30,11 @@ let ttokengadtdata token =
 
 let tokentypedef grammar =
   let datadefs =
-    StringMap.fold (fun token properties defs ->
-
-      (* Pseudo-tokens (used in %prec declarations, but never
-	 declared using %token) are filtered out. *)
-
-      if properties.tk_is_declared then
-	let params =
-	  match properties.tk_ocamltype with
-	  | None ->
-	      []
-	  | Some t ->
-	      [ TypTextual t ]
-	in
-	{
-	  dataname = token;
-	  datavalparams = params;
-	  datatypeparams = None
-	} :: defs
-      else
-	defs
-    ) grammar.tokens []
+    List.map (fun (token, typo) -> {
+      dataname = token;
+      datavalparams = (match typo with None -> [] | Some t -> [ TypTextual t ]);
+      datatypeparams = None
+    }) (typed_tokens grammar)
   in
   [
     IIComment "The type of tokens.";
@@ -84,23 +67,12 @@ let tokengadtdef grammar =
       (* the [error] token has a semantic value of type [unit] *)
   } in
   let datadefs =
-    StringMap.fold (fun token properties defs ->
-      if properties.tk_is_declared then
-        let index =
-          match properties.tk_ocamltype with
-          | None ->
-              tunit
-          | Some t ->
-              TypTextual t
-        in
-        {
-          dataname = ttokengadtdata token;
-          datavalparams = [];
-          datatypeparams = Some [ index ]
-        } :: defs
-      else
-        defs
-    ) grammar.tokens [errordata]
+    errordata ::
+    List.map (fun (token, typo) -> {
+      dataname = ttokengadtdata token;
+      datavalparams = [];
+      datatypeparams = Some [ match typo with None -> tunit | Some t -> TypTextual t ]
+    }) (typed_tokens grammar)
   in
   [
     IIComment "The indexed type of terminal symbols.";

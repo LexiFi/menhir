@@ -26,8 +26,14 @@ let nonterminalgadtdef grammar =
   let comment, datadefs =
     try
 
+      (* The ordering of this list matters. We want the data constructors
+         to respect the internal ordering (as determined by [nonterminals]
+         in [UnparameterizedSyntax]) of the nonterminal symbols. This may
+         be exploited in the table back-end to allow an unsafe conversion
+         of a data constructor to an integer code. *)
+
       "The indexed type of nonterminal symbols.",
-      List.fold_left (fun defs nt ->
+      List.map (fun nt ->
         let index =
           match ocamltype_of_symbol grammar nt with
           | Some t ->
@@ -39,8 +45,8 @@ let nonterminalgadtdef grammar =
           dataname = tnonterminalgadtdata nt;
           datavalparams = [];
           datatypeparams = Some [ index ]
-        } :: defs
-      ) [] (nonterminals grammar)
+        }
+      ) (nonterminals grammar)
 
     with MissingOCamlType nt ->
       (* If the type of some nonterminal symbol is unknown, give up

@@ -170,11 +170,7 @@ module Terminal = struct
      declared using %token) are filtered out. *)
 
   let (n : int), (name : string array), (map : int StringMap.t) =
-    let tokens = 
-      StringMap.fold (fun token properties tokens ->
-	if properties.tk_is_declared then token :: tokens else tokens
-      ) Front.grammar.tokens []
-    in
+    let tokens = tokens Front.grammar in
     match tokens with
     | [] ->
 	Error.error [] "no tokens have been declared."
