@@ -363,6 +363,12 @@ end
 
 module Analysis : sig
 
+  (* [nullable nt] is the NULLABLE flag of the non-terminal symbol [nt].
+     That is, it is true if and only if this symbol produces the empty
+     word [epsilon]. *)
+
+  val nullable: Nonterminal.t -> bool
+
   (* [nullable_first_rhs rhs i] considers the string of symbols found at
      offset [i] in the array [rhs]. It returns its NULLABLE flag as well
      as its FIRST set. The offset [i] must be contained between [0] and
