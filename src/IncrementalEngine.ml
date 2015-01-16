@@ -188,6 +188,12 @@ module type INSPECTION = sig
 
   val items: 'a lr1state -> item list
 
+  (* [nullable nt] tells whether the non-terminal symbol [nt] is nullable.
+     That is, it is true if and only if this symbol produces the empty
+     word [epsilon]. *)
+
+  val nullable: 'a nonterminal -> bool
+
 end
 
 (* This signature combines the incremental API and the inspection API. *)

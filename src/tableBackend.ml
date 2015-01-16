@@ -72,9 +72,6 @@ let tables =
 let symbols =
   "Symbols"
 
-let shared =
-  "Shared"
-
 let ti =
   "TI"
 
@@ -961,22 +958,11 @@ let program =
 
     (* Define the tables. *)
 
-    SIModuleDef (shared,
-      MStruct [
-        SIValDefs (false, [
-          lhs;
-        ])
-      ]
-    ) ::
-
     SIModuleDef (tables,
       MStruct [
         (* The internal sub-module [basics] contains the definitions of the
            exception [Error] and of the type [token]. *)
         SIInclude (MVar basics);
-        (* The internal sub-module [shared] contains the tables that are
-           used both in normal mode and in [--inspection] mode. *)
-        SIInclude (MVar shared);
 
         (* This is a non-recursive definition, so none of the names
            defined here are visible in the semantic actions. *)
@@ -988,7 +974,7 @@ let program =
           error;
           start_def;
           action;
-          (* [lhs] is part of [shared] *)
+          lhs;
           goto;
           semantic_action;
           trace;
@@ -1018,7 +1004,7 @@ let program =
 
         SIInclude (MVar symbols) ::
 
-        SIInclude (MApp (MVar make_inspection, MStruct (
+        SIInclude (MApp (MApp (MVar make_inspection, MVar tables), MStruct (
           (* This module must satisfy [InspectionTableFormat.TABLES]. *)
           (* [lr1state] *)
           SIInclude (MVar ti) ::
@@ -1028,8 +1014,6 @@ let program =
              in terms of the types [terminal] and [nonterminal]. This saves
              us the trouble of generating these definitions. *)
           SIInclude (MApp (MVar make_symbol, MVar symbols)) ::
-          (* [lhs] *)
-          SIInclude (MVar shared) ::
           SIValDefs (false,
             terminal() ::
             nonterminal() ::

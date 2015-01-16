@@ -30,7 +30,8 @@ let nonterminalgadtdef grammar =
          to respect the internal ordering (as determined by [nonterminals]
          in [UnparameterizedSyntax]) of the nonterminal symbols. This may
          be exploited in the table back-end to allow an unsafe conversion
-         of a data constructor to an integer code. *)
+         of a data constructor to an integer code. See [n2i] in
+         [InspectionTableInterpreter]. *)
 
       "The indexed type of nonterminal symbols.",
       List.map (fun nt ->

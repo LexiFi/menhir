@@ -94,8 +94,10 @@ module type TABLES = sig
 
   val goto: PackedIntArray.t * PackedIntArray.t
 
-  (* The number of start productions. A production [prod] is a start production
-     if and only if [prod < start] holds. *)
+  (* The number of start productions. A production [prod] is a start
+     production if and only if [prod < start] holds. This is also the
+     number of start symbols. A nonterminal symbol [nt] is a start
+     symbol if and only if [nt < start] holds. *)
 
   val start: int
 

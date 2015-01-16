@@ -21,9 +21,8 @@ module type TABLES = sig
   val    terminal: int -> xsymbol
   val nonterminal: int -> xsymbol
 
-  (* The left-hand side of every production. (Same as in [TableFormat.TABLES].) *)
-
-  val lhs: PackedIntArray.t
+  (* The left-hand side of every production already appears in the
+     signature [TableFormat.TABLES], so we need not repeat it here. *)
 
   (* The right-hand side of every production. This a linearized array
      of arrays of integers, whose [data] and [entry] components have

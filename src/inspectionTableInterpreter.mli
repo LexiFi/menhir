@@ -17,8 +17,10 @@ end)
    constructs the inspection API on top of the inspection tables described in
    [InspectionTableFormat]. *)
 
-module Make (T : InspectionTableFormat.TABLES
-             with type 'a lr1state = int)
+module Make
+  (B : TableFormat.TABLES)
+  (T : InspectionTableFormat.TABLES
+       with type 'a lr1state = int)
 
 : IncrementalEngine.INSPECTION
   with type 'a terminal := 'a T.terminal

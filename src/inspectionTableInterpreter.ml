@@ -27,10 +27,11 @@ end
 
 (* The code functor. *)
 
-module Make (
-  T : InspectionTableFormat.TABLES
-      with type 'a lr1state = int
-) = struct
+module Make
+  (B : TableFormat.TABLES)
+  (T : InspectionTableFormat.TABLES
+       with type 'a lr1state = int)
+= struct
 
   (* Including [T] is an easy way of inheriting the definitions of the types
      [symbol] and [xsymbol]. *)
@@ -62,8 +63,19 @@ module Make (
     else
       T.nonterminal symbol
 
-  (* The function [incoming_symbol] goes through the tables [lr0_core] and
-     [lr0_incoming]. This yields a representation of type [xsymbol], out of
+  (* This auxiliary function converts a nonterminal symbol to its integer
+     code. For speed and for convenience, we use an unsafe type cast. This
+     relies on the fact that the data constructors of the [nonterminal] GADT
+     are declared in an order that reflects their internal code. We add
+     [start] to account for the presence of the start symbols. *)
+
+  let n2i (nt : 'a T.nonterminal) : int =
+    let answer = B.start + Obj.magic nt in
+    assert (T.nonterminal answer = X (N nt)); (* TEMPORARY roundtrip *)
+    answer
+
+  (* The function [incoming_symbol] goes through the tables [T.lr0_core] and
+     [T.lr0_incoming]. This yields a representation of type [xsymbol], out of
      which we strip the [X] quantifier, so as to get a naked symbol. This last
      step is ill-typed and potentially dangerous. It is safe only because this
      function is used at type ['a lr1state -> 'a symbol], which forces an
@@ -76,20 +88,20 @@ module Make (
     | T.X symbol ->
         Obj.magic symbol
 
-  (* The function [lhs] reads the table [lhs] and uses [T.nonterminal]
+  (* The function [lhs] reads the table [B.lhs] and uses [T.nonterminal]
      to decode the symbol. *)
 
   let lhs prod =
-    T.nonterminal (PackedIntArray.get T.lhs prod)
+    T.nonterminal (PackedIntArray.get B.lhs prod)
 
-  (* The function [rhs] reads the table [rhs] and uses [decode_symbol]
+  (* The function [rhs] reads the table [T.rhs] and uses [decode_symbol]
      to decode the symbol. *)
 
   let rhs prod =
     List.map decode_symbol (read_packed_linearized T.rhs prod)
 
   (* The function [items] maps the LR(1) state [s] to its LR(0) core,
-     then uses [core] as an index into the table [lr0_items]. The
+     then uses [core] as an index into the table [T.lr0_items]. The
      items are then decoded by the function [export] below, which is
      essentially a copy of [Item.export]. *)
 
@@ -102,7 +114,14 @@ module Make (
   let items s =
     (* Map [s] to its LR(0) core. *)
     let core = PackedIntArray.get T.lr0_core s in
-    (* Now use [core] to look up the [lr0_items] table. *)
+    (* Now use [core] to look up the table [T.lr0_items]. *)
     List.map export (read_packed_linearized T.lr0_items core)
+
+  (* The function [nullable] maps the nonterminal symbol [nt] to its
+     integer code, which it uses to look up the array [T.nullable].
+     This yields 0 or 1, which we map back to a Boolean result. *)
+
+  let nullable nt =
+    PackedIntArray.get1 T.nullable (n2i nt) = 1
 
 end
