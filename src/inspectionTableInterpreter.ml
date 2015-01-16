@@ -124,4 +124,29 @@ module Make
   let nullable nt =
     PackedIntArray.get1 T.nullable (n2i nt) = 1
 
+  (* The function [foreach_terminal] exploits the fact that the
+     first component of [B.error] is [Terminal.n - 1], i.e., the
+     number of terminal symbols, including [error] but not [#]. *)
+
+  let rec foldij i j f accu =
+    if i = j then
+      accu
+    else
+      foldij (i + 1) j f (f i accu)
+
+  let foreach_terminal f accu =
+    let n, _ = B.error in
+    foldij 0 n (fun i accu ->
+      f (T.terminal i) accu
+    ) accu
+
+  let foreach_terminal_but_error f accu =
+    let n, _ = B.error in
+    foldij 0 n (fun i accu ->
+      if i = B.error_terminal then
+        accu
+      else
+        f (T.terminal i) accu
+    ) accu
+
 end

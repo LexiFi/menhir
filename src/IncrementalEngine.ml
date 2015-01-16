@@ -194,6 +194,13 @@ module type INSPECTION = sig
 
   val nullable: 'a nonterminal -> bool
 
+  (* [foreach_terminal] enumerates the terminal symbols, including [error].
+     [foreach_terminal_but_error] enumerates the terminal symbols, excluding
+     [error]. *)
+
+  val foreach_terminal:           (xsymbol -> 'a -> 'a) -> 'a -> 'a
+  val foreach_terminal_but_error: (xsymbol -> 'a -> 'a) -> 'a -> 'a
+
 end
 
 (* This signature combines the incremental API and the inspection API. *)
