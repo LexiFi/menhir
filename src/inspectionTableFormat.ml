@@ -50,8 +50,8 @@ module type TABLES = sig
   (* A table that tells which non-terminal symbols are nullable. *)
 
   val nullable: string
-    (* Like the [error] bitmap, this is the second component
-       of a packed int array of bit width 1. *)
+    (* This is a packed int array of bit width 1. It can be read
+       using [PackedIntArray.get1]. *)
 
 end
 
