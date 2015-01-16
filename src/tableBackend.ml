@@ -792,6 +792,11 @@ let xsymbol (symbol : Symbol.t) : expr =
    code) to its representation as an [xsymbol]. Include [error] but not [#],
    i.e., include all of the symbols which can appear in a production. *)
 
+(* Note that, instead of generating a function, we could (a) use an array
+   or (b) use an unsafe conversion of an integer to a data constructor,
+   then wrap it using [X] and [T/N]. Approach (b) is unsafe and causes
+   memory allocation (due to the wrapping) at each call. *)
+
 let terminal () =
   assert Settings.inspection;
   let t = "t" in
