@@ -8,7 +8,7 @@ all:
 	done
 
 clean:
-	/bin/rm -f *~ .*~ *.omc
+	/bin/rm -f *~ .*~
 	@for i in $(DEMOS) ; do \
 	  $(MAKE) -C $$i clean ; \
 	done
