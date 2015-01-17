@@ -146,6 +146,13 @@ module type INSPECTION = sig
 
   include SYMBOLS
 
+  (* Ordering functions. *)
+
+  val compare_terminals: _ terminal -> _ terminal -> int
+  val compare_nonterminals: _ nonterminal -> _ nonterminal -> int
+  val compare_symbols: xsymbol -> xsymbol -> int
+  val compare_words: xsymbol list -> xsymbol list -> int
+
   (* The type ['a lr1state] is meant to be the same as in [INCREMENTAL_ENGINE]. *)
 
   type 'a lr1state
