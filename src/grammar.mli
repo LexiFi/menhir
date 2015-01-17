@@ -369,6 +369,10 @@ module Analysis : sig
 
   val nullable: Nonterminal.t -> bool
 
+  (* [first nt] is the FIRST set of the non-terminal symbol [nt]. *)
+
+  val first: Nonterminal.t -> TerminalSet.t
+
   (* [nullable_first_rhs rhs i] considers the string of symbols found at
      offset [i] in the array [rhs]. It returns its NULLABLE flag as well
      as its FIRST set. The offset [i] must be contained between [0] and
