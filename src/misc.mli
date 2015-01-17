@@ -155,8 +155,3 @@ val normalize: string -> string
 
 val postincrement: int ref -> int
 
-(* [array_forall p a] computes the conjunction of the predicate [p] over all
-   elements of the array [a]. *)
-
-val array_forall: ('a -> bool) -> 'a array -> bool
-

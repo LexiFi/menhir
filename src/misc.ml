@@ -254,22 +254,3 @@ let postincrement r =
   r := x + 1;
   x
 
-(* [array_forall p a] computes the conjunction of the predicate [p] over all
-   elements of the array [a]. *)
-
-exception ArrayForall
-
-let _ArrayForall =
-  ArrayForall
-
-let array_forall (p : 'a -> bool) (a : 'a array) : bool =
-  try
-    for i = 0 to Array.length a - 1 do
-      let x = Array.get a i in
-      if not (p x) then
-	raise _ArrayForall
-    done;
-    true
-  with ArrayForall ->
-    false
-
