@@ -381,6 +381,11 @@ let encode_symbol_option = function
   | Some symbol ->
       encode_symbol symbol
 
+(* Encoding a Boolean as an integer value. *)
+
+let encode_bool b =
+  if b then 1 else 0
+
 (* ------------------------------------------------------------------------ *)
 
 (* Table compression. *)
@@ -434,7 +439,18 @@ let linearize_and_marshal1 (table : int array array) =
   let data, entry = MenhirLib.LinearizedArray.make table in
   ETuple [ marshal1 data; marshal1 entry ]
 
-(* [marshal2] marshals a two-dimensional table. *)
+(* [flatten_and_marshal11_list] marshals a two-dimensional bitmap,
+   whose width (for now) is assumed to be [Terminal.n - 1]. *)
+
+let flatten_and_marshal11_list (table : int list list) =
+  ETuple [
+    (* Store the table width. *)
+    EIntConst (Terminal.n - 1);
+    (* View the table as a one-dimensional array, and marshal it. *)
+    marshal11_list (List.flatten table)
+  ]
+
+(* [marshal2] marshals a two-dimensional table, with row displacement. *)
 
 let marshal2 name m n (matrix : int list list) =
   let matrix : int array array =
@@ -571,18 +587,13 @@ let goto =
 let error =
   define_and_measure (
     "error",
-    ETuple [
-      EIntConst (Terminal.n - 1);
-      marshal11_list (
-	List.flatten (
-	  Lr1.map (fun node ->
-	    Terminal.mapx (fun t ->
-	      error node t
-	    )
-	  )
-	)
+    flatten_and_marshal11_list (
+      Lr1.map (fun node ->
+        Terminal.mapx (fun t ->
+          error node t
+        )
       )
-    ]
+    )
   )
 
 let default_reduction =
@@ -909,14 +920,31 @@ let lr0_items () =
 
 let nullable () =
   assert Settings.inspection;
-  let nullable : int list =
-    Nonterminal.map (fun nt ->
-      if Analysis.nullable nt then 1 else 0
-    )
-  in
   define_and_measure (
     "nullable",
-    marshal11_list nullable
+    marshal11_list (
+      Nonterminal.map (fun nt ->
+        encode_bool (Analysis.nullable nt)
+      )
+    )
+  )
+
+(* ------------------------------------------------------------------------ *)
+
+(* A two-dimensional bitmap, indexed first by nonterminal symbols, then by
+   terminal symbols, encodes the FIRST sets. *)
+
+let first () =
+  assert Settings.inspection;
+  define_and_measure (
+    "first",
+    flatten_and_marshal11_list (
+      Nonterminal.map (fun nt ->
+        Terminal.mapx (fun t ->
+          encode_bool (TerminalSet.mem t (Analysis.first nt))
+        )
+      )
+    )
   )
 
 (* ------------------------------------------------------------------------ *)
@@ -1022,6 +1050,7 @@ let program =
             lr0_core() ::
             lr0_items() ::
             nullable() ::
+            first() ::
             []
           ) ::
           []

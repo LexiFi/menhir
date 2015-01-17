@@ -52,11 +52,8 @@ module Make (T : TableFormat.TABLES)
   (* This auxiliary function helps access a flattened, two-dimensional
      matrix, like the error bitmap. *)
 
-  let unflatten (n, data) i j =
-    PackedIntArray.get1 data (n * i + j)
-
   let action state terminal value shift reduce fail env =
-    match unflatten T.error state terminal with
+    match PackedIntArray.unflatten1 T.error state terminal with
     | 1 ->
 	let action = unmarshal2 T.action state terminal in
 	let opcode = action land 0b11

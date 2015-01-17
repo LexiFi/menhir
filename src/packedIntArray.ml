@@ -183,3 +183,12 @@ let get ((k, s) : t) (i : int) : int =
       let j = 4 * i in
       (((read s j lsl 8) + read s (j + 1)) lsl 8 + read s (j + 2)) lsl 8 + read s (j + 3)
 
+(* [unflatten1 (n, data) i j] accesses the two-dimensional bitmap
+   represented by [(n, data)] at indices [i] and [j]. The integer
+   [n] is the width of the bitmap; the string [data] is the second
+   component of the packed array obtained by encoding the table as
+   a one-dimensional array. *)
+
+let unflatten1 (n, data) i j =
+   get1 data (n * i + j)
+

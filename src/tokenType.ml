@@ -67,6 +67,12 @@ let tokengadtdef grammar =
       (* the [error] token has a semantic value of type [unit] *)
   } in
   let datadefs =
+    (* The ordering of this list matters. We want the data constructors
+       to respect the internal ordering (as determined by [typed_tokens]
+       in [UnparameterizedSyntax]) of the terminal symbols. This may be
+       exploited in the table back-end to allow an unsafe conversion
+       of a data constructor to an integer code. See [t2i] in
+       [InspectionTableInterpreter]. *)
     errordata ::
     List.map (fun (token, typo) -> {
       dataname = ttokengadtdata token;

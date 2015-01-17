@@ -63,15 +63,21 @@ module Make
     else
       T.nonterminal symbol
 
-  (* This auxiliary function converts a nonterminal symbol to its integer
-     code. For speed and for convenience, we use an unsafe type cast. This
-     relies on the fact that the data constructors of the [nonterminal] GADT
-     are declared in an order that reflects their internal code. We add
-     [start] to account for the presence of the start symbols. *)
+  (* These auxiliary functions convert a symbol to its integer code. For speed
+     and for convenience, we use an unsafe type cast. This relies on the fact
+     that the data constructors of the [terminal] and [nonterminal] GADTs are
+     declared in an order that reflects their internal code. In the case of
+     nonterminal symbols, we add [start] to account for the presence of the
+     start symbols. *)
 
   let n2i (nt : 'a T.nonterminal) : int =
     let answer = B.start + Obj.magic nt in
     assert (T.nonterminal answer = X (N nt)); (* TEMPORARY roundtrip *)
+    answer
+
+  let t2i (t : 'a T.terminal) : int =
+    let answer = Obj.magic t in
+    assert (T.terminal answer = X (T t)); (* TEMPORARY roundtrip *)
     answer
 
   (* The function [incoming_symbol] goes through the tables [T.lr0_core] and
@@ -121,8 +127,18 @@ module Make
      integer code, which it uses to look up the array [T.nullable].
      This yields 0 or 1, which we map back to a Boolean result. *)
 
+  let decode_bool i =
+    assert (i = 0 || i = 1);
+    i = 1
+
   let nullable nt =
-    PackedIntArray.get1 T.nullable (n2i nt) = 1
+    decode_bool (PackedIntArray.get1 T.nullable (n2i nt))
+
+  (* The function [first] maps the symbols [nt] and [t] to their integer
+     codes, which it uses to look up the matrix [T.first]. *)
+
+  let first nt t =
+    decode_bool (PackedIntArray.unflatten1 T.first (n2i nt) (t2i t))
 
   (* The function [foreach_terminal] exploits the fact that the
      first component of [B.error] is [Terminal.n - 1], i.e., the

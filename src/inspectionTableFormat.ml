@@ -52,5 +52,10 @@ module type TABLES = sig
     (* This is a packed int array of bit width 1. It can be read
        using [PackedIntArray.get1]. *)
 
+  (* A two-table dimensional table, indexed by a nonterminal symbol and
+     by a terminal symbol (other than [#]), encodes the FIRST sets. *)
+
+  val first: int (* width of the bitmap *) * string (* second component of [PackedIntArray.t] *)
+
 end
 

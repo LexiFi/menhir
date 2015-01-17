@@ -194,6 +194,12 @@ module type INSPECTION = sig
 
   val nullable: 'a nonterminal -> bool
 
+  (* [first nt t] tells whether the FIRST set of the nonterminal symbol [nt]
+     contains the terminal symbol [t]. That is, it is true if and only if
+     [nt] produces a word that begins with [t]. *)
+
+  val first: 'a nonterminal -> 'b terminal -> bool
+
   (* [foreach_terminal] enumerates the terminal symbols, including [error].
      [foreach_terminal_but_error] enumerates the terminal symbols, excluding
      [error]. *)
