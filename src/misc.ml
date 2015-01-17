@@ -74,12 +74,6 @@ let rec truncate k xs =
 let truncate k xs =
   if List.length xs <= k then xs else truncate k xs
 
-let repeat k x =
-  let rec loop k x accu =
-    if k = 0 then accu else loop (k - 1) x (x :: accu)
-  in
-  loop k x []
-
 module IntSet = Set.Make (struct 
 			    type t = int
 			    let compare = ( - )

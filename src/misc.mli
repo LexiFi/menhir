@@ -1,5 +1,3 @@
-(* TEMPORARY tidy up, comment, remove dead code *)
-
 (* Converting an option to a string, with [None] converted
    to the empty string. *)
 
@@ -56,10 +54,6 @@ val tabulateo: ('a -> int) -> ((unit -> 'a -> unit) -> unit -> unit) -> int -> (
 (* Truncature of a list. *)
 
 val truncate: int -> 'a list -> 'a list
-
-(* A list of repeated elements. *)
-
-val repeat: int -> 'a ->  'a list
 
 (* Reverse function application. *)
 
