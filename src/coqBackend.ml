@@ -217,15 +217,13 @@ module Run (T: sig end) = struct
     Nonterminal.iterx (fun nt ->
       fprintf f "    | %s => %b\n"
         (print_nterm nt)
-        (fst (Analysis.nullable_first_rhs (Array.of_list [Symbol.N nt]) 0)));
+        (Analysis.nullable nt));
     fprintf f "  end.\n\n";
 
     fprintf f "Definition first_nterm (nt:nonterminal) : list terminal :=\n";
     fprintf f "  match nt with\n";
     Nonterminal.iterx (fun nt ->
-      let firstSet =
-        snd (Analysis.nullable_first_rhs (Array.of_list [Symbol.N nt]) 0)
-      in
+      let firstSet = Analysis.first nt in
       fprintf f "    | %s => [" (print_nterm nt);
       let first = ref true in
       TerminalSet.iter (fun t ->
