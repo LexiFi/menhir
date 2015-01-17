@@ -155,14 +155,6 @@ val normalize: string -> string
 
 val postincrement: int ref -> int
 
-(* [gcp] returns the greatest common prefix of two strings. *)
-
-val gcp: string -> string -> string
-
-(* [gcps] returns the greatest common prefix of a nonempty list of strings. *)
-
-val gcps : string list -> string
-
 (* [array_forall p a] computes the conjunction of the predicate [p] over all
    elements of the array [a]. *)
 

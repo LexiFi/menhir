@@ -254,33 +254,6 @@ let postincrement r =
   r := x + 1;
   x
 
-(* [gcp] returns the greatest common prefix of two strings. *)
-
-let gcp s1 s2 =
-  let n1 = String.length s1
-  and n2 = String.length s2 in
-  let rec loop i =
-    if (i < n1) && (i < n2) && (s1.[i] = s2.[i]) then
-      loop (i+1)
-    else
-      String.sub s1 0 i
-  in
-  loop 0
-
-(* [gcps] returns the greatest common prefix of a nonempty list of strings. *)
-
-let gcps = function
-  | [] ->
-      assert false
-  | s :: ss ->
-      let rec loop accu = function
-	| [] ->
-	    accu
-	| s :: ss ->
-	    loop (gcp s accu) ss
-      in
-      loop s ss
-
 (* [array_forall p a] computes the conjunction of the predicate [p] over all
    elements of the array [a]. *)
 
