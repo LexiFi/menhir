@@ -181,19 +181,24 @@ module type INSPECTION = sig
      state [s]. This set is not epsilon-closed. This set is presented as a
      list, in an arbitrary order. *)
 
-  val items: 'a lr1state -> item list
+  val items: _ lr1state -> item list
 
   (* [nullable nt] tells whether the non-terminal symbol [nt] is nullable.
      That is, it is true if and only if this symbol produces the empty
      word [epsilon]. *)
 
-  val nullable: 'a nonterminal -> bool
+  val nullable: _ nonterminal -> bool
 
   (* [first nt t] tells whether the FIRST set of the nonterminal symbol [nt]
      contains the terminal symbol [t]. That is, it is true if and only if
      [nt] produces a word that begins with [t]. *)
 
-  val first: 'a nonterminal -> 'b terminal -> bool
+  val first: _ nonterminal -> _ terminal -> bool
+
+  (* [xfirst] is analogous to [first], but expects a first argument of type
+     [xsymbol] instead of [_ terminal]. *)
+
+  val xfirst: xsymbol -> _ terminal -> bool
 
   (* [foreach_terminal] enumerates the terminal symbols, including [error].
      [foreach_terminal_but_error] enumerates the terminal symbols, excluding

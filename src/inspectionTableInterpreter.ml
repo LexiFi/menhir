@@ -80,6 +80,30 @@ module Make
     assert (T.terminal answer = X (T t)); (* TEMPORARY roundtrip *)
     answer
 
+  (* Ordering functions. *)
+
+  let compare_terminals t1 t2 =
+    (* Subtraction is safe because overflow is impossible. *)
+    t2i t1 - t2i t2
+
+  let compare_nonterminals nt1 nt2 =
+    (* Subtraction is safe because overflow is impossible. *)
+    n2i nt1 - n2i nt2
+
+  let compare_symbols symbol1 symbol2 =
+    match symbol1, symbol2 with
+    | X (T _), X (N _) ->
+        -1
+    | X (N _), X (T _) ->
+        1
+    | X (T t1), X (T t2) ->
+        compare_terminals t1 t2
+    | X (N nt1), X (N nt2) ->
+        compare_nonterminals nt1 nt2
+
+  let compare_words w1 w2 =
+    General.compare compare_symbols w1 w2
+
   (* The function [incoming_symbol] goes through the tables [T.lr0_core] and
      [T.lr0_incoming]. This yields a representation of type [xsymbol], out of
      which we strip the [X] quantifier, so as to get a naked symbol. This last
@@ -140,6 +164,13 @@ module Make
   let first nt t =
     decode_bool (PackedIntArray.unflatten1 T.first (n2i nt) (t2i t))
 
+  let xfirst symbol t =
+    match symbol with
+    | X (T t') ->
+        compare_terminals t t' = 0
+    | X (N nt) ->
+        first nt t
+
   (* The function [foreach_terminal] exploits the fact that the
      first component of [B.error] is [Terminal.n - 1], i.e., the
      number of terminal symbols, including [error] but not [#]. *)
@@ -164,29 +195,5 @@ module Make
       else
         f (T.terminal i) accu
     ) accu
-
-  (* Ordering functions. *)
-
-  let compare_terminals t1 t2 =
-    (* Subtraction is safe because overflow is impossible. *)
-    t2i t1 - t2i t2
-
-  let compare_nonterminals nt1 nt2 =
-    (* Subtraction is safe because overflow is impossible. *)
-    n2i nt1 - n2i nt2
-
-  let compare_symbols symbol1 symbol2 =
-    match symbol1, symbol2 with
-    | X (T _), X (N _) ->
-        -1
-    | X (N _), X (T _) ->
-        1
-    | X (T t1), X (T t2) ->
-        compare_terminals t1 t2
-    | X (N nt1), X (N nt2) ->
-        compare_nonterminals nt1 nt2
-
-  let compare_words w1 w2 =
-    General.compare compare_symbols w1 w2
 
 end
