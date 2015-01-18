@@ -28,6 +28,7 @@ module Make (T : TABLE) = struct
 
   type 'a result =
     | InputNeeded of env
+    | Shifting of env * env * bool
     | AboutToReduce of env * production
     | HandlingError of env
     | Accepted of 'a
@@ -176,9 +177,16 @@ module Make (T : TABLE) = struct
 
     (* Switch to state [s']. *)
 
-    let current = s' in
-    let env = { env with stack; current } in
-    run env please_discard
+    let new_env = { env with stack; current = s' } in
+
+    (* Expose the transition to the user. (In principle, we have a choice
+       between exposing the transition before we take it, after we take
+       it, or at some point in between. This affects the number and type
+       of the parameters carried by [Shifting]. Here, we choose to expose
+       the transition after we take it; this allows [Shifting] to carry
+       only three parameters, whose meaning is simple.) *)
+
+    Shifting (env, new_env, please_discard)
 
   (* --------------------------------------------------------------------------- *)
 
@@ -411,6 +419,8 @@ module Make (T : TABLE) = struct
   let resume : 'a . 'a result -> 'a result = function
     | HandlingError env ->
         Obj.magic error env
+    | Shifting (_, env, please_discard) ->
+        Obj.magic run env please_discard
     | AboutToReduce (env, prod) ->
         Obj.magic reduce env prod
     | _ ->
@@ -458,6 +468,7 @@ module Make (T : TABLE) = struct
         let triple = read() in
         let result = offer result triple in
         loop read result
+    | Shifting _
     | AboutToReduce _
     | HandlingError _ ->
         (* The parser has suspended itself, but does not need

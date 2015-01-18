@@ -20,7 +20,8 @@ let rec loop lexbuf (result : int I.result) =
       and endp = lexbuf.Lexing.lex_curr_p in
       let result = I.offer result (token, startp, endp) in
       loop lexbuf result
-  | I.AboutToReduce (env, prod) ->
+  | I.Shifting _
+  | I.AboutToReduce _ ->
       let result = I.resume result in
       loop lexbuf result
   | I.HandlingError env ->

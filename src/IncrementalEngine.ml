@@ -19,16 +19,18 @@ module type INCREMENTAL_ENGINE = sig
   (* [InputNeeded] is an intermediate result. It means that the parser wishes
      to read one token before continuing. *)
 
+  (* [Shifting] is an intermediate result. It means that the parser is taking
+     a shift transition. It exposes the state of the parser before and after
+     the transition. The Boolean parameter tells whether the parser intends to
+     request a new token after this transition. (It always does, except when
+     it is about to accept.) *)
+
   (* [AboutToReduce] is an intermediate result. It means that the parser is
-     about to perform a reduction step. It does not need more input at this
-     point. The parser suspends itself at this point only in order to give the
-     user an opportunity to observe this reduction step. *)
+     about to perform a reduction step. It exposes the parser's current
+     state as well as the production that is about to be reduced. *)
 
   (* [HandlingError] is an intermediate result. It means that the parser has
-     detected an error and is currently handling it, in several steps. It does
-     not need more input at this point. The parser suspends itself at this
-     point only in order to give the user an opportunity to handle this error
-     in a different manner, if desired. *)
+     detected an error and is currently handling it, in several steps. *)
 
   type env
 
@@ -36,6 +38,7 @@ module type INCREMENTAL_ENGINE = sig
 
   type 'a result = private
     | InputNeeded of env
+    | Shifting of env * env * bool
     | AboutToReduce of env * production
     | HandlingError of env
     | Accepted of 'a
