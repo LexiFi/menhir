@@ -106,8 +106,8 @@ module StateVector = struct
   let push v x =
     x :: v
 
-  let truncate h v =
-    Misc.truncate h v
+  let truncate =
+    MenhirLib.General.take
 
 end
 

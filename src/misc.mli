@@ -51,10 +51,6 @@ val tabulatef:
 
 val tabulateo: ('a -> int) -> ((unit -> 'a -> unit) -> unit -> unit) -> int -> ('a -> 'b option) -> ('a -> 'b option) * int
 
-(* Truncature of a list. *)
-
-val truncate: int -> 'a list -> 'a list
-
 (* Reverse function application. *)
 
 val ( $$ ) : 'a -> ('a -> 'b) -> 'b

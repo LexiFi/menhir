@@ -62,18 +62,6 @@ let tabulateo number fold n f =
   in
   get, !c
 
-let rec truncate k xs =
-  match k, xs with
-  | 0, _ ->
-      []
-  | _, [] ->
-      assert false
-  | _, x :: xs ->
-      x :: truncate (k-1) xs
-
-let truncate k xs =
-  if List.length xs <= k then xs else truncate k xs
-
 module IntSet = Set.Make (struct 
 			    type t = int
 			    let compare = ( - )
