@@ -22,37 +22,41 @@ module Make
 
 : sig
 
+  open I
+
   (* Printing a list of symbols. *)
 
-  val print_symbols: I.xsymbol list -> unit
+  val print_symbols: xsymbol list -> unit
 
   (* Printing an element as a symbol. This prints just the symbol
      that this element represents; nothing more. *)
 
-  val print_element_as_symbol: I.element -> unit
+  val print_element_as_symbol: element -> unit
 
   (* Printing a stack as a list of elements. This function needs an element
      printer. It uses [print_element] if provided by the user; otherwise
-     it uses [print_element_as_symbol]. *)
+     it uses [print_element_as_symbol]. (Ending with a newline.) *)
 
-  val print_stack: I.stack -> unit
+  val print_stack: stack -> unit
 
   (* Printing an item. (Ending with a newline.) *)
 
-  val print_item: I.item -> unit
+  val print_item: item -> unit
 
   (* Printing a production. (Ending with a newline.) *)
 
-  val print_production: I.production -> unit
+  val print_production: production -> unit
 
   (* Printing the current LR(1) state. The current state is first displayed
      as a number; then the list of its LR(0) items is printed. (Ending with
      a newline.) *)
 
-  val print_current_state: I.env -> unit
+  val print_current_state: env -> unit
 
-  (* TEMPORARY move and document *)
-  val past: 'a I.lr1state -> I.xsymbol list
+  (* Printing a summary of the stack and current state. This function just
+     calls [print_stack] and [print_current_state] in succession. *)
+
+  val print_env: env -> unit
 
 end
 
