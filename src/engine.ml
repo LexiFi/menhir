@@ -503,35 +503,6 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* Streams. *)
-
-  type 'a stream =
-      'a head Lazy.t
-
-  and 'a head =
-    | Nil
-    | Cons of 'a * 'a stream
-
-  (* The length of a stream. *)
-
-  let rec length xs =
-    match Lazy.force xs with
-    | Nil ->
-        0
-    | Cons (_, xs) ->
-        1 + length xs
-
-  (* Folding over a stream. *)
-
-  let rec foldr f xs accu =
-    match Lazy.force xs with
-    | Nil ->
-        accu
-    | Cons (x, xs) ->
-        f x (foldr f xs accu)
-
-  (* --------------------------------------------------------------------------- *)
-
   (* Stack inspection. *)
 
   (* We offer a read-only view of the parser's state as a stream of elements.
@@ -541,6 +512,8 @@ module Make (T : TABLE) = struct
 
   type element =
     | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
+
+  open General
 
   type stack =
     element stream

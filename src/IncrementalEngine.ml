@@ -1,3 +1,5 @@
+open General
+
 (* This signature describes the incremental LR engine. *)
 
 (* In this mode, the user controls the lexer, and the parser suspends
@@ -68,23 +70,6 @@ module type INCREMENTAL_ENGINE = sig
      associated with this state's incoming symbol. *)
 
   type 'a lr1state
-
-  (* A stream is a list whose elements are produced on demand. *)
-
-  type 'a stream =
-      'a head Lazy.t
-
-  and 'a head =
-    | Nil
-    | Cons of 'a * 'a stream
-
-  (* The length of a stream. *)
-
-  val length: 'a stream -> int
-
-  (* Folding over a stream. *)
-
-  val foldr: ('a -> 'b -> 'b) -> 'a stream -> 'b -> 'b
 
   (* An element is a pair of a non-initial state [s] and a semantic value [v]
      associated with the incoming symbol of this state. The idea is, the value
