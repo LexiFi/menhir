@@ -138,7 +138,7 @@ let items_current env =
          would require wrapping it in an existential type. *)
       items current
 
-let shift_item (prod, index) t =
+let shift_item ((prod, index) as item) t =
   let rhs = rhs prod in
   let length = List.length rhs in
   assert (0 < index && index <= length);
@@ -149,20 +149,17 @@ let shift_item (prod, index) t =
     let symbol = List.nth rhs index in
     if xfirst symbol t then
       (* This item can justify a shift transition along [t]. *)
-      [ drop index rhs ]
+      [ item ]
     else
       (* This item cannot justify a shift transition along [t]. *)
       []
 
-let shift_items items t futures =
-  List.fold_left (fun futures item ->
-    shift_item item t @ futures
-  ) futures items
-
 let rec investigate_terminal checkpoint t futures =
   match checkpoint with
   | Shifting (env, _, _) ->
-      shift_items (items_current env) t futures
+      List.fold_left (fun futures item ->
+      shift_item item t @ futures
+      ) futures (items_current env)
   | AboutToReduce (_, prod) ->
       investigate_terminal (resume checkpoint) t futures
   | HandlingError _ ->
@@ -173,11 +170,7 @@ let rec investigate_terminal checkpoint t futures =
       assert false (* cannot happen *)
 
 let investigate checkpoint =
-  (* Print what we have recognized so far. *)
-  Printf.fprintf stderr "Past:\n%!";
-  let env = match checkpoint with InputNeeded env -> env | _ -> assert false in
-  P.print_symbols (List.rev (past (items_current env)));
-  Printf.fprintf stderr "\n%!";
+  let () = match checkpoint with InputNeeded env -> P.print_env env | _ -> assert false in
   (* Let us analyse which tokens are accepted in this state. *)
   let futures =
     foreach_terminal_but_error (fun symbol futures ->
@@ -191,12 +184,9 @@ let investigate checkpoint =
           investigate_terminal checkpoint t futures
     ) []
   in
-  let futures = uniq compare_words (List.sort compare_words futures) in
+  let futures = uniq compare_items (List.sort compare_items futures) in
   Printf.fprintf stderr "Futures:\n%!";
-  List.iter (fun future ->
-    P.print_symbols future;
-    Printf.fprintf stderr "\n%!"
-  ) futures
+  List.iter P.print_item futures
 
 (* The loop which drives the parser. At each iteration, we analyze a
    result produced by the parser, and act in an appropriate manner. *)
@@ -226,6 +216,7 @@ let rec loop lexbuf (checkpoint : int result) (result : int result) =
       Printf.fprintf stderr
         "At offset %d: syntax error.\n%!"
         (Lexing.lexeme_start lexbuf);
+      P.print_env env;
       investigate checkpoint
   | Accepted v ->
       (* The parser has succeeded and produced a semantic value. Print it. *)
