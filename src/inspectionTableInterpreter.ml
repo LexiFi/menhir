@@ -186,16 +186,7 @@ module Make
     | X (N nt1), X (N nt2) ->
         compare_nonterminals nt1 nt2
 
-  let rec compare_words w1 w2 =
-    match w1, w2 with
-    | [], [] ->
-        0
-    | [], _ :: _ ->
-        -1
-    | _ :: _, [] ->
-        1
-    | symbol1 :: w1, symbol2 :: w2 ->
-        let c = compare_symbols symbol1 symbol2 in
-        if c <> 0 then c else compare_words w1 w2
+  let compare_words w1 w2 =
+    General.compare compare_symbols w1 w2
 
 end
