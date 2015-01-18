@@ -40,6 +40,10 @@ let uniq cmp xs =
   | x :: xs ->
       x :: uniq1 cmp x xs
 
+let weed cmp xs =
+  uniq cmp (List.sort cmp xs)
+
+(* TEMPORARY dead code, if we remove [compare_words] *)
 let rec compare cmp xs ys =
   match xs, ys with
   | [], [] ->

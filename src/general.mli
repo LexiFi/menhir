@@ -22,6 +22,10 @@ val drop: int -> 'a list -> 'a list
 
 val uniq: ('a -> 'a -> int) -> 'a list -> 'a list
 
+(* [weed cmp xs] returns the list [xs] deprived of any duplicate elements. *)
+
+val weed: ('a -> 'a -> int) -> 'a list -> 'a list
+
 (* If [cmp] is an ordering on elements, then [compare cmp] is the
    lexicographic ordering on lists. *)
 
