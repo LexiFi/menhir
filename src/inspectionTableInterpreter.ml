@@ -104,6 +104,15 @@ module Make
   let compare_words w1 w2 =
     General.compare compare_symbols w1 w2
 
+  let compare_productions prod1 prod2 =
+    (* Subtraction is safe because overflow is impossible. *)
+    prod1 - prod2
+
+  let compare_items (prod1, index1) (prod2, index2) =
+    let c = compare_productions prod1 prod2 in
+    (* Subtraction is safe because overflow is impossible. *)
+    if c <> 0 then c else index1 - index2
+
   (* The function [incoming_symbol] goes through the tables [T.lr0_core] and
      [T.lr0_incoming]. This yields a representation of type [xsymbol], out of
      which we strip the [X] quantifier, so as to get a naked symbol. This last

@@ -134,13 +134,6 @@ module type INSPECTION = sig
 
   include SYMBOLS
 
-  (* Ordering functions. *)
-
-  val compare_terminals: _ terminal -> _ terminal -> int
-  val compare_nonterminals: _ nonterminal -> _ nonterminal -> int
-  val compare_symbols: xsymbol -> xsymbol -> int
-  val compare_words: xsymbol list -> xsymbol list -> int
-
   (* The type ['a lr1state] is meant to be the same as in [INCREMENTAL_ENGINE]. *)
 
   type 'a lr1state
@@ -157,6 +150,15 @@ module type INSPECTION = sig
 
   type item =
       production * int
+
+  (* Ordering functions. *)
+
+  val compare_terminals: _ terminal -> _ terminal -> int
+  val compare_nonterminals: _ nonterminal -> _ nonterminal -> int
+  val compare_symbols: xsymbol -> xsymbol -> int
+  val compare_words: xsymbol list -> xsymbol list -> int
+  val compare_productions: production -> production -> int
+  val compare_items: item -> item -> int
 
   (* [incoming_symbol s] is the incoming symbol of the state [s], that is,
      the symbol that the parser must recognize before (has recognized when)
