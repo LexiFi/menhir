@@ -22,13 +22,15 @@ test_ocamlyacc=false
 rm -f gene/*.time
 
 # Build the parser with the code back-end.
+# Do not link MenhirLib.
 echo "Building (code)..."
 make -C $GENE MENHIR="$MENHIR" clean all >/dev/null
 cp -RH $GENE/gene.native $GENE/gene.code
 
 # Build the parser with the table back-end.
+# Do link MenhirLib.
 echo "Building (table)..."
-make -C $GENE MENHIR="$MENHIR --table" clean all >/dev/null
+make -C $GENE MENHIR="$MENHIR --table" TAGS="-tags 'package(menhirLib)'" clean all >/dev/null
 cp -RH $GENE/gene.native $GENE/gene.table
 
 # (Optionally) Build the parser with ocamlyacc.
