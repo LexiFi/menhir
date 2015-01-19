@@ -8,7 +8,7 @@ open Parser.MenhirInterpreter
    general) auto-generate this code, because it requires making up semantic
    values of arbitrary OCaml types. *)
 
-let dummy_token (type a) (symbol : a terminal) : token =
+let terminal2token (type a) (symbol : a terminal) : token =
   let open Parser in
   match symbol with
   | T_TIMES ->
@@ -94,129 +94,32 @@ let print_element e : string =
 (* TEMPORARY comment *)
 
 module P =
-  Printers.Make(Parser.MenhirInterpreter) (struct
+  Printers.Make (Parser.MenhirInterpreter) (struct
     let print s = Printf.fprintf stderr "%s" s
     let print_symbol s = print (print_symbol s)
     let print_element = Some (fun s -> print (print_element s))
   end)
 
-let items_current env =
-  (* Get the current state. *)
-  match Lazy.force (stack env) with
-  | Nil ->
-      (* If we get here, then the stack is empty, which means the parser
-         is an initial state. This cannot happen. *)
-      invalid_arg "items_current"
-  | Cons (Element (current, _, _, _), _) ->
-      (* Extract the current state out of the top stack element, and
-         convert it to a set of LR(0) items. Returning a set of items
-         instead of an ['a lr1state] is convenient; returning [current]
-         would require wrapping it in an existential type. *)
-      items current
-
-let shift_item ((prod, index) as item) t =
-  let rhs = rhs prod in
-  let length = List.length rhs in
-  assert (0 < index && index <= length);
-  if index = length then
-    (* This item cannot justify a shift transition. *)
-    []
-  else
-    let symbol = List.nth rhs index in
-    if xfirst symbol t then
-      (* This item can justify a shift transition along [t]. *)
-      [ item ]
-    else
-      (* This item cannot justify a shift transition along [t]. *)
-      []
-
-let rec investigate_terminal checkpoint t futures =
-  match checkpoint with
-  | Shifting (env, _, _) ->
-      List.fold_left (fun futures item ->
-      shift_item item t @ futures
-      ) futures (items_current env)
-  | AboutToReduce (_, prod) ->
-      investigate_terminal (resume checkpoint) t futures
-  | HandlingError _ ->
-      futures
-  | InputNeeded _
-  | Accepted _
-  | Rejected ->
-      assert false (* cannot happen *)
-
-let investigate checkpoint =
-  let () = match checkpoint with InputNeeded env -> P.print_env env | _ -> assert false in
-  (* Let us analyse which tokens are accepted in this state. *)
-  let futures =
-    foreach_terminal_but_error (fun symbol futures ->
-      match symbol with
-      | X (N _) -> assert false
-      | X (T t) ->
-          (* Build a dummy token for the terminal symbol [t]. *)
-          let token = (dummy_token t, Lexing.dummy_pos, Lexing.dummy_pos) in
-          (* Submit it to the parser. *)
-          let checkpoint = offer checkpoint token in
-          investigate_terminal checkpoint t futures
-    ) []
-  in
-  let futures = uniq compare_items (List.sort compare_items futures) in
-  Printf.fprintf stderr "Futures:\n%!";
-  List.iter P.print_item futures
-
-(* The loop which drives the parser. At each iteration, we analyze a
-   result produced by the parser, and act in an appropriate manner. *)
-
-(* [lexbuf] is the lexing buffer. [result] is the last result produced
-   by the parser. [checkpoint] is the last [InputNeeded] that was
-   produced by the parser. *)
-
-let rec loop lexbuf (checkpoint : int result) (result : int result) =
-  match result with
-  | InputNeeded env ->
-      let checkpoint = result in
-      (* The parser needs a token. Request one from the lexer,
-         and offer it to the parser, which will produce a new
-         result. Then, repeat. *)
-      let token = Lexer.token lexbuf in
-      let startp = lexbuf.Lexing.lex_start_p
-      and endp = lexbuf.Lexing.lex_curr_p in
-      let result = offer result (token, startp, endp) in
-      loop lexbuf checkpoint result
-  | Shifting _
-  | AboutToReduce _ ->
-      let result = resume result in
-      loop lexbuf checkpoint result
-  | HandlingError env ->
-      (* The parser has suspended itself because of a syntax error. Stop. *)
-      Printf.fprintf stderr
-        "At offset %d: syntax error.\n%!"
-        (Lexing.lexeme_start lexbuf);
-      P.print_env env;
-      investigate checkpoint
-  | Accepted v ->
-      (* The parser has succeeded and produced a semantic value. Print it. *)
-      Printf.printf "%d\n%!" v
-  | Rejected ->
-      (* The parser rejects this input. This cannot happen, here, because
-         we stop as soon as the parser reports [HandlingError]. *)
-      assert false
+module E =
+  ErrorReporting.Make(Parser.MenhirInterpreter) (struct
+    let terminal2token = terminal2token
+  end)
 
 (* Initialize the lexer, and catch any exception raised by the lexer. *)
 
 let process (line : string) =
   let lexbuf = Lexing.from_string line in
   try
-    let result = Parser.Incremental.main() in
-    (* The parser cannot accept or reject before it asks for the very first
-       character of input. (Indeed, we statically reject a symbol that
-       generates the empty language or the singleton language {epsilon}.)
-       So, [result] must be [InputNeeded _]. *)
-    assert (match result with InputNeeded _ -> true | _ -> false);
-    loop lexbuf result result
+    let v = E.entry (Parser.Incremental.main()) Lexer.token lexbuf in
+    Printf.printf "%d\n%!" v
   with
   | Lexer.Error msg ->
       Printf.fprintf stderr "%s%!" msg
+  | E.Error explanations ->
+      Printf.fprintf stderr
+        "At offset %d: syntax error.\n%!"
+        (Lexing.lexeme_start lexbuf);
+      List.iter P.print_item explanations
 
 (* The rest of the code is as in the [calc] demo. *)
 
