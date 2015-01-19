@@ -1,5 +1,5 @@
 module Make
-  (I : MenhirLib.IncrementalEngine.EVERYTHING)
+  (I : IncrementalEngine.EVERYTHING)
   (User : sig
     val print: string -> unit
     val print_symbol: I.xsymbol -> unit
@@ -56,7 +56,7 @@ module Make
   (* Printing a stack as a list of symbols. *)
 
   let print_stack stack =
-    MenhirLib.General.foldr (fun element () ->
+    General.foldr (fun element () ->
       print_element element;
       print space
     ) stack ();
@@ -85,10 +85,10 @@ module Make
   let print_current_state env =
     print "Current LR(1) state: ";
     match Lazy.force (stack env) with
-    | MenhirLib.General.Nil ->
+    | General.Nil ->
         print "<some initial state>";
         print newline
-    | MenhirLib.General.Cons (Element (current, _, _, _), _) ->
+    | General.Cons (Element (current, _, _, _), _) ->
         print (string_of_int (Obj.magic current)); (* TEMPORARY safe conversion needed *)
         print newline;
         List.iter print_item (items current)

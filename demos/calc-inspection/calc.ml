@@ -94,14 +94,14 @@ let print_element e : string =
 (* TEMPORARY comment *)
 
 module P =
-  Printers.Make (Parser.MenhirInterpreter) (struct
+  MenhirLib.Printers.Make (Parser.MenhirInterpreter) (struct
     let print s = Printf.fprintf stderr "%s" s
     let print_symbol s = print (print_symbol s)
     let print_element = Some (fun s -> print (print_element s))
   end)
 
 module E =
-  ErrorReporting.Make(Parser.MenhirInterpreter) (struct
+  MenhirLib.ErrorReporting.Make(Parser.MenhirInterpreter) (struct
     let terminal2token = terminal2token
   end)
 

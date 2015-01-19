@@ -1,6 +1,8 @@
+(* This module is part of MenhirLib. *)
+
 module Make
 
-  (I : MenhirLib.IncrementalEngine.EVERYTHING)
+  (I : IncrementalEngine.EVERYTHING)
 
   (User : sig
 

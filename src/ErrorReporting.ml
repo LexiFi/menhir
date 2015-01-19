@@ -1,5 +1,5 @@
 module Make
-  (I : MenhirLib.IncrementalEngine.EVERYTHING)
+  (I : IncrementalEngine.EVERYTHING)
   (User : sig
 
     (* In order to submit artificial tokens to the parser, we need a function
@@ -12,7 +12,7 @@ module Make
   end)
 = struct
 
-  open MenhirLib.General
+  open General
   open I
   open User
 
@@ -92,7 +92,7 @@ module Make
         List.fold_left (fun explanations item ->
           test_shift_item t item @ explanations
         ) explanations (items_current env)
-    | AboutToReduce (_, prod) ->
+    | AboutToReduce _ ->
         (* The parser wishes to reduce. Just follow. *)
         investigate t (resume result) explanations
     | HandlingError _ ->
@@ -138,10 +138,11 @@ module Make
       and endp = lexbuf.Lexing.lex_curr_p in
       token, startp, endp
 
-  (* The following is a custom version of the loop found in [MenhirLib.Engine].
-     It drives the parser in the usual way, but keeps a checkpoint, which is
-     the last [InputNeeded] result. If a syntax error is detected, it goes back
-     to this state and analyzes it in order to produce a meaningful diagnostic. *)
+  (* The following is a custom version of the loop found in [Engine]. It
+     drives the parser in the usual way, but keeps a checkpoint, which is the
+     last [InputNeeded] result. If a syntax error is detected, it goes back to
+     this state and analyzes it in order to produce a meaningful
+     diagnostic. *)
 
   exception Error of explanations
 
@@ -154,7 +155,7 @@ module Make
 
   let rec loop (read : reader) ({ checkpoint; current } : 'a result) : 'a =
     match current with
-    | InputNeeded env ->
+    | InputNeeded _ ->
         (* Update the checkpoint. *)
         let checkpoint = current in
         let triple = read() in
