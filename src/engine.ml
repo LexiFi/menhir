@@ -7,6 +7,16 @@ open EngineTypes
    - at compile time, if so requested by the user, via the --interpret options;
    - at run time, in the table-based back-end. *)
 
+(* A tainted dummy position. In principe, it should never be exposed. *)
+
+let dummy_pos =
+  let open Lexing in {
+    pos_fname = "<MenhirLib.Engine>";
+    pos_lnum = 0;
+    pos_bol = 0;
+    pos_cnum = -1;
+  }
+
 module Make (T : TABLE) = struct
 
   (* This propagates type and exception definitions. *)
@@ -352,8 +362,8 @@ module Make (T : TABLE) = struct
     let rec empty = {
       state = s;                          (* dummy *)
       semv = T.error_value;               (* dummy *)
-      startp = Lexing.dummy_pos;          (* dummy *)
-      endp = Lexing.dummy_pos;            (* dummy *)
+      startp = dummy_pos;                 (* dummy *)
+      endp = dummy_pos;                   (* dummy *)
       next = empty;
     } in
 
@@ -369,7 +379,7 @@ module Make (T : TABLE) = struct
     let dummy_token = Obj.magic () in
     let env = {
       error = false;
-      triple = (dummy_token, Lexing.dummy_pos, Lexing.dummy_pos); (* dummy *)
+      triple = (dummy_token, dummy_pos, dummy_pos); (* dummy *)
       stack = empty;
       current = s;
     } in
@@ -551,6 +561,18 @@ module Make (T : TABLE) = struct
 
   let stack env : element stream =
     stack env.stack env.current
+
+  (* --------------------------------------------------------------------------- *)
+
+  (* Access to the position of the lookahead token. *)
+
+  let positions { triple = (_, startp, endp); _ } =
+    (* In principle, as soon as the lexer has been called at least once,
+       [startp] cannot be a dummy position. Our dummy position risks
+       exposure only if we are in the very initial state, as produced
+       by [start s] above. We declare this situation illegal. *)
+    assert (startp != dummy_pos && endp != dummy_pos);
+    startp, endp
 
 end
 

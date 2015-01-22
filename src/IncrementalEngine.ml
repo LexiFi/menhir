@@ -86,12 +86,19 @@ module type INCREMENTAL_ENGINE = sig
   type stack =
     element stream
 
-  (* The parser's stack, a stream of elements, can be examined. This stream is
-     empty if the parser is in an initial state; otherwise, it is non-empty.
-     The LR(1) automaton's current state is the one found in the top element
-     of the stack. *)
+  (* This is the parser's stack, a stream of elements. This stream is empty if
+     the parser is in an initial state; otherwise, it is non-empty.  The LR(1)
+     automaton's current state is the one found in the top element of the
+     stack. *)
 
   val stack: env -> stack
+
+  (* These are the start and end positions of the current lookahead token. It
+     is legal to invoke this function only after at least one token has been
+     offered to the parser via [offer]. In other words, it is illegal to
+     invoke it in an initial state. *)
+
+  val positions: env -> Lexing.position * Lexing.position
 
 end
 

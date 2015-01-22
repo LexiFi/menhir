@@ -1,3 +1,31 @@
+(* An explanation is a description of what the parser has recognized in the
+   recent past and what it expects next. *)
+
+type ('item, 'symbol) explanation = {
+
+  (* An explanation is based on an item. *)
+  item: 'item;
+
+  (* A past. This is a non-empty sequence of (terminal and non-terminal)
+     symbols, each of which corresponds to a range of the input file. These
+     symbols correspond to the first half (up to the bullet) of the item's
+     right-hand side. In short, they represent what we have recognized in
+     the recent past. *)
+  past: ('symbol * Lexing.position * Lexing.position) list;
+
+  (* A future. This is a non-empty sequence of (terminal and non-terminal)
+     symbols These symbols correspond to the second half (after the bullet)
+     of the item's right-hand side. In short, they represent what we expect
+     to recognize in the future, if this item is a good prediction. *)
+  future: 'symbol list;
+
+  (* A goal. This is a non-terminal symbol. It corresponds to the item's
+     left-hand side. In short, it represents the reduction that we will
+     be able to perform if we successfully recognize this future. *)
+  goal: 'symbol
+
+}
+
 module Make
   (I : IncrementalEngine.EVERYTHING)
   (User : sig
@@ -50,34 +78,6 @@ module Make
        we would have to reduce before we can shift [t].) *)
     index < length && xfirst (List.nth rhs index) t
 
-  (* An explanation is a description of what the parser has recognized in the
-     recent past and what it expects next. *)
-
-  type 'symbol explanation = {
-
-    (* An explanation is based on an item. *)
-    item: item;
-
-    (* A past. This is a non-empty sequence of (terminal and non-terminal)
-       symbols, each of which corresponds to a range of the input file. These
-       symbols correspond to the first half (up to the bullet) of the item's
-       right-hand side. In short, they represent what we have recognized in
-       the recent past. *)
-    past: ('symbol * Lexing.position * Lexing.position) list;
-
-    (* A future. This is a non-empty sequence of (terminal and non-terminal)
-       symbols These symbols correspond to the second half (after the bullet)
-       of the item's right-hand side. In short, they represent what we expect
-       to recognize in the future, if this item is a good prediction. *)
-    future: 'symbol list;
-
-    (* A goal. This is a non-terminal symbol. It corresponds to the item's
-       left-hand side. In short, it represents the reduction that we will
-       be able to perform if we successfully recognize this future. *)
-    goal: 'symbol
-
-  }
-
   let compare_explanations x1 x2 =
     let c = compare_items x1.item x2.item in
     (* TEMPORARY checking that if [c] is 0 then the positions are the same *)
@@ -89,10 +89,7 @@ module Make
     );
     c
 
-  (* We build lists of explanations. These explanations may originate in
-     distinct LR(1) states. *)
-
-  (* [marry past stack] TEMPORARY *)
+  (* [marry past stack] TEMPORARY comment *)
 
   let rec marry past stack =
     match past, stack with
@@ -108,8 +105,8 @@ module Make
      offering the terminal symbol [t] to the parser. It runs the parser,
      through an arbitrary number of reductions, until the parser either
      accepts this token (i.e., shifts) or rejects it (i.e., signals an
-     error). If the parser decides to shift, then the shift items found in the
-     LR(1) state before the shift are used to produce new explanations. *)
+     error). If the parser decides to shift, then the shift items found
+     in the LR(1) state before the shift are used to produce new explanations. *)
 
   (* It is desirable that the semantic actions be side-effect free, or
      that their side-effects be harmless (replayable). *)
@@ -152,18 +149,21 @@ module Make
            it can request another token or terminate. *)
         assert false
 
-  (* [investigate result] assumes that [result] is of the form [InputNeeded _].
-     For every terminal symbol [t], it investigates how the parser reacts when
-     fed the symbol [t], and returns a list of explanations. *)
+  (* [investigate pos result] assumes that [result] is of the form
+     [InputNeeded _].  For every terminal symbol [t], it investigates
+     how the parser reacts when fed the symbol [t], and returns a list
+     of explanations. The position [pos] is where a syntax error was
+     detected; it is used when manufacturing dummy tokens. This is
+     important because the position of the dummy token may end up in
+     the explanations that we produce. *)
 
-  let investigate (result : _ result) =
+  let investigate pos (result : _ result) =
     weed compare_explanations (
       foreach_terminal_but_error (fun symbol explanations ->
         match symbol with
         | X (N _) -> assert false
         | X (T t) ->
             (* Build a dummy token for the terminal symbol [t]. *)
-            let pos = Lexing.dummy_pos in
             let token = (terminal2token t, pos, pos) in
             (* Submit it to the parser. Accumulate explanations. *)
             investigate t (offer result token) explanations
@@ -188,7 +188,7 @@ module Make
      this state and analyzes it in order to produce a meaningful
      diagnostic. *)
 
-  exception Error of xsymbol explanation list
+  exception Error of (Lexing.position * Lexing.position) * (item, xsymbol) explanation list
 
   (* TEMPORARY why loop-style? we should offer a simplified incremental API *)
 
@@ -209,10 +209,12 @@ module Make
     | AboutToReduce _ ->
         let current = resume current in
         loop read { checkpoint; current }
-    | HandlingError _ ->
-        (* The parser signals a syntax error. Go back to the checkpoint
-           and investigate. *)
-        raise (Error (investigate checkpoint))
+    | HandlingError env ->
+        (* The parser signals a syntax error. Note the position of the
+           problematic token, which is useful. Then, go back to the
+           checkpoint and investigate. *)
+        let (startp, _) as positions = positions env in
+        raise (Error (positions, investigate startp checkpoint))
     | Accepted v ->
         v
     | Rejected ->
