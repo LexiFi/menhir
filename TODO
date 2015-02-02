@@ -93,7 +93,7 @@
   vide, Menhir utilise _menhir_env.lexer.lex_start_p, c'est-à-dire le
   début du dernier token lu par le lexer; en principe c'est le token
   de lookahead donc ça va, mais ça pourrait donner un résultat bizarre
-  si on réduit par défaut une production vide (on alors pour position
+  si on réduit par défaut une production vide (on a alors pour position
   le début du token précédent?) (BUG?). Par ailleurs, il faut être
   conscient que si l'action ocamllex se rappelle récursivement, alors
   _menhir_env.lexer.lex_start_p n'est pas le début du token mais une
@@ -101,6 +101,28 @@
   blancs). SUGGESTION DE SOLUTION: au lieu de paires (startpos, endpos),
   utiliser un type abstrait d'intervalles, avec un traitement particulier
   de l'intervalle vide. (Voir mon message du 15/09/2011.)
+
+* Tirer au clair la sémantique des $startpos/$endpos sur les productions vides.
+  BUG: %inline ne préserve pas la sémantique de $startpos/$endpos.
+    C'est vrai pour les productions epsilon (forcément)
+    mais aussi pour des productions non-epsilon
+      car $startpos de la production inlinée est changée en $endpos(x) où x est le symbole précédent!
+  Si on gérait les positions par macro-expansion *avant* de faire l'inlining
+  alors la passe d'inlining n'aurait pas besoin de s'en occuper (et serait
+  correcte par construction).
+
+* En mode code on tire les tokens d'un lexbuf et l'utilisateur doit construire
+  l'API moderne par `wrapping', s'il la souhaite. Mais en mode table l'API
+  moderne est native et l'API traditionnelle est construite (par nous) par
+  `wrapping', d'où risque de `double wrapping' pour un utilisateur qui veut
+  alterner entre code et table. On devrait exposer nous-mêmes les deux API.
+  En profiter pour laisser l'utilisateur contrôler comment un token doit
+  être emballé en `fat token' (token + range).
+
+* %inline pourrait-il fonctionner quand la règle à inliner utilise des $i?
+* %inline pourrait-il fonctionner quand les productions à inliner ont un %prec?
+    (ça aurait un sens au moins quand on inline dans une production unité?)
+    (ou plus généralement quand on inline en dernière position?)
 
 * BUG: message de Valentin Gatien-Baron du 09/01/2010: le bug de --explain
   est-il bien le bug connu? peut-on le corriger? ne suffirait-il pas de
@@ -142,15 +164,6 @@
 
 * si une variable est inutilisée dans une action sémantique, le
   warning est affiché dans le code produit.
-
-* tirer au clair la sémantique des $startpos/$endpos sur les
-  non-terminaux. Vérifier que %inline la préserve.
-  Est-il vrai que l'élimination de %inline change la signification
-  de $startpos et $endpos (qui devient relative à la nouvelle règle)?
-
-* %inline pourrait-il fonctionner quand la règle à inliner utilise des $i?
-* %inline pourrait-il fonctionner quand les productions à inliner ont un %prec?
-    (ça aurait un sens au moins quand on inline dans une production unité?)
 
 * BUG: solving a shift/reduce conflict in favor of reduction can
   cut a path that was required in order to explain another conflict.
