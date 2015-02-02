@@ -123,7 +123,6 @@ module Run (T: sig end) = struct
         iteri (fprintf f "| %d => %s ");
         fprintf f "| _ => %s end)%%int31;\n" (List.hd constrs);
         fprintf f "  inj_bound := %d%%int31 }.\n" (List.length constrs);
-        fprintf f "Solve Obligations using (intro x; case x; reflexivity).\n\n";
       end
     else
       begin
@@ -131,7 +130,6 @@ module Run (T: sig end) = struct
         fprintf f "  { AlphabetComparable := {| compare := fun x y =>\n";
         fprintf f "      match x, y return comparison with end |};\n";
         fprintf f "    AlphabetEnumerable := {| all_list := [] |} }.";
-        fprintf f "Solve Obligations using (intro x; case x)."
       end
 
   let write_terminals f =
@@ -235,6 +233,7 @@ module Run (T: sig end) = struct
 
   let write_grammar f =
     fprintf f "Module Import Gram <: Grammar.T.\n\n";
+    fprintf f "Local Obligation Tactic := intro x; case x; reflexivity.\n\n";
     write_terminals f;
     write_nonterminals f;
     fprintf f "Include Grammar.Symbol.\n\n";
@@ -399,6 +398,7 @@ module Run (T: sig end) = struct
 
   let write_automaton f =
     fprintf f "Module Aut <: Automaton.T.\n\n";
+    fprintf f "Local Obligation Tactic := intro x; case x; reflexivity.\n\n";
     fprintf f "Module Gram := Gram.\n";
     fprintf f "Module GramDefs := Gram.\n\n";
     write_nullable_first f;
