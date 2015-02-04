@@ -299,6 +299,8 @@ let materialize (source : node) (symbol : Symbol.t) (target : Lr0.lr1state) : un
     (* 20120525: the manner in which this check is performed depends on
        [Settings.construction_mode]. There are now three modes. *)
 
+    (* 20150204: there are now four modes. *)
+
     begin match Settings.construction_mode with
     | Settings.ModeCanonical ->
 
@@ -327,6 +329,9 @@ let materialize (source : node) (symbol : Symbol.t) (target : Lr0.lr1state) : un
 	    raise (Subsumed node)
 	) similar
 
+    | Settings.ModeLALR ->
+        ()
+
     end;
 
     begin match Settings.construction_mode with
@@ -350,6 +355,15 @@ let materialize (source : node) (symbol : Symbol.t) (target : Lr0.lr1state) : un
 	     Lr0.eos_compatible target node.state &&
 	     Lr0.error_compatible target node.state then
 	    raise (Compatible node)
+	) similar
+
+    | Settings.ModeLALR ->
+
+        (* In LALR mode, as soon as there is one similar state -- i.e. one
+           state that shares the same LR(0) core -- we merge the new state
+           into the existing one. *)
+	List.iter (fun node ->
+	  raise (Compatible node)
 	) similar
 
     end;
@@ -376,7 +390,7 @@ let materialize (source : node) (symbol : Symbol.t) (target : Lr0.lr1state) : un
 	 that all transition decisions made so far are explicit. *)
 
       node.state <- Lr0.union target node.state;
-      follow_state "Joining and growing existing state (Pager says, fine)" node true;
+      follow_state "Joining and growing existing state" node true;
       source.transitions <- SymbolMap.add symbol node source.transitions;
       grow_successors node
 

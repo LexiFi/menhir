@@ -792,7 +792,8 @@ let (has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) opti
 	    | Settings.ModeCanonical ->
 	        None
 	    | Settings.ModeInclusionOnly
-	    | Settings.ModePager ->
+	    | Settings.ModePager
+            | Settings.ModeLALR ->
 	        reduction
 	  end
 

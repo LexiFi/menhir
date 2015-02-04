@@ -31,6 +31,8 @@ type construction_mode =
 			              relationship, default reductions are used *)
   | ModePager         (* normal mode: states are merged as per Pager's criterion,
 			              default reductions are used *)
+  | ModeLALR          (* --lalr     : states are merged as in an LALR generator,
+                                      i.e. as soon as they have the same LR(0) core *)
 
 (* Note that --canonical overrides --no-pager. If both are specified, the result
    is a canonical automaton. *)
@@ -176,6 +178,7 @@ let options = Arg.align [
   "--inspection", Arg.Set inspection, " Generate the inspection API (requires --table)";
   "--interpret", Arg.Set interpret, " Interpret the sentences provided on stdin";
   "--interpret-show-cst", Arg.Set interpret_show_cst, " Show a concrete syntax tree upon acceptance";
+  "--lalr", Arg.Unit (fun () -> construction_mode := ModeLALR), " Construct an LALR(1) automaton";
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
