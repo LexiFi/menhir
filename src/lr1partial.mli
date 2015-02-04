@@ -1,5 +1,13 @@
 open Grammar
 
+(* This exception is raised by [Run] if we fail to reach the goal state.
+   This is known to happen in a few pathological cases (e.g., when a
+   shift/reduce conflict is solved in favor of reduction, the only path
+   towards the goal state may disappear). So we report this situation
+   gracefully in the .conflicts file instead of failing abruptly. *)
+
+exception Oops
+
 module Run (X : sig
 
   (* A restricted set of tokens of interest. *)

@@ -1,5 +1,7 @@
 open Grammar
 
+exception Oops
+
 module Run (X : sig
 
   (* A restricted set of tokens of interest. *)
@@ -184,13 +186,7 @@ end) = struct
 	 canonical automaton as well. Otherwise, Pager's construction
 	 is incorrect. *)
       
-      begin
-	Printf.fprintf stderr "** Internal failure (Pager's theorem).\n";
-	Printf.fprintf stderr "** Tokens of interest: %s\n" (TerminalSet.print X.tokens);
-	Printf.fprintf stderr "** Goal state: %d\n" (Lr1.number X.goal);
-	Printf.fprintf stderr "** Please send your grammar to Menhir's developers.\n%!";
-	exit 1
-      end
+      raise Oops
 
     with Goal (node, tok) ->
       node, tok

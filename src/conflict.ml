@@ -335,6 +335,7 @@ let () =
   if Settings.explain then begin
 
     Lr1.conflicts (fun toks node ->
+    try
 
       (* Construct a partial LR(1) automaton, looking for a conflict
 	 in a state that corresponds to this node. Because Pager's
@@ -467,6 +468,24 @@ let () =
       ) derivations;
 
       flush out
+
+    with Lr1partial.Oops ->
+      
+      (* Ha ha! We were unable to explain this conflict. This could happen
+         because the automaton was butchered by conflict resolution directives,
+         or because [--lalr] was enabled and we have unexplainable LALR conflicts.
+         Anyway, send the error message to the .conflicts file and continue. *)
+
+      let out = Lazy.force out in
+
+      Printf.fprintf out "\n\
+        ** Conflict (unexplainable) in state %d.\n\
+	** Token%s involved: %s\n\
+	** Internal failure (Pager's theorem).\n\
+	** Please send your grammar to Menhir's developers.\n%!"
+      (Lr1.number node)
+      (if TerminalSet.cardinal toks > 1 then "s" else "")
+      (TerminalSet.print toks)
 
     );
     Time.tick "Explaining conflicts"
