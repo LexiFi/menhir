@@ -1,0 +1,3065 @@
+Warning: you are using the standard library and/or the %inline keyword. We
+recommend switching on --infer in order to avoid obscure type error messages.
+%{
+
+open Kind
+open SurfaceSyntax
+open ParserUtils
+
+%}
+%start implementation
+%start interface
+%start warn_error_list
+%token WITNESS
+%token WITH
+%token WHILE
+%token VALUE
+%token VAL
+%token UNKNOWN
+%token UNDERSCORE
+%token <string> UIDENT
+%token TYPE
+%token TO
+%token TAKING
+%token TAKE
+%token TAGOF
+%token SEMI
+%token RPAREN
+%token REC
+%token RBRACKET
+%token RBRACE
+%token PRESERVING
+%token PERM
+%token PACK
+%token <string> OPPREFIX
+%token OPEN
+%token MUTABLE
+%token MATCH
+%token LPAREN
+%token <string> LIDENT
+%token LET
+%token LBRACKET
+%token LBRACE
+%token LARROW
+%token <int> INT
+%token IN
+%token IF
+%token GIVE
+%token FUN
+%token FROM
+%token FOR
+%token FLEX
+%token FAIL
+%token FACT
+%token EXPLAIN
+%token EXCLUSIVE
+%token EOF
+%token END
+%token EMPTY
+%token DYNAMIC
+%token DUPLICABLE
+%token DOWNTO
+%token DOT
+%token DO
+%token DBLARROW
+%token DATA
+%token CONSUMES
+%token COMMA
+%token COLONCOLON
+%token COLON
+%token BUILTIN
+%token BELOW
+%token BEGIN
+%token BAR
+%token AT
+%token ASSERT
+%token AS
+%token ARROW
+%token AND
+%token ALIAS
+%token ABSTRACT
+%token ABOVE
+%token THEN
+%token ELSE
+%token ADOPTS
+%token <string> COLONEQUAL
+%token <string> OPINFIX0a
+%token <string> OPINFIX0b
+%token <string> OPINFIX0c
+%token <string> EQUAL
+%token <string> OPINFIX0d
+%token <string> OPINFIX1
+%token <string> PLUS
+%token <string> OPINFIX2
+%token <string> MINUS
+%token <string> STAR
+%token <string> OPINFIX3
+%token <string> OPINFIX4
+%nonassoc THEN 
+%nonassoc ELSE 
+%nonassoc ADOPTS 
+%nonassoc COLONEQUAL 
+%left OPINFIX0a 
+%left OPINFIX0b 
+%left OPINFIX0c EQUAL 
+%left OPINFIX0d 
+%right OPINFIX1 
+%left PLUS OPINFIX2 MINUS 
+%left STAR OPINFIX3 
+%right OPINFIX4 
+%type <SurfaceSyntax.implementation> implementation
+%type <SurfaceSyntax.interface> interface
+%type <(ClFlags.flag * (int * int)) list> warn_error_list
+%%
+
+existential_quantifiers:
+| LBRACE bs = right_flexible_list_COMMA_type_binding_ RBRACE
+    { bs }
+
+atomic_type_binding:
+| x = variable
+    { x, KType, ($startpos(x), $endpos) }
+| LPAREN b = type_binding RPAREN
+    { b }
+
+atomic_type_binding_with_variance:
+| v = variance b = atomic_type_binding
+    { v, b }
+
+atomic_kind:
+| LPAREN kind0 = atomic_kind RPAREN
+    {let kind =
+  let kind = kind0 in
+  ( kind )
+in
+ kind }
+| VALUE
+    { KValue }
+| TYPE
+    { KType }
+| PERM
+    { KPerm }
+
+generic_datacon_application_right_flexible_list_SEMI_data_field_pattern__:
+| d00 = maybe_qualified_datacon_
+    {let x =
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+    ( mk_datacon_reference d )
+  in
+  ( x, [] )
+in
+ x }
+| d00 = maybe_qualified_datacon_ LBRACE y0 = right_flexible_list_SEMI_data_field_pattern_ RBRACE
+    {let x =
+  let y = y0 in
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+    ( mk_datacon_reference d )
+  in
+  ( x, y )
+in
+ x }
+
+generic_datacon_application_right_flexible_list_SEMI_data_field_expression__:
+| d00 = maybe_qualified_datacon_
+    {let x =
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+    ( mk_datacon_reference d )
+  in
+  ( x, [] )
+in
+ x }
+| d00 = maybe_qualified_datacon_ LBRACE y0 = right_flexible_list_SEMI_data_field_expression_ RBRACE
+    {let x =
+  let y = y0 in
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+    ( mk_datacon_reference d )
+  in
+  ( x, y )
+in
+ x }
+
+generic_datacon_application_data_type_def_branch_content_:
+| d00 = maybe_qualified_datacon_
+    {let x =
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+    ( mk_datacon_reference d )
+  in
+  ( x, [] )
+in
+ x }
+| d00 = maybe_qualified_datacon_ LBRACE y0 = data_type_def_branch_content RBRACE
+    {let x =
+  let y = y0 in
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+    ( mk_datacon_reference d )
+  in
+  ( x, y )
+in
+ x }
+
+data_field_def:
+| fs = separated_nonempty_list_COMMA_variable_ COLON x00 = raw_normal_type
+    {let ty =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ List.map (fun f -> `FieldValue (f, ty)) fs }
+| fs = separated_nonempty_list_COMMA_variable_ COLONCOLON x00 = raw_normal_type
+    {let ty =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ List.map (fun f -> `FieldBindingValue (f, ty)) fs }
+| f = variable EQUAL x0 = maybe_qualified_variable_
+    {let y =
+  let x = x0 in
+  ( TyVar x )
+in
+ [ `FieldValue (f, TySingleton y) ] }
+| f = variable
+    { [ `FieldValue (f, TySingleton (TyVar (Unqualified f))) ] }
+
+data_type_def_branch_content:
+| fss0 = right_flexible_list_SEMI_data_field_def_
+    {let fs =
+  let fss = fss0 in
+  ( List.flatten fss )
+in
+ fs }
+| fss0 = right_flexible_list_SEMI_data_field_def_ BAR x00 = raw_very_loose_type
+    {let perm =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+let fs =
+  let fss = fss0 in
+  ( List.flatten fss )
+in
+ fs @ [ `FieldPermission perm ] }
+
+fact:
+| FACT cs = separated_nonempty_list_DBLARROW_mode_constraint_
+    { match List.rev cs with goal :: hypotheses -> Fact (List.rev hypotheses, goal) | [] -> assert false }
+
+concrete_data_type_def:
+| x0 = variable ys0 = list_atomic_type_binding_with_variance_ EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
+    {let rhs =
+  let xs0 = xs00 in
+  let bs =
+    let xs = xs0 in
+    ( List.rev xs )
+  in
+  ( bs )
+in
+let lhs =
+  let _startpos_x_ = _startpos_x0_ in
+  let _endpos_x_ = _endpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, ($startpos(x), $endpos(x))),
+        ys
+    )
+in
+let flavor =
+  ( DataTypeFlavor.Immutable )
+in
+ { lhs = lhs KType; rhs = Concrete (flavor, rhs, a) } }
+| MUTABLE x0 = variable ys0 = list_atomic_type_binding_with_variance_ EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
+    {let rhs =
+  let xs0 = xs00 in
+  let bs =
+    let xs = xs0 in
+    ( List.rev xs )
+  in
+  ( bs )
+in
+let lhs =
+  let _startpos_x_ = _startpos_x0_ in
+  let _endpos_x_ = _endpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, ($startpos(x), $endpos(x))),
+        ys
+    )
+in
+let flavor =
+  ( DataTypeFlavor.Mutable )
+in
+ { lhs = lhs KType; rhs = Concrete (flavor, rhs, a) } }
+
+abstract_data_type_def:
+| x0 = variable ys0 = list_atomic_type_binding_with_variance_ facts = list_fact_
+    {let k =
+  ( KType )
+in
+let lhs =
+  let _startpos_x_ = _startpos_x0_ in
+  let _endpos_x_ = _endpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, ($startpos(x), $endpos(x))),
+        ys
+    )
+in
+ { lhs = lhs k; rhs = Abstract facts } }
+| x0 = variable ys0 = list_atomic_type_binding_with_variance_ COLON kind00 = atomic_kind facts = list_fact_
+    {let k =
+  let kind0 = kind00 in
+  let k =
+    let kind = kind0 in
+    ( kind )
+  in
+  ( k )
+in
+let lhs =
+  let _startpos_x_ = _startpos_x0_ in
+  let _endpos_x_ = _endpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, ($startpos(x), $endpos(x))),
+        ys
+    )
+in
+ { lhs = lhs k; rhs = Abstract facts } }
+
+abbreviation_def:
+| x0 = variable ys0 = list_atomic_type_binding_with_variance_ EQUAL x000 = raw_fat_type
+    {let t =
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let ty =
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( ty )
+in
+let k =
+  ( KType )
+in
+let lhs =
+  let _startpos_x_ = _startpos_x0_ in
+  let _endpos_x_ = _endpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, ($startpos(x), $endpos(x))),
+        ys
+    )
+in
+ { lhs = lhs k; rhs = Abbrev t } }
+| x0 = variable ys0 = list_atomic_type_binding_with_variance_ COLON kind00 = atomic_kind EQUAL x000 = raw_fat_type
+    {let t =
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let ty =
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( ty )
+in
+let k =
+  let kind0 = kind00 in
+  let k =
+    let kind = kind0 in
+    ( kind )
+  in
+  ( k )
+in
+let lhs =
+  let _startpos_x_ = _startpos_x0_ in
+  let _endpos_x_ = _endpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, ($startpos(x), $endpos(x))),
+        ys
+    )
+in
+ { lhs = lhs k; rhs = Abbrev t } }
+
+data_field_pattern:
+| f = variable EQUAL x000 = raw_loose_pattern
+    {let p =
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let p =
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let p =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( PLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( p )
+  in
+  ( p )
+in
+ f, p }
+| f = variable
+    { f, PVar f }
+
+parenthesized_tuple_components:
+| x00 = raw_fragile_expression
+    {let e =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ [ e ] }
+| x00 = raw_algebraic_expression COMMA e2 = parenthesized_tuple_components
+    {let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ e1 :: e2 }
+
+option_preceded_ADOPTS_arbitrary_type__:
+| 
+    { None }
+| ADOPTS x0000 = raw_fat_type
+    {let x =
+  let _startpos_x000_ = _startpos_x0000_ in
+  let x000 = x0000 in
+  let x =
+    let _startpos_x00_ = _startpos_x000_ in
+    let x00 = x000 in
+    let ty =
+      let _startpos_x0_ = _startpos_x00_ in
+      let x0 = x00 in
+      let ty =
+        let _startpos_x_ = _startpos_x0_ in
+        let x = x0 in
+        ( TyLocated (x, ($startpos(x), $endpos)) )
+      in
+      ( ty )
+    in
+    ( ty )
+  in
+  ( x )
+in
+ Some x }
+
+nonempty_list_warn_error_:
+| x = warn_error
+    { [ x ] }
+| x = warn_error xs = nonempty_list_warn_error_
+    { x :: xs }
+
+variable:
+| x = LIDENT
+    { Variable.register x }
+| LPAREN x = OPPREFIX RPAREN
+    { Variable.register x }
+| LPAREN o0 = OPINFIX0a RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = OPINFIX0b RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = OPINFIX0c RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = OPINFIX0d RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = OPINFIX1 RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = OPINFIX2 RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = OPINFIX3 RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = OPINFIX4 RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = EQUAL RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = STAR RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = MINUS RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = PLUS RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+| LPAREN o0 = COLONEQUAL RPAREN
+    {let x =
+  let o = o0 in
+  ( o )
+in
+ Variable.register x }
+
+maybe_qualified_variable_:
+| x = variable
+    { Unqualified x }
+| name0 = LIDENT COLONCOLON x = variable
+    {let m =
+  let name = name0 in
+  ( Module.register name )
+in
+ Qualified (m, x) }
+
+maybe_qualified_datacon_:
+| datacon0 = UIDENT
+    {let x =
+  let datacon = datacon0 in
+  ( Datacon.register datacon )
+in
+ Unqualified x }
+| name0 = LIDENT COLONCOLON datacon0 = UIDENT
+    {let x =
+  let datacon = datacon0 in
+  ( Datacon.register datacon )
+in
+let m =
+  let name = name0 in
+  ( Module.register name )
+in
+ Qualified (m, x) }
+
+reverse_left_flexible_list_BAR_data_type_def_branch_:
+| 
+    { [] }
+| x00 = raw_normal_type_no_adopts
+    {let x =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let t =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  let flavor =
+    ( DataTypeFlavor.Immutable )
+  in
+  (
+      flavor, t
+    )
+in
+ [x] }
+| MUTABLE x00 = raw_normal_type_no_adopts
+    {let x =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let t =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  let flavor =
+    ( DataTypeFlavor.Mutable )
+  in
+  (
+      flavor, t
+    )
+in
+ [x] }
+| xs = reverse_left_flexible_list_BAR_data_type_def_branch_ BAR x00 = raw_normal_type_no_adopts
+    {let x =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let t =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  let flavor =
+    ( DataTypeFlavor.Immutable )
+  in
+  (
+      flavor, t
+    )
+in
+ x :: xs }
+| xs = reverse_left_flexible_list_BAR_data_type_def_branch_ BAR MUTABLE x00 = raw_normal_type_no_adopts
+    {let x =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let t =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  let flavor =
+    ( DataTypeFlavor.Mutable )
+  in
+  (
+      flavor, t
+    )
+in
+ x :: xs }
+
+type_parameters:
+| LBRACKET bs = right_flexible_list_COMMA_type_binding_ RBRACKET
+    { bs }
+
+variance:
+| PLUS
+    { Covariant }
+| MINUS
+    { Contravariant }
+| 
+    { Invariant }
+
+type_binding:
+| b = atomic_type_binding
+    { b }
+| x = variable COLON kind0 = atomic_kind
+    {let kind =
+  let kind = kind0 in
+  ( kind )
+in
+ x, kind, ($startpos(x), $endpos) }
+
+raw_parenthetic_type:
+| LPAREN RPAREN
+    { TyTuple [] }
+| LPAREN x000 = raw_fat_type _menhir_p1 = RPAREN
+    {let ty =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos = _startpos__menhir_p1_ in
+  let x00 = x000 in
+  let ty =
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( ty )
+in
+ ty }
+
+raw_atomic_type:
+| ty = raw_parenthetic_type
+    { ty }
+| UNKNOWN
+    { TyUnknown }
+| DYNAMIC
+    { TyDynamic }
+| EMPTY
+    { TyEmpty }
+| UNDERSCORE
+    { TyWildcard }
+| x0 = maybe_qualified_variable_
+    {let x =
+  let x = x0 in
+  ( TyVar x )
+in
+ x }
+| dfs0 = generic_datacon_application_data_type_def_branch_content_
+    {let b =
+  let dfs = dfs0 in
+  ( dfs )
+in
+let _startpos_b_ = _startpos in
+ mk_concrete ($startpos(b), $endpos) b None }
+
+raw_tight_type:
+| ty = raw_atomic_type
+    { ty }
+| EQUAL x0 = maybe_qualified_variable_
+    {let x =
+  let x = x0 in
+  ( TyVar x )
+in
+ TySingleton x }
+| x000 = raw_tight_type x010 = raw_atomic_type
+    {let ty =
+  let _endpos_x00_ = _endpos_x000_ in
+  let _startpos_x00_ = _startpos_x000_ in
+  let _startpos_x01_ = _startpos_x010_ in
+  let x01 = x010 in
+  let x00 = x000 in
+  let ty2 =
+    let _startpos_x0_ = _startpos_x01_ in
+    let x0 = x01 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  let _startpos_ty2_ = _endpos_x00_ in
+  let ty1 =
+    let _endpos = _startpos_ty2_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( mktyapp ty1 ty2 )
+in
+ ty }
+
+raw_normal_type_no_adopts:
+| ty0 = raw_tight_type
+    {let x =
+  let ty = ty0 in
+  ( ty )
+in
+ x }
+| x000 = raw_tight_type _menhir_p00 = ARROW ty20 = raw_normal_type_no_adopts
+    {let x =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let ty2 = ty20 in
+  let _menhir_p0 = _menhir_p00 in
+  let x00 = x000 in
+  let ty1 =
+    let _endpos = _startpos__menhir_p0_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( TyArrow (ty1, ty2) )
+in
+ x }
+| bs0 = type_parameters ty0 = raw_normal_type_no_adopts
+    {let x =
+  let ty = ty0 in
+  let bs = bs0 in
+  ( List.fold_right (fun b ty -> TyForall (b, ty)) bs ty )
+in
+ x }
+| bs0 = existential_quantifiers ty0 = raw_normal_type_no_adopts
+    {let x =
+  let ty = ty0 in
+  let bs = bs0 in
+  ( List.fold_right (fun b ty -> TyExists (b, ty)) bs ty )
+in
+ x }
+| m00 = mode x0000 = raw_atomic_type _menhir_p00 = DBLARROW ty0 = raw_normal_type_no_adopts
+    {let x =
+  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos_x000_ = _startpos_x0000_ in
+  let ty = ty0 in
+  let _menhir_p0 = _menhir_p00 in
+  let x000 = x0000 in
+  let m0 = m00 in
+  let c =
+    let _startpos_x00_ = _startpos_x000_ in
+    let _endpos = _startpos__menhir_p0_ in
+    let x00 = x000 in
+    let m = m0 in
+    let t =
+      let _startpos_x0_ = _startpos_x00_ in
+      let x0 = x00 in
+      let ty =
+        let _startpos_x_ = _startpos_x0_ in
+        let x = x0 in
+        ( TyLocated (x, ($startpos(x), $endpos)) )
+      in
+      ( ty )
+    in
+    ( m, t )
+  in
+  ( TyImply (c, ty) )
+in
+ x }
+
+raw_normal_type:
+| ty0 = raw_tight_type
+    {let t =
+  let ty = ty0 in
+  ( ty )
+in
+ t }
+| x000 = raw_tight_type _menhir_p00 = ARROW ty20 = raw_normal_type
+    {let t =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let ty2 = ty20 in
+  let _menhir_p0 = _menhir_p00 in
+  let x00 = x000 in
+  let ty1 =
+    let _endpos = _startpos__menhir_p0_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( TyArrow (ty1, ty2) )
+in
+ t }
+| bs0 = type_parameters ty0 = raw_normal_type
+    {let t =
+  let ty = ty0 in
+  let bs = bs0 in
+  ( List.fold_right (fun b ty -> TyForall (b, ty)) bs ty )
+in
+ t }
+| bs0 = existential_quantifiers ty0 = raw_normal_type
+    {let t =
+  let ty = ty0 in
+  let bs = bs0 in
+  ( List.fold_right (fun b ty -> TyExists (b, ty)) bs ty )
+in
+ t }
+| m00 = mode x0000 = raw_atomic_type _menhir_p00 = DBLARROW ty0 = raw_normal_type
+    {let t =
+  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos_x000_ = _startpos_x0000_ in
+  let ty = ty0 in
+  let _menhir_p0 = _menhir_p00 in
+  let x000 = x0000 in
+  let m0 = m00 in
+  let c =
+    let _startpos_x00_ = _startpos_x000_ in
+    let _endpos = _startpos__menhir_p0_ in
+    let x00 = x000 in
+    let m = m0 in
+    let t =
+      let _startpos_x0_ = _startpos_x00_ in
+      let x0 = x00 in
+      let ty =
+        let _startpos_x_ = _startpos_x0_ in
+        let x = x0 in
+        ( TyLocated (x, ($startpos(x), $endpos)) )
+      in
+      ( ty )
+    in
+    ( m, t )
+  in
+  ( TyImply (c, ty) )
+in
+ t }
+| dfs0 = generic_datacon_application_data_type_def_branch_content_ ADOPTS t = raw_normal_type
+    {let b =
+  let dfs = dfs0 in
+  ( dfs )
+in
+let _startpos_b_ = _startpos in
+ mk_concrete ($startpos(b), $endpos) b (Some t) }
+
+raw_loose_type:
+| ty = raw_normal_type
+    { ty }
+| x0 = maybe_qualified_variable_ AT x00 = raw_normal_type
+    {let ty =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+let x =
+  let x = x0 in
+  ( TyVar x )
+in
+ TyAnchoredPermission (x, ty) }
+| x0 = maybe_qualified_variable_ EQUAL x1 = maybe_qualified_variable_
+    {let y =
+  let x = x1 in
+  ( TyVar x )
+in
+let x =
+  let x = x0 in
+  ( TyVar x )
+in
+ TyAnchoredPermission (x, TySingleton y) }
+| x = variable COLON x00 = raw_normal_type
+    {let ty =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ TyNameIntro (x, ty) }
+| UNDERSCORE COLON x00 = raw_normal_type
+    {let ty =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ ty }
+
+raw_consumes_type:
+| ty = raw_loose_type
+    { ty }
+| CONSUMES x00 = raw_loose_type
+    {let ty =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ TyConsumes ty }
+
+raw_very_loose_type:
+| ty = raw_consumes_type
+    { ty }
+| x00 = raw_consumes_type _menhir_p0 = STAR x01 = raw_very_loose_type
+    {let ty2 =
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+let ty1 =
+  let _endpos = _startpos__menhir_p0_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ TyStar (ty1, ty2) }
+| x000 = raw_consumes_type _menhir_p00 = COMMA x20 = separated_nonempty_list_COMMA_consumes_type_
+    {let tcs =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let x2 = x20 in
+  let _menhir_p0 = _menhir_p00 in
+  let x00 = x000 in
+  let x1 =
+    let _endpos = _startpos__menhir_p0_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( x1 :: x2 )
+in
+ TyTuple tcs }
+
+raw_fat_type:
+| ty = raw_very_loose_type
+    { ty }
+| x00 = raw_fat_type _menhir_p0 = BAR x01 = raw_very_loose_type
+    {let ty2 =
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+let ty1 =
+  let _endpos = _startpos__menhir_p0_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ TyBar (ty1, ty2) }
+| BAR x00 = raw_very_loose_type
+    {let ty2 =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ TyBar (TyTuple [], ty2) }
+| x00 = raw_fat_type _menhir_p0 = BAR m0 = mode x000 = raw_atomic_type
+    {let c =
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let m = m0 in
+  let t =
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( m, t )
+in
+let ty =
+  let _endpos = _startpos__menhir_p0_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ TyAnd (c, ty) }
+
+mode:
+| EXCLUSIVE
+    { Mode.ModeExclusive }
+| DUPLICABLE
+    { Mode.ModeDuplicable }
+
+raw_atomic_pattern:
+| LPAREN RPAREN
+    { PTuple [] }
+| LPAREN x000 = raw_loose_pattern _menhir_p1 = RPAREN
+    {let p =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos = _startpos__menhir_p1_ in
+  let x00 = x000 in
+  let p =
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let p =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( PLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( p )
+  in
+  ( p )
+in
+ p }
+| xys0 = generic_datacon_application_right_flexible_list_SEMI_data_field_pattern__
+    {let dc =
+  let xys = xys0 in
+  ( xys )
+in
+ PConstruct dc }
+| x = variable
+    { PVar x }
+| UNDERSCORE
+    { PAny }
+
+raw_normal_pattern:
+| p = raw_atomic_pattern
+    { p }
+| x000 = raw_atomic_pattern _menhir_p00 = COMMA x20 = separated_nonempty_list_COMMA_atomic_pattern_
+    {let ps =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let x2 = x20 in
+  let _menhir_p0 = _menhir_p00 in
+  let x00 = x000 in
+  let x1 =
+    let _endpos = _startpos__menhir_p0_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let p =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( PLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( p )
+  in
+  ( x1 :: x2 )
+in
+ PTuple ps }
+| x00 = raw_normal_pattern _menhir_p0 = AS v = variable
+    {let p =
+  let _endpos = _startpos__menhir_p0_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let p =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( PLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( p )
+in
+ PAs (p, v) }
+
+raw_loose_pattern:
+| p = raw_normal_pattern
+    { p }
+| x00 = raw_loose_pattern _menhir_p0 = COLON x01 = raw_normal_type
+    {let t =
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+let p =
+  let _endpos = _startpos__menhir_p0_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let p =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( PLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( p )
+in
+ PConstraint (p, t) }
+
+raw_atomic_expression:
+| o = OPPREFIX x00 = raw_atomic_expression
+    {let e =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkprefix o e }
+| x0 = maybe_qualified_variable_
+    {let v =
+  let x = x0 in
+  ( EVar x )
+in
+ v }
+| i = INT
+    { EInt i }
+| FAIL
+    { EFail }
+| xys0 = generic_datacon_application_right_flexible_list_SEMI_data_field_expression__
+    {let dc =
+  let xys = xys0 in
+  ( xys )
+in
+ EConstruct dc }
+| MATCH b = explain x000 = raw_tuple_or_raw_fragile_expression_ WITH xs0 = reverse_left_flexible_list_BAR_match_branch_ END
+    {let bs =
+  let xs = xs0 in
+  ( List.rev xs )
+in
+let e =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x00 = x000 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+ EMatch (b, e, bs) }
+| LPAREN RPAREN
+    { ETuple [] }
+| LPAREN es = parenthesized_tuple_components RPAREN
+    { match es with [ e ] -> e | _ -> ETuple es }
+| BEGIN es = parenthesized_tuple_components END
+    { match es with [ e ] -> e | _ -> ETuple es }
+
+data_field_expression:
+| f = variable EQUAL e = reasonable_expression
+    { f, e }
+| f = variable
+    { f, EVar (Unqualified f) }
+
+explain:
+| 
+    { false }
+| EXPLAIN
+    { true }
+
+raw_tight_expression:
+| x00 = raw_tight_expression DOT f = variable
+    {let e =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ EAccess (e, mk_field f) }
+| a = raw_atomic_expression
+    { a }
+
+raw_application_expression:
+| x00 = raw_application_expression x01 = raw_tight_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ EApply (e1, e2) }
+| x00 = raw_application_expression LBRACKET ts = separated_nonempty_list_COMMA_type_application_component_ RBRACKET
+    {let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ ETApply (e1, ts) }
+| e = raw_tight_expression
+    { e }
+
+type_application_component:
+| x00 = raw_normal_type
+    {let t =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ Ordered t }
+| v = variable EQUAL x00 = raw_normal_type
+    {let t =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ Named (v, t) }
+
+raw_algebraic_expression:
+| x00 = raw_algebraic_expression o0 = OPINFIX0a x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = OPINFIX0b x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = OPINFIX0c x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = OPINFIX0d x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = OPINFIX1 x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = OPINFIX2 x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = OPINFIX3 x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = OPINFIX4 x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = EQUAL x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = STAR x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = MINUS x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = PLUS x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| x00 = raw_algebraic_expression o0 = COLONEQUAL x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let o =
+  let o = o0 in
+  ( o )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix e1 o e2 }
+| MINUS x00 = raw_application_expression
+    {let e =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ mkinfix (EInt 0) "-" e }
+| x00 = raw_algebraic_expression ADOPTS x01 = raw_algebraic_expression
+    {let e2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ EOwns (e1, e2) }
+| e = raw_application_expression
+    { e }
+
+raw_tuple_or_raw_reasonable_expression_:
+| x000 = raw_algebraic_expression COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
+    {let es =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x2 = x20 in
+  let x00 = x000 in
+  let x1 =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( x1 :: x2 )
+in
+ ETuple es }
+| e = raw_reasonable_expression
+    { e }
+
+raw_tuple_or_raw_fragile_expression_:
+| x000 = raw_algebraic_expression COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
+    {let es =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x2 = x20 in
+  let x00 = x000 in
+  let x1 =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( x1 :: x2 )
+in
+ ETuple es }
+| e = raw_fragile_expression
+    { e }
+
+reasonable_expression:
+| x0 = raw_reasonable_expression
+    {let e =
+  let _startpos_x_ = _startpos_x0_ in
+  let _endpos_x_ = _endpos_x0_ in
+  let x = x0 in
+  ( ELocated (x, ($startpos(x), $endpos(x))) )
+in
+ e }
+
+raw_reasonable_expression:
+| IF b = explain x000 = raw_tuple_or_raw_fragile_expression_ THEN x00 = raw_tuple_or_raw_reasonable_expression_
+    {let e2 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let e1 =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x00 = x000 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+ EIfThenElse (b, e1, e2, ETuple []) }
+| IF b = explain x000 = raw_tuple_or_raw_fragile_expression_ THEN x00 = raw_tuple_or_raw_reasonable_expression_ ELSE x01 = raw_tuple_or_raw_reasonable_expression_
+    {let e3 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let e2 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let e1 =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x00 = x000 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+ EIfThenElse (b, e1, e2, e3) }
+| p = optional_preserving WHILE x000 = raw_tuple_or_raw_fragile_expression_ DO e2 = reasonable_expression
+    {let e1 =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x00 = x000 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+ EWhile (p, e1, e2) }
+| p = optional_preserving _menhir_p0 = FOR x0 = variable _menhir_p1 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_ f = direction x001 = raw_tuple_or_raw_fragile_expression_ DO e = reasonable_expression
+    {let e2 =
+  let _startpos_x00_ = _startpos_x001_ in
+  let _endpos_x00_ = _endpos_x001_ in
+  let x00 = x001 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+let e1 =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x00 = x000 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+let x =
+  let _startpos_x_ = _endpos__menhir_p0_ in
+  let _endpos = _startpos__menhir_p1_ in
+  let x = x0 in
+  ( x, KValue, ($startpos(x), $endpos) )
+in
+ EFor (p, x, e1, f, e2, e) }
+| x00 = raw_tight_expression DOT f = variable LARROW e2 = reasonable_expression
+    {let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ EAssign (e1, mk_field f, e2) }
+| TAGOF x00 = raw_tight_expression LARROW d0 = maybe_qualified_datacon_
+    {let d =
+  let d = d0 in
+  ( mk_datacon_reference d )
+in
+let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ EAssignTag (e1, d, mk_tag_update_info ()) }
+| TAKE x000 = raw_tuple_or_raw_fragile_expression_ FROM e2 = reasonable_expression
+    {let e1 =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x00 = x000 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+ ETake (e1, e2) }
+| GIVE x000 = raw_tuple_or_raw_fragile_expression_ TO e2 = reasonable_expression
+    {let e1 =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x00 = x000 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+ EGive (e1, e2) }
+| taking = TAKING x000 = raw_tuple_or_raw_fragile_expression_ FROM x00 = raw_tight_expression _menhir_p1 = BEGIN x001 = raw_tuple_or_raw_fragile_expression_ fin = END
+    {let e =
+  let _startpos_x00_ = _startpos_x001_ in
+  let _endpos_x00_ = _endpos_x001_ in
+  let x00 = x001 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+let e2 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let _endpos_e2_ = _startpos__menhir_p1_ in
+let e1 =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x00 = x000 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+
+      taking; fin; (* avoid ocaml warnings about unused variables *)
+      let eval_e1, v1 = name "adoptee" e1
+      and eval_e2, v2 = name "adopter" e2
+      and eval_e , v  = name "result"  e in
+      eval_e1 (
+      eval_e2 (
+      ESequence (
+      ELocated (ETake (v1, v2), ($startpos(taking), $endpos(e2))),
+      eval_e (
+      ESequence (
+      ELocated (EGive (v1, v2), ($startpos(fin), $endpos(fin))),
+      v
+      )))))
+    }
+| ASSERT x00 = raw_very_loose_type
+    {let t =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ EAssert t }
+| PACK x00 = raw_very_loose_type _menhir_p1 = WITNESS x01 = raw_very_loose_type
+    {let t2 =
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+let t1 =
+  let _endpos = _startpos__menhir_p1_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ EPack (t1, t2) }
+| x00 = raw_algebraic_expression COLON x01 = raw_very_loose_type
+    {let t =
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+let e =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ EConstraint (e, t) }
+| e = raw_algebraic_expression
+    { e }
+
+optional_preserving:
+| PRESERVING x000 = raw_fat_type
+    {let p =
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let ty =
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( ty )
+in
+ p }
+| 
+    { TyEmpty }
+
+raw_fragile_expression:
+| e1 = reasonable_expression SEMI x00 = raw_tuple_or_raw_fragile_expression_
+    {let e2 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ ESequence (e1, e2) }
+| e1 = reasonable_expression SEMI
+    { e1 }
+| LET flag0 = rec_flag xs00 = loption_separated_nonempty_list_AND_definition__ IN x00 = raw_tuple_or_raw_fragile_expression_
+    {let e =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let flag_defs =
+  let xs0 = xs00 in
+  let flag = flag0 in
+  let defs =
+    let xs = xs0 in
+    ( xs )
+  in
+  ( flag, defs )
+in
+ let flag, defs = flag_defs in ELet (flag, defs, e) }
+| LET FLEX v = type_binding IN x00 = raw_tuple_or_raw_fragile_expression_
+    {let e =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ ELetFlex (v, e) }
+| LET DATA defs0 = separated_nonempty_list_AND_concrete_data_type_def_ _menhir_p1 = IN x00 = raw_tuple_or_raw_fragile_expression_
+    {let e =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let d =
+  let _startpos_defs_ = _startpos_defs0_ in
+  let _endpos = _startpos__menhir_p1_ in
+  let defs = defs0 in
+  ( ($startpos(defs), $endpos), Recursive, defs )
+in
+ ELocalType (d, e) }
+| LET ABSTRACT def0 = abstract_data_type_def _menhir_p1 = IN x00 = raw_tuple_or_raw_fragile_expression_
+    {let e =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let d =
+  let _startpos_def_ = _startpos_def0_ in
+  let _endpos = _startpos__menhir_p1_ in
+  let def = def0 in
+  ( ($startpos(def), $endpos), Nonrecursive, [def] )
+in
+ ELocalType (d, e) }
+| LET ALIAS def0 = abbreviation_def _menhir_p1 = IN x00 = raw_tuple_or_raw_fragile_expression_
+    {let e =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+let d =
+  let _startpos_def_ = _startpos_def0_ in
+  let _endpos = _startpos__menhir_p1_ in
+  let def = def0 in
+  ( ($startpos(def), $endpos), Nonrecursive, [def] )
+in
+ ELocalType (d, e) }
+| FUN e = anonymous_function
+    { e }
+| e = raw_reasonable_expression
+    { e }
+
+rec_flag:
+| REC
+    { Recursive }
+| 
+    { Nonrecursive }
+
+loption_type_parameters_:
+| 
+    { [] }
+| x = type_parameters
+    { x }
+
+loption_separated_nonempty_list_AND_definition__:
+| 
+    { [] }
+| x = separated_nonempty_list_AND_definition_
+    { x }
+
+list_terminated_mode_constraint_DBLARROW__:
+| 
+    { [] }
+| m00 = mode x0000 = raw_atomic_type _menhir_p00 = DBLARROW xs = list_terminated_mode_constraint_DBLARROW__
+    {let x =
+  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos_x000_ = _startpos_x0000_ in
+  let _menhir_p0 = _menhir_p00 in
+  let x000 = x0000 in
+  let m0 = m00 in
+  let x =
+    let _startpos_x00_ = _startpos_x000_ in
+    let _endpos = _startpos__menhir_p0_ in
+    let x00 = x000 in
+    let m = m0 in
+    let t =
+      let _startpos_x0_ = _startpos_x00_ in
+      let x0 = x00 in
+      let ty =
+        let _startpos_x_ = _startpos_x0_ in
+        let x = x0 in
+        ( TyLocated (x, ($startpos(x), $endpos)) )
+      in
+      ( ty )
+    in
+    ( m, t )
+  in
+  ( x )
+in
+ x :: xs }
+
+list_interface_item_:
+| 
+    { [] }
+| x = interface_item xs = list_interface_item_
+    { x :: xs }
+
+list_implementation_item_:
+| 
+    { [] }
+| x = implementation_item xs = list_implementation_item_
+    { x :: xs }
+
+direction:
+| TO
+    { To }
+| DOWNTO
+    { Downto }
+| BELOW
+    { Below }
+| ABOVE
+    { Above }
+
+definition:
+| x00 = raw_normal_pattern _menhir_p0 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
+    {let e =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x00 = x000 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+let p =
+  let _endpos = _startpos__menhir_p0_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let p =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( PLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( p )
+in
+ p, e }
+| x00 = raw_normal_pattern _menhir_p0 = COLON x01 = raw_normal_type _menhir_p1 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
+    {let e =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x00 = x000 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+let t =
+  let _endpos = _startpos__menhir_p1_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+let p =
+  let _endpos = _startpos__menhir_p0_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let p =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( PLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( p )
+in
+ PConstraint (p, t), e }
+| x00 = raw_normal_pattern e = anonymous_function
+    {let p =
+  let _endpos = _startpos_e_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let p =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( PLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( p )
+in
+ p, e }
+| x00 = raw_normal_pattern _menhir_p0 = COLON x01 = raw_normal_type _menhir_p1 = EQUAL BUILTIN b = LIDENT
+    {let t =
+  let _endpos = _startpos__menhir_p1_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+let p =
+  let _endpos = _startpos__menhir_p0_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let p =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( PLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( p )
+in
+ PConstraint (p, t), ELocated (EBuiltin b, ($startpos($5), $endpos($5))) }
+
+anonymous_function:
+| type_parameters = loption_type_parameters_ cs = list_terminated_mode_constraint_DBLARROW__ x00 = raw_parenthetic_type _menhir_p0 = COLON x01 = raw_normal_type _menhir_p1 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
+    {let body =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos_x00_ = _endpos_x000_ in
+  let x00 = x000 in
+  let e =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _startpos_x_ = _startpos_x0_ in
+      let _endpos_x_ = _endpos_x0_ in
+      let x = x0 in
+      ( ELocated (x, ($startpos(x), $endpos(x))) )
+    in
+    ( e )
+  in
+  ( e )
+in
+let result =
+  let _endpos = _startpos__menhir_p1_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+let formal =
+  let _endpos = _startpos__menhir_p0_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+let _startpos_formal_ = _endpos_cs_ in
+let _endpos_formal_ = _startpos__menhir_p0_ in
+ let formal = List.fold_right (fun c ty -> TyAnd (c, ty)) cs formal in
+      let formal = TyLocated (formal, ($startpos(formal), $endpos(formal))) in
+      EFun (type_parameters, formal, result, body) }
+
+definition_group:
+| VAL flag0 = rec_flag xs00 = loption_separated_nonempty_list_AND_definition__
+    {let flag_defs =
+  let xs0 = xs00 in
+  let flag = flag0 in
+  let defs =
+    let xs = xs0 in
+    ( xs )
+  in
+  ( flag, defs )
+in
+ let flag, defs = flag_defs in
+      let loc = ($startpos($1), $endpos) in
+      ValueDefinitions (loc, flag, defs) }
+
+value_declaration:
+| _menhir_p0 = VAL x0 = variable _menhir_p1 = COLON x000 = raw_fat_type
+    {let ty =
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let ty =
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( ty )
+in
+let x =
+  let _startpos_x_ = _endpos__menhir_p0_ in
+  let _endpos = _startpos__menhir_p1_ in
+  let x = x0 in
+  ( x, KValue, ($startpos(x), $endpos) )
+in
+ ValueDeclaration (x, ty) }
+
+implementation_item:
+| DATA defs00 = separated_nonempty_list_AND_concrete_data_type_def_
+    {let item =
+  let _startpos_defs0_ = _startpos_defs00_ in
+  let defs0 = defs00 in
+  let g =
+    let _startpos_defs_ = _startpos_defs0_ in
+    let defs = defs0 in
+    ( ($startpos(defs), $endpos), Recursive, defs )
+  in
+  ( DataTypeGroup g )
+in
+ item }
+| ABSTRACT def00 = abstract_data_type_def
+    {let item =
+  let _startpos_def0_ = _startpos_def00_ in
+  let def0 = def00 in
+  let g =
+    let _startpos_def_ = _startpos_def0_ in
+    let def = def0 in
+    ( ($startpos(def), $endpos), Nonrecursive, [def] )
+  in
+  ( DataTypeGroup g )
+in
+ item }
+| ALIAS def00 = abbreviation_def
+    {let item =
+  let _startpos_def0_ = _startpos_def00_ in
+  let def0 = def00 in
+  let g =
+    let _startpos_def_ = _startpos_def0_ in
+    let def = def0 in
+    ( ($startpos(def), $endpos), Nonrecursive, [def] )
+  in
+  ( DataTypeGroup g )
+in
+ item }
+| item = definition_group
+    { item }
+| OPEN name00 = LIDENT
+    {let item =
+  let name0 = name00 in
+  let m =
+    let name = name0 in
+    ( Module.register name )
+  in
+  ( OpenDirective m )
+in
+ item }
+
+implementation:
+| items = list_implementation_item_ EOF
+    { items }
+
+warn_error_list:
+| ws = nonempty_list_warn_error_ EOF
+    { ws }
+
+warn_error:
+| f = flag r = range
+    { f, r }
+
+list_fact_:
+| 
+    { [] }
+| x = fact xs = list_fact_
+    { x :: xs }
+
+list_atomic_type_binding_with_variance_:
+| 
+    { [] }
+| x = atomic_type_binding_with_variance xs = list_atomic_type_binding_with_variance_
+    { x :: xs }
+
+separated_nonempty_list_DBLARROW_mode_constraint_:
+| m0 = mode x000 = raw_atomic_type
+    {let x =
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let m = m0 in
+  let t =
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( m, t )
+in
+ [ x ] }
+| m0 = mode x000 = raw_atomic_type _menhir_p0 = DBLARROW xs = separated_nonempty_list_DBLARROW_mode_constraint_
+    {let x =
+  let _startpos_x00_ = _startpos_x000_ in
+  let _endpos = _startpos__menhir_p0_ in
+  let x00 = x000 in
+  let m = m0 in
+  let t =
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( TyLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( ty )
+  in
+  ( m, t )
+in
+ x :: xs }
+
+separated_nonempty_list_COMMA_variable_:
+| x = variable
+    { [ x ] }
+| x = variable COMMA xs = separated_nonempty_list_COMMA_variable_
+    { x :: xs }
+
+separated_nonempty_list_COMMA_type_application_component_:
+| x = type_application_component
+    { [ x ] }
+| x = type_application_component COMMA xs = separated_nonempty_list_COMMA_type_application_component_
+    { x :: xs }
+
+separated_nonempty_list_COMMA_consumes_type_:
+| x00 = raw_consumes_type
+    {let x =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ [ x ] }
+| x00 = raw_consumes_type _menhir_p0 = COMMA xs = separated_nonempty_list_COMMA_consumes_type_
+    {let x =
+  let _endpos = _startpos__menhir_p0_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( TyLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( ty )
+in
+ x :: xs }
+
+separated_nonempty_list_COMMA_atomic_pattern_:
+| x00 = raw_atomic_pattern
+    {let x =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let p =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( PLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( p )
+in
+ [ x ] }
+| x00 = raw_atomic_pattern _menhir_p0 = COMMA xs = separated_nonempty_list_COMMA_atomic_pattern_
+    {let x =
+  let _endpos = _startpos__menhir_p0_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let p =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    ( PLocated (x, ($startpos(x), $endpos)) )
+  in
+  ( p )
+in
+ x :: xs }
+
+separated_nonempty_list_COMMA_algebraic_expression_:
+| x00 = raw_algebraic_expression
+    {let x =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ [ x ] }
+| x00 = raw_algebraic_expression COMMA xs = separated_nonempty_list_COMMA_algebraic_expression_
+    {let x =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _startpos_x_ = _startpos_x0_ in
+    let _endpos_x_ = _endpos_x0_ in
+    let x = x0 in
+    ( ELocated (x, ($startpos(x), $endpos(x))) )
+  in
+  ( e )
+in
+ x :: xs }
+
+separated_nonempty_list_AND_definition_:
+| x = definition
+    { [ x ] }
+| x = definition AND xs = separated_nonempty_list_AND_definition_
+    { x :: xs }
+
+separated_nonempty_list_AND_concrete_data_type_def_:
+| x = concrete_data_type_def
+    { [ x ] }
+| x = concrete_data_type_def AND xs = separated_nonempty_list_AND_concrete_data_type_def_
+    { x :: xs }
+
+right_flexible_list_SEMI_data_field_pattern_:
+| 
+    { [] }
+| x = data_field_pattern
+    { [x] }
+| x = data_field_pattern SEMI xs = right_flexible_list_SEMI_data_field_pattern_
+    { x :: xs }
+
+right_flexible_list_SEMI_data_field_expression_:
+| 
+    { [] }
+| x = data_field_expression
+    { [x] }
+| x = data_field_expression SEMI xs = right_flexible_list_SEMI_data_field_expression_
+    { x :: xs }
+
+right_flexible_list_SEMI_data_field_def_:
+| 
+    { [] }
+| x = data_field_def
+    { [x] }
+| x = data_field_def SEMI xs = right_flexible_list_SEMI_data_field_def_
+    { x :: xs }
+
+right_flexible_list_COMMA_type_binding_:
+| 
+    { [] }
+| x = type_binding
+    { [x] }
+| x = type_binding COMMA xs = right_flexible_list_COMMA_type_binding_
+    { x :: xs }
+
+reverse_left_flexible_list_BAR_match_branch_:
+| 
+    { [] }
+| x001 = raw_normal_pattern _menhir_p00 = ARROW x0000 = raw_tuple_or_raw_fragile_expression_
+    {let x =
+  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos_x00_ = _startpos_x001_ in
+  let _endpos_x000_ = _endpos_x0000_ in
+  let _startpos_x000_ = _startpos_x0000_ in
+  let x000 = x0000 in
+  let _menhir_p0 = _menhir_p00 in
+  let x00 = x001 in
+  let e =
+    let _startpos_x00_ = _startpos_x000_ in
+    let _endpos_x00_ = _endpos_x000_ in
+    let x00 = x000 in
+    let e =
+      let _endpos_x0_ = _endpos_x00_ in
+      let _startpos_x0_ = _startpos_x00_ in
+      let x0 = x00 in
+      let e =
+        let _startpos_x_ = _startpos_x0_ in
+        let _endpos_x_ = _endpos_x0_ in
+        let x = x0 in
+        ( ELocated (x, ($startpos(x), $endpos(x))) )
+      in
+      ( e )
+    in
+    ( e )
+  in
+  let p =
+    let _endpos = _startpos__menhir_p0_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let p =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( PLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( p )
+  in
+  ( p, e )
+in
+ [x] }
+| xs = reverse_left_flexible_list_BAR_match_branch_ BAR x001 = raw_normal_pattern _menhir_p00 = ARROW x0000 = raw_tuple_or_raw_fragile_expression_
+    {let x =
+  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos_x00_ = _startpos_x001_ in
+  let _endpos_x000_ = _endpos_x0000_ in
+  let _startpos_x000_ = _startpos_x0000_ in
+  let x000 = x0000 in
+  let _menhir_p0 = _menhir_p00 in
+  let x00 = x001 in
+  let e =
+    let _startpos_x00_ = _startpos_x000_ in
+    let _endpos_x00_ = _endpos_x000_ in
+    let x00 = x000 in
+    let e =
+      let _endpos_x0_ = _endpos_x00_ in
+      let _startpos_x0_ = _startpos_x00_ in
+      let x0 = x00 in
+      let e =
+        let _startpos_x_ = _startpos_x0_ in
+        let _endpos_x_ = _endpos_x0_ in
+        let x = x0 in
+        ( ELocated (x, ($startpos(x), $endpos(x))) )
+      in
+      ( e )
+    in
+    ( e )
+  in
+  let p =
+    let _endpos = _startpos__menhir_p0_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let p =
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      ( PLocated (x, ($startpos(x), $endpos)) )
+    in
+    ( p )
+  in
+  ( p, e )
+in
+ x :: xs }
+
+interface_item:
+| DATA defs00 = separated_nonempty_list_AND_concrete_data_type_def_
+    {let item =
+  let _startpos_defs0_ = _startpos_defs00_ in
+  let defs0 = defs00 in
+  let g =
+    let _startpos_defs_ = _startpos_defs0_ in
+    let defs = defs0 in
+    ( ($startpos(defs), $endpos), Recursive, defs )
+  in
+  ( DataTypeGroup g )
+in
+ item }
+| ABSTRACT def00 = abstract_data_type_def
+    {let item =
+  let _startpos_def0_ = _startpos_def00_ in
+  let def0 = def00 in
+  let g =
+    let _startpos_def_ = _startpos_def0_ in
+    let def = def0 in
+    ( ($startpos(def), $endpos), Nonrecursive, [def] )
+  in
+  ( DataTypeGroup g )
+in
+ item }
+| ALIAS def00 = abbreviation_def
+    {let item =
+  let _startpos_def0_ = _startpos_def00_ in
+  let def0 = def00 in
+  let g =
+    let _startpos_def_ = _startpos_def0_ in
+    let def = def0 in
+    ( ($startpos(def), $endpos), Nonrecursive, [def] )
+  in
+  ( DataTypeGroup g )
+in
+ item }
+| item = value_declaration
+    { item }
+| OPEN name00 = LIDENT
+    {let item =
+  let name0 = name00 in
+  let m =
+    let name = name0 in
+    ( Module.register name )
+  in
+  ( OpenDirective m )
+in
+ item }
+
+interface:
+| items = list_interface_item_ EOF
+    { items }
+
+flag:
+| AT
+    { ClFlags.CError }
+| MINUS
+    { ClFlags.CSilent }
+| PLUS
+    { ClFlags.CWarning }
+
+range:
+| i = INT
+    { i, i }
+| i = INT DOT DOT j = INT
+    { i, j }
+
+%%
+
+
+
