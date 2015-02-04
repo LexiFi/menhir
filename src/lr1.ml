@@ -336,16 +336,15 @@ let materialize (source : node) (symbol : Symbol.t) (target : Lr0.lr1state) : un
 
     | Settings.ModePager ->
 
-      (* One can be even more aggressive and check whether the existing state is
-	 compatible, in Pager's sense, with the new state. If so, there is no
-	 need to create a new state: just merge the new state into the existing
-	 one. The result is a state that may be larger than each of the two
-	 states that have been merged. *)
+        (* One can be even more aggressive and check whether the existing state is
+           compatible, in Pager's sense, with the new state. If so, there is no
+           need to create a new state: just merge the new state into the existing
+           one. The result is a state that may be larger than each of the two
+           states that have been merged. *)
 
-      (* 20110124: require error compatibility in addition to the existing
-	 compatibility criteria. *)
+        (* 20110124: require error compatibility in addition to the existing
+           compatibility criteria. *)
 
-      if Settings.construction_mode = Settings.ModePager then
 	List.iter (fun node ->
 	  if Lr0.compatible target node.state &&
 	     Lr0.eos_compatible target node.state &&
