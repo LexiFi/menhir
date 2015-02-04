@@ -481,11 +481,18 @@ let () =
       Printf.fprintf out "\n\
         ** Conflict (unexplainable) in state %d.\n\
 	** Token%s involved: %s\n\
-	** Internal failure (Pager's theorem).\n\
-	** Please send your grammar to Menhir's developers.\n%!"
+	** %s.\n%!"
       (Lr1.number node)
       (if TerminalSet.cardinal toks > 1 then "s" else "")
       (TerminalSet.print toks)
+      (match Settings.construction_mode with
+      | Settings.ModeLALR ->
+          "This may be an artificial conflict caused by your use of --lalr"
+      | Settings.ModeCanonical
+      | Settings.ModeInclusionOnly
+      | Settings.ModePager ->
+          "Please send your grammar to Menhir's developers"
+      )
 
     );
     Time.tick "Explaining conflicts"
