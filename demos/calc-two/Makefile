@@ -20,5 +20,6 @@ clean:
 
 test: all
 	@echo "The following command should print 42:"
-	echo "(1 + 2 * 10) * 2" | ./$(MAIN).native
-
+	echo "(1 + 2 * 10) * 2" | ./$(MAIN).native --algebraic
+	@echo "The following command should print 42:"
+	echo " 1 2 10 * + 2 *" | ./$(MAIN).native --reverse
