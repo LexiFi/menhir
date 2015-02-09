@@ -24,7 +24,7 @@ endif
 
 # ----------------------------------------------------------------------------
 
-# By default, we attempt to use ocamlfind (if present in the PATH), but it it
+# By default, we attempt to use ocamlfind (if present in the PATH), but it
 # is possible to prevent that externally by setting USE_OCAMLFIND to false.
 
 ifndef USE_OCAMLFIND
