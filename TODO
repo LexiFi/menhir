@@ -57,6 +57,18 @@
 
 * Tenter une minimisation a posteriori de l'automate. Sur la grammaire
   OCaml on devrait retrouver l'automate LALR, non?
+  Faire cette minimisation *après* la résolution des conflits afin que
+  la minimisation n'affecte pas le comportement de l'automate, même en
+  présence de directives de priorité. Du coup si on combine --canonical
+  et --minimize alors on devrait obtenir un automate correct, proche de
+  IELR, voir Denny et Malloy. Confirmer.
+
+* Pourquoi --canonical --table ne marche pas sur une grosse grammaire?
+  (3m57 pour ocaml.mly versus 16s sans --table)
+  Afficher combien de temps est passé à comprimer les tables.
+
+* TableBackend en principe ne devrait pas avoir besoin de Invariant?
+  Gain de temps/simplicité possible.
 
 * Could we avoid listing the contents of MenhirLib in 4 different files?
 
