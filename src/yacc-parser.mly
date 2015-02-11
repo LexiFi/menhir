@@ -76,7 +76,7 @@ declaration:
 | START nonterminals
     { List.map (Positions.map (fun nonterminal -> DStart nonterminal)) $2 }
 
-| TYPE OCAMLTYPE actual_parameters
+| TYPE OCAMLTYPE actuals
     { List.map (Positions.map (fun nt -> DType ($2, nt)))
         (List.map Parameters.with_pos $3) }
 
@@ -207,28 +207,28 @@ formal_parameters:
 | symbol COMMA formal_parameters
     { Positions.value $1 :: $3 }
 
-optional_actual_parameters:
+optional_actuals:
   /* epsilon */
     { [] }
-| LPAREN actual_parameters_comma RPAREN
+| LPAREN actuals_comma RPAREN
     { $2 }
 
-actual_parameters_comma:
-  actual_parameter 
+actuals_comma:
+  actual 
     { [ $1 ] }
-| actual_parameter COMMA actual_parameters_comma
+| actual COMMA actuals_comma
     { $1 :: $3 }
 
-actual_parameter:
-  symbol optional_actual_parameters
+actual:
+  symbol optional_actuals
     { Parameters.app $1 $2 }
-| actual_parameter modifier
+| actual modifier
     { ParameterApp ($2, [ $1 ]) }
 
-actual_parameters:
+actuals:
   /* epsilon */
     { [] }
-| actual_parameters optional_comma actual_parameter
+| actuals optional_comma actual
     { $3::$1 }
 
 optional_bar:
@@ -319,9 +319,9 @@ producers:
    binding. */
 
 producer:
-| actual_parameter
+| actual
     { None, $1 }
-| LID EQUAL actual_parameter
+| LID EQUAL actual
     { Some $1, $3 }
 
 %%
