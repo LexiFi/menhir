@@ -217,8 +217,10 @@ actual_parameters_comma:
     { $1 :: $3 }
 
 actual_parameter:
-  symbol optional_actual_parameters optional_modifier
-    { Parameters.oapp1 $3 (Parameters.app $1 $2) }
+  symbol optional_actual_parameters
+    { Parameters.app $1 $2 }
+| actual_parameter modifier
+    { ParameterApp ($2, [ $1 ]) }
 
 actual_parameters:
   /* epsilon */
@@ -235,12 +237,6 @@ optional_bar:
 /* ------------------------------------------------------------------------- */
 /* The "?", "+", and "*" modifiers are short-hands for applications of
    certain parameterized nonterminals, defined in the standard library. */
-
-optional_modifier:
-  /* epsilon */
-    { None }
-| modifier
-    { Some $1 }
 
 modifier:
   QUESTION

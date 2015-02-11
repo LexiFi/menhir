@@ -321,8 +321,10 @@ producer:
    "*" shortcuts. */
 
 actual_parameter:
-  symbol = symbol actuals = plist(actual_parameter) modifier = modifier?
-    { Parameters.oapp1 modifier (Parameters.app symbol actuals) }
+  symbol = symbol actuals = plist(actual_parameter)
+    { Parameters.app symbol actuals }
+| p = actual_parameter m = modifier
+    { ParameterApp (m, [ p ]) }
 
 /* ------------------------------------------------------------------------- */
 /* Formal or actual parameter lists are delimited with parentheses and
