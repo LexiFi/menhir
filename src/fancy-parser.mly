@@ -63,7 +63,7 @@ grammar:
       { 
 	pg_filename          = ""; (* filled in by the caller *)
 	pg_declarations      = List.flatten ds;
-	pg_rules	     = List.flatten rs;
+	pg_rules	     = rs;
 	pg_trailer           = t
       }
     }
@@ -227,16 +227,14 @@ rule:
   branches = branches
     { 
       let public, inline = flags in
-      [
-        {
-          pr_public_flag = public; 
-          pr_inline_flag = inline; 
-	  pr_nt          = Positions.value symbol;
-	  pr_positions   = [ Positions.position symbol ];
-	  pr_parameters  = List.map Positions.value params;
-	  pr_branches    = branches
-        }
-      ]
+      {
+        pr_public_flag = public; 
+        pr_inline_flag = inline; 
+        pr_nt          = Positions.value symbol;
+        pr_positions   = [ Positions.position symbol ];
+        pr_parameters  = List.map Positions.value params;
+        pr_branches    = branches
+      }
     }
 | error
     { Error.error (Positions.two $startpos $endpos) "syntax error inside the definition of a nonterminal symbol." }
