@@ -161,18 +161,22 @@ rule:
   flags
   symbol
   optional_formal_parameters
-  COLON optional_bar
-  production_group production_groups
-    { 
+  COLON
+  branches
+    {
       let public, inline = $1 in
       { pr_public_flag = public; 
 	pr_inline_flag = inline;
 	pr_nt          = Positions.value $2;
 	pr_positions   = [ Positions.position $2 ];
 	pr_parameters  = $3;
-	pr_branches    = List.flatten ($6 :: List.rev $7)
+	pr_branches    = $5
       }
     }
+
+branches:
+  optional_bar production_group production_groups
+    { List.flatten ($2 :: List.rev $3) }
 
 flags:
   /* epsilon */

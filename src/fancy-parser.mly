@@ -223,8 +223,8 @@ rule:
   flags = flags                                             /* flags */
   symbol = symbol                                           /* the symbol that is being defined */
   params = plist(symbol)                                    /* formal parameters */
-  COLON optional_bar
-  prods = separated_nonempty_list(BAR, production_group)    /* productions */
+  COLON
+  branches = branches
     { 
       let public, inline = flags in
       [
@@ -234,12 +234,16 @@ rule:
 	  pr_nt          = Positions.value symbol;
 	  pr_positions   = [ Positions.position symbol ];
 	  pr_parameters  = List.map Positions.value params;
-	  pr_branches    = List.flatten prods
+	  pr_branches    = branches
         }
       ]
     }
 | error
     { Error.error (Positions.two $startpos $endpos) "syntax error inside the definition of a nonterminal symbol." }
+
+%inline branches:
+  optional_bar prods = separated_nonempty_list(BAR, production_group)
+    { List.flatten prods }
 
 flags:
   /* epsilon */
