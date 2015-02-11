@@ -63,7 +63,7 @@ grammar:
       { 
 	pg_filename          = ""; (* filled in by the caller *)
 	pg_declarations      = List.flatten ds;
-	pg_rules	     = rs;
+	pg_rules	     = rs @ ParserAux.rules();
 	pg_trailer           = t
       }
     }
@@ -111,11 +111,11 @@ declaration:
       ])
     }
 
-| TYPE t = OCAMLTYPE ss = clist(actual_parameter) %prec decl
+| TYPE t = OCAMLTYPE ss = clist(strict_actual) %prec decl
     { List.map (Positions.map (fun nt -> DType (t, nt)))
         (List.map Parameters.with_pos ss) }
 
-| TYPE OCAMLTYPE clist(actual_parameter) error
+| TYPE OCAMLTYPE clist(strict_actual) error
 | TYPE OCAMLTYPE error
 | TYPE error
     { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
@@ -224,6 +224,7 @@ rule:
   symbol = symbol                                           /* the symbol that is being defined */
   params = plist(symbol)                                    /* formal parameters */
   COLON
+  optional_bar
   branches = branches
     { 
       let public, inline = flags in
@@ -240,7 +241,7 @@ rule:
     { Error.error (Positions.two $startpos $endpos) "syntax error inside the definition of a nonterminal symbol." }
 
 %inline branches:
-  optional_bar prods = separated_nonempty_list(BAR, production_group)
+  prods = separated_nonempty_list(BAR, production_group)
     { List.flatten prods }
 
 flags:
@@ -307,26 +308,63 @@ production:
    Because both [ioption] and [terminated] are defined as inlined by
    the standard library, this definition expands to two productions,
    one of which begins with id = LID, the other of which begins with
-   p = actual_parameter. The token LID is in FIRST(actual_parameter),
+   p = actual. The token LID is in FIRST(actual),
    but the LR(1) formalism can deal with that. If [option] was used
    instead of [ioption], an LR(1) conflict would arise -- looking
    ahead at LID would not allow determining whether to reduce an
    empty [option] or to shift. */
 
 producer:
-| id = ioption(terminated(LID, EQUAL)) p = actual_parameter
+| id = ioption(terminated(LID, EQUAL)) p = actual
     { id, p }
 
 /* ------------------------------------------------------------------------- */
-/* The syntax of actual parameters allows applications, whereas the syntax
-   of formal parameters does not. It also allows use of the "?", "+", and
-   "*" shortcuts. */
+/* The ideal syntax of actual parameters includes:
+   1. a symbol, optionally applied to a list of actual parameters;
+   2. an actual parameter followed with a modifier;
+   3. an anonymous rule. (Not delimited by parentheses! Otherwise
+      one would often end up writing two pairs of parentheses.) */
 
-actual_parameter:
-  symbol = symbol actuals = plist(actual_parameter)
+/* In order to avoid a few ambiguities, we restrict this ideal syntax as
+   follows:
+   a. Within a %type declaration, we use [strict_actual], which
+      allows 1- and 2- (this is undocumented; the documentation says we
+      require a symbol) but not 3-, which would not make semantic sense
+      anyway.
+   b. Within a producer, we use [actual], which allows 1- and
+      2- but not 3-. Case 3- is allowed by switching to [lax_actual]
+      within the actual arguments of an application, which are clearly
+      delimited by parentheses and commas.
+   c. In front of a modifier, we can never allow [lax_actual],
+      as this would create an ambiguity: basically, [A | B?] could be
+      interpreted either as [(A | B)?] or as [A | (B?)].
+*/
+
+%inline generic_actual(A, B):
+(* 1- *)
+  symbol = symbol actuals = plist(A)
     { Parameters.app symbol actuals }
-| p = actual_parameter m = modifier
+(* 2- *)
+| p = B m = modifier
     { ParameterApp (m, [ p ]) }
+
+strict_actual:
+  p = generic_actual(strict_actual, strict_actual)
+    { p }
+
+actual:
+  p = generic_actual(lax_actual, actual)
+    { p }
+
+lax_actual:
+  p = generic_actual(lax_actual, /* cannot be lax_ */ actual)
+    { p }
+(* 3- *)
+| /* leading bar disallowed */
+  branches = branches
+    { let position = position (with_poss $startpos $endpos ()) in
+      let symbol = ParserAux.anonymous position branches in
+      ParameterVar (with_pos position symbol) }
 
 /* ------------------------------------------------------------------------- */
 /* Formal or actual parameter lists are delimited with parentheses and

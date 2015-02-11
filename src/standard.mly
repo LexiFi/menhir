@@ -5,6 +5,18 @@
 %%
 
 (* ------------------------------------------------------------------------- *)
+(* The identity. *)
+
+(* [anonymous(X)] is the same as [X]. *)
+
+(* This can be useful because it allows placing an anonymous sub-rule in
+   the middle of a rule, as in [foo anonymous(bar { ... } | quux { ...}) baz]. *)
+
+%public %inline anonymous(X):
+  x = X
+    { x }
+
+(* ------------------------------------------------------------------------- *)
 (* Options. *)
 
 (* [option(X)] recognizes either nothing or [X]. It produces a value

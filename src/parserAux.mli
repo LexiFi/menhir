@@ -23,3 +23,11 @@ val check_production_group:
 
 val override: Positions.t -> 'a option -> 'a option -> 'a option
 
+(* Support for on-the-fly expansion of anonymous rules. When such a
+   rule is encountered, invoke [anonymous], which creates a fresh
+   non-terminal symbol, records the definition of this symbol to a
+   global variable, and returns this symbol. In the end, invoke
+   [rules], so as to obtain a list of all recorded definitions. *)
+
+val anonymous: Positions.t -> parameterized_branch list -> string
+val rules: unit -> parameterized_rule list
