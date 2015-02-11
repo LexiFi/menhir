@@ -1,7 +1,9 @@
 /* This is the crude version of the parser. It is meant to be processed
    by ocamlyacc. Its existence is necessary for bootstrapping. It is kept
-   in sync with [fancy-parser]. The two parsers accept the same language,
-   but [fancy-parser] performs slightly more refined error handling. */
+   in sync with [fancy-parser], with a few differences:
+   1. [fancy-parser] exploits many features of Menhir;
+   2. [fancy-parser] performs slightly more refined error handling;
+   3. [fancy-parser] supports anonymous rules. */
 
 %{
 
@@ -162,7 +164,8 @@ rule:
   symbol
   optional_formal_parameters
   COLON
-  branches
+  optional_bar
+  production_group production_groups
     {
       let public, inline = $1 in
       { pr_public_flag = public; 
@@ -170,13 +173,9 @@ rule:
 	pr_nt          = Positions.value $2;
 	pr_positions   = [ Positions.position $2 ];
 	pr_parameters  = $3;
-	pr_branches    = $5
+	pr_branches    = List.flatten ($6 :: List.rev $7)
       }
     }
-
-branches:
-  optional_bar production_group production_groups
-    { List.flatten ($2 :: List.rev $3) }
 
 flags:
   /* epsilon */
