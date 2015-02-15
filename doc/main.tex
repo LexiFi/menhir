@@ -374,6 +374,7 @@ must be fully qualified.
 \nt{actual} \is
    \nt{id} \optional{\dlpar\sepcommalist{\nt{actual}}\drpar} \\
 && \nt{actual} \optional{\dquestion \barre \dplus \barre \dstar} \\
+&& \seplist{\ \barre}{\nt{group}} % not really allowed everywhere
 
 \end{tabular}
 \end{center}
@@ -563,11 +564,40 @@ keyword (\kw{\$1}, etc.).
 \subsubsection{Actuals}
 \label{sec:actual}
 
-In its simplest form, an actual is just a terminal or nonterminal
-symbol. The optional actual parameters
-$\dlpar\sepcommalist{\nt{actual}}\drpar$ and the optional modifier
-(\dquestion, \dplus, or \dstar) are explained further on
-(see \sref{sec:templates} and \fref{fig:sugar}).
+In its simplest form, an actual is just a terminal or nonterminal symbol
+$\nt{id}$. If it is a parameterized non-terminal symbol (see
+\sref{sec:templates}), then it should be applied:
+$\nt{id}\dlpar\sepcommalist{\nt{actual}}\drpar$.
+
+An actual may be followed with a modifier (\dquestion, \dplus, or
+\dstar). This is explained further on (see \sref{sec:templates} and
+\fref{fig:sugar}).
+
+An actual may also be an ``anonymous rule''. In that case, one writes
+just the rule's right-hand side, which takes the form $\seplist{\ \barre\
+}{\nt{group}}$.
+(This form is allowed only as an argument in an application.)
+This form is expanded on the fly to a definition of a fresh non-terminal
+symbol, which is declared \dinline.
+For instance, providing an anonymous rule as an argument to \nt{list}:
+\begin{quote}
+\begin{tabular}{l}
+\nt{list} \dlpar \basic{e} = \nt{expression}; \basic{SEMICOLON} \dpaction{\basic{e}} \drpar
+\end{tabular}
+\end{quote}
+is equivalent to writing this:
+\begin{quote}
+\begin{tabular}{l}
+\nt{list} \dlpar \nt{expression\_SEMICOLON} \drpar
+\end{tabular}
+\end{quote}
+where the non-terminal symbol \nt{expression\_SEMICOLON} is chosen fresh and is defined as follows:
+\begin{quote}
+\begin{tabular}{l}
+\dinline \nt{expression\_SEMICOLON}:
+\newprod \basic{e} = \nt{expression}; \basic{SEMICOLON} \dpaction{\basic{e}}
+\end{tabular}
+\end{quote}
 
 \section{Advanced features}
 
