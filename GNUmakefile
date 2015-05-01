@@ -42,7 +42,7 @@ export CDPATH=
 
 # Distribution.
 # The version number is automatically set to the current date,
-# unles DATE is defined on the command line.
+# unless DATE is defined on the command line.
 ifndef $(DATE)
 DATE     := $(shell /bin/date +%Y%m%d)
 endif
