@@ -1394,6 +1394,11 @@ so you should not care how they are resolved.
 with \ocamlyacc's. Yet, \menhir attempts to be more user-friendly by warning
 about a class of so-called ``end-of-stream conflicts''.
 
+% TEMPORARY il faut noter que Menhir n'est pas conforme à ocamlyacc en
+% présence de conflits end-of-stream; apparemment il part dans le mur
+% en exigeant toujours le token suivant, alors que ocamlyacc est capable
+% de s'arrêter (comment?); cf. problème de S. Hinderer (avril 2015).
+
 \paragraph{How the end of stream is handled}
 
 In many textbooks on parsing, it is assumed that the lexical analyzer, which
@@ -1528,8 +1533,8 @@ token. \menhir's default behavior, in that case, is to suppress the action on
 When this grammar is processed, \menhir warns about these conflicts,
 and further warns that \nt{expr} is never accepted. Let us explain.
 
-Part of the corresponding automaton, as described in the \conflicts file, is
-shown in \fref{fig:basiceosdump}. Explanations at the end of the \conflicts
+Part of the corresponding automaton, as described in the \automaton file, is
+shown in \fref{fig:basiceosdump}. Explanations at the end of the \automaton
 file (not shown) point out that states 6 and 2 have an end-of-stream
 conflict. Indeed, both states have distinct actions on \eos and on the
 physical token \basic{TIMES}.
