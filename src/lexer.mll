@@ -312,6 +312,11 @@ rule main = parse
     { STAR }
 | "+"
     { PLUS }
+| "_" ['0'-'9']+
+    { Error.errorp
+        (Positions.with_poss (lexeme_start_p lexbuf) (lexeme_end_p lexbuf) ())
+        "identifiers of the form _0, _1, _2, ..., are reserved."
+    }
 | (lowercase identchar *) as id
     { if Hashtbl.mem reserved id then
 	Error.errorp
