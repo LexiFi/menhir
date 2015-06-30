@@ -119,156 +119,156 @@ open Syntax
 %%
 
 toplevel:
-| classDecs COLON termDef
-    { Program($1,$3) }
+| _1 = classDecs _2 = COLON _3 = termDef
+    {   ( Program(_1,_3) )}
 
 classDecs:
-| COMMAND
-    { [] }
-| classDec classDecs
-    {  let decl = $1 in
-          let decls = $2 in
-	      decl::decls }
+| _1 = COMMAND
+    {      ( [] )}
+| _1 = classDec _2 = classDecs
+    {      (  let decl = _1 in
+          let decls = _2 in
+	      decl::decls )}
 
 classDec:
-| CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef methodDefs RCURLY
-    { Class (Name($2.v), SuperName($4.v), $6, $7, $8) }
-| CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef RCURLY
-    { Class (Name($2.v), SuperName($4.v), $6, $7, []) }
-| CLASS ID EXTENDS ID LCURLY constructorDef methodDefs RCURLY
-    { Class (Name($2.v), SuperName($4.v), [], $6, $7) }
-| CLASS ID EXTENDS ID LCURLY constructorDef RCURLY
-    { Class (Name($2.v), SuperName($4.v), [], $6, []) }
+| _1 = CLASS _2 = ID _3 = EXTENDS _4 = ID _5 = LCURLY _6 = fieldDefs _7 = constructorDef _8 = methodDefs _9 = RCURLY
+    {      ( Class (Name(_2.v), SuperName(_4.v), _6, _7, _8) )}
+| _1 = CLASS _2 = ID _3 = EXTENDS _4 = ID _5 = LCURLY _6 = fieldDefs _7 = constructorDef _8 = RCURLY
+    {      ( Class (Name(_2.v), SuperName(_4.v), _6, _7, []) )}
+| _1 = CLASS _2 = ID _3 = EXTENDS _4 = ID _5 = LCURLY _6 = constructorDef _7 = methodDefs _8 = RCURLY
+    {      ( Class (Name(_2.v), SuperName(_4.v), [], _6, _7) )}
+| _1 = CLASS _2 = ID _3 = EXTENDS _4 = ID _5 = LCURLY _6 = constructorDef _7 = RCURLY
+    {      ( Class (Name(_2.v), SuperName(_4.v), [], _6, []) )}
 
 fieldDefs:
-| SEMI
-    { [] }
-| fieldDef SEMI fieldDefs
-    { let fDef = $1 in
-		  let fDefs = $3 in
-		  fDef::fDefs }
+| _1 = SEMI
+    {   ( [] )}
+| _1 = fieldDef _2 = SEMI _3 = fieldDefs
+    {   ( let fDef = _1 in
+		  let fDefs = _3 in
+		  fDef::fDefs )}
 
 fieldDef:
-| ID ID
-    { Field(Type($1.v), Name($2.v)) }
+| _1 = ID _2 = ID
+    {   ( Field(Type(_1.v), Name(_2.v)) )}
 
 constructorDef:
-| ID LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY
-    { Constructor(Name($1.v), $3, SuperConstructorCall($8), $11) }
+| _1 = ID _2 = LPAREN _3 = paramDefs _4 = RPAREN _5 = LCURLY _6 = SUPER _7 = LPAREN _8 = argDefs _9 = RPAREN _10 = SEMI _11 = fieldAssignmentDefs _12 = RCURLY
+    {   ( Constructor(Name(_1.v), _3, SuperConstructorCall(_8), _11) )}
 
 paramDefs:
 | 
-    { [] }
-| paramDef
-    { let pDef = $1 in
+    {     ( [] )}
+| _1 = paramDef
+    {      ( let pDef = _1 in
           let pDefs = [] in
-          pDef::pDefs }
-| paramDef COMMA paramDefs
-    { let pDef = $1 in
-          let pDefs = $3 in
-          pDef::pDefs }
+          pDef::pDefs )}
+| _1 = paramDef _2 = COMMA _3 = paramDefs
+    {      ( let pDef = _1 in
+          let pDefs = _3 in
+          pDef::pDefs )}
 
 paramDef:
-| ID ID
-    { Param (Type($1.v), Name($2.v)) }
+| _1 = ID _2 = ID
+    {      ( Param (Type(_1.v), Name(_2.v)) )}
 
 argDefs:
 | 
-    {	[] }
-| argDef
-    {	let aDef = $1 in
+    {      (	[] )}
+| _1 = argDef
+    {      (	let aDef = _1 in
 	  let aDefs = [] in
-	  aDef::aDefs }
-| argDef COMMA argDefs
-    {	let aDef = $1 in
-	  let aDefs = $3 in
-	  aDef::aDefs }
+	  aDef::aDefs )}
+| _1 = argDef _2 = COMMA _3 = argDefs
+    {      (	let aDef = _1 in
+	  let aDefs = _3 in
+	  aDef::aDefs )}
 
 argDef:
-| ID
-    { Arg($1.v) }
+| _1 = ID
+    {      ( Arg(_1.v) )}
 
 fieldAssignmentDefs:
 | 
-    { [] }
-| fieldAssignmentDef fieldAssignmentDefs
-    { let faDef = $1 in
-          let faDefs = $2 in
-	  faDef::faDefs }
+    {      ( [] )}
+| _1 = fieldAssignmentDef _2 = fieldAssignmentDefs
+    {      ( let faDef = _1 in
+          let faDefs = _2 in
+	  faDef::faDefs )}
 
 fieldAssignmentDef:
-| THIS DOT ID EQ ID SEMI
-    { FieldAssignment (Name($3.v), Value($5.v)) }
+| _1 = THIS _2 = DOT _3 = ID _4 = EQ _5 = ID _6 = SEMI
+    {      ( FieldAssignment (Name(_3.v), Value(_5.v)) )}
 
 methodDefs:
-| SEMI
-    { [] }
-| methodDef methodDefs
-    { let mDef = $1 in
-          let mDefs = $2 in
-	      mDef::mDefs }
+| _1 = SEMI
+    {      ( [] )}
+| _1 = methodDef _2 = methodDefs
+    {      ( let mDef = _1 in
+          let mDefs = _2 in
+	      mDef::mDefs )}
 
 methodDef:
-| ID ID LPAREN paramDefs RPAREN LCURLY RETURN termDef SEMI RCURLY
-    { Method(ReturnType($1.v),Name($2.v),$4,$8) }
+| _1 = ID _2 = ID _3 = LPAREN _4 = paramDefs _5 = RPAREN _6 = LCURLY _7 = RETURN _8 = termDef _9 = SEMI _10 = RCURLY
+    {   ( Method(ReturnType(_1.v),Name(_2.v),_4,_8) )}
 
 termDef:
-| TmVarDef
-    { $1 }
-| TmFieldAccessDef
-    { $1 }
-| TmMethodInvocationDef
-    { $1 }
-| TmObjectCreationDef
-    { $1 }
-| TmCastDef
-    { $1 }
-| TmThis
-    { $1 }
-| LPAREN TmFieldAccessDef RPAREN
-    { $2 }
-| LPAREN TmMethodInvocationDef RPAREN
-    { $2 }
-| LPAREN TmObjectCreationDef RPAREN
-    { $2 }
-| LPAREN TmCastDef RPAREN
-    { $2 }
+| _1 = TmVarDef
+    {      ( _1 )}
+| _1 = TmFieldAccessDef
+    {      ( _1 )}
+| _1 = TmMethodInvocationDef
+    {      ( _1 )}
+| _1 = TmObjectCreationDef
+    {      ( _1 )}
+| _1 = TmCastDef
+    {      ( _1 )}
+| _1 = TmThis
+    {      ( _1 )}
+| _1 = LPAREN _2 = TmFieldAccessDef _3 = RPAREN
+    {      ( _2 )}
+| _1 = LPAREN _2 = TmMethodInvocationDef _3 = RPAREN
+    {      ( _2 )}
+| _1 = LPAREN _2 = TmObjectCreationDef _3 = RPAREN
+    {      ( _2 )}
+| _1 = LPAREN _2 = TmCastDef _3 = RPAREN
+    {      ( _2 )}
 
 TmThis:
-| THIS
-    { TmVar("this") }
+| _1 = THIS
+    {     ( TmVar("this") )}
 
 TmVarDef:
-| ID
-    { TmVar($1.v) }
+| _1 = ID
+    {   ( TmVar(_1.v) )}
 
 TmFieldAccessDef:
-| termDef DOT ID
-    { TmFieldAccess($1,$3.v) }
+| _1 = termDef _2 = DOT _3 = ID
+    {   ( TmFieldAccess(_1,_3.v) )}
 
 TmMethodInvocationDef:
-| termDef DOT ID LPAREN termDefs RPAREN
-    { TmMethodInvocation($1,$3.v,$5) }
+| _1 = termDef _2 = DOT _3 = ID _4 = LPAREN _5 = termDefs _6 = RPAREN
+    {   ( TmMethodInvocation(_1,_3.v,_5) )}
 
 TmObjectCreationDef:
-| NEW ID LPAREN termDefs RPAREN
-    { TmObjectCreation($2.v,$4) }
+| _1 = NEW _2 = ID _3 = LPAREN _4 = termDefs _5 = RPAREN
+    {   ( TmObjectCreation(_2.v,_4) )}
 
 TmCastDef:
-| LPAREN ID RPAREN termDef
-    { TmCast($2.v,$4) }
+| _1 = LPAREN _2 = ID _3 = RPAREN _4 = termDef
+    {   ( TmCast(_2.v,_4) )}
 
 termDefs:
 | 
-    { [] }
-| termDef
-    { let tDef = $1 in
+    {      ( [] )}
+| _1 = termDef
+    {      ( let tDef = _1 in
           let tDefs = [] in
-          tDef::tDefs }
-| termDef COMMA termDefs
-    { let tDef = $1 in
-          let tDefs = $3 in
-          tDef::tDefs }
+          tDef::tDefs )}
+| _1 = termDef _2 = COMMA _3 = termDefs
+    {      ( let tDef = _1 in
+          let tDefs = _3 in
+          tDef::tDefs )}
 
 %%
 

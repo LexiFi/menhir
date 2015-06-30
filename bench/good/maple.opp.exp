@@ -161,59 +161,59 @@ let convert_exprs_to_names exprs =
 %%
 
 program:
-| statseq EOF
-    { List.rev $1 }
+| _1 = statseq _2 = EOF
+    {                      ( List.rev _1 )}
 
 comments:
-| comments COMMENT
-    { $2 :: $1 }
+| _1 = comments _2 = COMMENT
+    {                            ( _2 :: _1 )}
 | 
-    { [] }
+    {          ( [] )}
 
 statseq:
-| statseq SEMICOLON comments stat
-    { { comments = List.rev $3;
+| _1 = statseq _2 = SEMICOLON _3 = comments _4 = stat
+    {                                          ( { comments = List.rev _3;
 					      sep=SemiColon;
-					      stat = $4
+					      stat = _4
 					    }
-					    :: $1
-					  }
-| statseq COLON comments stat
-    { { comments = List.rev $3;
+					    :: _1
+					  )}
+| _1 = statseq _2 = COLON _3 = comments _4 = stat
+    {                                      ( { comments = List.rev _3;
 					  sep=Colon;
-					  stat = $4
+					  stat = _4
 					}
-					:: $1
-				      }
-| comments stat
-    {
-	     if (is_empty_stat $2) & (is_empty_comments $1) then []
+					:: _1
+				      )}
+| _1 = comments _2 = stat
+    {     (
+	     if (is_empty_stat _2) & (is_empty_comments _1) then []
 	     else
-	       [ { comments = List.rev $1;
+	       [ { comments = List.rev _1;
 		   sep=NoSep;
-		   stat = $2
+		   stat = _2
 		 }
 	       ]
-	    }
+	    )}
 
 stat:
-| nameseq ASSIGN exprseq
-    { AssignStat ( { lhs_of_assign=$1; rhs=$3 } ) }
-| expr
-    { ExprStat ($1) }
-| READ expr
-    { match $2 with
+| _1 = nameseq _2 = ASSIGN _3 = exprseq
+    {                                 ( AssignStat ( { lhs_of_assign=_1; rhs=_3 } ) )}
+| _1 = expr
+    {        ( ExprStat (_1) )}
+| _1 = READ _2 = expr
+    {             ( match _2 with
                       | ParenExpr ([e]) -> ReadStat (e)
-		      |	_ -> ReadStat ($2) ;
-		    }
-| SAVE name_string
-    { SaveStat ( [] , $2 ) }
-| SAVE nameseq COMMA name_string
-    { SaveStat ( $2 , $4 ) }
-| ifpart FI
-    { $1 }
-| ifpart ELSE statseq FI
-    { match $1 with
+		      |	_ -> ReadStat (_2) ;
+		    )}
+| _1 = SAVE _2 = name_string
+    {                    ( SaveStat ( [] , _2 ) )}
+| _1 = SAVE _2 = nameseq _3 = COMMA _4 = name_string
+    {                                  ( SaveStat ( _2 , _4 ) )}
+| _1 = ifpart _2 = FI
+    {             ( _1 )}
+| _1 = ifpart _2 = ELSE _3 = statseq _4 = FI
+    {       ( match _1 with
 	        | IfThenElseStat current_if_stat
 		  ->
 	            let condition = current_if_stat.cond and
@@ -222,151 +222,151 @@ stat:
 		    in IfThenElseStat ( { cond = condition;
 					  then_part = th;
 					  alternatives = alts;
-					  else_part = List.rev $3
+					  else_part = List.rev _3
 					} )
 		| _ ->
 		    begin
-		      Printf.printf "ERROR: ifpart is a %s\n" (string_of_stat $1);
+		      Printf.printf "ERROR: ifpart is a %s\n" (string_of_stat _1);
 		      Printf.printf "IfThenElseStat was expected\n";
 		      Printf.printf "current rule: stat: ifpart ELSE statseq FI\n";
 		      Printf.printf "line number : %d\n" !Maple_lexer.linecount;
 		      flush stdout;
 		      failwith "ifpart"
 		    end
-	      }
-| for_stmt
-    { $1 }
-| for_in_stmt
-    { $1 }
-| QUIT
-    { StopStat }
-| STOP
-    { StopStat }
+	      )}
+| _1 = for_stmt
+    {            ( _1 )}
+| _1 = for_in_stmt
+    {               ( _1 )}
+| _1 = QUIT
+    {        ( StopStat )}
+| _1 = STOP
+    {        ( StopStat )}
 | 
-    { EmptyStat }
+    {   ( EmptyStat )}
 
 for_stmt:
-| FOR name for_without_name
-    { let fwn = $3 in
-              ForStat ( { loop_index = Some $2;
+| _1 = FOR _2 = name _3 = for_without_name
+    {     ( let fwn = _3 in
+              ForStat ( { loop_index = Some _2;
 			  from_expr = fwn.from_expr;
 			  by_expr = fwn.by_expr;
 			  to_expr = fwn.to_expr;
 			  while_expr = fwn.while_expr;
 			  body = fwn.body
 			} )
-	    }
-| for_without_name
-    { ForStat ($1) }
+	    )}
+| _1 = for_without_name
+    {                    ( ForStat (_1) )}
 
 for_without_name:
-| FROM expr for_without_from
-    { let fwf = $3 in
+| _1 = FROM _2 = expr _3 = for_without_from
+    {     ( let fwf = _3 in
 	      { loop_index = None;
-		from_expr = Some $2;
+		from_expr = Some _2;
 		by_expr = fwf.by_expr;
 		to_expr = fwf.to_expr;
 		while_expr = fwf.while_expr;
 		body = fwf.body
 	      }	
-	    }
-| for_without_from
-    { $1 }
+	    )}
+| _1 = for_without_from
+    {                    ( _1 )}
 
 for_without_from:
-| BY expr TO expr for_body
-    { let fwb = $5 in
+| _1 = BY _2 = expr _3 = TO _4 = expr _5 = for_body
+    {     ( let fwb = _5 in
 	      { loop_index = None;
 		from_expr = None;
-		by_expr = Some $2 ;
-		to_expr = Some $4 ;
+		by_expr = Some _2 ;
+		to_expr = Some _4 ;
 		while_expr = fwb.while_expr;
 		body = fwb.body
 	      }
-	    }
-| TO expr BY expr for_body
-    { let fwb = $5 in
+	    )}
+| _1 = TO _2 = expr _3 = BY _4 = expr _5 = for_body
+    {     ( let fwb = _5 in
 	      { loop_index = None;
 		from_expr = None;
-		by_expr = Some $4 ;
-		to_expr = Some $2 ;
+		by_expr = Some _4 ;
+		to_expr = Some _2 ;
 		while_expr = fwb.while_expr;
 		body = fwb.body
 	      }
-	    }
-| TO expr for_body
-    { let fwb = $3 in
+	    )}
+| _1 = TO _2 = expr _3 = for_body
+    {     ( let fwb = _3 in
 	      { loop_index = None;
 		from_expr = None;
 		by_expr = None;
-		to_expr = Some $2 ;
+		to_expr = Some _2 ;
 		while_expr = fwb.while_expr;
 		body = fwb.body
 	      }
-	    }
-| BY expr for_body
-    { let fwb = $3 in
+	    )}
+| _1 = BY _2 = expr _3 = for_body
+    {     ( let fwb = _3 in
 	      { loop_index = None;
 		from_expr = None;
-		by_expr = Some $2 ;
+		by_expr = Some _2 ;
 		to_expr = None ;
 		while_expr = fwb.while_expr;
 		body = fwb.body
 	      }
-	    }
-| for_body
-    { $1 }
+	    )}
+| _1 = for_body
+    {            ( _1 )}
 
 for_body:
-| WHILE expr DO statseq OD
-    { { loop_index = None;
+| _1 = WHILE _2 = expr _3 = DO _4 = statseq _5 = OD
+    {     ( { loop_index = None;
 		from_expr = None;
 		by_expr = None;
 		to_expr = None;
-		while_expr = Some $2;
-		body = List.rev $4
+		while_expr = Some _2;
+		body = List.rev _4
 	      }
-	    }
-| DO statseq OD
-    { { loop_index = None;
+	    )}
+| _1 = DO _2 = statseq _3 = OD
+    {                 ( { loop_index = None;
 			    from_expr = None;
 			    by_expr = None;
 			    to_expr = None;
 			    while_expr = None;
-			    body = List.rev $2
+			    body = List.rev _2
 			  }
-			}
+			)}
 
 for_in_stmt:
-| FOR name IN expr DO statseq OD
-    {
-	      ForInStat ( { loop_var = $2;
-			    in_expr = $4;
+| _1 = FOR _2 = name _3 = IN _4 = expr _5 = DO _6 = statseq _7 = OD
+    {     (
+	      ForInStat ( { loop_var = _2;
+			    in_expr = _4;
 			    in_while = None;
-			    in_body = List.rev $6
+			    in_body = List.rev _6
 			  }
 			 )
-	    }
-| FOR name IN expr WHILE expr DO statseq OD
-    {
-	      ForInStat ( { loop_var = $2;
-			    in_expr = $4;
-			    in_while = Some $6;
-			    in_body = List.rev $8
+	    )}
+| _1 = FOR _2 = name _3 = IN _4 = expr _5 = WHILE _6 = expr _7 = DO _8 = statseq _9 = OD
+    {     (
+	      ForInStat ( { loop_var = _2;
+			    in_expr = _4;
+			    in_while = Some _6;
+			    in_body = List.rev _8
 			  }
 			 )
-	    }
+	    )}
 
 ifpart:
-| IF expr THEN statseq
-    { IfThenElseStat ( { cond=$2;
-						    then_part = List.rev $4;
+| _1 = IF _2 = expr _3 = THEN _4 = statseq
+    {                               ( IfThenElseStat ( { cond=_2;
+						    then_part = List.rev _4;
 						    alternatives = [];
 						    else_part = []
 						  } )
-			       }
-| ifpart ELIF expr THEN statseq
-    { match $1 with
+			       )}
+| _1 = ifpart _2 = ELIF _3 = expr _4 = THEN _5 = statseq
+    {       ( match _1 with
 	        | IfThenElseStat current_if_stat
 		  ->
 	            let condition = current_if_stat.cond and
@@ -374,216 +374,216 @@ ifpart:
 			alts = current_if_stat.alternatives
 		    in IfThenElseStat ( { cond = condition;
 					  then_part = th;
-					  alternatives = alts @ [ { cond_of_alt = $3;
-								    stats_of_alt = List.rev $5 } ];
+					  alternatives = alts @ [ { cond_of_alt = _3;
+								    stats_of_alt = List.rev _5 } ];
 					  else_part = []
 					} )
 		| _ ->
 		    begin
-		      Printf.printf "ERROR: ifpart is a %s\n" (string_of_stat $1);
+		      Printf.printf "ERROR: ifpart is a %s\n" (string_of_stat _1);
 		      Printf.printf "IfThenElseStat was expected\n";
 		      Printf.printf "current rule: ifpart: IF expr THEN statseq\n";
 		      Printf.printf "line number : %d\n" !Maple_lexer.linecount;
 		      flush stdout;
 		      failwith "ifpart"
 		    end
-	      }
+	      )}
 
 expr:
-| expr ARROW expr
-    { match $1 with
-	    | NameExpr (n) -> ArrowExpr ( [n] , $3 )
-	    | ParenExpr (exps) -> ArrowExpr ( (convert_exprs_to_names exps) , $3 )
+| _1 = expr _2 = ARROW _3 = expr
+    {            ( match _1 with
+	    | NameExpr (n) -> ArrowExpr ( [n] , _3 )
+	    | ParenExpr (exps) -> ArrowExpr ( (convert_exprs_to_names exps) , _3 )
 	    | _ ->
 		begin
 		  Printf.printf "ERROR: expected NameExpr or ParenExpr\n";
 		  Printf.printf "current rule: expr: expr ARROW expr\n";
-		  Printf.printf "first expr is a %s\n" (string_of_expr $1);
+		  Printf.printf "first expr is a %s\n" (string_of_expr _1);
 		  Printf.printf "line number : %d\n" !Maple_lexer.linecount;
 		  flush stdout;
 		  failwith "arrow expr"
 		end
-	    }
-| expr OR expr
-    { BinExpr ( { left = $1; bin_op = OrOp; right = $3 } ) }
-| expr AND expr
-    { BinExpr ( { left = $1; bin_op = AndOp; right = $3 } ) }
-| NOT expr
-    { UnaryExpr ( NotOp, $2) }
-| expr SUBTRACT expr
-    { BinExpr ( { left = $1; bin_op = MinusOp; right = $3 } ) }
-| expr PLUS expr
-    { BinExpr ( { left = $1; bin_op = PlusOp; right = $3 } ) }
-| PLUS expr %prec UPLUS
-    { UnaryExpr ( UnaryPlus , $2 ) }
-| SUBTRACT expr %prec UMINUS
-    { UnaryExpr ( UnaryMinus , $2 ) }
-| expr MULT expr
-    { BinExpr ( { left = $1; bin_op = MultOp; right = $3 } ) }
-| expr AMPOP expr
-    { BinExpr ( { left = $1; bin_op = NeutralOp($2); right = $3 } ) }
-| expr AMPMUL expr
-    { BinExpr ( { left = $1; bin_op = NeutralMulOp; right = $3 } ) }
-| expr SLASH expr
-    { BinExpr ( { left = $1; bin_op = DivOp; right = $3 } ) }
-| expr CARET expr
-    { BinExpr ( { left = $1; bin_op = ExpoOp; right = $3 } ) }
-| expr EXP expr
-    { BinExpr ( { left = $1; bin_op = ExpoOp; right = $3 } ) }
-| expr SEQ expr
-    { SeqExpr ( Some $1 , $3 ) }
-| SEQ expr
-    { SeqExpr ( None , $2 ) }
-| expr LT expr
-    { BinExpr ( { left = $1; bin_op = LTOp; right = $3 } ) }
-| expr GT expr
-    { BinExpr ( { left = $1; bin_op = GTOp; right = $3 } ) }
-| expr LE expr
-    { BinExpr ( { left = $1; bin_op = LEOp; right = $3 } ) }
-| expr GE expr
-    { BinExpr ( { left = $1; bin_op = GEOp; right = $3 } ) }
-| expr NE expr
-    { BinExpr ( { left = $1; bin_op = NEOp; right = $3 } ) }
-| expr EQUAL expr
-    { BinExpr ( { left = $1; bin_op = EQOp; right = $3 } ) }
-| expr MOD expr
-    { BinExpr ( { left = $1; bin_op = ModOp; right = $3 } ) }
-| expr ELLIPSE expr
-    { IntervalExpr ( $1 , $3 ) }
-| expr UNION expr
-    { BinExpr ( { left = $1; bin_op = Union; right = $3 } ) }
-| expr MINUS expr
-    { BinExpr ( { left = $1; bin_op = Minus; right = $3 } ) }
-| expr INTERSECT expr
-    { BinExpr ( { left = $1; bin_op = Intersect; right = $3 } ) }
-| expr EXCLAM
-    { Factorial ( $1 ) }
-| QUOTE expr QUOTE
-    { UnevaluatedExpr ( $2 ) }
-| LBRACK exprseq RBRACK
-    { ListExpr ( $2 ) }
-| LBRACE exprseq RBRACE
-    { SetExpr ( $2 ) }
-| name
-    { NameExpr ( $1 ) }
-| STRING
-    { StringExpr ($1) }
-| name functional_operator
-    {
-	     match $2 with
-	     | [a] -> CallExpr ( { callee = $1; args = a } )
-	     | _ -> FunctionalCallExpr ( { callee_f = $1; fargs = $2 } )
-	   }
-| INT
-    { IntExpr ($1) }
-| INT DOT INT
-    { FloatExpr ( $1, $3 ) }
-| INT DOT
-    { FloatExpr ( $1 , 0 ) }
-| DOT INT
-    { FloatExpr ( 0 , $2 ) }
-| PROC LPAREN parmseq RPAREN result_type decls_proc options_of_proc statseq END
-    {
-	     ProcDef ( { params = $3;
-			 result_type = $5;
-			 locals = $6;
-			 options = $7;
-			 body_of_proc = List.rev $8;
+	    )}
+| _1 = expr _2 = OR _3 = expr
+    {                ( BinExpr ( { left = _1; bin_op = OrOp; right = _3 } ) )}
+| _1 = expr _2 = AND _3 = expr
+    {                 ( BinExpr ( { left = _1; bin_op = AndOp; right = _3 } ) )}
+| _1 = NOT _2 = expr
+    {            ( UnaryExpr ( NotOp, _2) )}
+| _1 = expr _2 = SUBTRACT _3 = expr
+    {                      ( BinExpr ( { left = _1; bin_op = MinusOp; right = _3 } ) )}
+| _1 = expr _2 = PLUS _3 = expr
+    {                  ( BinExpr ( { left = _1; bin_op = PlusOp; right = _3 } ) )}
+| _1 = PLUS _2 = expr %prec UPLUS
+    {                         ( UnaryExpr ( UnaryPlus , _2 ) )}
+| _1 = SUBTRACT _2 = expr %prec UMINUS
+    {                              ( UnaryExpr ( UnaryMinus , _2 ) )}
+| _1 = expr _2 = MULT _3 = expr
+    {                  ( BinExpr ( { left = _1; bin_op = MultOp; right = _3 } ) )}
+| _1 = expr _2 = AMPOP _3 = expr
+    {                   ( BinExpr ( { left = _1; bin_op = NeutralOp(_2); right = _3 } ) )}
+| _1 = expr _2 = AMPMUL _3 = expr
+    {                    ( BinExpr ( { left = _1; bin_op = NeutralMulOp; right = _3 } ) )}
+| _1 = expr _2 = SLASH _3 = expr
+    {                   ( BinExpr ( { left = _1; bin_op = DivOp; right = _3 } ) )}
+| _1 = expr _2 = CARET _3 = expr
+    {                   ( BinExpr ( { left = _1; bin_op = ExpoOp; right = _3 } ) )}
+| _1 = expr _2 = EXP _3 = expr
+    {                 ( BinExpr ( { left = _1; bin_op = ExpoOp; right = _3 } ) )}
+| _1 = expr _2 = SEQ _3 = expr
+    {                 ( SeqExpr ( Some _1 , _3 ) )}
+| _1 = SEQ _2 = expr
+    {            ( SeqExpr ( None , _2 ) )}
+| _1 = expr _2 = LT _3 = expr
+    {                ( BinExpr ( { left = _1; bin_op = LTOp; right = _3 } ) )}
+| _1 = expr _2 = GT _3 = expr
+    {                ( BinExpr ( { left = _1; bin_op = GTOp; right = _3 } ) )}
+| _1 = expr _2 = LE _3 = expr
+    {                ( BinExpr ( { left = _1; bin_op = LEOp; right = _3 } ) )}
+| _1 = expr _2 = GE _3 = expr
+    {                ( BinExpr ( { left = _1; bin_op = GEOp; right = _3 } ) )}
+| _1 = expr _2 = NE _3 = expr
+    {                ( BinExpr ( { left = _1; bin_op = NEOp; right = _3 } ) )}
+| _1 = expr _2 = EQUAL _3 = expr
+    {                   ( BinExpr ( { left = _1; bin_op = EQOp; right = _3 } ) )}
+| _1 = expr _2 = MOD _3 = expr
+    {                 ( BinExpr ( { left = _1; bin_op = ModOp; right = _3 } ) )}
+| _1 = expr _2 = ELLIPSE _3 = expr
+    {                     ( IntervalExpr ( _1 , _3 ) )}
+| _1 = expr _2 = UNION _3 = expr
+    {                   ( BinExpr ( { left = _1; bin_op = Union; right = _3 } ) )}
+| _1 = expr _2 = MINUS _3 = expr
+    {                   ( BinExpr ( { left = _1; bin_op = Minus; right = _3 } ) )}
+| _1 = expr _2 = INTERSECT _3 = expr
+    {                       ( BinExpr ( { left = _1; bin_op = Intersect; right = _3 } ) )}
+| _1 = expr _2 = EXCLAM
+    {               ( Factorial ( _1 ) )}
+| _1 = QUOTE _2 = expr _3 = QUOTE
+    {                    ( UnevaluatedExpr ( _2 ) )}
+| _1 = LBRACK _2 = exprseq _3 = RBRACK
+    {                         ( ListExpr ( _2 ) )}
+| _1 = LBRACE _2 = exprseq _3 = RBRACE
+    {                         ( SetExpr ( _2 ) )}
+| _1 = name
+    {        ( NameExpr ( _1 ) )}
+| _1 = STRING
+    {          ( StringExpr (_1) )}
+| _1 = name _2 = functional_operator
+    {     (
+	     match _2 with
+	     | [a] -> CallExpr ( { callee = _1; args = a } )
+	     | _ -> FunctionalCallExpr ( { callee_f = _1; fargs = _2 } )
+	   )}
+| _1 = INT
+    {       ( IntExpr (_1) )}
+| _1 = INT _2 = DOT _3 = INT
+    {               ( FloatExpr ( _1, _3 ) )}
+| _1 = INT _2 = DOT
+    {           ( FloatExpr ( _1 , 0 ) )}
+| _1 = DOT _2 = INT
+    {           ( FloatExpr ( 0 , _2 ) )}
+| _1 = PROC _2 = LPAREN _3 = parmseq _4 = RPAREN _5 = result_type _6 = decls_proc _7 = options_of_proc _8 = statseq _9 = END
+    {     (
+	     ProcDef ( { params = _3;
+			 result_type = _5;
+			 locals = _6;
+			 options = _7;
+			 body_of_proc = List.rev _8;
 		       }
 		     )
-	    }
-| LPAREN exprseq RPAREN
-    { ParenExpr ($2) }
-| expr AT expr
-    { ComposeExpr ($1,$3) }
-| expr REPEAT_COMPOSE expr
-    { RepeatComposeExpr ($1,$3) }
+	    )}
+| _1 = LPAREN _2 = exprseq _3 = RPAREN
+    {                         ( ParenExpr (_2) )}
+| _1 = expr _2 = AT _3 = expr
+    {                ( ComposeExpr (_1,_3) )}
+| _1 = expr _2 = REPEAT_COMPOSE _3 = expr
+    {                            ( RepeatComposeExpr (_1,_3) )}
 
 exprseq:
 | 
-    { [] }
-| exprseq COMMA expr
-    { $1 @ [$3] }
-| expr
-    { [ $1 ] }
+    {          ( [] )}
+| _1 = exprseq _2 = COMMA _3 = expr
+    {                             ( _1 @ [_3] )}
+| _1 = expr
+    {        ( [ _1 ] )}
 
 name:
-| name_string
-    { NameString ($1) }
-| name DOT INT
-    { NameConcat ( $1 , N_int ($3) ) }
-| name DOT STRING
-    { NameConcat ( $1 , N_str ($3) ) }
-| name DOT LPAREN expr RPAREN
-    { NameConcat ( $1 , N_expr ($4) ) }
-| name LBRACK exprseq RBRACK
-    { NameIndexed ( $1 , $3 ) }
+| _1 = name_string
+    {                      ( NameString (_1) )}
+| _1 = name _2 = DOT _3 = INT
+    {                ( NameConcat ( _1 , N_int (_3) ) )}
+| _1 = name _2 = DOT _3 = STRING
+    {                   ( NameConcat ( _1 , N_str (_3) ) )}
+| _1 = name _2 = DOT _3 = LPAREN _4 = expr _5 = RPAREN
+    {                               ( NameConcat ( _1 , N_expr (_4) ) )}
+| _1 = name _2 = LBRACK _3 = exprseq _4 = RBRACK
+    {                              ( NameIndexed ( _1 , _3 ) )}
 
 functional_operator:
-| LPAREN exprseq RPAREN
-    { [ $2 ] }
-| functional_operator LPAREN exprseq RPAREN
-    { $1 @ [$3] }
+| _1 = LPAREN _2 = exprseq _3 = RPAREN
+    {                         ( [ _2 ] )}
+| _1 = functional_operator _2 = LPAREN _3 = exprseq _4 = RPAREN
+    {                                             ( _1 @ [_3] )}
 
 parmseq:
 | 
-    { [] }
-| oneparm
-    { [$1] }
-| parmseq COMMA oneparm
-    { $1 @ [$3] }
+    {          ( [] )}
+| _1 = oneparm
+    {           ( [_1] )}
+| _1 = parmseq _2 = COMMA _3 = oneparm
+    {                         ( _1 @ [_3] )}
 
 result_type:
 | 
-    { None }
-| DOUBLE_COLON name_string SEMICOLON
-    { Some $2 }
+    {   ( None )}
+| _1 = DOUBLE_COLON _2 = name_string _3 = SEMICOLON
+    {                                      ( Some _2 )}
 
 oneparm:
-| name
-    { { param_name =$1 ; param_type = None } }
-| name DOUBLE_COLON name_string
-    { { param_name =$1 ; param_type = Some $3 } }
+| _1 = name
+    {               ( { param_name =_1 ; param_type = None } )}
+| _1 = name _2 = DOUBLE_COLON _3 = name_string
+    {                                 ( { param_name =_1 ; param_type = Some _3 } )}
 
 nameseq:
 | 
-    { [] }
-| name
-    { [$1] }
-| nameseq COMMA name
-    { $1 @ [$3] }
+    {          ( [] )}
+| _1 = name
+    {        ( [_1] )}
+| _1 = nameseq _2 = COMMA _3 = name
+    {                      ( _1 @ [_3] )}
 
 decls_proc:
 | 
-    { [] }
-| globals_of_proc
-    { [] }
-| locals_of_proc
-    { $1 }
-| locals_of_proc globals_of_proc
-    { $1 }
-| globals_of_proc locals_of_proc
-    { $2 }
+    {   ( [] )}
+| _1 = globals_of_proc
+    {                   ( [] )}
+| _1 = locals_of_proc
+    {                  ( _1 )}
+| _1 = locals_of_proc _2 = globals_of_proc
+    {                                  ( _1 )}
+| _1 = globals_of_proc _2 = locals_of_proc
+    {                                  ( _2 )}
 
 locals_of_proc:
-| LOCAL nameseq SEMICOLON
-    { $2 }
+| _1 = LOCAL _2 = nameseq _3 = SEMICOLON
+    {                           ( _2 )}
 
 globals_of_proc:
-| GLOBAL nameseq SEMICOLON
-    { () }
+| _1 = GLOBAL _2 = nameseq _3 = SEMICOLON
+    {                            ( () )}
 
 options_of_proc:
 | 
-    { [] }
-| OPTION nameseq SEMICOLON
-    { $2 }
+    {   ( [] )}
+| _1 = OPTION _2 = nameseq _3 = SEMICOLON
+    {                            ( _2 )}
 
 name_string:
-| ID
-    { Ident ( $1  ) }
-| QUOTED_STRING
-    { QuotedString ( $1 ) }
+| _1 = ID
+    {             ( Ident ( _1  ) )}
+| _1 = QUOTED_STRING
+    {                 ( QuotedString ( _1 ) )}
 
 %%
 

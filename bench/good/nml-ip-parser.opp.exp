@@ -379,774 +379,774 @@ let unclosed opening_name opening_num closing_name closing_num =
 %%
 
 toplevel_phrase:
-| use_file_exprs EOF
-    { List.rev $1, Dep.needed_modules() }
+| _1 = use_file_exprs _2 = EOF
+    {     ( List.rev _1, Dep.needed_modules() )}
 | 
-    { [], [] }
+    {      ( [], [] )}
 
 use_file:
-| use_file_exprs EOF
-    {List.rev $1, Dep.needed_modules() }
+| _1 = use_file_exprs _2 = EOF
+    {    (List.rev _1, Dep.needed_modules() )}
 
 use_file_exprs:
-| top_expr
-    { [$1] }
-| use_file_exprs top_expr
-    { $2::$1 }
+| _1 = top_expr
+    {      ( [_1] )}
+| _1 = use_file_exprs _2 = top_expr
+    {      ( _2::_1 )}
 
 top_expr:
-| SEMISEMI
-    { mkstr(Pstr_empty) }
-| LET rec_flag let_bindings %prec prec_let
-    { mktoplet $2 (List.rev $3) }
-| EXCEPTION UIDENT OF type_expr
-    { mkstr(Pstr_exception($2,true)) }
-| EXCEPTION UIDENT
-    { mkstr(Pstr_exception($2,false)) }
-| TYPE type_vars LIDENT EQ opt_bar tag_list
-    { mkstr(Pstr_tags($3,List.rev $6)) }
-| TYPE LIDENT EQ opt_bar tag_list
-    { mkstr(Pstr_tags($2,List.rev $5)) }
-| TYPE LIDENT EQ LBRACE lbl_type_list opt_comma RBRACE
-    { mkstr(Pstr_recdef($2,List.rev $5)) }
-| TYPE LIDENT EQ LBRACE lbl_type_list opt_comma error
-    { unclosed "{" 4 "}" 7 }
-| MODULE mod_ident EQ mod_ident
-    { Dep.add_equiv $2 $4;
-	mkstr(Pstr_module_abbrev($2,$4)) }
-| OPEN mod_ident
-    { Dep.add $2;
-	mkstr(Pstr_open $2) }
-| seq_expr
-    { mkstrexp $1 }
+| _1 = SEMISEMI
+    {      ( mkstr(Pstr_empty) )}
+| _1 = LET _2 = rec_flag _3 = let_bindings %prec prec_let
+    {      ( mktoplet _2 (List.rev _3) )}
+| _1 = EXCEPTION _2 = UIDENT _3 = OF _4 = type_expr
+    {      ( mkstr(Pstr_exception(_2,true)) )}
+| _1 = EXCEPTION _2 = UIDENT
+    {      ( mkstr(Pstr_exception(_2,false)) )}
+| _1 = TYPE _2 = type_vars _3 = LIDENT _4 = EQ _5 = opt_bar _6 = tag_list
+    {      ( mkstr(Pstr_tags(_3,List.rev _6)) )}
+| _1 = TYPE _2 = LIDENT _3 = EQ _4 = opt_bar _5 = tag_list
+    {      ( mkstr(Pstr_tags(_2,List.rev _5)) )}
+| _1 = TYPE _2 = LIDENT _3 = EQ _4 = LBRACE _5 = lbl_type_list _6 = opt_comma _7 = RBRACE
+    {      ( mkstr(Pstr_recdef(_2,List.rev _5)) )}
+| _1 = TYPE _2 = LIDENT _3 = EQ _4 = LBRACE _5 = lbl_type_list _6 = opt_comma _7 = error
+    {      ( unclosed "{" 4 "}" 7 )}
+| _1 = MODULE _2 = mod_ident _3 = EQ _4 = mod_ident
+    {      ( Dep.add_equiv _2 _4;
+	mkstr(Pstr_module_abbrev(_2,_4)) )}
+| _1 = OPEN _2 = mod_ident
+    {      ( Dep.add _2;
+	mkstr(Pstr_open _2) )}
+| _1 = seq_expr
+    {      ( mkstrexp _1 )}
 
 tag_list:
-| simple_tag_type %prec prec_list
-    { [$1] }
-| tag_list BAR simple_tag_type %prec prec_list
-    { $3 :: $1 }
+| _1 = simple_tag_type %prec prec_list
+    {     ( [_1] )}
+| _1 = tag_list _2 = BAR _3 = simple_tag_type %prec prec_list
+    {      ( _3 :: _1 )}
 
 simple_tag_type:
-| UIDENT OF type_expr
-    { ($1,true) }
-| UIDENT
-    { ($1,false) }
+| _1 = UIDENT _2 = OF _3 = type_expr
+    {      ( (_1,true) )}
+| _1 = UIDENT
+    {      ( (_1,false) )}
 
 type_vars:
-| TIDENT
-    { [$1] }
-| LPAREN type_list RPAREN
-    { $2 }
+| _1 = TIDENT
+    {      ( [_1] )}
+| _1 = LPAREN _2 = type_list _3 = RPAREN
+    {      ( _2 )}
 
 type_list:
-| TIDENT %prec prec_list
-    {[$1]}
-| type_list COMMA TIDENT %prec prec_list
-    {$3::$1}
+| _1 = TIDENT %prec prec_list
+    {      ([_1])}
+| _1 = type_list _2 = COMMA _3 = TIDENT %prec prec_list
+    {      (_3::_1)}
 
 type_expr:
-| label_longident
-    { mktyp(Ptyp_ident $1)}
-| TIDENT
-    {mktyp(Ptyp_ident(Tident $1))}
-| type_expr label_longident
-    {mktyp(Ptyp_constr($2,$1))}
-| type_expr STAR type_expr
-    {mktyp(Ptyp_prod($1,$3))}
-| type_expr MINUSGREATER type_expr %prec LESSMINUS
-    {mktyp(Ptyp_arrow($1,$3))}
-| LPAREN type_expr RPAREN
-    {$2}
-| LPAREN type_expr error
-    { unclosed "(" 1 ")" 3 }
+| _1 = label_longident
+    {      ( mktyp(Ptyp_ident _1))}
+| _1 = TIDENT
+    {      (mktyp(Ptyp_ident(Tident _1)))}
+| _1 = type_expr _2 = label_longident
+    {      (mktyp(Ptyp_constr(_2,_1)))}
+| _1 = type_expr _2 = STAR _3 = type_expr
+    {      (mktyp(Ptyp_prod(_1,_3)))}
+| _1 = type_expr _2 = MINUSGREATER _3 = type_expr %prec LESSMINUS
+    {      (mktyp(Ptyp_arrow(_1,_3)))}
+| _1 = LPAREN _2 = type_expr _3 = RPAREN
+    {      (_2)}
+| _1 = LPAREN _2 = type_expr _3 = error
+    {      ( unclosed "(" 1 ")" 3 )}
 
 field_defn:
-| LIDENT COLON type_expr
-    { $1,Ip_types.Immutable }
-| MUTABLE LIDENT COLON type_expr
-    { $2,Ip_types.Mutable }
+| _1 = LIDENT _2 = COLON _3 = type_expr
+    {      ( _1,Ip_types.Immutable )}
+| _1 = MUTABLE _2 = LIDENT _3 = COLON _4 = type_expr
+    {      ( _2,Ip_types.Mutable )}
 
 lbl_type_list:
-| field_defn %prec prec_list
-    { [$1] }
-| lbl_type_list COMMA field_defn %prec prec_list
-    { $3 :: $1 }
+| _1 = field_defn %prec prec_list
+    {      ( [_1] )}
+| _1 = lbl_type_list _2 = COMMA _3 = field_defn %prec prec_list
+    {      ( _3 :: _1 )}
 
 rec_flag:
 | 
-    { Nonrecursive }
-| REC
-    { Recursive }
+    {     ( Nonrecursive )}
+| _1 = REC
+    {      ( Recursive )}
 
 expr:
-| value_expr
-    { $1 }
-| no_value_expr
-    { $1 }
+| _1 = value_expr
+    {      ( _1 )}
+| _1 = no_value_expr
+    {      ( _1 )}
 
 no_value_expr:
-| RAISE expr
-    { mkexp(Pexp_raise($2)) }
-| WHILE expr DO seq_expr DONE
-    { mkexp(Pexp_while($2,$4)) }
-| FOR LIDENT EQ expr direction_flag expr DO seq_expr DONE
-    { mkexp(Pexp_for($2,$4,$5,$6,$8)) }
-| simple_expr DOT label_longident LESSMINUS expr
-    { mkexp(Pexp_setfield($1,$3,$5)) }
-| simple_expr DOT LBRACK index_list RBRACK LESSMINUS expr
-    { mkexp(Pexp_setindex($1,List.rev $4,$7)) }
-| expr COLONEQUAL expr
-    { mkinfix $1 colonequalsym $3 }
-| ASSERT simple_expr %prec prec_appl
-    { mkassert $2 }
+| _1 = RAISE _2 = expr
+    {      ( mkexp(Pexp_raise(_2)) )}
+| _1 = WHILE _2 = expr _3 = DO _4 = seq_expr _5 = DONE
+    {      ( mkexp(Pexp_while(_2,_4)) )}
+| _1 = FOR _2 = LIDENT _3 = EQ _4 = expr _5 = direction_flag _6 = expr _7 = DO _8 = seq_expr _9 = DONE
+    {      ( mkexp(Pexp_for(_2,_4,_5,_6,_8)) )}
+| _1 = simple_expr _2 = DOT _3 = label_longident _4 = LESSMINUS _5 = expr
+    {      ( mkexp(Pexp_setfield(_1,_3,_5)) )}
+| _1 = simple_expr _2 = DOT _3 = LBRACK _4 = index_list _5 = RBRACK _6 = LESSMINUS _7 = expr
+    {      ( mkexp(Pexp_setindex(_1,List.rev _4,_7)) )}
+| _1 = expr _2 = COLONEQUAL _3 = expr
+    {      ( mkinfix _1 colonequalsym _3 )}
+| _1 = ASSERT _2 = simple_expr %prec prec_appl
+    {      ( mkassert _2 )}
 
 value_expr:
-| simple_expr
-    { $1 }
-| simple_expr simple_expr_list %prec prec_appl
-    { mkexp(Pexp_apply($1,List.rev $2)) }
-| LET rec_flag let_bindings IN seq_expr %prec prec_let
-    { mklet $2 (List.rev $3) $5 }
-| LET MODULE mod_ident EQ mod_ident IN seq_expr %prec prec_let
-    { Dep.subst $5 $3;
-	mkexp(Pexp_letmod($3,$5,$7)) }
-| FUN simple_pattern fun_def %prec prec_fun
-    { mkexp(Pexp_function[$2,$3]) }
-| FUNCTION opt_bar match_cases %prec prec_fun
-    { mkexp(Pexp_function(List.rev $3)) }
-| TRY seq_expr WITH opt_bar match_cases %prec prec_try
-    { mkexp(Pexp_try($2,List.rev $5)) }
-| TRY seq_expr WITH error %prec prec_try
-    { syntax_error() }
-| IF expr THEN expr ELSE expr %prec prec_if
-    { mkexp(Pexp_ifthenelse($2,$4,$6)) }
-| IF expr THEN expr %prec prec_if
-    { mkexp(Pexp_ifthenelse($2,$4,ghexp (Pexp_constant Const_unit) 0)) }
-| WHERE expr THEN expr ELSE expr %prec prec_if
-    { mkexp(Pexp_where($2, Some $4, Some $6)) }
-| WHERE expr %prec prec_if
-    { mkexp(Pexp_where($2, None, None)) }
-| expr WHERE expr %prec prec_if
-    { mkexp(Pexp_where($3, Some $1, None)) }
-| MATCH expr WITH opt_bar match_cases %prec prec_match
-    { mkexp(Pexp_match($2,List.rev $5)) }
-| MATCH expr_comma_list opt_comma WITH opt_bar match_cases %prec prec_match
-    { mkexp(Pexp_match(mkexp(Pexp_tuple(List.rev $2)),List.rev $6)) }
-| CASE opt_bar case_list
-    { mkexp(Pexp_case(List.rev $3)) }
-| constr_longident simple_expr %prec prec_constr_appl
-    { mkexp(Pexp_construct($1,Some $2)) }
-| expr QUESTION expr COLON expr
-    { mkexp(Pexp_ifthenelse($1,$3,$5)) }
-| expr COLONCOLON expr
-    { mkinfix $1 conssym $3 }
-| expr INFIXOP1L expr
-    { mkinfix $1 $2 $3 }
-| expr INFIXOP2L expr
-    { mkinfix $1 $2 $3 }
-| expr INFIXOP3L expr
-    { mkinfix $1 $2 $3 }
-| expr INFIXOP4L expr
-    { mkinfix $1 $2 $3 }
-| expr INFIXOP5L expr
-    { mkinfix $1 $2 $3 }
-| expr INFIXOP1R expr
-    { mkinfix $1 $2 $3 }
-| expr INFIXOP2R expr
-    { mkinfix $1 $2 $3 }
-| expr INFIXOP3R expr
-    { mkinfix $1 $2 $3 }
-| expr INFIXOP4R expr
-    { mkinfix $1 $2 $3 }
-| expr INFIXOP5R expr
-    { mkinfix $1 $2 $3 }
-| expr PLUS expr
-    { mkinfix $1 plussym $3 }
-| expr MINUS expr
-    { mkinfix $1 minussym $3 }
-| MINUS expr %prec prec_unary_minus
-    { mkuminus negsym $2 }
-| PLUS expr %prec prec_unary_minus
-    { $2 }
-| expr STAR expr
-    { mkinfix $1 starsym $3 }
-| expr EQ expr
-    { mkinfix $1 eqsym $3 }
-| expr BARBAR expr
-    { mkexp(Pexp_scor($1,$3)) }
-| expr AMPERAMPER expr
-    { mkexp(Pexp_scand($1,$3)) }
-| LAZY simple_expr %prec prec_appl
-    { mklazy $2 }
+| _1 = simple_expr
+    {      ( _1 )}
+| _1 = simple_expr _2 = simple_expr_list %prec prec_appl
+    {      ( mkexp(Pexp_apply(_1,List.rev _2)) )}
+| _1 = LET _2 = rec_flag _3 = let_bindings _4 = IN _5 = seq_expr %prec prec_let
+    {      ( mklet _2 (List.rev _3) _5 )}
+| _1 = LET _2 = MODULE _3 = mod_ident _4 = EQ _5 = mod_ident _6 = IN _7 = seq_expr %prec prec_let
+    {      ( Dep.subst _5 _3;
+	mkexp(Pexp_letmod(_3,_5,_7)) )}
+| _1 = FUN _2 = simple_pattern _3 = fun_def %prec prec_fun
+    {      ( mkexp(Pexp_function[_2,_3]) )}
+| _1 = FUNCTION _2 = opt_bar _3 = match_cases %prec prec_fun
+    {      ( mkexp(Pexp_function(List.rev _3)) )}
+| _1 = TRY _2 = seq_expr _3 = WITH _4 = opt_bar _5 = match_cases %prec prec_try
+    {      ( mkexp(Pexp_try(_2,List.rev _5)) )}
+| _1 = TRY _2 = seq_expr _3 = WITH _4 = error %prec prec_try
+    {      ( syntax_error() )}
+| _1 = IF _2 = expr _3 = THEN _4 = expr _5 = ELSE _6 = expr %prec prec_if
+    {      ( mkexp(Pexp_ifthenelse(_2,_4,_6)) )}
+| _1 = IF _2 = expr _3 = THEN _4 = expr %prec prec_if
+    {      ( mkexp(Pexp_ifthenelse(_2,_4,ghexp (Pexp_constant Const_unit) 0)) )}
+| _1 = WHERE _2 = expr _3 = THEN _4 = expr _5 = ELSE _6 = expr %prec prec_if
+    {      ( mkexp(Pexp_where(_2, Some _4, Some _6)) )}
+| _1 = WHERE _2 = expr %prec prec_if
+    {      ( mkexp(Pexp_where(_2, None, None)) )}
+| _1 = expr _2 = WHERE _3 = expr %prec prec_if
+    {      ( mkexp(Pexp_where(_3, Some _1, None)) )}
+| _1 = MATCH _2 = expr _3 = WITH _4 = opt_bar _5 = match_cases %prec prec_match
+    {      ( mkexp(Pexp_match(_2,List.rev _5)) )}
+| _1 = MATCH _2 = expr_comma_list _3 = opt_comma _4 = WITH _5 = opt_bar _6 = match_cases %prec prec_match
+    {      ( mkexp(Pexp_match(mkexp(Pexp_tuple(List.rev _2)),List.rev _6)) )}
+| _1 = CASE _2 = opt_bar _3 = case_list
+    {      ( mkexp(Pexp_case(List.rev _3)) )}
+| _1 = constr_longident _2 = simple_expr %prec prec_constr_appl
+    {      ( mkexp(Pexp_construct(_1,Some _2)) )}
+| _1 = expr _2 = QUESTION _3 = expr _4 = COLON _5 = expr
+    {      ( mkexp(Pexp_ifthenelse(_1,_3,_5)) )}
+| _1 = expr _2 = COLONCOLON _3 = expr
+    {      ( mkinfix _1 conssym _3 )}
+| _1 = expr _2 = INFIXOP1L _3 = expr
+    {      ( mkinfix _1 _2 _3 )}
+| _1 = expr _2 = INFIXOP2L _3 = expr
+    {      ( mkinfix _1 _2 _3 )}
+| _1 = expr _2 = INFIXOP3L _3 = expr
+    {      ( mkinfix _1 _2 _3 )}
+| _1 = expr _2 = INFIXOP4L _3 = expr
+    {      ( mkinfix _1 _2 _3 )}
+| _1 = expr _2 = INFIXOP5L _3 = expr
+    {      ( mkinfix _1 _2 _3 )}
+| _1 = expr _2 = INFIXOP1R _3 = expr
+    {      ( mkinfix _1 _2 _3 )}
+| _1 = expr _2 = INFIXOP2R _3 = expr
+    {      ( mkinfix _1 _2 _3 )}
+| _1 = expr _2 = INFIXOP3R _3 = expr
+    {      ( mkinfix _1 _2 _3 )}
+| _1 = expr _2 = INFIXOP4R _3 = expr
+    {      ( mkinfix _1 _2 _3 )}
+| _1 = expr _2 = INFIXOP5R _3 = expr
+    {      ( mkinfix _1 _2 _3 )}
+| _1 = expr _2 = PLUS _3 = expr
+    {      ( mkinfix _1 plussym _3 )}
+| _1 = expr _2 = MINUS _3 = expr
+    {      ( mkinfix _1 minussym _3 )}
+| _1 = MINUS _2 = expr %prec prec_unary_minus
+    {      ( mkuminus negsym _2 )}
+| _1 = PLUS _2 = expr %prec prec_unary_minus
+    {      ( _2 )}
+| _1 = expr _2 = STAR _3 = expr
+    {      ( mkinfix _1 starsym _3 )}
+| _1 = expr _2 = EQ _3 = expr
+    {      ( mkinfix _1 eqsym _3 )}
+| _1 = expr _2 = BARBAR _3 = expr
+    {      ( mkexp(Pexp_scor(_1,_3)) )}
+| _1 = expr _2 = AMPERAMPER _3 = expr
+    {      ( mkexp(Pexp_scand(_1,_3)) )}
+| _1 = LAZY _2 = simple_expr %prec prec_appl
+    {      ( mklazy _2 )}
 
 case_list:
-| simple_case %prec prec_list
-    {[$1]}
-| case_list BAR simple_case %prec prec_list
-    { $3::$1 }
+| _1 = simple_case %prec prec_list
+    {      ([_1])}
+| _1 = case_list _2 = BAR _3 = simple_case %prec prec_list
+    {      ( _3::_1 )}
 
 simple_case:
-| expr MINUSGREATER expr
-    { $1,$3 }
-| UNDERSCORE MINUSGREATER expr
-    { mkexp(Pexp_constant(Const_int 1)), $3 }
+| _1 = expr _2 = MINUSGREATER _3 = expr
+    {      ( _1,_3 )}
+| _1 = UNDERSCORE _2 = MINUSGREATER _3 = expr
+    {      ( mkexp(Pexp_constant(Const_int 1)), _3 )}
 
 expr_comma_list:
-| expr_comma_list_element %prec prec_list
-    {$1}
-| expr_comma_list COMMA expr_comma_list_element %prec prec_list
-    {$3@$1}
+| _1 = expr_comma_list_element %prec prec_list
+    {      (_1)}
+| _1 = expr_comma_list _2 = COMMA _3 = expr_comma_list_element %prec prec_list
+    {      (_3@_1)}
 
 expr_comma_list_element:
-| expr
-    {[$1]}
-| colonized_symbol COLON expr
-    {[$3; mkexp(Pexp_constant (Const_symbol $1))]}
+| _1 = expr
+    {      ([_1])}
+| _1 = colonized_symbol _2 = COLON _3 = expr
+    {      ([_3; mkexp(Pexp_constant (Const_symbol _1))])}
 
 colonized_symbol:
-| LIDENT
-    {$1}
-| UIDENT
-    {$1}
+| _1 = LIDENT
+    {      (_1)}
+| _1 = UIDENT
+    {      (_1)}
 
 basic_seq_expr:
-| expr
-    { [$1] }
-| basic_seq_expr SEMI expr
-    { $3 :: $1 }
-| basic_seq_expr SEMI
-    { $1 }
+| _1 = expr
+    {      ( [_1] )}
+| _1 = basic_seq_expr _2 = SEMI _3 = expr
+    {      ( _3 :: _1 )}
+| _1 = basic_seq_expr _2 = SEMI
+    {      ( _1 )}
 
 seq_expr:
-| basic_seq_expr
-    { match $1 with
+| _1 = basic_seq_expr
+    {      ( match _1 with
 	    [e] -> e
 	  | _ ->
-	      mkexp(Pexp_sequence(List.rev $1)) }
+	      mkexp(Pexp_sequence(List.rev _1)) )}
 
 simple_expr:
-| val_longident
-    { mkexp(Pexp_ident $1) }
-| constant
-    { mkexp(Pexp_constant $1) }
-| constr_longident
-    { mkexp(Pexp_construct($1,None)) }
-| LPAREN expr_comma_list opt_comma RPAREN
-    { mktuple (List.rev $2) }
-| LPAREN expr_comma_list BAR expr RPAREN
-    { mkexp(Pexp_as_tuple(mkinfix (mkexp(Pexp_list(List.rev $2)))
-			      appendsym $4)) }
-| LPAREN expr SEMI basic_seq_expr RPAREN
-    { mkexp(Pexp_sequence($2::(List.rev $4))) }
-| LPAREN expr SEMI basic_seq_expr error
-    { unclosed "(" 1 ")" 5 }
-| LPAREN expr_comma_list error
-    { unclosed "(" 1 ")" 3 }
-| BEGIN seq_expr END
-    { $2 }
-| BEGIN seq_expr error
-    { unclosed "begin" 1 "end" 3 }
-| simple_expr DOT label_longident
-    { mkexp(Pexp_field($1,$3)) }
-| simple_expr DOT LBRACK index_list RBRACK
-    { mkexp(Pexp_getindex($1,List.rev $4)) }
-| simple_expr DOT LBRACK index_list error
-    { unclosed "[" 3 "]" 5 }
-| LBRACKBAR expr_comma_list opt_comma BARRBRACK
-    { mkexp(Pexp_array(List.rev $2)) }
-| LBRACKBAR expr_comma_list opt_comma error
-    { unclosed "[|" 1 "|]" 4 }
-| LBRACE record_expr opt_comma RBRACE
-    { $2 }
-| LBRACE record_expr opt_comma error
-    { unclosed "{" 1 "}" 4 }
-| LVECTOR list_expr RBRACK
-    { mkexp(Pexp_vector($2)) }
-| LVECTOR list_expr error
-    { unclosed "#[" 1 "]" 3 }
-| LBRACK list_expr RBRACK
-    { $2 }
-| LBRACK list_expr error
-    { unclosed "[" 1 "]" 3 }
-| LMATRIX matrix_expr RBRACK
-    { mkexp(Pexp_matrix(List.rev $2)) }
-| LMATRIX matrix_expr error
-    { unclosed "#m[" 1 "]" 3 }
-| PREFIXOP simple_expr
-    { mkexp(Pexp_apply(mkoperator $1 1, [$2])) }
+| _1 = val_longident
+    {      ( mkexp(Pexp_ident _1) )}
+| _1 = constant
+    {      ( mkexp(Pexp_constant _1) )}
+| _1 = constr_longident
+    {      ( mkexp(Pexp_construct(_1,None)) )}
+| _1 = LPAREN _2 = expr_comma_list _3 = opt_comma _4 = RPAREN
+    {      ( mktuple (List.rev _2) )}
+| _1 = LPAREN _2 = expr_comma_list _3 = BAR _4 = expr _5 = RPAREN
+    {      ( mkexp(Pexp_as_tuple(mkinfix (mkexp(Pexp_list(List.rev _2)))
+			      appendsym _4)) )}
+| _1 = LPAREN _2 = expr _3 = SEMI _4 = basic_seq_expr _5 = RPAREN
+    {      ( mkexp(Pexp_sequence(_2::(List.rev _4))) )}
+| _1 = LPAREN _2 = expr _3 = SEMI _4 = basic_seq_expr _5 = error
+    {      ( unclosed "(" 1 ")" 5 )}
+| _1 = LPAREN _2 = expr_comma_list _3 = error
+    {      ( unclosed "(" 1 ")" 3 )}
+| _1 = BEGIN _2 = seq_expr _3 = END
+    {      ( _2 )}
+| _1 = BEGIN _2 = seq_expr _3 = error
+    {      ( unclosed "begin" 1 "end" 3 )}
+| _1 = simple_expr _2 = DOT _3 = label_longident
+    {      ( mkexp(Pexp_field(_1,_3)) )}
+| _1 = simple_expr _2 = DOT _3 = LBRACK _4 = index_list _5 = RBRACK
+    {      ( mkexp(Pexp_getindex(_1,List.rev _4)) )}
+| _1 = simple_expr _2 = DOT _3 = LBRACK _4 = index_list _5 = error
+    {      ( unclosed "[" 3 "]" 5 )}
+| _1 = LBRACKBAR _2 = expr_comma_list _3 = opt_comma _4 = BARRBRACK
+    {      ( mkexp(Pexp_array(List.rev _2)) )}
+| _1 = LBRACKBAR _2 = expr_comma_list _3 = opt_comma _4 = error
+    {      ( unclosed "[|" 1 "|]" 4 )}
+| _1 = LBRACE _2 = record_expr _3 = opt_comma _4 = RBRACE
+    {      ( _2 )}
+| _1 = LBRACE _2 = record_expr _3 = opt_comma _4 = error
+    {      ( unclosed "{" 1 "}" 4 )}
+| _1 = LVECTOR _2 = list_expr _3 = RBRACK
+    {      ( mkexp(Pexp_vector(_2)) )}
+| _1 = LVECTOR _2 = list_expr _3 = error
+    {      ( unclosed "#[" 1 "]" 3 )}
+| _1 = LBRACK _2 = list_expr _3 = RBRACK
+    {      ( _2 )}
+| _1 = LBRACK _2 = list_expr _3 = error
+    {      ( unclosed "[" 1 "]" 3 )}
+| _1 = LMATRIX _2 = matrix_expr _3 = RBRACK
+    {      ( mkexp(Pexp_matrix(List.rev _2)) )}
+| _1 = LMATRIX _2 = matrix_expr _3 = error
+    {      ( unclosed "#m[" 1 "]" 3 )}
+| _1 = PREFIXOP _2 = simple_expr
+    {      ( mkexp(Pexp_apply(mkoperator _1 1, [_2])) )}
 
 matrix_expr:
-| expr_comma_list
-    { [mkexp(Pexp_list(List.rev $1))] }
-| matrix_expr SEMI expr_comma_list
-    { mkexp(Pexp_list(List.rev $3)) :: $1 }
+| _1 = expr_comma_list
+    {      ( [mkexp(Pexp_list(List.rev _1))] )}
+| _1 = matrix_expr _2 = SEMI _3 = expr_comma_list
+    {      ( mkexp(Pexp_list(List.rev _3)) :: _1 )}
 
 list_expr:
-| expr BARCOLON generator_list
-    { make_comprehension $1 (List.rev $3)
-	  (mkexp(Pexp_constant Const_empty_list)) }
-| expr_comma_list opt_comma
-    { mkexp(Pexp_list(List.rev $1)) }
-| expr_comma_list opt_comma DOTDOT expr
-    { match $1 with
-	    [b;a] -> mkexp(Pexp_range(a,Some b,$4))
-	  | [a]   -> mkexp(Pexp_range(a,None,$4))
-	  | _ -> syntax_error()}
-| expr_comma_list BAR expr
-    { mkinfix (mkexp(Pexp_list(List.rev $1))) appendsym $3 }
+| _1 = expr _2 = BARCOLON _3 = generator_list
+    {      ( make_comprehension _1 (List.rev _3)
+	  (mkexp(Pexp_constant Const_empty_list)) )}
+| _1 = expr_comma_list _2 = opt_comma
+    {      ( mkexp(Pexp_list(List.rev _1)) )}
+| _1 = expr_comma_list _2 = opt_comma _3 = DOTDOT _4 = expr
+    {      ( match _1 with
+	    [b;a] -> mkexp(Pexp_range(a,Some b,_4))
+	  | [a]   -> mkexp(Pexp_range(a,None,_4))
+	  | _ -> syntax_error())}
+| _1 = expr_comma_list _2 = BAR _3 = expr
+    {      ( mkinfix (mkexp(Pexp_list(List.rev _1))) appendsym _3 )}
 
 generator_list:
-| generator
-    { [$1] }
-| generator_list SEMI generator
-    { $3 :: $1 }
+| _1 = generator
+    {      ( [_1] )}
+| _1 = generator_list _2 = SEMI _3 = generator
+    {      ( _3 :: _1 )}
 
 generator:
-| pattern LESSMINUS expr
-    { $1,$3,None }
-| pattern LESSMINUS expr COMMA expr
-    { $1,$3,Some $5 }
+| _1 = pattern _2 = LESSMINUS _3 = expr
+    {      ( _1,_3,None )}
+| _1 = pattern _2 = LESSMINUS _3 = expr _4 = COMMA _5 = expr
+    {      ( _1,_3,Some _5 )}
 
 simple_expr_list:
-| simple_expr
-    {[$1]}
-| simple_expr_list simple_expr
-    {$2::$1}
+| _1 = simple_expr
+    {      ([_1])}
+| _1 = simple_expr_list _2 = simple_expr
+    {      (_2::_1)}
 
 index_list:
-| index
-    {[$1]}
-| index_list COMMA index
-    {$3 :: $1}
+| _1 = index
+    {      ([_1])}
+| _1 = index_list _2 = COMMA _3 = index
+    {      (_3 :: _1)}
 
 index:
-| expr
-    { mkindex(Pindex_expr $1) }
-| STAR
-    { mkindex(Pindex_range_all) }
-| expr COLON expr
-    { mkindex(Pindex_range($1,$3)) }
-| expr COLON STAR
-    { mkindex(Pindex_range_to_end($1)) }
-| DOTDOT
-    { mkindex(Pindex_range_all) }
-| expr DOTDOT expr
-    { mkindex(Pindex_range($1,$3)) }
-| DOTDOT expr
-    { mkindex(Pindex_range(mkexp(Pexp_constant(Const_int 0)),$2)) }
-| expr DOTDOT
-    { mkindex(Pindex_range_to_end($1)) }
+| _1 = expr
+    {      ( mkindex(Pindex_expr _1) )}
+| _1 = STAR
+    {      ( mkindex(Pindex_range_all) )}
+| _1 = expr _2 = COLON _3 = expr
+    {      ( mkindex(Pindex_range(_1,_3)) )}
+| _1 = expr _2 = COLON _3 = STAR
+    {      ( mkindex(Pindex_range_to_end(_1)) )}
+| _1 = DOTDOT
+    {      ( mkindex(Pindex_range_all) )}
+| _1 = expr _2 = DOTDOT _3 = expr
+    {      ( mkindex(Pindex_range(_1,_3)) )}
+| _1 = DOTDOT _2 = expr
+    {      ( mkindex(Pindex_range(mkexp(Pexp_constant(Const_int 0)),_2)) )}
+| _1 = expr _2 = DOTDOT
+    {      ( mkindex(Pindex_range_to_end(_1)) )}
 
 let_bindings:
-| let_binding
-    {[$1]}
-| let_bindings AND let_binding
-    { $3 :: $1 }
+| _1 = let_binding
+    {      ([_1])}
+| _1 = let_bindings _2 = AND _3 = let_binding
+    {      ( _3 :: _1 )}
 
 let_binding:
-| val_ident fun_binding
-    { ({ppat_desc = Ppat_ident $1; ppat_loc = rhs_loc 1},$2) }
-| pattern_comma_list EQ seq_expr %prec prec_let
-    { match $1 with
-	    [pat] -> (pat,$3)
-	  | _ -> (mkpat(Ppat_tuple(List.rev $1)),$3) }
+| _1 = val_ident _2 = fun_binding
+    {      ( ({ppat_desc = Ppat_ident _1; ppat_loc = rhs_loc 1},_2) )}
+| _1 = pattern_comma_list _2 = EQ _3 = seq_expr %prec prec_let
+    {      ( match _1 with
+	    [pat] -> (pat,_3)
+	  | _ -> (mkpat(Ppat_tuple(List.rev _1)),_3) )}
 
 fun_binding:
-| EQ seq_expr %prec prec_let
-    { $2 }
-| simple_pattern fun_binding
-    { mkexp(Pexp_function[$1,$2]) }
+| _1 = EQ _2 = seq_expr %prec prec_let
+    {      ( _2 )}
+| _1 = simple_pattern _2 = fun_binding
+    {      ( mkexp(Pexp_function[_1,_2]) )}
 
 label_longident:
-| LIDENT
-    { Lident($1) }
-| UIDENT DOT LIDENT
-    { Dep.add $1;
-	Ldot($1,$3) }
+| _1 = LIDENT
+    {      ( Lident(_1) )}
+| _1 = UIDENT _2 = DOT _3 = LIDENT
+    {      ( Dep.add _1;
+	Ldot(_1,_3) )}
 
 lbl_expr_list:
-| label_longident EQ expr %prec prec_list
-    { [$1,$3] }
-| lbl_expr_list COMMA label_longident EQ expr %prec prec_list
-    { ($3,$5) :: $1 }
+| _1 = label_longident _2 = EQ _3 = expr %prec prec_list
+    {      ( [_1,_3] )}
+| _1 = lbl_expr_list _2 = COMMA _3 = label_longident _4 = EQ _5 = expr %prec prec_list
+    {      ( (_3,_5) :: _1 )}
 
 record_expr:
-| simple_expr WITH lbl_expr_list
-    { mkexp(Pexp_record(Some $1, List.rev $3)) }
-| lbl_expr_list
-    { match $1 with
+| _1 = simple_expr _2 = WITH _3 = lbl_expr_list
+    {      ( mkexp(Pexp_record(Some _1, List.rev _3)) )}
+| _1 = lbl_expr_list
+    {      ( match _1 with
 	    [] -> mkexp(Pexp_constant(Const_empty_record))
-	  | _  -> mkexp(Pexp_record(None, List.rev $1)) }
+	  | _  -> mkexp(Pexp_record(None, List.rev _1)) )}
 
 fun_def:
-| match_action
-    { $1 }
-| simple_pattern fun_def
-    { mkexp(Pexp_function[$1,$2]) }
+| _1 = match_action
+    {                                                ( _1 )}
+| _1 = simple_pattern _2 = fun_def
+    {                                                ( mkexp(Pexp_function[_1,_2]) )}
 
 match_action:
-| MINUSGREATER seq_expr
-    { $2 }
-| WHEN expr MINUSGREATER seq_expr
-    { mkexp(Pexp_when($2,$4)) }
+| _1 = MINUSGREATER _2 = seq_expr
+    {                                                ( _2 )}
+| _1 = WHEN _2 = expr _3 = MINUSGREATER _4 = seq_expr
+    {                                            ( mkexp(Pexp_when(_2,_4)) )}
 
 match_cases:
-| pattern_comma_list opt_comma match_action
-    { match $1 with
-	    [pat] -> [pat,$3]
-	  | _ -> [mkpat(Ppat_tuple(List.rev $1)),$3] }
-| match_cases BAR pattern_comma_list opt_comma match_action
-    { match $3 with
-	    [pat] -> (pat,$5) :: $1
-	  | _ -> (mkpat(Ppat_tuple(List.rev $3)),$5) :: $1 }
+| _1 = pattern_comma_list _2 = opt_comma _3 = match_action
+    {      ( match _1 with
+	    [pat] -> [pat,_3]
+	  | _ -> [mkpat(Ppat_tuple(List.rev _1)),_3] )}
+| _1 = match_cases _2 = BAR _3 = pattern_comma_list _4 = opt_comma _5 = match_action
+    {      ( match _3 with
+	    [pat] -> (pat,_5) :: _1
+	  | _ -> (mkpat(Ppat_tuple(List.rev _3)),_5) :: _1 )}
 
 constant:
-| INT
-    { Const_int $1 }
-| CHAR
-    { Const_char $1 }
-| STRING
-    { Const_string $1 }
-| FLOAT
-    { Const_float $1 }
-| LPAREN RPAREN
-    { Const_unit }
-| LBRACK RBRACK
-    { Const_empty_list }
-| LBRACE RBRACE
-    { Const_empty_record }
-| SHARP STRING
-    { Const_symbol (symbol $2) }
-| SHARP LIDENT
-    { Const_symbol $2 }
-| SHARP UIDENT
-    { Const_symbol $2 }
-| LVECTOR RBRACK
-    { Const_empty_vector }
-| DOLLAR STRING
-    { Const_symbol (symbol $2) }
-| DOLLAR LIDENT
-    { Const_symbol $2 }
-| DOLLAR UIDENT
-    { Const_symbol $2 }
-| LBRACKBAR BARRBRACK
-    { Const_empty_array }
-| IMAGINARY
-    { Const_complex(0.0, $1) }
+| _1 = INT
+    {                                                ( Const_int _1 )}
+| _1 = CHAR
+    {                                                ( Const_char _1 )}
+| _1 = STRING
+    {                                                ( Const_string _1 )}
+| _1 = FLOAT
+    {                                                ( Const_float _1 )}
+| _1 = LPAREN _2 = RPAREN
+    {                                                ( Const_unit )}
+| _1 = LBRACK _2 = RBRACK
+    {                                                ( Const_empty_list )}
+| _1 = LBRACE _2 = RBRACE
+    {                                                ( Const_empty_record )}
+| _1 = SHARP _2 = STRING
+    {                                                ( Const_symbol (symbol _2) )}
+| _1 = SHARP _2 = LIDENT
+    {                                                ( Const_symbol _2 )}
+| _1 = SHARP _2 = UIDENT
+    {                                                ( Const_symbol _2 )}
+| _1 = LVECTOR _2 = RBRACK
+    {                                           ( Const_empty_vector )}
+| _1 = DOLLAR _2 = STRING
+    {                                                ( Const_symbol (symbol _2) )}
+| _1 = DOLLAR _2 = LIDENT
+    {                                                ( Const_symbol _2 )}
+| _1 = DOLLAR _2 = UIDENT
+    {                                                ( Const_symbol _2 )}
+| _1 = LBRACKBAR _2 = BARRBRACK
+    {                                                ( Const_empty_array )}
+| _1 = IMAGINARY
+    {                                                ( Const_complex(0.0, _1) )}
 
 signed_constant:
-| constant
-    { $1 }
-| MINUS INT
-    { Const_int(- $2) }
-| MINUS FLOAT
-    { Const_float(-. $2) }
+| _1 = constant
+    {                                                ( _1 )}
+| _1 = MINUS _2 = INT
+    {                                          ( Const_int(- _2) )}
+| _1 = MINUS _2 = FLOAT
+    {                                          ( Const_float(-. _2) )}
 
 val_ident:
-| LIDENT
-    { $1 }
-| LPAREN operator RPAREN
-    { $2 }
+| _1 = LIDENT
+    {                                                ( _1 )}
+| _1 = LPAREN _2 = operator _3 = RPAREN
+    {                                                ( _2 )}
 
 operator:
-| PLUS
-    { plussym }
-| MINUS
-    { minussym }
-| STAR
-    { starsym }
-| EQ
-    { eqsym }
-| COLONCOLON
-    { conssym }
-| COLONEQUAL
-    { colonequalsym }
-| SHARP
-    { sharpsym }
-| DOLLAR
-    { dollarsym }
-| PREFIXOP
-    { $1 }
-| INFIXOP1L
-    { $1 }
-| INFIXOP2L
-    { $1 }
-| INFIXOP3L
-    { $1 }
-| INFIXOP4L
-    { $1 }
-| INFIXOP5L
-    { $1 }
-| INFIXOP1R
-    { $1 }
-| INFIXOP2R
-    { $1 }
-| INFIXOP3R
-    { $1 }
-| INFIXOP4R
-    { $1 }
-| INFIXOP5R
-    { $1 }
+| _1 = PLUS
+    {                                                ( plussym )}
+| _1 = MINUS
+    {                                                ( minussym )}
+| _1 = STAR
+    {                                                ( starsym )}
+| _1 = EQ
+    {                                                ( eqsym )}
+| _1 = COLONCOLON
+    {                                                ( conssym )}
+| _1 = COLONEQUAL
+    {                                                ( colonequalsym )}
+| _1 = SHARP
+    {                                                ( sharpsym )}
+| _1 = DOLLAR
+    {                                                ( dollarsym )}
+| _1 = PREFIXOP
+    {                                                ( _1 )}
+| _1 = INFIXOP1L
+    {                                                ( _1 )}
+| _1 = INFIXOP2L
+    {                                                ( _1 )}
+| _1 = INFIXOP3L
+    {                                                ( _1 )}
+| _1 = INFIXOP4L
+    {                                                ( _1 )}
+| _1 = INFIXOP5L
+    {                                                ( _1 )}
+| _1 = INFIXOP1R
+    {                                                ( _1 )}
+| _1 = INFIXOP2R
+    {                                                ( _1 )}
+| _1 = INFIXOP3R
+    {                                                ( _1 )}
+| _1 = INFIXOP4R
+    {                                                ( _1 )}
+| _1 = INFIXOP5R
+    {                                                ( _1 )}
 
 val_longident:
-| val_ident
-    { Lident $1 }
-| UIDENT DOT val_ident
-    { Dep.add $1;
-						  Ldot($1, $3) }
+| _1 = val_ident
+    {                                                ( Lident _1 )}
+| _1 = UIDENT _2 = DOT _3 = val_ident
+    {                                                ( Dep.add _1;
+						  Ldot(_1, _3) )}
 
 constr_longident:
-| UIDENT DOT UIDENT
-    { Dep.add $1;
-	Ldot($1,$3) }
-| UIDENT
-    { Lident($1) }
+| _1 = UIDENT _2 = DOT _3 = UIDENT
+    {      ( Dep.add _1;
+	Ldot(_1,_3) )}
+| _1 = UIDENT
+    {      ( Lident(_1) )}
 
 mod_ident:
-| UIDENT
-    { $1 }
+| _1 = UIDENT
+    {      ( _1 )}
 
 pattern:
-| simple_pattern
-    { $1 }
-| constr_longident pattern %prec prec_constr_appl
-    { mkpat(Ppat_construct($1,Some $2)) }
-| built_in_constr %prec prec_constr_appl
-    { $1 }
-| pattern AS LIDENT
-    { mkpat(Ppat_alias($1,$3)) }
-| pattern COLONCOLON pattern
-    { mkpat(Ppat_cons($1,$3)) }
-| pattern BARBAR pattern %prec BAR
-    { mkpat(Ppat_or($1,$3)) }
+| _1 = simple_pattern
+    {      ( _1 )}
+| _1 = constr_longident _2 = pattern %prec prec_constr_appl
+    {      ( mkpat(Ppat_construct(_1,Some _2)) )}
+| _1 = built_in_constr %prec prec_constr_appl
+    {      ( _1 )}
+| _1 = pattern _2 = AS _3 = LIDENT
+    {      ( mkpat(Ppat_alias(_1,_3)) )}
+| _1 = pattern _2 = COLONCOLON _3 = pattern
+    {      ( mkpat(Ppat_cons(_1,_3)) )}
+| _1 = pattern _2 = BARBAR _3 = pattern %prec BAR
+    {      ( mkpat(Ppat_or(_1,_3)) )}
 
 simple_pattern:
-| val_ident
-    { mkpat(Ppat_ident $1) }
-| UNDERSCORE
-    { mkpat(Ppat_any) }
-| signed_constant
-    { mkpat(Ppat_constant $1) }
-| CHAR DOTDOT CHAR
-    { mkrangepat $1 $3 }
-| constr_longident
-    { mkpat(Ppat_construct($1,None)) }
-| LBRACE lbl_pattern_list opt_comma RBRACE
-    { mkpat(Ppat_record(List.rev $2)) }
-| LBRACE lbl_pattern_list error
-    { unclosed "{" 1 "}" 4 }
-| LBRACK list_pattern RBRACK
-    { $2 }
-| LBRACK list_pattern error
-    { unclosed "[" 1 "]" 4 }
-| LPAREN list_pattern RPAREN %prec prec_list
-    { match $2 with
+| _1 = val_ident
+    {      ( mkpat(Ppat_ident _1) )}
+| _1 = UNDERSCORE
+    {      ( mkpat(Ppat_any) )}
+| _1 = signed_constant
+    {      ( mkpat(Ppat_constant _1) )}
+| _1 = CHAR _2 = DOTDOT _3 = CHAR
+    {      ( mkrangepat _1 _3 )}
+| _1 = constr_longident
+    {      ( mkpat(Ppat_construct(_1,None)) )}
+| _1 = LBRACE _2 = lbl_pattern_list _3 = opt_comma _4 = RBRACE
+    {      ( mkpat(Ppat_record(List.rev _2)) )}
+| _1 = LBRACE _2 = lbl_pattern_list _3 = error
+    {      ( unclosed "{" 1 "}" 4 )}
+| _1 = LBRACK _2 = list_pattern _3 = RBRACK
+    {      ( _2 )}
+| _1 = LBRACK _2 = list_pattern _3 = error
+    {      ( unclosed "[" 1 "]" 4 )}
+| _1 = LPAREN _2 = list_pattern _3 = RPAREN %prec prec_list
+    {      ( match _2 with
 	    {ppat_desc = Ppat_list l} ->
 	      if List.length l > 1 then
 		mkpat(Ppat_tuple(l))
 	      else List.hd l
-	  | _ -> mkpat(Ppat_tuplecons($2)) }
-| LPAREN pattern_comma_list COMMA param_tail RPAREN %prec prec_list
-    { mkpat(Ppat_tuplecons
-		(mklistpat(mkpat(Ppat_optional(List.rev $4))) $2)) }
-| LPAREN param_tail RPAREN
-    { mkpat(Ppat_tuplecons(mkpat(Ppat_optional(List.rev $2)))) }
-| LPAREN list_pattern error
-    { unclosed "(" 1 ")" 4 }
-| LVECTOR list_pattern RBRACK
-    { mkpat(Ppat_vector($2)) }
-| LVECTOR list_pattern error
-    { unclosed "#[" 1 "]" 4 }
+	  | _ -> mkpat(Ppat_tuplecons(_2)) )}
+| _1 = LPAREN _2 = pattern_comma_list _3 = COMMA _4 = param_tail _5 = RPAREN %prec prec_list
+    {      ( mkpat(Ppat_tuplecons
+		(mklistpat(mkpat(Ppat_optional(List.rev _4))) _2)) )}
+| _1 = LPAREN _2 = param_tail _3 = RPAREN
+    {      ( mkpat(Ppat_tuplecons(mkpat(Ppat_optional(List.rev _2)))) )}
+| _1 = LPAREN _2 = list_pattern _3 = error
+    {      ( unclosed "(" 1 ")" 4 )}
+| _1 = LVECTOR _2 = list_pattern _3 = RBRACK
+    {      ( mkpat(Ppat_vector(_2)) )}
+| _1 = LVECTOR _2 = list_pattern _3 = error
+    {      ( unclosed "#[" 1 "]" 4 )}
 
 param_tail:
-| AMPEROPT option_pattern_list
-    { $2 }
-| AMPEROPT option_pattern_list COMMA AMPERKEY key_pattern
-    { $5 @ $2 }
-| AMPERKEY key_pattern
-    { $2 }
+| _1 = AMPEROPT _2 = option_pattern_list
+    {      ( _2 )}
+| _1 = AMPEROPT _2 = option_pattern_list _3 = COMMA _4 = AMPERKEY _5 = key_pattern
+    {      ( _5 @ _2 )}
+| _1 = AMPERKEY _2 = key_pattern
+    {      ( _2 )}
 
 pattern_comma_list:
-| pattern_comma_list_element
-    { [$1] }
-| pattern_comma_list COMMA pattern_comma_list_element %prec prec_list
-    { $3 :: $1 }
+| _1 = pattern_comma_list_element
+    {      ( [_1] )}
+| _1 = pattern_comma_list _2 = COMMA _3 = pattern_comma_list_element %prec prec_list
+    {      ( _3 :: _1 )}
 
 pattern_comma_list_element:
-| pattern
-    { $1 }
-| AMPERREST LIDENT
-    { mkpat(Ppat_restcons($2, mkpat(Ppat_null))) }
+| _1 = pattern
+    {      ( _1 )}
+| _1 = AMPERREST _2 = LIDENT
+    {      ( mkpat(Ppat_restcons(_2, mkpat(Ppat_null))) )}
 
 list_pattern:
-| pattern_comma_list COMMA DOTDOTDOT AS LIDENT
-    { mklistpat (mkpat(Ppat_ident $5)) $1 }
-| pattern_comma_list COMMA DOTDOTDOT
-    { mklistpat (mkpat(Ppat_rest)) $1 }
-| pattern_comma_list BAR pattern
-    { mklistpat $3 $1 }
-| pattern_comma_list opt_comma
-    { if List.exists
+| _1 = pattern_comma_list _2 = COMMA _3 = DOTDOTDOT _4 = AS _5 = LIDENT
+    {      ( mklistpat (mkpat(Ppat_ident _5)) _1 )}
+| _1 = pattern_comma_list _2 = COMMA _3 = DOTDOTDOT
+    {      ( mklistpat (mkpat(Ppat_rest)) _1 )}
+| _1 = pattern_comma_list _2 = BAR _3 = pattern
+    {      ( mklistpat _3 _1 )}
+| _1 = pattern_comma_list _2 = opt_comma
+    {      ( if List.exists
 	  (function
 	       {ppat_desc = Ppat_restcons _} -> true
 	     | _ -> false)
-	  $1
+	  _1
 	then
-	  match List.hd $1 with
+	  match List.hd _1 with
 	      {ppat_desc = Ppat_restcons(id,_)} ->
-		mklistpat (mkpat(Ppat_ident id)) (List.tl $1)
+		mklistpat (mkpat(Ppat_ident id)) (List.tl _1)
 	    | _ ->
-		mklistpat (mkpat(Ppat_null)) $1
+		mklistpat (mkpat(Ppat_null)) _1
 	else
-	  mkpat(Ppat_list(List.rev $1)) }
-| DOTDOTDOT AS LIDENT
-    { mkpat(Ppat_ident $3) }
-| DOTDOTDOT
-    { mkpat(Ppat_rest) }
+	  mkpat(Ppat_list(List.rev _1)) )}
+| _1 = DOTDOTDOT _2 = AS _3 = LIDENT
+    {      ( mkpat(Ppat_ident _3) )}
+| _1 = DOTDOTDOT
+    {      ( mkpat(Ppat_rest) )}
 
 option_pattern_list:
-| option_pattern_list_element
-    { [$1] }
-| option_pattern_list COMMA option_pattern_list_element %prec prec_list
-    { $3 :: $1 }
+| _1 = option_pattern_list_element
+    {      ( [_1] )}
+| _1 = option_pattern_list _2 = COMMA _3 = option_pattern_list_element %prec prec_list
+    {      ( _3 :: _1 )}
 
 option_pattern_list_element:
-| LIDENT
-    { Arg_Optional($1,None) }
-| LIDENT EQ value_expr
-    { Arg_Optional($1, Some $3) }
-| AMPERREST LIDENT
-    { Arg_Rest $2 }
+| _1 = LIDENT
+    {      ( Arg_Optional(_1,None) )}
+| _1 = LIDENT _2 = EQ _3 = value_expr
+    {      ( Arg_Optional(_1, Some _3) )}
+| _1 = AMPERREST _2 = LIDENT
+    {      ( Arg_Rest _2 )}
 
 key_pattern:
-| key_pattern_list
-    { $1 }
-| key_pattern_list COMMA DOTDOTDOT
-    { Arg_OtherKeys None :: $1 }
-| key_pattern_list COMMA DOTDOTDOT AS LIDENT
-    { Arg_OtherKeys (Some $5) :: $1 }
-| DOTDOTDOT
-    { [Arg_OtherKeys None] }
-| DOTDOTDOT AS LIDENT
-    { [Arg_OtherKeys(Some $3) ] }
+| _1 = key_pattern_list
+    {      ( _1 )}
+| _1 = key_pattern_list _2 = COMMA _3 = DOTDOTDOT
+    {      ( Arg_OtherKeys None :: _1 )}
+| _1 = key_pattern_list _2 = COMMA _3 = DOTDOTDOT _4 = AS _5 = LIDENT
+    {      ( Arg_OtherKeys (Some _5) :: _1 )}
+| _1 = DOTDOTDOT
+    {      ( [Arg_OtherKeys None] )}
+| _1 = DOTDOTDOT _2 = AS _3 = LIDENT
+    {      ( [Arg_OtherKeys(Some _3) ] )}
 
 key_pattern_list:
-| key_pattern_list_element
-    { [$1] }
-| key_pattern_list COMMA key_pattern_list_element %prec prec_list
-    { $3 :: $1 }
+| _1 = key_pattern_list_element
+    {      ( [_1] )}
+| _1 = key_pattern_list _2 = COMMA _3 = key_pattern_list_element %prec prec_list
+    {      ( _3 :: _1 )}
 
 key_pattern_list_element:
-| LIDENT
-    { Arg_Key($1,None) }
-| LIDENT EQ value_expr
-    { Arg_Key($1, Some $3) }
-| AMPERREST LIDENT
-    { Arg_Rest($2) }
+| _1 = LIDENT
+    {      ( Arg_Key(_1,None) )}
+| _1 = LIDENT _2 = EQ _3 = value_expr
+    {      ( Arg_Key(_1, Some _3) )}
+| _1 = AMPERREST _2 = LIDENT
+    {      ( Arg_Rest(_2) )}
 
 lbl_pattern_list:
-| lbl_pattern_list_element
-    { [$1] }
-| lbl_pattern_list COMMA lbl_pattern_list_element %prec prec_list
-    { $3 :: $1 }
+| _1 = lbl_pattern_list_element
+    {       ( [_1] )}
+| _1 = lbl_pattern_list _2 = COMMA _3 = lbl_pattern_list_element %prec prec_list
+    {      ( _3 :: _1 )}
 
 lbl_pattern_list_element:
-| label_longident EQ pattern
-    { ($1,$3) }
+| _1 = label_longident _2 = EQ _3 = pattern
+    {       ( (_1,_3) )}
 
 built_in_constr:
-| INTPAT bi_pattern
-    { mkpat(Ppat_bi_int $2) }
-| FLOATPAT bi_pattern
-    { mkpat(Ppat_bi_float $2) }
-| COMPLEXPAT LPAREN bi_pattern COMMA bi_pattern RPAREN
-    { mkpat(Ppat_bi_complexpair($3,$5)) }
-| COMPLEXPAT bi_pattern
-    { mkpat(Ppat_bi_complex $2) }
-| NUMBERPAT bi_pattern
-    { mkpat(Ppat_bi_number $2) }
-| REALPAT bi_pattern
-    { mkpat(Ppat_bi_real $2) }
-| STRINGPAT bi_pattern
-    { mkpat(Ppat_bi_string $2) }
-| SYMBOLPAT bi_pattern
-    { mkpat(Ppat_bi_symbol $2) }
-| LISTPAT pattern
-    { mkpat(Ppat_bi_list $2) }
-| VECTORPAT pattern
-    { mkpat(Ppat_bi_vector $2) }
-| TUPLEPAT pattern
-    { mkpat(Ppat_bi_tuple $2) }
-| ARRAYPAT bi_pattern
-    { mkpat(Ppat_bi_array $2) }
-| ARRAYPAT LPAREN pattern COMMA bi_pattern RPAREN
-    { mkpat(Ppat_bi_arrayd($3,$5)) }
-| FARRAYPAT bi_pattern
-    { mkpat(Ppat_bi_farray $2) }
-| FARRAYPAT LPAREN pattern COMMA bi_pattern RPAREN
-    { mkpat(Ppat_bi_farrayd($3,$5)) }
-| CARRAYPAT bi_pattern
-    { mkpat(Ppat_bi_carray $2) }
-| CARRAYPAT LPAREN pattern COMMA bi_pattern RPAREN
-    { mkpat(Ppat_bi_carrayd($3,$5)) }
-| CHARPAT bi_pattern
-    { mkpat(Ppat_bi_char $2) }
-| RECORDPAT pattern
-    { mkpat(Ppat_bi_record $2) }
-| BOXPAT bi_pattern
-    { mkpat(Ppat_bi_box $2) }
-| BOXPAT LPAREN pattern COMMA pattern RPAREN
-    { mkpat(Ppat_bi_boxd($3,$5)) }
-| HASHTABLEPAT bi_pattern
-    { mkpat(Ppat_bi_hashtable $2) }
-| STACKPAT bi_pattern
-    { mkpat(Ppat_bi_stack $2) }
-| QUEUEPAT bi_pattern
-    { mkpat(Ppat_bi_queue $2) }
-| WEAKARRAYPAT bi_pattern
-    { mkpat(Ppat_bi_weak $2) }
-| IN_CHANNELPAT bi_pattern
-    { mkpat(Ppat_bi_inchan $2) }
-| OUT_CHANNELPAT bi_pattern
-    { mkpat(Ppat_bi_outchan $2) }
-| DIR_HANDLEPAT bi_pattern
-    { mkpat(Ppat_bi_dirhandle $2) }
+| _1 = INTPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_int _2) )}
+| _1 = FLOATPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_float _2) )}
+| _1 = COMPLEXPAT _2 = LPAREN _3 = bi_pattern _4 = COMMA _5 = bi_pattern _6 = RPAREN
+    {      ( mkpat(Ppat_bi_complexpair(_3,_5)) )}
+| _1 = COMPLEXPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_complex _2) )}
+| _1 = NUMBERPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_number _2) )}
+| _1 = REALPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_real _2) )}
+| _1 = STRINGPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_string _2) )}
+| _1 = SYMBOLPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_symbol _2) )}
+| _1 = LISTPAT _2 = pattern
+    {      ( mkpat(Ppat_bi_list _2) )}
+| _1 = VECTORPAT _2 = pattern
+    {      ( mkpat(Ppat_bi_vector _2) )}
+| _1 = TUPLEPAT _2 = pattern
+    {      ( mkpat(Ppat_bi_tuple _2) )}
+| _1 = ARRAYPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_array _2) )}
+| _1 = ARRAYPAT _2 = LPAREN _3 = pattern _4 = COMMA _5 = bi_pattern _6 = RPAREN
+    {      ( mkpat(Ppat_bi_arrayd(_3,_5)) )}
+| _1 = FARRAYPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_farray _2) )}
+| _1 = FARRAYPAT _2 = LPAREN _3 = pattern _4 = COMMA _5 = bi_pattern _6 = RPAREN
+    {      ( mkpat(Ppat_bi_farrayd(_3,_5)) )}
+| _1 = CARRAYPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_carray _2) )}
+| _1 = CARRAYPAT _2 = LPAREN _3 = pattern _4 = COMMA _5 = bi_pattern _6 = RPAREN
+    {      ( mkpat(Ppat_bi_carrayd(_3,_5)) )}
+| _1 = CHARPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_char _2) )}
+| _1 = RECORDPAT _2 = pattern
+    {      ( mkpat(Ppat_bi_record _2) )}
+| _1 = BOXPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_box _2) )}
+| _1 = BOXPAT _2 = LPAREN _3 = pattern _4 = COMMA _5 = pattern _6 = RPAREN
+    {      ( mkpat(Ppat_bi_boxd(_3,_5)) )}
+| _1 = HASHTABLEPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_hashtable _2) )}
+| _1 = STACKPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_stack _2) )}
+| _1 = QUEUEPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_queue _2) )}
+| _1 = WEAKARRAYPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_weak _2) )}
+| _1 = IN_CHANNELPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_inchan _2) )}
+| _1 = OUT_CHANNELPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_outchan _2) )}
+| _1 = DIR_HANDLEPAT _2 = bi_pattern
+    {      ( mkpat(Ppat_bi_dirhandle _2) )}
 
 bi_pattern:
-| simple_bi_pattern
-    { $1 }
-| LPAREN simple_bi_pattern RPAREN
-    { $2 }
+| _1 = simple_bi_pattern
+    {      ( _1 )}
+| _1 = LPAREN _2 = simple_bi_pattern _3 = RPAREN
+    {      ( _2 )}
 
 simple_bi_pattern:
-| UNDERSCORE
-    { mkpat(Ppat_any) }
-| LIDENT
-    { mkpat(Ppat_ident $1) }
-| signed_constant
-    { mkpat(Ppat_constant $1) }
+| _1 = UNDERSCORE
+    {      ( mkpat(Ppat_any) )}
+| _1 = LIDENT
+    {      ( mkpat(Ppat_ident _1) )}
+| _1 = signed_constant
+    {      ( mkpat(Ppat_constant _1) )}
 
 opt_comma:
 | 
-    { () }
-| COMMA
-    { () }
+    {                 ( () )}
+| _1 = COMMA
+    {                 ( () )}
 
 opt_bar:
 | 
-    { () }
-| BAR
-    { () }
+    {                                                ( () )}
+| _1 = BAR
+    {                                                ( () )}
 
 direction_flag:
-| TO
-    { Upto }
-| DOWNTO
-    { Downto }
-| ABOVE
-    { Above }
-| BELOW
-    { Below }
+| _1 = TO
+    {                                                ( Upto )}
+| _1 = DOWNTO
+    {                                                ( Downto )}
+| _1 = ABOVE
+    {                                                ( Above )}
+| _1 = BELOW
+    {                                                ( Below )}
 
 %%
 

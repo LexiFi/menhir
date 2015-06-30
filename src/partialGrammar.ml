@@ -580,48 +580,23 @@ let join grammar pgrammar =
     List.fold_left (join_declaration filename) grammar pgrammar.pg_declarations
     $$ join_trailer pgrammar.pg_trailer
 
-(* Check that the $i's are consistent, that is, that they are within
-   bounds and that they are not used when symbols are explicitly
-   named. Check also that no two symbols carry the same name. *)
+(* Check that there are not two symbols carrying the same name. *)
 
 let check_keywords producers action =
-  let length = List.length producers in
-    List.iter
-      (function keyword ->
-	 match Positions.value keyword with
-	   | Dollar i
-	   | Position (RightDollar i, _, _) ->
-	       if i < 1 || i > length then
-		 Error.errorp keyword
-		   (Printf.sprintf "$%d refers to a nonexistent symbol." i);
-	       let ido, _ = List.nth producers (i - 1) in
-	       begin
-		 match ido with
-		   | Some { value = id } ->
-		       Error.errorp keyword
-			 (Printf.sprintf 
-			    "please do not say: $%d. Instead, say: %s." i id)
-		   | None ->
-		       ()
-	       end
-	   | Position (RightNamed id, _, _) ->
-	       let found =
-		 ref false 
-	       in
-	       List.iter (fun (ido, _) ->
-		 match ido with
-		 | Some { value = id' } when id = id' ->
-		     found := true
-		 | _ ->
-		     ()
-	       ) producers;
-	       if not !found then
-		 Error.errorp keyword
-		   (Printf.sprintf "%s refers to a nonexistent symbol." id)
-	   | Position (Left, _, _)
-	   | SyntaxError ->
-	       ()
-      ) (Action.pkeywords action)
+  List.iter (fun keyword ->
+    match Positions.value keyword with
+      | Position (RightNamed id, _, _) ->
+	let found = ref false in
+	List.iter (fun (ido, _) ->
+	  if ido.value = id then found := true
+	) producers;
+	if not !found then
+	  Error.errorp keyword
+	    (Printf.sprintf "%s refers to a nonexistent symbol." id)
+      | Position (Left, _, _)
+      | SyntaxError ->
+	()
+  ) (Action.pkeywords action)
 
 let check_parameterized_grammar_is_well_defined grammar =
 
@@ -678,29 +653,26 @@ let check_parameterized_grammar_is_well_defined grammar =
 	       pr_branch_shift_precedence = sprec;
 	       pr_action = action 
 	     } -> ignore (List.fold_left
-			    
+
 	    (* Check the producers. *)
             (fun already_seen (id, p) ->
 	       let symbol, parameters = Parameters.unapp p in
 	       let s = symbol.value and p = symbol.position in
 	       let already_seen = 
-		 match id with
-		     None -> already_seen
-		   | Some id -> 
-		       (* Check the producer id is unique. *)
-		       if StringSet.mem id.value already_seen then
-			 Error.error [ id.position ]
-			   (Printf.sprintf
-			      "there are multiple producers named %s in this sequence." 
-			      id.value);
-		       StringSet.add id.value already_seen
+		 (* Check the producer id is unique. *)
+		 if StringSet.mem id.value already_seen then
+		   Error.error [ id.position ]
+		     (Printf.sprintf
+			"there are multiple producers named %s in this sequence." 
+			id.value);
+		 StringSet.add id.value already_seen
 	       in
 
 		 (* Check that the producer is defined somewhere. *)
 		 check_identifier_reference grammar prule s p;
 		 StringMap.iter (check_identifier_reference grammar prule) 
 		   (List.fold_left Parameters.identifiers StringMap.empty parameters);
-		 
+
 		 (* Check the %prec is a valid reference to a token. *)
 		 (try
                     if not ((StringMap.find s grammar.p_tokens).tk_is_declared
@@ -709,7 +681,7 @@ let check_parameterized_grammar_is_well_defined grammar =
 			(Printf.sprintf "%s has not been declared as a token." s)
 		  with Not_found -> ());
 		 already_seen
-		 		 
+
             ) StringSet.empty producers);
 
 	    check_keywords producers action;

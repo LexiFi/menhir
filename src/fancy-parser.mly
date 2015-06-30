@@ -269,17 +269,14 @@ production_group:
   action = ACTION
   oprec2 = precedence?
     { 
-      ParserAux.check_production_group
-	productions
-	$startpos(action) $endpos(action) action;
-
-      List.map (fun (producers, oprec1, rprec, pos) -> {
+      ParserAux.normalize_production_group productions
+      |> List.map (fun (producers, oprec1, rprec, pos) -> {
 	pr_producers                = producers;
 	pr_action                   = action;
 	pr_branch_shift_precedence  = ParserAux.override pos oprec1 oprec2;
 	pr_branch_reduce_precedence = rprec;
 	pr_branch_position          = pos
-      }) productions
+      }) 
     }
 | error ACTION precedence?
 | error EOF
@@ -316,7 +313,7 @@ production:
 
 producer:
 | id = ioption(terminated(LID, EQUAL)) p = actual
-    { id, p }
+    { position (with_poss $startpos $endpos ()), id, p }
 
 /* ------------------------------------------------------------------------- */
 /* The ideal syntax of actual parameters includes:

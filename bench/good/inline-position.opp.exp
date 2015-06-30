@@ -13,32 +13,32 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %%
 
 prog:
-| a1 a2 a3 a4 a5 a6 a7 a8
-    {()}
+| _1 = a1 _2 = a2 _3 = a3 _4 = a4 _5 = a5 _6 = a6 _7 = a7 _8 = a8
+    {(())}
 
 a1:
 | 
     {let x =
-  ( g $startpos $endpos $startpos $endpos )
+  ( g _startpos _endpos _startpos _endpos )
 in
 let _startpos_x_ = _startpos in
 let _endpos_x_ = _endpos in
-
-  f $startpos $endpos $startpos(x) $endpos(x)
-}
+(
+  f _startpos _endpos _startpos_x_ _endpos_x_
+)}
 
 a2:
 | a = A b = B
     {let x =
   let _startpos = _endpos_a_ in
   let _endpos = _startpos_b_ in
-  ( g $startpos $endpos $startpos $endpos )
+  ( g _startpos _endpos _startpos _endpos )
 in
 let _startpos_x_ = _endpos_a_ in
 let _endpos_x_ = _startpos_b_ in
-
-  f $startpos $endpos $startpos(x) $endpos(x)
-}
+(
+  f _startpos _endpos _startpos_x_ _endpos_x_
+)}
 
 a3:
 | a0 = A b0 = B
@@ -48,14 +48,14 @@ a3:
   let b = b0 in
   let a = a0 in
   (
-  g $startpos $endpos $startpos(a) $endpos(a)
+  g _startpos _endpos _startpos_a_ _endpos_a_
 )
 in
 let _startpos_x_ = _startpos in
 let _endpos_x_ = _endpos in
-
-  f $startpos $endpos $startpos(x) $endpos(x)
-}
+(
+  f _startpos _endpos _startpos_x_ _endpos_x_
+)}
 
 a4:
 | a = A a0 = A b0 = B b = B
@@ -67,66 +67,68 @@ a4:
   let b = b0 in
   let a = a0 in
   (
-  g $startpos $endpos $startpos(a) $endpos(a)
+  g _startpos _endpos _startpos_a_ _endpos_a_
 )
 in
 let _startpos_x_ = _endpos_a_ in
 let _endpos_x_ = _startpos_b_ in
-
-  f $startpos $endpos $startpos(x) $endpos(x)
-}
+(
+  f _startpos _endpos _startpos_x_ _endpos_x_
+)}
 
 a5:
-| _menhir_p0 = A _menhir_p1 = C
+| _1 = A _3 = C
     {let x =
-  let _startpos = _endpos__menhir_p0_ in
-  let _endpos = _startpos__menhir_p1_ in
-  ( g $startpos $endpos $startpos $endpos )
+  let _startpos = _endpos__1_ in
+  let _endpos = _startpos__3_ in
+  ( g _startpos _endpos _startpos _endpos )
 in
-let _startpos_x_ = _endpos__menhir_p0_ in
-let _endpos_x_ = _startpos__menhir_p1_ in
-
-  f $startpos $endpos $startpos(x) $endpos(x)
-}
+let _startpos_x_ = _endpos__1_ in
+let _endpos_x_ = _startpos__3_ in
+(
+  f _startpos _endpos _startpos_x_ _endpos_x_
+)}
 
 a6:
-| A B
+| _10 = A _20 = B
     {let x =
+  let _2 = _20 in
+  let _1 = _10 in
   (
-  g $startpos $endpos $startpos $endpos
+  g _startpos _endpos _startpos _endpos
 )
 in
 let _startpos_x_ = _startpos in
 let _endpos_x_ = _endpos in
-
-  f $startpos $endpos $startpos(x) $endpos(x)
-}
+(
+  f _startpos _endpos _startpos_x_ _endpos_x_
+)}
 
 a7:
-| A _menhir_p1 = B
+| _1 = A _3 = B
     {let x =
-  let _endpos = _startpos__menhir_p1_ in
+  let _endpos = _startpos__3_ in
   (
-  g $endpos $endpos $endpos $endpos
+  g _endpos _endpos _endpos _endpos
 )
 in
-let _endpos_x_ = _startpos__menhir_p1_ in
-
-  f $endpos $endpos $endpos(x) $endpos(x)
-}
+let _endpos_x_ = _startpos__3_ in
+(
+  f _endpos _endpos _endpos_x_ _endpos_x_
+)}
 
 a8:
-| _menhir_p0 = A B
+| _1 = A _3 = B
     {let x =
-  let _startpos = _endpos__menhir_p0_ in
+  let _startpos = _endpos__1_ in
   (
-  g $startpos $startpos $startpos $startpos
+  g _startpos _startpos _startpos _startpos
 )
 in
-let _startpos_x_ = _endpos__menhir_p0_ in
-
-  f $startpos $startpos $startpos(x) $startpos(x)
-}
+let _startpos_x_ = _endpos__1_ in
+(
+  f _startpos _startpos _startpos_x_ _startpos_x_
+)}
 
 %%
 

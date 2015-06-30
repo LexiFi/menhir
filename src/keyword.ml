@@ -23,16 +23,24 @@ type where =
    left-hand side or about one of the symbols in its right-hand
    side, which he can refer to by position or by name. *)
 
-type subject =
+type parsed_subject =
+  | PLeft
+  | PRightDollar of int
+  | PRightNamed of string
+
+and subject =
   | Left
-  | RightDollar of int
   | RightNamed of string
 
 (* Keywords inside semantic actions. They allow access to semantic
    values or to position information. *)
 
-type keyword =
-  | Dollar of int
+type parsed_keyword =
+  | PDollar of int
+  | PPosition of parsed_subject * where * flavor
+  | PSyntaxError
+
+and keyword =
   | Position of subject * where * flavor
   | SyntaxError
 
@@ -49,8 +57,6 @@ let where = function
 let subject = function
   | Left ->
       ""
-  | RightDollar i ->
-      Printf.sprintf "__%d_" i
   | RightNamed id ->
       Printf.sprintf "_%s_" id
 

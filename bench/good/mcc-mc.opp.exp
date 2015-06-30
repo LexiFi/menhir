@@ -45,54 +45,54 @@ let parse_fc buffer =
 %%
 
 program:
-| source_block_list TokEof
-    { $1 }
-| source_block_list
-    { $1 }
-| TokEof
-    { [] }
+| _1 = source_block_list _2 = TokEof
+    {                               ( _1 )}
+| _1 = source_block_list
+    {                         ( _1 )}
+| _1 = TokEof
+    {               ( [] )}
 
 source_block_list:
-| source_block_list source_block
-    { $1 @ $2 }
-| source_block
-    { $1 }
+| _1 = source_block_list _2 = source_block
+    {        ( _1 @ _2 )}
+| _1 = source_block
+    {                    ( _1 )}
 
 source_block:
-| pascal_block
-    { $1 }
-| pasqual_block
-    { $1 }
-| fc_block
-    { $1 }
-| generic_block
-    { $1 }
+| _1 = pascal_block
+    {                    ( _1 )}
+| _1 = pasqual_block
+    {                     ( _1 )}
+| _1 = fc_block
+    {                 ( _1 )}
+| _1 = generic_block
+    {                     ( _1 )}
 
 pascal_block:
-| TokLt TokLanguage TokEq TokPascal TokSource TokEq TokSourceString TokGt
-    { parse_pascal (fst $7) }
+| _1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokPascal _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
+    {        ( parse_pascal (fst _7) )}
 
 pasqual_block:
-| TokLt TokLanguage TokEq TokPasqual TokSource TokEq TokSourceString TokGt
-    { parse_pasqual (fst $7) }
+| _1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokPasqual _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
+    {    ( parse_pasqual (fst _7) )}
 
 fc_block:
-| TokLt TokLanguage TokEq TokFC TokSource TokEq TokSourceString TokGt
-    { parse_fc (fst $7) }
+| _1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokFC _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
+    {    ( parse_fc (fst _7) )}
 
 generic_block:
-| TokLt TokLanguage TokEq TokString TokSource TokEq TokSourceString TokGt
-    { match String.lowercase (fst $4) with
+| _1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokString _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
+    {        ( match String.lowercase (fst _4) with
 				      "pascal" ->
-					parse_pascal (fst $7)
+					parse_pascal (fst _7)
 				    | "pasqual" ->
-					parse_pasqual (fst $7)
+					parse_pasqual (fst _7)
 				    | "c" | "fc" ->
-					parse_fc (fst $7)
+					parse_fc (fst _7)
 				    | _ ->
-					print_string ("warning: block ignored (no front-end is found for " ^ (fst $4) ^ ")\n");
+					print_string ("warning: block ignored (no front-end is found for " ^ (fst _4) ^ ")\n");
 					[]
-				}
+				)}
 
 %%
 

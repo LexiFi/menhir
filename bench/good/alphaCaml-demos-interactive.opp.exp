@@ -15,18 +15,18 @@ open Syntax.Raw
 %%
 
 expr:
-| VAR
-    { EVar $1 }
-| CONST
-    { EConst $1 }
-| expr PLUS expr
-    { EAdd ($1, $3) }
-| FAIL
-    { EFail }
+| _1 = VAR
+    {    ( EVar _1 )}
+| _1 = CONST
+    {    ( EConst _1 )}
+| _1 = expr _2 = PLUS _3 = expr
+    {    ( EAdd (_1, _3) )}
+| _1 = FAIL
+    {    ( EFail )}
 
 declarations:
-| VAR EQUAL expr EOF
-    { D ($1, $3, Suspension.create (fun () -> !ParserFix.declarations())) }
+| _1 = VAR _2 = EQUAL _3 = expr _4 = EOF
+    {    ( D (_1, _3, Suspension.create (fun () -> !ParserFix.declarations())) )}
 
 %%
 

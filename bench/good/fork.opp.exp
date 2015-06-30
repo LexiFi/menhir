@@ -75,609 +75,609 @@ recommend switching on --infer in order to avoid obscure type error messages.
 
 kind_variable:
 | id = IDENTIFIER
-    { mkid kind_sort id }
+    {    ( mkid kind_sort id )}
 
 type_variable:
 | id = IDENTIFIER
-    { mkid type_sort id }
+    {    ( mkid type_sort id )}
 
 term_variable:
 | id = IDENTIFIER
-    { mkid term_sort id }
+    {    ( mkid term_sort id )}
 
 quantifier:
-| FORALL
-    { QForall }
-| EXISTS
-    { QExists }
+| _1 = FORALL
+    {    ( QForall )}
+| _1 = EXISTS
+    {    ( QExists )}
 
 statement:
-| x0 = ty2 _menhir_p0 = EQ x1 = ty2
+| x0 = ty2 _2 = EQ x1 = ty2
     {let ty2 =
-  let _startpos = _endpos__menhir_p0_ in
+  let _startpos = _endpos__2_ in
   let x = x1 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let ty1 =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- SEquation (ty1, ty2) }
-| FORALL b = type_binder DOT s = statement
-    { bind b mksforall (Error.dummy, s) }
+    ( SEquation (ty1, ty2) )}
+| _1 = FORALL b = type_binder _3 = DOT s = statement
+    {    ( bind b mksforall (Error.dummy, s) )}
 
 program:
-| ds = list_declaration_ EOF
-    { List.flatten ds }
+| ds = list_declaration_ _2 = EOF
+    {    ( List.flatten ds )}
 
 list_declaration_:
 | 
-    { [] }
+    {    ( [] )}
 | x = declaration xs = list_declaration_
-    { x :: xs }
+    {    ( x :: xs )}
 
 nonempty_list_loc_type_variable__:
 | x0 = type_variable
     {let x =
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- [ x ] }
+    ( [ x ] )}
 | x0 = type_variable xs = nonempty_list_loc_type_variable__
     {let x =
   let _endpos = _startpos_xs_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- x :: xs }
+    ( x :: xs )}
 
 nonempty_list_loc_term_variable__:
 | x0 = term_variable
     {let x =
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- [ x ] }
+    ( [ x ] )}
 | x0 = term_variable xs = nonempty_list_loc_term_variable__
     {let x =
   let _endpos = _startpos_xs_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- x :: xs }
+    ( x :: xs )}
 
 kind0:
-| STAR
-    { KStar }
+| _1 = STAR
+    {    ( KStar )}
 | id = kind_variable
-    { KDefined id }
-| LATER kind = kind0
-    { KLater kind }
-| LPAR kind0 = kind1 RPAR
+    {    ( KDefined id )}
+| _1 = LATER kind = kind0
+    {    ( KLater kind )}
+| _1 = LPAR kind0 = kind1 _3 = RPAR
     {let kind =
   let kind = kind0 in
-  ( kind )
+  (    ( kind ))
 in
- kind }
+    ( kind )}
 
 kind1:
 | kind = kind0
-    { kind }
-| kind1 = kind0 ARROW kind2 = kind1
-    { KArrow (kind1, kind2) }
+    {    ( kind )}
+| kind1 = kind0 _2 = ARROW kind2 = kind1
+    {    ( KArrow (kind1, kind2) )}
 
 type_binder:
 | ids = nonempty_list_loc_type_variable__
-    { ids, None }
-| ids = nonempty_list_loc_type_variable__ COLON kind0 = kind1
+    {    ( ids, None )}
+| ids = nonempty_list_loc_type_variable__ _2 = COLON kind0 = kind1
     {let kind =
   let kind = kind0 in
-  ( kind )
+  (    ( kind ))
 in
- ids, Some kind }
+    ( ids, Some kind )}
 
 ty0:
 | id = type_variable
-    { TyVar id }
-| LPAR RPAR
-    { TyUnit }
-| LPAR ty0 = ty3 RPAR
+    {    ( TyVar id )}
+| _1 = LPAR _2 = RPAR
+    {    ( TyUnit )}
+| _1 = LPAR ty0 = ty3 _3 = RPAR
     {let ty =
   let ty = ty0 in
-  ( ty )
+  (    ( ty ))
 in
- ty }
-| _menhir_p0 = LPAR ty00 = ty3 _menhir_p1 = COLON kind0 = kind1 RPAR
+    ( ty )}
+| _1 = LPAR ty00 = ty3 _3 = COLON kind0 = kind1 _5 = RPAR
     {let kind =
   let kind = kind0 in
-  ( kind )
+  (    ( kind ))
 in
 let ty =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__3_ in
+  let _startpos = _endpos__1_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- TyConstraint (ty, kind) }
-| _menhir_p0 = LPAR ty00 = ty3 delimiter = COMMA ty01 = ty3 _menhir_p1 = RPAR
+    ( TyConstraint (ty, kind) )}
+| _1 = LPAR ty00 = ty3 delimiter = COMMA ty01 = ty3 _5 = RPAR
     {let ty2 =
-  let _endpos = _startpos__menhir_p1_ in
+  let _endpos = _startpos__5_ in
   let _startpos = _endpos_delimiter_ in
   let ty0 = ty01 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let ty1 =
   let _endpos = _startpos_delimiter_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _startpos = _endpos__1_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- let loc1 = ($startpos, $endpos(delimiter))
+    ( let loc1 = (_startpos, _endpos_delimiter_)
       and () = delimiter in (* avoid a warning *)
-      TyPair (loc1, ty1, ty2) }
+      TyPair (loc1, ty1, ty2) )}
 
 ty1:
 | ty = ty0
-    { ty }
+    {    ( ty )}
 | x0 = ty1 x1 = ty0
     {let ty2 =
   let _startpos = _endpos_x0_ in
   let x = x1 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let _startpos_ty2_ = _endpos_x0_ in
 let ty1 =
   let _endpos = _startpos_ty2_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- TyApp (ty1, ty2) }
+    ( TyApp (ty1, ty2) )}
 
 ty2:
 | ty = ty1
-    { ty }
-| x0 = ty2 _menhir_p0 = BACKQUOTE x1 = ty1 delimiter = BACKQUOTE x2 = ty1
+    {    ( ty )}
+| x0 = ty2 _2 = BACKQUOTE x1 = ty1 delimiter = BACKQUOTE x2 = ty1
     {let ty2 =
   let _startpos = _endpos_delimiter_ in
   let x = x2 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let ty =
-  let _startpos = _endpos__menhir_p0_ in
+  let _startpos = _endpos__2_ in
   let _endpos = _startpos_delimiter_ in
   let x = x1 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let ty1 =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- let loc = ($startpos, $endpos(delimiter)) in
+    ( let loc = (_startpos, _endpos_delimiter_) in
       let () = delimiter in (* avoid a warning *)
-      TyApp ((loc, TyApp (ty, ty1)), ty2) }
+      TyApp ((loc, TyApp (ty, ty1)), ty2) )}
 
 ty3:
 | ty = ty2
-    { ty }
+    {    ( ty )}
 | x0 = ty2 delimiter = ARROW x1 = ty3
     {let ty2 =
   let _startpos = _endpos_delimiter_ in
   let x = x1 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let ty1 =
   let _endpos = _startpos_delimiter_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- let loc1 = ($startpos, $endpos(delimiter))
+    ( let loc1 = (_startpos, _endpos_delimiter_)
       and () = delimiter in (* avoid a warning *)
-      TyArrow (loc1, ty1, ty2) }
-| LAMBDA b = type_binder _menhir_p0 = DOT x0 = ty3
+      TyArrow (loc1, ty1, ty2) )}
+| _1 = LAMBDA b = type_binder _3 = DOT x0 = ty3
     {let ty =
-  let _startpos = _endpos__menhir_p0_ in
+  let _startpos = _endpos__3_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- bind b (mktyabs ty) ty }
-| q = quantifier b = type_binder _menhir_p0 = DOT x0 = ty3
+    ( bind b (mktyabs ty) ty )}
+| q = quantifier b = type_binder _3 = DOT x0 = ty3
     {let ty =
-  let _startpos = _endpos__menhir_p0_ in
+  let _startpos = _endpos__3_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- bind b (mktyquantified q ty) ty }
+    ( bind b (mktyquantified q ty) ty )}
 
 term_variable_or_wildcard:
 | id = term_variable
-    { Some id }
-| WILDCARD
-    { None }
+    {    ( Some id )}
+| _1 = WILDCARD
+    {    ( None )}
 
 term_binder:
-| ids = nonempty_list_loc_term_variable__ _menhir_p0 = COLON ty00 = ty3
+| ids = nonempty_list_loc_term_variable__ _2 = COLON ty00 = ty3
     {let ty =
-  let _startpos = _endpos__menhir_p0_ in
+  let _startpos = _endpos__2_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- ids, ty }
+    ( ids, ty )}
 
 term0:
 | id = term_variable
-    { TeVar id }
-| LPAR RPAR
-    { TeUnit }
-| LPAR t0 = term3 RPAR
+    {    ( TeVar id )}
+| _1 = LPAR _2 = RPAR
+    {    ( TeUnit )}
+| _1 = LPAR t0 = term3 _3 = RPAR
     {let t =
   let t = t0 in
-  ( t )
+  (    ( t ))
 in
- t }
-| _menhir_p0 = LPAR t00 = term3 _menhir_p1 = COLON ty00 = ty3 _menhir_p2 = RPAR
+    ( t )}
+| _1 = LPAR t00 = term3 _3 = COLON ty00 = ty3 _5 = RPAR
     {let ty =
-  let _endpos = _startpos__menhir_p2_ in
-  let _startpos = _endpos__menhir_p1_ in
+  let _endpos = _startpos__5_ in
+  let _startpos = _endpos__3_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let t =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__3_ in
+  let _startpos = _endpos__1_ in
   let t0 = t00 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- TeConstraint (t, ty) }
-| _menhir_p0 = LPAR t00 = term3 _menhir_p1 = COMMA t01 = term3 _menhir_p2 = RPAR
+    ( TeConstraint (t, ty) )}
+| _1 = LPAR t00 = term3 _3 = COMMA t01 = term3 _5 = RPAR
     {let t2 =
-  let _endpos = _startpos__menhir_p2_ in
-  let _startpos = _endpos__menhir_p1_ in
+  let _endpos = _startpos__5_ in
+  let _startpos = _endpos__3_ in
   let t0 = t01 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let t1 =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__3_ in
+  let _startpos = _endpos__1_ in
   let t0 = t00 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- TePair (t1, t2) }
+    ( TePair (t1, t2) )}
 
 term1:
 | t = term0
-    { t }
+    {    ( t )}
 | x0 = term1 x1 = term0
     {let t2 =
   let _startpos = _endpos_x0_ in
   let x = x1 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let _startpos_t2_ = _endpos_x0_ in
 let t1 =
   let _endpos = _startpos_t2_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- TeApp (t1, t2) }
-| x0 = term1 _menhir_p0 = LBRACKET ty00 = ty3 _menhir_p1 = RBRACKET
+    ( TeApp (t1, t2) )}
+| x0 = term1 _2 = LBRACKET ty00 = ty3 _4 = RBRACKET
     {let ty =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__4_ in
+  let _startpos = _endpos__2_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let t =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- TeTyApp (t, ty) }
+    ( TeTyApp (t, ty) )}
 
 term2:
 | t = term1
-    { t }
-| x0 = term2 _menhir_p0 = BACKQUOTE x1 = term1 delimiter = BACKQUOTE x2 = term1
+    {    ( t )}
+| x0 = term2 _2 = BACKQUOTE x1 = term1 delimiter = BACKQUOTE x2 = term1
     {let t2 =
   let _startpos = _endpos_delimiter_ in
   let x = x2 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let t =
-  let _startpos = _endpos__menhir_p0_ in
+  let _startpos = _endpos__2_ in
   let _endpos = _startpos_delimiter_ in
   let x = x1 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let t1 =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- let loc = ($startpos, $endpos(delimiter)) in
+    ( let loc = (_startpos, _endpos_delimiter_) in
       let () = delimiter in (* avoid a warning *)
-      TeApp ((loc, TeApp (t, t1)), t2) }
+      TeApp ((loc, TeApp (t, t1)), t2) )}
 
 term3:
 | t = term2
-    { t }
-| LAMBDA b = term_binder _menhir_p0 = DOT x0 = term3
+    {    ( t )}
+| _1 = LAMBDA b = term_binder _3 = DOT x0 = term3
     {let t =
-  let _startpos = _endpos__menhir_p0_ in
+  let _startpos = _endpos__3_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- bind b (mkteabs t) t }
-| BIGLAMBDA b = type_binder _menhir_p0 = DOT x0 = term3
+    ( bind b (mkteabs t) t )}
+| _1 = BIGLAMBDA b = type_binder _3 = DOT x0 = term3
     {let t =
-  let _startpos = _endpos__menhir_p0_ in
+  let _startpos = _endpos__3_ in
   let x = x0 in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- bind b (mktetyabs t) t }
-| _menhir_p0 = PACK ty00 = ty3 _menhir_p1 = COMMA t00 = term3 _menhir_p2 = AS ty01 = ty3
+    ( bind b (mktetyabs t) t )}
+| _1 = PACK ty00 = ty3 _3 = COMMA t00 = term3 _5 = AS ty01 = ty3
     {let ty1 =
-  let _startpos = _endpos__menhir_p2_ in
+  let _startpos = _endpos__5_ in
   let ty0 = ty01 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let t =
-  let _endpos = _startpos__menhir_p2_ in
-  let _startpos = _endpos__menhir_p1_ in
+  let _endpos = _startpos__5_ in
+  let _startpos = _endpos__3_ in
   let t0 = t00 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let ty2 =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__3_ in
+  let _startpos = _endpos__1_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- TePack (t, ty1, ty2) }
-| UNPACK alpha = type_variable COMMA x = term_variable _menhir_p0 = EQ t00 = term3 _menhir_p1 = IN t01 = term3
+    ( TePack (t, ty1, ty2) )}
+| _1 = UNPACK alpha = type_variable _3 = COMMA x = term_variable _5 = EQ t00 = term3 _7 = IN t01 = term3
     {let t2 =
-  let _startpos = _endpos__menhir_p1_ in
+  let _startpos = _endpos__7_ in
   let t0 = t01 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let t1 =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__7_ in
+  let _startpos = _endpos__5_ in
   let t0 = t00 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- TeUnpack (alpha, x, t1, t2) }
-| LET id = term_variable _menhir_p0 = EQ t00 = term3 _menhir_p1 = IN t01 = term3
+    ( TeUnpack (alpha, x, t1, t2) )}
+| _1 = LET id = term_variable _3 = EQ t00 = term3 _5 = IN t01 = term3
     {let t2 =
-  let _startpos = _endpos__menhir_p1_ in
+  let _startpos = _endpos__5_ in
   let t0 = t01 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let t1 =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__5_ in
+  let _startpos = _endpos__3_ in
   let t0 = t00 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- TeLet (id, t1, t2) }
-| LET LPAR id1 = term_variable_or_wildcard COMMA id2 = term_variable_or_wildcard RPAR _menhir_p0 = EQ t00 = term3 _menhir_p1 = IN t01 = term3
+    ( TeLet (id, t1, t2) )}
+| _1 = LET _2 = LPAR id1 = term_variable_or_wildcard _4 = COMMA id2 = term_variable_or_wildcard _6 = RPAR _7 = EQ t00 = term3 _9 = IN t01 = term3
     {let t2 =
-  let _startpos = _endpos__menhir_p1_ in
+  let _startpos = _endpos__9_ in
   let t0 = t01 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let t1 =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__9_ in
+  let _startpos = _endpos__7_ in
   let t0 = t00 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- TeLetPair (id1, id2, t1, t2) }
-| ASSERT id = term_variable _menhir_p0 = COLON ty00 = ty3 _menhir_p1 = IN t00 = term3
+    ( TeLetPair (id1, id2, t1, t2) )}
+| _1 = ASSERT id = term_variable _3 = COLON ty00 = ty3 _5 = IN t00 = term3
     {let t =
-  let _startpos = _endpos__menhir_p1_ in
+  let _startpos = _endpos__5_ in
   let t0 = t00 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let ty =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__5_ in
+  let _startpos = _endpos__3_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
-let _endpos_ty_ = _startpos__menhir_p1_ in
- let var = ($startpos(id), $endpos(id)), TeVar id in
-      let con = ($startpos(id), $endpos(ty)), TeConstraint (var, ty) in
-      TeLet (id, con, t) }
-| LET id = term_variable _menhir_p0 = COLON ty00 = ty3 _menhir_p1 = EQ t00 = term3 _menhir_p2 = IN t01 = term3
+let _endpos_ty_ = _startpos__5_ in
+    ( let var = (_startpos_id_, _endpos_id_), TeVar id in
+      let con = (_startpos_id_, _endpos_ty_), TeConstraint (var, ty) in
+      TeLet (id, con, t) )}
+| _1 = LET id = term_variable _3 = COLON ty00 = ty3 _5 = EQ t00 = term3 _7 = IN t01 = term3
     {let t2 =
-  let _startpos = _endpos__menhir_p2_ in
+  let _startpos = _endpos__7_ in
   let t0 = t01 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let t1 =
-  let _endpos = _startpos__menhir_p2_ in
-  let _startpos = _endpos__menhir_p1_ in
+  let _endpos = _startpos__7_ in
+  let _startpos = _endpos__5_ in
   let t0 = t00 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let ty =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__5_ in
+  let _startpos = _endpos__3_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
-let _endpos_ty_ = _startpos__menhir_p1_ in
- let con = ($startpos(id), $endpos(ty)), TeConstraint (t1, ty) in
-      TeLet (id, con, t2) }
-| TYPE id = type_variable _menhir_p0 = EQ ty00 = ty3 _menhir_p1 = IN t00 = term3
+let _endpos_ty_ = _startpos__5_ in
+    ( let con = (_startpos_id_, _endpos_ty_), TeConstraint (t1, ty) in
+      TeLet (id, con, t2) )}
+| _1 = TYPE id = type_variable _3 = EQ ty00 = ty3 _5 = IN t00 = term3
     {let t =
-  let _startpos = _endpos__menhir_p1_ in
+  let _startpos = _endpos__5_ in
   let t0 = t00 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let ty =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__5_ in
+  let _startpos = _endpos__3_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- TeType (id, ty, t) }
+    ( TeType (id, ty, t) )}
 
 declaration:
-| KIND id = kind_variable EQ kind0 = kind1
+| _1 = KIND id = kind_variable _3 = EQ kind0 = kind1
     {let kind =
   let kind = kind0 in
-  ( kind )
+  (    ( kind ))
 in
- [ DKind (id, kind) ] }
-| TYPE id = type_variable COLON kind0 = kind1 _menhir_p0 = EQ ty00 = ty3
+    ( [ DKind (id, kind) ] )}
+| _1 = TYPE id = type_variable _3 = COLON kind0 = kind1 _5 = EQ ty00 = ty3
     {let ty =
-  let _startpos = _endpos__menhir_p0_ in
+  let _startpos = _endpos__5_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let kind =
   let kind = kind0 in
-  ( kind )
+  (    ( kind ))
 in
- [ DType (id, kind, ty) ] }
-| DEFAULT KIND id = type_variable COLON kind0 = kind1
+    ( [ DType (id, kind, ty) ] )}
+| _1 = DEFAULT _2 = KIND id = type_variable _4 = COLON kind0 = kind1
     {let kind =
   let kind = kind0 in
-  ( kind )
+  (    ( kind ))
 in
- [ DDefaultKind (id, kind) ] }
-| LEMMA IDENTIFIER COLON s = statement
-    { [ DLemma s ] }
-| TERM id = term_variable _menhir_p0 = COLON ty00 = ty3 _menhir_p1 = EQ t00 = term3
+    ( [ DDefaultKind (id, kind) ] )}
+| _1 = LEMMA _2 = IDENTIFIER _3 = COLON s = statement
+    {    ( [ DLemma s ] )}
+| _1 = TERM id = term_variable _3 = COLON ty00 = ty3 _5 = EQ t00 = term3
     {let t =
-  let _startpos = _endpos__menhir_p1_ in
+  let _startpos = _endpos__5_ in
   let t0 = t00 in
   let x =
     let t = t0 in
-    ( t )
+    (    ( t ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
 let ty =
-  let _endpos = _startpos__menhir_p1_ in
-  let _startpos = _endpos__menhir_p0_ in
+  let _endpos = _startpos__5_ in
+  let _startpos = _endpos__3_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
-    ( ty )
+    (    ( ty ))
   in
-  ( (($startpos, $endpos), x) )
+  (    ( ((_startpos, _endpos), x) ))
 in
- [ DTerm (id, ty, t) ] }
+    ( [ DTerm (id, ty, t) ] )}
 | filename = INCLUDE
-    { !ParserBootstrap.load_and_parse filename }
+    {    ( !ParserBootstrap.load_and_parse filename )}
 
 %%
 

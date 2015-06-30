@@ -92,7 +92,7 @@ type branch_reduce_precedence =
     precedence_level
 
 type producer =
-    identifier Positions.located option * parameter
+    identifier Positions.located * parameter
 
 type parameterized_branch =
     { 

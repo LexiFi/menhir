@@ -145,370 +145,370 @@ Warning: the token UNION is unused.
 %%
 
 lexpr:
-| lexpr IMPLIES lexpr
-    { info (PLimplies ($1, $3)) }
-| lexpr IFF lexpr
-    { info (PLiff ($1, $3)) }
-| lexpr OR lexpr
-    { info (PLor ($1, $3)) }
-| lexpr AND lexpr
-    { info (PLand ($1, $3)) }
-| NOT lexpr %prec prec_not
-    { info (PLnot $2) }
-| TRUE
-    { info PLtrue }
-| FALSE
-    { info PLfalse }
-| lexpr relation lexpr %prec prec_relation
-    { info (PLrel ($1, $2, $3)) }
-| IF lexpr THEN lexpr ELSE lexpr %prec prec_if
-    { info (PLif ($2, $4, $6)) }
-| FORALL ne_parameters SEMICOLON lexpr %prec prec_forall
-    { info (PLforall ($2, $4)) }
-| EXISTS ne_parameters SEMICOLON lexpr %prec prec_exists
-    { info (PLexists ($2, $4)) }
-| SEPARATED LPAR lexpr COMMA lexpr RPAR
-    { info (PLseparated ($3,$5)) }
-| FULLSEPARATED LPAR lexpr COMMA lexpr RPAR
-    { info (PLfullseparated ($3,$5)) }
-| VALID LPAR lexpr RPAR
-    { info (PLvalid ($3)) }
-| VALID_INDEX LPAR lexpr COMMA lexpr RPAR
-    { info (PLvalid_index ($3,$5)) }
-| VALID_RANGE LPAR lexpr COMMA lexpr COMMA lexpr RPAR
-    { info (PLvalid_range ($3,$5,$7)) }
-| FRESH LPAR lexpr RPAR
-    { info (PLfresh ($3)) }
-| NULL
-    { info PLnull }
-| CONSTANT
-    { info (PLconstant $1) }
-| lexpr PLUS lexpr
-    { info (PLbinop ($1, Badd, $3)) }
-| lexpr MINUS lexpr
-    { info (PLbinop ($1, Bsub, $3)) }
-| lexpr STAR lexpr
-    { info (PLbinop ($1, Bmul, $3)) }
-| lexpr SLASH lexpr
-    { info (PLbinop ($1, Bdiv, $3)) }
-| lexpr PERCENT lexpr
-    { info (PLbinop ($1, Bmod, $3)) }
-| lexpr ARROW IDENTIFIER
-    { info (PLarrow ($1, $3)) }
-| lexpr DOT IDENTIFIER
-    { info (PLdot ($1, $3)) }
-| lexpr LSQUARE lexpr RSQUARE
-    { info (PLarrget ($1, $3)) }
-| lexpr LSQUARE lexpr_option DOTDOT lexpr_option RSQUARE
-    { info (PLrange ($1, $3, $5)) }
-| MINUS lexpr %prec prec_uminus
-    { info (PLunop (Uminus, $2)) }
-| PLUS lexpr %prec prec_uminus
-    { $2 }
-| STAR lexpr
-    { info (PLunop (Ustar, $2)) }
-| AMP lexpr
-    { info (PLunop (Uamp, $2)) }
-| lexpr QUESTION lexpr COLON lexpr %prec prec_question
-    { info (PLif ($1, $3, $5)) }
-| OLD LPAR lexpr RPAR
-    { info (PLold $3) }
-| AT LPAR lexpr COMMA IDENTIFIER RPAR
-    { info (PLat ($3, $5)) }
-| BASE_ADDR LPAR lexpr RPAR
-    { info (PLbase_addr $3) }
-| BLOCK_LENGTH LPAR lexpr RPAR
-    { info (PLblock_length $3) }
-| RESULT
-    { info PLresult }
-| LPAR lexpr RPAR %prec prec_par
-    { $2 }
-| IDENTIFIER
-    { info (PLvar (Info.default_var_info $1)) }
-| IDENTIFIER LPAR lexpr_list RPAR
-    { info (PLapp (Info.default_logic_info $1, $3)) }
-| LPAR logic_type_not_id RPAR lexpr %prec prec_cast
-    { info (PLcast ($2, $4)) }
-| LPAR lexpr RPAR lexpr %prec prec_cast
-    { match $2.lexpr_node with
-	| PLvar x -> info (PLcast (LTvar x.Info.var_name, $4))
-	| _ -> raise Parse_error }
-| IDENTIFIER COLONCOLON lexpr %prec prec_named
-    { info (PLnamed ($1, $3)) }
+| _1 = lexpr _2 = IMPLIES _3 = lexpr
+    {                      ( info (PLimplies (_1, _3)) )}
+| _1 = lexpr _2 = IFF _3 = lexpr
+    {                  ( info (PLiff (_1, _3)) )}
+| _1 = lexpr _2 = OR _3 = lexpr
+    {                     ( info (PLor (_1, _3)) )}
+| _1 = lexpr _2 = AND _3 = lexpr
+    {                     ( info (PLand (_1, _3)) )}
+| _1 = NOT _2 = lexpr %prec prec_not
+    {                           ( info (PLnot _2) )}
+| _1 = TRUE
+    {       ( info PLtrue )}
+| _1 = FALSE
+    {        ( info PLfalse )}
+| _1 = lexpr _2 = relation _3 = lexpr %prec prec_relation
+    {                                           ( info (PLrel (_1, _2, _3)) )}
+| _1 = IF _2 = lexpr _3 = THEN _4 = lexpr _5 = ELSE _6 = lexpr %prec prec_if
+    {      ( info (PLif (_2, _4, _6)) )}
+| _1 = FORALL _2 = ne_parameters _3 = SEMICOLON _4 = lexpr %prec prec_forall
+    {      ( info (PLforall (_2, _4)) )}
+| _1 = EXISTS _2 = ne_parameters _3 = SEMICOLON _4 = lexpr %prec prec_exists
+    {      ( info (PLexists (_2, _4)) )}
+| _1 = SEPARATED _2 = LPAR _3 = lexpr _4 = COMMA _5 = lexpr _6 = RPAR
+    {                                        ( info (PLseparated (_3,_5)) )}
+| _1 = FULLSEPARATED _2 = LPAR _3 = lexpr _4 = COMMA _5 = lexpr _6 = RPAR
+    {                                            ( info (PLfullseparated (_3,_5)) )}
+| _1 = VALID _2 = LPAR _3 = lexpr _4 = RPAR
+    {                        ( info (PLvalid (_3)) )}
+| _1 = VALID_INDEX _2 = LPAR _3 = lexpr _4 = COMMA _5 = lexpr _6 = RPAR
+    {                                          ( info (PLvalid_index (_3,_5)) )}
+| _1 = VALID_RANGE _2 = LPAR _3 = lexpr _4 = COMMA _5 = lexpr _6 = COMMA _7 = lexpr _8 = RPAR
+    {      ( info (PLvalid_range (_3,_5,_7)) )}
+| _1 = FRESH _2 = LPAR _3 = lexpr _4 = RPAR
+    {                        ( info (PLfresh (_3)) )}
+| _1 = NULL
+    {       ( info PLnull )}
+| _1 = CONSTANT
+    {           ( info (PLconstant _1) )}
+| _1 = lexpr _2 = PLUS _3 = lexpr
+    {                   ( info (PLbinop (_1, Badd, _3)) )}
+| _1 = lexpr _2 = MINUS _3 = lexpr
+    {                    ( info (PLbinop (_1, Bsub, _3)) )}
+| _1 = lexpr _2 = STAR _3 = lexpr
+    {                   ( info (PLbinop (_1, Bmul, _3)) )}
+| _1 = lexpr _2 = SLASH _3 = lexpr
+    {                    ( info (PLbinop (_1, Bdiv, _3)) )}
+| _1 = lexpr _2 = PERCENT _3 = lexpr
+    {                      ( info (PLbinop (_1, Bmod, _3)) )}
+| _1 = lexpr _2 = ARROW _3 = IDENTIFIER
+    {                         ( info (PLarrow (_1, _3)) )}
+| _1 = lexpr _2 = DOT _3 = IDENTIFIER
+    {                       ( info (PLdot (_1, _3)) )}
+| _1 = lexpr _2 = LSQUARE _3 = lexpr _4 = RSQUARE
+    {                              ( info (PLarrget (_1, _3)) )}
+| _1 = lexpr _2 = LSQUARE _3 = lexpr_option _4 = DOTDOT _5 = lexpr_option _6 = RSQUARE
+    {   ( info (PLrange (_1, _3, _5)) )}
+| _1 = MINUS _2 = lexpr %prec prec_uminus
+    {                                ( info (PLunop (Uminus, _2)) )}
+| _1 = PLUS _2 = lexpr %prec prec_uminus
+    {                               ( _2 )}
+| _1 = STAR _2 = lexpr
+    {             ( info (PLunop (Ustar, _2)) )}
+| _1 = AMP _2 = lexpr
+    {            ( info (PLunop (Uamp, _2)) )}
+| _1 = lexpr _2 = QUESTION _3 = lexpr _4 = COLON _5 = lexpr %prec prec_question
+    {    ( info (PLif (_1, _3, _5)) )}
+| _1 = OLD _2 = LPAR _3 = lexpr _4 = RPAR
+    {                      ( info (PLold _3) )}
+| _1 = AT _2 = LPAR _3 = lexpr _4 = COMMA _5 = IDENTIFIER _6 = RPAR
+    {                                      ( info (PLat (_3, _5)) )}
+| _1 = BASE_ADDR _2 = LPAR _3 = lexpr _4 = RPAR
+    {                            ( info (PLbase_addr _3) )}
+| _1 = BLOCK_LENGTH _2 = LPAR _3 = lexpr _4 = RPAR
+    {                               ( info (PLblock_length _3) )}
+| _1 = RESULT
+    {         ( info PLresult )}
+| _1 = LPAR _2 = lexpr _3 = RPAR %prec prec_par
+    {                                 ( _2 )}
+| _1 = IDENTIFIER
+    {             ( info (PLvar (Info.default_var_info _1)) )}
+| _1 = IDENTIFIER _2 = LPAR _3 = lexpr_list _4 = RPAR
+    {    ( info (PLapp (Info.default_logic_info _1, _3)) )}
+| _1 = LPAR _2 = logic_type_not_id _3 = RPAR _4 = lexpr %prec prec_cast
+    {                                                    ( info (PLcast (_2, _4)) )}
+| _1 = LPAR _2 = lexpr _3 = RPAR _4 = lexpr %prec prec_cast
+    {    ( match _2.lexpr_node with
+	| PLvar x -> info (PLcast (LTvar x.Info.var_name, _4))
+	| _ -> raise Parse_error )}
+| _1 = IDENTIFIER _2 = COLONCOLON _3 = lexpr %prec prec_named
+    {                                               ( info (PLnamed (_1, _3)) )}
 
 lexpr_option:
 | 
-    { None }
-| lexpr
-    { Some $1 }
+    {                ( None )}
+| _1 = lexpr
+    {                ( Some _1 )}
 
 logic_type:
-| IDENTIFIER
-    { LTvar $1 }
-| IDENTIFIER stars
-    { $2 (LTvar $1) }
-| logic_type_not_id
-    { $1 }
+| _1 = IDENTIFIER
+    {             ( LTvar _1 )}
+| _1 = IDENTIFIER _2 = stars
+    {                   ( _2 (LTvar _1) )}
+| _1 = logic_type_not_id
+    {                    ( _1 )}
 
 logic_type_not_id:
-| VOID
-    { LTvoid }
-| CHAR
-    { LTint }
-| SIGNED CHAR
-    { LTint }
-| UNSIGNED CHAR
-    { LTint }
-| SIGNED INT
-    { LTint }
-| INT
-    { LTint }
-| UNSIGNED INT
-    { LTint }
-| SIGNED SHORT
-    { LTint }
-| SHORT
-    { LTint }
-| UNSIGNED SHORT
-    { LTint }
-| SIGNED LONG
-    { LTint }
-| LONG
-    { LTint }
-| UNSIGNED LONG
-    { LTint }
-| SIGNED LONG LONG
-    { LTint }
-| LONG LONG
-    { LTint }
-| UNSIGNED LONG LONG
-    { LTint }
-| FLOAT
-    { LTfloat }
-| DOUBLE
-    { LTfloat }
-| LONG DOUBLE
-    { LTfloat }
-| TYPENAME
-    { LTvar $1 }
-| logic_type_not_id STAR
-    { LTpointer $1 }
+| _1 = VOID
+    {                 ( LTvoid )}
+| _1 = CHAR
+    {                 ( LTint )}
+| _1 = SIGNED _2 = CHAR
+    {                 ( LTint )}
+| _1 = UNSIGNED _2 = CHAR
+    {                 ( LTint )}
+| _1 = SIGNED _2 = INT
+    {                 ( LTint )}
+| _1 = INT
+    {                 ( LTint )}
+| _1 = UNSIGNED _2 = INT
+    {                 ( LTint )}
+| _1 = SIGNED _2 = SHORT
+    {                 ( LTint )}
+| _1 = SHORT
+    {                 ( LTint )}
+| _1 = UNSIGNED _2 = SHORT
+    {                 ( LTint )}
+| _1 = SIGNED _2 = LONG
+    {                 ( LTint )}
+| _1 = LONG
+    {                 ( LTint )}
+| _1 = UNSIGNED _2 = LONG
+    {                 ( LTint )}
+| _1 = SIGNED _2 = LONG _3 = LONG
+    {                   ( LTint )}
+| _1 = LONG _2 = LONG
+    {              ( LTint )}
+| _1 = UNSIGNED _2 = LONG _3 = LONG
+    {                     ( LTint )}
+| _1 = FLOAT
+    {              ( LTfloat )}
+| _1 = DOUBLE
+    {              ( LTfloat )}
+| _1 = LONG _2 = DOUBLE
+    {              ( LTfloat )}
+| _1 = TYPENAME
+    {                   ( LTvar _1 )}
+| _1 = logic_type_not_id _2 = STAR
+    {                         ( LTpointer _1 )}
 
 stars:
-| STAR
-    { fun t -> LTpointer t }
-| stars STAR
-    { fun t -> $1 (LTpointer t) }
+| _1 = STAR
+    {       ( fun t -> LTpointer t )}
+| _1 = stars _2 = STAR
+    {             ( fun t -> _1 (LTpointer t) )}
 
 relation:
-| LT
-    { Lt }
-| GT
-    { Gt }
-| LE
-    { Le }
-| GE
-    { Ge }
-| EQ
-    { Eq }
-| NE
-    { Neq }
+| _1 = LT
+    {          ( Lt )}
+| _1 = GT
+    {          ( Gt )}
+| _1 = LE
+    {          ( Le )}
+| _1 = GE
+    {          ( Ge )}
+| _1 = EQ
+    {          ( Eq )}
+| _1 = NE
+    {          ( Neq )}
 
 lexpr_list:
 | 
-    { [] }
-| ne_lexpr_list
-    { $1 }
+    {                ( [] )}
+| _1 = ne_lexpr_list
+    {                 ( _1 )}
 
 ne_lexpr_list:
-| lexpr
-    { [$1] }
-| lexpr COMMA ne_lexpr_list
-    { $1 :: $3 }
+| _1 = lexpr
+    {                           ( [_1] )}
+| _1 = lexpr _2 = COMMA _3 = ne_lexpr_list
+    {                            ( _1 :: _3 )}
 
 pre_condition:
 | 
-    { None }
-| REQUIRES lexpr
-    { Some $2 }
+    {                ( None )}
+| _1 = REQUIRES _2 = lexpr
+    {                 ( Some _2 )}
 
 post_condition:
 | 
-    { None }
-| ENSURES lexpr
-    { Some $2 }
+    {                 ( None )}
+| _1 = ENSURES _2 = lexpr
+    {                ( Some _2 )}
 
 spec:
-| pre_condition effects post_condition decreases
-    { { requires = $1; assigns = $2; ensures = $3; decreases = $4 } }
+| _1 = pre_condition _2 = effects _3 = post_condition _4 = decreases
+    {    ( { requires = _1; assigns = _2; ensures = _3; decreases = _4 } )}
 
 loop_annot:
-| invariant loop_effects variant
-    { { invariant = Some $1; loop_assigns = $2; variant = Some $3 } }
-| loop_effects variant
-    { { invariant = None; loop_assigns = $1; variant = Some $2 } }
-| invariant loop_effects
-    { { invariant = Some $1; loop_assigns = $2; variant = None } }
-| ne_loop_effects
-    { { invariant = None; loop_assigns = Some $1; variant = None } }
+| _1 = invariant _2 = loop_effects _3 = variant
+    {    ( { invariant = Some _1; loop_assigns = _2; variant = Some _3 } )}
+| _1 = loop_effects _2 = variant
+    {    ( { invariant = None; loop_assigns = _1; variant = Some _2 } )}
+| _1 = invariant _2 = loop_effects
+    {    ( { invariant = Some _1; loop_assigns = _2; variant = None } )}
+| _1 = ne_loop_effects
+    {    ( { invariant = None; loop_assigns = Some _1; variant = None } )}
 
 invariant:
-| INVARIANT lexpr
-    { $2 }
+| _1 = INVARIANT _2 = lexpr
+    {                  ( _2 )}
 
 variant:
-| VARIANT lexpr FOR IDENTIFIER
-    { ($2, Some $4) }
-| VARIANT lexpr
-    { ($2, None) }
+| _1 = VARIANT _2 = lexpr _3 = FOR _4 = IDENTIFIER
+    {                               ( (_2, Some _4) )}
+| _1 = VARIANT _2 = lexpr
+    {                               ( (_2, None) )}
 
 decreases:
 | 
-    { None }
-| DECREASES variant
-    { Some $2 }
+    {                  ( None )}
+| _1 = DECREASES _2 = variant
+    {                    ( Some _2 )}
 
 annot:
-| annotation EOF
-    { $1 }
+| _1 = annotation _2 = EOF
+    {                   ( _1 )}
 
 annotation:
-| decl
-    { Adecl [$1] }
-| ghost_decl
-    { Adecl $1 }
-| spec
-    { Aspec $1 }
-| loop_annot
-    { Aloop_annot $1 }
-| ASSERT lexpr
-    { Acode_annot (Assert $2) }
-| LABEL IDENTIFIER
-    { Acode_annot (Label $2) }
-| SET ghost_lvalue EQUAL lexpr
-    { Acode_annot(GhostSet($2,$4)) }
+| _1 = decl
+    {                   ( Adecl [_1] )}
+| _1 = ghost_decl
+    {                   ( Adecl _1 )}
+| _1 = spec
+    {                   ( Aspec _1 )}
+| _1 = loop_annot
+    {                   ( Aloop_annot _1 )}
+| _1 = ASSERT _2 = lexpr
+    {                   ( Acode_annot (Assert _2) )}
+| _1 = LABEL _2 = IDENTIFIER
+    {                   ( Acode_annot (Label _2) )}
+| _1 = SET _2 = ghost_lvalue _3 = EQUAL _4 = lexpr
+    {                   ( Acode_annot(GhostSet(_2,_4)) )}
 
 ghost_lvalue:
-| lexpr
-    { $1 }
+| _1 = lexpr
+    {                    ( _1 )}
 
 effects:
 | 
-    { None }
-| ASSIGNS locations
-    { Some $2 }
-| ASSIGNS NOTHING
-    { Some [] }
+    {                ( None )}
+| _1 = ASSIGNS _2 = locations
+    {                    ( Some _2 )}
+| _1 = ASSIGNS _2 = NOTHING
+    {                  ( Some [] )}
 
 loop_effects:
 | 
-    { None }
-| ne_loop_effects
-    { Some $1 }
+    {                ( None )}
+| _1 = ne_loop_effects
+    {                  ( Some _1 )}
 
 ne_loop_effects:
-| LOOP_ASSIGNS locations
-    { $2 }
-| LOOP_ASSIGNS NOTHING
-    { [] }
+| _1 = LOOP_ASSIGNS _2 = locations
+    {                         ( _2 )}
+| _1 = LOOP_ASSIGNS _2 = NOTHING
+    {                       ( [] )}
 
 locations:
-| location
-    { [$1] }
-| location COMMA locations
-    { $1 :: $3 }
+| _1 = location
+    {           ( [_1] )}
+| _1 = location _2 = COMMA _3 = locations
+    {                           ( _1 :: _3 )}
 
 location:
-| lexpr
-    { $1 }
+| _1 = lexpr
+    {        ( _1 )}
 
 decl:
-| LOGIC logic_type IDENTIFIER LPAR parameters RPAR
-    { LDlogic (Info.default_logic_info $3, $2, $5, []) }
-| LOGIC logic_type IDENTIFIER LPAR parameters RPAR READS locations
-    { LDlogic (Info.default_logic_info $3, $2, $5, $8) }
-| LOGIC logic_type IDENTIFIER LPAR parameters RPAR LBRACE lexpr RBRACE
-    { LDlogic_def (Info.default_logic_info $3, $2, $5, $8) }
-| PREDICATE IDENTIFIER LPAR parameters RPAR
-    { LDpredicate_reads (Info.default_logic_info $2, $4, []) }
-| PREDICATE IDENTIFIER LPAR parameters RPAR READS locations
-    { LDpredicate_reads (Info.default_logic_info $2, $4, $7) }
-| PREDICATE IDENTIFIER LPAR parameters RPAR LBRACE lexpr RBRACE
-    { LDpredicate_def (Info.default_logic_info $2, $4, $7) }
-| AXIOM IDENTIFIER COLON lexpr
-    { LDaxiom ($2, $4) }
-| INVARIANT IDENTIFIER COLON lexpr
-    { LDinvariant ($2, $4) }
+| _1 = LOGIC _2 = logic_type _3 = IDENTIFIER _4 = LPAR _5 = parameters _6 = RPAR
+    {    ( LDlogic (Info.default_logic_info _3, _2, _5, []) )}
+| _1 = LOGIC _2 = logic_type _3 = IDENTIFIER _4 = LPAR _5 = parameters _6 = RPAR _7 = READS _8 = locations
+    {    ( LDlogic (Info.default_logic_info _3, _2, _5, _8) )}
+| _1 = LOGIC _2 = logic_type _3 = IDENTIFIER _4 = LPAR _5 = parameters _6 = RPAR _7 = LBRACE _8 = lexpr _9 = RBRACE
+    {    ( LDlogic_def (Info.default_logic_info _3, _2, _5, _8) )}
+| _1 = PREDICATE _2 = IDENTIFIER _3 = LPAR _4 = parameters _5 = RPAR
+    {    ( LDpredicate_reads (Info.default_logic_info _2, _4, []) )}
+| _1 = PREDICATE _2 = IDENTIFIER _3 = LPAR _4 = parameters _5 = RPAR _6 = READS _7 = locations
+    {    ( LDpredicate_reads (Info.default_logic_info _2, _4, _7) )}
+| _1 = PREDICATE _2 = IDENTIFIER _3 = LPAR _4 = parameters _5 = RPAR _6 = LBRACE _7 = lexpr _8 = RBRACE
+    {    ( LDpredicate_def (Info.default_logic_info _2, _4, _7) )}
+| _1 = AXIOM _2 = IDENTIFIER _3 = COLON _4 = lexpr
+    {                               ( LDaxiom (_2, _4) )}
+| _1 = INVARIANT _2 = IDENTIFIER _3 = COLON _4 = lexpr
+    {                                   ( LDinvariant (_2, _4) )}
 
 ghost_decl:
-| GHOST type_specifier init_declarator_list
-    { List.map (ghost $2) $3 }
+| _1 = GHOST _2 = type_specifier _3 = init_declarator_list
+    {      ( List.map (ghost _2) _3 )}
 
 type_specifier:
-| CHAR
-    { Cast_misc.noattr (CTint (Unsigned, Char)) }
-| INT
-    { Cast_misc.noattr (CTint (Signed, Int)) }
-| FLOAT
-    { Cast_misc.noattr (CTfloat Float) }
-| DOUBLE
-    { Cast_misc.noattr (CTfloat Double) }
+| _1 = CHAR
+    {       ( Cast_misc.noattr (CTint (Unsigned, Char)) )}
+| _1 = INT
+    {      ( Cast_misc.noattr (CTint (Signed, Int)) )}
+| _1 = FLOAT
+    {        ( Cast_misc.noattr (CTfloat Float) )}
+| _1 = DOUBLE
+    {         ( Cast_misc.noattr (CTfloat Double) )}
 
 parameters:
 | 
-    { [] }
-| ne_parameters
-    { $1 }
+    {                 ( [] )}
+| _1 = ne_parameters
+    {                ( _1 )}
 
 ne_parameters:
-| parameter
-    { [$1] }
-| parameter COMMA ne_parameters
-    { $1 :: $3 }
+| _1 = parameter
+    {            ( [_1] )}
+| _1 = parameter _2 = COMMA _3 = ne_parameters
+    {                                ( _1 :: _3 )}
 
 parameter:
-| logic_type IDENTIFIER
-    { ($1, $2) }
-| logic_type IDENTIFIER LSQUARE RSQUARE
-    { (LTarray $1, $2) }
+| _1 = logic_type _2 = IDENTIFIER
+    {                        ( (_1, _2) )}
+| _1 = logic_type _2 = IDENTIFIER _3 = LSQUARE _4 = RSQUARE
+    {                                        ( (LTarray _1, _2) )}
 
 init_declarator_list:
-| init_declarator
-    { [$1] }
-| init_declarator_list COMMA init_declarator
-    { $1 @ [$3] }
+| _1 = init_declarator
+    {                          ( [_1] )}
+| _1 = init_declarator_list _2 = COMMA _3 = init_declarator
+    {                                                     ( _1 @ [_3] )}
 
 init_declarator:
-| declarator
-    { let (id,d) = $1 in (id,d, None) }
-| declarator EQUAL c_initializer
-    { let (id,d) = $1 in (id,d, Some $3) }
+| _1 = declarator
+    {            ( let (id,d) = _1 in (id,d, None) )}
+| _1 = declarator _2 = EQUAL _3 = c_initializer
+    {     ( let (id,d) = _1 in (id,d, Some _3) )}
 
 declarator:
-| direct_declarator
-    { $1 }
+| _1 = direct_declarator
+    {                              ( _1 )}
 
 direct_declarator:
-| IDENTIFIER
-    { $1, Dsimple }
-| direct_declarator LSQUARE lexpr RSQUARE
-    { let id,d = $1 in id, Darray (d, Some $3) }
-| direct_declarator LSQUARE RSQUARE
-    { let id,d = $1 in id, Darray (d, None) }
+| _1 = IDENTIFIER
+    {            ( _1, Dsimple )}
+| _1 = direct_declarator _2 = LSQUARE _3 = lexpr _4 = RSQUARE
+    {     ( let id,d = _1 in id, Darray (d, Some _3) )}
+| _1 = direct_declarator _2 = LSQUARE _3 = RSQUARE
+    {     ( let id,d = _1 in id, Darray (d, None) )}
 
 c_initializer:
-| lexpr
-    { Iexpr $1 }
-| LBRACE c_initializer_list RBRACE
-    { Ilist $2 }
-| LBRACE c_initializer_list COMMA RBRACE
-    { Ilist $2 }
+| _1 = lexpr
+    {                ( Iexpr _1 )}
+| _1 = LBRACE _2 = c_initializer_list _3 = RBRACE
+    {                                           ( Ilist _2 )}
+| _1 = LBRACE _2 = c_initializer_list _3 = COMMA _4 = RBRACE
+    {                                                 ( Ilist _2 )}
 
 c_initializer_list:
-| c_initializer
-    { [$1] }
-| c_initializer_list COMMA c_initializer
-    { $1 @ [$3] }
+| _1 = c_initializer
+    {                        ( [_1] )}
+| _1 = c_initializer_list _2 = COMMA _3 = c_initializer
+    {                                                 ( _1 @ [_3] )}
 
 %%
 

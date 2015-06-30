@@ -7,34 +7,34 @@
 %%
 
 def:
-| param_spec return_spec COMMA
-    { () }
+| _1 = param_spec _2 = return_spec _3 = COMMA
+    {    ( () )}
 
 param_spec:
-| typ
-    { () }
-| separated_nonempty_list_COMMA_name_ COLON typ
-    { () }
+| _1 = typ
+    {    ( () )}
+| _1 = separated_nonempty_list_COMMA_name_ _2 = COLON _3 = typ
+    {    ( () )}
 
 return_spec:
-| typ
-    { () }
-| name COLON typ
-    { () }
+| _1 = typ
+    {    ( () )}
+| _1 = name _2 = COLON _3 = typ
+    {    ( () )}
 
 typ:
-| ID
-    { () }
+| _1 = ID
+    {    ( () )}
 
 name:
-| ID
-    { () }
+| _1 = ID
+    {    ( () )}
 
 separated_nonempty_list_COMMA_name_:
 | x = name
-    { [ x ] }
-| x = name COMMA xs = separated_nonempty_list_COMMA_name_
-    { x :: xs }
+    {    ( [ x ] )}
+| x = name _2 = COMMA xs = separated_nonempty_list_COMMA_name_
+    {    ( x :: xs )}
 
 %%
 

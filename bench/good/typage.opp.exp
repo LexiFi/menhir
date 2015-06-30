@@ -28,54 +28,54 @@ open Records
 %%
 
 expression:
-| expr EOF
-    { $1 }
+| _1 = expr _2 = EOF
+    {                                ( _1 )}
 
 expr:
-| application
-    { $1 }
-| expr COMMA expr
-    { Paire($1, $3) }
-| FUN IDENT ARROW expr %prec prec_fun
-    { Fun($2, $4) }
-| LET IDENT EQUAL expr IN expr %prec prec_let
-    { Let($2, $4, $6) }
+| _1 = application
+    {                                ( _1 )}
+| _1 = expr _2 = COMMA _3 = expr
+    {                                ( Paire(_1, _3) )}
+| _1 = FUN _2 = IDENT _3 = ARROW _4 = expr %prec prec_fun
+    {                                ( Fun(_2, _4) )}
+| _1 = LET _2 = IDENT _3 = EQUAL _4 = expr _5 = IN _6 = expr %prec prec_let
+    {                                ( Let(_2, _4, _6) )}
 
 application:
-| application closed_expr
-    { App($1, $2) }
-| FST closed_expr
-    { Fst $2 }
-| SND closed_expr
-    { Snd $2 }
-| application AT LBRACE IDENT EQUAL expr RBRACE
-    { App (Exten $4, Paire ($1, $6)) }
-| closed_expr
-    { $1 }
+| _1 = application _2 = closed_expr
+    {                                ( App(_1, _2) )}
+| _1 = FST _2 = closed_expr
+    {                                ( Fst _2 )}
+| _1 = SND _2 = closed_expr
+    {                                ( Snd _2 )}
+| _1 = application _2 = AT _3 = LBRACE _4 = IDENT _5 = EQUAL _6 = expr _7 = RBRACE
+    {                                                  ( App (Exten _4, Paire (_1, _6)) )}
+| _1 = closed_expr
+    {                                ( _1 )}
 
 closed_expr:
-| IDENT
-    { Var $1 }
-| OP
-    { Op $1 }
-| INT
-    { Const $1 }
-| LPAREN expr RPAREN
-    { $2 }
-| LBRACE entries RBRACE
-    { Enreg $2 }
-| closed_expr DOT IDENT
-    { App (Proj $3, $1) }
+| _1 = IDENT
+    {                        ( Var _1 )}
+| _1 = OP
+    {                        ( Op _1 )}
+| _1 = INT
+    {                        ( Const _1 )}
+| _1 = LPAREN _2 = expr _3 = RPAREN
+    {                        ( _2 )}
+| _1 = LBRACE _2 = entries _3 = RBRACE
+    {                          ( Enreg _2 )}
+| _1 = closed_expr _2 = DOT _3 = IDENT
+    {                          ( App (Proj _3, _1) )}
 
 entries:
-| entry
-    { [ $1 ] }
-| entries SEMI entry
-    { $3 :: $1 }
+| _1 = entry
+    {          ( [ _1 ] )}
+| _1 = entries _2 = SEMI _3 = entry
+    {                       ( _3 :: _1 )}
 
 entry:
-| IDENT EQUAL application
-    { $1, $3 }
+| _1 = IDENT _2 = EQUAL _3 = application
+    {                            ( _1, _3 )}
 
 %%
 

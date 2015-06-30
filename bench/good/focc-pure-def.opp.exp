@@ -23,51 +23,51 @@
 %%
 
 main:
-| EOF
-    {()}
-| header_def main
-    { $1 }
-| coll_def main
-    { $1 }
+| _1 = EOF
+    {      (())}
+| _1 = header_def _2 = main
+    {                  ( _1 )}
+| _1 = coll_def _2 = main
+    {                ( _1 )}
 
 header_def:
-| COQ HEADER
-    { Hashtbl.add pure_def (toplevel,coq_h) ("",Some $2) }
-| CAML HEADER
-    {Hashtbl.add pure_def (toplevel,caml_h) ($2,None)}
-| CAMLI HEADER
-    {Hashtbl.add pure_def (toplevel,caml_hi) ($2,None)}
+| _1 = COQ _2 = HEADER
+    {             ( Hashtbl.add pure_def (toplevel,coq_h) ("",Some _2) )}
+| _1 = CAML _2 = HEADER
+    {              (Hashtbl.add pure_def (toplevel,caml_h) (_2,None))}
+| _1 = CAMLI _2 = HEADER
+    {               (Hashtbl.add pure_def (toplevel,caml_hi) (_2,None))}
 
 coll_def:
-| IMPORT FOR ID limport IMPORT
-    { List.iter (fun x -> let (a,b,c,d) = x in 
-		     (if c <> "" then Hashtbl.add pure_def ($3,c) ("",d));
-		     Hashtbl.add pure_def ($3 , a) (b,d)) $4 }
+| _1 = IMPORT _2 = FOR _3 = ID _4 = limport _5 = IMPORT
+    {      ( List.iter (fun x -> let (a,b,c,d) = x in 
+		     (if c <> "" then Hashtbl.add pure_def (_3,c) ("",d));
+		     Hashtbl.add pure_def (_3 , a) (b,d)) _4 )}
 
 limport:
-| END
-    { [] }
-| ID idlist def SEP limport
-    { let (a,b) = $3 in 
-			      let name = if a = "" then $1 else a in
-				(name,b,"",None) :: $5 }
-| ID idlist def LINK def SEP limport
-    { let (a,b) = $3 in
-				       let name = if a = "" then $1 else a in
-				       let (c,d) = $5 in 
-					 (name,b,c,Some d) :: $7 }
+| _1 = END
+    {      ( [] )}
+| _1 = ID _2 = idlist _3 = def _4 = SEP _5 = limport
+    {                            ( let (a,b) = _3 in 
+			      let name = if a = "" then _1 else a in
+				(name,b,"",None) :: _5 )}
+| _1 = ID _2 = idlist _3 = def _4 = LINK _5 = def _6 = SEP _7 = limport
+    {                                     ( let (a,b) = _3 in
+				       let name = if a = "" then _1 else a in
+				       let (c,d) = _5 in 
+					 (name,b,c,Some d) :: _7 )}
 
 def:
-| DEF
-    { ("" , $1) }
-| ID DEF
-    { ($1,$2) }
+| _1 = DEF
+    {      ( ("" , _1) )}
+| _1 = ID _2 = DEF
+    {         ( (_1,_2) )}
 
 idlist:
-| EQ
-    { [] }
-| ID idlist
-    { $1 :: $2 }
+| _1 = EQ
+    {     ( [] )}
+| _1 = ID _2 = idlist
+    {            ( _1 :: _2 )}
 
 %%
 

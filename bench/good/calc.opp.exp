@@ -14,24 +14,24 @@
 %%
 
 main:
-| expr EOL
-    { $1 }
+| _1 = expr _2 = EOL
+    {                            ( _1 )}
 
 expr:
-| INT
-    { $1 }
-| LPAREN expr RPAREN
-    { $2 }
-| expr PLUS expr
-    { $1 + $3 }
-| expr MINUS expr
-    { $1 - $3 }
-| expr TIMES expr
-    { $1 * $3 }
-| expr DIV expr
-    { $1 / $3 }
-| MINUS expr %prec UMINUS
-    { - $2 }
+| _1 = INT
+    {                            ( _1 )}
+| _1 = LPAREN _2 = expr _3 = RPAREN
+    {                            ( _2 )}
+| _1 = expr _2 = PLUS _3 = expr
+    {                            ( _1 + _3 )}
+| _1 = expr _2 = MINUS _3 = expr
+    {                            ( _1 - _3 )}
+| _1 = expr _2 = TIMES _3 = expr
+    {                            ( _1 * _3 )}
+| _1 = expr _2 = DIV _3 = expr
+    {                            ( _1 / _3 )}
+| _1 = MINUS _2 = expr %prec UMINUS
+    {                            ( - _2 )}
 
 %%
 

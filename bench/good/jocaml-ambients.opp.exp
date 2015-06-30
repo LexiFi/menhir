@@ -28,52 +28,52 @@ open Syntax;;
 %%
 
 main:
-| proc SEMISEMI
-    { $1 }
+| _1 = proc _2 = SEMISEMI
+    {                                        ( _1 )}
 
 proc:
-| proc PAR proc
-    { Par ($1, $3) }
-| LPAREN proc RPAREN
-    { $2 }
-| capa DOT proc
-    { Seq ($1, $3) }
-| DOLLAR ident LBRACKET proc RBRACKET
-    { Amb ($2, $4, true) }
-| ident LBRACKET proc RBRACKET
-    { Amb ($1, $3, false) }
-| NEW str DOT proc
-    { New ($2, $4) }
-| BANG proc
-    { Bang $2 }
-| LPAREN str RPAREN DOT proc
-    { Comm_in ($2, $5) }
-| LPOINT capa RPOINT
-    { Comm_out $2 }
-| ZERO
-    { Zero }
+| _1 = proc _2 = PAR _3 = proc
+    {                                        ( Par (_1, _3) )}
+| _1 = LPAREN _2 = proc _3 = RPAREN
+    {                                        ( _2 )}
+| _1 = capa _2 = DOT _3 = proc
+    {                                        ( Seq (_1, _3) )}
+| _1 = DOLLAR _2 = ident _3 = LBRACKET _4 = proc _5 = RBRACKET
+    {                                        ( Amb (_2, _4, true) )}
+| _1 = ident _2 = LBRACKET _3 = proc _4 = RBRACKET
+    {                                        ( Amb (_1, _3, false) )}
+| _1 = NEW _2 = str _3 = DOT _4 = proc
+    {                                        ( New (_2, _4) )}
+| _1 = BANG _2 = proc
+    {                                        ( Bang _2 )}
+| _1 = LPAREN _2 = str _3 = RPAREN _4 = DOT _5 = proc
+    {                                        ( Comm_in (_2, _5) )}
+| _1 = LPOINT _2 = capa _3 = RPOINT
+    {                                        ( Comm_out _2 )}
+| _1 = ZERO
+    {                                        ( Zero )}
 
 capa:
-| IN ident
-    { In $2 }
-| OUT ident
-    { Out $2 }
-| OPEN ident
-    { Open $2 }
-| ident
-    { Name $1 }
-| STRING
-    { Yell $1 }
-| capa DOT capa
-    { Seq_capa ($1, $3) }
+| _1 = IN _2 = ident
+    {                                        ( In _2 )}
+| _1 = OUT _2 = ident
+    {                                        ( Out _2 )}
+| _1 = OPEN _2 = ident
+    {                                        ( Open _2 )}
+| _1 = ident
+    {                                        ( Name _1 )}
+| _1 = STRING
+    {                                        ( Yell _1 )}
+| _1 = capa _2 = DOT _3 = capa
+    {                                        ( Seq_capa (_1, _3) )}
 
 ident:
-| IDENT
-    { Ident $1 }
+| _1 = IDENT
+    {                                        ( Ident _1 )}
 
 str:
-| IDENT
-    { $1 }
+| _1 = IDENT
+    {                                        ( _1 )}
 
 %%
 

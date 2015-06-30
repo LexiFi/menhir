@@ -131,57 +131,57 @@ let rec set_stdout pipe file stderr append =
 %%
 
 prog:
-| pipe TokEof
-    { let pipe, _ = $1 in
+| _1 = pipe _2 = TokEof
+    {          ( let pipe, _ = _1 in
                pipe
-          }
+          )}
 
 pipe:
-| command
-    { let command, loc = $1 in
+| _1 = command
+    {          ( let command, loc = _1 in
                PipeCommand (loc, command), loc
-          }
-| pipe TokSemiColon pipe
-    { let pipe1, loc1 = $1 in
-            let pipe2, loc2 = $3 in
+          )}
+| _1 = pipe _2 = TokSemiColon _3 = pipe
+    {          ( let pipe1, loc1 = _1 in
+            let pipe2, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
                PipeCond (loc, PipeSequence, pipe1, pipe2), loc
-          }
-| pipe TokAnd pipe
-    { let pipe1, loc1 = $1 in
-            let pipe2, loc2 = $3 in
+          )}
+| _1 = pipe _2 = TokAnd _3 = pipe
+    {          ( let pipe1, loc1 = _1 in
+            let pipe2, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
                PipeCond (loc, PipeAnd, pipe1, pipe2), loc
-          }
-| pipe TokOr pipe
-    { let pipe1, loc1 = $1 in
-            let pipe2, loc2 = $3 in
+          )}
+| _1 = pipe _2 = TokOr _3 = pipe
+    {          ( let pipe1, loc1 = _1 in
+            let pipe2, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
                PipeCond (loc, PipeOr, pipe1, pipe2), loc
-          }
-| pipe TokPipe pipe
-    { let pipe1, loc1 = $1 in
-            let pipe2, loc2 = $3 in
+          )}
+| _1 = pipe _2 = TokPipe _3 = pipe
+    {          ( let pipe1, loc1 = _1 in
+            let pipe2, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
                PipeCompose (loc, false, pipe1, pipe2), loc
-          }
-| pipe TokPipe TokAmp pipe
-    { let pipe1, loc1 = $1 in
-            let pipe2, loc2 = $4 in
+          )}
+| _1 = pipe _2 = TokPipe _3 = TokAmp _4 = pipe
+    {          ( let pipe1, loc1 = _1 in
+            let pipe2, loc2 = _4 in
             let loc = union_loc loc1 loc2 in
                PipeCompose (loc, true, pipe1, pipe2), loc
-          }
-| pipe TokAmp
-    { let pipe, loc1 = $1 in
-            let _, loc2 = $2 in
+          )}
+| _1 = pipe _2 = TokAmp
+    {          ( let pipe, loc1 = _1 in
+            let _, loc2 = _2 in
             let loc = union_loc loc1 loc2 in
                PipeBackground (loc, pipe), loc
-          }
-| TokLeftParen pipe TokRightParen
-    { let _, loc1 = $1 in
-            let _, loc2 = $3 in
+          )}
+| _1 = TokLeftParen _2 = pipe _3 = TokRightParen
+    {          ( let _, loc1 = _1 in
+            let _, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
-            let pipe, _ = $2 in
+            let pipe, _ = _2 in
             let group =
                { group_loc = loc;
                  group_stdin = None;
@@ -192,46 +192,46 @@ pipe:
                }
             in
                PipeGroup (loc, group), loc
-          }
-| pipe TokLessThan word
-    { let pipe, loc1 = $1 in
-            let file, loc2 = $3 in
+          )}
+| _1 = pipe _2 = TokLessThan _3 = word
+    {          ( let pipe, loc1 = _1 in
+            let file, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
             let pipe = set_stdin pipe file in
                pipe, loc
-          }
-| pipe TokGreaterThan word
-    { let pipe, loc1 = $1 in
-            let file, loc2 = $3 in
+          )}
+| _1 = pipe _2 = TokGreaterThan _3 = word
+    {          ( let pipe, loc1 = _1 in
+            let file, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
             let pipe = set_stdout pipe file false false in
                pipe, loc
-          }
-| pipe TokGreaterGreaterThan word
-    { let pipe, loc1 = $1 in
-            let file, loc2 = $3 in
+          )}
+| _1 = pipe _2 = TokGreaterGreaterThan _3 = word
+    {          ( let pipe, loc1 = _1 in
+            let file, loc2 = _3 in
             let loc = union_loc loc1 loc2 in
             let pipe = set_stdout pipe file false true in
                pipe, loc
-          }
-| pipe TokGreaterThan TokAmp word %prec TokGreaterThan
-    { let pipe, loc1 = $1 in
-            let file, loc2 = $4 in
+          )}
+| _1 = pipe _2 = TokGreaterThan _3 = TokAmp _4 = word %prec TokGreaterThan
+    {          ( let pipe, loc1 = _1 in
+            let file, loc2 = _4 in
             let loc = union_loc loc1 loc2 in
             let pipe = set_stdout pipe file true false in
                pipe, loc
-          }
-| pipe TokGreaterGreaterThan TokAmp word %prec TokGreaterGreaterThan
-    { let pipe, loc1 = $1 in
-            let file, loc2 = $4 in
+          )}
+| _1 = pipe _2 = TokGreaterGreaterThan _3 = TokAmp _4 = word %prec TokGreaterGreaterThan
+    {          ( let pipe, loc1 = _1 in
+            let file, loc2 = _4 in
             let loc = union_loc loc1 loc2 in
             let pipe = set_stdout pipe file true true in
                pipe, loc
-          }
+          )}
 
 command:
-| rev_command
-    { let escaped, env, argv, loc = $1 in
+| _1 = rev_command
+    {          ( let escaped, env, argv, loc = _1 in
             let env = env_of_list env in
             let argv = List.rev argv in
 	    let exe = List.hd argv in
@@ -248,92 +248,92 @@ command:
                }
             in
                command, loc
-          }
+          )}
 
 rev_command:
-| nondef_word
-    { let escaped, word, loc = $1 in
+| _1 = nondef_word
+    {          ( let escaped, word, loc = _1 in
                escaped, [], [word], loc
-          }
-| rev_cmd_env TokWhite nondef_word
-    { let env, loc1 = $1 in
-            let escaped, word, loc2 = $3 in
+          )}
+| _1 = rev_cmd_env _2 = TokWhite _3 = nondef_word
+    {          ( let env, loc1 = _1 in
+            let escaped, word, loc2 = _3 in
                escaped, env, [word], union_loc loc1 loc2
-          }
-| rev_command TokWhite word
-    { let escaped, env, words, loc1 = $1 in
-            let word, loc2 = $3 in
+          )}
+| _1 = rev_command _2 = TokWhite _3 = word
+    {          ( let escaped, env, words, loc1 = _1 in
+            let word, loc2 = _3 in
                escaped, env, word :: words, union_loc loc1 loc2
-          }
+          )}
 
 rev_cmd_env:
-| TokDefine opt_word
-    { let name, loc = $1 in
-               [name, $2], loc
-          }
-| rev_cmd_env TokWhite TokDefine opt_word
-    { let env, loc1 = $1 in
-            let name, loc2 = $3 in
-            let word = $4 in
+| _1 = TokDefine _2 = opt_word
+    {          ( let name, loc = _1 in
+               [name, _2], loc
+          )}
+| _1 = rev_cmd_env _2 = TokWhite _3 = TokDefine _4 = opt_word
+    {          ( let env, loc1 = _1 in
+            let name, loc2 = _3 in
+            let word = _4 in
                ((name, word) :: env), union_loc loc1 loc2
-          }
+          )}
 
 nondef_word:
-| rev_nondef_word
-    { let escaped, idl, loc = $1 in
+| _1 = rev_nondef_word
+    {          ( let escaped, idl, loc = _1 in
                escaped, concat_word idl, loc
-          }
+          )}
 
 rev_nondef_word:
-| TokString
-    { let id, loc = $1 in
+| _1 = TokString
+    {          ( let id, loc = _1 in
                if id = "\\" then
                   true, [], loc
                else
                   false, [id], loc
-          }
-| TokData
-    { let id, loc = $1 in
+          )}
+| _1 = TokData
+    {          ( let id, loc = _1 in
                true, [id], loc
-          }
-| rev_nondef_word any_id
-    { let escaped, idl, loc1 = $1 in
-            let word, loc2 = $2 in
+          )}
+| _1 = rev_nondef_word _2 = any_id
+    {          ( let escaped, idl, loc1 = _1 in
+            let word, loc2 = _2 in
                escaped, word :: idl, union_loc loc1 loc2
-          }
+          )}
 
 opt_word:
 | 
-    { "" }
-| word
-    { let id, _ = $1 in
+    {          ( "" )}
+| _1 = word
+    {          ( let id, _ = _1 in
                id
-          }
+          )}
 
 word:
-| rev_word
-    { let idl, loc = $1 in
+| _1 = rev_word
+    {          ( let idl, loc = _1 in
                concat_word idl, loc
-          }
+          )}
 
 rev_word:
-| any_id
-    { let id, loc = $1 in
+| _1 = any_id
+    {          ( let id, loc = _1 in
                [id], loc
-          }
-| rev_word any_id
-    { let idl, loc1 = $1 in
-            let word, loc2 = $2 in
+          )}
+| _1 = rev_word _2 = any_id
+    {          ( let idl, loc1 = _1 in
+            let word, loc2 = _2 in
                word :: idl, union_loc loc1 loc2
-          }
+          )}
 
 any_id:
-| TokString
-    { $1 }
-| TokData
-    { $1 }
-| TokDefine
-    { $1 }
+| _1 = TokString
+    {          ( _1 )}
+| _1 = TokData
+    {          ( _1 )}
+| _1 = TokDefine
+    {          ( _1 )}
 
 %%
 

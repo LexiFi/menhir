@@ -236,3 +236,11 @@ let postincrement r =
   r := x + 1;
   x
 
+(* [map_opt f l] returns the list of [y]s such that [f x = Some y] where [x]
+   is in [l], preserving the order of elements of [l]. *) 
+let map_opt f l =
+  List.(rev (fold_left (fun ys x ->
+    match f x with
+      | None -> ys
+      | Some y -> y :: ys
+  ) [] l))

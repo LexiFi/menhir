@@ -550,7 +550,7 @@ let expand p_grammar =
 	     sym, subst_parameters subst actual_parameters
 	 in
 	   (* Instantiate the definition of the producer. *)
-	   (expand_branches subst sym actual_parameters, Option.map Positions.value ido))
+	   (expand_branches subst sym actual_parameters, Positions.value ido))
       pbranch.pr_producers
     in
       {

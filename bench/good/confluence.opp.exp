@@ -141,384 +141,384 @@ let parse_error s =
 %%
 
 file:
-| file_application EOF
-    {
+| _1 = file_application _2 = EOF
+    {    (
       CfParserUtil.set_env "";
-      (snd $1)
-    }
-| ENVIRONMENT STRING file_application EOF
-    {
-      CfParserUtil.set_env (CfParserUtil.format_string (snd $2));
-      (snd $3)
-    }
-| ROOTENVIRONMENT file_application EOF
-    {
-      (snd $2)
-    }
+      (snd _1)
+    )}
+| _1 = ENVIRONMENT _2 = STRING _3 = file_application _4 = EOF
+    {    (
+      CfParserUtil.set_env (CfParserUtil.format_string (snd _2));
+      (snd _3)
+    )}
+| _1 = ROOTENVIRONMENT _2 = file_application _3 = EOF
+    {    (
+      (snd _2)
+    )}
 
 file_application:
-| component_ports IS statements
-    { ($1, CfAst.Apply (CfParserUtil.current_file_loc (), "", CfAst.Comp (CfParserUtil.current_file_loc (), "", $1, $3), CfParserUtil.free_arg_list (CfParserUtil.current_file_loc ()) $1)) }
-| component_ports name_space_sugar
-    { ($1, CfAst.Apply (CfParserUtil.current_file_loc (), "", CfAst.Comp (CfParserUtil.current_file_loc (), "", $1, $2), CfParserUtil.free_arg_list (CfParserUtil.current_file_loc ()) $1)) }
+| _1 = component_ports _2 = IS _3 = statements
+    {                                     ( (_1, CfAst.Apply (CfParserUtil.current_file_loc (), "", CfAst.Comp (CfParserUtil.current_file_loc (), "", _1, _3), CfParserUtil.free_arg_list (CfParserUtil.current_file_loc ()) _1)) )}
+| _1 = component_ports _2 = name_space_sugar
+    {                                     ( (_1, CfAst.Apply (CfParserUtil.current_file_loc (), "", CfAst.Comp (CfParserUtil.current_file_loc (), "", _1, _2), CfParserUtil.free_arg_list (CfParserUtil.current_file_loc ()) _1)) )}
 
 statements:
 | 
-    { [] }
-| statements statement
-    { $1 @ [$2] }
+    {                          ( [] )}
+| _1 = statements _2 = statement
+    {                          ( _1 @ [_2] )}
 
 statement:
-| name_space
-    { CfAst.ApplyStmt $1 }
-| ifelse
-    { $1 }
-| component_named
-    { $1 }
-| application
-    { CfAst.ApplyStmt $1 }
-| connect
-    { CfAst.ConnectStmt $1 }
+| _1 = name_space
+    {                    ( CfAst.ApplyStmt _1 )}
+| _1 = ifelse
+    {                    ( _1 )}
+| _1 = component_named
+    {                    ( _1 )}
+| _1 = application
+    {                    ( CfAst.ApplyStmt _1 )}
+| _1 = connect
+    {                    ( CfAst.ConnectStmt _1 )}
 
 name_space:
-| LOCAL locals IS statements END
-    { CfParserUtil.application_expr_of_namespace (fst $1) "" $2 $4 }
+| _1 = LOCAL _2 = locals _3 = IS _4 = statements _5 = END
+    {                                    ( CfParserUtil.application_expr_of_namespace (fst _1) "" _2 _4 )}
 
 name_space_sugar:
-| WITH locals IS statements
-    { [CfParserUtil.application_of_namespace (fst $1) "" $2 $4] }
+| _1 = WITH _2 = locals _3 = IS _4 = statements
+    {                              ( [CfParserUtil.application_of_namespace (fst _1) "" _2 _4] )}
 
 locals:
-| local
-    { [$1] }
-| locals local
-    { $1 @ [$2] }
+| _1 = local
+    {          ( [_1] )}
+| _1 = locals _2 = local
+    {                 ( _1 @ [_2] )}
 
 local:
-| IDENTIFIER
-    { snd $1 }
+| _1 = IDENTIFIER
+    {               ( snd _1 )}
 
 ifelse:
-| IF expression statements ifelse_else
-    { CfParserUtil.conditional_of_ifelse (fst $1) $2 $3 $4 }
-| IF expression name_space_sugar ifelse_else
-    { CfParserUtil.conditional_of_ifelse (fst $1) $2 $3 $4 }
+| _1 = IF _2 = expression _3 = statements _4 = ifelse_else
+    {                                               ( CfParserUtil.conditional_of_ifelse (fst _1) _2 _3 _4 )}
+| _1 = IF _2 = expression _3 = name_space_sugar _4 = ifelse_else
+    {                                               ( CfParserUtil.conditional_of_ifelse (fst _1) _2 _3 _4 )}
 
 ifelse_else:
-| END
-    { [] }
-| ELSE statements END
-    { $2 }
-| ELSE name_space_sugar END
-    { $2 }
-| EF expression statements ifelse_else
-    { [CfParserUtil.conditional_of_ifelse (fst $1) $2 $3 $4] }
-| EF expression name_space_sugar ifelse_else
-    { [CfParserUtil.conditional_of_ifelse (fst $1) $2 $3 $4] }
+| _1 = END
+    {                                                ( [] )}
+| _1 = ELSE _2 = statements _3 = END
+    {                                                ( _2 )}
+| _1 = ELSE _2 = name_space_sugar _3 = END
+    {                                                ( _2 )}
+| _1 = EF _2 = expression _3 = statements _4 = ifelse_else
+    {                                                ( [CfParserUtil.conditional_of_ifelse (fst _1) _2 _3 _4] )}
+| _1 = EF _2 = expression _3 = name_space_sugar _4 = ifelse_else
+    {                                                ( [CfParserUtil.conditional_of_ifelse (fst _1) _2 _3 _4] )}
 
 component_named:
-| COMPONENT IDENTIFIER component_ports IS statements END
-    { CfParserUtil.stmt_of_comp_named (fst $1) $2 $3 $5 }
-| COMPONENT IDENTIFIER component_ports name_space_sugar END
-    { CfParserUtil.stmt_of_comp_named (fst $1) $2 $3 $4 }
+| _1 = COMPONENT _2 = IDENTIFIER _3 = component_ports _4 = IS _5 = statements _6 = END
+    {                                                               ( CfParserUtil.stmt_of_comp_named (fst _1) _2 _3 _5 )}
+| _1 = COMPONENT _2 = IDENTIFIER _3 = component_ports _4 = name_space_sugar _5 = END
+    {                                                               ( CfParserUtil.stmt_of_comp_named (fst _1) _2 _3 _4 )}
 
 expression:
-| expression_nonop
-    { $1 }
-| expression_op
-    { $1 }
+| _1 = expression_nonop
+    {                     ( _1 )}
+| _1 = expression_op
+    {                     ( _1 )}
 
 expression_nonop:
-| PAREN_LEFT expression PAREN_RIGHT
-    { $2 }
-| STRING
-    { CfParserUtil.application_of_string (fst $1) (CfParserUtil.format_string (snd $1)) }
-| INTEGER
-    { CfAst.Integer (fst $1, snd $1) }
-| FLOAT
-    { CfAst.Float   (fst $1, snd $1) }
-| BOOLEAN
-    { CfAst.Boolean (fst $1, snd $1) }
-| VECTOR
-    { CfAst.Vector  (fst $1, snd $1) }
-| IDENTIFIER
-    { CfAst.Name (fst $1, snd $1) }
-| FREE
-    { CfAst.Free (fst $1) }
-| list_sugar
-    { $1 }
-| dot
-    { $1 }
-| vector_select
-    { $1 }
-| import_file
-    { $1 }
-| component_anon
-    { $1 }
-| primitive
-    { $1 }
-| name_space
-    { $1 }
-| application
-    { $1 }
-| func
-    { $1 }
-| record
-    { $1 }
-| nil
-    { $1 }
+| _1 = PAREN_LEFT _2 = expression _3 = PAREN_RIGHT
+    {                                       ( _2 )}
+| _1 = STRING
+    {                                       ( CfParserUtil.application_of_string (fst _1) (CfParserUtil.format_string (snd _1)) )}
+| _1 = INTEGER
+    {                                       ( CfAst.Integer (fst _1, snd _1) )}
+| _1 = FLOAT
+    {                                       ( CfAst.Float   (fst _1, snd _1) )}
+| _1 = BOOLEAN
+    {                                       ( CfAst.Boolean (fst _1, snd _1) )}
+| _1 = VECTOR
+    {                                       ( CfAst.Vector  (fst _1, snd _1) )}
+| _1 = IDENTIFIER
+    {                                       ( CfAst.Name (fst _1, snd _1) )}
+| _1 = FREE
+    {                                       ( CfAst.Free (fst _1) )}
+| _1 = list_sugar
+    {                                       ( _1 )}
+| _1 = dot
+    {                                       ( _1 )}
+| _1 = vector_select
+    {                                       ( _1 )}
+| _1 = import_file
+    {                                       ( _1 )}
+| _1 = component_anon
+    {                                       ( _1 )}
+| _1 = primitive
+    {                                       ( _1 )}
+| _1 = name_space
+    {                                       ( _1 )}
+| _1 = application
+    {                                       ( _1 )}
+| _1 = func
+    {                                       ( _1 )}
+| _1 = record
+    {                                       ( _1 )}
+| _1 = nil
+    {                                       ( _1 )}
 
 expression_op:
-| connect
-    { $1 }
-| prefix
-    { $1 }
-| infix
-    { $1 }
-| trifix
-    { $1 }
-| conditional
-    { $1 }
+| _1 = connect
+    {                                       ( _1 )}
+| _1 = prefix
+    {                                       ( _1 )}
+| _1 = infix
+    {                                       ( _1 )}
+| _1 = trifix
+    {                                       ( _1 )}
+| _1 = conditional
+    {                                       ( _1 )}
 
 list_sugar:
-| BRACKET_LEFT list_sugar_items BRACKET_RIGHT
-    { $2 }
+| _1 = BRACKET_LEFT _2 = list_sugar_items _3 = BRACKET_RIGHT
+    {                                                 ( _2 )}
 
 dot:
-| expression_nonop OP_DOT IDENTIFIER
-    { CfAst.DotName     (fst $2, $1, snd $3) }
-| expression_nonop OP_DOT INTEGER
-    { CfAst.DotPosition (fst $2, $1, snd $3) }
+| _1 = expression_nonop _2 = OP_DOT _3 = IDENTIFIER
+    {                                       ( CfAst.DotName     (fst _2, _1, snd _3) )}
+| _1 = expression_nonop _2 = OP_DOT _3 = INTEGER
+    {                                       ( CfAst.DotPosition (fst _2, _1, snd _3) )}
 
 vector_select:
-| expression_nonop OP_VEC_SELECT expression_nonop
-    { CfParserUtil.application_of_infix $2 $1 $3 }
+| _1 = expression_nonop _2 = OP_VEC_SELECT _3 = expression_nonop
+    {                                                    ( CfParserUtil.application_of_infix _2 _1 _3 )}
 
 import_file:
-| IMPORT STRING
-    { CfAst.Name (fst $1, CfParserUtil.add_import (CfParserUtil.format_string (snd $2))) }
+| _1 = IMPORT _2 = STRING
+    {                  ( CfAst.Name (fst _1, CfParserUtil.add_import (CfParserUtil.format_string (snd _2))) )}
 
 record:
-| PAREN_LEFT record_fields PAREN_RIGHT
-    { CfAst.Record (fst $1, List.rev $2) }
-| PAREN_LEFT PAREN_RIGHT
-    { CfAst.Record (fst $1, []) }
+| _1 = PAREN_LEFT _2 = record_fields _3 = PAREN_RIGHT
+    {                                            ( CfAst.Record (fst _1, List.rev _2) )}
+| _1 = PAREN_LEFT _2 = PAREN_RIGHT
+    {                                            ( CfAst.Record (fst _1, []) )}
 
 record_fields:
-| IDENTIFIER COLON expression_nonop
-    { [(snd $1, $3)] }
-| record_fields IDENTIFIER COLON expression_nonop
-    { (snd $2, $4) :: $1 }
+| _1 = IDENTIFIER _2 = COLON _3 = expression_nonop
+    {                                                     ( [(snd _1, _3)] )}
+| _1 = record_fields _2 = IDENTIFIER _3 = COLON _4 = expression_nonop
+    {                                                     ( (snd _2, _4) :: _1 )}
 
 nil:
-| BRACKET_LEFT BRACKET_RIGHT
-    { CfAst.Record (fst $1, []) }
+| _1 = BRACKET_LEFT _2 = BRACKET_RIGHT
+    {                                 ( CfAst.Record (fst _1, []) )}
 
 component_anon:
-| COMP component_ports IS statements END
-    { CfAst.Comp (fst $1, "", $2, $4) }
-| COMP component_ports name_space_sugar END
-    { CfAst.Comp (fst $1, "", $2, $3) }
+| _1 = COMP _2 = component_ports _3 = IS _4 = statements _5 = END
+    {                                               ( CfAst.Comp (fst _1, "", _2, _4) )}
+| _1 = COMP _2 = component_ports _3 = name_space_sugar _4 = END
+    {                                               ( CfAst.Comp (fst _1, "", _2, _3) )}
 
 component_ports:
 | 
-    { [] }
-| component_ports direction_marker IDENTIFIER
-    { $1 @ [snd $3] }
+    {                                                ( [] )}
+| _1 = component_ports _2 = direction_marker _3 = IDENTIFIER
+    {                                                ( _1 @ [snd _3] )}
 
 primitive:
-| PRIM IDENTIFIER component_ports END
-    { CfAst.Prim (fst $1, snd $2, $3) }
+| _1 = PRIM _2 = IDENTIFIER _3 = component_ports _4 = END
+    {                                         ( CfAst.Prim (fst _1, snd _2, _3) )}
 
 application:
-| BRACE_LEFT expression_nonop arguments BRACE_RIGHT
-    { CfAst.Apply (fst $1, "", $2, $3) }
-| BRACE_LEFT IDENTIFIER COLON expression_nonop arguments BRACE_RIGHT
-    { CfParserUtil.connect_name (fst $3) $2 (CfAst.Apply (fst $1, snd $2, $4, $5)) }
+| _1 = BRACE_LEFT _2 = expression_nonop _3 = arguments _4 = BRACE_RIGHT
+    {    ( CfAst.Apply (fst _1, "", _2, _3) )}
+| _1 = BRACE_LEFT _2 = IDENTIFIER _3 = COLON _4 = expression_nonop _5 = arguments _6 = BRACE_RIGHT
+    {    ( CfParserUtil.connect_name (fst _3) _2 (CfAst.Apply (fst _1, snd _2, _4, _5)) )}
 
 func:
-| BRACE_LEFT expression_nonop arguments direction_marker DOLLAR arguments BRACE_RIGHT
-    { CfParserUtil.select_position (fst $5)                                        (CfAst.Apply (fst $1, "", $2, ($3 @ (CfAst.Free (fst $5) :: $6))))  (List.length $3 + 1) }
-| BRACE_LEFT IDENTIFIER COLON expression_nonop arguments direction_marker DOLLAR arguments BRACE_RIGHT
-    { CfParserUtil.select_position (fst $7) (CfParserUtil.connect_name (fst $3) $2 (CfAst.Apply (fst $1, snd $2, $4, ($5 @ (CfAst.Free (fst $7) :: $8))))) (List.length $5 + 1) }
+| _1 = BRACE_LEFT _2 = expression_nonop _3 = arguments _4 = direction_marker _5 = DOLLAR _6 = arguments _7 = BRACE_RIGHT
+    {    ( CfParserUtil.select_position (fst _5)                                        (CfAst.Apply (fst _1, "", _2, (_3 @ (CfAst.Free (fst _5) :: _6))))  (List.length _3 + 1) )}
+| _1 = BRACE_LEFT _2 = IDENTIFIER _3 = COLON _4 = expression_nonop _5 = arguments _6 = direction_marker _7 = DOLLAR _8 = arguments _9 = BRACE_RIGHT
+    {    ( CfParserUtil.select_position (fst _7) (CfParserUtil.connect_name (fst _3) _2 (CfAst.Apply (fst _1, snd _2, _4, (_5 @ (CfAst.Free (fst _7) :: _8))))) (List.length _5 + 1) )}
 
 arguments:
 | 
-    { [] }
-| arguments direction_marker expression_nonop
-    { $1 @ [$3] }
+    {                                                ( [] )}
+| _1 = arguments _2 = direction_marker _3 = expression_nonop
+    {                                                ( _1 @ [_3] )}
 
 direction_marker:
 | 
-    { () }
-| OP_ADD
-    { () }
-| OP_SUB
-    { () }
-| OP_MUL
-    { () }
+    {           ( () )}
+| _1 = OP_ADD
+    {           ( () )}
+| _1 = OP_SUB
+    {           ( () )}
+| _1 = OP_MUL
+    {           ( () )}
 
 connect:
-| expression OP_UNIFY expression
-    { CfAst.Connect (fst $2, $1, $3) }
-| expression OP_CONNECT_LEFT expression
-    { CfAst.Connect (fst $2, $1, $3) }
-| expression OP_CONNECT_RIGHT expression
-    { CfAst.Connect (fst $2, $3, $1) }
+| _1 = expression _2 = OP_UNIFY _3 = expression
+    {                                           ( CfAst.Connect (fst _2, _1, _3) )}
+| _1 = expression _2 = OP_CONNECT_LEFT _3 = expression
+    {                                           ( CfAst.Connect (fst _2, _1, _3) )}
+| _1 = expression _2 = OP_CONNECT_RIGHT _3 = expression
+    {                                           ( CfAst.Connect (fst _2, _3, _1) )}
 
 prefix:
-| OP_NOT expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_BW_NOT expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_HEAD expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_TAIL expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_LENGTH expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_WIDTH expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_VEC_NOT expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_VEC_MSB expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_VEC_MSBS expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_VEC_LSB expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_VEC_LSBS expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_PROP_NOT expression
-    { CfParserUtil.application_of_prefix $1 $2 }
-| OP_PROP_X expression
-    { CfParserUtil.application_of_prefix $1 $2 }
+| _1 = OP_NOT _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_BW_NOT _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_HEAD _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_TAIL _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_LENGTH _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_WIDTH _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_VEC_NOT _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_VEC_MSB _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_VEC_MSBS _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_VEC_LSB _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_VEC_LSBS _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_PROP_NOT _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
+| _1 = OP_PROP_X _2 = expression
+    {                              ( CfParserUtil.application_of_prefix _1 _2 )}
 
 infix:
-| expression OP_BW_OR expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_OR expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_BW_XOR expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_XOR expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_BW_AND expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_AND expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_EQU expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_NEQ expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_EQU expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_NEQ expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_CONCAT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_RETURN expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_CONCAT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_CONS expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_REPEAT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_REPEAT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_LT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_GT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_LE expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_GE expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_LT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_GT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_LE expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_GE expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_LT_S expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_GT_S expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_LE_S expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_GE_S expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_LSHIFT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_RSHIFT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_LSHIFT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_RSHIFT expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_RSHIFT_S expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_ADD expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_SUB expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_ADD expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_SUB expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_MUL expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_DIV expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_MOD expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_MUL expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_DIV expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_MOD expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_MUL_S expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_POW expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_VEC_POW expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_PROP_AND expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_PROP_XOR expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_PROP_OR expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_PROP_EQUIV expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression OP_PROP_IMPLY expression
-    { CfParserUtil.application_of_infix $2 $1 $3 }
+| _1 = expression _2 = OP_BW_OR _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_OR _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_BW_XOR _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_XOR _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_BW_AND _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_AND _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_EQU _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_NEQ _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_EQU _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_NEQ _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_CONCAT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_RETURN _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_CONCAT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_CONS _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_REPEAT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_REPEAT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_LT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_GT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_LE _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_GE _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_LT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_GT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_LE _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_GE _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_LT_S _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_GT_S _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_LE_S _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_GE_S _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_LSHIFT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_RSHIFT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_LSHIFT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_RSHIFT _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_RSHIFT_S _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_ADD _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_SUB _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_ADD _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_SUB _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_MUL _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_DIV _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_MOD _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_MUL _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_DIV _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_MOD _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_MUL_S _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_POW _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_VEC_POW _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_PROP_AND _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_PROP_XOR _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_PROP_OR _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_PROP_EQUIV _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression _2 = OP_PROP_IMPLY _3 = expression
+    {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
 
 trifix:
-| expression OP_VEC_THEN expression OP_VEC_ELSE expression
-    { CfParserUtil.application_of_trifix $2 $1 $3 $5 }
+| _1 = expression _2 = OP_VEC_THEN _3 = expression _4 = OP_VEC_ELSE _5 = expression
+    {                                                              ( CfParserUtil.application_of_trifix _2 _1 _3 _5 )}
 
 conditional:
-| expression OP_AND expression
-    { CfAst.Cond (fst $2, $1, $3, $1) }
-| expression OP_OR expression
-    { CfAst.Cond (fst $2, $1, $1, $3) }
-| expression OP_THEN expression ELSE expression
-    { CfAst.Cond (fst $2, $1, $3, $5) }
+| _1 = expression _2 = OP_AND _3 = expression
+    {                                                      ( CfAst.Cond (fst _2, _1, _3, _1) )}
+| _1 = expression _2 = OP_OR _3 = expression
+    {                                                      ( CfAst.Cond (fst _2, _1, _1, _3) )}
+| _1 = expression _2 = OP_THEN _3 = expression _4 = ELSE _5 = expression
+    {                                                      ( CfAst.Cond (fst _2, _1, _3, _5) )}
 
 list_sugar_items:
-| expression_nonop
-    { CfParserUtil.application_of_infix (CfAst.expr_loc $1, "::") $1 (CfAst.Record (CfAst.expr_loc $1, [])) }
-| expression_nonop list_sugar_items
-    { CfParserUtil.application_of_infix (CfAst.expr_loc $1, "::") $1 $2 }
-| expression_nonop COLON expression_nonop
-    { CfParserUtil.application_of_infix $2 $1 $3 }
-| expression_nonop COLON expression_nonop list_sugar_items
-    { CfParserUtil.application_of_infix (fst $2, "++") (CfParserUtil.application_of_infix $2 $1 $3) $4 }
+| _1 = expression_nonop
+    {                                                              ( CfParserUtil.application_of_infix (CfAst.expr_loc _1, "::") _1 (CfAst.Record (CfAst.expr_loc _1, [])) )}
+| _1 = expression_nonop _2 = list_sugar_items
+    {                                                              ( CfParserUtil.application_of_infix (CfAst.expr_loc _1, "::") _1 _2 )}
+| _1 = expression_nonop _2 = COLON _3 = expression_nonop
+    {                                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
+| _1 = expression_nonop _2 = COLON _3 = expression_nonop _4 = list_sugar_items
+    {                                                              ( CfParserUtil.application_of_infix (fst _2, "++") (CfParserUtil.application_of_infix _2 _1 _3) _4 )}
 
 %%
 

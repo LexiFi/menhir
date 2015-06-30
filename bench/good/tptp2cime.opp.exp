@@ -43,78 +43,78 @@ open Clauses;;
 %%
 
 donnees:
-| FIN
-    { [] }
-| declaration donnees
-    { $1::$2 }
+| _1 = FIN
+    {                         ( [] )}
+| _1 = declaration _2 = donnees
+    {                         ( _1::_2 )}
 
 declaration:
-| keyword_include PARGAUCHE f_name PARDROITE POINT
-    { Abstract_include $3 }
-| keyword_input_clause PARGAUCHE ident VIRGULE ident VIRGULE clause PARDROITE POINT
-    { Abstract_clause $7 }
+| _1 = keyword_include _2 = PARGAUCHE _3 = f_name _4 = PARDROITE _5 = POINT
+    {      ( Abstract_include _3 )}
+| _1 = keyword_input_clause _2 = PARGAUCHE _3 = ident _4 = VIRGULE _5 = ident _6 = VIRGULE _7 = clause _8 = PARDROITE _9 = POINT
+    {      ( Abstract_clause _7 )}
 
 keyword_include:
-| TOKEN_INCLUDE
-    { etat_analyse.lexer_state <- Include_lexer }
+| _1 = TOKEN_INCLUDE
+    {                ( etat_analyse.lexer_state <- Include_lexer )}
 
 keyword_input_clause:
-| TOKEN_INPUT_CLAUSE
-    { etat_analyse.lexer_state <- Input_clause_lexer }
+| _1 = TOKEN_INPUT_CLAUSE
+    {                     ( etat_analyse.lexer_state <- Input_clause_lexer )}
 
 f_name:
-| FILE_NAME
-    { $1 }
+| _1 = FILE_NAME
+    {            ( _1 )}
 
 clause:
-| CROGAUCHE literal_list CRODROIT
-    { transform_clause $2 }
+| _1 = CROGAUCHE _2 = literal_list _3 = CRODROIT
+    {                                  ( transform_clause _2 )}
 
 literal_list:
-| literal
-    { $1::[] }
-| literal VIRGULE literal_list
-    { $1::$3 }
+| _1 = literal
+    {          ( _1::[] )}
+| _1 = literal _2 = VIRGULE _3 = literal_list
+    {                               ( _1::_3 )}
 
 literal:
-| PLUS atom
-    { P($2) }
-| MOINS atom
-    { M($2) }
+| _1 = PLUS _2 = atom
+    {            ( P(_2) )}
+| _1 = MOINS _2 = atom
+    {             ( M(_2) )}
 
 atom:
-| EGAL PARGAUCHE term VIRGULE term PARDROITE
-    { ($3,$5) }
+| _1 = EGAL _2 = PARGAUCHE _3 = term _4 = VIRGULE _5 = term _6 = PARDROITE
+    {                                             ( (_3,_5) )}
 
 ident:
-| IDENT
-    { $1 }
+| _1 = IDENT
+    {                      ( _1 )}
 
 term:
-| VRB
-    { add_operator_to_cime_pb VARIABLE 0 DEFAULT $1; 
-        Var (var_id_of_string $1) }
-| IDENT
-    { add_operator_to_cime_pb FREE 0 DEFAULT $1;
-          Term ((get_symbol_id $1),[]) }
-| PARGAUCHE term PARDROITE
-    { $2 }
-| IDENT PARGAUCHE term_list PARDROITE
-    {  let ar_f = (List.length $3) in
-      	add_operator_to_cime_pb FREE ar_f DEFAULT $1;
-      	let f=(get_symbol_id $1) in
-        Term(f,$3)
-    }
+| _1 = VRB
+    {      ( add_operator_to_cime_pb VARIABLE 0 DEFAULT _1; 
+        Var (var_id_of_string _1) )}
+| _1 = IDENT
+    {        ( add_operator_to_cime_pb FREE 0 DEFAULT _1;
+          Term ((get_symbol_id _1),[]) )}
+| _1 = PARGAUCHE _2 = term _3 = PARDROITE
+    {                           ( _2 )}
+| _1 = IDENT _2 = PARGAUCHE _3 = term_list _4 = PARDROITE
+    {     (  let ar_f = (List.length _3) in
+      	add_operator_to_cime_pb FREE ar_f DEFAULT _1;
+      	let f=(get_symbol_id _1) in
+        Term(f,_3)
+    )}
 
 term_list:
-| term %prec TERMLIST
-    { [$1] }
-| term VIRGULE term_list
-    { $1 :: $3 }
+| _1 = term %prec TERMLIST
+    {                      ( [_1] )}
+| _1 = term _2 = VIRGULE _3 = term_list
+    {                         ( _1 :: _3 )}
 
 term_line:
-| term POINT_VIRGULE
-    { $1 }
+| _1 = term _2 = POINT_VIRGULE
+    {                     ( _1 )}
 
 %%
 

@@ -17,73 +17,75 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %%
 
 clauses:
-| xs0 = loption_separated_nonempty_list_DOT_clause__ EOF
+| xs0 = loption_separated_nonempty_list_DOT_clause__ _2 = EOF
     {let clauses =
   let xs = xs0 in
-  ( xs )
+  (    ( xs ))
 in
- clauses }
+                                                     ( clauses )}
 
 term:
 | name = IDENTIFIER p = option_params_
-    { 
+    {                                        ( 
     let ts = match p with None -> [] | Some l -> l in
       Struct (name, ts)
-  }
+  )}
 | v = VARIABLE
-    { Var (0, v) }
+    {                 ( Var (0, v) )}
 
 params:
-| LPARENT xs00 = loption_separated_nonempty_list_COMMA_term__ RPARENT
+| _10 = LPARENT xs00 = loption_separated_nonempty_list_COMMA_term__ _30 = RPARENT
     {let terms =
+  let _3 = _30 in
   let xs0 = xs00 in
+  let _1 = _10 in
   let x =
     let xs = xs0 in
-    ( xs )
+    (    ( xs ))
   in
-  ( x )
+  (    ( x ))
 in
- terms }
+         ( terms )}
 
 option_params_:
 | 
-    { None }
+    {    ( None )}
 | x = params
-    { Some x }
+    {    ( Some x )}
 
 loption_separated_nonempty_list_DOT_clause__:
 | 
-    { [] }
+    {    ( [] )}
 | x = separated_nonempty_list_DOT_clause_
-    { x }
+    {    ( x )}
 
 loption_separated_nonempty_list_COMMA_term__:
 | 
-    { [] }
+    {    ( [] )}
 | x = separated_nonempty_list_COMMA_term_
-    { x }
+    {    ( x )}
 
 separated_nonempty_list_DOT_clause_:
 | x = clause
-    { [ x ] }
-| x = clause DOT xs = separated_nonempty_list_DOT_clause_
-    { x :: xs }
+    {    ( [ x ] )}
+| x = clause _2 = DOT xs = separated_nonempty_list_DOT_clause_
+    {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_term_:
 | x = term
-    { [ x ] }
-| x = term COMMA xs = separated_nonempty_list_COMMA_term_
-    { x :: xs }
+    {    ( [ x ] )}
+| x = term _2 = COMMA xs = separated_nonempty_list_COMMA_term_
+    {    ( x :: xs )}
 
 clause:
-| tm = term INFERS xs0 = loption_separated_nonempty_list_COMMA_term__
+| tm = term _2 = INFERS xs0 = loption_separated_nonempty_list_COMMA_term__
     {let ts =
   let xs = xs0 in
-  ( xs )
+  (    ( xs ))
 in
- (tm, ts) }
+                                                        ( (tm, ts) )}
 | fact = term
-    { (fact, []) }
+    {                 ( (fact, []) )}
 
 %%
 

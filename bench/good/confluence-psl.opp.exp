@@ -263,234 +263,234 @@ let debug msg =
 %%
 
 psl_specification:
-| verification_items EOF
-    { List.rev $1 }
+| _1 = verification_items _2 = EOF
+    {                           ( List.rev _1 )}
 
 verification_items:
 | 
-    { [] }
-| verification_items verification_unit
-    { $2 :: $1 }
+    {    ( [] )}
+| _1 = verification_items _2 = verification_unit
+    {                                         ( _2 :: _1 )}
 
 verification_unit:
-| vunit_type identifier Bracel inherit_specs vunit_items Bracer
-    { raise (Parser_util.Error "Verification unit requires module name.") }
-| vunit_type identifier Parenl hierarchical_hdl_name Parenr Bracel inherit_specs vunit_items Bracer
-    { List.hd $4, List.rev $8 }
+| _1 = vunit_type _2 = identifier _3 = Bracel _4 = inherit_specs _5 = vunit_items _6 = Bracer
+    {                                                                                                       ( raise (Parser_util.Error "Verification unit requires module name.") )}
+| _1 = vunit_type _2 = identifier _3 = Parenl _4 = hierarchical_hdl_name _5 = Parenr _6 = Bracel _7 = inherit_specs _8 = vunit_items _9 = Bracer
+    {                                                                                                       ( List.hd _4, List.rev _8 )}
 
 vunit_type:
-| Vunit
-    { $1 }
-| Vprop
-    { raise (Parser_util.Error "\"vprop\" not supported.") }
-| Vmode
-    { raise (Parser_util.Error "\"vmode\" not supported.") }
+| _1 = Vunit
+    {          ( _1 )}
+| _1 = Vprop
+    {          ( raise (Parser_util.Error "\"vprop\" not supported.") )}
+| _1 = Vmode
+    {          ( raise (Parser_util.Error "\"vmode\" not supported.") )}
 
 hierarchical_hdl_name:
-| identifier hierarchical_hdl_names
-    { fst $1 :: List.rev $2 }
+| _1 = identifier _2 = hierarchical_hdl_names
+    {                                      ( fst _1 :: List.rev _2 )}
 
 hierarchical_hdl_names:
 | 
-    { [] }
-| hierarchical_hdl_names path_separator identifier
-    { raise (Parser_util.Error "Hierarchical names are not supported.") }
+    {                                                      ( [] )}
+| _1 = hierarchical_hdl_names _2 = path_separator _3 = identifier
+    {                                                      ( raise (Parser_util.Error "Hierarchical names are not supported.") )}
 
 path_separator:
-| Period
-    { () }
-| Slash
-    { () }
+| _1 = Period
+    {           ( () )}
+| _1 = Slash
+    {           ( () )}
 
 inherit_specs:
 | 
-    { [] }
-| inherit_specs inherit_spec
-    { $2 :: $1 }
+    {                               ( [] )}
+| _1 = inherit_specs _2 = inherit_spec
+    {                               ( _2 :: _1 )}
 
 inherit_spec:
-| Inherit identifier comma_identifiers
-    { Parser_util.error "\"inherit\" not supported." }
+| _1 = Inherit _2 = identifier _3 = comma_identifiers
+    {                                         ( Parser_util.error "\"inherit\" not supported." )}
 
 vunit_items:
 | 
-    { [] }
-| vunit_items vunit_item
-    { $2 :: $1 }
+    {                           ( [] )}
+| _1 = vunit_items _2 = vunit_item
+    {                           ( _2 :: _1 )}
 
 vunit_item:
-| psl_directive
-    { $1 }
+| _1 = psl_directive
+    {                    ( _1 )}
 
 psl_directive:
-| verification_directive
-    { $1 }
-| identifier Colon verification_directive
-    { $3 }
+| _1 = verification_directive
+    {                                            ( _1 )}
+| _1 = identifier _2 = Colon _3 = verification_directive
+    {                                            ( _3 )}
 
 verification_directive:
-| Assert property report Semicolon
-    { Psl_ast.Assert (snd $1, $2, $3) }
-| Assume property Semicolon
-    { raise (Parser_util.Error "\"assume\" directive not supported.") }
-| Assume_guarantee property report Semicolon
-    { raise (Parser_util.Error "\"assume_guarantee\" directive not supported.") }
-| Restrict property Semicolon
-    { raise (Parser_util.Error "\"restrict\" directive not supported.") }
-| Restrict_guarantee property report Semicolon
-    { raise (Parser_util.Error "\"restrict_guarantee\" directive not supported.") }
-| Cover property report Semicolon
-    { raise (Parser_util.Error "\"cover\" directive not supported.") }
-| Fairness property Semicolon
-    { raise (Parser_util.Error "\"fairness\" directive not supported.") }
-| Strong Fairness property Comma property Semicolon
-    { raise (Parser_util.Error "\"strong fairness\" directive not supported.") }
+| _1 = Assert _2 = property _3 = report _4 = Semicolon
+    {                                                         ( Psl_ast.Assert (snd _1, _2, _3) )}
+| _1 = Assume _2 = property _3 = Semicolon
+    {                                                         ( raise (Parser_util.Error "\"assume\" directive not supported.") )}
+| _1 = Assume_guarantee _2 = property _3 = report _4 = Semicolon
+    {                                                         ( raise (Parser_util.Error "\"assume_guarantee\" directive not supported.") )}
+| _1 = Restrict _2 = property _3 = Semicolon
+    {                                                         ( raise (Parser_util.Error "\"restrict\" directive not supported.") )}
+| _1 = Restrict_guarantee _2 = property _3 = report _4 = Semicolon
+    {                                                         ( raise (Parser_util.Error "\"restrict_guarantee\" directive not supported.") )}
+| _1 = Cover _2 = property _3 = report _4 = Semicolon
+    {                                                         ( raise (Parser_util.Error "\"cover\" directive not supported.") )}
+| _1 = Fairness _2 = property _3 = Semicolon
+    {                                                         ( raise (Parser_util.Error "\"fairness\" directive not supported.") )}
+| _1 = Strong _2 = Fairness _3 = property _4 = Comma _5 = property _6 = Semicolon
+    {                                                         ( raise (Parser_util.Error "\"strong fairness\" directive not supported.") )}
 
 finite_range:
-| number range_sym number
-    { $1, $3 }
+| _1 = number _2 = range_sym _3 = number
+    {                            ( _1, _3 )}
 
 range_sym:
-| Colon
-    { () }
-| Period_period
-    { () }
+| _1 = Colon
+    {                  ( () )}
+| _1 = Period_period
+    {                  ( () )}
 
 report:
 | 
-    { "" }
-| Report String
-    { let s = fst $2 in String.sub s 1 (String.length s - 2) }
+    {                  ( "" )}
+| _1 = Report _2 = String
+    {                  ( let s = fst _2 in String.sub s 1 (String.length s - 2) )}
 
 identifier:
-| Identifier
-    { $1 }
-| Identifier_esc
-    { $1 }
+| _1 = Identifier
+    {                   ( _1 )}
+| _1 = Identifier_esc
+    {                   ( _1 )}
 
 comma_identifiers:
 | 
-    { () }
-| Comma identifier comma_identifiers
-    { () }
+    {                                        ( () )}
+| _1 = Comma _2 = identifier _3 = comma_identifiers
+    {                                        ( () )}
 
 number:
-| Integer
-    { int_of_string (fst $1) }
+| _1 = Integer
+    {             ( int_of_string (fst _1) )}
 
 property:
-| identifier
-    { Ltl.Variable (fst $1) }
-| Parenl property Parenr
-    { $2 }
-| property At clock_expression
-    { $3 $1 }
-| Bang property
-    { Ltl.not_ $2 }
-| property Amp_amp property
-    { Ltl.and_ $1 $3 }
-| property Bar_bar property
-    { Ltl.or_ $1 $3 }
-| property Dash_gt property
-    { Ltl.imply $1 $3 }
-| property Lt_dash_gt property
-    { Ltl.equivalent $1 $3 }
-| X property
-    { Ltl.next false $2 }
-| X_bang property
-    { Ltl.next true  $2 }
-| F property
-    { Ltl.eventually $2 }
-| G property
-    { Ltl.always $2 }
-| Brackl property U property Brackr
-    { Ltl.until true  $2 $4 }
-| Brackl property W property Brackr
-    { Ltl.until false $2 $4 }
-| Always property
-    { Ltl.always $2 }
-| Never property
-    { Ltl.never $2 }
-| Next property
-    { Ltl.next false $2 }
-| Next_bang property
-    { Ltl.next true  $2 }
-| Eventually_bang property
-    { Ltl.eventually $2 }
-| property Until property
-    { Ltl.until false $1 $3 }
-| property Until_bang property
-    { Ltl.until true  $1 $3 }
-| property Until_bang_ property
-    { Ltl.until_overlap true  $1 $3 }
-| property Until_ property
-    { Ltl.until_overlap false $1 $3 }
-| property Before property
-    { Ltl.before false $1 $3 }
-| property Before_bang property
-    { Ltl.before true  $1 $3 }
-| property Before_bang_ property
-    { Ltl.before_overlap true  $1 $3 }
-| property Before_ property
-    { Ltl.before_overlap false $1 $3 }
-| X Brackl number Brackr Parenl property Parenr
-    { Ltl.next_repeat false $3 $6 }
-| X_bang Brackl number Brackr Parenl property Parenr
-    { Ltl.next_repeat true  $3 $6 }
-| Next Brackl number Brackr Parenl property Parenr
-    { Ltl.next_repeat false $3 $6 }
-| Next_bang Brackl number Brackr Parenl property Parenr
-    { Ltl.next_repeat true  $3 $6 }
-| Next_a Brackl finite_range Brackr Parenl property Parenr
-    { Ltl.next_ae false true  (fst $3) (snd $3) $6 }
-| Next_a_bang Brackl finite_range Brackr Parenl property Parenr
-    { Ltl.next_ae true  true  (fst $3) (snd $3) $6 }
-| Next_e Brackl finite_range Brackr Parenl property Parenr
-    { Ltl.next_ae false false (fst $3) (snd $3) $6 }
-| Next_e_bang Brackl finite_range Brackr Parenl property Parenr
-    { Ltl.next_ae true  false (fst $3) (snd $3) $6 }
-| Next_event Parenl property Parenr Parenl property Parenr
-    {Ltl.next_event false $3 $6 }
-| Next_event_bang Parenl property Parenr Parenl property Parenr
-    {Ltl.next_event true  $3 $6 }
-| Next_event Parenl property Parenr Brackl number Brackr Parenl property Parenr
-    { Ltl.next_event_repeat false $6 $3 $9 }
-| Next_event_bang Parenl property Parenr Brackl number Brackr Parenl property Parenr
-    { Ltl.next_event_repeat true  $6 $3 $9 }
-| Next_event_a Parenl property Parenr Brackl finite_range Brackr Parenl property Parenr
-    { Ltl.next_event_ae false true  (fst $6) (snd $6) $3 $9 }
-| Next_event_a_bang Parenl property Parenr Brackl finite_range Brackr Parenl property Parenr
-    { Ltl.next_event_ae true  true  (fst $6) (snd $6) $3 $9 }
-| Next_event_e Parenl property Parenr Brackl finite_range Brackr Parenl property Parenr
-    { Ltl.next_event_ae false false (fst $6) (snd $6) $3 $9 }
-| Next_event_e_bang Parenl property Parenr Brackl finite_range Brackr Parenl property Parenr
-    { Ltl.next_event_ae true  false (fst $6) (snd $6) $3 $9 }
-| AX property
-    { raise (Parser_util.Error "PSL OBE properties are not supported.") }
-| AF property
-    { raise (Parser_util.Error "PSL OBE properties are not supported.") }
-| AG property
-    { raise (Parser_util.Error "PSL OBE properties are not supported.") }
-| A Brackl property U property Brackr
-    { raise (Parser_util.Error "PSL OBE properties are not supported.") }
-| EX property
-    { raise (Parser_util.Error "PSL OBE properties are not supported.") }
-| EF property
-    { raise (Parser_util.Error "PSL OBE properties are not supported.") }
-| EG property
-    { raise (Parser_util.Error "PSL OBE properties are not supported.") }
-| E Brackl property U property Brackr
-    { raise (Parser_util.Error "PSL OBE properties are not supported.") }
+| _1 = identifier
+    {                           ( Ltl.Variable (fst _1) )}
+| _1 = Parenl _2 = property _3 = Parenr
+    {                           ( _2 )}
+| _1 = property _2 = At _3 = clock_expression
+    {                                       ( _3 _1 )}
+| _1 = Bang _2 = property
+    {                                       ( Ltl.not_ _2 )}
+| _1 = property _2 = Amp_amp _3 = property
+    {                                       ( Ltl.and_ _1 _3 )}
+| _1 = property _2 = Bar_bar _3 = property
+    {                                       ( Ltl.or_ _1 _3 )}
+| _1 = property _2 = Dash_gt _3 = property
+    {                                       ( Ltl.imply _1 _3 )}
+| _1 = property _2 = Lt_dash_gt _3 = property
+    {                                       ( Ltl.equivalent _1 _3 )}
+| _1 = X _2 = property
+    {                                       ( Ltl.next false _2 )}
+| _1 = X_bang _2 = property
+    {                                       ( Ltl.next true  _2 )}
+| _1 = F _2 = property
+    {                                       ( Ltl.eventually _2 )}
+| _1 = G _2 = property
+    {                                       ( Ltl.always _2 )}
+| _1 = Brackl _2 = property _3 = U _4 = property _5 = Brackr
+    {                                       ( Ltl.until true  _2 _4 )}
+| _1 = Brackl _2 = property _3 = W _4 = property _5 = Brackr
+    {                                       ( Ltl.until false _2 _4 )}
+| _1 = Always _2 = property
+    {                                       ( Ltl.always _2 )}
+| _1 = Never _2 = property
+    {                                       ( Ltl.never _2 )}
+| _1 = Next _2 = property
+    {                                       ( Ltl.next false _2 )}
+| _1 = Next_bang _2 = property
+    {                                       ( Ltl.next true  _2 )}
+| _1 = Eventually_bang _2 = property
+    {                                       ( Ltl.eventually _2 )}
+| _1 = property _2 = Until _3 = property
+    {                                       ( Ltl.until false _1 _3 )}
+| _1 = property _2 = Until_bang _3 = property
+    {                                       ( Ltl.until true  _1 _3 )}
+| _1 = property _2 = Until_bang_ _3 = property
+    {                                       ( Ltl.until_overlap true  _1 _3 )}
+| _1 = property _2 = Until_ _3 = property
+    {                                       ( Ltl.until_overlap false _1 _3 )}
+| _1 = property _2 = Before _3 = property
+    {                                       ( Ltl.before false _1 _3 )}
+| _1 = property _2 = Before_bang _3 = property
+    {                                       ( Ltl.before true  _1 _3 )}
+| _1 = property _2 = Before_bang_ _3 = property
+    {                                       ( Ltl.before_overlap true  _1 _3 )}
+| _1 = property _2 = Before_ _3 = property
+    {                                       ( Ltl.before_overlap false _1 _3 )}
+| _1 = X _2 = Brackl _3 = number _4 = Brackr _5 = Parenl _6 = property _7 = Parenr
+    {                                                           ( Ltl.next_repeat false _3 _6 )}
+| _1 = X_bang _2 = Brackl _3 = number _4 = Brackr _5 = Parenl _6 = property _7 = Parenr
+    {                                                           ( Ltl.next_repeat true  _3 _6 )}
+| _1 = Next _2 = Brackl _3 = number _4 = Brackr _5 = Parenl _6 = property _7 = Parenr
+    {                                                           ( Ltl.next_repeat false _3 _6 )}
+| _1 = Next_bang _2 = Brackl _3 = number _4 = Brackr _5 = Parenl _6 = property _7 = Parenr
+    {                                                           ( Ltl.next_repeat true  _3 _6 )}
+| _1 = Next_a _2 = Brackl _3 = finite_range _4 = Brackr _5 = Parenl _6 = property _7 = Parenr
+    {                                                                    ( Ltl.next_ae false true  (fst _3) (snd _3) _6 )}
+| _1 = Next_a_bang _2 = Brackl _3 = finite_range _4 = Brackr _5 = Parenl _6 = property _7 = Parenr
+    {                                                                    ( Ltl.next_ae true  true  (fst _3) (snd _3) _6 )}
+| _1 = Next_e _2 = Brackl _3 = finite_range _4 = Brackr _5 = Parenl _6 = property _7 = Parenr
+    {                                                                    ( Ltl.next_ae false false (fst _3) (snd _3) _6 )}
+| _1 = Next_e_bang _2 = Brackl _3 = finite_range _4 = Brackr _5 = Parenl _6 = property _7 = Parenr
+    {                                                                    ( Ltl.next_ae true  false (fst _3) (snd _3) _6 )}
+| _1 = Next_event _2 = Parenl _3 = property _4 = Parenr _5 = Parenl _6 = property _7 = Parenr
+    {                                                                     (Ltl.next_event false _3 _6 )}
+| _1 = Next_event_bang _2 = Parenl _3 = property _4 = Parenr _5 = Parenl _6 = property _7 = Parenr
+    {                                                                     (Ltl.next_event true  _3 _6 )}
+| _1 = Next_event _2 = Parenl _3 = property _4 = Parenr _5 = Brackl _6 = number _7 = Brackr _8 = Parenl _9 = property _10 = Parenr
+    {                                                                                                ( Ltl.next_event_repeat false _6 _3 _9 )}
+| _1 = Next_event_bang _2 = Parenl _3 = property _4 = Parenr _5 = Brackl _6 = number _7 = Brackr _8 = Parenl _9 = property _10 = Parenr
+    {                                                                                                ( Ltl.next_event_repeat true  _6 _3 _9 )}
+| _1 = Next_event_a _2 = Parenl _3 = property _4 = Parenr _5 = Brackl _6 = finite_range _7 = Brackr _8 = Parenl _9 = property _10 = Parenr
+    {                                                                                                ( Ltl.next_event_ae false true  (fst _6) (snd _6) _3 _9 )}
+| _1 = Next_event_a_bang _2 = Parenl _3 = property _4 = Parenr _5 = Brackl _6 = finite_range _7 = Brackr _8 = Parenl _9 = property _10 = Parenr
+    {                                                                                                ( Ltl.next_event_ae true  true  (fst _6) (snd _6) _3 _9 )}
+| _1 = Next_event_e _2 = Parenl _3 = property _4 = Parenr _5 = Brackl _6 = finite_range _7 = Brackr _8 = Parenl _9 = property _10 = Parenr
+    {                                                                                                ( Ltl.next_event_ae false false (fst _6) (snd _6) _3 _9 )}
+| _1 = Next_event_e_bang _2 = Parenl _3 = property _4 = Parenr _5 = Brackl _6 = finite_range _7 = Brackr _8 = Parenl _9 = property _10 = Parenr
+    {                                                                                                ( Ltl.next_event_ae true  false (fst _6) (snd _6) _3 _9 )}
+| _1 = AX _2 = property
+    {                                        ( raise (Parser_util.Error "PSL OBE properties are not supported.") )}
+| _1 = AF _2 = property
+    {                                        ( raise (Parser_util.Error "PSL OBE properties are not supported.") )}
+| _1 = AG _2 = property
+    {                                        ( raise (Parser_util.Error "PSL OBE properties are not supported.") )}
+| _1 = A _2 = Brackl _3 = property _4 = U _5 = property _6 = Brackr
+    {                                        ( raise (Parser_util.Error "PSL OBE properties are not supported.") )}
+| _1 = EX _2 = property
+    {                                        ( raise (Parser_util.Error "PSL OBE properties are not supported.") )}
+| _1 = EF _2 = property
+    {                                        ( raise (Parser_util.Error "PSL OBE properties are not supported.") )}
+| _1 = EG _2 = property
+    {                                        ( raise (Parser_util.Error "PSL OBE properties are not supported.") )}
+| _1 = E _2 = Brackl _3 = property _4 = U _5 = property _6 = Brackr
+    {                                        ( raise (Parser_util.Error "PSL OBE properties are not supported.") )}
 
 clock_expression:
-| Parenl Posedge identifier Parenr
-    { Ltl.posedge (fst $3) }
-| Parenl Negedge identifier Parenr
-    { Ltl.negedge (fst $3) }
-| Rose Parenl identifier Parenr
-    { Ltl.posedge (fst $3) }
-| Fell Parenl identifier Parenr
-    { Ltl.negedge (fst $3) }
+| _1 = Parenl _2 = Posedge _3 = identifier _4 = Parenr
+    {                                      ( Ltl.posedge (fst _3) )}
+| _1 = Parenl _2 = Negedge _3 = identifier _4 = Parenr
+    {                                      ( Ltl.negedge (fst _3) )}
+| _1 = Rose _2 = Parenl _3 = identifier _4 = Parenr
+    {                                      ( Ltl.posedge (fst _3) )}
+| _1 = Fell _2 = Parenl _3 = identifier _4 = Parenr
+    {                                      ( Ltl.negedge (fst _3) )}
 
 %%
 

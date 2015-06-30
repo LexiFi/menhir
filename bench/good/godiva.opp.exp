@@ -129,186 +129,186 @@ let invalid n s = error n ("Invalid " ^ s)
 %%
 
 spec:
-| lines EOF
-    { let spec = List.fold_left replace_line base_spec $1 in
+| _1 = lines _2 = EOF
+    {                    ( let spec = List.fold_left replace_line base_spec _1 in
                       let curr_p = Parsing.symbol_end_pos () in
-                      { spec with EL.specfile = curr_p.Lexing.pos_fname } }
+                      { spec with EL.specfile = curr_p.Lexing.pos_fname } )}
 
 lines:
-| line lines
-    { $1 :: $2 }
+| _1 = line _2 = lines
+    {                    ( _1 :: _2 )}
 | 
-    { [] }
+    {                    ( [] )}
 
 line:
-| package_line
-    { $1 }
-| version_line
-    { $1 }
-| revision_line
-    { $1 }
-| depends_line
-    { $1 }
-| build_depends_line
-    { $1 }
-| sources_line
-    { $1 }
-| unpacksto_line
-    { $1 }
-| homepage_line
-    { $1 }
-| maintainer_line
-    { $1 }
-| options_line
-    { $1 }
-| docfiles_line
-    { $1 }
-| description_line
-    { $1 }
-| confopts_line
-    { $1 }
-| bytecode_target_line
-    { $1 }
-| opt_target_line
-    { $1 }
+| _1 = package_line
+    {                        ( _1 )}
+| _1 = version_line
+    {                        ( _1 )}
+| _1 = revision_line
+    {                        ( _1 )}
+| _1 = depends_line
+    {                        ( _1 )}
+| _1 = build_depends_line
+    {                         ( _1 )}
+| _1 = sources_line
+    {                        ( _1 )}
+| _1 = unpacksto_line
+    {                        ( _1 )}
+| _1 = homepage_line
+    {                        ( _1 )}
+| _1 = maintainer_line
+    {                        ( _1 )}
+| _1 = options_line
+    {                        ( _1 )}
+| _1 = docfiles_line
+    {                        ( _1 )}
+| _1 = description_line
+    {                        ( _1 )}
+| _1 = confopts_line
+    {                        ( _1 )}
+| _1 = bytecode_target_line
+    {                           ( _1 )}
+| _1 = opt_target_line
+    {                        ( _1 )}
 
 package_line:
-| PACKAGE PKGNAME EOL
-    { let (c, n) = $2 in Package (c, n) }
-| PACKAGE PKGNAME error EOL
-    { trail 3 "package name" }
-| PACKAGE EOL
-    { missing "package name" }
+| _1 = PACKAGE _2 = PKGNAME _3 = EOL
+    {                            ( let (c, n) = _2 in Package (c, n) )}
+| _1 = PACKAGE _2 = PKGNAME _3 = error _4 = EOL
+    {                                ( trail 3 "package name" )}
+| _1 = PACKAGE _2 = EOL
+    {                            ( missing "package name" )}
 
 version_line:
-| VERSION STRING EOL
-    { Version $2 }
-| VERSION STRING error EOL
-    { trail 3 "version number" }
-| VERSION EOL
-    { missing "version number" }
+| _1 = VERSION _2 = STRING _3 = EOL
+    {                            ( Version _2 )}
+| _1 = VERSION _2 = STRING _3 = error _4 = EOL
+    {                               ( trail 3 "version number" )}
+| _1 = VERSION _2 = EOL
+    {                            ( missing "version number" )}
 
 revision_line:
-| REVISION INT EOL
-    { Revision $2 }
-| REVISION INT error EOL
-    { trail 3 "revision number" }
-| REVISION EOL
-    { missing "revision number" }
+| _1 = REVISION _2 = INT _3 = EOL
+    {                            ( Revision _2 )}
+| _1 = REVISION _2 = INT _3 = error _4 = EOL
+    {                             ( trail 3 "revision number" )}
+| _1 = REVISION _2 = EOL
+    {                             ( missing "revision number" )}
 
 depends_line:
-| DEPENDS deps EOL
-    { Depends $2 }
+| _1 = DEPENDS _2 = deps _3 = EOL
+    {                            ( Depends _2 )}
 
 build_depends_line:
-| BUILD_DEPENDS deps EOL
-    { Build_Depends $2 }
+| _1 = BUILD_DEPENDS _2 = deps _3 = EOL
+    {                             ( Build_Depends _2 )}
 
 sources_line:
-| SOURCES STRING EOL
-    { Sources $2 }
-| SOURCES STRING error EOL
-    { trail 3 "sources url" }
-| SOURCES EOL
-    { missing "sources url" }
+| _1 = SOURCES _2 = STRING _3 = EOL
+    {                            ( Sources _2 )}
+| _1 = SOURCES _2 = STRING _3 = error _4 = EOL
+    {                               ( trail 3 "sources url" )}
+| _1 = SOURCES _2 = EOL
+    {                            ( missing "sources url" )}
 
 unpacksto_line:
-| UNPACKSTO STRING EOL
-    { Unpacks_To $2 }
-| UNPACKSTO STRING error EOL
-    { trail 3 "`unpacks to' directory" }
-| UNPACKSTO EOL
-    { missing "`unpacks to' directory" }
+| _1 = UNPACKSTO _2 = STRING _3 = EOL
+    {                            ( Unpacks_To _2 )}
+| _1 = UNPACKSTO _2 = STRING _3 = error _4 = EOL
+    {                                 ( trail 3 "`unpacks to' directory" )}
+| _1 = UNPACKSTO _2 = EOL
+    {                              ( missing "`unpacks to' directory" )}
 
 homepage_line:
-| HOMEPAGE STRING EOL
-    { Homepage $2 }
-| HOMEPAGE STRING error EOL
-    { trail 3 "homepage url" }
-| HOMEPAGE EOL
-    { missing "homepage url" }
+| _1 = HOMEPAGE _2 = STRING _3 = EOL
+    {                            ( Homepage _2 )}
+| _1 = HOMEPAGE _2 = STRING _3 = error _4 = EOL
+    {                                ( trail 3 "homepage url" )}
+| _1 = HOMEPAGE _2 = EOL
+    {                             ( missing "homepage url" )}
 
 maintainer_line:
-| MAINTAINER STRING EOL
-    { Maintainer $2 }
+| _1 = MAINTAINER _2 = STRING _3 = EOL
+    {                            ( Maintainer _2 )}
 
 options_line:
-| OPTIONS options EOL
-    { Options $2 }
+| _1 = OPTIONS _2 = options _3 = EOL
+    {                            ( Options _2 )}
 
 docfiles_line:
-| DOCFILES docfiles EOL
-    { Docfiles $2 }
+| _1 = DOCFILES _2 = docfiles _3 = EOL
+    {                            ( Docfiles _2 )}
 
 description_line:
-| DESCRIPTION STRINGPAIR
-    { let (s, l) = $2 in Description (s, l) }
+| _1 = DESCRIPTION _2 = STRINGPAIR
+    {                             ( let (s, l) = _2 in Description (s, l) )}
 
 confopts_line:
-| CONFOPTS confopts EOL
-    { Confopts $2 }
+| _1 = CONFOPTS _2 = confopts _3 = EOL
+    {                               ( Confopts _2 )}
 
 bytecode_target_line:
-| BC_TARGET STRING EOL
-    { Bytecode_Target $2 }
-| BC_TARGET STRING error EOL
-    { trail 3 "bytecode target" }
-| BC_TARGET EOL
-    { missing "bytecode target" }
+| _1 = BC_TARGET _2 = STRING _3 = EOL
+    {                            ( Bytecode_Target _2 )}
+| _1 = BC_TARGET _2 = STRING _3 = error _4 = EOL
+    {                                 ( trail 3 "bytecode target" )}
+| _1 = BC_TARGET _2 = EOL
+    {                            ( missing "bytecode target" )}
 
 opt_target_line:
-| OPT_TARGET STRING EOL
-    { Opt_Target $2 }
-| OPT_TARGET STRING error EOL
-    { trail 3 "opt target" }
-| OPT_TARGET EOL
-    { missing "opt target" }
+| _1 = OPT_TARGET _2 = STRING _3 = EOL
+    {                            ( Opt_Target _2 )}
+| _1 = OPT_TARGET _2 = STRING _3 = error _4 = EOL
+    {                                  ( trail 3 "opt target" )}
+| _1 = OPT_TARGET _2 = EOL
+    {                            ( missing "opt target" )}
 
 deps:
-| dep COMMA deps
-    { $1 :: $3 }
-| dep
-    { [$1] }
-| dep error
-    { error 2 "Missing comma" }
+| _1 = dep _2 = COMMA _3 = deps
+    {                    ( _1 :: _3 )}
+| _1 = dep
+    {                    ( [_1] )}
+| _1 = dep _2 = error
+    {                    ( error 2 "Missing comma" )}
 | 
-    { [] }
+    {                    ( [] )}
 
 dep:
-| PKGNAME LPAREN RELOP STRING RPAREN
-    { let (cat, name) = $1 in (cat, name, Some ($3, $4)) }
-| PKGNAME
-    { let (cat, name) = $1 in (cat, name, None) }
-| error
-    { invalid 1 "dependency" }
+| _1 = PKGNAME _2 = LPAREN _3 = RELOP _4 = STRING _5 = RPAREN
+    {        ( let (cat, name) = _1 in (cat, name, Some (_3, _4)) )}
+| _1 = PKGNAME
+    {        ( let (cat, name) = _1 in (cat, name, None) )}
+| _1 = error
+    {        ( invalid 1 "dependency" )}
 
 options:
-| OPTION COMMA options
-    { $1 :: $3 }
-| OPTION
-    { [$1] }
-| error
-    { invalid 1 "option" }
-| OPTION error
-    { error 2 "Missing comma" }
+| _1 = OPTION _2 = COMMA _3 = options
+    {                            ( _1 :: _3 )}
+| _1 = OPTION
+    {                            ( [_1] )}
+| _1 = error
+    {                            ( invalid 1 "option" )}
+| _1 = OPTION _2 = error
+    {                            ( error 2 "Missing comma" )}
 | 
-    { [] }
+    {                            ( [] )}
 
 docfiles:
-| STRING COMMA docfiles
-    { $1 :: $3 }
-| STRING
-    { [$1] }
-| error
-    { invalid 1 "doc file" }
-| STRING error
-    { error 2 "Missing comma" }
+| _1 = STRING _2 = COMMA _3 = docfiles
+    {                            ( _1 :: _3 )}
+| _1 = STRING
+    {                            ( [_1] )}
+| _1 = error
+    {                            ( invalid 1 "doc file" )}
+| _1 = STRING _2 = error
+    {                            ( error 2 "Missing comma" )}
 | 
-    { [] }
+    {                            ( [] )}
 
 confopts:
 | 
-    { [] }
+    {                            ( [] )}
 
 %%
 

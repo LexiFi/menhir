@@ -203,7 +203,6 @@ let destructuretokendef name codomain bindsemv branch = {
 let extrabindings action =
   Keyword.KeywordSet.fold (fun keyword bindings ->
     match keyword with
-    | Keyword.Dollar _
     | Keyword.Position (_, _, Keyword.FlavorPosition)
     | Keyword.SyntaxError ->
 	bindings

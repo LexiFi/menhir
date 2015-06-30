@@ -110,106 +110,106 @@ let connect_ports () =
 %%
 
 netlist:
-| scope
-    { connect_ports (); let scope = current_scope () in clear_tables (); scope }
+| _1 = scope
+    {           ( connect_ports (); let scope = current_scope () in clear_tables (); scope )}
 
 scope:
-| Parenl Scope scope_name Parenl scope_items Parenr Parenr
-    { () }
+| _1 = Parenl _2 = Scope _3 = scope_name _4 = Parenl _5 = scope_items _6 = Parenr _7 = Parenr
+    {                                                              ( () )}
 
 scope_name:
-| name name
-    { push_scope (if is_root_scope () then create_root_scope $1 else create_sub_scope (current_scope ()) $1 $2) }
+| _1 = name _2 = name
+    {              ( push_scope (if is_root_scope () then create_root_scope _1 else create_sub_scope (current_scope ()) _1 _2) )}
 
 scope_items:
 | 
-    { () }
-| scope_items scope_item
-    { () }
+    {                            ( () )}
+| _1 = scope_items _2 = scope_item
+    {                            ( () )}
 
 scope_item:
-| scope
-    { pop_scope () }
-| cell
-    { () }
+| _1 = scope
+    {           ( pop_scope () )}
+| _1 = cell
+    {           ( () )}
 
 string:
-| String
-    { format_string (fst $1) }
+| _1 = String
+    {           ( format_string (fst _1) )}
 
 integer:
-| Integer
-    { int_of_string (fst $1) }
+| _1 = Integer
+    {            ( int_of_string (fst _1) )}
 
 integers_0:
 | 
-    { [] }
-| integers_0 integer
-    { $2 :: $1 }
+    {                       ( [] )}
+| _1 = integers_0 _2 = integer
+    {                       ( _2 :: _1 )}
 
 integers:
-| integers_0
-    { List.rev $1 }
+| _1 = integers_0
+    {               ( List.rev _1 )}
 
 width:
-| integer
-    { $1 }
+| _1 = integer
+    {            ( _1 )}
 
 name:
-| string
-    { $1 }
+| _1 = string
+    {           ( _1 )}
 
 id:
-| integer
-    { $1 }
+| _1 = integer
+    {            ( _1 )}
 
 bit:
-| integer
-    { $1 }
+| _1 = integer
+    {            ( _1 )}
 
 cell:
-| Parenl Input id name width Parenr
-    { let cell = create_input (current_scope ()) $4 $5 in add_cell $3 cell }
-| Parenl Output id name width id Parenr
-    { let cell, data = create_output (current_scope ()) $4 $5 in add_cell $3 cell; add_port data $6 }
-| Parenl Name id name width id Parenr
-    { let cell, data = create_name   (current_scope ()) $4 $5 in add_cell $3 cell; add_port data $6 }
-| Parenl Dangle id Parenr
-    { add_cell $3 (dangle (current_scope ())) }
-| Parenl Const id string Parenr
-    { let cell = create_const (current_scope ()) $4 in add_cell $3 cell }
-| Parenl Buf id width id Parenr
-    { let cell, data = create_buf (current_scope ()) $4 in add_cell $3 cell; add_port data $5 }
-| Parenl Not id width id Parenr
-    { let cell, data = create_not (current_scope ()) $4 in add_cell $3 cell; add_port data $5 }
-| Parenl And id width id id Parenr
-    { let cell, left, right = create_and  (current_scope ()) $4 in add_cell $3 cell; add_port left $5; add_port right $6 }
-| Parenl Xor id width id id Parenr
-    { let cell, left, right = create_xor  (current_scope ()) $4 in add_cell $3 cell; add_port left $5; add_port right $6 }
-| Parenl Or id width id id Parenr
-    { let cell, left, right = create_or   (current_scope ()) $4 in add_cell $3 cell; add_port left $5; add_port right $6 }
-| Parenl Concat id width width id id Parenr
-    { let cell, left, right = create_concat (current_scope ()) $4 $5 in add_cell $3 cell; add_port left $6; add_port right $7 }
-| Parenl Select id width bit id Parenr
-    { let cell, data = create_select (current_scope ()) $4 $5 in add_cell $3 cell; add_port data $6 }
-| Parenl Eq id width id id Parenr
-    { let cell, left, right = create_eq   (current_scope ()) $4 in add_cell $3 cell; add_port left $5; add_port right $6 }
-| Parenl Lt id width id id Parenr
-    { let cell, left, right = create_lt   (current_scope ()) $4 in add_cell $3 cell; add_port left $5; add_port right $6 }
-| Parenl Add id width id id Parenr
-    { let cell, left, right = create_add  (current_scope ()) $4 in add_cell $3 cell; add_port left $5; add_port right $6 }
-| Parenl Sub id width id id Parenr
-    { let cell, left, right = create_sub  (current_scope ()) $4 in add_cell $3 cell; add_port left $5; add_port right $6 }
-| Parenl Mul id width id id Parenr
-    { let cell, left, right = create_mul  (current_scope ()) $4 in add_cell $3 cell; add_port left $5; add_port right $6 }
-| Parenl Mux id width id id id Parenr
-    { let cell, select, data_0, data_1 = create_mux (current_scope ()) $4 in add_cell $3 cell; add_port select $5; add_port data_0 $6; add_port data_1 $7 }
-| Parenl Ff id width id id Parenr
-    { let cell, clock, data = create_ff   (current_scope ()) $4 in add_cell $3 cell; add_port clock $5; add_port data $6 }
-| Parenl Ffc id width id id id Parenr
-    { let cell, clear, clock, data = create_ffc (current_scope ()) $4 in add_cell $3 cell; add_port clear $5; add_port clock $6; add_port data $7 }
-| Parenl Bbox id string width width Parenl integers Parenr id Parenr
-    { let cell, data = create_bbox (current_scope ()) $4 $5 $6 $8 in add_cell $3 cell; add_port data $10 }
+| _1 = Parenl _2 = Input _3 = id _4 = name _5 = width _6 = Parenr
+    {                                                         ( let cell = create_input (current_scope ()) _4 _5 in add_cell _3 cell )}
+| _1 = Parenl _2 = Output _3 = id _4 = name _5 = width _6 = id _7 = Parenr
+    {                                                         ( let cell, data = create_output (current_scope ()) _4 _5 in add_cell _3 cell; add_port data _6 )}
+| _1 = Parenl _2 = Name _3 = id _4 = name _5 = width _6 = id _7 = Parenr
+    {                                                         ( let cell, data = create_name   (current_scope ()) _4 _5 in add_cell _3 cell; add_port data _6 )}
+| _1 = Parenl _2 = Dangle _3 = id _4 = Parenr
+    {                                                         ( add_cell _3 (dangle (current_scope ())) )}
+| _1 = Parenl _2 = Const _3 = id _4 = string _5 = Parenr
+    {                                                         ( let cell = create_const (current_scope ()) _4 in add_cell _3 cell )}
+| _1 = Parenl _2 = Buf _3 = id _4 = width _5 = id _6 = Parenr
+    {                                                         ( let cell, data = create_buf (current_scope ()) _4 in add_cell _3 cell; add_port data _5 )}
+| _1 = Parenl _2 = Not _3 = id _4 = width _5 = id _6 = Parenr
+    {                                                         ( let cell, data = create_not (current_scope ()) _4 in add_cell _3 cell; add_port data _5 )}
+| _1 = Parenl _2 = And _3 = id _4 = width _5 = id _6 = id _7 = Parenr
+    {                                                         ( let cell, left, right = create_and  (current_scope ()) _4 in add_cell _3 cell; add_port left _5; add_port right _6 )}
+| _1 = Parenl _2 = Xor _3 = id _4 = width _5 = id _6 = id _7 = Parenr
+    {                                                         ( let cell, left, right = create_xor  (current_scope ()) _4 in add_cell _3 cell; add_port left _5; add_port right _6 )}
+| _1 = Parenl _2 = Or _3 = id _4 = width _5 = id _6 = id _7 = Parenr
+    {                                                         ( let cell, left, right = create_or   (current_scope ()) _4 in add_cell _3 cell; add_port left _5; add_port right _6 )}
+| _1 = Parenl _2 = Concat _3 = id _4 = width _5 = width _6 = id _7 = id _8 = Parenr
+    {                                                         ( let cell, left, right = create_concat (current_scope ()) _4 _5 in add_cell _3 cell; add_port left _6; add_port right _7 )}
+| _1 = Parenl _2 = Select _3 = id _4 = width _5 = bit _6 = id _7 = Parenr
+    {                                                         ( let cell, data = create_select (current_scope ()) _4 _5 in add_cell _3 cell; add_port data _6 )}
+| _1 = Parenl _2 = Eq _3 = id _4 = width _5 = id _6 = id _7 = Parenr
+    {                                                         ( let cell, left, right = create_eq   (current_scope ()) _4 in add_cell _3 cell; add_port left _5; add_port right _6 )}
+| _1 = Parenl _2 = Lt _3 = id _4 = width _5 = id _6 = id _7 = Parenr
+    {                                                         ( let cell, left, right = create_lt   (current_scope ()) _4 in add_cell _3 cell; add_port left _5; add_port right _6 )}
+| _1 = Parenl _2 = Add _3 = id _4 = width _5 = id _6 = id _7 = Parenr
+    {                                                         ( let cell, left, right = create_add  (current_scope ()) _4 in add_cell _3 cell; add_port left _5; add_port right _6 )}
+| _1 = Parenl _2 = Sub _3 = id _4 = width _5 = id _6 = id _7 = Parenr
+    {                                                         ( let cell, left, right = create_sub  (current_scope ()) _4 in add_cell _3 cell; add_port left _5; add_port right _6 )}
+| _1 = Parenl _2 = Mul _3 = id _4 = width _5 = id _6 = id _7 = Parenr
+    {                                                         ( let cell, left, right = create_mul  (current_scope ()) _4 in add_cell _3 cell; add_port left _5; add_port right _6 )}
+| _1 = Parenl _2 = Mux _3 = id _4 = width _5 = id _6 = id _7 = id _8 = Parenr
+    {                                                         ( let cell, select, data_0, data_1 = create_mux (current_scope ()) _4 in add_cell _3 cell; add_port select _5; add_port data_0 _6; add_port data_1 _7 )}
+| _1 = Parenl _2 = Ff _3 = id _4 = width _5 = id _6 = id _7 = Parenr
+    {                                                         ( let cell, clock, data = create_ff   (current_scope ()) _4 in add_cell _3 cell; add_port clock _5; add_port data _6 )}
+| _1 = Parenl _2 = Ffc _3 = id _4 = width _5 = id _6 = id _7 = id _8 = Parenr
+    {                                                         ( let cell, clear, clock, data = create_ffc (current_scope ()) _4 in add_cell _3 cell; add_port clear _5; add_port clock _6; add_port data _7 )}
+| _1 = Parenl _2 = Bbox _3 = id _4 = string _5 = width _6 = width _7 = Parenl _8 = integers _9 = Parenr _10 = id _11 = Parenr
+    {    ( let cell, data = create_bbox (current_scope ()) _4 _5 _6 _8 in add_cell _3 cell; add_port data _10 )}
 
 %%
 

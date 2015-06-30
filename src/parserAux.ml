@@ -19,19 +19,18 @@ module IdSet = Set.Make (struct
     compare (value id1) (value id2)
 end)
 
-let defined_identifiers ((ido, _) : producer) accu =
+let defined_identifiers (_, ido, _) accu =
   Option.fold IdSet.add ido accu
 
-let defined_identifiers (producers : producer list) =
+let defined_identifiers producers =
   List.fold_right defined_identifiers producers IdSet.empty
 
-let check_production_group right_hand_sides pos1 pos2 action =
-
+let check_production_group right_hand_sides =
   begin
     match right_hand_sides with
     | [] ->
 	assert false
-    | ((producers : producer list), _, _, _) :: right_hand_sides ->
+    | (producers, _, _, _) :: right_hand_sides ->
 	let ids = defined_identifiers producers in
 	List.iter (fun (producers, _, _, _) ->
 	  let ids' = defined_identifiers producers in
@@ -48,12 +47,23 @@ let check_production_group right_hand_sides pos1 pos2 action =
 	    ()
 	  ) right_hand_sides
   end;
-  begin
-    if List.length right_hand_sides > 1 && Action.use_dollar action then
-      Error.signal (Positions.two pos1 pos2)
-	"A semantic action that is shared between several productions must\n\
- 	 not use the $i notation -- semantic values must be named instead."
-  end
+  right_hand_sides
+
+let normalize_producer i (pos, opt_identifier, parameter) =
+  let id =
+    match opt_identifier with
+      | Some id -> id
+      | None -> Positions.with_pos pos ("_" ^ string_of_int (i + 1))
+  in
+  (id, parameter)
+
+let normalize_right_hand_side (producers, a, b, c) =
+  (List.mapi normalize_producer producers, a, b, c)
+
+let normalize_production_group right_hand_sides =
+  right_hand_sides
+  |> check_production_group
+  |> List.map normalize_right_hand_side
 
 let override pos o1 o2 =
   match o1, o2 with

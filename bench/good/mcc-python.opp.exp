@@ -143,798 +143,798 @@ let parse_error str =
 %%
 
 atom:
-| Identifier
-    { IdExpr (fst $1, snd $1)      }
-| literal
-    { LiteralExpr (fst $1, snd $1) }
-| enclosure
-    { $1			       }
+| _1 = Identifier
+    {               ( IdExpr (fst _1, snd _1)      )}
+| _1 = literal
+    {            ( LiteralExpr (fst _1, snd _1) )}
+| _1 = enclosure
+    {              ( _1			       )}
 
 enclosure:
-| parenth_form
-    { $1 }
-| list_display
-    { $1 }
-| dict_display
-    { $1 }
-| string_conversion
-    { $1 }
+| _1 = parenth_form
+    {                 ( _1 )}
+| _1 = list_display
+    {                 ( _1 )}
+| _1 = dict_display
+    {                 ( _1 )}
+| _1 = string_conversion
+    {                     ( _1 )}
 
 literal:
-| String
-    { StrLiteral     (fst $1, snd $1), snd $1 }
-| Integer
-    { IntLiteral     (fst $1, snd $1), snd $1 }
-| Longinteger
-    { LongIntLiteral (fst $1, snd $1), snd $1 }
-| Float
-    { FloatLiteral   (fst $1, snd $1), snd $1 }
-| Imaginary
-    { ImagLiteral    (fst $1, snd $1), snd $1 }
+| _1 = String
+    {           ( StrLiteral     (fst _1, snd _1), snd _1 )}
+| _1 = Integer
+    {            ( IntLiteral     (fst _1, snd _1), snd _1 )}
+| _1 = Longinteger
+    {                ( LongIntLiteral (fst _1, snd _1), snd _1 )}
+| _1 = Float
+    {          ( FloatLiteral   (fst _1, snd _1), snd _1 )}
+| _1 = Imaginary
+    {              ( ImagLiteral    (fst _1, snd _1), snd _1 )}
 
 parenth_form:
-| Leftparen Rightparen
-    { TupleExpr ([], union_pos $1 $2) }
-| Leftparen expr_list_without_comma Rightparen
-    {  let (el,_) = $2 in
+| _1 = Leftparen _2 = Rightparen
+    {                         ( TupleExpr ([], union_pos _1 _2) )}
+| _1 = Leftparen _2 = expr_list_without_comma _3 = Rightparen
+    {      (  let (el,_) = _2 in
 	 if List.length el = 1		(* If there was only one expression,  *)
 	    then List.hd el		(* then this is just that expression. *)
 				        (* Otherwise, it's a tuple.           *)
-	    else TupleExpr (el, union_pos $1 $3)
-      }
-| Leftparen expr_list_without_comma Comma Rightparen
-    { TupleExpr (fst $2, union_pos $1 $4) }
+	    else TupleExpr (el, union_pos _1 _3)
+      )}
+| _1 = Leftparen _2 = expr_list_without_comma _3 = Comma _4 = Rightparen
+    {      ( TupleExpr (fst _2, union_pos _1 _4) )}
 
 list_display:
-| Leftbracket Rightbracket
-    { ListExpr (List [], union_pos $1 $2) }
-| Leftbracket listmaker Rightbracket
-    { ListExpr ($2, union_pos $1 $3)      }
+| _1 = Leftbracket _2 = Rightbracket
+    {                             ( ListExpr (List [], union_pos _1 _2) )}
+| _1 = Leftbracket _2 = listmaker _3 = Rightbracket
+    {                                      ( ListExpr (_2, union_pos _1 _3)      )}
 
 listmaker:
-| expr_list
-    { List (fst $1) }
+| _1 = expr_list
+    {              ( List (fst _1) )}
 
 dict_display:
-| Leftbrace Rightbrace
-    { DictExpr ([], union_pos $1 $2)     }
-| Leftbrace key_datum_list Rightbrace
-    { DictExpr (fst $2, union_pos $1 $3) }
+| _1 = Leftbrace _2 = Rightbrace
+    {                          ( DictExpr ([], union_pos _1 _2)     )}
+| _1 = Leftbrace _2 = key_datum_list _3 = Rightbrace
+    {                                       ( DictExpr (fst _2, union_pos _1 _3) )}
 
 key_datum_list:
-| key_datum_list_without_comma
-    { $1				 }
-| key_datum_list_without_comma Comma
-    { (fst $1, union_pos (snd $1) $2) }
+| _1 = key_datum_list_without_comma
+    {                                       ( _1				 )}
+| _1 = key_datum_list_without_comma _2 = Comma
+    {                                       ( (fst _1, union_pos (snd _1) _2) )}
 
 key_datum_list_without_comma:
-| key_datum
-    { let (e1,e2,p) = $1 in ([(e1, e2)], p) }
-| key_datum_list_without_comma Comma key_datum
-    {  let (kdl,p1) = $1 in
-	 let (kd1,kd2,p2) = $3 in
+| _1 = key_datum
+    {               ( let (e1,e2,p) = _1 in ([(e1, e2)], p) )}
+| _1 = key_datum_list_without_comma _2 = Comma _3 = key_datum
+    {      (  let (kdl,p1) = _1 in
+	 let (kd1,kd2,p2) = _3 in
 	 (kdl @ [(kd1, kd2)], union_pos p1 p2)
-      }
+      )}
 
 key_datum:
-| expression Colon expression
-    { ($1, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
+| _1 = expression _2 = Colon _3 = expression
+    {      ( (_1, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 string_conversion:
-| Backquote expr_list_without_comma Backquote
-    { StrConvExpr (fst $2, union_pos $1 $3) }
+| _1 = Backquote _2 = expr_list_without_comma _3 = Backquote
+    {      ( StrConvExpr (fst _2, union_pos _1 _3) )}
 
 primary:
-| atom
-    { $1 }
-| attributeref
-    { $1 }
-| slicing
-    { $1 }
-| call
-    { $1 }
+| _1 = atom
+    {          ( _1 )}
+| _1 = attributeref
+    {                 ( _1 )}
+| _1 = slicing
+    {             ( _1 )}
+| _1 = call
+    {          ( _1 )}
 
 attributeref:
-| primary Period Identifier
-    { AttrRefExpr ($1, fst $3, union_pos (pos_of_expr $1) (snd $3)) }
+| _1 = primary _2 = Period _3 = Identifier
+    {      ( AttrRefExpr (_1, fst _3, union_pos (pos_of_expr _1) (snd _3)) )}
 
 slicing:
-| primary Leftbracket slice_list Rightbracket
-    { SliceExpr ($1, fst $3, union_pos (pos_of_expr $1) $4) }
+| _1 = primary _2 = Leftbracket _3 = slice_list _4 = Rightbracket
+    {      ( SliceExpr (_1, fst _3, union_pos (pos_of_expr _1) _4) )}
 
 slice_list:
-| slice_list_without_comma
-    { $1                              }
-| slice_list_without_comma Comma
-    { (fst $1, union_pos (snd $1) $2) }
+| _1 = slice_list_without_comma
+    {                               ( _1                              )}
+| _1 = slice_list_without_comma _2 = Comma
+    {                                   ( (fst _1, union_pos (snd _1) _2) )}
 
 slice_list_without_comma:
-| slice_item
-    { ([fst $1], snd $1) }
-| slice_list_without_comma Comma slice_item
-    { ((fst $1) @ [fst $3], union_pos (snd $1) (snd $3)) }
+| _1 = slice_item
+    {                   ( ([fst _1], snd _1) )}
+| _1 = slice_list_without_comma _2 = Comma _3 = slice_item
+    {      ( ((fst _1) @ [fst _3], union_pos (snd _1) (snd _3)) )}
 
 slice_item:
-| expression
-    { ExprSlice ($1), pos_of_expr $1 }
-| short_slice
-    { $1 }
-| short_slice Colon
-    {  let ss, pos = $1 in
+| _1 = expression
+    {                ( ExprSlice (_1), pos_of_expr _1 )}
+| _1 = short_slice
+    {                 ( _1 )}
+| _1 = short_slice _2 = Colon
+    {      (  let ss, pos = _1 in
 	 match ss with
 	    SimpleSlice(lower, upper) ->
 	       ExtSlice([lower; upper; IdExpr (none, no_pos)]), pos
 	  | _ ->
 	    fatal_error pos "InternalParserError: unexpected short_slice"
-      }
-| short_slice Colon expression
-    {  let ss, pos = $1 in
+      )}
+| _1 = short_slice _2 = Colon _3 = expression
+    {      (  let ss, pos = _1 in
 	 match ss with
-	    SimpleSlice(lower, upper) -> ExtSlice([lower; upper; $3]), pos
+	    SimpleSlice(lower, upper) -> ExtSlice([lower; upper; _3]), pos
 	  | _ ->
 	    fatal_error pos "InternalParserError: unexpected short_slice"
-      }
-| Ellipsis
-    { ExtSlice ([IdExpr (ellipsis, no_pos)]), $1 }
+      )}
+| _1 = Ellipsis
+    {              ( ExtSlice ([IdExpr (ellipsis, no_pos)]), _1 )}
 
 short_slice:
-| Colon
-    { SimpleSlice(zero, IdExpr(sys_maxint, no_pos)), $1 }
-| expression Colon
-    { SimpleSlice($1, IdExpr(sys_maxint, no_pos)), union_pos (pos_of_expr $1) $2 }
-| Colon expression
-    { SimpleSlice(zero, $2), union_pos $1 (pos_of_expr $2) }
-| expression Colon expression
-    { SimpleSlice($1, $3), union_pos (pos_of_expr $1) (pos_of_expr $3) }
+| _1 = Colon
+    {          ( SimpleSlice(zero, IdExpr(sys_maxint, no_pos)), _1 )}
+| _1 = expression _2 = Colon
+    {                    ( SimpleSlice(_1, IdExpr(sys_maxint, no_pos)), union_pos (pos_of_expr _1) _2 )}
+| _1 = Colon _2 = expression
+    {                    ( SimpleSlice(zero, _2), union_pos _1 (pos_of_expr _2) )}
+| _1 = expression _2 = Colon _3 = expression
+    {      ( SimpleSlice(_1, _3), union_pos (pos_of_expr _1) (pos_of_expr _3) )}
 
 call:
-| primary Leftparen Rightparen
-    { CallExpr($1, [], union_pos (pos_of_expr $1) $3) }
-| primary Leftparen arg_list Rightparen
-    { CallExpr ($1, List.rev $3, union_pos (pos_of_expr $1) $4) }
+| _1 = primary _2 = Leftparen _3 = Rightparen
+    {      ( CallExpr(_1, [], union_pos (pos_of_expr _1) _3) )}
+| _1 = primary _2 = Leftparen _3 = arg_list _4 = Rightparen
+    {      ( CallExpr (_1, List.rev _3, union_pos (pos_of_expr _1) _4) )}
 
 arg_list:
-| arg_comma_star argument optional_comma
-    { $2 :: $1 }
-| arg_comma_star Star atom
-    { StarArg ($3, pos_of_expr $3) :: $1 }
-| arg_comma_star Star atom Comma StarStar atom
-    { StarStarArg ($6, pos_of_expr $6) :: StarArg ($3, pos_of_expr $3) :: $1 }
-| arg_comma_star StarStar atom
-    { StarStarArg ($3, pos_of_expr $3) :: $1 }
+| _1 = arg_comma_star _2 = argument _3 = optional_comma
+    {                                          ( _2 :: _1 )}
+| _1 = arg_comma_star _2 = Star _3 = atom
+    {      ( StarArg (_3, pos_of_expr _3) :: _1 )}
+| _1 = arg_comma_star _2 = Star _3 = atom _4 = Comma _5 = StarStar _6 = atom
+    {      ( StarStarArg (_6, pos_of_expr _6) :: StarArg (_3, pos_of_expr _3) :: _1 )}
+| _1 = arg_comma_star _2 = StarStar _3 = atom
+    {      ( StarStarArg (_3, pos_of_expr _3) :: _1 )}
 
 arg_comma_star:
 | 
-    { [] }
-| arg_comma_star argument Comma
-    { $2 :: $1 }
+    {     ( [] )}
+| _1 = arg_comma_star _2 = argument _3 = Comma
+    {                                 ( _2 :: _1 )}
 
 argument:
-| expression
-    { let p = pos_of_expr $1 in PosArg ($1, p) }
-| Identifier Equal expression
-    {  let pos = union_pos (snd $1) (pos_of_expr $3) in
-	 KeywordArg (fst $1, $3, pos)
-      }
+| _1 = expression
+    {                ( let p = pos_of_expr _1 in PosArg (_1, p) )}
+| _1 = Identifier _2 = Equal _3 = expression
+    {      (  let pos = union_pos (snd _1) (pos_of_expr _3) in
+	 KeywordArg (fst _1, _3, pos)
+      )}
 
 optional_comma:
 | 
-    { () }
-| Comma
-    { () }
+    {         ( () )}
+| _1 = Comma
+    {         ( () )}
 
 power:
-| primary
-    { $1 }
-| primary StarStar u_expr
-    { OpExpr ($1, StarStar, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
+| _1 = primary
+    {              ( _1 )}
+| _1 = primary _2 = StarStar _3 = u_expr
+    {      ( OpExpr (_1, StarStar, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 u_expr:
-| power
-    { $1                                                      }
-| Dash u_expr
-    { OpExpr (zero, Dash, $2, union_pos $1 (pos_of_expr $2))  }
-| Plus u_expr
-    { OpExpr (zero, Plus, $2, union_pos $1 (pos_of_expr $2))  }
-| Tilde u_expr
-    { OpExpr (zero, Tilde, $2, union_pos $1 (pos_of_expr $2)) }
+| _1 = power
+    {            ( _1                                                      )}
+| _1 = Dash _2 = u_expr
+    {                  ( OpExpr (zero, Dash, _2, union_pos _1 (pos_of_expr _2))  )}
+| _1 = Plus _2 = u_expr
+    {                  ( OpExpr (zero, Plus, _2, union_pos _1 (pos_of_expr _2))  )}
+| _1 = Tilde _2 = u_expr
+    {                  ( OpExpr (zero, Tilde, _2, union_pos _1 (pos_of_expr _2)) )}
 
 m_expr:
-| u_expr
-    { $1 }
-| m_expr Star u_expr
-    { OpExpr ($1, Star, $3, union_pos (pos_of_expr $1) (pos_of_expr $3))    }
-| m_expr Slash u_expr
-    { OpExpr ($1, Slash, $3, union_pos (pos_of_expr $1) (pos_of_expr $3))   }
-| m_expr Percent u_expr
-    { OpExpr ($1, Percent, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
+| _1 = u_expr
+    {           ( _1 )}
+| _1 = m_expr _2 = Star _3 = u_expr
+    {      ( OpExpr (_1, Star, _3, union_pos (pos_of_expr _1) (pos_of_expr _3))    )}
+| _1 = m_expr _2 = Slash _3 = u_expr
+    {      ( OpExpr (_1, Slash, _3, union_pos (pos_of_expr _1) (pos_of_expr _3))   )}
+| _1 = m_expr _2 = Percent _3 = u_expr
+    {      ( OpExpr (_1, Percent, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 a_expr:
-| m_expr
-    { $1 }
-| a_expr Plus m_expr
-    { OpExpr ($1, Plus, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
-| a_expr Dash m_expr
-    { OpExpr ($1, Dash, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
+| _1 = m_expr
+    {           ( _1 )}
+| _1 = a_expr _2 = Plus _3 = m_expr
+    {      ( OpExpr (_1, Plus, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
+| _1 = a_expr _2 = Dash _3 = m_expr
+    {      ( OpExpr (_1, Dash, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 shift_expr:
-| a_expr
-    { $1 }
-| shift_expr Leftshift a_expr
-    { OpExpr ($1, Leftshift, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
-| shift_expr Rightshift a_expr
-    { OpExpr ($1, Rightshift, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
+| _1 = a_expr
+    {            ( _1 )}
+| _1 = shift_expr _2 = Leftshift _3 = a_expr
+    {      ( OpExpr (_1, Leftshift, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
+| _1 = shift_expr _2 = Rightshift _3 = a_expr
+    {      ( OpExpr (_1, Rightshift, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 and_expr:
-| shift_expr
-    { $1 }
-| and_expr Ampersand shift_expr
-    { OpExpr ($1, Ampersand, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
+| _1 = shift_expr
+    {                 ( _1 )}
+| _1 = and_expr _2 = Ampersand _3 = shift_expr
+    {      ( OpExpr (_1, Ampersand, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 xor_expr:
-| and_expr
-    { $1 }
-| xor_expr Caret and_expr
-    { OpExpr ($1, Caret, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
+| _1 = and_expr
+    {              ( _1 )}
+| _1 = xor_expr _2 = Caret _3 = and_expr
+    {      ( OpExpr (_1, Caret, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 or_expr:
-| xor_expr
-    { $1 }
-| or_expr Bar xor_expr
-    { OpExpr ($1, Bar, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
+| _1 = xor_expr
+    {             ( _1 )}
+| _1 = or_expr _2 = Bar _3 = xor_expr
+    {      ( OpExpr (_1, Bar, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 comparison:
-| or_expr
-    { $1 }
-| comparison comp_operator or_expr
-    { OpExpr($1, $2, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
+| _1 = or_expr
+    {               ( _1 )}
+| _1 = comparison _2 = comp_operator _3 = or_expr
+    {      ( OpExpr(_1, _2, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 comp_operator:
-| Lessthan
-    { Lessthan	}
-| Greaterthan
-    { Greaterthan	}
-| EqualEqual
-    { EqualEqual	}
-| GreaterthanEq
-    { GreaterthanEq	}
-| LessthanEq
-    { LessthanEq	}
-| NotEqual
-    { NotEqual	}
-| Is
-    { Is		}
-| Is Not
-    { IsNot		}
-| In
-    { In		}
-| Not In
-    { NotIn		}
+| _1 = Lessthan
+    {              ( Lessthan	)}
+| _1 = Greaterthan
+    {                 ( Greaterthan	)}
+| _1 = EqualEqual
+    {                ( EqualEqual	)}
+| _1 = GreaterthanEq
+    {                  ( GreaterthanEq	)}
+| _1 = LessthanEq
+    {                ( LessthanEq	)}
+| _1 = NotEqual
+    {              ( NotEqual	)}
+| _1 = Is
+    {         ( Is		)}
+| _1 = Is _2 = Not
+    {            ( IsNot		)}
+| _1 = In
+    {         ( In		)}
+| _1 = Not _2 = In
+    {            ( NotIn		)}
 
 expression:
-| or_test
-    { $1 }
-| lambda_form
-    { $1 }
+| _1 = or_test
+    {           ( _1 )}
+| _1 = lambda_form
+    {               ( _1 )}
 
 or_test:
-| and_test
-    { $1 }
-| or_test Or and_test
-    { OpExpr($1, Or, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
+| _1 = and_test
+    {              ( _1 )}
+| _1 = or_test _2 = Or _3 = and_test
+    {      ( OpExpr(_1, Or, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 and_test:
-| not_test
-    { $1 }
-| and_test And not_test
-    { OpExpr($1, And, $3, union_pos (pos_of_expr $1) (pos_of_expr $3)) }
+| _1 = not_test
+    {               ( _1 )}
+| _1 = and_test _2 = And _3 = not_test
+    {      ( OpExpr(_1, And, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 not_test:
-| comparison
-    { $1 }
-| Not not_test
-    { OpExpr(zero, Not, $2, union_pos $1 (pos_of_expr $2)) }
+| _1 = comparison
+    {                ( _1 )}
+| _1 = Not _2 = not_test
+    {                 ( OpExpr(zero, Not, _2, union_pos _1 (pos_of_expr _2)) )}
 
 lambda_form:
-| Lambda Colon expression
-    { FuncExpr([], [ReturnStmt($3, no_pos)], union_pos $1 (pos_of_expr $3)) }
-| Lambda parameter_list Colon expression
-    { FuncExpr(fst $2, [ReturnStmt($4, no_pos)], union_pos $1 (pos_of_expr $4)) }
+| _1 = Lambda _2 = Colon _3 = expression
+    {      ( FuncExpr([], [ReturnStmt(_3, no_pos)], union_pos _1 (pos_of_expr _3)) )}
+| _1 = Lambda _2 = parameter_list _3 = Colon _4 = expression
+    {      ( FuncExpr(fst _2, [ReturnStmt(_4, no_pos)], union_pos _1 (pos_of_expr _4)) )}
 
 expr_list_without_comma:
-| expression
-    { [$1], pos_of_expr $1 }
-| expr_list_without_comma Comma expression
-    {  let (el,elp) = $1 in
-	 el @ [$3], union_pos elp (pos_of_expr $3)
-      }
+| _1 = expression
+    {                  ( [_1], pos_of_expr _1 )}
+| _1 = expr_list_without_comma _2 = Comma _3 = expression
+    {      (  let (el,elp) = _1 in
+	 el @ [_3], union_pos elp (pos_of_expr _3)
+      )}
 
 expr_list:
-| expr_list_without_comma
-    { $1				    }
-| expr_list_without_comma Comma
-    { (fst $1), union_pos (snd $1) $2 }
+| _1 = expr_list_without_comma
+    {                             ( _1				    )}
+| _1 = expr_list_without_comma _2 = Comma
+    {                                  ( (fst _1), union_pos (snd _1) _2 )}
 
 simple_stmt:
-| expression_stmt
-    { $1 }
-| assert_stmt
-    { $1 }
-| assignment_stmt
-    { $1 }
-| augmented_assignment_stmt
-    { $1 }
-| pass_stmt
-    { $1 }
-| del_stmt
-    { $1 }
-| print_stmt
-    { $1 }
-| return_stmt
-    { $1 }
-| raise_stmt
-    { $1 }
-| break_stmt
-    { $1 }
-| continue_stmt
-    { $1 }
-| import_stmt
-    { $1 }
-| global_stmt
-    { $1 }
+| _1 = expression_stmt
+    {                     ( _1 )}
+| _1 = assert_stmt
+    {                  ( _1 )}
+| _1 = assignment_stmt
+    {                     ( _1 )}
+| _1 = augmented_assignment_stmt
+    {                              ( _1 )}
+| _1 = pass_stmt
+    {                ( _1 )}
+| _1 = del_stmt
+    {               ( _1 )}
+| _1 = print_stmt
+    {                 ( _1 )}
+| _1 = return_stmt
+    {                  ( _1 )}
+| _1 = raise_stmt
+    {                 ( _1 )}
+| _1 = break_stmt
+    {                 ( _1 )}
+| _1 = continue_stmt
+    {                   ( _1 )}
+| _1 = import_stmt
+    {                  ( _1 )}
+| _1 = global_stmt
+    {                  ( _1 )}
 
 expression_stmt:
-| expr_list
-    { let (el,elp) = $1 in ExprList (el, elp) }
+| _1 = expr_list
+    {             ( let (el,elp) = _1 in ExprList (el, elp) )}
 
 assert_stmt:
-| Assert expression
-    { AssertStmt($2, None, union_pos $1 (pos_of_expr $2)) }
-| Assert expression Comma expression
-    { AssertStmt($2, Some $4, union_pos $1 (pos_of_expr $4)) }
+| _1 = Assert _2 = expression
+    {      ( AssertStmt(_2, None, union_pos _1 (pos_of_expr _2)) )}
+| _1 = Assert _2 = expression _3 = Comma _4 = expression
+    {      ( AssertStmt(_2, Some _4, union_pos _1 (pos_of_expr _4)) )}
 
 assignment_stmt:
-| expr_list Equal expr_list
-    {  let (el1,p1) = $1 in
-	 let (el2,p2) = $3 in
+| _1 = expr_list _2 = Equal _3 = expr_list
+    {      (  let (el1,p1) = _1 in
+	 let (el2,p2) = _3 in
 	 AssignStmt ([el1], el2, union_pos p1 p2)
-      }
-| expr_list Equal assignment_stmt
-    {  let (el,elp) = $1 in
-         match $3 with
+      )}
+| _1 = expr_list _2 = Equal _3 = assignment_stmt
+    {      (  let (el,elp) = _1 in
+         match _3 with
 	    AssignStmt (dst,src,pos) ->
 	       AssignStmt(dst @ [el], src, union_pos elp pos)
 	  | _ ->
-	    fatal_error $2 "InternalParserError: unexpected assignment_stmt"
-      }
+	    fatal_error _2 "InternalParserError: unexpected assignment_stmt"
+      )}
 
 target_list:
-| target_list_without_comma
-    { $1 }
-| target_list_without_comma Comma
-    { let (tl,tlp) = $1 in (tl, union_pos tlp $2) }
+| _1 = target_list_without_comma
+    {                                 ( _1 )}
+| _1 = target_list_without_comma _2 = Comma
+    {                                    ( let (tl,tlp) = _1 in (tl, union_pos tlp _2) )}
 
 target_list_without_comma:
-| primary
-    { [$1], pos_of_expr $1 }
-| target_list_without_comma Comma primary
-    {  let (tl,tlp) = $1 in
-	 (tl @ [$3], union_pos tlp (pos_of_expr $3))
-      }
+| _1 = primary
+    {              ( [_1], pos_of_expr _1 )}
+| _1 = target_list_without_comma _2 = Comma _3 = primary
+    {      (  let (tl,tlp) = _1 in
+	 (tl @ [_3], union_pos tlp (pos_of_expr _3))
+      )}
 
 augmented_assignment_stmt:
-| primary augop expr_list
-    {  let (el,elp) = $3 in
-	 AugAssignStmt ($1, $2, el, union_pos (pos_of_expr $1) elp)
-      }
+| _1 = primary _2 = augop _3 = expr_list
+    {      (  let (el,elp) = _3 in
+	 AugAssignStmt (_1, _2, el, union_pos (pos_of_expr _1) elp)
+      )}
 
 augop:
-| PlusEqual
-    { PlusEqual       }
-| DashEqual
-    { DashEqual       }
-| StarEqual
-    { StarEqual       }
-| SlashEqual
-    { SlashEqual      }
-| PercentEqual
-    { PercentEqual    }
-| StarStarEqual
-    { StarStarEqual   }
-| RightshiftEqual
-    { RightshiftEqual }
-| LeftshiftEqual
-    { LeftshiftEqual  }
-| AmpersandEqual
-    { AmpersandEqual  }
-| CaretEqual
-    { CaretEqual      }
-| BarEqual
-    { BarEqual        }
+| _1 = PlusEqual
+    {              ( PlusEqual       )}
+| _1 = DashEqual
+    {              ( DashEqual       )}
+| _1 = StarEqual
+    {              ( StarEqual       )}
+| _1 = SlashEqual
+    {               ( SlashEqual      )}
+| _1 = PercentEqual
+    {                 ( PercentEqual    )}
+| _1 = StarStarEqual
+    {                 ( StarStarEqual   )}
+| _1 = RightshiftEqual
+    {                   ( RightshiftEqual )}
+| _1 = LeftshiftEqual
+    {                  ( LeftshiftEqual  )}
+| _1 = AmpersandEqual
+    {                  ( AmpersandEqual  )}
+| _1 = CaretEqual
+    {               ( CaretEqual      )}
+| _1 = BarEqual
+    {             ( BarEqual        )}
 
 pass_stmt:
-| Pass
-    { PassStmt $1 }
+| _1 = Pass
+    {         ( PassStmt _1 )}
 
 del_stmt:
-| Del target_list
-    { let (tl,tlp) = $2 in DelStmt (tl, union_pos $1 tlp) }
+| _1 = Del _2 = target_list
+    {                   ( let (tl,tlp) = _2 in DelStmt (tl, union_pos _1 tlp) )}
 
 print_stmt:
-| Print
-    { PrintStmt (none_expr, [], $1) }
-| Print expr_list
-    { let (el,elp) = $2 in PrintStmt (none_expr, el, union_pos $1 elp) }
-| Print Rightshift expression
-    { PrintStmt ($3, [], union_pos $1 (pos_of_expr $3)) }
-| Print Rightshift expression Comma expr_list
-    { let (el,elp) = $5 in PrintStmt ($3, el, union_pos $1 elp) }
+| _1 = Print
+    {           ( PrintStmt (none_expr, [], _1) )}
+| _1 = Print _2 = expr_list
+    {      ( let (el,elp) = _2 in PrintStmt (none_expr, el, union_pos _1 elp) )}
+| _1 = Print _2 = Rightshift _3 = expression
+    {      ( PrintStmt (_3, [], union_pos _1 (pos_of_expr _3)) )}
+| _1 = Print _2 = Rightshift _3 = expression _4 = Comma _5 = expr_list
+    {      ( let (el,elp) = _5 in PrintStmt (_3, el, union_pos _1 elp) )}
 
 return_stmt:
-| Return
-    { ReturnStmt (none_expr, $1) }
-| Return expr_list
-    {  let (el,elp) = $2 in
-	 let pos = union_pos $1 elp in
+| _1 = Return
+    {           ( ReturnStmt (none_expr, _1) )}
+| _1 = Return _2 = expr_list
+    {      (  let (el,elp) = _2 in
+	 let pos = union_pos _1 elp in
 	 if List.length el = 1
 	    then ReturnStmt (List.hd el, pos)
 	    else ReturnStmt (TupleExpr (el, elp), pos)
-      }
+      )}
 
 raise_stmt:
-| Raise
-    { RaiseStmt (none_expr, none_expr, none_expr, $1) }
-| Raise expression
-    { RaiseStmt ($2, none_expr, none_expr, union_pos $1 (pos_of_expr $2)) }
-| Raise expression Comma expression
-    { RaiseStmt ($2, $4, none_expr, union_pos $1 (pos_of_expr $4)) }
-| Raise expression Comma expression Comma expression
-    { RaiseStmt ($2, $4, $6, union_pos $1 (pos_of_expr $6)) }
+| _1 = Raise
+    {           ( RaiseStmt (none_expr, none_expr, none_expr, _1) )}
+| _1 = Raise _2 = expression
+    {      ( RaiseStmt (_2, none_expr, none_expr, union_pos _1 (pos_of_expr _2)) )}
+| _1 = Raise _2 = expression _3 = Comma _4 = expression
+    {      ( RaiseStmt (_2, _4, none_expr, union_pos _1 (pos_of_expr _4)) )}
+| _1 = Raise _2 = expression _3 = Comma _4 = expression _5 = Comma _6 = expression
+    {      ( RaiseStmt (_2, _4, _6, union_pos _1 (pos_of_expr _6)) )}
 
 break_stmt:
-| Break
-    { BreakStmt $1 }
+| _1 = Break
+    {         ( BreakStmt _1 )}
 
 continue_stmt:
-| Continue
-    { ContStmt $1 }
+| _1 = Continue
+    {            ( ContStmt _1 )}
 
 import_stmt:
-| Import module_list
-    {  let (ml,mlp) = $2 in
-	 ImportStmt ([], ml, union_pos $1 mlp)
-      }
-| From module_name Import Star
-    {  let (mn,mnp) = $2 in
-	 ImportStmt (mn, [], union_pos $1 $4)
-      }
-| From module_name Import import_ident_list
-    {  let (mn,mnp) = $2 in
-	 let (il,ilp) = $4 in
-	 ImportStmt (mn, il, union_pos $1 ilp)
-      }
+| _1 = Import _2 = module_list
+    {      (  let (ml,mlp) = _2 in
+	 ImportStmt ([], ml, union_pos _1 mlp)
+      )}
+| _1 = From _2 = module_name _3 = Import _4 = Star
+    {      (  let (mn,mnp) = _2 in
+	 ImportStmt (mn, [], union_pos _1 _4)
+      )}
+| _1 = From _2 = module_name _3 = Import _4 = import_ident_list
+    {      (  let (mn,mnp) = _2 in
+	 let (il,ilp) = _4 in
+	 ImportStmt (mn, il, union_pos _1 ilp)
+      )}
 
 module_list:
-| module_name
-    { let (mn,mnp) = $1 in [mn, none], mnp }
-| module_name Identifier Identifier
-    {  let (s,_) = $2 in
+| _1 = module_name
+    {                 ( let (mn,mnp) = _1 in [mn, none], mnp )}
+| _1 = module_name _2 = Identifier _3 = Identifier
+    {      (  let (s,_) = _2 in
 	 if Symbol.to_string s = "as"
 	    then
-	       let (mn,mnp) = $1 in
-	       let (id,idp) = $3 in
+	       let (mn,mnp) = _1 in
+	       let (id,idp) = _3 in
 	       [mn, id], union_pos mnp idp
 	    else raise Parsing.Parse_error
-      }
-| module_list Comma module_name
-    {  let (ml,mlp) = $1 in
-	 let (mn,mnp) = $3 in
+      )}
+| _1 = module_list _2 = Comma _3 = module_name
+    {      (  let (ml,mlp) = _1 in
+	 let (mn,mnp) = _3 in
 	 ml @ [mn, none], union_pos mlp mnp
-      }
-| module_list Comma module_name Identifier Identifier
-    {  let (s,_) = $4 in
+      )}
+| _1 = module_list _2 = Comma _3 = module_name _4 = Identifier _5 = Identifier
+    {      (  let (s,_) = _4 in
 	 if Symbol.to_string s = "as"
 	    then
-	       let (ml,mlp) = $1 in
-	       let (mn,mnp) = $3 in
-	       let (id,idp) = $5 in
+	       let (ml,mlp) = _1 in
+	       let (mn,mnp) = _3 in
+	       let (id,idp) = _5 in
 	       ml @ [mn, id], union_pos mlp idp
 
 	    else raise Parsing.Parse_error
-      }
+      )}
 
 module_name:
-| Identifier
-    { let (s,p) = $1 in [s], p }
-| module_name Period Identifier
-    {  let (mn,mnp) = $1 in
-	 let (s,p) = $3 in
+| _1 = Identifier
+    {               ( let (s,p) = _1 in [s], p )}
+| _1 = module_name _2 = Period _3 = Identifier
+    {      (  let (mn,mnp) = _1 in
+	 let (s,p) = _3 in
 	 mn @ [s], union_pos mnp p
-      }
+      )}
 
 import_ident_list:
-| Identifier
-    { let (id,idp) = $1 in [[id], none], idp }
-| Identifier Identifier Identifier
-    {  let (s,_) = $2 in
+| _1 = Identifier
+    {              ( let (id,idp) = _1 in [[id], none], idp )}
+| _1 = Identifier _2 = Identifier _3 = Identifier
+    {      (  let (s,_) = _2 in
 	 if Symbol.to_string s = "as"
 	    then
-	       let (id1,idp1) = $1 in
-	       let (id2,idp2) = $3 in
+	       let (id1,idp1) = _1 in
+	       let (id2,idp2) = _3 in
 	       [[id1], id2], union_pos idp1 idp2
 	    else raise Parsing.Parse_error
-      }
-| import_ident_list Comma Identifier
-    {  let (il,ilp) = $1 in
-	 let (id,idp) = $3 in
+      )}
+| _1 = import_ident_list _2 = Comma _3 = Identifier
+    {      (  let (il,ilp) = _1 in
+	 let (id,idp) = _3 in
 	 il @ [[id], none], union_pos ilp idp
-      }
-| import_ident_list Comma Identifier Identifier Identifier
-    {  let (s,_) = $4 in
+      )}
+| _1 = import_ident_list _2 = Comma _3 = Identifier _4 = Identifier _5 = Identifier
+    {      (  let (s,_) = _4 in
 	 if Symbol.to_string s = "as"
 	    then
-	       let (il,ilp) = $1 in
-	       let (id1,idp1) = $3 in
-	       let (id2,idp2) = $5 in
+	       let (il,ilp) = _1 in
+	       let (id1,idp1) = _3 in
+	       let (id2,idp2) = _5 in
 	       il @ [[id1], id2], union_pos ilp idp2
 	    else raise Parsing.Parse_error
-      }
+      )}
 
 global_stmt:
-| Global identifier_list
-    { let (il,ilp) = $2 in GlobalStmt (il, union_pos $1 ilp) }
+| _1 = Global _2 = identifier_list
+    {      ( let (il,ilp) = _2 in GlobalStmt (il, union_pos _1 ilp) )}
 
 identifier_list:
-| Identifier
-    { let (id,idp) = $1 in [id], idp }
-| identifier_list Comma Identifier
-    {  let (il,ilp) = $1 in
-	 let (id,idp) = $3 in
+| _1 = Identifier
+    {                 ( let (id,idp) = _1 in [id], idp )}
+| _1 = identifier_list _2 = Comma _3 = Identifier
+    {      (  let (il,ilp) = _1 in
+	 let (id,idp) = _3 in
 	 il @ [id], union_pos ilp idp
-      }
+      )}
 
 compound_stmt:
-| if_stmt
-    { $1 }
-| while_stmt
-    { $1 }
-| for_stmt
-    { $1 }
-| try_stmt
-    { $1 }
-| funcdef
-    { $1 }
-| classdef
-    { $1 }
+| _1 = if_stmt
+    {           ( _1 )}
+| _1 = while_stmt
+    {              ( _1 )}
+| _1 = for_stmt
+    {            ( _1 )}
+| _1 = try_stmt
+    {            ( _1 )}
+| _1 = funcdef
+    {           ( _1 )}
+| _1 = classdef
+    {            ( _1 )}
 
 suite:
-| stmt_list Newline
-    { $1 }
-| Newline Indent statement_plus Dedent
-    { $3 }
+| _1 = stmt_list _2 = Newline
+    {                         ( _1 )}
+| _1 = Newline _2 = Indent _3 = statement_plus _4 = Dedent
+    {                                         ( _3 )}
 
 statement_plus:
-| statement
-    { [$1], pos_of_stmt $1 }
-| statement_plus statement
-    {  let (stp,stpp) = $1 in
-	 stp @ [$2], union_pos stpp (pos_of_stmt $2)
-      }
+| _1 = statement
+    {               ( [_1], pos_of_stmt _1 )}
+| _1 = statement_plus _2 = statement
+    {      (  let (stp,stpp) = _1 in
+	 stp @ [_2], union_pos stpp (pos_of_stmt _2)
+      )}
 
 statement:
-| stmt_list Newline
-    { let (sl,slp) = $1 in StmtList (sl, slp) }
-| compound_stmt
-    { $1                                      }
+| _1 = stmt_list _2 = Newline
+    {                      ( let (sl,slp) = _1 in StmtList (sl, slp) )}
+| _1 = compound_stmt
+    {                  ( _1                                      )}
 
 stmt_list:
-| stmt_list_without_semicolon
-    { $1 }
-| stmt_list_without_semicolon Semicolon
-    { let (sl,slp) = $1 in sl, union_pos slp $2 }
+| _1 = stmt_list_without_semicolon
+    {                                 ( _1 )}
+| _1 = stmt_list_without_semicolon _2 = Semicolon
+    {      ( let (sl,slp) = _1 in sl, union_pos slp _2 )}
 
 stmt_list_without_semicolon:
-| simple_stmt
-    { [$1], pos_of_stmt $1 }
-| stmt_list_without_semicolon Semicolon simple_stmt
-    { let (sl,slp) = $1 in $3 :: sl, union_pos slp (pos_of_stmt $3) }
+| _1 = simple_stmt
+    {                ( [_1], pos_of_stmt _1 )}
+| _1 = stmt_list_without_semicolon _2 = Semicolon _3 = simple_stmt
+    {      ( let (sl,slp) = _1 in _3 :: sl, union_pos slp (pos_of_stmt _3) )}
 
 if_stmt:
-| If expression Colon suite
-    { let (s,sp) = $4 in IfStmt ($2, s, [], union_pos $1 sp) }
-| If expression Colon suite elif_list
-    {  let (s,sp) = $4 in
-	 let (el,elp) = $5 in
-	 IfStmt ($2, s, el, union_pos $1 elp)
-      }
+| _1 = If _2 = expression _3 = Colon _4 = suite
+    {      ( let (s,sp) = _4 in IfStmt (_2, s, [], union_pos _1 sp) )}
+| _1 = If _2 = expression _3 = Colon _4 = suite _5 = elif_list
+    {      (  let (s,sp) = _4 in
+	 let (el,elp) = _5 in
+	 IfStmt (_2, s, el, union_pos _1 elp)
+      )}
 
 elif_list:
-| Else Colon suite
-    { let (s,sp) = $3 in s, union_pos $1 sp }
-| Elif expression Colon suite
-    {  let (s,sp) = $4 in
-	 let pos = union_pos $1 sp in
-	 [IfStmt ($2, s, [], pos)], pos
-      }
-| Elif expression Colon suite elif_list
-    {  let (s,sp) = $4 in
-	 let (el,elp) = $5 in
-	 let pos = union_pos $1 elp in
-	 [IfStmt ($2, s, el, pos)], pos
-      }
+| _1 = Else _2 = Colon _3 = suite
+    {                     ( let (s,sp) = _3 in s, union_pos _1 sp )}
+| _1 = Elif _2 = expression _3 = Colon _4 = suite
+    {      (  let (s,sp) = _4 in
+	 let pos = union_pos _1 sp in
+	 [IfStmt (_2, s, [], pos)], pos
+      )}
+| _1 = Elif _2 = expression _3 = Colon _4 = suite _5 = elif_list
+    {      (  let (s,sp) = _4 in
+	 let (el,elp) = _5 in
+	 let pos = union_pos _1 elp in
+	 [IfStmt (_2, s, el, pos)], pos
+      )}
 
 while_stmt:
-| While expression Colon suite
-    { let (s,sp) = $4 in WhileStmt ($2, s, [], sp) }
-| While expression Colon suite Else Colon suite
-    {  let (s1,sp1) = $4 in
-	 let (s2,sp2) = $7 in
-	 WhileStmt ($2, s1, s2, union_pos $1 sp2)
-      }
+| _1 = While _2 = expression _3 = Colon _4 = suite
+    {      ( let (s,sp) = _4 in WhileStmt (_2, s, [], sp) )}
+| _1 = While _2 = expression _3 = Colon _4 = suite _5 = Else _6 = Colon _7 = suite
+    {      (  let (s1,sp1) = _4 in
+	 let (s2,sp2) = _7 in
+	 WhileStmt (_2, s1, s2, union_pos _1 sp2)
+      )}
 
 for_stmt:
-| For target_list In expr_list Colon suite
-    {  let (tl,tlp) = $2 in
-	 let (el,elp) = $4 in
-	 let (s,sp) = $6 in
-	 ForStmt (tl, el, s, [], union_pos $1 sp)
-      }
-| For target_list In expr_list Colon suite Else Colon suite
-    {  let (tl,tlp) = $2 in
-	 let (el,elp) = $4 in
-	 let (s1,sp1) = $6 in
-	 let (s2,sp2) = $9 in
-	 ForStmt (tl, el, s1, s2, union_pos $1 sp2)
-      }
+| _1 = For _2 = target_list _3 = In _4 = expr_list _5 = Colon _6 = suite
+    {      (  let (tl,tlp) = _2 in
+	 let (el,elp) = _4 in
+	 let (s,sp) = _6 in
+	 ForStmt (tl, el, s, [], union_pos _1 sp)
+      )}
+| _1 = For _2 = target_list _3 = In _4 = expr_list _5 = Colon _6 = suite _7 = Else _8 = Colon _9 = suite
+    {      (  let (tl,tlp) = _2 in
+	 let (el,elp) = _4 in
+	 let (s1,sp1) = _6 in
+	 let (s2,sp2) = _9 in
+	 ForStmt (tl, el, s1, s2, union_pos _1 sp2)
+      )}
 
 try_stmt:
-| try_exc_stmt
-    { $1 }
-| try_fin_stmt
-    { $1 }
+| _1 = try_exc_stmt
+    {                 ( _1 )}
+| _1 = try_fin_stmt
+    {                 ( _1 )}
 
 try_exc_stmt:
-| Try Colon suite exc_list
-    {  let (s,sp) = $3 in
-	 let (el,elp) = $4 in
-	 TryStmt (s, el, [], union_pos $1 elp)
-      }
-| Try Colon suite exc_list Else Colon suite
-    {  let (s1,sp1) = $3 in
-	 let (el,elp) = $4 in
-	 let (s2,sp2) = $7 in
-	 TryStmt (s1, el, s2, union_pos $1 sp2)
-      }
+| _1 = Try _2 = Colon _3 = suite _4 = exc_list
+    {      (  let (s,sp) = _3 in
+	 let (el,elp) = _4 in
+	 TryStmt (s, el, [], union_pos _1 elp)
+      )}
+| _1 = Try _2 = Colon _3 = suite _4 = exc_list _5 = Else _6 = Colon _7 = suite
+    {      (  let (s1,sp1) = _3 in
+	 let (el,elp) = _4 in
+	 let (s2,sp2) = _7 in
+	 TryStmt (s1, el, s2, union_pos _1 sp2)
+      )}
 
 exc_list:
-| exc_item
-    { let a, b, c, d = $1 in [a, b, c], d }
-| exc_list exc_item
-    {  let (el,elp) = $1 in
-	 let (a,b,c,d) = $2 in
+| _1 = exc_item
+    {             ( let a, b, c, d = _1 in [a, b, c], d )}
+| _1 = exc_list _2 = exc_item
+    {      (  let (el,elp) = _1 in
+	 let (a,b,c,d) = _2 in
 	 el @ [a, b, c], union_pos elp d
-      }
+      )}
 
 exc_item:
-| Except Colon suite
-    { let (s,sp) = $3 in none_expr, none_expr, s, union_pos $1 sp }
-| Except expression Colon suite
-    { let (s,sp) = $4 in $2, none_expr, s, union_pos $1 sp }
-| Except expression Comma primary Colon suite
-    { let (s,sp) = $6 in $2, $4, s, union_pos $1 sp }
+| _1 = Except _2 = Colon _3 = suite
+    {      ( let (s,sp) = _3 in none_expr, none_expr, s, union_pos _1 sp )}
+| _1 = Except _2 = expression _3 = Colon _4 = suite
+    {      ( let (s,sp) = _4 in _2, none_expr, s, union_pos _1 sp )}
+| _1 = Except _2 = expression _3 = Comma _4 = primary _5 = Colon _6 = suite
+    {      ( let (s,sp) = _6 in _2, _4, s, union_pos _1 sp )}
 
 try_fin_stmt:
-| Try Colon suite Finally Colon suite
-    {  let (s1,sp1) = $3 in
-	 let (s2,sp2) = $6 in
-	 TryStmt (s1, [], s2, union_pos $1 sp2)
-      }
+| _1 = Try _2 = Colon _3 = suite _4 = Finally _5 = Colon _6 = suite
+    {      (  let (s1,sp1) = _3 in
+	 let (s2,sp2) = _6 in
+	 TryStmt (s1, [], s2, union_pos _1 sp2)
+      )}
 
 funcdef:
-| Def Identifier Leftparen Rightparen Colon suite
-    {  let (id,idp) = $2 in
-	 let (s,sp) = $6 in
-	 FuncDef (id, [], s, union_pos $1 sp)
-      }
-| Def Identifier Leftparen parameter_list Rightparen Colon suite
-    {  let (id,idp) = $2 in
-	 let (pl,plp) = $4 in
-	 let (s,sp) = $7 in
-	 FuncDef (id, pl, s, union_pos $1 sp)
-      }
+| _1 = Def _2 = Identifier _3 = Leftparen _4 = Rightparen _5 = Colon _6 = suite
+    {      (  let (id,idp) = _2 in
+	 let (s,sp) = _6 in
+	 FuncDef (id, [], s, union_pos _1 sp)
+      )}
+| _1 = Def _2 = Identifier _3 = Leftparen _4 = parameter_list _5 = Rightparen _6 = Colon _7 = suite
+    {      (  let (id,idp) = _2 in
+	 let (pl,plp) = _4 in
+	 let (s,sp) = _7 in
+	 FuncDef (id, pl, s, union_pos _1 sp)
+      )}
 
 parameter_list:
-| defparams optional_comma
-    { $1 }
-| defparams Comma Star Identifier
-    {  let (dp,dpp) = $1 in
-	 let (id,idp) = $4 in
+| _1 = defparams _2 = optional_comma
+    {                             ( _1 )}
+| _1 = defparams _2 = Comma _3 = Star _4 = Identifier
+    {      (  let (dp,dpp) = _1 in
+	 let (id,idp) = _4 in
 	 dp @ [ExtraPosParam (id, idp)], union_pos dpp idp
-      }
-| defparams Comma StarStar Identifier
-    {  let (dp,dpp) = $1 in
-	 let (id,idp) = $4 in
+      )}
+| _1 = defparams _2 = Comma _3 = StarStar _4 = Identifier
+    {      (  let (dp,dpp) = _1 in
+	 let (id,idp) = _4 in
 	 dp @ [ExtraKwParam (id, idp)], union_pos dpp idp
-      }
-| Star Identifier
-    { let (id,idp) = $2 in [ExtraPosParam (id, idp)], union_pos $1 idp }
-| StarStar Identifier
-    { let (id,idp) = $2 in [ExtraKwParam (id, idp)], union_pos $1 idp }
-| Star Identifier Comma StarStar Identifier
-    {  let (id1,idp1) = $2 in
-	 let (id2,idp2) = $5 in
+      )}
+| _1 = Star _2 = Identifier
+    {      ( let (id,idp) = _2 in [ExtraPosParam (id, idp)], union_pos _1 idp )}
+| _1 = StarStar _2 = Identifier
+    {      ( let (id,idp) = _2 in [ExtraKwParam (id, idp)], union_pos _1 idp )}
+| _1 = Star _2 = Identifier _3 = Comma _4 = StarStar _5 = Identifier
+    {      (  let (id1,idp1) = _2 in
+	 let (id2,idp2) = _5 in
 	 [ExtraPosParam (id1, idp1); ExtraPosParam (id2, idp2)],
-	    union_pos $1 idp2
-      }
-| defparams Comma Star Identifier Comma StarStar Identifier
-    {  let (dp,dpp) = $1 in
-	 let (id1,idp1) = $4 in
-	 let (id2,idp2) = $7 in
+	    union_pos _1 idp2
+      )}
+| _1 = defparams _2 = Comma _3 = Star _4 = Identifier _5 = Comma _6 = StarStar _7 = Identifier
+    {      (  let (dp,dpp) = _1 in
+	 let (id1,idp1) = _4 in
+	 let (id2,idp2) = _7 in
 	 dp @ [ExtraPosParam (id1, idp1); ExtraKwParam (id2, idp2)],
 	    union_pos dpp idp2
-      }
+      )}
 
 defparams:
-| defparam
-    { [$1], pos_of_param $1 }
-| defparams Comma defparam
-    { let (pl,plp) = $1 in pl @ [$3], union_pos plp (pos_of_param $3) }
+| _1 = defparam
+    {              ( [_1], pos_of_param _1 )}
+| _1 = defparams _2 = Comma _3 = defparam
+    {      ( let (pl,plp) = _1 in pl @ [_3], union_pos plp (pos_of_param _3) )}
 
 defparam:
-| parameter
-    { $1 }
-| parameter Equal expression
-    {  DefParam ($1, $3, union_pos (pos_of_param $1) (pos_of_expr $3)) }
+| _1 = parameter
+    {               ( _1 )}
+| _1 = parameter _2 = Equal _3 = expression
+    {      (  DefParam (_1, _3, union_pos (pos_of_param _1) (pos_of_expr _3)) )}
 
 parameter:
-| Identifier
-    { let (id,idp) = $1 in IdParam (id, idp) }
-| Leftparen sublist Rightparen
-    { let (sl,slp) = $2 in SublistParam (sl, union_pos $1 $3) }
+| _1 = Identifier
+    {                ( let (id,idp) = _1 in IdParam (id, idp) )}
+| _1 = Leftparen _2 = sublist _3 = Rightparen
+    {      ( let (sl,slp) = _2 in SublistParam (sl, union_pos _1 _3) )}
 
 sublist:
-| sublist_without_comma
-    { $1 }
-| sublist_without_comma Comma
-    { $1 }
+| _1 = sublist_without_comma
+    {                         ( _1 )}
+| _1 = sublist_without_comma _2 = Comma
+    {                               ( _1 )}
 
 sublist_without_comma:
-| parameter
-    { [$1], pos_of_param $1 }
-| sublist_without_comma Comma parameter
-    { let (sl,slp) = $1 in sl @ [$3], union_pos slp (pos_of_param $3) }
+| _1 = parameter
+    {                 ( [_1], pos_of_param _1 )}
+| _1 = sublist_without_comma _2 = Comma _3 = parameter
+    {      ( let (sl,slp) = _1 in sl @ [_3], union_pos slp (pos_of_param _3) )}
 
 classdef:
-| Class Identifier Colon suite
-    {  let (id,idp) = $2 in
-	 let (s,sp) = $4 in
-	 ClassDef (id, [], s, union_pos $1 sp)
-      }
-| Class Identifier inheritance Colon suite
-    {  let (id,idp) = $2 in
-	 let (s,sp) = $5 in
-	 ClassDef (id, $3, s, union_pos $1 sp)
-      }
+| _1 = Class _2 = Identifier _3 = Colon _4 = suite
+    {      (  let (id,idp) = _2 in
+	 let (s,sp) = _4 in
+	 ClassDef (id, [], s, union_pos _1 sp)
+      )}
+| _1 = Class _2 = Identifier _3 = inheritance _4 = Colon _5 = suite
+    {      (  let (id,idp) = _2 in
+	 let (s,sp) = _5 in
+	 ClassDef (id, _3, s, union_pos _1 sp)
+      )}
 
 inheritance:
-| Leftparen Rightparen
-    { []     }
-| Leftparen expr_list Rightparen
-    { fst $2 }
+| _1 = Leftparen _2 = Rightparen
+    {                          ( []     )}
+| _1 = Leftparen _2 = expr_list _3 = Rightparen
+    {                                  ( fst _2 )}
 
 file_input:
-| file_input_list
-    { List.rev $1 }
+| _1 = file_input_list
+    {                     ( List.rev _1 )}
 
 file_input_list:
-| Newline
-    { []        }
-| statement
-    { [$1]      }
-| file_input_list Newline
-    { $1        }
-| file_input_list statement
-    { $2 :: $1  }
+| _1 = Newline
+    {             ( []        )}
+| _1 = statement
+    {               ( [_1]      )}
+| _1 = file_input_list _2 = Newline
+    {                           ( _1        )}
+| _1 = file_input_list _2 = statement
+    {                             ( _2 :: _1  )}
 
 %%
 
