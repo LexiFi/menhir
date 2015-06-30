@@ -14,7 +14,7 @@ let from_stretch s =
   { 
     expr      = IL.ETextual s;
     filenames = [ s.Stretch.stretch_filename ];
-    keywords  = Keyword.KeywordSet.from_list (List.map Positions.value s.Stretch.stretch_keywords);
+    keywords  = Keyword.KeywordSet.of_list (List.map Positions.value s.Stretch.stretch_keywords);
     pkeywords = s.Stretch.stretch_keywords;
   }
 

@@ -39,12 +39,5 @@ type keyword =
 val posvar: subject -> where -> flavor -> string
 
 (* Sets of keywords. *)
-module KeywordSet : 
-  sig 
-    include Set.S
-
-    (* This converts a list of keywords with positions into a set of keywords. *)
-    val from_list: elt list -> t
-
-  end with type elt = keyword
+module KeywordSet : Set.S with type elt = keyword
 
