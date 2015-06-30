@@ -18,7 +18,12 @@ type where =
 
 (* The user can request position information about a production's
    left-hand side or about one of the symbols in its right-hand
-   side, which he can refer to by position or by name. *)
+   side, which he can refer to by position or by name.
+
+   A positional reference of the form [$i] is a syntactic sugar for the
+   name [_i]. This surface syntax is first parsed as a [parsed_subject]
+   and desugared as a [subject] during keywords rewriting into actual
+   OCaml identifiers. (See {!Lexer.transform_keywords}) *)
 type parsed_subject =
   | PLeft
   | PRightDollar of int
@@ -29,8 +34,11 @@ and subject =
   | RightNamed of string
 
 (* Keywords inside semantic actions. They allow access to semantic
-   values or to position information. *)
+   values or to position information.
 
+   As said previously, a positional reference is a syntactic sugar
+   which appears in a [parsed_keyword] but is desugared in the
+   actual [keyword] representation. *)
 type parsed_keyword =
   | PDollar of int
   | PPosition of parsed_subject * where * flavor

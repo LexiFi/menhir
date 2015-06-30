@@ -49,6 +49,8 @@ let check_production_group right_hand_sides =
   end;
   right_hand_sides
 
+(* [normalize_producer i p] assigns a name of the form [_i]
+   to the unnamed producer [p]. *)
 let normalize_producer i (pos, opt_identifier, parameter) =
   let id =
     match opt_identifier with
