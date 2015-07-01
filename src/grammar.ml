@@ -277,6 +277,18 @@ module TerminalSet = struct
       )
     )
 
+  (* The following definitions are used in the computation of FIRST sets
+     below. They are not exported outside of this file. *)
+
+  type property =
+    t
+
+  let bottom =
+    empty
+
+  let is_maximal _ =
+    false
+
 end
 
 (* Maps over terminals. *)
@@ -511,6 +523,18 @@ module Production = struct
     in
     loop accu k
 
+  (* This funny variant is lazy. If at some point [f] does not demand its
+     second argument, then iteration stops. *)
+  let foldnt_lazy (nt : Nonterminal.t) (f : index -> 'a Lazy.t -> 'a) (seed : 'a) : 'a =
+    let k, k' = ntprods.(nt) in
+    let rec loop prod seed =
+      if prod < k' then
+        f prod (lazy (loop (prod + 1) seed))
+      else
+        seed
+    in
+    loop k seed
+
   (* Accessors. *)
 
   let def prod =
@@ -734,6 +758,119 @@ let () =
     close_out f
 
 (* ------------------------------------------------------------------------ *)
+(* Support for analyses of the grammar, expressed as fixed point computations.
+   We exploit the generic fixed point algorithm in [Fix]. *)
+
+module GenericAnalysis
+  (P : Fix.PROPERTY)
+  (S : sig
+    open P
+
+    (* An analysis is specified by the following functions. *)
+
+    (* [terminal] maps a terminal symbol to a property. *)
+    val terminal: Terminal.t -> property
+    
+    (* [disjunction] abstracts a binary alternative. That is, when we analyze
+       an alternative between several productions, we compute a property for
+       each of them independently, then we combine these properties using
+       [disjunction]. *)
+    val disjunction: property -> property Lazy.t -> property
+
+    (* [P.bottom] should be a neutral element for [disjunction]. We use it in
+       the analysis of an alternative with zero branches. *)
+
+    (* [conjunction] abstracts a binary sequence. That is, when we analyze a
+       sequence, we compute a property for each member independently, then we
+       combine these properties using [conjunction]. In general, conjunction
+       needs access to the first member of the sequence (a symbol), not just
+       to its analysis (a property). *)
+    val conjunction: Symbol.t -> property -> property Lazy.t -> property
+
+    (* [epsilon] abstracts the empty sequence. It should be a neutral element
+       for [conjunction]. *)
+    val epsilon: property
+
+  end)
+: sig
+  open P
+
+  (* The results of the analysis take the following form. *)
+
+  (* To every nonterminal symbol, we associate a property. *)
+  val lfp : Nonterminal.t -> property
+
+  (* To every suffix of every production, we associate a property.
+     The offset [i], which determines the beginning of the suffix,
+     must be contained between [0] and [n], inclusive, where [n]
+     is the length of the production. *)
+  val production: Production.index -> int -> property
+
+end = struct
+  open P
+
+  (* TEMPORARY isolate and publish the analysis of a symbol *)
+  (* TEMPORARY remove Lr1.ImperativeNodeMap, use Maps instead *)
+
+  (* Analyzing a production whose right-hand side is [rhs], starting at index [i].
+     The parameter [get] allows a recursive call to the analysis at a nonterminal
+     symbol. *)
+
+  let production prod i (get : Nonterminal.t -> property) : property =
+    let rhs = Production.rhs prod in
+    let n = Array.length rhs in
+    (* Conjunction over all symbols in the right-hand side. This can be viewed
+       as a version of [Array.fold_right], which does not necessarily begin at
+       index [0]. Note that, because [conjunction] is lazy, it is possible
+       to stop early. *)
+    let rec loop i =
+      if i = n then
+        S.epsilon
+      else
+        let symbol = rhs.(i) in
+        let p : property =
+          match symbol with
+          | Symbol.T tok ->
+              S.terminal tok
+          | Symbol.N nt ->
+              (* Recursive call to the analysis, via [get]. *)
+              get nt
+        in
+        S.conjunction symbol p (lazy (loop (i+1)))
+    in
+    loop i
+
+  (* The analysis is the least fixed point of the following function, which
+     analyzes a nonterminal symbol by looking up and analyzing its definition
+     as a disjunction of conjunctions of symbols. *)
+
+  let ntdef nt (get : Nonterminal.t -> property) : property =
+    (* Disjunction over all productions for this nonterminal symbol. *)
+    Production.foldnt_lazy nt (fun prod rest ->
+      S.disjunction
+        (production prod 0 get)
+        rest
+    ) P.bottom
+
+  (* The least fixed point is taken as follows. Note that it is computed
+     on demand, as [lfp] is called by the user. *)
+
+  module F =
+    Fix.Make
+      (Maps.ConsecutiveIntegerKeysToImperativeMaps(Nonterminal))
+      (P)
+
+  let lfp : Nonterminal.t -> property =
+    F.lfp ntdef
+
+  (* The analysis of a (suffix of a) production can be published too. *)
+
+  let production prod i : property =
+    production prod i lfp
+
+end
+
+(* ------------------------------------------------------------------------ *)
 (* Generic support for fixpoint computations.
 
    A fixpoint computation associates a property with every nonterminal.
@@ -807,6 +944,50 @@ let (nullable : bool array), (nullable_symbol : Symbol.t -> bool) =
   compute false
 
 (* ------------------------------------------------------------------------ *)
+
+let nonempty' =
+  let module NONEMPTY =
+    GenericAnalysis
+      (Boolean)
+      (struct
+        (* A terminal symbol is nonempty. *)
+        let terminal _ = true
+        (* An alternative is nonempty if at least one branch is nonempty. *)
+        let disjunction p q = p || (Lazy.force q)
+        (* A sequence is nonempty if both members are nonempty. *)
+        let conjunction _ p q = p && (Lazy.force q)
+        (* The sequence epsilon is nonempty. It generates the singleton
+           language {epsilon}. *)
+        let epsilon = true
+       end)
+  in
+  NONEMPTY.lfp
+
+let nullable' =
+  let module NULLABLE =
+    GenericAnalysis
+      (Boolean)
+      (struct
+        (* A terminal symbol is not nullable. *)
+        let terminal _ = false
+        (* An alternative is nullable if at least one branch is nullable. *)
+        let disjunction p q = p || (Lazy.force q)
+        (* A sequence is nullable if both members are nullable. *)
+        let conjunction _ p q = p && (Lazy.force q)
+        (* The sequence epsilon is nullable. *)
+        let epsilon = true
+       end)
+  in
+  NULLABLE.lfp
+
+(* TEMPORARY sanity check *)
+let () =
+  for nt = Nonterminal.start to Nonterminal.n - 1 do
+    assert (nonempty.(nt) = nonempty' nt);
+    assert (nullable.(nt) = nullable' nt);
+  done
+
+(* ------------------------------------------------------------------------ *)
 (* Compute FIRST sets. *)
 
 let first =
@@ -846,6 +1027,35 @@ let () =
     first.(nt) <- updated;
     TerminalSet.compare original updated <> 0
   )
+
+let first', _first_prod' =
+  let module FIRST =
+    GenericAnalysis
+      (TerminalSet)
+      (struct
+        (* A terminal symbol has a singleton FIRST set. *)
+        let terminal = TerminalSet.singleton
+        (* The FIRST set of an alternative is the union of the FIRST sets. *)
+        let disjunction p q = TerminalSet.union p (Lazy.force q)
+        (* The FIRST set of a sequence is the union of:
+             the FIRST set of the first member, and
+             the FIRST set of the second member, if the first member is nullable. *)
+        let conjunction symbol p q =
+          if nullable_symbol symbol then
+            TerminalSet.union p (Lazy.force q)
+          else
+            p
+        (* The FIRST set of the empty sequence is empty. *)
+        let epsilon = TerminalSet.empty
+       end)
+  in
+  FIRST.lfp, FIRST.production
+
+(* TEMPORARY sanity check *)
+let () =
+  for nt = Nonterminal.start to Nonterminal.n - 1 do
+    assert (TerminalSet.equal first.(nt) (first' nt))
+  done
 
 (* ------------------------------------------------------------------------ *)
 
