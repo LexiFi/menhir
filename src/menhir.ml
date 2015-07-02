@@ -4,3 +4,4 @@
 
 module B = Back (* artificial dependency *)
 
+module C = Coverage (*TEMPORARY*)
