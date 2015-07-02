@@ -761,6 +761,11 @@ let () =
 (* Support for analyses of the grammar, expressed as fixed point computations.
    We exploit the generic fixed point algorithm in [Fix]. *)
 
+(* We perform memoization only at nonterminal symbols. We assume that the
+   analysis of a symbol is the analysis of its definition (as opposed to,
+   say, a computation that depends on the occurrences of this symbol in
+   the grammar). *)
+
 module GenericAnalysis
   (P : Fix.PROPERTY)
   (S : sig
@@ -798,7 +803,10 @@ module GenericAnalysis
   (* The results of the analysis take the following form. *)
 
   (* To every nonterminal symbol, we associate a property. *)
-  val lfp : Nonterminal.t -> property
+  val nonterminal: Nonterminal.t -> property
+
+  (* To every symbol, we associate a property. *)
+  val symbol: Symbol.t -> property
 
   (* To every suffix of every production, we associate a property.
      The offset [i], which determines the beginning of the suffix,
@@ -809,13 +817,23 @@ module GenericAnalysis
 end = struct
   open P
 
-  (* TEMPORARY isolate and publish the analysis of a symbol *)
+  (* The following analysis functions are parameterized over [get], which allows
+     making a recursive call to the analysis at a nonterminal symbol. [get] maps
+     a nonterminal symbol to a property. *)
 
-  (* Analyzing a production whose right-hand side is [rhs], starting at index [i].
-     The parameter [get] allows a recursive call to the analysis at a nonterminal
-     symbol. *)
+  (* Analysis of a symbol. *)
 
-  let production prod i (get : Nonterminal.t -> property) : property =
+  let symbol sym get : property =
+    match sym with
+    | Symbol.T tok ->
+        S.terminal tok
+    | Symbol.N nt ->
+        (* Recursive call to the analysis, via [get]. *)
+        get nt    
+
+  (* Analysis of (a suffix of) a production [prod], starting at index [i]. *)
+
+  let production prod i get : property =
     let rhs = Production.rhs prod in
     let n = Array.length rhs in
     (* Conjunction over all symbols in the right-hand side. This can be viewed
@@ -826,16 +844,10 @@ end = struct
       if i = n then
         S.epsilon
       else
-        let symbol = rhs.(i) in
-        let p : property =
-          match symbol with
-          | Symbol.T tok ->
-              S.terminal tok
-          | Symbol.N nt ->
-              (* Recursive call to the analysis, via [get]. *)
-              get nt
-        in
-        S.conjunction symbol p (lazy (loop (i+1)))
+        let sym = rhs.(i) in
+        S.conjunction sym
+          (symbol sym get)
+          (lazy (loop (i+1)))
     in
     loop i
 
@@ -843,7 +855,7 @@ end = struct
      analyzes a nonterminal symbol by looking up and analyzing its definition
      as a disjunction of conjunctions of symbols. *)
 
-  let ntdef nt (get : Nonterminal.t -> property) : property =
+  let nonterminal nt get : property =
     (* Disjunction over all productions for this nonterminal symbol. *)
     Production.foldnt_lazy nt (fun prod rest ->
       S.disjunction
@@ -859,13 +871,16 @@ end = struct
       (Maps.ConsecutiveIntegerKeysToImperativeMaps(Nonterminal))
       (P)
 
-  let lfp : Nonterminal.t -> property =
-    F.lfp ntdef
+  let nonterminal =
+    F.lfp nonterminal
 
-  (* The analysis of a (suffix of a) production can be published too. *)
+  (* The auxiliary functions can be published too. *)
 
-  let production prod i : property =
-    production prod i lfp
+  let symbol sym =
+    symbol sym nonterminal
+
+  let production prod i =
+    production prod i nonterminal
 
 end
 
@@ -960,7 +975,7 @@ let nonempty' =
         let epsilon = true
        end)
   in
-  NONEMPTY.lfp
+  NONEMPTY.nonterminal
 
 let nullable' =
   let module NULLABLE =
@@ -977,7 +992,7 @@ let nullable' =
         let epsilon = true
        end)
   in
-  NULLABLE.lfp
+  NULLABLE.nonterminal
 
 (* TEMPORARY sanity check *)
 let () =
@@ -1027,7 +1042,7 @@ let () =
     TerminalSet.compare original updated <> 0
   )
 
-let first', _first_prod' =
+let first', _first_prod', _first_symbol' =
   let module FIRST =
     GenericAnalysis
       (TerminalSet)
@@ -1048,7 +1063,7 @@ let first', _first_prod' =
         let epsilon = TerminalSet.empty
        end)
   in
-  FIRST.lfp, FIRST.production
+  FIRST.nonterminal, FIRST.production, FIRST.symbol
 
 (* TEMPORARY sanity check *)
 let () =
