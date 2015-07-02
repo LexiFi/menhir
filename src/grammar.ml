@@ -887,45 +887,35 @@ end
    symbols (in a first pass), then solve the constraints (in a second
    pass). *)
 
-(* A member of an equation's right-hand side is either a variable (named after
-   a nonterminal symbol) or a constant (a set of terminal symbols). *)
+(* An equation's right-hand side is a set expression. *)
 
-type member =
-| MemberVar of Nonterminal.t
-| MemberConstant of TerminalSet.t
-
-(* A right-hand side is a list of members. *)
-
-type rhs =
-  member list
+type expr =
+| EVar of Nonterminal.t
+| EConstant of TerminalSet.t
+| EUnion of expr * expr
 
 (* A system of equations is represented as an array, which maps nonterminal
-   symbols to right-hand sides. *)
+   symbols to expressions. *)
 
 type equations =
-  rhs array
+  expr array
 
 (* This solver computes the least solution of a set of equations. *)
 
 let solve (eqs : equations) : Nonterminal.t -> TerminalSet.t =
 
-  let member m get =
-    match m with
-    | MemberVar nt ->
+  let rec expr e get =
+    match e with
+    | EVar nt ->
         get nt
-    | MemberConstant c ->
+    | EConstant c ->
         c
-  in
-
-  let rhs rhs get =
-    (* Union of all members. *)
-    List.fold_left (fun accu m ->
-      TerminalSet.union accu (member m get)
-    ) TerminalSet.empty rhs
+    | EUnion (e1, e2) ->
+        TerminalSet.union (expr e1 get) (expr e2 get)
   in
 
   let nonterminal nt get =
-    rhs eqs.(nt) get
+    expr eqs.(nt) get
   in
 
   let module F =
@@ -1054,15 +1044,15 @@ let follow : Nonterminal.t -> TerminalSet.t =
      symbols. *)
 
   let follow : equations =
-    Array.make Nonterminal.n []
+    Array.make Nonterminal.n (EConstant TerminalSet.empty)
   in
 
   (* Iterate over all start symbols. *)
-  let sharp = MemberConstant (TerminalSet.singleton Terminal.sharp) in
+  let sharp = EConstant (TerminalSet.singleton Terminal.sharp) in
   for nt = 0 to Nonterminal.start - 1 do
     assert (Nonterminal.is_start nt);
     (* Add # to FOLLOW(nt). *)
-    follow.(nt) <- sharp :: follow.(nt)
+    follow.(nt) <- EUnion (sharp, follow.(nt))
   done;
   (* We need to do this explicitly because our start productions are
      of the form S' -> S, not S' -> S #, so # will not automatically
@@ -1080,11 +1070,11 @@ let follow : Nonterminal.t -> TerminalSet.t =
           and first = FIRST.production prod (i+1) in
           (* The FIRST set of the remainder of the right-hand side
              contributes to the FOLLOW set of [nt2]. *)
-          follow.(nt2) <- MemberConstant first :: follow.(nt2);
+          follow.(nt2) <- EUnion (EConstant first, follow.(nt2));
           (* If the remainder of the right-hand side is nullable,
              FOLLOW(nt1) contributes to FOLLOW(nt2). *)
           if nullable then
-            follow.(nt2) <- MemberVar nt1 :: follow.(nt2)
+            follow.(nt2) <- EUnion (EVar nt1, follow.(nt2))
     ) rhs
   ) Production.table;
 
