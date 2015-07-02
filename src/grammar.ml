@@ -993,28 +993,32 @@ let () =
     TerminalSet.compare original updated <> 0
   )
 
+module FIRST =
+  GenericAnalysis
+    (TerminalSet)
+    (struct
+      (* A terminal symbol has a singleton FIRST set. *)
+      let terminal = TerminalSet.singleton
+      (* The FIRST set of an alternative is the union of the FIRST sets. *)
+      let disjunction p q = TerminalSet.union p (Lazy.force q)
+      (* The FIRST set of a sequence is the union of:
+           the FIRST set of the first member, and
+           the FIRST set of the second member, if the first member is nullable. *)
+      let conjunction symbol p q =
+        if NULLABLE.symbol symbol then
+          TerminalSet.union p (Lazy.force q)
+        else
+          p
+      (* The FIRST set of the empty sequence is empty. *)
+      let epsilon = TerminalSet.empty
+     end)
+
 let first', _first_prod', _first_symbol' =
-  let module FIRST =
-    GenericAnalysis
-      (TerminalSet)
-      (struct
-        (* A terminal symbol has a singleton FIRST set. *)
-        let terminal = TerminalSet.singleton
-        (* The FIRST set of an alternative is the union of the FIRST sets. *)
-        let disjunction p q = TerminalSet.union p (Lazy.force q)
-        (* The FIRST set of a sequence is the union of:
-             the FIRST set of the first member, and
-             the FIRST set of the second member, if the first member is nullable. *)
-        let conjunction symbol p q =
-          if NULLABLE.symbol symbol then
-            TerminalSet.union p (Lazy.force q)
-          else
-            p
-        (* The FIRST set of the empty sequence is empty. *)
-        let epsilon = TerminalSet.empty
-       end)
-  in
   FIRST.nonterminal, FIRST.production, FIRST.symbol
+
+let nullable_first_prod' prod i =
+  NULLABLE.production prod i,
+  FIRST.production prod i
 
 (* TEMPORARY sanity check *)
 let () =
@@ -1272,7 +1276,10 @@ module Analysis = struct
 
   let nullable_first_prod prod i =
     let rhs = Production.rhs prod in
-    nullable_first_rhs rhs i
+    let n, f = nullable_first_rhs rhs i in
+    let n', f' = nullable_first_prod' prod i in
+    assert (n = n' && TerminalSet.equal f f');
+    n, f
 
   let explain_first_rhs (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
     convert (explain tok rhs i)
