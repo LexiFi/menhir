@@ -709,27 +709,32 @@ module ProductionMap = struct
 end
 
 (* ------------------------------------------------------------------------ *)
-(* Build the grammar's forward reference graph. This graph is unused, but
-   can be printed on demand. *)
-
-let forward : NonterminalSet.t array =
-  Array.make Nonterminal.n NonterminalSet.empty
+(* If requested, build and print the forward reference graph of the grammar.
+   There is an edge of a nonterminal symbol [nt1] to every nonterminal symbol
+   [nt2] that occurs in the definition of [nt1]. *)
 
 let () =
-  Array.iter (fun (nt1, rhs) ->
-    Array.iter (function
-      | Symbol.T _ ->
-	  ()
-      | Symbol.N nt2 ->
-	  forward.(nt1) <- NonterminalSet.add nt2 forward.(nt1)
-    ) rhs
-  ) Production.table
+  if Settings.graph then begin
 
-(* ------------------------------------------------------------------------ *)
-(* If requested, dump the forward reference graph. *)
+    (* Allocate. *)
 
-let () =
-  if Settings.graph then
+    let forward : NonterminalSet.t array =
+      Array.make Nonterminal.n NonterminalSet.empty
+    in
+
+    (* Populate. *)
+
+    Array.iter (fun (nt1, rhs) ->
+      Array.iter (function
+        | Symbol.T _ ->
+            ()
+        | Symbol.N nt2 ->
+            forward.(nt1) <- NonterminalSet.add nt2 forward.(nt1)
+      ) rhs
+    ) Production.table;
+
+    (* Print. *)
+
     let module P = Dot.Print (struct
       type vertex = Nonterminal.t
       let name nt =
@@ -746,6 +751,8 @@ let () =
     let f = open_out (Settings.base ^ ".dot") in
     P.print f;
     close_out f
+
+  end
 
 (* ------------------------------------------------------------------------ *)
 (* Support for analyses of the grammar, expressed as fixed point computations.
