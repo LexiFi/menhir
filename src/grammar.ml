@@ -882,6 +882,61 @@ end = struct
 end
 
 (* ------------------------------------------------------------------------ *)
+(* The computation of FOLLOW sets does not follow the above model. Instead, we
+   need to explicitly compute a system of equations over sets of terminal
+   symbols (in a first pass), then solve the constraints (in a second
+   pass). *)
+
+(* A member of an equation's right-hand side is either a variable (named after
+   a nonterminal symbol) or a constant (a set of terminal symbols). *)
+
+type member =
+| MemberVar of Nonterminal.t
+| MemberConstant of TerminalSet.t
+
+(* A right-hand side is a list of members. *)
+
+type rhs =
+  member list
+
+(* A system of equations is represented as an array, which maps nonterminal
+   symbols to right-hand sides. *)
+
+type equations =
+  rhs array
+
+(* This solver computes the least solution of a set of equations. *)
+
+let solve (eqs : equations) : Nonterminal.t -> TerminalSet.t =
+
+  let member m get =
+    match m with
+    | MemberVar nt ->
+        get nt
+    | MemberConstant c ->
+        c
+  in
+
+  let rhs rhs get =
+    (* Union of all members. *)
+    List.fold_left (fun accu m ->
+      TerminalSet.union accu (member m get)
+    ) TerminalSet.empty rhs
+  in
+
+  let nonterminal nt get =
+    rhs eqs.(nt) get
+  in
+
+  let module F =
+    Fix.Make
+      (Maps.ConsecutiveIntegerKeysToImperativeMaps(Nonterminal))
+      (TerminalSet)
+  in
+  
+  F.lfp nonterminal
+
+(* ------------------------------------------------------------------------ *)
 (* Generic support for fixpoint computations.
 
    A fixpoint computation associates a property with every nonterminal.
@@ -1157,6 +1212,56 @@ let () =
 	(TerminalSet.print (tfollow t))
     done
   )
+
+(* ------------------------------------------------------------------------ *)
+(* Compute FOLLOW sets. *)
+
+let follow' =
+
+  let follow : equations =
+    Array.make Nonterminal.n []
+  in
+
+  (* Iterate over all start symbols. *)
+  let sharp = MemberConstant (TerminalSet.singleton Terminal.sharp) in
+  for nt = 0 to Nonterminal.start - 1 do
+    assert (Nonterminal.is_start nt);
+    (* Add # to FOLLOW(nt). *)
+    follow.(nt) <- sharp :: follow.(nt)
+  done;
+  (* We need to do this explicitly because our start productions are
+     of the form S' -> S, not S' -> S #, so # will not automatically
+     appear into FOLLOW(S) when the start productions are examined. *)
+
+  (* Iterate over all productions. *)
+  Array.iteri (fun prod (nt1, rhs) ->
+    (* Iterate over all nonterminal symbols [nt2] in the right-hand side. *)
+    Array.iteri (fun i symbol ->
+      match symbol with
+      | Symbol.T _ ->
+          ()
+      | Symbol.N nt2 ->
+          let nullable = NULLABLE.production prod (i+1)
+          and first = FIRST.production prod (i+1) in
+          (* The FIRST set of the remainder of the right-hand side
+             contributes to the FOLLOW set of [nt2]. *)
+          follow.(nt2) <- MemberConstant first :: follow.(nt2);
+          (* If the remainder of the right-hand side is nullable,
+             FOLLOW(nt1) contributes to FOLLOW(nt2). *)
+          if nullable then
+            follow.(nt2) <- MemberVar nt1 :: follow.(nt2)
+    ) rhs
+  ) Production.table;
+
+  solve follow
+
+(* Sanity check. *)
+let () =
+  for nt = 0 to Nonterminal.n - 1 do
+    let f = follow nt
+    and f'= follow' nt in
+    assert (TerminalSet.equal f f')
+  done
 
 (* ------------------------------------------------------------------------ *)
 (* Provide explanations about FIRST sets. *)
