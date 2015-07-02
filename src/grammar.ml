@@ -955,44 +955,6 @@ module NULLABLE =
 (* ------------------------------------------------------------------------ *)
 (* Compute FIRST sets. *)
 
-let first =
-  Array.make Nonterminal.n TerminalSet.empty
-
-let first_symbol = function
-  | Symbol.T tok ->
-      TerminalSet.singleton tok
-  | Symbol.N nt ->
-      first.(nt)
-
-let nullable_first_rhs (rhs : Symbol.t array) (i : int) : bool * TerminalSet.t =
-  let length = Array.length rhs in
-  assert (i <= length);
-  let rec loop i toks =
-    if i = length then
-      true, toks
-    else
-      let symbol = rhs.(i) in
-      let toks = TerminalSet.union (first_symbol symbol) toks in
-      if NULLABLE.symbol symbol then
-	loop (i+1) toks
-      else
-	false, toks
-  in
-  loop i TerminalSet.empty
-
-let () =
-  fixpoint backward (fun nt ->
-    let original = first.(nt) in
-    (* union over all productions for this nonterminal *)
-    let updated = Production.foldnt nt TerminalSet.empty (fun prod accu ->
-      let rhs = Production.rhs prod in
-      let _, toks = nullable_first_rhs rhs 0 in
-      TerminalSet.union toks accu
-    ) in
-    first.(nt) <- updated;
-    TerminalSet.compare original updated <> 0
-  )
-
 module FIRST =
   GenericAnalysis
     (TerminalSet)
@@ -1013,19 +975,6 @@ module FIRST =
       let epsilon = TerminalSet.empty
      end)
 
-let first', _first_prod', _first_symbol' =
-  FIRST.nonterminal, FIRST.production, FIRST.symbol
-
-let nullable_first_prod' prod i =
-  NULLABLE.production prod i,
-  FIRST.production prod i
-
-(* TEMPORARY sanity check *)
-let () =
-  for nt = Nonterminal.start to Nonterminal.n - 1 do
-    assert (TerminalSet.equal first.(nt) (first' nt))
-  done
-
 (* ------------------------------------------------------------------------ *)
 
 let () =
@@ -1041,7 +990,7 @@ let () =
       Error.error
 	(Nonterminal.positions nt)
 	(Printf.sprintf "%s generates the empty language." (Nonterminal.print false nt));
-    if TerminalSet.is_empty first.(nt) then
+    if TerminalSet.is_empty (FIRST.nonterminal nt) then
       Error.error
 	(Nonterminal.positions nt)
 	(Printf.sprintf "%s generates the language {epsilon}." (Nonterminal.print false nt))
@@ -1067,7 +1016,7 @@ let () =
     for nt = 0 to Nonterminal.n - 1 do
       Printf.fprintf f "first(%s) = %s\n"
 	(Nonterminal.print false nt)
-	(TerminalSet.print first.(nt))
+	(TerminalSet.print (FIRST.nonterminal nt))
     done
   )
 
@@ -1104,14 +1053,15 @@ let follow : TerminalSet.t array Lazy.t =
        appear into FOLLOW(S) when the start productions are examined. *)
 
     (* Iterate over all productions. *)
-    Array.iter (fun (nt1, rhs) ->
+    Array.iteri (fun prod (nt1, rhs) ->
       (* Iterate over all nonterminal symbols [nt2] in the right-hand side. *)
       Array.iteri (fun i symbol ->
 	match symbol with
 	| Symbol.T _ ->
 	    ()
 	| Symbol.N nt2 ->
-	    let nullable, first = nullable_first_rhs rhs (i+1) in
+            let nullable = NULLABLE.production prod (i+1)
+            and first = FIRST.production prod (i+1) in
 	    (* The FIRST set of the remainder of the right-hand side
 	       contributes to the FOLLOW set of [nt2]. *)
 	    follow.(nt2) <- TerminalSet.union first follow.(nt2);
@@ -1172,14 +1122,15 @@ let tfollow : TerminalSet.t array Lazy.t =
     in
 
     (* Iterate over all productions. *)
-    Array.iter (fun (nt1, rhs) ->
+    Array.iteri (fun prod (nt1, rhs) ->
       (* Iterate over all terminal symbols [t2] in the right-hand side. *)
       Array.iteri (fun i symbol ->
 	match symbol with
 	| Symbol.N _ ->
 	    ()
 	| Symbol.T t2 ->
-	    let nullable, first = nullable_first_rhs rhs (i+1) in
+            let nullable = NULLABLE.production prod (i+1)
+            and first = FIRST.production prod (i+1) in
 	    (* The FIRST set of the remainder of the right-hand side
 	       contributes to the FOLLOW set of [t2]. *)
 	    tfollow.(t2) <- TerminalSet.union first tfollow.(t2);
@@ -1238,7 +1189,7 @@ let explain (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
 	assert (Terminal.equal tok tok');
 	EObvious
     | Symbol.N nt ->
-	if TerminalSet.mem tok first.(nt) then
+	if TerminalSet.mem tok (FIRST.nonterminal nt) then
 	  EFirst (tok, nt)
 	else begin
 	  assert (NULLABLE.nonterminal nt);
@@ -1272,14 +1223,11 @@ module Analysis = struct
 
   let nullable = NULLABLE.nonterminal
 
-  let first = Array.get first
+  let first = FIRST.nonterminal
 
   let nullable_first_prod prod i =
-    let rhs = Production.rhs prod in
-    let n, f = nullable_first_rhs rhs i in
-    let n', f' = nullable_first_prod' prod i in
-    assert (n = n' && TerminalSet.equal f f');
-    n, f
+    NULLABLE.production prod i,
+    FIRST.production prod i
 
   let explain_first_rhs (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
     convert (explain tok rhs i)
