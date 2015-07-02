@@ -30,7 +30,7 @@ let is_maximal p =
 let min p1 p2 =
   match p1, p2 with
   | Finite i1, Finite i2 ->
-      Finite (min i1 i2)
+      if i1 <= i2 then p1 else p2
   | p, Infinity
   | Infinity, p ->
       p
