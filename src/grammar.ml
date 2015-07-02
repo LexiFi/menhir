@@ -1270,7 +1270,9 @@ module Analysis = struct
 
   let first = Array.get first
 
-  let nullable_first_rhs = nullable_first_rhs
+  let nullable_first_prod prod i =
+    let rhs = Production.rhs prod in
+    nullable_first_rhs rhs i
 
   let explain_first_rhs (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
     convert (explain tok rhs i)

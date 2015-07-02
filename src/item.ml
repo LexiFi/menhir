@@ -171,7 +171,7 @@ module Closure (L : Lookahead.S) = struct
 
 	let constant, transmits =
 	  if pos < length then
-	    let nullable, first = Analysis.nullable_first_rhs rhs (pos + 1) in
+	    let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
 	    L.constant first, nullable
 	  else
 	    (* No epsilon transitions leave this item. *)

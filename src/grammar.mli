@@ -373,12 +373,12 @@ module Analysis : sig
 
   val first: Nonterminal.t -> TerminalSet.t
 
-  (* [nullable_first_rhs rhs i] considers the string of symbols found at
-     offset [i] in the array [rhs]. It returns its NULLABLE flag as well
+  (* [nullable_first_prod prod i] considers the suffix of the the production
+     [prod] defined by offset [i]. It returns its NULLABLE flag as well
      as its FIRST set. The offset [i] must be contained between [0] and
-     [n], where [n] is the length of [rhs], inclusive. *)
+     [n], inclusive, where [n] is the length of production [prod]. *)
 
-  val nullable_first_rhs: Symbol.t array -> int -> bool * TerminalSet.t
+  val nullable_first_prod: Production.index -> int -> bool * TerminalSet.t
 
   (* [explain_first_rhs tok rhs i] explains why the token [tok] appears
      in the FIRST set for the string of symbols found at offset [i] in
