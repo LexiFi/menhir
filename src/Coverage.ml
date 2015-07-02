@@ -8,7 +8,8 @@ open Grammar
 module P =
   CompletedNatWitness
        
-(* TEMPORARY check no symbol produces the empty language *)
+(* TEMPORARY check no symbol produces the empty language? *)
+(* TEMPORARY avoid [error] token unless forced to use it *)
 
 type property =
   Terminal.t P.t
