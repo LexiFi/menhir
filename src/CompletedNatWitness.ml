@@ -23,6 +23,12 @@ let equal p1 p2 =
 let bottom =
   Infinity
 
+let epsilon =
+  Finite (0, lazy [])
+
+let singleton x =
+  Finite (1, lazy [x])
+
 let is_maximal p =
   match p with
   | Finite (0, _) ->

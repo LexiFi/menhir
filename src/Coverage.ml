@@ -1,19 +1,10 @@
-open CompletedNatWitness
+module P = CompletedNatWitness
 open Grammar
 
 (* TEMPORARY check no symbol produces the empty language *)
 
 type property =
-  Terminal.t CompletedNatWitness.t
-
-let none : property =
-  Infinity
-
-let epsilon : property =
-  Finite (0, lazy [])
-
-let char (t : Terminal.t) : property =
-  Finite (1, lazy [t])
+  Terminal.t P.t
 
 (* This tests whether state [s] is willing to reduce production [prod]
    when the lookahead symbol is [z]. *)
@@ -28,7 +19,7 @@ let has_reduction s prod z : bool =
   List.mem prod prods
 
 (* This tests whether state [s] has an outgoing transition labeled [sym].
-   If so, [s'] is passed to the continuation [k]. Otherwise, [none] is
+   If so, [s'] is passed to the continuation [k]. Otherwise, [P.bottom] is
    returned. *)
 
 let has_transition s sym k : property =
@@ -36,7 +27,7 @@ let has_transition s sym k : property =
     let s' = SymbolMap.find sym (Lr1.transitions s) in
     k s'
   with Not_found ->
-    none
+    P.bottom
 
 (* This computes [FIRST(alpha.z)], where [alpha] is the suffix determined
    by [prod] and [i]. *)
@@ -53,21 +44,21 @@ let first prod i z =
 let foreach_terminal (f : Terminal.t -> property) : property =
   Terminal.fold (fun t accu ->
     (* A feeble attempt at being slightly lazy. Not essential. *)
-    min_lazy accu (lazy (f t))
-  ) Infinity
+    P.min_lazy accu (lazy (f t))
+  ) P.bottom
 
 let foreach_terminal_in toks (f : Terminal.t -> property) : property =
   TerminalSet.fold (fun t accu ->
     (* A feeble attempt at being slightly lazy. Not essential. *)
-    min_lazy accu (lazy (f t))
-  ) toks Infinity
+    P.min_lazy accu (lazy (f t))
+  ) toks P.bottom
 
 (* This computes a minimum over the productions associated with [nt]. *)
 
 let foreach_production nt (f : Production.index -> property) : property =
-  Production.foldnt nt Infinity (fun prod accu ->
+  Production.foldnt nt P.bottom (fun prod accu ->
     (* A feeble attempt at being slightly lazy. Not essential. *)
-    min_lazy accu (lazy (f prod))
+    P.min_lazy accu (lazy (f prod))
   )
 
 (* A question takes the form [s, a, prod, i, z, goal], as defined below.
@@ -181,7 +172,7 @@ let answer (q : question) (get : question -> property) : property =
         Terminal.equal q.a q.z (* TEMPORARY ? *)
   in
   if happy then
-    epsilon
+    P.epsilon
 
   else begin
 
@@ -208,7 +199,7 @@ let answer (q : question) (get : question -> property) : property =
         | Reach _ ->
             false
       in
-      if happy then epsilon else none
+      if happy then P.epsilon else P.bottom
 
     end
     else
@@ -231,13 +222,13 @@ let answer (q : question) (get : question -> property) : property =
 
             if Terminal.equal q.a t (* condition 2 *)
             then
-              add (char q.a) (
+              P.add (P.singleton q.a) (
                 foreach_terminal_in (first q.prod (q.i + 1) q.z) (fun c ->
                   get { s = s'; a = c; prod = q.prod; i = q.i + 1; z = q.z; goal = q.goal }
                 )
               )
             else
-              none
+              P.bottom
 
         | Symbol.N nt ->
 
@@ -251,11 +242,11 @@ let answer (q : question) (get : question -> property) : property =
             (* TEMPORARY not quite sure that the reduction of [prod'] will take
                us back to state [s], as hoped. *)
 
-            min begin
+            P.min begin
 
             foreach_terminal_in (first q.prod (q.i + 1) q.z) (fun c ->
               foreach_production nt (fun prod' ->
-                add_lazy
+                P.add_lazy
                   (get { s = q.s; a = q.a; prod = prod'; i = 0; z = c; goal = Reduce })
                   (lazy (get { s = s'; a = c; prod = q.prod; i = q.i + 1; z = q.z; goal = q.goal }))
               )
@@ -263,7 +254,7 @@ let answer (q : question) (get : question -> property) : property =
 
             end begin
 
-              match q.goal with Reduce -> none | Reach _ ->
+              match q.goal with Reduce -> P.bottom | Reach _ ->
                 foreach_production nt (fun prod' ->
                   get { s = q.s; a = q.a; prod = prod'; i = 0; z = q.z; goal = q.goal }
                 )
@@ -279,7 +270,7 @@ let answer (q : question) (get : question -> property) : property =
 let answer (q : question) (get : question -> property) : property =
   print_question q;
   let p = answer q get in
-  Printf.fprintf stderr "%s\n%!" (CompletedNatWitness.print Terminal.print p);
+  Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
   p
  *)
 
@@ -293,7 +284,7 @@ module F =
   Fix.Make
     (Maps.PersistentMapsToImperativeMaps(QuestionMap))
     (struct
-      include CompletedNatWitness
+      include P
       type property = Terminal.t t
      end)
 
@@ -305,7 +296,7 @@ let answer : question -> property =
 
 let path s prod s' =
   foreach_terminal (fun z ->
-    add (
+    P.add (
       foreach_terminal_in (first prod 0 z) (fun a ->
         answer {
           s = s;
@@ -316,7 +307,7 @@ let path s prod s' =
           goal = Reach s'
         }
       )
-    ) (char z)
+    ) (P.singleton z)
   )
 
 (* Test. *)
@@ -327,7 +318,7 @@ let () =
       Printf.fprintf stderr "Attempting to go from state %d to state %d:\n%!"
         (Lr1.number s) (Lr1.number s');
       let p = path s prod s' in
-      Printf.fprintf stderr "%s\n%!" (CompletedNatWitness.print Terminal.print p);
+      Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
       Printf.fprintf stderr "Questions asked so far: %d\n" !qs
     ) ()
   )
