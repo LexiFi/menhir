@@ -281,7 +281,13 @@ let answer (q : question) (get : question -> property) : property =
   let p = answer q get in
   Printf.fprintf stderr "%s\n%!" (CompletedNatWitness.print Terminal.print p);
   p
-*)
+ *)
+
+(* Debugging wrapper. TEMPORARY *)
+let qs = ref 0
+let answer q get =
+  incr qs;
+  answer q get
 
 module F =
   Fix.Make
@@ -321,7 +327,8 @@ let () =
       Printf.fprintf stderr "Attempting to go from state %d to state %d:\n%!"
         (Lr1.number s) (Lr1.number s');
       let p = path s prod s' in
-      Printf.fprintf stderr "%s\n%!" (CompletedNatWitness.print Terminal.print p)
+      Printf.fprintf stderr "%s\n%!" (CompletedNatWitness.print Terminal.print p);
+      Printf.fprintf stderr "Questions asked so far: %d\n" !qs
     ) ()
   )
 (* Note the last symbol in the path plays a special role. It is not consumed. *)
