@@ -407,6 +407,9 @@ module Production = struct
   type index =
       int
 
+  let compare =
+    (-)
+
   (* Create an array of productions. Record which productions are
      associated with every nonterminal. A new production S' -> S
      is created for every start symbol S. It is known as a

@@ -11,6 +11,10 @@ module Nonterminal : sig
 
   type t
 
+  (* Comparison. *)
+
+  val compare: t -> t -> int
+
   (* The number of nonterminals. This includes the extra nonterminals
      that are internally generated for the grammar's entry points. *)
 
@@ -98,6 +102,7 @@ module Terminal : sig
   (* Comparison. *)
 
   val equal: t -> t -> bool
+  val compare: t -> t -> int
 
   (* [lookup] maps an identifier to a terminal, or raises [Not_found]. *)
 
@@ -239,6 +244,10 @@ module Production : sig
      associated with the start symbols. *)
 
   type index
+
+  (* Comparison. *)
+
+  val compare: index -> index -> int
 
   (* Productions can be converted to integers and back. This is unsafe
      and should be avoided as much as possible. This feature is
