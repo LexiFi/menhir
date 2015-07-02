@@ -709,19 +709,10 @@ module ProductionMap = struct
 end
 
 (* ------------------------------------------------------------------------ *)
-(* Build the grammar's forward and backward reference graphs.
-
-   In the backward reference graph, edges relate each nonterminal [nt]
-   to each of the nonterminals whose definition mentions [nt]. The
-   reverse reference graph is used in the computation of the nullable,
-   nonempty, and FIRST sets.
-
-   The forward reference graph is unused but can be printed on demand. *)
+(* Build the grammar's forward reference graph. This graph is unused, but
+   can be printed on demand. *)
 
 let forward : NonterminalSet.t array =
-  Array.make Nonterminal.n NonterminalSet.empty
-
-let backward : NonterminalSet.t array =
   Array.make Nonterminal.n NonterminalSet.empty
 
 let () =
@@ -730,8 +721,7 @@ let () =
       | Symbol.T _ ->
 	  ()
       | Symbol.N nt2 ->
-	  forward.(nt1) <- NonterminalSet.add nt2 forward.(nt1);
-	  backward.(nt2) <- NonterminalSet.add nt1 backward.(nt2)
+	  forward.(nt1) <- NonterminalSet.add nt2 forward.(nt1)
     ) rhs
   ) Production.table
 
