@@ -923,83 +923,34 @@ let fixpoint (dependencies : NonterminalSet.t array) (compute : Nonterminal.t ->
    difference is in the base case: a single terminal symbol is not
    nullable, but is nonempty. *)
 
-let compute (basecase : bool) : (bool array) * (Symbol.t -> bool) =
-  let property : bool array =
-    Array.make Nonterminal.n false
-  in
-  let symbol_has_property = function
-    | Symbol.T _ ->
-	basecase
-    | Symbol.N nt ->
-	property.(nt)
-  in
-  fixpoint backward (fun nt ->
-    if property.(nt) then
-      false (* no change *)
-    else
-      (* disjunction over all productions for this nonterminal *)
-      let updated = Production.foldnt nt false (fun prod accu ->
-	accu ||
-	let rhs = Production.rhs prod in
-	(* conjunction over all symbols in the right-hand side *)
-	Array.fold_left (fun accu symbol ->
-	  accu && symbol_has_property symbol
-	) true rhs
-      ) in
-      property.(nt) <- updated;
-      updated
-  );
-  property, symbol_has_property
+module NONEMPTY =
+  GenericAnalysis
+    (Boolean)
+    (struct
+      (* A terminal symbol is nonempty. *)
+      let terminal _ = true
+      (* An alternative is nonempty if at least one branch is nonempty. *)
+      let disjunction p q = p || (Lazy.force q)
+      (* A sequence is nonempty if both members are nonempty. *)
+      let conjunction _ p q = p && (Lazy.force q)
+      (* The sequence epsilon is nonempty. It generates the singleton
+         language {epsilon}. *)
+      let epsilon = true
+     end)
 
-let (nonempty : bool array), _ =
-  compute true
-
-let (nullable : bool array), (nullable_symbol : Symbol.t -> bool) =
-  compute false
-
-(* ------------------------------------------------------------------------ *)
-
-let nonempty' =
-  let module NONEMPTY =
-    GenericAnalysis
-      (Boolean)
-      (struct
-        (* A terminal symbol is nonempty. *)
-        let terminal _ = true
-        (* An alternative is nonempty if at least one branch is nonempty. *)
-        let disjunction p q = p || (Lazy.force q)
-        (* A sequence is nonempty if both members are nonempty. *)
-        let conjunction _ p q = p && (Lazy.force q)
-        (* The sequence epsilon is nonempty. It generates the singleton
-           language {epsilon}. *)
-        let epsilon = true
-       end)
-  in
-  NONEMPTY.nonterminal
-
-let nullable' =
-  let module NULLABLE =
-    GenericAnalysis
-      (Boolean)
-      (struct
-        (* A terminal symbol is not nullable. *)
-        let terminal _ = false
-        (* An alternative is nullable if at least one branch is nullable. *)
-        let disjunction p q = p || (Lazy.force q)
-        (* A sequence is nullable if both members are nullable. *)
-        let conjunction _ p q = p && (Lazy.force q)
-        (* The sequence epsilon is nullable. *)
-        let epsilon = true
-       end)
-  in
-  NULLABLE.nonterminal
-
-(* TEMPORARY sanity check *)
-let () =
-  for nt = Nonterminal.start to Nonterminal.n - 1 do
-    assert (nonempty.(nt) = nonempty' nt);
-    assert (nullable.(nt) = nullable' nt);
-  done
+module NULLABLE =
+  GenericAnalysis
+    (Boolean)
+    (struct
+      (* A terminal symbol is not nullable. *)
+      let terminal _ = false
+      (* An alternative is nullable if at least one branch is nullable. *)
+      let disjunction p q = p || (Lazy.force q)
+      (* A sequence is nullable if both members are nullable. *)
+      let conjunction _ p q = p && (Lazy.force q)
+      (* The sequence epsilon is nullable. *)
+      let epsilon = true
+     end)
 
 (* ------------------------------------------------------------------------ *)
 (* Compute FIRST sets. *)
@@ -1022,7 +973,7 @@ let nullable_first_rhs (rhs : Symbol.t array) (i : int) : bool * TerminalSet.t =
     else
       let symbol = rhs.(i) in
       let toks = TerminalSet.union (first_symbol symbol) toks in
-      if nullable_symbol symbol then
+      if NULLABLE.symbol symbol then
 	loop (i+1) toks
       else
 	false, toks
@@ -1055,7 +1006,7 @@ let first', _first_prod', _first_symbol' =
              the FIRST set of the first member, and
              the FIRST set of the second member, if the first member is nullable. *)
         let conjunction symbol p q =
-          if nullable_symbol symbol then
+          if NULLABLE.symbol symbol then
             TerminalSet.union p (Lazy.force q)
           else
             p
@@ -1082,7 +1033,7 @@ let () =
      be read. *)
   StringSet.iter (fun symbol ->
     let nt = Nonterminal.lookup symbol in
-    if not nonempty.(nt) then
+    if not (NONEMPTY.nonterminal nt) then
       Error.error
 	(Nonterminal.positions nt)
 	(Printf.sprintf "%s generates the empty language." (Nonterminal.print false nt));
@@ -1093,7 +1044,7 @@ let () =
   ) Front.grammar.start_symbols;
   (* If a nonterminal symbol generates the empty language, issue a warning. *)
   for nt = Nonterminal.start to Nonterminal.n - 1 do
-    if not nonempty.(nt) then
+    if not (NONEMPTY.nonterminal nt) then
       Error.grammar_warning
 	(Nonterminal.positions nt)
 	(Printf.sprintf "%s generates the empty language." (Nonterminal.print false nt));
@@ -1107,7 +1058,7 @@ let () =
     for nt = 0 to Nonterminal.n - 1 do
       Printf.fprintf f "nullable(%s) = %b\n"
 	(Nonterminal.print false nt)
-	nullable.(nt)
+	(NULLABLE.nonterminal nt)
     done;
     for nt = 0 to Nonterminal.n - 1 do
       Printf.fprintf f "first(%s) = %s\n"
@@ -1286,7 +1237,7 @@ let explain (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
 	if TerminalSet.mem tok first.(nt) then
 	  EFirst (tok, nt)
 	else begin
-	  assert nullable.(nt);
+	  assert (NULLABLE.nonterminal nt);
 	  match loop (i + 1) with
 	  | ENullable (symbols, e) ->
 	      ENullable (symbol :: symbols, e)
@@ -1315,7 +1266,7 @@ let rec convert = function
 
 module Analysis = struct
 
-  let nullable = Array.get nullable
+  let nullable = NULLABLE.nonterminal
 
   let first = Array.get first
 
