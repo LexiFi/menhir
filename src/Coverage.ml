@@ -1,6 +1,13 @@
-module P = CompletedNatWitness
 open Grammar
 
+(* Using [CompletedNatWitness] means that we wish to compute shortest paths.
+   An alternative would be to use [BooleanWitness], which offers the same
+   interface. That would mean we wish to compute an arbitrary path. That
+   would be faster, but the paths thus obtained are (according to a quick
+   experiment) really far from optimal. *)
+module P =
+  CompletedNatWitness
+       
 (* TEMPORARY check no symbol produces the empty language *)
 
 type property =
