@@ -170,7 +170,9 @@ open StateLattice
 let stack_states : Lr1.node -> property =
 
   let module F =
-    Fix.Make(Lr1.ImperativeNodeMap)(StateLattice)
+    Fix.Make
+      (Maps.PersistentMapsToImperativeMaps(Lr1.NodeMap))
+      (StateLattice)
   in
 
   F.lfp (fun node (get : Lr1.node -> property) ->

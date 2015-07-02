@@ -810,7 +810,6 @@ end = struct
   open P
 
   (* TEMPORARY isolate and publish the analysis of a symbol *)
-  (* TEMPORARY remove Lr1.ImperativeNodeMap, use Maps instead *)
 
   (* Analyzing a production whose right-hand side is [rhs], starting at index [i].
      The parameter [get] allows a recursive call to the analysis at a nonterminal

@@ -64,31 +64,6 @@ module NodeSet =
 module NodeMap =
   Map.Make (Node)
 
-module ImperativeNodeMap = struct
-
-  type key =
-      NodeMap.key
-
-  type 'data t =
-      'data NodeMap.t ref
-
-  let create () =
-    ref NodeMap.empty
-
-  let clear t =
-    t := NodeMap.empty
-
-  let add k d t =
-    t := NodeMap.add k d !t
-
-  let find k t =
-    NodeMap.find k !t
-
-  let iter f t =
-    NodeMap.iter f !t
-
-end
-
 (* ------------------------------------------------------------------------ *)
 
 (* Output debugging information if [--follow-construction] is enabled. *)

@@ -25,8 +25,6 @@ module NodeSet : Set.S with type elt = node
 
 module NodeMap : Map.S with type key = node
 
-module ImperativeNodeMap : Fix.IMPERATIVE_MAPS with type key = node
-
 (* These are the automaton's entry states, indexed by the start productions. *)
 
 val entry: node ProductionMap.t
