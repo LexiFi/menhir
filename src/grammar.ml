@@ -1254,6 +1254,8 @@ module Analysis = struct
 
   let follow = follow
 
+  let minimal_prod = MINIMAL.production
+
 end
 
 (* ------------------------------------------------------------------------ *)

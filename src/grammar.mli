@@ -382,7 +382,7 @@ module Analysis : sig
 
   val first: Nonterminal.t -> TerminalSet.t
 
-  (* [nullable_first_prod prod i] considers the suffix of the the production
+  (* [nullable_first_prod prod i] considers the suffix of the production
      [prod] defined by offset [i]. It returns its NULLABLE flag as well
      as its FIRST set. The offset [i] must be contained between [0] and
      [n], inclusive, where [n] is the length of production [prod]. *)
@@ -400,6 +400,12 @@ module Analysis : sig
      [nt] in a valid sentence. *)
 
   val follow: Nonterminal.t -> TerminalSet.t
+
+  (* [minimal_prod prod i] is the minimal length of a word generated
+     by by [prod/i], i.e., the suffix of production [prod] defined by
+     offset [i]. *)
+
+  val minimal_prod: Production.index -> int -> Terminal.t CompletedNatWitness.t
 
 end
 
