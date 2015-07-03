@@ -425,3 +425,7 @@ let () =
    It should work very well, because most of the time this should be a very good
    under-approximation (it should be equal to the true distance).
 *)
+(* TEMPORARY
+   also: first compute an optimistic path using the simple algorithm
+   and check if this path is feasible in the real automaton
+*)
