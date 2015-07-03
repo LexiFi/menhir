@@ -1,3 +1,27 @@
+(* The purpose of this algorithm is to find, for each pair of a state [s]
+   and a terminal symbol [z] such that looking at [z] in state [s] causes
+   an error, a minimal path (starting in some initial state) that actually
+   triggers this error. *)
+
+(* This is potentially useful for grammar designers who wish to better
+   understand the properties of their grammar, or who wish to produce a
+   list of all possible syntax errors (or, at least, one syntax error in
+   each automaton state where an error may occur). *)
+
+(* The problem seems rather tricky. One might think that it suffices to
+   compute shortest paths in the automaton, and to use [Analysis.minimal]
+   to replace each non-terminal symbol in a path with a minimal word
+   that it generates. One can indeed do so, but this yields only a lower
+   bound on the actual shortest path to the error at [s, z]. Indeed, two
+   difficulties arise:
+
+   - Some states have a default reduction. Thus, they will not trigger
+     an error, even though they should. The error is triggered in some
+     other state, after reduction takes place.
+
+   - If the grammar has conflicts, conflict resolution removes some
+     (shift or reduce) actions, hence may suppress the shortest path. *)
+
 open Grammar
 
 (* Using [CompletedNatWitness] means that we wish to compute shortest paths.
