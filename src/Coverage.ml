@@ -101,7 +101,7 @@ module ForwardAutomaton = struct
     Lr1.node
 
   let equal s1 s2 =
-    Lr1.Node.compare s1 s2
+    Lr1.Node.compare s1 s2 = 0
 
   let hash s =
     Hashtbl.hash (Lr1.number s)
@@ -121,6 +121,17 @@ module ForwardAutomaton = struct
     ) (Lr1.transitions s)
 
 end
+
+let approximate : Lr1.node -> int =
+  let module D = Dijkstra.Make(ForwardAutomaton) in
+  D.search (fun (_, _, _) -> ())
+
+let () =
+  Lr1.iter (fun s ->
+    Printf.fprintf stderr
+      "State %d is at least %d steps away from an initial state.\n%!"
+      (Lr1.number s) (approximate s)
+  )
 
 (* A question takes the form [s, a, prod, i, z], as defined below.
 
@@ -311,14 +322,14 @@ let backward (s', z) : property =
   end in
   let module D = Dijkstra.Make(G) in
   try
-    D.search (fun (distance, (v', _), path) ->
+    let _ = D.search (fun (distance, (v', _), path) ->
       incr es;
       if !es mod 10000 = 0 then
         Printf.fprintf stderr "es = %d\n%!" !es;
       if Lr1.incoming_symbol v' = None then
         let path = List.map snd path in
         raise (Success (P.Finite (distance, Seq.concat path))) (* TEMPORARY keep path *)
-    );
+    ) in
     P.bottom
   with Success p ->
     p

@@ -80,7 +80,8 @@ end) = struct
           end
         ) v
       end
-    done
+    done;
+    distance
 
 end
 
