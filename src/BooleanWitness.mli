@@ -22,7 +22,7 @@ val singleton: 'a -> 'a t
 val min: 'a t -> 'a t -> 'a t
 val add: 'a t -> 'a t -> 'a t
 
-val min_lazy: 'a t -> 'a t Lazy.t -> 'a t
-val add_lazy: 'a t -> 'a t Lazy.t -> 'a t
+val min_lazy: 'a t -> (unit -> 'a t) -> 'a t
+val add_lazy: 'a t -> (unit -> 'a t) -> 'a t
 
 val print: ('a -> string) -> 'a t -> string

@@ -13,8 +13,8 @@ val singleton: 'a -> t
 val min: t -> t -> t
 val add: t -> t -> t
 
-val min_lazy: t -> t Lazy.t -> t
-val add_lazy: t -> t Lazy.t -> t
+val min_lazy: t -> (unit -> t) -> t
+val add_lazy: t -> (unit -> t) -> t
 
 val until_finite: t -> t Lazy.t -> t
 

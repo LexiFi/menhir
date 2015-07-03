@@ -46,7 +46,7 @@ let min_lazy p1 p2 =
   | Finite 0 ->
       p1
   | _ ->
-      min p1 (Lazy.force p2)
+      min p1 (p2())
 
 let until_finite p1 p2 =
   match p1 with
@@ -67,7 +67,7 @@ let add_lazy p1 p2 =
   | Infinity ->
       Infinity
   | _ ->
-      add p1 (Lazy.force p2)
+      add p1 (p2())
 
 let print p =
   match p with

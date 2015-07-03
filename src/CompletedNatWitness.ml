@@ -49,7 +49,7 @@ let min_lazy p1 p2 =
   | Finite (0, _) ->
       p1
   | _ ->
-      min p1 (Lazy.force p2)
+      min p1 (p2())
 
 (* [until_finite] can be viewed as a variant of [min_lazy] where
    we are happy as soon as we find a finite value. It can be viewed
@@ -78,7 +78,7 @@ let add_lazy p1 p2 =
   | Infinity ->
       Infinity
   | _ ->
-      add p1 (Lazy.force p2)
+      add p1 (p2())
 
 let print conv p =
   match p with

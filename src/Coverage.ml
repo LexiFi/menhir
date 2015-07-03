@@ -78,13 +78,13 @@ let first prod i z =
 let foreach_terminal (f : Terminal.t -> property) : property =
   Terminal.fold (fun t accu ->
     (* A feeble attempt at being slightly lazy. Not essential. *)
-    P.min_lazy accu (lazy (f t))
+    P.min_lazy accu (fun () -> f t)
   ) P.bottom
 
 let foreach_terminal_in toks (f : Terminal.t -> property) : property =
   TerminalSet.fold (fun t accu ->
     (* A feeble attempt at being slightly lazy. Not essential. *)
-    P.min_lazy accu (lazy (f t))
+    P.min_lazy accu (fun () -> f t)
   ) toks P.bottom
 
 let foreach_terminal_until_finite (f : Terminal.t -> property) : property =
@@ -99,7 +99,7 @@ let foreach_terminal_until_finite (f : Terminal.t -> property) : property =
 let foreach_production nt (f : Production.index -> property) : property =
   Production.foldnt nt P.bottom (fun prod accu ->
     (* A feeble attempt at being slightly lazy. Not essential. *)
-    P.min_lazy accu (lazy (f prod))
+    P.min_lazy accu (fun () -> f prod)
   )
 
 (* A question takes the form [s, a, prod, i, z], as defined below.
@@ -230,7 +230,7 @@ let answer (q : question) (get : question -> property) : property =
               if TerminalSet.mem q.a (first prod' 0 c) then
                 P.add_lazy
                   (get { s = q.s; a = q.a; prod = prod'; i = 0; z = c })
-                  (lazy (get { s = s'; a = c; prod = q.prod; i = q.i + 1; z = q.z }))
+                  (fun () -> get { s = s'; a = c; prod = q.prod; i = q.i + 1; z = q.z })
               else
                 P.bottom
             )
@@ -286,21 +286,21 @@ let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
         P.bottom
     | Some (Symbol.T t) ->
         List.fold_left (fun accu pred ->
-          P.min_lazy accu (lazy (
+          P.min_lazy accu (fun () ->
             P.add (get (pred, t)) (P.singleton t)
-          ))
+          )
         ) P.bottom (Lr1.predecessors s')
     | Some (Symbol.N nt) ->
         List.fold_left (fun accu pred ->
-          P.min_lazy accu (lazy (
+          P.min_lazy accu (fun () ->
             foreach_production nt (fun prod ->
               foreach_terminal_in (first prod 0 z) (fun a ->
                 P.add_lazy
                   (get (pred, a))
-                  (lazy (answer { s = pred; a = a; prod = prod; i = 0; z = z }))
+                  (fun () -> answer { s = pred; a = a; prod = prod; i = 0; z = z })
               )
             )
-          ))
+          )
         ) P.bottom (Lr1.predecessors s')
 
 (* Debugging wrapper. TEMPORARY *)

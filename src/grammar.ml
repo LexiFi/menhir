@@ -528,11 +528,11 @@ module Production = struct
 
   (* This funny variant is lazy. If at some point [f] does not demand its
      second argument, then iteration stops. *)
-  let foldnt_lazy (nt : Nonterminal.t) (f : index -> 'a Lazy.t -> 'a) (seed : 'a) : 'a =
+  let foldnt_lazy (nt : Nonterminal.t) (f : index -> (unit -> 'a) -> 'a) (seed : 'a) : 'a =
     let k, k' = ntprods.(nt) in
     let rec loop prod seed =
       if prod < k' then
-        f prod (lazy (loop (prod + 1) seed))
+        f prod (fun () -> loop (prod + 1) seed)
       else
         seed
     in
@@ -780,7 +780,7 @@ module GenericAnalysis
        an alternative between several productions, we compute a property for
        each of them independently, then we combine these properties using
        [disjunction]. *)
-    val disjunction: property -> property Lazy.t -> property
+    val disjunction: property -> (unit -> property) -> property
 
     (* [P.bottom] should be a neutral element for [disjunction]. We use it in
        the analysis of an alternative with zero branches. *)
@@ -790,7 +790,7 @@ module GenericAnalysis
        combine these properties using [conjunction]. In general, conjunction
        needs access to the first member of the sequence (a symbol), not just
        to its analysis (a property). *)
-    val conjunction: Symbol.t -> property -> property Lazy.t -> property
+    val conjunction: Symbol.t -> property -> (unit -> property) -> property
 
     (* [epsilon] abstracts the empty sequence. It should be a neutral element
        for [conjunction]. *)
@@ -847,7 +847,7 @@ end = struct
         let sym = rhs.(i) in
         S.conjunction sym
           (symbol sym get)
-          (lazy (loop (i+1)))
+          (fun () -> loop (i+1))
     in
     loop i
 
@@ -943,9 +943,9 @@ module NONEMPTY =
       (* A terminal symbol is nonempty. *)
       let terminal _ = true
       (* An alternative is nonempty if at least one branch is nonempty. *)
-      let disjunction p q = p || (Lazy.force q)
+      let disjunction p q = p || q()
       (* A sequence is nonempty if both members are nonempty. *)
-      let conjunction _ p q = p && (Lazy.force q)
+      let conjunction _ p q = p && q()
       (* The sequence epsilon is nonempty. It generates the singleton
          language {epsilon}. *)
       let epsilon = true
@@ -958,9 +958,9 @@ module NULLABLE =
       (* A terminal symbol is not nullable. *)
       let terminal _ = false
       (* An alternative is nullable if at least one branch is nullable. *)
-      let disjunction p q = p || (Lazy.force q)
+      let disjunction p q = p || q()
       (* A sequence is nullable if both members are nullable. *)
-      let conjunction _ p q = p && (Lazy.force q)
+      let conjunction _ p q = p && q()
       (* The sequence epsilon is nullable. *)
       let epsilon = true
      end)
@@ -975,13 +975,13 @@ module FIRST =
       (* A terminal symbol has a singleton FIRST set. *)
       let terminal = TerminalSet.singleton
       (* The FIRST set of an alternative is the union of the FIRST sets. *)
-      let disjunction p q = TerminalSet.union p (Lazy.force q)
+      let disjunction p q = TerminalSet.union p (q())
       (* The FIRST set of a sequence is the union of:
            the FIRST set of the first member, and
            the FIRST set of the second member, if the first member is nullable. *)
       let conjunction symbol p q =
         if NULLABLE.symbol symbol then
-          TerminalSet.union p (Lazy.force q)
+          TerminalSet.union p (q())
         else
           p
       (* The FIRST set of the empty sequence is empty. *)

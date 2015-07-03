@@ -38,7 +38,7 @@ let min_lazy p1 p2 =
   | Reachable _ ->
       p1
   | Unreachable ->
-      Lazy.force p2
+      p2()
 
 let add p1 p2 =
   match p1, p2 with
@@ -55,7 +55,7 @@ let add_lazy p1 p2 =
   | Unreachable ->
       Unreachable
   | Reachable _ ->
-      add p1 (Lazy.force p2)
+      add p1 (p2())
 
 let print conv p =
   match p with
