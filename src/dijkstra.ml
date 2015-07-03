@@ -16,9 +16,9 @@ module Make (G : sig
 
   val weight: label -> int
 
-  (* The source vertex. *)
+  (* The source vertex (or vertices). *)
 
-  val source: vertex
+  val sources: (vertex -> unit) -> unit
 
   (* This provides access to a vertex' successors. *)
 
@@ -55,9 +55,11 @@ end) = struct
     let distance v =
       try H.find dist v with Not_found -> max_int
     in
-    (* Insert the initial vertex. *)
-    PQ.add queue (0, source, []);
-    H.add dist source 0;
+    (* Insert the initial vertices. *)
+    sources (fun source ->
+      PQ.add queue (0, source, []);
+      H.add dist source 0
+    );
     (* As long as the queue is nonempty, ... *)
     while not (PQ.is_empty queue) do
       (* Extract one vertex. *)

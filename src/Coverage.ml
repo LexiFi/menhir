@@ -254,7 +254,7 @@ let backward (s', z) : property =
     let hash (s, z) = Hashtbl.hash (Lr1.number s, z)
     type label = int * Terminal.t Seq.seq
     let weight (w, _) = w
-    let source = (s', z)
+    let sources f = f (s', z)
     let successors edge (s', z) =
       match Lr1.incoming_symbol s' with
       | None ->
