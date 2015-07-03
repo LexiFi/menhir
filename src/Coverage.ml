@@ -90,6 +90,38 @@ let foreach_production nt (f : Production.index -> property) : property =
     P.min_lazy accu (fun () -> f prod)
   )
 
+(* The automaton, viewed as a graph, whose vertices are states.
+   We label each edge with the minimum length of a word that it
+   generates. This allows us to compute a lower bound on the
+   distance to every state from any entry state. *)
+
+module ForwardAutomaton = struct
+
+  type vertex =
+    Lr1.node
+
+  let equal s1 s2 =
+    Lr1.Node.compare s1 s2
+
+  let hash s =
+    Hashtbl.hash (Lr1.number s)
+
+  type label =
+    int
+
+  let weight w = w
+
+  let sources f =
+    (* The sources are the entry states. *)
+    ProductionMap.iter (fun _ s -> f s) Lr1.entry
+
+  let successors edge s =
+    SymbolMap.iter (fun sym s' ->
+      edge (CompletedNatWitness.to_int (Analysis.minimal_symbol sym)) s'
+    ) (Lr1.transitions s)
+
+end
+
 (* A question takes the form [s, a, prod, i, z], as defined below.
 
    Such a question means: what is the set of terminal words [w]
