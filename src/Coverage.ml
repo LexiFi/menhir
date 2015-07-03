@@ -226,6 +226,8 @@ let answer (q : question) (get : question -> property) : property =
 let qs = ref 0
 let answer q get =
   incr qs;
+  if !qs mod 10000 = 0 then
+    Printf.fprintf stderr "%d\n%!" !qs;
   answer q get
 
 module F =
@@ -239,9 +241,6 @@ module F =
 let answer : question -> property =
   F.lfp answer
 
-(* TEMPORARY should limit backward search to states that are reachable from [s]
-   important (at least) when there are several initial states *)
-
 module Q = struct
   type t = Lr1.node * Terminal.t
   let compare (s'1, z1) (s'2, z2) =
@@ -250,7 +249,7 @@ module Q = struct
     ))
 end
 
-let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
+let backward relevant s ((s', z) : Q.t) (get : Q.t -> property) : property =
   if Lr1.Node.compare s s' = 0 then
     P.epsilon
   else
@@ -260,20 +259,26 @@ let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
         P.bottom
     | Some (Symbol.T t) ->
         List.fold_left (fun accu pred ->
-          P.min_lazy accu (lazy (
-            P.add (get (pred, t)) (P.singleton t)
-          ))
+          if relevant pred then
+            P.min_lazy accu (lazy (
+              P.add (get (pred, t)) (P.singleton t)
+            ))
+          else
+            P.bottom
         ) P.bottom (Lr1.predecessors s')
     | Some (Symbol.N nt) ->
         List.fold_left (fun accu pred ->
           P.min_lazy accu (lazy (
-            foreach_production nt (fun prod ->
-              foreach_terminal_in (first prod 0 z) (fun a ->
-                P.add_lazy
-                  (get (pred, a))
-                  (lazy (answer { s = pred; a = a; prod = prod; i = 0; z = z }))
+            if relevant pred then
+              foreach_production nt (fun prod ->
+                foreach_terminal_in (first prod 0 z) (fun a ->
+                  P.add_lazy
+                    (get (pred, a))
+                    (lazy (answer { s = pred; a = a; prod = prod; i = 0; z = z }))
+                )
               )
-            )
+            else
+              P.bottom
           ))
         ) P.bottom (Lr1.predecessors s')
 
@@ -288,13 +293,24 @@ module G =
       type property = Terminal.t t
      end)
 
-let backward s : Q.t -> property =
-  G.lfp (backward s)
+let backward relevant s : Q.t -> property =
+  G.lfp (backward relevant s)
 
 let backward s s' : property =
-  foreach_terminal (fun z ->
-    P.add (backward s (s', z)) (P.singleton z)
-  )
+  
+  (* Compute which states can reach the goal state [s']. *)
+  let relevant = Lr1.reverse_dfs s' in
+
+  (* If [s] cannot reach [s'], there is no need to look for a path. *)
+  if not (relevant s) then
+    P.bottom
+
+  else
+    foreach_terminal (fun z ->
+      (* TEMPORARY should iterate this loop only until we find a [z] that causes
+         an error in state [s'] *)
+      P.add (backward relevant s (s', z)) (P.singleton z)
+    )
 
 (* Test. *)
 (* TEMPORARY ne marche que s'il y a un seul point d'entr'ee.
