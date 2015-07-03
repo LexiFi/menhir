@@ -16,6 +16,6 @@ val add: t -> t -> t
 val min_lazy: t -> (unit -> t) -> t
 val add_lazy: t -> (unit -> t) -> t
 
-val until_finite: t -> t Lazy.t -> t
+val until_finite: t -> (unit -> t) -> t
 
 val print: t -> string

@@ -57,7 +57,7 @@ let until_finite p1 p2 =
   | Finite _ ->
       p1
   | Infinity ->
-      Lazy.force p2
+      p2()
 
 let add p1 p2 =
   match p1, p2 with

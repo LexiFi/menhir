@@ -77,21 +77,18 @@ let first prod i z =
 
 let foreach_terminal (f : Terminal.t -> property) : property =
   Terminal.fold (fun t accu ->
-    (* A feeble attempt at being slightly lazy. Not essential. *)
     P.min_lazy accu (fun () -> f t)
   ) P.bottom
 
 let foreach_terminal_in toks (f : Terminal.t -> property) : property =
   TerminalSet.fold (fun t accu ->
-    (* A feeble attempt at being slightly lazy. Not essential. *)
     P.min_lazy accu (fun () -> f t)
   ) toks P.bottom
 
 let foreach_terminal_until_finite (f : Terminal.t -> property) : property =
   Terminal.fold (fun t accu ->
-    (* Here, laziness is important. We stop as soon as we obtain a
-       finite result. *)
-    P.until_finite accu (lazy (f t))
+    (* We stop as soon as we obtain a finite result. *)
+    P.until_finite accu (fun () -> f t)
   ) P.bottom
 
 (* This computes a minimum over the productions associated with [nt]. *)
@@ -338,7 +335,7 @@ let backward s' : property =
       accu
 
     else
-      P.until_finite accu (lazy (
+      P.until_finite accu (fun () ->
 
         Printf.fprintf stderr
           "Attempting to go from state %d to an error in state %d:\n%!"
@@ -351,7 +348,7 @@ let backward s' : property =
             P.bottom
         )
 
-      ))
+      )
   ) P.bottom
 
 (* Test. *)
