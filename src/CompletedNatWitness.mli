@@ -1,14 +1,11 @@
 (* This is an enriched version of [CompletedNat], where we compute not just
-   numbers, but also lists of matching length. During the fixed point
-   computation, instead of manipulating actual lists, we manipulate only
-   recipes for constructing lists. These recipes can be evaluated by the user
-   after the fixed point has been reached. *)
+   numbers, but also sequences of matching length. *)
 
 (* A property is either [Finite (n, xs)], where [n] is a natural number and
-   [xs] is a (recipe for constructing a) list of length [n]; or [Infinity]. *)
+   [xs] is a sequence of length [n]; or [Infinity]. *)
 
 type 'a t =
-| Finite of int * 'a list Lazy.t
+| Finite of int * 'a Seq.seq
 | Infinity
 
 val bottom: 'a t

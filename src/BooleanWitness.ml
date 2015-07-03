@@ -1,5 +1,5 @@
 type 'a t =
-| Reachable of 'a list Lazy.t
+| Reachable of 'a Seq.seq
 | Unreachable
 
 let equal p1 p2 =
@@ -14,10 +14,10 @@ let bottom =
   Unreachable
 
 let epsilon =
-  Reachable (lazy [])
+  Reachable Seq.empty
 
 let singleton x =
-  Reachable (lazy [x])
+  Reachable (Seq.singleton x)
 
 let is_maximal p =
   match p with
@@ -43,10 +43,7 @@ let min_lazy p1 p2 =
 let add p1 p2 =
   match p1, p2 with
   | Reachable xs1, Reachable xs2 ->
-      Reachable (
-        (* The only list operation in the code! *)
-        lazy (Lazy.force xs1 @ Lazy.force xs2)
-      )
+      Reachable (Seq.append xs1 xs2)
   | _, _ ->
       Unreachable
 
@@ -60,6 +57,6 @@ let add_lazy p1 p2 =
 let print conv p =
   match p with
   | Reachable xs ->
-      String.concat " " (List.map conv (Lazy.force xs))
+      String.concat " " (List.map conv (Seq.elements xs))
   | Unreachable ->
       "unreachable"

@@ -1036,13 +1036,13 @@ module MINIMAL =
     (struct
       open CompletedNatWitness
       (* A terminal symbol has length 1. *)
-      let terminal t = Finite (1, lazy [t])
+      let terminal = singleton
       (* The length of an alternative is the minimum length of any branch. *)
       let disjunction = min_lazy
       (* The length of a sequence is the sum of the lengths of the members. *)
       let conjunction _ = add_lazy
       (* The epsilon sequence has length 0. *)
-      let epsilon = Finite (0, lazy [])
+      let epsilon = epsilon
      end)
 
 (* ------------------------------------------------------------------------ *)

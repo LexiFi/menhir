@@ -1,14 +1,11 @@
 (* This is an enriched version of [CompletedNat], where we compute not just
-   numbers, but also lists of matching length. During the fixed point
-   computation, instead of manipulating actual lists, we manipulate only
-   recipes for constructing lists. These recipes can be evaluated by the user
-   after the fixed point has been reached. *)
+   numbers, but also sequences of matching length. *)
 
 (* A property is either [Finite (n, xs)], where [n] is a natural number and
-   [xs] is a (recipe for constructing a) list of length [n]; or [Infinity]. *)
+   [xs] is a sequence of length [n]; or [Infinity]. *)
 
 type 'a t =
-| Finite of int * 'a list Lazy.t
+| Finite of int * 'a Seq.seq
 | Infinity
 
 let equal p1 p2 =
@@ -24,10 +21,10 @@ let bottom =
   Infinity
 
 let epsilon =
-  Finite (0, lazy [])
+  Finite (0, Seq.empty)
 
 let singleton x =
-  Finite (1, lazy [x])
+  Finite (1, Seq.singleton x)
 
 let is_maximal p =
   match p with
@@ -65,11 +62,7 @@ let until_finite p1 p2 =
 let add p1 p2 =
   match p1, p2 with
   | Finite (i1, xs1), Finite (i2, xs2) ->
-      Finite (
-        i1 + i2,
-        (* The only list operation in the code! *)
-        lazy (Lazy.force xs1 @ Lazy.force xs2)
-      )
+      Finite (i1 + i2, Seq.append xs1 xs2)
   | _, _ ->
       Infinity
 
@@ -84,6 +77,6 @@ let print conv p =
   match p with
   | Finite (i, xs) ->
       string_of_int i ^ " " ^
-      String.concat " " (List.map conv (Lazy.force xs))
+      String.concat " " (List.map conv (Seq.elements xs))
   | Infinity ->
       "infinity"

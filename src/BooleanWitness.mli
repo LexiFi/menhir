@@ -1,15 +1,11 @@
 (* This is an enriched version of [Boolean], where we compute not just a
    Boolean property, [Unreachable] or [Reachable], but also (in the latter
-   case) a path (a list). During the fixed point computation, instead of
-   manipulating actual lists, we manipulate only recipes for constructing
-   lists. These recipes can be evaluated by the user after the fixed point has
-   been reached. *)
+   case) a path (a sequence). *)
 
-(* A property is either [Reachable xs], where [xs] is a (recipe for
-   constructing a) path; or [Unreachable]. *)
+(* A property is either [Reachable xs], where [xs] is a path; or [Unreachable]. *)
 
 type 'a t =
-| Reachable of 'a list Lazy.t
+| Reachable of 'a Seq.seq
 | Unreachable
 
 val bottom: 'a t
