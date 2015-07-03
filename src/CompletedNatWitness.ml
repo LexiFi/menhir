@@ -48,6 +48,17 @@ let min_lazy p1 p2 =
   | _ ->
       min p1 (p2())
 
+let min_cutoff p1 p2 =
+  match p1 with
+  | Finite (0, _) ->
+      p1
+  | Finite (i1, _) ->
+      (* Pass [i1] as a cutoff value to [p2]. *)
+      min p1 (p2 i1)
+  | Infinity ->
+      (* Pass [max_int] to indicate no cutoff. *)
+      p2 max_int
+
 (* [until_finite] can be viewed as a variant of [min_lazy] where
    we are happy as soon as we find a finite value. It can be viewed
    as a minimum operation for the partial ordering where [Infinity]
