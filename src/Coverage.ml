@@ -350,9 +350,6 @@ let backward s' : property =
   ) P.bottom
 
 (* Test. *)
-(* TEMPORARY ne marche que s'il y a un seul point d'entr'ee.
-   S'il y en a plusieurs, il faudrait 'eviter de tester ceux qui
-   certainement ne donneront rien (inaccessible). *)
 
 let () =
   Lr1.iter (fun s' ->
