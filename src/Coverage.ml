@@ -72,11 +72,6 @@ let first prod i z =
 
 (* This computes a minimum over a set of terminal symbols. *)
 
-let foreach_terminal (f : Terminal.t -> property) : property =
-  Terminal.fold (fun t accu ->
-    P.min_lazy accu (fun () -> f t)
-  ) P.bottom
-
 let foreach_terminal_in toks (f : Terminal.t -> property) : property =
   TerminalSet.fold (fun t accu ->
     P.min_lazy accu (fun () -> f t)
