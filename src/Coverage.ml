@@ -249,7 +249,7 @@ module Q = struct
     ))
 end
 
-let backward relevant s ((s', z) : Q.t) (get : Q.t -> property) : property =
+let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
   if Lr1.Node.compare s s' = 0 then
     P.epsilon
   else
@@ -259,26 +259,20 @@ let backward relevant s ((s', z) : Q.t) (get : Q.t -> property) : property =
         P.bottom
     | Some (Symbol.T t) ->
         List.fold_left (fun accu pred ->
-          if relevant pred then
-            P.min_lazy accu (lazy (
-              P.add (get (pred, t)) (P.singleton t)
-            ))
-          else
-            P.bottom
+          P.min_lazy accu (lazy (
+            P.add (get (pred, t)) (P.singleton t)
+          ))
         ) P.bottom (Lr1.predecessors s')
     | Some (Symbol.N nt) ->
         List.fold_left (fun accu pred ->
           P.min_lazy accu (lazy (
-            if relevant pred then
-              foreach_production nt (fun prod ->
-                foreach_terminal_in (first prod 0 z) (fun a ->
-                  P.add_lazy
-                    (get (pred, a))
-                    (lazy (answer { s = pred; a = a; prod = prod; i = 0; z = z }))
-                )
+            foreach_production nt (fun prod ->
+              foreach_terminal_in (first prod 0 z) (fun a ->
+                P.add_lazy
+                  (get (pred, a))
+                  (lazy (answer { s = pred; a = a; prod = prod; i = 0; z = z }))
               )
-            else
-              P.bottom
+            )
           ))
         ) P.bottom (Lr1.predecessors s')
 
@@ -293,8 +287,8 @@ module G =
       type property = Terminal.t t
      end)
 
-let backward relevant s : Q.t -> property =
-  G.lfp (backward relevant s)
+let backward s : Q.t -> property =
+  G.lfp (backward s)
 
 let backward s s' : property =
   
@@ -309,7 +303,7 @@ let backward s s' : property =
     foreach_terminal (fun z ->
       (* TEMPORARY should iterate this loop only until we find a [z] that causes
          an error in state [s'] *)
-      P.add (backward relevant s (s', z)) (P.singleton z)
+      P.add (backward s (s', z)) (P.singleton z)
     )
 
 (* Test. *)
