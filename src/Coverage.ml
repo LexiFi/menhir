@@ -225,15 +225,6 @@ let answer (q : question) (get : question -> property) : property =
   end
 
 (* Debugging wrapper. TEMPORARY *)
-(*
-let answer (q : question) (get : question -> property) : property =
-  print_question q;
-  let p = answer q get in
-  Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
-  p
- *)
-
-(* Debugging wrapper. TEMPORARY *)
 let qs = ref 0
 let answer q get =
   incr qs;
@@ -262,34 +253,6 @@ end
 
 module QM =
   Map.Make(Q)
-
-let foreach_predecessor s f =
-  List.fold_left (fun accu pred ->
-    P.min_lazy accu (fun () -> f pred)
-  ) P.bottom (Lr1.predecessors s)
-
-let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
-  if Lr1.Node.compare s s' = 0 then
-    P.epsilon
-  else
-    match Lr1.incoming_symbol s' with
-    | None ->
-        (* We have reached a start symbol, but not the one we hoped for. *)
-        P.bottom
-    | Some (Symbol.T t) ->
-        foreach_predecessor s' (fun pred ->
-          P.add (get (pred, t)) (P.singleton t)
-        )
-    | Some (Symbol.N nt) ->
-        foreach_predecessor s' (fun pred ->
-          foreach_production nt (fun prod ->
-            foreach_terminal_in (first prod 0 z) (fun a ->
-              P.add_lazy
-                (get (pred, a))
-                (fun () -> answer { s = pred; a = a; prod = prod; i = 0; z = z })
-            )
-          )
-        )
 
 let es = ref 0
 
@@ -351,54 +314,6 @@ let arriere s' : property =
       P.bottom
   )
 
-(* Debugging wrapper. TEMPORARY *)
-let bs = ref 0
-let backward s q get =
-  incr bs;
-  if !bs mod 10000 = 0 then
-    Printf.fprintf stderr "bs = %d\n%!" !bs;
-  backward s q get
-
-module G =
-  Fix.Make
-    (Maps.PersistentMapsToImperativeMaps(QM)) (* TEMPORARY could use a square matrix instead *)
-    (struct
-      include P
-      type property = Terminal.t t
-     end)
-
-let backward s : Q.t -> property =
-  G.lfp (backward s)
-
-let backward s' : property =
-  
-  (* Compute which states can reach the goal state [s']. *)
-  let relevant = Lr1.reverse_dfs s' in
-
-  (* Iterate over all possible start states. *)
-  Lr1.fold_entry (fun _ s _ _ accu ->
-
-    (* If [s] cannot reach [s'], there is no need to look for a path. *)
-    if not (relevant s) then
-      accu
-
-    else
-      P.until_finite accu (fun () ->
-
-        Printf.fprintf stderr
-          "Attempting to go from state %d to an error in state %d:\n%!"
-          (Lr1.number s) (Lr1.number s');
-
-        foreach_terminal_until_finite (fun z ->
-          if causes_an_error s' z then
-            P.add (backward s (s', z)) (P.singleton z)
-          else
-            P.bottom
-        )
-
-      )
-  ) P.bottom
-
 (* Test. *)
 
 let () =
@@ -406,7 +321,6 @@ let () =
     let p = arriere s' in
     Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
     Printf.fprintf stderr "Questions asked so far: %d\n" !qs;
-    Printf.fprintf stderr "Backward searches so far: %d\n" !bs;
     Printf.fprintf stderr "Edges so far: %d\n" !es
   )
 
