@@ -84,6 +84,18 @@ let add_lazy p1 p2 =
   | _ ->
       add p1 (p2())
 
+let add_cutoff cutoff p1 p2 =
+  match p1 with
+  | Infinity ->
+      Infinity
+  | Finite (i1, _) ->
+      if cutoff <= i1 then
+        (* Cut. No need to evaluate [p2]. *)
+        Infinity
+      else
+        (* Evaluate [p2], with an adjusted cutoff value. *)
+        add p1 (p2 (cutoff - i1))
+
 let print conv p =
   match p with
   | Finite (i, xs) ->

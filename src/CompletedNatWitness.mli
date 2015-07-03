@@ -22,6 +22,7 @@ val min_lazy: 'a t -> (unit -> 'a t) -> 'a t
 val add_lazy: 'a t -> (unit -> 'a t) -> 'a t
 
 val min_cutoff: 'a t -> (int -> 'a t) -> 'a t
+val add_cutoff: (* cutoff: *) int -> 'a t -> (int -> 'a t) -> 'a t
 
 val until_finite: 'a t -> (unit -> 'a t) -> 'a t
 
