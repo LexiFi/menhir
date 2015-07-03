@@ -95,7 +95,6 @@ let foreach_terminal_until_finite (f : Terminal.t -> property) : property =
 
 let foreach_production nt (f : Production.index -> property) : property =
   Production.foldnt nt P.bottom (fun prod accu ->
-    (* A feeble attempt at being slightly lazy. Not essential. *)
     P.min_lazy accu (fun () -> f prod)
   )
 
@@ -137,22 +136,18 @@ let print_question q =
     (Item.print (Item.import (q.prod, q.i)))
     (Terminal.print q.z)
 
-let lexico cmp x1 x2 rest =
-  let c = cmp x1 x2 in
-  if c <> 0 then c else Lazy.force rest
-
 module Question = struct
   type t = question
   let compare q1 q2 =
-    lexico Lr1.Node.compare q1.s q2.s (lazy (
-      lexico Terminal.compare q1.a q2.a (lazy (
-        lexico Production.compare q1.prod q2.prod (lazy (
-          lexico Pervasives.compare q1.i q2.i (lazy (
-            Terminal.compare q1.z q2.z
-          ))
-        ))
-      ))
-    ))
+    let c = Lr1.Node.compare q1.s q2.s in
+    if c <> 0 then c else
+    let c = Terminal.compare q1.a q2.a in
+    if c <> 0 then c else
+    let c = Production.compare q1.prod q2.prod in
+    if c <> 0 then c else
+    let c = Pervasives.compare q1.i q2.i in
+    if c <> 0 then c else
+    Terminal.compare q1.z q2.z
 end
 
 module QuestionMap =
@@ -268,9 +263,9 @@ let answer : question -> property =
 module Q = struct
   type t = Lr1.node * Terminal.t
   let compare (s'1, z1) (s'2, z2) =
-    lexico Lr1.Node.compare s'1 s'2 (lazy (
-      Terminal.compare z1 z2
-    ))
+    let c = Lr1.Node.compare s'1 s'2 in
+    if c <> 0 then c else
+    Terminal.compare z1 z2
 end
 
 let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
