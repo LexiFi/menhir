@@ -26,3 +26,10 @@ let rec elements xs accu =
 
 let elements xs =
   elements xs []
+
+let rec concat xss =
+  match xss with
+  | [] ->
+      empty
+  | xs :: xss ->
+      append xs (concat xss)
