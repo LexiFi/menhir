@@ -268,6 +268,9 @@ module Q = struct
     Terminal.compare z1 z2
 end
 
+module QM =
+  Map.Make(Q)
+
 let foreach_predecessor s f =
   List.fold_left (fun accu pred ->
     P.min_lazy accu (fun () -> f pred)
@@ -296,6 +299,87 @@ let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
           )
         )
 
+let es = ref 0
+
+exception Success
+let arriere s (s', z) =
+  let module G = struct
+    type vertex = Q.t
+    type label = unit (* TEMPORARY *)
+    module M = Maps.PersistentMapsToImperativeMaps(QM)
+    let marks = M.create()
+    let dummy = Mark.fresh()
+    let set_mark v mark =
+      M.add v mark marks
+    let get_mark v =
+      try
+        M.find v marks
+      with Not_found ->
+        dummy
+    let entry f =
+      f (s', z)
+    let successors edge (s', z) =
+      assert (Lr1.Node.compare s s' <> 0);
+      match Lr1.incoming_symbol s' with
+      | None ->
+          (* We have reached a start symbol, but not the one we hoped for. *)
+          ()
+      | Some (Symbol.T t) ->
+          List.iter (fun pred ->
+            edge () (pred, t)
+          ) (Lr1.predecessors s')
+      | Some (Symbol.N nt) ->
+          List.iter (fun pred ->
+            Production.foldnt nt () (fun prod () ->
+              TerminalSet.iter (fun a ->
+                let _w = answer { s = pred; a = a; prod = prod; i = 0; z = z } in
+                edge () (pred, a)
+              ) (first prod 0 z)
+            )
+          ) (Lr1.predecessors s')
+  end in
+  let module B = Breadth.Make(G) in
+  try
+    if Lr1.Node.compare s s' = 0 then
+      raise Success;
+    B.search (fun _discovery _v () (v', _) ->
+      incr es;
+      if !es mod 10000 = 0 then
+        Printf.fprintf stderr "es = %d\n%!" !es;
+      if Lr1.Node.compare v' s = 0 then
+        raise Success
+    );
+    Printf.fprintf stderr "Unreachable.\n%!";
+    false
+  with Success ->
+    Printf.fprintf stderr "Got it.\n%!";
+    true
+
+let arriere s' : bool =
+  
+  (* Compute which states can reach the goal state [s']. *)
+  let relevant = Lr1.reverse_dfs s' in
+
+  (* Iterate over all possible start states. *)
+  Lr1.fold_entry (fun _ s _ _ accu ->
+    accu ||
+
+    (* If [s] cannot reach [s'], there is no need to look for a path. *)
+    relevant s && begin
+
+      Printf.fprintf stderr
+        "Attempting to go from state %d to an error in state %d:\n%!"
+        (Lr1.number s) (Lr1.number s');
+
+      Terminal.fold (fun z accu ->
+        accu ||
+        causes_an_error s z &&
+        arriere s (s', z)
+      ) accu
+
+    end
+  ) false
+
 (* Debugging wrapper. TEMPORARY *)
 let bs = ref 0
 let backward s q get =
@@ -303,9 +387,6 @@ let backward s q get =
   if !bs mod 10000 = 0 then
     Printf.fprintf stderr "bs = %d\n%!" !bs;
   backward s q get
-
-module QM =
-  Map.Make(Q)
 
 module G =
   Fix.Make
@@ -351,8 +432,11 @@ let backward s' : property =
 
 let () =
   Lr1.iter (fun s' ->
-    let p = backward s' in
-    Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
+    let p = arriere s' in
+    (* Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p); *)
+    Printf.fprintf stderr "%b\n%!" p;
     Printf.fprintf stderr "Questions asked so far: %d\n" !qs;
-    Printf.fprintf stderr "Backward searches so far: %d\n" !bs
+    Printf.fprintf stderr "Backward searches so far: %d\n" !bs;
+    Printf.fprintf stderr "Edges so far: %d\n" !es
   )
+
