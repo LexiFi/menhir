@@ -1,5 +1,7 @@
 open Grammar
 
+let second = true
+
 (* Using [CompletedNatWitness] means that we wish to compute shortest paths.
    An alternative would be to use [BooleanWitness], which offers the same
    interface. That would mean we wish to compute an arbitrary path. That
@@ -10,6 +12,10 @@ module P =
        
 (* TEMPORARY check no symbol produces the empty language? *)
 (* TEMPORARY avoid [error] token unless forced to use it *)
+(* TEMPORARY restrict first analysis to [Reduce] goals *)
+(* TEMPORARY try to improve efficiency by memoizing the result of costly loops *)
+(* TEMPORARY try to improve efficiency by memoizing [nullable_first_prod] *)
+(* TEMPORARY implement and exploit [Lr1.ImperativeNodeMap] using an array *)
 
 type property =
   Terminal.t P.t
@@ -247,9 +253,6 @@ let answer (q : question) (get : question -> property) : property =
                word that takes us from [s'], beginning with [c], to a state where
                we reach our original goal. *)
 
-            (* TEMPORARY not quite sure that the reduction of [prod'] will take
-               us back to state [s], as hoped. *)
-
             P.min begin
 
             foreach_terminal_in (first q.prod (q.i + 1) q.z) (fun c ->
@@ -316,11 +319,12 @@ let path s prod s' =
         }
       )
     ) (P.singleton z)
-  )
+                   )
 
 (* Test. *)
 
 let () =
+  if not second then
   Lr1.iter (fun s' ->
     Lr1.fold_entry (fun prod s _ _ () ->
       Printf.fprintf stderr "Attempting to go from state %d to state %d:\n%!"
@@ -331,3 +335,77 @@ let () =
     ) ()
   )
 (* Note the last symbol in the path plays a special role. It is not consumed. *)
+
+(* TEMPORARY should limit backward search to states that are reachable from [s]
+   important (at least) when there are several initial states *)
+
+module Q = struct
+  type t = Lr1.node * Terminal.t
+  let compare (s'1, z1) (s'2, z2) =
+    lexico Lr1.Node.compare s'1 s'2 (lazy (
+      Terminal.compare z1 z2
+    ))
+end
+
+let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
+  if Lr1.Node.compare s s' = 0 then
+    P.epsilon
+  else
+    match Lr1.incoming_symbol s' with
+    | None ->
+        (* We have reached a start symbol, but not the one we hoped for. *)
+        P.bottom
+    | Some (Symbol.T t) ->
+        List.fold_left (fun accu pred ->
+          P.min_lazy accu (lazy (
+            P.add (get (pred, t)) (P.singleton t)
+          ))
+        ) P.bottom (Lr1.predecessors s')
+    | Some (Symbol.N nt) ->
+        List.fold_left (fun accu pred ->
+          P.min_lazy accu (lazy (
+            foreach_production nt (fun prod ->
+              foreach_terminal_in (first prod 0 z) (fun a ->
+                P.add_lazy
+                  (get (pred, a))
+                  (lazy (answer { s = pred; a = a; prod = prod; i = 0; z = z; goal = Reduce }))
+              )
+            )
+          ))
+        ) P.bottom (Lr1.predecessors s')
+
+module QM =
+  Map.Make(Q)
+
+module G =
+  Fix.Make
+    (Maps.PersistentMapsToImperativeMaps(QM)) (* TEMPORARY could use a square matrix instead *)
+    (struct
+      include P
+      type property = Terminal.t t
+     end)
+
+let backward s : Q.t -> property =
+  G.lfp (backward s)
+
+let backward s s' : property =
+  foreach_terminal (fun z ->
+    P.add (backward s (s', z)) (P.singleton z)
+  )
+
+(* Test. *)
+(* TEMPORARY ne marche que s'il y a un seul point d'entr'ee.
+   S'il y en a plusieurs, il faudrait 'eviter de tester ceux qui
+   certainement ne donneront rien (inaccessible). *)
+
+let () =
+  if second then
+  Lr1.iter (fun s' ->
+    Lr1.fold_entry (fun _ s _ _ () ->
+      Printf.fprintf stderr "Attempting to go from state %d to state %d:\n%!"
+        (Lr1.number s) (Lr1.number s');
+      let p = backward s s' in
+      Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
+      Printf.fprintf stderr "Questions asked so far: %d\n" !qs
+    ) ()
+  )
