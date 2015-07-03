@@ -17,17 +17,28 @@ module P =
 type property =
   Terminal.t P.t
 
+(* This tests whether state [s] has a default reduction on [prod]. *)
+
+let has_default_reduction s prod =
+  match Invariant.has_default_reduction s with
+  | Some (prod', _) ->
+      prod = prod'
+  | None ->
+      false
+
 (* This tests whether state [s] is willing to reduce production [prod]
-   when the lookahead symbol is [z]. *)
+   when the lookahead symbol is [z]. This test takes a possible default
+   reduction into account. *)
+
+let reductions s z =
+  try
+    TerminalMap.find z (Lr1.reductions s)
+  with Not_found ->
+    []
 
 let has_reduction s prod z : bool =
-  let prods =
-    try
-      TerminalMap.find z (Lr1.reductions s)
-    with Not_found ->
-      []
-  in
-  List.mem prod prods
+  has_default_reduction s prod ||
+  List.mem prod (reductions s z)
 
 (* This tests whether state [s] has an outgoing transition labeled [sym].
    If so, [s'] is passed to the continuation [k]. Otherwise, [P.bottom] is
@@ -39,6 +50,18 @@ let has_transition s sym k : property =
     k s'
   with Not_found ->
     P.bottom
+
+(* This tests whether state [s] will initiate an error on the lookahead
+   symbol [z]. *)
+
+let causes_an_error s z =
+  not (Terminal.equal z Terminal.error) &&
+  match Invariant.has_default_reduction s with
+  | Some _ ->
+      false
+  | None ->
+      reductions s z = [] &&
+      not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
 
 (* This computes [FIRST(alpha.z)], where [alpha] is the suffix determined
    by [prod] and [i]. *)
@@ -301,9 +324,10 @@ let backward s s' : property =
 
   else
     foreach_terminal (fun z ->
-      (* TEMPORARY should iterate this loop only until we find a [z] that causes
-         an error in state [s'] *)
-      P.add (backward s (s', z)) (P.singleton z)
+      if causes_an_error s z then
+        P.add (backward s (s', z)) (P.singleton z)
+      else
+        P.bottom
     )
 
 (* Test. *)
@@ -314,7 +338,7 @@ let backward s s' : property =
 let () =
   Lr1.iter (fun s' ->
     Lr1.fold_entry (fun _ s _ _ () ->
-      Printf.fprintf stderr "Attempting to go from state %d to state %d:\n%!"
+      Printf.fprintf stderr "Attempting to go from state %d to an error in state %d:\n%!"
         (Lr1.number s) (Lr1.number s');
       let p = backward s s' in
       Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
