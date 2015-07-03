@@ -320,22 +320,34 @@ module G =
 let backward s : Q.t -> property =
   G.lfp (backward s)
 
-let backward s s' : property =
+let backward s' : property =
   
   (* Compute which states can reach the goal state [s']. *)
   let relevant = Lr1.reverse_dfs s' in
 
-  (* If [s] cannot reach [s'], there is no need to look for a path. *)
-  if not (relevant s) then
-    P.bottom
+  (* Iterate over all possible start states. *)
+  Lr1.fold_entry (fun _ s _ _ accu ->
 
-  else
-    foreach_terminal_until_finite (fun z ->
-      if causes_an_error s z then
-        P.add (backward s (s', z)) (P.singleton z)
-      else
-        P.bottom
-    )
+    (* If [s] cannot reach [s'], there is no need to look for a path. *)
+    if not (relevant s) then
+      accu
+
+    else
+      P.until_finite accu (lazy (
+
+        Printf.fprintf stderr
+          "Attempting to go from state %d to an error in state %d:\n%!"
+          (Lr1.number s) (Lr1.number s');
+
+        foreach_terminal_until_finite (fun z ->
+          if causes_an_error s z then
+            P.add (backward s (s', z)) (P.singleton z)
+          else
+            P.bottom
+        )
+
+      ))
+  ) P.bottom
 
 (* Test. *)
 (* TEMPORARY ne marche que s'il y a un seul point d'entr'ee.
@@ -344,11 +356,7 @@ let backward s s' : property =
 
 let () =
   Lr1.iter (fun s' ->
-    Lr1.fold_entry (fun _ s _ _ () ->
-      Printf.fprintf stderr "Attempting to go from state %d to an error in state %d:\n%!"
-        (Lr1.number s) (Lr1.number s');
-      let p = backward s s' in
-      Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
-      Printf.fprintf stderr "Questions asked so far: %d\n" !qs
-    ) ()
+    let p = backward s' in
+    Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
+    Printf.fprintf stderr "Questions asked so far: %d\n" !qs
   )
