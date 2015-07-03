@@ -243,24 +243,14 @@ module F =
 let answer : question -> property =
   F.lfp answer
 
-module Q = struct
-  type t = Lr1.node * Terminal.t
-  let compare (s'1, z1) (s'2, z2) =
-    let c = Lr1.Node.compare s'1 s'2 in
-    if c <> 0 then c else
-    Terminal.compare z1 z2
-end
-
-module QM =
-  Map.Make(Q)
-
 let es = ref 0
 
 exception Success of property
-let arriere (s', z) : property =
+let backward (s', z) : property =
   let module G = struct
-    type vertex = Q.t
-    let equal v1 v2 = Q.compare v1 v2 = 0
+    type vertex = Lr1.node * Terminal.t
+    let equal (s'1, z1) (s'2, z2) =
+      Lr1.Node.compare s'1 s'2 = 0 && Terminal.compare z1 z2 = 0
     let hash (s, z) = Hashtbl.hash (Lr1.number s, z)
     type label = int * Terminal.t Seq.seq
     let weight (w, _) = w
@@ -301,7 +291,7 @@ let arriere (s', z) : property =
   with Success p ->
     p
 
-let arriere s' : property =
+let backward s' : property =
   
   Printf.fprintf stderr
     "Attempting to reach an error in state %d:\n%!"
@@ -309,7 +299,7 @@ let arriere s' : property =
 
   foreach_terminal_until_finite (fun z ->
     if causes_an_error s' z then
-      P.add (arriere (s', z)) (P.singleton z)
+      P.add (backward (s', z)) (P.singleton z)
     else
       P.bottom
   )
@@ -318,7 +308,7 @@ let arriere s' : property =
 
 let () =
   Lr1.iter (fun s' ->
-    let p = arriere s' in
+    let p = backward s' in
     Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
     Printf.fprintf stderr "Questions asked so far: %d\n" !qs;
     Printf.fprintf stderr "Edges so far: %d\n" !es
