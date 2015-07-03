@@ -268,6 +268,11 @@ module Q = struct
     Terminal.compare z1 z2
 end
 
+let foreach_predecessor s f =
+  List.fold_left (fun accu pred ->
+    P.min_lazy accu (fun () -> f pred)
+  ) P.bottom (Lr1.predecessors s)
+
 let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
   if Lr1.Node.compare s s' = 0 then
     P.epsilon
@@ -277,23 +282,19 @@ let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
         (* We have reached a start symbol, but not the one we hoped for. *)
         P.bottom
     | Some (Symbol.T t) ->
-        List.fold_left (fun accu pred ->
-          P.min_lazy accu (fun () ->
-            P.add (get (pred, t)) (P.singleton t)
-          )
-        ) P.bottom (Lr1.predecessors s')
+        foreach_predecessor s' (fun pred ->
+          P.add (get (pred, t)) (P.singleton t)
+        )
     | Some (Symbol.N nt) ->
-        List.fold_left (fun accu pred ->
-          P.min_lazy accu (fun () ->
-            foreach_production nt (fun prod ->
-              foreach_terminal_in (first prod 0 z) (fun a ->
-                P.add_lazy
-                  (get (pred, a))
-                  (fun () -> answer { s = pred; a = a; prod = prod; i = 0; z = z })
-              )
+        foreach_predecessor s' (fun pred ->
+          foreach_production nt (fun prod ->
+            foreach_terminal_in (first prod 0 z) (fun a ->
+              P.add_lazy
+                (get (pred, a))
+                (fun () -> answer { s = pred; a = a; prod = prod; i = 0; z = z })
             )
           )
-        ) P.bottom (Lr1.predecessors s')
+        )
 
 (* Debugging wrapper. TEMPORARY *)
 let bs = ref 0
