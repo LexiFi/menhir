@@ -8,10 +8,7 @@ open Grammar
 module P =
   CompletedNatWitness
        
-(* TEMPORARY check no symbol produces the empty language? *)
 (* TEMPORARY avoid [error] token unless forced to use it *)
-(* TEMPORARY try to improve efficiency by memoizing the result of costly loops *)
-(* TEMPORARY try to improve efficiency by memoizing [nullable_first_prod] *)
 (* TEMPORARY implement and exploit [Lr1.ImperativeNodeMap] using an array *)
 
 type property =
