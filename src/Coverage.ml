@@ -87,6 +87,13 @@ let foreach_terminal_in toks (f : Terminal.t -> property) : property =
     P.min_lazy accu (lazy (f t))
   ) toks P.bottom
 
+let foreach_terminal_until_finite (f : Terminal.t -> property) : property =
+  Terminal.fold (fun t accu ->
+    (* Here, laziness is important. We stop as soon as we obtain a
+       finite result. *)
+    P.until_finite accu (lazy (f t))
+  ) P.bottom
+
 (* This computes a minimum over the productions associated with [nt]. *)
 
 let foreach_production nt (f : Production.index -> property) : property =
@@ -323,7 +330,7 @@ let backward s s' : property =
     P.bottom
 
   else
-    foreach_terminal (fun z ->
+    foreach_terminal_until_finite (fun z ->
       if causes_an_error s z then
         P.add (backward s (s', z)) (P.singleton z)
       else
