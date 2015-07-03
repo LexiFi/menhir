@@ -227,15 +227,12 @@ let answer (q : question) (get : question -> property) : property =
 
           foreach_terminal_in (first q.prod (q.i + 1) q.z) (fun c ->
             foreach_production nt (fun prod' ->
-              let w = 
-                if TerminalSet.mem q.a (first prod' 0 c) then
-                  get { s = q.s; a = q.a; prod = prod'; i = 0; z = c }
-                else
-                  P.bottom
-              in
-              P.add_lazy
-                w
-                (lazy (get { s = s'; a = c; prod = q.prod; i = q.i + 1; z = q.z }))
+              if TerminalSet.mem q.a (first prod' 0 c) then
+                P.add_lazy
+                  (get { s = q.s; a = q.a; prod = prod'; i = 0; z = c })
+                  (lazy (get { s = s'; a = c; prod = q.prod; i = q.i + 1; z = q.z }))
+              else
+                P.bottom
             )
           )
 
@@ -257,7 +254,7 @@ let qs = ref 0
 let answer q get =
   incr qs;
   if !qs mod 10000 = 0 then
-    Printf.fprintf stderr "%d\n%!" !qs;
+    Printf.fprintf stderr "qs = %d\n%!" !qs;
   answer q get
 
 module F =
@@ -305,6 +302,14 @@ let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
             )
           ))
         ) P.bottom (Lr1.predecessors s')
+
+(* Debugging wrapper. TEMPORARY *)
+let bs = ref 0
+let backward s q get =
+  incr bs;
+  if !bs mod 10000 = 0 then
+    Printf.fprintf stderr "bs = %d\n%!" !bs;
+  backward s q get
 
 module QM =
   Map.Make(Q)
@@ -355,5 +360,6 @@ let () =
   Lr1.iter (fun s' ->
     let p = backward s' in
     Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
-    Printf.fprintf stderr "Questions asked so far: %d\n" !qs
+    Printf.fprintf stderr "Questions asked so far: %d\n" !qs;
+    Printf.fprintf stderr "Backward searches so far: %d\n" !bs
   )
