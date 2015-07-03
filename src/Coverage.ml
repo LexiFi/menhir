@@ -117,7 +117,7 @@ module ForwardAutomaton = struct
 
   let successors edge s =
     SymbolMap.iter (fun sym s' ->
-      edge (CompletedNatWitness.to_int (Analysis.minimal_symbol sym)) s'
+      edge (P.to_int (Analysis.minimal_symbol sym)) s'
     ) (Lr1.transitions s)
 
 end
@@ -353,6 +353,11 @@ let () =
   Lr1.iter (fun s' ->
     let p = backward s' in
     Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
+    let approx = approximate s'
+    and real = P.to_int p - 1 in
+    assert (approx <= real);
+    if approx < real && real < max_int - 1 then
+        Printf.fprintf stderr "Approx = %d, real = %d\n" approx real;
     Printf.fprintf stderr "Questions asked so far: %d\n" !qs;
     Printf.fprintf stderr "Edges so far: %d\n" !es
   )
