@@ -301,83 +301,62 @@ let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
 
 let es = ref 0
 
-exception Success
-let arriere s (s', z) =
+exception Success of property
+let arriere (s', z) : bool =
   let module G = struct
     type vertex = Q.t
-    type label = unit (* TEMPORARY *)
-    module M = Maps.PersistentMapsToImperativeMaps(QM)
-    let marks = M.create()
-    let dummy = Mark.fresh()
-    let set_mark v mark =
-      M.add v mark marks
-    let get_mark v =
-      try
-        M.find v marks
-      with Not_found ->
-        dummy
-    let entry f =
-      f (s', z)
+    let equal v1 v2 = Q.compare v1 v2 = 0
+    let hash (s, z) = Hashtbl.hash (Lr1.number s, z)
+    type label = int * Terminal.t Seq.seq
+    let weight (w, _) = w
+    let source = (s', z)
     let successors edge (s', z) =
-      assert (Lr1.Node.compare s s' <> 0);
       match Lr1.incoming_symbol s' with
       | None ->
-          (* We have reached a start symbol, but not the one we hoped for. *)
+          (* A start symbol has no predecessors. *)
           ()
       | Some (Symbol.T t) ->
           List.iter (fun pred ->
-            edge () (pred, t)
+            edge (1, Seq.singleton t) (pred, t)
           ) (Lr1.predecessors s')
       | Some (Symbol.N nt) ->
           List.iter (fun pred ->
             Production.foldnt nt () (fun prod () ->
               TerminalSet.iter (fun a ->
-                let _w = answer { s = pred; a = a; prod = prod; i = 0; z = z } in
-                edge () (pred, a)
+                match answer { s = pred; a = a; prod = prod; i = 0; z = z } with
+                | P.Infinity ->
+                    ()
+                | P.Finite (w, ts) ->
+                    edge (w, ts) (pred, a)
               ) (first prod 0 z)
             )
           ) (Lr1.predecessors s')
   end in
-  let module B = Breadth.Make(G) in
+  let module D = Dijkstra.Make(G) in
   try
-    if Lr1.Node.compare s s' = 0 then
-      raise Success;
-    B.search (fun _discovery _v () (v', _) ->
+    D.search (fun (distance, (v', _), _path) ->
       incr es;
       if !es mod 10000 = 0 then
         Printf.fprintf stderr "es = %d\n%!" !es;
-      if Lr1.Node.compare v' s = 0 then
-        raise Success
+      if Lr1.incoming_symbol v' = None then
+        raise (Success (P.Finite (distance, Seq.empty))) (* TEMPORARY keep path *)
     );
     Printf.fprintf stderr "Unreachable.\n%!";
     false
-  with Success ->
+  with Success _ ->
     Printf.fprintf stderr "Got it.\n%!";
     true
 
 let arriere s' : bool =
   
-  (* Compute which states can reach the goal state [s']. *)
-  let relevant = Lr1.reverse_dfs s' in
+  Printf.fprintf stderr
+    "Attempting to reach an error in state %d:\n%!"
+    (Lr1.number s');
 
-  (* Iterate over all possible start states. *)
-  Lr1.fold_entry (fun _ s _ _ accu ->
+  Terminal.fold (fun z accu ->
     accu ||
-
-    (* If [s] cannot reach [s'], there is no need to look for a path. *)
-    relevant s && begin
-
-      Printf.fprintf stderr
-        "Attempting to go from state %d to an error in state %d:\n%!"
-        (Lr1.number s) (Lr1.number s');
-
-      Terminal.fold (fun z accu ->
-        accu ||
-        causes_an_error s z &&
-        arriere s (s', z)
-      ) accu
-
-    end
+      causes_an_error s' z &&
+      arriere (s', z)
   ) false
 
 (* Debugging wrapper. TEMPORARY *)
