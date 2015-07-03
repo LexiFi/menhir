@@ -103,3 +103,11 @@ let print conv p =
       String.concat " " (List.map conv (Seq.elements xs))
   | Infinity ->
       "infinity"
+
+let to_int p =
+  match p with
+  | Finite (i, _) ->
+      i
+  | Infinity ->
+      max_int
+
