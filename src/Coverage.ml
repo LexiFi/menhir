@@ -302,7 +302,7 @@ let backward s ((s', z) : Q.t) (get : Q.t -> property) : property =
 let es = ref 0
 
 exception Success of property
-let arriere (s', z) : bool =
+let arriere (s', z) : property =
   let module G = struct
     type vertex = Q.t
     let equal v1 v2 = Q.compare v1 v2 = 0
@@ -334,30 +334,30 @@ let arriere (s', z) : bool =
   end in
   let module D = Dijkstra.Make(G) in
   try
-    D.search (fun (distance, (v', _), _path) ->
+    D.search (fun (distance, (v', _), path) ->
       incr es;
       if !es mod 10000 = 0 then
         Printf.fprintf stderr "es = %d\n%!" !es;
       if Lr1.incoming_symbol v' = None then
-        raise (Success (P.Finite (distance, Seq.empty))) (* TEMPORARY keep path *)
+        let path = List.map snd path in
+        raise (Success (P.Finite (distance, Seq.concat path))) (* TEMPORARY keep path *)
     );
-    Printf.fprintf stderr "Unreachable.\n%!";
-    false
-  with Success _ ->
-    Printf.fprintf stderr "Got it.\n%!";
-    true
+    P.bottom
+  with Success p ->
+    p
 
-let arriere s' : bool =
+let arriere s' : property =
   
   Printf.fprintf stderr
     "Attempting to reach an error in state %d:\n%!"
     (Lr1.number s');
 
-  Terminal.fold (fun z accu ->
-    accu ||
-      causes_an_error s' z &&
-      arriere (s', z)
-  ) false
+  foreach_terminal_until_finite (fun z ->
+    if causes_an_error s' z then
+      P.add (arriere (s', z)) (P.singleton z)
+    else
+      P.bottom
+  )
 
 (* Debugging wrapper. TEMPORARY *)
 let bs = ref 0
@@ -398,7 +398,7 @@ let backward s' : property =
           (Lr1.number s) (Lr1.number s');
 
         foreach_terminal_until_finite (fun z ->
-          if causes_an_error s z then
+          if causes_an_error s' z then
             P.add (backward s (s', z)) (P.singleton z)
           else
             P.bottom
@@ -412,10 +412,16 @@ let backward s' : property =
 let () =
   Lr1.iter (fun s' ->
     let p = arriere s' in
-    (* Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p); *)
-    Printf.fprintf stderr "%b\n%!" p;
+    Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
     Printf.fprintf stderr "Questions asked so far: %d\n" !qs;
     Printf.fprintf stderr "Backward searches so far: %d\n" !bs;
     Printf.fprintf stderr "Edges so far: %d\n" !es
   )
 
+(* TEMPORARY
+   does it make sense to use A*?
+   use [MINIMAL] and [Dijkstra] to compute an under-approximation of the distance
+   of any state [s'] to an entry state
+   It should work very well, because most of the time this should be a very good
+   under-approximation (it should be equal to the true distance).
+*)
