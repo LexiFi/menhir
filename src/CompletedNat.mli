@@ -7,10 +7,15 @@ type t =
 
 include Fix.PROPERTY with type property = t
 
+val epsilon: t
+val singleton: 'a -> t
+
 val min: t -> t -> t
 val add: t -> t -> t
 
 val min_lazy: t -> t Lazy.t -> t
 val add_lazy: t -> t Lazy.t -> t
+
+val until_finite: t -> t Lazy.t -> t
 
 val print: t -> string

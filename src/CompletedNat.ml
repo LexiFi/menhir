@@ -20,6 +20,12 @@ let equal p1 p2 =
 let bottom =
   Infinity
 
+let epsilon =
+  Finite 0
+
+let singleton _ =
+  Finite 1
+
 let is_maximal p =
   match p with
   | Finite 0 ->
@@ -41,6 +47,13 @@ let min_lazy p1 p2 =
       p1
   | _ ->
       min p1 (Lazy.force p2)
+
+let until_finite p1 p2 =
+  match p1 with
+  | Finite _ ->
+      p1
+  | Infinity ->
+      Lazy.force p2
 
 let add p1 p2 =
   match p1, p2 with
