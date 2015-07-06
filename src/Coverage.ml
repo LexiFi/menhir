@@ -389,7 +389,7 @@ let backward (s', z) : P.property =
   let module G = struct
 
     (* A vertex is a pair [s, z]. *)
-    type vertex =
+    type node =
         Lr1.node * Terminal.t
 
     let equal (s'1, z1) (s'2, z2) =
@@ -440,8 +440,11 @@ let backward (s', z) : P.property =
             )
           ) (Lr1.predecessors s')
 
+    let estimate (s', _z) =
+      approx s'
+
   end in
-  let module D = Dijkstra.Make(G) in
+  let module A = Astar.Make(G) in
   let module S = struct exception Success of P.property end in
 
   (* Search backwards from [s', z], stopping as soon as an entry state
@@ -449,7 +452,7 @@ let backward (s', z) : P.property =
      that have been found. *)
 
   try
-    let _ = D.search (fun (_, (s, _), ps) ->
+    let _ = A.search (fun ((s, _), ps) ->
       (* Debugging. TEMPORARY *)
       incr es;
       if !es mod 10000 = 0 then
