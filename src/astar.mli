@@ -18,13 +18,13 @@ module Make (G : sig
 
   val sources: (node -> unit) -> unit
 
-  (* Whether a node is a goal node. *)
-  val is_goal: node -> bool
-
   (* [successors n f] presents each of [n]'s successors, in
      an arbitrary order, to [f], together with the cost of
      the edge that was followed. *)
   val successors: node -> (label -> int -> node -> unit) -> unit
+
+  (* Whether a node is a goal node. *)
+  val is_goal: node -> bool
 
   (* An estimate of the cost of the shortest path from the
      supplied node to some goal node. This estimate must
