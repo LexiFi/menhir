@@ -371,53 +371,103 @@ let answer : question -> P.property =
 let es = ref 0
 
 let backward (s', z) : P.property =
+
   let module G = struct
-    type vertex = Lr1.node * Terminal.t
+
+    (* A vertex is a pair [s, z]. *)
+    type vertex =
+        Lr1.node * Terminal.t
+
     let equal (s'1, z1) (s'2, z2) =
       Lr1.Node.compare s'1 s'2 = 0 && Terminal.compare z1 z2 = 0
-    let hash (s, z) = Hashtbl.hash (Lr1.number s, z)
-    type label = int * Terminal.t Seq.seq
-    let weight (w, _) = w
+
+    let hash (s, z) =
+      Hashtbl.hash (Lr1.number s, z)
+
+    (* An edge is labeled with a property of the form [Finite (i, pi)],
+       that is, a distance [i] and a witness path [pi]. *)
+    type label =
+      int * Terminal.t Seq.seq
+
+    let weight (w, _) =
+      w
+
+    (* Backward search from the single source [s', z]. *)
     let sources f = f (s', z)
+
     let successors edge (s', z) =
       match Lr1.incoming_symbol s' with
       | None ->
-          (* A start symbol has no predecessors. *)
+          (* An entry state has no predecessor states. *)
           ()
+
       | Some (Symbol.T t) ->
-          List.iter (fun pred ->
-            edge (1, Seq.singleton t) (pred, t)
+          (* There is an edge from [s] to [s'] labeled [t] in the automaton.
+             Thus, our graph has an edge from [s', z] to [s, t], labeled [t]. *)
+          let label = (1, Seq.singleton t) in
+          List.iter (fun s ->
+            edge label (s, t)
           ) (Lr1.predecessors s')
+
       | Some (Symbol.N nt) ->
-          List.iter (fun pred ->
+          (* There is an edge from [s] to [s'] labeled [nt] in the automaton.
+             For every production [prod] associated with [nt], for every
+             letter [a], we query the analysis for a path that begins in [s]
+             and leads to reducing [prod] when the lookahead symbol is [z].
+             Such a path [w] takes us from [s, a] to [s', z]. Thus, our graph
+             has an edge, labeled [w], in the reverse direction. *)
+          List.iter (fun s ->
             Production.foldnt nt () (fun prod () ->
               TerminalSet.iter (fun a ->
-                match answer { s = pred; a = a; prod = prod; i = 0; z = z } with
+                match answer { s = s; a = a; prod = prod; i = 0; z = z } with
                 | P.Infinity ->
                     ()
                 | P.Finite (w, ts) ->
-                    edge (w, ts) (pred, a)
+                    edge (w, ts) (s, a)
               ) (first prod 0 z)
             )
           ) (Lr1.predecessors s')
+
   end in
   let module D = Dijkstra.Make(G) in
   let module S = struct exception Success of P.property end in
+
+  (* Search backwards from [s', z], stopping as soon as an entry state
+     is reached. In that case, return the distance [i] and path [pi]
+     that have been found. *)
+
   try
-    let _ = D.search (fun (distance, (v', _), path) ->
+    let _ = D.search (fun (i, (s, _), labels) ->
+      (* Debugging. TEMPORARY *)
       incr es;
       if !es mod 10000 = 0 then
         Printf.fprintf stderr "es = %d\n%!" !es;
-      if Lr1.incoming_symbol v' = None then
-        let path = List.map snd path in
-        raise (S.Success (P.Finite (distance, Seq.concat path))) (* TEMPORARY keep path *)
+      (* If [s] is a start state... *)
+      if Lr1.incoming_symbol s = None then
+        (* [labels] is a list of graph labels. Projecting onto the second
+           component yields a list of paths (sequences of terminal symbols),
+           which we concatenate to obtain a path. Because the edges that were
+           followed last are in front of the list, and because this is a
+           reverse graph, we obtain a path that makes direct sense: it is a
+           sequence of terminal symbols that will take the automaton into
+           state [s'] if the next (unconsumed) symbol is [z]. *)
+        let path = P.Finite (i, Seq.concat (List.map snd labels)) in
+        raise (S.Success path)
     ) in
     P.bottom
   with S.Success p ->
     p
 
+(* ------------------------------------------------------------------------ *)
+
+(* For each state [s'] and for each terminal symbol [z] such that [z] triggers
+   an error in [s'], backward search is performed. For each state [s'], we
+   stop as soon as one [z] is found, i.e., as soon as one way of causing an
+   error in state [s'] is found. *)
+
 let backward s' : P.property =
   
+  (* Debugging. TEMPORARY *)
   Printf.fprintf stderr
     "Attempting to reach an error in state %d:\n%!"
     (Lr1.number s');
@@ -429,7 +479,7 @@ let backward s' : P.property =
       P.bottom
   )
 
-(* Test. *)
+(* Test. TEMPORARY *)
 
 let () =
   Lr1.iter (fun s' ->
