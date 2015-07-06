@@ -11,22 +11,24 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %%
 
 prog:
-| x = exp EOF
-    { x }
+| x = exp _2 = EOF
+    {                ( x )}
 
 exp:
 | x = INT
-    { x }
-| lhs = exp PLUS rhs = exp
+    {                     ( x )}
+| lhs = exp _10 = PLUS rhs = exp
     {let op =
-  ( fun x y -> x + y )
+  let _1 = _10 in
+  (                 ( fun x y -> x + y ))
 in
- op lhs rhs }
-| lhs = exp TIMES rhs = exp
+                                    ( op lhs rhs )}
+| lhs = exp _10 = TIMES rhs = exp
     {let op =
-  ( fun x y -> x * y )
+  let _1 = _10 in
+  (                  ( fun x y -> x * y ))
 in
- op lhs rhs }
+                                    ( op lhs rhs )}
 
 %%
 

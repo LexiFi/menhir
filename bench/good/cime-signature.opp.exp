@@ -24,55 +24,55 @@
 %%
 
 signature:
-| EOF
-    { [] }
-| decl SEMICOLON signature
-    { $1::$3 }
+| _1 = EOF
+    {                            ( [] )}
+| _1 = decl _2 = SEMICOLON _3 = signature
+    {                            ( _1::_3 )}
 
 decl:
-| op_list COLON fix arity
-    { let t,a = $4
+| _1 = op_list _2 = COLON _3 = fix _4 = arity
+    {  ( let t,a = _4
     in
-      if $3=INFIX & a<>2
+      if _3=INFIX & a<>2
       then Errors.semantical_error "Infix symbols must be binary"
-      else ($1,a,$3,t)
-  }
+      else (_1,a,_3,t)
+  )}
 
 fix:
-| KW_PREFIX
-    { PREFIX }
-| KW_INFIX
-    { INFIX  }
-| KW_POSTFIX
-    { POSTFIX }
+| _1 = KW_PREFIX
+    {                ( PREFIX )}
+| _1 = KW_INFIX
+    {                ( INFIX  )}
+| _1 = KW_POSTFIX
+    {                ( POSTFIX )}
 | 
-    { DEFAULT }
+    {                ( DEFAULT )}
 
 arity:
-| KW_C
-    { (C,2) }
-| KW_AC
-    { (AC,2) }
-| KW_CONSTANT
-    { (FREE,0) }
-| KW_UNARY
-    { (FREE,1) }
-| KW_BINARY
-    { (FREE,2) }
-| INT
-    { (FREE,int_of_string $1) }
+| _1 = KW_C
+    {               ( (C,2) )}
+| _1 = KW_AC
+    {               ( (AC,2) )}
+| _1 = KW_CONSTANT
+    {               ( (FREE,0) )}
+| _1 = KW_UNARY
+    {               ( (FREE,1) )}
+| _1 = KW_BINARY
+    {               ( (FREE,2) )}
+| _1 = INT
+    {               ( (FREE,int_of_string _1) )}
 
 op_list:
-| ident
-    { [$1] }
-| ident COMMA op_list
-    { $1::$3 }
+| _1 = ident
+    {                       ( [_1] )}
+| _1 = ident _2 = COMMA _3 = op_list
+    {                       ( _1::_3 )}
 
 ident:
-| IDENT
-    { $1 }
-| INT
-    { $1 }
+| _1 = IDENT
+    {        ( _1 )}
+| _1 = INT
+    {        ( _1 )}
 
 %%
 

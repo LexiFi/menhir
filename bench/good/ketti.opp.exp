@@ -7,22 +7,22 @@
 %%
 
 expr:
-| PLUS PLUS expr INT
-    {}
-| INT
-    {}
-| plus
-    {}
-| indir MINUS indir
-    {}
+| _1 = PLUS _2 = PLUS _3 = expr _4 = INT
+    {                     ()}
+| _1 = INT
+    {                     ()}
+| _1 = plus
+    {                     ()}
+| _1 = indir _2 = MINUS _3 = indir
+    {                     ()}
 
 indir:
-| plus
-    { }
+| _1 = plus
+    {            ( )}
 
 plus:
-| expr PLUS expr
-    { }
+| _1 = expr _2 = PLUS _3 = expr
+    {                      ( )}
 
 %%
 

@@ -18,25 +18,25 @@ open Code
 
 code_list:
 | 
-    { [] }
-| code code_list
-    { $1 :: $2 }
+    {                ( [] )}
+| _1 = code _2 = code_list
+    {                   ( _1 :: _2 )}
 
 code:
-| DEFINE
-    { Define $1 }
-| UNDEF
-    { Undef $1 }
-| IFDEF code_list ELSE code_list ENDIF
-    { Ifdef (true, $1, $2, Some ($4)) }
-| IFNDEF code_list ELSE code_list ENDIF
-    { Ifdef (false, $1, $2, Some ($4)) }
-| IFDEF code_list ENDIF
-    { Ifdef (true, $1, $2, None) }
-| IFNDEF code_list ENDIF
-    { Ifdef (false, $1, $2, None) }
-| OTHER
-    { Line $1 }
+| _1 = DEFINE
+    {           ( Define _1 )}
+| _1 = UNDEF
+    {          ( Undef _1 )}
+| _1 = IFDEF _2 = code_list _3 = ELSE _4 = code_list _5 = ENDIF
+    {                                         ( Ifdef (true, _1, _2, Some (_4)) )}
+| _1 = IFNDEF _2 = code_list _3 = ELSE _4 = code_list _5 = ENDIF
+    {                                          ( Ifdef (false, _1, _2, Some (_4)) )}
+| _1 = IFDEF _2 = code_list _3 = ENDIF
+    {                          ( Ifdef (true, _1, _2, None) )}
+| _1 = IFNDEF _2 = code_list _3 = ENDIF
+    {                           ( Ifdef (false, _1, _2, None) )}
+| _1 = OTHER
+    {          ( Line _1 )}
 
 %%
 

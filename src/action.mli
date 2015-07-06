@@ -53,9 +53,3 @@ val has_leftstart: t -> bool
 (** Check whether the keyword $end is used in the action. *)
 val has_leftend: t -> bool
 
-(** Check whether a particular $i keyword is used in the action. *)
-val has_dollar: int -> t -> bool
-
-(** Check whether any $i keyword is used in the action. *)
-val use_dollar: t -> bool
-

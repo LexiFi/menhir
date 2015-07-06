@@ -53,25 +53,13 @@ let actiondef grammar symbol branch =
      depend on the production's right-hand side. *)
 
   let _, formals =
-    List.fold_left (fun (i, formals) (symbol, ido) ->
+    List.fold_left (fun (i, formals) (symbol, id) ->
       let id, startp, endp, starto, endo =
-	match ido with
-	| None ->
-	    (* Symbols for which no name was chosen will be represented
-	       by variables named _1, _2, etc. *)
-	    Printf.sprintf "_%d" (i + 1),
-	    Printf.sprintf "_startpos__%d_" (i + 1),
-	    Printf.sprintf "_endpos__%d_" (i + 1),
-	    Printf.sprintf "_startofs__%d_" (i + 1),
-	    Printf.sprintf "_endofs__%d_" (i + 1)
-        | Some id ->
-	    (* Symbols for which a name was explicitly chosen will be
-	       known by that name in semantic actions. *)
-	    id,
-	    Printf.sprintf "_startpos_%s_" id,
-	    Printf.sprintf "_endpos_%s_" id,
-	    Printf.sprintf "_startofs_%s_" id,
-	    Printf.sprintf "_endofs_%s_" id
+	id,
+	Printf.sprintf "_startpos_%s_" id,
+	Printf.sprintf "_endpos_%s_" id,
+	Printf.sprintf "_startofs_%s_" id,
+	Printf.sprintf "_endofs_%s_" id
       in
       let t =
 	try

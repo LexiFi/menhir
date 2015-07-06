@@ -120,168 +120,168 @@ contact : filiot@lifl.fr
 %%
 
 main:
-| Body EOF
-    { $1 }
+| _1 = Body _2 = EOF
+    {           ( _1 )}
 | 
-    { raise( Fatal_error "empty input file") }
+    {  ( raise( Fatal_error "empty input file") )}
 
 Body:
-| Formula POINTVIRGULE
-    { ([], $1) }
-| VAR VariablesDec Formula POINTVIRGULE
-    { ($2, $3) }
-| VAR VariablesDec
-    { raise (Fatal_error (error_msg_pos (pos_item 2) ^
-			      "no given formula")) }
+| _1 = Formula _2 = POINTVIRGULE
+    {                       ( ([], _1) )}
+| _1 = VAR _2 = VariablesDec _3 = Formula _4 = POINTVIRGULE
+    {                                         ( (_2, _3) )}
+| _1 = VAR _2 = VariablesDec
+    {      ( raise (Fatal_error (error_msg_pos (pos_item 2) ^
+			      "no given formula")) )}
 
 VariablesDec:
-| STR POINTVIRGULE
-    { [$1, pos_item 1] }
-| STR COMMA VariablesDec
-    { ($1, pos_item 1) :: $3 }
+| _1 = STR _2 = POINTVIRGULE
+    {                   ( [_1, pos_item 1] )}
+| _1 = STR _2 = COMMA _3 = VariablesDec
+    {                         ( (_1, pos_item 1) :: _3 )}
 
 Formula:
-| LPAR Formula RPAR
-    { $2 }
-| TRUE
-    { True }
-| FALSE
-    { False }
-| SING LPAR STR RPAR
-    { Singleton ($3,pos_item 3) }
-| BinPredPref LPAR STR COMMA STR RPAR
-    { $1 ($3, pos_item 3) ($5, pos_item 5) }
-| ROOT LPAR STR RPAR
-    { Root ($3, pos_item 3) }
-| LEAF LPAR STR RPAR
-    { Leaf ($3, pos_item 3) }
-| EX1 QuantVariablesDec Formula
-    {
-    var_list_to_formula Ex1 $3 (pos_rule ()) $2
-  }
-| EX2 QuantVariablesDec Formula
-    {
-    var_list_to_formula Ex2 $3 (pos_rule ()) $2
-  }
-| ALL1 QuantVariablesDec Formula
-    {
-    var_list_to_formula All1 $3 (pos_rule ()) $2
-  }
-| ALL2 QuantVariablesDec Formula
-    {
-    var_list_to_formula All2 $3 (pos_rule ()) $2
-  }
-| EX1 QuantVariablesDec error
-    {
+| _1 = LPAR _2 = Formula _3 = RPAR
+    {                    ( _2 )}
+| _1 = TRUE
+    {       ( True )}
+| _1 = FALSE
+    {        ( False )}
+| _1 = SING _2 = LPAR _3 = STR _4 = RPAR
+    {                     ( Singleton (_3,pos_item 3) )}
+| _1 = BinPredPref _2 = LPAR _3 = STR _4 = COMMA _5 = STR _6 = RPAR
+    {      ( _1 (_3, pos_item 3) (_5, pos_item 5) )}
+| _1 = ROOT _2 = LPAR _3 = STR _4 = RPAR
+    {   ( Root (_3, pos_item 3) )}
+| _1 = LEAF _2 = LPAR _3 = STR _4 = RPAR
+    {   ( Leaf (_3, pos_item 3) )}
+| _1 = EX1 _2 = QuantVariablesDec _3 = Formula
+    {                                (
+    var_list_to_formula Ex1 _3 (pos_rule ()) _2
+  )}
+| _1 = EX2 _2 = QuantVariablesDec _3 = Formula
+    {                                (
+    var_list_to_formula Ex2 _3 (pos_rule ()) _2
+  )}
+| _1 = ALL1 _2 = QuantVariablesDec _3 = Formula
+    {                                 (
+    var_list_to_formula All1 _3 (pos_rule ()) _2
+  )}
+| _1 = ALL2 _2 = QuantVariablesDec _3 = Formula
+    {                                 (
+    var_list_to_formula All2 _3 (pos_rule ()) _2
+  )}
+| _1 = EX1 _2 = QuantVariablesDec _3 = error
+    {                              (
     raise
       (Fatal_error
 	 (error_msg_pos (pos_rule ()) ^
-	    "syntax error : maybe you forgot a comma ?")) }
-| EX2 QuantVariablesDec error
-    {
+	    "syntax error : maybe you forgot a comma ?")) )}
+| _1 = EX2 _2 = QuantVariablesDec _3 = error
+    {                              (
     raise
       (Fatal_error
 	 (error_msg_pos (pos_rule ()) ^
-	    "syntax error : maybe you forgot a comma ?")) }
-| ALL1 QuantVariablesDec error
-    {
+	    "syntax error : maybe you forgot a comma ?")) )}
+| _1 = ALL1 _2 = QuantVariablesDec _3 = error
+    {                               (
     raise
       (Fatal_error
 	 (error_msg_pos (pos_rule ()) ^
-	    "syntax error : maybe you forgot a comma ?")) }
-| ALL2 QuantVariablesDec error
-    {
+	    "syntax error : maybe you forgot a comma ?")) )}
+| _1 = ALL2 _2 = QuantVariablesDec _3 = error
+    {                               (
     raise
       (Fatal_error
 	 (error_msg_pos (pos_rule ()) ^
-	    "syntax error : maybe you forgot a comma ?")) }
-| STR BinPredInf STR
-    { $2 ($1, pos_item 1) ($3, pos_item 3) }
-| Formula OR Formula
-    { Or ($1, $3, pos_rule ()) }
-| Formula AND Formula
-    { And ($1, $3, pos_rule ()) }
-| Formula EQUIV Formula
-    { Equiv ($1, $3, pos_rule ()) }
-| Formula IMPLIES Formula
-    { Implies ($1, $3, pos_rule ()) }
+	    "syntax error : maybe you forgot a comma ?")) )}
+| _1 = STR _2 = BinPredInf _3 = STR
+    {                     ( _2 (_1, pos_item 1) (_3, pos_item 3) )}
+| _1 = Formula _2 = OR _3 = Formula
+    {                     ( Or (_1, _3, pos_rule ()) )}
+| _1 = Formula _2 = AND _3 = Formula
+    {                      ( And (_1, _3, pos_rule ()) )}
+| _1 = Formula _2 = EQUIV _3 = Formula
+    {                        ( Equiv (_1, _3, pos_rule ()) )}
+| _1 = Formula _2 = IMPLIES _3 = Formula
+    {                          ( Implies (_1, _3, pos_rule ()) )}
 
 QuantVariablesDec:
-| STR SEMICOLON
-    { [$1, pos_item 1] }
-| STR COMMA QuantVariablesDec
-    { ($1, pos_item 1) :: $3 }
+| _1 = STR _2 = SEMICOLON
+    {                ( [_1, pos_item 1] )}
+| _1 = STR _2 = COMMA _3 = QuantVariablesDec
+    {                              ( (_1, pos_item 1) :: _3 )}
 
 BinPredPref:
-| CHILD
-    { fun x y -> Child (x,y) }
-| FC
-    {fun x y -> First_child (x,y) }
-| NS
-    { fun x y -> Next_sibling (x,y) }
-| STR
-    { failwith ("unknown identifier : " ^ $1) }
-| LAB
-    { fun x y -> Lab (x,y) }
+| _1 = CHILD
+    {        ( fun x y -> Child (x,y) )}
+| _1 = FC
+    {     (fun x y -> First_child (x,y) )}
+| _1 = NS
+    {     ( fun x y -> Next_sibling (x,y) )}
+| _1 = STR
+    {      ( failwith ("unknown identifier : " ^ _1) )}
+| _1 = LAB
+    {      ( fun x y -> Lab (x,y) )}
 
 BinPredInf:
-| IN
-    { fun x y -> Is_in (x,y) }
-| NOTIN
-    { fun x y -> Neg (Is_in (x,y), pos_rule ()) }
-| EQ1
-    { fun x y -> Equal1 (x,y) }
-| EQ2
-    { fun x y -> Equal2 (x,y) }
-| DIFF1
-    { fun x y -> Diff1 (x,y) }
-| DIFF2
-    { fun x y -> Diff2 (x,y) }
-| SUB
-    { fun x y -> Include (x,y) }
-| PREF
-    { fun x y -> Pref (x,y) }
-| IPREF
-    { fun x y -> Pref (y,x) }
-| PREFSTRICT
-    {
+| _1 = IN
+    {       ( fun x y -> Is_in (x,y) )}
+| _1 = NOTIN
+    {          ( fun x y -> Neg (Is_in (x,y), pos_rule ()) )}
+| _1 = EQ1
+    {        ( fun x y -> Equal1 (x,y) )}
+| _1 = EQ2
+    {        ( fun x y -> Equal2 (x,y) )}
+| _1 = DIFF1
+    {          ( fun x y -> Diff1 (x,y) )}
+| _1 = DIFF2
+    {          ( fun x y -> Diff2 (x,y) )}
+| _1 = SUB
+    {        ( fun x y -> Include (x,y) )}
+| _1 = PREF
+    {         ( fun x y -> Pref (x,y) )}
+| _1 = IPREF
+    {          ( fun x y -> Pref (y,x) )}
+| _1 = PREFSTRICT
+    {               (
      fun x y ->
        And (Pref (x,
 		  y),
 	    Diff1 (x,y),
 	    pos_rule ())
-   }
-| IPREFSTRICT
-    {
+   )}
+| _1 = IPREFSTRICT
+    {                (
     fun x y -> And (Pref (y,x
 			 ),
 		    Diff1 (x,y),
 		    pos_rule ())
-   }
-| SIBSTRICT
-    {
+   )}
+| _1 = SIBSTRICT
+    {              (
      fun x y -> And (Next_sibling_star
 	    (x,y)
 	    ,
 	  Diff1 (x,y)
-	    , pos_rule ()) }
-| SIB
-    {
+	    , pos_rule ()) )}
+| _1 = SIB
+    {        (
      fun x y -> Next_sibling_star (x,y)
-   }
-| ISIB
-    { fun x y ->
+   )}
+| _1 = ISIB
+    {         ( fun x y ->
 	     Next_sibling_star (y,x)
-	 }
-| ISIBSTRICT
-    {
+	 )}
+| _1 = ISIBSTRICT
+    {               (
      fun x y -> And (Next_sibling_star
 		       ( y,x)
 		       ,
 		     Diff1 (x,y)
-		       , pos_rule ()) }
-| STR
-    { failwith ("unknown identifier : " ^ $1) }
+		       , pos_rule ()) )}
+| _1 = STR
+    {      ( failwith ("unknown identifier : " ^ _1) )}
 
 %%
 

@@ -475,28 +475,9 @@ module Production = struct
       and rprec = branch.branch_reduce_precedence in	
       let symbols = Array.of_list branch.producers in
       table.(k) <- (nt, Array.map (fun (v, _) -> Symbol.lookup v) symbols);
-      identifiers.(k) <- Array.mapi (fun i (_, ido) ->
-	match ido with
-	| None ->
-	    (* Symbols for which no name was chosen will be represented
-	       by variables named _1, _2, etc. *)
-	    Printf.sprintf "_%d" (i + 1)
-        | Some id ->
-	    (* Symbols for which a name was explicitly chosen will be
-	       known by that name in semantic actions. *)
-	    id
-      ) symbols;
-      used.(k) <- Array.mapi (fun i (_, ido) ->
-	match ido with
-	| None ->
-	    (* A symbol referred to as [$i] is used if and only if the
-	       [$i] keyword appears in the semantic action. *)
-            Action.has_dollar (i + 1) action
-	| Some _ ->
-	    (* A symbol referred to via a name is considered used.
-	       This is a conservative approximation. *)
-            true
-      ) symbols;
+      identifiers.(k) <- Array.map snd symbols;
+      (* TEMPORARY: [used] is useless since all arguments are named now. Should we remove it? *)
+      used.(k) <- Array.map (fun _ -> true) symbols; 
       actions.(k) <- Some action;
       reduce_precedence.(k) <- rprec;
       prec_decl.(k) <- sprec;

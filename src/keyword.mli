@@ -18,18 +18,33 @@ type where =
 
 (* The user can request position information about a production's
    left-hand side or about one of the symbols in its right-hand
-   side, which he can refer to by position or by name. *)
+   side, which he can refer to by position or by name.
 
-type subject =
+   A positional reference of the form [$i] is a syntactic sugar for the
+   name [_i]. This surface syntax is first parsed as a [parsed_subject]
+   and desugared as a [subject] during keywords rewriting into actual
+   OCaml identifiers. (See {!Lexer.transform_keywords}) *)
+type parsed_subject =
+  | PLeft
+  | PRightDollar of int
+  | PRightNamed of string
+
+and subject =
   | Left
-  | RightDollar of int
   | RightNamed of string
 
 (* Keywords inside semantic actions. They allow access to semantic
-   values or to position information. *)
+   values or to position information.
 
-type keyword =
-  | Dollar of int
+   As said previously, a positional reference is a syntactic sugar
+   which appears in a [parsed_keyword] but is desugared in the
+   actual [keyword] representation. *)
+type parsed_keyword =
+  | PDollar of int
+  | PPosition of parsed_subject * where * flavor
+  | PSyntaxError
+
+and keyword =
   | Position of subject * where * flavor
   | SyntaxError
 
@@ -39,12 +54,5 @@ type keyword =
 val posvar: subject -> where -> flavor -> string
 
 (* Sets of keywords. *)
-module KeywordSet : 
-  sig 
-    include Set.S
-
-    (* This converts a list of keywords with positions into a set of keywords. *)
-    val from_list: elt list -> t
-
-  end with type elt = keyword
+module KeywordSet : Set.S with type elt = keyword
 

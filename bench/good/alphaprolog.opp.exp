@@ -197,372 +197,372 @@ let rec ty_app ts t =
 %%
 
 parse:
-| decls EOF
-    { List.rev $1 }
+| _1 = decls _2 = EOF
+    {                                        ( List.rev _1 )}
 
 parse_input_line:
-| goal_decl DOT
-    { [mk_toplevel_decl $1] }
-| EOF
-    { raise End_of_file }
+| _1 = goal_decl _2 = DOT
+    {                                        ( [mk_toplevel_decl _1] )}
+| _1 = EOF
+    {                                        ( raise End_of_file )}
 
 goal_decl:
-| goal
-    { Query($1) }
-| directive
-    { $1 }
-| infix_decl
-    { $1 }
+| _1 = goal
+    {                                        ( Query(_1) )}
+| _1 = directive
+    {                                        ( _1 )}
+| _1 = infix_decl
+    {                                        ( _1 )}
 
 decls:
-| decls decl DOT
-    { $2::$1 }
+| _1 = decls _2 = decl _3 = DOT
+    {                                        ( _2::_1 )}
 | 
-    { [] }
+    {                                        ( [] )}
 
 decl:
-| sig_decl
-    { mk_decl $1}
-| prog
-    { mk_decl (ClauseDecl($1))}
-| QUESTION goal
-    { mk_decl(Query($2))}
-| directive
-    { mk_decl $1}
-| infix_decl
-    { mk_decl $1}
-| NAMESPACE ID LPAREN decls RPAREN
-    { mk_decl 
-					     (NamespaceDecl($2,
-							    List.rev $4))
-					}
+| _1 = sig_decl
+    {                                        ( mk_decl _1)}
+| _1 = prog
+    {                                        ( mk_decl (ClauseDecl(_1)))}
+| _1 = QUESTION _2 = goal
+    {                                        ( mk_decl(Query(_2)))}
+| _1 = directive
+    {                                        ( mk_decl _1)}
+| _1 = infix_decl
+    {                                        ( mk_decl _1)}
+| _1 = NAMESPACE _2 = ID _3 = LPAREN _4 = decls _5 = RPAREN
+    {                                        ( mk_decl 
+					     (NamespaceDecl(_2,
+							    List.rev _4))
+					)}
 
 sig_decl:
-| ID COLON kind
-    { KindDecl($1,$3) }
-| ID COLON ty
-    { SymDecl($1,$3) }
-| PRED ID ty0s
-    { PredDecl($2,List.rev $3) }
-| CNST ID EQ ty
-    { FuncDecl($2,[],$4) }
-| FUNC ID ty0s EQ ty
-    { FuncDecl($2,List.rev $3, $5) }
-| TYPE ID vars EQ ty
-    { let rvs = $3 in 
-                                          TypeDefn($2,List.rev rvs,$5) }
+| _1 = ID _2 = COLON _3 = kind
+    {                                        ( KindDecl(_1,_3) )}
+| _1 = ID _2 = COLON _3 = ty
+    {                                        ( SymDecl(_1,_3) )}
+| _1 = PRED _2 = ID _3 = ty0s
+    {                                        ( PredDecl(_2,List.rev _3) )}
+| _1 = CNST _2 = ID _3 = EQ _4 = ty
+    {                                        ( FuncDecl(_2,[],_4) )}
+| _1 = FUNC _2 = ID _3 = ty0s _4 = EQ _5 = ty
+    {                                        ( FuncDecl(_2,List.rev _3, _5) )}
+| _1 = TYPE _2 = ID _3 = vars _4 = EQ _5 = ty
+    {                                        ( let rvs = _3 in 
+                                          TypeDefn(_2,List.rev rvs,_5) )}
 
 vars:
 | 
-    { [] }
-| vars ID
-    { Var.mkvar' $2::$1 }
+    {                                        ( [] )}
+| _1 = vars _2 = ID
+    {                                        ( Var.mkvar' _2::_1 )}
 
 kind:
-| TYPE
-    { TypeK }
-| NAME_TYPE
-    { NameK }
-| kind ARROW kind
-    { ArrowK($1,$3) }
+| _1 = TYPE
+    {                                        ( TypeK )}
+| _1 = NAME_TYPE
+    {                                        ( NameK )}
+| _1 = kind _2 = ARROW _3 = kind
+    {                                        ( ArrowK(_1,_3) )}
 
 directive:
-| USE LITERAL
-    { UseDirective($2) }
-| TRACE INT
-    { TraceDirective ($2) }
-| TYPEQ preterm
-    { TypeQuery($2) }
-| QUIT
-    { QuitDirective }
-| OPEN qual_id
-    { OpenDirective $2 }
-| HELP
-    { HelpDirective(None) }
+| _1 = USE _2 = LITERAL
+    {                                        ( UseDirective(_2) )}
+| _1 = TRACE _2 = INT
+    {                                        ( TraceDirective (_2) )}
+| _1 = TYPEQ _2 = preterm
+    {                                        ( TypeQuery(_2) )}
+| _1 = QUIT
+    {                                 ( QuitDirective )}
+| _1 = OPEN _2 = qual_id
+    {                                 ( OpenDirective _2 )}
+| _1 = HELP
+    {                                 ( HelpDirective(None) )}
 
 infix_decl:
-| INFIXN ID INT
-    { add_sym $2 $3 Non;
-			                  InfixDecl(Non,$2,$3) }
-| INFIXL ID INT
-    { add_sym $2 $3 Left;
-			                  InfixDecl(Left,$2,$3) }
-| INFIXR ID INT
-    { add_sym $2 $3 Right;
-			                  InfixDecl(Right,$2,$3) }
+| _1 = INFIXN _2 = ID _3 = INT
+    {                                        ( add_sym _2 _3 Non;
+			                  InfixDecl(Non,_2,_3) )}
+| _1 = INFIXL _2 = ID _3 = INT
+    {                                 ( add_sym _2 _3 Left;
+			                  InfixDecl(Left,_2,_3) )}
+| _1 = INFIXR _2 = ID _3 = INT
+    {                                 ( add_sym _2 _3 Right;
+			                  InfixDecl(Right,_2,_3) )}
 
 prog:
-| preterm
-    { $1 }
-| dcg_rule
-    { $1 }
+| _1 = preterm
+    {                                       ( _1 )}
+| _1 = dcg_rule
+    {                                ( _1 )}
 
 dcg_rule:
-| app_or_qid DCG_ARROW dcg_term
-    { translate_dcg $1 $3 }
-| app_or_qid DCG_ARROW dcg_term SLASH constr
-    { Constr(translate_dcg $1 $3,$5) }
+| _1 = app_or_qid _2 = DCG_ARROW _3 = dcg_term
+    {                                       ( translate_dcg _1 _3 )}
+| _1 = app_or_qid _2 = DCG_ARROW _3 = dcg_term _4 = SLASH _5 = constr
+    {                                       ( Constr(translate_dcg _1 _3,_5) )}
 
 dcg_term:
-| LBRACE preterm RBRACE
-    { Goal $2 }
-| dcg_term COMMA dcg_term
-    { Seq ($1,$3) }
-| dcg_term SEMI dcg_term
-    { Alt($1,$3) }
-| app_or_qid
-    { Nonterm($1) }
-| CHAR
-    { Char $1 }
-| LITERAL
-    { Literal $1 }
+| _1 = LBRACE _2 = preterm _3 = RBRACE
+    {                                       ( Goal _2 )}
+| _1 = dcg_term _2 = COMMA _3 = dcg_term
+    {                                ( Seq (_1,_3) )}
+| _1 = dcg_term _2 = SEMI _3 = dcg_term
+    {                                ( Alt(_1,_3) )}
+| _1 = app_or_qid
+    {                                ( Nonterm(_1) )}
+| _1 = CHAR
+    {                                ( Char _1 )}
+| _1 = LITERAL
+    {                                ( Literal _1 )}
 
 goal:
-| preterm
-    { $1 }
+| _1 = preterm
+    {                                       ( _1 )}
 
 quantifier:
-| FORALL
-    { QForall }
-| EXISTS
-    { QExists }
-| NEW
-    { QNew }
+| _1 = FORALL
+    {                                       ( QForall )}
+| _1 = EXISTS
+    {                                       ( QExists )}
+| _1 = NEW
+    {                                       ( QNew )}
 
 qv:
-| ID
-    { (Var.mkvar' $1,UnderscoreTy) }
-| ID COLON ty
-    { (Var.mkvar' $1,$3) }
+| _1 = ID
+    {                                        ( (Var.mkvar' _1,UnderscoreTy) )}
+| _1 = ID _2 = COLON _3 = ty
+    {                                        ( (Var.mkvar' _1,_3) )}
 
 qlist:
-| qv
-    { [$1] }
-| qlist COMMA qv
-    { $3::$1 }
+| _1 = qv
+    {                                        ( [_1] )}
+| _1 = qlist _2 = COMMA _3 = qv
+    {                                        ( _3::_1 )}
 
 const:
-| UNDERSCORE
-    { Underscore }
-| CUT
-    { Cut }
-| TRUE
-    { True }
-| LBRACK RBRACK
-    { Nil }
-| LPAREN RPAREN
-    { Unit }
-| INT
-    { IntC $1 }
-| LITERAL
-    { do_literal $1 }
-| CHAR
-    { CharC $1 }
+| _1 = UNDERSCORE
+    {                                        ( Underscore )}
+| _1 = CUT
+    {                                        ( Cut )}
+| _1 = TRUE
+    {                                        ( True )}
+| _1 = LBRACK _2 = RBRACK
+    {                                        ( Nil )}
+| _1 = LPAREN _2 = RPAREN
+    {                                        ( Unit )}
+| _1 = INT
+    {                                        ( IntC _1 )}
+| _1 = LITERAL
+    {                                        ( do_literal _1 )}
+| _1 = CHAR
+    {                                        ( CharC _1 )}
 
 qual_id:
-| QUAL_ID
-    { $1 }
-| ID
-    { Rel(Base($1)) }
+| _1 = QUAL_ID
+    {                                        ( _1 )}
+| _1 = ID
+    {                                        ( Rel(Base(_1)) )}
 
 preterm0:
-| LPAREN preterm RPAREN
-    { $2 }
-| qual_id
-    { Atomic($1,[]) }
-| const
-    { $1 }
-| LBRACK preterms_brack RBRACK
-    { List.fold_right 
+| _1 = LPAREN _2 = preterm _3 = RPAREN
+    {                                        ( _2 )}
+| _1 = qual_id
+    {                                        ( Atomic(_1,[]) )}
+| _1 = const
+    {                                        ( _1 )}
+| _1 = LBRACK _2 = preterms_brack _3 = RBRACK
+    {                                        ( List.fold_right 
 					    (fun x y -> 
 					      Cons(x,y)) 
-					    (List.rev $2) Nil }
-| LBRACK preterms_brack BAR preterm_brack RBRACK
-    { List.fold_right 
+					    (List.rev _2) Nil )}
+| _1 = LBRACK _2 = preterms_brack _3 = BAR _4 = preterm_brack _5 = RBRACK
+    {                                        ( List.fold_right 
 					    (fun x y -> 
 					      Cons(x,y)) 
-					    (List.rev $2) $4 }
-| LPAREN ID TILDE ID RPAREN preterm0
-    { Transpose(Var.mkvar' $2,
-						    Var.mkvar' $4,$6) }
+					    (List.rev _2) _4 )}
+| _1 = LPAREN _2 = ID _3 = TILDE _4 = ID _5 = RPAREN _6 = preterm0
+    {                                        ( Transpose(Var.mkvar' _2,
+						    Var.mkvar' _4,_6) )}
 
 constr:
-| ID HASH ID
-    { [(Var.mkvar' $1,Var.mkvar' $3)] }
-| constr COMMA ID HASH ID
-    { (Var.mkvar' $3,Var.mkvar' $5)::$1 }
+| _1 = ID _2 = HASH _3 = ID
+    {                                        ( [(Var.mkvar' _1,Var.mkvar' _3)] )}
+| _1 = constr _2 = COMMA _3 = ID _4 = HASH _5 = ID
+    {                                        ( (Var.mkvar' _3,Var.mkvar' _5)::_1 )}
 
 preterm:
-| quantifier qlist DOT preterm
-    { do_quantify $1 (List.rev $2) $4 }
-| ID BACKSLASH preterm
-    { Abs (Var.mkvar' $1,$3) }
-| preterm ARROW preterm BAR preterm
-    { Guard($1,$3,$5) }
-| preterm LARROW preterm
-    { Implies ($3,$1) }
-| preterm COMMA preterm
-    { Pair($1,$3) }
-| preterm SEMI preterm
-    { Or($1,$3) }
-| preterm SLASH constr
-    { Constr($1,$3) }
-| preterm HASH preterm
-    { Fresh($1,$3) }
-| preterm EQ preterm
-    { Eq($1,$3) }
-| preterm IS preterm
-    { Is($1,$3) }
-| preterm DARROW preterm
-    { Implies($1,$3) }
-| preterm CONS preterm
-    { Cons($1,$3) }
-| NOT preterm0
-    { Not($2) }
-| infixl_preterm
-    { $1 }
-| infixr_preterm
-    { $1 }
-| infixn_preterm
-    { $1 }
-| app
-    { let (h,tl) = $1 in 
-                                          Atomic(h,List.rev tl) }
-| preterm0
-    {$1}
+| _1 = quantifier _2 = qlist _3 = DOT _4 = preterm
+    {                                        ( do_quantify _1 (List.rev _2) _4 )}
+| _1 = ID _2 = BACKSLASH _3 = preterm
+    {                                        ( Abs (Var.mkvar' _1,_3) )}
+| _1 = preterm _2 = ARROW _3 = preterm _4 = BAR _5 = preterm
+    {                                        ( Guard(_1,_3,_5) )}
+| _1 = preterm _2 = LARROW _3 = preterm
+    {                                        ( Implies (_3,_1) )}
+| _1 = preterm _2 = COMMA _3 = preterm
+    {                                        ( Pair(_1,_3) )}
+| _1 = preterm _2 = SEMI _3 = preterm
+    {                                        ( Or(_1,_3) )}
+| _1 = preterm _2 = SLASH _3 = constr
+    {                                        ( Constr(_1,_3) )}
+| _1 = preterm _2 = HASH _3 = preterm
+    {                                        ( Fresh(_1,_3) )}
+| _1 = preterm _2 = EQ _3 = preterm
+    {                                        ( Eq(_1,_3) )}
+| _1 = preterm _2 = IS _3 = preterm
+    {                                        ( Is(_1,_3) )}
+| _1 = preterm _2 = DARROW _3 = preterm
+    {                                        ( Implies(_1,_3) )}
+| _1 = preterm _2 = CONS _3 = preterm
+    {                                        ( Cons(_1,_3) )}
+| _1 = NOT _2 = preterm0
+    {                                        ( Not(_2) )}
+| _1 = infixl_preterm
+    {                                        ( _1 )}
+| _1 = infixr_preterm
+    {                                        ( _1 )}
+| _1 = infixn_preterm
+    {                                        ( _1 )}
+| _1 = app
+    {                                        ( let (h,tl) = _1 in 
+                                          Atomic(h,List.rev tl) )}
+| _1 = preterm0
+    {                                        (_1)}
 
 preterm_brack:
-| ID BACKSLASH preterm_brack
-    { Abs (Var.mkvar' $1,$3)}
-| preterm_brack CONS preterm_brack
-    { Cons($1,$3) }
-| app
-    { let (h,tl) = $1 in 
-                                          Atomic(h,List.rev tl) }
-| preterm0
-    { $1 }
+| _1 = ID _2 = BACKSLASH _3 = preterm_brack
+    {                                        ( Abs (Var.mkvar' _1,_3))}
+| _1 = preterm_brack _2 = CONS _3 = preterm_brack
+    {                                        ( Cons(_1,_3) )}
+| _1 = app
+    {                                        ( let (h,tl) = _1 in 
+                                          Atomic(h,List.rev tl) )}
+| _1 = preterm0
+    {                                        ( _1 )}
 
 preterms_brack:
-| preterm_brack
-    { [$1] }
-| preterms_brack COMMA preterm_brack
-    { $3::$1 }
+| _1 = preterm_brack
+    {                                        ( [_1] )}
+| _1 = preterms_brack _2 = COMMA _3 = preterm_brack
+    {                                        ( _3::_1 )}
 
 infixl_preterm:
-| preterm INFIXL1 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXL2 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXL3 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXL4 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXL5 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXL6 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXL7 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXL8 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXL9 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
+| _1 = preterm _2 = INFIXL1 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXL2 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXL3 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXL4 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXL5 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXL6 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXL7 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXL8 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXL9 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
 
 infixr_preterm:
-| preterm INFIXR1 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXR2 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXR3 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXR4 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXR5 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXR6 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXR7 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXR8 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXR9 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
+| _1 = preterm _2 = INFIXR1 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXR2 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXR3 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXR4 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXR5 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXR6 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXR7 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXR8 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXR9 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
 
 infixn_preterm:
-| preterm INFIXN1 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXN2 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXN3 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXN4 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXN5 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXN6 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXN7 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXN8 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
-| preterm INFIXN9 preterm
-    { Atomic(Rel(Base $2),[$1;$3]) }
+| _1 = preterm _2 = INFIXN1 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXN2 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXN3 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXN4 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXN5 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXN6 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXN7 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXN8 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
+| _1 = preterm _2 = INFIXN9 _3 = preterm
+    {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
 
 app:
-| qual_id preterm0
-    { ($1,[$2]) }
-| app preterm0
-    { let (h,tl) = $1 in 
-                                          (h,$2::tl) }
+| _1 = qual_id _2 = preterm0
+    {                                        ( (_1,[_2]) )}
+| _1 = app _2 = preterm0
+    {                                        ( let (h,tl) = _1 in 
+                                          (h,_2::tl) )}
 
 app_or_qid:
-| app
-    { let (hd,tl) = $1 in 
-	                                  (hd,List.rev tl) }
-| qual_id
-    { ($1,[]) }
+| _1 = app
+    {                                        ( let (hd,tl) = _1 in 
+	                                  (hd,List.rev tl) )}
+| _1 = qual_id
+    {                                        ( (_1,[]) )}
 
 tyapp:
-| qual_id ty0
-    { ($1,[$2]) }
-| tyapp ty0
-    { let (ds,ss) = $1 in 
-                                          (ds,$2::ss) }
+| _1 = qual_id _2 = ty0
+    {                                        ( (_1,[_2]) )}
+| _1 = tyapp _2 = ty0
+    {                                        ( let (ds,ss) = _1 in 
+                                          (ds,_2::ss) )}
 
 ty:
-| ty ARROW ty
-    { ArrowTy($1,$3) }
-| tyapp
-    { let ds,ss = $1 in 
-                                          DataTy(ds,List.rev ss) }
-| ty BACKSLASH ty
-    { AbsTy($1,$3) }
-| ty0
-    { $1 }
+| _1 = ty _2 = ARROW _3 = ty
+    {                                        ( ArrowTy(_1,_3) )}
+| _1 = tyapp
+    {                                        ( let ds,ss = _1 in 
+                                          DataTy(ds,List.rev ss) )}
+| _1 = ty _2 = BACKSLASH _3 = ty
+    {                                        ( AbsTy(_1,_3) )}
+| _1 = ty0
+    {                                        ( _1 )}
 
 comma_tys:
-| ty
-    { $1 }
-| ty COMMA comma_tys
-    { PairTy($1,$3) }
+| _1 = ty
+    {                                        ( _1 )}
+| _1 = ty _2 = COMMA _3 = comma_tys
+    {                                        ( PairTy(_1,_3) )}
 
 ty0:
-| LPAREN comma_tys RPAREN
-    { $2 }
-| UNDERSCORE
-    { UnderscoreTy }
-| qual_id
-    { IdTy($1) }
-| LBRACK ty RBRACK
-    { ListTy $2 }
-| LPAREN RPAREN
-    { UnitTy }
+| _1 = LPAREN _2 = comma_tys _3 = RPAREN
+    {                                        ( _2 )}
+| _1 = UNDERSCORE
+    {                                        ( UnderscoreTy )}
+| _1 = qual_id
+    {                                        ( IdTy(_1) )}
+| _1 = LBRACK _2 = ty _3 = RBRACK
+    {                                        ( ListTy _2 )}
+| _1 = LPAREN _2 = RPAREN
+    {                                        ( UnitTy )}
 
 ty0s:
-| ty0s ty0
-    { $2 :: $1 }
+| _1 = ty0s _2 = ty0
+    {                                        ( _2 :: _1 )}
 | 
-    { [] }
+    {                                        ( [] )}
 
 %%
 

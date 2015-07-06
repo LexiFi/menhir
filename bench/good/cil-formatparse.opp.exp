@@ -445,9 +445,9 @@ type maybeInit =
 %%
 
 expression:
-| ARG_e
-    {  (* Count arguments eagerly *) 
-                            let currentArg = $1 in 
+| _1 = ARG_e
+    {                       (  (* Count arguments eagerly *) 
+                            let currentArg = _1 in 
                             ((fun args ->
                                match getArg currentArg args with 
                                    Fe e -> e
@@ -455,147 +455,147 @@ expression:
                                             "expression" a),
 
                              (fun e -> Some [ Fe e ]))
-                         }
-| constant
-    { $1 }
-| lval %prec IDENT
-    { ((fun args -> Lval ((fst $1) args)),
+                         )}
+| _1 = constant
+    {                   ( _1 )}
+| _1 = lval %prec IDENT
+    {                        ( ((fun args -> Lval ((fst _1) args)),
 
                              (fun e -> match e with 
-                                Lval l -> (snd $1) l 
+                                Lval l -> (snd _1) l 
                               | _ -> None))
-                         }
-| SIZEOF expression
-    { ((fun args -> SizeOfE ((fst $2) args)),
+                         )}
+| _1 = SIZEOF _2 = expression
+    {          ( ((fun args -> SizeOfE ((fst _2) args)),
 
                            fun e -> match e with 
-                             SizeOfE e' -> (snd $2) e'
+                             SizeOfE e' -> (snd _2) e'
                            | _ -> None)
-                        }
-| SIZEOF LPAREN typename RPAREN
-    { ((fun args -> SizeOf ((fst $3) args)),
+                        )}
+| _1 = SIZEOF _2 = LPAREN _3 = typename _4 = RPAREN
+    {                        ( ((fun args -> SizeOf ((fst _3) args)),
                           
                            (fun e -> match e with 
-                              SizeOf t -> (snd $3) t
+                              SizeOf t -> (snd _3) t
                            |  _ -> None))
-                        }
-| ALIGNOF expression
-    { ((fun args -> AlignOfE ((fst $2) args)),
+                        )}
+| _1 = ALIGNOF _2 = expression
+    {          ( ((fun args -> AlignOfE ((fst _2) args)),
 
                            (fun e -> match e with
-                             AlignOfE e' -> (snd $2) e' | _ -> None))
-                        }
-| ALIGNOF LPAREN typename RPAREN
-    { ((fun args -> AlignOf ((fst $3) args)),
+                             AlignOfE e' -> (snd _2) e' | _ -> None))
+                        )}
+| _1 = ALIGNOF _2 = LPAREN _3 = typename _4 = RPAREN
+    {          ( ((fun args -> AlignOf ((fst _3) args)),
 
                            (fun e -> match e with
-                             AlignOf t' -> (snd $3) t' | _ -> None))
-                        }
-| PLUS expression
-    { $2 }
-| MINUS expression
-    { doUnop Neg $2 }
-| EXCLAM expression
-    { doUnop LNot $2 }
-| TILDE expression
-    { doUnop BNot $2 }
-| argu expression %prec ARG_u
-    { ((fun args -> 
-                             let e = (fst $2) args in
-                             UnOp((fst $1) args, e, typeOf e)),
+                             AlignOf t' -> (snd _3) t' | _ -> None))
+                        )}
+| _1 = PLUS _2 = expression
+    {          ( _2 )}
+| _1 = MINUS _2 = expression
+    {          ( doUnop Neg _2 )}
+| _1 = EXCLAM _2 = expression
+    {          ( doUnop LNot _2 )}
+| _1 = TILDE _2 = expression
+    {          ( doUnop BNot _2 )}
+| _1 = argu _2 = expression %prec ARG_u
+    {                        ( ((fun args -> 
+                             let e = (fst _2) args in
+                             UnOp((fst _1) args, e, typeOf e)),
 
                            (fun e -> match e with 
                              UnOp(uo, e', _) -> begin
-                               match (snd $1) uo, (snd $2) e' with 
+                               match (snd _1) uo, (snd _2) e' with 
                                  Some m1, Some m2 -> Some (m1 @ m2)
                                | _ -> None
                              end
                            | _ -> None))
-                        }
-| AND expression %prec ADDROF
-    { ((fun args -> 
-                             match (fst $2) args with
+                        )}
+| _1 = AND _2 = expression %prec ADDROF
+    {          ( ((fun args -> 
+                             match (fst _2) args with
                                 Lval l -> mkAddrOf l
                               | _ -> E.s (bug "AddrOf applied to a non lval")),
                           (fun e -> match e with 
-                            AddrOf l -> (snd $2) (Lval l)
-                          | e -> (snd $2) (Lval (mkMem e NoOffset))))
-                         }
-| LPAREN expression RPAREN
-    { $2 }
-| expression PLUS expression
-    { ((fun args -> buildPlus ((fst $1) args) 
-                                                  ((fst $3) args)), 
+                            AddrOf l -> (snd _2) (Lval l)
+                          | e -> (snd _2) (Lval (mkMem e NoOffset))))
+                         )}
+| _1 = LPAREN _2 = expression _3 = RPAREN
+    {                        ( _2 )}
+| _1 = expression _2 = PLUS _3 = expression
+    {   ( ((fun args -> buildPlus ((fst _1) args) 
+                                                  ((fst _3) args)), 
                           (fun e -> match e with 
                             BinOp((PlusPI|PlusA), e1, e2, _) -> begin
-                              match (snd $1) e1, (snd $3) e2 with
+                              match (snd _1) e1, (snd _3) e2 with
                                 Some m1, Some m2 -> Some (m1 @ m2)
                               | _, _ -> None
                             end
                           | _ -> None))
-                        }
-| expression MINUS expression
-    { ((fun args -> buildMinus ((fst $1) args)
-                                                   ((fst $3) args)),
+                        )}
+| _1 = expression _2 = MINUS _3 = expression
+    {                        ( ((fun args -> buildMinus ((fst _1) args)
+                                                   ((fst _3) args)),
 
                            (fun e -> match e with 
                              BinOp((MinusPP|MinusPI|MinusA), e1, e2, _) -> 
                                begin
-                                 match (snd $1) e1, (snd $3) e2 with
+                                 match (snd _1) e1, (snd _3) e2 with
                                    Some m1, Some m2 -> Some (m1 @ m2)
                                  | _, _ -> None
                                end
                            | _ -> None))
-                        }
-| expression argb expression %prec ARG_b
-    { ((fun args -> 
-                               let e1 = (fst $1) args in 
-                               let bop = (fst $2) args in
-                               let e2 = (fst $3) args in 
+                        )}
+| _1 = expression _2 = argb _3 = expression %prec ARG_b
+    {                        ( ((fun args -> 
+                               let e1 = (fst _1) args in 
+                               let bop = (fst _2) args in
+                               let e2 = (fst _3) args in 
                                let t1 = typeOf e1 in
                                BinOp(bop, e1, e2, t1)),
                            
                            (fun e -> match e with 
                              BinOp(bop, e1, e2, _) -> begin
-                               match (snd $1) e1,(snd $2) bop,(snd $3) e2 with
+                               match (snd _1) e1,(snd _2) bop,(snd _3) e2 with
                                  Some m1, Some m2, Some m3 -> 
                                    Some (m1 @ m2 @ m3)
                                | _, _, _ -> None
                              end
                            | _ -> None))
-                        }
-| expression STAR expression
-    { doBinop Mult $1 $3 }
-| expression SLASH expression
-    { doBinop Div $1 $3 }
-| expression PERCENT expression
-    { doBinop Mod $1 $3 }
-| expression INF_INF expression
-    { doBinop Shiftlt $1 $3 }
-| expression SUP_SUP expression
-    { doBinop Shiftrt $1 $3 }
-| expression AND expression
-    { doBinop BAnd $1 $3 }
-| expression PIPE expression
-    { doBinop BOr $1 $3 }
-| expression CIRC expression
-    { doBinop BXor $1 $3 }
-| expression EQ_EQ expression
-    { doBinop Eq $1 $3 }
-| expression EXCLAM_EQ expression
-    { doBinop Ne $1 $3 }
-| expression INF expression
-    { doBinop Lt $1 $3 }
-| expression SUP expression
-    { doBinop Gt $1 $3 }
-| expression INF_EQ expression
-    { doBinop Le $1 $3 }
-| expression SUP_EQ expression
-    { doBinop Ge $1 $3 }
-| LPAREN typename RPAREN expression
-    { ((fun args -> 
-                              let t = (fst $2) args in
-                              let e = (fst $4) args in
+                        )}
+| _1 = expression _2 = STAR _3 = expression
+    {   ( doBinop Mult _1 _3 )}
+| _1 = expression _2 = SLASH _3 = expression
+    {   ( doBinop Div _1 _3 )}
+| _1 = expression _2 = PERCENT _3 = expression
+    {   ( doBinop Mod _1 _3 )}
+| _1 = expression _2 = INF_INF _3 = expression
+    {   ( doBinop Shiftlt _1 _3 )}
+| _1 = expression _2 = SUP_SUP _3 = expression
+    {   ( doBinop Shiftrt _1 _3 )}
+| _1 = expression _2 = AND _3 = expression
+    {   ( doBinop BAnd _1 _3 )}
+| _1 = expression _2 = PIPE _3 = expression
+    {   ( doBinop BOr _1 _3 )}
+| _1 = expression _2 = CIRC _3 = expression
+    {   ( doBinop BXor _1 _3 )}
+| _1 = expression _2 = EQ_EQ _3 = expression
+    {   ( doBinop Eq _1 _3 )}
+| _1 = expression _2 = EXCLAM_EQ _3 = expression
+    {   ( doBinop Ne _1 _3 )}
+| _1 = expression _2 = INF _3 = expression
+    {   ( doBinop Lt _1 _3 )}
+| _1 = expression _2 = SUP _3 = expression
+    {   ( doBinop Gt _1 _3 )}
+| _1 = expression _2 = INF_EQ _3 = expression
+    {   ( doBinop Le _1 _3 )}
+| _1 = expression _2 = SUP_EQ _3 = expression
+    {   ( doBinop Ge _1 _3 )}
+| _1 = LPAREN _2 = typename _3 = RPAREN _4 = expression
+    {           ( ((fun args -> 
+                              let t = (fst _2) args in
+                              let e = (fst _4) args in
                               mkCast e t),
                             
                             (fun e -> 
@@ -604,36 +604,36 @@ expression:
                                   CastE (t', e') -> t', e'
                                 | _ -> typeOf e, e
                               in
-                              match (snd $2) t', (snd $4 e') with
+                              match (snd _2) t', (snd _4 e') with
                                 Some m1, Some m2 -> Some (m1 @ m2)
                               | _, _ -> None))
-                         }
+                         )}
 
 argu:
-| ARG_u
-    { let currentArg = $1 in
+| _1 = ARG_u
+    {                       ( let currentArg = _1 in
                          ((fun args ->
                            match getArg currentArg args with
                              Fu uo -> uo
                            | a -> wrongArgType currentArg "unnop" a),
 
                           fun uo -> Some [ Fu uo ])
-                       }
+                       )}
 
 argb:
-| ARG_b
-    { let currentArg = $1 in
+| _1 = ARG_b
+    {                       ( let currentArg = _1 in
                          ((fun args ->
                            match getArg currentArg args with
                              Fb bo -> bo
                            | a -> wrongArgType currentArg "binop" a),
 
                           fun bo -> Some [ Fb bo ])
-                       }
+                       )}
 
 constant:
-| ARG_d
-    { let currentArg = $1 in
+| _1 = ARG_d
+    {                       ( let currentArg = _1 in
                            ((fun args ->
                              match getArg currentArg args with
                                Fd n -> integer n
@@ -643,9 +643,9 @@ constant:
                               Const(CInt64(n, _, _)) -> 
                                 Some [ Fd (Int64.to_int n) ]
                             | _ -> None) 
-                         }
-| ARG_g
-    { let currentArg = $1 in
+                         )}
+| _1 = ARG_g
+    {                      ( let currentArg = _1 in
                         ((fun args ->
                              match getArg currentArg args with
                                Fg s -> Const(CStr s)
@@ -655,20 +655,20 @@ constant:
                               Const(CStr s) ->
                                 Some [ Fg s ]
                             | _ -> None) 
-                         }
-| CST_INT
-    { let n = parseInt $1 in
+                         )}
+| _1 = CST_INT
+    {                         ( let n = parseInt _1 in
                            ((fun args -> n),
 
                             (fun e -> match e, n with 
                               Const(CInt64(e', _, _)), 
                               Const(CInt64(n', _, _)) when e' = n' -> Some []
                             | _ -> None))
-                         }
+                         )}
 
 lval:
-| ARG_l
-    { let currentArg = $1 in
+| _1 = ARG_l
+    {                      ( let currentArg = _1 in
                            ((fun args -> 
                                 match getArg currentArg args with 
                                   Fl l -> l
@@ -676,187 +676,187 @@ lval:
                                 | a -> wrongArgType currentArg "lval" a),
 
                             fun l -> Some [ Fl l ])
-                         }
-| argv offset %prec ARG_v
-    { ((fun args -> 
-                              let v = (fst $1) args in
-                               (Var v, (fst $2) v.vtype args)),
+                         )}
+| _1 = argv _2 = offset %prec ARG_v
+    {                         ( ((fun args -> 
+                              let v = (fst _1) args in
+                               (Var v, (fst _2) v.vtype args)),
 
                             (fun l -> match l with 
                               Var vi, off -> begin
-                                match (snd $1) vi, (snd $2) off with 
+                                match (snd _1) vi, (snd _2) off with 
                                   Some m1, Some m2 -> Some (m1 @ m2)
                                 | _ -> None
                               end
                             | _ -> None))
-                         }
-| STAR expression
-    { ((fun args -> mkMem ((fst $2) args) NoOffset),
+                         )}
+| _1 = STAR _2 = expression
+    {                         ( ((fun args -> mkMem ((fst _2) args) NoOffset),
 
                            (fun l -> match l with 
-                              Mem e, NoOffset -> (snd $2) e
+                              Mem e, NoOffset -> (snd _2) e
                            | _, _ -> None))
-                         }
-| expression ARROW IDENT offset
-    { ((fun args -> 
-                   let e = (fst $1) args in
+                         )}
+| _1 = expression _2 = ARROW _3 = IDENT _4 = offset
+    {             ( ((fun args -> 
+                   let e = (fst _1) args in
                    let baset = 
                      match unrollTypeDeep (typeOf e) with 
                        TPtr (t, _) -> t
-                     | _ -> E.s (bug "Expecting a pointer for field %s\n" $3)
+                     | _ -> E.s (bug "Expecting a pointer for field %s\n" _3)
                    in
-                   let fi = getField baset $3 in
-                   mkMem e (Field(fi, (fst $4) fi.ftype args))),
+                   let fi = getField baset _3 in
+                   mkMem e (Field(fi, (fst _4) fi.ftype args))),
 
                 (fun l -> match l with 
-                   Mem e, Field(fi, off) when fi.fname = $3 -> begin
-                     match (snd $1) e, (snd $4) off with 
+                   Mem e, Field(fi, off) when fi.fname = _3 -> begin
+                     match (snd _1) e, (snd _4) off with 
                        Some m1, Some m2 -> Some (m1 @ m2)
                      | _, _ -> None
                    end
                 | _, _ -> None))
-             }
-| LPAREN STAR expression RPAREN offset
-    { ((fun args -> 
-                 let e = (fst $3) args in
+             )}
+| _1 = LPAREN _2 = STAR _3 = expression _4 = RPAREN _5 = offset
+    {             ( ((fun args -> 
+                 let e = (fst _3) args in
                  let baset = 
                    match unrollTypeDeep (typeOf e) with 
                      TPtr (t, _) -> t
                    | _ -> E.s (bug "Expecting a pointer\n")
                  in
-                 mkMem e ((fst $5) baset args)),
+                 mkMem e ((fst _5) baset args)),
 
                 (fun l -> match l with 
                   Mem e, off -> begin
-                    match (snd $3) e, (snd $5 off) with 
+                    match (snd _3) e, (snd _5 off) with 
                       Some m1, Some m2 -> Some (m1 @ m2)
                     | _, _ -> None
                   end
                 | _, _ -> None))
-              }
+              )}
 
 argv:
-| ARG_v
-    { let currentArg = $1 in
+| _1 = ARG_v
+    {                       ( let currentArg = _1 in
                          ((fun args ->
                            match getArg currentArg args with
                              Fv v -> v
                            | a -> wrongArgType currentArg "varinfo" a),
 
                           fun v -> Some [ Fv v ])
-                       }
-| IDENT
-    { let currentArg = $1 in
+                       )}
+| _1 = IDENT
+    {                       ( let currentArg = _1 in
                          ((fun args -> 
                            match getArg currentArg args with 
                              Fv v -> v
                            | a -> wrongArgType currentArg "varinfo" a),
                          (fun v -> 
                              E.s (bug "identifiers (%s) are not supported for deconstruction" currentArg)))
-                       }
+                       )}
 
 offset:
-| ARG_o
-    { let currentArg = $1 in
+| _1 = ARG_o
+    {                     ( let currentArg = _1 in
                             ((fun t args -> 
                                 match getArg currentArg args with 
                                   Fo o -> o
                                 | a -> wrongArgType currentArg "offset" a),
 
                               (fun off -> Some [ Fo off ]))
-                          }
+                          )}
 | 
-    { ((fun t args -> NoOffset),
+    {                          ( ((fun t args -> NoOffset),
 
                              (fun off -> match off with 
                                 NoOffset -> Some []
                               | _ -> None))
-                          }
-| DOT IDENT offset
-    { ((fun t args -> 
-                                let fi = getField t $2 in
-                                Field (fi, (fst $3) fi.ftype args)),
+                          )}
+| _1 = DOT _2 = IDENT _3 = offset
+    {                          ( ((fun t args -> 
+                                let fi = getField t _2 in
+                                Field (fi, (fst _3) fi.ftype args)),
 
                             (fun off -> match off with 
-                               Field (fi, off') when fi.fname = $2 -> 
-                                 (snd $3) off'
+                               Field (fi, off') when fi.fname = _2 -> 
+                                 (snd _3) off'
                             | _ -> None))
-                          }
-| LBRACKET expression RBRACKET offset
-    { ((fun t args -> 
+                          )}
+| _1 = LBRACKET _2 = expression _3 = RBRACKET _4 = offset
+    {                   ( ((fun t args -> 
                      let bt = 
                        match unrollType t with 
                          TArray(bt, _, _) -> bt 
                        | _ -> E.s (error "Formatcil: expecting an array for index")
                      in
-                     let e = (fst $2) args in 
-                     Index(e, (fst $4) bt args)),
+                     let e = (fst _2) args in 
+                     Index(e, (fst _4) bt args)),
 
                     (fun off -> match off with 
                       Index (e, off') -> begin
-                        match (snd $2) e, (snd $4) off with 
+                        match (snd _2) e, (snd _4) off with 
                           Some m1, Some m2 -> Some (m1 @ m2)
                         | _, _ -> None
                       end
                     | _ -> None))
-                    }
+                    )}
 
 typename:
-| one_formal
-    { ((fun args -> 
-                            let (_, ft, _) = (fst $1) args in
+| _1 = one_formal
+    {                      ( ((fun args -> 
+                            let (_, ft, _) = (fst _1) args in
                             ft),
 
-                         (fun t -> (snd $1) ("", t, [])))
-                      }
+                         (fun t -> (snd _1) ("", t, [])))
+                      )}
 
 one_formal:
-| type_spec attributes decl
-    { ((fun args -> 
-                        let tal = (fst $2) args in
-                        let ts = (fst $1) tal args in
-                        let (fn, ft, _) = (fst $3) ts args in
+| _1 = type_spec _2 = attributes _3 = decl
+    {                   ( ((fun args -> 
+                        let tal = (fst _2) args in
+                        let ts = (fst _1) tal args in
+                        let (fn, ft, _) = (fst _3) ts args in
                         (fn, ft, [])),
 
                       (fun (fn, ft, fa) -> 
-                         match (snd $3) (fn, ft) with 
+                         match (snd _3) (fn, ft) with 
                            Some (restt, m3) -> begin
-                             match (snd $1) restt, 
-                                   (snd $2) (typeAttrs restt)with
+                             match (snd _1) restt, 
+                                   (snd _2) (typeAttrs restt)with
                                Some m1, Some m2 -> 
                                  Some (m1 @ m2 @ m3)
                              | _, _ -> None
                            end
                          | _ -> None))
-                   }
-| ARG_f
-    { let currentArg = $1 in
+                   )}
+| _1 = ARG_f
+    {                   ( let currentArg = _1 in
                      ((fun args -> 
                          match getArg currentArg args with
                           Ff (fn, ft, fa) -> (fn, ft, fa)
                          | a  -> wrongArgType currentArg "formal" a),
 
                       (fun (fn, ft, fa) -> Some [ Ff (fn, ft, fa) ]))
-                   }
+                   )}
 
 type_spec:
-| ARG_t
-    { let currentArg = $1 in
+| _1 = ARG_t
+    {                ( let currentArg = _1 in
                      ((fun al args -> 
                        match getArg currentArg args with 
                           Ft t -> typeAddAttributes al t
                        | a -> wrongArgType currentArg "type" a),
                       
                       (fun t -> Some [ Ft t ]))
-                      }
-| VOID
-    { ((fun al args -> TVoid al),
+                      )}
+| _1 = VOID
+    {                    ( ((fun al args -> TVoid al),
 
                        (fun t -> match unrollType t with 
                            TVoid _ -> Some []
-                         | _ -> None)) }
-| ARG_k
-    { let currentArg = $1 in
+                         | _ -> None)) )}
+| _1 = ARG_k
+    {                    ( let currentArg = _1 in
                       ((fun al args -> 
                         match getArg currentArg args with 
                           Fk ik -> TInt(ik, al)
@@ -865,49 +865,49 @@ type_spec:
                        (fun t -> match unrollType t with 
                          TInt(ik, _) -> Some [ Fk ik ]
                        | _ -> None))
-                    }
-| CHAR
-    { ((fun al args -> TInt(IChar, al)),
-                       (matchIntType IChar)) }
-| UNSIGNED CHAR
-    { ((fun al args -> TInt(IUChar, al)), 
-                       matchIntType IUChar) }
-| SHORT
-    { ((fun al args -> TInt(IShort, al)), 
-                       matchIntType IShort) }
-| UNSIGNED SHORT
-    { ((fun al args -> TInt(IUShort, al)), 
-                       matchIntType IUShort) }
-| INT
-    { ((fun al args -> TInt(IInt, al)), 
-                       matchIntType IInt) }
-| UNSIGNED INT
-    { ((fun al args -> TInt(IUInt, al)), matchIntType IUInt) }
-| LONG
-    { ((fun al args -> TInt(ILong, al)), 
-                        matchIntType ILong) }
-| UNSIGNED LONG
-    { ((fun al args -> TInt(IULong, al)), 
-                        matchIntType IULong) }
-| LONG LONG
-    { ((fun al args -> TInt(ILongLong, al)), 
+                    )}
+| _1 = CHAR
+    {                    ( ((fun al args -> TInt(IChar, al)),
+                       (matchIntType IChar)) )}
+| _1 = UNSIGNED _2 = CHAR
+    {                    ( ((fun al args -> TInt(IUChar, al)), 
+                       matchIntType IUChar) )}
+| _1 = SHORT
+    {                    ( ((fun al args -> TInt(IShort, al)), 
+                       matchIntType IShort) )}
+| _1 = UNSIGNED _2 = SHORT
+    {                    ( ((fun al args -> TInt(IUShort, al)), 
+                       matchIntType IUShort) )}
+| _1 = INT
+    {                    ( ((fun al args -> TInt(IInt, al)), 
+                       matchIntType IInt) )}
+| _1 = UNSIGNED _2 = INT
+    {                    ( ((fun al args -> TInt(IUInt, al)), matchIntType IUInt) )}
+| _1 = LONG
+    {                     ( ((fun al args -> TInt(ILong, al)), 
+                        matchIntType ILong) )}
+| _1 = UNSIGNED _2 = LONG
+    {                     ( ((fun al args -> TInt(IULong, al)), 
+                        matchIntType IULong) )}
+| _1 = LONG _2 = LONG
+    {                       ( ((fun al args -> TInt(ILongLong, al)), 
                           
                           matchIntType ILongLong)
-                        }
-| UNSIGNED LONG LONG
-    { ((fun al args -> TInt(IULongLong, al)),
+                        )}
+| _1 = UNSIGNED _2 = LONG _3 = LONG
+    {                          ( ((fun al args -> TInt(IULongLong, al)),
 
                              matchIntType IULongLong)
-                           }
-| FLOAT
-    { ((fun al args -> TFloat(FFloat, al)),
+                           )}
+| _1 = FLOAT
+    {                    ( ((fun al args -> TFloat(FFloat, al)),
                        matchFloatType FFloat) 
-                    }
-| DOUBLE
-    { ((fun al args -> TFloat(FDouble, al)),
-                       matchFloatType FDouble) }
-| STRUCT ARG_c
-    { let currentArg = $2 in
+                    )}
+| _1 = DOUBLE
+    {                    ( ((fun al args -> TFloat(FDouble, al)),
+                       matchFloatType FDouble) )}
+| _1 = STRUCT _2 = ARG_c
+    {                 ( let currentArg = _2 in
                       ((fun al args -> 
                          match getArg currentArg args with 
                            Fc ci -> TComp(ci, al)
@@ -916,9 +916,9 @@ type_spec:
                         (fun t -> match unrollType t with 
                             TComp(ci, _) -> Some [ Fc ci ]
                           | _ -> None))
-                    }
-| UNION ARG_c
-    { let currentArg = $2 in
+                    )}
+| _1 = UNION _2 = ARG_c
+    {                ( let currentArg = _2 in
                      ((fun al args -> 
                          match getArg currentArg args with 
                            Fc ci -> TComp(ci, al)
@@ -928,125 +928,125 @@ type_spec:
                             TComp(ci, _) -> Some [ Fc ci ]
                           | _ -> None))
 
-                   }
-| TYPEOF LPAREN expression RPAREN
-    { ((fun al args -> typeAddAttributes al 
-                                        (typeOf ((fst $3) args))),
+                   )}
+| _1 = TYPEOF _2 = LPAREN _3 = expression _4 = RPAREN
+    {                   ( ((fun al args -> typeAddAttributes al 
+                                        (typeOf ((fst _3) args))),
                     
                       (fun t -> E.s (bug "Cannot match typeof(e)\n")))
-                   }
+                   )}
 
 decl:
-| STAR attributes decl
-    { ((fun ts args -> 
-                         let al = (fst $2) args in
-                         (fst $3) (TPtr(ts, al)) args),
+| _1 = STAR _2 = attributes _3 = decl
+    {                    ( ((fun ts args -> 
+                         let al = (fst _2) args in
+                         (fst _3) (TPtr(ts, al)) args),
 
                        (fun (fn, ft) -> 
-                         match (snd $3) (fn, ft) with 
+                         match (snd _3) (fn, ft) with 
                            Some (TPtr(bt, al), m2) -> begin
-                             match (snd $2) al with 
+                             match (snd _2) al with 
                                Some m1 -> Some (bt, m1 @ m2)
                              | _ -> None
                            end
                          | _ -> None))
-                    }
-| direct_decl
-    { $1 }
+                    )}
+| _1 = direct_decl
+    {                ( _1 )}
 
 direct_decl:
 | 
-    { ((fun ts args -> ("", ts, [])),
+    {                   ( ((fun ts args -> ("", ts, [])),
 
                       (* Match any name in this case *)
                       (fun (fn, ft) -> 
                          Some (unrollType ft, [])))
-                   }
-| IDENT
-    { ((fun ts args -> ($1, ts, [])),
+                   )}
+| _1 = IDENT
+    {                   ( ((fun ts args -> (_1, ts, [])),
 
                       (fun (fn, ft) -> 
-                        if fn = "" || fn = $1 then 
+                        if fn = "" || fn = _1 then 
                           Some (unrollType ft, []) 
                         else 
                           None))
-                   }
-| LPAREN attributes decl RPAREN
-    { ((fun ts args -> 
-                          let al = (fst $2) args in
-                          (fst $3) (typeAddAttributes al ts) args),
+                   )}
+| _1 = LPAREN _2 = attributes _3 = decl _4 = RPAREN
+    {                   ( ((fun ts args -> 
+                          let al = (fst _2) args in
+                          (fst _3) (typeAddAttributes al ts) args),
 
                       (fun (fn, ft) -> begin
-                        match (snd $3) (fn, ft) with
+                        match (snd _3) (fn, ft) with
                           Some (restt, m2) -> begin
-                            match (snd $2) (typeAttrs restt) with 
+                            match (snd _2) (typeAttrs restt) with 
                               Some m1 -> Some (restt, m1 @ m2)
                             | _ -> None
                           end
                         | _ -> None
                       end))
-                   }
-| direct_decl LBRACKET exp_opt RBRACKET
-    { ((fun ts args -> 
-                        (fst $1) (TArray(ts, (fst $3) args, [])) args),
+                   )}
+| _1 = direct_decl _2 = LBRACKET _3 = exp_opt _4 = RBRACKET
+    {                   ( ((fun ts args -> 
+                        (fst _1) (TArray(ts, (fst _3) args, [])) args),
 
                      (fun (fn, ft) -> 
-                       match (snd $1) (fn, ft) with 
+                       match (snd _1) (fn, ft) with 
                          Some (TArray(bt, lo, _), m1) -> begin
-                           match (snd $3) lo with 
+                           match (snd _3) lo with 
                              Some m2 -> Some (unrollType bt, m1 @ m2)
                            | _ -> None
                          end 
                        | _ -> None))
-                   }
-| LPAREN attributes decl RPAREN LPAREN parameters RPAREN
-    { ((fun ts args -> 
-                        let al = (fst $2) args in
-                        let pars, isva = (fst $6) args in
-                        (fst $3) (TFun(ts, pars, isva, al)) args),
+                   )}
+| _1 = LPAREN _2 = attributes _3 = decl _4 = RPAREN _5 = LPAREN _6 = parameters _7 = RPAREN
+    {                   ( ((fun ts args -> 
+                        let al = (fst _2) args in
+                        let pars, isva = (fst _6) args in
+                        (fst _3) (TFun(ts, pars, isva, al)) args),
 
                       (fun (fn, ft) -> 
-                         match (snd $3) (fn, ft) with 
+                         match (snd _3) (fn, ft) with 
                            Some (TFun(rt, args, isva, al), m1) -> begin
-                             match (snd $2) al, (snd $6) (args, isva) with 
+                             match (snd _2) al, (snd _6) (args, isva) with 
                                Some m2, Some m6 
                                -> Some (unrollType rt, m1 @ m2 @ m6)
                              | _ -> None
                            end
                          | _ -> None))
-                   }
+                   )}
 
 parameters:
 | 
-    { ((fun args -> (None, false)),
+    {                   ( ((fun args -> (None, false)),
 
                      (* Match any formals *)
                       (fun (pars, isva) -> 
                         match pars, isva with 
                           (_, false) -> Some [] 
                         | _ -> None))
-                   }
-| parameters_ne
-    { ((fun args -> 
+                   )}
+| _1 = parameters_ne
+    {                   ( ((fun args -> 
                         let (pars : (string * typ * attributes) list), 
-                            (isva : bool) = (fst $1) args in
+                            (isva : bool) = (fst _1) args in
                         (Some pars), isva),
 
                      (function 
-                         ((Some pars), isva) -> (snd $1) (pars, isva)
+                         ((Some pars), isva) -> (snd _1) (pars, isva)
                        |  _ -> None))
-                   }
+                   )}
 
 parameters_ne:
-| ELLIPSIS
-    { ((fun args -> ([], true)),
+| _1 = ELLIPSIS
+    {                   ( ((fun args -> ([], true)),
 
                       (function 
                           ([], true) -> Some [] 
                         | _ -> None))
-                   }
-| ARG_va
-    { let currentArg = $1 in
+                   )}
+| _1 = ARG_va
+    {                   ( let currentArg = _1 in
                      ((fun args -> 
                        match getArg currentArg args with
                          Fva isva -> ([], isva)
@@ -1055,9 +1055,9 @@ parameters_ne:
                      (function 
                          ([], isva) -> Some [ Fva isva ] 
                        | _ -> None))
-                   }
-| ARG_F
-    { let currentArg = $1 in
+                   )}
+| _1 = ARG_F
+    {                   ( let currentArg = _1 in
                      ((fun args -> 
                        match getArg currentArg args with
                         FF fl -> ( fl, false)
@@ -1066,250 +1066,250 @@ parameters_ne:
                       (function 
                           (pars, false) -> Some [ FF pars ] 
                         | _ -> None))
-                   }
-| one_formal
-    { ((fun args -> ([(fst $1) args], false)),
+                   )}
+| _1 = one_formal
+    {                   ( ((fun args -> ([(fst _1) args], false)),
 
                      (function 
-                         ([ f ], false) -> (snd $1) f 
+                         ([ f ], false) -> (snd _1) f 
                        | _ -> None))
-                   }
-| one_formal COMMA parameters_ne
-    { ((fun args -> 
-                        let this = (fst $1) args in
-                        let (rest, isva) = (fst $3) args in
+                   )}
+| _1 = one_formal _2 = COMMA _3 = parameters_ne
+    {                   ( ((fun args -> 
+                        let this = (fst _1) args in
+                        let (rest, isva) = (fst _3) args in
                         (this :: rest, isva)),
 
                       (function 
                           ((f::rest, isva)) -> begin
-                            match (snd $1) f, (snd $3) (rest, isva) with 
+                            match (snd _1) f, (snd _3) (rest, isva) with 
                               Some m1, Some m2 -> Some (m1 @ m2)
                             | _, _ -> None
                           end
                         | _ -> None))
-                   }
+                   )}
 
 exp_opt:
 | 
-    { ((fun args -> None),
+    {                   ( ((fun args -> None),
                       (* Match anything if the pattern does not have a len *)
-                      (fun _ -> Some [])) }
-| expression
-    { ((fun args -> Some ((fst $1) args)),
+                      (fun _ -> Some [])) )}
+| _1 = expression
+    {                   ( ((fun args -> Some ((fst _1) args)),
 
                       (fun lo -> match lo with
-                        Some e -> (snd $1) e
+                        Some e -> (snd _1) e
                       | _ -> None))
-                   }
-| ARG_eo
-    { let currentArg = $1 in
+                   )}
+| _1 = ARG_eo
+    {                   ( let currentArg = _1 in
                      ((fun args ->
                        match getArg currentArg args with
                          Feo lo -> lo
                        | a -> wrongArgType currentArg "exp_opt" a),
 
                       fun lo -> Some [ Feo lo ])
-                   }
+                   )}
 
 attributes:
 | 
-    { ((fun args -> []), 
-                     (fun attrs -> Some [])) }
-| ARG_A
-    { let currentArg = $1 in
+    {                  ( ((fun args -> []), 
+                     (fun attrs -> Some [])) )}
+| _1 = ARG_A
+    {                  ( let currentArg = _1 in
                     ((fun args -> 
                         match getArg currentArg args with
                           FA al -> al
                         | a -> wrongArgType currentArg "attributes" a),
 
                      (fun al -> Some [ FA al ]))
-                  }
-| attribute attributes
-    { ((fun args ->
-                       addAttribute ((fst $1) args) ((fst $2) args)),
+                  )}
+| _1 = attribute _2 = attributes
+    {                  ( ((fun args ->
+                       addAttribute ((fst _1) args) ((fst _2) args)),
                      (* Pass all the attributes down *)
                      (fun attrs ->
-                       match (snd $1) attrs, (snd $2) attrs with
+                       match (snd _1) attrs, (snd _2) attrs with
                          Some m1, Some m2 -> Some (m1 @ m2)
                        | _, _ -> None))
-                  }
+                  )}
 
 attribute:
-| CONST
-    { doAttr "const" None }
-| RESTRICT
-    { doAttr "restrict" None }
-| VOLATILE
-    { doAttr "volatile" None }
-| ATTRIBUTE LPAREN LPAREN attr RPAREN RPAREN
-    { $4 }
+| _1 = CONST
+    {                                        ( doAttr "const" None )}
+| _1 = RESTRICT
+    {                                        ( doAttr "restrict" None )}
+| _1 = VOLATILE
+    {                                        ( doAttr "volatile" None )}
+| _1 = ATTRIBUTE _2 = LPAREN _3 = LPAREN _4 = attr _5 = RPAREN _6 = RPAREN
+    {                                        ( _4 )}
 
 attr:
-| IDENT
-    { doAttr $1 None }
-| IDENT LPAREN attr_args_ne RPAREN
-    { doAttr $1 (Some $3) }
+| _1 = IDENT
+    {                          ( doAttr _1 None )}
+| _1 = IDENT _2 = LPAREN _3 = attr_args_ne _4 = RPAREN
+    {                          ( doAttr _1 (Some _3) )}
 
 attr_args_ne:
-| attr_arg
-    { ((fun args -> [ (fst $1) args ]),
+| _1 = attr_arg
+    {                                 ( ((fun args -> [ (fst _1) args ]),
 
                                     (fun aargs -> match aargs with 
-                                      [ arg ] -> (snd $1) arg
+                                      [ arg ] -> (snd _1) arg
                                     | _ -> None))
-                                 }
-| attr_arg COMMA attr_args_ne
-    { ((fun args -> 
-                                      let this = (fst $1) args in
-                                      this :: ((fst $3) args)),
+                                 )}
+| _1 = attr_arg _2 = COMMA _3 = attr_args_ne
+    {                                 ( ((fun args -> 
+                                      let this = (fst _1) args in
+                                      this :: ((fst _3) args)),
 
                                     (fun aargs -> match aargs with 
                                       h :: rest -> begin
-                                        match (snd $1) h, (snd $3) rest with
+                                        match (snd _1) h, (snd _3) rest with
                                           Some m1, Some m2 -> Some (m1 @ m2)
                                         | _, _ -> None
                                       end
                                     | _ -> None))
-                                  }
-| ARG_P
-    { let currentArg = $1 in
+                                  )}
+| _1 = ARG_P
+    {                        ( let currentArg = _1 in
                           ((fun args -> 
                             match getArg currentArg args with
                               FP al -> al
                             | a -> wrongArgType currentArg "attrparams" a),
 
                            (fun al -> Some [ FP al ]))
-                        }
+                        )}
 
 attr_arg:
-| IDENT
-    { ((fun args -> ACons($1, [])),
+| _1 = IDENT
+    {                     ( ((fun args -> ACons(_1, [])),
 
                         (fun aarg -> match aarg with 
-                            ACons(id, []) when id = $1 -> Some []
+                            ACons(id, []) when id = _1 -> Some []
                         | _ -> None))
-                     }
-| IDENT LPAREN attr_args_ne RPAREN
-    { ((fun args -> ACons($1, (fst $3) args)),
+                     )}
+| _1 = IDENT _2 = LPAREN _3 = attr_args_ne _4 = RPAREN
+    {                     ( ((fun args -> ACons(_1, (fst _3) args)),
 
                         (fun aarg -> match aarg with 
-                            ACons(id, args) when id = $1 -> 
-                              (snd $3) args
+                            ACons(id, args) when id = _1 -> 
+                              (snd _3) args
                         | _ -> None))
-                     }
-| ARG_p
-    { let currentArg = $1 in
+                     )}
+| _1 = ARG_p
+    {                     ( let currentArg = _1 in
                        ((fun args -> 
                           match getArg currentArg args with
                             Fp p -> p
                           | a -> wrongArgType currentArg "attrparam" a),
 
                         (fun ap -> Some [ Fp ap]))
-                     }
+                     )}
 
 instr:
-| ARG_i SEMICOLON
-    { let currentArg = $1 in
+| _1 = ARG_i _2 = SEMICOLON
+    {                        ( let currentArg = _1 in
                           ((fun loc args -> 
                                 match getArg currentArg args with 
                                   Fi i -> i
                                 | a -> wrongArgType currentArg "instr" a),
 
                            (fun i -> Some [ Fi i]))
-                        }
-| lval EQ expression SEMICOLON
-    { ((fun loc args -> 
-                              Set((fst $1) args, (fst $3) args, loc)),
+                        )}
+| _1 = lval _2 = EQ _3 = expression _4 = SEMICOLON
+    {   ( ((fun loc args -> 
+                              Set((fst _1) args, (fst _3) args, loc)),
 
                            (fun i -> match i with
                              Set (lv, e, l) -> begin
-                               match (snd $1) lv, (snd $3) e with
+                               match (snd _1) lv, (snd _3) e with
                                  Some m1, Some m2 -> Some (m1 @ m2)
                                | _, _ -> None
                              end
                            | _ -> None))
-                        }
-| lval PLUS_EQ expression SEMICOLON
-    { ((fun loc args -> 
-                              let l = (fst $1) args in
-                              Set(l, buildPlus (Lval l) ((fst $3) args), loc)),
+                        )}
+| _1 = lval _2 = PLUS_EQ _3 = expression _4 = SEMICOLON
+    {   ( ((fun loc args -> 
+                              let l = (fst _1) args in
+                              Set(l, buildPlus (Lval l) ((fst _3) args), loc)),
 
                            matchBinopEq 
                              (fun bop -> bop = PlusPI || bop = PlusA)
-                             (snd $1) (snd $3)) 
-                        }
-| lval MINUS_EQ expression SEMICOLON
-    { ((fun loc args -> 
-                              let l = (fst $1) args in
+                             (snd _1) (snd _3)) 
+                        )}
+| _1 = lval _2 = MINUS_EQ _3 = expression _4 = SEMICOLON
+    {   ( ((fun loc args -> 
+                              let l = (fst _1) args in
                               Set(l, 
-                                  buildMinus (Lval l) ((fst $3) args), loc)),
+                                  buildMinus (Lval l) ((fst _3) args), loc)),
 
                            matchBinopEq (fun bop -> bop = MinusA 
                                                || bop = MinusPP 
                                                || bop = MinusPI) 
-                                      (snd $1)  (snd $3)) 
-                        }
-| lval STAR_EQ expression SEMICOLON
-    { doBinopEq Mult $1 $3 }
-| lval SLASH_EQ expression SEMICOLON
-    { doBinopEq Div $1 $3 }
-| lval PERCENT_EQ expression SEMICOLON
-    { doBinopEq Mod $1 $3 }
-| lval AND_EQ expression SEMICOLON
-    { doBinopEq BAnd $1 $3 }
-| lval PIPE_EQ expression SEMICOLON
-    { doBinopEq BOr $1 $3 }
-| lval CIRC_EQ expression SEMICOLON
-    { doBinopEq BXor $1 $3 }
-| lval INF_INF_EQ expression SEMICOLON
-    { doBinopEq Shiftlt $1 $3 }
-| lval SUP_SUP_EQ expression SEMICOLON
-    { doBinopEq Shiftrt $1 $3 }
-| lval EQ lval LPAREN arguments RPAREN SEMICOLON
-    { ((fun loc args -> 
-                              Call(Some ((fst $1) args), Lval ((fst $3) args), 
-                                     (fst $5) args, loc)),
+                                      (snd _1)  (snd _3)) 
+                        )}
+| _1 = lval _2 = STAR_EQ _3 = expression _4 = SEMICOLON
+    {   ( doBinopEq Mult _1 _3 )}
+| _1 = lval _2 = SLASH_EQ _3 = expression _4 = SEMICOLON
+    {   ( doBinopEq Div _1 _3 )}
+| _1 = lval _2 = PERCENT_EQ _3 = expression _4 = SEMICOLON
+    {   ( doBinopEq Mod _1 _3 )}
+| _1 = lval _2 = AND_EQ _3 = expression _4 = SEMICOLON
+    {   ( doBinopEq BAnd _1 _3 )}
+| _1 = lval _2 = PIPE_EQ _3 = expression _4 = SEMICOLON
+    {   ( doBinopEq BOr _1 _3 )}
+| _1 = lval _2 = CIRC_EQ _3 = expression _4 = SEMICOLON
+    {   ( doBinopEq BXor _1 _3 )}
+| _1 = lval _2 = INF_INF_EQ _3 = expression _4 = SEMICOLON
+    {   ( doBinopEq Shiftlt _1 _3 )}
+| _1 = lval _2 = SUP_SUP_EQ _3 = expression _4 = SEMICOLON
+    {   ( doBinopEq Shiftrt _1 _3 )}
+| _1 = lval _2 = EQ _3 = lval _4 = LPAREN _5 = arguments _6 = RPAREN _7 = SEMICOLON
+    {   ( ((fun loc args -> 
+                              Call(Some ((fst _1) args), Lval ((fst _3) args), 
+                                     (fst _5) args, loc)),
 
                            (fun i -> match i with 
                              Call(Some l, Lval f, args, loc) -> begin
-                               match (snd $1) l, (snd $3) f, (snd $5) args with
+                               match (snd _1) l, (snd _3) f, (snd _5) args with
                                  Some m1, Some m2, Some m3 -> 
                                    Some (m1 @ m2 @ m3)
                                | _, _, _ -> None
                              end
                            | _ -> None))
-                        }
-| lval LPAREN arguments RPAREN SEMICOLON
-    { ((fun loc args -> 
-                              Call(None, Lval ((fst $1) args), 
-                                     (fst $3) args, loc)), 
+                        )}
+| _1 = lval _2 = LPAREN _3 = arguments _4 = RPAREN _5 = SEMICOLON
+    {   ( ((fun loc args -> 
+                              Call(None, Lval ((fst _1) args), 
+                                     (fst _3) args, loc)), 
 
                            (fun i -> match i with 
                              Call(None, Lval f, args, loc) -> begin
-                               match (snd $1) f, (snd $3) args with
+                               match (snd _1) f, (snd _3) args with
                                  Some m1, Some m2 -> Some (m1 @ m2)
                                | _, _ -> None
                              end
                            | _ -> None))
-                         }
-| arglo lval LPAREN arguments RPAREN SEMICOLON
-    { ((fun loc args -> 
-                       Call((fst $1) args, Lval ((fst $2) args), 
-                            (fst $4) args, loc)), 
+                         )}
+| _1 = arglo _2 = lval _3 = LPAREN _4 = arguments _5 = RPAREN _6 = SEMICOLON
+    {       ( ((fun loc args -> 
+                       Call((fst _1) args, Lval ((fst _2) args), 
+                            (fst _4) args, loc)), 
                         
                         (fun i -> match i with 
                           Call(lo, Lval f, args, loc) -> begin
-                            match (snd $1) lo, (snd $2) f, (snd $4) args with
+                            match (snd _1) lo, (snd _2) f, (snd _4) args with
                               Some m1, Some m2, Some m3 -> 
                                 Some (m1 @ m2 @ m3)
                             | _, _, _ -> None
                           end
                         | _ -> None))
-                     }
+                     )}
 
 arglo:
-| ARG_lo
-    { let currentArg = $1 in
+| _1 = ARG_lo
+    {                         ( let currentArg = _1 in
                            ((fun args -> 
                              let res = 
                                match getArg currentArg args with
@@ -1319,81 +1319,81 @@ arglo:
                              res),
 
                             (fun lo -> Some [ Flo lo ]))
-                         }
+                         )}
 
 arguments:
 | 
-    { ((fun args -> []), 
+    {                  ( ((fun args -> []), 
 
                      (fun actuals -> match actuals with 
                           [] -> Some []
                          | _ -> None))
-                  }
-| arguments_ne
-    { $1 }
+                  )}
+| _1 = arguments_ne
+    {                  ( _1 )}
 
 arguments_ne:
-| expression
-    { ((fun args -> [ (fst $1) args ]),
+| _1 = expression
+    {                  ( ((fun args -> [ (fst _1) args ]),
 
                      (fun actuals -> match actuals with 
-                        [ h ] -> (snd $1) h
+                        [ h ] -> (snd _1) h
                        | _ -> None))
-                  }
-| ARG_E
-    {  let currentArg = $1 in
+                  )}
+| _1 = ARG_E
+    {                  (  let currentArg = _1 in
                      ((fun args -> 
                          match getArg currentArg args with
                            FE el -> el
                           | a -> wrongArgType currentArg "arguments" a),
 
                       (fun actuals -> Some [ FE actuals ]))
-                  }
-| expression COMMA arguments_ne
-    { ((fun args -> ((fst $1) args) :: ((fst $3) args)),
+                  )}
+| _1 = expression _2 = COMMA _3 = arguments_ne
+    {                  ( ((fun args -> ((fst _1) args) :: ((fst _3) args)),
 
                      (fun actuals -> match actuals with 
                          h :: rest -> begin
-                           match (snd $1) h, (snd $3) rest with 
+                           match (snd _1) h, (snd _3) rest with 
                              Some m1, Some m2 -> Some (m1 @ m2)
                            | _, _ -> None
                          end
                        | _ -> None))
-                  }
+                  )}
 
 stmt:
-| IF LPAREN expression RPAREN stmt %prec IF
-    { (fun mkTemp loc args -> 
-                         mkStmt (If((fst $3) args, 
-                                    mkBlock [ $5 mkTemp loc args ],
+| _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = stmt %prec IF
+    {                  ( (fun mkTemp loc args -> 
+                         mkStmt (If((fst _3) args, 
+                                    mkBlock [ _5 mkTemp loc args ],
                                     mkBlock [], loc)))
-                  }
-| IF LPAREN expression RPAREN stmt ELSE stmt
-    { (fun mkTemp loc args -> 
-                         mkStmt (If((fst $3) args, 
-                                    mkBlock [ $5 mkTemp loc args ],
-                                    mkBlock [ $7 mkTemp loc args], loc)))
-                  }
-| RETURN exp_opt SEMICOLON
-    { (fun mkTemp loc args -> 
-                         mkStmt (Return((fst $2) args, loc))) 
-                  }
-| BREAK SEMICOLON
-    { (fun mkTemp loc args -> 
+                  )}
+| _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = stmt _6 = ELSE _7 = stmt
+    {                  ( (fun mkTemp loc args -> 
+                         mkStmt (If((fst _3) args, 
+                                    mkBlock [ _5 mkTemp loc args ],
+                                    mkBlock [ _7 mkTemp loc args], loc)))
+                  )}
+| _1 = RETURN _2 = exp_opt _3 = SEMICOLON
+    {                  ( (fun mkTemp loc args -> 
+                         mkStmt (Return((fst _2) args, loc))) 
+                  )}
+| _1 = BREAK _2 = SEMICOLON
+    {                  ( (fun mkTemp loc args -> 
                          mkStmt (Break loc))
-                  }
-| CONTINUE SEMICOLON
-    { (fun mkTemp loc args -> 
+                  )}
+| _1 = CONTINUE _2 = SEMICOLON
+    {                  ( (fun mkTemp loc args -> 
                          mkStmt (Continue loc))
-                  }
-| LBRACE stmt_list RBRACE
-    { (fun mkTemp loc args -> 
-                         let stmts = $2 mkTemp loc args in
+                  )}
+| _1 = LBRACE _2 = stmt_list _3 = RBRACE
+    {                  ( (fun mkTemp loc args -> 
+                         let stmts = _2 mkTemp loc args in
                          mkStmt (Block (mkBlock (stmts))))
-                  }
-| WHILE LPAREN expression RPAREN stmt
-    { (fun mkTemp loc args -> 
-                        let e = (fst $3) args in
+                  )}
+| _1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = stmt
+    {                  ( (fun mkTemp loc args -> 
+                        let e = (fst _3) args in
                         let e = 
                           if isPointerType(typeOf e) then 
                             mkCast e !upointType
@@ -1406,45 +1406,45 @@ stmt:
                                                  mkBlock [ mkStmt 
                                                              (Break loc) ],
                                                  loc));
-                                           $5 mkTemp loc args ],
+                                           _5 mkTemp loc args ],
                                  loc, None, None)))
-                   }
-| instr_list
-    { (fun mkTemp loc args -> 
-                       mkStmt (Instr ($1 loc args)))
-                  }
-| ARG_s
-    { let currentArg = $1 in
+                   )}
+| _1 = instr_list
+    {                  ( (fun mkTemp loc args -> 
+                       mkStmt (Instr (_1 loc args)))
+                  )}
+| _1 = ARG_s
+    {                  ( let currentArg = _1 in
                     (fun mkTemp loc args -> 
                        match getArg currentArg args with
                          Fs s -> s
-                       | a -> wrongArgType currentArg "stmt" a) }
+                       | a -> wrongArgType currentArg "stmt" a) )}
 
 stmt_list:
 | 
-    { (fun mkTemp loc args -> []) }
-| ARG_S
-    { let currentArg = $1 in
+    {                 ( (fun mkTemp loc args -> []) )}
+| _1 = ARG_S
+    {                 ( let currentArg = _1 in
                    (fun mkTemp loc args -> 
                        match getArg currentArg args with 
                        | FS sl -> sl 
                        | a -> wrongArgType currentArg "stmts" a)
-                 }
-| stmt stmt_list
-    { (fun mkTemp loc args -> 
-                      let this = $1 mkTemp loc args in
-                      this :: ($2 mkTemp loc args))
-                 }
-| type_spec attributes decl maybe_init SEMICOLON stmt_list
-    { (fun mkTemp loc args -> 
-                     let tal = (fst $2) args in
-                     let ts  = (fst $1) tal args in
-                     let (n, t, _) = (fst $3) ts args in
-                     let init = $4 args in
+                 )}
+| _1 = stmt _2 = stmt_list
+    {                 ( (fun mkTemp loc args -> 
+                      let this = _1 mkTemp loc args in
+                      this :: (_2 mkTemp loc args))
+                 )}
+| _1 = type_spec _2 = attributes _3 = decl _4 = maybe_init _5 = SEMICOLON _6 = stmt_list
+    {                ( (fun mkTemp loc args -> 
+                     let tal = (fst _2) args in
+                     let ts  = (fst _1) tal args in
+                     let (n, t, _) = (fst _3) ts args in
+                     let init = _4 args in
                      (* Before we proceed we must create the variable *)
                      let v = mkTemp n t in
                      (* Now we parse the rest *)
-                     let rest = $6 mkTemp loc ((n, Fv v) :: args) in
+                     let rest = _6 mkTemp loc ((n, Fv v) :: args) in
                      (* Now we add the initialization instruction to the 
                       * front *)
                      match init with 
@@ -1458,32 +1458,32 @@ stmt_list:
                          :: rest
 
                                                            )
-                 }
+                 )}
 
 instr_list:
-| instr %prec COMMA
-    { (fun loc args -> [ ((fst $1) loc args) ]) }
-| ARG_I
-    { let currentArg = $1 in
+| _1 = instr %prec COMMA
+    {                 ( (fun loc args -> [ ((fst _1) loc args) ]) )}
+| _1 = ARG_I
+    {                 ( let currentArg = _1 in
                    (fun loc args -> 
                        match getArg currentArg args with 
                        | FI il -> il 
                        | a -> wrongArgType currentArg "instrs" a)
-                 }
-| instr instr_list
-    { (fun loc args -> 
-                      let this = (fst $1) loc args in
-                      this :: ($2 loc args))
-                 }
+                 )}
+| _1 = instr _2 = instr_list
+    {                 ( (fun loc args -> 
+                      let this = (fst _1) loc args in
+                      this :: (_2 loc args))
+                 )}
 
 maybe_init:
 | 
-    { (fun args -> NoInit) }
-| EQ expression
-    { (fun args -> InitExp ((fst $2) args)) }
-| EQ lval LPAREN arguments RPAREN
-    { (fun args -> 
-                                    InitCall((fst $2) args, (fst $4) args)) }
+    {                                ( (fun args -> NoInit) )}
+| _1 = EQ _2 = expression
+    {                                ( (fun args -> InitExp ((fst _2) args)) )}
+| _1 = EQ _2 = lval _3 = LPAREN _4 = arguments _5 = RPAREN
+    {                                ( (fun args -> 
+                                    InitCall((fst _2) args, (fst _4) args)) )}
 
 %%
 

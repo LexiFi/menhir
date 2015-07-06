@@ -11,38 +11,38 @@
 %%
 
 goal:
-| assignment EOF
-    { }
+| _1 = assignment _2 = EOF
+    {                        ( )}
 
 primary:
-| INTEGER_LITERAL
-    { }
-| array_access
-    { }
+| _1 = INTEGER_LITERAL
+    {                      ( )}
+| _1 = array_access
+    {                      ( )}
 
 primary_not_name:
-| array_access
-    { }
-| NEW L_BRACKET expression R_BRACKET
-    { }
+| _1 = array_access
+    {                                             ( )}
+| _1 = NEW _2 = L_BRACKET _3 = expression _4 = R_BRACKET
+    {                                         ( )}
 
 array_access:
-| expression L_BRACKET primary_not_name R_BRACKET
-    { }
+| _1 = expression _2 = L_BRACKET _3 = primary_not_name _4 = R_BRACKET
+    {                                                      ( )}
 
 expression:
-| primary
-    { }
-| assignment
-    { }
+| _1 = primary
+    {                         ( )}
+| _1 = assignment
+    {                         ( )}
 
 assignment:
-| left_hand_side ASSIGN expression
-    { }
+| _1 = left_hand_side _2 = ASSIGN _3 = expression
+    {                                      ( )}
 
 left_hand_side:
-| primary_not_name
-    { }
+| _1 = primary_not_name
+    {                       ( )}
 
 %%
 

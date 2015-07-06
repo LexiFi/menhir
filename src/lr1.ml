@@ -675,20 +675,6 @@ let forbid_default_reduction node =
   node.forbid_default_reduction
 
 (* ------------------------------------------------------------------------ *)
-(* Breadth-first iteration over all nodes. *)
-
-let bfs =
-  let module B = Breadth.Make (struct
-    type vertex = node
-    type label = Symbol.t
-    let set_mark node m = node.mark <- m
-    let get_mark node = node.mark
-    let entry f = ProductionMap.iter (fun _ node -> f node) entry
-    let successors f node = SymbolMap.iter f node.transitions
-  end) in
-  B.search
-
-(* ------------------------------------------------------------------------ *)
 (* The incoming symbol of a node can be computed by going through its LR(0)
    core. For this reason, we do not need to explicitly record it here. *)
 
@@ -1085,4 +1071,11 @@ let fold_entry f accu =
     in
     f prod state nt t accu
   ) entry accu
+
+let entry_nt nt =
+  (* Find the entry state that corresponds to [nt]. *)
+  try
+    ProductionMap.find (Production.startsymbol2startprod nt) entry
+  with Not_found ->
+    assert false
 

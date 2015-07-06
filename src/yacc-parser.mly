@@ -264,9 +264,7 @@ production_group:
     { 
       let productions, action, oprec2 = $1, $2, $3 in
 
-      ParserAux.check_production_group
-	productions
-	(rhs_start_pos 2) (rhs_end_pos 2) action;
+      let productions = ParserAux.normalize_production_group productions in
 
       List.map (fun (producers, oprec1, rprec, pos) -> {
 	pr_producers                = producers;
@@ -320,9 +318,9 @@ producers:
 
 producer:
 | actual
-    { None, $1 }
+    { Positions.lex_join (symbol_start_pos()) (symbol_end_pos()), None, $1 }
 | LID EQUAL actual
-    { Some $1, $3 }
+    { Positions.lex_join (symbol_start_pos()) (symbol_end_pos()), Some $1, $3 }
 
 %%
 

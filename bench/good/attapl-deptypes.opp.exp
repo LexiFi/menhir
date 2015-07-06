@@ -114,145 +114,145 @@ let rec addbinders tyT l = match l with
 %%
 
 toplevel:
-| EOF
-    { fun ctx -> [],ctx }
-| Command SEMI toplevel
-    { fun ctx ->
-          let cmd,ctx = $1 ctx in
-          let cmds,ctx = $3 ctx in
-          cmd::cmds,ctx }
+| _1 = EOF
+    {      ( fun ctx -> [],ctx )}
+| _1 = Command _2 = SEMI _3 = toplevel
+    {      ( fun ctx ->
+          let cmd,ctx = _1 ctx in
+          let cmds,ctx = _3 ctx in
+          cmd::cmds,ctx )}
 
 Command:
-| IMPORT STRINGV
-    { fun ctx -> (Import($2.v)),ctx }
-| Term
-    { fun ctx -> (let t = $1 ctx in Whred(tmInfo t,t)),ctx }
-| LPAREN NORMAL Term RPAREN
-    { fun ctx -> (let t = $3 ctx in Eval(tmInfo t,t)),ctx }
-| UCID TyBinder
-    { fun ctx -> ((Bind($1.i, $1.v, $2 ctx)), addname ctx $1.v) }
-| LCID Binder
-    { fun ctx -> ((Bind($1.i,$1.v,$2 ctx)), addname ctx $1.v) }
+| _1 = IMPORT _2 = STRINGV
+    {                   ( fun ctx -> (Import(_2.v)),ctx )}
+| _1 = Term
+    {      ( fun ctx -> (let t = _1 ctx in Whred(tmInfo t,t)),ctx )}
+| _1 = LPAREN _2 = NORMAL _3 = Term _4 = RPAREN
+    {      ( fun ctx -> (let t = _3 ctx in Eval(tmInfo t,t)),ctx )}
+| _1 = UCID _2 = TyBinder
+    {      ( fun ctx -> ((Bind(_1.i, _1.v, _2 ctx)), addname ctx _1.v) )}
+| _1 = LCID _2 = Binder
+    {      ( fun ctx -> ((Bind(_1.i,_1.v,_2 ctx)), addname ctx _1.v) )}
 
 Binder:
-| COLON Type
-    { fun ctx -> VarBind ($2 ctx)}
-| EQ Term
-    { fun ctx -> TmAbbBind($2 ctx, None) }
-| EQ Term COLON Type
-    {fun ctx -> TmAbbBind($2 ctx, Some($4 ctx)) }
+| _1 = COLON _2 = Type
+    {      ( fun ctx -> VarBind (_2 ctx))}
+| _1 = EQ _2 = Term
+    {      ( fun ctx -> TmAbbBind(_2 ctx, None) )}
+| _1 = EQ _2 = Term _3 = COLON _4 = Type
+    {      (fun ctx -> TmAbbBind(_2 ctx, Some(_4 ctx)) )}
 
 Kind:
-| PI LCID COLON Type DOT Kind
-    {fun ctx -> let ctx1 = addname ctx $2.v in
-          KnPi($2.v,$4 ctx,$6 ctx1)}
-| ArrowKind
-    {$1}
+| _1 = PI _2 = LCID _3 = COLON _4 = Type _5 = DOT _6 = Kind
+    {                                  (fun ctx -> let ctx1 = addname ctx _2.v in
+          KnPi(_2.v,_4 ctx,_6 ctx1))}
+| _1 = ArrowKind
+    {              (_1)}
 
 ArrowKind:
-| AppType ARROW ArrowKind
-    { fun ctx -> KnPi("_",$1 ctx, $3 ctx) }
-| AKind
-    {$1 }
+| _1 = AppType _2 = ARROW _3 = ArrowKind
+    {                            ( fun ctx -> KnPi("_",_1 ctx, _3 ctx) )}
+| _1 = AKind
+    {        (_1 )}
 
 AKind:
-| STAR
-    { fun ctx -> KnStar }
-| LPAREN Kind RPAREN
-    { $2 }
+| _1 = STAR
+    {         ( fun ctx -> KnStar )}
+| _1 = LPAREN _2 = Kind _3 = RPAREN
+    {                        ( _2 )}
 
 Type:
-| AppType
-    { $1 }
-| AppType ARROW Type
-    { fun ctx ->
+| _1 = AppType
+    {            ( _1 )}
+| _1 = AppType _2 = ARROW _3 = Type
+    {                             ( fun ctx ->
           let ctx1 = addname ctx "_" in
-          TyPi("_",$1 ctx,$3 ctx1) }
-| PI LCID COLON Type DOT Type
-    { fun ctx ->
-          let ctx1 = addname ctx $2.v in
-          TyPi($2.v,$4 ctx,$6 ctx1) }
-| SIGMA LCID COLON Type DOT Type
-    { fun ctx ->
-          let ctx1 = addname ctx $2.v in
-          TySigma($2.v,$4 ctx,$6 ctx1) }
+          TyPi("_",_1 ctx,_3 ctx1) )}
+| _1 = PI _2 = LCID _3 = COLON _4 = Type _5 = DOT _6 = Type
+    {      ( fun ctx ->
+          let ctx1 = addname ctx _2.v in
+          TyPi(_2.v,_4 ctx,_6 ctx1) )}
+| _1 = SIGMA _2 = LCID _3 = COLON _4 = Type _5 = DOT _6 = Type
+    {      ( fun ctx ->
+          let ctx1 = addname ctx _2.v in
+          TySigma(_2.v,_4 ctx,_6 ctx1) )}
 
 AppType:
-| AppType ATerm
-    { fun ctx -> TyApp($1 ctx,$2 ctx) }
-| AType
-    { $1 }
+| _1 = AppType _2 = ATerm
+    {                  ( fun ctx -> TyApp(_1 ctx,_2 ctx) )}
+| _1 = AType
+    {          ( _1 )}
 
 AType:
-| LPAREN Type RPAREN
-    { $2 }
-| PROP
-    {fun ctx -> TyProp}
-| PRF LPAREN Term RPAREN
-    {fun ctx -> TyPrf($3 ctx)}
-| UCID
-    { fun ctx ->
-          if isnamebound ctx $1.v then
-            TyVar(name2index $1.i ctx $1.v, ctxlength ctx)
+| _1 = LPAREN _2 = Type _3 = RPAREN
+    {           ( _2 )}
+| _1 = PROP
+    {         (fun ctx -> TyProp)}
+| _1 = PRF _2 = LPAREN _3 = Term _4 = RPAREN
+    {                           (fun ctx -> TyPrf(_3 ctx))}
+| _1 = UCID
+    {      ( fun ctx ->
+          if isnamebound ctx _1.v then
+            TyVar(name2index _1.i ctx _1.v, ctxlength ctx)
           else 
-            TyId($1.v) }
+            TyId(_1.v) )}
 
 Term:
-| AppTerm
-    { $1 }
-| LAMBDA LCID COLON Type DOT Term
-    { fun ctx ->
-          let ctx1 = addname ctx $2.v in
-          TmAbs($1, $2.v, $4 ctx, $6 ctx1) }
-| ALL LCID COLON Type DOT Term
-    { fun ctx ->
-          let ctx1 = addname ctx $2.v in
-          TmAll($1, $2.v, $4 ctx, $6 ctx1) }
-| LAMBDA USCORE COLON Type DOT Term
-    { fun ctx ->
+| _1 = AppTerm
+    {      ( _1 )}
+| _1 = LAMBDA _2 = LCID _3 = COLON _4 = Type _5 = DOT _6 = Term
+    {      ( fun ctx ->
+          let ctx1 = addname ctx _2.v in
+          TmAbs(_1, _2.v, _4 ctx, _6 ctx1) )}
+| _1 = ALL _2 = LCID _3 = COLON _4 = Type _5 = DOT _6 = Term
+    {      ( fun ctx ->
+          let ctx1 = addname ctx _2.v in
+          TmAll(_1, _2.v, _4 ctx, _6 ctx1) )}
+| _1 = LAMBDA _2 = USCORE _3 = COLON _4 = Type _5 = DOT _6 = Term
+    {      ( fun ctx ->
           let ctx1 = addname ctx "_" in
-          TmAbs($1, "_", $4 ctx, $6 ctx1) }
+          TmAbs(_1, "_", _4 ctx, _6 ctx1) )}
 
 PathTerm:
-| PathTerm DOT TWO
-    { fun ctx ->
-          TmProj2($2, $1 ctx) }
-| PathTerm DOT ONE
-    { fun ctx ->
-          TmProj1($2, $1 ctx) }
-| ATerm
-    { $1 }
+| _1 = PathTerm _2 = DOT _3 = TWO
+    {      ( fun ctx ->
+          TmProj2(_2, _1 ctx) )}
+| _1 = PathTerm _2 = DOT _3 = ONE
+    {      ( fun ctx ->
+          TmProj1(_2, _1 ctx) )}
+| _1 = ATerm
+    {          ( _1 )}
 
 AppTerm:
-| PathTerm
-    {$1}
-| AppTerm ATerm
-    { fun ctx ->
-          let e1 = $1 ctx in
-          let e2 = $2 ctx in
-          TmApp(tmInfo e1,e1,e2) }
+| _1 = PathTerm
+    {             (_1)}
+| _1 = AppTerm _2 = ATerm
+    {      ( fun ctx ->
+          let e1 = _1 ctx in
+          let e2 = _2 ctx in
+          TmApp(tmInfo e1,e1,e2) )}
 
 ATerm:
-| LPAREN Term RPAREN
-    { $2 }
-| LPAREN Term COMMA TermList COLON Type RPAREN
-    { fun ctx -> 
-          TmList($1,$2 ctx :: $4 ctx ,$6 ctx)}
-| LCID
-    { fun ctx ->
-          TmVar($1.i, name2index $1.i ctx $1.v, ctxlength ctx) }
+| _1 = LPAREN _2 = Term _3 = RPAREN
+    {      ( _2 )}
+| _1 = LPAREN _2 = Term _3 = COMMA _4 = TermList _5 = COLON _6 = Type _7 = RPAREN
+    {                                                 ( fun ctx -> 
+          TmList(_1,_2 ctx :: _4 ctx ,_6 ctx))}
+| _1 = LCID
+    {      ( fun ctx ->
+          TmVar(_1.i, name2index _1.i ctx _1.v, ctxlength ctx) )}
 
 TermList:
-| Term
-    { fun ctx -> [$1 ctx] }
-| Term COMMA TermList
-    { fun ctx -> $1 ctx :: $3 ctx}
+| _1 = Term
+    {        ( fun ctx -> [_1 ctx] )}
+| _1 = Term _2 = COMMA _3 = TermList
+    {                       ( fun ctx -> _1 ctx :: _3 ctx)}
 
 TyBinder:
-| COLON Kind
-    { fun ctx -> TyVarBind($2 ctx) }
-| EQ Type
-    { fun ctx -> TyAbbBind($2 ctx, None) }
+| _1 = COLON _2 = Kind
+    {      ( fun ctx -> TyVarBind(_2 ctx) )}
+| _1 = EQ _2 = Type
+    {      ( fun ctx -> TyAbbBind(_2 ctx, None) )}
 
 %%
 

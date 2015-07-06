@@ -64,142 +64,142 @@ Warning: the token STRING is unused.
 %%
 
 main:
-| step EOF
-    { $1 }
+| _1 = step _2 = EOF
+    {                                                                                       ( _1 )}
 
 step:
-| TRIVIAL
-    { $1 }
-| UNFINISHED
-    { $1 }
-| FACT nafo FROM reflist SEMIKOLON step
-    { Fact_from ($2, $4, $6) }
-| SUBGOALS nafos IN steplist TOOBTAIN nafo BY reflist SEMIKOLON step
-    { Subgoals ($2, $4, $6, $8, $10) }
-| ASSUME hyps PROVE nafo IN step TOOBTAIN nafo BY reflist SEMIKOLON step
-    { Assume ($2,$4,$6,$8,$10,$12) }
-| ASSIGN subst SEMIKOLON step
-    { AssignSubst ($2,$4) }
-| ASSIGN abbrv SEMIKOLON step
-    { AssignAbbrv ($2,$4) }
-| OR LPARAN orsteps RPARAN SEMIKOLON step
-    { Or ($3,$6) }
-| CASES formulalist DOPPELPUNKT caseends TOOBTAIN nafo SEMIKOLON step
-    { Cases ($2, $4, $6, $8) }
+| _1 = TRIVIAL
+    {                                                                                       ( _1 )}
+| _1 = UNFINISHED
+    {                                                          ( _1 )}
+| _1 = FACT _2 = nafo _3 = FROM _4 = reflist _5 = SEMIKOLON _6 = step
+    {                                                                                       ( Fact_from (_2, _4, _6) )}
+| _1 = SUBGOALS _2 = nafos _3 = IN _4 = steplist _5 = TOOBTAIN _6 = nafo _7 = BY _8 = reflist _9 = SEMIKOLON _10 = step
+    {                                                                                       ( Subgoals (_2, _4, _6, _8, _10) )}
+| _1 = ASSUME _2 = hyps _3 = PROVE _4 = nafo _5 = IN _6 = step _7 = TOOBTAIN _8 = nafo _9 = BY _10 = reflist _11 = SEMIKOLON _12 = step
+    {                                                                                       ( Assume (_2,_4,_6,_8,_10,_12) )}
+| _1 = ASSIGN _2 = subst _3 = SEMIKOLON _4 = step
+    {                                                                                       ( AssignSubst (_2,_4) )}
+| _1 = ASSIGN _2 = abbrv _3 = SEMIKOLON _4 = step
+    {                                                                                       ( AssignAbbrv (_2,_4) )}
+| _1 = OR _2 = LPARAN _3 = orsteps _4 = RPARAN _5 = SEMIKOLON _6 = step
+    {                                                                                       ( Or (_3,_6) )}
+| _1 = CASES _2 = formulalist _3 = DOPPELPUNKT _4 = caseends _5 = TOOBTAIN _6 = nafo _7 = SEMIKOLON _8 = step
+    {                                                                                       ( Cases (_2, _4, _6, _8) )}
 
 nafos:
-| nafo
-    { [$1] }
-| nafo KOMMA nafo
-    { [$1;$3] }
+| _1 = nafo
+    {                                                                       ( [_1] )}
+| _1 = nafo _2 = KOMMA _3 = nafo
+    {                                                                       ( [_1;_3] )}
 
 nafo:
-| name DOPPELPUNKT formula
-    { ($1, $3) }
+| _1 = name _2 = DOPPELPUNKT _3 = formula
+    {                                                                       ( (_1, _3) )}
 
 name:
-| PUNKT
-    { LeerN }
-| IDENT
-    { Name $1 }
+| _1 = PUNKT
+    {                                                                       ( LeerN )}
+| _1 = IDENT
+    {                                                                       ( Name _1 )}
 
 formula:
-| PUNKT
-    { LeerF }
-| term
-    { For $1 }
+| _1 = PUNKT
+    {                                                                              ( LeerF )}
+| _1 = term
+    {                                                                ( For _1 )}
 
 formulalist:
-| formula
-    { [$1] }
-| formula KOMMA formulalist
-    { [$1] @ $3 }
+| _1 = formula
+    {                                                                              ( [_1] )}
+| _1 = formula _2 = KOMMA _3 = formulalist
+    {                                                                ( [_1] @ _3 )}
 
 reflist:
-| ref
-    {  [$1]   }
-| ref KOMMA reflist
-    { [$1] @ $3 }
+| _1 = ref
+    {                                                                       (  [_1]   )}
+| _1 = ref _2 = KOMMA _3 = reflist
+    {                                                                       ( [_1] @ _3 )}
 
 ref:
-| LPARAN name KOMMA formula KOMMA occurence RPARAN
-    { ($2,$4,$6) }
+| _1 = LPARAN _2 = name _3 = KOMMA _4 = formula _5 = KOMMA _6 = occurence _7 = RPARAN
+    {                                                                      ( (_2,_4,_6) )}
 
 occurence:
-| PUNKT
-    { LeerO }
-| INTLIST
-    { Occ $1 }
+| _1 = PUNKT
+    {                                                                              ( LeerO )}
+| _1 = INTLIST
+    {                                                                              ( Occ _1 )}
 
 caseends:
-| CASE name DOPPELPUNKT formula DOPPELPUNKT step END
-    { [($2, $4, $6)] }
-| caseends KOMMA caseends
-    { $1 @ $3 }
+| _1 = CASE _2 = name _3 = DOPPELPUNKT _4 = formula _5 = DOPPELPUNKT _6 = step _7 = END
+    {                                                                              ( [(_2, _4, _6)] )}
+| _1 = caseends _2 = KOMMA _3 = caseends
+    {                                                                              ( _1 @ _3 )}
 
 steplist:
-| step
-    { [$1] }
-| step KOMMA steplist
-    { [$1] @ $3 }
+| _1 = step
+    {                                                                              ( [_1] )}
+| _1 = step _2 = KOMMA _3 = steplist
+    {                                                                       ( [_1] @ _3 )}
 
 hyps:
-| hyp
-    { [] }
-| hyp KOMMA hyps
-    { [$1] @ $3 }
+| _1 = hyp
+    {                                                                            ( [] )}
+| _1 = hyp _2 = KOMMA _3 = hyps
+    {                                                                              ( [_1] @ _3 )}
 
 hyp:
-| nafo
-    { Fr $1 }
-| const DOPPELPUNKT hyptyp
-    { Cn ($1, $3) }
-| var DOPPELPUNKT hyptyp
-    { Vr ($1, $3) }
+| _1 = nafo
+    {                                                                              ( Fr _1 )}
+| _1 = const _2 = DOPPELPUNKT _3 = hyptyp
+    {                                                                       ( Cn (_1, _3) )}
+| _1 = var _2 = DOPPELPUNKT _3 = hyptyp
+    {                                                                       ( Vr (_1, _3) )}
 
 subst:
-| LPARAN LET VAR var DOPPPEQ term RPARAN
-    { ($4,$6) }
+| _1 = LPARAN _2 = LET _3 = VAR _4 = var _5 = DOPPPEQ _6 = term _7 = RPARAN
+    {                                                                                    ( (_4,_6) )}
 
 abbrv:
-| LPARAN LET CONST const DOPPPEQ term RPARAN
-    { ($4,$6) }
+| _1 = LPARAN _2 = LET _3 = CONST _4 = const _5 = DOPPPEQ _6 = term _7 = RPARAN
+    {                                                                                    ( (_4,_6) )}
 
 orsteps:
-| step
-    { [$1] }
-| step DOPPELSTRICH orsteps
-    { [$1] @ $3 }
+| _1 = step
+    {                                                                              ( [_1] )}
+| _1 = step _2 = DOPPELSTRICH _3 = orsteps
+    {                                                                                ( [_1] @ _3 )}
 
 const:
-| name
-    { Const $1 }
+| _1 = name
+    {                                                                              ( Const _1 )}
 
 var:
-| name
-    { Var $1 }
+| _1 = name
+    {                                                                             ( Var _1 )}
 
 hyptyp:
-| NOTYPE
-    { None }
-| complextype
-    { Some $1 }
+| _1 = NOTYPE
+    {                                                                              ( None )}
+| _1 = complextype
+    {                                                                              ( Some _1 )}
 
 term:
-| LPARAN APOST var APOST RPARAN
-    { V $3 }
-| LPARAN QUOT const QUOT RPARAN
-    { C $3 }
-| LPARAN term term RPARAN
-    { A ($2, $3) }
-| LPARAN LAM var DOPPELPUNKT complextype PUNKT term RPARAN
-    { L ( $3, $5, $7) }
+| _1 = LPARAN _2 = APOST _3 = var _4 = APOST _5 = RPARAN
+    {                                                                              ( V _3 )}
+| _1 = LPARAN _2 = QUOT _3 = const _4 = QUOT _5 = RPARAN
+    {                                                                       ( C _3 )}
+| _1 = LPARAN _2 = term _3 = term _4 = RPARAN
+    {                                                                       ( A (_2, _3) )}
+| _1 = LPARAN _2 = LAM _3 = var _4 = DOPPELPUNKT _5 = complextype _6 = PUNKT _7 = term _8 = RPARAN
+    {                                                                       ( L ( _3, _5, _7) )}
 
 complextype:
-| IDENT
-    { TC $1 }
-| LPARAN complextype PFEIL complextype RPARAN
-    { TA ($2,$4) }
+| _1 = IDENT
+    {                                                                           ( TC _1 )}
+| _1 = LPARAN _2 = complextype _3 = PFEIL _4 = complextype _5 = RPARAN
+    {                                                                           ( TA (_2,_4) )}
 
 %%
 

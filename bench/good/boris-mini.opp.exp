@@ -13,23 +13,23 @@ open Ast
 
 inst:
 | i = LIDENT e = expr
-    { () }
-| SEP i1 = inst i2 = inst
-    { () }
-| e = expr DOT
-    { () }
+    {    ( () )}
+| _1 = SEP i1 = inst i2 = inst
+    {    ( () )}
+| e = expr _2 = DOT
+    {    ( () )}
 
 expr:
 | i = LIDENT
-    { () }
-| e = expr DOT
-    { () }
-| i = inst DOT e = expr
-    { () }
+    {    ( () )}
+| e = expr _2 = DOT
+    {    ( () )}
+| i = inst _2 = DOT e = expr
+    {    ( () )}
 
 debut:
-| expr DOT
-    { () }
+| _1 = expr _2 = DOT
+    {    ( () )}
 
 %%
 

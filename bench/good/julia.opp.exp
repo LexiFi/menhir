@@ -13,20 +13,20 @@
 %%
 
 main:
-| statement EOF
-    { }
+| _1 = statement _2 = EOF
+    {                 ( )}
 
 statement:
-| TReturn
-    {  }
-| TIf TOPar expr TCPar statement %prec TIf
-    {  }
-| TIf TOPar expr TCPar statement TElse statement
-    {  }
+| _1 = TReturn
+    {  (  )}
+| _1 = TIf _2 = TOPar _3 = expr _4 = TCPar _5 = statement %prec TIf
+    {  (  )}
+| _1 = TIf _2 = TOPar _3 = expr _4 = TCPar _5 = statement _6 = TElse _7 = statement
+    {  (  )}
 
 expr:
-| TIdent
-    { }
+| _1 = TIdent
+    {         ( )}
 
 %%
 

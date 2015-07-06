@@ -40,232 +40,232 @@ open Tables
 %%
 
 TypeName:
-| IDENT
-    { String.uncapitalize $1 }
-| WIDGET
-    { "widget" }
+| _1 = IDENT
+    {         ( String.uncapitalize _1 )}
+| _1 = WIDGET
+    {          ( "widget" )}
 
 Type0:
-| TYINT
-    { Int }
-| TYFLOAT
-    { Float }
-| TYBOOL
-    { Bool }
-| TYCHAR
-    { Char }
-| TYSTRING
-    { String }
-| TypeName
-    { UserDefined $1 }
+| _1 = TYINT
+    {      ( Int )}
+| _1 = TYFLOAT
+    {      ( Float )}
+| _1 = TYBOOL
+    {      ( Bool )}
+| _1 = TYCHAR
+    {      ( Char )}
+| _1 = TYSTRING
+    {      ( String )}
+| _1 = TypeName
+    {      ( UserDefined _1 )}
 
 Type0_5:
-| Type0 SLASH Type0
-    { if !Flags.camltk then $1 else $3 }
-| Type0
-    { $1 }
+| _1 = Type0 _2 = SLASH _3 = Type0
+    {                      ( if !Flags.camltk then _1 else _3 )}
+| _1 = Type0
+    {          ( _1 )}
 
 Type1:
-| Type0_5
-    { $1 }
-| TypeName LPAREN IDENT RPAREN
-    { Subtype ($1, $3) }
-| WIDGET LPAREN IDENT RPAREN
-    { Subtype ("widget", $3) }
-| OPTION LPAREN IDENT RPAREN
-    { Subtype ("options", $3) }
-| Type1 AS STRING
-    { As ($1, $3) }
-| LBRACE Type_list RBRACE
-    { Product $2 }
+| _1 = Type0_5
+    {      ( _1 )}
+| _1 = TypeName _2 = LPAREN _3 = IDENT _4 = RPAREN
+    {     ( Subtype (_1, _3) )}
+| _1 = WIDGET _2 = LPAREN _3 = IDENT _4 = RPAREN
+    {     ( Subtype ("widget", _3) )}
+| _1 = OPTION _2 = LPAREN _3 = IDENT _4 = RPAREN
+    {     ( Subtype ("options", _3) )}
+| _1 = Type1 _2 = AS _3 = STRING
+    {     ( As (_1, _3) )}
+| _1 = LBRACE _2 = Type_list _3 = RBRACE
+    {      ( Product _2 )}
 
 Type2:
-| Type1
-    { $1 }
-| Type2 LIST
-    { List $1 }
+| _1 = Type1
+    {     ( _1 )}
+| _1 = Type2 _2 = LIST
+    {     ( List _1 )}
 
 Labeled_type2:
-| Type2
-    { "", $1 }
-| IDENT COLON Type2
-    { $1, $3 }
+| _1 = Type2
+    {      ( "", _1 )}
+| _1 = IDENT _2 = COLON _3 = Type2
+    {      ( _1, _3 )}
 
 Type_list:
-| Type2 COMMA Type_list
-    { $1 :: $3 }
-| Type2
-    { [$1] }
+| _1 = Type2 _2 = COMMA _3 = Type_list
+    {      ( _1 :: _3 )}
+| _1 = Type2
+    {      ( [_1] )}
 
 Type_record:
-| Labeled_type2 COMMA Type_record
-    { $1 :: $3 }
-| Labeled_type2
-    { [$1] }
+| _1 = Labeled_type2 _2 = COMMA _3 = Type_record
+    {      ( _1 :: _3 )}
+| _1 = Labeled_type2
+    {      ( [_1] )}
 
 FType:
-| LPAREN RPAREN
-    { Unit }
-| LPAREN Type2 RPAREN
-    { $2 }
-| LPAREN Type_record RPAREN
-    { Record $2 }
+| _1 = LPAREN _2 = RPAREN
+    {      ( Unit )}
+| _1 = LPAREN _2 = Type2 _3 = RPAREN
+    {      ( _2 )}
+| _1 = LPAREN _2 = Type_record _3 = RPAREN
+    {      ( Record _2 )}
 
 Type:
-| Type2
-    { $1 }
-| FUNCTION FType
-    { Function $2 }
+| _1 = Type2
+    {      ( _1 )}
+| _1 = FUNCTION _2 = FType
+    {      ( Function _2 )}
 
 SimpleArg:
-| STRING
-    {StringArg $1}
-| Type
-    {TypeArg ("", $1) }
+| _1 = STRING
+    {      (StringArg _1)}
+| _1 = Type
+    {      (TypeArg ("", _1) )}
 
 Arg:
-| STRING
-    {StringArg $1}
-| Type
-    {TypeArg ("", $1) }
-| IDENT COLON Type
-    {TypeArg ($1, $3)}
-| QUESTION IDENT COLON LBRACKET SimpleArgList RBRACKET DefaultList
-    {OptionalArgs ( $2, $5, $7 )}
-| QUESTION WIDGET COLON LBRACKET SimpleArgList RBRACKET DefaultList
-    {OptionalArgs ( "widget", $5, $7 )}
-| QUESTION IDENT COLON LBRACKET SimpleArgList RBRACKET
-    {OptionalArgs ( $2, $5, [] )}
-| QUESTION WIDGET COLON LBRACKET SimpleArgList RBRACKET
-    {OptionalArgs ( "widget", $5, [] )}
-| WIDGET COLON Type
-    {TypeArg ("widget", $3)}
-| Template
-    { $1 }
+| _1 = STRING
+    {      (StringArg _1)}
+| _1 = Type
+    {      (TypeArg ("", _1) )}
+| _1 = IDENT _2 = COLON _3 = Type
+    {      (TypeArg (_1, _3))}
+| _1 = QUESTION _2 = IDENT _3 = COLON _4 = LBRACKET _5 = SimpleArgList _6 = RBRACKET _7 = DefaultList
+    {      (OptionalArgs ( _2, _5, _7 ))}
+| _1 = QUESTION _2 = WIDGET _3 = COLON _4 = LBRACKET _5 = SimpleArgList _6 = RBRACKET _7 = DefaultList
+    {      (OptionalArgs ( "widget", _5, _7 ))}
+| _1 = QUESTION _2 = IDENT _3 = COLON _4 = LBRACKET _5 = SimpleArgList _6 = RBRACKET
+    {      (OptionalArgs ( _2, _5, [] ))}
+| _1 = QUESTION _2 = WIDGET _3 = COLON _4 = LBRACKET _5 = SimpleArgList _6 = RBRACKET
+    {      (OptionalArgs ( "widget", _5, [] ))}
+| _1 = WIDGET _2 = COLON _3 = Type
+    {      (TypeArg ("widget", _3))}
+| _1 = Template
+    {      ( _1 )}
 
 SimpleArgList:
-| SimpleArg SEMICOLON SimpleArgList
-    { $1 :: $3}
-| SimpleArg
-    { [$1] }
+| _1 = SimpleArg _2 = SEMICOLON _3 = SimpleArgList
+    {       ( _1 :: _3)}
+| _1 = SimpleArg
+    {      ( [_1] )}
 
 ArgList:
-| Arg SEMICOLON ArgList
-    { $1 :: $3}
-| Arg
-    { [$1] }
+| _1 = Arg _2 = SEMICOLON _3 = ArgList
+    {       ( _1 :: _3)}
+| _1 = Arg
+    {      ( [_1] )}
 
 DefaultList:
-| LBRACKET LBRACE ArgList RBRACE RBRACKET
-    {$3}
+| _1 = LBRACKET _2 = LBRACE _3 = ArgList _4 = RBRACE _5 = RBRACKET
+    {      (_3)}
 
 Template:
-| LBRACKET ArgList RBRACKET
-    { ListArg $2 }
+| _1 = LBRACKET _2 = ArgList _3 = RBRACKET
+    {      ( ListArg _2 )}
 
 Constructor:
-| IDENT Template
-    {{ component = Constructor; 
-         ml_name = $1;
-         var_name = getvarname $1 $2;
-         template = $2;
+| _1 = IDENT _2 = Template
+    {      ({ component = Constructor; 
+         ml_name = _1;
+         var_name = getvarname _1 _2;
+         template = _2;
          result = Unit;
-         safe = true }}
-| IDENT LPAREN IDENT RPAREN Template
-    {{ component = Constructor; 
-         ml_name = $1;
-         var_name = $3;
-         template = $5;
+         safe = true })}
+| _1 = IDENT _2 = LPAREN _3 = IDENT _4 = RPAREN _5 = Template
+    {      ({ component = Constructor; 
+         ml_name = _1;
+         var_name = _3;
+         template = _5;
          result = Unit;
-         safe = true }}
+         safe = true })}
 
 AbbrevConstructor:
-| Constructor
-    { Full $1 }
-| IDENT
-    { Abbrev $1 }
+| _1 = Constructor
+    {      ( Full _1 )}
+| _1 = IDENT
+    {      ( Abbrev _1 )}
 
 Constructors:
-| Constructor Constructors
-    { $1 :: $2 }
-| Constructor
-    { [$1] }
+| _1 = Constructor _2 = Constructors
+    {   ( _1 :: _2 )}
+| _1 = Constructor
+    {   ( [_1] )}
 
 AbbrevConstructors:
-| AbbrevConstructor AbbrevConstructors
-    { $1 :: $2 }
-| AbbrevConstructor
-    { [$1] }
+| _1 = AbbrevConstructor _2 = AbbrevConstructors
+    {   ( _1 :: _2 )}
+| _1 = AbbrevConstructor
+    {   ( [_1] )}
 
 Safe:
 | 
-    { true }
-| UNSAFE
-    { false }
+    {  ( true )}
+| _1 = UNSAFE
+    {  ( false )}
 
 Command:
-| Safe FUNCTION FType IDENT Template
-    {{component = Command; ml_name = $4; var_name = "";
-       template = $5; result = $3; safe = $1 }}
+| _1 = Safe _2 = FUNCTION _3 = FType _4 = IDENT _5 = Template
+    {     ({component = Command; ml_name = _4; var_name = "";
+       template = _5; result = _3; safe = _1 })}
 
 External:
-| Safe EXTERNAL IDENT STRING
-    {{component = External; ml_name = $3; var_name = "";
-       template = StringArg $4; result = Unit; safe = $1}}
+| _1 = Safe _2 = EXTERNAL _3 = IDENT _4 = STRING
+    {     ({component = External; ml_name = _3; var_name = "";
+       template = StringArg _4; result = Unit; safe = _1})}
 
 Option:
-| OPTION IDENT Template
-    {{component = Constructor; ml_name = $2; var_name = getvarname $2 $3;
-       template = $3; result = Unit; safe = true }}
-| OPTION IDENT LPAREN IDENT RPAREN Template
-    {{component = Constructor; ml_name = $2; var_name = $4;
-       template = $6; result = Unit; safe = true }}
-| OPTION IDENT
-    { retrieve_option $2 }
+| _1 = OPTION _2 = IDENT _3 = Template
+    {     ({component = Constructor; ml_name = _2; var_name = getvarname _2 _3;
+       template = _3; result = Unit; safe = true })}
+| _1 = OPTION _2 = IDENT _3 = LPAREN _4 = IDENT _5 = RPAREN _6 = Template
+    {     ({component = Constructor; ml_name = _2; var_name = _4;
+       template = _6; result = Unit; safe = true })}
+| _1 = OPTION _2 = IDENT
+    {     ( retrieve_option _2 )}
 
 WidgetComponents:
 | 
-    { [] }
-| Command WidgetComponents
-    { $1 :: $2 }
-| Option WidgetComponents
-    { $1 :: $2 }
-| External WidgetComponents
-    { $1 :: $2 }
+    {  ( [] )}
+| _1 = Command _2 = WidgetComponents
+    {  ( _1 :: _2 )}
+| _1 = Option _2 = WidgetComponents
+    {  ( _1 :: _2 )}
+| _1 = External _2 = WidgetComponents
+    {  ( _1 :: _2 )}
 
 ModuleComponents:
 | 
-    { [] }
-| Command ModuleComponents
-    { $1 :: $2 }
-| External ModuleComponents
-    { $1 :: $2 }
+    {  ( [] )}
+| _1 = Command _2 = ModuleComponents
+    {  ( _1 :: _2 )}
+| _1 = External _2 = ModuleComponents
+    {  ( _1 :: _2 )}
 
 ParserArity:
 | 
-    { OneToken }
-| SEQUENCE
-    { MultipleToken }
+    {  ( OneToken )}
+| _1 = SEQUENCE
+    {  ( MultipleToken )}
 
 entry:
-| TYPE ParserArity TypeName LBRACE Constructors RBRACE
-    { enter_type $3 $2 $5 }
-| VARIANT TYPE ParserArity TypeName LBRACE Constructors RBRACE
-    { enter_type $4 $3 $6 ~variant: true }
-| TYPE ParserArity TypeName EXTERNAL
-    { enter_external_type $3 $2 }
-| SUBTYPE ParserArity OPTION LPAREN IDENT RPAREN LBRACE AbbrevConstructors RBRACE
-    { enter_subtype "options" $2 $5 $8 }
-| SUBTYPE ParserArity TypeName LPAREN IDENT RPAREN LBRACE AbbrevConstructors RBRACE
-    { enter_subtype $3 $2 $5 $8 }
-| Command
-    { enter_function $1 }
-| WIDGET IDENT LBRACE WidgetComponents RBRACE
-    { enter_widget $2 $4 }
-| MODULE IDENT LBRACE ModuleComponents RBRACE
-    { enter_module (String.uncapitalize $2) $4 }
-| EOF
-    { raise End_of_file }
+| _1 = TYPE _2 = ParserArity _3 = TypeName _4 = LBRACE _5 = Constructors _6 = RBRACE
+    {    ( enter_type _3 _2 _5 )}
+| _1 = VARIANT _2 = TYPE _3 = ParserArity _4 = TypeName _5 = LBRACE _6 = Constructors _7 = RBRACE
+    {    ( enter_type _4 _3 _6 ~variant: true )}
+| _1 = TYPE _2 = ParserArity _3 = TypeName _4 = EXTERNAL
+    {    ( enter_external_type _3 _2 )}
+| _1 = SUBTYPE _2 = ParserArity _3 = OPTION _4 = LPAREN _5 = IDENT _6 = RPAREN _7 = LBRACE _8 = AbbrevConstructors _9 = RBRACE
+    {    ( enter_subtype "options" _2 _5 _8 )}
+| _1 = SUBTYPE _2 = ParserArity _3 = TypeName _4 = LPAREN _5 = IDENT _6 = RPAREN _7 = LBRACE _8 = AbbrevConstructors _9 = RBRACE
+    {    ( enter_subtype _3 _2 _5 _8 )}
+| _1 = Command
+    {    ( enter_function _1 )}
+| _1 = WIDGET _2 = IDENT _3 = LBRACE _4 = WidgetComponents _5 = RBRACE
+    {    ( enter_widget _2 _4 )}
+| _1 = MODULE _2 = IDENT _3 = LBRACE _4 = ModuleComponents _5 = RBRACE
+    {    ( enter_module (String.uncapitalize _2) _4 )}
+| _1 = EOF
+    {    ( raise End_of_file )}
 
 %%
 

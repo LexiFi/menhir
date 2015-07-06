@@ -18,7 +18,7 @@ open Syntax
 type branch =
     {
       branch_position           : Positions.t;
-      producers			: (symbol * identifier option) list; (* TEMPORARY convention renversée
+      producers			: (symbol * identifier) list; (* TEMPORARY convention renversée
                                     par rapport à syntax.mli; faire un type record au lieu d'une paire? *)
       action			: action;
       branch_shift_precedence	: branch_shift_precedence;

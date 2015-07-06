@@ -647,13 +647,10 @@ let () =
     and action = Production.action prod in
 
     KeywordSet.iter (function
-      | Dollar _
       | SyntaxError ->
 	  ()
       | Position (Left, where, _) ->
 	  require_aux where prod
-      | Position (RightDollar i, where, _) ->
-	  require where rhs.(i - 1)
       | Position (RightNamed id, where, _) ->
 	  Array.iteri (fun i id' ->
 	    if id = id' then

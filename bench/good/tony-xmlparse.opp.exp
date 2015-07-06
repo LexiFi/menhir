@@ -52,187 +52,187 @@ let n    = None		(* just to save space 	*)
 %%
 
 document:
-| prolog topelement misc EOF
-    { XML($1,$2,$3) }
+| _1 = prolog _2 = topelement _3 = misc _4 = EOF
+    {                                            ( XML(_1,_2,_3) )}
 
 topelement:
-| element
-    { setContext DataContext;
-                                              $1
-                                            }
+| _1 = element
+    {                                            ( setContext DataContext;
+                                              _1
+                                            )}
 
 prolog:
-| xmldecl misc
-    { Prolog($1,None    ,$2   ) }
-| xmldecl misc doctype misc
-    { Prolog($1,Some($3),$2@$4) }
-| misc doctype misc
-    { Prolog(n ,Some($2),$1@$3) }
-| misc
-    { Prolog(n ,None    ,$1   ) }
+| _1 = xmldecl _2 = misc
+    {                                            ( Prolog(_1,None    ,_2   ) )}
+| _1 = xmldecl _2 = misc _3 = doctype _4 = misc
+    {                                            ( Prolog(_1,Some(_3),_2@_4) )}
+| _1 = misc _2 = doctype _3 = misc
+    {                                            ( Prolog(n ,Some(_2),_1@_3) )}
+| _1 = misc
+    {                                            ( Prolog(n ,None    ,_1   ) )}
 
 misc:
 | 
-    {     [] }
-| misc pi
-    { $2::$1 }
-| misc CHUNK
-    {     $1 }
-| misc COMMENT
-    {     $1 }
+    {                                            (     [] )}
+| _1 = misc _2 = pi
+    {                                            ( _2::_1 )}
+| _1 = misc _2 = CHUNK
+    {                                            (     _1 )}
+| _1 = misc _2 = COMMENT
+    {                                            (     _1 )}
 
 dtdopen:
-| DTDOPEN
-    { setContext DeclContext}
+| _1 = DTDOPEN
+    {                                            ( setContext DeclContext)}
 
 dtdclose:
-| DTDCLOSE
-    { setContext DataContext }
+| _1 = DTDCLOSE
+    {                                            ( setContext DataContext )}
 
 doctype:
-| dtdopen NAME ext markup dtdclose
-    { DTD($2,$3) }
+| _1 = dtdopen _2 = NAME _3 = ext _4 = markup _5 = dtdclose
+    {                                            ( DTD(_2,_3) )}
 
 ext:
 | 
-    { None }
-| SYSTEM STRING
-    { Some (DTDsys($2))    }
-| PUBLIC STRING STRING
-    { Some (DTDpub($2,$3)) }
+    {                                            ( None )}
+| _1 = SYSTEM _2 = STRING
+    {                                            ( Some (DTDsys(_2))    )}
+| _1 = PUBLIC _2 = STRING _3 = STRING
+    {                                            ( Some (DTDpub(_2,_3)) )}
 
 markup:
 | 
-    { None }
-| error
-    { error "DTDs are unsupported" }
+    {                                            ( None )}
+| _1 = error
+    {                                            ( error "DTDs are unsupported" )}
 
 element:
-| emptyElemTag
-    { let (n,a) = $1 in
+| _1 = emptyElemTag
+    {                                            ( let (n,a) = _1 in
                                                 single n a  
-                                            }
-| sTag content eTag
-    {   let (sn,a) = $1 in
-                                                let  en    = $3 in
-                                                let  c     = $2 in
+                                            )}
+| _1 = sTag _2 = content _3 = eTag
+    {                                            (   let (sn,a) = _1 in
+                                                let  en    = _3 in
+                                                let  c     = _2 in
                                                   if sn = en then
                                                   element sn a c 
                                                   else error ("tag mismatch")
-                                            }
+                                            )}
 
 opn:
-| OPEN
-    { setContext ElementContext; $1 }
+| _1 = OPEN
+    {                                            ( setContext ElementContext; _1 )}
 
 opnslash:
-| OPENSLASH
-    { setContext ElementContext; $1 }
+| _1 = OPENSLASH
+    {                                            ( setContext ElementContext; _1 )}
 
 cls:
-| CLOSE
-    { setContext DataContext  }
+| _1 = CLOSE
+    {                                            ( setContext DataContext  )}
 
 slashcls:
-| SLASHCLOSE
-    { setContext DataContext  }
+| _1 = SLASHCLOSE
+    {                                            ( setContext DataContext  )}
 
 sTag:
-| opn attributes cls
-    { ($1,$2) }
+| _1 = opn _2 = attributes _3 = cls
+    {                                            ( (_1,_2) )}
 
 eTag:
-| opnslash cls
-    {  $1     }
+| _1 = opnslash _2 = cls
+    {                                            (  _1     )}
 
 emptyElemTag:
-| opn attributes slashcls
-    { ($1,$2) }
+| _1 = opn _2 = attributes _3 = slashcls
+    {                                            ( (_1,_2) )}
 
 attributes:
 | 
-    {     []  }
-| attributes attribute
-    { $2::$1  }
+    {                                            (     []  )}
+| _1 = attributes _2 = attribute
+    {                                            ( _2::_1  )}
 
 attribute:
-| NAME EQ STRING
-    { ($1,$3) }
+| _1 = NAME _2 = EQ _3 = STRING
+    {                                            ( (_1,_3) )}
 
 content:
 | 
-    { empty                    	}
-| content CHUNK
-    { $1 ^^ chunk $2     	}
-| content element
-    { $1 ^^ $2            	}
-| content pi
-    { match $2 with
+    {                                            ( empty                    	)}
+| _1 = content _2 = CHUNK
+    {                                            ( _1 ^^ chunk _2     	)}
+| _1 = content _2 = element
+    {                                            ( _1 ^^ _2            	)}
+| _1 = content _2 = pi
+    {                                            ( match _2 with
                                               name,strings -> 
-                                                $1 ^^ pi name strings   }
-| content COMMENT
-    { $1                        }
+                                                _1 ^^ pi name strings   )}
+| _1 = content _2 = COMMENT
+    {                                            ( _1                        )}
 
 xmlopen:
-| XMLOPEN
-    { setContext DeclContext}
+| _1 = XMLOPEN
+    {                                            ( setContext DeclContext)}
 
 xmlclose:
-| XMLCLOSE
-    { setContext DataContext }
+| _1 = XMLCLOSE
+    {                                            ( setContext DataContext )}
 
 xmlinfo:
-| version encoding sddecl
-    { ($1,$2,Some $3) }
-| version
-    { ($1,n ,None   ) }
-| version encoding
-    { ($1,$2,None   ) }
-| version sddecl
-    { ($1,n ,Some $2) }
+| _1 = version _2 = encoding _3 = sddecl
+    {                                            ( (_1,_2,Some _3) )}
+| _1 = version
+    {                                            ( (_1,n ,None   ) )}
+| _1 = version _2 = encoding
+    {                                            ( (_1,_2,None   ) )}
+| _1 = version _2 = sddecl
+    {                                            ( (_1,n ,Some _2) )}
 
 xmldecl:
-| xmlopen xmlinfo xmlclose
-    { match $2 with    
+| _1 = xmlopen _2 = xmlinfo _3 = xmlclose
+    {                                            ( match _2 with    
                                               (vers,enc,sa) ->
                                               Some (XMLDecl(
                                                     vers,       (* version *)
                                                     sa,         (* standalone *)
                                                     enc         (* encoding *)
                                                    ))
-                                            }
+                                            )}
 
 version:
-| VERSION EQ STRING
-    { $3 }
+| _1 = VERSION _2 = EQ _3 = STRING
+    {                                            ( _3 )}
 
 encoding:
-| ENCODING EQ STRING
-    { Some $3 }
+| _1 = ENCODING _2 = EQ _3 = STRING
+    {                                            ( Some _3 )}
 
 sddecl:
-| STANDALONE EQ STRING
-    { match $3 with
+| _1 = STANDALONE _2 = EQ _3 = STRING
+    {                                            ( match _3 with
                                             | "yes" -> true
                                             | "no"  -> false
                                             | _     -> error "yes/no expected"
-                                            }
+                                            )}
 
 piopen:
-| PIOPEN
-    { setContext PiContext; $1}
+| _1 = PIOPEN
+    {                                            ( setContext PiContext; _1)}
 
 pi:
-| piopen picontent PICLOSE
-    { setContext DataContext;
-                                                  ($1,List.rev $2)
-                                            }
+| _1 = piopen _2 = picontent _3 = PICLOSE
+    {                                            ( setContext DataContext;
+                                                  (_1,List.rev _2)
+                                            )}
 
 picontent:
 | 
-    { []        }
-| picontent WORD
-    { $2 :: $1  }
+    {                                            ( []        )}
+| _1 = picontent _2 = WORD
+    {                                            ( _2 :: _1  )}
 
 %%
 

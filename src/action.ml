@@ -14,7 +14,7 @@ let from_stretch s =
   { 
     expr      = IL.ETextual s;
     filenames = [ s.Stretch.stretch_filename ];
-    keywords  = Keyword.KeywordSet.from_list (List.map Positions.value s.Stretch.stretch_keywords);
+    keywords  = Keyword.KeywordSet.of_list (List.map Positions.value s.Stretch.stretch_keywords);
     pkeywords = s.Stretch.stretch_keywords;
   }
 
@@ -26,7 +26,10 @@ let parenthesize s =
 
 let rec parenthesize_stretch = function
   | IL.ETextual s ->
-      IL.ETextual { s with Stretch.stretch_raw_content = parenthesize s.Stretch.stretch_raw_content }
+    IL.ETextual { s with
+      Stretch.stretch_raw_content = parenthesize s.Stretch.stretch_raw_content;
+      Stretch.stretch_content = parenthesize s.Stretch.stretch_content
+    }
   | IL.ELet (es, e) ->
       IL.ELet (List.map (fun (p, e) -> (p, parenthesize_stretch e)) es, parenthesize_stretch e)
   | x -> x
@@ -97,17 +100,6 @@ let rename_pkeywords (psym, first_prod, last_prod) phi l =
 		      (* Similarly for $endpos. *)
 		    | Left, WhereEnd   -> last_prod, (used1, true)
 		      (* $i cannot be combined with inlining. *)
-		    | RightDollar i, _ ->
-                        (* This error message is not great, especially without
-                           a location, but that's better than [assert false]. *)
-                        let msg =
-                          Printf.sprintf "$%s%s($%d) in an %%inline definition is not supported.\n\
-                                          Please replace $%d with an appropriate name."
-                            (match where with WhereStart -> "start" | WhereEnd -> "end")
-                            (match flavor with FlavorOffset -> "ofs" | FlavorPosition -> "pos")
-                            i i
-                        in
-                        Error.error [] msg
 		    | RightNamed s, w  -> 
 			(* In the host rule, $startpos(x) is changed to 
 			   to $startpos(first_prod) (same thing for $endpos). *)
@@ -172,7 +164,7 @@ let pkeywords action =
 let print f action = 
   let module P = Printer.Make (struct let f = f 
 				      let locate_stretches = None 
-				      let raw_stretch_action = true
+				      let raw_stretch_action = false
 			       end) 
   in
     P.expr action.expr
@@ -195,23 +187,4 @@ let has_leftend action =
     | _ ->
 	false
   ) (keywords action)
-
-let has_dollar i action =
-  KeywordSet.exists (function
-    | Dollar j when i = j ->
-	true
-    | _ ->
-	false
-  ) (keywords action)
-
-let use_dollar action = 
-  KeywordSet.exists (function
-    | Dollar _ ->
-	true
-    | _ ->
-	false
-  ) (keywords action)
-    
-    
-
 

@@ -32,80 +32,80 @@
 %%
 
 yacc_definitions:
-| header tokendecls Tmark rules header EOF
-    { { header = $1 ; 
-	  decls = $2;
-	  rules = $4;
-	  trailer = $5 } }
+| _1 = header _2 = tokendecls _3 = Tmark _4 = rules _5 = header _6 = EOF
+    {      ( { header = _1 ; 
+	  decls = _2;
+	  rules = _4;
+	  trailer = _5 } )}
 
 header:
-| Taction
-    { $1 }
+| _1 = Taction
+    {      ( _1 )}
 | 
-    { dummy_loc }
+    {    ( dummy_loc )}
 
 tokendecls:
-| tokendecl tokendecls
-    { $1::$2 }
+| _1 = tokendecl _2 = tokendecls
+    {    ( _1::_2 )}
 | 
-    { [] }
+    {    ( [] )}
 
 tokendecl:
-| Ttoken Ttypedecl idlist
-    { Typed_tokens($2,$3) }
-| Ttoken idlist
-    { Untyped_tokens($2) }
-| Ttype Ttypedecl idlist
-    { Non_terminals_type($2,$3) }
-| Tstart idlist
-    { Start_symbols($2) }
-| Tleft idlist
-    { Tokens_assoc($2) }
-| Tnonassoc idlist
-    { Tokens_assoc($2) }
-| Tright idlist
-    { Tokens_assoc($2) }
+| _1 = Ttoken _2 = Ttypedecl _3 = idlist
+    {      ( Typed_tokens(_2,_3) )}
+| _1 = Ttoken _2 = idlist
+    {      ( Untyped_tokens(_2) )}
+| _1 = Ttype _2 = Ttypedecl _3 = idlist
+    {      ( Non_terminals_type(_2,_3) )}
+| _1 = Tstart _2 = idlist
+    {      ( Start_symbols(_2) )}
+| _1 = Tleft _2 = idlist
+    {      ( Tokens_assoc(_2) )}
+| _1 = Tnonassoc _2 = idlist
+    {      ( Tokens_assoc(_2) )}
+| _1 = Tright _2 = idlist
+    {      ( Tokens_assoc(_2) )}
 
 idlist:
-| Tident
-    { [$1] }
-| Tident idlist
-    { $1 :: $2 }
+| _1 = Tident
+    {    ( [_1] )}
+| _1 = Tident _2 = idlist
+    {    ( _1 :: _2 )}
 
 rules:
 | 
-    { [] }
-| general_rule rules
-    { $1 :: $2 }
+    {    ( [] )}
+| _1 = general_rule _2 = rules
+    {    ( _1 :: _2 )}
 
 general_rule:
-| rule Tsemicolon
-    { $1 }
-| rule
-    { Yacc_syntax.issue_warning "ocamlyacc documentation recommends adding a semicolon at end of each grammar rules";
-      $1 }
+| _1 = rule _2 = Tsemicolon
+    {      ( _1 )}
+| _1 = rule
+    {      ( Yacc_syntax.issue_warning "ocamlyacc documentation recommends adding a semicolon at end of each grammar rules";
+      _1 )}
 
 rule:
-| Tident Tcolon right_part
-    { ($1,$3) }
-| Tident Tcolon Tor right_part
-    { ($1,$4) }
+| _1 = Tident _2 = Tcolon _3 = right_part
+    {    ( (_1,_3) )}
+| _1 = Tident _2 = Tcolon _3 = Tor _4 = right_part
+    {    ( (_1,_4) )}
 
 right_part:
-| word Taction
-    { [($1,$2)] }
-| word Taction Tor right_part
-    { ($1,$2) :: $4 }
+| _1 = word _2 = Taction
+    {    ( [(_1,_2)] )}
+| _1 = word _2 = Taction _3 = Tor _4 = right_part
+    {    ( (_1,_2) :: _4 )}
 
 word:
 | 
-    { [] }
-| Tident word
-    { $1 :: $2 }
-| Tprec Tident word
-    { $2 :: $3 }
-| Terror word
-    { $2 }
+    {    ( [] )}
+| _1 = Tident _2 = word
+    {    ( _1 :: _2 )}
+| _1 = Tprec _2 = Tident _3 = word
+    {    ( _2 :: _3 )}
+| _1 = Terror _2 = word
+    {    ( _2 )}
 
 %%
 

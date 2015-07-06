@@ -100,291 +100,291 @@ open Cminor
 %%
 
 prog:
-| global_declarations proc_list EOF
-    { { prog_procs = List.rev $2;
+| _1 = global_declarations _2 = proc_list _3 = EOF
+    {      ( { prog_procs = List.rev _2;
           prog_main = "main";
-          prog_vars = List.rev $1; } }
+          prog_vars = List.rev _1; } )}
 
 global_declarations:
 | 
-    { [] }
-| global_declarations global_declaration
-    { $2 :: $1 }
+    {                                                ( [] )}
+| _1 = global_declarations _2 = global_declaration
+    {                                                ( _2 :: _1 )}
 
 global_declaration:
-| VAR STRINGLIT LBRACKET INTLIT RBRACKET
-    { ($2, Int32.to_int $4, 4) }
+| _1 = VAR _2 = STRINGLIT _3 = LBRACKET _4 = INTLIT _5 = RBRACKET
+    {                                                ( (_2, Int32.to_int _4, 4) )}
 
 proc_list:
 | 
-    { [] }
-| proc_list proc
-    { $2 :: $1 }
+    {                                                ( [] )}
+| _1 = proc_list _2 = proc
+    {                                                ( _2 :: _1 )}
 
 proc:
-| STRINGLIT LPAREN parameters RPAREN opt_type LBRACE stack_declaration var_declarations stmt_list RBRACE
-    { { proc_name = $1;
-          proc_return = $5;
-          proc_params = List.rev $3;
-          proc_stackspace = $7;
-          proc_vars = List.rev $8;
-          proc_body = List.rev $9 } }
+| _1 = STRINGLIT _2 = LPAREN _3 = parameters _4 = RPAREN _5 = opt_type _6 = LBRACE _7 = stack_declaration _8 = var_declarations _9 = stmt_list _10 = RBRACE
+    {      ( { proc_name = _1;
+          proc_return = _5;
+          proc_params = List.rev _3;
+          proc_stackspace = _7;
+          proc_vars = List.rev _8;
+          proc_body = List.rev _9 } )}
 
 parameters:
 | 
-    { [] }
-| parameter_list
-    { $1 }
+    {                                                ( [] )}
+| _1 = parameter_list
+    {                                                ( _1 )}
 
 parameter_list:
-| parameter
-    { [$1] }
-| parameter_list COMMA parameter
-    { $3 :: $1 }
+| _1 = parameter
+    {                                                ( [_1] )}
+| _1 = parameter_list _2 = COMMA _3 = parameter
+    {                                                ( _3 :: _1 )}
 
 parameter:
-| IDENT COLON type_
-    { ($1, $3) }
+| _1 = IDENT _2 = COLON _3 = type_
+    {                                                ( (_1, _3) )}
 
 stack_declaration:
 | 
-    { 0 }
-| STACK INTLIT
-    { Int32.to_int $2 }
+    {                                                ( 0 )}
+| _1 = STACK _2 = INTLIT
+    {                                                ( Int32.to_int _2 )}
 
 var_declarations:
 | 
-    { [] }
-| var_declarations var_declaration
-    { $2 @ $1 }
+    {                                                ( [] )}
+| _1 = var_declarations _2 = var_declaration
+    {                                                ( _2 @ _1 )}
 
 var_declaration:
-| VAR parameter_list SEMICOLON
-    { $2 }
+| _1 = VAR _2 = parameter_list _3 = SEMICOLON
+    {                                                ( _2 )}
 
 stmt:
-| expr SEMICOLON
-    { Sexpr $1 }
-| IF LPAREN expr RPAREN stmts ELSE stmts
-    { Sifthenelse($3, $5, $7) }
-| IF LPAREN expr RPAREN stmts
-    { Sifthenelse($3, $5, []) }
-| SWITCH expr LBRACE switch_cases RBRACE
-    { Sswitch($2, List.rev $4) }
-| LOOP stmts
-    { Sloop($2) }
-| INTLIT COLON stmts
-    { Sblock(Int32.to_int $1, $3) }
-| EXIT INTLIT SEMICOLON
-    { Sexit (Int32.to_int $2) }
-| RETURN SEMICOLON
-    { Sreturn None }
-| RETURN expr SEMICOLON
-    { Sreturn (Some $2) }
+| _1 = expr _2 = SEMICOLON
+    {                                                ( Sexpr _1 )}
+| _1 = IF _2 = LPAREN _3 = expr _4 = RPAREN _5 = stmts _6 = ELSE _7 = stmts
+    {                                                ( Sifthenelse(_3, _5, _7) )}
+| _1 = IF _2 = LPAREN _3 = expr _4 = RPAREN _5 = stmts
+    {                                                ( Sifthenelse(_3, _5, []) )}
+| _1 = SWITCH _2 = expr _3 = LBRACE _4 = switch_cases _5 = RBRACE
+    {                                                ( Sswitch(_2, List.rev _4) )}
+| _1 = LOOP _2 = stmts
+    {                                                ( Sloop(_2) )}
+| _1 = INTLIT _2 = COLON _3 = stmts
+    {                                                ( Sblock(Int32.to_int _1, _3) )}
+| _1 = EXIT _2 = INTLIT _3 = SEMICOLON
+    {                                                ( Sexit (Int32.to_int _2) )}
+| _1 = RETURN _2 = SEMICOLON
+    {                                                ( Sreturn None )}
+| _1 = RETURN _2 = expr _3 = SEMICOLON
+    {                                                ( Sreturn (Some _2) )}
 
 stmts:
-| LBRACE stmt_list RBRACE
-    { List.rev $2 }
-| stmt
-    { [$1] }
+| _1 = LBRACE _2 = stmt_list _3 = RBRACE
+    {                                                ( List.rev _2 )}
+| _1 = stmt
+    {                                                ( [_1] )}
 
 stmt_list:
 | 
-    { [] }
-| stmt_list stmt
-    { $2 :: $1 }
+    {                                                ( [] )}
+| _1 = stmt_list _2 = stmt
+    {                                                ( _2 :: _1 )}
 
 switch_cases:
 | 
-    { [] }
-| switch_cases switch_case
-    { $2 :: $1 }
+    {                                                ( [] )}
+| _1 = switch_cases _2 = switch_case
+    {                                                ( _2 :: _1 )}
 
 switch_case:
-| case_list stmt_list
-    { (List.rev $1, List.rev $2) }
-| DEFAULT COLON stmt_list
-    { ([], List.rev $3) }
+| _1 = case_list _2 = stmt_list
+    {                                                ( (List.rev _1, List.rev _2) )}
+| _1 = DEFAULT _2 = COLON _3 = stmt_list
+    {                                                ( ([], List.rev _3) )}
 
 case_list:
-| case
-    { [$1] }
-| case_list case
-    { $2 :: $1 }
+| _1 = case
+    {                                                ( [_1] )}
+| _1 = case_list _2 = case
+    {                                                ( _2 :: _1 )}
 
 case:
-| CASE INTLIT COLON
-    { $2 }
+| _1 = CASE _2 = INTLIT _3 = COLON
+    {                                                ( _2 )}
 
 expr:
-| LPAREN expr RPAREN
-    { $2 }
-| IDENT
-    { Evar $1 }
-| IDENT EQUAL expr
-    { Eassign($1, $3) }
-| INTLIT
-    { Econstint $1 }
-| FLOATLIT
-    { Econstfloat $1 }
-| STRINGLIT
-    { Eaddrsymbol $1 }
-| AMPERSAND INTLIT
-    { Eaddrstack $2 }
-| MINUS expr %prec p_uminus
-    { Eunop(OPnegint, $2) }
-| MINUSF expr %prec p_uminus
-    { Eunop(OPnegfloat, $2) }
-| ABSF expr
-    { Eunop(OPabsfloat, $2) }
-| INTOFFLOAT expr
-    { Eunop(OPintoffloat, $2) }
-| FLOATOFINT expr
-    { Eunop(OPfloatofint, $2) }
-| FLOATOFINTU expr
-    { Eunop(OPfloatofintu, $2) }
-| TILDE expr
-    { Eunop(OPnotint, $2) }
-| BANG expr
-    { Eunop(OPnotbool, $2) }
-| INT8S expr
-    { Eunop(OPcast8signed, $2) }
-| INT8U expr
-    { Eunop(OPcast8unsigned, $2) }
-| INT16S expr
-    { Eunop(OPcast16signed, $2) }
-| INT16U expr
-    { Eunop(OPcast16unsigned, $2) }
-| FLOAT32 expr
-    { Eunop(OPsingleoffloat, $2) }
-| expr PLUS expr
-    { Ebinop(OPaddint, $1, $3) }
-| expr MINUS expr
-    { Ebinop(OPsubint, $1, $3) }
-| expr STAR expr
-    { Ebinop(OPmulint, $1, $3) }
-| expr SLASH expr
-    { Ebinop(OPdivint, $1, $3) }
-| expr PERCENT expr
-    { Ebinop(OPmodint, $1, $3) }
-| expr SLASHU expr
-    { Ebinop(OPdivintu, $1, $3) }
-| expr PERCENTU expr
-    { Ebinop(OPmodintu, $1, $3) }
-| expr AMPERSAND expr
-    { Ebinop(OPandint, $1, $3) }
-| expr BAR expr
-    { Ebinop(OPorint, $1, $3) }
-| expr CARET expr
-    { Ebinop(OPxorint, $1, $3) }
-| expr LESSLESS expr
-    { Ebinop(OPshiftleftint, $1, $3) }
-| expr GREATERGREATER expr
-    { Ebinop(OPshiftrightint, $1, $3) }
-| expr GREATERGREATERU expr
-    { Ebinop(OPshiftrightintu, $1, $3) }
-| expr PLUSF expr
-    { Ebinop(OPaddfloat, $1, $3) }
-| expr MINUSF expr
-    { Ebinop(OPsubfloat, $1, $3) }
-| expr STARF expr
-    { Ebinop(OPmulfloat, $1, $3) }
-| expr SLASHF expr
-    { Ebinop(OPdivfloat, $1, $3) }
-| expr EQUALEQUAL expr
-    { Ebinop(OPcmpint Cequal, $1, $3) }
-| expr BANGEQUAL expr
-    { Ebinop(OPcmpint Cnotequal, $1, $3) }
-| expr LESS expr
-    { Ebinop(OPcmpint Cless, $1, $3) }
-| expr LESSEQUAL expr
-    { Ebinop(OPcmpint Clessequal, $1, $3) }
-| expr GREATER expr
-    { Ebinop(OPcmpint Cgreater, $1, $3) }
-| expr GREATEREQUAL expr
-    { Ebinop(OPcmpint Cgreaterequal, $1, $3) }
-| expr EQUALEQUALU expr
-    { Ebinop(OPcmpintu Cequal, $1, $3) }
-| expr BANGEQUALU expr
-    { Ebinop(OPcmpintu Cnotequal, $1, $3) }
-| expr LESSU expr
-    { Ebinop(OPcmpintu Cless, $1, $3) }
-| expr LESSEQUALU expr
-    { Ebinop(OPcmpintu Clessequal, $1, $3) }
-| expr GREATERU expr
-    { Ebinop(OPcmpintu Cgreater, $1, $3) }
-| expr GREATEREQUALU expr
-    { Ebinop(OPcmpintu Cgreaterequal, $1, $3) }
-| expr EQUALEQUALF expr
-    { Ebinop(OPcmpfloat Cequal, $1, $3) }
-| expr BANGEQUALF expr
-    { Ebinop(OPcmpfloat Cnotequal, $1, $3) }
-| expr LESSF expr
-    { Ebinop(OPcmpfloat Cless, $1, $3) }
-| expr LESSEQUALF expr
-    { Ebinop(OPcmpfloat Clessequal, $1, $3) }
-| expr GREATERF expr
-    { Ebinop(OPcmpfloat Cgreater, $1, $3) }
-| expr GREATEREQUALF expr
-    { Ebinop(OPcmpfloat Cgreaterequal, $1, $3) }
-| memory_chunk LBRACKET expr RBRACKET
-    { Eload($1, $3) }
-| memory_chunk LBRACKET expr RBRACKET EQUAL expr
-    { Estore($1, $3, $6) }
-| expr LPAREN expr_list RPAREN opt_type
-    { Ecall($1, $3, $5) }
-| expr AMPERSANDAMPERSAND expr
-    { Eandbool($1, $3) }
-| expr BARBAR expr
-    { Eorbool($1, $3) }
-| expr QUESTION expr COLON expr
-    { Econdition($1, $3, $5) }
-| expr COMMA expr %prec p_sequence
-    { Esequence2($1, $3) }
+| _1 = LPAREN _2 = expr _3 = RPAREN
+    {                                                ( _2 )}
+| _1 = IDENT
+    {                                                ( Evar _1 )}
+| _1 = IDENT _2 = EQUAL _3 = expr
+    {                                                ( Eassign(_1, _3) )}
+| _1 = INTLIT
+    {                                                ( Econstint _1 )}
+| _1 = FLOATLIT
+    {                                                ( Econstfloat _1 )}
+| _1 = STRINGLIT
+    {                                                ( Eaddrsymbol _1 )}
+| _1 = AMPERSAND _2 = INTLIT
+    {                                                ( Eaddrstack _2 )}
+| _1 = MINUS _2 = expr %prec p_uminus
+    {                                                ( Eunop(OPnegint, _2) )}
+| _1 = MINUSF _2 = expr %prec p_uminus
+    {                                                ( Eunop(OPnegfloat, _2) )}
+| _1 = ABSF _2 = expr
+    {                                                ( Eunop(OPabsfloat, _2) )}
+| _1 = INTOFFLOAT _2 = expr
+    {                                                ( Eunop(OPintoffloat, _2) )}
+| _1 = FLOATOFINT _2 = expr
+    {                                                ( Eunop(OPfloatofint, _2) )}
+| _1 = FLOATOFINTU _2 = expr
+    {                                                ( Eunop(OPfloatofintu, _2) )}
+| _1 = TILDE _2 = expr
+    {                                                ( Eunop(OPnotint, _2) )}
+| _1 = BANG _2 = expr
+    {                                                ( Eunop(OPnotbool, _2) )}
+| _1 = INT8S _2 = expr
+    {                                                ( Eunop(OPcast8signed, _2) )}
+| _1 = INT8U _2 = expr
+    {                                                ( Eunop(OPcast8unsigned, _2) )}
+| _1 = INT16S _2 = expr
+    {                                                ( Eunop(OPcast16signed, _2) )}
+| _1 = INT16U _2 = expr
+    {                                                ( Eunop(OPcast16unsigned, _2) )}
+| _1 = FLOAT32 _2 = expr
+    {                                                ( Eunop(OPsingleoffloat, _2) )}
+| _1 = expr _2 = PLUS _3 = expr
+    {                                                ( Ebinop(OPaddint, _1, _3) )}
+| _1 = expr _2 = MINUS _3 = expr
+    {                                                ( Ebinop(OPsubint, _1, _3) )}
+| _1 = expr _2 = STAR _3 = expr
+    {                                                ( Ebinop(OPmulint, _1, _3) )}
+| _1 = expr _2 = SLASH _3 = expr
+    {                                                ( Ebinop(OPdivint, _1, _3) )}
+| _1 = expr _2 = PERCENT _3 = expr
+    {                                                ( Ebinop(OPmodint, _1, _3) )}
+| _1 = expr _2 = SLASHU _3 = expr
+    {                                                ( Ebinop(OPdivintu, _1, _3) )}
+| _1 = expr _2 = PERCENTU _3 = expr
+    {                                                ( Ebinop(OPmodintu, _1, _3) )}
+| _1 = expr _2 = AMPERSAND _3 = expr
+    {                                                ( Ebinop(OPandint, _1, _3) )}
+| _1 = expr _2 = BAR _3 = expr
+    {                                                ( Ebinop(OPorint, _1, _3) )}
+| _1 = expr _2 = CARET _3 = expr
+    {                                                ( Ebinop(OPxorint, _1, _3) )}
+| _1 = expr _2 = LESSLESS _3 = expr
+    {                                                ( Ebinop(OPshiftleftint, _1, _3) )}
+| _1 = expr _2 = GREATERGREATER _3 = expr
+    {                                                ( Ebinop(OPshiftrightint, _1, _3) )}
+| _1 = expr _2 = GREATERGREATERU _3 = expr
+    {                                                ( Ebinop(OPshiftrightintu, _1, _3) )}
+| _1 = expr _2 = PLUSF _3 = expr
+    {                                                ( Ebinop(OPaddfloat, _1, _3) )}
+| _1 = expr _2 = MINUSF _3 = expr
+    {                                                ( Ebinop(OPsubfloat, _1, _3) )}
+| _1 = expr _2 = STARF _3 = expr
+    {                                                ( Ebinop(OPmulfloat, _1, _3) )}
+| _1 = expr _2 = SLASHF _3 = expr
+    {                                                ( Ebinop(OPdivfloat, _1, _3) )}
+| _1 = expr _2 = EQUALEQUAL _3 = expr
+    {                                                ( Ebinop(OPcmpint Cequal, _1, _3) )}
+| _1 = expr _2 = BANGEQUAL _3 = expr
+    {                                                ( Ebinop(OPcmpint Cnotequal, _1, _3) )}
+| _1 = expr _2 = LESS _3 = expr
+    {                                                ( Ebinop(OPcmpint Cless, _1, _3) )}
+| _1 = expr _2 = LESSEQUAL _3 = expr
+    {                                                ( Ebinop(OPcmpint Clessequal, _1, _3) )}
+| _1 = expr _2 = GREATER _3 = expr
+    {                                                ( Ebinop(OPcmpint Cgreater, _1, _3) )}
+| _1 = expr _2 = GREATEREQUAL _3 = expr
+    {                                                ( Ebinop(OPcmpint Cgreaterequal, _1, _3) )}
+| _1 = expr _2 = EQUALEQUALU _3 = expr
+    {                                                ( Ebinop(OPcmpintu Cequal, _1, _3) )}
+| _1 = expr _2 = BANGEQUALU _3 = expr
+    {                                                ( Ebinop(OPcmpintu Cnotequal, _1, _3) )}
+| _1 = expr _2 = LESSU _3 = expr
+    {                                                ( Ebinop(OPcmpintu Cless, _1, _3) )}
+| _1 = expr _2 = LESSEQUALU _3 = expr
+    {                                                ( Ebinop(OPcmpintu Clessequal, _1, _3) )}
+| _1 = expr _2 = GREATERU _3 = expr
+    {                                                ( Ebinop(OPcmpintu Cgreater, _1, _3) )}
+| _1 = expr _2 = GREATEREQUALU _3 = expr
+    {                                                ( Ebinop(OPcmpintu Cgreaterequal, _1, _3) )}
+| _1 = expr _2 = EQUALEQUALF _3 = expr
+    {                                                ( Ebinop(OPcmpfloat Cequal, _1, _3) )}
+| _1 = expr _2 = BANGEQUALF _3 = expr
+    {                                                ( Ebinop(OPcmpfloat Cnotequal, _1, _3) )}
+| _1 = expr _2 = LESSF _3 = expr
+    {                                                ( Ebinop(OPcmpfloat Cless, _1, _3) )}
+| _1 = expr _2 = LESSEQUALF _3 = expr
+    {                                                ( Ebinop(OPcmpfloat Clessequal, _1, _3) )}
+| _1 = expr _2 = GREATERF _3 = expr
+    {                                                ( Ebinop(OPcmpfloat Cgreater, _1, _3) )}
+| _1 = expr _2 = GREATEREQUALF _3 = expr
+    {                                                ( Ebinop(OPcmpfloat Cgreaterequal, _1, _3) )}
+| _1 = memory_chunk _2 = LBRACKET _3 = expr _4 = RBRACKET
+    {                                                ( Eload(_1, _3) )}
+| _1 = memory_chunk _2 = LBRACKET _3 = expr _4 = RBRACKET _5 = EQUAL _6 = expr
+    {                                                ( Estore(_1, _3, _6) )}
+| _1 = expr _2 = LPAREN _3 = expr_list _4 = RPAREN _5 = opt_type
+    {                                                ( Ecall(_1, _3, _5) )}
+| _1 = expr _2 = AMPERSANDAMPERSAND _3 = expr
+    {                                                ( Eandbool(_1, _3) )}
+| _1 = expr _2 = BARBAR _3 = expr
+    {                                                ( Eorbool(_1, _3) )}
+| _1 = expr _2 = QUESTION _3 = expr _4 = COLON _5 = expr
+    {                                                ( Econdition(_1, _3, _5) )}
+| _1 = expr _2 = COMMA _3 = expr %prec p_sequence
+    {                                                ( Esequence2(_1, _3) )}
 
 expr_list:
 | 
-    { [] }
-| expr_list_1
-    { List.rev $1 }
+    {                                                ( [] )}
+| _1 = expr_list_1
+    {                                                ( List.rev _1 )}
 
 expr_list_1:
-| expr %prec COMMA
-    { [$1] }
-| expr_list_1 COMMA expr
-    { $3 :: $1 }
+| _1 = expr %prec COMMA
+    {                                                ( [_1] )}
+| _1 = expr_list_1 _2 = COMMA _3 = expr
+    {                                                ( _3 :: _1 )}
 
 memory_chunk:
-| INT8S
-    { Mint8signed }
-| INT8U
-    { Mint8unsigned }
-| INT16S
-    { Mint16signed }
-| INT16U
-    { Mint16unsigned }
-| INT32
-    { Mint32 }
-| INT
-    { Mint32 }
-| FLOAT32
-    { Mfloat32 }
-| FLOAT64
-    { Mfloat64 }
-| FLOAT
-    { Mfloat64 }
+| _1 = INT8S
+    {                                                ( Mint8signed )}
+| _1 = INT8U
+    {                                                ( Mint8unsigned )}
+| _1 = INT16S
+    {                                                ( Mint16signed )}
+| _1 = INT16U
+    {                                                ( Mint16unsigned )}
+| _1 = INT32
+    {                                                ( Mint32 )}
+| _1 = INT
+    {                                                ( Mint32 )}
+| _1 = FLOAT32
+    {                                                ( Mfloat32 )}
+| _1 = FLOAT64
+    {                                                ( Mfloat64 )}
+| _1 = FLOAT
+    {                                                ( Mfloat64 )}
 
 type_:
-| INT
-    { Tint }
-| FLOAT
-    { Tfloat }
+| _1 = INT
+    {                                                ( Tint )}
+| _1 = FLOAT
+    {                                                ( Tfloat )}
 
 opt_type:
 | 
-    { None }
-| COLON type_
-    { Some($2) }
+    {                                                ( None )}
+| _1 = COLON _2 = type_
+    {                                                ( Some(_2) )}
 
 %%
 

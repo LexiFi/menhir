@@ -126,7 +126,7 @@ let binding mode id =
       ""
 
 let string_of_producer mode (symbol, ido) =
-  Misc.o2s ido (binding mode) ^ (Misc.normalize symbol)
+  binding mode ido ^ (Misc.normalize symbol)
 
 let print_branch mode f branch = 
   Printf.fprintf f "%s%s\n    {"

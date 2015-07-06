@@ -61,172 +61,172 @@ open Pp
 %%
 
 main:
-| PROGRAM vars definitions body endtok
-    { {global_vars = $2; definitions = $3; main = $4 } }
+| _1 = PROGRAM _2 = vars _3 = definitions _4 = body _5 = endtok
+    {    ( {global_vars = _2; definitions = _3; main = _4 } )}
 
 endtok:
-| SEMISEMI
-    {()}
-| DOT
-    {()}
+| _1 = SEMISEMI
+    {           (())}
+| _1 = DOT
+    {           (())}
 
 vars:
-| VAR args2
-    { $2 }
+| _1 = VAR _2 = args2
+    {                              ( _2 )}
 | 
-    { [] }
+    {                              ( [] )}
 
 args2:
-| declvar SEMI args2
-    { $1 @ $3 }
+| _1 = declvar _2 = SEMI _3 = args2
+    {                     ( _1 @ _3 )}
 | 
-    { [] }
+    {                     ( [] )}
 
 idents:
-| IDENT COMMA idents
-    {$1 :: $3 }
-| IDENT
-    { [ $1 ] }
+| _1 = IDENT _2 = COMMA _3 = idents
+    {                     (_1 :: _3 )}
+| _1 = IDENT
+    {                     ( [ _1 ] )}
 
 declvar:
-| idents COLON type_expr
-    { List.map (fun x -> x, $3) $1 }
+| _1 = idents _2 = COLON _3 = type_expr
+    {                                   ( List.map (fun x -> x, _3) _1 )}
 
 definitions:
-| fonction SEMI definitions
-    { $1 :: $3 }
+| _1 = fonction _2 = SEMI _3 = definitions
+    {                                      ( _1 :: _3 )}
 | 
-    { [] }
+    {                                      ( [] )}
 
 fonction:
-| FUNCTION IDENT LPAREN args RPAREN COLON type_expr SEMI vars body
-    { $2, { arguments = $4; result = Some $7; local_vars = $9; body = $10 } }
-| PROCEDURE IDENT LPAREN args RPAREN SEMI vars body
-    { $2, { arguments = $4; result = None; local_vars = $7; body = $8 } }
+| _1 = FUNCTION _2 = IDENT _3 = LPAREN _4 = args _5 = RPAREN _6 = COLON _7 = type_expr _8 = SEMI _9 = vars _10 = body
+    {    ( _2, { arguments = _4; result = Some _7; local_vars = _9; body = _10 } )}
+| _1 = PROCEDURE _2 = IDENT _3 = LPAREN _4 = args _5 = RPAREN _6 = SEMI _7 = vars _8 = body
+    {    ( _2, { arguments = _4; result = None; local_vars = _7; body = _8 } )}
 
 args:
-| declvar args1
-    { $1 @ $2 }
+| _1 = declvar _2 = args1
+    {                                      ( _1 @ _2 )}
 | 
-    { [] }
+    {                                      ( [] )}
 
 args1:
-| SEMI declvar args1
-    { $2 @ $3 }
+| _1 = SEMI _2 = declvar _3 = args1
+    {                                      ( _2 @ _3 )}
 | 
-    { [] }
+    {                                      ( [] )}
 
 instruction:
-| IDENT COLONEQUAL expression
-    { Set ($1, $3) }
-| BEGIN bloc END
-    { Sequence $2 }
-| IF expression THEN instruction ELSE instruction
-    { If ($2, $4, $6) }
-| WHILE expression DO instruction
-    { While ($2, $4) }
-| IDENT LPAREN arguments RPAREN
-    { Procedure_call ($1, $3) }
-| READ LPAREN IDENT RPAREN
-    { Read ($3) }
-| WRITE LPAREN expression RPAREN
-    { Write ($3) }
-| WRITELN LPAREN expression RPAREN
-    { Writeln ($3) }
-| array_expression LBRACKET expression RBRACKET COLONEQUAL expression
-    { Seti ($1, $3, $6) }
+| _1 = IDENT _2 = COLONEQUAL _3 = expression
+    {                                      ( Set (_1, _3) )}
+| _1 = BEGIN _2 = bloc _3 = END
+    {                                      ( Sequence _2 )}
+| _1 = IF _2 = expression _3 = THEN _4 = instruction _5 = ELSE _6 = instruction
+    {                                      ( If (_2, _4, _6) )}
+| _1 = WHILE _2 = expression _3 = DO _4 = instruction
+    {                                      ( While (_2, _4) )}
+| _1 = IDENT _2 = LPAREN _3 = arguments _4 = RPAREN
+    {                                      ( Procedure_call (_1, _3) )}
+| _1 = READ _2 = LPAREN _3 = IDENT _4 = RPAREN
+    {                                      ( Read (_3) )}
+| _1 = WRITE _2 = LPAREN _3 = expression _4 = RPAREN
+    {                                      ( Write (_3) )}
+| _1 = WRITELN _2 = LPAREN _3 = expression _4 = RPAREN
+    {                                      ( Writeln (_3) )}
+| _1 = array_expression _2 = LBRACKET _3 = expression _4 = RBRACKET _5 = COLONEQUAL _6 = expression
+    {                                      ( Seti (_1, _3, _6) )}
 
 body:
-| BEGIN bloc END
-    { $2 }
+| _1 = BEGIN _2 = bloc _3 = END
+    {                                      ( _2 )}
 
 bloc:
-| instruction bloc1
-    { $1 :: $2 }
+| _1 = instruction _2 = bloc1
+    {                                      ( _1 :: _2 )}
 | 
-    { [] }
+    {                                      ( [] )}
 
 bloc1:
-| SEMI instruction bloc1
-    { $2 :: $3 }
+| _1 = SEMI _2 = instruction _3 = bloc1
+    {                                      ( _2 :: _3 )}
 | 
-    { [] }
+    {                                      ( [] )}
 
 arguments:
-| expression arguments1
-    { $1 :: $2 }
+| _1 = expression _2 = arguments1
+    {                                      ( _1 :: _2 )}
 | 
-    { [] }
+    {                                      ( [] )}
 
 arguments1:
-| COMMA expression arguments1
-    { $2 :: $3 }
+| _1 = COMMA _2 = expression _3 = arguments1
+    {                                      ( _2 :: _3 )}
 | 
-    { [] }
+    {                                      ( [] )}
 
 expression:
-| LPAREN expression RPAREN
-    { $2 }
-| INT
-    { Int $1 }
-| FLOAT
-    { Float $1 }
-| MINUS expression %prec UMINUS
-    { Bin (Op Sub, Int 0, $2) }
-| BOOL
-    { Bool $1 }
-| IDENT
-    { Get $1 }
-| call_expression
-    { $1 }
-| array_expression LBRACKET expression RBRACKET
-    { Geti ($1, $3) }
-| expression PLUS expression
-    { Bin (Op Add, $1, $3) }
-| expression MINUS expression
-    { Bin (Op Sub, $1, $3) }
-| expression TIMES expression
-    { Bin (Op Mul, $1, $3) }
-| expression DIV expression
-    { Bin (Op Div, $1, $3) }
-| expression LESS expression
-    { Bin (Cmp Lt, $1, $3) }
-| expression LESSEQUAL expression
-    { Bin (Cmp Le, $1, $3) }
-| expression GREATER expression
-    { Bin (Cmp Gt, $1, $3) }
-| expression GREATEREQUAL expression
-    { Bin (Cmp Ge, $1, $3) }
-| expression EQUAL expression
-    { Bin (Cmp Eq, $1, $3) }
-| expression LESSGREATER expression
-    { Bin (Cmp Ne, $1, $3) }
+| _1 = LPAREN _2 = expression _3 = RPAREN
+    {                                      ( _2 )}
+| _1 = INT
+    {                                      ( Int _1 )}
+| _1 = FLOAT
+    {                                      ( Float _1 )}
+| _1 = MINUS _2 = expression %prec UMINUS
+    {                                      ( Bin (Op Sub, Int 0, _2) )}
+| _1 = BOOL
+    {                                      ( Bool _1 )}
+| _1 = IDENT
+    {                                      ( Get _1 )}
+| _1 = call_expression
+    {                                      ( _1 )}
+| _1 = array_expression _2 = LBRACKET _3 = expression _4 = RBRACKET
+    {                                      ( Geti (_1, _3) )}
+| _1 = expression _2 = PLUS _3 = expression
+    {                                      ( Bin (Op Add, _1, _3) )}
+| _1 = expression _2 = MINUS _3 = expression
+    {                                      ( Bin (Op Sub, _1, _3) )}
+| _1 = expression _2 = TIMES _3 = expression
+    {                                      ( Bin (Op Mul, _1, _3) )}
+| _1 = expression _2 = DIV _3 = expression
+    {                                      ( Bin (Op Div, _1, _3) )}
+| _1 = expression _2 = LESS _3 = expression
+    {                                      ( Bin (Cmp Lt, _1, _3) )}
+| _1 = expression _2 = LESSEQUAL _3 = expression
+    {                                      ( Bin (Cmp Le, _1, _3) )}
+| _1 = expression _2 = GREATER _3 = expression
+    {                                      ( Bin (Cmp Gt, _1, _3) )}
+| _1 = expression _2 = GREATEREQUAL _3 = expression
+    {                                      ( Bin (Cmp Ge, _1, _3) )}
+| _1 = expression _2 = EQUAL _3 = expression
+    {                                      ( Bin (Cmp Eq, _1, _3) )}
+| _1 = expression _2 = LESSGREATER _3 = expression
+    {                                      ( Bin (Cmp Ne, _1, _3) )}
 
 array_expression:
-| IDENT
-    { Get $1 }
-| array_expression LBRACKET expression RBRACKET
-    { Geti ($1, $3) }
-| call_expression
-    { $1 }
-| LPAREN expression RPAREN
-    { $2 }
+| _1 = IDENT
+    {        ( Get _1 )}
+| _1 = array_expression _2 = LBRACKET _3 = expression _4 = RBRACKET
+    {                                                ( Geti (_1, _3) )}
+| _1 = call_expression
+    {                  ( _1 )}
+| _1 = LPAREN _2 = expression _3 = RPAREN
+    {                           ( _2 )}
 
 call_expression:
-| IDENT LPAREN arguments RPAREN
-    { Function_call ($1, $3) }
-| ALLOC LPAREN expression COLON type_expr RPAREN
-    { Alloc ($3,$5) }
+| _1 = IDENT _2 = LPAREN _3 = arguments _4 = RPAREN
+    {                                      ( Function_call (_1, _3) )}
+| _1 = ALLOC _2 = LPAREN _3 = expression _4 = COLON _5 = type_expr _6 = RPAREN
+    {                                      ( Alloc (_3,_5) )}
 
 type_expr:
-| INTEGER
-    { Integer }
-| REAL
-    { Real }
-| BOOLEAN
-    { Boolean }
-| ARRAY OF type_expr
-    { Array ($3) }
+| _1 = INTEGER
+    {                                       ( Integer )}
+| _1 = REAL
+    {                                       ( Real )}
+| _1 = BOOLEAN
+    {                                       ( Boolean )}
+| _1 = ARRAY _2 = OF _3 = type_expr
+    {                                       ( Array (_3) )}
 
 %%
 

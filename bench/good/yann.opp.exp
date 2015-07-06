@@ -11,42 +11,42 @@
 %%
 
 exp:
-| term
-    {}
+| _1 = term
+    {       ()}
 
 fa1:
-| LPAREN exp RPAREN
-    {}
-| INT
-    {}
+| _1 = LPAREN _2 = exp _3 = RPAREN
+    {                    ()}
+| _1 = INT
+    {      ()}
 
 fa4:
-| MATRIX
-    {}
-| LPAREN exp RPAREN
-    {}
+| _1 = MATRIX
+    {         ()}
+| _1 = LPAREN _2 = exp _3 = RPAREN
+    {                    ()}
 
 product:
-| product TIMES fa1
-    {}
-| fa1
-    {}
+| _1 = product _2 = TIMES _3 = fa1
+    {                    ()}
+| _1 = fa1
+    {      ()}
 
 tensorproduct:
-| tensorproduct TENSOR fa4
-    {}
-| fa4
-    {}
+| _1 = tensorproduct _2 = TENSOR _3 = fa4
+    {                           ()}
+| _1 = fa4
+    {      ()}
 
 term:
-| term PLUS product
-    {}
-| term PLUS tensorproduct
-    {}
-| product
-    {}
-| term PLUS tensorproduct
-    {}
+| _1 = term _2 = PLUS _3 = product
+    {                    ()}
+| _1 = term _2 = PLUS _3 = tensorproduct
+    {                          ()}
+| _1 = product
+    {          ()}
+| _1 = term _2 = PLUS _3 = tensorproduct
+    {                          ()}
 
 %%
 

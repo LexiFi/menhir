@@ -12,24 +12,24 @@ Warning: the token FIN is unused.
 %%
 
 main:
-| instruction
-    {print_string "\ninstruction\n"; flush stdout}
+| _1 = instruction
+    {                    (print_string "\ninstruction\n"; flush stdout)}
 
 expr:
-| INT
-    {
-		print_string "\nINT:"; print_int $1;flush stdout
-	}
-| expr PLUS expr
-    {
+| _1 = INT
+    { (
+		print_string "\nINT:"; print_int _1;flush stdout
+	)}
+| _1 = expr _2 = PLUS _3 = expr
+    { (
 	  print_string "\nPlus"
-	}
+	)}
 
 instruction:
-| expr
-    { print_string "\ninstruction\n" ; flush stdout }
-| IDENT PARENG PAREND
-    { print_string "\nCall" ; flush stdout}
+| _1 = expr
+    {     ( print_string "\ninstruction\n" ; flush stdout )}
+| _1 = IDENT _2 = PARENG _3 = PAREND
+    {                     ( print_string "\nCall" ; flush stdout)}
 
 %%
 

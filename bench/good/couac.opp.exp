@@ -31,98 +31,98 @@
 %%
 
 grammar:
-| declarations PERCENTPERCENT rules trailer
-    { List.rev $1, $3, $4 }
+| _1 = declarations _2 = PERCENTPERCENT _3 = rules _4 = trailer
+    {    ( List.rev _1, _3, _4 )}
 
 trailer:
-| EOF
-    { None }
-| PERCENTPERCENT
-    { Some $1 }
+| _1 = EOF
+    {    ( None )}
+| _1 = PERCENTPERCENT
+    {    ( Some _1 )}
 
 declarations:
 | 
-    { [] }
-| declarations declaration
-    { $2 @ $1 }
+    {    ( [] )}
+| _1 = declarations _2 = declaration
+    {    ( _2 @ _1 )}
 
 declaration:
-| HEADER
-    { [ DCode $1 ] }
-| TOKEN terminals
-    { List.map (fun x -> DToken (None, x)) $2 }
-| TOKEN OCAMLTYPE terminals
-    { List.map (fun x -> DToken (Some $2, x)) $3 }
-| START nonterminals
-    { List.map (fun x -> DStart x) $2 }
-| TYPE OCAMLTYPE symbols
-    { [] }
-| LEFT symbols
-    { [] }
-| RIGHT symbols
-    { [] }
-| NONASSOC symbols
-    { [] }
+| _1 = HEADER
+    {    ( [ DCode _1 ] )}
+| _1 = TOKEN _2 = terminals
+    {    ( List.map (fun x -> DToken (None, x)) _2 )}
+| _1 = TOKEN _2 = OCAMLTYPE _3 = terminals
+    {    ( List.map (fun x -> DToken (Some _2, x)) _3 )}
+| _1 = START _2 = nonterminals
+    {    ( List.map (fun x -> DStart x) _2 )}
+| _1 = TYPE _2 = OCAMLTYPE _3 = symbols
+    {    ( [] )}
+| _1 = LEFT _2 = symbols
+    {    ( [] )}
+| _1 = RIGHT _2 = symbols
+    {    ( [] )}
+| _1 = NONASSOC _2 = symbols
+    {    ( [] )}
 
 symbols:
 | 
-    { [] }
-| symbols symbol
-    { $2 :: $1 }
+    {    ( [] )}
+| _1 = symbols _2 = symbol
+    {    ( _2 :: _1 )}
 
 symbol:
-| LID
-    { $1 }
-| UID
-    { $1 }
+| _1 = LID
+    {    ( _1 )}
+| _1 = UID
+    {    ( _1 )}
 
 terminals:
 | 
-    { [] }
-| terminals UID
-    { $2 :: $1 }
-| terminals LID
-    { error 2 "Terminal symbols must begin with an uppercase letter." }
+    {    ( [] )}
+| _1 = terminals _2 = UID
+    {    ( _2 :: _1 )}
+| _1 = terminals _2 = LID
+    {    ( error 2 "Terminal symbols must begin with an uppercase letter." )}
 
 nonterminals:
 | 
-    { [] }
-| nonterminals LID
-    { $2 :: $1 }
-| nonterminals UID
-    { error 2 "Nonterminal start symbols must begin with a lowercase letter." }
+    {    ( [] )}
+| _1 = nonterminals _2 = LID
+    {    ( _2 :: _1 )}
+| _1 = nonterminals _2 = UID
+    {    ( error 2 "Nonterminal start symbols must begin with a lowercase letter." )}
 
 rules:
 | 
-    { [] }
-| rules rule
-    { $2 :: $1 }
+    {    ( [] )}
+| _1 = rules _2 = rule
+    {    ( _2 :: _1 )}
 
 rule:
-| symbol COLON optional_bar production productions
-    { $1, $4 :: $5 }
+| _1 = symbol _2 = COLON _3 = optional_bar _4 = production _5 = productions
+    {    ( _1, _4 :: _5 )}
 
 optional_bar:
 | 
-    { () }
-| BAR
-    { () }
+    {    ( () )}
+| _1 = BAR
+    {    ( () )}
 
 productions:
 | 
-    { [] }
-| productions BAR production
-    { $3 :: $1 }
+    {    ( [] )}
+| _1 = productions _2 = BAR _3 = production
+    {    ( _3 :: _1 )}
 
 production:
-| symbols precedence ACTION
-    { List.rev $1, $3, $2 }
+| _1 = symbols _2 = precedence _3 = ACTION
+    {    ( List.rev _1, _3, _2 )}
 
 precedence:
 | 
-    { None }
-| PREC symbol
-    { Some $2 }
+    {    ( None )}
+| _1 = PREC _2 = symbol
+    {    ( Some _2 )}
 
 %%
 

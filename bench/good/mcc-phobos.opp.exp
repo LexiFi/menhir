@@ -213,526 +213,526 @@ let include_built_in (s, pos) =
 %%
 
 main:
-| module_name includes term_sections opt_preamble lexer opt_assocs grammar opt_rewrites_section opt_inline_forms TokEof
-    { { phobos_module_name = $1;
-                                  phobos_includes = $2;
-                                  phobos_termsets = $3;
-                                  phobos_local_rewrites = $4;
-                                  phobos_lexer_info = $5;
-                                  phobos_assoc_info = $6;
-                                  phobos_grammar_info = $7;
-                                  phobos_post_rewrites = $8;
-                                  phobos_inline_forms = $9
+| _1 = module_name _2 = includes _3 = term_sections _4 = opt_preamble _5 = lexer _6 = opt_assocs _7 = grammar _8 = opt_rewrites_section _9 = opt_inline_forms _10 = TokEof
+    {                              ( { phobos_module_name = _1;
+                                  phobos_includes = _2;
+                                  phobos_termsets = _3;
+                                  phobos_local_rewrites = _4;
+                                  phobos_lexer_info = _5;
+                                  phobos_assoc_info = _6;
+                                  phobos_grammar_info = _7;
+                                  phobos_post_rewrites = _8;
+                                  phobos_inline_forms = _9
                                 }
-                              }
+                              )}
 
 module_name:
-| TokModule identifier
-    { module_name := fst $2; fst $2 }
+| _1 = TokModule _2 = identifier
+    {                              ( module_name := fst _2; fst _2 )}
 
 includes:
 | 
-    { [] }
-| include_list_rev
-    { let mdl_names = List.flatten (List.rev $1) in
+    {                              ( [] )}
+| _1 = include_list_rev
+    {                              ( let mdl_names = List.flatten (List.rev _1) in
                                    process_includes mdl_names;
                                    mdl_names
-                              }
+                              )}
 
 include_list_rev:
-| include_list_rev include_item
-    { $2 :: $1 }
-| include_item
-    { [$1] }
+| _1 = include_list_rev _2 = include_item
+    {                              ( _2 :: _1 )}
+| _1 = include_item
+    {                              ( [_1] )}
 
 include_item:
-| TokInclude string_list
-    { $2 }
-| TokInclude identifier
-    { include_built_in $2; [] }
+| _1 = TokInclude _2 = string_list
+    {                              ( _2 )}
+| _1 = TokInclude _2 = identifier
+    {                              ( include_built_in _2; [] )}
 
 string_list:
-| string_list_rev
-    { List.rev $1 }
+| _1 = string_list_rev
+    {                              ( List.rev _1 )}
 
 string_list_rev:
-| string_list TokString
-    { (fst $2) :: $1 }
-| TokString
-    { [fst $1] }
+| _1 = string_list _2 = TokString
+    {                              ( (fst _2) :: _1 )}
+| _1 = TokString
+    {                              ( [fst _1] )}
 
 term_sections:
-| term_section_list
-    { List.rev $1 }
+| _1 = term_section_list
+    {                              ( List.rev _1 )}
 
 term_section_list:
-| term_section
-    { [$1] }
-| term_section_list term_section
-    { $2 :: $1 }
+| _1 = term_section
+    {                              ( [_1] )}
+| _1 = term_section_list _2 = term_section
+    {                              ( _2 :: _1 )}
 
 term_section:
-| TokTerms term_options
-    { $2 }
+| _1 = TokTerms _2 = term_options
+    {                              ( _2 )}
 
 term_options:
-| term_option_list
-    { List.rev $1 }
+| _1 = term_option_list
+    {                              ( List.rev _1 )}
 
 term_option_list:
-| term_option
-    { [$1] }
-| term_option_list term_option
-    { $2 :: $1 }
+| _1 = term_option
+    {                              ( [_1] )}
+| _1 = term_option_list _2 = term_option
+    {                              ( _2 :: _1 )}
 
 term_option:
-| TokExtend TokString TokLeftBrace opt_term_declarations TokRightBrace
-    { new_terms (fst $2) $4;
-                                To_extend (fst $2, $4)
-                              }
-| TokOption
-    { raise (ParseError (snd $1, string_add ["Invalid option \""; fst $1; "\""])) }
+| _1 = TokExtend _2 = TokString _3 = TokLeftBrace _4 = opt_term_declarations _5 = TokRightBrace
+    {                              ( new_terms (fst _2) _4;
+                                To_extend (fst _2, _4)
+                              )}
+| _1 = TokOption
+    {                              ( raise (ParseError (snd _1, string_add ["Invalid option \""; fst _1; "\""])) )}
 
 opt_preamble:
 | 
-    { [] }
-| preamble
-    { $1 }
+    {                              ( [] )}
+| _1 = preamble
+    {                              ( _1 )}
 
 preamble:
-| TokLeftBrace new_rewrites TokRightBrace
-    { $2 }
+| _1 = TokLeftBrace _2 = new_rewrites _3 = TokRightBrace
+    {                              ( _2 )}
 
 lexer:
-| TokTokens opt_lexer_options TokLeftBrace tokens TokRightBrace
-    { $4, $2 }
+| _1 = TokTokens _2 = opt_lexer_options _3 = TokLeftBrace _4 = tokens _5 = TokRightBrace
+    {                              ( _4, _2 )}
 
 opt_lexer_options:
 | 
-    { [] }
-| lexer_option_list
-    { List.rev $1 }
+    {                              ( [] )}
+| _1 = lexer_option_list
+    {                              ( List.rev _1 )}
 
 lexer_option_list:
-| lexer_option_list lexer_option
-    { $2 :: $1 }
-| lexer_option
-    { [$1] }
+| _1 = lexer_option_list _2 = lexer_option
+    {                              ( _2 :: _1 )}
+| _1 = lexer_option
+    {                              ( [_1] )}
 
 lexer_option:
-| TokLongest
-    { Lo_longest }
-| TokFirst
-    { Lo_first }
-| TokOption
-    { raise (ParseError (snd $1, string_add ["Invalid option \""; fst $1; "\""])) }
+| _1 = TokLongest
+    {                              ( Lo_longest )}
+| _1 = TokFirst
+    {                              ( Lo_first )}
+| _1 = TokOption
+    {                              ( raise (ParseError (snd _1, string_add ["Invalid option \""; fst _1; "\""])) )}
 
 tokens:
-| token_list
-    { List.rev $1 }
+| _1 = token_list
+    {                              ( List.rev _1 )}
 
 token_list:
-| token_list token
-    { $2 :: $1 }
-| token
-    { [$1] }
+| _1 = token_list _2 = token
+    {                              ( _2 :: _1 )}
+| _1 = token
+    {                              ( [_1] )}
 
 token:
-| TokId TokEq TokString token_body
-    { false, fst $1, fst $3, fst $4 }
-| TokIgnore TokId TokEq TokString token_body
-    { true, fst $2, fst $4, fst $5 }
+| _1 = TokId _2 = TokEq _3 = TokString _4 = token_body
+    {                              ( false, fst _1, fst _3, fst _4 )}
+| _1 = TokIgnore _2 = TokId _3 = TokEq _4 = TokString _5 = token_body
+    {                              ( true, fst _2, fst _4, fst _5 )}
 
 identifiers:
-| rev_identifier_list
-    { List.rev $1 }
+| _1 = rev_identifier_list
+    {                              ( List.rev _1 )}
 
 rev_identifier_list:
-| identifier
-    { [$1] }
-| rev_identifier_list identifier
-    { $2 :: $1 }
+| _1 = identifier
+    {                              ( [_1] )}
+| _1 = rev_identifier_list _2 = identifier
+    {                              ( _2 :: _1 )}
 
 identifiers_with_comma:
-| rev_identifier_list_with_comma
-    { List.rev $1 }
+| _1 = rev_identifier_list_with_comma
+    {                              ( List.rev _1 )}
 
 rev_identifier_list_with_comma:
-| identifier
-    { [$1] }
-| rev_identifier_list_with_comma TokComma identifier
-    { $3 :: $1 }
+| _1 = identifier
+    {                              ( [_1] )}
+| _1 = rev_identifier_list_with_comma _2 = TokComma _3 = identifier
+    {                              ( _3 :: _1 )}
 
 identifier:
-| TokId
-    { $1 }
+| _1 = TokId
+    {                              ( _1 )}
 
 opt_assocs:
 | 
-    { [] }
-| assoc_list
-    { List.rev $1 }
+    {                              ( [] )}
+| _1 = assoc_list
+    {                              ( List.rev _1 )}
 
 assoc_list:
-| assoc_list assoc
-    { $2 :: $1 }
-| assoc
-    { [$1] }
+| _1 = assoc_list _2 = assoc
+    {                              ( _2 :: _1 )}
+| _1 = assoc
+    {                              ( [_1] )}
 
 assoc:
-| TokNonAssoc identifiers
-    { Dir_nonassoc $2 }
-| TokLeftAssoc identifiers
-    { Dir_leftassoc $2 }
-| TokRightAssoc identifiers
-    { Dir_rightassoc $2 }
+| _1 = TokNonAssoc _2 = identifiers
+    {                              ( Dir_nonassoc _2 )}
+| _1 = TokLeftAssoc _2 = identifiers
+    {                              ( Dir_leftassoc _2 )}
+| _1 = TokRightAssoc _2 = identifiers
+    {                              ( Dir_rightassoc _2 )}
 
 grammar:
-| TokGrammar opt_grammar_options TokLeftBrace rules TokRightBrace
-    { $4, $2 }
+| _1 = TokGrammar _2 = opt_grammar_options _3 = TokLeftBrace _4 = rules _5 = TokRightBrace
+    {                              ( _4, _2 )}
 
 opt_grammar_options:
 | 
-    { [] }
-| grammar_option_list
-    { List.rev $1 }
+    {                              ( [] )}
+| _1 = grammar_option_list
+    {                              ( List.rev _1 )}
 
 grammar_option_list:
-| grammar_option_list grammar_option
-    { $2 :: $1 }
-| grammar_option
-    { [$1] }
+| _1 = grammar_option_list _2 = grammar_option
+    {                              ( _2 :: _1 )}
+| _1 = grammar_option
+    {                              ( [_1] )}
 
 grammar_option:
-| TokStart identifier
-    { Go_start (fst $2) }
+| _1 = TokStart _2 = identifier
+    {                              ( Go_start (fst _2) )}
 
 rules:
-| rule_list
-    { $1 }
+| _1 = rule_list
+    {                              ( _1 )}
 
 rule_list:
-| rule_list rule
-    { $1 @ $2 }
-| rule
-    { $1 }
+| _1 = rule_list _2 = rule
+    {                              ( _1 @ _2 )}
+| _1 = rule
+    {                              ( _1 )}
 
 rule:
-| TokId TokRuleEq productions
-    { make_rules $1 $3 }
+| _1 = TokId _2 = TokRuleEq _3 = productions
+    {                              ( make_rules _1 _3 )}
 
 productions:
-| prod_body prods
-    { $1 :: $2 }
-| prod_body
-    { [$1] }
+| _1 = prod_body _2 = prods
+    {                              ( _1 :: _2 )}
+| _1 = prod_body
+    {                              ( [_1] )}
 
 opt_prec:
 | 
-    { None }
-| TokPrec TokId
-    { Some $2 }
+    {                              ( None )}
+| _1 = TokPrec _2 = TokId
+    {                              ( Some _2 )}
 
 prods:
-| prod_list
-    { List.rev $1 }
+| _1 = prod_list
+    {                              ( List.rev _1 )}
 
 prod_list:
-| prod_list prod_list_prim
-    { $2 :: $1 }
-| prod_list_prim
-    { [$1] }
+| _1 = prod_list _2 = prod_list_prim
+    {                              ( _2 :: _1 )}
+| _1 = prod_list_prim
+    {                              ( [_1] )}
 
 prod_list_prim:
-| TokPipe prod_body
-    { $2 }
+| _1 = TokPipe _2 = prod_body
+    {                              ( _2 )}
 
 prod_body:
-| identifiers opt_prec body
-    { $1, $2, insert_rewrite_if_needed $1 (fst $3) }
-| identifiers opt_prec TokDoubledArrow simple_term
-    { production_of_shorthand $1 $2 $4 }
+| _1 = identifiers _2 = opt_prec _3 = body
+    {                              ( _1, _2, insert_rewrite_if_needed _1 (fst _3) )}
+| _1 = identifiers _2 = opt_prec _3 = TokDoubledArrow _4 = simple_term
+    {                              ( production_of_shorthand _1 _2 _4 )}
 
 token_body:
-| TokLeftBrace token_term_matches TokRightBrace
-    { $2, union_pos $1 $3 }
+| _1 = TokLeftBrace _2 = token_term_matches _3 = TokRightBrace
+    {                              ( _2, union_pos _1 _3 )}
 
 body:
-| TokLeftBrace opt_term_matches TokRightBrace
-    { $2, union_pos $1 $3 }
+| _1 = TokLeftBrace _2 = opt_term_matches _3 = TokRightBrace
+    {                              ( _2, union_pos _1 _3 )}
 
 new_rewrites:
 | 
-    { [] }
-| new_rewrite_list
-    { List.rev $1 }
+    {                              ( [] )}
+| _1 = new_rewrite_list
+    {                              ( List.rev _1 )}
 
 new_rewrite_list:
-| new_rewrite_list new_rewrite
-    { $2 :: $1 }
-| new_rewrite
-    { [$1] }
+| _1 = new_rewrite_list _2 = new_rewrite
+    {                              ( _2 :: _1 )}
+| _1 = new_rewrite
+    {                              ( [_1] )}
 
 new_rewrite:
-| from TokArrow simple_term
-    { $1, $3 }
+| _1 = from _2 = TokArrow _3 = simple_term
+    {                              ( _1, _3 )}
 
 token_term_matches:
 | 
-    { let term = pho_make_token_term () in
+    {                              ( let term = pho_make_token_term () in
                                    [([(term, bogus_pos)], (term, bogus_pos))]
-                              }
-| term_match_list
-    { List.rev $1 }
+                              )}
+| _1 = term_match_list
+    {                              ( List.rev _1 )}
 
 opt_term_matches:
 | 
-    { [] }
-| term_match_list
-    { List.rev $1 }
+    {                              ( [] )}
+| _1 = term_match_list
+    {                              ( List.rev _1 )}
 
 term_match_list:
-| term_match_list TokPipe term_match
-    { $3 :: $1 }
-| term_match
-    { [$1] }
+| _1 = term_match_list _2 = TokPipe _3 = term_match
+    {                              ( _3 :: _1 )}
+| _1 = term_match
+    {                              ( [_1] )}
 
 term_match:
-| froms TokArrow simple_term
-    { $1, $3 }
+| _1 = froms _2 = TokArrow _3 = simple_term
+    {                              ( _1, _3 )}
 
 froms:
-| from_list
-    { List.rev $1 }
+| _1 = from_list
+    {                              ( List.rev _1 )}
 
 from_list:
-| from_list from
-    { $2 :: $1 }
-| from
-    { [$1] }
+| _1 = from_list _2 = from
+    {                              ( _2 :: _1 )}
+| _1 = from
+    {                              ( [_1] )}
 
 from:
-| simple_term
-    { $1 }
-| identifier
-    { pho_make_token_term (), snd $1 }
+| _1 = simple_term
+    {                              ( _1 )}
+| _1 = identifier
+    {                              ( pho_make_token_term (), snd _1 )}
 
 quoted_identifier:
-| TokQuotedId
-    { $1 }
+| _1 = TokQuotedId
+    {                              ( _1 )}
 
 simple_term:
-| module_identifier opt_term_params subterms
-    { pho_make_term (fst $1) $2 (fst $3), union_pos (snd $1) (snd $3) }
-| module_identifier term_params
-    { pho_make_term (fst $1) (fst $2) [], union_pos (snd $1) (snd $2) }
-| quoted_identifier
-    { pho_make_var_term $1, snd $1 }
-| TokInt
-    { pho_make_number_term $1, snd $1 }
-| TokQuestionMark
-    { pho_make_unique_var_term ("?", $1), $1 }
+| _1 = module_identifier _2 = opt_term_params _3 = subterms
+    {                              ( pho_make_term (fst _1) _2 (fst _3), union_pos (snd _1) (snd _3) )}
+| _1 = module_identifier _2 = term_params
+    {                              ( pho_make_term (fst _1) (fst _2) [], union_pos (snd _1) (snd _2) )}
+| _1 = quoted_identifier
+    {                              ( pho_make_var_term _1, snd _1 )}
+| _1 = TokInt
+    {                              ( pho_make_number_term _1, snd _1 )}
+| _1 = TokQuestionMark
+    {                              ( pho_make_unique_var_term ("?", _1), _1 )}
 
 module_identifier:
-| modules_rev
-    { $1 }
+| _1 = modules_rev
+    {                              ( _1 )}
 
 modules_rev:
-| identifier
-    { [$1], snd $1 }
-| modules_rev TokBang identifier
-    { $3 :: fst $1, union_pos (snd $1) (snd $3) }
+| _1 = identifier
+    {                              ( [_1], snd _1 )}
+| _1 = modules_rev _2 = TokBang _3 = identifier
+    {                              ( _3 :: fst _1, union_pos (snd _1) (snd _3) )}
 
 subterms:
-| TokLeftBrace opt_subterm_list_semi TokRightBrace
-    { $2, union_pos $1 $3 }
+| _1 = TokLeftBrace _2 = opt_subterm_list_semi _3 = TokRightBrace
+    {                              ( _2, union_pos _1 _3 )}
 
 opt_subterm_list_semi:
 | 
-    { [] }
-| subterms_with_semi
-    { $1 }
+    {                              ( [] )}
+| _1 = subterms_with_semi
+    {                              ( _1 )}
 
 subterms_with_semi:
-| subterm_list_with_semi
-    { List.rev $1 }
+| _1 = subterm_list_with_semi
+    {                              ( List.rev _1 )}
 
 subterm_list_with_semi:
-| subterm_list_with_semi TokSemi sub_term
-    { $3 :: $1 }
-| sub_term
-    { [$1] }
+| _1 = subterm_list_with_semi _2 = TokSemi _3 = sub_term
+    {                              ( _3 :: _1 )}
+| _1 = sub_term
+    {                              ( [_1] )}
 
 sub_term:
-| simple_term
-    { pho_make_bterm [] $1 }
-| identifiers_with_comma TokDot simple_term
-    { pho_make_bterm $1 $3 }
+| _1 = simple_term
+    {                              ( pho_make_bterm [] _1 )}
+| _1 = identifiers_with_comma _2 = TokDot _3 = simple_term
+    {                              ( pho_make_bterm _1 _3 )}
 
 opt_term_params:
 | 
-    { [] }
-| term_params
-    { List.rev (fst $1) }
+    {                              ( [] )}
+| _1 = term_params
+    {                              ( List.rev (fst _1) )}
 
 term_params:
-| TokLeftBrack term_param_list TokRightBrack
-    { List.rev $2, union_pos $1 $3 }
+| _1 = TokLeftBrack _2 = term_param_list _3 = TokRightBrack
+    {                              ( List.rev _2, union_pos _1 _3 )}
 
 term_param_list:
-| term_param_list term_param
-    { $2 :: $1 }
-| term_param
-    { [$1] }
+| _1 = term_param_list _2 = term_param
+    {                              ( _2 :: _1 )}
+| _1 = term_param
+    {                              ( [_1] )}
 
 param_type_id:
-| TokId
-    { match fst $1 with
-                                   "s" -> TyString, snd $1
-                                 | "n" -> TyNum, snd $1
-                                 | "v" -> TyVar, snd $1
-                                 | "t" -> TyToken, snd $1
-                                 | "l" -> TyLevel, snd $1
+| _1 = TokId
+    {                              ( match fst _1 with
+                                   "s" -> TyString, snd _1
+                                 | "n" -> TyNum, snd _1
+                                 | "v" -> TyVar, snd _1
+                                 | "t" -> TyToken, snd _1
+                                 | "l" -> TyLevel, snd _1
                                  | _ ->
-                                       raise (ParseError (snd $1, "unknown parameter type"))
-                              }
+                                       raise (ParseError (snd _1, "unknown parameter type"))
+                              )}
 
 term_param:
-| TokId TokColon TokId
-    { match fst $3 with
+| _1 = TokId _2 = TokColon _3 = TokId
+    {                              ( match fst _3 with
                                    "s" ->
-                                       make_param (MString (fst $1))
+                                       make_param (MString (fst _1))
                                  | "n" ->
-                                       make_param (MNumber (fst $1))
+                                       make_param (MNumber (fst _1))
                                  | "v" ->
-                                       make_param (MVar (fst $1))
+                                       make_param (MVar (fst _1))
                                  | "t" ->
-                                       make_param (MToken (fst $1))
+                                       make_param (MToken (fst _1))
                                  | _ ->
-                                       raise (ParseError (snd $3, "unknown meta-parameter type"))
-                              }
-| TokInt TokColon param_type_id
-    { match fst $3 with
+                                       raise (ParseError (snd _3, "unknown meta-parameter type"))
+                              )}
+| _1 = TokInt _2 = TokColon _3 = param_type_id
+    {                              ( match fst _3 with
                                    TyNum ->
-                                       make_param (Number (num_of_int (fst $1)))
+                                       make_param (Number (num_of_int (fst _1)))
                                  | _ ->
-                                       raise (ParseError (snd $3, "invalid parameter type"))
-                              }
-| TokString TokColon param_type_id
-    { match fst $3 with
+                                       raise (ParseError (snd _3, "invalid parameter type"))
+                              )}
+| _1 = TokString _2 = TokColon _3 = param_type_id
+    {                              ( match fst _3 with
                                    TyString ->
-                                       make_param (String (fst $1))
+                                       make_param (String (fst _1))
                                  | TyToken ->
-                                       make_param (Token (fst $1))
+                                       make_param (Token (fst _1))
                                  | TyVar ->
-                                       make_param (Var (fst $1)) 
+                                       make_param (Var (fst _1)) 
                                  | _ ->
-                                       raise (ParseError (snd $3, "invalid parameter type"))
-                              }
-| TokString
-    { make_param (String (fst $1)) }
-| TokInt
-    { make_param (Number (num_of_int (fst $1))) }
-| TokId
-    { make_param (MString (fst $1)) }
+                                       raise (ParseError (snd _3, "invalid parameter type"))
+                              )}
+| _1 = TokString
+    {                              ( make_param (String (fst _1)) )}
+| _1 = TokInt
+    {                              ( make_param (Number (num_of_int (fst _1))) )}
+| _1 = TokId
+    {                              ( make_param (MString (fst _1)) )}
 
 opt_term_declarations:
 | 
-    { [] }
-| term_declaration_list
-    { $1 }
+    {                              ( [] )}
+| _1 = term_declaration_list
+    {                              ( _1 )}
 
 term_declaration_list:
-| term_declaration
-    { $1 }
-| term_declaration_list term_declaration
-    { $2 @ $1 }
+| _1 = term_declaration
+    {                              ( _1 )}
+| _1 = term_declaration_list _2 = term_declaration
+    {                              ( _2 @ _1 )}
 
 term_declaration:
-| TokDeclare syntax_terms
-    { $2 }
+| _1 = TokDeclare _2 = syntax_terms
+    {                              ( _2 )}
 
 syntax_terms:
-| syntax_term_list_rev
-    { List.rev $1 }
+| _1 = syntax_term_list_rev
+    {                              ( List.rev _1 )}
 
 syntax_term_list_rev:
-| syntax_term
-    { [$1] }
-| syntax_term_list_rev TokComma syntax_term
-    { $3 :: $1 }
+| _1 = syntax_term
+    {                              ( [_1] )}
+| _1 = syntax_term_list_rev _2 = TokComma _3 = syntax_term
+    {                              ( _3 :: _1 )}
 
 syntax_term:
-| st_identifier
-    { $1, 0 }
-| st_identifier TokLeftBrace opt_syntax_subterms TokRightBrace
-    { $1, List.length $3 }
+| _1 = st_identifier
+    {                              ( _1, 0 )}
+| _1 = st_identifier _2 = TokLeftBrace _3 = opt_syntax_subterms _4 = TokRightBrace
+    {                              ( _1, List.length _3 )}
 
 st_identifier:
-| identifier
-    { $1 }
-| identifier TokLeftBrack param_type_id TokRightBrack
-    { $1 }
+| _1 = identifier
+    {                              ( _1 )}
+| _1 = identifier _2 = TokLeftBrack _3 = param_type_id _4 = TokRightBrack
+    {                              ( _1 )}
 
 opt_syntax_subterms:
 | 
-    { [] }
-| syntax_subterms
-    { $1 }
+    {                              ( [] )}
+| _1 = syntax_subterms
+    {                              ( _1 )}
 
 syntax_subterms:
-| syntax_subterm_list
-    { List.rev $1 }
+| _1 = syntax_subterm_list
+    {                              ( List.rev _1 )}
 
 syntax_subterm_list:
-| syntax_subterm
-    { [$1] }
-| syntax_subterm_list TokSemi syntax_subterm
-    { $3 :: $1 }
+| _1 = syntax_subterm
+    {                              ( [_1] )}
+| _1 = syntax_subterm_list _2 = TokSemi _3 = syntax_subterm
+    {                              ( _3 :: _1 )}
 
 syntax_subterm:
-| syntax_subterm_base
-    { $1 }
-| identifier TokDot syntax_subterm_base
-    { $3 }
+| _1 = syntax_subterm_base
+    {                              ( _1 )}
+| _1 = identifier _2 = TokDot _3 = syntax_subterm_base
+    {                              ( _3 )}
 
 syntax_subterm_base:
-| quoted_identifier
-    { $1 }
-| quoted_identifier TokLeftBrack quoted_identifier TokRightBrack
-    { $1 }
+| _1 = quoted_identifier
+    {                              ( _1 )}
+| _1 = quoted_identifier _2 = TokLeftBrack _3 = quoted_identifier _4 = TokRightBrack
+    {                              ( _1 )}
 
 opt_rewrites_section:
 | 
-    { [] }
-| rev_rewrites_section_list
-    { List.rev $1 }
+    {                              ( [] )}
+| _1 = rev_rewrites_section_list
+    {                              ( List.rev _1 )}
 
 rev_rewrites_section_list:
-| rewrites_section
-    { [$1] }
-| rev_rewrites_section_list rewrites_section
-    { $2 :: $1 }
+| _1 = rewrites_section
+    {                              ( [_1] )}
+| _1 = rev_rewrites_section_list _2 = rewrites_section
+    {                              ( _2 :: _1 )}
 
 rewrites_section:
-| TokRewrites TokLeftBrace new_rewrites TokRightBrace
-    { $3 }
+| _1 = TokRewrites _2 = TokLeftBrace _3 = new_rewrites _4 = TokRightBrace
+    {                              ( _3 )}
 
 opt_inline_forms:
 | 
-    { [] }
-| inline_form_list_rev
-    { List.rev $1 }
+    {                              ( [] )}
+| _1 = inline_form_list_rev
+    {                              ( List.rev _1 )}
 
 inline_form_list_rev:
-| inline_form
-    { [$1] }
-| inline_form_list_rev inline_form
-    { $2 :: $1 }
+| _1 = inline_form
+    {                              ( [_1] )}
+| _1 = inline_form_list_rev _2 = inline_form
+    {                              ( _2 :: _1 )}
 
 inline_form:
-| TokInline simple_term
-    { $2 }
+| _1 = TokInline _2 = simple_term
+    {                              ( _2 )}
 
 %%
 

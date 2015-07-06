@@ -113,32 +113,32 @@ open ParserUtils
 %%
 
 existential_quantifiers:
-| LBRACE bs = right_flexible_list_COMMA_type_binding_ RBRACE
-    { bs }
+| _1 = LBRACE bs = right_flexible_list_COMMA_type_binding_ _3 = RBRACE
+    {    ( bs )}
 
 atomic_type_binding:
 | x = variable
-    { x, KType, ($startpos(x), $endpos) }
-| LPAREN b = type_binding RPAREN
-    { b }
+    {    ( x, KType, (_startpos_x_, _endpos) )}
+| _1 = LPAREN b = type_binding _3 = RPAREN
+    {    ( b )}
 
 atomic_type_binding_with_variance:
 | v = variance b = atomic_type_binding
-    { v, b }
+    {    ( v, b )}
 
 atomic_kind:
-| LPAREN kind0 = atomic_kind RPAREN
+| _1 = LPAREN kind0 = atomic_kind _3 = RPAREN
     {let kind =
   let kind = kind0 in
-  ( kind )
+  (    ( kind ))
 in
- kind }
-| VALUE
-    { KValue }
-| TYPE
-    { KType }
-| PERM
-    { KPerm }
+    ( kind )}
+| _1 = VALUE
+    {    ( KValue )}
+| _1 = TYPE
+    {    ( KType )}
+| _1 = PERM
+    {    ( KPerm )}
 
 generic_datacon_application_right_flexible_list_SEMI_data_field_pattern__:
 | d00 = maybe_qualified_datacon_
@@ -146,22 +146,24 @@ generic_datacon_application_right_flexible_list_SEMI_data_field_pattern__:
   let d0 = d00 in
   let x =
     let d = d0 in
-    ( mk_datacon_reference d )
+    (    ( mk_datacon_reference d ))
   in
-  ( x, [] )
+  (    ( x, [] ))
 in
- x }
-| d00 = maybe_qualified_datacon_ LBRACE y0 = right_flexible_list_SEMI_data_field_pattern_ RBRACE
+    ( x )}
+| d00 = maybe_qualified_datacon_ _20 = LBRACE y0 = right_flexible_list_SEMI_data_field_pattern_ _40 = RBRACE
     {let x =
+  let _4 = _40 in
   let y = y0 in
+  let _2 = _20 in
   let d0 = d00 in
   let x =
     let d = d0 in
-    ( mk_datacon_reference d )
+    (    ( mk_datacon_reference d ))
   in
-  ( x, y )
+  (    ( x, y ))
 in
- x }
+    ( x )}
 
 generic_datacon_application_right_flexible_list_SEMI_data_field_expression__:
 | d00 = maybe_qualified_datacon_
@@ -169,22 +171,24 @@ generic_datacon_application_right_flexible_list_SEMI_data_field_expression__:
   let d0 = d00 in
   let x =
     let d = d0 in
-    ( mk_datacon_reference d )
+    (    ( mk_datacon_reference d ))
   in
-  ( x, [] )
+  (    ( x, [] ))
 in
- x }
-| d00 = maybe_qualified_datacon_ LBRACE y0 = right_flexible_list_SEMI_data_field_expression_ RBRACE
+    ( x )}
+| d00 = maybe_qualified_datacon_ _20 = LBRACE y0 = right_flexible_list_SEMI_data_field_expression_ _40 = RBRACE
     {let x =
+  let _4 = _40 in
   let y = y0 in
+  let _2 = _20 in
   let d0 = d00 in
   let x =
     let d = d0 in
-    ( mk_datacon_reference d )
+    (    ( mk_datacon_reference d ))
   in
-  ( x, y )
+  (    ( x, y ))
 in
- x }
+    ( x )}
 
 generic_datacon_application_data_type_def_branch_content_:
 | d00 = maybe_qualified_datacon_
@@ -192,176 +196,180 @@ generic_datacon_application_data_type_def_branch_content_:
   let d0 = d00 in
   let x =
     let d = d0 in
-    ( mk_datacon_reference d )
+    (    ( mk_datacon_reference d ))
   in
-  ( x, [] )
+  (    ( x, [] ))
 in
- x }
-| d00 = maybe_qualified_datacon_ LBRACE y0 = data_type_def_branch_content RBRACE
+    ( x )}
+| d00 = maybe_qualified_datacon_ _20 = LBRACE y0 = data_type_def_branch_content _40 = RBRACE
     {let x =
+  let _4 = _40 in
   let y = y0 in
+  let _2 = _20 in
   let d0 = d00 in
   let x =
     let d = d0 in
-    ( mk_datacon_reference d )
+    (    ( mk_datacon_reference d ))
   in
-  ( x, y )
+  (    ( x, y ))
 in
- x }
+    ( x )}
 
 data_field_def:
-| fs = separated_nonempty_list_COMMA_variable_ COLON x00 = raw_normal_type
+| fs = separated_nonempty_list_COMMA_variable_ _2 = COLON x00 = raw_normal_type
     {let ty =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- List.map (fun f -> `FieldValue (f, ty)) fs }
-| fs = separated_nonempty_list_COMMA_variable_ COLONCOLON x00 = raw_normal_type
+    ( List.map (fun f -> `FieldValue (f, ty)) fs )}
+| fs = separated_nonempty_list_COMMA_variable_ _2 = COLONCOLON x00 = raw_normal_type
     {let ty =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- List.map (fun f -> `FieldBindingValue (f, ty)) fs }
-| f = variable EQUAL x0 = maybe_qualified_variable_
+    ( List.map (fun f -> `FieldBindingValue (f, ty)) fs )}
+| f = variable _2 = EQUAL x0 = maybe_qualified_variable_
     {let y =
   let x = x0 in
-  ( TyVar x )
+  (    ( TyVar x ))
 in
- [ `FieldValue (f, TySingleton y) ] }
+    ( [ `FieldValue (f, TySingleton y) ] )}
 | f = variable
-    { [ `FieldValue (f, TySingleton (TyVar (Unqualified f))) ] }
+    {    ( [ `FieldValue (f, TySingleton (TyVar (Unqualified f))) ] )}
 
 data_type_def_branch_content:
 | fss0 = right_flexible_list_SEMI_data_field_def_
     {let fs =
   let fss = fss0 in
-  ( List.flatten fss )
+  (    ( List.flatten fss ))
 in
- fs }
-| fss0 = right_flexible_list_SEMI_data_field_def_ BAR x00 = raw_very_loose_type
+    ( fs )}
+| fss0 = right_flexible_list_SEMI_data_field_def_ _2 = BAR x00 = raw_very_loose_type
     {let perm =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let fs =
   let fss = fss0 in
-  ( List.flatten fss )
+  (    ( List.flatten fss ))
 in
- fs @ [ `FieldPermission perm ] }
+    ( fs @ [ `FieldPermission perm ] )}
 
 fact:
-| FACT cs = separated_nonempty_list_DBLARROW_mode_constraint_
-    { match List.rev cs with goal :: hypotheses -> Fact (List.rev hypotheses, goal) | [] -> assert false }
+| _1 = FACT cs = separated_nonempty_list_DBLARROW_mode_constraint_
+    {    ( match List.rev cs with goal :: hypotheses -> Fact (List.rev hypotheses, goal) | [] -> assert false )}
 
 concrete_data_type_def:
-| x0 = variable ys0 = list_atomic_type_binding_with_variance_ EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
+| x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
     {let rhs =
   let xs0 = xs00 in
   let bs =
     let xs = xs0 in
-    ( List.rev xs )
+    (    ( List.rev xs ))
   in
-  ( bs )
+  (    ( bs ))
 in
 let lhs =
   let _startpos_x_ = _startpos_x0_ in
   let _endpos_x_ = _endpos_x0_ in
   let ys = ys0 in
   let x = x0 in
-  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+  (    ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
       fun kind ->
-        (x, kind, ($startpos(x), $endpos(x))),
+        (x, kind, (_startpos_x_, _endpos_x_)),
         ys
-    )
+    ))
 in
 let flavor =
-  ( DataTypeFlavor.Immutable )
+  (    ( DataTypeFlavor.Immutable ))
 in
- { lhs = lhs KType; rhs = Concrete (flavor, rhs, a) } }
-| MUTABLE x0 = variable ys0 = list_atomic_type_binding_with_variance_ EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
+    ( { lhs = lhs KType; rhs = Concrete (flavor, rhs, a) } )}
+| _10 = MUTABLE x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
     {let rhs =
   let xs0 = xs00 in
   let bs =
     let xs = xs0 in
-    ( List.rev xs )
+    (    ( List.rev xs ))
   in
-  ( bs )
+  (    ( bs ))
 in
 let lhs =
   let _startpos_x_ = _startpos_x0_ in
   let _endpos_x_ = _endpos_x0_ in
   let ys = ys0 in
   let x = x0 in
-  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+  (    ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
       fun kind ->
-        (x, kind, ($startpos(x), $endpos(x))),
+        (x, kind, (_startpos_x_, _endpos_x_)),
         ys
-    )
+    ))
 in
 let flavor =
-  ( DataTypeFlavor.Mutable )
+  let _1 = _10 in
+  (    ( DataTypeFlavor.Mutable ))
 in
- { lhs = lhs KType; rhs = Concrete (flavor, rhs, a) } }
+    ( { lhs = lhs KType; rhs = Concrete (flavor, rhs, a) } )}
 
 abstract_data_type_def:
 | x0 = variable ys0 = list_atomic_type_binding_with_variance_ facts = list_fact_
     {let k =
-  ( KType )
+  (    ( KType ))
 in
 let lhs =
   let _startpos_x_ = _startpos_x0_ in
   let _endpos_x_ = _endpos_x0_ in
   let ys = ys0 in
   let x = x0 in
-  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+  (    ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
       fun kind ->
-        (x, kind, ($startpos(x), $endpos(x))),
+        (x, kind, (_startpos_x_, _endpos_x_)),
         ys
-    )
+    ))
 in
- { lhs = lhs k; rhs = Abstract facts } }
-| x0 = variable ys0 = list_atomic_type_binding_with_variance_ COLON kind00 = atomic_kind facts = list_fact_
+    ( { lhs = lhs k; rhs = Abstract facts } )}
+| x0 = variable ys0 = list_atomic_type_binding_with_variance_ _10 = COLON kind00 = atomic_kind facts = list_fact_
     {let k =
   let kind0 = kind00 in
+  let _1 = _10 in
   let k =
     let kind = kind0 in
-    ( kind )
+    (    ( kind ))
   in
-  ( k )
+  (    ( k ))
 in
 let lhs =
   let _startpos_x_ = _startpos_x0_ in
   let _endpos_x_ = _endpos_x0_ in
   let ys = ys0 in
   let x = x0 in
-  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+  (    ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
       fun kind ->
-        (x, kind, ($startpos(x), $endpos(x))),
+        (x, kind, (_startpos_x_, _endpos_x_)),
         ys
-    )
+    ))
 in
- { lhs = lhs k; rhs = Abstract facts } }
+    ( { lhs = lhs k; rhs = Abstract facts } )}
 
 abbreviation_def:
-| x0 = variable ys0 = list_atomic_type_binding_with_variance_ EQUAL x000 = raw_fat_type
+| x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL x000 = raw_fat_type
     {let t =
   let _startpos_x00_ = _startpos_x000_ in
   let x00 = x000 in
@@ -371,28 +379,28 @@ abbreviation_def:
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (  ( ty ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let k =
-  ( KType )
+  (    ( KType ))
 in
 let lhs =
   let _startpos_x_ = _startpos_x0_ in
   let _endpos_x_ = _endpos_x0_ in
   let ys = ys0 in
   let x = x0 in
-  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+  (    ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
       fun kind ->
-        (x, kind, ($startpos(x), $endpos(x))),
+        (x, kind, (_startpos_x_, _endpos_x_)),
         ys
-    )
+    ))
 in
- { lhs = lhs k; rhs = Abbrev t } }
-| x0 = variable ys0 = list_atomic_type_binding_with_variance_ COLON kind00 = atomic_kind EQUAL x000 = raw_fat_type
+    ( { lhs = lhs k; rhs = Abbrev t } )}
+| x0 = variable ys0 = list_atomic_type_binding_with_variance_ _10 = COLON kind00 = atomic_kind _3 = EQUAL x000 = raw_fat_type
     {let t =
   let _startpos_x00_ = _startpos_x000_ in
   let x00 = x000 in
@@ -402,35 +410,36 @@ in
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (  ( ty ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let k =
   let kind0 = kind00 in
+  let _1 = _10 in
   let k =
     let kind = kind0 in
-    ( kind )
+    (    ( kind ))
   in
-  ( k )
+  (    ( k ))
 in
 let lhs =
   let _startpos_x_ = _startpos_x0_ in
   let _endpos_x_ = _endpos_x0_ in
   let ys = ys0 in
   let x = x0 in
-  ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+  (    ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
       fun kind ->
-        (x, kind, ($startpos(x), $endpos(x))),
+        (x, kind, (_startpos_x_, _endpos_x_)),
         ys
-    )
+    ))
 in
- { lhs = lhs k; rhs = Abbrev t } }
+    ( { lhs = lhs k; rhs = Abbrev t } )}
 
 data_field_pattern:
-| f = variable EQUAL x000 = raw_loose_pattern
+| f = variable _2 = EQUAL x000 = raw_loose_pattern
     {let p =
   let _startpos_x00_ = _startpos_x000_ in
   let x00 = x000 in
@@ -440,15 +449,15 @@ data_field_pattern:
     let p =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( PLocated (x, ($startpos(x), $endpos)) )
+      (    ( PLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( p )
+    (    ( p ))
   in
-  ( p )
+  (    ( p ))
 in
- f, p }
+    ( f, p )}
 | f = variable
-    { f, PVar f }
+    {    ( f, PVar f )}
 
 parenthesized_tuple_components:
 | x00 = raw_fragile_expression
@@ -460,12 +469,12 @@ parenthesized_tuple_components:
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- [ e ] }
-| x00 = raw_algebraic_expression COMMA e2 = parenthesized_tuple_components
+    ( [ e ] )}
+| x00 = raw_algebraic_expression _2 = COMMA e2 = parenthesized_tuple_components
     {let e1 =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -474,19 +483,20 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- e1 :: e2 }
+    ( e1 :: e2 )}
 
 option_preceded_ADOPTS_arbitrary_type__:
 | 
-    { None }
-| ADOPTS x0000 = raw_fat_type
+    {    ( None )}
+| _10 = ADOPTS x0000 = raw_fat_type
     {let x =
   let _startpos_x000_ = _startpos_x0000_ in
   let x000 = x0000 in
+  let _1 = _10 in
   let x =
     let _startpos_x00_ = _startpos_x000_ in
     let x00 = x000 in
@@ -496,137 +506,137 @@ option_preceded_ADOPTS_arbitrary_type__:
       let ty =
         let _startpos_x_ = _startpos_x0_ in
         let x = x0 in
-        ( TyLocated (x, ($startpos(x), $endpos)) )
+        (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
       in
-      ( ty )
+      (  ( ty ))
     in
-    ( ty )
+    (    ( ty ))
   in
-  ( x )
+  (    ( x ))
 in
- Some x }
+    ( Some x )}
 
 nonempty_list_warn_error_:
 | x = warn_error
-    { [ x ] }
+    {    ( [ x ] )}
 | x = warn_error xs = nonempty_list_warn_error_
-    { x :: xs }
+    {    ( x :: xs )}
 
 variable:
 | x = LIDENT
-    { Variable.register x }
-| LPAREN x = OPPREFIX RPAREN
-    { Variable.register x }
-| LPAREN o0 = OPINFIX0a RPAREN
+    {      ( Variable.register x )}
+| _1 = LPAREN x = OPPREFIX _3 = RPAREN
+    {      ( Variable.register x )}
+| _1 = LPAREN o0 = OPINFIX0a _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = OPINFIX0b RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = OPINFIX0b _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = OPINFIX0c RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = OPINFIX0c _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = OPINFIX0d RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = OPINFIX0d _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = OPINFIX1 RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = OPINFIX1 _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = OPINFIX2 RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = OPINFIX2 _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = OPINFIX3 RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = OPINFIX3 _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = OPINFIX4 RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = OPINFIX4 _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = EQUAL RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = EQUAL _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = STAR RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = STAR _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = MINUS RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = MINUS _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = PLUS RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = PLUS _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
-| LPAREN o0 = COLONEQUAL RPAREN
+      ( Variable.register x )}
+| _1 = LPAREN o0 = COLONEQUAL _3 = RPAREN
     {let x =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
- Variable.register x }
+      ( Variable.register x )}
 
 maybe_qualified_variable_:
 | x = variable
-    { Unqualified x }
-| name0 = LIDENT COLONCOLON x = variable
+    {    ( Unqualified x )}
+| name0 = LIDENT _2 = COLONCOLON x = variable
     {let m =
   let name = name0 in
-  ( Module.register name )
+  (    ( Module.register name ))
 in
- Qualified (m, x) }
+    ( Qualified (m, x) )}
 
 maybe_qualified_datacon_:
 | datacon0 = UIDENT
     {let x =
   let datacon = datacon0 in
-  ( Datacon.register datacon )
+  (    ( Datacon.register datacon ))
 in
- Unqualified x }
-| name0 = LIDENT COLONCOLON datacon0 = UIDENT
+    ( Unqualified x )}
+| name0 = LIDENT _2 = COLONCOLON datacon0 = UIDENT
     {let x =
   let datacon = datacon0 in
-  ( Datacon.register datacon )
+  (    ( Datacon.register datacon ))
 in
 let m =
   let name = name0 in
-  ( Module.register name )
+  (    ( Module.register name ))
 in
- Qualified (m, x) }
+    ( Qualified (m, x) )}
 
 reverse_left_flexible_list_BAR_data_type_def_branch_:
 | 
-    { [] }
+    {    ( [] )}
 | x00 = raw_normal_type_no_adopts
     {let x =
   let _startpos_x0_ = _startpos_x00_ in
@@ -634,97 +644,101 @@ reverse_left_flexible_list_BAR_data_type_def_branch_:
   let t =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
   let flavor =
-    ( DataTypeFlavor.Immutable )
+    (    ( DataTypeFlavor.Immutable ))
   in
-  (
+  (    (
       flavor, t
-    )
+    ))
 in
- [x] }
-| MUTABLE x00 = raw_normal_type_no_adopts
+    ( [x] )}
+| _100 = MUTABLE x00 = raw_normal_type_no_adopts
+    {let x =
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let _10 = _100 in
+  let t =
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
+  in
+  let flavor =
+    let _1 = _10 in
+    (    ( DataTypeFlavor.Mutable ))
+  in
+  (    (
+      flavor, t
+    ))
+in
+    ( [x] )}
+| xs = reverse_left_flexible_list_BAR_data_type_def_branch_ _2 = BAR x00 = raw_normal_type_no_adopts
     {let x =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let t =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
   let flavor =
-    ( DataTypeFlavor.Mutable )
+    (    ( DataTypeFlavor.Immutable ))
   in
-  (
+  (    (
       flavor, t
-    )
+    ))
 in
- [x] }
-| xs = reverse_left_flexible_list_BAR_data_type_def_branch_ BAR x00 = raw_normal_type_no_adopts
+    ( x :: xs )}
+| xs = reverse_left_flexible_list_BAR_data_type_def_branch_ _2 = BAR _100 = MUTABLE x00 = raw_normal_type_no_adopts
     {let x =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
+  let _10 = _100 in
   let t =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
   let flavor =
-    ( DataTypeFlavor.Immutable )
+    let _1 = _10 in
+    (    ( DataTypeFlavor.Mutable ))
   in
-  (
+  (    (
       flavor, t
-    )
+    ))
 in
- x :: xs }
-| xs = reverse_left_flexible_list_BAR_data_type_def_branch_ BAR MUTABLE x00 = raw_normal_type_no_adopts
-    {let x =
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let t =
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
-  in
-  let flavor =
-    ( DataTypeFlavor.Mutable )
-  in
-  (
-      flavor, t
-    )
-in
- x :: xs }
+    ( x :: xs )}
 
 type_parameters:
-| LBRACKET bs = right_flexible_list_COMMA_type_binding_ RBRACKET
-    { bs }
+| _1 = LBRACKET bs = right_flexible_list_COMMA_type_binding_ _3 = RBRACKET
+    {    ( bs )}
 
 variance:
-| PLUS
-    { Covariant }
-| MINUS
-    { Contravariant }
+| _1 = PLUS
+    {    ( Covariant )}
+| _1 = MINUS
+    {    ( Contravariant )}
 | 
-    { Invariant }
+    {    ( Invariant )}
 
 type_binding:
 | b = atomic_type_binding
-    { b }
-| x = variable COLON kind0 = atomic_kind
+    {    ( b )}
+| x = variable _2 = COLON kind0 = atomic_kind
     {let kind =
   let kind = kind0 in
-  ( kind )
+  (    ( kind ))
 in
- x, kind, ($startpos(x), $endpos) }
+    ( x, kind, (_startpos_x_, _endpos) )}
 
 raw_parenthetic_type:
-| LPAREN RPAREN
-    { TyTuple [] }
-| LPAREN x000 = raw_fat_type _menhir_p1 = RPAREN
+| _1 = LPAREN _2 = RPAREN
+    {    ( TyTuple [] )}
+| _1 = LPAREN x000 = raw_fat_type _3 = RPAREN
     {let ty =
   let _startpos_x00_ = _startpos_x000_ in
-  let _endpos = _startpos__menhir_p1_ in
+  let _endpos = _startpos__3_ in
   let x00 = x000 in
   let ty =
     let _startpos_x0_ = _startpos_x00_ in
@@ -732,48 +746,48 @@ raw_parenthetic_type:
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (  ( ty ))
   in
-  ( ty )
+  (    ( ty ))
 in
- ty }
+    ( ty )}
 
 raw_atomic_type:
 | ty = raw_parenthetic_type
-    { ty }
-| UNKNOWN
-    { TyUnknown }
-| DYNAMIC
-    { TyDynamic }
-| EMPTY
-    { TyEmpty }
-| UNDERSCORE
-    { TyWildcard }
+    {    ( ty )}
+| _1 = UNKNOWN
+    {    ( TyUnknown )}
+| _1 = DYNAMIC
+    {    ( TyDynamic )}
+| _1 = EMPTY
+    {    ( TyEmpty )}
+| _1 = UNDERSCORE
+    {    ( TyWildcard )}
 | x0 = maybe_qualified_variable_
     {let x =
   let x = x0 in
-  ( TyVar x )
+  (    ( TyVar x ))
 in
- x }
+    ( x )}
 | dfs0 = generic_datacon_application_data_type_def_branch_content_
     {let b =
   let dfs = dfs0 in
-  ( dfs )
+  (    ( dfs ))
 in
 let _startpos_b_ = _startpos in
- mk_concrete ($startpos(b), $endpos) b None }
+    ( mk_concrete (_startpos_b_, _endpos) b None )}
 
 raw_tight_type:
 | ty = raw_atomic_type
-    { ty }
-| EQUAL x0 = maybe_qualified_variable_
+    {    ( ty )}
+| _1 = EQUAL x0 = maybe_qualified_variable_
     {let x =
   let x = x0 in
-  ( TyVar x )
+  (    ( TyVar x ))
 in
- TySingleton x }
+    ( TySingleton x )}
 | x000 = raw_tight_type x010 = raw_atomic_type
     {let ty =
   let _endpos_x00_ = _endpos_x000_ in
@@ -787,9 +801,9 @@ in
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (    ( ty ))
   in
   let _startpos_ty2_ = _endpos_x00_ in
   let ty1 =
@@ -799,67 +813,67 @@ in
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (    ( ty ))
   in
-  ( mktyapp ty1 ty2 )
+  (    ( mktyapp ty1 ty2 ))
 in
- ty }
+    ( ty )}
 
 raw_normal_type_no_adopts:
 | ty0 = raw_tight_type
     {let x =
   let ty = ty0 in
-  ( ty )
+  (    ( ty ))
 in
- x }
-| x000 = raw_tight_type _menhir_p00 = ARROW ty20 = raw_normal_type_no_adopts
+    ( x )}
+| x000 = raw_tight_type _20 = ARROW ty20 = raw_normal_type_no_adopts
     {let x =
   let _startpos_x00_ = _startpos_x000_ in
-  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos__2_ = _startpos__20_ in
   let ty2 = ty20 in
-  let _menhir_p0 = _menhir_p00 in
+  let _2 = _20 in
   let x00 = x000 in
   let ty1 =
-    let _endpos = _startpos__menhir_p0_ in
+    let _endpos = _startpos__2_ in
     let _startpos_x0_ = _startpos_x00_ in
     let x0 = x00 in
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (    ( ty ))
   in
-  ( TyArrow (ty1, ty2) )
+  (    ( TyArrow (ty1, ty2) ))
 in
- x }
+    ( x )}
 | bs0 = type_parameters ty0 = raw_normal_type_no_adopts
     {let x =
   let ty = ty0 in
   let bs = bs0 in
-  ( List.fold_right (fun b ty -> TyForall (b, ty)) bs ty )
+  (    ( List.fold_right (fun b ty -> TyForall (b, ty)) bs ty ))
 in
- x }
+    ( x )}
 | bs0 = existential_quantifiers ty0 = raw_normal_type_no_adopts
     {let x =
   let ty = ty0 in
   let bs = bs0 in
-  ( List.fold_right (fun b ty -> TyExists (b, ty)) bs ty )
+  (    ( List.fold_right (fun b ty -> TyExists (b, ty)) bs ty ))
 in
- x }
-| m00 = mode x0000 = raw_atomic_type _menhir_p00 = DBLARROW ty0 = raw_normal_type_no_adopts
+    ( x )}
+| m00 = mode x0000 = raw_atomic_type _20 = DBLARROW ty0 = raw_normal_type_no_adopts
     {let x =
-  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos__2_ = _startpos__20_ in
   let _startpos_x000_ = _startpos_x0000_ in
   let ty = ty0 in
-  let _menhir_p0 = _menhir_p00 in
+  let _2 = _20 in
   let x000 = x0000 in
   let m0 = m00 in
   let c =
     let _startpos_x00_ = _startpos_x000_ in
-    let _endpos = _startpos__menhir_p0_ in
+    let _endpos = _startpos__2_ in
     let x00 = x000 in
     let m = m0 in
     let t =
@@ -868,69 +882,69 @@ in
       let ty =
         let _startpos_x_ = _startpos_x0_ in
         let x = x0 in
-        ( TyLocated (x, ($startpos(x), $endpos)) )
+        (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
       in
-      ( ty )
+      (    ( ty ))
     in
-    ( m, t )
+    (    ( m, t ))
   in
-  ( TyImply (c, ty) )
+  (    ( TyImply (c, ty) ))
 in
- x }
+    ( x )}
 
 raw_normal_type:
 | ty0 = raw_tight_type
     {let t =
   let ty = ty0 in
-  ( ty )
+  (    ( ty ))
 in
- t }
-| x000 = raw_tight_type _menhir_p00 = ARROW ty20 = raw_normal_type
+    ( t )}
+| x000 = raw_tight_type _20 = ARROW ty20 = raw_normal_type
     {let t =
   let _startpos_x00_ = _startpos_x000_ in
-  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos__2_ = _startpos__20_ in
   let ty2 = ty20 in
-  let _menhir_p0 = _menhir_p00 in
+  let _2 = _20 in
   let x00 = x000 in
   let ty1 =
-    let _endpos = _startpos__menhir_p0_ in
+    let _endpos = _startpos__2_ in
     let _startpos_x0_ = _startpos_x00_ in
     let x0 = x00 in
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (    ( ty ))
   in
-  ( TyArrow (ty1, ty2) )
+  (    ( TyArrow (ty1, ty2) ))
 in
- t }
+    ( t )}
 | bs0 = type_parameters ty0 = raw_normal_type
     {let t =
   let ty = ty0 in
   let bs = bs0 in
-  ( List.fold_right (fun b ty -> TyForall (b, ty)) bs ty )
+  (    ( List.fold_right (fun b ty -> TyForall (b, ty)) bs ty ))
 in
- t }
+    ( t )}
 | bs0 = existential_quantifiers ty0 = raw_normal_type
     {let t =
   let ty = ty0 in
   let bs = bs0 in
-  ( List.fold_right (fun b ty -> TyExists (b, ty)) bs ty )
+  (    ( List.fold_right (fun b ty -> TyExists (b, ty)) bs ty ))
 in
- t }
-| m00 = mode x0000 = raw_atomic_type _menhir_p00 = DBLARROW ty0 = raw_normal_type
+    ( t )}
+| m00 = mode x0000 = raw_atomic_type _20 = DBLARROW ty0 = raw_normal_type
     {let t =
-  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos__2_ = _startpos__20_ in
   let _startpos_x000_ = _startpos_x0000_ in
   let ty = ty0 in
-  let _menhir_p0 = _menhir_p00 in
+  let _2 = _20 in
   let x000 = x0000 in
   let m0 = m00 in
   let c =
     let _startpos_x00_ = _startpos_x000_ in
-    let _endpos = _startpos__menhir_p0_ in
+    let _endpos = _startpos__2_ in
     let x00 = x000 in
     let m = m0 in
     let t =
@@ -939,180 +953,180 @@ in
       let ty =
         let _startpos_x_ = _startpos_x0_ in
         let x = x0 in
-        ( TyLocated (x, ($startpos(x), $endpos)) )
+        (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
       in
-      ( ty )
+      (    ( ty ))
     in
-    ( m, t )
+    (    ( m, t ))
   in
-  ( TyImply (c, ty) )
+  (    ( TyImply (c, ty) ))
 in
- t }
-| dfs0 = generic_datacon_application_data_type_def_branch_content_ ADOPTS t = raw_normal_type
+    ( t )}
+| dfs0 = generic_datacon_application_data_type_def_branch_content_ _2 = ADOPTS t = raw_normal_type
     {let b =
   let dfs = dfs0 in
-  ( dfs )
+  (    ( dfs ))
 in
 let _startpos_b_ = _startpos in
- mk_concrete ($startpos(b), $endpos) b (Some t) }
+    ( mk_concrete (_startpos_b_, _endpos) b (Some t) )}
 
 raw_loose_type:
 | ty = raw_normal_type
-    { ty }
-| x0 = maybe_qualified_variable_ AT x00 = raw_normal_type
+    {    ( ty )}
+| x0 = maybe_qualified_variable_ _2 = AT x00 = raw_normal_type
     {let ty =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let x =
   let x = x0 in
-  ( TyVar x )
+  (    ( TyVar x ))
 in
- TyAnchoredPermission (x, ty) }
-| x0 = maybe_qualified_variable_ EQUAL x1 = maybe_qualified_variable_
+    ( TyAnchoredPermission (x, ty) )}
+| x0 = maybe_qualified_variable_ _2 = EQUAL x1 = maybe_qualified_variable_
     {let y =
   let x = x1 in
-  ( TyVar x )
+  (    ( TyVar x ))
 in
 let x =
   let x = x0 in
-  ( TyVar x )
+  (    ( TyVar x ))
 in
- TyAnchoredPermission (x, TySingleton y) }
-| x = variable COLON x00 = raw_normal_type
+    ( TyAnchoredPermission (x, TySingleton y) )}
+| x = variable _2 = COLON x00 = raw_normal_type
     {let ty =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- TyNameIntro (x, ty) }
-| UNDERSCORE COLON x00 = raw_normal_type
+    ( TyNameIntro (x, ty) )}
+| _1 = UNDERSCORE _2 = COLON x00 = raw_normal_type
     {let ty =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- ty }
+    ( ty )}
 
 raw_consumes_type:
 | ty = raw_loose_type
-    { ty }
-| CONSUMES x00 = raw_loose_type
+    {    ( ty )}
+| _1 = CONSUMES x00 = raw_loose_type
     {let ty =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- TyConsumes ty }
+    ( TyConsumes ty )}
 
 raw_very_loose_type:
 | ty = raw_consumes_type
-    { ty }
-| x00 = raw_consumes_type _menhir_p0 = STAR x01 = raw_very_loose_type
+    {    ( ty )}
+| x00 = raw_consumes_type _2 = STAR x01 = raw_very_loose_type
     {let ty2 =
   let _startpos_x0_ = _startpos_x01_ in
   let x0 = x01 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let ty1 =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- TyStar (ty1, ty2) }
-| x000 = raw_consumes_type _menhir_p00 = COMMA x20 = separated_nonempty_list_COMMA_consumes_type_
+    ( TyStar (ty1, ty2) )}
+| x000 = raw_consumes_type _20 = COMMA x20 = separated_nonempty_list_COMMA_consumes_type_
     {let tcs =
   let _startpos_x00_ = _startpos_x000_ in
-  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos__2_ = _startpos__20_ in
   let x2 = x20 in
-  let _menhir_p0 = _menhir_p00 in
+  let _2 = _20 in
   let x00 = x000 in
   let x1 =
-    let _endpos = _startpos__menhir_p0_ in
+    let _endpos = _startpos__2_ in
     let _startpos_x0_ = _startpos_x00_ in
     let x0 = x00 in
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (    ( ty ))
   in
-  ( x1 :: x2 )
+  (    ( x1 :: x2 ))
 in
- TyTuple tcs }
+    ( TyTuple tcs )}
 
 raw_fat_type:
 | ty = raw_very_loose_type
-    { ty }
-| x00 = raw_fat_type _menhir_p0 = BAR x01 = raw_very_loose_type
+    {    ( ty )}
+| x00 = raw_fat_type _2 = BAR x01 = raw_very_loose_type
     {let ty2 =
   let _startpos_x0_ = _startpos_x01_ in
   let x0 = x01 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let ty1 =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (  ( ty ))
 in
- TyBar (ty1, ty2) }
-| BAR x00 = raw_very_loose_type
+    ( TyBar (ty1, ty2) )}
+| _1 = BAR x00 = raw_very_loose_type
     {let ty2 =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- TyBar (TyTuple [], ty2) }
-| x00 = raw_fat_type _menhir_p0 = BAR m0 = mode x000 = raw_atomic_type
+    ( TyBar (TyTuple [], ty2) )}
+| x00 = raw_fat_type _2 = BAR m0 = mode x000 = raw_atomic_type
     {let c =
   let _startpos_x00_ = _startpos_x000_ in
   let x00 = x000 in
@@ -1123,38 +1137,38 @@ in
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (    ( ty ))
   in
-  ( m, t )
+  (    ( m, t ))
 in
 let ty =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (  ( ty ))
 in
- TyAnd (c, ty) }
+    ( TyAnd (c, ty) )}
 
 mode:
-| EXCLUSIVE
-    { Mode.ModeExclusive }
-| DUPLICABLE
-    { Mode.ModeDuplicable }
+| _1 = EXCLUSIVE
+    {    ( Mode.ModeExclusive )}
+| _1 = DUPLICABLE
+    {    ( Mode.ModeDuplicable )}
 
 raw_atomic_pattern:
-| LPAREN RPAREN
-    { PTuple [] }
-| LPAREN x000 = raw_loose_pattern _menhir_p1 = RPAREN
+| _1 = LPAREN _2 = RPAREN
+    {    ( PTuple [] )}
+| _1 = LPAREN x000 = raw_loose_pattern _3 = RPAREN
     {let p =
   let _startpos_x00_ = _startpos_x000_ in
-  let _endpos = _startpos__menhir_p1_ in
+  let _endpos = _startpos__3_ in
   let x00 = x000 in
   let p =
     let _startpos_x0_ = _startpos_x00_ in
@@ -1162,88 +1176,88 @@ raw_atomic_pattern:
     let p =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( PLocated (x, ($startpos(x), $endpos)) )
+      (    ( PLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( p )
+    (    ( p ))
   in
-  ( p )
+  (    ( p ))
 in
- p }
+    ( p )}
 | xys0 = generic_datacon_application_right_flexible_list_SEMI_data_field_pattern__
     {let dc =
   let xys = xys0 in
-  ( xys )
+  (    ( xys ))
 in
- PConstruct dc }
+    ( PConstruct dc )}
 | x = variable
-    { PVar x }
-| UNDERSCORE
-    { PAny }
+    {    ( PVar x )}
+| _1 = UNDERSCORE
+    {    ( PAny )}
 
 raw_normal_pattern:
 | p = raw_atomic_pattern
-    { p }
-| x000 = raw_atomic_pattern _menhir_p00 = COMMA x20 = separated_nonempty_list_COMMA_atomic_pattern_
+    {    ( p )}
+| x000 = raw_atomic_pattern _20 = COMMA x20 = separated_nonempty_list_COMMA_atomic_pattern_
     {let ps =
   let _startpos_x00_ = _startpos_x000_ in
-  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos__2_ = _startpos__20_ in
   let x2 = x20 in
-  let _menhir_p0 = _menhir_p00 in
+  let _2 = _20 in
   let x00 = x000 in
   let x1 =
-    let _endpos = _startpos__menhir_p0_ in
+    let _endpos = _startpos__2_ in
     let _startpos_x0_ = _startpos_x00_ in
     let x0 = x00 in
     let p =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( PLocated (x, ($startpos(x), $endpos)) )
+      (    ( PLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( p )
+    (    ( p ))
   in
-  ( x1 :: x2 )
+  (    ( x1 :: x2 ))
 in
- PTuple ps }
-| x00 = raw_normal_pattern _menhir_p0 = AS v = variable
+    ( PTuple ps )}
+| x00 = raw_normal_pattern _2 = AS v = variable
     {let p =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let p =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( PLocated (x, ($startpos(x), $endpos)) )
+    (    ( PLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( p )
+  (    ( p ))
 in
- PAs (p, v) }
+    ( PAs (p, v) )}
 
 raw_loose_pattern:
 | p = raw_normal_pattern
-    { p }
-| x00 = raw_loose_pattern _menhir_p0 = COLON x01 = raw_normal_type
+    {    ( p )}
+| x00 = raw_loose_pattern _2 = COLON x01 = raw_normal_type
     {let t =
   let _startpos_x0_ = _startpos_x01_ in
   let x0 = x01 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let p =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let p =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( PLocated (x, ($startpos(x), $endpos)) )
+    (    ( PLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( p )
+  (    ( p ))
 in
- PConstraint (p, t) }
+    ( PConstraint (p, t) )}
 
 raw_atomic_expression:
 | o = OPPREFIX x00 = raw_atomic_expression
@@ -1255,31 +1269,31 @@ raw_atomic_expression:
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkprefix o e }
+    ( mkprefix o e )}
 | x0 = maybe_qualified_variable_
     {let v =
   let x = x0 in
-  ( EVar x )
+  (    ( EVar x ))
 in
- v }
+    ( v )}
 | i = INT
-    { EInt i }
-| FAIL
-    { EFail }
+    {    ( EInt i )}
+| _1 = FAIL
+    {    ( EFail )}
 | xys0 = generic_datacon_application_right_flexible_list_SEMI_data_field_expression__
     {let dc =
   let xys = xys0 in
-  ( xys )
+  (    ( xys ))
 in
- EConstruct dc }
-| MATCH b = explain x000 = raw_tuple_or_raw_fragile_expression_ WITH xs0 = reverse_left_flexible_list_BAR_match_branch_ END
+    ( EConstruct dc )}
+| _1 = MATCH b = explain x000 = raw_tuple_or_raw_fragile_expression_ _4 = WITH xs0 = reverse_left_flexible_list_BAR_match_branch_ _6 = END
     {let bs =
   let xs = xs0 in
-  ( List.rev xs )
+  (    ( List.rev xs ))
 in
 let e =
   let _startpos_x00_ = _startpos_x000_ in
@@ -1293,34 +1307,34 @@ let e =
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
- EMatch (b, e, bs) }
-| LPAREN RPAREN
-    { ETuple [] }
-| LPAREN es = parenthesized_tuple_components RPAREN
-    { match es with [ e ] -> e | _ -> ETuple es }
-| BEGIN es = parenthesized_tuple_components END
-    { match es with [ e ] -> e | _ -> ETuple es }
+    ( EMatch (b, e, bs) )}
+| _1 = LPAREN _2 = RPAREN
+    {    ( ETuple [] )}
+| _1 = LPAREN es = parenthesized_tuple_components _3 = RPAREN
+    {    ( match es with [ e ] -> e | _ -> ETuple es )}
+| _1 = BEGIN es = parenthesized_tuple_components _3 = END
+    {    ( match es with [ e ] -> e | _ -> ETuple es )}
 
 data_field_expression:
-| f = variable EQUAL e = reasonable_expression
-    { f, e }
+| f = variable _2 = EQUAL e = reasonable_expression
+    {    ( f, e )}
 | f = variable
-    { f, EVar (Unqualified f) }
+    {    ( f, EVar (Unqualified f) )}
 
 explain:
 | 
-    { false }
-| EXPLAIN
-    { true }
+    {    ( false )}
+| _1 = EXPLAIN
+    {    ( true )}
 
 raw_tight_expression:
-| x00 = raw_tight_expression DOT f = variable
+| x00 = raw_tight_expression _2 = DOT f = variable
     {let e =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -1329,13 +1343,13 @@ raw_tight_expression:
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- EAccess (e, mk_field f) }
+    ( EAccess (e, mk_field f) )}
 | a = raw_atomic_expression
-    { a }
+    {    ( a )}
 
 raw_application_expression:
 | x00 = raw_application_expression x01 = raw_tight_expression
@@ -1347,9 +1361,9 @@ raw_application_expression:
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1359,12 +1373,12 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- EApply (e1, e2) }
-| x00 = raw_application_expression LBRACKET ts = separated_nonempty_list_COMMA_type_application_component_ RBRACKET
+    ( EApply (e1, e2) )}
+| x00 = raw_application_expression _2 = LBRACKET ts = separated_nonempty_list_COMMA_type_application_component_ _4 = RBRACKET
     {let e1 =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -1373,13 +1387,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- ETApply (e1, ts) }
+    ( ETApply (e1, ts) )}
 | e = raw_tight_expression
-    { e }
+    {    ( e )}
 
 type_application_component:
 | x00 = raw_normal_type
@@ -1389,23 +1403,23 @@ type_application_component:
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- Ordered t }
-| v = variable EQUAL x00 = raw_normal_type
+    ( Ordered t )}
+| v = variable _2 = EQUAL x00 = raw_normal_type
     {let t =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- Named (v, t) }
+    ( Named (v, t) )}
 
 raw_algebraic_expression:
 | x00 = raw_algebraic_expression o0 = OPINFIX0a x01 = raw_algebraic_expression
@@ -1417,13 +1431,13 @@ raw_algebraic_expression:
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1433,11 +1447,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = OPINFIX0b x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1447,13 +1461,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1463,11 +1477,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = OPINFIX0c x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1477,13 +1491,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1493,11 +1507,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = OPINFIX0d x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1507,13 +1521,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1523,11 +1537,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = OPINFIX1 x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1537,13 +1551,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1553,11 +1567,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = OPINFIX2 x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1567,13 +1581,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1583,11 +1597,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = OPINFIX3 x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1597,13 +1611,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1613,11 +1627,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = OPINFIX4 x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1627,13 +1641,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1643,11 +1657,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = EQUAL x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1657,13 +1671,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1673,11 +1687,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = STAR x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1687,13 +1701,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1703,11 +1717,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = MINUS x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1717,13 +1731,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1733,11 +1747,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = PLUS x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1747,13 +1761,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1763,11 +1777,11 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
+    ( mkinfix e1 o e2 )}
 | x00 = raw_algebraic_expression o0 = COLONEQUAL x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
@@ -1777,13 +1791,13 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let o =
   let o = o0 in
-  ( o )
+  (      ( o ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1793,12 +1807,12 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix e1 o e2 }
-| MINUS x00 = raw_application_expression
+    ( mkinfix e1 o e2 )}
+| _1 = MINUS x00 = raw_application_expression
     {let e =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -1807,12 +1821,12 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- mkinfix (EInt 0) "-" e }
-| x00 = raw_algebraic_expression ADOPTS x01 = raw_algebraic_expression
+    ( mkinfix (EInt 0) "-" e )}
+| x00 = raw_algebraic_expression _2 = ADOPTS x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
   let _startpos_x0_ = _startpos_x01_ in
@@ -1821,9 +1835,9 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1833,20 +1847,21 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- EOwns (e1, e2) }
+    ( EOwns (e1, e2) )}
 | e = raw_application_expression
-    { e }
+    {    ( e )}
 
 raw_tuple_or_raw_reasonable_expression_:
-| x000 = raw_algebraic_expression COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
+| x000 = raw_algebraic_expression _20 = COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
     {let es =
   let _startpos_x00_ = _startpos_x000_ in
   let _endpos_x00_ = _endpos_x000_ in
   let x2 = x20 in
+  let _2 = _20 in
   let x00 = x000 in
   let x1 =
     let _endpos_x0_ = _endpos_x00_ in
@@ -1856,22 +1871,23 @@ raw_tuple_or_raw_reasonable_expression_:
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( x1 :: x2 )
+  (    ( x1 :: x2 ))
 in
- ETuple es }
+    ( ETuple es )}
 | e = raw_reasonable_expression
-    { e }
+    {    ( e )}
 
 raw_tuple_or_raw_fragile_expression_:
-| x000 = raw_algebraic_expression COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
+| x000 = raw_algebraic_expression _20 = COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
     {let es =
   let _startpos_x00_ = _startpos_x000_ in
   let _endpos_x00_ = _endpos_x000_ in
   let x2 = x20 in
+  let _2 = _20 in
   let x00 = x000 in
   let x1 =
     let _endpos_x0_ = _endpos_x00_ in
@@ -1881,15 +1897,15 @@ raw_tuple_or_raw_fragile_expression_:
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( x1 :: x2 )
+  (    ( x1 :: x2 ))
 in
- ETuple es }
+    ( ETuple es )}
 | e = raw_fragile_expression
-    { e }
+    {    ( e )}
 
 reasonable_expression:
 | x0 = raw_reasonable_expression
@@ -1897,12 +1913,12 @@ reasonable_expression:
   let _startpos_x_ = _startpos_x0_ in
   let _endpos_x_ = _endpos_x0_ in
   let x = x0 in
-  ( ELocated (x, ($startpos(x), $endpos(x))) )
+  (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
 in
- e }
+    ( e )}
 
 raw_reasonable_expression:
-| IF b = explain x000 = raw_tuple_or_raw_fragile_expression_ THEN x00 = raw_tuple_or_raw_reasonable_expression_
+| _1 = IF b = explain x000 = raw_tuple_or_raw_fragile_expression_ _4 = THEN x00 = raw_tuple_or_raw_reasonable_expression_
     {let e2 =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -1911,9 +1927,9 @@ raw_reasonable_expression:
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let e1 =
   let _startpos_x00_ = _startpos_x000_ in
@@ -1927,14 +1943,14 @@ let e1 =
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
- EIfThenElse (b, e1, e2, ETuple []) }
-| IF b = explain x000 = raw_tuple_or_raw_fragile_expression_ THEN x00 = raw_tuple_or_raw_reasonable_expression_ ELSE x01 = raw_tuple_or_raw_reasonable_expression_
+    ( EIfThenElse (b, e1, e2, ETuple []) )}
+| _1 = IF b = explain x000 = raw_tuple_or_raw_fragile_expression_ _4 = THEN x00 = raw_tuple_or_raw_reasonable_expression_ _6 = ELSE x01 = raw_tuple_or_raw_reasonable_expression_
     {let e3 =
   let _endpos_x0_ = _endpos_x01_ in
   let _startpos_x0_ = _startpos_x01_ in
@@ -1943,9 +1959,9 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let e2 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -1955,9 +1971,9 @@ let e2 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let e1 =
   let _startpos_x00_ = _startpos_x000_ in
@@ -1971,14 +1987,14 @@ let e1 =
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
- EIfThenElse (b, e1, e2, e3) }
-| p = optional_preserving WHILE x000 = raw_tuple_or_raw_fragile_expression_ DO e2 = reasonable_expression
+    ( EIfThenElse (b, e1, e2, e3) )}
+| p = optional_preserving _2 = WHILE x000 = raw_tuple_or_raw_fragile_expression_ _4 = DO e2 = reasonable_expression
     {let e1 =
   let _startpos_x00_ = _startpos_x000_ in
   let _endpos_x00_ = _endpos_x000_ in
@@ -1991,14 +2007,14 @@ in
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
- EWhile (p, e1, e2) }
-| p = optional_preserving _menhir_p0 = FOR x0 = variable _menhir_p1 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_ f = direction x001 = raw_tuple_or_raw_fragile_expression_ DO e = reasonable_expression
+    ( EWhile (p, e1, e2) )}
+| p = optional_preserving _2 = FOR x0 = variable _4 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_ f = direction x001 = raw_tuple_or_raw_fragile_expression_ _8 = DO e = reasonable_expression
     {let e2 =
   let _startpos_x00_ = _startpos_x001_ in
   let _endpos_x00_ = _endpos_x001_ in
@@ -2011,11 +2027,11 @@ in
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
 let e1 =
   let _startpos_x00_ = _startpos_x000_ in
@@ -2029,20 +2045,20 @@ let e1 =
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
 let x =
-  let _startpos_x_ = _endpos__menhir_p0_ in
-  let _endpos = _startpos__menhir_p1_ in
+  let _startpos_x_ = _endpos__2_ in
+  let _endpos = _startpos__4_ in
   let x = x0 in
-  ( x, KValue, ($startpos(x), $endpos) )
+  (    ( x, KValue, (_startpos_x_, _endpos) ))
 in
- EFor (p, x, e1, f, e2, e) }
-| x00 = raw_tight_expression DOT f = variable LARROW e2 = reasonable_expression
+    ( EFor (p, x, e1, f, e2, e) )}
+| x00 = raw_tight_expression _2 = DOT f = variable _4 = LARROW e2 = reasonable_expression
     {let e1 =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -2051,15 +2067,15 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- EAssign (e1, mk_field f, e2) }
-| TAGOF x00 = raw_tight_expression LARROW d0 = maybe_qualified_datacon_
+    ( EAssign (e1, mk_field f, e2) )}
+| _1 = TAGOF x00 = raw_tight_expression _3 = LARROW d0 = maybe_qualified_datacon_
     {let d =
   let d = d0 in
-  ( mk_datacon_reference d )
+  (    ( mk_datacon_reference d ))
 in
 let e1 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -2069,12 +2085,12 @@ let e1 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- EAssignTag (e1, d, mk_tag_update_info ()) }
-| TAKE x000 = raw_tuple_or_raw_fragile_expression_ FROM e2 = reasonable_expression
+    ( EAssignTag (e1, d, mk_tag_update_info ()) )}
+| _1 = TAKE x000 = raw_tuple_or_raw_fragile_expression_ _3 = FROM e2 = reasonable_expression
     {let e1 =
   let _startpos_x00_ = _startpos_x000_ in
   let _endpos_x00_ = _endpos_x000_ in
@@ -2087,14 +2103,14 @@ in
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
- ETake (e1, e2) }
-| GIVE x000 = raw_tuple_or_raw_fragile_expression_ TO e2 = reasonable_expression
+    ( ETake (e1, e2) )}
+| _1 = GIVE x000 = raw_tuple_or_raw_fragile_expression_ _3 = TO e2 = reasonable_expression
     {let e1 =
   let _startpos_x00_ = _startpos_x000_ in
   let _endpos_x00_ = _endpos_x000_ in
@@ -2107,14 +2123,14 @@ in
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
- EGive (e1, e2) }
-| taking = TAKING x000 = raw_tuple_or_raw_fragile_expression_ FROM x00 = raw_tight_expression _menhir_p1 = BEGIN x001 = raw_tuple_or_raw_fragile_expression_ fin = END
+    ( EGive (e1, e2) )}
+| taking = TAKING x000 = raw_tuple_or_raw_fragile_expression_ _3 = FROM x00 = raw_tight_expression _5 = BEGIN x001 = raw_tuple_or_raw_fragile_expression_ fin = END
     {let e =
   let _startpos_x00_ = _startpos_x001_ in
   let _endpos_x00_ = _endpos_x001_ in
@@ -2127,11 +2143,11 @@ in
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
 let e2 =
   let _endpos_x0_ = _endpos_x00_ in
@@ -2141,11 +2157,11 @@ let e2 =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
-let _endpos_e2_ = _startpos__menhir_p1_ in
+let _endpos_e2_ = _startpos__5_ in
 let e1 =
   let _startpos_x00_ = _startpos_x000_ in
   let _endpos_x00_ = _endpos_x000_ in
@@ -2158,13 +2174,13 @@ let e1 =
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
-
+    (
       taking; fin; (* avoid ocaml warnings about unused variables *)
       let eval_e1, v1 = name "adoptee" e1
       and eval_e2, v2 = name "adopter" e2
@@ -2172,58 +2188,58 @@ in
       eval_e1 (
       eval_e2 (
       ESequence (
-      ELocated (ETake (v1, v2), ($startpos(taking), $endpos(e2))),
+      ELocated (ETake (v1, v2), (_startpos_taking_, _endpos_e2_)),
       eval_e (
       ESequence (
-      ELocated (EGive (v1, v2), ($startpos(fin), $endpos(fin))),
+      ELocated (EGive (v1, v2), (_startpos_fin_, _endpos_fin_)),
       v
       )))))
-    }
-| ASSERT x00 = raw_very_loose_type
+    )}
+| _1 = ASSERT x00 = raw_very_loose_type
     {let t =
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- EAssert t }
-| PACK x00 = raw_very_loose_type _menhir_p1 = WITNESS x01 = raw_very_loose_type
+    ( EAssert t )}
+| _1 = PACK x00 = raw_very_loose_type _3 = WITNESS x01 = raw_very_loose_type
     {let t2 =
   let _startpos_x0_ = _startpos_x01_ in
   let x0 = x01 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let t1 =
-  let _endpos = _startpos__menhir_p1_ in
+  let _endpos = _startpos__3_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- EPack (t1, t2) }
-| x00 = raw_algebraic_expression COLON x01 = raw_very_loose_type
+    ( EPack (t1, t2) )}
+| x00 = raw_algebraic_expression _2 = COLON x01 = raw_very_loose_type
     {let t =
   let _startpos_x0_ = _startpos_x01_ in
   let x0 = x01 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let e =
   let _endpos_x0_ = _endpos_x00_ in
@@ -2233,16 +2249,16 @@ let e =
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- EConstraint (e, t) }
+    ( EConstraint (e, t) )}
 | e = raw_algebraic_expression
-    { e }
+    {    ( e )}
 
 optional_preserving:
-| PRESERVING x000 = raw_fat_type
+| _1 = PRESERVING x000 = raw_fat_type
     {let p =
   let _startpos_x00_ = _startpos_x000_ in
   let x00 = x000 in
@@ -2252,18 +2268,18 @@ optional_preserving:
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (  ( ty ))
   in
-  ( ty )
+  (    ( ty ))
 in
- p }
+    ( p )}
 | 
-    { TyEmpty }
+    {    ( TyEmpty )}
 
 raw_fragile_expression:
-| e1 = reasonable_expression SEMI x00 = raw_tuple_or_raw_fragile_expression_
+| e1 = reasonable_expression _2 = SEMI x00 = raw_tuple_or_raw_fragile_expression_
     {let e2 =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -2272,14 +2288,14 @@ raw_fragile_expression:
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- ESequence (e1, e2) }
-| e1 = reasonable_expression SEMI
-    { e1 }
-| LET flag0 = rec_flag xs00 = loption_separated_nonempty_list_AND_definition__ IN x00 = raw_tuple_or_raw_fragile_expression_
+    ( ESequence (e1, e2) )}
+| e1 = reasonable_expression _2 = SEMI
+    {    ( e1 )}
+| _1 = LET flag0 = rec_flag xs00 = loption_separated_nonempty_list_AND_definition__ _3 = IN x00 = raw_tuple_or_raw_fragile_expression_
     {let e =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -2288,21 +2304,21 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let flag_defs =
   let xs0 = xs00 in
   let flag = flag0 in
   let defs =
     let xs = xs0 in
-    ( xs )
+    (    ( xs ))
   in
-  ( flag, defs )
+  (    ( flag, defs ))
 in
- let flag, defs = flag_defs in ELet (flag, defs, e) }
-| LET FLEX v = type_binding IN x00 = raw_tuple_or_raw_fragile_expression_
+    ( let flag, defs = flag_defs in ELet (flag, defs, e) )}
+| _1 = LET _2 = FLEX v = type_binding _4 = IN x00 = raw_tuple_or_raw_fragile_expression_
     {let e =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -2311,12 +2327,12 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- ELetFlex (v, e) }
-| LET DATA defs0 = separated_nonempty_list_AND_concrete_data_type_def_ _menhir_p1 = IN x00 = raw_tuple_or_raw_fragile_expression_
+    ( ELetFlex (v, e) )}
+| _1 = LET _10 = DATA defs0 = separated_nonempty_list_AND_concrete_data_type_def_ _3 = IN x00 = raw_tuple_or_raw_fragile_expression_
     {let e =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -2325,18 +2341,19 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let d =
   let _startpos_defs_ = _startpos_defs0_ in
-  let _endpos = _startpos__menhir_p1_ in
+  let _endpos = _startpos__3_ in
   let defs = defs0 in
-  ( ($startpos(defs), $endpos), Recursive, defs )
+  let _1 = _10 in
+  (    ( (_startpos_defs_, _endpos), Recursive, defs ))
 in
- ELocalType (d, e) }
-| LET ABSTRACT def0 = abstract_data_type_def _menhir_p1 = IN x00 = raw_tuple_or_raw_fragile_expression_
+    ( ELocalType (d, e) )}
+| _1 = LET _10 = ABSTRACT def0 = abstract_data_type_def _3 = IN x00 = raw_tuple_or_raw_fragile_expression_
     {let e =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -2345,18 +2362,19 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let d =
   let _startpos_def_ = _startpos_def0_ in
-  let _endpos = _startpos__menhir_p1_ in
+  let _endpos = _startpos__3_ in
   let def = def0 in
-  ( ($startpos(def), $endpos), Nonrecursive, [def] )
+  let _1 = _10 in
+  (    ( (_startpos_def_, _endpos), Nonrecursive, [def] ))
 in
- ELocalType (d, e) }
-| LET ALIAS def0 = abbreviation_def _menhir_p1 = IN x00 = raw_tuple_or_raw_fragile_expression_
+    ( ELocalType (d, e) )}
+| _1 = LET _10 = ALIAS def0 = abbreviation_def _3 = IN x00 = raw_tuple_or_raw_fragile_expression_
     {let e =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -2365,53 +2383,54 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
 let d =
   let _startpos_def_ = _startpos_def0_ in
-  let _endpos = _startpos__menhir_p1_ in
+  let _endpos = _startpos__3_ in
   let def = def0 in
-  ( ($startpos(def), $endpos), Nonrecursive, [def] )
+  let _1 = _10 in
+  (    ( (_startpos_def_, _endpos), Nonrecursive, [def] ))
 in
- ELocalType (d, e) }
-| FUN e = anonymous_function
-    { e }
+    ( ELocalType (d, e) )}
+| _1 = FUN e = anonymous_function
+    {    ( e )}
 | e = raw_reasonable_expression
-    { e }
+    {    ( e )}
 
 rec_flag:
-| REC
-    { Recursive }
+| _1 = REC
+    {    ( Recursive )}
 | 
-    { Nonrecursive }
+    {    ( Nonrecursive )}
 
 loption_type_parameters_:
 | 
-    { [] }
+    {    ( [] )}
 | x = type_parameters
-    { x }
+    {    ( x )}
 
 loption_separated_nonempty_list_AND_definition__:
 | 
-    { [] }
+    {    ( [] )}
 | x = separated_nonempty_list_AND_definition_
-    { x }
+    {    ( x )}
 
 list_terminated_mode_constraint_DBLARROW__:
 | 
-    { [] }
-| m00 = mode x0000 = raw_atomic_type _menhir_p00 = DBLARROW xs = list_terminated_mode_constraint_DBLARROW__
+    {    ( [] )}
+| m00 = mode x0000 = raw_atomic_type _20 = DBLARROW xs = list_terminated_mode_constraint_DBLARROW__
     {let x =
-  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos__2_ = _startpos__20_ in
   let _startpos_x000_ = _startpos_x0000_ in
-  let _menhir_p0 = _menhir_p00 in
+  let _2 = _20 in
   let x000 = x0000 in
   let m0 = m00 in
   let x =
     let _startpos_x00_ = _startpos_x000_ in
-    let _endpos = _startpos__menhir_p0_ in
+    let _endpos = _startpos__2_ in
     let x00 = x000 in
     let m = m0 in
     let t =
@@ -2420,40 +2439,40 @@ list_terminated_mode_constraint_DBLARROW__:
       let ty =
         let _startpos_x_ = _startpos_x0_ in
         let x = x0 in
-        ( TyLocated (x, ($startpos(x), $endpos)) )
+        (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
       in
-      ( ty )
+      (    ( ty ))
     in
-    ( m, t )
+    (    ( m, t ))
   in
-  ( x )
+  (    ( x ))
 in
- x :: xs }
+    ( x :: xs )}
 
 list_interface_item_:
 | 
-    { [] }
+    {    ( [] )}
 | x = interface_item xs = list_interface_item_
-    { x :: xs }
+    {    ( x :: xs )}
 
 list_implementation_item_:
 | 
-    { [] }
+    {    ( [] )}
 | x = implementation_item xs = list_implementation_item_
-    { x :: xs }
+    {    ( x :: xs )}
 
 direction:
-| TO
-    { To }
-| DOWNTO
-    { Downto }
-| BELOW
-    { Below }
-| ABOVE
-    { Above }
+| _1 = TO
+    {    ( To )}
+| _1 = DOWNTO
+    {    ( Downto )}
+| _1 = BELOW
+    {    ( Below )}
+| _1 = ABOVE
+    {    ( Above )}
 
 definition:
-| x00 = raw_normal_pattern _menhir_p0 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
+| x00 = raw_normal_pattern _2 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
     {let e =
   let _startpos_x00_ = _startpos_x000_ in
   let _endpos_x00_ = _endpos_x000_ in
@@ -2466,25 +2485,25 @@ definition:
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
 let p =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let p =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( PLocated (x, ($startpos(x), $endpos)) )
+    (    ( PLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( p )
+  (    ( p ))
 in
- p, e }
-| x00 = raw_normal_pattern _menhir_p0 = COLON x01 = raw_normal_type _menhir_p1 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
+    ( p, e )}
+| x00 = raw_normal_pattern _2 = COLON x01 = raw_normal_type _4 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
     {let e =
   let _startpos_x00_ = _startpos_x000_ in
   let _endpos_x00_ = _endpos_x000_ in
@@ -2497,35 +2516,35 @@ in
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
 let t =
-  let _endpos = _startpos__menhir_p1_ in
+  let _endpos = _startpos__4_ in
   let _startpos_x0_ = _startpos_x01_ in
   let x0 = x01 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let p =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let p =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( PLocated (x, ($startpos(x), $endpos)) )
+    (    ( PLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( p )
+  (    ( p ))
 in
- PConstraint (p, t), e }
+    ( PConstraint (p, t), e )}
 | x00 = raw_normal_pattern e = anonymous_function
     {let p =
   let _endpos = _startpos_e_ in
@@ -2534,38 +2553,38 @@ in
   let p =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( PLocated (x, ($startpos(x), $endpos)) )
+    (    ( PLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( p )
+  (    ( p ))
 in
- p, e }
-| x00 = raw_normal_pattern _menhir_p0 = COLON x01 = raw_normal_type _menhir_p1 = EQUAL BUILTIN b = LIDENT
+    ( p, e )}
+| x00 = raw_normal_pattern _2 = COLON x01 = raw_normal_type _4 = EQUAL _5 = BUILTIN b = LIDENT
     {let t =
-  let _endpos = _startpos__menhir_p1_ in
+  let _endpos = _startpos__4_ in
   let _startpos_x0_ = _startpos_x01_ in
   let x0 = x01 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let p =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let p =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( PLocated (x, ($startpos(x), $endpos)) )
+    (    ( PLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( p )
+  (    ( p ))
 in
- PConstraint (p, t), ELocated (EBuiltin b, ($startpos($5), $endpos($5))) }
+    ( PConstraint (p, t), ELocated (EBuiltin b, (_startpos__5_, _endpos__5_)) )}
 
 anonymous_function:
-| type_parameters = loption_type_parameters_ cs = list_terminated_mode_constraint_DBLARROW__ x00 = raw_parenthetic_type _menhir_p0 = COLON x01 = raw_normal_type _menhir_p1 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
+| type_parameters = loption_type_parameters_ cs = list_terminated_mode_constraint_DBLARROW__ x00 = raw_parenthetic_type _4 = COLON x01 = raw_normal_type _6 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
     {let body =
   let _startpos_x00_ = _startpos_x000_ in
   let _endpos_x00_ = _endpos_x000_ in
@@ -2578,57 +2597,57 @@ anonymous_function:
       let _startpos_x_ = _startpos_x0_ in
       let _endpos_x_ = _endpos_x0_ in
       let x = x0 in
-      ( ELocated (x, ($startpos(x), $endpos(x))) )
+      (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
     in
-    ( e )
+    (    ( e ))
   in
-  ( e )
+  (    ( e ))
 in
 let result =
-  let _endpos = _startpos__menhir_p1_ in
+  let _endpos = _startpos__6_ in
   let _startpos_x0_ = _startpos_x01_ in
   let x0 = x01 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let formal =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__4_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let _startpos_formal_ = _endpos_cs_ in
-let _endpos_formal_ = _startpos__menhir_p0_ in
- let formal = List.fold_right (fun c ty -> TyAnd (c, ty)) cs formal in
-      let formal = TyLocated (formal, ($startpos(formal), $endpos(formal))) in
-      EFun (type_parameters, formal, result, body) }
+let _endpos_formal_ = _startpos__4_ in
+    ( let formal = List.fold_right (fun c ty -> TyAnd (c, ty)) cs formal in
+      let formal = TyLocated (formal, (_startpos_formal_, _endpos_formal_)) in
+      EFun (type_parameters, formal, result, body) )}
 
 definition_group:
-| VAL flag0 = rec_flag xs00 = loption_separated_nonempty_list_AND_definition__
+| _1 = VAL flag0 = rec_flag xs00 = loption_separated_nonempty_list_AND_definition__
     {let flag_defs =
   let xs0 = xs00 in
   let flag = flag0 in
   let defs =
     let xs = xs0 in
-    ( xs )
+    (    ( xs ))
   in
-  ( flag, defs )
+  (    ( flag, defs ))
 in
- let flag, defs = flag_defs in
-      let loc = ($startpos($1), $endpos) in
-      ValueDefinitions (loc, flag, defs) }
+    ( let flag, defs = flag_defs in
+      let loc = (_startpos__1_, _endpos) in
+      ValueDefinitions (loc, flag, defs) )}
 
 value_declaration:
-| _menhir_p0 = VAL x0 = variable _menhir_p1 = COLON x000 = raw_fat_type
+| _1 = VAL x0 = variable _3 = COLON x000 = raw_fat_type
     {let ty =
   let _startpos_x00_ = _startpos_x000_ in
   let x00 = x000 in
@@ -2638,93 +2657,100 @@ value_declaration:
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (  ( ty ))
   in
-  ( ty )
+  (    ( ty ))
 in
 let x =
-  let _startpos_x_ = _endpos__menhir_p0_ in
-  let _endpos = _startpos__menhir_p1_ in
+  let _startpos_x_ = _endpos__1_ in
+  let _endpos = _startpos__3_ in
   let x = x0 in
-  ( x, KValue, ($startpos(x), $endpos) )
+  (    ( x, KValue, (_startpos_x_, _endpos) ))
 in
- ValueDeclaration (x, ty) }
+    ( ValueDeclaration (x, ty) )}
 
 implementation_item:
-| DATA defs00 = separated_nonempty_list_AND_concrete_data_type_def_
+| _100 = DATA defs00 = separated_nonempty_list_AND_concrete_data_type_def_
     {let item =
   let _startpos_defs0_ = _startpos_defs00_ in
   let defs0 = defs00 in
+  let _10 = _100 in
   let g =
     let _startpos_defs_ = _startpos_defs0_ in
     let defs = defs0 in
-    ( ($startpos(defs), $endpos), Recursive, defs )
+    let _1 = _10 in
+    (    ( (_startpos_defs_, _endpos), Recursive, defs ))
   in
-  ( DataTypeGroup g )
+  (    ( DataTypeGroup g ))
 in
- item }
-| ABSTRACT def00 = abstract_data_type_def
+    ( item )}
+| _100 = ABSTRACT def00 = abstract_data_type_def
     {let item =
   let _startpos_def0_ = _startpos_def00_ in
   let def0 = def00 in
+  let _10 = _100 in
   let g =
     let _startpos_def_ = _startpos_def0_ in
     let def = def0 in
-    ( ($startpos(def), $endpos), Nonrecursive, [def] )
+    let _1 = _10 in
+    (    ( (_startpos_def_, _endpos), Nonrecursive, [def] ))
   in
-  ( DataTypeGroup g )
+  (    ( DataTypeGroup g ))
 in
- item }
-| ALIAS def00 = abbreviation_def
+    ( item )}
+| _100 = ALIAS def00 = abbreviation_def
     {let item =
   let _startpos_def0_ = _startpos_def00_ in
   let def0 = def00 in
+  let _10 = _100 in
   let g =
     let _startpos_def_ = _startpos_def0_ in
     let def = def0 in
-    ( ($startpos(def), $endpos), Nonrecursive, [def] )
+    let _1 = _10 in
+    (    ( (_startpos_def_, _endpos), Nonrecursive, [def] ))
   in
-  ( DataTypeGroup g )
+  (    ( DataTypeGroup g ))
 in
- item }
+    ( item )}
 | item = definition_group
-    { item }
-| OPEN name00 = LIDENT
+    {    ( item )}
+| _10 = OPEN name00 = LIDENT
     {let item =
   let name0 = name00 in
+  let _1 = _10 in
   let m =
     let name = name0 in
-    ( Module.register name )
+    (    ( Module.register name ))
   in
-  ( OpenDirective m )
+  (    ( OpenDirective m ))
 in
- item }
+    ( item )}
 
 implementation:
-| items = list_implementation_item_ EOF
-    { items }
+| items = list_implementation_item_ _2 = EOF
+    {    ( items )}
 
 warn_error_list:
-| ws = nonempty_list_warn_error_ EOF
-    { ws }
+| ws = nonempty_list_warn_error_ _2 = EOF
+    {  ( ws )}
 
 warn_error:
 | f = flag r = range
-    { f, r }
+    {  ( f, r )}
 
 list_fact_:
 | 
-    { [] }
+    {    ( [] )}
 | x = fact xs = list_fact_
-    { x :: xs }
+    {    ( x :: xs )}
 
 list_atomic_type_binding_with_variance_:
 | 
-    { [] }
+    {    ( [] )}
 | x = atomic_type_binding_with_variance xs = list_atomic_type_binding_with_variance_
-    { x :: xs }
+    {    ( x :: xs )}
 
 separated_nonempty_list_DBLARROW_mode_constraint_:
 | m0 = mode x000 = raw_atomic_type
@@ -2738,17 +2764,17 @@ separated_nonempty_list_DBLARROW_mode_constraint_:
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (    ( ty ))
   in
-  ( m, t )
+  (    ( m, t ))
 in
- [ x ] }
-| m0 = mode x000 = raw_atomic_type _menhir_p0 = DBLARROW xs = separated_nonempty_list_DBLARROW_mode_constraint_
+    ( [ x ] )}
+| m0 = mode x000 = raw_atomic_type _2 = DBLARROW xs = separated_nonempty_list_DBLARROW_mode_constraint_
     {let x =
   let _startpos_x00_ = _startpos_x000_ in
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let x00 = x000 in
   let m = m0 in
   let t =
@@ -2757,25 +2783,25 @@ in
     let ty =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( TyLocated (x, ($startpos(x), $endpos)) )
+      (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( ty )
+    (    ( ty ))
   in
-  ( m, t )
+  (    ( m, t ))
 in
- x :: xs }
+    ( x :: xs )}
 
 separated_nonempty_list_COMMA_variable_:
 | x = variable
-    { [ x ] }
-| x = variable COMMA xs = separated_nonempty_list_COMMA_variable_
-    { x :: xs }
+    {    ( [ x ] )}
+| x = variable _2 = COMMA xs = separated_nonempty_list_COMMA_variable_
+    {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_type_application_component_:
 | x = type_application_component
-    { [ x ] }
-| x = type_application_component COMMA xs = separated_nonempty_list_COMMA_type_application_component_
-    { x :: xs }
+    {    ( [ x ] )}
+| x = type_application_component _2 = COMMA xs = separated_nonempty_list_COMMA_type_application_component_
+    {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_consumes_type_:
 | x00 = raw_consumes_type
@@ -2785,24 +2811,24 @@ separated_nonempty_list_COMMA_consumes_type_:
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- [ x ] }
-| x00 = raw_consumes_type _menhir_p0 = COMMA xs = separated_nonempty_list_COMMA_consumes_type_
+    ( [ x ] )}
+| x00 = raw_consumes_type _2 = COMMA xs = separated_nonempty_list_COMMA_consumes_type_
     {let x =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let ty =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( TyLocated (x, ($startpos(x), $endpos)) )
+    (    ( TyLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( ty )
+  (    ( ty ))
 in
- x :: xs }
+    ( x :: xs )}
 
 separated_nonempty_list_COMMA_atomic_pattern_:
 | x00 = raw_atomic_pattern
@@ -2812,24 +2838,24 @@ separated_nonempty_list_COMMA_atomic_pattern_:
   let p =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( PLocated (x, ($startpos(x), $endpos)) )
+    (    ( PLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( p )
+  (    ( p ))
 in
- [ x ] }
-| x00 = raw_atomic_pattern _menhir_p0 = COMMA xs = separated_nonempty_list_COMMA_atomic_pattern_
+    ( [ x ] )}
+| x00 = raw_atomic_pattern _2 = COMMA xs = separated_nonempty_list_COMMA_atomic_pattern_
     {let x =
-  let _endpos = _startpos__menhir_p0_ in
+  let _endpos = _startpos__2_ in
   let _startpos_x0_ = _startpos_x00_ in
   let x0 = x00 in
   let p =
     let _startpos_x_ = _startpos_x0_ in
     let x = x0 in
-    ( PLocated (x, ($startpos(x), $endpos)) )
+    (    ( PLocated (x, (_startpos_x_, _endpos)) ))
   in
-  ( p )
+  (    ( p ))
 in
- x :: xs }
+    ( x :: xs )}
 
 separated_nonempty_list_COMMA_algebraic_expression_:
 | x00 = raw_algebraic_expression
@@ -2841,12 +2867,12 @@ separated_nonempty_list_COMMA_algebraic_expression_:
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- [ x ] }
-| x00 = raw_algebraic_expression COMMA xs = separated_nonempty_list_COMMA_algebraic_expression_
+    ( [ x ] )}
+| x00 = raw_algebraic_expression _2 = COMMA xs = separated_nonempty_list_COMMA_algebraic_expression_
     {let x =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -2855,67 +2881,67 @@ in
     let _startpos_x_ = _startpos_x0_ in
     let _endpos_x_ = _endpos_x0_ in
     let x = x0 in
-    ( ELocated (x, ($startpos(x), $endpos(x))) )
+    (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
   in
-  ( e )
+  (    ( e ))
 in
- x :: xs }
+    ( x :: xs )}
 
 separated_nonempty_list_AND_definition_:
 | x = definition
-    { [ x ] }
-| x = definition AND xs = separated_nonempty_list_AND_definition_
-    { x :: xs }
+    {    ( [ x ] )}
+| x = definition _2 = AND xs = separated_nonempty_list_AND_definition_
+    {    ( x :: xs )}
 
 separated_nonempty_list_AND_concrete_data_type_def_:
 | x = concrete_data_type_def
-    { [ x ] }
-| x = concrete_data_type_def AND xs = separated_nonempty_list_AND_concrete_data_type_def_
-    { x :: xs }
+    {    ( [ x ] )}
+| x = concrete_data_type_def _2 = AND xs = separated_nonempty_list_AND_concrete_data_type_def_
+    {    ( x :: xs )}
 
 right_flexible_list_SEMI_data_field_pattern_:
 | 
-    { [] }
+    {    ( [] )}
 | x = data_field_pattern
-    { [x] }
-| x = data_field_pattern SEMI xs = right_flexible_list_SEMI_data_field_pattern_
-    { x :: xs }
+    {    ( [x] )}
+| x = data_field_pattern _2 = SEMI xs = right_flexible_list_SEMI_data_field_pattern_
+    {    ( x :: xs )}
 
 right_flexible_list_SEMI_data_field_expression_:
 | 
-    { [] }
+    {    ( [] )}
 | x = data_field_expression
-    { [x] }
-| x = data_field_expression SEMI xs = right_flexible_list_SEMI_data_field_expression_
-    { x :: xs }
+    {    ( [x] )}
+| x = data_field_expression _2 = SEMI xs = right_flexible_list_SEMI_data_field_expression_
+    {    ( x :: xs )}
 
 right_flexible_list_SEMI_data_field_def_:
 | 
-    { [] }
+    {    ( [] )}
 | x = data_field_def
-    { [x] }
-| x = data_field_def SEMI xs = right_flexible_list_SEMI_data_field_def_
-    { x :: xs }
+    {    ( [x] )}
+| x = data_field_def _2 = SEMI xs = right_flexible_list_SEMI_data_field_def_
+    {    ( x :: xs )}
 
 right_flexible_list_COMMA_type_binding_:
 | 
-    { [] }
+    {    ( [] )}
 | x = type_binding
-    { [x] }
-| x = type_binding COMMA xs = right_flexible_list_COMMA_type_binding_
-    { x :: xs }
+    {    ( [x] )}
+| x = type_binding _2 = COMMA xs = right_flexible_list_COMMA_type_binding_
+    {    ( x :: xs )}
 
 reverse_left_flexible_list_BAR_match_branch_:
 | 
-    { [] }
-| x001 = raw_normal_pattern _menhir_p00 = ARROW x0000 = raw_tuple_or_raw_fragile_expression_
+    {    ( [] )}
+| x001 = raw_normal_pattern _20 = ARROW x0000 = raw_tuple_or_raw_fragile_expression_
     {let x =
-  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos__2_ = _startpos__20_ in
   let _startpos_x00_ = _startpos_x001_ in
   let _endpos_x000_ = _endpos_x0000_ in
   let _startpos_x000_ = _startpos_x0000_ in
   let x000 = x0000 in
-  let _menhir_p0 = _menhir_p00 in
+  let _2 = _20 in
   let x00 = x001 in
   let e =
     let _startpos_x00_ = _startpos_x000_ in
@@ -2929,34 +2955,34 @@ reverse_left_flexible_list_BAR_match_branch_:
         let _startpos_x_ = _startpos_x0_ in
         let _endpos_x_ = _endpos_x0_ in
         let x = x0 in
-        ( ELocated (x, ($startpos(x), $endpos(x))) )
+        (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
       in
-      ( e )
+      (    ( e ))
     in
-    ( e )
+    (    ( e ))
   in
   let p =
-    let _endpos = _startpos__menhir_p0_ in
+    let _endpos = _startpos__2_ in
     let _startpos_x0_ = _startpos_x00_ in
     let x0 = x00 in
     let p =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( PLocated (x, ($startpos(x), $endpos)) )
+      (    ( PLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( p )
+    (    ( p ))
   in
-  ( p, e )
+  (    ( p, e ))
 in
- [x] }
-| xs = reverse_left_flexible_list_BAR_match_branch_ BAR x001 = raw_normal_pattern _menhir_p00 = ARROW x0000 = raw_tuple_or_raw_fragile_expression_
+    ( [x] )}
+| xs = reverse_left_flexible_list_BAR_match_branch_ _2 = BAR x001 = raw_normal_pattern _20 = ARROW x0000 = raw_tuple_or_raw_fragile_expression_
     {let x =
-  let _startpos__menhir_p0_ = _startpos__menhir_p00_ in
+  let _startpos__2_ = _startpos__20_ in
   let _startpos_x00_ = _startpos_x001_ in
   let _endpos_x000_ = _endpos_x0000_ in
   let _startpos_x000_ = _startpos_x0000_ in
   let x000 = x0000 in
-  let _menhir_p0 = _menhir_p00 in
+  let _2 = _20 in
   let x00 = x001 in
   let e =
     let _startpos_x00_ = _startpos_x000_ in
@@ -2970,94 +2996,101 @@ in
         let _startpos_x_ = _startpos_x0_ in
         let _endpos_x_ = _endpos_x0_ in
         let x = x0 in
-        ( ELocated (x, ($startpos(x), $endpos(x))) )
+        (    ( ELocated (x, (_startpos_x_, _endpos_x_)) ))
       in
-      ( e )
+      (    ( e ))
     in
-    ( e )
+    (    ( e ))
   in
   let p =
-    let _endpos = _startpos__menhir_p0_ in
+    let _endpos = _startpos__2_ in
     let _startpos_x0_ = _startpos_x00_ in
     let x0 = x00 in
     let p =
       let _startpos_x_ = _startpos_x0_ in
       let x = x0 in
-      ( PLocated (x, ($startpos(x), $endpos)) )
+      (    ( PLocated (x, (_startpos_x_, _endpos)) ))
     in
-    ( p )
+    (    ( p ))
   in
-  ( p, e )
+  (    ( p, e ))
 in
- x :: xs }
+    ( x :: xs )}
 
 interface_item:
-| DATA defs00 = separated_nonempty_list_AND_concrete_data_type_def_
+| _100 = DATA defs00 = separated_nonempty_list_AND_concrete_data_type_def_
     {let item =
   let _startpos_defs0_ = _startpos_defs00_ in
   let defs0 = defs00 in
+  let _10 = _100 in
   let g =
     let _startpos_defs_ = _startpos_defs0_ in
     let defs = defs0 in
-    ( ($startpos(defs), $endpos), Recursive, defs )
+    let _1 = _10 in
+    (    ( (_startpos_defs_, _endpos), Recursive, defs ))
   in
-  ( DataTypeGroup g )
+  (    ( DataTypeGroup g ))
 in
- item }
-| ABSTRACT def00 = abstract_data_type_def
+    ( item )}
+| _100 = ABSTRACT def00 = abstract_data_type_def
     {let item =
   let _startpos_def0_ = _startpos_def00_ in
   let def0 = def00 in
+  let _10 = _100 in
   let g =
     let _startpos_def_ = _startpos_def0_ in
     let def = def0 in
-    ( ($startpos(def), $endpos), Nonrecursive, [def] )
+    let _1 = _10 in
+    (    ( (_startpos_def_, _endpos), Nonrecursive, [def] ))
   in
-  ( DataTypeGroup g )
+  (    ( DataTypeGroup g ))
 in
- item }
-| ALIAS def00 = abbreviation_def
+    ( item )}
+| _100 = ALIAS def00 = abbreviation_def
     {let item =
   let _startpos_def0_ = _startpos_def00_ in
   let def0 = def00 in
+  let _10 = _100 in
   let g =
     let _startpos_def_ = _startpos_def0_ in
     let def = def0 in
-    ( ($startpos(def), $endpos), Nonrecursive, [def] )
+    let _1 = _10 in
+    (    ( (_startpos_def_, _endpos), Nonrecursive, [def] ))
   in
-  ( DataTypeGroup g )
+  (    ( DataTypeGroup g ))
 in
- item }
+    ( item )}
 | item = value_declaration
-    { item }
-| OPEN name00 = LIDENT
+    {    ( item )}
+| _10 = OPEN name00 = LIDENT
     {let item =
   let name0 = name00 in
+  let _1 = _10 in
   let m =
     let name = name0 in
-    ( Module.register name )
+    (    ( Module.register name ))
   in
-  ( OpenDirective m )
+  (    ( OpenDirective m ))
 in
- item }
+    ( item )}
 
 interface:
-| items = list_interface_item_ EOF
-    { items }
+| items = list_interface_item_ _2 = EOF
+    {  ( items )}
 
 flag:
-| AT
-    { ClFlags.CError }
-| MINUS
-    { ClFlags.CSilent }
-| PLUS
-    { ClFlags.CWarning }
+| _1 = AT
+    {  ( ClFlags.CError )}
+| _1 = MINUS
+    {  ( ClFlags.CSilent )}
+| _1 = PLUS
+    {  ( ClFlags.CWarning )}
 
 range:
 | i = INT
-    { i, i }
-| i = INT DOT DOT j = INT
-    { i, j }
+    {  ( i, i )}
+| i = INT _2 = DOT _3 = DOT j = INT
+    {  ( i, j )}
 
 %%
 

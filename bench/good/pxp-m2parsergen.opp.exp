@@ -33,137 +33,137 @@ Warning: the token Space is unused.
 %%
 
 text:
-| declarations rules
-    { { text_decls = $1; text_rules = $2; } }
+| _1 = declarations _2 = rules
+    {    ( { text_decls = _1; text_rules = _2; } )}
 
 declarations:
-| declaration declarations
-    { $1 :: $2 }
-| Separator
-    { [] }
+| _1 = declaration _2 = declarations
+    {    ( _1 :: _2 )}
+| _1 = Separator
+    {    ( [] )}
 
 declaration:
-| Token Uname
-    { D_token $2 }
-| Token Type Uname
-    { D_typed_token $3 }
+| _1 = Token _2 = Uname
+    {    ( D_token _2 )}
+| _1 = Token _2 = Type _3 = Uname
+    {    ( D_typed_token _3 )}
 
 rules:
-| rule rules
-    { $1 :: $2 }
-| Separator
-    { [] }
+| _1 = rule _2 = rules
+    {    ( _1 :: _2 )}
+| _1 = Separator
+    {    ( [] )}
 
 rule:
-| Lname Lparen formal_arguments Colon branches
-    { { rule_name = $1;
-	rule_arguments = $3;
-	rule_branches = $5;
+| _1 = Lname _2 = Lparen _3 = formal_arguments _4 = Colon _5 = branches
+    {    ( { rule_name = _1;
+	rule_arguments = _3;
+	rule_branches = _5;
       }
-    }
+    )}
 
 formal_arguments:
-| Rparen
-    { [] }
-| Lname comma_formal_arguments
-    { $1 :: $2 }
+| _1 = Rparen
+    {    ( [] )}
+| _1 = Lname _2 = comma_formal_arguments
+    {    ( _1 :: _2 )}
 
 comma_formal_arguments:
-| Comma Lname comma_formal_arguments
-    { $2 :: $3 }
-| Rparen
-    { [] }
+| _1 = Comma _2 = Lname _3 = comma_formal_arguments
+    {    ( _2 :: _3 )}
+| _1 = Rparen
+    {    ( [] )}
 
 branches:
-| branch alt_branches
-    { $1 :: $2 }
+| _1 = branch _2 = alt_branches
+    {    ( _1 :: _2 )}
 
 alt_branches:
-| Alt branch alt_branches
-    { $2 :: $3 }
+| _1 = Alt _2 = branch _3 = alt_branches
+    {    ( _2 :: _3 )}
 | 
-    { [] }
+    {    ( [] )}
 
 branch:
-| simple_branch
-    { $1 }
-| Dollar Code simple_branch
-    { { $3 with branch_early_code = $2 } }
+| _1 = simple_branch
+    {    ( _1 )}
+| _1 = Dollar _2 = Code _3 = simple_branch
+    {    ( { _3 with branch_early_code = _2 } )}
 
 simple_branch:
-| symbol Dollar Code patterns Code opt_error_handler
-    { { branch_selector = $1;
+| _1 = symbol _2 = Dollar _3 = Code _4 = patterns _5 = Code _6 = opt_error_handler
+    {    ( { branch_selector = _1;
         branch_early_code = ("",0,0);
-	branch_binding_code = $3;
-	branch_pattern = $4;
-	branch_result_code = $5;
-	branch_error_code = $6;
+	branch_binding_code = _3;
+	branch_pattern = _4;
+	branch_result_code = _5;
+	branch_error_code = _6;
       }
-    }
-| symbol patterns Code opt_error_handler
-    { { branch_selector = $1;
+    )}
+| _1 = symbol _2 = patterns _3 = Code _4 = opt_error_handler
+    {    ( { branch_selector = _1;
         branch_early_code = ("",0,0);
 	branch_binding_code = ("", 0, 0);
-	branch_pattern = $2;
-	branch_result_code = $3;
-	branch_error_code = $4;
+	branch_pattern = _2;
+	branch_result_code = _3;
+	branch_error_code = _4;
       }
-    }
+    )}
 
 patterns:
-| pattern patterns
-    { $1 :: $2 }
+| _1 = pattern _2 = patterns
+    {    ( _1 :: _2 )}
 | 
-    { [] }
+    {    ( [] )}
 
 pattern:
-| symbol Loop_star
-    { { pat_symbol = $1;
+| _1 = symbol _2 = Loop_star
+    {    ( { pat_symbol = _1;
 	pat_modifier = Repetition;
       }
-    }
-| symbol Error
-    { { pat_symbol = $1;
+    )}
+| _1 = symbol _2 = Error
+    {    ( { pat_symbol = _1;
 	pat_modifier = Option;
       }
-    }
-| symbol
-    { { pat_symbol = $1;
+    )}
+| _1 = symbol
+    {    ( { pat_symbol = _1;
 	pat_modifier = Exact;
       }
-    }
+    )}
 
 symbol:
-| Lname Colon Uname
-    { U_symbol($3, Some $1) }
-| Lname Colon Lname Lparen actual_arguments
-    { L_symbol($3, $5, Some $1) }
-| Lname Colon Lbracket Lname Rbracket Lparen actual_arguments
-    { L_indirect($4, $7, Some $1) }
-| Uname
-    { U_symbol($1, None) }
-| Lname Lparen actual_arguments
-    { L_symbol($1, $3, None) }
-| Lbracket Lname Rbracket Lparen actual_arguments
-    { L_indirect($2, $5, None) }
+| _1 = Lname _2 = Colon _3 = Uname
+    {    ( U_symbol(_3, Some _1) )}
+| _1 = Lname _2 = Colon _3 = Lname _4 = Lparen _5 = actual_arguments
+    {    ( L_symbol(_3, _5, Some _1) )}
+| _1 = Lname _2 = Colon _3 = Lbracket _4 = Lname _5 = Rbracket _6 = Lparen _7 = actual_arguments
+    {    ( L_indirect(_4, _7, Some _1) )}
+| _1 = Uname
+    {    ( U_symbol(_1, None) )}
+| _1 = Lname _2 = Lparen _3 = actual_arguments
+    {    ( L_symbol(_1, _3, None) )}
+| _1 = Lbracket _2 = Lname _3 = Rbracket _4 = Lparen _5 = actual_arguments
+    {    ( L_indirect(_2, _5, None) )}
 
 actual_arguments:
-| Rparen
-    { [] }
-| Lname comma_actual_arguments
-    { $1 :: $2 }
+| _1 = Rparen
+    {    ( [] )}
+| _1 = Lname _2 = comma_actual_arguments
+    {    ( _1 :: _2 )}
 
 comma_actual_arguments:
-| Rparen
-    { [] }
-| Comma Lname comma_actual_arguments
-    { $2 :: $3 }
+| _1 = Rparen
+    {    ( [] )}
+| _1 = Comma _2 = Lname _3 = comma_actual_arguments
+    {    ( _2 :: _3 )}
 
 opt_error_handler:
-| Error Code
-    { Some $2 }
+| _1 = Error _2 = Code
+    {    ( Some _2 )}
 | 
-    { None }
+    {    ( None )}
 
 %%
 

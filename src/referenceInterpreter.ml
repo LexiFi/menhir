@@ -232,12 +232,7 @@ let interpret log nt lexer lexbuf =
 
   (* Find the start state that corresponds to [nt] in the automaton. *)
 
-  let s : Lr1.node =
-    try
-      ProductionMap.find (Production.startsymbol2startprod nt) Lr1.entry
-    with Not_found ->
-      assert false
-  in
+  let s = Lr1.entry_nt nt in
 
   (* Run the engine. *)
   

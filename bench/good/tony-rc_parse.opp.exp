@@ -19,42 +19,42 @@ open Rc_ast
 %%
 
 rcfile:
-| rclines EOF
-    { $1            }
+| _1 = rclines _2 = EOF
+    {                                                ( _1            )}
 
 rclines:
 | 
-    { empty         }
-| rclines rcline
-    { let (id,rc) = $2 in
-                                                  add id rc $1
-                                                }
+    {                                                ( empty         )}
+| _1 = rclines _2 = rcline
+    {                                                ( let (id,rc) = _2 in
+                                                  add id rc _1
+                                                )}
 
 rcline:
-| ID EQUAL value
-    { ($1,$3)       }
-| ID EQUAL values
-    { ($1,RClist(List.rev $3))  }
+| _1 = ID _2 = EQUAL _3 = value
+    {                                                ( (_1,_3)       )}
+| _1 = ID _2 = EQUAL _3 = values
+    {                                                ( (_1,RClist(List.rev _3))  )}
 
 value:
-| ID
-    { RCstr($1)     }
-| STR
-    { RCstr($1)     }
-| TRUE
-    { RCbool(true)  }
-| FALSE
-    { RCbool(false) }
-| INT
-    { RCint($1)     }
-| FLOAT
-    { RCfloat($1)   }
+| _1 = ID
+    {                                                ( RCstr(_1)     )}
+| _1 = STR
+    {                                                ( RCstr(_1)     )}
+| _1 = TRUE
+    {                                                ( RCbool(true)  )}
+| _1 = FALSE
+    {                                                ( RCbool(false) )}
+| _1 = INT
+    {                                                ( RCint(_1)     )}
+| _1 = FLOAT
+    {                                                ( RCfloat(_1)   )}
 
 values:
-| value COMMA value
-    { [$3  ; $1]    }
-| values COMMA value
-    {  $3 :: $1     }
+| _1 = value _2 = COMMA _3 = value
+    {                                                ( [_3  ; _1]    )}
+| _1 = values _2 = COMMA _3 = value
+    {                                                (  _3 :: _1     )}
 
 %%
 

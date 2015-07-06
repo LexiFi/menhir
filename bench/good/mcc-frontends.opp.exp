@@ -15,50 +15,50 @@ Warning: the token TokSemi is unused.
 %%
 
 main:
-| section_list TokEof
-    { $1 }
+| _1 = section_list _2 = TokEof
+    {                              ( _1 )}
 
 section_list:
-| section_list_rev
-    { List.rev $1 }
+| _1 = section_list_rev
+    {                              ( List.rev _1 )}
 
 section_list_rev:
-| section
-    { [$1] }
-| section_list_rev section
-    { $2 :: $1 }
+| _1 = section
+    {                              ( [_1] )}
+| _1 = section_list_rev _2 = section
+    {                              ( _2 :: _1 )}
 
 section:
-| TokLeftBrack identifier TokRightBrack assignment_list
-    { $2, $4 }
+| _1 = TokLeftBrack _2 = identifier _3 = TokRightBrack _4 = assignment_list
+    {                              ( _2, _4 )}
 
 assignment_list:
-| assignment_list_rev
-    { List.rev $1 }
+| _1 = assignment_list_rev
+    {                              ( List.rev _1 )}
 
 assignment_list_rev:
-| assignment
-    { [$1] }
-| assignment_list_rev assignment
-    { $2 :: $1 }
+| _1 = assignment
+    {                              ( [_1] )}
+| _1 = assignment_list_rev _2 = assignment
+    {                              ( _2 :: _1 )}
 
 assignment:
-| identifier TokEq string_list
-    { $1, $3 }
+| _1 = identifier _2 = TokEq _3 = string_list
+    {                              ( _1, _3 )}
 
 string_list:
-| string_list_rev
-    { List.rev $1 }
+| _1 = string_list_rev
+    {                              ( List.rev _1 )}
 
 string_list_rev:
-| TokString
-    { [$1] }
-| string_list_rev TokComma TokString
-    { $3 :: $1 }
+| _1 = TokString
+    {                              ( [_1] )}
+| _1 = string_list_rev _2 = TokComma _3 = TokString
+    {                              ( _3 :: _1 )}
 
 identifier:
-| TokId
-    { $1 }
+| _1 = TokId
+    {                              ( _1 )}
 
 %%
 
