@@ -275,7 +275,8 @@ module Make (T : TABLE) = struct
   (* Here, the lookahead token CAN be [error]. *)
 
   and initiate env =
-    Log.initiating_error_handling();
+    if log then
+      Log.initiating_error_handling();
     let env = { env with error = true } in
     HandlingError env
 
@@ -304,14 +305,16 @@ module Make (T : TABLE) = struct
 
     (* This state is capable of shifting the [error] token. *)
 
-    Log.handling_error env.current;
+    if log then
+      Log.handling_error env.current;
     shift env please_discard terminal value s'
 
   and error_reduce env prod =
 
     (* This state is capable of performing a reduction on [error]. *)
 
-    Log.handling_error env.current;
+    if log then
+      Log.handling_error env.current;
     reduce env prod
       (* Intentionally calling [reduce] instead of [announce_reduce].
          It does not seem very useful, and it could be confusing, to

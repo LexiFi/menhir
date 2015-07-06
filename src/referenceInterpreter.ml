@@ -158,87 +158,68 @@ module T = struct
         next = !stack
       }
 
-  let log = true
+  (* The logging functions that follow are called only if [log] is [true]. *)
 
   module Log = struct
 
     open Printf
 
-    (* I use a reference as a quick and dirty form of parameter passing. *)
-
-    let log =
-      ref false
-
-    let maybe action =
-      if !log then begin
-	action();
-	prerr_newline()
-      end
-
     let state s =
-      maybe (fun () ->
-	fprintf stderr "State %d:" (Lr1.number s)
-      )
+      fprintf stderr "State %d:" (Lr1.number s);
+      prerr_newline()
 
     let shift tok s' =
-      maybe (fun () ->
-	fprintf stderr "Shifting (%s) to state %d" (Terminal.print tok) (Lr1.number s')
-      )
+      fprintf stderr "Shifting (%s) to state %d" (Terminal.print tok) (Lr1.number s');
+      prerr_newline()
 
     let reduce_or_accept prod =
-      maybe (fun () ->
-	match Production.classify prod with
-	| Some _ ->
-	    fprintf stderr "Accepting"
-	| None ->
-	    fprintf stderr "Reducing production %s" (Production.print prod)
-      )
+      match Production.classify prod with
+      | Some _ ->
+         fprintf stderr "Accepting";
+         prerr_newline()
+      | None ->
+         fprintf stderr "Reducing production %s" (Production.print prod);
+         prerr_newline()
 
     let lookahead_token tok startp endp =
-      maybe (fun () ->
-	fprintf stderr "Lookahead token is now %s (%d-%d)"
-	  (Terminal.print tok)
-	  startp.Lexing.pos_cnum
-	  endp.Lexing.pos_cnum
-      )
+      fprintf stderr "Lookahead token is now %s (%d-%d)"
+        (Terminal.print tok)
+        startp.Lexing.pos_cnum
+        endp.Lexing.pos_cnum;
+      prerr_newline()
 
     let initiating_error_handling () =
-      maybe (fun () ->
-	fprintf stderr "Initiating error handling"
-      )
+      fprintf stderr "Initiating error handling";
+      prerr_newline()
 
     let resuming_error_handling () =
-      maybe (fun () ->
-	fprintf stderr "Resuming error handling"
-      )
+      fprintf stderr "Resuming error handling";
+      prerr_newline()
 
     let handling_error s =
-      maybe (fun () ->
-	fprintf stderr "Handling error in state %d" (Lr1.number s)
-      )
+      fprintf stderr "Handling error in state %d" (Lr1.number s);
+      prerr_newline()
 
   end
 
 end
 
-(* Instantiate the LR engine with this information. *)
-
-module E =
-  MenhirLib.Engine.Make (T)
-
 (* Define a palatable user entry point. *)
 
 let interpret log nt lexer lexbuf =
 
-  (* Find the start state that corresponds to [nt] in the automaton. *)
+  (* Instantiate the LR engine. *)
 
-  let s = Lr1.entry_nt nt in
+  let module E =
+    MenhirLib.Engine.Make (struct
+      include T
+      let log = log
+    end)
+  in
 
-  (* Run the engine. *)
-  
+  (* Run it. *)
+
   try
-    T.Log.log := log;
-    Some (E.entry s lexer lexbuf)
+    Some (E.entry (Lr1.entry_nt nt) lexer lexbuf)
   with T.Error ->
     None
-
