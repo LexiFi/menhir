@@ -101,10 +101,6 @@ val map: (node -> 'a) -> 'a list
 val foldx: ('a -> node -> 'a) -> 'a -> 'a
 val iterx: (node -> unit) -> unit
 
-(* Breadth-first iteration over all edges. See [Breadth]. *)
-
-val bfs: (bool -> node -> Symbol.t -> node -> unit) -> unit
-
 (* Iteration over all edges that carry a certain symbol. Edges are
    grouped in families, where all edges in a single family have the
    same target node. [targets f accu symbol] invokes [f accu sources
