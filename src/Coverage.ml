@@ -22,102 +22,17 @@
    - If the grammar has conflicts, conflict resolution removes some
      (shift or reduce) actions, hence may suppress the shortest path. *)
 
+(* TEMPORARY explain how we approach the problem *)
+
 open Grammar
 
-(* Using [CompletedNatWitness] means that we wish to compute shortest paths.
-   An alternative would be to use [BooleanWitness], which offers the same
-   interface. That would mean we wish to compute an arbitrary path. That
-   would be faster, but the paths thus obtained are (according to a quick
-   experiment) really far from optimal. *)
-module P =
-  CompletedNatWitness
-       
-(* TEMPORARY avoid [error] token unless forced to use it *)
-(* TEMPORARY implement and exploit [Lr1.ImperativeNodeMap] using an array *)
+(* ------------------------------------------------------------------------ *)
 
-type property =
-  Terminal.t P.t
-
-(* This tests whether state [s] has a default reduction on [prod]. *)
-
-let has_default_reduction s prod =
-  match Invariant.has_default_reduction s with
-  | Some (prod', _) ->
-      prod = prod'
-  | None ->
-      false
-
-(* This tests whether state [s] is willing to reduce production [prod]
-   when the lookahead symbol is [z]. This test takes a possible default
-   reduction into account. *)
-
-let reductions s z =
-  try
-    TerminalMap.find z (Lr1.reductions s)
-  with Not_found ->
-    []
-
-let has_reduction s prod z : bool =
-  has_default_reduction s prod ||
-  List.mem prod (reductions s z)
-
-(* This tests whether state [s] has an outgoing transition labeled [sym].
-   If so, [s'] is passed to the continuation [k]. Otherwise, [P.bottom] is
-   returned. *)
-
-let has_transition s sym k : property =
-  try
-    let s' = SymbolMap.find sym (Lr1.transitions s) in
-    k s'
-  with Not_found ->
-    P.bottom
-
-(* This tests whether state [s] will initiate an error on the lookahead
-   symbol [z]. *)
-
-let causes_an_error s z =
-  not (Terminal.equal z Terminal.error) &&
-  match Invariant.has_default_reduction s with
-  | Some _ ->
-      false
-  | None ->
-      reductions s z = [] &&
-      not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
-
-(* This computes [FIRST(alpha.z)], where [alpha] is the suffix determined
-   by [prod] and [i]. *)
-
-let first prod i z =
-  let nullable, first = Analysis.nullable_first_prod prod i in
-  if nullable then
-    TerminalSet.add z first
-  else
-    first
-
-(* This computes a minimum over a set of terminal symbols. *)
-
-let foreach_terminal_in toks (f : Terminal.t -> property) : property =
-  TerminalSet.fold (fun t accu ->
-    P.min_lazy accu (fun () -> f t)
-  ) toks P.bottom
-
-let foreach_terminal_until_finite (f : Terminal.t -> property) : property =
-  Terminal.fold (fun t accu ->
-    (* We stop as soon as we obtain a finite result. *)
-    P.until_finite accu (fun () -> f t)
-  ) P.bottom
-
-(* This computes a minimum over the productions associated with [nt]. *)
-
-let foreach_production nt (f : Production.index -> property) : property =
-  Production.foldnt nt P.bottom (fun prod accu ->
-    P.min_lazy accu (fun () -> f prod)
-  )
-
-(* The automaton, viewed as a graph, whose vertices are states.
-   We label each edge with the minimum length of a word that it
-   generates. This allows us to compute a lower bound on the
-   distance to every state from any entry state. *)
+(* First, we implement the computation of forward shortest paths in the
+   automaton. We view the automaton as a graph whose vertices are states. We
+   label each edge with the minimum length of a word that it generates. This
+   yields a lower bound on the actual distance to every state from any entry
+   state. *)
 
 module ForwardAutomaton = struct
 
@@ -141,7 +56,9 @@ module ForwardAutomaton = struct
 
   let successors edge s =
     SymbolMap.iter (fun sym s' ->
-      edge (P.to_int (Analysis.minimal_symbol sym)) s'
+      (* The weight of the edge from [s] to [s'] is given by the function
+         [Grammar.Analysis.minimal_symbol]. *)
+      edge (CompletedNatWitness.to_int (Analysis.minimal_symbol sym)) s'
     ) (Lr1.transitions s)
 
 end
@@ -150,11 +67,97 @@ let approximate : Lr1.node -> int =
   let module D = Dijkstra.Make(ForwardAutomaton) in
   D.search (fun (_, _, _) -> ())
 
+(* Test. TEMPORARY *)
+
 let () =
   Lr1.iter (fun s ->
     Printf.fprintf stderr
       "State %d is at least %d steps away from an initial state.\n%!"
       (Lr1.number s) (approximate s)
+  )
+
+(* ------------------------------------------------------------------------ *)
+
+(* Auxiliary functions. *)
+
+(* This tests whether state [s] has a default reduction on [prod]. *)
+
+let has_default_reduction_on s prod =
+  match Invariant.has_default_reduction s with
+  | Some (prod', _) ->
+      prod = prod'
+  | None ->
+      false
+
+(* This returns the list of reductions of [state] on token [z]. This
+   should be a list of zero or one elements. *)
+
+let reductions s z =
+  try
+    TerminalMap.find z (Lr1.reductions s)
+  with Not_found ->
+    []
+
+(* This tests whether state [s] is willing to reduce production [prod]
+   when the lookahead symbol is [z]. This test takes a possible default
+   reduction into account. *)
+
+let has_reduction s prod z : bool =
+  has_default_reduction_on s prod ||
+  List.mem prod (reductions s z)
+
+(* This tests whether state [s] will initiate an error on the lookahead
+   symbol [z]. *)
+
+let causes_an_error s z =
+  not (Terminal.equal z Terminal.error) &&
+  match Invariant.has_default_reduction s with
+  | Some _ ->
+      false
+  | None ->
+      reductions s z = [] &&
+      not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
+
+(* Using [CompletedNatWitness] means that we wish to compute shortest paths.
+   An alternative would be to use [BooleanWitness], which offers the same
+   interface. That would mean we wish to compute an arbitrary path. That
+   would be faster, but the paths thus obtained are (according to a quick
+   experiment) really far from optimal. *)
+module P =
+  CompletedNatWitness
+       
+type property =
+  Terminal.t P.t
+
+(* This tests whether state [s] has an outgoing transition labeled [sym].
+   If so, [s'] is passed to the continuation [k]. Otherwise, [P.bottom] is
+   returned. *)
+
+let has_transition s sym k : property =
+  try
+    let s' = SymbolMap.find sym (Lr1.transitions s) in
+    k s'
+  with Not_found ->
+    P.bottom
+
+(* This computes a minimum over a set of terminal symbols. *)
+
+let foreach_terminal_in toks (f : Terminal.t -> property) : property =
+  TerminalSet.fold (fun t accu ->
+    P.min_lazy accu (fun () -> f t)
+  ) toks P.bottom
+
+let foreach_terminal_until_finite (f : Terminal.t -> property) : property =
+  Terminal.fold (fun t accu ->
+    (* We stop as soon as we obtain a finite result. *)
+    P.until_finite accu (fun () -> f t)
+  ) P.bottom
+
+(* This computes a minimum over the productions associated with [nt]. *)
+
+let foreach_production nt (f : Production.index -> property) : property =
+  Production.foldnt nt P.bottom (fun prod accu ->
+    P.min_lazy accu (fun () -> f prod)
   )
 
 (* A question takes the form [s, a, prod, i, z], as defined below.
@@ -211,6 +214,9 @@ end
 
 module QuestionMap =
   Map.Make(Question)
+
+let first =
+  Analysis.first_prod_lookahead
 
 (* The following function answers a question. This requires a fixed point
    computation. We have a certain amount of flexibility in how much
@@ -397,3 +403,6 @@ let () =
    also: first compute an optimistic path using the simple algorithm
    and check if this path is feasible in the real automaton
 *)
+(* TEMPORARY avoid [error] token unless forced to use it *)
+(* TEMPORARY implement and exploit [Lr1.ImperativeNodeMap] using an array *)
+(* TEMPORARY the code in this module should run only if --coverage is set *)

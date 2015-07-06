@@ -1249,6 +1249,13 @@ module Analysis = struct
     NULLABLE.production prod i,
     FIRST.production prod i
 
+  let first_prod_lookahead prod i z =
+    let first = FIRST.production prod i in
+    if NULLABLE.production prod i then
+      TerminalSet.add z first
+    else
+      first
+
   let explain_first_rhs (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
     convert (explain tok rhs i)
 

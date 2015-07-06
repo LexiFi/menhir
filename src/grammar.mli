@@ -389,6 +389,13 @@ module Analysis : sig
 
   val nullable_first_prod: Production.index -> int -> bool * TerminalSet.t
 
+  (* [first_prod_lookahead prod i t] computes [FIRST(alpha.t)], where [alpha]
+     is the suffix of the production defined by offset [i], and [t] is a
+     terminal symbol. The offset [i] must be contained between [0] and [n],
+     inclusive, where [n] is the length of production [prod]. *)
+
+  val first_prod_lookahead: Production.index -> int -> Terminal.t -> TerminalSet.t
+
   (* [explain_first_rhs tok rhs i] explains why the token [tok] appears
      in the FIRST set for the string of symbols found at offset [i] in
      the array [rhs]. *)
