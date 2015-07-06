@@ -132,11 +132,10 @@ let causes_an_error s z =
    would be faster, but (according to a quick experiment) the paths thus
    obtained would be really far from optimal. *)
 
-module P =
-  CompletedNatWitness
-
-type property =
-  Terminal.t P.t
+module P = struct
+  include CompletedNatWitness
+  type property = Terminal.t t
+end
 
 (* ------------------------------------------------------------------------ *)
 
@@ -146,7 +145,7 @@ type property =
    If so, [s'] is passed to the continuation [k]. Otherwise, [P.bottom] is
    returned. *)
 
-let has_transition s sym k : property =
+let has_transition s sym k : P.property =
   try
     let s' = SymbolMap.find sym (Lr1.transitions s) in
     k s'
@@ -155,7 +154,7 @@ let has_transition s sym k : property =
 
 (* This computes a minimum over a set of terminal symbols. *)
 
-let foreach_terminal_in toks (f : Terminal.t -> property) : property =
+let foreach_terminal_in toks (f : Terminal.t -> P.property) : P.property =
   TerminalSet.fold (fun t accu ->
     (* Using [min_lazy] allows stopping if we find a path of length 0.
        This is just an optimization. *)
@@ -165,7 +164,7 @@ let foreach_terminal_in toks (f : Terminal.t -> property) : property =
 (* This is analogous to [foreach_terminal_in], but stops as soon as a
    finite value is reached, i.e., as soon as one path is found. *)
 
-let foreach_terminal_until_finite (f : Terminal.t -> property) : property =
+let foreach_terminal_until_finite (f : Terminal.t -> P.property) : P.property =
   Terminal.fold (fun t accu ->
     (* We stop as soon as we obtain a finite result. *)
     P.until_finite accu (fun () -> f t)
@@ -173,7 +172,7 @@ let foreach_terminal_until_finite (f : Terminal.t -> property) : property =
 
 (* This computes a minimum over the productions associated with [nt]. *)
 
-let foreach_production nt (f : Production.index -> property) : property =
+let foreach_production nt (f : Production.index -> P.property) : P.property =
   Production.foldnt nt P.bottom (fun prod accu ->
     (* Using [min_lazy] allows stopping if we find a path of length 0.
        This is just an optimization. *)
@@ -256,12 +255,15 @@ module QuestionMap =
 let first =
   Analysis.first_prod_lookahead
 
-(* The following function answers a question. This requires a fixed point
-   computation. We have a certain amount of flexibility in how much
-   information we memoize; if we use a recursive call to [answer], we
-   re-compute; if we use a call to [get], we memoize. *)
+(* The following function defines the analysis. *)
 
-let answer (q : question) (get : question -> property) : property =
+(* We have a certain amount of flexibility in how much information we memoize;
+   if we use a recursive call to [answer], we re-compute; if we use a call to
+   [get], we memoize. As long as every direct recursive call is decreasing,
+   either choice is acceptable. A quick experiment suggests that memoization
+   everywhere is cost-effective. *)
+
+let answer (q : question) (get : question -> P.property) : P.property =
 
   let rhs = Production.rhs q.prod in
   let n = Array.length rhs in
@@ -297,12 +299,11 @@ let answer (q : question) (get : question -> property) : property =
       match sym with
       | Symbol.T t ->
 
-          (* Case 2a. [sym] is a terminal symbol [t]. Our precondition
-             implies that [t] is equal to [a]. [w] must begin with [a]
-             The rest must be some word [w'] such that, by starting from
-             [s'] and by reading [w'], we reach our goal. The first letter
-             in [w'] could be any terminal symbol [c], so we try all of
-             them. *)
+          (* Case 2a. [sym] is a terminal symbol [t]. Our precondition implies
+             that [t] is equal to [a]. [w] must begin with [a]. The rest must
+             be some word [w'] such that, by starting from [s'] and by reading
+             [w'], we reach our goal. The first letter in [w'] could be any
+             terminal symbol [c], so we try all of them. *)
 
           assert (Terminal.equal q.a t); (* per our precondition *)
           P.add (P.singleton q.a) (
@@ -314,11 +315,11 @@ let answer (q : question) (get : question -> property) : property =
       | Symbol.N nt ->
 
           (* Case 2b. [sym] is a nonterminal symbol [nt]. For each letter [c],
-             for each production [prod'] associated with [nt], we must
-             concatenate: 1- a word that takes us from [s], beginning with [a],
-             to a state where we can reduce [prod'], looking at [c]; and 2- a
-             word that takes us from [s'], beginning with [c], to a state where
-             we reach our original goal. *)
+             for each production [prod'] associated with [nt], we concatenate:
+             1- a word that takes us from [s], beginning with [a], to a state
+                where we can reduce [prod'], looking at [c];
+             2- a word that takes us from [s'], beginning with [c], to a state
+                where we reach our original goal. *)
 
           foreach_terminal_in (first q.prod (q.i + 1) q.z) (fun c ->
             foreach_production nt (fun prod' ->
@@ -335,7 +336,7 @@ let answer (q : question) (get : question -> property) : property =
 
   end
 
-(* Debugging wrapper. TEMPORARY *)
+(* Debugging. TEMPORARY *)
 let qs = ref 0
 let answer q get =
   incr qs;
@@ -343,21 +344,33 @@ let answer q get =
     Printf.fprintf stderr "qs = %d\n%!" !qs;
   answer q get
 
+(* The fixed point. *)
+
 module F =
   Fix.Make
     (Maps.PersistentMapsToImperativeMaps(QuestionMap))
-    (struct
-      include P
-      type property = Terminal.t t
-     end)
+    (P)
 
-let answer : question -> property =
+let answer : question -> P.property =
   F.lfp answer
 
+(* ------------------------------------------------------------------------ *)
+
+(* We now wish to determine, given a state [s'] and a terminal symbol [z],
+   a minimal path that takes us from some entry state to state [s'] with
+   [z] as the next (unconsumed) symbol. *)
+
+(* This can be formulated as a search for a shortest path in a graph. The
+   graph is not just the automaton, though. It is a (much) larger graph
+   whose vertices are pairs [s, z] and whose edges are obtained by calling
+   the expensive analysis above. Because we perform a backward search, from
+   [s', z] to any entry state, we use reverse edges, from a state to its
+   predecessors in the automaton. *)
+
+(* Debugging. TEMPORARY *)
 let es = ref 0
 
-exception Success of property
-let backward (s', z) : property =
+let backward (s', z) : P.property =
   let module G = struct
     type vertex = Lr1.node * Terminal.t
     let equal (s'1, z1) (s'2, z2) =
@@ -389,6 +402,7 @@ let backward (s', z) : property =
           ) (Lr1.predecessors s')
   end in
   let module D = Dijkstra.Make(G) in
+  let module S = struct exception Success of P.property end in
   try
     let _ = D.search (fun (distance, (v', _), path) ->
       incr es;
@@ -396,13 +410,13 @@ let backward (s', z) : property =
         Printf.fprintf stderr "es = %d\n%!" !es;
       if Lr1.incoming_symbol v' = None then
         let path = List.map snd path in
-        raise (Success (P.Finite (distance, Seq.concat path))) (* TEMPORARY keep path *)
+        raise (S.Success (P.Finite (distance, Seq.concat path))) (* TEMPORARY keep path *)
     ) in
     P.bottom
-  with Success p ->
+  with S.Success p ->
     p
 
-let backward s' : property =
+let backward s' : P.property =
   
   Printf.fprintf stderr
     "Attempting to reach an error in state %d:\n%!"
@@ -444,3 +458,4 @@ let () =
 (* TEMPORARY avoid [error] token unless forced to use it *)
 (* TEMPORARY implement and exploit [Lr1.ImperativeNodeMap] using an array *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
+(* TEMPORARY gain a constant factor by memoizing [nullable_first_prod]? *)
