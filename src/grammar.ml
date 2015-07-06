@@ -277,6 +277,18 @@ module TerminalSet = struct
       )
     )
 
+  (* The following definitions are used in the computation of FIRST sets
+     below. They are not exported outside of this file. *)
+
+  type property =
+    t
+
+  let bottom =
+    empty
+
+  let is_maximal _ =
+    false
+
 end
 
 (* Maps over terminals. *)
@@ -492,6 +504,18 @@ module Production = struct
     in
     loop accu k
 
+  (* This funny variant is lazy. If at some point [f] does not demand its
+     second argument, then iteration stops. *)
+  let foldnt_lazy (nt : Nonterminal.t) (f : index -> 'a Lazy.t -> 'a) (seed : 'a) : 'a =
+    let k, k' = ntprods.(nt) in
+    let rec loop prod seed =
+      if prod < k' then
+        f prod (lazy (loop (prod + 1) seed))
+      else
+        seed
+    in
+    loop k seed
+
   (* Accessors. *)
 
   let def prod =
@@ -666,37 +690,32 @@ module ProductionMap = struct
 end
 
 (* ------------------------------------------------------------------------ *)
-(* Build the grammar's forward and backward reference graphs.
-
-   In the backward reference graph, edges relate each nonterminal [nt]
-   to each of the nonterminals whose definition mentions [nt]. The
-   reverse reference graph is used in the computation of the nullable,
-   nonempty, and FIRST sets.
-
-   The forward reference graph is unused but can be printed on demand. *)
-
-let forward : NonterminalSet.t array =
-  Array.make Nonterminal.n NonterminalSet.empty
-
-let backward : NonterminalSet.t array =
-  Array.make Nonterminal.n NonterminalSet.empty
+(* If requested, build and print the forward reference graph of the grammar.
+   There is an edge of a nonterminal symbol [nt1] to every nonterminal symbol
+   [nt2] that occurs in the definition of [nt1]. *)
 
 let () =
-  Array.iter (fun (nt1, rhs) ->
-    Array.iter (function
-      | Symbol.T _ ->
-	  ()
-      | Symbol.N nt2 ->
-	  forward.(nt1) <- NonterminalSet.add nt2 forward.(nt1);
-	  backward.(nt2) <- NonterminalSet.add nt1 backward.(nt2)
-    ) rhs
-  ) Production.table
+  if Settings.graph then begin
 
-(* ------------------------------------------------------------------------ *)
-(* If requested, dump the forward reference graph. *)
+    (* Allocate. *)
 
-let () =
-  if Settings.graph then
+    let forward : NonterminalSet.t array =
+      Array.make Nonterminal.n NonterminalSet.empty
+    in
+
+    (* Populate. *)
+
+    Array.iter (fun (nt1, rhs) ->
+      Array.iter (function
+        | Symbol.T _ ->
+            ()
+        | Symbol.N nt2 ->
+            forward.(nt1) <- NonterminalSet.add nt2 forward.(nt1)
+      ) rhs
+    ) Production.table;
+
+    (* Print. *)
+
     let module P = Dot.Print (struct
       type vertex = Nonterminal.t
       let name nt =
@@ -714,37 +733,179 @@ let () =
     P.print f;
     close_out f
 
+  end
+
 (* ------------------------------------------------------------------------ *)
-(* Generic support for fixpoint computations.
+(* Support for analyses of the grammar, expressed as fixed point computations.
+   We exploit the generic fixed point algorithm in [Fix]. *)
 
-   A fixpoint computation associates a property with every nonterminal.
-   A monotone function tells how properties are computed. [compute nt]
-   updates the property associated with nonterminal [nt] and returns a
-   flag that tells whether the property actually needed an update. The
-   state of the computation is maintained entirely inside [compute] and
-   is invisible here.
+(* We perform memoization only at nonterminal symbols. We assume that the
+   analysis of a symbol is the analysis of its definition (as opposed to,
+   say, a computation that depends on the occurrences of this symbol in
+   the grammar). *)
 
-   Whenever a property of [nt] is updated, the properties of the
-   terminals whose definitions depend on [nt] are updated. The
-   dependency graph must be explicitly supplied. *)
+module GenericAnalysis
+  (P : Fix.PROPERTY)
+  (S : sig
+    open P
 
-let fixpoint (dependencies : NonterminalSet.t array) (compute : Nonterminal.t -> bool) : unit =
-  let queue : Nonterminal.t Queue.t = Queue.create () in
-  let onqueue : bool array = Array.make Nonterminal.n true in
-  for i = 0 to Nonterminal.n - 1 do
-    Queue.add i queue
-  done;
-  Misc.qiter (fun nt ->
-    onqueue.(nt) <- false;
-    let changed = compute nt in
-    if changed then
-      NonterminalSet.iter (fun nt ->
-	if not onqueue.(nt) then begin
-	  Queue.add nt queue;
-	  onqueue.(nt) <- true
-	end
-      ) dependencies.(nt)
-  ) queue
+    (* An analysis is specified by the following functions. *)
+
+    (* [terminal] maps a terminal symbol to a property. *)
+    val terminal: Terminal.t -> property
+    
+    (* [disjunction] abstracts a binary alternative. That is, when we analyze
+       an alternative between several productions, we compute a property for
+       each of them independently, then we combine these properties using
+       [disjunction]. *)
+    val disjunction: property -> property Lazy.t -> property
+
+    (* [P.bottom] should be a neutral element for [disjunction]. We use it in
+       the analysis of an alternative with zero branches. *)
+
+    (* [conjunction] abstracts a binary sequence. That is, when we analyze a
+       sequence, we compute a property for each member independently, then we
+       combine these properties using [conjunction]. In general, conjunction
+       needs access to the first member of the sequence (a symbol), not just
+       to its analysis (a property). *)
+    val conjunction: Symbol.t -> property -> property Lazy.t -> property
+
+    (* [epsilon] abstracts the empty sequence. It should be a neutral element
+       for [conjunction]. *)
+    val epsilon: property
+
+  end)
+: sig
+  open P
+
+  (* The results of the analysis take the following form. *)
+
+  (* To every nonterminal symbol, we associate a property. *)
+  val nonterminal: Nonterminal.t -> property
+
+  (* To every symbol, we associate a property. *)
+  val symbol: Symbol.t -> property
+
+  (* To every suffix of every production, we associate a property.
+     The offset [i], which determines the beginning of the suffix,
+     must be contained between [0] and [n], inclusive, where [n]
+     is the length of the production. *)
+  val production: Production.index -> int -> property
+
+end = struct
+  open P
+
+  (* The following analysis functions are parameterized over [get], which allows
+     making a recursive call to the analysis at a nonterminal symbol. [get] maps
+     a nonterminal symbol to a property. *)
+
+  (* Analysis of a symbol. *)
+
+  let symbol sym get : property =
+    match sym with
+    | Symbol.T tok ->
+        S.terminal tok
+    | Symbol.N nt ->
+        (* Recursive call to the analysis, via [get]. *)
+        get nt    
+
+  (* Analysis of (a suffix of) a production [prod], starting at index [i]. *)
+
+  let production prod i get : property =
+    let rhs = Production.rhs prod in
+    let n = Array.length rhs in
+    (* Conjunction over all symbols in the right-hand side. This can be viewed
+       as a version of [Array.fold_right], which does not necessarily begin at
+       index [0]. Note that, because [conjunction] is lazy, it is possible
+       to stop early. *)
+    let rec loop i =
+      if i = n then
+        S.epsilon
+      else
+        let sym = rhs.(i) in
+        S.conjunction sym
+          (symbol sym get)
+          (lazy (loop (i+1)))
+    in
+    loop i
+
+  (* The analysis is the least fixed point of the following function, which
+     analyzes a nonterminal symbol by looking up and analyzing its definition
+     as a disjunction of conjunctions of symbols. *)
+
+  let nonterminal nt get : property =
+    (* Disjunction over all productions for this nonterminal symbol. *)
+    Production.foldnt_lazy nt (fun prod rest ->
+      S.disjunction
+        (production prod 0 get)
+        rest
+    ) P.bottom
+
+  (* The least fixed point is taken as follows. Note that it is computed
+     on demand, as [lfp] is called by the user. *)
+
+  module F =
+    Fix.Make
+      (Maps.ConsecutiveIntegerKeysToImperativeMaps(Nonterminal))
+      (P)
+
+  let nonterminal =
+    F.lfp nonterminal
+
+  (* The auxiliary functions can be published too. *)
+
+  let symbol sym =
+    symbol sym nonterminal
+
+  let production prod i =
+    production prod i nonterminal
+
+end
+
+(* ------------------------------------------------------------------------ *)
+(* The computation of FOLLOW sets does not follow the above model. Instead, we
+   need to explicitly compute a system of equations over sets of terminal
+   symbols (in a first pass), then solve the constraints (in a second
+   pass). *)
+
+(* An equation's right-hand side is a set expression. *)
+
+type expr =
+| EVar of Nonterminal.t
+| EConstant of TerminalSet.t
+| EUnion of expr * expr
+
+(* A system of equations is represented as an array, which maps nonterminal
+   symbols to expressions. *)
+
+type equations =
+  expr array
+
+(* This solver computes the least solution of a set of equations. *)
+
+let solve (eqs : equations) : Nonterminal.t -> TerminalSet.t =
+
+  let rec expr e get =
+    match e with
+    | EVar nt ->
+        get nt
+    | EConstant c ->
+        c
+    | EUnion (e1, e2) ->
+        TerminalSet.union (expr e1 get) (expr e2 get)
+  in
+
+  let nonterminal nt get =
+    expr eqs.(nt) get
+  in
+
+  let module F =
+    Fix.Make
+      (Maps.ConsecutiveIntegerKeysToImperativeMaps(Nonterminal))
+      (TerminalSet)
+  in
+  
+  F.lfp nonterminal
 
 (* ------------------------------------------------------------------------ *)
 (* Compute which nonterminals are nonempty, that is, recognize a
@@ -753,80 +914,57 @@ let fixpoint (dependencies : NonterminalSet.t array) (compute : Nonterminal.t ->
    difference is in the base case: a single terminal symbol is not
    nullable, but is nonempty. *)
 
-let compute (basecase : bool) : (bool array) * (Symbol.t -> bool) =
-  let property : bool array =
-    Array.make Nonterminal.n false
-  in
-  let symbol_has_property = function
-    | Symbol.T _ ->
-	basecase
-    | Symbol.N nt ->
-	property.(nt)
-  in
-  fixpoint backward (fun nt ->
-    if property.(nt) then
-      false (* no change *)
-    else
-      (* disjunction over all productions for this nonterminal *)
-      let updated = Production.foldnt nt false (fun prod accu ->
-	accu ||
-	let rhs = Production.rhs prod in
-	(* conjunction over all symbols in the right-hand side *)
-	Array.fold_left (fun accu symbol ->
-	  accu && symbol_has_property symbol
-	) true rhs
-      ) in
-      property.(nt) <- updated;
-      updated
-  );
-  property, symbol_has_property
+module NONEMPTY =
+  GenericAnalysis
+    (Boolean)
+    (struct
+      (* A terminal symbol is nonempty. *)
+      let terminal _ = true
+      (* An alternative is nonempty if at least one branch is nonempty. *)
+      let disjunction p q = p || (Lazy.force q)
+      (* A sequence is nonempty if both members are nonempty. *)
+      let conjunction _ p q = p && (Lazy.force q)
+      (* The sequence epsilon is nonempty. It generates the singleton
+         language {epsilon}. *)
+      let epsilon = true
+     end)
 
-let (nonempty : bool array), _ =
-  compute true
-
-let (nullable : bool array), (nullable_symbol : Symbol.t -> bool) =
-  compute false
+module NULLABLE =
+  GenericAnalysis
+    (Boolean)
+    (struct
+      (* A terminal symbol is not nullable. *)
+      let terminal _ = false
+      (* An alternative is nullable if at least one branch is nullable. *)
+      let disjunction p q = p || (Lazy.force q)
+      (* A sequence is nullable if both members are nullable. *)
+      let conjunction _ p q = p && (Lazy.force q)
+      (* The sequence epsilon is nullable. *)
+      let epsilon = true
+     end)
 
 (* ------------------------------------------------------------------------ *)
 (* Compute FIRST sets. *)
 
-let first =
-  Array.make Nonterminal.n TerminalSet.empty
-
-let first_symbol = function
-  | Symbol.T tok ->
-      TerminalSet.singleton tok
-  | Symbol.N nt ->
-      first.(nt)
-
-let nullable_first_rhs (rhs : Symbol.t array) (i : int) : bool * TerminalSet.t =
-  let length = Array.length rhs in
-  assert (i <= length);
-  let rec loop i toks =
-    if i = length then
-      true, toks
-    else
-      let symbol = rhs.(i) in
-      let toks = TerminalSet.union (first_symbol symbol) toks in
-      if nullable_symbol symbol then
-	loop (i+1) toks
-      else
-	false, toks
-  in
-  loop i TerminalSet.empty
-
-let () =
-  fixpoint backward (fun nt ->
-    let original = first.(nt) in
-    (* union over all productions for this nonterminal *)
-    let updated = Production.foldnt nt TerminalSet.empty (fun prod accu ->
-      let rhs = Production.rhs prod in
-      let _, toks = nullable_first_rhs rhs 0 in
-      TerminalSet.union toks accu
-    ) in
-    first.(nt) <- updated;
-    TerminalSet.compare original updated <> 0
-  )
+module FIRST =
+  GenericAnalysis
+    (TerminalSet)
+    (struct
+      (* A terminal symbol has a singleton FIRST set. *)
+      let terminal = TerminalSet.singleton
+      (* The FIRST set of an alternative is the union of the FIRST sets. *)
+      let disjunction p q = TerminalSet.union p (Lazy.force q)
+      (* The FIRST set of a sequence is the union of:
+           the FIRST set of the first member, and
+           the FIRST set of the second member, if the first member is nullable. *)
+      let conjunction symbol p q =
+        if NULLABLE.symbol symbol then
+          TerminalSet.union p (Lazy.force q)
+        else
+          p
+      (* The FIRST set of the empty sequence is empty. *)
+      let epsilon = TerminalSet.empty
+     end)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -839,37 +977,71 @@ let () =
      be read. *)
   StringSet.iter (fun symbol ->
     let nt = Nonterminal.lookup symbol in
-    if not nonempty.(nt) then
+    if not (NONEMPTY.nonterminal nt) then
       Error.error
 	(Nonterminal.positions nt)
 	(Printf.sprintf "%s generates the empty language." (Nonterminal.print false nt));
-    if TerminalSet.is_empty first.(nt) then
+    if TerminalSet.is_empty (FIRST.nonterminal nt) then
       Error.error
 	(Nonterminal.positions nt)
 	(Printf.sprintf "%s generates the language {epsilon}." (Nonterminal.print false nt))
   ) Front.grammar.start_symbols;
   (* If a nonterminal symbol generates the empty language, issue a warning. *)
   for nt = Nonterminal.start to Nonterminal.n - 1 do
-    if not nonempty.(nt) then
+    if not (NONEMPTY.nonterminal nt) then
       Error.grammar_warning
 	(Nonterminal.positions nt)
 	(Printf.sprintf "%s generates the empty language." (Nonterminal.print false nt));
   done
 
 (* ------------------------------------------------------------------------ *)
+(* For every nonterminal symbol [nt], compute a word of minimal length
+   generated by [nt]. This analysis subsumes [NONEMPTY] and [NULLABLE].
+   Indeed, [nt] produces a nonempty language if only if the minimal length is
+   finite; [nt] is nullable if only if the minimal length is zero. *)
+
+(* This analysis is in principle more costly than the [NONEMPTY] and
+   [NULLABLE], so it is performed only on demand. In practice, it seems
+   to be very cheap: its cost is not measurable for any of the grammars
+   in our benchmark suite. *)
+
+module MINIMAL =
+  GenericAnalysis
+    (struct
+      include CompletedNatWitness
+      type property = Terminal.t t
+     end)
+    (struct
+      open CompletedNatWitness
+      (* A terminal symbol has length 1. *)
+      let terminal t = Finite (1, lazy [t])
+      (* The length of an alternative is the minimum length of any branch. *)
+      let disjunction = min_lazy
+      (* The length of a sequence is the sum of the lengths of the members. *)
+      let conjunction _ = add_lazy
+      (* The epsilon sequence has length 0. *)
+      let epsilon = Finite (0, lazy [])
+     end)
+
+(* ------------------------------------------------------------------------ *)
 (* Dump the analysis results. *)
 
 let () =
   Error.logG 2 (fun f ->
-    for nt = 0 to Nonterminal.n - 1 do
+    for nt = Nonterminal.start to Nonterminal.n - 1 do
       Printf.fprintf f "nullable(%s) = %b\n"
 	(Nonterminal.print false nt)
-	nullable.(nt)
+	(NULLABLE.nonterminal nt)
     done;
-    for nt = 0 to Nonterminal.n - 1 do
+    for nt = Nonterminal.start to Nonterminal.n - 1 do
       Printf.fprintf f "first(%s) = %s\n"
 	(Nonterminal.print false nt)
-	(TerminalSet.print first.(nt))
+	(TerminalSet.print (FIRST.nonterminal nt))
+    done;
+    for nt = Nonterminal.start to Nonterminal.n - 1 do
+      Printf.fprintf f "minimal(%s) = %s\n"
+	(Nonterminal.print false nt)
+	(CompletedNatWitness.print Terminal.print (MINIMAL.nonterminal nt))
     done
   )
 
@@ -881,81 +1053,55 @@ let () =
    this is useful for the SLR(1) test. Thus, we perform this analysis only
    on demand. *)
 
-let follow : TerminalSet.t array Lazy.t =
-  lazy (
+let follow : Nonterminal.t -> TerminalSet.t =
 
-    let follow =
-      Array.make Nonterminal.n TerminalSet.empty
+  (* First pass. Build a system of equations between sets of nonterminal
+     symbols. *)
 
-    and forward : NonterminalSet.t array =
-      Array.make Nonterminal.n NonterminalSet.empty
+  let follow : equations =
+    Array.make Nonterminal.n (EConstant TerminalSet.empty)
+  in
 
-    and backward : NonterminalSet.t array =
-      Array.make Nonterminal.n NonterminalSet.empty
+  (* Iterate over all start symbols. *)
+  let sharp = EConstant (TerminalSet.singleton Terminal.sharp) in
+  for nt = 0 to Nonterminal.start - 1 do
+    assert (Nonterminal.is_start nt);
+    (* Add # to FOLLOW(nt). *)
+    follow.(nt) <- EUnion (sharp, follow.(nt))
+  done;
+  (* We need to do this explicitly because our start productions are
+     of the form S' -> S, not S' -> S #, so # will not automatically
+     appear into FOLLOW(S) when the start productions are examined. *)
 
-    in
+  (* Iterate over all productions. *)
+  Array.iteri (fun prod (nt1, rhs) ->
+    (* Iterate over all nonterminal symbols [nt2] in the right-hand side. *)
+    Array.iteri (fun i symbol ->
+      match symbol with
+      | Symbol.T _ ->
+          ()
+      | Symbol.N nt2 ->
+          let nullable = NULLABLE.production prod (i+1)
+          and first = FIRST.production prod (i+1) in
+          (* The FIRST set of the remainder of the right-hand side
+             contributes to the FOLLOW set of [nt2]. *)
+          follow.(nt2) <- EUnion (EConstant first, follow.(nt2));
+          (* If the remainder of the right-hand side is nullable,
+             FOLLOW(nt1) contributes to FOLLOW(nt2). *)
+          if nullable then
+            follow.(nt2) <- EUnion (EVar nt1, follow.(nt2))
+    ) rhs
+  ) Production.table;
 
-    (* Iterate over all start symbols. *)
-    for nt = 0 to Nonterminal.start - 1 do
-      assert (Nonterminal.is_start nt);
-      (* Add # to FOLLOW(nt). *)
-      follow.(nt) <- TerminalSet.singleton Terminal.sharp
-    done;
-    (* We need to do this explicitly because our start productions are
-       of the form S' -> S, not S' -> S #, so # will not automatically
-       appear into FOLLOW(S) when the start productions are examined. *)
+  (* Second pass. Solve the equations (on demand). *)
 
-    (* Iterate over all productions. *)
-    Array.iter (fun (nt1, rhs) ->
-      (* Iterate over all nonterminal symbols [nt2] in the right-hand side. *)
-      Array.iteri (fun i symbol ->
-	match symbol with
-	| Symbol.T _ ->
-	    ()
-	| Symbol.N nt2 ->
-	    let nullable, first = nullable_first_rhs rhs (i+1) in
-	    (* The FIRST set of the remainder of the right-hand side
-	       contributes to the FOLLOW set of [nt2]. *)
-	    follow.(nt2) <- TerminalSet.union first follow.(nt2);
-	    (* If the remainder of the right-hand side is nullable,
-	       FOLLOW(nt1) contributes to FOLLOW(nt2). *)
-	    if nullable then begin
-	      forward.(nt1) <- NonterminalSet.add nt2 forward.(nt1);
-	      backward.(nt2) <- NonterminalSet.add nt1 backward.(nt2)
-	    end
-      ) rhs
-    ) Production.table;
-
-    (* The fixpoint computation used here is not the most efficient
-       algorithm -- one could do better by first collapsing the
-       strongly connected components, then walking the graph in
-       topological order. But this will do. *)
-
-    fixpoint forward (fun nt ->
-      let original = follow.(nt) in
-      (* union over all contributors *)
-      let updated = NonterminalSet.fold (fun nt' accu ->
-	TerminalSet.union follow.(nt') accu
-      ) backward.(nt) original in
-      follow.(nt) <- updated;
-      TerminalSet.compare original updated <> 0
-    );
-
-    follow
-
-  )
-
-(* Define an accessor that triggers the computation of the FOLLOW sets
-   if it has not been performed already. *)
-
-let follow nt =
-  (Lazy.force follow).(nt)
+  solve follow
 
 (* At log level 2, display the FOLLOW sets. *)
 
 let () =
   Error.logG 2 (fun f ->
-    for nt = 0 to Nonterminal.n - 1 do
+    for nt = Nonterminal.start to Nonterminal.n - 1 do
       Printf.fprintf f "follow(%s) = %s\n"
 	(Nonterminal.print false nt)
 	(TerminalSet.print (follow nt))
@@ -974,14 +1120,15 @@ let tfollow : TerminalSet.t array Lazy.t =
     in
 
     (* Iterate over all productions. *)
-    Array.iter (fun (nt1, rhs) ->
+    Array.iteri (fun prod (nt1, rhs) ->
       (* Iterate over all terminal symbols [t2] in the right-hand side. *)
       Array.iteri (fun i symbol ->
 	match symbol with
 	| Symbol.N _ ->
 	    ()
 	| Symbol.T t2 ->
-	    let nullable, first = nullable_first_rhs rhs (i+1) in
+            let nullable = NULLABLE.production prod (i+1)
+            and first = FIRST.production prod (i+1) in
 	    (* The FIRST set of the remainder of the right-hand side
 	       contributes to the FOLLOW set of [t2]. *)
 	    tfollow.(t2) <- TerminalSet.union first tfollow.(t2);
@@ -1040,10 +1187,10 @@ let explain (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
 	assert (Terminal.equal tok tok');
 	EObvious
     | Symbol.N nt ->
-	if TerminalSet.mem tok first.(nt) then
+	if TerminalSet.mem tok (FIRST.nonterminal nt) then
 	  EFirst (tok, nt)
 	else begin
-	  assert nullable.(nt);
+	  assert (NULLABLE.nonterminal nt);
 	  match loop (i + 1) with
 	  | ENullable (symbols, e) ->
 	      ENullable (symbol :: symbols, e)
@@ -1072,11 +1219,13 @@ let rec convert = function
 
 module Analysis = struct
 
-  let nullable = Array.get nullable
+  let nullable = NULLABLE.nonterminal
 
-  let first = Array.get first
+  let first = FIRST.nonterminal
 
-  let nullable_first_rhs = nullable_first_rhs
+  let nullable_first_prod prod i =
+    NULLABLE.production prod i,
+    FIRST.production prod i
 
   let explain_first_rhs (tok : Terminal.t) (rhs : Symbol.t array) (i : int) =
     convert (explain tok rhs i)

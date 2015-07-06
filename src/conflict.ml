@@ -187,14 +187,14 @@ let rec follow1 tok derivation offset' = function
 	 at the moment, so let's skip it. *)
       derivation
   | (item, _, offset) :: configs ->
-      let _, _, rhs, pos, length = Item.def item in
+      let prod, _, rhs, pos, length = Item.def item in
       if offset = offset' then
 
 	(* This is an epsilon transition. Attack a new line and add
 	   a comment that explains why the lookahead symbol is
 	   produced or inherited. *)
 	
-	let nullable, first = Analysis.nullable_first_rhs rhs (pos + 1) in
+	let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
 
 	if TerminalSet.mem tok first then
 
@@ -304,7 +304,7 @@ let explain_reduce_item
       if pos < length then
 	match rhs.(pos) with
 	| Symbol.N nt ->
-	    let nullable, first = Analysis.nullable_first_rhs rhs (pos + 1) in
+	    let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
 	    let first : bool = TerminalSet.mem tok first in
 	    let lookahead' =
 	      if nullable then first || lookahead else first
