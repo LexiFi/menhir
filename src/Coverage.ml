@@ -46,9 +46,7 @@ module ForwardAutomaton = struct
     Hashtbl.hash (Lr1.number s)
 
   type label =
-    int
-
-  let weight w = w
+    unit
 
   let sources f =
     (* The sources are the entry states. *)
@@ -58,7 +56,7 @@ module ForwardAutomaton = struct
     SymbolMap.iter (fun sym s' ->
       (* The weight of the edge from [s] to [s'] is given by the function
          [Grammar.Analysis.minimal_symbol]. *)
-      edge (CompletedNatWitness.to_int (Analysis.minimal_symbol sym)) s'
+      edge () (CompletedNatWitness.to_int (Analysis.minimal_symbol sym)) s'
     ) (Lr1.transitions s)
 
 end
@@ -387,10 +385,7 @@ let backward (s', z) : P.property =
     (* An edge is labeled with a property of the form [Finite (i, pi)],
        that is, a distance [i] and a witness path [pi]. *)
     type label =
-      int * Terminal.t Seq.seq
-
-    let weight (w, _) =
-      w
+      P.property
 
     (* Backward search from the single source [s', z]. *)
     let sources f = f (s', z)
@@ -404,9 +399,9 @@ let backward (s', z) : P.property =
       | Some (Symbol.T t) ->
           (* There is an edge from [s] to [s'] labeled [t] in the automaton.
              Thus, our graph has an edge from [s', z] to [s, t], labeled [t]. *)
-          let label = (1, Seq.singleton t) in
+          let label = P.singleton t in
           List.iter (fun s ->
-            edge label (s, t)
+            edge label 1 (s, t)
           ) (Lr1.predecessors s')
 
       | Some (Symbol.N nt) ->
@@ -419,11 +414,12 @@ let backward (s', z) : P.property =
           List.iter (fun s ->
             Production.foldnt nt () (fun prod () ->
               TerminalSet.iter (fun a ->
-                match answer { s = s; a = a; prod = prod; i = 0; z = z } with
+                let p = answer { s = s; a = a; prod = prod; i = 0; z = z } in
+                match p with
                 | P.Infinity ->
                     ()
-                | P.Finite (w, ts) ->
-                    edge (w, ts) (s, a)
+                | P.Finite (w, _) ->
+                    edge p w (s, a)
               ) (first prod 0 z)
             )
           ) (Lr1.predecessors s')
@@ -437,22 +433,22 @@ let backward (s', z) : P.property =
      that have been found. *)
 
   try
-    let _ = D.search (fun (i, (s, _), labels) ->
+    let _ = D.search (fun (_, (s, _), ps) ->
       (* Debugging. TEMPORARY *)
       incr es;
       if !es mod 10000 = 0 then
         Printf.fprintf stderr "es = %d\n%!" !es;
       (* If [s] is a start state... *)
       if Lr1.incoming_symbol s = None then
-        (* [labels] is a list of graph labels. Projecting onto the second
+        (* [labels] is a list of properties. Projecting onto the second
            component yields a list of paths (sequences of terminal symbols),
            which we concatenate to obtain a path. Because the edges that were
            followed last are in front of the list, and because this is a
            reverse graph, we obtain a path that makes direct sense: it is a
            sequence of terminal symbols that will take the automaton into
            state [s'] if the next (unconsumed) symbol is [z]. *)
-        let path = P.Finite (i, Seq.concat (List.map snd labels)) in
-        raise (S.Success path)
+        let p = List.fold_right P.add ps P.epsilon in
+        raise (S.Success p)
     ) in
     P.bottom
   with S.Success p ->

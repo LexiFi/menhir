@@ -12,17 +12,13 @@ module Make (G : sig
 
   type label
 
-  (* A graph label implies a nonnegative integer weight. *)
-
-  val weight: label -> int
-
   (* The source vertex (or vertices). *)
 
   val sources: (vertex -> unit) -> unit
 
-  (* This provides access to a vertex' successors. *)
+  (* The weighted outgoing edges of a vertex. *)
 
-  val successors: (label -> vertex -> unit) -> vertex -> unit
+  val successors: (label -> int -> vertex -> unit) -> vertex -> unit
 
 end) = struct
   open G
@@ -71,8 +67,8 @@ end) = struct
         (* Let the client know about it. *)
         f (w, v, p);
         (* Examine its outgoing edges. *)
-        successors (fun label v' ->
-          let w' = weight label + w in
+        successors (fun label weight v' ->
+          let w' = weight + w in
           if w' < distance v' then begin
             assert (not (H.mem fixed v'));
             H.replace dist v' w';
