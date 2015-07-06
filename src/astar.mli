@@ -23,9 +23,6 @@ module Make (G : sig
      the edge that was followed. *)
   val successors: node -> (label -> int -> node -> unit) -> unit
 
-  (* Whether a node is a goal node. *)
-  val is_goal: node -> bool
-
   (* An estimate of the cost of the shortest path from the
      supplied node to some goal node. This estimate must
      be a correct under-approximation of the actual cost. *)
@@ -33,9 +30,10 @@ module Make (G : sig
 
 end) : sig
 
-  (* This function produces a shortest path from the start
-     node to some goal node. It raises [Not_found] if no
-     such path exists. *)
-  val path: unit -> G.node list
+  (* Search. Newly discovered nodes are presented to the user, in order of
+     increasing distance from the source nodes, by invoking the user-supplied
+     function [f]. At the end, a mapping of nodes to distances to the source
+     nodes and a mapping of nodes to shortest paths are returned. *)
+  val search: (G.node * G.label list -> unit) -> (G.node -> int) * (G.node -> G.label list)
 
 end

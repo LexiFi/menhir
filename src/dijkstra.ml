@@ -18,7 +18,7 @@ module Make (G : sig
 
   (* The weighted outgoing edges of a vertex. *)
 
-  val successors: (label -> int -> vertex -> unit) -> vertex -> unit
+  val successors: vertex -> (label -> int -> vertex -> unit) -> unit
 
 end) = struct
   open G
@@ -67,14 +67,14 @@ end) = struct
         (* Let the client know about it. *)
         f (w, v, p);
         (* Examine its outgoing edges. *)
-        successors (fun label weight v' ->
+        successors v (fun label weight v' ->
           let w' = weight + w in
           if w' < distance v' then begin
             assert (not (H.mem fixed v'));
             H.replace dist v' w';
             PQ.add queue (w', v', label :: p)
           end
-        ) v
+        )
       end
     done;
     distance

@@ -41,9 +41,6 @@ module Make (G : sig
 
   val sources: (node -> unit) -> unit
 
-  (* Whether a node is a goal node. *)
-  val is_goal: node -> bool
-
   (* [successors n f] presents each of [n]'s successors, in
      an arbitrary order, to [f], together with the cost of
      the edge that was followed. *)
@@ -59,24 +56,24 @@ end) = struct
 
   type cost = int
 
-  type priority = cost            (* Nodes with low priorities are dealt with first. *)
+  (* Nodes with low priorities are dealt with first. *)
+  type priority = cost
 
   type inode = {
-
-      this: G.node;               (* Graph node associated with this internal record. *)
-
-      mutable cost: cost;         (* Cost of the best known path from a source node to this node. (ghat) *)
-
-      estimate: cost;             (* Estimated cost of the best path from this node to a goal node. (hhat) *)
-
-      mutable father: inode;      (* Last node on the best known path from a source node to this node. *)
-
-      mutable prev: inode;        (* Previous node on doubly linked priority list *)
-
-      mutable next: inode;        (* Next node on doubly linked priority list *)
-
-      mutable priority: priority; (* The node's priority, if the node is in the queue; -1 otherwise *)
-
+      (* Graph node associated with this internal record. *)
+      this: G.node;
+      (* Cost of the best known path from a source node to this node. (ghat) *)
+      mutable cost: cost;
+      (* Estimated cost of the best path from this node to a goal node. (hhat) *)
+      estimate: cost;
+      (* Best known path from a source node to this node. *)
+      mutable path: G.label list;
+      (* Previous node on doubly linked priority list *)
+      mutable prev: inode;
+      (* Next node on doubly linked priority list *)
+      mutable next: inode;
+      (* The node's priority, if the node is in the queue; -1 otherwise *)
+      mutable priority: priority;
   }
 
   (* This auxiliary module maintains a mapping of graph nodes
@@ -120,9 +117,8 @@ end) = struct
        can only decrease. *)
     val add_or_decrease: inode -> priority -> unit
 
-    (* Retrieve a node with lowest priority of the queue.
-       Raises [Not_found] if the queue is empty. *)
-    val get: unit -> inode
+    (* Retrieve a node with lowest priority of the queue. *)
+    val get: unit -> inode option
 
   end = struct
 
@@ -167,18 +163,18 @@ end) = struct
 
     let get () =
       if !best = max then
-	raise Not_found (* queue is empty *)
+	None
       else
 	match a.(!best) with
 	| None ->
 	    assert false
-	| Some inode ->
+	| Some inode as result ->
             remove inode;
             (* look for next nonempty bucket *)
             while (!best < max) && (a.(!best) = None) do
 	      incr best
 	    done;
-	    inode
+	    result
 
     let add_or_decrease inode priority =
       if inode.priority >= 0 then
@@ -195,7 +191,7 @@ end) = struct
         this = node;
         cost = 0;
         estimate = G.estimate node;
-        father = inode;
+        path = [];
         prev = inode;
         next = inode;
         priority = -1
@@ -207,91 +203,78 @@ end) = struct
   let expanded =
     ref 0
 
+  (* Access to the search results (after the search is over). *)
+
+  let distance node =
+    try (M.get node).cost with Not_found -> max_int
+
+  let path node =
+    (M.get node).path (* let [Not_found] escape if no path was found *)
+
   (* Search. *)
 
-  let rec search () =
+  let rec search f =
 
-    (* Pick the open node that currently has lowest fhat, (* TEMPORARY resolve ties in favor of goal nodes *)
+    (* Pick the open node that currently has lowest fhat,
        that is, lowest estimated distance to a goal node. *)
 
-    let inode = P.get () in (* may raise Not_found; then, no goal node is reachable *)
-    let node = inode.this in
+    match P.get() with
+    | None ->
+       (* Finished. *)
+       distance, path
 
-    (* If it is a goal node, we are done. *)
-    if G.is_goal node then
-      inode
-    else begin
+    | Some inode ->
+        let node = inode.this in
 
-      (* Monitoring. *)
-      incr expanded;
-      
-      (* Otherwise, examine its successors. *)
-      G.successors node (fun _ edge_cost son ->
+        (* Let the user know about this newly discovered node. *)
+        f (node, inode.path);
 
-        (* Determine the cost of the best known path from the
-	   start node, through this node, to this son. *)
-        let new_cost = inode.cost + edge_cost in
+        (* Monitoring. *)
+        incr expanded;
 
-        try
-          let ison = M.get son in
-          if new_cost < ison.cost then begin
+        (* Otherwise, examine its successors. *)
+        G.successors node (fun label edge_cost son ->
 
-            (* This son has been visited before, but this new
-	       path to it is shorter. If it was already open
-	       and waiting in the priority queue, increase its
-	       priority; otherwise, mark it as open and insert
-	       it into the queue. *)
+          (* Determine the cost of the best known path from the
+             start node, through this node, to this son. *)
+          let new_cost = inode.cost + edge_cost in
 
-            let new_fhat = new_cost + ison.estimate in
-	    P.add_or_decrease ison new_fhat;
-            ison.cost <- new_cost;
-            ison.father <- inode
+          try
+            let ison = M.get son in
+            if new_cost < ison.cost then begin
 
-          end
-        with Not_found ->
+              (* This son has been visited before, but this new
+                 path to it is shorter. If it was already open
+                 and waiting in the priority queue, increase its
+                 priority; otherwise, mark it as open and insert
+                 it into the queue. *)
 
-          (* This son was never visited before. Allocate a new
-             status record for it and mark it as open. *)
+              let new_fhat = new_cost + ison.estimate in
+              P.add_or_decrease ison new_fhat;
+              ison.cost <- new_cost;
+              ison.path <- label :: inode.path
 
-	  let e = G.estimate son in
-          let rec ison = {
-	    this = son;
-            cost = new_cost;
-	    estimate = e;
-	    father = inode;
-	    prev = ison;
-	    next = ison;
-            priority = -1
-	  } in
-	  M.add son ison;
-	  P.add ison (new_cost + e)
+            end
+          with Not_found ->
 
-      );
+            (* This son was never visited before. Allocate a new
+               status record for it and mark it as open. *)
 
-      search()
+            let e = G.estimate son in
+            let rec ison = {
+              this = son;
+              cost = new_cost;
+              estimate = e;
+              path = label :: inode.path;
+              prev = ison;
+              next = ison;
+              priority = -1
+            } in
+            M.add son ison;
+            P.add ison (new_cost + e)
 
-    end
+        );
 
-  (* Main function. *)
-
-  let path () =
-
-    (* Find the nearest goal node. *)
-
-    let goal = search() in
-
-    (* Build the shortest path back to the start node. *)
-
-    let rec build path inode =
-      let path = inode.this :: path in
-      let father = inode.father in
-      if father == inode then
-	path
-      else
-	build path father
-
-    in
-    let path = build [] goal in
-    path
+        search f
 
 end

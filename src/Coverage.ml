@@ -52,7 +52,7 @@ module ForwardAutomaton = struct
     (* The sources are the entry states. *)
     ProductionMap.iter (fun _ s -> f s) Lr1.entry
 
-  let successors edge s =
+  let successors s edge =
     SymbolMap.iter (fun sym s' ->
       (* The weight of the edge from [s] to [s'] is given by the function
          [Grammar.Analysis.minimal_symbol]. *)
@@ -64,6 +64,22 @@ end
 let approximate : Lr1.node -> int =
   let module D = Dijkstra.Make(ForwardAutomaton) in
   D.search (fun (_, _, _) -> ())
+
+let approx : Lr1.node -> int =
+  let module A = Astar.Make(struct
+    include ForwardAutomaton
+    let estimate _ = 0
+    type node = vertex
+  end) in
+  let distance, _ = A.search (fun (_, _) -> ()) in
+  distance
+
+(* Debugging. TEMPORARY *)
+let approximate s =
+  let d1 = approximate s
+  and d2 = approx s in
+  assert (d1 = d2);
+  d1
 
 (* Test. TEMPORARY *)
 
@@ -390,7 +406,7 @@ let backward (s', z) : P.property =
     (* Backward search from the single source [s', z]. *)
     let sources f = f (s', z)
 
-    let successors edge (s', z) =
+    let successors (s', z) edge =
       match Lr1.incoming_symbol s' with
       | None ->
           (* An entry state has no predecessor states. *)
