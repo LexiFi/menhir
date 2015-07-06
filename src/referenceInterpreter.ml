@@ -223,3 +223,28 @@ let interpret log nt lexer lexbuf =
     Some (E.entry (Lr1.entry_nt nt) lexer lexbuf)
   with T.Error ->
     None
+
+(* Another entry point, used internally by [Coverage] to check that the
+   sentences that [Coverage] produces do lead to an error in the expected
+   state. *)
+
+let _check nt (_path : Terminal.t list) (_z : Terminal.t) =
+
+  (* Instantiate the LR engine. *)
+
+  let module E =
+    MenhirLib.Engine.Make (struct
+      include T
+      let log = false
+    end)
+  in
+
+  (* Run it. *)
+
+  let _s = Lr1.entry_nt nt in
+
+  (* TEMPORARY use the incremental API to drive the engine, step by step,
+     up to the expected error. *)
+
+  ()
+
