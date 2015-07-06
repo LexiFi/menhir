@@ -14,8 +14,9 @@ module Make (G : sig
   (* Edge labels. *)
   type label
 
-  (* The graph's start node. *)
-  val start: node
+  (* The source node(s). *)
+
+  val sources: (node -> unit) -> unit
 
   (* Whether a node is a goal node. *)
   val is_goal: node -> bool

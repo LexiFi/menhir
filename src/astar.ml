@@ -37,8 +37,9 @@ module Make (G : sig
   (* Edge labels. *)
   type label
 
-  (* The graph's start node. *)
-  val start: node
+  (* The source node(s). *)
+
+  val sources: (node -> unit) -> unit
 
   (* Whether a node is a goal node. *)
   val is_goal: node -> bool
@@ -64,11 +65,11 @@ end) = struct
 
       this: G.node;               (* Graph node associated with this internal record. *)
 
-      mutable cost: cost;         (* Cost of the best known path from the start node to this node. (ghat) *)
+      mutable cost: cost;         (* Cost of the best known path from a source node to this node. (ghat) *)
 
       estimate: cost;             (* Estimated cost of the best path from this node to a goal node. (hhat) *)
 
-      mutable father: inode;      (* Last node on the best known path from the start node to this node. *)
+      mutable father: inode;      (* Last node on the best known path from a source node to this node. *)
 
       mutable prev: inode;        (* Previous node on doubly linked priority list *)
 
@@ -188,19 +189,20 @@ end) = struct
 
   (* Initialization. *)
 
-  let _ =
-    let e = G.estimate G.start in
-    let rec inode = {
-      this = G.start;
-      cost = 0;
-      estimate = e;
-      father = inode;
-      prev = inode;
-      next = inode;
-      priority = -1
-    } in
-    M.add G.start inode;
-    P.add inode e
+  let () =
+    G.sources (fun node ->
+      let rec inode = {
+        this = node;
+        cost = 0;
+        estimate = G.estimate node;
+        father = inode;
+        prev = inode;
+        next = inode;
+        priority = -1
+      } in
+      M.add node inode;
+      P.add inode inode.estimate
+    )
 
   let expanded =
     ref 0
