@@ -1086,3 +1086,10 @@ let fold_entry f accu =
     f prod state nt t accu
   ) entry accu
 
+let entry_nt nt =
+  (* Find the entry state that corresponds to [nt]. *)
+  try
+    ProductionMap.find (Production.startsymbol2startprod nt) entry
+  with Not_found ->
+    assert false
+

@@ -37,6 +37,11 @@ val fold_entry:
   (Production.index -> node -> Nonterminal.t -> Stretch.ocamltype -> 'a -> 'a) ->
   'a -> 'a
 
+(* This maps a (user) non-terminal start symbol to the corresponding
+   start state. *)
+
+val entry_nt: Nonterminal.t -> node
+
 (* Nodes are numbered sequentially from [0] to [n-1]. *)
 
 val n: int
