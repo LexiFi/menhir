@@ -118,16 +118,29 @@ let causes_an_error s z =
       reductions s z = [] &&
       not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
 
+(* ------------------------------------------------------------------------ *)
+
+(* The analysis that follows is formulated as a least fixed point computation.
+   The ordering is [CompletedNatWitness]. This represents the natural integers
+   completed with infinity. The bottom element is [infinity], which means that
+   no path is known, and the computation progresses towards smaller (finite)
+   numbers, which means that shorter paths become known. *)
+
 (* Using [CompletedNatWitness] means that we wish to compute shortest paths.
-   An alternative would be to use [BooleanWitness], which offers the same
-   interface. That would mean we wish to compute an arbitrary path. That
-   would be faster, but the paths thus obtained are (according to a quick
-   experiment) really far from optimal. *)
+   We could instead use [BooleanWitness], which offers the same interface.
+   That would mean we are happy as soon as we know an arbitrary path. That
+   would be faster, but (according to a quick experiment) the paths thus
+   obtained would be really far from optimal. *)
+
 module P =
   CompletedNatWitness
-       
+
 type property =
   Terminal.t P.t
+
+(* ------------------------------------------------------------------------ *)
+
+(* More auxiliary functions for the analysis. *)
 
 (* This tests whether state [s] has an outgoing transition labeled [sym].
    If so, [s'] is passed to the continuation [k]. Otherwise, [P.bottom] is
@@ -144,8 +157,13 @@ let has_transition s sym k : property =
 
 let foreach_terminal_in toks (f : Terminal.t -> property) : property =
   TerminalSet.fold (fun t accu ->
+    (* Using [min_lazy] allows stopping if we find a path of length 0.
+       This is just an optimization. *)
     P.min_lazy accu (fun () -> f t)
   ) toks P.bottom
+
+(* This is analogous to [foreach_terminal_in], but stops as soon as a
+   finite value is reached, i.e., as soon as one path is found. *)
 
 let foreach_terminal_until_finite (f : Terminal.t -> property) : property =
   Terminal.fold (fun t accu ->
@@ -157,14 +175,25 @@ let foreach_terminal_until_finite (f : Terminal.t -> property) : property =
 
 let foreach_production nt (f : Production.index -> property) : property =
   Production.foldnt nt P.bottom (fun prod accu ->
+    (* Using [min_lazy] allows stopping if we find a path of length 0.
+       This is just an optimization. *)
     P.min_lazy accu (fun () -> f prod)
   )
 
-(* A question takes the form [s, a, prod, i, z], as defined below.
+(* ------------------------------------------------------------------------ *)
 
-   Such a question means: what is the set of terminal words [w]
-   (or, rather, what is a minimal word [w])
-   such that:
+(* The main analysis. *)
+
+(* This analysis maps questions to properties.
+   It is defined as a fixed point computation. *)
+
+(* A question takes the form [s, a, prod, i, z], as defined by the record
+   type below.
+
+   [s] is a state. [prod/i] is a production suffix, which appears in the
+   closure of state [s]. [a] and [z] are terminal symbols.
+
+   This question means: what is the minimal length of a word [w] such that:
 
    1- the production suffix [prod/i] generates the word [w].
 
@@ -182,6 +211,16 @@ let foreach_production nt (f : Production.index -> property) : property =
    concatenation [AB], we must try all terminal symbols that come after [A]
    and form the beginning of [B]. *)
 
+(* This analysis is very costly. Indeed, the number of possible questions is
+   O(#items) * O(#alphabet^2), where #items is the total number of items in
+   (the closure? of) all states of the automaton, and #alphabet is the number
+   of terminal symbols. Furthermore, the lattice [CompletedNatWitness] is
+   quite high (in fact, it does not have bounded height...) and it can take a
+   while before the fixed point is reached. *)
+
+(* The product [Lr1.n * Terminal.n * Terminal.n] is about 12 million when
+   dealing with OCaml's grammar, in [--lalr] mode. *)
+
 type question = {
   s: Lr1.node;
   a: Terminal.t;
@@ -190,6 +229,7 @@ type question = {
   z: Terminal.t;
 }
 
+(* Debugging. TEMPORARY *)
 let print_question q =
   Printf.fprintf stderr
     "{ s = %d; a = %s; prod/i = %s; z = %s }\n"
@@ -198,22 +238,20 @@ let print_question q =
     (Item.print (Item.import (q.prod, q.i)))
     (Terminal.print q.z)
 
-module Question = struct
-  type t = question
-  let compare q1 q2 =
-    let c = Lr1.Node.compare q1.s q2.s in
-    if c <> 0 then c else
-    let c = Terminal.compare q1.a q2.a in
-    if c <> 0 then c else
-    let c = Production.compare q1.prod q2.prod in
-    if c <> 0 then c else
-    let c = Pervasives.compare q1.i q2.i in
-    if c <> 0 then c else
-    Terminal.compare q1.z q2.z
-end
-
 module QuestionMap =
-  Map.Make(Question)
+  Map.Make(struct
+    type t = question
+    let compare q1 q2 =
+      let c = Lr1.Node.compare q1.s q2.s in
+      if c <> 0 then c else
+      let c = Terminal.compare q1.a q2.a in
+      if c <> 0 then c else
+      let c = Production.compare q1.prod q2.prod in
+      if c <> 0 then c else
+      let c = Pervasives.compare q1.i q2.i in
+      if c <> 0 then c else
+      Terminal.compare q1.z q2.z
+  end)
 
 let first =
   Analysis.first_prod_lookahead
