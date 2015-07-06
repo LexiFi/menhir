@@ -509,13 +509,9 @@ let () =
     Printf.fprintf stderr "Edges so far: %d\n" !es
   )
 
-(* TEMPORARY
-   does it make sense to use A*?
-   use [MINIMAL] and [Dijkstra] to compute an under-approximation of the distance
-   of any state [s'] to an entry state
-   It should work very well, because most of the time this should be a very good
-   under-approximation (it should be equal to the true distance).
-*)
+(* TEMPORARY before optimizing further,
+   validate the results using the reference interpreter *)
+
 (* TEMPORARY
    also: first compute an optimistic path using the simple algorithm
    and check if this path is feasible in the real automaton
@@ -524,3 +520,10 @@ let () =
 (* TEMPORARY implement and exploit [Lr1.ImperativeNodeMap] using an array *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
 (* TEMPORARY gain a constant factor by memoizing [nullable_first_prod]? *)
+(* TEMPORARY gain some time and space by not memoizing "trivial" calls
+             e.g. when n = 0
+             e.g. when there is just one recursive call with i+1
+*)
+(* TEMPORARY maybe cutoff didn't work because productions were not sorted by length? *)
+(* TEMPORARY key idea? stop searching as soon as the lower bound predicted by [MINIMAL]
+             is reached *)
