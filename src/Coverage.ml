@@ -157,23 +157,50 @@ let has_transition s sym k : P.property =
 
 (* This computes a minimum over a set of terminal symbols. *)
 
-let foreach_terminal_in toks (f : Terminal.t -> P.property) : P.property =
+exception Stop of P.property
+
+let foreach_terminal_in toks bound (f : Terminal.t -> P.property) : P.property =
   (* Explicitly ignore the [error] token. *)
   let toks = TerminalSet.remove Terminal.error toks in
-  TerminalSet.fold (fun t accu ->
-    (* Using [min_lazy] allows stopping if we find a path of length 0.
-       This is just an optimization. *)
-    P.min_lazy accu (fun () -> f t)
-  ) toks P.bottom
+  try
+    TerminalSet.fold (fun t accu ->
+      let accu = P.min accu (f t) in
+      match accu with
+      | P.Finite (i, _) when i <= bound ->
+          assert (i = bound);
+          raise (Stop accu)
+      | _ ->
+          accu
+    ) toks P.bottom
+  with Stop accu ->
+    accu
 
 (* This computes a minimum over the productions associated with [nt]. *)
 
-let foreach_production nt (f : Production.index -> P.property) : P.property =
-  Production.foldnt nt P.bottom (fun prod accu ->
-    (* Using [min_lazy] allows stopping if we find a path of length 0.
-       This is just an optimization. *)
-    P.min_lazy accu (fun () -> f prod)
-  )
+let productions nt =
+  Production.foldnt nt [] (fun prod prods -> prod :: prods)
+
+let productions nt =
+  List.sort (fun prod1 prod2 ->
+    P.compare (Analysis.minimal_prod prod1 0) (Analysis.minimal_prod prod2 0)
+  ) (productions nt)
+
+let productions : Nonterminal.t -> Production.index list =
+  Obj.magic Misc.tabulate Nonterminal.n (Obj.magic productions) (* TEMPORARY *)
+
+let foreach_production nt bound (f : Production.index -> P.property) : P.property =
+  try
+    List.fold_left (fun accu prod ->
+      let accu = P.min accu (f prod) in
+      match accu with
+      | P.Finite (i, _) when i <= bound ->
+          assert (i = bound);
+          raise (Stop accu)
+      | _ ->
+          accu
+    ) P.bottom (productions nt)
+  with Stop accu ->
+    accu
 
 (* ------------------------------------------------------------------------ *)
 
@@ -269,6 +296,7 @@ let answer (q : question) (get : question -> P.property) : P.property =
      set unless [a] is in [FIRST(prod/i.z)]. Thus, by convention, we will ask
      this question only when this precondition is satisfied. *)
   assert (TerminalSet.mem q.a (first q.prod q.i q.z));
+  (* TEMPORARY ultimately disable this assertion? *)
 
   (* Now, three cases arise: *)
   if q.i = n then begin
@@ -286,49 +314,55 @@ let answer (q : question) (get : question -> P.property) : P.property =
   end
   else begin
 
-    (* Case 2. The suffix determined by [prod] and [i] begins with a symbol
-       [sym]. The state [s] must have an outgoing transition along [sym];
-       otherwise, no word exists. *)
+    match Analysis.minimal_prod q.prod q.i with
+    | P.Infinity ->
+        P.bottom
+    | P.Finite (bound, _) ->
 
-    let sym = rhs.(q.i) in
-    has_transition q.s sym (fun s' ->
-      match sym with
-      | Symbol.T t ->
+        (* Case 2. The suffix determined by [prod] and [i] begins with a symbol
+           [sym]. The state [s] must have an outgoing transition along [sym];
+           otherwise, no word exists. *)
 
-          (* Case 2a. [sym] is a terminal symbol [t]. Our precondition implies
-             that [t] is equal to [a]. [w] must begin with [a]. The rest must
-             be some word [w'] such that, by starting from [s'] and by reading
-             [w'], we reach our goal. The first letter in [w'] could be any
-             terminal symbol [c], so we try all of them. *)
+        let sym = rhs.(q.i) in
+        has_transition q.s sym (fun s' ->
+          match sym with
+          | Symbol.T t ->
 
-          assert (Terminal.equal q.a t); (* per our precondition *)
-          P.add (P.singleton q.a) (
-            foreach_terminal_in (first q.prod (q.i + 1) q.z) (fun c ->
-              get { s = s'; a = c; prod = q.prod; i = q.i + 1; z = q.z }
-            )
-          )
+              (* Case 2a. [sym] is a terminal symbol [t]. Our precondition implies
+                 that [t] is equal to [a]. [w] must begin with [a]. The rest must
+                 be some word [w'] such that, by starting from [s'] and by reading
+                 [w'], we reach our goal. The first letter in [w'] could be any
+                 terminal symbol [c], so we try all of them. *)
 
-      | Symbol.N nt ->
+              assert (Terminal.equal q.a t); (* per our precondition *)
+              assert (1 <= bound);
+              P.add (P.singleton q.a) (
+                foreach_terminal_in (first q.prod (q.i + 1) q.z) (bound - 1) (fun c ->
+                  get { s = s'; a = c; prod = q.prod; i = q.i + 1; z = q.z }
+                )
+              )
 
-          (* Case 2b. [sym] is a nonterminal symbol [nt]. For each letter [c],
-             for each production [prod'] associated with [nt], we concatenate:
-             1- a word that takes us from [s], beginning with [a], to a state
-                where we can reduce [prod'], looking at [c];
-             2- a word that takes us from [s'], beginning with [c], to a state
-                where we reach our original goal. *)
+          | Symbol.N nt ->
 
-          foreach_terminal_in (first q.prod (q.i + 1) q.z) (fun c ->
-            foreach_production nt (fun prod' ->
-              if TerminalSet.mem q.a (first prod' 0 c) then
-                P.add_lazy
-                  (get { s = q.s; a = q.a; prod = prod'; i = 0; z = c })
-                  (fun () -> get { s = s'; a = c; prod = q.prod; i = q.i + 1; z = q.z })
-              else
-                P.bottom
-            )
-          )
+              (* Case 2b. [sym] is a nonterminal symbol [nt]. For each letter [c],
+                 for each production [prod'] associated with [nt], we concatenate:
+                 1- a word that takes us from [s], beginning with [a], to a state
+                    where we can reduce [prod'], looking at [c];
+                 2- a word that takes us from [s'], beginning with [c], to a state
+                    where we reach our original goal. *)
 
-    )
+              foreach_terminal_in (first q.prod (q.i + 1) q.z) bound (fun c ->
+                foreach_production nt bound (fun prod' ->
+                  if TerminalSet.mem q.a (first prod' 0 c) then
+                    P.add_lazy
+                      (get { s = q.s; a = q.a; prod = prod'; i = 0; z = c })
+                      (fun () -> get { s = s'; a = c; prod = q.prod; i = q.i + 1; z = q.z })
+                  else
+                    P.bottom
+                )
+              )
+
+        )
 
   end
 
