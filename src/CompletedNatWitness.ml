@@ -17,6 +17,17 @@ let equal p1 p2 =
   | _, _ ->
       false
 
+let compare p1 p2 =
+  match p1, p2 with
+  | Finite (i1, _), Finite (i2, _) ->
+      if i1 < i2 then -1 else if i1 = i2 then 0 else 1
+  | Infinity, Infinity ->
+      0
+  | Finite _, Infinity ->
+      -1
+  | Infinity, Finite _ ->
+      1
+
 let bottom =
   Infinity
 

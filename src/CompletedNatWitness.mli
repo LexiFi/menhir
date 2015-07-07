@@ -12,6 +12,8 @@ val bottom: 'a t
 val equal: 'a t -> 'b t -> bool
 val is_maximal: 'a t -> bool
 
+val compare: 'a t -> 'b t -> int
+
 val epsilon: 'a t
 val singleton: 'a -> 'a t
 
