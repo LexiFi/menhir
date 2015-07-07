@@ -22,6 +22,13 @@
    - If the grammar has conflicts, conflict resolution removes some
      (shift or reduce) actions, hence may suppress the shortest path. *)
 
+(* We explicitly ignore the [error] token. If the grammar mentions [error]
+   and if some state is reachable only via an [error] transition, too bad;
+   we report this state as unreachable. It would be too complicated to have
+   to create a first error in order to be able to take certain transitions
+   or drop certain parts of the input. *)
+(* TEMPORARY warn if --coverage is set AND the grammar uses [error] *)
+
 (* TEMPORARY explain how we approach the problem *)
 
 open Grammar
@@ -87,6 +94,7 @@ let has_default_reduction_on s prod =
    should be a list of zero or one elements. *)
 
 let reductions s z =
+  assert (not (Terminal.equal z Terminal.error));
   try
     TerminalMap.find z (Lr1.reductions s)
   with Not_found ->
@@ -97,6 +105,7 @@ let reductions s z =
    reduction into account. *)
 
 let has_reduction s prod z : bool =
+  assert (not (Terminal.equal z Terminal.error));
   has_default_reduction_on s prod ||
   List.mem prod (reductions s z)
 
@@ -104,7 +113,7 @@ let has_reduction s prod z : bool =
    symbol [z]. *)
 
 let causes_an_error s z =
-  not (Terminal.equal z Terminal.error) &&
+  assert (not (Terminal.equal z Terminal.error));
   match Invariant.has_default_reduction s with
   | Some _ ->
       false
@@ -149,6 +158,8 @@ let has_transition s sym k : P.property =
 (* This computes a minimum over a set of terminal symbols. *)
 
 let foreach_terminal_in toks (f : Terminal.t -> P.property) : P.property =
+  (* Explicitly ignore the [error] token. *)
+  let toks = TerminalSet.remove Terminal.error toks in
   TerminalSet.fold (fun t accu ->
     (* Using [min_lazy] allows stopping if we find a path of length 0.
        This is just an optimization. *)
@@ -462,7 +473,7 @@ let backward s' : P.property =
 
     (* This loop stops as soon as we are able to reach one error at [s']. *)
     Terminal.iter (fun z ->
-      if causes_an_error s' z then
+      if not (Terminal.equal z Terminal.error) && causes_an_error s' z then
         backward (s', z)
     );
     (* No error can be triggered in state [s']. *)
@@ -520,7 +531,7 @@ let () =
    also: first compute an optimistic path using the simple algorithm
    and check if this path is feasible in the real automaton
 *)
-(* TEMPORARY avoid [error] token unless forced to use it *)
+(* TEMPORARY what about the pseudo-token [#]? *)
 (* TEMPORARY implement and exploit [Lr1.ImperativeNodeMap] using an array *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
 (* TEMPORARY gain a constant factor by memoizing [nullable_first_prod]? *)
