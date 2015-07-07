@@ -849,7 +849,7 @@ end = struct
 
   module F =
     Fix.Make
-      (Maps.ConsecutiveIntegerKeysToImperativeMaps(Nonterminal))
+      (Maps.ArrayAsImperativeMaps(Nonterminal))
       (P)
 
   let nonterminal =
@@ -904,7 +904,7 @@ let solve (eqs : equations) : Nonterminal.t -> TerminalSet.t =
 
   let module F =
     Fix.Make
-      (Maps.ConsecutiveIntegerKeysToImperativeMaps(Nonterminal))
+      (Maps.ArrayAsImperativeMaps(Nonterminal))
       (TerminalSet)
   in
   

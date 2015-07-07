@@ -86,7 +86,7 @@ module ImperativeMapsToImperativeMap
 
 end
 
-module ConsecutiveIntegerKeysToImperativeMaps
+module ArrayAsImperativeMaps
   (K : sig val n: int end)
   : IMPERATIVE_MAPS with type key = int
                      and type 'data t = 'data option array

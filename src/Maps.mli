@@ -58,7 +58,7 @@ module ImperativeMapsToImperativeMap
 (* An implementation of imperative maps as arrays is possible if keys
    are consecutive integers. *)
 
-module ConsecutiveIntegerKeysToImperativeMaps
+module ArrayAsImperativeMaps
   (K : sig val n: int end)
   : IMPERATIVE_MAPS with type key = int
                      and type 'data t = 'data option array
