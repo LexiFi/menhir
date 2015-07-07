@@ -111,3 +111,9 @@ let to_int p =
   | Infinity ->
       max_int
 
+let extract p =
+  match p with
+  | Finite (_, xs) ->
+      Seq.elements xs
+  | Infinity ->
+      assert false
