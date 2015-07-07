@@ -88,14 +88,16 @@ let rec fold f s accu =
   | N ->
       accu
   | C (base, ss, qs) ->
-      let limit = base + word_size in
-      loop limit f qs base ss accu
+      loop f qs base ss accu
 
-and loop limit f qs i ss accu =
-  if i = limit then
+and loop f qs i ss accu =
+  if ss = 0 then
     fold f qs accu
   else
-    loop limit f qs (i + 1) (ss lsr 1) (if ss land 1 = 1 then f i accu else accu)
+    (* One could in principle check whether [ss land 0x3] is zero and if
+       so move to [i + 2] and [ss lsr 2], and similarly for various sizes.
+       In practice, this does not seem to make a measurable difference. *)
+    loop f qs (i + 1) (ss lsr 1) (if ss land 1 = 1 then f i accu else accu)
 
 let iter f s =
   fold (fun x () -> f x) s ()
