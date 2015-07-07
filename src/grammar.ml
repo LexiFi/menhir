@@ -1226,13 +1226,25 @@ module Analysis = struct
 
   let first = FIRST.nonterminal
 
+  (* An initial definition of [nullable_first_prod]. *)
+
   let nullable_first_prod prod i =
     NULLABLE.production prod i,
     FIRST.production prod i
 
+  (* A memoised version, so as to avoid recomputing along a production's
+     right-hand side. *)
+
+  let nullable_first_prod =
+    Misc.tabulate Production.n (fun prod ->
+      Misc.tabulate (Production.length prod + 1) (fun i ->
+        nullable_first_prod prod i
+      )
+    )
+
   let first_prod_lookahead prod i z =
-    let first = FIRST.production prod i in
-    if NULLABLE.production prod i then
+    let nullable, first = nullable_first_prod prod i in
+    if nullable then
       TerminalSet.add z first
     else
       first
