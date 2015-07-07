@@ -593,6 +593,15 @@ module Domain = struct
   let singleton x =
     Leaf x
 
+  (* [is_singleton s] tests whether [s] is a singleton set. *)
+
+  let is_singleton = function
+    | Leaf _ ->
+        true
+    | Empty
+    | Branch _ ->
+        false
+
   (* [choose s] returns an arbitrarily chosen element of [s], if [s]
      is nonempty, and raises [Not_found] otherwise. *)
 

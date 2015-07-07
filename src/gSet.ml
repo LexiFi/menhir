@@ -24,6 +24,10 @@ module type S = sig
 
   val singleton: element -> t
 
+  (* [is_singleton s] tests whether [s] is a singleton set. *)
+
+  val is_singleton: t -> bool
+
   (* [cardinal s] returns the cardinal of [s]. *)
 
   val cardinal: t -> int

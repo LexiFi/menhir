@@ -102,6 +102,16 @@ and loop f qs i ss accu =
 let iter f s =
   fold (fun x () -> f x) s ()
 
+let is_singleton s =
+  match s with
+  | C (_, ss, N) ->
+      (* Test whether only one bit is set in [ss]. We do this by turning
+         off the rightmost bit, then comparing to zero. *)
+      ss land (ss - 1) = 0
+  | C (_, _, C _)
+  | N ->
+      false
+
 let cardinal s = 
   fold (fun _ m -> m + 1) s 0
 
