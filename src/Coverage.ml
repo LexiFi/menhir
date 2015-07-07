@@ -34,61 +34,41 @@ open Grammar
    yields a lower bound on the actual distance to every state from any entry
    state. *)
 
-module ForwardAutomaton = struct
-
-  type vertex =
-    Lr1.node
-
-  let equal s1 s2 =
-    Lr1.Node.compare s1 s2 = 0
-
-  let hash s =
-    Hashtbl.hash (Lr1.number s)
-
-  type label =
-    unit
-
-  let sources f =
-    (* The sources are the entry states. *)
-    ProductionMap.iter (fun _ s -> f s) Lr1.entry
-
-  let successors s edge =
-    SymbolMap.iter (fun sym s' ->
-      (* The weight of the edge from [s] to [s'] is given by the function
-         [Grammar.Analysis.minimal_symbol]. *)
-      edge () (CompletedNatWitness.to_int (Analysis.minimal_symbol sym)) s'
-    ) (Lr1.transitions s)
-
-end
-
 let approximate : Lr1.node -> int =
-  let module D = Dijkstra.Make(ForwardAutomaton) in
-  D.search (fun (_, _, _) -> ())
 
-let approx : Lr1.node -> int =
   let module A = Astar.Make(struct
-    include ForwardAutomaton
-    let estimate _ = 0
-    type node = vertex
+
+    type node =
+      Lr1.node
+
+    let equal s1 s2 =
+      Lr1.Node.compare s1 s2 = 0
+
+    let hash s =
+      Hashtbl.hash (Lr1.number s)
+
+    type label =
+      unit
+
+    let sources f =
+      (* The sources are the entry states. *)
+      ProductionMap.iter (fun _ s -> f s) Lr1.entry
+
+    let successors s edge =
+      SymbolMap.iter (fun sym s' ->
+        (* The weight of the edge from [s] to [s'] is given by the function
+           [Grammar.Analysis.minimal_symbol]. *)
+        edge () (CompletedNatWitness.to_int (Analysis.minimal_symbol sym)) s'
+      ) (Lr1.transitions s)
+
+    let estimate _ =
+      (* A* with a zero [estimate] behaves like Dijkstra's algorithm. *)
+      0
+
   end) in
+        
   let distance, _ = A.search (fun (_, _) -> ()) in
   distance
-
-(* Debugging. TEMPORARY *)
-let approximate s =
-  let d1 = approximate s
-  and d2 = approx s in
-  assert (d1 = d2);
-  d1
-
-(* Test. TEMPORARY *)
-
-let () =
-  Lr1.iter (fun s ->
-    Printf.fprintf stderr
-      "State %d is at least %d steps away from an initial state.\n%!"
-      (Lr1.number s) (approximate s)
-  )
 
 (* ------------------------------------------------------------------------ *)
 
@@ -434,7 +414,7 @@ let backward (s', z) : unit =
           ) (Lr1.predecessors s')
 
     let estimate (s', _z) =
-      approx s'
+      approximate s'
 
   end) in
 
