@@ -571,9 +571,5 @@ let () =
     Printf.fprintf stderr "Edges so far: %d\n" !es
   )
 
-(* TEMPORARY
-   also: first compute an optimistic path using the simple algorithm
-   and check if this path is feasible in the real automaton
-*)
 (* TEMPORARY what about the pseudo-token [#]? *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
