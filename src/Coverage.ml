@@ -162,12 +162,14 @@ exception Stop of P.property
 let foreach_terminal_in toks bound (f : Terminal.t -> P.property) : P.property =
   (* Explicitly ignore the [error] token. *)
   let toks = TerminalSet.remove Terminal.error toks in
-  try
+  (* Fast path. *)
+  if TerminalSet.is_singleton toks then
+    f (TerminalSet.choose toks)
+  else try
     TerminalSet.fold (fun t accu ->
       let accu = P.min accu (f t) in
       match accu with
       | P.Finite (i, _) when i <= bound ->
-          assert (i = bound);
           raise (Stop accu)
       | _ ->
           accu
@@ -189,6 +191,14 @@ let productions : Nonterminal.t -> Production.index list =
   Obj.magic Misc.tabulate Nonterminal.n (Obj.magic productions) (* TEMPORARY *)
 
 let foreach_production nt bound (f : Production.index -> P.property) : P.property =
+  let prods = productions nt in
+  match prods with
+  (* Fast paths. *)
+  | [] ->
+      P.bottom
+  | [ prod ] ->
+      f prod
+  | _ ->
   try
     List.fold_left (fun accu prod ->
       let accu = P.min accu (f prod) in
@@ -198,7 +208,7 @@ let foreach_production nt bound (f : Production.index -> P.property) : P.propert
           raise (Stop accu)
       | _ ->
           accu
-    ) P.bottom (productions nt)
+    ) P.bottom prods
   with Stop accu ->
     accu
 
