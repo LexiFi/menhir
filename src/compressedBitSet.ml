@@ -89,13 +89,13 @@ let rec fold f s accu =
       accu
   | C (base, ss, qs) ->
       let limit = base + word_size in
-      let rec loop i ss accu =
-	if i = limit then
-	  accu
-	else
-	  loop (i + 1) (ss lsr 1) (if ss land 1 = 1 then f i accu else accu)
-      in
-      fold f qs (loop base ss accu)
+      loop limit f qs base ss accu
+
+and loop limit f qs i ss accu =
+  if i = limit then
+    fold f qs accu
+  else
+    loop limit f qs (i + 1) (ss lsr 1) (if ss land 1 = 1 then f i accu else accu)
 
 let iter f s =
   fold (fun x () -> f x) s ()
