@@ -48,13 +48,6 @@ let min_lazy p1 p2 =
   | _ ->
       min p1 (p2())
 
-let until_finite p1 p2 =
-  match p1 with
-  | Finite _ ->
-      p1
-  | Infinity ->
-      p2()
-
 let add p1 p2 =
   match p1, p2 with
   | Finite i1, Finite i2 ->

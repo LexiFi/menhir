@@ -24,8 +24,6 @@ val add_lazy: 'a t -> (unit -> 'a t) -> 'a t
 val min_cutoff: 'a t -> (int -> 'a t) -> 'a t
 val add_cutoff: (* cutoff: *) int -> 'a t -> (int -> 'a t) -> 'a t
 
-val until_finite: 'a t -> (unit -> 'a t) -> 'a t
-
 val print: ('a -> string) -> 'a t -> string
 val to_int: 'a t -> int
 val extract: 'a t -> 'a list

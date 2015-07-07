@@ -59,17 +59,6 @@ let min_cutoff p1 p2 =
       (* Pass [max_int] to indicate no cutoff. *)
       p2 max_int
 
-(* [until_finite] can be viewed as a variant of [min_lazy] where
-   we are happy as soon as we find a finite value. It can be viewed
-   as a minimum operation for the partial ordering where [Infinity]
-   is above everyone and everyone else is incomparable. *)
-let until_finite p1 p2 =
-  match p1 with
-  | Finite _ ->
-      p1
-  | Infinity ->
-      p2()
-
 let add p1 p2 =
   match p1, p2 with
   | Finite (i1, xs1), Finite (i2, xs2) ->
