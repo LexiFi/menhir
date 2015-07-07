@@ -1,6 +1,8 @@
 open Grammar
 open Cst
 
+(* ------------------------------------------------------------------------ *)
+
 (* Set up all of the information required by the LR engine. Everything is
    read directly from [Grammar] and [Lr1]. *)
 
@@ -204,6 +206,8 @@ module T = struct
 
 end
 
+(* ------------------------------------------------------------------------ *)
+
 (* Define a palatable user entry point. *)
 
 let interpret log nt lexer lexbuf =
@@ -220,15 +224,29 @@ let interpret log nt lexer lexbuf =
   (* Run it. *)
 
   try
-    Some (E.entry (Lr1.entry_nt nt) lexer lexbuf)
+    Some (E.entry (Lr1.entry_of_nt nt) lexer lexbuf)
   with T.Error ->
     None
+
+(* ------------------------------------------------------------------------ *)
 
 (* Another entry point, used internally by [Coverage] to check that the
    sentences that [Coverage] produces do lead to an error in the expected
    state. *)
 
-let _check nt (_path : Terminal.t list) (_z : Terminal.t) =
+open MenhirLib.General (* streams *)
+
+type check_error_path_outcome =
+  (* Bad: the input was read past its end. *)
+| OInputReadPastEnd
+  (* Bad: a syntax error occurred before all of the input was read. *)
+| OInputNotFullyConsumed
+  (* Bad: the parser unexpectedly accepted (part of) this input. *)
+| OUnexpectedAccept
+  (* Good: a syntax error occurred after reading the last input token. *)
+| OK of Lr1.node
+
+let check_error_path nt input =
 
   (* Instantiate the LR engine. *)
 
@@ -239,12 +257,61 @@ let _check nt (_path : Terminal.t list) (_z : Terminal.t) =
     end)
   in
 
-  (* Run it. *)
+  (* Set up a function that delivers tokens one by one. *)
 
-  let _s = Lr1.entry_nt nt in
+  let input = ref input in
+  let next () =
+    match !input with
+    | [] ->
+        None
+    | t :: ts ->
+        input := ts;
+        Some t
+  in
 
-  (* TEMPORARY use the incremental API to drive the engine, step by step,
-     up to the expected error. *)
+  (* Run it. We wish to stop at the first error (without handling the error
+     in any way) and report in which state the error occurred. A clean way
+     of doing this is to use the incremental API, as follows. The main loop
+     resembles the [loop] function in [Engine]. *)
 
-  ()
+  let entry = Lr1.entry_of_nt nt in
+
+  let rec loop (result : cst E.result) =
+    match result with
+    | E.InputNeeded _ ->
+        begin match next() with
+        | None ->
+            OInputReadPastEnd
+        | Some t ->
+            let dummy = Lexing.dummy_pos in
+            loop (E.offer result (t, dummy, dummy))
+        end
+    | E.Shifting _
+    | E.AboutToReduce _ ->
+        loop (E.resume result)
+    | E.HandlingError env ->
+        (* Check that all of the input has been read. Otherwise, the error
+           has occurred sooner than expected. *)
+        if !input = [] then
+          (* Return the current state. This is done by peeking at the stack.
+             If the stack is empty, then we must be in the initial state. *)
+          OK (
+            match Lazy.force (E.stack env) with
+            | Nil ->
+                entry
+            | Cons (E.Element (s, _, _, _), _) ->
+                s
+          )
+        else
+          OInputNotFullyConsumed
+    | E.Accepted _ ->
+        (* The parser has succeeded. This is unexpected. *)
+        OUnexpectedAccept
+    | E.Rejected ->
+        (* The parser rejects this input. This should not happen; we
+           should observe [HandlingError _] first. *)
+        assert false
+  in
+
+  loop (E.start entry)
 

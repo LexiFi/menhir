@@ -1072,10 +1072,28 @@ let fold_entry f accu =
     f prod state nt t accu
   ) entry accu
 
-let entry_nt nt =
+let entry_of_nt nt =
   (* Find the entry state that corresponds to [nt]. *)
   try
     ProductionMap.find (Production.startsymbol2startprod nt) entry
   with Not_found ->
     assert false
 
+exception Found of Nonterminal.t
+
+let nt_of_entry s =
+  (* [s] should be an initial state. *)
+  assert (incoming_symbol s = None);
+  try
+    ProductionMap.iter (fun prod entry ->
+      if Node.compare s entry = 0 then
+        match Production.classify prod with
+        | None ->
+            assert false
+        | Some nt ->
+            raise (Found nt)
+    ) entry;
+    (* This should not happen if [s] is indeed an initial state. *)
+    assert false
+  with Found nt ->
+    nt

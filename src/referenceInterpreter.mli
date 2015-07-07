@@ -19,3 +19,22 @@ val interpret:
   Lexing.lexbuf ->
   cst option
 
+(* This variant of the reference interpreter is used internally by us. We use
+   it to debug [Coverage]. It checks that a sentence leads to a syntax error
+   in the expected state. *)
+
+type check_error_path_outcome =
+  (* Bad: the input was read past its end. *)
+| OInputReadPastEnd
+  (* Bad: a syntax error occurred before all of the input was read. *)
+| OInputNotFullyConsumed
+  (* Bad: the parser unexpectedly accepted (part of) this input. *)
+| OUnexpectedAccept
+  (* Good: a syntax error occurred after reading the last input token. *)
+| OK of Lr1.node
+
+val check_error_path:
+  Nonterminal.t ->   (* initial non-terminal symbol *)
+  Terminal.t list -> (* input  *)
+  check_error_path_outcome
+
