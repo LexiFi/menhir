@@ -324,6 +324,9 @@ let answer (q : question) (get : question -> P.property) : P.property =
   end
   else begin
 
+    (* This known lower bound is used below to interrupt a loop as soon as
+       an known-optimal result is reached. Unfortunately, this does yield
+       a large improvement. *)
     match Analysis.minimal_prod q.prod q.i with
     | P.Infinity ->
         P.bottom
