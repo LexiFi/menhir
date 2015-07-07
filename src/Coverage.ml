@@ -576,5 +576,4 @@ let () =
    and check if this path is feasible in the real automaton
 *)
 (* TEMPORARY what about the pseudo-token [#]? *)
-(* TEMPORARY implement and exploit [Lr1.ImperativeNodeMap] using an array *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
