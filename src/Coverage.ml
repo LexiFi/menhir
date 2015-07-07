@@ -175,15 +175,6 @@ let foreach_terminal_in toks (f : Terminal.t -> P.property) : P.property =
     P.min_lazy accu (fun () -> f t)
   ) toks P.bottom
 
-(* This is analogous to [foreach_terminal_in], but stops as soon as a
-   finite value is reached, i.e., as soon as one path is found. *)
-
-let foreach_terminal_until_finite (f : Terminal.t -> P.property) : P.property =
-  Terminal.fold (fun t accu ->
-    (* We stop as soon as we obtain a finite result. *)
-    P.until_finite accu (fun () -> f t)
-  ) P.bottom
-
 (* This computes a minimum over the productions associated with [nt]. *)
 
 let foreach_production nt (f : Production.index -> P.property) : P.property =
@@ -384,9 +375,11 @@ let answer : question -> P.property =
 (* Debugging. TEMPORARY *)
 let es = ref 0
 
-let backward (s', z) : P.property =
+exception Success of Lr1.node * P.property
 
-  let module G = struct
+let backward (s', z) : unit =
+
+  let module A = Astar.Make(struct
 
     (* A vertex is a pair [s, z]. *)
     type node =
@@ -443,35 +436,31 @@ let backward (s', z) : P.property =
     let estimate (s', _z) =
       approx s'
 
-  end in
-  let module A = Astar.Make(G) in
-  let module S = struct exception Success of P.property end in
+  end) in
 
-  (* Search backwards from [s', z], stopping as soon as an entry state
-     is reached. In that case, return the distance [i] and path [pi]
-     that have been found. *)
+  (* Search backwards from [s', z], stopping as soon as an entry state [s] is
+     reached. In that case, return the state [s] and the path that has been
+     found. *)
 
-  try
-    let _ = A.search (fun ((s, _), ps) ->
-      (* Debugging. TEMPORARY *)
-      incr es;
-      if !es mod 10000 = 0 then
-        Printf.fprintf stderr "es = %d\n%!" !es;
-      (* If [s] is a start state... *)
-      if Lr1.incoming_symbol s = None then
-        (* [labels] is a list of properties. Projecting onto the second
-           component yields a list of paths (sequences of terminal symbols),
-           which we concatenate to obtain a path. Because the edges that were
-           followed last are in front of the list, and because this is a
-           reverse graph, we obtain a path that makes direct sense: it is a
-           sequence of terminal symbols that will take the automaton into
-           state [s'] if the next (unconsumed) symbol is [z]. *)
-        let p = List.fold_right P.add ps P.epsilon in
-        raise (S.Success p)
-    ) in
-    P.bottom
-  with S.Success p ->
-    p
+  let _, _ = A.search (fun ((s, _), ps) ->
+    (* Debugging. TEMPORARY *)
+    incr es;
+    if !es mod 10000 = 0 then
+      Printf.fprintf stderr "es = %d\n%!" !es;
+    (* If [s] is a start state... *)
+    if Lr1.incoming_symbol s = None then
+      (* [labels] is a list of properties. Projecting onto the second
+         component yields a list of paths (sequences of terminal symbols),
+         which we concatenate to obtain a path. Because the edges that were
+         followed last are in front of the list, and because this is a
+         reverse graph, we obtain a path that makes direct sense: it is a
+         sequence of terminal symbols that will take the automaton into
+         state [s'] if the next (unconsumed) symbol is [z]. We append [z]
+         at the end of this path. *)
+      let p = List.fold_right P.add ps (P.singleton z) in
+      raise (Success (s, p))
+  ) in
+  ()
 
 (* ------------------------------------------------------------------------ *)
 
@@ -480,6 +469,8 @@ let backward (s', z) : P.property =
    stop as soon as one [z] is found, i.e., as soon as one way of causing an
    error in state [s'] is found. *)
 
+open ReferenceInterpreter
+
 let backward s' : P.property =
   
   (* Debugging. TEMPORARY *)
@@ -487,12 +478,48 @@ let backward s' : P.property =
     "Attempting to reach an error in state %d:\n%!"
     (Lr1.number s');
 
-  foreach_terminal_until_finite (fun z ->
-    if causes_an_error s' z then
-      P.add (backward (s', z)) (P.singleton z)
-    else
-      P.bottom
-  )
+  try
+
+    (* This loop stops as soon as we are able to reach one error at [s']. *)
+    Terminal.iter (fun z ->
+      if causes_an_error s' z then
+        backward (s', z)
+    );
+    (* No error can be triggered in state [s']. *)
+    P.bottom
+
+  with Success (s, p) ->
+    (* An error can be triggered in state [s'] by beginning in the initial
+       state [s] and reading the sequence of terminal symbols [p]. *)
+
+    (* Validation. *)
+    let outcome =
+      ReferenceInterpreter.check_error_path
+        (Lr1.nt_of_entry s)
+        (P.extract p)
+    in
+    let fail msg =
+      Printf.fprintf stderr "coverage: internal error: %s.\n%!" msg;
+      p
+    in
+    match outcome with
+    | OInputReadPastEnd ->
+        fail "input was read past its end"
+    | OInputNotFullyConsumed ->
+        fail "input was not fully consumed"
+    | OUnexpectedAccept ->
+        fail "input was unexpectedly accepted"
+    | OK state ->
+        if Lr1.Node.compare state s' = 0 then begin
+          Printf.fprintf stderr "Validated.\n%!";
+          p
+        end
+        else
+          fail (
+            Printf.sprintf "error occurred in state %d instead of %d"
+              (Lr1.number state)
+              (Lr1.number s')
+          )
 
 (* Test. TEMPORARY *)
 
@@ -508,9 +535,6 @@ let () =
     Printf.fprintf stderr "Questions asked so far: %d\n" !qs;
     Printf.fprintf stderr "Edges so far: %d\n" !es
   )
-
-(* TEMPORARY before optimizing further,
-   validate the results using the reference interpreter *)
 
 (* TEMPORARY
    also: first compute an optimistic path using the simple algorithm
