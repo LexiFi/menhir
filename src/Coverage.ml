@@ -499,12 +499,40 @@ let backward (s', z) : unit =
 
 (* ------------------------------------------------------------------------ *)
 
+(* The following code validates the fact that an error can be triggered in
+   state [s'] by beginning in the initial state [s] and reading the
+   sequence of terminal symbols [p]. We use this for debugging purposes. *)
+
+let fail msg =
+  Printf.fprintf stderr "coverage: internal error: %s.\n%!" msg;
+  false
+
+open ReferenceInterpreter
+
+let validate s s' p : bool =
+  match
+    ReferenceInterpreter.check_error_path (Lr1.nt_of_entry s) (P.extract p)
+  with
+  | OInputReadPastEnd ->
+      fail "input was read past its end"
+  | OInputNotFullyConsumed ->
+      fail "input was not fully consumed"
+  | OUnexpectedAccept ->
+      fail "input was unexpectedly accepted"
+  | OK state ->
+      Lr1.Node.compare state s' = 0 ||
+      fail (
+        Printf.sprintf "error occurred in state %d instead of %d"
+          (Lr1.number state)
+          (Lr1.number s')
+      )
+
+(* ------------------------------------------------------------------------ *)
+
 (* For each state [s'] and for each terminal symbol [z] such that [z] triggers
    an error in [s'], backward search is performed. For each state [s'], we
    stop as soon as one [z] is found, i.e., as soon as one way of causing an
    error in state [s'] is found. *)
-
-open ReferenceInterpreter
 
 let backward s' : P.property =
   
@@ -526,35 +554,8 @@ let backward s' : P.property =
   with Success (s, p) ->
     (* An error can be triggered in state [s'] by beginning in the initial
        state [s] and reading the sequence of terminal symbols [p]. *)
-
-    (* Validation. *)
-    let outcome =
-      ReferenceInterpreter.check_error_path
-        (Lr1.nt_of_entry s)
-        (P.extract p)
-    in
-    let fail msg =
-      Printf.fprintf stderr "coverage: internal error: %s.\n%!" msg;
-      p
-    in
-    match outcome with
-    | OInputReadPastEnd ->
-        fail "input was read past its end"
-    | OInputNotFullyConsumed ->
-        fail "input was not fully consumed"
-    | OUnexpectedAccept ->
-        fail "input was unexpectedly accepted"
-    | OK state ->
-        if Lr1.Node.compare state s' = 0 then begin
-          Printf.fprintf stderr "Validated.\n%!";
-          p
-        end
-        else
-          fail (
-            Printf.sprintf "error occurred in state %d instead of %d"
-              (Lr1.number state)
-              (Lr1.number s')
-          )
+    assert (validate s s' p);
+    p
 
 (* Test. TEMPORARY *)
 
