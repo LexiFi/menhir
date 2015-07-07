@@ -475,10 +475,10 @@ let eos_compatible  (k1, toksr1) (k2, toksr2) =
       let toks1 = toksr1.(i)
       and toks2 = toksr2.(i) in
       begin
-	if TerminalSet.mem Terminal.sharp toks1 && TerminalSet.cardinal toks1 = 1 then
+	if TerminalSet.mem Terminal.sharp toks1 && TerminalSet.is_singleton toks1 then
 	  (* "#" is alone in one set: it must be a member of the other set. *)
 	  TerminalSet.mem Terminal.sharp toks2
-	else if TerminalSet.mem Terminal.sharp toks2 && TerminalSet.cardinal toks2 = 1 then
+	else if TerminalSet.mem Terminal.sharp toks2 && TerminalSet.is_singleton toks2 then
 	  (* Symmetric condition. *)
 	  TerminalSet.mem Terminal.sharp toks1
 	else
