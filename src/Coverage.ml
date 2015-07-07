@@ -578,7 +578,3 @@ let () =
 (* TEMPORARY what about the pseudo-token [#]? *)
 (* TEMPORARY implement and exploit [Lr1.ImperativeNodeMap] using an array *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
-(* TEMPORARY gain a constant factor by memoizing [nullable_first_prod]? *)
-(* TEMPORARY maybe cutoff didn't work because productions were not sorted by length? *)
-(* TEMPORARY key idea? stop searching as soon as the lower bound predicted by [MINIMAL]
-             is reached *)
