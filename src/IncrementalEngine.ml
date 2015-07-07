@@ -81,7 +81,7 @@ module type INCREMENTAL_ENGINE = sig
     | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
 
   (* The parser's stack is (or, more precisely, can be viewed as) a stream of
-     elements. *)
+     elements. The type [stream] is defined by the module [General]. *)
 
   type stack =
     element stream
