@@ -450,7 +450,8 @@ let backward (s', z) : unit =
 
   let module A = Astar.Make(struct
 
-    (* A vertex is a pair [s, z]. *)
+    (* A vertex is a pair [s, z].
+       [z] cannot be the [error] token. *)
     type node =
         Lr1.node * Terminal.t
 
@@ -469,18 +470,20 @@ let backward (s', z) : unit =
     let sources f = f (s', z)
 
     let successors (s', z) edge =
+      assert (not (Terminal.equal z Terminal.error));
       match Lr1.incoming_symbol s' with
       | None ->
           (* An entry state has no predecessor states. *)
           ()
 
       | Some (Symbol.T t) ->
-          (* There is an edge from [s] to [s'] labeled [t] in the automaton.
-             Thus, our graph has an edge from [s', z] to [s, t], labeled [t]. *)
-          let label = P.singleton t in
-          List.iter (fun s ->
-            edge label 1 (s, t)
-          ) (Lr1.predecessors s')
+          if not (Terminal.equal t Terminal.error) then
+            (* There is an edge from [s] to [s'] labeled [t] in the automaton.
+               Thus, our graph has an edge from [s', z] to [s, t], labeled [t]. *)
+            let label = P.singleton t in
+            List.iter (fun s ->
+              edge label 1 (s, t)
+            ) (Lr1.predecessors s')
 
       | Some (Symbol.N nt) ->
           (* There is an edge from [s] to [s'] labeled [nt] in the automaton.
@@ -493,6 +496,7 @@ let backward (s', z) : unit =
             Production.foldnt nt () (fun prod () ->
               if viable s prod 0 z then
                 TerminalSet.iter (fun a ->
+                  assert (not (Terminal.equal a Terminal.error));
                   let p = answer { s = s; a = a; prod = prod; i = 0; z = z } in
                   match p with
                   | P.Infinity ->
