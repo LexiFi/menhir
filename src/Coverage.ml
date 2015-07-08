@@ -211,20 +211,28 @@ let foreach_production nt bound (f : Production.index -> P.property) : P.propert
 
 (* ------------------------------------------------------------------------ *)
 
-(* Construction area. *)
+(* The analysis that follows asks questions of the form [s, a, prod, i, z],
+   whose answer is the empty set (that is, [P.bottom]) unless, beginning in
+   state [s], one can follow the transitions dictated by [prod/i] and reach
+   a state that is willing to reduce [prod] when looking at [z]. We implement
+   a test for this viability condition. This is cheap and allows us to save
+   quite a few questions in the expensive analysis. *)
 
-let rec viable s prod i z : bool =
-  assert (not (Terminal.equal z Terminal.error));
-  let rhs = Production.rhs prod in
-  let n = Array.length rhs in
+let rec viable s prod rhs i n z : bool =
   if i = n then
     has_reduction s prod z
   else
     match has_transition s rhs.(i) with
     | Some s' ->
-        viable s' prod (i + 1) z
+        viable s' prod rhs (i + 1) n z
     | None ->
         false
+
+let viable s prod i z : bool =
+  assert (not (Terminal.equal z Terminal.error));
+  let rhs = Production.rhs prod in
+  let n = Array.length rhs in
+  viable s prod rhs i n z
 
 (* ------------------------------------------------------------------------ *)
 
@@ -313,15 +321,14 @@ let first prod i z =
 
 let answer (q : question) (get : question -> P.property) : P.property =
 
-  assert (not (Terminal.equal q.z Terminal.error));
-
   let rhs = Production.rhs q.prod in
   let n = Array.length rhs in
   assert (0 <= q.i && q.i <= n);
+  assert (not (Terminal.equal q.z Terminal.error));
 
   (* According to conditions 2 and 3, the answer to this question is the empty
-     set unless [a] is in [FIRST(prod/i.z)]. Thus, by convention, we will ask
-     this question only when this precondition is satisfied. *)
+     set unless [a] is in [FIRST(prod/i.z)]. Thus, by convention, we ask this
+     question only when this precondition holds. *)
   assert (TerminalSet.mem q.a (first q.prod q.i q.z));
   (* TEMPORARY ultimately disable this assertion *)
 
@@ -337,9 +344,9 @@ let answer (q : question) (get : question -> P.property) : P.property =
   if q.i = n then begin
 
     (* Case 1. The suffix determined by [prod] and [i] is epsilon. To satisfy
-       condition 1, [w] must be the empty word. Condition 2 is implied by our
-       precondition. There remains to check whether condition 3 is satisfied.
-       If so, we return the empty word; otherwise, no word exists. *)
+       condition 1, [w] must be the empty word. Condition 2 is implied by
+       precondition 1. Condition 3 is implied by precondition 2. Thus, success
+       is guaranteed: we return the empty word. *)
 
     assert (Terminal.equal q.a q.z);       (* per precondition 1 *)
     assert (has_reduction q.s q.prod q.z); (* per precondition 2 *)
@@ -358,12 +365,13 @@ let answer (q : question) (get : question -> P.property) : P.property =
 
         (* Case 2. The suffix determined by [prod] and [i] begins with a symbol
            [sym]. The state [s] must have an outgoing transition along [sym];
-           otherwise, no word exists. *)
+           otherwise, no word exists. (Furthermore, this is guaranteed by
+           precondition 2.) *)
 
         let sym = rhs.(q.i) in
         match sym, has_transition q.s sym with
         | _, None ->
-            P.bottom
+            assert false (* pre precondition 2 *)
         | Symbol.T t, Some s' ->
 
             (* Case 2a. [sym] is a terminal symbol [t]. Our precondition implies
@@ -372,7 +380,7 @@ let answer (q : question) (get : question -> P.property) : P.property =
                [w'], we reach our goal. The first letter in [w'] could be any
                terminal symbol [c], so we try all of them. *)
 
-            assert (Terminal.equal q.a t); (* per our precondition *)
+            assert (Terminal.equal q.a t); (* per precondition 1 *)
             assert (1 <= bound);
             P.add (P.singleton q.a) (
               foreach_terminal_in (first q.prod (q.i + 1) q.z) (bound - 1) (fun c ->
@@ -391,7 +399,7 @@ let answer (q : question) (get : question -> P.property) : P.property =
 
             foreach_terminal_in (first q.prod (q.i + 1) q.z) bound (fun c ->
               foreach_production nt bound (fun prod' ->
-                if TerminalSet.mem q.a (first prod' 0 c) && viable q.s prod' 0 c then
+                if viable q.s prod' 0 c && TerminalSet.mem q.a (first prod' 0 c) then
                   P.add_lazy
                     (get { s = q.s; a = q.a; prod = prod'; i = 0; z = c })
                     (fun () -> get { s = s'; a = c; prod = q.prod; i = q.i + 1; z = q.z })
