@@ -134,7 +134,7 @@ end) = struct
 
     (* Adjust node's priority and insert into doubly linked list. *)
     let add inode priority =
-      assert (priority < max);
+      assert (0 <= priority && priority < max);
       inode.priority <- priority;
       match a.(priority) with
       | None ->
@@ -185,12 +185,17 @@ end) = struct
 
   (* Initialization. *)
 
+  let estimate node =
+    let e = G.estimate node in
+    assert (0 <= e); (* failure means user error *)
+    e
+
   let () =
     G.sources (fun node ->
       let rec inode = {
         this = node;
         cost = 0;
-        estimate = G.estimate node;
+        estimate = estimate node;
         path = [];
         prev = inode;
         next = inode;
@@ -199,9 +204,6 @@ end) = struct
       M.add node inode;
       P.add inode inode.estimate
     )
-
-  let expanded =
-    ref 0
 
   (* Access to the search results (after the search is over). *)
 
@@ -229,15 +231,14 @@ end) = struct
         (* Let the user know about this newly discovered node. *)
         f (node, inode.path);
 
-        (* Monitoring. *)
-        incr expanded;
-
         (* Otherwise, examine its successors. *)
         G.successors node (fun label edge_cost son ->
+          assert (0 <= edge_cost); (* failure means user error *)
 
           (* Determine the cost of the best known path from the
              start node, through this node, to this son. *)
           let new_cost = inode.cost + edge_cost in
+          assert (0 <= new_cost); (* failure means overflow *)
 
           try
             let ison = M.get son in
@@ -250,6 +251,7 @@ end) = struct
                  it into the queue. *)
 
               let new_fhat = new_cost + ison.estimate in
+              assert (0 <= new_fhat); (* failure means overflow *)
               P.add_or_decrease ison new_fhat;
               ison.cost <- new_cost;
               ison.path <- label :: inode.path
@@ -260,18 +262,19 @@ end) = struct
             (* This son was never visited before. Allocate a new
                status record for it and mark it as open. *)
 
-            let e = G.estimate son in
             let rec ison = {
               this = son;
               cost = new_cost;
-              estimate = e;
+              estimate = estimate son;
               path = label :: inode.path;
               prev = ison;
               next = ison;
               priority = -1
             } in
             M.add son ison;
-            P.add ison (new_cost + e)
+            let fhat = new_cost + ison.estimate in
+            assert (0 <= fhat); (* failure means overflow *)
+            P.add ison fhat
 
         );
 
