@@ -213,26 +213,6 @@ let foreach_production nt bound (f : Production.index -> P.property) : P.propert
 
 (* Construction area. *)
 
-(* TEMPORARY
-let universe =
-  TerminalSet.add Terminal.sharp TerminalSet.universe
-
-let enabling_reduction s (prod : Production.index) : TerminalSet.t =
-  match Invariant.has_default_reduction s with
-  | Some (prod', _) ->
-      if prod = prod' then
-        universe
-      else
-        TerminalSet.empty
-  | None ->
-      TerminalMap.fold (fun z prods accu ->
-        if List.mem prod prods && not (Terminal.equal z Terminal.error) then
-          TerminalSet.add z accu
-        else
-          accu
-      ) (Lr1.reductions s) TerminalSet.empty
-*)
-
 let rec viable s prod i z : bool =
   assert (not (Terminal.equal z Terminal.error));
   let rhs = Production.rhs prod in
