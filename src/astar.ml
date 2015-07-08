@@ -122,38 +122,48 @@ end) = struct
 
   end = struct
 
-    (* Maximum allowed priority. *)
-    let max = 264
+    module InfiniteArray = MenhirLib.InfiniteArray
 
-    (* Array of pointers to the doubly linked lists,
-       indexed by priorities. *)
-    let a = Array.make max None
+    (* Array of pointers to the doubly linked lists, indexed by priorities.
+       There is no a priori bound on the size of this array -- its size is
+       increased if needed. It is up to the user to use a graph where paths
+       have reasonable lengths. *)
+    let a = InfiniteArray.make None
 
-    (* Index of lowest nonempty list. *)
-    let best = ref max
+    (* Index of lowest nonempty list, if there is one; or lower (sub-optimal,
+       but safe). If the queue is empty, [best] is arbitrary. *)
+    let best = ref 0
+
+    (* Current number of elements in the queue. Used in [get] to stop the
+       search for a nonempty bucket. *)
+    let cardinal = ref 0
 
     (* Adjust node's priority and insert into doubly linked list. *)
     let add inode priority =
-      assert (0 <= priority && priority < max);
+      assert (0 <= priority);
+      cardinal := !cardinal + 1;
       inode.priority <- priority;
-      match a.(priority) with
+      match InfiniteArray.get a priority with
       | None ->
-	  a.(priority) <- Some inode;
-	  if priority < !best then
-	    best := priority
+	  InfiniteArray.set a priority (Some inode);
+          (* Decrease [best], if necessary, so as not to miss the new element.
+             In the special case of A*, this never happens. *)
+          assert (!best <= priority);
+	  (* if priority < !best then best := priority *)
       | Some inode' ->
 	  inode.next <- inode';
 	  inode.prev <- inode'.prev;
 	  inode'.prev.next <- inode;
 	  inode'.prev <- inode
 
-    (* Takes a node off its doubly linked list. Does not adjust
-       [best]. *)
+    (* Takes a node off its doubly linked list. Does not adjust [best],
+       as this is not necessary in order to preserve the invariant. *)
     let remove inode =
+      cardinal := !cardinal - 1;
       if inode.next == inode then
-	a.(inode.priority) <- None
+        InfiniteArray.set a inode.priority None
       else begin
-        a.(inode.priority) <- Some inode.next;
+        InfiniteArray.set a inode.priority (Some inode.next);
 	inode.next.prev <- inode.prev;
 	inode.prev.next <- inode.next;
 	inode.next <- inode;
@@ -161,20 +171,24 @@ end) = struct
       end;
       inode.priority <- -1
 
-    let get () =
-      if !best = max then
+    let rec get () =
+      if !cardinal = 0 then
 	None
       else
-	match a.(!best) with
-	| None ->
-	    assert false
-	| Some inode as result ->
-            remove inode;
-            (* look for next nonempty bucket *)
-            while (!best < max) && (a.(!best) = None) do
-	      incr best
-	    done;
-	    result
+        get_nonempty()
+
+    and get_nonempty () =
+      (* Look for next nonempty bucket. We know there is one. This may
+         seem inefficient, because it is a linear search. However, in
+         A*, [best] never decreases, so the total cost of this loop is
+         the maximum priority ever used. *)
+      match InfiniteArray.get a !best with
+      | None ->
+          best := !best + 1;
+          get_nonempty()
+      | Some inode as result ->
+          remove inode;
+          result
 
     let add_or_decrease inode priority =
       if inode.priority >= 0 then
