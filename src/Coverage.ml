@@ -35,6 +35,25 @@ open Grammar
 
 (* ------------------------------------------------------------------------ *)
 
+(* Our main analysis is formulated as a least fixed point computation. The
+   ordering is [CompletedNatWitness]. This represents the natural integers
+   completed with infinity. The bottom element is [infinity], which means that
+   no path is known, and the computation progresses towards smaller (finite)
+   numbers, which means that shorter paths become known. *)
+
+(* Using [CompletedNatWitness] means that we wish to compute shortest paths.
+   We could instead use [BooleanWitness], which offers the same interface.
+   That would mean we are happy as soon as we know an arbitrary path. That
+   could be faster, but (according to a quick experiment) the paths thus
+   obtained would be really far from optimal. *)
+
+module P = struct
+  include CompletedNatWitness
+  type property = Terminal.t t
+end
+
+(* ------------------------------------------------------------------------ *)
+
 (* First, we implement the computation of forward shortest paths in the
    automaton. We view the automaton as a graph whose vertices are states. We
    label each edge with the minimum length of a word that it generates. This
@@ -64,8 +83,13 @@ let approximate : Lr1.node -> int =
     let successors s edge =
       SymbolMap.iter (fun sym s' ->
         (* The weight of the edge from [s] to [s'] is given by the function
-           [Grammar.Analysis.minimal_symbol]. *)
-        edge () (CompletedNatWitness.to_int (Analysis.minimal_symbol sym)) s'
+           [Grammar.Analysis.minimal_symbol]. If [sym] produces the empty
+           language, this could be infinite, in which case no edge exists. *)
+        match Analysis.minimal_symbol sym with
+        | P.Finite (w, _) ->
+            edge () w s'
+        | P.Infinity ->
+            ()
       ) (Lr1.transitions s)
 
     let estimate _ =
@@ -130,25 +154,6 @@ let causes_an_error s z =
   | None ->
       reductions s z = [] &&
       not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
-
-(* ------------------------------------------------------------------------ *)
-
-(* The analysis that follows is formulated as a least fixed point computation.
-   The ordering is [CompletedNatWitness]. This represents the natural integers
-   completed with infinity. The bottom element is [infinity], which means that
-   no path is known, and the computation progresses towards smaller (finite)
-   numbers, which means that shorter paths become known. *)
-
-(* Using [CompletedNatWitness] means that we wish to compute shortest paths.
-   We could instead use [BooleanWitness], which offers the same interface.
-   That would mean we are happy as soon as we know an arbitrary path. That
-   would be faster, but (according to a quick experiment) the paths thus
-   obtained would be really far from optimal. *)
-
-module P = struct
-  include CompletedNatWitness
-  type property = Terminal.t t
-end
 
 (* ------------------------------------------------------------------------ *)
 
@@ -604,7 +609,7 @@ let () =
     Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
     let approx = approximate s'
     and real = P.to_int p - 1 in
-    assert (approx <= real);
+    assert (approx = max_int && p = P.Infinity || approx <= real);
     if approx < real && real < max_int - 1 then
         Printf.fprintf stderr "Approx = %d, real = %d\n" approx real;
     Printf.fprintf stderr "Questions asked so far: %d\n" !qs;
