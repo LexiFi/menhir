@@ -1,5 +1,28 @@
 open Grammar
 
+  let id x = x
+  let some x = Some x
+
+let update_ref r f : bool =
+  let v = !r in
+  let v' = f v in
+  v != v' && (r := v'; true)
+
+module MyMap (X : Map.OrderedType) = struct
+  include Map.Make(X)
+  let update none some key m f =
+    match find key m with
+    | data ->
+        let data' = f (some data) in
+        if data' == data then
+          m
+        else
+          add key data' m
+    | exception Not_found ->
+        let data' = f none in
+        add key data' m
+end
+
 module W : sig
 
   type word
@@ -8,6 +31,7 @@ module W : sig
   val append: word -> word -> word
   val length: word -> int
   val first: word -> Terminal.t (* word must be nonempty *)
+  val print: word -> string
 
 end = struct
 
@@ -43,6 +67,10 @@ end = struct
   let first w =
     Seq.first w.data
 
+  let print w =
+    string_of_int w.length ^ " " ^
+    String.concat " " (List.map Terminal.print (Seq.elements w.data))
+
 end
 
 module Q = LowIntegerPriorityQueue
@@ -54,6 +82,27 @@ type fact = {
   word: W.word;
   lookahead: Terminal.t
 }
+
+let print_fact fact =
+  Printf.fprintf stderr
+    "from state %d in %d steps to state %d via %s . %s\n%!"
+    (Lr1.number fact.source)
+    fact.height
+    (Lr1.number fact.target)
+    (W.print fact.word)
+    (Terminal.print fact.lookahead)
+
+(* TEMPORARY not really satisfactory; conservative bound *)
+let max_height (s : Lr1.node) =
+  let items = Lr0.items (Lr0.core (Lr1.state s)) in
+  Item.Set.fold (fun item accu ->
+    let prod, i = Item.export item in
+    let height = Production.length prod - i in
+    max height accu
+  ) items 0
+
+let extensible fact =
+  fact.height < max_height fact.source
 
 let foreach_terminal f =
   Terminal.iter (fun t ->
@@ -86,6 +135,23 @@ let reductions s z =
   with Not_found ->
     []
 
+(* This tests whether state [s] is willing to reduce some production
+   when the lookahead symbol is [z]. This test takes a possible default
+   reduction into account. *)
+
+let has_reduction s z : Production.index option =
+  assert (not (Terminal.equal z Terminal.error));
+  match Invariant.has_default_reduction s with
+  | Some (prod, _) ->
+      Some prod
+  | None ->
+      match reductions s z with
+      | prod :: prods ->
+          assert (prods = []);
+          Some prod
+      | [] ->
+          None
+
 let q =
   Q.create()
 
@@ -109,47 +175,66 @@ let first w z =
   if W.length w > 0 then W.first w else z
 
 module T : sig
-  val register: fact -> bool (* true if fact is new *)
-  (* target/z *)
+
+  (* [register fact] registers the fact [fact]. It returns [true] if this fact
+     is new, i.e., no fact concerning the same quintuple of [source], [height],
+     [target], [a], and [z] was previously known. *)
+  val register: fact -> bool
+
+  (* [query target z f] enumerates all known facts whose target state is [target]
+     and whose lookahead assumption is [z]. *)
   val query: Lr1.node -> Terminal.t -> (fact -> unit) -> unit
+
 end = struct
 
-  (* For now, we implement a mapping of [source, height, target, a, z] to [w]. *)
+  (* We use a map of [target, z] to a map of [source, height, a] to facts. *)
 
-  module M =
-    Map.Make(struct
-      type t = Lr1.node * int * Lr1.node * Terminal.t * Terminal.t
-      let compare (source1, height1, target1, a1, z1) (source2, height2, target2, a2, z2) =
-        let c = Lr1.Node.compare source1 source2 in
-        if c <> 0 then c else
-        let c = Pervasives.compare height1 height2 in
-        if c <> 0 then c else
+  module M1 =
+    MyMap(struct
+      type t = Lr1.node * Terminal.t
+      let compare (target1, z1) (target2, z2) =
         let c = Lr1.Node.compare target1 target2 in
-        if c <> 0 then c else
-        let c = Terminal.compare a1 a2 in
         if c <> 0 then c else
         Terminal.compare z1 z2
     end)
 
-  let m =
-    ref M.empty
+  module M2 =
+    MyMap(struct
+      type t = Lr1.node * int * Terminal.t
+      let compare (source1, height1, a1) (source2, height2, a2) =
+        let c = Lr1.Node.compare source1 source2 in
+        if c <> 0 then c else
+        let c = Pervasives.compare height1 height2 in
+        if c <> 0 then c else
+        Terminal.compare a1 a2
+    end)
 
-  let add key w' =
-    match M.find key !m with
-    | w ->
-        assert (W.length w <= W.length w');
-          (* no need to add again *)
-        false
-    | exception Not_found ->
-        m := M.add key w' !m;
-        true
+  let m : fact M2.t M1.t ref =
+    ref M1.empty
 
   let register fact =
     let z = fact.lookahead in
     let a = first fact.word z in
-    add (fact.source, fact.height, fact.target, a, z) fact.word
+    update_ref m (fun m1 ->
+      M1.update M2.empty id (fact.target, z) m1 (fun m2 ->
+        M2.update None some (fact.source, fact.height, a) m2 (function
+          | None ->
+              fact
+          | Some earlier_fact ->
+              assert (W.length earlier_fact.word <= W.length fact.word);
+              earlier_fact
+        )
+      )
+    )
 
-  let query _ = assert false
+  let query target z f =
+    match M1.find (target, z) !m with
+    | m2 ->
+        M2.iter (fun _ fact ->
+          f fact
+        ) m2
+    | exception Not_found ->
+        ()
 
 end
 
@@ -175,7 +260,7 @@ end = struct
   (* For now, we implement a mapping of [s, nt, a, z] to [w]. *)
 
   module M =
-    Map.Make(struct
+    MyMap(struct
       type t = Lr1.node * Nonterminal.t * Terminal.t * Terminal.t
       let compare (s1, nt1, a1, z1) (s2, nt2, a2, z2) =
         let c = Lr1.Node.compare s1 s2 in
@@ -190,19 +275,17 @@ end = struct
   let m =
     ref M.empty
 
-  let add key w' =
-    match M.find key !m with
-    | w ->
-        assert (W.length w <= W.length w')
-          (* no need to add again *);
-        false
-    | exception Not_found ->
-        m := M.add key w' !m;
-        true
-
   let register s nt w z =
     let a = first w z in
-    add (s, nt, a, z) w
+    update_ref m (fun m ->
+      M.update None some (s, nt, a, z) m (function
+      | None ->
+          w
+      | Some earlier_w ->
+          assert (W.length earlier_w <= W.length w);
+          earlier_w
+      )
+    )
 
   let query s nt a z f =
     match M.find (s, nt, a, z) !m with
@@ -224,7 +307,8 @@ let extend fact target w z =
 let new_edge s nt w z =
   if E.register s nt w z then
     T.query s (first w z) (fun fact ->
-      add (extend fact s w z)
+      if extensible fact then
+        add (extend fact s w z)
     )
 
 (* [consequences fact] is invoked when we discover a new fact (i.e., one that
@@ -248,39 +332,40 @@ let consequences fact =
 
   (* 1. View [fact] as a vertex. Examine the transitions out of [fact.target]. *)
   
-  SymbolMap.iter (fun sym s ->
-    match sym with
-    | Symbol.T t ->
+  if extensible fact then
+    SymbolMap.iter (fun sym s ->
+      match sym with
+      | Symbol.T t ->
 
-        (* 1a. There is a transition labeled [t] out of [fact.target]. If the
-           lookahead assumption [fact.lookahead] accepts [t], then we derive a
-           new fact, where one more edge has been taken. We enqueue this new
-           fact for later examination. *)
-        (**)
+          (* 1a. There is a transition labeled [t] out of [fact.target]. If the
+             lookahead assumption [fact.lookahead] accepts [t], then we derive a
+             new fact, where one more edge has been taken. We enqueue this new
+             fact for later examination. *)
+          (**)
 
-        if Terminal.equal fact.lookahead t then
+          if Terminal.equal fact.lookahead t then
+            foreach_terminal (fun z ->
+              add (extend fact s (W.singleton t) z)
+            )
+
+      | Symbol.N nt ->
+
+          (* 1b. There is a transition labeled [nt] out of [fact.target]. We
+             need to know how this nonterminal edge can be taken. We query for a
+             word [w] that allows us to take this edge. The answer depends on
+             the terminal symbol [z] that comes *after* this word: we try all
+             such symbols. Furthermore, we need the first symbol of [w.z] to
+             satisfy the lookahead assumption [fact.lookahead], so the answer
+             also depends on this assumption. *)
+          (**)
+
           foreach_terminal (fun z ->
-            add (extend fact s (W.singleton t) z)
+            E.query fact.target nt fact.lookahead z (fun w ->
+              add (extend fact s w z)
+            )
           )
 
-    | Symbol.N nt ->
-
-        (* 1b. There is a transition labeled [nt] out of [fact.target]. We
-           need to know how this nonterminal edge can be taken. We query for a
-           word [w] that allows us to take this edge. The answer depends on
-           the terminal symbol [z] that comes *after* this word: we try all
-           such symbols. Furthermore, we need the first symbol of [w.z] to
-           satisfy the lookahead assumption [fact.lookahead], so the answer
-           also depends on this assumption. *)
-        (**)
-      
-        foreach_terminal (fun z ->
-          E.query fact.target nt fact.lookahead z (fun w ->
-            add (extend fact s w z)
-          )
-        )
-    
-  ) (Lr1.transitions fact.target);
+    ) (Lr1.transitions fact.target);
 
   (* 2. View [fact] as a possible edge. This is possible if the path from
      [fact.source] to [fact.target] represents a production [prod] and
@@ -292,21 +377,26 @@ let consequences fact =
      lookahead assumption [fact.lookahead], so we record that. *)
   (**)
 
-  match Invariant.has_default_reduction fact.target with
-  | Some (prod, _) ->
-      if Production.length prod = fact.height then
-        new_edge fact.source (Production.nt prod) fact.word fact.lookahead
-  | None ->
-      let z = fact.lookahead in
-      let prods = reductions fact.target z in
-      let prod = Misc.single prods in
-      if Production.length prod = fact.height then
-        new_edge fact.source (Production.nt prod) fact.word z
+  match has_reduction fact.target fact.lookahead with
+  | Some prod when Production.length prod = fact.height ->
+      new_edge fact.source (Production.nt prod) fact.word fact.lookahead
+  | _ ->
+      ()
+
+let facts = ref 0
 
 let discover fact =
-  if T.register fact then
-    consequences fact
+  if T.register fact then begin
 
-let main () =
+    incr facts;
+    Printf.fprintf stderr "facts = %d, current length = %d\n%!"
+      !facts (W.length fact.word);
+
+    print_fact fact;
+
+    consequences fact
+  end
+
+let main =
   Lr1.iter init;
   Q.repeat q discover
