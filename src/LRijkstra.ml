@@ -114,12 +114,57 @@ let compatible lookahead t =
   | Some t' ->
       Terminal.equal t t'
 
+let first w z =
+  if W.length w > 0 then W.first w else z
+
 module T : sig
-  val add: fact -> bool (* true if fact is new *)
+  val register: fact -> bool (* true if fact is new *)
   (* target/z *)
   val query: Lr1.node -> assumption -> (fact -> unit) -> unit
 end = struct
-  let add _ = assert false
+
+  (* For now, we implement a mapping of [source, height, target, a, z] to [w]. *)
+
+  module M =
+    Map.Make(struct
+      type t = Lr1.node * int * Lr1.node * Terminal.t * Terminal.t
+      let compare (source1, height1, target1, a1, z1) (source2, height2, target2, a2, z2) =
+        let c = Lr1.Node.compare source1 source2 in
+        if c <> 0 then c else
+        let c = Pervasives.compare height1 height2 in
+        if c <> 0 then c else
+        let c = Lr1.Node.compare target1 target2 in
+        if c <> 0 then c else
+        let c = Terminal.compare a1 a2 in
+        if c <> 0 then c else
+        Terminal.compare z1 z2
+    end)
+
+  let m =
+    ref M.empty
+
+  let add key w' =
+    match M.find key !m with
+    | w ->
+        assert (W.length w <= W.length w');
+          (* no need to add again *)
+        false
+    | exception Not_found ->
+        m := M.add key w' !m;
+        true
+
+  let rec register fact =
+    match fact.lookahead with
+    | None ->
+        foreach_terminal (fun z ->
+          let _ = register { fact with lookahead = Some z } in
+          ()
+        );
+        true (* TEMPORARY *)
+    | Some z ->
+        let a = first fact.word z in
+        add (fact.source, fact.height, fact.target, a, z) fact.word
+
   let query _ = assert false
 end
 
@@ -131,8 +176,8 @@ module E : sig
 
   (* [register s nt w z] records that, in state [s], the outgoing edge labeled
      [nt] can be taken by consuming the word [w], if the next symbol satisfies
-     [z]. *)
-  val register: Lr1.node -> Nonterminal.t -> W.word -> assumption -> unit
+     [z]. It returns [true] if this information is new. *)
+  val register: Lr1.node -> Nonterminal.t -> W.word -> assumption -> bool
 
   (* [query s nt a z] answers whether, in state [s], the outgoing edge labeled
      [nt] can be taken by consuming some word [w], under the assumption that
@@ -160,16 +205,28 @@ end = struct
   let m =
     ref M.empty
 
+  let add key w' =
+    match M.find key !m with
+    | w ->
+        assert (W.length w <= W.length w')
+          (* no need to add again *);
+        false
+    | exception Not_found ->
+        m := M.add key w' !m;
+        true
+
   let rec register s nt w oz =
     match oz with
     | Some z ->
         let a = W.first (W.append w (W.singleton z)) in (* TEMPORARY can be optimised *)
-        m := M.add (s, nt, a, z) w !m
+        add (s, nt, a, z) w
     | None ->
-        (* TEMPORARY naive *)
+        (* TEMPORARY naive; and which result should we return? *)
         foreach_terminal (fun z ->
-          register s nt w (Some z)
-        )
+          let _ = register s nt w (Some z) in
+          ()
+        );
+        true
 
   let query s nt oa z f =
     match oa with
@@ -195,10 +252,10 @@ let extend fact target w lookahead =
   }
 
 let new_edge s nt w lookahead =
-  E.register s nt w lookahead;
-  T.query s lookahead (* TEMPORARY bug? *) (fun fact ->
-    add (extend fact s w lookahead)
-  )
+  if (E.register s nt w lookahead) then
+    T.query s lookahead (* TEMPORARY bug? *) (fun fact ->
+      add (extend fact s w lookahead)
+    )
 
 (* [consequences fact] is invoked when we discover a new fact (i.e., one that
    was not previously known). It studies the consequences of this fact. These
@@ -282,7 +339,7 @@ let consequences fact =
             new_edge fact.source (Production.nt prod) fact.word (Some z)
 
 let discover fact =
-  if T.add fact then
+  if T.register fact then
     consequences fact
 
 let main () =
