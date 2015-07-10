@@ -42,6 +42,12 @@ let set a i x =
   a.table.(i) <- x;
   a.extent <- max (i + 1) a.extent
 
+let update a i f =
+  ensure a i;
+  let x = a.table.(i) in
+  a.table.(i) <- f x;
+  a.extent <- max (i + 1) a.extent
+
 let extent a =
   a.extent
 
