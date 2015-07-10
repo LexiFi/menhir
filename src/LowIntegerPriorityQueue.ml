@@ -63,3 +63,10 @@ let remove q =
   else
     remove_nonempty q
 
+let rec repeat q f =
+  match remove q with
+  | None ->
+      ()
+  | Some x ->
+      f x;
+      repeat q f

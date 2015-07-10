@@ -18,3 +18,8 @@ val is_empty: 'a t -> bool
 
 (** [cardinal q] returns the number of elements in the queue [q]. *)
 val cardinal: 'a t -> int
+
+(** [repeat q f] repeatedly extracts an element with minimum priority out of [q]
+    and passes it to [f] (which may insert new elements into [q]), until [q] is
+    exhausted. *)
+val repeat: 'a t -> ('a -> unit) -> unit
