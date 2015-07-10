@@ -125,7 +125,7 @@ let has_default_reduction_on s prod =
       false
 
 (* This returns the list of reductions of [state] on token [z]. This
-   should be a list of zero or one elements. *)
+   is a list of zero or one elements. *)
 
 let reductions s z =
   assert (not (Terminal.equal z Terminal.error));
