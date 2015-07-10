@@ -47,15 +47,12 @@ end
 
 module Q = LowIntegerPriorityQueue
 
-type assumption =
-  Terminal.t option
-
 type fact = {
   source: Lr1.node;
   height: int;
   target: Lr1.node;
   word: W.word;
-  lookahead: assumption
+  lookahead: Terminal.t
 }
 
 let foreach_terminal f =
@@ -98,21 +95,15 @@ let add fact =
 
 let init s =
   if has_nonterminal_transition s then
-    add {
-      source = s;
-      height = 0;
-      target = s;
-      word = W.epsilon;
-      lookahead = None;
-    }
-
-let compatible lookahead t =
-  assert (not (Terminal.equal t Terminal.error));
-  match lookahead with
-  | None ->
-      true
-  | Some t' ->
-      Terminal.equal t t'
+    foreach_terminal (fun z ->
+      add {
+        source = s;
+        height = 0;
+        target = s;
+        word = W.epsilon;
+        lookahead = z
+      }
+    )
 
 let first w z =
   if W.length w > 0 then W.first w else z
@@ -120,7 +111,7 @@ let first w z =
 module T : sig
   val register: fact -> bool (* true if fact is new *)
   (* target/z *)
-  val query: Lr1.node -> assumption -> (fact -> unit) -> unit
+  val query: Lr1.node -> Terminal.t -> (fact -> unit) -> unit
 end = struct
 
   (* For now, we implement a mapping of [source, height, target, a, z] to [w]. *)
@@ -153,19 +144,13 @@ end = struct
         m := M.add key w' !m;
         true
 
-  let rec register fact =
-    match fact.lookahead with
-    | None ->
-        foreach_terminal (fun z ->
-          let _ = register { fact with lookahead = Some z } in
-          ()
-        );
-        true (* TEMPORARY *)
-    | Some z ->
-        let a = first fact.word z in
-        add (fact.source, fact.height, fact.target, a, z) fact.word
+  let register fact =
+    let z = fact.lookahead in
+    let a = first fact.word z in
+    add (fact.source, fact.height, fact.target, a, z) fact.word
 
   let query _ = assert false
+
 end
 
 (* The module [E] is in charge of recording the non-terminal edges that we have
@@ -175,15 +160,15 @@ end
 module E : sig
 
   (* [register s nt w z] records that, in state [s], the outgoing edge labeled
-     [nt] can be taken by consuming the word [w], if the next symbol satisfies
-     [z]. It returns [true] if this information is new. *)
-  val register: Lr1.node -> Nonterminal.t -> W.word -> assumption -> bool
+     [nt] can be taken by consuming the word [w], if the next symbol is [z].
+     It returns [true] if this information is new. *)
+  val register: Lr1.node -> Nonterminal.t -> W.word -> Terminal.t -> bool
 
   (* [query s nt a z] answers whether, in state [s], the outgoing edge labeled
      [nt] can be taken by consuming some word [w], under the assumption that
      the next symbol is [z], and under the constraint that the first symbol of
-     [w.z] satisfies [a]. *)
-  val query: Lr1.node -> Nonterminal.t -> assumption -> Terminal.t -> (W.word -> unit) -> unit
+     [w.z] is [a]. *)
+  val query: Lr1.node -> Nonterminal.t -> Terminal.t -> Terminal.t -> (W.word -> unit) -> unit
 
 end = struct
 
@@ -215,46 +200,31 @@ end = struct
         m := M.add key w' !m;
         true
 
-  let rec register s nt w oz =
-    match oz with
-    | Some z ->
-        let a = W.first (W.append w (W.singleton z)) in (* TEMPORARY can be optimised *)
-        add (s, nt, a, z) w
-    | None ->
-        (* TEMPORARY naive; and which result should we return? *)
-        foreach_terminal (fun z ->
-          let _ = register s nt w (Some z) in
-          ()
-        );
-        true
+  let register s nt w z =
+    let a = first w z in
+    add (s, nt, a, z) w
 
-  let query s nt oa z f =
-    match oa with
-    | None ->
-        (* TEMPORARY naive; search for every a, taking minimum; should begin with z *)
-        assert false
-    | Some a ->
-        match M.find (s, nt, a, z) !m with
-        | w -> f w
-        | exception Not_found -> ()
+  let query s nt a z f =
+    match M.find (s, nt, a, z) !m with
+    | w -> f w
+    | exception Not_found -> ()
 
 end
 
-let extend fact target w lookahead =
-  (* TEMPORARY sanity check *)
-  (* assert (compatible fact.lookahead (W.first (W.append w (W.singleton lookahead)))); *)
+let extend fact target w z =
+  assert (Terminal.equal fact.lookahead (first w z));
   {
     source = fact.source;
     height = fact.height + 1;
     target = target;
     word = W.append fact.word w;
-    lookahead = lookahead
+    lookahead = z
   }
 
-let new_edge s nt w lookahead =
-  if (E.register s nt w lookahead) then
-    T.query s lookahead (* TEMPORARY bug? *) (fun fact ->
-      add (extend fact s w lookahead)
+let new_edge s nt w z =
+  if E.register s nt w z then
+    T.query s (first w z) (fun fact ->
+      add (extend fact s w z)
     )
 
 (* [consequences fact] is invoked when we discover a new fact (i.e., one that
@@ -288,8 +258,10 @@ let consequences fact =
            fact for later examination. *)
         (**)
 
-        if compatible fact.lookahead t then
-          add (extend fact s (W.singleton t) None)
+        if Terminal.equal fact.lookahead t then
+          foreach_terminal (fun z ->
+            add (extend fact s (W.singleton t) z)
+          )
 
     | Symbol.N nt ->
 
@@ -304,7 +276,7 @@ let consequences fact =
       
         foreach_terminal (fun z ->
           E.query fact.target nt fact.lookahead z (fun w ->
-            add (extend fact s w (Some z))
+            add (extend fact s w z)
           )
         )
     
@@ -325,18 +297,11 @@ let consequences fact =
       if Production.length prod = fact.height then
         new_edge fact.source (Production.nt prod) fact.word fact.lookahead
   | None ->
-      match fact.lookahead with
-      | None ->
-          TerminalMap.iter (fun z prods ->
-            let prod = Misc.single prods in
-            if Production.length prod = fact.height then
-              new_edge fact.source (Production.nt prod) fact.word (Some z)
-          ) (Lr1.reductions fact.target)
-      | Some z ->
-          let prods = reductions fact.target z in
-          let prod = Misc.single prods in
-          if Production.length prod = fact.height then
-            new_edge fact.source (Production.nt prod) fact.word (Some z)
+      let z = fact.lookahead in
+      let prods = reductions fact.target z in
+      let prod = Misc.single prods in
+      if Production.length prod = fact.height then
+        new_edge fact.source (Production.nt prod) fact.word z
 
 let discover fact =
   if T.register fact then
