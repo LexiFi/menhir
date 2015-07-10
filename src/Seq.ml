@@ -1,6 +1,9 @@
 (* Sequences with constant time concatenation and linear-time conversion
    to an ordinary list. *)
 
+(* We maintain the invariant that the left-hand side of [SConcat] is never
+   an empty sequence. This allows a slight improvement in [first]. *)
+
 type 'a seq =
 | SZero
 | SOne of 'a
@@ -13,7 +16,12 @@ let singleton x =
   SOne x
 
 let append xs ys =
-  SConcat (xs, ys)
+  match xs with
+  | SZero ->
+      ys
+  | SOne _
+  | SConcat _ ->
+      SConcat (xs, ys)
 
 let rec elements xs accu =
   match xs with
@@ -33,3 +41,15 @@ let rec concat xss =
       empty
   | xs :: xss ->
       append xs (concat xss)
+
+let rec first xs =
+  match xs with
+  | SZero ->
+      (* We disallow applying [first] to an empty sequence. *)
+      assert false
+  | SOne x ->
+      x
+  | SConcat (xs1, _) ->
+      (* Our invariant guarantees [xs1] is nonempty. *)
+      first xs1
+
