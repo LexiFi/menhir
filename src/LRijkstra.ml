@@ -497,15 +497,13 @@ let facts = ref 0
 
 let discover fact =
   if T.register fact then begin
-
-    (* TEMPORARY
+(*
     incr facts;
     Printf.fprintf stderr "Facts = %d, current length = %d\n%!"
       !facts (W.length fact.word);
     Printf.fprintf stderr "New fact:\n";
     print_fact fact;
-    *)
-
+*)
     consequences fact
   end
 
@@ -764,7 +762,6 @@ let backward s' : W.word option =
 (* Test. TEMPORARY *)
 
 let () =
-  if false then
   Lr1.iter (fun s' ->
     begin match backward s' with
     | None ->
