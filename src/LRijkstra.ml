@@ -83,30 +83,30 @@ module Trie = struct
   let c = ref 0
 
   type trie =
-    | Trie of int * bool * trie SymbolMap.t
+    | Trie of int * Production.index list * trie SymbolMap.t
 
-  let mktrie epsilon children =
+  let mktrie prods children =
     let stamp = Misc.postincrement c in
-    Trie (stamp, epsilon, children)
+    Trie (stamp, prods, children)
 
   let empty =
-    mktrie false SymbolMap.empty
+    mktrie [] SymbolMap.empty
 
-  let is_empty (Trie (_, epsilon, children)) =
-    not epsilon && SymbolMap.is_empty children
+  let is_empty (Trie (_, prods, children)) =
+    prods = [] && SymbolMap.is_empty children
 
-  let contains_epsilon (Trie (_, epsilon, _)) =
-    epsilon
+  let accepts prod (Trie (_, prods, _)) =
+    List.mem prod prods
 
   let update : Symbol.t -> trie SymbolMap.t -> (trie -> trie) -> trie SymbolMap.t =
     update SymbolMap.add SymbolMap.find empty id
 
-  let rec insert w (Trie (_, epsilon, children)) =
+  let rec insert w prod (Trie (_, prods, children)) =
     match w with
     | [] ->
-        mktrie true children
+        mktrie (prod :: prods) children
     | a :: w ->
-        mktrie epsilon (update a children (insert w))
+        mktrie prods (update a children (insert w prod))
 
   let derivative a (Trie (_, _, children)) =
     try
@@ -167,7 +167,7 @@ let star s : Trie.trie =
     | Symbol.N nt ->
         Production.foldnt nt accu (fun prod accu ->
           let w = Array.to_list (Production.rhs prod) in
-          Trie.insert w accu
+          Trie.insert w prod accu
         )
   ) (Lr1.transitions s) Trie.empty
 
@@ -429,7 +429,7 @@ let consequences fact =
   (**)
 
   match has_reduction fact.target fact.lookahead with
-  | Some prod when Trie.contains_epsilon fact.future ->
+  | Some prod when Trie.accepts prod fact.future ->
       new_edge fact.source (Production.nt prod) fact.word fact.lookahead
   | _ ->
       ()
