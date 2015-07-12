@@ -59,6 +59,21 @@ end) = struct
   (* Nodes with low priorities are dealt with first. *)
   type priority = cost
 
+  (* Paths back to a source (visible by the user). *)
+  type path =
+    | Edge of G.label * path
+    | Source of G.node
+
+  let rec follow labels path =
+    match path with
+    | Source node ->
+        node, labels
+    | Edge (label, path) ->
+        follow (label :: labels) path
+
+  let reverse path =
+    follow [] path
+
   type inode = {
       (* Graph node associated with this internal record. *)
       this: G.node;
@@ -67,7 +82,7 @@ end) = struct
       (* Estimated cost of the best path from this node to a goal node. (hhat) *)
       estimate: cost;
       (* Best known path from a source node to this node. *)
-      mutable path: G.label list;
+      mutable path: path;
       (* Previous node on doubly linked priority list *)
       mutable prev: inode;
       (* Next node on doubly linked priority list *)
@@ -210,7 +225,7 @@ end) = struct
         this = node;
         cost = 0;
         estimate = estimate node;
-        path = [];
+        path = Source node;
         prev = inode;
         next = inode;
         priority = -1
@@ -268,7 +283,7 @@ end) = struct
               assert (0 <= new_fhat); (* failure means overflow *)
               P.add_or_decrease ison new_fhat;
               ison.cost <- new_cost;
-              ison.path <- label :: inode.path
+              ison.path <- Edge (label, inode.path)
 
             end
           with Not_found ->
@@ -280,7 +295,7 @@ end) = struct
               this = son;
               cost = new_cost;
               estimate = estimate son;
-              path = label :: inode.path;
+              path = Edge (label, inode.path);
               prev = ison;
               next = ison;
               priority = -1
