@@ -209,7 +209,7 @@ let first w z =
 module T : sig
 
   (* [register fact] registers the fact [fact]. It returns [true] if this fact
-     is new, i.e., no fact concerning the same quintuple of [source], [height],
+     is new, i.e., no fact concerning the same quintuple of [source], [future],
      [target], [a], and [z] was previously known. *)
   val register: fact -> bool
 
@@ -219,7 +219,7 @@ module T : sig
 
 end = struct
 
-  (* We use a map of [target, z] to a map of [source, height, a] to facts. *)
+  (* We use a map of [target, z] to a map of [source, future, a] to facts. *)
 
   module M1 =
     MyMap(struct
@@ -233,10 +233,10 @@ end = struct
   module M2 =
     MyMap(struct
       type t = Lr1.node * Trie.trie * Terminal.t
-      let compare (source1, height1, a1) (source2, height2, a2) =
+      let compare (source1, future1, a1) (source2, future2, a2) =
         let c = Lr1.Node.compare source1 source2 in
         if c <> 0 then c else
-        let c = Trie.compare height1 height2 in
+        let c = Trie.compare future1 future2 in
         if c <> 0 then c else
         Terminal.compare a1 a2
     end)
