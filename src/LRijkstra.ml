@@ -8,19 +8,22 @@ let update_ref r f : bool =
   let v' = f v in
   v != v' && (r := v'; true)
 
+let update add find none some key m f =
+  match find key m with
+  | data ->
+      let data' = f (some data) in
+      if data' == data then
+        m
+      else
+        add key data' m
+  | exception Not_found ->
+      let data' = f none in
+      add key data' m
+
 module MyMap (X : Map.OrderedType) = struct
   include Map.Make(X)
   let update none some key m f =
-    match find key m with
-    | data ->
-        let data' = f (some data) in
-        if data' == data then
-          m
-        else
-          add key data' m
-    | exception Not_found ->
-        let data' = f none in
-        add key data' m
+    update add find none some key m f
 end
 
 module W : sig
@@ -75,34 +78,65 @@ end
 
 module Q = LowIntegerPriorityQueue
 
+module Trie = struct
+
+  let c = ref 0
+
+  type trie =
+    | Trie of int * bool * trie SymbolMap.t
+
+  let mktrie epsilon children =
+    let stamp = Misc.postincrement c in
+    Trie (stamp, epsilon, children)
+
+  let empty =
+    mktrie false SymbolMap.empty
+
+  let is_empty (Trie (_, epsilon, children)) =
+    not epsilon && SymbolMap.is_empty children
+
+  let contains_epsilon (Trie (_, epsilon, _)) =
+    epsilon
+
+  let update : Symbol.t -> trie SymbolMap.t -> (trie -> trie) -> trie SymbolMap.t =
+    update SymbolMap.add SymbolMap.find empty id
+
+  let rec insert w (Trie (_, epsilon, children)) =
+    match w with
+    | [] ->
+        mktrie true children
+    | a :: w ->
+        mktrie epsilon (update a children (insert w))
+
+  let derivative a (Trie (_, _, children)) =
+    try
+      SymbolMap.find a children
+    with Not_found ->
+      empty
+
+  let compare (Trie (stamp1, _, _)) (Trie (stamp2, _, _)) =
+    Pervasives.compare stamp1 stamp2
+
+end
+
 type fact = {
   source: Lr1.node;
-  height: int;
   target: Lr1.node;
+  future: Trie.trie;
   word: W.word;
   lookahead: Terminal.t
 }
 
 let print_fact fact =
   Printf.fprintf stderr
-    "from state %d in %d steps to state %d via %s . %s\n%!"
+    "from state %d to state %d via %s . %s\n%!"
     (Lr1.number fact.source)
-    fact.height
     (Lr1.number fact.target)
     (W.print fact.word)
     (Terminal.print fact.lookahead)
 
-(* TEMPORARY not really satisfactory; conservative bound *)
-let max_height (s : Lr1.node) =
-  let items = Lr0.items (Lr0.core (Lr1.state s)) in
-  Item.Set.fold (fun item accu ->
-    let prod, i = Item.export item in
-    let height = Production.length prod - i in
-    max height accu
-  ) items 0
-
-let extensible fact =
-  fact.height < max_height fact.source
+let extensible fact sym =
+  not (Trie.is_empty (Trie.derivative sym fact.future))
 
 let foreach_terminal f =
   Terminal.iter (fun t ->
@@ -124,6 +158,18 @@ let has_nonterminal_transition s =
     false
   with Found ->
     true
+
+let star s : Trie.trie =
+  SymbolMap.fold (fun sym _ accu ->
+    match sym with
+    | Symbol.T _ ->
+        accu
+    | Symbol.N nt ->
+        Production.foldnt nt accu (fun prod accu ->
+          let w = Array.to_list (Production.rhs prod) in
+          Trie.insert w accu
+        )
+  ) (Lr1.transitions s) Trie.empty
 
 (* This returns the list of reductions of [state] on token [z]. This
    is a list of zero or one elements. *)
@@ -160,12 +206,14 @@ let add fact =
   Q.add q fact (W.length fact.word)
 
 let init s =
+  let trie = star s in
+  assert (Trie.is_empty trie = not (has_nonterminal_transition s));
   if has_nonterminal_transition s then
     foreach_terminal (fun z ->
       add {
         source = s;
-        height = 0;
         target = s;
+        future = trie;
         word = W.epsilon;
         lookahead = z
       }
@@ -200,11 +248,11 @@ end = struct
 
   module M2 =
     MyMap(struct
-      type t = Lr1.node * int * Terminal.t
+      type t = Lr1.node * Trie.trie * Terminal.t
       let compare (source1, height1, a1) (source2, height2, a2) =
         let c = Lr1.Node.compare source1 source2 in
         if c <> 0 then c else
-        let c = Pervasives.compare height1 height2 in
+        let c = Trie.compare height1 height2 in
         if c <> 0 then c else
         Terminal.compare a1 a2
     end)
@@ -217,7 +265,7 @@ end = struct
     let a = first fact.word z in
     update_ref m (fun m1 ->
       M1.update M2.empty id (fact.target, z) m1 (fun m2 ->
-        M2.update None some (fact.source, fact.height, a) m2 (function
+        M2.update None some (fact.source, fact.future, a) m2 (function
           | None ->
               fact
           | Some earlier_fact ->
@@ -294,21 +342,24 @@ end = struct
 
 end
 
-let extend fact target w z =
+let extend fact target sym w z =
   assert (Terminal.equal fact.lookahead (first w z));
+  let future = Trie.derivative sym fact.future in
+  assert (not (Trie.is_empty future));
   {
     source = fact.source;
-    height = fact.height + 1;
     target = target;
+    future = future;
     word = W.append fact.word w;
     lookahead = z
   }
 
 let new_edge s nt w z =
   if E.register s nt w z then
+    let sym = (Symbol.N nt) in
     T.query s (first w z) (fun fact ->
-      if extensible fact then
-        add (extend fact s w z)
+      if extensible fact sym then
+        add (extend fact s sym w z)
     )
 
 (* [consequences fact] is invoked when we discover a new fact (i.e., one that
@@ -332,20 +383,20 @@ let consequences fact =
 
   (* 1. View [fact] as a vertex. Examine the transitions out of [fact.target]. *)
   
-  if extensible fact then
-    SymbolMap.iter (fun sym s ->
+  SymbolMap.iter (fun sym s ->
+    if extensible fact sym then
       match sym with
       | Symbol.T t ->
 
-          (* 1a. There is a transition labeled [t] out of [fact.target]. If the
-             lookahead assumption [fact.lookahead] accepts [t], then we derive a
-             new fact, where one more edge has been taken. We enqueue this new
-             fact for later examination. *)
+          (* 1a. There is a transition labeled [t] out of [fact.target]. If
+             the lookahead assumption [fact.lookahead] is compatible with [t],
+             then we derive a new fact, where one more edge has been taken. We
+             enqueue this new fact for later examination. *)
           (**)
 
           if Terminal.equal fact.lookahead t then
             foreach_terminal (fun z ->
-              add (extend fact s (W.singleton t) z)
+              add (extend fact s sym (W.singleton t) z)
             )
 
       | Symbol.N nt ->
@@ -361,24 +412,24 @@ let consequences fact =
 
           foreach_terminal (fun z ->
             E.query fact.target nt fact.lookahead z (fun w ->
-              add (extend fact s w z)
+              add (extend fact s sym w z)
             )
           )
 
-    ) (Lr1.transitions fact.target);
+  ) (Lr1.transitions fact.target);
 
   (* 2. View [fact] as a possible edge. This is possible if the path from
      [fact.source] to [fact.target] represents a production [prod] and
      [fact.target] is willing to reduce this production. We check that
-     [fact.height] equals the length of [prod]. This guarantees that
-     reducing [prod] takes us all the way back to [fact.source]. Thus,
-     this production gives rise to an edge labeled [nt] -- the left-hand
-     side of [prod] -- out of [fact.source]. This edge is subject to the
-     lookahead assumption [fact.lookahead], so we record that. *)
+     [fact.future] accepts [epsilon]. This guarantees that reducing [prod]
+     takes us all the way back to [fact.source]. Thus, this production gives
+     rise to an edge labeled [nt] -- the left-hand side of [prod] -- out of
+     [fact.source]. This edge is subject to the lookahead assumption
+     [fact.lookahead], so we record that. *)
   (**)
 
   match has_reduction fact.target fact.lookahead with
-  | Some prod when Production.length prod = fact.height ->
+  | Some prod when Trie.contains_epsilon fact.future ->
       new_edge fact.source (Production.nt prod) fact.word fact.lookahead
   | _ ->
       ()
@@ -389,9 +440,9 @@ let discover fact =
   if T.register fact then begin
 
     incr facts;
-    Printf.fprintf stderr "facts = %d, current length = %d\n%!"
+    Printf.fprintf stderr "Facts = %d, current length = %d\n%!"
       !facts (W.length fact.word);
-
+    Printf.fprintf stderr "New fact:\n";
     print_fact fact;
 
     consequences fact
@@ -400,3 +451,4 @@ let discover fact =
 let main =
   Lr1.iter init;
   Q.repeat q discover
+
