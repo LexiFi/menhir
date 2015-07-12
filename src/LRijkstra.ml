@@ -1,5 +1,95 @@
 open Grammar
 
+(* ------------------------------------------------------------------------ *)
+
+(* First, we implement the computation of forward shortest paths in the
+   automaton. We view the automaton as a graph whose vertices are states. We
+   label each edge with the minimum length of a word that it generates. This
+   yields a lower bound on the actual distance to every state from any entry
+   state. *)
+
+let approximate : Lr1.node -> int =
+
+  let module A = Astar.Make(struct
+
+    type node =
+      Lr1.node
+
+    let equal s1 s2 =
+      Lr1.Node.compare s1 s2 = 0
+
+    let hash s =
+      Hashtbl.hash (Lr1.number s)
+
+    type label =
+      unit
+
+    let sources f =
+      (* The sources are the entry states. *)
+      ProductionMap.iter (fun _ s -> f s) Lr1.entry
+
+    let successors s edge =
+      SymbolMap.iter (fun sym s' ->
+        (* The weight of the edge from [s] to [s'] is given by the function
+           [Grammar.Analysis.minimal_symbol]. If [sym] produces the empty
+           language, this could be infinite, in which case no edge exists. *)
+        match Analysis.minimal_symbol sym with
+        | CompletedNatWitness.Finite (w, _) ->
+            edge () w s'
+        | CompletedNatWitness.Infinity ->
+            ()
+      ) (Lr1.transitions s)
+
+    let estimate _ =
+      (* A* with a zero [estimate] behaves like Dijkstra's algorithm. *)
+      0
+
+  end) in
+        
+  let distance, _ = A.search (fun (_, _) -> ()) in
+  distance
+
+(* ------------------------------------------------------------------------ *)
+
+(* This returns the list of reductions of [state] on token [z]. This
+   is a list of zero or one elements. *)
+
+let reductions s z =
+  assert (not (Terminal.equal z Terminal.error));
+  try
+    TerminalMap.find z (Lr1.reductions s)
+  with Not_found ->
+    []
+
+(* This tests whether state [s] is willing to reduce some production
+   when the lookahead symbol is [z]. This test takes a possible default
+   reduction into account. *)
+
+let has_reduction s z : Production.index option =
+  assert (not (Terminal.equal z Terminal.error));
+  match Invariant.has_default_reduction s with
+  | Some (prod, _) ->
+      Some prod
+  | None ->
+      match reductions s z with
+      | prod :: prods ->
+          assert (prods = []);
+          Some prod
+      | [] ->
+          None
+
+(* This tests whether state [s] will initiate an error on the lookahead
+   symbol [z]. *)
+
+let causes_an_error s z =
+  assert (not (Terminal.equal z Terminal.error));
+  match Invariant.has_default_reduction s with
+  | Some _ ->
+      false
+  | None ->
+      reductions s z = [] &&
+      not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
+
   let id x = x
   let some x = Some x
 
@@ -34,6 +124,7 @@ module W : sig
   val append: word -> word -> word
   val length: word -> int
   val first: word -> Terminal.t (* word must be nonempty *)
+  val elements: word -> Terminal.t list
   val print: word -> string
 
 end = struct
@@ -70,9 +161,12 @@ end = struct
   let first w =
     Seq.first w.data
 
+  let elements w =
+    Seq.elements w.data
+
   let print w =
     string_of_int w.length ^ " " ^
-    String.concat " " (List.map Terminal.print (Seq.elements w.data))
+    String.concat " " (List.map Terminal.print (elements w))
 
 end
 
@@ -155,33 +249,6 @@ let star s : Trie.trie =
           Trie.insert w prod accu
         )
   ) (Lr1.transitions s) Trie.empty
-
-(* This returns the list of reductions of [state] on token [z]. This
-   is a list of zero or one elements. *)
-
-let reductions s z =
-  assert (not (Terminal.equal z Terminal.error));
-  try
-    TerminalMap.find z (Lr1.reductions s)
-  with Not_found ->
-    []
-
-(* This tests whether state [s] is willing to reduce some production
-   when the lookahead symbol is [z]. This test takes a possible default
-   reduction into account. *)
-
-let has_reduction s z : Production.index option =
-  assert (not (Terminal.equal z Terminal.error));
-  match Invariant.has_default_reduction s with
-  | Some (prod, _) ->
-      Some prod
-  | None ->
-      match reductions s z with
-      | prod :: prods ->
-          assert (prods = []);
-          Some prod
-      | [] ->
-          None
 
 let q =
   Q.create()
@@ -426,11 +493,13 @@ let facts = ref 0
 let discover fact =
   if T.register fact then begin
 
+    (* TEMPORARY
     incr facts;
     Printf.fprintf stderr "Facts = %d, current length = %d\n%!"
       !facts (W.length fact.word);
     Printf.fprintf stderr "New fact:\n";
     print_fact fact;
+    *)
 
     consequences fact
   end
@@ -439,3 +508,187 @@ let main =
   Lr1.iter init;
   Q.repeat q discover
 
+(* ------------------------------------------------------------------------ *)
+
+(* We now wish to determine, given a state [s'] and a terminal symbol [z], a
+   minimal path that takes us from some entry state to state [s'] with [z] as
+   the next (unconsumed) symbol. *)
+
+(* This can be formulated as a search for a shortest path in a graph. The
+   graph is not just the automaton, though. It is a (much) larger graph whose
+   vertices are pairs [s, z] and whose edges are obtained by querying the
+   module [E] above. Because we perform a backward search, from [s', z] to any
+   entry state, we use reverse edges, from a state to its predecessors in the
+   automaton. *)
+
+(* Debugging. TEMPORARY *)
+let es = ref 0
+
+exception Success of Lr1.node * W.word
+
+let backward (s', z) : unit =
+
+  let module A = Astar.Make(struct
+
+    (* A vertex is a pair [s, z].
+       [z] cannot be the [error] token. *)
+    type node =
+        Lr1.node * Terminal.t
+
+    let equal (s'1, z1) (s'2, z2) =
+      Lr1.Node.compare s'1 s'2 = 0 && Terminal.compare z1 z2 = 0
+
+    let hash (s, z) =
+      Hashtbl.hash (Lr1.number s, z)
+
+    (* An edge is labeled with a word. *)
+    type label =
+      W.word
+
+    (* Backward search from the single source [s', z]. *)
+    let sources f = f (s', z)
+
+    let successors (s', z) edge =
+      assert (not (Terminal.equal z Terminal.error));
+      match Lr1.incoming_symbol s' with
+      | None ->
+          (* An entry state has no predecessor states. *)
+          ()
+
+      | Some (Symbol.T t) ->
+          if not (Terminal.equal t Terminal.error) then
+            (* There is an edge from [s] to [s'] labeled [t] in the automaton.
+               Thus, our graph has an edge from [s', z] to [s, t], labeled [t]. *)
+            let w = W.singleton t in
+            List.iter (fun s ->
+              edge w 1 (s, t)
+            ) (Lr1.predecessors s')
+
+      | Some (Symbol.N nt) ->
+          (* There is an edge from [s] to [s'] labeled [nt] in the automaton.
+             For every letter [a], we query [E] for a word [w] that begins in
+             [s] and allows us to take the edge labeled [nt] when the
+             lookahead symbol is [z]. Such a path [w] takes us from [s, a] to
+             [s', z]. Thus, our graph has an edge, labeled [w], in the reverse
+             direction. *)
+          (**)
+          List.iter (fun s ->
+            foreach_terminal (fun a ->
+              assert (not (Terminal.equal a Terminal.error));
+              E.query s nt a z (fun w ->
+                edge w (W.length w) (s, a)
+              )
+            )
+          ) (Lr1.predecessors s')
+
+    let estimate (s', _z) =
+      approximate s'
+
+  end) in
+
+  (* Search backwards from [s', z], stopping as soon as an entry state [s] is
+     reached. In that case, return the state [s] and the path that has been
+     found. *)
+
+  let _, _ = A.search (fun ((s, _), ws) ->
+    (* Debugging. TEMPORARY *)
+    incr es;
+    if !es mod 10000 = 0 then
+      Printf.fprintf stderr "es = %d\n%!" !es;
+    (* If [s] is a start state... *)
+    if Lr1.incoming_symbol s = None then
+      (* [labels] is a list of properties. Projecting onto the second
+         component yields a list of paths (sequences of terminal symbols),
+         which we concatenate to obtain a path. Because the edges that were
+         followed last are in front of the list, and because this is a
+         reverse graph, we obtain a path that makes direct sense: it is a
+         sequence of terminal symbols that will take the automaton into
+         state [s'] if the next (unconsumed) symbol is [z]. We append [z]
+         at the end of this path. *)
+      let w = List.fold_right W.append ws (W.singleton z) in
+      raise (Success (s, w))
+  ) in
+  ()
+
+(* ------------------------------------------------------------------------ *)
+
+(* The following code validates the fact that an error can be triggered in
+   state [s'] by beginning in the initial state [s] and reading the
+   sequence of terminal symbols [w]. We use this for debugging purposes. *)
+
+let fail msg =
+  Printf.fprintf stderr "coverage: internal error: %s.\n%!" msg;
+  false
+
+open ReferenceInterpreter
+
+let validate s s' w : bool =
+  match
+    ReferenceInterpreter.check_error_path (Lr1.nt_of_entry s) (W.elements w)
+  with
+  | OInputReadPastEnd ->
+      fail "input was read past its end"
+  | OInputNotFullyConsumed ->
+      fail "input was not fully consumed"
+  | OUnexpectedAccept ->
+      fail "input was unexpectedly accepted"
+  | OK state ->
+      Lr1.Node.compare state s' = 0 ||
+      fail (
+        Printf.sprintf "error occurred in state %d instead of %d"
+          (Lr1.number state)
+          (Lr1.number s')
+      )
+
+(* ------------------------------------------------------------------------ *)
+
+(* For each state [s'] and for each terminal symbol [z] such that [z] triggers
+   an error in [s'], backward search is performed. For each state [s'], we
+   stop as soon as one [z] is found, i.e., as soon as one way of causing an
+   error in state [s'] is found. *)
+
+let backward s' : W.word option =
+  
+  (* Debugging. TEMPORARY *)
+  Printf.fprintf stderr
+    "Attempting to reach an error in state %d:\n%!"
+    (Lr1.number s');
+
+  try
+
+    (* This loop stops as soon as we are able to reach one error at [s']. *)
+    Terminal.iter (fun z ->
+      if not (Terminal.equal z Terminal.error) && causes_an_error s' z then
+        backward (s', z)
+    );
+    (* No error can be triggered in state [s']. *)
+    None
+
+  with Success (s, w) ->
+    (* An error can be triggered in state [s'] by beginning in the initial
+       state [s] and reading the sequence of terminal symbols [w]. *)
+    assert (validate s s' w);
+    Some w
+
+(* Test. TEMPORARY *)
+
+let () =
+  Lr1.iter (fun s' ->
+    begin match backward s' with
+    | None ->
+       Printf.fprintf stderr "infinity\n%!"
+    | Some w ->
+       Printf.fprintf stderr "%s\n%!" (W.print w)
+    end;
+(*
+    let approx = approximate s'
+    and real = P.to_int p - 1 in
+    assert (approx = max_int && p = P.Infinity || approx <= real);
+    if approx < real && real < max_int - 1 then
+        Printf.fprintf stderr "Approx = %d, real = %d\n" approx real;
+*)
+    Printf.fprintf stderr "Edges so far: %d\n" !es
+  )
+
+(* TEMPORARY what about the pseudo-token [#]? *)
+(* TEMPORARY the code in this module should run only if --coverage is set *)
