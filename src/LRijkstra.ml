@@ -510,6 +510,36 @@ let main =
 
 (* ------------------------------------------------------------------------ *)
 
+(* The following code validates the fact that an error can be triggered in
+   state [s'] by beginning in the initial state [s] and reading the
+   sequence of terminal symbols [w]. We use this for debugging purposes. *)
+
+let fail msg =
+  Printf.fprintf stderr "coverage: internal error: %s.\n%!" msg;
+  false
+
+open ReferenceInterpreter
+
+let validate s s' w : bool =
+  match
+    ReferenceInterpreter.check_error_path (Lr1.nt_of_entry s) (W.elements w)
+  with
+  | OInputReadPastEnd ->
+      fail "input was read past its end"
+  | OInputNotFullyConsumed ->
+      fail "input was not fully consumed"
+  | OUnexpectedAccept ->
+      fail "input was unexpectedly accepted"
+  | OK state ->
+      Lr1.Node.compare state s' = 0 ||
+      fail (
+        Printf.sprintf "error occurred in state %d instead of %d"
+          (Lr1.number state)
+          (Lr1.number s')
+      )
+
+(* ------------------------------------------------------------------------ *)
+
 (* We now wish to determine, given a state [s'] and a terminal symbol [z], a
    minimal path that takes us from some entry state to state [s'] with [z] as
    the next (unconsumed) symbol. *)
@@ -590,12 +620,13 @@ let backward (s', z) : unit =
      reached. In that case, return the state [s] and the path that has been
      found. *)
 
-  let _, _ = A.search (fun ((s, _), ws) ->
+  let _, _ = A.search (fun ((s, _), path) ->
     (* Debugging. TEMPORARY *)
     incr es;
     if !es mod 10000 = 0 then
       Printf.fprintf stderr "es = %d\n%!" !es;
     (* If [s] is a start state... *)
+    let _, ws = A.reverse path in
     if Lr1.incoming_symbol s = None then
       (* [labels] is a list of properties. Projecting onto the second
          component yields a list of paths (sequences of terminal symbols),
@@ -612,33 +643,82 @@ let backward (s', z) : unit =
 
 (* ------------------------------------------------------------------------ *)
 
-(* The following code validates the fact that an error can be triggered in
-   state [s'] by beginning in the initial state [s] and reading the
-   sequence of terminal symbols [w]. We use this for debugging purposes. *)
+(* Forward search. *)
 
-let fail msg =
-  Printf.fprintf stderr "coverage: internal error: %s.\n%!" msg;
-  false
+let forward () =
 
-open ReferenceInterpreter
+  let module A = Astar.Make(struct
 
-let validate s s' w : bool =
-  match
-    ReferenceInterpreter.check_error_path (Lr1.nt_of_entry s) (W.elements w)
-  with
-  | OInputReadPastEnd ->
-      fail "input was read past its end"
-  | OInputNotFullyConsumed ->
-      fail "input was not fully consumed"
-  | OUnexpectedAccept ->
-      fail "input was unexpectedly accepted"
-  | OK state ->
-      Lr1.Node.compare state s' = 0 ||
-      fail (
-        Printf.sprintf "error occurred in state %d instead of %d"
-          (Lr1.number state)
-          (Lr1.number s')
+    (* A vertex is a pair [s, z].
+       [z] cannot be the [error] token. *)
+    type node =
+        Lr1.node * Terminal.t
+
+    let equal (s'1, z1) (s'2, z2) =
+      Lr1.Node.compare s'1 s'2 = 0 && Terminal.compare z1 z2 = 0
+
+    let hash (s, z) =
+      Hashtbl.hash (Lr1.number s, z)
+
+    (* An edge is labeled with a word. *)
+    type label =
+      W.word
+
+    (* Forward search from every [s, z], where [s] is an initial state. *)
+    let sources f =
+      foreach_terminal (fun z ->
+        ProductionMap.iter (fun _ s ->
+          f (s, z)
+        ) Lr1.entry
       )
+
+    let successors (s, z) edge =
+      assert (not (Terminal.equal z Terminal.error));
+      SymbolMap.iter (fun sym s' ->
+        match sym with
+        | Symbol.T t ->
+            if Terminal.equal z t then
+              let w = W.singleton t in
+              foreach_terminal (fun z ->
+                edge w 1 (s', z)
+              )
+        | Symbol.N nt ->
+           foreach_terminal (fun z' ->
+             E.query s nt z z' (fun w ->
+               edge w (W.length w) (s', z')
+             )
+           )
+      ) (Lr1.transitions s)
+
+    let estimate _ =
+      0
+
+  end) in
+
+  (* Search forward. *)
+
+  let es = ref 0 in
+  let seen = ref Lr1.NodeSet.empty in
+  let _, _ = A.search (fun ((s', z), (path : A.path)) ->
+    (* Debugging. TEMPORARY *)
+    incr es;
+    if !es mod 10000 = 0 then
+      Printf.fprintf stderr "es = %d\n%!" !es;
+    if causes_an_error s' z && not (Lr1.NodeSet.mem s' !seen) then begin
+      seen := Lr1.NodeSet.add s' !seen;
+      (* An error can be triggered in state [s'] by beginning in the initial
+         state [s] and reading the sequence of terminal symbols [w]. *)
+      let (s, _), ws = A.reverse path in
+      let w = List.fold_right W.append ws (W.singleton z) in
+      Printf.fprintf stderr
+        "An error can be reached from state %d to state %d:\n%!"
+        (Lr1.number s)
+        (Lr1.number s');
+      Printf.fprintf stderr "%s\n%!" (W.print w);
+      assert (validate s s' w)
+    end
+  ) in
+  ()
 
 (* ------------------------------------------------------------------------ *)
 
@@ -673,6 +753,7 @@ let backward s' : W.word option =
 (* Test. TEMPORARY *)
 
 let () =
+  if false then
   Lr1.iter (fun s' ->
     begin match backward s' with
     | None ->
@@ -692,3 +773,7 @@ let () =
 
 (* TEMPORARY what about the pseudo-token [#]? *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
+
+let () =
+  Printf.fprintf stderr "Forward search:\n%!";
+  forward()
