@@ -530,13 +530,13 @@ let backward (s', z) : unit =
     if Lr1.incoming_symbol s = None then
       (* [labels] is a list of properties. Projecting onto the second
          component yields a list of paths (sequences of terminal symbols),
-         which we concatenate to obtain a path. Because the edges that were
-         followed last are in front of the list, and because this is a
-         reverse graph, we obtain a path that makes direct sense: it is a
+         which we concatenate to obtain a path. This path is a
          sequence of terminal symbols that will take the automaton into
          state [s'] if the next (unconsumed) symbol is [z]. We append [z]
          at the end of this path. *)
-      let p = List.fold_right P.add ps (P.singleton z) in
+      let _, ps = A.reverse ps in
+      let ps = List.rev_append ps [P.singleton z] in
+      let p = List.fold_right P.add ps P.epsilon in
       raise (Success (s, p))
   ) in
   ()
