@@ -409,6 +409,10 @@ let extend fact target sym w z =
   }
 
 let new_edge s nt w z =
+  (*
+  Printf.fprintf stderr "Considering reduction on %s in state %d\n"
+    (Terminal.print z) (Lr1.number s);
+  *)
   if E.register s nt w z then
     let sym = (Symbol.N nt) in
     let s' = try SymbolMap.find sym (Lr1.transitions s) with Not_found -> assert false in
