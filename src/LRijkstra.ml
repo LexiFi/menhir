@@ -632,6 +632,7 @@ let backward (s', z) : unit =
       Printf.fprintf stderr "es = %d\n%!" !es;
     (* If [s] is a start state... *)
     let _, ws = A.reverse path in
+    let ws = List.rev ws in
     if Lr1.incoming_symbol s = None then
       (* [labels] is a list of properties. Projecting onto the second
          component yields a list of paths (sequences of terminal symbols),
