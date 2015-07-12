@@ -144,21 +144,6 @@ let foreach_terminal f =
       f t
   )
 
-exception Found
-
-let has_nonterminal_transition s =
-  try
-    SymbolMap.iter (fun sym _ ->
-      match sym with
-      | Symbol.T _ ->
-          ()
-      | Symbol.N _ ->
-          raise Found
-    ) (Lr1.transitions s);
-    false
-  with Found ->
-    true
-
 let star s : Trie.trie =
   SymbolMap.fold (fun sym _ accu ->
     match sym with
@@ -207,8 +192,7 @@ let add fact =
 
 let init s =
   let trie = star s in
-  assert (Trie.is_empty trie = not (has_nonterminal_transition s));
-  if has_nonterminal_transition s then
+  if not (Trie.is_empty trie) then
     foreach_terminal (fun z ->
       add {
         source = s;
