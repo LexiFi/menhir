@@ -715,6 +715,11 @@ let forward () =
         (Lr1.number s)
         (Lr1.number s');
       Printf.fprintf stderr "%s\n%!" (W.print w);
+      let approx = approximate s'
+      and real = W.length w - 1 in
+      assert (approx <= real);
+      if approx < real then
+        Printf.fprintf stderr "Approx = %d, real = %d\n" approx real;
       assert (validate s s' w)
     end
   ) in
