@@ -411,9 +411,10 @@ let extend fact target sym w z =
 let new_edge s nt w z =
   if E.register s nt w z then
     let sym = (Symbol.N nt) in
+    let s' = try SymbolMap.find sym (Lr1.transitions s) with Not_found -> assert false in
     T.query s (first w z) (fun fact ->
       if extensible fact sym then
-        add (extend fact s sym w z)
+        add (extend fact s' sym w z)
     )
 
 (* [consequences fact] is invoked when we discover a new fact (i.e., one that
