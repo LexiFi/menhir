@@ -183,8 +183,8 @@ module Trie = struct
   let compare (Trie (stamp1, _, _)) (Trie (stamp2, _, _)) =
     Pervasives.compare (stamp1 : int) stamp2
 
-  let rec size (Trie (_, prods, children)) =
-    SymbolMap.fold (fun _ child accu -> size child + accu) children (List.length prods)
+  let rec size (Trie (_, _, children)) =
+    SymbolMap.fold (fun _ child accu -> size child + accu) children 1
 
 end
 
@@ -266,6 +266,7 @@ module T : sig
   val query: Lr1.node -> Terminal.t -> (fact -> unit) -> unit
 
   val stats: unit -> unit
+  val debug: unit -> unit
 
 end = struct
 
@@ -327,6 +328,33 @@ end = struct
 
   let stats () =
     Printf.fprintf stderr "T stores %d facts.\n%!" !count
+
+  let iter f =
+    let m1 = !m in
+    M1.iter (fun _ m2 ->
+      M2.iter (fun _ fact ->
+        f fact
+      ) m2
+    ) m1
+
+  (* Empirical verification that [future] determines [source] and [target]. *)
+  let debug () =
+    let module F = MyMap(struct
+      type t = Trie.trie
+      let compare = Trie.compare
+    end) in
+    let f = ref F.empty in
+    let c = ref 0 in
+    iter (fun fact ->
+      incr c;
+      try
+        let older_fact = F.find fact.future !f in
+        assert (Lr1.Node.compare older_fact.source fact.source = 0);
+        assert (Lr1.Node.compare older_fact.target fact.target = 0);
+      with Not_found ->
+        f := F.add fact.future fact !f
+    );
+    Printf.fprintf stderr "Yes (%d facts, %d distinct futures)\n" !c (F.cardinal !f)
 
 end
 
@@ -519,7 +547,8 @@ let main =
   Q.repeat q discover;
   Time.tick "Running LRijkstra";
   T.stats();
-  E.stats()
+  E.stats();
+  T.debug()
 
 (* ------------------------------------------------------------------------ *)
 
