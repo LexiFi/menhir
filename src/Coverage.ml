@@ -573,6 +573,105 @@ let validate s s' p : bool =
 
 (* ------------------------------------------------------------------------ *)
 
+(* Forward search. *)
+
+let foreach_terminal f =
+  Terminal.iter (fun t ->
+    if not (Terminal.equal t Terminal.error) then
+      f t
+  )
+
+let forward () =
+
+  let module A = Astar.Make(struct
+
+    (* A vertex is a pair [s, z].
+       [z] cannot be the [error] token. *)
+    type node =
+        Lr1.node * Terminal.t
+
+    let equal (s'1, z1) (s'2, z2) =
+      Lr1.Node.compare s'1 s'2 = 0 && Terminal.compare z1 z2 = 0
+
+    let hash (s, z) =
+      Hashtbl.hash (Lr1.number s, z)
+
+    (* An edge is labeled with a word. *)
+    type label =
+      P.property
+
+    (* Forward search from every [s, z], where [s] is an initial state. *)
+    let sources f =
+      foreach_terminal (fun z ->
+        ProductionMap.iter (fun _ s ->
+          f (s, z)
+        ) Lr1.entry
+      )
+
+    let successors (s, z) edge =
+      assert (not (Terminal.equal z Terminal.error));
+      SymbolMap.iter (fun sym s' ->
+        match sym with
+        | Symbol.T t ->
+            if Terminal.equal z t then
+              let w = P.singleton t in
+              foreach_terminal (fun z ->
+                edge w 1 (s', z)
+              )
+        | Symbol.N nt ->
+           foreach_terminal (fun z' ->
+             Production.iternt nt (fun prod ->
+               if viable s prod 0 z' && TerminalSet.mem z (first prod 0 z') then
+                 let p = answer { s = s; a = z; prod = prod; i = 0; z = z' } in
+                 match p with
+                 | P.Infinity ->
+                     ()
+                 | P.Finite (i, _) ->
+                     edge p i (s', z')
+             )
+           )
+      ) (Lr1.transitions s)
+
+    let estimate _ =
+      0
+
+  end) in
+
+  (* Search forward. *)
+
+  Printf.fprintf stderr "Forward search:\n%!";
+  let es = ref 0 in
+  let seen = ref Lr1.NodeSet.empty in
+  let _, _ = A.search (fun ((s', z), (path : A.path)) ->
+    (* Debugging. TEMPORARY *)
+    incr es;
+    if !es mod 10000 = 0 then
+      Printf.fprintf stderr "es = %d\n%!" !es;
+    if causes_an_error s' z && not (Lr1.NodeSet.mem s' !seen) then begin
+      seen := Lr1.NodeSet.add s' !seen;
+      (* An error can be triggered in state [s'] by beginning in the initial
+         state [s] and reading the sequence of terminal symbols [w]. *)
+      let (s, _), ws = A.reverse path in
+      let w = List.fold_right P.add ws (P.singleton z) in
+      Printf.fprintf stderr
+        "An error can be reached from state %d to state %d:\n%!"
+        (Lr1.number s)
+        (Lr1.number s');
+      Printf.fprintf stderr "%s\n%!" (P.print Terminal.print w);
+      let approx = approximate s'
+      and real = P.to_int w - 1 in
+      assert (approx <= real);
+      if approx < real then
+        Printf.fprintf stderr "Approx = %d, real = %d\n" approx real;
+      assert (validate s s' w)
+    end
+  ) in
+  Printf.fprintf stderr "Reachable (forward): %d states\n%!"
+    (Lr1.NodeSet.cardinal !seen);
+  !seen
+
+(* ------------------------------------------------------------------------ *)
+
 (* For each state [s'] and for each terminal symbol [z] such that [z] triggers
    an error in [s'], backward search is performed. For each state [s'], we
    stop as soon as one [z] is found, i.e., as soon as one way of causing an
@@ -624,7 +723,10 @@ let backward () =
 
 let () =
   let b = backward() in
-  ignore b
+  Time.tick "Backward search";
+  let f = forward() in
+  Time.tick "Forward search";
+  assert (Lr1.NodeSet.equal b f)
 
 (* TEMPORARY what about the pseudo-token [#]? *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
