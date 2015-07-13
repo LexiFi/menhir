@@ -230,6 +230,8 @@ let q =
   Q.create()
 
 let add fact =
+  (* assert (not (causes_an_error (target fact) fact.lookahead)); *)
+
   (* The length of the word serves as the priority of this fact. *)
   Q.add q fact (W.length fact.word)
     (* In principle, there is no need to insert the fact into the queue
@@ -245,11 +247,12 @@ let init s =
     (Lr1.number s) size;
   if not (Trie.is_empty trie) then
     foreach_terminal (fun z ->
-      add {
-        future = trie;
-        word = W.epsilon;
-        lookahead = z
-      }
+      if not (causes_an_error s z) then
+        add {
+          future = trie;
+          word = W.epsilon;
+          lookahead = z
+        }
     )
 
 module T : sig
@@ -389,14 +392,6 @@ end = struct
 
 end
 
-let extend fact sym w z =
-  assert (Terminal.equal fact.lookahead (W.first w z));
-  {
-    future = Trie.derivative sym fact.future;
-    word = W.append fact.word w;
-    lookahead = z
-  }
-
 let new_edge s nt w z =
   (*
   Printf.fprintf stderr "Considering reduction on %s in state %d\n"
@@ -405,8 +400,16 @@ let new_edge s nt w z =
   if E.register s nt w z then
     let sym = (Symbol.N nt) in
     T.query s (W.first w z) (fun fact ->
-      if extensible fact sym then
-        add (extend fact sym w z)
+      if extensible fact sym then begin
+        let future = Trie.derivative sym fact.future in
+        assert (Terminal.equal fact.lookahead (W.first w z));
+        if not (causes_an_error future.Trie.target z) then
+          add {
+            future;
+            word = W.append fact.word w;
+            lookahead = z
+          }
+      end
     )
 
 (* [consequences fact] is invoked when we discover a new fact (i.e., one that
@@ -430,7 +433,7 @@ let consequences fact =
 
   (* 1. View [fact] as a vertex. Examine the transitions out of [fact.target]. *)
   
-  SymbolMap.iter (fun sym _ ->
+  SymbolMap.iter (fun sym s' ->
     if extensible fact sym then
       match sym with
       | Symbol.T t ->
@@ -444,8 +447,10 @@ let consequences fact =
           if Terminal.equal fact.lookahead t then
             let future = Trie.derivative sym fact.future
             and word = W.append fact.word (W.singleton t) in
-            foreach_terminal (fun lookahead ->
-              add { future; word; lookahead }
+            (* assert (Lr1.Node.compare future.Trie.target s' = 0); *)
+            foreach_terminal (fun z ->
+              if not (causes_an_error s' z) then
+                add { future; word; lookahead = z }
             )
 
       | Symbol.N nt ->
@@ -461,13 +466,14 @@ let consequences fact =
 
           let future = Trie.derivative sym fact.future in
           foreach_terminal (fun z ->
-            E.query (target fact) nt fact.lookahead z (fun w ->
-              assert (Terminal.equal fact.lookahead (W.first w z));
-              add {
-                future;
-                word = W.append fact.word w;
-                lookahead = z
-              }
+            if not (causes_an_error s' z) then
+              E.query (target fact) nt fact.lookahead z (fun w ->
+                assert (Terminal.equal fact.lookahead (W.first w z));
+                add {
+                  future;
+                  word = W.append fact.word w;
+                  lookahead = z
+                }
             )
           )
 
