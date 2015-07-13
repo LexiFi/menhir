@@ -123,49 +123,21 @@ module W : sig
   val singleton: Terminal.t -> word
   val append: word -> word -> word
   val length: word -> int
-  val first: word -> Terminal.t (* word must be nonempty *)
+  val first: word -> Terminal.t -> Terminal.t
   val elements: word -> Terminal.t list
   val print: word -> string
 
 end = struct
 
-  type word = {
-    data: Terminal.t Seq.seq;
-    length: int;
-  }
-
-  let epsilon = {
-    data = Seq.empty;
-    length = 0;
-  }
-
-  (* TEMPORARY tabulate? *)
-  let singleton t = {
-    data = Seq.singleton t;
-    length = 1;
-  }
-
-  let append w1 w2 =
-    if w1.length = 0 then
-      w2
-    else if w2.length = 0 then
-      w1
-    else {
-      data = Seq.append w1.data w2.data;
-      length = w1.length + w2.length;
-    }
-
-  let length w =
-    w.length
-
-  let first w =
-    Seq.first w.data
-
-  let elements w =
-    Seq.elements w.data
-
+  type word = Terminal.t list
+  let epsilon = []
+  let singleton t = [t]
+  let append = (@)
+  let length = List.length
+  let first w z = match w with a :: _ -> a | [] -> z
+  let elements w = w
   let print w =
-    string_of_int w.length ^ " " ^
+    string_of_int (length w) ^ " " ^
     String.concat " " (List.map Terminal.print (elements w))
 
 end
@@ -282,9 +254,6 @@ let init s =
       }
     )
 
-let first w z =
-  if W.length w > 0 then W.first w else z
-
 module T : sig
 
   (* [register fact] registers the fact [fact]. It returns [true] if this fact
@@ -322,8 +291,8 @@ end = struct
       let compare fact1 fact2 =
         let c = Trie.compare fact1.future fact2.future in
         if c <> 0 then c else
-        let a1 = first fact1.word fact1.lookahead
-        and a2 = first fact2.word fact2.lookahead in
+        let a1 = W.first fact1.word fact1.lookahead
+        and a2 = W.first fact2.word fact2.lookahead in
         Terminal.compare a1 a2
     end)
 
@@ -341,7 +310,7 @@ end = struct
               incr count;
               fact
           | Some earlier_fact ->
-              assert (W.length earlier_fact.word <= W.length fact.word);
+              (* assert (W.length earlier_fact.word <= W.length fact.word); *)
               earlier_fact
         )
       )
@@ -403,14 +372,14 @@ end = struct
   let count = ref 0
 
   let register s nt w z =
-    let a = first w z in
+    let a = W.first w z in
     update_ref m (fun m ->
       M.update None some (s, nt, a, z) m (function
       | None ->
           incr count;
           w
       | Some earlier_w ->
-          assert (W.length earlier_w <= W.length w);
+          (* assert (W.length earlier_w <= W.length w); *)
           earlier_w
       )
     )
@@ -445,7 +414,7 @@ let new_edge s nt w z =
   if E.register s nt w z then
     let sym = (Symbol.N nt) in
     let s' = try SymbolMap.find sym (Lr1.transitions s) with Not_found -> assert false in
-    T.query s (first w z) (fun fact ->
+    T.query s (W.first w z) (fun fact ->
       if extensible fact sym then
         add (extend fact s' sym w z)
     )
