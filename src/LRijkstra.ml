@@ -459,9 +459,15 @@ let consequences fact =
              also depends on this assumption. *)
           (**)
 
+          let future = Trie.derivative sym fact.future in
           foreach_terminal (fun z ->
             E.query (target fact) nt fact.lookahead z (fun w ->
-              add (extend fact sym w z)
+              assert (Terminal.equal fact.lookahead (W.first w z));
+              add {
+                future;
+                word = W.append fact.word w;
+                lookahead = z
+              }
             )
           )
 
