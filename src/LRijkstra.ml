@@ -2,55 +2,6 @@ open Grammar
 
 (* ------------------------------------------------------------------------ *)
 
-(* First, we implement the computation of forward shortest paths in the
-   automaton. We view the automaton as a graph whose vertices are states. We
-   label each edge with the minimum length of a word that it generates. This
-   yields a lower bound on the actual distance to every state from any entry
-   state. *)
-
-let approximate : Lr1.node -> int =
-
-  let module A = Astar.Make(struct
-
-    type node =
-      Lr1.node
-
-    let equal s1 s2 =
-      Lr1.Node.compare s1 s2 = 0
-
-    let hash s =
-      Hashtbl.hash (Lr1.number s)
-
-    type label =
-      unit
-
-    let sources f =
-      (* The sources are the entry states. *)
-      ProductionMap.iter (fun _ s -> f s) Lr1.entry
-
-    let successors s edge =
-      SymbolMap.iter (fun sym s' ->
-        (* The weight of the edge from [s] to [s'] is given by the function
-           [Grammar.Analysis.minimal_symbol]. If [sym] produces the empty
-           language, this could be infinite, in which case no edge exists. *)
-        match Analysis.minimal_symbol sym with
-        | CompletedNatWitness.Finite (w, _) ->
-            edge () w s'
-        | CompletedNatWitness.Infinity ->
-            ()
-      ) (Lr1.transitions s)
-
-    let estimate _ =
-      (* A* with a zero [estimate] behaves like Dijkstra's algorithm. *)
-      0
-
-  end) in
-        
-  let distance, _ = A.search (fun (_, _) -> ()) in
-  distance
-
-(* ------------------------------------------------------------------------ *)
-
 (* This returns the list of reductions of [state] on token [z]. This
    is a list of zero or one elements. *)
 
@@ -568,104 +519,7 @@ let validate s s' w : bool =
 (* This can be formulated as a search for a shortest path in a graph. The
    graph is not just the automaton, though. It is a (much) larger graph whose
    vertices are pairs [s, z] and whose edges are obtained by querying the
-   module [E] above. Because we perform a backward search, from [s', z] to any
-   entry state, we use reverse edges, from a state to its predecessors in the
-   automaton. *)
-
-(* Debugging. TEMPORARY *)
-let es = ref 0
-
-exception Success of Lr1.node * W.word
-
-let backward (s', z) : unit =
-
-  let module A = Astar.Make(struct
-
-    (* A vertex is a pair [s, z].
-       [z] cannot be the [error] token. *)
-    type node =
-        Lr1.node * Terminal.t
-
-    let equal (s'1, z1) (s'2, z2) =
-      Lr1.Node.compare s'1 s'2 = 0 && Terminal.compare z1 z2 = 0
-
-    let hash (s, z) =
-      Hashtbl.hash (Lr1.number s, z)
-
-    (* An edge is labeled with a word. *)
-    type label =
-      W.word
-
-    (* Backward search from the single source [s', z]. *)
-    let sources f = f (s', z)
-
-    let successors (s', z) edge =
-      assert (not (Terminal.equal z Terminal.error));
-      match Lr1.incoming_symbol s' with
-      | None ->
-          (* An entry state has no predecessor states. *)
-          ()
-
-      | Some (Symbol.T t) ->
-          if not (Terminal.equal t Terminal.error) then
-            (* There is an edge from [s] to [s'] labeled [t] in the automaton.
-               Thus, our graph has an edge from [s', z] to [s, t], labeled [t]. *)
-            let w = W.singleton t in
-            List.iter (fun s ->
-              edge w 1 (s, t)
-            ) (Lr1.predecessors s')
-
-      | Some (Symbol.N nt) ->
-          (* There is an edge from [s] to [s'] labeled [nt] in the automaton.
-             For every letter [a], we query [E] for a word [w] that begins in
-             [s] and allows us to take the edge labeled [nt] when the
-             lookahead symbol is [z]. Such a path [w] takes us from [s, a] to
-             [s', z]. Thus, our graph has an edge, labeled [w], in the reverse
-             direction. *)
-          (**)
-          List.iter (fun s ->
-            foreach_terminal (fun a ->
-              assert (not (Terminal.equal a Terminal.error));
-              E.query s nt a z (fun w ->
-                edge w (W.length w) (s, a)
-              )
-            )
-          ) (Lr1.predecessors s')
-
-    let estimate (s', _z) =
-      approximate s'
-
-  end) in
-
-  (* Search backwards from [s', z], stopping as soon as an entry state [s] is
-     reached. In that case, return the state [s] and the path that has been
-     found. *)
-
-  let _, _ = A.search (fun ((s, _), path) ->
-    (* Debugging. TEMPORARY *)
-    incr es;
-    if !es mod 10000 = 0 then
-      Printf.fprintf stderr "es = %d\n%!" !es;
-    (* If [s] is a start state... *)
-    let _, ws = A.reverse path in
-    let ws = List.rev ws in
-    if Lr1.incoming_symbol s = None then
-      (* [labels] is a list of properties. Projecting onto the second
-         component yields a list of paths (sequences of terminal symbols),
-         which we concatenate to obtain a path. Because the edges that were
-         followed last are in front of the list, and because this is a
-         reverse graph, we obtain a path that makes direct sense: it is a
-         sequence of terminal symbols that will take the automaton into
-         state [s'] if the next (unconsumed) symbol is [z]. We append [z]
-         at the end of this path. *)
-      let w = List.fold_right W.append ws (W.singleton z) in
-      raise (Success (s, w))
-  ) in
-  ()
-
-(* ------------------------------------------------------------------------ *)
-
-(* Forward search. *)
+   module [E] above. *)
 
 let forward () =
 
@@ -752,65 +606,10 @@ let forward () =
     (Lr1.NodeSet.cardinal !seen);
   !seen
 
-(* ------------------------------------------------------------------------ *)
-
-(* For each state [s'] and for each terminal symbol [z] such that [z] triggers
-   an error in [s'], backward search is performed. For each state [s'], we
-   stop as soon as one [z] is found, i.e., as soon as one way of causing an
-   error in state [s'] is found. *)
-
-let backward s' : W.word option =
-  
-  (* Debugging. TEMPORARY *)
-  Printf.fprintf stderr
-    "Attempting to reach an error in state %d:\n%!"
-    (Lr1.number s');
-
-  try
-
-    (* This loop stops as soon as we are able to reach one error at [s']. *)
-    Terminal.iter (fun z ->
-      if not (Terminal.equal z Terminal.error) && causes_an_error s' z then
-        backward (s', z)
-    );
-    (* No error can be triggered in state [s']. *)
-    None
-
-  with Success (s, w) ->
-    (* An error can be triggered in state [s'] by beginning in the initial
-       state [s] and reading the sequence of terminal symbols [w]. *)
-    assert (validate s s' w);
-    Some w
-
-(* Test. TEMPORARY *)
-
-let backward () =
-  let reachable = ref Lr1.NodeSet.empty in
-  Lr1.iter (fun s' ->
-    begin match backward s' with
-    | None ->
-        Printf.fprintf stderr "infinity\n%!"
-    | Some w ->
-        Printf.fprintf stderr "%s\n%!" (W.print w);
-        reachable := Lr1.NodeSet.add s' !reachable
-    end;
-    Printf.fprintf stderr "Edges so far: %d\n" !es
-  );
-  Printf.fprintf stderr "Reachable (backward): %d states\n%!"
-    (Lr1.NodeSet.cardinal !reachable);
-  !reachable
-
 (* TEMPORARY what about the pseudo-token [#]? *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
 
 let () =
-(*
-  let b = backward() in
-  Time.tick "Backward search";
-*)
   let f = forward() in
   Time.tick "Forward search";
   ignore f
-(*
-  assert (Lr1.NodeSet.equal b f)
-*)
