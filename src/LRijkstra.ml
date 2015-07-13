@@ -285,21 +285,28 @@ module T : sig
 
 end = struct
 
-  (* We use a map of [target, z] to a map of [future, a] to facts. *)
+  (* We store the set of facts as... a set of facts. This is more subtle than
+     it may first seem, though. Indeed, we need to query this set in two ways.
+     In [register], we need to test whether a fact already is a member of the
+     set. In [query], we need to find all facts that match a pair [target, z].
+     We set up the set of facts with a comparison function that considers
+     [target] and [z] first, then considers the rest of the data. (We note
+     that [future] determines [target]. This cannot be exploited here.) This
+     allows [query] to perform a range request, using [MySet.for_every]. *)
+(**)
 
-  module M1 =
-    MyMap(struct
-      type t = Lr1.node * Terminal.t
-      let compare (target1, z1) (target2, z2) =
-        let c = Lr1.Node.compare target1 target2 in
-        if c <> 0 then c else
-        Terminal.compare z1 z2
-    end)
-
-  module M2 =
+  module M =
     MySet.Make(struct
       type t = fact
       let compare fact1 fact2 =
+        let target1 = target fact1
+        and target2 = target fact2 in
+        let c = Lr1.Node.compare target1 target2 in
+        if c <> 0 then c else
+        let z1 = fact1.lookahead
+        and z2 = fact2.lookahead in
+        let c = Terminal.compare z1 z2 in
+        if c <> 0 then c else
         let c = Trie.compare fact1.future fact2.future in
         if c <> 0 then c else
         let a1 = W.first fact1.word fact1.lookahead
@@ -307,28 +314,31 @@ end = struct
         Terminal.compare a1 a2
     end)
 
-  let m : M2.t M1.t ref =
-    ref M1.empty
+  let r : M.t ref =
+    ref M.empty
 
   let count = ref 0
 
   let register fact =
-    let z = fact.lookahead in
-    update_ref m (fun m1 ->
-      M1.update M2.empty id (target fact, z) m1 (fun m2 ->
-        let m2' = M2.add fact m2 in
-        if m2 != m2' then
-          incr count;
-        m2'
-      )
+    update_ref r (fun m ->
+      (* We crucially rely on the fact that [M.add] guarantees not to
+         change the set if an ``equal'' fact already exists. Thus, a
+         later, longer path is ignored in favor of an earlier, shorter
+         path. *)
+      let m' = M.add fact m in
+      if m != m' then incr count;
+      m'
     )
 
-  let query target z f =
-    match M1.find (target, z) !m with
-    | m2 ->
-        M2.iter f m2
-    | exception Not_found ->
-        ()
+  let query target1 z1 f =
+    let compare fact2 =
+        let target2 = target fact2 in
+        let c = Lr1.Node.compare target1 target2 in
+        if c <> 0 then c else
+        let z2 = fact2.lookahead in
+        Terminal.compare z1 z2
+    in    
+    M.for_every compare !r f
 
   let stats () =
     Printf.fprintf stderr "T stores %d facts.\n%!" !count
