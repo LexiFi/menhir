@@ -575,7 +575,7 @@ let forward () =
 
   Printf.fprintf stderr "Forward search:\n%!";
   let seen = ref Lr1.NodeSet.empty in
-  let _, _ = A.search (fun ((s', z), (path : A.path)) ->
+  let _, _ = A.search (fun ((s', z), path) ->
     if causes_an_error s' z && not (Lr1.NodeSet.mem s' !seen) then begin
       seen := Lr1.NodeSet.add s' !seen;
       (* An error can be triggered in state [s'] by beginning in the initial
@@ -587,13 +587,6 @@ let forward () =
         (Lr1.number s)
         (Lr1.number s');
       Printf.fprintf stderr "%s\n%!" (W.print w);
-      (*
-      let approx = approximate s'
-      and real = W.length w - 1 in
-      assert (approx <= real);
-      if approx < real then
-        Printf.fprintf stderr "Approx = %d, real = %d\n" approx real;
-      *)
       assert (validate s s' w)
     end
   ) in
