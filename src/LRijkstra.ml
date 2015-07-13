@@ -203,18 +203,22 @@ module Trie = struct
 end
 
 type fact = {
-  source: Lr1.node;
-  target: Lr1.node;
   future: Trie.trie;
   word: W.word;
   lookahead: Terminal.t
 }
 
+let source fact =
+  fact.future.Trie.source
+
+let target fact =
+  fact.future.Trie.target
+
 let print_fact fact =
   Printf.fprintf stderr
     "from state %d to state %d via %s . %s\n%!"
-    (Lr1.number fact.source)
-    (Lr1.number fact.target)
+    (Lr1.number (source fact))
+    (Lr1.number (target fact))
     (W.print fact.word)
     (Terminal.print fact.lookahead)
 
@@ -260,8 +264,6 @@ let init s =
   if not (Trie.is_empty trie) then
     foreach_terminal (fun z ->
       add {
-        source = s;
-        target = s;
         future = trie;
         word = W.epsilon;
         lookahead = z
@@ -280,7 +282,6 @@ module T : sig
   val query: Lr1.node -> Terminal.t -> (fact -> unit) -> unit
 
   val stats: unit -> unit
-  val debug: unit -> unit
 
 end = struct
 
@@ -317,11 +318,9 @@ end = struct
   let count = ref 0
 
   let register fact =
-    assert (Lr1.Node.compare fact.source fact.future.Trie.source = 0);
-    assert (Lr1.Node.compare fact.target fact.future.Trie.target = 0);
     let z = fact.lookahead in
     update_ref m (fun m1 ->
-      M1.update M2.empty id (fact.target, z) m1 (fun m2 ->
+      M1.update M2.empty id (target fact, z) m1 (fun m2 ->
         M2.update None some fact m2 (function
           | None ->
               incr count;
@@ -344,33 +343,6 @@ end = struct
 
   let stats () =
     Printf.fprintf stderr "T stores %d facts.\n%!" !count
-
-  let iter f =
-    let m1 = !m in
-    M1.iter (fun _ m2 ->
-      M2.iter (fun _ fact ->
-        f fact
-      ) m2
-    ) m1
-
-  (* Empirical verification that [future] determines [source] and [target]. *)
-  let debug () =
-    let module F = MyMap(struct
-      type t = Trie.trie
-      let compare = Trie.compare
-    end) in
-    let f = ref F.empty in
-    let c = ref 0 in
-    iter (fun fact ->
-      incr c;
-      try
-        let older_fact = F.find fact.future !f in
-        assert (Lr1.Node.compare older_fact.source fact.source = 0);
-        assert (Lr1.Node.compare older_fact.target fact.target = 0);
-      with Not_found ->
-        f := F.add fact.future fact !f
-    );
-    Printf.fprintf stderr "Yes (%d facts, %d distinct futures)\n" !c (F.cardinal !f)
 
 end
 
@@ -438,13 +410,10 @@ end = struct
 
 end
 
-let extend fact target sym w z =
-  (* assert (Terminal.equal fact.lookahead (first w z)); *)
-  let future = Trie.derivative sym fact.future in
+let extend fact sym w z =
+  assert (Terminal.equal fact.lookahead (W.first w z));
   {
-    source = fact.source;
-    target = target;
-    future = future;
+    future = Trie.derivative sym fact.future;
     word = W.append fact.word w;
     lookahead = z
   }
@@ -456,10 +425,9 @@ let new_edge s nt w z =
   *)
   if E.register s nt w z then
     let sym = (Symbol.N nt) in
-    let s' = try SymbolMap.find sym (Lr1.transitions s) with Not_found -> assert false in
     T.query s (W.first w z) (fun fact ->
       if extensible fact sym then
-        add (extend fact s' sym w z)
+        add (extend fact sym w z)
     )
 
 (* [consequences fact] is invoked when we discover a new fact (i.e., one that
@@ -483,7 +451,7 @@ let consequences fact =
 
   (* 1. View [fact] as a vertex. Examine the transitions out of [fact.target]. *)
   
-  SymbolMap.iter (fun sym s ->
+  SymbolMap.iter (fun sym _ ->
     if extensible fact sym then
       match sym with
       | Symbol.T t ->
@@ -496,7 +464,7 @@ let consequences fact =
 
           if Terminal.equal fact.lookahead t then
             foreach_terminal (fun z ->
-              add (extend fact s sym (W.singleton t) z)
+              add (extend fact sym (W.singleton t) z)
             )
 
       | Symbol.N nt ->
@@ -511,12 +479,12 @@ let consequences fact =
           (**)
 
           foreach_terminal (fun z ->
-            E.query fact.target nt fact.lookahead z (fun w ->
-              add (extend fact s sym w z)
+            E.query (target fact) nt fact.lookahead z (fun w ->
+              add (extend fact sym w z)
             )
           )
 
-  ) (Lr1.transitions fact.target);
+  ) (Lr1.transitions (target fact));
 
   (* 2. View [fact] as a possible edge. This is possible if the path from
      [fact.source] to [fact.target] represents a production [prod] and
@@ -528,9 +496,9 @@ let consequences fact =
      [fact.lookahead], so we record that. *)
   (**)
 
-  match has_reduction fact.target fact.lookahead with
+  match has_reduction (target fact) fact.lookahead with
   | Some prod when Trie.accepts prod fact.future ->
-      new_edge fact.source (Production.nt prod) fact.word fact.lookahead
+      new_edge (source fact) (Production.nt prod) fact.word fact.lookahead
   | _ ->
       ()
 
@@ -562,8 +530,7 @@ let main =
   Q.repeat q discover;
   Time.tick "Running LRijkstra";
   T.stats();
-  E.stats();
-  T.debug()
+  E.stats()
 
 (* ------------------------------------------------------------------------ *)
 
