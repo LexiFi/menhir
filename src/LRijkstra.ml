@@ -78,18 +78,57 @@ module W : sig
   val elements: word -> Terminal.t list
   val print: word -> string
 
+  val stats: unit -> unit
+
 end = struct
 
-  type word = Terminal.t list
-  let epsilon = []
-  let singleton t = [t]
-  let append = (@)
-  let length = List.length
-  let first w z = match w with a :: _ -> a | [] -> z
-  let elements w = w
+  let () =
+    assert (Terminal.n < 256)
+
+  let t2c (t : Terminal.t) : char =
+    Char.chr (Terminal.t2i t)
+  let c2t (t : char) : Terminal.t =
+    Obj.magic (Char.code t)
+
+  module H = Hashtbl.Make(struct
+      type t = string
+      let equal = (=)
+      let hash = Hashtbl.hash
+  end)
+  let table = H.create 1023
+  let c = ref 0
+  let n = ref 0
+  let intern s =
+    incr c;
+    try
+      H.find table s
+    with Not_found ->
+      incr n;
+      H.add table s s;
+      s
+
+  type word = string
+  let epsilon = ""
+  let singleton t = intern (String.make 1 (t2c t))
+  let append w1 w2 = intern (w1 ^ w2)
+  let length = String.length
+  let first w z = if length w > 0 then c2t w.[0] else z
+  let rec chars i n w =
+    if i = n then
+      []
+    else
+      c2t w.[i] :: chars (i + 1) n w
+  let elements w =
+    chars 0 (String.length w) w
   let print w =
     string_of_int (length w) ^ " " ^
     String.concat " " (List.map Terminal.print (elements w))
+
+  let stats () =
+    Printf.fprintf stderr
+      "Number of calls to intern: %d\n\
+       Number of elements in intern table: %d\n%!"
+      !c !n
 
 end
 
@@ -446,6 +485,7 @@ let level = ref 0
 
 let done_with_level () =
   Printf.fprintf stderr "Done with level %d.\n" !level;
+  W.stats();
   T.stats();
   E.stats();
   Printf.fprintf stderr "Q stores %d facts.\n%!" (Q.cardinal q)
