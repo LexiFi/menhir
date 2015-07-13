@@ -318,10 +318,12 @@ end = struct
 
   module M2 =
     MyMap(struct
-      type t = Trie.trie * Terminal.t
-      let compare (future1, a1) (future2, a2) =
-        let c = Trie.compare future1 future2 in
+      type t = fact
+      let compare fact1 fact2 =
+        let c = Trie.compare fact1.future fact2.future in
         if c <> 0 then c else
+        let a1 = first fact1.word fact1.lookahead
+        and a2 = first fact2.word fact2.lookahead in
         Terminal.compare a1 a2
     end)
 
@@ -332,10 +334,9 @@ end = struct
 
   let register fact =
     let z = fact.lookahead in
-    let a = first fact.word z in
     update_ref m (fun m1 ->
       M1.update M2.empty id (fact.target, z) m1 (fun m2 ->
-        M2.update None some (fact.future, a) m2 (function
+        M2.update None some fact m2 (function
           | None ->
               incr count;
               fact
@@ -425,7 +426,7 @@ end = struct
 end
 
 let extend fact target sym w z =
-  assert (Terminal.equal fact.lookahead (first w z));
+  (* assert (Terminal.equal fact.lookahead (first w z)); *)
   let future = Trie.derivative sym fact.future in
   assert (not (Trie.is_empty future));
   {
