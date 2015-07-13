@@ -260,6 +260,8 @@ let q =
 let add fact =
   (* The length of the word serves as the priority of this fact. *)
   Q.add q fact (W.length fact.word)
+    (* In principle, there is no need to insert the fact into the queue
+       if [T] already stores a comparable fact. *)
 
 let stars = ref 0
 
