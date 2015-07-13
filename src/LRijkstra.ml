@@ -654,7 +654,6 @@ let forward () =
     (Lr1.NodeSet.cardinal !seen);
   !seen
 
-(* TEMPORARY what about the pseudo-token [#]? *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
 
 let () =
