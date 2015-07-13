@@ -211,6 +211,9 @@ module Trie = struct
   let compare (Trie (stamp1, _, _)) (Trie (stamp2, _, _)) =
     Pervasives.compare (stamp1 : int) stamp2
 
+  let rec size (Trie (_, prods, children)) =
+    SymbolMap.fold (fun _ child accu -> size child + accu) children (List.length prods)
+
 end
 
 type fact = {
@@ -246,6 +249,7 @@ let star s : Trie.trie =
     | Symbol.N nt ->
         Production.foldnt nt accu (fun prod accu ->
           let w = Array.to_list (Production.rhs prod) in
+          (* could insert this branch only if viable -- leads to 12600 instead of 12900 in ocaml.mly --lalr *)
           Trie.insert w prod accu
         )
   ) (Lr1.transitions s) Trie.empty
@@ -257,8 +261,14 @@ let add fact =
   (* The length of the word serves as the priority of this fact. *)
   Q.add q fact (W.length fact.word)
 
+let stars = ref 0
+
 let init s =
   let trie = star s in
+  let size = (Trie.size trie) in
+  stars := !stars + size;
+  Printf.fprintf stderr "State %d has a star of size %d\n.%!"
+    (Lr1.number s) size;
   if not (Trie.is_empty trie) then
     foreach_terminal (fun z ->
       add {
@@ -518,7 +528,8 @@ let discover fact =
       Printf.fprintf stderr "Done with level %d.\n" !level;
       level := W.length fact.word;
       T.stats();
-      E.stats()
+      E.stats();
+      Printf.fprintf stderr "Q stores %d facts.\n%!" (Q.cardinal q)
     end;
 (*
     incr facts;
@@ -532,6 +543,7 @@ let discover fact =
 
 let main =
   Lr1.iter init;
+  Printf.fprintf stderr "Cumulated star size: %d\n%!" !stars;
   Q.repeat q discover;
   Time.tick "Running LRijkstra";
   T.stats();
