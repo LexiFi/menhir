@@ -150,16 +150,18 @@ module Trie = struct
 
   type trie = {
     identity: int;
+    source: Lr1.node;
+    target: Lr1.node;
     productions: Production.index list;
-    transitions: trie SymbolMap.t
+    transitions: trie SymbolMap.t;
   }
 
-  let mktrie productions transitions =
+  let mktrie source target productions transitions =
     let identity = Misc.postincrement c in
-    { identity; productions; transitions }
+    { identity; source; target; productions; transitions }
 
-  let empty =
-    mktrie [] SymbolMap.empty
+  let empty source =
+    mktrie source source [] SymbolMap.empty
 
   let is_empty t =
     t.productions = [] && SymbolMap.is_empty t.transitions
@@ -167,21 +169,30 @@ module Trie = struct
   let accepts prod t =
     List.mem prod t.productions
 
-  let update : Symbol.t -> trie SymbolMap.t -> (trie -> trie) -> trie SymbolMap.t =
-    update SymbolMap.add SymbolMap.find empty id
-
-  let rec insert w prod t =
+  let rec insert target w prod t =
     match w with
     | [] ->
-        mktrie (prod :: t.productions) t.transitions
+        mktrie t.source target (prod :: t.productions) t.transitions
     | a :: w ->
-        mktrie t.productions (update a t.transitions (insert w prod))
+        match SymbolMap.find a (Lr1.transitions target) with
+        | successor ->
+            let child = mktrie t.source successor [] SymbolMap.empty in
+            mktrie t.source target t.productions
+              (update SymbolMap.add SymbolMap.find child id a t.transitions (insert successor w prod))
+        | exception Not_found ->
+            t
+
+  let insert w prod t =
+    insert t.source w prod t
 
   let derivative a t =
     try
       SymbolMap.find a t.transitions
     with Not_found ->
-      empty
+      assert false
+
+  let has_derivative a t =
+    SymbolMap.mem a t.transitions
 
   let compare t1 t2 =
     Pervasives.compare (t1.identity : int) t2.identity
@@ -208,7 +219,7 @@ let print_fact fact =
     (Terminal.print fact.lookahead)
 
 let extensible fact sym =
-  not (Trie.is_empty (Trie.derivative sym fact.future))
+  Trie.has_derivative sym fact.future
 
 let foreach_terminal f =
   Terminal.iter (fun t ->
@@ -227,7 +238,7 @@ let star s : Trie.trie =
           (* could insert this branch only if viable -- leads to 12600 instead of 12900 in ocaml.mly --lalr *)
           Trie.insert w prod accu
         )
-  ) (Lr1.transitions s) Trie.empty
+  ) (Lr1.transitions s) (Trie.empty s)
 
 let q =
   Q.create()
@@ -306,6 +317,8 @@ end = struct
   let count = ref 0
 
   let register fact =
+    assert (Lr1.Node.compare fact.source fact.future.Trie.source = 0);
+    assert (Lr1.Node.compare fact.target fact.future.Trie.target = 0);
     let z = fact.lookahead in
     update_ref m (fun m1 ->
       M1.update M2.empty id (fact.target, z) m1 (fun m2 ->
@@ -428,7 +441,6 @@ end
 let extend fact target sym w z =
   (* assert (Terminal.equal fact.lookahead (first w z)); *)
   let future = Trie.derivative sym fact.future in
-  assert (not (Trie.is_empty future));
   {
     source = fact.source;
     target = target;
