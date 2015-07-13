@@ -442,8 +442,10 @@ let consequences fact =
           (**)
 
           if Terminal.equal fact.lookahead t then
-            foreach_terminal (fun z ->
-              add (extend fact sym (W.singleton t) z)
+            let future = Trie.derivative sym fact.future
+            and word = W.append fact.word (W.singleton t) in
+            foreach_terminal (fun lookahead ->
+              add { future; word; lookahead }
             )
 
       | Symbol.N nt ->
