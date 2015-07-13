@@ -213,13 +213,7 @@ module Trie = struct
     insert t.source w prod t
 
   let derivative a t =
-    try
-      SymbolMap.find a t.transitions
-    with Not_found ->
-      assert false
-
-  let has_derivative a t =
-    SymbolMap.mem a t.transitions
+    SymbolMap.find a t.transitions (* careful: may raise [Not_found] *)
 
   let compare t1 t2 =
     Pervasives.compare (t1.identity : int) t2.identity
@@ -240,9 +234,6 @@ let source fact =
 
 let target fact =
   fact.future.Trie.target
-
-let extensible fact sym =
-  Trie.has_derivative sym fact.future
 
 let star s : Trie.trie =
   SymbolMap.fold (fun sym _ accu ->
@@ -428,18 +419,19 @@ let new_edge s nt w z =
     (Terminal.print z) (Lr1.number s);
   *)
   if E.register s nt w z then
-    let sym = (Symbol.N nt) in
+    let sym = Symbol.N nt in
     T.query s (W.first w z) (fun fact ->
-      if extensible fact sym then begin
-        let future = Trie.derivative sym fact.future in
-        assert (Terminal.equal fact.lookahead (W.first w z));
-        if not (causes_an_error future.Trie.target z) then
-          add {
-            future;
-            word = W.append fact.word w;
-            lookahead = z
-          }
-      end
+      assert (Terminal.equal fact.lookahead (W.first w z));
+      match Trie.derivative sym fact.future with
+      | future ->
+          if not (causes_an_error future.Trie.target z) then
+            add {
+              future;
+              word = W.append fact.word w;
+              lookahead = z
+            }
+      | exception Not_found ->
+          ()
     )
 
 (* [consequences fact] is invoked when we discover a new fact (i.e., one that
@@ -464,46 +456,44 @@ let consequences fact =
   (* 1. View [fact] as a vertex. Examine the transitions out of [fact.target]. *)
   
   SymbolMap.iter (fun sym s' ->
-    if extensible fact sym then
-      match sym with
-      | Symbol.T t ->
+    match Trie.derivative sym fact.future, sym with
+    | exception Not_found -> ()
+    | future, Symbol.T t ->
 
-          (* 1a. There is a transition labeled [t] out of [fact.target]. If
-             the lookahead assumption [fact.lookahead] is compatible with [t],
-             then we derive a new fact, where one more edge has been taken. We
-             enqueue this new fact for later examination. *)
-          (**)
+        (* 1a. There is a transition labeled [t] out of [fact.target]. If
+           the lookahead assumption [fact.lookahead] is compatible with [t],
+           then we derive a new fact, where one more edge has been taken. We
+           enqueue this new fact for later examination. *)
+        (**)
 
-          if Terminal.equal fact.lookahead t then
-            let future = Trie.derivative sym fact.future
-            and word = W.append fact.word (W.singleton t) in
-            (* assert (Lr1.Node.compare future.Trie.target s' = 0); *)
-            foreach_terminal_not_causing_an_error s' (fun z ->
-              add { future; word; lookahead = z }
-            )
-
-      | Symbol.N nt ->
-
-          (* 1b. There is a transition labeled [nt] out of [fact.target]. We
-             need to know how this nonterminal edge can be taken. We query for a
-             word [w] that allows us to take this edge. The answer depends on
-             the terminal symbol [z] that comes *after* this word: we try all
-             such symbols. Furthermore, we need the first symbol of [w.z] to
-             satisfy the lookahead assumption [fact.lookahead], so the answer
-             also depends on this assumption. *)
-          (**)
-
-          let future = Trie.derivative sym fact.future in
+        if Terminal.equal fact.lookahead t then
+          let word = W.append fact.word (W.singleton t) in
+          (* assert (Lr1.Node.compare future.Trie.target s' = 0); *)
           foreach_terminal_not_causing_an_error s' (fun z ->
-            E.query (target fact) nt fact.lookahead z (fun w ->
-              assert (Terminal.equal fact.lookahead (W.first w z));
-              add {
-                future;
-                word = W.append fact.word w;
-                lookahead = z
-              }
-            )
+            add { future; word; lookahead = z }
           )
+
+    | future, Symbol.N nt ->
+
+        (* 1b. There is a transition labeled [nt] out of [fact.target]. We
+           need to know how this nonterminal edge can be taken. We query for a
+           word [w] that allows us to take this edge. The answer depends on
+           the terminal symbol [z] that comes *after* this word: we try all
+           such symbols. Furthermore, we need the first symbol of [w.z] to
+           satisfy the lookahead assumption [fact.lookahead], so the answer
+           also depends on this assumption. *)
+        (**)
+
+        foreach_terminal_not_causing_an_error s' (fun z ->
+          E.query (target fact) nt fact.lookahead z (fun w ->
+            assert (Terminal.equal fact.lookahead (W.first w z));
+            add {
+              future;
+              word = W.append fact.word w;
+              lookahead = z
+            }
+          )
+        )
 
   ) (Lr1.transitions (target fact));
 
