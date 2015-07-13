@@ -709,11 +709,6 @@ let backward () =
     Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
     if p <> P.Infinity then
       reachable := Lr1.NodeSet.add s' !reachable;
-    let approx = approximate s'
-    and real = P.to_int p - 1 in
-    assert (approx = max_int && p = P.Infinity || approx <= real);
-    if approx < real && real < max_int - 1 then
-        Printf.fprintf stderr "Approx = %d, real = %d\n" approx real;
     Printf.fprintf stderr "Questions asked so far: %d\n" !qs;
     Printf.fprintf stderr "Edges so far: %d\n" !es
   );
@@ -723,7 +718,7 @@ let backward () =
 
 let () =
   let b = backward() in
-  Time.tick "Backward search";
+  Time.tick "Backward search"; (* note: this includes the costly analysis *)
   let f = forward() in
   Time.tick "Forward search";
   assert (Lr1.NodeSet.equal b f)
