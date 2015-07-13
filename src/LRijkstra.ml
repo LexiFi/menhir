@@ -41,8 +41,33 @@ let causes_an_error s z =
       reductions s z = [] &&
       not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
 
-  let id x = x
-  let some x = Some x
+let foreach_terminal f =
+  Terminal.iter (fun t ->
+    if not (Terminal.equal t Terminal.error) then
+      f t
+  )
+
+let foreach_terminal_not_causing_an_error s f =
+  match Invariant.has_default_reduction s with
+  | Some _ ->
+      (* No terminal causes an error. *)
+      foreach_terminal f
+  | None ->
+      TerminalMap.iter (fun t _ ->
+        if not (Terminal.equal t Terminal.error) then
+          f t
+      ) (Lr1.reductions s);
+      SymbolMap.iter (fun sym _ ->
+        match sym with
+        | Symbol.T t ->
+            if not (Terminal.equal t Terminal.error) then
+              f t
+        | Symbol.N _ ->
+            ()
+      ) (Lr1.transitions s)
+
+let id x = x
+let some x = Some x
 
 let update_ref r f : bool =
   let v = !r in
@@ -207,12 +232,6 @@ let target fact =
 let extensible fact sym =
   Trie.has_derivative sym fact.future
 
-let foreach_terminal f =
-  Terminal.iter (fun t ->
-    if not (Terminal.equal t Terminal.error) then
-      f t
-  )
-
 let star s : Trie.trie =
   SymbolMap.fold (fun sym _ accu ->
     match sym with
@@ -246,13 +265,12 @@ let init s =
   Printf.fprintf stderr "State %d has a star of size %d\n.%!"
     (Lr1.number s) size;
   if not (Trie.is_empty trie) then
-    foreach_terminal (fun z ->
-      if not (causes_an_error s z) then
-        add {
-          future = trie;
-          word = W.epsilon;
-          lookahead = z
-        }
+    foreach_terminal_not_causing_an_error s (fun z ->
+      add {
+        future = trie;
+        word = W.epsilon;
+        lookahead = z
+      }
     )
 
 module T : sig
@@ -448,9 +466,8 @@ let consequences fact =
             let future = Trie.derivative sym fact.future
             and word = W.append fact.word (W.singleton t) in
             (* assert (Lr1.Node.compare future.Trie.target s' = 0); *)
-            foreach_terminal (fun z ->
-              if not (causes_an_error s' z) then
-                add { future; word; lookahead = z }
+            foreach_terminal_not_causing_an_error s' (fun z ->
+              add { future; word; lookahead = z }
             )
 
       | Symbol.N nt ->
@@ -465,15 +482,14 @@ let consequences fact =
           (**)
 
           let future = Trie.derivative sym fact.future in
-          foreach_terminal (fun z ->
-            if not (causes_an_error s' z) then
-              E.query (target fact) nt fact.lookahead z (fun w ->
-                assert (Terminal.equal fact.lookahead (W.first w z));
-                add {
-                  future;
-                  word = W.append fact.word w;
-                  lookahead = z
-                }
+          foreach_terminal_not_causing_an_error s' (fun z ->
+            E.query (target fact) nt fact.lookahead z (fun w ->
+              assert (Terminal.equal fact.lookahead (W.first w z));
+              add {
+                future;
+                word = W.append fact.word w;
+                lookahead = z
+              }
             )
           )
 
