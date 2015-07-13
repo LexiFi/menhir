@@ -721,11 +721,13 @@ let forward () =
         (Lr1.number s)
         (Lr1.number s');
       Printf.fprintf stderr "%s\n%!" (W.print w);
+      (*
       let approx = approximate s'
       and real = W.length w - 1 in
       assert (approx <= real);
       if approx < real then
         Printf.fprintf stderr "Approx = %d, real = %d\n" approx real;
+      *)
       assert (validate s s' w)
     end
   ) in
@@ -781,20 +783,17 @@ let backward () =
     (Lr1.NodeSet.cardinal !reachable);
   !reachable
 
-(*
-    let approx = approximate s'
-    and real = P.to_int p - 1 in
-    assert (approx = max_int && p = P.Infinity || approx <= real);
-    if approx < real && real < max_int - 1 then
-        Printf.fprintf stderr "Approx = %d, real = %d\n" approx real;
-*)
-
 (* TEMPORARY what about the pseudo-token [#]? *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
 
 let () =
+(*
   let b = backward() in
   Time.tick "Backward search";
+*)
   let f = forward() in
   Time.tick "Forward search";
+  ignore f
+(*
   assert (Lr1.NodeSet.equal b f)
+*)
