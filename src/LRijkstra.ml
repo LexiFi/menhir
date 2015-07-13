@@ -284,6 +284,8 @@ module T : sig
      and whose lookahead assumption is [z]. *)
   val query: Lr1.node -> Terminal.t -> (fact -> unit) -> unit
 
+  val stats: unit -> unit
+
 end = struct
 
   (* We use a map of [target, z] to a map of [future, a] to facts. *)
@@ -314,6 +316,8 @@ end = struct
   let m : fact M2.t M1.t ref =
     ref M1.empty
 
+  let count = ref 0
+
   let register fact =
     let z = fact.lookahead in
     let a = first fact.word z in
@@ -321,6 +325,7 @@ end = struct
       M1.update M2.empty id (fact.target, z) m1 (fun m2 ->
         M2.update None some (fact.future, a) m2 (function
           | None ->
+              incr count;
               fact
           | Some earlier_fact ->
               assert (W.length earlier_fact.word <= W.length fact.word);
@@ -337,6 +342,9 @@ end = struct
         ) m2
     | exception Not_found ->
         ()
+
+  let stats () =
+    Printf.fprintf stderr "T stores %d facts.\n%!" !count
 
 end
 
@@ -356,6 +364,8 @@ module E : sig
      the next symbol is [z], and under the constraint that the first symbol of
      [w.z] is [a]. *)
   val query: Lr1.node -> Nonterminal.t -> Terminal.t -> Terminal.t -> (W.word -> unit) -> unit
+
+  val stats: unit -> unit
 
 end = struct
 
@@ -377,11 +387,14 @@ end = struct
   let m =
     ref M.empty
 
+  let count = ref 0
+
   let register s nt w z =
     let a = first w z in
     update_ref m (fun m ->
       M.update None some (s, nt, a, z) m (function
       | None ->
+          incr count;
           w
       | Some earlier_w ->
           assert (W.length earlier_w <= W.length w);
@@ -393,6 +406,9 @@ end = struct
     match M.find (s, nt, a, z) !m with
     | w -> f w
     | exception Not_found -> ()
+
+  let stats () =
+    Printf.fprintf stderr "E stores %d facts.\n%!" !count
 
 end
 
@@ -493,14 +509,21 @@ let consequences fact =
   | _ ->
       ()
 
-let facts = ref 0
+let level = ref 0
 
 let discover fact =
   if T.register fact then begin
+
+    if W.length fact.word > ! level then begin
+      Printf.fprintf stderr "Done with level %d.\n" !level;
+      level := W.length fact.word;
+      T.stats();
+      E.stats()
+    end;
 (*
     incr facts;
     Printf.fprintf stderr "Facts = %d, current length = %d\n%!"
-      !facts (W.length fact.word);
+      !facts ();
     Printf.fprintf stderr "New fact:\n";
     print_fact fact;
 *)
@@ -510,7 +533,9 @@ let discover fact =
 let main =
   Lr1.iter init;
   Q.repeat q discover;
-  Time.tick "Running LRijkstra"
+  Time.tick "Running LRijkstra";
+  T.stats();
+  E.stats()
 
 (* ------------------------------------------------------------------------ *)
 
