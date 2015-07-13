@@ -574,13 +574,8 @@ let forward () =
   (* Search forward. *)
 
   Printf.fprintf stderr "Forward search:\n%!";
-  let es = ref 0 in
   let seen = ref Lr1.NodeSet.empty in
   let _, _ = A.search (fun ((s', z), (path : A.path)) ->
-    (* Debugging. TEMPORARY *)
-    incr es;
-    if !es mod 10000 = 0 then
-      Printf.fprintf stderr "es = %d\n%!" !es;
     if causes_an_error s' z && not (Lr1.NodeSet.mem s' !seen) then begin
       seen := Lr1.NodeSet.add s' !seen;
       (* An error can be triggered in state [s'] by beginning in the initial
