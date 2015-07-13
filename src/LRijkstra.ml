@@ -165,14 +165,6 @@ let source fact =
 let target fact =
   fact.future.Trie.target
 
-let print_fact fact =
-  Printf.fprintf stderr
-    "from state %d to state %d via %s . %s\n%!"
-    (Lr1.number (source fact))
-    (Lr1.number (target fact))
-    (W.print fact.word)
-    (Terminal.print fact.lookahead)
-
 let extensible fact sym =
   Trie.has_derivative sym fact.future
 
@@ -452,33 +444,27 @@ let consequences fact =
 
 let level = ref 0
 
+let done_with_level () =
+  Printf.fprintf stderr "Done with level %d.\n" !level;
+  T.stats();
+  E.stats();
+  Printf.fprintf stderr "Q stores %d facts.\n%!" (Q.cardinal q)
+
 let discover fact =
   if T.register fact then begin
-
     if W.length fact.word > ! level then begin
-      Printf.fprintf stderr "Done with level %d.\n" !level;
+      done_with_level();
       level := W.length fact.word;
-      T.stats();
-      E.stats();
-      Printf.fprintf stderr "Q stores %d facts.\n%!" (Q.cardinal q)
     end;
-(*
-    incr facts;
-    Printf.fprintf stderr "Facts = %d, current length = %d\n%!"
-      !facts ();
-    Printf.fprintf stderr "New fact:\n";
-    print_fact fact;
-*)
     consequences fact
   end
 
-let main =
+let () =
   Lr1.iter init;
   Printf.fprintf stderr "Cumulated star size: %d\n%!" !stars;
   Q.repeat q discover;
   Time.tick "Running LRijkstra";
-  T.stats();
-  E.stats()
+  done_with_level()
 
 (* ------------------------------------------------------------------------ *)
 
