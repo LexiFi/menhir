@@ -285,28 +285,23 @@ module T : sig
 
 end = struct
 
-  (* We store the set of facts as... a set of facts. This is more subtle than
-     it may first seem, though. Indeed, we need to query this set in two ways.
-     In [register], we need to test whether a fact already is a member of the
-     set. In [query], we need to find all facts that match a pair [target, z].
-     We set up the set of facts with a comparison function that considers
-     [target] and [z] first, then considers the rest of the data. (We note
-     that [future] determines [target]. This cannot be exploited here.) This
-     allows [query] to perform a range request, using [MySet.for_every]. *)
+  (* This module implements a set of facts. Two facts are considered equal
+     (for the purposes of this set) if they have the same [future], [a], and
+     [z] fields. The [word] is not considered. Indeed, we are not interested
+     in keeping track of several words that produce the same effect. Only the
+     shortest such word is of interest. *)
+
+  (* We need to query the set of facts in two ways. In [register], we need to
+     test whether a fact is in the set. In [query], we need to find all facts
+     that match a pair [target, z]. For this reason, we use a two-level table.
+     The first level is a matrix indexed by [target] and [z]. At the second
+     level, we find sets of facts. *)
 (**)
 
   module M =
     MySet.Make(struct
       type t = fact
       let compare fact1 fact2 =
-        let target1 = target fact1
-        and target2 = target fact2 in
-        let c = Lr1.Node.compare target1 target2 in
-        if c <> 0 then c else
-        let z1 = fact1.lookahead
-        and z2 = fact2.lookahead in
-        let c = Terminal.compare z1 z2 in
-        if c <> 0 then c else
         let c = Trie.compare fact1.future fact2.future in
         if c <> 0 then c else
         let a1 = W.first fact1.word fact1.lookahead
@@ -314,31 +309,34 @@ end = struct
         Terminal.compare a1 a2
     end)
 
-  let r : M.t ref =
-    ref M.empty
+  let table = (* a pretty large table... *)
+    Array.make (Lr1.n * Terminal.n) M.empty
+
+  let index target z =
+    Terminal.n * (Lr1.number target) + Terminal.t2i z
 
   let count = ref 0
 
   let register fact =
-    update_ref r (fun m ->
-      (* We crucially rely on the fact that [M.add] guarantees not to
-         change the set if an ``equal'' fact already exists. Thus, a
-         later, longer path is ignored in favor of an earlier, shorter
-         path. *)
-      let m' = M.add fact m in
-      if m != m' then incr count;
-      m'
-    )
+    let target = target fact in
+    let z = fact.lookahead in
+    let i = index target z in
+    let m = table.(i) in
+    (* We crucially rely on the fact that [M.add] guarantees not to
+       change the set if an ``equal'' fact already exists. Thus, a
+       later, longer path is ignored in favor of an earlier, shorter
+       path. *)
+    let m' = M.add fact m in
+    m != m' && begin
+      incr count;
+      table.(i) <- m';
+      true
+    end
 
-  let query target1 z1 f =
-    let compare fact2 =
-        let target2 = target fact2 in
-        let c = Lr1.Node.compare target1 target2 in
-        if c <> 0 then c else
-        let z2 = fact2.lookahead in
-        Terminal.compare z1 z2
-    in    
-    M.for_every compare !r f
+  let query target z f =
+    let i = index target z in
+    let m = table.(i) in
+    M.iter f m
 
   let stats () =
     Printf.fprintf stderr "T stores %d facts.\n%!" !count
