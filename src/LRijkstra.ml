@@ -509,7 +509,8 @@ let discover fact =
 
 let main =
   Lr1.iter init;
-  Q.repeat q discover
+  Q.repeat q discover;
+  Time.tick "Running LRijkstra"
 
 (* ------------------------------------------------------------------------ *)
 
@@ -701,6 +702,7 @@ let forward () =
 
   (* Search forward. *)
 
+  Printf.fprintf stderr "Forward search:\n%!";
   let es = ref 0 in
   let seen = ref Lr1.NodeSet.empty in
   let _, _ = A.search (fun ((s', z), (path : A.path)) ->
@@ -727,7 +729,9 @@ let forward () =
       assert (validate s s' w)
     end
   ) in
-  ()
+  Printf.fprintf stderr "Reachable (forward): %d states\n%!"
+    (Lr1.NodeSet.cardinal !seen);
+  !seen
 
 (* ------------------------------------------------------------------------ *)
 
@@ -761,14 +765,22 @@ let backward s' : W.word option =
 
 (* Test. TEMPORARY *)
 
-let () =
+let backward () =
+  let reachable = ref Lr1.NodeSet.empty in
   Lr1.iter (fun s' ->
     begin match backward s' with
     | None ->
-       Printf.fprintf stderr "infinity\n%!"
+        Printf.fprintf stderr "infinity\n%!"
     | Some w ->
-       Printf.fprintf stderr "%s\n%!" (W.print w)
+        Printf.fprintf stderr "%s\n%!" (W.print w);
+        reachable := Lr1.NodeSet.add s' !reachable
     end;
+    Printf.fprintf stderr "Edges so far: %d\n" !es
+  );
+  Printf.fprintf stderr "Reachable (backward): %d states\n%!"
+    (Lr1.NodeSet.cardinal !reachable);
+  !reachable
+
 (*
     let approx = approximate s'
     and real = P.to_int p - 1 in
@@ -776,12 +788,13 @@ let () =
     if approx < real && real < max_int - 1 then
         Printf.fprintf stderr "Approx = %d, real = %d\n" approx real;
 *)
-    Printf.fprintf stderr "Edges so far: %d\n" !es
-  )
 
 (* TEMPORARY what about the pseudo-token [#]? *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
 
 let () =
-  Printf.fprintf stderr "Forward search:\n%!";
-  forward()
+  let b = backward() in
+  Time.tick "Backward search";
+  let f = forward() in
+  Time.tick "Forward search";
+  assert (Lr1.NodeSet.equal b f)
