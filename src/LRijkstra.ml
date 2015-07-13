@@ -453,14 +453,16 @@ let new_edge s nt w z =
 
 let consequences fact =
 
-  (* 1. View [fact] as a vertex. Examine the transitions out of [fact.target]. *)
+  let target = target fact in
+
+  (* 1. View [fact] as a vertex. Examine the transitions out of [target]. *)
   
   SymbolMap.iter (fun sym s' ->
     match Trie.derivative sym fact.future, sym with
     | exception Not_found -> ()
     | future, Symbol.T t ->
 
-        (* 1a. There is a transition labeled [t] out of [fact.target]. If
+        (* 1a. There is a transition labeled [t] out of [target]. If
            the lookahead assumption [fact.lookahead] is compatible with [t],
            then we derive a new fact, where one more edge has been taken. We
            enqueue this new fact for later examination. *)
@@ -475,7 +477,7 @@ let consequences fact =
 
     | future, Symbol.N nt ->
 
-        (* 1b. There is a transition labeled [nt] out of [fact.target]. We
+        (* 1b. There is a transition labeled [nt] out of [target]. We
            need to know how this nonterminal edge can be taken. We query for a
            word [w] that allows us to take this edge. The answer depends on
            the terminal symbol [z] that comes *after* this word: we try all
@@ -485,7 +487,7 @@ let consequences fact =
         (**)
 
         foreach_terminal_not_causing_an_error s' (fun z ->
-          E.query (target fact) nt fact.lookahead z (fun w ->
+          E.query target nt fact.lookahead z (fun w ->
             assert (Terminal.equal fact.lookahead (W.first w z));
             add {
               future;
@@ -495,11 +497,11 @@ let consequences fact =
           )
         )
 
-  ) (Lr1.transitions (target fact));
+  ) (Lr1.transitions target);
 
   (* 2. View [fact] as a possible edge. This is possible if the path from
-     [fact.source] to [fact.target] represents a production [prod] and
-     [fact.target] is willing to reduce this production. We check that
+     [fact.source] to [target] represents a production [prod] and
+     [target] is willing to reduce this production. We check that
      [fact.future] accepts [epsilon]. This guarantees that reducing [prod]
      takes us all the way back to [fact.source]. Thus, this production gives
      rise to an edge labeled [nt] -- the left-hand side of [prod] -- out of
@@ -507,7 +509,7 @@ let consequences fact =
      [fact.lookahead], so we record that. *)
   (**)
 
-  match has_reduction (target fact) fact.lookahead with
+  match has_reduction target fact.lookahead with
   | Some prod when Trie.accepts prod fact.future ->
       new_edge (source fact) (Production.nt prod) fact.word fact.lookahead
   | _ ->
