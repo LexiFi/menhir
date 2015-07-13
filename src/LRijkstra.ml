@@ -148,43 +148,46 @@ module Trie = struct
 
   let c = ref 0
 
-  type trie =
-    | Trie of int * Production.index list * trie SymbolMap.t
+  type trie = {
+    identity: int;
+    productions: Production.index list;
+    transitions: trie SymbolMap.t
+  }
 
-  let mktrie prods children =
-    let stamp = Misc.postincrement c in
-    Trie (stamp, prods, children)
+  let mktrie productions transitions =
+    let identity = Misc.postincrement c in
+    { identity; productions; transitions }
 
   let empty =
     mktrie [] SymbolMap.empty
 
-  let is_empty (Trie (_, prods, children)) =
-    prods = [] && SymbolMap.is_empty children
+  let is_empty t =
+    t.productions = [] && SymbolMap.is_empty t.transitions
 
-  let accepts prod (Trie (_, prods, _)) =
-    List.mem prod prods
+  let accepts prod t =
+    List.mem prod t.productions
 
   let update : Symbol.t -> trie SymbolMap.t -> (trie -> trie) -> trie SymbolMap.t =
     update SymbolMap.add SymbolMap.find empty id
 
-  let rec insert w prod (Trie (_, prods, children)) =
+  let rec insert w prod t =
     match w with
     | [] ->
-        mktrie (prod :: prods) children
+        mktrie (prod :: t.productions) t.transitions
     | a :: w ->
-        mktrie prods (update a children (insert w prod))
+        mktrie t.productions (update a t.transitions (insert w prod))
 
-  let derivative a (Trie (_, _, children)) =
+  let derivative a t =
     try
-      SymbolMap.find a children
+      SymbolMap.find a t.transitions
     with Not_found ->
       empty
 
-  let compare (Trie (stamp1, _, _)) (Trie (stamp2, _, _)) =
-    Pervasives.compare (stamp1 : int) stamp2
+  let compare t1 t2 =
+    Pervasives.compare (t1.identity : int) t2.identity
 
-  let rec size (Trie (_, _, children)) =
-    SymbolMap.fold (fun _ child accu -> size child + accu) children 1
+  let rec size t =
+    SymbolMap.fold (fun _ child accu -> size child + accu) t.transitions 1
 
 end
 
