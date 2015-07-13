@@ -603,10 +603,13 @@ let backward s' : P.property =
 
 (* Test. TEMPORARY *)
 
-let () =
+let backward () =
+  let reachable = ref Lr1.NodeSet.empty in
   Lr1.iter (fun s' ->
     let p = backward s' in
     Printf.fprintf stderr "%s\n%!" (P.print Terminal.print p);
+    if p <> P.Infinity then
+      reachable := Lr1.NodeSet.add s' !reachable;
     let approx = approximate s'
     and real = P.to_int p - 1 in
     assert (approx = max_int && p = P.Infinity || approx <= real);
@@ -614,7 +617,14 @@ let () =
         Printf.fprintf stderr "Approx = %d, real = %d\n" approx real;
     Printf.fprintf stderr "Questions asked so far: %d\n" !qs;
     Printf.fprintf stderr "Edges so far: %d\n" !es
-  )
+  );
+  Printf.fprintf stderr "Reachable (backward): %d states\n%!"
+    (Lr1.NodeSet.cardinal !reachable);
+  !reachable
+
+let () =
+  let b = backward() in
+  ignore b
 
 (* TEMPORARY what about the pseudo-token [#]? *)
 (* TEMPORARY the code in this module should run only if --coverage is set *)
