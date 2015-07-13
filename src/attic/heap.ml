@@ -118,6 +118,15 @@ module Imperative(X : Ordered) = struct
     in
     foldrec x0 0
 
+  let cardinal h =
+    if h.size <= 0 then 0 else h.size
+
+  let repeat h f =
+    while h.size > 0 do
+      let x = pop_maximum h in
+      f x
+    done
+
 end
 
 

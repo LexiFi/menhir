@@ -60,5 +60,13 @@ module Imperative(X: Ordered) : sig
 
   val fold : (X.t -> 'a -> 'a) -> t -> 'a -> 'a
 
+  (* [cardinal h] is the number of elements in the heap [h]. *)
+  val cardinal: t -> int
+
+  (* [repeat h f] repeatedly extracts a maximum element out of [h]
+      and passes it to [f] (which may insert new elements into [h]),
+     until [h] is exhausted. *)
+  val repeat: t -> (X.t -> unit) -> unit
+
 end
 
