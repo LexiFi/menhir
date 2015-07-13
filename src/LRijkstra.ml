@@ -265,8 +265,6 @@ let init s =
   let trie = star s in
   let size = (Trie.size trie) in
   stars := !stars + size;
-  Printf.fprintf stderr "State %d has a star of size %d\n.%!"
-    (Lr1.number s) size;
   if not (Trie.is_empty trie) then
     foreach_terminal_not_causing_an_error s (fun z ->
       add {
