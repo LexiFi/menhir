@@ -39,6 +39,19 @@ let has_reduction s z : Production.index option =
       | [] ->
           None
 
+(* [can_reduce s prod] indicates whether state [s] is able to reduce
+   production [prod] (either as a default reduction, or as a normal
+   reduction). *)
+
+let can_reduce s prod =
+  match Invariant.has_default_reduction s with
+  | Some (prod', _) when prod = prod' ->
+      true
+  | _ ->
+      TerminalMap.fold (fun _ prods accu ->
+        accu || List.mem prod prods
+      ) (Lr1.reductions s) false
+
 (* [causes_an_error s z] tells whether state [s] will initiate an error on the
    lookahead symbol [z]. *)
 
@@ -169,17 +182,24 @@ end = struct
     let identity = Misc.postincrement c in
     { identity; source; target; productions; transitions }
 
-  (* TEMPORARY could insert this branch only if viable -- leads to 12600 instead of 12900 in ocaml.mly --lalr *)
-
   exception DeadBranch
 
   let rec insert w prod t =
     match w with
     | [] ->
-        (* We consume (update) the trie [t], so there is no need to allocate a
-           new stamp. (Of course we could allocate a new stamp, but I prefer
-           to be precise.) *)
-        { t with productions = prod :: t.productions }
+        (* We check whether the current state [t.target] is able to reduce
+           production [prod]. (If [prod] cannot be reduced, the reduction
+           action must have been suppressed by conflict resolution.) If not,
+           then this branch is dead. This test is superfluous (i.e., it would
+           be OK to conservatively assume that [prod] can be reduced) but
+           allows us to build a slightly smaller star in some cases. *)
+        if can_reduce t.target prod then
+          (* We consume (update) the trie [t], so there is no need to allocate
+             a new stamp. (Of course we could allocate a new stamp, but I prefer
+             to be precise.) *)
+          { t with productions = prod :: t.productions }
+        else
+          raise DeadBranch
     | a :: w ->
         (* Check if there is a transition labeled [a] out of [t.target]. If
            there is, we add a child to the trie [t]. If there isn't, then it
