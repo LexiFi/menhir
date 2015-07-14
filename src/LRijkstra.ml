@@ -90,11 +90,6 @@ let foreach_terminal_not_causing_an_error s f =
 let id x = x
 let some x = Some x
 
-let update_ref r f : bool =
-  let v = !r in
-  let v' = f v in
-  v != v' && (r := v'; true)
-
 let update add find none some key m f =
   match find key m with
   | data ->
@@ -381,10 +376,8 @@ end = struct
 
   module M =
     MyMap(struct
-      type t = Lr1.node * Nonterminal.t * Terminal.t * Terminal.t
-      let compare (s1, nt1, a1, z1) (s2, nt2, a2, z2) =
-        let c = Lr1.Node.compare s1 s2 in
-        if c <> 0 then c else
+      type t = Nonterminal.t * Terminal.t * Terminal.t
+      let compare (nt1, a1, z1) (nt2, a2, z2) =
         let c = Nonterminal.compare nt1 nt2 in
         if c <> 0 then c else
         let c = Terminal.compare a1 a2 in
@@ -392,26 +385,32 @@ end = struct
         Terminal.compare z1 z2
     end)
 
-  let m =
-    ref M.empty
+  let table =
+    Array.make Lr1.n M.empty
 
   let count = ref 0
 
   let register s nt w z =
+    let i = Lr1.number s in
+    let m = table.(i) in
     let a = W.first w z in
-    update_ref m (fun m ->
-      M.update None some (s, nt, a, z) m (function
+    let m' = M.update None some (nt, a, z) m (function
       | None ->
-          incr count;
           w
       | Some earlier_w ->
-          (* assert (W.length earlier_w <= W.length w); *)
           earlier_w
       )
-    )
+    in
+    m != m' && begin
+      incr count;
+      table.(i) <- m';
+      true
+    end
 
   let query s nt a z f =
-    match M.find (s, nt, a, z) !m with
+    let i = Lr1.number s in
+    let m = table.(i) in
+    match M.find (nt, a, z) m with
     | w -> f w
     | exception Not_found -> ()
 
