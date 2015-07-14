@@ -244,3 +244,17 @@ let map_opt f l =
       | None -> ys
       | Some y -> y :: ys
   ) [] l))
+
+let new_intern capacity : string -> string =
+  let module H = Hashtbl.Make(struct
+    type t = string
+    let equal = (=)
+    let hash = Hashtbl.hash
+  end) in
+  let table = H.create capacity in
+  fun s ->
+    try
+      H.find table s
+    with Not_found ->
+      H.add table s s;
+      s

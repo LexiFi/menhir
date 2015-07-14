@@ -1,4 +1,5 @@
 open Grammar
+module Q = LowIntegerPriorityQueue
 
 (* Throughout, we ignore the [error] pseudo-token completely. We consider that
    it never appears on the input stream. Hence, any state whose incoming
@@ -112,8 +113,6 @@ module W : sig
   val elements: word -> Terminal.t list
   val print: word -> string
 
-  val stats: unit -> unit
-
 end = struct
 
   let () =
@@ -124,22 +123,8 @@ end = struct
   let c2t (t : char) : Terminal.t =
     Obj.magic (Char.code t)
 
-  module H = Hashtbl.Make(struct
-      type t = string
-      let equal = (=)
-      let hash = Hashtbl.hash
-  end)
-  let table = H.create 1023
-  let c = ref 0
-  let n = ref 0
-  let intern s =
-    incr c;
-    try
-      H.find table s
-    with Not_found ->
-      incr n;
-      H.add table s s;
-      s
+  let intern =
+    Misc.new_intern 1023
 
   type word = string
   let epsilon = ""
@@ -158,15 +143,7 @@ end = struct
     string_of_int (length w) ^ " " ^
     String.concat " " (List.map Terminal.print (elements w))
 
-  let stats () =
-    Printf.fprintf stderr
-      "Number of calls to intern: %d\n\
-       Number of elements in intern table: %d\n%!"
-      !c !n
-
 end
-
-module Q = LowIntegerPriorityQueue
 
 module Trie = struct
 
@@ -513,7 +490,6 @@ let level = ref 0
 
 let done_with_level () =
   Printf.fprintf stderr "Done with level %d.\n" !level;
-  W.stats();
   T.stats();
   E.stats();
   Printf.fprintf stderr "Q stores %d facts.\n%!" (Q.cardinal q)

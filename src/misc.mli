@@ -148,3 +148,8 @@ val postincrement: int ref -> int
 (* [map_opt f l] returns the list of [y]s such that [f x = Some y] where [x]
    is in [l], preserving the order of elements of [l]. *) 
 val map_opt : ('a -> 'b option) -> 'a list -> 'b list
+
+(* [new_intern capacity] creates a new service for interning (hash-consing)
+   strings. [capacity] is the initial capacity of the internal hash table. *)
+val new_intern: int -> (string -> string)
+
