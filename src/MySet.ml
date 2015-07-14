@@ -86,22 +86,4 @@ module Make (Ord: Map.OrderedType) =
         Empty -> ()
       | Node(l, v, r, _) -> iter f l; f v; iter f r
 
-    let rec for_every cmp t f =
-      match t with
-        Empty -> ()
-      | Node(l, v, r, _) ->
-          let c = cmp v in
-          if c = 0 then begin
-            (* The desired range includes [v] and may include parts of [l] and [r]. *)
-            for_every cmp l f;
-            f v;
-            for_every cmp r f
-          end
-          else if c < 0 then
-            (* The desired range is below [v], but may include parts of [l]. *)
-            for_every cmp l f
-          else
-            (* The desired range is above [v], but may include parts of [l]. *)
-            for_every cmp r f
-
 end
