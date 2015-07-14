@@ -89,20 +89,6 @@ let foreach_terminal_not_causing_an_error s f =
 
 (* ------------------------------------------------------------------------ *)
 
-let id x = x
-
-let update add find none some key m f =
-  match find key m with
-  | data ->
-      let data' = f (some data) in
-      if data' == data then
-        m
-      else
-        add key data' m
-  | exception Not_found ->
-      let data' = f none in
-      add key data' m
-
 module Trie = struct
 
   let c = ref 0
@@ -119,7 +105,7 @@ module Trie = struct
     let identity = Misc.postincrement c in
     { identity; source; target; productions; transitions }
 
-  let empty source =
+  let fresh source =
     mktrie source source [] SymbolMap.empty
 
   let is_empty t =
@@ -128,16 +114,34 @@ module Trie = struct
   let accepts prod t =
     List.mem prod t.productions
 
+  (* [insert] logically consumes its argument [t], which should no
+     longer be used. *)
   let rec insert target w prod t =
     match w with
     | [] ->
-        mktrie t.source target (prod :: t.productions) t.transitions
+        (* We consume (update) the trie [t], so there is no need to allocate a
+           new stamp. (Of course we could allocate a new stamp, but I prefer
+           to be precise.) *)
+        { t with productions = prod :: t.productions }
     | a :: w ->
+        (* Check if there is a transition labeled [a] out of [target]. If
+           there is, we add a child to the trie [t]. If there isn't, then it
+           must have been removed by conflict resolution. (Indeed, it must be
+           present in a canonical automaton.) The trie remains unchanged in
+           this case. *)
         match SymbolMap.find a (Lr1.transitions target) with
         | successor ->
-            let child = mktrie t.source successor [] SymbolMap.empty in
-            mktrie t.source target t.productions
-              (update SymbolMap.add SymbolMap.find child id a t.transitions (insert successor w prod))
+            (* Find our child at [a], or create it. *)
+            let t' =
+              try
+                SymbolMap.find a t.transitions
+              with Not_found ->
+                mktrie t.source successor [] SymbolMap.empty
+            in
+            (* Update the child [t']. *)
+            let t' = insert successor w prod t' in
+            (* Update [t]. Again, no need to allocate a new stamp. *)
+            { t with transitions = SymbolMap.add a t' t.transitions }
         | exception Not_found ->
             t
 
@@ -150,8 +154,8 @@ module Trie = struct
   let compare t1 t2 =
     Pervasives.compare (t1.identity : int) t2.identity
 
-  let rec size t =
-    SymbolMap.fold (fun _ child accu -> size child + accu) t.transitions 1
+  let stats () =
+    Printf.fprintf stderr "Cumulated star size: %d\n%!" !c
 
 end
 
@@ -178,7 +182,7 @@ let star s : Trie.trie =
           (* could insert this branch only if viable -- leads to 12600 instead of 12900 in ocaml.mly --lalr *)
           Trie.insert w prod accu
         )
-  ) (Lr1.transitions s) (Trie.empty s)
+  ) (Lr1.transitions s) (Trie.fresh s)
 
 let q =
   Q.create()
@@ -191,12 +195,8 @@ let add fact =
     (* In principle, there is no need to insert the fact into the queue
        if [T] already stores a comparable fact. *)
 
-let stars = ref 0
-
 let init s =
   let trie = star s in
-  let size = (Trie.size trie) in
-  stars := !stars + size;
   if not (Trie.is_empty trie) then
     foreach_terminal_not_causing_an_error s (fun z ->
       add {
@@ -463,7 +463,7 @@ let discover fact =
 
 let () =
   Lr1.iter init;
-  Printf.fprintf stderr "Cumulated star size: %d\n%!" !stars;
+  Trie.stats();
   Q.repeat q discover;
   Time.tick "Running LRijkstra";
   done_with_level()
