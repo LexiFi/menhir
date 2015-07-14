@@ -171,8 +171,8 @@ end = struct
 
   (* TEMPORARY could insert this branch only if viable -- leads to 12600 instead of 12900 in ocaml.mly --lalr *)
 
-  (* [insert] logically consumes its argument [t], which should no
-     longer be used. *)
+  exception DeadBranch
+
   let rec insert w prod t =
     match w with
     | [] ->
@@ -184,8 +184,9 @@ end = struct
         (* Check if there is a transition labeled [a] out of [t.target]. If
            there is, we add a child to the trie [t]. If there isn't, then it
            must have been removed by conflict resolution. (Indeed, it must be
-           present in a canonical automaton.) The trie remains unchanged in
-           this case. *)
+           present in a canonical automaton.) We could in this case return an
+           unchanged sub-trie. We can do slightly better: we abort the whole
+           insertion, so as to return an unchanged toplevel trie. *)
         match SymbolMap.find a (Lr1.transitions t.target) with
         | successor ->
             (* Find our child at [a], or create it. *)
@@ -200,14 +201,19 @@ end = struct
             (* Update [t]. Again, no need to allocate a new stamp. *)
             { t with transitions = SymbolMap.add a t' t.transitions }
         | exception Not_found ->
-            t
+            raise DeadBranch
 
   (* [insert prod t] inserts a new branch, corresponding to production
      [prod], into the trie [t]. This function consumes its argument,
      which should no longer be used afterwards. *)
   let insert prod t =
     let w = Array.to_list (Production.rhs prod) in
-    insert w prod t
+    let save = !c in
+    try
+      insert w prod t
+    with DeadBranch ->
+      c := save;
+      t
 
   (* [fresh s] creates a new empty trie whose source is [s]. *)
   let fresh source =
