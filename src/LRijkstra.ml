@@ -134,11 +134,11 @@ module Trie : sig
      the root of the star of which [t] is a sub-trie. In other words, this
      tells us "where we come from". *)
   val source: trie -> Lr1.node
-    
-  (* [target t] returns the current state of the (sub-)trie [t]. This is
+
+  (* [current t] returns the current state of the (sub-)trie [t]. This is
      the root of the sub-trie [t]. In other words, this tells us "where
      we are". *)
-  val target: trie -> Lr1.node
+  val current: trie -> Lr1.node
 
   (* [accepts prod t] tells whether the current state of the trie [t] is
      the end of a branch associated with production [prod]. If so, this
@@ -165,7 +165,7 @@ end = struct
     (* The root state of this star: "where we come from". *)
     source: Lr1.node;
     (* The current state, i.e., the root of this sub-trie: "where we are". *)
-    target: Lr1.node;
+    current: Lr1.node;
     (* The productions that we can reduce in the current state. In other
        words, if this list is nonempty, then the current state is the end
        of one (or several) branches. It can nonetheless have children. *)
@@ -178,22 +178,22 @@ end = struct
   let c = ref 0
 
   (* This smart constructor creates a new trie with a unique identity. *)
-  let mktrie source target productions transitions =
+  let mktrie source current productions transitions =
     let identity = Misc.postincrement c in
-    { identity; source; target; productions; transitions }
+    { identity; source; current; productions; transitions }
 
   exception DeadBranch
 
   let rec insert w prod t =
     match w with
     | [] ->
-        (* We check whether the current state [t.target] is able to reduce
+        (* We check whether the current state [t.current] is able to reduce
            production [prod]. (If [prod] cannot be reduced, the reduction
            action must have been suppressed by conflict resolution.) If not,
            then this branch is dead. This test is superfluous (i.e., it would
            be OK to conservatively assume that [prod] can be reduced) but
            allows us to build a slightly smaller star in some cases. *)
-        if can_reduce t.target prod then
+        if can_reduce t.current prod then
           (* We consume (update) the trie [t], so there is no need to allocate
              a new stamp. (Of course we could allocate a new stamp, but I prefer
              to be precise.) *)
@@ -201,13 +201,13 @@ end = struct
         else
           raise DeadBranch
     | a :: w ->
-        (* Check if there is a transition labeled [a] out of [t.target]. If
+        (* Check if there is a transition labeled [a] out of [t.current]. If
            there is, we add a child to the trie [t]. If there isn't, then it
            must have been removed by conflict resolution. (Indeed, it must be
            present in a canonical automaton.) We could in this case return an
            unchanged sub-trie. We can do slightly better: we abort the whole
            insertion, so as to return an unchanged toplevel trie. *)
-        match SymbolMap.find a (Lr1.transitions t.target) with
+        match SymbolMap.find a (Lr1.transitions t.current) with
         | successor ->
             (* Find our child at [a], or create it. *)
             let t' =
@@ -261,13 +261,14 @@ end = struct
     else
       None
 
-  (* Accessors. *)
+  let compare t1 t2 =
+    Pervasives.compare (t1.identity : int) t2.identity
 
   let source t =
     t.source
 
-  let target t =
-    t.target
+  let current t =
+    t.current
 
   let accepts prod t =
     List.mem prod t.productions
@@ -275,13 +276,12 @@ end = struct
   let step a t =
     SymbolMap.find a t.transitions (* careful: may raise [Not_found] *)
 
-  let compare t1 t2 =
-    Pervasives.compare (t1.identity : int) t2.identity
-
   let verbose () =
     Printf.fprintf stderr "Cumulated star size: %d\n%!" !c
 
 end
+
+(* ------------------------------------------------------------------------ *)
 
 type fact = {
   future: Trie.trie;
@@ -292,14 +292,14 @@ type fact = {
 let source fact =
   Trie.source fact.future
 
-let target fact =
-  Trie.target fact.future
+let current fact =
+  Trie.current fact.future
 
 let q =
   Q.create()
 
 let add fact =
-  (* assert (not (causes_an_error (target fact) fact.lookahead)); *)
+  (* assert (not (causes_an_error (current fact) fact.lookahead)); *)
 
   (* The length of the word serves as the priority of this fact. *)
   Q.add q fact (W.length fact.word)
@@ -323,10 +323,10 @@ module T : sig
 
   (* [register fact] registers the fact [fact]. It returns [true] if this fact
      is new, i.e., no fact concerning the same quintuple of [source], [future],
-     [target], [a], and [z] was previously known. *)
+     [current], [a], and [z] was previously known. *)
   val register: fact -> bool
 
-  (* [query target z f] enumerates all known facts whose target state is [target]
+  (* [query current z f] enumerates all known facts whose current state is [current]
      and whose lookahead assumption is [z]. *)
   val query: Lr1.node -> Terminal.t -> (fact -> unit) -> unit
 
@@ -342,8 +342,8 @@ end = struct
 
   (* We need to query the set of facts in two ways. In [register], we need to
      test whether a fact is in the set. In [query], we need to find all facts
-     that match a pair [target, z]. For this reason, we use a two-level table.
-     The first level is a matrix indexed by [target] and [z]. At the second
+     that match a pair [current, z]. For this reason, we use a two-level table.
+     The first level is a matrix indexed by [current] and [z]. At the second
      level, we find sets of facts. *)
 (**)
 
@@ -361,15 +361,15 @@ end = struct
   let table = (* a pretty large table... *)
     Array.make (Lr1.n * Terminal.n) M.empty
 
-  let index target z =
-    Terminal.n * (Lr1.number target) + Terminal.t2i z
+  let index current z =
+    Terminal.n * (Lr1.number current) + Terminal.t2i z
 
   let count = ref 0
 
   let register fact =
-    let target = target fact in
+    let current = current fact in
     let z = fact.lookahead in
-    let i = index target z in
+    let i = index current z in
     let m = table.(i) in
     (* We crucially rely on the fact that [M.add] guarantees not to
        change the set if an ``equal'' fact already exists. Thus, a
@@ -382,8 +382,8 @@ end = struct
       true
     end
 
-  let query target z f =
-    let i = index target z in
+  let query current z f =
+    let i = index current z in
     let m = table.(i) in
     M.iter f m
 
@@ -466,7 +466,7 @@ let new_edge s nt w z =
       assert (Terminal.equal fact.lookahead (W.first w z));
       match Trie.step sym fact.future with
       | future ->
-          if not (causes_an_error (Trie.target future) z) then
+          if not (causes_an_error (Trie.current future) z) then
             add {
               future;
               word = W.append fact.word w;
@@ -485,8 +485,8 @@ let new_edge s nt w z =
    and enqueue new facts in the priority queue.
 
    - Sometimes, a fact can also be viewed as a newly discovered edge.
-   This is the case when the word from [fact.source] to [fact.target]
-   represents a production of the grammar and [fact.target] is willing
+   This is the case when the word from [fact.source] to [fact.current]
+   represents a production of the grammar and [fact.current] is willing
    to reduce this production. We record the existence of this edge,
    and re-inspect any previously discovered vertices which are
    interested in this outgoing edge.
@@ -495,16 +495,16 @@ let new_edge s nt w z =
 
 let consequences fact =
 
-  let target = target fact in
+  let current = current fact in
 
-  (* 1. View [fact] as a vertex. Examine the transitions out of [target]. *)
+  (* 1. View [fact] as a vertex. Examine the transitions out of [current]. *)
   
   SymbolMap.iter (fun sym s' ->
     match Trie.step sym fact.future, sym with
     | exception Not_found -> ()
     | future, Symbol.T t ->
 
-        (* 1a. There is a transition labeled [t] out of [target]. If
+        (* 1a. There is a transition labeled [t] out of [current]. If
            the lookahead assumption [fact.lookahead] is compatible with [t],
            then we derive a new fact, where one more edge has been taken. We
            enqueue this new fact for later examination. *)
@@ -512,14 +512,14 @@ let consequences fact =
 
         if Terminal.equal fact.lookahead t then
           let word = W.append fact.word (W.singleton t) in
-          (* assert (Lr1.Node.compare future.Trie.target s' = 0); *)
+          (* assert (Lr1.Node.compare future.Trie.current s' = 0); *)
           foreach_terminal_not_causing_an_error s' (fun z ->
             add { future; word; lookahead = z }
           )
 
     | future, Symbol.N nt ->
 
-        (* 1b. There is a transition labeled [nt] out of [target]. We
+        (* 1b. There is a transition labeled [nt] out of [current]. We
            need to know how this nonterminal edge can be taken. We query for a
            word [w] that allows us to take this edge. The answer depends on
            the terminal symbol [z] that comes *after* this word: we try all
@@ -529,7 +529,7 @@ let consequences fact =
         (**)
 
         foreach_terminal_not_causing_an_error s' (fun z ->
-          E.query target nt fact.lookahead z (fun w ->
+          E.query current nt fact.lookahead z (fun w ->
             assert (Terminal.equal fact.lookahead (W.first w z));
             add {
               future;
@@ -539,11 +539,11 @@ let consequences fact =
           )
         )
 
-  ) (Lr1.transitions target);
+  ) (Lr1.transitions current);
 
   (* 2. View [fact] as a possible edge. This is possible if the path from
-     [fact.source] to [target] represents a production [prod] and
-     [target] is willing to reduce this production. We check that
+     [fact.source] to [current] represents a production [prod] and
+     [current] is willing to reduce this production. We check that
      [fact.future] accepts [epsilon]. This guarantees that reducing [prod]
      takes us all the way back to [fact.source]. Thus, this production gives
      rise to an edge labeled [nt] -- the left-hand side of [prod] -- out of
@@ -551,7 +551,7 @@ let consequences fact =
      [fact.lookahead], so we record that. *)
   (**)
 
-  match has_reduction target fact.lookahead with
+  match has_reduction current fact.lookahead with
   | Some prod when Trie.accepts prod fact.future ->
       new_edge (source fact) (Production.nt prod) fact.word fact.lookahead
   | _ ->
