@@ -1,5 +1,4 @@
 open Grammar
-module Q = LowIntegerPriorityQueue
 module W = Terminal.Word(struct end) (* TEMPORARY wrap side effect in functor *)
 
 (* Throughout, we ignore the [error] pseudo-token completely. We consider that
@@ -283,6 +282,22 @@ end
 
 (* ------------------------------------------------------------------------ *)
 
+(* The main algorithm, [LRijkstra], accumulates facts. A fact is a triple of a
+   position (that is, a sub-trie), a word, and a lookahead assumption. Such a
+   fact means that this position can be reached, from the source state
+   [Trie.source fact.position], by consuming [fact.word], under the assumption
+   that the next input symbol is [fact.lookahead]. *)
+
+(* The first symbol of the input, [first fact.word fact.lookahead], plays a
+   special role. Indeed, for every position, for every first symbol, and for
+   every lookahead symbol, we keep track of at most one fact. Thus, the total
+   number of facts accumulated by the algorithm is at most [T.n^2], where [T]
+   is the total size of the tries that we have constructed, and [n] is the
+   number of terminal symbols. (This number can be quite large. [T] can be in
+   the tens of thousands, and [n] can be over one hundred. These figures lead
+   to a theoretical upper bound of 100M. In practice, for T=25K and n=108, we
+   observe that the algorithm gathers about 7M facts.) *)
+
 type fact = {
   position: Trie.trie;
   word: W.word;
@@ -295,29 +310,7 @@ let source fact =
 let current fact =
   Trie.current fact.position
 
-let q =
-  Q.create()
-
-let add fact =
-  (* assert (not (causes_an_error (current fact) fact.lookahead)); *)
-
-  (* The length of the word serves as the priority of this fact. *)
-  Q.add q fact (W.length fact.word)
-    (* In principle, there is no need to insert the fact into the queue
-       if [T] already stores a comparable fact. *)
-
-let init s =
-  match Trie.star s with
-  | Some trie ->
-      foreach_terminal_not_causing_an_error s (fun z ->
-        add {
-          position = trie;
-          word = W.epsilon;
-          lookahead = z
-        }
-      )
-  | None ->
-      ()
+(* ------------------------------------------------------------------------ *)
 
 module T : sig
 
@@ -392,6 +385,8 @@ end = struct
 
 end
 
+(* ------------------------------------------------------------------------ *)
+
 (* The module [E] is in charge of recording the non-terminal edges that we have
    discovered, or more precisely, the conditions under which these edges can be
    taken. *)
@@ -454,6 +449,55 @@ end = struct
     Printf.fprintf stderr "E stores %d facts.\n%!" !count
 
 end
+
+(* ------------------------------------------------------------------------ *)
+
+(* As in Dijkstra's algorithm, a priority queue contains the facts that await
+   examination. The length of [fact.word] serves as the priority of a fact.
+   This guarantees that we discover shortest paths. (We never insert into the
+   queue a fact whose priority is less than the priority of the last fact
+   extracted out of the queue.) *)
+
+(* [LowIntegerPriorityQueue] offers very efficient operations (essentially
+   constant time, for a small constant). It exploits the fact that priorities
+   are low nonnegative integers. *)
+
+module Q = LowIntegerPriorityQueue
+
+let q =
+  Q.create()
+
+(* We never insert into the queue a fact that immediately causes an error,
+   i.e., a fact such that [causes_an_error (current fact) fact.lookahead]
+   holds. In practice, this convention allows reducing the number of facts
+   that go through the queue by a factor of two. *)
+
+(* In principle, there is no need to insert the fact into the queue if [T]
+   already stores a comparable fact. We could perform this test in [add].
+   However, a quick experiment suggests that this is not worthwhile. The run
+   time augments (because membership in [T] is tested twice, upon inserting
+   and upon extracting) and the memory consumption does not seem to go down
+   significantly. *)
+
+let add fact =
+  (* assert (not (causes_an_error (current fact) fact.lookahead)); *)
+  (* The length of [fact.word] serves as the priority of this fact. *)
+  Q.add q fact (W.length fact.word)
+
+let init s =
+  match Trie.star s with
+  | Some trie ->
+      foreach_terminal_not_causing_an_error s (fun z ->
+        add {
+          position = trie;
+          word = W.epsilon;
+          lookahead = z
+        }
+      )
+  | None ->
+      ()
+
+(* ------------------------------------------------------------------------ *)
 
 let new_edge s nt w z =
   (*
