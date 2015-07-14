@@ -1,23 +1,31 @@
 open Grammar
 
+(* Throughout, we ignore the [error] pseudo-token completely. We consider that
+   it never appears on the input stream. Hence, any state whose incoming
+   symbol is [error] is considered unreachable. *)
+
 (* ------------------------------------------------------------------------ *)
 
-(* This returns the list of reductions of [state] on token [z]. This
-   is a list of zero or one elements. *)
+(* We begin with a number of auxiliary functions that provide information
+   about the LR(1) automaton. These functions could perhaps be moved to a
+   separate module. We keep them here, for the moment, because they are not
+   used anywhere else. *)
 
-let reductions s z =
-  assert (not (Terminal.equal z Terminal.error));
+(* [reductions s z] is the list of reductions permitted in state [s] when the
+   lookahead symbol is [z]. This is a list of zero or one elements. This does
+   not take default reductions into account. *)
+
+let reductions s z : Production.index list =
   try
     TerminalMap.find z (Lr1.reductions s)
   with Not_found ->
     []
 
-(* This tests whether state [s] is willing to reduce some production
-   when the lookahead symbol is [z]. This test takes a possible default
-   reduction into account. *)
+(* [has_reduction s z] tells whether state [s] is willing to reduce some
+   production (and if so, which one) when the lookahead symbol is [z]. It
+   takes a possible default reduction into account. *)
 
 let has_reduction s z : Production.index option =
-  assert (not (Terminal.equal z Terminal.error));
   match Invariant.has_default_reduction s with
   | Some (prod, _) ->
       Some prod
@@ -29,11 +37,10 @@ let has_reduction s z : Production.index option =
       | [] ->
           None
 
-(* This tests whether state [s] will initiate an error on the lookahead
-   symbol [z]. *)
+(* [causes_an_error s z] tells whether state [s] will initiate an error on the
+   lookahead symbol [z]. *)
 
-let causes_an_error s z =
-  assert (not (Terminal.equal z Terminal.error));
+let causes_an_error s z : bool =
   match Invariant.has_default_reduction s with
   | Some _ ->
       false
@@ -41,30 +48,44 @@ let causes_an_error s z =
       reductions s z = [] &&
       not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
 
+(* [foreach_terminal f] applies the function [f] to every terminal symbol in
+   turn, except [error]. *)
+
 let foreach_terminal f =
   Terminal.iter (fun t ->
     if not (Terminal.equal t Terminal.error) then
       f t
   )
 
+(* [foreach_terminal_not_causing_an_error s f] applies the function [f] to
+   every terminal symbol [z] such that [causes_an_error s z] is false. This
+   could be implemented in a naive manner using [foreach_terminal] and
+   [causes_an_error]. This implementation is slightly more efficient. *)
+
 let foreach_terminal_not_causing_an_error s f =
   match Invariant.has_default_reduction s with
   | Some _ ->
-      (* No terminal causes an error. *)
+      (* There is a default reduction. No symbol causes an error. *)
       foreach_terminal f
   | None ->
-      TerminalMap.iter (fun t _ ->
-        if not (Terminal.equal t Terminal.error) then
-          f t
+      (* Enumerate every terminal symbol [z] for which there is a
+         reduction. *)
+      TerminalMap.iter (fun z _ ->
+        if not (Terminal.equal z Terminal.error) then
+          f z
       ) (Lr1.reductions s);
+      (* Enumerate every terminal symbol [z] for which there is a
+         transition. *)
       SymbolMap.iter (fun sym _ ->
         match sym with
-        | Symbol.T t ->
-            if not (Terminal.equal t Terminal.error) then
-              f t
+        | Symbol.T z ->
+            if not (Terminal.equal z Terminal.error) then
+              f z
         | Symbol.N _ ->
             ()
       ) (Lr1.transitions s)
+
+(* ------------------------------------------------------------------------ *)
 
 (* TEMPORARY
 let number2node : int -> Lr1.node =
