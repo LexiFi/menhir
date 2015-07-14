@@ -700,6 +700,10 @@ let forward () =
 let () =
   let f = forward() in
   Time.tick "Forward search";
+  let stat = Gc.quick_stat() in
+  Printf.fprintf stderr
+    "Maximum size reached by the major heap: %dM\n"
+    (stat.Gc.top_heap_words * (Sys.word_size / 8) / 1024 / 1024);
   ignore f
 
 (* TODO:
