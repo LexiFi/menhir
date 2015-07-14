@@ -142,28 +142,38 @@ module Trie : sig
 
 end = struct
 
+  (* A trie has the following structure. *)
+
   type trie = {
+    (* A unique identity, used by [compare]. The trie construction code
+       ensures that these numbers are indeed unique: see [fresh], [insert],
+       [star]. *)
     identity: int;
+    (* The root state of this star: "where we come from". *)
     source: Lr1.node;
+    (* The current state, i.e., the root of this sub-trie: "where we are". *)
     target: Lr1.node;
+    (* The productions that we can reduce in the current state. In other
+       words, if this list is nonempty, then the current state is the end
+       of one (or several) branches. It can nonetheless have children. *)
     productions: Production.index list;
-    transitions: trie SymbolMap.t;
+    (* The children, or sub-tries. *)
+    transitions: trie SymbolMap.t
   }
 
+  (* This counter is used by [mktrie] to produce unique identities. *)
   let c = ref 0
 
+  (* This smart constructor creates a new trie with a unique identity. *)
   let mktrie source target productions transitions =
     let identity = Misc.postincrement c in
     { identity; source; target; productions; transitions }
-
-  let accepts prod t =
-    List.mem prod t.productions
 
   (* TEMPORARY could insert this branch only if viable -- leads to 12600 instead of 12900 in ocaml.mly --lalr *)
 
   (* [insert] logically consumes its argument [t], which should no
      longer be used. *)
-  let rec insert target w prod t =
+  let rec insert w prod t =
     match w with
     | [] ->
         (* We consume (update) the trie [t], so there is no need to allocate a
@@ -171,12 +181,12 @@ end = struct
            to be precise.) *)
         { t with productions = prod :: t.productions }
     | a :: w ->
-        (* Check if there is a transition labeled [a] out of [target]. If
+        (* Check if there is a transition labeled [a] out of [t.target]. If
            there is, we add a child to the trie [t]. If there isn't, then it
            must have been removed by conflict resolution. (Indeed, it must be
            present in a canonical automaton.) The trie remains unchanged in
            this case. *)
-        match SymbolMap.find a (Lr1.transitions target) with
+        match SymbolMap.find a (Lr1.transitions t.target) with
         | successor ->
             (* Find our child at [a], or create it. *)
             let t' =
@@ -186,7 +196,7 @@ end = struct
                 mktrie t.source successor [] SymbolMap.empty
             in
             (* Update the child [t']. *)
-            let t' = insert successor w prod t' in
+            let t' = insert w prod t' in
             (* Update [t]. Again, no need to allocate a new stamp. *)
             { t with transitions = SymbolMap.add a t' t.transitions }
         | exception Not_found ->
@@ -197,7 +207,7 @@ end = struct
      which should no longer be used afterwards. *)
   let insert prod t =
     let w = Array.to_list (Production.rhs prod) in
-    insert t.source w prod t
+    insert w prod t
 
   (* [fresh s] creates a new empty trie whose source is [s]. *)
   let fresh source =
@@ -227,6 +237,9 @@ end = struct
 
   let target t =
     t.target
+
+  let accepts prod t =
+    List.mem prod t.productions
 
   let step a t =
     SymbolMap.find a t.transitions (* careful: may raise [Not_found] *)
