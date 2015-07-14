@@ -284,16 +284,16 @@ end
 (* ------------------------------------------------------------------------ *)
 
 type fact = {
-  future: Trie.trie;
+  position: Trie.trie;
   word: W.word;
   lookahead: Terminal.t
 }
 
 let source fact =
-  Trie.source fact.future
+  Trie.source fact.position
 
 let current fact =
-  Trie.current fact.future
+  Trie.current fact.position
 
 let q =
   Q.create()
@@ -311,7 +311,7 @@ let init s =
   | Some trie ->
       foreach_terminal_not_causing_an_error s (fun z ->
         add {
-          future = trie;
+          position = trie;
           word = W.epsilon;
           lookahead = z
         }
@@ -322,7 +322,7 @@ let init s =
 module T : sig
 
   (* [register fact] registers the fact [fact]. It returns [true] if this fact
-     is new, i.e., no fact concerning the same quintuple of [source], [future],
+     is new, i.e., no fact concerning the same quintuple of [source], [position],
      [current], [a], and [z] was previously known. *)
   val register: fact -> bool
 
@@ -335,7 +335,7 @@ module T : sig
 end = struct
 
   (* This module implements a set of facts. Two facts are considered equal
-     (for the purposes of this set) if they have the same [future], [a], and
+     (for the purposes of this set) if they have the same [position], [a], and
      [z] fields. The [word] is not considered. Indeed, we are not interested
      in keeping track of several words that produce the same effect. Only the
      shortest such word is of interest. *)
@@ -351,7 +351,7 @@ end = struct
     MySet.Make(struct
       type t = fact
       let compare fact1 fact2 =
-        let c = Trie.compare fact1.future fact2.future in
+        let c = Trie.compare fact1.position fact2.position in
         if c <> 0 then c else
         let a1 = W.first fact1.word fact1.lookahead
         and a2 = W.first fact2.word fact2.lookahead in
@@ -464,11 +464,11 @@ let new_edge s nt w z =
     let sym = Symbol.N nt in
     T.query s (W.first w z) (fun fact ->
       assert (Terminal.equal fact.lookahead (W.first w z));
-      match Trie.step sym fact.future with
-      | future ->
-          if not (causes_an_error (Trie.current future) z) then
+      match Trie.step sym fact.position with
+      | position ->
+          if not (causes_an_error (Trie.current position) z) then
             add {
-              future;
+              position;
               word = W.append fact.word w;
               lookahead = z
             }
@@ -500,9 +500,9 @@ let consequences fact =
   (* 1. View [fact] as a vertex. Examine the transitions out of [current]. *)
   
   SymbolMap.iter (fun sym s' ->
-    match Trie.step sym fact.future, sym with
+    match Trie.step sym fact.position, sym with
     | exception Not_found -> ()
-    | future, Symbol.T t ->
+    | position, Symbol.T t ->
 
         (* 1a. There is a transition labeled [t] out of [current]. If
            the lookahead assumption [fact.lookahead] is compatible with [t],
@@ -512,12 +512,12 @@ let consequences fact =
 
         if Terminal.equal fact.lookahead t then
           let word = W.append fact.word (W.singleton t) in
-          (* assert (Lr1.Node.compare future.Trie.current s' = 0); *)
+          (* assert (Lr1.Node.compare position.Trie.current s' = 0); *)
           foreach_terminal_not_causing_an_error s' (fun z ->
-            add { future; word; lookahead = z }
+            add { position; word; lookahead = z }
           )
 
-    | future, Symbol.N nt ->
+    | position, Symbol.N nt ->
 
         (* 1b. There is a transition labeled [nt] out of [current]. We
            need to know how this nonterminal edge can be taken. We query for a
@@ -532,7 +532,7 @@ let consequences fact =
           E.query current nt fact.lookahead z (fun w ->
             assert (Terminal.equal fact.lookahead (W.first w z));
             add {
-              future;
+              position;
               word = W.append fact.word w;
               lookahead = z
             }
@@ -544,7 +544,7 @@ let consequences fact =
   (* 2. View [fact] as a possible edge. This is possible if the path from
      [fact.source] to [current] represents a production [prod] and
      [current] is willing to reduce this production. We check that
-     [fact.future] accepts [epsilon]. This guarantees that reducing [prod]
+     [fact.position] accepts [epsilon]. This guarantees that reducing [prod]
      takes us all the way back to [fact.source]. Thus, this production gives
      rise to an edge labeled [nt] -- the left-hand side of [prod] -- out of
      [fact.source]. This edge is subject to the lookahead assumption
@@ -552,7 +552,7 @@ let consequences fact =
   (**)
 
   match has_reduction current fact.lookahead with
-  | Some prod when Trie.accepts prod fact.future ->
+  | Some prod when Trie.accepts prod fact.position ->
       new_edge (source fact) (Production.nt prod) fact.word fact.lookahead
   | _ ->
       ()
