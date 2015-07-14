@@ -87,18 +87,6 @@ let foreach_terminal_not_causing_an_error s f =
 
 (* ------------------------------------------------------------------------ *)
 
-(* TEMPORARY
-let number2node : int -> Lr1.node =
-  let table = Array.make Lr1.n None in
-  Lr1.iter (fun node ->
-    table.(Lr1.number node) <- Some node
-  );
-  let table =
-    Array.map (function Some x -> x | None -> assert false) table
-  in
-  Array.get table
-*)
-
 let id x = x
 let some x = Some x
 
