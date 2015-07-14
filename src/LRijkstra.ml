@@ -104,19 +104,43 @@ let foreach_terminal_not_causing_an_error s f =
 module Trie : sig
 
   type trie
-  val fresh: Lr1.node -> trie
-  val is_empty: trie -> bool
-  val accepts: Production.index -> trie -> bool
-  val insert: Symbol.t list -> Production.index -> trie -> trie
-  val source: trie -> Lr1.node
-  val target: trie -> Lr1.node
-  val derivative: Symbol.t -> trie -> trie
+
+  (* [star s] creates a (new) trie whose source is [s], populated with its
+     branches. (There is one branch for every production [prod] associated
+     with every non-terminal symbol [nt] for which [s] carries an outgoing
+     edge.) If the star turns out to be trivial (i.e., without any branches)
+     then [None] is returned. *)
+  val star: Lr1.node -> trie option
+
+  (* Every (sub-)trie has a unique identity. (One can think of it as its
+     address.) [compare] compares the identity of two tries. This can be
+     used, e.g., to set up a map whose keys are tries. *)
   val compare: trie -> trie -> int
-  val stats: unit -> unit
+
+  (* [source t] returns the source state of the (sub-)trie [t]. This is
+     the root of the star of which [t] is a sub-trie. In other words, this
+     tells us "where we come from". *)
+  val source: trie -> Lr1.node
+    
+  (* [target t] returns the current state of the (sub-)trie [t]. This is
+     the root of the sub-trie [t]. In other words, this tells us "where
+     we are". *)
+  val target: trie -> Lr1.node
+
+  (* [accepts prod t] tells whether the current state of the trie [t] is
+     the end of a branch associated with production [prod]. If so, this
+     means that we have successfully followed a path that corresponds to
+     the right-hand side of production [prod]. *)
+  val accepts: Production.index -> trie -> bool
+
+  (* [step sym t] is the immediate sub-trie of [t] along the symbol [sym].
+     This function raises [Not_found] if [t] has no child labeled [sym]. *)
+  val step: Symbol.t -> trie -> trie
+
+  (* [verbose()] outputs debugging & performance information. *)
+  val verbose: unit -> unit
 
 end = struct
-
-  let c = ref 0
 
   type trie = {
     identity: int;
@@ -126,18 +150,16 @@ end = struct
     transitions: trie SymbolMap.t;
   }
 
+  let c = ref 0
+
   let mktrie source target productions transitions =
     let identity = Misc.postincrement c in
     { identity; source; target; productions; transitions }
 
-  let fresh source =
-    mktrie source source [] SymbolMap.empty
-
-  let is_empty t =
-    t.productions = [] && SymbolMap.is_empty t.transitions
-
   let accepts prod t =
     List.mem prod t.productions
+
+  (* TEMPORARY could insert this branch only if viable -- leads to 12600 instead of 12900 in ocaml.mly --lalr *)
 
   (* [insert] logically consumes its argument [t], which should no
      longer be used. *)
@@ -170,8 +192,35 @@ end = struct
         | exception Not_found ->
             t
 
-  let insert w prod t =
+  (* [insert prod t] inserts a new branch, corresponding to production
+     [prod], into the trie [t]. This function consumes its argument,
+     which should no longer be used afterwards. *)
+  let insert prod t =
+    let w = Array.to_list (Production.rhs prod) in
     insert t.source w prod t
+
+  (* [fresh s] creates a new empty trie whose source is [s]. *)
+  let fresh source =
+    mktrie source source [] SymbolMap.empty
+
+  let star s =
+    SymbolMap.fold (fun sym _ accu ->
+      match sym with
+      | Symbol.T _ ->
+          accu
+      | Symbol.N nt ->
+          Production.foldnt nt accu insert
+    ) (Lr1.transitions s) (fresh s)
+
+  let nontrivial t =
+    not (t.productions = [] && SymbolMap.is_empty t.transitions)
+
+  let star s =
+    let t = star s in
+    if nontrivial t then
+      Some t
+    else
+      None
 
   let source t =
     t.source
@@ -179,13 +228,13 @@ end = struct
   let target t =
     t.target
 
-  let derivative a t =
+  let step a t =
     SymbolMap.find a t.transitions (* careful: may raise [Not_found] *)
 
   let compare t1 t2 =
     Pervasives.compare (t1.identity : int) t2.identity
 
-  let stats () =
+  let verbose () =
     Printf.fprintf stderr "Cumulated star size: %d\n%!" !c
 
 end
@@ -202,19 +251,6 @@ let source fact =
 let target fact =
   Trie.target fact.future
 
-let star s : Trie.trie =
-  SymbolMap.fold (fun sym _ accu ->
-    match sym with
-    | Symbol.T _ ->
-        accu
-    | Symbol.N nt ->
-        Production.foldnt nt accu (fun prod accu ->
-          let w = Array.to_list (Production.rhs prod) in
-          (* could insert this branch only if viable -- leads to 12600 instead of 12900 in ocaml.mly --lalr *)
-          Trie.insert w prod accu
-        )
-  ) (Lr1.transitions s) (Trie.fresh s)
-
 let q =
   Q.create()
 
@@ -227,15 +263,17 @@ let add fact =
        if [T] already stores a comparable fact. *)
 
 let init s =
-  let trie = star s in
-  if not (Trie.is_empty trie) then
-    foreach_terminal_not_causing_an_error s (fun z ->
-      add {
-        future = trie;
-        word = W.epsilon;
-        lookahead = z
-      }
-    )
+  match Trie.star s with
+  | Some trie ->
+      foreach_terminal_not_causing_an_error s (fun z ->
+        add {
+          future = trie;
+          word = W.epsilon;
+          lookahead = z
+        }
+      )
+  | None ->
+      ()
 
 module T : sig
 
@@ -248,7 +286,7 @@ module T : sig
      and whose lookahead assumption is [z]. *)
   val query: Lr1.node -> Terminal.t -> (fact -> unit) -> unit
 
-  val stats: unit -> unit
+  val verbose: unit -> unit
 
 end = struct
 
@@ -305,7 +343,7 @@ end = struct
     let m = table.(i) in
     M.iter f m
 
-  let stats () =
+  let verbose () =
     Printf.fprintf stderr "T stores %d facts.\n%!" !count
 
 end
@@ -327,7 +365,7 @@ module E : sig
      [w.z] is [a]. *)
   val query: Lr1.node -> Nonterminal.t -> Terminal.t -> Terminal.t -> (W.word -> unit) -> unit
 
-  val stats: unit -> unit
+  val verbose: unit -> unit
 
 end = struct
 
@@ -368,7 +406,7 @@ end = struct
     | (_, _, _, w) -> f w
     | exception Not_found -> ()
 
-  let stats () =
+  let verbose () =
     Printf.fprintf stderr "E stores %d facts.\n%!" !count
 
 end
@@ -382,7 +420,7 @@ let new_edge s nt w z =
     let sym = Symbol.N nt in
     T.query s (W.first w z) (fun fact ->
       assert (Terminal.equal fact.lookahead (W.first w z));
-      match Trie.derivative sym fact.future with
+      match Trie.step sym fact.future with
       | future ->
           if not (causes_an_error (Trie.target future) z) then
             add {
@@ -418,7 +456,7 @@ let consequences fact =
   (* 1. View [fact] as a vertex. Examine the transitions out of [target]. *)
   
   SymbolMap.iter (fun sym s' ->
-    match Trie.derivative sym fact.future, sym with
+    match Trie.step sym fact.future, sym with
     | exception Not_found -> ()
     | future, Symbol.T t ->
 
@@ -479,8 +517,8 @@ let level = ref 0
 
 let done_with_level () =
   Printf.fprintf stderr "Done with level %d.\n" !level;
-  T.stats();
-  E.stats();
+  T.verbose();
+  E.verbose();
   Printf.fprintf stderr "Q stores %d facts.\n%!" (Q.cardinal q)
 
 let discover fact =
@@ -494,7 +532,7 @@ let discover fact =
 
 let () =
   Lr1.iter init;
-  Trie.stats();
+  Trie.verbose();
   Q.repeat q discover;
   Time.tick "Running LRijkstra";
   done_with_level()
@@ -619,3 +657,9 @@ let () =
   let f = forward() in
   Time.tick "Forward search";
   ignore f
+
+(* TODO:
+  subject to --coverage
+  write to .coverage file
+  collect performance data, correlated with star size and alphabet size; draw a graph
+*)
