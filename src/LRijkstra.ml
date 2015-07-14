@@ -248,15 +248,20 @@ end = struct
           Production.foldnt nt accu insert
     ) (Lr1.transitions s) (fresh s)
 
+  (* [nontrivial t] tests whether the trie [t] has any branches, i.e.,
+     contains at least one sub-trie whose [productions] field is nonempty. *)
   let nontrivial t =
     not (t.productions = [] && SymbolMap.is_empty t.transitions)
 
+  (* Redefine [star] to include a [nontrivial] test. *)
   let star s =
     let t = star s in
     if nontrivial t then
       Some t
     else
       None
+
+  (* Accessors. *)
 
   let source t =
     t.source
