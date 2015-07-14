@@ -88,7 +88,6 @@ let foreach_terminal_not_causing_an_error s f =
 (* ------------------------------------------------------------------------ *)
 
 let id x = x
-let some x = Some x
 
 let update add find none some key m f =
   match find key m with
@@ -101,12 +100,6 @@ let update add find none some key m f =
   | exception Not_found ->
       let data' = f none in
       add key data' m
-
-module MyMap (X : Map.OrderedType) = struct
-  include Map.Make(X)
-  let update none some key m f =
-    update add find none some key m f
-end
 
 module W : sig
 
@@ -375,9 +368,9 @@ end = struct
   (* For now, we implement a mapping of [s, nt, a, z] to [w]. *)
 
   module M =
-    MyMap(struct
-      type t = Nonterminal.t * Terminal.t * Terminal.t
-      let compare (nt1, a1, z1) (nt2, a2, z2) =
+    MySet.Make(struct
+      type t = Nonterminal.t * Terminal.t * Terminal.t * W.word
+      let compare (nt1, a1, z1, _w1) (nt2, a2, z2, _w2) =
         let c = Nonterminal.compare nt1 nt2 in
         if c <> 0 then c else
         let c = Terminal.compare a1 a2 in
@@ -394,13 +387,7 @@ end = struct
     let i = Lr1.number s in
     let m = table.(i) in
     let a = W.first w z in
-    let m' = M.update None some (nt, a, z) m (function
-      | None ->
-          w
-      | Some earlier_w ->
-          earlier_w
-      )
-    in
+    let m' = M.add (nt, a, z, w) m in
     m != m' && begin
       incr count;
       table.(i) <- m';
@@ -410,8 +397,9 @@ end = struct
   let query s nt a z f =
     let i = Lr1.number s in
     let m = table.(i) in
-    match M.find (nt, a, z) m with
-    | w -> f w
+    let dummy = W.epsilon in
+    match M.find (nt, a, z, dummy) m with
+    | (_, _, _, w) -> f w
     | exception Not_found -> ()
 
   let stats () =
