@@ -89,6 +89,18 @@ let foreach_terminal_not_causing_an_error s f =
 
 (* ------------------------------------------------------------------------ *)
 
+(* Suppose [s] is a state that carries an outgoing edge labeled with a
+   non-terminal symbol [nt]. We are interested in finding out how this edge
+   can be taken. In order to do that, we must determine how, by starting in
+   [s], one can follow a path that corresponds to (the right-hand side of) a
+   production [prod] associated with [nt]. There are in general several such
+   productions. The paths that they determine in the automaton form a "star".
+   We represent the star rooted at [s] as a trie. For every state [s], the
+   star rooted at [s] is constructed in advance, before the algorithm runs.
+   While the algorithm runs, a point in the trie (that is, a sub-trie) tells
+   us where we come form, where we are, and which production(s) we are hoping
+   to reduce in the future. *)
+
 module Trie = struct
 
   let c = ref 0
