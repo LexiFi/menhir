@@ -250,6 +250,75 @@ module Terminal = struct
     with Not_found ->
       None
 
+  (* The sub-module [Word] offers an implementation of words (that is,
+     sequences) of terminal symbols. It is used by [LRijkstra]. We
+     make it a functor, because it has internal state (a hash table)
+     and a side effect (failure if there are more than 256 terminal
+     symbols). *)
+
+  module Word (X : sig end) = struct
+
+    (* We could use lists, or perhaps the sequences offered by the module
+       [Seq], which support constant time concatenation. However, we need a
+       much more compact representation: [LRijkstra] stores tens of millions
+       of such words. We use strings, because they are very compact (8 bits
+       per symbol), and on top of that, we use a hash-consing facility. In
+       practice, hash-consing allows us to save 1000x in space. *)
+
+    (* A drawback of this approach is that it works only if the number of
+       terminal symbols is at most 256. For the moment, this is good enough.
+       [LRijkstra] already has difficulty at 100 terminal symbols or so. *)
+
+    let () =
+      if n > 256 then
+        Error.error [] (Printf.sprintf
+          "the --coverage analysis supports at most 256 terminal symbols.\n\
+           The grammar has %d terminal symbols." n)
+
+    let intern : string -> string =
+      Misc.new_intern 1023
+
+    type word =
+      string
+
+    let epsilon =
+      ""
+
+    (* TEMPORARY tabulate? *)
+    let singleton t =
+      intern (String.make 1 (Char.chr t))
+
+    let append w1 w2 =
+      intern (w1 ^ w2)
+
+    let length =
+      String.length
+
+    let first w z =
+      if length w > 0 then
+        Char.code w.[0]
+      else
+        z
+
+    let rec elements i n w =
+      if i = n then
+        []
+      else
+        Char.code w.[i] :: elements (i + 1) n w
+
+    let elements w =
+      elements 0 (String.length w) w
+
+    let print w =
+      let b = Buffer.create 128 in
+      Printf.bprintf b "%d " (length w); (* TEMPORARY *)
+      String.iter (fun c ->
+        Printf.bprintf b "%s " (print (Char.code c));
+      ) w;
+      Buffer.contents b
+
+  end
+
 end
 
 (* Sets of terminals are used intensively in the LR(1) construction,

@@ -1,5 +1,6 @@
 open Grammar
 module Q = LowIntegerPriorityQueue
+module W = Terminal.Word(struct end)
 
 (* Throughout, we ignore the [error] pseudo-token completely. We consider that
    it never appears on the input stream. Hence, any state whose incoming
@@ -101,49 +102,6 @@ let update add find none some key m f =
   | exception Not_found ->
       let data' = f none in
       add key data' m
-
-module W : sig
-
-  type word
-  val epsilon: word
-  val singleton: Terminal.t -> word
-  val append: word -> word -> word
-  val length: word -> int
-  val first: word -> Terminal.t -> Terminal.t
-  val elements: word -> Terminal.t list
-  val print: word -> string
-
-end = struct
-
-  let () =
-    assert (Terminal.n < 256)
-
-  let t2c (t : Terminal.t) : char =
-    Char.chr (Terminal.t2i t)
-  let c2t (t : char) : Terminal.t =
-    Obj.magic (Char.code t)
-
-  let intern =
-    Misc.new_intern 1023
-
-  type word = string
-  let epsilon = ""
-  let singleton t = intern (String.make 1 (t2c t))
-  let append w1 w2 = intern (w1 ^ w2)
-  let length = String.length
-  let first w z = if length w > 0 then c2t w.[0] else z
-  let rec chars i n w =
-    if i = n then
-      []
-    else
-      c2t w.[i] :: chars (i + 1) n w
-  let elements w =
-    chars 0 (String.length w) w
-  let print w =
-    string_of_int (length w) ^ " " ^
-    String.concat " " (List.map Terminal.print (elements w))
-
-end
 
 module Trie = struct
 

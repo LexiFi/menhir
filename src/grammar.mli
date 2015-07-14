@@ -153,6 +153,26 @@ module Terminal : sig
   val map: (t -> 'a) -> 'a list
   val mapx: (t -> 'a) -> 'a list
 
+  (* The sub-module [Word] offers an implementation of words (that is,
+     sequences) of terminal symbols. It is used by [LRijkstra]. We
+     make it a functor, because it has internal state (a hash table)
+     and a side effect (failure if there are more than 256 terminal
+     symbols). *)
+  
+    module Word (X : sig end) : sig
+
+      type word
+      val epsilon: word
+      val singleton: t -> word
+      val append: word -> word -> word
+      val length: word -> int
+      (* [first w z] returns the first symbol of the word [w.z]. *)
+      val first: word -> t -> t
+      val elements: word -> t list
+      val print: word -> string
+
+    end
+
 end
 
 (* ------------------------------------------------------------------------ *)
