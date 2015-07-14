@@ -1,6 +1,6 @@
 open Grammar
 module Q = LowIntegerPriorityQueue
-module W = Terminal.Word(struct end)
+module W = Terminal.Word(struct end) (* TEMPORARY wrap side effect in functor *)
 
 (* Throughout, we ignore the [error] pseudo-token completely. We consider that
    it never appears on the input stream. Hence, any state whose incoming
@@ -101,7 +101,20 @@ let foreach_terminal_not_causing_an_error s f =
    us where we come form, where we are, and which production(s) we are hoping
    to reduce in the future. *)
 
-module Trie = struct
+module Trie : sig
+
+  type trie
+  val fresh: Lr1.node -> trie
+  val is_empty: trie -> bool
+  val accepts: Production.index -> trie -> bool
+  val insert: Symbol.t list -> Production.index -> trie -> trie
+  val source: trie -> Lr1.node
+  val target: trie -> Lr1.node
+  val derivative: Symbol.t -> trie -> trie
+  val compare: trie -> trie -> int
+  val stats: unit -> unit
+
+end = struct
 
   let c = ref 0
 
@@ -160,6 +173,12 @@ module Trie = struct
   let insert w prod t =
     insert t.source w prod t
 
+  let source t =
+    t.source
+
+  let target t =
+    t.target
+
   let derivative a t =
     SymbolMap.find a t.transitions (* careful: may raise [Not_found] *)
 
@@ -178,10 +197,10 @@ type fact = {
 }
 
 let source fact =
-  fact.future.Trie.source
+  Trie.source fact.future
 
 let target fact =
-  fact.future.Trie.target
+  Trie.target fact.future
 
 let star s : Trie.trie =
   SymbolMap.fold (fun sym _ accu ->
@@ -365,7 +384,7 @@ let new_edge s nt w z =
       assert (Terminal.equal fact.lookahead (W.first w z));
       match Trie.derivative sym fact.future with
       | future ->
-          if not (causes_an_error future.Trie.target z) then
+          if not (causes_an_error (Trie.target future) z) then
             add {
               future;
               word = W.append fact.word w;
