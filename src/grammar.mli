@@ -170,6 +170,9 @@ module Terminal : sig
       val first: word -> t -> t
       val elements: word -> t list
       val print: word -> string
+      (* [verbose()] prints statistics about the use of the internal
+         hash-consing table so far. *)
+      val verbose: unit -> unit
 
     end
 

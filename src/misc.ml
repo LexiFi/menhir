@@ -245,16 +245,26 @@ let map_opt f l =
       | Some y -> y :: ys
   ) [] l))
 
-let new_intern capacity : string -> string =
+let new_intern capacity =
   let module H = Hashtbl.Make(struct
     type t = string
     let equal = (=)
     let hash = Hashtbl.hash
   end) in
   let table = H.create capacity in
-  fun s ->
+  let c = ref 0
+  and n = ref 0 in
+  let intern s =
+    c := !c + 1;
     try
       H.find table s
     with Not_found ->
+      n := !n + 1;
       H.add table s s;
       s
+  and verbose () =
+    Printf.fprintf stderr
+      "%d calls to intern; %d unique strings.\n%!"
+      !c !n
+  in
+  intern, verbose

@@ -275,7 +275,7 @@ module Terminal = struct
           "the --coverage analysis supports at most 256 terminal symbols.\n\
            The grammar has %d terminal symbols." n)
 
-    let intern : string -> string =
+    let (intern : string -> string), verbose =
       Misc.new_intern 1023
 
     type word =

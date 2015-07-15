@@ -605,6 +605,7 @@ let level = ref 0
 
 let done_with_level () =
   Printf.fprintf stderr "Done with level %d.\n" !level;
+  W.verbose();
   T.verbose();
   E.verbose();
   Printf.fprintf stderr "Q stores %d facts.\n%!" (Q.cardinal q)

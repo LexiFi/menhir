@@ -150,6 +150,9 @@ val postincrement: int ref -> int
 val map_opt : ('a -> 'b option) -> 'a list -> 'b list
 
 (* [new_intern capacity] creates a new service for interning (hash-consing)
-   strings. [capacity] is the initial capacity of the internal hash table. *)
-val new_intern: int -> (string -> string)
+   strings. [capacity] is the initial capacity of the internal hash table.
+   [new_intern] returns a pair [intern, verbose] where [intern] is the
+   hash-consing service and [verbose] prints statistics about the use of
+   the service so far. *)
+val new_intern: int -> (string -> string) * (unit -> unit)
 
