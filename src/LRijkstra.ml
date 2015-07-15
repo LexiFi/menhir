@@ -315,12 +315,12 @@ let current fact =
 module T : sig
 
   (* [register fact] registers the fact [fact]. It returns [true] if this fact
-     is new, i.e., no fact concerning the same quintuple of [source], [position],
-     [current], [a], and [z] was previously known. *)
+     is new, i.e., no fact concerning the same triple of [position], [a], and
+     [z] was previously known. *)
   val register: fact -> bool
 
-  (* [query current z f] enumerates all known facts whose current state is [current]
-     and whose lookahead assumption is [z]. *)
+  (* [query current z f] enumerates all known facts whose current state is
+     [current] and whose lookahead assumption is [z]. *)
   val query: Lr1.node -> Terminal.t -> (fact -> unit) -> unit
 
   val verbose: unit -> unit
@@ -752,8 +752,6 @@ let () =
   ignore f
 
 (* TODO:
-  try encoding fact.lookahead in fact.word
-  in T, combine identity and lookahead in just one word
   in E, try a larger array and/or combine nt/a/z in just one word
   subject to --coverage
   write to .coverage file
