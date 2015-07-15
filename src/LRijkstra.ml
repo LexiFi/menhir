@@ -751,6 +751,9 @@ let () =
   ignore f
 
 (* TODO:
+  try encoding fact.lookahead in fact.word
+  in T, combine identity and lookahead in just one word
+  in E, try a larger array and/or combine nt/a/z in just one word
   subject to --coverage
   write to .coverage file
   collect performance data, correlated with star size and alphabet size; draw a graph
