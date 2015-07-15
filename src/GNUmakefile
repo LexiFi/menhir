@@ -26,3 +26,8 @@ api: convert.mli.html IncrementalEngine.ml.html
 clean::
 	rm -f *.mli.html
 
+# ----------------------------------------------------------------------------
+# Remove the files *.old and *.new that I use to log output during debugging.
+
+clean::
+	rm -f *.old *.new
