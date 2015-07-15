@@ -756,5 +756,6 @@ let () =
   in E, try a larger array and/or combine nt/a/z in just one word
   subject to --coverage
   write to .coverage file
+  remove Coverage, remove CompletedNatWitness?, revert Fix
   collect performance data, correlated with star size and alphabet size; draw a graph
 *)
