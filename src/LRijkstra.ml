@@ -412,25 +412,26 @@ end = struct
 
   module M =
     MySet.Make(struct
-      type t = Nonterminal.t * Terminal.t * Terminal.t * W.word
-      let compare (nt1, a1, z1, _w1) (nt2, a2, z2, _w2) =
+      type t = Nonterminal.t * Terminal.t * W.word
+      let compare (nt1, a1, _w1) (nt2, a2, _w2) =
         let c = Nonterminal.compare nt1 nt2 in
         if c <> 0 then c else
-        let c = Terminal.compare a1 a2 in
-        if c <> 0 then c else
-        Terminal.compare z1 z2
+        Terminal.compare a1 a2
     end)
 
-  let table =
-    Array.make Lr1.n M.empty
+  let table = (* a pretty large table... *)
+    Array.make (Lr1.n * Terminal.n) M.empty
+
+  let index s z =
+    Terminal.n * (Lr1.number s) + Terminal.t2i z
 
   let count = ref 0
 
   let register s nt w z =
-    let i = Lr1.number s in
+    let i = index s z in
     let m = table.(i) in
     let a = W.first w z in
-    let m' = M.add (nt, a, z, w) m in
+    let m' = M.add (nt, a, w) m in
     m != m' && begin
       incr count;
       table.(i) <- m';
@@ -438,11 +439,11 @@ end = struct
     end
 
   let query s nt a z f =
-    let i = Lr1.number s in
+    let i = index s z in
     let m = table.(i) in
     let dummy = W.epsilon in
-    match M.find (nt, a, z, dummy) m with
-    | (_, _, _, w) -> f w
+    match M.find (nt, a, dummy) m with
+    | (_, _, w) -> f w
     | exception Not_found -> ()
 
   let verbose () =
