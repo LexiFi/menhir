@@ -410,6 +410,15 @@ end = struct
 
   (* For now, we implement a mapping of [s, nt, a, z] to [w]. *)
 
+  module H = Hashtbl
+(*
+    Hashtbl.Make(struct
+      type t = Nonterminal.t * Terminal.t * Terminal.t
+      let equal = (=)
+      let hash = Hashtbl.hash
+    end)
+*)
+(*
   module M =
     MySet.Make(struct
       type t = Nonterminal.t * Terminal.t * W.word
@@ -418,32 +427,39 @@ end = struct
         if c <> 0 then c else
         Terminal.compare a1 a2
     end)
-
+*)
   let table = (* a pretty large table... *)
-    Array.make (Lr1.n * Terminal.n) M.empty
+    Array.init (Lr1.n) (fun _ -> H.create 6311)
 
-  let index s z =
-    Terminal.n * (Lr1.number s) + Terminal.t2i z
+  let index s =
+    Lr1.number s
+
+  let pack nt a z : int =
+    (Nonterminal.n2i nt lsl 16) lor
+    (Terminal.t2i a lsl 8) lor
+    (Terminal.t2i z)
 
   let count = ref 0
 
   let register s nt w z =
-    let i = index s z in
+    let i = index s in
     let m = table.(i) in
     let a = W.first w z in
-    let m' = M.add (nt, a, w) m in
-    m != m' && begin
+    let key = pack nt a z in
+    if H.mem m key then
+      false
+    else begin
       incr count;
-      table.(i) <- m';
+      H.add m key w;
       true
     end
 
   let query s nt a z f =
-    let i = index s z in
+    let i = index s in
     let m = table.(i) in
-    let dummy = W.epsilon in
-    match M.find (nt, a, dummy) m with
-    | (_, _, w) -> f w
+    let key = pack nt a z in
+    match H.find m key with
+    | w -> f w
     | exception Not_found -> ()
 
   let verbose () =
