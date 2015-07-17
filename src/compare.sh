@@ -20,7 +20,8 @@ then
   exit 1
 fi
 
-export OCAMLRUNPARAM=b
+# Remove this, as it slows things down.
+# export OCAMLRUNPARAM=b
 
 # Go back to the last committed version.
 git stash
