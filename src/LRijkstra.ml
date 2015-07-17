@@ -411,23 +411,7 @@ end = struct
   (* For now, we implement a mapping of [s, nt, a, z] to [w]. *)
 
   module H = Hashtbl
-(*
-    Hashtbl.Make(struct
-      type t = Nonterminal.t * Terminal.t * Terminal.t
-      let equal = (=)
-      let hash = Hashtbl.hash
-    end)
-*)
-(*
-  module M =
-    MySet.Make(struct
-      type t = Nonterminal.t * Terminal.t * W.word
-      let compare (nt1, a1, _w1) (nt2, a2, _w2) =
-        let c = Nonterminal.compare nt1 nt2 in
-        if c <> 0 then c else
-        Terminal.compare a1 a2
-    end)
-*)
+
   let table = (* a pretty large table... *)
     Array.init (Lr1.n) (fun _ -> H.create 6311)
 
