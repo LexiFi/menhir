@@ -774,4 +774,18 @@ let () =
   write to .coverage file
   remove Coverage, remove CompletedNatWitness?, revert Fix
   collect performance data, correlated with star size and alphabet size; draw a graph
+  count the unreachable states and see if they are numerous in practice
+  search github for .mly files (batch search? unique files?)
+    extension:mly in:path size:>10000 mly
 *)
+
+(* One could approach the problem just by exploring the (infinite) graph whose
+   vertices are configurations of the LR automaton (i.e., stacks, or perhaps
+   pairs of a stack and a lookahead symbol) and transitions are determined by
+   feeding one symbol to the automaton. A small-step version of the reference
+   interpreter would allow us to set this up easily. One could then run a
+   breadth-first exploration of this graph and stop when desired, e.g., as
+   soon as all automaton states have been reached. However, this process does
+   not necessarily terminate, and could be very costly -- e.g. enumerating all
+   sentences of length 10 when the alphabet has size 100 costs 10^20. Also,
+   this approach cannot prove that a state is unreachable. *)
