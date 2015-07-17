@@ -759,6 +759,8 @@ let () =
   remove Coverage, remove CompletedNatWitness?, revert Fix
   collect performance data, correlated with star size and alphabet size; draw a graph
   count the unreachable states and see if they are numerous in practice
+  search github for .mly files (batch search? unique files?)
+    extension:mly in:path size:>10000 mly
 *)
 
 (* One could approach the problem just by exploring the (infinite) graph whose
