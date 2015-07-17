@@ -120,9 +120,12 @@ module Trie : sig
   (* [star s] creates a (new) trie whose source is [s], populated with its
      branches. (There is one branch for every production [prod] associated
      with every non-terminal symbol [nt] for which [s] carries an outgoing
-     edge.) If the star turns out to be trivial (i.e., without any branches)
-     then [None] is returned. *)
+     edge.) If the star turns out to be trivial then [None] is returned. *)
   val star: Lr1.node -> trie option
+
+  (* After [star s] has been called, [size (Lr1.number s)] reports the size
+     of the trie that has been constructed for state [s]. *)
+  val size: int -> int
 
   (* Every (sub-)trie has a unique identity. (One can think of it as its
      address.) [compare] compares the identity of two tries. This can be
@@ -248,17 +251,32 @@ end = struct
     ) (Lr1.transitions s) (fresh s)
 
   (* [nontrivial t] tests whether the trie [t] has any branches, i.e.,
-     contains at least one sub-trie whose [productions] field is nonempty. *)
+     contains at least one sub-trie whose [productions] field is nonempty.
+     Trivia: a trie of size greater than 1 is necessarily nontrivial, but the
+     converse is not true: a nontrivial trie can have size 1. (This occurs
+     when all productions have zero length.) *)
   let nontrivial t =
     not (t.productions = [] && SymbolMap.is_empty t.transitions)
 
-  (* Redefine [star] to include a [nontrivial] test. *)
+  (* Redefine [star] to include a [nontrivial] test and to record the size
+     of the newly built trie. *)
+
+  let size =
+    Array.make Lr1.n (-1)
+
   let star s =
+    let initial = !c in
     let t = star s in
+    let final = !c in
+    size.(Lr1.number s) <- final - initial;
     if nontrivial t then
       Some t
     else
       None
+
+  let size s =
+    assert (size.(s) >= 0);
+    size.(s)
 
   let compare t1 t2 =
     Pervasives.compare (t1.identity : int) t2.identity
@@ -309,6 +327,57 @@ let source fact =
 
 let current fact =
   Trie.current fact.position
+
+(* ------------------------------------------------------------------------ *)
+
+(* As in Dijkstra's algorithm, a priority queue contains the facts that await
+   examination. The length of [fact.word] serves as the priority of a fact.
+   This guarantees that we discover shortest paths. (We never insert into the
+   queue a fact whose priority is less than the priority of the last fact
+   extracted out of the queue.) *)
+
+(* [LowIntegerPriorityQueue] offers very efficient operations (essentially
+   constant time, for a small constant). It exploits the fact that priorities
+   are low nonnegative integers. *)
+
+module Q = LowIntegerPriorityQueue
+
+let q =
+  Q.create()
+
+(* We never insert into the queue a fact that immediately causes an error,
+   i.e., a fact such that [causes_an_error (current fact) fact.lookahead]
+   holds. In practice, this convention allows reducing the number of facts
+   that go through the queue by a factor of two. *)
+
+(* In principle, there is no need to insert the fact into the queue if [T]
+   already stores a comparable fact. We could perform this test in [add].
+   However, a quick experiment suggests that this is not worthwhile. The run
+   time augments (because membership in [T] is tested twice, upon inserting
+   and upon extracting) and the memory consumption does not seem to go down
+   significantly. *)
+
+let add fact =
+  (* assert (not (causes_an_error (current fact) fact.lookahead)); *)
+  (* The length of [fact.word] serves as the priority of this fact. *)
+  Q.add q fact (W.length fact.word)
+
+(* Construct the [star] of every state [s]. Initialize the priority queue. *)
+
+let () =
+  Lr1.iter (fun s ->
+    match Trie.star s with
+    | Some trie ->
+        foreach_terminal_not_causing_an_error s (fun z ->
+          add {
+            position = trie;
+            word = W.epsilon;
+            lookahead = z
+          }
+        )
+    | None ->
+        ()
+  )
 
 (* ------------------------------------------------------------------------ *)
 
@@ -408,12 +477,24 @@ module E : sig
 
 end = struct
 
-  (* For now, we implement a mapping of [s, nt, a, z] to [w]. *)
+  (* At a high level, we must implement a mapping of [s, nt, a, z] to [w]. In
+     practice, we can implement this specification using any combination of
+     arrays, hash tables, balanced binary trees, and perfect hashing (i.e.,
+     packing several of [s], [nt], [a], [z] in one word.) Here, we choose to
+     use an array, indexed by [s], of hash tables, indexed by a key that packs
+     [nt], [a], and [z] in one word. According to a quick experiment, the
+     final population of the hash table [table.(index s)] seems to be roughly
+     [Terminal.n * Trie.size s]. We note that using an initial capacity
+     of 0 and relying on the hash table's resizing mechanism has a significant
+     cost, which is why we try to guess a good initial capacity. *)
 
   module H = Hashtbl
 
   let table = (* a pretty large table... *)
-    Array.init (Lr1.n) (fun _ -> H.create 6311)
+    Array.init (Lr1.n) (fun i ->
+      let size = Trie.size i in
+      H.create (if size = 1 then 0 else Terminal.n * size)
+    )
 
   let index s =
     Lr1.number s
@@ -450,53 +531,6 @@ end = struct
     Printf.fprintf stderr "E stores %d facts.\n%!" !count
 
 end
-
-(* ------------------------------------------------------------------------ *)
-
-(* As in Dijkstra's algorithm, a priority queue contains the facts that await
-   examination. The length of [fact.word] serves as the priority of a fact.
-   This guarantees that we discover shortest paths. (We never insert into the
-   queue a fact whose priority is less than the priority of the last fact
-   extracted out of the queue.) *)
-
-(* [LowIntegerPriorityQueue] offers very efficient operations (essentially
-   constant time, for a small constant). It exploits the fact that priorities
-   are low nonnegative integers. *)
-
-module Q = LowIntegerPriorityQueue
-
-let q =
-  Q.create()
-
-(* We never insert into the queue a fact that immediately causes an error,
-   i.e., a fact such that [causes_an_error (current fact) fact.lookahead]
-   holds. In practice, this convention allows reducing the number of facts
-   that go through the queue by a factor of two. *)
-
-(* In principle, there is no need to insert the fact into the queue if [T]
-   already stores a comparable fact. We could perform this test in [add].
-   However, a quick experiment suggests that this is not worthwhile. The run
-   time augments (because membership in [T] is tested twice, upon inserting
-   and upon extracting) and the memory consumption does not seem to go down
-   significantly. *)
-
-let add fact =
-  (* assert (not (causes_an_error (current fact) fact.lookahead)); *)
-  (* The length of [fact.word] serves as the priority of this fact. *)
-  Q.add q fact (W.length fact.word)
-
-let init s =
-  match Trie.star s with
-  | Some trie ->
-      foreach_terminal_not_causing_an_error s (fun z ->
-        add {
-          position = trie;
-          word = W.epsilon;
-          lookahead = z
-        }
-      )
-  | None ->
-      ()
 
 (* ------------------------------------------------------------------------ *)
 
@@ -621,7 +655,6 @@ let discover fact =
   end
 
 let () =
-  Lr1.iter init;
   Trie.verbose();
   Q.repeat q discover;
   Time.tick "Running LRijkstra";
