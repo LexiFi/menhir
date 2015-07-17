@@ -20,14 +20,12 @@ then
   exit 1
 fi
 
-# Remove this, as it slows things down.
-# export OCAMLRUNPARAM=b
-
 # Go back to the last committed version.
 git stash
 echo "Compiling (last committed version)..."
 (
   make &> compile.old || exit 1
+  sleep 1
   for FILE in "$@"
   do
    echo "Running ($FILE.mly)..."
@@ -40,6 +38,7 @@ git stash pop
 echo "Compiling (current uncommitted version)..."
 (
   make &> compile.new || exit 1
+  sleep 1
   for FILE in "$@"
   do
     echo "Running ($FILE.mly)..."
