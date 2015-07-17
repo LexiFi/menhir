@@ -43,13 +43,13 @@ let create initial_size =
 
 (* careful: [key_index] has been manually inlined several times below *)
 let key_index h key =
-  (seeded_hash_param 10 100 0 key) land (Array.length h.data - 1)
+  (hash key) land (Array.length h.data - 1)
 
 let rec insert_bucket ndata mask = function
     Empty -> ()
   | Cons(key, data, rest) ->
       insert_bucket ndata mask rest; (* preserve original order of elements *)
-      let nidx = (seeded_hash_param 10 100 0 key) land mask in
+      let nidx = (hash key) land mask in
       ndata.(nidx) <- Cons(key, data, ndata.(nidx))
 
 let resize h =
@@ -73,7 +73,7 @@ let rec find_rec key = function
 
 let find h key =
   let data = h.data in
-  let i = (seeded_hash_param 10 100 0 key) land (Array.length data - 1) in
+  let i = (hash key) land (Array.length data - 1) in
   match data.(i) with
   | Empty -> raise Not_found
   | Cons(k1, d1, rest1) ->
@@ -107,7 +107,7 @@ let add h key info =
 let mem_add h key info =
   let data = h.data in
   let width = Array.length data in
-  let i = (seeded_hash_param 10 100 0 key) land (width - 1) in
+  let i = (hash key) land (width - 1) in
   let bucket = data.(i) in
   if mem_in_bucket key bucket then
     false
