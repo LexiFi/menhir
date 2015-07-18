@@ -2,8 +2,12 @@ open Grammar
 module W = Terminal.Word(struct end) (* TEMPORARY wrap side effect in functor *)
 
 (* Throughout, we ignore the [error] pseudo-token completely. We consider that
-   it never appears on the input stream. Hence, any state whose incoming
-   symbol is [error] is considered unreachable. *)
+   it never appears on the input stream. Thus, we disregard any reductions or
+   transitions that take place when the lookahead symbol is [error]. As a
+   result, any state whose incoming symbol is [error] is found unreachable. *)
+
+let regular z =
+  not (Terminal.equal z Terminal.error)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -17,6 +21,7 @@ module W = Terminal.Word(struct end) (* TEMPORARY wrap side effect in functor *)
    does not take default reductions into account. *)
 
 let reductions_on s z : Production.index list =
+  assert (regular z);
   try
     TerminalMap.find z (Lr1.reductions s)
   with Not_found ->
@@ -47,14 +52,15 @@ let can_reduce s prod =
   | Some (prod', _) when prod = prod' ->
       true
   | _ ->
-      TerminalMap.fold (fun _ prods accu ->
-        accu || List.mem prod prods
+      TerminalMap.fold (fun z prods accu ->
+        accu || regular z && List.mem prod prods
       ) (Lr1.reductions s) false
 
 (* [causes_an_error s z] tells whether state [s] will initiate an error on the
    lookahead symbol [z]. *)
 
 let causes_an_error s z : bool =
+  assert (regular z);
   match Invariant.has_default_reduction s with
   | Some _ ->
       false
@@ -67,7 +73,7 @@ let causes_an_error s z : bool =
 
 let foreach_terminal f =
   Terminal.iter (fun t ->
-    if not (Terminal.equal t Terminal.error) then
+    if regular t then
       f t
   )
 
@@ -85,7 +91,7 @@ let foreach_terminal_not_causing_an_error s f =
       (* Enumerate every terminal symbol [z] for which there is a
          reduction. *)
       TerminalMap.iter (fun z _ ->
-        if not (Terminal.equal z Terminal.error) then
+        if regular z then
           f z
       ) (Lr1.reductions s);
       (* Enumerate every terminal symbol [z] for which there is a
@@ -93,7 +99,7 @@ let foreach_terminal_not_causing_an_error s f =
       SymbolMap.iter (fun sym _ ->
         match sym with
         | Symbol.T z ->
-            if not (Terminal.equal z Terminal.error) then
+            if regular z then
               f z
         | Symbol.N _ ->
             ()
@@ -202,6 +208,8 @@ end = struct
           { t with productions = prod :: t.productions }
         else
           raise DeadBranch
+    | (Symbol.T t) :: _ when not (regular t) ->
+         raise DeadBranch
     | a :: w ->
         (* Check if there is a transition labeled [a] out of [t.current]. If
            there is, we add a child to the trie [t]. If there isn't, then it
@@ -582,6 +590,9 @@ let consequences fact =
     match Trie.step sym fact.position, sym with
     | exception Not_found -> ()
     | position, Symbol.T t ->
+        (* [t] cannot be the [error] token, because the trie does not have
+           any edges labeled [error]. *)
+        assert (regular t);
 
         (* 1a. There is a transition labeled [t] out of [current]. If
            the lookahead assumption [fact.lookahead] is compatible with [t],
@@ -729,7 +740,7 @@ let forward () =
       )
 
     let successors (s, z) edge =
-      assert (not (Terminal.equal z Terminal.error));
+      assert (regular z);
       SymbolMap.iter (fun sym s' ->
         match sym with
         | Symbol.T t ->
