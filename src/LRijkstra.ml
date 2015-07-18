@@ -1,6 +1,8 @@
 open Grammar
 module W = Terminal.Word(struct end) (* TEMPORARY wrap side effect in functor *)
 
+(* ------------------------------------------------------------------------ *)
+
 (* Throughout, we ignore the [error] pseudo-token completely. We consider that
    it never appears on the input stream. Thus, we disregard any reductions or
    transitions that take place when the lookahead symbol is [error]. As a
@@ -8,6 +10,14 @@ module W = Terminal.Word(struct end) (* TEMPORARY wrap side effect in functor *)
 
 let regular z =
   not (Terminal.equal z Terminal.error)
+
+(* We introduce a pseudo-terminal symbol [any]. It is used in several places
+   later on, in particular in the field [fact.lookahead], to encode the
+   absence of a lookahead hypothesis -- i.e., any terminal symbol will do. *)
+
+let any : Terminal.t =
+  assert (Terminal.n < 255); (* TEMPORARY *)
+  Obj.magic Terminal.n       (* TEMPORARY *)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -21,7 +31,7 @@ let regular z =
    does not take default reductions into account. *)
 
 let reductions_on s z : Production.index list =
-  assert (regular z);
+  assert (regular z && z <> any);
   try
     TerminalMap.find z (Lr1.reductions s)
   with Not_found ->
@@ -32,6 +42,7 @@ let reductions_on s z : Production.index list =
    takes a possible default reduction into account. *)
 
 let has_reduction s z : Production.index option =
+  assert (z <> any);
   match Invariant.has_default_reduction s with
   | Some (prod, _) ->
       Some prod
@@ -60,7 +71,7 @@ let can_reduce s prod =
    lookahead symbol [z]. *)
 
 let causes_an_error s z : bool =
-  assert (regular z);
+  assert (regular z && z <> any);
   match Invariant.has_default_reduction s with
   | Some _ ->
       false
@@ -104,6 +115,19 @@ let foreach_terminal_not_causing_an_error s f =
         | Symbol.N _ ->
             ()
       ) (Lr1.transitions s)
+
+(* Let us say a state [s] is solid if its incoming symbol is a terminal symbol
+   (or if it has no incoming symbol at all, i.e., it is an initial state). A
+   contrario, a state is fragile if its incoming symbol is a non-terminal
+   symbol. *)
+
+let is_solid s =
+  match Lr1.incoming_symbol s with
+  | None
+  | Some (Symbol.T _) ->
+      true
+  | Some (Symbol.N _) ->
+      false
 
 (* ------------------------------------------------------------------------ *)
 
@@ -314,27 +338,49 @@ end
    [Trie.source fact.position], by consuming [fact.word], under the assumption
    that the next input symbol is [fact.lookahead]. *)
 
-(* The first symbol of the input, [first fact.word fact.lookahead], plays a
-   special role. Indeed, for every position, for every first symbol, and for
-   every lookahead symbol, we keep track of at most one fact. Thus, the total
-   number of facts accumulated by the algorithm is at most [T.n^2], where [T]
-   is the total size of the tries that we have constructed, and [n] is the
-   number of terminal symbols. (This number can be quite large. [T] can be in
-   the tens of thousands, and [n] can be over one hundred. These figures lead
-   to a theoretical upper bound of 100M. In practice, for T=25K and n=108, we
-   observe that the algorithm gathers about 7M facts.) *)
+(* We allow [fact.lookahead] to be [any] so as to indicate that this fact does
+   not have a lookahead assumption. *)
 
 type fact = {
   position: Trie.trie;
   word: W.word;
-  lookahead: Terminal.t
+  lookahead: Terminal.t (* may be [any] *)
 }
+
+(* Accessors. *)
 
 let source fact =
   Trie.source fact.position
 
 let current fact =
   Trie.current fact.position
+
+(* Two invariants reduce the number of facts that we consider:
+
+   1. If [fact.lookahead] is a terminal symbol [z] (i.e., not [any]), then
+      [z] does not cause an error in the current state [current fact]. It
+      would be useless to consider a fact that violates this property; it
+      cannot possibly lead to a successful reduction.
+
+   2. [fact.lookahead] is [any] iff the current state [current fact] is
+      solid. This sounds rather reasonable (when a state is entered
+      by shifting, it is entered regardless of which symbol follows)
+      and simplifies the implementation of the sub-module [T].
+
+*)
+
+let invariant1 fact =
+  fact.lookahead = any || not (causes_an_error (current fact) fact.lookahead)
+
+let invariant2 fact =
+  (fact.lookahead = any) = is_solid (current fact)
+
+(* [compatible z a] checks whether the terminal symbol [a] satisfies the
+   lookahead assumption [z] -- which can be [any]. *)
+
+let compatible z a =
+  assert (a <> any);
+  z = any || z = a
 
 (* ------------------------------------------------------------------------ *)
 
@@ -366,7 +412,8 @@ let q =
    significantly. *)
 
 let add fact =
-  (* assert (not (causes_an_error (current fact) fact.lookahead)); *)
+  assert (invariant1 fact);
+  assert (invariant2 fact);
   (* The length of [fact.word] serves as the priority of this fact. *)
   Q.add q fact (W.length fact.word)
 
@@ -376,18 +423,36 @@ let () =
   Lr1.iter (fun s ->
     match Trie.star s with
     | Some trie ->
-        foreach_terminal_not_causing_an_error s (fun z ->
+        (* TEMPORARY weird *)
+        if is_solid s then
           add {
             position = trie;
             word = W.epsilon;
-            lookahead = z
+            lookahead = any
           }
-        )
+        else
+          foreach_terminal_not_causing_an_error s (fun z ->
+            add {
+              position = trie;
+              word = W.epsilon;
+              lookahead = z
+            }
+          )
     | None ->
         ()
   )
 
 (* ------------------------------------------------------------------------ *)
+
+(* The first symbol of the input, [W.first fact.word fact.lookahead], plays a
+   special role. Indeed, for every position, for every first symbol, and for
+   every lookahead symbol, we keep track of at most one fact. Thus, the total
+   number of facts accumulated by the algorithm is at most [T.n^2], where [T]
+   is the total size of the tries that we have constructed, and [n] is the
+   number of terminal symbols. (This number can be quite large. [T] can be in
+   the tens of thousands, and [n] can be over one hundred. These figures lead
+   to a theoretical upper bound of 100M. In practice, for T=25K and n=108, we
+   observe that the algorithm gathers about 7M facts.) *)
 
 module T : sig
 
@@ -425,20 +490,24 @@ end = struct
         if c <> 0 then c else
         let a1 = W.first fact1.word fact1.lookahead
         and a2 = W.first fact2.word fact2.lookahead in
+        (* note: [a1] and [a2] can be [any] here *)
         Terminal.compare a1 a2
     end)
 
   let table = (* a pretty large table... *)
-    Array.make (Lr1.n * Terminal.n) M.empty
+    Array.make (Lr1.n * (Terminal.n + 1)) M.empty (* room for [any] *)
+  (* TEMPORARY this space is wasted for solid states *)
 
   let index current z =
-    Terminal.n * (Lr1.number current) + Terminal.t2i z
+    (Terminal.n + 1) * (Lr1.number current) + Terminal.t2i z
 
   let count = ref 0
 
   let register fact =
     let current = current fact in
     let z = fact.lookahead in
+    (* [z] is [any] iff [current] is solid. *)
+    assert ((z = any) = is_solid current);
     let i = index current z in
     let m = table.(i) in
     (* We crucially rely on the fact that [M.add] guarantees not to
@@ -453,7 +522,10 @@ end = struct
     end
 
   let query current z f =
-    let i = index current z in
+    assert (z <> any);
+    (* if [current] is solid then the facts that concern it are stored
+       under any [any], not under [z] *)
+    let i = index current (if is_solid current then any else z) in
     let m = table.(i) in
     M.iter f m
 
@@ -515,9 +587,11 @@ end = struct
   let count = ref 0
 
   let register s nt w z =
+    assert (regular z && z <> any);
     let i = index s in
     let m = table.(i) in
     let a = W.first w z in
+    assert (not (causes_an_error s a));
     let key = pack nt a z in
     if H.mem m key then
       false
@@ -527,13 +601,27 @@ end = struct
       true
     end
 
-  let query s nt a z f =
-    let i = index s in
-    let m = table.(i) in
-    let key = pack nt a z in
-    match H.find m key with
-    | w -> f w
-    | exception Not_found -> ()
+  let rec query s nt a z f =
+    assert (regular z && z <> any);
+    (* [a] can be [any] *)
+    if a <> any then begin
+      let i = index s in
+      let m = table.(i) in
+      let key = pack nt a z in
+      match H.find m key with
+      | w -> f w
+      | exception Not_found -> ()
+    end
+    else begin
+      (* If [a] is [any], we query the table for every concrete [a].
+         We can limit ourselves to symbols that do not cause an error
+         in state [s]. Those that do certainly do not have an entry;
+         see the assertion in [register] above. *)
+      foreach_terminal_not_causing_an_error s (fun a ->
+        query s nt a z f
+      )
+        (* TEMPORARY try a scheme that allows a more efficient iteration? *)
+    end
 
   let verbose () =
     Printf.fprintf stderr "E stores %d facts.\n%!" !count
@@ -543,16 +631,14 @@ end
 (* ------------------------------------------------------------------------ *)
 
 let new_edge s nt w z =
-  (*
-  Printf.fprintf stderr "Considering reduction on %s in state %d\n"
-    (Terminal.print z) (Lr1.number s);
-  *)
+  assert (regular z && z <> any);
   if E.register s nt w z then
     let sym = Symbol.N nt in
     T.query s (W.first w z) (fun fact ->
-      assert (Terminal.equal fact.lookahead (W.first w z));
+      assert (compatible fact.lookahead (W.first w z));
       match Trie.step sym fact.position with
       | position ->
+          assert (not (is_solid (Trie.current position)));
           if not (causes_an_error (Trie.current position) z) then
             add {
               position;
@@ -600,12 +686,16 @@ let consequences fact =
            enqueue this new fact for later examination. *)
         (**)
 
-        if Terminal.equal fact.lookahead t then
+        if compatible fact.lookahead t then begin
           let word = W.append fact.word (W.singleton t) in
-          (* assert (Lr1.Node.compare position.Trie.current s' = 0); *)
-          foreach_terminal_not_causing_an_error s' (fun z ->
-            add { position; word; lookahead = z }
-          )
+          (* assert (Lr1.Node.compare (Trie.current position) s' = 0); *)
+          (* [s'] has a terminal incoming symbol. It is always entered
+             without consideration for the next lookahead symbol. Thus,
+             we use [any] as the lookahead assumption in the new fact
+             that we produce. *)
+          assert (is_solid (Trie.current position));
+          add { position; word; lookahead = any }
+        end
 
     | position, Symbol.N nt ->
 
@@ -620,7 +710,8 @@ let consequences fact =
 
         foreach_terminal_not_causing_an_error s' (fun z ->
           E.query current nt fact.lookahead z (fun w ->
-            assert (Terminal.equal fact.lookahead (W.first w z));
+            assert (compatible fact.lookahead (W.first w z));
+            assert (not (is_solid (Trie.current position)));
             add {
               position;
               word = W.append fact.word w;
@@ -641,11 +732,30 @@ let consequences fact =
      [fact.lookahead], so we record that. *)
   (**)
 
-  match has_reduction current fact.lookahead with
-  | Some prod when Trie.accepts prod fact.position ->
-      new_edge (source fact) (Production.nt prod) fact.word fact.lookahead
-  | _ ->
-      ()
+  if fact.lookahead <> any then begin
+    match has_reduction current fact.lookahead with
+    | Some prod when Trie.accepts prod fact.position ->
+        new_edge (source fact) (Production.nt prod) fact.word fact.lookahead
+    | _ ->
+        ()
+  end
+  else begin
+    (* Every reduction must be considered. *)
+    match Invariant.has_default_reduction current with
+    | Some (prod, _) ->
+        if Trie.accepts prod fact.position then
+          (* TEMPORARY for now, avoid sending [any] into [new_edge] *)
+          foreach_terminal (fun z ->
+            new_edge (source fact) (Production.nt prod) (fact.word) z
+          )
+    | None ->
+       TerminalMap.iter (fun z prods ->
+         if regular z then
+           let prod = Misc.single prods in
+           if Trie.accepts prod fact.position then
+             new_edge (source fact) (Production.nt prod) (fact.word) z
+       ) (Lr1.reductions current)
+  end
 
 let level = ref 0
 
