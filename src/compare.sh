@@ -20,31 +20,27 @@ then
   exit 1
 fi
 
-# Go back to the last committed version.
+# Try the current version.
+echo "Compiling (current uncommitted version)..."
+make &> compile.new || { cat compile.new && exit 1 ; }
+sleep 1
+for FILE in "$@"
+do
+  echo "Running ($FILE.mly)..."
+  { time $MENHIR $BASE $OPT $BENCH/$FILE.mly ; } &>$FILE.new
+done
+
+# Try the last committed version.
 git stash
 echo "Compiling (last committed version)..."
-(
-  make &> compile.old || exit 1
-  sleep 1
-  for FILE in "$@"
-  do
-   echo "Running ($FILE.mly)..."
-   { time $MENHIR $BASE $OPT $BENCH/$FILE.mly ; } &>$FILE.old
-  done
-)
-
-# Come back to the current (uncommitted) version.
+make &> compile.old || { cat compile.old && exit 1 ; }
+sleep 1
+for FILE in "$@"
+do
+ echo "Running ($FILE.mly)..."
+ { time $MENHIR $BASE $OPT $BENCH/$FILE.mly ; } &>$FILE.old
+done
 git stash pop
-echo "Compiling (current uncommitted version)..."
-(
-  make &> compile.new || exit 1
-  sleep 1
-  for FILE in "$@"
-  do
-    echo "Running ($FILE.mly)..."
-    { time $MENHIR $BASE $OPT $BENCH/$FILE.mly ; } &>$FILE.new
-  done
-)
 
 # Diff.
 for FILE in "$@"
