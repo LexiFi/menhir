@@ -649,19 +649,26 @@ let consequences fact =
 
 let level = ref 0
 
+let extracted, considered =
+  ref 0, ref 0
+
 let done_with_level () =
   Printf.fprintf stderr "Done with level %d.\n" !level;
   W.verbose();
   T.verbose();
   E.verbose();
-  Printf.fprintf stderr "Q stores %d facts.\n%!" (Q.cardinal q)
+  Printf.fprintf stderr "Q stores %d facts.\n" (Q.cardinal q);
+  Printf.fprintf stderr "%d facts extracted out of Q, of which %d considered.\n%!"
+    !extracted !considered
 
 let discover fact =
+  incr extracted;
   if T.register fact then begin
     if W.length fact.word > ! level then begin
       done_with_level();
       level := W.length fact.word;
     end;
+    incr considered;
     consequences fact
   end
 
