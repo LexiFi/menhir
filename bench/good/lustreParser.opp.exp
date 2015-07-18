@@ -1,0 +1,667 @@
+Warning: you are using the standard library and/or the %inline keyword. We
+recommend switching on --infer in order to avoid obscure type error messages.
+%{
+
+module I = LustreIdent
+module A = LustreAst
+
+let mk_pos = Lib.position_of_lexing 
+
+%}
+%start main
+%token WITH
+%token VAR
+%token TYPE
+%token TRUE
+%token THEN
+%token TEL
+%token <string> SYM
+%token SUBRANGE
+%token STRUCT
+%token SEMICOLON
+%token RSQBRACKET
+%token RPAREN
+%token RPARAMBRACKET
+%token RETURNS
+%token REQUIRES
+%token RCURLYBRACKET
+%token PROPERTY
+%token OF
+%token <string> NUMERAL
+%token NODE
+%token MAIN
+%token LSQBRACKET
+%token LPAREN
+%token LPARAMBRACKET
+%token LET
+%token LCURLYBRACKET
+%token IF
+%token HASH
+%token FUNCTION
+%token FBY
+%token FALSE
+%token EOF
+%token ENUM
+%token ENSURES
+%token DOTDOT
+%token DOT
+%token <string> DECIMAL
+%token CONST
+%token CONDACT
+%token COMMA
+%token COLON
+%token BOOL
+%token ASSERT
+%token PIPE
+%token ELSE
+%token ARROW
+%token IMPL
+%token XOR
+%token OR
+%token AND
+%token NEQ
+%token LTE
+%token LT
+%token GTE
+%token GT
+%token EQUALS
+%token PLUS
+%token MINUS
+%token MULT
+%token MOD
+%token INTDIV
+%token DIV
+%token WHEN
+%token NOT
+%token CURRENT
+%token PRE
+%token CARET
+%token REAL
+%token INT
+%left PIPE 
+%nonassoc ELSE 
+%right ARROW 
+%right IMPL 
+%left XOR OR 
+%left AND 
+%left NEQ LTE LT GTE GT EQUALS 
+%left PLUS MINUS 
+%left MULT MOD INTDIV DIV 
+%nonassoc WHEN 
+%nonassoc NOT 
+%nonassoc CURRENT 
+%nonassoc PRE 
+%left CARET 
+%nonassoc REAL INT 
+%type <LustreAst.t> main
+%%
+
+main:
+| p = list_decl_ _2 = EOF
+    {                         ( List.flatten p )}
+
+decl:
+| d = const_decl
+    {                   ( List.map 
+                       (function e -> A.ConstDecl (mk_pos _startpos, e)) 
+                       d )}
+| d = type_decl
+    {                  ( List.map 
+                      (function e -> A.TypeDecl (mk_pos _startpos, e)) 
+                      d )}
+| d = node_decl
+    {                  ( [A.NodeDecl (mk_pos _startpos, d)] )}
+| d = func_decl
+    {                  ( [A.FuncDecl (mk_pos _startpos, d)] )}
+| d = node_param_inst
+    {                        ( [A.NodeParamInst (mk_pos _startpos, d)] )}
+
+const_decl:
+| _1 = CONST l = nonempty_list_const_decl_body_
+    {                                                      ( List.flatten l )}
+
+const_decl_body:
+| h = ident _2 = COLON t = lustre_type _4 = SEMICOLON
+    {    ( [A.FreeConst (mk_pos _startpos, h, t)] )}
+| h = ident _2 = COMMA l = ident_list _4 = COLON t = lustre_type _6 = SEMICOLON
+    {    ( List.map (function e -> A.FreeConst (mk_pos _startpos, e, t)) (h :: l) )}
+| s = ident _2 = EQUALS e = expr _4 = SEMICOLON
+    {    ( [A.UntypedConst (mk_pos _startpos, s, e)] )}
+| c = typed_ident _2 = EQUALS e = expr _4 = SEMICOLON
+    {    ( let (s, t) = c in [A.TypedConst (mk_pos _startpos, s, e, t)] )}
+
+array_type:
+| t = lustre_type _2 = CARET s = expr
+    {                                     ( t, s )}
+
+enum_type:
+| _1 = ENUM _2 = LCURLYBRACKET l = ident_list _4 = RCURLYBRACKET
+    {                                                             ( l )}
+
+func_decl:
+| _1 = FUNCTION n = ident i = tlist_LPAREN_SEMICOLON_RPAREN_typed_idents_ _4 = RETURNS o = tlist_LPAREN_SEMICOLON_RPAREN_typed_idents_ _6 = SEMICOLON
+    {    ( (n, List.flatten i, List.flatten o)  )}
+
+node_decl:
+| _1 = NODE n = ident p = loption_static_params_ i = tlist_LPAREN_SEMICOLON_RPAREN_const_clocked_typed_idents_ _5 = RETURNS o = tlist_LPAREN_SEMICOLON_RPAREN_clocked_typed_idents_ _7 = SEMICOLON r = contract l = list_node_local_decl_ _10 = LET e = list_node_equation_ _12 = TEL _13 = option_node_sep_
+    {    ( (n, 
+       p,
+       List.flatten i, 
+       List.flatten o, 
+       (List.flatten l), 
+       e,
+       r)  )}
+
+node_param_inst:
+| _1 = NODE n = ident _3 = EQUALS s = ident p = tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_node_call_static_param_ _6 = SEMICOLON
+    {    ( (n, s, p) )}
+
+contract:
+| l = list_contract_clause_
+    {                              ( l )}
+
+loption_static_params_:
+| 
+    {    ( [] )}
+| x = static_params
+    {    ( x )}
+
+loption_separated_nonempty_list_COMMA_expr__:
+| 
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_expr_
+    {    ( x )}
+
+list_node_local_decl_:
+| 
+    {    ( [] )}
+| x = node_local_decl xs = list_node_local_decl_
+    {    ( x :: xs )}
+
+list_node_equation_:
+| 
+    {    ( [] )}
+| x = node_equation xs = list_node_equation_
+    {    ( x :: xs )}
+
+list_decl_:
+| 
+    {    ( [] )}
+| x = decl xs = list_decl_
+    {    ( x :: xs )}
+
+list_contract_clause_:
+| 
+    {    ( [] )}
+| x = contract_clause xs = list_contract_clause_
+    {    ( x :: xs )}
+
+nonempty_list_one_index_:
+| x = one_index
+    {    ( [ x ] )}
+| x = one_index xs = nonempty_list_one_index_
+    {    ( x :: xs )}
+
+nonempty_list_const_decl_body_:
+| x = const_decl_body
+    {    ( [ x ] )}
+| x = const_decl_body xs = nonempty_list_const_decl_body_
+    {    ( x :: xs )}
+
+type_decl:
+| _1 = TYPE l = ident_list _3 = SEMICOLON
+    {     ( List.map (function e -> A.FreeType (mk_pos _startpos, e)) l )}
+| _1 = TYPE l = ident_list _3 = EQUALS t = lustre_type _5 = SEMICOLON
+    {     ( List.map (function e -> A.AliasType (mk_pos _startpos, e, t)) l )}
+| _1 = TYPE l = ident_list _3 = EQUALS t = record_type _5 = SEMICOLON
+    {     ( List.map 
+         (function e -> 
+           A.AliasType (mk_pos _startpos, 
+                        e, 
+                        A.RecordType (mk_pos _startpos, t))) 
+         l )}
+
+lustre_type:
+| _1 = BOOL
+    {         ( A.Bool (mk_pos _startpos) )}
+| _1 = INT
+    {        ( A.Int (mk_pos _startpos))}
+| _1 = REAL
+    {         ( A.Real (mk_pos _startpos))}
+| _1 = SUBRANGE _2 = LSQBRACKET l = expr _4 = COMMA u = expr _6 = RSQBRACKET _7 = OF _8 = INT
+    {    ( A.IntRange (mk_pos _startpos, l, u))}
+| s = ident
+    {              ( A.UserType (mk_pos _startpos, s) )}
+| t = tuple_type
+    {                   ( A.TupleType (mk_pos _startpos, t) )}
+| t = array_type
+    {                   ( A.ArrayType (mk_pos _startpos, t) )}
+| t = enum_type
+    {                  ( A.EnumType (mk_pos _startpos, t) )}
+
+tuple_type:
+| _1 = LSQBRACKET l = lustre_type_list _3 = RSQBRACKET
+    {                                                 ( l )}
+
+record_type:
+| _1 = option_STRUCT_ f = tlist_LCURLYBRACKET_SEMICOLON_RCURLYBRACKET_typed_idents_
+    {    ( List.flatten f  )}
+
+node_sep:
+| _1 = DOT
+    {                          ( )}
+| _1 = SEMICOLON
+    {                          ( )}
+
+contract_clause:
+| _1 = REQUIRES e = expr _3 = SEMICOLON
+    {                                  ( A.Requires (mk_pos _startpos, e) )}
+| _1 = ENSURES e = expr _3 = SEMICOLON
+    {                                 ( A.Ensures (mk_pos _startpos, e) )}
+
+static_param:
+| _1 = TYPE t = ident
+    {                    ( A.TypeParam t )}
+
+static_params:
+| l = tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_static_param_
+    {    ( l )}
+
+node_local_decl:
+| c = const_decl
+    {                   ( List.map 
+                       (function e -> A.NodeConstDecl (mk_pos _startpos, e))
+                       c )}
+| v = var_decls
+    {                  ( List.map 
+                      (function e -> A.NodeVarDecl (mk_pos _startpos, e)) 
+                      v )}
+
+var_decls:
+| _1 = VAR l = nonempty_list_var_decl_
+    {                                     ( List.flatten l )}
+
+var_decl:
+| l = clocked_typed_idents _2 = SEMICOLON
+    {                                        ( l )}
+
+node_equation:
+| _1 = ASSERT e = expr _3 = SEMICOLON
+    {    ( A.Assert (mk_pos _startpos, e) )}
+| l = left_side _2 = EQUALS e = expr _4 = SEMICOLON
+    {    ( A.Equation (mk_pos _startpos, l, e) )}
+| _1 = MAIN
+    {         ( A.AnnotMain )}
+| _1 = PROPERTY e = expr _3 = SEMICOLON
+    {                                  ( A.AnnotProperty (mk_pos _startpos, e) )}
+
+left_side:
+| l = struct_item_list
+    {                         ( l )}
+| _1 = LPAREN l = struct_item_list _3 = RPAREN
+    {                                         ( l )}
+| _1 = LPAREN _2 = RPAREN
+    {                   ( [] )}
+
+struct_item:
+| s = ident
+    {     ( A.SingleIdent (mk_pos _startpos, s) )}
+| s = ident l = nonempty_list_one_index_
+    {     ( A.IndexedIdent (mk_pos _startpos, s, l))}
+
+struct_item_list:
+| l = separated_nonempty_list_COMMA_struct_item_
+    {                                                   ( l )}
+
+expr:
+| s = ident
+    {              ( A.Ident (mk_pos _startpos, s) )}
+| _1 = TRUE
+    {         ( A.True (mk_pos _startpos) )}
+| _1 = FALSE
+    {          ( A.False (mk_pos _startpos) )}
+| s = NUMERAL
+    {                ( A.Num (mk_pos _startpos, s) )}
+| s = DECIMAL
+    {                ( A.Dec (mk_pos _startpos, s) )}
+| _1 = INT e = expr
+    {                  ( A.ToInt (mk_pos _startpos, e) )}
+| _1 = REAL e = expr
+    {                   ( A.ToReal (mk_pos _startpos, e) )}
+| _1 = LPAREN e = expr _3 = RPAREN
+    {                             ( e )}
+| _1 = LPAREN h = expr _3 = COMMA l = expr_list _5 = RPAREN
+    {    ( A.ExprList (mk_pos _startpos, h :: l) )}
+| _1 = LSQBRACKET l = expr_list _3 = RSQBRACKET
+    {                                          ( A.TupleExpr (mk_pos _startpos, l) )}
+| e1 = expr _2 = CARET e2 = expr
+    {                                ( A.ArrayConstr (mk_pos _startpos, e1, e2) )}
+| e = ident _2 = LSQBRACKET i = expr _4 = RSQBRACKET
+    {    ( A.TupleProject (mk_pos _startpos, e, i) )}
+| e = ident _2 = LSQBRACKET l = array_slice_list _4 = RSQBRACKET
+    {    ( A.ArraySlice (mk_pos _startpos, e, l) )}
+| s = ident _2 = DOT t = ident
+    {    ( A.RecordProject (mk_pos _startpos, s, I.index_of_ident t) )}
+| t = ident f = tlist_LCURLYBRACKET_SEMICOLON_RCURLYBRACKET_record_field_assign_
+    {    ( A.RecordConstruct (mk_pos _startpos, t, f) )}
+| e1 = expr _2 = PIPE e2 = expr
+    {                               ( A.ArrayConcat (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = MINUS e2 = expr
+    {                                ( A.Minus (mk_pos _startpos, e1, e2) )}
+| _1 = MINUS e = expr
+    {                    ( A.Uminus (mk_pos _startpos, e) )}
+| e1 = expr _2 = PLUS e2 = expr
+    {                               ( A.Plus (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = MULT e2 = expr
+    {                               ( A.Times (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = DIV e2 = expr
+    {                              ( A.Div (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = INTDIV e2 = expr
+    {                                 ( A.IntDiv (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = MOD e2 = expr
+    {                              ( A.Mod (mk_pos _startpos, e1, e2) )}
+| _1 = NOT e = expr
+    {                  ( A.Not (mk_pos _startpos, e) )}
+| e1 = expr _2 = AND e2 = expr
+    {                              ( A.And (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = OR e2 = expr
+    {                             ( A.Or (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = XOR e2 = expr
+    {                              ( A.Xor (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = IMPL e2 = expr
+    {                               ( A.Impl (mk_pos _startpos, e1, e2) )}
+| _1 = HASH _2 = LPAREN e = expr_list _4 = RPAREN
+    {                                        ( A.OneHot (mk_pos _startpos, e) )}
+| e1 = expr _2 = LT e2 = expr
+    {                             ( A.Lt (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = GT e2 = expr
+    {                             ( A.Gt (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = LTE e2 = expr
+    {                              ( A.Lte (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = GTE e2 = expr
+    {                              ( A.Gte (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = EQUALS e2 = expr
+    {                                 ( A.Eq (mk_pos _startpos, e1, e2) )}
+| e1 = expr _2 = NEQ e2 = expr
+    {                              ( A.Neq (mk_pos _startpos, e1, e2) )}
+| _1 = IF e1 = expr _3 = THEN e2 = expr _5 = ELSE e3 = expr
+    {    ( A.Ite (mk_pos _startpos, e1, e2, e3) )}
+| _1 = WITH e1 = expr _3 = THEN e2 = expr _5 = ELSE e3 = expr
+    {    ( A.With (mk_pos _startpos, e1, e2, e3) )}
+| e1 = expr _2 = WHEN e2 = expr
+    {                               ( A.When (mk_pos _startpos, e1, e2) )}
+| _1 = CURRENT e = expr
+    {                      ( A.Current (mk_pos _startpos, e) )}
+| _1 = CONDACT _2 = LPAREN e1 = expr _4 = COMMA s = ident _6 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expr__ _8 = RPAREN _9 = COMMA v = expr_list _11 = RPAREN
+    {let a =
+  let xs = xs0 in
+  (    ( xs ))
+in
+    ( A.Condact (mk_pos _startpos, e1, s, a, v) )}
+| _1 = PRE e = expr
+    {                  ( A.Pre (mk_pos _startpos, e) )}
+| _1 = FBY _2 = LPAREN e1 = expr _4 = COMMA s = NUMERAL _6 = COMMA e2 = expr _8 = RPAREN
+    {    ( A.Fby (mk_pos _startpos, e2, (int_of_string s), e2) )}
+| e1 = expr _2 = ARROW e2 = expr
+    {                                ( A.Arrow (mk_pos _startpos, e1, e2) )}
+| e = node_call
+    {                  ( e )}
+
+node_call_static_param:
+| t = lustre_type
+    {                    ( t )}
+
+node_call:
+| s = ident _2 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expr__ _4 = RPAREN
+    {let a =
+  let xs = xs0 in
+  (    ( xs ))
+in
+    ( A.Call (mk_pos _startpos, s, a) )}
+| s = ident p = tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_node_call_static_param_ _3 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expr__ _5 = RPAREN
+    {let a =
+  let xs = xs0 in
+  (    ( xs ))
+in
+    ( A.CallParam (mk_pos _startpos, s, p, a) )}
+
+expr_list:
+| l = separated_nonempty_list_COMMA_expr_
+    {                                                    ( l )}
+
+array_slice:
+| il = expr _2 = DOTDOT iu = expr
+    {                                          ( il, iu )}
+
+array_slice_list:
+| l = separated_nonempty_list_COMMA_array_slice_
+    {                                                                  ( l )}
+
+record_field_assign:
+| s = ident _2 = EQUALS e = expr
+    {                                                 ( (s, e) )}
+
+lustre_type_list:
+| l = separated_nonempty_list_COMMA_lustre_type_
+    {                                                    ( l )}
+
+const_typed_idents:
+| o = boption_CONST_ l = typed_idents
+    {    ( List.map (function (e, t) -> (e, t, o)) l )}
+
+boption_CONST_:
+| 
+    {    ( false )}
+| _1 = CONST
+    {    ( true )}
+
+clock_expr:
+| c = ident
+    {              ( A.ClockPos c )}
+| _1 = NOT c = ident
+    {                   ( A.ClockNeg c )}
+| _1 = NOT _2 = LPAREN c = ident _4 = RPAREN
+    {                                   ( A.ClockNeg c )}
+| _1 = TRUE
+    {         ( A.ClockTrue )}
+
+ident:
+| s = SYM
+    {               ( I.mk_string_ident s )}
+
+typed_ident:
+| s = ident _2 = COLON t = lustre_type
+    {                                               ( (s, t) )}
+
+ident_list:
+| l = separated_nonempty_list_COMMA_ident_
+    {                                              ( l )}
+
+typed_idents:
+| l = separated_nonempty_list_COMMA_ident_ _2 = COLON t = lustre_type
+    {    ( List.map (function e -> (e, t)) l )}
+
+tlist_tail_SEMICOLON_RPAREN_typed_idents_:
+| x = typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
+    {                                      ( [ x ] )}
+| x = typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_typed_idents_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RPAREN_const_typed_idents_:
+| x = const_typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
+    {                                      ( [ x ] )}
+| x = const_typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_const_typed_idents_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RPAREN_const_clocked_typed_idents_:
+| x = const_clocked_typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
+    {                                      ( [ x ] )}
+| x = const_clocked_typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_const_clocked_typed_idents_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RPAREN_clocked_typed_idents_:
+| x = clocked_typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
+    {                                      ( [ x ] )}
+| x = clocked_typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_clocked_typed_idents_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RPARAMBRACKET_static_param_:
+| x = static_param _2 = option_SEMICOLON_ _3 = RPARAMBRACKET
+    {                                      ( [ x ] )}
+| x = static_param _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPARAMBRACKET_static_param_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RPARAMBRACKET_node_call_static_param_:
+| x = node_call_static_param _2 = option_SEMICOLON_ _3 = RPARAMBRACKET
+    {                                      ( [ x ] )}
+| x = node_call_static_param _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPARAMBRACKET_node_call_static_param_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RCURLYBRACKET_typed_idents_:
+| x = typed_idents _2 = option_SEMICOLON_ _3 = RCURLYBRACKET
+    {                                      ( [ x ] )}
+| x = typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RCURLYBRACKET_typed_idents_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RCURLYBRACKET_record_field_assign_:
+| x = record_field_assign _2 = option_SEMICOLON_ _3 = RCURLYBRACKET
+    {                                      ( [ x ] )}
+| x = record_field_assign _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RCURLYBRACKET_record_field_assign_
+    {    ( x :: xs )}
+
+tlist_LPAREN_SEMICOLON_RPAREN_typed_idents_:
+| _1 = LPAREN l = tlist_tail_SEMICOLON_RPAREN_typed_idents_
+    {                                                   ( l )}
+| _1 = LPAREN _2 = RPAREN
+    {                     ( [ ] )}
+
+tlist_LPAREN_SEMICOLON_RPAREN_const_clocked_typed_idents_:
+| _1 = LPAREN l = tlist_tail_SEMICOLON_RPAREN_const_clocked_typed_idents_
+    {                                                   ( l )}
+| _1 = LPAREN _2 = RPAREN
+    {                     ( [ ] )}
+
+tlist_LPAREN_SEMICOLON_RPAREN_clocked_typed_idents_:
+| _1 = LPAREN l = tlist_tail_SEMICOLON_RPAREN_clocked_typed_idents_
+    {                                                   ( l )}
+| _1 = LPAREN _2 = RPAREN
+    {                     ( [ ] )}
+
+tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_static_param_:
+| _1 = LPARAMBRACKET l = tlist_tail_SEMICOLON_RPARAMBRACKET_static_param_
+    {                                                   ( l )}
+| _1 = LPARAMBRACKET _2 = RPARAMBRACKET
+    {                     ( [ ] )}
+
+tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_node_call_static_param_:
+| _1 = LPARAMBRACKET l = tlist_tail_SEMICOLON_RPARAMBRACKET_node_call_static_param_
+    {                                                   ( l )}
+| _1 = LPARAMBRACKET _2 = RPARAMBRACKET
+    {                     ( [ ] )}
+
+tlist_LCURLYBRACKET_SEMICOLON_RCURLYBRACKET_typed_idents_:
+| _1 = LCURLYBRACKET l = tlist_tail_SEMICOLON_RCURLYBRACKET_typed_idents_
+    {                                                   ( l )}
+| _1 = LCURLYBRACKET _2 = RCURLYBRACKET
+    {                     ( [ ] )}
+
+tlist_LCURLYBRACKET_SEMICOLON_RCURLYBRACKET_record_field_assign_:
+| _1 = LCURLYBRACKET l = tlist_tail_SEMICOLON_RCURLYBRACKET_record_field_assign_
+    {                                                   ( l )}
+| _1 = LCURLYBRACKET _2 = RCURLYBRACKET
+    {                     ( [ ] )}
+
+option_node_sep_:
+| 
+    {    ( None )}
+| x = node_sep
+    {    ( Some x )}
+
+option_STRUCT_:
+| 
+    {    ( None )}
+| x = STRUCT
+    {    ( Some x )}
+
+option_SEMICOLON_:
+| 
+    {    ( None )}
+| x = SEMICOLON
+    {    ( Some x )}
+
+nonempty_list_var_decl_:
+| x = var_decl
+    {    ( [ x ] )}
+| x = var_decl xs = nonempty_list_var_decl_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_struct_item_:
+| x = struct_item
+    {    ( [ x ] )}
+| x = struct_item _2 = COMMA xs = separated_nonempty_list_COMMA_struct_item_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_lustre_type_:
+| x = lustre_type
+    {    ( [ x ] )}
+| x = lustre_type _2 = COMMA xs = separated_nonempty_list_COMMA_lustre_type_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_ident_:
+| x = ident
+    {    ( [ x ] )}
+| x = ident _2 = COMMA xs = separated_nonempty_list_COMMA_ident_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_expr_:
+| x = expr
+    {    ( [ x ] )}
+| x = expr _2 = COMMA xs = separated_nonempty_list_COMMA_expr_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_array_slice_:
+| x = array_slice
+    {    ( [ x ] )}
+| x = array_slice _2 = COMMA xs = separated_nonempty_list_COMMA_array_slice_
+    {    ( x :: xs )}
+
+clocked_typed_idents:
+| l = typed_idents
+    {    ( List.map (function (e, t) -> (mk_pos _startpos, e, t, A.ClockTrue)) l )}
+| l = typed_idents _2 = WHEN c = clock_expr
+    {    ( List.map (function (e, t) -> (mk_pos _startpos, e, t, c)) l )}
+| _1 = LPAREN l = typed_idents _3 = RPAREN _4 = WHEN c = clock_expr
+    {    ( List.map (function (e, t) -> (mk_pos _startpos, e, t, c)) l )}
+| _1 = LPAREN h = typed_idents _3 = SEMICOLON l = tlist_tail_SEMICOLON_RPAREN_typed_idents_ _5 = WHEN c = clock_expr
+    {    ( List.map
+        (function (e, t) -> (mk_pos _startpos, e, t, c)) 
+        (h @ (List.flatten l)) )}
+
+const_clocked_typed_idents:
+| l = const_typed_idents
+    {    ( List.map
+        (function (e, t, o) -> (mk_pos _startpos, e, t, A.ClockTrue, o)) 
+        l )}
+| l = const_typed_idents _2 = WHEN c = clock_expr
+    {    ( List.map
+        (function (e, t, o) -> (mk_pos _startpos, e, t, c, o)) 
+        l )}
+| _1 = LPAREN l = const_typed_idents _3 = RPAREN _4 = WHEN c = clock_expr
+    {    ( List.map
+        (function (e, t, o) -> (mk_pos _startpos, e, t, c, o)) 
+        l )}
+| _1 = LPAREN h = const_typed_idents _3 = SEMICOLON l = tlist_tail_SEMICOLON_RPAREN_const_typed_idents_ _5 = WHEN c = clock_expr
+    {    ( List.map (function (e, t, o) -> (mk_pos _startpos, e, t, c, o)) (h @ (List.flatten l)) )}
+
+one_index:
+| _1 = DOT i = ident
+    {     ( A.FieldIndex (mk_pos _startpos, i) )}
+| _1 = LSQBRACKET i = ident _3 = RSQBRACKET
+    {     ( A.VarIndex (mk_pos _startpos, i) )}
+| _1 = LSQBRACKET s = NUMERAL _3 = RSQBRACKET
+    {     ( A.NumIndex (mk_pos _startpos, int_of_string s) )}
+
+%%
+
+
+
