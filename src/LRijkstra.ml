@@ -12,11 +12,11 @@ module W = Terminal.Word(struct end) (* TEMPORARY wrap side effect in functor *)
    separate module. We keep them here, for the moment, because they are not
    used anywhere else. *)
 
-(* [reductions s z] is the list of reductions permitted in state [s] when the
-   lookahead symbol is [z]. This is a list of zero or one elements. This does
-   not take default reductions into account. *)
+(* [reductions_on s z] is the list of reductions permitted in state [s] when
+   the lookahead symbol is [z]. This is a list of zero or one elements. This
+   does not take default reductions into account. *)
 
-let reductions s z : Production.index list =
+let reductions_on s z : Production.index list =
   try
     TerminalMap.find z (Lr1.reductions s)
   with Not_found ->
@@ -31,7 +31,7 @@ let has_reduction s z : Production.index option =
   | Some (prod, _) ->
       Some prod
   | None ->
-      match reductions s z with
+      match reductions_on s z with
       | prod :: prods ->
           assert (prods = []);
           Some prod
@@ -59,7 +59,7 @@ let causes_an_error s z : bool =
   | Some _ ->
       false
   | None ->
-      reductions s z = [] &&
+      reductions_on s z = [] &&
       not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
 
 (* [foreach_terminal f] applies the function [f] to every terminal symbol in
