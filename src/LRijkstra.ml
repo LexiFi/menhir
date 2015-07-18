@@ -786,14 +786,12 @@ let () =
   ignore f
 
 (* TODO:
-  in E, try a larger array and/or combine nt/a/z in just one word
+  can we store fewer facts when we hit a default reduction?
   subject to --coverage
   write to .coverage file
   remove Coverage, remove CompletedNatWitness?, revert Fix
   collect performance data, correlated with star size and alphabet size; draw a graph
   count the unreachable states and see if they are numerous in practice
-  search github for .mly files (batch search? unique files?)
-    extension:mly in:path size:>10000 mly
 *)
 
 (* One could approach the problem just by exploring the (infinite) graph whose
