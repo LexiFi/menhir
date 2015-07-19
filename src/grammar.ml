@@ -289,7 +289,12 @@ module Terminal = struct
       intern (String.make 1 (Char.chr t))
 
     let append w1 w2 =
-      intern (w1 ^ w2)
+      if String.length w1 = 0 then
+        w2
+      else if String.length w2 = 0 then
+        w1
+      else
+        intern (w1 ^ w2)
 
     let length =
       String.length
