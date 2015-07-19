@@ -252,19 +252,17 @@ let new_intern capacity =
     let hash = Hashtbl.hash
   end) in
   let table = H.create capacity in
-  let c = ref 0
-  and n = ref 0 in
+  let c = ref 0 in
   let intern s =
     c := !c + 1;
     try
       H.find table s
     with Not_found ->
-      n := !n + 1;
       H.add table s s;
       s
   and verbose () =
     Printf.fprintf stderr
       "%d calls to intern; %d unique strings.\n%!"
-      !c !n
+      !c (H.length table)
   in
   intern, verbose
