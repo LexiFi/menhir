@@ -159,6 +159,15 @@ type suggestion =
 let suggestion =
   ref SuggestNothing
 
+let ignored_unused_tokens =
+  ref StringSet.empty
+
+let ignore_unused_token t =
+  ignored_unused_tokens := StringSet.add t !ignored_unused_tokens
+
+let ignore_all_unused_tokens =
+  ref false
+
 let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
@@ -208,6 +217,8 @@ let options = Arg.align [
   "--table", Arg.Set table, " Use the table-based back-end";
   "--timings", Arg.Set timings, " Display internal timings";
   "--trace", Arg.Set trace, " Include tracing instructions in the generated code";
+  "--unused-token", Arg.String ignore_unused_token, "<token> Do not warn that <token> is unused";
+  "--unused-tokens", Arg.Set ignore_all_unused_tokens, " Do not warn about any unused token";
   "--version", Arg.Set version, " Show version number and exit";
   "-b", Arg.Set_string base, "<basename> Synonymous with --base <basename>";
   "-lg", Arg.Set_int logG, " Synonymous with --log-grammar";
@@ -389,3 +400,8 @@ let strict =
 let fixedexc =
   !fixedexc
 
+let ignored_unused_tokens =
+  !ignored_unused_tokens
+
+let ignore_all_unused_tokens =
+  !ignore_all_unused_tokens

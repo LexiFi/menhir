@@ -163,3 +163,13 @@ val strict: bool
 
 val fixedexc: bool
 
+(* This is a set of tokens which may be unused and about which we should not
+   emit a warning. *)
+
+val ignored_unused_tokens: StringSet.t
+
+(* This flag supersedes the set [ignored_unused_tokens]. If it is set, then
+   we should not emit a warning about any unused tokens. *)
+
+val ignore_all_unused_tokens: bool
+
