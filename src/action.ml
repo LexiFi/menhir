@@ -164,7 +164,6 @@ let pkeywords action =
 let print f action = 
   let module P = Printer.Make (struct let f = f 
 				      let locate_stretches = None 
-				      let raw_stretch_action = false
 			       end) 
   in
     P.expr action.expr

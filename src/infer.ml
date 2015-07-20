@@ -183,7 +183,6 @@ let write grammar () =
   let module P = Printer.Make (struct
     let f = ml
     let locate_stretches = Some mlname
-    let raw_stretch_action = false
   end) in
   P.program (program grammar);
   close_out ml

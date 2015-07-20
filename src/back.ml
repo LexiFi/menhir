@@ -19,7 +19,6 @@ let write program =
 	   [menhir foo/bar.mly] and [cd foo && menhir bar.mly] will produce
 	   different files. Nevertheless, this seems useful/reasonable. *)
 	Some filename
-    let raw_stretch_action = false
   end) in
   P.program program
 
