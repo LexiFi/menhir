@@ -18,25 +18,13 @@ let from_stretch s =
     pkeywords = s.Stretch.stretch_keywords;
   }
 
-let parenthesize s = 
-  if String.length s < 2 || s.[0] <> '(' || s.[String.length s - 1] <> ')' then
-    "(" ^ s ^ ")"
-  else 
-    s
-
-let rec parenthesize_stretch = function
-  | IL.ETextual s ->
-    IL.ETextual { s with
-      Stretch.stretch_raw_content = parenthesize s.Stretch.stretch_raw_content;
-      Stretch.stretch_content = parenthesize s.Stretch.stretch_content
-    }
-  | IL.ELet (es, e) ->
-      IL.ELet (List.map (fun (p, e) -> (p, parenthesize_stretch e)) es, parenthesize_stretch e)
-  | x -> x
-
 let compose x a1 a2 = 
+  (* 2015/07/20: there used to be a call to [parenthesize_stretch] here,
+     which would insert parentheses around every stretch in [a1]. This is
+     not necessary, as far as I can see, since every stretch that represents
+     a semantic action is already parenthesized by the lexer. *)
   {
-    expr      = IL.ELet ([ IL.PVar x, parenthesize_stretch a1.expr ], a2.expr);
+    expr      = IL.ELet ([ IL.PVar x, a1.expr ], a2.expr);
     keywords  = Keyword.KeywordSet.union a1.keywords a2.keywords;
     filenames = a1.filenames @ a2.filenames;
     pkeywords = a1.pkeywords @ a2.pkeywords;
