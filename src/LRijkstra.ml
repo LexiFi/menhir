@@ -920,6 +920,8 @@ let () =
   remove Coverage, remove CompletedNatWitness?, revert Fix
   collect performance data, correlated with star size and alphabet size; draw a graph
   count the unreachable states and see if they are numerous in practice
+  optionally report several ways of reaching an error in state s
+    (with different lookahead tokens) (report all of them?)
 *)
 
 (* One could approach the problem just by exploring the (infinite) graph whose
