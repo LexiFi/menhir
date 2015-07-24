@@ -706,6 +706,8 @@ let consequences fact =
            such symbols. Furthermore, we need the first symbol of [w.z] to
            satisfy the lookahead assumption [fact.lookahead], so the answer
            also depends on this assumption. *)
+        (* TEMPORARY it could be that the answer does not depend on [z]...
+           (default reduction) *)
         (**)
 
         foreach_terminal_not_causing_an_error s' (fun z ->
