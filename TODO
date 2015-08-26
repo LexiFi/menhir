@@ -94,6 +94,33 @@
   incompatible in principle with --explain. Modify the code to fail
   gracefully when the problem arises.
 
+* les positions fournies par menhir ne sont pas les mêmes fournies par
+  ocamlyacc (voir messages de Tiphaine Turpin à partir du 30/08/2011).
+  Est-ce un problème? Peut-on documenter quelles sont les
+  positions fournies par Menhir? En particulier, pour une production
+  vide, Menhir utilise _menhir_env.lexer.lex_start_p, c'est-à-dire le
+  début du dernier token lu par le lexer; en principe c'est le token
+  de lookahead donc ça va, mais ça pourrait donner un résultat bizarre
+  si on réduit par défaut une production vide (on a alors pour position
+  le début du token précédent?) (BUG?). Par ailleurs, il faut être
+  conscient que si l'action ocamllex se rappelle récursivement, alors
+  _menhir_env.lexer.lex_start_p n'est pas le début du token mais une
+  position quelque part à l'intérieur du token (e.g. après des espaces
+  blancs). SUGGESTION DE SOLUTION: au lieu de paires (startpos, endpos),
+  utiliser un type abstrait d'intervalles, avec un traitement particulier
+  de l'intervalle vide. (Voir mon message du 15/09/2011.)
+
+* Tirer au clair la sémantique des $startpos/$endpos sur les productions vides.
+    Jacques-Henri dit que $startpos devrait toujours être $endpos du symbole précédent plus les blancs,
+    et symétriquement pour $endpos. Mais pour implémenter ça il faut consulter la pile?
+  BUG: %inline ne préserve pas la sémantique de $startpos/$endpos.
+    C'est vrai pour les productions epsilon (forcément)
+    mais aussi pour des productions non-epsilon
+      car $startpos de la production inlinée est changée en $endpos(x) où x est le symbole précédent!
+  Si on gérait les positions par macro-expansion *avant* de faire l'inlining
+  alors la passe d'inlining n'aurait pas besoin de s'en occuper (et serait
+  correcte par construction).
+
 * Tenter une minimisation a posteriori de l'automate. Sur la grammaire
   OCaml on devrait retrouver l'automate LALR, non?
   Faire cette minimisation *après* la résolution des conflits afin que
@@ -136,33 +163,6 @@
   de l'expansion des non-terminaux paramétrés. Il suffirait de vérifier que
   les paramètres effectifs sont toujours des atomes (symboles terminaux ou
   non-terminaux), non? (Jacques-Henri.)
-
-* les positions fournies par menhir ne sont pas les mêmes fournies par
-  ocamlyacc (voir messages de Tiphaine Turpin à partir du 30/08/2011).
-  Est-ce un problème? Peut-on documenter quelles sont les
-  positions fournies par Menhir? En particulier, pour une production
-  vide, Menhir utilise _menhir_env.lexer.lex_start_p, c'est-à-dire le
-  début du dernier token lu par le lexer; en principe c'est le token
-  de lookahead donc ça va, mais ça pourrait donner un résultat bizarre
-  si on réduit par défaut une production vide (on a alors pour position
-  le début du token précédent?) (BUG?). Par ailleurs, il faut être
-  conscient que si l'action ocamllex se rappelle récursivement, alors
-  _menhir_env.lexer.lex_start_p n'est pas le début du token mais une
-  position quelque part à l'intérieur du token (e.g. après des espaces
-  blancs). SUGGESTION DE SOLUTION: au lieu de paires (startpos, endpos),
-  utiliser un type abstrait d'intervalles, avec un traitement particulier
-  de l'intervalle vide. (Voir mon message du 15/09/2011.)
-
-* Tirer au clair la sémantique des $startpos/$endpos sur les productions vides.
-    Jacques-Henri dit que $startpos devrait toujours être $endpos du symbole précédent plus les blancs,
-    et symétriquement pour $endpos. Mais pour implémenter ça il faut consulter la pile?
-  BUG: %inline ne préserve pas la sémantique de $startpos/$endpos.
-    C'est vrai pour les productions epsilon (forcément)
-    mais aussi pour des productions non-epsilon
-      car $startpos de la production inlinée est changée en $endpos(x) où x est le symbole précédent!
-  Si on gérait les positions par macro-expansion *avant* de faire l'inlining
-  alors la passe d'inlining n'aurait pas besoin de s'en occuper (et serait
-  correcte par construction).
 
 * En mode code on tire les tokens d'un lexbuf et l'utilisateur doit construire
   l'API moderne par `wrapping', s'il la souhaite. Mais en mode table l'API
