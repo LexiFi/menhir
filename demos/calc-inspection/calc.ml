@@ -105,6 +105,10 @@ module E =
     let terminal2token = terminal2token
   end)
 
+let print_explanation explanation =
+  (* TEMPORARY not satisfactory at all *)
+  P.print_item explanation.MenhirLib.ErrorReporting.item
+
 (* Initialize the lexer, and catch any exception raised by the lexer. *)
 
 let process (line : string) =
@@ -115,11 +119,13 @@ let process (line : string) =
   with
   | Lexer.Error msg ->
       Printf.fprintf stderr "%s%!" msg
-  | E.Error explanations ->
+  | E.Error ((startp, _), explanations) ->
       Printf.fprintf stderr
-        "At offset %d: syntax error.\n%!"
-        (Lexing.lexeme_start lexbuf);
-      List.iter P.print_item explanations
+        "At line %d, column %d: syntax error.\n"
+        startp.Lexing.pos_lnum
+        startp.Lexing.pos_cnum;
+      List.iter print_explanation explanations;
+      flush stderr
 
 (* The rest of the code is as in the [calc] demo. *)
 
