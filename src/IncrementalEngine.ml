@@ -175,6 +175,12 @@ module type INSPECTION = sig
 
   val incoming_symbol: 'a lr1state -> 'a symbol
 
+  (* [items s] is the set of the LR(0) items in the LR(0) core of the LR(1)
+     state [s]. This set is not epsilon-closed. This set is presented as a
+     list, in an arbitrary order. *)
+
+  val items: _ lr1state -> item list
+
   (* [lhs prod] is the left-hand side of the production [prod]. This is
      always a non-terminal symbol. *)
 
@@ -184,12 +190,6 @@ module type INSPECTION = sig
      a (possibly empty) sequence of (terminal or nonterminal) symbols. *)
 
   val rhs: production -> xsymbol list
-
-  (* [items s] is the set of the LR(0) items in the LR(0) core of the LR(1)
-     state [s]. This set is not epsilon-closed. This set is presented as a
-     list, in an arbitrary order. *)
-
-  val items: _ lr1state -> item list
 
   (* [nullable nt] tells whether the non-terminal symbol [nt] is nullable.
      That is, it is true if and only if this symbol produces the empty
