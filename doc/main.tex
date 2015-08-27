@@ -1833,6 +1833,8 @@ produces one \ocaml module, \texttt{Parser}, whose code resides in the file
 we assume that the grammar specification has just one start symbol
 \verb+main+, whose \ocaml type is \verb+thing+.
 
+% ------------------------------------------------------------------------------
+
 \subsection{Monolithic API}
 \label{sec:monolithic}
 
@@ -1884,6 +1886,8 @@ consult \sref{sec:qa}.)
 This API is ``monolithic'' in the sense that there is just one function, which
 does everything: it pulls tokens from the lexer, parses, and eventually
 returns a semantic value (or fails by throwing the exception \texttt{Error}).
+
+% ------------------------------------------------------------------------------
 
 \subsection{Incremental API}
 \label{sec:incremental}
@@ -1940,9 +1944,35 @@ to as \verb+MenhirInterpreter.result+, or
 \verb+Parser.MenhirInterpreter.result+, depending on which modules the user
 chooses to open.
 
+%% type token
+
+% Passons-le sous silence.
+
+%% type env
+
+\begin{verbatim}
+  type env
+\end{verbatim}
+
+The abstract type \verb+env+ represents the current state of the
+parser. (That is, it contains the current state and stack of the LR
+automaton.) Assuming that semantic values are immutable, it is a persistent
+data structure: it can be stored and used multiple times, if desired.
+
+%% type production
+
+\begin{verbatim}
+  type production
+\end{verbatim}
+
+The abstract type \verb+production+ represents a production of the grammar.
+
+%% type 'a result
+
 \begin{verbatim}
   type 'a result = private
     | InputNeeded of env
+    | Shifting of env * env * bool
     | AboutToReduce of env * production
     | HandlingError of env
     | Accepted of 'a
@@ -1961,6 +1991,12 @@ a semantic value.
 \verb+InputNeeded+ is an intermediate result. It means that the parser wishes
 to read one token before continuing.
 
+\verb+Shifting+ is an intermediate result. It means that the parser is taking
+a shift transition. It exposes the state of the parser before and after the
+transition. The Boolean parameter tells whether the parser intends to request
+a new token after this transition. (It always does, except when it is about to
+accept.)
+
 \verb+AboutToReduce+ is an intermediate result: it means that the parser is
 about to perform a reduction step. \verb+HandlingError+ is also an
 intermediate result: it means that the parser has detected an error and is
@@ -1970,20 +2006,7 @@ cases, the parser does not need more input. The parser suspends itself at this
 point only in order to give the user an opportunity to observe the parser's
 transitions and possibly handle errors in a different manner, if desired.
 
-\begin{verbatim}
-  type env
-\end{verbatim}
-
-The abstract type \verb+env+ represents the current state of the
-parser. (That is, it contains the current state and stack of the LR
-automaton.) Assuming that semantic values are immutable, it is a persistent
-data structure: it can be stored and used multiple times, if desired.
-
-\begin{verbatim}
-  type production
-\end{verbatim}
-
-The abstract type \verb+production+ represents a production of the grammar.
+%% val offer
 
 \begin{verbatim}
   val offer:
@@ -1999,6 +2022,8 @@ This function expects the previous result \verb+result+ as well as a new token
 result, which again can be an intermediate result or a final result. It does
 not raise any exception. (The exception \texttt{Error} is used only in the
 monolithic API.)
+
+%% val resume
 
 \begin{verbatim}
   val resume:
@@ -2017,12 +2042,95 @@ The incremental API subsumes the monolithic API. Indeed, \verb+main+ can be
 \verb+Incremental.main+, then calling \verb+offer+ and
 \verb+resume+ in a loop, until a final result is obtained.
 
-At this time, because the type \verb+env+ is opaque, the state of the parser
-cannot be inspected by the user. We plan to offer an inspection API in the
-near future.
+Although the type \verb+env+ is opaque, a parser state can be inspected via a
+few accessor functions, which we are about to describe. Before we do so, we
+give a few more type definitions.
 
-% TEMPORARY stack
-% TEMPORARY symbol
+%% type 'a lr1state
+
+\begin{verbatim}
+  type 'a lr1state
+\end{verbatim}
+
+The abstract type \verb+'a lr1state+ describes a (non-initial) state of the
+LR(1) automaton.
+%
+If \verb+s+ is such a state, then \verb+s+ should have at least one incoming
+transition, and all of its incoming transitions carry the same (terminal or
+non-terminal) symbol, say $A$. We say that $A$ is the \emph{incoming symbol}
+of the state~\verb+s+.
+%
+The index \verb+'a+ is the type of the semantic values associated with $A$.
+The role played by \verb+'a+ is clarified in the definition of the
+type \verb+element+, which follows.
+
+%% type element
+
+\begin{verbatim}
+  type element =
+    | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
+\end{verbatim}
+
+The type \verb+element+ describes one entry in the stack of the LR(1)
+automaton. In a stack element of the form \verb+Element (s, v, startp, endp)+,
+\verb+s+ is a (non-initial) state and \verb+v+ is a semantic value. The
+value~\verb+v+ is associated with the incoming symbol~$A$ of the
+state~\verb+s+. In other words, the value \verb+v+ was pushed onto the stack
+just before the state \verb+s+ was entered. Thus, for some type \verb+'a+, the
+state~\verb+s+ has type \verb+'a lr1state+ and the value~\verb+v+ has
+type~\verb+'a+. The positions \verb+startp+ and \verb+endp+ delimit the
+fragment of the input text that was reduced to the symbol $A$.
+
+In order to do anything useful with the value \verb+v+, one must gain
+information about the type \verb+'a+, by inspection of the state~\verb+s+. So
+far, the type \verb+'a lr1state+ is abstract, so there is no way of
+inspecting~\verb+s+. The inspection API (\sref{sec:inspection}) offers further
+tools for this purpose.
+
+%% type stack
+
+\begin{verbatim}
+  type stack =
+    element stream
+\end{verbatim}
+
+A parser stack can be viewed as a stream of elements, where the first element
+of the stream is the topmost element of the stack. (The type \verb+'a stream+
+is defined in the module \menhirlibgeneral.) % TEMPORARY export this HTML file
+This stream is empty if the parser is in an initial state, and non-empty otherwise.
+% (Which initial state? -- no way to know...)
+In the latter case, 
+the current state of the LR(1) automaton is found in the topmost stack element.
+
+%% val stack
+
+\begin{verbatim}
+  val stack: env -> stack
+\end{verbatim}
+
+The function \verb+stack+ offers a view of the parser's stack as a stream of
+elements. This stream is computed on-demand. (The internal representation of
+the stack may be different, so a conversion is necessary.) Invoking the
+function \verb+stack+, and demanding the next element of the stream, takes
+constant time.
+
+%% val positions
+
+\begin{verbatim}
+  val positions: env -> Lexing.position * Lexing.position
+\end{verbatim}
+
+The function \verb+positions+ returns the start and end positions of the
+current lookahead token. It is legal to invoke this function only after at
+least one token has been offered to the parser via \verb+offer+. In other
+words, it is illegal to invoke it in an initial state.
+
+% ------------------------------------------------------------------------------
+
+\subsection{Inspection API}
+\label{sec:inspection}
+
+To be written.
 
 % TEMPORARY document the inspection API
 % document the modules that use the inspection API: Printers, ErrorReporting

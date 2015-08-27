@@ -74,7 +74,7 @@ module type INCREMENTAL_ENGINE = sig
   (* An element is a pair of a non-initial state [s] and a semantic value [v]
      associated with the incoming symbol of this state. The idea is, the value
      [v] was pushed onto the stack just before the state [s] was entered. Thus,
-     for some type ['a], the type [s] has type ['a lr1state] and the value [v]
+     for some type ['a], the state [s] has type ['a lr1state] and the value [v]
      has type ['a]. In other words, the type [element] is an existential type. *)
 
   type element =
