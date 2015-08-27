@@ -163,7 +163,6 @@ module type INSPECTION = sig
   val compare_terminals: _ terminal -> _ terminal -> int
   val compare_nonterminals: _ nonterminal -> _ nonterminal -> int
   val compare_symbols: xsymbol -> xsymbol -> int
-  val compare_words: xsymbol list -> xsymbol list -> int
   val compare_productions: production -> production -> int
   val compare_items: item -> item -> int
 
