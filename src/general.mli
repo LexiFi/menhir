@@ -26,11 +26,6 @@ val uniq: ('a -> 'a -> int) -> 'a list -> 'a list
 
 val weed: ('a -> 'a -> int) -> 'a list -> 'a list
 
-(* If [cmp] is an ordering on elements, then [compare cmp] is the
-   lexicographic ordering on lists. *)
-
-val compare: ('a -> 'a -> int) -> 'a list -> 'a list -> int
-
 (* --------------------------------------------------------------------------- *)
 
 (* A stream is a list whose elements are produced on demand. *)
