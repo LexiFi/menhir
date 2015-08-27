@@ -2144,11 +2144,175 @@ words, it is illegal to invoke it in an initial state.
 \label{sec:inspection}
 
 If \oinspection is set, \menhir offers an inspection API in addition to the
-monolithic and incremental APIs.
+monolithic and incremental APIs. Like the incremental API, the inspection API
+is found in the sub-module \menhirinterpreter. It offers the following types
+and functions.
 
-% TEMPORARY document the inspection API
+%% type _ terminal
+
+The type \verb+'a terminal+ is a generalized algebraic data type (GADT). A
+value of type \verb+'a terminal+ represents a terminal symbol (without a
+semantic value). The index \verb+'a+ is the type of the semantic values
+associated with this symbol. For instance, if the grammar contains the
+declarations \verb+%token A+ and \verb+%token<int> B+, then the generated
+module \menhirinterpreter contains the following definition:
+%
+\begin{verbatim}
+  type _ terminal =
+  | T_A : unit terminal
+  | T_B : int terminal
+\end{verbatim}
+%
+The data constructors are named after the terminal symbols, prefixed with ``\verb+T_+''.
+
+%% type _ nonterminal
+
+The type \verb+'a nonterminal+ is also a GADT. A value of type
+\verb+'a nonterminal+ represents a nonterminal symbol (without a semantic value). The
+index \verb+'a+ is the type of the semantic values associated with this
+symbol. For instance, if \verb+main+ is the only nonterminal symbol,
+then the generated
+module \menhirinterpreter contains the following definition:
+%
+\begin{verbatim}
+  type _ nonterminal =
+  | N_main : thing nonterminal
+\end{verbatim}
+%
+The data constructors are named after the nonterminal symbols, prefixed with ``\verb+N_+''.
+
+%% type 'a symbol
+
+The type \verb+'a symbol+
+% (an algebraic data type)
+is the disjoint union of the types \verb+'a terminal+ and \verb+'a nonterminal+.
+In other words, a value of type \verb+'a symbol+ represents a terminal or nonterminal symbol (without
+a semantic value).
+This type is (always) defined as follows:
+%
+\begin{verbatim}
+  type 'a symbol =
+    | T : 'a terminal -> 'a symbol
+    | N : 'a nonterminal -> 'a symbol
+\end{verbatim}
+
+%% type xsymbol
+
+The type \verb+xsymbol+ is an existentially quantified version of the
+type \verb+'a symbol+. It is useful in situations where the index \verb+'a+ is
+not statically known. It is (always) defined as follows:
+%
+\begin{verbatim}
+  type xsymbol = 
+    | X : 'a symbol -> xsymbol
+\end{verbatim}
+
+%% type item
+
+The type \verb+item+ describes an LR(0) item, that is, a pair of a production
+\verb+prod+ and an index \verb+i+ into the right-hand side of this production.
+If the length of the right-hand side is \verb+n+, then \verb+i+ is
+comprised between 0 and \verb+n+, inclusive.
+
+\begin{verbatim}
+  type item =
+      production * int
+\end{verbatim}
+
+%% Comparison functions.
+
+The following functions implement total orderings on the types
+\verb+_ terminal+, \verb+_ nonterminal+, \verb+xsymbol+,
+\verb+production+, and \verb+item+.
+
+\begin{verbatim}
+  val compare_terminals: _ terminal -> _ terminal -> int
+  val compare_nonterminals: _ nonterminal -> _ nonterminal -> int
+  val compare_symbols: xsymbol -> xsymbol -> int
+  val compare_productions: production -> production -> int
+  val compare_items: item -> item -> int
+\end{verbatim}
+
+%% val incoming_symbol
+
+The function \verb+incoming_symbol+ maps a (non-initial) LR(1)
+state~\verb+s+ to its incoming symbol, that is, the symbol that the parser
+must recognize before it enters the state \verb+s+.
+%
+\begin{verbatim}
+  val incoming_symbol: 'a lr1state -> 'a symbol
+\end{verbatim}
+%
+This function can be used to gain access to the semantic value \verb+v+
+in a stack element \verb+Element (s, v, _, _)+. Indeed, by case analysis on the
+symbol \verb+incoming_symbol s+, one gains information about the type \verb+'a+,
+hence one obtains the ability to do something useful with the value~\verb+v+.
+
+%% val items
+
+The function \verb+items+ maps a (non-initial) LR(1) state~\verb+s+ to its
+LR(0) \emph{core}, that is, to the underlying set of LR(0) items. This set
+is represented as a list, whose elements appear in an arbitrary order. This
+set is \emph{not} closed under $\epsilon$-transitions.
+%
+\begin{verbatim}
+  val items: _ lr1state -> item list
+\end{verbatim}
+
+%% val lhs
+%% val rhs
+
+The functions \verb+lhs+ and \verb+rhs+ map a production \verb+prod+ to
+its left-hand side and right-hand side, respectively. The left-hand side
+is always a nonterminal symbol, hence always of the form \verb+N _+. The
+right-hand side is a (possibly empty) sequence of (terminal or nonterminal)
+symbols.
+%
+\begin{verbatim}
+  val lhs: production -> xsymbol
+  val rhs: production -> xsymbol list
+\end{verbatim}
+%
+
+%% val nullable
+
+The function \verb+nullable+, applied to a non-terminal symbol,
+tells whether this symbol is nullable. A nonterminal symbol is nullable if and
+only if it produces the empty word $\epsilon$.
+%
+\begin{verbatim}
+  val nullable: _ nonterminal -> bool
+\end{verbatim}
+
+%% val first
+%% val xfirst
+
+The function call \verb+first nt t+ tells whether the \emph{FIRST} set of the
+nonterminal symbol \verb+nt+ contains the terminal symbol \verb+t+. That is,
+it returns \verb+true+ if and only if \verb+nt+ produces a word that begins
+with \verb+t+. The function \verb+xfirst+ is identical to \verb+first+, except
+it expects a first argument of type \verb+xsymbol+ instead of \verb+_ terminal+.
+%
+\begin{verbatim}
+  val first: _ nonterminal -> _ terminal -> bool
+  val xfirst: xsymbol -> _ terminal -> bool
+\end{verbatim}
+
+%% val foreach_terminal
+%% val foreach_terminal_but_error
+
+The function \verb+foreach_terminal+ enumerates the terminal symbols, including the special symbol \error.
+The function \verb+foreach_terminal_but_error+ enumerates the terminal symbols, excluding \error.
+\begin{verbatim}
+  val foreach_terminal:           (xsymbol -> 'a -> 'a) -> 'a -> 'a
+  val foreach_terminal_but_error: (xsymbol -> 'a -> 'a) -> 'a -> 'a
+\end{verbatim}
+
+% TEMPORARY
 % document the modules that use the inspection API: Printers, ErrorReporting
+% document MenhirLib.General?
 % The directory \distrib{demos/calc-inspection} contains a demo that illustrates the use of the inspection API.
+% review it / clean it up!
 
 % ---------------------------------------------------------------------------------------------------------------------
 
