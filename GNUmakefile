@@ -154,7 +154,7 @@ check:
 RSYNC   := scp -p -C
 TARGET  := yquem.inria.fr:public_html/menhir/
 PAGE    := /home/fpottier/dev/page
-API     := convert.mli.html IncrementalEngine.ml.html
+API     := convert.mli.html IncrementalEngine.ml.html general.mli.html
 
 export:
 # Copier l'archive et la doc vers yquem.
