@@ -176,6 +176,12 @@ and use \ocamlbuild, which has built-in knowledge of \menhir. Using
 % in the toplevel context, but can change meaning when inserted into a local
 % context.
 
+\docswitch{\oinspection} This switch requires \otable. It causes \menhir to generate
+not only the monolithic and incremental APIs (\sref{sec:monolithic},
+\sref{sec:incremental}), but also the inspection API (\sref{sec:inspection}).
+Activating this switch causes a few more tables to be produced, resulting in
+somewhat larger code size.
+
 \docswitch{\ointerpret} This switch causes \menhir to act as an interpreter,
 rather than as a compiler. No \ocaml code is generated. Instead, \menhir
 reads sentences off the standard input channel, parses them, and displays
@@ -296,6 +302,9 @@ above, help do this.
 
 The code-based back-end compiles the LR automaton directly into a nest of
 mutually recursive \ocaml functions. In that case, \menhirlib is not required.
+
+The incremental API (\sref{sec:incremental}) and the inspection API
+(\sref{sec:inspection}) are made available only by the table-based back-end.
 
 \docswitch{\otimings} This switch causes internal timing information to
 be sent to the standard error channel.
@@ -2134,7 +2143,8 @@ words, it is illegal to invoke it in an initial state.
 \subsection{Inspection API}
 \label{sec:inspection}
 
-To be written.
+If \oinspection is set, \menhir offers an inspection API in addition to the
+monolithic and incremental APIs.
 
 % TEMPORARY document the inspection API
 % document the modules that use the inspection API: Printers, ErrorReporting
