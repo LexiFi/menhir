@@ -13,10 +13,6 @@
 \input{macros}
 \input{version}
 
-% TEMPORARY indiquer que le comportement par défaut (en l'absence
-% de --only-tokens ou --external-tokens) est d'engendrer la déf.
-% du type token
-
 % ---------------------------------------------------------------------------------------------------------------------
 % Headings.
 
@@ -1836,19 +1832,48 @@ channel.
 When \menhir processes a grammar specification, say \texttt{parser.mly}, it
 produces one \ocaml module, \texttt{Parser}, whose code resides in the file
 \texttt{parser.ml} and whose signature resides in the file
-\texttt{parser.mli}. We now review this signature.
-We assume that the grammar specification has just one start symbol
+\texttt{parser.mli}. We now review this signature. For simplicity,
+we assume that the grammar specification has just one start symbol
 \mystartsymbol, whose \ocaml type is \mystartsymboltype. 
-
-% On passe sous silence la définition du type token, qui peut être absente
-% ou présente, et est expliquée ailleurs.
 
 \subsection{Monolithic API}
 \label{sec:monolithic}
 
-The monolithic API consists in just one parsing function, named after the
-start symbol. The generated file \texttt{parser.mli} contains the following
-declaration:
+The monolithic API defines the type \verb+token+, the exception \verb+Error+,
+and the parsing function \verb+main+, named after the start symbol of the
+grammar.
+
+%% type token
+
+The type \verb+token+ is an algebraic data type. A value of type \verb+token+
+represents a terminal symbol and its semantic value. For instance, if the
+grammar contains the declarations \verb+%token A+ and \verb+%token<int> B+,
+then the generated file \texttt{parser.mli} contains the following definition:
+\begin{verbatim}
+  type token =
+  | A
+  | B of int
+\end{verbatim}
+%
+If \oonlytokens is specified on the command line, the type \verb+token+ is
+generated, and the rest is omitted. On the contrary, if \oexternaltokens is
+used, the type \verb+token+ is omitted, but the rest (described below) is
+generated.
+
+%% exception Error
+
+The exception \verb+Error+ carries no argument. It is raised by the parsing
+function \verb+main+ (described below) when a syntax error is detected.
+%
+\begin{verbatim}
+  exception Error
+\end{verbatim}
+
+%% val main
+
+Next comes one parsing function for each start symbol of the grammar. Here, we
+have assumed that there is one start symbol, named \verb+main+, so the
+generated file \texttt{parser.mli} contains the following declaration:
 \begin{verbatim}
   val main: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> thing
 \end{verbatim}
