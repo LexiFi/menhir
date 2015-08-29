@@ -1,4 +1,16 @@
-* Gabriel veut inclure MenhirLib dans le parser engendré
+* BUG dans ErrorReporting si l'erreur se produit dans l'état
+  initial. Pénible que l'API d'inspection ne donne pas accès
+  à l'état courant lorsque la pile est vide (état initial donc).
+  Pourrait-on exposer cet état? Polymorphe? incoming_symbol
+  devrait alors produit une option. Et le cas Nil du type
+  stream devrait contenir l'état initial...
+  attention, car si on lui applique la fonction items, on va
+  obtenir un item spécial S' -> S # qui va poser problème.
+  Exposer l'état initial avec un type différent lr1initial?
+  De toute façon il faudra compliquer la notion de explanation
+  qui ne pourra plus toujours être basée sur un item...
+
+* Gabriel veut pouvoir inclure MenhirLib dans le parser engendré
 
 * gros BUG à corriger: il ne faut pas exiger le prochain token
   AVANT une réduction par défaut. Il faut suivre ocamlyacc et
