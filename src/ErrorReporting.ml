@@ -3,18 +3,18 @@
 
 type ('item, 'symbol) explanation = {
 
-  (* An explanation is based on an item. *)
+  (* An explanation is based on an LR(0) item. *)
   item: 'item;
 
   (* A past. This is a non-empty sequence of (terminal and non-terminal)
      symbols, each of which corresponds to a range of the input file. These
      symbols correspond to the first half (up to the bullet) of the item's
-     right-hand side. In short, they represent what we have recognized in
-     the recent past. *)
+     right-hand side. In short, they represent what (we think) we have
+     recognized in the recent past. *)
   past: ('symbol * Lexing.position * Lexing.position) list;
 
   (* A future. This is a non-empty sequence of (terminal and non-terminal)
-     symbols These symbols correspond to the second half (after the bullet)
+     symbols. These symbols correspond to the second half (after the bullet)
      of the item's right-hand side. In short, they represent what we expect
      to recognize in the future, if this item is a good prediction. *)
   future: 'symbol list;
