@@ -53,7 +53,7 @@ module Make
     match Lazy.force (stack env) with
     | Nil ->
         (* If we get here, then the stack is empty, which means the parser
-           is an initial state. This should not happen. *)
+           is in an initial state. This should not happen. *)
         invalid_arg "items_current" (* TEMPORARY it DOES happen! *)
     | Cons (Element (current, _, _, _), _) ->
         (* Extract the current state out of the top stack element, and
@@ -154,7 +154,7 @@ module Make
      important because the position of the dummy token may end up in
      the explanations that we produce. *)
 
-  let investigate pos (result : _ result) =
+  let investigate pos (result : _ result) : explanation list =
     weed compare_explanations (
       foreach_terminal_but_error (fun symbol explanations ->
         match symbol with
@@ -226,5 +226,8 @@ module Make
        So, [start] must be [InputNeeded _]. *)
     assert (match start with InputNeeded _ -> true | _ -> false);
     loop (wrap lexer lexbuf) { checkpoint = start; current = start }
+
+  (* TEMPORARY could also publish a list of the terminal symbols that
+     do not cause an error *)
 
 end
