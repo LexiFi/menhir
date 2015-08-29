@@ -1,31 +1,3 @@
-(* An explanation is a description of what the parser has recognized in the
-   recent past and what it expects next. *)
-
-type ('item, 'symbol) explanation = {
-
-  (* An explanation is based on an LR(0) item. *)
-  item: 'item;
-
-  (* A past. This is a non-empty sequence of (terminal and non-terminal)
-     symbols, each of which corresponds to a range of the input file. These
-     symbols correspond to the first half (up to the bullet) of the item's
-     right-hand side. In short, they represent what (we think) we have
-     recognized in the recent past. *)
-  past: ('symbol * Lexing.position * Lexing.position) list;
-
-  (* A future. This is a non-empty sequence of (terminal and non-terminal)
-     symbols. These symbols correspond to the second half (after the bullet)
-     of the item's right-hand side. In short, they represent what we expect
-     to recognize in the future, if this item is a good prediction. *)
-  future: 'symbol list;
-
-  (* A goal. This is a non-terminal symbol. It corresponds to the item's
-     left-hand side. In short, it represents the reduction that we will
-     be able to perform if we successfully recognize this future. *)
-  goal: 'symbol
-
-}
-
 module Make
   (I : IncrementalEngine.EVERYTHING)
   (User : sig
@@ -44,6 +16,32 @@ module Make
   open I
   open User
 
+  (* ------------------------------------------------------------------------ *)
+
+  (* Explanations. *)
+
+  type explanation = {
+    item: item;
+    past: (xsymbol * Lexing.position * Lexing.position) list
+  }
+
+  let item explanation =
+    explanation.item
+
+  let past explanation =
+    explanation.past
+
+  let future explanation =
+    let prod, index = explanation.item in
+    let rhs = rhs prod in
+    drop index rhs
+
+  let goal explanation =
+    let prod, _ = explanation.item in
+    lhs prod
+
+  (* ------------------------------------------------------------------------ *)
+
   (* [items_current env] assumes that [env] is not an initial state (which
      implies that the stack is non-empty). Under this assumption, it extracts
      the automaton's current state, i.e., the LR(1) state found in the top
@@ -56,7 +54,7 @@ module Make
     | Nil ->
         (* If we get here, then the stack is empty, which means the parser
            is an initial state. This should not happen. *)
-        invalid_arg "items_current"
+        invalid_arg "items_current" (* TEMPORARY it DOES happen! *)
     | Cons (Element (current, _, _, _), _) ->
         (* Extract the current state out of the top stack element, and
            convert it to a set of LR(0) items. Returning a set of items
@@ -126,13 +124,12 @@ module Make
             let rhs = rhs prod in
             {
               item = item;
-              past = List.rev (marry (List.rev (take index rhs)) stack);
-              future = drop index rhs;
-              goal = lhs prod
+              past = List.rev (marry (List.rev (take index rhs)) stack)
             } :: explanations
           else
             explanations
         ) explanations (items_current env)
+          (* TEMPORARY [env] may be an initial state! violating [item_current]'s precondition *)
     | AboutToReduce _ ->
         (* The parser wishes to reduce. Just follow. *)
         investigate t (resume result) explanations
@@ -188,7 +185,7 @@ module Make
      this state and analyzes it in order to produce a meaningful
      diagnostic. *)
 
-  exception Error of (Lexing.position * Lexing.position) * (item, xsymbol) explanation list
+  exception Error of (Lexing.position * Lexing.position) * explanation list
 
   (* TEMPORARY why loop-style? we should offer a simplified incremental API *)
 

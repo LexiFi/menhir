@@ -18,8 +18,9 @@ module E =
     (CalcErrorReporting)
 
 let print_explanation explanation =
-  (* TEMPORARY not satisfactory at all *)
-  P.print_item explanation.MenhirLib.ErrorReporting.item
+  (* not printing positions in the past, as they are hard to show in a
+     meaningful way in text mode *)
+  P.print_item (E.item explanation)
 
 (* Initialize the lexer, and catch any exception raised by the lexer. *)
 
