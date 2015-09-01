@@ -1,40 +1,40 @@
-* BUG dans ErrorReporting si l'erreur se produit dans l'état
-  initial. Pénible que l'API d'inspection ne donne pas accès
-  à l'état courant lorsque la pile est vide (état initial donc).
-  Pourrait-on exposer cet état? Polymorphe? incoming_symbol
+* BUG dans ErrorReporting si l'erreur se produit dans l'Ã©tat
+  initial. PÃ©nible que l'API d'inspection ne donne pas accÃ¨s
+  Ã  l'Ã©tat courant lorsque la pile est vide (Ã©tat initial donc).
+  Pourrait-on exposer cet Ã©tat? Polymorphe? incoming_symbol
   devrait alors produit une option. Et le cas Nil du type
-  stream devrait contenir l'état initial...
+  stream devrait contenir l'Ã©tat initial...
   attention, car si on lui applique la fonction items, on va
-  obtenir un item spécial S' -> S # qui va poser problème.
-  Exposer l'état initial avec un type différent lr1initial?
-  De toute façon il faudra compliquer la notion de explanation
-  qui ne pourra plus toujours être basée sur un item...
+  obtenir un item spÃ©cial S' -> S # qui va poser problÃ¨me.
+  Exposer l'Ã©tat initial avec un type diffÃ©rent lr1initial?
+  De toute faÃ§on il faudra compliquer la notion de explanation
+  qui ne pourra plus toujours Ãªtre basÃ©e sur un item...
 
-* Gabriel veut pouvoir inclure MenhirLib dans le parser engendré
+* Gabriel veut pouvoir inclure MenhirLib dans le parser engendrÃ©
 
-* gros BUG à corriger: il ne faut pas exiger le prochain token
-  AVANT une réduction par défaut. Il faut suivre ocamlyacc et
-  bison. Réfléchir... et corriger les deux back-ends. Attention
+* gros BUG Ã  corriger: il ne faut pas exiger le prochain token
+  AVANT une rÃ©duction par dÃ©faut. Il faut suivre ocamlyacc et
+  bison. RÃ©flÃ©chir... et corriger les deux back-ends. Attention
   toutefois, c'est un changement incompatible. Option de ligne
   de commande?
-  Réfléchir à l'impact sur les positions.
+  RÃ©flÃ©chir Ã  l'impact sur les positions.
   Il faut aussi revisiter la notion de conflit end-of-stream.
-  - si réduction par défaut, alors pas de conflit possible!
-  - si conflit, alors pourquoi on le résoud en éliminant la
-    réduction sur #? on pourrait faire aussi le choix opposé,
-    à savoir éliminer toutes les autres actions. Que fait
+  - si rÃ©duction par dÃ©faut, alors pas de conflit possible!
+  - si conflit, alors pourquoi on le rÃ©soud en Ã©liminant la
+    rÃ©duction sur #? on pourrait faire aussi le choix opposÃ©,
+    Ã  savoir Ã©liminer toutes les autres actions. Que fait
     ocamlyacc?
 
 * autoriser %token FOO "foo"
   pour pouvoir afficher les tokens sous forme plus lisible
-  et auto-générer une fonction (ou une table) print_terminal
+  et auto-gÃ©nÃ©rer une fonction (ou une table) print_terminal
 
 * autoriser %token FOO (unused)
-  (syntaxe concrète à déterminer)
-  équivalent à --unused-token FOO sur la ligne de commande.
+  (syntaxe concrÃ¨te Ã  dÃ©terminer)
+  Ã©quivalent Ã  --unused-token FOO sur la ligne de commande.
 
 * BUG: --infer does not work when a non-terminal begins
-  with a lowercase letter (Maxime Dénès).
+  with a lowercase letter (Maxime DÃ©nÃ¨s).
 
 * bench/Makefile no longer works on my Mac? (egrep problem)
 
@@ -84,70 +84,70 @@
   between 4.01.0 and 4.02.1. Use the tag last309 for this purpose,
   or the master branch.
 
-* Suite des patchs de Frédéric Bour.
-    API d'inspection complète.
-      Exposer le nombre d'états (pour la mémoisation) et une conversion état -> entier.
+* Suite des patchs de FrÃ©dÃ©ric Bour.
+    API d'inspection complÃ¨te.
+      Exposer le nombre d'Ã©tats (pour la mÃ©moisation) et une conversion Ã©tat -> entier.
       Idem pour les productions.
       Fonctions d'affichage pour les types terminal, nonterminal, etc.?
       Fonctions d'isomorphisme entre token et 'a terminal * 'a?
     Librairie(s) pour la gestion des erreurs.
-    Librairie pour la complétion du parsing.
+    Librairie pour la complÃ©tion du parsing.
       Need a way of feeding the parser a nonterminal symbol.
       Or a way of applying a semantic action to a vector of semantic values.
 
 * Meilleurs messages d'erreur de syntaxe.
-    Revenir en arrière après une erreur, car l'erreur
-    n'est détectée qu'après quelques réductions. Une fois que l'on est
-    revenu, on peut examiner les items de l'état courant et donner des
-    positions de début d'item qui devraient être intéressantes.    
-  Possibilité de coloriser ce qu'on a lu en indiquant ce qu'on a compris
+    Revenir en arriÃ¨re aprÃ¨s une erreur, car l'erreur
+    n'est dÃ©tectÃ©e qu'aprÃ¨s quelques rÃ©ductions. Une fois que l'on est
+    revenu, on peut examiner les items de l'Ã©tat courant et donner des
+    positions de dÃ©but d'item qui devraient Ãªtre intÃ©ressantes.    
+  PossibilitÃ© de coloriser ce qu'on a lu en indiquant ce qu'on a compris
   (sortie HTML).
 
 * Test and document --lalr (maybe). Explain that it is (probably)
   incompatible in principle with --explain. Modify the code to fail
   gracefully when the problem arises.
 
-* les positions fournies par menhir ne sont pas les mêmes fournies par
-  ocamlyacc (voir messages de Tiphaine Turpin à partir du 30/08/2011).
-  Est-ce un problème? Peut-on documenter quelles sont les
+* les positions fournies par menhir ne sont pas les mÃªmes fournies par
+  ocamlyacc (voir messages de Tiphaine Turpin Ã  partir du 30/08/2011).
+  Est-ce un problÃ¨me? Peut-on documenter quelles sont les
   positions fournies par Menhir? En particulier, pour une production
-  vide, Menhir utilise _menhir_env.lexer.lex_start_p, c'est-à-dire le
-  début du dernier token lu par le lexer; en principe c'est le token
-  de lookahead donc ça va, mais ça pourrait donner un résultat bizarre
-  si on réduit par défaut une production vide (on a alors pour position
-  le début du token précédent?) (BUG?). Par ailleurs, il faut être
-  conscient que si l'action ocamllex se rappelle récursivement, alors
-  _menhir_env.lexer.lex_start_p n'est pas le début du token mais une
-  position quelque part à l'intérieur du token (e.g. après des espaces
+  vide, Menhir utilise _menhir_env.lexer.lex_start_p, c'est-Ã -dire le
+  dÃ©but du dernier token lu par le lexer; en principe c'est le token
+  de lookahead donc Ã§a va, mais Ã§a pourrait donner un rÃ©sultat bizarre
+  si on rÃ©duit par dÃ©faut une production vide (on a alors pour position
+  le dÃ©but du token prÃ©cÃ©dent?) (BUG?). Par ailleurs, il faut Ãªtre
+  conscient que si l'action ocamllex se rappelle rÃ©cursivement, alors
+  _menhir_env.lexer.lex_start_p n'est pas le dÃ©but du token mais une
+  position quelque part Ã  l'intÃ©rieur du token (e.g. aprÃ¨s des espaces
   blancs). SUGGESTION DE SOLUTION: au lieu de paires (startpos, endpos),
   utiliser un type abstrait d'intervalles, avec un traitement particulier
   de l'intervalle vide. (Voir mon message du 15/09/2011.)
 
-* Tirer au clair la sémantique des $startpos/$endpos sur les productions vides.
-    Jacques-Henri dit que $startpos devrait toujours être $endpos du symbole précédent plus les blancs,
-    et symétriquement pour $endpos. Mais pour implémenter ça il faut consulter la pile?
-  BUG: %inline ne préserve pas la sémantique de $startpos/$endpos.
-    C'est vrai pour les productions epsilon (forcément)
+* Tirer au clair la sÃ©mantique des $startpos/$endpos sur les productions vides.
+    Jacques-Henri dit que $startpos devrait toujours Ãªtre $endpos du symbole prÃ©cÃ©dent plus les blancs,
+    et symÃ©triquement pour $endpos. Mais pour implÃ©menter Ã§a il faut consulter la pile?
+  BUG: %inline ne prÃ©serve pas la sÃ©mantique de $startpos/$endpos.
+    C'est vrai pour les productions epsilon (forcÃ©ment)
     mais aussi pour des productions non-epsilon
-      car $startpos de la production inlinée est changée en $endpos(x) où x est le symbole précédent!
-  Si on gérait les positions par macro-expansion *avant* de faire l'inlining
+      car $startpos de la production inlinÃ©e est changÃ©e en $endpos(x) oÃ¹ x est le symbole prÃ©cÃ©dent!
+  Si on gÃ©rait les positions par macro-expansion *avant* de faire l'inlining
   alors la passe d'inlining n'aurait pas besoin de s'en occuper (et serait
   correcte par construction).
 
 * Tenter une minimisation a posteriori de l'automate. Sur la grammaire
   OCaml on devrait retrouver l'automate LALR, non?
-  Faire cette minimisation *après* la résolution des conflits afin que
-  la minimisation n'affecte pas le comportement de l'automate, même en
-  présence de directives de priorité. Du coup si on combine --canonical
+  Faire cette minimisation *aprÃ¨s* la rÃ©solution des conflits afin que
+  la minimisation n'affecte pas le comportement de l'automate, mÃªme en
+  prÃ©sence de directives de prioritÃ©. Du coup si on combine --canonical
   et --minimize alors on devrait obtenir un automate correct, proche de
   IELR, voir Denny et Malloy. Confirmer.
 
 * Pourquoi --canonical --table ne marche pas sur une grosse grammaire?
   (3m57 pour ocaml.mly versus 16s sans --table)
-  Afficher combien de temps est passé à comprimer les tables.
+  Afficher combien de temps est passÃ© Ã  comprimer les tables.
 
 * TableBackend en principe ne devrait pas avoir besoin de Invariant?
-  Gain de temps/simplicité possible.
+  Gain de temps/simplicitÃ© possible.
 
 * Could we avoid listing the contents of MenhirLib in 4 different files?
 
@@ -158,38 +158,38 @@
   ou rien; tester en particulier sous Windows?
   Modifier la doc pour recommander ocamlfind.
 
-* ajouter une possibilité de désactiver certains warnings (utile pour
-  le cours de compilation où on démarre avec une grammaire à trous),
+* ajouter une possibilitÃ© de dÃ©sactiver certains warnings (utile pour
+  le cours de compilation oÃ¹ on dÃ©marre avec une grammaire Ã  trous),
   par exemple les non-terminaux inaccessibles
 
 * move to a new license (GPL V2?), as per Hongbo Zhang's request.
-* Les fichiers dans demos/ ne devraient pas être sous QPL mais libres...
+* Les fichiers dans demos/ ne devraient pas Ãªtre sous QPL mais libres...
 
 * _stage2/menhir.native --interpret fancy-parser.mly
   crashes with Stack_overflow when the input is just "grammar:\n"
   ... it seems to loop now ...
 
-* BUG: la directive $type<...> nt donne lieu à un message d'erreur bizarre
+* BUG: la directive $type<...> nt donne lieu Ã  un message d'erreur bizarre
   si le non-terminal nt n'existe pas. (Jacques-Henri.)
 
-* On pourrait rendre moins restrictif le critère qui garantit la terminaison
-  de l'expansion des non-terminaux paramétrés. Il suffirait de vérifier que
-  les paramètres effectifs sont toujours des atomes (symboles terminaux ou
+* On pourrait rendre moins restrictif le critÃ¨re qui garantit la terminaison
+  de l'expansion des non-terminaux paramÃ©trÃ©s. Il suffirait de vÃ©rifier que
+  les paramÃ¨tres effectifs sont toujours des atomes (symboles terminaux ou
   non-terminaux), non? (Jacques-Henri.)
 
 * En mode code on tire les tokens d'un lexbuf et l'utilisateur doit construire
   l'API moderne par `wrapping', s'il la souhaite. Mais en mode table l'API
   moderne est native et l'API traditionnelle est construite (par nous) par
-  `wrapping', d'où risque de `double wrapping' pour un utilisateur qui veut
-  alterner entre code et table. On devrait exposer nous-mêmes les deux API.
-  En profiter pour laisser l'utilisateur contrôler comment un token doit
-  être emballé en `fat token' (token + range).
+  `wrapping', d'oÃ¹ risque de `double wrapping' pour un utilisateur qui veut
+  alterner entre code et table. On devrait exposer nous-mÃªmes les deux API.
+  En profiter pour laisser l'utilisateur contrÃ´ler comment un token doit
+  Ãªtre emballÃ© en `fat token' (token + range).
 
-* %inline pourrait-il fonctionner quand les productions à inliner ont un %prec?
-    (ça aurait un sens au moins quand on inline dans une production unité?)
-    (ou plus généralement quand on inline en dernière position?)
+* %inline pourrait-il fonctionner quand les productions Ã  inliner ont un %prec?
+    (Ã§a aurait un sens au moins quand on inline dans une production unitÃ©?)
+    (ou plus gÃ©nÃ©ralement quand on inline en derniÃ¨re position?)
 
-* Reconnaître les directives # n "foo" dans le fichier .mly et en tenir
+* ReconnaÃ®tre les directives # n "foo" dans le fichier .mly et en tenir
   compte dans les locations.
 
 * BUG: message de Valentin Gatien-Baron du 09/01/2010: le bug de --explain
@@ -197,47 +197,47 @@
   passer sous silence les conflits qui ont lieu dans une partie inaccessible
   de l'automate?
 
-* BUG: message de Valentin Gatien-Baron du 09/01/2010: le warning erroné à
-  propos d'un %prec inutile peut-il être évité?
+* BUG: message de Valentin Gatien-Baron du 09/01/2010: le warning erronÃ© Ã 
+  propos d'un %prec inutile peut-il Ãªtre Ã©vitÃ©?
 
-* Implémenter un test de détection de boucles. Si la grammaire contient une
-  boucle, elle est infiniment ambiguë. Pour le test, calculer tous les
-  nullables, ajouter une production unité A -> B dès qu'il existe une
+* ImplÃ©menter un test de dÃ©tection de boucles. Si la grammaire contient une
+  boucle, elle est infiniment ambiguÃ«. Pour le test, calculer tous les
+  nullables, ajouter une production unitÃ© A -> B dÃ¨s qu'il existe une
   production A -> alpha B beta avec alpha et beta nullables, et regarder
-  ensuite s'il existe un cycle de productions unité.
+  ensuite s'il existe un cycle de productions unitÃ©.
 
 * Permettre une trace avec autre chose que fprintf stderr. Cela permettrait
-  au programmeur (par exemple) de décider à runtime s'il veut afficher ou
-  non la trace. (En mode --trace.) Et si possible, donner accès depuis
-  l'extérieur à la fonction print_token qui est engendrée.
+  au programmeur (par exemple) de dÃ©cider Ã  runtime s'il veut afficher ou
+  non la trace. (En mode --trace.) Et si possible, donner accÃ¨s depuis
+  l'extÃ©rieur Ã  la fonction print_token qui est engendrÃ©e.
 
-* (petit) BUG: --follow-construction n'affiche pas le contenu des états
+* (petit) BUG: --follow-construction n'affiche pas le contenu des Ã©tats
   initiaux (r0)
 
 * relire la preuve de Pager et comprendre si ce que fait Lr1.grow est correct
-  ou pas; faut-il faire grossir les états existants, ou bien (par exemple) les
+  ou pas; faut-il faire grossir les Ã©tats existants, ou bien (par exemple) les
   supprimer et recommencer leur construction?
 
 * que fait/que doit faire la combinaison --tokens-only --depend?
 
-* Préserver dirname/ dans les directives #line émises.
+* PrÃ©server dirname/ dans les directives #line Ã©mises.
 
-* BUG: Boris (1.- bouclage parser sur une entrée erronée 2.- une lecture
-  trop loin dans le stream, également liée à error).
+* BUG: Boris (1.- bouclage parser sur une entrÃ©e erronÃ©e 2.- une lecture
+  trop loin dans le stream, Ã©galement liÃ©e Ã  error).
 
-* éviter "Warning: 22 conflicts ..." car emacs prend "Warning" pour un
-  nom de fichier; d'après Damien, il devrait suffire que la phrase après
+* Ã©viter "Warning: 22 conflicts ..." car emacs prend "Warning" pour un
+  nom de fichier; d'aprÃ¨s Damien, il devrait suffire que la phrase aprÃ¨s
   les deux points ne commence pas par un nombre.
 
-* ajouter une option -q pour désactiver tous les warnings
+* ajouter une option -q pour dÃ©sactiver tous les warnings
 
-* si une variable est inutilisée dans une action sémantique, le
-  warning est affiché dans le code produit.
+* si une variable est inutilisÃ©e dans une action sÃ©mantique, le
+  warning est affichÃ© dans le code produit.
 
-* si une parenthèse est mal fermée dans une action sémantique,
-  l'erreur de syntaxe peut être détectée par OCaml en dehors
-  des actions sémantiques. Bétonner en mettant une séquence
-  improbable de begin/end/parenthèseses autour de l'action?
+* si une parenthÃ¨se est mal fermÃ©e dans une action sÃ©mantique,
+  l'erreur de syntaxe peut Ãªtre dÃ©tectÃ©e par OCaml en dehors
+  des actions sÃ©mantiques. BÃ©tonner en mettant une sÃ©quence
+  improbable de begin/end/parenthÃ¨seses autour de l'action?
 
 * BUG: solving a shift/reduce conflict in favor of reduction can
   cut a path that was required in order to explain another conflict.
@@ -253,37 +253,37 @@
 
 * dans le dump de l'automate, rajouter les transitions qui ont
   ete supprimees par resolution de conflits. Afficher aussi les
-  réductions par défaut?
+  rÃ©ductions par dÃ©faut?
 
 * expliquer aussi les conflits end-of-stream
 
 * Documenter l'emploi d'ocamlbuild.
 
-* Lorsqu'on crée un pseudo-lexème pour utiliser dans les
+* Lorsqu'on crÃ©e un pseudo-lexÃ¨me pour utiliser dans les
   directives %prec, la question de savoir s'il est associatif
-  à gauche ou à droite ou pas du tout ne se posera jamais. Donc,
+  Ã  gauche ou Ã  droite ou pas du tout ne se posera jamais. Donc,
   pour faire propre, on ne devrait pas autoriser l'emploi de
-  %left, %right, %nonassoc (sauf pour compatibilité arrière,
-  avec warning) mais introduire un nouveau mot-clé %fictitious
+  %left, %right, %nonassoc (sauf pour compatibilitÃ© arriÃ¨re,
+  avec warning) mais introduire un nouveau mot-clÃ© %fictitious
   ou %pseudo ou whatever.
 
-* Autre remarque du même tonneau, si on souhaite choisir un
-  niveau mais pas un statut d'associativité (parce qu'on pense
-  qu'il est inutile), il faudrait pouvoir déclarer %neutral
-  (whatever) et obtenir un niveau au statut non-spécifié (d'où
+* Autre remarque du mÃªme tonneau, si on souhaite choisir un
+  niveau mais pas un statut d'associativitÃ© (parce qu'on pense
+  qu'il est inutile), il faudrait pouvoir dÃ©clarer %neutral
+  (whatever) et obtenir un niveau au statut non-spÃ©cifiÃ© (d'oÃ¹
   erreur si on tente de consulter ce statut).
 
-* Prévoir une sortie --ocamlyacc qui affiche la grammaire sans
-  les liaisons des valeurs sémantiques et sans les actions
-  sémantiques?
+* PrÃ©voir une sortie --ocamlyacc qui affiche la grammaire sans
+  les liaisons des valeurs sÃ©mantiques et sans les actions
+  sÃ©mantiques?
 
-* Faire le nécessaire pour empêcher les warnings d'ocaml 3.09
-  sur les valeurs sémantiques nommées et non utilisées? Le
-  problème est que l'erreur est forcément rapportée dans le
-  fichier .ml engendré. Et ça résoudrait le problème du cas
-  où on n'utilise que $startpos(v) et pas v.
+* Faire le nÃ©cessaire pour empÃªcher les warnings d'ocaml 3.09
+  sur les valeurs sÃ©mantiques nommÃ©es et non utilisÃ©es? Le
+  problÃ¨me est que l'erreur est forcÃ©ment rapportÃ©e dans le
+  fichier .ml engendrÃ©. Et Ã§a rÃ©soudrait le problÃ¨me du cas
+  oÃ¹ on n'utilise que $startpos(v) et pas v.
 
 * Il faudrait activer le warning qui recommande d'utiliser --infer
-  dès que la librairie standard est utilisée (et pas seulement lorsque
-  %inline est utilisé).
+  dÃ¨s que la librairie standard est utilisÃ©e (et pas seulement lorsque
+  %inline est utilisÃ©).
 
