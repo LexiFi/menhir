@@ -8,12 +8,24 @@ open TokenType
 (* ------------------------------------------------------------------------- *)
 (* Naming conventions. *)
 
-(* The type variable associated with a nonterminal symbol. Its name
-   begins with a prefix which ensures that it cannot clash with
-   Objective Caml keywords. *)
+(* The type variable associated with a nonterminal symbol. Its name begins
+   with a prefix which ensures that it begins with a lowercase letter and
+   cannot clash with Objective Caml keywords. *)
 
 let ntvar symbol =
   Printf.sprintf "tv_%s" (Misc.normalize symbol)
+
+(* The term variable associated with a nonterminal symbol. Its name begins
+   with a prefix which ensures that it begins with a lowercase letter and
+   cannot clash with Objective Caml keywords. *)
+
+let encode symbol =
+  Printf.sprintf "xv_%s" (Misc.normalize symbol)
+
+let decode s =
+  let n = String.length s in
+  assert (n >= 3 && String.sub s 0 3 = "xv_");
+  String.sub s 3 (n - 3)
 
 (* The name of the temporary file. *)
 
@@ -136,7 +148,7 @@ let program grammar =
 
   let ps, ts =
     StringMap.fold (fun symbol _ (ps, ts) ->
-      PVar (Misc.normalize symbol) :: ps,
+      PVar (encode (Misc.normalize symbol)) :: ps,
       nttype grammar symbol :: ts
     ) grammar.rules ([], [])
   in
@@ -306,7 +318,7 @@ let infer grammar =
 
   let env : (string * ocamltype) list =
     List.map (fun (id, openingofs, closingofs) ->
-      id, Inferred (String.sub output openingofs (closingofs - openingofs))
+      decode id, Inferred (String.sub output openingofs (closingofs - openingofs))
     ) env
   in
 

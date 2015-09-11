@@ -1,0 +1,26 @@
+%start entry
+%token EOF
+%token B
+%token A
+
+%type <unit> entry
+%%
+
+entry:
+| _1 = nonempty_list_AB_ _2 = EOF
+    {          ()}
+
+AB:
+| _1 = A _2 = B
+    {      ()}
+
+nonempty_list_AB_:
+| x = AB
+    {    ( [ x ] )}
+| x = AB xs = nonempty_list_AB_
+    {    ( x :: xs )}
+
+%%
+
+
+
