@@ -6,7 +6,7 @@
 
 SHELL := bash
 
-.PHONY: all test clean package check export godi
+.PHONY: all test clean package check export godi opam
 
 # -------------------------------------------------------------------------
 
@@ -217,3 +217,38 @@ godi:
 	(*) \
 	  open $(GODIURL) ;; \
 	esac
+
+# -------------------------------------------------------------------------
+
+# Updating the opam package.
+
+# This entry assumes that "make package" and "make export" have been
+# run on the same day.
+
+OPAM := $(HOME)/dev/opam-repository
+CSUM  = $(shell md5sum menhir-$(DATE).tar.gz | cut -d ' ' -f 1)
+
+opam:
+# Update my local copy of the opam repository.
+	@ echo "Updating local opam repository..."
+	@ cd $(OPAM) && \
+	  git fetch upstream && \
+	  git merge upstream/master
+# Create a new Menhir package, based on the last one.
+	@ echo "Creating a new package description menhir-$(DATE)..."
+	@ cd $(OPAM)/packages/menhir && \
+	  cp -r `ls | grep menhir | tail -1` menhir.$(DATE)
+# Update the file "url".
+	@ cd $(OPAM)/packages/menhir/menhir.$(DATE) && \
+	  rm url && \
+	  echo 'archive: "http://gallium.inria.fr/~fpottier/menhir/menhir-$(DATE).tar.gz"' >> url && \
+	  echo 'checksum: "$(CSUM)"' >> url
+# Prepare a commit.
+	@ echo "Preparing a new commit..."
+	@ cd $(OPAM)/packages/menhir && \
+	  git add menhir.$(DATE) && \
+	  git status
+# Ask for review.
+	@ echo "If happy, please run:"
+	@ echo "  cd $(OPAM)/packages/menhir && git commit -a && git push && firefox https://github.com/"
+	@ echo "and issue a pull request."
