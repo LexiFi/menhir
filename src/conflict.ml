@@ -59,7 +59,7 @@ let rec follow derivation offset' = function
    to one of the automaton's entry nodes), a fixed string of
    input symbols, to be fully consumed, and a goal item. The
    objective is to find a path through the automaton that
-   leads from the start configuration [(stop, 0)] to the goal
+   leads from the start configuration [(start, 0)] to the goal
    configuration [(stop, n)], where [n] is the length of the
    input string. The automaton is explored via breadth-first
    search. A hash table is used to record which configurations
