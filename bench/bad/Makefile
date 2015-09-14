@@ -21,6 +21,7 @@ test: clean $(RESULTS)
 	 fi
 
 %.result: %.mly
+# Check if there is a group of several .mly files, or just one .mly file.
 	@ if echo $< | grep -e "-1.mly" &> /dev/null; then				\
 		export BASE=`echo $< | sed s/"-1.mly"/""/`;				\
 		export FILES=`echo $$BASE-[1-9].mly`;					\
@@ -33,7 +34,7 @@ test: clean $(RESULTS)
 	  echo "-> [KO] menhir should not accept $$FILES";				\
 	  export FAILED_FILES="$$FAILED_FILES $$FILES";					\
 	else										\
-	  $(SHELL) -c '$(MENHIR) --only-preprocess $$CMD >& $@';				\
+	  $(SHELL) -c '$(MENHIR) $$CMD >& $@';						\
 	  if [ x$$CREATE_EXPECTED == x"1" ]; then					\
 		cp $@ $*.expected;							\
 	  fi;										\
