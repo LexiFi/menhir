@@ -28,8 +28,22 @@
    have to create a first error in order to be able to take certain
    transitions or drop certain parts of the input. *)
 
+(* ------------------------------------------------------------------------ *)
+
+(* To delay the side effects performed by this module, we wrap everything in
+   in a big functor without arguments. *)
+
+module Run (X : sig end) = struct
+
 open Grammar
-module W = Terminal.Word(struct end) (* TEMPORARY wrap side effect in functor *)
+
+(* ------------------------------------------------------------------------ *)
+
+(* Build a module that represents words as (hash-consed) strings. Note:
+   this functor application has a side effect (it allocates memory, and
+   more importantly, it may fail). *)
+
+module W = Terminal.Word(struct end)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -934,8 +948,6 @@ let forward () =
     (Lr1.NodeSet.cardinal !seen);
   !seen
 
-(* TEMPORARY the code in this module should run only if --coverage is set *)
-
 let () =
   let f = forward() in
   Time.tick "Forward search";
@@ -948,8 +960,8 @@ let () =
 (* TODO:
   can we store fewer facts when we hit a default reduction?
   subject to --coverage
-  write to .coverage file
-  remove Coverage, remove CompletedNatWitness?, revert Fix
+  write to .coverage file or to standard output?
+  remove CompletedNatWitness?, revert Fix
   collect performance data, correlated with star size and alphabet size; draw a graph
   count the unreachable states and see if they are numerous in practice
   optionally report several ways of reaching an error in state s
@@ -959,3 +971,4 @@ let () =
     and evaluate how well (or how badly) it scales
 *)
 
+end
