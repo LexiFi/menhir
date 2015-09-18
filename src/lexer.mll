@@ -13,7 +13,7 @@
     let token = f lexbuf in
     lexbuf.lex_start_p <- startp;
     token
-  
+
   (* Updates the line counter, which is used in some error messages. *)
 
   let update_loc lexbuf =
@@ -36,6 +36,26 @@
   let overwrite content offset c1 c2 =
     assert (Bytes.get content offset = c1);
     Bytes.set content offset c2
+
+  (* Check that only allowed indices are used in semantic actions. *)
+  let check_producers_indices allowed_producers pkeywords =
+    List.iter (function
+      | { value = Keyword.PDollar idx; position } ->
+	if idx - 1 >= Array.length allowed_producers then
+	  Error.error [position] begin
+	    Printf.sprintf "$%d refers to a nonexistent symbol." idx
+	  end
+	else begin match allowed_producers.(idx - 1) with
+	    | None ->
+	      ()
+	    | Some x ->
+	      Error.error [position] begin
+		Printf.sprintf "please do not say: $%d. Instead, say: %s." idx x
+	      end
+	  end
+      | _ ->
+	()
+    ) pkeywords
 
   (* In-place transformation of keywords. We turn our keywords into
      valid OCaml identifiers by replacing '$', '(', and ')' with '_'.
@@ -344,8 +364,12 @@ rule main = parse
     { savestart lexbuf (fun lexbuf ->
         let openingpos = lexeme_end_p lexbuf in
         let closingpos, pkeywords = action false openingpos [] lexbuf in
-	let stretch = mk_stretch openingpos closingpos true pkeywords in
-        ACTION (Action.from_stretch stretch)
+        ACTION (
+	  fun allowed_producers_indices ->
+	  let stretch = mk_stretch openingpos closingpos true pkeywords in
+	  check_producers_indices allowed_producers_indices pkeywords;
+	  Action.from_stretch stretch
+	)
       ) }
 | eof
     { EOF }

@@ -6,7 +6,7 @@ let current_token_precedence =
   fun pos1 pos2 ->
     incr c;
     PrecedenceLevel (Error.get_filemark (), !c, pos1, pos2)
-      
+
 let current_reduce_precedence =
   let c = ref 0 in
   fun () ->
@@ -113,3 +113,17 @@ let rules () =
   rules := [];
   result
 
+(* Only unamed producers can be referred using positional identifiers.
+   Besides, such positions must be taken in the interval [1
+   .. List.length producers]. The output array [p] is such that
+   [p.(idx) = Some x] if [idx] must be referred using [x], not
+   [$(idx + 1)]. *)
+let producer_names producers =
+  let is_index identifier =
+    Str.(string_match (regexp "_[0-9]+") identifier 0)
+  in
+  List.(
+    producers
+    |> map (fun ({ value = id }, _) -> if is_index id then None else Some id)
+    |> Array.of_list
+  )

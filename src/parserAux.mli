@@ -29,3 +29,8 @@ val override: Positions.t -> 'a option -> 'a option -> 'a option
 
 val anonymous: Positions.t -> parameterized_branch list -> string
 val rules: unit -> parameterized_rule list
+
+(* [producer_names producers] returns an array [names] such that
+   [names.(idx) = None] if the (idx + 1)-th producer is unnamed
+   and [names.(idx) = Some id] if it is called [id]. *)
+val producer_names : Syntax.producer list -> Syntax.identifier option array

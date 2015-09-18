@@ -25,7 +25,7 @@ open Positions
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
-%token <Action.t> ACTION
+%token <Syntax.identifier option array -> Action.t> ACTION
 
 /* ------------------------------------------------------------------------- */
 /* Start symbol. */
@@ -268,15 +268,17 @@ production_group:
   productions = separated_nonempty_list(BAR, production)
   action = ACTION
   oprec2 = precedence?
-    { 
+    {
       ParserAux.normalize_production_group productions
-      |> List.map (fun (producers, oprec1, rprec, pos) -> {
-	pr_producers                = producers;
-	pr_action                   = action;
-	pr_branch_shift_precedence  = ParserAux.override pos oprec1 oprec2;
-	pr_branch_reduce_precedence = rprec;
-	pr_branch_position          = pos
-      }) 
+      |> List.map (fun (producers, oprec1, rprec, pos) ->
+  	let producer_names = ParserAux.producer_names producers in
+	{
+	  pr_producers                = producers;
+	  pr_action                   = action producer_names;
+	  pr_branch_shift_precedence  = ParserAux.override pos oprec1 oprec2;
+	  pr_branch_reduce_precedence = rprec;
+	  pr_branch_position          = pos
+	})
     }
 | error ACTION precedence?
 | error EOF
