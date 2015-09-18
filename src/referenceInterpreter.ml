@@ -230,8 +230,8 @@ let interpret log nt lexer lexbuf =
 
 (* ------------------------------------------------------------------------ *)
 
-(* Another entry point, used internally by [Coverage] to check that the
-   sentences that [Coverage] produces do lead to an error in the expected
+(* Another entry point, used internally by [LRijkstra] to check that the
+   sentences that [LRijkstra] produces do lead to an error in the expected
    state. *)
 
 open MenhirLib.General (* streams *)

@@ -20,7 +20,7 @@ val interpret:
   cst option
 
 (* This variant of the reference interpreter is used internally by us. We use
-   it to debug [Coverage]. It checks that a sentence leads to a syntax error
+   it to debug [LRijkstra]. It checks that a sentence leads to a syntax error
    in the expected state. *)
 
 type check_error_path_outcome =

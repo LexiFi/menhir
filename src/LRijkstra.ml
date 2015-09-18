@@ -1,3 +1,33 @@
+(* The purpose of this algorithm is to find, for each pair of a state [s]
+   and a terminal symbol [z] such that looking at [z] in state [s] causes
+   an error, a minimal path (starting in some initial state) that actually
+   triggers this error. *)
+
+(* This is potentially useful for grammar designers who wish to better
+   understand the properties of their grammar, or who wish to produce a
+   list of all possible syntax errors (or, at least, one syntax error in
+   each automaton state where an error may occur). *)
+
+(* The problem seems rather tricky. One might think that it suffices to
+   compute shortest paths in the automaton, and to use [Analysis.minimal] to
+   replace each non-terminal symbol in a path with a minimal word that this
+   symbol generates. One can indeed do so, but this yields only a lower bound
+   on the actual shortest path to the error at [s, z]. Indeed, two
+   difficulties arise:
+
+   - Some states have a default reduction. Thus, they will not trigger
+     an error, even though they should. The error is triggered in some
+     other state, after reduction takes place.
+
+   - If the grammar has conflicts, conflict resolution removes some
+     (shift or reduce) actions, hence may suppress the shortest path. *)
+
+(* We explicitly choose to ignore the [error] token. If the grammar mentions
+   [error] and if some state is reachable only via an [error] transition, too
+   bad: we report this state as unreachable. It would be too complicated to
+   have to create a first error in order to be able to take certain
+   transitions or drop certain parts of the input. *)
+
 open Grammar
 module W = Terminal.Word(struct end) (* TEMPORARY wrap side effect in functor *)
 
@@ -924,15 +954,8 @@ let () =
   count the unreachable states and see if they are numerous in practice
   optionally report several ways of reaching an error in state s
     (with different lookahead tokens) (report all of them?)
+  warn if --coverage is set AND the grammar uses [error]
+  implement a naive semi-algorithm that enumerates all input sentences,
+    and evaluate how well (or how badly) it scales
 *)
 
-(* One could approach the problem just by exploring the (infinite) graph whose
-   vertices are configurations of the LR automaton (i.e., stacks, or perhaps
-   pairs of a stack and a lookahead symbol) and transitions are determined by
-   feeding one symbol to the automaton. A small-step version of the reference
-   interpreter would allow us to set this up easily. One could then run a
-   breadth-first exploration of this graph and stop when desired, e.g., as
-   soon as all automaton states have been reached. However, this process does
-   not necessarily terminate, and could be very costly -- e.g. enumerating all
-   sentences of length 10 when the alphabet has size 100 costs 10^20. Also,
-   this approach cannot prove that a state is unreachable. *)
