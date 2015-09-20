@@ -11,7 +11,7 @@ MENHIR=$(SRC)/_stage2/menhir.native --stdlib $(SRC)
 
 # La convention de nommage des tests multi-grammaires
 # est : /nom/-[1-9].mly
-TESTS=$(shell ls *.mly | egrep '*([1]|[^2-9]).mly')
+TESTS=$(shell ls *.mly | egrep '.*([1]|[^2-9]).mly')
 RESULTS=$(TESTS:.mly=.result)
 
 test: clean $(RESULTS)
