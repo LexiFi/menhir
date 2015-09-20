@@ -46,8 +46,7 @@ let check_production_group right_hand_sides =
 	  with Not_found ->
 	    ()
 	  ) right_hand_sides
-  end;
-  right_hand_sides
+  end
 
 (* [normalize_producer i p] assigns a name of the form [_i]
    to the unnamed producer [p]. *)
@@ -59,13 +58,8 @@ let normalize_producer i (pos, opt_identifier, parameter) =
   in
   (id, parameter)
 
-let normalize_right_hand_side (producers, a, b, c) =
-  (List.mapi normalize_producer producers, a, b, c)
-
-let normalize_production_group right_hand_sides =
-  right_hand_sides
-  |> check_production_group
-  |> List.map normalize_right_hand_side
+let normalize_producers producers =
+  List.mapi normalize_producer producers
 
 let override pos o1 o2 =
   match o1, o2 with
@@ -113,17 +107,13 @@ let rules () =
   rules := [];
   result
 
-(* Only unnamed producers can be referred using positional identifiers.
+(* Only unnamed producers can be referred to using positional identifiers.
    Besides, such positions must be taken in the interval [1
    .. List.length producers]. The output array [p] is such that
-   [p.(idx) = Some x] if [idx] must be referred using [x], not
+   [p.(idx) = Some x] if [idx] must be referred to using [x], not
    [$(idx + 1)]. *)
 let producer_names producers =
-  let is_index identifier =
-    Str.(string_match (regexp "_[0-9]+") identifier 0)
-  in
-  List.(
-    producers
-    |> map (fun ({ value = id }, _) -> if is_index id then None else Some id)
-    |> Array.of_list
-  )
+  producers
+  |> List.map (fun (_, oid, _) -> Option.map Positions.value oid)
+  |> Array.of_list
+

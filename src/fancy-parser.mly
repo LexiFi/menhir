@@ -269,16 +269,24 @@ production_group:
   action = ACTION
   oprec2 = precedence?
     {
-      ParserAux.normalize_production_group productions
-      |> List.map (fun (producers, oprec1, rprec, pos) ->
-  	let producer_names = ParserAux.producer_names producers in
+      (* If multiple productions share a single semantic action, check
+         that all of them bind the same names. *)
+      ParserAux.check_production_group productions;
+      (* Then, *)
+      List.map (fun (producers, oprec1, rprec, pos) ->
+        (* Replace [$i] with [_i]. *)
+        let pr_producers = ParserAux.normalize_producers producers in
+        (* Distribute the semantic action. Also, check that every [$i]
+           is within bounds. *)
+        let pr_action = action (ParserAux.producer_names producers) in
 	{
-	  pr_producers                = producers;
-	  pr_action                   = action producer_names;
+	  pr_producers;
+	  pr_action;
 	  pr_branch_shift_precedence  = ParserAux.override pos oprec1 oprec2;
 	  pr_branch_reduce_precedence = rprec;
 	  pr_branch_position          = pos
 	})
+      productions
     }
 | error ACTION precedence?
 | error EOF

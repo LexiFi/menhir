@@ -8,12 +8,21 @@ open Syntax
 val current_token_precedence: Lexing.position -> Lexing.position -> precedence_level
 val current_reduce_precedence: unit -> precedence_level
 
-(* [check_disjunctive_production] accepts production group and checks
-   that they all productions in the group define the same set of
-   identifiers. *)
+(* [check_production_group] accepts a production group and checks that all
+   productions in the group define the same set of identifiers. *)
 
-val normalize_production_group:
-  ((Positions.t * identifier Positions.located option * parameter) list * 'a * 'b * 'c) list -> (producer list * 'a * 'b * 'c) list
+val check_production_group:
+  ((Positions.t * identifier Positions.located option * parameter) list * 'a * 'b * 'c) list ->
+  unit
+
+(* [normalize_producers] accepts a list of producers where identifiers are
+   optional and returns a list of producers where identifiers are mandatory.
+   A missing identifier in the [i]-th position receives the conventional
+   name [_i]. *)
+
+val normalize_producers: 
+  (Positions.t * identifier Positions.located option * parameter) list ->
+  producer list
 
 (* [override pos oprec1 oprec2] decides which of the two optional
    %prec declarations [oprec1] and [oprec2] applies to a
@@ -33,4 +42,6 @@ val rules: unit -> parameterized_rule list
 (* [producer_names producers] returns an array [names] such that
    [names.(idx) = None] if the (idx + 1)-th producer is unnamed
    and [names.(idx) = Some id] if it is called [id]. *)
-val producer_names : Syntax.producer list -> Syntax.identifier option array
+val producer_names :
+  (_ * Syntax.identifier Positions.located option * _) list ->
+  Syntax.identifier option array
