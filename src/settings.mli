@@ -163,3 +163,9 @@ val strict: bool
 
 val fixedexc: bool
 
+(* This flag causes Menhir to produce a list of erroneous input sentences.
+   Enough sentences are computed to produce exactly one error in every state
+   where an error can occur. *)
+
+val list_errors: bool
+

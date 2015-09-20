@@ -159,6 +159,9 @@ type suggestion =
 let suggestion =
   ref SuggestNothing
 
+let list_errors =
+  ref false
+
 let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
@@ -179,6 +182,7 @@ let options = Arg.align [
   "--interpret", Arg.Set interpret, " Interpret the sentences provided on stdin";
   "--interpret-show-cst", Arg.Set interpret_show_cst, " Show a concrete syntax tree upon acceptance";
   "--lalr", Arg.Unit (fun () -> construction_mode := ModeLALR), " Construct an LALR(1) automaton";
+  "--list-errors", Arg.Set list_errors, " Produce a list of erroneous inputs";
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
@@ -388,4 +392,7 @@ let strict =
 
 let fixedexc =
   !fixedexc
+
+let list_errors =
+  !list_errors
 

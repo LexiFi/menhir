@@ -2,6 +2,14 @@
 
 module I = Interpret (* artificial dependency; ensures that [Interpret] runs first *)
 
+(* If [--list-errors] is set, produce a list of erroneous input sentences, then stop. *)
+
+let () =
+  if Settings.list_errors then begin
+    let module L = LRijkstra.Run(struct end) in
+    exit 0
+  end
+
 (* Define an .ml file writer . *)
 
 let write program =

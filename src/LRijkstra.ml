@@ -959,14 +959,14 @@ let () =
 
 (* TODO:
   can we store fewer facts when we hit a default reduction?
-  subject to --coverage
-  write to .coverage file or to standard output?
   remove CompletedNatWitness?, revert Fix
   collect performance data, correlated with star size and alphabet size; draw a graph
   count the unreachable states and see if they are numerous in practice
   optionally report several ways of reaching an error in state s
     (with different lookahead tokens) (report all of them?)
-  warn if --coverage is set AND the grammar uses [error]
+  warn if --list-errors is set AND the grammar uses [error]
+  remove $syntaxerror?
+  how do we maintain the list of error messages when the grammar evolves?
   implement a naive semi-algorithm that enumerates all input sentences,
     and evaluate how well (or how badly) it scales
 *)

@@ -4,4 +4,3 @@
 
 module B = Back (* artificial dependency *)
 
-module L = LRijkstra (* TEMPORARY *)
