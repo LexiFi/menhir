@@ -113,7 +113,7 @@ let rules () =
   rules := [];
   result
 
-(* Only unamed producers can be referred using positional identifiers.
+(* Only unnamed producers can be referred using positional identifiers.
    Besides, such positions must be taken in the interval [1
    .. List.length producers]. The output array [p] is such that
    [p.(idx) = Some x] if [idx] must be referred using [x], not
