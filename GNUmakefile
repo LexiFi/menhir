@@ -96,10 +96,12 @@ LIBFILES := \
 
 package: clean
 # Create a directory to store the distributed files temporarily.
+# In src/_tags, every line tagged "my_warnings" is removed.
 	@ rm -fr $(PACKAGE)
 	@ mkdir -p $(PACKAGE)/src
 	@ cp -fr $(DISTRIBUTED_FILES) $(PACKAGE)
-	@ cp -fr src/*.ml{,i,y,l,pack} src/Makefile src/_tags src/META $(PACKAGE)/src
+	@ cp -fr src/*.ml{,i,y,l,pack} src/Makefile src/META $(PACKAGE)/src
+	@ grep -v my_warnings src/_tags > $(PACKAGE)/src/_tags
 	@ $(MAKE) -C $(PACKAGE)/demos clean
 # Insert headers.
 	@ echo "-> Inserting headers."
