@@ -271,10 +271,7 @@ module Terminal = struct
        [LRijkstra] already has difficulty at 100 terminal symbols or so. *)
 
     let () =
-      if n > 256 then
-        Error.error [] (Printf.sprintf
-          "the --coverage analysis supports at most 256 terminal symbols.\n\
-           The grammar has %d terminal symbols." n)
+      assert (n <= 256)
 
     let (intern : string -> string), verbose =
       Misc.new_intern 1023

@@ -39,6 +39,22 @@ open Grammar
 
 (* ------------------------------------------------------------------------ *)
 
+(* Because of our encoding of terminal symbols as 8-bit characters, and
+   because of the need to make room for [any], this algorithm supports
+   at most 255 terminal symbols. *)
+
+(* We could perhaps make this limit 256 by encoding [any] as [error] or [#],
+   but that sounds dangerous. *)
+
+let () =
+  if Terminal.n > 255 then
+    Error.error [] (Printf.sprintf
+      "--list-errors supports at most 255 terminal symbols.\n\
+       The grammar has %d terminal symbols." Terminal.n
+    )
+
+(* ------------------------------------------------------------------------ *)
+
 (* Build a module that represents words as (hash-consed) strings. Note:
    this functor application has a side effect (it allocates memory, and
    more importantly, it may fail). *)
@@ -108,6 +124,8 @@ let can_reduce s prod =
       true
   | _ ->
       TerminalMap.fold (fun z prods accu ->
+        (* A reduction on [#] is always a default reduction. (See [lr1.ml].) *)
+        assert (not (Terminal.equal z Terminal.sharp));
         accu || regular z && List.mem prod prods
       ) (Lr1.reductions s) false
 
