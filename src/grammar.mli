@@ -155,6 +155,11 @@ module Terminal : sig
 
   val mapx: (t -> 'a) -> 'a list
 
+  (* [iter_real] offers iteration over all real terminals, i.e. all
+     terminals except [error] and [#]. *)
+
+  val iter_real: (t -> unit) -> unit
+
   (* The sub-module [Word] offers an implementation of words (that is,
      sequences) of terminal symbols. It is used by [LRijkstra]. We
      make it a functor, because it has internal state (a hash table)

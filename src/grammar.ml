@@ -242,6 +242,13 @@ module Terminal = struct
   let mapx f =
     Misc.mapi sharp f
 
+  let () =
+    assert (error = 0)
+  let iter_real f =
+    for i = 1 to n-2 do
+      f i
+    done
+
   (* If a token named [EOF] exists, then it is assumed to represent
      ocamllex's [eof] pattern. *)
 
