@@ -145,12 +145,14 @@ module Terminal : sig
 
   (* Iteration over terminals. The order in which elements are
      examined, and the order of [map]'s output list, correspond to the
-     numeric indices produced by [t2i] above. [mapx] offers iteration
-     over all terminals except [#]. *)
+     numeric indices produced by [t2i] above. *)
 
   val iter: (t -> unit) -> unit
   val fold: (t -> 'a -> 'a) -> 'a -> 'a
   val map: (t -> 'a) -> 'a list
+
+  (* [mapx] offers iteration over all terminals except [#]. *)
+
   val mapx: (t -> 'a) -> 'a list
 
   (* The sub-module [Word] offers an implementation of words (that is,
@@ -158,23 +160,23 @@ module Terminal : sig
      make it a functor, because it has internal state (a hash table)
      and a side effect (failure if there are more than 256 terminal
      symbols). *)
-  
-    module Word (X : sig end) : sig
 
-      type word
-      val epsilon: word
-      val singleton: t -> word
-      val append: word -> word -> word
-      val length: word -> int
-      (* [first w z] returns the first symbol of the word [w.z]. *)
-      val first: word -> t -> t
-      val elements: word -> t list
-      val print: word -> string
-      (* [verbose()] prints statistics about the use of the internal
-         hash-consing table so far. *)
-      val verbose: unit -> unit
+  module Word (X : sig end) : sig
 
-    end
+    type word
+    val epsilon: word
+    val singleton: t -> word
+    val append: word -> word -> word
+    val length: word -> int
+    (* [first w z] returns the first symbol of the word [w.z]. *)
+    val first: word -> t -> t
+    val elements: word -> t list
+    val print: word -> string
+    (* [verbose()] prints statistics about the use of the internal
+       hash-consing table so far. *)
+    val verbose: unit -> unit
+
+  end
 
 end
 
