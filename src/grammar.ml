@@ -237,9 +237,10 @@ module Terminal = struct
   let map f =
     Misc.mapi n f
 
+  let () =
+    assert (sharp = n - 1)
   let mapx f =
-    assert (sharp = n - 1);
-    Misc.mapi (n-1) f
+    Misc.mapi sharp f
 
   (* If a token named [EOF] exists, then it is assumed to represent
      ocamllex's [eof] pattern. *)
