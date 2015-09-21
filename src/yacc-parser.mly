@@ -19,7 +19,7 @@ open Positions
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
-%token <Syntax.action> ACTION
+%token <Syntax.identifier option array -> Syntax.action> ACTION
 %start grammar
 %type <ConcreteSyntax.grammar> grammar
 
@@ -261,18 +261,26 @@ production_groups:
 
 production_group:
   productions ACTION /* action is lexically delimited by braces */ optional_precedence
-    { 
+    {
       let productions, action, oprec2 = $1, $2, $3 in
-
-      let productions = ParserAux.normalize_production_group productions in
-
-      List.map (fun (producers, oprec1, rprec, pos) -> {
-	pr_producers                = producers;
-	pr_action                   = action;
-	pr_branch_shift_precedence  = ParserAux.override pos oprec1 oprec2;
-	pr_branch_reduce_precedence = rprec;
-	pr_branch_position          = pos
-      }) productions
+      (* If multiple productions share a single semantic action, check
+         that all of them bind the same names. *)
+      ParserAux.check_production_group productions;
+      (* Then, *)
+      List.map (fun (producers, oprec1, rprec, pos) ->
+        (* Replace [$i] with [_i]. *)
+        let pr_producers = ParserAux.normalize_producers producers in
+        (* Distribute the semantic action. Also, check that every [$i]
+           is within bounds. *)
+        let pr_action = action (ParserAux.producer_names producers) in
+	{
+	  pr_producers;
+	  pr_action;
+	  pr_branch_shift_precedence  = ParserAux.override pos oprec1 oprec2;
+	  pr_branch_reduce_precedence = rprec;
+	  pr_branch_position          = pos
+	})
+      productions
     }
 
 optional_precedence:
