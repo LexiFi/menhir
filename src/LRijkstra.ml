@@ -80,7 +80,7 @@ let non_error z =
    [z <> any]. *)
 
 let any =
-  Obj.magic Terminal.n
+  Terminal.sharp
 
 (* ------------------------------------------------------------------------ *)
 
@@ -563,11 +563,11 @@ end = struct
     end)
 
   let table = (* a pretty large table... *)
-    Array.make (Lr1.n * (Terminal.n + 1)) M.empty (* room for [any] *)
+    Array.make (Lr1.n * Terminal.n) M.empty
   (* TEMPORARY this space is wasted for solid states *)
 
   let index current z =
-    (Terminal.n + 1) * (Lr1.number current) + Terminal.t2i z
+    Terminal.n * (Lr1.number current) + Terminal.t2i z
 
   let count = ref 0
 
