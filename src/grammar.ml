@@ -195,6 +195,9 @@ module Terminal = struct
   let pseudo tok =
     (tok = sharp) || (tok = error)
 
+  let real t =
+    error <> t && t <> sharp
+
   let token_properties = 
     let not_so_dummy_properties = (* applicable to [error] and [#] *)
       {

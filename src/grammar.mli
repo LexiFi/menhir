@@ -138,10 +138,10 @@ module Terminal : sig
 
   val eof: t option
 
-  (* This returns [true] if and only if the token at hand is one of
-     [#] or [error]. *)
+  (* A terminal symbol is pseudo if it is [#] or [error]. It is real otherwise. *)
 
   val pseudo: t -> bool
+  val real: t -> bool
 
   (* Iteration over terminals. The order in which elements are
      examined, and the order of [map]'s output list, correspond to the
@@ -155,8 +155,7 @@ module Terminal : sig
 
   val mapx: (t -> 'a) -> 'a list
 
-  (* [iter_real] offers iteration over all real terminals, i.e. all
-     terminals except [error] and [#]. *)
+  (* [iter_real] offers iteration over all real terminals. *)
 
   val iter_real: (t -> unit) -> unit
 
