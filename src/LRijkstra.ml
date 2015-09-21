@@ -22,11 +22,17 @@
    - If the grammar has conflicts, conflict resolution removes some
      (shift or reduce) actions, hence may suppress the shortest path. *)
 
-(* We explicitly choose to ignore the [error] token. If the grammar mentions
-   [error] and if some state is reachable only via an [error] transition, too
-   bad: we report this state as unreachable. It would be too complicated to
-   have to create a first error in order to be able to take certain
-   transitions or drop certain parts of the input. *)
+(* We explicitly choose to ignore the [error] token. Thus, we disregard any
+   reductions or transitions that take place when the lookahead symbol is
+   [error]. As a result, any state whose incoming symbol is [error] is found
+   unreachable. It would be too complicated to have to create a first error in
+   order to be able to take certain transitions or drop certain parts of the
+   input. *)
+
+(* We never work with the terminal symbol [#] either. This symbol never
+   appears in the maps returned by [Lr1.transitions] and [Lr1.reductions].
+   Thus, in principle, we work with ``real'' terminal symbols only. However,
+   we encode [any] as [#] -- see below. *)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -39,17 +45,13 @@ open Grammar
 
 (* ------------------------------------------------------------------------ *)
 
-(* Because of our encoding of terminal symbols as 8-bit characters, and
-   because of the need to make room for [any], this algorithm supports
-   at most 255 terminal symbols. *)
-
-(* We could perhaps make this limit 256 by encoding [any] as [error] or [#],
-   but that sounds dangerous. *)
+(* Because of our encoding of terminal symbols as 8-bit characters, this
+   algorithm supports at most 256 terminal symbols. *)
 
 let () =
-  if Terminal.n > 255 then
+  if Terminal.n > 256 then
     Error.error [] (Printf.sprintf
-      "--list-errors supports at most 255 terminal symbols.\n\
+      "--list-errors supports at most 256 terminal symbols.\n\
        The grammar has %d terminal symbols." Terminal.n
     )
 
@@ -63,21 +65,22 @@ module W = Terminal.Word(struct end)
 
 (* ------------------------------------------------------------------------ *)
 
-(* Throughout, we ignore the [error] pseudo-token completely. We consider that
-   it never appears on the input stream. Thus, we disregard any reductions or
-   transitions that take place when the lookahead symbol is [error]. As a
-   result, any state whose incoming symbol is [error] is found unreachable. *)
+(* The [error] token may appear in the maps returned by [Lr1.transitions]
+   and [Lr1.reductions], so we sometimes need to explicitly check for it. *)
 
-let regular z =
+let non_error z =
   not (Terminal.equal z Terminal.error)
 
 (* We introduce a pseudo-terminal symbol [any]. It is used in several places
    later on, in particular in the field [fact.lookahead], to encode the
    absence of a lookahead hypothesis -- i.e., any terminal symbol will do. *)
 
-let any : Terminal.t =
-  assert (Terminal.n < 255); (* TEMPORARY *)
-  Obj.magic Terminal.n       (* TEMPORARY *)
+(* We choose to encode [any] as [#]. There is no risk of confusion, since we
+   do not use [#] anywhere. Thus, the assertion [Terminal.real z] implies
+   [z <> any]. *)
+
+let any =
+  Obj.magic Terminal.n
 
 (* ------------------------------------------------------------------------ *)
 
@@ -91,7 +94,7 @@ let any : Terminal.t =
    does not take default reductions into account. *)
 
 let reductions_on s z : Production.index list =
-  assert (regular z && z <> any);
+  assert (Terminal.real z);
   try
     TerminalMap.find z (Lr1.reductions s)
   with Not_found ->
@@ -102,7 +105,7 @@ let reductions_on s z : Production.index list =
    takes a possible default reduction into account. *)
 
 let has_reduction s z : Production.index option =
-  assert (z <> any);
+  assert (Terminal.real z);
   match Invariant.has_default_reduction s with
   | Some (prod, _) ->
       Some prod
@@ -126,14 +129,14 @@ let can_reduce s prod =
       TerminalMap.fold (fun z prods accu ->
         (* A reduction on [#] is always a default reduction. (See [lr1.ml].) *)
         assert (not (Terminal.equal z Terminal.sharp));
-        accu || regular z && List.mem prod prods
+        accu || non_error z && List.mem prod prods
       ) (Lr1.reductions s) false
 
 (* [causes_an_error s z] tells whether state [s] will initiate an error on the
    lookahead symbol [z]. *)
 
 let causes_an_error s z : bool =
-  assert (regular z && z <> any);
+  assert (Terminal.real z);
   match Invariant.has_default_reduction s with
   | Some _ ->
       false
@@ -142,13 +145,10 @@ let causes_an_error s z : bool =
       not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
 
 (* [foreach_terminal f] applies the function [f] to every terminal symbol in
-   turn, except [error]. *)
+   turn, except [error] and [#]. *)
 
-let foreach_terminal f =
-  Terminal.iter (fun t ->
-    if regular t then
-      f t
-  )
+let foreach_terminal =
+  Terminal.iter_real
 
 (* [foreach_terminal_not_causing_an_error s f] applies the function [f] to
    every terminal symbol [z] such that [causes_an_error s z] is false. This
@@ -164,7 +164,9 @@ let foreach_terminal_not_causing_an_error s f =
       (* Enumerate every terminal symbol [z] for which there is a
          reduction. *)
       TerminalMap.iter (fun z _ ->
-        if regular z then
+        (* A reduction on [#] is always a default reduction. (See [lr1.ml].) *)
+        assert (not (Terminal.equal z Terminal.sharp));
+        if non_error z then
           f z
       ) (Lr1.reductions s);
       (* Enumerate every terminal symbol [z] for which there is a
@@ -172,7 +174,8 @@ let foreach_terminal_not_causing_an_error s f =
       SymbolMap.iter (fun sym _ ->
         match sym with
         | Symbol.T z ->
-            if regular z then
+            assert (not (Terminal.equal z Terminal.sharp));
+            if non_error z then
               f z
         | Symbol.N _ ->
             ()
@@ -294,7 +297,7 @@ end = struct
           { t with productions = prod :: t.productions }
         else
           raise DeadBranch
-    | (Symbol.T t) :: _ when not (regular t) ->
+    | (Symbol.T t) :: _ when not (non_error t) ->
          raise DeadBranch
     | a :: w ->
         (* Check if there is a transition labeled [a] out of [t.current]. If
@@ -441,7 +444,8 @@ let invariant2 fact =
    lookahead assumption [z] -- which can be [any]. *)
 
 let compatible z a =
-  assert (a <> any);
+  assert (non_error z);
+  assert (Terminal.real a);
   z = any || z = a
 
 (* ------------------------------------------------------------------------ *)
@@ -474,6 +478,8 @@ let q =
    significantly. *)
 
 let add fact =
+  (* [fact.lookahead] can be [any] *)
+  assert (non_error fact.lookahead);
   assert (invariant1 fact);
   assert (invariant2 fact);
   (* The length of [fact.word] serves as the priority of this fact. *)
@@ -568,6 +574,7 @@ end = struct
   let register fact =
     let current = current fact in
     let z = fact.lookahead in
+    assert (non_error z);
     (* [z] is [any] iff [current] is solid. *)
     assert ((z = any) = is_solid current);
     let i = index current z in
@@ -649,7 +656,7 @@ end = struct
   let count = ref 0
 
   let register s nt w z =
-    assert (regular z && z <> any);
+    assert (Terminal.real z);
     let i = index s in
     let m = table.(i) in
     let a = W.first w z in
@@ -664,7 +671,7 @@ end = struct
     end
 
   let rec query s nt a z f =
-    assert (regular z && z <> any);
+    assert (Terminal.real z);
     (* [a] can be [any] *)
     if a <> any then begin
       let i = index s in
@@ -693,7 +700,7 @@ end
 (* ------------------------------------------------------------------------ *)
 
 let new_edge s nt w z =
-  assert (regular z && z <> any);
+  assert (Terminal.real z);
   if E.register s nt w z then
     let sym = Symbol.N nt in
     T.query s (W.first w z) (fun fact ->
@@ -740,7 +747,7 @@ let consequences fact =
     | position, Symbol.T t ->
         (* [t] cannot be the [error] token, because the trie does not have
            any edges labeled [error]. *)
-        assert (regular t);
+        assert (non_error t);
 
         (* 1a. There is a transition labeled [t] out of [current]. If
            the lookahead assumption [fact.lookahead] is compatible with [t],
@@ -814,7 +821,7 @@ let consequences fact =
           )
     | None ->
        TerminalMap.iter (fun z prods ->
-         if regular z then
+         if non_error z then
            let prod = Misc.single prods in
            if Trie.accepts prod fact.position then
              new_edge (source fact) (Production.nt prod) (fact.word) z
@@ -921,7 +928,7 @@ let forward () =
       )
 
     let successors (s, z) edge =
-      assert (regular z);
+      assert (Terminal.real z);
       SymbolMap.iter (fun sym s' ->
         match sym with
         | Symbol.T t ->
