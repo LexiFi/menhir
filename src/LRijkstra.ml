@@ -593,7 +593,7 @@ end = struct
   let query current z f =
     assert (z <> any);
     (* if [current] is solid then the facts that concern it are stored
-       under any [any], not under [z] *)
+       under [any], not under [z] *)
     let i = index current (if is_solid current then any else z) in
     let m = table.(i) in
     M.iter f m
