@@ -7,7 +7,8 @@ module I = Interpret (* artificial dependency; ensures that [Interpret] runs fir
 let () =
   if Settings.list_errors then begin
     let module L = LRijkstra.Run(struct
-      let verbose = true
+      (* Undocumented: if [--log-automaton 2] is set, be verbose. *)
+      let verbose = Settings.logA >= 2
     end) in
     exit 0
   end

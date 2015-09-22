@@ -27,7 +27,7 @@ sleep 1
 for FILE in "$@"
 do
   echo "Running ($FILE.mly)..."
-  { time $MENHIR --list-errors $BASE $OPT $BENCH/$FILE.mly ; } &>$FILE.new
+  { time $MENHIR --list-errors -la 2 $BASE $OPT $BENCH/$FILE.mly ; } &>$FILE.new
 done
 
 # Try the last committed version.
@@ -38,7 +38,7 @@ sleep 1
 for FILE in "$@"
 do
  echo "Running ($FILE.mly)..."
- { time $MENHIR --list-errors $BASE $OPT $BENCH/$FILE.mly ; } &>$FILE.old
+ { time $MENHIR --list-errors -la 2 $BASE $OPT $BENCH/$FILE.mly ; } &>$FILE.old
 done
 git stash pop
 
