@@ -424,7 +424,9 @@ let current fact =
    1. If [fact.lookahead] is a real terminal symbol [z] (i.e., not [any]),
       then [z] does not cause an error in the current state [current fact].
       It would be useless to consider a fact that violates this property;
-      this cannot possibly lead to a successful reduction.
+      this cannot possibly lead to a successful reduction. In practice,
+      this refinement allows reducing the number of facts that go through
+      the queue by a factor of two.
 
    2. [fact.lookahead] is [any] iff the current state [current fact] is
       solid. This sounds rather reasonable (when a state is entered
@@ -464,11 +466,6 @@ module Q = LowIntegerPriorityQueue
 let q =
   Q.create()
 
-(* We never insert into the queue a fact that immediately causes an error,
-   i.e., a fact such that [causes_an_error (current fact) fact.lookahead]
-   holds. In practice, this convention allows reducing the number of facts
-   that go through the queue by a factor of two. *)
-
 (* In principle, there is no need to insert the fact into the queue if [T]
    already stores a comparable fact. We could perform this test in [add].
    However, a quick experiment suggests that this is not worthwhile. The run
@@ -477,7 +474,7 @@ let q =
    significantly. *)
 
 let add fact =
-  (* [fact.lookahead] can be [any] *)
+  (* [fact.lookahead] can be [any], but cannot be [error] *)
   assert (non_error fact.lookahead);
   assert (invariant1 fact);
   assert (invariant2 fact);
@@ -487,26 +484,26 @@ let add fact =
 (* Construct the [star] of every state [s]. Initialize the priority queue. *)
 
 let () =
+  (* For every state [s]... *)
   Lr1.iter (fun s ->
+    (* If the trie rooted at [s] is nontrivial...*)
     match Trie.star s with
-    | Some trie ->
-        (* TEMPORARY weird *)
-        if is_solid s then
-          add {
-            position = trie;
-            word = W.epsilon;
-            lookahead = any
-          }
-        else
-          foreach_terminal_not_causing_an_error s (fun z ->
-            add {
-              position = trie;
-              word = W.epsilon;
-              lookahead = z
-            }
-          )
     | None ->
         ()
+    | Some position ->
+        (* ...then insert an initial fact into the priority queue. *)
+        (* In order to respect invariants 1 and 2, we must distinguish two
+           cases. If [s] is solid, then we insert a single fact, whose
+           lookahead assumption is [any]. Otherwise, we must insert one
+           initial fact for every terminal symbol [z] that does not cause
+           an error in state [s]. *)
+        let word = W.epsilon in
+        if is_solid s then
+          add { position; word; lookahead = any }
+        else
+          foreach_terminal_not_causing_an_error s (fun z ->
+            add { position; word; lookahead = z }
+          )
   )
 
 (* ------------------------------------------------------------------------ *)
@@ -993,6 +990,7 @@ let () =
     (with different lookahead tokens) (report all of them?)
   warn if --list-errors is set AND the grammar uses [error]
   control verbose output
+  measure the cost of assertions
   remove $syntaxerror?
   how do we maintain the list of error messages when the grammar evolves?
   implement a naive semi-algorithm that enumerates all input sentences,
