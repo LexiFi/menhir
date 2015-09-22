@@ -41,7 +41,7 @@
 (* ------------------------------------------------------------------------ *)
 
 (* To delay the side effects performed by this module, we wrap everything in
-   in a big functor without arguments. *)
+   in a big functor. The functor also serves to pass a verbosity parameter. *)
 
 module Run (X : sig val verbose: bool end) = struct
 
