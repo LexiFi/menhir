@@ -772,115 +772,141 @@ let new_edge s nt w z =
 
 (* ------------------------------------------------------------------------ *)
 
-(* [consequences fact] is invoked when we discover a new fact (i.e., one that
-   was not previously known). It studies the consequences of this fact. These
+(* [new_fact fact] is invoked when we discover a new fact (i.e., one that was
+   not previously known). It studies the consequences of this fact. These
    consequences are of two kinds:
 
    - As in Dijkstra's algorithm, the new fact can be viewed as a newly
-   discovered vertex. We study its (currently known) outgoing edges,
-   and enqueue new facts in the priority queue.
+     discovered vertex. We study its (currently known) outgoing edges,
+     and enqueue new facts in the priority queue.
 
-   - Sometimes, a fact can also be viewed as a newly discovered edge.
-   This is the case when the word from [fact.source] to [fact.current]
-   represents a production of the grammar and [fact.current] is willing
-   to reduce this production. We record the existence of this edge,
-   and re-inspect any previously discovered vertices which are
-   interested in this outgoing edge.
-*)
-(**)
+   - Sometimes, a fact can also be viewed as a newly discovered edge. This is
+     the case when the word that took us from [fact.source] to [fact.current]
+     represents a production of the grammar and [fact.current] is willing to
+     reduce this production. We record the existence of this edge, and
+     re-inspect any previously discovered vertices which are interested in
+     this outgoing edge. *)
 
-let consequences fact =
+let new_fact fact =
 
   let current = current fact in
 
-  (* 1. View [fact] as a vertex. Examine the transitions out of [current]. *)
+  (* 1. View [fact] as a vertex. Examine the transitions out of [current].
+     For every transition labeled by a symbol [sym] and into a state
+     [target], ... *)
   
-  SymbolMap.iter (fun sym s' ->
+  Lr1.transitions current |> SymbolMap.iter (fun sym target ->
+    (* ... try to follow this transition in the trie [fact.position],
+       down to a child which we call [position]. *)
     match Trie.step sym fact.position, sym with
-    | exception Not_found -> ()
+
+    | exception Not_found ->
+
+        (* Could not take a step in the trie. This means this transition
+           leads nowhere of interest. *)
+        ()
+
     | position, Symbol.T t ->
-        (* [t] cannot be the [error] token, because the trie does not have
-           any edges labeled [error]. *)
+          
+        (* 1a. The transition exists in the trie, and [sym] is in fact a
+           terminal symbol [t]. We note that [t] cannot be the [error] token,
+           because the trie does not have any edges labeled [error]. *)
+        assert (Lr1.Node.compare (Trie.current position) target = 0);
+        assert (is_solid target);
         assert (non_error t);
 
-        (* 1a. There is a transition labeled [t] out of [current]. If
-           the lookahead assumption [fact.lookahead] is compatible with [t],
-           then we derive a new fact, where one more edge has been taken. We
-           enqueue this new fact for later examination. *)
-        (**)
+        (* If the lookahead assumption [fact.lookahead] is compatible with
+           [t], then we derive a new fact, where one more edge has been taken,
+           and enqueue this new fact for later examination. *)
+        
+        (* The state [target] is solid, i.e., its incoming symbol is terminal.
+           This state is always entered without consideration for the next
+           lookahead symbol. Thus, we can use [any] as the lookahead assumption
+           in the new fact that we produce. If we did not have [any], we would
+           have to produce one fact for every possible lookahead symbol. *)
 
-        if compatible fact.lookahead t then begin
+        if compatible fact.lookahead t then
           let word = W.append fact.word (W.singleton t) in
-          (* assert (Lr1.Node.compare (Trie.current position) s' = 0); *)
-          (* [s'] has a terminal incoming symbol. It is always entered
-             without consideration for the next lookahead symbol. Thus,
-             we use [any] as the lookahead assumption in the new fact
-             that we produce. *)
-          assert (is_solid (Trie.current position));
           add { position; word; lookahead = any }
-        end
 
     | position, Symbol.N nt ->
 
-        (* 1b. There is a transition labeled [nt] out of [current]. We
-           need to know how this nonterminal edge can be taken. We query for a
-           word [w] that allows us to take this edge. The answer depends on
-           the terminal symbol [z] that comes *after* this word: we try all
-           such symbols. Furthermore, we need the first symbol of [w.z] to
-           satisfy the lookahead assumption [fact.lookahead], so the answer
-           also depends on this assumption. *)
-        (* TEMPORARY it could be that the answer does not depend on [z]...
-           (default reduction) *)
-        (**)
+        (* 1b. The transition exists in the trie, and [sym] is in fact a
+           nonterminal symbol [nt]. *)
+         assert (Lr1.Node.compare (Trie.current position) target = 0);
+         assert (not (is_solid target));
 
-        foreach_terminal_not_causing_an_error s' (fun z ->
+        (* We need to know how this nonterminal edge can be taken. We query
+           [E] for a word [w] that allows us to take this edge. In general,
+           the answer depends on the terminal symbol [z] that comes *after*
+           this word: we try all such symbols. We must make sure that the
+           first symbol of the word [w.z] satisfies the lookahead assumption
+           [fact.lookahead]; this is ensured by passing this information to
+           [E.query]. *)
+
+        (* It could be the case that, due to a default reduction, the answer
+           to our query does not depend on [z], and we are wasting work.
+           However, allowing [z] to be [any] in [E.query], and taking 
+           advantage of this to increase performance, seems difficult. *)
+
+        foreach_terminal_not_causing_an_error target (fun z ->
           E.query current nt fact.lookahead z (fun w ->
             assert (compatible fact.lookahead (W.first w z));
-            assert (not (is_solid (Trie.current position)));
-            add {
-              position;
-              word = W.append fact.word w;
-              lookahead = z
-            }
+            let word = W.append fact.word w in
+            add { position; word; lookahead = z }
           )
         )
 
-  ) (Lr1.transitions current);
+  );
 
   (* 2. View [fact] as a possible edge. This is possible if the path from
-     [fact.source] to [current] represents a production [prod] and
-     [current] is willing to reduce this production. We check that
-     [fact.position] accepts [epsilon]. This guarantees that reducing [prod]
+     [fact.source] to the [current] state represents a production [prod] and
+     [current] is willing to reduce this production. Then, reducing [prod]
      takes us all the way back to [fact.source]. Thus, this production gives
      rise to an edge labeled [nt] -- the left-hand side of [prod] -- out of
-     [fact.source]. This edge is subject to the lookahead assumption
-     [fact.lookahead], so we record that. *)
-  (**)
+     [fact.source]. *)
 
-  if not (Terminal.equal fact.lookahead any) then begin
-    match has_reduction current fact.lookahead with
+  let z = fact.lookahead in
+  if not (Terminal.equal z any) then begin
+
+    (* 2a. The lookahead assumption [z] is a real terminal symbol. We check
+       whether [current] is willing to reduce some production [prod] on [z],
+       and whether the sub-trie [fact.position] accepts [prod], which means
+       that this reduction takes us back to the root of the trie. If so, we
+       have discovered a new edge. *)
+
+    match has_reduction current z with
     | Some prod when Trie.accepts prod fact.position ->
-        new_edge (source fact) (Production.nt prod) fact.word fact.lookahead
+        new_edge (source fact) (Production.nt prod) fact.word z
     | _ ->
         ()
+
   end
   else begin
-    (* Every reduction must be considered. *)
+
+    (* 2b. The lookahead assumption is [any]. We must consider every pair
+       [prod, z] such that the [current] state can reduce [prod] on [z]
+       and [fact.position] accepts [prod]. *)
+
     match Invariant.has_default_reduction current with
     | Some (prod, _) ->
         if Trie.accepts prod fact.position then
-          (* TEMPORARY for now, avoid sending [any] into [new_edge] *)
+          (* [new_edge] does not accept [any] as its 4th parameter, so we
+             must iterate over all terminal symbols. *)
           foreach_terminal (fun z ->
-            new_edge (source fact) (Production.nt prod) (fact.word) z
+            new_edge (source fact) (Production.nt prod) fact.word z
           )
     | None ->
        TerminalMap.iter (fun z prods ->
          if non_error z then
            let prod = Misc.single prods in
            if Trie.accepts prod fact.position then
-             new_edge (source fact) (Production.nt prod) (fact.word) z
+             new_edge (source fact) (Production.nt prod) fact.word z
        ) (Lr1.reductions current)
+
   end
+
+(* ------------------------------------------------------------------------ *)
 
 let level = ref 0
 
@@ -906,7 +932,7 @@ let discover fact =
       level := W.length fact.word;
     end;
     incr considered;
-    consequences fact
+    new_fact fact
   end
 
 let () =
