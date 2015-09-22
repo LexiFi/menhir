@@ -47,6 +47,9 @@ module Run (X : sig val verbose: bool end) = struct
 
 open Grammar
 
+let start =
+  Unix.((times()).tms_utime)
+
 (* ------------------------------------------------------------------------ *)
 
 (* Because of our encoding of terminal symbols as 8-bit characters, this
@@ -228,6 +231,10 @@ module Trie : sig
      of the trie that has been constructed for state [s]. *)
   val size: int -> int
 
+  (* After [star] has been called a number of times, [cumulated_size()]
+     reports the total size of the tries that have been constructed. *)
+  val cumulated_size: unit -> int
+
   (* Every (sub-)trie has a unique identity. (One can think of it as its
      address.) [compare] compares the identity of two tries. This can be
      used, e.g., to set up a map whose keys are tries. *)
@@ -382,6 +389,9 @@ end = struct
     assert (size.(s) >= 0);
     size.(s)
 
+  let cumulated_size () =
+    !c
+
   let compare t1 t2 =
     Pervasives.compare t1.identity t2.identity
 
@@ -398,7 +408,7 @@ end = struct
     SymbolMap.find a t.transitions (* careful: may raise [Not_found] *)
 
   let verbose () =
-    Printf.eprintf "Cumulated star size: %d\n%!" !c
+    Printf.eprintf "Cumulated star size: %d\n%!" (cumulated_size())
 
 end
 
@@ -558,6 +568,9 @@ module T : sig
      symbol [z] must a real terminal symbol, i.e., cannot be [any]. *)
   val query: Lr1.node -> Terminal.t -> (fact -> unit) -> unit
 
+  (* [size()] returns the number of facts currently stored in the set. *)
+  val size: unit -> int
+
   (* [verbose()] outputs debugging & performance information. *)
   val verbose: unit -> unit
 
@@ -633,8 +646,11 @@ end = struct
     let m = table.(i) in
     M.iter f m
 
+  let size () =
+    !count
+
   let verbose () =
-    Printf.eprintf "T stores %d facts.\n%!" !count
+    Printf.eprintf "T stores %d facts.\n%!" (size())
 
 end
 
@@ -670,6 +686,9 @@ module E : sig
      [any]. *)
   val query: Lr1.node -> Nonterminal.t -> Terminal.t -> Terminal.t ->
              (W.word -> unit) -> unit
+
+  (* [size()] returns the number of edges currently stored in the set. *)
+  val size: unit -> int
 
   (* [verbose()] outputs debugging & performance information. *)
   val verbose: unit -> unit
@@ -742,8 +761,11 @@ end = struct
       | exception Not_found -> ()
     end
 
+  let size () =
+    !count
+
   let verbose () =
-    Printf.eprintf "E stores %d facts.\n%!" !count
+    Printf.eprintf "E stores %d edges.\n%!" (size())
 
 end
 
@@ -1136,6 +1158,49 @@ let () =
     Printf.eprintf
       "Maximum size reached by the major heap: %dM\n"
       (stat.Gc.top_heap_words * (Sys.word_size / 8) / 1024 / 1024)
+  end
+
+(* ------------------------------------------------------------------------ *)
+
+(* Should we collect statistics? *)
+
+let collect =
+  true
+
+let () =
+  if collect then begin
+    let stop = Unix.((times()).tms_utime) in
+    let c = open_out_gen [ Open_creat; Open_append; Open_text ] 0o644 "lr.csv" in
+    Printf.fprintf c
+      "%s,%d,%d,%d,%d,%d,%d,%d,%.2f\n%!"
+      (* Grammar name. *)
+      Settings.base
+      (* Number of terminal symbols. *)
+      Terminal.n
+      (* Number of nonterminal symbols. *)
+      Nonterminal.n
+      (* Grammar size (not counting the error productions). *)
+      begin
+        Production.foldx (fun prod accu ->
+          let rhs = Production.rhs prod in
+          if List.mem (Symbol.T Terminal.error) (Array.to_list rhs) then
+            accu
+          else
+            accu + Array.length rhs
+        ) 0
+      end
+      (* Automaton size (i.e., number of states). *)
+      Lr1.n
+      (* Cumulated trie size. *)
+      (Trie.cumulated_size())
+      (* Size of [T]. *)
+      (T.size())
+      (* Size of [E]. *)
+      (E.size())
+      (* Elapsed user time, in seconds. *)
+      (stop -. start)
+    ;
+    close_out c
   end
 
 (* ------------------------------------------------------------------------ *)
