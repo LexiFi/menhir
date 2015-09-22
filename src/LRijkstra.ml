@@ -34,6 +34,9 @@
    Thus, in principle, we work with ``real'' terminal symbols only. However,
    we encode [any] as [#] -- see below. *)
 
+(* NOTE: THIS FILE IS COMPILED WITH -noassert BY DEFAULT. If you would like
+   the assertions to be tested at runtime, change that in the file _tags. *)
+
 (* ------------------------------------------------------------------------ *)
 
 (* To delay the side effects performed by this module, we wrap everything in
@@ -568,7 +571,7 @@ end = struct
     MySet.Make(struct
       type t = fact
       let compare fact1 fact2 =
-        (* assert (fact1.lookahead = fact2.lookahead); *)
+        assert (fact1.lookahead = fact2.lookahead);
         let c = Trie.compare fact1.position fact2.position in
         if c <> 0 then c else
         let z = fact1.lookahead in
