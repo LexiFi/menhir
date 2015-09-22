@@ -39,7 +39,7 @@
 (* To delay the side effects performed by this module, we wrap everything in
    in a big functor without arguments. *)
 
-module Run (X : sig end) = struct
+module Run (X : sig val verbose: bool end) = struct
 
 open Grammar
 
@@ -296,7 +296,7 @@ end = struct
           { t with productions = prod :: t.productions }
         else
           raise DeadBranch
-    | (Symbol.T t) :: _ when not (non_error t) ->
+    | (Symbol.T t) :: _ when Terminal.equal t Terminal.error ->
          raise DeadBranch
     | a :: w ->
         (* Check if there is a transition labeled [a] out of [t.current]. If
@@ -337,6 +337,9 @@ end = struct
   let fresh source =
     mktrie source source [] SymbolMap.empty
 
+  (* The star at [s] is obtained by starting with a fresh empty trie and
+     inserting into it every production [prod] whose left-hand side [nt]
+     is the label of an outgoing edge at [s]. *)
   let star s =
     SymbolMap.fold (fun sym _ accu ->
       match sym with
@@ -346,16 +349,16 @@ end = struct
           Production.foldnt nt accu insert
     ) (Lr1.transitions s) (fresh s)
 
-  (* [nontrivial t] tests whether the trie [t] has any branches, i.e.,
-     contains at least one sub-trie whose [productions] field is nonempty.
-     Trivia: a trie of size greater than 1 is necessarily nontrivial, but the
-     converse is not true: a nontrivial trie can have size 1. (This occurs
-     when all productions have zero length.) *)
-  let nontrivial t =
-    not (t.productions = [] && SymbolMap.is_empty t.transitions)
+  (* A trie [t] is nontrivial if it has at least one branch, i.e., contains at
+     least one sub-trie whose [productions] field is nonempty. Trivia: a trie
+     of size greater than 1 is necessarily nontrivial, but the converse is not
+     true: a nontrivial trie can have size 1. (This occurs if all productions
+     have zero length.) *)
+  let trivial t =
+    t.productions = [] && SymbolMap.is_empty t.transitions
 
-  (* Redefine [star] to include a [nontrivial] test and to record the size
-     of the newly built trie. *)
+  (* Redefine [star] to include a [nontrivial] test and to record the size of
+     the newly built trie. *)
 
   let size =
     Array.make Lr1.n (-1)
@@ -365,17 +368,14 @@ end = struct
     let t = star s in
     let final = !c in
     size.(Lr1.number s) <- final - initial;
-    if nontrivial t then
-      Some t
-    else
-      None
+    if trivial t then None else Some t
 
   let size s =
     assert (size.(s) >= 0);
     size.(s)
 
   let compare t1 t2 =
-    Pervasives.compare (t1.identity : int) t2.identity
+    Pervasives.compare t1.identity t2.identity
 
   let source t =
     t.source
@@ -390,7 +390,7 @@ end = struct
     SymbolMap.find a t.transitions (* careful: may raise [Not_found] *)
 
   let verbose () =
-    Printf.fprintf stderr "Cumulated star size: %d\n%!" !c
+    Printf.eprintf "Cumulated star size: %d\n%!" !c
 
 end
 
@@ -421,10 +421,10 @@ let current fact =
 
 (* Two invariants reduce the number of facts that we consider:
 
-   1. If [fact.lookahead] is a terminal symbol [z] (i.e., not [any]), then
-      [z] does not cause an error in the current state [current fact]. It
-      would be useless to consider a fact that violates this property; it
-      cannot possibly lead to a successful reduction.
+   1. If [fact.lookahead] is a real terminal symbol [z] (i.e., not [any]),
+      then [z] does not cause an error in the current state [current fact].
+      It would be useless to consider a fact that violates this property;
+      this cannot possibly lead to a successful reduction.
 
    2. [fact.lookahead] is [any] iff the current state [current fact] is
       solid. This sounds rather reasonable (when a state is entered
@@ -598,7 +598,7 @@ end = struct
     M.iter f m
 
   let verbose () =
-    Printf.fprintf stderr "T stores %d facts.\n%!" !count
+    Printf.eprintf "T stores %d facts.\n%!" !count
 
 end
 
@@ -692,7 +692,7 @@ end = struct
     end
 
   let verbose () =
-    Printf.fprintf stderr "E stores %d facts.\n%!" !count
+    Printf.eprintf "E stores %d facts.\n%!" !count
 
 end
 
@@ -833,12 +833,14 @@ let extracted, considered =
   ref 0, ref 0
 
 let done_with_level () =
-  Printf.fprintf stderr "Done with level %d.\n" !level;
-  W.verbose();
-  T.verbose();
-  E.verbose();
-  Printf.fprintf stderr "Q stores %d facts.\n" (Q.cardinal q);
-  Printf.fprintf stderr "%d facts extracted out of Q, of which %d considered.\n%!"
+  Printf.eprintf "Done with level %d.\n" !level;
+  if X.verbose then begin
+    W.verbose();
+    T.verbose();
+    E.verbose()
+  end;
+  Printf.eprintf "Q stores %d facts.\n" (Q.cardinal q);
+  Printf.eprintf "%d facts extracted out of Q, of which %d considered.\n%!"
     !extracted !considered
 
 let discover fact =
@@ -853,7 +855,8 @@ let discover fact =
   end
 
 let () =
-  Trie.verbose();
+  if X.verbose then
+    Trie.verbose();
   Q.repeat q discover;
   Time.tick "Running LRijkstra";
   done_with_level()
@@ -865,7 +868,7 @@ let () =
    sequence of terminal symbols [w]. We use this for debugging purposes. *)
 
 let fail msg =
-  Printf.fprintf stderr "coverage: internal error: %s.\n%!" msg;
+  Printf.eprintf "coverage: internal error: %s.\n%!" msg;
   false
 
 open ReferenceInterpreter
@@ -951,7 +954,7 @@ let forward () =
 
   (* Search forward. *)
 
-  Printf.fprintf stderr "Forward search:\n%!";
+  Printf.eprintf "Forward search:\n%!";
   let seen = ref Lr1.NodeSet.empty in
   let _, _ = A.search (fun ((s', z), path) ->
     if causes_an_error s' z && not (Lr1.NodeSet.mem s' !seen) then begin
@@ -960,15 +963,15 @@ let forward () =
          state [s] and reading the sequence of terminal symbols [w]. *)
       let (s, _), ws = A.reverse path in
       let w = List.fold_right W.append ws (W.singleton z) in
-      Printf.fprintf stderr
+      Printf.eprintf
         "An error can be reached from state %d to state %d:\n%!"
         (Lr1.number s)
         (Lr1.number s');
-      Printf.fprintf stderr "%s\n%!" (W.print w);
+      Printf.eprintf "%s\n%!" (W.print w);
       assert (validate s s' w)
     end
   ) in
-  Printf.fprintf stderr "Reachable (forward): %d states\n%!"
+  Printf.eprintf "Reachable (forward): %d states\n%!"
     (Lr1.NodeSet.cardinal !seen);
   !seen
 
@@ -976,7 +979,7 @@ let () =
   let f = forward() in
   Time.tick "Forward search";
   let stat = Gc.quick_stat() in
-  Printf.fprintf stderr
+  Printf.eprintf
     "Maximum size reached by the major heap: %dM\n"
     (stat.Gc.top_heap_words * (Sys.word_size / 8) / 1024 / 1024);
   ignore f
@@ -989,6 +992,7 @@ let () =
   optionally report several ways of reaching an error in state s
     (with different lookahead tokens) (report all of them?)
   warn if --list-errors is set AND the grammar uses [error]
+  control verbose output
   remove $syntaxerror?
   how do we maintain the list of error messages when the grammar evolves?
   implement a naive semi-algorithm that enumerates all input sentences,

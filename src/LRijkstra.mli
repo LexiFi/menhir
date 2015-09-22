@@ -6,5 +6,5 @@
 (* The result of this analysis is written to the standard output channel.
    No result is returned. *)
 
-module Run (X : sig end) : sig end
+module Run (X : sig val verbose: bool end) : sig end
 

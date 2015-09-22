@@ -6,7 +6,9 @@ module I = Interpret (* artificial dependency; ensures that [Interpret] runs fir
 
 let () =
   if Settings.list_errors then begin
-    let module L = LRijkstra.Run(struct end) in
+    let module L = LRijkstra.Run(struct
+      let verbose = true
+    end) in
     exit 0
   end
 
