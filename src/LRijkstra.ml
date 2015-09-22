@@ -1165,7 +1165,7 @@ let () =
 (* Should we collect statistics? *)
 
 let collect =
-  true
+  true (* TEMPORARY *)
 
 let () =
   if collect then begin
