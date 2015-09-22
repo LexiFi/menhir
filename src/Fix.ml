@@ -495,7 +495,7 @@ and node_for (v : variable) : node =
        recursively is mandatory, otherwise [solve] might loop, creating
        an infinite number of nodes for the same variable. *)
     M.add v node transient;
-    Workset.insert node; (* or: solve node *)
+    solve node; (* or: Workset.insert node *)
     node
 
 (* -------------------------------------------------------------------------- *)
