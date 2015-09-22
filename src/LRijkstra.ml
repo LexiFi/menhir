@@ -211,6 +211,9 @@ let is_solid s =
    us where we come from, where we are, and which production(s) we are hoping
    to reduce in the future. *)
 
+let grammar_uses_error =
+  ref false
+
 module Trie : sig
 
   type trie
@@ -301,6 +304,7 @@ end = struct
         else
           raise DeadBranch
     | (Symbol.T t) :: _ when Terminal.equal t Terminal.error ->
+         grammar_uses_error := true;
          raise DeadBranch
     | a :: w ->
         (* Check if there is a transition labeled [a] out of [t.current]. If
@@ -513,6 +517,13 @@ let () =
   );
   if X.verbose then
     Trie.verbose()
+
+(* Produce a warning if the grammar uses the [error] pseudo-token. *)
+
+let () =
+  if !grammar_uses_error then
+    Error.warning []
+      "--list-errors ignores all productions that involve the error token."
 
 (* ------------------------------------------------------------------------ *)
 
@@ -1070,11 +1081,17 @@ let explored =
 let data : (Nonterminal.t * W.word) Lr1.NodeMap.t ref =
   ref Lr1.NodeMap.empty
 
+(* [reachable] is a set of all reachable states. *)
+
+let reachable =
+  ref Lr1.NodeSet.empty
+
 (* Perform the forward search. *)
 
 let _, _ =
   A.search (fun ((s', z), path) ->
     incr explored;
+    reachable := Lr1.NodeSet.add s' !reachable;
     (* If [z] causes an error in state [s'] and this is the first time
        we are able to trigger an error in this state, ... *)
     if causes_an_error s' z && not (Lr1.NodeMap.mem s' !data) then begin
@@ -1110,8 +1127,10 @@ let () =
   if X.verbose then begin
     Printf.eprintf
       "%d graph nodes explored by forward search.\n\
+       %d out of %d states are reachable.\n\
        Found %d states where an error can occur.\n%!"
     !explored
+    (Lr1.NodeSet.cardinal !reachable) Lr1.n
     (Lr1.NodeMap.cardinal !data);
     let stat = Gc.quick_stat() in
     Printf.eprintf
@@ -1120,18 +1139,13 @@ let () =
   end
 
 (* TODO:
-  remove CompletedNatWitness?, revert Fix
   collect performance data, correlated with star size and alphabet size; draw a graph
-  count the unreachable states and see if they are numerous in practice
-  optionally report several ways of reaching an error in state s
-    (with different lookahead tokens) (report all of them?)
-  warn if --list-errors is set AND the grammar uses [error]
-  control verbose output
   measure the cost of assertions
   remove $syntaxerror?
   how do we maintain the list of error messages when the grammar evolves?
   implement a naive semi-algorithm that enumerates all input sentences,
     and evaluate how well (or how badly) it scales
+  document! explain that any production that contains [error] is ignored
 *)
 
 end
