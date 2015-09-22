@@ -508,15 +508,24 @@ let () =
 
 (* ------------------------------------------------------------------------ *)
 
-(* The first symbol of the input, [W.first fact.word fact.lookahead], plays a
-   special role. Indeed, for every position, for every first symbol, and for
-   every lookahead symbol, we keep track of at most one fact. Thus, the total
-   number of facts accumulated by the algorithm is at most [T.n^2], where [T]
-   is the total size of the tries that we have constructed, and [n] is the
-   number of terminal symbols. (This number can be quite large. [T] can be in
-   the tens of thousands, and [n] can be over one hundred. These figures lead
-   to a theoretical upper bound of 100M. In practice, for T=25K and n=108, we
-   observe that the algorithm gathers about 7M facts.) *)
+(* The module [T] maintains a set of known facts. *)
+
+(* Three aspects of a fact are of particular interest:
+   - its position [position], given by [fact.position];
+   - its first symbol [a], given by [W.first fact.word fact.lookahead];
+   - its lookahead assumption [z], given by [fact.lookahead].
+
+   For every triple of [position], [a], and [z], we store at most one fact,
+   (whose word has minimal length). Indeed, we are not interested in keeping
+   track of several words that produce the same effect. Only the shortest such
+   word is of interest.
+   
+   Thus, the total number of facts accumulated by the algorithm is at most
+   [T.n^2], where [T] is the total size of the tries that we have constructed,
+   and [n] is the number of terminal symbols. (This number can be quite large.
+   [T] can be in the tens of thousands, and [n] can be over one hundred. These
+   figures lead to a theoretical upper bound of 100M. In practice, for T=25K
+   and n=108, we observe that the algorithm gathers about 7M facts.) *)
 
 module T : sig
 
@@ -526,39 +535,47 @@ module T : sig
   val register: fact -> bool
 
   (* [query current z f] enumerates all known facts whose current state is
-     [current] and whose lookahead assumption is [z]. *)
+     [current] and whose lookahead assumption is compatible with [z]. The
+     symbol [z] must a real terminal symbol, i.e., cannot be [any]. *)
   val query: Lr1.node -> Terminal.t -> (fact -> unit) -> unit
 
+  (* [verbose()] outputs debugging & performance information. *)
   val verbose: unit -> unit
 
 end = struct
 
-  (* This module implements a set of facts. Two facts are considered equal
-     (for the purposes of this set) if they have the same [position], [a], and
-     [z] fields. The [word] is not considered. Indeed, we are not interested
-     in keeping track of several words that produce the same effect. Only the
-     shortest such word is of interest. *)
+  (* We need to query the set of facts in two ways. In [register], we must test
+     whether a proposed triple of [position], [a], [z] already appears in the
+     set. In [query], we must find all facts that match a pair [current, z],
+     where [current] is a state. (Note that [position] determines [current], but
+     the converse is not true: a position contains more information besides the
+     current state.)
 
-  (* We need to query the set of facts in two ways. In [register], we need to
-     test whether a fact is in the set. In [query], we need to find all facts
-     that match a pair [current, z]. For this reason, we use a two-level table.
-     The first level is a matrix indexed by [current] and [z]. At the second
-     level, we find sets of facts. *)
-(**)
+     To address these needs, we use a two-level table. The first level is a
+     matrix indexed by [current] and [z]. At the second level, we find sets of
+     facts, where two facts are considered equal if they have the same triple of
+     [position], [a], and [z]. In fact, we know at this level that all facts
+     have the same [z] component, so only [position] and [a] are compared. *)
+
+  (* The level-2 sets. *)
 
   module M =
     MySet.Make(struct
       type t = fact
       let compare fact1 fact2 =
+        (* assert (fact1.lookahead = fact2.lookahead); *)
         let c = Trie.compare fact1.position fact2.position in
         if c <> 0 then c else
-        let a1 = W.first fact1.word fact1.lookahead
-        and a2 = W.first fact2.word fact2.lookahead in
+        let z = fact1.lookahead in
+        let a1 = W.first fact1.word z
+        and a2 = W.first fact2.word z in
         (* note: [a1] and [a2] can be [any] here *)
         Terminal.compare a1 a2
     end)
 
-  let table = (* a pretty large table... *)
+  (* The level-1 matrix. *)
+
+  let table =
     Array.make (Lr1.n * Terminal.n) M.empty
   (* TEMPORARY this space is wasted for solid states *)
 
