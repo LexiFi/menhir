@@ -1138,14 +1138,5 @@ let () =
       (stat.Gc.top_heap_words * (Sys.word_size / 8) / 1024 / 1024)
   end
 
-(* TODO:
-  collect performance data, correlated with star size and alphabet size; draw a graph
-  measure the cost of assertions
-  remove $syntaxerror?
-  how do we maintain the list of error messages when the grammar evolves?
-  implement a naive semi-algorithm that enumerates all input sentences,
-    and evaluate how well (or how badly) it scales
-  document! explain that any production that contains [error] is ignored
-*)
-
 end
+
