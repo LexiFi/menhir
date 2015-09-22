@@ -153,7 +153,7 @@ let foreach_terminal =
 (* [foreach_terminal_not_causing_an_error s f] applies the function [f] to
    every terminal symbol [z] such that [causes_an_error s z] is false. This
    could be implemented in a naive manner using [foreach_terminal] and
-   [causes_an_error]. This implementation is slightly more efficient. *)
+   [causes_an_error]. This implementation is significantly more efficient. *)
 
 let foreach_terminal_not_causing_an_error s f =
   match Invariant.has_default_reduction s with
@@ -182,17 +182,16 @@ let foreach_terminal_not_causing_an_error s f =
       ) (Lr1.transitions s)
 
 (* Let us say a state [s] is solid if its incoming symbol is a terminal symbol
-   (or if it has no incoming symbol at all, i.e., it is an initial state). A
-   contrario, a state is fragile if its incoming symbol is a non-terminal
-   symbol. *)
+   (or if it has no incoming symbol at all, i.e., it is an initial state). It
+   is fragile if its incoming symbol is a non-terminal symbol. *)
 
 let is_solid s =
   match Lr1.incoming_symbol s with
   | None
   | Some (Symbol.T _) ->
-      true
+    true
   | Some (Symbol.N _) ->
-      false
+    false
 
 (* ------------------------------------------------------------------------ *)
 
