@@ -484,6 +484,8 @@ let add fact =
   (* The length of [fact.word] serves as the priority of this fact. *)
   Q.add q fact (W.length fact.word)
 
+(* ------------------------------------------------------------------------ *)
+
 (* Construct the [star] of every state [s]. Initialize the priority queue. *)
 
 let () =
@@ -507,7 +509,9 @@ let () =
           foreach_terminal_not_causing_an_error s (fun z ->
             add { position; word; lookahead = z }
           )
-  )
+  );
+  if X.verbose then
+    Trie.verbose()
 
 (* ------------------------------------------------------------------------ *)
 
@@ -908,39 +912,36 @@ let new_fact fact =
 
 (* ------------------------------------------------------------------------ *)
 
-let level = ref 0
+(* The main loop of the algorithm. *)
 
-let extracted, considered =
-  ref 0, ref 0
+let level, extracted, considered =
+  ref 0, ref 0, ref 0
 
 let done_with_level () =
-  Printf.eprintf "Done with level %d.\n" !level;
   if X.verbose then begin
+    Printf.eprintf "Done with level %d.\n" !level;
     W.verbose();
     T.verbose();
-    E.verbose()
-  end;
-  Printf.eprintf "Q stores %d facts.\n" (Q.cardinal q);
-  Printf.eprintf "%d facts extracted out of Q, of which %d considered.\n%!"
-    !extracted !considered
-
-let discover fact =
-  incr extracted;
-  if T.register fact then begin
-    if W.length fact.word > ! level then begin
-      done_with_level();
-      level := W.length fact.word;
-    end;
-    incr considered;
-    new_fact fact
+    E.verbose();
+    Printf.eprintf "Q stores %d facts.\n" (Q.cardinal q);
+    Printf.eprintf "%d facts extracted out of Q, of which %d considered.\n%!"
+      !extracted !considered
   end
 
 let () =
-  if X.verbose then
-    Trie.verbose();
-  Q.repeat q discover;
-  Time.tick "Running LRijkstra";
-  done_with_level()
+  Q.repeat q (fun fact ->
+    incr extracted;
+    if T.register fact then begin
+      if W.length fact.word > !level then begin
+        done_with_level();
+        level := W.length fact.word;
+      end;
+      incr considered;
+      new_fact fact
+    end
+  );
+  done_with_level();
+  Time.tick "Running LRijkstra"
 
 (* ------------------------------------------------------------------------ *)
 
