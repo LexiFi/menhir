@@ -266,14 +266,6 @@ module Production : sig
 
   val identifiers: index -> Syntax.identifier array
 
-  (* This maps a production index to an array of Boolean flag. Each
-     flag tells whether the semantic value of the corresponding symbol
-     is used in the semantic action. This is a conservative
-     approximation: [true] means maybe, while [false] means certainly
-     not. *)
-
-  val used: index -> bool array  
-
   (* This maps a production index to the production's semantic action.
      This function is not applicable to a start production. *)
 

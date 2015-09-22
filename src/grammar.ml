@@ -432,9 +432,6 @@ module Production = struct
   let identifiers : identifier array array =
     Array.make n [||]
 
-  let used : bool array array =
-    Array.make n [||]
-
   let actions : action option array =
     Array.make n None
 
@@ -451,7 +448,6 @@ module Production = struct
       and nt' = Nonterminal.lookup (nonterminal ^ "'") in
       table.(k) <- (nt', [| Symbol.N nt |]);
       identifiers.(k) <- [| "_1" |];
-      used.(k) <- [| true |];
       ntprods.(nt') <- (k, k+1);
       positions.(k) <- Nonterminal.positions nt;
       k+1,
@@ -473,8 +469,6 @@ module Production = struct
       let symbols = Array.of_list branch.producers in
       table.(k) <- (nt, Array.map (fun (v, _) -> Symbol.lookup v) symbols);
       identifiers.(k) <- Array.map snd symbols;
-      (* TEMPORARY: [used] is useless since all arguments are named now. Should we remove it? *)
-      used.(k) <- Array.map (fun _ -> true) symbols; 
       actions.(k) <- Some action;
       reduce_precedence.(k) <- rprec;
       prec_decl.(k) <- sprec;
@@ -534,9 +528,6 @@ module Production = struct
 
   let identifiers prod =
     identifiers.(prod)
-
-  let used prod =
-    used.(prod)
 
   let is_start prod =
     prod < start

@@ -144,12 +144,11 @@ let define_and_measure (x, e) =
 
 let reducecellparams prod i _symbol (next : pattern) : pattern =
 
-  let ids = Production.identifiers prod
-  and used = Production.used prod in
+  let ids = Production.identifiers prod in
 
   PRecord [
     fstate, (if i = 0 then PVar state else PWildcard);
-    fsemv, (if used.(i) then PVar ids.(i) else PWildcard);
+    fsemv, PVar ids.(i);
     fstartp, PVar (Printf.sprintf "_startpos_%s_" ids.(i));
     fendp, PVar (Printf.sprintf "_endpos_%s_" ids.(i));
     fnext, next;
@@ -162,27 +161,22 @@ let reducecellparams prod i _symbol (next : pattern) : pattern =
 
 let reducecellcasts prod i symbol casts =
 
-  let ids = Production.identifiers prod
-  and used = Production.used prod in
-
-  if used.(i) then
-    let id = ids.(i) in
-    let t : typ =
-      match semvtype symbol with
-      | [] ->
-	  tunit
-      | [ t ] ->
-	  t
-      | _ ->
-	  assert false
-    in
-    (* Cast: [let id = ((Obj.magic id) : t) in ...]. *)
-    (
-      PVar id,
-      EAnnot (EMagic (EVar id), type2scheme t)
-    ) :: casts
-  else
-    casts
+  let ids = Production.identifiers prod in
+  let id = ids.(i) in
+  let t : typ =
+    match semvtype symbol with
+    | [] ->
+        tunit
+    | [ t ] ->
+        t
+    | _ ->
+        assert false
+  in
+  (* Cast: [let id = ((Obj.magic id) : t) in ...]. *)
+  (
+    PVar id,
+    EAnnot (EMagic (EVar id), type2scheme t)
+  ) :: casts
 
 (* This is the body of the [reduce] function associated with
    production [prod]. It assumes that the variables [env] and [stack]
