@@ -35,7 +35,8 @@
    we encode [any] as [#] -- see below. *)
 
 (* NOTE: THIS FILE IS COMPILED WITH -noassert BY DEFAULT. If you would like
-   the assertions to be tested at runtime, change that in the file _tags. *)
+   the assertions to be tested at runtime, change that in the file _tags.
+   The performance impact of the assertions is about 10%. *)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -914,25 +915,28 @@ let new_fact fact =
 
 (* The main loop of the algorithm. *)
 
+(* [level] is the length of [fact.word] for the facts that we are examining
+   at the moment. [extracted] counts how many facts we have extracted out of
+   the priority queue. [considered] counts how many of these were found to
+   be new, and subsequently passed to [new_fact]. *)
+
 let level, extracted, considered =
   ref 0, ref 0, ref 0
 
 let done_with_level () =
-  if X.verbose then begin
-    Printf.eprintf "Done with level %d.\n" !level;
-    W.verbose();
-    T.verbose();
-    E.verbose();
-    Printf.eprintf "Q stores %d facts.\n" (Q.cardinal q);
-    Printf.eprintf "%d facts extracted out of Q, of which %d considered.\n%!"
-      !extracted !considered
-  end
+  Printf.eprintf "Done with level %d.\n" !level;
+  W.verbose();
+  T.verbose();
+  E.verbose();
+  Printf.eprintf "Q stores %d facts.\n" (Q.cardinal q);
+  Printf.eprintf "%d facts extracted out of Q, of which %d considered.\n%!"
+    !extracted !considered
 
 let () =
   Q.repeat q (fun fact ->
     incr extracted;
     if T.register fact then begin
-      if W.length fact.word > !level then begin
+      if X.verbose && W.length fact.word > !level then begin
         done_with_level();
         level := W.length fact.word;
       end;
@@ -940,7 +944,8 @@ let () =
       new_fact fact
     end
   );
-  done_with_level();
+  if X.verbose then
+    done_with_level();
   Time.tick "Running LRijkstra"
 
 (* ------------------------------------------------------------------------ *)
@@ -950,14 +955,13 @@ let () =
    sequence of terminal symbols [w]. We use this for debugging purposes. *)
 
 let fail msg =
-  Printf.eprintf "coverage: internal error: %s.\n%!" msg;
+  Printf.eprintf "LRijkstra: internal error: %s.\n%!" msg;
   false
 
-open ReferenceInterpreter
-
 let validate s s' w : bool =
+  let open ReferenceInterpreter in
   match
-    ReferenceInterpreter.check_error_path (Lr1.nt_of_entry s) (W.elements w)
+    check_error_path (Lr1.nt_of_entry s) (W.elements w)
   with
   | OInputReadPastEnd ->
       fail "input was read past its end"
@@ -982,92 +986,140 @@ let validate s s' w : bool =
 (* This can be formulated as a search for a shortest path in a graph. The
    graph is not just the automaton, though. It is a (much) larger graph whose
    vertices are pairs [s, z] and whose edges are obtained by querying the
-   module [E] above. *)
+   module [E] above. For this purpose, we use Dijkstra's algorithm,
+   unmodified. Experiments show that the running time of this phase is
+   typically 10x shorter than the running time of the main loop above. *)
 
-let forward () =
+module A = Astar.Make(struct
 
-  let module A = Astar.Make(struct
+  (* A vertex is a pair [s, z], where [z] is a real terminal symbol. *)
+  type node =
+      Lr1.node * Terminal.t
 
-    (* A vertex is a pair [s, z].
-       [z] cannot be the [error] token. *)
-    type node =
-        Lr1.node * Terminal.t
+  let equal (s'1, z1) (s'2, z2) =
+    Lr1.Node.compare s'1 s'2 = 0 && Terminal.compare z1 z2 = 0
 
-    let equal (s'1, z1) (s'2, z2) =
-      Lr1.Node.compare s'1 s'2 = 0 && Terminal.compare z1 z2 = 0
+  let hash (s, z) =
+    Hashtbl.hash (Lr1.number s, z)
 
-    let hash (s, z) =
-      Hashtbl.hash (Lr1.number s, z)
+  (* An edge is labeled with a word. *)
+  type label =
+    W.word
 
-    (* An edge is labeled with a word. *)
-    type label =
-      W.word
+  (* We search forward from every [s, z], where [s] is an initial state. *)
+  let sources f =
+    foreach_terminal (fun z ->
+      ProductionMap.iter (fun _ s ->
+        f (s, z)
+      ) Lr1.entry
+    )
 
-    (* Forward search from every [s, z], where [s] is an initial state. *)
-    let sources f =
-      foreach_terminal (fun z ->
-        ProductionMap.iter (fun _ s ->
-          f (s, z)
-        ) Lr1.entry
-      )
-
-    let successors (s, z) edge =
-      assert (Terminal.real z);
-      SymbolMap.iter (fun sym s' ->
-        match sym with
-        | Symbol.T t ->
-            if Terminal.equal z t then
-              let w = W.singleton t in
-              foreach_terminal (fun z ->
-                edge w 1 (s', z)
-              )
-        | Symbol.N nt ->
-           foreach_terminal (fun z' ->
-             E.query s nt z z' (fun w ->
-               edge w (W.length w) (s', z')
-             )
+  (* The successors of [s, z] are defined as follows. *)
+  let successors (s, z) edge =
+    assert (Terminal.real z);
+    (* For every transition out of [s], labeled [sym], leading to [s']... *)
+    Lr1.transitions s |> SymbolMap.iter (fun sym s' ->
+      match sym with
+      | Symbol.T t ->
+          if Terminal.equal z t then
+            (* If [sym] is the terminal symbol [z], then this transition
+               matches our lookahead assumption, so we can take it. For
+               every [z'], we have an edge to [s', z'], labeled with the
+               singleton word [z]. *)
+            let w = W.singleton z in
+            foreach_terminal (fun z' ->
+              edge w 1 (s', z')
+            )
+      | Symbol.N nt ->
+          (* If [sym] is a nonterminal symbol [nt], then we query [E]
+             in order to find out which (minimal) words [w] allow us
+             to take this transition. We must again try every [z'],
+             and must respect the constraint that the first symbol
+             of the word [w.z'] is [z]. For every [z'] and [w] that
+             fulfill these requirements, we have an edge to [s', z'],
+             labeled with the word [w]. *)
+         foreach_terminal (fun z' ->
+           E.query s nt z z' (fun w ->
+             edge w (W.length w) (s', z')
            )
-      ) (Lr1.transitions s)
+         )
+    )
 
-    let estimate _ =
-      0
+  (* Algorithm A*, used with a zero estimate, is Dijkstra's algorithm.
+     We have experimented with a non-zero estimate, but the performance
+     increase was minimal. *)
+  let estimate _ =
+    0
 
-  end) in
+end)
 
-  (* Search forward. *)
+(* ------------------------------------------------------------------------ *)
 
-  Printf.eprintf "Forward search:\n%!";
-  let seen = ref Lr1.NodeSet.empty in
-  let _, _ = A.search (fun ((s', z), path) ->
-    if causes_an_error s' z && not (Lr1.NodeSet.mem s' !seen) then begin
-      seen := Lr1.NodeSet.add s' !seen;
-      (* An error can be triggered in state [s'] by beginning in the initial
-         state [s] and reading the sequence of terminal symbols [w]. *)
+(* [explored] counts how many graph nodes we have discovered during the
+   search. *)
+
+let explored =
+  ref 0
+
+(* [data] can be viewed as a set of triples [nt, s', w], meaning that an error
+   can be triggered in state [s'] by beginning in the initial state that
+   corresponds to [nt] and by reading the sequence of terminal symbols [w]. We
+   store at most one such triple for every state [s'], so we organize [data]
+   as a mapping of [s'] to the pair [s, w]. *)
+
+let data : (Nonterminal.t * W.word) Lr1.NodeMap.t ref =
+  ref Lr1.NodeMap.empty
+
+(* Perform the forward search. *)
+
+let _, _ =
+  A.search (fun ((s', z), path) ->
+    incr explored;
+    (* If [z] causes an error in state [s'] and this is the first time
+       we are able to trigger an error in this state, ... *)
+    if causes_an_error s' z && not (Lr1.NodeMap.mem s' !data) then begin
+      (* Reconstruct the initial state [s] and the word [w] that lead
+         to this error. *)
       let (s, _), ws = A.reverse path in
       let w = List.fold_right W.append ws (W.singleton z) in
-      Printf.eprintf
-        "An error can be reached from state %d to state %d:\n%!"
-        (Lr1.number s)
-        (Lr1.number s');
-      Printf.eprintf "%s\n%!" (W.print w);
-      assert (validate s s' w)
+      (* Check that the reference interpreter confirms our finding. *)
+      assert (validate s s' w);
+      (* Store this new data. *)
+      let nt = Lr1.nt_of_entry s in
+      data := Lr1.NodeMap.add s' (nt, w) !data;
+      (* As we go, display the data. This leads to sorting the output
+         by increasing word sizes. *)
+      Printf.printf
+        "An error in state %d can be obtained as follows.\n\
+         Start symbol: %s\n\
+         Input length: %d\n\
+         Input sentence:\n\
+         %s\n\n%!"
+        (Lr1.number s')
+        (Nonterminal.print false nt)
+        (W.length w)
+        (W.print w)
+      (* TEMPORARY print a concrete version of the input sentence, too *)
+      (* this requires a mechanism for printing a terminal symbol under a
+         concrete form *)
     end
-  ) in
-  Printf.eprintf "Reachable (forward): %d states\n%!"
-    (Lr1.NodeSet.cardinal !seen);
-  !seen
+  )
 
 let () =
-  let f = forward() in
   Time.tick "Forward search";
-  let stat = Gc.quick_stat() in
-  Printf.eprintf
-    "Maximum size reached by the major heap: %dM\n"
-    (stat.Gc.top_heap_words * (Sys.word_size / 8) / 1024 / 1024);
-  ignore f
+  if X.verbose then begin
+    Printf.eprintf
+      "%d graph nodes explored by forward search.\n\
+       Found %d states where an error can occur.\n%!"
+    !explored
+    (Lr1.NodeMap.cardinal !data);
+    let stat = Gc.quick_stat() in
+    Printf.eprintf
+      "Maximum size reached by the major heap: %dM\n"
+      (stat.Gc.top_heap_words * (Sys.word_size / 8) / 1024 / 1024)
+  end
 
 (* TODO:
-  can we store fewer facts when we hit a default reduction?
   remove CompletedNatWitness?, revert Fix
   collect performance data, correlated with star size and alphabet size; draw a graph
   count the unreachable states and see if they are numerous in practice
