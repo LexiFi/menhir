@@ -623,21 +623,36 @@ end
 
 (* The module [E] is in charge of recording the non-terminal edges that we have
    discovered, or more precisely, the conditions under which these edges can be
-   taken. *)
+   taken.
+   
+   It maintains a set of quadruples [s, nt, w, z], where such a quadruple means
+   that in the state [s], the outgoing edge labeled [nt] can be taken by
+   consuming the word [w], under the assumption that the next symbol is [z].
+
+   Again, the terminal symbol [a], given by [W.first w z], plays a role. For
+   each quadruple [s, nt, a, z], we store at most one quadruple [s, nt, w, z].
+   Thus, internally, we maintain a mapping of [s, nt, a, z] to [w].
+
+   For greater simplicity, we do not allow [z] to be [any] in [register] or
+   [query]. Allowing it would complicate things significantly, it seems. *)
 
 module E : sig
 
   (* [register s nt w z] records that, in state [s], the outgoing edge labeled
      [nt] can be taken by consuming the word [w], if the next symbol is [z].
-     It returns [true] if this information is new. *)
+     It returns [true] if this information is new, i.e., if the underlying
+     quadruple [s, nt, a, z] is new. The symbol [z] cannot be [any]. *)
   val register: Lr1.node -> Nonterminal.t -> W.word -> Terminal.t -> bool
 
-  (* [query s nt a z] answers whether, in state [s], the outgoing edge labeled
-     [nt] can be taken by consuming some word [w], under the assumption that
-     the next symbol is [z], and under the constraint that the first symbol of
-     [w.z] is [a]. *)
-  val query: Lr1.node -> Nonterminal.t -> Terminal.t -> Terminal.t -> (W.word -> unit) -> unit
+  (* [query s nt a z] enumerates all words [w] such that, in state [s], the
+     outgoing edge labeled [nt] can be taken by consuming the word [w], under
+     the assumption that the next symbol is [z], and the first symbol of the
+     word [w.z] is [a]. The symbol [a] can be [any]. The symbol [z] cannot be
+     [any]. *)
+  val query: Lr1.node -> Nonterminal.t -> Terminal.t -> Terminal.t ->
+             (W.word -> unit) -> unit
 
+  (* [verbose()] outputs debugging & performance information. *)
   val verbose: unit -> unit
 
 end = struct
@@ -655,8 +670,8 @@ end = struct
 
   module H = Hashtbl
 
-  let table = (* a pretty large table... *)
-    Array.init (Lr1.n) (fun i ->
+  let table =
+    Array.init Lr1.n (fun i ->
       let size = Trie.size i in
       H.create (if size = 1 then 0 else Terminal.n * size)
     )
@@ -665,6 +680,7 @@ end = struct
     Lr1.number s
 
   let pack nt a z : int =
+    (* We rely on the fact that we have at most 256 terminal symbols. *)
     (Nonterminal.n2i nt lsl 16) lor
     (Terminal.t2i a lsl 8) lor
     (Terminal.t2i z)
@@ -676,6 +692,7 @@ end = struct
     let i = index s in
     let m = table.(i) in
     let a = W.first w z in
+    (* Note that looking at [a] in state [s] cannot cause an error. *)
     assert (not (causes_an_error s a));
     let key = pack nt a z in
     if H.mem m key then
@@ -688,24 +705,22 @@ end = struct
 
   let rec query s nt a z f =
     assert (Terminal.real z);
-    (* [a] can be [any] *)
-    if not (Terminal.equal a any) then begin
-      let i = index s in
-      let m = table.(i) in
-      let key = pack nt a z in
-      match H.find m key with
-      | w -> f w
-      | exception Not_found -> ()
-    end
-    else begin
-      (* If [a] is [any], we query the table for every concrete [a].
+    if Terminal.equal a any then begin
+      (* If [a] is [any], we query the table for every real symbol [a].
          We can limit ourselves to symbols that do not cause an error
          in state [s]. Those that do certainly do not have an entry;
          see the assertion in [register] above. *)
       foreach_terminal_not_causing_an_error s (fun a ->
         query s nt a z f
       )
-        (* TEMPORARY try a scheme that allows a more efficient iteration? *)
+    end
+    else begin
+      let i = index s in
+      let m = table.(i) in
+      let key = pack nt a z in
+      match H.find m key with
+      | w -> f w
+      | exception Not_found -> ()
     end
 
   let verbose () =
