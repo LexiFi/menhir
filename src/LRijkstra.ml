@@ -555,7 +555,12 @@ end = struct
      matrix indexed by [current] and [z]. At the second level, we find sets of
      facts, where two facts are considered equal if they have the same triple of
      [position], [a], and [z]. In fact, we know at this level that all facts
-     have the same [z] component, so only [position] and [a] are compared. *)
+     have the same [z] component, so only [position] and [a] are compared.
+
+     Because our facts satisfy invariant 2, [z] is [any] if and only if the
+     state [current fact] is solid. This means that we are wasting quite a
+     lot of space in the matrix (for a solid state, the whole line is empty,
+     except for the [any] column). *)
 
   (* The level-2 sets. *)
 
@@ -577,7 +582,6 @@ end = struct
 
   let table =
     Array.make (Lr1.n * Terminal.n) M.empty
-  (* TEMPORARY this space is wasted for solid states *)
 
   let index current z =
     Terminal.n * (Lr1.number current) + Terminal.t2i z
@@ -587,9 +591,6 @@ end = struct
   let register fact =
     let current = current fact in
     let z = fact.lookahead in
-    assert (non_error z);
-    (* [z] is [any] iff [current] is solid. *)
-    assert ((z = any) = is_solid current);
     let i = index current z in
     let m = table.(i) in
     (* We crucially rely on the fact that [M.add] guarantees not to
@@ -604,9 +605,11 @@ end = struct
     end
 
   let query current z f =
-    assert (z <> any);
-    (* if [current] is solid then the facts that concern it are stored
-       under [any], not under [z] *)
+    assert (not (Terminal.equal z any));
+    (* If the state [current] is solid then the facts that concern it are
+       stored in the column [any], and all of them are compatible with [z].
+       Otherwise, they are stored in all columns except [any], and only
+       those stored in the column [z] are compatible with [z]. *)
     let i = index current (if is_solid current then any else z) in
     let m = table.(i) in
     M.iter f m
@@ -686,7 +689,7 @@ end = struct
   let rec query s nt a z f =
     assert (Terminal.real z);
     (* [a] can be [any] *)
-    if a <> any then begin
+    if not (Terminal.equal a any) then begin
       let i = index s in
       let m = table.(i) in
       let key = pack nt a z in
@@ -816,7 +819,7 @@ let consequences fact =
      [fact.lookahead], so we record that. *)
   (**)
 
-  if fact.lookahead <> any then begin
+  if not (Terminal.equal fact.lookahead any) then begin
     match has_reduction current fact.lookahead with
     | Some prod when Trie.accepts prod fact.position ->
         new_edge (source fact) (Production.nt prod) fact.word fact.lookahead
