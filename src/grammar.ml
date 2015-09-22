@@ -324,7 +324,6 @@ module Terminal = struct
 
     let print w =
       let b = Buffer.create 128 in
-      Printf.bprintf b "%d " (length w); (* TEMPORARY *)
       String.iter (fun c ->
         Printf.bprintf b "%s " (print (Char.code c));
       ) w;
