@@ -730,24 +730,44 @@ end
 
 (* ------------------------------------------------------------------------ *)
 
+(* [new_edge s nt w z] is invoked when we discover that in the state [s], the
+   outgoing edge labeled [nt] can be taken by consuming the word [w], under
+   the assumption that the next symbol is [z]. We check whether this quadruple
+   already exists in the set [E]. If not, then we add it, and we compute its
+   consequences, in the form of new facts, which we insert into the priority
+   queue for later examination. *)
+
 let new_edge s nt w z =
   assert (Terminal.real z);
   if E.register s nt w z then
     let sym = Symbol.N nt in
+    (* Query [T] for existing facts which could be extended by following
+       this newly discovered edge. They must be facts whose current state
+       is [s] and whose lookahead assumption is compatible with [a]. For
+       each such fact, ... *)
     T.query s (W.first w z) (fun fact ->
       assert (compatible fact.lookahead (W.first w z));
+      (* ... try to take one step in the trie along an edge labeled [nt]. *)
       match Trie.step sym fact.position with
       | position ->
+          (* This takes up to a new state whose incoming symbol is [nt].
+             Hence, this state is not solid. In order to satisfy invariant 2,
+             we must create fact whose lookahead assumption is not [any].
+             That's fine, since our lookahead assumption is [z]. In order to
+             satisfy invariant 1, we must check that [z] does not cause an
+             error in this state. *)
           assert (not (is_solid (Trie.current position)));
           if not (causes_an_error (Trie.current position) z) then
-            add {
-              position;
-              word = W.append fact.word w;
-              lookahead = z
-            }
+            let word = W.append fact.word w in
+            add { position; word; lookahead = z }
       | exception Not_found ->
+          (* Could not take a step in the trie. This means this branch
+             leads nowhere of interest, and was pruned when the trie
+             was constructed. *)
           ()
     )
+
+(* ------------------------------------------------------------------------ *)
 
 (* [consequences fact] is invoked when we discover a new fact (i.e., one that
    was not previously known). It studies the consequences of this fact. These
