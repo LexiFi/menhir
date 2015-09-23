@@ -74,7 +74,7 @@ module type INCREMENTAL_ENGINE = sig
   (* An element is a pair of a non-initial state [s] and a semantic value [v]
      associated with the incoming symbol of this state. The idea is, the value
      [v] was pushed onto the stack just before the state [s] was entered. Thus,
-     for some type ['a], the type [s] has type ['a lr1state] and the value [v]
+     for some type ['a], the state [s] has type ['a lr1state] and the value [v]
      has type ['a]. In other words, the type [element] is an existential type. *)
 
   type element =
@@ -163,7 +163,6 @@ module type INSPECTION = sig
   val compare_terminals: _ terminal -> _ terminal -> int
   val compare_nonterminals: _ nonterminal -> _ nonterminal -> int
   val compare_symbols: xsymbol -> xsymbol -> int
-  val compare_words: xsymbol list -> xsymbol list -> int
   val compare_productions: production -> production -> int
   val compare_items: item -> item -> int
 
@@ -176,6 +175,12 @@ module type INSPECTION = sig
 
   val incoming_symbol: 'a lr1state -> 'a symbol
 
+  (* [items s] is the set of the LR(0) items in the LR(0) core of the LR(1)
+     state [s]. This set is not epsilon-closed. This set is presented as a
+     list, in an arbitrary order. *)
+
+  val items: _ lr1state -> item list
+
   (* [lhs prod] is the left-hand side of the production [prod]. This is
      always a non-terminal symbol. *)
 
@@ -185,12 +190,6 @@ module type INSPECTION = sig
      a (possibly empty) sequence of (terminal or nonterminal) symbols. *)
 
   val rhs: production -> xsymbol list
-
-  (* [items s] is the set of the LR(0) items in the LR(0) core of the LR(1)
-     state [s]. This set is not epsilon-closed. This set is presented as a
-     list, in an arbitrary order. *)
-
-  val items: _ lr1state -> item list
 
   (* [nullable nt] tells whether the non-terminal symbol [nt] is nullable.
      That is, it is true if and only if this symbol produces the empty

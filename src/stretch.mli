@@ -7,7 +7,8 @@
    content of the fragment, as a string. The [raw_content] field holds
    the text that was found in the source file, while the [content]
    field holds the same text after transformation by the lexer (which
-   substitutes keywords, inserts padding, etc.). *)
+   may substitute keywords, insert padding, insert parentheses, etc.).
+   See [Lexer.mk_stretch] and its various call sites in [Lexer]. *)
 
 type t = {
     stretch_filename	: string;

@@ -43,19 +43,6 @@ let uniq cmp xs =
 let weed cmp xs =
   uniq cmp (List.sort cmp xs)
 
-(* TEMPORARY dead code, if we remove [compare_words] *)
-let rec compare cmp xs ys =
-  match xs, ys with
-  | [], [] ->
-      0
-  | [], _ :: _ ->
-      -1
-  | _ :: _, [] ->
-      1
-  | x :: xs, y :: ys ->
-      let c = cmp x y in
-      if c <> 0 then c else compare cmp xs ys
-
 (* --------------------------------------------------------------------------- *)
 
 (* Streams. *)

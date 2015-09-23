@@ -101,9 +101,6 @@ module Make
     | X (N nt1), X (N nt2) ->
         compare_nonterminals nt1 nt2
 
-  let compare_words w1 w2 =
-    General.compare compare_symbols w1 w2
-
   let compare_productions prod1 prod2 =
     (* Subtraction is safe because overflow is impossible. *)
     prod1 - prod2

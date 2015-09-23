@@ -717,16 +717,18 @@ let check_parameterized_grammar_is_well_defined grammar =
       ) grammar.p_rules;
     
   (* Check that every token is used. *)
-  begin match Settings.token_type_mode with
-  | Settings.TokenTypeOnly ->
-      ()
-  | Settings.TokenTypeAndCode
-  | Settings.CodeOnly _ ->
-      StringMap.iter (fun token { tk_position = p } -> 
-	if not (StringSet.mem token !used_tokens) then
-	  Error.warning [p] 
-	    (Printf.sprintf "the token %s is unused." token)
-      ) grammar.p_tokens
+  if not Settings.ignore_all_unused_tokens then begin
+    match Settings.token_type_mode with
+    | Settings.TokenTypeOnly ->
+        ()
+    | Settings.TokenTypeAndCode
+    | Settings.CodeOnly _ ->
+        StringMap.iter (fun token { tk_position = p } -> 
+          if not (StringSet.mem token !used_tokens
+               || StringSet.mem token Settings.ignored_unused_tokens) then
+            Error.warning [p] 
+              (Printf.sprintf "the token %s is unused." token)
+        ) grammar.p_tokens
   end;
     
   grammar

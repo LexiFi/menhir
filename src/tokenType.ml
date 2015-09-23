@@ -111,7 +111,6 @@ let produce_tokentypes grammar =
       let module P = 
 	Printer.Make (struct 
 			let f = open_out (Settings.base ^ ".mli")
-			let raw_stretch_action = false
 			let locate_stretches = None 
 		      end) 
       in
@@ -121,7 +120,6 @@ let produce_tokentypes grammar =
       let module P = 
 	Printer.Make (struct 
 			let f = open_out (Settings.base ^ ".ml")
-			let raw_stretch_action = false
 			let locate_stretches = None 
 		      end) 
       in

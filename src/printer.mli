@@ -6,10 +6,6 @@ module Make (X : sig
 
   val f: out_channel
 
-  (* If [raw_stretch_action] is set, then we print the semantic actions 
-     as they are found into the original source code. *)
-  val raw_stretch_action: bool
-
   (* This controls the way we print Objective Caml stretches (types and
      semantic actions). We either surround them with #line directives
      (for better error reports if the generated code is ill-typed) or

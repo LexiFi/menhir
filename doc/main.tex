@@ -13,10 +13,6 @@
 \input{macros}
 \input{version}
 
-% TEMPORARY indiquer que le comportement par défaut (en l'absence
-% de --only-tokens ou --external-tokens) est d'engendrer la déf.
-% du type token
-
 % ---------------------------------------------------------------------------------------------------------------------
 % Headings.
 
@@ -156,6 +152,13 @@ vertices are the grammar's nonterminal symbols. There is a directed edge from
 vertex $A$ to vertex $B$ if the definition of $A$ refers to $B$. The file is
 in a format that is suitable for processing by the \emph{graphviz} toolkit.
 
+\docswitch{\oignoreone \nt{symbol}} This switch suppresses the warning that
+is normally emitted when \menhir finds that the terminal symbol \nt{symbol} is
+unused.
+
+\docswitch{\oignoreall} This switch suppresses all of the warnings that are
+normally emitted when \menhir finds that some terminal symbols are unused.
+
 \docswitch{\oinfer} This switch causes the semantic actions to be checked for
 type consistency \emph{before} the parser is generated. This is done by
 invoking the \ocaml compiler. Use of \oinfer is \textbf{strongly recommended},
@@ -172,6 +175,12 @@ and use \ocamlbuild, which has built-in knowledge of \menhir. Using
 % There is a slight catch with \oinfer. The types inferred by \ocamlc are valid
 % in the toplevel context, but can change meaning when inserted into a local
 % context.
+
+\docswitch{\oinspection} This switch requires \otable. It causes \menhir to generate
+not only the monolithic and incremental APIs (\sref{sec:monolithic},
+\sref{sec:incremental}), but also the inspection API (\sref{sec:inspection}).
+Activating this switch causes a few more tables to be produced, resulting in
+somewhat larger code size.
 
 \docswitch{\ointerpret} This switch causes \menhir to act as an interpreter,
 rather than as a compiler. No \ocaml code is generated. Instead, \menhir
@@ -293,6 +302,9 @@ above, help do this.
 
 The code-based back-end compiles the LR automaton directly into a nest of
 mutually recursive \ocaml functions. In that case, \menhirlib is not required.
+
+The incremental API (\sref{sec:incremental}) and the inspection API
+(\sref{sec:inspection}) are made available only by the table-based back-end.
 
 \docswitch{\otimings} This switch causes internal timing information to
 be sent to the standard error channel.
@@ -486,8 +498,14 @@ the parser.
 \subsection{Rules}
 
 Following the mandatory \percentpercent keyword, a sequence of rules is
-expected. Each rule defines a nonterminal symbol~\nt{id}. In its simplest
-form, a rule begins with \nt{id}, followed by a colon character (\deuxpoints),
+expected. Each rule defines a nonterminal symbol~\nt{id}.
+%
+(It is recommended that the name of a nonterminal symbol begin with a lowercase
+letter, so it falls in the category \nt{lid}. This is in fact mandatory for the
+start symbols.)
+In its simplest
+form, a rule begins with the nonterminal symbol \nt{id},
+followed by a colon character (\deuxpoints),
 and continues with a sequence of production groups
 (\sref{sec:productiongroups}). Each production group is preceded with a
 vertical bar character (\barre); the very first bar is optional. The meaning
@@ -513,18 +531,19 @@ A semantic action is a piece of \ocaml code that is executed in order to
 assign a semantic value to the nonterminal symbol with which this production
 group is associated. A semantic action can refer to the (already computed)
 semantic values of the terminal or nonterminal symbols that appear in the
-production via the semantic value identifiers bound by the production. For
-compatibility with \ocamlyacc, semantic actions can also refer to these
-semantic values via positional keywords of the form
+production via the semantic value identifiers bound by the production.
+
+For compatibility with \ocamlyacc, semantic actions can also refer to
+unnamed semantic values via positional keywords of the form
 \kw{\$1}, \kw{\$2}, etc.\ This style is discouraged. Furthermore, as
 a positional keyword of the form \kw{\$i} is internally rewritten as
-\nt{\_i}, such identifiers are forbidden.
+\nt{\_i}, the user should not use identifiers of the form \nt{\_i}.
 
 \paragraph{\dprec annotations}
 \label{sec:prec}
 
-An annotation of the form \dprec \nt{uid} indicates that the precedence level
-of the production group is the level assigned to the symbol \nt{uid} via a
+An annotation of the form \dprec \nt{id} indicates that the precedence level
+of the production group is the level assigned to the symbol \nt{id} via a
 previous \dnonassoc, \dleft, or \dright declaration (\sref{sec:assoc}). In the
 absence of a
 \dprec annotation, the precedence level assigned to each production is the
@@ -1823,25 +1842,53 @@ channel.
 
 \section{Generated API}
 
-\newcommand{\mystartsymbol}{\texttt{main}\xspace}
-\newcommand{\mystartsymboltype}{\texttt{thing}\xspace}
-
 When \menhir processes a grammar specification, say \texttt{parser.mly}, it
 produces one \ocaml module, \texttt{Parser}, whose code resides in the file
 \texttt{parser.ml} and whose signature resides in the file
-\texttt{parser.mli}. We now review this signature.
-We assume that the grammar specification has just one start symbol
-\mystartsymbol, whose \ocaml type is \mystartsymboltype. 
+\texttt{parser.mli}. We now review this signature. For simplicity,
+we assume that the grammar specification has just one start symbol
+\verb+main+, whose \ocaml type is \verb+thing+.
 
-% On passe sous silence la définition du type token, qui peut être absente
-% ou présente, et est expliquée ailleurs.
+% ------------------------------------------------------------------------------
 
 \subsection{Monolithic API}
 \label{sec:monolithic}
 
-The monolithic API consists in just one parsing function, named after the
-start symbol. The generated file \texttt{parser.mli} contains the following
-declaration:
+The monolithic API defines the type \verb+token+, the exception \verb+Error+,
+and the parsing function \verb+main+, named after the start symbol of the
+grammar.
+
+%% type token
+
+The type \verb+token+ is an algebraic data type. A value of type \verb+token+
+represents a terminal symbol and its semantic value. For instance, if the
+grammar contains the declarations \verb+%token A+ and \verb+%token<int> B+,
+then the generated file \texttt{parser.mli} contains the following definition:
+\begin{verbatim}
+  type token =
+  | A
+  | B of int
+\end{verbatim}
+%
+If \oonlytokens is specified on the command line, the type \verb+token+ is
+generated, and the rest is omitted. On the contrary, if \oexternaltokens is
+used, the type \verb+token+ is omitted, but the rest (described below) is
+generated.
+
+%% exception Error
+
+The exception \verb+Error+ carries no argument. It is raised by the parsing
+function \verb+main+ (described below) when a syntax error is detected.
+%
+\begin{verbatim}
+  exception Error
+\end{verbatim}
+
+%% val main
+
+Next comes one parsing function for each start symbol of the grammar. Here, we
+have assumed that there is one start symbol, named \verb+main+, so the
+generated file \texttt{parser.mli} contains the following declaration:
 \begin{verbatim}
   val main: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> thing
 \end{verbatim}
@@ -1855,6 +1902,8 @@ consult \sref{sec:qa}.)
 This API is ``monolithic'' in the sense that there is just one function, which
 does everything: it pulls tokens from the lexer, parses, and eventually
 returns a semantic value (or fails by throwing the exception \texttt{Error}).
+
+% ------------------------------------------------------------------------------
 
 \subsection{Incremental API}
 \label{sec:incremental}
@@ -1887,7 +1936,7 @@ $O(n)$ space in memory.
 % error recovery, up to a complete parse... as in Merlin.
 
 In this API, the parser is started by invoking
-\texttt{Incremental.\mystartsymbol}.  (Recall that we assume \mystartsymbol is
+\verb+Incremental.main+. (Recall that we assume \verb+main+ is
 the name of the start symbol.) The generated file \texttt{parser.mli} contains
 the following declaration:
 \begin{verbatim}
@@ -1895,13 +1944,17 @@ the following declaration:
     val main: unit -> thing MenhirInterpreter.result
   end
 \end{verbatim}
+We emphasize that the function \verb+Incremental.main+ does not parse
+anything. It constructs a parser state which serves as a \emph{starting}
+point. The functions \verb+offer+ and \verb+resume+, described below, are used
+to drive the parser.
 
 The sub-module \menhirinterpreter is also part of the incremental API.
 Its declaration, which appears in the generated file \texttt{parser.mli}, is as
 follows:
 \begin{verbatim}
   module MenhirInterpreter : MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE
-    with type token := token
+    with type token = token
 \end{verbatim}
 The signature \verb+INCREMENTAL_ENGINE+, defined in the module
 \menhirlibincrementalengine, contains the following elements.
@@ -1911,9 +1964,35 @@ to as \verb+MenhirInterpreter.result+, or
 \verb+Parser.MenhirInterpreter.result+, depending on which modules the user
 chooses to open.
 
+%% type token
+
+% Passons-le sous silence.
+
+%% type env
+
+\begin{verbatim}
+  type env
+\end{verbatim}
+
+The abstract type \verb+env+ represents the current state of the
+parser. (That is, it contains the current state and stack of the LR
+automaton.) Assuming that semantic values are immutable, it is a persistent
+data structure: it can be stored and used multiple times, if desired.
+
+%% type production
+
+\begin{verbatim}
+  type production
+\end{verbatim}
+
+The abstract type \verb+production+ represents a production of the grammar.
+
+%% type 'a result
+
 \begin{verbatim}
   type 'a result = private
     | InputNeeded of env
+    | Shifting of env * env * bool
     | AboutToReduce of env * production
     | HandlingError of env
     | Accepted of 'a
@@ -1932,6 +2011,12 @@ a semantic value.
 \verb+InputNeeded+ is an intermediate result. It means that the parser wishes
 to read one token before continuing.
 
+\verb+Shifting+ is an intermediate result. It means that the parser is taking
+a shift transition. It exposes the state of the parser before and after the
+transition. The Boolean parameter tells whether the parser intends to request
+a new token after this transition. (It always does, except when it is about to
+accept.)
+
 \verb+AboutToReduce+ is an intermediate result: it means that the parser is
 about to perform a reduction step. \verb+HandlingError+ is also an
 intermediate result: it means that the parser has detected an error and is
@@ -1941,20 +2026,7 @@ cases, the parser does not need more input. The parser suspends itself at this
 point only in order to give the user an opportunity to observe the parser's
 transitions and possibly handle errors in a different manner, if desired.
 
-\begin{verbatim}
-  type env
-\end{verbatim}
-
-The abstract type \verb+env+ represents the current state of the
-parser. (That is, it contains the current state and stack of the LR
-automaton.) Assuming that semantic values are immutable, it is a persistent
-data structure: it can be stored and used multiple times, if desired.
-
-\begin{verbatim}
-  type production
-\end{verbatim}
-
-The abstract type \verb+production+ represents a production of the grammar.
+%% val offer
 
 \begin{verbatim}
   val offer:
@@ -1971,6 +2043,8 @@ result, which again can be an intermediate result or a final result. It does
 not raise any exception. (The exception \texttt{Error} is used only in the
 monolithic API.)
 
+%% val resume
+
 \begin{verbatim}
   val resume:
     'a result ->
@@ -1983,21 +2057,269 @@ parser has suspended itself with a result of the form
 This function expects just the previous result \verb+result+. It produces a new
 result. It does not raise any exception.
 
-The incremental API subsumes the monolithic API. Indeed, \mystartsymbol can be
+The incremental API subsumes the monolithic API. Indeed, \verb+main+ can be
 (and is in fact) implemented by first using
-\texttt{Incremental.\mystartsymbol}, then calling \verb+offer+ and
+\verb+Incremental.main+, then calling \verb+offer+ and
 \verb+resume+ in a loop, until a final result is obtained.
 
-At this time, because the type \verb+env+ is opaque, the state of the parser
-cannot be inspected by the user. We plan to offer an inspection API in the
-near future.
+Although the type \verb+env+ is opaque, a parser state can be inspected via a
+few accessor functions, which we are about to describe. Before we do so, we
+give a few more type definitions.
 
-% TEMPORARY stack
-% TEMPORARY symbol
+%% type 'a lr1state
 
-% TEMPORARY document the inspection API
+\begin{verbatim}
+  type 'a lr1state
+\end{verbatim}
+
+The abstract type \verb+'a lr1state+ describes a (non-initial) state of the
+LR(1) automaton.
+%
+If \verb+s+ is such a state, then \verb+s+ should have at least one incoming
+transition, and all of its incoming transitions carry the same (terminal or
+non-terminal) symbol, say $A$. We say that $A$ is the \emph{incoming symbol}
+of the state~\verb+s+.
+%
+The index \verb+'a+ is the type of the semantic values associated with $A$.
+The role played by \verb+'a+ is clarified in the definition of the
+type \verb+element+, which follows.
+
+%% type element
+
+\begin{verbatim}
+  type element =
+    | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
+\end{verbatim}
+
+The type \verb+element+ describes one entry in the stack of the LR(1)
+automaton. In a stack element of the form \verb+Element (s, v, startp, endp)+,
+\verb+s+ is a (non-initial) state and \verb+v+ is a semantic value. The
+value~\verb+v+ is associated with the incoming symbol~$A$ of the
+state~\verb+s+. In other words, the value \verb+v+ was pushed onto the stack
+just before the state \verb+s+ was entered. Thus, for some type \verb+'a+, the
+state~\verb+s+ has type \verb+'a lr1state+ and the value~\verb+v+ has
+type~\verb+'a+. The positions \verb+startp+ and \verb+endp+ delimit the
+fragment of the input text that was reduced to the symbol $A$.
+
+In order to do anything useful with the value \verb+v+, one must gain
+information about the type \verb+'a+, by inspection of the state~\verb+s+. So
+far, the type \verb+'a lr1state+ is abstract, so there is no way of
+inspecting~\verb+s+. The inspection API (\sref{sec:inspection}) offers further
+tools for this purpose.
+
+%% type stack
+
+\begin{verbatim}
+  type stack =
+    element stream
+\end{verbatim}
+
+A parser stack can be viewed as a stream of elements, where the first element
+of the stream is the topmost element of the stack. (The type \verb+'a stream+
+is defined in the module \menhirlibgeneral.)
+This stream is empty if the parser is in an initial state, and non-empty otherwise.
+% (Which initial state? -- no way to know...)
+In the latter case, 
+the current state of the LR(1) automaton is found in the topmost stack element.
+
+%% val stack
+
+\begin{verbatim}
+  val stack: env -> stack
+\end{verbatim}
+
+The function \verb+stack+ offers a view of the parser's stack as a stream of
+elements. This stream is computed on-demand. (The internal representation of
+the stack may be different, so a conversion is necessary.) Invoking the
+function \verb+stack+, and demanding the next element of the stream, takes
+constant time.
+
+%% val positions
+
+\begin{verbatim}
+  val positions: env -> Lexing.position * Lexing.position
+\end{verbatim}
+
+The function \verb+positions+ returns the start and end positions of the
+current lookahead token. It is legal to invoke this function only after at
+least one token has been offered to the parser via \verb+offer+. In other
+words, it is illegal to invoke it in an initial state.
+
+% ------------------------------------------------------------------------------
+
+\subsection{Inspection API}
+\label{sec:inspection}
+
+If \oinspection is set, \menhir offers an inspection API in addition to the
+monolithic and incremental APIs. Like the incremental API, the inspection API
+is found in the sub-module \menhirinterpreter. It offers the following types
+and functions.
+
+%% type _ terminal
+
+The type \verb+'a terminal+ is a generalized algebraic data type (GADT). A
+value of type \verb+'a terminal+ represents a terminal symbol (without a
+semantic value). The index \verb+'a+ is the type of the semantic values
+associated with this symbol. For instance, if the grammar contains the
+declarations \verb+%token A+ and \verb+%token<int> B+, then the generated
+module \menhirinterpreter contains the following definition:
+%
+\begin{verbatim}
+  type _ terminal =
+  | T_A : unit terminal
+  | T_B : int terminal
+\end{verbatim}
+%
+The data constructors are named after the terminal symbols, prefixed with ``\verb+T_+''.
+
+%% type _ nonterminal
+
+The type \verb+'a nonterminal+ is also a GADT. A value of type
+\verb+'a nonterminal+ represents a nonterminal symbol (without a semantic value). The
+index \verb+'a+ is the type of the semantic values associated with this
+symbol. For instance, if \verb+main+ is the only nonterminal symbol,
+then the generated
+module \menhirinterpreter contains the following definition:
+%
+\begin{verbatim}
+  type _ nonterminal =
+  | N_main : thing nonterminal
+\end{verbatim}
+%
+The data constructors are named after the nonterminal symbols, prefixed with ``\verb+N_+''.
+
+%% type 'a symbol
+
+The type \verb+'a symbol+
+% (an algebraic data type)
+is the disjoint union of the types \verb+'a terminal+ and \verb+'a nonterminal+.
+In other words, a value of type \verb+'a symbol+ represents a terminal or nonterminal symbol (without
+a semantic value).
+This type is (always) defined as follows:
+%
+\begin{verbatim}
+  type 'a symbol =
+    | T : 'a terminal -> 'a symbol
+    | N : 'a nonterminal -> 'a symbol
+\end{verbatim}
+
+%% type xsymbol
+
+The type \verb+xsymbol+ is an existentially quantified version of the
+type \verb+'a symbol+. It is useful in situations where the index \verb+'a+ is
+not statically known. It is (always) defined as follows:
+%
+\begin{verbatim}
+  type xsymbol = 
+    | X : 'a symbol -> xsymbol
+\end{verbatim}
+
+%% type item
+
+The type \verb+item+ describes an LR(0) item, that is, a pair of a production
+\verb+prod+ and an index \verb+i+ into the right-hand side of this production.
+If the length of the right-hand side is \verb+n+, then \verb+i+ is
+comprised between 0 and \verb+n+, inclusive.
+
+\begin{verbatim}
+  type item =
+      production * int
+\end{verbatim}
+
+%% Comparison functions.
+
+The following functions implement total orderings on the types
+\verb+_ terminal+, \verb+_ nonterminal+, \verb+xsymbol+,
+\verb+production+, and \verb+item+.
+
+\begin{verbatim}
+  val compare_terminals: _ terminal -> _ terminal -> int
+  val compare_nonterminals: _ nonterminal -> _ nonterminal -> int
+  val compare_symbols: xsymbol -> xsymbol -> int
+  val compare_productions: production -> production -> int
+  val compare_items: item -> item -> int
+\end{verbatim}
+
+%% val incoming_symbol
+
+The function \verb+incoming_symbol+ maps a (non-initial) LR(1)
+state~\verb+s+ to its incoming symbol, that is, the symbol that the parser
+must recognize before it enters the state \verb+s+.
+%
+\begin{verbatim}
+  val incoming_symbol: 'a lr1state -> 'a symbol
+\end{verbatim}
+%
+This function can be used to gain access to the semantic value \verb+v+
+in a stack element \verb+Element (s, v, _, _)+. Indeed, by case analysis on the
+symbol \verb+incoming_symbol s+, one gains information about the type \verb+'a+,
+hence one obtains the ability to do something useful with the value~\verb+v+.
+
+%% val items
+
+The function \verb+items+ maps a (non-initial) LR(1) state~\verb+s+ to its
+LR(0) \emph{core}, that is, to the underlying set of LR(0) items. This set
+is represented as a list, whose elements appear in an arbitrary order. This
+set is \emph{not} closed under $\epsilon$-transitions.
+%
+\begin{verbatim}
+  val items: _ lr1state -> item list
+\end{verbatim}
+
+%% val lhs
+%% val rhs
+
+The functions \verb+lhs+ and \verb+rhs+ map a production \verb+prod+ to
+its left-hand side and right-hand side, respectively. The left-hand side
+is always a nonterminal symbol, hence always of the form \verb+N _+. The
+right-hand side is a (possibly empty) sequence of (terminal or nonterminal)
+symbols.
+%
+\begin{verbatim}
+  val lhs: production -> xsymbol
+  val rhs: production -> xsymbol list
+\end{verbatim}
+%
+
+%% val nullable
+
+The function \verb+nullable+, applied to a non-terminal symbol,
+tells whether this symbol is nullable. A nonterminal symbol is nullable if and
+only if it produces the empty word $\epsilon$.
+%
+\begin{verbatim}
+  val nullable: _ nonterminal -> bool
+\end{verbatim}
+
+%% val first
+%% val xfirst
+
+The function call \verb+first nt t+ tells whether the \emph{FIRST} set of the
+nonterminal symbol \verb+nt+ contains the terminal symbol \verb+t+. That is,
+it returns \verb+true+ if and only if \verb+nt+ produces a word that begins
+with \verb+t+. The function \verb+xfirst+ is identical to \verb+first+, except
+it expects a first argument of type \verb+xsymbol+ instead of \verb+_ terminal+.
+%
+\begin{verbatim}
+  val first: _ nonterminal -> _ terminal -> bool
+  val xfirst: xsymbol -> _ terminal -> bool
+\end{verbatim}
+
+%% val foreach_terminal
+%% val foreach_terminal_but_error
+
+The function \verb+foreach_terminal+ enumerates the terminal symbols, including the special symbol \error.
+The function \verb+foreach_terminal_but_error+ enumerates the terminal symbols, excluding \error.
+\begin{verbatim}
+  val foreach_terminal:           (xsymbol -> 'a -> 'a) -> 'a -> 'a
+  val foreach_terminal_but_error: (xsymbol -> 'a -> 'a) -> 'a -> 'a
+\end{verbatim}
+
+% TEMPORARY
 % document the modules that use the inspection API: Printers, ErrorReporting
+% document MenhirLib.General?
 % The directory \distrib{demos/calc-inspection} contains a demo that illustrates the use of the inspection API.
+% review it / clean it up!
 
 % ---------------------------------------------------------------------------------------------------------------------
 
@@ -2231,7 +2553,7 @@ The list is roughly sorted by decreasing order of importance.
       deprecated. They are replaced with keywords (\sref{sec:errors}).
 
 \item \menhir's error handling mechanism (\sref{sec:errors}) is inspired
-      by \ocamlyacc's, but are not guaranteed to be fully
+      by \ocamlyacc's, but is not guaranteed to be fully
       compatible. Error recovery, also known as re-synchronization, is not
       supported by \menhir.
 
@@ -2360,7 +2682,7 @@ was generously funded by Jane Street Capital, LLC through the ``OCaml Summer
 Project'' initiative.
 
 Frédéric Bour provided motivation and an initial implementation for the
-incremental API.
+incremental API and inspection API.
 
 Jacques-Henri Jourdan designed and implemented the Coq back-end and did the
 Coq proofs that come with it.

@@ -1,10 +1,11 @@
 %start a 
 %type <unit> a
+%token B
 
 %%
 
 a:
-  b { () }
+  b | B { () }
 
 b:
   a { () }

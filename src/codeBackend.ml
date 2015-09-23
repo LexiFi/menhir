@@ -710,19 +710,12 @@ let runcellparams var holds_state symbol =
    symbol this stack cell is associated with. *)
 
 let reducecellparams prod i holds_state symbol =
-  let ids = Production.identifiers prod
-  and used = Production.used prod in
+  let ids = Production.identifiers prod in
 
-  (* If the semantic value is used in the semantic action, then it is
-     bound to the variable [ids.(i)]. If the semantic value is not
-     used in the semantic action, then it is dropped using a wildcard
-     pattern. *)
+  (* The semantic value is bound to the variable [ids.(i)]. *)
 
   let semvpat _t =
-    if used.(i) then
-      PVar ids.(i)
-    else
-      PWildcard
+    PVar ids.(i)
   in
 
   elementif holds_state (if i = 0 then PVar state else PWildcard) @
@@ -1137,7 +1130,6 @@ let reducebody prod =
 
   let nt, rhs = Production.def prod
   and ids = Production.identifiers prod
-  and used = Production.used prod
   and length = Production.length prod in
 
   (* Build a pattern that represents the shape of the stack. Out of
@@ -1167,14 +1159,11 @@ let reducebody prod =
 
   let unitbindings =
     Misc.foldi length (fun i unitbindings ->
-      if used.(i) then
-	match semvtype rhs.(i) with
-	| [] ->
-	    (PVar ids.(i), EUnit) :: unitbindings
-	| _ ->
-	    unitbindings
-      else
-	unitbindings
+      match semvtype rhs.(i) with
+      | [] ->
+  	  (PVar ids.(i), EUnit) :: unitbindings
+      | _ ->
+	  unitbindings
     ) []
   in
 
