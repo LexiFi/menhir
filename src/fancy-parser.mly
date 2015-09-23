@@ -45,12 +45,6 @@ open Positions
 %nonassoc no_optional_bar
 %nonassoc BAR
 
-/* These declarations encourage the [error] token to be shifted if
-   found at the end of what seems like a legal declaration. */
-
-%nonassoc decl
-%nonassoc error
-
 %%
 
 /* ------------------------------------------------------------------------- */
@@ -77,20 +71,10 @@ declaration:
 | h = HEADER /* lexically delimited by %{ ... %} */
     { [ with_poss $startpos $endpos (DCode h) ] }
 
-| TOKEN t = OCAMLTYPE? ts = clist(terminal) %prec decl
+| TOKEN t = OCAMLTYPE? ts = clist(terminal)
     { List.map (Positions.map (fun terminal -> DToken (t, terminal))) ts }
 
-| TOKEN OCAMLTYPE? clist(terminal) error
-| TOKEN OCAMLTYPE? error
-    { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
-      "syntax error in a %token declaration.";
-      "Here are sample valid declarations:";
-      "  %token DOT SEMICOLON";
-      "  %token <string> LID UID";
-      ])
-    }
-
-| START t = OCAMLTYPE? nts = clist(nonterminal) %prec decl
+| START t = OCAMLTYPE? nts = clist(nonterminal)
     /* %start <ocamltype> foo is syntactic sugar for %start foo %type <ocamltype> foo */
     {
       match t with
@@ -101,59 +85,16 @@ declaration:
             Positions.mapd (fun nt -> DStart nt, DType (t, ParameterVar ntloc)) ntloc) nts
     }
 
-| START OCAMLTYPE? clist(nonterminal) error
-| START OCAMLTYPE? error
-    { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
-      "syntax error in a %start declaration.";
-      "Here are sample valid declarations:";
-      "  %start expression phrase";
-      "  %start <int> date time";
-      ])
-    }
-
-| TYPE t = OCAMLTYPE ss = clist(strict_actual) %prec decl
+| TYPE t = OCAMLTYPE ss = clist(strict_actual)
     { List.map (Positions.map (fun nt -> DType (t, nt)))
         (List.map Parameters.with_pos ss) }
 
-| TYPE OCAMLTYPE clist(strict_actual) error
-| TYPE OCAMLTYPE error
-| TYPE error
-    { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
-      "syntax error in a %type declaration.";
-      "Here are sample valid declarations:";
-      "  %type <Syntax.expression> expression";
-      "  %type <int> date time";
-      ])
-    }
-
-| k = priority_keyword ss = clist(symbol) %prec decl
+| k = priority_keyword ss = clist(symbol)
     { let prec = ParserAux.current_token_precedence $startpos(k) $endpos(k) in
       List.map (Positions.map (fun symbol -> DTokenProperties (symbol, k, prec))) ss }
 
-| priority_keyword clist(symbol) error
-| priority_keyword error
-    { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
-      "syntax error in a precedence declaration.";
-      "Here are sample valid declarations:";
-      "  %left PLUS TIMES";
-      "  %nonassoc unary_minus";
-      "  %right CONCAT";
-      ])
-    }
-
 | PARAMETER t = OCAMLTYPE
     { [ with_poss $startpos $endpos (DParameter t) ] }
-
-| PARAMETER error
-    { Error.error (Positions.two $startpos $endpos) (String.concat "\n" [
-      "syntax error in a %parameter declaration.";
-      "Here is a sample valid declaration:";
-      "  %parameter <X : sig type t end>";
-      ])
-    }
-
-| error
-    { Error.error (Positions.two $startpos $endpos) "syntax error inside a declaration." }
 
 /* This production recognizes tokens that are valid in the rules section,
    but not in the declarations section. This is a hint that a %% was
@@ -237,8 +178,6 @@ rule:
         pr_branches    = branches
       }
     }
-| error
-    { Error.error (Positions.two $startpos $endpos) "syntax error inside the definition of a nonterminal symbol." }
 
 %inline branches:
   prods = separated_nonempty_list(BAR, production_group)
@@ -278,6 +217,7 @@ production_group:
         let pr_producers = ParserAux.normalize_producers producers in
         (* Distribute the semantic action. Also, check that every [$i]
            is within bounds. *)
+        let action : Syntax.identifier option array -> Action.t = action in
         let pr_action = action (ParserAux.producer_names producers) in
 	{
 	  pr_producers;
@@ -288,9 +228,6 @@ production_group:
 	})
       productions
     }
-| error ACTION precedence?
-| error EOF
-    { Error.error (Positions.two $startpos($1) $endpos($1)) "syntax error inside a production." }
 
 %inline precedence:
   PREC symbol = symbol
