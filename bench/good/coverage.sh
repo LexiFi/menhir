@@ -15,7 +15,7 @@ make -C $SRC bootstrap || exit 1
 # Remove any leftover output files.
 rm -f log lr.csv
 # Print the header of lr.csv. (This should be kept in sync with LRijkstra.ml.)
-echo "grammar,terminals,nonterminals,size,states,trie,facts,edges,time" > lr.csv
+echo "grammar,terminals,nonterminals,size,states,trie,facts,edges,time,heap" > lr.csv
 # Try every grammar. (Only the single-file grammars, that is.)
 for f in `ls *.mly | egrep -v '.*-([1-9]).mly'` ; do
   echo "Now dealing with: $f" | tee -a log

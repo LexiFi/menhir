@@ -1161,20 +1161,25 @@ let _, _ =
     end
   )
 
+let max_heap_size =
+  if X.verbose || X.statistics <> None then
+    let stat = Gc.quick_stat() in
+    (stat.Gc.top_heap_words * (Sys.word_size / 8) / 1024 / 1024)
+  else
+    0 (* dummy *)
+
 let () =
   Time.tick "Forward search";
   if X.verbose then begin
     Printf.eprintf
       "%d graph nodes explored by forward search.\n\
        %d out of %d states are reachable.\n\
-       Found %d states where an error can occur.\n%!"
+       Found %d states where an error can occur.\n\
+       Maximum size reached by the major heap: %dM\n%!"
     !explored
     (Lr1.NodeSet.cardinal !reachable) Lr1.n
-    (Lr1.NodeMap.cardinal !data);
-    let stat = Gc.quick_stat() in
-    Printf.eprintf
-      "Maximum size reached by the major heap: %dM\n"
-      (stat.Gc.top_heap_words * (Sys.word_size / 8) / 1024 / 1024)
+    (Lr1.NodeMap.cardinal !data)
+    max_heap_size
   end
 
 (* ------------------------------------------------------------------------ *)
@@ -1188,7 +1193,7 @@ let () =
   X.statistics |> Option.iter (fun filename ->
     let c = open_out_gen [ Open_creat; Open_append; Open_text ] 0o644 filename in
     Printf.fprintf c
-      "%s,%d,%d,%d,%d,%d,%d,%d,%.2f\n%!"
+      "%s,%d,%d,%d,%d,%d,%d,%d,%.2f,%d\n%!"
       (* Grammar name. *)
       Settings.base
       (* Number of terminal symbols. *)
@@ -1215,6 +1220,8 @@ let () =
       (E.size())
       (* Elapsed user time, in seconds. *)
       (stop -. start)
+      (* Max heap size, in megabytes. *)
+      max_heap_size
     ;
     close_out c
   )
