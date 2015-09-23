@@ -6,5 +6,11 @@
 (* The result of this analysis is written to the standard output channel.
    No result is returned. *)
 
-module Run (X : sig val verbose: bool end) : sig end
+module Run (X : sig
+  (* If [verbose] is set, produce various messages on [stderr]. *)
+  val verbose: bool
+  (* If [statistics] is defined, it is interpreted as the name of
+     a file to which one line of statistics is appended. *)
+  val statistics: string option
+end) : sig end
 

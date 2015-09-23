@@ -41,14 +41,31 @@
 (* ------------------------------------------------------------------------ *)
 
 (* To delay the side effects performed by this module, we wrap everything in
-   in a big functor. The functor also serves to pass a verbosity parameter. *)
+   in a big functor. The functor also serves to pass verbosity parameters. *)
 
-module Run (X : sig val verbose: bool end) = struct
+module Run (X : sig
+  (* If [verbose] is set, produce various messages on [stderr]. *)
+  val verbose: bool
+  (* If [statistics] is defined, it is interpreted as the name of
+     a file to which one line of statistics is appended. *)
+  val statistics: string option
+end) = struct
 
 open Grammar
 
+(* ------------------------------------------------------------------------ *)
+
+(* Record our start time. *)
+
+let now () =
+  match X.statistics with
+  | Some _ ->
+      Unix.((times()).tms_utime)
+  | None ->
+      0.0
+
 let start =
-  Unix.((times()).tms_utime)
+  now()
 
 (* ------------------------------------------------------------------------ *)
 
@@ -1162,15 +1179,14 @@ let () =
 
 (* ------------------------------------------------------------------------ *)
 
-(* Should we collect statistics? *)
+(* If requested by the client, produce one line of statistics. *)
 
-let collect =
-  true (* TEMPORARY *)
+let stop =
+  now()
 
 let () =
-  if collect then begin
-    let stop = Unix.((times()).tms_utime) in
-    let c = open_out_gen [ Open_creat; Open_append; Open_text ] 0o644 "lr.csv" in
+  X.statistics |> Option.iter (fun filename ->
+    let c = open_out_gen [ Open_creat; Open_append; Open_text ] 0o644 filename in
     Printf.fprintf c
       "%s,%d,%d,%d,%d,%d,%d,%d,%.2f\n%!"
       (* Grammar name. *)
@@ -1201,7 +1217,7 @@ let () =
       (stop -. start)
     ;
     close_out c
-  end
+  )
 
 (* ------------------------------------------------------------------------ *)
 
