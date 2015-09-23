@@ -72,14 +72,14 @@ let stream (toks : Terminal.t list) : unit -> Terminal.t * Lexing.position * Lex
    it. Otherwise, we use the grammar's unique start symbol, if there is
    one. *)
 
-let start ((nto, _) : sentence) : Nonterminal.t =
+let start poss ((nto, _) : sentence) : Nonterminal.t =
   match nto with
   | Some nt ->
       nt
   | None ->
       match ProductionMap.is_singleton Lr1.entry with
       | None ->
-          Error.error []
+          Error.error poss
             "Because the grammar has multiple start symbols, each of the\n\
              sentences provided on the standard input channel must be of the\n\
              form: <start symbol>: <token>*"
@@ -96,7 +96,7 @@ let start ((nto, _) : sentence) : Nonterminal.t =
 
 let interpret ((_, toks) as sentence) : unit =
 
-  let nt = start sentence in
+  let nt = start [] sentence in
 
   (* Run the reference interpreter. This can produce a concrete syntax tree
      ([Some cst]), fail with a parser error ([None]), or fail with a lexer error
@@ -153,7 +153,7 @@ let fail msg =
   exit 1
 
 let interpret_error ((_, toks) as sentence) =
-  let nt = start sentence in
+  let nt = start [] sentence in
   let open ReferenceInterpreter in
   match check_error_path nt toks with
   | OInputReadPastEnd ->
@@ -164,6 +164,28 @@ let interpret_error ((_, toks) as sentence) =
       fail "No syntax error occurred; in fact, the input was accepted"
   | OK state ->
       succeed (Lr1.number state)
+
+(* [convert_located_sentence] is analogous to [interpret_error]. It converts
+   a (located) sentence to a state, which it returns. *)
+
+let convert_located_sentence (poss, ((_, toks) as sentence)) =
+  let nt = start poss sentence in
+  let open ReferenceInterpreter in
+  match check_error_path nt toks with
+  | OInputReadPastEnd ->
+      Error.signal poss "No syntax error occurred";
+      -1 (* dummy *)
+  | OInputNotFullyConsumed ->
+      Error.signal poss "A syntax error occurred before the last token was reached";
+      -1 (* dummy *)
+  | OUnexpectedAccept ->
+      Error.signal poss "No syntax error occurred; in fact, the input was accepted";
+      -1 (* dummy *)
+  | OK state ->
+      Lr1.number state
+
+let convert_entry (sentences, message) =
+  List.map convert_located_sentence sentences, message
 
 (* --------------------------------------------------------------------------- *)
 
@@ -178,7 +200,7 @@ let setup () : unit -> sentence option =
 
   let read () =
     try
-      SentenceParser.sentence SentenceLexer.lex lexbuf
+      SentenceParser.optional_sentence SentenceLexer.lex lexbuf
     with Parsing.Parse_error ->
       Error.error (Positions.lexbuf lexbuf) "Ill-formed input sentence."
   in
@@ -220,4 +242,70 @@ let () =
       exit 1 (* abnormal: no input *)
     | Some sentence ->
         interpret_error sentence (* never returns *)
+
+(* --------------------------------------------------------------------------- *)
+
+(* If [--compile-errors <filename>] is set, compile the error message
+   descriptions found in file [filename] down to OCaml code, then stop. *)
+
+(* TEMPORARY old
+let read filename =
+  let lexbuf = Lexing.from_string (IO.read_whole_file filename) in
+  lexbuf.Lexing.lex_curr_p <-
+    { 
+      Lexing.pos_fname = filename; 
+      Lexing.pos_lnum  = 1;
+      Lexing.pos_bol   = 0; 
+      Lexing.pos_cnum  = 0
+    };
+  try
+    SentenceParser.file SentenceLexer.lex lexbuf
+  with Parsing.Parse_error ->
+    Error.error (Positions.lexbuf lexbuf) "Ill-formed error message description file."
+      (* TEMPORARY could improve this message... *)
+
+let () =
+  Settings.compile_errors |> Option.iter (fun filename ->
+    (* Read the file. *)
+    let entries = read filename in
+    (* Convert every sentence to a state number. This can signal errors.
+       We report all of them. *)
+    let _entries = List.map convert_entry entries in
+    if Error.errors() then exit 1;
+    exit 0
+  )
+*)
+let () =
+  Settings.compile_errors |> Option.iter (fun filename ->
+    (* Read the file. (Don't bother closing it.) *)
+    let c = open_in filename in
+    let lexbuf = Lexing.from_channel c in
+    lexbuf.Lexing.lex_curr_p <-
+    { 
+      Lexing.pos_fname = filename; 
+      Lexing.pos_lnum  = 1;
+      Lexing.pos_bol   = 0; 
+      Lexing.pos_cnum  = 0
+    };
+    let rec loop accu =
+      (* Try to read a non-empty series of non-empty sentences. *)
+      SentenceLexer.skip lexbuf;
+      match SentenceParser.entry1 SentenceLexer.lex lexbuf with
+      | [] ->
+          (* We have read [EOF]. Stop. *)
+          List.rev accu
+      | sentences ->
+          (* We have read at least one sentence. Now, read a block of text. *)
+          SentenceLexer.skip lexbuf;
+          let text = SentenceLexer.block (Buffer.create 512) lexbuf in
+          (* Continue. *)
+          loop ((sentences, text) :: accu)
+    in
+    let entries = loop [] in
+    (* Convert every sentence to a state number. This can signal errors.
+       We report all of them. *)
+    let _entries = List.map convert_entry entries in
+    if Error.errors() then exit 1;
+    exit 0
+  )
 
