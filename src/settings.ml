@@ -130,6 +130,9 @@ let interpret =
 let interpret_show_cst =
   ref false
 
+let interpret_error =
+  ref false
+
 let table = 
   ref false
 
@@ -190,6 +193,7 @@ let options = Arg.align [
   "--inspection", Arg.Set inspection, " Generate the inspection API (requires --table)";
   "--interpret", Arg.Set interpret, " Interpret the sentences provided on stdin";
   "--interpret-show-cst", Arg.Set interpret_show_cst, " Show a concrete syntax tree upon acceptance";
+  "--interpret-error", Arg.Set interpret_error, " Interpret one sentence that should end in an error";
   "--lalr", Arg.Unit (fun () -> construction_mode := ModeLALR), " Construct an LALR(1) automaton";
   "--list-errors", Arg.Set list_errors, " Produce a list of erroneous inputs";
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
@@ -376,6 +380,9 @@ let interpret =
 
 let interpret_show_cst =
   !interpret_show_cst
+
+let interpret_error =
+  !interpret_error
 
 let table = 
   !table

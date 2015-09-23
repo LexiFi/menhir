@@ -128,6 +128,12 @@ val interpret : bool
 
 val interpret_show_cst : bool
 
+(* Whether Menhir should behave as an interpreter, in a special mode where
+   it checks one input sentence, expecting it to trigger an error at the
+   last token, and displays which state was reached. *)
+
+val interpret_error : bool
+
 (* Whether to use the table-based back-end ([true]) or the code-based
    back-end ([false]). *)
 
