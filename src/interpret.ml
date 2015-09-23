@@ -144,7 +144,7 @@ let interpret ((_, toks) as sentence) : unit =
 
 let succeed s =
   Printf.printf
-    "OK %d\n# This sentence ends with a syntax error in state %d, as expected.\n%!"
+    "OK %d\n# This sentence ends with a syntax error in state %d.\n%!"
     s s;
   exit 0
 
