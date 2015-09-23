@@ -96,17 +96,6 @@ declaration:
 | PARAMETER t = OCAMLTYPE
     { [ with_poss $startpos $endpos (DParameter t) ] }
 
-/* This production recognizes tokens that are valid in the rules section,
-   but not in the declarations section. This is a hint that a %% was
-   forgotten. */
-
-| rule_specific_token
-    {
-      Error.error (Positions.two $startpos $endpos)
-        "syntax error inside a declaration.\n\
-         Did you perhaps forget the %% that separates declarations and rules?"
-    }
-
 priority_keyword:
   LEFT
     { LeftAssoc }
@@ -114,13 +103,6 @@ priority_keyword:
     { RightAssoc }
 | NONASSOC
     { NonAssoc }
-
-rule_specific_token:
-| PUBLIC
-| INLINE
-| COLON
-| EOF
-    { () }
 
 /* ------------------------------------------------------------------------- */
 /* Our lists of symbols are separated with optional commas. Order is
