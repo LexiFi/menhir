@@ -174,10 +174,17 @@ let ignore_all_unused_tokens =
 let list_errors =
   ref false
 
+let compile_errors =
+  ref None
+
+let set_compile_errors filename =
+  compile_errors := Some filename
+
 let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
   "--comment", Arg.Set comment, " Include comments in the generated code";
+  "--compile-errors", Arg.String set_compile_errors, "<filename> Map the error messages in <filename> to OCaml code.";
   "--coq", Arg.Set coq, " Generate a formally verified parser, in Coq";
   "--coq-no-complete", Arg.Set coq_no_complete, " Do not generate a proof of completeness";
   "--coq-no-actions", Arg.Set coq_no_actions, " Ignore semantic actions in the Coq output";
@@ -419,3 +426,6 @@ let ignore_all_unused_tokens =
 
 let list_errors =
   !list_errors
+
+let compile_errors =
+  !compile_errors

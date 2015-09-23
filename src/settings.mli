@@ -184,3 +184,9 @@ val ignore_all_unused_tokens: bool
    where an error can occur. *)
 
 val list_errors: bool
+
+(* This flag causes Menhir to read the error message descriptions stored in
+   [filename] and compile them to OCaml code. *)
+
+val compile_errors: string option
+
