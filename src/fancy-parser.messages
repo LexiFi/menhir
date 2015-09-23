@@ -1,0 +1,230 @@
+# ----------------------------------------------------------------------------
+
+UID
+
+Either a declaration or %% is expected at this point.
+
+# ----------------------------------------------------------------------------
+
+TYPE UID 
+TYPE OCAMLTYPE TYPE 
+TYPE OCAMLTYPE UID PUBLIC 
+TYPE OCAMLTYPE UID RPAREN 
+TYPE OCAMLTYPE UID LPAREN TYPE 
+TYPE OCAMLTYPE UID COMMA TYPE 
+TYPE OCAMLTYPE UID LPAREN UID UID 
+TYPE OCAMLTYPE UID LPAREN UID COMMA TYPE 
+
+Ill-formed %type declaration.
+Examples of well-formed declarations:
+  %type <Syntax.expression> expression
+  %type <int> date time
+  %type <int option> option(date)
+
+# ----------------------------------------------------------------------------
+
+TOKEN TYPE 
+TOKEN OCAMLTYPE TYPE 
+TOKEN UID STAR 
+TOKEN UID COMMA TYPE 
+
+Ill-formed %token declaration.
+Examples of well-formed declarations:
+  %token FOO
+  %token DOT SEMICOLON
+  %token <string> LID UID
+
+# ----------------------------------------------------------------------------
+
+START UID 
+START OCAMLTYPE LEFT 
+START LID UID 
+START LID COMMA UID 
+
+Ill-formed %start declaration.
+A start symbol must begin with a lowercase letter.
+Examples of well-formed declarations:
+  %start program
+  %start expression phrase
+  %start <int> date time
+
+# ----------------------------------------------------------------------------
+
+RIGHT TYPE 
+RIGHT UID STAR 
+RIGHT UID COMMA TYPE 
+
+Ill-formed precedence declaration.
+Examples of well-formed declarations:
+  %left PLUS
+  %left PLUS MINUS
+  %nonassoc unary_minus
+  %right CONCAT
+
+# ----------------------------------------------------------------------------
+
+PARAMETER UID 
+
+Ill-formed %parameter declaration.
+Examples of well-formed declarations:
+  %parameter <X : sig type t end>
+
+# ----------------------------------------------------------------------------
+
+HEADER UID 
+
+Either another declaration or %% is expected at this point.
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT TYPE 
+
+Either a rule or %% is expected at this point.
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT PUBLIC TYPE 
+PERCENTPERCENT INLINE TYPE 
+PERCENTPERCENT PUBLIC INLINE TYPE 
+
+Ill-formed rule.
+%inline, %public, or a non-terminal symbol is expected at this point.
+Examples of well-formed rules:
+  %public option(X): { None } | x = X { Some x }
+  %inline clist(X): xs = separated_nonempty_list(COMMA?, X) { xs }
+  %public %inline pair(X, Y): x = X; y = Y { (x, y) }
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID UID 
+
+Ill-formed rule.
+Either a list of formal parameters or a colon is expected at this point.
+Examples of well-formed rules:
+  main: e = expr EOL { e }
+  expr: i = INT { i } | e1 = expr PLUS e2 = expr { e1 + e2 }
+  option(X): { None } | x = X { Some x }
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID LPAREN TYPE 
+PERCENTPERCENT UID LPAREN UID UID 
+PERCENTPERCENT UID LPAREN UID COMMA TYPE 
+
+Ill-formed rule.
+A comma-delimited list of formal parameters is expected at this point.
+Examples of well-formed rules:
+  option(X): { None } | x = X { Some x }
+  pair(X, Y): x = X; y = Y { (x, y) }
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID COLON TYPE 
+PERCENTPERCENT UID COLON BAR TYPE 
+PERCENTPERCENT UID COLON ACTION BAR TYPE 
+PERCENTPERCENT UID COLON UID BAR TYPE 
+
+Ill-formed rule.
+A list of productions is expected at this point.
+Examples of well-formed rules:
+  main: e = expr EOL { e }
+  expr: i = INT { i } | e1 = expr PLUS e2 = expr { e1 + e2 }
+  symbol: s = LID | s = UID { s }
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID COLON ACTION RPAREN 
+
+Either another rule or %% is expected at this point.
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID COLON UID TYPE 
+PERCENTPERCENT UID COLON LID TYPE 
+PERCENTPERCENT UID COLON LID EQUAL TYPE 
+PERCENTPERCENT UID COLON UID PLUS TYPE 
+PERCENTPERCENT UID COLON UID LPAREN UID TYPE 
+# Above: this sentence seems tricky. All we know is we have just read a
+# symbol, and in front of us could be many things (comma, closing parenthesis,
+# identifier, modifier, %prec keyword, etc.). We expect to reduce this to
+# actual or lax_actual. Let's just back up to a safe level of abstraction and
+# say this is an ill-formed production.
+PERCENTPERCENT UID COLON UID LPAREN ACTION UID 
+# Above: another tricky case. Looking at the description of this state, it seems that
+# only COMMA and RPAREN can follow here. But in fact, other tokens are
+# possible, such as BAR, simply because they will NOT take us into this state.
+# This is a manifestation of the fact that non-canonical automata ``reduce too
+# far'' and can enter a state that they should not enter, before they detect
+# the error. Again, let's back up to a safe level of abstraction.
+PERCENTPERCENT UID COLON LID EQUAL UID PLUS TYPE 
+PERCENTPERCENT UID COLON UID LPAREN UID STAR TYPE 
+PERCENTPERCENT UID COLON UID LPAREN UID LPAREN LID RPAREN TYPE 
+# Above two sentences: again cases where we have two different possible contexts,
+# with different expectations as to what comes next. Again, let's back up.
+
+Ill-formed production.
+A production is a sequence of producers, followed with a semantic action.
+Examples of well-formed producers:
+  expr
+  option(COMMA)
+  separated_list(COMMA, expr)
+  e = expr
+  ds = declaration*
+  es = list(terminated(expr, SEMI))
+  es = list(e = expr SEMI { e })
+  xs = list(x = var { Some x } | WILDCARD { None })
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID COLON PREC TYPE 
+
+Ill-formed %prec annotation.
+A symbol is expected at this point.
+Examples of well-formed annotations:
+  expr: MINUS e = expr %prec UMINUS { -e }
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID COLON ACTION TYPE 
+
+A %prec annotation, another rule, or %% is expected at this point.
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID COLON UID LPAREN TYPE 
+PERCENTPERCENT UID COLON UID LPAREN UID COMMA TYPE 
+
+Ill-formed rule.
+A comma-delimited list of actual parameters is expected at this point.
+Examples of well-formed rules:
+  call: f = callee LPAREN args = separated_list(COMMA, expr) RPAREN { f, args }
+  list(X): { [] } | x = X; xs = list(X) { x :: xs }
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID COLON PREC LID UID 
+
+Ill-formed rule.
+Either a semantic action { ... }
+or another production | ...
+is expected here.
+Examples of well-formed rules:
+  expr: MINUS e = expr %prec UMINUS { -e }
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID LPAREN UID RPAREN BAR 
+
+Ill-formed rule.
+A colon is expected at this point.
+Examples of well-formed rules:
+  option(X): { None } | x = X { Some x }
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID COLON ACTION PREC UID TYPE 
+
+Either another rule
+or another production | ...
+is expected at this point.
+
