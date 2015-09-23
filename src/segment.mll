@@ -1,6 +1,7 @@
-(* This lexer is used to cut an input into segments, delimited
-   by blank lines. It produces a list of segments, where each
-   segment is a pair of positions. *)
+(* This lexer is used to cut an input into segments, delimited by a
+   blank line. (More precisely, by a run of at least one blank lines
+   and zero or more comment lines.) It produces a list of segments,
+   where each segment is a pair of positions. *)
 
 {
 
@@ -54,8 +55,6 @@ and busy segments opening just_saw_a_newline = parse
         idle segments lexbuf
       else
         busy segments opening true lexbuf }
-| comment
-    { new_line lexbuf; busy segments opening true lexbuf }
 | eof
     { let closing = lexbuf.lex_start_p in
       let segment = (opening, closing) in
