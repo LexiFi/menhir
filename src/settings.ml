@@ -262,15 +262,6 @@ let () =
   end
 
 (* ------------------------------------------------------------------------- *)
-(* Semi-hack: for some specific requests, such as [--interpret-error],
-   [--list-errors] and [--compile-errors], there is no need to use [--infer].
-   We turn it off silently. This may help avoid dependency nightmares. *)
-
-let () =
-  if !interpret_error || !list_errors || !compile_errors <> None then
-    infer := false
-
-(* ------------------------------------------------------------------------- *)
 
 (* Menhir is able to suggest compile and link flags to be passed to the
    Objective Caml compilers. If required, do so and stop. *)
