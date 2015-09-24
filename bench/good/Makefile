@@ -105,8 +105,13 @@ clean::
 # ------------------------------------------------------------------------------
 # Testing LRijkstra, that is, menhir --list-errors.
 
-TIMEOUT  := 2
-PARALLEL := -j4
+ifeq($(shell hostname),teraram)
+  TIMEOUT  := 2
+  PARALLEL := -j40
+else
+  TIMEOUT  := 2
+  PARALLEL := -j4
+endif
 
 SINGLE    = $(shell ls *.mly | egrep -v '.*-([1-9]).mly')
 
