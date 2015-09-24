@@ -1,7 +1,8 @@
 (* This lexer is used to cut an input into segments, delimited by a
    blank line. (More precisely, by a run of at least one blank lines
    and zero or more comment lines.) It produces a list of segments,
-   where each segment is a pair of positions. *)
+   where each segment is represented as a pair of positions. It is
+   stand-alone and cannot fail. *)
 
 {
 
@@ -62,4 +63,30 @@ and busy segments opening just_saw_a_newline = parse
       List.rev segments }
 | _
     { busy segments opening false lexbuf }
+
+{
+
+  (* This wrapper function reads a file, cuts it into segments, and
+     creates a fresh lexbuf for each segment, taking care to adjust
+     its start position. *)
+
+  let segment filename : (string * lexbuf) list =
+    let content = IO.read_whole_file filename in
+    let lexbuf = from_string content in
+    lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
+    let segments = idle [] lexbuf in
+    List.map (fun (startp, endp) ->
+      let start = startp.pos_cnum in
+      let length = endp.pos_cnum - start in
+      let content = String.sub content start length in
+      let lexbuf = from_string content in
+      lexbuf.lex_start_p <- startp;
+      lexbuf.lex_curr_p <- startp;
+      lexbuf.lex_abs_pos <- startp.pos_cnum;
+        (* That was tricky to find out. See [Lexing.engine]. [pos_cnum] is
+           updated based on [buf.lex_abs_pos + buf.lex_curr_pos]. *)
+      content, lexbuf
+    ) segments
+      
+}
 
