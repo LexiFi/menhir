@@ -4,8 +4,6 @@
 
 (* Reading a grammar from a file. *)
 
-module D = Driver
-
 let load_partial_grammar filename =
   let validExt = if Settings.coq then ".vy" else ".mly" in
   if not (Filename.check_suffix filename validExt) then
@@ -21,7 +19,7 @@ let load_partial_grammar filename =
     let lexbuf = Lexing.from_string contents in
     lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
     let grammar =
-      { (Parser.grammar Lexer.main lexbuf) with ConcreteSyntax.pg_filename = filename }
+      { (Driver.grammar Lexer.main lexbuf) with ConcreteSyntax.pg_filename = filename }
     in
     Error.file_contents := None;
     grammar
