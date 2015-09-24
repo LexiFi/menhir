@@ -34,12 +34,12 @@ let parser_rule () =
 
 let driver_rule () =
   (* The source file is either [yaccDriver.ml] or [fancyDriver.ml], depending
-     on which tag is (globally) present: [yacc_parser] or [fancy_parser]. *)
+     whether the tag [fancy_parser] is (globally) present. *)
   let source =
-    if Tags.mem "yacc_parser" (tags_of_pathname "")
-    then "yaccDriver.ml"
-    else "fancyDriver.ml"
-  in
+    if Tags.mem "fancy_parser" (tags_of_pathname "")
+    then "fancyDriver.ml"
+    else "yaccDriver.ml"
+ in
   (* The target file is [Driver.ml]. *)
   let target =
     "Driver.ml"
