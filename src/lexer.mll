@@ -257,6 +257,9 @@
   let error1 pos msg =
     Error.error (Positions.one pos) msg
 
+  let error2 lexbuf msg =
+    Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p) msg
+
 }
 
 let newline = ('\010' | '\013' | "\013\010")
@@ -374,7 +377,7 @@ rule main = parse
 | eof
     { EOF }
 | _
-    { error1 (lexeme_start_p lexbuf) "unexpected character(s)." }
+    { error2 lexbuf "unexpected character(s)." }
 
 (* Skip C style comments. *)
 
@@ -437,7 +440,7 @@ and action percent openingpos pkeywords = parse
     { let pkeyword = mk_keyword lexbuf w f n id in
       action percent openingpos (pkeyword :: pkeywords) lexbuf }
 | previouserror
-    { error1 (lexeme_start_p lexbuf) "$previouserror is no longer supported." }
+    { error2 lexbuf "$previouserror is no longer supported." }
 | syntaxerror
     { let pkeyword = with_cpos lexbuf Keyword.PSyntaxError in
       action percent openingpos (pkeyword :: pkeywords) lexbuf }
@@ -475,7 +478,7 @@ and parentheses openingpos pkeywords = parse
     { let pkeyword = mk_keyword lexbuf w f n id in
       parentheses openingpos (pkeyword :: pkeywords) lexbuf }
 | previouserror
-    { error1 (lexeme_start_p lexbuf) "$previouserror is no longer supported." }
+    { error2 lexbuf "$previouserror is no longer supported." }
 | syntaxerror
     { let pkeyword = with_cpos lexbuf Keyword.PSyntaxError in
       parentheses openingpos (pkeyword :: pkeywords) lexbuf }
