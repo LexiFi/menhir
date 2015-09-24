@@ -2,7 +2,7 @@
 %token BAZ QUUX HOP
 %token BAR BAT
 %token FOO QWD ASFLJ QWKJH QWDK
-%start<int> RAT
+%start<int> rat
 %type<int> date time
 %token BAZAR
 %left FOO BAR
