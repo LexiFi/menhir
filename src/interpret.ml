@@ -12,6 +12,27 @@ module I = Invariant (* artificial dependency; ensures that [Invariant] runs fir
 type sentence =
     Nonterminal.t option * Terminal.t list
 
+(* Debugging.
+
+let print_sentence (nto, terminals) : string =
+  let b = Buffer.create 128 in
+  Option.iter (fun nt ->
+    Printf.bprintf b "%s: " (Nonterminal.print true nt)
+  ) nto;
+  List.iter (fun t ->
+    Printf.bprintf b "%s " (Terminal.print t)
+  ) terminals;
+  Printf.bprintf b "\n";
+  Buffer.contents b
+
+let print_sentence sentence : unit =
+  print_string (print_sentence sentence)
+
+let print_located_sentence (_, sentence) : unit =
+  print_sentence sentence
+
+*)
+
 (* --------------------------------------------------------------------------- *)
 
 (* [stream] turns a finite list of terminals into a stream of terminals. *)
@@ -248,60 +269,43 @@ let () =
 (* If [--compile-errors <filename>] is set, compile the error message
    descriptions found in file [filename] down to OCaml code, then stop. *)
 
-(* TEMPORARY old
-let read filename =
-  let lexbuf = Lexing.from_string (IO.read_whole_file filename) in
-  lexbuf.Lexing.lex_curr_p <-
-    { 
-      Lexing.pos_fname = filename; 
-      Lexing.pos_lnum  = 1;
-      Lexing.pos_bol   = 0; 
-      Lexing.pos_cnum  = 0
-    };
-  try
-    SentenceParser.file SentenceLexer.lex lexbuf
-  with Parsing.Parse_error ->
-    Error.error (Positions.lexbuf lexbuf) "Ill-formed error message description file."
-      (* TEMPORARY could improve this message... *)
+let () =
+  Settings.compile_errors |> Option.iter (fun filename ->
 
-let () =
-  Settings.compile_errors |> Option.iter (fun filename ->
-    (* Read the file. *)
-    let entries = read filename in
-    (* Convert every sentence to a state number. This can signal errors.
-       We report all of them. *)
-    let _entries = List.map convert_entry entries in
-    if Error.errors() then exit 1;
-    exit 0
-  )
-*)
-let () =
-  Settings.compile_errors |> Option.iter (fun filename ->
-    (* Read the file. (Don't bother closing it.) *)
-    let c = open_in filename in
-    let lexbuf = Lexing.from_channel c in
-    lexbuf.Lexing.lex_curr_p <-
-    { 
-      Lexing.pos_fname = filename; 
-      Lexing.pos_lnum  = 1;
-      Lexing.pos_bol   = 0; 
-      Lexing.pos_cnum  = 0
-    };
-    let rec loop accu =
-      (* Try to read a non-empty series of non-empty sentences. *)
-      SentenceLexer.skip lexbuf;
-      match SentenceParser.entry1 SentenceLexer.lex lexbuf with
+    (* Read and segment the file. Each segment is a pair of a string and a
+       lexbuf. *)
+    let segments = Segment.segment filename in
+    (* Process the segments, two by two. We expect one segment to contain
+       a non-empty series of sentences, and the next segment to contain
+       free-form text. *)
+    let rec loop accu segments =
+      match segments with
       | [] ->
-          (* We have read [EOF]. Stop. *)
           List.rev accu
-      | sentences ->
-          (* We have read at least one sentence. Now, read a block of text. *)
-          SentenceLexer.skip lexbuf;
-          let text = SentenceLexer.block (Buffer.create 512) lexbuf in
-          (* Continue. *)
-          loop ((sentences, text) :: accu)
+      | (_, lexbuf) :: [] ->
+          (* Oops, we are desynchronized. *)
+          Error.signal
+            (Positions.one (Lexing.lexeme_end_p lexbuf))
+            "Syntax error: missing a final message. I may be desynchronized.";
+          List.rev accu
+      | (_, lexbuf) :: (text, _) :: segments ->
+          (* Read a non-empty series of located sentences. *)
+          match SentenceParser.entry SentenceLexer.lex lexbuf with
+          | exception Parsing.Parse_error ->
+              (* Report an error. *)
+              Error.signal
+                (Positions.one (Lexing.lexeme_start_p lexbuf))
+                "Syntax error: ill-formed sentence.";
+              (* Continue anyway. *)
+              loop accu segments
+          | sentences ->
+              loop ((sentences, text) :: accu) segments
     in
-    let entries = loop [] in
+    let entries = loop [] segments in
+    if Error.errors() then exit 1;
+    (* Although we try to report several errors, [SentenceLexer.lex] may
+       abort the whole process after just one error. This could be improved. *)
+
     (* Convert every sentence to a state number. This can signal errors.
        We report all of them. *)
     let _entries = List.map convert_entry entries in
@@ -309,3 +313,4 @@ let () =
     exit 0
   )
 
+module S = Segment
