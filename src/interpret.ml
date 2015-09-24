@@ -348,6 +348,44 @@ let () =
        files, one of which can be produced via [--list-errors]. This will
        ensure completeness. *)
 
+    (* Now, compile this information down to OCaml code. We wish to
+       produce a function that maps a state number to a message. By
+       convention, we call this function [message]. *)
+
+    let open IL in
+    let open CodeBits in
+    let default = {
+      branchpat  = PWildcard;
+      branchbody = eraisenotfound
+        (* The default branch raises an exception, which can be caught by
+           the user, who can then produce a generic error message. *)
+    } in
+    let branches =
+      List.fold_left (fun branches (sentences_and_states, message) ->
+        (* Create an or-pattern for these states. *)
+        let states = List.map (fun (_, s) ->
+          pint (Lr1.number s)
+        ) sentences_and_states in
+        (* Map all these states to this message. *)
+        { branchpat = POr states;
+          branchbody = EStringConst message } :: branches
+      ) [ default ] entries
+    in
+    let messagedef = {
+      valpublic = true;
+      valpat = PVar "message";
+      valval = EFun ([ PVar "s" ], EMatch (EVar "s", branches))
+    } in
+    let program = [ SIValDefs (false, [ messagedef ]) ] in
+
+    (* Write this program to the standard output channel. *)
+
+    let module P = Printer.Make (struct
+      let f = stdout
+      let locate_stretches = None
+    end) in
+    P.program program;
+
     exit 0
   )
 
