@@ -161,7 +161,31 @@ let interpret ((_, toks) as sentence) : unit =
 
 (* --------------------------------------------------------------------------- *)
 
-(* [interpret_error] interprets a sentence, expecting it to end in an error. *)
+(* [interpret_error_aux] interprets a sentence, expecting it to end in an
+   error. Failure or success is reported via two continuations. *)
+
+let interpret_error_aux poss ((_, terminals) as sentence) fail succeed =
+  let nt = start poss sentence in
+  let open ReferenceInterpreter in
+  match check_error_path nt terminals with
+  | OInputReadPastEnd ->
+      fail "No syntax error occurs."
+  | OInputNotFullyConsumed ->
+      fail "A syntax error occurs before the last token is reached."
+  | OUnexpectedAccept ->
+      fail "No syntax error occurs; in fact, this input is accepted."
+  | OK state ->
+      succeed (Lr1.number state)
+
+(* --------------------------------------------------------------------------- *)
+
+(* [interpret_error] interprets a sentence, expecting it to end in an error.
+   Failure or success is reported on the standard output channel. This is
+   used by [--interpret-error]. *)
+
+let fail msg =
+  Printf.printf "BAD\n# %s\n%!" msg;
+  exit 1
 
 let succeed s =
   Printf.printf
@@ -169,41 +193,24 @@ let succeed s =
     s s;
   exit 0
 
-let fail msg =
-  Printf.printf "BAD\n# %s.\n%!" msg;
-  exit 1
+let interpret_error sentence =
+  interpret_error_aux [] sentence fail succeed
 
-let interpret_error ((_, toks) as sentence) =
-  let nt = start [] sentence in
-  let open ReferenceInterpreter in
-  match check_error_path nt toks with
-  | OInputReadPastEnd ->
-      fail "No syntax error occurred"
-  | OInputNotFullyConsumed ->
-      fail "A syntax error occurred before the last token was reached"
-  | OUnexpectedAccept ->
-      fail "No syntax error occurred; in fact, the input was accepted"
-  | OK state ->
-      succeed (Lr1.number state)
+(* --------------------------------------------------------------------------- *)
 
-(* [convert_located_sentence] is analogous to [interpret_error]. It converts
-   a (located) sentence to a state, which it returns. *)
+(* [convert_located_sentence] interprets a (located) sentence, expecting it to
+   end in an error, and returns the state in which the error is obtained. This
+   is used by [--compile-errors]. *)
 
-let convert_located_sentence (poss, ((_, toks) as sentence)) =
-  let nt = start poss sentence in
-  let open ReferenceInterpreter in
-  match check_error_path nt toks with
-  | OInputReadPastEnd ->
-      Error.signal poss "No syntax error occurred";
-      -1 (* dummy *)
-  | OInputNotFullyConsumed ->
-      Error.signal poss "A syntax error occurred before the last token was reached";
-      -1 (* dummy *)
-  | OUnexpectedAccept ->
-      Error.signal poss "No syntax error occurred; in fact, the input was accepted";
-      -1 (* dummy *)
-  | OK state ->
-      Lr1.number state
+let convert_located_sentence (poss, sentence) =
+  let fail msg =
+    Error.signal poss (Printf.sprintf
+      "This sentence does not end with a syntax error, as desired.\n%s"
+      msg
+    );
+    -1 (* dummy result *)
+  in
+  interpret_error_aux poss sentence fail (fun s -> s)
 
 let convert_entry (sentences, message) =
   List.map convert_located_sentence sentences, message
