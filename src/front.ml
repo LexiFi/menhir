@@ -99,11 +99,24 @@ let () =
 
 (* ------------------------------------------------------------------------- *)
 
+(* If some flags imply that we will NOT produce an OCaml parser, then there
+   is no need to perform type inference, so we act as if --infer was absent.
+   This saves time and dependency nightmares. *)
+
+let skipping_parser_generation =
+  Settings.coq ||
+  Settings.compile_errors <> None ||
+  Settings.interpret_error ||
+  Settings.list_errors
+    (* maybe also: [preprocess_mode <> PMNormal] *)
+
+(* ------------------------------------------------------------------------- *)
+
 (* If [--infer] was specified on the command line, perform type inference.
    The OCaml type of every nonterminal is then known. *)
 
 let grammar =
-  if Settings.infer then
+  if Settings.infer && not skipping_parser_generation then
     let grammar = Infer.infer grammar in
     Time.tick "Inferring types for nonterminals";
     grammar
@@ -120,7 +133,7 @@ let grammar =
     let grammar, inlined = 
       NonTerminalDefinitionInlining.inline grammar
     in
-    if not Settings.infer && inlined && not Settings.coq then
+    if not Settings.infer && inlined && not skipping_parser_generation then
       Error.warning []
 	"you are using the standard library and/or the %inline keyword. We\n\
 	 recommend switching on --infer in order to avoid obscure type error messages.";
