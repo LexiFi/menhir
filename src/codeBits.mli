@@ -43,6 +43,10 @@ val pat2var: pattern -> string
 val blet: (pattern * expr) list * expr -> expr
 val mlet: pattern list -> expr list -> expr -> expr
 
+(* [eraisenotfound] is an expression that raises [Not_found]. *)
+
+val eraisenotfound: expr
+
 (* [bottom] is an expression that has every type. Its semantics is
    irrelevant. *)
 

@@ -114,11 +114,16 @@ let blet (bindings, body) =
 let mlet formals actuals body =
   blet (List.combine formals actuals, body)
 
+(* [eraisenotfound] is an expression that raises [Not_found]. *)
+
+let eraisenotfound =
+  ERaise (EData ("Not_found", []))
+
 (* [bottom] is an expression that has every type. Its semantics is
    irrelevant. *)
 
 let bottom =
-  ERaise (EData ("Not_found", []))
+  eraisenotfound
 
 (* Boolean constants. *)
 
