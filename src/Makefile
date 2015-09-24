@@ -53,8 +53,7 @@ bootstrap: .versioncheck stage1 stage2 stage3
 # Build Menhir using ocamlyacc.
 
 stage1:
-	@$(OCAMLBUILD) -build-dir _stage1 -tag yacc_parser \
-	  menhir.$(TARGET)
+	@$(OCAMLBUILD) -build-dir _stage1 menhir.$(TARGET)
 
 # ----------------------------------------------------------------------------
 # Stage 2.
