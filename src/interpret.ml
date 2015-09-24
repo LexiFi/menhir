@@ -175,7 +175,7 @@ let interpret_error_aux poss ((_, terminals) as sentence) fail succeed =
   | OUnexpectedAccept ->
       fail "No syntax error occurs; in fact, this input is accepted."
   | OK state ->
-      succeed (Lr1.number state)
+      succeed state
 
 (* --------------------------------------------------------------------------- *)
 
@@ -188,6 +188,7 @@ let fail msg =
   exit 1
 
 let succeed s =
+  let s = Lr1.number s in
   Printf.printf
     "OK %d\n# This sentence ends with a syntax error in state %d.\n%!"
     s s;
@@ -208,12 +209,12 @@ let convert_located_sentence (poss, sentence) =
       "This sentence does not end with a syntax error, as desired.\n%s"
       msg
     );
-    -1 (* dummy result *)
+    [] (* dummy result *)
   in
-  interpret_error_aux poss sentence fail (fun s -> s)
+  interpret_error_aux poss sentence fail (fun s -> [ (poss, sentence), s ])
 
 let convert_entry (sentences, message) =
-  List.map convert_located_sentence sentences, message
+  List.flatten (List.map convert_located_sentence sentences), message
 
 (* --------------------------------------------------------------------------- *)
 
@@ -313,10 +314,30 @@ let () =
     (* Although we try to report several errors, [SentenceLexer.lex] may
        abort the whole process after just one error. This could be improved. *)
 
-    (* Convert every sentence to a state number. This can signal errors.
-       We report all of them. *)
-    let _entries = List.map convert_entry entries in
+    (* Convert every sentence to a state number. We signal an error if a
+       sentence does not end in an error, as expected. *)
+    let entries = List.map convert_entry entries in
     if Error.errors() then exit 1;
+
+    (* Build a mapping of states to located sentences. This allows us to
+       detect if two sentences lead to the same state. *)
+    let _mapping =
+      List.fold_left (fun mapping (sentences_and_states, _message) ->
+        List.fold_left (fun mapping (sentence2, s) ->
+          match Lr1.NodeMap.find s mapping with
+          | sentence1 ->
+              Error.signal (fst sentence1 @ fst sentence2)
+                (Printf.sprintf
+                   "Redundancy: these sentences both cause an error in state %d."
+                   (Lr1.number s));
+              mapping
+          | exception Not_found ->
+              Lr1.NodeMap.add s sentence2 mapping
+        ) mapping sentences_and_states
+      ) Lr1.NodeMap.empty entries
+    in
+    if Error.errors() then exit 1;
+
     exit 0
   )
 
