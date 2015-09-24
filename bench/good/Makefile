@@ -97,7 +97,7 @@ expected:
 	@ CREATE_EXPECTED=1 $(MAKE) -s test
 	@ echo "Expected output re-generated."
 
-clean:
+clean::
 	rm -f *~
 	rm -f *.ml *.mli *.conflicts *.automaton
 	rm -f *.out failures warnings
@@ -131,9 +131,14 @@ list:
 # Each process appends one line of data to lr.csv when it finishes.
 # Hopefully the final content of lr.csv will be a reasonable interleaving
 # of these lines.
-	@ $(MAKE) $(PARALLEL) $(patsubst %.mly,%.log,$(SINGLE))
+	@ time $(MAKE) $(PARALLEL) $(patsubst %.mly,%.log,$(SINGLE))
 # Finished.
 	@ echo "Number of grammars that could not be handled in $(TIMEOUT) seconds:"
 	@ grep TIMEOUT *.log | wc -l
 	@ echo "Number of grammars that were successfully handled:"
 	@ tail -n +2 lr.csv  | wc -l
+
+clean::
+	rm -f *.log
+#	rm -f lr.csv
+
