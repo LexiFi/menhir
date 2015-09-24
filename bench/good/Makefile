@@ -106,8 +106,8 @@ clean::
 # Testing LRijkstra, that is, menhir --list-errors.
 
 ifeq ($(shell hostname),teraram)
-  TIMEOUT  := 2
-  PARALLEL := -j40
+  TIMEOUT  := 1200
+  PARALLEL := -j30
 else
   TIMEOUT  := 2
   PARALLEL := -j4
@@ -120,7 +120,7 @@ SINGLE    = $(shell ls *.mly | egrep -v '.*-([1-9]).mly')
 	@ if (timeout $(TIMEOUT) $(MENHIR) --list-errors -la 2 --lalr $<) >>$@ 2>&1 ; then \
 	    echo "$<: success." | tee -a $@ ; \
           else \
-	    echo "$<: TIMEOUT." | tee -a $@ ; \
+	    echo "$<: TIMEOUT (or failure)." | tee -a $@ ; \
 	  fi
 
 list:
