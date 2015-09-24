@@ -12,6 +12,9 @@ module I = Invariant (* artificial dependency; ensures that [Invariant] runs fir
 type sentence =
     Nonterminal.t option * Terminal.t list
 
+type located_sentence =
+    Positions.positions * sentence
+
 (* Debugging.
 
 let print_sentence (nto, terminals) : string =
@@ -321,7 +324,7 @@ let () =
 
     (* Build a mapping of states to located sentences. This allows us to
        detect if two sentences lead to the same state. *)
-    let _mapping =
+    let (_ : located_sentence Lr1.NodeMap.t) =
       List.fold_left (fun mapping (sentences_and_states, _message) ->
         List.fold_left (fun mapping (sentence2, s) ->
           match Lr1.NodeMap.find s mapping with
@@ -338,7 +341,13 @@ let () =
     in
     if Error.errors() then exit 1;
 
+    (* In principle, we would like to check whether this set of sentences
+       is complete (i.e., covers all states where an error can arise), but
+       this is costly -- it requires running [LRijkstra]. Instead, we will
+       probably offer a separate facility for comparing two [.messages]
+       files, one of which can be produced via [--list-errors]. This will
+       ensure completeness. *)
+
     exit 0
   )
 
-module S = Segment
