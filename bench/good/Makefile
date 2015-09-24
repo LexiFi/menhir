@@ -1,4 +1,4 @@
-.PHONY: clean test expected
+.PHONY: clean test expected list
 
 # Note that there is potential confusion between src/_stage1/menhir
 # and src/_stage2/menhir. Here, we use the latter (built by "make
@@ -102,3 +102,38 @@ clean:
 	rm -f *.ml *.mli *.conflicts *.automaton
 	rm -f *.out failures warnings
 
+# ------------------------------------------------------------------------------
+# Testing LRijkstra, that is, menhir --list-errors.
+
+TIMEOUT  := 2
+PARALLEL := -j4
+
+SINGLE    = $(shell ls *.mly | egrep -v '.*-([1-9]).mly')
+
+%.log: %.mly
+	@ echo "Now dealing with: $<" | tee -a $@
+	@ if (timeout $(TIMEOUT) $(MENHIR) --list-errors -la 2 --lalr $<) >>$@ 2>&1 ; then \
+	    echo "$<: success." | tee -a $@ ; \
+          else \
+	    echo "$<: TIMEOUT." | tee -a $@ ; \
+	  fi
+
+list:
+# Compile Menhir.
+#	make -C $(SRC) clean
+	make -C $(SRC) bootstrap
+# Remove any leftover output files.
+	rm -f *.log lr.csv
+# Print the header of lr.csv. (This should be kept in sync with LRijkstra.ml.)
+	echo "grammar,terminals,nonterminals,size,states,trie,facts,edges,time,heap" > lr.csv
+# Try every grammar. (Only the single-file grammars, that is.)
+# This can proceed in parallel, for a reasonable number of processes.
+# Each process appends one line of data to lr.csv when it finishes.
+# Hopefully the final content of lr.csv will be a reasonable interleaving
+# of these lines.
+	@ $(MAKE) $(PARALLEL) $(patsubst %.mly,%.log,$(SINGLE))
+# Finished.
+	@ echo "Number of grammars that could not be handled in $(TIMEOUT) seconds:"
+	@ grep TIMEOUT *.log | wc -l
+	@ echo "Number of grammars that were successfully handled:"
+	@ tail -n +2 lr.csv  | wc -l
