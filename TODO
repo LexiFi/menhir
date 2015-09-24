@@ -1,12 +1,22 @@
-* About --list-errors and --interpret-error:
-  document!
-    explain that any production that contains [error] is ignored
+* About --list-errors and --interpret-error and --compile-errors:
+  document these options
+    explain that any production that contains [error] is ignored by --list-errors
+  document the .messages file format
+  document the workflow
   collect performance data
-    correlate with star size and alphabet size, etc. draw a graph
-    graph unreachable states, too
-  Add --compile-errors and check that every error is covered at
-  least once and at most once.
-  clean up sentenceLexer/sentenceParser, do proper segmentation
+    correlate with star size and alphabet size, etc.
+    create separate graphs for 3 modes: --lalr, pager, --canonical
+  Modify LRijkstra to produce a valid .messages file
+  Implement --compare-errors to make sure that every error is covered.
+  In Menhir's bootstrapped parser:
+    re-establish rule_specific_token?
+      git show 64504bd5214794dc34530f93faccd9f62f049dcf
+    use a canonical automaton?
+
+* When dealing with errors, should we back up to the last shift action,
+  undoing any non-canonical reduce actions? if so, a lot of code is
+  impacted (--list-errors, --interpret-error, --compile-errors, --compare-errors,
+  plus fancyDriver.ml).
 
 * Dans les avantages de Menhir versus ocamlyacc (dans la doc et
   sur la page Web), ajouter le back-end Coq, l'API incrémentale
