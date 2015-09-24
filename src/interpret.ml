@@ -352,6 +352,8 @@ let () =
        produce a function that maps a state number to a message. By
        convention, we call this function [message]. *)
 
+    let name = "message" in
+
     let open IL in
     let open CodeBits in
     let default = {
@@ -373,10 +375,16 @@ let () =
     in
     let messagedef = {
       valpublic = true;
-      valpat = PVar "message";
+      valpat = PVar name;
       valval = EFun ([ PVar "s" ], EMatch (EVar "s", branches))
     } in
-    let program = [ SIValDefs (false, [ messagedef ]) ] in
+    let program = [
+      SIComment (Printf.sprintf
+                   "This file was auto-generated based on \"%s\"." filename);
+      SIComment (Printf.sprintf
+                   "Please note that the function [%s] can raise [Not_found]." name);
+      SIValDefs (false, [ messagedef ])
+    ] in
 
     (* Write this program to the standard output channel. *)
 
