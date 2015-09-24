@@ -15,14 +15,9 @@ let load_partial_grammar filename =
 
     let contents = IO.read_whole_file filename in
     Error.file_contents := Some contents;
+    let open Lexing in
     let lexbuf = Lexing.from_string contents in
-    lexbuf.Lexing.lex_curr_p <-
-	{ 
-	  Lexing.pos_fname = filename; 
-	  Lexing.pos_lnum  = 1;
-	  Lexing.pos_bol   = 0; 
-	  Lexing.pos_cnum  = 0
-	};
+    lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
     let grammar =
       { (Parser.grammar Lexer.main lexbuf) with ConcreteSyntax.pg_filename = filename }
     in
