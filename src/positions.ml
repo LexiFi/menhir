@@ -147,3 +147,11 @@ let two (pos1 : Lexing.position) (pos2 : Lexing.position) : positions =
 let lexbuf (lexbuf : Lexing.lexbuf) : positions =
   [ lex_join lexbuf.Lexing.lex_start_p lexbuf.Lexing.lex_curr_p ]
 
+let print (pos : Lexing.position) =
+  Printf.printf
+    "{ pos_fname = \"%s\"; pos_lnum = %d; pos_bol = %d; pos_cnum = %d }\n"
+      pos.pos_fname
+      pos.pos_lnum
+      pos.pos_bol
+      pos.pos_cnum
+

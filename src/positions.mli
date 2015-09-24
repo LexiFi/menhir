@@ -116,3 +116,5 @@ val two: Lexing.position -> Lexing.position -> positions
 
 val lexbuf: Lexing.lexbuf -> positions
 
+(* Low-level printing function, for debugging. *)
+val print: Lexing.position -> unit
