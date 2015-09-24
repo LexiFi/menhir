@@ -641,6 +641,8 @@ let rec structure_item f item =
         fprintf f "module %s = %a" name modexpr rhs
     | SIInclude e ->
         fprintf f "include %a" modexpr e
+    | SIComment comment ->
+        fprintf f "(* %s *)" comment
     end;
     nl f
 

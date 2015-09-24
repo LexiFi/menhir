@@ -250,3 +250,5 @@ and structure_item =
   | SIModuleDef of string * modexpr
     (* Module inclusion. *)
   | SIInclude of modexpr
+    (* Comment. *)
+  | SIComment of string

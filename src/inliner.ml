@@ -285,7 +285,8 @@ let rec inline_structure_item item =
   | SIExcDefs _
   | SITypeDefs _
   | SIValDefs (false, _)
-  | SIStretch _ ->
+  | SIStretch _
+  | SIComment _ ->
       item
 
 and inline_structure s =
