@@ -4,6 +4,8 @@
 
 (* Reading a grammar from a file. *)
 
+module D = Driver
+
 let load_partial_grammar filename =
   let validExt = if Settings.coq then ".vy" else ".mly" in
   if not (Filename.check_suffix filename validExt) then
