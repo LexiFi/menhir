@@ -67,7 +67,7 @@ FLAGS := -v -lg 1 -la 1 -lc 1 --comment --infer --stdlib $(SRC) --strict --fixed
 
 stage2:
 	@$(OCAMLBUILD) -build-dir _stage2 -tag fancy_parser \
-	  -use-menhir -menhir "$(SRC)/_stage1/menhir.$(TARGET) $(FLAGS)" \
+	  -use-menhir -menhir "$(SRC)/_stage1/menhir.$(TARGET)" -yaccflags "$(FLAGS)" \
 	  menhir.$(TARGET)
 
 # ----------------------------------------------------------------------------
@@ -76,7 +76,7 @@ stage2:
 # is identical to the stage 2 parser.
 stage3:
 	@$(OCAMLBUILD) -build-dir _stage3 -tag fancy_parser \
-	  -use-menhir -menhir "$(SRC)/_stage2/menhir.$(TARGET) $(FLAGS)" \
+	  -use-menhir -menhir "$(SRC)/_stage2/menhir.$(TARGET)" -yaccflags "$(FLAGS)" \
 	  parser.ml parser.mli
 	@for i in parser.ml parser.mli ; do \
 	  if ! diff _stage2/$$i _stage3/$$i 2>&1 >/dev/null ; then \
