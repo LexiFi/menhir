@@ -23,29 +23,23 @@ let flags () =
    The choice between the two parsers is determined by the presence of the tag
    [fancy_parser]. *)
 
+let fancy () : bool =
+  mark_tag_used "fancy_parser";
+  Tags.mem "fancy_parser" (tags_of_pathname "")
+
 let parser_rule () =
-  let source =
-    mark_tag_used "fancy_parser";
-    if Tags.mem "fancy_parser" (tags_of_pathname "")
-    then "fancy-parser.mly"
-    else "yacc-parser.mly"
-  in
-  copy_rule "create parser.mly" source "parser.mly"
+  copy_rule "create parser.mly"
+    (* source: *)
+    (if fancy() then "fancy-parser.mly" else "yacc-parser.mly")
+    (* target: *)
+    "parser.mly"
 
 let driver_rule () =
-  (* The source file is either [yaccDriver.ml] or [fancyDriver.ml], depending
-     whether the tag [fancy_parser] is (globally) present. *)
-  let source =
-    if Tags.mem "fancy_parser" (tags_of_pathname "")
-    then "fancyDriver.ml"
-    else "yaccDriver.ml"
- in
-  (* The target file is [Driver.ml]. *)
-  let target =
+  copy_rule "create Driver.ml" 
+    (* source: *)
+    (if fancy() then "fancyDriver.ml" else "yaccDriver.ml")
+    (* target: *)
     "Driver.ml"
-  in
-  (* A copy rule. *)
-  copy_rule "create Driver.ml" source target
 
 (* ---------------------------------------------------------------------------- *)
 
