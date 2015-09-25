@@ -329,6 +329,9 @@ module Terminal = struct
       ) w;
       Buffer.contents b
 
+    (* [Pervasives.compare] implements a lexicographic ordering on strings. *)
+    let compare = Pervasives.compare
+
   end
 
 end

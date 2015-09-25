@@ -179,7 +179,8 @@ module Terminal : sig
     (* [verbose()] prints statistics about the use of the internal
        hash-consing table so far. *)
     val verbose: unit -> unit
-
+    (* Lexicographic ordering. *)
+    val compare: word -> word -> int
   end
 
 end
