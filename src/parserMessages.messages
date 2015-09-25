@@ -9,11 +9,11 @@ Either a declaration or %% is expected at this point.
 TYPE UID 
 TYPE OCAMLTYPE TYPE 
 TYPE OCAMLTYPE UID PREC 
-TYPE OCAMLTYPE UID RPAREN 
 TYPE OCAMLTYPE UID LPAREN TYPE 
 TYPE OCAMLTYPE UID COMMA TYPE 
 TYPE OCAMLTYPE UID LPAREN UID UID 
 TYPE OCAMLTYPE UID LPAREN UID COMMA TYPE 
+TYPE OCAMLTYPE UID PLUS RPAREN 
 
 Ill-formed %type declaration.
 Examples of well-formed declarations:
@@ -133,10 +133,7 @@ Examples of well-formed rules:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID COLON ACTION RPAREN 
 PERCENTPERCENT UID COLON ACTION TYPE 
-# These sentences are distinct in the non-canonical automaton,
-# but lead to the same state in the canonical automaton.
 
 Either another rule or %% is expected at this point.
 
@@ -164,6 +161,8 @@ PERCENTPERCENT UID COLON UID LPAREN UID STAR TYPE
 PERCENTPERCENT UID COLON UID LPAREN UID LPAREN LID RPAREN TYPE 
 # Above two sentences: again cases where we have two different possible contexts,
 # with different expectations as to what comes next. Again, let's back up.
+PERCENTPERCENT UID COLON UID LPAREN LID TYPE
+PERCENTPERCENT UID COLON UID LPAREN ACTION BAR TYPE 
 
 Ill-formed production.
 A production is a sequence of producers, followed with a semantic action.
@@ -180,6 +179,8 @@ Examples of well-formed producers:
 # ----------------------------------------------------------------------------
 
 PERCENTPERCENT UID COLON PREC TYPE 
+PERCENTPERCENT UID COLON UID LPAREN ACTION PREC TYPE 
+PERCENTPERCENT UID COLON ACTION PREC TYPE 
 
 Ill-formed %prec annotation.
 A symbol is expected at this point.
@@ -224,4 +225,39 @@ PERCENTPERCENT UID COLON ACTION PREC UID TYPE
 Either another rule
 or another production | ...
 is expected at this point.
+
+# ----------------------------------------------------------------------------
+
+TYPE OCAMLTYPE UID LPAREN UID LPAREN TYPE 
+PERCENTPERCENT UID COLON UID LPAREN UID LPAREN TYPE 
+
+Ill-formed list of actual parameters.
+A comma-delimited list of actual parameters is expected at this point.
+Examples of well-formed actual parameters:
+  expr
+  expr+
+  option(expr)
+  separated_list(COMMA, expr)
+
+# Omitting the fact that an anonymous rule is a valid actual parameter...
+
+# ----------------------------------------------------------------------------
+
+TYPE OCAMLTYPE UID LPAREN UID PLUS UID 
+
+Ill-formed list of actual parameters.
+A modifier, a closing parenthesis, or a comma is expected at this point.
+A modifier is * or + or ?.
+Examples of well-formed actual parameters:
+  expr
+  expr+
+  option(expr)
+  separated_list(COMMA, expr)
+
+PERCENTPERCENT UID COLON UID LPAREN ACTION PREC UID UID 
+
+Either another production | ...
+or a comma or a closing parenthesis
+is expected at this point.
+# Tricky.
 

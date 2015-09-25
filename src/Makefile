@@ -63,7 +63,7 @@ stage1:
 # descends into another directory when executing commands.
 SRC   := $(shell pwd)
 
-FLAGS := -v -lg 1 -la 1 -lc 1 --table --infer --stdlib $(SRC) --strict --fixed-exception
+FLAGS := -v -lg 1 -la 1 -lc 1 --table --infer --stdlib $(SRC) --strict --fixed-exception --canonical
 
 stage2:
 	@$(OCAMLBUILD) -build-dir _stage2 -tag fancy_parser \
