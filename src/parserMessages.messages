@@ -6,6 +6,12 @@ Either a declaration or %% is expected at this point.
 
 # ----------------------------------------------------------------------------
 
+HEADER UID 
+
+Either another declaration or %% is expected at this point.
+
+# ----------------------------------------------------------------------------
+
 TYPE UID 
 TYPE OCAMLTYPE TYPE 
 TYPE OCAMLTYPE UID PREC 
@@ -71,15 +77,15 @@ Examples of well-formed declarations:
 
 # ----------------------------------------------------------------------------
 
-HEADER UID 
-
-Either another declaration or %% is expected at this point.
-
-# ----------------------------------------------------------------------------
-
 PERCENTPERCENT TYPE 
 
 Either a rule or %% is expected at this point.
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID COLON ACTION TYPE 
+
+Either another rule or %% is expected at this point.
 
 # ----------------------------------------------------------------------------
 
@@ -130,12 +136,6 @@ Examples of well-formed rules:
   main: e = expr EOL { e }
   expr: i = INT { i } | e1 = expr PLUS e2 = expr { e1 + e2 }
   symbol: s = LID | s = UID { s }
-
-# ----------------------------------------------------------------------------
-
-PERCENTPERCENT UID COLON ACTION TYPE 
-
-Either another rule or %% is expected at this point.
 
 # ----------------------------------------------------------------------------
 
@@ -225,6 +225,8 @@ PERCENTPERCENT UID COLON ACTION PREC UID TYPE
 Either another rule
 or another production | ...
 is expected at this point.
+Examples of well-formed rules:
+  option(X): { None } | x = X { Some x }
 
 # ----------------------------------------------------------------------------
 
@@ -240,6 +242,7 @@ Examples of well-formed actual parameters:
   separated_list(COMMA, expr)
 
 # Omitting the fact that an anonymous rule is a valid actual parameter...
+# Also omitting the subtle distinctions between lax_actual, actual, etc.
 
 # ----------------------------------------------------------------------------
 
@@ -253,6 +256,8 @@ Examples of well-formed actual parameters:
   expr+
   option(expr)
   separated_list(COMMA, expr)
+
+# ----------------------------------------------------------------------------
 
 PERCENTPERCENT UID COLON UID LPAREN ACTION PREC UID UID 
 
