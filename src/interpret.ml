@@ -1,19 +1,33 @@
 (* This module is in charge of handling the [--interpret] option,
    if it is present. *)
 
-open Grammar
 module I = Invariant (* artificial dependency; ensures that [Invariant] runs first *)
 
 (* --------------------------------------------------------------------------- *)
 
-(* A sentence is a pair of an optional non-terminal start symbol and a
-   list of terminal symbols. *)
+(* The following definitions are in sync with [SentenceParser]. *)
 
-type sentence =
-    Nonterminal.t option * Terminal.t list
+open Grammar
+type terminals = Terminal.t list
+type sentence = Nonterminal.t option * terminals
+type located_sentence = Positions.positions * sentence
+type message = string
 
-type located_sentence =
-    Positions.positions * sentence
+(* A run is a series of sentences together with an error message. *)
+
+type run = located_sentence list * message
+
+(* A targeted sentence is a located sentence together with the state
+   into which it leads. *)
+
+type targeted_sentence = located_sentence * Lr1.node
+
+(* A targeted run is a series of targeted sentences together with an error
+   message. *)
+
+type targeted_run = targeted_sentence list * message
+
+(* --------------------------------------------------------------------------- *)
 
 (* Debugging.
 
@@ -202,22 +216,32 @@ let interpret_error sentence =
 
 (* --------------------------------------------------------------------------- *)
 
-(* [convert_located_sentence] interprets a (located) sentence, expecting it to
-   end in an error, and returns the state in which the error is obtained. This
-   is used by [--compile-errors]. *)
+(* [target_sentence] interprets a (located) sentence, expecting it to end in
+   an error, computes the state in which the error is obtained, and constructs
+   a targeted sentence. *)
 
-let convert_located_sentence (poss, sentence) =
-  let fail msg =
-    Error.signal poss (Printf.sprintf
-      "This sentence does not end with a syntax error, as desired.\n%s"
-      msg
-    );
-    [] (* dummy result *)
-  in
-  interpret_error_aux poss sentence fail (fun s -> [ (poss, sentence), s ])
+let fail poss msg =
+  Error.signal poss (Printf.sprintf
+    "This sentence does not end with a syntax error, as desired.\n%s"
+    msg
+  );
+  [] (* dummy result *)
 
-let convert_entry (sentences, message) =
-  List.flatten (List.map convert_located_sentence sentences), message
+let target_sentence : located_sentence -> targeted_sentence list =
+  fun (poss, sentence) ->
+    interpret_error_aux poss sentence
+      (fail poss)
+      (fun s -> [ (poss, sentence), s ])
+
+let target_run : run -> targeted_run =
+  fun (sentences, message) ->
+    List.flatten (List.map target_sentence sentences), message
+
+let target_runs : run list -> targeted_run list =
+  fun runs ->
+    let runs = List.map target_run runs in
+    if Error.errors() then exit 1;
+    runs
 
 (* --------------------------------------------------------------------------- *)
 
@@ -277,50 +301,57 @@ let () =
 
 (* --------------------------------------------------------------------------- *)
 
+(* Reading a [.messages] file. *)
+
+let read_messages filename : run list =
+  (* Read and segment the file. *)
+  let segments : (string * Lexing.lexbuf) list = Segment.segment filename in
+  (* Process the segments, two by two. We expect one segment to contain
+     a non-empty series of sentences, and the next segment to contain
+     free-form text. *)
+  let rec loop accu segments =
+    match segments with
+    | [] ->
+        List.rev accu
+    | (_, lexbuf) :: [] ->
+        (* Oops, we are desynchronized. *)
+        Error.signal
+          (Positions.one (Lexing.lexeme_end_p lexbuf))
+          "Syntax error: missing a final message. I may be desynchronized.";
+        List.rev accu
+    | (_, lexbuf) :: (text, _) :: segments ->
+        (* Read a non-empty series of located sentences. *)
+        match SentenceParser.entry SentenceLexer.lex lexbuf with
+        | exception Parsing.Parse_error ->
+            (* Report an error. *)
+            Error.signal
+              (Positions.one (Lexing.lexeme_start_p lexbuf))
+              "Syntax error: ill-formed sentence.";
+            (* Continue anyway. *)
+            loop accu segments
+        | sentences ->
+            loop ((sentences, text) :: accu) segments
+  in
+  let runs = loop [] segments in
+  if Error.errors() then exit 1;
+  (* Although we try to report several errors, [SentenceLexer.lex] may
+     abort the whole process after just one error. This could be improved. *)
+  runs
+
+(* --------------------------------------------------------------------------- *)
+
 (* If [--compile-errors <filename>] is set, compile the error message
    descriptions found in file [filename] down to OCaml code, then stop. *)
 
 let () =
   Settings.compile_errors |> Option.iter (fun filename ->
 
-    (* Read and segment the file. Each segment is a pair of a string and a
-       lexbuf. *)
-    let segments = Segment.segment filename in
-    (* Process the segments, two by two. We expect one segment to contain
-       a non-empty series of sentences, and the next segment to contain
-       free-form text. *)
-    let rec loop accu segments =
-      match segments with
-      | [] ->
-          List.rev accu
-      | (_, lexbuf) :: [] ->
-          (* Oops, we are desynchronized. *)
-          Error.signal
-            (Positions.one (Lexing.lexeme_end_p lexbuf))
-            "Syntax error: missing a final message. I may be desynchronized.";
-          List.rev accu
-      | (_, lexbuf) :: (text, _) :: segments ->
-          (* Read a non-empty series of located sentences. *)
-          match SentenceParser.entry SentenceLexer.lex lexbuf with
-          | exception Parsing.Parse_error ->
-              (* Report an error. *)
-              Error.signal
-                (Positions.one (Lexing.lexeme_start_p lexbuf))
-                "Syntax error: ill-formed sentence.";
-              (* Continue anyway. *)
-              loop accu segments
-          | sentences ->
-              loop ((sentences, text) :: accu) segments
-    in
-    let entries = loop [] segments in
-    if Error.errors() then exit 1;
-    (* Although we try to report several errors, [SentenceLexer.lex] may
-       abort the whole process after just one error. This could be improved. *)
+    (* Read the file. *)
+    let runs = read_messages filename in
 
     (* Convert every sentence to a state number. We signal an error if a
        sentence does not end in an error, as expected. *)
-    let entries = List.map convert_entry entries in
-    if Error.errors() then exit 1;
+    let runs = target_runs runs in
 
     (* Build a mapping of states to located sentences. This allows us to
        detect if two sentences lead to the same state. *)
@@ -337,7 +368,7 @@ let () =
           | exception Not_found ->
               Lr1.NodeMap.add s sentence2 mapping
         ) mapping sentences_and_states
-      ) Lr1.NodeMap.empty entries
+      ) Lr1.NodeMap.empty runs
     in
     if Error.errors() then exit 1;
 
@@ -371,7 +402,7 @@ let () =
         (* Map all these states to this message. *)
         { branchpat = POr states;
           branchbody = EStringConst message } :: branches
-      ) [ default ] entries
+      ) [ default ] runs
     in
     let messagedef = {
       valpublic = true;
