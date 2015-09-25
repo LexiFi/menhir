@@ -44,14 +44,14 @@ let rec loop lexer lexbuf (result : 'a result) : 'a =
             Obj.magic (s : _ lr1state)
       in
       (* Display a nice error message. In principle, the table found in
-         [FancyParserMessages] should be complete, so we should obtain
+         [ParserMessages] should be complete, so we should obtain
          a nice message. If [Not_found] is raised, we produce a generic
          message, which is better than nothing. Note that the OCaml code
-         in [FancyParserMessages] is auto-generated based on the table in
-         [fancy-parser.messages]. *)
+         in [ParserMessages] is auto-generated based on the table in
+         [ParserMessages.messages]. *)
       let message =
         try
-          FancyParserMessages.message s
+          ParserMessages.message s
         with Not_found ->
           Printf.sprintf "Unknown syntax error (in state %d).\n" s
       in
