@@ -765,11 +765,14 @@ let errorpeeker node =
    not do anything about it for the moment. (Furthermore, someone who
    uses precedence declarations is looking for trouble anyway.)
 
-   20120525: if [--canonical] has been specified, then we disallow
-   default reductions on a normal token, because we do not want to
-   introduce any spurious actions into the automaton. We do still
-   allow default reductions on "#", since they are needed for the
-   automaton to terminate properly. *)
+   Between 2012/05/25 and 2015/09/25, if [--canonical] has been specified,
+   then we disallow default reductions on a normal token, because we do not
+   want to introduce any spurious actions into the automaton. We do still
+   allow default reductions on "#", since they are needed for the automaton to
+   terminate properly. From 2015/09/25 on, we again always allow default
+   reductions, as they seem to be beneficial when explaining syntax errors. *)
+
+(**)
 
 let (has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) option), hdrcount =
   Misc.tabulateo Lr1.number Lr1.fold Lr1.n (fun s ->
@@ -778,27 +781,14 @@ let (has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) opti
       None
     else
 
-      match ProductionMap.is_singleton (Lr1.invert (Lr1.reductions s)) with
-      | Some (_, toks)  as reduction
-	  when SymbolMap.purelynonterminal (Lr1.transitions s) ->
-
-  	  if TerminalSet.mem Terminal.sharp toks then
-	    (* Perform default reduction on "#". *)
-	    reduction
-	  else begin
-	    (* Perform default reduction, unless [--canonical] has been specified. *)
-	    match Settings.construction_mode with
-	    | Settings.ModeCanonical ->
-	        None
-	    | Settings.ModeInclusionOnly
-	    | Settings.ModePager
-            | Settings.ModeLALR ->
-	        reduction
-	  end
-
-      | Some _
+      let reduction = ProductionMap.is_singleton (Lr1.invert (Lr1.reductions s)) in
+      match reduction with
+      | Some _ ->
+	  if SymbolMap.purelynonterminal (Lr1.transitions s)
+          then reduction
+          else None
       | None ->
-	  None
+	  reduction
 
   )
 
