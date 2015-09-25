@@ -25,16 +25,6 @@
   let declare_typename (i,_,_) =
     !declare_typename i
 
-  let syntax_error pos =
-    Cerrors.fatal_error "%s:%d: syntax error"
-        pos.Lexing.pos_fname pos.Lexing.pos_lnum
-
-  let unclosed opening closing pos1 pos2 =
-    Cerrors.info "%s:%d: syntax error: expecting '%s'"
-        pos2.Lexing.pos_fname pos2.Lexing.pos_lnum closing;
-    Cerrors.fatal_error "%s:%d: this is the location of the unclosed '%s'"
-        pos1.Lexing.pos_fname pos1.Lexing.pos_lnum opening
-
 %}
 
 %token<string * Pre_parser_aux.identifier_type ref * Cabs.cabsloc>
