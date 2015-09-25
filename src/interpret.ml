@@ -340,6 +340,88 @@ let read_messages filename : run list =
 
 (* --------------------------------------------------------------------------- *)
 
+(* [message_table] converts a list of targeted runs to a table (a mapping) of
+   states to located sentences. Optionally, it can detect that two sentences
+   lead to the same state, and report an error. *)
+
+let message_table (detect_redundancy : bool) (runs : targeted_run list)
+  : located_sentence Lr1.NodeMap.t =
+
+  let table =
+    List.fold_left (fun table (sentences_and_states, _message) ->
+      List.fold_left (fun table (sentence2, s) ->
+        match Lr1.NodeMap.find s table with
+        | sentence1 ->
+            if detect_redundancy then
+              Error.signal (fst sentence1 @ fst sentence2)
+                (Printf.sprintf
+                   "Redundancy: these sentences both cause an error in state %d."
+                   (Lr1.number s));
+            table
+        | exception Not_found ->
+            Lr1.NodeMap.add s sentence2 table
+      ) table sentences_and_states
+    ) Lr1.NodeMap.empty runs
+  in
+  if Error.errors() then exit 1;
+  table
+
+(* --------------------------------------------------------------------------- *)
+
+(* [compile_runs] converts a list of targeted runs to OCaml code that encodes
+   a mapping of state numbers to error messages. The code is sent to the
+   standard output channel. *)
+
+let compile_runs filename (runs : targeted_run list) : unit =
+
+  (* We wish to produce a function that maps a state number to a message.
+     By convention, we call this function [message]. *)
+
+  let name = "message" in
+
+  let open IL in
+  let open CodeBits in
+  let default = {
+    branchpat  = PWildcard;
+    branchbody = eraisenotfound
+  (* The default branch raises an exception, which can be caught by
+     the user, who can then produce a generic error message. *)
+  } in
+  let branches =
+    List.fold_left (fun branches (sentences_and_states, message) ->
+      (* Create an or-pattern for these states. *)
+      let states = List.map (fun (_, s) ->
+        pint (Lr1.number s)
+      ) sentences_and_states in
+      (* Map all these states to this message. *)
+      { branchpat = POr states;
+        branchbody = EStringConst message } :: branches
+    ) [ default ] runs
+  in
+  let messagedef = {
+    valpublic = true;
+    valpat = PVar name;
+    valval = EFun ([ PVar "s" ], EMatch (EVar "s", branches))
+  } in
+  let program = [
+    SIComment (Printf.sprintf
+      "This file was auto-generated based on \"%s\"." filename);
+    SIComment (Printf.sprintf
+      "Please note that the function [%s] can raise [Not_found]." name);
+    SIValDefs (false,
+      [ messagedef ]);
+  ] in
+
+  (* Write this program to the standard output channel. *)
+
+  let module P = Printer.Make (struct
+    let f = stdout
+    let locate_stretches = None
+  end) in
+  P.program program
+
+(* --------------------------------------------------------------------------- *)
+
 (* If [--compile-errors <filename>] is set, compile the error message
    descriptions found in file [filename] down to OCaml code, then stop. *)
 
@@ -355,22 +437,7 @@ let () =
 
     (* Build a mapping of states to located sentences. This allows us to
        detect if two sentences lead to the same state. *)
-    let (_ : located_sentence Lr1.NodeMap.t) =
-      List.fold_left (fun mapping (sentences_and_states, _message) ->
-        List.fold_left (fun mapping (sentence2, s) ->
-          match Lr1.NodeMap.find s mapping with
-          | sentence1 ->
-              Error.signal (fst sentence1 @ fst sentence2)
-                (Printf.sprintf
-                   "Redundancy: these sentences both cause an error in state %d."
-                   (Lr1.number s));
-              mapping
-          | exception Not_found ->
-              Lr1.NodeMap.add s sentence2 mapping
-        ) mapping sentences_and_states
-      ) Lr1.NodeMap.empty runs
-    in
-    if Error.errors() then exit 1;
+    let _ = message_table true runs in
 
     (* In principle, we would like to check whether this set of sentences
        is complete (i.e., covers all states where an error can arise), but
@@ -382,48 +449,7 @@ let () =
     (* Now, compile this information down to OCaml code. We wish to
        produce a function that maps a state number to a message. By
        convention, we call this function [message]. *)
-
-    let name = "message" in
-
-    let open IL in
-    let open CodeBits in
-    let default = {
-      branchpat  = PWildcard;
-      branchbody = eraisenotfound
-        (* The default branch raises an exception, which can be caught by
-           the user, who can then produce a generic error message. *)
-    } in
-    let branches =
-      List.fold_left (fun branches (sentences_and_states, message) ->
-        (* Create an or-pattern for these states. *)
-        let states = List.map (fun (_, s) ->
-          pint (Lr1.number s)
-        ) sentences_and_states in
-        (* Map all these states to this message. *)
-        { branchpat = POr states;
-          branchbody = EStringConst message } :: branches
-      ) [ default ] runs
-    in
-    let messagedef = {
-      valpublic = true;
-      valpat = PVar name;
-      valval = EFun ([ PVar "s" ], EMatch (EVar "s", branches))
-    } in
-    let program = [
-      SIComment (Printf.sprintf
-                   "This file was auto-generated based on \"%s\"." filename);
-      SIComment (Printf.sprintf
-                   "Please note that the function [%s] can raise [Not_found]." name);
-      SIValDefs (false, [ messagedef ])
-    ] in
-
-    (* Write this program to the standard output channel. *)
-
-    let module P = Printer.Make (struct
-      let f = stdout
-      let locate_stretches = None
-    end) in
-    P.program program;
+    compile_runs filename runs;
 
     exit 0
   )
