@@ -461,6 +461,9 @@ let () =
    state that appears on the left-hand side appears on the right-hand side as
    well. *)
 
+let default_message =
+  "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+
 let () =
   Settings.compare_errors |> Option.iter (fun (filename1, filename2) ->
 
@@ -484,15 +487,23 @@ let () =
 
     (* Check that [table1] is a subset of [table2], that is, for every state
        [s] in the domain of [table1], [s] is mapped by [table1] and [table2]
-       to the same error message. *)
+       to the same error message. As an exception, if the message found in
+       [table1] is the default message, then no comparison takes place. This
+       allows using [--list-errors] and [--compare-errors] in conjunction to
+       ensure that a [.messages] file is complete, without seeing warnings
+       about different messages. *)
     table1 |> Lr1.NodeMap.iter (fun s ((poss1, _), message1) ->
-      let (poss2, _), message2 = Lr1.NodeMap.find s table2 in
-      if message1 <> message2 then
-        Error.warning (poss1 @ poss2) (Printf.sprintf
-          "These sentences lead to an error in state %d.\n\
-           The corresponding messages in \"%s\" and \"%s\" differ."
-          (Lr1.number s) filename1 filename2
-        )
+      if message1 <> default_message then
+        try
+          let (poss2, _), message2 = Lr1.NodeMap.find s table2 in
+          if message1 <> message2 then
+            Error.warning (poss1 @ poss2) (Printf.sprintf
+              "These sentences lead to an error in state %d.\n\
+               The corresponding messages in \"%s\" and \"%s\" differ."
+              (Lr1.number s) filename1 filename2
+            )
+        with Not_found ->
+          ()
     );
 
     if Error.errors() then exit 1;

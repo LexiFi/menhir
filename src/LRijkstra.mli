@@ -3,8 +3,8 @@
    an error, a minimal path (starting in some initial state) that actually
    triggers this error. *)
 
-(* The result of this analysis is written to the standard output channel.
-   No result is returned. *)
+(* The result of this analysis is a [.messages] file. It is written to the
+   standard output channel. No result is returned. *)
 
 module Run (X : sig
   (* If [verbose] is set, produce various messages on [stderr]. *)

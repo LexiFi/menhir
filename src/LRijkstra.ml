@@ -1143,13 +1143,13 @@ let display (nt, w, s') : unit =
      blank line, followed with a proposed error message, followed with
      another blank line. *)
   Printf.printf
-    "%s: %s\n# Length: %d\n# Leads to an error in state: %d.\n%s\n%s\n\n"
+    "%s: %s\n# Length: %d\n# Leads to an error in state: %d.\n%s\n%s\n"
     (Nonterminal.print false nt)
     (W.print w)
     (W.length w)
     (Lr1.number s')
     (Lr0.print_closure "# " (Lr1.state s'))
-    "Syntax error."
+    Interpret.default_message
 
 (* Perform the forward search. *)
 
