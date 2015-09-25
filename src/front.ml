@@ -105,7 +105,8 @@ let skipping_parser_generation =
   Settings.coq ||
   Settings.compile_errors <> None ||
   Settings.interpret_error ||
-  Settings.list_errors
+  Settings.list_errors ||
+  Settings.compare_errors <> None
     (* maybe also: [preprocess_mode <> PMNormal] *)
 
 (* ------------------------------------------------------------------------- *)

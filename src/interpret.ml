@@ -341,17 +341,17 @@ let read_messages filename : run list =
 (* --------------------------------------------------------------------------- *)
 
 (* [message_table] converts a list of targeted runs to a table (a mapping) of
-   states to located sentences. Optionally, it can detect that two sentences
-   lead to the same state, and report an error. *)
+   states to located sentences and messages. Optionally, it can detect that
+   two sentences lead to the same state, and report an error. *)
 
 let message_table (detect_redundancy : bool) (runs : targeted_run list)
-  : located_sentence Lr1.NodeMap.t =
+  : (located_sentence * message) Lr1.NodeMap.t =
 
   let table =
-    List.fold_left (fun table (sentences_and_states, _message) ->
+    List.fold_left (fun table (sentences_and_states, message) ->
       List.fold_left (fun table (sentence2, s) ->
         match Lr1.NodeMap.find s table with
-        | sentence1 ->
+        | sentence1, _ ->
             if detect_redundancy then
               Error.signal (fst sentence1 @ fst sentence2)
                 (Printf.sprintf
@@ -359,7 +359,7 @@ let message_table (detect_redundancy : bool) (runs : targeted_run list)
                    (Lr1.number s));
             table
         | exception Not_found ->
-            Lr1.NodeMap.add s sentence2 table
+            Lr1.NodeMap.add s (sentence2, message) table
       ) table sentences_and_states
     ) Lr1.NodeMap.empty runs
   in
@@ -439,12 +439,12 @@ let () =
        detect if two sentences lead to the same state. *)
     let _ = message_table true runs in
 
-    (* In principle, we would like to check whether this set of sentences
-       is complete (i.e., covers all states where an error can arise), but
-       this is costly -- it requires running [LRijkstra]. Instead, we will
-       probably offer a separate facility for comparing two [.messages]
-       files, one of which can be produced via [--list-errors]. This will
-       ensure completeness. *)
+    (* In principle, we would like to check whether this set of sentences is
+       complete (i.e., covers all states where an error can arise), but this
+       may be costly -- it requires running [LRijkstra]. Instead, we offer a
+       separate facility for comparing two [.messages] files, one of which can
+       be produced via [--list-errors]. This can be used to ensure
+       completeness. *)
 
     (* Now, compile this information down to OCaml code. We wish to
        produce a function that maps a state number to a message. By
@@ -452,5 +452,51 @@ let () =
     compile_runs filename runs;
 
     exit 0
+  )
+
+(* --------------------------------------------------------------------------- *)
+
+(* If two [--compare-errors <filename>] directives are provided, compare the
+   two message descriptions files, and stop. We wish to make sure that every
+   state that appears on the left-hand side appears on the right-hand side as
+   well. *)
+
+let () =
+  Settings.compare_errors |> Option.iter (fun (filename1, filename2) ->
+
+    (* Read and convert both files, as above. *)
+    let runs1 = read_messages filename1
+    and runs2 = read_messages filename2 in
+    let runs1 = target_runs runs1
+    and runs2 = target_runs runs2 in (* here, it would be OK to ignore errors *)
+    let table1 = message_table false runs1
+    and table2 = message_table false runs2 in
+    
+    (* Check that the domain of [table1] is a subset of the domain of [table2]. *)
+    table1 |> Lr1.NodeMap.iter (fun s ((poss1, _), _) ->
+      if not (Lr1.NodeMap.mem s table2) then
+        Error.signal poss1 (Printf.sprintf
+          "This sentence leads to an error in state %d.\n\
+           No sentence that leads to this state exists in \"%s\"."
+          (Lr1.number s) filename2
+        )
+    );
+
+    (* Check that [table1] is a subset of [table2], that is, for every state
+       [s] in the domain of [table1], [s] is mapped by [table1] and [table2]
+       to the same error message. *)
+    table1 |> Lr1.NodeMap.iter (fun s ((poss1, _), message1) ->
+      let (poss2, _), message2 = Lr1.NodeMap.find s table2 in
+      if message1 <> message2 then
+        Error.warning (poss1 @ poss2) (Printf.sprintf
+          "These sentences lead to an error in state %d.\n\
+           The corresponding messages in \"%s\" and \"%s\" differ."
+          (Lr1.number s) filename1 filename2
+        )
+    );
+
+    if Error.errors() then exit 1;
+    exit 0
+
   )
 

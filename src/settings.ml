@@ -180,11 +180,18 @@ let compile_errors =
 let set_compile_errors filename =
   compile_errors := Some filename
 
+let compare_errors =
+  ref []
+
+let add_compare_errors filename =
+  compare_errors := filename :: !compare_errors
+
 let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
   "--comment", Arg.Set comment, " Include comments in the generated code";
-  "--compile-errors", Arg.String set_compile_errors, "<filename> Map the error messages in <filename> to OCaml code.";
+  "--compare-errors", Arg.String add_compare_errors, "<filename> (used twice) Compare two .messages files.";
+  "--compile-errors", Arg.String set_compile_errors, "<filename> Compile a .messages file to OCaml code.";
   "--coq", Arg.Set coq, " Generate a formally verified parser, in Coq";
   "--coq-no-complete", Arg.Set coq_no_complete, " Do not generate a proof of completeness";
   "--coq-no-actions", Arg.Set coq_no_actions, " Ignore semantic actions in the Coq output";
@@ -429,3 +436,16 @@ let list_errors =
 
 let compile_errors =
   !compile_errors
+
+let compare_errors =
+  match !compare_errors with
+  | [] ->
+      None
+  | [ filename2; filename1 ] -> (* LIFO *)
+      Some (filename1, filename2)
+  | _ ->
+      eprintf
+        "To compare two .messages files, please use:\n\
+         --compare-errors <filename1> --compare-errors <filename2>.\n";
+      exit 1
+

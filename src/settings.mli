@@ -190,3 +190,8 @@ val list_errors: bool
 
 val compile_errors: string option
 
+(* If present, this is a pair of .messages files whose contents should
+   be compared. *)
+
+val compare_errors: (string * string) option
+
