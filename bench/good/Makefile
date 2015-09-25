@@ -106,8 +106,8 @@ clean::
 # Testing LRijkstra, that is, menhir --list-errors.
 
 ifeq ($(shell hostname),teraram)
-  TIMEOUT  := 1200
-  PARALLEL := -j30
+  TIMEOUT  := 3600
+  PARALLEL := -j40
 else
   TIMEOUT  := 2
   PARALLEL := -j4
