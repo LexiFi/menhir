@@ -1111,19 +1111,43 @@ end)
 let explored =
   ref 0
 
-(* [data] can be viewed as a set of triples [nt, s', w], meaning that an error
-   can be triggered in state [s'] by beginning in the initial state that
-   corresponds to [nt] and by reading the sequence of terminal symbols [w]. We
-   store at most one such triple for every state [s'], so we organize [data]
-   as a mapping of [s'] to the pair [s, w]. *)
+(* We wish to store a set of triples [nt, w, s'], meaning that an error can be
+   triggered in state [s'] by beginning in the initial state that corresponds
+   to [nt] and by reading the sequence of terminal symbols [w]. We wish to
+   store at most one such triple for every state [s'], so we organize the data
+   as a set [domain] of states [s'] and a list [data] of triples [nt, w, s']. *)
 
-let data : (Nonterminal.t * W.word) Lr1.NodeMap.t ref =
-  ref Lr1.NodeMap.empty
+(* We could print this data as we go, which would naturally result in sorting
+   the output by increasing word sizes. However, it seems preferable to sort
+   the sentences lexicographically, so that similar sentences end up close to
+   one another. This is why we store a list of triples and sort it before
+   printing it out. *)
 
-(* [reachable] is a set of all reachable states. *)
+let domain =
+  ref Lr1.NodeSet.empty
+
+let data : (Nonterminal.t * W.word * Lr1.node) list ref =
+  ref []
+
+(* The set [reachable] stores every reachable state (regardless of whether an
+   error can be triggered in that state). *)
 
 let reachable =
   ref Lr1.NodeSet.empty
+
+(* [display] displays one data item. *)
+
+let display (nt, w, s') =
+  Printf.printf
+    "An error in state %d can be obtained as follows.\n\
+     Start symbol: %s\n\
+     Input length: %d\n\
+     Input sentence:\n\
+     %s\n\n%!"
+    (Lr1.number s')
+    (Nonterminal.print false nt)
+    (W.length w)
+    (W.print w)
 
 (* Perform the forward search. *)
 
@@ -1133,7 +1157,7 @@ let _, _ =
     reachable := Lr1.NodeSet.add s' !reachable;
     (* If [z] causes an error in state [s'] and this is the first time
        we are able to trigger an error in this state, ... *)
-    if causes_an_error s' z && not (Lr1.NodeMap.mem s' !data) then begin
+    if causes_an_error s' z && not (Lr1.NodeSet.mem s' !domain) then begin
       (* Reconstruct the initial state [s] and the word [w] that lead
          to this error. *)
       let (s, _), ws = A.reverse path in
@@ -1142,24 +1166,23 @@ let _, _ =
       assert (validate s s' w);
       (* Store this new data. *)
       let nt = Lr1.nt_of_entry s in
-      data := Lr1.NodeMap.add s' (nt, w) !data;
-      (* As we go, display the data. This leads to sorting the output
-         by increasing word sizes. *)
-      Printf.printf
-        "An error in state %d can be obtained as follows.\n\
-         Start symbol: %s\n\
-         Input length: %d\n\
-         Input sentence:\n\
-         %s\n\n%!"
-        (Lr1.number s')
-        (Nonterminal.print false nt)
-        (W.length w)
-        (W.print w)
-      (* TEMPORARY print a concrete version of the input sentence, too *)
-      (* this requires a mechanism for printing a terminal symbol under a
-         concrete form *)
+      domain := Lr1.NodeSet.add s' !domain;
+      data := (nt, w, s') :: !data
     end
   )
+
+(* Sort and output the data. *)
+
+let () =
+  let compare (nt1, w1, _) (nt2, w2, _) =
+    let c = Nonterminal.compare nt1 nt2 in
+    if c <> 0 then c else W.compare w2 w1
+  in
+  List.iter display (List.fast_sort compare !data)
+
+(* ------------------------------------------------------------------------ *)
+
+(* Verbosity. *)
 
 let max_heap_size =
   if X.verbose || X.statistics <> None then
@@ -1178,13 +1201,13 @@ let () =
        Maximum size reached by the major heap: %dM\n%!"
     !explored
     (Lr1.NodeSet.cardinal !reachable) Lr1.n
-    (Lr1.NodeMap.cardinal !data)
+    (Lr1.NodeSet.cardinal !domain)
     max_heap_size
   end
 
 (* ------------------------------------------------------------------------ *)
 
-(* If requested by the client, produce one line of statistics. *)
+(* If requested by the client, write one line of statistics to a .csv file. *)
 
 let stop =
   now()
