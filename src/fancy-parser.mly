@@ -206,7 +206,7 @@ optional_bar:
 production_group:
   productions = separated_nonempty_list(BAR, production)
   action = ACTION
-  oprec2 = precedence?
+  oprec2 = ioption(precedence)
     {
       (* If multiple productions share a single semantic action, check
          that all of them bind the same names. *)
@@ -238,7 +238,7 @@ production_group:
    precedence declaration. */
 
 production:
-  producers = producer* oprec = precedence?
+  producers = producer* oprec = ioption(precedence)
     { producers,
       oprec,
       ParserAux.current_reduce_precedence(),
