@@ -6,14 +6,20 @@ Either a declaration or %% is expected at this point.
 
 # ----------------------------------------------------------------------------
 
+HEADER UID 
+
+Either another declaration or %% is expected at this point.
+
+# ----------------------------------------------------------------------------
+
 TYPE UID 
 TYPE OCAMLTYPE TYPE 
 TYPE OCAMLTYPE UID PREC 
-TYPE OCAMLTYPE UID RPAREN 
 TYPE OCAMLTYPE UID LPAREN TYPE 
 TYPE OCAMLTYPE UID COMMA TYPE 
 TYPE OCAMLTYPE UID LPAREN UID UID 
 TYPE OCAMLTYPE UID LPAREN UID COMMA TYPE 
+TYPE OCAMLTYPE UID PLUS RPAREN 
 
 Ill-formed %type declaration.
 Examples of well-formed declarations:
@@ -71,15 +77,15 @@ Examples of well-formed declarations:
 
 # ----------------------------------------------------------------------------
 
-HEADER UID 
-
-Either another declaration or %% is expected at this point.
-
-# ----------------------------------------------------------------------------
-
 PERCENTPERCENT TYPE 
 
 Either a rule or %% is expected at this point.
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID COLON ACTION TYPE 
+
+Either another rule or %% is expected at this point.
 
 # ----------------------------------------------------------------------------
 
@@ -99,7 +105,8 @@ Examples of well-formed rules:
 PERCENTPERCENT UID UID 
 
 Ill-formed rule.
-Either a list of formal parameters or a colon is expected at this point.
+Either a parenthesized, comma-delimited list of formal parameters
+or a colon is expected at this point.
 Examples of well-formed rules:
   main: e = expr EOL { e }
   expr: i = INT { i } | e1 = expr PLUS e2 = expr { e1 + e2 }
@@ -133,37 +140,11 @@ Examples of well-formed rules:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID COLON ACTION RPAREN 
-PERCENTPERCENT UID COLON ACTION TYPE 
-# These sentences are distinct in the non-canonical automaton,
-# but lead to the same state in the canonical automaton.
-
-Either another rule or %% is expected at this point.
-
-# ----------------------------------------------------------------------------
-
 PERCENTPERCENT UID COLON UID TYPE 
 PERCENTPERCENT UID COLON LID TYPE 
 PERCENTPERCENT UID COLON LID EQUAL TYPE 
 PERCENTPERCENT UID COLON UID PLUS TYPE 
-PERCENTPERCENT UID COLON UID LPAREN UID TYPE 
-# Above: this sentence seems tricky. All we know is we have just read a
-# symbol, and in front of us could be many things (comma, closing parenthesis,
-# identifier, modifier, %prec keyword, etc.). We expect to reduce this to
-# actual or lax_actual. Let's just back up to a safe level of abstraction and
-# say this is an ill-formed production.
-PERCENTPERCENT UID COLON UID LPAREN ACTION UID 
-# Above: another tricky case. Looking at the description of this state, it seems that
-# only COMMA and RPAREN can follow here. But in fact, other tokens are
-# possible, such as BAR, simply because they will NOT take us into this state.
-# This is a manifestation of the fact that non-canonical automata ``reduce too
-# far'' and can enter a state that they should not enter, before they detect
-# the error. Again, let's back up to a safe (?) level of abstraction.
 PERCENTPERCENT UID COLON LID EQUAL UID PLUS TYPE 
-PERCENTPERCENT UID COLON UID LPAREN UID STAR TYPE 
-PERCENTPERCENT UID COLON UID LPAREN UID LPAREN LID RPAREN TYPE 
-# Above two sentences: again cases where we have two different possible contexts,
-# with different expectations as to what comes next. Again, let's back up.
 
 Ill-formed production.
 A production is a sequence of producers, followed with a semantic action.
@@ -177,9 +158,55 @@ Examples of well-formed producers:
   es = list(e = expr SEMI { e })
   xs = list(x = var { Some x } | WILDCARD { None })
 
+# The following sentences are similar, but have an open parenthesis.
+# Suggesting that a parenthesis could be closed seems a safe bet. These
+# sentences are otherwise tricky. In front of us could be many things (comma,
+# closing parenthesis, identifier, modifier, %prec keyword, etc.). We expect
+# to reduce to actual or lax_actual. Let's just back up to a safe level of
+# abstraction and say this is an ill-formed production.
+
+PERCENTPERCENT UID COLON UID LPAREN UID TYPE 
+PERCENTPERCENT UID COLON UID LPAREN UID STAR TYPE 
+PERCENTPERCENT UID COLON UID LPAREN UID LPAREN LID RPAREN TYPE 
+PERCENTPERCENT UID COLON UID LPAREN LID TYPE
+PERCENTPERCENT UID COLON UID LPAREN ACTION BAR TYPE 
+
+Ill-formed production.
+Maybe you meant to close a parenthesis at this point?
+A production is a sequence of producers, followed with a semantic action.
+Examples of well-formed producers:
+  expr
+  option(COMMA)
+  separated_list(COMMA, expr)
+  e = expr
+  ds = declaration*
+  es = list(terminated(expr, SEMI))
+  es = list(e = expr SEMI { e })
+  xs = list(x = var { Some x } | WILDCARD { None })
+
+# ----------------------------------------------------------------------------
+
+PERCENTPERCENT UID COLON UID LPAREN ACTION UID 
+# In the non-canonical automaton, this is a tricky case where, looking at the
+# description of the state, it seems that only COMMA and RPAREN can follow
+# here. But in fact, other tokens are possible, such as BAR, simply because
+# they will NOT take us into this state. In the canonical automaton, the list
+# of possibilities is explicit in the lookahead sets.
+PERCENTPERCENT UID COLON UID LPAREN ACTION PREC UID UID 
+# In the first case above, we may expect a %prec annotation, whereas in the
+# second case above, we have just seen it. In the error message, we merge
+# these two situations and do not mention the possibility of a %prec
+# annotation.
+
+Either another production | ...
+or a comma or a closing parenthesis
+is expected at this point.
+
 # ----------------------------------------------------------------------------
 
 PERCENTPERCENT UID COLON PREC TYPE 
+PERCENTPERCENT UID COLON UID LPAREN ACTION PREC TYPE 
+PERCENTPERCENT UID COLON ACTION PREC TYPE 
 
 Ill-formed %prec annotation.
 A symbol is expected at this point.
@@ -224,4 +251,35 @@ PERCENTPERCENT UID COLON ACTION PREC UID TYPE
 Either another rule
 or another production | ...
 is expected at this point.
+Examples of well-formed rules:
+  option(X): { None } | x = X { Some x }
+
+# ----------------------------------------------------------------------------
+
+TYPE OCAMLTYPE UID LPAREN UID LPAREN TYPE 
+PERCENTPERCENT UID COLON UID LPAREN UID LPAREN TYPE 
+
+Ill-formed list of actual parameters.
+A comma-delimited list of actual parameters is expected at this point.
+Examples of well-formed actual parameters:
+  expr
+  expr+
+  option(expr)
+  separated_list(COMMA, expr)
+
+# Omitting the fact that an anonymous rule is a valid actual parameter...
+# Also omitting the subtle distinctions between lax_actual, actual, etc.
+
+# ----------------------------------------------------------------------------
+
+TYPE OCAMLTYPE UID LPAREN UID PLUS UID 
+
+Ill-formed list of actual parameters.
+A modifier, a closing parenthesis, or a comma is expected at this point.
+A modifier is * or + or ?.
+Examples of well-formed actual parameters:
+  expr
+  expr+
+  option(expr)
+  separated_list(COMMA, expr)
 
