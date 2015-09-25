@@ -1135,19 +1135,21 @@ let data : (Nonterminal.t * W.word * Lr1.node) list ref =
 let reachable =
   ref Lr1.NodeSet.empty
 
-(* [display] displays one data item. *)
+(* [display] displays one data item. The format is that of a [.messages]
+   file, which the user can then edit to customize the error messages. *)
 
-let display (nt, w, s') =
+let display (nt, w, s') : unit =
+  (* Print the sentence, followed with a few comments, followed with a
+     blank line, followed with a proposed error message, followed with
+     another blank line. *)
   Printf.printf
-    "An error in state %d can be obtained as follows.\n\
-     Start symbol: %s\n\
-     Input length: %d\n\
-     Input sentence:\n\
-     %s\n\n%!"
-    (Lr1.number s')
+    "%s: %s\n# Length: %d\n# Leads to an error in state: %d.\n%s\n%s\n\n"
     (Nonterminal.print false nt)
-    (W.length w)
     (W.print w)
+    (W.length w)
+    (Lr1.number s')
+    (Lr0.print_closure "# " (Lr1.state s'))
+    "Syntax error."
 
 (* Perform the forward search. *)
 

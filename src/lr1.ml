@@ -75,7 +75,7 @@ let follow_transition (again : bool) (source : node) (symbol : Symbol.t) (state 
       (if again then "Re-examining" else "Examining")
       source.raw_number
       (Symbol.print symbol)
-      (Lr0.print_closure state)
+      (Lr0.print_closure "" state)
 
 let follow_state (msg : string) (node : node) (print : bool) =
   if Settings.follow then
@@ -83,7 +83,7 @@ let follow_state (msg : string) (node : node) (print : bool) =
       "%s: r%d.\n%s\n"
       msg
       node.raw_number
-      (if print then Lr0.print_closure node.state else "")
+      (if print then Lr0.print_closure "" node.state else "")
 
 (* ------------------------------------------------------------------------ *)
 
@@ -714,34 +714,34 @@ let out =
 (* ------------------------------------------------------------------------ *)
 (* If requested, dump a verbose description of the automaton. *)
 
+let describe out node =
+  Printf.fprintf out "State %d%s:\n%s"
+    node.number
+    (if Settings.follow then Printf.sprintf " (r%d)" node.raw_number else "")
+    (Lr0.print "" node.state);
+  SymbolMap.iter (fun symbol node ->
+    Printf.fprintf out "-- On %s shift to state %d\n"
+      (Symbol.print symbol) node.number
+  ) node.transitions;
+  TerminalMap.iter (fun tok prods ->
+    List.iter (fun prod ->
+      (* TEMPORARY factoriser les symboles qui conduisent a reduire une meme production *)
+      Printf.fprintf out "-- On %s " (Terminal.print tok);
+      match Production.classify prod with
+      | Some nt ->
+          Printf.fprintf out "accept %s\n" (Nonterminal.print false nt)
+      | None ->
+          Printf.fprintf out "reduce production %s\n" (Production.print prod)
+    ) prods
+  ) node.reductions;
+  if not (TerminalSet.is_empty node.conflict_tokens) then
+    Printf.fprintf out "** Conflict on %s\n" (TerminalSet.print node.conflict_tokens);
+  Printf.fprintf out "\n%!"
+
 let () =
   Time.tick "Construction of the LR(1) automaton";
   if Settings.dump then begin
-    fold (fun () node ->
-      let out = Lazy.force out in
-      Printf.fprintf out "State %d%s:\n%s"
-	node.number
-	(if Settings.follow then Printf.sprintf " (r%d)" node.raw_number else "")
-	(Lr0.print node.state);
-      SymbolMap.iter (fun symbol node ->
-	Printf.fprintf out "-- On %s shift to state %d\n"
-	  (Symbol.print symbol) node.number
-      ) node.transitions;
-      TerminalMap.iter (fun tok prods ->
-	List.iter (fun prod ->
-	  (* TEMPORARY factoriser les symboles qui conduisent a reduire une meme production *)
-	  Printf.fprintf out "-- On %s " (Terminal.print tok);
-	  match Production.classify prod with
-	  | Some nt ->
-	      Printf.fprintf out "accept %s\n" (Nonterminal.print false nt)
-	  | None ->
-	      Printf.fprintf out "reduce production %s\n" (Production.print prod)
-	) prods
-      ) node.reductions;
-      if not (TerminalSet.is_empty node.conflict_tokens) then
-	Printf.fprintf out "** Conflict on %s\n" (TerminalSet.print node.conflict_tokens);
-      Printf.fprintf out "\n%!"
-    ) ();
+    iter (describe (Lazy.force out));
     Time.tick "Dumping the LR(1) automaton"
   end
 

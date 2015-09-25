@@ -139,7 +139,7 @@ let count_slr_violations () : int =
 	Printf.fprintf
 	  stderr
 	  "The following SLR(1) state has a conflict:\n%s"
-	  (Lr0.print_concrete s)
+	  (Lr0.print_concrete "" s)
     end
   done;
 

@@ -244,21 +244,24 @@ let export (k, toksr) =
 
 (* Displaying a concrete state. *)
 
-let print_concrete (state : concretelr1state) =
+let print_concrete leading (state : concretelr1state) =
   let buffer = Buffer.create 1024 in
   Item.Map.iter (fun item toks ->
-    Printf.bprintf buffer "%s[ %s ]\n" (Item.print item) (TerminalSet.print toks)
+    Printf.bprintf buffer "%s%s[ %s ]\n"
+      leading
+      (Item.print item)
+      (TerminalSet.print toks)
   ) state;
   Buffer.contents buffer
 
 (* Displaying a state. By default, only the kernel is displayed, not
    the closure. *)
 
-let print state =
-  print_concrete (export state)
+let print leading state =
+  print_concrete leading (export state)
 
-let print_closure state =
-  print_concrete (closure (export state))
+let print_closure leading state =
+  print_concrete leading (closure (export state))
 
 (* The core of an LR(1) state is the underlying LR(0) state. *)
 

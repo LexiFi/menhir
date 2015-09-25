@@ -107,13 +107,12 @@ val union: lr1state -> lr1state -> lr1state
 
 val restrict: TerminalSet.t -> lr1state -> lr1state
 
-(* Displaying a concrete state. *)
+(* The following functions display: 1- a concrete state; 2- a state
+   (only the kernel, not the closure); 3- the closure of a state.
+   The first parameter is a fixed string that is added at the
+   beginning of every line. *)
 
-val print_concrete: concretelr1state -> string
-
-(* Displaying a state. By default, only the kernel is displayed, not
-   the closure. *)
-
-val print: lr1state -> string
-val print_closure: lr1state -> string
+val print_concrete: string -> concretelr1state -> string
+val print:          string ->         lr1state -> string
+val print_closure:  string ->         lr1state -> string
 
