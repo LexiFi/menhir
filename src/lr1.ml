@@ -920,11 +920,14 @@ let rec best choice = function
       | Some choice ->
 	  best choice prods
       | None ->
+          (* The cause for not knowing which production is best could be:
+             1- the productions originate in different source files;
+             2- they are derived, via inlining, from the same production. *) 
 	  Error.signal
 	    (Production.positions choice @ Production.positions prod)
 	    (Printf.sprintf
-	       "will not resolve reduce/reduce conflict between\n\
-                productions that originate in distinct source files:\n%s\n%s"
+	       "do not know how to resolve a reduce/reduce conflict\n\
+                between the following two productions:\n%s\n%s"
                   (Production.print choice)
                   (Production.print prod));
 	  choice (* dummy *)
