@@ -1148,7 +1148,7 @@ let display (nt, w, s') : unit =
     (W.print w)
     (W.length w)
     (Lr1.number s')
-    (Lr0.print_closure "# " (Lr1.state s'))
+    (Lr0.print "# " (Lr1.state s')) (* TEMPORARY [print] or [print_closure]? *)
     Interpret.default_message
 
 (* Perform the forward search. *)
