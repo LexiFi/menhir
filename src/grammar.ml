@@ -463,7 +463,34 @@ end
 
 (* Sets of symbols. *)
 
-module SymbolSet = Set.Make(Symbol)
+module SymbolSet = struct
+
+  include Set.Make(Symbol)
+
+  let print symbols =
+    let _, accu =
+      fold (fun symbol (first, accu) ->
+	false,
+	if first then
+          accu ^ (Symbol.print symbol)
+	else
+	  accu ^ " " ^ (Symbol.print symbol)
+    ) symbols (true, "") in
+    accu
+
+  (* The following definitions are used in the computation of symbolic FOLLOW
+     sets below. They are not exported outside of this file. *)
+
+  type property =
+    t
+
+  let bottom =
+    empty
+
+  let is_maximal _ =
+    false
+
+end
 
 (* Maps over symbols. *)
 
@@ -946,44 +973,56 @@ end
    symbols (in a first pass), then solve the constraints (in a second
    pass). *)
 
-(* An equation's right-hand side is a set expression. *)
+(* The computation of the symbolic FOLLOW sets follows the same pattern, but
+   produces sets of symbols, instead of sets of terminals. For this reason,
+   we parameterize this little equation solver over a module [P], which we
+   later instantiate with [TerminalSet] and [SymbolSet]. *)
 
-type expr =
-| EVar of Nonterminal.t
-| EConstant of TerminalSet.t
-| EUnion of expr * expr
+module Solve (P : sig
+  include Fix.PROPERTY
+  val union: property -> property -> property
+end) = struct
 
-(* A system of equations is represented as an array, which maps nonterminal
-   symbols to expressions. *)
+  (* An equation's right-hand side is a set expression. *)
 
-type equations =
-  expr array
+  type expr =
+  | EVar of Nonterminal.t
+  | EConstant of P.property
+  | EUnion of expr * expr
 
-(* This solver computes the least solution of a set of equations. *)
+  (* A system of equations is represented as an array, which maps nonterminal
+     symbols to expressions. *)
 
-let solve (eqs : equations) : Nonterminal.t -> TerminalSet.t =
+  type equations =
+    expr array
 
-  let rec expr e get =
-    match e with
-    | EVar nt ->
-        get nt
-    | EConstant c ->
-        c
-    | EUnion (e1, e2) ->
-        TerminalSet.union (expr e1 get) (expr e2 get)
-  in
+  (* This solver computes the least solution of a set of equations. *)
 
-  let nonterminal nt get =
-    expr eqs.(nt) get
-  in
+  let solve (eqs : equations) : Nonterminal.t -> P.property =
 
-  let module F =
-    Fix.Make
-      (Maps.ArrayAsImperativeMaps(Nonterminal))
-      (TerminalSet)
-  in
-  
-  F.lfp nonterminal
+    let rec expr e get =
+      match e with
+      | EVar nt ->
+          get nt
+      | EConstant c ->
+          c
+      | EUnion (e1, e2) ->
+          P.union (expr e1 get) (expr e2 get)
+    in
+
+    let nonterminal nt get =
+      expr eqs.(nt) get
+    in
+
+    let module F =
+      Fix.Make
+        (Maps.ArrayAsImperativeMaps(Nonterminal))
+        (P)
+    in
+
+    F.lfp nonterminal
+
+end
 
 (* ------------------------------------------------------------------------ *)
 (* Compute which nonterminals are nonempty, that is, recognize a
@@ -1131,49 +1170,74 @@ let () =
    this is useful for the SLR(1) test. Thus, we perform this analysis only
    on demand. *)
 
-let follow : Nonterminal.t -> TerminalSet.t =
+(* The computation of the symbolic FOLLOW sets follows exactly the same
+   pattern. We share code and parameterize this computation over a module [P],
+   just like the little equation solver above. *)
 
-  (* First pass. Build a system of equations between sets of nonterminal
-     symbols. *)
+module FOLLOW (P : sig
+  include Fix.PROPERTY
+  val union: property -> property -> property
+  val terminal: Terminal.t -> property
+  val first: Production.index -> int -> property
+end) = struct
+
+  module S = Solve(P)
+  open S
+
+  (* First pass. Build a system of equations. *)
 
   let follow : equations =
-    Array.make Nonterminal.n (EConstant TerminalSet.empty)
-  in
+    Array.make Nonterminal.n (EConstant P.bottom)
 
   (* Iterate over all start symbols. *)
-  let sharp = EConstant (TerminalSet.singleton Terminal.sharp) in
-  for nt = 0 to Nonterminal.start - 1 do
-    assert (Nonterminal.is_start nt);
-    (* Add # to FOLLOW(nt). *)
-    follow.(nt) <- EUnion (sharp, follow.(nt))
-  done;
-  (* We need to do this explicitly because our start productions are
-     of the form S' -> S, not S' -> S #, so # will not automatically
-     appear into FOLLOW(S) when the start productions are examined. *)
+  let () =
+    let sharp = EConstant (P.terminal Terminal.sharp) in
+    for nt = 0 to Nonterminal.start - 1 do
+      assert (Nonterminal.is_start nt);
+      (* Add # to FOLLOW(nt). *)
+      follow.(nt) <- EUnion (sharp, follow.(nt))
+    done
+    (* We need to do this explicitly because our start productions are
+       of the form S' -> S, not S' -> S #, so # will not automatically
+       appear into FOLLOW(S) when the start productions are examined. *)
 
   (* Iterate over all productions. *)
-  Array.iteri (fun prod (nt1, rhs) ->
-    (* Iterate over all nonterminal symbols [nt2] in the right-hand side. *)
-    Array.iteri (fun i symbol ->
-      match symbol with
-      | Symbol.T _ ->
-          ()
-      | Symbol.N nt2 ->
-          let nullable = NULLABLE.production prod (i+1)
-          and first = FIRST.production prod (i+1) in
-          (* The FIRST set of the remainder of the right-hand side
-             contributes to the FOLLOW set of [nt2]. *)
-          follow.(nt2) <- EUnion (EConstant first, follow.(nt2));
-          (* If the remainder of the right-hand side is nullable,
-             FOLLOW(nt1) contributes to FOLLOW(nt2). *)
-          if nullable then
-            follow.(nt2) <- EUnion (EVar nt1, follow.(nt2))
-    ) rhs
-  ) Production.table;
+  let () =
+    Array.iteri (fun prod (nt1, rhs) ->
+      (* Iterate over all nonterminal symbols [nt2] in the right-hand side. *)
+      Array.iteri (fun i symbol ->
+        match symbol with
+        | Symbol.T _ ->
+            ()
+        | Symbol.N nt2 ->
+            let nullable = NULLABLE.production prod (i+1)
+            and first = P.first prod (i+1) in
+            (* The FIRST set of the remainder of the right-hand side
+               contributes to the FOLLOW set of [nt2]. *)
+            follow.(nt2) <- EUnion (EConstant first, follow.(nt2));
+            (* If the remainder of the right-hand side is nullable,
+               FOLLOW(nt1) contributes to FOLLOW(nt2). *)
+            if nullable then
+              follow.(nt2) <- EUnion (EVar nt1, follow.(nt2))
+      ) rhs
+    ) Production.table
 
   (* Second pass. Solve the equations (on demand). *)
 
-  solve follow
+  let follow : Nonterminal.t -> P.property =
+    solve follow
+
+end
+
+(* Use the above functor to obtain the standard (concrete) FOLLOW sets. *)
+
+let follow : Nonterminal.t -> TerminalSet.t =
+  let module F = FOLLOW(struct
+    include TerminalSet
+    let terminal = singleton
+    let first = FIRST.production
+  end) in
+  F.follow
 
 (* At log level 2, display the FOLLOW sets. *)
 
@@ -1234,6 +1298,54 @@ let () =
       Printf.fprintf f "follow(%s) = %s\n"
 	(Terminal.print t)
 	(TerminalSet.print (tfollow t))
+    done
+  )
+
+(* ------------------------------------------------------------------------ *)
+(* Compute symbolic FIRST and FOLLOW sets. *)
+
+(* The symbolic FIRST set of the word determined by [prod/i] is defined
+   (and computed) as follows. *)
+
+let sfirst prod i =
+  let rhs = Production.rhs prod in
+  let n = Array.length rhs in
+  let rec loop i =
+    if i = n then
+      (* If the word [prod/i] is empty, the set is empty. *)
+      SymbolSet.empty
+    else
+      let sym = rhs.(i) in
+      (* If the word [prod/i] begins with a symbol [sym], then [sym]
+         itself is part of the symbolic FIRST set, unconditionally. *)
+      SymbolSet.union
+        (SymbolSet.singleton sym)
+        (* Furthermore, if [sym] is nullable, then the symbolic
+           FIRST set of the sub-word [prod/i+1] contributes, too. *)
+        (if NULLABLE.symbol sym then loop (i + 1) else SymbolSet.empty)
+  in
+  loop i
+
+(* The symbolic FOLLOW sets are computed just like the FOLLOW sets,
+   except we use a symbolic FIRST set instead of a standard FIRST
+   set. *)
+
+let sfollow : Nonterminal.t -> SymbolSet.t =
+  let module F = FOLLOW(struct
+    include SymbolSet
+    let terminal t = SymbolSet.singleton (Symbol.T t)
+    let first = sfirst
+  end) in
+  F.follow
+
+(* At log level 3, display the symbolic FOLLOW sets. *)
+
+let () =
+  Error.logG 3 (fun f ->
+    for nt = Nonterminal.start to Nonterminal.n - 1 do
+      Printf.fprintf f "sfollow(%s) = %s\n"
+	(Nonterminal.print false nt)
+	(SymbolSet.print (sfollow nt))
     done
   )
 
