@@ -355,7 +355,7 @@ specifier_qualifier_list(context):
 
 specifier_qualifier_list_no_typedef_name:
 | type_specifier_no_typedef_name specifier_qualifier_list_no_typedef_name?
-| type_qualifier specifier_qualifier_list_no_typedef_name?
+| type_qualifier                 specifier_qualifier_list_no_typedef_name?
     {}
 
 struct_declarator_list:
