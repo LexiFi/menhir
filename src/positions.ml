@@ -99,7 +99,7 @@ let string_of_lex_pos p =
 
 let string_of_pos p = 
   let filename = filename_of_position p in
-  assert (filename <> "");
+  (* [filename] is hopefully not "". *)
   let l = line p.start_p in
   let c1, c2 = characters p.start_p p.end_p in
   Printf.sprintf "File \"%s\", line %d, characters %d-%d" filename l c1 c2
