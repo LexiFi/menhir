@@ -1,25 +1,25 @@
 # ----------------------------------------------------------------------------
 
-UID
+grammar: UID
 
 Either a declaration or %% is expected at this point.
 
 # ----------------------------------------------------------------------------
 
-HEADER UID 
+grammar: HEADER UID 
 
 Either another declaration or %% is expected at this point.
 
 # ----------------------------------------------------------------------------
 
-TYPE UID 
-TYPE OCAMLTYPE TYPE 
-TYPE OCAMLTYPE UID PREC 
-TYPE OCAMLTYPE UID LPAREN TYPE 
-TYPE OCAMLTYPE UID COMMA TYPE 
-TYPE OCAMLTYPE UID LPAREN UID UID 
-TYPE OCAMLTYPE UID LPAREN UID COMMA TYPE 
-TYPE OCAMLTYPE UID PLUS RPAREN 
+grammar: TYPE UID 
+grammar: TYPE OCAMLTYPE TYPE 
+grammar: TYPE OCAMLTYPE UID PREC 
+grammar: TYPE OCAMLTYPE UID LPAREN TYPE 
+grammar: TYPE OCAMLTYPE UID COMMA TYPE 
+grammar: TYPE OCAMLTYPE UID LPAREN UID UID 
+grammar: TYPE OCAMLTYPE UID LPAREN UID COMMA TYPE 
+grammar: TYPE OCAMLTYPE UID PLUS RPAREN 
 
 Ill-formed %type declaration.
 Examples of well-formed declarations:
@@ -29,10 +29,10 @@ Examples of well-formed declarations:
 
 # ----------------------------------------------------------------------------
 
-TOKEN TYPE 
-TOKEN OCAMLTYPE TYPE 
-TOKEN UID STAR 
-TOKEN UID COMMA TYPE 
+grammar: TOKEN TYPE 
+grammar: TOKEN OCAMLTYPE TYPE 
+grammar: TOKEN UID STAR 
+grammar: TOKEN UID COMMA TYPE 
 
 Ill-formed %token declaration.
 Examples of well-formed declarations:
@@ -42,10 +42,10 @@ Examples of well-formed declarations:
 
 # ----------------------------------------------------------------------------
 
-START UID 
-START OCAMLTYPE LEFT 
-START LID UID 
-START LID COMMA UID 
+grammar: START UID 
+grammar: START OCAMLTYPE LEFT 
+grammar: START LID UID 
+grammar: START LID COMMA UID 
 
 Ill-formed %start declaration.
 A start symbol must begin with a lowercase letter.
@@ -56,9 +56,9 @@ Examples of well-formed declarations:
 
 # ----------------------------------------------------------------------------
 
-RIGHT TYPE 
-RIGHT UID STAR 
-RIGHT UID COMMA TYPE 
+grammar: RIGHT TYPE 
+grammar: RIGHT UID STAR 
+grammar: RIGHT UID COMMA TYPE 
 
 Ill-formed precedence declaration.
 Examples of well-formed declarations:
@@ -69,7 +69,7 @@ Examples of well-formed declarations:
 
 # ----------------------------------------------------------------------------
 
-PARAMETER UID 
+grammar: PARAMETER UID 
 
 Ill-formed %parameter declaration.
 Examples of well-formed declarations:
@@ -77,21 +77,21 @@ Examples of well-formed declarations:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT TYPE 
+grammar: PERCENTPERCENT TYPE 
 
 Either a rule or %% is expected at this point.
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID COLON ACTION TYPE 
+grammar: PERCENTPERCENT UID COLON ACTION TYPE 
 
 Either another rule or %% is expected at this point.
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT PUBLIC TYPE 
-PERCENTPERCENT INLINE TYPE 
-PERCENTPERCENT PUBLIC INLINE TYPE 
+grammar: PERCENTPERCENT PUBLIC TYPE 
+grammar: PERCENTPERCENT INLINE TYPE 
+grammar: PERCENTPERCENT PUBLIC INLINE TYPE 
 
 Ill-formed rule.
 %inline, %public, or a non-terminal symbol is expected at this point.
@@ -102,7 +102,7 @@ Examples of well-formed rules:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID UID 
+grammar: PERCENTPERCENT UID UID 
 
 Ill-formed rule.
 Either a parenthesized, comma-delimited list of formal parameters
@@ -114,9 +114,9 @@ Examples of well-formed rules:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID LPAREN TYPE 
-PERCENTPERCENT UID LPAREN UID UID 
-PERCENTPERCENT UID LPAREN UID COMMA TYPE 
+grammar: PERCENTPERCENT UID LPAREN TYPE 
+grammar: PERCENTPERCENT UID LPAREN UID UID 
+grammar: PERCENTPERCENT UID LPAREN UID COMMA TYPE 
 
 Ill-formed rule.
 A comma-delimited list of formal parameters is expected at this point.
@@ -126,10 +126,10 @@ Examples of well-formed rules:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID COLON TYPE 
-PERCENTPERCENT UID COLON BAR TYPE 
-PERCENTPERCENT UID COLON ACTION BAR TYPE 
-PERCENTPERCENT UID COLON UID BAR TYPE 
+grammar: PERCENTPERCENT UID COLON TYPE 
+grammar: PERCENTPERCENT UID COLON BAR TYPE 
+grammar: PERCENTPERCENT UID COLON ACTION BAR TYPE 
+grammar: PERCENTPERCENT UID COLON UID BAR TYPE 
 
 Ill-formed rule.
 A list of productions is expected at this point.
@@ -140,11 +140,11 @@ Examples of well-formed rules:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID COLON UID TYPE 
-PERCENTPERCENT UID COLON LID TYPE 
-PERCENTPERCENT UID COLON LID EQUAL TYPE 
-PERCENTPERCENT UID COLON UID PLUS TYPE 
-PERCENTPERCENT UID COLON LID EQUAL UID PLUS TYPE 
+grammar: PERCENTPERCENT UID COLON UID TYPE 
+grammar: PERCENTPERCENT UID COLON LID TYPE 
+grammar: PERCENTPERCENT UID COLON LID EQUAL TYPE 
+grammar: PERCENTPERCENT UID COLON UID PLUS TYPE 
+grammar: PERCENTPERCENT UID COLON LID EQUAL UID PLUS TYPE 
 
 Ill-formed production.
 A production is a sequence of producers, followed with a semantic action.
@@ -165,11 +165,11 @@ Examples of well-formed producers:
 # to reduce to actual or lax_actual. Let's just back up to a safe level of
 # abstraction and say this is an ill-formed production.
 
-PERCENTPERCENT UID COLON UID LPAREN UID TYPE 
-PERCENTPERCENT UID COLON UID LPAREN UID STAR TYPE 
-PERCENTPERCENT UID COLON UID LPAREN UID LPAREN LID RPAREN TYPE 
-PERCENTPERCENT UID COLON UID LPAREN LID TYPE
-PERCENTPERCENT UID COLON UID LPAREN ACTION BAR TYPE 
+grammar: PERCENTPERCENT UID COLON UID LPAREN UID TYPE 
+grammar: PERCENTPERCENT UID COLON UID LPAREN UID STAR TYPE 
+grammar: PERCENTPERCENT UID COLON UID LPAREN UID LPAREN LID RPAREN TYPE 
+grammar: PERCENTPERCENT UID COLON UID LPAREN LID TYPE
+grammar: PERCENTPERCENT UID COLON UID LPAREN ACTION BAR TYPE 
 
 Ill-formed production.
 Maybe you meant to close a parenthesis at this point?
@@ -186,13 +186,13 @@ Examples of well-formed producers:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID COLON UID LPAREN ACTION UID 
+grammar: PERCENTPERCENT UID COLON UID LPAREN ACTION UID 
 # In the non-canonical automaton, this is a tricky case where, looking at the
 # description of the state, it seems that only COMMA and RPAREN can follow
 # here. But in fact, other tokens are possible, such as BAR, simply because
 # they will NOT take us into this state. In the canonical automaton, the list
 # of possibilities is explicit in the lookahead sets.
-PERCENTPERCENT UID COLON UID LPAREN ACTION PREC UID UID 
+grammar: PERCENTPERCENT UID COLON UID LPAREN ACTION PREC UID UID 
 # In the first case above, we may expect a %prec annotation, whereas in the
 # second case above, we have just seen it. In the error message, we merge
 # these two situations and do not mention the possibility of a %prec
@@ -204,9 +204,9 @@ is expected at this point.
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID COLON PREC TYPE 
-PERCENTPERCENT UID COLON UID LPAREN ACTION PREC TYPE 
-PERCENTPERCENT UID COLON ACTION PREC TYPE 
+grammar: PERCENTPERCENT UID COLON PREC TYPE 
+grammar: PERCENTPERCENT UID COLON UID LPAREN ACTION PREC TYPE 
+grammar: PERCENTPERCENT UID COLON ACTION PREC TYPE 
 
 Ill-formed %prec annotation.
 A symbol is expected at this point.
@@ -215,8 +215,8 @@ Examples of well-formed annotations:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID COLON UID LPAREN TYPE 
-PERCENTPERCENT UID COLON UID LPAREN UID COMMA TYPE 
+grammar: PERCENTPERCENT UID COLON UID LPAREN TYPE 
+grammar: PERCENTPERCENT UID COLON UID LPAREN UID COMMA TYPE 
 
 Ill-formed rule.
 A comma-delimited list of actual parameters is expected at this point.
@@ -226,7 +226,7 @@ Examples of well-formed rules:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID COLON PREC LID UID 
+grammar: PERCENTPERCENT UID COLON PREC LID UID 
 
 Ill-formed rule.
 Either a semantic action { ... }
@@ -237,7 +237,7 @@ Examples of well-formed rules:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID LPAREN UID RPAREN BAR 
+grammar: PERCENTPERCENT UID LPAREN UID RPAREN BAR 
 
 Ill-formed rule.
 A colon is expected at this point.
@@ -246,7 +246,7 @@ Examples of well-formed rules:
 
 # ----------------------------------------------------------------------------
 
-PERCENTPERCENT UID COLON ACTION PREC UID TYPE 
+grammar: PERCENTPERCENT UID COLON ACTION PREC UID TYPE 
 
 Either another rule
 or another production | ...
@@ -256,8 +256,8 @@ Examples of well-formed rules:
 
 # ----------------------------------------------------------------------------
 
-TYPE OCAMLTYPE UID LPAREN UID LPAREN TYPE 
-PERCENTPERCENT UID COLON UID LPAREN UID LPAREN TYPE 
+grammar: TYPE OCAMLTYPE UID LPAREN UID LPAREN TYPE 
+grammar: PERCENTPERCENT UID COLON UID LPAREN UID LPAREN TYPE 
 
 Ill-formed list of actual parameters.
 A comma-delimited list of actual parameters is expected at this point.
