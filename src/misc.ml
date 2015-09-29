@@ -2,7 +2,7 @@
 let ( $$ ) x f = f x
 
 let unSome = function
-   None -> assert false
+    None -> assert false
   | Some x -> x
 
 let o2s o f =

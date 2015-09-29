@@ -1,3 +1,7 @@
+(* Projecting out of an option. May fail abruptly! *)
+
+val unSome: 'a option -> 'a
+
 (* Converting an option to a string, with [None] converted
    to the empty string. *)
 
