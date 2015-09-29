@@ -577,5 +577,19 @@ module Make (T : TABLE) = struct
     assert (startp != dummy_pos && endp != dummy_pos);
     startp, endp
 
+  (* --------------------------------------------------------------------------- *)
+
+  (* Access to information about default reductions. *)
+
+  (* We can make this a function of states, or a function of environments. For
+     now, the latter appears simpler. *)
+
+  let has_default_reduction env : bool =
+    T.default_reduction
+      env.current
+      (fun _env _prod -> true)
+      (fun _env -> false)
+      env
+
 end
 

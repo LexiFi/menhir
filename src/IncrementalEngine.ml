@@ -100,6 +100,13 @@ module type INCREMENTAL_ENGINE = sig
 
   val positions: env -> Lexing.position * Lexing.position
 
+  (* This tells whether the parser is about to perform a default reduction.
+     In particular, when applied to an environment taken from a result of
+     the form [AboutToReduce (env, prod)], this tells whether the reduction
+     that is about to take place is a default reduction. *)
+
+  val has_default_reduction: env -> bool
+
 end
 
 (* This signature is a fragment of the inspection API that is made available
