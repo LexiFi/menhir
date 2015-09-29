@@ -44,8 +44,8 @@ entry: located_sentences_or_comments EOF
 /* A list of located sentences or comments. */
 located_sentences_or_comments:
   { [] }
-| located_sentence located_sentences_or_comments { Sentence $1 :: $2 }
-| COMMENT          located_sentences_or_comments { Comment  $1 :: $2 }
+| located_sentence located_sentences_or_comments { Thing   $1 :: $2 }
+| COMMENT          located_sentences_or_comments { Comment $1 :: $2 }
 
 /* A located sentence. */
 located_sentence: sentence

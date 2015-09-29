@@ -271,24 +271,28 @@ let print_messages_item (nt, sentence, target) : unit =
 
 (* --------------------------------------------------------------------------- *)
 
-(* [write_messages runs] turns a list of runs into a new [.messages] file.
-   Any manually-written comments are preserved. New auto-generated comments
-   are produced. *)
+(* [write_run run] writes a run into a new [.messages] file. Manually-written
+   comments are preserved. New auto-generated comments are produced. *)
 
-let write_run : maybe_targeted_run -> unit =
-  fun (sentences_or_comments, message) ->
-    (* First, print every sentence and human comment. *)
-    List.iter (fun sentence_or_comment ->
-      match sentence_or_comment with
-      | Sentence ((poss, ((_, toks) as sentence)), target) ->
-          let nt = start poss sentence in
-          (* Every sentence is followed with newly generated auto-comments. *)
-          print_messages_auto (nt, toks, target)
-      | Comment c ->
-          print_string c
-    ) sentences_or_comments;
-  (* Then, print the error message, between two blank lines. *)
-  Printf.printf "\n%s\n" message
+let write_run : maybe_targeted_run or_comment -> unit =
+  function
+  | Thing (sentences_or_comments, message) ->
+      (* First, print every sentence and human comment. *)
+      List.iter (fun sentence_or_comment ->
+        match sentence_or_comment with
+        | Thing ((poss, ((_, toks) as sentence)), target) ->
+            let nt = start poss sentence in
+            (* Every sentence is followed with newly generated auto-comments. *)
+            print_messages_auto (nt, toks, target)
+        | Comment c ->
+            print_string c
+      ) sentences_or_comments;
+      (* Then, print the error message, after a blank line. *)
+      Printf.printf "\n%s" message
+        (* second blank line omitted because it will be printed as part
+           of a [Comment] *)
+  | Comment comments ->
+      print_string comments
 
 (* --------------------------------------------------------------------------- *)
 
@@ -348,11 +352,16 @@ let target_runs : run list -> targeted_run list =
 
 (* --------------------------------------------------------------------------- *)
 
-(* [filter_run] filters out the comments in a run. *)
+(* [filter_things] filters out the comments in a list of things or comments. *)
+
+let filter_things : 'a or_comment list -> 'a list =
+  fun things -> List.flatten (List.map unThing things)
+
+(* [filter_run] filters out the comments within a run. *)
 
 let filter_run : targeted_run -> filtered_targeted_run =
   fun (sentences, message) ->
-    List.flatten (List.map unSentence sentences), message
+    filter_things sentences, message
 
 (* --------------------------------------------------------------------------- *)
 
@@ -414,9 +423,14 @@ let () =
 
 (* Reading a [.messages] file. *)
 
-let read_messages filename : run list =
+(* Our life is slightly complicated by the fact that the whitespace between
+   two runs can contain comments, which we wish to preserve when performing
+   [--update-errors]. *)
+
+let read_messages filename : run or_comment list =
+  let open Segment in
   (* Read and segment the file. *)
-  let segments : (string * Lexing.lexbuf) list = Segment.segment filename in
+  let segments : (tag * string * Lexing.lexbuf) list = segment filename in
   (* Process the segments, two by two. We expect one segment to contain
      a non-empty series of sentences, and the next segment to contain
      free-form text. *)
@@ -424,7 +438,9 @@ let read_messages filename : run list =
     match segments with
     | [] ->
         List.rev accu
-    | (_, lexbuf) :: segments ->
+    | (Whitespace, comments, _) :: segments ->
+         loop (Comment comments :: accu) segments
+    | (Segment, _, lexbuf) :: segments ->
         (* Read a series of located sentences. *)
         match SentenceParser.entry SentenceLexer.lex lexbuf with
         | exception Parsing.Parse_error ->
@@ -432,14 +448,25 @@ let read_messages filename : run list =
               (Positions.one (Lexing.lexeme_start_p lexbuf))
               "Ill-formed sentence."
         | sentences ->
-            (* Read a segment of text. *)
+            (* In principle, we should now find a segment of whitespace
+               followed with a segment of text. By construction, the two
+               kinds of segments alternate. *)
             match segments with
-            | [] ->
-              Error.error
-                (Positions.one (Lexing.lexeme_end_p lexbuf))
-                "Syntax error: missing a final message. I may be desynchronized."
-            | (text, _) :: segments ->
-                loop ((sentences, text) :: accu) segments
+            | (Whitespace, _comments, _) ::
+              (Segment, text, _) ::
+              segments ->
+                (* TEMPORARY keep comments *)
+                loop (Thing (sentences, text) :: accu) segments
+            | []
+            | [ _ ] ->
+                Error.error
+                  (Positions.one (Lexing.lexeme_end_p lexbuf))
+                  "Syntax error: missing a final message. I may be desynchronized."
+            | (Segment, _, _) :: _
+            | (Whitespace, _, _) :: (Whitespace, _, _) :: _ ->
+                (* Should not happen, thanks to the alternation between the
+                   two kinds of segments. *)
+                assert false
   in
   loop [] segments
 
@@ -536,14 +563,16 @@ let () =
   Settings.compile_errors |> Option.iter (fun filename ->
 
     (* Read the file. *)
-    let runs = read_messages filename in
+    let runs : run or_comment list = read_messages filename in
+    (* Drop the comments in between two runs. *)
+    let runs : run list = filter_things runs in
 
     (* Convert every sentence to a state number. We signal an error if a
        sentence does not end in an error, as expected. *)
-    let runs = target_runs runs in
+    let runs : targeted_run list = target_runs runs in
 
-    (* Remove comments. *)
-    let runs = List.map filter_run runs in
+    (* Remove comments within the runs. *)
+    let runs : filtered_targeted_run list = List.map filter_run runs in
 
     (* Build a mapping of states to located sentences. This allows us to
        detect if two sentences lead to the same state. *)
@@ -577,6 +606,8 @@ let () =
     (* Read and convert both files, as above. *)
     let runs1 = read_messages filename1
     and runs2 = read_messages filename2 in
+    let runs1 = filter_things runs1
+    and runs2 = filter_things runs2 in
     let runs1 = target_runs runs1
     and runs2 = target_runs runs2 in (* here, it would be OK to ignore errors *)
     let runs1 = List.map filter_run runs1
@@ -631,11 +662,13 @@ let () =
   Settings.update_errors |> Option.iter (fun filename ->
 
     (* Read the file. *)
-    let runs = read_messages filename in
+    let runs : run or_comment list = read_messages filename in
 
     (* Convert every sentence to a state number. Warn, but do not
        fail, if a sentence does not end in an error, as it should. *)
-    let runs = List.map (target_run_1 Error.warning) runs in
+    let runs : maybe_targeted_run or_comment list =
+      List.map (or_comment_map (target_run_1 Error.warning)) runs
+    in
 
     (* We might wish to detect if two sentences lead to the same state. We
        might also wish to detect if this set of sentences is incomplete,

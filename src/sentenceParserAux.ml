@@ -13,17 +13,17 @@ type comment =
   string
 
 type 'a or_comment =
-| Sentence of 'a
+| Thing of 'a
 | Comment of comment
 
 let or_comment_map f = function
-  | Sentence s ->
-      Sentence (f s)
+  | Thing s ->
+      Thing (f s)
   | Comment c ->
       Comment c
 
-let unSentence = function
-  | Sentence x ->
+let unThing = function
+  | Thing x ->
       [ x ]
   | Comment _ ->
       []
