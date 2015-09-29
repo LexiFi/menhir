@@ -236,11 +236,11 @@ let interpret log nt lexer lexbuf =
 
 open MenhirLib.General (* streams *)
 
-type spurious_reductions =
-  Production.index list
+type spurious_reduction =
+  Lr1.node * Production.index
 
 type target =
-  Lr1.node * spurious_reductions
+  Lr1.node * spurious_reduction list
 
 type check_error_path_outcome =
   (* Bad: the input was read past its end. *)
@@ -268,6 +268,22 @@ let check_error_path nt input =
     end)
   in
 
+  (* Determine the initial state. *)
+
+  let entry = Lr1.entry_of_nt nt in
+
+  (* This function helps extract the current parser state out of [env].
+     It may become unnecessary if the [Engine] API offers it. *)
+
+  let current env =
+    (* Peek at the stack. If empty, then we must be in the initial state. *)
+    match Lazy.force (E.stack env) with
+    | Nil ->
+        entry
+    | Cons (E.Element (s, _, _, _), _) ->
+        s
+  in
+
   (* Set up a function that delivers tokens one by one. *)
 
   let input = ref input in
@@ -284,7 +300,7 @@ let check_error_path nt input =
     !input = []
   in
 
-  (* Run it. We wish to stop at the first error (without handling the error
+  (* Run. We wish to stop at the first error (without handling the error
      in any way) and report in which state the error occurred. A clean way
      of doing this is to use the incremental API, as follows. The main loop
      resembles the [loop] function in [Engine]. *)
@@ -293,9 +309,7 @@ let check_error_path nt input =
      spurious reductions. We accumulate these reductions in [spurious], a
      (reversed) list of productions. *)
 
-  let entry = Lr1.entry_of_nt nt in
-
-  let rec loop (result : cst E.result) (spurious : Production.index list) =
+  let rec loop (result : cst E.result) (spurious : spurious_reduction list) =
     match result with
     | E.InputNeeded _ ->
       begin match next() with
@@ -312,7 +326,7 @@ let check_error_path nt input =
            a default reduction, then this is a spurious reduction. *)
         let spurious =
           if looking_at_last_token() && not (E.has_default_reduction env) then
-            prod :: spurious
+            (current env, prod) :: spurious
           else
             spurious
         in
@@ -321,16 +335,8 @@ let check_error_path nt input =
         (* Check that all of the input has been read. Otherwise, the error
            has occurred sooner than expected. *)
         if !input = [] then
-          (* Return the current state. This is done by peeking at the stack.
-             If the stack is empty, then we must be in the initial state. *)
-          let s = 
-            match Lazy.force (E.stack env) with
-            | Nil ->
-                entry
-            | Cons (E.Element (s, _, _, _), _) ->
-                s
-          in
-          OK (s, List.rev spurious)
+          (* Return the current state and the list of spurious reductions. *)
+          OK (current env, List.rev spurious)
         else
           OInputNotFullyConsumed
     | E.Accepted _ ->

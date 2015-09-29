@@ -24,11 +24,11 @@ val interpret:
    in the expected state. It is also used by several of the command line
    options [--interpret-error], [--compile-errors], etc. *)
 
-type spurious_reductions =
-  Production.index list
+type spurious_reduction =
+  Lr1.node * Production.index
 
 type target =
-  Lr1.node * spurious_reductions
+  Lr1.node * spurious_reduction list
 
 type check_error_path_outcome =
   (* Bad: the input was read past its end. *)

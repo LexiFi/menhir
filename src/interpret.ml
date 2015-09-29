@@ -218,13 +218,13 @@ let default_message =
   "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
 
 (* [print_messages_auto] displays just the sentence and the auto-generated
-   comments. [os'] may be [None], in which case the auto-generated comment
+   comments. [otarget] may be [None], in which case the auto-generated comment
    is just a warning that this sentence does not end in an error. *)
 
 let print_messages_auto (nt, sentence, otarget) : unit =
   (* Print the sentence, followed with auto-generated comments. *)
   print_string (print_sentence (Some nt, sentence));
-  match otarget with
+  match (otarget : target option) with
   | None ->
       Printf.printf
         "##\n\
@@ -248,9 +248,10 @@ let print_messages_auto (nt, sentence, otarget) : unit =
            ## accurate view of the past (what has been recognized so far), they\n\
            ## may provide an INCOMPLETE view of the future (what was expected next).\n"
         ;
-        List.iter (fun prod ->
+        List.iter (fun (s, prod) ->
           Printf.printf
-            "## Spurious reduction of production %s\n"
+            "## In state %d, spurious reduction of production %s\n"
+            (Lr1.number s)
             (Production.print prod)
         ) spurious;
         Printf.printf "##\n"
@@ -279,10 +280,10 @@ let write_run : maybe_targeted_run -> unit =
     (* First, print every sentence and human comment. *)
     List.iter (fun sentence_or_comment ->
       match sentence_or_comment with
-      | Sentence ((poss, ((_, toks) as sentence)), os') ->
+      | Sentence ((poss, ((_, toks) as sentence)), target) ->
           let nt = start poss sentence in
           (* Every sentence is followed with newly generated auto-comments. *)
-          print_messages_auto (nt, toks, os')
+          print_messages_auto (nt, toks, target)
       | Comment c ->
           print_string c
     ) sentences_or_comments;
