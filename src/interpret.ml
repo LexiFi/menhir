@@ -8,15 +8,24 @@ module I = Invariant (* artificial dependency; ensures that [Invariant] runs fir
 open Grammar
 open SentenceParserAux
 
+(* A delimiter. *)
+
+type delimiter =
+  string
+
 (* An error message. *)
 
 type message =
   string
 
-(* A run is a series of sentences or comments together with an error message. *)
+(* A run is a series of sentences or comments,
+   followed with a delimiter (at least one blank line; comments),
+   followed with an error message. *)
 
 type run =
-  located_sentence or_comment list * message
+  located_sentence or_comment list *
+  delimiter *
+  message
 
 (* A targeted sentence is a located sentence together with the target into
    which it leads. A target tells us which state a sentence leads to, as well
@@ -38,16 +47,21 @@ type targeted_sentence =
    an error message. *)
 
 type maybe_targeted_run =
-  maybe_targeted_sentence or_comment list * message
+  maybe_targeted_sentence or_comment list *
+  delimiter *
+  message
 
 type targeted_run =
-  targeted_sentence or_comment list * message
+  targeted_sentence or_comment list *
+  delimiter *
+  message
 
 (* A filtered targeted run is a series of targeted sentences together with an
    error message. (The comments have been filtered out.) *)
 
 type filtered_targeted_run =
-  targeted_sentence list * message
+  targeted_sentence list *
+  message
 
 (* --------------------------------------------------------------------------- *)
 
@@ -276,7 +290,7 @@ let print_messages_item (nt, sentence, target) : unit =
 
 let write_run : maybe_targeted_run or_comment -> unit =
   function
-  | Thing (sentences_or_comments, message) ->
+  | Thing (sentences_or_comments, delimiter, message) ->
       (* First, print every sentence and human comment. *)
       List.iter (fun sentence_or_comment ->
         match sentence_or_comment with
@@ -287,11 +301,15 @@ let write_run : maybe_targeted_run or_comment -> unit =
         | Comment c ->
             print_string c
       ) sentences_or_comments;
-      (* Then, print the error message, after a blank line. *)
-      Printf.printf "\n%s" message
-        (* second blank line omitted because it will be printed as part
-           of a [Comment] *)
+      (* Then, print the delimiter, which must begin with a blank line
+         and may include comments. *)
+      print_string delimiter;
+      (* Then, print the error message. *)
+      print_string message
+      (* No need for another blank line. It will be printed as part of a
+         separate [Comment]. *)
   | Comment comments ->
+      (* Must begin with a blank line. *)
       print_string comments
 
 (* --------------------------------------------------------------------------- *)
@@ -332,13 +350,17 @@ let target_sentence signal : located_sentence -> maybe_targeted_sentence =
       (fun _nt _terminals target -> Some target)
 
 let target_run_1 signal : run -> maybe_targeted_run =
-  fun (sentences, message) ->
-    List.map (or_comment_map (target_sentence signal)) sentences, message
+  fun (sentences, delimiter, message) ->
+    List.map (or_comment_map (target_sentence signal)) sentences,
+    delimiter,
+    message
 
 let target_run_2 : maybe_targeted_run -> targeted_run =
-  fun (sentences, message) ->
+  fun (sentences, delimiter, message) ->
     let aux (x, y) = (x, Misc.unSome y) in
-    List.map (or_comment_map aux) sentences, message
+    List.map (or_comment_map aux) sentences,
+    delimiter,
+    message
 
 let target_runs : run list -> targeted_run list =
   fun runs ->
@@ -360,7 +382,7 @@ let filter_things : 'a or_comment list -> 'a list =
 (* [filter_run] filters out the comments within a run. *)
 
 let filter_run : targeted_run -> filtered_targeted_run =
-  fun (sentences, message) ->
+  fun (sentences, _, message) ->
     filter_things sentences, message
 
 (* --------------------------------------------------------------------------- *)
@@ -452,11 +474,11 @@ let read_messages filename : run or_comment list =
                followed with a segment of text. By construction, the two
                kinds of segments alternate. *)
             match segments with
-            | (Whitespace, _comments, _) ::
-              (Segment, text, _) ::
+            | (Whitespace, comments, _) ::
+              (Segment, message, _) ::
               segments ->
-                (* TEMPORARY keep comments *)
-                loop (Thing (sentences, text) :: accu) segments
+                let run : run = sentences, comments, message in
+                loop (Thing run :: accu) segments
             | []
             | [ _ ] ->
                 Error.error
