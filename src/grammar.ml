@@ -323,11 +323,10 @@ module Terminal = struct
       elements 0 (String.length w) w
 
     let print w =
-      let b = Buffer.create 128 in
-      String.iter (fun c ->
-        Printf.bprintf b "%s " (print (Char.code c));
-      ) w;
-      Buffer.contents b
+      Misc.separated_iter_to_string
+        (fun c -> print (Char.code c))
+        " "
+        (fun f -> String.iter f w)
 
     (* [Pervasives.compare] implements a lexicographic ordering on strings. *)
     let compare = Pervasives.compare
@@ -344,15 +343,7 @@ module TerminalSet = struct
   include CompressedBitSet 
 
   let print toks =
-    let _, accu =
-      fold (fun tok (first, accu) ->
-	false,
-	if first then
-          accu ^ (Terminal.print tok)
-	else
-	  accu ^ " " ^ (Terminal.print tok)
-    ) toks (true, "") in
-    accu
+    Misc.separated_iter_to_string Terminal.print " " (fun f -> iter f toks)
 
   let universe =
     remove Terminal.sharp (
@@ -468,15 +459,7 @@ module SymbolSet = struct
   include Set.Make(Symbol)
 
   let print symbols =
-    let _, accu =
-      fold (fun symbol (first, accu) ->
-	false,
-	if first then
-          accu ^ (Symbol.print symbol)
-	else
-	  accu ^ " " ^ (Symbol.print symbol)
-    ) symbols (true, "") in
-    accu
+    Symbol.printl (elements symbols)
 
   (* The following definitions are used in the computation of symbolic FOLLOW
      sets below. They are not exported outside of this file. *)

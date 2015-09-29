@@ -67,23 +67,36 @@ module IntSet = Set.Make (struct
 			    let compare = ( - )
 			  end)
 
-let separated_list_to_string printer separator list = 
+type 'a iter = ('a -> unit) -> unit
 
-  let rec loop x = function
-    | [] ->
-        printer x
-    | y :: xs ->
-        printer x 
-	^ separator 
-	^ loop y xs
-  in
+let separated_iter_to_string printer separator iter = 
+  let b = Buffer.create 32 in
+  let first = ref true in
+  iter (fun x ->
+    if !first then begin
+      Buffer.add_string b (printer x);
+      first := false
+    end
+    else begin
+      Buffer.add_string b separator;
+      Buffer.add_string b (printer x)
+    end
+  );
+  Buffer.contents b
 
-  match list with
-  | [] ->
-      ""
-  | x :: xs ->
-      loop x xs
+let separated_list_to_string printer separator xs = 
+  separated_iter_to_string printer separator (fun f -> List.iter f xs)
 
+let terminated_iter_to_string printer terminator iter =
+  let b = Buffer.create 32 in
+  iter (fun x ->
+    Buffer.add_string b (printer x);
+    Buffer.add_string b terminator
+  );
+  Buffer.contents b
+
+let terminated_list_to_string printer terminator xs =
+  terminated_iter_to_string printer terminator (fun f -> List.iter f xs)
 
 let index_map string_map = 
   let n = StringMap.cardinal string_map in

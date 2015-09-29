@@ -60,10 +60,20 @@ val ( $$ ) : 'a -> ('a -> 'b) -> 'b
 module IntSet    : Set.S with type elt = int
 
 (* [separated_list_to_string printer sep l] converts [l] into a string
-   representation built using [printer] on each element and [sep] as 
+   representation built by using [printer] on each element and [sep] as 
    a separator. *)
 
-val separated_list_to_string: ('a -> string) -> string -> 'a list -> string
+type 'a iter = ('a -> unit) -> unit
+
+val separated_iter_to_string:  ('a -> string) -> string -> 'a iter -> string
+val separated_list_to_string:  ('a -> string) -> string -> 'a list -> string
+
+(* [terminated_list_to_string printer term l] converts [l] into a string
+   representation built by using [printer] on each element and [term] as 
+   a terminator. *)
+
+val terminated_list_to_string: ('a -> string) -> string -> 'a list -> string
+val terminated_iter_to_string: ('a -> string) -> string -> 'a iter -> string
 
 (* [index_map f] returns a triple (indexed_f, domain_indexation, domain_array).
    [indexed_f] is a mapping from [0..n-1] to the elements of the map [f] 
