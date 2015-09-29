@@ -225,17 +225,36 @@ let print_messages_auto (nt, sentence, otarget) : unit =
   (* Print the sentence, followed with auto-generated comments. *)
   print_string (print_sentence (Some nt, sentence));
   match otarget with
-  | Some (s', _spurious) ->
-      (* TEMPORARY warn about spurious reductions *)
+  | None ->
       Printf.printf
-        "##\n## Ends in an error in state: %d.\n##\n%s##\n"
+        "##\n\
+         ## WARNING: This sentence does NOT end with a syntax error, as it should.\n\
+         ##\n"
+  | Some (s', spurious) ->
+      Printf.printf
+        "##\n\
+         ## Ends in an error in state: %d.\n\
+         ##\n\
+         %s##\n"
         (Lr1.number s')
         (* [Lr0.print] or [Lr0.print_closure] could be used here. The latter
            could sometimes be helpful, but is usually intolerably verbose. *)
         (Lr0.print "## " (Lr1.state s'))
-  | None ->
-      Printf.printf
-        "##\n## WARNING: This sentence does NOT end with a syntax error, as it should.\n##\n"
+      ;
+      if spurious <> [] then begin
+        Printf.printf
+          "## WARNING: This example involves spurious reductions.\n\
+           ## This implies that, although the LR(1) items shown above provide an\n\
+           ## accurate view of the past (what has been recognized so far), they\n\
+           ## may provide an INCOMPLETE view of the future (what was expected next).\n"
+        ;
+        List.iter (fun prod ->
+          Printf.printf
+            "## Spurious reduction of production %s\n"
+            (Production.print prod)
+        ) spurious;
+        Printf.printf "##\n"
+      end
 
 (* [print_messages_item] displays one data item. The item is of the form [nt,
    sentence, target], which means that beginning at the start symbol [nt], the
