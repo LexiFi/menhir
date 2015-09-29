@@ -21,7 +21,14 @@ val interpret:
 
 (* This variant of the reference interpreter is used internally by us. We use
    it to debug [LRijkstra]. It checks that a sentence leads to a syntax error
-   in the expected state. *)
+   in the expected state. It is also used by several of the command line
+   options [--interpret-error], [--compile-errors], etc. *)
+
+type spurious_reductions =
+  Production.index list
+
+type target =
+  Lr1.node * spurious_reductions
 
 type check_error_path_outcome =
   (* Bad: the input was read past its end. *)
@@ -30,8 +37,13 @@ type check_error_path_outcome =
 | OInputNotFullyConsumed
   (* Bad: the parser unexpectedly accepted (part of) this input. *)
 | OUnexpectedAccept
-  (* Good: a syntax error occurred after reading the last input token. *)
-| OK of Lr1.node
+  (* Good: a syntax error occurred after reading the last input token. We
+     report in which state the error took place, as well as a list of spurious
+     reductions. A spurious reduction is a non-default reduction that takes
+     place after looking at the last input token -- the erroneous token. 
+     We note that a spurious reduction can happen only in a non-canonical
+     LR automaton. *)
+| OK of target
 
 val check_error_path:
   Nonterminal.t ->   (* initial non-terminal symbol *)

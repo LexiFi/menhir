@@ -9,11 +9,13 @@
 val default_message: string
 
 (* [print_messages_item] displays one data item. The item is of the form [nt,
-   sentence, s'], which means that beginning at the start symbol [nt], the
-   sentence [sentence] ends in an error in state [s']. The display obeys the
-   [.messages] file format. *)
+   sentence, target], which means that beginning at the start symbol [nt], the
+   sentence [sentence] ends in an error in the target state given by [target].
+   [target] also contains information about which spurious reductions are
+   performed at the end. The display obeys the [.messages] file format. *)
 
 open Grammar
 
-val print_messages_item: Nonterminal.t * Terminal.t list * Lr1.node -> unit
+val print_messages_item:
+  Nonterminal.t * Terminal.t list * ReferenceInterpreter.target -> unit
 

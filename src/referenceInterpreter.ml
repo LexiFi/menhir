@@ -236,6 +236,12 @@ let interpret log nt lexer lexbuf =
 
 open MenhirLib.General (* streams *)
 
+type spurious_reductions =
+  Production.index list
+
+type target =
+  Lr1.node * spurious_reductions
+
 type check_error_path_outcome =
   (* Bad: the input was read past its end. *)
 | OInputReadPastEnd
@@ -243,8 +249,13 @@ type check_error_path_outcome =
 | OInputNotFullyConsumed
   (* Bad: the parser unexpectedly accepted (part of) this input. *)
 | OUnexpectedAccept
-  (* Good: a syntax error occurred after reading the last input token. *)
-| OK of Lr1.node
+  (* Good: a syntax error occurred after reading the last input token. We
+     report in which state the error took place, as well as a list of spurious
+     reductions. A spurious reduction is a non-default reduction that takes
+     place after looking at the last input token -- the erroneous token. 
+     We note that a spurious reduction can happen only in a non-canonical
+     LR automaton. *)
+| OK of target
 
 let check_error_path nt input =
 
@@ -269,39 +280,57 @@ let check_error_path nt input =
         Some t
   in
 
+  let looking_at_last_token () : bool =
+    !input = []
+  in
+
   (* Run it. We wish to stop at the first error (without handling the error
      in any way) and report in which state the error occurred. A clean way
      of doing this is to use the incremental API, as follows. The main loop
      resembles the [loop] function in [Engine]. *)
 
+  (* Another reason why we write our own loop is that we wish to detect
+     spurious reductions. We accumulate these reductions in [spurious], a
+     (reversed) list of productions. *)
+
   let entry = Lr1.entry_of_nt nt in
 
-  let rec loop (result : cst E.result) =
+  let rec loop (result : cst E.result) (spurious : Production.index list) =
     match result with
     | E.InputNeeded _ ->
-        begin match next() with
-        | None ->
-            OInputReadPastEnd
-        | Some t ->
-            let dummy = Lexing.dummy_pos in
-            loop (E.offer result (t, dummy, dummy))
-        end
-    | E.Shifting _
-    | E.AboutToReduce _ ->
-        loop (E.resume result)
+      begin match next() with
+      | None ->
+        OInputReadPastEnd
+      | Some t ->
+        let dummy = Lexing.dummy_pos in
+        loop (E.offer result (t, dummy, dummy)) spurious
+      end
+    | E.Shifting _ ->
+      loop (E.resume result) spurious
+    | E.AboutToReduce (env, prod) ->
+        (* If we have requested the last input token and if this is not
+           a default reduction, then this is a spurious reduction. *)
+        let spurious =
+          if looking_at_last_token() && not (E.has_default_reduction env) then
+            prod :: spurious
+          else
+            spurious
+        in
+        loop (E.resume result) spurious
     | E.HandlingError env ->
         (* Check that all of the input has been read. Otherwise, the error
            has occurred sooner than expected. *)
         if !input = [] then
           (* Return the current state. This is done by peeking at the stack.
              If the stack is empty, then we must be in the initial state. *)
-          OK (
+          let s = 
             match Lazy.force (E.stack env) with
             | Nil ->
                 entry
             | Cons (E.Element (s, _, _, _), _) ->
                 s
-          )
+          in
+          OK (s, List.rev spurious)
         else
           OInputNotFullyConsumed
     | E.Accepted _ ->
@@ -313,5 +342,5 @@ let check_error_path nt input =
         assert false
   in
 
-  loop (E.start entry)
+  loop (E.start entry) []
 

@@ -1001,17 +1001,19 @@ let () =
 (* ------------------------------------------------------------------------ *)
 
 (* The following code validates the fact that an error can be triggered in
-   state [s'] by beginning in the initial state [s] and reading the
-   sequence of terminal symbols [w]. We use this for debugging purposes. *)
+   state [s'] by beginning at the start symbol [nt] and reading the
+   sequence of terminal symbols [w]. We use this for debugging purposes.
+   Furthermore, this gives us a list of spurious reductions, which we use
+   to produce a comment. *)
 
 let fail msg =
   Printf.eprintf "LRijkstra: internal error: %s.\n%!" msg;
-  false
+  exit 1
 
-let validate s s' w : bool =
+let validate nt s' w : ReferenceInterpreter.target =
   let open ReferenceInterpreter in
   match
-    check_error_path (Lr1.nt_of_entry s) (W.elements w)
+    check_error_path nt (W.elements w)
   with
   | OInputReadPastEnd ->
       fail "input was read past its end"
@@ -1019,13 +1021,15 @@ let validate s s' w : bool =
       fail "input was not fully consumed"
   | OUnexpectedAccept ->
       fail "input was unexpectedly accepted"
-  | OK state ->
-      Lr1.Node.compare state s' = 0 ||
-      fail (
-        Printf.sprintf "error occurred in state %d instead of %d"
-          (Lr1.number state)
-          (Lr1.number s')
-      )
+  | OK ((state, _) as target) ->
+      if Lr1.Node.compare state s' <> 0 then
+        fail (
+          Printf.sprintf "error occurred in state %d instead of %d"
+            (Lr1.number state)
+            (Lr1.number s')
+        )
+      else
+        target
 
 (* ------------------------------------------------------------------------ *)
 
@@ -1111,11 +1115,13 @@ end)
 let explored =
   ref 0
 
-(* We wish to store a set of triples [nt, w, s'], meaning that an error can be
-   triggered in state [s'] by beginning in the initial state that corresponds
-   to [nt] and by reading the sequence of terminal symbols [w]. We wish to
-   store at most one such triple for every state [s'], so we organize the data
-   as a set [domain] of states [s'] and a list [data] of triples [nt, w, s']. *)
+(* We wish to store a set of triples [nt, w, (s', spurious)], meaning that an
+   error can be triggered in state [s'] by beginning in the initial state that
+   corresponds to [nt] and by reading the sequence of terminal symbols [w]. We
+   wish to store at most one such triple for every state [s'], so we organize
+   the data as a set [domain] of states [s'] and a list [data] of triples [nt,
+   w, (s', spurious)]. The list [spurious] documents the spurious reductions
+   that are performed by the parser at the end. *)
 
 (* We could print this data as we go, which would naturally result in sorting
    the output by increasing word sizes. However, it seems preferable to sort
@@ -1126,7 +1132,7 @@ let explored =
 let domain =
   ref Lr1.NodeSet.empty
 
-let data : (Nonterminal.t * W.word * Lr1.node) list ref =
+let data : (Nonterminal.t * W.word * ReferenceInterpreter.target) list ref =
   ref []
 
 (* The set [reachable] stores every reachable state (regardless of whether an
@@ -1148,12 +1154,13 @@ let _, _ =
          to this error. *)
       let (s, _), ws = A.reverse path in
       let w = List.fold_right W.append ws (W.singleton z) in
-      (* Check that the reference interpreter confirms our finding. *)
-      assert (validate s s' w);
-      (* Store this new data. *)
+      (* Check that the reference interpreter confirms our finding.
+         At the same time, compute a list of spurious reductions. *)
       let nt = Lr1.nt_of_entry s in
+      let target = validate nt s' w in
+      (* Store this new data. *)
       domain := Lr1.NodeSet.add s' !domain;
-      data := (nt, w, s') :: !data
+      data := (nt, w, target) :: !data
     end
   )
 
@@ -1165,7 +1172,7 @@ let () =
     let c = Nonterminal.compare nt1 nt2 in
     if c <> 0 then c else W.compare w2 w1
   )
-  |> List.map (fun (nt, w, s') -> (nt, W.elements w, s'))
+  |> List.map (fun (nt, w, target) -> (nt, W.elements w, target))
   |> List.iter Interpret.print_messages_item
 
 (* ------------------------------------------------------------------------ *)

@@ -18,14 +18,21 @@ type message =
 type run =
   located_sentence or_comment list * message
 
-(* A targeted sentence is a located sentence together with the state
-   into which it leads. *)
+(* A targeted sentence is a located sentence together with the target into
+   which it leads. A target tells us which state a sentence leads to, as well
+   as which spurious reductions are performed at the end. *)
+
+type target =
+  ReferenceInterpreter.target
+
+let target2state (s, _spurious) =
+  s
 
 type maybe_targeted_sentence =
-  located_sentence * Lr1.node option
+  located_sentence * target option
 
 type targeted_sentence =
-  located_sentence * Lr1.node
+  located_sentence * target
 
 (* A targeted run is a series of targeted sentences or comments together with
    an error message. *)
@@ -198,8 +205,8 @@ let interpret_error_aux poss ((_, terminals) as sentence) fail succeed =
       fail "A syntax error occurs before the last token is reached."
   | OUnexpectedAccept ->
       fail "No syntax error occurs; in fact, this input is accepted."
-  | OK s' ->
-      succeed nt terminals s'
+  | OK target ->
+      succeed nt terminals target
 
 (* --------------------------------------------------------------------------- *)
 
@@ -214,11 +221,12 @@ let default_message =
    comments. [os'] may be [None], in which case the auto-generated comment
    is just a warning that this sentence does not end in an error. *)
 
-let print_messages_auto (nt, sentence, os') : unit =
+let print_messages_auto (nt, sentence, otarget) : unit =
   (* Print the sentence, followed with auto-generated comments. *)
   print_string (print_sentence (Some nt, sentence));
-  match os' with
-  | Some s' ->
+  match otarget with
+  | Some (s', _spurious) ->
+      (* TEMPORARY warn about spurious reductions *)
       Printf.printf
         "##\n## Ends in an error in state: %d.\n##\n%s##\n"
         (Lr1.number s')
@@ -230,13 +238,14 @@ let print_messages_auto (nt, sentence, os') : unit =
         "##\n## WARNING: This sentence does NOT end with a syntax error, as it should.\n##\n"
 
 (* [print_messages_item] displays one data item. The item is of the form [nt,
-   sentence, s'], which means that beginning at the start symbol [nt], the
-   sentence [sentence] ends in an error in state [s']. The display obeys the
-   [.messages] file format. *)
+   sentence, target], which means that beginning at the start symbol [nt], the
+   sentence [sentence] ends in an error in the target state given by [target].
+   [target] also contains information about which spurious reductions are
+   performed at the end. The display obeys the [.messages] file format. *)
 
-let print_messages_item (nt, sentence, s') : unit =
+let print_messages_item (nt, sentence, target) : unit =
   (* Print the sentence, followed with auto-generated comments. *)
-  print_messages_auto (nt, sentence, Some s');
+  print_messages_auto (nt, sentence, Some target);
   (* Then, print a proposed error message, between two blank lines. *)
   Printf.printf "\n%s\n" default_message
 
@@ -270,8 +279,8 @@ let write_run : maybe_targeted_run -> unit =
 let fail msg =
   Error.error [] msg
 
-let succeed nt terminals s' =
-  print_messages_item (nt, terminals, s');
+let succeed nt terminals target =
+  print_messages_item (nt, terminals, target);
   exit 0
 
 let interpret_error sentence =
@@ -296,7 +305,7 @@ let target_sentence signal : located_sentence -> maybe_targeted_sentence =
         None
       )
       (* success: *)
-      (fun _nt _terminals s' -> Some s')
+      (fun _nt _terminals target -> Some target)
 
 let target_run_1 signal : run -> maybe_targeted_run =
   fun (sentences, message) ->
@@ -425,7 +434,8 @@ let message_table (detect_redundancy : bool) (runs : filtered_targeted_run list)
 
   let table =
     List.fold_left (fun table (sentences_and_states, message) ->
-      List.fold_left (fun table (sentence2, s) ->
+      List.fold_left (fun table (sentence2, target) ->
+        let s = target2state target in
         match Lr1.NodeMap.find s table with
         | sentence1, _ ->
             if detect_redundancy then
@@ -466,7 +476,8 @@ let compile_runs filename (runs : filtered_targeted_run list) : unit =
   let branches =
     List.fold_left (fun branches (sentences_and_states, message) ->
       (* Create an or-pattern for these states. *)
-      let states = List.map (fun (_, s) ->
+      let states = List.map (fun (_, target) ->
+        let s = target2state target in
         pint (Lr1.number s)
       ) sentences_and_states in
       (* Map all these states to this message. *)
