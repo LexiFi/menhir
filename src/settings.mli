@@ -195,3 +195,10 @@ val compile_errors: string option
 
 val compare_errors: (string * string) option
 
+(* This flag causes Menhir to read the error message descriptions stored in
+   [filename] and re-generate the auto-generated comments, which begin with
+   [##]. This allows bringing these comments up to date when the grammar
+   evolves. *)
+
+val update_errors: string option
+

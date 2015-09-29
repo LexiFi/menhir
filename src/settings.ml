@@ -185,6 +185,12 @@ let compare_errors =
 let add_compare_errors filename =
   compare_errors := filename :: !compare_errors
 
+let update_errors =
+  ref None
+
+let set_update_errors filename =
+  update_errors := Some filename
+
 let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
@@ -240,6 +246,7 @@ let options = Arg.align [
   "--trace", Arg.Set trace, " Include tracing instructions in the generated code";
   "--unused-token", Arg.String ignore_unused_token, "<token> Do not warn that <token> is unused";
   "--unused-tokens", Arg.Set ignore_all_unused_tokens, " Do not warn about any unused token";
+  "--update-errors", Arg.String set_update_errors, "<filename> Update auto-comments in a .messages file";
   "--version", Arg.Set version, " Show version number and exit";
   "-b", Arg.Set_string base, "<basename> Synonymous with --base <basename>";
   "-lg", Arg.Set_int logG, " Synonymous with --log-grammar";
@@ -447,4 +454,7 @@ let compare_errors =
         "To compare two .messages files, please use:\n\
          --compare-errors <filename1> --compare-errors <filename2>.\n";
       exit 1
+
+let update_errors =
+  !update_errors
 

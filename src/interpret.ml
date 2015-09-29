@@ -21,6 +21,9 @@ type run =
 (* A targeted sentence is a located sentence together with the state
    into which it leads. *)
 
+type maybe_targeted_sentence =
+  located_sentence * Lr1.node option
+
 type targeted_sentence =
   located_sentence * Lr1.node
 
@@ -28,7 +31,7 @@ type targeted_sentence =
    an error message. *)
 
 type maybe_targeted_run =
-  targeted_sentence option or_comment list * message
+  maybe_targeted_sentence or_comment list * message
 
 type targeted_run =
   targeted_sentence or_comment list * message
@@ -207,23 +210,56 @@ let interpret_error_aux poss ((_, terminals) as sentence) fail succeed =
 let default_message =
   "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
 
-(* [print_messages_item] displays one data item. The item is of the form [nt,
-   w, s'], which means that beginning at the start symbol [nt], the sentence
-   [w] ends in an error in state [s']. The display obeys the [.messages] file
-   format. *)
+(* [print_messages_auto] displays just the sentence and the auto-generated
+   comments. [os'] may be [None], in which case the auto-generated comment
+   is just a warning that this sentence does not end in an error. *)
 
-let print_messages_item (nt, w, s') : unit =
-  (* Print the sentence, followed with a few comments, followed with a
-     blank line, followed with a proposed error message, followed with
-     another blank line. *)
-  Printf.printf
-    "%s##\n## Ends in an error in state: %d.\n##\n%s\n%s\n"
-    (print_sentence (Some nt, w))
-    (Lr1.number s')
-    (* [Lr0.print] or [Lr0.print_closure] could be used here. The latter
-       could sometimes be helpful, but is usually intolerably verbose. *)
-    (Lr0.print "## " (Lr1.state s'))
-    default_message
+let print_messages_auto (nt, sentence, os') : unit =
+  (* Print the sentence, followed with auto-generated comments. *)
+  print_string (print_sentence (Some nt, sentence));
+  match os' with
+  | Some s' ->
+      Printf.printf
+        "##\n## Ends in an error in state: %d.\n##\n%s##\n"
+        (Lr1.number s')
+        (* [Lr0.print] or [Lr0.print_closure] could be used here. The latter
+           could sometimes be helpful, but is usually intolerably verbose. *)
+        (Lr0.print "## " (Lr1.state s'))
+  | None ->
+      Printf.printf
+        "##\n## WARNING: This sentence does NOT end with a syntax error, as it should.\n##\n"
+
+(* [print_messages_item] displays one data item. The item is of the form [nt,
+   sentence, s'], which means that beginning at the start symbol [nt], the
+   sentence [sentence] ends in an error in state [s']. The display obeys the
+   [.messages] file format. *)
+
+let print_messages_item (nt, sentence, s') : unit =
+  (* Print the sentence, followed with auto-generated comments. *)
+  print_messages_auto (nt, sentence, Some s');
+  (* Then, print a proposed error message, between two blank lines. *)
+  Printf.printf "\n%s\n" default_message
+
+(* --------------------------------------------------------------------------- *)
+
+(* [write_messages runs] turns a list of runs into a new [.messages] file.
+   Any manually-written comments are preserved. New auto-generated comments
+   are produced. *)
+
+let write_run : maybe_targeted_run -> unit =
+  fun (sentences_or_comments, message) ->
+    (* First, print every sentence and human comment. *)
+    List.iter (fun sentence_or_comment ->
+      match sentence_or_comment with
+      | Sentence ((poss, ((_, toks) as sentence)), os') ->
+          let nt = start poss sentence in
+          (* Every sentence is followed with newly generated auto-comments. *)
+          print_messages_auto (nt, toks, os')
+      | Comment c ->
+          print_string c
+    ) sentences_or_comments;
+  (* Then, print the error message, between two blank lines. *)
+  Printf.printf "\n%s\n" message
 
 (* --------------------------------------------------------------------------- *)
 
@@ -247,31 +283,34 @@ let interpret_error sentence =
    an error, computes the state in which the error is obtained, and constructs
    a targeted sentence. *)
 
-let fail poss msg =
-  Error.signal poss (Printf.sprintf
-    "This sentence does not end with a syntax error, as it should.\n%s"
-    msg
-  );
-  None (* no result *)
-
-let target_sentence : located_sentence -> targeted_sentence option =
+let target_sentence signal : located_sentence -> maybe_targeted_sentence =
   fun (poss, sentence) ->
+    (poss, sentence),
     interpret_error_aux poss sentence
-      (fail poss)
-      (fun _nt _terminals s' -> Some ((poss, sentence), s'))
+      (* failure: *)
+      (fun msg ->
+        signal poss (Printf.sprintf
+          "This sentence does not end with a syntax error, as it should.\n%s"
+          msg
+        );
+        None
+      )
+      (* success: *)
+      (fun _nt _terminals s' -> Some s')
 
-let target_run_1 : run -> maybe_targeted_run =
+let target_run_1 signal : run -> maybe_targeted_run =
   fun (sentences, message) ->
-    List.map (or_comment_map target_sentence) sentences, message
+    List.map (or_comment_map (target_sentence signal)) sentences, message
 
 let target_run_2 : maybe_targeted_run -> targeted_run =
   fun (sentences, message) ->
-    List.map (or_comment_map Misc.unSome) sentences, message
+    let aux (x, y) = (x, Misc.unSome y) in
+    List.map (or_comment_map aux) sentences, message
 
 let target_runs : run list -> targeted_run list =
   fun runs ->
     (* Interpret all sentences, possibly displaying multiple errors. *)
-    let runs = List.map target_run_1 runs in
+    let runs = List.map (target_run_1 Error.signal) runs in
     (* Abort if an error occurred. *)
     if Error.errors() then exit 1;
     (* Remove the options introduced by the first phase above. *)
@@ -548,5 +587,38 @@ let () =
     if Error.errors() then exit 1;
     exit 0
 
+  )
+
+(* --------------------------------------------------------------------------- *)
+
+(* If [--update-errors <filename>] is set, update the error message
+   descriptions found in file [filename]. The idea is to re-generate
+   the auto-comments, which are marked with ##, while leaving the
+   rest untouched. *)
+
+let () =
+  Settings.update_errors |> Option.iter (fun filename ->
+
+    (* Read the file. *)
+    let runs = read_messages filename in
+
+    (* Convert every sentence to a state number. Warn, but do not
+       fail, if a sentence does not end in an error, as it should. *)
+    let runs = List.map (target_run_1 Error.warning) runs in
+
+    (* We might wish to detect if two sentences lead to the same state. We
+       might also wish to detect if this set of sentences is incomplete,
+       and complete it automatically. However, the first task is carried
+       out by [--compile-errors] already, and the second task is carried
+       out by [--list-errors] and [--compare-errors] together. For now,
+       let's try and keep things as simple as possible. The task of
+       [--update-errors] should be to update the auto-generated comments,
+       without failing, and without adding or removing sentences. *)
+
+    (* Now, write a new [.messages] to the standard output channel, with
+       new auto-generated comments. *)
+    List.iter write_run runs;
+
+    exit 0
   )
 
