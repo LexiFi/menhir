@@ -11,16 +11,15 @@
 %token COLON EOF EOL
 %token<Grammar.Terminal.t> TERMINAL
 %token<Grammar.Nonterminal.t> NONTERMINAL
+%token<string> COMMENT
+  /* only manually-written comments, beginning with a single # */
 
 /* ------------------------------------------------------------------------ */
 /* Types. */
 
 %{
 
-  open Grammar
-  type terminals = Terminal.t list
-  type sentence = Nonterminal.t option * terminals
-  type located_sentence = Positions.positions * sentence
+  open SentenceParserAux
 
 %}
 
@@ -28,28 +27,25 @@
 %type <sentence> sentence
 %type <located_sentence> located_sentence
 
-/* %start <sentence option> optional_sentence */
-%type
-  <(Grammar.Nonterminal.t option * Grammar.Terminal.t list) option>
-optional_sentence
+%type <SentenceParserAux.sentence option> optional_sentence
 %start optional_sentence
 
-/* %start<located_sentence list> entry */
-%type
-  <(Positions.positions * (Grammar.Nonterminal.t option * Grammar.Terminal.t list)) list>
-entry
+%type<SentenceParserAux.located_sentence SentenceParserAux.or_comment list> entry
 %start entry
 
 %%
 
 /* ------------------------------------------------------------------------ */
 
-/* An entry is a non-empty list of located sentences. */
-entry: located_sentence located_sentences EOF
-  { $1 :: $2 }
+/* An entry is a list of located sentences or comments. */
+entry: located_sentences_or_comments EOF
+  { $1 }
 
-/* A list of located sentences. */
-located_sentences: { [] } | located_sentence located_sentences { $1 :: $2 }
+/* A list of located sentences or comments. */
+located_sentences_or_comments:
+  { [] }
+| located_sentence located_sentences_or_comments { Sentence $1 :: $2 }
+| COMMENT          located_sentences_or_comments { Comment  $1 :: $2 }
 
 /* A located sentence. */
 located_sentence: sentence

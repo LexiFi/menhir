@@ -24,7 +24,9 @@ let uppercase = ['A'-'Z' '\192'-'\214' '\216'-'\222']
 
 let identchar = ['A'-'Z' 'a'-'z' '_' '\192'-'\214' '\216'-'\246' '\248'-'\255' '0'-'9'] (* '\'' forbidden *)
 
-let comment = '#' [^'\010''\013']* newline
+let autocomment = "##" [^'\010''\013']* newline
+
+let comment = "#" [^'\010''\013']* newline
 
 let skip = newline whitespace* newline
 
@@ -55,9 +57,12 @@ rule lex = parse
   (* The end of a line is translated to [EOL]. *)
   | newline
       { new_line lexbuf; EOL }
-  (* A comment is ignored. *)
-  | comment
+  (* An auto-generated comment is ignored. *)
+  | autocomment
       { new_line lexbuf; lex lexbuf }
+  (* A manually-written comment is preserved. *)
+  | comment as c
+      { new_line lexbuf; COMMENT c }
   (* The end of file is translated to [EOF]. *)
   | eof
       { EOF }

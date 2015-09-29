@@ -5,27 +5,39 @@ module I = Invariant (* artificial dependency; ensures that [Invariant] runs fir
 
 (* --------------------------------------------------------------------------- *)
 
-(* The following definitions are in sync with [SentenceParser]. *)
-
 open Grammar
-type terminals = Terminal.t list
-type sentence = Nonterminal.t option * terminals
-type located_sentence = Positions.positions * sentence
-type message = string
+open SentenceParserAux
 
-(* A run is a series of sentences together with an error message. *)
+(* An error message. *)
 
-type run = located_sentence list * message
+type message =
+  string
+
+(* A run is a series of sentences or comments together with an error message. *)
+
+type run =
+  located_sentence or_comment list * message
 
 (* A targeted sentence is a located sentence together with the state
    into which it leads. *)
 
-type targeted_sentence = located_sentence * Lr1.node
+type targeted_sentence =
+  located_sentence * Lr1.node
 
-(* A targeted run is a series of targeted sentences together with an error
-   message. *)
+(* A targeted run is a series of targeted sentences or comments together with
+   an error message. *)
 
-type targeted_run = targeted_sentence list * message
+type maybe_targeted_run =
+  targeted_sentence option or_comment list * message
+
+type targeted_run =
+  targeted_sentence or_comment list * message
+
+(* A filtered targeted run is a series of targeted sentences together with an
+   error message. (The comments have been filtered out.) *)
+
+type filtered_targeted_run =
+  targeted_sentence list * message
 
 (* --------------------------------------------------------------------------- *)
 
@@ -237,26 +249,42 @@ let interpret_error sentence =
 
 let fail poss msg =
   Error.signal poss (Printf.sprintf
-    "This sentence does not end with a syntax error, as desired.\n%s"
+    "This sentence does not end with a syntax error, as it should.\n%s"
     msg
   );
-  [] (* dummy result *)
+  None (* no result *)
 
-let target_sentence : located_sentence -> targeted_sentence list =
+let target_sentence : located_sentence -> targeted_sentence option =
   fun (poss, sentence) ->
     interpret_error_aux poss sentence
       (fail poss)
-      (fun _nt _terminals s' -> [ (poss, sentence), s' ])
+      (fun _nt _terminals s' -> Some ((poss, sentence), s'))
 
-let target_run : run -> targeted_run =
+let target_run_1 : run -> maybe_targeted_run =
   fun (sentences, message) ->
-    List.flatten (List.map target_sentence sentences), message
+    List.map (or_comment_map target_sentence) sentences, message
+
+let target_run_2 : maybe_targeted_run -> targeted_run =
+  fun (sentences, message) ->
+    List.map (or_comment_map Misc.unSome) sentences, message
 
 let target_runs : run list -> targeted_run list =
   fun runs ->
-    let runs = List.map target_run runs in
+    (* Interpret all sentences, possibly displaying multiple errors. *)
+    let runs = List.map target_run_1 runs in
+    (* Abort if an error occurred. *)
     if Error.errors() then exit 1;
+    (* Remove the options introduced by the first phase above. *)
+    let runs = List.map target_run_2 runs in
     runs
+
+(* --------------------------------------------------------------------------- *)
+
+(* [filter_run] filters out the comments in a run. *)
+
+let filter_run : targeted_run -> filtered_targeted_run =
+  fun (sentences, message) ->
+    List.flatten (List.map unSentence sentences), message
 
 (* --------------------------------------------------------------------------- *)
 
@@ -328,30 +356,24 @@ let read_messages filename : run list =
     match segments with
     | [] ->
         List.rev accu
-    | (_, lexbuf) :: [] ->
-        (* Oops, we are desynchronized. *)
-        Error.signal
-          (Positions.one (Lexing.lexeme_end_p lexbuf))
-          "Syntax error: missing a final message. I may be desynchronized.";
-        List.rev accu
-    | (_, lexbuf) :: (text, _) :: segments ->
-        (* Read a non-empty series of located sentences. *)
+    | (_, lexbuf) :: segments ->
+        (* Read a series of located sentences. *)
         match SentenceParser.entry SentenceLexer.lex lexbuf with
         | exception Parsing.Parse_error ->
-            (* Report an error. *)
-            Error.signal
+            Error.error
               (Positions.one (Lexing.lexeme_start_p lexbuf))
-              "Syntax error: ill-formed sentence.";
-            (* Continue anyway. *)
-            loop accu segments
+              "Ill-formed sentence."
         | sentences ->
-            loop ((sentences, text) :: accu) segments
+            (* Read a segment of text. *)
+            match segments with
+            | [] ->
+              Error.error
+                (Positions.one (Lexing.lexeme_end_p lexbuf))
+                "Syntax error: missing a final message. I may be desynchronized."
+            | (text, _) :: segments ->
+                loop ((sentences, text) :: accu) segments
   in
-  let runs = loop [] segments in
-  if Error.errors() then exit 1;
-  (* Although we try to report several errors, [SentenceLexer.lex] may
-     abort the whole process after just one error. This could be improved. *)
-  runs
+  loop [] segments
 
 (* --------------------------------------------------------------------------- *)
 
@@ -359,7 +381,7 @@ let read_messages filename : run list =
    states to located sentences and messages. Optionally, it can detect that
    two sentences lead to the same state, and report an error. *)
 
-let message_table (detect_redundancy : bool) (runs : targeted_run list)
+let message_table (detect_redundancy : bool) (runs : filtered_targeted_run list)
   : (located_sentence * message) Lr1.NodeMap.t =
 
   let table =
@@ -387,7 +409,7 @@ let message_table (detect_redundancy : bool) (runs : targeted_run list)
    a mapping of state numbers to error messages. The code is sent to the
    standard output channel. *)
 
-let compile_runs filename (runs : targeted_run list) : unit =
+let compile_runs filename (runs : filtered_targeted_run list) : unit =
 
   (* We wish to produce a function that maps a state number to a message.
      By convention, we call this function [message]. *)
@@ -450,6 +472,9 @@ let () =
        sentence does not end in an error, as expected. *)
     let runs = target_runs runs in
 
+    (* Remove comments. *)
+    let runs = List.map filter_run runs in
+
     (* Build a mapping of states to located sentences. This allows us to
        detect if two sentences lead to the same state. *)
     let _ = message_table true runs in
@@ -484,6 +509,8 @@ let () =
     and runs2 = read_messages filename2 in
     let runs1 = target_runs runs1
     and runs2 = target_runs runs2 in (* here, it would be OK to ignore errors *)
+    let runs1 = List.map filter_run runs1
+    and runs2 = List.map filter_run runs2 in
     let table1 = message_table false runs1
     and table2 = message_table false runs2 in
     
