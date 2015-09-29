@@ -8,3 +8,12 @@
 
 val default_message: string
 
+(* [print_messages_item] displays one data item. The item is of the form [nt,
+   w, s'], which means that beginning at the start symbol [nt], the sentence
+   [w] ends in an error in state [s']. The display obeys the [.messages] file
+   format. *)
+
+open Grammar
+
+val print_messages_item: Nonterminal.t * Terminal.t list * Lr1.node -> unit
+

@@ -29,26 +29,18 @@ type targeted_run = targeted_sentence list * message
 
 (* --------------------------------------------------------------------------- *)
 
-(* Debugging.
+(* Display and debugging. *)
 
 let print_sentence (nto, terminals) : string =
   let b = Buffer.create 128 in
   Option.iter (fun nt ->
-    Printf.bprintf b "%s: " (Nonterminal.print true nt)
+    Printf.bprintf b "%s: " (Nonterminal.print false nt)
   ) nto;
   List.iter (fun t ->
     Printf.bprintf b "%s " (Terminal.print t)
   ) terminals;
   Printf.bprintf b "\n";
   Buffer.contents b
-
-let print_sentence sentence : unit =
-  print_string (print_sentence sentence)
-
-let print_located_sentence (_, sentence) : unit =
-  print_sentence sentence
-
-*)
 
 (* --------------------------------------------------------------------------- *)
 
@@ -191,8 +183,35 @@ let interpret_error_aux poss ((_, terminals) as sentence) fail succeed =
       fail "A syntax error occurs before the last token is reached."
   | OUnexpectedAccept ->
       fail "No syntax error occurs; in fact, this input is accepted."
-  | OK state ->
-      succeed state
+  | OK s' ->
+      succeed nt terminals s'
+
+(* --------------------------------------------------------------------------- *)
+
+(* This default error message is produced by [--list-errors] when it creates a
+   [.messages] file, and is recognized by [--compare-errors] when it compares
+   two such files. *)
+
+let default_message =
+  "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
+
+(* [print_messages_item] displays one data item. The item is of the form [nt,
+   w, s'], which means that beginning at the start symbol [nt], the sentence
+   [w] ends in an error in state [s']. The display obeys the [.messages] file
+   format. *)
+
+let print_messages_item (nt, w, s') : unit =
+  (* Print the sentence, followed with a few comments, followed with a
+     blank line, followed with a proposed error message, followed with
+     another blank line. *)
+  Printf.printf
+    "%s##\n## Ends in an error in state: %d.\n##\n%s\n%s\n"
+    (print_sentence (Some nt, w))
+    (Lr1.number s')
+    (* [Lr0.print] or [Lr0.print_closure] could be used here. The latter
+       could sometimes be helpful, but is usually intolerably verbose. *)
+    (Lr0.print "## " (Lr1.state s'))
+    default_message
 
 (* --------------------------------------------------------------------------- *)
 
@@ -201,14 +220,10 @@ let interpret_error_aux poss ((_, terminals) as sentence) fail succeed =
    used by [--interpret-error]. *)
 
 let fail msg =
-  Printf.printf "BAD\n# %s\n%!" msg;
-  exit 1
+  Error.error [] msg
 
-let succeed s =
-  let s = Lr1.number s in
-  Printf.printf
-    "OK %d\n# This sentence ends with a syntax error in state %d.\n%!"
-    s s;
+let succeed nt terminals s' =
+  print_messages_item (nt, terminals, s');
   exit 0
 
 let interpret_error sentence =
@@ -231,7 +246,7 @@ let target_sentence : located_sentence -> targeted_sentence list =
   fun (poss, sentence) ->
     interpret_error_aux poss sentence
       (fail poss)
-      (fun s -> [ (poss, sentence), s ])
+      (fun _nt _terminals s' -> [ (poss, sentence), s' ])
 
 let target_run : run -> targeted_run =
   fun (sentences, message) ->
@@ -460,9 +475,6 @@ let () =
    two message descriptions files, and stop. We wish to make sure that every
    state that appears on the left-hand side appears on the right-hand side as
    well. *)
-
-let default_message =
-  "<YOUR SYNTAX ERROR MESSAGE HERE>\n"
 
 let () =
   Settings.compare_errors |> Option.iter (fun (filename1, filename2) ->

@@ -1135,22 +1135,6 @@ let data : (Nonterminal.t * W.word * Lr1.node) list ref =
 let reachable =
   ref Lr1.NodeSet.empty
 
-(* [display] displays one data item. The format is that of a [.messages]
-   file, which the user can then edit to customize the error messages. *)
-
-let display (nt, w, s') : unit =
-  (* Print the sentence, followed with a few comments, followed with a
-     blank line, followed with a proposed error message, followed with
-     another blank line. *)
-  Printf.printf
-    "%s: %s\n# Length: %d\n# Leads to an error in state: %d.\n%s\n%s\n"
-    (Nonterminal.print false nt)
-    (W.print w)
-    (W.length w)
-    (Lr1.number s')
-    (Lr0.print "# " (Lr1.state s')) (* TEMPORARY [print] or [print_closure]? *)
-    Interpret.default_message
-
 (* Perform the forward search. *)
 
 let _, _ =
@@ -1176,11 +1160,13 @@ let _, _ =
 (* Sort and output the data. *)
 
 let () =
-  let compare (nt1, w1, _) (nt2, w2, _) =
+  !data
+  |> List.fast_sort (fun (nt1, w1, _) (nt2, w2, _) ->
     let c = Nonterminal.compare nt1 nt2 in
     if c <> 0 then c else W.compare w2 w1
-  in
-  List.iter display (List.fast_sort compare !data)
+  )
+  |> List.map (fun (nt, w, s') -> (nt, W.elements w, s'))
+  |> List.iter Interpret.print_messages_item
 
 (* ------------------------------------------------------------------------ *)
 
