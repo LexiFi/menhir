@@ -251,9 +251,10 @@ type check_error_path_outcome =
 | OUnexpectedAccept
   (* Good: a syntax error occurred after reading the last input token. We
      report in which state the error took place, as well as a list of spurious
-     reductions. A spurious reduction is a non-default reduction that takes
-     place after looking at the last input token -- the erroneous token. 
-     We note that a spurious reduction can happen only in a non-canonical
+     reductions. A non-default reduction that takes place after looking at the
+     last input token (i.e., the erroneous token) is spurious. Furthermore, any
+     reduction that takes place after a spurious reduction is itself spurious.
+     We note that a spurious reduction can take place only in a non-canonical
      LR automaton. *)
 | OK of target
 
@@ -323,9 +324,13 @@ let check_error_path nt input =
       loop (E.resume result) spurious
     | E.AboutToReduce (env, prod) ->
         (* If we have requested the last input token and if this is not
-           a default reduction, then this is a spurious reduction. *)
+           a default reduction, then this is a spurious reduction.
+           Furthermore, if a spurious reduction has taken place already,
+           then this is also a spurious reduction. *)
         let spurious =
-          if looking_at_last_token() && not (E.has_default_reduction env) then
+          if looking_at_last_token() && not (E.has_default_reduction env)
+          || spurious <> []
+          then
             (current env, prod) :: spurious
           else
             spurious
