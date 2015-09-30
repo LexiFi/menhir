@@ -443,6 +443,31 @@ let () =
 
 (* --------------------------------------------------------------------------- *)
 
+(* Display an informational message about the contents of a [.messages] file.  *)
+
+let stats (runs : run or_comment list) =
+  (* [s] counts the sample input sentences. [m] counts the error messages. *)
+  let s = ref 0
+  and m = ref 0 in
+  List.iter (function
+  | Thing (sentences, _, _) ->
+      incr m;
+      List.iter (function
+      | Thing _ ->
+          incr s
+      | Comment _ ->
+          ()
+      ) sentences
+  | Comment _ ->
+      ()
+  ) runs;
+  Printf.eprintf
+    "Read %d sample input sentences and %d error messages.\n%!"
+    !s !m;
+  runs
+
+(* --------------------------------------------------------------------------- *)
+
 (* Reading a [.messages] file. *)
 
 (* Our life is slightly complicated by the fact that the whitespace between
@@ -490,7 +515,7 @@ let read_messages filename : run or_comment list =
                    two kinds of segments. *)
                 assert false
   in
-  loop [] segments
+  stats (loop [] segments)
 
 (* --------------------------------------------------------------------------- *)
 
