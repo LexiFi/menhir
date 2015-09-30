@@ -1126,7 +1126,8 @@ let explored =
 (* We could print this data as we go, which would naturally result in sorting
    the output by increasing word sizes. However, it seems preferable to sort
    the sentences lexicographically, so that similar sentences end up close to
-   one another. This is why we store a list of triples and sort it before
+   one another. (We could also sort them by state number. The result would be
+   roughly similar.) This is why we store a list of triples and sort it before
    printing it out. *)
 
 let domain =
