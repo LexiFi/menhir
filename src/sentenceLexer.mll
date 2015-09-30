@@ -37,7 +37,7 @@ rule lex = parse
       { try
 	  let nt = Nonterminal.lookup lid in
 	  if StringSet.mem lid Front.grammar.UnparameterizedSyntax.start_symbols then
-	    NONTERMINAL nt
+	    NONTERMINAL (nt, lexbuf.lex_start_p, lexbuf.lex_curr_p)
 	  else
 	    error2 lexbuf (Printf.sprintf "\"%s\" is not a start symbol." lid)
 	with Not_found ->
@@ -47,7 +47,7 @@ rule lex = parse
      terminal symbol. *)
   | (uppercase identchar *) as uid
       { try
-	  TERMINAL (Terminal.lookup uid)
+	  TERMINAL (Terminal.lookup uid, lexbuf.lex_start_p, lexbuf.lex_curr_p)
 	with Not_found ->
 	  error2 lexbuf (Printf.sprintf "\"%s\" is not a known terminal symbol." uid)
       }
