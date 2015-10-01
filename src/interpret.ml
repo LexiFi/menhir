@@ -255,6 +255,12 @@ let print_messages_auto (nt, sentence, otarget) : unit =
            could sometimes be helpful, but is usually intolerably verbose. *)
         (Lr0.print "## " (Lr1.state s'))
       ;
+      Printf.printf
+        "## The known suffix of the stack is as follows:\n\
+         ## %s\n\
+         ##\n"
+        (Invariant.print (Invariant.stack s'))
+      ;
       if spurious <> [] then begin
         Printf.printf
           "## WARNING: This example involves spurious reductions.\n\
