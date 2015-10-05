@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # This script tries to find the Menhir executable.
 # This is useful because we would like the demos
@@ -13,7 +13,9 @@
 # This loop assumes that we are somewhere within
 # the Menhir distribution, so by going up, we will
 # end up at the root of the distribution.
-while ! [ -d src ] ; do
+attempts=2
+while [ $attempts -gt 0 ] && ! [ -d src ] ; do
+  let attempts=attempts-1
   cd ..
 done
 LOCAL=src/_stage1/menhir.native
