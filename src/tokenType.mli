@@ -11,12 +11,12 @@
 
 (* In this module, we also deal with [--only-tokens] and [--external-tokens].
    If [--only-tokens] is specified on the command line, [produce_tokentypes]
-   emits the type definition(s) and exit. If [--external-tokens] is specified,
-   then the list [tokentypedefs] is empty, and [tokenprefix] produces a
-   nontrivial prefix. *)
+   emits the type definition(s) and exit. If [--external-tokens M] is set,
+   then the token type and the token GADT are defined as abbreviations for
+   [M.token] and ['a M.terminal]. *)
 
 (* The conventional name of the [token] type, for use by the code
-   generators. If [--external-tokens] is set, this type is qualified. *)
+   generators. *)
 
 val ttoken: IL.typ
 
@@ -28,8 +28,7 @@ val tokendata: string -> string
 
 (* The conventional name of the [terminal] type, a.k.a. the token GADT. This
    is an indexed type (i.e., it has one type parameter). Its data constructors
-   carry zero value arguments. If [--external-tokens] is set, this type is
-   qualified. *)
+   carry zero value arguments. *)
 
 val tctokengadt: string
 val ttokengadt: IL.typ -> IL.typ
@@ -40,10 +39,7 @@ val ttokengadt: IL.typ -> IL.typ
 val tokengadtdata: string -> string
 
 (* The definitions of the token type and of the token GADT, for use by the
-   code generators. Each of these lists may define zero or one type. Indeed,
-   both lists are empty when [--external-tokens] is set. Otherwise, only the
-   type [token] is defined always, and the type [terminal] is defined only in
-   [--inspection] mode. *)
+   code generators. Each of these lists defines zero or one type. *)
 
 val tokentypedef: UnparameterizedSyntax.grammar -> IL.interface
 val tokengadtdef: UnparameterizedSyntax.grammar -> IL.interface
