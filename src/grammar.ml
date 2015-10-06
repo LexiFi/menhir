@@ -554,7 +554,7 @@ module Production = struct
   let prec_decl : symbol located option array = 
     Array.make n None
 
-  let reduce_precedence : precedence_level array = 
+  let production_level : precedence_level array = 
     Array.make n UndefinedPrecedence
 
   let (_ : int) = StringMap.fold (fun nonterminal { branches = branches } k ->
@@ -564,7 +564,7 @@ module Production = struct
       table.(k) <- (nt, Array.map (fun (v, _) -> Symbol.lookup v) symbols);
       identifiers.(k) <- Array.map snd symbols;
       actions.(k) <- Some branch.action;
-      reduce_precedence.(k) <- branch.branch_reduce_precedence;
+      production_level.(k) <- branch.branch_production_level;
       prec_decl.(k) <- branch.branch_prec_annotation;
       positions.(k) <- [ branch.branch_position ];
       k+1
@@ -1497,9 +1497,9 @@ module Precedence = struct
 
 
   let reduce_reduce prod1 prod2 =
-    let rp1 = Production.reduce_precedence.(prod1) 
-    and rp2 = Production.reduce_precedence.(prod2) in
-    match precedence_order rp1 rp2 with
+    let pl1 = Production.production_level.(prod1) 
+    and pl2 = Production.production_level.(prod2) in
+    match precedence_order pl1 pl2 with
     | Lt -> 
 	Some prod1
     | Gt -> 

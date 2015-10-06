@@ -86,12 +86,15 @@ type declaration =
   | DType of Stretch.ocamltype * parameter
 
 (* A [%prec] annotation is optional. A production can carry at most one.
-   If there is one, it is a symbol name. *)
+   If there is one, it is a symbol name. See [ParserAux]. *)
 
 type branch_prec_annotation =
     symbol Positions.located option
 
-type branch_reduce_precedence =
+(* A "production level" is used to solve reduce/reduce conflicts. It reflects
+   which production appears first in the grammar. See [ParserAux]. *)
+
+type branch_production_level =
     precedence_level
 
 type producer =
@@ -103,7 +106,7 @@ type parameterized_branch =
       pr_producers		   : producer list;
       pr_action			   : action; 
       pr_branch_prec_annotation    : branch_prec_annotation;
-      pr_branch_reduce_precedence  : branch_reduce_precedence
+      pr_branch_production_level   : branch_production_level
     }
 
 type parameterized_rule =

@@ -7,7 +7,7 @@ let new_precedence_level =
     incr c;
     PrecedenceLevel (Error.get_filemark (), !c, pos1, pos2)
 
-let current_reduce_precedence =
+let new_production_level =
   let c = ref 0 in
   fun () ->
     incr c;

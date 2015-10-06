@@ -3,17 +3,26 @@
 
 open Syntax
 
-(* [new_precedence_level pos1 pos2] creates a new precendence level,
-   which is stronger than any previously created levels, for tokens.
-   It should be called every time a [%left], [%right], or [%nonassoc]
-   declaration is found. The positions are the positions of this
-   declaration in the source code. *)
+(* [new_precedence_level pos1 pos2] creates a new precendence level, which is
+   stronger than any levels previously created by this function. It should be
+   called every time a [%left], [%right], or [%nonassoc] declaration is found.
+   The positions are the positions of this declaration in the source code. The
+   precedence levels created by this function are attached to tokens and (via
+   %prec) to productions. They are used in solving shift/reduce and
+   shift/reduce/reduce conflicts. *)
 
 val new_precedence_level: Lexing.position -> Lexing.position -> precedence_level
 
-(* TEMPORARY document *)
+(* [new_production_level()] creates a new precedence level, which is stronger
+   than any levels previously created by this function. It should be called
+   every time a new production is found. The precedence levels created by this
+   function are attached to productions. They are used in solving
+   reduce/reduce conflicts: following ocamlyacc and bison, the production that
+   appears first in the grammar receives preference. It may seem very strange
+   that %prec annotations do not influence this process, but that's how it is,
+   at least for the moment. *)
 
-val current_reduce_precedence: unit -> precedence_level
+val new_production_level: unit -> precedence_level
 
 (* [check_production_group] accepts a production group and checks that all
    productions in the group define the same set of identifiers. *)

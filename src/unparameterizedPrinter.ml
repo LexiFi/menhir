@@ -144,9 +144,12 @@ let print_branch mode f branch =
 let print_trailers b g =
   List.iter (fun stretch -> Printf.fprintf b "%s\n" stretch.stretch_raw_content) g.postludes
 
+(* Because the resolution of reduce/reduce conflicts is implicitly dictated by
+   the order in which productions appear in the grammar, the printer should be
+   careful to preserve this order. *)
 let branches_order r r' = 
   let branch_order b b' = 
-    match b.branch_reduce_precedence, b'.branch_reduce_precedence with
+    match b.branch_production_level, b'.branch_production_level with
       | UndefinedPrecedence, _ | _, UndefinedPrecedence ->
 	  0
       | PrecedenceLevel (m, l, _, _), PrecedenceLevel (m', l', _, _) ->

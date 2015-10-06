@@ -267,7 +267,7 @@ production_group:
          that all of them bind the same names. *)
       ParserAux.check_production_group productions;
       (* Then, *)
-      List.map (fun (producers, oprec1, rprec, pos) ->
+      List.map (fun (producers, oprec1, level, pos) ->
         (* Replace [$i] with [_i]. *)
         let pr_producers = ParserAux.normalize_producers producers in
         (* Distribute the semantic action. Also, check that every [$i]
@@ -277,7 +277,7 @@ production_group:
 	  pr_producers;
 	  pr_action;
 	  pr_branch_prec_annotation   = ParserAux.override pos oprec1 oprec2;
-	  pr_branch_reduce_precedence = rprec;
+	  pr_branch_production_level  = level;
 	  pr_branch_position          = pos
 	})
       productions
@@ -310,7 +310,7 @@ production:
   producers optional_precedence
     { List.rev $1,
       $2,
-      ParserAux.current_reduce_precedence(),
+      ParserAux.new_production_level(),
       Positions.lex_join (symbol_start_pos()) (symbol_end_pos())
     }
 

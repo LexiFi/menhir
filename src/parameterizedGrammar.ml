@@ -558,7 +558,7 @@ let expand p_grammar =
 	producers		 = new_producers;
 	action			 = pbranch.pr_action;
 	branch_prec_annotation   = pbranch.pr_branch_prec_annotation;
-	branch_reduce_precedence = pbranch.pr_branch_reduce_precedence;
+	branch_production_level  = pbranch.pr_branch_production_level;
       }
 
   (* Instantiate the branches of sym for a particular set of actual
