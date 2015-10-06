@@ -11,7 +11,7 @@ let new_production_level =
   let c = ref 0 in
   fun () ->
     incr c;
-    PrecedenceLevel (Error.get_filemark (), !c, Lexing.dummy_pos, Lexing.dummy_pos)
+    ProductionLevel (Error.get_filemark (), !c)
 
 module IdSet = Set.Make (struct
   type t = identifier located

@@ -13,16 +13,16 @@ open Syntax
 
 val new_precedence_level: Lexing.position -> Lexing.position -> precedence_level
 
-(* [new_production_level()] creates a new precedence level, which is stronger
+(* [new_production_level()] creates a new production level, which is stronger
    than any levels previously created by this function. It should be called
-   every time a new production is found. The precedence levels created by this
+   every time a new production is found. The production levels created by this
    function are attached to productions. They are used in solving
    reduce/reduce conflicts: following ocamlyacc and bison, the production that
    appears first in the grammar receives preference. It may seem very strange
    that %prec annotations do not influence this process, but that's how it is,
    at least for the moment. *)
 
-val new_production_level: unit -> precedence_level
+val new_production_level: unit -> branch_production_level
 
 (* [check_production_group] accepts a production group and checks that all
    productions in the group define the same set of identifiers. *)

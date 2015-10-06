@@ -554,8 +554,12 @@ module Production = struct
   let prec_decl : symbol located option array = 
     Array.make n None
 
-  let production_level : precedence_level array = 
-    Array.make n UndefinedPrecedence
+  let production_level : branch_production_level array = 
+    (* The start productions should receive this dummy level, I suppose.
+       We use a fresh mark, so a reduce/reduce conflict that involves a
+       start production will not be solved. *)
+    let dummy = ProductionLevel (Mark.fresh(), 0) in
+    Array.make n dummy
 
   let (_ : int) = StringMap.fold (fun nonterminal { branches = branches } k ->
     let nt = Nonterminal.lookup nonterminal in
@@ -1444,8 +1448,20 @@ module Precedence = struct
       |	UndefinedPrecedence, _
       | _, UndefinedPrecedence -> 
 	  Ic
-
       | PrecedenceLevel (m1, l1, _, _), PrecedenceLevel (m2, l2, _, _) ->
+	  if not (Mark.same m1 m2) then
+	    Ic
+	  else
+	    if l1 > l2 then 
+	      Gt 
+	    else if l1 < l2 then 
+	      Lt
+	    else 
+	      Eq
+
+  let production_order p1 p2 =
+    match p1, p2 with
+      | ProductionLevel (m1, l1), ProductionLevel (m2, l2) ->
 	  if not (Mark.same m1 m2) then
 	    Ic
 	  else
@@ -1499,7 +1515,7 @@ module Precedence = struct
   let reduce_reduce prod1 prod2 =
     let pl1 = Production.production_level.(prod1) 
     and pl2 = Production.production_level.(prod2) in
-    match precedence_order pl1 pl2 with
+    match production_order pl1 pl2 with
     | Lt -> 
 	Some prod1
     | Gt -> 

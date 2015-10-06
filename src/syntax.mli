@@ -95,7 +95,7 @@ type branch_prec_annotation =
    which production appears first in the grammar. See [ParserAux]. *)
 
 type branch_production_level =
-    precedence_level
+  | ProductionLevel of Mark.t * int
 
 type producer =
     identifier Positions.located * parameter

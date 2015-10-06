@@ -150,9 +150,7 @@ let print_trailers b g =
 let branches_order r r' = 
   let branch_order b b' = 
     match b.branch_production_level, b'.branch_production_level with
-      | UndefinedPrecedence, _ | _, UndefinedPrecedence ->
-	  0
-      | PrecedenceLevel (m, l, _, _), PrecedenceLevel (m', l', _, _) ->
+      | ProductionLevel (m, l), ProductionLevel (m', l') ->
 	  if Mark.same m m' then
 	    if l < l' then
 	      -1
