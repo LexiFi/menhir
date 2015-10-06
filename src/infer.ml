@@ -304,10 +304,16 @@ let infer grammar =
   in
 
   let output =
-    Option.project (
-      IO.with_file mlname (write grammar) (fun () ->
-        IO.invoke ocamlc_command
-    ))
+    write grammar ();
+    match IO.invoke ocamlc_command with
+    | Some result ->
+        Sys.remove mlname;
+        result
+    | None ->
+        (* 2015/10/05: intentionally do not remove the [.ml] file if [ocamlc]
+           fails. (Or if an exception is thrown.) We cannot understand why
+           [ocaml] complains if we can't see the [.ml] file. *)
+        exit 1
   in
 
   (* Make sense out of ocamlc's output. *)

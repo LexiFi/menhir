@@ -13,11 +13,17 @@ open CodeBits
 let tctoken =
   "token"
 
+let ttoken =
+  TypApp (tctoken, [])
+
 (* This is the conventional name of the token GADT, which describes
    the tokens. Same setup as above. *)
 
 let tctokengadt =
   "terminal"
+
+let ttokengadt a =
+  TypApp (tctokengadt, [ a ])
 
 (* This is the conventional name of the data constructors of
    the token GADT. *)
@@ -25,29 +31,45 @@ let tctokengadt =
 let ttokengadtdata token =
   "T_" ^ token
 
-(* This is the definition of the type of tokens. (Regardless of
-   [Settings.token_type_mode], which is examined below.) *)
+(* This is the definition of the type of tokens. It is defined as an algebraic
+   data type, unless [--external-tokens M] is set, in which case it is defined
+   as an abbreviation for the type [M.token]. *)
 
 let tokentypedef grammar =
-  let datadefs =
-    List.map (fun (token, typo) -> {
-      dataname = token;
-      datavalparams = (match typo with None -> [] | Some t -> [ TypTextual t ]);
-      datatypeparams = None
-    }) (typed_tokens grammar)
+  let typerhs =
+    match Settings.token_type_mode with
+    | Settings.TokenTypeOnly
+    | Settings.TokenTypeAndCode ->
+
+        (* Algebraic data type. *)
+
+        TDefSum (
+          List.map (fun (tok, typo) -> {
+            dataname = tok;
+            datavalparams = (match typo with None -> [] | Some t -> [ TypTextual t ]);
+            datatypeparams = None
+          }) (typed_tokens grammar)
+        )
+
+    | Settings.CodeOnly m ->
+
+        (* Type abbreviation. *)
+
+        TAbbrev (TypApp (m ^ "." ^ tctoken, []))
+
   in
   [
     IIComment "The type of tokens.";
     IITypeDecls [{
       typename = tctoken;
       typeparams = [];
-      typerhs = TDefSum datadefs;
+      typerhs;
       typeconstraint = None
     }]
   ]
 
-(* This is the definition of the token GADT. Here, the data
-   constructors have no value argument, but have a type index. *)
+(* This is the definition of the token GADT. Here, the data constructors have
+   no value argument, but have a type index. *)
 
 (* The token GADT is produced only when [Settings.inspection] is true. Thus,
    when [Settings.inspection] is false, we remain compatible with old versions
@@ -58,34 +80,56 @@ let tokentypedef grammar =
    [error] token (because this GADT must describe all of the tokens that are
    allowed to appear in a production). *)
 
+(* It is defined as a generalized algebraic data type, unless
+   [--external-tokens M] is set, in which case it is defined as an
+   abbreviation for the type ['a M.tokengadt]. *)
+
 let tokengadtdef grammar =
   assert Settings.inspection;
-  let errordata = {
-    dataname = ttokengadtdata "error";
-    datavalparams = [];
-    datatypeparams = Some [ tunit ]
-      (* the [error] token has a semantic value of type [unit] *)
-  } in
-  let datadefs =
-    (* The ordering of this list matters. We want the data constructors
-       to respect the internal ordering (as determined by [typed_tokens]
-       in [UnparameterizedSyntax]) of the terminal symbols. This may be
-       exploited in the table back-end to allow an unsafe conversion
-       of a data constructor to an integer code. See [t2i] in
-       [InspectionTableInterpreter]. *)
-    errordata ::
-    List.map (fun (token, typo) -> {
-      dataname = ttokengadtdata token;
-      datavalparams = [];
-      datatypeparams = Some [ match typo with None -> tunit | Some t -> TypTextual t ]
-    }) (typed_tokens grammar)
+  let param, typerhs =
+    match Settings.token_type_mode with
+    | Settings.TokenTypeOnly
+    | Settings.TokenTypeAndCode ->
+
+        (* Generalized algebraic data type. *)
+
+        let param = "_" in
+        param,
+        TDefSum (
+          (* The ordering of this list matters. We want the data constructors
+             to respect the internal ordering (as determined by [typed_tokens]
+             in [UnparameterizedSyntax]) of the terminal symbols. This may be
+             exploited in the table back-end to allow an unsafe conversion
+             of a data constructor to an integer code. See [t2i] in
+             [InspectionTableInterpreter]. *)
+          {
+            dataname = ttokengadtdata "error";
+            datavalparams = [];
+            datatypeparams = Some [ tunit ]
+              (* the [error] token has a semantic value of type [unit] *)
+          } ::
+          List.map (fun (token, typo) -> {
+            dataname = ttokengadtdata token;
+            datavalparams = [];
+            datatypeparams = Some [ match typo with None -> tunit | Some t -> TypTextual t ]
+          }) (typed_tokens grammar)
+        )
+
+    | Settings.CodeOnly m ->
+
+        (* Type abbreviation. *)
+
+        let param = "a" in
+        param,
+        TAbbrev (TypApp (m ^ "." ^ tctokengadt, [ TypVar param ]))
+
   in
   [
     IIComment "The indexed type of terminal symbols.";
     IITypeDecls [{
       typename = tctokengadt;
-      typeparams = [ "_" ];
-      typerhs = TDefSum datadefs;
+      typeparams = [ param ];
+      typerhs;
       typeconstraint = None
     }]
   ]
@@ -134,29 +178,10 @@ let produce_tokentypes grammar =
   | Settings.TokenTypeAndCode ->
       ()
 
-(* Define [tokentypedef] and [tokengadtdef], [tokenprefix]. *)
-
-let tokentypedef grammar =
-  match Settings.token_type_mode with
-  | Settings.CodeOnly _ ->
-      []
-  | Settings.TokenTypeAndCode ->
-      tokentypedef grammar
-  | Settings.TokenTypeOnly ->
-      (* This should not happen, as [produce_tokentype] should
-         have been called first. *)
-      assert false
-
-let tokengadtdef grammar =
-  match Settings.token_type_mode with
-  | Settings.CodeOnly _ ->
-      []
-  | Settings.TokenTypeAndCode ->
-      tokengadtdef grammar
-  | Settings.TokenTypeOnly ->
-      (* This should not happen, as [produce_tokentype] should
-         have been called first. *)
-      assert false
+(* The token type and the token GADTs can be referred to via a short
+   (unqualified) name, regardless of how they have been defined (either
+   directly or as an abbreviation). However, their data constructors must
+   be qualified if [--external-tokens] is set. *)
 
 let tokenprefix id =
   match Settings.token_type_mode with
@@ -167,23 +192,8 @@ let tokenprefix id =
   | Settings.TokenTypeOnly ->
       id (* irrelevant, really *)
 
-(* Redefine the name of the [token] type to take a possible
-   prefix into account. *)
-
-let tctoken =
-  tokenprefix tctoken
-
-let ttoken =
-  TypApp (tctoken, [])
-
 let tokendata =
   tokenprefix
-
-let tctokengadt =
-  tokenprefix tctokengadt
-
-let ttokengadt a =
-  TypApp (tctokengadt, [ a ])
 
 let tokengadtdata token =
   tokenprefix (ttokengadtdata token)

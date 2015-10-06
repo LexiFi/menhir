@@ -167,6 +167,8 @@ let interface grammar = [
 (* Writing the interface to a file. *)
 
 let write grammar () =
+  (* We have a dependency on [TokenType], which takes care of the case
+     where [token_type_mode] is [TokenTypeOnly]. *)
   assert (Settings.token_type_mode <> Settings.TokenTypeOnly);
   let mli = open_out (Settings.base ^ ".mli") in
   let module P = Printer.Make (struct
