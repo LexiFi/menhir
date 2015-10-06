@@ -1508,9 +1508,9 @@ module Precedence = struct
     | Gt -> 
 	Some prod2
     | Eq -> 
-	(* the order is strict except in presence of inlining: 
-	   two branches can have the same precedence level when
-	   they come from an inlined one. *)
+	(* The order is strict except in the presence of parameterized non-terminals.
+	   Two productions can have the same precedence level if they originate, via
+           macro-expansion, from a single production in the source grammar. *)
 	None
     | Ic -> 
 	None
