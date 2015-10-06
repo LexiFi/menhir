@@ -48,7 +48,7 @@ type token_properties =
 	       tk_ocamltype     : Stretch.ocamltype option;
 	       tk_position	: Positions.t;
       mutable  tk_associativity : token_associativity;
-      mutable  tk_priority      : precedence_level; (* TEMPORARY terminologie toujours pas coherente *)
+      mutable  tk_precedence    : precedence_level;
       mutable  tk_is_declared   : bool; 
     }
 

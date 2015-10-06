@@ -26,7 +26,7 @@ module TokPrecedence = struct
      level was useful. *)
 
   let levelip id properties =
-    lazy (use id), properties.tk_priority
+    lazy (use id), properties.tk_precedence
 
   let leveli id = 
     let properties =
@@ -43,7 +43,7 @@ module TokPrecedence = struct
   let diagnostics () =
     StringMap.iter (fun id properties ->
       if not (StringSet.mem id !ever_useful) then
-	match properties.tk_priority with
+	match properties.tk_precedence with
 	| UndefinedPrecedence ->
 	    ()
 	| PrecedenceLevel (_, _, pos1, pos2) ->
@@ -202,7 +202,7 @@ module Terminal = struct
     let not_so_dummy_properties = (* applicable to [error] and [#] *)
       {
 	tk_filename      = "__primitives__";
-	tk_priority      = UndefinedPrecedence;
+	tk_precedence    = UndefinedPrecedence;
 	tk_associativity = UndefinedAssoc;
 	tk_ocamltype     = None;
 	tk_is_declared   = true;

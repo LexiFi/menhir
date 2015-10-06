@@ -64,7 +64,7 @@ let join_declaration filename (grammar : grammar) decl =
 	    tk_filename      = filename; 
 	    tk_ocamltype     = ocamltype;
 	    tk_associativity = UndefinedAssoc;
-	    tk_priority      = UndefinedPrecedence;
+	    tk_precedence    = UndefinedPrecedence;
 	    tk_position      = decl.position;
 	    tk_is_declared   = true
 	  } 
@@ -101,7 +101,7 @@ let join_declaration filename (grammar : grammar) decl =
 	    tk_filename      = filename; 
 	    tk_ocamltype     = None;
 	    tk_associativity = UndefinedAssoc;
-	    tk_priority      = prec;
+	    tk_precedence    = prec;
 	    tk_is_declared   = false;
 	    (* Will be updated later. *)
 	    tk_position	     = decl.position;
@@ -119,7 +119,7 @@ let join_declaration filename (grammar : grammar) decl =
 
       (* Record the new declaration. *)
 
-      token_properties.tk_priority <- prec;
+      token_properties.tk_precedence <- prec;
       token_properties.tk_associativity <- assoc;
       grammar
 

@@ -54,7 +54,7 @@ let print_tokens mode b g =
   (* Sort tokens wrt precedence. *)
   let undefined, partition_tokens = 
     StringMap.fold (fun token prop acu ->
-      insert acu (token, prop.tk_priority)
+      insert acu (token, prop.tk_precedence)
     ) g.tokens ([], [])
   in
   let ordered_tokens =
