@@ -560,15 +560,12 @@ module Production = struct
   let (_ : int) = StringMap.fold (fun nonterminal { branches = branches } k ->
     let nt = Nonterminal.lookup nonterminal in
     let k' = List.fold_left (fun k branch ->
-      let action = branch.action
-      and sprec = branch.branch_shift_precedence 
-      and rprec = branch.branch_reduce_precedence in	
       let symbols = Array.of_list branch.producers in
       table.(k) <- (nt, Array.map (fun (v, _) -> Symbol.lookup v) symbols);
       identifiers.(k) <- Array.map snd symbols;
-      actions.(k) <- Some action;
-      reduce_precedence.(k) <- rprec;
-      prec_decl.(k) <- sprec;
+      actions.(k) <- Some branch.action;
+      reduce_precedence.(k) <- branch.branch_reduce_precedence;
+      prec_decl.(k) <- branch.branch_prec_annotation;
       positions.(k) <- [ branch.branch_position ];
       k+1
     ) k branches in
@@ -740,7 +737,7 @@ module Production = struct
   let combine e1 e2 =
     lazy (Lazy.force e1; Lazy.force e2)
 
-  let shift_precedence prod =
+  let precedence prod =
     let fact1, prec_decl = consult_prec_decl prod in
     let oterminal =
       match prec_decl with
@@ -1461,7 +1458,7 @@ module Precedence = struct
 
   let shift_reduce tok prod =
     let fact1, tokp  = Terminal.precedence_level tok
-    and fact2, prodp = Production.shift_precedence prod in
+    and fact2, prodp = Production.precedence prod in
     match precedence_order tokp prodp with
    
       (* Our information is inconclusive. Drop [fact1] and [fact2],

@@ -21,7 +21,7 @@ type branch =
       producers			: (symbol * identifier) list; (* TEMPORARY convention renversée
                                     par rapport à syntax.mli; faire un type record au lieu d'une paire? *)
       action			: action;
-      branch_shift_precedence	: branch_shift_precedence;
+      branch_prec_annotation	: branch_prec_annotation;
       branch_reduce_precedence  : branch_reduce_precedence
     }
 

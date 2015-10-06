@@ -222,7 +222,7 @@ production_group:
 	{
 	  pr_producers;
 	  pr_action;
-	  pr_branch_shift_precedence  = ParserAux.override pos oprec1 oprec2;
+	  pr_branch_prec_annotation   = ParserAux.override pos oprec1 oprec2;
 	  pr_branch_reduce_precedence = rprec;
 	  pr_branch_position          = pos
 	})

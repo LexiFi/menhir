@@ -650,9 +650,9 @@ let check_parameterized_grammar_is_well_defined grammar =
 
 	 (* Check each branch. *)
 	 (fun { pr_producers = producers; 
-	       pr_branch_shift_precedence = sprec;
-	       pr_action = action 
-	     } -> ignore (List.fold_left
+	        pr_branch_prec_annotation;
+	        pr_action = action 
+	      } -> ignore (List.fold_left
 
 	    (* Check the producers. *)
             (fun already_seen (id, p) ->
@@ -686,7 +686,7 @@ let check_parameterized_grammar_is_well_defined grammar =
 
 	    check_keywords producers action;
 
-            match sprec with
+            match pr_branch_prec_annotation with
 
               | None -> ()
 

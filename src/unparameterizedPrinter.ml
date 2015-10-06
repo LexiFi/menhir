@@ -131,7 +131,7 @@ let string_of_producer mode (symbol, ido) =
 let print_branch mode f branch = 
   Printf.fprintf f "%s%s\n    {"
     (String.concat " " (List.map (string_of_producer mode) branch.producers))
-    (Misc.o2s branch.branch_shift_precedence (fun x -> " %prec "^x.value));
+    (Misc.o2s branch.branch_prec_annotation (fun x -> " %prec "^x.value));
   begin match mode with
   | PrintNormal ->
       Action.print f branch.action  

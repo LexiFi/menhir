@@ -557,7 +557,7 @@ let expand p_grammar =
         branch_position          = pbranch.pr_branch_position;
 	producers		 = new_producers;
 	action			 = pbranch.pr_action;
-	branch_shift_precedence  = pbranch.pr_branch_shift_precedence;
+	branch_prec_annotation   = pbranch.pr_branch_prec_annotation;
 	branch_reduce_precedence = pbranch.pr_branch_reduce_precedence;
       }
 
