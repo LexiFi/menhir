@@ -86,7 +86,7 @@ declaration:
         Positions.mapd (fun nt -> DStart nt, DType ($2, ParameterVar ntloc)) ntloc) $3 }
 
 | priority_keyword symbols
-    { let prec = ParserAux.current_token_precedence (rhs_start_pos 1) (rhs_end_pos 1) in
+    { let prec = ParserAux.new_precedence_level (rhs_start_pos 1) (rhs_end_pos 1) in
       List.map (Positions.map (fun symbol -> DTokenProperties (symbol, $1, prec))) $2 }
 
 | PARAMETER OCAMLTYPE

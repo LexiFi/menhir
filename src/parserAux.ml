@@ -1,7 +1,7 @@
 open Positions
 open Syntax
 
-let current_token_precedence =
+let new_precedence_level =
   let c = ref 0 in
   fun pos1 pos2 ->
     incr c;

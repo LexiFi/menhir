@@ -3,9 +3,16 @@
 
 open Syntax
 
+(* [new_precedence_level pos1 pos2] creates a new precendence level,
+   which is stronger than any previously created levels, for tokens.
+   It should be called every time a [%left], [%right], or [%nonassoc]
+   declaration is found. The positions are the positions of this
+   declaration in the source code. *)
+
+val new_precedence_level: Lexing.position -> Lexing.position -> precedence_level
+
 (* TEMPORARY document *)
 
-val current_token_precedence: Lexing.position -> Lexing.position -> precedence_level
 val current_reduce_precedence: unit -> precedence_level
 
 (* [check_production_group] accepts a production group and checks that all
