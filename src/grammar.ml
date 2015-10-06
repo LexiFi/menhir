@@ -698,25 +698,43 @@ module Production = struct
   let tabulateb f =
     Misc.tabulateb n f
 
-  (* This array allows recording, on a production by production basis,
-     whether the production's shift precedence is ever useful. This
-     allows emitting warnings about useless %prec declarations. *)
+  (* This array allows recording, for each %prec declaration, whether it is
+     ever useful. This allows us to emit a warning about useless %prec
+     declarations. *)
 
-  let prec_decl_ever_useful =
-    Array.make n false
+  (* 2015/10/06: We take into account the fact that a %prec declaration can be
+     duplicated by inlining or by the expansion of parameterized non-terminal
+     symbols. Our table is not indexed by productions, but by positions (of
+     %prec declarations in the source). Thus, if a %prec declaration is
+     duplicated, at least one of its copies should be found useful for the
+     warning to be suppressed. *)
+
+  let ever_useful : (Positions.t, unit) Hashtbl.t =
+    (* assuming that generic hashing and equality on positions are OK *)
+    Hashtbl.create 16
 
   let consult_prec_decl prod =
-    lazy (prec_decl_ever_useful.(prod) <- true),
-    prec_decl.(prod)
+    let osym = prec_decl.(prod) in
+    lazy (
+      Option.iter (fun sym ->
+        (* Mark this %prec declaration as useful. *)
+        let pos = Positions.position sym in
+        Hashtbl.add ever_useful pos ()
+      ) osym
+    ),
+    osym
 
   let diagnostics () =
     iterx (fun prod ->
-      if not prec_decl_ever_useful.(prod) then
-	match prec_decl.(prod) with
-	| None ->
-	    ()
-	| Some id ->
-	    Error.grammar_warning [Positions.position id] "this %prec declaration is never useful."
+      let osym = prec_decl.(prod) in
+      Option.iter (fun sym ->
+        (* Check whether this %prec declaration was useless. *)
+        let pos = Positions.position sym in
+        if not (Hashtbl.mem ever_useful pos) then begin
+          Error.grammar_warning [pos] "this %prec declaration is never useful.";
+          Hashtbl.add ever_useful pos () (* hack: avoid two warnings at the same position *)
+        end
+      ) osym
     )
 
   (* Determining the precedence level of a production. If no %prec
