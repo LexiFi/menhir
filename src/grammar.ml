@@ -1505,12 +1505,13 @@ module Precedence = struct
     | Gt -> 
 	Some prod2
     | Eq -> 
-	(* The order is strict except in the presence of parameterized non-terminals.
-	   Two productions can have the same precedence level if they originate, via
-           macro-expansion, from a single production in the source grammar. *)
-	None
+        (* The order is strict except in the presence of parameterized
+           non-terminals and/or inlining. Two productions can have the same
+           precedence level if they originate, via macro-expansion or via
+           inlining, from a single production in the source grammar. *)
+        None
     | Ic -> 
-	None
+        None
 
 end
   
