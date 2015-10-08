@@ -12,15 +12,12 @@
    compute shortest paths in the automaton, and to use [Analysis.minimal] to
    replace each non-terminal symbol in a path with a minimal word that this
    symbol generates. One can indeed do so, but this yields only a lower bound
-   on the actual shortest path to the error at [s, z]. Indeed, two
-   difficulties arise:
-
-   - Some states have a default reduction. Thus, they will not trigger
-     an error, even though they should. The error is triggered in some
-     other state, after reduction takes place.
-
-   - If the grammar has conflicts, conflict resolution removes some
-     (shift or reduce) actions, hence may suppress the shortest path. *)
+   on the actual shortest path to the error at [s, z]. Indeed, several
+   difficulties arise, including the fact that reductions are subject to a
+   lookahead hypothesis; the fact that some states have a default reduction,
+   hence will never trigger an error; the fact that conflict resolution
+   removes some (shift or reduce) actions, hence may suppress the shortest
+   path. *)
 
 (* We explicitly choose to ignore the [error] token. Thus, we disregard any
    reductions or transitions that take place when the lookahead symbol is
