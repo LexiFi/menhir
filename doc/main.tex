@@ -2648,6 +2648,26 @@ incremental API (\sref{sec:incremental}) does not mention the type
 \verb+Lexing.lexbuf+. In this API, the parser expects to be supplied with
 triples of a token and start/end positions of type \verb+Lexing.position+.
 
+\question{I need both \dinline and non-\dinline versions of a non-terminal
+symbol. Is this possible?} Define an \dinline version first, then use it to
+define a non-\dinline version, like this:
+\begin{verbatim}
+%inline ioption(X):  (* nothing *) { None } | x = X { Some x }
+         option(X): o = ioption(X) { o }
+\end{verbatim}
+This can work even in the presence of recursion, as illustrated by the
+following definition of (reversed, left-recursive, possibly empty) lists:
+\begin{verbatim}
+%inline irevlist(X):    (* nothing *) { [] } | xs = revlist(X) x = X { x :: xs }
+         revlist(X): xs = irevlist(X) { xs }
+\end{verbatim}
+The definition of \verb+irevlist+ is expanded into the definition of \verb+revlist+,
+so in the end, \verb+revlist+ receives its normal, recursive definition. One can
+then view \verb+irevlist+ as a variant of \verb+revlist+ that is inlined one level
+deep.
+% Intentionally do not call this "list", because people may copy-paste this
+% definition, and will end up unintentionally redefining the meaning of *.
+
 % ---------------------------------------------------------------------------------------------------------------------
 
 \section{Technical background}
