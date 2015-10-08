@@ -463,7 +463,7 @@ let current fact =
    2. [fact.lookahead] is [any] iff the current state [current fact] is
       solid. This sounds rather reasonable (when a state is entered
       by shifting, it is entered regardless of which symbol follows)
-      and simplifies the implementation of the sub-module [T].
+      and simplifies the implementation of the sub-module [F].
 
 *)
 
@@ -498,10 +498,10 @@ module Q = LowIntegerPriorityQueue
 let q =
   Q.create()
 
-(* In principle, there is no need to insert the fact into the queue if [T]
+(* In principle, there is no need to insert the fact into the queue if [F]
    already stores a comparable fact. We could perform this test in [add].
    However, a quick experiment suggests that this is not worthwhile. The run
-   time augments (because membership in [T] is tested twice, upon inserting
+   time augments (because membership in [F] is tested twice, upon inserting
    and upon extracting) and the memory consumption does not seem to go down
    significantly. *)
 
@@ -551,7 +551,7 @@ let () =
 
 (* ------------------------------------------------------------------------ *)
 
-(* The module [T] maintains a set of known facts. *)
+(* The module [F] maintains a set of known facts. *)
 
 (* Three aspects of a fact are of particular interest:
    - its position [position], given by [fact.position];
@@ -570,7 +570,7 @@ let () =
    figures lead to a theoretical upper bound of 100M. In practice, for T=25K
    and n=108, we observe that the algorithm gathers about 7M facts.) *)
 
-module T : sig
+module F : sig
 
   (* [register fact] registers the fact [fact]. It returns [true] if this fact
      is new, i.e., no fact concerning the same triple of [position], [a], and
@@ -664,7 +664,7 @@ end = struct
     !count
 
   let verbose () =
-    Printf.eprintf "T stores %d facts.\n%!" (size())
+    Printf.eprintf "F stores %d facts.\n%!" (size())
 
 end
 
@@ -796,11 +796,11 @@ let new_edge s nt w z =
   assert (Terminal.real z);
   if E.register s nt w z then
     let sym = Symbol.N nt in
-    (* Query [T] for existing facts which could be extended by following
+    (* Query [F] for existing facts which could be extended by following
        this newly discovered edge. They must be facts whose current state
        is [s] and whose lookahead assumption is compatible with [a]. For
        each such fact, ... *)
-    T.query s (W.first w z) (fun fact ->
+    F.query s (W.first w z) (fun fact ->
       assert (compatible fact.lookahead (W.first w z));
       (* ... try to take one step in the trie along an edge labeled [nt]. *)
       match Trie.step sym fact.position with
@@ -973,7 +973,7 @@ let level, extracted, considered =
 let done_with_level () =
   Printf.eprintf "Done with level %d.\n" !level;
   W.verbose();
-  T.verbose();
+  F.verbose();
   E.verbose();
   Printf.eprintf "Q stores %d facts.\n" (Q.cardinal q);
   Printf.eprintf "%d facts extracted out of Q, of which %d considered.\n%!"
@@ -982,7 +982,7 @@ let done_with_level () =
 let () =
   Q.repeat q (fun fact ->
     incr extracted;
-    if T.register fact then begin
+    if F.register fact then begin
       if X.verbose && W.length fact.word > !level then begin
         done_with_level();
         level := W.length fact.word;
@@ -1230,8 +1230,8 @@ let () =
       Lr1.n
       (* Cumulated trie size. *)
       (Trie.cumulated_size())
-      (* Size of [T]. *)
-      (T.size())
+      (* Size of [F]. *)
+      (F.size())
       (* Size of [E]. *)
       (E.size())
       (* Elapsed user time, in seconds. *)
