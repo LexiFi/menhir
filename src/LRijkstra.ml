@@ -805,7 +805,7 @@ let new_edge s nt w z =
       (* ... try to take one step in the trie along an edge labeled [nt]. *)
       match Trie.step sym fact.position with
       | position ->
-          (* This takes up to a new state whose incoming symbol is [nt].
+          (* This takes us to a new state whose incoming symbol is [nt].
              Hence, this state is not solid. In order to satisfy invariant 2,
              we must create fact whose lookahead assumption is not [any].
              That's fine, since our lookahead assumption is [z]. In order to
