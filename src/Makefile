@@ -61,7 +61,11 @@ stage1:
 
 # Do not use . to refer to the current directory, because ocamlbuild
 # descends into another directory when executing commands.
-SRC   := $(shell pwd)
+# Do not use $(shell pwd) either, because this assumes we are running
+# on a Unix platform, and can fail on Windows.
+# So, use .., which works fine if ocamlbuild has effectively descended
+# into a subdirectory.
+SRC   := ..
 
 FLAGS := -v -lg 1 -la 1 -lc 1 --comment --infer --stdlib $(SRC) --strict --fixed-exception
 
