@@ -12,7 +12,7 @@
 
 BENCH=../bench/good
 MENHIR=_stage1/menhir.native
-BASE="-v -lg 1 -la 1"
+BASE="-v -lg 1"
 
 if [ $# -eq 0 ]
 then
