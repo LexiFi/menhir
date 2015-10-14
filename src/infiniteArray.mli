@@ -12,9 +12,6 @@ val get: 'a t -> int -> 'a
     [a] to [x]. Slots are numbered 0 and up. **)
 val set: 'a t -> int -> 'a -> unit
 
-(** [update a i f] is equivalent to [set a i (f (get a i))]. *)
-val update: 'a t -> int -> ('a -> 'a) -> unit
-
 (** [extent a] is the length of an initial segment of the array [a]
     that is sufficiently large to contain all [set] operations ever
     performed. In other words, all elements beyond that segment have
