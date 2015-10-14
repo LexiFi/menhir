@@ -44,7 +44,7 @@ let set a i x =
 
 let update a i f =
   ensure a i;
-  let x = a.table.(i) in
+  let x = Array.unsafe_get a.table (i) in
   Array.unsafe_set a.table (i) (f x);
   if a.extent <= i then
     a.extent <- i + 1
