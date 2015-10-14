@@ -109,7 +109,7 @@ module Terminal : sig
   val lookup : string -> t
 
   (* Terminals can be converted to integers. This feature is exploited
-     in the table-based back-end. *)
+     in the table-based back-end and in [LRijkstra]. *)
 
   val t2i: t -> int
 
