@@ -1,5 +1,3 @@
-(* $Id: parameterizedGrammar.mli,v 1.6 2005/12/01 16:20:06 regisgia Exp $ *)
-
 (* This turns a grammar where nonterminal symbols can be parameterized
    into a grammar where nonterminal symbols are not parameterized. The
    transformation is a textual expansion process, whose termination is

@@ -1,5 +1,3 @@
-(* $Id: infiniteArray.ml,v 1.6 2007/09/10 21:09:37 fpottier Exp $ *)
-
 (** This module implements infinite arrays, that is, arrays that grow
     transparently upon demand. *)
 

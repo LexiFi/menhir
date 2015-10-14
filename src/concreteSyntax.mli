@@ -1,4 +1,3 @@
-(* $Id: concreteSyntax.mli,v 1.3 2005/12/01 16:20:06 regisgia Exp $ *)
 type grammar =
     { 
       pg_filename	   : Syntax.filename;

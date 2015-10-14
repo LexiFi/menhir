@@ -1,5 +1,3 @@
-(* $Id: infiniteArray.mli,v 1.5 2007/09/10 21:09:37 fpottier Exp $ *)
-
 (** This module implements infinite arrays. **)
 type 'a t
 

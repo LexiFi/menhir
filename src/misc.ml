@@ -279,3 +279,6 @@ let new_intern capacity =
       !c (H.length table)
   in
   intern, verbose
+
+let new_intern_int capacity =
+  

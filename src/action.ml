@@ -1,5 +1,3 @@
-(* $Id: action.ml,v 1.10 2006/06/26 09:41:33 regisgia Exp $ *)
-
 open Keyword
 
 type t = 

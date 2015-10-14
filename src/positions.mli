@@ -1,5 +1,3 @@
-(* $Id: positions.mli,v 1.10 2005/12/01 16:20:07 regisgia Exp $ *)
-
 (* TEMPORARY faire un peu le ménage dans cette interface pléthorique? *)
 
 (** Extension of standard library's positions. *)

@@ -1,5 +1,3 @@
-(* $Id: listMonad.mli,v 1.2 2005/12/01 16:20:06 regisgia Exp $ *)
-
 (** Monad type which represents a list of results. *)
 type 'a m = 'a list
 

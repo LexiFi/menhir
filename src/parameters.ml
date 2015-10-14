@@ -1,5 +1,3 @@
-(* $Id: parameters.ml,v 1.12 2005/12/02 16:16:22 regisgia Exp $ *)
-
 (* TEMPORARY clean up and write an .mli file *)
 
 open Syntax

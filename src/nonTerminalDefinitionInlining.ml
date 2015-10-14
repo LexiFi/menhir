@@ -1,4 +1,3 @@
-(* $Id: nonTerminalDefinitionInlining.ml,v 1.17 2006/06/26 09:41:33 regisgia Exp $ *)
 open UnparameterizedSyntax
 open ListMonad
 

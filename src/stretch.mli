@@ -1,5 +1,3 @@
-(* $Id: stretch.mli,v 1.4 2005/12/01 16:20:07 regisgia Exp $ *)
-
 (* A stretch is a fragment of a source file. It holds the file name,
    the line number, and the line count (that is, the length) of the
    fragment. These are used for generating #line directives when the

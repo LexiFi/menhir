@@ -1,5 +1,3 @@
-(* $Id: unionFind.ml,v 1.5 2005/12/01 16:20:07 regisgia Exp $ *)
-
 (** This module implements a simple and efficient union/find algorithm.
     See Robert E. Tarjan, ``Efficiency of a Good But Not Linear Set
     Union Algorithm'', JACM 22(2), 1975. *)

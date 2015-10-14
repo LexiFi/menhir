@@ -1,5 +1,3 @@
-(* $Id: positions.ml,v 1.9 2005/12/01 16:20:07 regisgia Exp $ *)
-
 (* TEMPORARY vérifier que ces fonctions sont utilisées partout et
              de façon cohérente; interaction avec [Error]? *)
 
