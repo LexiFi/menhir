@@ -165,9 +165,15 @@ module Terminal : sig
      and a side effect (failure if there are more than 256 terminal
      symbols). *)
 
+  (* The type [word] should be treated, as much as possible, as an
+     abstract type. In fact, for efficiency reasons, we represent a
+     word as a unique integer codes, and we allocate these integer
+     codes sequentially, from 0 upwards. The conversion from [int]
+     to [word] is of course unsafe and should be used wisely. *)
+
   module Word (X : sig end) : sig
 
-    type word
+    type word = int
     val epsilon: word
     val singleton: t -> word
     val append: word -> word -> word

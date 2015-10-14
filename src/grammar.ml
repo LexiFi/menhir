@@ -283,32 +283,34 @@ module Terminal = struct
     let () =
       assert (n <= 256)
 
-    let (intern : string -> string), verbose =
-      Misc.new_intern 1023
+    let (encode : string -> int), (decode : int -> string), verbose =
+      Misc.new_encode_decode 1024
 
     type word =
-      string
+      int
 
     let epsilon =
-      ""
+      encode ""
 
-    (* TEMPORARY tabulate? *)
     let singleton t =
-      intern (String.make 1 (Char.chr t))
+      encode (String.make 1 (Char.chr t))
 
-    let append w1 w2 =
+    let append i1 i2 =
+      let w1 = decode i1
+      and w2 = decode i2 in
       if String.length w1 = 0 then
-        w2
+        i2
       else if String.length w2 = 0 then
-        w1
+        i1
       else
-        intern (w1 ^ w2)
+        encode (w1 ^ w2)
 
-    let length =
-      String.length
+    let length i =
+      String.length (decode i)
 
-    let first w z =
-      if length w > 0 then
+    let first i z =
+      let w = decode i in
+      if String.length w > 0 then
         Char.code w.[0]
       else
         z
@@ -319,17 +321,20 @@ module Terminal = struct
       else
         Char.code w.[i] :: elements (i + 1) n w
 
-    let elements w =
+    let elements i =
+      let w = decode i in
       elements 0 (String.length w) w
 
-    let print w =
+    let print i =
+      let w = decode i in
       Misc.separated_iter_to_string
         (fun c -> print (Char.code c))
         " "
         (fun f -> String.iter f w)
 
     (* [Pervasives.compare] implements a lexicographic ordering on strings. *)
-    let compare = Pervasives.compare
+    let compare i1 i2 =
+      Pervasives.compare (decode i1) (decode i2)
 
   end
 
