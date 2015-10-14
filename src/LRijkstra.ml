@@ -508,8 +508,11 @@ let () =
        You are using a %d-bit machine." Sys.word_size
     )
 
+let identity (fact : fact) : int =
+  fact lsr 38
+
 let position (fact : fact) : Trie.trie =
-  Trie.decode (fact lsr 38)
+  Trie.decode (identity fact)
 
 let word (fact : fact) : W.word =
   (fact lsr 8) land (1 lsl 30 - 1)
@@ -716,8 +719,11 @@ end = struct
       type t = fact
       let compare fact1 fact2 =
         assert (lookahead fact1 = lookahead fact2);
-        let c = Trie.compare (position fact1) (position fact2) in
-          (* TEMPORARY could compare positions without decoding *)
+        (* Compare the two positions first. This can be done without going
+           through [Trie.decode], by directly comparing the two integer
+           identities. *)
+        let c = Pervasives.compare (identity fact1) (identity fact2) in
+        assert (c = Trie.compare (position fact1) (position fact2));
         if c <> 0 then c else
         let z = lookahead fact1 in
         let a1 = W.first (word fact1) z
