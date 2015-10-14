@@ -23,6 +23,7 @@ let rec new_length length i =
     new_length (2 * length) i
 
 let ensure a i =
+  assert (0 <= i);
   let table = a.table in
   let length = Array.length table in
   if i >= length then begin
@@ -33,17 +34,17 @@ let ensure a i =
 
 let get a i =
   ensure a i;
-  a.table.(i)
+  Array.unsafe_get a.table (i)
 
 let set a i x =
   ensure a i;
-  a.table.(i) <- x;
+  Array.unsafe_set a.table (i) x;
   a.extent <- max (i + 1) a.extent
 
 let update a i f =
   ensure a i;
   let x = a.table.(i) in
-  a.table.(i) <- f x;
+  Array.unsafe_set a.table (i) (f x);
   a.extent <- max (i + 1) a.extent
 
 let extent a =
