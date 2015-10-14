@@ -259,13 +259,16 @@ let map_opt f l =
   ) [] l))
 
 let new_intern capacity =
+  (* Set up a a hash table, mapping strings to unique integers. *)
   let module H = Hashtbl.Make(struct
     type t = string
     let equal = (=)
     let hash = Hashtbl.hash
   end) in
   let table = H.create capacity in
+  (* This counts the calls to [intern]. *)
   let c = ref 0 in
+  (* A string is mapped to a unique string, as follows. *)
   let intern s =
     c := !c + 1;
     try
@@ -280,5 +283,37 @@ let new_intern capacity =
   in
   intern, verbose
 
-let new_intern_int capacity =
-  
+let new_encode_decode capacity =
+  (* Set up a a hash table, mapping strings to unique integers. *)
+  let module H = Hashtbl.Make(struct
+    type t = string
+    let equal = (=)
+    let hash = Hashtbl.hash
+  end) in
+  let table = H.create capacity in
+  (* Set up a resizable array, mapping integers to strings. *)
+  let text = MenhirLib.InfiniteArray.make "" in
+  (* This counts the calls to [encode]. *)
+  let c = ref 0 in
+  (* A string is mapped to a unique integer, as follows. *)
+  let encode (s : string) : int =
+    c := !c + 1;
+    try
+      H.find table s
+    with Not_found ->
+      (* The number of elements in the hash table is the next available
+         unique integer code. *)
+      let i = H.length table in
+      H.add table s i;
+      MenhirLib.InfiniteArray.set text i s;
+      i
+  (* An integer code can be mapped back to a string, as follows. *)
+  and decode (i : int) : string =
+    MenhirLib.InfiniteArray.get text i
+  and verbose () =
+    Printf.fprintf stderr
+      "%d calls to intern; %d unique strings.\n%!"
+      !c (H.length table)
+  in
+  encode, decode, verbose
+

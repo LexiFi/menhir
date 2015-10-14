@@ -170,3 +170,11 @@ val map_opt : ('a -> 'b option) -> 'a list -> 'b list
    the service so far. *)
 val new_intern: int -> (string -> string) * (unit -> unit)
 
+(* [new_encode_decode capacity] creates a new service for assigning unique
+   integer codes to strings. [capacity] is the initial capacity of the
+   internal hash table. [new_encode_decode] returns a triple [encode, decode,
+   verbose], where [encode] and [decode] translate between strings and unique
+   integer codes and [verbose] prints statistics about the use of the service
+   so far. *)
+val new_encode_decode: int -> (string -> int) * (int -> string) * (unit -> unit)
+
