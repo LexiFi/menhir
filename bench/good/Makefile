@@ -117,7 +117,7 @@ SINGLE    = $(shell ls *.mly | egrep -v '.*-([1-9]).mly')
 
 %.log: %.mly
 	@ echo "Now dealing with: $<" | tee -a $@
-	@ if (timeout $(TIMEOUT) $(MENHIR) --list-errors -la 2 $<) >>$@ 2>&1 ; then \
+	@ if (timeout $(TIMEOUT) $(MENHIR) --list-errors -la 2 --lalr $<) >>$@ 2>&1 ; then \
 	    echo "$<: success." | tee -a $@ ; \
           else \
 	    echo "$<: TIMEOUT (or failure)." | tee -a $@ ; \
