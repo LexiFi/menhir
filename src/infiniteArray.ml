@@ -39,13 +39,15 @@ let get a i =
 let set a i x =
   ensure a i;
   Array.unsafe_set a.table (i) x;
-  a.extent <- max (i + 1) a.extent
+  if a.extent <= i then
+    a.extent <- i + 1
 
 let update a i f =
   ensure a i;
   let x = a.table.(i) in
   Array.unsafe_set a.table (i) (f x);
-  a.extent <- max (i + 1) a.extent
+  if a.extent <= i then
+    a.extent <- i + 1
 
 let extent a =
   a.extent
