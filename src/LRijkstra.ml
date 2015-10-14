@@ -542,7 +542,7 @@ let mkfact p w l =
   assert (position fact == p);  (* round-trip property *)
   fact
 
-(* Accessors. *)
+(* Accessors. *) (* TEMPORARY remove? *)
 
 let source fact =
   Trie.source (position fact)
@@ -566,14 +566,12 @@ let current fact =
 
 *)
 
-let invariant1 fact =
-  let current = current fact
-  and lookahead = lookahead fact in
+let invariant1 position _word lookahead =
+  let current = Trie.current position in
   lookahead = any || not (causes_an_error current lookahead)
 
-let invariant2 fact =
-  let current = current fact
-  and lookahead = lookahead fact in
+let invariant2 position _word lookahead =
+  let current = Trie.current position in
   (lookahead = any) = is_solid current
 
 (* [compatible z a] checks whether the terminal symbol [a] satisfies the
@@ -602,20 +600,21 @@ let q =
   Q.create()
 
 (* In principle, there is no need to insert the fact into the queue if [F]
-   already stores a comparable fact. We could perform this test in [add].
+   already stores a comparable fact. We could perform this test in [enqueue].
    However, a quick experiment suggests that this is not worthwhile. The run
    time augments (because membership in [F] is tested twice, upon inserting
    and upon extracting) and the memory consumption does not seem to go down
    significantly. *)
 
-let add fact =
-  (* [fact.lookahead] can be [any], but cannot be [error] *)
-  assert (non_error (lookahead fact));
-  assert (invariant1 fact);
-  assert (invariant2 fact);
+let enqueue position word lookahead =
+  (* [lookahead] can be [any], but cannot be [error] *)
+  assert (non_error lookahead);
+  assert (invariant1 position word lookahead);
+  assert (invariant2 position word lookahead);
   (* The length of [fact.word] serves as the priority of this fact. *)
-  (* TEMPORARY we are decoding a word that we have just encoded *)
-  Q.add q fact (W.length (word fact))
+  let priority = W.length word in
+  (* Encode and enqueue this fact. *)
+  Q.add q (mkfact position word lookahead) priority
 
 (* ------------------------------------------------------------------------ *)
 
@@ -637,10 +636,10 @@ let () =
            an error in state [s]. *)
         let word = W.epsilon in
         if is_solid s then
-          add (mkfact position word any)
+          enqueue position word any
         else
           foreach_terminal_not_causing_an_error s (fun z ->
-            add (mkfact position word z)
+            enqueue position word z
           )
   );
   if X.verbose then
@@ -922,7 +921,7 @@ let new_edge s nt w z =
           assert (not (is_solid (Trie.current position)));
           if not (causes_an_error (Trie.current position) z) then
             let word = W.append (word fact) w in
-            add (mkfact position word z)
+            enqueue position word z
       | exception Not_found ->
           (* Could not take a step in the trie. This means this branch
              leads nowhere of interest, and was pruned when the trie
@@ -988,7 +987,7 @@ let new_fact fact =
 
         if compatible (lookahead fact) t then
           let word = W.append (word fact) (W.singleton t) in
-          add (mkfact position word any)
+          enqueue position word any
 
     | position, Symbol.N nt ->
 
@@ -1014,7 +1013,7 @@ let new_fact fact =
           E.query current nt (lookahead fact) z (fun w ->
             assert (compatible (lookahead fact) (W.first w z));
             let word = W.append (word fact) w in
-            add (mkfact position word z)
+            enqueue position word z
           )
         )
 
