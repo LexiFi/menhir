@@ -93,7 +93,7 @@ let non_error z =
   not (Terminal.equal z Terminal.error)
 
 (* We introduce a pseudo-terminal symbol [any]. It is used in several places
-   later on, in particular in the field [fact.lookahead], to encode the
+   later on, in particular in the [lookahead] field of a fact, to encode the
    absence of a lookahead hypothesis -- i.e., any terminal symbol will do. *)
 
 (* We choose to encode [any] as [#]. There is no risk of confusion, since we
@@ -465,12 +465,12 @@ end
 (* ------------------------------------------------------------------------ *)
 
 (* The main algorithm, [LRijkstra], accumulates facts. A fact is a triple of a
-   position (that is, a sub-trie), a word, and a lookahead assumption. Such a
-   fact means that this position can be reached, from the source state
-   [Trie.source fact.position], by consuming [fact.word], under the assumption
-   that the next input symbol is [fact.lookahead]. *)
+   [position] (that is, a sub-trie), a [word], and a [lookahead] assumption.
+   Such a fact means that this [position] can be reached, from the source
+   state [Trie.source position], by consuming [word], under the assumption
+   that the next input symbol is [lookahead]. *)
 
-(* We allow [fact.lookahead] to be [any] so as to indicate that this fact does
+(* We allow [lookahead] to be [any] so as to indicate that this fact does
    not have a lookahead assumption. *)
 
 (*
@@ -542,24 +542,16 @@ let mkfact p w l =
   assert (position fact == p);  (* round-trip property *)
   fact
 
-(* Accessors. *) (* TEMPORARY remove? *)
-
-let source fact =
-  Trie.source (position fact)
-
-let current fact =
-  Trie.current (position fact)
-
 (* Two invariants reduce the number of facts that we consider:
 
-   1. If [fact.lookahead] is a real terminal symbol [z] (i.e., not [any]),
-      then [z] does not cause an error in the current state [current fact].
+   1. If [lookahead] is a real terminal symbol [z] (i.e., not [any]),
+      then [z] does not cause an error in the [current] state.
       It would be useless to consider a fact that violates this property;
       this cannot possibly lead to a successful reduction. In practice,
       this refinement allows reducing the number of facts that go through
       the queue by a factor of two.
 
-   2. [fact.lookahead] is [any] iff the current state [current fact] is
+   2. [lookahead] is [any] iff the [current] state is
       solid. This sounds rather reasonable (when a state is entered
       by shifting, it is entered regardless of which symbol follows)
       and simplifies the implementation of the sub-module [F].
@@ -585,7 +577,7 @@ let compatible z a =
 (* ------------------------------------------------------------------------ *)
 
 (* As in Dijkstra's algorithm, a priority queue contains the facts that await
-   examination. The length of [fact.word] serves as the priority of a fact.
+   examination. The length of [word fact] serves as the priority of a fact.
    This guarantees that we discover shortest paths. (We never insert into the
    queue a fact whose priority is less than the priority of the last fact
    extracted out of the queue.) *)
@@ -611,7 +603,7 @@ let enqueue position word lookahead =
   assert (non_error lookahead);
   assert (invariant1 position word lookahead);
   assert (invariant2 position word lookahead);
-  (* The length of [fact.word] serves as the priority of this fact. *)
+  (* The length of [word] serves as the priority of this fact. *)
   let priority = W.length word in
   (* Encode and enqueue this fact. *)
   Q.add q (mkfact position word lookahead) priority
@@ -657,9 +649,9 @@ let () =
 (* The module [F] maintains a set of known facts. *)
 
 (* Three aspects of a fact are of particular interest:
-   - its position [position], given by [fact.position];
-   - its first symbol [a], given by [W.first fact.word fact.lookahead];
-   - its lookahead assumption [z], given by [fact.lookahead].
+   - its position [position], given by [position fact];
+   - its first symbol [a], given by [W.first (word fact) (lookahead fact)];
+   - its lookahead assumption [z], given by [lookahead fact].
 
    For every triple of [position], [a], and [z], we store at most one fact,
    (whose word has minimal length). Indeed, we are not interested in keeping
@@ -707,7 +699,7 @@ end = struct
      have the same [z] component, so only [position] and [a] are compared.
 
      Because our facts satisfy invariant 2, [z] is [any] if and only if the
-     state [current fact] is solid. This means that we are wasting quite a
+     state [current] is solid. This means that we are wasting quite a
      lot of space in the matrix (for a solid state, the whole line is empty,
      except for the [any] column). *)
 
@@ -742,7 +734,7 @@ end = struct
   let count = ref 0
 
   let register fact =
-    let current = current fact in
+    let current = Trie.current (position fact) in
     let z = lookahead fact in
     let i = index current z in
     let m = table.(i) in
@@ -940,25 +932,31 @@ let new_edge s nt w z =
      and enqueue new facts in the priority queue.
 
    - Sometimes, a fact can also be viewed as a newly discovered edge. This is
-     the case when the word that took us from [fact.source] to [fact.current]
-     represents a production of the grammar and [fact.current] is willing to
+     the case when the word that took us from [source] to [current]
+     represents a production of the grammar and [current] is willing to
      reduce this production. We record the existence of this edge, and
      re-inspect any previously discovered vertices which are interested in
      this outgoing edge. *)
 
 let new_fact fact =
 
-  (* TEMPORARY here and possibly elsewhere, avoid decoding [fact] several times *)
-  let current = current fact in
+  (* Throughout this rather long function, there is just one [fact]. Let's
+     name its components right now, so as to avoid accessing them several
+     times. (That could be costly, as it requires decoding the fact.) *)
+  let position = position fact 
+  and lookahead = lookahead fact
+  and word = word fact in
+  let source = Trie.source position
+  and current = Trie.current position in
 
   (* 1. View [fact] as a vertex. Examine the transitions out of [current].
      For every transition labeled by a symbol [sym] and into a state
      [target], ... *)
   
   Lr1.transitions current |> SymbolMap.iter (fun sym target ->
-    (* ... try to follow this transition in the trie [fact.position],
-       down to a child which we call [position]. *)
-    match Trie.step sym (position fact), sym with
+    (* ... try to follow this transition in the trie [position],
+       down to a child which we call [child]. *)
+    match Trie.step sym position, sym with
 
     | exception Not_found ->
 
@@ -966,16 +964,16 @@ let new_fact fact =
            leads nowhere of interest. *)
         ()
 
-    | position, Symbol.T t ->
+    | child, Symbol.T t ->
           
         (* 1a. The transition exists in the trie, and [sym] is in fact a
            terminal symbol [t]. We note that [t] cannot be the [error] token,
            because the trie does not have any edges labeled [error]. *)
-        assert (Lr1.Node.compare (Trie.current position) target = 0);
+        assert (Lr1.Node.compare (Trie.current child) target = 0);
         assert (is_solid target);
         assert (non_error t);
 
-        (* If the lookahead assumption [fact.lookahead] is compatible with
+        (* If the lookahead assumption [lookahead] is compatible with
            [t], then we derive a new fact, where one more edge has been taken,
            and enqueue this new fact for later examination. *)
         
@@ -985,15 +983,15 @@ let new_fact fact =
            in the new fact that we produce. If we did not have [any], we would
            have to produce one fact for every possible lookahead symbol. *)
 
-        if compatible (lookahead fact) t then
-          let word = W.append (word fact) (W.singleton t) in
-          enqueue position word any
+        if compatible lookahead t then
+          let word = W.append word (W.singleton t) in
+          enqueue child word any
 
-    | position, Symbol.N nt ->
+    | child, Symbol.N nt ->
 
         (* 1b. The transition exists in the trie, and [sym] is in fact a
            nonterminal symbol [nt]. *)
-         assert (Lr1.Node.compare (Trie.current position) target = 0);
+         assert (Lr1.Node.compare (Trie.current child) target = 0);
          assert (not (is_solid target));
 
         (* We need to know how this nonterminal edge can be taken. We query
@@ -1001,7 +999,7 @@ let new_fact fact =
            the answer depends on the terminal symbol [z] that comes *after*
            this word: we try all such symbols. We must make sure that the
            first symbol of the word [w.z] satisfies the lookahead assumption
-           [fact.lookahead]; this is ensured by passing this information to
+           [lookahead]; this is ensured by passing this information to
            [E.query]. *)
 
         (* It could be the case that, due to a default reduction, the answer
@@ -1010,34 +1008,34 @@ let new_fact fact =
            advantage of this to increase performance, seems difficult. *)
 
         foreach_terminal_not_causing_an_error target (fun z ->
-          E.query current nt (lookahead fact) z (fun w ->
-            assert (compatible (lookahead fact) (W.first w z));
-            let word = W.append (word fact) w in
-            enqueue position word z
+          E.query current nt lookahead z (fun w ->
+            assert (compatible lookahead (W.first w z));
+            let word = W.append word w in
+            enqueue child word z
           )
         )
 
   );
 
   (* 2. View [fact] as a possible edge. This is possible if the path from
-     [fact.source] to the [current] state represents a production [prod] and
+     [source] to the [current] state represents a production [prod] and
      [current] is willing to reduce this production. Then, reducing [prod]
-     takes us all the way back to [fact.source]. Thus, this production gives
+     takes us all the way back to [source]. Thus, this production gives
      rise to an edge labeled [nt] -- the left-hand side of [prod] -- out of
-     [fact.source]. *)
+     [source]. *)
 
-  let z = lookahead fact in
+  let z = lookahead in
   if not (Terminal.equal z any) then begin
 
     (* 2a. The lookahead assumption [z] is a real terminal symbol. We check
        whether [current] is willing to reduce some production [prod] on [z],
-       and whether the sub-trie [fact.position] accepts [prod], which means
+       and whether the sub-trie [position] accepts [prod], which means
        that this reduction takes us back to the root of the trie. If so, we
        have discovered a new edge. *)
 
     match has_reduction current z with
-    | Some prod when Trie.accepts prod (position fact) ->
-        new_edge (source fact) (Production.nt prod) (word fact) z
+    | Some prod when Trie.accepts prod position ->
+        new_edge source (Production.nt prod) word z
     | _ ->
         ()
 
@@ -1046,22 +1044,22 @@ let new_fact fact =
 
     (* 2b. The lookahead assumption is [any]. We must consider every pair
        [prod, z] such that the [current] state can reduce [prod] on [z]
-       and [fact.position] accepts [prod]. *)
+       and [position] accepts [prod]. *)
 
     match Invariant.has_default_reduction current with
     | Some (prod, _) ->
-        if Trie.accepts prod (position fact) then
+        if Trie.accepts prod position then
           (* [new_edge] does not accept [any] as its 4th parameter, so we
              must iterate over all terminal symbols. *)
           foreach_terminal (fun z ->
-            new_edge (source fact) (Production.nt prod) (word fact) z
+            new_edge source (Production.nt prod) word z
           )
     | None ->
        TerminalMap.iter (fun z prods ->
          if non_error z then
            let prod = Misc.single prods in
-           if Trie.accepts prod (position fact) then
-             new_edge (source fact) (Production.nt prod) (word fact) z
+           if Trie.accepts prod position then
+             new_edge source (Production.nt prod) word z
        ) (Lr1.reductions current)
 
   end
@@ -1070,7 +1068,7 @@ let new_fact fact =
 
 (* The main loop of the algorithm. *)
 
-(* [level] is the length of [fact.word] for the facts that we are examining
+(* [level] is the length of [word fact] for the facts that we are examining
    at the moment. [extracted] counts how many facts we have extracted out of
    the priority queue. [considered] counts how many of these were found to
    be new, and subsequently passed to [new_fact]. *)
