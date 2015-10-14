@@ -214,6 +214,29 @@ let is_solid s =
   | Some (Symbol.N _) ->
     false
 
+(* [reduction_path_exists s w prod] tests whether the path determined by the
+   sequence of symbols [w] out of the state [s] exists in the automaton and
+   leads to a state where [prod] can be reduced. It further requires [w] to
+   not contain the [error] token. Finally, it it sees the [error] token, it
+   sets the flag [grammar_uses_error]. *)
+
+let grammar_uses_error =
+  ref false
+
+let rec reduction_path_exists s (w : Symbol.t list) prod : bool =
+  match w with
+  | [] ->
+      can_reduce s prod
+  | (Symbol.T t) :: _ when Terminal.equal t Terminal.error ->
+      grammar_uses_error := true;
+      false
+  | a :: w ->
+      match SymbolMap.find a (Lr1.transitions s) with
+      | s ->
+          reduction_path_exists s w prod
+      | exception Not_found ->
+          false
+
 (* ------------------------------------------------------------------------ *)
 
 (* Suppose [s] is a state that carries an outgoing edge labeled with a
@@ -227,9 +250,6 @@ let is_solid s =
    While the algorithm runs, a point in the trie (that is, a sub-trie) tells
    us where we come from, where we are, and which production(s) we are hoping
    to reduce in the future. *)
-
-let grammar_uses_error =
-  ref false
 
 module Trie : sig
 
@@ -277,6 +297,13 @@ module Trie : sig
   (* [verbose()] outputs debugging & performance information. *)
   val verbose: unit -> unit
 
+  (* Since every (sub-)trie has a unique identity, its identity can serve
+     as a unique integer code for this (sub-)trie. We allow this conversion,
+     both ways. This mechanism is used only as a way of saving space in the
+     encoding of facts. *)
+  val encode: trie -> int
+  val decode: int -> trie
+
 end = struct
 
   (* A trie has the following structure. *)
@@ -293,74 +320,72 @@ end = struct
     (* The productions that we can reduce in the current state. In other
        words, if this list is nonempty, then the current state is the end
        of one (or several) branches. It can nonetheless have children. *)
-    productions: Production.index list;
+    mutable productions: Production.index list;
     (* The children, or sub-tries. *)
-    transitions: trie SymbolMap.t
+    mutable transitions: trie SymbolMap.t
+    (* The two fields above are written only during the construction of a
+       trie. Once every trie has been constructed, they are frozen. *)
   }
 
   (* This counter is used by [mktrie] to produce unique identities. *)
   let c = ref 0
 
+  (* We keep a mapping of integer identities to tries. Whenever a new
+     identity is assigned, this mapping must be updated. *)
+  let tries =
+    let s : Lr1.node = Obj.magic () in (* yes, this hurts *)
+    let dummy = { identity = -1; source = s; current = s;
+                  productions = []; transitions = SymbolMap.empty } in
+    MenhirLib.InfiniteArray.make dummy
+
   (* This smart constructor creates a new trie with a unique identity. *)
   let mktrie source current productions transitions =
     let identity = Misc.postincrement c in
-    { identity; source; current; productions; transitions }
+    let t = { identity; source; current; productions; transitions } in
+    MenhirLib.InfiniteArray.set tries identity t;
+    t
 
-  exception DeadBranch
+  (* [insert t w prod] updates the trie (in place) by adding a new branch,
+     corresponding to the sequence of symbols [w], and ending with a reduction
+     of production [prod]. We assume [reduction_path_exists w prod t.current]
+     holds, so we need not worry about this being a dead branch, and we can
+     use destructive updates without having to set up an undo mechanism. *)
 
-  let rec insert w prod t =
+  let rec insert (t : trie) (w : Symbol.t list) prod : unit =
     match w with
     | [] ->
-        (* We check whether the current state [t.current] is able to reduce
-           production [prod]. (If [prod] cannot be reduced, the reduction
-           action must have been suppressed by conflict resolution.) If not,
-           then this branch is dead. This test is superfluous (i.e., it would
-           be OK to conservatively assume that [prod] can be reduced) but
-           allows us to build a slightly smaller star in some cases. *)
-        if can_reduce t.current prod then
-          (* We consume (update) the trie [t], so there is no need to allocate
-             a new stamp. (Of course we could allocate a new stamp, but I prefer
-             to be precise.) *)
-          { t with productions = prod :: t.productions }
-        else
-          raise DeadBranch
-    | (Symbol.T t) :: _ when Terminal.equal t Terminal.error ->
-         grammar_uses_error := true;
-         raise DeadBranch
+        assert (can_reduce t.current prod);
+        t.productions <- prod :: t.productions
     | a :: w ->
-        (* Check if there is a transition labeled [a] out of [t.current]. If
-           there is, we add a child to the trie [t]. If there isn't, then it
-           must have been removed by conflict resolution. (Indeed, it must be
-           present in a canonical automaton.) We could in this case return an
-           unchanged sub-trie. We can do slightly better: we abort the whole
-           insertion, so as to return an unchanged toplevel trie. *)
         match SymbolMap.find a (Lr1.transitions t.current) with
+        | exception Not_found ->
+            assert false
         | successor ->
             (* Find our child at [a], or create it. *)
             let t' =
               try
                 SymbolMap.find a t.transitions
               with Not_found ->
-                mktrie t.source successor [] SymbolMap.empty
+                let t' = mktrie t.source successor [] SymbolMap.empty in
+                t.transitions <- SymbolMap.add a t' t.transitions;
+                t'
             in
-            (* Update the child [t']. *)
-            let t' = insert w prod t' in
-            (* Update [t]. Again, no need to allocate a new stamp. *)
-            { t with transitions = SymbolMap.add a t' t.transitions }
-        | exception Not_found ->
-            raise DeadBranch
+            (* Update our child. *)
+            insert t' w prod
 
-  (* [insert prod t] inserts a new branch, corresponding to production
-     [prod], into the trie [t]. This function consumes its argument,
-     which should no longer be used afterwards. *)
-  let insert prod t =
+  (* [insert t prod] inserts a new branch, corresponding to production
+     [prod], into the trie [t], which is updated in place. *)
+  let insert t prod : unit =
     let w = Array.to_list (Production.rhs prod) in
-    let save = !c in
-    try
-      insert w prod t
-    with DeadBranch ->
-      c := save;
-      t
+    (* Check whether the path [w] leads to a state where [prod] can be
+       reduced. If not, then some transition or reduction action must
+       have been suppressed by conflict resolution; or the path [w]
+       involves the [error] token. In that case, the branch is dead,
+       and is not added. This test is superfluous (i.e., it would
+       be OK to add a dead branch) but allows us to build a slightly
+       smaller star in some cases. *)
+    if reduction_path_exists t.current w prod then
+      insert t w prod
 
   (* [fresh s] creates a new empty trie whose source is [s]. *)
   let fresh source =
@@ -370,13 +395,15 @@ end = struct
      inserting into it every production [prod] whose left-hand side [nt]
      is the label of an outgoing edge at [s]. *)
   let star s =
-    SymbolMap.fold (fun sym _ accu ->
+    let t = fresh s in
+    SymbolMap.iter (fun sym _ ->
       match sym with
       | Symbol.T _ ->
-          accu
+          ()
       | Symbol.N nt ->
-          Production.foldnt nt accu insert
-    ) (Lr1.transitions s) (fresh s)
+          Production.iternt nt (insert t)
+    ) (Lr1.transitions s);
+    t
 
   (* A trie [t] is nontrivial if it has at least one branch, i.e., contains at
      least one sub-trie whose [productions] field is nonempty. Trivia: a trie
@@ -424,6 +451,15 @@ end = struct
   let verbose () =
     Printf.eprintf "Cumulated star size: %d\n%!" (cumulated_size())
 
+  let decode i =
+    let t = MenhirLib.InfiniteArray.get tries i in
+    assert (t.identity = i); (* ensure we do not get the [dummy] trie *)
+    t
+
+  let encode t =
+    assert (decode t.identity == t); (* round-trip property *)
+    t.identity
+
 end
 
 (* ------------------------------------------------------------------------ *)
@@ -437,19 +473,79 @@ end
 (* We allow [fact.lookahead] to be [any] so as to indicate that this fact does
    not have a lookahead assumption. *)
 
+(*
+
 type fact = {
   position: Trie.trie;
   word: W.word;
   lookahead: Terminal.t (* may be [any] *)
 }
 
+*)
+
+(* To save memory (and therefore time), we encode a fact in a single OCaml
+   integer value. This is made possible by the fact that tries, words, and
+   terminal symbols are represented as (or can be encoded as) integers. 
+   This admittedly horrible hack allows us to save roughly a factor of 2
+   in space, and to gain 10% in time. *)
+
+type fact = int
+
+(* Encoding and decoding facts. *)
+
+(* The lookahead symbol fits in 8 bits. In the largest grammars that we have
+   seen, the number of unique words is about 3.10^5, so a word should fit in
+   about 19 bits (2^19 = 524288). In the largest grammars that we have seen,
+   the cumulated star size is about 64000, so a trie should fit in about 17
+   bits (2^17 = 131072). We have ample space in a 63-bit word! We allocate 8
+   bits for [lookahead], 30 bits for [word], and 25 bits for [position]. We
+   could support 32-bit machines too, but that is probably pointless. *)
+
+let () =
+  if Sys.word_size < 64 then
+    Error.error [] (Printf.sprintf
+      "--list-errors requires a 64-bit machine.\n\
+       You are using a %d-bit machine." Sys.word_size
+    )
+
+let position (fact : fact) : Trie.trie =
+  Trie.decode (fact lsr 38)
+
+let word (fact : fact) : W.word =
+  (fact lsr 8) land (1 lsl 30 - 1)
+
+let lookahead (fact : fact) : Terminal.t =
+  Terminal.i2t (fact land (1 lsl 8 - 1))
+
+let mkfact position (word : W.word) lookahead =
+  let position : int = Trie.encode position
+  and word : int = word
+  and lookahead : int = Terminal.t2i lookahead in
+  assert (0 <= position && 0 <= word && 0 <= lookahead);
+  assert (lookahead < 1 lsl 8);
+  if position < 1 lsl 25 && word < 1 lsl 30 then
+    (position lsl 38) lor (word lsl 8) lor lookahead
+  else
+    Error.error [] (Printf.sprintf
+      "Internal error: a hardwired limit was exceeded.\n\
+       Position = %d. Word = %d.\n\
+       Please report this error to Menhir's developers.\n%!"
+      position word)
+
+let mkfact p w l =
+  let fact = mkfact p w l in
+  assert (word fact == w);      (* round-trip property *)
+  assert (lookahead fact == l); (* round-trip property *)
+  assert (position fact == p);  (* round-trip property *)
+  fact
+
 (* Accessors. *)
 
 let source fact =
-  Trie.source fact.position
+  Trie.source (position fact)
 
 let current fact =
-  Trie.current fact.position
+  Trie.current (position fact)
 
 (* Two invariants reduce the number of facts that we consider:
 
@@ -468,10 +564,14 @@ let current fact =
 *)
 
 let invariant1 fact =
-  fact.lookahead = any || not (causes_an_error (current fact) fact.lookahead)
+  let current = current fact
+  and lookahead = lookahead fact in
+  lookahead = any || not (causes_an_error current lookahead)
 
 let invariant2 fact =
-  (fact.lookahead = any) = is_solid (current fact)
+  let current = current fact
+  and lookahead = lookahead fact in
+  (lookahead = any) = is_solid current
 
 (* [compatible z a] checks whether the terminal symbol [a] satisfies the
    lookahead assumption [z] -- which can be [any]. *)
@@ -507,11 +607,12 @@ let q =
 
 let add fact =
   (* [fact.lookahead] can be [any], but cannot be [error] *)
-  assert (non_error fact.lookahead);
+  assert (non_error (lookahead fact));
   assert (invariant1 fact);
   assert (invariant2 fact);
   (* The length of [fact.word] serves as the priority of this fact. *)
-  Q.add q fact (W.length fact.word)
+  (* TEMPORARY we are decoding a word that we have just encoded *)
+  Q.add q fact (W.length (word fact))
 
 (* ------------------------------------------------------------------------ *)
 
@@ -533,10 +634,10 @@ let () =
            an error in state [s]. *)
         let word = W.epsilon in
         if is_solid s then
-          add { position; word; lookahead = any }
+          add (mkfact position word any)
         else
           foreach_terminal_not_causing_an_error s (fun z ->
-            add { position; word; lookahead = z }
+            add (mkfact position word z)
           )
   );
   if X.verbose then
@@ -614,12 +715,13 @@ end = struct
     MySet.Make(struct
       type t = fact
       let compare fact1 fact2 =
-        assert (fact1.lookahead = fact2.lookahead);
-        let c = Trie.compare fact1.position fact2.position in
+        assert (lookahead fact1 = lookahead fact2);
+        let c = Trie.compare (position fact1) (position fact2) in
+          (* TEMPORARY could compare positions without decoding *)
         if c <> 0 then c else
-        let z = fact1.lookahead in
-        let a1 = W.first fact1.word z
-        and a2 = W.first fact2.word z in
+        let z = lookahead fact1 in
+        let a1 = W.first (word fact1) z
+        and a2 = W.first (word fact2) z in
         (* note: [a1] and [a2] can be [any] here *)
         Terminal.compare a1 a2
     end)
@@ -636,7 +738,7 @@ end = struct
 
   let register fact =
     let current = current fact in
-    let z = fact.lookahead in
+    let z = lookahead fact in
     let i = index current z in
     let m = table.(i) in
     (* We crucially rely on the fact that [M.add] guarantees not to
@@ -801,9 +903,9 @@ let new_edge s nt w z =
        is [s] and whose lookahead assumption is compatible with [a]. For
        each such fact, ... *)
     F.query s (W.first w z) (fun fact ->
-      assert (compatible fact.lookahead (W.first w z));
+      assert (compatible (lookahead fact) (W.first w z));
       (* ... try to take one step in the trie along an edge labeled [nt]. *)
-      match Trie.step sym fact.position with
+      match Trie.step sym (position fact) with
       | position ->
           (* This takes us to a new state whose incoming symbol is [nt].
              Hence, this state is not solid. In order to satisfy invariant 2,
@@ -813,8 +915,8 @@ let new_edge s nt w z =
              error in this state. *)
           assert (not (is_solid (Trie.current position)));
           if not (causes_an_error (Trie.current position) z) then
-            let word = W.append fact.word w in
-            add { position; word; lookahead = z }
+            let word = W.append (word fact) w in
+            add (mkfact position word z)
       | exception Not_found ->
           (* Could not take a step in the trie. This means this branch
              leads nowhere of interest, and was pruned when the trie
@@ -841,6 +943,7 @@ let new_edge s nt w z =
 
 let new_fact fact =
 
+  (* TEMPORARY here and possibly elsewhere, avoid decoding [fact] several times *)
   let current = current fact in
 
   (* 1. View [fact] as a vertex. Examine the transitions out of [current].
@@ -850,7 +953,7 @@ let new_fact fact =
   Lr1.transitions current |> SymbolMap.iter (fun sym target ->
     (* ... try to follow this transition in the trie [fact.position],
        down to a child which we call [position]. *)
-    match Trie.step sym fact.position, sym with
+    match Trie.step sym (position fact), sym with
 
     | exception Not_found ->
 
@@ -877,9 +980,9 @@ let new_fact fact =
            in the new fact that we produce. If we did not have [any], we would
            have to produce one fact for every possible lookahead symbol. *)
 
-        if compatible fact.lookahead t then
-          let word = W.append fact.word (W.singleton t) in
-          add { position; word; lookahead = any }
+        if compatible (lookahead fact) t then
+          let word = W.append (word fact) (W.singleton t) in
+          add (mkfact position word any)
 
     | position, Symbol.N nt ->
 
@@ -902,10 +1005,10 @@ let new_fact fact =
            advantage of this to increase performance, seems difficult. *)
 
         foreach_terminal_not_causing_an_error target (fun z ->
-          E.query current nt fact.lookahead z (fun w ->
-            assert (compatible fact.lookahead (W.first w z));
-            let word = W.append fact.word w in
-            add { position; word; lookahead = z }
+          E.query current nt (lookahead fact) z (fun w ->
+            assert (compatible (lookahead fact) (W.first w z));
+            let word = W.append (word fact) w in
+            add (mkfact position word z)
           )
         )
 
@@ -918,7 +1021,7 @@ let new_fact fact =
      rise to an edge labeled [nt] -- the left-hand side of [prod] -- out of
      [fact.source]. *)
 
-  let z = fact.lookahead in
+  let z = lookahead fact in
   if not (Terminal.equal z any) then begin
 
     (* 2a. The lookahead assumption [z] is a real terminal symbol. We check
@@ -928,8 +1031,8 @@ let new_fact fact =
        have discovered a new edge. *)
 
     match has_reduction current z with
-    | Some prod when Trie.accepts prod fact.position ->
-        new_edge (source fact) (Production.nt prod) fact.word z
+    | Some prod when Trie.accepts prod (position fact) ->
+        new_edge (source fact) (Production.nt prod) (word fact) z
     | _ ->
         ()
 
@@ -942,18 +1045,18 @@ let new_fact fact =
 
     match Invariant.has_default_reduction current with
     | Some (prod, _) ->
-        if Trie.accepts prod fact.position then
+        if Trie.accepts prod (position fact) then
           (* [new_edge] does not accept [any] as its 4th parameter, so we
              must iterate over all terminal symbols. *)
           foreach_terminal (fun z ->
-            new_edge (source fact) (Production.nt prod) fact.word z
+            new_edge (source fact) (Production.nt prod) (word fact) z
           )
     | None ->
        TerminalMap.iter (fun z prods ->
          if non_error z then
            let prod = Misc.single prods in
-           if Trie.accepts prod fact.position then
-             new_edge (source fact) (Production.nt prod) fact.word z
+           if Trie.accepts prod (position fact) then
+             new_edge (source fact) (Production.nt prod) (word fact) z
        ) (Lr1.reductions current)
 
   end
@@ -983,9 +1086,9 @@ let () =
   Q.repeat q (fun fact ->
     incr extracted;
     if F.register fact then begin
-      if X.verbose && W.length fact.word > !level then begin
+      if X.verbose && W.length (word fact) > !level then begin
         done_with_level();
-        level := W.length fact.word;
+        level := W.length (word fact);
       end;
       incr considered;
       new_fact fact
