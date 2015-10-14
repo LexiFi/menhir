@@ -23,11 +23,11 @@ let length a =
 
 let get a i =
   assert (0 <= i && i < a.size);
-  a.table.(i)
+  Array.unsafe_get a.table (i)
 
 let set a i x =
   assert (0 <= i && i < a.size);
-  a.table.(i) <- x
+  Array.unsafe_set a.table (i) x
 
 let resize a s =
   assert (s >= 0);
@@ -47,5 +47,5 @@ let resize a s =
       a.table <- table
     end;
     a.size <- s
-  end
-
+  end;
+  assert (a.size <= Array.length a.table)
