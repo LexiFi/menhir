@@ -153,6 +153,7 @@ module Terminal = struct
   type t = int
 
   let t2i i = i
+  let i2t i = i
 
   let compare = (-)
 

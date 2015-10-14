@@ -108,10 +108,12 @@ module Terminal : sig
 
   val lookup : string -> t
 
-  (* Terminals can be converted to integers. This feature is exploited
-     in the table-based back-end and in [LRijkstra]. *)
+  (* Terminals can be converted to integers. This feature is exploited in the
+     table-based back-end and in [LRijkstra]. The reverse conversion, [i2t],
+     is unsafe and should not be used. [LRijkstra] uses it :-) *)
 
   val t2i: t -> int
+  val i2t: int -> t (* unsafe! *)
 
   (* This produces a string representation of a terminal. *)
 
