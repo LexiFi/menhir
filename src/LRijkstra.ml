@@ -491,6 +491,9 @@ type fact = {
 
 type fact = int
 
+let dummy : fact =
+  -1 (* should never be accessed! *)
+
 (* Encoding and decoding facts. *)
 
 (* The lookahead symbol fits in 8 bits. In the largest grammars that we have
@@ -509,12 +512,15 @@ let () =
     )
 
 let identity (fact : fact) : int =
+  assert (fact <> dummy);
   fact lsr 38
 
 let position (fact : fact) : Trie.trie =
+  assert (fact <> dummy);
   Trie.decode (identity fact)
 
 let word (fact : fact) : W.word =
+  assert (fact <> dummy);
   (fact lsr 8) land (1 lsl 30 - 1)
 
 let lookahead (fact : fact) : Terminal.t =
@@ -589,7 +595,7 @@ let compatible z a =
 module Q = LowIntegerPriorityQueue
 
 let q =
-  Q.create()
+  Q.create dummy
 
 (* In principle, there is no need to insert the fact into the queue if [F]
    already stores a comparable fact. We could perform this test in [enqueue].

@@ -4,8 +4,9 @@
 (** The type of priority queues. *)
 type 'a t
 
-(** [create()] creates an empty priority queue. *)
-val create: unit -> 'a t
+(** [create default] creates an empty priority queue. The [default] value is
+    used to fill empty physical slots, but is otherwise irrelevant. *)
+val create: 'a -> 'a t
 
 (** [add q x p] inserts the element [x], with priority [p], into the queue [q]. *)
 val add: 'a t -> 'a -> int -> unit

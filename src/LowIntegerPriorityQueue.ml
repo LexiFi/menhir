@@ -1,17 +1,19 @@
 (* This module implements a simple-minded priority queue, under the assumption
    that priorities are low nonnegative integers. *)
 
-module InfiniteArray = MenhirLib.InfiniteArray
+module MyArray = ResizableArray
+module MyStack = ResizableArray
 
 type 'a t = {
 
-  (* A priority queue is represented as an array of lists, indexed by
-     priorities. There is no a priori bound on the size of this array -- its
-     size is increased if needed. It is up to the user to use priorities of
-     reasonable magnitude. *)
-  a: 'a list InfiniteArray.t;
+  (* A priority queue is represented as a resizable array, indexed by
+     priorities, of stacks (implemented as resizable arrays). There is no a
+     priori bound on the size of the main array -- its size is increased if
+     needed. It is up to the user to use priorities of reasonable
+     magnitude. *)
+  a: 'a MyStack.t MyArray.t;
 
-  (* Index of lowest nonempty list, if there is one; or lower (sub-optimal,
+  (* Index of lowest nonempty stack, if there is one; or lower (sub-optimal,
      but safe). If the queue is empty, [best] is arbitrary. *)
   mutable best: int;
 
@@ -21,17 +23,26 @@ type 'a t = {
 
 }
 
-let create () = {
-  a = InfiniteArray.make [];
-  best = 0;
-  cardinal = 0;
-}
+let create default =
+  (* Set up the main array so that it initially has 16 priority levels and, whenever
+     new levels are added, each of them is initialized with a fresh empty stack. The
+     dummy stack is never accessed; it is used to fill empty physical slots in the
+     main array. *)
+  let dummy = MyStack.make_ 0 default in
+  let a = MyArray.make 16 dummy (fun _ -> MyStack.make_ 1024 default) in
+  { a; best = 0; cardinal = 0 }
 
 let add q x priority =
   assert (0 <= priority);
   q.cardinal <- q.cardinal + 1;
-  let xs = InfiniteArray.get q.a priority in
-  InfiniteArray.set q.a priority (x :: xs);
+  (* Grow the main array if necessary. *)
+  if MyArray.length q.a <= priority then
+    MyArray.resize q.a (priority + 1);
+  (* Find out which stack we should push into. *)
+  let xs = MyArray.get q.a priority in
+  (* assert (xs != MyArray.default q.a); *)
+  (* Push. *)
+  MyStack.push xs x;
   (* Decrease [q.best], if necessary, so as not to miss the new element. In
      the special case of Dijkstra's algorithm or A*, this never happens. *)
   if priority < q.best then
@@ -48,14 +59,24 @@ let rec remove_nonempty q =
      inefficient, because it is a linear search. However, in applications
      where [q.best] never decreases, the cumulated cost of this loop is the
      maximum priority ever used, which is good. *)
-  match InfiniteArray.get q.a q.best with
-  | [] ->
-      q.best <- q.best + 1;
-      remove_nonempty q
-  | x :: xs ->
-      q.cardinal <- q.cardinal - 1;
-      InfiniteArray.set q.a q.best xs;
-      Some x
+  let xs = MyArray.get q.a q.best in
+  if MyStack.length xs = 0 then begin
+    (* As noted below, [MyStack.pop] does not physically shrink the stack.
+       When we find that a priority level has become empty, we physically
+       empty it, so as to free the (possibly large) space that it takes up.
+       This strategy is good when the client is Dijkstra's algorithm or A*. *)
+    let dummy = MyArray.default q.a in
+    MyArray.set q.a q.best dummy;
+    q.best <- q.best + 1;
+    remove_nonempty q
+  end
+  else begin
+    q.cardinal <- q.cardinal - 1;
+    Some (MyStack.pop xs)
+    (* Note: [MyStack.pop] does not shrink the physical array underlying the
+       stack. This is good, because we are likely to push new elements into
+       this stack. *)
+  end
 
 let remove q =
   if q.cardinal = 0 then
