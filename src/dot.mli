@@ -38,6 +38,13 @@ type style =
   | Diagonals
   | Rounded
 
+type shape =
+  | Box
+  | Oval
+  | Circle
+  | DoubleCircle
+      (* there are many others, let's stop here *)
+
 (* ------------------------------------------------------------------------- *)
 
 (* The graph printer. *)
@@ -50,7 +57,7 @@ module Print (G : sig
 
   val successors: (?style:style -> label:string -> vertex -> unit) -> vertex -> unit
 
-  val iter: (?style:style -> label:string -> vertex -> unit) -> unit
+  val iter: (?shape:shape -> ?style:style -> label:string -> vertex -> unit) -> unit
 
 end) : sig
 

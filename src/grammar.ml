@@ -837,7 +837,7 @@ let () =
 	NonterminalSet.iter (fun successor ->
 	  f ~label:"" successor
 	) forward.(nt)
-      let iter (f : ?style:Dot.style -> label:string -> vertex -> unit) =
+      let iter (f : ?shape:Dot.shape -> ?style:Dot.style -> label:string -> vertex -> unit) =
 	Nonterminal.iter (fun nt ->
 	  f ~label:(Nonterminal.print false nt) nt
 	)

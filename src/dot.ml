@@ -36,6 +36,13 @@ type style =
   | Diagonals
   | Rounded
 
+type shape =
+  | Box
+  | Oval
+  | Circle
+  | DoubleCircle
+      (* there are many others, let's stop here *)
+
 (* ------------------------------------------------------------------------- *)
 
 (* Basic printers. *)
@@ -65,6 +72,23 @@ let print_style = function
       in
       sprintf ", style = %s" style
 
+let print_shape = function
+  | None ->
+      ""
+  | Some shape ->
+      let shape =
+	match shape with
+        | Box ->
+            "box"
+        | Oval ->
+            "oval"
+        | Circle ->
+            "circle"
+        | DoubleCircle ->
+            "doublecircle"
+      in
+      sprintf ", shape = %s" shape
+
 (* ------------------------------------------------------------------------- *)
 
 (* The graph printer. *)
@@ -77,7 +101,7 @@ module Print (G : sig
 
   val successors: (?style:style -> label:string -> vertex -> unit) -> vertex -> unit
 
-  val iter: (?style:style -> label:string -> vertex -> unit) -> unit
+  val iter: (?shape:shape -> ?style:style -> label:string -> vertex -> unit) -> unit
 
 end) = struct
 
@@ -115,15 +139,17 @@ end) = struct
 	  fprintf f "ratio = auto;\n"
     end;
 
-    G.iter (fun ?style ~label vertex ->
-      fprintf f "%s [ label=\"%s\"%s ] ;\n"
+    G.iter (fun ?shape ?style ~label vertex ->
+      fprintf f "%s [ label=\"%s\"%s%s ] ;\n"
 	(G.name vertex)
 	label
 	(print_style style)
+        (print_shape shape)
     );
 
-    G.iter (fun ?style ~label source ->
-      ignore style; (* avoid unused variable warnings *)
+    G.iter (fun ?shape ?style ~label source ->
+      ignore shape; (* avoid unused variable warnings *)
+      ignore style;
       ignore label;
       G.successors (fun ?style ~label destination ->
 	fprintf f "%s %s %s [ label=\"%s\"%s ] ;\n"

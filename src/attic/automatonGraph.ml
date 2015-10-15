@@ -9,7 +9,7 @@ module G = struct
       Lr1.node
 
   let number s : string =
-    string_of_int (Lr1.number s)
+    Printf.sprintf "%02d" (Lr1.number s)
 
   let name s =
     Printf.sprintf "s%s" (number s)
@@ -19,9 +19,19 @@ module G = struct
       action ~label:(Symbol.print symbol) s'
     )
       
-  let iter (action: ?style:Dot.style -> label:string -> vertex -> unit) : unit =
+  let iter (action: ?shape:Dot.shape -> ?style:Dot.style -> label:string -> vertex -> unit) : unit =
     Lr1.iter (fun s ->
-      action ~label:(number s) s
+      let has_reduction =
+        match Invariant.has_default_reduction s with
+        | Some _ ->
+            true
+        | None ->
+            not (TerminalMap.is_empty (Lr1.reductions s))
+      in
+      let shape =
+        if has_reduction then Dot.DoubleCircle else Dot.Circle
+      in
+      action ~shape ~label:(number s) s
     )
 
 end
@@ -32,6 +42,6 @@ let filename =
 let () =
   let c = open_out filename in
   let module P = Dot.Print(G) in
-  P.print ~orientation:Dot.Portrait ~size:(8.,5.) c;
+  P.print ~orientation:Dot.Portrait ~ratio:Dot.Compress ~size:(5.,5.) c;
   close_out c
 
