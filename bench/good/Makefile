@@ -130,7 +130,7 @@ list:
 # Remove any leftover output files.
 	rm -f *.log lr.csv
 # Print the header of lr.csv. (This should be kept in sync with LRijkstra.ml.)
-	echo "grammar,terminals,nonterminals,size,states,trie,facts,edges,time,heap" > lr.csv
+	echo "grammar,terminals,nonterminals,size,states,trie,facts,edgefacts,time,heap" > lr.csv
 # Try every grammar. (Only the single-file grammars, that is.)
 # This can proceed in parallel, for a reasonable number of processes.
 # Each process appends one line of data to lr.csv when it finishes.
