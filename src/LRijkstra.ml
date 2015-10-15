@@ -599,7 +599,7 @@ let q =
 
 (* In principle, there is no need to insert the fact into the queue if [F]
    already stores a comparable fact. We could perform this test in [enqueue].
-   However, a quick experiment suggests that this is not worthwhile. The run
+   However, a few experiments suggests that this is not worthwhile. The run
    time augments (because membership in [F] is tested twice, upon inserting
    and upon extracting) and the memory consumption does not seem to go down
    significantly. *)
