@@ -23,8 +23,7 @@ let fail lexbuf checkpoint =
                usually 0. This is a BIG HACK. TEMPORARY *)
             0
         | Cons (Element (s, _, _, _), _) ->
-            (* We are missing a conversion [lr1state -> int]. TEMPORARY *)
-            Obj.magic (s : _ lr1state)
+            number s
       in
       (* Display a nice error message. In principle, the table found in
          [ParserMessages] should be complete, so we should obtain
