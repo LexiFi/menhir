@@ -86,8 +86,7 @@ module type INCREMENTAL_ENGINE = sig
   (* [loop supplier checkpoint] begins parsing from [checkpoint], reading
      tokens from [supplier]. It continues parsing until it reaches a
      checkpoint of the form [Accepted v] or [Rejected]. In the former case, it
-     returns [v]. In the latter case, it raises [Error]. This is how the
-     monolithic API is implemented on top of the incremental API. *)
+     returns [v]. In the latter case, it raises the exception [Error]. *)
 
   val loop: supplier -> 'a checkpoint -> 'a
 
@@ -95,13 +94,13 @@ module type INCREMENTAL_ENGINE = sig
      [checkpoint], reading tokens from [supplier]. It continues parsing until
      it reaches a checkpoint of the form [Accepted v] or [HandlingError env]
      (or [Rejected], but that should not happen, as [HandlingError _] will be
-     observed first). In the former case, it returns [v]. In the latter case,
-     it calls [fail] with this checkpoint. It cannot raise [Error].
+     observed first). In the former case, it calls [succeed v]. In the latter
+     case, it calls [fail] with this checkpoint. It cannot raise [Error].
 
      This means that Menhir's traditional error-handling procedure (which pops
      the stack until a state that can act on the [error] token is found) does
      not get a chance to run. Instead, the user can implement her own error
-     handling code, in the [fail] function. *)
+     handling code, in the [fail] continuation. *)
 
   val loop_handle:
     ('a -> 'answer) ->
