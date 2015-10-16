@@ -5,6 +5,8 @@ module Make (T : TableFormat.TABLES)
   type state =
       int
 
+  let number s = s
+
   type token =
       T.token
 

@@ -8,6 +8,9 @@ module T = struct
 
   type state =
       Lr1.node
+
+  let number =
+    Lr1.number
    
   type token =
       Terminal.t
