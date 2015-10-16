@@ -446,15 +446,15 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* Wrapping a lexer and lexbuf as a reader. *)
+  (* Wrapping a lexer and lexbuf as a token supplier. *)
 
-  type reader =
+  type supplier =
     unit -> token * Lexing.position * Lexing.position
 
-  let lexer_lexbuf_to_reader
+  let lexer_lexbuf_to_supplier
       (lexer : Lexing.lexbuf -> token)
       (lexbuf : Lexing.lexbuf)
-  : reader =
+  : supplier =
     fun () ->
       let token = lexer lexbuf in
       let startp = lexbuf.Lexing.lex_start_p
@@ -474,7 +474,7 @@ module Make (T : TABLE) = struct
      All of the cheating resides in the types assigned to [offer] and [handle]
      above. *)
 
-  let rec loop : 'a . reader -> 'a result -> 'a =
+  let rec loop : 'a . supplier -> 'a result -> 'a =
     fun read result ->
     match result with
     | InputNeeded _ ->
@@ -500,7 +500,7 @@ module Make (T : TABLE) = struct
         raise Error
 
   let entry (s : state) lexer lexbuf : semantic_value =
-    loop (lexer_lexbuf_to_reader lexer lexbuf) (start s)
+    loop (lexer_lexbuf_to_supplier lexer lexbuf) (start s)
 
   (* --------------------------------------------------------------------------- *)
 
