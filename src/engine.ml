@@ -451,7 +451,10 @@ module Make (T : TABLE) = struct
   type reader =
     unit -> token * Lexing.position * Lexing.position
 
-  let wrap (lexer : Lexing.lexbuf -> token) (lexbuf : Lexing.lexbuf) : reader =
+  let lexer_lexbuf_to_reader
+      (lexer : Lexing.lexbuf -> token)
+      (lexbuf : Lexing.lexbuf)
+  : reader =
     fun () ->
       let token = lexer lexbuf in
       let startp = lexbuf.Lexing.lex_start_p
@@ -497,7 +500,7 @@ module Make (T : TABLE) = struct
         raise Error
 
   let entry (s : state) lexer lexbuf : semantic_value =
-    loop (wrap lexer lexbuf) (start s)
+    loop (lexer_lexbuf_to_reader lexer lexbuf) (start s)
 
   (* --------------------------------------------------------------------------- *)
 
