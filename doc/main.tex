@@ -2090,6 +2090,47 @@ as an argument.
 The function \verb+lexer_lexbuf_to_supplier+, applied to a lexer and to a
 lexing buffer, produces a fresh supplier.
 
+%% (remark about the loop* functions)
+
+The functions \verb+offer+ and \verb+resume+, documented above, are sufficient
+to write a parser loop. One can imagine many variations of such a loop, which
+is why we expose \verb+offer+ and \verb+resume+ in the first place!.
+Nevertheless, some variations are so common that it is worth providing them,
+ready for use.
+
+%% val loop
+
+\begin{verbatim}
+  val loop: supplier -> 'a checkpoint -> 'a
+\end{verbatim}
+
+\verb+loop supplier checkpoint+ begins parsing from \verb+checkpoint+, reading
+tokens from \verb+supplier+. It continues parsing until it reaches a
+checkpoint of the form \verb+Accepted v+ or \verb+Rejected+. In the former
+case, it returns \verb+v+. In the latter case, it raises the
+exception \verb+Error+. (By the way, this is how we implement the monolithic
+API on top of the incremental API.)
+
+\begin{verbatim}
+  val loop_handle:
+    ('a -> 'answer) ->
+    ('a checkpoint -> 'answer) ->
+    supplier -> 'a checkpoint -> 'answer
+\end{verbatim}
+
+\verb+loop_handle succeed fail supplier checkpoint+ begins parsing from
+\verb+checkpoint+, reading tokens from \verb+supplier+. It continues parsing until
+it reaches a checkpoint of the form \verb+Accepted v+ or \verb+HandlingError env+
+(or \verb+Rejected+, but that should not happen, as \verb+HandlingError _+
+will be observed first). In the former case, it calls \verb+succeed v+. In
+the latter case, it calls \verb+fail+ with this checkpoint. It cannot
+raise \verb+Error+.
+
+This means that Menhir's traditional error-handling procedure (which pops the
+stack until a state that can act on the \error token is found) does not get a
+chance to run. Instead, the user can implement her own error handling code, in
+the \verb+fail+ continuation.
+
 %% type 'a lr1state
 
 \begin{verbatim}
