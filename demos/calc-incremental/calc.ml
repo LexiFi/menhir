@@ -4,26 +4,26 @@ module I =
   Parser.MenhirInterpreter
 
 (* The loop which drives the parser. At each iteration, we analyze a
-   result produced by the parser, and act in an appropriate manner. *)
+   checkpoint produced by the parser, and act in an appropriate manner. *)
 
-(* [lexbuf] is the lexing buffer. [result] is the last result produced
+(* [lexbuf] is the lexing buffer. [checkpoint] is the last checkpoint produced
    by the parser. *)
 
-let rec loop lexbuf (result : int I.result) =
-  match result with
+let rec loop lexbuf (checkpoint : int I.checkpoint) =
+  match checkpoint with
   | I.InputNeeded env ->
       (* The parser needs a token. Request one from the lexer,
          and offer it to the parser, which will produce a new
-         result. Then, repeat. *)
+         checkpoint. Then, repeat. *)
       let token = Lexer.token lexbuf in
       let startp = lexbuf.Lexing.lex_start_p
       and endp = lexbuf.Lexing.lex_curr_p in
-      let result = I.offer result (token, startp, endp) in
-      loop lexbuf result
+      let checkpoint = I.offer checkpoint (token, startp, endp) in
+      loop lexbuf checkpoint
   | I.Shifting _
   | I.AboutToReduce _ ->
-      let result = I.resume result in
-      loop lexbuf result
+      let checkpoint = I.resume checkpoint in
+      loop lexbuf checkpoint
   | I.HandlingError env ->
       (* The parser has suspended itself because of a syntax error. Stop. *)
       Printf.fprintf stderr

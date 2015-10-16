@@ -9,36 +9,36 @@ module type INCREMENTAL_ENGINE = sig
 
   type token
 
-  (* The type ['a result] represents an intermediate or final result of the
-     parser. An intermediate result is a suspension: it records the parser's
+  (* The type ['a checkpoint] represents an intermediate or final state of the
+     parser. An intermediate checkpoint is a suspension: it records the parser's
      current state, and allows parsing to be resumed. The parameter ['a] is
      the type of the semantic value that will eventually be produced if the
      parser succeeds. *)
 
-  (* [Accepted] and [Rejected] are final results. [Accepted] carries a
+  (* [Accepted] and [Rejected] are final checkpoints. [Accepted] carries a
      semantic value. *)
 
-  (* [InputNeeded] is an intermediate result. It means that the parser wishes
+  (* [InputNeeded] is an intermediate checkpoint. It means that the parser wishes
      to read one token before continuing. *)
 
-  (* [Shifting] is an intermediate result. It means that the parser is taking
+  (* [Shifting] is an intermediate checkpoint. It means that the parser is taking
      a shift transition. It exposes the state of the parser before and after
      the transition. The Boolean parameter tells whether the parser intends to
      request a new token after this transition. (It always does, except when
      it is about to accept.) *)
 
-  (* [AboutToReduce] is an intermediate result. It means that the parser is
+  (* [AboutToReduce] is an intermediate checkpoint. It means that the parser is
      about to perform a reduction step. It exposes the parser's current
      state as well as the production that is about to be reduced. *)
 
-  (* [HandlingError] is an intermediate result. It means that the parser has
+  (* [HandlingError] is an intermediate checkpoint. It means that the parser has
      detected an error and is currently handling it, in several steps. *)
 
   type env
 
   type production
 
-  type 'a result = private
+  type 'a checkpoint = private
     | InputNeeded of env
     | Shifting of env * env * bool
     | AboutToReduce of env * production
@@ -47,23 +47,23 @@ module type INCREMENTAL_ENGINE = sig
     | Rejected
 
   (* [offer] allows the user to resume the parser after it has suspended
-     itself with a result of the form [InputNeeded env]. [offer] expects the
-     old result as well as a new token and produces a new result. It does not
+     itself with a checkpoint of the form [InputNeeded env]. [offer] expects the
+     old checkpoint as well as a new token and produces a new checkpoint. It does not
      raise any exception. *)
 
   val offer:
-    'a result ->
+    'a checkpoint ->
     token * Lexing.position * Lexing.position ->
-    'a result
+    'a checkpoint
 
   (* [resume] allows the user to resume the parser after it has suspended
-     itself with a result of the form [AboutToReduce (env, prod)] or
-     [HandlingError env]. [resume] expects the old result and produces a new
-     result. It does not raise any exception. *)
+     itself with a checkpoint of the form [AboutToReduce (env, prod)] or
+     [HandlingError env]. [resume] expects the old checkpoint and produces a new
+     checkpoint. It does not raise any exception. *)
 
   val resume:
-    'a result ->
-    'a result
+    'a checkpoint ->
+    'a checkpoint
 
   (* The abstract type ['a lr1state] describes the non-initial states of the
      LR(1) automaton. The index ['a] represents the type of the semantic value

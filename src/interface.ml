@@ -31,8 +31,8 @@ let entrytypescheme grammar symbol =
 let interpreter =
   "MenhirInterpreter"
 
-let result t =
-  TypApp (interpreter ^ ".result", [ t ])
+let checkpoint t =
+  TypApp (interpreter ^ ".checkpoint", [ t ])
 
 let lr1state =
   "lr1state"
@@ -51,7 +51,7 @@ let incremental =
 
 let entrytypescheme_incremental grammar symbol =
   let t = TypTextual (ocamltype_of_start_symbol grammar symbol) in
-  type2scheme (marrow [ tunit ] (result t))
+  type2scheme (marrow [ tunit ] (checkpoint t))
 
 (* -------------------------------------------------------------------------- *)
 
@@ -148,7 +148,7 @@ let incremental_api grammar () : interface =
   ) ::
 
   (* The entry points must come after the incremental API, because
-     their type refers to the type [result]. *)
+     their type refers to the type [checkpoint]. *)
   incremental_entry_points grammar
 
 (* -------------------------------------------------------------------------- *)

@@ -1941,7 +1941,7 @@ the name of the start symbol.) The generated file \texttt{parser.mli} contains
 the following declaration:
 \begin{verbatim}
   module Incremental : sig
-    val main: unit -> thing MenhirInterpreter.result
+    val main: unit -> thing MenhirInterpreter.checkpoint
   end
 \end{verbatim}
 We emphasize that the function \verb+Incremental.main+ does not parse
@@ -1959,9 +1959,9 @@ follows:
 The signature \verb+INCREMENTAL_ENGINE+, defined in the module
 \menhirlibincrementalengine, contains the following elements.
 Please keep in mind that, from the outside, these elements should be referred
-to with an appropriate prefix: e.g., the type \verb+result+ should be referred
-to as \verb+MenhirInterpreter.result+, or
-\verb+Parser.MenhirInterpreter.result+, depending on which modules the user
+to with an appropriate prefix: e.g., the type \verb+checkpoint+ should be referred
+to as \verb+MenhirInterpreter.checkpoint+, or
+\verb+Parser.MenhirInterpreter.checkpoint+, depending on which modules the user
 chooses to open.
 
 %% type token
@@ -1987,10 +1987,10 @@ data structure: it can be stored and used multiple times, if desired.
 
 The abstract type \verb+production+ represents a production of the grammar.
 
-%% type 'a result
+%% type 'a checkpoint
 
 \begin{verbatim}
-  type 'a result = private
+  type 'a checkpoint = private
     | InputNeeded of env
     | Shifting of env * env * bool
     | AboutToReduce of env * production
@@ -1999,29 +1999,29 @@ The abstract type \verb+production+ represents a production of the grammar.
     | Rejected
 \end{verbatim}
 
-The type \verb+'a result+ represents an intermediate or
-final result of the parser. An intermediate result is a suspension: it records
+The type \verb+'a checkpoint+ represents an intermediate or
+final state of the parser. An intermediate checkpoint is a suspension: it records
 the parser's current state, and allows parsing to be resumed. The parameter
 \verb+'a+ is the type of the semantic value that will eventually be produced
 if the parser succeeds.
 
-\verb+Accepted+ and \verb+Rejected+ are final results. \verb+Accepted+ carries
+\verb+Accepted+ and \verb+Rejected+ are final checkpoints. \verb+Accepted+ carries
 a semantic value.
 
-\verb+InputNeeded+ is an intermediate result. It means that the parser wishes
+\verb+InputNeeded+ is an intermediate checkpoint. It means that the parser wishes
 to read one token before continuing.
 
-\verb+Shifting+ is an intermediate result. It means that the parser is taking
+\verb+Shifting+ is an intermediate checkpoint. It means that the parser is taking
 a shift transition. It exposes the state of the parser before and after the
 transition. The Boolean parameter tells whether the parser intends to request
 a new token after this transition. (It always does, except when it is about to
 accept.)
 
-\verb+AboutToReduce+ is an intermediate result: it means that the parser is
+\verb+AboutToReduce+ is an intermediate checkpoint: it means that the parser is
 about to perform a reduction step. \verb+HandlingError+ is also an
-intermediate result: it means that the parser has detected an error and is
+intermediate checkpoint: it means that the parser has detected an error and is
 about to handle it. (Error handling is typically performed in several steps,
-so the next result is likely to be \verb+HandlingError+ again.) In these two
+so the next checkpoint is likely to be \verb+HandlingError+ again.) In these two
 cases, the parser does not need more input. The parser suspends itself at this
 point only in order to give the user an opportunity to observe the parser's
 transitions and possibly handle errors in a different manner, if desired.
@@ -2030,16 +2030,16 @@ transitions and possibly handle errors in a different manner, if desired.
 
 \begin{verbatim}
   val offer:
-    'a result ->
+    'a checkpoint ->
     token * Lexing.position * Lexing.position ->
-    'a result
+    'a checkpoint
 \end{verbatim}
 
 The function \verb+offer+ allows the user to resume the parser after the
-parser has suspended itself with a result of the form \verb+InputNeeded env+.
-This function expects the previous result \verb+result+ as well as a new token
+parser has suspended itself with a checkpoint of the form \verb+InputNeeded env+.
+This function expects the previous checkpoint \verb+checkpoint+ as well as a new token
 (together with the start and end positions of this token). It produces a new
-result, which again can be an intermediate result or a final result. It does
+checkpoint, which again can be an intermediate checkpoint or a final checkpoint. It does
 not raise any exception. (The exception \texttt{Error} is used only in the
 monolithic API.)
 
@@ -2047,20 +2047,20 @@ monolithic API.)
 
 \begin{verbatim}
   val resume:
-    'a result ->
-    'a result
+    'a checkpoint ->
+    'a checkpoint
 \end{verbatim}
 
 The function \verb+resume+ allows the user to resume the parser after the
-parser has suspended itself with a result of the form
+parser has suspended itself with a checkpoint of the form
 \verb+AboutToReduce (env, prod)+ or \verb+HandlingError env+.
-This function expects just the previous result \verb+result+. It produces a new
-result. It does not raise any exception.
+This function expects just the previous checkpoint \verb+checkpoint+. It produces a new
+checkpoint. It does not raise any exception.
 
 The incremental API subsumes the monolithic API. Indeed, \verb+main+ can be
 (and is in fact) implemented by first using
 \verb+Incremental.main+, then calling \verb+offer+ and
-\verb+resume+ in a loop, until a final result is obtained.
+\verb+resume+ in a loop, until a final checkpoint is obtained.
 
 Although the type \verb+env+ is opaque, a parser state can be inspected via a
 few accessor functions, which we are about to describe. Before we do so, we

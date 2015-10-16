@@ -730,7 +730,7 @@ let incremental_entry_point state nt t =
             ]
           )
         ),
-        type2scheme (result (TypTextual t))
+        type2scheme (checkpoint (TypTextual t))
       )
     )
   )
