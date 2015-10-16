@@ -3,10 +3,11 @@
 module I =
   Parser.MenhirInterpreter
 
-(* The loop which drives the parser. At each iteration, we analyze a
-   checkpoint produced by the parser, and act in an appropriate manner. *)
+(* -------------------------------------------------------------------------- *)
 
-(* [lexbuf] is the lexing buffer. [checkpoint] is the last checkpoint produced
+(* The loop which drives the parser. At each iteration, we analyze a
+   checkpoint produced by the parser, and act in an appropriate manner.
+   [lexbuf] is the lexing buffer. [checkpoint] is the last checkpoint produced
    by the parser. *)
 
 let rec loop lexbuf (checkpoint : int I.checkpoint) =
@@ -37,6 +38,28 @@ let rec loop lexbuf (checkpoint : int I.checkpoint) =
          we stop as soon as the parser reports [HandlingError]. *)
       assert false
 
+(* -------------------------------------------------------------------------- *)
+
+(* The above loop is shown for explanatory purposes, but can in fact be
+   replaced with the following code, which exploits the functions
+   [lexer_lexbuf_to_supplier] and [loop_handle] offered by Menhir. *)
+
+let succeed (v : int) =
+  (* The parser has succeeded and produced a semantic value. Print it. *)
+  Printf.printf "%d\n%!" v
+
+let fail lexbuf (_ : int I.checkpoint) =
+  (* The parser has suspended itself because of a syntax error. Stop. *)
+  Printf.fprintf stderr
+    "At offset %d: syntax error.\n%!"
+    (Lexing.lexeme_start lexbuf)
+
+let loop lexbuf result =
+  let supplier = I.lexer_lexbuf_to_supplier Lexer.token lexbuf in
+  I.loop_handle succeed (fail lexbuf) supplier result
+
+(* -------------------------------------------------------------------------- *)
+
 (* Initialize the lexer, and catch any exception raised by the lexer. *)
 
 let process (line : string) =
@@ -46,6 +69,8 @@ let process (line : string) =
   with
   | Lexer.Error msg ->
       Printf.fprintf stderr "%s%!" msg
+
+(* -------------------------------------------------------------------------- *)
 
 (* The rest of the code is as in the [calc] demo. *)
 

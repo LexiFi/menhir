@@ -508,6 +508,36 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
+  (* [loop_handle] stops if it encounters an error, and at this point, invokes
+     its failure continuation, without letting Menhir do its own traditional
+     error-handling (which involves popping the stack, etc.). *)
+
+  let rec loop_handle succeed fail read checkpoint =
+    match checkpoint with
+    | InputNeeded _ ->
+        (* The parser needs a token. Request one from the lexer,
+           and offer it to the parser, which will produce a new
+           checkpoint. Then, repeat. *)
+        let triple = read() in
+        let checkpoint = offer checkpoint triple in
+        loop_handle succeed fail read checkpoint
+    | Shifting _
+    | AboutToReduce _ ->
+        (* The parser has suspended itself, but does not need
+           new input. Just resume the parser. Then, repeat. *)
+        let checkpoint = resume checkpoint in
+        loop_handle succeed fail read checkpoint
+    | HandlingError _
+    | Rejected ->
+        (* The parser has detected an error. Invoke the failure continuation. *)
+        fail checkpoint
+    | Accepted v ->
+        (* The parser has succeeded and produced a semantic value.
+           Return this semantic value to the user. *)
+        succeed v
+
+  (* --------------------------------------------------------------------------- *)
+
   (* The type ['a lr1state] describes the (non-initial) states of the LR(1)
      automaton. The index ['a] represents the type of the semantic value
      associated with the state's incoming symbol. *)

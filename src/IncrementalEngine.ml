@@ -65,6 +65,49 @@ module type INCREMENTAL_ENGINE = sig
     'a checkpoint ->
     'a checkpoint
 
+  (* A token supplier is a function of no arguments which delivers a new token
+     (together with its start and end positions) every time it is called. *)
+
+  type supplier =
+    unit -> token * Lexing.position * Lexing.position
+
+  (* A pair of a lexer and a lexing buffer can be easily turned into a supplier. *)
+
+  val lexer_lexbuf_to_supplier:
+    (Lexing.lexbuf -> token) ->
+    Lexing.lexbuf ->
+    supplier
+
+  (* The functions [offer] and [resume] are sufficient to write a parser loop.
+     One can imagine many variations (which is why we expose these functions
+     in the first place!). Here, we expose a few variations of the main loop,
+     ready for use. *)
+
+  (* [loop supplier checkpoint] begins parsing from [checkpoint], reading
+     tokens from [supplier]. It continues parsing until it reaches a
+     checkpoint of the form [Accepted v] or [Rejected]. In the former case, it
+     returns [v]. In the latter case, it raises [Error]. This is how the
+     monolithic API is implemented on top of the incremental API. *)
+
+  val loop: supplier -> 'a checkpoint -> 'a
+
+  (* [loop_handle succeed fail supplier checkpoint] begins parsing from
+     [checkpoint], reading tokens from [supplier]. It continues parsing until
+     it reaches a checkpoint of the form [Accepted v] or [HandlingError env]
+     (or [Rejected], but that should not happen, as [HandlingError _] will be
+     observed first). In the former case, it returns [v]. In the latter case,
+     it calls [fail] with this checkpoint. It cannot raise [Error].
+
+     This means that Menhir's traditional error-handling procedure (which pops
+     the stack until a state that can act on the [error] token is found) does
+     not get a chance to run. Instead, the user can implement her own error
+     handling code, in the [fail] function. *)
+
+  val loop_handle:
+    ('a -> 'answer) ->
+    ('a checkpoint -> 'answer) ->
+    supplier -> 'a checkpoint -> 'answer
+
   (* The abstract type ['a lr1state] describes the non-initial states of the
      LR(1) automaton. The index ['a] represents the type of the semantic value
      associated with this state's incoming symbol. *)
