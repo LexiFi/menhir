@@ -2066,6 +2066,30 @@ Although the type \verb+env+ is opaque, a parser state can be inspected via a
 few accessor functions, which we are about to describe. Before we do so, we
 give a few more type definitions.
 
+%% type supplier
+
+\begin{verbatim}
+  type supplier =
+    unit -> token * Lexing.position * Lexing.position
+\end{verbatim}
+
+A token supplier is a function of no arguments which delivers a new token
+(together with its start and end positions) every time it is called. The
+function \verb+loop+ and its variants, described below, expect a supplier
+as an argument.
+
+%% val lexer_lexbuf_to_supplier
+
+\begin{verbatim}
+  val lexer_lexbuf_to_supplier:
+    (Lexing.lexbuf -> token) ->
+    Lexing.lexbuf ->
+    supplier
+\end{verbatim}
+
+The function \verb+lexer_lexbuf_to_supplier+, applied to a lexer and to a
+lexing buffer, produces a fresh supplier.
+
 %% type 'a lr1state
 
 \begin{verbatim}
