@@ -28,15 +28,15 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* The type [result] represents an intermediate or final result of the
+  (* The type [checkpoint] represents an intermediate or final result of the
      parser. See [EngineTypes]. *)
 
-  (* The type [result] is presented to the user as a private type (see
-     [IncrementalEngine]). This prevents the user from manufacturing results
+  (* The type [checkpoint] is presented to the user as a private type (see
+     [IncrementalEngine]). This prevents the user from manufacturing checkpoints
      (i.e., continuations) that do not make sense. (Such continuations could
      potentially violate the LR invariant and lead to crashes.) *)
 
-  type 'a result =
+  type 'a checkpoint =
     | InputNeeded of env
     | Shifting of env * env * bool
     | AboutToReduce of env * production
@@ -72,11 +72,11 @@ module Make (T : TABLE) = struct
      a terminal symbol and [s] does not have a default reduction on [#]. *)
 
   (* The following recursive group of functions are tail recursive, produce a
-     result of type [semantic_value result], and cannot raise an exception. A
-     semantic action can raise [Error], but this exception is immediately
-     caught within [reduce]. *)
+     checkpoint of type [semantic_value checkpoint], and cannot raise an
+     exception. A semantic action can raise [Error], but this exception is
+     immediately caught within [reduce]. *)
 
-  let rec run env please_discard : semantic_value result =
+  let rec run env please_discard : semantic_value checkpoint =
 
     (* Log the fact that we just entered this state. *)
     
@@ -96,7 +96,7 @@ module Make (T : TABLE) = struct
 
   (* [discard env triple] stores [triple] into [env], overwriting the previous
      token. It is invoked by [offer], which itself is invoked by the user in
-     response to an [InputNeeded] result. *)
+     response to an [InputNeeded] checkpoint. *)
 
   and discard env triple =
     if log then begin
@@ -200,7 +200,7 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* The function [announce_reduce] stops the parser and returns a result
+  (* The function [announce_reduce] stops the parser and returns a checkpoint
      which allows the parser to be resumed by calling [reduce]. *)
 
   (* Only ordinary productions are exposed to the user. Start productions
@@ -355,7 +355,7 @@ module Make (T : TABLE) = struct
 
   (* [start s] begins the parsing process. *)
 
-  let start (s : state) : semantic_value result =
+  let start (s : state) : semantic_value checkpoint =
     
     (* Build an empty stack. This is a dummy cell, which is its own
        successor. Its fields other than [next] contain dummy values.
@@ -396,40 +396,43 @@ module Make (T : TABLE) = struct
 
     run env true
 
-  (* [offer result triple] is invoked by the user in response to a result
-     of the form [InputNeeded env]. It checks that [result] is indeed of
-     this form, and invokes [discard]. *)
+  (* [offer checkpoint triple] is invoked by the user in response to a
+     checkpoint of the form [InputNeeded env]. It checks that [checkpoint] is
+     indeed of this form, and invokes [discard]. *)
 
-  (* [resume result] is invoked by the user in response to a result of the
-     form [AboutToReduce (env, prod)] or [HandlingError env]. It checks
-     that [result] is indeed of this form, and invokes [reduce] or [error],
-     as appropriate. *)
+  (* [resume checkpoint] is invoked by the user in response to a checkpoint of
+     the form [AboutToReduce (env, prod)] or [HandlingError env]. It checks
+     that [checkpoint] is indeed of this form, and invokes [reduce] or
+     [error], as appropriate. *)
 
   (* In reality, [offer] and [resume] accept an argument of type
-     [semantic_value result] and produce a result of the same type. The choice
-     of [semantic_value] is forced by the fact that this is the parameter of
-     the result [Accepted]. *)
+     [semantic_value checkpoint] and produce a checkpoint of the same type.
+     The choice of [semantic_value] is forced by the fact that this is the
+     parameter of the checkpoint [Accepted]. *)
 
   (* We change this as follows. *)
 
   (* We change the argument and result type of [offer] and [resume] from
-     [semantic_value result] to ['a result]. This is safe, in this case,
-     because we give the user access to values of type [t result] only if [t]
-     is indeed the type of the eventual semantic value for this run. (More
-     precisely, by examining the signatures [INCREMENTAL_ENGINE] and
-     [INCREMENTAL_ENGINE_START], one finds that the user can build a value of
-     type ['a result] only if ['a] is [semantic_value]. The table back-end
-     goes further than this and produces versions of [start] composed with a
-     suitable cast, which give the user access to a value of type [t result]
-     where [t] is the type of the start symbol.) *)
+     [semantic_value checkpoint] to ['a checkpoint]. This is safe, in this
+     case, because we give the user access to values of type [t checkpoint]
+     only if [t] is indeed the type of the eventual semantic value for this
+     run. (More precisely, by examining the signatures [INCREMENTAL_ENGINE]
+     and [INCREMENTAL_ENGINE_START], one finds that the user can build a value
+     of type ['a checkpoint] only if ['a] is [semantic_value]. The table
+     back-end goes further than this and produces versions of [start] composed
+     with a suitable cast, which give the user access to a value of type
+     [t checkpoint] where [t] is the type of the start symbol.) *)
 
-  let offer : 'a . 'a result -> token * Lexing.position * Lexing.position -> 'a result = function
+  let offer : 'a . 'a checkpoint ->
+                   token * Lexing.position * Lexing.position ->
+                   'a checkpoint
+  = function
     | InputNeeded env ->
         Obj.magic discard env
     | _ ->
         raise (Invalid_argument "offer expects InputNeeded")
 
-  let resume : 'a . 'a result -> 'a result = function
+  let resume : 'a . 'a checkpoint -> 'a checkpoint = function
     | HandlingError env ->
         Obj.magic error env
     | Shifting (_, env, please_discard) ->
@@ -446,12 +449,15 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* Wrapping a lexer and lexbuf as a reader. *)
+  (* Wrapping a lexer and lexbuf as a token supplier. *)
 
-  type reader =
+  type supplier =
     unit -> token * Lexing.position * Lexing.position
 
-  let wrap (lexer : Lexing.lexbuf -> token) (lexbuf : Lexing.lexbuf) : reader =
+  let lexer_lexbuf_to_supplier
+      (lexer : Lexing.lexbuf -> token)
+      (lexbuf : Lexing.lexbuf)
+  : supplier =
     fun () ->
       let token = lexer lexbuf in
       let startp = lexbuf.Lexing.lex_start_p
@@ -460,9 +466,10 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
-  (* The main loop repeatedly handles intermediate results, until a final result
-     is obtained. This allows implementing the monolithic interface ([entry]) in
-     terms of the incremental interface ([start], [offer], [handle], [reduce]). *)
+  (* The main loop repeatedly handles intermediate checkpoints, until a final
+     checkpoint is obtained. This allows implementing the monolithic interface
+     ([entry]) in terms of the incremental interface ([start], [offer],
+     [handle], [reduce]). *)
 
   (* By convention, acceptance is reported by returning a semantic value, whereas
      rejection is reported by raising [Error]. *)
@@ -471,23 +478,23 @@ module Make (T : TABLE) = struct
      All of the cheating resides in the types assigned to [offer] and [handle]
      above. *)
 
-  let rec loop : 'a . reader -> 'a result -> 'a =
-    fun read result ->
-    match result with
+  let rec loop : 'a . supplier -> 'a checkpoint -> 'a =
+    fun read checkpoint ->
+    match checkpoint with
     | InputNeeded _ ->
         (* The parser needs a token. Request one from the lexer,
            and offer it to the parser, which will produce a new
-           result. Then, repeat. *)
+           checkpoint. Then, repeat. *)
         let triple = read() in
-        let result = offer result triple in
-        loop read result
+        let checkpoint = offer checkpoint triple in
+        loop read checkpoint
     | Shifting _
     | AboutToReduce _
     | HandlingError _ ->
         (* The parser has suspended itself, but does not need
            new input. Just resume the parser. Then, repeat. *)
-        let result = resume result in
-        loop read result
+        let checkpoint = resume checkpoint in
+        loop read checkpoint
     | Accepted v ->
         (* The parser has succeeded and produced a semantic value.
            Return this semantic value to the user. *)
@@ -497,7 +504,37 @@ module Make (T : TABLE) = struct
         raise Error
 
   let entry (s : state) lexer lexbuf : semantic_value =
-    loop (wrap lexer lexbuf) (start s)
+    loop (lexer_lexbuf_to_supplier lexer lexbuf) (start s)
+
+  (* --------------------------------------------------------------------------- *)
+
+  (* [loop_handle] stops if it encounters an error, and at this point, invokes
+     its failure continuation, without letting Menhir do its own traditional
+     error-handling (which involves popping the stack, etc.). *)
+
+  let rec loop_handle succeed fail read checkpoint =
+    match checkpoint with
+    | InputNeeded _ ->
+        (* The parser needs a token. Request one from the lexer,
+           and offer it to the parser, which will produce a new
+           checkpoint. Then, repeat. *)
+        let triple = read() in
+        let checkpoint = offer checkpoint triple in
+        loop_handle succeed fail read checkpoint
+    | Shifting _
+    | AboutToReduce _ ->
+        (* The parser has suspended itself, but does not need
+           new input. Just resume the parser. Then, repeat. *)
+        let checkpoint = resume checkpoint in
+        loop_handle succeed fail read checkpoint
+    | HandlingError _
+    | Rejected ->
+        (* The parser has detected an error. Invoke the failure continuation. *)
+        fail checkpoint
+    | Accepted v ->
+        (* The parser has succeeded and produced a semantic value.
+           Return this semantic value to the user. *)
+        succeed v
 
   (* --------------------------------------------------------------------------- *)
 

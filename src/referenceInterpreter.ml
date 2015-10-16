@@ -310,18 +310,18 @@ let check_error_path nt input =
      spurious reductions. We accumulate these reductions in [spurious], a
      (reversed) list of productions. *)
 
-  let rec loop (result : cst E.result) (spurious : spurious_reduction list) =
-    match result with
+  let rec loop (checkpoint : cst E.checkpoint) (spurious : spurious_reduction list) =
+    match checkpoint with
     | E.InputNeeded _ ->
       begin match next() with
       | None ->
         OInputReadPastEnd
       | Some t ->
         let dummy = Lexing.dummy_pos in
-        loop (E.offer result (t, dummy, dummy)) spurious
+        loop (E.offer checkpoint (t, dummy, dummy)) spurious
       end
     | E.Shifting _ ->
-      loop (E.resume result) spurious
+      loop (E.resume checkpoint) spurious
     | E.AboutToReduce (env, prod) ->
         (* If we have requested the last input token and if this is not
            a default reduction, then this is a spurious reduction.
@@ -335,7 +335,7 @@ let check_error_path nt input =
           else
             spurious
         in
-        loop (E.resume result) spurious
+        loop (E.resume checkpoint) spurious
     | E.HandlingError env ->
         (* Check that all of the input has been read. Otherwise, the error
            has occurred sooner than expected. *)

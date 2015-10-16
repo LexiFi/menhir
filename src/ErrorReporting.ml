@@ -99,7 +99,7 @@ module Make
     | _ :: _, lazy Nil ->
         assert false
 
-  (* [investigate t result] assumes that [result] has been obtained by
+  (* [investigate t checkpoint] assumes that [checkpoint] has been obtained by
      offering the terminal symbol [t] to the parser. It runs the parser,
      through an arbitrary number of reductions, until the parser either
      accepts this token (i.e., shifts) or rejects it (i.e., signals an
@@ -109,8 +109,8 @@ module Make
   (* It is desirable that the semantic actions be side-effect free, or
      that their side-effects be harmless (replayable). *)
 
-  let rec investigate (t : _ terminal) (result : _ result) explanations =
-    match result with
+  let rec investigate (t : _ terminal) (checkpoint : _ checkpoint) explanations =
+    match checkpoint with
     | Shifting (env, _, _) ->
         (* The parser is about to shift, which means it is willing to
            consume the terminal symbol [t]. In the state before the
@@ -132,7 +132,7 @@ module Make
           (* TEMPORARY [env] may be an initial state! violating [item_current]'s precondition *)
     | AboutToReduce _ ->
         (* The parser wishes to reduce. Just follow. *)
-        investigate t (resume result) explanations
+        investigate t (resume checkpoint) explanations
     | HandlingError _ ->
         (* The parser fails, which means the terminal symbol [t] does
            not make sense at this point. Thus, no new explanations of
@@ -146,7 +146,7 @@ module Make
            it can request another token or terminate. *)
         assert false
 
-  (* [investigate pos result] assumes that [result] is of the form
+  (* [investigate pos checkpoint] assumes that [checkpoint] is of the form
      [InputNeeded _].  For every terminal symbol [t], it investigates
      how the parser reacts when fed the symbol [t], and returns a list
      of explanations. The position [pos] is where a syntax error was
@@ -154,7 +154,7 @@ module Make
      important because the position of the dummy token may end up in
      the explanations that we produce. *)
 
-  let investigate pos (result : _ result) : explanation list =
+  let investigate pos (checkpoint : _ checkpoint) : explanation list =
     weed compare_explanations (
       foreach_terminal_but_error (fun symbol explanations ->
         match symbol with
@@ -163,7 +163,7 @@ module Make
             (* Build a dummy token for the terminal symbol [t]. *)
             let token = (terminal2token t, pos, pos) in
             (* Submit it to the parser. Accumulate explanations. *)
-            investigate t (offer result token) explanations
+            investigate t (offer checkpoint token) explanations
       ) []
     )
 
@@ -180,38 +180,38 @@ module Make
       token, startp, endp
 
   (* The following is a custom version of the loop found in [Engine]. It
-     drives the parser in the usual way, but keeps a checkpoint, which is the
-     last [InputNeeded] result. If a syntax error is detected, it goes back to
-     this state and analyzes it in order to produce a meaningful
+     drives the parser in the usual way, but records the last [InputNeeded]
+     checkpoint. If a syntax error is detected, it goes back to this
+     checkpoint and analyzes it in order to produce a meaningful
      diagnostic. *)
 
   exception Error of (Lexing.position * Lexing.position) * explanation list
 
   (* TEMPORARY why loop-style? we should offer a simplified incremental API *)
 
-  type 'a result = {
-    checkpoint: 'a I.result;
-    current: 'a I.result
+  type 'a checkpoint = {
+    inputneeded: 'a I.checkpoint;
+    current: 'a I.checkpoint
   }
 
-  let rec loop (read : reader) ({ checkpoint; current } : 'a result) : 'a =
+  let rec loop (read : reader) ({ inputneeded; current } : 'a checkpoint) : 'a =
     match current with
     | InputNeeded _ ->
-        (* Update the checkpoint. *)
-        let checkpoint = current in
+        (* Update the last recorded [InputNeeded] checkpoint. *)
+        let inputneeded = current in
         let triple = read() in
         let current = offer current triple in
-        loop read { checkpoint; current }
+        loop read { inputneeded; current }
     | Shifting _
     | AboutToReduce _ ->
         let current = resume current in
-        loop read { checkpoint; current }
+        loop read { inputneeded; current }
     | HandlingError env ->
         (* The parser signals a syntax error. Note the position of the
            problematic token, which is useful. Then, go back to the
            checkpoint and investigate. *)
         let (startp, _) as positions = positions env in
-        raise (Error (positions, investigate startp checkpoint))
+        raise (Error (positions, investigate startp inputneeded))
     | Accepted v ->
         v
     | Rejected ->
@@ -219,13 +219,13 @@ module Make
            we stop as soon as the parser reports [HandlingError]. *)
         assert false
 
-  let entry (start : 'a I.result) lexer lexbuf =
+  let entry (start : 'a I.checkpoint) lexer lexbuf =
     (* The parser cannot accept or reject before it asks for the very first
        character of input. (Indeed, we statically reject a symbol that
        generates the empty language or the singleton language {epsilon}.)
        So, [start] must be [InputNeeded _]. *)
     assert (match start with InputNeeded _ -> true | _ -> false);
-    loop (wrap lexer lexbuf) { checkpoint = start; current = start }
+    loop (wrap lexer lexbuf) { inputneeded = start; current = start }
 
   (* TEMPORARY could also publish a list of the terminal symbols that
      do not cause an error *)

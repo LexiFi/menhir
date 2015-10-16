@@ -312,24 +312,24 @@ end
 
 module type INCREMENTAL_ENGINE_START = sig
 
-  (* [start] is an entry point. It requires just a start state, and begins
-     the parsing process. It produces a result, which usually will be an
-     [InputNeeded] result. (It could be [Accepted] if this starting state
+  (* [start] is an entry point. It requires just a start state, and begins the
+     parsing process. It produces a checkpoint, which usually will be an
+     [InputNeeded] checkpoint. (It could be [Accepted] if this starting state
      accepts only the empty word. It could be [Rejected] if this starting
      state accepts no word at all.) It does not raise any exception. *)
 
-  (* [start s] should really produce a result of type ['a result], for a
-     fixed ['a] that depends on the state [s]. We cannot express this, so
-     we use [semantic_value result], which is safe. The table back-end
-     uses [Obj.magic] to produce safe specialized versions of [start]. *)
+  (* [start s] should really produce a checkpoint of type ['a checkpoint], for
+     a fixed ['a] that depends on the state [s]. We cannot express this, so we
+     use [semantic_value checkpoint], which is safe. The table back-end uses
+     [Obj.magic] to produce safe specialized versions of [start]. *)
 
   type state
   type semantic_value
-  type 'a result
+  type 'a checkpoint
 
   val start:
     state ->
-    semantic_value result
+    semantic_value checkpoint
 
 end
 
@@ -349,7 +349,7 @@ module type ENGINE = sig
   include INCREMENTAL_ENGINE_START
     with type state := state
      and type semantic_value := semantic_value
-     and type 'a result := 'a result
+     and type 'a checkpoint := 'a checkpoint
 
 end
 

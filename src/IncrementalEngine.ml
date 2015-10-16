@@ -9,36 +9,36 @@ module type INCREMENTAL_ENGINE = sig
 
   type token
 
-  (* The type ['a result] represents an intermediate or final result of the
-     parser. An intermediate result is a suspension: it records the parser's
+  (* The type ['a checkpoint] represents an intermediate or final state of the
+     parser. An intermediate checkpoint is a suspension: it records the parser's
      current state, and allows parsing to be resumed. The parameter ['a] is
      the type of the semantic value that will eventually be produced if the
      parser succeeds. *)
 
-  (* [Accepted] and [Rejected] are final results. [Accepted] carries a
+  (* [Accepted] and [Rejected] are final checkpoints. [Accepted] carries a
      semantic value. *)
 
-  (* [InputNeeded] is an intermediate result. It means that the parser wishes
+  (* [InputNeeded] is an intermediate checkpoint. It means that the parser wishes
      to read one token before continuing. *)
 
-  (* [Shifting] is an intermediate result. It means that the parser is taking
+  (* [Shifting] is an intermediate checkpoint. It means that the parser is taking
      a shift transition. It exposes the state of the parser before and after
      the transition. The Boolean parameter tells whether the parser intends to
      request a new token after this transition. (It always does, except when
      it is about to accept.) *)
 
-  (* [AboutToReduce] is an intermediate result. It means that the parser is
+  (* [AboutToReduce] is an intermediate checkpoint. It means that the parser is
      about to perform a reduction step. It exposes the parser's current
      state as well as the production that is about to be reduced. *)
 
-  (* [HandlingError] is an intermediate result. It means that the parser has
+  (* [HandlingError] is an intermediate checkpoint. It means that the parser has
      detected an error and is currently handling it, in several steps. *)
 
   type env
 
   type production
 
-  type 'a result = private
+  type 'a checkpoint = private
     | InputNeeded of env
     | Shifting of env * env * bool
     | AboutToReduce of env * production
@@ -47,23 +47,65 @@ module type INCREMENTAL_ENGINE = sig
     | Rejected
 
   (* [offer] allows the user to resume the parser after it has suspended
-     itself with a result of the form [InputNeeded env]. [offer] expects the
-     old result as well as a new token and produces a new result. It does not
+     itself with a checkpoint of the form [InputNeeded env]. [offer] expects the
+     old checkpoint as well as a new token and produces a new checkpoint. It does not
      raise any exception. *)
 
   val offer:
-    'a result ->
+    'a checkpoint ->
     token * Lexing.position * Lexing.position ->
-    'a result
+    'a checkpoint
 
   (* [resume] allows the user to resume the parser after it has suspended
-     itself with a result of the form [AboutToReduce (env, prod)] or
-     [HandlingError env]. [resume] expects the old result and produces a new
-     result. It does not raise any exception. *)
+     itself with a checkpoint of the form [AboutToReduce (env, prod)] or
+     [HandlingError env]. [resume] expects the old checkpoint and produces a new
+     checkpoint. It does not raise any exception. *)
 
   val resume:
-    'a result ->
-    'a result
+    'a checkpoint ->
+    'a checkpoint
+
+  (* A token supplier is a function of no arguments which delivers a new token
+     (together with its start and end positions) every time it is called. *)
+
+  type supplier =
+    unit -> token * Lexing.position * Lexing.position
+
+  (* A pair of a lexer and a lexing buffer can be easily turned into a supplier. *)
+
+  val lexer_lexbuf_to_supplier:
+    (Lexing.lexbuf -> token) ->
+    Lexing.lexbuf ->
+    supplier
+
+  (* The functions [offer] and [resume] are sufficient to write a parser loop.
+     One can imagine many variations (which is why we expose these functions
+     in the first place!). Here, we expose a few variations of the main loop,
+     ready for use. *)
+
+  (* [loop supplier checkpoint] begins parsing from [checkpoint], reading
+     tokens from [supplier]. It continues parsing until it reaches a
+     checkpoint of the form [Accepted v] or [Rejected]. In the former case, it
+     returns [v]. In the latter case, it raises the exception [Error]. *)
+
+  val loop: supplier -> 'a checkpoint -> 'a
+
+  (* [loop_handle succeed fail supplier checkpoint] begins parsing from
+     [checkpoint], reading tokens from [supplier]. It continues parsing until
+     it reaches a checkpoint of the form [Accepted v] or [HandlingError env]
+     (or [Rejected], but that should not happen, as [HandlingError _] will be
+     observed first). In the former case, it calls [succeed v]. In the latter
+     case, it calls [fail] with this checkpoint. It cannot raise [Error].
+
+     This means that Menhir's traditional error-handling procedure (which pops
+     the stack until a state that can act on the [error] token is found) does
+     not get a chance to run. Instead, the user can implement her own error
+     handling code, in the [fail] continuation. *)
+
+  val loop_handle:
+    ('a -> 'answer) ->
+    ('a checkpoint -> 'answer) ->
+    supplier -> 'a checkpoint -> 'answer
 
   (* The abstract type ['a lr1state] describes the non-initial states of the
      LR(1) automaton. The index ['a] represents the type of the semantic value

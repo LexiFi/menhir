@@ -11,24 +11,24 @@ open MenhirLib.General        (* streams: Nil, Cons *)
 open Parser.MenhirInterpreter (* incremental API to our parser *)
 
 (* The loop which drives the parser. At each iteration, we analyze a
-   result produced by the parser, and act in an appropriate manner.
+   checkpoint produced by the parser, and act in an appropriate manner.
    We have to do this in order to get ahold of the current state when
    a syntax error is encountered. *)
 
-let rec loop lexer lexbuf (result : 'a result) : 'a =
+let rec loop lexer lexbuf (checkpoint : 'a checkpoint) : 'a =
   let open Lexing in
-  match result with
+  match checkpoint with
   | InputNeeded _ ->
       (* The parser needs a token. Request one from the lexer,
          and offer it to the parser, which will produce a new
-         result. Then, repeat. *)
+         checkpoint. Then, repeat. *)
       let token = lexer lexbuf in
-      let result = offer result (token, lexbuf.lex_start_p, lexbuf.lex_curr_p) in
-      loop lexer lexbuf result
+      let checkpoint = offer checkpoint (token, lexbuf.lex_start_p, lexbuf.lex_curr_p) in
+      loop lexer lexbuf checkpoint
   | Shifting _
   | AboutToReduce _ ->
-      let result = resume result in
-      loop lexer lexbuf result
+      let checkpoint = resume checkpoint in
+      loop lexer lexbuf checkpoint
   | HandlingError env ->
       (* The parser has suspended itself because of a syntax error. Stop.
          Find out which state the parser is currently in. *)

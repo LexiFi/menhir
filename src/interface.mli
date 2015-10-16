@@ -14,9 +14,9 @@ val entrytypescheme: UnparameterizedSyntax.grammar -> string -> IL.typescheme
 
 val interpreter: string
 
-(* The type ['a result], defined in the interpreter sub-module. *)
+(* The type ['a checkpoint], defined in the interpreter sub-module. *)
 
-val result: IL.typ -> IL.typ
+val checkpoint: IL.typ -> IL.typ
 
 (* The name of the sub-module that contains the incremental entry points. *)
 

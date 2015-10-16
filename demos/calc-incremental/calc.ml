@@ -3,27 +3,28 @@
 module I =
   Parser.MenhirInterpreter
 
-(* The loop which drives the parser. At each iteration, we analyze a
-   result produced by the parser, and act in an appropriate manner. *)
+(* -------------------------------------------------------------------------- *)
 
-(* [lexbuf] is the lexing buffer. [result] is the last result produced
+(* The loop which drives the parser. At each iteration, we analyze a
+   checkpoint produced by the parser, and act in an appropriate manner.
+   [lexbuf] is the lexing buffer. [checkpoint] is the last checkpoint produced
    by the parser. *)
 
-let rec loop lexbuf (result : int I.result) =
-  match result with
+let rec loop lexbuf (checkpoint : int I.checkpoint) =
+  match checkpoint with
   | I.InputNeeded env ->
       (* The parser needs a token. Request one from the lexer,
          and offer it to the parser, which will produce a new
-         result. Then, repeat. *)
+         checkpoint. Then, repeat. *)
       let token = Lexer.token lexbuf in
       let startp = lexbuf.Lexing.lex_start_p
       and endp = lexbuf.Lexing.lex_curr_p in
-      let result = I.offer result (token, startp, endp) in
-      loop lexbuf result
+      let checkpoint = I.offer checkpoint (token, startp, endp) in
+      loop lexbuf checkpoint
   | I.Shifting _
   | I.AboutToReduce _ ->
-      let result = I.resume result in
-      loop lexbuf result
+      let checkpoint = I.resume checkpoint in
+      loop lexbuf checkpoint
   | I.HandlingError env ->
       (* The parser has suspended itself because of a syntax error. Stop. *)
       Printf.fprintf stderr
@@ -37,6 +38,28 @@ let rec loop lexbuf (result : int I.result) =
          we stop as soon as the parser reports [HandlingError]. *)
       assert false
 
+(* -------------------------------------------------------------------------- *)
+
+(* The above loop is shown for explanatory purposes, but can in fact be
+   replaced with the following code, which exploits the functions
+   [lexer_lexbuf_to_supplier] and [loop_handle] offered by Menhir. *)
+
+let succeed (v : int) =
+  (* The parser has succeeded and produced a semantic value. Print it. *)
+  Printf.printf "%d\n%!" v
+
+let fail lexbuf (_ : int I.checkpoint) =
+  (* The parser has suspended itself because of a syntax error. Stop. *)
+  Printf.fprintf stderr
+    "At offset %d: syntax error.\n%!"
+    (Lexing.lexeme_start lexbuf)
+
+let loop lexbuf result =
+  let supplier = I.lexer_lexbuf_to_supplier Lexer.token lexbuf in
+  I.loop_handle succeed (fail lexbuf) supplier result
+
+(* -------------------------------------------------------------------------- *)
+
 (* Initialize the lexer, and catch any exception raised by the lexer. *)
 
 let process (line : string) =
@@ -46,6 +69,8 @@ let process (line : string) =
   with
   | Lexer.Error msg ->
       Printf.fprintf stderr "%s%!" msg
+
+(* -------------------------------------------------------------------------- *)
 
 (* The rest of the code is as in the [calc] demo. *)
 
