@@ -113,6 +113,10 @@ module type INCREMENTAL_ENGINE = sig
 
   type 'a lr1state
 
+  (* The states of the LR(1) automaton are numbered (from 0 and up). *)
+
+  val number: _ lr1state -> int
+
   (* An element is a pair of a non-initial state [s] and a semantic value [v]
      associated with the incoming symbol of this state. The idea is, the value
      [v] was pushed onto the stack just before the state [s] was entered. Thus,

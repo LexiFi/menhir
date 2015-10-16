@@ -84,6 +84,10 @@ module type TABLE = sig
 
   type state
 
+  (* States are numbered. *)
+
+  val number: state -> int
+
   (* The type of tokens. These can be thought of as real tokens, that is,
      tokens returned by the lexer. They carry a semantic value. This type
      does not include the [error] pseudo-token. *)
