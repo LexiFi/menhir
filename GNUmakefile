@@ -81,7 +81,6 @@ LIBFILES := \
   src/convert.{ml,mli} \
   src/engine.{ml,mli} \
   src/engineTypes.ml \
-  src/ErrorReporting.{ml,mli} \
   src/general.{ml,mli} \
   src/IncrementalEngine.ml \
   src/infiniteArray.{ml,mli} \
