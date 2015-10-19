@@ -1058,6 +1058,60 @@ let default_conflict_resolution () =
     Error.grammar_warning [] (Printf.sprintf "%d states have an end-of-stream conflict." !ambiguities)
 
 (* ------------------------------------------------------------------------ *)
+(* Extra reductions. 2015/10/19 *)
+
+(* If a state can reduce only one production, whose left-hand symbol has
+   been declared [--on-error-reduce], then every error action in this
+   state is replaced with a reduction action. This is done even though
+   this state may have outgoing shift transitions: thus, we are forcing
+   one interpretation of the past, among several possible interpretations. *)
+
+(* This code looks like the decision for a default reduction in [Invariant],
+   except we do not impose the absence of outgoing terminal transitions.
+   Also, we actually modify the automaton, so the back-ends, the reference
+   interpreter, etc. need not be aware of this feature, whereas they are
+   aware of default reductions. *)
+
+let extra =
+  ref 0
+
+let extra_reductions () =
+  iter (fun node ->
+    if not node.forbid_default_reduction then
+      match ProductionMap.is_singleton (invert (reductions node)) with
+      | Some (prod, toks)
+        when Settings.on_error_reduce (Nonterminal.print false (Production.nt prod)) ->
+          (* An extra reduction is possible. Take the set of all (real) tokens,
+             subtract the tokens for which there is an outgoing transition,
+             and allow reduction of [prod] on all of the remaining tokens. *)
+          let accu =
+            SymbolMap.fold (fun symbol _target accu ->
+              match symbol with
+              | Symbol.T tok ->
+                  TerminalSet.remove tok accu
+              | Symbol.N _ ->
+                  accu
+            ) (transitions node) TerminalSet.universe
+          in
+          (* Since shift/reduce conflicts have been resolved already, we
+             should have this property: *)
+          assert (TerminalSet.subset toks accu);
+          (* Allow reduction of [prod] on the tokens in [accu]. *)
+          TerminalSet.iter (fun tok ->
+            node.reductions <- TerminalMap.add tok [ prod ] node.reductions
+          ) accu;
+          (* Statistics. *)
+          if not (TerminalSet.subset accu toks) then
+            incr extra;
+      | _ ->
+          ()
+  );
+  if !extra > 0 then
+    Error.logA 1 (fun f ->
+      Printf.fprintf f "Extra reductions on error were added in %d states.\n" !extra
+    )
+
+(* ------------------------------------------------------------------------ *)
 (* Define [fold_entry], which in some cases facilitates the use of [entry]. *)
 
 let fold_entry f accu =
