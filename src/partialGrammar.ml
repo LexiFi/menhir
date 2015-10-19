@@ -672,7 +672,9 @@ let check_parameterized_grammar_is_well_defined grammar =
 		 StringMap.iter (check_identifier_reference grammar prule) 
 		   (List.fold_left Parameters.identifiers StringMap.empty parameters);
 
-		 (* Check the %prec is a valid reference to a token. *)
+		 (* If this producer seems to be a reference to a token, make sure it
+                    is a real token, as opposed to a pseudo-token introduced in a
+                    priority declaration. *)
 		 (try
                     if not ((StringMap.find s grammar.p_tokens).tk_is_declared
                            || List.mem s reserved) then 
