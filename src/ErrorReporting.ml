@@ -167,53 +167,29 @@ module Make
       ) []
     )
 
-  (* The following is a custom version of the loop found in [Engine]. It
-     drives the parser in the usual way, but records the last [InputNeeded]
-     checkpoint. If a syntax error is detected, it goes back to this
-     checkpoint and analyzes it in order to produce a meaningful
-     diagnostic. *)
+  (* We drive the parser in the usual way, but records the last [InputNeeded]
+     checkpoint. If a syntax error is detected, we go back to this checkpoint
+     and analyze it in order to produce a meaningful diagnostic. *)
 
   exception Error of (Lexing.position * Lexing.position) * explanation list
 
-  (* TEMPORARY why loop-style? we should offer a simplified incremental API *)
-
-  type 'a checkpoint = {
-    inputneeded: 'a I.checkpoint;
-    current: 'a I.checkpoint
-  }
-
-  let rec loop (read : supplier) ({ inputneeded; current } : 'a checkpoint) : 'a =
-    match current with
-    | InputNeeded _ ->
-        (* Update the last recorded [InputNeeded] checkpoint. *)
-        let inputneeded = current in
-        let triple = read() in
-        let current = offer current triple in
-        loop read { inputneeded; current }
-    | Shifting _
-    | AboutToReduce _ ->
-        let current = resume current in
-        loop read { inputneeded; current }
-    | HandlingError env ->
-        (* The parser signals a syntax error. Note the position of the
-           problematic token, which is useful. Then, go back to the
-           checkpoint and investigate. *)
-        let (startp, _) as positions = positions env in
-        raise (Error (positions, investigate startp inputneeded))
-    | Accepted v ->
-        v
-    | Rejected ->
-        (* The parser rejects this input. This cannot happen, because
-           we stop as soon as the parser reports [HandlingError]. *)
-        assert false
-
   let entry (start : 'a I.checkpoint) lexer lexbuf =
-    (* The parser cannot accept or reject before it asks for the very first
-       character of input. (Indeed, we statically reject a symbol that
-       generates the empty language or the singleton language {epsilon}.)
-       So, [start] must be [InputNeeded _]. *)
-    assert (match start with InputNeeded _ -> true | _ -> false);
-    loop (lexer_lexbuf_to_supplier lexer lexbuf) { inputneeded = start; current = start }
+    let fail (inputneeded : 'a I.checkpoint) (checkpoint : 'a I.checkpoint) =
+      (* The parser signals a syntax error. Note the position of the
+         problematic token, which is useful. Then, go back to the
+         last [InputNeeded] checkpoint and investigate. *)
+      match checkpoint with
+      | HandlingError env ->
+          let (startp, _) as positions = positions env in
+          raise (Error (positions, investigate startp inputneeded))
+      | _ ->
+          assert false
+    in
+    I.loop_handle_undo
+      (fun v -> v)
+      fail
+      (lexer_lexbuf_to_supplier lexer lexbuf)
+      start
 
   (* TEMPORARY could also publish a list of the terminal symbols that
      do not cause an error *)

@@ -515,16 +515,11 @@ module Make (T : TABLE) = struct
   let rec loop_handle succeed fail read checkpoint =
     match checkpoint with
     | InputNeeded _ ->
-        (* The parser needs a token. Request one from the lexer,
-           and offer it to the parser, which will produce a new
-           checkpoint. Then, repeat. *)
         let triple = read() in
         let checkpoint = offer checkpoint triple in
         loop_handle succeed fail read checkpoint
     | Shifting _
     | AboutToReduce _ ->
-        (* The parser has suspended itself, but does not need
-           new input. Just resume the parser. Then, repeat. *)
         let checkpoint = resume checkpoint in
         loop_handle succeed fail read checkpoint
     | HandlingError _
@@ -532,9 +527,53 @@ module Make (T : TABLE) = struct
         (* The parser has detected an error. Invoke the failure continuation. *)
         fail checkpoint
     | Accepted v ->
-        (* The parser has succeeded and produced a semantic value.
-           Return this semantic value to the user. *)
+        (* The parser has succeeded and produced a semantic value. Invoke the
+           success continuation. *)
         succeed v
+
+  (* --------------------------------------------------------------------------- *)
+
+  (* [loop_handle_undo] is analogous to [loop_handle], except it passes a pair
+     of checkpoints to the failure continuation.
+
+     The first (and oldest) checkpoint is the last [InputNeeded] checkpoint that
+     was encountered before the error was detected. The second (and newest)
+     checkpoint is where the error was detected, as in [loop_handle]. Going back
+     to the first checkpoint can be thought of as undoing any reductions that
+     were performed after seeing the problematic token. (These reductions must
+     be default reductions or spurious reductions.) *)
+
+  let rec loop_handle_undo succeed fail read (inputneeded, checkpoint) =
+    match checkpoint with
+    | InputNeeded _ ->
+        (* Update the last recorded [InputNeeded] checkpoint. *)
+        let inputneeded = checkpoint in
+        let triple = read() in
+        let checkpoint = offer checkpoint triple in
+        loop_handle_undo succeed fail read (inputneeded, checkpoint)
+    | Shifting _
+    | AboutToReduce _ ->
+        let checkpoint = resume checkpoint in
+        loop_handle_undo succeed fail read (inputneeded, checkpoint)
+    | HandlingError _
+    | Rejected ->
+        fail inputneeded checkpoint
+    | Accepted v ->
+        succeed v
+
+  (* For simplicity, we publish a version of [loop_handle_undo] that takes a
+     single checkpoint as an argument, instead of a pair of checkpoints. We
+     check that the argument is [InputNeeded _], and duplicate it. *)
+
+  (* The parser cannot accept or reject before it asks for the very first
+     character of input. (Indeed, we statically reject a symbol that
+     generates the empty language or the singleton language {epsilon}.)
+     So, the [start] checkpoint must match [InputNeeded _]. Hence, it is
+     permitted to call [loop_handle_undo] with a [start] checkpoint. *)
+
+  let loop_handle_undo succeed fail read checkpoint =
+    assert (match checkpoint with InputNeeded _ -> true | _ -> false);
+    loop_handle_undo succeed fail read (checkpoint, checkpoint)
 
   (* --------------------------------------------------------------------------- *)
 

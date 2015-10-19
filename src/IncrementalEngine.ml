@@ -107,6 +107,24 @@ module type INCREMENTAL_ENGINE = sig
     ('a checkpoint -> 'answer) ->
     supplier -> 'a checkpoint -> 'answer
 
+  (* [loop_handle_undo] is analogous to [loop_handle], except it passes a pair
+     of checkpoints to the failure continuation.
+
+     The first (and oldest) checkpoint is the last [InputNeeded] checkpoint that
+     was encountered before the error was detected. The second (and newest)
+     checkpoint is where the error was detected, as in [loop_handle]. Going back
+     to the first checkpoint can be thought of as undoing any reductions that
+     were performed after seeing the problematic token. (These reductions must
+     be default reductions or spurious reductions.)
+
+     [loop_handle_undo] must initially be applied to an [InputNeeded] checkpoint.
+     The parser's initial checkpoints satisfy this constraint. *)
+
+  val loop_handle_undo:
+    ('a -> 'answer) ->
+    ('a checkpoint -> 'a checkpoint -> 'answer) ->
+    supplier -> 'a checkpoint -> 'answer
+
   (* The abstract type ['a lr1state] describes the non-initial states of the
      LR(1) automaton. The index ['a] represents the type of the semantic value
      associated with this state's incoming symbol. *)
