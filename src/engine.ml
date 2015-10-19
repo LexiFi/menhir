@@ -575,6 +575,41 @@ module Make (T : TABLE) = struct
     assert (match checkpoint with InputNeeded _ -> true | _ -> false);
     loop_handle_undo succeed fail read (checkpoint, checkpoint)
 
+  (* ------------------------------------------------------------------------ *)
+
+  (* [loop_test f checkpoint accu] assumes that [checkpoint] has been obtained
+     by submitting a token to the parser. It runs the parser from [checkpoint],
+     through an arbitrary number of reductions, until the parser either accepts
+     this token (i.e., shifts) or rejects it (i.e., signals an error). If the
+     parser decides to shift, then the accumulator is updated by applying the
+     user function [f] to the [env] just before shifting and to the old [accu].
+     Otherwise, the accumulator is not updated, i.e., [accu] is returned. *)
+
+  (* It is desirable that the semantic actions be side-effect free, or that
+     their side-effects be harmless (replayable). *)
+
+  let rec loop_test f checkpoint accu =
+    match checkpoint with
+    | Shifting (env, _, _) ->
+        (* The parser is about to shift, which means it is willing to
+           consume the terminal symbol that we have fed it. Update the
+           accumulator with the state just before this transition. *)
+        f env accu
+    | AboutToReduce _ ->
+        (* The parser wishes to reduce. Just follow. *)
+        loop_test f (resume checkpoint) accu
+    | HandlingError _ ->
+        (* The parser fails, which means it rejects the terminal symbol
+           that we have fed it. Do not update the accumulator. *)
+        accu
+    | InputNeeded _
+    | Accepted _
+    | Rejected ->
+        (* None of these cases can arise. Indeed, after a token is submitted
+           to it, the parser must shift, reduce, or signal an error, before
+           it can request another token or terminate. *)
+        assert false
+
   (* --------------------------------------------------------------------------- *)
 
   (* The type ['a lr1state] describes the (non-initial) states of the LR(1)

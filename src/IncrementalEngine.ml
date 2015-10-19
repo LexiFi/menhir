@@ -125,6 +125,21 @@ module type INCREMENTAL_ENGINE = sig
     ('a checkpoint -> 'a checkpoint -> 'answer) ->
     supplier -> 'a checkpoint -> 'answer
 
+  (* [loop_test f checkpoint accu] assumes that [checkpoint] has been obtained
+     by submitting a token to the parser. It runs the parser from [checkpoint],
+     through an arbitrary number of reductions, until the parser either accepts
+     this token (i.e., shifts) or rejects it (i.e., signals an error). If the
+     parser decides to shift, then the accumulator is updated by applying the
+     user function [f] to the [env] just before shifting and to the old [accu].
+     Otherwise, the accumulator is not updated, i.e., [accu] is returned. *)
+
+  (* It is desirable that the semantic actions be side-effect free, or that
+     their side-effects be harmless (replayable). *)
+
+  val loop_test:
+    (env -> 'accu -> 'accu) ->
+    'a checkpoint -> 'accu -> 'accu
+
   (* The abstract type ['a lr1state] describes the non-initial states of the
      LR(1) automaton. The index ['a] represents the type of the semantic value
      associated with this state's incoming symbol. *)

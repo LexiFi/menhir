@@ -99,52 +99,31 @@ module Make
     | _ :: _, lazy Nil ->
         assert false
 
-  (* [investigate t checkpoint] assumes that [checkpoint] has been obtained by
-     offering the terminal symbol [t] to the parser. It runs the parser,
-     through an arbitrary number of reductions, until the parser either
-     accepts this token (i.e., shifts) or rejects it (i.e., signals an
-     error). If the parser decides to shift, then the shift items found
-     in the LR(1) state before the shift are used to produce new explanations. *)
+  (* [accumulate t env explanations] is called if the parser decides to shift
+     the test token [t]. The parameter [env] describes the parser configuration
+     before it shifts this token. (Some reductions have taken place.) We use the
+     shift items found in [env] to produce new explanations. *)
 
-  (* It is desirable that the semantic actions be side-effect free, or
-     that their side-effects be harmless (replayable). *)
-
-  let rec investigate (t : _ terminal) (checkpoint : _ checkpoint) explanations =
-    match checkpoint with
-    | Shifting (env, _, _) ->
-        (* The parser is about to shift, which means it is willing to
-           consume the terminal symbol [t]. In the state before the
-           transition, look at the items that justify shifting [t].
-           We view these items as explanations: they explain what
-           we have read and what we expect to read. *)
-        let stack = stack env in
-        List.fold_left (fun explanations item ->
-          if is_shift_item t item then
-            let prod, index = item in
-            let rhs = rhs prod in
-            {
-              item = item;
-              past = List.rev (marry (List.rev (take index rhs)) stack)
-            } :: explanations
-          else
-            explanations
-        ) explanations (items_current env)
-          (* TEMPORARY [env] may be an initial state! violating [item_current]'s precondition *)
-    | AboutToReduce _ ->
-        (* The parser wishes to reduce. Just follow. *)
-        investigate t (resume checkpoint) explanations
-    | HandlingError _ ->
-        (* The parser fails, which means the terminal symbol [t] does
-           not make sense at this point. Thus, no new explanations of
-           what the parser expects need be produced. *)
+  let accumulate (t : _ terminal) env explanations =
+    (* The parser is about to shift, which means it is willing to
+       consume the terminal symbol [t]. In the state before the
+       transition, look at the items that justify shifting [t].
+       We view these items as explanations: they explain what
+       we have read and what we expect to read. *)
+    let stack = stack env in
+    List.fold_left (fun explanations item ->
+      if is_shift_item t item then
+        let prod, index = item in
+        let rhs = rhs prod in
+        {
+          item = item;
+          past = List.rev (marry (List.rev (take index rhs)) stack)
+        } :: explanations
+      else
         explanations
-    | InputNeeded _
-    | Accepted _
-    | Rejected ->
-        (* None of these cases can arise. Indeed, after a token is submitted
-           to it, the parser must shift, reduce, or signal an error, before
-           it can request another token or terminate. *)
-        assert false
+    ) explanations (items_current env)
+      (* TEMPORARY [env] may be an initial state!
+         violating [item_current]'s precondition *)
 
   (* [investigate pos checkpoint] assumes that [checkpoint] is of the form
      [InputNeeded _].  For every terminal symbol [t], it investigates
@@ -163,7 +142,8 @@ module Make
             (* Build a dummy token for the terminal symbol [t]. *)
             let token = (terminal2token t, pos, pos) in
             (* Submit it to the parser. Accumulate explanations. *)
-            investigate t (offer checkpoint token) explanations
+            let checkpoint = offer checkpoint token in
+            I.loop_test (accumulate t) checkpoint explanations
       ) []
     )
 
