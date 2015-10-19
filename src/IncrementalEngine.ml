@@ -140,6 +140,23 @@ module type INCREMENTAL_ENGINE = sig
     (env -> 'accu -> 'accu) ->
     'a checkpoint -> 'accu -> 'accu
 
+  (* The function [loop_test] can be used, after an error has been detected, to
+     dynamically test which tokens would have been accepted at this point. We
+     provide this test, ready for use. *)
+
+  (* For completeness, one must undo any spurious reductions before carrying out
+     this test -- that is, one must apply [acceptable] to the FIRST checkpoint
+     that is passed by [loop_handle_undo] to its failure continuation. *)
+
+  (* This test causes some semantic actions to be run! The semantic actions
+     should be side-effect free, or their side-effects should be harmless. *)
+
+  (* The position [pos] is used as the start and end positions of the
+     hypothetical token, and may be picked up by the semantic actions. We
+     suggest using the position where the error was detected. *)
+
+  val acceptable: 'a checkpoint -> token -> Lexing.position -> bool
+
   (* The abstract type ['a lr1state] describes the non-initial states of the
      LR(1) automaton. The index ['a] represents the type of the semantic value
      associated with this state's incoming symbol. *)

@@ -585,8 +585,8 @@ module Make (T : TABLE) = struct
      user function [f] to the [env] just before shifting and to the old [accu].
      Otherwise, the accumulator is not updated, i.e., [accu] is returned. *)
 
-  (* It is desirable that the semantic actions be side-effect free, or that
-     their side-effects be harmless (replayable). *)
+  (* This test causes some semantic actions to be run! The semantic actions
+     should be side-effect free, or their side-effects should be harmless. *)
 
   let rec loop_test f checkpoint accu =
     match checkpoint with
@@ -609,6 +609,28 @@ module Make (T : TABLE) = struct
            to it, the parser must shift, reduce, or signal an error, before
            it can request another token or terminate. *)
         assert false
+
+  (* --------------------------------------------------------------------------- *)
+
+  (* The function [loop_test] can be used, after an error has been detected, to
+     dynamically test which tokens would have been accepted at this point. We
+     provide this test, ready for use. *)
+
+  (* For completeness, one must undo any spurious reductions before carrying out
+     this test -- that is, one must apply [acceptable] to the FIRST checkpoint
+     that is passed by [loop_handle_undo] to its failure continuation. *)
+
+  (* This test causes some semantic actions to be run! The semantic actions
+     should be side-effect free, or their side-effects should be harmless. *)
+
+  (* The position [pos] is used as the start and end positions of the
+     hypothetical token, and may be picked up by the semantic actions. We
+     suggest using the position where the error was detected. *)
+
+  let acceptable checkpoint token pos =
+    let triple = (token, pos, pos) in
+    let checkpoint = offer checkpoint triple in
+    loop_test (fun _env _accu -> true) checkpoint false
 
   (* --------------------------------------------------------------------------- *)
 
