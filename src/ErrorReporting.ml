@@ -167,18 +167,6 @@ module Make
       ) []
     )
 
-  (* TEMPORARY copied from engine.ml; move/share with [Convert] *)
-
-  type reader =
-    unit -> token * Lexing.position * Lexing.position
-
-  let wrap (lexer : Lexing.lexbuf -> token) (lexbuf : Lexing.lexbuf) : reader =
-    fun () ->
-      let token = lexer lexbuf in
-      let startp = lexbuf.Lexing.lex_start_p
-      and endp = lexbuf.Lexing.lex_curr_p in
-      token, startp, endp
-
   (* The following is a custom version of the loop found in [Engine]. It
      drives the parser in the usual way, but records the last [InputNeeded]
      checkpoint. If a syntax error is detected, it goes back to this
@@ -194,7 +182,7 @@ module Make
     current: 'a I.checkpoint
   }
 
-  let rec loop (read : reader) ({ inputneeded; current } : 'a checkpoint) : 'a =
+  let rec loop (read : supplier) ({ inputneeded; current } : 'a checkpoint) : 'a =
     match current with
     | InputNeeded _ ->
         (* Update the last recorded [InputNeeded] checkpoint. *)
@@ -225,7 +213,7 @@ module Make
        generates the empty language or the singleton language {epsilon}.)
        So, [start] must be [InputNeeded _]. *)
     assert (match start with InputNeeded _ -> true | _ -> false);
-    loop (wrap lexer lexbuf) { inputneeded = start; current = start }
+    loop (lexer_lexbuf_to_supplier lexer lexbuf) { inputneeded = start; current = start }
 
   (* TEMPORARY could also publish a list of the terminal symbols that
      do not cause an error *)

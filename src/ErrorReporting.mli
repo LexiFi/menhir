@@ -72,9 +72,6 @@ module Make
 
   (* TEMPORARY *)
 
-  type reader =
-    unit -> token * Lexing.position * Lexing.position
-
   val entry: 'a I.checkpoint -> (Lexing.lexbuf -> token) -> Lexing.lexbuf -> 'a
 
 end
