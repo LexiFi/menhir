@@ -780,8 +780,6 @@ let errorpeeker node =
    terminate properly. From 2015/09/25 on, we again always allow default
    reductions, as they seem to be beneficial when explaining syntax errors. *)
 
-(**)
-
 let (has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) option), hdrcount =
   Misc.tabulateo Lr1.number Lr1.fold Lr1.n (fun s ->
 
