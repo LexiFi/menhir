@@ -6,7 +6,7 @@
 
 SHELL := bash
 
-.PHONY: all test clean package check export godi opam
+.PHONY: all test clean package check export godi opam local
 
 # -------------------------------------------------------------------------
 
@@ -253,3 +253,12 @@ opam:
 	@ echo "If happy, please run:"
 	@ echo "  cd $(OPAM)/packages/menhir && git commit -a && git push && firefox https://github.com/"
 	@ echo "and issue a pull request."
+
+# -------------------------------------------------------------------------
+
+# Re-installing locally. This can overwrite an existing local installation.
+
+local:
+	$(MAKE) package
+	$(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=false all
+	sudo $(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=false install
