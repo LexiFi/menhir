@@ -506,7 +506,9 @@ let () =
   Lr1.default_conflict_resolution();
   Time.tick "Resolving remaining conflicts"
 
-(* This is a good place to add extra reductions, if requested by the user. *)
+(* ------------------------------------------------------------------------ *)
+(* Now is as good a time as any to add extra reductions, if requested by the
+   user. This must be done after conflicts have been resolved. *)
 
 let () =
   Lr1.extra_reductions();
