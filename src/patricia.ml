@@ -505,6 +505,17 @@ module Make (X : Endianness.S) = struct
 	else
 	  Branch (p, m, tree0', tree1')
 
+  (* [filter f m] returns a copy of the map [m] where only the bindings
+     that satisfy [f] have been retained. *)
+
+  let filter f m =
+    fold (fun key data accu ->
+      if f key data then
+        add key data accu
+      else
+        accu
+    ) m empty
+
   (* [iterator m] returns a stateful iterator over the map [m]. *)
 
   (* TEMPORARY performance could be improved, see JCF's paper *)

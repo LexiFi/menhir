@@ -116,6 +116,11 @@ module type S = sig
 
   val fold_rev: (key -> 'a -> 'b -> 'b) -> 'a t -> 'b -> 'b
 
+  (* [filter f m] returns a copy of the map [m] where only the bindings
+     that satisfy [f] have been retained. *)
+
+  val filter: (key -> 'a -> bool) -> 'a t -> 'a t
+
   (* It is valid to evaluate [iter2 f m1 m2] if and only if [m1] and
      [m2] have equal domains. Doing so invokes [f k x1 x2], in turn,
      for each key [k] bound to [x1] in [m1] and to [x2] in
