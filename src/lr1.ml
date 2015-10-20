@@ -1078,8 +1078,18 @@ let default_conflict_resolution () =
 (* This code can run before we decide on the default reductions; this does
    not affect which default reductions will be permitted. *)
 
+(* A count of how many states receive extra reductions through this mechanism. *)
+
 let extra =
   ref 0
+
+(* The set of nonterminal symbols in the left-hand side of an extra reduction. *)
+
+let extra_nts =
+  ref StringSet.empty
+
+let lhs prod : string =
+  Nonterminal.print false (Production.nt prod)
 
 let extra_reductions () =
   iter (fun node ->
@@ -1091,30 +1101,41 @@ let extra_reductions () =
       let productions = invert (reductions node) in
       (* Keep only those whose left-hand symbol is marked [--on-error-reduce]. *)
       let productions = ProductionMap.filter (fun prod _ ->
-        Settings.on_error_reduce (Nonterminal.print false (Production.nt prod))
+        StringSet.mem (lhs prod) Settings.on_error_reduce
       ) productions in
       (* Check if this only one such production remains. *)
       match ProductionMap.is_singleton productions with
       | None ->
           ()
       | Some (prod, _) ->
-          (* An extra reduction is possible. Replace every error action with
-             a reduction of [prod]. *)
           let acceptable = acceptable_tokens node in
-          let statistics = lazy (incr extra) in
+          (* An extra reduction is possible. Replace every error action with
+             a reduction of [prod]. If we replace at least one error action
+             with a reduction, update [extra] and [extra_nts]. *)
+          let triggered = lazy (
+            incr extra;
+            extra_nts := StringSet.add (lhs prod) !extra_nts
+          ) in
           Terminal.iter_real (fun tok ->
             if not (TerminalSet.mem tok acceptable) then begin
               node.reductions <- TerminalMap.add tok [ prod ] node.reductions;
-              Lazy.force statistics
+              Lazy.force triggered
             end
           )
 
     end
   );
+  (* Info message. *)
   if !extra > 0 then
     Error.logA 1 (fun f ->
       Printf.fprintf f "Extra reductions on error were added in %d states.\n" !extra
-    )
+    );
+  (* Warning about useless --on-error-reduce switches. *)
+  StringSet.iter (fun nt ->
+    if not (StringSet.mem nt !extra_nts) then
+      Error.grammar_warning []
+        (Printf.sprintf "the command line option --on-error-reduce %s is never useful." nt)
+  ) Settings.on_error_reduce
 
 (* ------------------------------------------------------------------------ *)
 (* Define [fold_entry], which in some cases facilitates the use of [entry]. *)

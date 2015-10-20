@@ -197,11 +197,11 @@ let echo_errors =
 let set_echo_errors filename =
   echo_errors := Some filename
 
-let on_error_reduce_symbols =
+let on_error_reduce =
   ref StringSet.empty
 
 let on_error_reduce_symbol nt =
-  on_error_reduce_symbols := StringSet.add nt !on_error_reduce_symbols
+  on_error_reduce := StringSet.add nt !on_error_reduce
 
 let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
@@ -475,6 +475,6 @@ let update_errors =
 let echo_errors =
   !echo_errors
 
-let on_error_reduce nt =
-  StringSet.mem nt !on_error_reduce_symbols
+let on_error_reduce =
+  !on_error_reduce
 
