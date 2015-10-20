@@ -839,9 +839,6 @@ let invert reductions : TerminalSet.t ProductionMap.t =
 (* ------------------------------------------------------------------------ *)
 (* Computing which terminal symbols a state is willing to act upon.
 
-   This function is currently unused, but could be used as part of an error
-   reporting system.
-
    One must keep in mind that, due to the merging of states, a state might be
    willing to perform a reduction on a certain token, yet the reduction can
    take us to another state where this token causes an error. In other words,
@@ -1060,51 +1057,59 @@ let default_conflict_resolution () =
 (* ------------------------------------------------------------------------ *)
 (* Extra reductions. 2015/10/19 *)
 
-(* If a state can reduce only one production, whose left-hand symbol has
-   been declared [--on-error-reduce], then every error action in this
-   state is replaced with a reduction action. This is done even though
-   this state may have outgoing shift transitions: thus, we are forcing
-   one interpretation of the past, among several possible interpretations. *)
+(* If a state can reduce one production whose left-hand symbol has been marked
+   [--on-error-reduce], and only one such production, then every error action
+   in this state is replaced with a reduction action. This is done even though
+   this state may have outgoing shift transitions: thus, we are forcing one
+   interpretation of the past, among several possible interpretations. *)
 
-(* This code looks like the decision for a default reduction in [Invariant],
-   except we do not impose the absence of outgoing terminal transitions.
-   Also, we actually modify the automaton, so the back-ends, the reference
-   interpreter, etc. need not be aware of this feature, whereas they are
-   aware of default reductions. *)
+(* The above is the lax interpretation of the criterion. In a stricter
+   interpretation, one could require the state to be able to reduce only
+   one production, and furthermore require this production to be marked.
+   In practice, the lax interpretation makes [--on-error-reduce] more
+   powerful, and this extra power seems useful. *)
+
+(* The code below looks like the decision on a default reduction in
+   [Invariant], except we do not impose the absence of outgoing terminal
+   transitions. Also, we actually modify the automaton, so the back-ends, the
+   reference interpreter, etc., need not be aware of this feature, whereas
+   they are aware of default reductions. *)
+
+(* This code can run before we decide on the default reductions; this does
+   not affect which default reductions will be permitted. *)
 
 let extra =
   ref 0
 
 let extra_reductions () =
   iter (fun node ->
-    if not node.forbid_default_reduction then
-      match ProductionMap.is_singleton (invert (reductions node)) with
-      | Some (prod, toks)
-        when Settings.on_error_reduce (Nonterminal.print false (Production.nt prod)) ->
-          (* An extra reduction is possible. Take the set of all (real) tokens,
-             subtract the tokens for which there is an outgoing transition,
-             and allow reduction of [prod] on all of the remaining tokens. *)
-          let accu =
-            SymbolMap.fold (fun symbol _target accu ->
-              match symbol with
-              | Symbol.T tok ->
-                  TerminalSet.remove tok accu
-              | Symbol.N _ ->
-                  accu
-            ) (transitions node) TerminalSet.universe
-          in
-          (* Since shift/reduce conflicts have been resolved already, we
-             should have this property: *)
-          assert (TerminalSet.subset toks accu);
-          (* Allow reduction of [prod] on the tokens in [accu]. *)
-          TerminalSet.iter (fun tok ->
-            node.reductions <- TerminalMap.add tok [ prod ] node.reductions
-          ) accu;
-          (* Statistics. *)
-          if not (TerminalSet.subset accu toks) then
-            incr extra;
-      | _ ->
+    (* Just like a default reduction, an extra reduction should be forbidden
+       (it seems) if [forbid_default_reduction] is set. *)
+    if not node.forbid_default_reduction then begin
+
+      (* Compute the productions which this node can reduce. *)
+      let productions = invert (reductions node) in
+      (* Keep only those whose left-hand symbol is marked [--on-error-reduce]. *)
+      let productions = ProductionMap.filter (fun prod _ ->
+        Settings.on_error_reduce (Nonterminal.print false (Production.nt prod))
+      ) productions in
+      (* Check if this only one such production remains. *)
+      match ProductionMap.is_singleton productions with
+      | None ->
           ()
+      | Some (prod, _) ->
+          (* An extra reduction is possible. Replace every error action with
+             a reduction of [prod]. *)
+          let acceptable = acceptable_tokens node in
+          let statistics = lazy (incr extra) in
+          Terminal.iter_real (fun tok ->
+            if not (TerminalSet.mem tok acceptable) then begin
+              node.reductions <- TerminalMap.add tok [ prod ] node.reductions;
+              Lazy.force statistics
+            end
+          )
+
+    end
   );
   if !extra > 0 then
     Error.logA 1 (fun f ->
