@@ -191,6 +191,12 @@ let update_errors =
 let set_update_errors filename =
   update_errors := Some filename
 
+let echo_errors =
+  ref None
+
+let set_echo_errors filename =
+  echo_errors := Some filename
+
 let on_error_reduce_symbols =
   ref StringSet.empty
 
@@ -208,6 +214,7 @@ let options = Arg.align [
   "--coq-no-actions", Arg.Set coq_no_actions, " Ignore semantic actions in the Coq output";
   "--depend", Arg.Unit (fun () -> depend := OMPostprocess), " Invoke ocamldep and display dependencies";
   "--dump", Arg.Set dump, " Describe the automaton in <basename>.automaton";
+  "--echo-errors", Arg.String set_echo_errors, "<filename> Echo the sentences in a .messages file";
   "--error-recovery", Arg.Set recovery, " (no longer supported)";
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
@@ -464,6 +471,9 @@ let compare_errors =
 
 let update_errors =
   !update_errors
+
+let echo_errors =
+  !echo_errors
 
 let on_error_reduce nt =
   StringSet.mem nt !on_error_reduce_symbols

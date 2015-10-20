@@ -1,6 +1,3 @@
-(* This module is in charge of handling the [--interpret] option,
-   if it is present. *)
-
 module I = Invariant (* artificial dependency; ensures that [Invariant] runs first *)
 
 (* --------------------------------------------------------------------------- *)
@@ -737,5 +734,26 @@ let () =
     List.iter write_run runs;
 
     exit 0
+  )
+
+(* --------------------------------------------------------------------------- *)
+
+(* If [--echo-errors <filename>] is set, echo the error sentences found in file
+   [filename]. Do not echo the error messages or the comments. *)
+
+let () =
+  Settings.echo_errors |> Option.iter (fun filename ->
+
+    (* Read the file. *)
+    let runs : run or_comment list = read_messages filename in
+
+    (* Echo. *)
+    List.iter (or_comment_iter (fun run ->
+      let (sentences : located_sentence or_comment list), _, _ = run in
+      List.iter (or_comment_iter (fun (_, sentence) ->
+        print_string (print_sentence sentence)
+      )) sentences
+    )) runs
+
   )
 

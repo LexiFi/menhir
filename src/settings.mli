@@ -202,6 +202,12 @@ val compare_errors: (string * string) option
 
 val update_errors: string option
 
+(* This flag causes Menhir to read the error message descriptions stored in
+   [filename] and echo the error sentences (and nothing else; no messages,
+   no comments). *)
+
+val echo_errors: string option
+
 (* This function takes a non-terminal symbol and tells whether it appears
    in a command line switch of the form [--on-error-reduce]. This switch
    indicates that extra reductions are desired when an error is detected. *)
