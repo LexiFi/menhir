@@ -741,6 +741,11 @@ let () =
 (* If [--echo-errors <filename>] is set, echo the error sentences found in file
    [filename]. Do not echo the error messages or the comments. *)
 
+(* In principle, we should able to run this command without even giving an .mly
+   file name on the command line, and without building the automaton. This is
+   not possible at the moment, because our code is organized in too rigid a
+   manner. *)
+
 let () =
   Settings.echo_errors |> Option.iter (fun filename ->
 
@@ -753,7 +758,8 @@ let () =
       List.iter (or_comment_iter (fun (_, sentence) ->
         print_string (print_sentence sentence)
       )) sentences
-    )) runs
+    )) runs;
 
+    exit 0
   )
 
