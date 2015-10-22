@@ -265,9 +265,9 @@ module Trie : sig
      of the trie that has been constructed for state [s]. *)
   val size: int -> int
 
-  (* After [star] has been called a number of times, [cumulated_size()]
+  (* After [star] has been called a number of times, [total_size()]
      reports the total size of the tries that have been constructed. *)
-  val cumulated_size: unit -> int
+  val total_size: unit -> int
 
   (* Every (sub-)trie has a unique identity. (One can think of it as its
      address.) [compare] compares the identity of two tries. This can be
@@ -430,7 +430,7 @@ end = struct
     assert (size.(s) >= 0);
     size.(s)
 
-  let cumulated_size () =
+  let total_size () =
     !c
 
   let compare t1 t2 =
@@ -449,7 +449,7 @@ end = struct
     SymbolMap.find a t.transitions (* careful: may raise [Not_found] *)
 
   let verbose () =
-    Printf.eprintf "Cumulated star size: %d\n%!" (cumulated_size())
+    Printf.eprintf "Total star size: %d\n%!" (total_size())
 
   let decode i =
     let t = MenhirLib.InfiniteArray.get tries i in
@@ -499,7 +499,7 @@ let dummy : fact =
 (* The lookahead symbol fits in 8 bits. In the largest grammars that we have
    seen, the number of unique words is about 3.10^5, so a word should fit in
    about 19 bits (2^19 = 524288). In the largest grammars that we have seen,
-   the cumulated star size is about 64000, so a trie should fit in about 17
+   the total star size is about 64000, so a trie should fit in about 17
    bits (2^17 = 131072). We have ample space in a 63-bit word! We allocate 8
    bits for [lookahead], 30 bits for [word], and 25 bits for [position]. We
    could support 32-bit machines too, but that is probably pointless. *)
@@ -1340,8 +1340,8 @@ let () =
       end
       (* Automaton size (i.e., number of states). *)
       Lr1.n
-      (* Cumulated trie size. *)
-      (Trie.cumulated_size())
+      (* Total trie size. *)
+      (Trie.total_size())
       (* Size of [F]. *)
       (F.size())
       (* Size of [E]. *)
