@@ -9,8 +9,8 @@ let () =
     let module L = LRijkstra.Run(struct
       (* Undocumented: if [--log-automaton 2] is set, be verbose. *)
       let verbose = Settings.logA >= 2
-      (* TEMPORARY *)
-      let statistics = if verbose then Some "lr.csv" else None
+      (* For my own purposes, LRijstra can print one line of statistics to a .csv file. *)
+      let statistics = if false then Some "lr.csv" else None
     end) in
     exit 0
   end
