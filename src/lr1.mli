@@ -143,13 +143,13 @@ val reverse_dfs: node -> (node -> bool)
 val default_conflict_resolution: unit -> unit
 
 (* This function adds extra reduction actions in the face of an error, if
-   requested by the user via [--on-error-reduce]. *)
+   requested by the user via [%on_error_reduce]. *)
 
 (* It must be called after conflict resolution has taken place. The
    automaton is modified in place. *)
 
 (* If a state can reduce only one production, whose left-hand symbol has
-   been declared [--on-error-reduce], then every error action in this
+   been declared [%on_error_reduce], then every error action in this
    state is replaced with a reduction action. This is done even though
    this state may have outgoing shift transitions: thus, we are forcing
    one interpretation of the past, among several possible interpretations. *)

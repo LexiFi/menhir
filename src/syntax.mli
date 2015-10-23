@@ -85,6 +85,10 @@ type declaration =
 
   | DType of Stretch.ocamltype * parameter
 
+    (* On-error-reduce declaration. *)
+
+  | DOnErrorReduce of parameter
+
 (* A [%prec] annotation is optional. A production can carry at most one.
    If there is one, it is a symbol name. See [ParserAux]. *)
 

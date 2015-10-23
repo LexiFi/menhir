@@ -498,6 +498,16 @@ module Precedence : sig
 end
 
 (* ------------------------------------------------------------------------ *)
+(* %on_error_reduce declarations. *)
+
+module OnErrorReduce : sig
+
+  (* This is the set of %on_error_reduce declarations. *)
+  val declarations: StringSet.t
+
+end
+
+(* ------------------------------------------------------------------------ *)
 (* Diagnostics. *)
 
 (* This function prints diagnostics about precedence declarations that

@@ -1559,3 +1559,13 @@ let diagnostics () =
   TokPrecedence.diagnostics();
   Production.diagnostics()
 
+(* ------------------------------------------------------------------------ *)
+(* %on_error_reduce declarations. *)
+
+module OnErrorReduce = struct
+
+  let declarations =
+    Front.grammar.on_error_reduce
+
+end
+

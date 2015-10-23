@@ -40,6 +40,7 @@ type grammar =
       parameters           : Stretch.t list;
       start_symbols        : StringSet.t;
       types                : Stretch.ocamltype StringMap.t;
+      on_error_reduce      : StringSet.t;
       tokens	           : Syntax.token_properties StringMap.t;
       rules	           : rule StringMap.t;
     }

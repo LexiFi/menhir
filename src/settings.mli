@@ -208,9 +208,3 @@ val update_errors: string option
 
 val echo_errors: string option
 
-(* This is the set of non-terminal symbols that appear in a command line
-   switch of the form [--on-error-reduce]. This switch indicates that extra
-   reductions are desired when an error is detected. *)
-
-val on_error_reduce: StringSet.t
-

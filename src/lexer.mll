@@ -305,6 +305,8 @@ rule main = parse
     { PARAMETER }
 | "%inline"
     { INLINE }
+| "%on_error_reduce"
+    { ON_ERROR_REDUCE }
 | "%%"
     { (* The token [PERCENTPERCENT] carries a stretch that contains
          everything that follows %% in the input file. This string

@@ -1058,7 +1058,7 @@ let default_conflict_resolution () =
 (* Extra reductions. 2015/10/19 *)
 
 (* If a state can reduce one production whose left-hand symbol has been marked
-   [--on-error-reduce], and only one such production, then every error action
+   [%on_error_reduce], and only one such production, then every error action
    in this state is replaced with a reduction action. This is done even though
    this state may have outgoing shift transitions: thus, we are forcing one
    interpretation of the past, among several possible interpretations. *)
@@ -1066,7 +1066,7 @@ let default_conflict_resolution () =
 (* The above is the lax interpretation of the criterion. In a stricter
    interpretation, one could require the state to be able to reduce only
    one production, and furthermore require this production to be marked.
-   In practice, the lax interpretation makes [--on-error-reduce] more
+   In practice, the lax interpretation makes [%on_error_reduce] more
    powerful, and this extra power seems useful. *)
 
 (* The code below looks like the decision on a default reduction in
@@ -1099,9 +1099,9 @@ let extra_reductions () =
 
       (* Compute the productions which this node can reduce. *)
       let productions = invert (reductions node) in
-      (* Keep only those whose left-hand symbol is marked [--on-error-reduce]. *)
+      (* Keep only those whose left-hand symbol is marked [%on_error_reduce]. *)
       let productions = ProductionMap.filter (fun prod _ ->
-        StringSet.mem (lhs prod) Settings.on_error_reduce
+        StringSet.mem (lhs prod) OnErrorReduce.declarations
       ) productions in
       (* Check if this only one such production remains. *)
       match ProductionMap.is_singleton productions with
@@ -1130,12 +1130,12 @@ let extra_reductions () =
     Error.logA 1 (fun f ->
       Printf.fprintf f "Extra reductions on error were added in %d states.\n" !extra
     );
-  (* Warning about useless --on-error-reduce switches. *)
+  (* Warn about useless %on_error_reduce declarations. *)
   StringSet.iter (fun nt ->
     if not (StringSet.mem nt !extra_nts) then
       Error.grammar_warning []
-        (Printf.sprintf "the command line option --on-error-reduce %s is never useful." nt)
-  ) Settings.on_error_reduce
+        (Printf.sprintf "the declaration %%on_error_reduce %s is never useful." nt)
+  ) OnErrorReduce.declarations
 
 (* ------------------------------------------------------------------------ *)
 (* Define [fold_entry], which in some cases facilitates the use of [entry]. *)

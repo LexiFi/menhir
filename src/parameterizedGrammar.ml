@@ -589,7 +589,12 @@ let expand p_grammar =
 	 Expansion is not needed. *)
       with Not_found -> Positions.value sym 
   in
-  let rec types_from_list = function
+
+  (* Process %type declarations. *)
+  let rec types_from_list
+      (ps : (Syntax.parameter * 'a Positions.located) list)
+    : 'a StringMap.t =
+    match ps with
     | [] -> StringMap.empty
     | (nt, ty)::q ->
         let accu = types_from_list q in
@@ -597,9 +602,25 @@ let expand p_grammar =
         if StringMap.mem mangled accu then
           Error.error [Positions.position (Parameters.with_pos nt)]
             (Printf.sprintf
-               "There are multiple %%type definitions for nonterminal %s."
+               "There are multiple %%type declarations for nonterminal %s."
                mangled);
         StringMap.add mangled (Positions.value ty) accu
+  in
+
+  (* Process %on_error_reduce declarations. *)
+  let rec on_error_reduce_from_list (ps : Syntax.parameter list) : StringSet.t =
+    match ps with
+    | [] ->
+        StringSet.empty
+    | nt :: ps ->
+        let accu = on_error_reduce_from_list ps in
+        let mangled = mangle nt in
+        if StringSet.mem mangled accu then
+          Error.error [Positions.position (Parameters.with_pos nt)]
+            (Printf.sprintf
+               "There are multiple %%on_error_reduce declarations for nonterminal %s."
+               mangled);
+        StringSet.add mangled accu
   in
 
   let start_symbols = StringMap.domain (p_grammar.p_start_symbols) in
@@ -609,6 +630,7 @@ let expand p_grammar =
     parameters    = p_grammar.p_parameters;
     start_symbols = start_symbols;
     types         = types_from_list p_grammar.p_types;
+    on_error_reduce = on_error_reduce_from_list p_grammar.p_on_error_reduce;
     tokens	  = p_grammar.p_tokens;
     rules	  = 
       let closed_rules = StringMap.fold 

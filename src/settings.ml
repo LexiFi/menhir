@@ -197,12 +197,6 @@ let echo_errors =
 let set_echo_errors filename =
   echo_errors := Some filename
 
-let on_error_reduce =
-  ref StringSet.empty
-
-let on_error_reduce_symbol nt =
-  on_error_reduce := StringSet.add nt !on_error_reduce
-
 let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
@@ -238,7 +232,6 @@ let options = Arg.align [
   "--no-stdlib", Arg.Set no_stdlib, " Do not load the standard library";
   "--ocamlc", Arg.Set_string ocamlc, "<command> Specifies how ocamlc should be invoked";
   "--ocamldep", Arg.Set_string ocamldep, "<command> Specifies how ocamldep should be invoked";
-  "--on-error-reduce", Arg.String on_error_reduce_symbol, "<symbol> Reduce this nonterminal symbol upon an error";
   "--only-preprocess", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintNormal),
                        " Print grammar and exit";
   "--only-preprocess-u", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintUnitActions),
@@ -474,7 +467,4 @@ let update_errors =
 
 let echo_errors =
   !echo_errors
-
-let on_error_reduce =
-  !on_error_reduce
 

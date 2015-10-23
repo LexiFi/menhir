@@ -14,7 +14,7 @@ open Positions
 %}
 
 %token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL 
-%token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER
+%token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
 %token <string Positions.located> LID UID 
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
@@ -91,6 +91,10 @@ declaration:
 
 | PARAMETER OCAMLTYPE
     { [ unknown_pos (DParameter $2) ] }
+
+| ON_ERROR_REDUCE actuals
+    { List.map (Positions.map (fun nt -> DOnErrorReduce nt))
+        (List.map Parameters.with_pos $2) }
 
 optional_ocamltype:
   /* epsilon */

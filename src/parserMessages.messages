@@ -20,12 +20,19 @@ grammar: TYPE OCAMLTYPE UID COMMA TYPE
 grammar: TYPE OCAMLTYPE UID LPAREN UID UID 
 grammar: TYPE OCAMLTYPE UID LPAREN UID COMMA TYPE 
 grammar: TYPE OCAMLTYPE UID PLUS RPAREN 
+grammar: ON_ERROR_REDUCE TYPE
 
-Ill-formed %type declaration.
+# %type<ocamltype> and %on_error_reduce are both followed with clist(strict_actual),
+# so they are not distinguished in the automaton.
+
+Ill-formed declaration.
 Examples of well-formed declarations:
   %type <Syntax.expression> expression
   %type <int> date time
   %type <int option> option(date)
+  %on_error_reduce expression
+  %on_error_reduce date time
+  %on_error_reduce option(date)
 
 # ----------------------------------------------------------------------------
 

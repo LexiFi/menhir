@@ -20,7 +20,7 @@ open Positions
 /* Tokens. */
 
 %token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL
-%token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER
+%token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
 %token <string Positions.located> LID UID 
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
@@ -95,6 +95,10 @@ declaration:
 
 | PARAMETER t = OCAMLTYPE
     { [ with_poss $startpos $endpos (DParameter t) ] }
+
+| ON_ERROR_REDUCE ss = clist(strict_actual)
+    { List.map (Positions.map (fun nt -> DOnErrorReduce nt))
+        (List.map Parameters.with_pos ss) }
 
 /* This production recognizes tokens that are valid in the rules section,
    but not in the declarations section. This is a hint that a %% was

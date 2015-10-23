@@ -84,6 +84,12 @@ let join_declaration filename (grammar : grammar) decl =
       { grammar with
           p_types = (nonterminal, with_pos (position decl) ocamltype)::grammar.p_types }
 
+  (* Reductions on error for nonterminals. *)
+
+  | DOnErrorReduce (nonterminal) ->
+      { grammar with
+        p_on_error_reduce = nonterminal :: grammar.p_on_error_reduce }
+
   (* Token associativity and precedence. *)
 
   | DTokenProperties (terminal, assoc, prec) ->
@@ -571,7 +577,8 @@ let empty_grammar =
     p_start_symbols           = StringMap.empty;
     p_types                   = [];
     p_tokens                  = StringMap.empty;
-    p_rules                   = StringMap.empty
+    p_rules                   = StringMap.empty;
+    p_on_error_reduce         = [];
   }
 
 let join grammar pgrammar =
@@ -618,14 +625,22 @@ let check_parameterized_grammar_is_well_defined grammar =
     | ParameterApp (id, _) -> id
   in
 
-  List.iter (fun (symbol, _) ->
-    let head_symb = parameter_head_symb symbol in
-    if not (StringMap.mem (value head_symb) grammar.p_rules) then
-      Error.errorp (Parameters.with_pos symbol)
-	(Printf.sprintf
-	   "this is a terminal symbol.\n\
-             %%type declarations are applicable only to nonterminal symbols."))
-    grammar.p_types;
+  (* Every %type definition has, at its head, a nonterminal symbol. *)
+  (* Same check for %on_error_reduce definitions. *)
+  (* Apparently we do not check the parameters at this point. Maybe this is
+     done later, or not at all. *)
+  let check (kind : string) (ps : Syntax.parameter list) =
+    List.iter (fun p ->
+      let head_symb = parameter_head_symb p in
+      if not (StringMap.mem (value head_symb) grammar.p_rules) then
+        Error.errorp (Parameters.with_pos p)
+          (Printf.sprintf
+             "this should be a nonterminal symbol.\n\
+              %s declarations are applicable only to nonterminal symbols." kind)
+    ) ps
+  in
+  check "%type" (List.map fst grammar.p_types);
+  check "%on_error_reduce" grammar.p_on_error_reduce;
 
   (* Every reference to a symbol is well defined. *)
   let reserved = [ "error" ] in
