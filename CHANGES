@@ -1,24 +1,43 @@
-2015/??/??:
+2015/10/23:
+New declaration "%on_error_reduce foo", where foo is a nonterminal symbol.
+This modifies the automaton as follows. In every state where a production of
+the form "foo -> ..." is ready to be reduced, every error action is replaced
+with a reduction of this production. (If there is a conflict between several
+productions that could be reduced in this manner, nothing is done.) This does
+not affect the language that is accepted by the automaton, but delays the
+detection of an error: more reductions take place before the error is
+detected.
+
+2015/10/23:
 Fixed a bug whereby Menhir would warn about a useless %prec declaration,
 even though it was useful. This would happen when the declaration was
 duplicated (by inlining or by macro-expansion) and some but not all of
 the copies were useful.
 
-2015/??/??:
+2015/10/23:
 Added [has_default_reduction] to the incremental API.
 
-2015/??/??:
+2015/10/23:
 Modified the meaning of --canonical to allow default reductions to take
 place. There implies no loss of precision in terms of lookahead sets,
 and should allow gaining more contextual information when a syntax
 error is encountered. (It should also lead to a smaller automaton.)
 
-2015/??/??:
-New option --list-errors, which produces a list of input sentences which
+2015/10/23:
+A brand new set of tools to work on syntax errors.
+New command --list-errors, which produces a list of input sentences which
 are representative of all possible syntax errors. (Costly.)
-New option --interpret-error, which confirms that one particular input
+New command --interpret-error, which confirms that one particular input
 sentence ends in a syntax error, and prints the number of the state in
 which this error occurs.
+New command --compile-errors, which compiles a list of erroneous sentences
+(together with error messages) to OCaml code.
+New command --compare-errors, which compares two lists of erroneous sentences
+to check if they cover the same error states.
+New command --update-errors, which updates the auto-generated comments in
+a list of erroneous sentences.
+New command --echo-errors, which removes all comments and messages from
+a list of erroneous sentences, and echoes just the sentences.
 
 2015/10/16:
 Additions to the incremental API.
