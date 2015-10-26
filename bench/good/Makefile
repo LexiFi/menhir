@@ -30,8 +30,10 @@ test: clean $(RESULTS)
 	  exit 1; \
 	fi
 
-# The file %.opp.out   stores the output of menhir --only-preprocess.
-# The file %.opp.exp stores its expected output.
+# The file %.flags    (if it exists) stores extra flags that should be passed to Menhir.
+
+# The file %.opp.out  stores the output of menhir --only-preprocess.
+# The file %.opp.exp  stores its expected output.
 # The file %.out      stores the output of menhir.
 # The file %.exp      stores its expected output.
 
@@ -45,6 +47,9 @@ test: clean $(RESULTS)
 	  export BASE=`echo $< | sed s/".mly"/""/`;			\
 	  export CMD="$<";						\
 	fi;								\
+	if [ -f $*.flags ] ; then                                       \
+	  export CMD="$$CMD `cat $*.flags`" ;                            \
+	fi;                                                             \
 	$(SHELL) -c '$(MENHIR) --only-preprocess $$CMD >& $@';		\
 	if [ x$$CREATE_EXPECTED == x"1" ]; then				\
 	  cp $@ $*.opp.exp;						\
