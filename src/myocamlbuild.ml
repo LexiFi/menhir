@@ -143,6 +143,10 @@ let parser_configuration () =
      that [parserMessages.messages] covers all possible syntax errors. *)
   if fancy() then begin
     generic_compile_errors true;
+    (* We might wish to perform the completeness check only if [Sys.word_size]
+       is at least 64. Indeed, on a 32-bit machine, [menhir --list-errors] is
+       restricted to small grammars. For the moment, this works, because our
+       grammar is small enough. *)
     generic_completeness_check()
   end
 
