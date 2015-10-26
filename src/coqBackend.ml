@@ -64,14 +64,14 @@ module Run (T: sig end) = struct
       begin
         Nonterminal.iterx (fun nonterminal ->
           match Nonterminal.ocamltype nonterminal with
-            | None -> Error.error [] (sprintf "I don't know the type of non-terminal %s"
-                                     (Nonterminal.print false nonterminal))
+            | None -> Error.error [] "I don't know the type of the nonterminal symbol %s."
+                                     (Nonterminal.print false nonterminal)
             | Some _ -> ());
         Production.iterx (fun prod ->
           let act =  Production.action prod in
           if Action.(has_syntaxerror act || has_leftstart act || has_leftend act) then
-              Error.error [] ("$syntaxerror, $start, $end are not "^
-                             "supported by the coq back-end"))
+              Error.error [] "$syntaxerror, $start, $end are not supported by the Coq back-end."
+        )
       end;
 
     Production.iterx (fun prod ->
@@ -79,12 +79,12 @@ module Run (T: sig end) = struct
         match symb with
           | Symbol.T t ->
               if t = Terminal.error then
-                Error.error [] "The coq back-end does not support error"
+                Error.error [] "the Coq back-end does not support the error token."
           | _ -> ())
         (Production.rhs prod));
 
     if Front.grammar.UnparameterizedSyntax.parameters <> [] then
-      Error.error [] "The coq back-end does not support %parameter"
+      Error.error [] "the Coq back-end does not support %%parameter."
 
   (* Optimized because if we extract some constants to the right caml term, 
      the ocaml inlining+constant unfolding replaces that by the actual constant *)

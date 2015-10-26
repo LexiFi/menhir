@@ -163,7 +163,7 @@ let inline grammar =
 	 | BeingExpanded ->
     	     Error.error
 	       r.positions
-	       (Printf.sprintf "there is a cycle in the definition of %s." k)
+	       "there is a cycle in the definition of %s." k
 	 | Expanded r ->
 	     r)
     with Not_found ->
@@ -178,7 +178,7 @@ let inline grammar =
         (fun _ r -> 
 	   if r.inline_flag then
              Error.error r.positions
-               (Printf.sprintf "%%inline is not supported by the coq back-end"))
+               "%%inline is not supported by the Coq back-end.")
         grammar.rules
   in
 

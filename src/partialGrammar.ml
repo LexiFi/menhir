@@ -120,7 +120,7 @@ let join_declaration filename (grammar : grammar) decl =
       if token_properties.tk_associativity <> UndefinedAssoc then 
 	Error.error
 	  [ decl.position; token_properties.tk_position ]
-	  (Printf.sprintf "there are multiple precedence declarations for token %s." terminal);
+	  "there are multiple precedence declarations for token %s." terminal;
 
       (* Record the new declaration. *)
 
@@ -312,17 +312,15 @@ let store_symbol (symbols : symbol_table) symbol kind =
 	| (PublicNonTerminal p | PrivateNonTerminal p),
 	  (PublicNonTerminal p' | PrivateNonTerminal p') ->
 	    Error.error [ p; p'] 
-	      (Printf.sprintf 
 		 "the nonterminal symbol %s is multiply defined."
-		 symbol)
+		 symbol
 
 	(* The symbol is known to be a token but declared as a non terminal.*)
 	| (Token tkp, (PrivateNonTerminal p | PublicNonTerminal p)) 
 	| ((PrivateNonTerminal p | PublicNonTerminal p), Token tkp) ->
 	    Error.error [ p; tkp.tk_position ]
-	      (Printf.sprintf 
-		 "The identifier %s is a reference to a token."
-		 symbol)
+		 "the identifier %s is a reference to a token."
+		 symbol
 
 	(* We do not gain any piece of information. *)
 	| _, DontKnow _ | Token _, Token _ ->
@@ -344,16 +342,15 @@ let store_used_symbol position tokens symbols symbol =
 let non_terminal_is_not_reserved symbol positions = 
   if symbol = "error" then
     Error.error positions
-      (Printf.sprintf "%s is reserved and thus cannot be used \
-                       as a non-terminal symbol." symbol)
+      "%s is reserved and thus cannot be used \
+       as a non-terminal symbol." symbol
 
 let non_terminal_is_not_a_token tokens symbol positions = 
   try
     let tkp = StringMap.find symbol tokens in
       Error.error (positions @ [ tkp.tk_position ])
-      (Printf.sprintf 
-	 "The identifier %s is a reference to a token."
-	 symbol)
+	 "the identifier %s is a reference to a token."
+	 symbol
   with Not_found -> ()
 
 let store_public_nonterminal tokens symbols symbol positions =
@@ -492,7 +489,7 @@ let merge_rules symbols pgs =
       (iter_on_only_used_symbols 
 	 (fun k pos -> if not (StringSet.mem k public_symbols) then
 	    Error.error [ pos ]
-	      (Printf.sprintf "%s is undefined." k)))
+	      "%s is undefined." k))
       symbols
   in
   (* Detect private symbol clashes and rename them if necessary. *)
@@ -544,12 +541,11 @@ let merge_rules symbols pgs =
 		  (* The arity of the parameterized symbols must be constant.*)
 		  if ra <> ra' then 
 		    Error.error positions 
-		      (Printf.sprintf "symbol %s is defined with arities %d and %d."
-			 r.pr_nt ra ra')
+		      "the symbol %s is defined with arities %d and %d."
+			 r.pr_nt ra ra'
 		  else if r.pr_inline_flag <> r'.pr_inline_flag then
 		    Error.error positions
-		      (Printf.sprintf 
-			 "not all definitions of %s are marked %%inline." r.pr_nt)
+			 "not all definitions of %s are marked %%inline." r.pr_nt
 		  else 
 		    (* We combine the different branches. The parameters 
 		       could have different names, we rename them with
@@ -610,14 +606,12 @@ let check_parameterized_grammar_is_well_defined grammar =
   StringMap.iter 
     (fun nonterminal p ->
        if not (StringMap.mem nonterminal grammar.p_rules) then
-	 Error.error [p] (Printf.sprintf "the start symbol %s is undefined." 
-			   nonterminal);
+	 Error.error [p] "the start symbol %s is undefined." nonterminal;
        if not (List.exists (function 
                             | ParameterVar { value = id }, _ -> id = nonterminal
                             | _ -> false) grammar.p_types) then
 	 Error.error [p]
-	   (Printf.sprintf 
-	      "the type of the start symbol %s is unspecified." nonterminal);
+	   "the type of the start symbol %s is unspecified." nonterminal;
     ) grammar.p_start_symbols;
 
   let parameter_head_symb = function
@@ -657,7 +651,7 @@ let check_parameterized_grammar_is_well_defined grammar =
 	   || StringMap.mem s grammar.p_tokens
 	   || List.mem s prule.pr_parameters
 	   || List.mem s reserved) then
-      Error.error [ p ] (Printf.sprintf "%s is undefined." s)
+      Error.error [ p ] "%s is undefined." s
   in
     StringMap.iter
       (fun k prule -> List.iter
@@ -676,9 +670,8 @@ let check_parameterized_grammar_is_well_defined grammar =
 		 (* Check the producer id is unique. *)
 		 if StringSet.mem id.value already_seen then
 		   Error.error [ id.position ]
-		     (Printf.sprintf
 			"there are multiple producers named %s in this sequence." 
-			id.value);
+			id.value;
 		 StringSet.add id.value already_seen
 	       in
 
@@ -727,8 +720,7 @@ let check_parameterized_grammar_is_well_defined grammar =
 	 if (prule.pr_inline_flag 
 	     && StringMap.mem k grammar.p_start_symbols) then
 	   Error.error prule.pr_positions 
-	     (Printf.sprintf 
-		"%s cannot be both a start symbol and inlined." k);
+		"%s cannot be both a start symbol and inlined." k;
 
       ) grammar.p_rules;
     

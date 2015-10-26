@@ -31,10 +31,12 @@ val logC: int -> (out_channel -> unit) -> unit
 
 (* Errors and warnings. *)
 
-(* [error ps msg] displays the error message [msg], referring to the
-   positions [ps], and exits. *)
+(* [error ps format ...] displays the list of positions [ps], followed with the
+   error message [format ...], and exits. The strings "Error: " and "\n" are
+   automatically added at the beginning and end of the error message. The
+   message should begin with a lowercase letter. *)
 
-val error: Positions.positions -> string -> 'a
+val error: Positions.positions -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 (* [errorp v msg] displays the error message [msg], referring to the
    position range carried by [v], and exits. *)

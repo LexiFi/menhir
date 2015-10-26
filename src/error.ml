@@ -72,21 +72,31 @@ let logC =
 let errors =
   ref false
 
-let printN positions message = 
+let print_positions positions =
   List.iter (fun position -> 
     fprintf stderr "%s:\n" (Positions.string_of_pos position)
-  ) positions;
+  ) positions
+
+let printN positions message = (* TEMPORARY *)
+  print_positions positions;
   fprintf stderr "%s\n%!" message
 
 let error_message message =
   "Error: " ^ message
 
-let error positions message =
+let old_error positions message = (* TEMPORARY *)
   printN positions (error_message message);
   exit 1
 
+let error positions format =
+  print_positions positions;
+  Printf.kfprintf
+    (fun _ -> exit 1)
+    stderr
+    ("Error: " ^^ format ^^ "\n%!")
+
 let errorp v message =
-  error [ Positions.position v ] message
+  old_error [ Positions.position v ] message
 
 let signal positions message =
   printN positions message;

@@ -71,10 +71,9 @@ let start =
 
 let () =
   if Terminal.n > 256 then
-    Error.error [] (Printf.sprintf
+    Error.error []
       "--list-errors supports at most 256 terminal symbols.\n\
        The grammar has %d terminal symbols." Terminal.n
-    )
 
 (* ------------------------------------------------------------------------ *)
 
@@ -555,11 +554,11 @@ let mkfact position (word : W.word) lookahead =
        else
          "Please report this error to Menhir's developers."
     in
-    Error.error [] (Printf.sprintf
-      "Internal error: a hardwired limit was exceeded.\n\
+    Error.error []
+      "an internal limit was exceeded.\n\
        Sys.word_size = %d. Position = %d. Word = %d.\n\
        %s%!"
-      Sys.word_size position word advice)
+      Sys.word_size position word advice
 
 let mkfact p w l =
   let fact = mkfact p w l in

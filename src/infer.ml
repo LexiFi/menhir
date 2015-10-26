@@ -257,7 +257,7 @@ let depend grammar =
 	  Lexdep.main lexbuf
 	with Lexdep.Error msg ->
 	  (* Echo the error message, followed with ocamldep's output. *)
-	  Error.error [] (msg ^ output)
+	  Error.error [] "%s" (msg ^ output)
       in
 
       (* Look for the line that concerns the [.cmo] target, and echo a

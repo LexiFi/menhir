@@ -40,21 +40,19 @@
   (* Check that only allowed indices are used in semantic actions. *)
   let check_producers_indices allowed_producers pkeywords =
     List.iter (function
-      | { value = Keyword.PDollar idx; position } ->
+    | { value = Keyword.PDollar idx; position } ->
 	if idx - 1 >= Array.length allowed_producers then
-	  Error.error [position] begin
-	    Printf.sprintf "$%d refers to a nonexistent symbol." idx
-	  end
+	  Error.error [position]
+	    "$%d refers to a nonexistent symbol." idx
 	else begin match allowed_producers.(idx - 1) with
-	    | None ->
-	      ()
-	    | Some x ->
-	      Error.error [position] begin
-		Printf.sprintf "please do not say: $%d. Instead, say: %s." idx x
-	      end
-	  end
-      | _ ->
-	()
+	| None ->
+	    ()
+	| Some x ->
+	    Error.error [position]
+	      "please do not say: $%d. Instead, say: %s." idx x
+	end
+    | _ ->
+        ()
     ) pkeywords
 
   (* In-place transformation of keywords. We turn our keywords into
@@ -101,7 +99,7 @@
     | [] ->
         ()
     | { value = _; position = pos } :: _ ->
-        Error.error [pos] "A Menhir keyword cannot be used in an OCaml header."
+        Error.error [pos] "a Menhir keyword cannot be used in an OCaml header."
 
   (* Creates a stretch. *)
 
@@ -252,13 +250,13 @@
     ];
     table
 
-  (* A short-hand. *)
+  (* Short-hands. *)
 
-  let error1 pos msg =
-    Error.error (Positions.one pos) msg
+  let error1 pos =
+    Error.error (Positions.one pos)
 
-  let error2 lexbuf msg =
-    Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p) msg
+  let error2 lexbuf =
+    Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p)
 
 }
 

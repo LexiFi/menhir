@@ -63,12 +63,11 @@ let nonterminalgadtdef grammar =
           "The indexed type of nonterminal symbols (mock!).",
           []
       | Settings.OMNone ->
-          Error.error [] (Printf.sprintf "\
+          Error.error [] "\
             the type of the nonterminal symbol %s is unknown.\n\
             When --inspection is set, the type of every nonterminal symbol must be known.\n\
             Please use --infer or specify the type of every symbol via %%type declarations."
             nt
-          )
 
   in
   [

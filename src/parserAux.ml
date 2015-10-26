@@ -41,7 +41,7 @@ let check_production_group right_hand_sides =
 				  (IdSet.diff ids' ids))
 	    in
 	    Error.error [Positions.position id]
-	      "Two productions that share a semantic action must define\n\
+	      "two productions that share a semantic action must define\n\
 	       exactly the same identifiers."
 	  with Not_found ->
 	    ()

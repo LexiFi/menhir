@@ -266,9 +266,9 @@ module Closure (L : Lookahead.S) = struct
     let names = String.concat "\n" (List.map print items) in
     Error.error
       positions
-      (Printf.sprintf "the grammar is ambiguous.\n\
-                       The following items participate in an epsilon-cycle:\n\
-                       %s" names)
+      "the grammar is ambiguous.\n\
+       The following items participate in an epsilon-cycle:\n\
+       %s" names
 
   let () =
      P.iter (fun node ->

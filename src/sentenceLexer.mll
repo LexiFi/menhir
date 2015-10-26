@@ -9,8 +9,8 @@
 
   (* A short-hand. *)
 
-  let error2 lexbuf msg =
-    Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p) msg
+  let error2 lexbuf =
+    Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p)
 
 }
 
@@ -39,9 +39,9 @@ rule lex = parse
 	  if StringSet.mem lid Front.grammar.UnparameterizedSyntax.start_symbols then
 	    NONTERMINAL (nt, lexbuf.lex_start_p, lexbuf.lex_curr_p)
 	  else
-	    error2 lexbuf (Printf.sprintf "\"%s\" is not a start symbol." lid)
+	    error2 lexbuf "\"%s\" is not a start symbol." lid
 	with Not_found ->
-	  error2 lexbuf (Printf.sprintf "\"%s\" is not a known non-terminal symbol." lid)
+	  error2 lexbuf "\"%s\" is not a known non-terminal symbol." lid
       }
   (* An identifier that begins with an uppercase letter is considered a
      terminal symbol. *)
@@ -49,7 +49,7 @@ rule lex = parse
       { try
 	  TERMINAL (Terminal.lookup uid, lexbuf.lex_start_p, lexbuf.lex_curr_p)
 	with Not_found ->
-	  error2 lexbuf (Printf.sprintf "\"%s\" is not a known terminal symbol." uid)
+	  error2 lexbuf "\"%s\" is not a known terminal symbol." uid
       }
   (* Whitespace is ignored. *)
   | whitespace

@@ -143,7 +143,7 @@ let start poss ((nto, _) : sentence) : Nonterminal.t =
       match ProductionMap.is_singleton Lr1.entry with
       | None ->
           Error.error poss
-            "Because the grammar has multiple start symbols, each of the\n\
+            "because the grammar has multiple start symbols, each of the\n\
              sentences provided on the standard input channel must be of the\n\
              form: <start symbol>: <token>*"
       | Some (prod, _) ->
@@ -211,11 +211,11 @@ let interpret_error_aux poss ((_, terminals) as sentence) fail succeed =
   let open ReferenceInterpreter in
   match check_error_path nt terminals with
   | OInputReadPastEnd ->
-      fail "No syntax error occurs."
+      fail "no syntax error occurs."
   | OInputNotFullyConsumed ->
-      fail "A syntax error occurs before the last token is reached."
+      fail "a syntax error occurs before the last token is reached."
   | OUnexpectedAccept ->
-      fail "No syntax error occurs; in fact, this input is accepted."
+      fail "no syntax error occurs; in fact, this input is accepted."
   | OK target ->
       succeed nt terminals target
 
@@ -322,7 +322,7 @@ let write_run : maybe_targeted_run or_comment -> unit =
    used by [--interpret-error]. *)
 
 let fail msg =
-  Error.error [] msg
+  Error.error [] "%s" msg
 
 let succeed nt terminals target =
   print_messages_item (nt, terminals, target);
@@ -403,7 +403,7 @@ let setup () : unit -> sentence option =
     try
       SentenceParser.optional_sentence SentenceLexer.lex lexbuf
     with Parsing.Parse_error ->
-      Error.error (Positions.lexbuf lexbuf) "Ill-formed input sentence."
+      Error.error (Positions.lexbuf lexbuf) "ill-formed input sentence."
   in
 
   read
@@ -496,7 +496,7 @@ let read_messages filename : run or_comment list =
         | exception Parsing.Parse_error ->
             Error.error
               (Positions.one (Lexing.lexeme_start_p lexbuf))
-              "Ill-formed sentence."
+              "ill-formed sentence."
         | sentences ->
             (* In principle, we should now find a segment of whitespace
                followed with a segment of text. By construction, the two
@@ -511,7 +511,7 @@ let read_messages filename : run or_comment list =
             | [ _ ] ->
                 Error.error
                   (Positions.one (Lexing.lexeme_end_p lexbuf))
-                  "Syntax error: missing a final message. I may be desynchronized."
+                  "missing a final message. I may be desynchronized."
             | (Segment, _, _) :: _
             | (Whitespace, _, _) :: (Whitespace, _, _) :: _ ->
                 (* Should not happen, thanks to the alternation between the

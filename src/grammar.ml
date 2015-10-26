@@ -1105,11 +1105,11 @@ let () =
     if not (NONEMPTY.nonterminal nt) then
       Error.error
 	(Nonterminal.positions nt)
-	(Printf.sprintf "%s generates the empty language." (Nonterminal.print false nt));
+	"%s generates the empty language." (Nonterminal.print false nt);
     if TerminalSet.is_empty (FIRST.nonterminal nt) then
       Error.error
 	(Nonterminal.positions nt)
-	(Printf.sprintf "%s generates the language {epsilon}." (Nonterminal.print false nt))
+	"%s generates the language {epsilon}." (Nonterminal.print false nt)
   ) Front.grammar.start_symbols;
   (* If a nonterminal symbol generates the empty language, issue a warning. *)
   for nt = Nonterminal.start to Nonterminal.n - 1 do

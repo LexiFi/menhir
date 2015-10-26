@@ -206,29 +206,26 @@ let check positions env k expected_type =
 	UnificationError (t1, t2) ->
 	  Error.error
 	    positions
-	    (Printf.sprintf 
-	       "How is this symbol parameterized?\n\
+             "how is this symbol parameterized?\n\
 	      It is used at sorts %s and %s.\n\
               The sort %s is not compatible with the sort %s."
 	       (string_of_var inference_var) (string_of_var checking_var)
-	       (string_of_nt_type t1) (string_of_nt_type t2))
+	       (string_of_nt_type t1) (string_of_nt_type t2)
 	    
       | BadArityError (n1, n2) ->
 	  Error.error
 	    positions
-	    (Printf.sprintf
 	       "does this symbol expect %d or %d arguments?" 
-	       (min n1 n2) (max n1 n2))
+	       (min n1 n2) (max n1 n2)
 
       | OccursError (x, y) ->
 	  Error.error
 	    positions
-	    (Printf.sprintf 
-	       "How is this symbol parameterized?\n\
+             "how is this symbol parameterized?\n\
 	      It is used at sorts %s and %s.\n\
               The sort %s cannot be unified with the sort %s."
 	       (string_of_var inference_var) (string_of_var checking_var)
-	       (string_of_var x) (string_of_var y))
+	       (string_of_var x) (string_of_var y)
 	  
 
 
@@ -396,10 +393,9 @@ let check_grammar p_grammar =
 		     in the component. *) 
 	       if marked_components.(repr) <> parameters_len then 
 		 Error.error positions
-		   (Printf.sprintf 
-		      "Mutually recursive definitions must have the same parameters.\n\
+		      "mutually recursive definitions must have the same parameters.\n\
                        This is not the case for %s and %s."
-			 (name repr) iname)
+			 (name repr) iname
 	 in
 
 	(* In each production rule, the parameterized non terminal
@@ -422,13 +418,12 @@ let check_grammar p_grammar =
 			 if not (actual_parameters_as_formal actuals params)
 			 then
 			   Error.error [ symbol.position ]
-			     (Printf.sprintf
-				"Mutually recursive definitions must have the same \
+				"mutually recursive definitions must have the same \
                                  parameters.\n\
 				 This is not the case for %s."
 				 (let name1, name2 = (name idx), (name i) in
 				    if name1 <> name2 then name1 ^ " and "^ name2
-				    else name1))
+				    else name1)
 		   with _ -> ())
 		    symbols) (branches i)
 	 in
@@ -486,7 +481,7 @@ let expand p_grammar =
     let normalized_name = Misc.normalize name in
     if StringSet.mem normalized_name !names then
       Error.error []
-	(Printf.sprintf "internal name clash over %s" normalized_name);
+	"internal name clash over %s" normalized_name;
     names := StringSet.add normalized_name !names;
     name
   in 
@@ -601,9 +596,8 @@ let expand p_grammar =
         let mangled = mangle nt in
         if StringMap.mem mangled accu then
           Error.error [Positions.position (Parameters.with_pos nt)]
-            (Printf.sprintf
-               "There are multiple %%type declarations for nonterminal %s."
-               mangled);
+               "there are multiple %%type declarations for nonterminal %s."
+               mangled;
         StringMap.add mangled (Positions.value ty) accu
   in
 
@@ -617,9 +611,8 @@ let expand p_grammar =
         let mangled = mangle nt in
         if StringSet.mem mangled accu then
           Error.error [Positions.position (Parameters.with_pos nt)]
-            (Printf.sprintf
-               "There are multiple %%on_error_reduce declarations for nonterminal %s."
-               mangled);
+               "there are multiple %%on_error_reduce declarations for nonterminal %s."
+               mangled;
         StringSet.add mangled accu
   in
 
@@ -638,8 +631,8 @@ let expand p_grammar =
 	   (* If [k] is a start symbol then it cannot be parameterized. *)
 	   if prule.pr_parameters <> [] && StringSet.mem k start_symbols then
 	     Error.error []
-	       (Printf.sprintf "The start symbol `%s' cannot be parameterized."
-		  k);
+	       "the start symbol %s cannot be parameterized."
+		  k;
 
 	   (* Entry points are the closed non terminals. *)
 	   if prule.pr_parameters = [] then 

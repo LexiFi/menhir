@@ -40,7 +40,7 @@ let fail lexbuf checkpoint =
       (* Hack: remove the final newline, because [Error.error] adds one. *)
       let message = String.sub message 0 (String.length message - 1) in
       (* Display our message and die. *)
-      Error.error (Positions.lexbuf lexbuf) message
+      Error.error (Positions.lexbuf lexbuf) "syntax error.\n%s" message
   | _ ->
       (* This cannot happen. *)
       assert false
