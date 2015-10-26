@@ -496,24 +496,37 @@ let dummy : fact =
 
 (* Encoding and decoding facts. *)
 
-(* The lookahead symbol fits in 8 bits. In the largest grammars that we have
-   seen, the number of unique words is about 3.10^5, so a word should fit in
-   about 19 bits (2^19 = 524288). In the largest grammars that we have seen,
-   the total star size is about 64000, so a trie should fit in about 17
-   bits (2^17 = 131072). We have ample space in a 63-bit word! We allocate 8
-   bits for [lookahead], 30 bits for [word], and 25 bits for [position]. We
-   could support 32-bit machines too, but that is probably pointless. *)
+(* We encode [position|word|lookahead] in a single word of memory. *)
 
-let () =
-  if Sys.word_size < 64 then
-    Error.error [] (Printf.sprintf
-      "--list-errors requires a 64-bit machine.\n\
-       You are using a %d-bit machine." Sys.word_size
-    )
+(* The lookahead symbol fits in 8 bits. *)
+
+(* In the largest grammars that we have seen, the number of unique words is
+   about 3.10^5, so a word should fit in about 19 bits (2^19 = 524288). In the
+   largest grammars that we have seen, the total star size is about 64000, so a
+   trie should fit in about 17 bits (2^17 = 131072). *)
+
+(* On a 64-bit machine, we have ample space in a 63-bit word! We allocate 30
+   bits for [word] and the rest (i.e., 25 bits) for [position]. *)
+
+(* On a 32-bit machine, we are a bit more cramped! In Menhir's own fancy-parser,
+   the number of terminal symbols is 27, the number of unique words is 566, and
+   the total star size is 546. We allocate 12 bits for [word] and 11 bits for
+   [position]. This is better than refusing to work altogether, but still not
+   great. A more satisfactory approach might be to revert to heap allocation of
+   facts when in 32-bit mode, but that would make the code somewhat ugly. *)
+
+let w_lookahead =
+  8
+
+let w_word =
+  if Sys.word_size < 64 then 12 else 30
+
+let w_position  =
+  Sys.word_size - 1 - (w_word + w_lookahead) (* 25, on a 64-bit machine *)
 
 let identity (fact : fact) : int =
   assert (fact <> dummy);
-  fact lsr 38
+  fact lsr (w_word + w_lookahead)
 
 let position (fact : fact) : Trie.trie =
   assert (fact <> dummy);
@@ -521,25 +534,32 @@ let position (fact : fact) : Trie.trie =
 
 let word (fact : fact) : W.word =
   assert (fact <> dummy);
-  (fact lsr 8) land (1 lsl 30 - 1)
+  (fact lsr w_lookahead) land (1 lsl w_word - 1)
 
 let lookahead (fact : fact) : Terminal.t =
-  Terminal.i2t (fact land (1 lsl 8 - 1))
+  Terminal.i2t (fact land (1 lsl w_lookahead - 1))
 
 let mkfact position (word : W.word) lookahead =
   let position : int = Trie.encode position
   and word : int = word
   and lookahead : int = Terminal.t2i lookahead in
   assert (0 <= position && 0 <= word && 0 <= lookahead);
-  assert (lookahead < 1 lsl 8);
-  if position < 1 lsl 25 && word < 1 lsl 30 then
-    (position lsl 38) lor (word lsl 8) lor lookahead
+  assert (lookahead < 1 lsl w_lookahead);
+  if position < 1 lsl w_position && word < 1 lsl w_word then
+    (* [lsl] binds tighter than [lor] *)
+    (position lsl w_word lor word) lsl w_lookahead lor lookahead
   else
+    let advice =
+       if Sys.word_size < 64 then
+         "Please use a 64-bit machine."
+       else
+         "Please report this error to Menhir's developers."
+    in
     Error.error [] (Printf.sprintf
       "Internal error: a hardwired limit was exceeded.\n\
-       Position = %d. Word = %d.\n\
-       Please report this error to Menhir's developers.\n%!"
-      position word)
+       Sys.word_size = %d. Position = %d. Word = %d.\n\
+       %s\n%!"
+      Sys.word_size position word advice)
 
 let mkfact p w l =
   let fact = mkfact p w l in
