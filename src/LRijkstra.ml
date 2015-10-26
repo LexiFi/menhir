@@ -558,7 +558,7 @@ let mkfact position (word : W.word) lookahead =
     Error.error [] (Printf.sprintf
       "Internal error: a hardwired limit was exceeded.\n\
        Sys.word_size = %d. Position = %d. Word = %d.\n\
-       %s\n%!"
+       %s%!"
       Sys.word_size position word advice)
 
 let mkfact p w l =
