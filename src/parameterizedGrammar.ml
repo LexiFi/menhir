@@ -595,7 +595,7 @@ let expand p_grammar =
         let accu = types_from_list q in
         let mangled = mangle nt in
         if StringMap.mem mangled accu then
-          Error.error [Positions.position (Parameters.with_pos nt)]
+          Error.error [Parameters.position nt]
                "there are multiple %%type declarations for nonterminal %s."
                mangled;
         StringMap.add mangled (Positions.value ty) accu
@@ -610,7 +610,7 @@ let expand p_grammar =
         let accu = on_error_reduce_from_list ps in
         let mangled = mangle nt in
         if StringSet.mem mangled accu then
-          Error.error [Positions.position (Parameters.with_pos nt)]
+          Error.error [Parameters.position nt]
                "there are multiple %%on_error_reduce declarations for nonterminal %s."
                mangled;
         StringSet.add mangled accu

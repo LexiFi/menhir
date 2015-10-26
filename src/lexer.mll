@@ -337,9 +337,7 @@ rule main = parse
     { PLUS }
 | (lowercase identchar *) as id
     { if Hashtbl.mem reserved id then
-	Error.errorp
-	  (Positions.with_poss (lexeme_start_p lexbuf) (lexeme_end_p lexbuf) ())
-	  "this is an Objective Caml reserved word."
+        error2 lexbuf "this is an Objective Caml reserved word."
       else
 	LID (with_pos (cpos lexbuf) id)
     }

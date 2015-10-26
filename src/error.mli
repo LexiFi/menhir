@@ -41,7 +41,7 @@ val error: Positions.positions -> ('a, out_channel, unit, 'b) format4 -> 'a
 (* [errorp v msg] displays the error message [msg], referring to the
    position range carried by [v], and exits. *)
 
-val errorp: 'a Positions.located -> string -> 'b
+val errorp: _ Positions.located -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 (* [warning ps msg] displays the warning message [msg], referring to
    the positions [ps]. *)

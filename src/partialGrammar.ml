@@ -43,7 +43,7 @@ let join_declaration filename (grammar : grammar) decl =
 
 	  if token_property.tk_is_declared then
 	    Error.errorp decl
-	      (Printf.sprintf "the token %s has multiple definitions." terminal)
+	      "the token %s has multiple definitions." terminal
 
 	  (* Otherwise, update the previous definition. *)
 
@@ -594,7 +594,7 @@ let check_keywords producers action =
 	) producers;
 	if not !found then
 	  Error.errorp keyword
-	    (Printf.sprintf "%s refers to a nonexistent symbol." id)
+	    "%s refers to a nonexistent symbol." id
       | Position (Left, _, _)
       | SyntaxError ->
 	()
@@ -627,10 +627,9 @@ let check_parameterized_grammar_is_well_defined grammar =
     List.iter (fun p ->
       let head_symb = parameter_head_symb p in
       if not (StringMap.mem (value head_symb) grammar.p_rules) then
-        Error.errorp (Parameters.with_pos p)
-          (Printf.sprintf
+        Error.error [Parameters.position p]
              "this should be a nonterminal symbol.\n\
-              %s declarations are applicable only to nonterminal symbols." kind)
+              %s declarations are applicable only to nonterminal symbols." kind
     ) ps
   in
   check "%type" (List.map fst grammar.p_types);
@@ -687,7 +686,7 @@ let check_parameterized_grammar_is_well_defined grammar =
                     if not ((StringMap.find s grammar.p_tokens).tk_is_declared
                            || List.mem s reserved) then 
 		      Error.errorp symbol
-			(Printf.sprintf "%s has not been declared as a token." s)
+			"%s has not been declared as a token." s
 		  with Not_found -> ());
 		 already_seen
 
@@ -706,13 +705,13 @@ let check_parameterized_grammar_is_well_defined grammar =
 		  (* It is forbidden to use the %prec directive with %inline. *)
 		  if prule.pr_inline_flag then
 		    Error.errorp terminal
-		      "use of %prec is forbidden in an %inlined nonterminal definition.";
+		      "use of %%prec is forbidden in an %%inlined nonterminal definition.";
 
 		  (* Furthermore, the symbol following %prec must be a valid
 		     token identifier. *)  
                   if not (StringMap.mem terminal.value grammar.p_tokens) then
 		    Error.errorp terminal
-		      (Printf.sprintf "%s is undefined." terminal.value))
+		      "%s is undefined." terminal.value)
 
 	 prule.pr_branches;
 

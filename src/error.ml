@@ -84,10 +84,6 @@ let printN positions message = (* TEMPORARY *)
 let error_message message =
   "Error: " ^ message
 
-let old_error positions message = (* TEMPORARY *)
-  printN positions (error_message message);
-  exit 1
-
 let error positions format =
   print_positions positions;
   Printf.kfprintf
@@ -95,8 +91,8 @@ let error positions format =
     stderr
     ("Error: " ^^ format ^^ "\n%!")
 
-let errorp v message =
-  old_error [ Positions.position v ] message
+let errorp v =
+  error [ Positions.position v ]
 
 let signal positions message =
   printN positions message;
