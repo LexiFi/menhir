@@ -34,34 +34,32 @@ val logC: int -> (out_channel -> unit) -> unit
 (* [error ps format ...] displays the list of positions [ps], followed with the
    error message [format ...], and exits. The strings "Error: " and "\n" are
    automatically added at the beginning and end of the error message. The
-   message should begin with a lowercase letter. *)
+   message should begin with a lowercase letter and end with a dot. *)
 
 val error: Positions.positions -> ('a, out_channel, unit, 'b) format4 -> 'a
 
-(* [errorp v msg] displays the error message [msg], referring to the
-   position range carried by [v], and exits. *)
+(* [errorp] is like [error], but uses the position range carried by [v]. *)
 
 val errorp: _ Positions.located -> ('a, out_channel, unit, 'b) format4 -> 'a
 
-(* [warning ps msg] displays the warning message [msg], referring to
-   the positions [ps]. *)
+(* [signal] is like [error], except it does not exit immediately. It sets a
+   flag which can be tested using [errors]. *)
 
-val warning: Positions.positions -> string -> unit
-
-(* [signal ps msg] displays the error message [msg], referring to the
-   positions [ps], and does not exit immediately. *)
-
-val signal: Positions.positions -> string -> unit
+val signal: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
 
 (* [errors] returns [true] if [signal] was previously called. Together
    [signal] and [errors] allow reporting multiple errors before aborting. *)
 
 val errors: unit -> bool
 
+(* [warning] is like [signal], except it does not set a flag. *)
+
+val warning: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
+
 (* Certain warnings about the grammar can optionally be treated as errors.
    The following function emits a warning or error message, via [warning] or
    [signal]. It does not stop the program; the client must at some point call
    [errors] and stop the program if any errors have been reported. *)
 
-val grammar_warning: Positions.positions -> string -> unit
+val grammar_warning: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
 

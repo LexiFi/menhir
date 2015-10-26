@@ -32,9 +32,8 @@ let trim grammar =
       if not (StringSet.mem symbol reachable) then
 	Error.grammar_warning
 	  rule.positions
-	  (Printf.sprintf
 	     "symbol %s is unreachable from any of the start symbol(s)."
-	       symbol)
+	       symbol
     ) grammar.rules;
     { grammar with rules = StringMap.restrict reachable grammar.rules }
 

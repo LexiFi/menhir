@@ -48,7 +48,7 @@ module TokPrecedence = struct
 	    ()
 	| PrecedenceLevel (_, _, pos1, pos2) ->
 	    Error.grammar_warning (Positions.two pos1 pos2)
-	      (Printf.sprintf "the precedence level assigned to %s is never useful." id)
+	      "the precedence level assigned to %s is never useful." id
     ) Front.grammar.tokens
 
 end
@@ -737,7 +737,7 @@ module Production = struct
         (* Check whether this %prec declaration was useless. *)
         let pos = Positions.position sym in
         if not (Hashtbl.mem ever_useful pos) then begin
-          Error.grammar_warning [pos] "this %prec declaration is never useful.";
+          Error.grammar_warning [pos] "this %%prec declaration is never useful.";
           Hashtbl.add ever_useful pos () (* hack: avoid two warnings at the same position *)
         end
       ) osym
@@ -1116,7 +1116,7 @@ let () =
     if not (NONEMPTY.nonterminal nt) then
       Error.grammar_warning
 	(Nonterminal.positions nt)
-	(Printf.sprintf "%s generates the empty language." (Nonterminal.print false nt));
+	"%s generates the empty language." (Nonterminal.print false nt);
   done
 
 (* ------------------------------------------------------------------------ *)

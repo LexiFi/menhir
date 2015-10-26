@@ -269,16 +269,16 @@ let () =
 	  incr count;
 	  Error.grammar_warning
 	    (Nonterminal.positions nt)
-	    (Printf.sprintf "symbol %s is never accepted." (Nonterminal.print false nt))
+	    "symbol %s is never accepted." (Nonterminal.print false nt)
       | None ->
 	  incr count;
 	  Error.grammar_warning
 	    (Production.positions prod)
-	    (Printf.sprintf "production %sis never reduced." (Production.print prod))
+	    "production %sis never reduced." (Production.print prod)
   );
   if !count > 0 then
     Error.grammar_warning []
-      (Printf.sprintf "in total, %d productions are never reduced." !count)
+      "in total, %d productions are never reduced." !count
 
 (* ------------------------------------------------------------------------ *)
 (* From the above information, deduce, for each production, the states that

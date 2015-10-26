@@ -892,11 +892,11 @@ let () =
   if !shift_reduce = 1 then
     Error.grammar_warning [] "one state has shift/reduce conflicts."
   else if !shift_reduce > 1 then
-    Error.grammar_warning [] (Printf.sprintf "%d states have shift/reduce conflicts." !shift_reduce);
+    Error.grammar_warning [] "%d states have shift/reduce conflicts." !shift_reduce;
   if !reduce_reduce = 1 then
     Error.grammar_warning [] "one state has reduce/reduce conflicts."
   else if !reduce_reduce > 1 then
-    Error.grammar_warning [] (Printf.sprintf "%d states have reduce/reduce conflicts." !reduce_reduce)
+    Error.grammar_warning [] "%d states have reduce/reduce conflicts." !reduce_reduce
 
 (* There is a global check for errors at the end of [Invariant], so we do
    not need to check & stop here. *)
@@ -922,11 +922,10 @@ let rec best choice = function
              2- they are derived, via inlining, from the same production. *) 
 	  Error.signal
 	    (Production.positions choice @ Production.positions prod)
-	    (Printf.sprintf
 	       "do not know how to resolve a reduce/reduce conflict\n\
                 between the following two productions:\n%s\n%s"
                   (Production.print choice)
-                  (Production.print prod));
+                  (Production.print prod);
 	  choice (* dummy *)
 
 (* Go ahead. *)
@@ -976,11 +975,11 @@ let default_conflict_resolution () =
   if !shift_reduce = 1 then
     Error.warning [] "one shift/reduce conflict was arbitrarily resolved."
   else if !shift_reduce > 1 then
-    Error.warning [] (Printf.sprintf "%d shift/reduce conflicts were arbitrarily resolved." !shift_reduce);
+    Error.warning [] "%d shift/reduce conflicts were arbitrarily resolved." !shift_reduce;
   if !reduce_reduce = 1 then
     Error.warning [] "one reduce/reduce conflict was arbitrarily resolved."
   else if !reduce_reduce > 1 then
-    Error.warning [] (Printf.sprintf "%d reduce/reduce conflicts were arbitrarily resolved." !reduce_reduce);
+    Error.warning [] "%d reduce/reduce conflicts were arbitrarily resolved." !reduce_reduce;
 
   (* Now, ensure that states that have a reduce action at the
      pseudo-token "#" have no other action. *)
@@ -1052,7 +1051,7 @@ let default_conflict_resolution () =
   if !ambiguities = 1 then
     Error.grammar_warning [] "one state has an end-of-stream conflict."
   else if !ambiguities > 1 then
-    Error.grammar_warning [] (Printf.sprintf "%d states have an end-of-stream conflict." !ambiguities)
+    Error.grammar_warning [] "%d states have an end-of-stream conflict." !ambiguities
 
 (* ------------------------------------------------------------------------ *)
 (* Extra reductions. 2015/10/19 *)
@@ -1134,7 +1133,7 @@ let extra_reductions () =
   StringSet.iter (fun nt ->
     if not (StringSet.mem nt !extra_nts) then
       Error.grammar_warning []
-        (Printf.sprintf "the declaration %%on_error_reduce %s is never useful." nt)
+        "the declaration %%on_error_reduce %s is never useful." nt
   ) OnErrorReduce.declarations
 
 (* ------------------------------------------------------------------------ *)

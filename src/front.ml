@@ -134,7 +134,7 @@ let grammar =
     in
     if not Settings.infer && inlined && not skipping_parser_generation then
       Error.warning []
-	"you are using the standard library and/or the %inline keyword. We\n\
+	"you are using the standard library and/or the %%inline keyword. We\n\
 	 recommend switching on --infer in order to avoid obscure type error messages.";
     Time.tick "Inlining";
     grammar

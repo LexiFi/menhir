@@ -337,16 +337,18 @@ let interpret_error sentence =
    an error, computes the state in which the error is obtained, and constructs
    a targeted sentence. *)
 
-let target_sentence signal : located_sentence -> maybe_targeted_sentence =
+let target_sentence
+    (signal : Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a)
+  : located_sentence -> maybe_targeted_sentence =
   fun (poss, sentence) ->
     (poss, sentence),
     interpret_error_aux poss sentence
       (* failure: *)
       (fun msg ->
-        signal poss (Printf.sprintf
-          "This sentence does not end with a syntax error, as it should.\n%s"
+        signal poss
+          "this sentence does not end with a syntax error, as it should.\n%s"
           msg
-        );
+        ;
         None
       )
       (* success: *)
@@ -537,9 +539,8 @@ let message_table (detect_redundancy : bool) (runs : filtered_targeted_run list)
         | sentence1, _ ->
             if detect_redundancy then
               Error.signal (fst sentence1 @ fst sentence2)
-                (Printf.sprintf
-                   "Redundancy: these sentences both cause an error in state %d."
-                   (Lr1.number s));
+                   "these sentences both cause an error in state %d."
+                   (Lr1.number s);
             table
         | exception Not_found ->
             Lr1.NodeMap.add s (sentence2, message) table
@@ -668,11 +669,10 @@ let () =
     (* Check that the domain of [table1] is a subset of the domain of [table2]. *)
     table1 |> Lr1.NodeMap.iter (fun s ((poss1, _), _) ->
       if not (Lr1.NodeMap.mem s table2) then
-        Error.signal poss1 (Printf.sprintf
-          "This sentence leads to an error in state %d.\n\
+        Error.signal poss1
+          "this sentence leads to an error in state %d.\n\
            No sentence that leads to this state exists in \"%s\"."
           (Lr1.number s) filename2
-        )
     );
 
     (* Check that [table1] is a subset of [table2], that is, for every state
@@ -687,11 +687,10 @@ let () =
         try
           let (poss2, _), message2 = Lr1.NodeMap.find s table2 in
           if message1 <> message2 then
-            Error.warning (poss1 @ poss2) (Printf.sprintf
-              "These sentences lead to an error in state %d.\n\
+            Error.warning (poss1 @ poss2)
+              "these sentences lead to an error in state %d.\n\
                The corresponding messages in \"%s\" and \"%s\" differ."
               (Lr1.number s) filename1 filename2
-            )
         with Not_found ->
           ()
     );

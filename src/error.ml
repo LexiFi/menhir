@@ -1,12 +1,5 @@
 open Printf
 
-(* TEMPORARY Vérifier que les messages d'erreur sont standardisés au
-   maximum, localisés au maximum. Supprimer autant de fonctions que
-   possible dans ce module. *)
-
-(* TEMPORARY reprendre compl`etement implementation et interface
-   de ce module *)
-
 (* ---------------------------------------------------------------------------- *)
 
 (* Global state. *)
@@ -72,46 +65,39 @@ let logC =
 let errors =
   ref false
 
-let print_positions positions =
+let display continuation header positions format =
   List.iter (fun position -> 
     fprintf stderr "%s:\n" (Positions.string_of_pos position)
-  ) positions
-
-let printN positions message = (* TEMPORARY *)
-  print_positions positions;
-  fprintf stderr "%s\n%!" message
-
-let error_message message =
-  "Error: " ^ message
+  ) positions;
+  Printf.kfprintf
+    continuation
+    stderr
+    (header ^^ format ^^ "\n%!")
 
 let error positions format =
-  print_positions positions;
-  Printf.kfprintf
+  display
     (fun _ -> exit 1)
-    stderr
-    ("Error: " ^^ format ^^ "\n%!")
+    "Error: "
+    positions format 
 
-let errorp v =
-  error [ Positions.position v ]
+let signal positions format =
+  display
+    (fun _ -> errors := true)
+    "Error: "
+    positions format 
 
-let signal positions message =
-  printN positions message;
-  errors := true
-
-let warning positions message =
-  printN positions (Printf.sprintf "Warning: %s" message)
+let warning positions format =
+  display
+    (fun _ -> ())
+    "Warning: "
+    positions format 
 
 let errors () =
   !errors
 
-(* Certain warnings about the grammar can optionally be treated as errors.
-   The following function emits a warning or error message, via [warning] or
-   [signal]. It does not stop the program; the client must at some point call
-   [errors] and stop the program if any errors have been reported. *)
+let errorp v =
+  error [ Positions.position v ]
 
-let grammar_warning positions message =
-  if Settings.strict then
-    signal positions (error_message message)
-  else
-    warning positions message
+let grammar_warning =
+  if Settings.strict then signal else warning
 
