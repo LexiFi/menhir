@@ -32,20 +32,6 @@ ifndef USE_OCAMLFIND
 endif
 
 # ----------------------------------------------------------------------------
-
-# A few settings differ on Windows versus Unix.
-
-ifeq "$(shell ocamlc -config | grep ccomp_type)" "ccomp_type: msvc"
-MENHIREXE    := menhir.exe
-OBJ          := obj
-# LIBSUFFIX    := lib
-else
-MENHIREXE    := menhir
-OBJ          := o
-# LIBSUFFIX    := a
-endif
-
-# ----------------------------------------------------------------------------
 # Installation paths.
 
 bindir          := ${PREFIX}/bin
@@ -55,6 +41,30 @@ mandir          := ${PREFIX}/share/man/man1
 MANS            := menhir.1
 DOCS            := manual.pdf demos
 MLYLIB          := src/standard.mly
+
+# ----------------------------------------------------------------------------
+
+# A few settings differ on Windows versus Unix.
+
+# If the compiler is MSVC, then the name of the executable file ends in .exe,
+# and object file names end in .obj instead of .o.
+
+ifeq "$(shell ocamlc -config | grep ccomp_type)" "ccomp_type: msvc"
+  MENHIREXE    := menhir.exe
+  OBJ          := obj
+# LIBSUFFIX    := lib
+else
+  MENHIREXE    := menhir
+  OBJ          := o
+# LIBSUFFIX    := a
+endif
+
+# If Cygwin is present, then the path ${libdir} that is recorded in
+# src/installation.ml (see below) must be translated using cygpath.
+
+libdir	        := $(shell if which cygpath >/dev/null ; \
+	             then echo "cygpath -m ${libdir}" ; \
+                     else echo ${libdir} ; fi)
 
 # -------------------------------------------------------------------------
 
