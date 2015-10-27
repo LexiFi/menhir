@@ -47,6 +47,7 @@ type check_error_path_outcome =
 | OK of target
 
 val check_error_path:
+  bool ->            (* --trace *)
   Nonterminal.t ->   (* initial non-terminal symbol *)
   Terminal.t list -> (* input  *)
   check_error_path_outcome

@@ -261,14 +261,14 @@ type check_error_path_outcome =
      LR automaton. *)
 | OK of target
 
-let check_error_path nt input =
+let check_error_path log nt input =
 
   (* Instantiate the LR engine. *)
 
   let module E =
     MenhirLib.Engine.Make (struct
       include T
-      let log = false
+      let log = log
     end)
   in
 

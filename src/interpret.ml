@@ -206,10 +206,10 @@ let interpret ((_, toks) as sentence) : unit =
 (* [interpret_error_aux] interprets a sentence, expecting it to end in an
    error. Failure or success is reported via two continuations. *)
 
-let interpret_error_aux poss ((_, terminals) as sentence) fail succeed =
+let interpret_error_aux log poss ((_, terminals) as sentence) fail succeed =
   let nt = start poss sentence in
   let open ReferenceInterpreter in
-  match check_error_path nt terminals with
+  match check_error_path log nt terminals with
   | OInputReadPastEnd ->
       fail "no syntax error occurs."
   | OInputNotFullyConsumed ->
@@ -329,7 +329,7 @@ let succeed nt terminals target =
   exit 0
 
 let interpret_error sentence =
-  interpret_error_aux [] sentence fail succeed
+  interpret_error_aux Settings.trace [] sentence fail succeed
 
 (* --------------------------------------------------------------------------- *)
 
@@ -342,7 +342,7 @@ let target_sentence
   : located_sentence -> maybe_targeted_sentence =
   fun (poss, sentence) ->
     (poss, sentence),
-    interpret_error_aux poss sentence
+    interpret_error_aux false poss sentence
       (* failure: *)
       (fun msg ->
         signal poss

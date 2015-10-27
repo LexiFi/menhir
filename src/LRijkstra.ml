@@ -1141,7 +1141,7 @@ let fail msg =
 let validate nt s' w : ReferenceInterpreter.target =
   let open ReferenceInterpreter in
   match
-    check_error_path nt (W.elements w)
+    check_error_path false nt (W.elements w)
   with
   | OInputReadPastEnd ->
       fail "input was read past its end"
