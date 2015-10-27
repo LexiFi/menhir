@@ -97,7 +97,7 @@ two \messages files, \nt{filename1} and \nt{filename2}. Each file is read and
 internally translated to a mapping of states to messages. \menhir then checks
 that the left-hand mapping is a subset of the right-hand mapping. This feature
 is typically used in conjunction with \olisterrors to check that \nt{filename2}
-is complete, i.e., covers all states where an error can occur.
+is complete (that is, covers all states where an error can occur).
 For more information, see \sref{sec:errors:new}.
 
 \docswitch{\ocompileerrors \nt{filename}} This switch causes \menhir to read the
@@ -112,7 +112,7 @@ irredundant. For more information, see \sref{sec:errors:new}.
 \docswitch{\ocoqnoactions} (Used in conjunction with \ocoq.) This switch
 causes the semantic actions present in the \texttt{.vy} file to be ignored and
 replaced with \verb+tt+, the unique inhabitant of Coq's \verb+unit+ type. This
-feature can be used to test the Coq back-end with a standard grammar, i.e., a
+feature can be used to test the Coq back-end with a standard grammar, that is, a
 grammar that contains \ocaml semantic actions. Just rename the file from
 \texttt{.mly} to \texttt{.vy} and set this switch.
 
@@ -2489,11 +2489,13 @@ set of tools for creating, maintaining, and exploiting \messages files
 In this approach to error reporting, the special \error token is not used. It
 should not appear in the grammar.
 
-% TEMPORARY TODO:
+% TEMPORARY TODO: document the workflow
 % pointer vers pre_parser.mly et ErrorReporting.ml et handcrafted.messages dans CompCert
 % section sur comment écrire de bons messages?
 % parler aussi de %on_error_reduce, de duplication de contexte statique, ...
 % souligner que le message doit être représentatif de toutes les façons d'atteindre cet état
+
+% ---------------------------------------------------------------------------------------------------------------------
 
 \subsection{The \messages file format}
 \label{sec:messages:format}
@@ -2603,8 +2605,87 @@ error state that can be reached via other sentences that do involve spurious
 reductions.
 % Not sure what to conclude about this issue...
 
+% ---------------------------------------------------------------------------------------------------------------------
+
 \subsection{Maintaining \messages files}
 \label{sec:messages:tools}
+
+Ideally, the set of input sentences in a \messages file should be correct
+(that is, every sentence causes an error on its last token), irredundant (that
+is, no two sentences lead to the same error state), and complete (that is,
+every error state is reached by some sentence).
+
+Correctness and irredundancy are checked by the
+command \ocompileerrors \nt{filename}, where \nt{filename} is the name of
+a \messages file. This command fails if a sentence does not cause an error at
+all, or causes an error too early. It also fails if two sentences lead to the
+same error state.
+%
+If the file is correct and irredundant, then (as its name suggests) this
+command compiles the \messages file down to an OCaml function, whose code
+is printed on the standard output channel. This function, named \verb+message+,
+has type \verb+int -> string+, and maps a state number to a message. It
+raises the exception \verb+Not_found+ if its argument is not the number of
+a state for which a message has been defined.
+
+Completeness is checked via the commands \olisterrors and
+\ocompareerrors. The former produces, from scratch, a complete
+set of input sentences, that is, a set of input sentences that reaches all
+error states. The latter compares two sets of sentences (more precisely,
+the two underlying sets of error states) for inclusion.
+
+The command \olisterrors first computes all possible ways of causing an error.
+From this information, it deduces a list of all error states, that is, all
+states where an error can be detected. For each of these states, it computes a
+(minimal) input sentence that causes an error in this state. Finally, it
+prints these sentences, in the \messages file format, on the standard output
+channel. Each sentence is followed with an auto-generated comment and with a
+dummy diagnostic message. The user should be warned that this algorithm may
+require large amounts of time (typically in the tens of seconds, possibly
+more) and memory (typically in the gigabytes, possibly more). It requires a
+64-bit machine. (On a 32-bit machine, it works, but quickly hits a built-in
+size limit.) At the verbosity level \ologautomaton~\texttt{2}, it displays
+some progress information and internal statistics on the standard error
+channel.
+
+The command \ocompareerrors \nt{filename1} \ocompareerrors \nt{filename2}
+compares the \messages files \nt{filename1} and \nt{filename2}. Each file is
+read and internally translated to a mapping of states to messages. \menhir
+then checks that the left-hand mapping is a subset of the right-hand mapping.
+That is, if a state~$s$ is reached by some sentence in \nt{filename1}, then it
+should also be reached by some sentence in \nt{filename2}. Furthermore, if the
+message associated with $s$ in \nt{filename1} is not a dummy message, then the
+same message should be associated with $s$ in \nt{filename2}.
+
+To check that the sentences in \nt{filename2} cover all error states, it
+suffices to (1)~use \olisterrors to produce a complete set of sentences,
+which one stores in \nt{filename1}, then (2)~use \ocompareerrors to
+compare \nt{filename1} and \nt{filename2}.
+
+The command \oupdateerrors \nt{filename} is used to update the auto-generated
+comments in the \messages file \nt{filename}. It is typically used after a
+change in the grammar (or in the command line options that affect the
+construction of the automaton). A new \messages file is produced on the
+standard output channel. It is identical to \nt{filename}, except the
+auto-generated comments, identified by \verb+##+, have been removed and
+re-generated.
+
+The command \oechoerrors \nt{filename} is used to filter out all comments,
+blank lines, and messages from the \messages file \nt{filename}. The input
+sentences, and nothing else, are echoed on the standard output channel. As an
+example application, one could then translate the sentences to concrete syntax
+and create a collection of source files that trigger every possible syntax
+error.
+
+The command \ointerpreterror is analogous to \ointerpret. It causes \menhir to
+act as an interpreter. \menhir reads sentences off the standard input channel,
+parses them, and displays the outcome. This switch can be usefully combined
+with \otrace. The main difference between \ointerpret and \ointerpreterror is
+that, when the latter command is used,
+\menhir expects the input sentence to cause an error on its last token, and
+displays information about the state in which the error is detected, in the
+form of a \messages file entry. This can be used to quickly find out exactly
+what error is caused by one particular input sentence.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
