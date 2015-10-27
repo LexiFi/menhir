@@ -401,6 +401,7 @@ must be fully qualified.
 && \dright \sepspacelist{\nt{uid}} \\
 && \dtype \ocamltype \sepspacelist{\nt{lid}} \\
 && \dstart \optional{\ocamltype} \sepspacelist{\nt{lid}} \\
+&& \donerrorreduce \sepspacelist{\nt{lid}} \\
 
 \nt{rule} \is
    \optional{\dpublic} \optional{\dinline}
@@ -517,6 +518,12 @@ assigns an \ocaml type to each of the nonterminal symbols $\nt{lid}_1, \ldots, \
 For start symbols, providing an \ocaml type is mandatory, but is usually done as part of the
 \dstart declaration. For other symbols, it is optional. Providing type information can improve
 the quality of \ocaml's type error messages.
+% TEMPORARY type information can be mandatory in --coq mode; document?
+
+A \dtype declaration may concern not only a nonterminal symbol, such as, say,
+\texttt{expression}, but also a fully applied parameterized nonterminal
+symbol, such as \texttt{list(expression)} or \texttt{separated\_list(COMMA,
+  option(expression))}.
 
 \subsubsection{Start symbols}
 \label{sec:start}
@@ -531,6 +538,61 @@ part of the \dstart declaration or via separate \dtype declarations. Each
 of $\nt{lid}_1, \ldots, \nt{lid}_n$ becomes the name of a function whose
 signature is published in the \mli file and that can be used to invoke
 the parser.
+
+\subsubsection{Extra reductions on error}
+\label{sec:onerrorreduce}
+
+A declaration of the form:
+\begin{quote}
+\donerrorreduce $\nt{lid}_1 \ldots \nt{lid}_n$
+\end{quote}
+marks the nonterminal symbols $\nt{lid}_1, \ldots, \nt{lid}_n$ as
+potentially eligible for reduction when an invalid token is found.
+
+More precisely, this declaration affects the automaton as follows. Let us say
+that a production $\nt{lid} \rightarrow \ldots$ is ``reducible on error'' if
+its left-hand symbol~\nt{lid} appears in a \donerrorreduce declaration. After
+the automaton has been constructed and after any conflicts have been resolved,
+in every state~$s$, the following rule is applied:
+\begin{quote}
+  If the set of all productions that are ready to be reduced in state~$s$ and
+  are reducible on error is a singleton set $\{ p \}$, then in state~$s$ every
+  error action is replaced with a reduction of the production~$p$.
+\end{quote}
+In other words, for every terminal symbol~$t$, if the automaton's action table
+says: ``in state~$s$, when the next input symbol is~$t$, fail'', then this
+table entry is replaced with: ``in state~$s$, when the next input symbol
+is~$t$, reduce production~$p$''.
+
+If this rule fires in state~$s$, then an error can never be detected in
+state~$s$, since all error actions in state~$s$ are replaced with reduce
+actions. Error detection is deferred: at least one reduction takes place
+before the error is detected. It is a ``spurious'' reduction: in a canonical
+LR(1) automaton, it would not take place.
+
+An \donerrorreduce declaration does not affect the language that is accepted by
+the automaton. It does not affect the location where an error is detected. It
+is used to control in which state an error is detected. If used wisely, it
+makes errors easier to report, because they are detected in a state for which
+it is easier to write an accurate diagnostic message (\sref{sec:errors:new}).
+
+% This may make the tables bigger (but I have no statistics).
+% This makes LRijkstra significantly slower.
+
+This mechanism should be used with caution. By performing a spurious
+reduction, one commits to a certain interpretation of what has been read so
+far. For instance, by reducing the production
+$\texttt{list(expression)} \rightarrow \epsilon$, one decides that an empty
+list of expressions has been recognized, even though this list could have been
+continued if a different token had been found instead of the invalid token.
+This should be taken into account when writing diagnostic messages.
+% TEMPORARY pointeur sur l'endroit où on parle de "if this list is complete,
+% then..."
+
+Like a \dtype declaration, an \donerrorreduce declaration may concern not only
+a nonterminal symbol, such as, say, \texttt{expression}, but also a fully
+applied parameterized nonterminal symbol, such as \texttt{list(expression)} or
+\texttt{separated\_list(COMMA, option(expression))}.
 
 \subsection{Rules}
 
@@ -2489,12 +2551,6 @@ set of tools for creating, maintaining, and exploiting \messages files
 In this approach to error reporting, the special \error token is not used. It
 should not appear in the grammar.
 
-% TEMPORARY TODO: document the workflow
-% pointer vers pre_parser.mly et ErrorReporting.ml et handcrafted.messages dans CompCert
-% section sur comment écrire de bons messages?
-% parler aussi de %on_error_reduce, de duplication de contexte statique, ...
-% souligner que le message doit être représentatif de toutes les façons d'atteindre cet état
-
 % ---------------------------------------------------------------------------------------------------------------------
 
 \subsection{The \messages file format}
@@ -2686,6 +2742,18 @@ that, when the latter command is used,
 displays information about the state in which the error is detected, in the
 form of a \messages file entry. This can be used to quickly find out exactly
 what error is caused by one particular input sentence.
+
+% ---------------------------------------------------------------------------------------------------------------------
+
+\subsection{Writing a diagnostic message}
+
+% ICI
+
+% TEMPORARY TODO: document the workflow
+% pointer vers pre_parser.mly et ErrorReporting.ml et handcrafted.messages dans CompCert
+% section sur comment écrire de bons messages?
+% parler aussi de %on_error_reduce, de duplication de contexte statique, ...
+% souligner que le message doit être représentatif de toutes les façons d'atteindre cet état
 
 % ---------------------------------------------------------------------------------------------------------------------
 
