@@ -52,7 +52,7 @@ first~\cite{aho-86,appel-tiger-98,hopcroft-motwani-ullman-00}. They are also
 invited to have a look at the \distrib{demos} directory in \menhir's
 distribution.
 
-Potential users of Menhir should be warned that \menhir's feature set is not
+Potential users of \menhir should be warned that \menhir's feature set is not
 completely stable. There is a tension between preserving a measure of
 compatibility with \ocamlyacc, on the one hand, and introducing new ideas, on
 the other hand. Some aspects of the tool, such as the error handling
@@ -90,6 +90,22 @@ the \obase switch \emph{must} be used.
 
 \docswitch{\ocomment} This switch causes a few comments to be inserted into the
 \ocaml code that is written to the \ml file.
+
+\docswitch{\ocompareerrors \nt{filename1} \ocompareerrors \nt{filename2}} Two
+such switches must always be used in conjunction so as to specify the names of
+two \messages files, \nt{filename1} and \nt{filename2}. Each file is read and
+internally translated to a mapping of states to messages. \menhir then checks
+that the left-hand mapping is a subset of the right-hand mapping. This feature
+is typically used in conjunction with \olisterrors to check that \nt{filename2}
+is complete, i.e., covers all states where an error can occur.
+For more information, see \sref{sec:errors:new}.
+
+\docswitch{\ocompileerrors \nt{filename}} This switch causes \menhir to read the
+file \nt{filename}, which must obey the \messages file format, and to compile
+it to an OCaml function that maps a state number to a message. The OCaml code
+is sent to the standard output channel. At the same time, \menhir checks that
+the collection of input sentences in the file \nt{filename} is correct and
+irredundant. For more information, see \sref{sec:errors:new}.
 
 \docswitch{\ocoq} This switch causes \menhir to produce Coq code. See \sref{sec:coq}.
 
@@ -129,6 +145,11 @@ switch.
 \docswitch{\odump} This switch causes a description of the automaton
 to be written to the file \nt{basename}\automaton.
 
+\docswitch{\oechoerrors \nt{filename}} This switch causes \menhir to 
+read the \messages file \nt{filename} and to produce on the standard output
+channel just the input sentences. (That is, all messages, blank lines, and
+comments are filtered out.) For more information, see \sref{sec:errors:new}.
+
 \docswitch{\oexplain} This switch causes conflict explanations to be
 written  to the file \nt{basename}\conflicts. See also \sref{sec:conflicts}.
 
@@ -143,7 +164,7 @@ out of a grammar specification using the \oonlytokens switch.
 \docswitch{\ofixedexc} This switch causes the exception \texttt{Error} to be
 internally defined as a synonym for \texttt{Parsing.Parse\_error}. This means
 that an exception handler that catches \texttt{Parsing.Parse\_error} will also
-catch the generated parser's \texttt{Error}. This helps increase Menhir's
+catch the generated parser's \texttt{Error}. This helps increase \menhir's
 compatibility with \ocamlyacc. There is otherwise no reason to use this switch.
 
 \docswitch{\ograph} This switch causes a description of the grammar's
@@ -185,11 +206,21 @@ somewhat larger code size.
 \docswitch{\ointerpret} This switch causes \menhir to act as an interpreter,
 rather than as a compiler. No \ocaml code is generated. Instead, \menhir
 reads sentences off the standard input channel, parses them, and displays
-outcomes. For more information, see \sref{sec:interpret}.
+outcomes. This switch can be usefully combined with \otrace.
+For more information, see \sref{sec:interpret}.
+
+\docswitch{\ointerpreterror} This switch is analogous to \ointerpret, except
+\menhir expects every sentence to cause an error on its last token, and
+displays information about the state in which the error is detected, in
+the \messages file format. For more information, see \sref{sec:errors:new}.
 
 \docswitch{\ointerpretshowcst} This switch, used in conjunction with \ointerpret,
 causes \menhir to display a concrete syntax tree when a sentence is successfully
 parsed. For more information, see \sref{sec:interpret}.
+
+\docswitch{\olisterrors} This switch causes \menhir to produce (on the standard
+output channel) a complete list of input sentences that cause an error, in the
+\messages file format. For more information, see \sref{sec:errors:new}.
 
 \docswitch{\ologautomaton \nt{level}} When \nt{level} is nonzero, this switch
 causes some information about the automaton to be logged to the standard error
@@ -314,6 +345,12 @@ the generated parser, so that, when the parser is run, its actions are
 logged to the standard error channel. This is analogous to \texttt{ocamlrun}'s
 \texttt{p=1} parameter, except this switch must be enabled at compile time:
 one cannot selectively enable or disable tracing at runtime.
+
+\docswitch{\oupdateerrors \nt{filename}} This switch causes \menhir to 
+read the \messages file \nt{filename} and to produce on the standard output
+channel a new \messages file that is identical, except the auto-generated
+comments have been re-generated. For more information,
+see \sref{sec:errors:new}.
 
 \docswitch{\oversion} This switch causes \menhir to print its own version
 number and exit.
@@ -1415,7 +1452,7 @@ so you should not care how they are resolved.
 with \ocamlyacc's. Yet, \menhir attempts to be more user-friendly by warning
 about a class of so-called ``end-of-stream conflicts''.
 
-% TEMPORARY il faut noter que Menhir n'est pas conforme à ocamlyacc en
+% TEMPORARY il faut noter que \menhir n'est pas conforme à ocamlyacc en
 % présence de conflits end-of-stream; apparemment il part dans le mur
 % en exigeant toujours le token suivant, alors que ocamlyacc est capable
 % de s'arrêter (comment?); cf. problème de S. Hinderer (avril 2015).
@@ -1634,12 +1671,17 @@ dummy positions.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
-\section{Error handling}
+\section{Error handling: the traditional way}
 \label{sec:errors}
+
+\menhir's traditional error handling mechanism is considered deprecated: although
+it is still supported for the time being, it might be removed in the future.
+We recommend setting up an error handling mechanism using the new tools
+offered by \menhir (\sref{sec:errors:new}).
 
 \paragraph{Error handling}
 
-\menhir's error handling mechanism is inspired by that of \yacc and
+\menhir's error traditional handling mechanism is inspired by that of \yacc and
 \ocamlyacc, but is not identical. A special \error token is made available
 for use within productions. The LR automaton is constructed exactly as if
 \error was a regular terminal symbol. However, \error is never produced
@@ -1685,6 +1727,7 @@ might also be desirable.  It is unclear whether this keyword is useful; it
 might be suppressed in the future.
 
 \paragraph{When are errors detected?}
+% TEMPORARY maybe move this paragraph
 
 An error is detected when the current state of the automaton has no action on
 the current lookahead token. Thus, understanding exactly when errors are
@@ -1695,6 +1738,30 @@ technique~\cite{knuth-lr-65}, which is too expensive to be practical. Instead,
 reductions}. Both techniques can \emph{defer} error detection by allowing
 extra reductions to take place before an error is detected. All LALR(1) parser
 generators exhibit the same problem.
+
+% ---------------------------------------------------------------------------------------------------------------------
+
+\section{Error handling: the new way}
+\label{sec:errors:new}
+
+\menhir's incremental API (\sref{sec:incremental}) allows taking control when
+an error is detected. Indeed, as soon as an invalid token is detected, the
+parser produces a checkpoint of the form \verb+HandlingError _+. At this
+point, if one decides to let the parser proceed, by just
+calling \verb+resume+, then \menhir enters its traditional error handling mode
+(\sref{sec:errors}). Instead, one can take control and perform error
+handling or error recovery in any way one pleases. One can, for instance,
+build and display an error message, based on the parser's current stack and/or
+state. Or, one could modify the input stream, by inserting or deleting tokens,
+so as to suppress the error. The possibilities are endless.
+
+A simple-minded approach to error reporting, which has been proposed by
+Jeffery~\citeyear{jeffery-03}, consists in selecting an error message (or an
+error message template) based purely on the current state of the automaton.
+
+% TEMPORARY TODO:
+% pointer vers pre_parser.mly et ErrorReporting.ml et handcrafted.messages
+% dans CompCert
 
 % ---------------------------------------------------------------------------------------------------------------------
 
@@ -1746,7 +1813,7 @@ their symbolic names. Writing, say, ``\texttt{12+32\textbackslash n}'' instead
 of \texttt{INT PLUS INT EOL} is not permitted. \menhir would not be able to
 make sense of such a concrete notation, since it does not have a lexer for it.
 
-% On pourrait documenter le fait qu'une phrase finie est transformée par Menhir
+% On pourrait documenter le fait qu'une phrase finie est transformée par \menhir
 % en un flot de tokens potentiellement infinie, avec un suffixe infini EOF ...
 % Mais c'est un hack, qui pourrait changer à l'avenir.
 
