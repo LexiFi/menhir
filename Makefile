@@ -34,10 +34,10 @@ endif
 # ----------------------------------------------------------------------------
 # Installation paths.
 
-bindir          := ${PREFIX}/bin
-docdir		:= ${PREFIX}/share/doc/menhir
-libdir	        := ${PREFIX}/share/menhir
-mandir          := ${PREFIX}/share/man/man1
+bindir          := $(PREFIX)/bin
+docdir		:= $(PREFIX)/share/doc/menhir
+libdir	        := $(PREFIX)/share/menhir
+mandir          := $(PREFIX)/share/man/man1
 MANS            := menhir.1
 DOCS            := manual.pdf demos
 MLYLIB          := src/standard.mly
@@ -59,7 +59,7 @@ else
 # LIBSUFFIX    := a
 endif
 
-# The path ${libdir}, which is recorded in src/installation.ml (see below),
+# The path $(libdir), which is recorded in src/installation.ml (see below),
 # must sometimes be translated using cygpath.
 
 # This one is tricky. To summarize, if I understood correctly, we can assume
@@ -75,7 +75,7 @@ endif
 # "os_type" is "Cygwin" or "Unix".
 
 ifneq (,$(findstring "os_type: Win", "$(shell ocamlc -config | grep os_type)"))
-libdir        := $(shell cygpath -m ${libdir})
+libdir        := $(shell cygpath -m $(libdir))
 endif
 
 # -------------------------------------------------------------------------
@@ -98,7 +98,7 @@ endif
 
 all:
 	rm -f src/installation.ml
-	echo "let libdir = \"${libdir}\"" > src/installation.ml
+	echo "let libdir = \"$(libdir)\"" > src/installation.ml
 	if $(USE_OCAMLFIND) ; then \
 	  echo "let ocamlfind = true" >> src/installation.ml ; \
 	else \
