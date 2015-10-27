@@ -1671,100 +1671,6 @@ dummy positions.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
-\section{Error handling: the traditional way}
-\label{sec:errors}
-
-\menhir's traditional error handling mechanism is considered deprecated: although
-it is still supported for the time being, it might be removed in the future.
-We recommend setting up an error handling mechanism using the new tools
-offered by \menhir (\sref{sec:errors:new}).
-
-\paragraph{Error handling}
-
-\menhir's error traditional handling mechanism is inspired by that of \yacc and
-\ocamlyacc, but is not identical. A special \error token is made available
-for use within productions. The LR automaton is constructed exactly as if
-\error was a regular terminal symbol. However, \error is never produced
-by the lexical analyzer. Instead, when an error is detected, the current
-lookahead token is discarded and replaced with the \error token, which becomes
-the current lookahead token. At this point, the parser enters \emph{error
-handling} mode.
-
-In error handling mode, automaton states are popped off the automaton's stack
-until a state that can \emph{act} on \error is found. This includes
-\emph{both} shift \emph{and} reduce actions. (\yacc and \ocamlyacc do not
-trigger reduce actions on \error. It is somewhat unclear why this is so.)
-
-When a state that can reduce on \error is found, reduction is performed.
-Since the lookahead token is still \error, the automaton remains in error
-handling mode.
-
-When a state that can shift on \error is found, the \error token is shifted.
-At this point, the parser returns to normal mode.
-
-When no state that can act on \error is found on the automaton's stack, the
-parser stops and raises the exception \texttt{Error}. This exception carries
-no information. The position of the error can be obtained by reading the
-lexical analyzer's environment record.
-
-\paragraph{Error recovery}
-
-\ocamlyacc offers an error recovery mode, which is entered immediately after
-an \error token was successfully shifted. In this mode, tokens are repeatedly
-taken off the input stream and discarded until an acceptable token is found.
-This feature is no longer offered by \menhir.
-
-\paragraph{Error-related keywords}
-
-The following keyword is made available to semantic actions.
-
-When the \verb+$syntaxerror+ keyword is evaluated, evaluation of the semantic
-action is aborted, so that the current reduction is abandoned; the current
-lookahead token is discarded and replaced with the \error token; and error
-handling mode is entered.  Note that there is no mechanism for inserting an
-\error token \emph{in front of} the current lookahead token, even though this
-might also be desirable.  It is unclear whether this keyword is useful; it
-might be suppressed in the future.
-
-\paragraph{When are errors detected?}
-% TEMPORARY maybe move this paragraph
-
-An error is detected when the current state of the automaton has no action on
-the current lookahead token. Thus, understanding exactly when errors are
-detected requires understanding how the automaton is constructed. \menhir's
-construction technique is \emph{not} Knuth's canonical LR(1)
-technique~\cite{knuth-lr-65}, which is too expensive to be practical. Instead,
-\menhir \emph{merges} states~\cite{pager-77} and introduces so-called \emph{default
-reductions}. Both techniques can \emph{defer} error detection by allowing
-extra reductions to take place before an error is detected. All LALR(1) parser
-generators exhibit the same problem.
-
-% ---------------------------------------------------------------------------------------------------------------------
-
-\section{Error handling: the new way}
-\label{sec:errors:new}
-
-\menhir's incremental API (\sref{sec:incremental}) allows taking control when
-an error is detected. Indeed, as soon as an invalid token is detected, the
-parser produces a checkpoint of the form \verb+HandlingError _+. At this
-point, if one decides to let the parser proceed, by just
-calling \verb+resume+, then \menhir enters its traditional error handling mode
-(\sref{sec:errors}). Instead, one can take control and perform error
-handling or error recovery in any way one pleases. One can, for instance,
-build and display an error message, based on the parser's current stack and/or
-state. Or, one could modify the input stream, by inserting or deleting tokens,
-so as to suppress the error. The possibilities are endless.
-
-A simple-minded approach to error reporting, which has been proposed by
-Jeffery~\citeyear{jeffery-03}, consists in selecting an error message (or an
-error message template) based purely on the current state of the automaton.
-
-% TEMPORARY TODO:
-% pointer vers pre_parser.mly et ErrorReporting.ml et handcrafted.messages
-% dans CompCert
-
-% ---------------------------------------------------------------------------------------------------------------------
-
 \section{Using \menhir as an interpreter}
 \label{sec:interpret}
 
@@ -2472,6 +2378,233 @@ The function \verb+foreach_terminal_but_error+ enumerates the terminal symbols, 
 % document MenhirLib.General?
 % The directory \distrib{demos/calc-inspection} contains a demo that illustrates the use of the inspection API.
 % review it / clean it up!
+
+% ---------------------------------------------------------------------------------------------------------------------
+
+\section{Error handling: the traditional way}
+\label{sec:errors}
+
+\menhir's traditional error handling mechanism is considered deprecated: although
+it is still supported for the time being, it might be removed in the future.
+We recommend setting up an error handling mechanism using the new tools
+offered by \menhir (\sref{sec:errors:new}).
+
+\paragraph{Error handling}
+
+\menhir's error traditional handling mechanism is inspired by that of \yacc and
+\ocamlyacc, but is not identical. A special \error token is made available
+for use within productions. The LR automaton is constructed exactly as if
+\error was a regular terminal symbol. However, \error is never produced
+by the lexical analyzer. Instead, when an error is detected, the current
+lookahead token is discarded and replaced with the \error token, which becomes
+the current lookahead token. At this point, the parser enters \emph{error
+handling} mode.
+
+In error handling mode, automaton states are popped off the automaton's stack
+until a state that can \emph{act} on \error is found. This includes
+\emph{both} shift \emph{and} reduce actions. (\yacc and \ocamlyacc do not
+trigger reduce actions on \error. It is somewhat unclear why this is so.)
+
+When a state that can reduce on \error is found, reduction is performed.
+Since the lookahead token is still \error, the automaton remains in error
+handling mode.
+
+When a state that can shift on \error is found, the \error token is shifted.
+At this point, the parser returns to normal mode.
+
+When no state that can act on \error is found on the automaton's stack, the
+parser stops and raises the exception \texttt{Error}. This exception carries
+no information. The position of the error can be obtained by reading the
+lexical analyzer's environment record.
+
+\paragraph{Error recovery}
+
+\ocamlyacc offers an error recovery mode, which is entered immediately after
+an \error token was successfully shifted. In this mode, tokens are repeatedly
+taken off the input stream and discarded until an acceptable token is found.
+This feature is no longer offered by \menhir.
+
+\paragraph{Error-related keywords}
+
+The following keyword is made available to semantic actions.
+
+When the \verb+$syntaxerror+ keyword is evaluated, evaluation of the semantic
+action is aborted, so that the current reduction is abandoned; the current
+lookahead token is discarded and replaced with the \error token; and error
+handling mode is entered.  Note that there is no mechanism for inserting an
+\error token \emph{in front of} the current lookahead token, even though this
+might also be desirable.  It is unclear whether this keyword is useful; it
+might be suppressed in the future.
+
+\paragraph{When are errors detected?}
+% TEMPORARY maybe move this paragraph
+
+An error is detected when the current state of the automaton has no action on
+the current lookahead token. Thus, understanding exactly when errors are
+detected requires understanding how the automaton is constructed. \menhir's
+construction technique is \emph{not} Knuth's canonical LR(1)
+technique~\cite{knuth-lr-65}, which is too expensive to be practical. Instead,
+\menhir \emph{merges} states~\cite{pager-77} and introduces so-called \emph{default
+reductions}. Both techniques can \emph{defer} error detection by allowing
+extra reductions to take place before an error is detected. All LALR(1) parser
+generators exhibit the same problem.
+
+% ---------------------------------------------------------------------------------------------------------------------
+
+\section{Error handling: the new way}
+\label{sec:errors:new}
+
+\menhir's incremental API (\sref{sec:incremental}) allows taking control when
+an error is detected. Indeed, as soon as an invalid token is detected, the
+parser produces a checkpoint of the form \verb+HandlingError _+. At this
+point, if one decides to let the parser proceed, by just
+calling \verb+resume+, then \menhir enters its traditional error handling mode
+(\sref{sec:errors}). Instead, however, one can decide to take control and
+perform error handling or error recovery in any way one pleases. One can, for
+instance, build and display a diagnostic message, based on the automaton's
+current stack and/or state. Or, one could modify the input stream, by
+inserting or deleting tokens, so as to suppress the error, and resume normal
+parsing. In principle, the possibilities are endless.
+
+An apparently simple-minded approach to error reporting,
+proposed by Jeffery~\citeyear{jeffery-03} and further explored by
+Pottier~\citeyear{pottier-reachability}, consists in selecting a diagnostic
+message (or a template for a diagnostic message) based purely on the current
+state of the automaton.
+
+In this approach, one determines, ahead of time, which are the ``error
+states'' (that is, the states in which an error can be detected), and one
+prepares, for each error state, a diagnostic message. Because state numbers
+are fragile (they change when the grammar evolves), an error state is
+identified not by its number, but by an input sentence that leads to it: more
+precisely, by an input sentence which causes an error to be detected in this
+state. Thus, one maintains a set of pairs of an erroneous input sentence and a
+diagnostic message.
+
+\menhir defines a file format, the \messages file format,
+for representing this information (\sref{sec:messages:format}), and offers a
+set of tools for creating, maintaining, and exploiting \messages files
+(\sref{sec:messages:tools}).
+
+In this approach to error reporting, the special \error token is not used. It
+should not appear in the grammar.
+
+% TEMPORARY TODO:
+% pointer vers pre_parser.mly et ErrorReporting.ml et handcrafted.messages dans CompCert
+% section sur comment écrire de bons messages?
+% parler aussi de %on_error_reduce, de duplication de contexte statique, ...
+% souligner que le message doit être représentatif de toutes les façons d'atteindre cet état
+
+\subsection{The \messages file format}
+\label{sec:messages:format}
+
+A \messages file is a text file. Comment lines, which begin with a \verb+#+
+character, are ignored everywhere. As is evident in the following description,
+blank lines are significant: they are used as separators between entries and
+within an entry.
+
+A~\messages file is composed of a list of entries. Two entries are separated
+by one or more blank lines. Each entry consists of one or more input
+sentences, followed with one or more blank lines, followed with a message. The
+syntax of an input sentence is described in \sref{sec:sentences}. A message is
+arbitrary text, but cannot contain a blank line. We stress that there cannot
+be a blank line between two sentences (if there is one, \menhir becomes confused
+and may complain about some word not being ``a known non-terminal symbol'').
+
+As an example, here is a valid entry, taken from \menhir's own \messages file:
+\begin{verbatim}
+    grammar: TYPE UID 
+    grammar: TYPE OCAMLTYPE UID PREC 
+
+    # A (handwritten) comment.
+
+    Ill-formed declaration.
+    Examples of well-formed declarations:
+      %type <Syntax.expression> expression
+      %type <int> date time
+\end{verbatim}
+%
+This entry contains two input sentences, which lead to errors in two
+distinct states. A single message is associated with these two error states.
+
+Several commands, described next (\sref{sec:messages:tools}),
+produce \messages files where each input sentence is followed with an
+auto-generated comment, marked with \verb+##+. This special comment indicates
+in which state the error is detected, and is supposed to help the reader
+understand what it means to be in this state: What has been read so far? What
+is expected next?
+
+As an example, the previous entry, decorated with auto-generated comments,
+looks like this. (We have manually wrapped the lines that did not fit in this
+document.)
+
+\begin{verbatim}
+    grammar: TYPE UID 
+    ##
+    ## Ends in an error in state: 1.
+    ##
+    ## declaration -> TYPE . OCAMLTYPE separated_nonempty_list(option(COMMA),
+    ##   strict_actual) [ TYPE TOKEN START RIGHT PUBLIC PERCENTPERCENT PARAMETER
+    ##   ON_ERROR_REDUCE NONASSOC LEFT INLINE HEADER EOF COLON ]
+    ##
+    ## The known suffix of the stack is as follows:
+    ## TYPE 
+    ##
+    grammar: TYPE OCAMLTYPE UID PREC 
+    ##
+    ## Ends in an error in state: 5.
+    ##
+    ## strict_actual -> symbol . loption(delimited(LPAREN,separated_nonempty_list
+    ##   (COMMA,strict_actual),RPAREN)) [ UID TYPE TOKEN START STAR RIGHT QUESTION
+    ##   PUBLIC PLUS PERCENTPERCENT PARAMETER ON_ERROR_REDUCE NONASSOC LID LEFT
+    ##   INLINE HEADER EOF COMMA COLON ]
+    ##
+    ## The known suffix of the stack is as follows:
+    ## symbol 
+    ##
+
+    # A (handwritten) comment.
+
+    Ill-formed declaration.
+    Examples of well-formed declarations:
+      %type <Syntax.expression> expression
+      %type <int> date time
+\end{verbatim}
+
+An auto-generated comment begins with the number of the error state that is
+reached via this input sentence. Then, it shows the LR(1) items that compose
+this state, in the same format as in an \automaton file. Then, it shows what
+is known about the stack when the automaton is in this state. (This can be
+deduced from the LR(1) items, but is more readable if shown separately.)
+% Plus, there might be cases where the known suffix is longer than the what
+% the LR(1) items suggest. But I have never seen this yet.
+
+In a canonical LR(1) automaton, the LR(1) items offer an exact description of
+the past (that is, what has been read so far) and the future (that is, which
+terminal symbols are allowed next). This information can (and should) be used
+when preparing a diagnostic message.
+
+In a noncanonical automaton, which is by default what \menhir produces, the
+situation is more subtle. The lookahead sets can be over-approximated, so the
+automaton can perform one or more ``spurious reductions'' before an error is
+detected. As a result, the LR(1) items in the error state offer a description
+of the future that may be both incorrect (that is, a terminal symbol that
+appears in a lookahead set is not necessarily a valid continuation) and
+incomplete (that is, a terminal symbol that does not appear in any lookahead
+set may nevertheless be a valid continuation). The reader is referred to
+Pottier's paper~\citeyear{pottier-reachability} for details.
+
+In order to attract the user's attention to this issue, if an input sentence
+causes one or more spurious reductions, then the auto-generated comment
+contains a warning about this fact. This mechanism is not completely
+foolproof, though, as it may be the case that one particular sentence does not
+cause any spurious reductions (hence, no warning appears), yet leads to an
+error state that can be reached via other sentences that do involve spurious
+reductions.
+% Not sure what to conclude about this issue...
+
+\subsection{Maintaining \messages files}
+\label{sec:messages:tools}
 
 % ---------------------------------------------------------------------------------------------------------------------
 
