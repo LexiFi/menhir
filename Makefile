@@ -59,12 +59,24 @@ else
 # LIBSUFFIX    := a
 endif
 
-# If Cygwin is present, then the path ${libdir} that is recorded in
-# src/installation.ml (see below) must be translated using cygpath.
+# The path ${libdir}, which is recorded in src/installation.ml (see below),
+# must sometimes be translated using cygpath.
 
-libdir	        := $(shell if which cygpath >/dev/null ; \
-	             then echo "cygpath -m ${libdir}" ; \
-                     else echo ${libdir} ; fi)
+# This one is tricky. To summarize, if I understood correctly, we can assume
+# that Cygwin always exists when Menhir is compiled and installed (because
+# executing a Makefile, like this one, requires Cygwin), but we cannot assume
+# that Menhir will be executed under Cygwin. If the OCaml compiler is
+# configured to produce a Cygwin executable, then, yes, Cygwin is there at
+# execution time, so path translation is not necessary (and should not be
+# performed). On the other hand, if the OCaml compiler is configured to
+# produce a native Windows executable, then Cygwin is not there at execution
+# time and path translation is required. In summary, path translation must be
+# performed if "os_type" is "Win32" or "Win64", and must not performed if
+# "os_type" is "Cygwin" or "Unix".
+
+ifneq (,$(findstring "os_type: Win", "$(shell ocamlc -config | grep os_type)"))
+libdir        := $(shell cygpath -m ${libdir})
+endif
 
 # -------------------------------------------------------------------------
 
