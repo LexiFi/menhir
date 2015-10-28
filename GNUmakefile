@@ -132,16 +132,22 @@ package: clean
 check:
 	@ echo "-> Checking the package ..."
 # Create a temporary directory; extract, build, and install the
-# package into it; run the test suite using the installed binary.
+# package into it; build the demos and run the test suite using
+# the installed binary.
 	@ TEMPDIR=`mktemp -d /tmp/menhir-test.XXXXXX` && { \
 	echo "   * Extracting. " && \
 	(cd $$TEMPDIR && tar xfz $(TARBALL)) && \
 	echo "   * Compiling and installing." && \
 	mkdir $$TEMPDIR/install && \
-	(cd $(PACKAGE) \
+	(cd $$TEMPDIR/$(PACKAGE) \
 		&& make PREFIX=$$TEMPDIR/install USE_OCAMLFIND=false all install \
 	) > $$TEMPDIR/install.log 2>&1 \
 		|| (cat $$TEMPDIR/install.log; exit 1) && \
+	echo "   * Building the demos." && \
+	(cd $$TEMPDIR/$(PACKAGE) \
+		&& $(MAKE) MENHIR=$$TEMPDIR/install/bin/menhir -C demos \
+	) > $$TEMPDIR/demos.log 2>&1 \
+		|| (cat $$TEMPDIR/demos.log; exit 1) && \
 	echo "   * Running the test suite." && \
 	$(MAKE) MENHIR=$$TEMPDIR/install/bin/menhir test > $$TEMPDIR/test.log 2>&1 \
 		|| (cat $$TEMPDIR/test.log; exit 1) && \
