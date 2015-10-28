@@ -2745,11 +2745,225 @@ what error is caused by one particular input sentence.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
-\subsection{Writing diagnostic messages: guidelines and tricks}
+\subsection{Writing accurate diagnostic messages}
+\label{sec:writing:diagnostics}
 
-% TEMPORARY
-% parler aussi de %on_error_reduce, de duplication de contexte statique, ...
-% souligner que le message doit être représentatif de toutes les façons d'atteindre cet état
+One might think that writing a diagnostic message for each error state is a
+straightforward (if lengthy) task. In reality, it is not so simple. Here are a
+few guidelines. The reader is referred to Pottier's
+paper~\citeyear{pottier-reachability} for more details.
+
+The first thing to keep in mind is that a diagnostic message is associated
+with a \emph{state}~$s$, as opposed to a sentence. An entry in a \messages
+file contains a sentence~$w$ that leads to an error in state~$s$. This
+sentence is just one way of causing an error in state~$s$; there may exist
+many other sentences that also cause an error in this state. The diagnostic
+message should not be specific of the sentence~$w$: it should make sense
+regardless of how the state~$s$ is reached.
+
+As a rule of thumb, when writing a diagnostic message, one should (as much as
+possible) ignore the example sentence~$w$ altogether, and concentrate on the
+description of the state~$s$, which appears as part of the auto-generated
+comment.
+
+The LR(1) items that compose the state~$s$ offer a description of the past
+(that is, what has been read so far) and the future (that is, which terminal
+symbols are allowed next). A diagnostic message should be crafted, based on
+this description.
+
+As pointed out earlier (\sref{sec:messages:format}), in a noncanonical
+automaton, the lookahead sets in the LR(1) items can be both over- and
+under-approximated. One must be aware of this phenomenon, otherwise one runs
+the risk of writing a diagnostic message that proposes too many or too few
+continuations.
+
+\begin{figure}
+\verbatiminput{declarations.mly}
+\caption{A simple grammar where one error state is difficult to explain (\sref{sec:writing:diagnostics})}
+\label{fig:declarations}
+\end{figure}
+
+\begin{figure}
+\begin{verbatim}
+program: ID COLON ID LPAREN 
+##
+## Ends in an error in state: 8.
+##
+## typ1 -> typ0 . [ SEMICOLON RPAREN ]
+## typ1 -> typ0 . ARROW typ1 [ SEMICOLON RPAREN ]
+##
+## The known suffix of the stack is as follows:
+## typ0 
+##
+\end{verbatim}
+\caption{A problematic error state in the grammar of \fref{fig:declarations}}
+\label{fig:declarations:over}
+\end{figure}
+
+As an example, let us consider the grammar in \fref{fig:declarations}.
+According to this grammar, a ``program'' is either a declaration between
+parentheses or a declaration followed with a semicolon. A ``declaration'' is
+an identifier, followed with a colon, followed with a type. A ``type'' is an
+identifier, a type between parentheses, or a function type in the style of
+OCaml. The (noncanonical) automaton produced by \menhir for this grammar has 17~states.
+Using \olisterrors, we find that an error can be detected in 10 of these
+17~states. By manual inspection of the auto-generated comments, we find that
+for 9 out of these 10~states, writing an accurate diagnostic message is easy. However,
+one problematic state remains, namely state~8,
+shown in \fref{fig:declarations:over}.
+
+In this state, a (level-0) type has just been read. One valid continuation,
+which corresponds to the second LR(1) item in \fref{fig:declarations:over},
+is to continue this type: the terminal symbol \verb+ARROW+, followed with a
+(level-1) type, is a valid continuation. Now, the question is, what other
+valid continuations are there? By examining the first LR(1) item
+in \fref{fig:declarations:over}, it may look as if both \verb+SEMICOLON+
+and \verb+RPAREN+ are valid continuations. However, this cannot be the case. A
+moment's thought reveals that \emph{either} we have seen an opening
+parenthesis \verb+LPAREN+ at the very beginning of the program, in which case
+we definitely expect a closing parenthesis \verb+RPAREN+; \emph{or} we have
+not seen one, in which case we definitely expect a semicolon \verb+SEMICOLON+.
+It is \emph{never} the case that \emph{both} \verb+SEMICOLON+
+and \verb+RPAREN+ are valid continuations!
+
+In fact, the lookahead set in the first LR(1) item
+in \fref{fig:declarations:over} is over-approximated.
+State~8 in the noncanonical automaton results from the fusion of two states
+in the canonical automaton.
+
+In such a situation, one cannot write an accurate diagnostic message, by lack
+of ``static context''. The automaton's current state alone does not offer a
+precise view of the valid continuations. Some valuable information (that is,
+whether we have seen an opening parenthesis \verb+LPAREN+ at the very
+beginning of the program) is buried in the automaton's stack.
+
+\begin{figure}
+\verbatiminput{declarations-phantom.mly}
+\caption{Better static context via selective duplication (\sref{sec:writing:diagnostics})}
+\label{fig:declarations:phantom}
+\end{figure}
+
+\begin{figure}
+\verbatiminput{declarations-onerrorreduce.mly}
+\caption{Better static context via reductions on error (\sref{sec:writing:diagnostics})}
+\label{fig:declarations:onerrorreduce}
+\end{figure}
+% TEMPORARY captions
+
+\begin{figure}
+\begin{verbatim}
+program: ID COLON ID LPAREN 
+##
+## Ends in an error in state: 15.
+##
+## program -> declaration . SEMICOLON [ # ]
+##
+## The known suffix of the stack is as follows:
+## declaration 
+##
+## WARNING: This example involves spurious reductions.
+## This implies that, although the LR(1) items shown above provide an
+## accurate view of the past (what has been recognized so far), they
+## may provide an INCOMPLETE view of the future (what was expected next).
+## In state 8, spurious reduction of production typ1 -> typ0 
+## In state 11, spurious reduction of production declaration -> ID COLON typ1 
+##
+\end{verbatim}
+\caption{A problematic error state in the grammar of \fref{fig:declarations:onerrorreduce}}
+\label{fig:declarations:under}
+\end{figure}
+
+How can one work around this problem? Let us suggest three options.
+
+One option would be to build a canonical automaton, using \menhir's
+(undocumented!) \ocanonical switch. In this case, we would
+obtain a 27-state automaton, where the problem has disappeared. However, this
+option is rarely viable, as it duplicates many states without good reason.
+
+A second option is to manually cause just enough duplication to remove the
+problematic over-approximation. In our example, we must distinguish two kinds
+of types and declarations, namely those that should be followed with a closing
+parenthesis, and those that should be followed with a semicolon. We create
+such a distinction by parameterizing \verb+typ1+ and \verb+declaration+ with a
+phantom parameter. The modified grammar is shown
+in \fref{fig:declarations:phantom}. The phantom parameter does not affect the
+language that is accepted: for instance, the nonterminal
+symbols \texttt{declaration(SEMICOLON)} and
+\texttt{declaration(RPAREN)} generate the same language as \texttt{declaration}
+in the original grammar of \fref{fig:declarations}. Yet, by creating a
+distinction between these two symbols, we force the construction of an
+automaton where more states are distinguished. In this case, \menhir produces
+a 23-state automaton. Using \olisterrors, we find that an error can be
+detected in 11 of these 23~states, and by manual inspection of the
+auto-generated comments, we find that for each of these 11~states, writing an
+accurate diagnostic message is easy. In summary, we have selectively duplicated
+just enough states so as to split the problematic error state into two 
+non-problematic error states.
+
+% Je me demande s'il n'y a pas un lien avec la traduction de LR(k+1) vers LR(k)...
+% On voit que le FOLLOW est intégré au symbole nonterminal.
+
+A third and last option is to introduce an \donerrorreduce declaration
+(\sref{sec:onerrorreduce}) so as to prevent the detection of an error in the
+problematic state~8. We see in \fref{fig:declarations:over} that, in
+state~8, the production $\texttt{typ1} \rightarrow \texttt{typ0}$ is ready to
+be reduced. If we could force this reduction to take place, then the automaton
+would move to some other state where it would be clear which
+of \verb+SEMICOLON+ and \verb+RPAREN+ is expected next. This is
+achieved by marking \verb+typ1+ as ``reducible on error''.
+The modified grammar is shown
+in \fref{fig:declarations:onerrorreduce}.
+For this grammar, \menhir produces a 17-state automaton.
+(This is the exact same automaton as for the grammar of \fref{fig:declarations},
+except 2 of the 17 states have extra reduction actions.)
+Using \olisterrors, we find that an error can be detected in 9 of these~17 states.
+The problematic error state, namely state~8, is no longer an error state!
+The problem has vanished.
+
+The third option seems by far the simplest of all, and is recommended in many
+situations. However, it comes with a caveat. There is now a state whose
+lookahead sets are under-approximated, and because of this, a danger of
+writing an incomplete diagnostic message, one that does not list all valid
+continuations.
+
+To see this, let us look again at the sentence
+\texttt{ID COLON ID LPAREN}. In the grammar of \fref{fig:declarations},
+this sentence used to take us to the problematic state~8
+(\fref{fig:declarations:over}). In the grammar of
+\fref{fig:declarations:onerrorreduce}), because more reduction actions are
+carried out before the error is detected, this sentence takes us
+to state~15, as shown in \fref{fig:declarations:under}.
+
+When writing a diagnostic message for state~15, one might be tempted to write:
+``Up to this point, a declaration has been recognized. At this point, a
+semicolon is expected''. Indeed, by examining the sole LR(1) item in state~15,
+it looks as if \verb+SEMICOLON+ is the only permitted continuation. However,
+this is not the case. Another valid continuation is \verb+ARROW+: indeed, the
+sentence
+\texttt{ID COLON ID ARROW ID SEMICOLON} forms a valid program. In fact, if
+the first token following \texttt{ID COLON ID} is \texttt{ARROW}, then in
+state~8 this token is shifted, so the two reductions that take us from state~8
+through state~11 to state~15 never take place. This is why, even though
+\texttt{ARROW} does not appear in state~15 as a valid continuation, it is
+nevertheless a valid continuation of \texttt{ID COLON ID}. The warning
+produced by \menhir, shown in \fref{fig:declarations:under}, is supposed to
+attract attention to this issue.
+
+Another way to explain this issue is to point out that, by declaring
+\verb+%on_error_reduce typ1+, we force a somewhat arbitrary choice.
+When the parser reads a (level-1) type and finds an invalid token, it decides
+that this type is finished, even though, in reality, it could be continued
+with \verb+ARROW+ \ldots.
+This in turn causes the parser to perform another reduction and consider
+the current declaration finished, even though, in reality, it could be continued
+with \verb+ARROW+ \ldots.
+
+In summary, when writing a diagnostic message for state~15, one should take
+into account the fact that this state can be reached via spurious reductions
+and (therefore) \verb+SEMICOLON+ may not be the only permitted continuation.
+One way of doing this, without explicitly listing all permitted continuations,
+is to write: ``Up to this point, a declaration has been recognized. If this
+declaration is complete, then at this point, a semicolon is expected''.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
