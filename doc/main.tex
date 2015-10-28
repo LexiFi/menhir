@@ -2436,7 +2436,7 @@ The function \verb+foreach_terminal_but_error+ enumerates the terminal symbols, 
 \end{verbatim}
 
 % TEMPORARY
-% document the modules that use the inspection API: Printers, ErrorReporting
+% document the modules that use the inspection API: Printers
 % document MenhirLib.General?
 % The directory \distrib{demos/calc-inspection} contains a demo that illustrates the use of the inspection API.
 % review it / clean it up!
@@ -2745,15 +2745,36 @@ what error is caused by one particular input sentence.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
-\subsection{Writing a diagnostic message}
+\subsection{Writing diagnostic messages: guidelines and tricks}
 
-% ICI
-
-% TEMPORARY TODO: document the workflow
-% pointer vers pre_parser.mly et ErrorReporting.ml et handcrafted.messages dans CompCert
-% section sur comment écrire de bons messages?
+% TEMPORARY
 % parler aussi de %on_error_reduce, de duplication de contexte statique, ...
 % souligner que le message doit être représentatif de toutes les façons d'atteindre cet état
+
+% ---------------------------------------------------------------------------------------------------------------------
+
+\subsection{A working example}
+
+The CompCert verified compiler offers a real-world example of this approach to
+error handling. The ``pre-parser'' is where syntax errors are detected: see
+\compcertgithubfile{cparser/pre\_parser.mly}.
+% (The pre-parser is also in charge of distinguishing type names versus variable
+% names, but that is an independent issue.)
+A database of erroneous input sentences and (templates for) diagnostic messages is stored in
+\compcertgithubfile{cparser/handcrafted.messages}. It is compiled, using \ocompileerrors,
+to an OCaml file named \texttt{cparser/pre\_parser\_messages.ml}. The
+function \verb+Pre_parser_messages.message+, which maps a state number to (a template for) a
+diagnostic message, is called from
+\compcertgithubfile{cparser/ErrorReports.ml},
+where we construct and display a full-fledged diagnostic message.
+
+In CompCert, we allow a template for a diagnostic message to contain the
+special form \verb+$i+, where \verb+i+ is an integer constant, understood as
+an index into the parser's stack. The code
+in \compcertgithubfile{cparser/ErrorReports.ml} automatically replaces this
+special form with the fragment of the source text that corresponds to this
+stack entry. This mechanism is not built into \menhir; it is implemented in
+CompCert, using \menhir's incremental API.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
@@ -2762,7 +2783,7 @@ what error is caused by one particular input sentence.
 
 \menhir is able to generate a parser that whose correctness can be formally
 verified using the Coq proof assistant~\cite{jourdan-leroy-pottier-12}. This
-feature is used to construct the parser of the CompCert certified C
+feature is used to construct the parser of the CompCert verified
 compiler~\cite{compcert}.
 
 Setting the \ocoq switch on the command line enables the Coq back-end.  When
@@ -2775,7 +2796,7 @@ with embedded semantic actions. The only difference is that the semantic
 actions in a \texttt{.vy} file are expressed in Coq instead
 of \ocaml. A \texttt{.vy} file otherwise uses the same syntax as
 a \texttt{.mly} file. CompCert's
-\href{https://github.com/AbsInt/CompCert/tree/master/cparser/Parser.vy}{\texttt{Parser.vy}}
+\compcertgithubfile{cparser/Parser.vy}
 serves as an example.
 
 Several restrictions are imposed when \menhir is used in \ocoq mode:
@@ -2902,8 +2923,8 @@ named \verb+Parser.unambiguous+.
 
 The parsers produced by \menhir's Coq back-end must be linked with a Coq
 library, which can be found in the CompCert tree~\cite{compcert,compcert-github}, in the
-\href{https://github.com/AbsInt/CompCert/tree/master/cparser/validator}
-{\texttt{cparser/validator}} subdirectory. CompCert can be used as
+\compcertgithubfile{cparser/validator}
+subdirectory. CompCert can be used as
 an example if one wishes to use \menhir to generate a formally verified parser
 as part of some other project.
 
