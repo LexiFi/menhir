@@ -570,24 +570,15 @@ actions. Error detection is deferred: at least one reduction takes place
 before the error is detected. It is a ``spurious'' reduction: in a canonical
 LR(1) automaton, it would not take place.
 
-An \donerrorreduce declaration does not affect the language that is accepted by
-the automaton. It does not affect the location where an error is detected. It
-is used to control in which state an error is detected. If used wisely, it
-makes errors easier to report, because they are detected in a state for which
-it is easier to write an accurate diagnostic message (\sref{sec:errors:new}).
+An \donerrorreduce declaration does not affect the language that is accepted
+by the automaton. It does not affect the location where an error is detected.
+It is used to control in which state an error is detected. If used wisely, it
+can make errors easier to report, because they are detected in a state for
+which it is easier to write an accurate diagnostic message
+(\sref{sec:errors:diagnostics}).
 
 % This may make the tables bigger (but I have no statistics).
 % This makes LRijkstra significantly slower.
-
-This mechanism should be used with caution. By performing a spurious
-reduction, one commits to a certain interpretation of what has been read so
-far. For instance, by reducing the production
-$\texttt{list(expression)} \rightarrow \epsilon$, one decides that an empty
-list of expressions has been recognized, even though this list could have been
-continued if a different token had been found instead of the invalid token.
-This should be taken into account when writing diagnostic messages.
-% TEMPORARY pointeur sur l'endroit où on parle de "if this list is complete,
-% then..."
 
 Like a \dtype declaration, an \donerrorreduce declaration may concern not only
 a nonterminal symbol, such as, say, \texttt{expression}, but also a fully
@@ -2498,19 +2489,6 @@ handling mode is entered.  Note that there is no mechanism for inserting an
 might also be desirable.  It is unclear whether this keyword is useful; it
 might be suppressed in the future.
 
-\paragraph{When are errors detected?}
-% TEMPORARY maybe move this paragraph
-
-An error is detected when the current state of the automaton has no action on
-the current lookahead token. Thus, understanding exactly when errors are
-detected requires understanding how the automaton is constructed. \menhir's
-construction technique is \emph{not} Knuth's canonical LR(1)
-technique~\cite{knuth-lr-65}, which is too expensive to be practical. Instead,
-\menhir \emph{merges} states~\cite{pager-77} and introduces so-called \emph{default
-reductions}. Both techniques can \emph{defer} error detection by allowing
-extra reductions to take place before an error is detected. All LALR(1) parser
-generators exhibit the same problem.
-
 % ---------------------------------------------------------------------------------------------------------------------
 
 \section{Error handling: the new way}
@@ -2546,9 +2524,25 @@ diagnostic message.
 \menhir defines a file format, the \messages file format,
 for representing this information (\sref{sec:messages:format}), and offers a
 set of tools for creating, maintaining, and exploiting \messages files
-(\sref{sec:messages:tools}).
+(\sref{sec:messages:tools}). Once one understands these tools, there remains
+to write a collection of diagnostic messages, a more subtle task than one
+might think (\sref{sec:errors:diagnostics}), and to glue everything together
+(\sref{sec:errors:example}).
 
-In this approach to error reporting, the special \error token is not used. It
+In this approach to error handling, as in any other approach, one must
+understand exactly when (that is, in which states) errors are detected.
+This in turn requires understanding how the automaton is constructed.
+\menhir's construction technique is not Knuth's canonical LR(1)
+technique~\cite{knuth-lr-65}, which is usually too expensive to be practical.
+Instead, \menhir \emph{merges} states~\cite{pager-77} and introduces so-called \emph{default
+reductions}. These techniques \emph{defer} error detection by allowing
+extra reductions to take place before an error is detected.
+% Furthermore, \menhir supports \donerrorreduce declarations,
+% which also introduce extra reductions.
+The impact of these alterations must be taken into account when writing
+diagnostic messages (\sref{sec:errors:diagnostics}).
+
+In this approach to error handling, the special \error token is not used. It
 should not appear in the grammar.
 
 % ---------------------------------------------------------------------------------------------------------------------
@@ -2569,21 +2563,63 @@ arbitrary text, but cannot contain a blank line. We stress that there cannot
 be a blank line between two sentences (if there is one, \menhir becomes confused
 and may complain about some word not being ``a known non-terminal symbol'').
 
-As an example, here is a valid entry, taken from \menhir's own \messages file:
+\begin{figure}
 \begin{verbatim}
-    grammar: TYPE UID 
-    grammar: TYPE OCAMLTYPE UID PREC 
+grammar: TYPE UID 
+grammar: TYPE OCAMLTYPE UID PREC 
 
-    # A (handwritten) comment.
+# A (handwritten) comment.
 
-    Ill-formed declaration.
-    Examples of well-formed declarations:
-      %type <Syntax.expression> expression
-      %type <int> date time
+Ill-formed declaration.
+Examples of well-formed declarations:
+  %type <Syntax.expression> expression
+  %type <int> date time
 \end{verbatim}
-%
-This entry contains two input sentences, which lead to errors in two
-distinct states. A single message is associated with these two error states.
+\caption{An entry in a \messages file}
+\label{fig:messages:entry}
+\end{figure}
+
+\begin{figure}
+\begin{verbatim}
+grammar: TYPE UID 
+##
+## Ends in an error in state: 1.
+##
+## declaration -> TYPE . OCAMLTYPE separated_nonempty_list(option(COMMA),
+##   strict_actual) [ TYPE TOKEN START RIGHT PUBLIC PERCENTPERCENT PARAMETER
+##   ON_ERROR_REDUCE NONASSOC LEFT INLINE HEADER EOF COLON ]
+##
+## The known suffix of the stack is as follows:
+## TYPE 
+##
+grammar: TYPE OCAMLTYPE UID PREC 
+##
+## Ends in an error in state: 5.
+##
+## strict_actual -> symbol . loption(delimited(LPAREN,separated_nonempty_list
+##   (COMMA,strict_actual),RPAREN)) [ UID TYPE TOKEN START STAR RIGHT QUESTION
+##   PUBLIC PLUS PERCENTPERCENT PARAMETER ON_ERROR_REDUCE NONASSOC LID LEFT
+##   INLINE HEADER EOF COMMA COLON ]
+##
+## The known suffix of the stack is as follows:
+## symbol 
+##
+
+# A (handwritten) comment.
+
+Ill-formed declaration.
+Examples of well-formed declarations:
+  %type <Syntax.expression> expression
+  %type <int> date time
+\end{verbatim}
+\caption{An entry in a \messages file, decorated with auto-generated comments}
+\label{fig:messages:entry:decorated}
+\end{figure}
+
+As an example, \fref{fig:messages:entry} shows a valid entry, taken
+from \menhir's own \messages file. This entry contains two input sentences,
+which lead to errors in two distinct states. A single message is associated
+with these two error states.
 
 Several commands, described next (\sref{sec:messages:tools}),
 produce \messages files where each input sentence is followed with an
@@ -2592,65 +2628,36 @@ in which state the error is detected, and is supposed to help the reader
 understand what it means to be in this state: What has been read so far? What
 is expected next?
 
-As an example, the previous entry, decorated with auto-generated comments,
-looks like this. (We have manually wrapped the lines that did not fit in this
-document.)
-
-\begin{verbatim}
-    grammar: TYPE UID 
-    ##
-    ## Ends in an error in state: 1.
-    ##
-    ## declaration -> TYPE . OCAMLTYPE separated_nonempty_list(option(COMMA),
-    ##   strict_actual) [ TYPE TOKEN START RIGHT PUBLIC PERCENTPERCENT PARAMETER
-    ##   ON_ERROR_REDUCE NONASSOC LEFT INLINE HEADER EOF COLON ]
-    ##
-    ## The known suffix of the stack is as follows:
-    ## TYPE 
-    ##
-    grammar: TYPE OCAMLTYPE UID PREC 
-    ##
-    ## Ends in an error in state: 5.
-    ##
-    ## strict_actual -> symbol . loption(delimited(LPAREN,separated_nonempty_list
-    ##   (COMMA,strict_actual),RPAREN)) [ UID TYPE TOKEN START STAR RIGHT QUESTION
-    ##   PUBLIC PLUS PERCENTPERCENT PARAMETER ON_ERROR_REDUCE NONASSOC LID LEFT
-    ##   INLINE HEADER EOF COMMA COLON ]
-    ##
-    ## The known suffix of the stack is as follows:
-    ## symbol 
-    ##
-
-    # A (handwritten) comment.
-
-    Ill-formed declaration.
-    Examples of well-formed declarations:
-      %type <Syntax.expression> expression
-      %type <int> date time
-\end{verbatim}
+As an example, the previous entry, decorated with auto-generated comments, is
+shown in \fref{fig:messages:entry:decorated}. (We have manually wrapped the
+lines that did not fit in this document.)
 
 An auto-generated comment begins with the number of the error state that is
-reached via this input sentence. Then, it shows the LR(1) items that compose
-this state, in the same format as in an \automaton file. Then, it shows what
-is known about the stack when the automaton is in this state. (This can be
-deduced from the LR(1) items, but is more readable if shown separately.)
+reached via this input sentence.
+
+Then, the auto-generated comment shows the LR(1) items that compose this
+state, in the same format as in an \automaton file. these items offer a
+description of the past (that is, what has been read so far) and the future
+(that is, which terminal symbols are allowed next).
+
+Finally, the auto-generated comment shows what is known about the stack when
+the automaton is in this state. (This can be deduced from the LR(1) items, but
+is more readable if shown separately.)
 % Plus, there might be cases where the known suffix is longer than the what
 % the LR(1) items suggest. But I have never seen this yet.
 
 In a canonical LR(1) automaton, the LR(1) items offer an exact description of
-the past (that is, what has been read so far) and the future (that is, which
-terminal symbols are allowed next). This information can (and should) be used
-when preparing a diagnostic message.
-
-In a noncanonical automaton, which is by default what \menhir produces, the
-situation is more subtle. The lookahead sets can be over-approximated, so the
-automaton can perform one or more ``spurious reductions'' before an error is
-detected. As a result, the LR(1) items in the error state offer a description
-of the future that may be both incorrect (that is, a terminal symbol that
-appears in a lookahead set is not necessarily a valid continuation) and
-incomplete (that is, a terminal symbol that does not appear in any lookahead
-set may nevertheless be a valid continuation). The reader is referred to
-Pottier's paper~\citeyear{pottier-reachability} for details.
+the past and future. However, in a noncanonical automaton, which is by default
+what \menhir produces, the situation is more subtle. The lookahead sets can be
+over-approximated, so the automaton can perform one or more ``spurious
+reductions'' before an error is detected. As a result, the LR(1) items in the
+error state offer a description of the future that may be both incorrect (that
+is, a terminal symbol that appears in a lookahead set is not necessarily a
+valid continuation) and incomplete (that is, a terminal symbol that does not
+appear in any lookahead set may nevertheless be a valid continuation). More
+details appear further on (\sref{sec:errors:diagnostics}).
+% and in Pottier's paper~\citeyear{pottier-reachability}.
+% TEMPORARY maybe cite it once a nice, long version of it exists.
 
 In order to attract the user's attention to this issue, if an input sentence
 causes one or more spurious reductions, then the auto-generated comment
@@ -2746,12 +2753,17 @@ what error is caused by one particular input sentence.
 % ---------------------------------------------------------------------------------------------------------------------
 
 \subsection{Writing accurate diagnostic messages}
-\label{sec:writing:diagnostics}
+\label{sec:errors:diagnostics}
 
 One might think that writing a diagnostic message for each error state is a
-straightforward (if lengthy) task. In reality, it is not so simple. Here are a
-few guidelines. The reader is referred to Pottier's
-paper~\citeyear{pottier-reachability} for more details.
+straightforward (if lengthy) task. In reality, it is not so simple.
+% Here are a few guidelines.
+
+% The reader is referred to Pottier's paper~\citeyear{pottier-reachability} for
+% more details.
+% TEMPORARY maybe cite it once a nice, long version of it exists.
+
+\paragraph{A state, not a sentence}
 
 The first thing to keep in mind is that a diagnostic message is associated
 with a \emph{state}~$s$, as opposed to a sentence. An entry in a \messages
@@ -2768,18 +2780,12 @@ comment.
 
 The LR(1) items that compose the state~$s$ offer a description of the past
 (that is, what has been read so far) and the future (that is, which terminal
-symbols are allowed next). A diagnostic message should be crafted, based on
+symbols are allowed next). A diagnostic message should be designed based on
 this description.
-
-As pointed out earlier (\sref{sec:messages:format}), in a noncanonical
-automaton, the lookahead sets in the LR(1) items can be both over- and
-under-approximated. One must be aware of this phenomenon, otherwise one runs
-the risk of writing a diagnostic message that proposes too many or too few
-continuations.
 
 \begin{figure}
 \verbatiminput{declarations.mly}
-\caption{A simple grammar where one error state is difficult to explain (\sref{sec:writing:diagnostics})}
+\caption{A grammar where one error state is difficult to explain}
 \label{fig:declarations}
 \end{figure}
 
@@ -2796,16 +2802,26 @@ program: ID COLON ID LPAREN
 ## typ0 
 ##
 \end{verbatim}
-\caption{A problematic error state in the grammar of \fref{fig:declarations}}
+\caption{A problematic error state in the grammar of \fref{fig:declarations}, due to over-approximation}
 \label{fig:declarations:over}
 \end{figure}
+
+\paragraph{The problem of over-approximated lookahead sets}
+
+As pointed out earlier (\sref{sec:messages:format}), in a noncanonical
+automaton, the lookahead sets in the LR(1) items can be both over- and
+under-approximated. One must be aware of this phenomenon, otherwise one runs
+the risk of writing a diagnostic message that proposes too many or too few
+continuations.
 
 As an example, let us consider the grammar in \fref{fig:declarations}.
 According to this grammar, a ``program'' is either a declaration between
 parentheses or a declaration followed with a semicolon. A ``declaration'' is
 an identifier, followed with a colon, followed with a type. A ``type'' is an
 identifier, a type between parentheses, or a function type in the style of
-OCaml. The (noncanonical) automaton produced by \menhir for this grammar has 17~states.
+OCaml.
+
+The (noncanonical) automaton produced by \menhir for this grammar has 17~states.
 Using \olisterrors, we find that an error can be detected in 10 of these
 17~states. By manual inspection of the auto-generated comments, we find that
 for 9 out of these 10~states, writing an accurate diagnostic message is easy. However,
@@ -2828,27 +2844,27 @@ and \verb+RPAREN+ are valid continuations!
 
 In fact, the lookahead set in the first LR(1) item
 in \fref{fig:declarations:over} is over-approximated.
-State~8 in the noncanonical automaton results from the fusion of two states
+State~8 in the noncanonical automaton results from merging two states
 in the canonical automaton.
 
-In such a situation, one cannot write an accurate diagnostic message, by lack
-of ``static context''. The automaton's current state alone does not offer a
+In such a situation, one cannot write an accurate diagnostic message.
+% by lack of ``static context''.
+Knowing that the automaton is in state~8 does not give us a
 precise view of the valid continuations. Some valuable information (that is,
 whether we have seen an opening parenthesis \verb+LPAREN+ at the very
 beginning of the program) is buried in the automaton's stack.
 
 \begin{figure}
 \verbatiminput{declarations-phantom.mly}
-\caption{Better static context via selective duplication (\sref{sec:writing:diagnostics})}
+\caption{Splitting the problematic state of \fref{fig:declarations:over} via selective duplication}
 \label{fig:declarations:phantom}
 \end{figure}
 
 \begin{figure}
 \verbatiminput{declarations-onerrorreduce.mly}
-\caption{Better static context via reductions on error (\sref{sec:writing:diagnostics})}
+\caption{Avoiding the problematic state of \fref{fig:declarations:over} via reductions on error}
 \label{fig:declarations:onerrorreduce}
 \end{figure}
-% TEMPORARY captions
 
 \begin{figure}
 \begin{verbatim}
@@ -2869,30 +2885,35 @@ program: ID COLON ID LPAREN
 ## In state 11, spurious reduction of production declaration -> ID COLON typ1 
 ##
 \end{verbatim}
-\caption{A problematic error state in the grammar of \fref{fig:declarations:onerrorreduce}}
+\caption{A problematic error state in the grammar of \fref{fig:declarations:onerrorreduce}, due to under-approximation}
 \label{fig:declarations:under}
 \end{figure}
 
 How can one work around this problem? Let us suggest three options.
 
-One option would be to build a canonical automaton, using \menhir's
-(undocumented!) \ocanonical switch. In this case, we would
+\paragraph{Blind duplication of states}
+
+One option would be to build a canonical automaton by using the
+% (undocumented!)
+\ocanonical switch. In this example, one would
 obtain a 27-state automaton, where the problem has disappeared. However, this
 option is rarely viable, as it duplicates many states without good reason.
 
+\paragraph{Selective duplication of states}
+
 A second option is to manually cause just enough duplication to remove the
-problematic over-approximation. In our example, we must distinguish two kinds
-of types and declarations, namely those that should be followed with a closing
-parenthesis, and those that should be followed with a semicolon. We create
+problematic over-approximation. In our example, we wish to distinguish two kinds
+of types and declarations, namely those that must be followed with a closing
+parenthesis, and those that must be followed with a semicolon. We create
 such a distinction by parameterizing \verb+typ1+ and \verb+declaration+ with a
 phantom parameter. The modified grammar is shown
 in \fref{fig:declarations:phantom}. The phantom parameter does not affect the
 language that is accepted: for instance, the nonterminal
 symbols \texttt{declaration(SEMICOLON)} and
 \texttt{declaration(RPAREN)} generate the same language as \texttt{declaration}
-in the original grammar of \fref{fig:declarations}. Yet, by creating a
-distinction between these two symbols, we force the construction of an
-automaton where more states are distinguished. In this case, \menhir produces
+in the grammar of \fref{fig:declarations}. Yet, by giving
+distinct names to these two symbols, we force the construction of an
+automaton where more states are distinguished. In this example, \menhir produces
 a 23-state automaton. Using \olisterrors, we find that an error can be
 detected in 11 of these 23~states, and by manual inspection of the
 auto-generated comments, we find that for each of these 11~states, writing an
@@ -2903,36 +2924,40 @@ non-problematic error states.
 % Je me demande s'il n'y a pas un lien avec la traduction de LR(k+1) vers LR(k)...
 % On voit que le FOLLOW est intégré au symbole nonterminal.
 
+\paragraph{Reductions on error}
+
 A third and last option is to introduce an \donerrorreduce declaration
 (\sref{sec:onerrorreduce}) so as to prevent the detection of an error in the
 problematic state~8. We see in \fref{fig:declarations:over} that, in
 state~8, the production $\texttt{typ1} \rightarrow \texttt{typ0}$ is ready to
 be reduced. If we could force this reduction to take place, then the automaton
 would move to some other state where it would be clear which
-of \verb+SEMICOLON+ and \verb+RPAREN+ is expected next. This is
-achieved by marking \verb+typ1+ as ``reducible on error''.
+of \verb+SEMICOLON+ and \verb+RPAREN+ is expected. We
+achieve this by marking \verb+typ1+ as ``reducible on error''.
 The modified grammar is shown
 in \fref{fig:declarations:onerrorreduce}.
 For this grammar, \menhir produces a 17-state automaton.
 (This is the exact same automaton as for the grammar of \fref{fig:declarations},
-except 2 of the 17 states have extra reduction actions.)
+except 2 of the 17 states have received extra reduction actions.)
 Using \olisterrors, we find that an error can be detected in 9 of these~17 states.
-The problematic error state, namely state~8, is no longer an error state!
+The problematic state, namely state~8, is no longer an error state!
 The problem has vanished.
 
+\paragraph{The problem of under-approximated lookahead sets}
+
 The third option seems by far the simplest of all, and is recommended in many
-situations. However, it comes with a caveat. There is now a state whose
-lookahead sets are under-approximated, and because of this, a danger of
-writing an incomplete diagnostic message, one that does not list all valid
-continuations.
+situations. However, it comes with a caveat. There may now exist states whose
+lookahead sets are under-approximated, in a certain sense. Because of this,
+there is a danger of writing an incomplete diagnostic message, one that does
+not list all valid continuations.
 
 To see this, let us look again at the sentence
-\texttt{ID COLON ID LPAREN}. In the grammar of \fref{fig:declarations},
-this sentence used to take us to the problematic state~8
-(\fref{fig:declarations:over}). In the grammar of
-\fref{fig:declarations:onerrorreduce}), because more reduction actions are
+\texttt{ID COLON ID LPAREN}. In the grammar and automaton of \fref{fig:declarations},
+this sentence takes us to the problematic state~8, shown in
+\fref{fig:declarations:over}. In the grammar and automaton of
+\fref{fig:declarations:onerrorreduce}, because more reduction actions are
 carried out before the error is detected, this sentence takes us
-to state~15, as shown in \fref{fig:declarations:under}.
+to state~15, shown in \fref{fig:declarations:under}.
 
 When writing a diagnostic message for state~15, one might be tempted to write:
 ``Up to this point, a declaration has been recognized. At this point, a
@@ -2944,19 +2969,18 @@ sentence
 the first token following \texttt{ID COLON ID} is \texttt{ARROW}, then in
 state~8 this token is shifted, so the two reductions that take us from state~8
 through state~11 to state~15 never take place. This is why, even though
-\texttt{ARROW} does not appear in state~15 as a valid continuation, it is
-nevertheless a valid continuation of \texttt{ID COLON ID}. The warning
+\texttt{ARROW} does not appear in state~15 as a valid continuation, it
+nevertheless is a valid continuation of \texttt{ID COLON ID}. The warning
 produced by \menhir, shown in \fref{fig:declarations:under}, is supposed to
 attract attention to this issue.
 
 Another way to explain this issue is to point out that, by declaring
-\verb+%on_error_reduce typ1+, we force a somewhat arbitrary choice.
-When the parser reads a (level-1) type and finds an invalid token, it decides
-that this type is finished, even though, in reality, it could be continued
-with \verb+ARROW+ \ldots.
-This in turn causes the parser to perform another reduction and consider
-the current declaration finished, even though, in reality, it could be continued
-with \verb+ARROW+ \ldots.
+\verb+%on_error_reduce typ1+, we make a choice.
+When the parser reads a type and finds an invalid token, it decides that this
+type is finished, even though, in reality, this type could be continued
+with \verb+ARROW+ \ldots. This in turn causes the parser to perform another
+reduction and consider the current declaration finished, even though, in
+reality, this declaration could be continued with \verb+ARROW+ \ldots.
 
 In summary, when writing a diagnostic message for state~15, one should take
 into account the fact that this state can be reached via spurious reductions
@@ -2968,6 +2992,7 @@ declaration is complete, then at this point, a semicolon is expected''.
 % ---------------------------------------------------------------------------------------------------------------------
 
 \subsection{A working example}
+\label{sec:errors:example}
 
 The CompCert verified compiler offers a real-world example of this approach to
 error handling. The ``pre-parser'' is where syntax errors are detected: see
@@ -2988,7 +3013,7 @@ an index into the parser's stack. The code
 in \compcertgithubfile{cparser/ErrorReports.ml} automatically replaces this
 special form with the fragment of the source text that corresponds to this
 stack entry. This mechanism is not built into \menhir; it is implemented in
-CompCert, using \menhir's incremental API.
+CompCert using \menhir's incremental API.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
