@@ -26,4 +26,7 @@ clean:
 test: all
 	@echo "The following command should print 42:"
 	echo "(1 + 2 * 10) * 2" | ./$(MAIN).native
-
+	@echo "The following command should print an error message:"
+	echo "(1 + 2 * 10) * )" | ./$(MAIN).native
+	@echo "The following command should print an error message:"
+	echo "(1 + 2 * 10))" | ./$(MAIN).native

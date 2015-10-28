@@ -9,11 +9,11 @@ module P =
     (Parser.MenhirInterpreter)
     (CalcPrinters)
 
-(* Instantiate [MenhirLib.ErrorReporting] for our parser. This requires
+(* Instantiate [ErrorReporting] for our parser. This requires
    providing a few functions -- see [CalcErrorReporting]. *)
 
 module E =
-  MenhirLib.ErrorReporting.Make
+  ErrorReporting.Make
     (Parser.MenhirInterpreter)
     (CalcErrorReporting)
 
