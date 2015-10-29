@@ -78,18 +78,11 @@ ifneq (,$(findstring "os_type: Win", "$(shell ocamlc -config | grep os_type)"))
 libdir        := $(shell cygpath -m $(libdir))
 endif
 
-# -------------------------------------------------------------------------
-
-# Building menhirLib.
-
-ifeq ($(TARGET),byte)
-MENHIRLIB       := menhirLib.cmi menhirLib.cmo
-else
-MENHIRLIB       := menhirLib.cmi menhirLib.cmo menhirLib.cmx menhirLib.$(OBJ)
-endif
-
 # ----------------------------------------------------------------------------
 # Compilation.
+
+# The directory where things are built.
+BUILDDIR := src/_stage2
 
 # Installation time settings are recorded within src/installation.ml.
 # This file is recreated every time so as to avoid becoming stale.
@@ -97,20 +90,65 @@ endif
 .PHONY: all install uninstall
 
 all:
-	rm -f src/installation.ml
-	echo "let libdir = \"$(libdir)\"" > src/installation.ml
-	if $(USE_OCAMLFIND) ; then \
+	@ rm -f src/installation.ml
+	@ echo "let libdir = \"$(libdir)\"" > src/installation.ml
+	@ if $(USE_OCAMLFIND) ; then \
 	  echo "let ocamlfind = true" >> src/installation.ml ; \
 	else \
 	  echo "let ocamlfind = false" >> src/installation.ml ; \
 	fi
-	$(MAKE) -C src library bootstrap
+	@ $(MAKE) -C src library bootstrap
+	@ $(MAKE) $(BUILDDIR)/menhirLib.ml $(BUILDDIR)/menhirLib.mli
+
+# -------------------------------------------------------------------------
+
+# The names of the modules in MenhirLib are obtained by reading the
+# non-comment lines in menhirLib.mlpack.
+
+MENHIRLIB_MODULES := $(shell grep -ve "^[ \t\n\r]*\#" src/menhirLib.mlpack)
+
+# The source file menhirLib.ml is created by concatenating all of the source
+# files that make up MenhirLib. This file is not needed to compile Menhir or
+# MenhirLib. It is installed at the same time as MenhirLib and is copied by
+# Menhir when the user requests a self-contained parser (one that is not
+# dependent on MenhirLib).
+
+$(BUILDDIR)/menhirLib.ml:
+	@ rm -f $@
+	@ for m in $(MENHIRLIB_MODULES) ; do \
+	  echo "module $$m = struct" >> $@ ; \
+	  cat src/$$m.ml >> $@ ; \
+	  echo "end" >> $@ ; \
+	done
+
+# The source file menhirLib.mli is created in the same way. If a module
+# does not have an .mli file, then we assume that its .ml file contains
+# type (and module type) definitions only, so we copy it instead of the
+# (non-existent) .mli file.
+
+$(BUILDDIR)/menhirLib.mli:
+	@ rm -f $@
+	@ for m in $(MENHIRLIB_MODULES) ; do \
+	  echo "module $$m : sig" >> $@ ; \
+	  if [ -f src/$$m.mli ] ; then \
+	    cat src/$$m.mli >> $@ ; \
+	  else \
+	    cat src/$$m.ml >> $@ ; \
+	  fi ; \
+	  echo "end" >> $@ ; \
+	done
+
+# -------------------------------------------------------------------------
+
+# The files that should be installed as part of menhirLib.
+
+MENHIRLIB       := menhirLib.mli menhirLib.ml menhirLib.cmi menhirLib.cmo
+ifneq ($(TARGET),byte)
+MENHIRLIB       := $(MENHIRLIB) menhirLib.cmx menhirLib.$(OBJ)
+endif
 
 # ----------------------------------------------------------------------------
 # Installation.
-
-# The directory where things have been built (by make all, above).
-BUILDDIR := src/_stage2
 
 install:
 	mkdir -p $(bindir)
