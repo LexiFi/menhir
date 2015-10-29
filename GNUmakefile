@@ -6,7 +6,7 @@
 
 SHELL := bash
 
-.PHONY: all test clean package check export godi opam local
+.PHONY: all test clean package check api export godi opam local
 
 # -------------------------------------------------------------------------
 
@@ -40,6 +40,8 @@ clean:
 
 export CDPATH=
 
+# -------------------------------------------------------------------------
+
 # Distribution.
 # The version number is automatically set to the current date,
 # unless DATE is defined on the command line.
@@ -54,17 +56,7 @@ HEADACHE := headache
 SRCHEAD  := $(CURRENT)/header
 LIBHEAD  := $(CURRENT)/lgpl-header
 
-# GODI settings. We assume $(GODI_HOME) is defined and points
-# to the host machine's GODI installation.
-
-GODINAME := godi/godi-menhir
-GODIWORK := /home/fpottier/dev/godi-build
-GODISVN  := $(GODIWORK)/trunk/$(GODINAME)
-GODIH    := $(GODI_HOME)/build/$(GODINAME)
-GODIPACK := $(GODIWORK)/pack
-GODIMAP  := $(GODIPACK)/release.4.00.map $(GODIPACK)/release.4.01.map
-GODIURL  := https://godirepo.camlcity.org/godi_admin
-GODIVA   := $(GODI_HOME)/bin/godiva
+# -------------------------------------------------------------------------
 
 # A list of files to copy without changes to the package.
 #
@@ -73,25 +65,24 @@ GODIVA   := $(GODI_HOME)/bin/godiva
 
 DISTRIBUTED_FILES := AUTHORS CHANGES INSTALLATION LICENSE Makefile demos
 
-# Some source files carry the "library" license, while others carry
-# the regular "source code" license.
+# -------------------------------------------------------------------------
 
-LIBFILES := \
-  src/standard.mly \
-  src/Convert.{ml,mli} \
-  src/Engine.{ml,mli} \
-  src/EngineTypes.ml \
-  src/General.{ml,mli} \
-  src/IncrementalEngine.ml \
-  src/InfiniteArray.{ml,mli} \
-  src/InspectionTableFormat.ml \
-  src/InspectionTableInterpreter.{ml,mli} \
-  src/LinearizedArray.{ml,mli} \
-  src/PackedIntArray.{ml,mli} \
-  src/Printers.{ml,mli} \
-  src/RowDisplacement.{ml,mli}\
-  src/TableFormat.ml \
-  src/TableInterpreter.{ml,mli}
+# The names of the modules in MenhirLib are obtained by reading the
+# non-comment lines in menhirLib.mlpack.
+
+MENHIRLIB_MODULES := $(shell grep -ve "^[ \t\n\r]*\#" src/menhirLib.mlpack)
+
+# The names of the source files in MenhirLib are obtained by adding
+# an .ml or .mli extension to the module name. (We assume that the
+# first letter of the file name is a capital letter.)
+
+MENHIRLIB_FILES   := $(shell for m in $(MENHIRLIB_MODULES) ; do \
+	                       ls src/$$m.{ml,mli} 2>/dev/null ; \
+	                     done)
+
+# -------------------------------------------------------------------------
+
+# Creating a tarball for distribution.
 
 package: clean
 # Create a directory to store the distributed files temporarily.
@@ -103,10 +94,13 @@ package: clean
 	@ grep -v my_warnings src/_tags > $(PACKAGE)/src/_tags
 	@ $(MAKE) -C $(PACKAGE)/demos clean
 # Insert headers.
+# Note that standard.mly as well as the source files in MenhirLib carry the
+# "library" license, while every other file carries the regular "source code"
+# license.
 	@ echo "-> Inserting headers."
 	@ cd $(PACKAGE) && find . -regex ".*\.ml\(i\|y\|l\)?" \
 	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
-	@ cd $(PACKAGE) && for file in $(LIBFILES) ; do \
+	@ cd $(PACKAGE) && for file in src/standard.mly $(MENHIRLIB_FILES) ; do \
 	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
 	  done
 # Set the version number into the files that mention it. These
@@ -122,12 +116,14 @@ package: clean
 	@ mv $(PACKAGE)/doc/main.pdf $(PACKAGE)/manual.pdf
 	@ mv $(PACKAGE)/doc/menhir.1 $(PACKAGE)/
 	@ rm -rf $(PACKAGE)/doc
-# Create the API documentation.
-	@ $(MAKE) -C src api
 # Create the tarball.
 	@ echo "-> Tarball creation."
 	tar --exclude=.gitignore -cvz -f $(TARBALL) $(PACKAGE)
 	@ echo "-> Package $(PACKAGE).tar.gz is ready."
+
+# -------------------------------------------------------------------------
+
+# Checking the tarball that was created above.
 
 check:
 	@ echo "-> Checking the package ..."
@@ -156,25 +152,53 @@ check:
 
 # -------------------------------------------------------------------------
 
-# Copying to my Web site.
+# Generating HTML documentation for certain API files.
+
+%.mli.html: %.mli
+	caml2html -nf $<
+
+%.ml.html: %.ml
+	caml2html -nf $<
+
+# -------------------------------------------------------------------------
+
+# Copying the tarball to my Web site.
 
 RSYNC   := scp -p -C
 TARGET  := yquem.inria.fr:public_html/menhir/
 PAGE    := /home/fpottier/dev/page
-API     := convert.mli.html IncrementalEngine.ml.html general.mli.html
+API     := src/Convert.mli.html \
+	   src/IncrementalEngine.ml.html \
+	   src/General.mli.html
 
-export:
+api: $(API)
+
+export: api
 # Copier l'archive et la doc vers yquem.
 	$(RSYNC) $(TARBALL) $(TARGET)
 	$(RSYNC) $(PACKAGE)/manual.pdf $(TARGET)
 	$(RSYNC) CHANGES $(TARGET)
 # Copier l'API vers la page Web.
-	cd src && $(RSYNC) $(API) $(TARGET)
+	$(RSYNC) $(API) $(TARGET)
 # Mettre à jour la page Web de Menhir avec le nouveau numéro de version.
 	cd $(PAGE) && \
 	  sed --in-place=.bak "s/menhir-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/$(PACKAGE)/" menhir.xml && \
 	  $(MAKE) export && \
 	  cvs commit -m "Updated Menhir's version number."
+
+# -------------------------------------------------------------------------
+
+# GODI settings. We assume $(GODI_HOME) is defined and points
+# to the host machine's GODI installation.
+
+GODINAME := godi/godi-menhir
+GODIWORK := /home/fpottier/dev/godi-build
+GODISVN  := $(GODIWORK)/trunk/$(GODINAME)
+GODIH    := $(GODI_HOME)/build/$(GODINAME)
+GODIPACK := $(GODIWORK)/pack
+GODIMAP  := $(GODIPACK)/release.4.00.map $(GODIPACK)/release.4.01.map
+GODIURL  := https://godirepo.camlcity.org/godi_admin
+GODIVA   := $(GODI_HOME)/bin/godiva
 
 # -------------------------------------------------------------------------
 
