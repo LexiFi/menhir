@@ -32,7 +32,7 @@ clean:
 	@ for i in bench demos src ; do \
 	  $(MAKE) -C $$i $@ ; \
 	done
-	$(MAKE) -rs -C doc $@
+	@ $(MAKE) -rs -C doc $@
 
 # -------------------------------------------------------------------------
 
