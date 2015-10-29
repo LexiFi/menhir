@@ -1,8 +1,69 @@
 open Ocamlbuild_plugin
 open Command
 
+(* ---------------------------------------------------------------------------- *)
 (* The following rules can be copied into other projects. *)
+(* ---------------------------------------------------------------------------- *)
 
+(* The auxiliary function [lines] reads a file, line by line. *)
+
+let lines filename : string list =
+  let c = open_in filename in
+  let lines = ref [] in
+  try
+    while true do
+      lines := input_line c :: !lines
+    done;
+    assert false
+  with End_of_file ->
+    close_in c;
+    List.rev !lines
+
+(* The auxiliary function [noncomment] recognizes a non-blank non-comment line. *)
+
+let rec noncomment s i n =
+  i < n && match s.[i] with
+  | ' ' | '\t' | '\r' | '\n' ->
+      noncomment s (i + 1) n
+  | '#' ->
+      false
+  | _ ->
+      true
+
+let noncomment s =
+  noncomment s 0 (String.length s)
+
+(* ---------------------------------------------------------------------------- *)
+
+(* If [m] is the name of a module, [cmx m] is the name of its [.cmx] file. There
+   are two candidate names, because of OCaml's convention where the first letter
+   of the file name is capitalized to obtain the module name. We decide between
+   the two by testing whether an [.ml] file exists. *)
+
+let cmx (m : string) : string =
+  let candidate = m ^ ".cmx" in
+  if Sys.file_exists (m ^ ".ml") then candidate else String.uncapitalize candidate
+
+(* ---------------------------------------------------------------------------- *)
+
+(* If there is a file [foo.mlpack], then the modules that are listed in this
+   file are meant to be part of the library [Foo], and should receive the tag
+   [for-pack(Foo)]. ocamlbuild doesn't do this automatically, so we program
+   it. *)
+
+(* The argument [basename] should be the basename of the [.mlpack] file. *)
+
+let for_pack (basename : string) =
+  let filename = basename ^ ".mlpack" in
+  let modules = List.filter noncomment (lines filename) in
+  let library = String.capitalize basename in
+  let tags = [ Printf.sprintf "for-pack(%s)" library ] in
+  List.iter (fun m ->
+    tag_file (cmx m) tags
+  ) modules
+
+(* ---------------------------------------------------------------------------- *)
+(* The following rules can be copied into other projects. *)
 (* ---------------------------------------------------------------------------- *)
 
 (* This rule generates an .ml file [target] from an .mly file [grammar] and a
@@ -171,5 +232,6 @@ let () =
     (* Add our rules after the standard ones. *)
     parser_configuration();
     flags();
+    for_pack "menhirLib";
   | _ -> ()
   )
