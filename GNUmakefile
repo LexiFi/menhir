@@ -78,20 +78,20 @@ DISTRIBUTED_FILES := AUTHORS CHANGES INSTALLATION LICENSE Makefile demos
 
 LIBFILES := \
   src/standard.mly \
-  src/convert.{ml,mli} \
-  src/engine.{ml,mli} \
-  src/engineTypes.ml \
-  src/general.{ml,mli} \
+  src/Convert.{ml,mli} \
+  src/Engine.{ml,mli} \
+  src/EngineTypes.ml \
+  src/General.{ml,mli} \
   src/IncrementalEngine.ml \
-  src/infiniteArray.{ml,mli} \
-  src/inspectionTableFormat.ml \
-  src/inspectionTableInterpreter.{ml,mli} \
+  src/InfiniteArray.{ml,mli} \
+  src/InspectionTableFormat.ml \
+  src/InspectionTableInterpreter.{ml,mli} \
   src/LinearizedArray.{ml,mli} \
-  src/packedIntArray.{ml,mli} \
+  src/PackedIntArray.{ml,mli} \
   src/Printers.{ml,mli} \
-  src/rowDisplacement.{ml,mli}\
-  src/tableFormat.ml \
-  src/tableInterpreter.{ml,mli}
+  src/RowDisplacement.{ml,mli}\
+  src/TableFormat.ml \
+  src/TableInterpreter.{ml,mli}
 
 package: clean
 # Create a directory to store the distributed files temporarily.
