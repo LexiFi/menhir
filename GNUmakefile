@@ -188,69 +188,6 @@ export: api
 
 # -------------------------------------------------------------------------
 
-# GODI settings. We assume $(GODI_HOME) is defined and points
-# to the host machine's GODI installation.
-
-GODINAME := godi/godi-menhir
-GODIWORK := /home/fpottier/dev/godi-build
-GODISVN  := $(GODIWORK)/trunk/$(GODINAME)
-GODIH    := $(GODI_HOME)/build/$(GODINAME)
-GODIPACK := $(GODIWORK)/pack
-GODIMAP  := $(GODIPACK)/release.4.00.map $(GODIPACK)/release.4.01.map
-GODIURL  := https://godirepo.camlcity.org/godi_admin
-GODIVA   := $(GODI_HOME)/bin/godiva
-
-# -------------------------------------------------------------------------
-
-# Creating a GODI package.
-
-# This entry assumes that "make package" and "make export" have been
-# run on the same day. It must have sufficient rights to write into
-# the local GODI hierarchy.
-
-godi:
-	@ if [ `whoami` != "root" ] ; then \
-	  echo "make godi must be run with root privileges. Try running ./godi" ; \
-	  exit 1 ; \
-	fi
-	@ sed -e s/VERSION/$(DATE)/ < spec.godiva > $(GODISVN)/spec.godiva
-	@ cd $(GODIWORK) && svn up
-	@ cd $(GODISVN) && \
-          $(GODIVA) -refetch -localbase $(GODI_HOME) spec.godiva && \
-	  rsync -v -r $(GODIH)/ $(GODISVN) && \
-	  chown -R fpottier $(GODISVN)
-	@ echo "Do you wish to proceed and commit changes to GODI (yes or no)?"
-	@ read answer && if [ "$$answer" != "yes" ] ; then \
-	  echo Aborting. ; \
-	  exit 1 ; \
-	fi
-	@ cd $(GODISVN) && \
-	  svn commit -m "Changes to Menhir package." && \
-	  export revision=`svn info Makefile | sed -n 's/^R.vision \?: \([0-9]\+\)$$/\1/p'` && \
-	  echo Revision is now $$revision. && \
-	  for map in $(GODIMAP) ; do \
-	    sed --in-place=.bak "s/^\(.*menhir[^0-9]*\)[0-9]\+$$/\1$$revision/" $$map ; \
-	  done
-	@ echo Here are my changes to the release maps:
-	@ cd $(GODIPACK) && svn diff --diff-cmd diff -x "-C0"
-	@ echo "Do you wish to proceed and commit changes to GODI (yes or no)?"
-	@ read answer && if [ "$$answer" != "yes" ] ; then \
-	  echo Aborting. ; \
-	  exit 1 ; \
-	fi
-	@ cd $(GODIPACK) && svn commit -m "Updated release map for Menhir."
-	@ echo "You may now open GODI's release tool at"
-	@ echo "        $(GODIURL)"
-	@ echo "and proceed as directed. I will try to open this URL for you."
-	@ case $$OSTYPE in \
-	(linux*) \
-	  su fpottier -c "firefox $(GODIURL)" ;; \
-	(*) \
-	  open $(GODIURL) ;; \
-	esac
-
-# -------------------------------------------------------------------------
-
 # Updating the opam package.
 
 # This entry assumes that "make package" and "make export" have been
