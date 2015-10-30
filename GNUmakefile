@@ -171,6 +171,8 @@ API     := src/Convert.mli.html \
 	   src/IncrementalEngine.ml.html \
 	   src/General.mli.html
 
+SED     := $(shell if hash gsed 2>/dev/null ; then echo gsed ; else echo sed ; fi)
+
 api: $(API)
 
 export: api
@@ -182,7 +184,7 @@ export: api
 	$(RSYNC) $(API) $(TARGET)
 # Mettre à jour la page Web de Menhir avec le nouveau numéro de version.
 	cd $(PAGE) && \
-	  sed --in-place=.bak "s/menhir-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/$(PACKAGE)/" menhir.xml && \
+	  $(SED) --in-place=.bak "s/menhir-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/$(PACKAGE)/" menhir.xml && \
 	  $(MAKE) export && \
 	  cvs commit -m "Updated Menhir's version number."
 
