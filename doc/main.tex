@@ -313,6 +313,11 @@ issued; otherwise, the object file \texttt{menhirLib.cmx} is named.
 % The file \distrib{demos/obsolete/Makefile.shared} shows how to exploit
 % the \texttt{--suggest-*} switches.
 
+\docswitch{\osuggestmenhirlib} This switch causes \menhir to print (the
+absolute path of) the directory where \menhirlib was installed. If \menhirlib
+was installed via \ocamlfind, this is equivalent to calling \texttt{ocamlfind
+query menhirLib}.
+
 \docswitch{\ostdlib \nt{directory}} This switch controls the directory
 where the standard library is found. It allows overriding the default
 directory that is set at installation time. The trailing \texttt{/} character
@@ -3349,6 +3354,14 @@ then view \verb+irevlist+ as a variant of \verb+revlist+ that is inlined one lev
 deep.
 % Intentionally do not call this "list", because people may copy-paste this
 % definition, and will end up unintentionally redefining the meaning of *.
+
+\question{Can I ship a generated parser while avoiding a dependency on \menhirlib?}
+Yes. One option is to use the code-based back-end (that is, to not
+use \otable). In this case, the generated parser is self-contained. Another
+option is to use the table-based back-end (that is, use \otable) and include a
+copy of the files \verb+menhirLib.{ml,mli}+ together with the generated
+parser. The command \texttt{menhir \osuggestmenhirlib} will tell you where to
+find these source files.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
