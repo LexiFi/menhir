@@ -17,6 +17,14 @@ all:
 
 # -------------------------------------------------------------------------
 
+# Utilities.
+
+SED     := $(shell if hash gsed 2>/dev/null ; then echo gsed ; else echo sed ; fi)
+CUT     := $(shell if hash gcut 2>/dev/null ; then echo gcut ; else echo cut ; fi)
+MD5SUM  := $(shell if hash md5  2>/dev/null ; then echo "md5 -r" ; else echo md5sum ; fi)
+
+# -------------------------------------------------------------------------
+
 # Testing.
 # Assumes that "make bootstrap" has been run in src/
 # or that MENHIR is properly set.
@@ -171,8 +179,6 @@ API     := src/Convert.mli.html \
 	   src/IncrementalEngine.ml.html \
 	   src/General.mli.html
 
-SED     := $(shell if hash gsed 2>/dev/null ; then echo gsed ; else echo sed ; fi)
-
 api: $(API)
 
 export: api
@@ -185,8 +191,8 @@ export: api
 # Mettre à jour la page Web de Menhir avec le nouveau numéro de version.
 	cd $(PAGE) && \
 	  $(SED) --in-place=.bak "s/menhir-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/$(PACKAGE)/" menhir.xml && \
-	  $(MAKE) export && \
-	  cvs commit -m "Updated Menhir's version number."
+	  cvs commit -m "Updated Menhir's version number." && \
+	  if hash cduce ; then $(MAKE) export ; fi
 
 # -------------------------------------------------------------------------
 
@@ -196,7 +202,7 @@ export: api
 # run on the same day.
 
 OPAM := $(HOME)/dev/opam-repository
-CSUM  = $(shell md5sum menhir-$(DATE).tar.gz | cut -d ' ' -f 1)
+CSUM  = $(shell $(MD5SUM) menhir-$(DATE).tar.gz | cut -d ' ' -f 1)
 
 opam:
 # Update my local copy of the opam repository.
