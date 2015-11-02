@@ -7,7 +7,7 @@ open EngineTypes
    - at compile time, if so requested by the user, via the --interpret options;
    - at run time, in the table-based back-end. *)
 
-(* A tainted dummy position. In principe, it should never be exposed. *)
+(* A tainted dummy position. In principle, it should never be exposed. *)
 
 let dummy_pos =
   let open Lexing in {
