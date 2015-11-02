@@ -1032,6 +1032,11 @@ let new_fact fact =
            However, allowing [z] to be [any] in [E.query], and taking 
            advantage of this to increase performance, seems difficult. *)
 
+        (* Remark by Jacques-Henri Jourdan: we could remove the outer loop
+           on [z], remove the parameter [z] to [E.query], and let [E.query]
+           itself enumerate all values of [z]. Potentially this could allow
+           a more efficient implementation of the data structure [E]. *)
+
         foreach_terminal_not_causing_an_error target (fun z ->
           E.query current nt lookahead z (fun w ->
             assert (compatible lookahead (W.first w z));
