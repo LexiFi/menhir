@@ -33,6 +33,8 @@ endif
 
 # ----------------------------------------------------------------------------
 # Installation paths.
+# These may be overridden from outside; e.g., our opam package description
+# provides its own values of docdir, libdir, and mandir.
 
 bindir          := $(PREFIX)/bin
 docdir		:= $(PREFIX)/share/doc/menhir
@@ -59,8 +61,8 @@ else
 # LIBSUFFIX    := a
 endif
 
-# The path $(libdir), which is recorded in src/installation.ml (see below),
-# must sometimes be translated using cygpath.
+# The path $(installation_libdir), which is recorded in src/installation.ml (see
+# below), must sometimes be translated using cygpath.
 
 # This one is tricky. To summarize, if I understood correctly, we can assume
 # that Cygwin always exists when Menhir is compiled and installed (because
@@ -75,7 +77,9 @@ endif
 # "os_type" is "Cygwin" or "Unix".
 
 ifneq (,$(findstring "os_type: Win", "$(shell ocamlc -config | grep os_type)"))
-libdir        := $(shell cygpath -m $(libdir))
+installation_libdir := $(shell cygpath -m $(libdir))
+else
+installation_libdir := $(libdir)
 endif
 
 # ----------------------------------------------------------------------------
@@ -91,7 +95,7 @@ BUILDDIR := src/_stage2
 
 all:
 	@ rm -f src/installation.ml
-	@ echo "let libdir = \"$(libdir)\"" > src/installation.ml
+	@ echo "let libdir = \"$(installation_libdir)\"" > src/installation.ml
 	@ if $(USE_OCAMLFIND) ; then \
 	  echo "let ocamlfind = true" >> src/installation.ml ; \
 	else \
