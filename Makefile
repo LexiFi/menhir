@@ -71,7 +71,7 @@ endif
 # performed). On the other hand, if the OCaml compiler is configured to
 # produce a native Windows executable, then Cygwin is not there at execution
 # time and path translation is required. In summary, path translation must be
-# performed if "os_type" is "Win32" or "Win64", and must not performed if
+# performed if "os_type" is "Win32" or "Win64", and must not be performed if
 # "os_type" is "Cygwin" or "Unix".
 
 ifneq (,$(findstring "os_type: Win", "$(shell ocamlc -config | grep os_type)"))
