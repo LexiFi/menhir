@@ -51,7 +51,7 @@ MLYLIB          := src/standard.mly
 # If the compiler is MSVC, then the name of the executable file ends in .exe,
 # and object file names end in .obj instead of .o.
 
-ifeq "$(shell ocamlc -config | grep ccomp_type)" "ccomp_type: msvc"
+ifneq (,$(shell ocamlc -config | grep -E "ccomp_type: msvc"))
   MENHIREXE    := menhir.exe
   OBJ          := obj
 # LIBSUFFIX    := lib
