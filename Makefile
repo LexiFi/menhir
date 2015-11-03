@@ -51,7 +51,7 @@ MLYLIB          := src/standard.mly
 # If the compiler is MSVC, then the name of the executable file ends in .exe,
 # and object file names end in .obj instead of .o.
 
-ifeq "$(shell ocamlc -config | grep ccomp_type)" "ccomp_type: msvc"
+ifneq (,$(shell ocamlc -config | grep -E "ccomp_type: msvc"))
   MENHIREXE    := menhir.exe
   OBJ          := obj
 # LIBSUFFIX    := lib
@@ -76,7 +76,7 @@ endif
 # performed if "os_type" is "Win32" or "Win64", and must not be performed if
 # "os_type" is "Cygwin" or "Unix".
 
-ifneq (,$(findstring "os_type: Win", "$(shell ocamlc -config | grep os_type)"))
+ifneq (,$(shell ocamlc -config | grep -E "os_type: (Win32|Win64)"))
 installation_libdir := $(shell cygpath -m $(libdir))
 else
 installation_libdir := $(libdir)
