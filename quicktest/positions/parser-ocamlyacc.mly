@@ -32,15 +32,15 @@ optional_dot:
 raw_expr:
 | INT
     {}
-| LPAREN nothing expr RPAREN
+| optional_dot LPAREN nothing expr RPAREN optional_dot
     {}
-| expr PLUS optional_dot expr
+| expr PLUS expr
     {}
-| expr MINUS optional_dot expr
+| expr MINUS expr
     {}
-| expr TIMES optional_dot expr
+| expr TIMES expr
     {}
-| expr DIV optional_dot expr
+| expr DIV expr
     {}
 | MINUS expr %prec UMINUS
     {}

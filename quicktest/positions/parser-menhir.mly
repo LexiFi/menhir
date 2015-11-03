@@ -32,8 +32,8 @@ optional_dot:
 
 raw_expr:
 | INT
-| LPAREN nothing expr RPAREN
-| expr operator optional_dot expr
+| optional_dot LPAREN nothing expr RPAREN optional_dot
+| expr operator expr
 | MINUS expr %prec UMINUS
     {}
 
