@@ -209,9 +209,7 @@ module type TABLE = sig
      4. pushing a new stack cell, which contains the three values
         computed in step 3;
 
-     5. returning the new stack computed in steps 2 and 4. The environment
-        is not affected: the caller of the semantic action is responsible
-        for writing the new stack into [env.stack].
+     5. returning the new stack computed in steps 2 and 4.
 
      Point 1 is essentially forced upon us: if semantic values were fetched
      off the stack by this interpreter, then the calling convention for
