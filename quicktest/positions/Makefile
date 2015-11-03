@@ -12,7 +12,7 @@ MAIN            := calc
 all:
 	@ $(OCAMLBUILD) -build-dir _ocamlyacc               $(MAIN).native
 	@ $(OCAMLBUILD) -build-dir _menhir       -tag fancy $(MAIN).native \
-	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS)"
+	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) -lc 1 --comment --no-code-inlining"
 	@ $(OCAMLBUILD) -build-dir _menhir_table -tag fancy $(MAIN).native \
 	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --table" -package menhirLib
 
