@@ -6,17 +6,17 @@
 . ./config.sh
 
 # The time command.
-if which gtime >/dev/null ; then
+if command -v gtime >/dev/null ; then
   TIME=gtime
 else
   TIME=time
 fi
 
 # Testing ocamlyacc is optional.
-test_ocamlyacc=false
+test_ocamlyacc=true
 
 # Make sure Menhir and MenhirLib are up-to-date.
-./build.sh
+./build.sh || exit 1
 
 # Remove any stale performance measurements.
 rm -f gene/*.time
@@ -24,19 +24,19 @@ rm -f gene/*.time
 # Build the parser with the code back-end.
 # Do not link MenhirLib.
 echo "Building (code)..."
-make -C $GENE MENHIR="$MENHIR" clean all >/dev/null
+make -C $GENE MENHIR="$MENHIR" clean all >/dev/null || exit 1
 cp -RH $GENE/gene.native $GENE/gene.code
 
 # Build the parser with the table back-end.
 # Do link MenhirLib.
 echo "Building (table)..."
-make -C $GENE MENHIR="$MENHIR --table" TAGS="-tags 'package(menhirLib)'" clean all >/dev/null
+make -C $GENE MENHIR="$MENHIR --table" TAGS="-tags 'package(menhirLib)'" clean all >/dev/null || exit 1
 cp -RH $GENE/gene.native $GENE/gene.table
 
 # (Optionally) Build the parser with ocamlyacc.
 if $test_ocamlyacc; then
   echo "Building (ocamlyacc)..."
-  make -C $GENE OCAMLBUILD="ocamlbuild -use-ocamlfind" clean all >/dev/null
+  make -C $GENE OCAMLBUILD="ocamlbuild -use-ocamlfind" clean all >/dev/null || exit 1
   cp -RH $GENE/gene.native $GENE/gene.ocamlyacc
 fi
 
