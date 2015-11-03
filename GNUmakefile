@@ -192,7 +192,7 @@ export: api
 	cd $(PAGE) && \
 	  $(SED) --in-place=.bak "s/menhir-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/$(PACKAGE)/" menhir.xml && \
 	  cvs commit -m "Updated Menhir's version number." && \
-	  if hash cduce ; then $(MAKE) export ; fi
+	  if [ -x /opt/godi/bin/cduce ] ; then $(MAKE) export ; fi
 
 # -------------------------------------------------------------------------
 
