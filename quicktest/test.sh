@@ -12,7 +12,7 @@
 # Build the parser with the code back-end and run it.
 echo "Building and running (code)..."
 make -C $CALC MENHIR="$MENHIR --trace" clean >/dev/null
-make -C $CALC MENHIR="$MENHIR --trace"       >/dev/null
+make -C $CALC MENHIR="$MENHIR --trace"       >/dev/null || exit 1
 for f in $DATA/*.real.in ; do
   b=${f%.in}
   $CALC/calc < $f > $b.code.out 2> $b.code.err
@@ -21,7 +21,7 @@ done
 # Build the parser with the table back-end and run it.
 echo "Building and running (table)..."
 make -C $CALC MENHIR="$MENHIR --trace --table" clean >/dev/null
-make -C $CALC MENHIR="$MENHIR --trace --table"       >/dev/null
+make -C $CALC MENHIR="$MENHIR --trace --table"       >/dev/null || exit 1
 for f in $DATA/*.real.in ; do
   b=${f%.in}
   $CALC/calc < $f > $b.table.out 2> $b.table.err
@@ -30,7 +30,7 @@ done
 # Build the parser with the table back-end (with --inspection) and run it.
 echo "Building and running (inspection)..."
 make -C $CALC MENHIR="$MENHIR --trace --table --inspection" clean >/dev/null
-make -C $CALC MENHIR="$MENHIR --trace --table --inspection"       >/dev/null
+make -C $CALC MENHIR="$MENHIR --trace --table --inspection"       >/dev/null || exit 1
 for f in $DATA/*.real.in ; do
   b=${f%.in}
   $CALC/calc < $f > $b.inspection.out 2> $b.inspection.err
