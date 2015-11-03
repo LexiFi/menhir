@@ -76,7 +76,7 @@ endif
 # performed if "os_type" is "Win32" or "Win64", and must not be performed if
 # "os_type" is "Cygwin" or "Unix".
 
-ifneq (,$(findstring "os_type: Win", "$(shell ocamlc -config | grep os_type)"))
+ifneq (,$(shell ocamlc -config | grep -E "os_type: (Win32|Win64)"))
 installation_libdir := $(shell cygpath -m $(libdir))
 else
 installation_libdir := $(libdir)
