@@ -10,23 +10,23 @@ val compose : string -> t -> t -> t
 type sw =
   Keyword.subject * Keyword.where
 
-type renaming_env =
+type keyword_renaming =
   string * sw * sw
 
-(** [rename renaming_env phi a] builds the action
+(** [rename keyword_renaming phi a] builds the action
     [let x1 = x1' and ... xn = xn' in a] if [phi] is [(x1, x1') ... (xn, xn')].
     Moreover, [renaming_env] is used to correctly replace $startpos/$endpos
     present in the semantic action. *)
 val rename:
-  renaming_env
-  -> (string * string) list -> t -> t * (bool * bool)
+  keyword_renaming
+  -> (string * string) list -> t -> t
 
-(** [rename_inlined_psym renaming_env phi a] updates the occurrences of the
+(** [rename_inlined_psym keyword_renaming phi a] updates the occurrences of the
     inlined non terminal in the action [a].
 *)
 val rename_inlined_psym:
-  renaming_env
-  -> (string * string) list -> t -> t * (bool * bool)
+  keyword_renaming
+  -> (string * string) list -> t -> t
 
 (** Semantic actions are translated into [IL] code using the
     [IL.ETextual] and [IL.ELet] constructors. *)

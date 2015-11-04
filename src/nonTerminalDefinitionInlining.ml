@@ -110,42 +110,39 @@ let inline grammar =
 	let phi, inlined_producers = rename_if_necessary b pb.producers in
 
 	(* Define the renaming environment given the shape of the branch. *)
-	let renaming_env, prefix', suffix' =
-
-	  let start_position, prefix' =
+	  let start_position =
 	    match List.rev prefix with
 
 	      (* If the prefix is empty, the start position is the rule
 		 start position. *)
-	      | [] -> (Keyword.Left, Keyword.WhereStart), prefix
+	      | [] -> (Keyword.Left, Keyword.WhereStart)
 
 	      (* The last producer of prefix is named [x],
 		 $startpos in the inlined rule will be changed to $endpos(x). *)
-	      | (_, x) :: _ -> (Keyword.RightNamed x, Keyword.WhereEnd), prefix
+	      | (_, x) :: _ -> (Keyword.RightNamed x, Keyword.WhereEnd)
 
 	  in
 	  (* Same thing for the suffix. *)
-	  let end_position, suffix' =
+	  let end_position =
 	    match suffix with
-	      | [] -> (Keyword.Left, Keyword.WhereEnd), suffix
-	      | (_, x) :: _ -> (Keyword.RightNamed x, Keyword.WhereStart), suffix
+	      | [] -> (Keyword.Left, Keyword.WhereEnd)
+	      | (_, x) :: _ -> (Keyword.RightNamed x, Keyword.WhereStart)
 	  in
-	  (psym, start_position, end_position), prefix', suffix'
+
+	let renaming_env =
+	  (psym, start_position, end_position)
 	in
 	(* Rename the host semantic action.
 	   Each reference of the inlined non terminal [psym] must be taken into
 	   account. $startpos(psym) is changed to $startpos(x) where [x] is
 	   the first producer of the inlined branch if it is not empty or
 	   the preceding producer found in the prefix. *)
-	let outer_action, (used1, used2) =
+	let outer_action =
 	  Action.rename_inlined_psym renaming_env [] b.action
 	in
-	let action', (used1', used2') =
+	let action' =
 	  Action.rename renaming_env phi pb.action
 	in
-        assert (prefix == prefix' && suffix == suffix');
-	let prefix = if used1 || used1' then prefix' else prefix in
-	let suffix = if used2 || used2' then suffix' else suffix in
 
 	{ b with
 	  producers = prefix @ inlined_producers @ suffix;
