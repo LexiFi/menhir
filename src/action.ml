@@ -51,6 +51,30 @@ let compose x a1 a2 =
     pkeywords = [] (* don't bother; already checked *)
   }
 
+(* Substitutions, represented as association lists.
+   In principle, no name appears twice in the domain. *)
+
+type subst =
+  (string * string) list
+
+let apply (phi : subst) (s : string) : string =
+  try 
+    List.assoc s phi
+  with Not_found ->
+    s 
+
+let apply_subject (phi : subst) (subject : subject) : subject =
+  match subject with
+  | Left ->
+      Left
+  | RightNamed s ->
+      RightNamed (apply phi s)
+
+let extend x y (phi : subst ref) =
+  assert (not (List.mem_assoc x !phi));
+  if x <> y then
+    phi := (x, y) :: !phi
+
 (* Renaming of keywords, used during inlining. *)
 
 type sw =
@@ -58,25 +82,6 @@ type sw =
 
 type keyword_renaming =
   string * sw * sw
-
-let apply phi s =
-  try 
-    List.assoc s phi
-  with Not_found ->
-    s 
-
-let apply_subject phi = function
-  | Left ->
-      Left
-  | RightNamed s ->
-      RightNamed (apply phi s)
-
-(*
-  Printf.printf "outer renaming of %s to %s\n%!"
-    (posvar subject where FlavorPosition)
-    (posvar subject' where' FlavorPosition)
-  ; (* TEMPORARY *)
-*)
 
 let rename_sw_outer
     ((psym, first_prod, last_prod) : keyword_renaming)
@@ -100,63 +105,60 @@ let rename_sw_inner
   | Left, WhereEnd   -> Some last_prod
   | RightNamed _, _ ->  None
 
-let rename_keyword
-    (f : sw -> sw option)
-    phi
-    keyword : keyword =
+(* [rename_keyword f phi keyword] applies the function [f] to possibly change
+   the keyword [keyword]. If [f] decides to change this keyword (by returning
+   [Some _]) then this decision is obeyed. Otherwise, the keyword is renamed
+   by the substitution [phi]. In either case, [phi] is extended with a
+   renaming decision. *)
+
+let rename_keyword (f : sw -> sw option) (phi : subst ref) keyword : keyword =
   match keyword with
-  | SyntaxError -> SyntaxError
+  | SyntaxError ->
+      SyntaxError
   | Position (subject, where, flavor) ->
-    let (subject', where') = 
-      match f (subject, where) with
-      | Some sw' -> sw'
-      | None -> apply_subject !phi subject, where
-    in
-    let from_pos = Keyword.posvar subject where flavor
-    and to_pos = Keyword.posvar subject' where' flavor in
-    if from_pos <> to_pos then
-      phi := (from_pos, to_pos) :: !phi;
-    Position (subject', where', flavor)
+      let subject', where' = 
+        match f (subject, where) with
+        | Some (subject', where') ->
+            subject', where'
+        | None ->
+            apply_subject !phi subject, where
+      in
+      extend
+        (Keyword.posvar subject where flavor)
+        (Keyword.posvar subject' where' flavor)
+        phi;
+      Position (subject', where', flavor)
 
-(* Rename the keywords related to position to handle the composition
-   of semantic actions during non terminal inlining. 
+(* [rename f phi a] applies to the semantic action [a] the renaming [phi]
+   as well as the renaming decisions made by the function [f]. [f] is
+   applied to (not-yet-renamed) keywords and may decide to change them
+   (by returning [Some _]). *)
 
-   The first argument describes the context: 
-   - [first_prod] is the first producer that starts the action's rule.
-   - [last_prod] is the last one.
-   For instance, if %inline rule r is A -> B C and rule r' is D -> E A F,
-   then [first_prod] is B and [last_prod] is C. 
-   If r is A -> and r' is unchanged. [first_prod] is E and [last_prod] is F.
-   - [psym] is the producer that is being inlined.
-   
-*)
+let rename f phi a = 
 
-let rename f renaming phi a = 
-
+  (* Rename all keywords, growing [phi] as we go. *)
   let keywords = a.keywords in
   let phi = ref phi in
-  let keywords =
-    KeywordSet.map (rename_keyword (f renaming) phi) keywords
-  in
+  let keywords = KeywordSet.map (rename_keyword f phi) keywords in
   let phi = !phi in
 
-  { a with 
-      (* We use the let construct to rename without modification of the semantic
-	 action code. *)
-      expr = 
-      IL.ELet (List.map (fun (x, x') -> (IL.PVar x, IL.EVar x')) phi,
-	       a.expr);
+  (* Construct a new semantic action, where [phi] is translated into
+     a series of [let] bindings. *)
+  let phi = List.map (fun (x, y) -> IL.PVar x, IL.EVar y) phi in
+  let expr = IL.ELet (phi, a.expr) in
 
-      (* Keywords related to positions are updated too. *)
-      pkeywords = []; (* don't bother *)
-      keywords  = keywords;
+  { 
+    expr      = expr;
+    filenames = a.filenames;
+    pkeywords = []; (* don't bother *)
+    keywords  = keywords;
   }
 
-let rename_outer =
-  rename rename_sw_outer
+let rename_outer renaming =
+  rename (rename_sw_outer renaming)
 
-let rename_inner =
-  rename rename_sw_inner
+let rename_inner renaming =
+  rename (rename_sw_inner renaming)
 
 let to_il_expr action = 
   action.expr
