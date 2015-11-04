@@ -587,7 +587,7 @@ let join grammar pgrammar =
 let check_keywords producers action =
   List.iter (fun keyword ->
     match Positions.value keyword with
-      | Position (RightNamed id, _, _) ->
+    | Position (RightNamed id, _, _) ->
 	let found = ref false in
 	List.iter (fun (ido, _) ->
 	  if ido.value = id then found := true
@@ -595,9 +595,9 @@ let check_keywords producers action =
 	if not !found then
 	  Error.errorp keyword
 	    "%s refers to a nonexistent symbol." id
-      | Position (Left, _, _)
-      | SyntaxError ->
-	()
+    | Position (Left, _, _)
+    | SyntaxError ->
+        ()
   ) (Action.pkeywords action)
 
 let check_parameterized_grammar_is_well_defined grammar =
