@@ -100,7 +100,7 @@ let rename_keyword_outer
     Position (subject', where', flavor)
 
 let rename_keyword_inner
-    ((psym, first_prod, last_prod) : keyword_renaming)
+    ((_, first_prod, last_prod) : keyword_renaming)
     phi
     keyword : keyword =
   match keyword with
@@ -111,12 +111,7 @@ let rename_keyword_inner
       | Left, WhereStart -> first_prod
       | Left, WhereEnd   -> last_prod
       | RightNamed s, where ->
-          if s = psym then
-            match where with
-            | WhereStart -> first_prod
-            | WhereEnd   -> last_prod
-          else
-          (* Otherwise, we just take the renaming into account. *)
+          (* Just take the renaming into account. *)
 	  let s' = apply !phi s in
 	  (RightNamed s', where)
     in
