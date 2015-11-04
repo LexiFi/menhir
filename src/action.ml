@@ -95,7 +95,7 @@ let rename_keyword_outer
     in
     let from_pos = Keyword.posvar subject where flavor
     and to_pos = Keyword.posvar subject' where' flavor in
-    if from_pos <> to_pos && not (List.mem_assoc from_pos !phi) then
+    if from_pos <> to_pos then
       phi := (from_pos, to_pos) :: !phi;
     Position (subject', where', flavor)
 
@@ -122,7 +122,7 @@ let rename_keyword_inner
     in
     let from_pos = Keyword.posvar subject where flavor
     and to_pos = Keyword.posvar subject' where' flavor in
-    if from_pos <> to_pos && not (List.mem_assoc from_pos !phi) then
+    if from_pos <> to_pos then
       phi := (from_pos, to_pos) :: !phi;
     Position (subject', where', flavor)
 
