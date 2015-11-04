@@ -52,9 +52,6 @@ let fstack =
 let fcurrent =
   field "current"
 
-let ftriple =
-  field "triple"
-
 let entry =
   interpreter ^ ".entry"
 
@@ -178,6 +175,12 @@ let reducecellcasts prod i symbol casts =
     EAnnot (EMagic (EVar id), type2scheme t)
   ) :: casts
 
+(* 2015/11/04. The start and end positions of an epsilon production are obtained
+   by taking the end position stored in the top stack cell (whatever it is). *)
+
+let endpos_of_top_stack_cell =
+  ERecordAccess(EVar stack, fendp)
+
 (* This is the body of the [reduce] function associated with
    production [prod]. It assumes that the variables [env] and [stack]
    have been bound. *)
@@ -210,11 +213,7 @@ let reducebody prod =
       if length > 0 then
 	EVar (Printf.sprintf "_startpos_%s_" ids.(0))
       else
-        (* Use the start position of the current lookahead token,
-           which is stored in the second component of [env.triple]. *)
-        ELet ([PTuple [PWildcard; PVar "startpos"; PWildcard],
-               ERecordAccess (EVar env, ftriple)],
-              EVar "startpos")
+        endpos_of_top_stack_cell
     ) ::
     ( PVar endp,
       if length > 0 then
