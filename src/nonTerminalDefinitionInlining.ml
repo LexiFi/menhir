@@ -176,6 +176,9 @@ let inline grammar =
         let producers = prefix @ inlined_producers @ suffix in
         let index2id = index2id producers in
 
+        let prefix = List.length prefix
+        and inlined_producers = List.length inlined_producers in
+
         (* Define how the start and end positions of the inner production should
            be computed once it is inlined into the outer production. These
            definitions of [startp] and [endp] are then used to transform
@@ -186,17 +189,17 @@ let inline grammar =
            regardless of whether inlining is performed. *)
 
         let startp =
-          if List.length inlined_producers > 0 then
+          if inlined_producers > 0 then
             (* If the inner production is non-epsilon, things are easy. The start
                position of the inner production is the start position of its first
                element. *)
-            RightNamed (index2id (List.length prefix)), WhereStart
-          else if List.length prefix > 0 then
+            RightNamed (index2id prefix), WhereStart
+          else if prefix > 0 then
             (* If the inner production is epsilon, we are supposed to compute the
                end position of whatever comes in front of it. If the prefix is
                nonempty, then this is the end position of the last symbol in the
                prefix. *)
-            RightNamed (index2id (List.length prefix - 1)), WhereEnd
+            RightNamed (index2id (prefix - 1)), WhereEnd
           else
             (* If the inner production is epsilon and the prefix is empty, then
                we need to look up the end position stored in the top stack cell
@@ -209,23 +212,24 @@ let inline grammar =
              production is the start production of the outer production.
              This is true only if the inner production is non-epsilon. *)
 
-	  in
-	  (* Same thing for the suffix. *)
-	  let endp =
-	    match suffix with
-	      | [] -> (Left, WhereEnd)
-	      | (_, x) :: _ -> (RightNamed x, WhereStart)
-	  in
+	in
 
-	(* Rename the host semantic action.
-	   Each reference of the inlined non terminal [c] must be taken into
-	   account. $startpos(c) is changed to $startpos(x) where [x] is
-	   the first producer of the inlined branch if it is not empty or
-	   the preceding producer found in the prefix. *)
+	let endp =
+          if inlined_producers > 0 then
+            (* If the inner production is non-epsilon, things are easy, then its end
+               position is the end position of its last element. *)
+            RightNamed (index2id (prefix + inlined_producers - 1)), WhereEnd
+          else
+            (* If the inner production is epsilon, then its end position is equal
+               to its start position. *)
+            startp
+
+        in
+
+	(* Rename the outer and inner semantic action. *)
 	let outer_action =
 	  Action.rename (rename_sw_outer (c, startp, endp)) [] b.action
-	in
-	let action' =
+	and action' =
 	  Action.rename (rename_sw_inner (startp, endp)) phi pb.action
 	in
 
