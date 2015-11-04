@@ -59,39 +59,51 @@ type sw =
 type keyword_renaming =
   string * sw * sw
 
-let rename_inlined_psym ((psym, first_prod, last_prod) : keyword_renaming) phi keywords =
+let rename_position_keyword
+    ((psym, first_prod, last_prod) : keyword_renaming)
+    (subject, where) : sw =
+  match subject, where with
+  | Left, _ -> (subject, where)
+  | RightNamed s, w ->
+      assert (s = psym);
+      match w with
+      | WhereStart -> first_prod
+      | WhereEnd   -> last_prod
+
+let rename_keyword
+    (f : keyword_renaming -> sw -> sw)
+    ((psym, _, _) as renaming : keyword_renaming)
+    phi
+    keyword : keyword =
+  match keyword with
+  | SyntaxError -> SyntaxError
+  | Position (subject, where, flavor) ->
+    let (subject', where') = 
+      match subject with
+      | Left ->
+          f renaming (subject, where)
+      | RightNamed s ->
+          if s = psym then
+            f renaming (subject, where)
+          else
+          (* Otherwise, we just take the renaming into account. *)
+	  let s' = try 
+	    List.assoc s !phi
+	  with Not_found ->
+            s 
+	  in
+	  (RightNamed s', where)
+    in
+    let from_pos = Keyword.posvar subject where flavor
+    and to_pos = Keyword.posvar subject' where' flavor in
+    if from_pos <> to_pos && not (List.mem_assoc from_pos !phi) then
+      phi := (from_pos, to_pos) :: !phi;
+    Position (subject', where', flavor)
+
+let rename_inlined_psym (renaming : keyword_renaming) phi keywords =
   let phi = ref phi in
   let keywords =
-    KeywordSet.map (fun keyword ->
-       match keyword with
-	 | Position (subject, where, flavor) ->
-	     let (subject', where') = 
-	       match subject, where with
-		 | RightNamed s, w  -> 
-		     (* In the host rule, $startpos(x) is changed 
-			to $startpos(first_prod) (same thing for $endpos). *)
-		     if s = psym then
-		       match w with
-			 | WhereStart -> first_prod
-			 | WhereEnd   -> last_prod
-		     else 
-		       (* Otherwise, we just take the renaming into account. *)
-		       let s' = try 
-			 List.assoc s !phi
-		       with Not_found -> s 
-		       in
-			 (RightNamed s', w)
-		 | Left, _ -> (subject, where)
-	     in
-	     let from_pos = Keyword.posvar subject where flavor
-	     and to_pos = Keyword.posvar subject' where' flavor in
-	     if from_pos <> to_pos && not (List.mem_assoc from_pos !phi) then
-		   phi := (from_pos, to_pos) :: !phi;
-	     Position (subject', where', flavor)
-
-	 | SyntaxError -> SyntaxError
-    )
-  keywords
+    KeywordSet.map (rename_keyword rename_position_keyword renaming phi) keywords
   in
   keywords, !phi
 
