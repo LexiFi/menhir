@@ -201,14 +201,15 @@ let destructuretokendef name codomain bindsemv branch = {
    accessing the [pos_cnum] field. *)
 
 let extrabindings action =
-  Keyword.KeywordSet.fold (fun keyword bindings ->
+  let open Keyword in
+  KeywordSet.fold (fun keyword bindings ->
     match keyword with
-    | Keyword.Position (_, _, Keyword.FlavorPosition)
-    | Keyword.SyntaxError ->
+    | Position (_, _, FlavorPosition)
+    | SyntaxError ->
 	bindings
-    | Keyword.Position (s, w, (Keyword.FlavorOffset as f)) ->
-	(PVar (Keyword.posvar s w f),
-	 ERecordAccess (EVar (Keyword.posvar s w Keyword.FlavorPosition), "Lexing.pos_cnum")) :: bindings
+    | Position (s, w, (FlavorOffset as f)) ->
+	(PVar (posvar s w f),
+	 ERecordAccess (EVar (posvar s w FlavorPosition), "Lexing.pos_cnum")) :: bindings
   ) (Action.keywords action) []
 
 (* ------------------------------------------------------------------------ *)
