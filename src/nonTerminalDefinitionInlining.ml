@@ -10,24 +10,8 @@ type 'a color =
   | BeingExpanded
   | Expanded of 'a
 
-(* [id2index] and [index2id] convert both ways between a 0-based index
-   (into a list of producers) and an identifier (the name of the producer). *)
-
-(* TEMPORARY unneeded?
-let rec id2index accu producers x =
-  match producers with
-  | [] ->
-      assert false (* should not happen *)
-  | (_, y) :: producers ->
-      if x = y then begin
-        accu
-      end
-      else
-        id2index (accu + 1) producers x
-
-let id2index producers x =
-  id2index 0 producers x
-*)
+(* [index2id] converts a 0-based index (into a list of producers) to
+   an identifier (the name of the producer). *)
 
 let index2id producers i =
   try
