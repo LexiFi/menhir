@@ -56,9 +56,9 @@ test: all
 	    cat $$log ; \
 	  fi ; \
 	  if diff _menhir_table/$$out _menhir_no_inline/$$out > $$log ; then \
-	    echo "menhir(table) versus menhir(no-inline): $$f: OK" ; \
+	    echo "menhir(table) versus menhir(table,no-inline): $$f: OK" ; \
 	  else \
-	    echo "menhir(table) versus menhir(no-inline): $$f: FAILURE" ; \
+	    echo "menhir(table) versus menhir(table,no-inline): $$f: FAILURE" ; \
 	    cat $$log ; \
 	  fi ; \
 	done
