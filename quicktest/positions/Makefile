@@ -42,6 +42,7 @@ test: all
 	@ for f in *.in ; do \
 	  base=$${f%*.in} ; \
 	  out=$$base.out ; \
+	  echo "Processing $$f..." ; \
 	  for target in _ocamlyacc _menhir_code _menhir_code_inline _menhir_table _menhir_table_inline ; do \
 	    $$target/$(MAIN).native < $$f > $$target/$$out ; \
 	  done ; \
