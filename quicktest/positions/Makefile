@@ -15,18 +15,22 @@ all:
 	@ $(OCAMLBUILD) -build-dir _ocamlyacc                      $(MAIN).native
 # Menhir, code back-end, %inline disabled.
 	@ $(OCAMLBUILD) -build-dir _menhir_code         -tag fancy $(MAIN).native \
-	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --no-inline -lc 1 --comment --no-code-inlining"
+	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) -lc 1 --comment --no-code-inlining --no-inline"
+# Menhir, code back-end, %inline enabled.
+	@ $(OCAMLBUILD) -build-dir _menhir_code_inline  -tag fancy $(MAIN).native \
+	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) -lc 1 --comment --no-code-inlining"
 # Menhir, table back-end, %inline disabled.
 	@ $(OCAMLBUILD) -build-dir _menhir_table        -tag fancy $(MAIN).native \
-	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --no-inline --table" -package menhirLib
+	  -package menhirLib -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --table --no-inline "
 # Menhir, table back-end, %inline enabled.
 	@ $(OCAMLBUILD) -build-dir _menhir_table_inline -tag fancy $(MAIN).native \
-	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --table" -package menhirLib
+	  -package menhirLib -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --table"
 
 clean:
 	@ rm -f *~ .*~ *.log
 	@ $(OCAMLBUILD) -build-dir _ocamlyacc           -clean
 	@ $(OCAMLBUILD) -build-dir _menhir_code         -clean
+	@ $(OCAMLBUILD) -build-dir _menhir_code_inline  -clean
 	@ $(OCAMLBUILD) -build-dir _menhir_table        -clean
 	@ $(OCAMLBUILD) -build-dir _menhir_table_inline -clean
 
@@ -38,7 +42,7 @@ test: all
 	@ for f in *.in ; do \
 	  base=$${f%*.in} ; \
 	  out=$$base.out ; \
-	  for target in _ocamlyacc _menhir_code _menhir_table _menhir_table_inline ; do \
+	  for target in _ocamlyacc _menhir_code _menhir_code_inline _menhir_table _menhir_table_inline ; do \
 	    $$target/$(MAIN).native < $$f > $$target/$$out ; \
 	  done ; \
 	done
@@ -46,7 +50,9 @@ test: all
 	  _ocamlyacc/_menhir_code \
 	  _ocamlyacc/_menhir_table \
 	  _menhir_code/_menhir_table \
+	  _menhir_code_inline/_menhir_table_inline \
 	  _menhir_table/_menhir_table_inline \
+	  _menhir_code/_menhir_code_inline \
 	; do \
 	  left=$${pair%/*} ; \
 	  right=$${pair#*/} ; \
