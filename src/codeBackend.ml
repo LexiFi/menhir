@@ -1,10 +1,5 @@
 (* The code generator. *)
 
-(* TEMPORARY env.startp seems to be always equal to env.lexbuf.lex_start_p,
-   and similarly for env.endp. Is there a point to copying these
-   positions to the env record? Maybe just making these positions
-   accessible via a single indirection, instead of two? I forget. *)
-
 module Run (T : sig end) = struct
 
 open Grammar
