@@ -65,6 +65,12 @@ let apply phi s =
   with Not_found ->
     s 
 
+let apply_subject phi = function
+  | Left ->
+      Left
+  | RightNamed s ->
+      RightNamed (apply phi s)
+
 (*
   Printf.printf "outer renaming of %s to %s\n%!"
     (posvar subject where FlavorPosition)
@@ -72,48 +78,39 @@ let apply phi s =
   ; (* TEMPORARY *)
 *)
 
-let rename_keyword_outer
+let rename_sw_outer
     ((psym, first_prod, last_prod) : keyword_renaming)
-    phi
-    keyword : keyword =
-  match keyword with
-  | SyntaxError -> SyntaxError
-  | Position (subject, where, flavor) ->
-    let (subject', where') = 
-      match subject with
-      | Left ->
-          (subject, where)
-      | RightNamed s ->
-          if s = psym then
-            match where with
-            | WhereStart -> first_prod
-            | WhereEnd   -> last_prod
-          else
-          (* Otherwise, we just take the renaming into account. *)
-	  let s' = apply !phi s in
-	  (RightNamed s', where)
-    in
-    let from_pos = Keyword.posvar subject where flavor
-    and to_pos = Keyword.posvar subject' where' flavor in
-    if from_pos <> to_pos then
-      phi := (from_pos, to_pos) :: !phi;
-    Position (subject', where', flavor)
+    (subject, where) : sw option =
+  match subject with
+  | RightNamed s ->
+      if s = psym then
+        match where with
+        | WhereStart -> Some first_prod
+        | WhereEnd   -> Some last_prod
+      else
+        None
+  | Left ->
+      None
 
-let rename_keyword_inner
+let rename_sw_inner
     ((_, first_prod, last_prod) : keyword_renaming)
+    (subject, where) : sw option =
+  match subject, where with
+  | Left, WhereStart -> Some first_prod
+  | Left, WhereEnd   -> Some last_prod
+  | RightNamed _, _ ->  None
+
+let rename_keyword
+    (f : sw -> sw option)
     phi
     keyword : keyword =
   match keyword with
   | SyntaxError -> SyntaxError
   | Position (subject, where, flavor) ->
     let (subject', where') = 
-      match subject, where with
-      | Left, WhereStart -> first_prod
-      | Left, WhereEnd   -> last_prod
-      | RightNamed s, where ->
-          (* Just take the renaming into account. *)
-	  let s' = apply !phi s in
-	  (RightNamed s', where)
+      match f (subject, where) with
+      | Some sw' -> sw'
+      | None -> apply_subject !phi subject, where
     in
     let from_pos = Keyword.posvar subject where flavor
     and to_pos = Keyword.posvar subject' where' flavor in
@@ -139,7 +136,7 @@ let rename f renaming phi a =
   let keywords = a.keywords in
   let phi = ref phi in
   let keywords =
-    KeywordSet.map (f renaming phi) keywords
+    KeywordSet.map (rename_keyword (f renaming) phi) keywords
   in
   let phi = !phi in
 
@@ -156,10 +153,10 @@ let rename f renaming phi a =
   }
 
 let rename_outer =
-  rename rename_keyword_outer
+  rename rename_sw_outer
 
 let rename_inner =
-  rename rename_keyword_inner
+  rename rename_sw_inner
 
 let to_il_expr action = 
   action.expr
