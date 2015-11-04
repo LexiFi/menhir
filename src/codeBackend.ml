@@ -571,10 +571,10 @@ let curryif flag t =
 let celltype tailtype holds_state symbol _ =
   TypTuple (
     tailtype ::
+    elementif (Invariant.endp symbol) tposition @
     elementif holds_state tstate @
     semvtype symbol @
-    elementif (Invariant.startp symbol) tposition @
-    elementif (Invariant.endp symbol) tposition
+    elementif (Invariant.startp symbol) tposition
   )
 
 (* Types for stacks. 
@@ -686,19 +686,23 @@ let letunless e x e1 e2 =
 (* ------------------------------------------------------------------------ *)
 (* Calling conventions. *)
 
+(* The layout of a stack cell is determined here. The first field in a stack
+   cell is always a pointer to the rest of the stack; it is followed by the
+   fields listed below, each of which may or may not appear. [runpushcell] and
+   [gotopushcell] are the two places where stack cells are allocated. *)
+
+(* 2015/11/04. We make [endp] the first element in the list of optional fields,
+   so we are able to access it at a fixed offset, provided we know that it
+   exists. This is exploited when reducing an epsilon production. *)
+
 (* The contents of a stack cell, exposed as individual parameters. The choice of
    identifiers is suitable for use in the definition of [run]. *)
 
-(* This code also determines the layout of a stack cell. The first field in a
-   stack cell is always a pointer to the rest of the stack; it is followed by
-   the fields listed below, each of which may or may not appear. [runpushcell]
-   and [gotopushcell] are the two places where stack cells are allocated. *)
-
 let runcellparams var holds_state symbol =
+  elementif (Invariant.endp symbol) (var endp) @
   elementif holds_state (var state) @
   symval symbol (var semv) @
-  elementif (Invariant.startp symbol) (var startp) @
-  elementif (Invariant.endp symbol) (var endp)
+  elementif (Invariant.startp symbol) (var startp)
 
 (* The contents of a stack cell, exposed as individual parameters, again.
    The choice of identifiers is suitable for use in the definition of a
@@ -717,10 +721,10 @@ let reducecellparams prod i holds_state symbol =
     PVar ids.(i)
   in
 
+  elementif (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i))) @
   elementif holds_state (if i = 0 then PVar state else PWildcard) @
   symvalt symbol semvpat @
-  elementif (Invariant.startp symbol) (PVar (Printf.sprintf "_startpos_%s_" ids.(i))) @
-  elementif (Invariant.endp symbol) (PVar (Printf.sprintf "_endpos_%s_" ids.(i)))
+  elementif (Invariant.startp symbol) (PVar (Printf.sprintf "_startpos_%s_" ids.(i)))
 
 (* The contents of a stack cell, exposed as individual parameters,
    again. The choice of identifiers is suitable for use in the
@@ -730,10 +734,10 @@ let errorcellparams (i, pat) holds_state symbol _ =
   i + 1,
   ptuple (
     pat ::
+    elementif (Invariant.endp symbol) PWildcard @
     elementif holds_state (if i = 0 then PVar state else PWildcard) @
     symval symbol PWildcard @
-    elementif (Invariant.startp symbol) PWildcard @
-    elementif (Invariant.endp symbol) PWildcard
+    elementif (Invariant.startp symbol) PWildcard
   )
 
 (* Calls to [run]. *)
@@ -860,10 +864,10 @@ let shiftbranchbody s tok s' =
     (EMagic (EVar stack)) ::
     Invariant.fold_top (fun holds_state symbol ->
       assert (Symbol.equal (Symbol.T tok) symbol);
+      elementif (Invariant.endp symbol) getendp @
       elementif holds_state (estatecon s) @
       tokval tok (EVar semv) @
-      elementif (Invariant.startp symbol) getstartp @
-      elementif (Invariant.endp symbol) getendp
+      elementif (Invariant.startp symbol) getstartp
     ) [] (Invariant.stack s')
   in
 
@@ -1169,11 +1173,15 @@ let reducebody prod =
   (* If necessary, determine start and end positions for the left-hand
      side of the production. If the right-hand side is nonempty, this
      is done by extracting position information out of the first and
-     last symbols of the right-hand side. If it is empty, then both
-     positions are taken to be the current lookahead token's start
-     position.
+     last symbols of the right-hand side. If it is empty, then (as of
+     2015/11/04) this is done by taking the end position stored in the
+     top stack cell (whatever it is). The constraints imposed by the
+     module [Invariant], the layout of cells, and our creation of a
+     sentinel cell (see [entrydef] further on), ensure that this cell
+     exists and has an [endp] field at offset 1. Yes, we live
+     dangerously. You only live once. *)
 
-     Note that [Keyword.has_leftstart keywords] does not imply
+  (* Note that [Keyword.has_leftstart keywords] does not imply
      [Invariant.startp symbol], and similarly for end positions. *)
 
   let symbol =
@@ -1187,18 +1195,25 @@ let reducebody prod =
       Action.has_leftend action || Invariant.endp symbol
     in
     elementif bind_startp
-      ( PVar startp,
-	if length > 0 then
+      ( if length > 0 then
+	  PVar startp,
 	  EVar (Printf.sprintf "_startpos_%s_" ids.(0))
         else
-          getstartp
+          (* Extract the field at offset 1 in the top stack cell. *)
+          PTuple [ PWildcard; PVar startp ],
+          EVar stack
       ) @
     elementif bind_endp
-      ( PVar endp,
-	if length > 0 then
+      ( if length > 0 then
+	  PVar endp,
 	  EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1))
+        else if bind_startp then
+          PVar endp,
+	  EVar startp
         else
-          if bind_startp then EVar startp else getstartp
+          (* Extract the field at offset 1 in the top stack cell. *)
+          PTuple [ PWildcard; PVar endp ],
+          EVar stack
       )
   in
 
@@ -1461,12 +1476,26 @@ let errorcasedef =
    This is a public definition.
 
    The code initializes a parser environment, an empty stack, and invokes
-   [run]. *)
+   [run]. 
+   
+   2015/11/04. If the state [s] can reduce an epsilon production, then the
+   initial stack should contain a sentinel cell with a valid [endp] field
+   at offset 1. Otherwise, the initial stack can be the unit value, as it
+   used to be. *)
 
 let entrydef s = 
   let nt = Item.startnt (Lr1.start2item s) in
   let lexer = "lexer"
   and lexbuf = "lexbuf" in
+
+  let initial_stack =
+    if Lr1.has_epsilon_reduction s then
+      let initial_position = getendp in
+      etuple [ EUnit; initial_position ]
+    else
+      EUnit
+  in
+
   {
     valpublic = true;
     valpat = PVar (Nonterminal.print true nt);
@@ -1474,7 +1503,7 @@ let entrydef s =
                EFun ( [ PVar lexer; PVar lexbuf ],
 		 blet (
 		   [ PVar env, EApp (EVar initenv, [ EVar lexer; EVar lexbuf ]) ],
-		   EMagic (EApp (EVar (run s), [ EVar env; EUnit ]))
+		   EMagic (EApp (EVar (run s), [ EVar env; initial_stack ]))
 		 )
 	       ),
                entrytypescheme Front.grammar (Nonterminal.print true nt)
