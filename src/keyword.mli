@@ -54,5 +54,11 @@ and keyword =
 val posvar: subject -> where -> flavor -> string
 
 (* Sets of keywords. *)
-module KeywordSet : Set.S with type elt = keyword
+module KeywordSet : sig
+
+  include Set.S with type elt = keyword
+
+  val map: (keyword -> keyword) -> t -> t
+
+end
 

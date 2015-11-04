@@ -72,9 +72,16 @@ let posvar s w f =
 (* ------------------------------------------------------------------------- *)
 (* Sets of keywords. *)
 
-module KeywordSet =
-  Set.Make (struct
+module KeywordSet = struct
+
+  include Set.Make (struct
     type t = keyword
     let compare = compare
   end)
 
+  let map f keywords =
+    fold (fun keyword accu ->
+      add (f keyword) accu
+    ) keywords empty
+
+end
