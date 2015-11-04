@@ -11,6 +11,12 @@
 %type<unit> main
 %start main
 
+/* For now, we do not use [Parsing.symbol_start_pos()] because it performs
+   a computation that Menhir does not (yet) emulate. In order to get the
+   "real" startpos, the one that is stored in the stack, we use
+   [Parsing.symbol_start_pos()] for epsilon productions and
+   [Parsing.rhs_start_pos 1] for non-epsilon productions. */
+
 %%
 
 main:
@@ -27,17 +33,17 @@ optional_dot:
 | nothing
     { Aux.print "optional_dot" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos())}
 | DOT
-    { Aux.print "optional_dot" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos())}
+    { Aux.print "optional_dot" (Parsing.rhs_start_pos 1) (Parsing.symbol_end_pos())}
 
 optional_comma:
 | nothing
     { Aux.print "optional_comma" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos())}
 | COMMA
-    { Aux.print "optional_comma" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos())}
+    { Aux.print "optional_comma" (Parsing.rhs_start_pos 1) (Parsing.symbol_end_pos())}
 
 annotations:
   optional_dot optional_comma
-    { Aux.print "annotations" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos())}
+    { Aux.print "annotations" (Parsing.rhs_start_pos 1) (Parsing.symbol_end_pos())}
 
 raw_expr:
 | INT
@@ -57,5 +63,5 @@ raw_expr:
 
 expr:
   raw_expr
-    { Aux.print "expr" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos()) }
+    { Aux.print "expr" (Parsing.rhs_start_pos 1) (Parsing.symbol_end_pos()) }
 
