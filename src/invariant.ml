@@ -596,6 +596,17 @@ let rewind node : instruction =
   rewind w
 
 (* ------------------------------------------------------------------------ *)
+(* This auxiliary function tests whether a state has a reduction action for
+   an epsilon production. It could be moved to [Lr1], if desired. *)
+
+let has_epsilon_reduction node =
+  TerminalMap.fold (fun _ prods accu ->
+    accu ||
+    let prod = Misc.single prods in
+    Production.length prod = 0
+  ) (Lr1.reductions node) false
+
+(* ------------------------------------------------------------------------ *)
 (* We now determine which positions must be kept track of. For
    simplicity, we do this on a per symbol basis. That is, for each
    symbol, either we never keep track of position information, or we
@@ -612,6 +623,14 @@ let rewind node : instruction =
    track of its start (resp. end) position, then the first
    (resp. last) symbol of its right-hand side (if there is one) must
    do so as well. That is, unless the right-hand side is empty. *)
+
+(* 2015/11/04. When an epsilon production is reduced, the top stack cell is
+   consulted for its end position. This implies that this cell must exist and
+   must store an end position! Thus, we have the following constraint: if some
+   state whose incoming symbol is [sym] can reduce an epsilon production, then
+   [sym] must keep track of its end position. (Furthermore, if some initial
+   state can reduce an epsilon production, then the sentinel cell at the bottom
+   of the stack must contain a position. This does not concern us here.) *)
 
 open Keyword
 
@@ -665,6 +684,12 @@ let () =
 	      require where rhs.(i)
 	  ) ids
     ) (Action.keywords action)
+  );
+  Lr1.iterx (fun node ->
+    (* 2015/11/04. See above. *)
+    if has_epsilon_reduction node then
+      let sym = Misc.unSome (Lr1.incoming_symbol node) in
+      require WhereEnd sym
   )
 
 let startp =
