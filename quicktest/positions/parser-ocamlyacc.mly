@@ -8,7 +8,7 @@
 %left TIMES DIV         /* medium precedence */
 %nonassoc UMINUS        /* highest precedence */
 
-%type<unit> main
+%type<Aux.main> main
 %start main
 
 /* For now, we do not use [Parsing.symbol_start_pos()] because it performs
@@ -17,51 +17,53 @@
    [Parsing.symbol_start_pos()] for epsilon productions and
    [Parsing.rhs_start_pos 1] for non-epsilon productions. */
 
+%{ open Aux %}
+
 %%
 
 main:
 | nothing expr EOL
-    {}
+    { (Parsing.rhs_start_pos 1, Parsing.symbol_end_pos()), $1, $2 }
 
 /* Added just to exercise productions with an empty right-hand side. */
 nothing:
 | /* nothing */
-    { Aux.print "nothing" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos()) }
+    { (Parsing.symbol_start_pos(), Parsing.symbol_end_pos()) }
 
 /* Added just to exercise productions with an empty right-hand side, in a choice. */
 optional_dot:
 | nothing
-    { Aux.print "optional_dot" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos())}
+    { (Parsing.symbol_start_pos(), Parsing.symbol_end_pos()), Some $1 }
 | DOT
-    { Aux.print "optional_dot" (Parsing.rhs_start_pos 1) (Parsing.symbol_end_pos())}
+    { (Parsing.symbol_start_pos(), Parsing.symbol_end_pos()), None }
 
 optional_comma:
 | nothing
-    { Aux.print "optional_comma" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos())}
+    { (Parsing.symbol_start_pos(), Parsing.symbol_end_pos()), Some $1 }
 | COMMA
-    { Aux.print "optional_comma" (Parsing.rhs_start_pos 1) (Parsing.symbol_end_pos())}
+    { (Parsing.symbol_start_pos(), Parsing.symbol_end_pos()), None }
 
 annotations:
   optional_dot optional_comma
-    { Aux.print "annotations" (Parsing.rhs_start_pos 1) (Parsing.symbol_end_pos())}
+    { (Parsing.rhs_start_pos 1, Parsing.symbol_end_pos()), $1, $2 }
 
 raw_expr:
 | INT
-    {}
+    { EInt }
 | annotations LPAREN nothing expr RPAREN optional_dot
-    {}
+    { EParen($1, $3, $4, $6) }
 | expr PLUS expr
-    {}
+    { EBinOp ($1, $3) }
 | expr MINUS expr
-    {}
+    { EBinOp ($1, $3) }
 | expr TIMES expr
-    {}
+    { EBinOp ($1, $3) }
 | expr DIV expr
-    {}
+    { EBinOp ($1, $3) }
 | MINUS expr %prec UMINUS
-    {}
+    { EUnOp $2 }
 
 expr:
   raw_expr
-    { Aux.print "expr" (Parsing.rhs_start_pos 1) (Parsing.symbol_end_pos()) }
+    { (Parsing.rhs_start_pos 1, Parsing.symbol_end_pos()), $1 }
 
