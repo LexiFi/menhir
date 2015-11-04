@@ -1972,11 +1972,13 @@ the name of the start symbol.) The generated file \texttt{parser.mli} contains
 the following declaration:
 \begin{verbatim}
   module Incremental : sig
-    val main: unit -> thing MenhirInterpreter.checkpoint
+    val main: Lexing.position -> thing MenhirInterpreter.checkpoint
   end
 \end{verbatim}
+The argument is the initial position. If the lexer is based on an OCaml
+lexing buffer, this argument should be \verb+lexbuf.lex_curr_p+.
 We emphasize that the function \verb+Incremental.main+ does not parse
-anything. It constructs a parser state which serves as a \emph{starting}
+anything. It constructs a checkpoint which serves as a \emph{starting}
 point. The functions \verb+offer+ and \verb+resume+, described below, are used
 to drive the parser.
 

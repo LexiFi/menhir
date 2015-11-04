@@ -314,15 +314,17 @@ end
 
 module type INCREMENTAL_ENGINE_START = sig
 
-  (* [start] is an entry point. It requires just a start state, and begins the
-     parsing process. It produces a checkpoint, which usually will be an
-     [InputNeeded] checkpoint. (It could be [Accepted] if this starting state
-     accepts only the empty word. It could be [Rejected] if this starting
-     state accepts no word at all.) It does not raise any exception. *)
+  (* [start] is an entry point. It requires a start state and a start position
+     and begins the parsing process. If the lexer is based on an OCaml lexing
+     buffer, the start position should be [lexbuf.lex_curr_p]. [start] produces
+     a checkpoint, which usually will be an [InputNeeded] checkpoint. (It could
+     be [Accepted] if this starting state accepts only the empty word. It could
+     be [Rejected] if this starting state accepts no word at all.) It does not
+     raise any exception. *)
 
-  (* [start s] should really produce a checkpoint of type ['a checkpoint], for
-     a fixed ['a] that depends on the state [s]. We cannot express this, so we
-     use [semantic_value checkpoint], which is safe. The table back-end uses
+  (* [start s pos] should really produce a checkpoint of type ['a checkpoint],
+     for a fixed ['a] that depends on the state [s]. We cannot express this, so
+     we use [semantic_value checkpoint], which is safe. The table back-end uses
      [Obj.magic] to produce safe specialized versions of [start]. *)
 
   type state
@@ -331,6 +333,7 @@ module type INCREMENTAL_ENGINE_START = sig
 
   val start:
     state ->
+    Lexing.position ->
     semantic_value checkpoint
 
 end

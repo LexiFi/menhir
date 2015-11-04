@@ -713,19 +713,21 @@ let monolithic_api : IL.valdef list =
 (* An entry point to the incremental API. *)
 
 let incremental_entry_point state nt t =
+  let initial = "initial_position" in
   define (
     Nonterminal.print true nt,
-    (* In principle the abstraction [fun () -> ...] should not be
-       necessary, since [start] is a pure function. However, when
-       [--trace] is enabled, [start] will log messages to the
-       standard error channel. *)
+    (* In principle the eta-expansion [fun initial_position -> start s
+       initial_position] should not be necessary, since [start] is a pure
+       function. However, when [--trace] is enabled, [start] will log messages
+       to the standard error channel. *)
     EFun (
-      [ PUnit ],
+      [ PVar initial ],
       EAnnot (
         EMagic (
           EApp (
             EVar start, [
               EIntConst (Lr1.number state);
+              EVar initial;
             ]
           )
         ),

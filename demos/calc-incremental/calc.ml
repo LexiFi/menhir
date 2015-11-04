@@ -1,3 +1,5 @@
+open Lexing
+
 (* A short name for the incremental parser API. *)
 
 module I =
@@ -17,8 +19,8 @@ let rec loop lexbuf (checkpoint : int I.checkpoint) =
          and offer it to the parser, which will produce a new
          checkpoint. Then, repeat. *)
       let token = Lexer.token lexbuf in
-      let startp = lexbuf.Lexing.lex_start_p
-      and endp = lexbuf.Lexing.lex_curr_p in
+      let startp = lexbuf.lex_start_p
+      and endp = lexbuf.lex_curr_p in
       let checkpoint = I.offer checkpoint (token, startp, endp) in
       loop lexbuf checkpoint
   | I.Shifting _
@@ -29,7 +31,7 @@ let rec loop lexbuf (checkpoint : int I.checkpoint) =
       (* The parser has suspended itself because of a syntax error. Stop. *)
       Printf.fprintf stderr
         "At offset %d: syntax error.\n%!"
-        (Lexing.lexeme_start lexbuf)
+        (lexeme_start lexbuf)
   | I.Accepted v ->
       (* The parser has succeeded and produced a semantic value. Print it. *)
       Printf.printf "%d\n%!" v
@@ -52,7 +54,7 @@ let fail lexbuf (_ : int I.checkpoint) =
   (* The parser has suspended itself because of a syntax error. Stop. *)
   Printf.fprintf stderr
     "At offset %d: syntax error.\n%!"
-    (Lexing.lexeme_start lexbuf)
+    (lexeme_start lexbuf)
 
 let loop lexbuf result =
   let supplier = I.lexer_lexbuf_to_supplier Lexer.token lexbuf in
@@ -63,9 +65,9 @@ let loop lexbuf result =
 (* Initialize the lexer, and catch any exception raised by the lexer. *)
 
 let process (line : string) =
-  let lexbuf = Lexing.from_string line in
+  let lexbuf = from_string line in
   try
-    loop lexbuf (Parser.Incremental.main())
+    loop lexbuf (Parser.Incremental.main lexbuf.lex_curr_p)
   with
   | Lexer.Error msg ->
       Printf.fprintf stderr "%s%!" msg
@@ -89,5 +91,5 @@ let rec repeat channel =
     repeat channel
   
 let () =
-  repeat (Lexing.from_channel stdin)
+  repeat (from_channel stdin)
 

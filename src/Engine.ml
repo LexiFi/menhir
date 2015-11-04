@@ -7,16 +7,6 @@ open EngineTypes
    - at compile time, if so requested by the user, via the --interpret options;
    - at run time, in the table-based back-end. *)
 
-(* A tainted dummy position. In principle, it should never be exposed. *)
-
-let dummy_pos =
-  let open Lexing in {
-    pos_fname = "<MenhirLib.Engine>";
-    pos_lnum = 0;
-    pos_bol = 0;
-    pos_cnum = -1;
-  }
-
 module Make (T : TABLE) = struct
 
   (* This propagates type and exception definitions. *)
@@ -355,18 +345,19 @@ module Make (T : TABLE) = struct
 
   (* [start s] begins the parsing process. *)
 
-  let start (s : state) : semantic_value checkpoint =
+  let start (s : state) (initial : Lexing.position) : semantic_value checkpoint =
     
-    (* Build an empty stack. This is a dummy cell, which is its own
-       successor. Its fields other than [next] contain dummy values.
-       Its [next] field WILL be accessed by [error_fail] if an error
-       occurs and is propagated all the way until the stack is empty. *)
+    (* Build an empty stack. This is a dummy cell, which is its own successor.
+       Its [next] field WILL be accessed by [error_fail] if an error occurs and
+       is propagated all the way until the stack is empty. Its [endp] field WILL
+       be accessed (by a semantic action) if an epsilon production is reduced
+       when the stack is empty. *)
 
     let rec empty = {
       state = s;                          (* dummy *)
       semv = T.error_value;               (* dummy *)
-      startp = dummy_pos;                 (* dummy *)
-      endp = dummy_pos;                   (* dummy *)
+      startp = initial;                   (* dummy *)
+      endp = initial;
       next = empty;
     } in
 
@@ -382,7 +373,7 @@ module Make (T : TABLE) = struct
     let dummy_token = Obj.magic () in
     let env = {
       error = false;
-      triple = (dummy_token, dummy_pos, dummy_pos); (* dummy *)
+      triple = (dummy_token, initial, initial); (* dummy *)
       stack = empty;
       current = s;
     } in
@@ -504,7 +495,8 @@ module Make (T : TABLE) = struct
         raise Error
 
   let entry (s : state) lexer lexbuf : semantic_value =
-    loop (lexer_lexbuf_to_supplier lexer lexbuf) (start s)
+    let initial = lexbuf.Lexing.lex_curr_p in
+    loop (lexer_lexbuf_to_supplier lexer lexbuf) (start s initial)
 
   (* --------------------------------------------------------------------------- *)
 
@@ -703,12 +695,8 @@ module Make (T : TABLE) = struct
   (* Access to the position of the lookahead token. *)
 
   let positions { triple = (_, startp, endp); _ } =
-    (* In principle, as soon as the lexer has been called at least once,
-       [startp] cannot be a dummy position. Our dummy position risks
-       exposure only if we are in the very initial state, as produced
-       by [start s] above. We declare this situation illegal. *)
-    assert (startp != dummy_pos && endp != dummy_pos);
     startp, endp
+      (* TEMPORARY remove this function? *)
 
   (* --------------------------------------------------------------------------- *)
 
