@@ -17,7 +17,7 @@ main:
     {}
 
 /* Added just to exercise productions with an empty right-hand side. */
-nothing:
+%inline nothing:
 | /* nothing */
     { Aux.print "nothing" $startpos $endpos }
 
@@ -27,7 +27,7 @@ optional_dot:
 | DOT
     { Aux.print "optional_dot" $startpos $endpos}
 
-optional_comma:
+%inline optional_comma:
 | nothing
 | COMMA
     { Aux.print "optional_comma" $startpos $endpos}
