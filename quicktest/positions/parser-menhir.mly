@@ -36,7 +36,7 @@ optional_dot:
 | COMMA
     { ($startpos, $endpos), None }
 
-annotations:
+%inline annotations:
   optional_dot optional_comma
     { ($startpos, $endpos), $1, $2 }
 
@@ -53,7 +53,7 @@ raw_expr:
 | MINUS expr %prec UMINUS
     { EUnOp $2 }
 
-expr:
+%inline expr:
   e = raw_expr
     { ($startpos, $endpos), e }
 
