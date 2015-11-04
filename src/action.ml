@@ -49,7 +49,7 @@ let rename_inlined_psym (psym, first_prod, last_prod) phi l =
 		       with Not_found -> s 
 		       in
 			 (RightNamed s', w), (used1, used2)
-		 | _ -> (subject, where), (used1, used2)
+		 | Left, _ -> (subject, where), (used1, used2)
 	     in
 	     let from_pos = Keyword.posvar subject where flavor
 	     and to_pos = Keyword.posvar subject' where' flavor in
