@@ -21,23 +21,25 @@ let index2id producers i =
     assert false (* should not happen *)
 
 (* [rename_sw_outer] transforms the keywords in the outer production (the
-   caller) during inlining. It looks for [$startpos(x)] and [$endpos(x)], where
-   [x] is the name of the callee, and replaces them with [startp] and [endp],
-   respectively. *)
+   caller) during inlining. It replaces [$startpos(x)] and [$endpos(x)], where
+   [x] is the name of the callee, with [startpx] and [endpx], respectively. It
+   also replaces [$startpos] with [startp]. Although in most cases [startp]
+   will be [$startpos] -- so [$startpos] is not affected -- in the special
+   case where we are inlining an epsilon production in front of the outer
+   production, we must replace [$startpos] with [$endpos($0)]. *)
 
-(* It does not modify [$startpos] or [$endpos], of course, nor [$startpos(y)]
-   and [$endpos(y)] for some other [y]. It does not modify [$endpos($0)]. *)
-
-let rename_sw_outer (x, startp, endp) (subject, where) : (subject * where) option =
-  match subject with
-  | Before
-  | Left ->
+let rename_sw_outer (x, startpx, endpx, startp) (subject, where) : (subject * where) option =
+  match subject, where with
+  | Before, _
+  | Left, WhereEnd ->
       None
-  | RightNamed x' ->
+  | Left, WhereStart ->
+      Some startp
+  | RightNamed x', _ ->
       if x' = x then
         match where with
-        | WhereStart -> Some startp
-        | WhereEnd   -> Some endp
+        | WhereStart -> Some startpx
+        | WhereEnd   -> Some endpx
       else
         None
 
@@ -228,9 +230,24 @@ let inline grammar =
             Before, WhereEnd
         in
 
+        (* In the special case where the inner production is epsilon and
+           the prefix is empty, [$startpos] in the outer production must
+           be changed to [$endpos($0)] in order to preserve the semantics.
+           Indeed, if we do not do anything special, inlining causes the
+           inner production to disappear, so [$startpos] will be computed
+           based on the next element of the outer production, whereas in
+           the absence of inlining, it was computed by the epsilon production. *)
+        
+        let outer_startp =
+          if inlined_producers = 0 && prefix = 0 then
+            Before, WhereEnd
+          else
+            Left, WhereStart
+        in
+
 	(* Rename the outer and inner semantic action. *)
 	let outer_action =
-	  Action.rename (rename_sw_outer (c, startp, endp)) [] b.action
+	  Action.rename (rename_sw_outer (c, startp, endp, outer_startp)) [] b.action
 	and action' =
 	  Action.rename (rename_sw_inner (beforeendp, startp, endp)) phi pb.action
 	in
