@@ -31,7 +31,7 @@ let rename_sw_outer
    during inlining. *)
 
 let rename_sw_inner
-    (_, first_prod, last_prod)
+    (first_prod, last_prod)
     (subject, where) =
   match subject, where with
   | Left, WhereStart -> Some first_prod
@@ -158,19 +158,16 @@ let inline grammar =
 	      | (_, x) :: _ -> (Keyword.RightNamed x, Keyword.WhereStart)
 	  in
 
-	let renaming =
-	  (psym, start_position, end_position)
-	in
 	(* Rename the host semantic action.
 	   Each reference of the inlined non terminal [psym] must be taken into
 	   account. $startpos(psym) is changed to $startpos(x) where [x] is
 	   the first producer of the inlined branch if it is not empty or
 	   the preceding producer found in the prefix. *)
 	let outer_action =
-	  Action.rename (rename_sw_outer renaming) [] b.action
+	  Action.rename (rename_sw_outer (psym, start_position, end_position)) [] b.action
 	in
 	let action' =
-	  Action.rename (rename_sw_inner renaming) phi pb.action
+	  Action.rename (rename_sw_inner (start_position, end_position)) phi pb.action
 	in
 
 	{ b with
