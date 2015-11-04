@@ -7,26 +7,22 @@ val compose : string -> t -> t -> t
 
 (* TEMPORARY document this: *)
 
+type subst =
+  (string * string) list
+
 type sw =
   Keyword.subject * Keyword.where
 
-type keyword_renaming =
-  string * sw * sw
-
-(** [rename_inner keyword_renaming phi a] builds the action
-    [let x1 = x1' and ... xn = xn' in a] if [phi] is [(x1, x1') ... (xn, xn')].
-    Moreover, [renaming_env] is used to correctly replace $startpos/$endpos
-    present in the semantic action. *)
-val rename_inner:
-  keyword_renaming
-  -> (string * string) list -> t -> t
-
-(** [rename_outer keyword_renaming phi a] updates the occurrences of the
-    inlined non terminal in the action [a].
-*)
-val rename_outer:
-  keyword_renaming
-  -> (string * string) list -> t -> t
+(** [rename f phi a] applies to the semantic action [a] the renaming [phi] as
+    well as the transformations decided by the function [f]. The function [f] is
+    applied to each (not-yet-renamed) keyword and may decide to transform it, by
+    returning [Some _], or to not transform it, by returning [None]. (In the
+    latter case, [phi] still applies to the keyword.) *)
+val rename:
+  (sw -> sw option) ->
+  subst ->
+  t ->
+  t
 
 (** Semantic actions are translated into [IL] code using the
     [IL.ETextual] and [IL.ELet] constructors. *)

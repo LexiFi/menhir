@@ -80,31 +80,6 @@ let extend x y (phi : subst ref) =
 type sw =
   Keyword.subject * Keyword.where
 
-type keyword_renaming =
-  string * sw * sw
-
-let rename_sw_outer
-    ((psym, first_prod, last_prod) : keyword_renaming)
-    (subject, where) : sw option =
-  match subject with
-  | RightNamed s ->
-      if s = psym then
-        match where with
-        | WhereStart -> Some first_prod
-        | WhereEnd   -> Some last_prod
-      else
-        None
-  | Left ->
-      None
-
-let rename_sw_inner
-    ((_, first_prod, last_prod) : keyword_renaming)
-    (subject, where) : sw option =
-  match subject, where with
-  | Left, WhereStart -> Some first_prod
-  | Left, WhereEnd   -> Some last_prod
-  | RightNamed _, _ ->  None
-
 (* [rename_keyword f phi keyword] applies the function [f] to possibly change
    the keyword [keyword]. If [f] decides to change this keyword (by returning
    [Some _]) then this decision is obeyed. Otherwise, the keyword is renamed
@@ -129,10 +104,11 @@ let rename_keyword (f : sw -> sw option) (phi : subst ref) keyword : keyword =
         phi;
       Position (subject', where', flavor)
 
-(* [rename f phi a] applies to the semantic action [a] the renaming [phi]
-   as well as the renaming decisions made by the function [f]. [f] is
-   applied to (not-yet-renamed) keywords and may decide to change them
-   (by returning [Some _]). *)
+(* [rename f phi a] applies to the semantic action [a] the renaming [phi] as
+   well as the transformations decided by the function [f]. The function [f] is
+   applied to each (not-yet-renamed) keyword and may decide to transform it, by
+   returning [Some _], or to not transform it, by returning [None]. (In the
+   latter case, [phi] still applies to the keyword.) *)
 
 let rename f phi a = 
 
@@ -153,12 +129,6 @@ let rename f phi a =
     pkeywords = []; (* don't bother *)
     keywords  = keywords;
   }
-
-let rename_outer renaming =
-  rename (rename_sw_outer renaming)
-
-let rename_inner renaming =
-  rename (rename_sw_inner renaming)
 
 let to_il_expr action = 
   action.expr

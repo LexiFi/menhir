@@ -1,3 +1,4 @@
+open Keyword
 open UnparameterizedSyntax
 open ListMonad
 
@@ -8,6 +9,34 @@ exception NoInlining
 type 'a color = 
   | BeingExpanded
   | Expanded of 'a
+
+(* [rename_sw_outer] transforms the keywords in the outer production (the caller)
+   during inlining. *)
+
+let rename_sw_outer
+    (psym, first_prod, last_prod)
+    (subject, where) =
+  match subject with
+  | RightNamed s ->
+      if s = psym then
+        match where with
+        | WhereStart -> Some first_prod
+        | WhereEnd   -> Some last_prod
+      else
+        None
+  | Left ->
+      None
+
+(* [rename_sw_inner] transforms the keywords in the inner production (the callee)
+   during inlining. *)
+
+let rename_sw_inner
+    (_, first_prod, last_prod)
+    (subject, where) =
+  match subject, where with
+  | Left, WhereStart -> Some first_prod
+  | Left, WhereEnd   -> Some last_prod
+  | RightNamed _, _ ->  None
 
 (* Inline a grammar. The resulting grammar does not contain any definitions
    that can be inlined. *)
@@ -129,7 +158,7 @@ let inline grammar =
 	      | (_, x) :: _ -> (Keyword.RightNamed x, Keyword.WhereStart)
 	  in
 
-	let renaming_env =
+	let renaming =
 	  (psym, start_position, end_position)
 	in
 	(* Rename the host semantic action.
@@ -138,10 +167,10 @@ let inline grammar =
 	   the first producer of the inlined branch if it is not empty or
 	   the preceding producer found in the prefix. *)
 	let outer_action =
-	  Action.rename_outer renaming_env [] b.action
+	  Action.rename (rename_sw_outer renaming) [] b.action
 	in
 	let action' =
-	  Action.rename_inner renaming_env phi pb.action
+	  Action.rename (rename_sw_inner renaming) phi pb.action
 	in
 
 	{ b with
