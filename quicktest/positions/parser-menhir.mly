@@ -36,13 +36,13 @@ annotations:
   optional_dot optional_comma
     { Aux.print "annotations" $startpos $endpos }
 
-%inline operator:
-  PLUS | MINUS | TIMES | DIV {}
-
 raw_expr:
 | INT
 | annotations LPAREN nothing expr RPAREN optional_dot
-| expr operator expr
+| expr PLUS expr
+| expr MINUS expr
+| expr TIMES expr
+| expr DIV expr
 | MINUS expr %prec UMINUS
     {}
 
