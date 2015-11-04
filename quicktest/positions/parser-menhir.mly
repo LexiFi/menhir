@@ -2,7 +2,7 @@
 %token PLUS MINUS TIMES DIV
 %token LPAREN RPAREN
 %token EOL
-%token DOT
+%token DOT COMMA
 
 %left PLUS MINUS        /* lowest precedence */
 %left TIMES DIV         /* medium precedence */
@@ -27,12 +27,21 @@ optional_dot:
 | DOT
     { Aux.print "optional_dot" $startpos $endpos}
 
+optional_comma:
+| nothing
+| COMMA
+    { Aux.print "optional_comma" $startpos $endpos}
+
+annotations:
+  optional_dot optional_comma
+    { Aux.print "annotations" $startpos $endpos }
+
 %inline operator:
   PLUS | MINUS | TIMES | DIV {}
 
 raw_expr:
 | INT
-| optional_dot LPAREN nothing expr RPAREN optional_dot
+| annotations LPAREN nothing expr RPAREN optional_dot
 | expr operator expr
 | MINUS expr %prec UMINUS
     {}

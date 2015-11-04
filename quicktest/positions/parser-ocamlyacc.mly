@@ -2,7 +2,7 @@
 %token PLUS MINUS TIMES DIV
 %token LPAREN RPAREN
 %token EOL
-%token DOT
+%token DOT COMMA
 
 %left PLUS MINUS        /* lowest precedence */
 %left TIMES DIV         /* medium precedence */
@@ -29,10 +29,20 @@ optional_dot:
 | DOT
     { Aux.print "optional_dot" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos())}
 
+optional_comma:
+| nothing
+    { Aux.print "optional_comma" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos())}
+| COMMA
+    { Aux.print "optional_comma" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos())}
+
+annotations:
+  optional_dot optional_comma
+    { Aux.print "annotations" (Parsing.symbol_start_pos()) (Parsing.symbol_end_pos())}
+
 raw_expr:
 | INT
     {}
-| optional_dot LPAREN nothing expr RPAREN optional_dot
+| annotations LPAREN nothing expr RPAREN optional_dot
     {}
 | expr PLUS expr
     {}
