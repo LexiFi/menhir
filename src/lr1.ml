@@ -837,6 +837,16 @@ let invert reductions : TerminalSet.t ProductionMap.t =
   ) reductions ProductionMap.empty
     
 (* ------------------------------------------------------------------------ *)
+(* Testing whether a state can reduce some epsilon production. *)
+
+let has_epsilon_reduction node =
+  TerminalMap.fold (fun _ prods accu ->
+    accu ||
+    let prod = Misc.single prods in
+    Production.length prod = 0
+  ) (reductions node) false
+
+(* ------------------------------------------------------------------------ *)
 (* Computing which terminal symbols a state is willing to act upon.
 
    One must keep in mind that, due to the merging of states, a state might be

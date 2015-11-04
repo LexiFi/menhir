@@ -596,17 +596,6 @@ let rewind node : instruction =
   rewind w
 
 (* ------------------------------------------------------------------------ *)
-(* This auxiliary function tests whether a state has a reduction action for
-   an epsilon production. It could be moved to [Lr1], if desired. *)
-
-let has_epsilon_reduction node =
-  TerminalMap.fold (fun _ prods accu ->
-    accu ||
-    let prod = Misc.single prods in
-    Production.length prod = 0
-  ) (Lr1.reductions node) false
-
-(* ------------------------------------------------------------------------ *)
 (* We now determine which positions must be kept track of. For
    simplicity, we do this on a per symbol basis. That is, for each
    symbol, either we never keep track of position information, or we
@@ -687,7 +676,7 @@ let () =
   );
   Lr1.iterx (fun node ->
     (* 2015/11/04. See above. *)
-    if has_epsilon_reduction node then
+    if Lr1.has_epsilon_reduction node then
       let sym = Misc.unSome (Lr1.incoming_symbol node) in
       require WhereEnd sym
   )

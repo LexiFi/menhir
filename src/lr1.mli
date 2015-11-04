@@ -83,6 +83,10 @@ val forbid_default_reduction: node -> bool
 
 val invert : ProductionMap.key list TerminalMap.t -> TerminalSet.t ProductionMap.t
 
+(* Testing whether a state can reduce some epsilon production. *)
+
+val has_epsilon_reduction: node -> bool
+
 (* Computing which terminal symbols a state is willing to act upon.
 
    This function is currently unused, but could be used as part of an error
