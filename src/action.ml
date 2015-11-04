@@ -59,7 +59,7 @@ type sw =
 type keyword_renaming =
   string * sw * sw
 
-let rename_position_keyword
+let rename_position_keyword_outer
     ((psym, first_prod, last_prod) : keyword_renaming)
     (subject, where) : sw =
   match subject, where with
@@ -70,7 +70,7 @@ let rename_position_keyword
       | WhereStart -> first_prod
       | WhereEnd   -> last_prod
 
-let rename_position_keyword_2
+let rename_position_keyword_inner
     ((psym, first_prod, last_prod) : keyword_renaming)
     (subject, where) : sw =
   match subject, where with
@@ -148,11 +148,11 @@ let rename f renaming phi a =
       keywords  = keywords;
   }
 
-let rename_inlined_psym =
-  rename rename_position_keyword
+let rename_outer =
+  rename rename_position_keyword_outer
 
-let rename =
-  rename rename_position_keyword_2
+let rename_inner =
+  rename rename_position_keyword_inner
 
 let to_il_expr action = 
   action.expr

@@ -13,18 +13,18 @@ type sw =
 type keyword_renaming =
   string * sw * sw
 
-(** [rename keyword_renaming phi a] builds the action
+(** [rename_inner keyword_renaming phi a] builds the action
     [let x1 = x1' and ... xn = xn' in a] if [phi] is [(x1, x1') ... (xn, xn')].
     Moreover, [renaming_env] is used to correctly replace $startpos/$endpos
     present in the semantic action. *)
-val rename:
+val rename_inner:
   keyword_renaming
   -> (string * string) list -> t -> t
 
-(** [rename_inlined_psym keyword_renaming phi a] updates the occurrences of the
+(** [rename_outer keyword_renaming phi a] updates the occurrences of the
     inlined non terminal in the action [a].
 *)
-val rename_inlined_psym:
+val rename_outer:
   keyword_renaming
   -> (string * string) list -> t -> t
 

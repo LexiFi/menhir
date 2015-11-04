@@ -138,10 +138,10 @@ let inline grammar =
 	   the first producer of the inlined branch if it is not empty or
 	   the preceding producer found in the prefix. *)
 	let outer_action =
-	  Action.rename_inlined_psym renaming_env [] b.action
+	  Action.rename_outer renaming_env [] b.action
 	in
 	let action' =
-	  Action.rename renaming_env phi pb.action
+	  Action.rename_inner renaming_env phi pb.action
 	in
 
 	{ b with
