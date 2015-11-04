@@ -619,7 +619,9 @@ let rewind node : instruction =
    state whose incoming symbol is [sym] can reduce an epsilon production, then
    [sym] must keep track of its end position. (Furthermore, if some initial
    state can reduce an epsilon production, then the sentinel cell at the bottom
-   of the stack must contain a position. This does not concern us here.) *)
+   of the stack must contain a position. This does not concern us here.)
+   Similarly, if some state whose incoming symbol is [sym] uses [$beforeendpos],
+   then [sym] must keep track of its end position. *)
 
 open Keyword
 
@@ -661,10 +663,15 @@ let () =
     let rhs = Production.rhs prod
     and ids = Production.identifiers prod
     and action = Production.action prod in
-
     KeywordSet.iter (function
       | SyntaxError ->
 	  ()
+      | Position (Before, _, _) ->
+          (* Doing nothing here is OK because the presence of [$beforepos]
+             in a semantic action is taken account below when we look at
+             every state and check whether it can reduce a production whose
+             semantic action contains [$beforepos]. *)
+          ()
       | Position (Left, where, _) ->
 	  require_aux where prod
       | Position (RightNamed id, where, _) ->
@@ -676,7 +683,7 @@ let () =
   );
   Lr1.iterx (fun node ->
     (* 2015/11/04. See above. *)
-    if Lr1.has_epsilon_reduction node then
+    if Lr1.has_beforeend node then
       let sym = Misc.unSome (Lr1.incoming_symbol node) in
       require WhereEnd sym
   )

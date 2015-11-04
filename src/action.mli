@@ -55,3 +55,8 @@ val has_leftstart: t -> bool
 (** Check whether the keyword $end is used in the action. *)
 val has_leftend: t -> bool
 
+(** Check whether the keyword $start or $end is used in the action. *)
+val has_left: t -> bool
+
+(** Check whether the keyword $beforeend is used in the action. *)
+val has_beforeend: t -> bool

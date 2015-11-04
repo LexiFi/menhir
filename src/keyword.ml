@@ -29,6 +29,7 @@ type parsed_subject =
   | PRightNamed of string
 
 and subject =
+  | Before
   | Left
   | RightNamed of string
 
@@ -55,6 +56,8 @@ let where = function
       "end"
 
 let subject = function
+  | Before ->
+      "before"
   | Left ->
       ""
   | RightNamed id ->

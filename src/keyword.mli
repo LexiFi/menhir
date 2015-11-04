@@ -23,13 +23,18 @@ type where =
    A positional reference of the form [$i] is a syntactic sugar for the
    name [_i]. This surface syntax is first parsed as a [parsed_subject]
    and desugared as a [subject] during keywords rewriting into actual
-   OCaml identifiers. (See {!Lexer.transform_keywords}) *)
+   OCaml identifiers. (See {!Lexer.transform_keywords}.)
+
+   We add a new subject, [Before], which corresponds to [$beforeendpos]
+   in concrete syntax. We adopt the (slightly awkward) convention that
+   when the subject is [Before], the [where] component must be [WhereEnd]. *)
 type parsed_subject =
   | PLeft
   | PRightDollar of int
   | PRightNamed of string
 
 and subject =
+  | Before
   | Left
   | RightNamed of string
 

@@ -65,8 +65,9 @@ let apply (phi : subst) (s : string) : string =
 
 let apply_subject (phi : subst) (subject : subject) : subject =
   match subject with
+  | Before
   | Left ->
-      Left
+      subject
   | RightNamed s ->
       RightNamed (apply phi s)
 
@@ -152,6 +153,14 @@ let print f action =
 let has_syntaxerror action =
   KeywordSet.mem SyntaxError (keywords action)
 
+let has_left action =
+  KeywordSet.exists (function
+    | Position (Left, _, _) ->
+	true
+    | _ ->
+	false
+  ) (keywords action)
+
 let has_leftstart action =
   KeywordSet.exists (function
     | Position (Left, WhereStart, _) ->
@@ -168,3 +177,10 @@ let has_leftend action =
 	false
   ) (keywords action)
 
+let has_beforeend action =
+  KeywordSet.exists (function
+    | Position (Before, WhereEnd, _) ->
+	true
+    | _ ->
+	false
+  ) (keywords action)

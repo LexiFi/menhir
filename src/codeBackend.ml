@@ -1481,7 +1481,7 @@ let errorcasedef =
    2015/11/04. If the state [s] can reduce an epsilon production, then the
    initial stack should contain a sentinel cell with a valid [endp] field
    at offset 1. Otherwise, the initial stack can be the unit value, as it
-   used to be. *)
+   used to be. (Note that it would be OK to always have a sentinel.) *)
 
 let entrydef s = 
   let nt = Item.startnt (Lr1.start2item s) in
@@ -1489,7 +1489,7 @@ let entrydef s =
   and lexbuf = "lexbuf" in
 
   let initial_stack =
-    if Lr1.has_epsilon_reduction s then
+    if Lr1.has_beforeend s then
       let initial_position = getendp in
       etuple [ EUnit; initial_position ]
     else

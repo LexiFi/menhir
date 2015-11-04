@@ -26,10 +26,11 @@ let index2id producers i =
    respectively. *)
 
 (* It does not modify [$startpos] or [$endpos], of course, nor [$startpos(y)]
-   and [$endpos(y)] for some other [y]. *)
+   and [$endpos(y)] for some other [y]. It does not modify [$beforeendpos]. *)
 
 let rename_sw_outer (x, startp, endp) (subject, where) : (subject * where) option =
   match subject with
+  | Before
   | Left ->
       None
   | RightNamed x' ->
@@ -41,13 +42,16 @@ let rename_sw_outer (x, startp, endp) (subject, where) : (subject * where) optio
         None
 
 (* [rename_sw_inner] transforms the keywords in the inner production (the callee)
-   during inlining. It looks for [$startpos] and [$endpos] and replaces them with
-   [startp] and [endp], respectively. *)
+   during inlining. It looks for [$beforepos], [$startpos], and [$endpos,] and
+   replaces them with [beforep], [startp], and [endp], respectively. *)
 
 (* It does not modify any [$startpos(x)], of course. *)
 
-let rename_sw_inner (startp, endp) (subject, where) : (subject * where) option =
+let rename_sw_inner (beforep, startp, endp) (subject, where) : (subject * where) option =
   match subject, where with
+  | Before, _ ->
+      assert (where = WhereEnd);
+      Some beforep
   | Left, WhereStart ->
       Some startp
   | Left, WhereEnd ->
@@ -186,10 +190,11 @@ let inline grammar =
             RightNamed (index2id (prefix - 1)), WhereEnd
           else
             (* If the inner production is epsilon and the prefix is empty, then
-               we need to look up the end position stored in the top stack cell
-               (for which we do not have a name). *)
-            (* TEMPORARY missing a new feature *)
-            Left, WhereStart (* TEMPORARY this is an approximation *)
+               we need to look up the end position stored in the top stack cell.
+               This is the reason why we need the keyword [$beforeendpos]. It is
+               required in this case to preserve the semantics of $startpos and
+               $endpos. *)
+            Before, WhereEnd
 
           (* Note that, to contrary to intuition perhaps, we do NOT have that
              if the prefix is empty, then the start position of the inner
@@ -210,11 +215,24 @@ let inline grammar =
 
         in
 
+        (* We must also transform [$beforeendpos] if it used by the inner
+           production. It refers to the end position of the stack cell
+           that comes before the inner production. So, if the prefix is
+           non-empty, then it translates to the end position of the last
+           element of the prefix. Otherwise, it translates to [$beforeendpos]. *)
+
+        let beforep =
+          if prefix > 0 then
+            RightNamed (index2id (prefix - 1)), WhereEnd
+          else
+            Before, WhereEnd
+        in
+
 	(* Rename the outer and inner semantic action. *)
 	let outer_action =
 	  Action.rename (rename_sw_outer (c, startp, endp)) [] b.action
 	and action' =
-	  Action.rename (rename_sw_inner (startp, endp)) phi pb.action
+	  Action.rename (rename_sw_inner (beforep, startp, endp)) phi pb.action
 	in
 
 	{ b with

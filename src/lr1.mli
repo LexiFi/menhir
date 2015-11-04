@@ -83,9 +83,12 @@ val forbid_default_reduction: node -> bool
 
 val invert : ProductionMap.key list TerminalMap.t -> TerminalSet.t ProductionMap.t
 
-(* Testing whether a state can reduce some epsilon production. *)
+(* [has_beforeend s] tests whether the state [s] can reduce a production
+   whose semantic action can peek at the before-endpos, that is, the end
+   position of the cell that is at the top of the stack after popping and
+   before pushing. *)
 
-val has_epsilon_reduction: node -> bool
+val has_beforeend: node -> bool
 
 (* Computing which terminal symbols a state is willing to act upon.
 

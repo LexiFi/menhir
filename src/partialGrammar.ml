@@ -595,7 +595,7 @@ let check_keywords producers action =
 	if not !found then
 	  Error.errorp keyword
 	    "%s refers to a nonexistent symbol." id
-    | Position (Left, _, _)
+    | Position ((Before | Left), _, _)
     | SyntaxError ->
         ()
   ) (Action.pkeywords action)
