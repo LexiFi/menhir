@@ -1181,7 +1181,7 @@ let reducebody prod =
      exists and has an [endp] field at offset 1. Yes, we live
      dangerously. You only live once. *)
 
-  (* Note that [Keyword.has_leftstart keywords] does not imply
+  (* Note that [Action.has_leftstart action] does not imply
      [Invariant.startp symbol], and similarly for end positions. *)
 
   let symbol =
@@ -1189,11 +1189,18 @@ let reducebody prod =
   in
 
   let posbindings action =
-    let bind_startp =
+    let bind_beforeendp =
+      Action.has_beforeend action
+    and bind_startp =
       Action.has_leftstart action || Invariant.startp symbol
     and bind_endp =
       Action.has_leftend action || Invariant.endp symbol
     in
+    elementif bind_beforeendp
+      ( (* Extract the field at offset 1 in the top stack cell. *)
+        PTuple [ PWildcard; PVar beforeendp ],
+        EVar stack
+      ) @
     elementif bind_startp
       ( if length > 0 then
 	  PVar startp,
