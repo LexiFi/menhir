@@ -11,11 +11,15 @@ MAIN            := calc
 
 all:
 	cd .. && ./build.sh
+# ocamlyacc.
 	@ $(OCAMLBUILD) -build-dir _ocamlyacc                $(MAIN).native
+# Menhir, code back-end, %inline disabled.
 	@ $(OCAMLBUILD) -build-dir _menhir_code   -tag fancy $(MAIN).native \
 	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --no-inline -lc 1 --comment --no-code-inlining"
+# Menhir, table back-end, %inline disabled.
 	@ $(OCAMLBUILD) -build-dir _menhir_table  -tag fancy $(MAIN).native \
 	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --no-inline --table" -package menhirLib
+# Menhir, table back-end, %inline enabled.
 	@ $(OCAMLBUILD) -build-dir _menhir_inline -tag fancy $(MAIN).native \
 	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --table" -package menhirLib
 
@@ -37,14 +41,18 @@ test: all
 	  for target in _ocamlyacc _menhir_code _menhir_table _menhir_inline ; do \
 	    $$target/$(MAIN).native < $$f > $$target/$$out ; \
 	  done ; \
-	  for pair in \
-	    _ocamlyacc/_menhir_code \
-	    _ocamlyacc/_menhir_table \
-	    _menhir_code/_menhir_table \
-	    _menhir_table/_menhir_inline \
-	  ; do \
-	    left=$${pair%/*} ; \
-	    right=$${pair#*/} ; \
+	done
+	@ for pair in \
+	  _ocamlyacc/_menhir_code \
+	  _ocamlyacc/_menhir_table \
+	  _menhir_code/_menhir_table \
+	  _menhir_table/_menhir_inline \
+	; do \
+	  left=$${pair%/*} ; \
+	  right=$${pair#*/} ; \
+	  for f in *.in ; do \
+	    base=$${f%*.in} ; \
+	    out=$$base.out ; \
 	    log=$$base.$$left.$$right.log ; \
 	    if diff $$left/$$out $$right/$$out > $$log ; then \
 	      echo "$$left versus $$right: $$f: OK" ; \
