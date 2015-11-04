@@ -43,7 +43,7 @@ let rename_inlined_psym (psym, first_prod, last_prod) phi l =
 			 | WhereStart -> first_prod, (true, used2)
 			 | WhereEnd -> last_prod, (used1, true)
 		     else 
-		       (* Otherwise, we just that the renaming into account. *)
+		       (* Otherwise, we just take the renaming into account. *)
 		       let s' = try 
 			 List.assoc s phi
 		       with Not_found -> s 
