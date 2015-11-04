@@ -143,6 +143,7 @@ let inline grammar =
 	let action', (used1', used2') =
 	  Action.rename renaming_env phi pb.action
 	in
+        assert (prefix == prefix' && suffix == suffix');
 	let prefix = if used1 || used1' then prefix' else prefix in
 	let suffix = if used2 || used2' then suffix' else suffix in
 
