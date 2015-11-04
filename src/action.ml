@@ -70,6 +70,20 @@ let rename_position_keyword
       | WhereStart -> first_prod
       | WhereEnd   -> last_prod
 
+let rename_position_keyword_2
+    ((psym, first_prod, last_prod) : keyword_renaming)
+    (subject, where) : sw =
+  match subject, where with
+  (* $startpos is changed to $startpos(first_prod) in the 
+       inlined rule. Similarly for $endpos. *)
+  | Left, WhereStart -> first_prod
+  | Left, WhereEnd   -> last_prod
+  | RightNamed s, w ->
+      assert (s = psym);
+      match w with
+      | WhereStart -> first_prod
+      | WhereEnd   -> last_prod
+
 let rename_keyword
     (f : keyword_renaming -> sw -> sw)
     ((psym, _, _) as renaming : keyword_renaming)
@@ -100,13 +114,6 @@ let rename_keyword
       phi := (from_pos, to_pos) :: !phi;
     Position (subject', where', flavor)
 
-let rename_inlined_psym (renaming : keyword_renaming) phi keywords =
-  let phi = ref phi in
-  let keywords =
-    KeywordSet.map (rename_keyword rename_position_keyword renaming phi) keywords
-  in
-  keywords, !phi
-
 (* Rename the keywords related to position to handle the composition
    of semantic actions during non terminal inlining. 
 
@@ -119,50 +126,21 @@ let rename_inlined_psym (renaming : keyword_renaming) phi keywords =
    - [psym] is the producer that is being inlined.
    
 *)
-let rename_pkeywords (psym, first_prod, last_prod) phi keywords = 
+
+let rename f renaming phi a = 
+
+  let keywords = a.keywords in
   let phi = ref phi in
   let keywords =
-    KeywordSet.map (fun keyword ->
-      match keyword with
-      | Position (subject, where, flavor) ->
-		let (subject', where') = 
-		  match subject, where with
-		      (* $startpos is changed to $startpos(first_prod) in the 
-			 inlined rule. *)
-		    | Left, WhereStart -> first_prod
-		      (* Similarly for $endpos. *)
-		    | Left, WhereEnd   -> last_prod
-		    | RightNamed s, w  -> 
-			(* In the host rule, $startpos(x) is changed to 
-			   to $startpos(first_prod) (same thing for $endpos). *)
-			if s = psym then
-			  match w with
-			    | WhereStart -> first_prod;
-			    | WhereEnd -> last_prod
-			else 
-			  (* Otherwise, we just take the renaming into account. *)
-			  let s' = try List.assoc s !phi with Not_found -> s in
-			    (RightNamed s', w)
-		in
-		let from_pos = Keyword.posvar subject where flavor
-		and to_pos = Keyword.posvar subject' where' flavor in
-	        if from_pos <> to_pos && not (List.mem_assoc from_pos !phi) then
-		  phi := (from_pos, to_pos) :: !phi;
-	        Position (subject', where', flavor)
-
-	 | SyntaxError -> SyntaxError
-    )
-  keywords
+    KeywordSet.map (rename_keyword f renaming phi) keywords
   in
-  keywords, !phi
-		
-let rename renaming_fun keyword_renaming phi a = 
-  let keywords, phi = renaming_fun keyword_renaming phi a.keywords in
+  let phi = !phi in
+
   { a with 
       (* We use the let construct to rename without modification of the semantic
 	 action code. *)
       expr = 
-      IL.ELet (List.map (fun (x, x') -> (IL.PVar x, IL.EVar x')) phi, 
+      IL.ELet (List.map (fun (x, x') -> (IL.PVar x, IL.EVar x')) phi,
 	       a.expr);
 
       (* Keywords related to positions are updated too. *)
@@ -171,10 +149,10 @@ let rename renaming_fun keyword_renaming phi a =
   }
 
 let rename_inlined_psym =
-  rename rename_inlined_psym
+  rename rename_position_keyword
 
 let rename =
-  rename rename_pkeywords
+  rename rename_position_keyword_2
 
 let to_il_expr action = 
   action.expr
