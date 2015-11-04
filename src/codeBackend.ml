@@ -686,9 +686,13 @@ let letunless e x e1 e2 =
 (* ------------------------------------------------------------------------ *)
 (* Calling conventions. *)
 
-(* The contents of a stack cell, exposed as individual parameters. The
-   choice of identifiers is suitable for use in the definition of
-   [run]. *)
+(* The contents of a stack cell, exposed as individual parameters. The choice of
+   identifiers is suitable for use in the definition of [run]. *)
+
+(* This code also determines the layout of a stack cell. The first field in a
+   stack cell is always a pointer to the rest of the stack; it is followed by
+   the fields listed below, each of which may or may not appear. [runpushcell]
+   and [gotopushcell] are the two places where stack cells are allocated. *)
 
 let runcellparams var holds_state symbol =
   elementif holds_state (var state) @
