@@ -48,6 +48,11 @@ let token =
    that binding these variables before executing a semantic action is
    meaningful. *)
 
+(* These names should agree with the printing function [Keyword.posvar]. *)
+
+let beforeendp =
+  "_endpos__0_"
+
 let startp =
   "_startpos"
 

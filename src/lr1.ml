@@ -844,7 +844,7 @@ let invert reductions : TerminalSet.t ProductionMap.t =
 
 (* This is the case if [s] can reduce an epsilon production whose semantic
    action uses [$startpos] or [$endpos]. This is also the case if [s] can
-   reduce a production whose semantic action uses [$beforeendpos]. *)
+   reduce a production whose semantic action uses [$endpos($0)]. *)
 
 let has_beforeend node =
   TerminalMap.fold (fun _ prods accu ->

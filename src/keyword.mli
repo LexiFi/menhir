@@ -25,7 +25,7 @@ type where =
    and desugared as a [subject] during keywords rewriting into actual
    OCaml identifiers. (See {!Lexer.transform_keywords}.)
 
-   We add a new subject, [Before], which corresponds to [$beforeendpos]
+   We add a new subject, [Before], which corresponds to [$endpos($0)]
    in concrete syntax. We adopt the (slightly awkward) convention that
    when the subject is [Before], the [where] component must be [WhereEnd]. *)
 type parsed_subject =

@@ -620,7 +620,7 @@ let rewind node : instruction =
    [sym] must keep track of its end position. (Furthermore, if some initial
    state can reduce an epsilon production, then the sentinel cell at the bottom
    of the stack must contain a position. This does not concern us here.)
-   Similarly, if some state whose incoming symbol is [sym] uses [$beforeendpos],
+   Similarly, if some state whose incoming symbol is [sym] uses [$endpos($0)],
    then [sym] must keep track of its end position. *)
 
 open Keyword
@@ -667,10 +667,10 @@ let () =
       | SyntaxError ->
 	  ()
       | Position (Before, _, _) ->
-          (* Doing nothing here is OK because the presence of [$beforepos]
+          (* Doing nothing here is OK because the presence of [$endpos($0)]
              in a semantic action is taken account below when we look at
              every state and check whether it can reduce a production whose
-             semantic action contains [$beforepos]. *)
+             semantic action contains [$endpos($0)]. *)
           ()
       | Position (Left, where, _) ->
 	  require_aux where prod

@@ -205,10 +205,16 @@ let reducebody prod =
     ) (0, PVar stack, []) (Invariant.prodstack prod)
   in
 
-  (* Determine start and end positions for the left-hand side of the
-     production. *)
+  (* Determine beforeend/start/end positions for the left-hand side of the
+     production, and bind them to the conventional variables [beforeendp],
+     [startp], and [endp]. These variables may be unused by the semantic
+     action, in which case these bindings are dead code and can be ignored
+     by the OCaml compiler. *)
 
   let posbindings =
+    ( PVar beforeendp,
+      endpos_of_top_stack_cell
+    ) ::
     ( PVar startp,
       if length > 0 then
 	EVar (Printf.sprintf "_startpos_%s_" ids.(0))

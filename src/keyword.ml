@@ -57,7 +57,7 @@ let where = function
 
 let subject = function
   | Before ->
-      "before"
+      "__0_"
   | Left ->
       ""
   | RightNamed id ->

@@ -37,6 +37,7 @@ val token: string
 
 (* Variables used to hold start and end positions. *)
 
+val beforeendp: string
 val startp: string
 val endp: string
 
