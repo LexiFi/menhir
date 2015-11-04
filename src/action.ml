@@ -1,19 +1,26 @@
 open Keyword
 
+type pkeywords =
+  keyword Positions.located list
+
 type t = 
     {
       expr	: IL.expr;
-      keywords  : Keyword.KeywordSet.t;
+      keywords  : KeywordSet.t;
       filenames : string list;
-      pkeywords : Keyword.keyword Positions.located list
+      pkeywords : pkeywords
     }
 
+let pkeywords_to_keywords pkeywords =
+  KeywordSet.of_list (List.map Positions.value pkeywords)
+
 let from_stretch s = 
+  let pkeywords = s.Stretch.stretch_keywords in
   { 
     expr      = IL.ETextual s;
     filenames = [ s.Stretch.stretch_filename ];
-    keywords  = Keyword.KeywordSet.of_list (List.map Positions.value s.Stretch.stretch_keywords);
-    pkeywords = s.Stretch.stretch_keywords;
+    pkeywords = pkeywords;
+    keywords  = pkeywords_to_keywords pkeywords; (* TEMPORARY maybe we do not need this redundancy? *)
   }
 
 let compose x a1 a2 = 
@@ -23,15 +30,20 @@ let compose x a1 a2 =
      a semantic action is already parenthesized by the lexer. *)
   {
     expr      = IL.ELet ([ IL.PVar x, a1.expr ], a2.expr);
-    keywords  = Keyword.KeywordSet.union a1.keywords a2.keywords;
+    keywords  = KeywordSet.union a1.keywords a2.keywords;
     filenames = a1.filenames @ a2.filenames;
     pkeywords = a1.pkeywords @ a2.pkeywords;
   }
 
-let rename_inlined_psym (psym, first_prod, last_prod) phi l =
-  List.fold_left
-    (fun (l, phi, (used1, used2)) pk ->
-       match pk.Positions.value with
+type sw =
+  Keyword.subject * Keyword.where
+
+type renaming_env =
+  string * sw * sw
+
+let rename_inlined_psym ((psym, first_prod, last_prod) : renaming_env) phi pkeywords =
+  List.fold_left (fun (l, phi, (used1, used2)) pk ->
+       match Positions.value pk with
 	 | Position (subject, where, flavor) ->
 	     let (subject', where'), (used1, used2) = 
 	       match subject, where with
@@ -53,7 +65,7 @@ let rename_inlined_psym (psym, first_prod, last_prod) phi l =
 	     in
 	     let from_pos = Keyword.posvar subject where flavor
 	     and to_pos = Keyword.posvar subject' where' flavor in
-	       (Positions.with_pos pk.Positions.position 
+	       (Positions.with_pos (Positions.position pk)
 		  (Position (subject', where', flavor)) :: l,
 		(if from_pos <> to_pos && not (List.mem_assoc from_pos phi) then 
 		   (from_pos, to_pos) :: phi else phi),
@@ -61,7 +73,7 @@ let rename_inlined_psym (psym, first_prod, last_prod) phi l =
 
 	 | SyntaxError -> pk :: l, phi, (used1, used2)
     )
-    ([], phi, (false, false)) l
+  ([], phi, (false, false)) pkeywords
 
 (* Rename the keywords related to position to handle the composition
    of semantic actions during non terminal inlining. 
@@ -120,13 +132,8 @@ let rename renaming_fun renaming_env phi a =
 	       a.expr);
 
       (* Keywords related to positions are updated too. *)
-      keywords = 
-      List.fold_left 
-	(fun acu pk -> Keyword.KeywordSet.add pk.Positions.value acu) 
-	Keyword.KeywordSet.empty
-	pkeywords;
-
-      pkeywords = pkeywords
+      pkeywords = pkeywords;
+      keywords  = pkeywords_to_keywords pkeywords;
   }, used_fg
 
 let rename_inlined_psym =
