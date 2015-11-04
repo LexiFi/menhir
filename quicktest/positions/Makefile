@@ -16,7 +16,7 @@ all:
 	@ $(OCAMLBUILD) -build-dir _menhir_table -tag fancy $(MAIN).native \
 	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --table" -package menhirLib
 	@ $(OCAMLBUILD) -build-dir _menhir_no_inline -tag fancy $(MAIN).native \
-	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --no-inline"
+	  -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS) --table --no-inline" -package menhirLib
 
 clean:
 	@ rm -f *~ .*~
