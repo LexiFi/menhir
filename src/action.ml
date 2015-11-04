@@ -59,7 +59,7 @@ let rename_inlined_psym (psym, first_prod, last_prod) phi l =
 		   (from_pos, to_pos) :: phi else phi),
 		(used1, used2))
 
-	 | _ -> pk :: l, phi, (used1, used2)
+	 | SyntaxError -> pk :: l, phi, (used1, used2)
     )
     ([], phi, (false, false)) l
 
