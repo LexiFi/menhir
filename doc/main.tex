@@ -1716,6 +1716,8 @@ the author of the lexical analyzer.)
 \caption{Position-related keywords}
 \label{fig:pos}
 \end{figure}
+% TEMPORARY simplify the way things are said in this table
+% TEMPORARY documenter $endpos($0)
 
 \begin{figure}
 \begin{center}
@@ -1728,7 +1730,7 @@ not yet implemented       \\
 \verb+rhs_start_pos i+    &
 \verb+$startpos($i)+      & ($1 \leq i \leq n$) \\
 \verb+rhs_end_pos i+      &
-\verb+$endpos($i)+        & ($1 \leq i \leq n$) \\
+\verb+$endpos($i)+        & ($0 \leq i \leq n$) \\
 % Offsets.
 \verb+symbol_start()+     &
 not yet implemented       \\
@@ -1737,7 +1739,7 @@ not yet implemented       \\
 \verb+rhs_start i+        &
 \verb+$startofs($i)+      & ($1 \leq i \leq n$) \\
 \verb+rhs_end i+          &
-\verb+$endofs($i)+        & ($1 \leq i \leq n$) \\
+\verb+$endofs($i)+        & ($0 \leq i \leq n$) \\
 \end{tabular}
 \end{center}
 \caption{Translating position-related incantations from \ocamlyacc to \menhir}
@@ -1753,6 +1755,16 @@ nonterminal symbols. This is done by making a set of keywords, documented in
 Note also that \ocaml's standard library module \texttt{Parsing} is
 deprecated. The functions that it offers \emph{can} be called, but will return
 dummy positions.
+
+% TEMPORARY document exactly positions are computed
+
+% TEMPORARY document that %inline preserves positions
+%   Warn that it can REORDER side effects! (the inlined semantic
+%   action is delayed to the beginning of the host semantic action)
+
+% TEMPORARY document that if $startpos seems less accurate than it used to be,
+%   then one might wish to switch to $symbolstartpos instead.
+
 
 \fref{fig:pos:mapping} sums up how to translate a call to \texttt{Parsing}
 module, as used in \ocamlyacc grammars, to a \menhir keyword.
