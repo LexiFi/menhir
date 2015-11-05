@@ -13,7 +13,7 @@ type optional_comma =
   positions * nothing option
 
 type annotations =
-  positions * positions * optional_dot * optional_comma
+  positions * position * position * optional_dot * optional_comma
 
 type raw_expr =
   | EInt
@@ -22,7 +22,7 @@ type raw_expr =
   | EUnOp of expr
 
 and expr =
-  positions * raw_expr
+  positions * position * int * raw_expr
 
 type main =
   positions * nothing * expr
@@ -34,6 +34,17 @@ let iter f = function
       f x
 
 module Print = struct
+
+  let position msg pos =
+    Printf.printf "%s = %s/%03d,\n"
+      msg
+      pos.pos_fname
+      pos.pos_cnum
+
+  let offset msg ofs =
+    Printf.printf "%s = %03d,\n"
+      msg
+      ofs
 
   let positions nt (startpos, endpos) =
     Printf.printf "%s: startpos = %s/%03d,\n%s:   endpos = %s/%03d\n"
@@ -55,9 +66,10 @@ module Print = struct
     positions "optional_comma" poss;
     iter nothing no
 
-  let annotations (poss1, poss2, odot, ocomma) =
-    positions "annotations" poss1;
-    positions "annotations(internal)" poss2;
+  let annotations (poss, pos1, pos2, odot, ocomma) =
+    positions "annotations" poss;
+    position  "annotations:   $endpos($1)" pos1;
+    position  "annotations: $startpos($2)" pos2;
     optional_dot odot;
     optional_comma ocomma
 
@@ -75,8 +87,10 @@ module Print = struct
     | EUnOp e ->
         expr e
 
-  and expr (poss, e) =
+  and expr (poss, pos, ofs, e) =
     positions "expr" poss;
+    position "expr: $endpos($0)" pos;
+    offset   "expr: $endofs($0)" ofs;
     raw_expr e
 
   let main (poss, n, e) =

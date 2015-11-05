@@ -39,7 +39,7 @@ optional_dot:
 %inline annotations:
   optional_dot optional_comma
     { ($startpos, $endpos),
-      ($endpos($1), $startpos($2)),
+      $endpos($1), $startpos($2),
       $1, $2 }
 
 raw_expr:
@@ -57,5 +57,5 @@ raw_expr:
 
 %inline expr:
   e = raw_expr
-    { ($startpos, $endpos), e }
+    { ($startpos, $endpos), $endpos($0), $endofs($0), e }
 
