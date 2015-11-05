@@ -1,3 +1,5 @@
+open Keyword
+
 (** Semantic action's type. *)
 type t
 
@@ -5,13 +7,24 @@ type t
     feature is used during the processing of the %inline keyword. *)
 val compose : string -> t -> t -> t
 
-(* TEMPORARY document this: *)
+(* [define keyword keywords f action] defines away the keyword [keyword].
+   It is removed from the set of keywords of this semantic action; the
+   set [keywords] is added in its place. The body of the semantic action
+   is transformed by the function [f], which typically wraps it in some
+   new [let] bindings. *)
+
+val define: keyword -> KeywordSet.t -> (IL.expr -> IL.expr) -> t -> t
+
+(* Variable-to-variable substitutions, used by [rename], below. *)
 
 type subst =
   (string * string) list
 
+(* [Subject/where] pairs, as defined in [Keyword], encode a position
+   keyword. *)
+
 type sw =
-  Keyword.subject * Keyword.where
+  subject * where
 
 (** [rename f phi a] applies to the semantic action [a] the renaming [phi] as
     well as the transformations decided by the function [f]. The function [f] is
@@ -35,10 +48,10 @@ val to_il_expr: t -> IL.expr
 val filenames: t -> string list
 
 (** [pkeywords a] returns a list of all keyword occurrences in [a]. *)
-val pkeywords: t -> Keyword.keyword Positions.located list
+val pkeywords: t -> keyword Positions.located list
 
 (** [keywords a] is the set of keywords used in the semantic action [a]. *)
-val keywords: t -> Keyword.KeywordSet.t
+val keywords: t -> KeywordSet.t
 
 (** [print f a] prints [a] to channel [f]. *)
 val print: out_channel -> t -> unit
@@ -46,17 +59,8 @@ val print: out_channel -> t -> unit
 (** [from_stretch s] builds an action out of a textual piece of code. *)
 val from_stretch: Stretch.t -> t
 
-(** Check whether the keyword $syntaxerror is used in the action. *)
+(** Test whether the keyword [$syntaxerror] is used in the action. *)
 val has_syntaxerror: t -> bool
 
-(** Check whether the keyword $start is used in the action. *)
-val has_leftstart: t -> bool
-
-(** Check whether the keyword $end is used in the action. *)
-val has_leftend: t -> bool
-
-(** Check whether the keyword $start or $end is used in the action. *)
-val has_left: t -> bool
-
-(** Check whether the keyword $endpos($0) is used in the action. *)
+(** Test whether the keyword [$endpos($0)] is used in the action. *)
 val has_beforeend: t -> bool

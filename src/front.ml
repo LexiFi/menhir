@@ -127,6 +127,13 @@ let grammar =
 
 (* ------------------------------------------------------------------------- *)
 
+(* Expand away some of the position keywords. *)
+
+let grammar =
+  KeywordExpansion.expand_grammar grammar
+
+(* ------------------------------------------------------------------------- *)
+
 (* If [--no-inline] was specified on the command line, skip the
    inlining of non terminal definitions marked with %inline. *)
 

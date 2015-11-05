@@ -247,7 +247,6 @@ let reducebody prod =
       (pat, EVar stack) ::                  (* destructure the stack *)
       casts @                               (* perform type casts *)
       posbindings @                         (* bind [startp] and [endp] *)
-      extrabindings action @                (* add bindings for the weird keywords *)
       [ PVar semv, act ],                   (* run the user's code and bind [semv] *)
 
       (* Return a new stack, onto which we have pushed a new stack cell. *)

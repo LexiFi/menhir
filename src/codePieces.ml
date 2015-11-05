@@ -195,30 +195,6 @@ let destructuretokendef name codomain bindsemv branch = {
 
 (* ------------------------------------------------------------------------ *)
 
-(* Bindings for exotic keywords. *)
-
-(* [extrabindings action] provides definitions for the [$startofs] and
-   [$endofs] keywords, if required by a semantic action. The parameter
-   [action] is the semantic action within which these keywords might be
-   used. *)
-
-(* The [ofs] keyword family is defined in terms of the [pos] family by
-   accessing the [pos_cnum] field. *)
-
-let extrabindings action =
-  let open Keyword in
-  KeywordSet.fold (fun keyword bindings ->
-    match keyword with
-    | Position (_, _, FlavorPosition)
-    | SyntaxError ->
-	bindings
-    | Position (s, w, (FlavorOffset as f)) ->
-	(PVar (posvar s w f),
-	 ERecordAccess (EVar (posvar s w FlavorPosition), "Lexing.pos_cnum")) :: bindings
-  ) (Action.keywords action) []
-
-(* ------------------------------------------------------------------------ *)
-
 (* A global variable holds the exception [Error]. *)
 
 (* We preallocate the [Error] exception and store it into a global

@@ -37,6 +37,15 @@ let from_stretch s =
     keywords  = pkeywords_to_keywords pkeywords;
   }
 
+(* Defining a keyword in terms of other keywords. *)
+
+let define keyword keywords f action =
+  assert (KeywordSet.mem keyword action.keywords);
+  { action with
+    expr     = f action.expr;
+    keywords = KeywordSet.union keywords (KeywordSet.remove keyword action.keywords)
+  }
+
 (* Composition, used during inlining. *)
 
 let compose x a1 a2 = 
@@ -153,34 +162,6 @@ let print f action =
 let has_syntaxerror action =
   KeywordSet.mem SyntaxError (keywords action)
 
-let has_left action =
-  KeywordSet.exists (function
-    | Position (Left, _, _) ->
-	true
-    | _ ->
-	false
-  ) (keywords action)
-
-let has_leftstart action =
-  KeywordSet.exists (function
-    | Position (Left, WhereStart, _) ->
-	true
-    | _ ->
-	false
-  ) (keywords action)
-
-let has_leftend action =
-  KeywordSet.exists (function
-    | Position (Left, WhereEnd, _) ->
-	true
-    | _ ->
-	false
-  ) (keywords action)
-
 let has_beforeend action =
-  KeywordSet.exists (function
-    | Position (Before, WhereEnd, _) ->
-	true
-    | _ ->
-	false
-  ) (keywords action)
+  KeywordSet.mem (Position (Before, WhereEnd, FlavorPosition)) action.keywords
+

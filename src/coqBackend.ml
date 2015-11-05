@@ -68,9 +68,8 @@ module Run (T: sig end) = struct
                                      (Nonterminal.print false nonterminal)
             | Some _ -> ());
         Production.iterx (fun prod ->
-          let act =  Production.action prod in
-          if Action.(has_syntaxerror act || has_leftstart act || has_leftend act) then
-              Error.error [] "$syntaxerror, $start, $end are not supported by the Coq back-end."
+          if not (Keyword.KeywordSet.is_empty (Action.keywords (Production.action prod))) then
+            Error.error [] "The Coq back-end supports none of the $ keywords."
         )
       end;
 

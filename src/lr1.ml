@@ -842,9 +842,10 @@ let invert reductions : TerminalSet.t ProductionMap.t =
    position of the cell that is at the top of the stack after popping and
    before pushing. *)
 
-(* This is the case if [s] can reduce an epsilon production whose semantic
-   action uses [$startpos] or [$endpos]. This is also the case if [s] can
-   reduce a production whose semantic action uses [$endpos($0)]. *)
+(* This is also the case if [s] can reduce a production whose semantic
+   action uses [$endpos($0)]. Note that [$startpos] and [$endpos] have
+   been expanded away, so we need not worry about the fact that they
+   can be used in an epsilon production. *)
 
 let has_beforeend node =
   TerminalMap.fold (fun _ prods accu ->
@@ -852,8 +853,7 @@ let has_beforeend node =
     let prod = Misc.single prods in
     not (Production.is_start prod) &&
     let action = Production.action prod in
-       Production.length prod = 0 && Action.has_left action
-    || Action.has_beforeend action
+    Action.has_beforeend action
   ) (reductions node) false
 
 (* ------------------------------------------------------------------------ *)

@@ -1181,22 +1181,13 @@ let reducebody prod =
      exists and has an [endp] field at offset 1. Yes, we live
      dangerously. You only live once. *)
 
-  (* Note that [Action.has_leftstart action] does not imply
-     [Invariant.startp symbol], and similarly for end positions. *)
-
   let symbol =
     Symbol.N nt
   in
 
   let posbindings action =
-    let bind_beforeendp =
-      Action.has_beforeend action
-    and bind_startp =
-      Action.has_leftstart action || Invariant.startp symbol
-    and bind_endp =
-      Action.has_leftend action || Invariant.endp symbol
-    in
-    elementif bind_beforeendp
+    let bind_startp = Invariant.startp symbol in
+    elementif (Action.has_beforeend action)
       ( (* Extract the field at offset 1 in the top stack cell. *)
         PTuple [ PWildcard; PVar beforeendp ],
         EVar stack
@@ -1210,7 +1201,7 @@ let reducebody prod =
           PTuple [ PWildcard; PVar startp ],
           EVar stack
       ) @
-    elementif bind_endp
+    elementif (Invariant.endp symbol)
       ( if length > 0 then
 	  PVar endp,
 	  EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1))
@@ -1253,8 +1244,7 @@ let reducebody prod =
       (blet (
 	(pat, EVar stack) ::
 	unitbindings @
-	posbindings action @
-	extrabindings action,
+	posbindings action,
 
 	(* If the semantic action is susceptible of raising [Error],
 	   use a [let/unless] construct, otherwise use [let]. *)

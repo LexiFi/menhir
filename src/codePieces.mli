@@ -107,16 +107,6 @@ val destructuretokendef: string -> typ -> bool -> (Terminal.t -> expr) -> valdef
 
 (* ------------------------------------------------------------------------ *)
 
-(* Bindings for exotic keywords. *)
-
-(* This provides definitions for the [$startofs] and [$endofs] keywords, if
-   required by a semantic action. The [ofs] keyword family is defined in terms
-   of the [pos] family by accessing the [pos_cnum] field. *)
-
-val extrabindings: Action.t -> (pattern * expr) list
-
-(* ------------------------------------------------------------------------ *)
-
 (* A global variable holds the exception [Error]. *)
 
 (* The definition of this global variable. *)

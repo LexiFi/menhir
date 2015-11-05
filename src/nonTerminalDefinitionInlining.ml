@@ -22,19 +22,12 @@ let index2id producers i =
 
 (* [rename_sw_outer] transforms the keywords in the outer production (the
    caller) during inlining. It replaces [$startpos(x)] and [$endpos(x)], where
-   [x] is the name of the callee, with [startpx] and [endpx], respectively. It
-   also replaces [$startpos] with [startp]. Although in most cases [startp]
-   will be [$startpos] -- so [$startpos] is not affected -- in the special
-   case where we are inlining an epsilon production in front of the outer
-   production, we must replace [$startpos] with [$endpos($0)]. *)
+   [x] is the name of the callee, with [startpx] and [endpx], respectively. *)
 
-let rename_sw_outer (x, startpx, endpx, startp) (subject, where) : (subject * where) option =
+let rename_sw_outer (x, startpx, endpx) (subject, where) : (subject * where) option =
   match subject, where with
-  | Before, _
-  | Left, WhereEnd ->
+  | Before, _ ->
       None
-  | Left, WhereStart ->
-      Some startp
   | RightNamed x', _ ->
       if x' = x then
         match where with
@@ -42,24 +35,25 @@ let rename_sw_outer (x, startpx, endpx, startp) (subject, where) : (subject * wh
         | WhereEnd   -> Some endpx
       else
         None
+  | Left, _ ->
+      (* [$startpos] and [$endpos] have been expanded away earlier; see
+         [KeywordExpansion]. *)
+      assert false
 
 (* [rename_sw_inner] transforms the keywords in the inner production (the callee)
-   during inlining. It looks for [$endpos($0)], [$startpos], and [$endpos], and
-   replaces them with [beforeendp], [startp], and [endp], respectively. *)
+   during inlining. It replaces [$endpos($0)] with [beforeendp]. *)
 
-(* It does not modify any [$startpos(x)], of course. *)
-
-let rename_sw_inner (beforeendp, startp, endp) (subject, where) : (subject * where) option =
+let rename_sw_inner beforeendp (subject, where) : (subject * where) option =
   match subject, where with
   | Before, _ ->
       assert (where = WhereEnd);
       Some beforeendp
-  | Left, WhereStart ->
-      Some startp
-  | Left, WhereEnd ->
-      Some endp
   | RightNamed _, _ ->
       None
+  | Left, _ ->
+      (* [$startpos] and [$endpos] have been expanded away earlier; see
+         [KeywordExpansion]. *)
+      assert false
 
 (* Inline a grammar. The resulting grammar does not contain any definitions
    that can be inlined. *)
@@ -230,26 +224,11 @@ let inline grammar =
             Before, WhereEnd
         in
 
-        (* In the special case where the inner production is epsilon and
-           the prefix is empty, [$startpos] in the outer production must
-           be changed to [$endpos($0)] in order to preserve the semantics.
-           Indeed, if we do not do anything special, inlining causes the
-           inner production to disappear, so [$startpos] will be computed
-           based on the next element of the outer production, whereas in
-           the absence of inlining, it was computed by the epsilon production. *)
-        
-        let outer_startp =
-          if inlined_producers = 0 && prefix = 0 then
-            Before, WhereEnd
-          else
-            Left, WhereStart
-        in
-
 	(* Rename the outer and inner semantic action. *)
 	let outer_action =
-	  Action.rename (rename_sw_outer (c, startp, endp, outer_startp)) [] b.action
+	  Action.rename (rename_sw_outer (c, startp, endp)) [] b.action
 	and action' =
-	  Action.rename (rename_sw_inner (beforeendp, startp, endp)) phi pb.action
+	  Action.rename (rename_sw_inner beforeendp) phi pb.action
 	in
 
 	{ b with
