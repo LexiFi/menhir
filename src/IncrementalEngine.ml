@@ -189,10 +189,9 @@ module type INCREMENTAL_ENGINE = sig
 
   val stack: env -> stack
 
-  (* These are the start and end positions of the current lookahead token. It
-     is legal to invoke this function only after at least one token has been
-     offered to the parser via [offer]. In other words, it is illegal to
-     invoke it in an initial state. *)
+  (* These are the start and end positions of the current lookahead token. If
+     invoked in an initial state, this function returns a pair of twice the
+     initial position. *)
 
   val positions: env -> Lexing.position * Lexing.position
 

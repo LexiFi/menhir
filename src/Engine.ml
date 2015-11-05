@@ -696,7 +696,6 @@ module Make (T : TABLE) = struct
 
   let positions { triple = (_, startp, endp); _ } =
     startp, endp
-      (* TEMPORARY remove this function? *)
 
   (* --------------------------------------------------------------------------- *)
 
