@@ -13,7 +13,7 @@ type optional_comma =
   positions * nothing option
 
 type annotations =
-  positions * optional_dot * optional_comma
+  positions * positions * optional_dot * optional_comma
 
 type raw_expr =
   | EInt
@@ -55,8 +55,9 @@ module Print = struct
     positions "optional_comma" poss;
     iter nothing no
 
-  let annotations (poss, odot, ocomma) =
-    positions "annotations" poss;
+  let annotations (poss1, poss2, odot, ocomma) =
+    positions "annotations" poss1;
+    positions "annotations(internal)" poss2;
     optional_dot odot;
     optional_comma ocomma
 

@@ -45,7 +45,9 @@ optional_comma:
 
 annotations:
   optional_dot optional_comma
-    { (Parsing.rhs_start_pos 1, Parsing.symbol_end_pos()), $1, $2 }
+    { (Parsing.rhs_start_pos 1, Parsing.symbol_end_pos()),
+      (Parsing.rhs_end_pos 1, Parsing.rhs_start_pos 2),
+      $1, $2 }
 
 raw_expr:
 | INT
