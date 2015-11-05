@@ -94,12 +94,14 @@ quantifier:
 statement:
 | x0 = ty2 _2 = EQ x1 = ty2
     {let ty2 =
-  let _startpos = _endpos__2_ in
+  let _endpos = _endpos_x1_ in
+  let _startpos = _startpos_x1_ in
   let x = x1 in
       ( ((_startpos, _endpos), x) )
 in
 let ty1 =
-  let _endpos = _startpos__2_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
@@ -120,13 +122,16 @@ list_declaration_:
 nonempty_list_loc_type_variable__:
 | x0 = type_variable
     {let x =
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
     ( [ x ] )}
 | x0 = type_variable xs = nonempty_list_loc_type_variable__
     {let x =
-  let _endpos = _startpos_xs_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
@@ -135,13 +140,16 @@ in
 nonempty_list_loc_term_variable__:
 | x0 = term_variable
     {let x =
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
     ( [ x ] )}
 | x0 = term_variable xs = nonempty_list_loc_term_variable__
     {let x =
-  let _endpos = _startpos_xs_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
@@ -194,8 +202,8 @@ in
       ( kind )
 in
 let ty =
-  let _endpos = _startpos__3_ in
-  let _startpos = _endpos__1_ in
+  let _endpos = _endpos_ty00_ in
+  let _startpos = _startpos_ty00_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
@@ -206,8 +214,8 @@ in
     ( TyConstraint (ty, kind) )}
 | _1 = LPAR ty00 = ty3 delimiter = COMMA ty01 = ty3 _5 = RPAR
     {let ty2 =
-  let _endpos = _startpos__5_ in
-  let _startpos = _endpos_delimiter_ in
+  let _endpos = _endpos_ty01_ in
+  let _startpos = _startpos_ty01_ in
   let ty0 = ty01 in
   let x =
     let ty = ty0 in
@@ -216,8 +224,8 @@ in
       ( ((_startpos, _endpos), x) )
 in
 let ty1 =
-  let _endpos = _startpos_delimiter_ in
-  let _startpos = _endpos__1_ in
+  let _endpos = _endpos_ty00_ in
+  let _startpos = _startpos_ty00_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
@@ -234,13 +242,14 @@ ty1:
     {    ( ty )}
 | x0 = ty1 x1 = ty0
     {let ty2 =
-  let _startpos = _endpos_x0_ in
+  let _endpos = _endpos_x1_ in
+  let _startpos = _startpos_x1_ in
   let x = x1 in
       ( ((_startpos, _endpos), x) )
 in
-let _startpos_ty2_ = _endpos_x0_ in
 let ty1 =
-  let _endpos = _startpos_ty2_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
@@ -251,18 +260,20 @@ ty2:
     {    ( ty )}
 | x0 = ty2 _2 = BACKQUOTE x1 = ty1 delimiter = BACKQUOTE x2 = ty1
     {let ty2 =
-  let _startpos = _endpos_delimiter_ in
+  let _endpos = _endpos_x2_ in
+  let _startpos = _startpos_x2_ in
   let x = x2 in
       ( ((_startpos, _endpos), x) )
 in
 let ty =
-  let _endpos = _startpos_delimiter_ in
-  let _startpos = _endpos__2_ in
+  let _endpos = _endpos_x1_ in
+  let _startpos = _startpos_x1_ in
   let x = x1 in
       ( ((_startpos, _endpos), x) )
 in
 let ty1 =
-  let _endpos = _startpos__2_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
@@ -275,12 +286,14 @@ ty3:
     {    ( ty )}
 | x0 = ty2 delimiter = ARROW x1 = ty3
     {let ty2 =
-  let _startpos = _endpos_delimiter_ in
+  let _endpos = _endpos_x1_ in
+  let _startpos = _startpos_x1_ in
   let x = x1 in
       ( ((_startpos, _endpos), x) )
 in
 let ty1 =
-  let _endpos = _startpos_delimiter_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
@@ -289,14 +302,16 @@ in
       TyArrow (loc1, ty1, ty2) )}
 | _1 = LAMBDA b = type_binder _3 = DOT x0 = ty3
     {let ty =
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
     ( bind b (mktyabs ty) ty )}
 | q = quantifier b = type_binder _3 = DOT x0 = ty3
     {let ty =
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
@@ -311,7 +326,8 @@ term_variable_or_wildcard:
 term_binder:
 | ids = nonempty_list_loc_term_variable__ _2 = COLON ty00 = ty3
     {let ty =
-  let _startpos = _endpos__2_ in
+  let _endpos = _endpos_ty00_ in
+  let _startpos = _startpos_ty00_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
@@ -334,8 +350,8 @@ in
     ( t )}
 | _1 = LPAR t00 = term3 _3 = COLON ty00 = ty3 _5 = RPAR
     {let ty =
-  let _endpos = _startpos__5_ in
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_ty00_ in
+  let _startpos = _startpos_ty00_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
@@ -344,8 +360,8 @@ in
       ( ((_startpos, _endpos), x) )
 in
 let t =
-  let _endpos = _startpos__3_ in
-  let _startpos = _endpos__1_ in
+  let _endpos = _endpos_t00_ in
+  let _startpos = _startpos_t00_ in
   let t0 = t00 in
   let x =
     let t = t0 in
@@ -356,8 +372,8 @@ in
     ( TeConstraint (t, ty) )}
 | _1 = LPAR t00 = term3 _3 = COMMA t01 = term3 _5 = RPAR
     {let t2 =
-  let _endpos = _startpos__5_ in
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_t01_ in
+  let _startpos = _startpos_t01_ in
   let t0 = t01 in
   let x =
     let t = t0 in
@@ -366,8 +382,8 @@ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos = _startpos__3_ in
-  let _startpos = _endpos__1_ in
+  let _endpos = _endpos_t00_ in
+  let _startpos = _startpos_t00_ in
   let t0 = t00 in
   let x =
     let t = t0 in
@@ -382,21 +398,22 @@ term1:
     {    ( t )}
 | x0 = term1 x1 = term0
     {let t2 =
-  let _startpos = _endpos_x0_ in
+  let _endpos = _endpos_x1_ in
+  let _startpos = _startpos_x1_ in
   let x = x1 in
       ( ((_startpos, _endpos), x) )
 in
-let _startpos_t2_ = _endpos_x0_ in
 let t1 =
-  let _endpos = _startpos_t2_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
     ( TeApp (t1, t2) )}
 | x0 = term1 _2 = LBRACKET ty00 = ty3 _4 = RBRACKET
     {let ty =
-  let _endpos = _startpos__4_ in
-  let _startpos = _endpos__2_ in
+  let _endpos = _endpos_ty00_ in
+  let _startpos = _startpos_ty00_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
@@ -405,7 +422,8 @@ in
       ( ((_startpos, _endpos), x) )
 in
 let t =
-  let _endpos = _startpos__2_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
@@ -416,18 +434,20 @@ term2:
     {    ( t )}
 | x0 = term2 _2 = BACKQUOTE x1 = term1 delimiter = BACKQUOTE x2 = term1
     {let t2 =
-  let _startpos = _endpos_delimiter_ in
+  let _endpos = _endpos_x2_ in
+  let _startpos = _startpos_x2_ in
   let x = x2 in
       ( ((_startpos, _endpos), x) )
 in
 let t =
-  let _endpos = _startpos_delimiter_ in
-  let _startpos = _endpos__2_ in
+  let _endpos = _endpos_x1_ in
+  let _startpos = _startpos_x1_ in
   let x = x1 in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos = _startpos__2_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
@@ -440,21 +460,24 @@ term3:
     {    ( t )}
 | _1 = LAMBDA b = term_binder _3 = DOT x0 = term3
     {let t =
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
     ( bind b (mkteabs t) t )}
 | _1 = BIGLAMBDA b = type_binder _3 = DOT x0 = term3
     {let t =
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_x0_ in
+  let _startpos = _startpos_x0_ in
   let x = x0 in
       ( ((_startpos, _endpos), x) )
 in
     ( bind b (mktetyabs t) t )}
 | _1 = PACK ty00 = ty3 _3 = COMMA t00 = term3 _5 = AS ty01 = ty3
     {let ty1 =
-  let _startpos = _endpos__5_ in
+  let _endpos = _endpos_ty01_ in
+  let _startpos = _startpos_ty01_ in
   let ty0 = ty01 in
   let x =
     let ty = ty0 in
@@ -463,8 +486,8 @@ in
       ( ((_startpos, _endpos), x) )
 in
 let t =
-  let _endpos = _startpos__5_ in
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_t00_ in
+  let _startpos = _startpos_t00_ in
   let t0 = t00 in
   let x =
     let t = t0 in
@@ -473,8 +496,8 @@ let t =
       ( ((_startpos, _endpos), x) )
 in
 let ty2 =
-  let _endpos = _startpos__3_ in
-  let _startpos = _endpos__1_ in
+  let _endpos = _endpos_ty00_ in
+  let _startpos = _startpos_ty00_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
@@ -485,7 +508,8 @@ in
     ( TePack (t, ty1, ty2) )}
 | _1 = UNPACK alpha = type_variable _3 = COMMA x = term_variable _5 = EQ t00 = term3 _7 = IN t01 = term3
     {let t2 =
-  let _startpos = _endpos__7_ in
+  let _endpos = _endpos_t01_ in
+  let _startpos = _startpos_t01_ in
   let t0 = t01 in
   let x =
     let t = t0 in
@@ -494,8 +518,8 @@ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos = _startpos__7_ in
-  let _startpos = _endpos__5_ in
+  let _endpos = _endpos_t00_ in
+  let _startpos = _startpos_t00_ in
   let t0 = t00 in
   let x =
     let t = t0 in
@@ -506,7 +530,8 @@ in
     ( TeUnpack (alpha, x, t1, t2) )}
 | _1 = LET id = term_variable _3 = EQ t00 = term3 _5 = IN t01 = term3
     {let t2 =
-  let _startpos = _endpos__5_ in
+  let _endpos = _endpos_t01_ in
+  let _startpos = _startpos_t01_ in
   let t0 = t01 in
   let x =
     let t = t0 in
@@ -515,8 +540,8 @@ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos = _startpos__5_ in
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_t00_ in
+  let _startpos = _startpos_t00_ in
   let t0 = t00 in
   let x =
     let t = t0 in
@@ -527,7 +552,8 @@ in
     ( TeLet (id, t1, t2) )}
 | _1 = LET _2 = LPAR id1 = term_variable_or_wildcard _4 = COMMA id2 = term_variable_or_wildcard _6 = RPAR _7 = EQ t00 = term3 _9 = IN t01 = term3
     {let t2 =
-  let _startpos = _endpos__9_ in
+  let _endpos = _endpos_t01_ in
+  let _startpos = _startpos_t01_ in
   let t0 = t01 in
   let x =
     let t = t0 in
@@ -536,8 +562,8 @@ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos = _startpos__9_ in
-  let _startpos = _endpos__7_ in
+  let _endpos = _endpos_t00_ in
+  let _startpos = _startpos_t00_ in
   let t0 = t00 in
   let x =
     let t = t0 in
@@ -548,7 +574,8 @@ in
     ( TeLetPair (id1, id2, t1, t2) )}
 | _1 = ASSERT id = term_variable _3 = COLON ty00 = ty3 _5 = IN t00 = term3
     {let t =
-  let _startpos = _endpos__5_ in
+  let _endpos = _endpos_t00_ in
+  let _startpos = _startpos_t00_ in
   let t0 = t00 in
   let x =
     let t = t0 in
@@ -557,8 +584,8 @@ in
       ( ((_startpos, _endpos), x) )
 in
 let ty =
-  let _endpos = _startpos__5_ in
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_ty00_ in
+  let _startpos = _startpos_ty00_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
@@ -566,13 +593,14 @@ let ty =
   in
       ( ((_startpos, _endpos), x) )
 in
-let _endpos_ty_ = _startpos__5_ in
+let _endpos_ty_ = _endpos_ty00_ in
     ( let var = (_startpos_id_, _endpos_id_), TeVar id in
       let con = (_startpos_id_, _endpos_ty_), TeConstraint (var, ty) in
       TeLet (id, con, t) )}
 | _1 = LET id = term_variable _3 = COLON ty00 = ty3 _5 = EQ t00 = term3 _7 = IN t01 = term3
     {let t2 =
-  let _startpos = _endpos__7_ in
+  let _endpos = _endpos_t01_ in
+  let _startpos = _startpos_t01_ in
   let t0 = t01 in
   let x =
     let t = t0 in
@@ -581,8 +609,8 @@ let _endpos_ty_ = _startpos__5_ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos = _startpos__7_ in
-  let _startpos = _endpos__5_ in
+  let _endpos = _endpos_t00_ in
+  let _startpos = _startpos_t00_ in
   let t0 = t00 in
   let x =
     let t = t0 in
@@ -591,8 +619,8 @@ let t1 =
       ( ((_startpos, _endpos), x) )
 in
 let ty =
-  let _endpos = _startpos__5_ in
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_ty00_ in
+  let _startpos = _startpos_ty00_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
@@ -600,12 +628,13 @@ let ty =
   in
       ( ((_startpos, _endpos), x) )
 in
-let _endpos_ty_ = _startpos__5_ in
+let _endpos_ty_ = _endpos_ty00_ in
     ( let con = (_startpos_id_, _endpos_ty_), TeConstraint (t1, ty) in
       TeLet (id, con, t2) )}
 | _1 = TYPE id = type_variable _3 = EQ ty00 = ty3 _5 = IN t00 = term3
     {let t =
-  let _startpos = _endpos__5_ in
+  let _endpos = _endpos_t00_ in
+  let _startpos = _startpos_t00_ in
   let t0 = t00 in
   let x =
     let t = t0 in
@@ -614,8 +643,8 @@ let _endpos_ty_ = _startpos__5_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty =
-  let _endpos = _startpos__5_ in
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_ty00_ in
+  let _startpos = _startpos_ty00_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
@@ -634,7 +663,8 @@ in
     ( [ DKind (id, kind) ] )}
 | _1 = TYPE id = type_variable _3 = COLON kind0 = kind1 _5 = EQ ty00 = ty3
     {let ty =
-  let _startpos = _endpos__5_ in
+  let _endpos = _endpos_ty00_ in
+  let _startpos = _startpos_ty00_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
@@ -657,7 +687,8 @@ in
     {    ( [ DLemma s ] )}
 | _1 = TERM id = term_variable _3 = COLON ty00 = ty3 _5 = EQ t00 = term3
     {let t =
-  let _startpos = _endpos__5_ in
+  let _endpos = _endpos_t00_ in
+  let _startpos = _startpos_t00_ in
   let t0 = t00 in
   let x =
     let t = t0 in
@@ -666,8 +697,8 @@ in
       ( ((_startpos, _endpos), x) )
 in
 let ty =
-  let _endpos = _startpos__5_ in
-  let _startpos = _endpos__3_ in
+  let _endpos = _endpos_ty00_ in
+  let _startpos = _startpos_ty00_ in
   let ty0 = ty00 in
   let x =
     let ty = ty0 in
