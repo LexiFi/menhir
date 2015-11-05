@@ -102,8 +102,10 @@ let actiondef grammar symbol branch =
     PAnnot (PVar "_eRR", texn) ::
     PAnnot (PVar "_startpos", tposition) ::
     PAnnot (PVar "_endpos", tposition) ::
+    PAnnot (PVar "_endpos__0_", tposition) ::
     PAnnot (PVar "_startofs", tint) ::
     PAnnot (PVar "_endofs", tint) ::
+    PAnnot (PVar "_endofs__0_", tint) ::
     formals
   in
 

@@ -39,20 +39,23 @@
 
   (* Check that only allowed indices are used in semantic actions. *)
   let check_producers_indices allowed_producers pkeywords =
-    List.iter (function
-    | { value = Keyword.PDollar idx; position } ->
-	if idx - 1 >= Array.length allowed_producers then
-	  Error.error [position]
-	    "$%d refers to a nonexistent symbol." idx
-	else begin match allowed_producers.(idx - 1) with
-	| None ->
-	    ()
-	| Some x ->
-	    Error.error [position]
-	      "please do not say: $%d. Instead, say: %s." idx x
-	end
-    | _ ->
-        ()
+    List.iter (fun pkeyword ->
+      match Positions.value pkeyword with
+      | Keyword.PPosition (Keyword.PRightDollar 0, Keyword.WhereEnd, _) ->
+          (* As a special case, [$endpos($0)] is allowed. *)
+          ()
+      | Keyword.PDollar idx
+      | Keyword.PPosition (Keyword.PRightDollar idx, _, _) ->
+  	  if not (0 <= idx - 1 && idx - 1 < Array.length allowed_producers) then
+	    Error.error [ Positions.position pkeyword ]
+	      "$%d refers to a nonexistent symbol." idx
+	  else
+            allowed_producers.(idx - 1) |> Option.iter (fun x ->
+	      Error.error [ Positions.position pkeyword ]
+	        "please do not say: $%d. Instead, say: %s." idx x
+            )
+      | _ ->
+         ()
     ) pkeywords
 
   (* In-place transformation of keywords. We turn our keywords into
@@ -136,6 +139,7 @@
       in
       let rewrite_subject = function
 	| PLeft -> Left
+        | PRightDollar 0 -> Before
 	| PRightDollar i -> RightNamed (rewrite_index i)
 	| PRightNamed n -> RightNamed n
       in
