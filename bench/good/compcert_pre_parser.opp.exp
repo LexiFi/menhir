@@ -203,7 +203,8 @@ primary_expression:
 | _1 = LPAREN _2 = expression _3 = RPAREN
     {    ()}
 | _1 = LPAREN _2 = expression _3 = error
-    {    ( unclosed "(" ")" _startpos__1_ _endpos )}
+    {let _endpos = _endpos__3_ in
+    ( unclosed "(" ")" _startpos__1_ _endpos )}
 
 postfix_expression:
 | _1 = primary_expression
@@ -225,17 +226,20 @@ in
     {let _3 =
       ( None )
 in
+let _endpos = _endpos__4_ in
     ( unclosed "(" ")" _startpos__2_ _endpos )}
 | _1 = postfix_expression _2 = LPAREN x0 = argument_expression_list _4 = error
     {let _3 =
   let x = x0 in
       ( Some x )
 in
+let _endpos = _endpos__4_ in
     ( unclosed "(" ")" _startpos__2_ _endpos )}
 | _1 = BUILTIN_VA_ARG _2 = LPAREN _3 = assignment_expression _4 = COMMA _5 = type_name _6 = RPAREN
     {    ()}
 | _1 = BUILTIN_VA_ARG _2 = LPAREN _3 = assignment_expression _4 = COMMA _5 = type_name _6 = error
-    {    ( unclosed "(" ")" _startpos__2_ _endpos )}
+    {let _endpos = _endpos__6_ in
+    ( unclosed "(" ")" _startpos__2_ _endpos )}
 | _1 = postfix_expression _2 = DOT i = general_identifier
     {    ( set_id_type i OtherId )}
 | _1 = postfix_expression _2 = PTR i = general_identifier
@@ -256,17 +260,20 @@ in
 in
     ()}
 | _1 = LPAREN _2 = type_name _3 = error
-    {    ( unclosed "(" ")" _startpos__1_ _endpos )}
+    {let _endpos = _endpos__3_ in
+    ( unclosed "(" ")" _startpos__1_ _endpos )}
 | _1 = LPAREN _2 = type_name _3 = RPAREN _4 = LBRACE _5 = initializer_list _7 = error
     {let _6 =
       ( None )
 in
+let _endpos = _endpos__7_ in
     ( unclosed "{" "}" _startpos__4_ _endpos )}
 | _1 = LPAREN _2 = type_name _3 = RPAREN _4 = LBRACE _5 = initializer_list x0 = COMMA _7 = error
     {let _6 =
   let x = x0 in
       ( Some x )
 in
+let _endpos = _endpos__7_ in
     ( unclosed "{" "}" _startpos__4_ _endpos )}
 
 argument_expression_list:
@@ -1082,9 +1089,11 @@ struct_or_union_specifier:
 | _1 = struct_or_union _2 = attribute_specifier_list i = general_identifier
     {    ( set_id_type i OtherId )}
 | _1 = struct_or_union _2 = attribute_specifier_list _3 = LBRACE _4 = struct_declaration_list _5 = error
-    {    ( unclosed "{" "}" _startpos__3_ _endpos )}
+    {let _endpos = _endpos__5_ in
+    ( unclosed "{" "}" _startpos__3_ _endpos )}
 | _1 = struct_or_union _2 = attribute_specifier_list _3 = general_identifier _4 = LBRACE _5 = struct_declaration_list _6 = error
-    {    ( unclosed "{" "}" _startpos__4_ _endpos )}
+    {let _endpos = _endpos__6_ in
+    ( unclosed "{" "}" _startpos__4_ _endpos )}
 
 struct_or_union:
 | _1 = STRUCT
@@ -1259,23 +1268,27 @@ in
     {let _5 =
       ( None )
 in
+let _endpos = _endpos__6_ in
     ( unclosed "{" "}" _startpos__3_ _endpos )}
 | _1 = ENUM _2 = attribute_specifier_list _3 = LBRACE _4 = enumerator_list x0 = COMMA _6 = error
     {let _5 =
   let x = x0 in
       ( Some x )
 in
+let _endpos = _endpos__6_ in
     ( unclosed "{" "}" _startpos__3_ _endpos )}
 | _1 = ENUM _2 = attribute_specifier_list _3 = general_identifier _4 = LBRACE _5 = enumerator_list _7 = error
     {let _6 =
       ( None )
 in
+let _endpos = _endpos__7_ in
     ( unclosed "{" "}" _startpos__4_ _endpos )}
 | _1 = ENUM _2 = attribute_specifier_list _3 = general_identifier _4 = LBRACE _5 = enumerator_list x0 = COMMA _7 = error
     {let _6 =
   let x = x0 in
       ( Some x )
 in
+let _endpos = _endpos__7_ in
     ( unclosed "{" "}" _startpos__4_ _endpos )}
 
 enumerator_list:
@@ -1641,12 +1654,14 @@ in
     {let _3 =
       ( None )
 in
+let _endpos = _endpos__4_ in
     ( unclosed "{" "}" _startpos__1_ _endpos )}
 | _1 = LBRACE _2 = initializer_list x0 = COMMA _4 = error
     {let _3 =
   let x = x0 in
       ( Some x )
 in
+let _endpos = _endpos__4_ in
     ( unclosed "{" "}" _startpos__1_ _endpos )}
 
 initializer_list:
@@ -1748,7 +1763,8 @@ compound_statement:
 | _1 = LBRACE _2 = in_context_compcert_pre_parser_option_block_item_list__ _3 = RBRACE
     {    ()}
 | _1 = LBRACE _2 = in_context_compcert_pre_parser_option_block_item_list__ _3 = error
-    {    ( unclosed "{" "}" _startpos__1_ _endpos )}
+    {let _endpos = _endpos__3_ in
+    ( unclosed "{" "}" _startpos__1_ _endpos )}
 
 block_item_list:
 | _2 = block_item
@@ -2157,7 +2173,8 @@ translation_unit_file:
 | _1 = EOF
     {    ()}
 | _1 = error
-    {    ( syntax_error _endpos )}
+    {let _endpos = _endpos__1_ in
+    ( syntax_error _endpos )}
 
 translation_unit:
 | _1 = external_declaration
@@ -2261,12 +2278,14 @@ in
     {let _3 =
       ( None )
 in
+let _endpos = _endpos__5_ in
     ( unclosed "{" "}" _startpos__2_ _endpos )}
 | _1 = function_definition_begin _2 = LBRACE x0 = block_item_list _4 = pop_context _5 = error
     {let _3 =
   let x = x0 in
       ( Some x )
 in
+let _endpos = _endpos__5_ in
     ( unclosed "{" "}" _startpos__2_ _endpos )}
 
 %%

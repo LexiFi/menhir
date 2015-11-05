@@ -75,7 +75,9 @@ typ:
 
 expression:
 | e = raw_expression
-    {    ( Location.make _startpos _endpos e )}
+    {let _endpos = _endpos_e_ in
+let _startpos = _startpos_e_ in
+    ( Location.make _startpos _endpos e )}
 | _1 = LPAREN e = expression _3 = RPAREN
     {    ( e )}
 
@@ -317,7 +319,9 @@ in
 | lvalue = lvalue _2 = COLONEQ e = expression
     {    ( (lvalue : LPP.expression -> LPP.instruction) e )}
 | _1 = READLN _2 = LPAREN lvalue = lvalue _4 = RPAREN
-    {    ( let callee = Location.make _startpos__1_ _endpos__1_ (CPrimitiveFunction Readln) in
+    {let _endpos = _endpos__4_ in
+let _startpos = _startpos__1_ in
+    ( let callee = Location.make _startpos__1_ _endpos__1_ (CPrimitiveFunction Readln) in
       let e = Location.make _startpos _endpos (EFunCall (callee, [])) in
       (lvalue : LPP.expression -> LPP.instruction) e )}
 | _1 = IF c = condition _3 = THEN b = instruction_or_block
