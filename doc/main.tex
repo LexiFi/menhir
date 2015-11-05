@@ -1717,6 +1717,33 @@ the author of the lexical analyzer.)
 \label{fig:pos}
 \end{figure}
 
+\begin{figure}
+\begin{center}
+\begin{tabular}{lll}
+% Positions.
+\verb+symbol_start_pos()+ &
+not yet implemented       \\
+\verb+symbol_end_pos()+   &
+\verb+$endpos+            \\
+\verb+rhs_start_pos i+    &
+\verb+$startpos($i)+      & ($1 \leq i \leq n$) \\
+\verb+rhs_end_pos i+      &
+\verb+$endpos($i)+        & ($1 \leq i \leq n$) \\
+% Offsets.
+\verb+symbol_start()+     &
+not yet implemented       \\
+\verb+symbol_end()+       &
+\verb+$endofs+            \\
+\verb+rhs_start i+        &
+\verb+$startofs($i)+      & ($1 \leq i \leq n$) \\
+\verb+rhs_end i+          &
+\verb+$endofs($i)+        & ($1 \leq i \leq n$) \\
+\end{tabular}
+\end{center}
+\caption{Translating position-related incantations from \ocamlyacc to \menhir}
+\label{fig:pos:mapping}
+\end{figure}
+
 This mechanism allows associating pairs of positions with terminal symbols. If
 desired, \menhir automatically extends it to nonterminal symbols as well. That
 is, it offers a mechanism for associating pairs of positions with terminal or
@@ -1726,6 +1753,15 @@ nonterminal symbols. This is done by making a set of keywords, documented in
 Note also that \ocaml's standard library module \texttt{Parsing} is
 deprecated. The functions that it offers \emph{can} be called, but will return
 dummy positions.
+
+\fref{fig:pos:mapping} sums up how to translate a call to \texttt{Parsing}
+module, as used in \ocamlyacc grammars, to a \menhir keyword.
+%
+We note that \menhir's \verb+$startpos+ does not appear in the right-hand
+column. An \ocamlyacc equivalent of \verb+$startpos+ is \verb+rhs_start_pos 1+
+if used in a non-$\epsilon$ production (i.e., a production whose right-hand
+side has length at least 1) and \verb+symbol_start_pos()+ if used in an
+$\epsilon$-production (i.e., a production whose right-hand side has length 0).
 
 % ---------------------------------------------------------------------------------------------------------------------
 
