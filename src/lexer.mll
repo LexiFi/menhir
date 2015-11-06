@@ -1,267 +1,267 @@
 {
 
-  open Lexing
-  open Parser
-  open Positions
+open Lexing
+open Parser
+open Positions
 
-  (* This wrapper saves the current lexeme start, invokes its argument,
-     and restores it. This allows transmitting better positions to the
-     parser. *)
+(* This wrapper saves the current lexeme start, invokes its argument,
+   and restores it. This allows transmitting better positions to the
+   parser. *)
 
-  let savestart lexbuf f =
-    let startp = lexbuf.lex_start_p in
-    let token = f lexbuf in
-    lexbuf.lex_start_p <- startp;
-    token
+let savestart lexbuf f =
+  let startp = lexbuf.lex_start_p in
+  let token = f lexbuf in
+  lexbuf.lex_start_p <- startp;
+  token
 
-  (* Extracts a chunk out of the source file. *)
+(* Extracts a chunk out of the source file. *)
 
-  let chunk ofs1 ofs2 =
-    let contents = Error.get_file_contents() in
-    let len = ofs2 - ofs1 in
-    String.sub contents ofs1 len
+let chunk ofs1 ofs2 =
+  let contents = Error.get_file_contents() in
+  let len = ofs2 - ofs1 in
+  String.sub contents ofs1 len
 
-  (* Overwrites an old character with a new one at a specified
-     offset in a [bytes] buffer. *)
+(* Overwrites an old character with a new one at a specified
+   offset in a [bytes] buffer. *)
 
-  let overwrite content offset c1 c2 =
-    assert (Bytes.get content offset = c1);
-    Bytes.set content offset c2
+let overwrite content offset c1 c2 =
+  assert (Bytes.get content offset = c1);
+  Bytes.set content offset c2
 
-  type parsed_subject =
-  | PLeft
-  | PRightDollar of int
-  | PRightNamed of string
+type parsed_subject =
+| PLeft
+| PRightDollar of int
+| PRightNamed of string
 
-  type parsed_keyword =
-  | PDollar of int
-  | PPosition of parsed_subject * Keyword.where * Keyword.flavor
-  | PSyntaxError
+type parsed_keyword =
+| PDollar of int
+| PPosition of parsed_subject * Keyword.where * Keyword.flavor
+| PSyntaxError
 
-  (* Check that only allowed indices are used in semantic actions. *)
-  let check_producers_indices (producers : string option array) pkeywords =
-    List.iter (fun pkeyword ->
-      match Positions.value pkeyword with
-      | PPosition (PRightDollar 0, Keyword.WhereEnd, _) ->
-          (* As a special case, [$endpos($0)] is allowed. *)
-          ()
-      | PDollar idx
-      | PPosition (PRightDollar idx, _, _) ->
-  	  if not (0 <= idx - 1 && idx - 1 < Array.length producers) then
-	    Error.error [ Positions.position pkeyword ]
-	      "$%d refers to a nonexistent symbol." idx
-	  else
-            producers.(idx - 1) |> Option.iter (fun x ->
-	      Error.error [ Positions.position pkeyword ]
-	        "please do not say: $%d. Instead, say: %s." idx x
-            )
-      | _ ->
-         ()
-    ) pkeywords
+(* Check that only allowed indices are used in semantic actions. *)
+let check_producers_indices (producers : string option array) pkeywords =
+  List.iter (fun pkeyword ->
+    match Positions.value pkeyword with
+    | PPosition (PRightDollar 0, Keyword.WhereEnd, _) ->
+        (* As a special case, [$endpos($0)] is allowed. *)
+        ()
+    | PDollar idx
+    | PPosition (PRightDollar idx, _, _) ->
+        if not (0 <= idx - 1 && idx - 1 < Array.length producers) then
+          Error.error [ Positions.position pkeyword ]
+            "$%d refers to a nonexistent symbol." idx
+        else
+          producers.(idx - 1) |> Option.iter (fun x ->
+            Error.error [ Positions.position pkeyword ]
+              "please do not say: $%d. Instead, say: %s." idx x
+          )
+    | _ ->
+       ()
+  ) pkeywords
 
-  (* In-place transformation of keywords. We turn our keywords into
-     valid OCaml identifiers by replacing '$', '(', and ')' with '_'.
-     Bloody. *)
+(* In-place transformation of keywords. We turn our keywords into
+   valid OCaml identifiers by replacing '$', '(', and ')' with '_'.
+   Bloody. *)
 
-  let transform_keywords ofs1 (pkeywords : parsed_keyword located list) (content : bytes) =
-    List.iter (function { value = keyword; position = pos } ->
-      let pos = start_of_position pos in
-      let ofs = pos.pos_cnum - ofs1 in
-      overwrite content ofs '$' '_';
-      match keyword with
-      | PDollar _
-      | PPosition (PLeft, _, _) ->
-	  ()
-      | PSyntaxError ->
-	  (* $syntaxerror is replaced with
-	     (raise _eRR) *)
-          let source = "(raise _eRR)" in
-          Bytes.blit_string source 0 content ofs (String.length source)
-      | PPosition (subject, where, _) ->
-	  let ofslpar =
-	    match where with
-	    | Keyword.WhereStart ->
-		ofs + 9
-	    | Keyword.WhereEnd ->
-		ofs + 7
-	  in
-	  overwrite content ofslpar '(' '_';
-	  match subject with
-	  | PLeft ->
-	      assert false
-	  | PRightDollar i ->
-	      overwrite content (ofslpar + 1) '$' '_';
-	      overwrite content (ofslpar + 2 + String.length (string_of_int i)) ')' '_'
-	  | PRightNamed id ->
-	      overwrite content (ofslpar + 1 + String.length id) ')' '_'
-    ) pkeywords
+let transform_keywords ofs1 (pkeywords : parsed_keyword located list) (content : bytes) =
+  List.iter (function { value = keyword; position = pos } ->
+    let pos = start_of_position pos in
+    let ofs = pos.pos_cnum - ofs1 in
+    overwrite content ofs '$' '_';
+    match keyword with
+    | PDollar _
+    | PPosition (PLeft, _, _) ->
+        ()
+    | PSyntaxError ->
+        (* $syntaxerror is replaced with
+           (raise _eRR) *)
+        let source = "(raise _eRR)" in
+        Bytes.blit_string source 0 content ofs (String.length source)
+    | PPosition (subject, where, _) ->
+        let ofslpar =
+          match where with
+          | Keyword.WhereStart ->
+              ofs + 9
+          | Keyword.WhereEnd ->
+              ofs + 7
+        in
+        overwrite content ofslpar '(' '_';
+        match subject with
+        | PLeft ->
+            assert false
+        | PRightDollar i ->
+            overwrite content (ofslpar + 1) '$' '_';
+            overwrite content (ofslpar + 2 + String.length (string_of_int i)) ')' '_'
+        | PRightNamed id ->
+            overwrite content (ofslpar + 1 + String.length id) ')' '_'
+  ) pkeywords
 
-  (* In an OCaml header, there should be no keywords. This is just a sanity check. *)
+(* In an OCaml header, there should be no keywords. This is just a sanity check. *)
 
-  let no_keywords pkeywords =
+let no_keywords pkeywords =
+  match pkeywords with
+  | [] ->
+      ()
+  | { value = _; position = pos } :: _ ->
+      Error.error [pos] "a Menhir keyword cannot be used in an OCaml header."
+
+(* Creates a stretch. *)
+
+let mk_stretch pos1 pos2 parenthesize pkeywords = 
+  (* Read the specified chunk of the file. *)
+  let ofs1 = pos1.pos_cnum
+  and ofs2 = pos2.pos_cnum in
+  let raw_content : string = chunk ofs1 ofs2 in
+  (* Transform the keywords, if there are any. (This explicit test
+     allows saving one string copy and keeping just one live copy.) *)
+  let content : string =
     match pkeywords with
     | [] ->
-        ()
-    | { value = _; position = pos } :: _ ->
-        Error.error [pos] "a Menhir keyword cannot be used in an OCaml header."
-
-  (* Creates a stretch. *)
-
-  let mk_stretch pos1 pos2 parenthesize pkeywords = 
-    (* Read the specified chunk of the file. *)
-    let ofs1 = pos1.pos_cnum
-    and ofs2 = pos2.pos_cnum in
-    let raw_content : string = chunk ofs1 ofs2 in
-    (* Transform the keywords, if there are any. (This explicit test
-       allows saving one string copy and keeping just one live copy.) *)
-    let content : string =
-      match pkeywords with
-      | [] ->
-          raw_content
-      | _ :: _ ->
-          let content : bytes = Bytes.of_string raw_content in
-          transform_keywords ofs1 pkeywords content;
-          Bytes.unsafe_to_string content
+        raw_content
+    | _ :: _ ->
+        let content : bytes = Bytes.of_string raw_content in
+        transform_keywords ofs1 pkeywords content;
+        Bytes.unsafe_to_string content
+  in
+  (* Add whitespace so that the column numbers match those of the source file.
+     If requested, add parentheses so that the semantic action can be inserted
+     into other code without ambiguity. *)
+  let content =
+    if parenthesize then
+      (String.make (pos1.pos_cnum - pos1.pos_bol - 1) ' ') ^ "(" ^ content ^ ")"
+    else
+      (String.make (pos1.pos_cnum - pos1.pos_bol) ' ') ^ content
+  in
+  (* After parsing, every occurrence [$i] is replaced by [_i] in
+     semantic actions. *)
+  let rewritten_pkeywords = Keyword.(
+    let rewrite_index i =
+      "_" ^ string_of_int i
     in
-    (* Add whitespace so that the column numbers match those of the source file.
-       If requested, add parentheses so that the semantic action can be inserted
-       into other code without ambiguity. *)
-    let content =
-      if parenthesize then
-	(String.make (pos1.pos_cnum - pos1.pos_bol - 1) ' ') ^ "(" ^ content ^ ")"
-      else
-	(String.make (pos1.pos_cnum - pos1.pos_bol) ' ') ^ content
+    let rewrite_subject = function
+      | PLeft -> Left
+      | PRightDollar 0 -> Before
+      | PRightDollar i -> RightNamed (rewrite_index i)
+      | PRightNamed n  -> RightNamed n
     in
-    (* After parsing, every occurrence [$i] is replaced by [_i] in
-       semantic actions. *)
-    let rewritten_pkeywords = Keyword.(
-      let rewrite_index i =
-	"_" ^ string_of_int i
-      in
-      let rewrite_subject = function
-	| PLeft -> Left
-        | PRightDollar 0 -> Before
-	| PRightDollar i -> RightNamed (rewrite_index i)
-	| PRightNamed n  -> RightNamed n
-      in
-      Misc.map_opt (fun pk ->
-	let position = Positions.position pk in
-	match Positions.value pk with
-        | PDollar _ -> None
-	| PPosition (s, w, f) -> Some (Positions.with_pos position (Position (rewrite_subject s, w, f)))
-	| PSyntaxError -> Some (Positions.with_pos position SyntaxError)
-      ) pkeywords
-    ) in
-    {
-      Stretch.stretch_filename = Error.get_filename();
-      Stretch.stretch_linenum = pos1.pos_lnum;
-      Stretch.stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
-      Stretch.stretch_content = content;
-      Stretch.stretch_raw_content = raw_content;
-      Stretch.stretch_keywords = rewritten_pkeywords
-    } 
+    Misc.map_opt (fun pk ->
+      let position = Positions.position pk in
+      match Positions.value pk with
+      | PDollar _ -> None
+      | PPosition (s, w, f) -> Some (Positions.with_pos position (Position (rewrite_subject s, w, f)))
+      | PSyntaxError -> Some (Positions.with_pos position SyntaxError)
+    ) pkeywords
+  ) in
+  {
+    Stretch.stretch_filename = Error.get_filename();
+    Stretch.stretch_linenum = pos1.pos_lnum;
+    Stretch.stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
+    Stretch.stretch_content = content;
+    Stretch.stretch_raw_content = raw_content;
+    Stretch.stretch_keywords = rewritten_pkeywords
+  } 
 
-  (* Translates the family of position-related keywords to abstract
-     syntax. *)
+(* Translates the family of position-related keywords to abstract
+   syntax. *)
 
-  let mk_keyword lexbuf w f n id =
-    let where =
-      match w with
-      | Some _ ->
-	  Keyword.WhereStart
-      | None ->
-	  Keyword.WhereEnd
-    and flavor =
-      match f with
-      | Some _ ->
-	  Keyword.FlavorPosition
-      | None ->
-	  Keyword.FlavorOffset
-    and subject =
-      match n, id with
-      | Some n, None ->
-	  PRightDollar (int_of_string n)
-      | None, Some id ->
-	  PRightNamed id
-      | None, None ->
-	  PLeft
-      | Some _, Some _ ->
-          assert false
-    in
-    let keyword = PPosition (subject, where, flavor) in
-    with_cpos lexbuf keyword
+let mk_keyword lexbuf w f n id =
+  let where =
+    match w with
+    | Some _ ->
+        Keyword.WhereStart
+    | None ->
+        Keyword.WhereEnd
+  and flavor =
+    match f with
+    | Some _ ->
+        Keyword.FlavorPosition
+    | None ->
+        Keyword.FlavorOffset
+  and subject =
+    match n, id with
+    | Some n, None ->
+        PRightDollar (int_of_string n)
+    | None, Some id ->
+        PRightNamed id
+    | None, None ->
+        PLeft
+    | Some _, Some _ ->
+        assert false
+  in
+  let keyword = PPosition (subject, where, flavor) in
+  with_cpos lexbuf keyword
 
-  (* Objective Caml's reserved words. *)
+(* Objective Caml's reserved words. *)
 
-  let reserved =
-    let table = Hashtbl.create 149 in
-    List.iter (fun word -> Hashtbl.add table word ()) [
-      "and";
-      "as";
-      "assert";
-      "begin";
-      "class";
-      "constraint";
-      "do";
-      "done";
-      "downto";
-      "else";
-      "end";
-      "exception";
-      "external";
-      "false";
-      "for";
-      "fun";
-      "function";
-      "functor";
-      "if";
-      "in";
-      "include";
-      "inherit";
-      "initializer";
-      "lazy";
-      "let";
-      "match";
-      "method";
-      "module";
-      "mutable";
-      "new";
-      "object";
-      "of";
-      "open";
-      "or";
-      "parser";
-      "private";
-      "rec";
-      "sig";
-      "struct";
-      "then";
-      "to";
-      "true";
-      "try";
-      "type";
-      "val";
-      "virtual";
-      "when";
-      "while";
-      "with";
-      "mod";
-      "land";
-      "lor";
-      "lxor";
-      "lsl";
-      "lsr";
-      "asr";
-    ];
-    table
+let reserved =
+  let table = Hashtbl.create 149 in
+  List.iter (fun word -> Hashtbl.add table word ()) [
+    "and";
+    "as";
+    "assert";
+    "begin";
+    "class";
+    "constraint";
+    "do";
+    "done";
+    "downto";
+    "else";
+    "end";
+    "exception";
+    "external";
+    "false";
+    "for";
+    "fun";
+    "function";
+    "functor";
+    "if";
+    "in";
+    "include";
+    "inherit";
+    "initializer";
+    "lazy";
+    "let";
+    "match";
+    "method";
+    "module";
+    "mutable";
+    "new";
+    "object";
+    "of";
+    "open";
+    "or";
+    "parser";
+    "private";
+    "rec";
+    "sig";
+    "struct";
+    "then";
+    "to";
+    "true";
+    "try";
+    "type";
+    "val";
+    "virtual";
+    "when";
+    "while";
+    "with";
+    "mod";
+    "land";
+    "lor";
+    "lxor";
+    "lsl";
+    "lsr";
+    "asr";
+  ];
+  table
 
-  (* Short-hands. *)
+(* Short-hands. *)
 
-  let error1 pos =
-    Error.error (Positions.one pos)
+let error1 pos =
+  Error.error (Positions.one pos)
 
-  let error2 lexbuf =
-    Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p)
+let error2 lexbuf =
+  Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p)
 
 }
 
