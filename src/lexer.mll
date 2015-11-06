@@ -29,7 +29,7 @@
     Bytes.set content offset c2
 
   (* Check that only allowed indices are used in semantic actions. *)
-  let check_producers_indices allowed_producers pkeywords =
+  let check_producers_indices (producers : string option array) pkeywords =
     List.iter (fun pkeyword ->
       match Positions.value pkeyword with
       | Keyword.PPosition (Keyword.PRightDollar 0, Keyword.WhereEnd, _) ->
@@ -37,11 +37,11 @@
           ()
       | Keyword.PDollar idx
       | Keyword.PPosition (Keyword.PRightDollar idx, _, _) ->
-  	  if not (0 <= idx - 1 && idx - 1 < Array.length allowed_producers) then
+  	  if not (0 <= idx - 1 && idx - 1 < Array.length producers) then
 	    Error.error [ Positions.position pkeyword ]
 	      "$%d refers to a nonexistent symbol." idx
 	  else
-            allowed_producers.(idx - 1) |> Option.iter (fun x ->
+            producers.(idx - 1) |> Option.iter (fun x ->
 	      Error.error [ Positions.position pkeyword ]
 	        "please do not say: $%d. Instead, say: %s." idx x
             )
@@ -361,9 +361,9 @@ rule main = parse
         let openingpos = lexeme_end_p lexbuf in
         let closingpos, pkeywords = action false openingpos [] lexbuf in
         ACTION (
-	  fun allowed_producers_indices ->
+	  fun (producers : string option array) ->
 	  let stretch = mk_stretch openingpos closingpos true pkeywords in
-	  check_producers_indices allowed_producers_indices pkeywords;
+	  check_producers_indices producers pkeywords;
 	  Action.from_stretch stretch
 	)
       ) }
