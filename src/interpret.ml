@@ -497,7 +497,7 @@ let read_messages filename : run or_comment list =
         match SentenceParser.entry SentenceLexer.lex lexbuf with
         | exception Parsing.Parse_error ->
             Error.error
-              (Positions.one (Lexing.lexeme_start_p lexbuf))
+              [Positions.cpos lexbuf]
               "ill-formed sentence."
         | sentences ->
             (* In principle, we should now find a segment of whitespace
