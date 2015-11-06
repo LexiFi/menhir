@@ -14,15 +14,6 @@
     lexbuf.lex_start_p <- startp;
     token
 
-  (* Updates the line counter, which is used in some error messages. *)
-
-  let update_loc lexbuf =
-    let pos = lexbuf.lex_curr_p in
-    lexbuf.lex_curr_p <- { pos with
-      pos_lnum = pos.pos_lnum + 1;
-      pos_bol = pos.pos_cnum;
-    }
-
   (* Extracts a chunk out of the source file. *)
 
   let chunk ofs1 ofs2 =
@@ -349,7 +340,7 @@ rule main = parse
     { UID (with_pos (cpos lexbuf) id) }
 | "//" [^ '\010' '\013']* newline (* skip C++ style comment *)
 | newline
-    { update_loc lexbuf; main lexbuf }
+    { new_line lexbuf; main lexbuf }
 | whitespace+
     { main lexbuf }
 | "/*"
@@ -385,7 +376,7 @@ rule main = parse
 
 and comment openingpos = parse
 | newline
-    { update_loc lexbuf; comment openingpos lexbuf }
+    { new_line lexbuf; comment openingpos lexbuf }
 | "*/"
     { () }
 | eof
@@ -406,7 +397,7 @@ and ocamltype openingpos = parse
 | "(*"
     { ocamlcomment (lexeme_start_p lexbuf) lexbuf; ocamltype openingpos lexbuf }
 | newline
-    { update_loc lexbuf; ocamltype openingpos lexbuf }
+    { new_line lexbuf; ocamltype openingpos lexbuf }
 | eof
     { error1 openingpos "unterminated Objective Caml type." }
 | _
@@ -456,7 +447,7 @@ and action percent openingpos pkeywords = parse
     { ocamlcomment (lexeme_start_p lexbuf) lexbuf;
       action percent openingpos pkeywords lexbuf }
 | newline
-    { update_loc lexbuf;
+    { new_line lexbuf;
       action percent openingpos pkeywords lexbuf }
 | ')'
 | eof
@@ -491,7 +482,7 @@ and parentheses openingpos pkeywords = parse
 | "(*"
     { ocamlcomment (lexeme_start_p lexbuf) lexbuf; parentheses openingpos pkeywords lexbuf }
 | newline
-    { update_loc lexbuf; parentheses openingpos pkeywords lexbuf }
+    { new_line lexbuf; parentheses openingpos pkeywords lexbuf }
 | '}'
 | eof
     { error1 openingpos "unbalanced opening parenthesis." }
@@ -514,7 +505,7 @@ and ocamlcomment openingpos = parse
 | "'"
     { char lexbuf; ocamlcomment openingpos lexbuf }
 | newline
-    { update_loc lexbuf; ocamlcomment openingpos lexbuf }
+    { new_line lexbuf; ocamlcomment openingpos lexbuf }
 | eof
     { error1 openingpos "unterminated Objective Caml comment." }
 | _
@@ -527,7 +518,7 @@ and string openingpos = parse
    { () }
 | '\\' newline
 | newline
-   { update_loc lexbuf; string openingpos lexbuf }
+   { new_line lexbuf; string openingpos lexbuf }
 | '\\' _
    (* Upon finding a backslash, skip the character that follows,
       unless it is a newline. Pretty crude, but should work. *)
@@ -543,7 +534,7 @@ and string openingpos = parse
 
 and char = parse
 | '\\'? newline "'"
-   { update_loc lexbuf }
+   { new_line lexbuf }
 | [^ '\\' '\''] "'"
 | '\\' _ "'"
 | '\\' ['0'-'9'] ['0'-'9'] ['0'-'9'] "'"
@@ -558,7 +549,7 @@ and char = parse
 
 and finish = parse
 | newline
-    { update_loc lexbuf; finish lexbuf }
+    { new_line lexbuf; finish lexbuf }
 | eof
     { lexeme_start_p lexbuf }
 | _
