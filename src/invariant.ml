@@ -638,6 +638,8 @@ let rec require where symbol =
 	startp
     | WhereEnd ->
 	endp
+    | WhereSymbolStart ->
+        assert false (* has been expanded away *)
   in
   if not (SymbolSet.mem symbol !wherep) then begin
     wherep := SymbolSet.add symbol !wherep;
@@ -657,6 +659,8 @@ and require_aux where prod =
 	require where rhs.(0)
     | WhereEnd ->
 	require where rhs.(length - 1)
+    | WhereSymbolStart ->
+        assert false (* has been expanded away *)
 
 let () =
   Production.iterx (fun prod ->

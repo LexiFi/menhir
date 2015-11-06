@@ -12,12 +12,14 @@ type flavor =
   | FlavorOffset
   | FlavorPosition
 
-(* The user can request position information about the
-   start or end of a symbol. *)
+(* The user can request position information about the $start or $end
+   of a symbol. Also, $symbolstart requests the computation of the
+   start position of the first nonempty element in a production. *)
 
 type where =
-  | WhereStart
-  | WhereEnd
+| WhereSymbolStart
+| WhereStart
+| WhereEnd
 
 (* The user can request position information about a production's
    left-hand side or about one of the symbols in its right-hand
@@ -40,6 +42,8 @@ type keyword =
    name of the variable that the keyword is replaced with. *)
 
 let where = function
+  | WhereSymbolStart ->
+      "symbolstart"
   | WhereStart ->
       "start"
   | WhereEnd ->

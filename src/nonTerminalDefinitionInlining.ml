@@ -33,11 +33,12 @@ let rename_sw_outer (x, startpx, endpx) (subject, where) : (subject * where) opt
         match where with
         | WhereStart -> Some startpx
         | WhereEnd   -> Some endpx
+        | WhereSymbolStart -> assert false (* has been expanded away *)
       else
         None
   | Left, _ ->
-      (* [$startpos] and [$endpos] have been expanded away earlier; see
-         [KeywordExpansion]. *)
+      (* [$startpos], [$endpos], and [$symbolstartpos] have been expanded away
+         earlier; see [KeywordExpansion]. *)
       assert false
 
 (* [rename_sw_inner] transforms the keywords in the inner production (the callee)

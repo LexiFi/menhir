@@ -141,10 +141,20 @@ let position pos
   let none _ = () in
   let where, ofslpar (* offset of the opening parenthesis, if there is one *) =
     match where with
-    | "start" -> WhereStart, 9
-    |   "end" -> WhereEnd,   7
+    | "symbolstart" -> WhereSymbolStart, 15
+    | "start"       -> WhereStart,        9
+    | "end"         -> WhereEnd,          7
     | _       -> assert false
-  and flavor =
+  in
+  let () =
+    match where, i, x with
+    | WhereSymbolStart, Some _, _
+    | WhereSymbolStart, _, Some _ ->
+        Error.error [pos] "$symbolstart%s does not take a parameter." flavor
+    | _, _, _ ->
+        ()
+  in
+  let flavor =
     match flavor with
     | "pos"   -> FlavorPosition
     | "ofs"   -> FlavorOffset
@@ -325,7 +335,7 @@ let identchar = ['A'-'Z' 'a'-'z' '_' '\192'-'\214' '\216'-'\246' '\248'-'\255' '
 
 let poskeyword = 
   '$'
-  (("start" | "end") as where)
+  (("symbolstart" | "start" | "end") as where)
   (("pos" | "ofs") as flavor)
   ( '(' ( '$' (['0'-'9']+ as i) | ((lowercase identchar*) as x)) ')')?
 
