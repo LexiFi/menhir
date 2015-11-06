@@ -1032,6 +1032,22 @@ recognized by the grammar would be the same, but the LR automaton
 would probably have one more state and would perform one more
 reduction at run time.
 
+The \dinline keyword does not affect the computation of positions
+(\sref{sec:positions}). The same positions are computed, regardless of
+where \dinline keywords are placed.
+
+If the semantic actions have side effects, the \dinline keyword \emph{can}
+affect the order in which these side effects take place. In the example of
+\nt{op} and \nt{expression} above, if for some reason the semantic action
+associated with \nt{op} has a side effect (such as updating a global variable,
+or printing a message), then, by inlining \nt{op}, we delay this side effect,
+which takes place \emph{after} the second operand has been recognized, whereas
+in the absence of inlining it takes place as soon as the operator has been
+recognized.
+
+% Du coup, ça change l'ordre des effets, dans cet exemple, de infixe
+% à postfixe.
+
 \subsection{The standard library}
 \label{sec:library}
 
@@ -1694,54 +1710,52 @@ the author of the lexical analyzer.)
 
 \begin{figure}
 \begin{center}
-\begin{tabular}{lp{9cm}}
-\verb+$startpos+ & start position of the sentence derived out of the production that is being reduced \\
-\verb+$endpos+   & end position of the sentence derived out of the production that is being reduced \\
+\begin{tabular}{l@{\hskip 7.1mm}l}
+\verb+$startpos+ & start position of the first symbol in the production's right-hand side, if there is one; \\&
+                   end position of the most recently parsed symbol, otherwise \\
+\verb+$endpos+   & end position of the first symbol in the production's right-hand side, if there is one; \\&
+                   end position of the most recently parsed symbol, otherwise \\
 \verb+$startpos(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+
-                 & start position of the sentence derived out of the symbol whose semantic value is referred to as
-                   \verb+$+\nt{i} or \nt{id} \\
+                 & start position of the symbol named \verb+$+\nt{i} or \nt{id} \\
 \verb+$endpos(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+
-                 & end position of the sentence derived out of the symbol whose semantic value is referred to as
-                   \verb+$+\nt{i} or \nt{id} \\
-\verb+$startofs+ & start offset of the sentence derived out of the production that is being reduced \\
-\verb+$endofs+   & end offset of the sentence derived out of the production that is being reduced \\
-\verb+$startofs(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+
-                 & start offset of the sentence derived out of the symbol whose semantic value is referred to as
-                   \verb+$+\nt{i} or \nt{id} \\
-\verb+$endofs(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+
-                 & end offset of the sentence derived out of the symbol whose semantic value is referred to as
-                   \verb+$+\nt{i} or \nt{id} \\
+                 &   end position of the symbol named \verb+$+\nt{i} or \nt{id} \\
+\verb+$symbolstartpos+ & start position of the leftmost symbol \nt{id} such that
+                         \verb+$startpos(+\nt{id}\verb+) != $endpos(+\nt{id}\verb+)+; \\&
+                         if there is no such symbol, \verb+$endpos+ \\[2mm]
+\verb+$startofs+ \\
+\verb+$endofs+   \\
+\verb+$startofs(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+ & same as above, but produce an integer offset instead of a position \\
+\verb+$endofs(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+ \\
+\verb+$symbolstartofs+ \\
 \end{tabular}
 \end{center}
 \caption{Position-related keywords}
 \label{fig:pos}
 \end{figure}
-% TEMPORARY simplify the way things are said in this table
-% TEMPORARY documenter $endpos($0)
+
+% We could document $endpos($0). Not sure whether that would be a good thing.
 
 \begin{figure}
-\begin{center}
-\begin{tabular}{lll}
+\begin{tabular}{ll@{\hskip2cm}l}
 % Positions.
 \verb+symbol_start_pos()+ &
-not yet implemented       \\
+\verb+$symbolstartpos+    \\
 \verb+symbol_end_pos()+   &
 \verb+$endpos+            \\
 \verb+rhs_start_pos i+    &
 \verb+$startpos($i)+      & ($1 \leq i \leq n$) \\
 \verb+rhs_end_pos i+      &
-\verb+$endpos($i)+        & ($0 \leq i \leq n$) \\
+\verb+$endpos($i)+        & ($1 \leq i \leq n$) \\ % i = 0 permitted, really
 % Offsets.
 \verb+symbol_start()+     &
-not yet implemented       \\
+\verb+$symbolstartofs+    \\
 \verb+symbol_end()+       &
 \verb+$endofs+            \\
 \verb+rhs_start i+        &
 \verb+$startofs($i)+      & ($1 \leq i \leq n$) \\
 \verb+rhs_end i+          &
-\verb+$endofs($i)+        & ($0 \leq i \leq n$) \\
+\verb+$endofs($i)+        & ($1 \leq i \leq n$) \\ % i = 0 permitted, really
 \end{tabular}
-\end{center}
 \caption{Translating position-related incantations from \ocamlyacc to \menhir}
 \label{fig:pos:mapping}
 \end{figure}
@@ -1749,31 +1763,65 @@ not yet implemented       \\
 This mechanism allows associating pairs of positions with terminal symbols. If
 desired, \menhir automatically extends it to nonterminal symbols as well. That
 is, it offers a mechanism for associating pairs of positions with terminal or
-nonterminal symbols. This is done by making a set of keywords, documented in
-\fref{fig:pos}, available to semantic actions. Note that these keywords are
-\emph{not} available elsewhere---in particular, not within \ocaml headers.
+nonterminal symbols. This is done by making a set of keywords available to
+semantic actions (\fref{fig:pos}). Note that these keywords are
+\emph{not} available outside of a semantic action:
+in particular, they cannot be used within an \ocaml header.
 Note also that \ocaml's standard library module \texttt{Parsing} is
 deprecated. The functions that it offers \emph{can} be called, but will return
 dummy positions.
 
-% TEMPORARY document exactly positions are computed
+We remark that, if the current production has an empty right-hand side, then
+\verb+$startpos+ and \verb+$endpos+ are equal, and (by convention) are the end
+position of the most recently parsed symbol (that is, the symbol that happens
+to be on top of the automaton's stack when this production is reduced). If
+the current production has a nonempty right-hand side, then
+\verb+$startpos+ is the same as \verb+$startpos($1)+ and
+\verb+$endpos+ is the same as \verb+$endpos($+\nt{n}\verb+)+,
+where \nt{n} is the length of the right-hand side.
 
-% TEMPORARY document that %inline preserves positions
-%   Warn that it can REORDER side effects! (the inlined semantic
-%   action is delayed to the beginning of the host semantic action)
+More generally, if the current production has matched a sentence of length
+zero, then \verb+$startpos+ and \verb+$endpos+ will be equal, and conversely.
+% (provided the lexer is reasonable and never produces a token whose start and
+% end positions are equal).
 
-% TEMPORARY document that if $startpos seems less accurate than it used to be,
-%   then one might wish to switch to $symbolstartpos instead.
+The position \verb+$startpos+ is sometimes ``further towards the left'' than
+one would like. For example, in the following production:
+\begin{verbatim}
+  declaration: modifier? variable { $startpos }
+\end{verbatim}
+the keyword \verb+$startpos+ represents the start position of the optional
+modifier \verb+modifier?+. If this modifier turns out to be absent, then its
+start position is (by definition) the end position of the most recently parsed
+symbol. This may not be what is desired: perhaps the user would prefer in this
+case to use the start position of the symbol \verb+variable+. This is achieved by
+using \verb+$symbolstartpos+ instead of \verb+$startpos+. By definition,
+\verb+$symbolstartpos+ is the start position of the leftmost symbol whose
+start and end positions differ. In this example, the computation of
+\verb+$symbolstartpos+ skips the absent \verb+modifier+, whose start and end
+positions coincide, and returns the start position of the symbol \verb+variable+
+(assuming this symbol has distinct start and end positions).
 
+There is no keyword \verb+$symbolendpos+. Indeed, the problem
+with \verb+$startpos+ is due to the asymmetry in the definition
+of \verb+$startpos+ and \verb+$endpos+ in the case of an empty right-hand
+side, and does not affect \verb+$endpos+.
 
-\fref{fig:pos:mapping} sums up how to translate a call to \texttt{Parsing}
-module, as used in \ocamlyacc grammars, to a \menhir keyword.
-%
+The positions computed by Menhir are exactly the same as computed
+by \verb+ocamlyacc+. More precisely, \fref{fig:pos:mapping} sums up how to
+translate a call to the \texttt{Parsing} module, as used in an \ocamlyacc grammar,
+to a \menhir keyword.
+
 We note that \menhir's \verb+$startpos+ does not appear in the right-hand
-column. An \ocamlyacc equivalent of \verb+$startpos+ is \verb+rhs_start_pos 1+
-if used in a non-$\epsilon$ production (i.e., a production whose right-hand
-side has length at least 1) and \verb+symbol_start_pos()+ if used in an
-$\epsilon$-production (i.e., a production whose right-hand side has length 0).
+column in \fref{fig:pos:mapping}. In other words, \menhir's \verb+$startpos+
+does not correspond exactly to any of the \ocamlyacc function calls.
+An exact \ocamlyacc equivalent of \verb+$startpos+ is \verb+rhs_start_pos 1+
+if the current production has a nonempty right-hand side and
+\verb+symbol_start_pos()+ if it has an empty right-hand side.
+
+Finally, we remark that \menhir's \dinline keyword (\sref{sec:inline})
+does not affect the computation of positions. The same positions are computed,
+regardless of where \dinline keywords are placed.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
@@ -3413,6 +3461,11 @@ copy of the files \verb+menhirLib.{ml,mli}+ together with the generated
 parser. The command \texttt{menhir \osuggestmenhirlib} will tell you where to
 find these source files.
 
+\question{Why is \texttt{\$startpos} off towards the left? It seems to include some leading whitespace.}
+Indeed, as of 2015/11/04, the computation of positions has changed so as to match \ocamlyacc's
+behavior. As a result, \texttt{\$startpos} can now appear to be too far off to the left. This is explained
+in \sref{sec:positions}. In short, the solution is to use \verb+$symbolstartpos+ instead.
+
 % ---------------------------------------------------------------------------------------------------------------------
 
 \section{Technical background}
@@ -3421,9 +3474,9 @@ After experimenting with Knuth's canonical LR(1) technique~\cite{knuth-lr-65},
 we found that it \emph{really} is not practical, even on today's computers.
 For this reason, \menhir implements a slightly modified version of Pager's
 algorithm~\cite{pager-77}, which merges states on the fly if it can be proved
-that no reduce/reduce conflicts will arise as a consequence of this
-decision. This is how \menhir avoids the so-called \emph{mysterious} conflicts
-created by LALR(1) parser generators~\cite[section 5.7]{bison}.
+that no reduce/reduce conflicts will arise as a consequence of this decision.
+This is how \menhir avoids the so-called \emph{mysterious} conflicts created
+by LALR(1) parser generators~\cite[section 5.7]{bison}.
 
 \menhir's algorithm for explaining conflicts is inspired by DeRemer and
 Pennello's~\cite{deremer-pennello-82} and adapted for use with Pager's
