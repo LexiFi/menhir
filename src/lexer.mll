@@ -109,16 +109,16 @@
       | [] ->
           raw_content
       | _ :: _ ->
-        let content : bytes = Bytes.of_string raw_content in
-        transform_keywords ofs1 pkeywords content;
-        Bytes.unsafe_to_string content
+          let content : bytes = Bytes.of_string raw_content in
+          transform_keywords ofs1 pkeywords content;
+          Bytes.unsafe_to_string content
     in
     (* Add whitespace so that the column numbers match those of the source file.
        If requested, add parentheses so that the semantic action can be inserted
        into other code without ambiguity. *)
     let content =
       if parenthesize then
-	  (String.make (pos1.pos_cnum - pos1.pos_bol - 1) ' ') ^ "(" ^ content ^ ")"
+	(String.make (pos1.pos_cnum - pos1.pos_bol - 1) ' ') ^ "(" ^ content ^ ")"
       else
 	(String.make (pos1.pos_cnum - pos1.pos_bol) ' ') ^ content
     in
@@ -132,7 +132,7 @@
 	| PLeft -> Left
         | PRightDollar 0 -> Before
 	| PRightDollar i -> RightNamed (rewrite_index i)
-	| PRightNamed n -> RightNamed n
+	| PRightNamed n  -> RightNamed n
       in
       Misc.map_opt (fun pk ->
 	let position = Positions.position pk in
