@@ -8,6 +8,7 @@
 %left TIMES DIV         /* medium precedence */
 %nonassoc UMINUS        /* highest precedence */
 
+%type<Aux.annotations> annotations
 %type<Aux.main> main
 %start main
 
@@ -46,14 +47,14 @@ optional_comma:
 annotations:
   optional_dot optional_comma
     { (Parsing.rhs_start_pos 1, Parsing.symbol_end_pos()),
-      Parsing.rhs_end_pos 1, Parsing.rhs_start_pos 2, Parsing.rhs_start 1,
+      Parsing.rhs_end_pos 1, Parsing.rhs_start_pos 2, Parsing.rhs_start 1, Parsing.symbol_start_pos(),
       $1, $2 }
 
 raw_expr:
 | INT
     { EInt }
 | annotations LPAREN nothing expr RPAREN optional_dot
-    { EParen($1, $3, $4, $6) }
+    { EParen($1, $3, $4, $6, Parsing.symbol_start()) }
 | expr PLUS expr
     { EBinOp ($1, $3) }
 | expr MINUS expr

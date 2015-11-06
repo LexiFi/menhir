@@ -8,6 +8,7 @@
 %left TIMES DIV         /* medium precedence */
 %nonassoc UMINUS        /* highest precedence */
 
+%type<Aux.annotations> annotations
 %start<Aux.main> main
 
 %{ open Aux %}
@@ -39,14 +40,14 @@ optional_dot:
 %inline annotations:
   optional_dot optional_comma
     { ($startpos, $endpos),
-      $endpos($1), $startpos($2), $startofs,
+      $endpos($1), $startpos($2), $startofs, $symbolstartpos,
       $1, $2 }
 
 raw_expr:
 | INT
     { EInt }
 | a = annotations LPAREN n = nothing e = expr RPAREN o = optional_dot
-    { EParen(a, n, e, o) }
+    { EParen(a, n, e, o, $symbolstartofs) }
 | expr PLUS expr
 | expr MINUS expr
 | expr TIMES expr
