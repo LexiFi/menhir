@@ -10,12 +10,6 @@ type t = {
      be several files. *)
   filenames: string list;
 
-  (* A list of keywords that appear in this semantic action, with their
-     positions. This list is maintained only up to the well-formedness check in
-     [PartialGrammar.check_keywords]. Thereafter, it is no longer used. So, the
-     keyword-renaming functions do not bother to update it. *)
-  pkeywords : keyword Positions.located list;
-
   (* The set of keywords that appear in this semantic action. They can be thought
      of as free variables that refer to positions. They must be renamed during
      inlining. *)
@@ -25,17 +19,11 @@ type t = {
 
 (* Creation. *)
 
-let pkeywords_to_keywords pkeywords =
-  KeywordSet.of_list (List.map Positions.value pkeywords)
-
-let from_stretch s = 
-  let pkeywords = s.Stretch.stretch_keywords in
-  { 
-    expr      = IL.ETextual s;
-    filenames = [ s.Stretch.stretch_filename ];
-    pkeywords = pkeywords;
-    keywords  = pkeywords_to_keywords pkeywords;
-  }
+let from_stretch s = { 
+  expr      = IL.ETextual s;
+  filenames = [ s.Stretch.stretch_filename ];
+  keywords  = KeywordSet.of_list s.Stretch.stretch_keywords
+}
 
 (* Defining a keyword in terms of other keywords. *)
 
@@ -57,7 +45,6 @@ let compose x a1 a2 =
     expr      = IL.ELet ([ IL.PVar x, a1.expr ], a2.expr);
     keywords  = KeywordSet.union a1.keywords a2.keywords;
     filenames = a1.filenames @ a2.filenames;
-    pkeywords = [] (* don't bother; already checked *)
   }
 
 (* Substitutions, represented as association lists.
@@ -136,7 +123,6 @@ let rename f phi a =
   { 
     expr      = expr;
     filenames = a.filenames;
-    pkeywords = []; (* don't bother *)
     keywords  = keywords;
   }
 
@@ -148,9 +134,6 @@ let filenames action =
 
 let keywords action = 
   action.keywords
-
-let pkeywords action = 
-  action.pkeywords
 
 let print f action = 
   let module P = Printer.Make (struct let f = f 

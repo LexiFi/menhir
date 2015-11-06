@@ -3,6 +3,17 @@
 open Lexing
 open Parser
 open Positions
+open Keyword
+
+(* ------------------------------------------------------------------------ *)
+
+(* Short-hands. *)
+
+let error1 pos =
+  Error.error (Positions.one pos)
+
+let error2 lexbuf =
+  Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -38,99 +49,178 @@ let overwrite content offset c1 c2 =
 
 (* Keyword recognition and construction. *)
 
-type parsed_subject =
-| PLeft
-| PRightDollar of int
-| PRightNamed of string
+(* A monster is a spot where we have identified a keyword in concrete syntax.
+   We describe a monster as an object with the following methods: *)
 
-type parsed_keyword =
-| PDollar of int
-| PPosition of parsed_subject * Keyword.where * Keyword.flavor
-| PSyntaxError
+type monster = {
 
-(* Check that only allowed indices are used in semantic actions. *)
-let check_producers_indices (producers : string option array) pkeywords =
-  List.iter (fun pkeyword ->
-    match Positions.value pkeyword with
-    | PPosition (PRightDollar 0, Keyword.WhereEnd, _) ->
-        (* As a special case, [$endpos($0)] is allowed. *)
-        ()
-    | PDollar idx
-    | PPosition (PRightDollar idx, _, _) ->
-        if not (0 <= idx - 1 && idx - 1 < Array.length producers) then
-          Error.error [ Positions.position pkeyword ]
-            "$%d refers to a nonexistent symbol." idx
+  (* The position of the monster. *)
+  pos: Positions.t;
+
+  (* This method is passed an array of (optional) names for the producers,
+     that is, the elements of the production's right-hand side. It may
+     perform some checks and is allowed to fail. *)
+  check: string option array -> unit;
+
+  (* This method transforms the keyword (in place) into a conventional
+     OCaml identifier. This is done by replacing '$', '(', and ')' with
+     '_'. Bloody. The arguments are [ofs1] and [content]. [ofs1] is the
+     offset where [content] begins in the source file. *)
+  transform: int -> bytes -> unit;
+
+  (* This is the keyword, in abstract syntax. *)
+  keyword: keyword option;
+
+}
+
+(* ------------------------------------------------------------------------ *)
+
+(* The [$syntaxerror] monster. *)
+
+let syntaxerror pos : monster =
+  let check _ = ()
+  and transform ofs1 content =
+    (* [$syntaxerror] is replaced with
+       [(raise _eRR)]. Same length. *)
+    let pos = start_of_position pos in
+    let ofs = pos.pos_cnum - ofs1 in
+    let source = "(raise _eRR)" in
+    Bytes.blit_string source 0 content ofs (String.length source)
+  and keyword =
+    Some SyntaxError
+  in
+  { pos; check; transform; keyword }
+
+(* ------------------------------------------------------------------------ *)
+
+(* We check that every [$i] is within range. Also, we forbid using [$i]
+   when a producer has been given a name; this is bad style and may be
+   a mistake. (Plus, this simplies our life, as we rewrite [$i] to [_i],
+   and we would have to rewrite it to a different identifier otherwise.) *)
+
+let check_dollar pos i producers =
+  if not (0 <= i - 1 && i - 1 < Array.length producers) then
+    Error.error [pos] "$%d refers to a nonexistent symbol." i
+  else
+    producers.(i - 1) |> Option.iter (fun x ->
+      Error.error [pos] "please do not say: $%d. Instead, say: %s." i x
+    )
+
+(* We check that every reference to a producer [x] in a position keyword,
+   such as [$startpos(x)], exists. *)
+
+let check_producer pos x producers =
+  if not (List.mem (Some x) (Array.to_list producers)) then
+    Error.error [pos] "%s refers to a nonexistent symbol." x
+
+(* ------------------------------------------------------------------------ *)
+
+(* The [$i] monster. *)
+
+let dollar pos i : monster =
+  let check = check_dollar pos i
+  and transform ofs1 content =
+    (* [$i] is replaced with [_i]. Thus, it is no longer a keyword. *)
+    let pos = start_of_position pos in
+    let ofs = pos.pos_cnum - ofs1 in
+    overwrite content ofs '$' '_'
+  and keyword =
+    None
+  in
+  { pos; check; transform; keyword }
+
+(* ------------------------------------------------------------------------ *)
+
+(* The position-keyword monster. The most horrible of all. *)
+
+let position pos
+  (where : string)
+  (flavor : string)
+  (i : string option) (x : string option)
+=
+  let none _ = () in
+  let where, ofslpar (* offset of the opening parenthesis, if there is one *) =
+    match where with
+    | "start" -> WhereStart, 9
+    |   "end" -> WhereEnd,   7
+    | _       -> assert false
+  and flavor =
+    match flavor with
+    | "pos"   -> FlavorPosition
+    | "ofs"   -> FlavorOffset
+    | _       -> assert false
+  in
+  let subject, check =
+    match i, x with
+    | Some i, None ->
+        let ii = int_of_string i in (* cannot fail *)
+        if ii = 0 && where = WhereEnd then
+          (* [$endpos($0)] *)
+          Before, none
         else
-          producers.(idx - 1) |> Option.iter (fun x ->
-            Error.error [ Positions.position pkeyword ]
-              "please do not say: $%d. Instead, say: %s." idx x
-          )
-    | _ ->
-       ()
-  ) pkeywords
-
-(* In-place transformation of keywords. We turn our keywords into
-   valid OCaml identifiers by replacing '$', '(', and ')' with '_'.
-   Bloody. *)
-
-let transform_keywords ofs1 (pkeywords : parsed_keyword located list) (content : bytes) =
-  List.iter (function { value = keyword; position = pos } ->
+          (* [$startpos($i)] is rewritten to [$startpos(_i)]. *)
+          RightNamed ("_" ^ i), check_dollar pos ii
+    | None, Some x ->
+        (* [$startpos(x)] *)
+        RightNamed x, check_producer pos x
+    | None, None ->
+        (* [$startpos] *)
+        Left, none
+    | Some _, Some _ ->
+        assert false
+  in
+  let transform ofs1 content =
     let pos = start_of_position pos in
     let ofs = pos.pos_cnum - ofs1 in
     overwrite content ofs '$' '_';
-    match keyword with
-    | PDollar _
-    | PPosition (PLeft, _, _) ->
-        ()
-    | PSyntaxError ->
-        (* $syntaxerror is replaced with
-           (raise _eRR) *)
-        let source = "(raise _eRR)" in
-        Bytes.blit_string source 0 content ofs (String.length source)
-    | PPosition (subject, where, _) ->
-        let ofslpar =
-          match where with
-          | Keyword.WhereStart ->
-              ofs + 9
-          | Keyword.WhereEnd ->
-              ofs + 7
-        in
+    let ofslpar = ofs + ofslpar in
+    match i, x with
+    | None, Some x ->
         overwrite content ofslpar '(' '_';
-        match subject with
-        | PLeft ->
-            assert false
-        | PRightDollar i ->
-            overwrite content (ofslpar + 1) '$' '_';
-            overwrite content (ofslpar + 2 + String.length (string_of_int i)) ')' '_'
-        | PRightNamed id ->
-            overwrite content (ofslpar + 1 + String.length id) ')' '_'
-  ) pkeywords
+        overwrite content (ofslpar + 1 + String.length x) ')' '_'
+    | Some i, None ->
+        overwrite content ofslpar '(' '_';
+        overwrite content (ofslpar + 1) '$' '_';
+        overwrite content (ofslpar + 2 + String.length i) ')' '_'
+    | _, _ ->
+        ()
+  in
+  let keyword =
+    Some (Position (subject, where, flavor))
+  in
+  { pos; check; transform; keyword }
 
-(* In an OCaml header, there should be no keywords. This is just a sanity check. *)
+(* ------------------------------------------------------------------------ *)
 
-let no_keywords pkeywords =
-  match pkeywords with
+(* In an OCaml header, there should be no monsters. This is just a sanity
+   check. *)
+
+let no_monsters monsters =
+  match monsters with
   | [] ->
       ()
-  | { value = _; position = pos } :: _ ->
-      Error.error [pos] "a Menhir keyword cannot be used in an OCaml header."
+  | monster :: _ ->
+      Error.error [monster.pos]
+        "a Menhir keyword cannot be used in an OCaml header."
+
+(* ------------------------------------------------------------------------ *)
 
 (* Creates a stretch. *)
 
-let mk_stretch pos1 pos2 parenthesize pkeywords = 
+let mk_stretch pos1 pos2 parenthesize monsters = 
   (* Read the specified chunk of the file. *)
   let ofs1 = pos1.pos_cnum
   and ofs2 = pos2.pos_cnum in
   let raw_content : string = chunk ofs1 ofs2 in
-  (* Transform the keywords, if there are any. (This explicit test
+  (* Transform the monsters, if there are any. (This explicit test
      allows saving one string copy and keeping just one live copy.) *)
   let content : string =
-    match pkeywords with
+    match monsters with
     | [] ->
         raw_content
     | _ :: _ ->
         let content : bytes = Bytes.of_string raw_content in
-        transform_keywords ofs1 pkeywords content;
+        List.iter (fun monster -> monster.transform ofs1 content) monsters;
         Bytes.unsafe_to_string content
   in
   (* Add whitespace so that the column numbers match those of the source file.
@@ -142,64 +232,14 @@ let mk_stretch pos1 pos2 parenthesize pkeywords =
     else
       (String.make (pos1.pos_cnum - pos1.pos_bol) ' ') ^ content
   in
-  (* After parsing, every occurrence [$i] is replaced by [_i] in
-     semantic actions. *)
-  let rewritten_pkeywords = Keyword.(
-    let rewrite_index i =
-      "_" ^ string_of_int i
-    in
-    let rewrite_subject = function
-      | PLeft -> Left
-      | PRightDollar 0 -> Before
-      | PRightDollar i -> RightNamed (rewrite_index i)
-      | PRightNamed n  -> RightNamed n
-    in
-    Misc.map_opt (fun pk ->
-      let position = Positions.position pk in
-      match Positions.value pk with
-      | PDollar _ -> None
-      | PPosition (s, w, f) -> Some (Positions.with_pos position (Position (rewrite_subject s, w, f)))
-      | PSyntaxError -> Some (Positions.with_pos position SyntaxError)
-    ) pkeywords
-  ) in
-  {
-    Stretch.stretch_filename = Error.get_filename();
-    Stretch.stretch_linenum = pos1.pos_lnum;
-    Stretch.stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
-    Stretch.stretch_content = content;
-    Stretch.stretch_raw_content = raw_content;
-    Stretch.stretch_keywords = rewritten_pkeywords
-  } 
-
-(* Translates the family of position-related keywords to abstract
-   syntax. *)
-
-let mk_keyword lexbuf w f n id =
-  let where =
-    match w with
-    | Some _ ->
-        Keyword.WhereStart
-    | None ->
-        Keyword.WhereEnd
-  and flavor =
-    match f with
-    | Some _ ->
-        Keyword.FlavorPosition
-    | None ->
-        Keyword.FlavorOffset
-  and subject =
-    match n, id with
-    | Some n, None ->
-        PRightDollar (int_of_string n)
-    | None, Some id ->
-        PRightNamed id
-    | None, None ->
-        PLeft
-    | Some _, Some _ ->
-        assert false
-  in
-  let keyword = PPosition (subject, where, flavor) in
-  with_cpos lexbuf keyword
+  Stretch.({
+    stretch_filename = Error.get_filename();
+    stretch_linenum = pos1.pos_lnum;
+    stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
+    stretch_content = content;
+    stretch_raw_content = raw_content;
+    stretch_keywords = Misc.map_opt (fun monster -> monster.keyword) monsters
+  })
 
 (* ------------------------------------------------------------------------ *)
 
@@ -267,16 +307,6 @@ let reserved =
   ];
   table
 
-(* ------------------------------------------------------------------------ *)
-
-(* Short-hands. *)
-
-let error1 pos =
-  Error.error (Positions.one pos)
-
-let error2 lexbuf =
-  Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p)
-
 }
 
 (* ------------------------------------------------------------------------ *)
@@ -295,9 +325,9 @@ let identchar = ['A'-'Z' 'a'-'z' '_' '\192'-'\214' '\216'-'\246' '\248'-'\255' '
 
 let poskeyword = 
   '$'
-  (("start" as w) | "end")
-  (("pos" as f) | "ofs")
-  ( '(' ( '$' (['0'-'9']+ as n) | ((lowercase identchar*) as id)) ')')?
+  (("start" | "end") as where)
+  (("pos" | "ofs") as flavor)
+  ( '(' ( '$' (['0'-'9']+ as i) | ((lowercase identchar*) as x)) ')')?
 
 let previouserror =
   "$previouserror"
@@ -384,19 +414,19 @@ rule main = parse
 | "%{"
     { savestart lexbuf (fun lexbuf ->
         let openingpos = lexeme_end_p lexbuf in
-        let closingpos, pkeywords = action true openingpos [] lexbuf in
-        no_keywords pkeywords;
+        let closingpos, monsters = action true openingpos [] lexbuf in
+        no_monsters monsters;
         HEADER (mk_stretch openingpos closingpos false [])
       ) }
 | "{"
     { savestart lexbuf (fun lexbuf ->
         let openingpos = lexeme_end_p lexbuf in
-        let closingpos, pkeywords = action false openingpos [] lexbuf in
+        let closingpos, monsters = action false openingpos [] lexbuf in
         ACTION (
 	  fun (producers : string option array) ->
-	  let stretch = mk_stretch openingpos closingpos true pkeywords in
-	  check_producers_indices producers pkeywords;
-	  Action.from_stretch stretch
+            List.iter (fun monster -> monster.check producers) monsters;
+	    let stretch = mk_stretch openingpos closingpos true monsters in
+	    Action.from_stretch stretch
 	)
       ) }
 | eof
@@ -441,93 +471,92 @@ and ocamltype openingpos = parse
 
 (* ------------------------------------------------------------------------ *)
 
-(* Collect O'Caml code delimited by curly brackets. Any occurrences of
-   the special ``$i'' identifiers are recorded in the accumulating
-   parameter [pkeywords]. Nested curly brackets must be properly
-   counted. Nested parentheses are also kept track of, so as to better
-   report errors when they are not balanced. *)
+(* Collect O'Caml code delimited by curly brackets. The monsters that are
+   encountered along the way are accumulated in the list [monsters]. Nested
+   curly brackets must be properly counted. Nested parentheses are also kept
+   track of, so as to better report errors when they are not balanced. *)
 
-and action percent openingpos pkeywords = parse
+and action percent openingpos monsters = parse
 | '{'
-    { let _, pkeywords = action false (lexeme_end_p lexbuf) pkeywords lexbuf in
-      action percent openingpos pkeywords lexbuf }
+    { let _, monsters = action false (lexeme_end_p lexbuf) monsters lexbuf in
+      action percent openingpos monsters lexbuf }
 | ("}" | "%}") as delimiter
     { match percent, delimiter with
       | true, "%}"
       | false, "}" ->
 	  (* This is the delimiter we were instructed to look for. *)
-	  lexeme_start_p lexbuf, pkeywords
+	  lexeme_start_p lexbuf, monsters
       | _, _ ->
 	  (* This is not it. *)
 	  error1 openingpos "unbalanced opening brace."
     }
 | '('
-    { let _, pkeywords = parentheses (lexeme_end_p lexbuf) pkeywords lexbuf in
-      action percent openingpos pkeywords lexbuf }
-| '$' (['0'-'9']+ as n)
-    { let pkeyword = with_cpos lexbuf (PDollar (int_of_string n)) in
-      action percent openingpos (pkeyword :: pkeywords) lexbuf }
+    { let _, monsters = parentheses (lexeme_end_p lexbuf) monsters lexbuf in
+      action percent openingpos monsters lexbuf }
+| '$' (['0'-'9']+ as i)
+    { let monster = dollar (cpos lexbuf) (int_of_string i) in
+      action percent openingpos (monster :: monsters) lexbuf }
 | poskeyword
-    { let pkeyword = mk_keyword lexbuf w f n id in
-      action percent openingpos (pkeyword :: pkeywords) lexbuf }
+    { let monster = position (cpos lexbuf) where flavor i x in
+      action percent openingpos (monster :: monsters) lexbuf }
 | previouserror
     { error2 lexbuf "$previouserror is no longer supported." }
 | syntaxerror
-    { let pkeyword = with_cpos lexbuf PSyntaxError in
-      action percent openingpos (pkeyword :: pkeywords) lexbuf }
+    { let monster = syntaxerror (cpos lexbuf) in
+      action percent openingpos (monster :: monsters) lexbuf }
 | '"'
     { string (lexeme_start_p lexbuf) lexbuf;
-      action percent openingpos pkeywords lexbuf }
+      action percent openingpos monsters lexbuf }
 | "'"
     { char lexbuf;
-      action percent openingpos pkeywords lexbuf }
+      action percent openingpos monsters lexbuf }
 | "(*"
     { ocamlcomment (lexeme_start_p lexbuf) lexbuf;
-      action percent openingpos pkeywords lexbuf }
+      action percent openingpos monsters lexbuf }
 | newline
     { new_line lexbuf;
-      action percent openingpos pkeywords lexbuf }
+      action percent openingpos monsters lexbuf }
 | ')'
 | eof
     { error1 openingpos "unbalanced opening brace." }
 | _
-    { action percent openingpos pkeywords lexbuf }
+    { action percent openingpos monsters lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 
-and parentheses openingpos pkeywords = parse
+and parentheses openingpos monsters = parse
 | '('
-    { let _, pkeywords = parentheses (lexeme_end_p lexbuf) pkeywords lexbuf in
-      parentheses openingpos pkeywords lexbuf }
+    { let _, monsters = parentheses (lexeme_end_p lexbuf) monsters lexbuf in
+      parentheses openingpos monsters lexbuf }
 | ')'
-    { lexeme_start_p lexbuf, pkeywords }
+    { lexeme_start_p lexbuf, monsters }
 | '{'
-    { let _, pkeywords = action false (lexeme_end_p lexbuf) pkeywords lexbuf in
-      parentheses openingpos pkeywords lexbuf }
-| '$' (['0'-'9']+ as n)
-    { let pkeyword = with_cpos lexbuf (PDollar (int_of_string n)) in
-      parentheses openingpos (pkeyword :: pkeywords) lexbuf }
+    { let _, monsters = action false (lexeme_end_p lexbuf) monsters lexbuf in
+      parentheses openingpos monsters lexbuf }
+| '$' (['0'-'9']+ as i)
+    { let monster = dollar (cpos lexbuf) (int_of_string i) in
+      parentheses openingpos (monster :: monsters) lexbuf }
 | poskeyword
-    { let pkeyword = mk_keyword lexbuf w f n id in
-      parentheses openingpos (pkeyword :: pkeywords) lexbuf }
+    { let monster = position (cpos lexbuf) where flavor i x in
+      parentheses openingpos (monster :: monsters) lexbuf }
 | previouserror
     { error2 lexbuf "$previouserror is no longer supported." }
 | syntaxerror
-    { let pkeyword = with_cpos lexbuf PSyntaxError in
-      parentheses openingpos (pkeyword :: pkeywords) lexbuf }
+    { let monster = syntaxerror (cpos lexbuf) in
+      parentheses openingpos (monster :: monsters) lexbuf }
 | '"'
-    { string (lexeme_start_p lexbuf) lexbuf; parentheses openingpos pkeywords lexbuf }
+    { string (lexeme_start_p lexbuf) lexbuf; parentheses openingpos monsters lexbuf }
 | "'"
-    { char lexbuf; parentheses openingpos pkeywords lexbuf }
+    { char lexbuf; parentheses openingpos monsters lexbuf }
 | "(*"
-    { ocamlcomment (lexeme_start_p lexbuf) lexbuf; parentheses openingpos pkeywords lexbuf }
+    { ocamlcomment (lexeme_start_p lexbuf) lexbuf; parentheses openingpos monsters lexbuf }
 | newline
-    { new_line lexbuf; parentheses openingpos pkeywords lexbuf }
+    { new_line lexbuf; parentheses openingpos monsters lexbuf }
 | '}'
 | eof
     { error1 openingpos "unbalanced opening parenthesis." }
 | _
-    { parentheses openingpos pkeywords lexbuf }
+    { parentheses openingpos monsters lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 

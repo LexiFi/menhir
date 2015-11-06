@@ -47,9 +47,6 @@ val to_il_expr: t -> IL.expr
     the standard library. *)
 val filenames: t -> string list
 
-(** [pkeywords a] returns a list of all keyword occurrences in [a]. *)
-val pkeywords: t -> keyword Positions.located list
-
 (** [keywords a] is the set of keywords used in the semantic action [a]. *)
 val keywords: t -> KeywordSet.t
 
