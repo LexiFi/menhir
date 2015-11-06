@@ -108,7 +108,7 @@ declaration:
     {
       Error.error (Positions.two $startpos $endpos)
         "syntax error inside a declaration.\n\
-         Did you perhaps forget the %% that separates declarations and rules?"
+         Did you perhaps forget the %%%% that separates declarations and rules?"
     }
 
 priority_keyword:
