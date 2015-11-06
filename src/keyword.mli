@@ -18,38 +18,23 @@ type where =
 
 (* The user can request position information about a production's
    left-hand side or about one of the symbols in its right-hand
-   side, which he can refer to by position or by name.
-
-   A positional reference of the form [$i] is a syntactic sugar for the
-   name [_i]. This surface syntax is first parsed as a [parsed_subject]
-   and desugared as a [subject] during keywords rewriting into actual
-   OCaml identifiers. (See {!Lexer.transform_keywords}.)
+   side, which he must refer to by name. (Referring to its symbol
+   by its position, using [$i], is permitted in the concrete
+   syntax, but the lexer eliminates this form.)
 
    We add a new subject, [Before], which corresponds to [$endpos($0)]
    in concrete syntax. We adopt the (slightly awkward) convention that
    when the subject is [Before], the [where] component must be [WhereEnd]. *)
-type parsed_subject =
-  | PLeft
-  | PRightDollar of int
-  | PRightNamed of string
 
-and subject =
+type subject =
   | Before
   | Left
   | RightNamed of string
 
 (* Keywords inside semantic actions. They allow access to semantic
-   values or to position information.
+   values or to position information. *)
 
-   As said previously, a positional reference is a syntactic sugar
-   which appears in a [parsed_keyword] but is desugared in the
-   actual [keyword] representation. *)
-type parsed_keyword =
-  | PDollar of int
-  | PPosition of parsed_subject * where * flavor
-  | PSyntaxError
-
-and keyword =
+type keyword =
   | Position of subject * where * flavor
   | SyntaxError
 

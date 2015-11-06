@@ -28,15 +28,25 @@
     assert (Bytes.get content offset = c1);
     Bytes.set content offset c2
 
+  type parsed_subject =
+  | PLeft
+  | PRightDollar of int
+  | PRightNamed of string
+
+  type parsed_keyword =
+  | PDollar of int
+  | PPosition of parsed_subject * Keyword.where * Keyword.flavor
+  | PSyntaxError
+
   (* Check that only allowed indices are used in semantic actions. *)
   let check_producers_indices (producers : string option array) pkeywords =
     List.iter (fun pkeyword ->
       match Positions.value pkeyword with
-      | Keyword.PPosition (Keyword.PRightDollar 0, Keyword.WhereEnd, _) ->
+      | PPosition (PRightDollar 0, Keyword.WhereEnd, _) ->
           (* As a special case, [$endpos($0)] is allowed. *)
           ()
-      | Keyword.PDollar idx
-      | Keyword.PPosition (Keyword.PRightDollar idx, _, _) ->
+      | PDollar idx
+      | PPosition (PRightDollar idx, _, _) ->
   	  if not (0 <= idx - 1 && idx - 1 < Array.length producers) then
 	    Error.error [ Positions.position pkeyword ]
 	      "$%d refers to a nonexistent symbol." idx
@@ -53,21 +63,21 @@
      valid OCaml identifiers by replacing '$', '(', and ')' with '_'.
      Bloody. *)
 
-  let transform_keywords ofs1 (pkeywords : Keyword.parsed_keyword located list) (content : bytes) =
+  let transform_keywords ofs1 (pkeywords : parsed_keyword located list) (content : bytes) =
     List.iter (function { value = keyword; position = pos } ->
       let pos = start_of_position pos in
       let ofs = pos.pos_cnum - ofs1 in
       overwrite content ofs '$' '_';
       match keyword with
-      | Keyword.PDollar _
-      | Keyword.PPosition (Keyword.PLeft, _, _) ->
+      | PDollar _
+      | PPosition (PLeft, _, _) ->
 	  ()
-      | Keyword.PSyntaxError ->
+      | PSyntaxError ->
 	  (* $syntaxerror is replaced with
 	     (raise _eRR) *)
           let source = "(raise _eRR)" in
           Bytes.blit_string source 0 content ofs (String.length source)
-      | Keyword.PPosition (subject, where, _) ->
+      | PPosition (subject, where, _) ->
 	  let ofslpar =
 	    match where with
 	    | Keyword.WhereStart ->
@@ -77,12 +87,12 @@
 	  in
 	  overwrite content ofslpar '(' '_';
 	  match subject with
-	  | Keyword.PLeft ->
+	  | PLeft ->
 	      assert false
-	  | Keyword.PRightDollar i ->
+	  | PRightDollar i ->
 	      overwrite content (ofslpar + 1) '$' '_';
 	      overwrite content (ofslpar + 2 + String.length (string_of_int i)) ')' '_'
-	  | Keyword.PRightNamed id ->
+	  | PRightNamed id ->
 	      overwrite content (ofslpar + 1 + String.length id) ')' '_'
     ) pkeywords
 
@@ -170,15 +180,15 @@
     and subject =
       match n, id with
       | Some n, None ->
-	  Keyword.PRightDollar (int_of_string n)
+	  PRightDollar (int_of_string n)
       | None, Some id ->
-	  Keyword.PRightNamed id
+	  PRightNamed id
       | None, None ->
-	  Keyword.PLeft
+	  PLeft
       | Some _, Some _ ->
           assert false
     in
-    let keyword = Keyword.PPosition (subject, where, flavor) in
+    let keyword = PPosition (subject, where, flavor) in
     with_cpos lexbuf keyword
 
   (* Objective Caml's reserved words. *)
@@ -427,7 +437,7 @@ and action percent openingpos pkeywords = parse
     { let _, pkeywords = parentheses (lexeme_end_p lexbuf) pkeywords lexbuf in
       action percent openingpos pkeywords lexbuf }
 | '$' (['0'-'9']+ as n)
-    { let pkeyword = with_cpos lexbuf (Keyword.PDollar (int_of_string n)) in
+    { let pkeyword = with_cpos lexbuf (PDollar (int_of_string n)) in
       action percent openingpos (pkeyword :: pkeywords) lexbuf }
 | poskeyword
     { let pkeyword = mk_keyword lexbuf w f n id in
@@ -435,7 +445,7 @@ and action percent openingpos pkeywords = parse
 | previouserror
     { error2 lexbuf "$previouserror is no longer supported." }
 | syntaxerror
-    { let pkeyword = with_cpos lexbuf Keyword.PSyntaxError in
+    { let pkeyword = with_cpos lexbuf PSyntaxError in
       action percent openingpos (pkeyword :: pkeywords) lexbuf }
 | '"'
     { string (lexeme_start_p lexbuf) lexbuf;
@@ -465,7 +475,7 @@ and parentheses openingpos pkeywords = parse
     { let _, pkeywords = action false (lexeme_end_p lexbuf) pkeywords lexbuf in
       parentheses openingpos pkeywords lexbuf }
 | '$' (['0'-'9']+ as n)
-    { let pkeyword = with_cpos lexbuf (Keyword.PDollar (int_of_string n)) in
+    { let pkeyword = with_cpos lexbuf (PDollar (int_of_string n)) in
       parentheses openingpos (pkeyword :: pkeywords) lexbuf }
 | poskeyword
     { let pkeyword = mk_keyword lexbuf w f n id in
@@ -473,7 +483,7 @@ and parentheses openingpos pkeywords = parse
 | previouserror
     { error2 lexbuf "$previouserror is no longer supported." }
 | syntaxerror
-    { let pkeyword = with_cpos lexbuf Keyword.PSyntaxError in
+    { let pkeyword = with_cpos lexbuf PSyntaxError in
       parentheses openingpos (pkeyword :: pkeywords) lexbuf }
 | '"'
     { string (lexeme_start_p lexbuf) lexbuf; parentheses openingpos pkeywords lexbuf }

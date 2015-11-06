@@ -23,12 +23,7 @@ type where =
    left-hand side or about one of the symbols in its right-hand
    side, which he can refer to by position or by name. *)
 
-type parsed_subject =
-  | PLeft
-  | PRightDollar of int
-  | PRightNamed of string
-
-and subject =
+type subject =
   | Before
   | Left
   | RightNamed of string
@@ -36,12 +31,7 @@ and subject =
 (* Keywords inside semantic actions. They allow access to semantic
    values or to position information. *)
 
-type parsed_keyword =
-  | PDollar of int
-  | PPosition of parsed_subject * where * flavor
-  | PSyntaxError
-
-and keyword =
+type keyword =
   | Position of subject * where * flavor
   | SyntaxError
 
