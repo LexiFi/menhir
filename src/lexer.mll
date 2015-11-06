@@ -4,6 +4,8 @@ open Lexing
 open Parser
 open Positions
 
+(* ------------------------------------------------------------------------ *)
+
 (* This wrapper saves the current lexeme start, invokes its argument,
    and restores it. This allows transmitting better positions to the
    parser. *)
@@ -14,6 +16,8 @@ let savestart lexbuf f =
   lexbuf.lex_start_p <- startp;
   token
 
+(* ------------------------------------------------------------------------ *)
+
 (* Extracts a chunk out of the source file. *)
 
 let chunk ofs1 ofs2 =
@@ -21,12 +25,18 @@ let chunk ofs1 ofs2 =
   let len = ofs2 - ofs1 in
   String.sub contents ofs1 len
 
+(* ------------------------------------------------------------------------ *)
+
 (* Overwrites an old character with a new one at a specified
    offset in a [bytes] buffer. *)
 
 let overwrite content offset c1 c2 =
   assert (Bytes.get content offset = c1);
   Bytes.set content offset c2
+
+(* ------------------------------------------------------------------------ *)
+
+(* Keyword recognition and construction. *)
 
 type parsed_subject =
 | PLeft
@@ -191,6 +201,8 @@ let mk_keyword lexbuf w f n id =
   let keyword = PPosition (subject, where, flavor) in
   with_cpos lexbuf keyword
 
+(* ------------------------------------------------------------------------ *)
+
 (* Objective Caml's reserved words. *)
 
 let reserved =
@@ -255,6 +267,8 @@ let reserved =
   ];
   table
 
+(* ------------------------------------------------------------------------ *)
+
 (* Short-hands. *)
 
 let error1 pos =
@@ -264,6 +278,10 @@ let error2 lexbuf =
   Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p)
 
 }
+
+(* ------------------------------------------------------------------------ *)
+
+(* Patterns. *)
 
 let newline = ('\010' | '\013' | "\013\010")
 
@@ -286,6 +304,10 @@ let previouserror =
 
 let syntaxerror =
   "$syntaxerror"
+
+(* ------------------------------------------------------------------------ *)
+
+(* The lexer. *)
 
 rule main = parse
 | "%token"
@@ -382,6 +404,8 @@ rule main = parse
 | _
     { error2 lexbuf "unexpected character(s)." }
 
+(* ------------------------------------------------------------------------ *)
+
 (* Skip C style comments. *)
 
 and comment openingpos = parse
@@ -393,6 +417,8 @@ and comment openingpos = parse
     { error1 openingpos "unterminated comment." }
 | _
     { comment openingpos lexbuf }
+
+(* ------------------------------------------------------------------------ *)
 
 (* Collect an O'Caml type delimited by angle brackets. Angle brackets can
    appear as part of O'Caml function types and variant types, so we must
@@ -412,6 +438,8 @@ and ocamltype openingpos = parse
     { error1 openingpos "unterminated Objective Caml type." }
 | _
     { ocamltype openingpos lexbuf }
+
+(* ------------------------------------------------------------------------ *)
 
 (* Collect O'Caml code delimited by curly brackets. Any occurrences of
    the special ``$i'' identifiers are recorded in the accumulating
@@ -465,6 +493,8 @@ and action percent openingpos pkeywords = parse
 | _
     { action percent openingpos pkeywords lexbuf }
 
+(* ------------------------------------------------------------------------ *)
+
 and parentheses openingpos pkeywords = parse
 | '('
     { let _, pkeywords = parentheses (lexeme_end_p lexbuf) pkeywords lexbuf in
@@ -499,6 +529,8 @@ and parentheses openingpos pkeywords = parse
 | _
     { parentheses openingpos pkeywords lexbuf }
 
+(* ------------------------------------------------------------------------ *)
+
 (* Skip O'Caml comments. Comments can be nested and can contain
    strings or characters, which must be correctly analyzed. (A string
    could contain begin-of-comment or end-of-comment sequences, which
@@ -521,6 +553,8 @@ and ocamlcomment openingpos = parse
 | _
     { ocamlcomment openingpos lexbuf }
 
+(* ------------------------------------------------------------------------ *)
+
 (* Skip O'Caml strings. *)
 
 and string openingpos = parse
@@ -538,6 +572,8 @@ and string openingpos = parse
 | _
    { string openingpos lexbuf }
 
+(* ------------------------------------------------------------------------ *)
+
 (* Skip O'Caml characters. A lone quote character is legal inside
    a comment, so if we don't recognize the matching closing quote,
    we simply abandon. *)
@@ -552,6 +588,8 @@ and char = parse
 | ""
    { () } 
 
+(* ------------------------------------------------------------------------ *)
+
 (* Read until the end of the file. This is used after finding a %%
    that marks the end of the grammar specification. We update the
    current position as we go. This allows us to build a stretch
@@ -564,3 +602,4 @@ and finish = parse
     { lexeme_start_p lexbuf }
 | _
     { finish lexbuf }
+
