@@ -1,6 +1,6 @@
 # This is a development Makefile, which is not shipped.
 
-.PHONY: api clean
+.PHONY: clean
 
 -include Makefile
 
