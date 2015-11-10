@@ -22,11 +22,15 @@
   never reduced *and no warning about it*. (Just place it behind
   another production that is never reduced.) Document this fact.
 
-* Another crazy idea: if we had a special "void" non-terminal symbol,
-  we could use it as a parameter, which would allow us to make extensible
-  definitions. (Any production that contains void would be removed after
-  expansion of the parameterized non-terminals.)
-  This would allow some simplifications in CompCert's grammar.
+* If the right-hand side of a production provably generates the empty
+  language, remove this production. (Must remove it explicitly, otherwise
+  we lose the property that errors are detected as early as possible.
+  Also, this avoids triggering the detection of epsilon-cycles, which
+  assumes that all symbols are inhabited.)
+  Document this trick: the empty language can be defined by "void: void"
+  and can be used as an actual parameter in parameterized definitions.
+  This allows making extensible definitions and instantiating them with
+  "no extension".
 
 * --compile-errors could warn about messages wider than 80 columns
                    could also warn statically about out-of-range $i?
