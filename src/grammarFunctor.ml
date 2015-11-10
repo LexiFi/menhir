@@ -1372,6 +1372,8 @@ module Analysis = struct
 
   let first = FIRST.nonterminal
 
+  let first_symbol = FIRST.symbol
+
   (* An initial definition of [nullable_first_prod]. *)
 
   let nullable_first_prod prod i =

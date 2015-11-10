@@ -438,6 +438,7 @@ module Analysis : sig
   (* [first nt] is the FIRST set of the non-terminal symbol [nt]. *)
 
   val first: Nonterminal.t -> TerminalSet.t
+  val first_symbol: Symbol.t -> TerminalSet.t
 
   (* [nullable_first_prod prod i] considers the suffix of the production
      [prod] defined by offset [i]. It returns its NULLABLE flag as well
