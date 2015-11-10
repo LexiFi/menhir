@@ -1719,7 +1719,7 @@ the author of the lexical analyzer.)
                  & start position of the symbol named \verb+$+\nt{i} or \nt{id} \\
 \verb+$endpos(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+
                  &   end position of the symbol named \verb+$+\nt{i} or \nt{id} \\
-\verb+$symbolstartpos+ & start position of the leftmost symbol \nt{id} such that
+\ksymbolstartpos & start position of the leftmost symbol \nt{id} such that
                          \verb+$startpos(+\nt{id}\verb+) != $endpos(+\nt{id}\verb+)+; \\&
                          if there is no such symbol, \verb+$endpos+ \\[2mm]
 \verb+$startofs+ \\
@@ -1739,7 +1739,7 @@ the author of the lexical analyzer.)
 \begin{tabular}{ll@{\hskip2cm}l}
 % Positions.
 \verb+symbol_start_pos()+ &
-\verb+$symbolstartpos+    \\
+\ksymbolstartpos          \\
 \verb+symbol_end_pos()+   &
 \verb+$endpos+            \\
 \verb+rhs_start_pos i+    &
@@ -1795,22 +1795,42 @@ modifier \verb+modifier?+. If this modifier turns out to be absent, then its
 start position is (by definition) the end position of the most recently parsed
 symbol. This may not be what is desired: perhaps the user would prefer in this
 case to use the start position of the symbol \verb+variable+. This is achieved by
-using \verb+$symbolstartpos+ instead of \verb+$startpos+. By definition,
-\verb+$symbolstartpos+ is the start position of the leftmost symbol whose
+using \ksymbolstartpos instead of \verb+$startpos+. By definition,
+\ksymbolstartpos is the start position of the leftmost symbol whose
 start and end positions differ. In this example, the computation of
-\verb+$symbolstartpos+ skips the absent \verb+modifier+, whose start and end
+\ksymbolstartpos skips the absent \verb+modifier+, whose start and end
 positions coincide, and returns the start position of the symbol \verb+variable+
 (assuming this symbol has distinct start and end positions).
+
+% On pourrait souligner que $symbolstartpos renvoie la $startpos du premier
+% symbole non vide, et non pas la $symbolstartpos du premier symbole non vide.
+% Donc ça peut rester un peu contre-intuitif, et ne pas correspondre
+% exactement à ce que l'on attend. D'ailleurs, le calcul de $symbolstartpos
+% est préservé par %inline (on obtient cela très facilement en éliminant
+% $symbolstartpos avant l'inlining) mais ne correspond pas à ce que donnerait
+% $symbolstartpos après un inlining manuel. Fondamentalement, cette notion de
+% $symbolstartpos ne tourne pas très rond.
 
 There is no keyword \verb+$symbolendpos+. Indeed, the problem
 with \verb+$startpos+ is due to the asymmetry in the definition
 of \verb+$startpos+ and \verb+$endpos+ in the case of an empty right-hand
 side, and does not affect \verb+$endpos+.
 
-The positions computed by Menhir are exactly the same as computed
-by \verb+ocamlyacc+. More precisely, \fref{fig:pos:mapping} sums up how to
-translate a call to the \texttt{Parsing} module, as used in an \ocamlyacc grammar,
-to a \menhir keyword.
+\newcommand{\fineprint}{\footnote{%
+    The computation of \ksymbolstartpos
+    is optimized by \menhir under two assumptions about the lexer. First,
+    \menhir assumes that the lexer never produces a token whose start and end
+    positions are equal. Second, \menhir assumes that two positions produced
+    by the lexer are equal if and only if they are physically equal. If the
+    lexer violates either of these assumptions, the computation of 
+    \ksymbolstartpos could produce a result that differs from
+    \texttt{Parsing.symbol\_start\_pos()}.
+}}
+
+The positions computed by Menhir are exactly the same as those computed by
+\verb+ocamlyacc+\fineprint. More precisely, \fref{fig:pos:mapping} sums up how
+to translate a call to the \texttt{Parsing} module, as used in an \ocamlyacc
+grammar, to a \menhir keyword.
 
 We note that \menhir's \verb+$startpos+ does not appear in the right-hand
 column in \fref{fig:pos:mapping}. In other words, \menhir's \verb+$startpos+
