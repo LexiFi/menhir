@@ -9,42 +9,34 @@ type flavor =
   | FlavorOffset
   | FlavorPosition
 
-(* The user can request position information about the
-   start or end of a symbol. *)
+(* The user can request position information about the $start or $end
+   of a symbol. Also, $symbolstart requests the computation of the
+   start position of the first nonempty element in a production. *)
 
 type where =
-  | WhereStart
-  | WhereEnd
+| WhereSymbolStart
+| WhereStart
+| WhereEnd
 
 (* The user can request position information about a production's
    left-hand side or about one of the symbols in its right-hand
-   side, which he can refer to by position or by name.
+   side, which he must refer to by name. (Referring to its symbol
+   by its position, using [$i], is permitted in the concrete
+   syntax, but the lexer eliminates this form.)
 
-   A positional reference of the form [$i] is a syntactic sugar for the
-   name [_i]. This surface syntax is first parsed as a [parsed_subject]
-   and desugared as a [subject] during keywords rewriting into actual
-   OCaml identifiers. (See {!Lexer.transform_keywords}) *)
-type parsed_subject =
-  | PLeft
-  | PRightDollar of int
-  | PRightNamed of string
+   We add a new subject, [Before], which corresponds to [$endpos($0)]
+   in concrete syntax. We adopt the (slightly awkward) convention that
+   when the subject is [Before], the [where] component must be [WhereEnd]. *)
 
-and subject =
+type subject =
+  | Before
   | Left
   | RightNamed of string
 
 (* Keywords inside semantic actions. They allow access to semantic
-   values or to position information.
+   values or to position information. *)
 
-   As said previously, a positional reference is a syntactic sugar
-   which appears in a [parsed_keyword] but is desugared in the
-   actual [keyword] representation. *)
-type parsed_keyword =
-  | PDollar of int
-  | PPosition of parsed_subject * where * flavor
-  | PSyntaxError
-
-and keyword =
+type keyword =
   | Position of subject * where * flavor
   | SyntaxError
 
@@ -54,5 +46,11 @@ and keyword =
 val posvar: subject -> where -> flavor -> string
 
 (* Sets of keywords. *)
-module KeywordSet : Set.S with type elt = keyword
+module KeywordSet : sig
+
+  include Set.S with type elt = keyword
+
+  val map: (keyword -> keyword) -> t -> t
+
+end
 

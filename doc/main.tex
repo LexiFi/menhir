@@ -1032,6 +1032,22 @@ recognized by the grammar would be the same, but the LR automaton
 would probably have one more state and would perform one more
 reduction at run time.
 
+The \dinline keyword does not affect the computation of positions
+(\sref{sec:positions}). The same positions are computed, regardless of
+where \dinline keywords are placed.
+
+If the semantic actions have side effects, the \dinline keyword \emph{can}
+affect the order in which these side effects take place. In the example of
+\nt{op} and \nt{expression} above, if for some reason the semantic action
+associated with \nt{op} has a side effect (such as updating a global variable,
+or printing a message), then, by inlining \nt{op}, we delay this side effect,
+which takes place \emph{after} the second operand has been recognized, whereas
+in the absence of inlining it takes place as soon as the operator has been
+recognized.
+
+% Du coup, ça change l'ordre des effets, dans cet exemple, de infixe
+% à postfixe.
+
 \subsection{The standard library}
 \label{sec:library}
 
@@ -1694,38 +1710,138 @@ the author of the lexical analyzer.)
 
 \begin{figure}
 \begin{center}
-\begin{tabular}{lp{9cm}}
-\verb+$startpos+ & start position of the sentence derived out of the production that is being reduced \\
-\verb+$endpos+   & end position of the sentence derived out of the production that is being reduced \\
+\begin{tabular}{l@{\hskip 7.1mm}l}
+\verb+$startpos+ & start position of the first symbol in the production's right-hand side, if there is one; \\&
+                   end position of the most recently parsed symbol, otherwise \\
+\verb+$endpos+   & end position of the first symbol in the production's right-hand side, if there is one; \\&
+                   end position of the most recently parsed symbol, otherwise \\
 \verb+$startpos(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+
-                 & start position of the sentence derived out of the symbol whose semantic value is referred to as
-                   \verb+$+\nt{i} or \nt{id} \\
+                 & start position of the symbol named \verb+$+\nt{i} or \nt{id} \\
 \verb+$endpos(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+
-                 & end position of the sentence derived out of the symbol whose semantic value is referred to as
-                   \verb+$+\nt{i} or \nt{id} \\
-\verb+$startofs+ & start offset of the sentence derived out of the production that is being reduced \\
-\verb+$endofs+   & end offset of the sentence derived out of the production that is being reduced \\
-\verb+$startofs(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+
-                 & start offset of the sentence derived out of the symbol whose semantic value is referred to as
-                   \verb+$+\nt{i} or \nt{id} \\
-\verb+$endofs(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+
-                 & end offset of the sentence derived out of the symbol whose semantic value is referred to as
-                   \verb+$+\nt{i} or \nt{id} \\
+                 &   end position of the symbol named \verb+$+\nt{i} or \nt{id} \\
+\ksymbolstartpos & start position of the leftmost symbol \nt{id} such that
+                         \verb+$startpos(+\nt{id}\verb+) != $endpos(+\nt{id}\verb+)+; \\&
+                         if there is no such symbol, \verb+$endpos+ \\[2mm]
+\verb+$startofs+ \\
+\verb+$endofs+   \\
+\verb+$startofs(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+ & same as above, but produce an integer offset instead of a position \\
+\verb+$endofs(+ \verb+$+\nt{i} \barre \nt{id} \verb+)+ \\
+\verb+$symbolstartofs+ \\
 \end{tabular}
 \end{center}
 \caption{Position-related keywords}
 \label{fig:pos}
 \end{figure}
 
+% We could document $endpos($0). Not sure whether that would be a good thing.
+
+\begin{figure}
+\begin{tabular}{ll@{\hskip2cm}l}
+% Positions.
+\verb+symbol_start_pos()+ &
+\ksymbolstartpos          \\
+\verb+symbol_end_pos()+   &
+\verb+$endpos+            \\
+\verb+rhs_start_pos i+    &
+\verb+$startpos($i)+      & ($1 \leq i \leq n$) \\
+\verb+rhs_end_pos i+      &
+\verb+$endpos($i)+        & ($1 \leq i \leq n$) \\ % i = 0 permitted, really
+% Offsets.
+\verb+symbol_start()+     &
+\verb+$symbolstartofs+    \\
+\verb+symbol_end()+       &
+\verb+$endofs+            \\
+\verb+rhs_start i+        &
+\verb+$startofs($i)+      & ($1 \leq i \leq n$) \\
+\verb+rhs_end i+          &
+\verb+$endofs($i)+        & ($1 \leq i \leq n$) \\ % i = 0 permitted, really
+\end{tabular}
+\caption{Translating position-related incantations from \ocamlyacc to \menhir}
+\label{fig:pos:mapping}
+\end{figure}
+
 This mechanism allows associating pairs of positions with terminal symbols. If
 desired, \menhir automatically extends it to nonterminal symbols as well. That
 is, it offers a mechanism for associating pairs of positions with terminal or
-nonterminal symbols. This is done by making a set of keywords, documented in
-\fref{fig:pos}, available to semantic actions. Note that these keywords are
-\emph{not} available elsewhere---in particular, not within \ocaml headers.
+nonterminal symbols. This is done by making a set of keywords available to
+semantic actions (\fref{fig:pos}). Note that these keywords are
+\emph{not} available outside of a semantic action:
+in particular, they cannot be used within an \ocaml header.
 Note also that \ocaml's standard library module \texttt{Parsing} is
 deprecated. The functions that it offers \emph{can} be called, but will return
 dummy positions.
+
+We remark that, if the current production has an empty right-hand side, then
+\verb+$startpos+ and \verb+$endpos+ are equal, and (by convention) are the end
+position of the most recently parsed symbol (that is, the symbol that happens
+to be on top of the automaton's stack when this production is reduced). If
+the current production has a nonempty right-hand side, then
+\verb+$startpos+ is the same as \verb+$startpos($1)+ and
+\verb+$endpos+ is the same as \verb+$endpos($+\nt{n}\verb+)+,
+where \nt{n} is the length of the right-hand side.
+
+More generally, if the current production has matched a sentence of length
+zero, then \verb+$startpos+ and \verb+$endpos+ will be equal, and conversely.
+% (provided the lexer is reasonable and never produces a token whose start and
+% end positions are equal).
+
+The position \verb+$startpos+ is sometimes ``further towards the left'' than
+one would like. For example, in the following production:
+\begin{verbatim}
+  declaration: modifier? variable { $startpos }
+\end{verbatim}
+the keyword \verb+$startpos+ represents the start position of the optional
+modifier \verb+modifier?+. If this modifier turns out to be absent, then its
+start position is (by definition) the end position of the most recently parsed
+symbol. This may not be what is desired: perhaps the user would prefer in this
+case to use the start position of the symbol \verb+variable+. This is achieved by
+using \ksymbolstartpos instead of \verb+$startpos+. By definition,
+\ksymbolstartpos is the start position of the leftmost symbol whose
+start and end positions differ. In this example, the computation of
+\ksymbolstartpos skips the absent \verb+modifier+, whose start and end
+positions coincide, and returns the start position of the symbol \verb+variable+
+(assuming this symbol has distinct start and end positions).
+
+% On pourrait souligner que $symbolstartpos renvoie la $startpos du premier
+% symbole non vide, et non pas la $symbolstartpos du premier symbole non vide.
+% Donc ça peut rester un peu contre-intuitif, et ne pas correspondre
+% exactement à ce que l'on attend. D'ailleurs, le calcul de $symbolstartpos
+% est préservé par %inline (on obtient cela très facilement en éliminant
+% $symbolstartpos avant l'inlining) mais ne correspond pas à ce que donnerait
+% $symbolstartpos après un inlining manuel. Fondamentalement, cette notion de
+% $symbolstartpos ne tourne pas très rond.
+
+There is no keyword \verb+$symbolendpos+. Indeed, the problem
+with \verb+$startpos+ is due to the asymmetry in the definition
+of \verb+$startpos+ and \verb+$endpos+ in the case of an empty right-hand
+side, and does not affect \verb+$endpos+.
+
+\newcommand{\fineprint}{\footnote{%
+    The computation of \ksymbolstartpos
+    is optimized by \menhir under two assumptions about the lexer. First,
+    \menhir assumes that the lexer never produces a token whose start and end
+    positions are equal. Second, \menhir assumes that two positions produced
+    by the lexer are equal if and only if they are physically equal. If the
+    lexer violates either of these assumptions, the computation of 
+    \ksymbolstartpos could produce a result that differs from
+    \texttt{Parsing.symbol\_start\_pos()}.
+}}
+
+The positions computed by Menhir are exactly the same as those computed by
+\verb+ocamlyacc+\fineprint. More precisely, \fref{fig:pos:mapping} sums up how
+to translate a call to the \texttt{Parsing} module, as used in an \ocamlyacc
+grammar, to a \menhir keyword.
+
+We note that \menhir's \verb+$startpos+ does not appear in the right-hand
+column in \fref{fig:pos:mapping}. In other words, \menhir's \verb+$startpos+
+does not correspond exactly to any of the \ocamlyacc function calls.
+An exact \ocamlyacc equivalent of \verb+$startpos+ is \verb+rhs_start_pos 1+
+if the current production has a nonempty right-hand side and
+\verb+symbol_start_pos()+ if it has an empty right-hand side.
+
+Finally, we remark that \menhir's \dinline keyword (\sref{sec:inline})
+does not affect the computation of positions. The same positions are computed,
+regardless of where \dinline keywords are placed.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
@@ -1972,11 +2088,13 @@ the name of the start symbol.) The generated file \texttt{parser.mli} contains
 the following declaration:
 \begin{verbatim}
   module Incremental : sig
-    val main: unit -> thing MenhirInterpreter.checkpoint
+    val main: Lexing.position -> thing MenhirInterpreter.checkpoint
   end
 \end{verbatim}
+The argument is the initial position. If the lexer is based on an OCaml
+lexing buffer, this argument should be \verb+lexbuf.lex_curr_p+.
 We emphasize that the function \verb+Incremental.main+ does not parse
-anything. It constructs a parser state which serves as a \emph{starting}
+anything. It constructs a checkpoint which serves as a \emph{starting}
 point. The functions \verb+offer+ and \verb+resume+, described below, are used
 to drive the parser.
 
@@ -2245,9 +2363,9 @@ constant time.
 \end{verbatim}
 
 The function \verb+positions+ returns the start and end positions of the
-current lookahead token. It is legal to invoke this function only after at
-least one token has been offered to the parser via \verb+offer+. In other
-words, it is illegal to invoke it in an initial state.
+current lookahead token. If invoked in an initial state, this function returns
+a pair of twice the initial position that was passed as an argument
+to \verb+main+.
 
 %% val has_default_reduction
 
@@ -3364,6 +3482,11 @@ copy of the files \verb+menhirLib.{ml,mli}+ together with the generated
 parser. The command \texttt{menhir \osuggestmenhirlib} will tell you where to
 find these source files.
 
+\question{Why is \texttt{\$startpos} off towards the left? It seems to include some leading whitespace.}
+Indeed, as of 2015/11/04, the computation of positions has changed so as to match \ocamlyacc's
+behavior. As a result, \texttt{\$startpos} can now appear to be too far off to the left. This is explained
+in \sref{sec:positions}. In short, the solution is to use \verb+$symbolstartpos+ instead.
+
 % ---------------------------------------------------------------------------------------------------------------------
 
 \section{Technical background}
@@ -3372,9 +3495,9 @@ After experimenting with Knuth's canonical LR(1) technique~\cite{knuth-lr-65},
 we found that it \emph{really} is not practical, even on today's computers.
 For this reason, \menhir implements a slightly modified version of Pager's
 algorithm~\cite{pager-77}, which merges states on the fly if it can be proved
-that no reduce/reduce conflicts will arise as a consequence of this
-decision. This is how \menhir avoids the so-called \emph{mysterious} conflicts
-created by LALR(1) parser generators~\cite[section 5.7]{bison}.
+that no reduce/reduce conflicts will arise as a consequence of this decision.
+This is how \menhir avoids the so-called \emph{mysterious} conflicts created
+by LALR(1) parser generators~\cite[section 5.7]{bison}.
 
 \menhir's algorithm for explaining conflicts is inspired by DeRemer and
 Pennello's~\cite{deremer-pennello-82} and adapted for use with Pager's

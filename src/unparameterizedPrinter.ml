@@ -134,10 +134,10 @@ let print_branch mode f branch =
     (Misc.o2s branch.branch_prec_annotation (fun x -> " %prec "^x.value));
   begin match mode with
   | PrintNormal ->
-      Action.print f branch.action  
+      Action.print f branch.action
   | PrintUnitActions
   | PrintUnitActionsUnitTokens ->
-      Printf.fprintf f "()"
+      () (* Printing a pair of empty braces is fine. *)
   end;
   Printf.fprintf f "}\n"
 

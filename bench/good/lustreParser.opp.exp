@@ -102,19 +102,24 @@ main:
 
 decl:
 | d = const_decl
-    {                   ( List.map 
+    {let _startpos = _startpos_d_ in
+                   ( List.map 
                        (function e -> A.ConstDecl (mk_pos _startpos, e)) 
                        d )}
 | d = type_decl
-    {                  ( List.map 
+    {let _startpos = _startpos_d_ in
+                  ( List.map 
                       (function e -> A.TypeDecl (mk_pos _startpos, e)) 
                       d )}
 | d = node_decl
-    {                  ( [A.NodeDecl (mk_pos _startpos, d)] )}
+    {let _startpos = _startpos_d_ in
+                  ( [A.NodeDecl (mk_pos _startpos, d)] )}
 | d = func_decl
-    {                  ( [A.FuncDecl (mk_pos _startpos, d)] )}
+    {let _startpos = _startpos_d_ in
+                  ( [A.FuncDecl (mk_pos _startpos, d)] )}
 | d = node_param_inst
-    {                        ( [A.NodeParamInst (mk_pos _startpos, d)] )}
+    {let _startpos = _startpos_d_ in
+                        ( [A.NodeParamInst (mk_pos _startpos, d)] )}
 
 const_decl:
 | _1 = CONST l = nonempty_list_const_decl_body_
@@ -122,13 +127,17 @@ const_decl:
 
 const_decl_body:
 | h = ident _2 = COLON t = lustre_type _4 = SEMICOLON
-    {    ( [A.FreeConst (mk_pos _startpos, h, t)] )}
+    {let _startpos = _startpos_h_ in
+    ( [A.FreeConst (mk_pos _startpos, h, t)] )}
 | h = ident _2 = COMMA l = ident_list _4 = COLON t = lustre_type _6 = SEMICOLON
-    {    ( List.map (function e -> A.FreeConst (mk_pos _startpos, e, t)) (h :: l) )}
+    {let _startpos = _startpos_h_ in
+    ( List.map (function e -> A.FreeConst (mk_pos _startpos, e, t)) (h :: l) )}
 | s = ident _2 = EQUALS e = expr _4 = SEMICOLON
-    {    ( [A.UntypedConst (mk_pos _startpos, s, e)] )}
+    {let _startpos = _startpos_s_ in
+    ( [A.UntypedConst (mk_pos _startpos, s, e)] )}
 | c = typed_ident _2 = EQUALS e = expr _4 = SEMICOLON
-    {    ( let (s, t) = c in [A.TypedConst (mk_pos _startpos, s, e, t)] )}
+    {let _startpos = _startpos_c_ in
+    ( let (s, t) = c in [A.TypedConst (mk_pos _startpos, s, e, t)] )}
 
 array_type:
 | t = lustre_type _2 = CARET s = expr
@@ -210,11 +219,14 @@ nonempty_list_const_decl_body_:
 
 type_decl:
 | _1 = TYPE l = ident_list _3 = SEMICOLON
-    {     ( List.map (function e -> A.FreeType (mk_pos _startpos, e)) l )}
+    {let _startpos = _startpos__1_ in
+     ( List.map (function e -> A.FreeType (mk_pos _startpos, e)) l )}
 | _1 = TYPE l = ident_list _3 = EQUALS t = lustre_type _5 = SEMICOLON
-    {     ( List.map (function e -> A.AliasType (mk_pos _startpos, e, t)) l )}
+    {let _startpos = _startpos__1_ in
+     ( List.map (function e -> A.AliasType (mk_pos _startpos, e, t)) l )}
 | _1 = TYPE l = ident_list _3 = EQUALS t = record_type _5 = SEMICOLON
-    {     ( List.map 
+    {let _startpos = _startpos__1_ in
+     ( List.map 
          (function e -> 
            A.AliasType (mk_pos _startpos, 
                         e, 
@@ -223,21 +235,29 @@ type_decl:
 
 lustre_type:
 | _1 = BOOL
-    {         ( A.Bool (mk_pos _startpos) )}
+    {let _startpos = _startpos__1_ in
+         ( A.Bool (mk_pos _startpos) )}
 | _1 = INT
-    {        ( A.Int (mk_pos _startpos))}
+    {let _startpos = _startpos__1_ in
+        ( A.Int (mk_pos _startpos))}
 | _1 = REAL
-    {         ( A.Real (mk_pos _startpos))}
+    {let _startpos = _startpos__1_ in
+         ( A.Real (mk_pos _startpos))}
 | _1 = SUBRANGE _2 = LSQBRACKET l = expr _4 = COMMA u = expr _6 = RSQBRACKET _7 = OF _8 = INT
-    {    ( A.IntRange (mk_pos _startpos, l, u))}
+    {let _startpos = _startpos__1_ in
+    ( A.IntRange (mk_pos _startpos, l, u))}
 | s = ident
-    {              ( A.UserType (mk_pos _startpos, s) )}
+    {let _startpos = _startpos_s_ in
+              ( A.UserType (mk_pos _startpos, s) )}
 | t = tuple_type
-    {                   ( A.TupleType (mk_pos _startpos, t) )}
+    {let _startpos = _startpos_t_ in
+                   ( A.TupleType (mk_pos _startpos, t) )}
 | t = array_type
-    {                   ( A.ArrayType (mk_pos _startpos, t) )}
+    {let _startpos = _startpos_t_ in
+                   ( A.ArrayType (mk_pos _startpos, t) )}
 | t = enum_type
-    {                  ( A.EnumType (mk_pos _startpos, t) )}
+    {let _startpos = _startpos_t_ in
+                  ( A.EnumType (mk_pos _startpos, t) )}
 
 tuple_type:
 | _1 = LSQBRACKET l = lustre_type_list _3 = RSQBRACKET
@@ -255,9 +275,11 @@ node_sep:
 
 contract_clause:
 | _1 = REQUIRES e = expr _3 = SEMICOLON
-    {                                  ( A.Requires (mk_pos _startpos, e) )}
+    {let _startpos = _startpos__1_ in
+                                  ( A.Requires (mk_pos _startpos, e) )}
 | _1 = ENSURES e = expr _3 = SEMICOLON
-    {                                 ( A.Ensures (mk_pos _startpos, e) )}
+    {let _startpos = _startpos__1_ in
+                                 ( A.Ensures (mk_pos _startpos, e) )}
 
 static_param:
 | _1 = TYPE t = ident
@@ -269,11 +291,13 @@ static_params:
 
 node_local_decl:
 | c = const_decl
-    {                   ( List.map 
+    {let _startpos = _startpos_c_ in
+                   ( List.map 
                        (function e -> A.NodeConstDecl (mk_pos _startpos, e))
                        c )}
 | v = var_decls
-    {                  ( List.map 
+    {let _startpos = _startpos_v_ in
+                  ( List.map 
                       (function e -> A.NodeVarDecl (mk_pos _startpos, e)) 
                       v )}
 
@@ -287,13 +311,16 @@ var_decl:
 
 node_equation:
 | _1 = ASSERT e = expr _3 = SEMICOLON
-    {    ( A.Assert (mk_pos _startpos, e) )}
+    {let _startpos = _startpos__1_ in
+    ( A.Assert (mk_pos _startpos, e) )}
 | l = left_side _2 = EQUALS e = expr _4 = SEMICOLON
-    {    ( A.Equation (mk_pos _startpos, l, e) )}
+    {let _startpos = _startpos_l_ in
+    ( A.Equation (mk_pos _startpos, l, e) )}
 | _1 = MAIN
     {         ( A.AnnotMain )}
 | _1 = PROPERTY e = expr _3 = SEMICOLON
-    {                                  ( A.AnnotProperty (mk_pos _startpos, e) )}
+    {let _startpos = _startpos__1_ in
+                                  ( A.AnnotProperty (mk_pos _startpos, e) )}
 
 left_side:
 | l = struct_item_list
@@ -305,9 +332,11 @@ left_side:
 
 struct_item:
 | s = ident
-    {     ( A.SingleIdent (mk_pos _startpos, s) )}
+    {let _startpos = _startpos_s_ in
+     ( A.SingleIdent (mk_pos _startpos, s) )}
 | s = ident l = nonempty_list_one_index_
-    {     ( A.IndexedIdent (mk_pos _startpos, s, l))}
+    {let _startpos = _startpos_s_ in
+     ( A.IndexedIdent (mk_pos _startpos, s, l))}
 
 struct_item_list:
 | l = separated_nonempty_list_COMMA_struct_item_
@@ -315,95 +344,137 @@ struct_item_list:
 
 expr:
 | s = ident
-    {              ( A.Ident (mk_pos _startpos, s) )}
+    {let _startpos = _startpos_s_ in
+              ( A.Ident (mk_pos _startpos, s) )}
 | _1 = TRUE
-    {         ( A.True (mk_pos _startpos) )}
+    {let _startpos = _startpos__1_ in
+         ( A.True (mk_pos _startpos) )}
 | _1 = FALSE
-    {          ( A.False (mk_pos _startpos) )}
+    {let _startpos = _startpos__1_ in
+          ( A.False (mk_pos _startpos) )}
 | s = NUMERAL
-    {                ( A.Num (mk_pos _startpos, s) )}
+    {let _startpos = _startpos_s_ in
+                ( A.Num (mk_pos _startpos, s) )}
 | s = DECIMAL
-    {                ( A.Dec (mk_pos _startpos, s) )}
+    {let _startpos = _startpos_s_ in
+                ( A.Dec (mk_pos _startpos, s) )}
 | _1 = INT e = expr
-    {                  ( A.ToInt (mk_pos _startpos, e) )}
+    {let _startpos = _startpos__1_ in
+                  ( A.ToInt (mk_pos _startpos, e) )}
 | _1 = REAL e = expr
-    {                   ( A.ToReal (mk_pos _startpos, e) )}
+    {let _startpos = _startpos__1_ in
+                   ( A.ToReal (mk_pos _startpos, e) )}
 | _1 = LPAREN e = expr _3 = RPAREN
     {                             ( e )}
 | _1 = LPAREN h = expr _3 = COMMA l = expr_list _5 = RPAREN
-    {    ( A.ExprList (mk_pos _startpos, h :: l) )}
+    {let _startpos = _startpos__1_ in
+    ( A.ExprList (mk_pos _startpos, h :: l) )}
 | _1 = LSQBRACKET l = expr_list _3 = RSQBRACKET
-    {                                          ( A.TupleExpr (mk_pos _startpos, l) )}
+    {let _startpos = _startpos__1_ in
+                                          ( A.TupleExpr (mk_pos _startpos, l) )}
 | e1 = expr _2 = CARET e2 = expr
-    {                                ( A.ArrayConstr (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                                ( A.ArrayConstr (mk_pos _startpos, e1, e2) )}
 | e = ident _2 = LSQBRACKET i = expr _4 = RSQBRACKET
-    {    ( A.TupleProject (mk_pos _startpos, e, i) )}
+    {let _startpos = _startpos_e_ in
+    ( A.TupleProject (mk_pos _startpos, e, i) )}
 | e = ident _2 = LSQBRACKET l = array_slice_list _4 = RSQBRACKET
-    {    ( A.ArraySlice (mk_pos _startpos, e, l) )}
+    {let _startpos = _startpos_e_ in
+    ( A.ArraySlice (mk_pos _startpos, e, l) )}
 | s = ident _2 = DOT t = ident
-    {    ( A.RecordProject (mk_pos _startpos, s, I.index_of_ident t) )}
+    {let _startpos = _startpos_s_ in
+    ( A.RecordProject (mk_pos _startpos, s, I.index_of_ident t) )}
 | t = ident f = tlist_LCURLYBRACKET_SEMICOLON_RCURLYBRACKET_record_field_assign_
-    {    ( A.RecordConstruct (mk_pos _startpos, t, f) )}
+    {let _startpos = _startpos_t_ in
+    ( A.RecordConstruct (mk_pos _startpos, t, f) )}
 | e1 = expr _2 = PIPE e2 = expr
-    {                               ( A.ArrayConcat (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                               ( A.ArrayConcat (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = MINUS e2 = expr
-    {                                ( A.Minus (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                                ( A.Minus (mk_pos _startpos, e1, e2) )}
 | _1 = MINUS e = expr
-    {                    ( A.Uminus (mk_pos _startpos, e) )}
+    {let _startpos = _startpos__1_ in
+                    ( A.Uminus (mk_pos _startpos, e) )}
 | e1 = expr _2 = PLUS e2 = expr
-    {                               ( A.Plus (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                               ( A.Plus (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = MULT e2 = expr
-    {                               ( A.Times (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                               ( A.Times (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = DIV e2 = expr
-    {                              ( A.Div (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                              ( A.Div (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = INTDIV e2 = expr
-    {                                 ( A.IntDiv (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                                 ( A.IntDiv (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = MOD e2 = expr
-    {                              ( A.Mod (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                              ( A.Mod (mk_pos _startpos, e1, e2) )}
 | _1 = NOT e = expr
-    {                  ( A.Not (mk_pos _startpos, e) )}
+    {let _startpos = _startpos__1_ in
+                  ( A.Not (mk_pos _startpos, e) )}
 | e1 = expr _2 = AND e2 = expr
-    {                              ( A.And (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                              ( A.And (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = OR e2 = expr
-    {                             ( A.Or (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                             ( A.Or (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = XOR e2 = expr
-    {                              ( A.Xor (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                              ( A.Xor (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = IMPL e2 = expr
-    {                               ( A.Impl (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                               ( A.Impl (mk_pos _startpos, e1, e2) )}
 | _1 = HASH _2 = LPAREN e = expr_list _4 = RPAREN
-    {                                        ( A.OneHot (mk_pos _startpos, e) )}
+    {let _startpos = _startpos__1_ in
+                                        ( A.OneHot (mk_pos _startpos, e) )}
 | e1 = expr _2 = LT e2 = expr
-    {                             ( A.Lt (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                             ( A.Lt (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = GT e2 = expr
-    {                             ( A.Gt (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                             ( A.Gt (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = LTE e2 = expr
-    {                              ( A.Lte (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                              ( A.Lte (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = GTE e2 = expr
-    {                              ( A.Gte (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                              ( A.Gte (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = EQUALS e2 = expr
-    {                                 ( A.Eq (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                                 ( A.Eq (mk_pos _startpos, e1, e2) )}
 | e1 = expr _2 = NEQ e2 = expr
-    {                              ( A.Neq (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                              ( A.Neq (mk_pos _startpos, e1, e2) )}
 | _1 = IF e1 = expr _3 = THEN e2 = expr _5 = ELSE e3 = expr
-    {    ( A.Ite (mk_pos _startpos, e1, e2, e3) )}
+    {let _startpos = _startpos__1_ in
+    ( A.Ite (mk_pos _startpos, e1, e2, e3) )}
 | _1 = WITH e1 = expr _3 = THEN e2 = expr _5 = ELSE e3 = expr
-    {    ( A.With (mk_pos _startpos, e1, e2, e3) )}
+    {let _startpos = _startpos__1_ in
+    ( A.With (mk_pos _startpos, e1, e2, e3) )}
 | e1 = expr _2 = WHEN e2 = expr
-    {                               ( A.When (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                               ( A.When (mk_pos _startpos, e1, e2) )}
 | _1 = CURRENT e = expr
-    {                      ( A.Current (mk_pos _startpos, e) )}
+    {let _startpos = _startpos__1_ in
+                      ( A.Current (mk_pos _startpos, e) )}
 | _1 = CONDACT _2 = LPAREN e1 = expr _4 = COMMA s = ident _6 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expr__ _8 = RPAREN _9 = COMMA v = expr_list _11 = RPAREN
     {let a =
   let xs = xs0 in
       ( xs )
 in
+let _startpos = _startpos__1_ in
     ( A.Condact (mk_pos _startpos, e1, s, a, v) )}
 | _1 = PRE e = expr
-    {                  ( A.Pre (mk_pos _startpos, e) )}
+    {let _startpos = _startpos__1_ in
+                  ( A.Pre (mk_pos _startpos, e) )}
 | _1 = FBY _2 = LPAREN e1 = expr _4 = COMMA s = NUMERAL _6 = COMMA e2 = expr _8 = RPAREN
-    {    ( A.Fby (mk_pos _startpos, e2, (int_of_string s), e2) )}
+    {let _startpos = _startpos__1_ in
+    ( A.Fby (mk_pos _startpos, e2, (int_of_string s), e2) )}
 | e1 = expr _2 = ARROW e2 = expr
-    {                                ( A.Arrow (mk_pos _startpos, e1, e2) )}
+    {let _startpos = _startpos_e1_ in
+                                ( A.Arrow (mk_pos _startpos, e1, e2) )}
 | e = node_call
     {                  ( e )}
 
@@ -417,12 +488,14 @@ node_call:
   let xs = xs0 in
       ( xs )
 in
+let _startpos = _startpos_s_ in
     ( A.Call (mk_pos _startpos, s, a) )}
 | s = ident p = tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_node_call_static_param_ _3 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expr__ _5 = RPAREN
     {let a =
   let xs = xs0 in
       ( xs )
 in
+let _startpos = _startpos_s_ in
     ( A.CallParam (mk_pos _startpos, s, p, a) )}
 
 expr_list:
@@ -627,39 +700,50 @@ separated_nonempty_list_COMMA_array_slice_:
 
 clocked_typed_idents:
 | l = typed_idents
-    {    ( List.map (function (e, t) -> (mk_pos _startpos, e, t, A.ClockTrue)) l )}
+    {let _startpos = _startpos_l_ in
+    ( List.map (function (e, t) -> (mk_pos _startpos, e, t, A.ClockTrue)) l )}
 | l = typed_idents _2 = WHEN c = clock_expr
-    {    ( List.map (function (e, t) -> (mk_pos _startpos, e, t, c)) l )}
+    {let _startpos = _startpos_l_ in
+    ( List.map (function (e, t) -> (mk_pos _startpos, e, t, c)) l )}
 | _1 = LPAREN l = typed_idents _3 = RPAREN _4 = WHEN c = clock_expr
-    {    ( List.map (function (e, t) -> (mk_pos _startpos, e, t, c)) l )}
+    {let _startpos = _startpos__1_ in
+    ( List.map (function (e, t) -> (mk_pos _startpos, e, t, c)) l )}
 | _1 = LPAREN h = typed_idents _3 = SEMICOLON l = tlist_tail_SEMICOLON_RPAREN_typed_idents_ _5 = WHEN c = clock_expr
-    {    ( List.map
+    {let _startpos = _startpos__1_ in
+    ( List.map
         (function (e, t) -> (mk_pos _startpos, e, t, c)) 
         (h @ (List.flatten l)) )}
 
 const_clocked_typed_idents:
 | l = const_typed_idents
-    {    ( List.map
+    {let _startpos = _startpos_l_ in
+    ( List.map
         (function (e, t, o) -> (mk_pos _startpos, e, t, A.ClockTrue, o)) 
         l )}
 | l = const_typed_idents _2 = WHEN c = clock_expr
-    {    ( List.map
+    {let _startpos = _startpos_l_ in
+    ( List.map
         (function (e, t, o) -> (mk_pos _startpos, e, t, c, o)) 
         l )}
 | _1 = LPAREN l = const_typed_idents _3 = RPAREN _4 = WHEN c = clock_expr
-    {    ( List.map
+    {let _startpos = _startpos__1_ in
+    ( List.map
         (function (e, t, o) -> (mk_pos _startpos, e, t, c, o)) 
         l )}
 | _1 = LPAREN h = const_typed_idents _3 = SEMICOLON l = tlist_tail_SEMICOLON_RPAREN_const_typed_idents_ _5 = WHEN c = clock_expr
-    {    ( List.map (function (e, t, o) -> (mk_pos _startpos, e, t, c, o)) (h @ (List.flatten l)) )}
+    {let _startpos = _startpos__1_ in
+    ( List.map (function (e, t, o) -> (mk_pos _startpos, e, t, c, o)) (h @ (List.flatten l)) )}
 
 one_index:
 | _1 = DOT i = ident
-    {     ( A.FieldIndex (mk_pos _startpos, i) )}
+    {let _startpos = _startpos__1_ in
+     ( A.FieldIndex (mk_pos _startpos, i) )}
 | _1 = LSQBRACKET i = ident _3 = RSQBRACKET
-    {     ( A.VarIndex (mk_pos _startpos, i) )}
+    {let _startpos = _startpos__1_ in
+     ( A.VarIndex (mk_pos _startpos, i) )}
 | _1 = LSQBRACKET s = NUMERAL _3 = RSQBRACKET
-    {     ( A.NumIndex (mk_pos _startpos, int_of_string s) )}
+    {let _startpos = _startpos__1_ in
+     ( A.NumIndex (mk_pos _startpos, int_of_string s) )}
 
 %%
 

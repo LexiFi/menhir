@@ -3,7 +3,6 @@ open Syntax
 open ConcreteSyntax
 open InternalSyntax
 open Positions
-open Keyword
 
 (* ------------------------------------------------------------------------- *)
 (* This adds one declaration [decl], as found in file [filename], to
@@ -582,24 +581,6 @@ let join grammar pgrammar =
     List.fold_left (join_declaration filename) grammar pgrammar.pg_declarations
     $$ join_trailer pgrammar.pg_trailer
 
-(* Check that there are not two symbols carrying the same name. *)
-
-let check_keywords producers action =
-  List.iter (fun keyword ->
-    match Positions.value keyword with
-      | Position (RightNamed id, _, _) ->
-	let found = ref false in
-	List.iter (fun (ido, _) ->
-	  if ido.value = id then found := true
-	) producers;
-	if not !found then
-	  Error.errorp keyword
-	    "%s refers to a nonexistent symbol." id
-      | Position (Left, _, _)
-      | SyntaxError ->
-	()
-  ) (Action.pkeywords action)
-
 let check_parameterized_grammar_is_well_defined grammar =
 
   (* Every start symbol is defined and has a %type declaration. *)
@@ -658,7 +639,6 @@ let check_parameterized_grammar_is_well_defined grammar =
 	 (* Check each branch. *)
 	 (fun { pr_producers = producers; 
 	        pr_branch_prec_annotation;
-	        pr_action = action 
 	      } -> ignore (List.fold_left
 
 	    (* Check the producers. *)
@@ -691,8 +671,6 @@ let check_parameterized_grammar_is_well_defined grammar =
 		 already_seen
 
             ) StringSet.empty producers);
-
-	    check_keywords producers action;
 
             match pr_branch_prec_annotation with
 

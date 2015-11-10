@@ -52,5 +52,5 @@ let grammar lexer lexbuf =
     (fun v -> v)
     (fail lexbuf)
     (lexer_lexbuf_to_supplier lexer lexbuf)
-    (Parser.Incremental.grammar())
+    (Parser.Incremental.grammar lexbuf.Lexing.lex_curr_p)
 

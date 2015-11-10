@@ -1,3 +1,4 @@
+open Keyword
 open UnparameterizedSyntax
 open ListMonad
 
@@ -8,6 +9,52 @@ exception NoInlining
 type 'a color = 
   | BeingExpanded
   | Expanded of 'a
+
+(* [index2id] converts a 0-based index (into a list of producers) to
+   an identifier (the name of the producer). *)
+
+let index2id producers i =
+  try
+    let (_, x) = List.nth producers i in
+    x
+  with Failure _ ->
+    assert false (* should not happen *)
+
+(* [rename_sw_outer] transforms the keywords in the outer production (the
+   caller) during inlining. It replaces [$startpos(x)] and [$endpos(x)], where
+   [x] is the name of the callee, with [startpx] and [endpx], respectively. *)
+
+let rename_sw_outer (x, startpx, endpx) (subject, where) : (subject * where) option =
+  match subject, where with
+  | Before, _ ->
+      None
+  | RightNamed x', _ ->
+      if x' = x then
+        match where with
+        | WhereStart -> Some startpx
+        | WhereEnd   -> Some endpx
+        | WhereSymbolStart -> assert false (* has been expanded away *)
+      else
+        None
+  | Left, _ ->
+      (* [$startpos], [$endpos], and [$symbolstartpos] have been expanded away
+         earlier; see [KeywordExpansion]. *)
+      assert false
+
+(* [rename_sw_inner] transforms the keywords in the inner production (the callee)
+   during inlining. It replaces [$endpos($0)] with [beforeendp]. *)
+
+let rename_sw_inner beforeendp (subject, where) : (subject * where) option =
+  match subject, where with
+  | Before, _ ->
+      assert (where = WhereEnd);
+      Some beforeendp
+  | RightNamed _, _ ->
+      None
+  | Left, _ ->
+      (* [$startpos] and [$endpos] have been expanded away earlier; see
+         [KeywordExpansion]. *)
+      assert false
 
 (* Inline a grammar. The resulting grammar does not contain any definitions
    that can be inlined. *)
@@ -77,7 +124,7 @@ let inline grammar =
       prefix, expand_rule nt p, nt, psym, suffix
 
   (* We have to rename producers' names of the inlined production 
-     if they clashes with the producers' names of the branch into 
+     if they clash with the producers' names of the branch into 
      which we do the inlining. *)
   and rename_if_necessary b producers =
 
@@ -100,7 +147,8 @@ let inline grammar =
      ListMonad to combine the results. *)
   and expand_branch (b : branch) : branch ListMonad.m =
     try
-      let prefix, p, _nt, psym, suffix = find_inline_producer b in
+      (* [c] is the identifier under which the callee is known. *)
+      let prefix, p, _nt, c, suffix = find_inline_producer b in
       use_inline := true;
       (* Inline a branch of [nt] at position [prefix] ... [suffix] in
 	 the branch [b]. *)
@@ -109,46 +157,84 @@ let inline grammar =
 	   the name of the host's producers. *)
 	let phi, inlined_producers = rename_if_necessary b pb.producers in
 
-	(* Define the renaming environment given the shape of the branch. *)
-	let renaming_env, prefix', suffix' =
+        (* After inlining, the producers are as follows. *)
+        let producers = prefix @ inlined_producers @ suffix in
+        let index2id = index2id producers in
 
-	  let start_position, prefix' =
-	    match List.rev prefix with
+        let prefix = List.length prefix
+        and inlined_producers = List.length inlined_producers in
 
-	      (* If the prefix is empty, the start position is the rule
-		 start position. *)
-	      | [] -> (Keyword.Left, Keyword.WhereStart), prefix
+        (* Define how the start and end positions of the inner production should
+           be computed once it is inlined into the outer production. These
+           definitions of [startp] and [endp] are then used to transform
+           [$startpos] and [$endpos] in the inner production and to transform
+           [$startpos(x)] and [$endpos(x)] in the outer production. *)
 
-	      (* The last producer of prefix is named [x],
-		 $startpos in the inlined rule will be changed to $endpos(x). *)
-	      | (_, x) :: _ -> (Keyword.RightNamed x, Keyword.WhereEnd), prefix
+        (* 2015/11/04. We ensure that positions are computed in the same manner,
+           regardless of whether inlining is performed. *)
 
-	  in
-	  (* Same thing for the suffix. *)
-	  let end_position, suffix' =
-	    match suffix with
-	      | [] -> (Keyword.Left, Keyword.WhereEnd), suffix
-	      | (_, x) :: _ -> (Keyword.RightNamed x, Keyword.WhereStart), suffix
-	  in
-	  (psym, start_position, end_position), prefix', suffix'
+        let startp =
+          if inlined_producers > 0 then
+            (* If the inner production is non-epsilon, things are easy. The start
+               position of the inner production is the start position of its first
+               element. *)
+            RightNamed (index2id prefix), WhereStart
+          else if prefix > 0 then
+            (* If the inner production is epsilon, we are supposed to compute the
+               end position of whatever comes in front of it. If the prefix is
+               nonempty, then this is the end position of the last symbol in the
+               prefix. *)
+            RightNamed (index2id (prefix - 1)), WhereEnd
+          else
+            (* If the inner production is epsilon and the prefix is empty, then
+               we need to look up the end position stored in the top stack cell.
+               This is the reason why we need the keyword [$endpos($0)]. It is
+               required in this case to preserve the semantics of $startpos and
+               $endpos. *)
+            Before, WhereEnd
+
+          (* Note that, to contrary to intuition perhaps, we do NOT have that
+             if the prefix is empty, then the start position of the inner
+             production is the start production of the outer production.
+             This is true only if the inner production is non-epsilon. *)
+
 	in
-	(* Rename the host semantic action.
-	   Each reference of the inlined non terminal [psym] must be taken into
-	   account. $startpos(psym) is changed to $startpos(x) where [x] is
-	   the first producer of the inlined branch if it is not empty or
-	   the preceding producer found in the prefix. *)
-	let outer_action, (used1, used2) =
-	  Action.rename_inlined_psym renaming_env [] b.action
+
+	let endp =
+          if inlined_producers > 0 then
+            (* If the inner production is non-epsilon, things are easy, then its end
+               position is the end position of its last element. *)
+            RightNamed (index2id (prefix + inlined_producers - 1)), WhereEnd
+          else
+            (* If the inner production is epsilon, then its end position is equal
+               to its start position. *)
+            startp
+
+        in
+
+        (* We must also transform [$endpos($0)] if it used by the inner
+           production. It refers to the end position of the stack cell
+           that comes before the inner production. So, if the prefix is
+           non-empty, then it translates to the end position of the last
+           element of the prefix. Otherwise, it translates to [$endpos($0)]. *)
+
+        let beforeendp =
+          if prefix > 0 then
+            RightNamed (index2id (prefix - 1)), WhereEnd
+          else
+            Before, WhereEnd
+        in
+
+	(* Rename the outer and inner semantic action. *)
+	let outer_action =
+	  Action.rename (rename_sw_outer (c, startp, endp)) [] b.action
+	and action' =
+	  Action.rename (rename_sw_inner beforeendp) phi pb.action
 	in
-	let action', (used1', used2') =
-	  Action.rename renaming_env phi pb.action
-	in
-	let prefix = if used1 || used1' then prefix' else prefix in
-	let suffix = if used2 || used2' then suffix' else suffix in
 
 	{ b with
-	  producers = prefix @ inlined_producers @ suffix;
-	  action = Action.compose psym action' outer_action
+	  producers = producers;
+	  action = Action.compose c action' outer_action
 	}
       in
       List.map inline_branch p.branches >>= expand_branch

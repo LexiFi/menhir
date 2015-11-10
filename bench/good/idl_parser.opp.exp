@@ -145,13 +145,16 @@ partialInterface:
   let _1 = _10 in
       ( x )
 in
+let _startpos = _startpos__1_ in
       ( PartialInterface(_startpos, [], name, mems) )}
 
 typedef:
 | _1 = TYPEDEF attrs = extendedAttributeList ty = typeDecl id = ID _5 = SEMI
-    {      ( Typedef (_startpos, [], ty, id) )}
+    {let _startpos = _startpos__1_ in
+      ( Typedef (_startpos, [], ty, id) )}
 | nat = NATIVE _2 = SEMI
-    {      ( let (id, natid) = nat in Typedef (_startpos, [], Native natid, Id.id_of_string id) )}
+    {let _startpos = _startpos_nat_ in
+      ( let (id, natid) = nat in Typedef (_startpos, [], Native natid, Id.id_of_string id) )}
 
 loption_separated_nonempty_list_COMMA_expr__:
 | 
@@ -253,7 +256,8 @@ definition:
 | _1 = implementsStatement
     {                        ( _1 )}
 | _1 = INCLUDE _2 = STRING
-    {                   ( Include(_startpos, [], _2) )}
+    {let _startpos = _startpos__1_ in
+                   ( Include(_startpos, [], _2) )}
 | _1 = MODULE name = ID _10 = LBRACE x0 = ilist_definition_ _30 = RBRACE _4 = SEMI
     {let defs =
   let _3 = _30 in
@@ -261,9 +265,11 @@ definition:
   let _1 = _10 in
       ( x )
 in
+let _startpos = _startpos__1_ in
     ( Module (_startpos, [], name, defs) )}
 | _1 = INTERFACE _2 = ID _3 = SEMI
-    {                      ( ForwardInterface (_startpos, [], _2) )}
+    {let _startpos = _startpos__1_ in
+                      ( ForwardInterface (_startpos, [], _2) )}
 | c = const
     {            ( let (p, m, t, id, e) = c in Const(p,m,t,id,e) )}
 
@@ -277,7 +283,8 @@ callbackRestOrInterface:
 | _1 = callbackRest
     {                 ( _1 )}
 | _1 = interface
-    {              ( 
+    {let _startpos = _startpos__1_ in
+              ( 
     match _1 with
     | Interface(_, id, nameOpt, members, metas, _) -> 
       Interface(_startpos, id, nameOpt, members, metas, IsCallbackInterface)
@@ -296,6 +303,8 @@ let name =
   let _1 = _10 in
                   ( Id.id_of_string "Constructor" )
 in
+let _startpos_name_ = _startpos__10_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 | _10 = NOTXPCOM _2 = EQUALS ret = returnType _11 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
@@ -308,6 +317,8 @@ let name =
   let _1 = _10 in
                ( Id.id_of_string "notxpcom" )
 in
+let _startpos_name_ = _startpos__10_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 | _10 = RETVAL _2 = EQUALS ret = returnType _11 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
@@ -320,6 +331,8 @@ let name =
   let _1 = _10 in
              ( Id.id_of_string "retval" )
 in
+let _startpos_name_ = _startpos__10_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 | _10 = UNSAFE _2 = EQUALS ret = returnType _11 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
@@ -332,6 +345,8 @@ let name =
   let _1 = _10 in
              ( Id.id_of_string "unsafe" )
 in
+let _startpos_name_ = _startpos__10_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 | _10 = PRIVATEBROWSINGCHECK _2 = EQUALS ret = returnType _11 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
@@ -344,6 +359,8 @@ let name =
   let _1 = _10 in
                            ( Id.id_of_string "PrivateBrowsingCheck" )
 in
+let _startpos_name_ = _startpos__10_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 | _10 = QUERYINTERFACETYPE _2 = EQUALS ret = returnType _11 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
@@ -356,6 +373,8 @@ let name =
   let _1 = _10 in
                          ( Id.id_of_string "QueryInterfaceType" )
 in
+let _startpos_name_ = _startpos__10_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 | _1000 = CREATOR _2 = EQUALS ret = returnType _10 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
@@ -376,6 +395,8 @@ let name =
   in
                                       ( id )
 in
+let _startpos_name_ = _startpos__1000_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 | _1000 = GETTER _2 = EQUALS ret = returnType _10 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
@@ -396,6 +417,8 @@ let name =
   in
                                       ( id )
 in
+let _startpos_name_ = _startpos__1000_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 | _1000 = SETTER _2 = EQUALS ret = returnType _10 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
@@ -416,6 +439,8 @@ let name =
   in
                                       ( id )
 in
+let _startpos_name_ = _startpos__1000_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 | id000 = ID _2 = EQUALS ret = returnType _10 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
@@ -436,6 +461,8 @@ let name =
   in
                                       ( id )
 in
+let _startpos_name_ = _startpos_id000_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 | _1000 = DICTIONARY _2 = EQUALS ret = returnType _10 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
@@ -456,6 +483,8 @@ let name =
   in
                                       ( id )
 in
+let _startpos_name_ = _startpos__1000_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 | _1000 = PARTIAL _2 = EQUALS ret = returnType _10 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
@@ -476,6 +505,8 @@ let name =
   in
                                       ( id )
 in
+let _startpos_name_ = _startpos__1000_ in
+let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 
 interface:
@@ -486,6 +517,7 @@ interface:
   let _1 = _10 in
       ( x )
 in
+let _startpos = _startpos__1_ in
       ( Interface(_startpos, [], name, inherits, mems, IsNormalInterface) )}
 
 interfaceMembers:
@@ -506,6 +538,7 @@ dictionary:
   let _1 = _10 in
       ( x )
 in
+let _startpos = _startpos__1_ in
       ( Dictionary(_startpos, [], name, inherits, defs) )}
 
 dictionaryMembers:
@@ -521,6 +554,7 @@ let name =
   let _1 = _10 in
                   ( Id.id_of_string "Constructor" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _10 = CONSTRUCTOR x0 = default _4 = SEMI
     {let _3 =
@@ -531,6 +565,7 @@ let name =
   let _1 = _10 in
                   ( Id.id_of_string "Constructor" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _10 = NOTXPCOM _4 = SEMI
     {let _3 =
@@ -540,6 +575,7 @@ let name =
   let _1 = _10 in
                ( Id.id_of_string "notxpcom" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _10 = NOTXPCOM x0 = default _4 = SEMI
     {let _3 =
@@ -550,6 +586,7 @@ let name =
   let _1 = _10 in
                ( Id.id_of_string "notxpcom" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _10 = RETVAL _4 = SEMI
     {let _3 =
@@ -559,6 +596,7 @@ let name =
   let _1 = _10 in
              ( Id.id_of_string "retval" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _10 = RETVAL x0 = default _4 = SEMI
     {let _3 =
@@ -569,6 +607,7 @@ let name =
   let _1 = _10 in
              ( Id.id_of_string "retval" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _10 = UNSAFE _4 = SEMI
     {let _3 =
@@ -578,6 +617,7 @@ let name =
   let _1 = _10 in
              ( Id.id_of_string "unsafe" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _10 = UNSAFE x0 = default _4 = SEMI
     {let _3 =
@@ -588,6 +628,7 @@ let name =
   let _1 = _10 in
              ( Id.id_of_string "unsafe" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _10 = PRIVATEBROWSINGCHECK _4 = SEMI
     {let _3 =
@@ -597,6 +638,7 @@ let name =
   let _1 = _10 in
                            ( Id.id_of_string "PrivateBrowsingCheck" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _10 = PRIVATEBROWSINGCHECK x0 = default _4 = SEMI
     {let _3 =
@@ -607,6 +649,7 @@ let name =
   let _1 = _10 in
                            ( Id.id_of_string "PrivateBrowsingCheck" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _10 = QUERYINTERFACETYPE _4 = SEMI
     {let _3 =
@@ -616,6 +659,7 @@ let name =
   let _1 = _10 in
                          ( Id.id_of_string "QueryInterfaceType" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _10 = QUERYINTERFACETYPE x0 = default _4 = SEMI
     {let _3 =
@@ -626,6 +670,7 @@ let name =
   let _1 = _10 in
                          ( Id.id_of_string "QueryInterfaceType" )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _1000 = CREATOR _4 = SEMI
     {let _3 =
@@ -643,6 +688,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _1000 = CREATOR x0 = default _4 = SEMI
     {let _3 =
@@ -661,6 +707,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _1000 = GETTER _4 = SEMI
     {let _3 =
@@ -678,6 +725,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _1000 = GETTER x0 = default _4 = SEMI
     {let _3 =
@@ -696,6 +744,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _1000 = SETTER _4 = SEMI
     {let _3 =
@@ -713,6 +762,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _1000 = SETTER x0 = default _4 = SEMI
     {let _3 =
@@ -731,6 +781,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl id000 = ID _4 = SEMI
     {let _3 =
@@ -748,6 +799,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl id000 = ID x0 = default _4 = SEMI
     {let _3 =
@@ -766,6 +818,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _1000 = DICTIONARY _4 = SEMI
     {let _3 =
@@ -783,6 +836,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _1000 = DICTIONARY x0 = default _4 = SEMI
     {let _3 =
@@ -801,6 +855,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _1000 = PARTIAL _4 = SEMI
     {let _3 =
@@ -818,6 +873,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 | ty = typeDecl _1000 = PARTIAL x0 = default _4 = SEMI
     {let _3 =
@@ -836,6 +892,7 @@ let name =
   in
                                       ( id )
 in
+let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 
 default:
@@ -850,6 +907,7 @@ exceptionDef:
   let _1 = _10 in
       ( x )
 in
+let _startpos = _startpos__1_ in
       ( Exception(_startpos, [], name, inherits, mems) )}
 
 exceptionMembers:
@@ -864,23 +922,27 @@ inheritance:
 
 implementsStatement:
 | _1 = ID _2 = IMPLEMENTS _3 = ID _4 = SEMI
-    {      ( Implements(_startpos, [], _1, _3) )}
+    {let _startpos = _startpos__1_ in
+      ( Implements(_startpos, [], _1, _3) )}
 
 stringifierAttributeOrOperation:
 | _1 = attribute
-    {              ( 
+    {let _startpos = _startpos__1_ in
+              ( 
     match _1 with
     | Attribute(_, meta, readonly, _, ty, id) -> Attribute(_startpos, meta, readonly, IsStringifier, ty, id)
     | _ -> failwith "Impossible"
   )}
 | _1 = operation
-    {              ( 
+    {let _startpos = _startpos__1_ in
+              ( 
     match _1 with
     | Operation(_, meta, _, quals, ret, id, args) -> Operation(_startpos, meta, IsStringifier, quals, ret, id, args)
     | _ -> failwith "Impossible"
   )}
 | _1 = SEMI
-    {         ( Stringifier(_startpos, []) )}
+    {let _startpos = _startpos__1_ in
+         ( Stringifier(_startpos, []) )}
 
 operation:
 | _10 = STATIC op = operationRest
@@ -888,6 +950,8 @@ operation:
   let _1 = _10 in
              ( {noQualifiers with static=true} )
 in
+let _startpos_q_ = _startpos__10_ in
+let _startpos = _startpos_q_ in
                                   ( op _startpos q )}
 | _20 = GETTER op = operationRest
     {let q =
@@ -897,6 +961,8 @@ in
   in
                                            ( {noQualifiers with legacyCaller=legacy; getter=true} )
 in
+let _startpos_q_ = _startpos__20_ in
+let _startpos = _startpos_q_ in
                                   ( op _startpos q )}
 | _100 = LEGACYCALLER _20 = GETTER op = operationRest
     {let q =
@@ -908,6 +974,8 @@ in
   in
                                            ( {noQualifiers with legacyCaller=legacy; getter=true} )
 in
+let _startpos_q_ = _startpos__100_ in
+let _startpos = _startpos_q_ in
                                   ( op _startpos q )}
 | _10 = SETTER op = operationRest
     {let q =
@@ -917,6 +985,8 @@ in
   in
                                        ( {noQualifiers with setter=true; creator=creator} )
 in
+let _startpos_q_ = _startpos__10_ in
+let _startpos = _startpos_q_ in
                                   ( op _startpos q )}
 | _11 = SETTER _100 = CREATOR op = operationRest
     {let q =
@@ -928,23 +998,31 @@ in
   in
                                        ( {noQualifiers with setter=true; creator=creator} )
 in
+let _startpos_q_ = _startpos__11_ in
+let _startpos = _startpos_q_ in
                                   ( op _startpos q )}
 | _10 = CREATOR op = operationRest
     {let q =
   let _1 = _10 in
               ( {noQualifiers with creator=true} )
 in
+let _startpos_q_ = _startpos__10_ in
+let _startpos = _startpos_q_ in
                                   ( op _startpos q )}
 | _10 = DELETER op = operationRest
     {let q =
   let _1 = _10 in
               ( {noQualifiers with deleter=true} )
 in
+let _startpos_q_ = _startpos__10_ in
+let _startpos = _startpos_q_ in
                                   ( op _startpos q )}
 | op = operationRest
     {let q =
       ( noQualifiers )
 in
+let _startpos_q_ = _endpos__0_ in
+let _startpos = _startpos_q_ in
                                   ( op _startpos q )}
 
 raisesClause:
@@ -1412,11 +1490,13 @@ enum:
   let _1 = _10 in
       ( x )
 in
+let _startpos = _startpos__1_ in
       ( Enum(_startpos, [], name, mems) )}
 
 const:
 | _1 = CONST cty = constType id = ID _4 = EQUALS cval = constValue _6 = SEMI
-    {      ( (_startpos, [], cty, id, cval) )}
+    {let _startpos = _startpos__1_ in
+      ( (_startpos, [], cty, id, cval) )}
 
 constValue:
 | _1 = expr
@@ -1745,6 +1825,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _10 = NOTXPCOM _6 = SEMI
     {let name =
@@ -1754,6 +1835,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _10 = RETVAL _6 = SEMI
     {let name =
@@ -1763,6 +1845,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _10 = UNSAFE _6 = SEMI
     {let name =
@@ -1772,6 +1855,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _10 = PRIVATEBROWSINGCHECK _6 = SEMI
     {let name =
@@ -1781,6 +1865,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _10 = QUERYINTERFACETYPE _6 = SEMI
     {let name =
@@ -1790,6 +1875,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _1000 = CREATOR _6 = SEMI
     {let name =
@@ -1807,6 +1893,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _1000 = GETTER _6 = SEMI
     {let name =
@@ -1824,6 +1911,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _1000 = SETTER _6 = SEMI
     {let name =
@@ -1841,6 +1929,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl id000 = ID _6 = SEMI
     {let name =
@@ -1858,6 +1947,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _1000 = DICTIONARY _6 = SEMI
     {let name =
@@ -1875,6 +1965,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _1000 = PARTIAL _6 = SEMI
     {let name =
@@ -1892,6 +1983,7 @@ in
 let readonly =
       ( false )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl _11 = CONSTRUCTOR _6 = SEMI
     {let name =
@@ -1902,6 +1994,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl _11 = NOTXPCOM _6 = SEMI
     {let name =
@@ -1912,6 +2005,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl _11 = RETVAL _6 = SEMI
     {let name =
@@ -1922,6 +2016,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl _11 = UNSAFE _6 = SEMI
     {let name =
@@ -1932,6 +2027,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl _11 = PRIVATEBROWSINGCHECK _6 = SEMI
     {let name =
@@ -1942,6 +2038,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl _11 = QUERYINTERFACETYPE _6 = SEMI
     {let name =
@@ -1952,6 +2049,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl _1000 = CREATOR _6 = SEMI
     {let name =
@@ -1970,6 +2068,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl _1000 = GETTER _6 = SEMI
     {let name =
@@ -1988,6 +2087,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl _1000 = SETTER _6 = SEMI
     {let name =
@@ -2006,6 +2106,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl id000 = ID _6 = SEMI
     {let name =
@@ -2024,6 +2125,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl _1000 = DICTIONARY _6 = SEMI
     {let name =
@@ -2042,6 +2144,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 | _1 = option_INHERIT_ _10 = READONLY _3 = ATTRIBUTE ty = typeDecl _1000 = PARTIAL _6 = SEMI
     {let name =
@@ -2060,6 +2163,7 @@ let readonly =
   let _1 = _10 in
       ( true )
 in
+let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 
 argumentList:
@@ -2541,7 +2645,8 @@ exceptionMember:
 
 exceptionField:
 | ty = typeDecl id = ID _3 = SEMI
-    {                           ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, id) )}
+    {let _startpos = _startpos_ty_ in
+                           ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, id) )}
 
 extendedAttributeList:
 | _10 = LBRACK x0 = iseparated_nonempty_list_COMMA_extendedAttribute_ _30 = RBRACK

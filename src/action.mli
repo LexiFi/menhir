@@ -1,3 +1,5 @@
+open Keyword
+
 (** Semantic action's type. *)
 type t
 
@@ -5,20 +7,35 @@ type t
     feature is used during the processing of the %inline keyword. *)
 val compose : string -> t -> t -> t
 
-(** [rename renaming_env phi a] builds the action
-    [let x1 = x1' and ... xn = xn' in a] if [phi] is [(x1, x1') ... (xn, xn')].
-    Moreover, [renaming_env] is used to correctly replace $startpos/$endpos
-    present in the semantic action. *)
-val rename:
-  string * (Keyword.subject * Keyword.where) * (Keyword.subject * Keyword.where)
-  -> (string * string) list -> t -> t * (bool * bool)
+(* [define keyword keywords f action] defines away the keyword [keyword].
+   It is removed from the set of keywords of this semantic action; the
+   set [keywords] is added in its place. The body of the semantic action
+   is transformed by the function [f], which typically wraps it in some
+   new [let] bindings. *)
 
-(** [rename_inlined_psym renaming_env phi a] updates the occurrences of the
-    inlined non terminal in the action [a].
-*)
-val rename_inlined_psym:
-  string * (Keyword.subject * Keyword.where) * (Keyword.subject * Keyword.where)
-  -> (string * string) list -> t -> t * (bool * bool)
+val define: keyword -> KeywordSet.t -> (IL.expr -> IL.expr) -> t -> t
+
+(* Variable-to-variable substitutions, used by [rename], below. *)
+
+type subst =
+  (string * string) list
+
+(* [Subject/where] pairs, as defined in [Keyword], encode a position
+   keyword. *)
+
+type sw =
+  subject * where
+
+(** [rename f phi a] applies to the semantic action [a] the renaming [phi] as
+    well as the transformations decided by the function [f]. The function [f] is
+    applied to each (not-yet-renamed) keyword and may decide to transform it, by
+    returning [Some _], or to not transform it, by returning [None]. (In the
+    latter case, [phi] still applies to the keyword.) *)
+val rename:
+  (sw -> sw option) ->
+  subst ->
+  t ->
+  t
 
 (** Semantic actions are translated into [IL] code using the
     [IL.ETextual] and [IL.ELet] constructors. *)
@@ -30,11 +47,8 @@ val to_il_expr: t -> IL.expr
     the standard library. *)
 val filenames: t -> string list
 
-(** [pkeywords a] returns a list of all keyword occurrences in [a]. *)
-val pkeywords: t -> Keyword.keyword Positions.located list
-
 (** [keywords a] is the set of keywords used in the semantic action [a]. *)
-val keywords: t -> Keyword.KeywordSet.t
+val keywords: t -> KeywordSet.t
 
 (** [print f a] prints [a] to channel [f]. *)
 val print: out_channel -> t -> unit
@@ -42,12 +56,8 @@ val print: out_channel -> t -> unit
 (** [from_stretch s] builds an action out of a textual piece of code. *)
 val from_stretch: Stretch.t -> t
 
-(** Check whether the keyword $syntaxerror is used in the action. *)
+(** Test whether the keyword [$syntaxerror] is used in the action. *)
 val has_syntaxerror: t -> bool
 
-(** Check whether the keyword $start is used in the action. *)
-val has_leftstart: t -> bool
-
-(** Check whether the keyword $end is used in the action. *)
-val has_leftend: t -> bool
-
+(** Test whether the keyword [$endpos($0)] is used in the action. *)
+val has_beforeend: t -> bool

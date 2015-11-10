@@ -8,45 +8,55 @@
 %left TIMES DIV         /* medium precedence */
 %nonassoc UMINUS        /* highest precedence */
 
-%start<unit> main
+%type<Aux.annotations> annotations
+%start<Aux.main> main
+
+%{ open Aux %}
 
 %%
 
 main:
-| nothing expr EOL
-    {}
+| n = nothing e = expr EOL
+    { ($startpos, $endpos), n, e, $symbolstartpos }
 
 /* Added just to exercise productions with an empty right-hand side. */
 %inline nothing:
 | /* nothing */
-    { Aux.print "nothing" $startpos $endpos }
+    { ($startpos, $endpos) }
 
 /* Added just to exercise productions with an empty right-hand side, in a choice. */
 optional_dot:
-| nothing
+| n = nothing
+    { ($startpos, $endpos), Some n }
 | DOT
-    { Aux.print "optional_dot" $startpos $endpos}
+    { ($startpos, $endpos), None }
 
 %inline optional_comma:
-| nothing
+| n = nothing
+    { ($startpos, $endpos), Some n }
 | COMMA
-    { Aux.print "optional_comma" $startpos $endpos}
+    { ($startpos, $endpos), None }
 
-annotations:
+%inline annotations:
   optional_dot optional_comma
-    { Aux.print "annotations" $startpos $endpos }
+    { ($startpos, $endpos),
+      $endpos($1), $startpos($2), $startofs, $symbolstartpos,
+      $1, $2 }
 
 raw_expr:
 | INT
-| annotations LPAREN nothing expr RPAREN optional_dot
+    { EInt }
+| a = annotations LPAREN n = nothing e = expr RPAREN o = optional_dot
+    { EParen(a, n, e, o, $symbolstartofs) }
 | expr PLUS expr
 | expr MINUS expr
 | expr TIMES expr
 | expr DIV expr
+    { EBinOp ($1, $3) }
 | MINUS expr %prec UMINUS
-    {}
+    { EUnOp $2 }
 
-expr:
-  raw_expr
-    { Aux.print "expr" $startpos $endpos }
+%inline expr:
+  e = raw_expr
+    { ($startpos, $endpos), $endpos($0), $endofs($0), e }
 

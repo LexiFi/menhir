@@ -613,6 +613,16 @@ let rewind node : instruction =
    (resp. last) symbol of its right-hand side (if there is one) must
    do so as well. That is, unless the right-hand side is empty. *)
 
+(* 2015/11/04. When an epsilon production is reduced, the top stack cell is
+   consulted for its end position. This implies that this cell must exist and
+   must store an end position! Thus, we have the following constraint: if some
+   state whose incoming symbol is [sym] can reduce an epsilon production, then
+   [sym] must keep track of its end position. (Furthermore, if some initial
+   state can reduce an epsilon production, then the sentinel cell at the bottom
+   of the stack must contain a position. This does not concern us here.)
+   Similarly, if some state whose incoming symbol is [sym] uses [$endpos($0)],
+   then [sym] must keep track of its end position. *)
+
 open Keyword
 
 let startp =
@@ -628,6 +638,8 @@ let rec require where symbol =
 	startp
     | WhereEnd ->
 	endp
+    | WhereSymbolStart ->
+        assert false (* has been expanded away *)
   in
   if not (SymbolSet.mem symbol !wherep) then begin
     wherep := SymbolSet.add symbol !wherep;
@@ -647,16 +659,23 @@ and require_aux where prod =
 	require where rhs.(0)
     | WhereEnd ->
 	require where rhs.(length - 1)
+    | WhereSymbolStart ->
+        assert false (* has been expanded away *)
 
 let () =
   Production.iterx (fun prod ->
     let rhs = Production.rhs prod
     and ids = Production.identifiers prod
     and action = Production.action prod in
-
     KeywordSet.iter (function
       | SyntaxError ->
 	  ()
+      | Position (Before, _, _) ->
+          (* Doing nothing here is OK because the presence of [$endpos($0)]
+             in a semantic action is taken account below when we look at
+             every state and check whether it can reduce a production whose
+             semantic action contains [$endpos($0)]. *)
+          ()
       | Position (Left, where, _) ->
 	  require_aux where prod
       | Position (RightNamed id, where, _) ->
@@ -665,6 +684,12 @@ let () =
 	      require where rhs.(i)
 	  ) ids
     ) (Action.keywords action)
+  );
+  Lr1.iterx (fun node ->
+    (* 2015/11/04. See above. *)
+    if Lr1.has_beforeend node then
+      let sym = Misc.unSome (Lr1.incoming_symbol node) in
+      require WhereEnd sym
   )
 
 let startp =

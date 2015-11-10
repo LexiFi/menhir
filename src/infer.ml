@@ -64,8 +64,8 @@ let actiondef grammar symbol branch =
   (* Construct a list of the semantic action's formal parameters that
      depend on the production's right-hand side. *)
 
-  let _, formals =
-    List.fold_left (fun (i, formals) (symbol, id) ->
+  let formals =
+    List.fold_left (fun formals (symbol, id) ->
       let id, startp, endp, starto, endo =
 	id,
 	Printf.sprintf "_startpos_%s_" id,
@@ -86,14 +86,13 @@ let actiondef grammar symbol branch =
 	  (* Symbol is a nonterminal. *)
 	  nttype grammar symbol
       in
-      i + 1,
       PAnnot (PVar id, t) ::
       PAnnot (PVar startp, tposition) ::
       PAnnot (PVar endp, tposition) ::
       PAnnot (PVar starto, tint) ::
       PAnnot (PVar endo, tint) ::
       formals
-    ) (0, []) branch.producers
+    ) [] branch.producers
   in
 
   (* Extend the list with parameters that do not depend on the
@@ -103,8 +102,12 @@ let actiondef grammar symbol branch =
     PAnnot (PVar "_eRR", texn) ::
     PAnnot (PVar "_startpos", tposition) ::
     PAnnot (PVar "_endpos", tposition) ::
+    PAnnot (PVar "_endpos__0_", tposition) ::
+    PAnnot (PVar "_symbolstartpos", tposition) ::
     PAnnot (PVar "_startofs", tint) ::
     PAnnot (PVar "_endofs", tint) ::
+    PAnnot (PVar "_endofs__0_", tint) ::
+    PAnnot (PVar "_symbolstartofs", tint) ::
     formals
   in
 

@@ -12,35 +12,28 @@ type flavor =
   | FlavorOffset
   | FlavorPosition
 
-(* The user can request position information about the
-   start or end of a symbol. *)
+(* The user can request position information about the $start or $end
+   of a symbol. Also, $symbolstart requests the computation of the
+   start position of the first nonempty element in a production. *)
 
 type where =
-  | WhereStart
-  | WhereEnd
+| WhereSymbolStart
+| WhereStart
+| WhereEnd
 
 (* The user can request position information about a production's
    left-hand side or about one of the symbols in its right-hand
    side, which he can refer to by position or by name. *)
 
-type parsed_subject =
-  | PLeft
-  | PRightDollar of int
-  | PRightNamed of string
-
-and subject =
+type subject =
+  | Before
   | Left
   | RightNamed of string
 
 (* Keywords inside semantic actions. They allow access to semantic
    values or to position information. *)
 
-type parsed_keyword =
-  | PDollar of int
-  | PPosition of parsed_subject * where * flavor
-  | PSyntaxError
-
-and keyword =
+type keyword =
   | Position of subject * where * flavor
   | SyntaxError
 
@@ -49,12 +42,16 @@ and keyword =
    name of the variable that the keyword is replaced with. *)
 
 let where = function
+  | WhereSymbolStart ->
+      "symbolstart"
   | WhereStart ->
       "start"
   | WhereEnd ->
       "end"
 
 let subject = function
+  | Before ->
+      "__0_"
   | Left ->
       ""
   | RightNamed id ->
@@ -72,9 +69,16 @@ let posvar s w f =
 (* ------------------------------------------------------------------------- *)
 (* Sets of keywords. *)
 
-module KeywordSet =
-  Set.Make (struct
+module KeywordSet = struct
+
+  include Set.Make (struct
     type t = keyword
     let compare = compare
   end)
 
+  let map f keywords =
+    fold (fun keyword accu ->
+      add (f keyword) accu
+    ) keywords empty
+
+end

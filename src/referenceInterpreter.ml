@@ -320,8 +320,7 @@ let check_error_path log nt input =
       | None ->
         OInputReadPastEnd
       | Some t ->
-        let dummy = Lexing.dummy_pos in
-        loop (E.offer checkpoint (t, dummy, dummy)) spurious
+        loop (E.offer checkpoint (t, Lexing.dummy_pos, Lexing.dummy_pos)) spurious
       end
     | E.Shifting _ ->
       loop (E.resume checkpoint) spurious
@@ -356,5 +355,5 @@ let check_error_path log nt input =
         assert false
   in
 
-  loop (E.start entry) []
+  loop (E.start entry Lexing.dummy_pos) []
 

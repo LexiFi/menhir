@@ -52,9 +52,6 @@ let fstack =
 let fcurrent =
   field "current"
 
-let ftriple =
-  field "triple"
-
 let entry =
   interpreter ^ ".entry"
 
@@ -178,6 +175,12 @@ let reducecellcasts prod i symbol casts =
     EAnnot (EMagic (EVar id), type2scheme t)
   ) :: casts
 
+(* 2015/11/04. The start and end positions of an epsilon production are obtained
+   by taking the end position stored in the top stack cell (whatever it is). *)
+
+let endpos_of_top_stack_cell =
+  ERecordAccess(EVar stack, fendp)
+
 (* This is the body of the [reduce] function associated with
    production [prod]. It assumes that the variables [env] and [stack]
    have been bound. *)
@@ -202,19 +205,21 @@ let reducebody prod =
     ) (0, PVar stack, []) (Invariant.prodstack prod)
   in
 
-  (* Determine start and end positions for the left-hand side of the
-     production. *)
+  (* Determine beforeend/start/end positions for the left-hand side of the
+     production, and bind them to the conventional variables [beforeendp],
+     [startp], and [endp]. These variables may be unused by the semantic
+     action, in which case these bindings are dead code and can be ignored
+     by the OCaml compiler. *)
 
   let posbindings =
+    ( PVar beforeendp,
+      endpos_of_top_stack_cell
+    ) ::
     ( PVar startp,
       if length > 0 then
 	EVar (Printf.sprintf "_startpos_%s_" ids.(0))
       else
-        (* Use the start position of the current lookahead token,
-           which is stored in the second component of [env.triple]. *)
-        ELet ([PTuple [PWildcard; PVar "startpos"; PWildcard],
-               ERecordAccess (EVar env, ftriple)],
-              EVar "startpos")
+        endpos_of_top_stack_cell
     ) ::
     ( PVar endp,
       if length > 0 then
@@ -242,7 +247,6 @@ let reducebody prod =
       (pat, EVar stack) ::                  (* destructure the stack *)
       casts @                               (* perform type casts *)
       posbindings @                         (* bind [startp] and [endp] *)
-      extrabindings action @                (* add bindings for the weird keywords *)
       [ PVar semv, act ],                   (* run the user's code and bind [semv] *)
 
       (* Return a new stack, onto which we have pushed a new stack cell. *)
@@ -714,19 +718,21 @@ let monolithic_api : IL.valdef list =
 (* An entry point to the incremental API. *)
 
 let incremental_entry_point state nt t =
+  let initial = "initial_position" in
   define (
     Nonterminal.print true nt,
-    (* In principle the abstraction [fun () -> ...] should not be
-       necessary, since [start] is a pure function. However, when
-       [--trace] is enabled, [start] will log messages to the
-       standard error channel. *)
+    (* In principle the eta-expansion [fun initial_position -> start s
+       initial_position] should not be necessary, since [start] is a pure
+       function. However, when [--trace] is enabled, [start] will log messages
+       to the standard error channel. *)
     EFun (
-      [ PUnit ],
+      [ PVar initial ],
       EAnnot (
         EMagic (
           EApp (
             EVar start, [
               EIntConst (Lr1.number state);
+              EVar initial;
             ]
           )
         ),

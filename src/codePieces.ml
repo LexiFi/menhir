@@ -48,6 +48,11 @@ let token =
    that binding these variables before executing a semantic action is
    meaningful. *)
 
+(* These names should agree with the printing function [Keyword.posvar]. *)
+
+let beforeendp =
+  "_endpos__0_"
+
 let startp =
   "_startpos"
 
@@ -187,29 +192,6 @@ let destructuretokendef name codomain bindsemv branch = {
       type2scheme (arrow TokenType.ttoken codomain)
     )
 }
-
-(* ------------------------------------------------------------------------ *)
-
-(* Bindings for exotic keywords. *)
-
-(* [extrabindings action] provides definitions for the [$startofs] and
-   [$endofs] keywords, if required by a semantic action. The parameter
-   [action] is the semantic action within which these keywords might be
-   used. *)
-
-(* The [ofs] keyword family is defined in terms of the [pos] family by
-   accessing the [pos_cnum] field. *)
-
-let extrabindings action =
-  Keyword.KeywordSet.fold (fun keyword bindings ->
-    match keyword with
-    | Keyword.Position (_, _, Keyword.FlavorPosition)
-    | Keyword.SyntaxError ->
-	bindings
-    | Keyword.Position (s, w, (Keyword.FlavorOffset as f)) ->
-	(PVar (Keyword.posvar s w f),
-	 ERecordAccess (EVar (Keyword.posvar s w Keyword.FlavorPosition), "Lexing.pos_cnum")) :: bindings
-  ) (Action.keywords action) []
 
 (* ------------------------------------------------------------------------ *)
 

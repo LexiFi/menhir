@@ -1,3 +1,4 @@
+open Lexing
 open MenhirLib.General
 open Parser.MenhirInterpreter
 
@@ -28,17 +29,17 @@ let print_explanation explanation =
 let print_explanations startp explanations =
   Printf.fprintf stderr
     "At line %d, column %d: syntax error.\n"
-    startp.Lexing.pos_lnum
-    startp.Lexing.pos_cnum;
+    startp.pos_lnum
+    startp.pos_cnum;
   List.iter print_explanation explanations;
   flush stderr
 
 (* The rest of the code is as in the [calc] demo. *)
 
 let process (line : string) =
-  let lexbuf = Lexing.from_string line in
+  let lexbuf = from_string line in
   try
-    let v = E.entry (Parser.Incremental.main()) Lexer.token lexbuf in
+    let v = E.entry (Parser.Incremental.main lexbuf.lex_curr_p) Lexer.token lexbuf in
     Printf.printf "%d\n%!" v
   with
   | Lexer.Error msg ->
@@ -61,5 +62,5 @@ let rec repeat channel =
     repeat channel
   
 let () =
-  repeat (Lexing.from_channel stdin)
+  repeat (from_channel stdin)
 
