@@ -1,6 +1,21 @@
-(* This module transforms [Front.grammar], an abstract syntax tree for
-   the grammar, into an internal representation of the grammar that is
-   more usable. *)
+(* The functor [Make] transforms an abstract syntax tree for the grammar into a
+   rich internal representation of the grammar. *)
+
+(* The reason why this is now a functor, and the reason why its verbosity can
+   be controlled, is that we may wish to invoke it several times, e.g. on the
+   grammar before %inlining, and on the grammar after %inlining. 2015/11/10 *)
+
+module Make (G : sig
+
+  (* An abstract syntax tree for the grammar. *)
+  val grammar: UnparameterizedSyntax.grammar
+
+  (* This flag indicates whether it is OK to produce warnings, verbose
+     information, etc., when this functor is invoked. If it is set to
+     [false], then only serious errors can be signaled. *)
+  val verbose: bool
+
+end) : sig
 
 (* ------------------------------------------------------------------------ *)
 (* Nonterminals. *)
@@ -511,4 +526,9 @@ end
    should be invoked after only the automaton has been constructed. *)
 
 val diagnostics: unit -> unit
+
+(* ------------------------------------------------------------------------ *)
+
+end (* module Make *)
+
 
