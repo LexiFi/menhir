@@ -138,13 +138,26 @@ check:
 # Create a temporary directory; extract, build, and install the
 # package into it; build the demos and run the test suite using
 # the installed binary.
+# Some of the demos assume Menhir has been installed using ocamlfind,
+# so that is what we do. For this reason, we must check first that
+# ocamlfind does not already have some version of menhirLib.
+	@ if ocamlfind query menhirLib >/dev/null 2>/dev/null ; then \
+	  echo "Error: menhirLib is already installed." ; \
+	  echo "Please remove it first by running this command:" ; \
+	  if opam list -i menhir >/dev/null ; then \
+	    echo "  opam remove menhir" ; \
+	  else \
+	    echo "  ocamlfind remove menhirLib" ; \
+	  fi ; \
+	  exit 1 ; \
+	fi
 	@ TEMPDIR=`mktemp -d /tmp/menhir-test.XXXXXX` && { \
 	echo "   * Extracting. " && \
 	(cd $$TEMPDIR && tar xfz $(TARBALL)) && \
 	echo "   * Compiling and installing." && \
 	mkdir $$TEMPDIR/install && \
 	(cd $$TEMPDIR/$(PACKAGE) \
-		&& make PREFIX=$$TEMPDIR/install USE_OCAMLFIND=false all install \
+		&& make PREFIX=$$TEMPDIR/install USE_OCAMLFIND=true all install \
 	) > $$TEMPDIR/install.log 2>&1 \
 		|| (cat $$TEMPDIR/install.log; exit 1) && \
 	echo "   * Building the demos." && \
@@ -155,6 +168,11 @@ check:
 	echo "   * Running the test suite." && \
 	$(MAKE) MENHIR=$$TEMPDIR/install/bin/menhir test > $$TEMPDIR/test.log 2>&1 \
 		|| (cat $$TEMPDIR/test.log; exit 1) && \
+	echo "   * Uninstalling." && \
+	(cd $$TEMPDIR/$(PACKAGE) \
+		&& make PREFIX=$$TEMPDIR/install USE_OCAMLFIND=true uninstall \
+	) > $$TEMPDIR/uninstall.log 2>&1 \
+		|| (cat $$TEMPDIR/uninstall.log; exit 1) && \
 	rm -fr $$TEMPDIR ; }
 	@ echo "-> Package $(PACKAGE) seems ready for distribution!"
 
