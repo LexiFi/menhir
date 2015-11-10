@@ -1368,6 +1368,8 @@ module Analysis = struct
 
   let nullable = NULLABLE.nonterminal
 
+  let nullable_symbol = NULLABLE.symbol
+
   let first = FIRST.nonterminal
 
   (* An initial definition of [nullable_first_prod]. *)

@@ -252,6 +252,10 @@ module Symbol : sig
     | N of Nonterminal.t
     | T of Terminal.t
 
+  (* [lookup] maps an identifier to a symbol, or raises [Not_found]. *)
+
+  val lookup : string -> t
+
   (* Comparison. *)
 
   val equal: t -> t -> bool
@@ -429,6 +433,7 @@ module Analysis : sig
      word [epsilon]. *)
 
   val nullable: Nonterminal.t -> bool
+  val nullable_symbol: Symbol.t -> bool
 
   (* [first nt] is the FIRST set of the non-terminal symbol [nt]. *)
 
