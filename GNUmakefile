@@ -6,7 +6,7 @@
 
 SHELL := bash
 
-.PHONY: all test clean package check api export godi opam local
+.PHONY: all test clean package check api export godi opam local unlocal
 
 # -------------------------------------------------------------------------
 
@@ -235,5 +235,9 @@ opam:
 
 local:
 	$(MAKE) package
-	$(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=false all
-	sudo $(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=false install
+	$(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=true all
+	sudo PATH="$(PATH)" $(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=true install
+
+unlocal:
+	sudo PATH="$(PATH)" $(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=true uninstall
+
