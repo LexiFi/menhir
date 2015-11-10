@@ -58,6 +58,9 @@ let entry =
 let start =
   interpreter ^ ".start"
 
+let staticVersion =
+  menhirlib ^ ".StaticVersion"
+
 (* The following are names of internal sub-modules. *)
 
 let basics =
@@ -949,6 +952,19 @@ let first () =
 
 (* ------------------------------------------------------------------------ *)
 
+(* A reference to [MenhirLib.StaticVersion.require_XXXXXXXX], where [XXXXXXXX]
+   is our 8-digit version number. This ensures that the generated code can be
+   linked only with an appropriate version of MenhirLib. This is important
+   because we use unsafe casts, and a version mismatch could cause a crash. *)
+
+let versiondef = {
+  valpublic = true;
+  valpat = PUnit;
+  valval = EVar (staticVersion ^ ".require_" ^ Version.version);
+}
+
+(* ------------------------------------------------------------------------ *)
+
 (* Let's put everything together. *)
 
 open UnparameterizedSyntax
@@ -959,6 +975,15 @@ let grammar =
 let program =
  
   [ SIFunctor (grammar.parameters,
+
+    (* Make a reference to [MenhirLib.StaticVersion.require_XXXXXXXX], where
+       [XXXXXXXX] is our 8-digit version number. This ensures that the
+       generated code can be linked only with an appropriate version of
+       MenhirLib. This is important because we use unsafe casts, and a
+       version mismatch could cause a crash. *)
+
+    SIComment "This generated code requires the following version of MenhirLib:" ::
+    SIValDefs (false, [ versiondef ]) ::
 
     (* Define the internal sub-module [basics], which contains the definitions
        of the exception [Error] and of the type [token]. Then, include this

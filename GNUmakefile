@@ -112,10 +112,12 @@ package: clean
 	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
 	  done
 # Set the version number into the files that mention it. These
-# include version.ml, version.tex, META.
+# include version.ml, StaticVersion.{ml,mli}, version.tex, META.
 	@ echo "-> Setting version to $(DATE)."
 	@ echo let version = \"$(DATE)\" > $(PACKAGE)/src/version.ml
 	@ echo version = \"$(DATE)\" >> $(PACKAGE)/src/META
+	@ echo "let require_$(DATE) = ()" > $(PACKAGE)/src/StaticVersion.ml
+	@ echo "val require_$(DATE) : unit" > $(PACKAGE)/src/StaticVersion.mli
 # Copy and compile the documentation.
 	@ echo "-> Generating the documentation."
 	@ cp -r doc $(PACKAGE)
