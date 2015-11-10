@@ -1,4 +1,5 @@
 %start main
+%token C
 %token B
 %token A
 
@@ -6,17 +7,39 @@
 %%
 
 main:
-| _1 = A _2 = B
-    {let _endpos = _endpos__2_ in
-let _symbolstartpos = if Pervasives.(!=) _startpos__1_ _endpos__1_ then
+| _1 = A _2 = B _3 = hop
+    {let _symbolstartpos = _startpos__1_ in
+let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
+              ( _symbolstartpos, _symbolstartofs )}
+
+hop:
+| _1 = bar _2 = A _3 = B
+    {let _symbolstartpos = _startpos__1_ in
+             ( _symbolstartpos )}
+
+bar:
+| _1 = option_foo_ _2 = B
+    {let _symbolstartpos = if Pervasives.(!=) _startpos__1_ _endpos__1_ then
   _startpos__1_
 else
-  if Pervasives.(!=) _startpos__2_ _endpos__2_ then
-    _startpos__2_
-  else
-    _endpos in
-let _symbolstartofs = _symbolstartpos.Lexing.pos_cnum in
-          ( _symbolstartpos, _symbolstartofs )}
+  _startpos__2_ in
+            ( _symbolstartpos )}
+
+foo:
+| _1 = C _2 = nothing
+    {               ()}
+
+nothing:
+| 
+    {let _endpos = _endpos__0_ in
+let _symbolstartpos = _endpos in
+         ( _symbolstartpos )}
+
+option_foo_:
+| 
+    {    ( None )}
+| x = foo
+    {    ( Some x )}
 
 %%
 
