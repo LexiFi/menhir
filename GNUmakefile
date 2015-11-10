@@ -239,6 +239,8 @@ opam:
 	  rm url && \
 	  echo 'archive: "http://gallium.inria.fr/~fpottier/menhir/menhir-$(DATE).tar.gz"' >> url && \
 	  echo 'checksum: "$(CSUM)"' >> url
+# Copy the file "opam" from Menhir's repository to opam's.
+	@ cp -f opam $(OPAM)/packages/menhir/menhir.$(DATE)
 # Prepare a commit.
 	@ echo "Preparing a new commit..."
 	@ cd $(OPAM)/packages/menhir && \
