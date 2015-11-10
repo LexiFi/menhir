@@ -24,7 +24,7 @@
 
 main:
 | nothing expr EOL
-    { (Parsing.rhs_start_pos 1, Parsing.symbol_end_pos()), $1, $2 }
+    { (Parsing.rhs_start_pos 1, Parsing.symbol_end_pos()), $1, $2, Parsing.symbol_start_pos() }
 
 /* Added just to exercise productions with an empty right-hand side. */
 nothing:

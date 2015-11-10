@@ -25,7 +25,7 @@ and expr =
   positions * position * int * raw_expr
 
 type main =
-  positions * nothing * expr
+  positions * nothing * expr * position
 
 let iter f = function
   | None ->
@@ -96,10 +96,11 @@ module Print = struct
     offset   "expr: $endofs($0)" ofs;
     raw_expr e
 
-  let main (poss, n, e) =
+  let main (poss, n, e, pos1) =
     positions "main" poss;
     nothing n;
-    expr e
+    expr e;
+    position "main: $symbolstartpos" pos1
 
 end
 

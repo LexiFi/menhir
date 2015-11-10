@@ -17,7 +17,7 @@
 
 main:
 | n = nothing e = expr EOL
-    { ($startpos, $endpos), n, e }
+    { ($startpos, $endpos), n, e, $symbolstartpos }
 
 /* Added just to exercise productions with an empty right-hand side. */
 %inline nothing:
