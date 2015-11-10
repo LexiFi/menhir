@@ -499,9 +499,9 @@ end
 (* ------------------------------------------------------------------------ *)
 (* Diagnostics. *)
 
-(* This function prints diagnostics about precedence declarations that
-   are never consulted. It is called after the automaton is
-   constructed. *)
+(* This function prints warnings about useless precedence declarations for
+   terminal symbols (%left, %right, %nonassoc) and productions (%prec). It
+   should be invoked after only the automaton has been constructed. *)
 
 val diagnostics: unit -> unit
 

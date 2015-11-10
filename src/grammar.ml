@@ -37,8 +37,9 @@ module TokPrecedence = struct
     in
     levelip id properties    
 
-  (* This function is invoked after the automaton has been constructed.
-     It warns about unused precedence levels. *)
+  (* This function prints warnings about useless precedence declarations
+     for terminal symbols (%left, %right, %nonassoc). It should be invoked
+     after only the automaton has been constructed. *)
 
   let diagnostics () =
     StringMap.iter (fun id properties ->
@@ -729,6 +730,10 @@ module Production = struct
       ) osym
     ),
     osym
+
+  (* This function prints warnings about useless precedence declarations for
+     productions (%prec). It should be invoked after only the automaton has
+     been constructed. *)
 
   let diagnostics () =
     iterx (fun prod ->
@@ -1518,6 +1523,10 @@ module Precedence = struct
 
 end
   
+(* This function prints warnings about useless precedence declarations for
+   terminal symbols (%left, %right, %nonassoc) and productions (%prec). It
+   should be invoked after only the automaton has been constructed. *)
+
 let diagnostics () =
   TokPrecedence.diagnostics();
   Production.diagnostics()
