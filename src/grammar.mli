@@ -86,6 +86,13 @@ module Nonterminal : sig
 end
 
 (* ------------------------------------------------------------------------ *)
+(* Sets of nonterminals. *)
+
+module NonterminalMap : GMap.S with type key = Nonterminal.t
+
+module NonterminalSet = NonterminalMap.Domain
+
+(* ------------------------------------------------------------------------ *)
 (* Terminals. *)
 
 module Terminal : sig

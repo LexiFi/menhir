@@ -1,5 +1,10 @@
 open Grammar
 
+let () =
+  if Settings.graph then
+    DependencyGraph.print_dependency_graph()
+  (* artificial dependency *)
+
 (* -------------------------------------------------------------------------- *)
 (* Our output channel. *)
 
