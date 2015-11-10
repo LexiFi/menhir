@@ -19,11 +19,12 @@ let posvar_ = function
    [Parsing.symbol_start_pos] in OCaml's standard library. *)
 
 (* This cascade of [if] constructs could be quite big, and this could be a
-   problem in terms of code size. Fortunately, because we know which symbols are
-   nullable, we can optimize this code by computing, ahead of time, the outcome
-   of certain comparisons. This assumes that the lexer never produces a token
-   whose start and end positions are the same. There follows that a non-nullable
-   symbol cannot have the same start and end positions. *)
+   problem in terms of code size. Fortunately, we can optimize this code by
+   computing, ahead of time, the outcome of certain comparisons. We assume that
+   the lexer never produces a token whose start and end positions are the same.
+   There follows that a non-nullable symbol cannot have the same start and end
+   positions. Conversely, a symbol that generates (a subset of) the language
+   {epsilon} must have the same start and end positions. *)
 
 (* Although this code is modeled after [Parsing.symbol_start_pos], we compare
    positions using physical equality, whereas they use structural equality. If
@@ -40,7 +41,8 @@ let posvar_ = function
    symbol, once inlined, can be seen to be a sequence of empty and nonempty
    symbols. *)
 
-let rec symbolstartpos nullable producers i n : IL.expr * KeywordSet.t =
+let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
+: IL.expr * KeywordSet.t =
   if i = n then
     (* Return [$endpos]. *)
     let keyword = Position (Left, WhereEnd, FlavorPosition) in
@@ -56,16 +58,23 @@ let rec symbolstartpos nullable producers i n : IL.expr * KeywordSet.t =
     let startp = Position (RightNamed x, WhereStart, FlavorPosition)
     and   endp = Position (RightNamed x, WhereEnd,   FlavorPosition) in
     if not (nullable symbol) then
+      (* The start and end positions must differ. *)
       EVar (posvar_ startp),
       KeywordSet.singleton startp
     else
-      let continue, keywords = symbolstartpos nullable producers (i + 1) n in
-      EIfThenElse (
-        EApp (EVar "Pervasives.(!=)", [ EVar (posvar_ startp); EVar (posvar_ endp) ]),
-        EVar (posvar_ startp),
-        continue
-      ),
-      KeywordSet.add startp (KeywordSet.add endp keywords)
+      let continue, keywords = symbolstartpos analysis producers (i + 1) n in
+      if epsilon symbol then
+        (* The start and end positions must be the same. *)
+        continue,
+        keywords
+      else
+        (* In the general case, a runtime test is required. *)
+        EIfThenElse (
+          EApp (EVar "Pervasives.(!=)", [ EVar (posvar_ startp); EVar (posvar_ endp) ]),
+          EVar (posvar_ startp),
+          continue
+        ),
+        KeywordSet.add startp (KeywordSet.add endp keywords)
 
 (* [define keyword1 f keyword2] macro-expands [keyword1] as [f(keyword2)],
    where [f] is a function of expressions to expressions. *)
@@ -94,10 +103,10 @@ let expand_ofs keyword action =
 (* [$symbolstartpos] is expanded into a cascade of [if] constructs, modeled
    after [Parsing.symbol_start_pos]. *)
 
-let expand_symbolstartpos nullable producers n keyword action =
+let expand_symbolstartpos analysis producers n keyword action =
   match keyword with
   | Position (Left, WhereSymbolStart, FlavorPosition) ->
-      let expansion, keywords = symbolstartpos nullable producers 0 n in
+      let expansion, keywords = symbolstartpos analysis producers 0 n in
       Action.define keyword keywords
         (mlet [ PVar (posvar_ keyword) ] [ expansion ])
         action
@@ -150,7 +159,7 @@ let expand_round f action =
    can cause new keywords to appear, which must eliminated by the following
    rounds. *)
 
-let expand_action nullable producers action =
+let expand_action analysis producers action =
   let n = List.length producers in
 
   (* The [ofs] keyword family is defined in terms of the [pos] family by
@@ -160,7 +169,7 @@ let expand_action nullable producers action =
 
   (* Expand [$symbolstartpos] away. *)
 
-  let action = expand_round (expand_symbolstartpos nullable producers n) action in
+  let action = expand_round (expand_symbolstartpos analysis producers n) action in
 
   (* Then, expand away the non-[ofs] keywords. *)
 
@@ -168,26 +177,34 @@ let expand_action nullable producers action =
 
   action
 
-let expand_branch nullable branch =
-  { branch with action = expand_action nullable branch.producers branch.action }
+(* Silently analyze the grammar so as to find out which symbols are
+   nullable and which symbols generate a subset of {epsilon}. This
+   is used to optimize the expansion of $symbolstartpos. *)
 
-let expand_rule nullable rule =
-  { rule with branches = List.map (expand_branch nullable) rule.branches }
-
-let expand_grammar grammar =
-  (* Silently analyze the grammar so as to find out which symbols are
-     nullable. This is used to optimize the expansion of the keyword
-     $symbolstartpos. *)
+let analysis grammar =
   let module G = GrammarFunctor.Make(struct
     let grammar = grammar
     let verbose = false
   end) in
-  let nullable (nt : Syntax.symbol) : bool =
-    G.Analysis.nullable_symbol (try
-      G.Symbol.lookup nt
-    with Not_found ->
-      assert false
-    )
+  let lookup (nt : Syntax.symbol) : G.Symbol.t =
+    try G.Symbol.lookup nt with Not_found -> assert false
   in
-  { grammar with rules = StringMap.map (expand_rule nullable) grammar.rules }
+  let nullable nt : bool =
+    G.Analysis.nullable_symbol (lookup nt)
+  and epsilon nt : bool =
+    G.TerminalSet.is_empty (G.Analysis.first_symbol (lookup nt))
+  in
+  nullable, epsilon
+
+(* Put everything together. *)
+
+let expand_branch analysis branch =
+  { branch with action = expand_action analysis branch.producers branch.action }
+
+let expand_rule analysis rule =
+  { rule with branches = List.map (expand_branch analysis) rule.branches }
+
+let expand_grammar grammar =
+  let analysis = analysis grammar in
+  { grammar with rules = StringMap.map (expand_rule analysis) grammar.rules }
 
