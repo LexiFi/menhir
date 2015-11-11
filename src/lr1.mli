@@ -84,9 +84,9 @@ val forbid_default_reduction: node -> bool
 val invert : ProductionMap.key list TerminalMap.t -> TerminalSet.t ProductionMap.t
 
 (* [has_beforeend s] tests whether the state [s] can reduce a production
-   whose semantic action can peek at the before-endpos, that is, the end
-   position of the cell that is at the top of the stack after popping and
-   before pushing. *)
+   whose semantic action uses [$endpos($0)]. Note that [$startpos] and
+   [$endpos] have been expanded away already, so we need not worry about
+   the fact that (in an epsilon production) they expand to [$endpos($0)]. *)
 
 val has_beforeend: node -> bool
 
