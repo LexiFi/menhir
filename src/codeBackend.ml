@@ -1190,7 +1190,7 @@ let reducebody prod =
     elementif (Action.has_beforeend action)
       ( (* Extract the field at offset 1 in the top stack cell. *)
         PTuple [ PWildcard; PVar beforeendp ],
-        EVar stack
+        EMagic (EVar stack)
       ) @
     elementif bind_startp
       ( if length > 0 then
@@ -1199,7 +1199,7 @@ let reducebody prod =
         else
           (* Extract the field at offset 1 in the top stack cell. *)
           PTuple [ PWildcard; PVar startp ],
-          EVar stack
+          EMagic (EVar stack)
       ) @
     elementif (Invariant.endp symbol)
       ( if length > 0 then
@@ -1211,7 +1211,7 @@ let reducebody prod =
         else
           (* Extract the field at offset 1 in the top stack cell. *)
           PTuple [ PWildcard; PVar endp ],
-          EVar stack
+          EMagic (EVar stack)
       )
   in
 
