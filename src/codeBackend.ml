@@ -1181,25 +1181,26 @@ let reducebody prod =
      exists and has an [endp] field at offset 1. Yes, we live
      dangerously. You only live once. *)
 
-  let symbol =
-    Symbol.N nt
+  let extract x =
+    (* Extract the end position (i.e., the field at offset 1) in the top
+       stack cell and bind it to the variable [x]. *)
+    PTuple [ PWildcard; PVar x ],
+    EMagic (EVar stack)
   in
+
+  let symbol = Symbol.N nt in
 
   let posbindings action =
     let bind_startp = Invariant.startp symbol in
     elementif (Action.has_beforeend action)
-      ( (* Extract the field at offset 1 in the top stack cell. *)
-        PTuple [ PWildcard; PVar beforeendp ],
-        EMagic (EVar stack)
+      ( extract beforeendp
       ) @
     elementif bind_startp
       ( if length > 0 then
 	  PVar startp,
 	  EVar (Printf.sprintf "_startpos_%s_" ids.(0))
         else
-          (* Extract the field at offset 1 in the top stack cell. *)
-          PTuple [ PWildcard; PVar startp ],
-          EMagic (EVar stack)
+          extract startp
       ) @
     elementif (Invariant.endp symbol)
       ( if length > 0 then
@@ -1209,9 +1210,7 @@ let reducebody prod =
           PVar endp,
 	  EVar startp
         else
-          (* Extract the field at offset 1 in the top stack cell. *)
-          PTuple [ PWildcard; PVar endp ],
-          EMagic (EVar stack)
+          extract endp
       )
   in
 
