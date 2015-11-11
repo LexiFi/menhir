@@ -596,32 +596,41 @@ let rewind node : instruction =
   rewind w
 
 (* ------------------------------------------------------------------------ *)
-(* We now determine which positions must be kept track of. For
-   simplicity, we do this on a per symbol basis. That is, for each
-   symbol, either we never keep track of position information, or we
-   always do. In fact, we do distinguish start and end positions.
-   This leads to computing two sets of symbols -- those that keep
-   track of their start position and those that keep track of their
-   end position.
 
-   A symbol on the right-hand side of a production must keep track of
-   its (start or end) position if that position is explicitly
-   requested by a semantic action.
+(* We now determine which positions must be kept track of. For simplicity, we
+   do this on a per-symbol basis. That is, for each symbol, either we never
+   keep track of position information, or we always do. In fact, we do
+   distinguish start and end positions. This leads to computing two sets of
+   symbols -- those that keep track of their start position and those that
+   keep track of their end position.
 
-   Furthermore, if the left-hand symbol of a production must keep
-   track of its start (resp. end) position, then the first
-   (resp. last) symbol of its right-hand side (if there is one) must
-   do so as well. That is, unless the right-hand side is empty. *)
+   A symbol on the right-hand side of a production must keep track of its
+   (start or end) position if that position is explicitly requested by a
+   semantic action.
 
-(* 2015/11/04. When an epsilon production is reduced, the top stack cell is
-   consulted for its end position. This implies that this cell must exist and
-   must store an end position! Thus, we have the following constraint: if some
-   state whose incoming symbol is [sym] can reduce an epsilon production, then
-   [sym] must keep track of its end position. (Furthermore, if some initial
-   state can reduce an epsilon production, then the sentinel cell at the bottom
-   of the stack must contain a position. This does not concern us here.)
-   Similarly, if some state whose incoming symbol is [sym] uses [$endpos($0)],
-   then [sym] must keep track of its end position. *)
+   Furthermore, if the left-hand symbol of a production must keep track of its
+   start (resp. end) position, then the first (resp. last) symbol of its
+   right-hand side (if there is one) must do so as well. That is, unless the
+   right-hand side is empty. *)
+
+(* 2015/11/04. When an epsilon production [prod] is reduced, the top stack cell
+   may be consulted for its end position. This implies that this cell must exist
+   and must store an end position! Now, when does this happen?
+
+   1- This happens if the left-hand symbol of the production, [nt prod], keeps
+      track of its start or end position.
+   2- This happens if the semantic action explicitly mentions the keyword
+      [$endpos($0)].
+
+   Now, if this happens, what should we do?
+
+   a- If this happens in a state [s] whose incoming symbol is [sym], then [sym]
+      must keep track of its end position.
+   b- If this happens in an initial state, where the stack may be empty, then
+      the sentinel cell at the bottom of the stack must contain an end position.
+
+   Point (b) doesn't concern us here, but point (a) does. We must implement the
+   constraint (1) \/ (2) -> (a). *)
 
 open Keyword
 
