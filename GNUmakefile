@@ -6,7 +6,7 @@
 
 SHELL := bash
 
-.PHONY: all test clean package check api export godi opam local unlocal
+.PHONY: all test clean package check api export godi opam local unlocal pin unpin
 
 # -------------------------------------------------------------------------
 
@@ -262,4 +262,10 @@ local:
 
 unlocal:
 	sudo PATH="$(PATH)" $(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=true uninstall
+
+pin:
+	opam pin add menhir `pwd` -k git
+
+unpin:
+	opam pin remove menhir
 
