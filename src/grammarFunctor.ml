@@ -952,63 +952,6 @@ end = struct
 end
 
 (* ------------------------------------------------------------------------ *)
-(* The computation of FOLLOW sets does not follow the above model. Instead, we
-   need to explicitly compute a system of equations over sets of terminal
-   symbols (in a first pass), then solve the constraints (in a second
-   pass). *)
-
-(* The computation of the symbolic FOLLOW sets follows the same pattern, but
-   produces sets of symbols, instead of sets of terminals. For this reason,
-   we parameterize this little equation solver over a module [P], which we
-   later instantiate with [TerminalSet] and [SymbolSet]. *)
-
-module Solve (P : sig
-  include Fix.PROPERTY
-  val union: property -> property -> property
-end) = struct
-
-  (* An equation's right-hand side is a set expression. *)
-
-  type expr =
-  | EVar of Nonterminal.t
-  | EConstant of P.property
-  | EUnion of expr * expr
-
-  (* A system of equations is represented as an array, which maps nonterminal
-     symbols to expressions. *)
-
-  type equations =
-    expr array
-
-  (* This solver computes the least solution of a set of equations. *)
-
-  let solve (eqs : equations) : Nonterminal.t -> P.property =
-
-    let rec expr e get =
-      match e with
-      | EVar nt ->
-          get nt
-      | EConstant c ->
-          c
-      | EUnion (e1, e2) ->
-          P.union (expr e1 get) (expr e2 get)
-    in
-
-    let nonterminal nt get =
-      expr eqs.(nt) get
-    in
-
-    let module F =
-      Fix.Make
-        (Maps.ArrayAsImperativeMaps(Nonterminal))
-        (P)
-    in
-
-    F.lfp nonterminal
-
-end
-
-(* ------------------------------------------------------------------------ *)
 (* Compute which nonterminals are nonempty, that is, recognize a
    nonempty language. Also, compute which nonterminals are
    nullable. The two computations are almost identical. The only
@@ -1125,8 +1068,9 @@ let () =
    on demand. *)
 
 (* The computation of the symbolic FOLLOW sets follows exactly the same
-   pattern. We share code and parameterize this computation over a module [P],
-   just like the little equation solver above. *)
+   pattern as that of the traditional FOLLOW sets. We share code and
+   parameterize this computation over a module [P]. The type [P.property]
+   intuitively represents a set of symbols. *)
 
 module FOLLOW (P : sig
   include Fix.PROPERTY
@@ -1135,21 +1079,23 @@ module FOLLOW (P : sig
   val first: Production.index -> int -> property
 end) = struct
 
-  module S = Solve(P)
-  open S
+  module S =
+    FixSolver.Make
+      (Maps.ArrayAsImperativeMaps(Nonterminal))
+      (P)
 
-  (* First pass. Build a system of equations. *)
+  (* Build a system of constraints. *)
 
-  let follow : equations =
-    Array.make Nonterminal.n (EConstant P.bottom)
+  let record_ConVar, record_VarVar, solve =
+    S.create()
 
   (* Iterate over all start symbols. *)
   let () =
-    let sharp = EConstant (P.terminal Terminal.sharp) in
+    let sharp = P.terminal Terminal.sharp in
     for nt = 0 to Nonterminal.start - 1 do
       assert (Nonterminal.is_start nt);
       (* Add # to FOLLOW(nt). *)
-      follow.(nt) <- EUnion (sharp, follow.(nt))
+      record_ConVar sharp nt
     done
     (* We need to do this explicitly because our start productions are
        of the form S' -> S, not S' -> S #, so # will not automatically
@@ -1168,18 +1114,18 @@ end) = struct
             and first = P.first prod (i+1) in
             (* The FIRST set of the remainder of the right-hand side
                contributes to the FOLLOW set of [nt2]. *)
-            follow.(nt2) <- EUnion (EConstant first, follow.(nt2));
+            record_ConVar first nt2;
             (* If the remainder of the right-hand side is nullable,
                FOLLOW(nt1) contributes to FOLLOW(nt2). *)
             if nullable then
-              follow.(nt2) <- EUnion (EVar nt1, follow.(nt2))
+              record_VarVar nt1 nt2
       ) rhs
     ) Production.table
 
   (* Second pass. Solve the equations (on demand). *)
 
   let follow : Nonterminal.t -> P.property =
-    solve follow
+    solve()
 
 end
 
