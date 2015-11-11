@@ -1474,10 +1474,11 @@ let errorcasedef =
    The code initializes a parser environment, an empty stack, and invokes
    [run]. 
    
-   2015/11/04. If the state [s] can reduce an epsilon production, then the
-   initial stack should contain a sentinel cell with a valid [endp] field
-   at offset 1. Otherwise, the initial stack can be the unit value, as it
-   used to be. (Note that it would be OK to always have a sentinel.) *)
+   2015/11/11. If the state [s] can reduce an epsilon production whose left-hand
+   symbol keeps track of its start or end position, or if [s] can reduce any
+   production that mentions [$endpos($0)], then the initial stack should contain
+   a sentinel cell with a valid [endp] field at offset 1. For simplicity, we
+   always create a sentinel cell. *)
 
 let entrydef s = 
   let nt = Item.startnt (Lr1.start2item s) in
@@ -1485,11 +1486,8 @@ let entrydef s =
   and lexbuf = "lexbuf" in
 
   let initial_stack =
-    if Lr1.has_beforeend s then
-      let initial_position = getendp in
-      etuple [ EUnit; initial_position ]
-    else
-      EUnit
+    let initial_position = getendp in
+    etuple [ EUnit; initial_position ]
   in
 
   {

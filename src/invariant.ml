@@ -597,6 +597,48 @@ let rewind node : instruction =
 
 (* ------------------------------------------------------------------------ *)
 
+(* Machinery for the computation of which symbols must keep track of their
+   start or end positions. *)
+
+open Keyword
+
+type variable =
+  Symbol.t * where (* WhereStart or WhereEnd *)
+
+module M : Fix.IMPERATIVE_MAPS with type key = variable = struct
+  type key = variable
+  type 'data t = {
+    mutable startp: 'data SymbolMap.t;
+    mutable endp:   'data SymbolMap.t;
+  }
+  open SymbolMap
+  let create() =
+    { startp = empty; endp = empty }
+  let clear m =
+    m.startp <- empty; m.endp <- empty
+  let add (sym, where) data m =
+    match where with
+    | WhereStart ->
+        m.startp <- add sym data m.startp
+    | WhereEnd ->
+        m.endp <- add sym data m.endp
+    | WhereSymbolStart ->
+        assert false
+  let find (sym, where) m =
+    match where with
+    | WhereStart ->
+        find sym m.startp
+    | WhereEnd ->
+        find sym m.endp
+    | WhereSymbolStart ->
+        assert false
+  let iter f m =
+    iter (fun sym -> f (sym, WhereStart)) m.startp;
+    iter (fun sym -> f (sym, WhereEnd)) m.endp
+end
+
+(* ------------------------------------------------------------------------ *)
+
 (* We now determine which positions must be kept track of. For simplicity, we
    do this on a per-symbol basis. That is, for each symbol, either we never
    keep track of position information, or we always do. In fact, we do
@@ -613,12 +655,12 @@ let rewind node : instruction =
    right-hand side (if there is one) must do so as well. That is, unless the
    right-hand side is empty. *)
 
-(* 2015/11/04. When an epsilon production [prod] is reduced, the top stack cell
-   may be consulted for its end position. This implies that this cell must exist
+(* 2015/11/11. When a production [prod] is reduced, the top stack cell may be
+   consulted for its end position. This implies that this cell must exist
    and must store an end position! Now, when does this happen?
 
-   1- This happens if the left-hand symbol of the production, [nt prod], keeps
-      track of its start or end position.
+   1- This happens if [prod] is an epsilon production and the left-hand symbol
+      of the production, [nt prod], keeps track of its start or end position.
    2- This happens if the semantic action explicitly mentions the keyword
       [$endpos($0)].
 
@@ -630,96 +672,118 @@ let rewind node : instruction =
       the sentinel cell at the bottom of the stack must contain an end position.
 
    Point (b) doesn't concern us here, but point (a) does. We must implement the
-   constraint (1) \/ (2) -> (a). *)
+   constraint (1) \/ (2) -> (a). Point (b) is taken care of in the code back-end,
+   where, for simplicity, we always create a sentinel cell. *)
 
-open Keyword
+(* I will say that this is a lot more sophisticated than I would like. The code
+   back-end has been known for its efficiency and I am trying to maintain this
+   property -- in particular, I would like to keep track of no positions at all,
+   if the user doesn't use any position keyword. But I am suffering. *)
 
-let startp =
-  ref SymbolSet.empty
+module S =
+  FixSolver.Make(M)(Boolean)
 
-let endp =
-  ref SymbolSet.empty
-
-let rec require where symbol =
-  let wherep =
-    match where with
-    | WhereStart ->
-	startp
-    | WhereEnd ->
-	endp
-    | WhereSymbolStart ->
-        assert false (* has been expanded away *)
-  in
-  if not (SymbolSet.mem symbol !wherep) then begin
-    wherep := SymbolSet.add symbol !wherep;
-    match symbol with
-    | Symbol.T _ ->
-	()
-    | Symbol.N nt ->
-	Production.iternt nt (require_aux where)
-  end
-
-and require_aux where prod =
-  let _nt, rhs = Production.def prod in
-  let length = Array.length rhs in
-  if length > 0 then
-    match where with
-    | WhereStart ->
-	require where rhs.(0)
-    | WhereEnd ->
-	require where rhs.(length - 1)
-    | WhereSymbolStart ->
-        assert false (* has been expanded away *)
+let record_ConVar, record_VarVar, solve =
+  S.create()
 
 let () =
+
+  (* We gather the constraints explained above in two loops. The first loop
+     looks at every (non-start) production [prod]. The second loop looks at
+     every (non-initial) state [s]. *)
+
   Production.iterx (fun prod ->
-    let rhs = Production.rhs prod
+
+    let nt, rhs = Production.def prod
     and ids = Production.identifiers prod
     and action = Production.action prod in
+    let length = Array.length rhs in
+
+    if length > 0 then begin
+      (* If [nt] keeps track of its start position, then the first symbol
+         in the right-hand side must do so as well. *)
+      record_VarVar (Symbol.N nt, WhereStart) (rhs.(0), WhereStart);
+      (* If [nt] keeps track of its end position, then the last symbol
+         in the right-hand side must do so as well. *)
+      record_VarVar (Symbol.N nt, WhereEnd) (rhs.(length - 1), WhereEnd)
+    end;
+
     KeywordSet.iter (function
       | SyntaxError ->
-	  ()
-      | Position (Before, _, _) ->
-          (* Doing nothing here is OK because the presence of [$endpos($0)]
-             in a semantic action is taken account below when we look at
-             every state and check whether it can reduce a production whose
-             semantic action contains [$endpos($0)]. *)
           ()
-      | Position (Left, where, _) ->
-	  require_aux where prod
+      | Position (Before, _, _) ->
+          (* Doing nothing here because [$endpos($0)] is dealt with in
+             the second loop. *)
+          ()
+      | Position (Left, _, _) ->
+          (* [$startpos] and [$endpos] have been expanded away. *)
+          assert false
+      | Position (RightNamed _, WhereSymbolStart, _) ->
+          (* [$symbolstartpos(x)] does not exist. *)
+          assert false
       | Position (RightNamed id, where, _) ->
+          (* If the semantic action mentions [$startpos($i)], then the
+             [i]-th symbol in the right-hand side must keep track of
+             its start position. Similarly for end positions. *)
 	  Array.iteri (fun i id' ->
 	    if id = id' then
-	      require where rhs.(i)
+              record_ConVar true (rhs.(i), where)
 	  ) ids
     ) (Action.keywords action)
-  );
-  Lr1.iterx (fun node ->
-    (* 2015/11/04. See above. *)
-    if Lr1.has_beforeend node then
-      let sym = Misc.unSome (Lr1.incoming_symbol node) in
-      require WhereEnd sym
+
+  ); (* end of loop on productions *)
+
+  Lr1.iterx (fun s ->
+    (* Let [sym] be the incoming symbol of state [s]. *)
+    let sym = Misc.unSome (Lr1.incoming_symbol s) in
+
+    (* Condition (1) in the long comment above (2015/11/11). If an epsilon
+       production [prod] can be reduced in state [s], if its left-hand side
+       [nt] keeps track of its start or end position, then [sym] must keep
+       track of its end position. *)
+    TerminalMap.iter (fun _ prods ->
+      let prod = Misc.single prods in
+      let nt, rhs = Production.def prod in
+      let length = Array.length rhs in
+      if length = 0 then begin
+        record_VarVar (Symbol.N nt, WhereStart) (sym, WhereEnd);
+        record_VarVar (Symbol.N nt, WhereEnd) (sym, WhereEnd)
+      end
+    ) (Lr1.reductions s);
+
+    (* Condition (2) in the long comment above (2015/11/11). If a production
+       can be reduced in state [s] and mentions [$endpos($0)], then [sym]
+       must keep track of its end position. *)
+    if Lr1.has_beforeend s then
+      record_ConVar true (sym, WhereEnd)
+
   )
 
-let startp =
-  !startp
+let track : variable -> bool =
+  solve()
 
-let endp =
-  !endp
+let startp symbol =
+  track (symbol, WhereStart)
+
+let endp symbol =
+  track (symbol, WhereEnd)
+
+let for_every_symbol (f : Symbol.t -> unit) : unit =
+  Terminal.iter (fun t -> f (Symbol.T t));
+  Nonterminal.iter (fun nt -> f (Symbol.N nt))
+
+let sum_over_every_symbol (f : Symbol.t -> bool) : int =
+  let c = ref 0 in
+  for_every_symbol (fun sym -> if f sym then c := !c + 1);
+  !c
 
 let () =
   Error.logC 1 (fun f ->
     Printf.fprintf f
       "%d out of %d symbols keep track of their start position.\n\
        %d out of %d symbols keep track of their end position.\n"
-        (SymbolSet.cardinal startp) (Terminal.n + Nonterminal.n)
-        (SymbolSet.cardinal endp) (Terminal.n + Nonterminal.n))
-
-let startp symbol =
-  SymbolSet.mem symbol startp
-
-let endp symbol =
-  SymbolSet.mem symbol endp
+        (sum_over_every_symbol startp) (Terminal.n + Nonterminal.n)
+        (sum_over_every_symbol endp) (Terminal.n + Nonterminal.n))
 
 (* ------------------------------------------------------------------------- *)
 (* Miscellaneous. *)
