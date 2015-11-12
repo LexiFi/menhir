@@ -210,6 +210,7 @@ export: api
 	$(RSYNC) $(API) $(TARGET)
 # Mettre à jour la page Web de Menhir avec le nouveau numéro de version.
 	cd $(PAGE) && \
+	  cvs up && \
 	  $(SED) --in-place=.bak "s/menhir-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/$(PACKAGE)/" menhir.xml && \
 	  cvs commit -m "Updated Menhir's version number." && \
 	  if [ -x /opt/godi/bin/cduce ] ; then $(MAKE) export ; fi
