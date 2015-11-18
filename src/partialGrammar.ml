@@ -680,11 +680,6 @@ let check_parameterized_grammar_is_well_defined grammar =
 		  check_identifier_reference grammar prule 
 		    terminal.value terminal.position;
 
-		  (* It is forbidden to use the %prec directive with %inline. *)
-		  if prule.pr_inline_flag then
-		    Error.errorp terminal
-		      "use of %%prec is forbidden in an %%inlined nonterminal definition.";
-
 		  (* Furthermore, the symbol following %prec must be a valid
 		     token identifier. *)  
                   if not (StringMap.mem terminal.value grammar.p_tokens) then

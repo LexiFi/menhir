@@ -148,11 +148,37 @@ let inline grammar =
   and expand_branch (b : branch) : branch ListMonad.m =
     try
       (* [c] is the identifier under which the callee is known. *)
-      let prefix, p, _nt, c, suffix = find_inline_producer b in
+      let prefix, p, nt, c, suffix = find_inline_producer b in
       use_inline := true;
       (* Inline a branch of [nt] at position [prefix] ... [suffix] in
 	 the branch [b]. *)
       let inline_branch pb =
+
+        (* 2015/11/18. The interaction of %prec and %inline is not documented.
+           It used to be the case that we would disallow marking a production
+           both %inline and %prec. Now, we allow it, but we check that (1) it
+           is inlined at the last position of the host production and (2) the
+           host production does not already have a %prec annotation. *)
+        pb.branch_prec_annotation |> Option.iter (fun callee_prec ->
+          (* The callee has a %prec annotation. *)
+          (* Check condition 1. *)
+          if List.length suffix > 0 then
+            Error.error [ Positions.position callee_prec; b.branch_position ]
+              "this production carries a %%prec annotation,\n\
+               and the nonterminal symbol %s is marked %%inline.\n\
+               For this reason, %s can be used only in tail position."
+              nt nt;
+          (* Check condition 2. *)
+          b.branch_prec_annotation |> Option.iter (fun caller_prec ->
+            Error.error [ Positions.position callee_prec; Positions.position caller_prec ]
+              "this production carries a %%prec annotation,\n\
+               and the nonterminal symbol %s is marked %%inline.\n\
+               For this reason, %s cannot be used in a production\n\
+               which itself carries a %%prec annotation."
+              nt nt
+          )
+        );
+
 	(* Rename the producers of this branch is they conflict with
 	   the name of the host's producers. *)
 	let phi, inlined_producers = rename_if_necessary b pb.producers in
@@ -232,9 +258,23 @@ let inline grammar =
 	  Action.rename (rename_sw_inner beforeendp) phi pb.action
 	in
 
+        (* 2015/11/18. If the callee has a %prec annotation (which implies
+           the caller does not have one, and the callee appears in tail
+           position in the caller) then the annotation is inherited. This
+           seems reasonable, but remains undocumented. *)
+        let branch_prec_annotation =
+          match pb.branch_prec_annotation with
+          | (Some _) as annotation ->
+              assert (b.branch_prec_annotation = None);
+              annotation
+          | None ->
+              b.branch_prec_annotation
+        in
+
 	{ b with
-	  producers = producers;
-	  action = Action.compose c action' outer_action
+	  producers;
+	  action = Action.compose c action' outer_action;
+          branch_prec_annotation;
 	}
       in
       List.map inline_branch p.branches >>= expand_branch
