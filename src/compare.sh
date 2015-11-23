@@ -27,7 +27,7 @@ sleep 1
 for FILE in "$@"
 do
   echo "Running ($FILE.mly)..."
-  { time $MENHIR --list-errors -la 2 $BASE $OPT $BENCH/$FILE.mly ; } &>$FILE.new
+  { time $MENHIR --list-errors -la 2 $BASE $OPT $BENCH/$FILE.mly ; } >$FILE.out.new 2>$FILE.err.new
 done
 
 # Try the last committed version.
@@ -38,13 +38,15 @@ sleep 1
 for FILE in "$@"
 do
  echo "Running ($FILE.mly)..."
- { time $MENHIR --list-errors -la 2 $BASE $OPT $BENCH/$FILE.mly ; } &>$FILE.old
+ { time $MENHIR --list-errors -la 2 $BASE $OPT $BENCH/$FILE.mly ; } >$FILE.out.old 2>$FILE.err.old
 done
 git stash pop
 
 # Diff.
 for FILE in "$@"
 do
-  echo "Diffing ($FILE.mly)..."
-  diff $FILE.old $FILE.new
+  echo "Diffing stderr ($FILE.mly)..."
+  diff $FILE.err.old $FILE.err.new
+  echo "Diffing stdout ($FILE.mly)..."
+  diff $FILE.out.old $FILE.out.new
 done
