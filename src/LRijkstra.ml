@@ -209,9 +209,9 @@ let is_solid s =
   match Lr1.incoming_symbol s with
   | None
   | Some (Symbol.T _) ->
-    true
+      true
   | Some (Symbol.N _) ->
-    false
+      false
 
 (* [reduction_path_exists s w prod] tests whether the path determined by the
    sequence of symbols [w] out of the state [s] exists in the automaton and
