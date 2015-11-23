@@ -817,13 +817,15 @@ module E : sig
      quadruple [s, nt, a, z] is new. The symbol [z] cannot be [any]. *)
   val register: Lr1.node -> Nonterminal.t -> W.word -> Terminal.t -> bool
 
-  (* [query s nt a otarget] enumerates all words [w] and all real symbols [z]
+  (* [query s nt a foreach] enumerates all words [w] and all real symbols [z]
      such that, in state [s], the outgoing edge labeled [nt] can be taken by
      consuming the word [w], under the assumption that the next symbol is [z],
      and the first symbol of the word [w.z] is [a]. The symbol [a] can be [any].
-     If the state [otarget] is provided, then only the symbols [z] that cannot
-     cause an error in this state are listed. *)
-  val query: Lr1.node -> Nonterminal.t -> Terminal.t -> Lr1.node option ->
+     The function [foreach] can be either [foreach_terminal] or of the form
+     [foreach_terminal_not_causing_an_error _]. It limits the symbols [z] that
+     are considered. *)
+  val query: Lr1.node -> Nonterminal.t -> Terminal.t ->
+             (* foreach: *) ((Terminal.t -> unit) -> unit) ->
              (W.word -> Terminal.t -> unit) -> unit
 
   (* [size()] returns the number of edges currently stored in the set. *)
@@ -880,24 +882,17 @@ end = struct
       true
     end
 
-  let rec query s nt a target f =
+  let rec query s nt a foreach f =
     if Terminal.equal a any then begin
       (* If [a] is [any], we query the table for every real symbol [a].
          We can limit ourselves to symbols that do not cause an error
          in state [s]. Those that do certainly do not have an entry;
          see the assertion in [register] above. *)
       foreach_terminal_not_causing_an_error s (fun a ->
-        query s nt a target f
+        query s nt a foreach f
       )
     end
     else
-      let foreach =
-        match target with
-        | None ->
-            foreach_terminal
-        | Some target ->
-            foreach_terminal_not_causing_an_error target
-      in
       foreach (fun z ->
         assert (Terminal.real z);
         let i = index s in
@@ -1041,7 +1036,8 @@ let new_fact fact =
            However, allowing [z] to be [any] in [E.query], and taking 
            advantage of this to increase performance, seems difficult. *)
 
-        E.query current nt lookahead (Some target) (fun w z ->
+        let foreach = foreach_terminal_not_causing_an_error target in
+        E.query current nt lookahead foreach (fun w z ->
           assert (compatible lookahead (W.first w z));
           let word = W.append word w in
           enqueue child word z
@@ -1227,7 +1223,7 @@ module A = Astar.Make(struct
              of the word [w.z'] is [z]. For every [z'] and [w] that
              fulfill these requirements, we have an edge to [s', z'],
              labeled with the word [w]. *)
-          E.query s nt z None (fun w z' ->
+          E.query s nt z foreach_terminal (fun w z' ->
             edge w (W.length w) (s', z')
           )
     )
