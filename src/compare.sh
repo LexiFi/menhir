@@ -26,8 +26,9 @@ make &> compile.new || { cat compile.new && exit 1 ; }
 sleep 1
 for FILE in "$@"
 do
+  FLAGS=`if [ -f $BENCH/$FILE.flags ] ; then cat $BENCH/$FILE.flags ; fi`
   echo "Running ($FILE.mly)..."
-  { time $MENHIR --list-errors -la 2 $BASE $OPT $BENCH/$FILE.mly ; } >$FILE.out.new 2>$FILE.err.new
+  { time $MENHIR $BASE $OPT $FLAGS --list-errors -la 2 $BENCH/$FILE.mly ; } >$FILE.out.new 2>$FILE.err.new
 done
 
 # Try the last committed version.
@@ -37,8 +38,9 @@ make &> compile.old || { cat compile.old && exit 1 ; }
 sleep 1
 for FILE in "$@"
 do
- echo "Running ($FILE.mly)..."
- { time $MENHIR --list-errors -la 2 $BASE $OPT $BENCH/$FILE.mly ; } >$FILE.out.old 2>$FILE.err.old
+  FLAGS=`if [ -f $BENCH/$FILE.flags ] ; then cat $BENCH/$FILE.flags ; fi`
+  echo "Running ($FILE.mly)..."
+  { time $MENHIR $BASE $OPT $FLAGS --list-errors -la 2 $BENCH/$FILE.mly ; } >$FILE.out.old 2>$FILE.err.old
 done
 git stash pop
 
