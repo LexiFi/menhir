@@ -1016,8 +1016,8 @@ let new_fact fact =
 
         (* 1b. The transition exists in the trie, and [sym] is in fact a
            nonterminal symbol [nt]. *)
-         assert (Lr1.Node.compare (Trie.current child) target = 0);
-         assert (not (is_solid target));
+        assert (Lr1.Node.compare (Trie.current child) target = 0);
+        assert (not (is_solid target));
 
         (* We need to know how this nonterminal edge can be taken. We query
            [E] for a word [w] that allows us to take this edge. In general,
