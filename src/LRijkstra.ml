@@ -893,10 +893,10 @@ end = struct
       )
     end
     else
+      let i = index s in
+      let m = table.(i) in
       foreach (fun z ->
         assert (Terminal.real z);
-        let i = index s in
-        let m = table.(i) in
         let key = pack nt a z in
         match H.find m key with
         | w -> f w z
