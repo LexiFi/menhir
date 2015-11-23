@@ -1225,11 +1225,11 @@ module A = Astar.Make(struct
              of the word [w.z'] is [z]. For every [z'] and [w] that
              fulfill these requirements, we have an edge to [s', z'],
              labeled with the word [w]. *)
-         foreach_terminal (fun z' ->
-           E.query s nt z z' (fun w ->
-             edge w (W.length w) (s', z')
-           )
-         )
+          foreach_terminal (fun z' ->
+            E.query s nt z z' (fun w ->
+              edge w (W.length w) (s', z')
+            )
+          )
     )
 
   (* Algorithm A*, used with a zero estimate, is Dijkstra's algorithm.
