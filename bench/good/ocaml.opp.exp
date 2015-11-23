@@ -1,10 +1,10 @@
-File "ocaml.mly", line 524, characters 29-36:
+File "ocaml.mly", line 529, characters 29-36:
 Warning: the token COMMENT is unused.
-File "ocaml.mly", line 525, characters 30-39:
+File "ocaml.mly", line 530, characters 30-39:
 Warning: the token DOCSTRING is unused.
-File "ocaml.mly", line 527, characters 7-10:
+File "ocaml.mly", line 532, characters 7-10:
 Warning: the token EOL is unused.
-File "ocaml.mly", line 443, characters 7-22:
+File "ocaml.mly", line 448, characters 7-22:
 Warning: the token GREATERRBRACKET is unused.
 %{
 open Location
@@ -62,9 +62,6 @@ let ghpat d = Pat.mk ~loc:(symbol_gloc ()) d
 let ghtyp d = Typ.mk ~loc:(symbol_gloc ()) d
 let ghloc d = { txt = d; loc = symbol_gloc () }
 let ghstr d = Str.mk ~loc:(symbol_gloc()) d
-
-let ghunit () =
-  ghexp (Pexp_construct (mknoloc (Lident "()"), None))
 
 let mkinfix arg1 name arg2 =
   mkexp(Pexp_apply(mkoperator name 2, [Nolabel, arg1; Nolabel, arg2]))
@@ -142,6 +139,14 @@ let mkexp_constraint e (t1, t2) =
   | Some t, None -> ghexp(Pexp_constraint(e, t))
   | _, Some t -> ghexp(Pexp_coerce(e, t1, t))
   | None, None -> assert false
+
+let mkexp_opt_constraint e = function
+  | None -> e
+  | Some constraint_ -> mkexp_constraint e constraint_
+
+let mkpat_opt_constraint p = function
+  | None -> p
+  | Some typ -> mkpat (Ppat_constraint(p, typ))
 
 let array_function par assign=
   let op = if assign then par^"<-" else par in
@@ -791,8 +796,12 @@ module_type:
 | _1 = SIG _2 = signature _3 = error
     {      ( unclosed "sig" 1 "end" 3 )}
 | _1 = FUNCTOR _2 = functor_args _3 = MINUSGREATER _4 = module_type %prec below_WITH
-    {      ( List.fold_left (fun acc (n, t) -> mkmty(Pmty_functor(n, t, acc)))
-                       _4 _2 )}
+    {      ( List.fold_left
+          (fun acc (n, t) ->
+           mkmty(Pmty_functor(n, t, acc)))
+        _4 _2 )}
+| _1 = module_type _2 = MINUSGREATER _3 = module_type %prec below_WITH
+    {      ( mkmty(Pmty_functor(mknoloc "_", Some _1, _3)) )}
 | _1 = module_type _2 = WITH _3 = with_constraints
     {      ( mkmty(Pmty_with(_1, List.rev _3)) )}
 | _1 = MODULE _2 = TYPE _3 = OF _4 = module_expr %prec below_LBRACKETAT
@@ -1521,10 +1530,14 @@ match_case:
     {      ( Exp.case _1 _3 )}
 | _1 = pattern _2 = WHEN _3 = seq_expr _4 = MINUSGREATER _5 = seq_expr
     {      ( Exp.case _1 ~guard:_3 _5 )}
+| _1 = pattern _2 = MINUSGREATER _3 = DOT
+    {      ( Exp.case _1 (Exp.unreachable ~loc:(rhs_loc 3) ()))}
 
 fun_def:
 | _1 = MINUSGREATER _2 = seq_expr
-    {                                                ( _2 )}
+    {                                                 ( _2 )}
+| _1 = COLON _2 = simple_core_type _3 = MINUSGREATER _4 = seq_expr
+    {                                                 ( mkexp (Pexp_constraint (_4, _2)) )}
 | _1 = labeled_simple_pattern _2 = fun_def
     {      (
        let (l,o,p) = _1 in
@@ -1554,10 +1567,10 @@ lbl_expr_list:
     {                   ( [_1] )}
 
 lbl_expr:
-| _1 = label_longident _2 = EQUAL _3 = expr
-    {      ( (mkrhs _1 1,_3) )}
-| _1 = label_longident
-    {      ( (mkrhs _1 1, exp_of_label _1 1) )}
+| _1 = label_longident _2 = opt_type_constraint _3 = EQUAL _4 = expr
+    {      ( (mkrhs _1 1, mkexp_opt_constraint _4 _2) )}
+| _1 = label_longident _2 = opt_type_constraint
+    {      ( (mkrhs _1 1, mkexp_opt_constraint (exp_of_label _1 1) _2) )}
 
 field_expr_list:
 | _1 = field_expr _2 = opt_semi
@@ -1588,6 +1601,12 @@ type_constraint:
     {                                                ( syntax_error() )}
 | _1 = COLONGREATER _2 = error
     {                                                ( syntax_error() )}
+
+opt_type_constraint:
+| _1 = type_constraint
+    {                    ( Some _1 )}
+| 
+    {                ( None )}
 
 pattern:
 | _1 = simple_pattern
@@ -1699,10 +1718,16 @@ lbl_pattern_list:
     {      ( let (fields, closed) = _3 in _1 :: fields, closed )}
 
 lbl_pattern:
-| _1 = label_longident _2 = EQUAL _3 = pattern
-    {      ( (mkrhs _1 1,_3) )}
-| _1 = label_longident
-    {      ( (mkrhs _1 1, pat_of_label _1 1) )}
+| _1 = label_longident _2 = opt_pattern_type_constraint _3 = EQUAL _4 = pattern
+    {     ( (mkrhs _1 1, mkpat_opt_constraint _4 _2) )}
+| _1 = label_longident _2 = opt_pattern_type_constraint
+    {     ( (mkrhs _1 1, mkpat_opt_constraint (pat_of_label _1 1) _2) )}
+
+opt_pattern_type_constraint:
+| _1 = COLON _2 = core_type
+    {                    ( Some _2 )}
+| 
+    {                ( None )}
 
 value_description:
 | _1 = VAL _2 = val_ident _3 = COLON _4 = core_type _5 = post_item_attributes
@@ -2019,7 +2044,7 @@ core_type:
     {      ( Typ.attr _1 _2 )}
 
 core_type_no_attr:
-| _1 = core_type2
+| _1 = core_type2 %prec MINUSGREATER
     {      ( _1 )}
 | _1 = core_type2 _2 = AS _3 = QUOTE _4 = ident
     {      ( mktyp(Ptyp_alias(_1, _4)) )}

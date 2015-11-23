@@ -1,6 +1,3 @@
-Note: the nonterminal symbol ioption (from pre_parser.mly) is renamed pre_parser_ioption.
-Note: the nonterminal symbol list (from pre_parser.mly) is renamed pre_parser_list.
-Note: the nonterminal symbol option (from pre_parser.mly) is renamed pre_parser_option.
 Warning: you are using the standard library and/or the %inline keyword. We
 recommend switching on --infer in order to avoid obscure type error messages.
 %{
@@ -14,6 +11,12 @@ recommend switching on --infer in order to avoid obscure type error messages.
 
   let declare_typename (i,_,_) =
     !declare_typename i
+
+  type 'id fun_declarator_ctx =
+  | Decl_ident
+  | Decl_other
+  | Decl_fun of (unit -> unit)
+  | Decl_krfun of 'id
 
 %}
 %start translation_unit_file
@@ -48,6 +51,7 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %token <Cabs.cabsloc> RBRACE
 %token <Cabs.cabsloc> QUESTION
 %token <Cabs.cabsloc> PTR
+%token <string> PRE_NAME
 %token <string * Cabs.cabsloc> PRAGMA
 %token <Cabs.cabsloc> PLUS
 %token <Cabs.cabsloc> PERCENT
@@ -80,7 +84,6 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %token <Cabs.cabsloc> EQ
 %token EOF
 %token <Cabs.cabsloc> ENUM
-%token <Cabs.cabsloc> ELSE
 %token <Cabs.cabsloc> ELLIPSIS
 %token <Cabs.cabsloc> DOUBLE
 %token <Cabs.cabsloc> DOT
@@ -110,12 +113,15 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %token <Cabs.cabsloc> ALIGNAS
 %token <Cabs.cabsloc> ADD_ASSIGN
 %token <string * Pre_parser_aux.identifier_type ref * Cabs.cabsloc> TYPEDEF_NAME
+%token <Cabs.cabsloc> ELSE
+%nonassoc lowPrec1 
 %nonassoc TYPEDEF_NAME 
-%nonassoc highPrec 
+%nonassoc lowPrec2 
+%nonassoc ELSE 
 %type <unit> translation_unit_file
 %%
 
-pre_parser_option_typedef_declarator_list_:
+option_typedef_declarator_list_:
 | 
     {let o =
       ( None )
@@ -128,7 +134,7 @@ in
 in
     ( o )}
 
-pre_parser_option_type_qualifier_list_:
+option_type_qualifier_list_:
 | 
     {let o =
       ( None )
@@ -141,7 +147,7 @@ in
 in
     ( o )}
 
-pre_parser_option_struct_declarator_list_:
+option_struct_declarator_list_:
 | 
     {let o =
       ( None )
@@ -154,46 +160,7 @@ in
 in
     ( o )}
 
-pre_parser_option_specifier_qualifier_list_no_typedef_name_type_name__:
-| 
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = specifier_qualifier_list_no_typedef_name_type_name_
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-pre_parser_option_specifier_qualifier_list_no_typedef_name_struct_declaration__:
-| 
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = specifier_qualifier_list_no_typedef_name_struct_declaration_
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-pre_parser_option_parameter_type_list_:
-| 
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = parameter_type_list
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-pre_parser_option_other_identifier_:
+option_other_identifier_:
 | 
     {let o =
       ( None )
@@ -210,7 +177,7 @@ in
 in
     ( o )}
 
-pre_parser_option_init_declarator_list_:
+option_init_declarator_list_:
 | 
     {let o =
       ( None )
@@ -223,7 +190,20 @@ in
 in
     ( o )}
 
-pre_parser_option_expression_:
+option_identifier_list_:
+| 
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = identifier_list
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_expression_:
 | 
     {let o =
       ( None )
@@ -236,7 +216,7 @@ in
 in
     ( o )}
 
-pre_parser_option_direct_abstract_declarator_:
+option_direct_abstract_declarator_:
 | 
     {let o =
       ( None )
@@ -249,7 +229,7 @@ in
 in
     ( o )}
 
-pre_parser_option_designator_list_:
+option_designator_list_:
 | 
     {let o =
       ( None )
@@ -262,7 +242,7 @@ in
 in
     ( o )}
 
-pre_parser_option_designation_:
+option_designation_:
 | 
     {let o =
       ( None )
@@ -275,7 +255,7 @@ in
 in
     ( o )}
 
-pre_parser_option_declarator_:
+option_declarator_:
 | 
     {let o =
       ( None )
@@ -288,7 +268,20 @@ in
 in
     ( o )}
 
-pre_parser_option_block_item_list_:
+option_context_parameter_type_list_:
+| 
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = context_parameter_type_list
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_block_item_list_:
 | 
     {let o =
       ( None )
@@ -301,7 +294,7 @@ in
 in
     ( o )}
 
-pre_parser_option_argument_expression_list_:
+option_argument_expression_list_:
 | 
     {let o =
       ( None )
@@ -314,7 +307,7 @@ in
 in
     ( o )}
 
-pre_parser_option_abstract_declarator_type_name__:
+option_abstract_declarator_type_name__:
 | 
     {let o =
       ( None )
@@ -327,7 +320,7 @@ in
 in
     ( o )}
 
-pre_parser_option_abstract_declarator_parameter_declaration__:
+option_abstract_declarator_parameter_declaration__:
 | 
     {let o =
       ( None )
@@ -340,7 +333,7 @@ in
 in
     ( o )}
 
-pre_parser_option_COMMA_:
+option_COMMA_:
 | 
     {let o =
       ( None )
@@ -392,14 +385,28 @@ in
 in
                ()}
 
-pre_parser_list_pointer1_:
+list_specifier_qualifier_no_typedef_name_:
 | 
-    {let xs =
+    {let _1 =
                 ()
 in
-    ( xs )}
-| _11 = pre_parser_list_pointer1_ _100 = STAR _200 = pre_parser_option_type_qualifier_list_
-    {let xs =
+              ()}
+| _10 = list_specifier_qualifier_no_typedef_name_ _20 = specifier_qualifier_no_typedef_name
+    {let _1 =
+  let _2 = _20 in
+  let _1 = _10 in
+                ()
+in
+              ()}
+
+list_pointer1_:
+| 
+    {let _1 =
+                ()
+in
+              ()}
+| _11 = list_pointer1_ _100 = STAR _200 = option_type_qualifier_list_
+    {let _1 =
   let _20 = _200 in
   let _10 = _100 in
   let _1 = _11 in
@@ -410,41 +417,137 @@ in
   in
                 ()
 in
-    ( xs )}
+              ()}
 
-pre_parser_list_declaration_specifier_no_typedef_name_:
+list_declaration_specifier_no_typedef_name_:
 | 
-    {let xs =
+    {let _1 =
                 ()
 in
-    ( xs )}
-| _10 = pre_parser_list_declaration_specifier_no_typedef_name_ _20 = declaration_specifier_no_typedef_name
-    {let xs =
+              ()}
+| _10 = list_declaration_specifier_no_typedef_name_ _20 = declaration_specifier_no_typedef_name
+    {let _1 =
   let _2 = _20 in
   let _1 = _10 in
                 ()
 in
-    ( xs )}
+              ()}
 
-pre_parser_list_declaration_specifier_no_type_:
+list_declaration_specifier_no_type_:
 | 
-    {let xs =
+    {let _1 =
                 ()
 in
-    ( xs )}
-| _10 = pre_parser_list_declaration_specifier_no_type_ _20 = declaration_specifier_no_type
-    {let xs =
-  let _2 = _20 in
+              ()}
+| _11 = list_declaration_specifier_no_type_ _100 = storage_class_specifier_no_typedef
+    {let _1 =
+  let _10 = _100 in
+  let _1 = _11 in
+  let _2 =
+    let _1 = _10 in
+        ()
+  in
+                ()
+in
+              ()}
+| _11 = list_declaration_specifier_no_type_ _100 = type_qualifier_noattr
+    {let _1 =
+  let _10 = _100 in
+  let _1 = _11 in
+  let _2 =
+    let _1 = _10 in
+        ()
+  in
+                ()
+in
+              ()}
+| _11 = list_declaration_specifier_no_type_ _100 = function_specifier
+    {let _1 =
+  let _10 = _100 in
+  let _1 = _11 in
+  let _2 =
+    let _1 = _10 in
+        ()
+  in
+                ()
+in
+              ()}
+| _11 = list_declaration_specifier_no_type_ _100 = attribute_specifier
+    {let _1 =
+  let _10 = _100 in
+  let _1 = _11 in
+  let _2 =
+    let _1 = _10 in
+        ()
+  in
+                ()
+in
+              ()}
+
+rlist_declaration_specifier_no_type_:
+| _10 = storage_class_specifier_no_typedef
+    {let _1 =
   let _1 = _10 in
-                ()
+      ()
 in
-    ( xs )}
+              ()}
+| _10 = type_qualifier_noattr
+    {let _1 =
+  let _1 = _10 in
+      ()
+in
+              ()}
+| _10 = function_specifier
+    {let _1 =
+  let _1 = _10 in
+      ()
+in
+              ()}
+| _10 = attribute_specifier
+    {let _1 =
+  let _1 = _10 in
+      ()
+in
+              ()}
+| _10 = storage_class_specifier_no_typedef _2 = rlist_declaration_specifier_no_type_
+    {let _1 =
+  let _1 = _10 in
+      ()
+in
+              ()}
+| _10 = type_qualifier_noattr _2 = rlist_declaration_specifier_no_type_
+    {let _1 =
+  let _1 = _10 in
+      ()
+in
+              ()}
+| _10 = function_specifier _2 = rlist_declaration_specifier_no_type_
+    {let _1 =
+  let _1 = _10 in
+      ()
+in
+              ()}
+| _10 = attribute_specifier _2 = rlist_declaration_specifier_no_type_
+    {let _1 =
+  let _1 = _10 in
+      ()
+in
+              ()}
+
+typedef_name:
+| _1 = PRE_NAME i = TYPEDEF_NAME
+    {    ( i )}
 
 general_identifier:
-| i = VAR_NAME
+| i = typedef_name
     {    ( i )}
-| i = TYPEDEF_NAME
-    {    ( i )}
+| _10 = PRE_NAME i0 = VAR_NAME
+    {let i =
+  let i = i0 in
+  let _1 = _10 in
+      ( i )
+in
+    ( i )}
 
 string_literals_list:
 | _1 = STRING_LITERAL
@@ -452,45 +555,34 @@ string_literals_list:
 | _1 = string_literals_list _2 = STRING_LITERAL
     {    ()}
 
-open_context:
-|  %prec highPrec
-    {                            ( !open_context () )}
-
-close_context:
+save_context:
 | 
-    {              ( !close_context () )}
-
-in_context_pre_parser_option_parameter_type_list__:
-| _1 = open_context x = pre_parser_option_parameter_type_list_ _3 = close_context
-    {                                    ( x )}
-
-save_contexts_stk:
-| 
-    {              ( !save_contexts_stk () )}
-
-declare_varname_fst_declarator__:
-| x0 = declarator
-    {let i =
-  let x = x0 in
-      ( fst x )
-in
-         ( declare_varname i; i )}
+    {              ( !save_context () )}
 
 declare_varname_enumerator_:
 | i = enumerator
-    {         ( declare_varname i; i )}
+    {         ( declare_varname (fst i); i )}
 
-declare_typename_fst_declarator__:
-| x0 = declarator
-    {let i =
-  let x = x0 in
-      ( fst x )
-in
-         ( declare_typename i; i )}
+declare_varname_declarator_noattrend_:
+| i = declarator_noattrend
+    {         ( declare_varname (fst i); i )}
+
+declare_varname_declarator_:
+| i = declarator
+    {         ( declare_varname (fst i); i )}
+
+declare_typename_declarator_:
+| i = declarator
+    {         ( declare_typename (fst i); i )}
 
 primary_expression:
-| _1 = VAR_NAME
-    {    ()}
+| _10 = PRE_NAME i0 = VAR_NAME
+    {let _1 =
+  let i = i0 in
+  let _1 = _10 in
+      ( i )
+in
+    ()}
 | _1 = CONSTANT
     {    ()}
 | _1 = string_literals_list
@@ -503,7 +595,7 @@ postfix_expression:
     {    ()}
 | _1 = postfix_expression _2 = LBRACK _3 = expression _4 = RBRACK
     {    ()}
-| _1 = postfix_expression _2 = LPAREN _3 = pre_parser_option_argument_expression_list_ _4 = RPAREN
+| _1 = postfix_expression _2 = LPAREN _3 = option_argument_expression_list_ _4 = RPAREN
     {    ()}
 | _1 = BUILTIN_VA_ARG _2 = LPAREN _3 = assignment_expression _4 = COMMA _5 = type_name _6 = RPAREN
     {    ()}
@@ -523,7 +615,7 @@ in
     {    ()}
 | _1 = postfix_expression _2 = DEC
     {    ()}
-| _1 = LPAREN _2 = type_name _3 = RPAREN _4 = LBRACE _5 = initializer_list _6 = pre_parser_option_COMMA_ _7 = RBRACE
+| _1 = LPAREN _2 = type_name _3 = RPAREN _4 = LBRACE _5 = initializer_list _6 = option_COMMA_ _7 = RBRACE
     {    ()}
 
 argument_expression_list:
@@ -708,20 +800,16 @@ expression:
 | _1 = expression _2 = COMMA _3 = assignment_expression
     {    ()}
 
-constant_expression:
-| _1 = conditional_expression
-    {    ()}
-
 declaration_external_declaration_:
-| _1 = declaration_specifiers_declaration_external_declaration__ _2 = pre_parser_option_init_declarator_list_ _3 = SEMICOLON
+| _1 = declaration_specifiers_declaration_external_declaration__ _2 = option_init_declarator_list_ _3 = SEMICOLON
     {    ()}
-| _1 = declaration_specifiers_typedef _2 = pre_parser_option_typedef_declarator_list_ _3 = SEMICOLON
+| _1 = declaration_specifiers_typedef _2 = option_typedef_declarator_list_ _3 = SEMICOLON
     {    ()}
 
 declaration_block_item_:
-| _1 = declaration_specifiers_declaration_block_item__ _2 = pre_parser_option_init_declarator_list_ _3 = SEMICOLON
+| _1 = declaration_specifiers_declaration_block_item__ _2 = option_init_declarator_list_ _3 = SEMICOLON
     {    ()}
-| _1 = declaration_specifiers_typedef _2 = pre_parser_option_typedef_declarator_list_ _3 = SEMICOLON
+| _1 = declaration_specifiers_typedef _2 = option_typedef_declarator_list_ _3 = SEMICOLON
     {    ()}
 
 init_declarator_list:
@@ -731,9 +819,9 @@ init_declarator_list:
     {    ()}
 
 init_declarator:
-| _1 = declare_varname_fst_declarator__
+| _1 = declare_varname_declarator_noattrend_ _2 = save_context _3 = attribute_specifier_list
     {    ()}
-| _1 = declare_varname_fst_declarator__ _2 = EQ _3 = c_initializer
+| _1 = declare_varname_declarator_noattrend_ _2 = save_context _3 = attribute_specifier_list _4 = EQ _5 = c_initializer
     {    ()}
 
 typedef_declarator_list:
@@ -743,7 +831,7 @@ typedef_declarator_list:
     {    ()}
 
 typedef_declarator:
-| _1 = declare_typename_fst_declarator__
+| _1 = declare_typename_declarator_
     {    ()}
 
 storage_class_specifier_no_typedef:
@@ -756,91 +844,143 @@ storage_class_specifier_no_typedef:
 | _1 = REGISTER
     {    ()}
 
-declaration_specifier_no_type:
-| _1 = storage_class_specifier_no_typedef
-    {    ()}
-| _1 = type_qualifier
-    {    ()}
-| _1 = function_specifier
-    {    ()}
-
 declaration_specifier_no_typedef_name:
 | _1 = storage_class_specifier_no_typedef
     {    ()}
-| _1 = type_qualifier
-    {    ()}
+| _10 = type_qualifier_noattr
+    {let _1 =
+  let _1 = _10 in
+      ()
+in
+    ()}
+| _10 = attribute_specifier
+    {let _1 =
+  let _1 = _10 in
+      ()
+in
+    ()}
 | _1 = function_specifier
     {    ()}
 | _1 = type_specifier_no_typedef_name
     {    ()}
 
 declaration_specifiers_parameter_declaration_:
-| _2 = TYPEDEF_NAME _3 = pre_parser_list_declaration_specifier_no_type_
+| _2 = typedef_name _3 = list_declaration_specifier_no_type_
     {let _1 =
-                ()
+      ( None )
 in
     ()}
-| _10 = pre_parser_list_declaration_specifier_no_type_ _20 = declaration_specifier_no_type _2 = TYPEDEF_NAME _3 = pre_parser_list_declaration_specifier_no_type_
+| x0 = rlist_declaration_specifier_no_type_ _2 = typedef_name _3 = list_declaration_specifier_no_type_
     {let _1 =
-  let _2 = _20 in
-  let _1 = _10 in
-                ()
+  let x = x0 in
+      ( Some x )
 in
     ()}
-| _1 = pre_parser_list_declaration_specifier_no_type_ _2 = type_specifier_no_typedef_name _3 = pre_parser_list_declaration_specifier_no_typedef_name_
-    {    ()}
+| _2 = type_specifier_no_typedef_name _3 = list_declaration_specifier_no_typedef_name_
+    {let _1 =
+      ( None )
+in
+    ()}
+| x0 = rlist_declaration_specifier_no_type_ _2 = type_specifier_no_typedef_name _3 = list_declaration_specifier_no_typedef_name_
+    {let _1 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
 
 declaration_specifiers_declaration_external_declaration__:
-| _2 = TYPEDEF_NAME _3 = pre_parser_list_declaration_specifier_no_type_
+| _2 = typedef_name _3 = list_declaration_specifier_no_type_
     {let _1 =
-                ()
+      ( None )
 in
     ()}
-| _10 = pre_parser_list_declaration_specifier_no_type_ _20 = declaration_specifier_no_type _2 = TYPEDEF_NAME _3 = pre_parser_list_declaration_specifier_no_type_
+| x0 = rlist_declaration_specifier_no_type_ _2 = typedef_name _3 = list_declaration_specifier_no_type_
     {let _1 =
-  let _2 = _20 in
-  let _1 = _10 in
-                ()
+  let x = x0 in
+      ( Some x )
 in
     ()}
-| _1 = pre_parser_list_declaration_specifier_no_type_ _2 = type_specifier_no_typedef_name _3 = pre_parser_list_declaration_specifier_no_typedef_name_
-    {    ()}
+| _2 = type_specifier_no_typedef_name _3 = list_declaration_specifier_no_typedef_name_
+    {let _1 =
+      ( None )
+in
+    ()}
+| x0 = rlist_declaration_specifier_no_type_ _2 = type_specifier_no_typedef_name _3 = list_declaration_specifier_no_typedef_name_
+    {let _1 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
 
 declaration_specifiers_declaration_block_item__:
-| _2 = TYPEDEF_NAME _3 = pre_parser_list_declaration_specifier_no_type_
+| _2 = typedef_name _3 = list_declaration_specifier_no_type_
     {let _1 =
-                ()
+      ( None )
 in
     ()}
-| _10 = pre_parser_list_declaration_specifier_no_type_ _20 = declaration_specifier_no_type _2 = TYPEDEF_NAME _3 = pre_parser_list_declaration_specifier_no_type_
+| x0 = rlist_declaration_specifier_no_type_ _2 = typedef_name _3 = list_declaration_specifier_no_type_
     {let _1 =
-  let _2 = _20 in
-  let _1 = _10 in
-                ()
+  let x = x0 in
+      ( Some x )
 in
     ()}
-| _1 = pre_parser_list_declaration_specifier_no_type_ _2 = type_specifier_no_typedef_name _3 = pre_parser_list_declaration_specifier_no_typedef_name_
-    {    ()}
+| _2 = type_specifier_no_typedef_name _3 = list_declaration_specifier_no_typedef_name_
+    {let _1 =
+      ( None )
+in
+    ()}
+| x0 = rlist_declaration_specifier_no_type_ _2 = type_specifier_no_typedef_name _3 = list_declaration_specifier_no_typedef_name_
+    {let _1 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
 
 declaration_specifiers_typedef:
-| _1 = pre_parser_list_declaration_specifier_no_type_ _2 = TYPEDEF _3 = pre_parser_list_declaration_specifier_no_type_ _4 = TYPEDEF_NAME _5 = pre_parser_list_declaration_specifier_no_type_
-    {    ()}
-| _2 = TYPEDEF_NAME _3 = pre_parser_list_declaration_specifier_no_type_ _4 = TYPEDEF _5 = pre_parser_list_declaration_specifier_no_type_
+| _2 = TYPEDEF _3 = list_declaration_specifier_no_type_ _4 = typedef_name _5 = list_declaration_specifier_no_type_
     {let _1 =
-                ()
+      ( None )
 in
     ()}
-| _10 = pre_parser_list_declaration_specifier_no_type_ _20 = declaration_specifier_no_type _2 = TYPEDEF_NAME _3 = pre_parser_list_declaration_specifier_no_type_ _4 = TYPEDEF _5 = pre_parser_list_declaration_specifier_no_type_
+| x0 = rlist_declaration_specifier_no_type_ _2 = TYPEDEF _3 = list_declaration_specifier_no_type_ _4 = typedef_name _5 = list_declaration_specifier_no_type_
     {let _1 =
-  let _2 = _20 in
-  let _1 = _10 in
-                ()
+  let x = x0 in
+      ( Some x )
 in
     ()}
-| _1 = pre_parser_list_declaration_specifier_no_type_ _2 = TYPEDEF _3 = pre_parser_list_declaration_specifier_no_type_ _4 = type_specifier_no_typedef_name _5 = pre_parser_list_declaration_specifier_no_typedef_name_
-    {    ()}
-| _1 = pre_parser_list_declaration_specifier_no_type_ _2 = type_specifier_no_typedef_name _3 = pre_parser_list_declaration_specifier_no_typedef_name_ _4 = TYPEDEF _5 = pre_parser_list_declaration_specifier_no_typedef_name_
-    {    ()}
+| _2 = typedef_name _3 = list_declaration_specifier_no_type_ _4 = TYPEDEF _5 = list_declaration_specifier_no_type_
+    {let _1 =
+      ( None )
+in
+    ()}
+| x0 = rlist_declaration_specifier_no_type_ _2 = typedef_name _3 = list_declaration_specifier_no_type_ _4 = TYPEDEF _5 = list_declaration_specifier_no_type_
+    {let _1 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
+| _2 = TYPEDEF _3 = list_declaration_specifier_no_type_ _4 = type_specifier_no_typedef_name _5 = list_declaration_specifier_no_typedef_name_
+    {let _1 =
+      ( None )
+in
+    ()}
+| x0 = rlist_declaration_specifier_no_type_ _2 = TYPEDEF _3 = list_declaration_specifier_no_type_ _4 = type_specifier_no_typedef_name _5 = list_declaration_specifier_no_typedef_name_
+    {let _1 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
+| _2 = type_specifier_no_typedef_name _3 = list_declaration_specifier_no_typedef_name_ _4 = TYPEDEF _5 = list_declaration_specifier_no_typedef_name_
+    {let _1 =
+      ( None )
+in
+    ()}
+| x0 = rlist_declaration_specifier_no_type_ _2 = type_specifier_no_typedef_name _3 = list_declaration_specifier_no_typedef_name_ _4 = TYPEDEF _5 = list_declaration_specifier_no_typedef_name_
+    {let _1 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
 
 type_specifier_no_typedef_name:
 | _1 = VOID
@@ -869,7 +1009,7 @@ type_specifier_no_typedef_name:
     {    ()}
 
 struct_or_union_specifier:
-| _1 = struct_or_union _2 = attribute_specifier_list _3 = pre_parser_option_other_identifier_ _4 = LBRACE _5 = struct_declaration_list _6 = RBRACE
+| _1 = struct_or_union _2 = attribute_specifier_list _3 = option_other_identifier_ _4 = LBRACE _5 = struct_declaration_list _6 = RBRACE
     {    ()}
 | _1 = struct_or_union _2 = attribute_specifier_list i0 = general_identifier
     {let _3 =
@@ -891,32 +1031,72 @@ struct_declaration_list:
     {    ()}
 
 struct_declaration:
-| _1 = specifier_qualifier_list_struct_declaration_ _2 = pre_parser_option_struct_declarator_list_ _3 = SEMICOLON
+| _1 = specifier_qualifier_list_struct_declaration_ _2 = option_struct_declarator_list_ _3 = SEMICOLON
     {    ()}
 
 specifier_qualifier_list_type_name_:
-| _1 = pre_parser_option_type_qualifier_list_ _2 = TYPEDEF_NAME _3 = pre_parser_option_type_qualifier_list_
-    {    ()}
-| _1 = pre_parser_option_type_qualifier_list_ _2 = type_specifier_no_typedef_name _3 = pre_parser_option_specifier_qualifier_list_no_typedef_name_type_name__
-    {    ()}
+| _2 = typedef_name _3 = option_type_qualifier_list_
+    {let _1 =
+      ( None )
+in
+    ()}
+| x0 = type_qualifier_list _2 = typedef_name _3 = option_type_qualifier_list_
+    {let _1 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
+| _2 = type_specifier_no_typedef_name _3 = list_specifier_qualifier_no_typedef_name_
+    {let _1 =
+      ( None )
+in
+    ()}
+| x0 = type_qualifier_list _2 = type_specifier_no_typedef_name _3 = list_specifier_qualifier_no_typedef_name_
+    {let _1 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
 
 specifier_qualifier_list_struct_declaration_:
-| _1 = pre_parser_option_type_qualifier_list_ _2 = TYPEDEF_NAME _3 = pre_parser_option_type_qualifier_list_
-    {    ()}
-| _1 = pre_parser_option_type_qualifier_list_ _2 = type_specifier_no_typedef_name _3 = pre_parser_option_specifier_qualifier_list_no_typedef_name_struct_declaration__
-    {    ()}
+| _2 = typedef_name _3 = option_type_qualifier_list_
+    {let _1 =
+      ( None )
+in
+    ()}
+| x0 = type_qualifier_list _2 = typedef_name _3 = option_type_qualifier_list_
+    {let _1 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
+| _2 = type_specifier_no_typedef_name _3 = list_specifier_qualifier_no_typedef_name_
+    {let _1 =
+      ( None )
+in
+    ()}
+| x0 = type_qualifier_list _2 = type_specifier_no_typedef_name _3 = list_specifier_qualifier_no_typedef_name_
+    {let _1 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
 
-specifier_qualifier_list_no_typedef_name_type_name_:
-| _1 = type_specifier_no_typedef_name _2 = pre_parser_option_specifier_qualifier_list_no_typedef_name_type_name__
+specifier_qualifier_no_typedef_name:
+| _1 = type_specifier_no_typedef_name
     {    ()}
-| _1 = type_qualifier _2 = pre_parser_option_specifier_qualifier_list_no_typedef_name_type_name__
-    {    ()}
-
-specifier_qualifier_list_no_typedef_name_struct_declaration_:
-| _1 = type_specifier_no_typedef_name _2 = pre_parser_option_specifier_qualifier_list_no_typedef_name_struct_declaration__
-    {    ()}
-| _1 = type_qualifier _2 = pre_parser_option_specifier_qualifier_list_no_typedef_name_struct_declaration__
-    {    ()}
+| _10 = type_qualifier_noattr
+    {let _1 =
+  let _1 = _10 in
+      ()
+in
+    ()}
+| _10 = attribute_specifier
+    {let _1 =
+  let _1 = _10 in
+      ()
+in
+    ()}
 
 struct_declarator_list:
 | _1 = struct_declarator
@@ -927,11 +1107,15 @@ struct_declarator_list:
 struct_declarator:
 | _1 = declarator
     {    ()}
-| _1 = pre_parser_option_declarator_ _2 = COLON _3 = constant_expression
-    {    ()}
+| _1 = option_declarator_ _2 = COLON _10 = conditional_expression
+    {let _3 =
+  let _1 = _10 in
+      ()
+in
+    ()}
 
 enum_specifier:
-| _1 = ENUM _2 = attribute_specifier_list _3 = pre_parser_option_other_identifier_ _4 = LBRACE _5 = enumerator_list _6 = pre_parser_option_COMMA_ _7 = RBRACE
+| _1 = ENUM _2 = attribute_specifier_list _3 = option_other_identifier_ _4 = LBRACE _5 = enumerator_list _6 = option_COMMA_ _7 = RBRACE
     {    ()}
 | _1 = ENUM _2 = attribute_specifier_list i0 = general_identifier
     {let _3 =
@@ -948,28 +1132,30 @@ enumerator_list:
 
 enumerator:
 | i = enumeration_constant
-    {    ( i )}
-| i = enumeration_constant _2 = EQ _3 = constant_expression
-    {    ( i )}
+    {    ( (i, ()) )}
+| i = enumeration_constant _2 = EQ _10 = conditional_expression
+    {let _3 =
+  let _1 = _10 in
+      ()
+in
+    ( (i, ()) )}
 
 enumeration_constant:
 | i = general_identifier
     {    ( set_id_type i VarId; i )}
 
-type_qualifier:
+type_qualifier_noattr:
 | _1 = CONST
     {    ()}
 | _1 = RESTRICT
     {    ()}
 | _1 = VOLATILE
     {    ()}
-| _1 = attribute_specifier
-    {    ()}
 
 attribute_specifier_list:
 | 
     {    ()}
-| _1 = attribute_specifier_list _2 = attribute_specifier
+| _1 = attribute_specifier _2 = attribute_specifier_list
     {    ()}
 
 attribute_specifier:
@@ -993,9 +1179,9 @@ gcc_attribute:
     {    ()}
 | _1 = gcc_attribute_word
     {    ()}
-| _1 = gcc_attribute_word _2 = LPAREN _3 = pre_parser_option_argument_expression_list_ _4 = RPAREN
+| _1 = gcc_attribute_word _2 = LPAREN _3 = option_argument_expression_list_ _4 = RPAREN
     {    ()}
-| _1 = gcc_attribute_word _2 = LPAREN i = TYPEDEF_NAME _4 = COMMA _5 = argument_expression_list _6 = RPAREN
+| _1 = gcc_attribute_word _2 = LPAREN i = typedef_name _4 = COMMA _5 = argument_expression_list _6 = RPAREN
     {    ( set_id_type i VarId )}
 
 gcc_attribute_word:
@@ -1014,13 +1200,29 @@ function_specifier:
 | _1 = INLINE
     {    ()}
 
-declarator:
-| x = direct_declarator _3 = attribute_specifier_list
-    {let _1 =
-                ()
+low_prec:
+|  %prec lowPrec1
+    {                          ()}
+
+declarator_identifier:
+| _1 = PRE_NAME _2 = low_prec i = TYPEDEF_NAME
+    {    ( i )}
+| _10 = PRE_NAME i0 = VAR_NAME
+    {let i =
+  let i = i0 in
+  let _1 = _10 in
+      ( i )
 in
-    ( x )}
-| _11 = pre_parser_list_pointer1_ _100 = STAR _200 = pre_parser_option_type_qualifier_list_ x = direct_declarator _3 = attribute_specifier_list
+    ( i )}
+
+declarator:
+| x = declarator_noattrend _2 = attribute_specifier_list
+    {    ( x )}
+
+declarator_noattrend:
+| x = direct_declarator
+    {    ( x )}
+| _11 = list_pointer1_ _100 = STAR _200 = option_type_qualifier_list_ x = direct_declarator
     {let _1 =
   let _20 = _200 in
   let _10 = _100 in
@@ -1030,205 +1232,162 @@ in
     let _1 = _10 in
         ()
   in
-                ()
+      ()
 in
-    ( x )}
+    ( match snd x with
+      | Decl_ident -> (fst x, Decl_other)
+      | _ -> x )}
 
 direct_declarator:
-| i = general_identifier
-    {    ( set_id_type i VarId; (i, None) )}
-| _1 = LPAREN x = declarator _3 = RPAREN
-    {    ( x )}
-| x = direct_declarator _2 = LBRACK _3 = pre_parser_option_type_qualifier_list_ _4 = optional_assignment_expression_RBRACK_
-    {    ( x )}
-| x = direct_declarator _2 = LPAREN _3 = open_context _4 = pre_parser_option_parameter_type_list_ restore_fun = save_contexts_stk _6 = close_context _7 = RPAREN
+| i = declarator_identifier
+    {    ( set_id_type i VarId; (i, Decl_ident) )}
+| _1 = LPAREN _2 = save_context x = declarator _4 = RPAREN
     {    ( match snd x with
-      | None -> (fst x, Some restore_fun)
-      | Some _ -> x )}
+      | Decl_ident -> (fst x, Decl_other)
+      | _ -> x )}
+| x = direct_declarator _2 = LBRACK _3 = option_type_qualifier_list_ _4 = optional_assignment_expression_RBRACK_
+    {    ( match snd x with
+      | Decl_ident -> (fst x, Decl_other)
+      | _ -> x )}
+| x = direct_declarator _2 = LPAREN ctx = context_parameter_type_list _4 = RPAREN
+    {    ( match snd x with
+      | Decl_ident -> (fst x, Decl_fun ctx)
+      | _ -> x )}
+| x = direct_declarator _2 = LPAREN _3 = save_context il = option_identifier_list_ _5 = RPAREN
+    {    ( match snd x, il with
+      | Decl_ident, Some il -> (fst x, Decl_krfun il)
+      | Decl_ident, None -> (fst x, Decl_krfun [])
+      | _ -> x )}
 
 type_qualifier_list:
-| _1 = pre_parser_option_type_qualifier_list_ _2 = type_qualifier
-    {    ()}
+| _1 = option_type_qualifier_list_ _10 = type_qualifier_noattr
+    {let _2 =
+  let _1 = _10 in
+      ()
+in
+    ()}
+| _1 = option_type_qualifier_list_ _10 = attribute_specifier
+    {let _2 =
+  let _1 = _10 in
+      ()
+in
+    ()}
+
+context_parameter_type_list:
+| ctx1 = save_context _2 = parameter_type_list ctx2 = save_context
+    {    ( ctx1 (); ctx2 )}
 
 parameter_type_list:
-| l = parameter_list
-    {    ( l )}
-| l = parameter_list _2 = COMMA _3 = ELLIPSIS
-    {    ( l )}
+| _1 = parameter_list
+    {    ()}
+| _1 = parameter_list _2 = COMMA _3 = ELLIPSIS
+    {    ()}
 
 parameter_list:
-| i = parameter_declaration
-    {    ( [i] )}
-| l = parameter_list _2 = COMMA i = parameter_declaration
-    {    ( i::l )}
+| _1 = parameter_declaration
+    {    ()}
+| _1 = parameter_list _2 = COMMA _3 = parameter_declaration
+    {    ()}
 
 parameter_declaration:
-| _1 = declaration_specifiers_parameter_declaration_ id = declare_varname_fst_declarator__
-    {    ( Some id )}
-| _1 = declaration_specifiers_parameter_declaration_ _2 = pre_parser_option_abstract_declarator_parameter_declaration__
-    {    ( None )}
+| _1 = declaration_specifiers_parameter_declaration_ _2 = declare_varname_declarator_
+    {    ()}
+| _1 = declaration_specifiers_parameter_declaration_ _2 = option_abstract_declarator_parameter_declaration__
+    {    ()}
 
 type_name:
-| _1 = specifier_qualifier_list_type_name_ _2 = pre_parser_option_abstract_declarator_type_name__
+| _1 = specifier_qualifier_list_type_name_ _2 = option_abstract_declarator_type_name__
     {    ()}
 
 abstract_declarator_type_name_:
-| _110 = pre_parser_list_pointer1_ _1000 = STAR _2000 = pre_parser_option_type_qualifier_list_
+| _11 = list_pointer1_ _100 = STAR _200 = option_type_qualifier_list_
     {let _1 =
-  let _200 = _2000 in
-  let _100 = _1000 in
-  let _11 = _110 in
-  let _1 =
-    let _20 = _200 in
-    let _10 = _100 in
-    let _1 = _11 in
-    let _2 =
-      let _2 = _20 in
-      let _1 = _10 in
-          ()
-    in
+  let _20 = _200 in
+  let _10 = _100 in
+  let _1 = _11 in
+  let _2 =
+    let _2 = _20 in
+    let _1 = _10 in
         ()
   in
       ()
 in
     ()}
-| _20 = direct_abstract_declarator
-    {let _1 =
-  let _2 = _20 in
-  let _1 =
-                  ()
-  in
-      ()
-in
-    ()}
-| _110 = pre_parser_list_pointer1_ _1000 = STAR _2000 = pre_parser_option_type_qualifier_list_ _20 = direct_abstract_declarator
-    {let _1 =
-  let _2 = _20 in
-  let _200 = _2000 in
-  let _100 = _1000 in
-  let _11 = _110 in
-  let _1 =
-    let _20 = _200 in
-    let _10 = _100 in
-    let _1 = _11 in
-    let _2 =
-      let _2 = _20 in
-      let _1 = _10 in
-          ()
-    in
-                  ()
-  in
-      ()
-in
-    ()}
-
-abstract_declarator_parameter_declaration_:
-| _110 = pre_parser_list_pointer1_ _1000 = STAR _2000 = pre_parser_option_type_qualifier_list_
-    {let _1 =
-  let _200 = _2000 in
-  let _100 = _1000 in
-  let _11 = _110 in
-  let _1 =
-    let _20 = _200 in
-    let _10 = _100 in
-    let _1 = _11 in
-    let _2 =
-      let _2 = _20 in
-      let _1 = _10 in
-          ()
-    in
-        ()
-  in
-      ()
-in
-    ()}
-| _20 = direct_abstract_declarator
-    {let _1 =
-  let _2 = _20 in
-  let _1 =
-                  ()
-  in
-      ()
-in
-    ()}
-| _110 = pre_parser_list_pointer1_ _1000 = STAR _2000 = pre_parser_option_type_qualifier_list_ _20 = direct_abstract_declarator
-    {let _1 =
-  let _2 = _20 in
-  let _200 = _2000 in
-  let _100 = _1000 in
-  let _11 = _110 in
-  let _1 =
-    let _20 = _200 in
-    let _10 = _100 in
-    let _1 = _11 in
-    let _2 =
-      let _2 = _20 in
-      let _1 = _10 in
-          ()
-    in
-                  ()
-  in
-      ()
-in
-    ()}
-
-direct_abstract_declarator:
-| _1 = LPAREN _110 = pre_parser_list_pointer1_ _1000 = STAR _2000 = pre_parser_option_type_qualifier_list_ _3 = RPAREN
-    {let _2 =
-  let _200 = _2000 in
-  let _100 = _1000 in
-  let _11 = _110 in
-  let _1 =
-    let _20 = _200 in
-    let _10 = _100 in
-    let _1 = _11 in
-    let _2 =
-      let _2 = _20 in
-      let _1 = _10 in
-          ()
-    in
-        ()
-  in
-      ()
-in
-    ()}
-| _1 = LPAREN _20 = direct_abstract_declarator _3 = RPAREN
-    {let _2 =
-  let _2 = _20 in
-  let _1 =
-                  ()
-  in
-      ()
-in
-    ()}
-| _1 = LPAREN _110 = pre_parser_list_pointer1_ _1000 = STAR _2000 = pre_parser_option_type_qualifier_list_ _20 = direct_abstract_declarator _3 = RPAREN
-    {let _2 =
-  let _2 = _20 in
-  let _200 = _2000 in
-  let _100 = _1000 in
-  let _11 = _110 in
-  let _1 =
-    let _20 = _200 in
-    let _10 = _100 in
-    let _1 = _11 in
-    let _2 =
-      let _2 = _20 in
-      let _1 = _10 in
-          ()
-    in
-                  ()
-  in
-      ()
-in
-    ()}
-| _1 = pre_parser_option_direct_abstract_declarator_ _2 = LBRACK _3 = pre_parser_option_type_qualifier_list_ _4 = optional_assignment_expression_RBRACK_
-    {    ()}
-| _2 = LPAREN _3 = in_context_pre_parser_option_parameter_type_list__ _4 = RPAREN
+| _2 = direct_abstract_declarator
     {let _1 =
       ( None )
 in
     ()}
-| x0 = direct_abstract_declarator _2 = LPAREN _3 = in_context_pre_parser_option_parameter_type_list__ _4 = RPAREN
+| _110 = list_pointer1_ _1000 = STAR _2000 = option_type_qualifier_list_ _2 = direct_abstract_declarator
+    {let _1 =
+  let _200 = _2000 in
+  let _100 = _1000 in
+  let _11 = _110 in
+  let x =
+    let _20 = _200 in
+    let _10 = _100 in
+    let _1 = _11 in
+    let _2 =
+      let _2 = _20 in
+      let _1 = _10 in
+          ()
+    in
+        ()
+  in
+      ( Some x )
+in
+    ()}
+
+abstract_declarator_parameter_declaration_:
+| _11 = list_pointer1_ _100 = STAR _200 = option_type_qualifier_list_
+    {let _1 =
+  let _20 = _200 in
+  let _10 = _100 in
+  let _1 = _11 in
+  let _2 =
+    let _2 = _20 in
+    let _1 = _10 in
+        ()
+  in
+      ()
+in
+    ()}
+| _2 = direct_abstract_declarator
+    {let _1 =
+      ( None )
+in
+    ()}
+| _110 = list_pointer1_ _1000 = STAR _2000 = option_type_qualifier_list_ _2 = direct_abstract_declarator
+    {let _1 =
+  let _200 = _2000 in
+  let _100 = _1000 in
+  let _11 = _110 in
+  let x =
+    let _20 = _200 in
+    let _10 = _100 in
+    let _1 = _11 in
+    let _2 =
+      let _2 = _20 in
+      let _1 = _10 in
+          ()
+    in
+        ()
+  in
+      ( Some x )
+in
+    ()}
+
+direct_abstract_declarator:
+| _1 = LPAREN _2 = save_context _3 = abstract_declarator_type_name_ _4 = RPAREN
+    {    ()}
+| _1 = option_direct_abstract_declarator_ _2 = LBRACK _3 = option_type_qualifier_list_ _4 = optional_assignment_expression_RBRACK_
+    {    ()}
+| _2 = LPAREN _3 = option_context_parameter_type_list_ _4 = RPAREN
+    {let _1 =
+      ( None )
+in
+    ()}
+| x0 = direct_abstract_declarator _2 = LPAREN _3 = option_context_parameter_type_list_ _4 = RPAREN
     {let _1 =
   let x = x0 in
       ( Some x )
@@ -1238,13 +1397,13 @@ in
 c_initializer:
 | _1 = assignment_expression
     {    ()}
-| _1 = LBRACE _2 = initializer_list _3 = pre_parser_option_COMMA_ _4 = RBRACE
+| _1 = LBRACE _2 = initializer_list _3 = option_COMMA_ _4 = RBRACE
     {    ()}
 
 initializer_list:
-| _1 = pre_parser_option_designation_ _2 = c_initializer
+| _1 = option_designation_ _2 = c_initializer
     {    ()}
-| _1 = initializer_list _2 = COMMA _3 = pre_parser_option_designation_ _4 = c_initializer
+| _1 = initializer_list _2 = COMMA _3 = option_designation_ _4 = c_initializer
     {    ()}
 
 designation:
@@ -1252,12 +1411,16 @@ designation:
     {    ()}
 
 designator_list:
-| _1 = pre_parser_option_designator_list_ _2 = designator
+| _1 = option_designator_list_ _2 = designator
     {    ()}
 
 designator:
-| _1 = LBRACK _2 = constant_expression _3 = RBRACK
-    {    ()}
+| _1 = LBRACK _10 = conditional_expression _3 = RBRACK
+    {let _2 =
+  let _1 = _10 in
+      ()
+in
+    ()}
 | _1 = DOT i0 = general_identifier
     {let _2 =
   let i = i0 in
@@ -1265,255 +1428,99 @@ designator:
 in
     ()}
 
-statement_finish_close:
-| _1 = labeled_statement_statement_finish_close_
+statement:
+| _1 = labeled_statement
     {    ()}
-| _1 = compound_statement_nop_
+| _1 = compound_statement
     {    ()}
-| _1 = expression_statement_close_context_
+| _1 = expression_statement
     {    ()}
-| _1 = selection_statement_finish_nop_
+| _1 = selection_statement
     {    ()}
-| _1 = iteration_statement_nop_statement_finish_close_
+| _1 = iteration_statement
     {    ()}
-| _1 = jump_statement_close_context_
+| _1 = jump_statement
     {    ()}
-| _1 = asm_statement_close_context_
-    {    ()}
-
-statement_finish_noclose:
-| _1 = labeled_statement_statement_finish_noclose_
-    {    ()}
-| _1 = compound_statement_open_context_
-    {    ()}
-| _1 = expression_statement_nop_
-    {    ()}
-| _1 = selection_statement_finish_open_context_
-    {    ()}
-| _1 = iteration_statement_open_context_statement_finish_close_
-    {    ()}
-| _1 = jump_statement_nop_
-    {    ()}
-| _1 = asm_statement_nop_
+| _1 = asm_statement
     {    ()}
 
-statement_intern_close:
-| _1 = labeled_statement_statement_intern_close_
-    {    ()}
-| _1 = compound_statement_nop_
-    {    ()}
-| _1 = expression_statement_close_context_
-    {    ()}
-| _1 = selection_statement_intern_close
-    {    ()}
-| _1 = iteration_statement_nop_statement_intern_close_
-    {    ()}
-| _1 = jump_statement_close_context_
-    {    ()}
-| _1 = asm_statement_close_context_
-    {    ()}
-
-labeled_statement_statement_intern_close_:
-| i0 = general_identifier _2 = COLON _3 = statement_intern_close
+labeled_statement:
+| i0 = general_identifier _2 = COLON _3 = statement
     {let _1 =
   let i = i0 in
       ( set_id_type i OtherId )
 in
     ()}
-| _1 = CASE _2 = constant_expression _3 = COLON _4 = statement_intern_close
-    {    ()}
-| _1 = DEFAULT _2 = COLON _3 = statement_intern_close
-    {    ()}
-
-labeled_statement_statement_finish_noclose_:
-| i0 = general_identifier _2 = COLON _3 = statement_finish_noclose
-    {let _1 =
-  let i = i0 in
-      ( set_id_type i OtherId )
-in
-    ()}
-| _1 = CASE _2 = constant_expression _3 = COLON _4 = statement_finish_noclose
-    {    ()}
-| _1 = DEFAULT _2 = COLON _3 = statement_finish_noclose
-    {    ()}
-
-labeled_statement_statement_finish_close_:
-| i0 = general_identifier _2 = COLON _3 = statement_finish_close
-    {let _1 =
-  let i = i0 in
-      ( set_id_type i OtherId )
-in
-    ()}
-| _1 = CASE _2 = constant_expression _3 = COLON _4 = statement_finish_close
-    {    ()}
-| _1 = DEFAULT _2 = COLON _3 = statement_finish_close
-    {    ()}
-
-compound_statement_open_context_:
-| _1 = LBRACE _2 = open_context _3 = pre_parser_option_block_item_list_ _4 = close_context _5 = RBRACE
-    {    ()}
-
-compound_statement_nop_:
-| _1 = LBRACE _3 = pre_parser_option_block_item_list_ _4 = close_context _5 = RBRACE
+| _1 = CASE _10 = conditional_expression _3 = COLON _4 = statement
     {let _2 =
-                           ()
+  let _1 = _10 in
+      ()
 in
     ()}
+| _1 = DEFAULT _2 = COLON _3 = statement
+    {    ()}
+
+compound_statement:
+| ctx = save_context _2 = LBRACE _3 = option_block_item_list_ _4 = RBRACE
+    {    ( ctx() )}
 
 block_item_list:
-| _1 = pre_parser_option_block_item_list_ _2 = block_item
+| _1 = option_block_item_list_ _2 = block_item
     {    ()}
 
 block_item:
 | _1 = declaration_block_item_
     {    ()}
-| _1 = statement_finish_noclose
+| _1 = statement
     {    ()}
 | _1 = PRAGMA
     {    ()}
 
-expression_statement_nop_:
-| _1 = pre_parser_option_expression_ _3 = SEMICOLON
-    {let _2 =
-                           ()
-in
-    ()}
-
-expression_statement_close_context_:
-| _1 = pre_parser_option_expression_ _2 = close_context _3 = SEMICOLON
+expression_statement:
+| _1 = option_expression_ _2 = SEMICOLON
     {    ()}
 
-jump_statement_nop_:
-| _1 = GOTO i0 = general_identifier _4 = SEMICOLON
-    {let _3 =
-                           ()
-in
-let _2 =
-  let i = i0 in
-      ( set_id_type i OtherId )
-in
-    ()}
-| _1 = CONTINUE _3 = SEMICOLON
-    {let _2 =
-                           ()
-in
-    ()}
-| _1 = BREAK _3 = SEMICOLON
-    {let _2 =
-                           ()
-in
-    ()}
-| _1 = RETURN _2 = pre_parser_option_expression_ _4 = SEMICOLON
-    {let _3 =
-                           ()
-in
-    ()}
-
-jump_statement_close_context_:
-| _1 = GOTO i0 = general_identifier _3 = close_context _4 = SEMICOLON
+jump_statement:
+| _1 = GOTO i0 = general_identifier _3 = SEMICOLON
     {let _2 =
   let i = i0 in
       ( set_id_type i OtherId )
 in
     ()}
-| _1 = CONTINUE _2 = close_context _3 = SEMICOLON
+| _1 = CONTINUE _2 = SEMICOLON
     {    ()}
-| _1 = BREAK _2 = close_context _3 = SEMICOLON
+| _1 = BREAK _2 = SEMICOLON
     {    ()}
-| _1 = RETURN _2 = pre_parser_option_expression_ _3 = close_context _4 = SEMICOLON
-    {    ()}
-
-asm_statement_nop_:
-| _1 = ASM _2 = asm_attributes _3 = LPAREN _4 = string_literals_list _5 = asm_arguments _6 = RPAREN _8 = SEMICOLON
-    {let _7 =
-                           ()
-in
-    ()}
-
-asm_statement_close_context_:
-| _1 = ASM _2 = asm_attributes _3 = LPAREN _4 = string_literals_list _5 = asm_arguments _6 = RPAREN _7 = close_context _8 = SEMICOLON
+| _1 = RETURN _2 = option_expression_ _3 = SEMICOLON
     {    ()}
 
-if_else_statement_begin_open_context_:
-| _1 = IF _2 = open_context _3 = LPAREN _4 = expression _5 = RPAREN restore_fun = save_contexts_stk _7 = statement_intern_close
-    {    ( restore_fun () )}
-
-if_else_statement_begin_nop_:
-| _1 = IF _3 = LPAREN _4 = expression _5 = RPAREN restore_fun = save_contexts_stk _7 = statement_intern_close
-    {let _2 =
-                           ()
-in
-    ( restore_fun () )}
-
-selection_statement_finish_open_context_:
-| _1 = IF _2 = open_context _3 = LPAREN _4 = expression _5 = RPAREN _6 = save_contexts_stk _7 = statement_finish_close
-    {    ()}
-| _1 = if_else_statement_begin_open_context_ _2 = ELSE _3 = statement_finish_close
-    {    ()}
-| _1 = SWITCH _2 = open_context _3 = LPAREN _4 = expression _5 = RPAREN _6 = statement_finish_close
+asm_statement:
+| _1 = ASM _2 = asm_attributes _3 = LPAREN _4 = string_literals_list _5 = asm_arguments _6 = RPAREN _7 = SEMICOLON
     {    ()}
 
-selection_statement_finish_nop_:
-| _1 = IF _3 = LPAREN _4 = expression _5 = RPAREN _6 = save_contexts_stk _7 = statement_finish_close
-    {let _2 =
-                           ()
-in
-    ()}
-| _1 = if_else_statement_begin_nop_ _2 = ELSE _3 = statement_finish_close
-    {    ()}
-| _1 = SWITCH _3 = LPAREN _4 = expression _5 = RPAREN _6 = statement_finish_close
-    {let _2 =
-                           ()
-in
-    ()}
+ifelse_statement1:
+| _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN ctx = save_context _6 = statement _7 = ELSE
+    {    ( ctx() )}
 
-selection_statement_intern_close:
-| _1 = if_else_statement_begin_nop_ _2 = ELSE _3 = statement_intern_close
-    {    ()}
-| _1 = SWITCH _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_intern_close
-    {    ()}
+selection_statement:
+| ctx = save_context _2 = ifelse_statement1 _3 = statement
+    {    ( ctx() )}
+| ctx = save_context _2 = IF _3 = LPAREN _4 = expression _5 = RPAREN _6 = save_context _7 = statement %prec lowPrec2
+    {    ( ctx() )}
+| ctx = save_context _2 = SWITCH _3 = LPAREN _4 = expression _5 = RPAREN _6 = statement
+    {    ( ctx() )}
 
-iteration_statement_open_context_statement_finish_close_:
-| _1 = WHILE _2 = open_context _3 = LPAREN _4 = expression _5 = RPAREN _6 = statement_finish_close
-    {    ()}
-| _1 = DO _2 = open_context _3 = statement_finish_close _4 = WHILE _5 = open_context _6 = LPAREN _7 = expression _8 = RPAREN _9 = close_context _10 = SEMICOLON
-    {    ()}
-| _1 = FOR _2 = open_context _3 = LPAREN _4 = for_statement_header _5 = optional_expression_SEMICOLON_ _6 = optional_expression_RPAREN_ _7 = statement_finish_close
-    {    ()}
+do_statement1:
+| ctx = save_context _2 = DO _3 = statement
+    {    ( ctx () )}
 
-iteration_statement_nop_statement_intern_close_:
-| _1 = WHILE _3 = LPAREN _4 = expression _5 = RPAREN _6 = statement_intern_close
-    {let _2 =
-                           ()
-in
-    ()}
-| _1 = DO _2 = open_context _3 = statement_finish_close _4 = WHILE _6 = LPAREN _7 = expression _8 = RPAREN _9 = close_context _10 = SEMICOLON
-    {let _5 =
-                           ()
-in
-    ()}
-| _1 = FOR _3 = LPAREN _4 = for_statement_header _5 = optional_expression_SEMICOLON_ _6 = optional_expression_RPAREN_ _7 = statement_intern_close
-    {let _2 =
-                           ()
-in
-    ()}
-
-iteration_statement_nop_statement_finish_close_:
-| _1 = WHILE _3 = LPAREN _4 = expression _5 = RPAREN _6 = statement_finish_close
-    {let _2 =
-                           ()
-in
-    ()}
-| _1 = DO _2 = open_context _3 = statement_finish_close _4 = WHILE _6 = LPAREN _7 = expression _8 = RPAREN _9 = close_context _10 = SEMICOLON
-    {let _5 =
-                           ()
-in
-    ()}
-| _1 = FOR _3 = LPAREN _4 = for_statement_header _5 = optional_expression_SEMICOLON_ _6 = optional_expression_RPAREN_ _7 = statement_finish_close
-    {let _2 =
-                           ()
-in
-    ()}
+iteration_statement:
+| ctx = save_context _2 = WHILE _3 = LPAREN _4 = expression _5 = RPAREN _6 = statement
+    {    ( ctx() )}
+| ctx = save_context _2 = do_statement1 _3 = WHILE _4 = LPAREN _5 = expression _6 = RPAREN _7 = SEMICOLON
+    {    ( ctx() )}
+| ctx = save_context _2 = FOR _3 = LPAREN _4 = for_statement_header _5 = optional_expression_SEMICOLON_ _6 = optional_expression_RPAREN_ _7 = statement
+    {    ( ctx() )}
 
 for_statement_header:
 | _1 = optional_expression_SEMICOLON_
@@ -1568,7 +1575,7 @@ in
 asm_flags:
 | _1 = string_literals_list
     {    ()}
-| _1 = string_literals_list _2 = COMMA _3 = asm_flags
+| _1 = asm_flags _2 = COMMA _3 = string_literals_list
     {    ()}
 
 translation_unit_file:
@@ -1595,77 +1602,50 @@ external_declaration:
 | _1 = PRAGMA
     {    ()}
 
-function_definition_begin:
-| _1 = declaration_specifiers_declaration_external_declaration__ x = direct_declarator
-    {let _2 =
-                ()
-in
-    ( match x with
-      | (_, None) -> (raise _eRR)
-      | (i, Some restore_fun) -> restore_fun ()
-    )}
-| _1 = declaration_specifiers_declaration_external_declaration__ _11 = pre_parser_list_pointer1_ _100 = STAR _200 = pre_parser_option_type_qualifier_list_ x = direct_declarator
-    {let _2 =
-  let _20 = _200 in
-  let _10 = _100 in
-  let _1 = _11 in
-  let _2 =
-    let _2 = _20 in
-    let _1 = _10 in
-        ()
-  in
-                ()
-in
-    ( match x with
-      | (_, None) -> (raise _eRR)
-      | (i, Some restore_fun) -> restore_fun ()
-    )}
-| _1 = declaration_specifiers_declaration_external_declaration__ x = direct_declarator _4 = LPAREN params = identifier_list _6 = RPAREN _7 = open_context _8 = declaration_list
-    {let _2 =
-                ()
-in
-    ( match x with
-      | (_, Some _) -> (raise _eRR)
-      | (i, None) ->
-	declare_varname i;
-	List.iter declare_varname params
-    )}
-| _1 = declaration_specifiers_declaration_external_declaration__ _11 = pre_parser_list_pointer1_ _100 = STAR _200 = pre_parser_option_type_qualifier_list_ x = direct_declarator _4 = LPAREN params = identifier_list _6 = RPAREN _7 = open_context _8 = declaration_list
-    {let _2 =
-  let _20 = _200 in
-  let _10 = _100 in
-  let _1 = _11 in
-  let _2 =
-    let _2 = _20 in
-    let _1 = _10 in
-        ()
-  in
-                ()
-in
-    ( match x with
-      | (_, Some _) -> (raise _eRR)
-      | (i, None) ->
-	declare_varname i;
-	List.iter declare_varname params
-    )}
-
 identifier_list:
-| id = VAR_NAME
-    {    ( [id] )}
-| idl = identifier_list _2 = COMMA id = VAR_NAME
-    {    ( id :: idl )}
+| _10 = PRE_NAME i0 = VAR_NAME
+    {let x =
+  let i = i0 in
+  let _1 = _10 in
+      ( i )
+in
+    ( [x] )}
+| l = identifier_list _2 = COMMA _10 = PRE_NAME i0 = VAR_NAME
+    {let x =
+  let i = i0 in
+  let _1 = _10 in
+      ( i )
+in
+    ( x::l )}
+
+kr_param_declaration:
+| _1 = declaration_specifiers_declaration_block_item__ _2 = option_init_declarator_list_ _3 = SEMICOLON
+    {    ()}
 
 declaration_list:
-| 
+| _1 = kr_param_declaration
     {    ()}
-| _1 = declaration_list _2 = declaration_block_item_
+| _1 = declaration_list _2 = kr_param_declaration
     {    ()}
+
+function_definition1:
+| _1 = declaration_specifiers_declaration_external_declaration__ func = declare_varname_declarator_noattrend_ _3 = save_context _4 = attribute_specifier_list ctx = save_context
+    {    ( begin match snd func with
+      | Decl_fun ctx -> ctx (); declare_varname (fst func)
+      | Decl_krfun il -> List.iter declare_varname il
+      | _ -> ()
+      end;
+      ctx )}
+| _1 = declaration_specifiers_declaration_external_declaration__ func = declare_varname_declarator_noattrend_ ctx = save_context _4 = declaration_list
+    {    ( begin match snd func with
+      | Decl_fun ctx -> ctx (); declare_varname (fst func)
+      | Decl_krfun il -> List.iter declare_varname il
+      | _ -> ()
+      end;
+      ctx )}
 
 function_definition:
-| _1 = function_definition_begin _2 = LBRACE _3 = pre_parser_option_block_item_list_ _4 = close_context _5 = RBRACE
-    {    ()}
+| ctx = function_definition1 _2 = compound_statement
+    {    ( ctx () )}
 
 %%
-
-
-
