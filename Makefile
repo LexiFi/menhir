@@ -31,6 +31,11 @@ endif
 # By default, we attempt to use ocamlfind (if present in the PATH), but it
 # is possible to prevent that externally by setting USE_OCAMLFIND to false.
 
+# USE_OCAMLFIND is used only at build time (i.e., by "make all"). At
+# (un)installation time, instead, we query menhir using --suggest-ocamlfind.
+# This should protect us against people who pass USE_OCAMLFIND at build time
+# and forget to pass it at (un)installation time.
+
 ifndef USE_OCAMLFIND
   USE_OCAMLFIND = ocamlfind ocamlc -v >/dev/null 2>&1
 endif
@@ -164,7 +169,7 @@ install:
 # Install the library.
 	mkdir -p $(libdir)
 	install -m 644 $(MLYLIB) $(libdir)
-	@if $(USE_OCAMLFIND) ; then \
+	@if `$(BUILDDIR)/menhir.$(TARGET) --suggest-ocamlfind` ; then \
 	  echo Installing MenhirLib via ocamlfind. ; \
 	  ocamlfind install menhirLib src/META $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) ; \
 	else \
@@ -180,11 +185,11 @@ install:
 	fi
 
 uninstall:
-	rm -rf $(bindir)/$(MENHIREXE)
-	rm -rf $(libdir)
-	@if $(USE_OCAMLFIND) ; then \
+	@if `$(bindir)/$(MENHIREXE) --suggest-ocamlfind` ; then \
 	  echo Un-installing MenhirLib via ocamlfind. ; \
 	  ocamlfind remove menhirLib ; \
 	fi
+	rm -rf $(bindir)/$(MENHIREXE)
+	rm -rf $(libdir)
 	rm -rf $(docdir)
 	rm -rf $(mandir)/$(MANS)
