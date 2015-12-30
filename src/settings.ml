@@ -158,6 +158,7 @@ type suggestion =
   | SuggestCompFlags
   | SuggestLinkFlags of string (* "cmo" or "cmx" *)
   | SuggestWhereIsMenhirLibSource
+  | SuggestUseOcamlfind
 
 let suggestion =
   ref SuggestNothing
@@ -251,6 +252,8 @@ let options = Arg.align [
                               " Suggest link flags for ocamlopt";
   "--suggest-menhirLib", Arg.Unit (fun () -> suggestion := SuggestWhereIsMenhirLibSource),
                          " Suggest where is MenhirLib";
+  "--suggest-ocamlfind", Arg.Unit (fun () -> suggestion := SuggestUseOcamlfind),
+                         " Show whether Menhir was installed using ocamlfind";
   "--table", Arg.Set table, " Use the table-based back-end";
   "--timings", Arg.Set timings, " Display internal timings";
   "--trace", Arg.Set trace, " Include tracing instructions in the generated code";
@@ -321,6 +324,9 @@ let () =
         ()
       else
         printf "%s\n%!" Installation.libdir;
+      exit 0
+  | SuggestUseOcamlfind ->
+      printf "%b\n" Installation.ocamlfind;
       exit 0
 
 (* ------------------------------------------------------------------------- *)
