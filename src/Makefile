@@ -44,8 +44,7 @@ bootstrap: .versioncheck stage1 stage2 stage3
 
 .versioncheck:
 	@ echo Checking that OCaml is recent enough...
-	@$(OCAMLBUILD) -build-dir _stage1 checkOCamlVersion.byte
-	@ _stage1/checkOCamlVersion.byte --verbose --gt "4.02"
+	@ ocaml checkOCamlVersion.ml --verbose --gt "4.02"
 	@ touch $@
 
 # ----------------------------------------------------------------------------
