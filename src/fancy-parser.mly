@@ -63,7 +63,7 @@ grammar:
     }
 
 /* ------------------------------------------------------------------------- */
-/* A declaration is an %{ Objective Caml header %}, or a %token, %start,
+/* A declaration is an %{ OCaml header %}, or a %token, %start,
    %type, %left, %right, or %nonassoc declaration. */
 
 declaration:

@@ -253,7 +253,7 @@ let mk_stretch pos1 pos2 parenthesize monsters =
 
 (* ------------------------------------------------------------------------ *)
 
-(* Objective Caml's reserved words. *)
+(* OCaml's reserved words. *)
 
 let reserved =
   let table = Hashtbl.create 149 in
@@ -404,7 +404,7 @@ rule main = parse
     { PLUS }
 | (lowercase identchar *) as id
     { if Hashtbl.mem reserved id then
-        error2 lexbuf "this is an Objective Caml reserved word."
+        error2 lexbuf "this is an OCaml reserved word."
       else
 	LID (with_pos (cpos lexbuf) id)
     }
@@ -475,7 +475,7 @@ and ocamltype openingpos = parse
 | newline
     { new_line lexbuf; ocamltype openingpos lexbuf }
 | eof
-    { error1 openingpos "unterminated Objective Caml type." }
+    { error1 openingpos "unterminated OCaml type." }
 | _
     { ocamltype openingpos lexbuf }
 
@@ -588,7 +588,7 @@ and ocamlcomment openingpos = parse
 | newline
     { new_line lexbuf; ocamlcomment openingpos lexbuf }
 | eof
-    { error1 openingpos "unterminated Objective Caml comment." }
+    { error1 openingpos "unterminated OCaml comment." }
 | _
     { ocamlcomment openingpos lexbuf }
 
@@ -607,7 +607,7 @@ and string openingpos = parse
       unless it is a newline. Pretty crude, but should work. *)
    { string openingpos lexbuf }
 | eof 
-   { error1 openingpos "unterminated Objective Caml string." }
+   { error1 openingpos "unterminated OCaml string." }
 | _
    { string openingpos lexbuf }
 

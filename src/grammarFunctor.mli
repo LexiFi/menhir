@@ -53,12 +53,12 @@ module Nonterminal : sig
      The Boolean parameter tells whether the string representation
      should be normalized, that is, whether parentheses and commas
      should be eliminated. This is necessary if the string is intended
-     for use as a valid nonterminal name or as a valid Objective Caml
+     for use as a valid nonterminal name or as a valid OCaml
      identifier. *)
 
   val print: bool -> t -> string
 
-  (* This is the Objective Caml type associated with a nonterminal
+  (* This is the OCaml type associated with a nonterminal
      symbol. It is known only if a %type declaration was provided.
      This function is not applicable to the internally generated
      nonterminals. *)
@@ -141,7 +141,7 @@ module Terminal : sig
 
   val print: t -> string
 
-  (* This is the Objective Caml type associated with a terminal
+  (* This is the OCaml type associated with a terminal
      symbol. It is known only if the %token declaration was
      accompanied with a type. *)
 

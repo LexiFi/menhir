@@ -90,7 +90,7 @@ and datadef = {
 
 and typ =
   
-  (* Textual Objective Caml type. *)
+  (* Textual OCaml type. *)
   | TypTextual of Stretch.ocamltype
 
   (* Type variable, without its leading quote. Can also be "_". *)
@@ -178,7 +178,7 @@ and expr =
   | ERecordAccess of expr * string
   | ERecordWrite of expr * string * expr
 
-  (* Textual Objective Caml code. *)
+  (* Textual OCaml code. *)
   | ETextual of Stretch.t
 
   (* Comments. *)

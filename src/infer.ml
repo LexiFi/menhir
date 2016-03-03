@@ -10,14 +10,14 @@ open TokenType
 
 (* The type variable associated with a nonterminal symbol. Its name begins
    with a prefix which ensures that it begins with a lowercase letter and
-   cannot clash with Objective Caml keywords. *)
+   cannot clash with OCaml keywords. *)
 
 let ntvar symbol =
   Printf.sprintf "tv_%s" (Misc.normalize symbol)
 
 (* The term variable associated with a nonterminal symbol. Its name begins
    with a prefix which ensures that it begins with a lowercase letter and
-   cannot clash with Objective Caml keywords. *)
+   cannot clash with OCaml keywords. *)
 
 let encode symbol =
   Printf.sprintf "xv_%s" (Misc.normalize symbol)

@@ -10,7 +10,7 @@ val ntvar: string -> string
 val infer: UnparameterizedSyntax.grammar -> UnparameterizedSyntax.grammar
 
 (* [depend grammar] prints (on the standard output channel) the
-   Objective Caml dependencies induced by the semantic actions.
+   OCaml dependencies induced by the semantic actions.
    Then, it exits the program. *)
 
 val depend: UnparameterizedSyntax.grammar -> 'a

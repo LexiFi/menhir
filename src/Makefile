@@ -43,7 +43,7 @@ bootstrap: .versioncheck stage1 stage2 stage3
 # Checking the version of the OCaml compiler.
 
 .versioncheck:
-	@ echo Checking that Objective Caml is recent enough...
+	@ echo Checking that OCaml is recent enough...
 	@$(OCAMLBUILD) -build-dir _stage1 checkOCamlVersion.byte
 	@ _stage1/checkOCamlVersion.byte --verbose --gt "4.02"
 	@ touch $@

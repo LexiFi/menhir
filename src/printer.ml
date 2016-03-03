@@ -9,7 +9,7 @@ module Make (X : sig
 
   val f: out_channel
 
-  (* This controls the way we print Objective Caml stretches (types and
+  (* This controls the way we print OCaml stretches (types and
      semantic actions). We either surround them with #line directives
      (for better error reports if the generated code is ill - typed) or
      don't (for better readability). The value is either [None] -- do

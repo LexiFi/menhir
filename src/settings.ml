@@ -17,7 +17,7 @@ let tokentypeonly () =
 let codeonly m =
   if String.capitalize m <> m then begin
     (* Not using module [Error] to avoid a circular dependency. *)
-    fprintf stderr "Error: %s is not a valid Objective Caml module name.\n" m;
+    fprintf stderr "Error: %s is not a valid OCaml module name.\n" m;
     exit 1
   end;
   token_type_mode := CodeOnly m
@@ -290,7 +290,7 @@ let () =
 (* ------------------------------------------------------------------------- *)
 
 (* Menhir is able to suggest compile and link flags to be passed to the
-   Objective Caml compilers. If required, do so and stop. *)
+   OCaml compilers. If required, do so and stop. *)
 
 (* If [--table] is not passed, no flags are necessary. If [--table] is
    passed, then [MenhirLib] needs to be visible (at compile time) and

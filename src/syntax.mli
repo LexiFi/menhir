@@ -22,7 +22,7 @@ type filename =
 type trailer =
     Stretch.t
 
-(* Objective Caml semantic actions are represented as stretches. *)
+(* OCaml semantic actions are represented as stretches. *)
 
 type action =
     Action.t
@@ -61,11 +61,11 @@ and parameters =
 
 type declaration =
 
-    (* Raw Objective Caml code. *)
+    (* Raw OCaml code. *)
 
   | DCode of Stretch.t
 
-    (* Raw Objective Caml functor parameter. *)
+    (* Raw OCaml functor parameter. *)
 
   | DParameter of Stretch.ocamltype (* really a stretch *)
 
