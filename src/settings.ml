@@ -14,8 +14,15 @@ let token_type_mode =
 let tokentypeonly () =
   token_type_mode := TokenTypeOnly
 
+let is_uppercase_ascii c =
+  c >= 'A' && c <= 'Z'
+
+let is_capitalized_ascii s =
+  String.length s > 0 &&
+  is_uppercase_ascii s.[0]
+
 let codeonly m =
-  if String.capitalize m <> m then begin
+  if not (is_capitalized_ascii m) then begin
     (* Not using module [Error] to avoid a circular dependency. *)
     fprintf stderr "Error: %s is not a valid OCaml module name.\n" m;
     exit 1
