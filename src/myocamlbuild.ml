@@ -2,6 +2,59 @@ open Ocamlbuild_plugin
 open Command
 
 (* ---------------------------------------------------------------------------- *)
+
+(* This compatibility layer allows us to support both OCaml 4.02 and 4.03, with
+   deprecation errors activated. We define our own copies of certain 4.03
+   functions. *)
+
+module Compatibility = struct
+
+  module Char = struct
+
+    let lowercase_ascii c =
+      if (c >= 'A' && c <= 'Z')
+      then Char.chr (Char.code c + 32)
+      else c
+
+    let uppercase_ascii c =
+      if (c >= 'a' && c <= 'z')
+      then Char.chr (Char.code c - 32)
+      else c
+
+  end
+
+  module Bytes = struct
+
+    include Bytes
+
+    let apply1 f s =
+      if Bytes.length s = 0 then s else begin
+        let r = Bytes.copy s in
+        Bytes.unsafe_set r 0 (f (Bytes.unsafe_get s 0));
+        r
+      end
+
+    let capitalize_ascii s =
+      apply1 Char.uppercase_ascii s
+
+    let uncapitalize_ascii s =
+      apply1 Char.lowercase_ascii s
+
+  end
+
+  module String = struct
+
+    let capitalize_ascii s =
+      Bytes.unsafe_to_string (Bytes.capitalize_ascii (Bytes.unsafe_of_string s))
+
+    let uncapitalize_ascii s =
+      Bytes.unsafe_to_string (Bytes.uncapitalize_ascii (Bytes.unsafe_of_string s))
+
+  end
+
+end
+
+(* ---------------------------------------------------------------------------- *)
 (* The following rules can be copied into other projects. *)
 (* ---------------------------------------------------------------------------- *)
 
@@ -42,7 +95,7 @@ let noncomment s =
 
 let cmx (m : string) : string =
   let candidate = m ^ ".cmx" in
-  if Sys.file_exists (m ^ ".ml") then candidate else String.uncapitalize candidate
+  if Sys.file_exists (m ^ ".ml") then candidate else Compatibility.String.uncapitalize_ascii candidate
 
 (* ---------------------------------------------------------------------------- *)
 
@@ -56,7 +109,7 @@ let cmx (m : string) : string =
 let for_pack (basename : string) =
   let filename = basename ^ ".mlpack" in
   let modules = List.filter noncomment (lines filename) in
-  let library = String.capitalize basename in
+  let library = Compatibility.String.capitalize_ascii basename in
   let tags = [ Printf.sprintf "for-pack(%s)" library ] in
   List.iter (fun m ->
     tag_file (cmx m) tags
