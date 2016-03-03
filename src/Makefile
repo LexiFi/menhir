@@ -19,7 +19,11 @@ endif
 # ----------------------------------------------------------------------------
 # Ocamlbuild tool and settings.
 
-OCAMLBUILD := ocamlbuild -classic-display -j 0 -cflags "-safe-string -bin-annot"
+# Both targets "library" and "stage1" use "_stage1" as the build directory.
+# This used to be fine with ocamlbuild, but starting with ocamlbuild 4.03,
+# the flag -no-hygiene is required.
+
+OCAMLBUILD := ocamlbuild -classic-display -no-hygiene -j 0 -cflags "-safe-string -bin-annot"
 
 # ----------------------------------------------------------------------------
 # For everyday development.
