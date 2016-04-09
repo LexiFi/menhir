@@ -186,8 +186,10 @@ let print_rules mode b g =
   in
   List.iter (fun (nt, r) ->
     Printf.fprintf b "\n%s:\n" (Misc.normalize nt);
+    let first = ref true in
     List.iter (fun br -> 
-      Printf.fprintf b "| ";
+      (* Menhir accepts a leading "|", but bison does not. Let's not print it. *)
+      if !first then first := false else Printf.fprintf b "| ";
       print_branch mode b br
     ) r.branches
   ) ordered_rules
