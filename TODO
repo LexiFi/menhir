@@ -1,3 +1,27 @@
+* Discussion with Frédéric Bour.
+  - clean up tabs -> spaces, remove trailing spaces. (use emacs in batch mode, or sed)
+    check that my .emacs produces only spaces
+  - annotations/attributes in .mly files
+  - SDK, exposing a dump of Grammar/Lr0/Lr1
+  - Engine: offer richer API
+      new stack inspection API, without streams
+        stack_next pourrait renvoyer une somme (stack + initial)
+        allows comparing stacks
+        allows exposing current state even when it is an initial state?
+        meta-initial state with transition to the real initial states?
+      remonter aussi la fonction element: 'a checkpoint -> int -> element de CompCert
+      parameterize the type 'a env again
+      and offer val input_needed : 'a env -> 'a checkpoint
+                val pop: 'a env -> 'a env option
+                val feed_symbol: 'a symbol -> -> 'a -> pos -> pos -> 'b env -> 'b env (* peut échouer si la transition n'existe pas *)
+                val force_reduction: production -> 'a env -> 'a env (* unsafe actuellement; need a bitmap of which productions can safely be reduced in each state *)
+                val default_reduction: _ lr1state -> production option
+                bijection entre production et int
+  - incompatibility avec ocamlyacc: Menhir discards the token when entering
+    error mode, ocamlyacc doesn't.
+  - allow splitting a nonterminal symbol (in a file or over multiple files).
+    with an explicit keyword?
+
 * Look into the format of bison's tables, and see if we could produce
   them.
 
