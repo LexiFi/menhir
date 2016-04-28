@@ -268,7 +268,7 @@ let (@@) f x = f x
 %%
 
 parse_unit:
-| _1 = push_scope _2 = external_definitions _3 = pop_scope _4 = EOF
+_1 = push_scope _2 = external_definitions _3 = pop_scope _4 = EOF
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ TranslationUnit (List.rev _2) )}
@@ -278,33 +278,33 @@ let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ TranslationUnit ([]) )}
 
 parse_decl:
-| _1 = push_scope _2 = declaration _3 = pop_scope _4 = EOF
+_1 = push_scope _2 = declaration _3 = pop_scope _4 = EOF
     {  ( _2 )}
 
 parse_expr:
-| _1 = push_scope _2 = expression _3 = pop_scope _4 = EOF
+_1 = push_scope _2 = expression _3 = pop_scope _4 = EOF
     {  ( _2 )}
 
 parse_stmt:
-| _1 = push_scope _2 = statement _3 = pop_scope _4 = EOF
+_1 = push_scope _2 = statement _3 = pop_scope _4 = EOF
     {  ( _2 )}
 
 parse_type:
-| _1 = push_scope _2 = type_name _3 = pop_scope _4 = EOF
+_1 = push_scope _2 = type_name _3 = pop_scope _4 = EOF
     {  ( _2 )}
 
 test:
-| _1 = parse_unit
+_1 = parse_unit
     {  ( true )}
 
 external_definitions:
-| _1 = external_definition
+_1 = external_definition
     {  ( if _1.d == EmptyDecl then [] else [_1] )}
 | _1 = external_definitions _2 = external_definition
     {  ( if _2.d == EmptyDecl then _1 else _2 :: _1 )}
 
 external_definition:
-| _1 = list_attribute_ _2 = declaration
+_1 = list_attribute_ _2 = declaration
     {  ( attr _1 _2 )}
 | _1 = list_attribute_ _2 = default_toplevel_declaring_list _3 = TK_SEMICOLON
     {let _endpos = _endpos__3_ in
@@ -328,20 +328,20 @@ let _startpos = _startpos__1_ in
     {  ( _2 )}
 
 function_definition:
-| _1 = function_declaration _2 = compound_statement
+_1 = function_declaration _2 = compound_statement
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( Decls.leave_function ();
     decl (_startpos, _endpos) @@ FunctionDefinition (_1, _2) )}
 
 function_declaration:
-| decl = old_function_declaration
+decl = old_function_declaration
     {  ( Decls.enter_function decl; decl )}
 | decl = std_function_declaration
     {  ( Decls.enter_function decl; decl )}
 
 std_function_declaration:
-| _1 = default_int _2 = identifier_declarator
+_1 = default_int _2 = identifier_declarator
     {  ( Decls.set_base_type _2 _1 )}
 | _1 = declaration_qualifier_list _2 = default_int _3 = identifier_declarator
     {  ( Decls.set_base_type (Decls.merge_decls _1 _3) _2 )}
@@ -349,7 +349,7 @@ std_function_declaration:
     {  ( Decls.set_base_type _3 (Types.add_tqual _2 _1) )}
 
 old_function_declaration:
-| _1 = default_int _2 = old_function_declarator _3 = list_declaration_
+_1 = default_int _2 = old_function_declarator _3 = list_declaration_
     {  ( Decls.add_parameter_types (Decls.set_base_type _2 _1) _3 )}
 | _1 = declaration_specifier _2 = old_function_declarator _3 = list_declaration_
     {  ( Decls.add_parameter_types (Decls.merge_decls _1 _2) _3 )}
@@ -361,7 +361,7 @@ old_function_declaration:
     {  ( Decls.add_parameter_types (Decls.set_base_type _3 (Types.add_tqual _2 _1)) _4 )}
 
 old_function_declarator:
-| _1 = postfix_old_function_declarator
+_1 = postfix_old_function_declarator
     {  ( _1 )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = old_function_declarator
     {let _endpos = _endpos__3_ in
@@ -373,7 +373,7 @@ let _startpos = _startpos__1_ in
   ( attr _2 (Decls.set_base_type _4 (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3)) )}
 
 postfix_old_function_declarator:
-| _1 = paren_identifier_declarator _2 = TK_LBRACK _3 = sep_TK_COMMA_simple_identifier_declarator_ _4 = TK_RBRACK
+_1 = paren_identifier_declarator _2 = TK_LBRACK _3 = sep_TK_COMMA_simple_identifier_declarator_ _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.empty, ctyp (_startpos, _endpos) @@ FunctionType (ctyp (_startpos, _endpos) @@ EmptyType, List.map (fun id -> Decls.set_base_type id default_int) _3), _1, Decls.empty, None) )}
@@ -383,7 +383,7 @@ let _startpos = _startpos__1_ in
     {  ( attr _2 (Decls.set_base_type _3 _5) )}
 
 declaration:
-| _1 = declaring_list _2 = TK_SEMICOLON
+_1 = declaring_list _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ DeclaringList (List.rev _1) )}
@@ -403,18 +403,18 @@ let _startpos = _startpos__1_ in
     {  ( _1 )}
 
 attr_function_declaration:
-| _1 = attr_function_declarator _2 = compound_statement
+_1 = attr_function_declarator _2 = compound_statement
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( Decls.leave_function ();
     attr (fst _1) (decl (_startpos, _endpos) @@ FunctionDefinition (snd _1, _2)) )}
 
 attr_function_declarator:
-| _1 = attr_function_declarator_
+_1 = attr_function_declarator_
     {  ( Decls.enter_function (snd _1); _1 )}
 
 attr_function_declarator_:
-| _1 = declaration_specifier _2 = identifier_declarator
+_1 = declaration_specifier _2 = identifier_declarator
     {  ( [], Decls.merge_decls _1 _2 )}
 | _1 = type_specifier _2 = identifier_declarator
     {  ( [], Decls.set_base_type _2 _1 )}
@@ -424,7 +424,7 @@ attr_function_declarator_:
     {  ( _2, Decls.set_base_type _3 _1 )}
 
 declaring_list:
-| _1 = declaration_specifier _2 = declarator _3 = option_asm_declaration_specifier_ _4 = list_attribute_ _5 = option_decl_initialiser_
+_1 = declaration_specifier _2 = declarator _3 = option_asm_declaration_specifier_ _4 = list_attribute_ _5 = option_decl_initialiser_
     {  ( [attr _4 (Decls.finish_decl (Decls.merge_decls _1 _2) (ast_from_opt _3) _5)] )}
 | _1 = declaration_specifier_nosue _2 = nonempty_list_attribute_ _3 = declarator _4 = option_asm_declaration_specifier_ _5 = list_attribute_ _6 = option_decl_initialiser_
     {  ( [attr (_2 @ _5) (Decls.finish_decl (Decls.merge_decls _1 _3) (ast_from_opt _4) _6)] )}
@@ -440,7 +440,7 @@ let _startpos = _startpos__1_ in
     {  ( attr (_3 @ _6) (Decls.finish_decl (Decls.merge_decls (Decls.decl_base_type (List.hd _1)) _4) (ast_from_opt _5) _7) :: _1 )}
 
 default_declaring_list:
-| _1 = declaration_qualifier_list _2 = default_int _3 = identifier_declarator _4 = option_asm_declaration_specifier_ _5 = list_attribute_ _6 = option_decl_initialiser_
+_1 = declaration_qualifier_list _2 = default_int _3 = identifier_declarator _4 = option_asm_declaration_specifier_ _5 = list_attribute_ _6 = option_decl_initialiser_
     {  ( [attr _5 (Decls.finish_decl (Decls.merge_decls (Decls.set_base_type _1 _2) _3) (ast_from_opt _4) _6)] )}
 | _1 = nonempty_list_type_qualifier_ _2 = default_int _3 = identifier_declarator _4 = option_asm_declaration_specifier_ _5 = list_attribute_ _6 = option_decl_initialiser_
     {  ( [attr _5 (Decls.finish_decl (Decls.set_base_type _3 (Types.add_tqual _2 _1)) (ast_from_opt _4) _6)] )}
@@ -448,19 +448,19 @@ default_declaring_list:
     {  ( attr (_3 @ _6) (Decls.finish_decl (Decls.merge_decls (Decls.decl_base_type (List.hd _1)) _4) (ast_from_opt _5) _7) :: _1 )}
 
 default_toplevel_declaring_list:
-| _1 = default_int _2 = identifier_declarator _3 = option_asm_declaration_specifier_ _4 = list_attribute_ _5 = option_decl_initialiser_
+_1 = default_int _2 = identifier_declarator _3 = option_asm_declaration_specifier_ _4 = list_attribute_ _5 = option_decl_initialiser_
     {  ( [attr _4 (Decls.finish_decl (Decls.set_base_type _2 _1) (ast_from_opt _3) _5)] )}
 | _1 = default_toplevel_declaring_list _2 = TK_COMMA _3 = identifier_declarator _4 = option_asm_declaration_specifier_ _5 = list_attribute_ _6 = option_decl_initialiser_
     {  ( attr _5 (Decls.finish_decl (Decls.merge_decls (Decls.decl_base_type (List.hd _1)) _3) (ast_from_opt _4) _6) :: _1 )}
 
 declaration_specifier:
-| _1 = declaration_specifier_nosue
+_1 = declaration_specifier_nosue
     {                               ( _1 )}
 | _1 = sue_declaration_specifier
     {                             ( _1 )}
 
 declaration_specifier_nosue:
-| _1 = basic_declaration_specifier
+_1 = basic_declaration_specifier
     {                               ( _1 )}
 | _1 = typedef_declaration_specifier
     {                                 ( _1 )}
@@ -472,7 +472,7 @@ let _startpos = _startpos__1_ in
            ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.empty, ctyp (_startpos, _endpos) @@ WildcardType _1, Decls.empty, Decls.empty, None) )}
 
 basic_declaration_specifier:
-| _1 = basic_type_specifier _2 = storage_class
+_1 = basic_type_specifier _2 = storage_class
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
@@ -484,7 +484,7 @@ let _startpos = _startpos__1_ in
     {  ( Decls.add_basic_type _1 _2 )}
 
 sue_declaration_specifier:
-| _1 = sue_type_specifier _2 = storage_class
+_1 = sue_type_specifier _2 = storage_class
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
@@ -494,7 +494,7 @@ let _startpos = _startpos__1_ in
     {  ( Decls.add_dqual _1 _2 )}
 
 typeof_declaration_specifier:
-| _1 = typeof_type_specifier _2 = storage_class
+_1 = typeof_type_specifier _2 = storage_class
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
@@ -504,7 +504,7 @@ let _startpos = _startpos__1_ in
     {  ( Decls.add_dqual _1 _2 )}
 
 typedef_declaration_specifier:
-| _1 = typedef_type_specifier _2 = storage_class
+_1 = typedef_type_specifier _2 = storage_class
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _2, _1, Decls.empty, Decls.empty, None) )}
@@ -516,7 +516,7 @@ let _startpos = _startpos__1_ in
     {  ( Decls.add_dqual _1 _2 )}
 
 declaration_qualifier_list:
-| _1 = storage_class _2 = list_attribute_
+_1 = storage_class _2 = list_attribute_
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( attr _2 (decl (_startpos, _endpos) @@ TypedDecl ("", Sclass.add Sclass.empty _1, ctyp (_startpos, _endpos) @@ EmptyType, Decls.empty, Decls.empty, None)) )}
@@ -528,19 +528,19 @@ let _startpos = _startpos__1_ in
     {  ( attr _3 (Decls.add_dqual _1 _2) )}
 
 declaration_qualifier:
-| _1 = type_qualifier
+_1 = type_qualifier
     {                  ( (None, Some _1) )}
 | _1 = storage_class
     {                 ( (Some _1, None) )}
 
 type_specifier:
-| _1 = type_specifier_nosue
+_1 = type_specifier_nosue
     {                        ( _1 )}
 | _1 = sue_type_specifier
     {                      ( _1 )}
 
 type_specifier_nosue:
-| _1 = basic_type_specifier
+_1 = basic_type_specifier
     {                        ( _1 )}
 | _1 = typedef_type_specifier
     {                          ( _1 )}
@@ -548,7 +548,7 @@ type_specifier_nosue:
     {                         ( _1 )}
 
 basic_type_specifier:
-| _1 = basic_type_name
+_1 = basic_type_name
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ PartialBasicType [_1] )}
@@ -562,7 +562,7 @@ let _startpos = _startpos__1_ in
     {  ( Types.add_basic_type _1 _2 )}
 
 sue_type_specifier:
-| _1 = elaborated_type_name
+_1 = elaborated_type_name
     {  ( _1 )}
 | _1 = nonempty_list_type_qualifier_ _2 = elaborated_type_name
     {  ( Types.add_tqual _2 _1 )}
@@ -570,7 +570,7 @@ sue_type_specifier:
     {  ( Types.add_tqual _1 [_2] )}
 
 typedef_type_specifier:
-| _1 = TK_TYPEDEF_NAME
+_1 = TK_TYPEDEF_NAME
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ TypedefType _1 )}
@@ -582,7 +582,7 @@ let _startpos = _startpos__1_ in
     {  ( Types.add_tqual _1 [_2] )}
 
 typeof_type_specifier:
-| _1 = typeof_type_name
+_1 = typeof_type_name
     {  ( _1 )}
 | _1 = nonempty_list_type_qualifier_ _2 = typeof_type_name
     {  ( Types.add_tqual _2 _1 )}
@@ -590,7 +590,7 @@ typeof_type_specifier:
     {  ( Types.add_tqual _1 [_2] )}
 
 typeof_type_name:
-| _1 = KW_TYPEOF _2 = TK_LBRACK _3 = type_specifier _4 = TK_RBRACK
+_1 = KW_TYPEOF _2 = TK_LBRACK _3 = type_specifier _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ TypeofType _3 )}
@@ -600,7 +600,7 @@ let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ TypeofExpr _3 )}
 
 elaborated_type_name:
-| _1 = struct_or_union_specifier
+_1 = struct_or_union_specifier
     {                             ( _1 )}
 | _1 = enum_specifier _2 = list_attribute_
     {                             ( _1 )}
@@ -608,7 +608,7 @@ elaborated_type_name:
     {                      ( _1 )}
 
 declarator:
-| _1 = paren_typedef_declarator
+_1 = paren_typedef_declarator
     {                            ( _1 )}
 | _1 = parameter_typedef_declarator
     {                                ( _1 )}
@@ -620,7 +620,7 @@ declarator:
     {                           ( _2 )}
 
 paren_typedef_declarator:
-| _1 = paren_postfix_typedef_declarator
+_1 = paren_postfix_typedef_declarator
     {  ( _1 )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = paren_typedef_declarator
     {  ( attr _2 (Decls.add_pointer_type _3) )}
@@ -632,7 +632,7 @@ paren_typedef_declarator:
     {  ( attr _2 (Decls.add_tqual (Decls.add_pointer_type _4) _3) )}
 
 paren_postfix_typedef_declarator:
-| _1 = TK_LBRACK _2 = list_attribute_ _3 = paren_typedef_declarator _4 = TK_RBRACK
+_1 = TK_LBRACK _2 = list_attribute_ _3 = paren_typedef_declarator _4 = TK_RBRACK
     {  ( attr _2 _3 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = simple_paren_typedef_declarator _4 = postfixing_abstract_declarator _5 = TK_RBRACK
     {  ( attr _2 (Decls.set_base_type _3 _4) )}
@@ -640,13 +640,13 @@ paren_postfix_typedef_declarator:
     {  ( attr _2 (Decls.set_base_type _3 _5) )}
 
 simple_paren_typedef_declarator:
-| _1 = simple_typedef_declarator
+_1 = simple_typedef_declarator
     {  ( _1 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = simple_paren_typedef_declarator _4 = TK_RBRACK
     {  ( attr _2 _3 )}
 
 parameter_typedef_declarator:
-| _1 = simple_typedef_declarator
+_1 = simple_typedef_declarator
     {  ( _1 )}
 | _1 = simple_typedef_declarator _2 = postfixing_abstract_declarator
     {  ( Decls.set_base_type _1 _2 )}
@@ -654,13 +654,13 @@ parameter_typedef_declarator:
     {  ( _1 )}
 
 simple_typedef_declarator:
-| _1 = TK_TYPEDEF_NAME
+_1 = TK_TYPEDEF_NAME
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ IdentifierDeclarator ([], _1) )}
 
 clean_typedef_declarator:
-| _1 = clean_postfix_typedef_declarator
+_1 = clean_postfix_typedef_declarator
     {  ( _1 )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = parameter_typedef_declarator
     {let _endpos = _endpos__3_ in
@@ -672,13 +672,13 @@ let _startpos = _startpos__1_ in
   ( attr _2 (Decls.set_base_type _4 (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3)) )}
 
 clean_postfix_typedef_declarator:
-| _1 = TK_LBRACK _2 = list_attribute_ _3 = clean_typedef_declarator _4 = TK_RBRACK
+_1 = TK_LBRACK _2 = list_attribute_ _3 = clean_typedef_declarator _4 = TK_RBRACK
     {  ( attr _2 _3 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = clean_typedef_declarator _4 = TK_RBRACK _5 = postfixing_abstract_declarator
     {  ( attr _2 (Decls.set_base_type _3 _5) )}
 
 abstract_declarator:
-| _1 = unary_abstract_declarator
+_1 = unary_abstract_declarator
     {                             ( _1 )}
 | _1 = postfix_abstract_declarator
     {                               ( _1 )}
@@ -686,7 +686,7 @@ abstract_declarator:
     {                                  ( _1 )}
 
 unary_abstract_declarator:
-| _1 = TK_STAR _2 = list_attribute_
+_1 = TK_STAR _2 = list_attribute_
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType) )}
@@ -704,7 +704,7 @@ let _startpos = _startpos__1_ in
   ( Types.set_base_type (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3) _4 )}
 
 postfix_abstract_declarator:
-| _1 = TK_LBRACK _2 = list_attribute_ _3 = unary_abstract_declarator _4 = TK_RBRACK
+_1 = TK_LBRACK _2 = list_attribute_ _3 = unary_abstract_declarator _4 = TK_RBRACK
     {  ( _3 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = postfix_abstract_declarator _4 = TK_RBRACK
     {  ( _3 )}
@@ -714,7 +714,7 @@ postfix_abstract_declarator:
     {  ( Types.set_base_type _5 _3 )}
 
 postfixing_abstract_declarator:
-| _1 = nonempty_list_array_abstract_declarator_
+_1 = nonempty_list_array_abstract_declarator_
     {  ( Types.make_array_type _1 )}
 | _1 = TK_LBRACK _2 = option_forward_parameter_type_list_ _3 = TK_RBRACK
     {let _endpos = _endpos__3_ in
@@ -722,13 +722,13 @@ let _startpos = _startpos__1_ in
   ( let params, forwards = list_pair_from_opt _2 in ctyp (_startpos, _endpos) @@ FunctionType (ctyp (_startpos, _endpos) @@ EmptyType, params) )}
 
 identifier_declarator:
-| _1 = unary_identifier_declarator
+_1 = unary_identifier_declarator
     {                               ( _1 )}
 | _1 = paren_identifier_declarator
     {                               ( _1 )}
 
 unary_identifier_declarator:
-| _1 = postfix_identifier_declarator
+_1 = postfix_identifier_declarator
     {  ( _1 )}
 | _1 = TK_STAR _2 = list_attribute_ _3 = identifier_declarator
     {let _endpos = _endpos__3_ in
@@ -740,7 +740,7 @@ let _startpos = _startpos__1_ in
   ( attr _2 (Decls.set_base_type _4 (Types.add_tqual (ctyp (_startpos, _endpos) @@ PointerType (ctyp (_startpos, _endpos) @@ EmptyType)) _3)) )}
 
 postfix_identifier_declarator:
-| _1 = paren_identifier_declarator _2 = postfixing_abstract_declarator
+_1 = paren_identifier_declarator _2 = postfixing_abstract_declarator
     {  ( Decls.set_base_type _1 _2 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = unary_identifier_declarator _4 = TK_RBRACK
     {  ( attr _2 _3 )}
@@ -748,7 +748,7 @@ postfix_identifier_declarator:
     {  ( attr _2 (Decls.set_base_type _3 _5) )}
 
 paren_identifier_declarator:
-| _1 = simple_identifier_declarator
+_1 = simple_identifier_declarator
     {  ( _1 )}
 | _1 = TK_LBRACK _2 = list_attribute_ _3 = paren_identifier_declarator _4 = TK_RBRACK
     {  ( attr _2 _3 )}
@@ -758,17 +758,17 @@ let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ WildcardDecl _1 )}
 
 simple_identifier_declarator:
-| _1 = TK_IDENTIFIER
+_1 = TK_IDENTIFIER
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ IdentifierDeclarator ([], _1) )}
 
 type_name:
-| _1 = list_attribute_ _2 = type_name_noattr
+_1 = list_attribute_ _2 = type_name_noattr
     {  ( _2 )}
 
 type_name_noattr:
-| _1 = type_specifier
+_1 = type_specifier
     {  ( _1 )}
 | _1 = type_specifier _2 = abstract_declarator
     {  ( Types.set_base_type _1 _2 )}
@@ -782,11 +782,11 @@ let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ WildcardType _1 )}
 
 decl_initialiser:
-| _1 = TK_EQUALS _2 = basic_initialiser
+_1 = TK_EQUALS _2 = basic_initialiser
     {  ( _2 )}
 
 initialiser:
-| _1 = basic_initialiser
+_1 = basic_initialiser
     {  ( _1 )}
 | _1 = member_designators _2 = basic_initialiser
     {let _endpos = _endpos__2_ in
@@ -798,7 +798,7 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ ArrayLabelledInitialiser (_2, _5) )}
 
 member_designators:
-| _1 = nonempty_list_member_designator_ _2 = TK_EQUALS
+_1 = nonempty_list_member_designator_ _2 = TK_EQUALS
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( desg (_startpos, _endpos) @@ _1 )}
@@ -808,11 +808,11 @@ let _startpos = _startpos__1_ in
   ( desg (_startpos, _endpos) @@ [_1] )}
 
 member_designator:
-| _1 = TK_PERIOD _2 = TK_IDENTIFIER
+_1 = TK_PERIOD _2 = TK_IDENTIFIER
     {  ( _2 )}
 
 range_expression:
-| _1 = assignment_expression
+_1 = assignment_expression
     {  ( _1 )}
 | _1 = assignment_expression _2 = TK_ELLIPSIS _3 = assignment_expression
     {let _endpos = _endpos__3_ in
@@ -820,13 +820,13 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (OP_Ellipsis, _1, _3) )}
 
 basic_initialiser:
-| _1 = bracketed_initialiser_list
+_1 = bracketed_initialiser_list
     {                              ( _1 )}
 | _1 = assignment_expression
     {                         ( _1 )}
 
 bracketed_initialiser_list:
-| _1 = TK_LBRACE _2 = TK_RBRACE
+_1 = TK_LBRACE _2 = TK_RBRACE
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ InitialiserList [] )}
@@ -836,11 +836,11 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ InitialiserList (List.rev _2) )}
 
 forward_parameter_type_list:
-| _1 = sep_rev_TK_SEMICOLON_parameter_type_list_
+_1 = sep_rev_TK_SEMICOLON_parameter_type_list_
     {  ( List.hd _1, List.rev (List.tl _1) )}
 
 parameter_type_list:
-| _1 = sep_rev_TK_COMMA_parameter_declaration_
+_1 = sep_rev_TK_COMMA_parameter_declaration_
     {  ( List.rev _1 )}
 | _1 = sep_rev_TK_COMMA_parameter_declaration_ _2 = TK_COMMA _3 = TK_ELLIPSIS
     {let _endpos = _endpos__3_ in
@@ -848,13 +848,13 @@ let _startpos = _startpos__1_ in
   ( List.rev (abstract_decl (ctyp (_startpos, _endpos) @@ PartialBasicType [BT_Ellipsis]) :: _1) )}
 
 parameter_declaration:
-| _1 = list_attribute_ _2 = parameter_declaration_noattr
+_1 = list_attribute_ _2 = parameter_declaration_noattr
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( assert (Predicates.is_decl _2); { _2 with d_sloc = (_startpos, _endpos) } )}
 
 parameter_declaration_noattr:
-| _1 = declaration_specifier
+_1 = declaration_specifier
     {  ( _1 )}
 | _1 = declaration_specifier _2 = abstract_declarator
     {  ( Decls.merge_decls _1 (abstract_decl _2) )}
@@ -884,13 +884,13 @@ parameter_declaration_noattr:
     {  ( attr _4 (Decls.set_tspec _3 (Types.add_tqual _2 _1)) )}
 
 array_abstract_declarator:
-| _1 = TK_LSQBRACK _2 = option_constant_expression_ _3 = TK_RSQBRACK
+_1 = TK_LSQBRACK _2 = option_constant_expression_ _3 = TK_RSQBRACK
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ ArrayType (_2, ctyp (_startpos, _endpos) @@ EmptyType) )}
 
 primary_expression:
-| _1 = identifier
+_1 = identifier
     {  ( _1 )}
 | _1 = numeric_literal
     {  ( _1 )}
@@ -906,13 +906,13 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ WildcardExpr _1 )}
 
 statement_expression:
-| _1 = TK_LBRACK _2 = compound_statement _3 = TK_RBRACK
+_1 = TK_LBRACK _2 = compound_statement _3 = TK_RBRACK
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BraceExpression _2 )}
 
 postfix_expression:
-| _1 = primary_expression
+_1 = primary_expression
     {  ( _1 )}
 | _1 = postfix_expression _2 = TK_LSQBRACK _3 = expression _4 = TK_RSQBRACK
     {let _endpos = _endpos__4_ in
@@ -964,13 +964,13 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ CompoundLiteral (_2, _4) )}
 
 unary_prefix_operator:
-| _1 = TK_INC
+_1 = TK_INC
     {          ( OP_PreIncrement )}
 | _1 = TK_DEC
     {          ( OP_PreDecrement )}
 
 unary_operator:
-| _1 = TK_AND
+_1 = TK_AND
     {          ( OP_AddressOf )}
 | _1 = TK_ANDAND
     {             ( OP_AddressOfLabel )}
@@ -990,7 +990,7 @@ unary_operator:
     {           ( OP_Real )}
 
 unary_expression:
-| _1 = postfix_expression
+_1 = postfix_expression
     {  ( _1 )}
 | _1 = unary_prefix_operator _2 = unary_expression
     {let _endpos = _endpos__2_ in
@@ -1020,7 +1020,7 @@ let _startpos = _startpos__1_ in
     {  ( _2 )}
 
 cast_expression:
-| _1 = unary_expression
+_1 = unary_expression
     {  ( _1 )}
 | _1 = TK_LBRACK _2 = type_name _3 = TK_RBRACK _4 = cast_expression
     {let _endpos = _endpos__4_ in
@@ -1028,7 +1028,7 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ Cast (_2, _4) )}
 
 multiplicative_operator:
-| _1 = TK_STAR
+_1 = TK_STAR
     {           ( OP_Multiply )}
 | _1 = TK_SLASH
     {            ( OP_Divide )}
@@ -1036,7 +1036,7 @@ multiplicative_operator:
     {              ( OP_Modulo )}
 
 multiplicative_expression:
-| _1 = cast_expression
+_1 = cast_expression
     {  ( _1 )}
 | _1 = multiplicative_expression _2 = multiplicative_operator _3 = cast_expression
     {let _endpos = _endpos__3_ in
@@ -1044,13 +1044,13 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 additive_operator:
-| _1 = TK_PLUS
+_1 = TK_PLUS
     {           ( OP_Add )}
 | _1 = TK_MINUS
     {            ( OP_Subtract )}
 
 additive_expression:
-| _1 = multiplicative_expression
+_1 = multiplicative_expression
     {  ( _1 )}
 | _1 = additive_expression _2 = additive_operator _3 = multiplicative_expression
     {let _endpos = _endpos__3_ in
@@ -1058,13 +1058,13 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 shift_operator:
-| _1 = TK_LTLT
+_1 = TK_LTLT
     {           ( OP_ShiftLeft )}
 | _1 = TK_GTGT
     {           ( OP_ShiftRight )}
 
 shift_expression:
-| _1 = additive_expression
+_1 = additive_expression
     {  ( _1 )}
 | _1 = shift_expression _2 = shift_operator _3 = additive_expression
     {let _endpos = _endpos__3_ in
@@ -1072,7 +1072,7 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 relational_operator:
-| _1 = TK_LESS
+_1 = TK_LESS
     {           ( OP_Less )}
 | _1 = TK_GREATER
     {              ( OP_Greater )}
@@ -1082,7 +1082,7 @@ relational_operator:
     {                 ( OP_GreaterEqual )}
 
 relational_expression:
-| _1 = shift_expression
+_1 = shift_expression
     {  ( _1 )}
 | _1 = relational_expression _2 = relational_operator _3 = shift_expression
     {let _endpos = _endpos__3_ in
@@ -1090,13 +1090,13 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 equality_operator:
-| _1 = TK_EQEQ
+_1 = TK_EQEQ
     {           ( OP_Equal )}
 | _1 = TK_NE
     {         ( OP_NotEqual )}
 
 equality_expression:
-| _1 = relational_expression
+_1 = relational_expression
     {  ( _1 )}
 | _1 = equality_expression _2 = equality_operator _3 = relational_expression
     {let _endpos = _endpos__3_ in
@@ -1104,11 +1104,11 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 and_operator:
-| _1 = TK_AND
+_1 = TK_AND
     {          ( OP_BitwiseAnd )}
 
 and_expression:
-| _1 = equality_expression
+_1 = equality_expression
     {  ( _1 )}
 | _1 = and_expression _2 = and_operator _3 = equality_expression
     {let _endpos = _endpos__3_ in
@@ -1116,11 +1116,11 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 exclusive_or_operator:
-| _1 = TK_CARET
+_1 = TK_CARET
     {            ( OP_BitwiseXor )}
 
 exclusive_or_expression:
-| _1 = and_expression
+_1 = and_expression
     {  ( _1 )}
 | _1 = exclusive_or_expression _2 = exclusive_or_operator _3 = and_expression
     {let _endpos = _endpos__3_ in
@@ -1128,11 +1128,11 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 inclusive_or_operator:
-| _1 = TK_PIPE
+_1 = TK_PIPE
     {           ( OP_BitwiseOr )}
 
 inclusive_or_expression:
-| _1 = exclusive_or_expression
+_1 = exclusive_or_expression
     {  ( _1 )}
 | _1 = inclusive_or_expression _2 = inclusive_or_operator _3 = exclusive_or_expression
     {let _endpos = _endpos__3_ in
@@ -1140,11 +1140,11 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 logical_and_operator:
-| _1 = TK_ANDAND
+_1 = TK_ANDAND
     {             ( OP_LogicalAnd )}
 
 logical_and_expression:
-| _1 = inclusive_or_expression
+_1 = inclusive_or_expression
     {  ( _1 )}
 | _1 = logical_and_expression _2 = logical_and_operator _3 = inclusive_or_expression
     {let _endpos = _endpos__3_ in
@@ -1152,11 +1152,11 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 logical_or_operator:
-| _1 = TK_PIPEPIPE
+_1 = TK_PIPEPIPE
     {               ( OP_LogicalOr )}
 
 logical_or_expression:
-| _1 = logical_and_expression
+_1 = logical_and_expression
     {  ( _1 )}
 | _1 = logical_or_expression _2 = logical_or_operator _3 = logical_and_expression
     {let _endpos = _endpos__3_ in
@@ -1164,7 +1164,7 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 conditional_expression:
-| _1 = logical_or_expression
+_1 = logical_or_expression
     {  ( _1 )}
 | _1 = logical_or_expression _2 = TK_QMARK _3 = option_expression_ _4 = TK_COLON _5 = conditional_expression
     {let _endpos = _endpos__5_ in
@@ -1172,7 +1172,7 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ TernaryExpression (OP_Conditional, _1, _3, _5) )}
 
 assignment_operator:
-| _1 = TK_EQUALS
+_1 = TK_EQUALS
     {             ( OP_Assign )}
 | _1 = TK_STAR_EQ
     {              ( OP_MultiplyAssign )}
@@ -1196,7 +1196,7 @@ assignment_operator:
     {              ( OP_BitwiseOrAssign )}
 
 assignment_expression:
-| _1 = conditional_expression
+_1 = conditional_expression
     {  ( _1 )}
 | _1 = cast_expression _2 = assignment_operator _3 = assignment_expression
     {let _endpos = _endpos__3_ in
@@ -1204,7 +1204,7 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (_2, _1, _3) )}
 
 expression:
-| _1 = assignment_expression
+_1 = assignment_expression
     {  ( _1 )}
 | _1 = expression _2 = TK_COMMA _3 = assignment_expression
     {let _endpos = _endpos__3_ in
@@ -1212,11 +1212,11 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ BinaryExpression (OP_Comma, _1, _3) )}
 
 constant_expression:
-| _1 = conditional_expression
+_1 = conditional_expression
     {  ( _1 )}
 
 numeric_literal:
-| _1 = TK_INTEGER_CONSTANT
+_1 = TK_INTEGER_CONSTANT
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ IntegerLiteral (LIT_Dec, fst _1, snd _1) )}
@@ -1250,19 +1250,19 @@ let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ CharLiteral (LIT_WChar, _1) )}
 
 string_literal:
-| _1 = nonempty_list_simple_string_literal_
+_1 = nonempty_list_simple_string_literal_
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ merge_string_literals [] _1 )}
 
 simple_string_literal:
-| _1 = TK_STRING_LITERAL
+_1 = TK_STRING_LITERAL
     {  ( LIT_String, _1 )}
 | _1 = TK_WSTRING_LITERAL
     {  ( LIT_WString, _1 )}
 
 type_qualifier:
-| _1 = KW_CONST
+_1 = KW_CONST
     {  ( TQ_Const )}
 | _1 = KW_VOLATILE
     {  ( TQ_Volatile )}
@@ -1272,7 +1272,7 @@ type_qualifier:
     {  ( TQ_Complex )}
 
 pointer_type_qualifier:
-| _1 = KW_CONST
+_1 = KW_CONST
     {  ( TQ_Const )}
 | _1 = KW_VOLATILE
     {  ( TQ_Volatile )}
@@ -1280,7 +1280,7 @@ pointer_type_qualifier:
     {  ( TQ_Restrict )}
 
 storage_class:
-| _1 = KW_TYPEDEF
+_1 = KW_TYPEDEF
     {  ( SC_Typedef )}
 | _1 = KW_EXTERN
     {  ( SC_Extern )}
@@ -1296,7 +1296,7 @@ storage_class:
     {  ( SC_Thread )}
 
 basic_type_name:
-| _1 = KW_SIGNED
+_1 = KW_SIGNED
     {  ( BT_Signed )}
 | _1 = KW_UNSIGNED
     {  ( BT_Unsigned )}
@@ -1328,17 +1328,17 @@ basic_type_name:
     {  ( BT_Void )}
 
 default_int:
-| 
+
     {  ( default_int )}
 
 statement:
-| _1 = statement_noexpr
+_1 = statement_noexpr
     {                    ( _1 )}
 | _1 = expression_statement
     {                        ( _1 )}
 
 statement_noexpr:
-| _1 = labelled_statement
+_1 = labelled_statement
     {                      ( _1 )}
 | _1 = compound_statement
     {                      ( _1 )}
@@ -1354,7 +1354,7 @@ statement_noexpr:
     {                                 ( _2 )}
 
 statement_or_declaration:
-| _1 = statement
+_1 = statement
     {  ( _1 )}
 | _1 = option_KW_EXTENSION_ _2 = list_attribute_ _3 = declaration
     {let _endpos = _endpos__3_ in
@@ -1362,7 +1362,7 @@ let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ DeclarationStatement (attr _2 _3) )}
 
 labelled_statement:
-| _1 = TK_IDENTIFIER _2 = TK_COLON _3 = statement
+_1 = TK_IDENTIFIER _2 = TK_COLON _3 = statement
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ LabelledStatement (_1, _3) )}
@@ -1380,27 +1380,27 @@ let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ DefaultStatement )}
 
 compound_statement:
-| _1 = TK_LBRACE _2 = push_scope _3 = list_statement_or_declaration_ _4 = pop_scope _5 = TK_RBRACE
+_1 = TK_LBRACE _2 = push_scope _3 = list_statement_or_declaration_ _4 = pop_scope _5 = TK_RBRACE
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ CompoundStatement ("", _3) )}
 
 push_scope:
-| 
+
     {   ( Lexer_hack.push_scope () )}
 
 pop_scope:
-| 
+
     {   ( Lexer_hack.pop_scope () )}
 
 expression_statement:
-| _1 = option_expression_ _2 = TK_SEMICOLON
+_1 = option_expression_ _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ ExpressionStatement _1 )}
 
 selection_statement:
-| _1 = KW_IF _2 = TK_LBRACK _3 = expression _4 = TK_RBRACK _5 = statement %prec KW_IF
+_1 = KW_IF _2 = TK_LBRACK _3 = expression _4 = TK_RBRACK _5 = statement %prec KW_IF
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ IfStatement (_3, _5, stmt (_startpos, _endpos) @@ EmptyStmt) )}
@@ -1414,7 +1414,7 @@ let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ SwitchStatement (_3, _5) )}
 
 iteration_statement:
-| _1 = KW_WHILE _2 = TK_LBRACK _3 = expression _4 = TK_RBRACK _5 = statement
+_1 = KW_WHILE _2 = TK_LBRACK _3 = expression _4 = TK_RBRACK _5 = statement
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ WhileStatement (_3, _5) )}
@@ -1428,7 +1428,7 @@ let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ ForStatement (_3, _5, _7, _9) )}
 
 jump_statement:
-| _1 = KW_GOTO _2 = expression _3 = TK_SEMICOLON
+_1 = KW_GOTO _2 = expression _3 = TK_SEMICOLON
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ GotoStatement _2 )}
@@ -1446,7 +1446,7 @@ let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ ReturnStatement _2 )}
 
 struct_or_union_specifier:
-| _1 = struct_or_union _2 = list_attribute_ _3 = TK_LBRACE _4 = struct_declaration_list_opt _5 = TK_RBRACE _6 = list_attribute_
+_1 = struct_or_union _2 = list_attribute_ _3 = TK_LBRACE _4 = struct_declaration_list_opt _5 = TK_RBRACE _6 = list_attribute_
     {let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ SUEType (List.flatten _2, _1, "", _4) )}
@@ -1460,25 +1460,25 @@ let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ SUEType (List.flatten _2, _1, _3, _6) )}
 
 struct_or_union:
-| _1 = KW_STRUCT
+_1 = KW_STRUCT
     {  ( SUE_Struct )}
 | _1 = KW_UNION
     {  ( SUE_Union )}
 
 identifier:
-| _1 = TK_IDENTIFIER
+_1 = TK_IDENTIFIER
     {let _endpos = _endpos__1_ in
 let _startpos = _startpos__1_ in
   ( expr (_startpos, _endpos) @@ Identifier (_1) )}
 
 identifier_or_typedef_name:
-| _1 = TK_IDENTIFIER
+_1 = TK_IDENTIFIER
     {  ( _1 )}
 | _1 = TK_TYPEDEF_NAME
     {  ( _1 )}
 
 struct_declaration:
-| _1 = struct_declaring_list _2 = TK_SEMICOLON
+_1 = struct_declaring_list _2 = TK_SEMICOLON
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ DeclaringList (List.rev _1) )}
@@ -1490,25 +1490,25 @@ let _startpos = _startpos__1_ in
     {  ( _2 )}
 
 struct_declaration_list:
-| _1 = list_attribute_ _2 = struct_declaration
+_1 = list_attribute_ _2 = struct_declaration
     {  ( [_2] )}
 | _1 = struct_declaration_list _2 = list_attribute_ _3 = struct_declaration
     {  ( _3 :: _1 )}
 
 struct_declaration_list_opt:
-| 
+
     {  ( [Decls.empty] )}
 | _1 = struct_declaration_list
     {  ( List.rev _1 )}
 
 struct_default_declaring_list:
-| _1 = nonempty_list_type_qualifier_ _2 = struct_identifier_declarator
+_1 = nonempty_list_type_qualifier_ _2 = struct_identifier_declarator
     {  ( [Decls.add_tqual _2 _1] )}
 | _1 = struct_default_declaring_list _2 = TK_COMMA _3 = struct_identifier_declarator
     {  ( _3 :: _1 )}
 
 struct_declaring_list:
-| _1 = type_specifier _2 = struct_declarator
+_1 = type_specifier _2 = struct_declarator
     {  ( [Decls.set_tspec _2 _1] )}
 | _1 = type_specifier_nosue _2 = nonempty_list_attribute_ _3 = struct_declarator
     {  ( [attr _2 (Decls.set_tspec _3 _1)] )}
@@ -1520,7 +1520,7 @@ let _startpos = _startpos__1_ in
   ( [attr _2 (Decls.set_tspec (decl (_startpos, _endpos) @@ StructDeclarator (Decls.empty, None)) (ctyp (_startpos, _endpos) @@ SUEType (List.flatten _2, _1, "", _4)))] )}
 
 struct_declarator:
-| _1 = declarator _2 = option_bit_field_size_ _3 = list_attribute_
+_1 = declarator _2 = option_bit_field_size_ _3 = list_attribute_
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ StructDeclarator (attr _3 _1, _2) )}
@@ -1530,17 +1530,17 @@ let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ StructDeclarator (Decls.empty, Some _1) )}
 
 struct_identifier_declarator:
-| _1 = default_int _2 = identifier_declarator _3 = option_bit_field_size_ _4 = list_attribute_
+_1 = default_int _2 = identifier_declarator _3 = option_bit_field_size_ _4 = list_attribute_
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
   ( Decls.set_tspec (decl (_startpos, _endpos) @@ StructDeclarator (attr _4 _2, _3)) _1 )}
 
 bit_field_size:
-| _1 = TK_COLON _2 = constant_expression
+_1 = TK_COLON _2 = constant_expression
     {  ( _2 )}
 
 enum_specifier:
-| _1 = KW_ENUM _2 = TK_LBRACE _3 = sep_rev_TK_COMMA_enumerator_ _4 = option_TK_COMMA_ _5 = TK_RBRACE
+_1 = KW_ENUM _2 = TK_LBRACE _3 = sep_rev_TK_COMMA_enumerator_ _4 = option_TK_COMMA_ _5 = TK_RBRACE
     {let _endpos = _endpos__5_ in
 let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ SUEType ([], SUE_Enum, "", List.rev _3) )}
@@ -1554,49 +1554,49 @@ let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ SUEType ([], SUE_Enum, _2, []) )}
 
 enumerator:
-| _1 = TK_IDENTIFIER _2 = option_enumerator_value_
+_1 = TK_IDENTIFIER _2 = option_enumerator_value_
     {let _endpos = _endpos__2_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ Enumerator (_1, _2) )}
 
 enumerator_value:
-| _1 = TK_EQUALS _2 = constant_expression
+_1 = TK_EQUALS _2 = constant_expression
     {  ( _2 )}
 
 datatype_specifier:
-| _1 = KW_DATATYPE _2 = datatype_name _3 = TK_EQUALS _4 = datatype_declaring_list
+_1 = KW_DATATYPE _2 = datatype_name _3 = TK_EQUALS _4 = datatype_declaring_list
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
   ( ctyp (_startpos, _endpos) @@ SUEType ([], SUE_Enum, _2, []) )}
 
 datatype_name:
-| _1 = identifier_or_typedef_name
+_1 = identifier_or_typedef_name
     {  ( Lexer_hack.typedef _1; _1 )}
 
 datatype_declaring_list:
-| _1 = TK_PIPE _2 = sep_TK_PIPE_datatype_declarator_
+_1 = TK_PIPE _2 = sep_TK_PIPE_datatype_declarator_
     {  ( 0 )}
 
 datatype_declarator:
-| _1 = TK_IDENTIFIER _2 = datatype_member_list
+_1 = TK_IDENTIFIER _2 = datatype_member_list
     {  ( 0 )}
 
 datatype_member_list:
-| _1 = TK_LBRACK _2 = sep_TK_COMMA_datatype_member_ _3 = TK_RBRACK
+_1 = TK_LBRACK _2 = sep_TK_COMMA_datatype_member_ _3 = TK_RBRACK
     {  ( 0 )}
 
 datatype_member:
-| _1 = TK_IDENTIFIER _2 = TK_COLON _3 = type_name
+_1 = TK_IDENTIFIER _2 = TK_COLON _3 = type_name
     {  ( 0 )}
 
 asm_declaration_specifier:
-| _1 = KW_ASM _2 = TK_LBRACK _3 = nonempty_list_TK_STRING_LITERAL_ _4 = TK_RBRACK
+_1 = KW_ASM _2 = TK_LBRACK _3 = nonempty_list_TK_STRING_LITERAL_ _4 = TK_RBRACK
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
   ( decl (_startpos, _endpos) @@ AsmSpecifier _3 )}
 
 asm_statement:
-| _1 = KW_ASM _2 = boption_KW_VOLATILE_ _3 = TK_LBRACK _4 = nonempty_list_TK_STRING_LITERAL_ _5 = TK_RBRACK _6 = TK_SEMICOLON
+_1 = KW_ASM _2 = boption_KW_VOLATILE_ _3 = TK_LBRACK _4 = nonempty_list_TK_STRING_LITERAL_ _5 = TK_RBRACK _6 = TK_SEMICOLON
     {let _endpos = _endpos__6_ in
 let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ AsmStatement (_2, _4, [], [], [], []) )}
@@ -1618,329 +1618,329 @@ let _startpos = _startpos__1_ in
   ( stmt (_startpos, _endpos) @@ AsmStatement (_2, _5, [], list_from_opt _8, list_from_opt _10, _12) )}
 
 asm_argument_list:
-| _1 = sep_TK_COMMA_asm_argument_
+_1 = sep_TK_COMMA_asm_argument_
     {  ( _1 )}
 
 asm_argument:
-| _1 = nonempty_list_TK_STRING_LITERAL_ _2 = TK_LBRACK _3 = assignment_expression _4 = TK_RBRACK
+_1 = nonempty_list_TK_STRING_LITERAL_ _2 = TK_LBRACK _3 = assignment_expression _4 = TK_RBRACK
     {  ( AsmArgument (_1, _3) )}
 
 asm_clobbered:
-| _1 = nonempty_list_TK_STRING_LITERAL_
+_1 = nonempty_list_TK_STRING_LITERAL_
     {  ( _1 )}
 
 sep_TK_PIPE_datatype_declarator_:
-| _1 = sep_rev_TK_PIPE_datatype_declarator_
+_1 = sep_rev_TK_PIPE_datatype_declarator_
     {                       ( List.rev _1 )}
 
 sep_TK_COMMA_simple_identifier_declarator_:
-| _1 = sep_rev_TK_COMMA_simple_identifier_declarator_
+_1 = sep_rev_TK_COMMA_simple_identifier_declarator_
     {                       ( List.rev _1 )}
 
 sep_TK_COMMA_numeric_literal_:
-| _1 = sep_rev_TK_COMMA_numeric_literal_
+_1 = sep_rev_TK_COMMA_numeric_literal_
     {                       ( List.rev _1 )}
 
 sep_TK_COMMA_datatype_member_:
-| _1 = sep_rev_TK_COMMA_datatype_member_
+_1 = sep_rev_TK_COMMA_datatype_member_
     {                       ( List.rev _1 )}
 
 sep_TK_COMMA_attrib_:
-| _1 = sep_rev_TK_COMMA_attrib_
+_1 = sep_rev_TK_COMMA_attrib_
     {                       ( List.rev _1 )}
 
 sep_TK_COMMA_assignment_expression_:
-| _1 = sep_rev_TK_COMMA_assignment_expression_
+_1 = sep_rev_TK_COMMA_assignment_expression_
     {                       ( List.rev _1 )}
 
 sep_TK_COMMA_asm_clobbered_:
-| _1 = sep_rev_TK_COMMA_asm_clobbered_
+_1 = sep_rev_TK_COMMA_asm_clobbered_
     {                       ( List.rev _1 )}
 
 sep_TK_COMMA_asm_argument_:
-| _1 = sep_rev_TK_COMMA_asm_argument_
+_1 = sep_rev_TK_COMMA_asm_argument_
     {                       ( List.rev _1 )}
 
 sep_TK_COMMA_TK_IDENTIFIER_:
-| _1 = sep_rev_TK_COMMA_TK_IDENTIFIER_
+_1 = sep_rev_TK_COMMA_TK_IDENTIFIER_
     {                       ( List.rev _1 )}
 
 sep_rev_TK_SEMICOLON_parameter_type_list_:
-| _1 = parameter_type_list
+_1 = parameter_type_list
     {  ( [_1] )}
 | _1 = sep_rev_TK_SEMICOLON_parameter_type_list_ _2 = TK_SEMICOLON _3 = parameter_type_list
     {  ( _3 :: _1 )}
 
 sep_rev_TK_PIPE_datatype_declarator_:
-| _1 = datatype_declarator
+_1 = datatype_declarator
     {  ( [_1] )}
 | _1 = sep_rev_TK_PIPE_datatype_declarator_ _2 = TK_PIPE _3 = datatype_declarator
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_simple_identifier_declarator_:
-| _1 = simple_identifier_declarator
+_1 = simple_identifier_declarator
     {  ( [_1] )}
 | _1 = sep_rev_TK_COMMA_simple_identifier_declarator_ _2 = TK_COMMA _3 = simple_identifier_declarator
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_parameter_declaration_:
-| _1 = parameter_declaration
+_1 = parameter_declaration
     {  ( [_1] )}
 | _1 = sep_rev_TK_COMMA_parameter_declaration_ _2 = TK_COMMA _3 = parameter_declaration
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_numeric_literal_:
-| _1 = numeric_literal
+_1 = numeric_literal
     {  ( [_1] )}
 | _1 = sep_rev_TK_COMMA_numeric_literal_ _2 = TK_COMMA _3 = numeric_literal
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_initialiser_:
-| _1 = initialiser
+_1 = initialiser
     {  ( [_1] )}
 | _1 = sep_rev_TK_COMMA_initialiser_ _2 = TK_COMMA _3 = initialiser
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_enumerator_:
-| _1 = enumerator
+_1 = enumerator
     {  ( [_1] )}
 | _1 = sep_rev_TK_COMMA_enumerator_ _2 = TK_COMMA _3 = enumerator
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_datatype_member_:
-| _1 = datatype_member
+_1 = datatype_member
     {  ( [_1] )}
 | _1 = sep_rev_TK_COMMA_datatype_member_ _2 = TK_COMMA _3 = datatype_member
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_attrib_:
-| _1 = attrib
+_1 = attrib
     {  ( [_1] )}
 | _1 = sep_rev_TK_COMMA_attrib_ _2 = TK_COMMA _3 = attrib
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_assignment_expression_:
-| _1 = assignment_expression
+_1 = assignment_expression
     {  ( [_1] )}
 | _1 = sep_rev_TK_COMMA_assignment_expression_ _2 = TK_COMMA _3 = assignment_expression
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_asm_clobbered_:
-| _1 = asm_clobbered
+_1 = asm_clobbered
     {  ( [_1] )}
 | _1 = sep_rev_TK_COMMA_asm_clobbered_ _2 = TK_COMMA _3 = asm_clobbered
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_asm_argument_:
-| _1 = asm_argument
+_1 = asm_argument
     {  ( [_1] )}
 | _1 = sep_rev_TK_COMMA_asm_argument_ _2 = TK_COMMA _3 = asm_argument
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_TK_IDENTIFIER_:
-| _1 = TK_IDENTIFIER
+_1 = TK_IDENTIFIER
     {  ( [_1] )}
 | _1 = sep_rev_TK_COMMA_TK_IDENTIFIER_ _2 = TK_COMMA _3 = TK_IDENTIFIER
     {  ( _3 :: _1 )}
 
 list_statement_or_declaration_:
-| _1 = list_rev_statement_or_declaration_
+_1 = list_rev_statement_or_declaration_
     {                     ( List.rev _1 )}
 
 list_declaration_:
-| _1 = list_rev_declaration_
+_1 = list_rev_declaration_
     {                     ( List.rev _1 )}
 
 list_attribute_:
-| _1 = list_rev_attribute_
+_1 = list_rev_attribute_
     {                     ( List.rev _1 )}
 
 list_rev_statement_or_declaration_:
-| 
+
     {  ( [] )}
 | _1 = list_rev_statement_or_declaration_ _2 = statement_or_declaration
     {  ( _2 :: _1 )}
 
 list_rev_declaration_:
-| 
+
     {  ( [] )}
 | _1 = list_rev_declaration_ _2 = declaration
     {  ( _2 :: _1 )}
 
 list_rev_attribute_:
-| 
+
     {  ( [] )}
 | _1 = list_rev_attribute_ _2 = attribute
     {  ( _2 :: _1 )}
 
 nonempty_list_type_qualifier_:
-| _1 = nonempty_list_rev_type_qualifier_
+_1 = nonempty_list_rev_type_qualifier_
     {                                       ( List.rev _1 )}
 
 nonempty_list_simple_string_literal_:
-| _1 = nonempty_list_rev_simple_string_literal_
+_1 = nonempty_list_rev_simple_string_literal_
     {                                       ( List.rev _1 )}
 
 nonempty_list_pointer_type_qualifier_:
-| _1 = nonempty_list_rev_pointer_type_qualifier_
+_1 = nonempty_list_rev_pointer_type_qualifier_
     {                                       ( List.rev _1 )}
 
 nonempty_list_member_designator_:
-| _1 = nonempty_list_rev_member_designator_
+_1 = nonempty_list_rev_member_designator_
     {                                       ( List.rev _1 )}
 
 nonempty_list_attribute_:
-| _1 = nonempty_list_rev_attribute_
+_1 = nonempty_list_rev_attribute_
     {                                       ( List.rev _1 )}
 
 nonempty_list_array_abstract_declarator_:
-| _1 = nonempty_list_rev_array_abstract_declarator_
+_1 = nonempty_list_rev_array_abstract_declarator_
     {                                       ( List.rev _1 )}
 
 nonempty_list_TK_STRING_LITERAL_:
-| _1 = nonempty_list_rev_TK_STRING_LITERAL_
+_1 = nonempty_list_rev_TK_STRING_LITERAL_
     {                                       ( List.rev _1 )}
 
 nonempty_list_rev_type_qualifier_:
-| _1 = type_qualifier
+_1 = type_qualifier
     {  ( [_1] )}
 | _1 = nonempty_list_rev_type_qualifier_ _2 = type_qualifier
     {  ( _2 :: _1 )}
 
 nonempty_list_rev_simple_string_literal_:
-| _1 = simple_string_literal
+_1 = simple_string_literal
     {  ( [_1] )}
 | _1 = nonempty_list_rev_simple_string_literal_ _2 = simple_string_literal
     {  ( _2 :: _1 )}
 
 nonempty_list_rev_pointer_type_qualifier_:
-| _1 = pointer_type_qualifier
+_1 = pointer_type_qualifier
     {  ( [_1] )}
 | _1 = nonempty_list_rev_pointer_type_qualifier_ _2 = pointer_type_qualifier
     {  ( _2 :: _1 )}
 
 nonempty_list_rev_member_designator_:
-| _1 = member_designator
+_1 = member_designator
     {  ( [_1] )}
 | _1 = nonempty_list_rev_member_designator_ _2 = member_designator
     {  ( _2 :: _1 )}
 
 nonempty_list_rev_attribute_:
-| _1 = attribute
+_1 = attribute
     {  ( [_1] )}
 | _1 = nonempty_list_rev_attribute_ _2 = attribute
     {  ( _2 :: _1 )}
 
 nonempty_list_rev_array_abstract_declarator_:
-| _1 = array_abstract_declarator
+_1 = array_abstract_declarator
     {  ( [_1] )}
 | _1 = nonempty_list_rev_array_abstract_declarator_ _2 = array_abstract_declarator
     {  ( _2 :: _1 )}
 
 nonempty_list_rev_TK_STRING_LITERAL_:
-| _1 = TK_STRING_LITERAL
+_1 = TK_STRING_LITERAL
     {  ( [_1] )}
 | _1 = nonempty_list_rev_TK_STRING_LITERAL_ _2 = TK_STRING_LITERAL
     {  ( _2 :: _1 )}
 
 option_sep_TK_COMMA_attrib__:
-| 
+
     {  ( None )}
 | _1 = sep_TK_COMMA_attrib_
     {  ( Some _1 )}
 
 option_sep_TK_COMMA_assignment_expression__:
-| 
+
     {  ( None )}
 | _1 = sep_TK_COMMA_assignment_expression_
     {  ( Some _1 )}
 
 option_sep_TK_COMMA_asm_clobbered__:
-| 
+
     {  ( None )}
 | _1 = sep_TK_COMMA_asm_clobbered_
     {  ( Some _1 )}
 
 option_paren_numeric_literal__:
-| 
+
     {  ( None )}
 | _1 = paren_numeric_literal_
     {  ( Some _1 )}
 
 option_forward_parameter_type_list_:
-| 
+
     {  ( None )}
 | _1 = forward_parameter_type_list
     {  ( Some _1 )}
 
 option_expression_:
-| 
+
     {  ( None )}
 | _1 = expression
     {  ( Some _1 )}
 
 option_enumerator_value_:
-| 
+
     {  ( None )}
 | _1 = enumerator_value
     {  ( Some _1 )}
 
 option_decl_initialiser_:
-| 
+
     {  ( None )}
 | _1 = decl_initialiser
     {  ( Some _1 )}
 
 option_constant_expression_:
-| 
+
     {  ( None )}
 | _1 = constant_expression
     {  ( Some _1 )}
 
 option_bit_field_size_:
-| 
+
     {  ( None )}
 | _1 = bit_field_size
     {  ( Some _1 )}
 
 option_asm_declaration_specifier_:
-| 
+
     {  ( None )}
 | _1 = asm_declaration_specifier
     {  ( Some _1 )}
 
 option_asm_argument_list_:
-| 
+
     {  ( None )}
 | _1 = asm_argument_list
     {  ( Some _1 )}
 
 option_TK_EQUALS_:
-| 
+
     {  ( None )}
 | _1 = TK_EQUALS
     {  ( Some _1 )}
 
 option_TK_COMMA_:
-| 
+
     {  ( None )}
 | _1 = TK_COMMA
     {  ( Some _1 )}
 
 option_KW_EXTENSION_:
-| 
+
     {  ( None )}
 | _1 = KW_EXTENSION
     {  ( Some _1 )}
 
 boption_KW_VOLATILE_:
-| 
+
     {  ( false )}
 | _1 = KW_VOLATILE
     {  ( true )}
 
 attribute:
-| _1 = KW_ATTRIBUTE _2 = TK_LBRACK _3 = TK_LBRACK _4 = option_sep_TK_COMMA_attrib__ _5 = TK_RBRACK _6 = TK_RBRACK
+_1 = KW_ATTRIBUTE _2 = TK_LBRACK _3 = TK_LBRACK _4 = option_sep_TK_COMMA_attrib__ _5 = TK_RBRACK _6 = TK_RBRACK
     {  ( list_from_opt _4 )}
 | _1 = KW_DECLSPEC _2 = TK_LBRACK _3 = sep_TK_COMMA_attrib_ _4 = TK_RBRACK
     {  ( _3 )}
@@ -1948,31 +1948,31 @@ attribute:
     {  ( ["fastcall", []] )}
 
 paren_string_literal_:
-| _1 = TK_LBRACK _2 = string_literal _3 = TK_RBRACK
+_1 = TK_LBRACK _2 = string_literal _3 = TK_RBRACK
     {  ( _2 )}
 | _1 = TK_LBRACK _2 = paren_string_literal_ _3 = TK_RBRACK
     {  ( _2 )}
 
 paren_sep_TK_COMMA_numeric_literal__:
-| _1 = TK_LBRACK _2 = sep_TK_COMMA_numeric_literal_ _3 = TK_RBRACK
+_1 = TK_LBRACK _2 = sep_TK_COMMA_numeric_literal_ _3 = TK_RBRACK
     {  ( _2 )}
 | _1 = TK_LBRACK _2 = paren_sep_TK_COMMA_numeric_literal__ _3 = TK_RBRACK
     {  ( _2 )}
 
 paren_numeric_literal_:
-| _1 = TK_LBRACK _2 = numeric_literal _3 = TK_RBRACK
+_1 = TK_LBRACK _2 = numeric_literal _3 = TK_RBRACK
     {  ( _2 )}
 | _1 = TK_LBRACK _2 = paren_numeric_literal_ _3 = TK_RBRACK
     {  ( _2 )}
 
 paren_identifier_:
-| _1 = TK_LBRACK _2 = identifier _3 = TK_RBRACK
+_1 = TK_LBRACK _2 = identifier _3 = TK_RBRACK
     {  ( _2 )}
 | _1 = TK_LBRACK _2 = paren_identifier_ _3 = TK_RBRACK
     {  ( _2 )}
 
 attrib:
-| _1 = KW_ATTR_ALIAS _2 = paren_string_literal_
+_1 = KW_ATTR_ALIAS _2 = paren_string_literal_
     {  ( "alias", [_2] )}
 | _1 = KW_ATTR_ALIGNED _2 = option_paren_numeric_literal__
     {  ( "aligned", singleton_list_from_opt _2 )}

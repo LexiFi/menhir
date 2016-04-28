@@ -28,7 +28,7 @@
 %%
 
 signature:
-| _1 = EOF
+_1 = EOF
     {                            ( [] )}
 | _1 = decl
     {                            ( [_1] )}
@@ -36,7 +36,7 @@ signature:
     {                            ( _1::_3 )}
 
 sorted_signature:
-| _1 = EOF
+_1 = EOF
     {                                          ( [] )}
 | _1 = sorted_decl
     {                                          ( [_1] )}
@@ -44,7 +44,7 @@ sorted_signature:
     {                                          ( _1::_3 )}
 
 decl:
-| _1 = op_list _2 = COLON _3 = fix _4 = arity
+_1 = op_list _2 = COLON _3 = fix _4 = arity
     {  ( let t,a = _4
     in
       if _3=Infix & a<>2
@@ -53,7 +53,7 @@ decl:
   )}
 
 sorted_decl:
-| _1 = op_list _2 = COLON _3 = fix _4 = arity _5 = AS _6 = profile_list
+_1 = op_list _2 = COLON _3 = fix _4 = arity _5 = AS _6 = profile_list
     {    ( let t,a = _4 in
         if _3=Infix & a<>2
           then raise (Syntax_error "Infix symbols must be binary")
@@ -65,27 +65,27 @@ sorted_decl:
 	    )}
 
 profile_list:
-| _1 = profile
+_1 = profile
     {                               ( [_1]   )}
 | _1 = profile _2 = COMMA _3 = profile_list
     {                               ( _1::_3 )}
 
 profile:
-| _1 = sort_list _2 = ARROW _3 = sort
+_1 = sort_list _2 = ARROW _3 = sort
     {                         ( (_1,_3) )}
 
 sort_list:
-| 
+
     {                        ( [] )}
 | _1 = sort _2 = sort_list
     {                        ( _1::_2 )}
 
 sort:
-| _1 = IDENT
+_1 = IDENT
     {                        ( _1 )}
 
 fix:
-| _1 = KW_PREFIX
+_1 = KW_PREFIX
     {                ( Prefix )}
 | _1 = KW_INFIX
     {                ( Infix  )}
@@ -95,7 +95,7 @@ fix:
     {                ( Default )}
 
 arity:
-| _1 = KW_C
+_1 = KW_C
     {               ( (Commutative,2) )}
 | _1 = KW_AC
     {               ( (Ac,2) )}
@@ -109,13 +109,13 @@ arity:
     {               ( (Free,int_of_string _1) )}
 
 op_list:
-| _1 = ident
+_1 = ident
     {                       ( [_1] )}
 | _1 = ident _2 = COMMA _3 = op_list
     {                       ( _1::_3 )}
 
 ident:
-| _1 = IDENT
+_1 = IDENT
     {        ( _1 )}
 | _1 = INT
     {        ( _1 )}

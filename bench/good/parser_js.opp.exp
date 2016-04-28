@@ -175,21 +175,21 @@ let fake_tok s = {
 %%
 
 main:
-| _1 = program _2 = EOF
+_1 = program _2 = EOF
     {                  ( _1 )}
 
 program:
-| _1 = statement_list
+_1 = statement_list
     {                        ( _1 )}
 
 source_element:
-| _1 = statement
+_1 = statement
     {                        ( St _1 )}
 | _1 = declaration
     {               ( _1 )}
 
 declaration:
-| _1 = function_declaration
+_1 = function_declaration
     {                        ( FunDecl _1 )}
 | _1 = class_declaration
     {                     ( ClassDecl _1 )}
@@ -197,7 +197,7 @@ declaration:
     {                         ( InterfaceDecl _1 )}
 
 statement:
-| _1 = block
+_1 = block
     {                        ( _1 )}
 | _1 = variable_statement
     {                        ( _1 )}
@@ -227,41 +227,41 @@ statement:
     {                        ( _1 )}
 
 block:
-| _1 = T_LCURLY _2 = statement_list _3 = T_RCURLY
+_1 = T_LCURLY _2 = statement_list _3 = T_RCURLY
     {                                    ( Block (_1, _2, _3) )}
 | _1 = T_LCURLY _2 = T_RCURLY
     {                                    ( Block (_1, [], _2) )}
 
 variable_statement:
-| _1 = T_VAR _2 = variable_declaration_list _3 = semicolon
+_1 = T_VAR _2 = variable_declaration_list _3 = semicolon
     {                                              ( Variable (_1, _2, _3) )}
 | _1 = T_CONST _2 = variable_declaration_list _3 = semicolon
     {                                               ( Const (_1, _2, _3) )}
 
 variable_declaration:
-| _1 = identifier _2 = annotation_opt _3 = initializeur_opt
+_1 = identifier _2 = annotation_opt _3 = initializeur_opt
     {     ( { v_name = _1; v_type = _2; v_init = _3 } )}
 
 initializeur:
-| _1 = T_ASSIGN _2 = assignment_expression
+_1 = T_ASSIGN _2 = assignment_expression
     {                                  ( _1, _2 )}
 
 empty_statement:
-| _1 = semicolon
+_1 = semicolon
     {             ( Nop _1 )}
 
 expression_statement:
-| _1 = expression_no_statement _2 = semicolon
+_1 = expression_no_statement _2 = semicolon
     {                                     ( ExprStmt (_1, _2) )}
 
 if_statement:
-| _1 = T_IF _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = statement _6 = T_ELSE _7 = statement
+_1 = T_IF _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = statement _6 = T_ELSE _7 = statement
     {     ( If (_1, (_2, _3, _4), _5, Some (_6, _7)) )}
 | _1 = T_IF _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = statement %prec p_IF
     {     ( If (_1, (_2, _3, _4), _5, None) )}
 
 iteration_statement:
-| _1 = T_DO _2 = statement _3 = T_WHILE _4 = T_LPAREN _5 = expression _6 = T_RPAREN _7 = semicolon
+_1 = T_DO _2 = statement _3 = T_WHILE _4 = T_LPAREN _5 = expression _6 = T_RPAREN _7 = semicolon
     {     ( Do (_1, _2, _3, (_4, _5, _6), _7) )}
 | _1 = T_WHILE _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = statement
     {     ( While (_1, (_2, _3, _4), _5) )}
@@ -275,51 +275,51 @@ iteration_statement:
     {     ( ForIn (_1, _2, Vars (_3, _4), _5, _6, _7, _8) )}
 
 variable_declaration_no_in:
-| _1 = identifier _2 = initializer_no_in
+_1 = identifier _2 = initializer_no_in
     {     ( { v_name = _1; v_init = Some _2; v_type =None } )}
 | _1 = identifier
     {     ( { v_name = _1; v_init = None; v_type = None } )}
 
 initializer_no_in:
-| _1 = T_ASSIGN _2 = assignment_expression_no_in
+_1 = T_ASSIGN _2 = assignment_expression_no_in
     {                                        ( _1, _2 )}
 
 continue_statement:
-| _1 = T_CONTINUE _2 = identifier _3 = semicolon
+_1 = T_CONTINUE _2 = identifier _3 = semicolon
     {                                   ( Continue (_1, Some _2, _3) )}
 | _1 = T_CONTINUE _2 = semicolon
     {                                   ( Continue (_1, None, _2) )}
 
 break_statement:
-| _1 = T_BREAK _2 = identifier _3 = semicolon
+_1 = T_BREAK _2 = identifier _3 = semicolon
     {                                ( Break (_1, Some _2, _3) )}
 | _1 = T_BREAK _2 = semicolon
     {                                ( Break (_1, None, _2) )}
 
 return_statement:
-| _1 = T_RETURN _2 = expression _3 = semicolon
+_1 = T_RETURN _2 = expression _3 = semicolon
     {                                 ( Return (_1, Some _2, _3) )}
 | _1 = T_RETURN _2 = semicolon
     {                                 ( Return (_1, None, _2) )}
 
 with_statement:
-| _1 = T_WITH _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = statement
+_1 = T_WITH _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = statement
     {                                                 ( With (_1, (_2, _3, _4), _5) )}
 
 switch_statement:
-| _1 = T_SWITCH _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = case_block
+_1 = T_SWITCH _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = case_block
     {                                                    ( Switch (_1, (_2, _3, _4), _5) )}
 
 labelled_statement:
-| _1 = identifier _2 = T_COLON _3 = statement
+_1 = identifier _2 = T_COLON _3 = statement
     {                                ( Labeled (_1, _2, _3) )}
 
 throw_statement:
-| _1 = T_THROW _2 = expression _3 = semicolon
+_1 = T_THROW _2 = expression _3 = semicolon
     {                                ( Throw (_1, _2, _3) )}
 
 try_statement:
-| _1 = T_TRY _2 = block _3 = catch
+_1 = T_TRY _2 = block _3 = catch
     {                             ( Try (_1, _2, Some _3, None)  )}
 | _1 = T_TRY _2 = block _3 = finally
     {                             ( Try (_1, _2, None, Some _3) )}
@@ -327,52 +327,52 @@ try_statement:
     {                             ( Try (_1, _2, Some _3, Some _4) )}
 
 catch:
-| _1 = T_CATCH _2 = T_LPAREN _3 = identifier _4 = T_RPAREN _5 = block
+_1 = T_CATCH _2 = T_LPAREN _3 = identifier _4 = T_RPAREN _5 = block
     {                                              ( _1, (_2, _3, _4), _5 )}
 
 finally:
-| _1 = T_FINALLY _2 = block
+_1 = T_FINALLY _2 = block
     {                   ( _1, _2 )}
 
 case_block:
-| _1 = T_LCURLY _2 = case_clauses_opt _3 = T_RCURLY
+_1 = T_LCURLY _2 = case_clauses_opt _3 = T_RCURLY
     {     ( (_1, _2, _3) )}
 | _1 = T_LCURLY _2 = case_clauses_opt _3 = default_clause _4 = case_clauses_opt _5 = T_RCURLY
     {     ( (_1, _2 @ [_3] @ _4, _5) )}
 
 case_clause:
-| _1 = T_CASE _2 = expression _3 = T_COLON _4 = statement_list
+_1 = T_CASE _2 = expression _3 = T_COLON _4 = statement_list
     {                                            ( Case (_1, _2, _3, _4) )}
 | _1 = T_CASE _2 = expression _3 = T_COLON
     {                             ( Case (_1, _2, _3, []) )}
 
 default_clause:
-| _1 = T_DEFAULT _2 = T_COLON
+_1 = T_DEFAULT _2 = T_COLON
     {                     ( Default (_1, _2, []))}
 | _1 = T_DEFAULT _2 = T_COLON _3 = statement_list
     {                                    ( Default (_1, _2, _3) )}
 
 function_declaration:
-| _1 = T_FUNCTION _2 = identifier _3 = generics_opt _4 = T_LPAREN _5 = formal_parameter_list_opt _6 = T_RPAREN _7 = annotation_opt _8 = T_LCURLY _9 = function_body _10 = T_RCURLY
+_1 = T_FUNCTION _2 = identifier _3 = generics_opt _4 = T_LPAREN _5 = formal_parameter_list_opt _6 = T_RPAREN _7 = annotation_opt _8 = T_LCURLY _9 = function_body _10 = T_RCURLY
     {     ( { f_tok = Some _1; f_name= Some _2; f_type_params = _3;
          f_params= (_4, _5, _6);
          f_return_type = _7; f_body = (_8, _9, _10)
      } )}
 
 function_expression:
-| _1 = T_FUNCTION _2 = identifier_opt _3 = generics_opt _4 = T_LPAREN _5 = formal_parameter_list_opt _6 = T_RPAREN _7 = annotation_opt _8 = T_LCURLY _9 = function_body _10 = T_RCURLY
+_1 = T_FUNCTION _2 = identifier_opt _3 = generics_opt _4 = T_LPAREN _5 = formal_parameter_list_opt _6 = T_RPAREN _7 = annotation_opt _8 = T_LCURLY _9 = function_body _10 = T_RCURLY
     {     ( e(Function { f_tok = Some _1; f_name= _2; f_type_params = _3;
                     f_params= (_4, _5, _6);
                     f_return_type = _7; f_body = (_8, _9, _10) }) )}
 
 formal_parameter:
-| _1 = identifier
+_1 = identifier
     {                         ( mk_param _1 )}
 | _1 = identifier _2 = annotation
     {                         ( { (mk_param _1) with p_type = Some _2; } )}
 
 formal_optional_parameter:
-| _1 = identifier _2 = T_PLING
+_1 = identifier _2 = T_PLING
     {     ( { (mk_param _1) with p_default = Some(DNone _2); } )}
 | _1 = identifier _2 = T_PLING _3 = annotation
     {     ( { (mk_param _1) with p_type = Some _3; p_default = Some(DNone _2); } )}
@@ -382,14 +382,14 @@ formal_optional_parameter:
     {     ( let (tok,e) = _3 in { (mk_param _1) with p_type = Some _2; p_default = Some(DSome(tok,e)); } )}
 
 formal_rest_parameter:
-| _1 = T_DOTS _2 = identifier
+_1 = T_DOTS _2 = identifier
     {                     ( { (mk_param _2) with p_dots = Some _1; } )}
 | _1 = T_DOTS _2 = identifier _3 = annotation
     {     ( { (mk_param _2) with p_dots = Some _1; p_type = Some _3;
        } )}
 
 formal_parameter_list:
-| _1 = formal_parameter _2 = T_COMMA _3 = formal_parameter_list
+_1 = formal_parameter _2 = T_COMMA _3 = formal_parameter_list
     {     ( (Left _1)::(Right _2)::_3 )}
 | _1 = formal_parameter
     {                     ( [Left _1] )}
@@ -397,7 +397,7 @@ formal_parameter_list:
     {                                  ( _1 )}
 
 formal_optional_parameter_list:
-| _1 = formal_optional_parameter _2 = T_COMMA _3 = formal_optional_parameter_list
+_1 = formal_optional_parameter _2 = T_COMMA _3 = formal_optional_parameter_list
     {     ( (Left _1)::(Right _2)::_3 )}
 | _1 = formal_optional_parameter
     {                             ( [Left _1] )}
@@ -405,13 +405,13 @@ formal_optional_parameter_list:
     {                         ( [Left _1] )}
 
 function_body:
-| 
+
     {                   ( [] )}
 | _1 = statement_list
     {                   ( _1 )}
 
 class_declaration:
-| _1 = T_CLASS _2 = binding_identifier _3 = generics_opt _4 = class_tail
+_1 = T_CLASS _2 = binding_identifier _3 = generics_opt _4 = class_tail
     {   (
      let (extends, body) = _4 in
      { c_tok = _1;
@@ -423,19 +423,19 @@ class_declaration:
    )}
 
 class_tail:
-| _1 = class_heritage_opt _2 = T_LCURLY _3 = class_body_opt _4 = T_RCURLY
+_1 = class_heritage_opt _2 = T_LCURLY _3 = class_body_opt _4 = T_RCURLY
     {                                                                ( _1,(_2,_3,_4))}
 
 class_heritage:
-| _1 = T_EXTENDS _2 = type_expression
+_1 = T_EXTENDS _2 = type_expression
     {                                          ( (_1, _2) )}
 
 class_body:
-| _1 = class_element_list
+_1 = class_element_list
     {                               ( _1 )}
 
 class_element:
-| _1 = identifier _2 = annotation _3 = semicolon
+_1 = identifier _2 = annotation _3 = semicolon
     {                                   ( Field (_1, _2, _3) )}
 | _1 = method_definition
     {                              ( Method (None, _1) )}
@@ -445,18 +445,18 @@ class_element:
     {             ( ClassExtraSemiColon _1 )}
 
 binding_identifier:
-| _1 = identifier
+_1 = identifier
     {                               ( _1 )}
 
 method_definition:
-| _1 = identifier _2 = generics_opt _3 = T_LPAREN _4 = formal_parameter_list_opt _5 = T_RPAREN _6 = annotation_opt _7 = T_LCURLY _8 = function_body _9 = T_RCURLY
+_1 = identifier _2 = generics_opt _3 = T_LPAREN _4 = formal_parameter_list_opt _5 = T_RPAREN _6 = annotation_opt _7 = T_LCURLY _8 = function_body _9 = T_RCURLY
     {  ( { f_tok = None; f_name = Some _1; f_type_params = _2;
       f_params = (_3, _4, _5);
       f_return_type = _6; f_body =  (_7, _8, _9)
   } )}
 
 interface_declaration:
-| _1 = T_INTERFACE _2 = binding_identifier _3 = generics_opt _4 = type_
+_1 = T_INTERFACE _2 = binding_identifier _3 = generics_opt _4 = type_
     {   (
      { i_tok = _1;
        i_name = _2;
@@ -466,17 +466,17 @@ interface_declaration:
    )}
 
 annotation:
-| _1 = T_COLON _2 = type_
+_1 = T_COLON _2 = type_
     {                          ( TAnnot(_1, _2) )}
 
 complex_annotation:
-| _1 = annotation
+_1 = annotation
     {              ( _1 )}
 | _1 = generics_opt _2 = T_LPAREN _3 = param_type_list_opt _4 = T_RPAREN _5 = T_COLON _6 = type_
     {     ( TFunAnnot(_1,(_2,_3,_4),_5,_6) )}
 
 type_:
-| _1 = T_VOID
+_1 = T_VOID
     {                 ( TName (V("void", _1), None) )}
 | _1 = nominal_type
     {                ( TName(_1) )}
@@ -488,29 +488,29 @@ type_:
     {                                                 ( TObj (_1, _2, _3) )}
 
 field_type:
-| _1 = T_IDENTIFIER _2 = complex_annotation _3 = semicolon
+_1 = T_IDENTIFIER _2 = complex_annotation _3 = semicolon
     {                                                      ( (_1, _2, _3) )}
 
 field_type_list:
-| _1 = field_type
+_1 = field_type
     {              ( [_1] )}
 | _1 = field_type_list _2 = field_type
     {                              ( _1 @ [_2] )}
 
 param_type:
-| _1 = T_IDENTIFIER _2 = complex_annotation
+_1 = T_IDENTIFIER _2 = complex_annotation
     {  ( (RequiredParam(_1), _2) )}
 
 optional_param_type:
-| _1 = T_IDENTIFIER _2 = T_PLING _3 = complex_annotation
+_1 = T_IDENTIFIER _2 = T_PLING _3 = complex_annotation
     {  ( (OptionalParam(_1,_2), _3) )}
 
 rest_param_type:
-| _1 = T_DOTS _2 = T_IDENTIFIER _3 = complex_annotation
+_1 = T_DOTS _2 = T_IDENTIFIER _3 = complex_annotation
     {  ( (RestParam(_1,_2), _3) )}
 
 param_type_list:
-| _1 = param_type _2 = T_COMMA _3 = param_type_list
+_1 = param_type _2 = T_COMMA _3 = param_type_list
     {                                      ( (Left _1)::(Right _2)::_3 )}
 | _1 = param_type
     {                                      ( [Left _1] )}
@@ -518,7 +518,7 @@ param_type_list:
     {                                      ( _1 )}
 
 optional_param_type_list:
-| _1 = optional_param_type _2 = T_COMMA _3 = optional_param_type_list
+_1 = optional_param_type _2 = T_COMMA _3 = optional_param_type_list
     {     ( (Left _1)::(Right _2)::_3 )}
 | _1 = optional_param_type
     {                             ( [Left _1] )}
@@ -526,89 +526,89 @@ optional_param_type_list:
     {                             ( [Left _1] )}
 
 type_variable:
-| _1 = identifier
+_1 = identifier
     {              ( _1 )}
 
 type_variable_list:
-| _1 = type_variable
+_1 = type_variable
     {                                            ( [Left _1] )}
 | _1 = type_variable_list _2 = T_COMMA _3 = type_variable
     {                                            ( _1 @ [Right _2; Left _3] )}
 
 generics:
-| _1 = T_LESS_THAN _2 = type_variable_list _3 = T_GREATER_THAN
+_1 = T_LESS_THAN _2 = type_variable_list _3 = T_GREATER_THAN
     {                                                 ( _1, _2, _3 )}
 
 type_reference:
-| _1 = identifier
+_1 = identifier
     {              ( V(_1) )}
 
 nominal_type:
-| _1 = type_reference
+_1 = type_reference
     {                  ( (_1,None) )}
 | _1 = type_reference _2 = type_arguments
     {                                 ( (_1, Some _2) )}
 
 type_arguments:
-| _1 = T_LESS_THAN _2 = type_argument_list _3 = T_GREATER_THAN
+_1 = T_LESS_THAN _2 = type_argument_list _3 = T_GREATER_THAN
     {                                                 ( _1, _2, _3 )}
 | _1 = mismatched_type_arguments
     {                             ( _1 )}
 
 type_argument_list:
-| _1 = type_
+_1 = type_
     {                                    ( [Left _1] )}
 | _1 = type_argument_list _2 = T_COMMA _3 = type_
     {                                    ( _1 @ [Right _2; Left _3] )}
 
 mismatched_type_arguments:
-| _1 = T_LESS_THAN _2 = type_argument_list1 _3 = T_RSHIFT
+_1 = T_LESS_THAN _2 = type_argument_list1 _3 = T_RSHIFT
     {                                            ( _1, _2, _3 )}
 | _1 = T_LESS_THAN _2 = type_argument_list2 _3 = T_RSHIFT3
     {                                             ( _1, _2, _3 )}
 
 type_argument_list1:
-| _1 = nominal_type1
+_1 = nominal_type1
     {                                            ( [Left (TName _1)] )}
 | _1 = type_argument_list _2 = T_COMMA _3 = nominal_type1
     {                                            ( _1 @ [Right _2; Left (TName _3)] )}
 
 nominal_type1:
-| _1 = type_reference _2 = type_arguments1
+_1 = type_reference _2 = type_arguments1
     {                                  ( (_1, Some _2) )}
 
 type_arguments1:
-| _1 = T_LESS_THAN _2 = type_argument_list
+_1 = T_LESS_THAN _2 = type_argument_list
     {                                  ( _1, _2, fake_tok ">" )}
 
 type_argument_list2:
-| _1 = nominal_type2
+_1 = nominal_type2
     {                                            ( [Left (TName _1)] )}
 | _1 = type_argument_list _2 = T_COMMA _3 = nominal_type2
     {                                            ( _1 @ [Right _2; Left (TName _3)] )}
 
 nominal_type2:
-| _1 = type_reference _2 = type_arguments2
+_1 = type_reference _2 = type_arguments2
     {                                  ( (_1, Some _2) )}
 
 type_arguments2:
-| _1 = T_LESS_THAN _2 = type_argument_list1
+_1 = T_LESS_THAN _2 = type_argument_list1
     {                                   ( _1, _2, fake_tok ">" )}
 
 type_expression:
-| _1 = left_hand_side_expression_no_statement
+_1 = left_hand_side_expression_no_statement
     {                                          ( (_1,None) )}
 | _1 = type_reference _2 = type_arguments
     {                                 ( (_1, Some _2) )}
 
 expression:
-| _1 = assignment_expression
+_1 = assignment_expression
     {                         ( _1 )}
 | _1 = expression _2 = T_COMMA _3 = assignment_expression
     {                                            ( e(Seq (_1, _2, _3)) )}
 
 assignment_expression:
-| _1 = conditional_expression
+_1 = conditional_expression
     {                          ( _1 )}
 | _1 = left_hand_side_expression _2 = assignment_operator _3 = assignment_expression
     {     ( e(Assign (_1, _2, _3)) )}
@@ -616,7 +616,7 @@ assignment_expression:
     {                  ( Arrow _1 )}
 
 assignment_operator:
-| _1 = T_ASSIGN
+_1 = T_ASSIGN
     {                    ( A_eq , _1 )}
 | _1 = T_MULT_ASSIGN
     {                    ( A_mul, _1 )}
@@ -642,19 +642,19 @@ assignment_operator:
     {                    ( A_or , _1 )}
 
 left_hand_side_expression:
-| _1 = new_expression
+_1 = new_expression
     {                   ( _1 )}
 | _1 = call_expression
     {                   ( _1 )}
 
 conditional_expression:
-| _1 = post_in_expression
+_1 = post_in_expression
     {                      ( _1 )}
 | _1 = post_in_expression _2 = T_PLING _3 = assignment_expression _4 = T_COLON _5 = assignment_expression
     {     ( e(Conditional (_1, _2, _3, _4, _5)) )}
 
 post_in_expression:
-| _1 = pre_in_expression
+_1 = pre_in_expression
     {                     ( _1 )}
 | _1 = post_in_expression _2 = T_LESS_THAN _3 = post_in_expression
     {                                                              ( bop B_lt _1 _2 _3 )}
@@ -688,7 +688,7 @@ post_in_expression:
     {                                                              ( bop B_or _1 _2 _3 )}
 
 pre_in_expression:
-| _1 = left_hand_side_expression
+_1 = left_hand_side_expression
     {                                                 ( _1 )}
 | _1 = pre_in_expression _2 = T_INCR %prec p_POSTFIX
     {                                                 ( uop U_post_increment _2 _1 )}
@@ -730,7 +730,7 @@ pre_in_expression:
     {                                                 ( bop B_asr _1 _2 _3 )}
 
 call_expression:
-| _1 = member_expression _2 = arguments
+_1 = member_expression _2 = arguments
     {                                                    ( e(Apply (_1, _2)) )}
 | _1 = call_expression _2 = arguments
     {                                                    ( e(Apply (_1, _2)) )}
@@ -740,13 +740,13 @@ call_expression:
     {                                                     ( e(Period (_1, _2, _3)) )}
 
 new_expression:
-| _1 = member_expression
+_1 = member_expression
     {                        ( _1 )}
 | _1 = T_NEW _2 = new_expression
     {                        ( uop U_new _1 _2 )}
 
 member_expression:
-| _1 = primary_expression
+_1 = primary_expression
     {                                                      ( _1 )}
 | _1 = member_expression _2 = T_LBRACKET _3 = expression _4 = T_RBRACKET
     {                                                      ( e(Bracket(_1, (_2, _3, _4))) )}
@@ -756,7 +756,7 @@ member_expression:
     {     ( e(Apply(uop U_new _1 _2, _3)) )}
 
 primary_expression:
-| _1 = primary_expression_no_statement
+_1 = primary_expression_no_statement
     {                                   ( _1 )}
 | _1 = object_literal
     {                                   ( e(Object _1) )}
@@ -764,7 +764,7 @@ primary_expression:
     {                                   ( _1 )}
 
 primary_expression_no_statement:
-| _1 = T_THIS
+_1 = T_THIS
     {                   ( e((This _1)) )}
 | _1 = identifier
     {                   ( e((V _1)) )}
@@ -790,29 +790,29 @@ primary_expression_no_statement:
     {     ( Encaps (Some _1, _2, _3, _4) )}
 
 null_literal:
-| _1 = T_NULL
+_1 = T_NULL
     {          ( _1 )}
 
 boolean_literal:
-| _1 = T_TRUE
+_1 = T_TRUE
     {           ( true, _1 )}
 | _1 = T_FALSE
     {           ( false, _1 )}
 
 numeric_literal:
-| _1 = T_NUMBER
+_1 = T_NUMBER
     {            ( _1 )}
 
 regex_literal:
-| _1 = T_REGEX
+_1 = T_REGEX
     {           ( _1 )}
 
 string_literal:
-| _1 = T_STRING
+_1 = T_STRING
     {            ( _1 )}
 
 array_literal:
-| _1 = T_LBRACKET _2 = elison _3 = T_RBRACKET
+_1 = T_LBRACKET _2 = elison _3 = T_RBRACKET
     {                                             ( Array(_1, _2, _3) )}
 | _1 = T_LBRACKET _2 = T_RBRACKET
     {                                             ( Array(_1, [], _2) )}
@@ -822,11 +822,11 @@ array_literal:
     {                                             ( Array(_1, _2 @ _3, _4) )}
 
 element_list:
-| _1 = element_list_rev
+_1 = element_list_rev
     {                               ( List.rev _1 )}
 
 element_list_rev:
-| _1 = elison _2 = assignment_expression
+_1 = elison _2 = assignment_expression
     {                                  ( (Left _2)::_1 )}
 | _1 = assignment_expression
     {                                  ( [Left _1] )}
@@ -834,7 +834,7 @@ element_list_rev:
     {                                                     ( [Left _3] @ _2 @ _1 )}
 
 object_literal:
-| _1 = T_LCURLY _2 = T_RCURLY
+_1 = T_LCURLY _2 = T_RCURLY
     {     ( (_1, [], _2) )}
 | _1 = T_LCURLY _2 = property_name_and_value_list _3 = T_VIRTUAL_SEMICOLON _4 = T_RCURLY
     {     ( (_1, _2, _4) )}
@@ -842,25 +842,25 @@ object_literal:
     {     ( (_1, _2 @ [Right _3], _5) )}
 
 property_name_and_value:
-| _1 = property_name _2 = T_COLON _3 = assignment_expression
+_1 = property_name _2 = T_COLON _3 = assignment_expression
     {     ( Left (P_field (_1, _2, _3)) )}
 | _1 = method_definition
     {     ( Left (P_method (_1)) )}
 
 property_name_and_value_list:
-| _1 = property_name_and_value
+_1 = property_name_and_value
     {     ( [_1] )}
 | _1 = property_name_and_value_list _2 = T_COMMA _3 = property_name_and_value
     {     ( _1 @ [Right _2; _3] )}
 
 arguments:
-| _1 = T_LPAREN _2 = T_RPAREN
+_1 = T_LPAREN _2 = T_RPAREN
     {                                   ( (_1, [], _2) )}
 | _1 = T_LPAREN _2 = argument_list _3 = T_RPAREN
     {                                   ( (_1, _2, _3) )}
 
 argument_list:
-| _1 = T_DOTS _2 = assignment_expression
+_1 = T_DOTS _2 = assignment_expression
     {     ( [Left (uop U_spread _1 _2)] )}
 | _1 = assignment_expression
     {     ( [Left _1] )}
@@ -868,13 +868,13 @@ argument_list:
     {     ( (Left _1)::(Right _2)::_3 )}
 
 xhp_html:
-| _1 = T_XHP_OPEN_TAG _2 = xhp_attributes _3 = T_XHP_GT _4 = xhp_children _5 = T_XHP_CLOSE_TAG
+_1 = T_XHP_OPEN_TAG _2 = xhp_attributes _3 = T_XHP_GT _4 = xhp_children _5 = T_XHP_CLOSE_TAG
     {     ( Xhp (_1, _2, _3, _4, _5)  )}
 | _1 = T_XHP_OPEN_TAG _2 = xhp_attributes _3 = T_XHP_SLASH_GT
     {     ( XhpSingleton (_1, _2, _3) )}
 
 xhp_child:
-| _1 = T_XHP_TEXT
+_1 = T_XHP_TEXT
     {                        ( XhpText _1 )}
 | _1 = xhp_html
     {                        ( XhpNested _1 )}
@@ -884,23 +884,23 @@ xhp_child:
     {     ( XhpExpr (_1, None , _2) (*TODO$3*) )}
 
 xhp_attribute:
-| _1 = T_XHP_ATTR _2 = T_ASSIGN _3 = xhp_attribute_value
+_1 = T_XHP_ATTR _2 = T_ASSIGN _3 = xhp_attribute_value
     {                                           ( _1, _2, _3 )}
 
 xhp_attribute_value:
-| _1 = T_STRING
+_1 = T_STRING
     {            ( XhpAttrString (_1) )}
 | _1 = T_LCURLY _2 = expression _3 = semicolon _4 = T_RCURLY
     {                                             ( XhpAttrExpr (_1, _2, _4)(*TODO$3*) )}
 
 encaps:
-| _1 = T_ENCAPSED_STRING
+_1 = T_ENCAPSED_STRING
     {                     ( EncapsString _1 )}
 | _1 = T_DOLLARCURLY _2 = expression _3 = T_VIRTUAL_SEMICOLON _4 = T_RCURLY
     {     ( EncapsExpr (_1, _2, _4) )}
 
 arrow_function:
-| _1 = identifier _2 = T_ARROW _3 = arrow_body
+_1 = identifier _2 = T_ARROW _3 = arrow_body
     {     ( { a_params = ASingleParam (mk_param _1); a_return_type = None;
          a_tok = _2; a_body = _3 } )}
 | _1 = T_LPAREN _2 = T_RPAREN _3 = annotation_opt _4 = T_ARROW _5 = arrow_body
@@ -937,31 +937,31 @@ arrow_function:
      )}
 
 arrow_body:
-| _1 = block
+_1 = block
     {     ( match _1 with Block (a,b,c) -> ABody (a,b,c) | _ -> raise Impossible )}
 | _1 = assignment_expression_no_statement %prec LOW_PRIORITY_RULE
     {                                                              ( AExpr _1 )}
 
 expression_no_in:
-| _1 = assignment_expression_no_in
+_1 = assignment_expression_no_in
     {                               ( _1 )}
 | _1 = expression_no_in _2 = T_COMMA _3 = assignment_expression_no_in
     {                                                        ( e(Seq (_1, _2, _3)) )}
 
 assignment_expression_no_in:
-| _1 = conditional_expression_no_in
+_1 = conditional_expression_no_in
     {                                ( _1 )}
 | _1 = left_hand_side_expression _2 = assignment_operator _3 = assignment_expression_no_in
     {     ( e(Assign (_1, _2, _3)) )}
 
 conditional_expression_no_in:
-| _1 = post_in_expression_no_in
+_1 = post_in_expression_no_in
     {                            ( _1 )}
 | _1 = post_in_expression_no_in _2 = T_PLING _3 = assignment_expression_no_in _4 = T_COLON _5 = assignment_expression_no_in
     {     ( e(Conditional (_1, _2, _3, _4, _5)) )}
 
 post_in_expression_no_in:
-| _1 = pre_in_expression
+_1 = pre_in_expression
     {                     ( _1 )}
 | _1 = post_in_expression_no_in _2 = T_LESS_THAN _3 = post_in_expression
     {                                                                    ( bop B_lt _1 _2 _3 )}
@@ -993,25 +993,25 @@ post_in_expression_no_in:
     {                                                                    ( bop B_or _1 _2 _3 )}
 
 expression_no_statement:
-| _1 = assignment_expression_no_statement
+_1 = assignment_expression_no_statement
     {                                      ( _1 )}
 | _1 = expression_no_statement _2 = T_COMMA _3 = assignment_expression
     {                                                         ( e(Seq (_1, _2, _3)) )}
 
 assignment_expression_no_statement:
-| _1 = conditional_expression_no_statement
+_1 = conditional_expression_no_statement
     {                                       ( _1 )}
 | _1 = left_hand_side_expression_no_statement _2 = assignment_operator _3 = assignment_expression
     {     ( e(Assign (_1, _2, _3)) )}
 
 conditional_expression_no_statement:
-| _1 = post_in_expression_no_statement
+_1 = post_in_expression_no_statement
     {                                   ( _1 )}
 | _1 = post_in_expression_no_statement _2 = T_PLING _3 = assignment_expression _4 = T_COLON _5 = assignment_expression
     {     ( e(Conditional (_1, _2, _3, _4, _5)) )}
 
 post_in_expression_no_statement:
-| _1 = pre_in_expression_no_statement
+_1 = pre_in_expression_no_statement
     {                                  ( _1 )}
 | _1 = post_in_expression_no_statement _2 = T_LESS_THAN _3 = post_in_expression
     {                                                                           ( bop B_lt _1 _2 _3 )}
@@ -1045,7 +1045,7 @@ post_in_expression_no_statement:
     {                                                                           ( bop B_or _1 _2 _3 )}
 
 pre_in_expression_no_statement:
-| _1 = left_hand_side_expression_no_statement
+_1 = left_hand_side_expression_no_statement
     {                                                              ( _1 )}
 | _1 = pre_in_expression_no_statement _2 = T_INCR
     {                                                              ( uop U_post_increment _2 _1 )}
@@ -1087,19 +1087,19 @@ pre_in_expression_no_statement:
     {                                                              ( bop B_asr _1 _2 _3 )}
 
 left_hand_side_expression_no_statement:
-| _1 = new_expression_no_statement
+_1 = new_expression_no_statement
     {                               ( _1 )}
 | _1 = call_expression_no_statement
     {                                ( _1 )}
 
 new_expression_no_statement:
-| _1 = member_expression_no_statement
+_1 = member_expression_no_statement
     {                                  ( _1 )}
 | _1 = T_NEW _2 = new_expression
     {                        ( uop U_new _1 _2 )}
 
 call_expression_no_statement:
-| _1 = member_expression_no_statement _2 = arguments
+_1 = member_expression_no_statement _2 = arguments
     {                                                                 ( e(Apply (_1, _2)) )}
 | _1 = call_expression_no_statement _2 = arguments
     {                                                                 ( e(Apply (_1, _2)) )}
@@ -1109,7 +1109,7 @@ call_expression_no_statement:
     {                                                                  ( e(Period (_1, _2, _3)) )}
 
 member_expression_no_statement:
-| _1 = primary_expression_no_statement
+_1 = primary_expression_no_statement
     {                                                                   ( _1 )}
 | _1 = member_expression_no_statement _2 = T_LBRACKET _3 = expression _4 = T_RBRACKET
     {                                                                   ( e(Bracket(_1, (_2, _3, _4))) )}
@@ -1119,23 +1119,23 @@ member_expression_no_statement:
     {                                                                   ( e(Apply(uop U_new _1 _2, _3)) )}
 
 identifier:
-| _1 = T_IDENTIFIER
+_1 = T_IDENTIFIER
     {                ( _1 )}
 
 field_name:
-| _1 = T_IDENTIFIER
+_1 = T_IDENTIFIER
     {                ( _1 )}
 | _1 = T_CLASS
     {           ( "class", _1 )}
 
 method_name:
-| _1 = T_IDENTIFIER
+_1 = T_IDENTIFIER
     {                ( _1 )}
 | _1 = T_DEFAULT
     {             ( "default", _1 )}
 
 property_name:
-| _1 = T_IDENTIFIER
+_1 = T_IDENTIFIER
     {                   ( PN_String _1 )}
 | _1 = string_literal
     {                   ( PN_String _1 )}
@@ -1145,139 +1145,139 @@ property_name:
     {                   ( PN_String ("class", _1) )}
 
 semicolon:
-| _1 = T_SEMICOLON
+_1 = T_SEMICOLON
     {                       ( Some _1 )}
 | _1 = T_VIRTUAL_SEMICOLON
     {                       ( None )}
 
 elison:
-| _1 = T_COMMA
+_1 = T_COMMA
     {           ( [Right _1] )}
 | _1 = elison _2 = T_COMMA
     {                  ( _1 @ [Right _2] )}
 
 statement_list:
-| _1 = source_element
+_1 = source_element
     {                  ( [_1] )}
 | _1 = statement_list _2 = source_element
     {                                 ( _1 @ [_2] )}
 
 class_element_list:
-| _1 = class_element
+_1 = class_element
     {                 ( [_1] )}
 | _1 = class_element_list _2 = class_element
     {                                    ( _1 @ [_2] )}
 
 encaps_list:
-| _1 = encaps
+_1 = encaps
     {          ( [_1] )}
 | _1 = encaps_list _2 = encaps
     {                      ( _1 @ [_2] )}
 
 case_clauses:
-| _1 = case_clause
+_1 = case_clause
     {               ( [_1] )}
 | _1 = case_clauses _2 = case_clause
     {                            ( _1 @ [_2] )}
 
 xhp_attributes:
-| 
+
     {                 ( [] )}
 | _1 = xhp_attributes _2 = xhp_attribute
     {                                ( _1 @ [_2] )}
 
 xhp_children:
-| 
+
     {                 ( [] )}
 | _1 = xhp_children _2 = xhp_child
     {                          ( _1 @ [_2] )}
 
 variable_declaration_list:
-| _1 = variable_declaration
+_1 = variable_declaration
     {     ( [Left _1]  )}
 | _1 = variable_declaration_list _2 = T_COMMA _3 = variable_declaration
     {     ( _1 @ [Right _2; Left _3] )}
 
 variable_declaration_list_no_in:
-| _1 = variable_declaration_no_in
+_1 = variable_declaration_no_in
     {     ( [Left _1] )}
 | _1 = variable_declaration_list_no_in _2 = T_COMMA _3 = variable_declaration_no_in
     {     ( _1 @ [Right _2; Left _3] )}
 
 expression_opt:
-| 
+
     {                   ( None )}
 | _1 = expression
     {                   ( Some _1 )}
 
 expression_no_in_opt:
-| 
+
     {                    ( None )}
 | _1 = expression_no_in
     {                    ( Some _1 )}
 
 class_heritage_opt:
-| 
+
     {                   ( None )}
 | _1 = class_heritage
     {                  ( Some _1 )}
 
 class_body_opt:
-| 
+
     {                   ( [] )}
 | _1 = class_body
     {              ( _1 )}
 
 formal_parameter_list_opt:
-| 
+
     {                   ( [] )}
 | _1 = formal_parameter_list
     {                         ( _1 )}
 
 case_clauses_opt:
-| 
+
     {                   ( [] )}
 | _1 = case_clauses
     {                   ( _1 )}
 
 encaps_list_opt:
-| 
+
     {                   ( [] )}
 | _1 = encaps_list
     {                  ( _1 )}
 
 annotation_opt:
-| 
+
     {                   ( None )}
 | _1 = annotation
     {                 ( Some _1 )}
 
 generics_opt:
-| 
+
     {                   ( None )}
 | _1 = generics
     {                   ( Some _1 )}
 
 identifier_opt:
-| 
+
     {                   ( None )}
 | _1 = identifier
     {              ( Some _1 )}
 
 initializeur_opt:
-| 
+
     {                   ( None )}
 | _1 = initializeur
     {                ( Some _1 )}
 
 field_type_list_opt:
-| 
+
     {                   ( [] )}
 | _1 = field_type_list
     {                   ( _1 )}
 
 param_type_list_opt:
-| 
+
     {                   ( [] )}
 | _1 = param_type_list
     {                   ( _1 )}

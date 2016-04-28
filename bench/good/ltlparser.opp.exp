@@ -56,11 +56,11 @@ let get_fresh_ident () =
 %%
 
 ltl:
-| _1 = formula _2 = EOF
+_1 = formula _2 = EOF
     {                      ((_1,observed_expressions))}
 
 formula:
-| _1 = LTL_TRUE
+_1 = LTL_TRUE
     {            (Ltlast.LTrue)}
 | _1 = LTL_FALSE
     {     (Ltlast.LFalse)}
@@ -100,7 +100,7 @@ formula:
 	    )}
 
 logic_relation:
-| _1 = arith_relation _2 = LTL_EQ _3 = arith_relation
+_1 = arith_relation _2 = LTL_EQ _3 = arith_relation
     {                                         ( Eq, _1 , _3)}
 | _1 = arith_relation _2 = LTL_LT _3 = arith_relation
     {                                         ( Lt, _1, _3 )}
@@ -116,7 +116,7 @@ logic_relation:
     {                  ( Neq, _1, PCst (IntConstant "0") )}
 
 arith_relation:
-| _1 = arith_relation_mul _2 = LTL_PLUS _3 = arith_relation
+_1 = arith_relation_mul _2 = LTL_PLUS _3 = arith_relation
     {                                                     ( PBinop(Badd,_1,_3) )}
 | _1 = arith_relation_mul _2 = LTL_MINUS _3 = arith_relation
     {                                               ( PBinop(Bsub,_1,_3) )}
@@ -124,7 +124,7 @@ arith_relation:
     {                      ( _1 )}
 
 arith_relation_mul:
-| _1 = arith_relation_mul _2 = LTL_DIV _3 = access_or_const
+_1 = arith_relation_mul _2 = LTL_DIV _3 = access_or_const
     {                                              ( PBinop(Bdiv,_1,_3) )}
 | _1 = arith_relation_mul _2 = LTL_STAR _3 = access_or_const
     {                                               ( PBinop(Bmul,_1,_3) )}
@@ -134,7 +134,7 @@ arith_relation_mul:
     {                   ( _1 )}
 
 access_or_const:
-| _1 = LTL_INT
+_1 = LTL_INT
     {                  ( PCst (IntConstant _1) )}
 | _1 = LTL_MINUS _2 = LTL_INT
     {                            ( PUnop (Uminus,PCst (IntConstant _2)) )}
@@ -144,7 +144,7 @@ access_or_const:
     {                                        ( _2 )}
 
 access:
-| _1 = access _2 = LTL_RIGHT_ARROW _3 = LTL_LABEL
+_1 = access _2 = LTL_RIGHT_ARROW _3 = LTL_LABEL
     {                                    ( PField (PUnop(Ustar,_1),_3) )}
 | _1 = access _2 = LTL_DOT _3 = LTL_LABEL
     {                            ( PField(_1,_3) )}
@@ -152,13 +152,13 @@ access:
     {                (_1)}
 
 access_array:
-| _1 = access_array _2 = LTL_LEFT_SQUARE _3 = access_or_const _4 = LTL_RIGHT_SQUARE
+_1 = access_array _2 = LTL_LEFT_SQUARE _3 = access_or_const _4 = LTL_RIGHT_SQUARE
     {     ( PArrget(_1,_3) )}
 | _1 = access_leaf
     {                   (_1)}
 
 access_leaf:
-| _1 = LTL_ADRESSE _2 = access
+_1 = LTL_ADRESSE _2 = access
     {                             ( PUnop (Uamp,_2) )}
 | _1 = LTL_STAR _2 = access
     {                   ( PUnop (Ustar, _2 ) )}

@@ -292,15 +292,15 @@ let deconstr_record exp f =
 %%
 
 implementation:
-| _1 = structure _2 = EOF
+_1 = structure _2 = EOF
     {                                         ( _1 )}
 
 interface:
-| _1 = signature _2 = EOF
+_1 = signature _2 = EOF
     {                                         ( List.rev _1 )}
 
 toplevel_phrase:
-| _1 = top_structure _2 = SEMISEMI
+_1 = top_structure _2 = SEMISEMI
     {                                         ( Ptop_def _1 )}
 | _1 = seq_expr _2 = SEMISEMI
     {                                         ( Ptop_def[mkstrexp _1] )}
@@ -310,7 +310,7 @@ toplevel_phrase:
     {                                         ( raise End_of_file )}
 
 top_structure:
-| _1 = structure_item
+_1 = structure_item
     {                                         ( [_1] )}
 | _1 = structure_item _2 = top_structure
     {                                         ( _1 :: _2 )}
@@ -318,13 +318,13 @@ top_structure:
     {                                         ( [mkstr (Pstr_location _3)] )}
 
 use_file:
-| _1 = use_file_tail
+_1 = use_file_tail
     {                                         ( _1 )}
 | _1 = seq_expr _2 = use_file_tail
     {                                         ( Ptop_def[mkstrexp _1] :: _2 )}
 
 use_file_tail:
-| _1 = EOF
+_1 = EOF
     {                                                ( [] )}
 | _1 = SEMISEMI _2 = EOF
     {                                                ( [] )}
@@ -340,7 +340,7 @@ use_file_tail:
     {                                                ( _1 :: _2 )}
 
 module_expr:
-| _1 = mod_longident
+_1 = mod_longident
     {      ( mkmod(Pmod_ident _1) )}
 | _1 = STRUCT _2 = structure _3 = END
     {      ( mkmod(Pmod_structure(_2)) )}
@@ -362,19 +362,19 @@ module_expr:
     {      ( unclosed "(" 1 ")" 3 )}
 
 lident_comma_list:
-| _1 = LIDENT
+_1 = LIDENT
     {           ([_1])}
 | _1 = LIDENT _2 = COMMA _3 = lident_comma_list
     {                                   ( _1::_3 )}
 
 structure:
-| _1 = structure_tail
+_1 = structure_tail
     {                                                ( _1 )}
 | _1 = seq_expr _2 = structure_tail
     {                                                ( mkstrexp _1 :: _2 )}
 
 structure_tail:
-| 
+
     {                                                ( [] )}
 | _1 = SEMISEMI
     {                                                ( [] )}
@@ -390,7 +390,7 @@ structure_tail:
     {      ( (mkstr (Pstr_location _4)):: _5 )}
 
 structure_item:
-| _1 = LET _2 = JOINDEF _3 = def_bindings
+_1 = LET _2 = JOINDEF _3 = def_bindings
     {      (  mkstr(Pstr_def(List.rev _3)) )}
 | _1 = LET _2 = rec_flag _3 = let_bindings
     {      ( match _3 with
@@ -414,7 +414,7 @@ structure_item:
     {      ( unclosed "class" 1 "end" 3 )}
 
 module_binding:
-| _1 = EQUAL _2 = module_expr
+_1 = EQUAL _2 = module_expr
     {      ( _2 )}
 | _1 = COLON _2 = module_type _3 = EQUAL _4 = module_expr
     {      ( mkmod(Pmod_constraint(_4, _2)) )}
@@ -422,7 +422,7 @@ module_binding:
     {      ( mkmod(Pmod_functor(_2, _4, _6)) )}
 
 module_type:
-| _1 = mty_longident
+_1 = mty_longident
     {      ( mkmty(Pmty_ident _1) )}
 | _1 = SIG _2 = signature _3 = END
     {      ( mkmty(Pmty_signature(List.rev _2)) )}
@@ -438,7 +438,7 @@ module_type:
     {      ( unclosed "(" 1 ")" 3 )}
 
 signature:
-| 
+
     {                                                ( [] )}
 | _1 = signature _2 = signature_item
     {                                                ( _2 :: _1 )}
@@ -446,7 +446,7 @@ signature:
     {                                                ( _2 :: _1 )}
 
 signature_item:
-| _1 = VAL _2 = val_ident _3 = COLON _4 = core_type
+_1 = VAL _2 = val_ident _3 = COLON _4 = core_type
     {      ( mksig(Psig_value(_2, {pval_type = _4; pval_prim = []})) )}
 | _1 = EXTERNAL _2 = val_ident _3 = COLON _4 = core_type _5 = EQUAL _6 = primitive_declaration
     {      ( mksig(Psig_value(_2, {pval_type = _4; pval_prim = _6})) )}
@@ -468,13 +468,13 @@ signature_item:
     {      ( mksig(Psig_class (List.rev _2)) )}
 
 module_declaration:
-| _1 = COLON _2 = module_type
+_1 = COLON _2 = module_type
     {      ( _2 )}
 | _1 = LPAREN _2 = UIDENT _3 = COLON _4 = module_type _5 = RPAREN _6 = module_declaration
     {      ( mkmty(Pmty_functor(_2, _4, _6)) )}
 
 seq_expr:
-| _1 = expr
+_1 = expr
     {                                  ( _1 )}
 | _1 = expr _2 = SEMI
     {                                  ( _1 )}
@@ -482,13 +482,13 @@ seq_expr:
     {                                  ( mkexp(Pexp_sequence(_1, _3)) )}
 
 expr:
-| _1 = expr0
+_1 = expr0
     {           ( _1 )}
 | _1 = expr_comma_list
     {      ( mkexp(Pexp_tuple(List.rev _1)) )}
 
 expr0:
-| _1 = simple_expr
+_1 = simple_expr
     {      ( _1 )}
 | _1 = simple_expr _2 = simple_expr_list %prec prec_appl
     {      ( mkexp(Pexp_apply(_1, List.rev _2)) )}
@@ -598,7 +598,7 @@ expr0:
     {      ( mklazy _2 )}
 
 simple_expr:
-| _1 = val_longident
+_1 = val_longident
     {      ( mkexp(Pexp_ident _1) )}
 | _1 = constant
     {      ( mkexp(Pexp_constant _1) )}
@@ -676,19 +676,19 @@ simple_expr:
                 mkexp(Pexp_send(mkexp(Pexp_ident (Lident"x")), _3))]) )}
 
 simple_expr_list:
-| _1 = simple_expr
+_1 = simple_expr
     {      ( [_1] )}
 | _1 = simple_expr_list _2 = simple_expr
     {      ( _2 :: _1 )}
 
 def_bindings:
-| _1 = def_binding
+_1 = def_binding
     {                                                   ( [_1] )}
 | _1 = def_bindings _2 = AND _3 = def_binding
     {                                                ( _3 :: _1 )}
 
 def_binding:
-| _1 = LIDENT _2 = LBRACKET _3 = lident_comma_list _4 = RBRACKET _5 = LBRACE _6 = simple_def_binding _7 = loc_init _8 = RBRACE
+_1 = LIDENT _2 = LBRACKET _3 = lident_comma_list _4 = RBRACKET _5 = LBRACE _6 = simple_def_binding _7 = loc_init _8 = RBRACE
     {    ( (Some (_1, _7, Some _3)), List.rev _6 )}
 | _1 = LIDENT _2 = LBRACE _3 = simple_def_binding _4 = loc_init _5 = RBRACE
     {    ( (Some (_1, _4, None)), List.rev _3 )}
@@ -696,17 +696,17 @@ def_binding:
     {                                            ( None, List.rev _1 )}
 
 simple_def_binding:
-| _1 = def_pattern
+_1 = def_pattern
     {                           ( [_1] )}
 | _1 = simple_def_binding _2 = OR _3 = def_pattern
     {                                                 ( _3 :: _1 )}
 
 def_pattern:
-| _1 = join_pattern _2 = EQUAL _3 = process
+_1 = join_pattern _2 = EQUAL _3 = process
     {                                    ( (_1,_3) )}
 
 join_pattern:
-| _1 = LIDENT _2 = simple_pattern
+_1 = LIDENT _2 = simple_pattern
     {                               ( mkpat(Ppat_channel (_1,_2,Sync)) )}
 | _1 = LIDENT _2 = PREFIXOP _3 = simple_pattern
     {           ( match _2 with
@@ -718,29 +718,29 @@ join_pattern:
     {                                       ( mkpat(Ppat_or(_1,_3)) )}
 
 loc_bindings:
-| _1 = loc_binding
+_1 = loc_binding
     {                                    ( [_1] )}
 | _1 = loc_binding _2 = AND _3 = loc_bindings
     {                                   ( _1::_3 )}
 
 loc_init:
-| _1 = DO _2 = process0
+_1 = DO _2 = process0
     {                   ( _2 )}
 | 
     {                    ( mkexp(Pexp_null) )}
 
 loc_binding:
-| _1 = LIDENT _2 = loc_modules _3 = loc_defs _4 = loc_init
+_1 = LIDENT _2 = loc_modules _3 = loc_defs _4 = loc_init
     {                                         ( _1, mklistexp _2, _3, _4 )}
 
 list_of_modules:
-| _1 = UIDENT
+_1 = UIDENT
     {                ( [ mkexp(Pexp_module _1) ] )}
 | _1 = UIDENT _2 = SEMI _3 = list_of_modules
     {                                   ( (mkexp(Pexp_module _1))::_3 )}
 
 loc_modules:
-| 
+
     {                  ( [] )}
 | _1 = LBRACKET _2 = list_of_modules _3 = RBRACKET
     {                                      ( _2 )}
@@ -748,19 +748,19 @@ loc_modules:
     {                      ( [] )}
 
 loc_defs:
-| _1 = JOINDEF _2 = def_bindings
+_1 = JOINDEF _2 = def_bindings
     {                         ( _2 )}
 | 
     {                         ( [] )}
 
 to_ident:
-| _1 = TO _2 = LIDENT
+_1 = TO _2 = LIDENT
     {                ( Some _2 )}
 | 
     {                  ( None )}
 
 process:
-| 
+
     {                                             ( mkexp(Pexp_null))}
 | _1 = process0
     {                                             ( _1 )}
@@ -788,19 +788,19 @@ process:
   )}
 
 join_match_cases:
-| _1 = pattern _2 = join_match_action
+_1 = pattern _2 = join_match_action
     {                                                     ( [_1, _2] )}
 | _1 = join_match_cases _2 = BAR _3 = pattern _4 = join_match_action
     {                                                          ( (_3, _4) :: _1 )}
 
 join_match_action:
-| _1 = MINUSGREATER _2 = process0
+_1 = MINUSGREATER _2 = process0
     {                                                ( _2 )}
 | _1 = WHEN _2 = seq_expr _3 = MINUSGREATER _4 = process0
     {                                                ( mkexp(Pexp_when(_2, _4)) )}
 
 proc_expr:
-| _1 = simple_chan_expr
+_1 = simple_chan_expr
     {      ( _1 )}
 | _1 = simple_chan_expr _2 = simple_expr_list %prec prec_appl
     {      ( mkexp(Pexp_apply(_1, List.rev _2)) )}
@@ -836,7 +836,7 @@ proc_expr:
     {      ( mklazy _2 )}
 
 simple_chan_expr:
-| _1 = val_longident
+_1 = val_longident
     {      ( mkexp(Pexp_ident _1) )}
 | _1 = constant
     {      ( mkexp(Pexp_constant _1) )}
@@ -854,7 +854,7 @@ simple_chan_expr:
     {      ( deconstr_record _1 (fun exp -> mkexp(Pexp_field(exp, _3))) )}
 
 process0:
-| _1 = REPLY _2 = expr _3 = to_ident
+_1 = REPLY _2 = expr _3 = to_ident
     {      ( mkexp(Pexp_reply(_2,_3)))}
 | _1 = REPLY _2 = to_ident
     {      ( mkexp(Pexp_reply(void (),_2)))}
@@ -878,13 +878,13 @@ process0:
     {                     ( mkexp(Pexp_location(_2, mkexp(Pexp_null))) )}
 
 let_bindings:
-| _1 = let_binding
+_1 = let_binding
     {                                                ( [_1] )}
 | _1 = let_bindings _2 = AND _3 = let_binding
     {                                                ( _3 :: _1 )}
 
 let_binding:
-| _1 = val_ident _2 = fun_binding
+_1 = val_ident _2 = fun_binding
     {      ( ({ppat_desc = Ppat_var _1; ppat_loc = rhs_loc 1}, _2) )}
 | _1 = pattern _2 = EQUAL _3 = seq_expr %prec prec_let
     {      ( (_1,_3) )}
@@ -893,7 +893,7 @@ let_binding:
 	    (_1, mkexp (Pexp_apply (r, [_3]))) )}
 
 fun_binding:
-| _1 = EQUAL _2 = seq_expr %prec prec_let
+_1 = EQUAL _2 = seq_expr %prec prec_let
     {      ( _2 )}
 | _1 = type_constraint _2 = EQUAL _3 = seq_expr %prec prec_let
     {      ( let (t, t') = _1 in mkexp(Pexp_constraint(_3, t, t')) )}
@@ -901,13 +901,13 @@ fun_binding:
     {      ( mkexp(Pexp_function[_1,_2]) )}
 
 parser_cases:
-| _1 = parser_case
+_1 = parser_case
     {                                                ( [_1] )}
 | _1 = parser_cases _2 = BAR _3 = parser_case
     {                                                ( _3 :: _1 )}
 
 parser_case:
-| _1 = LBRACKETLESS _2 = stream_pattern _3 = opt_semi _4 = GREATERRBRACKET _5 = opt_pat _6 = MINUSGREATER _7 = seq_expr
+_1 = LBRACKETLESS _2 = stream_pattern _3 = opt_semi _4 = GREATERRBRACKET _5 = opt_pat _6 = MINUSGREATER _7 = seq_expr
     {      ( (List.rev _2, _5, _7) )}
 | _1 = LBRACKETLESS _2 = stream_pattern _3 = opt_semi _4 = error
     {      ( unclosed "[<" 1 ">]" 4 )}
@@ -915,13 +915,13 @@ parser_case:
     {      ( ([], _3, _5) )}
 
 stream_pattern:
-| _1 = stream_pattern_component _2 = opt_err
+_1 = stream_pattern_component _2 = opt_err
     {                                                         ( [(_1, _2)] )}
 | _1 = stream_pattern _2 = SEMI _3 = stream_pattern_component _4 = opt_err
     {                                                         ( (_3, _4) :: _1 )}
 
 stream_pattern_component:
-| _1 = QUOTE _2 = pattern
+_1 = QUOTE _2 = pattern
     {      ( Pstream.Spat_term (_2, None) )}
 | _1 = QUOTE _2 = pattern _3 = WHEN _4 = expr %prec prec_list
     {      ( Pstream.Spat_term (_2, Some _4) )}
@@ -931,73 +931,73 @@ stream_pattern_component:
     {      ( Pstream.Spat_sterm _1 )}
 
 opt_pat:
-| 
+
     {                                                ( None )}
 | _1 = simple_pattern
     {                                                ( Some _1 )}
 
 opt_err:
-| 
+
     {                                                ( None )}
 | _1 = QUESTION _2 = expr %prec prec_list
     {                                                ( Some _2 )}
 
 stream_expr:
-| _1 = stream_expr_component
+_1 = stream_expr_component
     {                                                ( [_1] )}
 | _1 = stream_expr _2 = SEMI _3 = stream_expr_component
     {                                                ( _3 :: _1 )}
 
 stream_expr_component:
-| _1 = QUOTE _2 = expr %prec prec_list
+_1 = QUOTE _2 = expr %prec prec_list
     {                                                ( Pstream.Sexp_term _2 )}
 | _1 = expr %prec prec_list
     {                                                ( Pstream.Sexp_nterm _1 )}
 
 match_cases:
-| _1 = pattern _2 = match_action
+_1 = pattern _2 = match_action
     {                                                ( [_1, _2] )}
 | _1 = match_cases _2 = BAR _3 = pattern _4 = match_action
     {                                                ( (_3, _4) :: _1 )}
 
 fun_def:
-| _1 = match_action
+_1 = match_action
     {                                                ( _1 )}
 | _1 = simple_pattern _2 = fun_def
     {                                                ( mkexp(Pexp_function[_1,_2]) )}
 
 match_action:
-| _1 = MINUSGREATER _2 = seq_expr
+_1 = MINUSGREATER _2 = seq_expr
     {                                                ( _2 )}
 | _1 = WHEN _2 = seq_expr _3 = MINUSGREATER _4 = seq_expr
     {                                                ( mkexp(Pexp_when(_2, _4)) )}
 
 expr_comma_list:
-| _1 = expr_comma_list _2 = COMMA _3 = expr
+_1 = expr_comma_list _2 = COMMA _3 = expr
     {                                                ( _3 :: _1 )}
 | _1 = expr _2 = COMMA _3 = expr
     {                                                ( [_3; _1] )}
 
 lbl_expr_list:
-| _1 = label_longident _2 = EQUAL _3 = expr %prec prec_list
+_1 = label_longident _2 = EQUAL _3 = expr %prec prec_list
     {      ( [_1,_3] )}
 | _1 = lbl_expr_list _2 = SEMI _3 = label_longident _4 = EQUAL _5 = expr %prec prec_list
     {      ( (_3, _5) :: _1 )}
 
 label_expr_list:
-| _1 = label _2 = EQUAL _3 = expr %prec prec_list
+_1 = label _2 = EQUAL _3 = expr %prec prec_list
     {      ( [_1,_3] )}
 | _1 = label_expr_list _2 = SEMI _3 = label _4 = EQUAL _5 = expr %prec prec_list
     {      ( (_3, _5) :: _1 )}
 
 expr_semi_list:
-| _1 = expr %prec prec_list
+_1 = expr %prec prec_list
     {                                                ( [_1] )}
 | _1 = expr_semi_list _2 = SEMI _3 = expr %prec prec_list
     {                                                ( _3 :: _1 )}
 
 type_constraint:
-| _1 = COLON _2 = core_type
+_1 = COLON _2 = core_type
     {                                                ( (Some _2, None) )}
 | _1 = COLON _2 = core_type _3 = COLONGREATER _4 = core_type
     {                                                ( (Some _2, Some _4) )}
@@ -1009,7 +1009,7 @@ type_constraint:
     {                                                ( syntax_error() )}
 
 pattern:
-| _1 = simple_pattern
+_1 = simple_pattern
     {      ( _1 )}
 | _1 = pattern _2 = AS _3 = val_ident
     {      ( mkpat(Ppat_alias(_1, _3)) )}
@@ -1024,7 +1024,7 @@ pattern:
     {      ( mkpat(Ppat_or(_1, _3)) )}
 
 simple_pattern:
-| _1 = val_ident
+_1 = val_ident
     {      ( mkpat(Ppat_var _1) )}
 | _1 = UNDERSCORE
     {      ( mkpat(Ppat_any) )}
@@ -1052,37 +1052,37 @@ simple_pattern:
     {      ( unclosed "(" 1 ")" 5 )}
 
 pattern_comma_list:
-| _1 = pattern_comma_list _2 = COMMA _3 = pattern
+_1 = pattern_comma_list _2 = COMMA _3 = pattern
     {                                                ( _3 :: _1 )}
 | _1 = pattern _2 = COMMA _3 = pattern
     {                                                ( [_3; _1] )}
 
 pattern_semi_list:
-| _1 = pattern
+_1 = pattern
     {                                                ( [_1] )}
 | _1 = pattern_semi_list _2 = SEMI _3 = pattern
     {                                                ( _3 :: _1 )}
 
 lbl_pattern_list:
-| _1 = label_longident _2 = EQUAL _3 = pattern
+_1 = label_longident _2 = EQUAL _3 = pattern
     {                                                ( [(_1, _3)] )}
 | _1 = lbl_pattern_list _2 = SEMI _3 = label_longident _4 = EQUAL _5 = pattern
     {                                                        ( (_3, _5) :: _1 )}
 
 primitive_declaration:
-| _1 = STRING
+_1 = STRING
     {                                                ( [_1] )}
 | _1 = STRING _2 = primitive_declaration
     {                                                ( _1 :: _2 )}
 
 class_list:
-| _1 = class_list _2 = AND _3 = class_def
+_1 = class_list _2 = AND _3 = class_def
     {                                                ( _3 :: _1 )}
 | _1 = class_def
     {                                                ( [_1] )}
 
 class_def:
-| _1 = virtual_flag _2 = closed_flag _3 = class_type_parameters _4 = LIDENT _5 = simple_pattern_list _6 = self _7 = self_type _8 = EQUAL _9 = constraints _10 = class_fields
+_1 = virtual_flag _2 = closed_flag _3 = class_type_parameters _4 = LIDENT _5 = simple_pattern_list _6 = self _7 = self_type _8 = EQUAL _9 = constraints _10 = class_fields
     {          ( { pcl_name = _4; pcl_param = _3; pcl_args = List.rev _5;
               pcl_self = _6; pcl_self_ty = _7; pcl_cstr = List.rev _9;
               pcl_field = List.rev _10;
@@ -1090,23 +1090,23 @@ class_def:
               pcl_loc = symbol_loc () } )}
 
 class_type_parameters:
-| _1 = type_parameters
+_1 = type_parameters
     {                                                ( _1, symbol_loc () )}
 
 simple_pattern_list:
-| _1 = simple_pattern
+_1 = simple_pattern
     {                                                ( [_1] )}
 | _1 = simple_pattern_list _2 = simple_pattern
     {                                                ( _2::_1 )}
 
 self:
-| _1 = AS _2 = LIDENT
+_1 = AS _2 = LIDENT
     {                                                ( Some _2 )}
 | 
     {                                                ( None )}
 
 class_fields:
-| 
+
     {                                                ( [] )}
 | _1 = class_fields _2 = INHERIT _3 = ancestor
     {                                                ( Pcf_inher _3 :: _1 )}
@@ -1118,7 +1118,7 @@ class_fields:
     {                                                ( Pcf_meth _2 :: _1 )}
 
 ancestor:
-| _1 = LPAREN _2 = core_type_comma_list _3 = RPAREN _4 = class_longident _5 = simple_expr_list _6 = self
+_1 = LPAREN _2 = core_type_comma_list _3 = RPAREN _4 = class_longident _5 = simple_expr_list _6 = self
     {          ( _4, List.rev _2, List.rev _5, _6, symbol_loc () )}
 | _1 = LPAREN _2 = core_type _3 = RPAREN _4 = class_longident _5 = simple_expr_list _6 = self
     {          ( _4, [_2], List.rev _5, _6, symbol_loc () )}
@@ -1126,17 +1126,17 @@ ancestor:
     {          ( _1, [], List.rev _2, _3, symbol_loc () )}
 
 value:
-| _1 = private_flag _2 = mutable_flag _3 = label _4 = EQUAL _5 = seq_expr
+_1 = private_flag _2 = mutable_flag _3 = label _4 = EQUAL _5 = seq_expr
     {          ( _3, _1, _2, Some _5, symbol_loc () )}
 | _1 = private_flag _2 = mutable_flag _3 = label
     {          ( _3, _1, _2, None, symbol_loc () )}
 
 virtual_method:
-| _1 = VIRTUAL _2 = protected_flag _3 = label _4 = COLON _5 = core_type
+_1 = VIRTUAL _2 = protected_flag _3 = label _4 = COLON _5 = core_type
     {          ( _3, _2, _5, symbol_loc () )}
 
 meth_binding:
-| _1 = EQUAL _2 = seq_expr %prec prec_let
+_1 = EQUAL _2 = seq_expr %prec prec_let
     {       ( (_2,0) )}
 | _1 = type_constraint _2 = EQUAL _3 = seq_expr %prec prec_let
     {       ( let (t, t') = _1 in (mkexp(Pexp_constraint(_3, t, t')),0) )}
@@ -1147,18 +1147,18 @@ meth_binding:
          (mkexp(Pexp_function[_1,s2]),nparams+1) )}
 
 method_def:
-| _1 = METHOD _2 = protected_flag _3 = label _4 = meth_binding
+_1 = METHOD _2 = protected_flag _3 = label _4 = meth_binding
     {          ( let (s4,np)= _4 in
 	    _3, np , _2, s4, symbol_loc () )}
 
 class_type_list:
-| _1 = class_type_list _2 = AND _3 = class_type
+_1 = class_type_list _2 = AND _3 = class_type
     {                                                ( _3 :: _1 )}
 | _1 = class_type
     {                                                ( [_1] )}
 
 class_type:
-| _1 = virtual_flag _2 = closed_flag _3 = class_type_parameters _4 = LIDENT _5 = type_list _6 = self_type _7 = EQUAL _8 = constraints _9 = class_type_fields
+_1 = virtual_flag _2 = closed_flag _3 = class_type_parameters _4 = LIDENT _5 = type_list _6 = self_type _7 = EQUAL _8 = constraints _9 = class_type_fields
     {          ( { pcty_name = _4; pcty_param = _3; pcty_args = _5;
               pcty_self = _6; pcty_cstr = List.rev _8;
               pcty_field = List.rev _9;
@@ -1166,29 +1166,29 @@ class_type:
               pcty_loc = symbol_loc () } )}
 
 type_list:
-| _1 = LPAREN _2 = core_type _3 = RPAREN _4 = type_list
+_1 = LPAREN _2 = core_type _3 = RPAREN _4 = type_list
     {                                                ( _2 :: _4 )}
 | _1 = LPAREN _2 = core_type _3 = RPAREN
     {                                                ( [_2] )}
 
 self_type:
-| _1 = COLON _2 = type_parameter
+_1 = COLON _2 = type_parameter
     {                                                ( Some _2 )}
 | 
     {                                                ( None )}
 
 constraints:
-| _1 = constraints _2 = CONSTRAINT _3 = constrain
+_1 = constraints _2 = CONSTRAINT _3 = constrain
     {                                                ( _3 :: _1 )}
 | 
     {                                                ( [] )}
 
 constrain:
-| _1 = type_parameter _2 = EQUAL _3 = core_type
+_1 = type_parameter _2 = EQUAL _3 = core_type
     {                                                ( _1, _3, symbol_loc () )}
 
 class_type_fields:
-| 
+
     {                                                ( [] )}
 | _1 = class_type_fields _2 = INHERIT _3 = ancestor_type
     {                                                ( Pctf_inher _3 :: _1 )}
@@ -1200,7 +1200,7 @@ class_type_fields:
     {                                                ( Pctf_meth _2 :: _1 )}
 
 ancestor_type:
-| _1 = LPAREN _2 = core_type_comma_list _3 = RPAREN _4 = class_longident
+_1 = LPAREN _2 = core_type_comma_list _3 = RPAREN _4 = class_longident
     {          ( _4, List.rev _2, symbol_loc () )}
 | _1 = LPAREN _2 = core_type _3 = RPAREN _4 = class_longident
     {          ( _4, [_2], symbol_loc () )}
@@ -1208,25 +1208,25 @@ ancestor_type:
     {          ( _1, [], symbol_loc () )}
 
 value_type:
-| _1 = private_flag _2 = mutable_flag _3 = label _4 = COLON _5 = core_type
+_1 = private_flag _2 = mutable_flag _3 = label _4 = COLON _5 = core_type
     {          ( _3, _1, _2, Some _5, symbol_loc () )}
 | _1 = private_flag _2 = mutable_flag _3 = label
     {          ( _3, _1, _2, None, symbol_loc () )}
 
 method_type:
-| _1 = METHOD _2 = protected_flag _3 = label _4 = COLON _5 = core_type
+_1 = METHOD _2 = protected_flag _3 = label _4 = COLON _5 = core_type
     {          ( _3, _2, _5, symbol_loc () )}
 | _1 = METHOD _2 = protected_flag _3 = label
     {          ( _3, _2, mktyp(Ptyp_any), symbol_loc () )}
 
 type_declarations:
-| _1 = type_declaration
+_1 = type_declaration
     {                                                ( [_1] )}
 | _1 = type_declarations _2 = AND _3 = type_declaration
     {                                                ( _3 :: _1 )}
 
 type_declaration:
-| _1 = type_parameters _2 = LIDENT _3 = type_kind _4 = constraints
+_1 = type_parameters _2 = LIDENT _3 = type_kind _4 = constraints
     {      ( let (kind, manifest) = _3 in
         (_2, {ptype_params = _1;
               ptype_cstrs = List.rev _4;
@@ -1235,7 +1235,7 @@ type_declaration:
               ptype_loc = symbol_loc()}) )}
 
 type_kind:
-| 
+
     {      ( (Ptype_abstract, None) )}
 | _1 = EQUAL _2 = core_type %prec prec_type_def
     {      ( (Ptype_abstract, Some _2) )}
@@ -1251,7 +1251,7 @@ type_kind:
     {      ( (Ptype_record(List.rev _5), Some _2) )}
 
 type_parameters:
-| 
+
     {                                                ( [] )}
 | _1 = type_parameter
     {                                                ( [_1] )}
@@ -1259,49 +1259,49 @@ type_parameters:
     {                                                ( List.rev _2 )}
 
 type_parameter:
-| _1 = QUOTE _2 = ident
+_1 = QUOTE _2 = ident
     {                                                ( _2 )}
 
 type_parameter_list:
-| _1 = type_parameter
+_1 = type_parameter
     {                                                ( [_1] )}
 | _1 = type_parameter_list _2 = COMMA _3 = type_parameter
     {                                                ( _3 :: _1 )}
 
 constructor_declarations:
-| _1 = constructor_declaration
+_1 = constructor_declaration
     {                                                ( [_1] )}
 | _1 = constructor_declarations _2 = BAR _3 = constructor_declaration
     {                                                         ( _3 :: _1 )}
 
 constructor_declarations_ext:
-| _1 = constructor_declarations
+_1 = constructor_declarations
     {                                                 ( _1 )}
 | _1 = tag_constructor_declarations
     {                                                 ( _1 )}
 
 tag_constructor_declarations:
-| _1 = tag_constructor_declaration
+_1 = tag_constructor_declaration
     {                                                    ( [_1] )}
 | _1 = tag_constructor_declarations _2 = BAR _3 = tag_constructor_declaration
     {                                                                 ( _3 :: _1 )}
 
 tag_constructor_declaration:
-| _1 = constr_ident _2 = LBRACKET _3 = INT _4 = RBRACKET _5 = ext_constructor_arguments
+_1 = constr_ident _2 = LBRACKET _3 = INT _4 = RBRACKET _5 = ext_constructor_arguments
     {                                             ( (_1, Some _3,_5) )}
 
 constructor_declaration:
-| _1 = constr_ident _2 = ext_constructor_arguments
+_1 = constr_ident _2 = ext_constructor_arguments
     {                                              ( (_1, None, _2) )}
 
 constructor_arguments:
-| 
+
     {                                                ( [] )}
 | _1 = OF _2 = core_type_list
     {                                                ( List.rev _2 )}
 
 ext_constructor_arguments:
-| 
+
     {                                                 ( Pconstr_tuple[])}
 | _1 = OF _2 = core_type_list
     {                                                 ( Pconstr_tuple(List.rev _2))}
@@ -1309,23 +1309,23 @@ ext_constructor_arguments:
     {                                                 ( Pconstr_record(List.rev _3))}
 
 label_declarations:
-| _1 = label_declaration
+_1 = label_declaration
     {                                                ( [_1] )}
 | _1 = label_declarations _2 = SEMI _3 = label_declaration
     {                                                ( _3 :: _1 )}
 
 label_declaration:
-| _1 = mutable_flag _2 = LIDENT _3 = COLON _4 = core_type
+_1 = mutable_flag _2 = LIDENT _3 = COLON _4 = core_type
     {                                                ( (_2, _1, _4) )}
 
 with_constraints:
-| _1 = with_constraint
+_1 = with_constraint
     {                                                ( [_1] )}
 | _1 = with_constraints _2 = AND _3 = with_constraint
     {                                                ( _3 :: _1 )}
 
 with_constraint:
-| _1 = TYPE _2 = type_parameters _3 = label_longident _4 = EQUAL _5 = core_type _6 = constraints
+_1 = TYPE _2 = type_parameters _3 = label_longident _4 = EQUAL _5 = core_type _6 = constraints
     {      ( (_3, Pwith_type {ptype_params = _2;
                          ptype_cstrs = List.rev _6;
                          ptype_kind = Ptype_abstract;
@@ -1335,7 +1335,7 @@ with_constraint:
     {      ( (_2, Pwith_module _4) )}
 
 core_type:
-| _1 = simple_core_type
+_1 = simple_core_type
     {      ( _1 )}
 | _1 = core_type _2 = MINUSGREATER _3 = core_type %prec prec_type_arrow
     {      ( mktyp(Ptyp_arrow(_1, _3)) )}
@@ -1345,7 +1345,7 @@ core_type:
     {      ( mktyp(Ptyp_alias(_1, _3)) )}
 
 simple_core_type:
-| _1 = QUOTE _2 = ident
+_1 = QUOTE _2 = ident
     {      ( mktyp(Ptyp_var _2) )}
 | _1 = LESSLESS _2 = core_type _3 = GREATERGREATER
     {      ( mktyp(Ptyp_channel(_2,Pasync)) )}
@@ -1371,25 +1371,25 @@ simple_core_type:
     {      ( mktyp(Ptyp_class(_5, List.rev _2)) )}
 
 core_type_tuple:
-| _1 = simple_core_type _2 = STAR _3 = simple_core_type
+_1 = simple_core_type _2 = STAR _3 = simple_core_type
     {                                                ( [_3; _1] )}
 | _1 = core_type_tuple _2 = STAR _3 = simple_core_type
     {                                                ( _3 :: _1 )}
 
 core_type_comma_list:
-| _1 = core_type _2 = COMMA _3 = core_type
+_1 = core_type _2 = COMMA _3 = core_type
     {                                                ( [_3; _1] )}
 | _1 = core_type_comma_list _2 = COMMA _3 = core_type
     {                                                ( _3 :: _1 )}
 
 core_type_list:
-| _1 = simple_core_type
+_1 = simple_core_type
     {                                                ( [_1] )}
 | _1 = core_type_list _2 = STAR _3 = simple_core_type
     {                                                ( _3 :: _1 )}
 
 meth_list:
-| _1 = field _2 = SEMI _3 = meth_list
+_1 = field _2 = SEMI _3 = meth_list
     {                                                ( _1 :: _3 )}
 | _1 = field _2 = opt_semi
     {                                                ( [_1] )}
@@ -1397,15 +1397,15 @@ meth_list:
     {                                                ( [mkfield Pfield_var] )}
 
 field:
-| _1 = label _2 = COLON _3 = core_type
+_1 = label _2 = COLON _3 = core_type
     {                                                ( mkfield(Pfield(_1, _3)) )}
 
 label:
-| _1 = LIDENT
+_1 = LIDENT
     {                                                ( _1 )}
 
 constant:
-| _1 = INT
+_1 = INT
     {                                                ( Const_int _1 )}
 | _1 = CHAR
     {                                                ( Const_char _1 )}
@@ -1415,7 +1415,7 @@ constant:
     {                                                ( Const_float _1 )}
 
 signed_constant:
-| _1 = constant
+_1 = constant
     {                                                ( _1 )}
 | _1 = SUBTRACTIVE _2 = INT
     {                                                ( Const_int(- _2) )}
@@ -1423,19 +1423,19 @@ signed_constant:
     {                                                ( Const_float("-" ^ _2) )}
 
 ident:
-| _1 = UIDENT
+_1 = UIDENT
     {                                                ( _1 )}
 | _1 = LIDENT
     {                                                ( _1 )}
 
 val_ident:
-| _1 = LIDENT
+_1 = LIDENT
     {                                                ( _1 )}
 | _1 = LPAREN _2 = operator _3 = RPAREN
     {                                                ( _2 )}
 
 operator:
-| _1 = PREFIXOP
+_1 = PREFIXOP
     {                                                ( _1 )}
 | _1 = INFIXOP0
     {                                                ( _1 )}
@@ -1469,7 +1469,7 @@ operator:
     {                                                ( ":=" )}
 
 constr_ident:
-| _1 = UIDENT
+_1 = UIDENT
     {                                                ( _1 )}
 | _1 = LBRACKET _2 = RBRACKET
     {                                                ( "[]" )}
@@ -1483,13 +1483,13 @@ constr_ident:
     {                                                ( "true" )}
 
 val_longident:
-| _1 = val_ident
+_1 = val_ident
     {                                                ( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = val_ident
     {                                                ( Ldot(_1, _3) )}
 
 constr_longident:
-| _1 = mod_longident
+_1 = mod_longident
     {                                                ( _1 )}
 | _1 = LBRACKET _2 = RBRACKET
     {                                                ( Lident "[]" )}
@@ -1501,25 +1501,25 @@ constr_longident:
     {                                                ( Lident "true" )}
 
 label_longident:
-| _1 = LIDENT
+_1 = LIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = LIDENT
     {                                                ( Ldot(_1, _3) )}
 
 type_longident:
-| _1 = LIDENT
+_1 = LIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_ext_longident _2 = DOT _3 = LIDENT
     {                                                ( Ldot(_1, _3) )}
 
 mod_longident:
-| _1 = UIDENT
+_1 = UIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = UIDENT
     {                                                ( Ldot(_1, _3) )}
 
 mod_ext_longident:
-| _1 = UIDENT
+_1 = UIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_ext_longident _2 = DOT _3 = UIDENT
     {                                                ( Ldot(_1, _3) )}
@@ -1527,19 +1527,19 @@ mod_ext_longident:
     {                                                      ( Lapply(_1, _3) )}
 
 mty_longident:
-| _1 = ident
+_1 = ident
     {                                                ( Lident _1 )}
 | _1 = mod_ext_longident _2 = DOT _3 = ident
     {                                                ( Ldot(_1, _3) )}
 
 class_longident:
-| _1 = LIDENT
+_1 = LIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = LIDENT
     {                                                ( Ldot(_1, _3) )}
 
 toplevel_directive:
-| _1 = SHARP _2 = ident
+_1 = SHARP _2 = ident
     {                                ( Ptop_dir(_2, Pdir_none) )}
 | _1 = SHARP _2 = ident _3 = STRING
     {                                ( Ptop_dir(_2, Pdir_string _3) )}
@@ -1549,55 +1549,55 @@ toplevel_directive:
     {                                ( Ptop_dir(_2, Pdir_ident _3) )}
 
 rec_flag:
-| 
+
     {                                                ( Nonrecursive )}
 | _1 = REC
     {                                                ( Recursive )}
 
 direction_flag:
-| _1 = TO
+_1 = TO
     {                                                ( Upto )}
 | _1 = DOWNTO
     {                                                ( Downto )}
 
 private_flag:
-| 
+
     {                                                ( Public )}
 | _1 = PRIVATE
     {                                                ( Private )}
 
 protected_flag:
-| 
+
     {                                                ( Public )}
 | _1 = PROTECTED
     {                                                ( Private )}
 
 mutable_flag:
-| 
+
     {                                                ( Immutable )}
 | _1 = MUTABLE
     {                                                ( Mutable )}
 
 virtual_flag:
-| 
+
     {                                                ( Concrete )}
 | _1 = VIRTUAL
     {                                                ( Virtual )}
 
 closed_flag:
-| 
+
     {                                                ( Open )}
 | _1 = CLOSED
     {                                                ( Closed )}
 
 opt_bar:
-| 
+
     {                                                ( () )}
 | _1 = BAR
     {                                                ( () )}
 
 opt_semi:
-| 
+
     {                                                ( () )}
 | _1 = SEMI
     {                                                ( () )}

@@ -44,29 +44,29 @@ Warning: the token RIGHT_BRA is unused.
 %%
 
 poly_interp_entry:
-| _1 = interp _2 = EOF
+_1 = interp _2 = EOF
     {             ( _1 )}
 
 interp:
-| 
+
     {                           ( SymbolMap.empty )}
 | _1 = symbol_interp _2 = EQUAL _3 = poly _4 = SEMICOLON _5 = interp
     {                           ( SymbolMap.add _1 _3 _5 )}
 
 symbol_interp:
-| _1 = INTERP
+_1 = INTERP
     {                            ( current_poly_vars := []; _1 )}
 | _1 = INTERP _2 = LEFT_PAR _3 = vars
     {                           ( current_poly_vars := _3; _1 )}
 
 vars:
-| _1 = VAR _2 = RIGHT_PAR
+_1 = VAR _2 = RIGHT_PAR
     {                           ( [_1] )}
 | _1 = VAR _2 = COMMA _3 = vars
     {                           ( _1::_3 )}
 
 poly:
-| _1 = VAR
+_1 = VAR
     {                           ( var _1 )}
 | _1 = INT
     {                           ( IntPolynomials.cte _1 )}
@@ -89,11 +89,11 @@ poly:
     )}
 
 weight_entry:
-| _1 = weight _2 = EOF
+_1 = weight _2 = EOF
     {             ( _1 )}
 
 weight:
-| 
+
     {                             ( SymbolMap.empty )}
 | _1 = INTERP _2 = EQUAL _3 = INT _4 = SEMICOLON _5 = weight
     {                                    ( SymbolMap.add _1 (Numbers.to_int _3) _5 )}

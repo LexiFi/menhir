@@ -229,17 +229,17 @@ Warning: the token String_raw is unused.
 %%
 
 nothing:
-| _1 = Endofstream
+_1 = Endofstream
     {              ( () )}
 
 translation_unit:
-| _1 = declaration _2 = Endofstream
+_1 = declaration _2 = Endofstream
     {      ( [_1] )}
 | _1 = declaration _2 = translation_unit
     {      ( _1 :: _2 )}
 
 declaration:
-| _1 = declaration_specifiers _2 = init_declarator_list _3 = KW_semicolon
+_1 = declaration_specifiers _2 = init_declarator_list _3 = KW_semicolon
     {      ( let d = {d_specs=_1; d_decl=_2} in
           check_for_typedefs d;
           d
@@ -251,7 +251,7 @@ declaration:
       )}
 
 declaration_specifiers:
-| _1 = storage_class_specifier _2 = declaration_specifiers
+_1 = storage_class_specifier _2 = declaration_specifiers
     {      ( (_1::(fst _2), snd _2) )}
 | _1 = storage_class_specifier
     {      ( ([_1], ([],[])) )}
@@ -265,7 +265,7 @@ declaration_specifiers:
     {      ( ([],([],[_1])) )}
 
 storage_class_specifier:
-| _1 = KW_auto
+_1 = KW_auto
     {                ( S_auto )}
 | _1 = KW_register
     {                ( S_register )}
@@ -277,7 +277,7 @@ storage_class_specifier:
     {                ( S_typedef )}
 
 type_specifier:
-| _1 = KW_void
+_1 = KW_void
     {                                ( T_void )}
 | _1 = KW_char
     {              ( T_char )}
@@ -303,13 +303,13 @@ type_specifier:
     {                  ( T_typedef _1 )}
 
 type_qualifier:
-| _1 = KW_const
+_1 = KW_const
     {                ( Q_const )}
 | _1 = KW_volatile
     {                ( Q_volatile )}
 
 struct_or_union_specifier:
-| _1 = struct_or_union _2 = Ident _3 = KW_obrace _4 = struct_declaration_list _5 = KW_cbrace
+_1 = struct_or_union _2 = Ident _3 = KW_obrace _4 = struct_declaration_list _5 = KW_cbrace
     {      ( {struct_su = _1; struct_tag = Some _2; struct_lst = _4 })}
 | _1 = struct_or_union _2 = Typedef_ident _3 = KW_obrace _4 = struct_declaration_list _5 = KW_cbrace
     {      ( {struct_su = _1; struct_tag = Some _2; struct_lst = _4 })}
@@ -321,29 +321,29 @@ struct_or_union_specifier:
     {      ( {struct_su = _1; struct_tag = Some _2; struct_lst = [] })}
 
 struct_or_union:
-| _1 = KW_struct
+_1 = KW_struct
     {              ( Is_struct )}
 | _1 = KW_union
     {              ( Is_union )}
 
 struct_declaration_list:
-| _1 = struct_declaration
+_1 = struct_declaration
     {      ( [_1] )}
 | _1 = struct_declaration _2 = struct_declaration_list
     {      ( _1 :: _2 )}
 
 init_declarator_list:
-| _1 = declarator
+_1 = declarator
     {      ( [_1] )}
 | _1 = declarator _2 = KW_comma _3 = init_declarator_list
     {      ( _1 :: _3 )}
 
 struct_declaration:
-| _1 = specifier_qualifier_list _2 = struct_declarator_list _3 = KW_semicolon
+_1 = specifier_qualifier_list _2 = struct_declarator_list _3 = KW_semicolon
     {      ( {s_specs = _1; s_decl = _2} )}
 
 specifier_qualifier_list:
-| _1 = type_specifier
+_1 = type_specifier
     {      ( ([_1],[]) )}
 | _1 = type_specifier _2 = specifier_qualifier_list
     {      ( (_1::(fst _2),snd _2) )}
@@ -353,13 +353,13 @@ specifier_qualifier_list:
     {     ( (fst _2,_1::(snd _2)) )}
 
 struct_declarator_list:
-| _1 = declarator
+_1 = declarator
     {      ( [_1] )}
 | _1 = declarator _2 = KW_comma _3 = struct_declarator_list
     {      ( _1 :: _3 )}
 
 enum_specifier:
-| _1 = KW_enum _2 = Ident _3 = KW_obrace _4 = enumerator_list _5 = KW_cbrace
+_1 = KW_enum _2 = Ident _3 = KW_obrace _4 = enumerator_list _5 = KW_cbrace
     {      ( {enum_tag = Some _2; enum_labels =_4 })}
 | _1 = KW_enum _2 = Typedef_ident _3 = KW_obrace _4 = enumerator_list _5 = KW_cbrace
     {      ( {enum_tag = Some _2; enum_labels =_4 })}
@@ -371,25 +371,25 @@ enum_specifier:
     {      ( {enum_tag = Some _2; enum_labels = [] } )}
 
 enumerator_list:
-| _1 = enumerator
+_1 = enumerator
     {      ( [_1] )}
 | _1 = enumerator _2 = KW_comma _3 = enumerator_list
     {      ( _1 :: _3 )}
 
 enumerator:
-| _1 = Ident
+_1 = Ident
     {      ( (_1,None) )}
 | _1 = Ident _2 = KW_assign _3 = Integer_unsuffixed
     {      ( (_1,Some _3) )}
 
 declarator:
-| _1 = direct_declarator
+_1 = direct_declarator
     {      ( _1 )}
 | _1 = pointer _2 = direct_declarator
     {      ( D_pointer (_2,_1) )}
 
 direct_declarator:
-| _1 = Ident
+_1 = Ident
     {      ( D_name _1 )}
 | _1 = KW_oparen _2 = declarator _3 = KW_cparen
     {      ( _2 )}
@@ -401,7 +401,7 @@ direct_declarator:
     {      ( D_function (_1,_3) )}
 
 pointer:
-| _1 = KW_times _2 = type_qualifier_list
+_1 = KW_times _2 = type_qualifier_list
     {      ( [_2] )}
 | _1 = KW_times
     {      ( [[]] )}
@@ -411,25 +411,25 @@ pointer:
     {      ( [] :: _2 )}
 
 type_qualifier_list:
-| _1 = type_qualifier
+_1 = type_qualifier
     {      ( [_1] )}
 | _1 = type_qualifier _2 = type_qualifier_list
     {      ( _1 :: _2 )}
 
 parameter_type_list:
-| _1 = parameter_list
+_1 = parameter_list
     {      ( _1 )}
 | _1 = parameter_list _2 = KW_comma _3 = KW_andsoon
     {      ( _1 @ [P_var] )}
 
 parameter_list:
-| _1 = parameter_declaration
+_1 = parameter_declaration
     {      ( [_1] )}
 | _1 = parameter_list _2 = KW_comma _3 = parameter_declaration
     {      ( _1 @  [_3] )}
 
 parameter_declaration:
-| _1 = declaration_specifiers _2 = declarator
+_1 = declaration_specifiers _2 = declarator
     {      ( P_decl (_1,_2) )}
 | _1 = declaration_specifiers _2 = abstract_declarator
     {      ( P_abs (_1,_2) )}
@@ -437,7 +437,7 @@ parameter_declaration:
     {      ( P_null _1 )}
 
 abstract_declarator:
-| _1 = pointer
+_1 = pointer
     {      ( D_abspointer _1 )}
 | _1 = pointer _2 = direct_abstract_declarator
     {      ( D_pointer (_2,_1) )}
@@ -445,7 +445,7 @@ abstract_declarator:
     {      ( _1 )}
 
 direct_abstract_declarator:
-| _1 = KW_oparen _2 = abstract_declarator _3 = KW_cparen
+_1 = KW_oparen _2 = abstract_declarator _3 = KW_cparen
     {      ( _2 )}
 | _1 = direct_abstract_declarator _2 = KW_obracket _3 = KW_cbracket
     {      ( D_openarray _1 )}
@@ -465,7 +465,7 @@ direct_abstract_declarator:
     {      ( D_absfunction [] )}
 
 typedef_name:
-| _1 = Typedef_ident
+_1 = Typedef_ident
     {       ( _1 )}
 
 %%

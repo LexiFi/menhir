@@ -268,26 +268,26 @@ end
 %%
 
 source_text:
-| _1 = description_list _2 = EOF
+_1 = description_list _2 = EOF
     {   (
 				get_endpos _2;
 				_1
 			)}
 
 description_list:
-| _1 = description
+_1 = description
     {              ( _1::[] )}
 | _1 = description _2 = source_text
     {                             (  _1::_2 )}
 
 description:
-| _1 = module_def
+_1 = module_def
     {             (
 					_1
 				)}
 
 module_def:
-| _1 = KEY_MODULE _2 = IDENTIFIER _3 = list_of_ports_opt _4 = SEMICOLON _5 = module_item_optlist _6 = KEY_ENDMODULE
+_1 = KEY_MODULE _2 = IDENTIFIER _3 = list_of_ports_opt _4 = SEMICOLON _5 = module_item_optlist _6 = KEY_ENDMODULE
     {   (
 				(*print_endline $2;*)
 				get_endpos _6;
@@ -295,42 +295,42 @@ module_def:
 			)}
 
 list_of_ports_opt:
-| 
+
     {   ([])}
 | _1 = list_of_ports
     {                  (_1)}
 
 list_of_ports:
-| _1 = LPAREN _2 = port _3 = comma_port_optlist _4 = RPAREN
+_1 = LPAREN _2 = port _3 = comma_port_optlist _4 = RPAREN
     {   (
 				get_endpos _4;
 				_2::_3
 			)}
 
 comma_port_optlist:
-| 
+
     {   ([])}
 | _1 = comma_port _2 = comma_port_optlist
     {                                   (_1::_2)}
 
 comma_port:
-| _1 = COMMA _2 = port
+_1 = COMMA _2 = port
     {   (
 				_2
 			)}
 
 port:
-| _1 = port_expression_opt
+_1 = port_expression_opt
     {                       (_1)}
 
 port_expression_opt:
-| 
+
     {      ([])}
 | _1 = port_expression
     {                     (_1)}
 
 port_expression:
-| _1 = port_reference
+_1 = port_reference
     {                   ([_1])}
 | _1 = LBRACE _2 = port_reference _3 = comma_port_reference_optlist _4 = RBRACE
     {  (
@@ -339,27 +339,27 @@ port_expression:
 		)}
 
 comma_port_reference_optlist:
-| 
+
     {      ([])}
 | _1 = comma_port_reference _2 = comma_port_reference_optlist
     {                                                     (_1::_2)}
 
 comma_port_reference:
-| _1 = COMMA _2 = port_reference
+_1 = COMMA _2 = port_reference
     {                        (_2)}
 
 port_reference:
-| _1 = IDENTIFIER
+_1 = IDENTIFIER
     {               (_1)}
 
 module_item_optlist:
-| 
+
     {     ([])}
 | _1 = module_item _2 = module_item_optlist
     {                                    (_1::_2)}
 
 module_item:
-| _1 = parameter_declaration
+_1 = parameter_declaration
     {                          (_1)}
 | _1 = input_declaration
     {                        (_1)}
@@ -399,26 +399,26 @@ module_item:
     {                        (_1)}
 
 function_avoid_amb:
-| _1 = KEY_FUNCTION _2 = range_or_type_opt _3 = IDENTIFIER _4 = SEMICOLON _5 = tf_declaration_list _6 = statement _7 = KEY_ENDFUNCTION
+_1 = KEY_FUNCTION _2 = range_or_type_opt _3 = IDENTIFIER _4 = SEMICOLON _5 = tf_declaration_list _6 = statement _7 = KEY_ENDFUNCTION
     {   (
 				get_endpos _7;
 				T_function_avoid_amb(_2,_3,_5,_6)
 			)}
 
 tf_declaration_list:
-| _1 = tf_declaration
+_1 = tf_declaration
     {                  ([_1])}
 | _1 = tf_declaration _2 = tf_declaration_list
     {                                       (_1::_2)}
 
 range_or_type_opt:
-| 
+
     {    (T_range_or_type_NOSPEC)}
 | _1 = range_or_type
     {                  (_1)}
 
 range_or_type:
-| _1 = range
+_1 = range
     {       (T_range_or_type_range(_1))}
 | _1 = KEY_INTEGER
     {                 (T_range_or_type_INTEGER)}
@@ -426,20 +426,20 @@ range_or_type:
     {              (T_range_or_type_REAL)}
 
 task:
-| _1 = KEY_TASK _2 = IDENTIFIER _3 = SEMICOLON _4 = tf_declaration_optlist _5 = statement_or_null _6 = KEY_ENDTASK
+_1 = KEY_TASK _2 = IDENTIFIER _3 = SEMICOLON _4 = tf_declaration_optlist _5 = statement_or_null _6 = KEY_ENDTASK
     {  (
 			get_endpos _6;
 			T_task(_2,_4,_5)
 		)}
 
 tf_declaration_optlist:
-| 
+
     {   ([])}
 | _1 = tf_declaration _2 = tf_declaration_optlist
     {                                         (_1::_2)}
 
 tf_declaration:
-| _1 = parameter_declaration
+_1 = parameter_declaration
     {                       (_1)}
 | _1 = input_declaration
     {                     (_1)}
@@ -459,24 +459,24 @@ tf_declaration:
     {                     (_1)}
 
 initial_statement:
-| _1 = KEY_INITIAL _2 = statement
+_1 = KEY_INITIAL _2 = statement
     {                          (_2)}
 
 specify_block:
-| _1 = KEY_SPECIFY _2 = specify_item_optlist _3 = KEY_ENDSPECIFY
+_1 = KEY_SPECIFY _2 = specify_item_optlist _3 = KEY_ENDSPECIFY
     {  (
 			get_endpos _3;
 			T_specify_block(_2)
 		)}
 
 specify_item_optlist:
-| 
+
     {   ([])}
 | _1 = specify_item _2 = specify_item_optlist
     {                                     (_1::_2)}
 
 specify_item:
-| _1 = specparam_declaration
+_1 = specparam_declaration
     {                       (0)}
 | _1 = path_declaration
     {                     (0)}
@@ -490,14 +490,14 @@ specify_item:
     {        (0)}
 
 sdpd:
-| _1 = KEY_IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = path_description _6 = SINGLEASSIGN _7 = path_delay_value _8 = SEMICOLON
+_1 = KEY_IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = path_description _6 = SINGLEASSIGN _7 = path_delay_value _8 = SEMICOLON
     {  (
 			get_endpos _8;
 			0
 		)}
 
 system_timing_check:
-| _1 = DOLLOR_SETUP _2 = LPAREN _3 = timing_check_event _4 = COMMA _5 = timing_check_event _6 = COMMA _7 = timing_check_limit _8 = comma_notify_register_opt _9 = RPAREN _10 = SEMICOLON
+_1 = DOLLOR_SETUP _2 = LPAREN _3 = timing_check_event _4 = COMMA _5 = timing_check_event _6 = COMMA _7 = timing_check_limit _8 = comma_notify_register_opt _9 = RPAREN _10 = SEMICOLON
     { (
 		get_endpos _10;
 		0
@@ -534,63 +534,63 @@ system_timing_check:
 	)}
 
 comma_constant_expression_comma_notify_register_opt:
-| 
+
     {   (0)}
 | _1 = comma_constant_expression_comma_notify_register
     {                                                   (0)}
 
 comma_constant_expression_comma_notify_register:
-| _1 = COMMA _2 = constant_expression _3 = COMMA _4 = notify_register
+_1 = COMMA _2 = constant_expression _3 = COMMA _4 = notify_register
     {                                                  (0)}
 
 notify_register:
-| _1 = identifier
+_1 = identifier
     {             (0)}
 
 controlled_timing_check_event:
-| _1 = timing_check_event_control _2 = specify_terminal_descriptor _3 = and3_timing_check_condition_opt
+_1 = timing_check_event_control _2 = specify_terminal_descriptor _3 = and3_timing_check_condition_opt
     {                                                                                         (0)}
 
 and3_timing_check_condition_opt:
-| 
+
     {   (0)}
 | _1 = and3_timing_check_condition
     {                                (0)}
 
 and3_timing_check_condition:
-| _1 = AND3 _2 = timing_check_condition
+_1 = AND3 _2 = timing_check_condition
     {                              (0)}
 
 timing_check_condition:
-| _1 = expression
+_1 = expression
     {             (0)}
 
 comma_notify_register_opt:
-| 
+
     {   (0)}
 | _1 = comma_notify_register
     {                         (0)}
 
 comma_notify_register:
-| _1 = COMMA _2 = notify_register
+_1 = COMMA _2 = notify_register
     {                        (0)}
 
 timing_check_limit:
-| _1 = expression
+_1 = expression
     {             (0)}
 
 timing_check_event:
-| _1 = timing_check_event_control_opt _2 = specify_terminal_descriptor _3 = and3_timing_check_condition_opt
+_1 = timing_check_event_control_opt _2 = specify_terminal_descriptor _3 = and3_timing_check_condition_opt
     {                                                                                              (0)}
 
 timing_check_event_control_opt:
-| 
+
     {   (0)}
 | _1 = timing_check_event_control
     {                              (0)}
 
 timing_check_event_control:
-| _1 = KEY_POSEDGE
+_1 = KEY_POSEDGE
     { (
 		get_endpos _1;
 		0
@@ -604,28 +604,28 @@ timing_check_event_control:
     {                          (0)}
 
 edge_control_specifier:
-| _1 = KEY_EDGE _2 = LBRACKET _3 = edge_descriptor _4 = comma_edge_descriptor_optlist _5 = RBRACKET
+_1 = KEY_EDGE _2 = LBRACKET _3 = edge_descriptor _4 = comma_edge_descriptor_optlist _5 = RBRACKET
     { (
 		get_endpos _5;
 		0
 	)}
 
 edge_descriptor:
-| 
+
     {  (print_string "no supported edge_descriptor";0)}
 
 comma_edge_descriptor_optlist:
-| 
+
     {   (0)}
 | _1 = comma_edge_descriptor _2 = comma_edge_descriptor_optlist
     {                                                       (0)}
 
 comma_edge_descriptor:
-| _1 = COMMA _2 = edge_descriptor
+_1 = COMMA _2 = edge_descriptor
     {                        (0)}
 
 edge_sensitive_path_declaration:
-| _1 = KEY_IF_LPAREN_expression_RPAREN_opt _2 = LPAREN _3 = edge_identifier_opt _4 = specify_terminal_descriptor _5 = PATHTO _6 = LPAREN _7 = specify_terminal_descriptor _8 = polarity_operator _9 = QUESTION_MARK_COLON _10 = data_source_expression _11 = RPAREN _12 = RPAREN _13 = SINGLEASSIGN _14 = path_delay_value _15 = SEMICOLON
+_1 = KEY_IF_LPAREN_expression_RPAREN_opt _2 = LPAREN _3 = edge_identifier_opt _4 = specify_terminal_descriptor _5 = PATHTO _6 = LPAREN _7 = specify_terminal_descriptor _8 = polarity_operator _9 = QUESTION_MARK_COLON _10 = data_source_expression _11 = RPAREN _12 = RPAREN _13 = SINGLEASSIGN _14 = path_delay_value _15 = SEMICOLON
     { (
 		get_endpos _15;
 		0
@@ -637,31 +637,31 @@ edge_sensitive_path_declaration:
 	)}
 
 list_of_path_input_outputs:
-| _1 = specify_terminal_descriptor _2 = comma_specify_terminal_descriptor_optlist
+_1 = specify_terminal_descriptor _2 = comma_specify_terminal_descriptor_optlist
     {                                                                       (0)}
 
 comma_specify_terminal_descriptor_optlist:
-| 
+
     {   (0)}
 | _1 = comma_specify_terminal_descriptor _2 = comma_specify_terminal_descriptor_optlist
     {                                                                               (0)}
 
 comma_specify_terminal_descriptor:
-| _1 = COMMA _2 = specify_terminal_descriptor
+_1 = COMMA _2 = specify_terminal_descriptor
     {                                   (0)}
 
 data_source_expression:
-| _1 = expression
+_1 = expression
     {             (0)}
 
 edge_identifier_opt:
-| 
+
     {  (0)}
 | _1 = edge_identifier
     {                    (0)}
 
 edge_identifier:
-| _1 = KEY_POSEDGE
+_1 = KEY_POSEDGE
     { (
 		get_endpos _1;
 		0
@@ -673,7 +673,7 @@ edge_identifier:
 	)}
 
 polarity_operator:
-| _1 = ADD
+_1 = ADD
     { (
 		get_endpos _1;
 		0
@@ -685,7 +685,7 @@ polarity_operator:
 	)}
 
 KEY_IF_LPAREN_expression_RPAREN_opt:
-| 
+
     {   (0)}
 | _1 = KEY_IF _2 = LPAREN _3 = expression _4 = RPAREN
     { (
@@ -694,7 +694,7 @@ KEY_IF_LPAREN_expression_RPAREN_opt:
 	)}
 
 level_sensitive_path_declaration:
-| _1 = KEY_IF _2 = LPAREN _3 = conditional_port_expression _4 = RPAREN _5 = LPAREN _6 = specify_terminal_descriptor _7 = polarity_operator_opt _8 = PATHTO _9 = specify_terminal_descriptor _10 = RPAREN _11 = SINGLEASSIGN _12 = path_delay_value _13 = SEMICOLON
+_1 = KEY_IF _2 = LPAREN _3 = conditional_port_expression _4 = RPAREN _5 = LPAREN _6 = specify_terminal_descriptor _7 = polarity_operator_opt _8 = PATHTO _9 = specify_terminal_descriptor _10 = RPAREN _11 = SINGLEASSIGN _12 = path_delay_value _13 = SEMICOLON
     { (
 		get_endpos _13;
 		0
@@ -706,7 +706,7 @@ level_sensitive_path_declaration:
 	)}
 
 specify_terminal_descriptor:
-| _1 = IDENTIFIER
+_1 = IDENTIFIER
     {            (0)}
 | _1 = IDENTIFIER _2 = LBRACKET _3 = expression _4 = RBRACKET
     { (
@@ -720,24 +720,24 @@ specify_terminal_descriptor:
 	)}
 
 polarity_operator_opt:
-| 
+
     {  (0)}
 | _1 = polarity_operator
     {                     (0)}
 
 conditional_port_expression:
-| _1 = expression
+_1 = expression
     {             (0)}
 
 path_declaration:
-| _1 = path_description _2 = SINGLEASSIGN _3 = path_delay_value _4 = SEMICOLON
+_1 = path_description _2 = SINGLEASSIGN _3 = path_delay_value _4 = SEMICOLON
     { (
 		get_endpos _4;
 		0
 	)}
 
 path_description:
-| _1 = LPAREN _2 = specify_terminal_descriptor _3 = PATHTO _4 = specify_terminal_descriptor _5 = RPAREN
+_1 = LPAREN _2 = specify_terminal_descriptor _3 = PATHTO _4 = specify_terminal_descriptor _5 = RPAREN
     { (
 		get_endpos _5;
 		0
@@ -749,7 +749,7 @@ path_description:
 	)}
 
 path_delay_value:
-| _1 = path_delay_expression
+_1 = path_delay_expression
     {                         (0)}
 | _1 = LPAREN _2 = path_delay_expression _3 = COMMA _4 = path_delay_expression _5 = RPAREN
     { (
@@ -768,93 +768,93 @@ path_delay_value:
 	)}
 
 path_delay_expression:
-| _1 = mintypmax_expression
+_1 = mintypmax_expression
     {                      (0)}
 
 specparam_declaration:
-| _1 = KEY_SPECPARAM _2 = list_of_param_assignments _3 = SEMICOLON
+_1 = KEY_SPECPARAM _2 = list_of_param_assignments _3 = SEMICOLON
     { (
 		get_endpos _3;
 		0
 	)}
 
 parameter_override:
-| _1 = KEY_DEFPARAM _2 = list_of_param_assignments _3 = SEMICOLON
+_1 = KEY_DEFPARAM _2 = list_of_param_assignments _3 = SEMICOLON
     { (
 		get_endpos _3;
 		T_parameter_override(_2)
 	)}
 
 gate_declaration:
-| _1 = GATETYPE _2 = drive_strength_opt _3 = delay_opt _4 = gate_instance _5 = comma_gate_instance_optlist _6 = SEMICOLON
+_1 = GATETYPE _2 = drive_strength_opt _3 = delay_opt _4 = gate_instance _5 = comma_gate_instance_optlist _6 = SEMICOLON
     { (
 		get_endpos _6;
 		T_gate_declaration(_1,_2,_3,(_4::_5))
 	)}
 
 comma_gate_instance_optlist:
-| 
+
     {    ([])}
 | _1 = comma_gate_instance _2 = comma_gate_instance_optlist
     {                                                    (_1::_2)}
 
 comma_gate_instance:
-| _1 = COMMA _2 = gate_instance
+_1 = COMMA _2 = gate_instance
     {                       (_2)}
 
 gate_instance:
-| _1 = name_of_gate_instance_opt _2 = LPAREN _3 = terminal _4 = comma_terminal_optlist _5 = RPAREN
+_1 = name_of_gate_instance_opt _2 = LPAREN _3 = terminal _4 = comma_terminal_optlist _5 = RPAREN
     {  (
 			get_endpos _5;
 			T_gate_instance(_1,(_3::_4))
 		)}
 
 name_of_gate_instance_opt:
-| 
+
     {    ("")}
 | _1 = IDENTIFIER
     {              (_1)}
 
 comma_terminal_optlist:
-| 
+
     {    ([])}
 | _1 = comma_terminal _2 = comma_terminal_optlist
     {                                         (_1::_2)}
 
 comma_terminal:
-| _1 = COMMA _2 = terminal
+_1 = COMMA _2 = terminal
     {                  (_2)}
 
 terminal:
-| _1 = expression
+_1 = expression
     {                      (_1)}
 
 drive_strength_opt:
-| 
+
     {   (T_drive_strength_NOSPEC)}
 | _1 = drive_strength
     {                  (_1)}
 
 integer_declaration:
-| _1 = KEY_INTEGER _2 = list_of_register_variables _3 = SEMICOLON
+_1 = KEY_INTEGER _2 = list_of_register_variables _3 = SEMICOLON
     {  (
 			get_endpos _3;
 			_2
 		)}
 
 time_declaration:
-| _1 = KEY_TIME _2 = list_of_register_variables _3 = SEMICOLON
+_1 = KEY_TIME _2 = list_of_register_variables _3 = SEMICOLON
     {  (
 			get_endpos _3;
 			_2
 		)}
 
 always_statement:
-| _1 = KEY_ALWAYS _2 = statement
+_1 = KEY_ALWAYS _2 = statement
     {                        (_2)}
 
 statement:
-| _1 = blocking_assignment _2 = SEMICOLON
+_1 = blocking_assignment _2 = SEMICOLON
     {  (
 			get_endpos _2;
 			T_blocking_assignment(_1)
@@ -980,19 +980,19 @@ statement:
 		)}
 
 statement_optlist:
-| 
+
     {    ([])}
 | _1 = statement _2 = statement_optlist
     {                               (_1::_2)}
 
 block_declaration_optlist:
-| 
+
     {    ([])}
 | _1 = block_declaration _2 = block_declaration_optlist
     {                                                  (_1::_2)}
 
 block_declaration:
-| _1 = parameter_declaration
+_1 = parameter_declaration
     {                       (_1)}
 | _1 = reg_declaration
     {                   (_1)}
@@ -1006,67 +1006,67 @@ block_declaration:
     {                     (_1)}
 
 event_declaration:
-| _1 = KEY_EVENT _2 = name_of_event _3 = comma_name_of_event_optlist _4 = SEMICOLON
+_1 = KEY_EVENT _2 = name_of_event _3 = comma_name_of_event_optlist _4 = SEMICOLON
     {  (
 			get_endpos _4;
 			T_event_declaration(_2::_3)
 		)}
 
 comma_name_of_event_optlist:
-| 
+
     {    ([])}
 | _1 = comma_name_of_event _2 = comma_name_of_event_optlist
     {                                                   (_1::_2)}
 
 comma_name_of_event:
-| _1 = COMMA _2 = name_of_event
+_1 = COMMA _2 = name_of_event
     {                       (_2)}
 
 name_of_event:
-| _1 = IDENTIFIER
+_1 = IDENTIFIER
     {             (_1)}
 
 real_declaration:
-| _1 = KEY_REAL _2 = list_of_variables _3 = SEMICOLON
+_1 = KEY_REAL _2 = list_of_variables _3 = SEMICOLON
     {  (
 			get_endpos _3;
 			T_real_declaration(_2)
 		)}
 
 parameter_declaration:
-| _1 = KEY_PARAMETER _2 = list_of_param_assignments _3 = SEMICOLON
+_1 = KEY_PARAMETER _2 = list_of_param_assignments _3 = SEMICOLON
     {  (
 			get_endpos _3;
 			T_parameter_declaration(_2)
 		)}
 
 list_of_param_assignments:
-| _1 = param_assignment _2 = comma_param_assignment_optlist
+_1 = param_assignment _2 = comma_param_assignment_optlist
     {                                                  (_1::_2)}
 
 comma_param_assignment_optlist:
-| 
+
     {   ([])}
 | _1 = comma_param_assignment _2 = comma_param_assignment_optlist
     {                                                          (_1::_2)}
 
 comma_param_assignment:
-| _1 = COMMA _2 = param_assignment
+_1 = COMMA _2 = param_assignment
     {                         (_2)}
 
 param_assignment:
-| _1 = identifier _2 = SINGLEASSIGN _3 = constant_expression
+_1 = identifier _2 = SINGLEASSIGN _3 = constant_expression
     {  (
 			get_endpos _2;
 			T_param_assignment(_1,_3)
 		)}
 
 name_of_system_task:
-| _1 = DOLLOR_SYSTEM_IDENTIFIER
+_1 = DOLLOR_SYSTEM_IDENTIFIER
     {                          (_1)}
 
 event_control:
-| _1 = AT _2 = identifier
+_1 = AT _2 = identifier
     {  (
 			get_endpos _1;
 			T_event_control_id(_2)
@@ -1078,25 +1078,25 @@ event_control:
 		)}
 
 event_expression_list:
-| _1 = event_expression _2 = or_event_expression_optlist
+_1 = event_expression _2 = or_event_expression_optlist
     {                                                (_1::_2)}
 | _1 = event_expression _2 = comma_event_expression_optlist
     {                                                     (_1::_2)}
 
 or_event_expression_optlist:
-| 
+
     {   ([])}
 | _1 = KEY_OR _2 = event_expression _3 = or_event_expression_optlist
     {                                                        (_2::_3)}
 
 comma_event_expression_optlist:
-| 
+
     {   ([])}
 | _1 = COMMA _2 = event_expression _3 = comma_event_expression_optlist
     {                                                         (_2::_3)}
 
 event_expression:
-| _1 = expression
+_1 = expression
     {              (T_event_expression(_1))}
 | _1 = KEY_POSEDGE _2 = SCALAR_EVENT_EXPRESSION
     {                                         (T_event_expression_posedge(_2))}
@@ -1104,21 +1104,21 @@ event_expression:
     {                                         (T_event_expression_negedge(_2))}
 
 SCALAR_EVENT_EXPRESSION:
-| _1 = expression
+_1 = expression
     {              (_1)}
 
 delay_control:
-| _1 = JING _2 = expression
+_1 = JING _2 = expression
     {                   (T_delay_control(_2))}
 
 case_item_list:
-| _1 = case_item
+_1 = case_item
     {             ([_1])}
 | _1 = case_item _2 = case_item_list
     {                              (_1::_2)}
 
 case_item:
-| _1 = expression _2 = comma_expression_optlist _3 = COLON _4 = statement_or_null
+_1 = expression _2 = comma_expression_optlist _3 = COLON _4 = statement_or_null
     {                                                               (T_case_item_normal(_1::_2,_4))}
 | _1 = KEY_DEFAULT _2 = COLON _3 = statement_or_null
     {                                         (T_case_item_default(_3))}
@@ -1126,7 +1126,7 @@ case_item:
     {                                   (T_case_item_default(_2))}
 
 blocking_assignment:
-| _1 = lvalue _2 = SINGLEASSIGN _3 = expression
+_1 = lvalue _2 = SINGLEASSIGN _3 = expression
     {                                  (T_blocking_assignment_direct(_1,_3))}
 | _1 = lvalue _2 = SINGLEASSIGN _3 = delay_control _4 = expression
     {                                                   (T_blocking_assignment_delay(_1,_4,_3))}
@@ -1134,7 +1134,7 @@ blocking_assignment:
     {                                                  (T_blocking_assignment_event(_1,_4,_3))}
 
 non_blocking_assignment:
-| _1 = lvalue _2 = LE _3 = expression
+_1 = lvalue _2 = LE _3 = expression
     {                        (T_non_blocking_assignment_direct(_1,_3))}
 | _1 = lvalue _2 = LE _3 = delay_control _4 = expression
     {                                        (T_non_blocking_assignment_delay(_1,_4,_3))}
@@ -1142,7 +1142,7 @@ non_blocking_assignment:
     {                                         (T_non_blocking_assignment_event(_1,_4,_3))}
 
 statement_or_null:
-| _1 = statement
+_1 = statement
     {           (_1)}
 | _1 = SEMICOLON
     {  (
@@ -1151,28 +1151,28 @@ statement_or_null:
 		)}
 
 reg_declaration:
-| _1 = KEY_REG _2 = range_opt _3 = list_of_register_variables _4 = SEMICOLON
+_1 = KEY_REG _2 = range_opt _3 = list_of_register_variables _4 = SEMICOLON
     {  (
 			get_endpos _4;
 			T_reg_declaration(_2,_3)
 		)}
 
 list_of_register_variables:
-| _1 = register_variable _2 = comma_register_variable_optlist
+_1 = register_variable _2 = comma_register_variable_optlist
     {                                                    (_1::_2)}
 
 comma_register_variable_optlist:
-| 
+
     {   ([])}
 | _1 = comma_register_variable _2 = comma_register_variable_optlist
     {                                                            (_1::_2)}
 
 comma_register_variable:
-| _1 = COMMA _2 = register_variable
+_1 = COMMA _2 = register_variable
     {                           (_2)}
 
 register_variable:
-| _1 = IDENTIFIER
+_1 = IDENTIFIER
     {            (T_register_variables_ID(_1))}
 | _1 = IDENTIFIER _2 = LBRACKET _3 = constant_expression _4 = COLON _5 = constant_expression _6 = RBRACKET
     {  (
@@ -1181,47 +1181,47 @@ register_variable:
 		)}
 
 module_instantiation:
-| _1 = IDENTIFIER _2 = drive_strength_opt _3 = parameter_value_assignment_opt _4 = module_instance _5 = comma_module_instance_optlist _6 = SEMICOLON
+_1 = IDENTIFIER _2 = drive_strength_opt _3 = parameter_value_assignment_opt _4 = module_instance _5 = comma_module_instance_optlist _6 = SEMICOLON
     {  (
 			get_endpos _6;
 			T_module_instantiation(_1,_2,_3,_4::_5)
 		)}
 
 comma_module_instance_optlist:
-| 
+
     {   ([])}
 | _1 = comma_module_instance _2 = comma_module_instance_optlist
     {                                                         (_1::_2)}
 
 comma_module_instance:
-| _1 = COMMA _2 = module_instance
+_1 = COMMA _2 = module_instance
     {                          (_2)}
 
 module_instance:
-| _1 = IDENTIFIER _2 = LPAREN _3 = list_of_module_connections _4 = RPAREN
+_1 = IDENTIFIER _2 = LPAREN _3 = list_of_module_connections _4 = RPAREN
     {  (
 			get_endpos _4;
 			T_module_instance(_1,_3)
 		)}
 
 list_of_module_connections:
-| _1 = module_port_connection _2 = comma_module_port_connection_optlist
+_1 = module_port_connection _2 = comma_module_port_connection_optlist
     {                                                             (T_list_of_module_connections_unnamed(_1::_2))}
 | _1 = named_port_connection _2 = comma_named_port_connection_optlist
     {                                                                 (T_list_of_module_connections_named(_1::_2))}
 
 comma_named_port_connection_optlist:
-| 
+
     {    ([])}
 | _1 = comma_named_port_connection _2 = comma_named_port_connection_optlist
     {                                                                    (_1::_2)}
 
 comma_named_port_connection:
-| _1 = COMMA _2 = named_port_connection
+_1 = COMMA _2 = named_port_connection
     {                               (_2)}
 
 named_port_connection:
-| _1 = DOT _2 = IDENTIFIER _3 = LPAREN _4 = RPAREN
+_1 = DOT _2 = IDENTIFIER _3 = LPAREN _4 = RPAREN
     {  (
 			get_endpos _4;
 			T_named_port_connection(_2,T_expression_NOSPEC(0))
@@ -1233,36 +1233,36 @@ named_port_connection:
 		)}
 
 comma_module_port_connection_optlist:
-| 
+
     {    ([])}
 | _1 = comma_module_port_connection _2 = comma_module_port_connection_optlist
     {                                                                      (_1::_2)}
 
 comma_module_port_connection:
-| _1 = COMMA _2 = module_port_connection
+_1 = COMMA _2 = module_port_connection
     {                                 (_2)}
 
 module_port_connection:
-| 
+
     {                   (T_expression_NOSPEC(0))}
 | _1 = expression
     {              (_1)}
 
 parameter_value_assignment_opt:
-| 
+
     {                        ([])}
 | _1 = parameter_value_assignment
     {                               (_1)}
 
 parameter_value_assignment:
-| _1 = JING _2 = LPAREN _3 = expression _4 = comma_expression_optlist _5 = RPAREN
+_1 = JING _2 = LPAREN _3 = expression _4 = comma_expression_optlist _5 = RPAREN
     {  (
 			get_endpos _5;
 			_3::_4
 		)}
 
 continuous_assign:
-| _1 = KEY_ASSIGN _2 = delay_opt _3 = list_of_assignments _4 = SEMICOLON
+_1 = KEY_ASSIGN _2 = delay_opt _3 = list_of_assignments _4 = SEMICOLON
     {   (
 			get_endpos _4;
 			T_continuous_assign_assign(T_drive_strength_NOSPEC,_2,_3)
@@ -1284,25 +1284,25 @@ continuous_assign:
 		)}
 
 list_of_assignments:
-| _1 = assignment _2 = comma_assignment_optlist
+_1 = assignment _2 = comma_assignment_optlist
     {                                       (_1::_2)}
 
 comma_assignment_optlist:
-| 
+
     {   ([])}
 | _1 = comma_assignment _2 = comma_assignment_optlist
     {                                              (_1::_2)}
 
 comma_assignment:
-| _1 = COMMA _2 = assignment
+_1 = COMMA _2 = assignment
     {                   (_2)}
 
 assignment:
-| _1 = lvalue _2 = SINGLEASSIGN _3 = expression
+_1 = lvalue _2 = SINGLEASSIGN _3 = expression
     {                                 (T_assignment(_1,_3))}
 
 lvalue:
-| _1 = identifier
+_1 = identifier
     {              (T_lvalue_id(_1))}
 | _1 = identifier _2 = LBRACKET _3 = expression _4 = RBRACKET
     {  (
@@ -1318,7 +1318,7 @@ lvalue:
     {                  (T_lvalue_concat(_1))}
 
 expression:
-| _1 = primary
+_1 = primary
     {           (T_primary(_1))}
 | _1 = ADD _2 = primary %prec UADD
     {                            (T_add1(_2))}
@@ -1388,7 +1388,7 @@ expression:
     {            (T_string(_1))}
 
 primary:
-| _1 = number
+_1 = number
     {          (T_primary_num(_1))}
 | _1 = identifier
     {               (T_primary_id(_1))}
@@ -1425,37 +1425,37 @@ primary:
 		)}
 
 multiple_concatenation:
-| _1 = LBRACE _2 = expression _3 = LBRACE _4 = expression _5 = comma_expression_optlist _6 = RBRACE _7 = RBRACE
+_1 = LBRACE _2 = expression _3 = LBRACE _4 = expression _5 = comma_expression_optlist _6 = RBRACE _7 = RBRACE
     {  (
 			get_endpos _7;
 			T_primary_multiconcat(_2,_4::_5)
 		)}
 
 concatenation:
-| _1 = LBRACE _2 = expression _3 = comma_expression_optlist _4 = RBRACE
+_1 = LBRACE _2 = expression _3 = comma_expression_optlist _4 = RBRACE
     {  (
 			get_endpos _4;
 			_2::_3
 		)}
 
 comma_expression_optlist:
-| 
+
     {    ([])}
 | _1 = comma_expression _2 = comma_expression_optlist
     {                                               (_1::_2)}
 
 mintypmax_expression:
-| _1 = expression
+_1 = expression
     {            (T_mintypmax_expression_1(_1))}
 | _1 = expression _2 = COLON _3 = expression _4 = COLON _5 = expression
     {                                                  (T_mintypmax_expression_3(_1,_3,_5))}
 
 comma_expression:
-| _1 = COMMA _2 = expression
+_1 = COMMA _2 = expression
     {                    (_2)}
 
 number:
-| _1 = UNSIGNED_NUMBER
+_1 = UNSIGNED_NUMBER
     {                    (T_number_unsign(int_of_string (delunderscore _1)))}
 | _1 = BASE_NUMBER
     {                (string2base_number _1)}
@@ -1465,21 +1465,21 @@ number:
     {                (T_number_float(float_of_string (delunderscore _1)))}
 
 identifier:
-| _1 = IDENTIFIER _2 = dot_IDENTIFIER_optlist
+_1 = IDENTIFIER _2 = dot_IDENTIFIER_optlist
     {                                    (_1::_2)}
 
 dot_IDENTIFIER_optlist:
-| 
+
     {    ([])}
 | _1 = dot_IDENTIFIER _2 = dot_IDENTIFIER_optlist
     {                                         (_1::_2)}
 
 dot_IDENTIFIER:
-| _1 = DOT _2 = IDENTIFIER
+_1 = DOT _2 = IDENTIFIER
     {                  (_2)}
 
 drive_strength:
-| _1 = LPAREN _2 = STRENGTH0 _3 = COMMA _4 = STRENGTH1 _5 = RPAREN
+_1 = LPAREN _2 = STRENGTH0 _3 = COMMA _4 = STRENGTH1 _5 = RPAREN
     {  (
 			get_endpos _5;
 			T_drive_strength(_2,_4)
@@ -1491,28 +1491,28 @@ drive_strength:
 		)}
 
 input_declaration:
-| _1 = KEY_INPUT _2 = range_opt _3 = list_of_variables _4 = SEMICOLON
+_1 = KEY_INPUT _2 = range_opt _3 = list_of_variables _4 = SEMICOLON
     {  (
 			get_endpos _4;
 			T_input_declaration(_2,_3)
 		)}
 
 output_declaration:
-| _1 = KEY_OUTPUT _2 = range_opt _3 = list_of_variables _4 = SEMICOLON
+_1 = KEY_OUTPUT _2 = range_opt _3 = list_of_variables _4 = SEMICOLON
     {  (
 			get_endpos _4;
 			T_output_declaration(_2,_3)
 		)}
 
 inout_declaration:
-| _1 = KEY_INOUT _2 = range_opt _3 = list_of_variables _4 = SEMICOLON
+_1 = KEY_INOUT _2 = range_opt _3 = list_of_variables _4 = SEMICOLON
     {  (
 			get_endpos _4;
 			T_inout_declaration(_2,_3)
 		)}
 
 net_declaration:
-| _1 = NETTYPE _2 = expandrange_opt _3 = delay_opt _4 = list_of_variables _5 = SEMICOLON
+_1 = NETTYPE _2 = expandrange_opt _3 = delay_opt _4 = list_of_variables _5 = SEMICOLON
     {  (
 			get_endpos _5;
 			T_net_declaration(_1,T_charge_strength_NOSPEC,_2,_3,_4)
@@ -1524,13 +1524,13 @@ net_declaration:
 		)}
 
 delay_opt:
-| 
+
     {   (T_delay_NOSPEC)}
 | _1 = delay
     {          (_1)}
 
 delay:
-| _1 = JING _2 = number
+_1 = JING _2 = number
     {              (T_delay_number(_2))}
 | _1 = JING _2 = identifier
     {                    (T_delay_id(_2))}
@@ -1546,13 +1546,13 @@ delay:
 		)}
 
 expandrange_opt:
-| 
+
     {   (T_expandrange_NOSPEC)}
 | _1 = expandrange
     {                  (_1)}
 
 expandrange:
-| _1 = range
+_1 = range
     {        (T_expandrange_range(_1))}
 | _1 = KEY_SCALARED _2 = range
     {                       (T_expandrange_scalared(_2))}
@@ -1560,7 +1560,7 @@ expandrange:
     {                       (T_expandrange_vectored(_2))}
 
 charge_strength:
-| _1 = LPAREN _2 = KEY_SMALL _3 = RPAREN
+_1 = LPAREN _2 = KEY_SMALL _3 = RPAREN
     {  (
 			get_endpos _3;
 			T_charge_strength_SMALL
@@ -1577,38 +1577,38 @@ charge_strength:
 		)}
 
 range_opt:
-| 
+
     {    (T_range_NOSPEC)}
 | _1 = range
     {         (_1)}
 
 range:
-| _1 = LBRACKET _2 = constant_expression _3 = COLON _4 = constant_expression _5 = RBRACKET
+_1 = LBRACKET _2 = constant_expression _3 = COLON _4 = constant_expression _5 = RBRACKET
     {  (
 			get_endpos _5;
 			T_range(_2,_4)
 		)}
 
 constant_expression:
-| _1 = expression
+_1 = expression
     {             (_1)}
 
 list_of_variables:
-| _1 = IDENTIFIER _2 = comma_IDENTIFIER_optlist
+_1 = IDENTIFIER _2 = comma_IDENTIFIER_optlist
     {                                      (_1::_2)}
 
 comma_IDENTIFIER_optlist:
-| 
+
     {    ([])}
 | _1 = comma_IDENTIFIER _2 = comma_IDENTIFIER_optlist
     {                                              (_1::_2)}
 
 comma_IDENTIFIER:
-| _1 = COMMA _2 = IDENTIFIER
+_1 = COMMA _2 = IDENTIFIER
     {                    (_2)}
 
 name_of_system_function:
-| _1 = DOLLOR _2 = IDENTIFIER
+_1 = DOLLOR _2 = IDENTIFIER
     {                    ((String.concat "" ("$"::[_2]))::[])}
 
 %%

@@ -149,11 +149,11 @@ let parse_error s =
 %%
 
 execfile:
-| _1 = items
+_1 = items
     {         ( _1 )}
 
 instructions:
-| _1 = EOF
+_1 = EOF
     {                                  ( empty_raw_instructions )}
 | _1 = instruction
     {                                  ( _1 )}
@@ -163,7 +163,7 @@ instructions:
     {                                  ( add_raw_instructions _1 _3 )}
 
 instruction:
-| _1 = command
+_1 = command
     {                               ( {empty_raw_instructions with 
 				     raw_commands = [_1]} )}
 | _1 = SHOW _2 = IDENT
@@ -276,13 +276,13 @@ instruction:
                                              raw_edge_instructions = [Raw_suppress_e [e,Some (_2)]];})}
 
 modes:
-| _1 = mode
+_1 = mode
     {                           ( [_1] )}
 | _1 = mode _2 = modes
     {                             ( _1 :: _2 )}
 
 mode:
-| _1 = SET _2 = FONTSIZE _3 = EQUALS _4 = IDENT
+_1 = SET _2 = FONTSIZE _3 = EQUALS _4 = IDENT
     {                               ( Fontsize (try int_of_string _4 with Invalid_argument _ -> parse_error "fontsize must be an int" ))}
 | _1 = SET _2 = NODE_HEIGHT _3 = EQUALS _4 = FILENAME
     {                                    ( Node_height (try float_of_string _4 with Invalid_argument _ -> parse_error "node_height must be a float"))}
@@ -316,7 +316,7 @@ mode:
     {                               ( Thread_ids _4 )}
 
 command:
-| _1 = QUIT
+_1 = QUIT
     {                                  ( Quit )}
 | _1 = NEXT
     {                                  ( Continue )}
@@ -344,13 +344,13 @@ command:
     {                                  ( Generate (Instructions,_3) )}
 
 items:
-| _1 = item _2 = items
+_1 = item _2 = items
     {                                  ( _1 :: _2 )}
 | _1 = EOF
     {                                  ( [] )}
 
 item:
-| _1 = MODEL _2 = COLON _3 = IDENT
+_1 = MODEL _2 = COLON _3 = IDENT
     {                     ( Model _3 )}
 | _1 = transition_sequence
     {                                  ( Trans _1 )}
@@ -379,47 +379,47 @@ item:
     {                                       ( Show None )}
 
 checks:
-| _1 = IDENT
+_1 = IDENT
     {                                 ( [_1] )}
 | _1 = IDENT _2 = checks
     {                                 ( _1 :: _2 )}
 
 output_edge_inst:
-| _1 = DISPLAY_EDGE _2 = edges _3 = from_opt _4 = to_opt _5 = DOT
+_1 = DISPLAY_EDGE _2 = edges _3 = from_opt _4 = to_opt _5 = DOT
     {                                                       ( List.map (fun e -> (e,RawCrossProduct(_3,_4))) _2 )}
 | _1 = DISPLAY_EDGE _2 = edges _3 = COLON _4 = action_edges _5 = DOT
     {                                                       ( List.map (fun e -> (e,RawExact _4)) _2 )}
 
 suppress_edge_inst:
-| _1 = SUPPRESS_EDGE _2 = edges _3 = from_opt _4 = to_opt _5 = DOT
+_1 = SUPPRESS_EDGE _2 = edges _3 = from_opt _4 = to_opt _5 = DOT
     {                                                        ( List.map (fun e -> (e,RawCrossProduct(_3,_4))) _2 )}
 | _1 = SUPPRESS_EDGE _2 = edges _3 = COLON _4 = action_edges _5 = DOT
     {                                                        ( List.map (fun e -> (e,RawExact _4)) _2 )}
 
 action_edges:
-| _1 = action_edge
+_1 = action_edge
     {                               ( [_1] )}
 | _1 = action_edge _2 = action_edges
     {                               ( _1 :: _2 )}
 
 action_edge:
-| _1 = action_or_name _2 = EDGEHEAD _3 = action_or_name
+_1 = action_or_name _2 = EDGEHEAD _3 = action_or_name
     {                                          ( (_1,_3) )}
 
 edgename:
-| _1 = MO
+_1 = MO
     {                              ( match _1 with | Atomic Cmm.Seq_cst -> "sc" | _ -> parse_error "non-\"sc\" memory order appearing in relation name position")}
 | _1 = IDENT
     {                               ( _1 )}
 
 edges:
-| _1 = edgename
+_1 = edgename
     {                                    ( [_1] )}
 | _1 = edgename _2 = edges
     {                                   ( _1 :: _2 )}
 
 from_opt:
-| 
+
     {                                       ( All )}
 | _1 = FROM _2 = action_or_name_list
     {                                       ( Actions _2 )}
@@ -427,7 +427,7 @@ from_opt:
     {                                       ( All )}
 
 to_opt:
-| 
+
     {                                       ( All )}
 | _1 = TO _2 = action_or_name_list
     {                                       ( Actions _2 )}
@@ -435,35 +435,35 @@ to_opt:
     {                                       ( All )}
 
 action_or_name_list:
-| _1 = action_or_name
+_1 = action_or_name
     {                                       ( [_1] )}
 | _1 = action_or_name _2 = action_or_name_list
     {                                       ( _1 :: _2 )}
 
 transition_sequence:
-| _1 = action_or_name _2 = EDGETAIL _3 = edgename _4 = EDGEHEAD _5 = action_or_name
+_1 = action_or_name _2 = EDGETAIL _3 = edgename _4 = EDGEHEAD _5 = action_or_name
     {                                                              ( (_1,[(_3,_5)]) )}
 | _1 = transition_sequence _2 = EDGETAIL _3 = edgename _4 = EDGEHEAD _5 = action_or_name
     {                                                                     ( let (start,trans)= _1 in (start,trans@[(_3,_5)]) )}
 
 prefixed_transition_sequence:
-| _1 = edgename _2 = COLON _3 = prefixed_transition_sequence_body
+_1 = edgename _2 = COLON _3 = prefixed_transition_sequence_body
     {                                                        ( let (start,trans)=_3 in (start, List.map (function x -> (_1,x)) trans) )}
 
 prefixed_transition_sequence_body:
-| _1 = action_or_name
+_1 = action_or_name
     {                   ( (_1,[]) )}
 | _1 = prefixed_transition_sequence_body _2 = EDGEHEAD _3 = action_or_name
     {                                                                ( let (start,trans) = _1 in (start,trans@[_3]) )}
 
 action_or_name:
-| _1 = IDENT
+_1 = IDENT
     {           ( Action_name _1 )}
 | _1 = action
     {           ( Action _1 )}
 
 action:
-| _1 = IDENT _2 = SEMICOLON _3 = IDENT _4 = COLON _5 = L _6 = location _7 = LOCKOUTCOME
+_1 = IDENT _2 = SEMICOLON _3 = IDENT _4 = COLON _5 = L _6 = location _7 = LOCKOUTCOME
     {                                                        ( Cmm.Lock(_1,named_thread_id _3, _6, _7) )}
 | _1 = IDENT _2 = SEMICOLON _3 = IDENT _4 = COLON _5 = U _6 = location
     {                                            ( Cmm.Unlock(_1,named_thread_id _3,_6) )}
@@ -495,27 +495,27 @@ action:
       | Mutex -> raise (Failure "parse error: F with mutex type") )}
 
 location:
-| _1 = IDENT
+_1 = IDENT
     {          ( Cmm.Rigid (Cmm.Symbolic _1) )}
 
 valu:
-| _1 = IDENT
+_1 = IDENT
     {          ( Cmm.Rigid (Cmm.Symbolic _1) )}
 
 lk:
-| _1 = LBRACE _2 = lk_body _3 = RBRACE
+_1 = LBRACE _2 = lk_body _3 = RBRACE
     {                          ( _2 )}
 | _1 = LBRACE _2 = RBRACE
     {                  ( [] )}
 
 lk_body:
-| _1 = location _2 = COLON _3 = location_kind
+_1 = location _2 = COLON _3 = location_kind
     {                                                  (      [(_1,_3)] )}
 | _1 = lk_body _2 = COMMA _3 = location _4 = COLON _5 = location_kind
     {                                                  ( _1 @ [(_3,_5)] )}
 
 location_kind:
-| _1 = ATOMIC
+_1 = ATOMIC
     {              ( Cmm.Atomic )}
 | _1 = NONATOMIC
     {              ( Cmm.Non_Atomic )}
@@ -523,17 +523,17 @@ location_kind:
     {              ( Cmm.Mutex )}
 
 skeletonexecfile:
-| _1 = skeleton_items
+_1 = skeleton_items
     {                  ( _1 )}
 
 skeleton_items:
-| _1 = skeleton_item _2 = skeleton_items
+_1 = skeleton_item _2 = skeleton_items
     {                                                    ( _1 :: _2 )}
 | _1 = EOF
     {                                  ( [] )}
 
 skeleton_item:
-| _1 = skeleton_transition_sequence
+_1 = skeleton_transition_sequence
     {                                           ( S_Trans _1 )}
 | _1 = skeleton_action_or_name
     {                                           ( S_Trans (_1,[]) )}
@@ -545,53 +545,53 @@ skeleton_item:
     {                                           ( S_Atomiclocs _3 )}
 
 skeleton_transition_sequence:
-| _1 = skeleton_action_or_name _2 = EDGETAIL _3 = edgename _4 = EDGEHEAD _5 = skeleton_action_or_name
+_1 = skeleton_action_or_name _2 = EDGETAIL _3 = edgename _4 = EDGEHEAD _5 = skeleton_action_or_name
     {                                                                                ( (_1,[(_3,_5)]) )}
 | _1 = skeleton_transition_sequence _2 = EDGETAIL _3 = edgename _4 = EDGEHEAD _5 = skeleton_action_or_name
     {                                                                                       ( let (start,trans)= _1 in (start,trans@[(_3,_5)]) )}
 
 skeleton_prefixed_transition_sequence:
-| _1 = edgename _2 = COLON _3 = skeleton_prefixed_transition_sequence_body
+_1 = edgename _2 = COLON _3 = skeleton_prefixed_transition_sequence_body
     {                                                                 ( let (start,trans)=_3 in (start, List.map (function x -> (_1,x)) trans) )}
 
 skeleton_prefixed_transition_sequence_body:
-| _1 = skeleton_action_or_name
+_1 = skeleton_action_or_name
     {                            ( (_1,[]) )}
 | _1 = skeleton_prefixed_transition_sequence_body _2 = EDGEHEAD _3 = skeleton_action_or_name
     {                                                                                  ( let (start,trans) = _1 in (start,trans@[_3]) )}
 
 skeleton_action_set_set:
-| _1 = LBRACE _2 = skeleton_action_set_set_body _3 = RBRACE
+_1 = LBRACE _2 = skeleton_action_set_set_body _3 = RBRACE
     {                                               ( _2 )}
 | _1 = LBRACE _2 = RBRACE
     {                  ( [] )}
 
 skeleton_action_set_set_body:
-| _1 = skeleton_action_set
+_1 = skeleton_action_set
     {                        ( [_1] )}
 | _1 = skeleton_action_set_set_body _2 = COMMA _3 = skeleton_action_set
     {                                                             ( _1 @ [_3] )}
 
 skeleton_action_set:
-| _1 = LBRACE _2 = skeleton_action_set_body _3 = RBRACE
+_1 = LBRACE _2 = skeleton_action_set_body _3 = RBRACE
     {                                           ( _2 )}
 | _1 = LBRACE _2 = RBRACE
     {                  ( [] )}
 
 skeleton_action_set_body:
-| _1 = skeleton_action_or_name
+_1 = skeleton_action_or_name
     {                            ( [_1] )}
 | _1 = skeleton_action_set_body _2 = COMMA _3 = skeleton_action_or_name
     {                                                             ( _1 @ [_3] )}
 
 skeleton_action_or_name:
-| _1 = IDENT
+_1 = IDENT
     {           ( S_Action_name _1 )}
 | _1 = skeleton_action
     {                    ( S_Action _1 )}
 
 skeleton_action:
-| _1 = IDENT _2 = SEMICOLON _3 = IDENT _4 = COLON _5 = L
+_1 = IDENT _2 = SEMICOLON _3 = IDENT _4 = COLON _5 = L
     {                                   ( S_Lock(_1,named_thread_id _3) )}
 | _1 = IDENT _2 = SEMICOLON _3 = IDENT _4 = COLON _5 = U
     {                                   ( S_Unlock(_1,named_thread_id _3) )}
@@ -605,7 +605,7 @@ skeleton_action:
     {                                                   ( S_Fence(_1,named_thread_id _3,_6) )}
 
 skeleton_mos:
-| _1 = STAR
+_1 = STAR
     {          ( MO_Star )}
 | _1 = ATOMIC
     {           ( MO_Atomic )}
@@ -613,7 +613,7 @@ skeleton_mos:
     {                                       ( MO_Set _2 )}
 
 skeleton_mo_set_body:
-| _1 = MO
+_1 = MO
     {       ( [_1] )}
 | _1 = skeleton_mo_set_body _2 = COMMA _3 = MO
     {                                   ( _1 @ [_3] )}

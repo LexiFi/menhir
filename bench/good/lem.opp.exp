@@ -237,7 +237,7 @@ let mk_pre_x_l sk1 (sk2,id) sk3 l =
 %%
 
 x:
-| _1 = X
+_1 = X
     {    ( X_l(_1, loc ()) )}
 | _1 = Lparen _2 = Eq _3 = Rparen
     {    ( mk_pre_x_l _1 _2 _3 (loc ()) )}
@@ -275,24 +275,24 @@ x:
     {    ( mk_pre_x_l _1 _2 _3 (loc ()) )}
 
 id:
-| _1 = id_help
+_1 = id_help
     {    ( Id(fst _1, snd _1, loc ()) )}
 
 id_help:
-| _1 = x
+_1 = x
     {    ( ([],_1) )}
 | _1 = x _2 = Dot _3 = id_help
     {    ( let (l,last) = _3 in
         ((_1,_2)::l, last) )}
 
 tnvar:
-| _1 = Tyvar
+_1 = Tyvar
     {    ( Avl(A_l((fst _1, snd _1), loc ())) )}
 | _1 = Nvar
     {    ( Nvl(N_l((fst _1, snd _1), loc ())) )}
 
 atomic_typ:
-| _1 = Under
+_1 = Under
     {    ( tloc (Typ_wild(_1)) )}
 | _1 = Tyvar
     {    ( tloc (Typ_var(A_l((fst _1, snd _1), loc()))) )}
@@ -304,19 +304,19 @@ atomic_typ:
     {    ( tloc (Typ_paren(_1,_2,_3)) )}
 
 appt_typ:
-| _1 = atomic_typ
+_1 = atomic_typ
     {    ( _1 )}
 | _1 = atomic_nexp
     {    ( tloc (Typ_Nexps(_1)) )}
 
 atomic_typs:
-| _1 = appt_typ
+_1 = appt_typ
     {    ( [_1] )}
 | _1 = appt_typ _2 = atomic_typs
     {    ( _1::_2 )}
 
 app_typ:
-| _1 = atomic_typ
+_1 = atomic_typ
     {    ( _1 )}
 | _1 = id _2 = atomic_typs
     {    ( tloc (Typ_app(_1,_2)) )}
@@ -324,13 +324,13 @@ app_typ:
     {    ( tloc (Typ_backend(fst _1,snd _1, _2)) )}
 
 star_typ_list:
-| _1 = app_typ
+_1 = app_typ
     {    ( [(_1,None)] )}
 | _1 = app_typ _2 = Star _3 = star_typ_list
     {    ( (_1,fst _2)::_3 )}
 
 star_typ:
-| _1 = star_typ_list
+_1 = star_typ_list
     {    ( match _1 with
         | [] -> assert false
         | [(t,None)] -> t
@@ -338,13 +338,13 @@ star_typ:
         | ts -> tloc (Typ_tup(ts)) )}
 
 typ:
-| _1 = star_typ
+_1 = star_typ
     {    ( _1 )}
 | _1 = star_typ _2 = Arrow _3 = typ
     {    ( tloc (Typ_fn(_1,_2,_3)) )}
 
 atomic_nexp:
-| _1 = Nvar
+_1 = Nvar
     {     ( nloc (Nexp_var (fst _1, snd _1)) )}
 | _1 = Num
     {     ( nloc (Nexp_constant(fst _1, fst (snd _1))) )}
@@ -352,19 +352,19 @@ atomic_nexp:
     {     ( nloc (Nexp_paren(_1,_2,_3)) )}
 
 star_nexp:
-| _1 = atomic_nexp
+_1 = atomic_nexp
     {     ( _1 )}
 | _1 = atomic_nexp _2 = Star _3 = star_nexp
     {     ( nloc (Nexp_times(_1, fst _2, _3)) )}
 
 nexp:
-| _1 = star_nexp
+_1 = star_nexp
     {     ( _1 )}
 | _1 = star_nexp _2 = Plus _3 = nexp
     {     ( nloc (Nexp_sum(_1,fst _2,_3)) )}
 
 lit:
-| _1 = True
+_1 = True
     {    ( lloc (L_true(_1)) )}
 | _1 = False
     {    ( lloc (L_false(_1)) )}
@@ -392,7 +392,7 @@ lit:
     {    ( lloc (L_hex(fst _1, snd _1)) )}
 
 atomic_pat:
-| _1 = Under
+_1 = Under
     {    ( ploc (P_wild(_1)) )}
 | _1 = id
     {    ( ploc (P_app(_1,[])) )}
@@ -418,31 +418,31 @@ atomic_pat:
     {    ( ploc (P_num_add(_1,fst _2,fst _3, fst (snd _3))) )}
 
 atomic_pats:
-| _1 = atomic_pat
+_1 = atomic_pat
     {    ( [_1] )}
 | _1 = atomic_pat _2 = atomic_pats
     {    ( _1::_2 )}
 
 atomic_pats_two:
-| _1 = atomic_pat _2 = atomic_pat
+_1 = atomic_pat _2 = atomic_pat
     {    ( [_1;_2] )}
 | _1 = atomic_pat _2 = atomic_pats_two
     {    ( _1::_2 )}
 
 app_pat:
-| _1 = atomic_pat
+_1 = atomic_pat
     {    ( _1 )}
 | _1 = id _2 = atomic_pats
     {    ( ploc (P_app(_1,_2)) )}
 
 pat:
-| _1 = app_pat
+_1 = app_pat
     {    ( _1 )}
 | _1 = app_pat _2 = ColonColon _3 = pat
     {    ( ploc (P_cons(_1,fst _2,_3)) )}
 
 semi_pats_atomic:
-| _1 = atomic_pat
+_1 = atomic_pat
     {    ( ([(_1,None)], (None,false)))}
 | _1 = atomic_pat _2 = Semi
     {    ( ([(_1,None)], (_2,true)) )}
@@ -450,7 +450,7 @@ semi_pats_atomic:
     {    ( ((_1,_2)::fst _3, snd _3) )}
 
 semi_pats_help:
-| _1 = pat
+_1 = pat
     {    ( ([(_1,None)], (None,false)) )}
 | _1 = pat _2 = Semi
     {    ( ([(_1,None)], (_2,true)) )}
@@ -458,23 +458,23 @@ semi_pats_help:
     {    ( ((_1,_2)::fst _3, snd _3) )}
 
 semi_pats:
-| 
+
     {    ( ([], (None, false)) )}
 | _1 = semi_pats_help
     {    ( _1 )}
 
 comma_pats:
-| _1 = pat _2 = Comma _3 = pat
+_1 = pat _2 = Comma _3 = pat
     {    ( [(_1,_2);(_3,None)] )}
 | _1 = pat _2 = Comma _3 = comma_pats
     {    ( (_1,_2)::_3 )}
 
 fpat:
-| _1 = id _2 = Eq _3 = pat
+_1 = id _2 = Eq _3 = pat
     {    ( Fpat(_1,fst _2,_3,loc ()) )}
 
 fpats:
-| _1 = fpat
+_1 = fpat
     {    ( ([(_1,None)], (None,false)) )}
 | _1 = fpat _2 = Semi
     {    ( ([(_1,None)], (_2,true)) )}
@@ -482,7 +482,7 @@ fpats:
     {    ( ((_1,_2)::fst _3, snd _3) )}
 
 atomic_exp:
-| _1 = LtBar _2 = fexps _3 = BarGt
+_1 = LtBar _2 = fexps _3 = BarGt
     {    ( eloc (Record(_1,_2,_3)) )}
 | _1 = LtBar _2 = at_exp _3 = With _4 = fexps _5 = BarGt
     {    ( eloc (Recup(_1,_2,_3,_4,_5)) )}
@@ -524,7 +524,7 @@ atomic_exp:
     {    ( eloc (Do(_1,_2,_3,_4,_5,_6)) )}
 
 field_exp:
-| _1 = atomic_exp
+_1 = atomic_exp
     {    ( _1 )}
 | _1 = atomic_exp _2 = Dot _3 = id
     {    ( eloc (Field(_1,_2,_3)) )}
@@ -540,13 +540,13 @@ field_exp:
     {    ( eloc (Ident(_1)) )}
 
 app_exp:
-| _1 = field_exp
+_1 = field_exp
     {    ( _1 )}
 | _1 = app_exp _2 = field_exp
     {    ( eloc (App(_1,_2)) )}
 
 right_atomic_exp:
-| _1 = Forall _2 = quant_bindings _3 = Dot _4 = exp
+_1 = Forall _2 = quant_bindings _3 = Dot _4 = exp
     {    ( eloc (Quant(Q_forall(_1), _2,_3,_4)) )}
 | _1 = Exists _2 = quant_bindings _3 = Dot _4 = exp
     {    ( eloc (Quant(Q_exists(_1), _2,_3,_4)) )}
@@ -558,19 +558,19 @@ right_atomic_exp:
     {    ( eloc (Let(_1,_2,_3,_4)) )}
 
 starstar_exp:
-| _1 = app_exp
+_1 = app_exp
     {    ( _1 )}
 | _1 = app_exp _2 = StarstarX _3 = starstar_exp
     {    ( eloc (Infix(_1, SymX_l(_2, locn 2 2), _3)) )}
 
 starstar_right_atomic_exp:
-| _1 = right_atomic_exp
+_1 = right_atomic_exp
     {    ( _1 )}
 | _1 = app_exp _2 = StarstarX _3 = starstar_right_atomic_exp
     {    ( eloc (Infix(_1, SymX_l(_2, locn 2 2), _3)) )}
 
 star_exp:
-| _1 = starstar_exp
+_1 = starstar_exp
     {    ( _1 )}
 | _1 = star_exp _2 = Star _3 = starstar_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
@@ -578,7 +578,7 @@ star_exp:
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 star_right_atomic_exp:
-| _1 = starstar_right_atomic_exp
+_1 = starstar_right_atomic_exp
     {    ( _1 )}
 | _1 = star_exp _2 = Star _3 = starstar_right_atomic_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
@@ -586,7 +586,7 @@ star_right_atomic_exp:
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 plus_exp:
-| _1 = star_exp
+_1 = star_exp
     {    ( _1 )}
 | _1 = plus_exp _2 = Plus _3 = star_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
@@ -594,7 +594,7 @@ plus_exp:
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 plus_right_atomic_exp:
-| _1 = star_right_atomic_exp
+_1 = star_right_atomic_exp
     {    ( _1 )}
 | _1 = plus_exp _2 = Plus _3 = star_right_atomic_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
@@ -602,19 +602,19 @@ plus_right_atomic_exp:
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 cons_exp:
-| _1 = plus_exp
+_1 = plus_exp
     {    ( _1 )}
 | _1 = plus_exp _2 = ColonColon _3 = cons_exp
     {    ( eloc (Cons(_1,fst _2,_3)) )}
 
 cons_right_atomic_exp:
-| _1 = plus_right_atomic_exp
+_1 = plus_right_atomic_exp
     {    ( _1 )}
 | _1 = plus_exp _2 = ColonColon _3 = cons_right_atomic_exp
     {    ( eloc (Cons(_1,fst _2,_3)) )}
 
 at_exp:
-| _1 = cons_exp
+_1 = cons_exp
     {    ( _1 )}
 | _1 = cons_exp _2 = At _3 = at_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
@@ -622,7 +622,7 @@ at_exp:
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 at_right_atomic_exp:
-| _1 = cons_right_atomic_exp
+_1 = cons_right_atomic_exp
     {    ( _1 )}
 | _1 = cons_exp _2 = At _3 = at_right_atomic_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
@@ -630,7 +630,7 @@ at_right_atomic_exp:
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 eq_exp:
-| _1 = at_exp
+_1 = at_exp
     {    ( _1 )}
 | _1 = eq_exp _2 = Eq _3 = at_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
@@ -646,7 +646,7 @@ eq_exp:
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 eq_right_atomic_exp:
-| _1 = at_right_atomic_exp
+_1 = at_right_atomic_exp
     {    ( _1 )}
 | _1 = eq_exp _2 = Eq _3 = at_right_atomic_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
@@ -658,55 +658,55 @@ eq_right_atomic_exp:
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 and_exp:
-| _1 = eq_exp
+_1 = eq_exp
     {    ( _1 )}
 | _1 = eq_exp _2 = AmpAmp _3 = and_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 and_right_atomic_exp:
-| _1 = eq_right_atomic_exp
+_1 = eq_right_atomic_exp
     {    ( _1 )}
 | _1 = eq_exp _2 = AmpAmp _3 = and_right_atomic_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 or_exp:
-| _1 = and_exp
+_1 = and_exp
     {    ( _1 )}
 | _1 = and_exp _2 = BarBar _3 = or_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 or_right_atomic_exp:
-| _1 = and_right_atomic_exp
+_1 = and_right_atomic_exp
     {    ( _1 )}
 | _1 = and_exp _2 = BarBar _3 = or_right_atomic_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 imp_exp:
-| _1 = or_exp
+_1 = or_exp
     {    ( _1 )}
 | _1 = or_exp _2 = MinusMinusGt _3 = imp_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 imp_right_atomic_exp:
-| _1 = or_right_atomic_exp
+_1 = or_right_atomic_exp
     {    ( _1 )}
 | _1 = or_exp _2 = MinusMinusGt _3 = imp_right_atomic_exp
     {    ( eloc (Infix(_1,SymX_l(_2, locn 2 2), _3)) )}
 
 exp:
-| _1 = imp_right_atomic_exp
+_1 = imp_right_atomic_exp
     {    ( _1 )}
 | _1 = imp_exp
     {    ( _1 )}
 
 comma_exps:
-| _1 = exp _2 = Comma _3 = exp
+_1 = exp _2 = Comma _3 = exp
     {    ( [(_1,_2);(_3,None)] )}
 | _1 = exp _2 = Comma _3 = comma_exps
     {    ( (_1,_2)::_3 )}
 
 semi_exps_help:
-| _1 = exp
+_1 = exp
     {    ( ([(_1,None)], (None,false)) )}
 | _1 = exp _2 = Semi
     {    ( ([(_1,None)], (_2,true)) )}
@@ -714,13 +714,13 @@ semi_exps_help:
     {    ( ((_1,_2)::fst _3, snd _3) )}
 
 semi_exps:
-| 
+
     {    ( ([], (None, false)) )}
 | _1 = semi_exps_help
     {    ( _1 )}
 
 quant_bindings:
-| _1 = x
+_1 = x
     {    ( [Qb_var(_1)] )}
 | _1 = Lparen _2 = pat _3 = IN _4 = exp _5 = Rparen
     {    ( [Qb_restr(_1,_2,fst _3,_4,_5)] )}
@@ -734,37 +734,37 @@ quant_bindings:
     {    ( Qb_list_restr(_1,_2,fst _3,_4,_5)::_6 )}
 
 patsexp:
-| _1 = atomic_pats1 _2 = Arrow _3 = exp
+_1 = atomic_pats1 _2 = Arrow _3 = exp
     {    ( Patsexp(_1,_2,_3,loc ()) )}
 
 opt_typ_annot:
-| 
+
     {    ( Typ_annot_none )}
 | _1 = Colon _2 = typ
     {    ( Typ_annot_some(_1,_2) )}
 
 atomic_pats1:
-| _1 = atomic_pat
+_1 = atomic_pat
     {    ( [_1] )}
 | _1 = atomic_pat _2 = atomic_pats1
     {    ( _1::_2 )}
 
 patexps:
-| _1 = pat _2 = Arrow _3 = exp
+_1 = pat _2 = Arrow _3 = exp
     {    ( [(Patexp(_1,_2,_3,loc ()),None)] )}
 | _1 = pat _2 = Arrow _3 = exp _4 = Bar _5 = patexps
     {    ( (Patexp(_1,_2,_3,locn 1 3),_4)::_5 )}
 
 fexp:
-| _1 = id _2 = Eq _3 = exp
+_1 = id _2 = Eq _3 = exp
     {    ( Fexp(_1,fst _2,_3,loc()) )}
 
 fexps:
-| _1 = fexps_help
+_1 = fexps_help
     {    ( Fexps(fst _1, fst (snd _1), snd (snd _1), loc ()) )}
 
 fexps_help:
-| _1 = fexp
+_1 = fexp
     {    ( ([(_1,None)], (None,false)) )}
 | _1 = fexp _2 = Semi
     {    ( ([(_1,None)], (_2,true)) )}
@@ -772,30 +772,30 @@ fexps_help:
     {    ( ((_1,_2)::fst _3, snd _3) )}
 
 letbind:
-| _1 = pat _2 = opt_typ_annot _3 = Eq _4 = exp
+_1 = pat _2 = opt_typ_annot _3 = Eq _4 = exp
     {    ( match pat_dest_id_app _1 with
         | Some((v,pats)) when pats <> [] ->
             lbloc (Let_fun(Funcl(v,pats,_2,fst _3,_4)))
         | _ -> lbloc (Let_val(_1,_2,fst _3,_4)) )}
 
 do_exps:
-| 
+
     {    ( [] )}
 | _1 = pat _2 = LeftArrow _3 = exp _4 = Semi _5 = do_exps
     {    ( (_1,_2,_3,_4)::_5 )}
 
 funcl:
-| _1 = x _2 = atomic_pats1 _3 = opt_typ_annot _4 = Eq _5 = exp
+_1 = x _2 = atomic_pats1 _3 = opt_typ_annot _4 = Eq _5 = exp
     {    ( reclloc (Funcl(_1,_2,_3,fst _4,_5)) )}
 
 funcls:
-| _1 = x _2 = atomic_pats1 _3 = opt_typ_annot _4 = Eq _5 = exp
+_1 = x _2 = atomic_pats1 _3 = opt_typ_annot _4 = Eq _5 = exp
     {    ( [(reclloc (Funcl(_1,_2,_3,fst _4,_5)),None)] )}
 | _1 = funcl _2 = And _3 = funcls
     {    ( (_1,_2)::_3 )}
 
 name_ts:
-| 
+
     {    ( [] )}
 | _1 = x _2 = name_ts
     {    ( (Name_t_name _1)::_2 )}
@@ -803,41 +803,41 @@ name_ts:
     {    ( (Name_t_nt(_1,_2,_3,_4,_5))::_6 )}
 
 exps:
-| 
+
     {    ( [] )}
 | _1 = field_exp _2 = exps
     {    ( _1::_2 )}
 
 indreln_clause:
-| _1 = x _2 = Colon _3 = Forall _4 = name_ts _5 = Dot _6 = exp _7 = EqEqGt _8 = x _9 = exps
+_1 = x _2 = Colon _3 = Forall _4 = name_ts _5 = Dot _6 = exp _7 = EqEqGt _8 = x _9 = exps
     {    ( irloc (Rule(_1,_2,_3,_4,_5,_6,_7,_8,_9)) )}
 
 and_indreln_clauses:
-| _1 = indreln_clause
+_1 = indreln_clause
     {    ( [(_1,None)] )}
 | _1 = indreln_clause _2 = And _3 = and_indreln_clauses
     {    ( (_1,_2)::_3 )}
 
 witness_clause:
-| _1 = Witness _2 = Type _3 = x _4 = Semi
+_1 = Witness _2 = Type _3 = x _4 = Semi
     {    ( Witness_some(_1,_2,_3,_4) )}
 | _1 = Semi
     {         ( Witness_none )}
 
 check_clause:
-| _1 = Check _2 = x _3 = Semi
+_1 = Check _2 = x _3 = Semi
     {    ( Check_some(_1,_2,_3) )}
 | 
     {    ( Check_none )}
 
 functions_clause:
-| _1 = x _2 = Colon _3 = typ
+_1 = x _2 = Colon _3 = typ
     {  ( Functions_one(_1,_2,_3) )}
 | _1 = x _2 = Colon _3 = typ _4 = Semi _5 = functions_clause
     {  ( Functions_some(_1,_2,_3,_4,_5) )}
 
 indreln_name:
-| _1 = Lsquare _2 = x _3 = Colon _4 = typschm _5 = Rsquare
+_1 = Lsquare _2 = x _3 = Colon _4 = typschm _5 = Rsquare
     {    ( Name_l ( Inderln_name_Name (_1,_2,_3,_4,Witness_none,Check_none,Functions_none,_5) ,loc ()) )}
 | _1 = Lsquare _2 = x _3 = Colon _4 = typschm _5 = witness_clause _6 = Rsquare
     {    ( Name_l ( Inderln_name_Name (_1,_2,_3,_4,_5,Check_none,Functions_none,_6) ,loc ()) )}
@@ -847,29 +847,29 @@ indreln_name:
     {    ( Name_l ( Inderln_name_Name (_1,_2,_3,_4,_5,_6,_7,_8) ,loc ()) )}
 
 and_indreln_names:
-| _1 = indreln_name
+_1 = indreln_name
     {    ( [(_1,None)] )}
 | _1 = indreln_name _2 = And _3 = and_indreln_names
     {    ( (_1,_2)::_3 )}
 
 tnvs:
-| 
+
     {    ( [] )}
 | _1 = tnvar _2 = tnvs
     {    ( _1::_2 )}
 
 c:
-| _1 = id _2 = tnvar
+_1 = id _2 = tnvar
     {    ( C(_1,_2) )}
 
 cs:
-| _1 = c
+_1 = c
     {    ( [(_1,None)] )}
 | _1 = c _2 = Comma _3 = cs
     {    ( (_1,_2)::_3 )}
 
 c2:
-| _1 = id _2 = typ
+_1 = id _2 = typ
     {    ( 
       match _2 with
         | Typ_l(Typ_var(a_l),_) ->
@@ -879,25 +879,25 @@ c2:
     )}
 
 cs2:
-| _1 = c2
+_1 = c2
     {    ( [(_1, None)] )}
 | _1 = c2 _2 = Comma _3 = cs2
     {    ( (_1,_2)::_3 )}
 
 range:
-| _1 = nexp _2 = Eq _3 = nexp
+_1 = nexp _2 = Eq _3 = nexp
     {    ( Range_l(Fixed(_1,(fst _2),_3), loc () ) )}
 | _1 = nexp _2 = GtEq _3 = nexp
     {    ( Range_l(Bounded(_1,(fst _2),_3), loc () ) )}
 
 ranges:
-| _1 = range
+_1 = range
     {    ( [(_1,None)] )}
 | _1 = range _2 = Comma _3 = ranges
     {    ( (_1,_2)::_3 )}
 
 typschm:
-| _1 = typ
+_1 = typ
     {    ( Ts(C_pre_empty, _1) )}
 | _1 = Forall _2 = tnvs _3 = Dot _4 = typ
     {    ( Ts(C_pre_forall(_1,_2,_3,Cs_empty),_4) )}
@@ -909,13 +909,13 @@ typschm:
     {    ( Ts(C_pre_forall(_1,_2,_3,Cs_both(_4,_5,_6,_7)),_8) )}
 
 insttyp:
-| _1 = typ
+_1 = typ
     {    ( _1 )}
 | _1 = nexp
     {    ( tloc (Typ_Nexps(_1)) )}
 
 instschm:
-| _1 = Lparen _2 = id _3 = insttyp _4 = Rparen
+_1 = Lparen _2 = id _3 = insttyp _4 = Rparen
     {    ( Is(C_pre_empty, _1,_2,_3,_4) )}
 | _1 = Forall _2 = tnvs _3 = Dot _4 = Lparen _5 = id _6 = insttyp _7 = Rparen
     {    ( Is(C_pre_forall(_1,_2,_3,Cs_empty),_4,_5,_6,_7) )}
@@ -923,35 +923,35 @@ instschm:
     {    ( Is(C_pre_forall(_1,_2,_3,Cs_classes(_4,_5)),_6,_7,_8,_9) )}
 
 val_spec:
-| _1 = Val _2 = x _3 = Colon _4 = typschm
+_1 = Val _2 = x _3 = Colon _4 = typschm
     {    ( Val_spec(_1,_2,Ascii_opt_none,_3,_4) )}
 | _1 = Val _2 = x _3 = Lsquare _4 = BacktickString _5 = Rsquare _6 = Colon _7 = typschm
     {    ( Val_spec(_1,_2,Ascii_opt_some(_3,fst _4, snd _4,_5),_6,_7) )}
 
 class_val_spec:
-| _1 = Val _2 = targets_opt _3 = x _4 = Colon _5 = typ
+_1 = Val _2 = targets_opt _3 = x _4 = Colon _5 = typ
     {    ( (_1,_2,_3,Ascii_opt_none,_4,_5) )}
 | _1 = Val _2 = targets_opt _3 = x _4 = Lsquare _5 = BacktickString _6 = Rsquare _7 = Colon _8 = typ
     {    ( (_1,_2,_3,Ascii_opt_some(_4,fst _5, snd _5,_6),_7,_8) )}
 
 class_val_specs:
-| _1 = class_val_spec
+_1 = class_val_spec
     {    ( [(fun (a,b,c,d,e,f) -> (a,b,c,d,e,f,loc())) _1] )}
 | _1 = class_val_spec _2 = class_val_specs
     {    ( ((fun (a,b,c,d,e,f) -> (a,b,c,d,e,f,loc())) _1)::_2 )}
 
 target:
-| _1 = X
+_1 = X
     {    ( get_target _1, None )}
 
 targets:
-| _1 = target
+_1 = target
     {    ( [ _1 ] )}
 | _1 = target _2 = Semi _3 = targets
     {    ( _1::_3 )}
 
 targets_opt:
-| 
+
     {    ( None )}
 | _1 = Lcurly _2 = Rcurly
     {    ( Some(Targets_concrete(_1,[],_2)) )}
@@ -963,17 +963,17 @@ targets_opt:
     {    ( Some(Targets_non_exec(_1)) )}
 
 component_term:
-| _1 = Function_
+_1 = Function_
     {    ( Component_function _1 )}
 | _1 = Field
     {    ( Component_field _1 )}
 
 component_type:
-| _1 = Type
+_1 = Type
     {    ( Component_type _1 )}
 
 component:
-| _1 = component_term
+_1 = component_term
     {    ( _1 )}
 | _1 = component_type
     {    ( _1 )}
@@ -981,31 +981,31 @@ component:
     {    ( Component_module _1 )}
 
 termination_setting:
-| _1 = Automatic
+_1 = Automatic
     {    ( Termination_setting_automatic _1 )}
 | _1 = Manual
     {    ( Termination_setting_manual _1 )}
 
 exhaustivity_setting:
-| _1 = Exhaustive
+_1 = Exhaustive
     {    ( Exhaustivity_setting_exhaustive _1 )}
 | _1 = Inexhaustive
     {    ( Exhaustivity_setting_inexhaustive _1 )}
 
 elim_opt:
-| 
+
     {    ( Elim_opt_none )}
 | _1 = id
     {    ( Elim_opt_some(_1) )}
 
 tnvar_list:
-| 
+
     {    ( [] )}
 | _1 = tnvar _2 = tnvar_list
     {    ( _1::_2 )}
 
 fixity_decl:
-| _1 = RightAssoc _2 = Num
+_1 = RightAssoc _2 = Num
     {    ( Fixity_right_assoc(_1, fst (snd _2)) )}
 | _1 = LeftAssoc _2 = Num
     {    ( Fixity_left_assoc(_1, fst (snd _2)) )}
@@ -1015,7 +1015,7 @@ fixity_decl:
     {    ( Fixity_default_assoc )}
 
 target_rep_rhs_term:
-| 
+
     {    ( Target_rep_rhs_undefined )}
 | _1 = Infix _2 = fixity_decl _3 = BacktickString
     {    ( Target_rep_rhs_infix(_1, _2, fst _3, snd _3) )}
@@ -1025,17 +1025,17 @@ target_rep_rhs_term:
     {    ( Target_rep_rhs_special(_1, fst _2, snd _2, _3) )}
 
 target_rep_rhs_type:
-| _1 = typ
+_1 = typ
     {    ( _1 )}
 
 x_ls:
-| 
+
     {    ( [] )}
 | _1 = X _2 = x_ls
     {    ( (Ast.X_l (_1, loc()))::_2 )}
 
 declaration:
-| _1 = Declare _2 = targets_opt _3 = CompileMessage _4 = id _5 = Eq _6 = String
+_1 = Declare _2 = targets_opt _3 = CompileMessage _4 = id _5 = Eq _6 = String
     {    ( Decl_compile_message_decl(_1, _2, _3, _4, fst _5, fst _6, snd _6) )}
 | _1 = Declare _2 = targets_opt _3 = Rename _4 = Module_ _5 = Eq _6 = x
     {    ( Decl_rename_current_module_decl(_1, _2, _3, _4, fst _5, _6) )}
@@ -1055,7 +1055,7 @@ declaration:
     {    ( Decl_pattern_match_decl(_1, _2, _3, _4, _5, _6, fst _7, _8, fst _9, fst (snd _9),snd (snd _9), _10, _11) )}
 
 lemma_typ:
-| _1 = Lemma
+_1 = Lemma
     {    ( Lemma_lemma _1 )}
 | _1 = Theorem
     {    ( Lemma_theorem _1 )}
@@ -1063,11 +1063,11 @@ lemma_typ:
     {    ( Lemma_assert _1 )}
 
 lemma:
-| _1 = lemma_typ _2 = targets_opt _3 = x _4 = Colon _5 = exp
+_1 = lemma_typ _2 = targets_opt _3 = x _4 = Colon _5 = exp
     {    ( Lemma_named (_1, _2, _3, _4, _5) )}
 
 val_def:
-| _1 = Let_ _2 = targets_opt _3 = letbind
+_1 = Let_ _2 = targets_opt _3 = letbind
     {    ( Let_def(_1,_2,_3) )}
 | _1 = Let_ _2 = Rec _3 = targets_opt _4 = funcls
     {    ( Let_rec(_1,_2,_3,_4) )}
@@ -1077,13 +1077,13 @@ val_def:
     {    ( Let_transform(_1,_2,_3,_4) )}
 
 val_defs:
-| _1 = val_def
+_1 = val_def
     {    ( [(_1,loc())] )}
 | _1 = val_def _2 = val_defs
     {    ( (_1,loc ())::_2 )}
 
 open_import:
-| _1 = Open_
+_1 = Open_
     {    ( OI_open(_1) )}
 | _1 = Include_
     {    ( OI_include(_1) )}
@@ -1095,7 +1095,7 @@ open_import:
     {    ( OI_include_import(_1, _2) )}
 
 def:
-| _1 = Type _2 = tds
+_1 = Type _2 = tds
     {    ( dloc (Type_def(_1,_2)) )}
 | _1 = val_def
     {    ( dloc (Val_def(_1)) )}
@@ -1125,11 +1125,11 @@ def:
     {    ( dloc (Declaration _1) )}
 
 xtyp:
-| _1 = x _2 = Colon _3 = typ
+_1 = x _2 = Colon _3 = typ
     {    ( (_1,_2,_3) )}
 
 xtyps:
-| _1 = xtyp
+_1 = xtyp
     {    ( ([(_1,None)], (None, false)) )}
 | _1 = xtyp _2 = Semi
     {    ( ([(_1,None)], (_2, true)) )}
@@ -1137,23 +1137,23 @@ xtyps:
     {    ( ((_1,_2)::fst _3, snd _3) )}
 
 ctor_texp:
-| _1 = x _2 = Of _3 = star_typ_list
+_1 = x _2 = Of _3 = star_typ_list
     {    ( Cte(_1,_2,_3) )}
 | _1 = x
     {    ( Cte(_1,None,[]) )}
 
 ctor_single_texp:
-| _1 = x _2 = Of _3 = star_typ_list
+_1 = x _2 = Of _3 = star_typ_list
     {    ( Cte(_1,_2,_3) )}
 
 ctor_texps:
-| _1 = ctor_texp
+_1 = ctor_texp
     {    ( [(_1,None)] )}
 | _1 = ctor_texp _2 = Bar _3 = ctor_texps
     {    ( (_1,_2)::_3 )}
 
 texp:
-| _1 = typ
+_1 = typ
     {    ( Te_abbrev(_1) )}
 | _1 = LtBar _2 = xtyps _3 = BarGt
     {    ( Te_record(_1,fst _2, fst (snd _2), snd (snd _2), _3) )}
@@ -1165,11 +1165,11 @@ texp:
     {    ( Te_variant(None,false,[(_1,None)]) )}
 
 name_sect:
-| _1 = Lsquare _2 = x _3 = Eq _4 = String _5 = Rsquare
+_1 = Lsquare _2 = x _3 = Eq _4 = String _5 = Rsquare
     {    ( Name_sect_name(_1,_2,fst _3,(fst _4),(snd _4),_5) )}
 
 td:
-| _1 = x _2 = tnvs
+_1 = x _2 = tnvs
     {    ( Td_opaque(_1,_2,Name_sect_none) )}
 | _1 = x _2 = tnvs _3 = name_sect
     {    ( Td_opaque(_1,_2,_3) )}
@@ -1179,13 +1179,13 @@ td:
     {    ( Td(_1,_2,_3,fst _4,_5) )}
 
 tds:
-| _1 = td
+_1 = td
     {    ( [(_1,None)] )}
 | _1 = td _2 = And _3 = tds
     {    ( (_1,_2)::_3 )}
 
 semi_ids_help:
-| _1 = id
+_1 = id
     {    ( ([(_1,None)], (None,false)) )}
 | _1 = id _2 = Semi
     {    ( ([(_1,None)], (_2,true)) )}
@@ -1193,25 +1193,25 @@ semi_ids_help:
     {    ( ((_1,_2)::fst _3, snd _3) )}
 
 semi_ids:
-| 
+
     {    ( ([], (None, false)) )}
 | _1 = semi_ids_help
     {    ( _1 )}
 
 ids:
-| _1 = id
+_1 = id
     {    ( [_1] )}
 | _1 = id _2 = ids
     {    ( _1 :: _2 )}
 
 backtickstrings:
-| _1 = BacktickString
+_1 = BacktickString
     {    ( [_1] )}
 | _1 = BacktickString _2 = backtickstrings
     {    ( _1 :: _2 )}
 
 defs_help:
-| _1 = def
+_1 = def
     {    ( [(_1,None,false)] )}
 | _1 = def _2 = SemiSemi
     {    ( [(_1,_2,true)] )}
@@ -1221,11 +1221,11 @@ defs_help:
     {    ( (_1,_2,true)::_3 )}
 
 defs:
-| _1 = defs_help
+_1 = defs_help
     {    ( Defs(_1) )}
 
 file:
-| _1 = defs _2 = Eof
+_1 = defs _2 = Eof
     {    ( (_1,_2) )}
 
 %%

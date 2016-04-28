@@ -15,49 +15,49 @@ Warning: the token TokSemi is unused.
 %%
 
 main:
-| _1 = section_list _2 = TokEof
+_1 = section_list _2 = TokEof
     {                              ( _1 )}
 
 section_list:
-| _1 = section_list_rev
+_1 = section_list_rev
     {                              ( List.rev _1 )}
 
 section_list_rev:
-| _1 = section
+_1 = section
     {                              ( [_1] )}
 | _1 = section_list_rev _2 = section
     {                              ( _2 :: _1 )}
 
 section:
-| _1 = TokLeftBrack _2 = identifier _3 = TokRightBrack _4 = assignment_list
+_1 = TokLeftBrack _2 = identifier _3 = TokRightBrack _4 = assignment_list
     {                              ( _2, _4 )}
 
 assignment_list:
-| _1 = assignment_list_rev
+_1 = assignment_list_rev
     {                              ( List.rev _1 )}
 
 assignment_list_rev:
-| _1 = assignment
+_1 = assignment
     {                              ( [_1] )}
 | _1 = assignment_list_rev _2 = assignment
     {                              ( _2 :: _1 )}
 
 assignment:
-| _1 = identifier _2 = TokEq _3 = string_list
+_1 = identifier _2 = TokEq _3 = string_list
     {                              ( _1, _3 )}
 
 string_list:
-| _1 = string_list_rev
+_1 = string_list_rev
     {                              ( List.rev _1 )}
 
 string_list_rev:
-| _1 = TokString
+_1 = TokString
     {                              ( [_1] )}
 | _1 = string_list_rev _2 = TokComma _3 = TokString
     {                              ( _3 :: _1 )}
 
 identifier:
-| _1 = TokId
+_1 = TokId
     {                              ( _1 )}
 
 %%

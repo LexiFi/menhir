@@ -52,11 +52,11 @@
 %%
 
 term_eof:
-| _1 = term _2 = EOF
+_1 = term _2 = EOF
     {           ( _1 )}
 
 term:
-| _1 = VAR_IDENT
+_1 = VAR_IDENT
     {    ( make_var_term _1 )}
 | _1 = PREFIX_IDENT
     {    ( !check_make_term _1 [] )}
@@ -74,17 +74,17 @@ term:
     {    ( _2 )}
 
 term_list:
-| _1 = term
+_1 = term
     {                        ( [_1] )}
 | _1 = term _2 = COMMA _3 = term_list
     {                        ( _1 :: _3 )}
 
 equation_set_eof:
-| _1 = equation_set _2 = EOF
+_1 = equation_set _2 = EOF
     {                     ( _1 )}
 
 equation_set:
-| 
+
     {                        ( []   )}
 | _1 = equation
     {                            ( [_1] )}
@@ -92,19 +92,19 @@ equation_set:
     {                                  ( _1::_3 )}
 
 equation_eof:
-| _1 = equation _2 = EOF
+_1 = equation _2 = EOF
     {                 ( _1 )}
 
 equation:
-| _1 = term _2 = EQ _3 = term
+_1 = term _2 = EQ _3 = term
     {                       ( (_1,_3) )}
 
 rule_set_eof:
-| _1 = rule_set _2 = EOF
+_1 = rule_set _2 = EOF
     {                 ( _1 )}
 
 rule_set:
-| 
+
     {                          ( []   )}
 | _1 = rule
     {                          ( [_1] )}
@@ -112,15 +112,15 @@ rule_set:
     {                          ( _1::_3 )}
 
 rule:
-| _1 = term _2 = ARROW _3 = term
+_1 = term _2 = ARROW _3 = term
     {                          ( (_1,_3) )}
 
 order_constraint_eof:
-| _1 = formula _2 = EOF
+_1 = formula _2 = EOF
     {                                  ( _1 )}
 
 formula:
-| _1 = term _2 = comp _3 = term
+_1 = term _2 = comp _3 = term
     {                           ( Order_constraints.Atom(_1,_2,_3) )}
 | _1 = formula _2 = AND _3 = formula
     {                           ( Order_constraints.conj _1 _3 )}
@@ -132,7 +132,7 @@ formula:
     {                           ( _2 )}
 
 comp:
-| _1 = EQ
+_1 = EQ
     {     ( Order_constraints.Eq )}
 | _1 = GT
     {     ( Order_constraints.Gt )}
@@ -146,11 +146,11 @@ comp:
     {     ( Order_constraints.Ne )}
 
 precedence_eof:
-| _1 = precedence _2 = EOF
+_1 = precedence _2 = EOF
     {  ( _1 )}
 
 precedence:
-| 
+
     {                                ( [] )}
 | _1 = ordered_list
     {                  ( [_1] )}
@@ -158,7 +158,7 @@ precedence:
     {                                ( _1::_3 )}
 
 ordered_list:
-| _1 = ident
+_1 = ident
     {            ( One(_1) )}
 | _1 = ident _2 = EQ _3 = ordered_list
     {                         ( Eq(_1,_3) )}
@@ -168,7 +168,7 @@ ordered_list:
     {                         ( Lt(_1,_3) )}
 
 ident:
-| _1 = PREFIX_IDENT
+_1 = PREFIX_IDENT
     {                ( _1 )}
 | _1 = POSTFIX_IDENT
     {                ( _1 )}
@@ -176,11 +176,11 @@ ident:
     {                ( _1 )}
 
 status_eof:
-| _1 = status _2 = EOF
+_1 = status _2 = EOF
     {                       ( _1 )}
 
 status:
-| 
+
     {                                ( [] )}
 | _1 = symbol_status
     {                                ( [_1] )}
@@ -188,7 +188,7 @@ status:
     {                                    ( _1::_3 )}
 
 symbol_status:
-| _1 = ident _2 = MUL
+_1 = ident _2 = MUL
     {               ( (_1,Rpo.Multiset) )}
 | _1 = ident _2 = LR_LEX
     {               ( (_1,Rpo.Lr_lexico) )}

@@ -36,11 +36,11 @@
 %%
 
 full_module:
-| x = annot y = module_body
+x = annot y = module_body
     {                             ( (((_startpos_x_, _endpos_x_), x), y) )}
 
 module_body:
-| _1 = module_item _2 = module_body
+_1 = module_item _2 = module_body
     {                            ( _1 :: _2 )}
 | _1 = EOF
     {                            ( [] )}
@@ -48,13 +48,13 @@ module_body:
     {               ( syntax_error "Syntax error" _startpos__e_ _endpos__e_ )}
 
 annot:
-| x = asection l = annot
+x = asection l = annot
     {                         ( x :: l )}
 | 
     {                         ( ([] : annot) )}
 
 asection:
-| _1 = LT x = LIDENT l = afield_list _4 = GT
+_1 = LT x = LIDENT l = afield_list _4 = GT
     {let _endpos = _endpos__4_ in
 let _startpos = _startpos__1_ in
                                     ( (x, ((_startpos, _endpos), l)) )}
@@ -68,13 +68,13 @@ let _startpos = _startpos__1_ in
                                         _startpos__e_ _endpos__e_ )}
 
 afield_list:
-| x = afield l = afield_list
+x = afield l = afield_list
     {                              ( x :: l )}
 | 
     {                              ( [] )}
 
 afield:
-| _1 = LIDENT _2 = EQ _3 = STRING
+_1 = LIDENT _2 = EQ _3 = STRING
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
                     ( (_1, ((_startpos, _endpos), Some _3)) )}
@@ -84,7 +84,7 @@ let _startpos = _startpos__1_ in
                     ( (_1, ((_startpos, _endpos), None)) )}
 
 module_item:
-| _1 = TYPE p = type_param s = LIDENT a = annot _5 = EQ t = type_expr
+_1 = TYPE p = type_param s = LIDENT a = annot _5 = EQ t = type_expr
     {let _endpos = _endpos_t_ in
 let _startpos = _startpos__1_ in
                                ( `Type ((_startpos, _endpos), (s, p, a), t) )}
@@ -96,7 +96,7 @@ let _startpos = _startpos__1_ in
     {    ( syntax_error "Expecting type name" _startpos__e_ _endpos__e_ )}
 
 type_param:
-| _1 = TIDENT
+_1 = TIDENT
     {                                    ( [ _1 ] )}
 | _1 = OP_PAREN _2 = type_var_list _3 = CL_PAREN
     {                                    ( _2 )}
@@ -106,13 +106,13 @@ type_param:
     {    ( syntax_error "Expecting ')'" _startpos__e_ _endpos__e_ )}
 
 type_var_list:
-| _1 = TIDENT _2 = COMMA _3 = type_var_list
+_1 = TIDENT _2 = COMMA _3 = type_var_list
     {                               ( _1 :: _3 )}
 | _1 = TIDENT
     {                               ( [ _1 ] )}
 
 type_expr:
-| _1 = OP_BRACK l = variant_list _3 = CL_BRACK a = annot
+_1 = OP_BRACK l = variant_list _3 = CL_BRACK a = annot
     {let _endpos = _endpos_a_ in
 let _startpos = _startpos__1_ in
      ( `Sum ((_startpos, _endpos), l, a) )}
@@ -175,7 +175,7 @@ let _startpos = _startpos_x_ in
     {     ( syntax_error "Expecting ')'" _startpos__e_ _endpos__e_ )}
 
 cartesian_product:
-| x = annot_expr _2 = STAR l = cartesian_product
+x = annot_expr _2 = STAR l = cartesian_product
     {                                              ( x :: l )}
 | x = annot_expr _2 = STAR y = annot_expr
     {                                              ( [ x; y ] )}
@@ -183,7 +183,7 @@ cartesian_product:
     {                                              ( [] )}
 
 annot_expr:
-| a = annot _2 = COLON x = type_expr
+a = annot _2 = COLON x = type_expr
     {let _endpos = _endpos_x_ in
 let _startpos = _startpos_a_ in
                                    ( ((_startpos, _endpos), x, a) )}
@@ -193,13 +193,13 @@ let _startpos = _startpos_x_ in
                                    ( ((_startpos, _endpos), x, []) )}
 
 type_inst:
-| l = type_args s = LIDENT
+l = type_args s = LIDENT
     {let _endpos = _endpos_s_ in
 let _startpos = _startpos_l_ in
                             ( ((_startpos, _endpos), s, l) )}
 
 type_args:
-| _1 = type_expr
+_1 = type_expr
     {                                    ( [ _1 ] )}
 | _1 = OP_PAREN _2 = type_arg_list _3 = CL_PAREN
     {                                    ( _2 )}
@@ -209,25 +209,25 @@ type_args:
     {     ( syntax_error "Expecting ')'" _startpos__e_ _endpos__e_ )}
 
 type_arg_list:
-| _1 = type_expr _2 = COMMA _3 = type_arg_list
+_1 = type_expr _2 = COMMA _3 = type_arg_list
     {                                 ( _1 :: _3 )}
 | _1 = type_expr _2 = COMMA _3 = type_expr
     {                                 ( [ _1; _3 ] )}
 
 variant_list:
-| _1 = BAR _2 = variant_list0
+_1 = BAR _2 = variant_list0
     {                    ( _2 )}
 | _1 = variant_list0
     {                    ( _1 )}
 
 variant_list0:
-| _1 = variant _2 = BAR _3 = variant_list0
+_1 = variant _2 = BAR _3 = variant_list0
     {                             ( _1 :: _3 )}
 | _1 = variant
     {                             ( ([ _1 ] : variant list) )}
 
 variant:
-| x = UIDENT a = annot _3 = OF t = type_expr
+x = UIDENT a = annot _3 = OF t = type_expr
     {let _endpos = _endpos_t_ in
 let _startpos = _startpos_x_ in
      ( `Variant ((_startpos, _endpos), (x, a), Some t) )}
@@ -244,7 +244,7 @@ let _startpos = _startpos__1_ in
          _startpos__e_ _endpos__e_ )}
 
 field_list:
-| x = field _2 = SEMICOLON l = field_list
+x = field _2 = SEMICOLON l = field_list
     {                                       ( x :: l )}
 | x = field _2 = SEMICOLON
     {                                       ( [ x ] )}
@@ -252,7 +252,7 @@ field_list:
     {                                       ( [ x ] )}
 
 field:
-| fn = field_name a = annot _3 = COLON t = type_expr
+fn = field_name a = annot _3 = COLON t = type_expr
     {let _endpos = _endpos_t_ in
 let _startpos = _startpos_fn_ in
     ( let k, fk = fn in
@@ -268,7 +268,7 @@ let _startpos = _startpos__1_ in
     {    ( syntax_error "Expecting ':'" _startpos__e_ _endpos__e_ )}
 
 field_name:
-| k = LIDENT
+k = LIDENT
     {                         ( (k, `Required) )}
 | _1 = QUESTION k = LIDENT
     {                         ( (k, `Optional) )}

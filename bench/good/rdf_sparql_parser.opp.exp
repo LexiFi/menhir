@@ -172,7 +172,7 @@ let mk_boolean = mk_lit ~typ: xsd_boolean;;
 %%
 
 query:
-| p = prologue k = query_kind v = values_clause _4 = EOF
+p = prologue k = query_kind v = values_clause _4 = EOF
     {  (
     { q_prolog = p ;
       q_kind = k ;
@@ -181,17 +181,17 @@ query:
   )}
 
 prologue:
-| _1 = list_prologue_item_
+_1 = list_prologue_item_
     {                              ( _1 )}
 
 prologue_item:
-| _1 = BASE _2 = Iriref_
+_1 = BASE _2 = Iriref_
     {               ( BaseDecl _2 )}
 | _1 = PREFIX name = Pname_ns ir = Iriref_
     {                                  ( PrefixDecl (name, ir) )}
 
 query_kind:
-| s = select_clause ds = list_dataset_clause_ w = where_clause m = solution_modifier
+s = select_clause ds = list_dataset_clause_ w = where_clause m = solution_modifier
     {  (
     Select {
       select_select = s ; select_dataset = ds ;
@@ -244,7 +244,7 @@ query_kind:
   )}
 
 select_clause:
-| _1 = SELECT f = option_select_flag_ v = select_vars
+_1 = SELECT f = option_select_flag_ v = select_vars
     {   (
     { sel_flag = f ;
       sel_vars = v ;
@@ -252,11 +252,11 @@ select_clause:
   )}
 
 source_selector:
-| _1 = iri
+_1 = iri
     {                     ( _1 )}
 
 prefixed_name:
-| _1 = Pname_ns
+_1 = Pname_ns
     {           (
     { pname_loc = mk_loc _startpos__1_ _endpos__1_ ;
       pname_ns = _1 ;
@@ -269,7 +269,7 @@ prefixed_name:
   )}
 
 solution_modifier:
-| g = option_group_clause_ h = option_having_clause_ o = option_order_clause_ lo = option_limit_offset_clause_
+g = option_group_clause_ h = option_having_clause_ o = option_order_clause_ lo = option_limit_offset_clause_
     {  (
     let loc = mk_loc _startpos_g_ _endpos_lo_ in
     { solmod_loc = loc ;
@@ -281,11 +281,11 @@ solution_modifier:
   )}
 
 order_clause:
-| _1 = ORDER _2 = BY l = nonempty_list_order_condition_
+_1 = ORDER _2 = BY l = nonempty_list_order_condition_
     {                                            ( l )}
 
 subselect:
-| sel = select_clause w = where_clause sol = solution_modifier v = values_clause
+sel = select_clause w = where_clause sol = solution_modifier v = values_clause
     {  (
    let loc = mk_loc _startpos_sel_ _endpos_v_ in
    {
@@ -298,7 +298,7 @@ subselect:
   )}
 
 triples_block:
-| l = triples_block_details
+l = triples_block_details
     {  (
     let loc = mk_loc _startpos_l_ _endpos_l_ in
     Triples
@@ -308,7 +308,7 @@ triples_block:
   )}
 
 triples_block_details:
-| s = triples_same_subject_path rest = option_triples_block_details2_
+s = triples_same_subject_path rest = option_triples_block_details2_
     {  (
     match rest with
       None -> [s]
@@ -316,7 +316,7 @@ triples_block_details:
   )}
 
 service_graph_pattern:
-| _1 = SERVICE silent = option_SILENT_ vi = var_or_iri g = group_graph_pattern
+_1 = SERVICE silent = option_SILENT_ vi = var_or_iri g = group_graph_pattern
     {  (
     let loc = mk_loc _startpos__1_ _endpos_g_ in
     let t =
@@ -330,137 +330,137 @@ service_graph_pattern:
   )}
 
 string:
-| _1 = String_literal
+_1 = String_literal
     {                       ( _1 )}
 
 substring_expression:
-| _1 = SUBSTR _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = RPAR
+_1 = SUBSTR _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = RPAR
     {  ( Bic_fun("SUBSTR", [e1 ; e2]) )}
 | _1 = SUBSTR _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = RPAR
     {  ( Bic_fun ("SUBSTR", [e1 ; e2 ; e3]) )}
 
 str_replace_expression:
-| _1 = REPLACE _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = RPAR
+_1 = REPLACE _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = RPAR
     {  ( Bic_fun("REPLACE", [e1 ; e2 ; e3]) )}
 | _1 = REPLACE _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = COMMA e4 = expression _10 = RPAR
     {  ( Bic_fun ("REPLACE", [e1 ;e2 ; e3 ; e4]) )}
 
 option_triples_block_details2_:
-| 
+
     {    ( None )}
 | x = triples_block_details2
     {    ( Some x )}
 
 option_triples_block_details_:
-| 
+
     {    ( None )}
 | x = triples_block_details
     {    ( Some x )}
 
 option_triples_block_:
-| 
+
     {    ( None )}
 | x = triples_block
     {    ( Some x )}
 
 option_select_flag_:
-| 
+
     {    ( None )}
 | x = select_flag
     {    ( Some x )}
 
 option_property_list_path_not_empty_:
-| 
+
     {    ( None )}
 | x = property_list_path_not_empty
     {    ( Some x )}
 
 option_property_list_not_empty_:
-| 
+
     {    ( None )}
 | x = property_list_not_empty
     {    ( Some x )}
 
 option_path_mod_:
-| 
+
     {    ( None )}
 | x = path_mod
     {    ( Some x )}
 
 option_order_clause_:
-| 
+
     {    ( None )}
 | x = order_clause
     {    ( Some x )}
 
 option_offset_clause_:
-| 
+
     {    ( None )}
 | x = offset_clause
     {    ( Some x )}
 
 option_limit_offset_clause_:
-| 
+
     {    ( None )}
 | x = limit_offset_clause
     {    ( Some x )}
 
 separated_nonempty_list_UNION_group_graph_pattern_:
-| x = group_graph_pattern
+x = group_graph_pattern
     {    ( [ x ] )}
 | x = group_graph_pattern _2 = UNION xs = separated_nonempty_list_UNION_group_graph_pattern_
     {    ( x :: xs )}
 
 separated_nonempty_list_SLASH_path_elt_or_inverse_:
-| x = path_elt_or_inverse
+x = path_elt_or_inverse
     {    ( [ x ] )}
 | x = path_elt_or_inverse _2 = SLASH xs = separated_nonempty_list_SLASH_path_elt_or_inverse_
     {    ( x :: xs )}
 
 separated_nonempty_list_PIPE_path_sequence_:
-| x = path_sequence
+x = path_sequence
     {    ( [ x ] )}
 | x = path_sequence _2 = PIPE xs = separated_nonempty_list_PIPE_path_sequence_
     {    ( x :: xs )}
 
 separated_nonempty_list_PIPE_path_one_in_property_set_:
-| x = path_one_in_property_set
+x = path_one_in_property_set
     {    ( [ x ] )}
 | x = path_one_in_property_set _2 = PIPE xs = separated_nonempty_list_PIPE_path_one_in_property_set_
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_object_path_:
-| x = object_path
+x = object_path
     {    ( [ x ] )}
 | x = object_path _2 = COMMA xs = separated_nonempty_list_COMMA_object_path_
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_object__:
-| x = object_
+x = object_
     {    ( [ x ] )}
 | x = object_ _2 = COMMA xs = separated_nonempty_list_COMMA_object__
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_expression_:
-| x = expression
+x = expression
     {    ( [ x ] )}
 | x = expression _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
     {    ( x :: xs )}
 
 select_flag:
-| _1 = DISTINCT
+_1 = DISTINCT
     {           ( Distinct )}
 | _1 = REDUCED
     {          ( Reduced )}
 
 select_vars:
-| _1 = STAR
+_1 = STAR
     {       ( SelectAll )}
 | _1 = nonempty_list_select_var_
     {                            ( SelectVars _1 )}
 
 select_var:
-| _1 = var
+_1 = var
     {      (
     { sel_var_loc = mk_loc _startpos__1_ _endpos__1_ ;
       sel_var_expr = None ;
@@ -476,13 +476,13 @@ select_var:
   )}
 
 construct_template:
-| _1 = LBRACE _2 = option_construct_triples_ _3 = RBRACE
+_1 = LBRACE _2 = option_construct_triples_ _3 = RBRACE
     {                                         (
    match _2 with None -> [] | Some l -> l
   )}
 
 construct_triples:
-| _1 = triples_same_subject
+_1 = triples_same_subject
     {                       ( [ _1 ] )}
 | _1 = triples_same_subject _2 = DOT
     {                           ( [ _1 ] )}
@@ -490,11 +490,11 @@ construct_triples:
     {                                             ( _1 :: _3 )}
 
 triples_template:
-| _1 = construct_triples
+_1 = construct_triples
     {                                    ( _1 )}
 
 triples_same_subject:
-| v = var_or_term l = property_list_not_empty
+v = var_or_term l = property_list_not_empty
     {  (
     TriplesVar (v, l)
   )}
@@ -504,33 +504,33 @@ triples_same_subject:
   )}
 
 dataset_clause:
-| _1 = FROM _2 = source_selector
+_1 = FROM _2 = source_selector
     {                       ( DefaultGraphClause _2 )}
 | _1 = FROM _2 = NAMED _3 = source_selector
     {                             ( NamedGraphClause _3 )}
 
 iri:
-| _1 = Iriref_
+_1 = Iriref_
     {          ( Rdf_sparql_types.Reliri _1 )}
 | _1 = prefixed_name
     {                ( Rdf_sparql_types.PrefixedName _1 )}
 
 values_clause:
-| _1 = option_values_clause__
+_1 = option_values_clause__
     {                                      ( _1 )}
 
 values_clause_:
-| _1 = VALUES d = datablock
+_1 = VALUES d = datablock
     {                     ( d )}
 
 datablock:
-| _1 = inline_data_one_var
+_1 = inline_data_one_var
     {                      ( InLineDataOneVar _1 )}
 | _1 = inline_data_full
     {                   ( InLineDataFull _1 )}
 
 inline_data_one_var:
-| v = var _2 = LBRACE l = list_data_block_value_ _4 = RBRACE
+v = var _2 = LBRACE l = list_data_block_value_ _4 = RBRACE
     {  (
     let loc = mk_loc _startpos_v_ _endpos__4_ in
     { idov_loc = loc ;
@@ -540,7 +540,7 @@ inline_data_one_var:
   )}
 
 inline_data_full:
-| vars = nil_or_var_list _2 = LBRACE l = list_data_block_values_or_nil_ _4 = RBRACE
+vars = nil_or_var_list _2 = LBRACE l = list_data_block_values_or_nil_ _4 = RBRACE
     {  (
     let loc = mk_loc _startpos_vars_ _endpos__4_ in
     {
@@ -551,13 +551,13 @@ inline_data_full:
   )}
 
 data_block_values_or_nil:
-| _1 = NIL
+_1 = NIL
     {      ( Nil )}
 | _1 = LPAR l = list_data_block_value_ _3 = RPAR
     {                                     ( Value l )}
 
 data_block_value:
-| _1 = iri
+_1 = iri
     {      ( DataBlockValueIri _1 )}
 | _1 = rdf_literal
     {              ( DataBlockValueRdf _1 )}
@@ -569,11 +569,11 @@ data_block_value:
     {        ( DataBlockValueUndef )}
 
 group_clause:
-| _1 = GROUP _2 = BY l = nonempty_list_group_condition_
+_1 = GROUP _2 = BY l = nonempty_list_group_condition_
     {  ( l )}
 
 group_condition:
-| _1 = built_in_call
+_1 = built_in_call
     {                ( GroupBuiltInCall _1 )}
 | _1 = function_call
     {                ( GroupFunctionCall _1 )}
@@ -581,7 +581,7 @@ group_condition:
     {            ( GroupVar _1 )}
 
 group_var:
-| v = var
+v = var
     {        (
     let loc = mk_loc _startpos_v_ _endpos_v_ in
     { grpvar_loc = loc ; grpvar_expr = None ; grpvar = Some v }
@@ -598,19 +598,19 @@ group_var:
   )}
 
 having_clause:
-| _1 = HAVING l = nonempty_list_having_condition_
+_1 = HAVING l = nonempty_list_having_condition_
     {                                           ( l )}
 
 having_condition:
-| _1 = constraint_
+_1 = constraint_
     {                              ( _1 )}
 
 bracketted_expression:
-| _1 = LPAR _2 = expression _3 = RPAR
+_1 = LPAR _2 = expression _3 = RPAR
     {                                            ( _2 )}
 
 constraint_:
-| _1 = bracketted_expression
+_1 = bracketted_expression
     {                        ( ConstrExpr _1 )}
 | _1 = built_in_call
     {                ( ConstrBuiltInCall _1 )}
@@ -618,13 +618,13 @@ constraint_:
     {                ( ConstrFunctionCall _1 )}
 
 group_graph_pattern:
-| _1 = LBRACE _2 = subselect _3 = RBRACE
+_1 = LBRACE _2 = subselect _3 = RBRACE
     {                          ( SubSelect _2 )}
 | _1 = LBRACE _2 = group_graph_pattern_sub _3 = RBRACE
     {                                        ( GGPSub _2 )}
 
 group_graph_pattern_sub:
-| t = option_triples_block_ l = list_gp_triples_
+t = option_triples_block_ l = list_gp_triples_
     {  (
     let loc = mk_loc _startpos_t_ _endpos_l_ in
     let l =
@@ -644,25 +644,25 @@ group_graph_pattern_sub:
   )}
 
 gp_triples:
-| gp = graph_pattern_not_triples _2 = option_DOT_ t = option_triples_block_
+gp = graph_pattern_not_triples _2 = option_DOT_ t = option_triples_block_
     {  ( (gp, t) )}
 
 graph_node:
-| _1 = var_or_term
+_1 = var_or_term
     {              ( GraphNodeVT _1 )}
 | _1 = triples_node
     {               ( GraphNodeTriples _1 )}
 
 collection:
-| _1 = LPAR _2 = nonempty_list_graph_node_ _3 = RPAR
+_1 = LPAR _2 = nonempty_list_graph_node_ _3 = RPAR
     {                                    ( _2 )}
 
 blank_node_property_list:
-| _1 = LBRACKET _2 = property_list_not_empty _3 = RBRACKET
+_1 = LBRACKET _2 = property_list_not_empty _3 = RBRACKET
     {                                          ( _2 )}
 
 graph_term:
-| _1 = iri
+_1 = iri
     {      ( GraphTermIri _1 )}
 | _1 = rdf_literal
     {              ( GraphTermLit _1 )}
@@ -676,7 +676,7 @@ graph_term:
     {      ( GraphTermNil )}
 
 graph_pattern_not_triples:
-| _1 = group_of_union_graph_pattern
+_1 = group_of_union_graph_pattern
     {                               ( _1 )}
 | _1 = optional_graph_pattern
     {                         ( _1 )}
@@ -694,15 +694,15 @@ graph_pattern_not_triples:
     {              ( _1 )}
 
 group_of_union_graph_pattern:
-| l = separated_nonempty_list_UNION_group_graph_pattern_
+l = separated_nonempty_list_UNION_group_graph_pattern_
     {                                                        ( Union l )}
 
 minus_graph_pattern:
-| _1 = MINUS g = group_graph_pattern
+_1 = MINUS g = group_graph_pattern
     {                              ( Minus g )}
 
 graph_graph_pattern:
-| _1 = GRAPH vi = var_or_iri g = group_graph_pattern
+_1 = GRAPH vi = var_or_iri g = group_graph_pattern
     {  (
     let loc = mk_loc _startpos__1_ _endpos_g_ in
     let t =
@@ -715,11 +715,11 @@ graph_graph_pattern:
   )}
 
 filter:
-| _1 = FILTER _2 = constraint_
+_1 = FILTER _2 = constraint_
     {                           ( Filter _2 )}
 
 bind:
-| _1 = BIND _2 = LPAR e = expression _4 = AS v = var _6 = RPAR
+_1 = BIND _2 = LPAR e = expression _4 = AS v = var _6 = RPAR
     {  (
     let loc = mk_loc _startpos__1_ _endpos__6_ in
     let t =
@@ -732,77 +732,77 @@ bind:
   )}
 
 inline_data:
-| _1 = VALUES _2 = datablock
+_1 = VALUES _2 = datablock
     {                   ( InlineData _2 )}
 
 loption_separated_nonempty_list_PIPE_path_one_in_property_set__:
-| 
+
     {    ( [] )}
 | x = separated_nonempty_list_PIPE_path_one_in_property_set_
     {    ( x )}
 
 list_verbp_object_list_l_:
-| 
+
     {    ( [] )}
 | x = verbp_object_list_l xs = list_verbp_object_list_l_
     {    ( x :: xs )}
 
 list_data_block_values_or_nil_:
-| 
+
     {    ( [] )}
 | x = data_block_values_or_nil xs = list_data_block_values_or_nil_
     {    ( x :: xs )}
 
 list_data_block_value_:
-| 
+
     {    ( [] )}
 | x = data_block_value xs = list_data_block_value_
     {    ( x :: xs )}
 
 nonempty_list_select_var_:
-| x = select_var
+x = select_var
     {    ( [ x ] )}
 | x = select_var xs = nonempty_list_select_var_
     {    ( x :: xs )}
 
 nonempty_list_order_condition_:
-| x = order_condition
+x = order_condition
     {    ( [ x ] )}
 | x = order_condition xs = nonempty_list_order_condition_
     {    ( x :: xs )}
 
 nonempty_list_having_condition_:
-| x = having_condition
+x = having_condition
     {    ( [ x ] )}
 | x = having_condition xs = nonempty_list_having_condition_
     {    ( x :: xs )}
 
 nonempty_list_group_condition_:
-| x = group_condition
+x = group_condition
     {    ( [ x ] )}
 | x = group_condition xs = nonempty_list_group_condition_
     {    ( x :: xs )}
 
 nonempty_list_graph_node_path_:
-| x = graph_node_path
+x = graph_node_path
     {    ( [ x ] )}
 | x = graph_node_path xs = nonempty_list_graph_node_path_
     {    ( x :: xs )}
 
 nonempty_list_graph_node_:
-| x = graph_node
+x = graph_node
     {    ( [ x ] )}
 | x = graph_node xs = nonempty_list_graph_node_
     {    ( x :: xs )}
 
 nil_or_var_list:
-| _1 = NIL
+_1 = NIL
     {      ( [] )}
 | _1 = LPAR l = list_var_ _3 = RPAR
     {                        ( l )}
 
 limit_offset_clause:
-| l = limit_clause o = option_offset_clause_
+l = limit_clause o = option_offset_clause_
     {  (
     let loc = mk_loc _startpos_l_ _endpos_o_ in
     { limoff_loc = loc ; limoff_limit = Some l ; limoff_offset = o }
@@ -814,15 +814,15 @@ limit_offset_clause:
   )}
 
 limit_clause:
-| _1 = LIMIT _2 = Integer
+_1 = LIMIT _2 = Integer
     {                            ( int_of_string _2 )}
 
 offset_clause:
-| _1 = OFFSET _2 = Integer
+_1 = OFFSET _2 = Integer
     {                              ( int_of_string _2 )}
 
 order_condition:
-| _1 = ASC _2 = bracketted_expression
+_1 = ASC _2 = bracketted_expression
     {                            ( OrderAsc _2 )}
 | _1 = DESC _2 = bracketted_expression
     {                             ( OrderDesc _2 )}
@@ -832,15 +832,15 @@ order_condition:
     {      ( OrderVar _1 )}
 
 where_clause:
-| _1 = option_WHERE_ _2 = group_graph_pattern
+_1 = option_WHERE_ _2 = group_graph_pattern
     {                                    ( _2 )}
 
 triples_block_details2:
-| _1 = DOT t = option_triples_block_details_
+_1 = DOT t = option_triples_block_details_
     {  ( match t with None -> [] | Some l -> l )}
 
 triples_same_subject_path:
-| v = var_or_term p = property_list_path_not_empty
+v = var_or_term p = property_list_path_not_empty
     {  (
     TriplesVar (v, p)
   )}
@@ -850,11 +850,11 @@ triples_same_subject_path:
   )}
 
 property_list_path:
-| l = option_property_list_path_not_empty_
+l = option_property_list_path_not_empty_
     {  ( match l with None -> [] | Some l -> l )}
 
 property_list_path_not_empty:
-| v = verb_path_or_simple olp = object_list_path more = list_verbp_object_list_l_
+v = verb_path_or_simple olp = object_list_path more = list_verbp_object_list_l_
     {  (
     let loc = mk_loc _startpos_v_ _endpos_more_ in
     let more = List.fold_left
@@ -873,11 +873,11 @@ property_list_path_not_empty:
   )}
 
 verbp_object_list_l:
-| _1 = SEMICOLON _2 = option_verbp_object_list_
+_1 = SEMICOLON _2 = option_verbp_object_list_
     {  ( _2 )}
 
 verbp_object_list:
-| v = verb_path_or_simple l = object_list
+v = verb_path_or_simple l = object_list
     {  (
     let loc = mk_loc _startpos_v_ _endpos_l_ in
     { propol_loc = loc ;
@@ -887,33 +887,33 @@ verbp_object_list:
   )}
 
 object_list:
-| _1 = separated_nonempty_list_COMMA_object__
+_1 = separated_nonempty_list_COMMA_object__
     {                                                     ( _1 )}
 
 object_:
-| _1 = graph_node
+_1 = graph_node
     {                    ( _1 )}
 
 verb_path_or_simple:
-| _1 = path
+_1 = path
     {       ( VerbPath _1 )}
 | _1 = var
     {      ( VerbVar _1 )}
 
 triples_node:
-| _1 = collection
+_1 = collection
     {             ( TNodeCollection _1 )}
 | _1 = blank_node_property_list
     {                           ( TNodeBlank _1 )}
 
 property_list:
-| l = option_property_list_not_empty_
+l = option_property_list_not_empty_
     {                                    (
     match l with None -> [] | Some l -> l
   )}
 
 property_list_not_empty:
-| v = verb_object_list l = list_verb_object_list_l_
+v = verb_object_list l = list_verb_object_list_l_
     {  (
     let l = List.fold_left
       (fun acc -> function
@@ -928,11 +928,11 @@ property_list_not_empty:
   )}
 
 verb_object_list_l:
-| _1 = SEMICOLON _2 = option_verb_object_list_
+_1 = SEMICOLON _2 = option_verb_object_list_
     {  ( _2 )}
 
 verb_object_list:
-| v = verb l = object_list
+v = verb l = object_list
     {  (
     let loc = mk_loc _startpos_v_ _endpos_l_ in
     { propol_loc = loc ;
@@ -942,7 +942,7 @@ verb_object_list:
   )}
 
 verb:
-| _1 = var_or_iri
+_1 = var_or_iri
     {             (
   match _1 with
     VIVar v -> VerbVar v
@@ -952,19 +952,19 @@ verb:
     {    ( VerbA )}
 
 var_or_iri:
-| _1 = var
+_1 = var
     {      ( VIVar _1 )}
 | _1 = iri
     {      ( VIIri _1 )}
 
 var_or_term:
-| _1 = var
+_1 = var
     {      ( Var _1 )}
 | _1 = graph_term
     {             ( GraphTerm _1 )}
 
 var:
-| s = Var1
+s = Var1
     {  (
     let loc = mk_loc _startpos_s_ _endpos_s_ in
     { var_loc = loc ; var_name = s }
@@ -976,57 +976,57 @@ var:
   )}
 
 optional_graph_pattern:
-| _1 = OPTIONAL g = group_graph_pattern
+_1 = OPTIONAL g = group_graph_pattern
     {                                 ( Optional g )}
 
 object_list_path:
-| _1 = separated_nonempty_list_COMMA_object_path_
+_1 = separated_nonempty_list_COMMA_object_path_
     {                                                              ( _1 )}
 
 object_path:
-| _1 = graph_node_path
+_1 = graph_node_path
     {                             ( _1 )}
 
 graph_node_path:
-| _1 = var_or_term
+_1 = var_or_term
     {              ( GraphNodeVT _1 )}
 | _1 = triples_node_path
     {                    ( GraphNodeTriples _1 )}
 
 triples_node_path:
-| _1 = collection_path
+_1 = collection_path
     {                  ( TNodeCollection _1 )}
 | _1 = blank_node_property_list_path
     {                                ( TNodeBlank _1 )}
 
 collection_path:
-| _1 = LPAR _2 = nonempty_list_graph_node_path_ _3 = RPAR
+_1 = LPAR _2 = nonempty_list_graph_node_path_ _3 = RPAR
     {                                         ( _2 )}
 
 blank_node_property_list_path:
-| _1 = LBRACKET _2 = property_list_path_not_empty _3 = RBRACKET
+_1 = LBRACKET _2 = property_list_path_not_empty _3 = RBRACKET
     {                                               ( _2 )}
 
 path:
-| _1 = path_alternative
+_1 = path_alternative
     {                       ( _1 )}
 
 path_alternative:
-| _1 = separated_nonempty_list_PIPE_path_sequence_
+_1 = separated_nonempty_list_PIPE_path_sequence_
     {  ( _1 )}
 
 path_sequence:
-| _1 = separated_nonempty_list_SLASH_path_elt_or_inverse_
+_1 = separated_nonempty_list_SLASH_path_elt_or_inverse_
     {  ( _1 )}
 
 path_elt_or_inverse:
-| _1 = path_elt
+_1 = path_elt
     {           ( Elt _1 )}
 | _1 = HAT _2 = path_elt
     {               ( Inv _2 )}
 
 path_elt:
-| p = path_primary m = option_path_mod_
+p = path_primary m = option_path_mod_
     {  (
     let loc = mk_loc _startpos_p_ _endpos_m_ in
     { pelt_loc = loc ;
@@ -1036,7 +1036,7 @@ path_elt:
   )}
 
 path_primary:
-| _1 = iri
+_1 = iri
     {      ( PathIri _1 )}
 | _1 = A
     {    ( PathA )}
@@ -1046,7 +1046,7 @@ path_primary:
     {                 ( Path _2 )}
 
 path_negated_property_list:
-| _1 = path_one_in_property_set
+_1 = path_one_in_property_set
     {                           ( [ _1 ] )}
 | _1 = LPAR xs0 = loption_separated_nonempty_list_PIPE_path_one_in_property_set__
     {let l =
@@ -1056,7 +1056,7 @@ in
                                                         ( l )}
 
 path_one_in_property_set:
-| _1 = iri
+_1 = iri
     {      ( PathOneInIri _1 )}
 | _1 = A
     {    ( PathOneInA )}
@@ -1066,7 +1066,7 @@ path_one_in_property_set:
     {        ( PathOneInNotA )}
 
 path_mod:
-| _1 = QM
+_1 = QM
     {     ( ModOptional )}
 | _1 = STAR
     {       ( ModList )}
@@ -1074,7 +1074,7 @@ path_mod:
     {       ( ModOneOrMore )}
 
 blank_node:
-| s = Blank_node_label
+s = Blank_node_label
     {  (
     let loc = mk_loc _startpos_s_ _endpos_s_ in
     { bnode_loc = loc ;
@@ -1090,7 +1090,7 @@ blank_node:
   )}
 
 arg_list:
-| _1 = NIL
+_1 = NIL
     {      (
     let loc = mk_loc _startpos__1_ _endpos__1_ in
     { argl_loc = loc ; argl_distinct = false ; argl = [] }
@@ -1102,18 +1102,18 @@ arg_list:
   )}
 
 function_call:
-| i = iri a = arg_list
+i = iri a = arg_list
     {  (
     let loc = mk_loc _startpos_i_ _endpos_a_ in
     { func_loc = loc ; func_iri = i ; func_args = a }
   )}
 
 expression:
-| e = value_logical
+e = value_logical
     {                            ( e )}
 
 value_logical:
-| e = relational_expression
+e = relational_expression
     {                            ( e )}
 | e1 = value_logical _2 = AMPAMP e2 = value_logical
     {  (
@@ -1128,7 +1128,7 @@ value_logical:
   )}
 
 relational_expression:
-| e1 = numexp _2 = EQUAL e2 = numexp
+e1 = numexp _2 = EQUAL e2 = numexp
     {                            (
     { expr_loc = mk_loc _startpos_e1_ _endpos_e2_ ;
       expr = EBin (e1, EEqual, e2) ;
@@ -1180,13 +1180,13 @@ relational_expression:
     {         ( _1 )}
 
 expression_list:
-| _1 = NIL
+_1 = NIL
     {      ( [] )}
 | _1 = LPAR l = separated_nonempty_list_COMMA_expression_ _3 = RPAR
     {                                                         ( l )}
 
 primary_expression:
-| _1 = bracketted_expression
+_1 = bracketted_expression
     {                        ( _1 )}
 | bic = built_in_call
     {                    (
@@ -1226,7 +1226,7 @@ primary_expression:
   )}
 
 numeric_literal:
-| _1 = numeric_literal_
+_1 = numeric_literal_
     {  (
     let loc = mk_loc _startpos__1_ _endpos__1_ in
     { rdf_lit_loc = loc ;
@@ -1236,7 +1236,7 @@ numeric_literal:
   )}
 
 boolean_literal:
-| _1 = Boolean
+_1 = Boolean
     {          (
     let loc = mk_loc _startpos__1_ _endpos__1_ in
     { rdf_lit_loc = loc ;
@@ -1246,7 +1246,7 @@ boolean_literal:
   )}
 
 rdf_literal:
-| r = rdf_literal_
+r = rdf_literal_
     {  (
     let loc = mk_loc _startpos_r_ _endpos_r_ in
     let (s, lang, typ) = r in
@@ -1257,7 +1257,7 @@ rdf_literal:
   )}
 
 rdf_literal_:
-| s = string
+s = string
     {           ( (s, None, None) )}
 | s = string _2 = HATHAT iri = iri
     {                          ( (s, None, Some iri) )}
@@ -1265,121 +1265,121 @@ rdf_literal_:
     {                     ( (s, Some t, None) )}
 
 regexp_expression:
-| _1 = REGEX _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = RPAR
+_1 = REGEX _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = RPAR
     {  ( Bic_fun("REGEX", [e1 ; e2]) )}
 | _1 = REGEX _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = RPAR
     {  ( Bic_fun ("REGEX", [e1 ; e2 ; e3]) )}
 
 option_where_clause_:
-| 
+
     {    ( None )}
 | x = where_clause
     {    ( Some x )}
 
 option_verbp_object_list_:
-| 
+
     {    ( None )}
 | x = verbp_object_list
     {    ( Some x )}
 
 option_verb_object_list_:
-| 
+
     {    ( None )}
 | x = verb_object_list
     {    ( Some x )}
 
 option_values_clause__:
-| 
+
     {    ( None )}
 | x = values_clause_
     {    ( Some x )}
 
 option_limit_clause_:
-| 
+
     {    ( None )}
 | x = limit_clause
     {    ( Some x )}
 
 option_having_clause_:
-| 
+
     {    ( None )}
 | x = having_clause
     {    ( Some x )}
 
 option_group_clause_:
-| 
+
     {    ( None )}
 | x = group_clause
     {    ( Some x )}
 
 option_construct_triples_:
-| 
+
     {    ( None )}
 | x = construct_triples
     {    ( Some x )}
 
 option_WHERE_:
-| 
+
     {    ( None )}
 | x = WHERE
     {    ( Some x )}
 
 option_SILENT_:
-| 
+
     {    ( None )}
 | x = SILENT
     {    ( Some x )}
 
 option_DOT_:
-| 
+
     {    ( None )}
 | x = DOT
     {    ( Some x )}
 
 option_DISTINCT_:
-| 
+
     {    ( None )}
 | x = DISTINCT
     {    ( Some x )}
 
 list_verb_object_list_l_:
-| 
+
     {    ( [] )}
 | x = verb_object_list_l xs = list_verb_object_list_l_
     {    ( x :: xs )}
 
 list_var_:
-| 
+
     {    ( [] )}
 | x = var xs = list_var_
     {    ( x :: xs )}
 
 list_prologue_item_:
-| 
+
     {    ( [] )}
 | x = prologue_item xs = list_prologue_item_
     {    ( x :: xs )}
 
 list_gp_triples_:
-| 
+
     {    ( [] )}
 | x = gp_triples xs = list_gp_triples_
     {    ( x :: xs )}
 
 list_dataset_clause_:
-| 
+
     {    ( [] )}
 | x = dataset_clause xs = list_dataset_clause_
     {    ( x :: xs )}
 
 nonempty_list_var_or_iri_:
-| x = var_or_iri
+x = var_or_iri
     {    ( [ x ] )}
 | x = var_or_iri xs = nonempty_list_var_or_iri_
     {    ( x :: xs )}
 
 iri_or_function:
-| iri = iri
+iri = iri
     {  (
     EIri iri
   )}
@@ -1387,7 +1387,7 @@ iri_or_function:
     {                ( EFuncall _1 )}
 
 numexp:
-| e = primary_expression
+e = primary_expression
     {                       ( e )}
 | e1 = expression _2 = STAR e2 = expression
     {                                   (
@@ -1473,7 +1473,7 @@ numexp:
   )}
 
 numeric_literal_:
-| _1 = numeric_literal_unsigned
+_1 = numeric_literal_unsigned
     {                           ( _1 )}
 | _1 = numeric_literal_positive
     {                           ( _1 )}
@@ -1481,7 +1481,7 @@ numeric_literal_:
     {                           ( _1 )}
 
 numeric_literal_unsigned:
-| _1 = Integer
+_1 = Integer
     {          ( mk_integer _1 )}
 | _1 = Decimal
     {          ( mk_decimal _1 )}
@@ -1489,7 +1489,7 @@ numeric_literal_unsigned:
     {         ( mk_double _1 )}
 
 numeric_literal_positive:
-| _1 = Integer_positive
+_1 = Integer_positive
     {                   ( mk_integer _1 )}
 | _1 = Decimal_positive
     {                   ( mk_decimal _1 )}
@@ -1497,7 +1497,7 @@ numeric_literal_positive:
     {                  ( mk_double _1 )}
 
 numeric_literal_negative:
-| _1 = Integer_negative
+_1 = Integer_negative
     {                   ( mk_integer _1 )}
 | _1 = Decimal_negative
     {                   ( mk_decimal _1 )}
@@ -1505,7 +1505,7 @@ numeric_literal_negative:
     {                  ( mk_double _1 )}
 
 built_in_call:
-| _1 = aggregate
+_1 = aggregate
     {            ( Bic_agg _1 )}
 | _1 = regexp_expression
     {                    ( _1 )}
@@ -1619,7 +1619,7 @@ built_in_call:
     {                                   ( Bic_NOTEXISTS g )}
 
 aggregate:
-| _1 = COUNT _2 = LPAR d = option_DISTINCT_ _4 = STAR _5 = RPAR
+_1 = COUNT _2 = LPAR d = option_DISTINCT_ _4 = STAR _5 = RPAR
     {                                          ( Bic_COUNT (d<>None, None) )}
 | _1 = COUNT _2 = LPAR d = option_DISTINCT_ e = expression _5 = RPAR
     {                                                  ( Bic_COUNT (d<>None, Some e) )}

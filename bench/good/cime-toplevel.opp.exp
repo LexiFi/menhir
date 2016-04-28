@@ -50,13 +50,13 @@ open Abstract_syntax;;
 %%
 
 command:
-| _1 = EOF
+_1 = EOF
     {                        ( raise End_of_file )}
 | _1 = command_aux _2 = SEMICOLON
     {                        ( _1 )}
 
 command_aux:
-| _1 = LET _2 = IDENT _3 = EQUAL _4 = expr
+_1 = LET _2 = IDENT _3 = EQUAL _4 = expr
     {                                ( Def(_2,_4) )}
 | _1 = LET _2 = LEFTPAR _3 = identlist _4 = RIGHTPAR _5 = EQUAL _6 = expr
     {                                                     ( Deftuple(_3,_6) )}
@@ -74,19 +74,19 @@ command_aux:
     {                                ( Directive(_2,Numbers.to_string _3) )}
 
 identlist:
-| _1 = IDENT
+_1 = IDENT
     {                                  ( [_1] )}
 | _1 = IDENT _2 = COMMA _3 = identlist
     {                                  ( _1::_3 )}
 
 args:
-| _1 = IDENT
+_1 = IDENT
     {                            ( [_1] )}
 | _1 = IDENT _2 = args
     {                            ( _1::_2 )}
 
 expr:
-| _1 = IF _2 = expr _3 = THEN _4 = expr _5 = ELSE _6 = expr %prec IF
+_1 = IF _2 = expr _3 = THEN _4 = expr _5 = ELSE _6 = expr %prec IF
     {    ( If(_2,_4,_6) )}
 | _1 = expr _2 = simple_expr %prec APPLY
     {    ( Apply(_1,_2) )}
@@ -124,7 +124,7 @@ expr:
     {      ( _1 )}
 
 simple_expr:
-| _1 = IDENT
+_1 = IDENT
     {    ( Var(_1) )}
 | _1 = INTEGER
     {    ( Integer(_1) )}
@@ -144,13 +144,13 @@ simple_expr:
     {   ( Set(_2) )}
 
 commalist:
-| _1 = expr
+_1 = expr
     {    ( [_1] )}
 | _1 = expr _2 = COMMA _3 = commalist
     {    ( _1::_3 )}
 
 semicolonlist:
-| _1 = expr
+_1 = expr
     {    ( [_1] )}
 | _1 = expr _2 = SEMICOLON
     {    ( [_1] )}

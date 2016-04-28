@@ -263,23 +263,23 @@ let debug msg =
 %%
 
 psl_specification:
-| _1 = verification_items _2 = EOF
+_1 = verification_items _2 = EOF
     {                           ( List.rev _1 )}
 
 verification_items:
-| 
+
     {    ( [] )}
 | _1 = verification_items _2 = verification_unit
     {                                         ( _2 :: _1 )}
 
 verification_unit:
-| _1 = vunit_type _2 = identifier _3 = Bracel _4 = inherit_specs _5 = vunit_items _6 = Bracer
+_1 = vunit_type _2 = identifier _3 = Bracel _4 = inherit_specs _5 = vunit_items _6 = Bracer
     {                                                                                                       ( raise (Parser_util.Error "Verification unit requires module name.") )}
 | _1 = vunit_type _2 = identifier _3 = Parenl _4 = hierarchical_hdl_name _5 = Parenr _6 = Bracel _7 = inherit_specs _8 = vunit_items _9 = Bracer
     {                                                                                                       ( List.hd _4, List.rev _8 )}
 
 vunit_type:
-| _1 = Vunit
+_1 = Vunit
     {          ( _1 )}
 | _1 = Vprop
     {          ( raise (Parser_util.Error "\"vprop\" not supported.") )}
@@ -287,49 +287,49 @@ vunit_type:
     {          ( raise (Parser_util.Error "\"vmode\" not supported.") )}
 
 hierarchical_hdl_name:
-| _1 = identifier _2 = hierarchical_hdl_names
+_1 = identifier _2 = hierarchical_hdl_names
     {                                      ( fst _1 :: List.rev _2 )}
 
 hierarchical_hdl_names:
-| 
+
     {                                                      ( [] )}
 | _1 = hierarchical_hdl_names _2 = path_separator _3 = identifier
     {                                                      ( raise (Parser_util.Error "Hierarchical names are not supported.") )}
 
 path_separator:
-| _1 = Period
+_1 = Period
     {           ( () )}
 | _1 = Slash
     {           ( () )}
 
 inherit_specs:
-| 
+
     {                               ( [] )}
 | _1 = inherit_specs _2 = inherit_spec
     {                               ( _2 :: _1 )}
 
 inherit_spec:
-| _1 = Inherit _2 = identifier _3 = comma_identifiers
+_1 = Inherit _2 = identifier _3 = comma_identifiers
     {                                         ( Parser_util.error "\"inherit\" not supported." )}
 
 vunit_items:
-| 
+
     {                           ( [] )}
 | _1 = vunit_items _2 = vunit_item
     {                           ( _2 :: _1 )}
 
 vunit_item:
-| _1 = psl_directive
+_1 = psl_directive
     {                    ( _1 )}
 
 psl_directive:
-| _1 = verification_directive
+_1 = verification_directive
     {                                            ( _1 )}
 | _1 = identifier _2 = Colon _3 = verification_directive
     {                                            ( _3 )}
 
 verification_directive:
-| _1 = Assert _2 = property _3 = report _4 = Semicolon
+_1 = Assert _2 = property _3 = report _4 = Semicolon
     {                                                         ( Psl_ast.Assert (snd _1, _2, _3) )}
 | _1 = Assume _2 = property _3 = Semicolon
     {                                                         ( raise (Parser_util.Error "\"assume\" directive not supported.") )}
@@ -347,39 +347,39 @@ verification_directive:
     {                                                         ( raise (Parser_util.Error "\"strong fairness\" directive not supported.") )}
 
 finite_range:
-| _1 = number _2 = range_sym _3 = number
+_1 = number _2 = range_sym _3 = number
     {                            ( _1, _3 )}
 
 range_sym:
-| _1 = Colon
+_1 = Colon
     {                  ( () )}
 | _1 = Period_period
     {                  ( () )}
 
 report:
-| 
+
     {                  ( "" )}
 | _1 = Report _2 = String
     {                  ( let s = fst _2 in String.sub s 1 (String.length s - 2) )}
 
 identifier:
-| _1 = Identifier
+_1 = Identifier
     {                   ( _1 )}
 | _1 = Identifier_esc
     {                   ( _1 )}
 
 comma_identifiers:
-| 
+
     {                                        ( () )}
 | _1 = Comma _2 = identifier _3 = comma_identifiers
     {                                        ( () )}
 
 number:
-| _1 = Integer
+_1 = Integer
     {             ( int_of_string (fst _1) )}
 
 property:
-| _1 = identifier
+_1 = identifier
     {                           ( Ltl.Variable (fst _1) )}
 | _1 = Parenl _2 = property _3 = Parenr
     {                           ( _2 )}
@@ -483,7 +483,7 @@ property:
     {                                        ( raise (Parser_util.Error "PSL OBE properties are not supported.") )}
 
 clock_expression:
-| _1 = Parenl _2 = Posedge _3 = identifier _4 = Parenr
+_1 = Parenl _2 = Posedge _3 = identifier _4 = Parenr
     {                                      ( Ltl.posedge (fst _3) )}
 | _1 = Parenl _2 = Negedge _3 = identifier _4 = Parenr
     {                                      ( Ltl.negedge (fst _3) )}

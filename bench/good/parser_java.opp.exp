@@ -208,25 +208,25 @@ let constructor_invocation name args =
 %%
 
 goal:
-| _1 = compilation_unit _2 = EOF
+_1 = compilation_unit _2 = EOF
     {                            ( _1 )}
 
 compilation_unit:
-| _1 = package_declaration_opt _2 = import_declarations_opt _3 = type_declarations_opt
+_1 = package_declaration_opt _2 = import_declarations_opt _3 = type_declarations_opt
     {  ( { package = _1; imports = _2; decls = _3; } )}
 
 package_declaration:
-| _1 = PACKAGE _2 = name _3 = SM
+_1 = PACKAGE _2 = name _3 = SM
     {                                      ( qualified_ident _2 )}
 
 import_declaration:
-| _1 = IMPORT _2 = static_opt _3 = name _4 = SM
+_1 = IMPORT _2 = static_opt _3 = name _4 = SM
     {                                        ( _2, qualified_ident _3 )}
 | _1 = IMPORT _2 = static_opt _3 = name _4 = DOT _5 = TIMES _6 = SM
     {                                        ( _2, (qualified_ident _3 @["*", _5]))}
 
 type_declaration:
-| _1 = class_declaration
+_1 = class_declaration
     {                          ( [Class _1] )}
 | _1 = interface_declaration
     {                          ( [Class _1] )}
@@ -238,11 +238,11 @@ type_declaration:
     {       ( [] )}
 
 identifier:
-| _1 = IDENTIFIER
+_1 = IDENTIFIER
     {                       ( _1 )}
 
 name:
-| _1 = identifier_
+_1 = identifier_
     {                         ( [_1] )}
 | _1 = name _2 = DOT _3 = identifier_
     {                         ( _1 @ [_3] )}
@@ -250,13 +250,13 @@ name:
     {                                              ( _1@[TypeArgs_then_Id(_4,_6)] )}
 
 identifier_:
-| _1 = identifier
+_1 = identifier
     {                                    ( Id _1 )}
 | _1 = identifier _2 = LT2 _3 = type_arguments _4 = GT
     {                                    ( Id_then_TypeArgs(_1, _3) )}
 
 type_java:
-| _1 = primitive_type
+_1 = primitive_type
     {                            ( _1 )}
 | _1 = class_or_interface_type
     {                            ( _1 )}
@@ -264,21 +264,21 @@ type_java:
     {                            ( _1 )}
 
 primitive_type:
-| _1 = PRIMITIVE_TYPE
+_1 = PRIMITIVE_TYPE
     {                                ( named_type _1 )}
 
 class_or_interface_type:
-| _1 = name
+_1 = name
     {                              ( TClass (class_type _1) )}
 
 reference_type:
-| _1 = class_or_interface_type
+_1 = class_or_interface_type
     {                           ( _1 )}
 | _1 = array_type
     {              ( _1 )}
 
 array_type:
-| _1 = primitive_type _2 = LB_RB
+_1 = primitive_type _2 = LB_RB
     {                                 ( TArray _1 )}
 | _1 = class_or_interface_type _2 = LB_RB
     {                                 ( TArray _1 )}
@@ -286,7 +286,7 @@ array_type:
     {                                 ( TArray _1 )}
 
 type_argument:
-| _1 = reference_type
+_1 = reference_type
     {                  ( TArgument _1 )}
 | _1 = COND
     {                  ( TQuestion None )}
@@ -296,23 +296,23 @@ type_argument:
     {                               ( TQuestion (Some (true, _3)))}
 
 type_parameter:
-| _1 = identifier
+_1 = identifier
     {                            ( TParam (_1, []) )}
 | _1 = identifier _2 = EXTENDS _3 = bound
     {                            ( TParam (_1, _3) )}
 
 bound:
-| _1 = ref_type_and_list
+_1 = ref_type_and_list
     {                         ( _1 )}
 
 primary:
-| _1 = primary_no_new_array
+_1 = primary_no_new_array
     {                              ( _1 )}
 | _1 = array_creation_expression
     {                              ( _1 )}
 
 primary_no_new_array:
-| _1 = literal
+_1 = literal
     {                       ( _1 )}
 | _1 = class_literal
     {                       ( _1 )}
@@ -332,7 +332,7 @@ primary_no_new_array:
     {                                      ( _1 )}
 
 literal:
-| _1 = LITERAL
+_1 = LITERAL
     {           ( Literal (_1) )}
 | _1 = TInt
     {           ( Literal (_1) )}
@@ -344,7 +344,7 @@ literal:
     {           ( Literal (_1) )}
 
 class_literal:
-| _1 = primitive_type _2 = DOT _3 = CLASS
+_1 = primitive_type _2 = DOT _3 = CLASS
     {                             ( ClassLiteral _1 )}
 | _1 = name _2 = DOT _3 = CLASS
     {                             ( ClassLiteral (TClass (class_type (_1))) )}
@@ -354,7 +354,7 @@ class_literal:
     {                             ( ClassLiteral (void_type _1) )}
 
 class_instance_creation_expression:
-| _1 = NEW _2 = name _3 = LP _4 = argument_list_opt _5 = RP _6 = class_body_opt
+_1 = NEW _2 = name _3 = LP _4 = argument_list_opt _5 = RP _6 = class_body_opt
     {       ( NewClass (TClass (class_type _2), _4, _6) )}
 | _1 = primary _2 = DOT _3 = NEW _4 = identifier _5 = LP _6 = argument_list_opt _7 = RP _8 = class_body_opt
     {       ( NewQualifiedClass (_1, _4, _6, _8) )}
@@ -362,7 +362,7 @@ class_instance_creation_expression:
     {       ( NewQualifiedClass ((Name (name _1)), _4, _6, _8) )}
 
 array_creation_expression:
-| _1 = NEW _2 = primitive_type _3 = dim_exprs _4 = dims_opt
+_1 = NEW _2 = primitive_type _3 = dim_exprs _4 = dims_opt
     {       ( NewArray (_2, List.rev _3, _4, None) )}
 | _1 = NEW _2 = name _3 = dim_exprs _4 = dims_opt
     {       ( NewArray (TClass (class_type (_2)), List.rev _3, _4, None) )}
@@ -372,17 +372,17 @@ array_creation_expression:
     {       ( NewArray (TClass (class_type (_2)), [], _3, Some _4) )}
 
 dim_expr:
-| _1 = LB _2 = expression _3 = RB
+_1 = LB _2 = expression _3 = RB
     {                            ( _2 )}
 
 dims:
-| _1 = LB_RB
+_1 = LB_RB
     {               ( 1 )}
 | _1 = dims _2 = LB_RB
     {               ( _1 + 1 )}
 
 field_access:
-| _1 = primary _2 = DOT _3 = identifier
+_1 = primary _2 = DOT _3 = identifier
     {                                 ( Dot (_1, _3) )}
 | _1 = SUPER _2 = DOT _3 = identifier
     {                                 ( Dot (Name [super_ident _1], _3) )}
@@ -390,13 +390,13 @@ field_access:
     {                                 ( Dot (Name (name _1@[super_ident _3]), _5) )}
 
 array_access:
-| _1 = name _2 = LB _3 = expression _4 = RB
+_1 = name _2 = LB _3 = expression _4 = RB
     {                                          ( ArrayAccess ((Name (name _1)), _3))}
 | _1 = primary_no_new_array _2 = LB _3 = expression _4 = RB
     {                                          ( ArrayAccess (_1, _3) )}
 
 method_invocation:
-| _1 = name _2 = LP _3 = argument_list_opt _4 = RP
+_1 = name _2 = LP _3 = argument_list_opt _4 = RP
     {        (
           match List.rev _1 with
           (* TODO: lose information of TypeArgs_then_Id *)
@@ -422,7 +422,7 @@ method_invocation:
     { ( Call (Dot (Name (name _1 @ [super_ident _3]), _5), _7))}
 
 postfix_expression:
-| _1 = primary
+_1 = primary
     {            ( _1 )}
 | _1 = name
     {            (
@@ -444,15 +444,15 @@ postfix_expression:
     {                              ( _1 )}
 
 post_increment_expression:
-| _1 = postfix_expression _2 = INCR
+_1 = postfix_expression _2 = INCR
     {                                                    ( Postfix (_1, "++") )}
 
 post_decrement_expression:
-| _1 = postfix_expression _2 = DECR
+_1 = postfix_expression _2 = DECR
     {                                                    ( Postfix (_1, "--") )}
 
 unary_expression:
-| _1 = pre_increment_expression
+_1 = pre_increment_expression
     {                             ( _1 )}
 | _1 = pre_decrement_expression
     {                             ( _1 )}
@@ -464,15 +464,15 @@ unary_expression:
     {                                    ( _1 )}
 
 pre_increment_expression:
-| _1 = INCR _2 = unary_expression
+_1 = INCR _2 = unary_expression
     {                                                 ( Prefix ("++", _2) )}
 
 pre_decrement_expression:
-| _1 = DECR _2 = unary_expression
+_1 = DECR _2 = unary_expression
     {                                                 ( Prefix ("--", _2) )}
 
 unary_expression_not_plus_minus:
-| _1 = postfix_expression
+_1 = postfix_expression
     {                       ( _1 )}
 | _1 = COMPL _2 = unary_expression
     {                           ( Prefix ("~", _2) )}
@@ -482,7 +482,7 @@ unary_expression_not_plus_minus:
     {                    ( _1 )}
 
 cast_expression:
-| _1 = LP _2 = primitive_type _3 = RP _4 = unary_expression
+_1 = LP _2 = primitive_type _3 = RP _4 = unary_expression
     {                                          ( Cast (_2, _4) )}
 | _1 = LP _2 = expression _3 = RP _4 = unary_expression_not_plus_minus
     { (
@@ -504,7 +504,7 @@ cast_expression:
     {                                                     ( Cast (_2, _4) )}
 
 multiplicative_expression:
-| _1 = unary_expression
+_1 = unary_expression
     {                     ( _1 )}
 | _1 = multiplicative_expression _2 = TIMES _3 = unary_expression
     {                                                    ( Infix (_1, "*", _3) )}
@@ -514,7 +514,7 @@ multiplicative_expression:
     {                                                    ( Infix (_1, "%", _3) )}
 
 additive_expression:
-| _1 = multiplicative_expression
+_1 = multiplicative_expression
     {                              ( _1 )}
 | _1 = additive_expression _2 = PLUS _3 = multiplicative_expression
     {                                                      ( Infix (_1, "+", _3) )}
@@ -522,7 +522,7 @@ additive_expression:
     {                                                       ( Infix (_1, "-", _3) )}
 
 shift_expression:
-| _1 = additive_expression
+_1 = additive_expression
     {                        ( _1 )}
 | _1 = shift_expression _2 = LS _3 = additive_expression
     {                                            ( Infix (_1, "<<", _3) )}
@@ -532,7 +532,7 @@ shift_expression:
     {                                             ( Infix (_1, ">>>", _3) )}
 
 relational_expression:
-| _1 = shift_expression
+_1 = shift_expression
     {                     ( _1 )}
 | _1 = relational_expression _2 = LT _3 = shift_expression
     {                                              ( Infix (_1, "<", _3) )}
@@ -546,7 +546,7 @@ relational_expression:
     {                                                    ( InstanceOf (_1, _3) )}
 
 equality_expression:
-| _1 = relational_expression
+_1 = relational_expression
     {                          ( _1 )}
 | _1 = equality_expression _2 = EQ_EQ _3 = relational_expression
     {                                                    ( Infix (_1, "==", _3) )}
@@ -554,53 +554,53 @@ equality_expression:
     {                                                    ( Infix (_1, "!=", _3) )}
 
 and_expression:
-| _1 = equality_expression
+_1 = equality_expression
     {                        ( _1 )}
 | _1 = and_expression _2 = AND _3 = equality_expression
     {                                           ( Infix (_1, "&", _3) )}
 
 exclusive_or_expression:
-| _1 = and_expression
+_1 = and_expression
     {                   ( _1 )}
 | _1 = exclusive_or_expression _2 = XOR _3 = and_expression
     {                                               ( Infix (_1, "^", _3) )}
 
 inclusive_or_expression:
-| _1 = exclusive_or_expression
+_1 = exclusive_or_expression
     {                            ( _1 )}
 | _1 = inclusive_or_expression _2 = OR _3 = exclusive_or_expression
     {                                                       ( Infix (_1, "|", _3) )}
 
 conditional_and_expression:
-| _1 = inclusive_or_expression
+_1 = inclusive_or_expression
     {                            ( _1 )}
 | _1 = conditional_and_expression _2 = AND_AND _3 = inclusive_or_expression
     {     ( Infix(_1,"&&",_3) )}
 
 conditional_or_expression:
-| _1 = conditional_and_expression
+_1 = conditional_and_expression
     {                               ( _1 )}
 | _1 = conditional_or_expression _2 = OR_OR _3 = conditional_and_expression
     {     ( Infix (_1, "||", _3) )}
 
 conditional_expression:
-| _1 = conditional_or_expression
+_1 = conditional_or_expression
     {     ( _1 )}
 | _1 = conditional_or_expression _2 = COND _3 = expression _4 = COLON _5 = conditional_expression
     {     ( Conditional (_1, _3, _5) )}
 
 assignment_expression:
-| _1 = conditional_expression
+_1 = conditional_expression
     {                           ( _1 )}
 | _1 = assignment
     {                           ( _1 )}
 
 assignment:
-| _1 = left_hand_side _2 = assignment_operator _3 = assignment_expression
+_1 = left_hand_side _2 = assignment_operator _3 = assignment_expression
     {    ( Assignment (_1, fst _2, _3) )}
 
 left_hand_side:
-| _1 = name
+_1 = name
     {                 ( Name (name _1) )}
 | _1 = field_access
     {                 ( _1 )}
@@ -608,21 +608,21 @@ left_hand_side:
     {                 ( _1 )}
 
 assignment_operator:
-| _1 = EQ
+_1 = EQ
     {       ( "=", _1  )}
 | _1 = OPERATOR_EQ
     {                ( _1 )}
 
 expression:
-| _1 = assignment_expression
+_1 = assignment_expression
     {                                   ( _1 )}
 
 constant_expression:
-| _1 = expression
+_1 = expression
     {                                 ( _1 )}
 
 statement:
-| _1 = statement_without_trailing_substatement
+_1 = statement_without_trailing_substatement
     {                                            ( _1 )}
 | _1 = labeled_statement
     {                      ( _1 )}
@@ -636,7 +636,7 @@ statement:
     {                  ( _1 )}
 
 statement_without_trailing_substatement:
-| _1 = block
+_1 = block
     {          ( _1 )}
 | _1 = empty_statement
     {                    ( _1 )}
@@ -664,11 +664,11 @@ statement_without_trailing_substatement:
     {                                         ( Assert (_2, Some _4) )}
 
 block:
-| _1 = LC _2 = block_statements_opt _3 = RC
+_1 = LC _2 = block_statements_opt _3 = RC
     {                                   ( Block _2 )}
 
 block_statement:
-| _1 = local_variable_declaration_statement
+_1 = local_variable_declaration_statement
     {                                         ( _1 )}
 | _1 = class_declaration
     {                      ( [LocalClass _1] )}
@@ -676,29 +676,29 @@ block_statement:
     {                      ( [_1] )}
 
 local_variable_declaration_statement:
-| _1 = local_variable_declaration _2 = SM
+_1 = local_variable_declaration _2 = SM
     { ( List.map (fun x -> LocalVar x) _1 )}
 
 local_variable_declaration:
-| _1 = type_java _2 = variable_declarators
+_1 = type_java _2 = variable_declarators
     {     ( decls (fun x -> x) [] _1 (List.rev _2) )}
 | _1 = modifiers _2 = type_java _3 = variable_declarators
     {     ( decls (fun x -> x) _1 _2 (List.rev _3) )}
 
 empty_statement:
-| _1 = SM
+_1 = SM
     {                    ( Empty )}
 
 labeled_statement:
-| _1 = identifier _2 = COLON _3 = statement
+_1 = identifier _2 = COLON _3 = statement
     {   ( Label (_1, _3) )}
 
 expression_statement:
-| _1 = statement_expression _2 = SM
+_1 = statement_expression _2 = SM
     {                                               ( Expr _1 )}
 
 statement_expression:
-| _1 = assignment
+_1 = assignment
     {               ( _1 )}
 | _1 = pre_increment_expression
     {                             ( _1 )}
@@ -714,19 +714,19 @@ statement_expression:
     {                                       ( _1 )}
 
 if_then_statement:
-| _1 = IF _2 = LP _3 = expression _4 = RP _5 = statement
+_1 = IF _2 = LP _3 = expression _4 = RP _5 = statement
     {   ( If (_3, _5, Empty) )}
 
 if_then_else_statement:
-| _1 = IF _2 = LP _3 = expression _4 = RP _5 = statement_no_short_if _6 = ELSE _7 = statement
+_1 = IF _2 = LP _3 = expression _4 = RP _5 = statement_no_short_if _6 = ELSE _7 = statement
     {   ( If (_3, _5, _7) )}
 
 switch_statement:
-| _1 = SWITCH _2 = LP _3 = expression _4 = RP _5 = switch_block
+_1 = SWITCH _2 = LP _3 = expression _4 = RP _5 = switch_block
     {    ( Switch (_3, _5) )}
 
 switch_block:
-| _1 = LC _2 = RC
+_1 = LC _2 = RC
     {          ( [] )}
 | _1 = LC _2 = switch_labels _3 = RC
     {                        ( [_2, []] )}
@@ -736,97 +736,97 @@ switch_block:
     {     ( List.rev ((List.rev _3, []) :: _2) )}
 
 switch_block_statement_group:
-| _1 = switch_labels _2 = block_statements
+_1 = switch_labels _2 = block_statements
     {                                                              (List.rev _1, _2)}
 
 switch_label:
-| _1 = CASE _2 = constant_expression _3 = COLON
+_1 = CASE _2 = constant_expression _3 = COLON
     {                                   ( Case _2 )}
 | _1 = DEFAULT _2 = COLON
     {                                   ( Default )}
 
 while_statement:
-| _1 = WHILE _2 = LP _3 = expression _4 = RP _5 = statement
+_1 = WHILE _2 = LP _3 = expression _4 = RP _5 = statement
     {     ( While (_3, _5) )}
 
 do_statement:
-| _1 = DO _2 = statement _3 = WHILE _4 = LP _5 = expression _6 = RP _7 = SM
+_1 = DO _2 = statement _3 = WHILE _4 = LP _5 = expression _6 = RP _7 = SM
     {     ( Do (_2, _5) )}
 
 for_statement:
-| _1 = FOR _2 = LP _3 = for_control _4 = RP _5 = statement
+_1 = FOR _2 = LP _3 = for_control _4 = RP _5 = statement
     { ( For (_3, _5) )}
 
 for_control:
-| _1 = for_init_opt _2 = SM _3 = expression_opt _4 = SM _5 = for_update_opt
+_1 = for_init_opt _2 = SM _3 = expression_opt _4 = SM _5 = for_update_opt
     {     ( ForClassic (_1, Common2.option_to_list _3, _5) )}
 | _1 = for_var_control
     {     ( let (a, b) = _1 in Foreach (a, b) )}
 
 for_init_opt:
-| 
+
     {                  ( ForInitExprs [] )}
 | _1 = for_init
     {                  ( _1 )}
 
 for_init:
-| _1 = statement_expression_list
+_1 = statement_expression_list
     {                              ( ForInitExprs _1 )}
 | _1 = local_variable_declaration
     {                              ( ForInitVars _1 )}
 
 for_update:
-| _1 = statement_expression_list
+_1 = statement_expression_list
     {                                       ( _1 )}
 
 for_var_control:
-| _1 = type_java _2 = variable_declarator_id _3 = for_var_control_rest
+_1 = type_java _2 = variable_declarator_id _3 = for_var_control_rest
     {     (  canon_var [] _1 _2, _3 )}
 | _1 = modifiers _2 = type_java _3 = variable_declarator_id _4 = for_var_control_rest
     {     ( canon_var _1 _2 _3, _4 )}
 
 for_var_control_rest:
-| _1 = COLON _2 = expression
+_1 = COLON _2 = expression
     {                                       ( _2 )}
 
 break_statement:
-| _1 = BREAK _2 = identifier_opt _3 = SM
+_1 = BREAK _2 = identifier_opt _3 = SM
     {                                          ( Break _2 )}
 
 continue_statement:
-| _1 = CONTINUE _2 = identifier_opt _3 = SM
+_1 = CONTINUE _2 = identifier_opt _3 = SM
     {                                                ( Continue _2 )}
 
 return_statement:
-| _1 = RETURN _2 = expression_opt _3 = SM
+_1 = RETURN _2 = expression_opt _3 = SM
     {                                            ( Return _2 )}
 
 synchronized_statement:
-| _1 = SYNCHRONIZED _2 = LP _3 = expression _4 = RP _5 = block
+_1 = SYNCHRONIZED _2 = LP _3 = expression _4 = RP _5 = block
     {                                                            ( Sync (_3, _5) )}
 
 throw_statement:
-| _1 = THROW _2 = expression _3 = SM
+_1 = THROW _2 = expression _3 = SM
     {                                      ( Throw _2 )}
 
 try_statement:
-| _1 = TRY _2 = block _3 = catches
+_1 = TRY _2 = block _3 = catches
     {                                  ( Try (_2, List.rev _3, None) )}
 | _1 = TRY _2 = block _3 = catches_opt _4 = finally
     {                                  ( Try (_2, _3, Some _4) )}
 
 catch_clause:
-| _1 = CATCH _2 = LP _3 = formal_parameter _4 = RP _5 = block
+_1 = CATCH _2 = LP _3 = formal_parameter _4 = RP _5 = block
     {                                       ( _3, _5 )}
 | _1 = CATCH _2 = LP _3 = formal_parameter _4 = RP _5 = empty_statement
     {                                                 ( _3, _5 )}
 
 finally:
-| _1 = FINALLY _2 = block
+_1 = FINALLY _2 = block
     {                        ( _2 )}
 
 statement_no_short_if:
-| _1 = statement_without_trailing_substatement
+_1 = statement_without_trailing_substatement
     {                                            ( _1 )}
 | _1 = labeled_statement_no_short_if
     {                                  ( _1 )}
@@ -838,23 +838,23 @@ statement_no_short_if:
     {                              ( _1 )}
 
 labeled_statement_no_short_if:
-| _1 = identifier _2 = COLON _3 = statement_no_short_if
+_1 = identifier _2 = COLON _3 = statement_no_short_if
     {   ( Label (_1, _3) )}
 
 if_then_else_statement_no_short_if:
-| _1 = IF _2 = LP _3 = expression _4 = RP _5 = statement_no_short_if _6 = ELSE _7 = statement_no_short_if
+_1 = IF _2 = LP _3 = expression _4 = RP _5 = statement_no_short_if _6 = ELSE _7 = statement_no_short_if
     {   ( If (_3, _5, _7) )}
 
 while_statement_no_short_if:
-| _1 = WHILE _2 = LP _3 = expression _4 = RP _5 = statement_no_short_if
+_1 = WHILE _2 = LP _3 = expression _4 = RP _5 = statement_no_short_if
     {     ( While (_3, _5) )}
 
 for_statement_no_short_if:
-| _1 = FOR _2 = LP _3 = for_control _4 = RP _5 = statement_no_short_if
+_1 = FOR _2 = LP _3 = for_control _4 = RP _5 = statement_no_short_if
     { ( For (_3, _5) )}
 
 modifier:
-| _1 = PUBLIC
+_1 = PUBLIC
     {                ( Public, _1 )}
 | _1 = PROTECTED
     {                ( Protected, _1 )}
@@ -880,13 +880,13 @@ modifier:
     {              ( Annotation _1, (info_of_identifier_ (List.hd (List.rev (fst _1)))) )}
 
 annotation:
-| _1 = AT _2 = name
+_1 = AT _2 = name
     {           ( (_2, None) )}
 | _1 = AT _2 = name _3 = LP _4 = annotation_element _5 = RP
     {                                    ( (_2, Some _4) )}
 
 annotation_element:
-| 
+
     {                 ( EmptyAnnotArg )}
 | _1 = element_value
     {                 ( AnnotArgValue _1 )}
@@ -894,7 +894,7 @@ annotation_element:
     {                       ( AnnotArgPairInit _1 )}
 
 element_value:
-| _1 = expr1
+_1 = expr1
     {         ( AnnotExprInit _1 )}
 | _1 = annotation
     {              ( AnnotNestedAnnot _1 )}
@@ -902,11 +902,11 @@ element_value:
     {                                   ( AnnotArrayInit _1 )}
 
 element_value_pair:
-| _1 = identifier _2 = EQ _3 = element_value
+_1 = identifier _2 = EQ _3 = element_value
     {                               ( (_1, _3) )}
 
 element_value_array_initializer:
-| _1 = LC _2 = RC
+_1 = LC _2 = RC
     {         ( [] )}
 | _1 = LC _2 = element_values _3 = RC
     {                        ( _2 )}
@@ -914,7 +914,7 @@ element_value_array_initializer:
     {                           ( _2 )}
 
 expr1:
-| _1 = primary_no_new_array
+_1 = primary_no_new_array
     {                        ( _1 )}
 | _1 = primary_no_new_array _2 = PLUS _3 = primary_no_new_array
     {                                                  ( failwith "+ inside raw annot values"  )}
@@ -922,7 +922,7 @@ expr1:
     {        ( NameOrClassType _1 )}
 
 class_declaration:
-| _1 = modifiers_opt _2 = CLASS _3 = identifier _4 = type_parameters_opt _5 = super_opt _6 = interfaces_opt _7 = class_body
+_1 = modifiers_opt _2 = CLASS _3 = identifier _4 = type_parameters_opt _5 = super_opt _6 = interfaces_opt _7 = class_body
     {  ( { cl_name = _3; cl_kind = ClassRegular;
       cl_mods = _1; cl_tparams = _4;
       cl_extends = _5;  cl_impls = _6;
@@ -931,19 +931,19 @@ class_declaration:
   )}
 
 super:
-| _1 = EXTENDS _2 = type_java
+_1 = EXTENDS _2 = type_java
     {                          ( _2 )}
 
 interfaces:
-| _1 = IMPLEMENTS _2 = ref_type_list
+_1 = IMPLEMENTS _2 = ref_type_list
     {                                      ( _2 )}
 
 class_body:
-| _1 = LC _2 = class_body_declarations_opt _3 = RC
+_1 = LC _2 = class_body_declarations_opt _3 = RC
     {                                               ( _2 )}
 
 class_body_declaration:
-| _1 = class_member_declaration
+_1 = class_member_declaration
     {                             ( _1 )}
 | _1 = constructor_declaration
     {                            ( [_1] )}
@@ -953,7 +953,7 @@ class_body_declaration:
     {                       ( [_1] )}
 
 class_member_declaration:
-| _1 = field_declaration
+_1 = field_declaration
     {                      ( _1 )}
 | _1 = method_declaration
     {                       ( [Method _1] )}
@@ -971,87 +971,87 @@ class_member_declaration:
     {       ( [] )}
 
 field_declaration:
-| _1 = modifiers_opt _2 = type_java _3 = variable_declarators _4 = SM
+_1 = modifiers_opt _2 = type_java _3 = variable_declarators _4 = SM
     {   ( decls (fun x -> Field x) _1 _2 (List.rev _3) )}
 
 variable_declarator:
-| _1 = variable_declarator_id
+_1 = variable_declarator_id
     {                           ( _1, None )}
 | _1 = variable_declarator_id _2 = EQ _3 = variable_initializer
     {                                                   ( _1, Some _3 )}
 
 variable_declarator_id:
-| _1 = identifier
+_1 = identifier
     {                                 ( IdentDecl _1 )}
 | _1 = variable_declarator_id _2 = LB_RB
     {                                 ( ArrayDecl _1 )}
 
 variable_initializer:
-| _1 = expression
+_1 = expression
     {                      ( ExprInit _1 )}
 | _1 = array_initializer
     {                      ( _1 )}
 
 array_initializer:
-| _1 = LC _2 = comma_opt _3 = RC
+_1 = LC _2 = comma_opt _3 = RC
     {                                          ( ArrayInit [] )}
 | _1 = LC _2 = variable_initializers _3 = comma_opt _4 = RC
     {                                          ( ArrayInit (List.rev _2) )}
 
 method_declaration:
-| _1 = method_header _2 = method_body
+_1 = method_header _2 = method_body
     {                                               ( { _1 with m_body = _2 } )}
 
 method_header:
-| _1 = modifiers_opt _2 = type_java _3 = method_declarator _4 = throws_opt
+_1 = modifiers_opt _2 = type_java _3 = method_declarator _4 = throws_opt
     {     ( method_header _1 _2 _3 _4 )}
 | _1 = modifiers_opt _2 = VOID _3 = method_declarator _4 = throws_opt
     {     ( method_header _1 (void_type _2) _3 _4 )}
 
 method_declarator:
-| _1 = identifier _2 = LP _3 = formal_parameter_list_opt _4 = RP
+_1 = identifier _2 = LP _3 = formal_parameter_list_opt _4 = RP
     {                                               ( (IdentDecl _1), _3 )}
 | _1 = method_declarator _2 = LB_RB
     {                                               ( (ArrayDecl (fst _1)), snd _1 )}
 
 generic_method_or_constructor_decl:
-| _1 = modifiers_opt _2 = type_parameters _3 = generic_method_or_constructor_rest
+_1 = modifiers_opt _2 = type_parameters _3 = generic_method_or_constructor_rest
     {                                                                    ( )}
 
 generic_method_or_constructor_rest:
-| _1 = type_java _2 = identifier _3 = method_declarator_rest
+_1 = type_java _2 = identifier _3 = method_declarator_rest
     {                                               ( )}
 | _1 = VOID _2 = identifier _3 = method_declarator_rest
     {                                          ( )}
 
 method_declarator_rest:
-| _1 = formal_parameters _2 = throws_opt _3 = method_body
+_1 = formal_parameters _2 = throws_opt _3 = method_body
     {                                            ( )}
 
 formal_parameters:
-| _1 = LP _2 = formal_parameter_list_opt _3 = RP
+_1 = LP _2 = formal_parameter_list_opt _3 = RP
     {                                                   ( _2 )}
 
 throws:
-| _1 = THROWS _2 = qualified_ident_list
+_1 = THROWS _2 = qualified_ident_list
     {                                     ( _2 )}
 
 method_body:
-| _1 = block
+_1 = block
     {          ( _1 )}
 | _1 = SM
     {          ( Empty )}
 
 instance_initializer:
-| _1 = block
+_1 = block
     {                                  ( Init (false, _1) )}
 
 static_initializer:
-| _1 = STATIC _2 = block
+_1 = STATIC _2 = block
     {                                  ( Init (true, _2) )}
 
 constructor_declaration:
-| _1 = modifiers_opt _2 = constructor_declarator _3 = throws_opt _4 = constructor_body
+_1 = modifiers_opt _2 = constructor_declarator _3 = throws_opt _4 = constructor_body
     {  (
     let no_type = TBasic ("void", fakeInfo "void") in
     let (id, formals) = _2 in
@@ -1061,17 +1061,17 @@ constructor_declaration:
   )}
 
 constructor_declarator:
-| _1 = identifier _2 = LP _3 = formal_parameter_list_opt _4 = RP
+_1 = identifier _2 = LP _3 = formal_parameter_list_opt _4 = RP
     {                                                                    ( _1, _3 )}
 
 constructor_body:
-| _1 = LC _2 = block_statements_opt _3 = RC
+_1 = LC _2 = block_statements_opt _3 = RC
     {                                                              ( Block _2 )}
 | _1 = LC _2 = explicit_constructor_invocation _3 = block_statements_opt _4 = RC
     {                                                              ( Block (_2::_3) )}
 
 explicit_constructor_invocation:
-| _1 = THIS _2 = LP _3 = argument_list_opt _4 = RP _5 = SM
+_1 = THIS _2 = LP _3 = argument_list_opt _4 = RP _5 = SM
     {      ( constructor_invocation [this_ident _1] _3 )}
 | _1 = SUPER _2 = LP _3 = argument_list_opt _4 = RP _5 = SM
     {      ( constructor_invocation [super_ident _1] _3 )}
@@ -1081,23 +1081,23 @@ explicit_constructor_invocation:
     {      ( constructor_invocation (name _1 @ [super_ident _3]) _5 )}
 
 formal_parameter:
-| _1 = variable_modifiers_opt _2 = type_java _3 = variable_declarator_id_bis
+_1 = variable_modifiers_opt _2 = type_java _3 = variable_declarator_id_bis
     {  ( canon_var _1 _2 _3 )}
 
 variable_declarator_id_bis:
-| _1 = variable_declarator_id
+_1 = variable_declarator_id
     {                               ( _1 )}
 | _1 = DOTS _2 = variable_declarator_id
     {                               ( _2 (* todo_ast *) )}
 
 variable_modifier:
-| _1 = FINAL
+_1 = FINAL
     {              ( Final, _1 )}
 | _1 = annotation
     {              ( (Annotation _1), info_of_identifier_ (List.hd (List.rev (fst _1))) )}
 
 interface_declaration:
-| _1 = modifiers_opt _2 = INTERFACE _3 = identifier _4 = type_parameters_opt _5 = extends_interfaces_opt _6 = interface_body
+_1 = modifiers_opt _2 = INTERFACE _3 = identifier _4 = type_parameters_opt _5 = extends_interfaces_opt _6 = interface_body
     {  ( { cl_name = _3; cl_kind = Interface;
       cl_mods = _1; cl_tparams = _4;
       cl_extends = None; cl_impls = _5;
@@ -1106,17 +1106,17 @@ interface_declaration:
   )}
 
 extends_interfaces:
-| _1 = EXTENDS _2 = reference_type
+_1 = EXTENDS _2 = reference_type
     {                                         ( [_2] )}
 | _1 = extends_interfaces _2 = CM _3 = reference_type
     {                                         ( _1 @ [_3] )}
 
 interface_body:
-| _1 = LC _2 = interface_member_declarations_opt _3 = RC
+_1 = LC _2 = interface_member_declarations_opt _3 = RC
     {                                                         ( _2 )}
 
 interface_member_declaration:
-| _1 = constant_declaration
+_1 = constant_declaration
     {                         ( _1 )}
 | _1 = abstract_method_declaration
     {                                ( [Method _1] )}
@@ -1134,31 +1134,31 @@ interface_member_declaration:
     {       ( [] )}
 
 constant_declaration:
-| _1 = modifiers_opt _2 = type_java _3 = variable_declarators _4 = SM
+_1 = modifiers_opt _2 = type_java _3 = variable_declarators _4 = SM
     {     ( decls (fun x -> Field x) _1 _2 (List.rev _3) )}
 
 abstract_method_declaration:
-| _1 = modifiers_opt _2 = type_java _3 = method_declarator _4 = throws_opt _5 = SM
+_1 = modifiers_opt _2 = type_java _3 = method_declarator _4 = throws_opt _5 = SM
     { ( method_header _1 _2 _3 _4 )}
 | _1 = modifiers_opt _2 = VOID _3 = method_declarator _4 = throws_opt _5 = SM
     { ( method_header _1 (void_type _2) _3 _4 )}
 
 interface_generic_method_decl:
-| _1 = modifiers_opt _2 = type_parameters _3 = type_java _4 = identifier _5 = interface_method_declator_rest
+_1 = modifiers_opt _2 = type_parameters _3 = type_java _4 = identifier _5 = interface_method_declator_rest
     {    ( ast_todo )}
 | _1 = modifiers_opt _2 = type_parameters _3 = VOID _4 = identifier _5 = interface_method_declator_rest
     {    ( ast_todo )}
 
 interface_method_declator_rest:
-| _1 = formal_parameters _2 = throws_opt _3 = SM
+_1 = formal_parameters _2 = throws_opt _3 = SM
     {                                   ( )}
 
 enum_declaration:
-| _1 = modifiers_opt _2 = ENUM _3 = identifier _4 = interfaces_opt _5 = enum_body
+_1 = modifiers_opt _2 = ENUM _3 = identifier _4 = interfaces_opt _5 = enum_body
     {   ( { en_name = _3; en_mods = _1; en_impls = _4; en_body = _5; } )}
 
 enum_body:
-| _1 = LC _2 = enum_body_declarations_opt _3 = RC
+_1 = LC _2 = enum_body_declarations_opt _3 = RC
     {                                                      ( [], _2 )}
 | _1 = LC _2 = enum_constants _3 = enum_body_declarations_opt _4 = RC
     {                                                      ( _2, _3 )}
@@ -1166,7 +1166,7 @@ enum_body:
     {                                                      ( _2, _4 )}
 
 enum_constant:
-| _1 = identifier
+_1 = identifier
     {                                      ( EnumSimple _1 )}
 | _1 = identifier _2 = LP _3 = argument_list_opt _4 = RP
     {                                      ( EnumConstructor (_1, _3) )}
@@ -1174,25 +1174,25 @@ enum_constant:
     {                                             ( EnumWithMethods (_1, _3) )}
 
 enum_body_declarations:
-| _1 = SM _2 = class_body_declarations_opt
+_1 = SM _2 = class_body_declarations_opt
     {                                                       ( _2 )}
 
 annotation_type_declaration:
-| _1 = modifiers _2 = AT _3 = INTERFACE _4 = identifier _5 = annotation_type_body
+_1 = modifiers _2 = AT _3 = INTERFACE _4 = identifier _5 = annotation_type_body
     {                                                          ( ast_todo )}
 | _1 = AT _2 = INTERFACE _3 = identifier _4 = annotation_type_body
     {                                                          ( ast_todo )}
 
 annotation_type_body:
-| _1 = LC _2 = annotation_type_element_declarations_opt _3 = RC
+_1 = LC _2 = annotation_type_element_declarations_opt _3 = RC
     {                                                                     ( )}
 
 annotation_type_element_declaration:
-| _1 = annotation_type_element_rest
+_1 = annotation_type_element_rest
     {                              ( )}
 
 annotation_type_element_rest:
-| _1 = modifiers_opt _2 = type_java _3 = identifier _4 = annotation_method_or_constant_rest _5 = SM
+_1 = modifiers_opt _2 = type_java _3 = identifier _4 = annotation_method_or_constant_rest _5 = SM
     {                                                                            ( )}
 | _1 = class_declaration
     {                     ( )}
@@ -1204,323 +1204,323 @@ annotation_type_element_rest:
     {                               (  )}
 
 annotation_method_or_constant_rest:
-| _1 = LP _2 = RP
+_1 = LP _2 = RP
     {         ( )}
 | _1 = LP _2 = RP _3 = DEFAULT _4 = element_value
     {                               ( )}
 
 annotation_type_element_declarations_opt:
-| 
+
     {   ( )}
 | _1 = annotation_type_element_declarations
     {                                        ( )}
 
 annotation_type_element_declarations:
-| _1 = annotation_type_element_declaration
+_1 = annotation_type_element_declaration
     {                                       ( )}
 | _1 = annotation_type_element_declarations _2 = annotation_type_element_declaration
     {                                                                            ( )}
 
 import_declarations:
-| _1 = import_declaration
+_1 = import_declaration
     {                       ( [_1] )}
 | _1 = import_declarations _2 = import_declaration
     {                                           ( _1 @ [_2] )}
 
 import_declarations_opt:
-| 
+
     {                  ( [] )}
 | _1 = import_declarations
     {                        ( _1 )}
 
 type_declarations:
-| _1 = type_declaration
+_1 = type_declaration
     {                     ( _1 )}
 | _1 = type_declarations _2 = type_declaration
     {                                       ( _1 @ _2 )}
 
 type_declarations_opt:
-| 
+
     {                  ( [] )}
 | _1 = type_declarations
     {                      ( _1 )}
 
 package_declaration_opt:
-| 
+
     {                  ( None )}
 | _1 = package_declaration
     {                        ( Some _1 )}
 
 modifiers:
-| _1 = modifier
+_1 = modifier
     {             ( [_1] )}
 | _1 = modifiers _2 = modifier
     {                       ( _2 :: _1 )}
 
 modifiers_opt:
-| 
+
     {                  ( [] )}
 | _1 = modifiers
     {              ( List.rev _1 )}
 
 super_opt:
-| 
+
     {                  ( None )}
 | _1 = super
     {          ( Some _1 )}
 
 interfaces_opt:
-| 
+
     {                  ( [] )}
 | _1 = interfaces
     {               ( _1 )}
 
 ref_type_list:
-| _1 = reference_type
+_1 = reference_type
     {                   ( [_1] )}
 | _1 = ref_type_list _2 = CM _3 = reference_type
     {                                    ( _1 @ [_3] )}
 
 ref_type_and_list:
-| _1 = reference_type
+_1 = reference_type
     {                   ( [_1] )}
 | _1 = ref_type_and_list _2 = AND _3 = reference_type
     {                                         ( _1 @ [_3] )}
 
 class_body_declarations:
-| _1 = class_body_declaration
+_1 = class_body_declaration
     {                           ( _1 )}
 | _1 = class_body_declarations _2 = class_body_declaration
     {                                                   ( _1 @ _2 )}
 
 class_body_declarations_opt:
-| 
+
     {                  ( [] )}
 | _1 = class_body_declarations
     {                            ( _1 )}
 
 variable_declarators:
-| _1 = variable_declarator
+_1 = variable_declarator
     {                        ( [_1] )}
 | _1 = variable_declarators _2 = CM _3 = variable_declarator
     {                                                ( _3 :: _1 )}
 
 formal_parameter_list:
-| _1 = formal_parameter
+_1 = formal_parameter
     {                     ( [_1] )}
 | _1 = formal_parameter_list _2 = CM _3 = formal_parameter
     {                                              ( _3 :: _1 )}
 
 formal_parameter_list_opt:
-| 
+
     {                  ( [] )}
 | _1 = formal_parameter_list
     {                          ( List.rev _1 )}
 
 variable_modifiers_opt:
-| 
+
     {                  ( [] )}
 | _1 = variable_modifiers
     {                       ( _1 )}
 
 variable_modifiers:
-| _1 = variable_modifier
+_1 = variable_modifier
     {                     ( [_1] )}
 | _1 = variable_modifiers _2 = variable_modifier
     {                                        ( _1 @ [_2] )}
 
 static_opt:
-| 
+
     {                  ( false )}
 | _1 = STATIC
     {           ( true )}
 
 throws_opt:
-| 
+
     {                  ( [] )}
 | _1 = throws
     {           ( _1 )}
 
 qualified_ident_list:
-| _1 = name
+_1 = name
     {                                 ( [qualified_ident _1] )}
 | _1 = qualified_ident_list _2 = CM _3 = name
     {                                 ( _1 @ [qualified_ident _3] )}
 
 extends_interfaces_opt:
-| 
+
     {                  ( [] )}
 | _1 = extends_interfaces
     {                       ( _1 )}
 
 interface_member_declarations:
-| _1 = interface_member_declaration
+_1 = interface_member_declaration
     {                                 ( _1 )}
 | _1 = interface_member_declarations _2 = interface_member_declaration
     {                                                               ( _1 @ _2 )}
 
 interface_member_declarations_opt:
-| 
+
     {                  ( [] )}
 | _1 = interface_member_declarations
     {                                  ( _1 )}
 
 variable_initializers:
-| _1 = variable_initializer
+_1 = variable_initializer
     {                         ( [_1] )}
 | _1 = variable_initializers _2 = CM _3 = variable_initializer
     {                                                  ( _3 :: _1 )}
 
 comma_opt:
-| 
+
     {                  ( () )}
 | _1 = CM
     {       ( () )}
 
 block_statements:
-| _1 = block_statement
+_1 = block_statement
     {                    ( _1 )}
 | _1 = block_statements _2 = block_statement
     {                                     ( _1 @ _2 )}
 
 block_statements_opt:
-| 
+
     {                      ( [] )}
 | _1 = block_statements
     {                     ( _1 )}
 
 switch_block_statement_groups:
-| _1 = switch_block_statement_group
+_1 = switch_block_statement_group
     {                                 ( [_1] )}
 | _1 = switch_block_statement_groups _2 = switch_block_statement_group
     {                                                               ( _2 :: _1 )}
 
 switch_labels:
-| _1 = switch_label
+_1 = switch_label
     {                 ( [_1] )}
 | _1 = switch_labels _2 = switch_label
     {                               ( _2 :: _1 )}
 
 expression_opt:
-| 
+
     {                  ( None )}
 | _1 = expression
     {                  ( Some _1 )}
 
 for_update_opt:
-| 
+
     {                  ( [] )}
 | _1 = for_update
     {                  ( _1 )}
 
 statement_expression_list:
-| _1 = statement_expression
+_1 = statement_expression
     {                                                      ( [_1] )}
 | _1 = statement_expression_list _2 = CM _3 = statement_expression
     {                                                      ( _1 @ [_3] )}
 
 identifier_opt:
-| 
+
     {                  ( None )}
 | _1 = identifier
     {               ( Some _1 )}
 
 catches:
-| _1 = catch_clause
+_1 = catch_clause
     {                 ( [_1] )}
 | _1 = catches _2 = catch_clause
     {                         ( _2 :: _1 )}
 
 catches_opt:
-| 
+
     {                  ( [] )}
 | _1 = catches
     {            ( List.rev _1 )}
 
 argument_list:
-| _1 = expression
+_1 = expression
     {               ( [_1] )}
 | _1 = argument_list _2 = CM _3 = expression
     {                                ( _3 :: _1 )}
 
 argument_list_opt:
-| 
+
     {                  ( [] )}
 | _1 = argument_list
     {                  ( List.rev _1 )}
 
 method_declarations_opt:
-| 
+
     {                  ( [] )}
 | _1 = method_declarations
     {                        ( List.rev _1 )}
 
 method_declarations:
-| _1 = method_declaration
+_1 = method_declaration
     {                      ( [_1] )}
 | _1 = method_declarations _2 = method_declaration
     {                                          ( _2 :: _1 )}
 
 class_body_opt:
-| 
+
     {                  ( None )}
 | _1 = class_body
     {                  ( Some _1 )}
 
 dim_exprs:
-| _1 = dim_expr
+_1 = dim_expr
     {             ( [_1] )}
 | _1 = dim_exprs _2 = dim_expr
     {                       ( _2 :: _1 )}
 
 dims_opt:
-| 
+
     {                  ( 0 )}
 | _1 = dims
     {         ( _1 )}
 
 enum_constants:
-| _1 = enum_constant
+_1 = enum_constant
     {                 ( [_1] )}
 | _1 = enum_constants _2 = CM _3 = enum_constant
     {                                   ( _1 @ [_3] )}
 
 enum_body_declarations_opt:
-| 
+
     {                           ( [] )}
 | _1 = enum_body_declarations
     {                           ( _1 )}
 
 type_parameters_opt:
-| 
+
     {                   ( [] )}
 | _1 = type_parameters
     {                   ( _1 )}
 
 type_parameters:
-| _1 = LT _2 = type_parameters_bis _3 = GT
+_1 = LT _2 = type_parameters_bis _3 = GT
     {                             ( _2 )}
 
 type_parameters_bis:
-| _1 = type_parameter
+_1 = type_parameter
     {                                          ( [_1] )}
 | _1 = type_parameters_bis _2 = CM _3 = type_parameter
     {                                          ( _1 @ [_3] )}
 
 type_arguments:
-| _1 = type_argument
+_1 = type_argument
     {                                    ( [_1] )}
 | _1 = type_arguments _2 = CM _3 = type_argument
     {                                    ( _1 @ [_3] )}
 
 element_value_pairs:
-| _1 = element_value_pair
+_1 = element_value_pair
     {                      ( [_1] )}
 | _1 = element_value_pairs _2 = CM _3 = element_value_pair
     {                                             ( _1 @ [_3] )}
 
 element_values:
-| _1 = element_value
+_1 = element_value
     {                 ( [_1] )}
 | _1 = element_values _2 = CM _3 = element_value
     {                                   ( _1 @ [_3] )}

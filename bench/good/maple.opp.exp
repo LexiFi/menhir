@@ -161,17 +161,17 @@ let convert_exprs_to_names exprs =
 %%
 
 program:
-| _1 = statseq _2 = EOF
+_1 = statseq _2 = EOF
     {                      ( List.rev _1 )}
 
 comments:
-| _1 = comments _2 = COMMENT
+_1 = comments _2 = COMMENT
     {                            ( _2 :: _1 )}
 | 
     {          ( [] )}
 
 statseq:
-| _1 = statseq _2 = SEMICOLON _3 = comments _4 = stat
+_1 = statseq _2 = SEMICOLON _3 = comments _4 = stat
     {                                          ( { comments = List.rev _3;
 					      sep=SemiColon;
 					      stat = _4
@@ -197,7 +197,7 @@ statseq:
 	    )}
 
 stat:
-| _1 = nameseq _2 = ASSIGN _3 = exprseq
+_1 = nameseq _2 = ASSIGN _3 = exprseq
     {                                 ( AssignStat ( { lhs_of_assign=_1; rhs=_3 } ) )}
 | _1 = expr
     {        ( ExprStat (_1) )}
@@ -246,7 +246,7 @@ stat:
     {   ( EmptyStat )}
 
 for_stmt:
-| _1 = FOR _2 = name _3 = for_without_name
+_1 = FOR _2 = name _3 = for_without_name
     {     ( let fwn = _3 in
               ForStat ( { loop_index = Some _2;
 			  from_expr = fwn.from_expr;
@@ -260,7 +260,7 @@ for_stmt:
     {                    ( ForStat (_1) )}
 
 for_without_name:
-| _1 = FROM _2 = expr _3 = for_without_from
+_1 = FROM _2 = expr _3 = for_without_from
     {     ( let fwf = _3 in
 	      { loop_index = None;
 		from_expr = Some _2;
@@ -274,7 +274,7 @@ for_without_name:
     {                    ( _1 )}
 
 for_without_from:
-| _1 = BY _2 = expr _3 = TO _4 = expr _5 = for_body
+_1 = BY _2 = expr _3 = TO _4 = expr _5 = for_body
     {     ( let fwb = _5 in
 	      { loop_index = None;
 		from_expr = None;
@@ -318,7 +318,7 @@ for_without_from:
     {            ( _1 )}
 
 for_body:
-| _1 = WHILE _2 = expr _3 = DO _4 = statseq _5 = OD
+_1 = WHILE _2 = expr _3 = DO _4 = statseq _5 = OD
     {     ( { loop_index = None;
 		from_expr = None;
 		by_expr = None;
@@ -338,7 +338,7 @@ for_body:
 			)}
 
 for_in_stmt:
-| _1 = FOR _2 = name _3 = IN _4 = expr _5 = DO _6 = statseq _7 = OD
+_1 = FOR _2 = name _3 = IN _4 = expr _5 = DO _6 = statseq _7 = OD
     {     (
 	      ForInStat ( { loop_var = _2;
 			    in_expr = _4;
@@ -358,7 +358,7 @@ for_in_stmt:
 	    )}
 
 ifpart:
-| _1 = IF _2 = expr _3 = THEN _4 = statseq
+_1 = IF _2 = expr _3 = THEN _4 = statseq
     {                               ( IfThenElseStat ( { cond=_2;
 						    then_part = List.rev _4;
 						    alternatives = [];
@@ -390,7 +390,7 @@ ifpart:
 	      )}
 
 expr:
-| _1 = expr _2 = ARROW _3 = expr
+_1 = expr _2 = ARROW _3 = expr
     {            ( match _1 with
 	    | NameExpr (n) -> ArrowExpr ( [n] , _3 )
 	    | ParenExpr (exps) -> ArrowExpr ( (convert_exprs_to_names exps) , _3 )
@@ -500,7 +500,7 @@ expr:
     {                            ( RepeatComposeExpr (_1,_3) )}
 
 exprseq:
-| 
+
     {          ( [] )}
 | _1 = exprseq _2 = COMMA _3 = expr
     {                             ( _1 @ [_3] )}
@@ -508,7 +508,7 @@ exprseq:
     {        ( [ _1 ] )}
 
 name:
-| _1 = name_string
+_1 = name_string
     {                      ( NameString (_1) )}
 | _1 = name _2 = DOT _3 = INT
     {                ( NameConcat ( _1 , N_int (_3) ) )}
@@ -520,13 +520,13 @@ name:
     {                              ( NameIndexed ( _1 , _3 ) )}
 
 functional_operator:
-| _1 = LPAREN _2 = exprseq _3 = RPAREN
+_1 = LPAREN _2 = exprseq _3 = RPAREN
     {                         ( [ _2 ] )}
 | _1 = functional_operator _2 = LPAREN _3 = exprseq _4 = RPAREN
     {                                             ( _1 @ [_3] )}
 
 parmseq:
-| 
+
     {          ( [] )}
 | _1 = oneparm
     {           ( [_1] )}
@@ -534,19 +534,19 @@ parmseq:
     {                         ( _1 @ [_3] )}
 
 result_type:
-| 
+
     {   ( None )}
 | _1 = DOUBLE_COLON _2 = name_string _3 = SEMICOLON
     {                                      ( Some _2 )}
 
 oneparm:
-| _1 = name
+_1 = name
     {               ( { param_name =_1 ; param_type = None } )}
 | _1 = name _2 = DOUBLE_COLON _3 = name_string
     {                                 ( { param_name =_1 ; param_type = Some _3 } )}
 
 nameseq:
-| 
+
     {          ( [] )}
 | _1 = name
     {        ( [_1] )}
@@ -554,7 +554,7 @@ nameseq:
     {                      ( _1 @ [_3] )}
 
 decls_proc:
-| 
+
     {   ( [] )}
 | _1 = globals_of_proc
     {                   ( [] )}
@@ -566,21 +566,21 @@ decls_proc:
     {                                  ( _2 )}
 
 locals_of_proc:
-| _1 = LOCAL _2 = nameseq _3 = SEMICOLON
+_1 = LOCAL _2 = nameseq _3 = SEMICOLON
     {                           ( _2 )}
 
 globals_of_proc:
-| _1 = GLOBAL _2 = nameseq _3 = SEMICOLON
+_1 = GLOBAL _2 = nameseq _3 = SEMICOLON
     {                            ( () )}
 
 options_of_proc:
-| 
+
     {   ( [] )}
 | _1 = OPTION _2 = nameseq _3 = SEMICOLON
     {                            ( _2 )}
 
 name_string:
-| _1 = ID
+_1 = ID
     {             ( Ident ( _1  ) )}
 | _1 = QUOTED_STRING
     {                 ( QuotedString ( _1 ) )}

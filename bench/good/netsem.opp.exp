@@ -369,11 +369,11 @@ let rec foldlist l s r =
 %%
 
 main:
-| _1 = timecomment _2 = comment _3 = main_h
+_1 = timecomment _2 = comment _3 = main_h
     {                             ( PARSE_RETURN(_1,_2,_3) )}
 
 main_h:
-| _1 = netcall _2 = SC
+_1 = netcall _2 = SC
     {             ( _1 )}
 | _1 = lib _2 = SC
     {            ( _1 )}
@@ -385,11 +385,11 @@ main_h:
     {                  ( _1 )}
 
 spec3main:
-| _1 = timecomment _2 = comment _3 = spec3main_h
+_1 = timecomment _2 = comment _3 = spec3main_h
     {                                  ( SPEC3_PARSE_RETURN(_1,_2,_3) )}
 
 spec3main_h:
-| _1 = ln1host _2 = SC
+_1 = ln1host _2 = SC
     {             ( _1 )}
 | _1 = ln1epsilon _2 = SC
     {                ( _1 )}
@@ -397,11 +397,11 @@ spec3main_h:
     {                     ( _1 )}
 
 ln1host:
-| _1 = LN1_HOST _2 = LPAREN _3 = STRING _4 = COMMA _5 = ln1host_h _6 = RPAREN
+_1 = LN1_HOST _2 = LPAREN _3 = STRING _4 = COMMA _5 = ln1host_h _6 = RPAREN
     {                                                ( HOLLN1_HOST(_3,_5) )}
 
 ln1host_h:
-| _1 = netcall
+_1 = netcall
     {          ( _1)}
 | _1 = lib
     {      ( _1 )}
@@ -409,15 +409,15 @@ ln1host_h:
     {        ( _1 )}
 
 ln1epsilon:
-| _1 = LN1_EPSILON _2 = LPAREN _3 = T_DURATION _4 = intr _5 = intr _6 = RPAREN
+_1 = LN1_EPSILON _2 = LPAREN _3 = T_DURATION _4 = intr _5 = intr _6 = RPAREN
     {                                                 ( HOLLN1_EPSILON(DURATION(_4,_5)) )}
 
 ln1abstime:
-| _1 = T_ABSTIME _2 = intr _3 = intr
+_1 = T_ABSTIME _2 = intr _3 = intr
     {                      ( HOLLN1_ABSTIME(_2, _3) )}
 
 netcall:
-| _1 = LHSEND _2 = LPAREN _3 = netparam _4 = RPAREN
+_1 = LHSEND _2 = LPAREN _3 = netparam _4 = RPAREN
     {                                ( HOLSNDMSG _3 )}
 | _1 = LHLOOP _2 = LPAREN _3 = netparam _4 = RPAREN
     {                                ( HOLLOOPMSG _3 )}
@@ -425,7 +425,7 @@ netcall:
     {                                ( HOLRCVMSG _3 )}
 
 netparam:
-| _1 = TCP _2 = LPAREN _3 = RECSTART _4 = tcpdetail _5 = RECEND _6 = RPAREN
+_1 = TCP _2 = LPAREN _3 = RECSTART _4 = tcpdetail _5 = RECEND _6 = RPAREN
     {    ( let p = foldlist _4 clear_tcp_status clear_tcp_hol in
       let _ = chk_missing_tcp (fst p) in
       let m = TCPMSG (snd p) in m )}
@@ -439,25 +439,25 @@ netparam:
       let m = ICMPMSG (snd p) in m )}
 
 tcpdetail:
-| _1 = tcpval
+_1 = tcpval
     {         ( [_1] )}
 | _1 = tcpval _2 = SC _3 = tcpdetail
     {                      ( _1::_3 )}
 
 icmpdetail:
-| _1 = icmpval
+_1 = icmpval
     {          ( [_1] )}
 | _1 = icmpval _2 = SC _3 = icmpdetail
     {                        ( _1::_3 )}
 
 udpdetail:
-| _1 = udpval
+_1 = udpval
     {         ( [_1] )}
 | _1 = udpval _2 = SC _3 = udpdetail
     {                      ( _1::_3 )}
 
 tcpval:
-| _1 = IS1 _2 = ASSIGN _3 = ipoption
+_1 = IS1 _2 = ASSIGN _3 = ipoption
     {                      ( update_tcp (HOL_TCP_IS1 _3) )}
 | _1 = IS2 _2 = ASSIGN _3 = ipoption
     {                      ( update_tcp (HOL_TCP_IS2 _3) )}
@@ -495,7 +495,7 @@ tcpval:
     {                               ( update_tcp (HOL_TCP_DATA _3) )}
 
 icmpval:
-| _1 = IS1 _2 = ASSIGN _3 = ipoption
+_1 = IS1 _2 = ASSIGN _3 = ipoption
     {                      ( update_icmp (HOL_ICMP_IS1 _3) )}
 | _1 = IS2 _2 = ASSIGN _3 = ipoption
     {                      ( update_icmp (HOL_ICMP_IS2 _3) )}
@@ -515,13 +515,13 @@ icmpval:
     {                       ( update_icmp (HOL_ICMP_TYPE _3) )}
 
 protocol:
-| _1 = PROTO_TCP
+_1 = PROTO_TCP
     {            ( PROTO_TCP )}
 | _1 = PROTO_UDP
     {            ( PROTO_UDP )}
 
 icmptype:
-| _1 = ICMP_UNREACH _2 = icmp_unreach
+_1 = ICMP_UNREACH _2 = icmp_unreach
     {                            ( ICMP_UNREACH _2 )}
 | _1 = ICMP_PARAMPROB _2 = icmp_paramprob
     {                                ( ICMP_PARAMPROB _2 )}
@@ -531,7 +531,7 @@ icmptype:
     {                                        ( ICMP_TIME_EXCEEDED _2 )}
 
 icmp_unreach:
-| _1 = ICMP_NET
+_1 = ICMP_NET
     {           ( NET )}
 | _1 = ICMP_HOST
     {            ( HOST )}
@@ -565,23 +565,23 @@ icmp_unreach:
     {                   ( PREC_CUTOFF )}
 
 icmp_paramprob:
-| _1 = ICMP_BADHDR
+_1 = ICMP_BADHDR
     {              ( BADHDR )}
 | _1 = ICMP_NEEDOPT
     {               ( NEEDOPT )}
 
 icmp_source_quench:
-| _1 = ICMP_QUENCH
+_1 = ICMP_QUENCH
     {              ( QUENCH )}
 
 icmp_time_exceeded:
-| _1 = ICMP_INTRANS
+_1 = ICMP_INTRANS
     {               ( INTRANS )}
 | _1 = ICMP_REASS
     {             ( REASS )}
 
 udpval:
-| _1 = IS1 _2 = ASSIGN _3 = ipoption
+_1 = IS1 _2 = ASSIGN _3 = ipoption
     {                      ( update_udp (HOL_UDP_IS1 _3) )}
 | _1 = IS2 _2 = ASSIGN _3 = ipoption
     {                      ( update_udp (HOL_UDP_IS2 _3) )}
@@ -593,19 +593,19 @@ udpval:
     {                               ( update_udp (HOL_UDP_DATA _3) )}
 
 seqlocal:
-| _1 = LPAREN _2 = seqlocal _3 = RPAREN
+_1 = LPAREN _2 = seqlocal _3 = RPAREN
     {                         ( _2 )}
 | _1 = SEQLOCAL _2 = word16
     {                  ( _2 )}
 
 seqforeign:
-| _1 = LPAREN _2 = seqforeign _3 = RPAREN
+_1 = LPAREN _2 = seqforeign _3 = RPAREN
     {                           ( _2 )}
 | _1 = SEQFOREIGN _2 = word16
     {                    ( _2 )}
 
 tsseqoption:
-| _1 = LPAREN _2 = tsseqoption _3 = RPAREN
+_1 = LPAREN _2 = tsseqoption _3 = RPAREN
     {                            ( _2 )}
 | _1 = NONE
     {       ( None )}
@@ -613,7 +613,7 @@ tsseqoption:
     {                                                     ( Some(_4, _7) )}
 
 datalist:
-| _1 = LPAREN _2 = datalist _3 = RPAREN
+_1 = LPAREN _2 = datalist _3 = RPAREN
     {                         ( _2 )}
 | _1 = LSQBRKT _2 = RSQBRKT
     {                  ( [] )}
@@ -621,19 +621,19 @@ datalist:
     {                            ( _2 )}
 
 datalist2:
-| _1 = BYTE _2 = intr
+_1 = BYTE _2 = intr
     {            ( [_2] )}
 | _1 = BYTE _2 = intr _3 = SC _4 = datalist2
     {                         ( _2::_4 )}
 
 lib:
-| _1 = LHCALL _2 = LPAREN _3 = tid _4 = COMMA _5 = call _6 = RPAREN
+_1 = LHCALL _2 = LPAREN _3 = tid _4 = COMMA _5 = call _6 = RPAREN
     {                                      ( LIBCALL (_3, _5) )}
 | _1 = LHRETURN _2 = LPAREN _3 = tid _4 = COMMA _5 = return _6 = RPAREN
     {                                          ( LIBRETURN (_3, _5) )}
 
 return:
-| _1 = LPAREN _2 = return _3 = RPAREN
+_1 = LPAREN _2 = return _3 = RPAREN
     {                        ( _2 )}
 | _1 = returnok
     {           ( _1 )}
@@ -641,11 +641,11 @@ return:
     {             ( _1 )}
 
 returnok:
-| _1 = LHOK _2 = returnok_inner
+_1 = LHOK _2 = returnok_inner
     {                      ( _2 )}
 
 returnok_inner:
-| _1 = UNIT
+_1 = UNIT
     {       ( OK_UNIT () )}
 | _1 = LPAREN _2 = fd _3 = RPAREN
     {                   ( OK_FD (fd_of_int_private (Int64.to_int _2)) )}
@@ -678,11 +678,11 @@ returnok_inner:
     {                              ( OK_INTERFACE_LIST _2 )}
 
 returnfail:
-| _1 = LHFAIL _2 = LPAREN _3 = unixerror _4 = RPAREN
+_1 = LHFAIL _2 = LPAREN _3 = unixerror _4 = RPAREN
     {                                 ( FAIL _3 )}
 
 call:
-| _1 = LPAREN _2 = call _3 = RPAREN
+_1 = LPAREN _2 = call _3 = RPAREN
     {                      ( _2 )}
 | _1 = ACCEPT _2 = fd
     {    ( ACCEPT (fd_of_int_private (Int64.to_int _2)) )}
@@ -747,13 +747,13 @@ call:
     {    ( GETSOCKLISTENING (fd_of_int_private (Int64.to_int _2)) )}
 
 tid:
-| _1 = LPAREN _2 = tid _3 = RPAREN
+_1 = LPAREN _2 = tid _3 = RPAREN
     {                    ( _2 )}
 | _1 = TID _2 = intr
     {           ( Ocamllib.tid_of_int_private (Int64.to_int _2) )}
 
 filebflag:
-| _1 = LPAREN _2 = filebflag _3 = RPAREN
+_1 = LPAREN _2 = filebflag _3 = RPAREN
     {                          ( _2 )}
 | _1 = TO_NONBLOCK
     {              ( O_NONBLOCK )}
@@ -761,7 +761,7 @@ filebflag:
     {           ( O_ASYNC  )}
 
 sockbflag:
-| _1 = LPAREN _2 = sockbflag _3 = RPAREN
+_1 = LPAREN _2 = sockbflag _3 = RPAREN
     {                          ( _2 )}
 | _1 = TSO_BSDCOMPAT
     {                ( SO_BSDCOMPAT )}
@@ -777,7 +777,7 @@ sockbflag:
     {                ( SO_BROADCAST )}
 
 socknflag:
-| _1 = LPAREN _2 = socknflag _3 = RPAREN
+_1 = LPAREN _2 = socknflag _3 = RPAREN
     {                          ( _2 )}
 | _1 = TSO_SNDBUF
     {             ( SO_SNDBUF )}
@@ -789,7 +789,7 @@ socknflag:
     {               ( SO_RCVLOWAT )}
 
 socktflag:
-| _1 = LPAREN _2 = socktflag _3 = RPAREN
+_1 = LPAREN _2 = socktflag _3 = RPAREN
     {                          ( _2 )}
 | _1 = TSO_LINGER
     {             ( SO_LINGER )}
@@ -799,7 +799,7 @@ socktflag:
     {               ( SO_RCVTIMEO )}
 
 msgbflag:
-| _1 = LPAREN _2 = msgbflag _3 = RPAREN
+_1 = LPAREN _2 = msgbflag _3 = RPAREN
     {                         ( _2 )}
 | _1 = TMSG_PEEK
     {            ( MSG_PEEK )}
@@ -811,7 +811,7 @@ msgbflag:
     {                ( MSG_DONTWAIT )}
 
 signal:
-| _1 = LPAREN _2 = signal _3 = RPAREN
+_1 = LPAREN _2 = signal _3 = RPAREN
     {                       ( _2 )}
 | _1 = TSIGABRT
     {           ( SIGABRT )}
@@ -871,7 +871,7 @@ signal:
     {           ( SIGXFSZ )}
 
 topt:
-| _1 = LPAREN _2 = topt _3 = RPAREN
+_1 = LPAREN _2 = topt _3 = RPAREN
     {                     ( _2 )}
 | _1 = NONE
     {       ( None )}
@@ -879,7 +879,7 @@ topt:
     {               ( Some _2 )}
 
 filebflaglist:
-| _1 = LPAREN _2 = filebflaglist _3 = RPAREN
+_1 = LPAREN _2 = filebflaglist _3 = RPAREN
     {                              ( _2 )}
 | _1 = LSQBRKT _2 = filebflaglisth _3 = RSQBRKT
     {                                  ( _2 )}
@@ -887,13 +887,13 @@ filebflaglist:
     {                  ( [] )}
 
 filebflaglisth:
-| _1 = filebflag
+_1 = filebflag
     {            ( [_1] )}
 | _1 = filebflaglisth _2 = SC _3 = filebflag
     {                              ( _3 :: _1 )}
 
 msgbflaglist:
-| _1 = LPAREN _2 = msgbflaglist _3 = RPAREN
+_1 = LPAREN _2 = msgbflaglist _3 = RPAREN
     {                             ( _2 )}
 | _1 = LSQBRKT _2 = msgbflaglisth _3 = RSQBRKT
     {                                ( _2 )}
@@ -901,25 +901,25 @@ msgbflaglist:
     {                  ( [] )}
 
 msgbflaglisth:
-| _1 = msgbflag
+_1 = msgbflag
     {           ( [_1] )}
 | _1 = msgbflaglisth _2 = SC _3 = msgbflag
     {                            ( _3 :: _1 )}
 
 fdlist:
-| _1 = LSQBRKT _2 = fdlisth _3 = RSQBRKT
+_1 = LSQBRKT _2 = fdlisth _3 = RSQBRKT
     {                          ( _2 )}
 | _1 = LSQBRKT _2 = RSQBRKT
     {                  ( [] )}
 
 fdlisth:
-| _1 = fd
+_1 = fd
     {     ( [fd_of_int_private (Int64.to_int _1)] )}
 | _1 = fdlisth _2 = SC _3 = fd
     {                ( (fd_of_int_private (Int64.to_int _3))::_1 )}
 
 siglistopt:
-| _1 = LPAREN _2 = siglistopt _3 = RPAREN
+_1 = LPAREN _2 = siglistopt _3 = RPAREN
     {                           ( _2 )}
 | _1 = NONE
     {        ( None )}
@@ -927,7 +927,7 @@ siglistopt:
     {               ( Some _2 )}
 
 siglist:
-| _1 = LPAREN _2 = siglist _3 = RPAREN
+_1 = LPAREN _2 = siglist _3 = RPAREN
     {                        ( _2 )}
 | _1 = LSQBRKT _2 = siglisth _3 = RSQBRKT
     {                           ( _2 )}
@@ -935,71 +935,71 @@ siglist:
     {                  ( [] )}
 
 siglisth:
-| _1 = signal
+_1 = signal
     {         ( [_1] )}
 | _1 = siglisth _2 = SC _3 = signal
     {                     ( _3 :: _1 )}
 
 pselectopts:
-| _1 = LPAREN _2 = pselectopts _3 = RPAREN
+_1 = LPAREN _2 = pselectopts _3 = RPAREN
     {                            ( _2 )}
 | _1 = fdlist _2 = COMMA _3 = fdlist _4 = COMMA _5 = fdlist _6 = COMMA _7 = topt _8 = COMMA _9 = siglistopt
     {    ( PSELECT (_1, _3, _5, uint_pairopt_to_int_pairopt _7, _9) )}
 
 fdlisttriple:
-| _1 = LPAREN _2 = fdlisttriple _3 = RPAREN
+_1 = LPAREN _2 = fdlisttriple _3 = RPAREN
     {                             ( _2 )}
 | _1 = fdlist _2 = COMMA _3 = LPAREN _4 = fdlist _5 = COMMA _6 = fdlist _7 = RPAREN
     {                                                 ( (_1, (_4, _6)) )}
 
 fdipport:
-| _1 = LPAREN _2 = fdipport _3 = RPAREN
+_1 = LPAREN _2 = fdipport _3 = RPAREN
     {                         ( _2 )}
 | _1 = fd _2 = COMMA _3 = LPAREN _4 = ip _5 = COMMA _6 = port _7 = RPAREN
     {    ( (fd_of_int_private(Int64.to_int _1), (uint_ip_to_ip _4, uint_port_to_port _6)) )}
 
 interfacelist:
-| _1 = LPAREN _2 = interfacelist _3 = RPAREN
+_1 = LPAREN _2 = interfacelist _3 = RPAREN
     {                              ( _2 )}
 | _1 = LSQBRKT _2 = interfacelisth _3 = RSQBRKT
     {                                 ( _2 )}
 
 interfacelisth:
-| _1 = interface
+_1 = interface
     {            ( [_1] )}
 | _1 = interfacelisth _2 = SC _3 = interface
     {                              ( _3 :: _1 )}
 
 interface:
-| _1 = LPAREN _2 = ifid _3 = COMMA _4 = ip _5 = COMMA _6 = iplist _7 = COMMA _8 = netmask _9 = RPAREN
+_1 = LPAREN _2 = ifid _3 = COMMA _4 = ip _5 = COMMA _6 = iplist _7 = COMMA _8 = netmask _9 = RPAREN
     {                                                         ( (_2, uint_ip_to_ip _4, _6, uint_netmask_to_netmask _8) )}
 
 ifid:
-| _1 = LPAREN _2 = ifid _3 = RPAREN
+_1 = LPAREN _2 = ifid _3 = RPAREN
     {                     ( _2 )}
 | _1 = IFID _2 = IDENT
     {             ( ifid_of_string _2 )}
 
 netmask:
-| _1 = LPAREN _2 = netmask _3 = RPAREN
+_1 = LPAREN _2 = netmask _3 = RPAREN
     {                        ( _2 )}
 | _1 = NETMASK _2 = netmaskaddr
     {                        ( _2 )}
 
 netmaskaddr:
-| _1 = LPAREN _2 = netmaskaddr _3 = RPAREN
+_1 = LPAREN _2 = netmaskaddr _3 = RPAREN
     {                            ( _2 )}
 | _1 = INT
     {       ( _1 )}
 
 trace:
-| _1 = TRACE _2 = LPAREN _3 = traceaction _4 = COMMA _5 = tracesid _6 = COMMA _7 = traceaddr _8 = COMMA _9 = tracest _10 = COMMA _11 = RECSTART _12 = tcpcbdetail _13 = RECEND _14 = RPAREN
+_1 = TRACE _2 = LPAREN _3 = traceaction _4 = COMMA _5 = tracesid _6 = COMMA _7 = traceaddr _8 = COMMA _9 = tracest _10 = COMMA _11 = RECSTART _12 = tcpcbdetail _13 = RECEND _14 = RPAREN
     {    ( let p = foldlist _12 clear_tcpcb_status clear_tcpcb in
       let _ = chk_missing_tcpcb (fst p) in
       let m = TCPTRACE(_3, _5, _7, _9, (snd p)) in m )}
 
 traceaction:
-| _1 = LPAREN _2 = traceaction _3 = RPAREN
+_1 = LPAREN _2 = traceaction _3 = RPAREN
     {                            ( _2 )}
 | _1 = T_TA_OUTPUT
     {              ( TA_OUTPUT )}
@@ -1013,13 +1013,13 @@ traceaction:
     {            ( TA_DROP )}
 
 tracesid:
-| _1 = LPAREN _2 = tracesid _3 = RPAREN
+_1 = LPAREN _2 = tracesid _3 = RPAREN
     {                         ( _2 )}
 | _1 = SID _2 = INT
     {          ( _2 )}
 
 traceaddr:
-| _1 = LPAREN _2 = traceaddr _3 = RPAREN
+_1 = LPAREN _2 = traceaddr _3 = RPAREN
     {                          ( _2 )}
 | _1 = SOME _2 = traceaddr_h
     {                   ( TRACEADDR(Some(_2)) )}
@@ -1027,13 +1027,13 @@ traceaddr:
     {       ( TRACEADDR(None) )}
 
 traceaddr_h:
-| _1 = LPAREN _2 = traceaddr_h _3 = RPAREN
+_1 = LPAREN _2 = traceaddr_h _3 = RPAREN
     {                            ( _2 )}
 | _1 = ipoption _2 = COMMA _3 = portoption _4 = COMMA _5 = ipoption _6 = COMMA _7 = portoption
     {    ( (_1, _3, _5, _7) )}
 
 tracest:
-| _1 = T_CLOSED
+_1 = T_CLOSED
     {           ( TCPCB_CLOSED )}
 | _1 = T_LISTEN
     {           ( TCPCB_LISTEN )}
@@ -1057,19 +1057,19 @@ tracest:
     {              ( TCPCB_TIME_WAIT )}
 
 tcpcbdetail:
-| _1 = tcpcb
+_1 = tcpcb
     {        ( [_1] )}
 | _1 = tcpcb _2 = SC _3 = tcpcbdetail
     {                       ( _1::_3 )}
 
 timepair:
-| _1 = LPAREN _2 = timepair _3 = RPAREN
+_1 = LPAREN _2 = timepair _3 = RPAREN
     {                         ( _2 )}
 | _1 = TSSEQ _2 = word16 _3 = COMMA _4 = NEVERTIMER
     {                                ( (_2, NEVER_TIMER) )}
 
 tsrecent:
-| _1 = LPAREN _2 = tsrecent _3 = RPAREN
+_1 = LPAREN _2 = tsrecent _3 = RPAREN
     {                         ( _2 )}
 | _1 = TIMEWINDOWCLOSED
     {                   ( TimeWindowClosed )}
@@ -1077,7 +1077,7 @@ tsrecent:
     {                      ( TimeWindow (fst _2, snd _2) )}
 
 tcpcb:
-| _1 = T_SND_UNA _2 = ASSIGN _3 = seqlocal
+_1 = T_SND_UNA _2 = ASSIGN _3 = seqlocal
     {                            ( update_tcpcb (TCPCB_SND_UNA _3) )}
 | _1 = T_SND_MAX _2 = ASSIGN _3 = seqlocal
     {                            ( update_tcpcb (TCPCB_SND_MAX _3) )}
@@ -1123,7 +1123,7 @@ tcpcb:
     {                                    ( update_tcpcb (TCPCB_LAST_ACK_SENT _3) )}
 
 rttsegopt:
-| _1 = LPAREN _2 = rttsegopt _3 = RPAREN
+_1 = LPAREN _2 = rttsegopt _3 = RPAREN
     {                          ( _2 )}
 | _1 = NONE
     {       ( None )}
@@ -1131,29 +1131,29 @@ rttsegopt:
     {              ( Some(_2) )}
 
 rttseg:
-| _1 = LPAREN _2 = rttseg _3 = RPAREN
+_1 = LPAREN _2 = rttseg _3 = RPAREN
     {                       ( _2 )}
 | _1 = tsseq _2 = COMMA _3 = seqlocal
     {                       ( (_1, _3) )}
 
 tsseq:
-| _1 = LPAREN _2 = tsseq _3 = RPAREN
+_1 = LPAREN _2 = tsseq _3 = RPAREN
     {                      ( _2 )}
 | _1 = TSSEQ _2 = word16
     {               ( _2 )}
 
 epsilon:
-| _1 = T_LH_EPSILON _2 = LPAREN _3 = T_DURATION _4 = intr _5 = intr _6 = RPAREN
+_1 = T_LH_EPSILON _2 = LPAREN _3 = T_DURATION _4 = intr _5 = intr _6 = RPAREN
     {                                                  ( HOLEPSILON (DURATION(_4, _5)) )}
 
 abstime:
-| _1 = LPAREN _2 = abstime _3 = RPAREN
+_1 = LPAREN _2 = abstime _3 = RPAREN
     {                        ( _2 )}
 | _1 = T_ABSTIME _2 = intr _3 = intr
     {                      ( HOLABSTIME(_2, _3) )}
 
 bool:
-| _1 = LPAREN _2 = bool _3 = RPAREN
+_1 = LPAREN _2 = bool _3 = RPAREN
     {                     ( _2 )}
 | _1 = TRUE
     {       ( true )}
@@ -1161,7 +1161,7 @@ bool:
     {        ( false )}
 
 intr:
-| _1 = LPAREN _2 = intr _3 = RPAREN
+_1 = LPAREN _2 = intr _3 = RPAREN
     {                     ( _2 )}
 | _1 = INT
     {      ( _1 )}
@@ -1169,25 +1169,25 @@ intr:
     {            ( Int64.neg(_2) )}
 
 intpair:
-| _1 = LPAREN _2 = intpair _3 = RPAREN
+_1 = LPAREN _2 = intpair _3 = RPAREN
     {                        ( _2 )}
 | _1 = intr _2 = COMMA _3 = intr
     {                  ( (_1, _3) )}
 
 ip:
-| _1 = LPAREN _2 = ip _3 = RPAREN
+_1 = LPAREN _2 = ip _3 = RPAREN
     {                   ( _2 )}
 | _1 = IP _2 = ipaddr
     {            ( _2 )}
 
 ipaddr:
-| _1 = LPAREN _2 = ipaddr _3 = RPAREN
+_1 = LPAREN _2 = ipaddr _3 = RPAREN
     {                       ( _2 )}
 | _1 = INT _2 = INT _3 = INT _4 = INT
     {                  ( (_1 << 24) |. (_2 << 16) |. (_3 << 8) |. _4 )}
 
 ipoption:
-| _1 = LPAREN _2 = ipoption _3 = RPAREN
+_1 = LPAREN _2 = ipoption _3 = RPAREN
     {                         ( _2 )}
 | _1 = NONE
     {       ( None )}
@@ -1195,25 +1195,25 @@ ipoption:
     {          ( ip_option_of_uint _2 )}
 
 iplist:
-| _1 = LSQBRKT _2 = ips _3 = RSQBRKT
+_1 = LSQBRKT _2 = ips _3 = RSQBRKT
     {                      ( _2 )}
 | _1 = LSQBRKT _2 = RSQBRKT
     {                      ( [] )}
 
 ips:
-| _1 = ip
+_1 = ip
     {     ( [uint_ip_to_ip _1] )}
 | _1 = ip _2 = SC _3 = ips
     {            ( (uint_ip_to_ip _1)::_3 )}
 
 port:
-| _1 = LPAREN _2 = port _3 = RPAREN
+_1 = LPAREN _2 = port _3 = RPAREN
     {                     ( _2 )}
 | _1 = PORT _2 = intr
     {            ( _2 )}
 
 portoption:
-| _1 = LPAREN _2 = portoption _3 = RPAREN
+_1 = LPAREN _2 = portoption _3 = RPAREN
     {                           ( _2 )}
 | _1 = NONE
     {       ( None )}
@@ -1221,13 +1221,13 @@ portoption:
     {            ( port_option_of_uint _2 )}
 
 word16:
-| _1 = LPAREN _2 = word16 _3 = RPAREN
+_1 = LPAREN _2 = word16 _3 = RPAREN
     {                       ( _2 )}
 | _1 = WORD16 _2 = intr
     {              ( _2 )}
 
 word16option:
-| _1 = LPAREN _2 = word16option _3 = RPAREN
+_1 = LPAREN _2 = word16option _3 = RPAREN
     {                             ( _2 )}
 | _1 = NONE
     {       ( None )}
@@ -1235,13 +1235,13 @@ word16option:
     {              ( Some _2 )}
 
 byte:
-| _1 = LPAREN _2 = byte _3 = RPAREN
+_1 = LPAREN _2 = byte _3 = RPAREN
     {                     ( _2 )}
 | _1 = BYTE _2 = intr
     {            ( _2 )}
 
 byteoption:
-| _1 = LPAREN _2 = byteoption _3 = RPAREN
+_1 = LPAREN _2 = byteoption _3 = RPAREN
     {                           ( _2 )}
 | _1 = NONE
     {       ( None )}
@@ -1249,19 +1249,19 @@ byteoption:
     {            ( Some _2 )}
 
 stringr:
-| _1 = LPAREN _2 = stringr _3 = RPAREN
+_1 = LPAREN _2 = stringr _3 = RPAREN
     {                        ( _2 )}
 | _1 = STRING
     {         ( _1 )}
 
 fd:
-| _1 = LPAREN _2 = fd _3 = RPAREN
+_1 = LPAREN _2 = fd _3 = RPAREN
     {                   ( _2 )}
 | _1 = FD _2 = intr
     {          ( _2 )}
 
 addrop:
-| _1 = NONE
+_1 = NONE
     {       ( None )}
 | _1 = LPAREN _2 = addrop _3 = RPAREN
     {                       ( _2 )}
@@ -1269,7 +1269,7 @@ addrop:
     {                                   ( Some(uint_ip_to_ip _3, uint_port_to_port _5) )}
 
 ipportboolop:
-| _1 = NONE
+_1 = NONE
     {       ( None )}
 | _1 = LPAREN _2 = ipportboolop _3 = RPAREN
     {                             ( _2 )}
@@ -1277,37 +1277,37 @@ ipportboolop:
     {                                       ( Some(_3, _5) )}
 
 ipport:
-| _1 = LPAREN _2 = ipport _3 = RPAREN
+_1 = LPAREN _2 = ipport _3 = RPAREN
     {                       ( _2 )}
 | _1 = LPAREN _2 = ipoption _3 = COMMA _4 = portoption _5 = RPAREN
     {                                          ( (uint_ipopt_to_ipopt _2, uint_portopt_to_portopt _4) )}
 
 socktype:
-| _1 = SOCK_DGRAM
+_1 = SOCK_DGRAM
     {             ( SOCK_DGRAM )}
 | _1 = SOCK_STREAM
     {              ( SOCK_STREAM )}
 
 timecomment:
-| _1 = SCOMMENTSTART _2 = intr _3 = DOT _4 = intr _5 = stringr _6 = SCOMMENTEND
+_1 = SCOMMENTSTART _2 = intr _3 = DOT _4 = intr _5 = stringr _6 = SCOMMENTEND
     {    ( Some(TIMECOMMENT(_2*.(uint 1000000)+._4, _5)) )}
 | 
     {  ( None )}
 
 comment_h:
-| _1 = COMMENT
+_1 = COMMENT
     {          ( [_1] )}
 | _1 = comment_h _2 = COMMENT
     {                    ( _2 :: _1 )}
 
 comment:
-| _1 = comment_h
+_1 = comment_h
     {            ( Some _1 )}
 | 
     {  ( None )}
 
 unixerror:
-| _1 = T_ERR_E2BIG
+_1 = T_ERR_E2BIG
     {              ( E2BIG )}
 | _1 = T_ERR_EACCES
     {               ( EACCES )}

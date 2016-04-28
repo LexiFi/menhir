@@ -254,13 +254,13 @@ Warning: symbol integer_list is unreachable from any of the start symbol(s).
 %%
 
 program:
-| _1 = declaration
+_1 = declaration
     {                          ( if !numerrors>=1 then raise Exit else [_1, []] )}
 | _1 = declaration _2 = program
     {                          ( (_1, []) :: _2 )}
 
 declaration:
-| _1 = DECLARE _2 = IDENTIFIER _3 = COLON _4 = type_expr
+_1 = DECLARE _2 = IDENTIFIER _3 = COLON _4 = type_expr
     {                                         ( Global(_2, _4, None) )}
 | _1 = DECLARE _2 = IDENTIFIER _3 = COLON _4 = type_expr _5 = GETS _6 = anno_expr
     {                                                        ( Global(_2, _4, Some _6) )}
@@ -294,13 +294,13 @@ declaration:
     {                                   ( id_error() )}
 
 flow_program:
-| _1 = flow_statement
+_1 = flow_statement
     {                     ( [_1, []] )}
 | _1 = flow_statement _2 = flow_program
     {                                  ( (_1,[]) :: _2 )}
 
 flow_statement:
-| _1 = resource
+_1 = resource
     {                    ( _1 )}
 | _1 = instruction
     {                    ( Instruction(_1) )}
@@ -333,11 +333,11 @@ flow_statement:
     {                                                   ( print_error("Invalid bind source") )}
 
 instruction:
-| _1 = CONSUME _2 = IDENTIFIER
+_1 = CONSUME _2 = IDENTIFIER
     {                         ( Consume(_2) )}
 
 resource:
-| _1 = SOURCE _2 = IDENTIFIER _3 = COLON _4 = type_expr _5 = GETS _6 = handle
+_1 = SOURCE _2 = IDENTIFIER _3 = COLON _4 = type_expr _5 = GETS _6 = handle
     {                                                    (
         let channel_type, channel_format = _6
         in Source(Resource(_2, Handle(_4, channel_type, channel_format)))
@@ -361,19 +361,19 @@ resource:
       )}
 
 handle:
-| _1 = FILE _2 = LPAREN _3 = STRING _4 = COMMA _5 = IDENTIFIER _6 = RPAREN
+_1 = FILE _2 = LPAREN _3 = STRING _4 = COMMA _5 = IDENTIFIER _6 = RPAREN
     {      ( File(_3), parse_format _5 )}
 | _1 = SOCKET _2 = LPAREN _3 = STRING _4 = COMMA _5 = INTEGER _6 = COMMA _7 = IDENTIFIER _8 = RPAREN
     {      ( Network(_3, _5), parse_format _7 )}
 
 stream:
-| _1 = STREAM _2 = LPAREN _3 = anno_expr _4 = RPAREN
+_1 = STREAM _2 = LPAREN _3 = anno_expr _4 = RPAREN
     {                                      ( ConstStream(_3) )}
 | _1 = RANDOM _2 = LPAREN _3 = INTEGER _4 = RPAREN
     {                                   ( RandomStream(_3) )}
 
 resource_pattern:
-| _1 = IDENTIFIER
+_1 = IDENTIFIER
     {                                       ( Terminal(_1) )}
 | _1 = LPAREN _2 = resource_pattern _3 = RPAREN
     {                                         ( _2 )}
@@ -393,17 +393,17 @@ resource_pattern:
       )}
 
 annotations:
-| _1 = annotation
+_1 = annotation
     {                                       ( [_1] )}
 | _1 = annotation _2 = SEMICOLON _3 = annotations
     {                                       ( _1::_3 )}
 
 annotation:
-| _1 = identifier_stream
+_1 = identifier_stream
     {                             ( Property(String.concat " " _1) )}
 
 type_expr:
-| _1 = type_expr _2 = RARROW _3 = fn_type_expr_list %prec UMINUS
+_1 = type_expr _2 = RARROW _3 = fn_type_expr_list %prec UMINUS
     {                                                      ( let is, o = list_split (-1) (_1::_3) in
                                            match (hd o).typ with
                                            | TFunction(is', o') -> wrap_tfunc (is@is') o'
@@ -425,29 +425,29 @@ type_expr:
     {                                    ( let c, anno = _1 in { (canonical c) with anno} )}
 
 fn_type_expr_list:
-| _1 = type_expr _2 = RARROW _3 = fn_type_expr_list
+_1 = type_expr _2 = RARROW _3 = fn_type_expr_list
     {                                          ( _1 :: _3 )}
 | _1 = type_expr
     {                                          ( [_1] )}
 
 type_expr_tuple:
-| _1 = type_expr_list
+_1 = type_expr_list
     {                     ( wrap_ttuple _1 )}
 
 type_expr_list:
-| _1 = type_expr
+_1 = type_expr
     {                                      ( [_1] )}
 | _1 = type_expr _2 = COMMA _3 = type_expr_list
     {                                      ( _1 :: _3 )}
 
 annotated_collection_type:
-| _1 = collection_type
+_1 = collection_type
     {                                                          ( _1, [] )}
 | _1 = collection_type _2 = ANNOTATE _3 = LBRACE _4 = annotations _5 = RBRACE
     {                                                          ( _1, _4 )}
 
 collection_type:
-| _1 = LBRACE _2 = type_expr _3 = RBRACE
+_1 = LBRACE _2 = type_expr _3 = RBRACE
     {                              ( TCollection(TSet, _2) )}
 | _1 = LBRACE _2 = type_expr_tuple _3 = RBRACE
     {                                    ( TCollection(TSet, _2) )}
@@ -485,25 +485,25 @@ collection_type:
     {                                              ( TCollection(TSortedSet, _2) )}
 
 int_list_list:
-| _1 = int_list
+_1 = int_list
     {               ([_1])}
 | _1 = int_list _2 = SEMICOLON _3 = int_list_list
     {                                       ( _1::_3 )}
 
 int_list:
-| _1 = INTEGER
+_1 = INTEGER
     {              ([_1])}
 | _1 = INTEGER _2 = COMMA _3 = int_list
     {                             ( _1::_3 )}
 
 anno_expr:
-| _1 = expr _2 = ANNOTATE _3 = LBRACE _4 = annotations _5 = RBRACE
+_1 = expr _2 = ANNOTATE _3 = LBRACE _4 = annotations _5 = RBRACE
     {                                                  ( K3Util.add_annos _4 _1 )}
 | _1 = expr
     {                                                  ( _1 )}
 
 expr:
-| _1 = LPAREN _2 = tuple _3 = RPAREN
+_1 = LPAREN _2 = tuple _3 = RPAREN
     {                          ( _2 )}
 | _1 = block
     {            ( _1 )}
@@ -571,47 +571,47 @@ expr:
     {                             ( print_error("Function application error") )}
 
 id_unknown:
-| _1 = UNKNOWN
+_1 = UNKNOWN
     {              ( "_" )}
 | _1 = IDENTIFIER
     {                 ( _1 )}
 
 id_list:
-| _1 = id_unknown
+_1 = id_unknown
     {                 ( [_1] )}
 | _1 = id_unknown _2 = COMMA _3 = id_list
     {                               ( _1 :: _3 )}
 
 expr_list:
-| _1 = anno_expr
+_1 = anno_expr
     {                                ( [_1] )}
 | _1 = anno_expr _2 = COMMA _3 = expr_list
     {                                ( _1 :: _3 )}
 
 expr_seq:
-| _1 = tuple
+_1 = tuple
     {                               ( [_1] )}
 | _1 = tuple _2 = SEMICOLON _3 = expr_seq
     {                               ( _1 :: _3 )}
 
 tuple:
-| _1 = expr_list
+_1 = expr_list
     {                ( if List.length _1 = 1 then List.hd _1 else mkexpr Tuple _1 )}
 
 value_typed_identifier:
-| _1 = IDENTIFIER _2 = COLON _3 = type_expr
+_1 = IDENTIFIER _2 = COLON _3 = type_expr
     {                                                ( (_1, _3) )}
 | _1 = IDENTIFIER _2 = COLON _3 = error
     {                                                ( type_error() )}
 
 value_typed_identifier_list:
-| _1 = value_typed_identifier
+_1 = value_typed_identifier
     {                                                               ( [_1] )}
 | _1 = value_typed_identifier _2 = COMMA _3 = value_typed_identifier_list
     {                                                               ( _1 :: _3 )}
 
 arg:
-| _1 = LPAREN _2 = arg_list _3 = RPAREN
+_1 = LPAREN _2 = arg_list _3 = RPAREN
     {                              ( ATuple(_2) )}
 | _1 = UNKNOWN
     {              ( AIgnored )}
@@ -619,13 +619,13 @@ arg:
     {                              ( AVar(fst _1, snd _1) )}
 
 arg_list:
-| _1 = arg
+_1 = arg
     {                         ( [(_1)] )}
 | _1 = arg _2 = COMMA _3 = arg_list
     {                         ( _1 :: _3 )}
 
 constant:
-| _1 = UNKNOWN
+_1 = UNKNOWN
     {                ( CUnknown )}
 | _1 = UNIT
     {                ( CUnit )}
@@ -641,7 +641,7 @@ constant:
     {                ( _1 )}
 
 range:
-| _1 = LBRACE _2 = anno_expr _3 = COLON _4 = COLON _5 = anno_expr _6 = COLON _7 = COLON _8 = anno_expr _9 = RBRACE
+_1 = LBRACE _2 = anno_expr _3 = COLON _4 = COLON _5 = anno_expr _6 = COLON _7 = COLON _8 = anno_expr _9 = RBRACE
     {                                                                          ( mkexpr (Range(TSet)) [_2; _5; _8] )}
 | _1 = LBRACEBAR _2 = anno_expr _3 = COLON _4 = COLON _5 = anno_expr _6 = COLON _7 = COLON _8 = anno_expr _9 = RBRACEBAR
     {                                                                                ( mkexpr (Range(TBag)) [_2; _5; _8] )}
@@ -651,7 +651,7 @@ range:
     {                                                                                      ( mkexpr (Range(TVector)) [_2; _5; _8] )}
 
 collection:
-| _1 = LBRACE _2 = RBRACE _3 = COLON _4 = type_expr
+_1 = LBRACE _2 = RBRACE _3 = COLON _4 = type_expr
     {                                                  ( build_collection [] _4 )}
 | _1 = LBRACEBAR _2 = RBRACEBAR _3 = COLON _4 = type_expr
     {                                                  ( build_collection [] _4 )}
@@ -699,11 +699,11 @@ collection:
     {                                                       ( build_collection _2 (mk_unknown_collection (TVMap None)) )}
 
 variable:
-| _1 = IDENTIFIER
+_1 = IDENTIFIER
     {                 ( _1 )}
 
 address:
-| _1 = IDENTIFIER _2 = COLON _3 = INTEGER
+_1 = IDENTIFIER _2 = COLON _3 = INTEGER
     {                               ( CAddress(_1,_3) )}
 | _1 = IP _2 = COLON _3 = INTEGER
     {                       (
@@ -714,7 +714,7 @@ address:
       )}
 
 arithmetic:
-| _1 = NEG _2 = anno_expr
+_1 = NEG _2 = anno_expr
     {                    ( mkexpr Neg [_2] )}
 | _1 = anno_expr _2 = PLUS _3 = anno_expr
     {                               ( mkexpr Add [_1; _3] )}
@@ -738,7 +738,7 @@ arithmetic:
     {                             ( arith_error 2 )}
 
 predicate:
-| _1 = NOT _2 = anno_expr
+_1 = NOT _2 = anno_expr
     {                    ( mkexpr Neg [_2] )}
 | _1 = anno_expr _2 = AND _3 = anno_expr
     {                              ( mkexpr Mult [_1; _3] )}
@@ -770,7 +770,7 @@ predicate:
     {                          ( comp_error() )}
 
 conditional:
-| _1 = IF _2 = anno_expr _3 = THEN _4 = anno_expr _5 = ELSE _6 = anno_expr
+_1 = IF _2 = anno_expr _3 = THEN _4 = anno_expr _5 = ELSE _6 = anno_expr
     {                                                 ( mkexpr IfThenElse [_2; _4; _6] )}
 | _1 = IF _2 = anno_expr _3 = THEN _4 = anno_expr _5 = ELSE _6 = error
     {                                             ( cond_error "else branch" )}
@@ -780,7 +780,7 @@ conditional:
     {                                   ( cond_error "predicate" )}
 
 case:
-| _1 = CASE _2 = anno_expr _3 = OF _4 = LBRACE _5 = JUST _6 = id_unknown _7 = RARROW _8 = anno_expr _9 = RBRACE _10 = LBRACE _11 = NOTHING _12 = RARROW _13 = anno_expr _14 = RBRACE
+_1 = CASE _2 = anno_expr _3 = OF _4 = LBRACE _5 = JUST _6 = id_unknown _7 = RARROW _8 = anno_expr _9 = RBRACE _10 = LBRACE _11 = NOTHING _12 = RARROW _13 = anno_expr _14 = RBRACE
     {      ( mk_case_sn _2 _6 _8 _13 )}
 | _1 = CASE _2 = anno_expr _3 = OF _4 = LBRACE _5 = NOTHING _6 = RARROW _7 = anno_expr _8 = RBRACE _9 = LBRACE _10 = JUST _11 = id_unknown _12 = RARROW _13 = anno_expr _14 = RBRACE
     {      ( mk_case_sn _2 _11 _7 _13 )}
@@ -794,7 +794,7 @@ case:
     {                 ( case_error "predicate" )}
 
 letin:
-| _1 = LET _2 = LPAREN _3 = id_list _4 = RPAREN _5 = GETS _6 = anno_expr _7 = IN _8 = anno_expr
+_1 = LET _2 = LPAREN _3 = id_list _4 = RPAREN _5 = GETS _6 = anno_expr _7 = IN _8 = anno_expr
     {                                                              ( mk_let _3 _6 _8 )}
 | _1 = LET _2 = IDENTIFIER _3 = GETS _4 = anno_expr _5 = IN _6 = anno_expr
     {                                                              ( mk_let [_2] _4 _6 )}
@@ -810,7 +810,7 @@ letin:
     {                                                     ( print_error "Let binding error" )}
 
 bind:
-| _1 = BIND _2 = anno_expr _3 = AS _4 = IDENTIFIER _5 = IN _6 = anno_expr
+_1 = BIND _2 = anno_expr _3 = AS _4 = IDENTIFIER _5 = IN _6 = anno_expr
     {                                                ( mk_bind _2 _4 _6 )}
 | _1 = BIND _2 = anno_expr _3 = AS _4 = IDENTIFIER _5 = IN _6 = error
     {                                            ( bind_error "expr" )}
@@ -824,7 +824,7 @@ bind:
     {                         ( bind_error "predicate" )}
 
 lambda:
-| _1 = BACKSLASH _2 = arg _3 = RARROW _4 = anno_expr
+_1 = BACKSLASH _2 = arg _3 = RARROW _4 = anno_expr
     {                                      ( mkexpr (Lambda(_2)) [_4] )}
 | _1 = BACKSLASH _2 = arg _3 = RARROW _4 = error
     {                                  ( lambda_error "body" )}
@@ -832,11 +832,11 @@ lambda:
     {                                  ( lambda_error "argument" )}
 
 tuple_index:
-| _1 = anno_expr _2 = PERIOD _3 = LBRACKET _4 = INTEGER _5 = RBRACKET
+_1 = anno_expr _2 = PERIOD _3 = LBRACKET _4 = INTEGER _5 = RBRACKET
     {                                                 ( mkexpr (Subscript _4) [_1] )}
 
 access:
-| _1 = anno_expr _2 = LBRACKET _3 = tuple _4 = RBRACKET
+_1 = anno_expr _2 = LBRACKET _3 = tuple _4 = RBRACKET
     {                                        ( mkexpr Slice [_1; _3] )}
 | _1 = anno_expr _2 = LBRACKETLT _3 = tuple _4 = RBRACKET
     {                                          ( mkexpr SliceFrontier [_1; _3] )}
@@ -852,7 +852,7 @@ access:
     {                                                                       ( mkexpr MinWith [_3; _5; _7] )}
 
 mutation:
-| _1 = INSERT _2 = LPAREN _3 = variable _4 = COMMA _5 = tuple _6 = RPAREN
+_1 = INSERT _2 = LPAREN _3 = variable _4 = COMMA _5 = tuple _6 = RPAREN
     {                                                ( mkexpr Insert [mk_var _3; _5] )}
 | _1 = UPSERT_WITH _2 = LPAREN _3 = variable _4 = COMMA _5 = LPAREN _6 = tuple _7 = RPAREN _8 = COMMA _9 = anno_expr _10 = COMMA _11 = anno_expr _12 = RPAREN
     {                                                                                                   ( mkexpr UpsertWith [mk_var _3; _6; _9; _11] )}
@@ -892,7 +892,7 @@ mutation:
     {                                    ( assign_error "reference" )}
 
 transformers:
-| _1 = anno_expr _2 = CONCAT _3 = anno_expr
+_1 = anno_expr _2 = CONCAT _3 = anno_expr
     {                                                                    ( mkexpr Combine [_1; _3] )}
 | _1 = MAP _2 = LPAREN _3 = anno_expr _4 = COMMA _5 = anno_expr _6 = RPAREN
     {                                                                    ( mkexpr Map [_3; _5] )}
@@ -958,17 +958,17 @@ transformers:
     {                                                               ( print_error("Invalid groupby syntax") )}
 
 block:
-| _1 = DO _2 = LBRACE _3 = expr_seq _4 = RBRACE
+_1 = DO _2 = LBRACE _3 = expr_seq _4 = RBRACE
     {                                ( mkexpr Block _3 )}
 
 identifier_stream:
-| _1 = IDENTIFIER
+_1 = IDENTIFIER
     {                                     ([_1])}
 | _1 = IDENTIFIER _2 = identifier_stream
     {                                     ( _1::_2 )}
 
 program_test:
-| _1 = program _2 = EXPECTED _3 = named_expr_list
+_1 = program _2 = EXPECTED _3 = named_expr_list
     {                                           ( ProgTest (_1, _3) )}
 | _1 = program _2 = NETWORK _3 = EXPECTED _4 = named_expr_list
     {                                               ( NetworkTest (_1, _4) )}
@@ -980,7 +980,7 @@ program_test:
     {                                           ( print_error "no expected values specified for program test" )}
 
 expression_test_list:
-| _1 = anno_expr _2 = EXPECTED _3 = check_expr
+_1 = anno_expr _2 = EXPECTED _3 = check_expr
     {                                                          ( [[], _1, _3] )}
 | _1 = program _2 = anno_expr _3 = EXPECTED _4 = check_expr
     {                                                          ( [_1, _2, _4] )}
@@ -990,11 +990,11 @@ expression_test_list:
     {                                                ( print_error "invalid expected expression")}
 
 expression_test:
-| _1 = expression_test_list
+_1 = expression_test_list
     {                                                    ( ExprTest _1 )}
 
 named_expr_list:
-| _1 = anno_expr _2 = GETS _3 = check_expr
+_1 = anno_expr _2 = GETS _3 = check_expr
     {                                                         ( [_1, _3] )}
 | _1 = anno_expr _2 = GETS _3 = check_expr _4 = COMMA _5 = named_expr_list
     {                                                         ( _5@[_1, _3] )}
@@ -1002,7 +1002,7 @@ named_expr_list:
     {                           ( print_error "invalid check expression")}
 
 check_expr:
-| _1 = IDENTIFIER _2 = COLON _3 = anno_expr
+_1 = IDENTIFIER _2 = COLON _3 = anno_expr
     {                                          ( InlineExpr(_1, _3) )}
 
 %%

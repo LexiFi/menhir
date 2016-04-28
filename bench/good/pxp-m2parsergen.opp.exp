@@ -33,29 +33,29 @@ Warning: the token Space is unused.
 %%
 
 text:
-| _1 = declarations _2 = rules
+_1 = declarations _2 = rules
     {    ( { text_decls = _1; text_rules = _2; } )}
 
 declarations:
-| _1 = declaration _2 = declarations
+_1 = declaration _2 = declarations
     {    ( _1 :: _2 )}
 | _1 = Separator
     {    ( [] )}
 
 declaration:
-| _1 = Token _2 = Uname
+_1 = Token _2 = Uname
     {    ( D_token _2 )}
 | _1 = Token _2 = Type _3 = Uname
     {    ( D_typed_token _3 )}
 
 rules:
-| _1 = rule _2 = rules
+_1 = rule _2 = rules
     {    ( _1 :: _2 )}
 | _1 = Separator
     {    ( [] )}
 
 rule:
-| _1 = Lname _2 = Lparen _3 = formal_arguments _4 = Colon _5 = branches
+_1 = Lname _2 = Lparen _3 = formal_arguments _4 = Colon _5 = branches
     {    ( { rule_name = _1;
 	rule_arguments = _3;
 	rule_branches = _5;
@@ -63,35 +63,35 @@ rule:
     )}
 
 formal_arguments:
-| _1 = Rparen
+_1 = Rparen
     {    ( [] )}
 | _1 = Lname _2 = comma_formal_arguments
     {    ( _1 :: _2 )}
 
 comma_formal_arguments:
-| _1 = Comma _2 = Lname _3 = comma_formal_arguments
+_1 = Comma _2 = Lname _3 = comma_formal_arguments
     {    ( _2 :: _3 )}
 | _1 = Rparen
     {    ( [] )}
 
 branches:
-| _1 = branch _2 = alt_branches
+_1 = branch _2 = alt_branches
     {    ( _1 :: _2 )}
 
 alt_branches:
-| _1 = Alt _2 = branch _3 = alt_branches
+_1 = Alt _2 = branch _3 = alt_branches
     {    ( _2 :: _3 )}
 | 
     {    ( [] )}
 
 branch:
-| _1 = simple_branch
+_1 = simple_branch
     {    ( _1 )}
 | _1 = Dollar _2 = Code _3 = simple_branch
     {    ( { _3 with branch_early_code = _2 } )}
 
 simple_branch:
-| _1 = symbol _2 = Dollar _3 = Code _4 = patterns _5 = Code _6 = opt_error_handler
+_1 = symbol _2 = Dollar _3 = Code _4 = patterns _5 = Code _6 = opt_error_handler
     {    ( { branch_selector = _1;
         branch_early_code = ("",0,0);
 	branch_binding_code = _3;
@@ -111,13 +111,13 @@ simple_branch:
     )}
 
 patterns:
-| _1 = pattern _2 = patterns
+_1 = pattern _2 = patterns
     {    ( _1 :: _2 )}
 | 
     {    ( [] )}
 
 pattern:
-| _1 = symbol _2 = Loop_star
+_1 = symbol _2 = Loop_star
     {    ( { pat_symbol = _1;
 	pat_modifier = Repetition;
       }
@@ -134,7 +134,7 @@ pattern:
     )}
 
 symbol:
-| _1 = Lname _2 = Colon _3 = Uname
+_1 = Lname _2 = Colon _3 = Uname
     {    ( U_symbol(_3, Some _1) )}
 | _1 = Lname _2 = Colon _3 = Lname _4 = Lparen _5 = actual_arguments
     {    ( L_symbol(_3, _5, Some _1) )}
@@ -148,19 +148,19 @@ symbol:
     {    ( L_indirect(_2, _5, None) )}
 
 actual_arguments:
-| _1 = Rparen
+_1 = Rparen
     {    ( [] )}
 | _1 = Lname _2 = comma_actual_arguments
     {    ( _1 :: _2 )}
 
 comma_actual_arguments:
-| _1 = Rparen
+_1 = Rparen
     {    ( [] )}
 | _1 = Comma _2 = Lname _3 = comma_actual_arguments
     {    ( _2 :: _3 )}
 
 opt_error_handler:
-| _1 = Error _2 = Code
+_1 = Error _2 = Code
     {    ( Some _2 )}
 | 
     {    ( None )}

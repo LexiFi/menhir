@@ -25,11 +25,11 @@
 %%
 
 term_eof:
-| _1 = term _2 = EOF
+_1 = term _2 = EOF
     {           ( _1 )}
 
 term:
-| _1 = PREFIX_IDENT
+_1 = PREFIX_IDENT
     {   ( (* printf "forme a\n"; *)
       try
         VAR (var_id_of_string _1)
@@ -69,23 +69,23 @@ term:
     )}
 
 term_list:
-| _1 = term %prec TERMLIST
+_1 = term %prec TERMLIST
     {                      ( [_1] )}
 | _1 = term _2 = COMMA _3 = term_list
     {                       ( _1 :: _3 )}
 
 rule_set_eof:
-| _1 = rule_set _2 = EOF
+_1 = rule_set _2 = EOF
     {                 ( _1 )}
 
 rule_set:
-| _1 = rule
+_1 = rule
     {                          ( [_1]   )}
 | _1 = rule _2 = SEMICOLON _3 = rule_set
     {                          ( _1::_3 )}
 
 rule:
-| _1 = term _2 = ARROW _3 = term
+_1 = term _2 = ARROW _3 = term
     {                          ( make_basic_rule ((flatten_term _1),
                                              (flatten_term _3)) )}
 

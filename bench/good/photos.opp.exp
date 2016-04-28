@@ -43,7 +43,7 @@ let today () =
 %%
 
 query0:
-| _1 = NAME _2 = LITERAL
+_1 = NAME _2 = LITERAL
     {    ( Name (fun s -> Filename.chop_extension s = _2) )}
 | _1 = BEFORE _2 = date
     {    ( let _, date = _2 in DateLessThan date )}
@@ -70,23 +70,23 @@ query0:
     {    ( True )}
 
 query1:
-| _1 = query1 _2 = AND _3 = query0
+_1 = query1 _2 = AND _3 = query0
     {    ( And (_1, _3) )}
 | _1 = query0
     {    ( _1 )}
 
 query2:
-| _1 = query2 _2 = OR _3 = query1
+_1 = query2 _2 = OR _3 = query1
     {    ( Or (_1, _3) )}
 | _1 = query1
     {    ( _1 )}
 
 query:
-| _1 = query2
+_1 = query2
     {    ( _1 )}
 
 date:
-| _1 = NUMBER _2 = SLASH _3 = NUMBER _4 = SLASH _5 = NUMBER
+_1 = NUMBER _2 = SLASH _3 = NUMBER _4 = SLASH _5 = NUMBER
     {    ( try
         let date = fst (Unix.mktime {
 			Unix.tm_year = _1 - 1900;

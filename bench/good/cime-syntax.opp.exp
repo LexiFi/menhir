@@ -119,7 +119,7 @@ let monome_de_variable var =
 %%
 
 donnees:
-| _1 = EOF
+_1 = EOF
     {                         ( [] )}
 | _1 = KW_END
     {                         ( [] )}
@@ -127,7 +127,7 @@ donnees:
     {                         ( _1::_2 )}
 
 declaration:
-| _1 = TOKEN_INCLUDE _2 = STRING
+_1 = TOKEN_INCLUDE _2 = STRING
     {                       (Abstract_include _2)}
 | _1 = keyword_operators _2 = operateurs
     {                                 ( Abstract_operators _2 )}
@@ -153,75 +153,75 @@ declaration:
     {                                        ( Abstract_inductive _2 )}
 
 keyword_operators:
-| _1 = OPERATEURS
+_1 = OPERATEURS
     {             ( 
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Ident_lexer )}
 
 keyword_conjectures:
-| _1 = CONJECTURES
+_1 = CONJECTURES
     {              (  
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer )}
 
 keyword_inductive:
-| _1 = INDUCTIVE
+_1 = INDUCTIVE
     {            (  
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer )}
 
 keyword_theory:
-| _1 = THEORIE
+_1 = THEORIE
     {          (  
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Ident_lexer )}
 
 keyword_axioms:
-| _1 = EQUATIONS
+_1 = EQUATIONS
     {            (  
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer )}
 
 keyword_problems:
-| _1 = PROBLEMES
+_1 = PROBLEMES
     {            (  
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer )}
 
 keyword_sortes:
-| _1 = SORTES
+_1 = SORTES
     {         ( etat_analyse.lexer_state <- Ident_lexer )}
 
 keyword_subsortes:
-| _1 = SUBSORTES
+_1 = SUBSORTES
     {              (etat_analyse.lexer_state <- Ident_lexer)}
 
 subsortes:
-| _1 = base_sorte _2 = INFERIEUR _3 = base_sorte
+_1 = base_sorte _2 = INFERIEUR _3 = base_sorte
     {                                    ([(see_as_base_sort _1,see_as_base_sort _3)])}
 | _1 = base_sorte _2 = INFERIEUR _3 = base_sorte _4 = VIRGULE _5 = subsortes
     {                                                    ((see_as_base_sort _1,see_as_base_sort _3):: _5 )}
 
 sortes:
-| _1 = base_sorte
+_1 = base_sorte
     {               (make_new_sort _1)}
 | _1 = base_sorte _2 = VIRGULE _3 = sortes
     {                            (make_new_sort _1 ; _3)}
 
 keyword_order:
-| _1 = ORDRE
+_1 = ORDRE
     {        ( etat_analyse.lexer_state <- Standard_lexer )}
 
 base_sorte:
-| _1 = IDENT
+_1 = IDENT
     {          (_1)}
 
 signature_eof:
-| _1 = operateurs _2 = EOF
+_1 = operateurs _2 = EOF
     {                        ( () )}
 
 operateurs:
-| _1 = decl_arite
+_1 = decl_arite
     {                         ( [_1] )}
 | _1 = decl_arite _2 = operateurs
     {                         ( _1::_2 )}
@@ -231,19 +231,19 @@ operateurs:
     {                                       ( _1::_3 )}
 
 profile_list:
-| _1 = profile
+_1 = profile
     {            ([_1])}
 | _1 = profile _2 = VIRGULE _3 = profile_list
     {                                 (_1::_3)}
 
 profile:
-| _1 = base_sorte
+_1 = base_sorte
     {             ([_1])}
 | _1 = base_sorte _2 = FLECHE _3 = profile
     {                             (_1::_3)}
 
 decl_arite:
-| _1 = op_list_colon _2 = fix _3 = arity _4 = AS _5 = profile_list
+_1 = op_list_colon _2 = fix _3 = arity _4 = AS _5 = profile_list
     {    ( let t,a = _3 in
         if _2=INFIX & a<>2
           then raise (Erreur_de_syntaxe "Infix symbols must be binary")
@@ -273,7 +273,7 @@ decl_arite:
 	    )}
 
 fix:
-| _1 = PREFIXE
+_1 = PREFIXE
     {          ( PREFIX )}
 | _1 = INFIXE
     {          ( INFIX  )}
@@ -283,11 +283,11 @@ fix:
     {          ( DEFAULT )}
 
 arity:
-| _1 = arityaux
+_1 = arityaux
     {                 ( etat_analyse.lexer_state <- Ident_lexer;_1 )}
 
 arityaux:
-| _1 = TOKEN_C
+_1 = TOKEN_C
     {                 ( (C,2) )}
 | _1 = TOKEN_AC
     {                 ( (AC,2) )}
@@ -303,21 +303,21 @@ arityaux:
     {                 ( (FREE,_1) )}
 
 op_list_colon:
-| _1 = op_list _2 = DEUX_POINTS
+_1 = op_list _2 = DEUX_POINTS
     {                      ( etat_analyse.lexer_state <- Standard_lexer; _1 )}
 
 op_list:
-| _1 = ident
+_1 = ident
     {                         ( [_1] )}
 | _1 = ident _2 = VIRGULE _3 = op_list
     {                         ( _1::_3 )}
 
 ident:
-| _1 = IDENT
+_1 = IDENT
     {                      ( _1 )}
 
 unif_type:
-| _1 = TOKEN_AC _2 = ONLY
+_1 = TOKEN_AC _2 = ONLY
     {                      ( Unif_type_AC_only )}
 | _1 = TOKEN_AC _2 = COMPLETE
     {                      ( Unif_type_AC_complete )}
@@ -325,57 +325,57 @@ unif_type:
     {                      ( Unif_type_plain )}
 
 theorie:
-| _1 = decl_theorie
+_1 = decl_theorie
     {                       ( [_1] )}
 | _1 = decl_theorie _2 = theorie
     {                       ( _1::_2 )}
 
 decl_theorie:
-| _1 = ident _2 = PARGAUCHE _3 = id_list_end
+_1 = ident _2 = PARGAUCHE _3 = id_list_end
     {                              ( PRDF(_1::_3) )}
 | _1 = keyword_user _2 = PARGAUCHE _3 = regle_list _4 = PARDROITE
     {                                              ( etat_analyse.lexer_state <- Ident_lexer;USR(_3) )}
 
 id_list_end:
-| _1 = ident _2 = PARDROITE
+_1 = ident _2 = PARDROITE
     {                             ( [_1] )}
 | _1 = ident _2 = VIRGULE _3 = id_list_end
     {                             ( _1::_3 )}
 
 keyword_user:
-| _1 = TOKEN_USER
+_1 = TOKEN_USER
     {             ( etat_analyse.lexer_state <- Term_lexer )}
 
 regle_list:
-| _1 = regle
+_1 = regle
     {                                 ( [_1] )}
 | _1 = regle _2 = POINT_VIRGULE _3 = regle_list
     {                                 ( _1::_3)}
 
 regle:
-| _1 = term _2 = FLECHE _3 = term
+_1 = term _2 = FLECHE _3 = term
     {                                    ( make_basic_rule ((flatten_term _1),
                                                        (flatten_term _3)) )}
 
 equations:
-| _1 = equation _2 = POINT_VIRGULE
+_1 = equation _2 = POINT_VIRGULE
     {                                    ( [_1] )}
 | _1 = equation _2 = POINT_VIRGULE _3 = equations
     {                                    ( _1::_3 )}
 
 equation:
-| _1 = term _2 = EGAL _3 = term
+_1 = term _2 = EGAL _3 = term
     {                                    ( new pair_of_terms (flatten_term _1) 
                                       	(flatten_term _3) )}
 
 ordre_plus:
-| _1 = ordre
+_1 = ordre
     {        ( _1 )}
 | _1 = TOKEN_SEMI_INTERACTIF _2 = PARGAUCHE _3 = ordre _4 = PARDROITE
     {        ( SEMI_INTERACTIF(_3) )}
 
 ordre:
-| _1 = keyword_rpo _2 = PARGAUCHE _3 = precedence _4 = POINT_VIRGULE _5 = statuts _6 = PARDROITE
+_1 = keyword_rpo _2 = PARGAUCHE _3 = precedence _4 = POINT_VIRGULE _5 = statuts _6 = PARDROITE
     {    ( RPO(_3,_5) )}
 | _1 = keyword_rpo _2 = PARGAUCHE _3 = precedence _4 = PARDROITE
     {    ( RPO(_3,[]) )}
@@ -393,25 +393,25 @@ ordre:
     {    ( Rps(_1,_2) )}
 
 rps_header:
-| _1 = TOKEN_RPS _2 = PARGAUCHE _3 = ordre _4 = POINT_VIRGULE
+_1 = TOKEN_RPS _2 = PARGAUCHE _3 = ordre _4 = POINT_VIRGULE
     {    (  
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Term_lexer;_3 )}
 
 keyword_rpo:
-| _1 = TOKEN_RPO
+_1 = TOKEN_RPO
     {            (  
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer )}
 
 keyword_mapo:
-| _1 = TOKEN_MAPO
+_1 = TOKEN_MAPO
     {             (  
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer )}
 
 mu_value:
-| _1 = INT _2 = POINT_VIRGULE
+_1 = INT _2 = POINT_VIRGULE
     {             (  
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer;_1 )}
@@ -421,17 +421,17 @@ mu_value:
   etat_analyse.lexer_state <- Ident_lexer;0 )}
 
 keyword_poly:
-| _1 = TOKEN_POLY
+_1 = TOKEN_POLY
     {             ( etat_analyse.lexer_state <- Standard_lexer )}
 
 ordre_List:
-| _1 = ordre _2 = PARDROITE
+_1 = ordre _2 = PARDROITE
     {                    ( [_1] )}
 | _1 = ordre _2 = POINT_VIRGULE _3 = ordre_List
     {                                   ( _1::_3 )}
 
 precedence:
-| 
+
     {                                        ( [] )}
 | _1 = liste_ordonnee
     {                     ( [_1] )}
@@ -439,7 +439,7 @@ precedence:
     {                                    ( _1::_3 )}
 
 liste_ordonnee:
-| _1 = ident
+_1 = ident
     {             ( One_symbol (get_symbol_id _1) )}
 | _1 = ident _2 = EGAL _3 = liste_ordonnee
     {                              ( Equal_to (get_symbol_id _1,_3) )}
@@ -449,19 +449,19 @@ liste_ordonnee:
     {                                  ( Lower_than (get_symbol_id _1,_3) )}
 
 poly_decl_list:
-| _1 = poly_decl
+_1 = poly_decl
     {               ( [_1] )}
 | _1 = poly_decl _2 = POINT_VIRGULE _3 = poly_decl_list
     {                                        ( _1::_3 )}
 
 statuts:
-| _1 = statut
+_1 = statut
     {                          ( [_1]   )}
 | _1 = statut _2 = VIRGULE _3 = statuts
     {                          ( _1::_3 )}
 
 statut:
-| _1 = ident _2 = MUL
+_1 = ident _2 = MUL
     {    ( (get_symbol_id _1),MULTISET
     )}
 | _1 = ident _2 = lexstat
@@ -472,19 +472,19 @@ statut:
     )}
 
 lexstat:
-| _1 = LRLEX
+_1 = LRLEX
     {        ( LR_LEXICO )}
 | _1 = RLLEX
     {        ( RL_LEXICO )}
 
 problemes:
-| _1 = probleme _2 = POINT_VIRGULE
+_1 = probleme _2 = POINT_VIRGULE
     {                                    ( [_1] )}
 | _1 = probleme _2 = POINT_VIRGULE _3 = problemes
     {                                    ( _1::_3 )}
 
 probleme:
-| _1 = term _2 = EGAL _3 = term
+_1 = term _2 = EGAL _3 = term
     {    ( EQUATION_A_PROUVER(flatten_term _1,flatten_term _3) )}
 | _1 = REDUIRE _2 = term
     {    ( TERME_A_REDUIRE(flatten_term _2) )}
@@ -498,7 +498,7 @@ probleme:
     {    ( TERMES_A_COMPARER(flatten_term _2,flatten_term _4) )}
 
 poly_decl:
-| _1 = entete_poly _2 = EGAL _3 = poly
+_1 = entete_poly _2 = EGAL _3 = poly
     {    (  
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer;
@@ -506,7 +506,7 @@ poly_decl:
       )}
 
 entete_poly:
-| _1 = CROGAUCHE _2 = poly_ident _3 = CRODROIT
+_1 = CROGAUCHE _2 = poly_ident _3 = CRODROIT
     {    ( current_poly_vars := [];
       _2 )}
 | _1 = CROGAUCHE _2 = poly_ident _3 = CRODROIT _4 = PARGAUCHE _5 = poly_var_list_end
@@ -534,18 +534,18 @@ entete_poly:
     )}
 
 poly_ident:
-| _1 = ident
+_1 = ident
     {        ( etat_analyse.lexer_state <- Poly_lexer;
       	  (get_symbol_id _1) )}
 
 poly_var_list_end:
-| _1 = POLY_VAR _2 = PARDROITE
+_1 = POLY_VAR _2 = PARDROITE
     {                                      ( [_1] )}
 | _1 = POLY_VAR _2 = VIRGULE _3 = poly_var_list_end
     {                                      ( _1::_3 )}
 
 poly:
-| _1 = POLY_VAR
+_1 = POLY_VAR
     {    ( monome_de_variable _1 )}
 | _1 = INT
     {    ( IntPolynomials.cte (Num.Int _1) )}
@@ -563,7 +563,7 @@ poly:
     {    ( IntPolynomials.power _1 _3 )}
 
 term:
-| _1 = PREFIX_IDENT
+_1 = PREFIX_IDENT
     {   ( (* printf "forme a\n"; *)
       try
         VAR (var_id_of_string _1)
@@ -603,13 +603,13 @@ term:
     )}
 
 term_list:
-| _1 = term %prec TERMLIST
+_1 = term %prec TERMLIST
     {                      ( [_1] )}
 | _1 = term _2 = VIRGULE _3 = term_list
     {                         ( _1 :: _3 )}
 
 term_eof:
-| _1 = term _2 = EOF
+_1 = term _2 = EOF
     {           ( _1 )}
 
 %%

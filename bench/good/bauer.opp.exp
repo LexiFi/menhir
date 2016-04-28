@@ -17,7 +17,7 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %%
 
 clauses:
-| xs0 = loption_separated_nonempty_list_DOT_clause__ _2 = EOF
+xs0 = loption_separated_nonempty_list_DOT_clause__ _2 = EOF
     {let clauses =
   let xs = xs0 in
       ( xs )
@@ -25,7 +25,7 @@ in
                                                      ( clauses )}
 
 term:
-| name = IDENTIFIER p = option_params_
+name = IDENTIFIER p = option_params_
     {                                        ( 
     let ts = match p with None -> [] | Some l -> l in
       Struct (name, ts)
@@ -34,7 +34,7 @@ term:
     {                 ( Var (0, v) )}
 
 params:
-| _10 = LPARENT xs00 = loption_separated_nonempty_list_COMMA_term__ _30 = RPARENT
+_10 = LPARENT xs00 = loption_separated_nonempty_list_COMMA_term__ _30 = RPARENT
     {let terms =
   let _3 = _30 in
   let xs0 = xs00 in
@@ -48,37 +48,37 @@ in
          ( terms )}
 
 option_params_:
-| 
+
     {    ( None )}
 | x = params
     {    ( Some x )}
 
 loption_separated_nonempty_list_DOT_clause__:
-| 
+
     {    ( [] )}
 | x = separated_nonempty_list_DOT_clause_
     {    ( x )}
 
 loption_separated_nonempty_list_COMMA_term__:
-| 
+
     {    ( [] )}
 | x = separated_nonempty_list_COMMA_term_
     {    ( x )}
 
 separated_nonempty_list_DOT_clause_:
-| x = clause
+x = clause
     {    ( [ x ] )}
 | x = clause _2 = DOT xs = separated_nonempty_list_DOT_clause_
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_term_:
-| x = term
+x = term
     {    ( [ x ] )}
 | x = term _2 = COMMA xs = separated_nonempty_list_COMMA_term_
     {    ( x :: xs )}
 
 clause:
-| tm = term _2 = INFERS xs0 = loption_separated_nonempty_list_COMMA_term__
+tm = term _2 = INFERS xs0 = loption_separated_nonempty_list_COMMA_term__
     {let ts =
   let xs = xs0 in
       ( xs )

@@ -67,59 +67,59 @@ open Parser_aux
 %%
 
 argument_list_eol:
-| _1 = ARGUMENT _2 = argument_list_eol
+_1 = ARGUMENT _2 = argument_list_eol
     {      ( _1::_2 )}
 | _1 = end_of_line
     {      ( [] )}
 
 argument_eol:
-| _1 = ARGUMENT _2 = end_of_line
+_1 = ARGUMENT _2 = end_of_line
     {      ( _1 )}
 
 integer_list_eol:
-| _1 = INTEGER _2 = integer_list_eol
+_1 = INTEGER _2 = integer_list_eol
     {      ( (to_int _1) :: _2 )}
 | _1 = end_of_line
     {      ( [] )}
 
 integer_eol:
-| _1 = INTEGER _2 = end_of_line
+_1 = INTEGER _2 = end_of_line
     {      ( to_int _1 )}
 
 int64_eol:
-| _1 = INTEGER _2 = end_of_line
+_1 = INTEGER _2 = end_of_line
     {      ( _1 )}
 
 integer:
-| _1 = INTEGER
+_1 = INTEGER
     {      ( to_int _1 )}
 
 opt_integer_eol:
-| _1 = INTEGER _2 = end_of_line
+_1 = INTEGER _2 = end_of_line
     {      ( Some (to_int _1) )}
 | _1 = end_of_line
     {      ( None )}
 
 opt_int64_eol:
-| _1 = INTEGER _2 = end_of_line
+_1 = INTEGER _2 = end_of_line
     {      ( Some _1 )}
 | _1 = end_of_line
     {      ( None )}
 
 opt_signed_integer_eol:
-| _1 = MINUS _2 = integer_eol
+_1 = MINUS _2 = integer_eol
     {      ( Some (- _2) )}
 | _1 = opt_integer_eol
     {      ( _1 )}
 
 opt_signed_int64_eol:
-| _1 = MINUS _2 = int64_eol
+_1 = MINUS _2 = int64_eol
     {      ( Some (Int64.neg _2) )}
 | _1 = opt_int64_eol
     {      ( _1 )}
 
 longident:
-| _1 = LIDENT
+_1 = LIDENT
     {                                ( Lident _1 )}
 | _1 = module_path _2 = DOT _3 = LIDENT
     {                                ( Ldot(_1, _3) )}
@@ -127,43 +127,43 @@ longident:
     {                                ( Lident _1 )}
 
 module_path:
-| _1 = UIDENT
+_1 = UIDENT
     {                                ( Lident _1 )}
 | _1 = module_path _2 = DOT _3 = UIDENT
     {                                ( Ldot(_1, _3) )}
 
 longident_eol:
-| _1 = longident _2 = end_of_line
+_1 = longident _2 = end_of_line
     {                               ( _1 )}
 
 identifier:
-| _1 = LIDENT
+_1 = LIDENT
     {                                ( _1 )}
 | _1 = UIDENT
     {                                ( _1 )}
 
 identifier_eol:
-| _1 = identifier _2 = end_of_line
+_1 = identifier _2 = end_of_line
     {                                ( _1 )}
 
 identifier_or_eol:
-| _1 = identifier
+_1 = identifier
     {                                ( Some _1 )}
 | _1 = end_of_line
     {                                ( None )}
 
 opt_identifier:
-| _1 = identifier
+_1 = identifier
     {                                ( Some _1 )}
 | 
     {                                ( None )}
 
 opt_identifier_eol:
-| _1 = opt_identifier _2 = end_of_line
+_1 = opt_identifier _2 = end_of_line
     {                                ( _1 )}
 
 expression:
-| _1 = longident
+_1 = longident
     {                                               ( E_ident _1 )}
 | _1 = STAR
     {                                                ( E_result )}
@@ -183,13 +183,13 @@ expression:
     {                                                ( _2 )}
 
 expression_list_eol:
-| _1 = expression _2 = expression_list_eol
+_1 = expression _2 = expression_list_eol
     {                                                ( _1::_2 )}
 | _1 = end_of_line
     {                                                ( [] )}
 
 break_argument_eol:
-| _1 = end_of_line
+_1 = end_of_line
     {                                                ( BA_none )}
 | _1 = integer_eol
     {                                                ( BA_pc _1 )}
@@ -201,13 +201,13 @@ break_argument_eol:
     {                                                ( BA_pos2 (_2, _4) )}
 
 list_arguments_eol:
-| _1 = opt_identifier _2 = integer _3 = opt_integer_eol
+_1 = opt_identifier _2 = integer _3 = opt_integer_eol
     {      ( (_1, Some _2, _3) )}
 | _1 = opt_identifier_eol
     {      ( (_1, None, None) )}
 
 end_of_line:
-| _1 = EOL
+_1 = EOL
     {        ( stop_user_input () )}
 
 %%

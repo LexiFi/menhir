@@ -13,11 +13,11 @@ Warning: the token EOF is unused.
 %%
 
 main:
-| _1 = sexp
+_1 = sexp
     {         ( _1 )}
 
 sexp:
-| _1 = oclisp_list
+_1 = oclisp_list
     {       ( _1 )}
 | _1 = atom
     {       ( _1 )}
@@ -25,13 +25,13 @@ sexp:
     {             ( Types.Cons (Types.Atom "quote", Types.Cons(_2, Types.Atom "nil")) )}
 
 oclisp_list:
-| _1 = LBRACKET _2 = RBRACKET
+_1 = LBRACKET _2 = RBRACKET
     {                    ( Types.Atom "nil" )}
 | _1 = LBRACKET _2 = inside_list _3 = RBRACKET
     {                                ( _2 )}
 
 inside_list:
-| _1 = sexp _2 = DOT _3 = sexp
+_1 = sexp _2 = DOT _3 = sexp
     {                ( Types.Cons (_1,_3) )}
 | _1 = sexp
     {       ( Types.Cons (_1, Types.Atom "nil") )}
@@ -39,7 +39,7 @@ inside_list:
     {                   (Types.Cons(_1,_2))}
 
 atom:
-| _1 = NAME
+_1 = NAME
     {           ( Types.Atom _1 )}
 
 %%

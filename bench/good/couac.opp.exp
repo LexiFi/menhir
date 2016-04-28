@@ -31,23 +31,23 @@
 %%
 
 grammar:
-| _1 = declarations _2 = PERCENTPERCENT _3 = rules _4 = trailer
+_1 = declarations _2 = PERCENTPERCENT _3 = rules _4 = trailer
     {    ( List.rev _1, _3, _4 )}
 
 trailer:
-| _1 = EOF
+_1 = EOF
     {    ( None )}
 | _1 = PERCENTPERCENT
     {    ( Some _1 )}
 
 declarations:
-| 
+
     {    ( [] )}
 | _1 = declarations _2 = declaration
     {    ( _2 @ _1 )}
 
 declaration:
-| _1 = HEADER
+_1 = HEADER
     {    ( [ DCode _1 ] )}
 | _1 = TOKEN _2 = terminals
     {    ( List.map (fun x -> DToken (None, x)) _2 )}
@@ -65,19 +65,19 @@ declaration:
     {    ( [] )}
 
 symbols:
-| 
+
     {    ( [] )}
 | _1 = symbols _2 = symbol
     {    ( _2 :: _1 )}
 
 symbol:
-| _1 = LID
+_1 = LID
     {    ( _1 )}
 | _1 = UID
     {    ( _1 )}
 
 terminals:
-| 
+
     {    ( [] )}
 | _1 = terminals _2 = UID
     {    ( _2 :: _1 )}
@@ -85,7 +85,7 @@ terminals:
     {    ( error 2 "Terminal symbols must begin with an uppercase letter." )}
 
 nonterminals:
-| 
+
     {    ( [] )}
 | _1 = nonterminals _2 = LID
     {    ( _2 :: _1 )}
@@ -93,33 +93,33 @@ nonterminals:
     {    ( error 2 "Nonterminal start symbols must begin with a lowercase letter." )}
 
 rules:
-| 
+
     {    ( [] )}
 | _1 = rules _2 = rule
     {    ( _2 :: _1 )}
 
 rule:
-| _1 = symbol _2 = COLON _3 = optional_bar _4 = production _5 = productions
+_1 = symbol _2 = COLON _3 = optional_bar _4 = production _5 = productions
     {    ( _1, _4 :: _5 )}
 
 optional_bar:
-| 
+
     {    ( () )}
 | _1 = BAR
     {    ( () )}
 
 productions:
-| 
+
     {    ( [] )}
 | _1 = productions _2 = BAR _3 = production
     {    ( _3 :: _1 )}
 
 production:
-| _1 = symbols _2 = precedence _3 = ACTION
+_1 = symbols _2 = precedence _3 = ACTION
     {    ( List.rev _1, _3, _2 )}
 
 precedence:
-| 
+
     {    ( None )}
 | _1 = PREC _2 = symbol
     {    ( Some _2 )}

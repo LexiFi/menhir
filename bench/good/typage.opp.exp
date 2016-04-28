@@ -28,11 +28,11 @@ open Records
 %%
 
 expression:
-| _1 = expr _2 = EOF
+_1 = expr _2 = EOF
     {                                ( _1 )}
 
 expr:
-| _1 = application
+_1 = application
     {                                ( _1 )}
 | _1 = expr _2 = COMMA _3 = expr
     {                                ( Paire(_1, _3) )}
@@ -42,7 +42,7 @@ expr:
     {                                ( Let(_2, _4, _6) )}
 
 application:
-| _1 = application _2 = closed_expr
+_1 = application _2 = closed_expr
     {                                ( App(_1, _2) )}
 | _1 = FST _2 = closed_expr
     {                                ( Fst _2 )}
@@ -54,7 +54,7 @@ application:
     {                                ( _1 )}
 
 closed_expr:
-| _1 = IDENT
+_1 = IDENT
     {                        ( Var _1 )}
 | _1 = OP
     {                        ( Op _1 )}
@@ -68,13 +68,13 @@ closed_expr:
     {                          ( App (Proj _3, _1) )}
 
 entries:
-| _1 = entry
+_1 = entry
     {          ( [ _1 ] )}
 | _1 = entries _2 = SEMI _3 = entry
     {                       ( _3 :: _1 )}
 
 entry:
-| _1 = IDENT _2 = EQUAL _3 = application
+_1 = IDENT _2 = EQUAL _3 = application
     {                            ( _1, _3 )}
 
 %%

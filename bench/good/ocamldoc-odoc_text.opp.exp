@@ -79,23 +79,23 @@ let print_DEBUG s = print_string s; print_newline ()
 %%
 
 main:
-| _1 = text _2 = EOF
+_1 = text _2 = EOF
     {           ( _1 )}
 | _1 = EOF
     {      ( [Raw ""] )}
 
 text:
-| _1 = text_element_list
+_1 = text_element_list
     {                    ( _1 )}
 
 text_element_list:
-| _1 = text_element
+_1 = text_element
     {               ( [ _1 ] )}
 | _1 = text_element _2 = text_element_list
     {                                 ( _1 :: _2 )}
 
 text_element:
-| _1 = Title _2 = text _3 = END
+_1 = Title _2 = text _3 = END
     {                 ( let n, l_opt = _1 in Title (n, l_opt, _2) )}
 | _1 = BOLD _2 = text _3 = END
     {                ( Bold _2 )}
@@ -216,7 +216,7 @@ text_element:
     {         ( Raw _1 )}
 
 ocamldoc_odoc_text_list:
-| _1 = string
+_1 = string
     {         ( [] (* A VOIR : un test pour voir qu'il n'y a que des blancs *) )}
 | _1 = string _2 = ocamldoc_odoc_text_list
     {              ( _2 )}
@@ -228,31 +228,31 @@ ocamldoc_odoc_text_list:
     {            ( _1 :: _2 )}
 
 item:
-| _1 = ITEM _2 = text _3 = END
+_1 = ITEM _2 = text _3 = END
     {                  ( _2 )}
 
 shortcut_list:
-| _1 = text _2 = shortcut_list2
+_1 = text _2 = shortcut_list2
     {                         ( _1 :: _2 )}
 | _1 = text
     {       ( [ _1 ] )}
 
 shortcut_list2:
-| _1 = SHORTCUT_LIST_ITEM _2 = shortcut_list
+_1 = SHORTCUT_LIST_ITEM _2 = shortcut_list
     {                                   ( _2 )}
 
 shortcut_enum:
-| _1 = text _2 = shortcut_enum2
+_1 = text _2 = shortcut_enum2
     {                         ( _1 :: _2 )}
 | _1 = text
     {       ( [ _1 ] )}
 
 shortcut_enum2:
-| _1 = SHORTCUT_ENUM_ITEM _2 = shortcut_enum
+_1 = SHORTCUT_ENUM_ITEM _2 = shortcut_enum
     {                                   ( _2 )}
 
 string:
-| _1 = Char
+_1 = Char
     {         ( _1 )}
 | _1 = Char _2 = string
     {              ( _1^_2 )}

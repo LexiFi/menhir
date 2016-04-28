@@ -199,17 +199,17 @@ Warning: the token EOF is unused.
 %%
 
 jas_file:
-| _1 = sep _2 = jasmin_header _3 = inners _4 = fields _5 = methods
+_1 = sep _2 = jasmin_header _3 = inners _4 = fields _5 = methods
     {    ( _2 _3 _4 _5 )}
 
 sep:
-| _1 = SEP
+_1 = SEP
     {        ( () )}
 | 
     {    ( () )}
 
 jasmin_header:
-| _1 = bytecode_spec _2 = source_spec _3 = class_spec _4 = super_spec _5 = implements _6 = signature_spec _7 = enclosing_spec _8 = deprecated_spec _9 = annotations _10 = generic_attributes _11 = debug_extension
+_1 = bytecode_spec _2 = source_spec _3 = class_spec _4 = super_spec _5 = implements _6 = signature_spec _7 = enclosing_spec _8 = deprecated_spec _9 = annotations _10 = generic_attributes _11 = debug_extension
     {    (
 
       let (class_or_interface, access, name) = _3 in
@@ -323,27 +323,27 @@ jasmin_header:
     )}
 
 signature_spec:
-| _1 = DSIGNATURE _2 = signature_expr _3 = SEP
+_1 = DSIGNATURE _2 = signature_expr _3 = SEP
     {                                  ( Some _2 )}
 | 
     {                ( None )}
 
 signature_expr:
-| _1 = Str
+_1 = Str
     {        ( JParseSignature.parse_ClassSignature _1 )}
 
 deprecated_spec:
-| _1 = DDEPRECATED _2 = deprecated_expr _3 = SEP
+_1 = DDEPRECATED _2 = deprecated_expr _3 = SEP
     {                                    ( true )}
 | 
     {                  ( false )}
 
 deprecated_expr:
-| 
+
     {    ( () )}
 
 bytecode_spec:
-| _1 = DBYTECODE _2 = Num _3 = SEP
+_1 = DBYTECODE _2 = Num _3 = SEP
     {    (
       let (major, minor) =
         begin try
@@ -361,7 +361,7 @@ bytecode_spec:
     )}
 
 source_spec:
-| _1 = DSOURCE _2 = Str _3 = SEP
+_1 = DSOURCE _2 = Str _3 = SEP
     {                    ( Some _2 )}
 | _1 = DSOURCE _2 = Word _3 = SEP
     {                     ( Some _2 )}
@@ -369,7 +369,7 @@ source_spec:
     {                  ( !sourcefile )}
 
 class_spec:
-| _1 = DCLASS _2 = access _3 = classname _4 = SEP
+_1 = DCLASS _2 = access _3 = classname _4 = SEP
     {    (
       cn := _3;
       ("class",_2,_3)
@@ -381,27 +381,27 @@ class_spec:
     )}
 
 classname:
-| _1 = Word
+_1 = Word
     {         ( JBasics.make_cn (replace_dot _1) )}
 
 access:
-| _1 = access_list
+_1 = access_list
     {                ( _1 )}
 
 access_list:
-| _1 = access_items
+_1 = access_items
     {                   ( _1 )}
 | 
     {      ( [`Default] )}
 
 access_items:
-| _1 = access_item _2 = access_items
+_1 = access_item _2 = access_items
     {                                 ( _1::_2 )}
 | _1 = access_item
     {                    ( [_1] )}
 
 access_item:
-| _1 = PUBLIC
+_1 = PUBLIC
     {                 ( `Public )}
 | _1 = PRIVATE
     {                  ( `Private )}
@@ -437,61 +437,61 @@ access_item:
     {                    ( `Synthetic )}
 
 super_spec:
-| _1 = DSUPER _2 = classname _3 = SEP
+_1 = DSUPER _2 = classname _3 = SEP
     {                         ( Some (_2) )}
 
 implements:
-| _1 = implements_list
+_1 = implements_list
     {                    ( _1 )}
 | 
     {                ( [] )}
 
 implements_list:
-| _1 = implements_spec _2 = implements_list
+_1 = implements_spec _2 = implements_list
     {                                      ( _1::_2 )}
 | _1 = implements_spec
     {                      ( [_1] )}
 
 implements_spec:
-| _1 = DIMPLEMENTS _2 = classname _3 = SEP
+_1 = DIMPLEMENTS _2 = classname _3 = SEP
     {                                  ( _2 )}
 
 annotations:
-| _1 = ann_cls_list
+_1 = ann_cls_list
     {                 ( [] )}
 | 
     {                ( [] )}
 
 ann_cls_list:
-| _1 = ann_cls_list _2 = ann_cls_spec
+_1 = ann_cls_list _2 = ann_cls_spec
     {      ( _2::_1 )}
 | _1 = ann_cls_spec
     {      ( [_1] )}
 
 ann_cls_spec:
-| _1 = ann_cls_expr _2 = ann_arglist _3 = endannotationsep
+_1 = ann_cls_expr _2 = ann_arglist _3 = endannotationsep
     {        ( "" )}
 
 ann_cls_expr:
-| _1 = DANNOTATION _2 = ann_clf_expr
+_1 = DANNOTATION _2 = ann_clf_expr
     {          ( () )}
 
 endannotationsep:
-| _1 = endannotation _2 = SEP
+_1 = endannotation _2 = SEP
     {                      ( () )}
 
 endannotation:
-| _1 = DEND _2 = ANNOTATION
+_1 = DEND _2 = ANNOTATION
     {                    ( () )}
 
 ann_clf_expr:
-| _1 = VISIBLE _2 = classname _3 = SEP
+_1 = VISIBLE _2 = classname _3 = SEP
     {    ( () )}
 | _1 = INVISIBLE _2 = classname _3 = SEP
     {    ( () )}
 
 ann_met_expr:
-| _1 = VISIBLE _2 = classname _3 = SEP
+_1 = VISIBLE _2 = classname _3 = SEP
     {    ( () )}
 | _1 = INVISIBLE _2 = classname _3 = SEP
     {    ( () )}
@@ -501,89 +501,89 @@ ann_met_expr:
     {    ( () )}
 
 ann_arglist:
-| _1 = ann_arg_list
+_1 = ann_arg_list
     {                 ( [] )}
 | 
     {                ( [] )}
 
 ann_arg_list:
-| _1 = ann_arg_list _2 = ann_arg_spec
+_1 = ann_arg_list _2 = ann_arg_spec
     {      ( _2::_1 )}
 | _1 = ann_arg_spec
     {      ( [_1] )}
 
 ann_arg_spec:
-| _1 = ann_arg_expr _2 = EQ _3 = ann_value_list
+_1 = ann_arg_expr _2 = EQ _3 = ann_value_list
     {        ( (_1,_3) )}
 
 ann_arg_expr:
-| _1 = Word _2 = Word
+_1 = Word _2 = Word
     {          ( "" )}
 | _1 = Word _2 = Word _3 = Word
     {          ( "" )}
 
 ann_def_spec:
-| _1 = DEFAULT _2 = SEP
+_1 = DEFAULT _2 = SEP
     {    ( () )}
 
 ann_value_list:
-| _1 = ann_value_items _2 = SEP
+_1 = ann_value_items _2 = SEP
     {    ( _1 )}
 | _1 = ann_ann_list
     {    ( _1 )}
 
 ann_value_items:
-| _1 = ann_value_items _2 = ann_value
+_1 = ann_value_items _2 = ann_value
     {    ( _2::_1 )}
 | _1 = ann_value
     {    ( [_1] )}
 
 ann_value:
-| _1 = any_item
+_1 = any_item
     {      ( "" )}
 
 ann_ann_list:
-| _1 = ann_ann_list _2 = ann_ann_value
+_1 = ann_ann_list _2 = ann_ann_value
     {                               ( _2::_1 )}
 | _1 = ann_ann_value
     {                  ( [_1] )}
 
 ann_ann_value:
-| _1 = DANNOTATION _2 = ann_nest _3 = ann_arglist _4 = endannotationsep
+_1 = DANNOTATION _2 = ann_nest _3 = ann_arglist _4 = endannotationsep
     {      ( "" )}
 
 ann_nest:
-| _1 = SEP
+_1 = SEP
     {            ( () )}
 
 ann_def_val:
-| _1 = ann_def_expr _2 = EQ _3 = ann_value_list
+_1 = ann_def_expr _2 = EQ _3 = ann_value_list
     {    ( () )}
 
 ann_def_expr:
-| _1 = Word
+_1 = Word
     {      ( () )}
 | _1 = Word _2 = Word
     {      ( () )}
 
 debug_extension:
-| _1 = debug_list
+_1 = debug_list
     {               ( Some (String.concat " " (List.rev _1)) )}
 | 
     {                ( None )}
 
 debug_list:
-| _1 = debug_list _2 = debug_spec
+_1 = debug_list _2 = debug_spec
     {      ( _2::_1 )}
 | _1 = debug_spec
     {      ( [_1] )}
 
 debug_spec:
-| _1 = DDEBUG _2 = Str _3 = SEP
+_1 = DDEBUG _2 = Str _3 = SEP
     {                       ( _2 )}
 
 enclosing_spec:
-| _1 = DENCLOSING _2 = METHOD _3 = Word _4 = SEP
+_1 = DENCLOSING _2 = METHOD _3 = Word _4 = SEP
     {    (
       let (name, md) = split_method _3 in
       let (vts, ovt) = JParseSignature.parse_method_descriptor md in
@@ -594,39 +594,39 @@ enclosing_spec:
     {                  ( None )}
 
 generic_attributes:
-| _1 = generic_list
+_1 = generic_list
     {                 ( _1 )}
 | 
     {                ( [] )}
 
 generic_list:
-| _1 = generic_list _2 = generic_spec
+_1 = generic_list _2 = generic_spec
     {                                ( _2::_1 )}
 | _1 = generic_spec
     {                   ( [_1] )}
 
 generic_spec:
-| _1 = DATTRIBUTE _2 = generic_expr _3 = SEP
+_1 = DATTRIBUTE _2 = generic_expr _3 = SEP
     {                                    ( _2 )}
 
 generic_expr:
-| _1 = Word _2 = Str
+_1 = Word _2 = Str
     {             ( (_1,_2) )}
 
 fields:
-| _1 = field_list
+_1 = field_list
     {               ( _1 )}
 | 
     {    ( [] )}
 
 field_list:
-| _1 = field_spec _2 = field_list
+_1 = field_spec _2 = field_list
     {                            ( _1::_2 )}
 | _1 = field_spec
     {                 ( [_1] )}
 
 field_spec:
-| _1 = DFIELD _2 = access _3 = Word _4 = Word _5 = SIGNATURE _6 = Str _7 = optional_default _8 = SEP
+_1 = DFIELD _2 = access _3 = Word _4 = Word _5 = SIGNATURE _6 = Str _7 = optional_default _8 = SEP
     {        (
           let fs = JBasics.make_fs _3 (JParseSignature.parse_field_descriptor _4) in
           let f = {
@@ -694,33 +694,33 @@ field_spec:
         )}
 
 optional_default:
-| _1 = EQ _2 = item
+_1 = EQ _2 = item
     {                  ( Some _2 )}
 | 
     {                      ( None )}
 
 field_start:
-| _1 = access _2 = Word _3 = Word _4 = optional_default _5 = SEP
+_1 = access _2 = Word _3 = Word _4 = optional_default _5 = SEP
     {          ( "" )}
 
 endfield:
-| _1 = DEND _2 = FIELD _3 = SEP
+_1 = DEND _2 = FIELD _3 = SEP
     {          ( () )}
 
 field_exts:
-| _1 = field_ext_list
+_1 = field_ext_list
     {                         ( _1 )}
 | 
     {                      ( [] )}
 
 field_ext_list:
-| _1 = field_ext_list _2 = field_ext_expr
+_1 = field_ext_list _2 = field_ext_expr
     {                                          ( _2::_1 )}
 | _1 = field_ext_expr
     {                           ( [_1] )}
 
 field_ext_expr:
-| _1 = DSIGNATURE _2 = signature_expr _3 = SEP
+_1 = DSIGNATURE _2 = signature_expr _3 = SEP
     {              ( "" )}
 | _1 = DATTRIBUTE _2 = generic_expr _3 = SEP
     {              ( "" )}
@@ -730,7 +730,7 @@ field_ext_expr:
     {              ( "" )}
 
 item:
-| _1 = Int
+_1 = Int
     {    ( () )}
 | _1 = Num
     {    ( () )}
@@ -738,25 +738,25 @@ item:
     {    ( () )}
 
 any_item:
-| _1 = Word
+_1 = Word
     {    ( () )}
 | _1 = item
     {    ( () )}
 
 inners:
-| _1 = inner_list
+_1 = inner_list
     {               ( List.rev _1 )}
 | 
     {                ( [] )}
 
 inner_list:
-| _1 = inner_list _2 = inner_spec
+_1 = inner_list _2 = inner_spec
     {                            ( _2::_1 )}
 | _1 = inner_spec
     {                 ( [_1] )}
 
 inner_spec:
-| _1 = DINNER _2 = CLASS _3 = access _4 = inner_name _5 = inner_inner _6 = inner_outer _7 = SEP
+_1 = DINNER _2 = CLASS _3 = access _4 = inner_name _5 = inner_inner _6 = inner_outer _7 = SEP
     {        ( 
           {
             ic_class_name = _5;
@@ -790,37 +790,37 @@ inner_spec:
         )}
 
 inner_name:
-| _1 = Word
+_1 = Word
     {               ( Some _1 )}
 | 
     {                      ( None )}
 
 inner_inner:
-| _1 = INNER _2 = classname
+_1 = INNER _2 = classname
     {                          ( Some _2 )}
 | 
     {                      ( None )}
 
 inner_outer:
-| _1 = OUTER _2 = classname
+_1 = OUTER _2 = classname
     {                          ( Some _2 )}
 | 
     {                      ( None )}
 
 methods:
-| _1 = method_list
+_1 = method_list
     {                ( _1 )}
 | 
     {                ( [] )}
 
 method_list:
-| _1 = method_spec
+_1 = method_spec
     {                  ( [_1] )}
 | _1 = method_list _2 = method_spec
     {                              ( _2::_1 )}
 
 method_spec:
-| _1 = defmethod _2 = statements _3 = endmethod
+_1 = defmethod _2 = statements _3 = endmethod
     {        (
           let(access,ms) = _1 in
           let code,lines,excs,throws = mkcode (List.rev _2) in
@@ -894,7 +894,7 @@ method_spec:
         )}
 
 defmethod:
-| _1 = DMETHOD _2 = access _3 = Word _4 = SEP
+_1 = DMETHOD _2 = access _3 = Word _4 = SEP
     {          (
             init_method();
             let (name, md) = split_method _3 in
@@ -904,21 +904,21 @@ defmethod:
           )}
 
 endmethod:
-| _1 = DEND _2 = METHOD _3 = SEP
+_1 = DEND _2 = METHOD _3 = SEP
     {                          ( () )}
 
 statements:
-| _1 = statements _2 = statement
+_1 = statements _2 = statement
     {                               ( _2::_1 )}
 | _1 = statement
     {                    ( [_1] )}
 
 statement:
-| _1 = stmnt _2 = SEP
+_1 = stmnt _2 = SEP
     {                      ( _1 )}
 
 stmnt:
-| _1 = instruction
+_1 = instruction
     {                          ( _1 )}
 | _1 = directive
     {                        ( _1 )}
@@ -930,7 +930,7 @@ stmnt:
     {                          ( add 0 JCode.OpInvalid )}
 
 label:
-| _1 = Word _2 = COLON
+_1 = Word _2 = COLON
     {                           (
                 addlabel _1 !pos;
                 add 0 JCode.OpInvalid
@@ -943,7 +943,7 @@ label:
               )}
 
 directive:
-| _1 = DVAR _2 = var_expr
+_1 = DVAR _2 = var_expr
     {                (
                   failwith "TODO: .var"
                 )}
@@ -985,7 +985,7 @@ directive:
                 )}
 
 var_expr:
-| _1 = Int _2 = IS _3 = Word _4 = Word _5 = optional_signature _6 = FROM _7 = Word _8 = TO _9 = Word
+_1 = Int _2 = IS _3 = Word _4 = Word _5 = optional_signature _6 = FROM _7 = Word _8 = TO _9 = Word
     {                  ( ()  (* TODO *))}
 | _1 = Int _2 = IS _3 = Word _4 = Word _5 = optional_signature
     {                  ( ()  (* TODO *))}
@@ -993,13 +993,13 @@ var_expr:
     {                  ( ()  (* TODO *))}
 
 optional_signature:
-| _1 = SIGNATURE _2 = Str
+_1 = SIGNATURE _2 = Str
     {                                  ( Some _2 )}
 | 
     {                                ( None )}
 
 limit_expr:
-| _1 = LOCALS _2 = Int
+_1 = LOCALS _2 = Int
     {                             ( limit_locals := _2 )}
 | _1 = STACK _2 = Int
     {                            ( limit_stack := _2 )}
@@ -1007,15 +1007,15 @@ limit_expr:
     {                           ( () )}
 
 line_expr:
-| _1 = Int
+_1 = Int
     {                      ( lines := (!pos, _1) :: !lines )}
 
 throws_expr:
-| _1 = classname
+_1 = classname
     {                            ( throws := _1 :: !throws )}
 
 catch_expr:
-| _1 = classname _2 = FROM _3 = Word _4 = TO _5 = Word _6 = USING _7 = Word
+_1 = classname _2 = FROM _3 = Word _4 = TO _5 = Word _6 = USING _7 = Word
     {                  (
                     excs := {
                       JCode.e_start = label2int _3;
@@ -1035,35 +1035,35 @@ catch_expr:
                   )}
 
 set_expr:
-| _1 = Word _2 = any_item
+_1 = Word _2 = any_item
     {                                ( () )}
 
 stackmap:
-| _1 = defstack _2 = stack_map_frame_desc _3 = endstack
+_1 = defstack _2 = stack_map_frame_desc _3 = endstack
     {                  ( () )}
 | _1 = USE _2 = defstack_same _3 = stack_map_frame_desc _4 = endstack
     {                  ( () )}
 
 defstack_same:
-| _1 = defstack_same_expr _2 = LOCALS _3 = SEP
+_1 = defstack_same_expr _2 = LOCALS _3 = SEP
     {                    ( () )}
 
 defstack_same_expr:
-| _1 = Int
+_1 = Int
     {                    ( () )}
 | 
     {                    ( () )}
 
 defstack:
-| _1 = SEP
+_1 = SEP
     {                        ( () )}
 
 stack_map_frame_desc:
-| _1 = stack_offset_def _2 = stack_items
+_1 = stack_offset_def _2 = stack_items
     {                    ( () )}
 
 stack_offset_def:
-| _1 = OFFSET _2 = Int _3 = SEP
+_1 = OFFSET _2 = Int _3 = SEP
     {                    ( () )}
 | _1 = OFFSET _2 = Word _3 = SEP
     {                    ( () )}
@@ -1071,17 +1071,17 @@ stack_offset_def:
     {                    ( () )}
 
 stack_items:
-| _1 = stack_items _2 = stack_item
+_1 = stack_items _2 = stack_item
     {                                           ( _2::_1 )}
 | 
     {                                  ( [] )}
 
 stack_item:
-| _1 = stack_item_expr _2 = SEP
+_1 = stack_item_expr _2 = SEP
     {                                        ( _1 )}
 
 stack_item_expr:
-| _1 = LOCALS _2 = Word
+_1 = LOCALS _2 = Word
     {                    ( "" )}
 | _1 = LOCALS _2 = Word _3 = Word
     {                    ( "" )}
@@ -1095,17 +1095,17 @@ stack_item_expr:
     {                    ( "" )}
 
 endstack:
-| _1 = DEND _2 = STACK
+_1 = DEND _2 = STACK
     {                               ( () )}
 
 instruction:
-| _1 = simple_instruction
+_1 = simple_instruction
     {                                   ( _1 )}
 | _1 = complex_instruction
     {                                    ( _1 )}
 
 simple_instruction:
-| _1 = Insn
+_1 = Insn
     {                       (
                   match (fst _1) with
                   (* A *)
@@ -1504,13 +1504,13 @@ simple_instruction:
                 )}
 
 complex_instruction:
-| _1 = LOOKUPSWITCH _2 = lookup
+_1 = LOOKUPSWITCH _2 = lookup
     {                                      ( _2 )}
 | _1 = TABLESWITCH _2 = table
     {                                    ( _2 )}
 
 lookup:
-| _1 = lookup_args _2 = lookup_list _3 = lookup_default
+_1 = lookup_args _2 = lookup_list _3 = lookup_default
     {                    (
                       let a =
                         match _3 with
@@ -1528,29 +1528,29 @@ lookup:
                     )}
 
 lookup_args:
-| _1 = SEP
+_1 = SEP
     {                          ( () )}
 
 lookup_list:
-| _1 = lookup_entry _2 = lookup_list
+_1 = lookup_entry _2 = lookup_list
     {                                               ( _1 :: _2 )}
 | _1 = lookup_entry
     {                                   ( [_1] )}
 
 lookup_entry:
-| _1 = Int _2 = COLON _3 = Word _4 = SEP
+_1 = Int _2 = COLON _3 = Word _4 = SEP
     {                                           ( CaseIntWord(_1,_3) )}
 | _1 = Int _2 = COLON _3 = Int _4 = SEP
     {                                          ( CaseIntInt(_1,_3) )}
 
 lookup_default:
-| _1 = DEFAULT _2 = COLON _3 = Word
+_1 = DEFAULT _2 = COLON _3 = Word
     {                                         ( DefaultWord _3 )}
 | _1 = DEFAULT _2 = COLON _3 = Int
     {                                        ( DefaultInt _3 )}
 
 table:
-| _1 = table_args _2 = table_list _3 = table_default
+_1 = table_args _2 = table_list _3 = table_default
     {                    (
                       (* T *)
                       let (low,high,defs,def) = (fst _1,snd _1,_2,_3) in
@@ -1567,25 +1567,25 @@ table:
                     )}
 
 table_args:
-| _1 = Int _2 = SEP
+_1 = Int _2 = SEP
     {                              ( (_1,-1) )}
 | _1 = Int _2 = Int _3 = SEP
     {                                  ( (_1, _2) )}
 
 table_list:
-| _1 = table_entry _2 = table_list
+_1 = table_entry _2 = table_list
     {                                             ( _1::_2 )}
 | _1 = table_entry
     {                                  ( [_1] )}
 
 table_entry:
-| _1 = Word _2 = SEP
+_1 = Word _2 = SEP
     {                                 ( DefaultWord(_1) )}
 | _1 = Int _2 = SEP
     {                                ( DefaultInt(_1) )}
 
 table_default:
-| _1 = DEFAULT _2 = COLON _3 = Word
+_1 = DEFAULT _2 = COLON _3 = Word
     {                                         ( DefaultWord(_3) )}
 | _1 = DEFAULT _2 = COLON _3 = Int
     {                                        ( DefaultInt(_3) )}

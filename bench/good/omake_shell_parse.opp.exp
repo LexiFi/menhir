@@ -131,13 +131,13 @@ let rec set_stdout pipe file stderr append =
 %%
 
 prog:
-| _1 = pipe _2 = TokEof
+_1 = pipe _2 = TokEof
     {          ( let pipe, _ = _1 in
                pipe
           )}
 
 pipe:
-| _1 = command
+_1 = command
     {          ( let command, loc = _1 in
                PipeCommand (loc, command), loc
           )}
@@ -230,7 +230,7 @@ pipe:
           )}
 
 command:
-| _1 = rev_command
+_1 = rev_command
     {          ( let escaped, env, argv, loc = _1 in
             let env = env_of_list env in
             let argv = List.rev argv in
@@ -251,7 +251,7 @@ command:
           )}
 
 rev_command:
-| _1 = nondef_word
+_1 = nondef_word
     {          ( let escaped, word, loc = _1 in
                escaped, [], [word], loc
           )}
@@ -267,7 +267,7 @@ rev_command:
           )}
 
 rev_cmd_env:
-| _1 = TokDefine _2 = opt_word
+_1 = TokDefine _2 = opt_word
     {          ( let name, loc = _1 in
                [name, _2], loc
           )}
@@ -279,13 +279,13 @@ rev_cmd_env:
           )}
 
 nondef_word:
-| _1 = rev_nondef_word
+_1 = rev_nondef_word
     {          ( let escaped, idl, loc = _1 in
                escaped, concat_word idl, loc
           )}
 
 rev_nondef_word:
-| _1 = TokString
+_1 = TokString
     {          ( let id, loc = _1 in
                if id = "\\" then
                   true, [], loc
@@ -303,7 +303,7 @@ rev_nondef_word:
           )}
 
 opt_word:
-| 
+
     {          ( "" )}
 | _1 = word
     {          ( let id, _ = _1 in
@@ -311,13 +311,13 @@ opt_word:
           )}
 
 word:
-| _1 = rev_word
+_1 = rev_word
     {          ( let idl, loc = _1 in
                concat_word idl, loc
           )}
 
 rev_word:
-| _1 = any_id
+_1 = any_id
     {          ( let id, loc = _1 in
                [id], loc
           )}
@@ -328,7 +328,7 @@ rev_word:
           )}
 
 any_id:
-| _1 = TokString
+_1 = TokString
     {          ( _1 )}
 | _1 = TokData
     {          ( _1 )}

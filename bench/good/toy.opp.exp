@@ -68,7 +68,7 @@ open ToyParserUtil
 %%
 
 phrase:
-| _1 = SHARP _2 = IDENT
+_1 = SHARP _2 = IDENT
     {                             ( PhraseDirective _2 )}
 | _1 = LET _2 = binding_list _3 = SEMISEMI
     {                                         ( PhraseLet(false, _2) )}
@@ -80,7 +80,7 @@ phrase:
     {                                                                ( PhraseInclude _2 )}
 
 expression:
-| _1 = expression3
+_1 = expression3
     {                            ( _1 )}
 | _1 = FUNCTION _2 = function_match
     {                                   ( EFun _2 )}
@@ -98,13 +98,13 @@ expression:
     {                                                                ( ETry (_2, _4) )}
 
 expression3:
-| _1 = expression2
+_1 = expression2
     {                      ( _1 )}
 | _1 = expression2 _2 = SEMI _3 = expression
     {                                    ( ESeq(_1, _3) )}
 
 expression2:
-| _1 = expression1
+_1 = expression1
     {                      ( _1 )}
 | _1 = IF _2 = expression1 _3 = THEN _4 = expression2 _5 = ELSE _6 = expression2
     {                                                      ( EIf (_2, _4, _6) )}
@@ -114,7 +114,7 @@ expression2:
     {                                      ( EApp (EApp(EVar ":=", _1), _3) )}
 
 expression1:
-| _1 = expression0
+_1 = expression0
     {                     ( _1 )}
 | _1 = CONSTRUCTOR _2 = expression0
     {                               ( EApp (EConstruct _1, _2) )}
@@ -124,7 +124,7 @@ expression1:
     {                                                        ( EApp (EVar "ref", _2) )}
 
 expression0:
-| _1 = IDENT
+_1 = IDENT
     {                ( EVar _1 )}
 | _1 = CONSTRUCTOR
     {                     ( EApp (EConstruct _1, EConstant ConstUnit) )}
@@ -152,7 +152,7 @@ expression0:
     {                                                        ( ELabel (_1, _3) )}
 
 constant:
-| _1 = INTCONST
+_1 = INTCONST
     {                  ( ConstInt _1 )}
 | _1 = FALSE
     {               ( ConstBool false )}
@@ -168,11 +168,11 @@ constant:
     {                                                        ( ConstString _1 )}
 
 label_expression:
-| _1 = IDENT _2 = EQUAL _3 = expression2
+_1 = IDENT _2 = EQUAL _3 = expression2
     {                               ( _1, _3 )}
 
 label_expression_list:
-| 
+
     {                      ( [] )}
 | _1 = label_expression
     {                         ( [_1] )}
@@ -180,7 +180,7 @@ label_expression_list:
     {                                                 ( _1 :: _3 )}
 
 expr_semi_list:
-| 
+
     {                                                        ( [] )}
 | _1 = expression2
     {                                                        ( [_1] )}
@@ -188,25 +188,25 @@ expr_semi_list:
     {                                                        ( _1 :: _3 )}
 
 fun_match:
-| _1 = simple_pattern_list _2 = ARROW _3 = expression _4 = BAR _5 = fun_match
+_1 = simple_pattern_list _2 = ARROW _3 = expression _4 = BAR _5 = fun_match
     {                                                       ( (_1, _3) :: _5 )}
 | _1 = simple_pattern_list _2 = ARROW _3 = expression
     {                                          ( [_1, _3] )}
 
 function_match:
-| _1 = pattern _2 = ARROW _3 = expression _4 = BAR _5 = function_match
+_1 = pattern _2 = ARROW _3 = expression _4 = BAR _5 = function_match
     {                                                 ( ([_1], _3) :: _5 )}
 | _1 = pattern _2 = ARROW _3 = expression
     {                                ( [[_1], _3] )}
 
 try_match:
-| _1 = pattern _2 = ARROW _3 = expression _4 = BAR _5 = try_match
+_1 = pattern _2 = ARROW _3 = expression _4 = BAR _5 = try_match
     {                                            ( (_1, _3) :: _5 )}
 | _1 = pattern _2 = ARROW _3 = expression
     {                                ( [_1, _3] )}
 
 simple_pattern:
-| _1 = UNDERSCORE
+_1 = UNDERSCORE
     {                           ( PWildcard )}
 | _1 = IDENT
     {               ( PVar _1 )}
@@ -220,7 +220,7 @@ simple_pattern:
     {                                       ( PRecord _2 )}
 
 pattern:
-| _1 = simple_pattern
+_1 = simple_pattern
     {                                                        ( _1 )}
 | _1 = pattern _2 = AS _3 = IDENT
     {                         ( PAlias (_1, _3) )}
@@ -234,7 +234,7 @@ pattern:
     {                                                        ( POr (_1, _3) )}
 
 label_pattern_list:
-| 
+
     {                      ( StringMap.empty )}
 | _1 = IDENT _2 = EQUAL _3 = pattern
     {                            ( StringMap.singleton _1 _3 )}
@@ -250,19 +250,19 @@ label_pattern_list:
                                                         )}
 
 simple_pattern_list:
-| _1 = simple_pattern
+_1 = simple_pattern
     {                       ( [_1] )}
 | _1 = simple_pattern _2 = simple_pattern_list
     {                                         ( _1 :: _2 )}
 
 binding_list:
-| _1 = binding _2 = AND _3 = binding_list
+_1 = binding _2 = AND _3 = binding_list
     {                                                        ( _1 :: _3 )}
 | _1 = binding
     {                                                        ( [_1] )}
 
 binding:
-| _1 = pattern _2 = EQUAL _3 = expression
+_1 = pattern _2 = EQUAL _3 = expression
     {                                       ( (_1, _3) )}
 | _1 = IDENT _2 = simple_pattern_list _3 = EQUAL _4 = expression
     {                                                        ( (PVar _1, EFun [_2, _4]) )}

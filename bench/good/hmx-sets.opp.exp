@@ -74,13 +74,13 @@ let rec make_set = function
 %%
 
 phrase:
-| _1 = expression _2 = SEMISEMI
+_1 = expression _2 = SEMISEMI
     {                                                                ( "_", _1 )}
 | _1 = LET _2 = pattern _3 = pattern_list _4 = EQUAL _5 = expression _6 = SEMISEMI
     {                                                                ( make_let (_2, make_fun _3 _5) )}
 
 expression:
-| _1 = expression2
+_1 = expression2
     {                            ( _1 )}
 | _1 = FUN _2 = pattern_list _3 = ARROW _4 = expression
     {                                         ( make_fun _2 _4 )}
@@ -89,13 +89,13 @@ expression:
                                                                   Let (name, body, _7) )}
 
 expression2:
-| _1 = expression1
+_1 = expression1
     {                      ( _1 )}
 | _1 = expression1 _2 = SEMI _3 = expression
     {                                    ( sequence _1 _3 )}
 
 expression1:
-| _1 = expression0
+_1 = expression0
     {                             ( _1 )}
 | _1 = expression1 _2 = expression0
     {                                                ( App (_1, _2) )}
@@ -103,7 +103,7 @@ expression1:
     {                                                                ( PrimApp (PrimChoice, [_2;_3]) )}
 
 expression0:
-| _1 = IDENT
+_1 = IDENT
     {                        ( Var _1 )}
 | _1 = UNIT
     {                      ( PrimApp (PrimUnit, []) )}
@@ -129,7 +129,7 @@ expression0:
     {                                                                ( PrimApp (PrimSetModify _3, [_1]) )}
 
 label_list:
-| 
+
     {                              ( [] )}
 | _1 = IDENT
     {                             ( [_1] )}
@@ -137,13 +137,13 @@ label_list:
     {                                                   ( _1 :: _3 )}
 
 pattern_list:
-| 
+
     {                              ( [] )}
 | _1 = pattern _2 = pattern_list
     {                                                     ( _1 :: _2 )}
 
 pattern:
-| _1 = IDENT
+_1 = IDENT
     {                                                                ( PVariable _1 )}
 | _1 = UNDERSCORE
     {                                                                ( PVariable "-" )}

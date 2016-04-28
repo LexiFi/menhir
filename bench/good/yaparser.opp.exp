@@ -106,7 +106,7 @@ type pre_cond = Behavior of string | Pre of Promelaast.condition
 %%
 
 main:
-| _1 = options _2 = states
+_1 = options _2 = states
     {                   (
   List.iter
     (fun(key, ids) ->
@@ -159,35 +159,35 @@ main:
   )}
 
 options:
-| _1 = options _2 = yaparser_option
+_1 = options _2 = yaparser_option
     {                   ( _1@[_2] )}
 | _1 = yaparser_option
     {                   ( [_1] )}
 
 yaparser_option:
-| _1 = PERCENT _2 = IDENTIFIER _3 = opt_identifiers _4 = SEMI_COLON
+_1 = PERCENT _2 = IDENTIFIER _3 = opt_identifiers _4 = SEMI_COLON
     {                                                  ( (_2, _3) )}
 
 opt_identifiers:
-| 
+
     {                ( [] )}
 | _1 = COLON _2 = id_list
     {                  ( _2 )}
 
 id_list:
-| _1 = id_list _2 = COMMA _3 = IDENTIFIER
+_1 = id_list _2 = COMMA _3 = IDENTIFIER
     {                             ( _1@[_3] )}
 | _1 = IDENTIFIER
     {                             ( [_1] )}
 
 states:
-| _1 = states _2 = state
+_1 = states _2 = state
     {                 ( _1@_2 )}
 | _1 = state
     {          ( _1 )}
 
 state:
-| _1 = IDENTIFIER _2 = COLON _3 = transitions _4 = SEMI_COLON
+_1 = IDENTIFIER _2 = COLON _3 = transitions _4 = SEMI_COLON
     {                                            (
       let start_state = fetch_and_create_state _1 in
       let (_, transitions) =
@@ -214,13 +214,13 @@ state:
   )}
 
 transitions:
-| _1 = transitions _2 = PIPE _3 = transition
+_1 = transitions _2 = PIPE _3 = transition
     {                                ( _1@[_3] )}
 | _1 = transition
     {               ( [_1] )}
 
 transition:
-| _1 = LCURLY _2 = seq_elt _3 = RCURLY _4 = RARROW _5 = IDENTIFIER
+_1 = LCURLY _2 = seq_elt _3 = RCURLY _4 = RARROW _5 = IDENTIFIER
     {      ( (Seq _2, prefetch_and_create_state _5) )}
 | _1 = OTHERWISE _2 = RARROW _3 = IDENTIFIER
     {                                ((Otherwise, prefetch_and_create_state _3) )}
@@ -228,19 +228,19 @@ transition:
     {                      ( (Seq (to_seq PTrue), prefetch_and_create_state _2) )}
 
 non_empty_seq:
-| _1 = seq_elt
+_1 = seq_elt
     {            ( _1 )}
 | _1 = seq_elt _2 = SEMI_COLON _3 = seq
     {                           ( _1 @ _3 )}
 
 seq:
-| 
+
     {                  ( [] )}
 | _1 = non_empty_seq
     {                  ( _1 )}
 
 guard:
-| _1 = single_cond
+_1 = single_cond
     {                ( to_seq _1 )}
 | _1 = LSQUARE _2 = non_empty_seq _3 = RSQUARE
     {                                  ( _2 )}
@@ -275,19 +275,19 @@ guard:
       )}
 
 pre_cond:
-| _1 = COLUMNCOLUMN _2 = IDENTIFIER
+_1 = COLUMNCOLUMN _2 = IDENTIFIER
     {                            ( Behavior _2 )}
 | _1 = LBRACELBRACE _2 = single_cond _3 = RBRACERBRACE
     {                                          ( Pre _2 )}
 
 post_cond:
-| 
+
     {                  ( None )}
 | _1 = LBRACELBRACE _2 = single_cond _3 = RBRACERBRACE
     {                                          ( Some _2 )}
 
 seq_elt:
-| _1 = guard _2 = repetition
+_1 = guard _2 = repetition
     {                     (
     let min, max = _2 in
     match _1 with
@@ -300,7 +300,7 @@ seq_elt:
   )}
 
 repetition:
-|  %prec lowest
+ %prec lowest
     {      ( Some Data_for_aorai.cst_one, Some Data_for_aorai.cst_one )}
 | _1 = PLUS
     {         ( Some Data_for_aorai.cst_one, None)}
@@ -318,7 +318,7 @@ repetition:
     {                                       ( None, Some _3 )}
 
 single_cond:
-| _1 = CALLORRETURN_OF _2 = LPAREN _3 = IDENTIFIER _4 = RPAREN
+_1 = CALLORRETURN_OF _2 = LPAREN _3 = IDENTIFIER _4 = RPAREN
     {      ( POr (PCall (_3,None), PReturn _3) )}
 | _1 = CALL_OF _2 = LPAREN _3 = IDENTIFIER _4 = RPAREN
     {                                      ( PCall (_3,None) )}
@@ -340,7 +340,7 @@ single_cond:
     {                   ( _1 )}
 
 logic_relation:
-| _1 = arith_relation _2 = EQ _3 = arith_relation
+_1 = arith_relation _2 = EQ _3 = arith_relation
     {                                     ( PRel(Eq, _1, _3) )}
 | _1 = arith_relation _2 = LT _3 = arith_relation
     {                                     ( PRel(Lt, _1, _3) )}
@@ -356,7 +356,7 @@ logic_relation:
     {                              ( PRel (Neq, _1, PCst(IntConstant "0")) )}
 
 arith_relation:
-| _1 = arith_relation_mul _2 = PLUS _3 = arith_relation
+_1 = arith_relation_mul _2 = PLUS _3 = arith_relation
     {                                           ( PBinop(Badd,_1,_3) )}
 | _1 = arith_relation_mul _2 = MINUS _3 = arith_relation
     {                                            ( PBinop(Bsub,_1,_3) )}
@@ -364,7 +364,7 @@ arith_relation:
     {                                    ( _1 )}
 
 arith_relation_mul:
-| _1 = arith_relation_mul _2 = SLASH _3 = access_or_const
+_1 = arith_relation_mul _2 = SLASH _3 = access_or_const
     {                                             ( PBinop(Bdiv,_1,_3) )}
 | _1 = arith_relation_mul _2 = STAR _3 = access_or_const
     {                                            ( PBinop(Bmul, _1, _3) )}
@@ -374,7 +374,7 @@ arith_relation_mul:
     {                                   ( _1 )}
 
 arith_relation_bw:
-| _1 = access_or_const %prec lowest
+_1 = access_or_const %prec lowest
     {                                 ( _1 )}
 | _1 = arith_relation_bw _2 = AMP _3 = access_or_const
     {                                          ( PBinop(Bbw_and,_1,_3) )}
@@ -384,7 +384,7 @@ arith_relation_bw:
     {                                            ( PBinop(Bbw_xor,_1,_3) )}
 
 access_or_const:
-| _1 = INT
+_1 = INT
     {        ( PCst (IntConstant _1) )}
 | _1 = MINUS _2 = INT
     {              ( PUnop (Uminus, PCst (IntConstant _2)) )}
@@ -394,7 +394,7 @@ access_or_const:
     {                                 ( _2 )}
 
 access:
-| _1 = access _2 = DOT _3 = IDENTIFIER
+_1 = access _2 = DOT _3 = IDENTIFIER
     {                          ( PField(_1,_3) )}
 | _1 = access _2 = LSQUARE _3 = access_or_const _4 = RSQUARE
     {                                           ( PArrget(_1,_3) )}
@@ -402,7 +402,7 @@ access:
     {                    (_1)}
 
 access_leaf:
-| _1 = STAR _2 = access
+_1 = STAR _2 = access
     {                ( PUnop (Ustar,_2) )}
 | _1 = IDENTIFIER _2 = LPAREN _3 = RPAREN _4 = DOT _5 = IDENTIFIER
     {                                            ( PPrm(_1,_5) )}

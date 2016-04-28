@@ -175,25 +175,25 @@ let make_package name defs = {
 %%
 
 idl_file:
-| _1 = idl_file_list _2 = EOF
+_1 = idl_file_list _2 = EOF
     {                    ( _1 )}
 | _1 = defs _2 = EOF
     {           ( [make_package [] _1] )}
 
 idl_file_list:
-| _1 = PACKAGE _2 = ident_list _3 = SEMI _4 = defs
+_1 = PACKAGE _2 = ident_list _3 = SEMI _4 = defs
     {                               ( [make_package _2 _4] )}
 | _1 = PACKAGE _2 = ident_list _3 = SEMI _4 = defs _5 = idl_file_list
     {                                             ( (make_package _2 _4) :: _5 )}
 
 defs:
-| _1 = def
+_1 = def
     {      ( [_1] )}
 | _1 = def _2 = defs
     {           ( _1 :: _2 )}
 
 def:
-| _1 = CLASS _2 = ident _3 = def_body
+_1 = CLASS _2 = ident _3 = def_body
     {                       ( make_def _2 _3 )}
 | _1 = annotations _2 = CLASS _3 = ident _4 = def_body
     {                                   ( make_def ~annotations:_1 _3 _4 )}
@@ -235,23 +235,23 @@ def:
     {                                                                 ( make_def ~annotations:_1 ~interface:true _3 ~implements:_5 _6 )}
 
 super:
-| _1 = EXTENDS _2 = qident
+_1 = EXTENDS _2 = qident
     {                 ( _2 )}
 
 def_body:
-| _1 = LBRACE _2 = decls _3 = RBRACE
+_1 = LBRACE _2 = decls _3 = RBRACE
     {                      ( _2 )}
 | _1 = LBRACE _2 = RBRACE
     {                ( [] )}
 
 decls:
-| _1 = decl _2 = SEMI
+_1 = decl _2 = SEMI
     {            ( [_1] )}
 | _1 = decl _2 = SEMI _3 = decls
     {                  ( _1 :: _3 )}
 
 decl:
-| _1 = fields
+_1 = fields
     {         ( _1 )}
 | _1 = methods
     {          ( _1 )}
@@ -259,7 +259,7 @@ decl:
     {        ( _1 )}
 
 fields:
-| _1 = typ _2 = ident
+_1 = typ _2 = ident
     {            ( make_field _1 _2 )}
 | _1 = annotations _2 = typ _3 = ident
     {                        ( make_field ~annotations:_1 _2 _3 )}
@@ -269,7 +269,7 @@ fields:
     {                                  ( make_field ~modifiers:_2 ~annotations:_1 _3 _4 )}
 
 methods:
-| _1 = typ _2 = ident _3 = args
+_1 = typ _2 = ident _3 = args
     {      ( make_method _1 _2 _3 )}
 | _1 = annotations _2 = typ _3 = ident _4 = args
     {      ( make_method ~annotations:_1 _2 _3 _4 )}
@@ -279,25 +279,25 @@ methods:
     {      ( make_method ~modifiers:_2 ~annotations:_1 _3 _4 _5 )}
 
 inits:
-| _1 = annotations _2 = INIT _3 = args
+_1 = annotations _2 = INIT _3 = args
     {                        ( make_init _1 _3 )}
 | _1 = INIT _2 = args
     {            ( raise (Syntax_error (Einit_no_alias (Loc.get ()))) )}
 
 args:
-| _1 = LPAREN _2 = RPAREN
+_1 = LPAREN _2 = RPAREN
     {                ( [] )}
 | _1 = LPAREN _2 = arg_list _3 = RPAREN
     {                         ( _2 )}
 
 arg_list:
-| _1 = arg
+_1 = arg
     {      ( [_1] )}
 | _1 = arg _2 = COMMA _3 = arg_list
     {                     ( _1 :: _3 )}
 
 arg:
-| _1 = typ
+_1 = typ
     {      ( make_arg _1 )}
 | _1 = annotations _2 = typ
     {                  ( make_arg ~annotations:_1 _2)}
@@ -307,7 +307,7 @@ arg:
     {                        ( make_arg ~annotations:_1 ~ident:_3 _2 )}
 
 typ:
-| _1 = VOID
+_1 = VOID
     {       ( make_type Ivoid )}
 | _1 = BOOLEAN
     {           ( make_type Iboolean )}
@@ -335,13 +335,13 @@ typ:
     {         ( make_type (Iobject _1) )}
 
 modifiers:
-| _1 = modifier
+_1 = modifier
     {           ( [_1] )}
 | _1 = modifier _2 = modifiers
     {                     ( _1::_2 )}
 
 modifier:
-| _1 = STATIC
+_1 = STATIC
     {         ( make_modifiers Istatic )}
 | _1 = ABSTRACT
     {           ( make_modifiers Iabstract )}
@@ -349,17 +349,17 @@ modifier:
     {         ( make_modifiers Ifinal )}
 
 annotations:
-| _1 = LBRACKET _2 = ann_list _3 = RBRACKET
+_1 = LBRACKET _2 = ann_list _3 = RBRACKET
     {                             ( _2 )}
 
 ann_list:
-| _1 = ann
+_1 = ann
     {      ( [_1] )}
 | _1 = ann _2 = COMMA _3 = ann_list
     {                     ( _1 :: _3 )}
 
 ann:
-| _1 = NAME _2 = ident
+_1 = NAME _2 = ident
     {             ( make_annotation (Iname _2) )}
 | _1 = CALLBACK
     {           ( make_annotation Icallback )}
@@ -367,23 +367,23 @@ ann:
     {        ( make_annotation (Icamlarray) )}
 
 ident:
-| _1 = IDENT
+_1 = IDENT
     {        ( make_ident _1 )}
 
 ident_list:
-| _1 = IDENT
+_1 = IDENT
     {        ( [_1] )}
 | _1 = ident_list _2 = DOT _3 = IDENT
     {                       ( _3 :: _1 )}
 
 qident:
-| _1 = ident
+_1 = ident
     {        ( make_qident [] _1 )}
 | _1 = ident_list _2 = DOT _3 = ident
     {                       ( make_qident _1 _3 )}
 
 interface_list:
-| _1 = qident
+_1 = qident
     {         ( [_1] )}
 | _1 = qident _2 = COMMA _3 = interface_list
     {                              ( _1 :: _3 )}

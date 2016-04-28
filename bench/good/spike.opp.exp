@@ -687,7 +687,7 @@ let del_minmax c =
 %%
 
 specif:
-| _1 = spec_fields _2 = spec_ordering _3 = spec_prop _4 = spec_problem _5 = TOK_EOF
+_1 = spec_fields _2 = spec_ordering _3 = spec_prop _4 = spec_problem _5 = TOK_EOF
     {  ( yy_queue )}
 | _1 = spec_fields _2 = spec_ordering _3 = spec_prop _4 = TOK_EOF
     {  (
@@ -697,7 +697,7 @@ specif:
   )}
 
 spec_fields:
-| _1 = opt_specif_name _2 = opt_specif_use _3 = opt_specif_sorts _4 = opt_specif_obs_sorts _5 = opt_specif_constructors _6 = opt_specif_functions _7 = opt_specif_axioms
+_1 = opt_specif_name _2 = opt_specif_use _3 = opt_specif_sorts _4 = opt_specif_obs_sorts _5 = opt_specif_constructors _6 = opt_specif_functions _7 = opt_specif_axioms
     {  ( 
   update_dico_free_constructors () ;
     if !free_constructors
@@ -709,7 +709,7 @@ spec_fields:
   )}
 
 spec_ordering:
-| _1 = opt_specif_greater _2 = opt_specif_equivs _3 = opt_specif_status _4 = opt_specif_test_sets _5 = opt_specif_nullary_sorts _6 = opt_specif_function_props
+_1 = opt_specif_greater _2 = opt_specif_equivs _3 = opt_specif_status _4 = opt_specif_test_sets _5 = opt_specif_nullary_sorts _6 = opt_specif_function_props
     {  (
     let () = determine_ac_category () in
     (* Orient axioms *)
@@ -780,17 +780,17 @@ spec_ordering:
 )}
 
 spec_prop:
-| _1 = opt_specif_properties _2 = opt_specif_priorities _3 = opt_specif_critical_context_sets
+_1 = opt_specif_properties _2 = opt_specif_priorities _3 = opt_specif_critical_context_sets
     {  ( )}
 
 spec_problem:
-| _1 = spec_problem_field
+_1 = spec_problem_field
     {  ( [_1] )}
 | _1 = spec_problem _2 = spec_problem_field
     {  ( _1 @ [_2] )}
 
 spec_problem_field:
-| _1 = specif_lemmas
+_1 = specif_lemmas
     {  ( )}
 | _1 = specif_conjectures
     {  ( )}
@@ -826,7 +826,7 @@ spec_problem_field:
     {  ( )}
 
 opt_specif_name:
-| _1 = TOK_SPECIF _2 = TOK_COLUMN _3 = TOK_IDENT
+_1 = TOK_SPECIF _2 = TOK_COLUMN _3 = TOK_IDENT
     {  ( spec_name := _3 )}
 | _1 = TOK_SPECIF _2 = TOK_COLUMN
     {  ( )}
@@ -834,7 +834,7 @@ opt_specif_name:
     {  ( )}
 
 opt_specif_use:
-| _1 = TOK_USE _2 = TOK_COLUMN _3 = list_of_idents _4 = TOK_SEMICOLUMN
+_1 = TOK_USE _2 = TOK_COLUMN _3 = list_of_idents _4 = TOK_SEMICOLUMN
     {  ( 
     let rec fn = function
       [] -> ()
@@ -850,13 +850,13 @@ opt_specif_use:
     {  ( )}
 
 list_of_idents:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  ( [ _1 ] )}
 | _1 = list_of_idents _2 = TOK_IDENT
     {  ( _1 @ [ _2 ] )}
 
 opt_specif_sorts:
-| _1 = TOK_SORTS _2 = TOK_COLUMN _3 = get_list_of_sorts _4 = TOK_SEMICOLUMN
+_1 = TOK_SORTS _2 = TOK_COLUMN _3 = get_list_of_sorts _4 = TOK_SEMICOLUMN
     {  ( buffered_output "\nSuccessfully parsed sorts" ;
     flush stdout )}
 | _1 = TOK_SORTS _2 = TOK_COLUMN
@@ -865,13 +865,13 @@ opt_specif_sorts:
     {  ( )}
 
 get_list_of_sorts:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  ( selective_add_sort dico_sort_string sort_counter _1 )}
 | _1 = get_list_of_sorts _2 = TOK_IDENT
     {  ( selective_add_sort dico_sort_string sort_counter _2 )}
 
 opt_specif_constructors:
-| _1 = TOK_CONSTRUCTORS _2 = TOK_COLUMN _3 = list_of_constructors
+_1 = TOK_CONSTRUCTORS _2 = TOK_COLUMN _3 = list_of_constructors
     {  ( buffered_output "\nSuccessfully parsed constructors" ;
     flush stdout )}
 | _1 = TOK_CONSTRUCTORS _2 = TOK_COLUMN
@@ -880,7 +880,7 @@ opt_specif_constructors:
     {  ( )}
 
 opt_specif_obs_sorts:
-| _1 = TOK_OBS_SORTS _2 = TOK_COLUMN _3 = get_list_of_obs_sorts _4 = TOK_SEMICOLUMN
+_1 = TOK_OBS_SORTS _2 = TOK_COLUMN _3 = get_list_of_obs_sorts _4 = TOK_SEMICOLUMN
     {  ( buffered_output "Successfully parsed observable sorts" ;
     flush stdout )}
 | _1 = TOK_OBS_SORTS _2 = TOK_COLUMN
@@ -889,7 +889,7 @@ opt_specif_obs_sorts:
     {  ( )}
 
 get_list_of_obs_sorts:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  ( try
      let () = observational_proof := true in
      let k = (try (dico_sort_string#find_key _1) with Failure "find_key" -> failwith "get_list_of_obs_sorts") in
@@ -918,17 +918,17 @@ get_list_of_obs_sorts:
     selective_add dico_obs_sort obs_sort_counter $2*))}
 
 list_of_constructors:
-| _1 = specif_constructor
+_1 = specif_constructor
     {  ( )}
 | _1 = list_of_constructors _2 = specif_constructor
     {  ( )}
 
 specif_constructor:
-| _1 = TOK_IDENT _2 = TOK_COLUMN _3 = specif_profile
+_1 = TOK_IDENT _2 = TOK_COLUMN _3 = specif_profile
     {  (process_specif_symbol constructor_counter _1 _3  )}
 
 opt_specif_functions:
-| _1 = TOK_FUNCTIONS _2 = TOK_COLUMN _3 = list_of_functions
+_1 = TOK_FUNCTIONS _2 = TOK_COLUMN _3 = list_of_functions
     {  ( buffered_output "\nSuccessfully parsed functions" ;
     flush stdout )}
 | _1 = TOK_FUNCTIONS _2 = TOK_FUNCTIONS _3 = TOK_COLUMN _4 = list_of_functions
@@ -942,17 +942,17 @@ opt_specif_functions:
     {  ( )}
 
 list_of_functions:
-| _1 = specif_function
+_1 = specif_function
     {  ( )}
 | _1 = list_of_functions _2 = specif_function
     {  ( )}
 
 specif_function:
-| _1 = TOK_IDENT _2 = TOK_COLUMN _3 = specif_profile
+_1 = TOK_IDENT _2 = TOK_COLUMN _3 = specif_profile
     {  ( process_specif_symbol function_counter _1 _3 )}
 
 specif_profile:
-| _1 = list_of_sorts _2 = TOK_ARROW _3 = list_of_sorts _4 = TOK_SEMICOLUMN
+_1 = list_of_sorts _2 = TOK_ARROW _3 = list_of_sorts _4 = TOK_SEMICOLUMN
     {  ( if List.length _3 > 1 then parse_failwith "The function should return only one value" else (_1, List.hd _3) )}
 | _1 = list_of_sorts _2 = TOK_SEMICOLUMN
     {  ( ([], List.hd _1) )}
@@ -960,13 +960,13 @@ specif_profile:
     {  (  if List.length _2 > 1 then parse_failwith "The function should return only one value" else  ([], List.hd _2) )}
 
 list_of_sorts:
-| _1 = ident_sort
+_1 = ident_sort
     {  (_1)}
 | _1 = list_of_sorts _2 = ident_sort
     {      (_1 @ _2)}
 
 ident_sort:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  ( let s =
       find_sort_id _1
   in [ s ] )}
@@ -980,13 +980,13 @@ ident_sort:
  )}
 
 end_of_sorts:
-| _1 = TOK_RPAR
+_1 = TOK_RPAR
     {  ([])}
 | _1 = ident_sort _2 = TOK_RPAR
     {  (_1)}
 
 opt_specif_axioms:
-| _1 = TOK_AXIOMS _2 = TOK_COLUMN _3 = pos_codes_true _4 = list_of_horn_clauses
+_1 = TOK_AXIOMS _2 = TOK_COLUMN _3 = pos_codes_true _4 = list_of_horn_clauses
     {  ( buffered_output "\nSuccessfully parsed axioms" ; flush stdout ;
     yy_axioms := List.map introduce_var_exist _4 ;
     if !debug_mode then print_clause_list (List.map (fun (_, _, x) -> x) !yy_axioms) )}
@@ -996,7 +996,7 @@ opt_specif_axioms:
     {  ( )}
 
 opt_specif_function_props:
-| _1 = TOK_FUNCTION_PROPS _2 = TOK_COLUMN _3 = list_of_raw_symbols _4 = TOK_COLUMN _5 = TOK_AC _6 = TOK_SEMICOLUMN
+_1 = TOK_FUNCTION_PROPS _2 = TOK_COLUMN _3 = list_of_raw_symbols _4 = TOK_COLUMN _5 = TOK_AC _6 = TOK_SEMICOLUMN
     {  (process_function_props _3 Prop_ac )}
 | _1 = TOK_FUNCTION_PROPS _2 = TOK_COLUMN _3 = list_of_raw_symbols _4 = TOK_COLUMN _5 = TOK_ASSOC _6 = TOK_SEMICOLUMN
     {  (process_function_props _3 Prop_assoc )}
@@ -1006,20 +1006,20 @@ opt_specif_function_props:
     {  ()}
 
 list_of_raw_symbols:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  ( [ _1 ] )}
 | _1 = list_of_raw_symbols _2 = TOK_IDENT
     {  ( _1 @ [ _2 ] )}
 
 list_of_symbols:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  ( [ find_symbol_id _1 ] )}
 | _1 = list_of_symbols _2 = TOK_IDENT
     {  ( let s = find_symbol_id _2 in 
     if not (List.mem s _1) then _1 @ [ find_symbol_id _2 ] else parse_failwith (_2 ^ " is duplicated") )}
 
 opt_specif_greater:
-| _1 = TOK_GREATER _2 = TOK_COLUMN _3 = init_order_dico _4 = list_of_greater
+_1 = TOK_GREATER _2 = TOK_COLUMN _3 = init_order_dico _4 = list_of_greater
     {  (     (* print_dico_order () *))}
 | _1 = TOK_GREATER _2 = TOK_COLUMN
     {  ( )}
@@ -1027,25 +1027,25 @@ opt_specif_greater:
     {  ( let () = buffered_output "No order provided" in default_fill_order_dico () )}
 
 init_order_dico:
-| 
+
     {  ( 
     print_dico_const_string ();
     dico_order#init (!all_defined_functions @ !all_constructors) ;
     flush stdout )}
 
 list_of_greater:
-| _1 = specif_greater
+_1 = specif_greater
     {  ( )}
 | _1 = list_of_greater _2 = specif_greater
     {  ( )}
 
 specif_greater:
-| _1 = TOK_IDENT _2 = TOK_COLUMN _3 = list_of_symbols _4 = TOK_SEMICOLUMN
+_1 = TOK_IDENT _2 = TOK_COLUMN _3 = list_of_symbols _4 = TOK_SEMICOLUMN
     {  (  let v = find_symbol_id _1 in
      List.iter (fun x -> dico_order#add_couple v x) _3 )}
 
 opt_specif_equivs:
-| _1 = TOK_EQUIV _2 = TOK_COLUMN _3 = init_equiv_dico _4 = list_of_equivs
+_1 = TOK_EQUIV _2 = TOK_COLUMN _3 = init_equiv_dico _4 = list_of_equivs
     {  ( 
     if dico_order#empty
     then
@@ -1074,7 +1074,7 @@ opt_specif_equivs:
   )}
 
 init_equiv_dico:
-| 
+
     {  ( 
 
 (*     List.iter (fun x -> (buffered_output ("init_order_dico : x = " ^ (string_of_int x)))) (!all_defined_functions @ !all_constructors); *)
@@ -1082,19 +1082,19 @@ init_equiv_dico:
     flush stdout )}
 
 list_of_equivs:
-| _1 = specif_equiv
+_1 = specif_equiv
     {  ( )}
 | _1 = list_of_equivs _2 = specif_equiv
     {  ( )}
 
 specif_equiv:
-| _1 = list_of_symbols _2 = TOK_SEMICOLUMN
+_1 = list_of_symbols _2 = TOK_SEMICOLUMN
     {  ( match _1 with
       [] -> failwith "I'm bewildered"
       | _::_ ->  dico_equivalence#fill (fun _ _ -> true) _1;  )}
 
 opt_specif_status:
-| _1 = TOK_STATUS _2 = TOK_COLUMN _3 = list_of_statuses
+_1 = TOK_STATUS _2 = TOK_COLUMN _3 = list_of_statuses
     {  ( buffered_output "\nSuccessfully parsed statuses" ; flush stdout ;
     print_dico_id_status () ;
     (try complete_status_dico ()
@@ -1120,13 +1120,13 @@ opt_specif_status:
   )}
 
 list_of_statuses:
-| _1 = specif_status
+_1 = specif_status
     {  ( )}
 | _1 = list_of_statuses _2 = specif_status
     {  ( )}
 
 specif_status:
-| _1 = list_of_symbols _2 = TOK_LEFTRIGHT _3 = TOK_SEMICOLUMN
+_1 = list_of_symbols _2 = TOK_LEFTRIGHT _3 = TOK_SEMICOLUMN
     {  (
     try
       let () = List.iter (fun x -> if symbol_is_ac x then failwith (dico_const_string#find x) else ()) _1
@@ -1143,7 +1143,7 @@ specif_status:
     {      ( List.iter (fun x -> add_to_status_dico x Multiset) _1 )}
 
 opt_specif_properties:
-| _1 = TOK_PROPERTIES _2 = TOK_COLUMN _3 = list_of_properties
+_1 = TOK_PROPERTIES _2 = TOK_COLUMN _3 = list_of_properties
     {  ( buffered_output "\nSuccessfully parsed properties" ; flush stdout )}
 | _1 = TOK_PROPERTIES _2 = TOK_COLUMN
     {  ( )}
@@ -1151,7 +1151,7 @@ opt_specif_properties:
     {  ( )}
 
 list_of_properties:
-| _1 = TOK_IDENT _2 = TOK_SEMICOLUMN
+_1 = TOK_IDENT _2 = TOK_SEMICOLUMN
     {  ( try
       let p = Hashtbl.find oracles_table _1
       in p := true
@@ -1172,7 +1172,7 @@ list_of_properties:
       with Not_found -> parse_failwith ("property \"" ^ _2 ^ "\" is not defined") )}
 
 opt_specif_priorities:
-| _1 = TOK_PRIORITIES _2 = TOK_COLUMN _3 = list_of_priorities
+_1 = TOK_PRIORITIES _2 = TOK_COLUMN _3 = list_of_priorities
     {  ( buffered_output "\nSuccessfully parsed priorities" ; flush stdout ;
     !fill_default_induction_positions _3 ;
     buffered_output "Generate will be attempted on the following positions:" ;
@@ -1188,19 +1188,19 @@ opt_specif_priorities:
   )}
 
 list_of_priorities:
-| _1 = list_of_function_symbols _2 = TOK_SEMICOLUMN
+_1 = list_of_function_symbols _2 = TOK_SEMICOLUMN
     {  ( [ _1 ] )}
 | _1 = list_of_priorities _2 = list_of_function_symbols _3 = TOK_SEMICOLUMN
     {  ( _1 @ [ _2 ] )}
 
 list_of_function_symbols:
-| _1 = specif_fun_with_positions
+_1 = specif_fun_with_positions
     {  ( _1 )}
 | _1 = list_of_function_symbols _2 = specif_fun_with_positions
     {  ( merge_induction_positions _1 _2 )}
 
 specif_fun_with_positions:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  (   
     let n =
       try
@@ -1238,29 +1238,29 @@ specif_fun_with_positions:
   )}
 
 specif_path:
-| _1 = TOK_LBRACKET _2 = list_of_sym_int_couples _3 = TOK_RBRACKET
+_1 = TOK_LBRACKET _2 = list_of_sym_int_couples _3 = TOK_RBRACKET
     {  ( _2 )}
 
 list_of_paths:
-| _1 = specif_path
+_1 = specif_path
     {  ( [_1] )}
 | _1 = list_of_paths _2 = specif_path
     {  ( _1 @ [_2] )}
 
 list_of_sym_int_couples:
-| _1 = sym_int_couple
+_1 = sym_int_couple
     {  ( [ _1 ] )}
 | _1 = list_of_sym_int_couples _2 = TOK_SEMICOLUMN _3 = sym_int_couple
     {  ( _1 @ [ _3 ] )}
 
 sym_int_couple:
-| _1 = TOK_IDENT _2 = TOK_AROBAT _3 = TOK_IDENT
+_1 = TOK_IDENT _2 = TOK_AROBAT _3 = TOK_IDENT
     {  ( let f = find_symbol_id _1
     and i = parse_positive_int _3
     in f, i )}
 
 opt_specif_test_sets:
-| _1 = TOK_TEST_SETS _2 = TOK_COLUMN _3 = list_of_test_sets
+_1 = TOK_TEST_SETS _2 = TOK_COLUMN _3 = list_of_test_sets
     {  ( 
 (*     buffered_output "\nSuccessfully parsed test sets" ;  *)
 (*     flush stdout; *)
@@ -1272,20 +1272,20 @@ opt_specif_test_sets:
     {  ()}
 
 list_of_test_sets:
-| _1 = specif_test_set
+_1 = specif_test_set
     {  ( )}
 | _1 = list_of_test_sets _2 = specif_test_set
     {  ( )}
 
 specif_test_set:
-| _1 = TOK_IDENT _2 = TOK_COLUMN _3 = list_of_terms _4 = TOK_SEMICOLUMN
+_1 = TOK_IDENT _2 = TOK_COLUMN _3 = list_of_terms _4 = TOK_SEMICOLUMN
     {  ( 
   )}
 | _1 = list_of_paths _2 = TOK_COLUMN _3 = list_of_terms _4 = TOK_SEMICOLUMN
     {  ( )}
 
 opt_specif_nullary_sorts:
-| _1 = TOK_NULLARY_SORTS _2 = TOK_COLUMN _3 = list_of_nullary_sorts _4 = TOK_SEMICOLUMN
+_1 = TOK_NULLARY_SORTS _2 = TOK_COLUMN _3 = list_of_nullary_sorts _4 = TOK_SEMICOLUMN
     { (
    let fn string = 
      let s = find_sort_id string in
@@ -1306,24 +1306,24 @@ opt_specif_nullary_sorts:
     {  ( )}
 
 list_of_nullary_sorts:
-| _1 = specif_nullary_sort
+_1 = specif_nullary_sort
     {    ([_1] )}
 | _1 = list_of_nullary_sorts _2 = specif_nullary_sort
     {    ( _1 @ [_2])}
 
 specif_nullary_sort:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {( _1
 )}
 
 list_of_contexts:
-| _1 = reset_tmp_vars _2 = context
+_1 = reset_tmp_vars _2 = context
     {  ( [ _2 ] )}
 | _1 = list_of_contexts _2 = reset_tmp_vars _3 = context
     {  ( _1 @ [ _3 ] )}
 
 context:
-| _1 = TOK_LBRACKET _2 = get_term _3 = TOK_COMA _4 = TOK_IDENT _5 = TOK_RBRACKET
+_1 = TOK_LBRACKET _2 = get_term _3 = TOK_COMA _4 = TOK_IDENT _5 = TOK_RBRACKET
     {  ( let t = _2
     and x =
       try List.assoc _4 !yy_tmp_vars
@@ -1334,7 +1334,7 @@ context:
     in c )}
 
 context_specif:
-| _1 = TOK_IDENT _2 = TOK_COLUMN _3 = list_of_contexts _4 = TOK_SEMICOLUMN
+_1 = TOK_IDENT _2 = TOK_COLUMN _3 = list_of_contexts _4 = TOK_SEMICOLUMN
     {   ( let declared_sort = find_sort_id _1
      and contexts = _3
      in if not (List.for_all (fun c -> c#sort = declared_sort)contexts)
@@ -1347,13 +1347,13 @@ context_specif:
    )}
 
 list_of_context_specif:
-| _1 = context_specif
+_1 = context_specif
     {  ( [ _1 ] )}
 | _1 = list_of_context_specif _2 = context_specif
     {  ( _1 @ [ _2 ] )}
 
 opt_specif_critical_context_sets:
-| _1 = TOK_CRITICAL_CONTEXT_SETS _2 = TOK_COLUMN _3 = list_of_context_specif
+_1 = TOK_CRITICAL_CONTEXT_SETS _2 = TOK_COLUMN _3 = list_of_context_specif
     {  ( buffered_output "Successfully parsed critical context sets" ;print_critical_context_set ();flush stdout )}
 | _1 = TOK_CRITICAL_CONTEXT_SETS _2 = TOK_COLUMN
     {  ( )}
@@ -1361,19 +1361,19 @@ opt_specif_critical_context_sets:
     {  ( )}
 
 specif_ind_priorities:
-| _1 = TOK_IND_PRIORITIES _2 = TOK_COLUMN _3 = list_of_infs
+_1 = TOK_IND_PRIORITIES _2 = TOK_COLUMN _3 = list_of_infs
     {  ( )}
 | _1 = TOK_IND_PRIORITIES _2 = TOK_COLUMN
     {  ( )}
 
 list_of_infs:
-| _1 = specif_infs
+_1 = specif_infs
     {  ( )}
 | _1 = list_of_infs _2 = specif_infs
     {  ( )}
 
 specif_infs:
-| _1 = list_of_symbols _2 = TOK_SEMICOLUMN
+_1 = list_of_symbols _2 = TOK_SEMICOLUMN
     {  ( 
 (*     let l = list_2_list_of_couples $1 *)
 (*     in List.iter (fun (x, y) -> dico_infs#add_couple y x) l  *)
@@ -1390,13 +1390,13 @@ specif_infs:
   )}
 
 specif_complete_terms:
-| _1 = TOK_COMPLETE_TERMS _2 = TOK_COLUMN _3 = list_of_terms _4 = TOK_SEMICOLUMN
+_1 = TOK_COMPLETE_TERMS _2 = TOK_COLUMN _3 = list_of_terms _4 = TOK_SEMICOLUMN
     {  (Queue.add (Cterm_token _3) yy_queue )}
 | _1 = TOK_COMPLETE_TERMS _2 = TOK_COLUMN
     {  ( )}
 
 specif_lemmas:
-| _1 = TOK_LEMMAS _2 = TOK_COLUMN _3 = pos_codes_false _4 = list_of_clauses
+_1 = TOK_LEMMAS _2 = TOK_COLUMN _3 = pos_codes_false _4 = list_of_clauses
     {  ( buffered_output "\nSuccessfully parsed lemmas" ; flush stdout ;
     print_clause_list _4 ;
     Queue.add (Lemmas_token _4) yy_queue )}
@@ -1404,7 +1404,7 @@ specif_lemmas:
     {  ( )}
 
 specif_conjectures:
-| _1 = TOK_CONJECTURES _2 = TOK_COLUMN _3 = pos_codes_false _4 = list_of_clauses_history
+_1 = TOK_CONJECTURES _2 = TOK_COLUMN _3 = pos_codes_false _4 = list_of_clauses_history
     {  ( buffered_output "\nSuccessfully parsed conjectures" ;
     print_clause_list _4 ;
     let lc = 
@@ -1417,7 +1417,7 @@ specif_conjectures:
     {  ( )}
 
 specif_hypotheses:
-| _1 = TOK_HYPOTHESES _2 = TOK_COLUMN _3 = pos_codes_false _4 = list_of_clauses
+_1 = TOK_HYPOTHESES _2 = TOK_COLUMN _3 = pos_codes_false _4 = list_of_clauses
     {  ( buffered_output "\nSuccessfully parsed hypotheses" ;
     print_clause_list _4 ;
     Queue.add (Hypotheses_token _4) yy_queue )}
@@ -1425,13 +1425,13 @@ specif_hypotheses:
     {  ( )}
 
 list_of_clauses:
-| _1 = reset_and_clause
+_1 = reset_and_clause
     {  ( [_1] )}
 | _1 = list_of_clauses _2 = reset_and_clause
     {  ( _1 @ [_2] )}
 
 list_of_clauses_history:
-| _1 = reset_and_clause
+_1 = reset_and_clause
     {  ( [_1] )}
 | _1 = reset_and_clause _2 = history_clause
     {  ( let () = _1#set_history _2 in [_1])}
@@ -1439,35 +1439,35 @@ list_of_clauses_history:
     {  ( _1 @ [_2] )}
 
 history_clause:
-| _1 = one_history
+_1 = one_history
     {([_1])}
 | _1 = history_clause _2 = one_history
     {(_1 @ [_2])}
 
 one_history:
-| _1 = TOK_OPEN_SUBSTITUTION _2 = specif_substitution2 _3 = TOK_CLOSE_SUBSTITUTION _4 = garbage_history _5 = specif_clause _6 = TOK_SEMICOLUMN
+_1 = TOK_OPEN_SUBSTITUTION _2 = specif_substitution2 _3 = TOK_CLOSE_SUBSTITUTION _4 = garbage_history _5 = specif_clause _6 = TOK_SEMICOLUMN
     {((_2, _5))}
 
 garbage_history:
-| _1 = TOK_ON _2 = TOK_LBRACKET _3 = TOK_IDENT _4 = TOK_RBRACKET
+_1 = TOK_ON _2 = TOK_LBRACKET _3 = TOK_IDENT _4 = TOK_RBRACKET
     {()}
 
 reset_and_clause:
-| _1 = reset_tmp_vars _2 = specif_clause _3 = TOK_SEMICOLUMN
+_1 = reset_tmp_vars _2 = specif_clause _3 = TOK_SEMICOLUMN
     {  ( _2 )}
 
 list_of_horn_clauses:
-| _1 = reset_and_horn_clause
+_1 = reset_and_horn_clause
     {  ( [_1] )}
 | _1 = list_of_horn_clauses _2 = reset_and_horn_clause
     {  ( _1 @ [_2] )}
 
 reset_and_horn_clause:
-| _1 = reset_tmp_vars _2 = specif_horn_clause _3 = TOK_SEMICOLUMN
+_1 = reset_tmp_vars _2 = specif_horn_clause _3 = TOK_SEMICOLUMN
     {  ( (!parsed_gfile, !linenumber, _2) )}
 
 reset_tmp_vars:
-| 
+
     {  ( yy_tmp_vars := [] ;
     yy_tmp_sorts := [] ;
 (*     if !debug_mode then print_string "\nReset of yy_tmp_param_sorts"; *)
@@ -1475,11 +1475,11 @@ reset_tmp_vars:
     yy_tmp_equiv_dico#clear )}
 
 specif_clause2:
-| _1 = specif_clause _2 = TOK_EOF
+_1 = specif_clause _2 = TOK_EOF
     {  ( _1 )}
 
 specif_clause:
-| _1 = list_of_literals
+_1 = list_of_literals
     {  ( 
     let l' = List.map literal_of_incomplete_terms _1 in
     let new_l' = expand_sorts_list l' in
@@ -1516,7 +1516,7 @@ specif_clause:
   )}
 
 specif_horn_clause:
-| _1 = specif_literal
+_1 = specif_literal
     {  ( 
     let l' = [ literal_of_incomplete_terms _1 ] in
     let new_l' = expand_sorts_list l' in
@@ -1548,13 +1548,13 @@ specif_horn_clause:
   )}
 
 list_of_literals:
-| _1 = specif_literal
+_1 = specif_literal
     {  ( [ _1 ] )}
 | _1 = list_of_literals _2 = TOK_COMA _3 = specif_literal
     {  ( _1 @ [ _3 ] )}
 
 specif_literal:
-| _1 = literal_get_sides
+_1 = literal_get_sides
     {  ( 
   let lhs, rhs, type_lit = _1 in
     let t = process_term_tokens lhs
@@ -1588,7 +1588,7 @@ specif_literal:
     term_t, term_t', type_lit )}
 
 literal_get_sides:
-| _1 = specif_term _2 = TOK_EQUAL _3 = specif_term
+_1 = specif_term _2 = TOK_EQUAL _3 = specif_term
     {  ( (_1,_3, Lit_equal (term_true, term_true)) )}
 | _1 = specif_term _2 = TOK_ARROW _3 = specif_term
     {  ( (_1,_3, Lit_rule (term_true, term_true)))}
@@ -1596,17 +1596,17 @@ literal_get_sides:
     {  ( (_1,_3, Lit_diff (term_true, term_true)) )}
 
 specif_term:
-| _1 = list_of_tokens
+_1 = list_of_tokens
     {  (_1 )}
 
 list_of_tokens:
-| _1 = one_token
+_1 = one_token
     {  ( _1 )}
 | _1 = list_of_tokens _2 = one_token
     {  ( _1 @ _2 )}
 
 one_token:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  ( [ TT_ident _1 ] )}
 | _1 = TOK_LPAR _2 = TOK_IDENT _3 = TOK_COLUMN _4 = TOK_IDENT _5 = TOK_RPAR
     {  ( let () = check_explicit_type _2 _4 in
@@ -1616,7 +1616,7 @@ one_token:
   in _2)}
 
 list_of_term_tokens:
-| _1 = list_of_tokens
+_1 = list_of_tokens
     {  ( let content = (try defined_content (process_term_tokens _1) with
       (Failure "defined_content") -> failwith "defined_content")
   in [ TT_tree content ] )}
@@ -1626,24 +1626,24 @@ list_of_term_tokens:
   in _1 @ [ TT_tree content ] )}
 
 specif_strategies:
-| _1 = TOK_STRATEGIES _2 = TOK_COLUMN _3 = list_of_strategies
+_1 = TOK_STRATEGIES _2 = TOK_COLUMN _3 = list_of_strategies
     {  ( buffered_output "\nSuccessfully parsed strategies" ;
     Queue.add (Strat_token _3) yy_queue )}
 | _1 = TOK_STRATEGIES _2 = TOK_COLUMN
     {  ( )}
 
 list_of_strategies:
-| _1 = specif_strategy
+_1 = specif_strategy
     {  ( [_1] )}
 | _1 = list_of_strategies _2 = specif_strategy
     {  ( _1 @ [_2] )}
 
 specif_strategy:
-| _1 = TOK_IDENT _2 = TOK_EQUAL _3 = strategy_term _4 = TOK_SEMICOLUMN
+_1 = TOK_IDENT _2 = TOK_EQUAL _3 = strategy_term _4 = TOK_SEMICOLUMN
     {  ( (_1, _3) )}
 
 strategy_term:
-| _1 = TOK_ADDPREMISE _2 = TOK_LPAR _3 = reasoning_module _4 = TOK_COMA _5 = TOK_LBRACKET _6 = list_of_reasoning_modules _7 = TOK_RBRACKET _8 = TOK_RPAR
+_1 = TOK_ADDPREMISE _2 = TOK_LPAR _3 = reasoning_module _4 = TOK_COMA _5 = TOK_LBRACKET _6 = list_of_reasoning_modules _7 = TOK_RBRACKET _8 = TOK_RPAR
     {    (new strategy (Inference_rule (AddPremise (_3, new strategy (Try_ _6)))))}
 | _1 = TOK_SIMPLIFY _2 = TOK_LPAR _3 = reasoning_module _4 = TOK_COMA _5 = TOK_LBRACKET _6 = list_of_reasoning_modules _7 = TOK_RBRACKET _8 = TOK_RPAR
     {    (new strategy (Inference_rule (Simplify (_3, new strategy (Try_ _6)))))}
@@ -1686,13 +1686,13 @@ strategy_term:
     | _ -> parse_failwith "Bad argument for strategy \"print_goals_history\"" )}
 
 list_of_strategy_terms:
-| _1 = strategy_term
+_1 = strategy_term
     {  ( [ _1 ] )}
 | _1 = list_of_strategy_terms _2 = TOK_COMA _3 = strategy_term
     {  ( _1 @ [ _3 ] )}
 
 reasoning_module:
-| _1 = TOK_CONTEXTUAL_REWRITING _2 = TOK_LPAR _3 = strategy_term _4 = TOK_COMA _5 = specif_list_of_systems _6 = TOK_COMA _7 = specif_clausal_position _8 = TOK_RPAR
+_1 = TOK_CONTEXTUAL_REWRITING _2 = TOK_LPAR _3 = strategy_term _4 = TOK_COMA _5 = specif_list_of_systems _6 = TOK_COMA _7 = specif_clausal_position _8 = TOK_RPAR
     {  ( Contextual_rewriting (_3, _5, _7) )}
 | _1 = TOK_EQUATIONAL_REWRITING _2 = TOK_LPAR _3 = specif_literal_position_in_clause _4 = TOK_RPAR
     {  ( (Equational_rewriting _3) )}
@@ -1751,25 +1751,25 @@ reasoning_module:
     {  ( Id )}
 
 list_of_reasoning_modules:
-| _1 = reasoning_module
+_1 = reasoning_module
     {  ( [ new strategy (Inference_rule (Id_st _1)) ] )}
 | _1 = list_of_reasoning_modules _2 = TOK_COMA _3 = reasoning_module
     {  ( _1 @ [ new strategy (Inference_rule (Id_st _3)) ] )}
 
 specif_list_of_systems:
-| _1 = TOK_QUESTION_MARK
+_1 = TOK_QUESTION_MARK
     {  ( LOS_query )}
 | _1 = list_of_systems
     {  ( LOS_defined _1 )}
 
 list_of_systems:
-| _1 = specif_system
+_1 = specif_system
     {  ( [ _1 ] )}
 | _1 = list_of_systems _2 = TOK_OR _3 = specif_system
     {  ( _1 @ [ _3 ] )}
 
 specif_system:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  ( match _1 with
     | "r"| "R" -> R
     | "c"| "C" -> C
@@ -1777,27 +1777,27 @@ specif_system:
     | _ -> parse_failwith "bad systems specification" )}
 
 specif_startpoint:
-| _1 = TOK_START_WITH _2 = TOK_COLUMN _3 = strategy_term
+_1 = TOK_START_WITH _2 = TOK_COLUMN _3 = strategy_term
     {  ( buffered_output "\nSuccessfully parsed startpoint" ;
     Queue.add (Startpoint_token _3) yy_queue )}
 | _1 = TOK_START_WITH _2 = TOK_COLUMN
     {  ( )}
 
 specif_augmentation:
-| _1 = TOK_AUGMENTATION_STRATEGY _2 = TOK_COLUMN _3 = strategy_term
+_1 = TOK_AUGMENTATION_STRATEGY _2 = TOK_COLUMN _3 = strategy_term
     {  ( buffered_output "\nSuccessfully parsed the augmentation strategy" ;
     Queue.add (Augmentation_token _3) yy_queue )}
 | _1 = TOK_AUGMENTATION_STRATEGY _2 = TOK_COLUMN
     {  ( )}
 
 specif_norm:
-| _1 = TOK_NORM _2 = TOK_COLUMN _3 = list_of_terms _4 = TOK_SEMICOLUMN
+_1 = TOK_NORM _2 = TOK_COLUMN _3 = list_of_terms _4 = TOK_SEMICOLUMN
     {  ( Queue.add (Norm_token _3) yy_queue )}
 | _1 = TOK_NORM _2 = TOK_COLUMN
     {  ( )}
 
 specif_rpocompare:
-| _1 = TOK_RPOCOMPARE _2 = TOK_COLUMN _3 = two_terms
+_1 = TOK_RPOCOMPARE _2 = TOK_COLUMN _3 = two_terms
     {  ( 
      let t, t' = _3 in
     Queue.add (Rpo_token (t, t')) yy_queue )}
@@ -1805,61 +1805,61 @@ specif_rpocompare:
     {  ( )}
 
 specif_compare:
-| _1 = TOK_COMPARE _2 = TOK_COLUMN _3 = two_clauses
+_1 = TOK_COMPARE _2 = TOK_COLUMN _3 = two_clauses
     {  ( let c, c' = _3 in
     Queue.add (Compare_token (c, c')) yy_queue )}
 | _1 = TOK_COMPARE _2 = TOK_COLUMN
     {  ( )}
 
 specif_max_compare:
-| _1 = TOK_MAX_COMPARE _2 = TOK_COLUMN _3 = two_clauses
+_1 = TOK_MAX_COMPARE _2 = TOK_COLUMN _3 = two_clauses
     {  ( let c, c' = _3 in
     Queue.add (Compare_max_token (c, c')) yy_queue )}
 | _1 = TOK_MAX_COMPARE _2 = TOK_COLUMN
     {  ( )}
 
 specif_stop_on_clause:
-| _1 = TOK_STOP_ON_CLAUSE _2 = TOK_COLUMN _3 = TOK_IDENT _4 = TOK_SEMICOLUMN
+_1 = TOK_STOP_ON_CLAUSE _2 = TOK_COLUMN _3 = TOK_IDENT _4 = TOK_SEMICOLUMN
     {  (
     stop_clause := int_of_string _3)}
 | _1 = TOK_STOP_ON_CLAUSE _2 = TOK_COLUMN
     {  ()}
 
 specif_extract:
-| _1 = TOK_EXTRACT _2 = TOK_COLUMN _3 = list_of_symbols
+_1 = TOK_EXTRACT _2 = TOK_COLUMN _3 = list_of_symbols
     {  ( extract_specification _3)}
 | _1 = TOK_EXTRACT _2 = TOK_COLUMN
     {  ( )}
 
 specif_match:
-| _1 = TOK_MATCH _2 = TOK_COLUMN _3 = two_terms _4 = TOK_SEMICOLUMN
+_1 = TOK_MATCH _2 = TOK_COLUMN _3 = two_terms _4 = TOK_SEMICOLUMN
     {  ( let t, t' = _3 in
     Queue.add (Match_token (t, t')) yy_queue )}
 | _1 = TOK_MATCH _2 = TOK_COLUMN
     {  ( )}
 
 specif_ac_subsumes:
-| _1 = TOK_AC_SUBSUMES _2 = reset_tmp_vars _3 = TOK_COLUMN _4 = set_of_terms _5 = reset_tmp_vars _6 = TOK_SEMICOLUMN _7 = set_of_terms _8 = TOK_SEMICOLUMN
+_1 = TOK_AC_SUBSUMES _2 = reset_tmp_vars _3 = TOK_COLUMN _4 = set_of_terms _5 = reset_tmp_vars _6 = TOK_SEMICOLUMN _7 = set_of_terms _8 = TOK_SEMICOLUMN
     {  ( Queue.add (Ac_token (_4, _7)) yy_queue )}
 | _1 = TOK_AC_SUBSUMES _2 = reset_tmp_vars _3 = TOK_COLUMN
     {  ( )}
 
 set_of_terms:
-| _1 = get_term
+_1 = get_term
     {  ( [ _1 ] )}
 | _1 = set_of_terms _2 = TOK_COMA _3 = get_term
     {  ( _1 @ [ _3 ] )}
 
 two_terms:
-| _1 = reset_tmp_vars _2 = get_term _3 = TOK_QUESTION_MARK _4 = get_term
+_1 = reset_tmp_vars _2 = get_term _3 = TOK_QUESTION_MARK _4 = get_term
     {  ( (_2, _4) )}
 
 two_clauses:
-| _1 = pos_codes_false _2 = reset_tmp_vars _3 = specif_clause _4 = TOK_QUESTION_MARK _5 = specif_clause
+_1 = pos_codes_false _2 = reset_tmp_vars _3 = specif_clause _4 = TOK_QUESTION_MARK _5 = specif_clause
     {  ( (_3, _5) )}
 
 specif_literal_position_in_clause:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  ( match _1 with
       "*" -> Pos_all
     | _ -> Pos_litdefined (true, parse_positive_int _1) )}
@@ -1869,7 +1869,7 @@ specif_literal_position_in_clause:
     {  ( Pos_query )}
 
 specif_clausal_position:
-| _1 = TOK_IDENT _2 = TOK_IDENT _3 = bracket_enclosed_list_of_positive_ints
+_1 = TOK_IDENT _2 = TOK_IDENT _3 = bracket_enclosed_list_of_positive_ints
     {  ( let i = parse_positive_int _1
     in let b =
       match i with
@@ -1885,35 +1885,35 @@ specif_clausal_position:
     {  ( Pos_query )}
 
 bracket_enclosed_list_of_positive_ints:
-| _1 = TOK_LBRACKET _2 = list_of_positive_ints _3 = TOK_RBRACKET
+_1 = TOK_LBRACKET _2 = list_of_positive_ints _3 = TOK_RBRACKET
     {  ( _2 )}
 | _1 = TOK_LBRACKET _2 = TOK_RBRACKET
     {  ( [] )}
 
 list_of_positions:
-| _1 = bracket_enclosed_list_of_positive_ints
+_1 = bracket_enclosed_list_of_positive_ints
     {  ( [List.map (fun x -> (0,x)) _1 ] )}
 | _1 = list_of_positions _2 = bracket_enclosed_list_of_positive_ints
     {  ( _1 @ [List.map (fun x -> (0,x))  _2 ] )}
 
 list_of_positive_ints:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  ( [(parse_positive_int _1) - 1] )}
 | _1 = list_of_positive_ints _2 = TOK_IDENT
     {  ( _1 @ [(parse_positive_int _2) - 1] )}
 
 specif_substitution:
-| _1 = specif_substitution2 _2 = TOK_EOF
+_1 = specif_substitution2 _2 = TOK_EOF
     {  ( _1 )}
 
 specif_substitution2:
-| _1 = specif_var_term
+_1 = specif_var_term
     {  ( [_1] )}
 | _1 = specif_substitution2 _2 = TOK_SEMICOLUMN _3 = specif_var_term
     {  ( insert_sorted (fun (x, _) (x', _) -> x = x') (fun (x, _) (x', _) -> x < x') _3 _1 )}
 
 specif_var_term:
-| _1 = TOK_IDENT _2 = TOK_COMA _3 = specif_term
+_1 = TOK_IDENT _2 = TOK_COMA _3 = specif_term
     {  ( 
     let v =
       try List.assoc _1 !yy_tmp_vars
@@ -1927,11 +1927,11 @@ specif_var_term:
   )}
 
 specif_positive_int:
-| _1 = TOK_IDENT
+_1 = TOK_IDENT
     {  ( parse_positive_int _1 )}
 
 get_term:
-| _1 = specif_term
+_1 = specif_term
     {  ( let t = process_term_tokens _1 in
     let term_t =
       match t with
@@ -1957,21 +1957,21 @@ get_term:
     in term_t )}
 
 list_of_terms:
-| _1 = reset_tmp_vars _2 = get_term
+_1 = reset_tmp_vars _2 = get_term
     {  ( [_2] )}
 | _1 = list_of_terms _2 = TOK_COMA _3 = reset_tmp_vars _4 = get_term
     {  ( _1 @ [_4] )}
 
 pos_codes_true:
-| 
+
     {  ( pick_pos_codes := true )}
 
 pos_codes_false:
-| 
+
     {  ( pick_pos_codes := false )}
 
 specif_shell_command:
-| _1 = TOK_STRATEGIES _2 = strategy_term
+_1 = TOK_STRATEGIES _2 = strategy_term
     {  ( Command_strategy _2 )}
 | _1 = TOK_IDENT
     {  ( match _1 with
@@ -1983,7 +1983,7 @@ specif_shell_command:
     | _ -> Command_error )}
 
 print_caml:
-| _1 = TOK_PRINT_CAML _2 = TOK_COLUMN _3 = pos_codes_false _4 = list_of_clauses
+_1 = TOK_PRINT_CAML _2 = TOK_COLUMN _3 = pos_codes_false _4 = list_of_clauses
     {  (
     buffered_output (sprint_list "\n\nThe CAML version :" compute_string_clause_caml _4);
   )}

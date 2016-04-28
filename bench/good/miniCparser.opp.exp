@@ -60,19 +60,19 @@ open C
 %%
 
 upath:
-| _1 = UIDENT
+_1 = UIDENT
     {                     ( Pident(Ident.create _1) )}
 | _1 = upath _2 = DOT _3 = UIDENT
     {                     ( Pdot(_1, _3) )}
 
 lpath:
-| _1 = LIDENT
+_1 = LIDENT
     {                     ( Pident(Ident.create _1) )}
 | _1 = upath _2 = DOT _3 = LIDENT
     {                     ( Pdot(_1, _3) )}
 
 expr:
-| _1 = INTCONST
+_1 = INTCONST
     {                                        ( Intconst _1 )}
 | _1 = FLOATCONST
     {                                        ( Floatconst _1 )}
@@ -116,7 +116,7 @@ expr:
     {                                        ( _2 )}
 
 expr_comma_list:
-| 
+
     {                                        ( [] )}
 | _1 = expr
     {                                        ( [_1] )}
@@ -124,7 +124,7 @@ expr_comma_list:
     {                                        ( _3 :: _1 )}
 
 statement:
-| _1 = expr _2 = SEMI
+_1 = expr _2 = SEMI
     {                                           ( Expr _1 )}
 | _1 = IF _2 = LPAREN _3 = expr _4 = RPAREN _5 = statement _6 = ELSE _7 = statement
     {                                                   ( If(_3, _5, _7) )}
@@ -138,25 +138,25 @@ statement:
     {                                           ( Block(List.rev _2, List.rev _3) )}
 
 statement_list:
-| 
+
     {                                        ( [] )}
 | _1 = statement_list _2 = statement
     {                                        ( _2 :: _1 )}
 
 decl_list:
-| 
+
     {                                        ( [] )}
 | _1 = decl_list _2 = ctype _3 = LIDENT _4 = SEMI
     {                                        ( (Ident.create _3, _2) :: _1 )}
 
 term:
-| _1 = ctype _2 = LIDENT _3 = SEMI
+_1 = ctype _2 = LIDENT _3 = SEMI
     {      ( (Ident.create _2, Var_decl _1) )}
 | _1 = ctype _2 = LIDENT _3 = LPAREN _4 = parameters _5 = RPAREN _6 = statement
     {      ( (Ident.create _2, Fun_def(List.rev _4, _1, _6)) )}
 
 parameters:
-| 
+
     {                                        ( [] )}
 | _1 = ctype _2 = LIDENT
     {                                        ( [Ident.create _2, _1] )}
@@ -164,7 +164,7 @@ parameters:
     {                                        ( (Ident.create _4, _3) :: _1 )}
 
 ctype:
-| _1 = VOID
+_1 = VOID
     {                                        ( Void )}
 | _1 = INT
     {                                        ( Int )}
@@ -176,11 +176,11 @@ ctype:
     {                                        ( Pointer _1 )}
 
 typedef:
-| _1 = ctype _2 = typedef_cont
+_1 = ctype _2 = typedef_cont
     {                                        ( _2(_1) )}
 
 typedef_cont:
-| _1 = UIDENT
+_1 = UIDENT
     {      ( let id = Ident.create _1 in (fun ty -> (id, ty)) )}
 | _1 = STAR _2 = typedef_cont
     {      ( let f = _2 in fun ty -> let (id, ty') = f ty in (id, Pointer ty') )}
@@ -192,23 +192,23 @@ typedef_cont:
         fun ty -> let (id, ty_res) = f ty in (id, Function(ty_args, ty_res)) )}
 
 ty_params:
-| _1 = ty_param
+_1 = ty_param
     {                                ( [_1] )}
 | _1 = ty_params _2 = COMMA _3 = ty_param
     {                                ( _3 :: _1 )}
 
 ty_param:
-| _1 = ctype
+_1 = ctype
     {                                ( _1 )}
 | _1 = ctype _2 = LIDENT
     {                                ( _1 )}
 
 valuedecl:
-| _1 = ctype _2 = valuedecl_cont
+_1 = ctype _2 = valuedecl_cont
     {                                          ( _2(_1) )}
 
 valuedecl_cont:
-| _1 = LIDENT
+_1 = LIDENT
     {      ( let id = Ident.create _1 in (fun ty -> (id, ty)) )}
 | _1 = STAR _2 = valuedecl_cont
     {      ( let f = _2 in fun ty -> let (id, ty') = f ty in (id, Pointer ty') )}
@@ -220,7 +220,7 @@ valuedecl_cont:
         fun ty -> let (id, ty_res) = f ty in (id, Function(ty_args, ty_res)) )}
 
 modulexpr:
-| _1 = upath
+_1 = upath
     {                                      ( CMod.Longident _1 )}
 | _1 = STRUCT _2 = structure _3 = END
     {                                      ( CMod.Structure(List.rev _2) )}
@@ -234,13 +234,13 @@ modulexpr:
     {                                      ( CMod.Constraint(_1, _3) )}
 
 structure:
-| 
+
     {                                      ( [] )}
 | _1 = structure _2 = structure_item
     {                                      ( _2 :: _1 )}
 
 structure_item:
-| _1 = term
+_1 = term
     {      ( let (id, term) = _1 in CMod.Value_str(id, term) )}
 | _1 = TYPEDEF _2 = typedef _3 = SEMI
     {      ( let (id, ty) = _2 in CMod.Type_str(id, (), ty) )}
@@ -250,7 +250,7 @@ structure_item:
     {      ( CMod.Module_str(Ident.create _2, _4) )}
 
 moduletype:
-| _1 = SIG _2 = signature _3 = END
+_1 = SIG _2 = signature _3 = END
     {                                    ( CMod.Signature(List.rev _2) )}
 | _1 = FUNCTOR _2 = LPAREN _3 = UIDENT _4 = COLON _5 = moduletype _6 = RPAREN _7 = moduletype
     {                                    ( CMod.Functor_type(Ident.create _3, _5, _7) )}
@@ -258,13 +258,13 @@ moduletype:
     {                                    ( _2 )}
 
 signature:
-| 
+
     {                                    ( [] )}
 | _1 = signature _2 = signature_item
     {                                    ( _2 :: _1 )}
 
 signature_item:
-| _1 = valuedecl _2 = SEMI
+_1 = valuedecl _2 = SEMI
     {      ( let (id, ty) = _1 in CMod.Value_sig(id, ty) )}
 | _1 = TYPEDEF _2 = typedef _3 = SEMI
     {      ( let (id, ty) = _2 in
@@ -275,13 +275,13 @@ signature_item:
     {      ( CMod.Module_sig(Ident.create _2, _4) )}
 
 phrase:
-| _1 = structure_item
+_1 = structure_item
     {                                      ( _1 )}
 | _1 = EOF
     {                                      ( raise End_of_file )}
 
 implementation:
-| _1 = modulexpr _2 = EOF
+_1 = modulexpr _2 = EOF
     {                                      ( _1 )}
 
 %%

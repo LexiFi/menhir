@@ -23,7 +23,7 @@
 %%
 
 main:
-| _1 = EOF
+_1 = EOF
     {      (())}
 | _1 = header_def _2 = main
     {                  ( _1 )}
@@ -31,7 +31,7 @@ main:
     {                ( _1 )}
 
 header_def:
-| _1 = COQ _2 = HEADER
+_1 = COQ _2 = HEADER
     {             ( Hashtbl.add pure_def (toplevel,coq_h) ("",Some _2) )}
 | _1 = CAML _2 = HEADER
     {              (Hashtbl.add pure_def (toplevel,caml_h) (_2,None))}
@@ -39,13 +39,13 @@ header_def:
     {               (Hashtbl.add pure_def (toplevel,caml_hi) (_2,None))}
 
 coll_def:
-| _1 = IMPORT _2 = FOR _3 = ID _4 = limport _5 = IMPORT
+_1 = IMPORT _2 = FOR _3 = ID _4 = limport _5 = IMPORT
     {      ( List.iter (fun x -> let (a,b,c,d) = x in 
 		     (if c <> "" then Hashtbl.add pure_def (_3,c) ("",d));
 		     Hashtbl.add pure_def (_3 , a) (b,d)) _4 )}
 
 limport:
-| _1 = END
+_1 = END
     {      ( [] )}
 | _1 = ID _2 = idlist _3 = def _4 = SEP _5 = limport
     {                            ( let (a,b) = _3 in 
@@ -58,13 +58,13 @@ limport:
 					 (name,b,c,Some d) :: _7 )}
 
 def:
-| _1 = DEF
+_1 = DEF
     {      ( ("" , _1) )}
 | _1 = ID _2 = DEF
     {         ( (_1,_2) )}
 
 idlist:
-| _1 = EQ
+_1 = EQ
     {     ( [] )}
 | _1 = ID _2 = idlist
     {            ( _1 :: _2 )}

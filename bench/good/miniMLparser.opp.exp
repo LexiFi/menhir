@@ -74,13 +74,13 @@ let ternop op arg1 arg2 arg3 =
 %%
 
 path:
-| _1 = IDENT
+_1 = IDENT
     {                    ( Pident(Ident.create _1) )}
 | _1 = path _2 = DOT _3 = IDENT
     {                    ( Pdot(_1, _3) )}
 
 valexpr:
-| _1 = valexpr1
+_1 = valexpr1
     {                                      ( _1 )}
 | _1 = valexpr _2 = COMMA _3 = valexpr
     {                                      ( binop "," _1 _3 )}
@@ -112,13 +112,13 @@ valexpr:
     {                                         ( ternop "conditional" _2 _4 _6 )}
 
 valexpr1:
-| _1 = valexpr0
+_1 = valexpr0
     {             ( _1 )}
 | _1 = valexpr1 _2 = valexpr0
     {                      ( ML.Apply(_1, _2) )}
 
 valexpr0:
-| _1 = path
+_1 = path
     {         ( ML.Longident(_1) )}
 | _1 = INT
     {         ( ML.Constant _1 )}
@@ -126,13 +126,13 @@ valexpr0:
     {                          ( _2 )}
 
 valbind:
-| _1 = EQUAL _2 = valexpr
+_1 = EQUAL _2 = valexpr
     {                      ( _2 )}
 | _1 = IDENT _2 = valbind
     {                      ( ML.Function(Ident.create _1, _2) )}
 
 simpletype:
-| _1 = QUOTE _2 = IDENT
+_1 = QUOTE _2 = IDENT
     {                            ( ML.Var(find_type_variable _2) )}
 | _1 = simpletype _2 = ARROW _3 = simpletype
     {                                ( ML.Typeconstr(path_arrow, [_1; _3]) )}
@@ -146,30 +146,30 @@ simpletype:
     {                                      ( ML.Typeconstr(_4, List.rev _2) )}
 
 simpletypelist:
-| _1 = simpletype
+_1 = simpletype
     {               ( [_1] )}
 | _1 = simpletypelist _2 = COMMA _3 = simpletype
     {                                    ( _3::_1 )}
 
 valuedecl:
-| _1 = colon_begin_scheme _2 = simpletype
+_1 = colon_begin_scheme _2 = simpletype
     {            ( reset_type_variables(); end_def(); generalize _2 )}
 
 colon_begin_scheme:
-| _1 = COLON
+_1 = COLON
     {            ( begin_def(); reset_type_variables() )}
 
 typedecl:
-| _1 = typeparams _2 = IDENT
+_1 = typeparams _2 = IDENT
     {                            ( (_2, {ML.arity = List.length _1}) )}
 
 typedef:
-| _1 = typeparams _2 = IDENT _3 = EQUAL _4 = simpletype
+_1 = typeparams _2 = IDENT _3 = EQUAL _4 = simpletype
     {      ( reset_type_variables();
         (_2, {ML.arity = List.length _1}, {ML.params = _1; ML.defbody = _4}) )}
 
 typeparams:
-| 
+
     {                                ( [] )}
 | _1 = typeparam
     {                                ( [_1] )}
@@ -177,17 +177,17 @@ typeparams:
     {                                ( List.rev _2 )}
 
 typeparamlist:
-| _1 = typeparam
+_1 = typeparam
     {                                    ( [_1] )}
 | _1 = typeparamlist _2 = COMMA _3 = typeparam
     {                                    ( _3 :: _1 )}
 
 typeparam:
-| _1 = QUOTE _2 = IDENT
+_1 = QUOTE _2 = IDENT
     {                ( find_type_variable _2 )}
 
 typeinfo:
-| _1 = typedef
+_1 = typedef
     {              ( let (id, kind, def) = _1 in
                 (id, {MLMod.kind = kind; MLMod.manifest = Some def}))}
 | _1 = typedecl
@@ -195,7 +195,7 @@ typeinfo:
                 (id, {MLMod.kind = kind; MLMod.manifest = None}) )}
 
 modulexpr:
-| _1 = path
+_1 = path
     {                                      ( MLMod.Longident _1 )}
 | _1 = STRUCT _2 = structure _3 = END
     {                                      ( MLMod.Structure(List.rev _2) )}
@@ -209,13 +209,13 @@ modulexpr:
     {                                      ( MLMod.Constraint(_1, _3) )}
 
 structure:
-| 
+
     {                                      ( [] )}
 | _1 = structure _2 = structure_item _3 = opt_semi
     {                                      ( _2 :: _1 )}
 
 structure_item:
-| _1 = VALUE _2 = IDENT _3 = valbind
+_1 = VALUE _2 = IDENT _3 = valbind
     {                                  ( MLMod.Value_str(Ident.create _2, _3) )}
 | _1 = TYPE _2 = typedef
     {                                  ( let (id, kind, def) = _2 in
@@ -226,13 +226,13 @@ structure_item:
     {                                   ( MLMod.Module_str(Ident.create _2, _4) )}
 
 opt_semi:
-| 
+
     {                  ( () )}
 | _1 = SEMICOLON
     {              ( () )}
 
 moduletype:
-| _1 = SIG _2 = signature _3 = END
+_1 = SIG _2 = signature _3 = END
     {                                    ( MLMod.Signature(List.rev _2) )}
 | _1 = FUNCTOR _2 = LPAREN _3 = IDENT _4 = COLON _5 = moduletype _6 = RPAREN _7 = moduletype
     {                                    ( MLMod.Functor_type(Ident.create _3, _5, _7) )}
@@ -240,13 +240,13 @@ moduletype:
     {                                    ( _2 )}
 
 signature:
-| 
+
     {                                      ( [] )}
 | _1 = signature _2 = signature_item _3 = opt_semi
     {                                      ( _2 :: _1 )}
 
 signature_item:
-| _1 = VALUE _2 = IDENT _3 = valuedecl
+_1 = VALUE _2 = IDENT _3 = valuedecl
     {                                      ( MLMod.Value_sig(Ident.create _2, _3) )}
 | _1 = TYPE _2 = typeinfo
     {                     ( let (id, def) = _2 in MLMod.Type_sig(Ident.create id, def) )}
@@ -254,13 +254,13 @@ signature_item:
     {                                      ( MLMod.Module_sig(Ident.create _2, _4) )}
 
 phrase:
-| _1 = structure_item _2 = SEMISEMI
+_1 = structure_item _2 = SEMISEMI
     {                                      ( _1 )}
 | _1 = EOF
     {                                      ( raise End_of_file )}
 
 implementation:
-| _1 = modulexpr _2 = EOF
+_1 = modulexpr _2 = EOF
     {                                      ( _1 )}
 
 %%

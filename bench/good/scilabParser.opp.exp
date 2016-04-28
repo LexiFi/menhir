@@ -138,7 +138,7 @@ Warning: the token WIERDOP is unused.
 %%
 
 program:
-| _1 = expressions
+_1 = expressions
     {                                                ( Exp _1 )}
 | _1 = EOL _2 = expressions
     {                                                ( Exp _2 )}
@@ -156,7 +156,7 @@ program:
                                                   Exp (create_exp loc seqexp) )}
 
 expressions:
-| _1 = recursiveExpression
+_1 = recursiveExpression
     {                                               ( let seqexp = SeqExp (List.rev _1) in
                                                  let off_st = Parsing.rhs_start_pos 1 in
                                                  let off_end = Parsing.rhs_end_pos 1 in
@@ -199,7 +199,7 @@ expressions:
                                                  create_exp loc seqexp )}
 
 recursiveExpression:
-| _1 = recursiveExpression _2 = expression _3 = expressionLineBreak
+_1 = recursiveExpression _2 = expression _3 = expressionLineBreak
     {                                                             ( List.append (match _2.exp_desc with SeqExp l -> l | _ -> [_2]) _1 )}
 | _1 = recursiveExpression _2 = expression _3 = COMMENT _4 = expressionLineBreak
     {                                                             ( let commentexp = CommentExp { commentExp_comment = _3 } in
@@ -219,7 +219,7 @@ recursiveExpression:
     {                                                             ( match _1.exp_desc with SeqExp l -> l | _ -> [_1] )}
 
 expressionLineBreak:
-| _1 = SEMI
+_1 = SEMI
     {                                              ( )}
 | _1 = COMMA
     {                                              ( )}
@@ -233,7 +233,7 @@ expressionLineBreak:
     {                                              ( )}
 
 expression:
-| _1 = functionDeclaration
+_1 = functionDeclaration
     {                         ( _1 )}
 | _1 = functionCall %prec TOPLEVEL
     {                                                ( _1 )}
@@ -281,7 +281,7 @@ expression:
                                                   create_exp loc (ConstExp commentexp) )}
 
 implicitFunctionCall:
-| _1 = implicitFunctionCall _2 = implicitCallable
+_1 = implicitFunctionCall _2 = implicitCallable
     {                                                ( _2::_1 )}
 | _1 = ID _2 = implicitCallable
     {                                                ( let varloc_st = Parsing.rhs_start_pos 1 in
@@ -294,7 +294,7 @@ implicitFunctionCall:
                                                   _2::[varexp])}
 
 implicitCallable:
-| _1 = ID
+_1 = ID
     {                                                ( let strexp = StringExp
                                                     { stringExp_value = _1 ;
                                                       stringExp_bigString = () } in
@@ -368,13 +368,13 @@ implicitCallable:
                                                   create_exp str_loc (ConstExp strexp) )}
 
 functionCall:
-| _1 = simpleFunctionCall
+_1 = simpleFunctionCall
     {                                                ( _1 )}
 | _1 = specificFunctionCall
     {                                                ( _1 )}
 
 specificFunctionCall:
-| _1 = BOOLTRUE _2 = LPAREN _3 = functionArgs _4 = RPAREN
+_1 = BOOLTRUE _2 = LPAREN _3 = functionArgs _4 = RPAREN
     {                                                ( let varloc_st = Parsing.rhs_start_pos 1 in
                                                   let varloc_end = Parsing.rhs_end_pos 1 in
                                                   let varloc = create_loc varloc_st varloc_end in
@@ -404,7 +404,7 @@ specificFunctionCall:
                                                   create_exp loc (CallExp callexp) )}
 
 simpleFunctionCall:
-| _1 = ID _2 = LPAREN _3 = functionArgs _4 = RPAREN
+_1 = ID _2 = LPAREN _3 = functionArgs _4 = RPAREN
     {                                                ( let varloc_st = Parsing.rhs_start_pos 1 in
                                                   let varloc_end = Parsing.rhs_end_pos 1 in
                                                   let varloc = create_loc varloc_st varloc_end in
@@ -420,7 +420,7 @@ simpleFunctionCall:
                                                   create_exp loc (CallExp callexp) )}
 
 functionArgs:
-| _1 = variable
+_1 = variable
     {                                                ( [_1] )}
 | _1 = functionCall
     {                                                ( [_1] )}
@@ -438,7 +438,7 @@ functionArgs:
     {                                               ( _1 )}
 
 functionDeclaration:
-| _1 = FUNCTION _2 = ID _3 = ASSIGN _4 = ID _5 = functionDeclarationArguments _6 = functionDeclarationBreak _7 = functionBody _8 = functionDelimiter
+_1 = FUNCTION _2 = ID _3 = ASSIGN _4 = ID _5 = functionDeclarationArguments _6 = functionDeclarationBreak _7 = functionBody _8 = functionDelimiter
     {                                                                                                             (
   let ret_st =  Parsing.rhs_start_pos 2 in
   let ret_end = Parsing.rhs_end_pos 2 in
@@ -656,23 +656,23 @@ functionDeclaration:
   create_exp fundec_loc (Dec fundec) )}
 
 functionDelimiter:
-| _1 = END
+_1 = END
     {                                                    ( )}
 | _1 = ENDFUNCTION
     {                                                    ( )}
 
 hiddenFun:
-| _1 = HIDDENFUNCTION
+_1 = HIDDENFUNCTION
     {                                                    ( )}
 | _1 = HIDDEN _2 = FUNCTION
     {                                                    ( )}
 
 functionDeclarationReturns:
-| _1 = idList
+_1 = idList
     {                                                ( List.rev _1 )}
 
 functionDeclarationArguments:
-| _1 = LPAREN _2 = idList _3 = RPAREN
+_1 = LPAREN _2 = idList _3 = RPAREN
     {                                                ( List.rev _2 )}
 | _1 = LPAREN _2 = RPAREN
     {                                                ( [] )}
@@ -680,7 +680,7 @@ functionDeclarationArguments:
     {                                                ( [] )}
 
 idList:
-| _1 = idList _2 = COMMA _3 = ID
+_1 = idList _2 = COMMA _3 = ID
     {                                                ( let varloc_st = Parsing.rhs_start_pos 3 in
                                                   let varloc_end = Parsing.rhs_end_pos 3 in
                                                   let varloc = create_loc varloc_st varloc_end in
@@ -696,7 +696,7 @@ idList:
                                                   [varexp] )}
 
 functionDeclarationBreak:
-| _1 = lineEnd
+_1 = lineEnd
     {            ( )}
 | _1 = SEMI
     {          ( )}
@@ -710,7 +710,7 @@ functionDeclarationBreak:
     {                                ( )}
 
 functionBody:
-| _1 = expressions
+_1 = expressions
     {                                 ( _1 )}
 | 
     {                                 ( let off_st = Parsing.rhs_start_pos 1 in
@@ -720,13 +720,13 @@ functionBody:
                                    create_exp loc (SeqExp []) )}
 
 condition:
-| _1 = functionCall %prec HIGHLEVEL
+_1 = functionCall %prec HIGHLEVEL
     {                                                ( _1 )}
 | _1 = variable %prec HIGHLEVEL
     {                                                ( _1 )}
 
 comparison:
-| _1 = variable _2 = AND _3 = variable
+_1 = variable _2 = AND _3 = variable
     {                                                ( let cmploc_st = Parsing.rhs_start_pos 1 in
                                                   let cmploc_end = Parsing.rhs_end_pos 3 in
                                                   let cmploc = create_loc cmploc_st cmploc_end in
@@ -1016,7 +1016,7 @@ comparison:
                                                   create_exp cmploc (MathExp (OpExp (oper,args))) )}
 
 operation:
-| _1 = variable _2 = PLUS _3 = variable
+_1 = variable _2 = PLUS _3 = variable
     {                                                ( let oploc_st = Parsing.rhs_start_pos 1 in
                                                   let oploc_end = Parsing.rhs_end_pos 3 in
                                                   let oploc = create_loc oploc_st oploc_end in
@@ -1670,13 +1670,13 @@ operation:
                                                  create_exp tloc (MathExp (TransposeExp texp)) )}
 
 listableBegin:
-| _1 = COLON _2 = variable
+_1 = COLON _2 = variable
     {                                                ( _2 )}
 | _1 = COLON _2 = functionCall
     {                                                ( _2 )}
 
 listableEnd:
-| _1 = listableBegin _2 = COLON _3 = variable
+_1 = listableBegin _2 = COLON _3 = variable
     {                                                ( { listExp_start = create_dummy_exp ();
                                                     listExp_step  = _1;
                                                     listExp_end   = _3 } )}
@@ -1697,7 +1697,7 @@ listableEnd:
                                                     listExp_end   = _1 } )}
 
 variable:
-| _1 = NOT _2 = variable %prec NOT
+_1 = NOT _2 = variable %prec NOT
     {                                         ( let off_st = Parsing.rhs_start_pos 1 in
                                                   let off_end = Parsing.rhs_end_pos 7 in
                                                   let loc = create_loc off_st off_end in
@@ -1861,13 +1861,13 @@ variable:
                                                   create_exp loc (CallExp callexp) )}
 
 variableField:
-| _1 = variable
+_1 = variable
     {                      ( _1 )}
 | _1 = functionCall
     {                      ( _1 )}
 
 variableFields:
-| _1 = variableFields _2 = COMMA _3 = variableFields
+_1 = variableFields _2 = COMMA _3 = variableFields
     {                                                ( _1 )}
 | _1 = variableField
     {                                                ( _1 )}
@@ -1879,7 +1879,7 @@ variableFields:
                                                   create_exp loc (SeqExp []) )}
 
 ifControl:
-| _1 = IF _2 = condition _3 = thenTok _4 = thenBody _5 = END
+_1 = IF _2 = condition _3 = thenTok _4 = thenBody _5 = END
     {                                                      ( let ifexp = IfExp
                                                           { ifExp_test = _2;
                                                             ifExp_then = _4;
@@ -1917,7 +1917,7 @@ ifControl:
                                                         create_exp loc (ControlExp ifexp) )}
 
 thenBody:
-| 
+
     {                                               ( let off_st = Parsing.rhs_start_pos 1 in
                                                  let off_end = Parsing.rhs_end_pos 1 in
                                                  let loc =
@@ -1927,13 +1927,13 @@ thenBody:
     {                                               ( _1 )}
 
 elseBody:
-| 
+
     {                                               ( None )}
 | _1 = expressions
     {                                               ( Some _1 )}
 
 ifConditionBreak:
-| _1 = SEMI
+_1 = SEMI
     {            ( )}
 | _1 = SEMI _2 = EOL
     {               ( )}
@@ -1945,7 +1945,7 @@ ifConditionBreak:
     {           ( )}
 
 thenTok:
-| _1 = THEN
+_1 = THEN
     {                                                ( )}
 | _1 = ifConditionBreak _2 = THEN
     {                           ( )}
@@ -1959,7 +1959,7 @@ thenTok:
     {                                                ( )}
 
 elseTok:
-| _1 = ELSE
+_1 = ELSE
     {            ( )}
 | _1 = ELSE _2 = COMMA
     {                 ( )}
@@ -1973,7 +1973,7 @@ elseTok:
     {                    ( )}
 
 elseIfControl:
-| _1 = ELSEIF _2 = condition _3 = thenTok _4 = thenBody
+_1 = ELSEIF _2 = condition _3 = thenTok _4 = thenBody
     {                                                      ( let ifexp =
                                                           ControlExp
                                                             (IfExp
@@ -2019,7 +2019,7 @@ elseIfControl:
                                                           (SeqExp [create_exp loc ifexp]) )}
 
 selectControl:
-| _1 = select _2 = selectable _3 = selectConditionBreak _4 = casesControl _5 = END
+_1 = select _2 = selectable _3 = selectConditionBreak _4 = casesControl _5 = END
     {                                                                                       ( let select_exp = SelectExp
                                                                                            { selectExp_selectme = _2 ;
                                                                                              selectExp_cases    = Array.of_list (List.rev _4) ;
@@ -2070,13 +2070,13 @@ selectControl:
                                                                                          create_exp select_loc (ControlExp select_exp) )}
 
 select:
-| _1 = SELECT
+_1 = SELECT
     {                                   ( )}
 | _1 = SWITCH
     {                                   ( )}
 
 defaultCase:
-| _1 = elseTok
+_1 = elseTok
     {                                   ( )}
 | _1 = OTHERWISE
     {                                   ( )}
@@ -2092,13 +2092,13 @@ defaultCase:
     {                                   ( )}
 
 selectable:
-| _1 = variable
+_1 = variable
     {                                   ( _1 )}
 | _1 = functionCall
     {                                   ( _1 )}
 
 selectConditionBreak:
-| _1 = EOL
+_1 = EOL
     {                                   ( )}
 | _1 = COMMA
     {                                   ( )}
@@ -2110,7 +2110,7 @@ selectConditionBreak:
     {                                   ( )}
 
 casesControl:
-| _1 = CASE _2 = variable _3 = caseControlBreak _4 = caseBody
+_1 = CASE _2 = variable _3 = caseControlBreak _4 = caseBody
     {                                                           ( let casetest_st = Parsing.rhs_start_pos 2 in
                                                              let casetest_end = Parsing.rhs_end_pos 2 in
                                                              let casetest_loc = create_loc casetest_st casetest_end in
@@ -2184,7 +2184,7 @@ casesControl:
                                                              casexp::_1 )}
 
 caseBody:
-| _1 = expressions
+_1 = expressions
     {                                   (
   match _1.exp_desc with
     | SeqExp l -> l
@@ -2193,7 +2193,7 @@ caseBody:
     {                                   ( [] )}
 
 caseControlBreak:
-| _1 = THEN
+_1 = THEN
     {                                   ( )}
 | _1 = COMMA
     {                                   ( )}
@@ -2219,7 +2219,7 @@ caseControlBreak:
     {                                   ( )}
 
 forControl:
-| _1 = FOR _2 = ID _3 = ASSIGN _4 = forIterator _5 = forConditionBreak _6 = forBody _7 = END
+_1 = FOR _2 = ID _3 = ASSIGN _4 = forIterator _5 = forConditionBreak _6 = forBody _7 = END
     {                                                                        ( let vardec_st = Parsing.rhs_start_pos 2 in
                                                                           let vardec_end = Parsing.rhs_end_pos 2 in
                                                                           let vardec_loc = create_loc vardec_st vardec_end in
@@ -2253,13 +2253,13 @@ forControl:
                                                                           create_exp loc (ControlExp forexp))}
 
 forIterator:
-| _1 = functionCall %prec UPLEVEL
+_1 = functionCall %prec UPLEVEL
     {                                                ( _1 )}
 | _1 = variable %prec UPLEVEL
     {                                                ( _1 )}
 
 forConditionBreak:
-| _1 = EOL
+_1 = EOL
     {           ( )}
 | _1 = SEMI
     {            ( )}
@@ -2277,7 +2277,7 @@ forConditionBreak:
     {                  ( )}
 
 forBody:
-| _1 = expressions
+_1 = expressions
     {                                                ( _1 )}
 | 
     {                                                ( let off_st = Parsing.rhs_start_pos 1 in
@@ -2287,7 +2287,7 @@ forBody:
                                                   create_exp loc (SeqExp []) )}
 
 whileControl:
-| _1 = WHILE _2 = condition _3 = whileConditionBreak _4 = whileBody _5 = END
+_1 = WHILE _2 = condition _3 = whileConditionBreak _4 = whileBody _5 = END
     {                                                                          ( let wexp =
                                                                               WhileExp
                                                                                 { whileExp_test = _2;
@@ -2317,7 +2317,7 @@ whileControl:
                                                                             create_exp loc seqexp )}
 
 whileBody:
-| 
+
     {                        ( let off_st = Parsing.rhs_start_pos 1 in
                           let off_end = Parsing.rhs_end_pos 1 in
                           let loc =
@@ -2327,13 +2327,13 @@ whileBody:
     {                        ( _1 )}
 
 elseWhileBody:
-| 
+
     {                        ( [] )}
 | _1 = expressions
     {                        ( match _1.exp_desc with | SeqExp l -> l | _ -> [] )}
 
 whileConditionBreak:
-| _1 = COMMA
+_1 = COMMA
     {                        ( )}
 | _1 = SEMI
     {                        ( )}
@@ -2371,7 +2371,7 @@ whileConditionBreak:
     {                        ( )}
 
 tryControl:
-| _1 = tryTok _2 = catchBody _3 = catchTok _4 = catchBody _5 = END
+_1 = tryTok _2 = catchBody _3 = catchTok _4 = catchBody _5 = END
     {                                                   ( let test_loc_st = Parsing.rhs_start_pos 2 in
                                                      let test_loc_end = Parsing.rhs_end_pos 2 in
                                                      let test_loc = create_loc test_loc_st test_loc_end in
@@ -2404,7 +2404,7 @@ tryControl:
                                                      create_exp loc (ControlExp tryexp) )}
 
 tryTok:
-| _1 = TRY
+_1 = TRY
     {                                                   ( )}
 | _1 = TRY _2 = SEMI
     {                                                   ( )}
@@ -2418,7 +2418,7 @@ tryTok:
     {                                                   ( )}
 
 catchTok:
-| _1 = CATCH
+_1 = CATCH
     {                                                   ( )}
 | _1 = CATCH _2 = SEMI
     {                                                   ( )}
@@ -2432,13 +2432,13 @@ catchTok:
     {                                                   ( )}
 
 catchBody:
-| _1 = expressions
+_1 = expressions
     {                                                   ( match _1.exp_desc with | SeqExp l -> l | _ -> [] )}
 | 
     {                                                   ( [] )}
 
 returnControl:
-| _1 = RETURN
+_1 = RETURN
     {                                                   ( let off_st = Parsing.rhs_start_pos 1 in
                                                      let off_end = Parsing.rhs_end_pos 1 in
                                                      let loc = create_loc off_st off_end in
@@ -2454,7 +2454,7 @@ returnControl:
                                                      create_exp loc (ControlExp retexp) )}
 
 cell:
-| _1 = LBRACE _2 = matrixOrCellLines _3 = RBRACE
+_1 = LBRACE _2 = matrixOrCellLines _3 = RBRACE
     {                                                          ( let mle = Array.of_list (List.rev _2) in
                                                             let mathexp = CellExp { matrixExp_lines = mle } in
                                                             let off_st = Parsing.rhs_start_pos 1 in
@@ -2538,7 +2538,7 @@ cell:
                                                             create_exp loc (MathExp mathexp) )}
 
 matrix:
-| _1 = LBRACK _2 = matrixOrCellLines _3 = RBRACK
+_1 = LBRACK _2 = matrixOrCellLines _3 = RBRACK
     {                                              ( let mle = Array.of_list (List.rev _2) in
                                                 let mathexp =
                                                   MatrixExp { matrixExp_lines = mle } in
@@ -2630,13 +2630,13 @@ matrix:
                                                 create_exp loc (MathExp mathexp) )}
 
 matrixOrCellLines:
-| _1 = matrixOrCellLines _2 = matrixOrCellLine
+_1 = matrixOrCellLines _2 = matrixOrCellLine
     {                                                   ( _2::_1 )}
 | _1 = matrixOrCellLine
     {                                                      ( [_1])}
 
 matrixOrCellLineBreak:
-| _1 = SEMI
+_1 = SEMI
     {                                                                (  )}
 | _1 = EOL
     {                                                                (  )}
@@ -2646,7 +2646,7 @@ matrixOrCellLineBreak:
     {                                                                (  )}
 
 matrixOrCellLine:
-| _1 = matrixOrCellColumns _2 = matrixOrCellLineBreak
+_1 = matrixOrCellColumns _2 = matrixOrCellLineBreak
     {                                                                     ( let st_line = Parsing.rhs_start_pos 1 in
                                                                        let end_line = Parsing.rhs_end_pos 1 in
                                                                        let loc_line = create_loc st_line end_line in
@@ -2662,7 +2662,7 @@ matrixOrCellLine:
                                                                            Array.of_list (List.rev _1) } )}
 
 matrixOrCellColumns:
-| _1 = matrixOrCellColumns _2 = matrixOrCellColumnsBreak _3 = variable %prec HIGHLEVEL
+_1 = matrixOrCellColumns _2 = matrixOrCellColumnsBreak _3 = variable %prec HIGHLEVEL
     {                                                                              ( _3::_1 )}
 | _1 = matrixOrCellColumns _2 = matrixOrCellColumnsBreak _3 = functionCall %prec HIGHLEVEL
     {                                                                              ( _3::_1 )}
@@ -2690,13 +2690,13 @@ matrixOrCellColumns:
                                                                                 [cmt_exp] )}
 
 matrixOrCellColumnsBreak:
-| _1 = matrixOrCellColumnsBreak _2 = COMMA
+_1 = matrixOrCellColumnsBreak _2 = COMMA
     {                                    (  )}
 | _1 = COMMA
     {               (  )}
 
 variableDeclaration:
-| _1 = assignable _2 = ASSIGN _3 = variable %prec HIGHLEVEL
+_1 = assignable _2 = ASSIGN _3 = variable %prec HIGHLEVEL
     {                                                                ( let assignexp =
                                                                     AssignExp {assignExp_left_exp = _1;
                                                                                assignExp_right_exp = _3 } in
@@ -2746,7 +2746,7 @@ variableDeclaration:
                                                                   create_exp loc assignexp )}
 
 assignable:
-| _1 = variable _2 = DOT _3 = ID %prec UPLEVEL
+_1 = variable _2 = DOT _3 = ID %prec UPLEVEL
     {                                                                ( let varloc_st = Parsing.rhs_start_pos 3 in
                                                                   let varloc_end = Parsing.rhs_end_pos 3 in
                                                                   let varloc = create_loc varloc_st varloc_end in
@@ -2822,26 +2822,26 @@ assignable:
                                                                   create_exp loc (CallExp callexp) )}
 
 multipleResults:
-| _1 = LBRACK _2 = matrixOrCellColumns _3 = RBRACK
+_1 = LBRACK _2 = matrixOrCellColumns _3 = RBRACK
     {                                                 ( let off_st = Parsing.rhs_start_pos 1 in
                                                                   let off_end = Parsing.rhs_end_pos 3 in
                                                                   let loc = create_loc off_st off_end in
                                                                   create_exp loc (AssignListExp (Array.of_list (List.rev _2))) )}
 
 comments:
-| _1 = COMMENT _2 = EOL
+_1 = COMMENT _2 = EOL
     {                                                    ( )}
 | _1 = comments _2 = COMMENT _3 = EOL
     {                                                    ( )}
 
 lineEnd:
-| _1 = EOL
+_1 = EOL
     {                                                    ( )}
 | _1 = COMMENT _2 = EOL
     {                                                    ( )}
 
 keywords:
-| _1 = IF
+_1 = IF
     {                                                    ( let varloc_st = Parsing.rhs_start_pos 1 in
                                                       let varloc_end = Parsing.rhs_end_pos 1 in
                                                       let varloc = create_loc varloc_st varloc_end in

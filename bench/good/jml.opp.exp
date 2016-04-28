@@ -145,11 +145,11 @@ Warning: the token THEN is unused.
 %%
 
 jml_specification_eof:
-| _1 = jml_specification _2 = EOF
+_1 = jml_specification _2 = EOF
     {    ( _1 )}
 
 jml_specification:
-| _1 = PURE
+_1 = PURE
     {    ( Jml_pure )}
 | _1 = SPEC_PUBLIC
     {    ( Jml_spec_public )}
@@ -163,7 +163,7 @@ jml_specification:
     {    ( Jml_assertion(_2) )}
 
 loop_annotation:
-| _1 = LOOP_INVARIANT _2 = expr_semicolon _3 = assignable_clauses _4 = decreases_clause
+_1 = LOOP_INVARIANT _2 = expr_semicolon _3 = assignable_clauses _4 = decreases_clause
     {    ( 
       let m = _3 in
       { loop_invariant = _2 ; 
@@ -172,69 +172,69 @@ loop_annotation:
 	loop_decreases = _4} )}
 
 decreases_clause:
-| 
+
     {                         ( expr_zero )}
 | _1 = DECREASES _2 = expr_semicolon
     {                           ( _2 )}
 
 method_specification:
-| _1 = non_extending_specification
+_1 = non_extending_specification
     {    ( Non_extending(_1) )}
 | _1 = extending_specification
     {    ( _1 )}
 
 extending_specification:
-| _1 = ALSO _2 = additive_specification
+_1 = ALSO _2 = additive_specification
     {    ( Extending_also(_2) )}
 | _1 = AND _2 = conjoinable_spec_seq
     {    ( Extending_and(_2) )}
 
 non_extending_specification:
-| _1 = spec_case_seq
+_1 = spec_case_seq
     {    ( _1 )}
 
 spec_case_seq:
-| _1 = spec_case
+_1 = spec_case
     {    ( [_1] )}
 | _1 = spec_case _2 = ALSO _3 = spec_case_seq
     {    ( _1::_3 )}
 
 spec_case:
-| _1 = generic_spec_case
+_1 = generic_spec_case
     {    ( Generic(_1) )}
 | _1 = behavior_spec
     {    ( _1 )}
 
 additive_specification:
-| _1 = spec_case_seq
+_1 = spec_case_seq
     {    ( _1 )}
 
 generic_spec_case:
-| _1 = spec_var_decls _2 = spec_header _3 = generic_spec_body
+_1 = spec_var_decls _2 = spec_header _3 = generic_spec_body
     {    ( { generic_spec_var_decls = _1 ; 
 	  generic_spec_header = _2 ; 
 	  generic_spec_body = _3 } )}
 
 spec_header:
-| _1 = requires_clauses _2 = when_clauses _3 = measured_clauses
+_1 = requires_clauses _2 = when_clauses _3 = measured_clauses
     {    ( { requires_clauses = _1 ;
 	when_clauses = _2 ;
 	measured_clauses = _3 } )}
 
 generic_spec_body:
-| _1 = simple_spec_body
+_1 = simple_spec_body
     {    ( Simple_spec_body(_1) )}
 | _1 = LEFTBRACEBAR _2 = generic_spec_case_seq _3 = BARRIGHTBRACE
     {    ( Nested_spec_body(_2) )}
 
 generic_spec_case_seq:
-| _1 = generic_spec_case
+_1 = generic_spec_case
     {    ( [_1] )}
 | _1 = generic_spec_case _2 = ALSO _3 = generic_spec_case_seq
     {    ( _1::_3 )}
 
 simple_spec_body:
-| _1 = assignable_clause _2 = assignable_clauses _3 = ensures_clauses _4 = signals_clauses _5 = diverges_clauses
+_1 = assignable_clause _2 = assignable_clauses _3 = ensures_clauses _4 = signals_clauses _5 = diverges_clauses
     {    ( { assignable_clauses = _1::_2 ;
 	ensures_clauses = _3 ;
 	signals_clauses = _4 ;
@@ -256,7 +256,7 @@ simple_spec_body:
 	diverges_clauses = _1::_2 } )}
 
 behavior_spec:
-| _1 = privacy _2 = BEHAVIOR _3 = generic_spec_case
+_1 = privacy _2 = BEHAVIOR _3 = generic_spec_case
     {    ( Behavior(_1,_3) )}
 | _1 = privacy _2 = EXCEPTIONAL_BEHAVIOR _3 = exceptional_spec_case
     {    ( Exceptional_behavior(_1,_3) )}
@@ -264,13 +264,13 @@ behavior_spec:
     {    ( Normal_behavior(_1,_3) )}
 
 exceptional_spec_case:
-| _1 = spec_var_decls _2 = spec_header _3 = exceptional_spec_body
+_1 = spec_var_decls _2 = spec_header _3 = exceptional_spec_body
     {    ( { exceptional_spec_var_decls = _1 ;
 	exceptional_spec_header = _2 ;
 	exceptional_spec_body = _3 } )}
 
 privacy:
-| 
+
     {    ( Privacy_none )}
 | _1 = PUBLIC
     {    ( Privacy_public )}
@@ -280,66 +280,66 @@ privacy:
     {    ( Privacy_private )}
 
 exceptional_spec_body:
-| _1 = exceptional_simple_spec_body
+_1 = exceptional_simple_spec_body
     {    ( Simple_exceptional_spec_body(_1) )}
 | _1 = LEFTBRACEBAR _2 = exceptional_spec_case_seq _3 = BARRIGHTBRACE
     {    ( Nested_exceptional_spec_body(_2) )}
 
 exceptional_simple_spec_body:
-| _1 = assignable_clauses _2 = signals_clauses _3 = diverges_clauses
+_1 = assignable_clauses _2 = signals_clauses _3 = diverges_clauses
     {    ( { exceptional_assignable_clauses = _1 ;
 	exceptional_signals_clauses = _2 ;
 	exceptional_diverges_clauses = _3 } )}
 
 exceptional_spec_case_seq:
-| _1 = exceptional_spec_case
+_1 = exceptional_spec_case
     {    ( [_1] )}
 | _1 = exceptional_spec_case _2 = ALSO _3 = exceptional_spec_case_seq
     {    ( _1::_3 )}
 
 normal_spec_case:
-| _1 = spec_var_decls _2 = spec_header _3 = normal_spec_body
+_1 = spec_var_decls _2 = spec_header _3 = normal_spec_body
     {    ( { normal_spec_var_decls = _1 ;
 	normal_spec_header = _2 ;
 	normal_spec_body = _3 } )}
 
 normal_spec_body:
-| _1 = normal_simple_spec_body
+_1 = normal_simple_spec_body
     {    ( Simple_normal_spec_body(_1) )}
 | _1 = LEFTBRACEBAR _2 = normal_spec_case_seq _3 = BARRIGHTBRACE
     {    ( Nested_normal_spec_body(_2) )}
 
 normal_simple_spec_body:
-| _1 = assignable_clauses _2 = ensures_clauses _3 = diverges_clauses
+_1 = assignable_clauses _2 = ensures_clauses _3 = diverges_clauses
     {    ( { normal_assignable_clauses = _1 ;
 	normal_ensures_clauses = _2 ;
 	normal_diverges_clauses = _3 } )}
 
 normal_spec_case_seq:
-| _1 = normal_spec_case
+_1 = normal_spec_case
     {    ( [_1] )}
 | _1 = normal_spec_case _2 = ALSO _3 = normal_spec_case_seq
     {    ( _1::_3 )}
 
 conjoinable_spec_seq:
-| _1 = conjoinable_spec
+_1 = conjoinable_spec
     {    ( [_1] )}
 | _1 = conjoinable_spec _2 = AND _3 = conjoinable_spec_seq
     {    ( _1::_3 )}
 
 conjoinable_spec:
-| _1 = generic_conjoinable_spec
+_1 = generic_conjoinable_spec
     {    ( Generic_conjoinable_spec(_1) )}
 | _1 = behavior_conjoinable_spec
     {    ( Behavior_conjoinable_spec(_1) )}
 
 generic_conjoinable_spec:
-| _1 = spec_var_decls _2 = simple_spec_body
+_1 = spec_var_decls _2 = simple_spec_body
     {    ( { conjoinable_spec_var_decls = _1 ;
 	conjoinable_spec_body = _2 } )}
 
 behavior_conjoinable_spec:
-| _1 = privacy _2 = BEHAVIOR _3 = spec_var_decls _4 = simple_spec_body
+_1 = privacy _2 = BEHAVIOR _3 = spec_var_decls _4 = simple_spec_body
     {    ( Behavior(_1,
 	       { generic_spec_var_decls = _3 ; 
 		 generic_spec_header = default_spec_header ;
@@ -356,92 +356,92 @@ behavior_conjoinable_spec:
 		 normal_spec_body = Simple_normal_spec_body(_4) } ) )}
 
 spec_var_decls:
-| _1 = forall_var_decls _2 = let_var_decls
+_1 = forall_var_decls _2 = let_var_decls
     {    ( { forall_var_decls = _1 ;
 	let_var_decls = _2 } )}
 
 forall_var_decls:
-| 
+
     {    ( [] )}
 | _1 = forall_var_decl _2 = forall_var_decls
     {    ( _1::_2 )}
 
 forall_var_decl:
-| _1 = FORALL _2 = variable_declaration _3 = SEMICOLON
+_1 = FORALL _2 = variable_declaration _3 = SEMICOLON
     {    ( _2 )}
 
 let_var_decls:
-| 
+
     {    ( [] )}
 | _1 = OLD _2 = local_spec_var_decls
     {    ( _2 )}
 
 local_spec_var_decls:
-| _1 = local_spec_var_decl
+_1 = local_spec_var_decl
     {    ( [_1] )}
 | _1 = local_spec_var_decl _2 = local_spec_var_decls
     {    ( _1::_2 )}
 
 local_spec_var_decl:
-| _1 = MODEL _2 = variable_declaration _3 = SEMICOLON
+_1 = MODEL _2 = variable_declaration _3 = SEMICOLON
     {    ( let (t,idl) = _2 in Local_spec_var_decl_model(t,idl) )}
 | _1 = GHOST _2 = variable_declaration _3 = SEMICOLON
     {    ( let (t,idl)=_2 in Local_spec_var_decl_ghost(t,idl) )}
 
 requires_clauses:
-| 
+
     {    ( [] )}
 | _1 = requires_clause _2 = requires_clauses
     {    ( _1::_2 )}
 
 requires_clause:
-| _1 = REQUIRES _2 = expr_semicolon
+_1 = REQUIRES _2 = expr_semicolon
     {    ( _2 )}
 
 when_clauses:
-| 
+
     {    ( [] )}
 | _1 = when_clause _2 = when_clauses
     {    ( _1::_2 )}
 
 when_clause:
-| _1 = WHEN _2 = expr_semicolon
+_1 = WHEN _2 = expr_semicolon
     {    ( _2 )}
 
 measured_clauses:
-| 
+
     {    ( [] )}
 | _1 = measured_clause _2 = measured_clauses
     {    ( _1::_2 )}
 
 measured_clause:
-| _1 = MEASURED_BY _2 = expr_semicolon
+_1 = MEASURED_BY _2 = expr_semicolon
     {    ( _2 )}
 
 assignable_clauses:
-| 
+
     {    ( [] )}
 | _1 = assignable_clause _2 = assignable_clauses
     {    ( _1::_2 )}
 
 assignable_clause:
-| _1 = ASSIGNABLE _2 = assignable_objects _3 = SEMICOLON
+_1 = ASSIGNABLE _2 = assignable_objects _3 = SEMICOLON
     {                                          ( _2 )}
 
 assignable_objects:
-| _1 = assignable_entry
+_1 = assignable_entry
     {    ( [_1] )}
 | _1 = assignable_entry _2 = COMMA _3 = assignable_objects
     {    ( _1::_3 )}
 
 assignable_entry:
-| _1 = assignable_any_object
+_1 = assignable_any_object
     {    ( (_1,None) )}
 | _1 = assignable_any_object _2 = IF _3 = expr
     {    ( (_1,Some _3) )}
 
 assignable_any_object:
-| _1 = BSEVERYTHING
+_1 = BSEVERYTHING
     {    ( Assignable_everything )}
 | _1 = BSNOTHING
     {    ( Assignable_nothing )}
@@ -455,13 +455,13 @@ assignable_any_object:
     {                                (let e = expand_name _1 in Assignable_set_ref (e,_2::_3))}
 
 set_ref_sep:
-| _1 = LEFTBRACKET _2 = expr _3 = DOTDOT _4 = expr _5 = RIGHTBRACKET
+_1 = LEFTBRACKET _2 = expr _3 = DOTDOT _4 = expr _5 = RIGHTBRACKET
     {    (Set_array_interval(_2,_4))}
 | _1 = LEFTBRACKET _2 = STAR _3 = RIGHTBRACKET
     {    (Set_array)}
 
 set_ref:
-| _1 = set_ref_sep
+_1 = set_ref_sep
     {              (_1)}
 | _1 = LEFTBRACKET _2 = expr _3 = RIGHTBRACKET
     {    (Set_array_index(_2))}
@@ -469,29 +469,29 @@ set_ref:
     {    (Set_fieldraw(_2))}
 
 set_ref_list:
-| 
+
     {   ([])}
 | _1 = set_ref _2 = set_ref_list
     {                       (_1::_2)}
 
 ensures_clauses:
-| 
+
     {    ( [] )}
 | _1 = ensures_clause _2 = ensures_clauses
     {    ( _1::_2 )}
 
 ensures_clause:
-| _1 = ENSURES _2 = expr_semicolon
+_1 = ENSURES _2 = expr_semicolon
     {    ( _2 )}
 
 signals_clauses:
-| 
+
     {    ( [] )}
 | _1 = signals_clause _2 = signals_clauses
     {    ( _1::_2 )}
 
 signals_clause:
-| _1 = SIGNALS _2 = LEFTPAR _3 = type_expr _4 = ident _5 = RIGHTPAR _6 = opt_expr_semicolon
+_1 = SIGNALS _2 = LEFTPAR _3 = type_expr _4 = ident _5 = RIGHTPAR _6 = opt_expr_semicolon
     {   ( { signals_exception = _3 ;
        signals_variable = Some _4 ;
        signals_post = match _6 with | None -> expr_true | Some e -> e ; } )}
@@ -501,23 +501,23 @@ signals_clause:
        signals_post = match _5 with | None -> expr_true | Some e -> e ; } )}
 
 diverges_clauses:
-| 
+
     {    ( [] )}
 | _1 = diverges_clause _2 = diverges_clauses
     {    ( _1::_2 )}
 
 diverges_clause:
-| _1 = DIVERGES _2 = expr_semicolon
+_1 = DIVERGES _2 = expr_semicolon
     {    ( _2 )}
 
 jml_declarations:
-| 
+
     {    ( [] )}
 | _1 = jml_declaration _2 = jml_declarations
     {    ( _1::_2 )}
 
 jml_declaration:
-| _1 = privacy _2 = INVARIANT _3 = expr_semicolon
+_1 = privacy _2 = INVARIANT _3 = expr_semicolon
     {      ( Invariant(_3) )}
 | _1 = modifiers _2 = type_expr _3 = variable_declarators _4 = SEMICOLON
     {    ( Jml_variable_declaration(
@@ -528,13 +528,13 @@ jml_declaration:
     {    ( Represents(_2,_4) )}
 
 modifiers:
-| 
+
     {    ( [] )}
 | _1 = modifier _2 = modifiers
     {    ( _1::_2 )}
 
 modifier:
-| _1 = MODEL
+_1 = MODEL
     {    ( `MODEL )}
 | _1 = FINAL
     {    ( `FINAL )}
@@ -548,17 +548,17 @@ modifier:
     {    ( `PROTECTED )}
 
 expr_semicolon:
-| _1 = expr _2 = SEMICOLON
+_1 = expr _2 = SEMICOLON
     {    ( _1 )}
 
 opt_expr_semicolon:
-| _1 = expr _2 = SEMICOLON
+_1 = expr _2 = SEMICOLON
     {    ( Some(_1) )}
 | _1 = SEMICOLON
     {    ( None )}
 
 field_access:
-| _1 = SUPER _2 = DOT _3 = ident
+_1 = SUPER _2 = DOT _3 = ident
     {    ( let (l,_) as id = _3 in
       (merge_locs _1 l, Super_access(id)) )}
 | _1 = primary_expr _2 = DOT _3 = ident
@@ -566,13 +566,13 @@ field_access:
       (merge_locs e.expr_loc l,Primary_access(e,id)) )}
 
 primary_expr:
-| _1 = primary_no_new_array
+_1 = primary_no_new_array
     {    ( _1 )}
 | _1 = array_creation_expression
     {    ( _1 )}
 
 primary_no_new_array:
-| _1 = INTEGER
+_1 = INTEGER
     {    ( let (loc,n)=_1 in mk_lit loc (Int(n)) )}
 | _1 = REAL
     {    ( let (loc,r)=_1 in mk_lit loc (Float(r)) )}
@@ -655,7 +655,7 @@ primary_no_new_array:
     {    ( _1 )}
 
 array_access:
-| _1 = primary_no_new_array _2 = LEFTBRACKET _3 = expr _4 = RIGHTBRACKET
+_1 = primary_no_new_array _2 = LEFTBRACKET _3 = expr _4 = RIGHTBRACKET
     {    ( let e=_1 in
       let eend = symbol_end() in
       (*i
@@ -671,7 +671,7 @@ array_access:
 	(Array_access(e,_3)) )}
 
 array_creation_expression:
-| _1 = NEW _2 = base_type _3 = array_dims
+_1 = NEW _2 = base_type _3 = array_dims
     {    ( let l = _1 in
       mk_expr 
 	(extend_loc l)
@@ -683,31 +683,31 @@ array_creation_expression:
 	(Array_creation(build_array_creation_expr (Type_name(_2)) _3)) )}
 
 array_dims:
-| _1 = LEFTBRACKET _2 = expr _3 = RIGHTBRACKET _4 = implicit_dims
+_1 = LEFTBRACKET _2 = expr _3 = RIGHTBRACKET _4 = implicit_dims
     {    ( ([_2],_4) )}
 | _1 = LEFTBRACKET _2 = expr _3 = RIGHTBRACKET _4 = array_dims
     {    ( let (a,b) = _4 in (_2::a,b) )}
 
 implicit_dims:
-| 
+
     {    ( 0 )}
 | _1 = LEFTBRACKET _2 = RIGHTBRACKET _3 = implicit_dims
     {    ( succ _3 )}
 
 primary_expr_or_name:
-| _1 = primary_expr
+_1 = primary_expr
     {    ( _1 )}
 | _1 = name
     {    ( expand_name _1 )}
 
 expr:
-| _1 = name
+_1 = name
     {    ( expand_name _1 )}
 | _1 = expr_no_name
     {    ( _1 )}
 
 expr_no_name:
-| _1 = primary_expr
+_1 = primary_expr
     {    ( _1 )}
 | _1 = expr _2 = QUESTIONMARK _3 = expr _4 = COLON _5 = expr %prec IFEXPR
     {    ( let e1=_1 and e3=_5 in
@@ -833,45 +833,45 @@ expr_no_name:
 	(Instanceof(e,_3)) )}
 
 parenthesized_name:
-| _1 = LEFTPAR _2 = name _3 = RIGHTPAR
+_1 = LEFTPAR _2 = name _3 = RIGHTPAR
     {    ( _2 )}
 
 name:
-| _1 = ident
+_1 = ident
     {    ( [_1] )}
 | _1 = name _2 = DOT _3 = ident
     {    ( _3::_1 )}
 
 argument_list:
-| 
+
     {    ( [] )}
 | _1 = expr_comma_list
     {    ( _1 )}
 
 expr_comma_list:
-| _1 = expr
+_1 = expr
     {    ( [_1] )}
 | _1 = expr _2 = COMMA _3 = expr_comma_list
     {    ( _1::_3 )}
 
 variable_declaration:
-| _1 = type_expr _2 = variable_declarators
+_1 = type_expr _2 = variable_declarators
     {    ( (_1,_2) )}
 
 variable_declarators:
-| _1 = variable_declarator_id
+_1 = variable_declarator_id
     {    ( [_1] )}
 | _1 = variable_declarator_id _2 = COMMA _3 = variable_declarators
     {    ( _1::_3 )}
 
 variable_declarator_id:
-| _1 = ident
+_1 = ident
     {    ( let (loc,id)=_1 in Simple_id(loc,id) )}
 | _1 = variable_declarator_id _2 = LEFTBRACKET _3 = RIGHTBRACKET
     {    ( Array_id(_1) )}
 
 base_type:
-| _1 = SHORT
+_1 = SHORT
     {    ( "short" )}
 | _1 = BOOLEAN
     {    ( "boolean" )}
@@ -889,19 +889,19 @@ base_type:
     {    ( "double" )}
 
 type_expr:
-| _1 = name
+_1 = name
     {    ( Type_name(_1) )}
 | _1 = type_expr_no_name
     {    ( _1 )}
 
 type_expr_no_name:
-| _1 = base_type
+_1 = base_type
     {    ( Base_type(_1) )}
 | _1 = array_type_expr
     {    ( Array_type_expr(_1) )}
 
 array_type_expr:
-| _1 = base_type _2 = LEFTBRACKET _3 = RIGHTBRACKET
+_1 = base_type _2 = LEFTBRACKET _3 = RIGHTBRACKET
     {    ( Base_type(_1) )}
 | _1 = name _2 = LEFTBRACKET _3 = RIGHTBRACKET
     {    ( Type_name(_1) )}
@@ -909,7 +909,7 @@ array_type_expr:
     {    ( Array_type_expr(_1) )}
 
 ident:
-| _1 = ID
+_1 = ID
     {    ( _1 )}
 
 %%

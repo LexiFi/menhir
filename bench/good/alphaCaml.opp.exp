@@ -56,17 +56,17 @@ open Syntax
 %%
 
 typevar:
-| _1 = QUOTE _2 = LID
+_1 = QUOTE _2 = LID
     {    ( _2 )}
 
 typevars:
-| _1 = typevar
+_1 = typevar
     {    ( [ _1 ] )}
 | _1 = typevars _2 = COMMA _3 = typevar
     {    ( _3 :: _1 )}
 
 params:
-| 
+
     {    ( [] )}
 | _1 = typevar
     {    ( [ _1 ] )}
@@ -74,13 +74,13 @@ params:
     {    ( List.rev _2 )}
 
 params_and_set_current:
-| _1 = params
+_1 = params
     {    ( let params = _1 in
       current_params := params;
       params )}
 
 identifier:
-| _1 = LID
+_1 = LID
     {    ( _1 )}
 | _1 = UID _2 = DOT _3 = identifier
     {    ( let (pos1, _, id1) = _1
@@ -88,13 +88,13 @@ identifier:
       (pos1, pos2, id1 ^ "." ^ id2) )}
 
 container:
-| 
+
     {    ( None )}
 | _1 = identifier
     {    ( Some _1 )}
 
 expfactor:
-| _1 = ATOM _2 = LID
+_1 = ATOM _2 = LID
     {    ( EAtom _2 )}
 | _1 = OCAML
     {    ( EEscape _1 )}
@@ -121,7 +121,7 @@ expfactor:
     {    ( error 1 "Invalid expression factor." )}
 
 patfactor:
-| _1 = ATOM _2 = LID
+_1 = ATOM _2 = LID
     {    ( PAtom _2 )}
 | _1 = OCAML
     {    ( PEscape _1 )}
@@ -139,7 +139,7 @@ patfactor:
     {    ( error 1 "Invalid pattern factor." )}
 
 patmodifier:
-| _1 = INNER
+_1 = INNER
     {    ( MInner )}
 | _1 = OUTER
     {    ( MOuter )}
@@ -147,7 +147,7 @@ patmodifier:
     {    ( MNeutral )}
 
 expfactors:
-| _1 = expfactor
+_1 = expfactor
     {    ( [ (None, _1) ] )}
 | _1 = expfactors _2 = STAR _3 = expfactor
     {    ( (None, _3) :: _1 )}
@@ -155,7 +155,7 @@ expfactors:
     {    ( error 2 "Undetermined syntax error." )}
 
 patfactors:
-| _1 = patfactor
+_1 = patfactor
     {    ( [ (None, _1) ] )}
 | _1 = patfactors _2 = STAR _3 = patfactor
     {    ( (None, _3) :: _1 )}
@@ -163,13 +163,13 @@ patfactors:
     {    ( error 2 "Undetermined syntax error." )}
 
 explfactor:
-| _1 = LID _2 = COLON _3 = expfactor
+_1 = LID _2 = COLON _3 = expfactor
     {    ( (Some _1, _3) )}
 | _1 = error
     {    ( error 1 "\"<label> : <expression factor>\" expected." )}
 
 explfactors:
-| _1 = explfactor
+_1 = explfactor
     {    ( [ _1 ] )}
 | _1 = explfactors _2 = SEMICOLON _3 = explfactor
     {    ( _3 :: _1 )}
@@ -177,13 +177,13 @@ explfactors:
     {    ( error 2 "\";\" or \"}\" expected." )}
 
 patlfactor:
-| _1 = LID _2 = COLON _3 = patfactor
+_1 = LID _2 = COLON _3 = patfactor
     {    ( (Some _1, _3) )}
 | _1 = error
     {    ( error 1 "\"<label> : <pattern factor>\" expected." )}
 
 patlfactors:
-| _1 = patlfactor
+_1 = patlfactor
     {    ( [ _1 ] )}
 | _1 = patlfactors _2 = SEMICOLON _3 = patlfactor
     {    ( _3 :: _1 )}
@@ -191,7 +191,7 @@ patlfactors:
     {    ( error 2 "\";\" or \"}\" expected." )}
 
 expsummand:
-| _1 = BAR _2 = UID
+_1 = BAR _2 = UID
     {    ( Summand (Some _2, []) )}
 | _1 = BAR _2 = UID _3 = OF _4 = expfactors
     {    ( Summand (Some _2, List.rev _4) )}
@@ -199,7 +199,7 @@ expsummand:
     {    ( error 2 "\"| <uppercase identifier> [ of <expression factors> ]\" expected." )}
 
 patsummand:
-| _1 = BAR _2 = UID
+_1 = BAR _2 = UID
     {    ( Summand (Some _2, []) )}
 | _1 = BAR _2 = UID _3 = OF _4 = patfactors
     {    ( Summand (Some _2, List.rev _4) )}
@@ -207,31 +207,31 @@ patsummand:
     {    ( error 2 "\"| <uppercase identifier> [ of <pattern factors> ]\" expected." )}
 
 expsummands:
-| _1 = expsummand
+_1 = expsummand
     {    ( [ _1 ] )}
 | _1 = expsummands _2 = expsummand
     {    ( _2 :: _1 )}
 
 patsummands:
-| _1 = patsummand
+_1 = patsummand
     {    ( [ _1 ] )}
 | _1 = patsummands _2 = patsummand
     {    ( _2 :: _1 )}
 
 sorts:
-| _1 = LID
+_1 = LID
     {    ( [ _1 ] )}
 | _1 = sorts _2 = COMMA _3 = LID
     {    ( _3 :: _1 )}
 
 optional_semicolon:
-| 
+
     {    ( () )}
 | _1 = SEMICOLON
     {    ( () )}
 
 exprhs:
-| _1 = expsummands
+_1 = expsummands
     {    ( List.rev _1 )}
 | _1 = expfactors
     {    ( [ Summand (None, List.rev _1) ] )}
@@ -239,7 +239,7 @@ exprhs:
     {    ( [ Summand (None, List.rev _2) ] )}
 
 patrhs:
-| _1 = patsummands
+_1 = patsummands
     {    ( List.rev _1 )}
 | _1 = patfactors
     {    ( [ Summand (None, List.rev _1) ] )}
@@ -247,7 +247,7 @@ patrhs:
     {    ( [ Summand (None, List.rev _2) ] )}
 
 declaration:
-| _1 = TYPE _2 = params_and_set_current _3 = LID _4 = EQUAL _5 = exprhs
+_1 = TYPE _2 = params_and_set_current _3 = LID _4 = EQUAL _5 = exprhs
     {    ( DeclExpType (_2, _3, _5) )}
 | _1 = TYPE _2 = params_and_set_current _3 = LID _4 = BINDS _5 = sorts _6 = EQUAL _7 = patrhs
     {    ( DeclPatType (_2, _3, _5, _7) )}
@@ -268,19 +268,19 @@ declaration:
     {    ( error 2 "\"identifier module <uppercase identifier>\" expected." )}
 
 declarations:
-| 
+
     {    ( [] )}
 | _1 = declarations _2 = declaration
     {    ( _2 :: _1 )}
 
 prologue:
-| 
+
     {    ( "\n\n" )}
 | _1 = OCAML
     {    ( "\n\n(* Prologue. *)" ^ _1 )}
 
 phrase:
-| _1 = prologue _2 = declarations _3 = EOF
+_1 = prologue _2 = declarations _3 = EOF
     {    ( _1, List.rev (!inline_defs @ _2) )}
 | _1 = error
     {    ( error 1 "\"type\", \"sort\", \"container\",\nor \"identifier module\" declaration expected." )}

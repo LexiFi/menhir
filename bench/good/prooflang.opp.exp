@@ -64,11 +64,11 @@ Warning: the token STRING is unused.
 %%
 
 main:
-| _1 = step _2 = EOF
+_1 = step _2 = EOF
     {                                                                                       ( _1 )}
 
 step:
-| _1 = TRIVIAL
+_1 = TRIVIAL
     {                                                                                       ( _1 )}
 | _1 = UNFINISHED
     {                                                          ( _1 )}
@@ -88,69 +88,69 @@ step:
     {                                                                                       ( Cases (_2, _4, _6, _8) )}
 
 nafos:
-| _1 = nafo
+_1 = nafo
     {                                                                       ( [_1] )}
 | _1 = nafo _2 = KOMMA _3 = nafo
     {                                                                       ( [_1;_3] )}
 
 nafo:
-| _1 = name _2 = DOPPELPUNKT _3 = formula
+_1 = name _2 = DOPPELPUNKT _3 = formula
     {                                                                       ( (_1, _3) )}
 
 name:
-| _1 = PUNKT
+_1 = PUNKT
     {                                                                       ( LeerN )}
 | _1 = IDENT
     {                                                                       ( Name _1 )}
 
 formula:
-| _1 = PUNKT
+_1 = PUNKT
     {                                                                              ( LeerF )}
 | _1 = term
     {                                                                ( For _1 )}
 
 formulalist:
-| _1 = formula
+_1 = formula
     {                                                                              ( [_1] )}
 | _1 = formula _2 = KOMMA _3 = formulalist
     {                                                                ( [_1] @ _3 )}
 
 reflist:
-| _1 = ref
+_1 = ref
     {                                                                       (  [_1]   )}
 | _1 = ref _2 = KOMMA _3 = reflist
     {                                                                       ( [_1] @ _3 )}
 
 ref:
-| _1 = LPARAN _2 = name _3 = KOMMA _4 = formula _5 = KOMMA _6 = occurence _7 = RPARAN
+_1 = LPARAN _2 = name _3 = KOMMA _4 = formula _5 = KOMMA _6 = occurence _7 = RPARAN
     {                                                                      ( (_2,_4,_6) )}
 
 occurence:
-| _1 = PUNKT
+_1 = PUNKT
     {                                                                              ( LeerO )}
 | _1 = INTLIST
     {                                                                              ( Occ _1 )}
 
 caseends:
-| _1 = CASE _2 = name _3 = DOPPELPUNKT _4 = formula _5 = DOPPELPUNKT _6 = step _7 = END
+_1 = CASE _2 = name _3 = DOPPELPUNKT _4 = formula _5 = DOPPELPUNKT _6 = step _7 = END
     {                                                                              ( [(_2, _4, _6)] )}
 | _1 = caseends _2 = KOMMA _3 = caseends
     {                                                                              ( _1 @ _3 )}
 
 steplist:
-| _1 = step
+_1 = step
     {                                                                              ( [_1] )}
 | _1 = step _2 = KOMMA _3 = steplist
     {                                                                       ( [_1] @ _3 )}
 
 hyps:
-| _1 = hyp
+_1 = hyp
     {                                                                            ( [] )}
 | _1 = hyp _2 = KOMMA _3 = hyps
     {                                                                              ( [_1] @ _3 )}
 
 hyp:
-| _1 = nafo
+_1 = nafo
     {                                                                              ( Fr _1 )}
 | _1 = const _2 = DOPPELPUNKT _3 = hyptyp
     {                                                                       ( Cn (_1, _3) )}
@@ -158,35 +158,35 @@ hyp:
     {                                                                       ( Vr (_1, _3) )}
 
 subst:
-| _1 = LPARAN _2 = LET _3 = VAR _4 = var _5 = DOPPPEQ _6 = term _7 = RPARAN
+_1 = LPARAN _2 = LET _3 = VAR _4 = var _5 = DOPPPEQ _6 = term _7 = RPARAN
     {                                                                                    ( (_4,_6) )}
 
 abbrv:
-| _1 = LPARAN _2 = LET _3 = CONST _4 = const _5 = DOPPPEQ _6 = term _7 = RPARAN
+_1 = LPARAN _2 = LET _3 = CONST _4 = const _5 = DOPPPEQ _6 = term _7 = RPARAN
     {                                                                                    ( (_4,_6) )}
 
 orsteps:
-| _1 = step
+_1 = step
     {                                                                              ( [_1] )}
 | _1 = step _2 = DOPPELSTRICH _3 = orsteps
     {                                                                                ( [_1] @ _3 )}
 
 const:
-| _1 = name
+_1 = name
     {                                                                              ( Const _1 )}
 
 var:
-| _1 = name
+_1 = name
     {                                                                             ( Var _1 )}
 
 hyptyp:
-| _1 = NOTYPE
+_1 = NOTYPE
     {                                                                              ( None )}
 | _1 = complextype
     {                                                                              ( Some _1 )}
 
 term:
-| _1 = LPARAN _2 = APOST _3 = var _4 = APOST _5 = RPARAN
+_1 = LPARAN _2 = APOST _3 = var _4 = APOST _5 = RPARAN
     {                                                                              ( V _3 )}
 | _1 = LPARAN _2 = QUOT _3 = const _4 = QUOT _5 = RPARAN
     {                                                                       ( C _3 )}
@@ -196,7 +196,7 @@ term:
     {                                                                       ( L ( _3, _5, _7) )}
 
 complextype:
-| _1 = IDENT
+_1 = IDENT
     {                                                                           ( TC _1 )}
 | _1 = LPARAN _2 = complextype _3 = PFEIL _4 = complextype _5 = RPARAN
     {                                                                           ( TA (_2,_4) )}

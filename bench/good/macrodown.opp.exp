@@ -282,13 +282,13 @@ Warning: the token IGNORED is unused.
 %%
 
 main:
-| _1 = nxtoplevel _2 = EOI
+_1 = nxtoplevel _2 = EOI
     {                   ( _1 )}
 | _1 = sxblock _2 = EOI
     {                ( _1 )}
 
 nxtoplevel:
-| _1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = nxtoplevel
+_1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = nxtoplevel
     {                                                    ( make_let_expression _1 _2 _3 _5 _6 _7 )}
 | _1 = LET _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = nxtoplevel
     {                                                    ( make_let_expression _1 _2 _3 _5 _6 _7 )}
@@ -381,7 +381,7 @@ nxtoplevel:
       )}
 
 nxmutual:
-| _1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxmutual
+_1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxmutual
     {                                        (
         let ((varln, varstt, varend), vn) = _2 in
         let varrng = (varln, varstt, varln, varend) in
@@ -399,7 +399,7 @@ nxmutual:
     {              ( UTEndOfMutualLet )}
 
 nxlet:
-| _1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = IN _8 = nxlet
+_1 = LET _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = IN _8 = nxlet
     {                                                  ( make_let_expression _1 _2 _3 _5 _6 _8 )}
 | _1 = LET _2 = CTRLSEQ _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec _7 = IN _8 = nxlet
     {                                                  ( make_let_expression _1 _2 _3 _5 _6 _8 )}
@@ -472,7 +472,7 @@ nxlet:
       )}
 
 nxdec:
-| _1 = LETAND _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec
+_1 = LETAND _2 = VAR _3 = argvar _4 = DEFEQ _5 = nxlet _6 = nxdec
     {                                        (
         let ((varln, varstt, varend), vn) = _2 in
         let varrng = (varln, varstt, varln, varend) in
@@ -502,7 +502,7 @@ nxdec:
       )}
 
 nxwhl:
-| _1 = WHILE _2 = nxlet _3 = DO _4 = nxwhl
+_1 = WHILE _2 = nxlet _3 = DO _4 = nxwhl
     {                         (
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _4 in
@@ -521,7 +521,7 @@ nxwhl:
       )}
 
 nxif:
-| _1 = IF _2 = nxlet _3 = THEN _4 = nxlet _5 = ELSE _6 = nxlet
+_1 = IF _2 = nxlet _3 = THEN _4 = nxlet _5 = ELSE _6 = nxlet
     {                                   (
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _6 in
@@ -615,7 +615,7 @@ nxif:
       )}
 
 nxbfr:
-| _1 = nxlambda _2 = BEFORE _3 = nxbfr
+_1 = nxlambda _2 = BEFORE _3 = nxbfr
     {                          (
         let (sttln, sttpos, _, _) = get_range _1 in
         let (_, _, endln, endpos) = get_range _3 in
@@ -630,7 +630,7 @@ nxbfr:
       )}
 
 nxlambda:
-| _1 = VAR _2 = OVERWRITEEQ _3 = nxlor
+_1 = VAR _2 = OVERWRITEEQ _3 = nxlor
     {                          (
         let ((sttln, sttpos, varend), vn) = _1 in
         let (_, _, endln, endpos) = get_range _3 in
@@ -693,7 +693,7 @@ nxlambda:
       )}
 
 argvar:
-| _1 = VAR _2 = argvar
+_1 = VAR _2 = argvar
     {               (
         let ((varln, varstt, varend), vn) = _1 in
         let varrng = (varln, varstt, varln, varend) in
@@ -703,7 +703,7 @@ argvar:
     {    ( UTEndOfArgumentVariable )}
 
 nxlor:
-| _1 = nxland _2 = LOR _3 = nxlor
+_1 = nxland _2 = LOR _3 = nxlor
     {                     ( binary_operator "||" _1 _2 _3 )}
 | _1 = nxland
     {           ( _1 )}
@@ -713,7 +713,7 @@ nxlor:
       )}
 
 nxland:
-| _1 = nxcomp _2 = LAND _3 = nxland
+_1 = nxcomp _2 = LAND _3 = nxland
     {                       ( binary_operator "&&" _1 _2 _3 )}
 | _1 = nxcomp
     {           ( _1 )}
@@ -723,7 +723,7 @@ nxland:
       )}
 
 nxcomp:
-| _1 = nxconcat _2 = EQ _3 = nxcomp
+_1 = nxconcat _2 = EQ _3 = nxcomp
     {                        ( binary_operator "==" _1 _2 _3 )}
 | _1 = nxconcat _2 = NEQ _3 = nxcomp
     {                        ( binary_operator "<>" _1 _2 _3 )}
@@ -763,7 +763,7 @@ nxcomp:
       )}
 
 nxconcat:
-| _1 = nxlplus _2 = CONCAT _3 = nxconcat
+_1 = nxlplus _2 = CONCAT _3 = nxconcat
     {                            ( binary_operator "^" _1 _2 _3 )}
 | _1 = nxlplus _2 = CONS _3 = nxconcat
     {                            ( binary_operator "::" _1 _2 _3 )}
@@ -775,7 +775,7 @@ nxconcat:
       )}
 
 nxlplus:
-| _1 = nxlminus _2 = PLUS _3 = nxrplus
+_1 = nxlminus _2 = PLUS _3 = nxrplus
     {                          ( binary_operator "+" _1 _2 _3 )}
 | _1 = nxlminus
     {             ( _1 )}
@@ -785,7 +785,7 @@ nxlplus:
       )}
 
 nxlminus:
-| _1 = nxlplus _2 = MINUS _3 = nxrtimes
+_1 = nxlplus _2 = MINUS _3 = nxrtimes
     {                           ( binary_operator "-" _1 _2 _3 )}
 | _1 = nxltimes
     {             ( _1 )}
@@ -795,7 +795,7 @@ nxlminus:
       )}
 
 nxrplus:
-| _1 = nxrminus _2 = PLUS _3 = nxrplus
+_1 = nxrminus _2 = PLUS _3 = nxrplus
     {                          ( binary_operator "+" _1 _2 _3 )}
 | _1 = nxrminus
     {             ( _1 )}
@@ -805,7 +805,7 @@ nxrplus:
       )}
 
 nxrminus:
-| _1 = nxrplus _2 = MINUS _3 = nxrtimes
+_1 = nxrplus _2 = MINUS _3 = nxrtimes
     {                           ( binary_operator "+" _1 _2 _3 )}
 | _1 = nxrtimes
     {             ( _1 )}
@@ -815,7 +815,7 @@ nxrminus:
       )}
 
 nxltimes:
-| _1 = nxun _2 = TIMES _3 = nxrtimes
+_1 = nxun _2 = TIMES _3 = nxrtimes
     {                           ( binary_operator "*" _1 _2 _3 )}
 | _1 = nxltimes _2 = DIVIDES _3 = nxapp
     {                           ( binary_operator "/" _1 _2 _3 )}
@@ -837,7 +837,7 @@ nxltimes:
       )}
 
 nxrtimes:
-| _1 = nxapp _2 = TIMES _3 = nxrtimes
+_1 = nxapp _2 = TIMES _3 = nxrtimes
     {                           ( binary_operator "*" _1 _2 _3 )}
 | _1 = nxrtimes _2 = DIVIDES _3 = nxapp
     {                           ( binary_operator "/" _1 _2 _3 )}
@@ -859,7 +859,7 @@ nxrtimes:
       )}
 
 nxun:
-| _1 = MINUS _2 = nxapp
+_1 = MINUS _2 = nxapp
     {                ( binary_operator "-" ((-16, 0, 0, 0), UTNumericConstant(0)) _1 _2 )}
 | _1 = LNOT _2 = nxapp
     {                (
@@ -904,7 +904,7 @@ nxun:
       )}
 
 nxapp:
-| _1 = nxapp _2 = nxbot
+_1 = nxapp _2 = nxbot
     {                (
         let (sttln, sttpos, _, _) = get_range _1 in
         let (_, _, endln, endpos) = get_range _2 in
@@ -915,7 +915,7 @@ nxapp:
     {          ( _1 )}
 
 nxbot:
-| _1 = VAR
+_1 = VAR
     {        (
         let ((varln, varstt, varend), vn) = _1 in
         let rng = (varln, varstt, varln, varend) in
@@ -1012,7 +1012,7 @@ nxbot:
       )}
 
 binop:
-| _1 = PLUS
+_1 = PLUS
     {            ( "+" )}
 | _1 = MINUS
     {            ( "-" )}
@@ -1046,7 +1046,7 @@ binop:
     {            ( "before" )}
 
 nxlist:
-| _1 = LISTPUNCT _2 = nxlet _3 = nxlist
+_1 = LISTPUNCT _2 = nxlet _3 = nxlist
     {                           (
         let (sttln, sttpos, _) = _1 in
         let (_, _, endln, endpos) = get_range _3 in
@@ -1062,7 +1062,7 @@ nxlist:
       )}
 
 sxsep:
-| _1 = SEP _2 = sxsepsub
+_1 = SEP _2 = sxsepsub
     {                 ( _2 )}
 | _1 = sxblock
     {            ( _1 )}
@@ -1073,7 +1073,7 @@ sxsep:
       )}
 
 sxsepsub:
-| _1 = sxblock _2 = SEP _3 = sxsepsub
+_1 = sxblock _2 = SEP _3 = sxsepsub
     {                         (
         let (sttln, sttpos, _, _) = get_range _1 in
         let (_, _, endln, endpos) = get_range _3 in
@@ -1089,7 +1089,7 @@ sxsepsub:
       )}
 
 sxblock:
-| _1 = sxbot _2 = sxblock
+_1 = sxbot _2 = sxblock
     {                  (
         let (sttln, sttpos, _, _) = get_range _1 in
         let (_, _, endln, endpos) = get_range _2 in
@@ -1100,7 +1100,7 @@ sxblock:
     {    ( ((-19, 0, 0, 0), UTStringEmpty) )}
 
 sxbot:
-| _1 = CHAR
+_1 = CHAR
     {          (
         let ((ln, sttpos, endpos), ch) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
@@ -1138,7 +1138,7 @@ sxbot:
       )}
 
 sxclsnm:
-| _1 = CLASSNAME
+_1 = CLASSNAME
     {              (
         let ((ln, sttpos, endpos), clsnm) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
@@ -1148,7 +1148,7 @@ sxclsnm:
     {    ( ((-20, 0, 0, 0), UTNoContent) )}
 
 sxidnm:
-| _1 = IDNAME
+_1 = IDNAME
     {           (
         let ((ln, sttpos, endpos), idnm) = _1 in
         let rng = (ln, sttpos, ln, endpos) in
@@ -1158,7 +1158,7 @@ sxidnm:
     {    ( ((-21, 0, 0, 0), UTNoContent) )}
 
 narg:
-| _1 = OPENNUM _2 = nxlet _3 = CLOSENUM _4 = narg
+_1 = OPENNUM _2 = nxlet _3 = CLOSENUM _4 = narg
     {                                (
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _3 in
@@ -1180,7 +1180,7 @@ narg:
       )}
 
 sarg:
-| _1 = BGRP _2 = sxsep _3 = EGRP _4 = sargsub
+_1 = BGRP _2 = sxsep _3 = EGRP _4 = sargsub
     {                            ( UTArgumentCons(_2, _4) )}
 | _1 = OPENQT _2 = sxsep _3 = CLOSEQT _4 = sargsub
     {                                 (
@@ -1201,7 +1201,7 @@ sarg:
       )}
 
 sargsub:
-| _1 = BGRP _2 = sxsep _3 = EGRP _4 = sargsub
+_1 = BGRP _2 = sxsep _3 = EGRP _4 = sargsub
     {                            (
         let (sttln, sttpos, _) = _1 in
         let (endln, _, endpos) = _3 in

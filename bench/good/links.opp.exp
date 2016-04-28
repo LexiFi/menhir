@@ -281,7 +281,7 @@ let datatype d = d, None
 %%
 
 interactive:
-| _1 = preamble_declaration
+_1 = preamble_declaration
     {                                                               ( `Definitions [_1] )}
 | _1 = nofun_declaration
     {                                                               ( `Definitions [_1] )}
@@ -297,7 +297,7 @@ interactive:
     {                                                               ( `Directive ("quit", []) (* rather hackish *) )}
 
 file:
-| _1 = preamble _2 = declarations _3 = exp _4 = END
+_1 = preamble _2 = declarations _3 = exp _4 = END
     {                                                               ( _1 @ _2, Some _3 )}
 | _1 = preamble _2 = exp _3 = END
     {                                                               ( _1, Some _2 )}
@@ -305,17 +305,17 @@ file:
     {                                                               ( _1 @ _2, None )}
 
 directive:
-| _1 = KEYWORD _2 = args _3 = SEMICOLON
+_1 = KEYWORD _2 = args _3 = SEMICOLON
     {                                                               ( (_1, _2) )}
 
 args:
-| 
+
     {                                                               ( [] )}
 | _1 = arg _2 = args
     {                                                               ( _1 :: _2 )}
 
 arg:
-| _1 = STRING
+_1 = STRING
     {                                                               ( _1 )}
 | _1 = VARIABLE
     {                                                               ( _1 )}
@@ -331,33 +331,33 @@ arg:
     {                                                               ( "false" )}
 
 var:
-| _1 = VARIABLE
+_1 = VARIABLE
     {                                                               ( _1, pos() )}
 
 preamble:
-| _1 = preamble_declaration _2 = preamble
+_1 = preamble_declaration _2 = preamble
     {                                                               ( _1 :: _2 )}
 | 
     {                                                               ( [] )}
 
 declarations:
-| _1 = declarations _2 = declaration
+_1 = declarations _2 = declaration
     {                                                               ( _1 @ [_2] )}
 | _1 = declaration
     {                                                               ( [_1] )}
 
 declaration:
-| _1 = fun_declaration
+_1 = fun_declaration
     {                                                               ( _1 )}
 | _1 = nofun_declaration
     {                                                               ( _1 )}
 
 preamble_declaration:
-| _1 = INCLUDE _2 = STRING
+_1 = INCLUDE _2 = STRING
     {                                                               ( `Include _2, pos() )}
 
 nofun_declaration:
-| _1 = ALIEN _2 = VARIABLE _3 = var _4 = COLON _5 = datatype _6 = SEMICOLON
+_1 = ALIEN _2 = VARIABLE _3 = var _4 = COLON _5 = datatype _6 = SEMICOLON
     {                                                               ( let (name, name_pos) = _3 in
                                                                    `Foreign ((name, None, name_pos), _2, datatype _5), pos() )}
 | _1 = fixity _2 = perhaps_uinteger _3 = op _4 = SEMICOLON
@@ -373,34 +373,34 @@ nofun_declaration:
     {                                                               ( _1 )}
 
 fun_declarations:
-| _1 = fun_declarations _2 = fun_declaration
+_1 = fun_declarations _2 = fun_declaration
     {                                                               ( _1 @ [_2] )}
 | _1 = fun_declaration
     {                                                               ( [_1] )}
 
 fun_declaration:
-| _1 = tlfunbinding
+_1 = tlfunbinding
     {                                                               ( let ((d,dpos),p,l, pos) = _1
                                                                  in `Fun ((d, None, dpos),([],p),l,None), pos )}
 | _1 = signature _2 = tlfunbinding
     {                                                               ( annotate _1 (`Fun _2) )}
 
 perhaps_uinteger:
-| 
+
     {                                                               ( None )}
 | _1 = UINTEGER
     {                                                               ( Some _1 )}
 
 prefixop:
-| _1 = PREFIXOP
+_1 = PREFIXOP
     {                                                               ( _1, pos() )}
 
 postfixop:
-| _1 = POSTFIXOP
+_1 = POSTFIXOP
     {                                                               ( _1, pos() )}
 
 tlfunbinding:
-| _1 = FUN _2 = var _3 = arg_lists _4 = perhaps_location _5 = block
+_1 = FUN _2 = var _3 = arg_lists _4 = perhaps_location _5 = block
     {                                                               ( (_2, (_3, (`Block _5, pos ())), _4, pos()) )}
 | _1 = OP _2 = pattern _3 = op _4 = pattern _5 = perhaps_location _6 = block
     {                                                               ( (_3, ([[_2; _4]], (`Block _6, pos ())), _5, pos ()) )}
@@ -410,27 +410,27 @@ tlfunbinding:
     {                                                               ( (_3, ([[_2]], (`Block _5, pos ())), _4, pos ()) )}
 
 tlvarbinding:
-| _1 = VAR _2 = var _3 = perhaps_location _4 = EQ _5 = exp
+_1 = VAR _2 = var _3 = perhaps_location _4 = EQ _5 = exp
     {                                                               ( (_2, _5, _3), pos() )}
 
 signature:
-| _1 = SIG _2 = var _3 = COLON _4 = datatype
+_1 = SIG _2 = var _3 = COLON _4 = datatype
     {                                                               ( _2, datatype _4 )}
 | _1 = SIG _2 = op _3 = COLON _4 = datatype
     {                                                               ( _2, datatype _4 )}
 
 typedecl:
-| _1 = TYPENAME _2 = CONSTRUCTOR _3 = typeargs_opt _4 = EQ _5 = datatype
+_1 = TYPENAME _2 = CONSTRUCTOR _3 = typeargs_opt _4 = EQ _5 = datatype
     {                                                               ( `Type (_2, _3, datatype _5), pos()  )}
 
 typeargs_opt:
-| 
+
     {                                                               ( [] )}
 | _1 = LPAREN _2 = varlist _3 = RPAREN
     {                                                               ( _2 )}
 
 kind:
-| _1 = TYPE
+_1 = TYPE
     {                                                               ( `Type )}
 | _1 = BASETYPE
     {                                                               ( `BaseType )}
@@ -442,25 +442,25 @@ kind:
     {                                                               ( `Presence )}
 
 subkind:
-| _1 = ANY
+_1 = ANY
     {                                                               ( "Any" )}
 | _1 = BASE
     {                                                               ( "Base" )}
 
 typearg:
-| _1 = VARIABLE
+_1 = VARIABLE
     {                                                               ( (`TypeVar (_1, `Any), None) )}
 | _1 = VARIABLE _2 = kind
     {                                                               ( (attach_kind (pos()) (_1, _2), None) )}
 
 varlist:
-| _1 = typearg
+_1 = typearg
     {                                                               ( [_1] )}
 | _1 = typearg _2 = COMMA _3 = varlist
     {                                                               ( _1 :: _3 )}
 
 fixity:
-| _1 = INFIX
+_1 = INFIX
     {                                                               ( `None, _1 )}
 | _1 = INFIXL
     {                                                               ( `Left, _1 )}
@@ -472,7 +472,7 @@ fixity:
     {                                                               ( `Post, _1 )}
 
 perhaps_location:
-| _1 = SERVER
+_1 = SERVER
     {                                                               ( `Server )}
 | _1 = CLIENT
     {                                                               ( `Client )}
@@ -482,7 +482,7 @@ perhaps_location:
     {                                                               ( `Unknown )}
 
 constant:
-| _1 = UINTEGER
+_1 = UINTEGER
     {                                                               ( `Int _1    , pos() )}
 | _1 = UFLOAT
     {                                                               ( `Float _1  , pos() )}
@@ -496,7 +496,7 @@ constant:
     {                                                               ( `Char _1   , pos() )}
 
 atomic_expression:
-| _1 = VARIABLE
+_1 = VARIABLE
     {                                                               ( `Var _1, pos() )}
 | _1 = constant
     {                                                               ( let c, p = _1 in `Constant c, p )}
@@ -504,7 +504,7 @@ atomic_expression:
     {                                                               ( _1 )}
 
 primary_expression:
-| _1 = atomic_expression
+_1 = atomic_expression
     {                                                               ( _1 )}
 | _1 = LBRACKET _2 = RBRACKET
     {                                                               ( `ListLit ([], None), pos() )}
@@ -518,13 +518,13 @@ primary_expression:
     {                                                               ( `FunLit (None, (_2, (`Block _3, pos ()))), pos() )}
 
 constructor_expression:
-| _1 = CONSTRUCTOR
+_1 = CONSTRUCTOR
     {                                                               ( `ConstructorLit(_1, None, None), pos() )}
 | _1 = CONSTRUCTOR _2 = parenthesized_thing
     {                                                               ( `ConstructorLit(_1, Some _2, None), pos() )}
 
 parenthesized_thing:
-| _1 = LPAREN _2 = binop _3 = RPAREN
+_1 = LPAREN _2 = binop _3 = RPAREN
     {                                                               ( `Section _2, pos() )}
 | _1 = LPAREN _2 = DOT _3 = record_label _4 = RPAREN
     {                                                               ( `Section (`Project _3), pos() )}
@@ -540,7 +540,7 @@ parenthesized_thing:
     {                                                               ( `With (_2, _4), pos() )}
 
 binop:
-| _1 = MINUS
+_1 = MINUS
     {                                                               ( `Minus )}
 | _1 = MINUSDOT
     {                                                               ( `FloatMinus )}
@@ -548,7 +548,7 @@ binop:
     {                                                               ( `Name (fst _1) )}
 
 op:
-| _1 = INFIX0
+_1 = INFIX0
     {                                                               ( _1, pos() )}
 | _1 = INFIXL0
     {                                                               ( _1, pos() )}
@@ -610,7 +610,7 @@ op:
     {                                                               ( _1, pos() )}
 
 postfix_expression:
-| _1 = primary_expression
+_1 = primary_expression
     {                                                               ( _1 )}
 | _1 = primary_expression _2 = POSTFIXOP
     {                                                               ( `UnaryAppl (([], `Name _2), _1), pos() )}
@@ -634,19 +634,19 @@ postfix_expression:
     {                                                               ( `Projection (_1, _3), pos() )}
 
 arg_spec:
-| _1 = LPAREN _2 = RPAREN
+_1 = LPAREN _2 = RPAREN
     {                                                               ( [] )}
 | _1 = LPAREN _2 = exps _3 = RPAREN
     {                                                               ( _2 )}
 
 exps:
-| _1 = exp _2 = COMMA _3 = exps
+_1 = exp _2 = COMMA _3 = exps
     {                                                               ( _1 :: _3 )}
 | _1 = exp
     {                                                               ( [_1] )}
 
 unary_expression:
-| _1 = MINUS _2 = unary_expression
+_1 = MINUS _2 = unary_expression
     {                                                               ( `UnaryAppl (([], `Minus),      _2), pos() )}
 | _1 = MINUSDOT _2 = unary_expression
     {                                                               ( `UnaryAppl (([], `FloatMinus), _2), pos() )}
@@ -658,7 +658,7 @@ unary_expression:
     {                                                               ( _1 )}
 
 infixr_9:
-| _1 = unary_expression
+_1 = unary_expression
     {                                                               ( _1 )}
 | _1 = unary_expression _2 = INFIX9 _3 = unary_expression
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
@@ -666,13 +666,13 @@ infixr_9:
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixl_9:
-| _1 = infixr_9
+_1 = infixr_9
     {                                                               ( _1 )}
 | _1 = infixl_9 _2 = INFIXL9 _3 = infixr_9
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixr_8:
-| _1 = infixl_9
+_1 = infixl_9
     {                                                               ( _1 )}
 | _1 = infixl_9 _2 = INFIX8 _3 = infixl_9
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
@@ -682,13 +682,13 @@ infixr_8:
     {                                                               ( `InfixAppl (([], `Cons), _1, _3), pos() )}
 
 infixl_8:
-| _1 = infixr_8
+_1 = infixr_8
     {                                                               ( _1 )}
 | _1 = infixl_8 _2 = INFIXL8 _3 = infixr_8
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixr_7:
-| _1 = infixl_8
+_1 = infixl_8
     {                                                               ( _1 )}
 | _1 = infixl_8 _2 = INFIX7 _3 = infixl_8
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
@@ -696,13 +696,13 @@ infixr_7:
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixl_7:
-| _1 = infixr_7
+_1 = infixr_7
     {                                                               ( _1 )}
 | _1 = infixl_7 _2 = INFIXL7 _3 = infixr_7
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixr_6:
-| _1 = infixl_7
+_1 = infixl_7
     {                                                               ( _1 )}
 | _1 = infixl_7 _2 = INFIX6 _3 = infixl_7
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
@@ -710,7 +710,7 @@ infixr_6:
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixl_6:
-| _1 = infixr_6
+_1 = infixr_6
     {                                                               ( _1 )}
 | _1 = infixl_6 _2 = INFIXL6 _3 = infixr_6
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
@@ -720,7 +720,7 @@ infixl_6:
     {                                                               ( `InfixAppl (([], `FloatMinus), _1, _3), pos() )}
 
 infixr_5:
-| _1 = infixl_6
+_1 = infixl_6
     {                                                               ( _1 )}
 | _1 = infixl_6 _2 = INFIX5 _3 = infixl_6
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
@@ -728,13 +728,13 @@ infixr_5:
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixl_5:
-| _1 = infixr_5
+_1 = infixr_5
     {                                                               ( _1 )}
 | _1 = infixl_5 _2 = INFIXL5 _3 = infixr_5
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixr_4:
-| _1 = infixl_5
+_1 = infixl_5
     {                                                               ( _1 )}
 | _1 = infixl_5 _2 = INFIX4 _3 = infixl_5
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
@@ -744,13 +744,13 @@ infixr_4:
     {                                                               ( let r, flags = _3 in `InfixAppl (([], `RegexMatch flags), _1, r), pos() )}
 
 infixl_4:
-| _1 = infixr_4
+_1 = infixr_4
     {                                                               ( _1 )}
 | _1 = infixl_4 _2 = INFIXL4 _3 = infixr_4
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixr_3:
-| _1 = infixl_4
+_1 = infixl_4
     {                                                               ( _1 )}
 | _1 = infixl_4 _2 = INFIX3 _3 = infixl_4
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
@@ -758,13 +758,13 @@ infixr_3:
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixl_3:
-| _1 = infixr_3
+_1 = infixr_3
     {                                                               ( _1 )}
 | _1 = infixl_3 _2 = INFIXL3 _3 = infixr_3
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixr_2:
-| _1 = infixl_3
+_1 = infixl_3
     {                                                               ( _1 )}
 | _1 = infixl_3 _2 = INFIX2 _3 = infixl_3
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
@@ -772,13 +772,13 @@ infixr_2:
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixl_2:
-| _1 = infixr_2
+_1 = infixr_2
     {                                                               ( _1 )}
 | _1 = infixl_2 _2 = INFIXL2 _3 = infixr_2
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixr_1:
-| _1 = infixl_2
+_1 = infixl_2
     {                                                               ( _1 )}
 | _1 = infixl_2 _2 = INFIX1 _3 = infixl_2
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
@@ -786,13 +786,13 @@ infixr_1:
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixl_1:
-| _1 = infixr_1
+_1 = infixr_1
     {                                                               ( _1 )}
 | _1 = infixl_1 _2 = INFIXL1 _3 = infixr_1
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixr_0:
-| _1 = infixl_1
+_1 = infixl_1
     {                                                               ( _1 )}
 | _1 = infixl_1 _2 = INFIX0 _3 = infixl_1
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
@@ -800,13 +800,13 @@ infixr_0:
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 infixl_0:
-| _1 = infixr_0
+_1 = infixr_0
     {                                                               ( _1 )}
 | _1 = infixl_0 _2 = INFIXL0 _3 = infixr_0
     {                                                               ( `InfixAppl (([], `Name _2), _1, _3), pos() )}
 
 logical_expression:
-| _1 = infixl_0
+_1 = infixl_0
     {                                                               ( _1 )}
 | _1 = logical_expression _2 = BARBAR _3 = infixl_0
     {                                                               ( `InfixAppl (([], `Or), _1, _3), pos() )}
@@ -814,7 +814,7 @@ logical_expression:
     {                                                               ( `InfixAppl (([], `And), _1, _3), pos() )}
 
 typed_expression:
-| _1 = logical_expression
+_1 = logical_expression
     {                                                               ( _1 )}
 | _1 = typed_expression _2 = COLON _3 = datatype
     {                                                               ( `TypeAnnotation (_1, datatype _3), pos() )}
@@ -822,7 +822,7 @@ typed_expression:
     {                                                               ( `Upcast (_1, datatype _3, datatype _5), pos() )}
 
 db_expression:
-| _1 = typed_expression
+_1 = typed_expression
     {                                                               ( _1 )}
 | _1 = DELETE _2 = LPAREN _3 = table_generator _4 = RPAREN _5 = perhaps_where
     {                                                               ( let pat, phrase = _3 in `DBDelete (pat, phrase, _5), pos() )}
@@ -830,15 +830,15 @@ db_expression:
     {                                                               ( let pat, phrase = _3 in `DBUpdate(pat, phrase, _5, _8), pos() )}
 
 xml:
-| _1 = xml_tree
+_1 = xml_tree
     {                                                               ( _1 )}
 
 xmlid:
-| _1 = VARIABLE
+_1 = VARIABLE
     {                                                               ( _1 )}
 
 attrs:
-| _1 = block
+_1 = block
     {                                                               ( [], Some (`Block _1, pos ()) )}
 | _1 = attr_list
     {                                                               ( _1, None )}
@@ -846,19 +846,19 @@ attrs:
     {                                                               ( _1, Some (`Block _2, pos ()) )}
 
 attr_list:
-| _1 = attr
+_1 = attr
     {                                                               ( [_1] )}
 | _1 = attr_list _2 = attr
     {                                                               ( _2 :: _1 )}
 
 attr:
-| _1 = xmlid _2 = EQ _3 = LQUOTE _4 = attr_val _5 = RQUOTE
+_1 = xmlid _2 = EQ _3 = LQUOTE _4 = attr_val _5 = RQUOTE
     {                                                               ( (_1, _4) )}
 | _1 = xmlid _2 = EQ _3 = LQUOTE _4 = RQUOTE
     {                                                               ( (_1, [(`Constant (`String ""), pos() : Sugartypes.phrase)]) )}
 
 attr_val:
-| _1 = block
+_1 = block
     {                                                               ( [`Block _1, pos ()] )}
 | _1 = STRING
     {                                                               ( [`Constant (`String _1), pos()] )}
@@ -868,7 +868,7 @@ attr_val:
     {                                                               ( (`Constant (`String _1), pos()) :: _2)}
 
 xml_tree:
-| _1 = LXML _2 = SLASHRXML
+_1 = LXML _2 = SLASHRXML
     {                                                               ( `Xml (_1, [], None, []), pos() )}
 | _1 = LXML _2 = RXML _3 = ENDTAG
     {                                                               ( ensure_match (pos()) _1 _3 (`Xml (_1, [], None, []), pos()) )}
@@ -882,13 +882,13 @@ xml_tree:
     {                                                               ( ensure_match (pos()) _1 _5 (`Xml (_1, fst _2, snd _2, _4), pos()) )}
 
 xml_contents_list:
-| _1 = xml_contents
+_1 = xml_contents
     {                                                               ( [_1] )}
 | _1 = xml_contents _2 = xml_contents_list
     {                                                               ( _1 :: _2 )}
 
 xml_contents:
-| _1 = block
+_1 = block
     {                                                               ( `Block _1, pos () )}
 | _1 = formlet_binding
     {                                                               ( _1 )}
@@ -902,43 +902,43 @@ xml_contents:
     {                                                               ( `TextNode (Utility.xml_unescape _1), pos() )}
 
 formlet_binding:
-| _1 = LBRACE _2 = logical_expression _3 = RARROW _4 = pattern _5 = RBRACE
+_1 = LBRACE _2 = logical_expression _3 = RARROW _4 = pattern _5 = RBRACE
     {                                                               ( `FormBinding(_2, _4), pos())}
 
 formlet_placement:
-| _1 = LBRACE _2 = logical_expression _3 = FATRARROW _4 = logical_expression _5 = RBRACE
+_1 = LBRACE _2 = logical_expression _3 = FATRARROW _4 = logical_expression _5 = RBRACE
     {                                                               ( `FormletPlacement (_2, _4, (`ListLit ([], None), pos())), pos () )}
 | _1 = LBRACE _2 = logical_expression _3 = FATRARROW _4 = logical_expression _5 = WITH _6 = logical_expression _7 = RBRACE
     {                                                               ( `FormletPlacement (_2, _4, _6), pos () )}
 
 page_placement:
-| _1 = LBRACEBAR _2 = exp _3 = BARRBRACE
+_1 = LBRACEBAR _2 = exp _3 = BARRBRACE
     {                                                               ( `PagePlacement _2, pos() )}
 
 conditional_expression:
-| _1 = db_expression
+_1 = db_expression
     {                                                               ( _1 )}
 | _1 = IF _2 = LPAREN _3 = exp _4 = RPAREN _5 = exp _6 = ELSE _7 = exp
     {                                                               ( `Conditional (_3, _5, _7), pos() )}
 
 cases:
-| _1 = case
+_1 = case
     {                                                               ( [_1] )}
 | _1 = case _2 = cases
     {                                                               ( _1 :: _2 )}
 
 case:
-| _1 = CASE _2 = pattern _3 = RARROW _4 = block_contents
+_1 = CASE _2 = pattern _3 = RARROW _4 = block_contents
     {                                                               ( _2, (`Block (_4), pos()) )}
 
 perhaps_cases:
-| 
+
     {                                                               ( [] )}
 | _1 = cases
     {                                                               ( _1 )}
 
 case_expression:
-| _1 = conditional_expression
+_1 = conditional_expression
     {                                                               ( _1 )}
 | _1 = SWITCH _2 = LPAREN _3 = exp _4 = RPAREN _5 = LBRACE _6 = perhaps_cases _7 = RBRACE
     {                                                               ( `Switch (_3, _6, None), pos() )}
@@ -946,57 +946,57 @@ case_expression:
     {                                                               ( `Receive (_3, None), pos() )}
 
 iteration_expression:
-| _1 = case_expression
+_1 = case_expression
     {                                                               ( _1 )}
 | _1 = FOR _2 = LPAREN _3 = perhaps_generators _4 = RPAREN _5 = perhaps_where _6 = perhaps_orderby _7 = exp
     {                                                               ( `Iteration (_3, _7, _5, _6), pos() )}
 
 perhaps_generators:
-| 
+
     {                                                               ( [] )}
 | _1 = generators
     {                                                               ( _1 )}
 
 generators:
-| _1 = generator
+_1 = generator
     {                                                               ( [_1] )}
 | _1 = generator _2 = COMMA _3 = generators
     {                                                               ( _1 :: _3 )}
 
 generator:
-| _1 = list_generator
+_1 = list_generator
     {                                                               ( `List _1 )}
 | _1 = table_generator
     {                                                               ( `Table _1 )}
 
 list_generator:
-| _1 = pattern _2 = LARROW _3 = exp
+_1 = pattern _2 = LARROW _3 = exp
     {                                                               ( (_1, _3) )}
 
 table_generator:
-| _1 = pattern _2 = LLARROW _3 = exp
+_1 = pattern _2 = LLARROW _3 = exp
     {                                                               ( (_1, _3) )}
 
 perhaps_where:
-| 
+
     {                                                               ( None )}
 | _1 = WHERE _2 = LPAREN _3 = exp _4 = RPAREN
     {                                                               ( Some _3 )}
 
 perhaps_orderby:
-| 
+
     {                                                               ( None )}
 | _1 = ORDERBY _2 = LPAREN _3 = exps _4 = RPAREN
     {                                                               ( Some (make_tuple (pos()) _3) )}
 
 escape_expression:
-| _1 = iteration_expression
+_1 = iteration_expression
     {                                                               ( _1 )}
 | _1 = ESCAPE _2 = var _3 = IN _4 = postfix_expression
     {                                                               ( `Escape ((fst _2, None, snd _2), _4), pos() )}
 
 formlet_expression:
-| _1 = escape_expression
+_1 = escape_expression
     {                                                               ( _1 )}
 | _1 = FORMLET _2 = xml _3 = YIELDS _4 = exp
     {                                                               ( `Formlet (_2, _4), pos() )}
@@ -1004,49 +1004,49 @@ formlet_expression:
     {                                                               ( `Page (_2), pos() )}
 
 table_expression:
-| _1 = formlet_expression
+_1 = formlet_expression
     {                                                               ( _1 )}
 | _1 = TABLE _2 = exp _3 = WITH _4 = datatype _5 = perhaps_table_constraints _6 = FROM _7 = exp
     {                                                               ( `TableLit (_2, datatype _4, _5, _7), pos())}
 
 perhaps_table_constraints:
-| _1 = WHERE _2 = table_constraints
+_1 = WHERE _2 = table_constraints
     {                                                               ( _2 )}
 | 
     {                                                               ( [] )}
 
 table_constraints:
-| _1 = record_label _2 = field_constraints
+_1 = record_label _2 = field_constraints
     {                                                               ( [(_1, _2)] )}
 | _1 = record_label _2 = field_constraints _3 = COMMA _4 = table_constraints
     {                                                               ( (_1, _2) :: _4 )}
 
 field_constraints:
-| _1 = field_constraint
+_1 = field_constraint
     {                                                               ( [_1] )}
 | _1 = field_constraint _2 = field_constraints
     {                                                               ( _1 :: _2 )}
 
 field_constraint:
-| _1 = READONLY
+_1 = READONLY
     {                                                               ( `Readonly )}
 | _1 = DEFAULT
     {                                                               ( `Default )}
 
 perhaps_db_args:
-| _1 = atomic_expression
+_1 = atomic_expression
     {                                                               ( Some _1 )}
 | 
     {                                                               ( None )}
 
 perhaps_db_driver:
-| _1 = atomic_expression _2 = perhaps_db_args
+_1 = atomic_expression _2 = perhaps_db_args
     {                                                               ( Some _1, _2 )}
 | 
     {                                                               ( None, None )}
 
 database_expression:
-| _1 = table_expression
+_1 = table_expression
     {                                                               ( _1 )}
 | _1 = INSERT _2 = exp _3 = VALUES _4 = LPAREN _5 = RPAREN _6 = exp
     {                                                               ( `DBInsert (_2, [], _6, None), pos() )}
@@ -1078,13 +1078,13 @@ database_expression:
     {                                                               ( `DatabaseLit (_2, _3), pos() )}
 
 record_labels:
-| _1 = record_label _2 = COMMA _3 = record_labels
+_1 = record_label _2 = COMMA _3 = record_labels
     {                                                               ( _1 :: _3 )}
 | _1 = record_label
     {                                                               ( [_1] )}
 
 binding:
-| _1 = VAR _2 = pattern _3 = EQ _4 = exp _5 = SEMICOLON
+_1 = VAR _2 = pattern _3 = EQ _4 = exp _5 = SEMICOLON
     {                                                               ( `Val ([], _2, _4, `Unknown, None), pos () )}
 | _1 = exp _2 = SEMICOLON
     {                                                               ( `Exp _1, pos () )}
@@ -1094,17 +1094,17 @@ binding:
     {                                                               ( _1 )}
 
 bindings:
-| _1 = binding
+_1 = binding
     {                                                               ( [_1] )}
 | _1 = bindings _2 = binding
     {                                                               ( _1 @ [_2] )}
 
 block:
-| _1 = LBRACE _2 = block_contents _3 = RBRACE
+_1 = LBRACE _2 = block_contents _3 = RBRACE
     {                                                               ( _2 )}
 
 block_contents:
-| _1 = bindings _2 = exp _3 = SEMICOLON
+_1 = bindings _2 = exp _3 = SEMICOLON
     {                                                               ( (_1 @ [`Exp _2, pos ()], (`RecordLit ([], None), pos())) )}
 | _1 = bindings _2 = exp
     {                                                               ( (_1, _2) )}
@@ -1116,27 +1116,27 @@ block_contents:
     {                                                               ( ([], (`TupleLit [], pos())) )}
 
 perhaps_semi:
-| _1 = SEMICOLON
+_1 = SEMICOLON
     {                                                               ()}
 | 
     {                                                               ()}
 
 exp:
-| _1 = database_expression
+_1 = database_expression
     {                                                               ( _1 )}
 
 labeled_exps:
-| _1 = record_label _2 = EQ _3 = exp
+_1 = record_label _2 = EQ _3 = exp
     {                                                               ( [_1, _3] )}
 | _1 = record_label _2 = EQ _3 = exp _4 = COMMA _5 = labeled_exps
     {                                                               ( (_1, _3) :: _5 )}
 
 just_datatype:
-| _1 = datatype _2 = END
+_1 = datatype _2 = END
     {                                                               ( _1 )}
 
 datatype:
-| _1 = mu_datatype
+_1 = mu_datatype
     {                                                               ( _1 )}
 | _1 = straight_arrow
     {                                                               ( _1 )}
@@ -1144,13 +1144,13 @@ datatype:
     {                                                               ( _1 )}
 
 arrow_prefix:
-| _1 = LBRACE _2 = RBRACE
+_1 = LBRACE _2 = RBRACE
     {                                                               ( ([], `Closed) )}
 | _1 = LBRACE _2 = efields _3 = RBRACE
     {                                                               ( _2 )}
 
 straight_arrow_prefix:
-| _1 = arrow_prefix
+_1 = arrow_prefix
     {                                                               ( _1 )}
 | _1 = MINUS _2 = nonrec_row_var
     {                                                               ( ([], _2) )}
@@ -1158,7 +1158,7 @@ straight_arrow_prefix:
     {                                                               ( ([], _2) )}
 
 squig_arrow_prefix:
-| _1 = hear_arrow_prefix
+_1 = hear_arrow_prefix
     {                                                               ( _1 )}
 | _1 = arrow_prefix
     {                                                               ( _1 )}
@@ -1168,7 +1168,7 @@ squig_arrow_prefix:
     {                                                               ( ([], _2) )}
 
 hear_arrow_prefix:
-| _1 = LBRACE _2 = COLON _3 = datatype _4 = COMMA _5 = efields _6 = RBRACE
+_1 = LBRACE _2 = COLON _3 = datatype _4 = COMMA _5 = efields _6 = RBRACE
     {                                                               ( row_with
                                                                    ("wild", `Present UnitType)
                                                                    (row_with
@@ -1188,7 +1188,7 @@ hear_arrow_prefix:
                                                                   _5) )}
 
 straight_arrow:
-| _1 = parenthesized_datatypes _2 = straight_arrow_prefix _3 = RARROW _4 = datatype
+_1 = parenthesized_datatypes _2 = straight_arrow_prefix _3 = RARROW _4 = datatype
     {                                                               ( FunctionType (_1, _2, _4) )}
 | _1 = parenthesized_datatypes _2 = RARROW _3 = datatype
     {                                                               ( FunctionType (_1,
@@ -1196,7 +1196,7 @@ straight_arrow:
                                                                                _3) )}
 
 squiggly_arrow:
-| _1 = parenthesized_datatypes _2 = squig_arrow_prefix _3 = SQUIGRARROW _4 = datatype
+_1 = parenthesized_datatypes _2 = squig_arrow_prefix _3 = SQUIGRARROW _4 = datatype
     {                                                               ( FunctionType (_1,
                                                                                row_with
                                                                                  ("wild", `Present UnitType)
@@ -1209,25 +1209,25 @@ squiggly_arrow:
                                                                                 _3) )}
 
 mu_datatype:
-| _1 = MU _2 = VARIABLE _3 = DOT _4 = mu_datatype
+_1 = MU _2 = VARIABLE _3 = DOT _4 = mu_datatype
     {                                                               ( MuType (_2, _4) )}
 | _1 = forall_datatype
     {                                                               ( _1 )}
 
 forall_datatype:
-| _1 = FORALL _2 = varlist _3 = DOT _4 = datatype
+_1 = FORALL _2 = varlist _3 = DOT _4 = datatype
     {                                                               ( ForallType (List.map fst _2, _4) )}
 | _1 = primary_datatype
     {                                                               ( _1 )}
 
 parenthesized_datatypes:
-| _1 = LPAREN _2 = RPAREN
+_1 = LPAREN _2 = RPAREN
     {                                                               ( [] )}
 | _1 = LPAREN _2 = datatypes _3 = RPAREN
     {                                                               ( _2 )}
 
 primary_datatype:
-| _1 = parenthesized_datatypes
+_1 = parenthesized_datatypes
     {                                                               ( match _1 with
                                                                    | [] -> UnitType
                                                                    | [t] -> t
@@ -1259,7 +1259,7 @@ primary_datatype:
     {                                                               ( TypeApplication (_1, _3) )}
 
 type_var:
-| _1 = VARIABLE
+_1 = VARIABLE
     {                                                               ( RigidTypeVar (_1, `Any) )}
 | _1 = QUESTIONVAR
     {                                                               ( TypeVar (_1, `Any) )}
@@ -1269,17 +1269,17 @@ type_var:
     {                                                               ( fresh_type_variable `Any )}
 
 kinded_type_var:
-| _1 = type_var _2 = subkind
+_1 = type_var _2 = subkind
     {                                                               ( attach_subkind (pos()) (_1, _2) )}
 
 type_arg_list:
-| _1 = type_arg
+_1 = type_arg
     {                                                               ( [_1] )}
 | _1 = type_arg _2 = COMMA _3 = type_arg_list
     {                                                               ( _1 :: _3 )}
 
 type_arg:
-| _1 = datatype
+_1 = datatype
     {                                                               ( `Type _1 )}
 | _1 = TYPE _2 = LPAREN _3 = datatype _4 = RPAREN
     {                                                               ( `Type _3 )}
@@ -1291,25 +1291,25 @@ type_arg:
     {                                                               ( `Row _2 )}
 
 vrow:
-| _1 = vfields
+_1 = vfields
     {                                                               ( _1 )}
 | 
     {                                                               ( [], `Closed )}
 
 datatypes:
-| _1 = datatype
+_1 = datatype
     {                                                               ( [_1] )}
 | _1 = datatype _2 = COMMA _3 = datatypes
     {                                                               ( _1 :: _3 )}
 
 row:
-| _1 = fields
+_1 = fields
     {                                                               ( _1 )}
 | 
     {                                                               ( [], `Closed )}
 
 fields:
-| _1 = field
+_1 = field
     {                                                               ( [_1], `Closed )}
 | _1 = field _2 = VBAR _3 = row_var
     {                                                               ( [_1], _3 )}
@@ -1323,13 +1323,13 @@ fields:
     {                                                               ( _1 :: fst _3, snd _3 )}
 
 field:
-| _1 = field_label
+_1 = field_label
     {                                                               ( _1, `Present UnitType )}
 | _1 = field_label _2 = fieldspec
     {                                                               ( _1, _2 )}
 
 field_label:
-| _1 = CONSTRUCTOR
+_1 = CONSTRUCTOR
     {                                                               ( _1 )}
 | _1 = VARIABLE
     {                                                               ( _1 )}
@@ -1339,7 +1339,7 @@ field_label:
     {                                                               ( Num.string_of_num _1 )}
 
 rfields:
-| _1 = rfield
+_1 = rfield
     {                                                               ( [_1], `Closed )}
 | _1 = rfield _2 = VBAR _3 = row_var
     {                                                               ( [_1], _3 )}
@@ -1353,17 +1353,17 @@ rfields:
     {                                                               ( _1 :: fst _3, snd _3 )}
 
 rfield:
-| _1 = record_label
+_1 = record_label
     {                                                               ( _1, `Present UnitType )}
 | _1 = record_label _2 = fieldspec
     {                                                               ( _1, _2 )}
 
 record_label:
-| _1 = field_label
+_1 = field_label
     {                                                               ( _1 )}
 
 vfields:
-| _1 = vfield
+_1 = vfield
     {                                                               ( [_1], `Closed )}
 | _1 = row_var
     {                                                               ( [], _1 )}
@@ -1373,13 +1373,13 @@ vfields:
     {                                                               ( _1 :: fst _3, snd _3 )}
 
 vfield:
-| _1 = CONSTRUCTOR
+_1 = CONSTRUCTOR
     {                                                               ( _1, `Present UnitType )}
 | _1 = CONSTRUCTOR _2 = fieldspec
     {                                                               ( _1, _2 )}
 
 efields:
-| _1 = efield
+_1 = efield
     {                                                               ( [_1], `Closed )}
 | _1 = efield _2 = VBAR _3 = nonrec_row_var
     {                                                               ( [_1], _3 )}
@@ -1393,19 +1393,19 @@ efields:
     {                                                               ( _1 :: fst _3, snd _3 )}
 
 efield:
-| _1 = effect_label
+_1 = effect_label
     {                                                               ( _1, `Present UnitType )}
 | _1 = effect_label _2 = fieldspec
     {                                                               ( _1, _2 )}
 
 effect_label:
-| _1 = CONSTRUCTOR
+_1 = CONSTRUCTOR
     {                                                               ( _1 )}
 | _1 = VARIABLE
     {                                                               ( _1 )}
 
 fieldspec:
-| _1 = COLON _2 = datatype
+_1 = COLON _2 = datatype
     {                                                               ( `Present _2 )}
 | _1 = LBRACE _2 = COLON _3 = datatype _4 = RBRACE
     {                                                               ( `Present _3 )}
@@ -1423,7 +1423,7 @@ fieldspec:
     {                                                               ( fresh_presence_variable () )}
 
 nonrec_row_var:
-| _1 = VARIABLE
+_1 = VARIABLE
     {                                                               ( `OpenRigid (_1, `Any) )}
 | _1 = QUESTIONVAR
     {                                                               ( `Open (_1, `Any) )}
@@ -1433,21 +1433,21 @@ nonrec_row_var:
     {                                                               ( fresh_row_variable `Any )}
 
 row_var:
-| _1 = nonrec_row_var
+_1 = nonrec_row_var
     {                                                               ( _1 )}
 | _1 = LPAREN _2 = MU _3 = VARIABLE _4 = DOT _5 = vfields _6 = RPAREN
     {                                                               ( `Recursive (_3, _5) )}
 
 kinded_nonrec_row_var:
-| _1 = nonrec_row_var _2 = subkind
+_1 = nonrec_row_var _2 = subkind
     {                                                               ( attach_row_subkind (pos()) (_1, _2) )}
 
 kinded_row_var:
-| _1 = row_var _2 = subkind
+_1 = row_var _2 = subkind
     {                                                               ( attach_row_subkind (pos()) (_1, _2) )}
 
 regex:
-| _1 = SLASH _2 = regex_pattern_alternate _3 = regex_flags_opt
+_1 = SLASH _2 = regex_pattern_alternate _3 = regex_flags_opt
     {                                                                                 ( (`Regex _2, pos()), _3 )}
 | _1 = SLASH _2 = regex_flags_opt
     {                                                                                 ( (`Regex (`Simply ""), pos()), _2 )}
@@ -1455,13 +1455,13 @@ regex:
     {                                                                                 ( (`Regex (`Replace (_2, _4)), pos()), `RegexReplace :: _5 )}
 
 regex_flags_opt:
-| _1 = SLASH
+_1 = SLASH
     {                                                               ([])}
 | _1 = SLASHFLAGS
     {                                                               (parseRegexFlags _1)}
 
 regex_replace:
-| 
+
     {                                                               ( `Literal "")}
 | _1 = REGEXREPL
     {                                                               ( `Literal _1)}
@@ -1469,7 +1469,7 @@ regex_replace:
     {                                                               ( `Splice (`Block _1, pos ()) )}
 
 regex_pattern:
-| _1 = RANGE
+_1 = RANGE
     {                                                               ( `Range _1 )}
 | _1 = STRING
     {                                                               ( `Simply _1 )}
@@ -1493,37 +1493,37 @@ regex_pattern:
     {                                                               ( `Splice (`Block _1, pos ()) )}
 
 regex_pattern_alternate:
-| _1 = regex_pattern_sequence
+_1 = regex_pattern_sequence
     {                                                               ( `Seq _1 )}
 | _1 = regex_pattern_sequence _2 = ALTERNATE _3 = regex_pattern_alternate
     {                                                               ( `Alternate (`Seq _1, _3) )}
 
 regex_pattern_sequence:
-| _1 = regex_pattern
+_1 = regex_pattern
     {                                                               ( [_1] )}
 | _1 = regex_pattern _2 = regex_pattern_sequence
     {                                                               ( _1 :: _2 )}
 
 pattern:
-| _1 = typed_pattern
+_1 = typed_pattern
     {                                                            ( _1 )}
 | _1 = typed_pattern _2 = COLON _3 = primary_datatype
     {                                                            ( (`HasType (_1, datatype _3), pos()) )}
 
 typed_pattern:
-| _1 = cons_pattern
+_1 = cons_pattern
     {                                                            ( _1 )}
 | _1 = cons_pattern _2 = AS _3 = var
     {                                                            ( `As ((fst _3, None, snd _3), _1), pos() )}
 
 cons_pattern:
-| _1 = constructor_pattern
+_1 = constructor_pattern
     {                                                            ( _1 )}
 | _1 = constructor_pattern _2 = COLONCOLON _3 = cons_pattern
     {                                                            ( `Cons (_1, _3), pos() )}
 
 constructor_pattern:
-| _1 = negative_pattern
+_1 = negative_pattern
     {                                                            ( _1 )}
 | _1 = CONSTRUCTOR
     {                                                            ( `Variant (_1, None), pos() )}
@@ -1531,13 +1531,13 @@ constructor_pattern:
     {                                                            ( `Variant (_1, Some _2), pos() )}
 
 constructors:
-| _1 = CONSTRUCTOR
+_1 = CONSTRUCTOR
     {                                                            ( [_1] )}
 | _1 = CONSTRUCTOR _2 = COMMA _3 = constructors
     {                                                            ( _1 :: _3 )}
 
 negative_pattern:
-| _1 = primary_pattern
+_1 = primary_pattern
     {                                                            ( _1 )}
 | _1 = MINUS _2 = CONSTRUCTOR
     {                                                            ( `Negative [_2], pos() )}
@@ -1545,7 +1545,7 @@ negative_pattern:
     {                                                            ( `Negative _3, pos() )}
 
 parenthesized_pattern:
-| _1 = LPAREN _2 = RPAREN
+_1 = LPAREN _2 = RPAREN
     {                                                            ( `Tuple [], pos() )}
 | _1 = LPAREN _2 = pattern _3 = RPAREN
     {                                                            ( _2 )}
@@ -1557,7 +1557,7 @@ parenthesized_pattern:
     {                                                            ( `Record (_2, None), pos() )}
 
 primary_pattern:
-| _1 = VARIABLE
+_1 = VARIABLE
     {                                                            ( `Variable (_1, None, pos()), pos() )}
 | _1 = UNDERSCORE
     {                                                            ( `Any, pos() )}
@@ -1571,25 +1571,25 @@ primary_pattern:
     {                                                            ( _1 )}
 
 patterns:
-| _1 = pattern
+_1 = pattern
     {                                                            ( [_1] )}
 | _1 = pattern _2 = COMMA _3 = patterns
     {                                                            ( _1 :: _3 )}
 
 labeled_patterns:
-| _1 = record_label _2 = EQ _3 = pattern
+_1 = record_label _2 = EQ _3 = pattern
     {                                                            ( [(_1, _3)] )}
 | _1 = record_label _2 = EQ _3 = pattern _4 = COMMA _5 = labeled_patterns
     {                                                            ( (_1, _3) :: _5 )}
 
 multi_args:
-| _1 = LPAREN _2 = patterns _3 = RPAREN
+_1 = LPAREN _2 = patterns _3 = RPAREN
     {                                                            ( _2 )}
 | _1 = LPAREN _2 = RPAREN
     {                                                            ( [] )}
 
 arg_lists:
-| _1 = multi_args
+_1 = multi_args
     {                                                            ( [_1] )}
 | _1 = multi_args _2 = arg_lists
     {                                                            ( _1 :: _2 )}

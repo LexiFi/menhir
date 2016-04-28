@@ -82,11 +82,11 @@ let desc = ref nosym
 %%
 
 file:
-| _1 = header _2 = defs _3 = END _4 = HEX
+_1 = header _2 = defs _3 = END _4 = HEX
     {      ( (List.rev _2, int_of_string _4) )}
 
 header:
-| _1 = SYMFILE _2 = ident _3 = HEX
+_1 = SYMFILE _2 = ident _3 = HEX
     {      ( modname := _2;
 	if int_of_string _3 <> Config.signature then begin
 	  sem_error "symbol table for '$' is from wrong version of compiler"
@@ -95,7 +95,7 @@ header:
 	end )}
 
 defs:
-| 
+
     {                  ( [] )}
 | _1 = defs _2 = def
     {               ( _2::_1 )}
@@ -103,7 +103,7 @@ defs:
     {                 ( _1 )}
 
 def:
-| _1 = TYPE _2 = ident _3 = MARK _4 = otype
+_1 = TYPE _2 = ident _3 = MARK _4 = otype
     {      ( if _4.t_name = anon then _4.t_name <- _2;
 	make_def _2 _3 TypeDef _4 )}
 | _1 = VAR _2 = ident _3 = MARK _4 = otype
@@ -120,7 +120,7 @@ def:
 	d.d_lab <- proc_name !modname 0 _2; d )}
 
 fixup:
-| _1 = TARGET _2 = int _3 = otype
+_1 = TARGET _2 = int _3 = otype
     {      ( let t0 = use_type _2 in
 	match t0.t_guts with
 	    PointerType d -> d.d_type <- _3
@@ -141,7 +141,7 @@ fixup:
     {              ( )}
 
 otype:
-| _1 = USE _2 = int
+_1 = USE _2 = int
     {              ( use_type _2 )}
 | _1 = BASICTYPE
     {                ( _1 )}
@@ -149,7 +149,7 @@ otype:
     {              ( _1 )}
 
 typedef:
-| _1 = DEF _2 = int _3 = tguts
+_1 = DEF _2 = int _3 = tguts
     {      ( let t = def_type _2 !modname _2 _3 in
 	if is_record t then t.t_desc <- !desc;
 	t )}
@@ -159,7 +159,7 @@ typedef:
 	t.t_name <- _5; t )}
 
 tguts:
-| _1 = POINTER
+_1 = POINTER
     {      ( (PointerType (make_def anon Private TypeDef voidtype), 
 	  addr_rep, [GC_Offset 0]) )}
 | _1 = ENUM _2 = int
@@ -178,7 +178,7 @@ tguts:
 	(ProcType p, addr_rep, []) )}
 
 locals:
-| 
+
     {                  ( [] )}
 | _1 = locals _2 = local
     {                  ( _2::_1 )}
@@ -186,12 +186,12 @@ locals:
     {                  ( _1 )}
 
 local:
-| _1 = kind _2 = ident _3 = MARK _4 = int _5 = otype
+_1 = kind _2 = ident _3 = MARK _4 = int _5 = otype
     {      ( let d = make_def _2 _3 _1 _5 in
 	d.d_offset <- _4; d )}
 
 kind:
-| _1 = LOCAL
+_1 = LOCAL
     {            ( VarDef )}
 | _1 = PARAM
     {            ( ParamDef )}
@@ -201,31 +201,31 @@ kind:
     {            ( FieldDef )}
 
 tname:
-| _1 = ident
+_1 = ident
     {            ( _1 )}
 | _1 = ANON
     {           ( anon )}
 
 ident:
-| _1 = TAG
+_1 = TAG
     {           ( intern _1 )}
 
 symbol:
-| _1 = TAG
+_1 = TAG
     {           ( _1 )}
 
 const:
-| _1 = I _2 = NUM
+_1 = I _2 = NUM
     {            ( IntVal (Int32.of_string _2) )}
 | _1 = F _2 = FLO
     {            ( FloVal (float_of_string _2) )}
 
 int:
-| _1 = NUM
+_1 = NUM
     {           ( int_of_string _1 )}
 
 prockind:
-| _1 = PROC
+_1 = PROC
     {           ( Procedure )}
 | _1 = METH
     {           ( Method )}

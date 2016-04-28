@@ -25,11 +25,11 @@
 %%
 
 condition_start:
-| _1 = condition _2 = EOF
+_1 = condition _2 = EOF
     {                             ( _1 )}
 
 condition:
-| _1 = condition _2 = OR _3 = condition
+_1 = condition _2 = OR _3 = condition
     {                             ( Or(_1,_3) )}
 | _1 = condition _2 = AND _3 = condition
     {                             ( And(_1,_3) )}
@@ -41,7 +41,7 @@ condition:
     {                             ( _1 )}
 
 atom:
-| _1 = cte _2 = COLON _3 = STRING
+_1 = cte _2 = COLON _3 = STRING
     {    ( let s = Latex_accents.normalize true _3 in
     (*i
       Printf.printf "regexp = %s\n" s;
@@ -53,7 +53,7 @@ atom:
     {    ( Exists(String.uppercase _2) )}
 
 cte:
-| _1 = IDENT
+_1 = IDENT
     {                             ( Field(String.uppercase _1) )}
 | _1 = INT
     {                             ( Cte(_1) )}

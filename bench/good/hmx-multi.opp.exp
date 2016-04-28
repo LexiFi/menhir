@@ -112,7 +112,7 @@ let rec make_case subject = function
 %%
 
 phrase:
-| _1 = expression _2 = SEMISEMI
+_1 = expression _2 = SEMISEMI
     {                                                                ( "-", _1 )}
 | _1 = LET _2 = pattern _3 = pattern_list _4 = EQUAL _5 = expression _6 = SEMISEMI
     {                                                                ( make_let (_2, make_fun _3 _5) )}
@@ -121,7 +121,7 @@ phrase:
                                                                   _3, primapp PrimFix ff )}
 
 expression:
-| _1 = expression2
+_1 = expression2
     {                            ( _1 )}
 | _1 = FUN _2 = pattern_list _3 = ARROW _4 = expression
     {                                         ( make_fun _2 _4 )}
@@ -133,13 +133,13 @@ expression:
                                                                   Let (_3, primapp PrimFix ff, _8) )}
 
 expression2:
-| _1 = expression1
+_1 = expression1
     {                      ( _1 )}
 | _1 = expression1 _2 = SEMI _3 = expression
     {                                    ( sequence _1 _3 )}
 
 expression1:
-| _1 = expression0
+_1 = expression0
     {                             ( _1 )}
 | _1 = expression1 _2 = expression0
     {                                                ( app _1 _2 )}
@@ -147,7 +147,7 @@ expression1:
     {                                                                ( primapp2 PrimChoice _2 _3 )}
 
 expression0:
-| _1 = LIDENT
+_1 = LIDENT
     {                         ( Var _1 )}
 | _1 = UIDENT
     {                         ( prim (PrimConstructor _1) )}
@@ -173,7 +173,7 @@ expression0:
     {                                                                ( app (make_case _2 _6) _4 )}
 
 field_expr_list:
-| 
+
     {                              ( [] )}
 | _1 = field_expr
     {                                                                ( [_1] )}
@@ -181,13 +181,13 @@ field_expr_list:
     {                                                          ( _1 :: _3 )}
 
 field_expr:
-| _1 = LIDENT _2 = EQUAL _3 = expression1
+_1 = LIDENT _2 = EQUAL _3 = expression1
     {                                                                ( false, _1, _3 )}
 | _1 = MUTABLE _2 = LIDENT _3 = EQUAL _4 = expression1
     {                                                                ( true, _2, _4 )}
 
 field_list:
-| 
+
     {                              ( [] )}
 | _1 = LIDENT
     {                                      ( [_1] )}
@@ -195,13 +195,13 @@ field_list:
     {                                                          ( _1 :: _3 )}
 
 pattern_list:
-| 
+
     {                              ( [] )}
 | _1 = pattern _2 = pattern_list
     {                                                     ( _1 :: _2 )}
 
 pattern:
-| _1 = LIDENT
+_1 = LIDENT
     {                                                                ( PVariable _1 )}
 | _1 = UNDERSCORE
     {                                                                ( PVariable "-" )}
@@ -209,17 +209,17 @@ pattern:
     {                                                                ( PUnit )}
 
 case_list:
-| 
+
     {                                                                ( [] )}
 | _1 = case_entry _2 = case_list
     {                                                                ( _1 :: _2 )}
 
 case_entry:
-| _1 = BAR _2 = case_pattern _3 = ARROW _4 = expression
+_1 = BAR _2 = case_pattern _3 = ARROW _4 = expression
     {                                                                ( _2, _4 )}
 
 case_pattern:
-| _1 = UIDENT
+_1 = UIDENT
     {                                                                ( CaseOne _1 )}
 | _1 = UNDERSCORE
     {                                                                ( CaseAll )}

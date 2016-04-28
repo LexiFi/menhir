@@ -138,7 +138,7 @@ let noQualifiers = {static=false;getter=false;setter=false;
 %%
 
 partialInterface:
-| _1 = PARTIAL _2 = INTERFACE name = ID _10 = LBRACE x0 = interfaceMembers _30 = RBRACE _5 = SEMI
+_1 = PARTIAL _2 = INTERFACE name = ID _10 = LBRACE x0 = interfaceMembers _30 = RBRACE _5 = SEMI
     {let mems =
   let _3 = _30 in
   let x = x0 in
@@ -149,7 +149,7 @@ let _startpos = _startpos__1_ in
       ( PartialInterface(_startpos, [], name, mems) )}
 
 typedef:
-| _1 = TYPEDEF attrs = extendedAttributeList ty = typeDecl id = ID _5 = SEMI
+_1 = TYPEDEF attrs = extendedAttributeList ty = typeDecl id = ID _5 = SEMI
     {let _startpos = _startpos__1_ in
       ( Typedef (_startpos, [], ty, id) )}
 | nat = NATIVE _2 = SEMI
@@ -157,91 +157,91 @@ typedef:
       ( let (id, natid) = nat in Typedef (_startpos, [], Native natid, Id.id_of_string id) )}
 
 loption_separated_nonempty_list_COMMA_expr__:
-| 
+
     {    ( [] )}
 | x = separated_nonempty_list_COMMA_expr_
     {    ( x )}
 
 loption_separated_nonempty_list_COMMA_argument__:
-| 
+
     {    ( [] )}
 | x = separated_nonempty_list_COMMA_argument_
     {    ( x )}
 
 loption_separated_nonempty_list_COMMA_ID__:
-| 
+
     {    ( [] )}
 | x = separated_nonempty_list_COMMA_ID_
     {    ( x )}
 
 ilist_extAttrIfaceMemList_interfaceMember__:
-| 
+
     {    ( [] )}
 | x = extAttrIfaceMemList_interfaceMember_ xs = ilist_extAttrIfaceMemList_interfaceMember__
     {    ( x :: xs )}
 
 ilist_extAttrExnMemList_exceptionMember__:
-| 
+
     {    ( [] )}
 | x = extAttrExnMemList_exceptionMember_ xs = ilist_extAttrExnMemList_exceptionMember__
     {    ( x :: xs )}
 
 ilist_extAttrDictList_dictionaryMember__:
-| 
+
     {    ( [] )}
 | x = extAttrDictList_dictionaryMember_ xs = ilist_extAttrDictList_dictionaryMember__
     {    ( x :: xs )}
 
 ilist_extAttrDefList_definition__:
-| 
+
     {    ( [] )}
 | x = extAttrDefList_definition_ xs = ilist_extAttrDefList_definition__
     {    ( x :: xs )}
 
 ilist_definition_:
-| 
+
     {    ( [] )}
 | x = definition xs = ilist_definition_
     {    ( x :: xs )}
 
 iseparated_nonempty_list_COMMA_extendedAttribute_:
-| x = extendedAttribute
+x = extendedAttribute
     {    ( [ x ] )}
 | x = extendedAttribute _2 = COMMA xs = iseparated_nonempty_list_COMMA_extendedAttribute_
     {    ( x :: xs )}
 
 iseparated_nonempty_list_COMMA_STRING_:
-| x = STRING
+x = STRING
     {    ( [ x ] )}
 | x = STRING _2 = COMMA xs = iseparated_nonempty_list_COMMA_STRING_
     {    ( x :: xs )}
 
 extAttrIfaceMemList_interfaceMember_:
-| attrs = extendedAttributeList x = interfaceMember
+attrs = extendedAttributeList x = interfaceMember
     {                                    ( ifaceMemWithAttrs x attrs )}
 
 extAttrExnMemList_exceptionMember_:
-| attrs = extendedAttributeList x = exceptionMember
+attrs = extendedAttributeList x = exceptionMember
     {                                    ( ifaceMemWithAttrs x attrs )}
 
 extAttrArgList_optionalOrRequiredArgument_:
-| attrs = extendedAttributeList x = optionalOrRequiredArgument
+attrs = extendedAttributeList x = optionalOrRequiredArgument
     {                                    ( (attrs, x) )}
 
 extAttrDefList_definition_:
-| attrs = extendedAttributeList x = definition
+attrs = extendedAttributeList x = definition
     {                                    ( defWithAttrs x attrs )}
 
 extAttrDictList_dictionaryMember_:
-| attrs = extendedAttributeList x = dictionaryMember
+attrs = extendedAttributeList x = dictionaryMember
     {                                    ( ifaceMemWithAttrs x attrs )}
 
 definitions:
-| defs = ilist_extAttrDefList_definition__
+defs = ilist_extAttrDefList_definition__
     {                                           ( defs )}
 
 definition:
-| _1 = callbackOrInterface
+_1 = callbackOrInterface
     {                        ( _1 )}
 | _1 = partialInterface
     {                     ( _1 )}
@@ -274,13 +274,13 @@ let _startpos = _startpos__1_ in
     {            ( let (p, m, t, id, e) = c in Const(p,m,t,id,e) )}
 
 callbackOrInterface:
-| _1 = CALLBACK _2 = callbackRestOrInterface
+_1 = CALLBACK _2 = callbackRestOrInterface
     {                                     ( _2 )}
 | _1 = interface
     {              ( _1 )}
 
 callbackRestOrInterface:
-| _1 = callbackRest
+_1 = callbackRest
     {                 ( _1 )}
 | _1 = interface
     {let _startpos = _startpos__1_ in
@@ -292,7 +292,7 @@ callbackRestOrInterface:
   )}
 
 callbackRest:
-| _10 = CONSTRUCTOR _2 = EQUALS ret = returnType _11 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
+_10 = CONSTRUCTOR _2 = EQUALS ret = returnType _11 = LPAREN x0 = argumentList _30 = RPAREN _5 = SEMI
     {let args =
   let _3 = _30 in
   let x = x0 in
@@ -510,7 +510,7 @@ let _startpos = _startpos_name_ in
       ( Callback(_startpos, [], name, args, ret) )}
 
 interface:
-| _1 = INTERFACE name = ID inherits = inheritance _10 = LBRACE x0 = interfaceMembers _30 = RBRACE _5 = SEMI
+_1 = INTERFACE name = ID inherits = inheritance _10 = LBRACE x0 = interfaceMembers _30 = RBRACE _5 = SEMI
     {let mems =
   let _3 = _30 in
   let x = x0 in
@@ -521,17 +521,17 @@ let _startpos = _startpos__1_ in
       ( Interface(_startpos, [], name, inherits, mems, IsNormalInterface) )}
 
 interfaceMembers:
-| mems = ilist_extAttrIfaceMemList_interfaceMember__
+mems = ilist_extAttrIfaceMemList_interfaceMember__
     {                                                     ( mems )}
 
 interfaceMember:
-| c = const
+c = const
     {            ( let (p,m,t,id,c) = c in ConstMember(p,m,t,id,c) )}
 | _1 = attributeOrOperation
     {                         ( _1 )}
 
 dictionary:
-| _1 = DICTIONARY name = ID inherits = inheritance _10 = LBRACE x0 = dictionaryMembers _30 = RBRACE _5 = SEMI
+_1 = DICTIONARY name = ID inherits = inheritance _10 = LBRACE x0 = dictionaryMembers _30 = RBRACE _5 = SEMI
     {let defs =
   let _3 = _30 in
   let x = x0 in
@@ -542,11 +542,11 @@ let _startpos = _startpos__1_ in
       ( Dictionary(_startpos, [], name, inherits, defs) )}
 
 dictionaryMembers:
-| mems = ilist_extAttrDictList_dictionaryMember__
+mems = ilist_extAttrDictList_dictionaryMember__
     {                                                  ( mems )}
 
 dictionaryMember:
-| ty = typeDecl _10 = CONSTRUCTOR _4 = SEMI
+ty = typeDecl _10 = CONSTRUCTOR _4 = SEMI
     {let _3 =
       ( None )
 in
@@ -896,11 +896,11 @@ let _startpos = _startpos_ty_ in
       ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, name) )}
 
 default:
-| _1 = EQUALS _2 = constValue
+_1 = EQUALS _2 = constValue
     {                      ( _2 )}
 
 exceptionDef:
-| _1 = EXCEPTION name = ID inherits = inheritance _10 = LBRACE x0 = exceptionMembers _30 = RBRACE _5 = SEMI
+_1 = EXCEPTION name = ID inherits = inheritance _10 = LBRACE x0 = exceptionMembers _30 = RBRACE _5 = SEMI
     {let mems =
   let _3 = _30 in
   let x = x0 in
@@ -911,22 +911,22 @@ let _startpos = _startpos__1_ in
       ( Exception(_startpos, [], name, inherits, mems) )}
 
 exceptionMembers:
-| mems = ilist_extAttrExnMemList_exceptionMember__
+mems = ilist_extAttrExnMemList_exceptionMember__
     {                                                   ( mems )}
 
 inheritance:
-| _1 = COLON _2 = scopedName
+_1 = COLON _2 = scopedName
     {                     ( Some (_2) )}
 | 
     {    ( None )}
 
 implementsStatement:
-| _1 = ID _2 = IMPLEMENTS _3 = ID _4 = SEMI
+_1 = ID _2 = IMPLEMENTS _3 = ID _4 = SEMI
     {let _startpos = _startpos__1_ in
       ( Implements(_startpos, [], _1, _3) )}
 
 stringifierAttributeOrOperation:
-| _1 = attribute
+_1 = attribute
     {let _startpos = _startpos__1_ in
               ( 
     match _1 with
@@ -945,7 +945,7 @@ stringifierAttributeOrOperation:
          ( Stringifier(_startpos, []) )}
 
 operation:
-| _10 = STATIC op = operationRest
+_10 = STATIC op = operationRest
     {let q =
   let _1 = _10 in
              ( {noQualifiers with static=true} )
@@ -1026,7 +1026,7 @@ let _startpos = _startpos_q_ in
                                   ( op _startpos q )}
 
 raisesClause:
-| _1 = RAISES _10 = LPAREN xs00 = loption_separated_nonempty_list_COMMA_ID__ _30 = RPAREN
+_1 = RAISES _10 = LPAREN xs00 = loption_separated_nonempty_list_COMMA_ID__ _30 = RPAREN
     {let _2 =
   let _3 = _30 in
   let xs0 = xs00 in
@@ -1040,7 +1040,7 @@ in
                                                                 ( () )}
 
 operationRest:
-| ret = returnType name = option_identOrKeyword_ _10 = LPAREN x0 = argumentList _30 = RPAREN _4 = option_raisesClause_ _5 = SEMI
+ret = returnType name = option_identOrKeyword_ _10 = LPAREN x0 = argumentList _30 = RPAREN _4 = option_raisesClause_ _5 = SEMI
     {let args =
   let _3 = _30 in
   let x = x0 in
@@ -1050,17 +1050,17 @@ in
       ( (fun start quals -> Operation(start, [], IsNormal, quals, ret, name, args)) )}
 
 typeDecl:
-| _1 = singleType
+_1 = singleType
     {               ( _1 )}
 
 singleType:
-| _1 = nonAnyType
+_1 = nonAnyType
     {               ( _1 )}
 | _1 = ANY _2 = typeSuffixStartingWithArray
     {                                    ( _2 Any )}
 
 unsignedIntegerType:
-| ty = integerType
+ty = integerType
     {let unsigned =
       ( false )
 in
@@ -1073,49 +1073,49 @@ in
                                                ( ty (if unsigned then Unsigned else NoUnsigned) )}
 
 option_raisesClause_:
-| 
+
     {    ( None )}
 | x = raisesClause
     {    ( Some x )}
 
 option_default_:
-| 
+
     {    ( None )}
 | x = default
     {    ( Some x )}
 
 option_INHERIT_:
-| 
+
     {    ( None )}
 | x = INHERIT
     {    ( Some x )}
 
 separated_nonempty_list_COMMA_expr_:
-| x = expr
+x = expr
     {    ( [ x ] )}
 | x = expr _2 = COMMA xs = separated_nonempty_list_COMMA_expr_
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_argument_:
-| x = argument
+x = argument
     {    ( [ x ] )}
 | x = argument _2 = COMMA xs = separated_nonempty_list_COMMA_argument_
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_ID_:
-| x = ID
+x = ID
     {    ( [ x ] )}
 | x = ID _2 = COMMA xs = separated_nonempty_list_COMMA_ID_
     {    ( x :: xs )}
 
 scopedName:
-| n = absoluteScopedName
+n = absoluteScopedName
     {                         ( n )}
 | n = relativeScopedName
     {                         ( n )}
 
 absoluteScopedName:
-| _1 = COLONCOLON _10 = CONSTRUCTOR parts = scopedNameParts
+_1 = COLONCOLON _10 = CONSTRUCTOR parts = scopedNameParts
     {let id =
   let _1 = _10 in
                   ( Id.id_of_string "Constructor" )
@@ -1237,7 +1237,7 @@ in
                                                        ( AbsoluteName (id::parts) )}
 
 relativeScopedName:
-| _10 = CONSTRUCTOR parts = scopedNameParts
+_10 = CONSTRUCTOR parts = scopedNameParts
     {let id =
   let _1 = _10 in
                   ( Id.id_of_string "Constructor" )
@@ -1359,7 +1359,7 @@ in
                                             ( RelativeName (id::parts) )}
 
 scopedNameParts:
-| _1 = COLONCOLON _10 = CONSTRUCTOR parts = scopedNameParts
+_1 = COLONCOLON _10 = CONSTRUCTOR parts = scopedNameParts
     {let id =
   let _1 = _10 in
                   ( Id.id_of_string "Constructor" )
@@ -1483,7 +1483,7 @@ in
     {    ( [] )}
 
 enum:
-| _1 = ENUM name = ID _10 = LBRACE x0 = iseparated_nonempty_list_COMMA_STRING_ _30 = RBRACE _4 = SEMI
+_1 = ENUM name = ID _10 = LBRACE x0 = iseparated_nonempty_list_COMMA_STRING_ _30 = RBRACE _4 = SEMI
     {let mems =
   let _3 = _30 in
   let x = x0 in
@@ -1494,16 +1494,16 @@ let _startpos = _startpos__1_ in
       ( Enum(_startpos, [], name, mems) )}
 
 const:
-| _1 = CONST cty = constType id = ID _4 = EQUALS cval = constValue _6 = SEMI
+_1 = CONST cty = constType id = ID _4 = EQUALS cval = constValue _6 = SEMI
     {let _startpos = _startpos__1_ in
       ( (_startpos, [], cty, id, cval) )}
 
 constValue:
-| _1 = expr
+_1 = expr
     {         ( _1 )}
 
 expr:
-| _1 = exprUn
+_1 = exprUn
     {           ( _1 )}
 | _1 = expr _2 = MOD _3 = expr
     {                  ( BinOp(_1, Mod, _3) )}
@@ -1527,7 +1527,7 @@ expr:
     {                  ( BinOp(_1, Or, _3) )}
 
 exprUn:
-| name0 = scopedName
+name0 = scopedName
     {let atom =
   let name = name0 in
                       ( Ident name )
@@ -1809,7 +1809,7 @@ in
                         ( UnOp(UMinus, atom) )}
 
 attributeOrOperation:
-| _1 = STRINGIFIER _2 = stringifierAttributeOrOperation
+_1 = STRINGIFIER _2 = stringifierAttributeOrOperation
     {                                                ( _2 )}
 | _1 = attribute
     {              ( _1 )}
@@ -1817,7 +1817,7 @@ attributeOrOperation:
     {              ( _1 )}
 
 attribute:
-| _1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _10 = CONSTRUCTOR _6 = SEMI
+_1 = option_INHERIT_ _3 = ATTRIBUTE ty = typeDecl _10 = CONSTRUCTOR _6 = SEMI
     {let name =
   let _1 = _10 in
                   ( Id.id_of_string "Constructor" )
@@ -2167,7 +2167,7 @@ let _startpos = _startpos__1_ in
       ( Attribute(_startpos, [], (if readonly then ReadOnly else NoReadOnly), IsNormal, ty, name) )}
 
 argumentList:
-| xs0 = loption_separated_nonempty_list_COMMA_argument__
+xs0 = loption_separated_nonempty_list_COMMA_argument__
     {let args =
   let xs = xs0 in
       ( xs )
@@ -2175,14 +2175,14 @@ in
                                         ( args )}
 
 argument:
-| arg = extAttrArgList_optionalOrRequiredArgument_
+arg = extAttrArgList_optionalOrRequiredArgument_
     {                                                   ( 
     let (m, (io, opt, ty, dots, id, def)) = arg in 
     if opt then (io, Optional::m, ty, dots, id, def)
     else (io, m, ty, dots, id, def) )}
 
 optionalOrRequiredArgument:
-| io = inout _2 = OPTIONAL ty = typeDecl _10 = CONSTRUCTOR def = option_default_
+io = inout _2 = OPTIONAL ty = typeDecl _10 = CONSTRUCTOR def = option_default_
     {let id =
   let _1 = _10 in
                   ( Id.id_of_string "Constructor" )
@@ -2628,7 +2628,7 @@ in
                                                      ( (io, false, ty, dots, id, None) )}
 
 inout:
-| _1 = IN
+_1 = IN
     {       ( InParam )}
 | _1 = OUT
     {        ( OutParam )}
@@ -2638,18 +2638,18 @@ inout:
     {    ( InParam )}
 
 exceptionMember:
-| c = const
+c = const
     {            ( let (p,m,t,id,e) = c in ConstMember(p,m,t,id,e) )}
 | _1 = exceptionField
     {                   ( _1 )}
 
 exceptionField:
-| ty = typeDecl id = ID _3 = SEMI
+ty = typeDecl id = ID _3 = SEMI
     {let _startpos = _startpos_ty_ in
                            ( Attribute(_startpos, [], NoReadOnly, IsNormal, ty, id) )}
 
 extendedAttributeList:
-| _10 = LBRACK x0 = iseparated_nonempty_list_COMMA_extendedAttribute_ _30 = RBRACK
+_10 = LBRACK x0 = iseparated_nonempty_list_COMMA_extendedAttribute_ _30 = RBRACK
     {let attrs =
   let _3 = _30 in
   let x = x0 in
@@ -2661,7 +2661,7 @@ in
     {    ( [] )}
 
 extendedAttribute:
-| _1 = extendedAttributeNoArgs
+_1 = extendedAttributeNoArgs
     {                            ( _1 )}
 | _1 = extendedAttributeArgList
     {                             ( _1 )}
@@ -2671,7 +2671,7 @@ extendedAttribute:
     {                           ( _1 )}
 
 nonAnyType:
-| _1 = primitiveType _2 = typeSuffix
+_1 = primitiveType _2 = typeSuffix
     {                             ( (_2 _1) )}
 | _1 = SEQUENCE _2 = LANGLE t = typeDecl _4 = RANGLE
     {let q =
@@ -2686,7 +2686,7 @@ in
                                                        ( if q then Ques (Sequence t) else Sequence t )}
 
 constType:
-| ty = primitiveType
+ty = primitiveType
     {let readonly =
       ( false )
 in
@@ -2699,7 +2699,7 @@ in
                                              ( if readonly then Ques ty else ty )}
 
 primitiveType:
-| _1 = unsignedIntegerType
+_1 = unsignedIntegerType
     {                        ( _1 )}
 | _1 = BOOLEAN
     {            ( Boolean )}
@@ -2876,7 +2876,7 @@ in
   )}
 
 integerType:
-| _1 = BYTE
+_1 = BYTE
     {         ( (fun u -> match u with | Unsigned -> Octet | NoUnsigned -> Byte) )}
 | _1 = SHORT
     {          ( (fun u -> Short u) )}
@@ -2893,7 +2893,7 @@ in
                                 ( if longopt then (fun u -> LongLong u) else (fun u -> Long u) )}
 
 typeSuffix:
-| _1 = LRBRACK _2 = typeSuffix
+_1 = LRBRACK _2 = typeSuffix
     {                       ( (fun t -> _2 (Array t)) )}
 | _1 = QUES _2 = typeSuffixStartingWithArray
     {                                     ( (fun t -> _2 (Ques t)) )}
@@ -2901,19 +2901,19 @@ typeSuffix:
     {    ( (fun t -> t) )}
 
 typeSuffixStartingWithArray:
-| _1 = LRBRACK _2 = typeSuffix
+_1 = LRBRACK _2 = typeSuffix
     {                       ( (fun t -> _2 (Array t)) )}
 | 
     {    ( (fun t -> t) )}
 
 returnType:
-| _1 = typeDecl
+_1 = typeDecl
     {             ( _1 )}
 | _1 = VOID
     {         ( Void )}
 
 extendedAttributeNoArgs:
-| _1 = CONST
+_1 = CONST
     {          ( AttrNoArgs (Id.id_of_string "const") )}
 | _1 = NOINTERFACEOBJECT
     {                      ( NoInterfaceObject )}
@@ -3015,7 +3015,7 @@ in
                                     ( AttrNoArgs id )}
 
 extendedAttributeArgList:
-| _1 = UUID
+_1 = UUID
     {         ( Uuid (_1) )}
 | _1 = CONSTRUCTOR _10 = LPAREN x0 = argumentList _30 = RPAREN
     {let args =
@@ -3163,7 +3163,7 @@ in
                                                                                                 ( AttrArgList (id, args) )}
 
 extendedAttributeIdent:
-| _1 = PUTFORWARDS _2 = EQUALS id = ID
+_1 = PUTFORWARDS _2 = EQUALS id = ID
     {                             ( PutForwards id )}
 | _1 = TREATNULLAS _2 = EQUALS _3 = typeDecl
     {                                ( TreatNullAs _3 )}
@@ -5763,7 +5763,7 @@ in
                                                  ( AttrNamedIdent(name, id) )}
 
 extendedAttributeNamedArgList:
-| _1 = NAMEDCONSTRUCTOR _2 = EQUALS name = ID _10 = LPAREN x0 = argumentList _30 = RPAREN
+_1 = NAMEDCONSTRUCTOR _2 = EQUALS name = ID _10 = LPAREN x0 = argumentList _30 = RPAREN
     {let args =
   let _3 = _30 in
   let x = x0 in
@@ -9805,11 +9805,11 @@ in
                                                                                                              ( AttrNamedArgList (name,id,args) )}
 
 idlFile:
-| _1 = definitions _2 = EOF
+_1 = definitions _2 = EOF
     {                     ( _1 )}
 
 option_identOrKeyword_:
-| 
+
     {    ( None )}
 | _10 = CONSTRUCTOR
     {let x =

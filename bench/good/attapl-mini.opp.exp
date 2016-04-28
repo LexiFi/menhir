@@ -97,37 +97,37 @@ let seq e1 e2 =
 %%
 
 program:
-| _1 = bindings _2 = EOF
+_1 = bindings _2 = EOF
     {                                                                ( List.rev _1 )}
 
 forall:
-| 
+
     {                                                                ( [] )}
 | _1 = FORALL _2 = quantifiers _3 = DOT
     {                                                                ( _2 )}
 
 quantifiers:
-| _1 = quantifier
+_1 = quantifier
     {                                                                ( [ _1 ] )}
 | _1 = quantifiers _2 = quantifier
     {                                                                ( _2 :: _1 )}
 
 quantifier:
-| _1 = LID
+_1 = LID
     {                                                                ( _1 )}
 
 typ:
-| _1 = type2
+_1 = type2
     {                                                                ( _1 )}
 
 type2:
-| _1 = type1 _2 = ARROW _3 = type2
+_1 = type1 _2 = ARROW _3 = type2
     {                                                                ( TypArrow (_1, _3) )}
 | _1 = type1
     {                                                                ( _1 )}
 
 type1:
-| _1 = type0 _2 = STAR _3 = type1
+_1 = type0 _2 = STAR _3 = type1
     {                                                                ( match _3 with
                                                                   | TypTuple typs -> TypTuple (_1 :: typs)
 								  | _ -> TypTuple [ _1; _3 ] )}
@@ -135,7 +135,7 @@ type1:
     {                                                                ( _1 )}
 
 type0:
-| _1 = LID
+_1 = LID
     {                                                                ( TypVar _1 )}
 | _1 = UNIT
     {                                                                ( TypTuple [] )}
@@ -145,17 +145,17 @@ type0:
     {                                                                ( TypTuple (_2 :: _4) )}
 
 types:
-| _1 = typ
+_1 = typ
     {                                                                ( [ _1 ] )}
 | _1 = typ _2 = COMMA _3 = types
     {                                                                ( _1 :: _3 )}
 
 expression:
-| _1 = expression400
+_1 = expression400
     {                                                                ( _1 )}
 
 expression400:
-| _1 = BACKSLASH _2 = pattern _3 = DOT _4 = expression400
+_1 = BACKSLASH _2 = pattern _3 = DOT _4 = expression400
     {                                                                ( ELambda (_2, _4) )}
 | _1 = binding _2 = IN _3 = expression400
     {                                                                ( EBinding (_1, _3) )}
@@ -167,13 +167,13 @@ expression400:
     {                                                                ( _1 )}
 
 expression300:
-| _1 = expression0 _2 = DOT _3 = LID _4 = LEFTARROW _5 = expression100
+_1 = expression0 _2 = DOT _3 = LID _4 = LEFTARROW _5 = expression100
     {                                                                ( ERecordUpdate (_1, _3, _5) )}
 | _1 = expression200
     {                                                                ( _1 )}
 
 expression200:
-| _1 = expression200 _2 = INFIXOP0 _3 = expression200
+_1 = expression200 _2 = INFIXOP0 _3 = expression200
     {                                                                ( infix _2 _1 _3 )}
 | _1 = expression200 _2 = INFIXOP1 _3 = expression200
     {                                                                ( infix _2 _1 _3 )}
@@ -189,13 +189,13 @@ expression200:
     {                                                                ( _1 )}
 
 expression100:
-| _1 = expression100 _2 = expression0
+_1 = expression100 _2 = expression0
     {                                                                ( EApp (_1, _2) )}
 | _1 = expression0
     {                                                                ( _1 )}
 
 expression0:
-| _1 = LID
+_1 = LID
     {                                                                ( EVar _1 )}
 | _1 = INTEGER
     {                                                                ( EPrimApp (PIntegerConstant _1, []) )}
@@ -213,35 +213,35 @@ expression0:
     {                                                                ( ETuple (_2 :: _4) )}
 
 expressions:
-| _1 = expression
+_1 = expression
     {                                                                ( [ _1 ] )}
 | _1 = expression _2 = COMMA _3 = expressions
     {                                                                ( _1 :: _3 )}
 
 bindings:
-| 
+
     {                                                                ( [] )}
 | _1 = bindings _2 = binding
     {                                                                ( _2 :: _1 )}
 
 binding:
-| _1 = LET _2 = value_definitions
+_1 = LET _2 = value_definitions
     {                                                                ( BindValue _2 )}
 | _1 = LET _2 = REC _3 = value_definitions
     {                                                                ( BindRecValue _3 )}
 
 value_definitions:
-| _1 = value_definition
+_1 = value_definition
     {                                                                ( [ _1 ] )}
 | _1 = value_definitions _2 = AND _3 = value_definition
     {                                                                ( _3 :: _1 )}
 
 value_definition:
-| _1 = forall _2 = pattern0 _3 = equal_expression
+_1 = forall _2 = pattern0 _3 = equal_expression
     {                                                                ( (_1, _2, _3) )}
 
 equal_expression:
-| _1 = EQUAL _2 = expression
+_1 = EQUAL _2 = expression
     {                                                                ( _2 )}
 | _1 = COLON _2 = typ _3 = EQUAL _4 = expression
     {                                                                ( ETypeConstraint (_4, _2) )}
@@ -249,29 +249,29 @@ equal_expression:
     {                                                                ( ELambda (_1, _2) )}
 
 pattern:
-| _1 = pattern3
+_1 = pattern3
     {                                                                ( _1 )}
 
 pattern3:
-| _1 = pattern2
+_1 = pattern2
     {                                                                ( _1 )}
 | _1 = pattern3 _2 = COLON _3 = typ
     {                                                                ( PTypeConstraint (_1, _3) )}
 
 pattern2:
-| _1 = pattern1
+_1 = pattern1
     {                                                                ( _1 )}
 | _1 = LID _2 = AS _3 = pattern2
     {                                                                ( PAlias (_1, _3) )}
 
 pattern1:
-| _1 = pattern0
+_1 = pattern0
     {                                                                ( _1 )}
 | _1 = UID _2 = pattern0s
     {                                                                ( PData (_1, List.rev _2) )}
 
 pattern0:
-| _1 = LID
+_1 = LID
     {                                                                ( PVar _1 )}
 | _1 = WILD
     {                                                                ( PWildcard )}
@@ -285,13 +285,13 @@ pattern0:
     {                                                                ( PTuple (_2 :: _4) )}
 
 patterns:
-| _1 = pattern
+_1 = pattern
     {                                                                ( [ _1 ] )}
 | _1 = pattern _2 = COMMA _3 = patterns
     {                                                                ( _1 :: _3 )}
 
 pattern0s:
-| 
+
     {                                                                ( [] )}
 | _1 = pattern0s _2 = pattern0
     {                                                                ( _2 :: _1 )}
