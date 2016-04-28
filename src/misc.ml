@@ -53,9 +53,9 @@ let tabulateo number fold n f =
       let image = f element in
       begin match image with
       | Some _ ->
-	  incr c
+          incr c
       | None ->
-	  ()
+          ()
       end;
       image
     )
@@ -63,9 +63,9 @@ let tabulateo number fold n f =
   get, !c
 
 module IntSet = Set.Make (struct 
-			    type t = int
-			    let compare = ( - )
-			  end)
+                            type t = int
+                            let compare = ( - )
+                          end)
 
 type 'a iter = ('a -> unit) -> unit
 
@@ -131,9 +131,9 @@ let materialize (table : ('a, 'a option) Hashtbl.t) (x : 'a) : 'a list =
   let rec loop x =
     match Hashtbl.find table x with
     | None ->
-	[]
+        []
     | Some x ->
-	x :: loop x
+        x :: loop x
   in
   loop x
 
@@ -212,9 +212,9 @@ let rec smap f = function
       let x' = f x
       and xs' = smap f xs in
       if x == x' && xs == xs' then
-	l
+        l
       else
-	x' :: xs'
+        x' :: xs'
 
 let rec smapa f accu = function
   | [] ->
@@ -224,9 +224,9 @@ let rec smapa f accu = function
       let accu, xs' = smapa f accu xs in
       accu,
       if x == x' && xs == xs' then
-	l
+        l
       else
-	x' :: xs'
+        x' :: xs'
 
 let normalize s =
   let s = Bytes.of_string s in
@@ -236,9 +236,9 @@ let normalize s =
     | '('
     | ')'
     | ',' ->
-	Bytes.set s i '_'
+        Bytes.set s i '_'
     | _ ->
-	()
+        ()
   done;
   Bytes.unsafe_to_string s
 

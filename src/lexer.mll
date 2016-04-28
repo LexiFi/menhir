@@ -406,7 +406,7 @@ rule main = parse
     { if Hashtbl.mem reserved id then
         error2 lexbuf "this is an OCaml reserved word."
       else
-	LID (with_pos (cpos lexbuf) id)
+        LID (with_pos (cpos lexbuf) id)
     }
 | (uppercase identchar *) as id
     { UID (with_pos (cpos lexbuf) id) }
@@ -433,11 +433,11 @@ rule main = parse
         let openingpos = lexeme_end_p lexbuf in
         let closingpos, monsters = action false openingpos [] lexbuf in
         ACTION (
-	  fun (producers : string option array) ->
+          fun (producers : string option array) ->
             List.iter (fun monster -> monster.check producers) monsters;
-	    let stretch = mk_stretch openingpos closingpos true monsters in
-	    Action.from_stretch stretch
-	)
+            let stretch = mk_stretch openingpos closingpos true monsters in
+            Action.from_stretch stretch
+        )
       ) }
 | eof
     { EOF }
@@ -494,11 +494,11 @@ and action percent openingpos monsters = parse
     { match percent, delimiter with
       | true, "%}"
       | false, "}" ->
-	  (* This is the delimiter we were instructed to look for. *)
-	  lexeme_start_p lexbuf, monsters
+          (* This is the delimiter we were instructed to look for. *)
+          lexeme_start_p lexbuf, monsters
       | _, _ ->
-	  (* This is not it. *)
-	  error1 openingpos "unbalanced opening brace."
+          (* This is not it. *)
+          error1 openingpos "unbalanced opening brace."
     }
 | '('
     { let _, monsters = parentheses (lexeme_end_p lexbuf) monsters lexbuf in

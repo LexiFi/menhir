@@ -160,16 +160,16 @@ end) = struct
       inode.priority <- priority;
       match InfiniteArray.get a priority with
       | None ->
-	  InfiniteArray.set a priority (Some inode);
+          InfiniteArray.set a priority (Some inode);
           (* Decrease [best], if necessary, so as not to miss the new element.
              In the special case of A*, this never happens. *)
           assert (!best <= priority);
-	  (* if priority < !best then best := priority *)
+          (* if priority < !best then best := priority *)
       | Some inode' ->
-	  inode.next <- inode';
-	  inode.prev <- inode'.prev;
-	  inode'.prev.next <- inode;
-	  inode'.prev <- inode
+          inode.next <- inode';
+          inode.prev <- inode'.prev;
+          inode'.prev.next <- inode;
+          inode'.prev <- inode
 
     (* Takes a node off its doubly linked list. Does not adjust [best],
        as this is not necessary in order to preserve the invariant. *)
@@ -179,16 +179,16 @@ end) = struct
         InfiniteArray.set a inode.priority None
       else begin
         InfiniteArray.set a inode.priority (Some inode.next);
-	inode.next.prev <- inode.prev;
-	inode.prev.next <- inode.next;
-	inode.next <- inode;
-	inode.prev <- inode
+        inode.next.prev <- inode.prev;
+        inode.prev.next <- inode.next;
+        inode.next <- inode;
+        inode.prev <- inode
       end;
       inode.priority <- -1
 
     let rec get () =
       if !cardinal = 0 then
-	None
+        None
       else
         get_nonempty()
 
@@ -207,7 +207,7 @@ end) = struct
 
     let add_or_decrease inode priority =
       if inode.priority >= 0 then
-	remove inode;
+        remove inode;
       add inode priority
 
   end

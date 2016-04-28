@@ -5,10 +5,10 @@ let cardinal s =
 
 let filter pred map =
   fold (fun key value map ->
-	  if pred key value then 
-	    add key value map
-	  else 
-	    map) map empty
+          if pred key value then 
+            add key value map
+          else 
+            map) map empty
 
 let restrict domain map =
   filter (fun k _ -> StringSet.mem k domain) map

@@ -46,13 +46,13 @@ let rec repr point =
       let point'' = repr point' in
       if point'' != point' then
 
-	(* [point''] is [point']'s representative element. Because we
-	   just invoked [repr point'], [point'.link] must be [Link
-	   point'']. We write this value into [point.link], thus
-	   performing path compression. Note that this function never
-	   performs memory allocation. *)
+        (* [point''] is [point']'s representative element. Because we
+           just invoked [repr point'], [point'.link] must be [Link
+           point'']. We write this value into [point.link], thus
+           performing path compression. Note that this function never
+           performs memory allocation. *)
 
-	point.link <- point'.link;
+        point.link <- point'.link;
       point''
   | Info _ ->
       point
@@ -101,13 +101,13 @@ let union point1 point2 =
       let weight1 = info1.weight
       and weight2 = info2.weight in
       if weight1 >= weight2 then begin
-	point2.link <- Link point1;
-	info1.weight <- weight1 + weight2;
-	info1.descriptor <- info2.descriptor
+        point2.link <- Link point1;
+        info1.weight <- weight1 + weight2;
+        info1.descriptor <- info2.descriptor
       end
       else begin
-	point1.link <- Link point2;
-	info2.weight <- weight1 + weight2
+        point1.link <- Link point2;
+        info2.weight <- weight1 + weight2
       end
   | _, _ ->
       assert false (* [repr] guarantees that [link] matches [Info _]. *)

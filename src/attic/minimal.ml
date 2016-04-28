@@ -35,8 +35,8 @@ let () =
   Error.logG 2 (fun f ->
     for nt = Nonterminal.start to Nonterminal.n - 1 do
       Printf.fprintf f "minimal(%s) = %s\n"
-	(Nonterminal.print false nt)
-	(CompletedNatWitness.print Terminal.print (MINIMAL.nonterminal nt))
+        (Nonterminal.print false nt)
+        (CompletedNatWitness.print Terminal.print (MINIMAL.nonterminal nt))
     done
   )
 

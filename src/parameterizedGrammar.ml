@@ -38,9 +38,9 @@ let var_name =
   in
     fun v -> 
       let repr = UnionFind.find v in 
-	match repr.name with
-	    None -> let name = next_name () in repr.name <- Some name; name
-	  | Some x -> x
+        match repr.name with
+            None -> let name = next_name () in repr.name <- Some name; name
+          | Some x -> x
 
 (* [string_of_nt_type] is a simple pretty printer for types (they can be 
    recursive). *)
@@ -50,7 +50,7 @@ let var_name =
 let string_of paren_fun ?paren ?colors t : string = 
   let colors = 
     match colors with 
-	None    -> (Mark.fresh (), Mark.fresh ()) 
+        None    -> (Mark.fresh (), Mark.fresh ()) 
       | Some cs -> cs 
   in
   let s, p = paren_fun colors t in
@@ -66,16 +66,16 @@ let rec paren_nt_type colors = function
 
   | Arrow ins ->
       let args = separated_list_to_string 
-	(string_of paren_var ~paren:true ~colors) ", " ins 
+        (string_of paren_var ~paren:true ~colors) ", " ins 
       in
       let args = 
-	if List.length ins > 1 then
-	  "("^ args ^ ")"
-	else 
-	  args
+        if List.length ins > 1 then
+          "("^ args ^ ")"
+        else 
+          args
       in
-	args^" -> *", true
-	
+        args^" -> *", true
+        
 and paren_var (white, black) x = 
   let descr = UnionFind.find x in
     if Mark.same descr.mark white then begin
@@ -85,13 +85,13 @@ and paren_var (white, black) x =
     else begin 
       descr.mark <- white;
       let s, p = match descr.structure with
-	  None -> var_name x, false
-	| Some t -> paren_nt_type (white, black) t
+          None -> var_name x, false
+        | Some t -> paren_nt_type (white, black) t
       in
-	if Mark.same descr.mark black then
-	  (var_name x ^ " = " ^ s, true)
-	else 
-	  (s, p)
+        if Mark.same descr.mark black then
+          (var_name x ^ " = " ^ s, true)
+        else 
+          (s, p)
     end
 
 let string_of_nt_type ?colors t = 
@@ -107,7 +107,7 @@ let string_of_var ?colors v =
 (* [print_env env] returns a string description of the typing environment. *)
 let print_env = 
   List.iter (fun (k, (_, v)) -> 
-	       Printf.eprintf "%s: %s\n" k (string_of_var v))
+               Printf.eprintf "%s: %s\n" k (string_of_var v))
 
 *)
 
@@ -124,9 +124,9 @@ let dfs action x =
       action x;
       match descr.structure with
       | None ->
-	  ()
+          ()
       | Some t -> 
-	  visit_term t
+          visit_term t
     end
 
   and visit_term (Arrow ins) =
@@ -161,24 +161,24 @@ let rec unify_var toplevel x y =
   if not (UnionFind.equivalent x y) then
     let reprx, repry = UnionFind.find x, UnionFind.find y in
       match reprx.structure, repry.structure with
-	  None, Some _    -> occurs_check x y; UnionFind.union x y
-	| Some _, None    -> occurs_check y x; UnionFind.union y x
-	| None, None      -> UnionFind.union x y
-	| Some t, Some t' -> unify toplevel t t'; UnionFind.union x y
-	    
+          None, Some _    -> occurs_check x y; UnionFind.union x y
+        | Some _, None    -> occurs_check y x; UnionFind.union y x
+        | None, None      -> UnionFind.union x y
+        | Some t, Some t' -> unify toplevel t t'; UnionFind.union x y
+            
 and unify toplevel t1 t2 = 
   match t1, t2 with
 
     | Arrow ins, Arrow ins' ->
-	let n1, n2 = List.length ins, List.length ins' in
-	if n1 <> n2 then
-	  if n1 = 0 || n2 = 0 || not toplevel then
-	    raise (UnificationError (t1, t2))
-	  else
-	    (* the flag [toplevel] is used only here and influences which
-	       exception is raised; BadArityError is raised only at toplevel *)
-	    raise (BadArityError (n1, n2));
-	List.iter2 (unify_var false) ins ins'
+        let n1, n2 = List.length ins, List.length ins' in
+        if n1 <> n2 then
+          if n1 = 0 || n2 = 0 || not toplevel then
+            raise (UnificationError (t1, t2))
+          else
+            (* the flag [toplevel] is used only here and influences which
+               exception is raised; BadArityError is raised only at toplevel *)
+            raise (BadArityError (n1, n2));
+        List.iter2 (unify_var false) ins ins'
 
 let unify_var x y =
   unify_var true x y
@@ -203,30 +203,30 @@ let check positions env k expected_type =
     try
       unify_var inference_var checking_var
     with 
-	UnificationError (t1, t2) ->
-	  Error.error
-	    positions
+        UnificationError (t1, t2) ->
+          Error.error
+            positions
              "how is this symbol parameterized?\n\
-	      It is used at sorts %s and %s.\n\
+              It is used at sorts %s and %s.\n\
               The sort %s is not compatible with the sort %s."
-	       (string_of_var inference_var) (string_of_var checking_var)
-	       (string_of_nt_type t1) (string_of_nt_type t2)
-	    
+               (string_of_var inference_var) (string_of_var checking_var)
+               (string_of_nt_type t1) (string_of_nt_type t2)
+            
       | BadArityError (n1, n2) ->
-	  Error.error
-	    positions
-	       "does this symbol expect %d or %d arguments?" 
-	       (min n1 n2) (max n1 n2)
+          Error.error
+            positions
+               "does this symbol expect %d or %d arguments?" 
+               (min n1 n2) (max n1 n2)
 
       | OccursError (x, y) ->
-	  Error.error
-	    positions
+          Error.error
+            positions
              "how is this symbol parameterized?\n\
-	      It is used at sorts %s and %s.\n\
+              It is used at sorts %s and %s.\n\
               The sort %s cannot be unified with the sort %s."
-	       (string_of_var inference_var) (string_of_var checking_var)
-	       (string_of_var x) (string_of_var y)
-	  
+               (string_of_var inference_var) (string_of_var checking_var)
+               (string_of_var x) (string_of_var y)
+          
 
 
 (* An identifier can be used either in a total application or as a
@@ -238,16 +238,16 @@ let rec parameter_type env = function
   | ParameterApp (x, args) ->
       assert (args <> []);
       let expected_type =
-	(* [x] is applied, it must be to the exact number 
-	   of arguments. *)
-	Arrow (List.map (parameter_type env) args) 
+        (* [x] is applied, it must be to the exact number 
+           of arguments. *)
+        Arrow (List.map (parameter_type env) args) 
       in
-	(* Check the well-formedness of the application. *)
-	check [x.position] env x.value expected_type;
+        (* Check the well-formedness of the application. *)
+        check [x.position] env x.value expected_type;
 
-	(* Similarly, if it was a total application the result is 
-	   [Star] otherwise it is the flexible variable. *)
-	star_variable
+        (* Similarly, if it was a total application the result is 
+           [Star] otherwise it is the flexible variable. *)
+        star_variable
 
 let check_grammar p_grammar = 
   (* [n] is the grammar size. *)
@@ -270,25 +270,25 @@ let check_grammar p_grammar =
     Array.init n (fun node -> 
       (* We only are interested by parameterized non terminals. *)
       if parameters node <> [] then
-	List.fold_left (fun succs { pr_producers = symbols } ->
-	  List.fold_left (fun succs -> function (_, p) -> 
-	    let symbol, _ = Parameters.unapp p in
-	    try 
-	      let symbol_node = conv symbol.value in
-		(* [symbol] is a parameterized non terminal, we add it 
-		   to the successors set. *)
-		if parameters symbol_node <> [] then
-		  IntSet.add symbol_node succs
-		else 
-		  succs
-	    with Not_found -> 
-	      (* [symbol] is a token, it is not interesting for type inference
-		 purpose. *)
-	      succs
-	  ) succs symbols
+        List.fold_left (fun succs { pr_producers = symbols } ->
+          List.fold_left (fun succs -> function (_, p) -> 
+            let symbol, _ = Parameters.unapp p in
+            try 
+              let symbol_node = conv symbol.value in
+                (* [symbol] is a parameterized non terminal, we add it 
+                   to the successors set. *)
+                if parameters symbol_node <> [] then
+                  IntSet.add symbol_node succs
+                else 
+                  succs
+            with Not_found -> 
+              (* [symbol] is a token, it is not interesting for type inference
+                 purpose. *)
+              succs
+          ) succs symbols
         ) IntSet.empty (branches node)
       else
-	Misc.IntSet.empty
+        Misc.IntSet.empty
     )
   in
 
@@ -297,20 +297,20 @@ let check_grammar p_grammar =
   let module RulesGraph = 
       struct
 
-	type node = int
+        type node = int
 
-	let n = n
+        let n = n
 
-	let index node = 
-	  node
+        let index node = 
+          node
 
-	let successors f node = 
-	  IntSet.iter f successors.(node)
+        let successors f node = 
+          IntSet.iter f successors.(node)
 
-	let iter f = 
-	  for i = 0 to n - 1 do 
-	    f i
-	  done
+        let iter f = 
+          for i = 0 to n - 1 do 
+            f i
+          done
 
       end
   in
@@ -338,17 +338,17 @@ let check_grammar p_grammar =
   let nt_type i =
     match parameters i with
       | [] -> 
-	  star_variable
-	    
+          star_variable
+            
       | x -> 
-	  flexible_arrow x
+          flexible_arrow x
   in
 
   (* [actual_parameters_as_formal] is the well-formedness checker for 
      parameterized non terminal application. *)
   let actual_parameters_as_formal actual_parameters formal_parameters = 
     List.for_all2 (fun y -> (function ParameterVar x -> x.value = y 
-			      | _ -> false)) 
+                              | _ -> false)) 
       formal_parameters actual_parameters
   in
 
@@ -364,96 +364,96 @@ let check_grammar p_grammar =
        definition is well-formed. *)
     RulesGraph.iter 
       (fun i ->
-	 let params    = parameters i 
-	 and iname     = name i 
-	 and repr      = ConnectedComponents.representative i 
-	 and positions = positions i
-	 in
+         let params    = parameters i 
+         and iname     = name i 
+         and repr      = ConnectedComponents.representative i 
+         and positions = positions i
+         in
 
-	 (* The environment is augmented with the parameters whose types are
-	    unknown. *)
-	 let env' = List.map 
-	   (fun k -> (k, (positions, fresh_flexible_variable ()))) params
-	 in
-	 let env = env' @ env in
-	   
-	 (* The type of the parameterized non terminal is constrained to be
-	    [expected_ty]. *)
-	 let check_type () = 
-	   check positions env iname (Arrow (List.map (fun (_, (_, t)) -> t) env'))
-	 in
+         (* The environment is augmented with the parameters whose types are
+            unknown. *)
+         let env' = List.map 
+           (fun k -> (k, (positions, fresh_flexible_variable ()))) params
+         in
+         let env = env' @ env in
+           
+         (* The type of the parameterized non terminal is constrained to be
+            [expected_ty]. *)
+         let check_type () = 
+           check positions env iname (Arrow (List.map (fun (_, (_, t)) -> t) env'))
+         in
 
-	 (* We check the number of parameters. *)
-	 let check_parameters () = 
-	   let parameters_len = List.length params in
-	     (* The component is visited for the first time. *)
-	     if marked_components.(repr) = unseen then
-	       marked_components.(repr) <- parameters_len
-	     else (* Otherwise, we check that the arity is homogeneous 
-		     in the component. *) 
-	       if marked_components.(repr) <> parameters_len then 
-		 Error.error positions
-		      "mutually recursive definitions must have the same parameters.\n\
+         (* We check the number of parameters. *)
+         let check_parameters () = 
+           let parameters_len = List.length params in
+             (* The component is visited for the first time. *)
+             if marked_components.(repr) = unseen then
+               marked_components.(repr) <- parameters_len
+             else (* Otherwise, we check that the arity is homogeneous 
+                     in the component. *) 
+               if marked_components.(repr) <> parameters_len then 
+                 Error.error positions
+                      "mutually recursive definitions must have the same parameters.\n\
                        This is not the case for %s and %s."
-			 (name repr) iname
-	 in
+                         (name repr) iname
+         in
 
-	(* In each production rule, the parameterized non terminal
-	   of the same component must be instantiated with the same
-	   formal arguments. *)
-	 let check_producers () =
-	   List.iter 
-	     (fun { pr_producers = symbols } -> List.iter 
-		(function (_, p) ->
-		   let symbol, actuals = Parameters.unapp p in
-		   (* We take the use of each symbol into account. *)
-		     check [ symbol.position ] env symbol.value 
-		       (if actuals = [] then star else 
-			  Arrow (List.map (parameter_type env) actuals));
-		   (* If it is in the same component, check in addition that
-		      the arguments are the formal arguments. *)
-		   try 
-		     let idx = conv symbol.value in 
-		       if ConnectedComponents.representative idx = repr then
-			 if not (actual_parameters_as_formal actuals params)
-			 then
-			   Error.error [ symbol.position ]
-				"mutually recursive definitions must have the same \
+        (* In each production rule, the parameterized non terminal
+           of the same component must be instantiated with the same
+           formal arguments. *)
+         let check_producers () =
+           List.iter 
+             (fun { pr_producers = symbols } -> List.iter 
+                (function (_, p) ->
+                   let symbol, actuals = Parameters.unapp p in
+                   (* We take the use of each symbol into account. *)
+                     check [ symbol.position ] env symbol.value 
+                       (if actuals = [] then star else 
+                          Arrow (List.map (parameter_type env) actuals));
+                   (* If it is in the same component, check in addition that
+                      the arguments are the formal arguments. *)
+                   try 
+                     let idx = conv symbol.value in 
+                       if ConnectedComponents.representative idx = repr then
+                         if not (actual_parameters_as_formal actuals params)
+                         then
+                           Error.error [ symbol.position ]
+                                "mutually recursive definitions must have the same \
                                  parameters.\n\
-				 This is not the case for %s."
-				 (let name1, name2 = (name idx), (name i) in
-				    if name1 <> name2 then name1 ^ " and "^ name2
-				    else name1)
-		   with _ -> ())
-		    symbols) (branches i)
-	 in
-	   check_type ();
-	   check_parameters ();
-	   check_producers ())
+                                 This is not the case for %s."
+                                 (let name1, name2 = (name idx), (name i) in
+                                    if name1 <> name2 then name1 ^ " and "^ name2
+                                    else name1)
+                   with _ -> ())
+                    symbols) (branches i)
+         in
+           check_type ();
+           check_parameters ();
+           check_producers ())
 
       
 let rec subst_parameter subst = function
   | ParameterVar x ->
       (try 
-	List.assoc x.value subst 
+        List.assoc x.value subst 
       with Not_found ->
-	ParameterVar x)
+        ParameterVar x)
 
   | ParameterApp (x, ps) -> 
       (try 
-	match List.assoc x.value subst with
-	  | ParameterVar y ->
-	      ParameterApp (y, List.map (subst_parameter subst) ps)
+        match List.assoc x.value subst with
+          | ParameterVar y ->
+              ParameterApp (y, List.map (subst_parameter subst) ps)
 
-	  | ParameterApp _ ->
-	      (* Type-checking ensures that we cannot do partial
-		 application. Consequently, if an higher-order non terminal
-		 is an actual argument, it cannot be the result of a 
-		 partial application. *)
-	      assert false
+          | ParameterApp _ ->
+              (* Type-checking ensures that we cannot do partial
+                 application. Consequently, if an higher-order non terminal
+                 is an actual argument, it cannot be the result of a 
+                 partial application. *)
+              assert false
 
       with Not_found -> 
-	  ParameterApp (x, List.map (subst_parameter subst) ps))
+          ParameterApp (x, List.map (subst_parameter subst) ps))
 
 let subst_parameters subst = 
   List.map (subst_parameter subst)
@@ -463,7 +463,7 @@ let names_of_p_grammar p_grammar =
   StringMap.fold (fun tok _ acu -> StringSet.add tok acu) 
     p_grammar.p_tokens StringSet.empty 
     $$ (StringMap.fold (fun nt _ acu -> StringSet.add nt acu)
-	  p_grammar.p_rules)
+          p_grammar.p_rules)
 *)
 
 let expand p_grammar = 
@@ -481,7 +481,7 @@ let expand p_grammar =
     let normalized_name = Misc.normalize name in
     if StringSet.mem normalized_name !names then
       Error.error []
-	"internal name clash over %s" normalized_name;
+        "internal name clash over %s" normalized_name;
     names := StringSet.add normalized_name !names;
     name
   in 
@@ -501,18 +501,18 @@ let expand p_grammar =
   let rec mangle = function 
     | ParameterVar x
     | ParameterApp (x, []) ->
-	Positions.value x
+        Positions.value x
     | ParameterApp (x, ps) ->
 
-	(* We include parentheses and commas in the names that we
-	   assign to expanded nonterminals, because that is more
-	   readable and acceptable in many situations. We replace them
-	   with underscores in situations where these characters are
-	   not valid. *)
+        (* We include parentheses and commas in the names that we
+           assign to expanded nonterminals, because that is more
+           readable and acceptable in many situations. We replace them
+           with underscores in situations where these characters are
+           not valid. *)
 
-	Printf.sprintf "%s(%s)"
-	  (Positions.value x)
-	  (separated_list_to_string mangle "," ps)
+        Printf.sprintf "%s(%s)"
+          (Positions.value x)
+          (separated_list_to_string mangle "," ps)
 
   in
   let name_of symbol parameters = 
@@ -529,31 +529,31 @@ let expand p_grammar =
   let rec expand_branch subst pbranch = 
     let new_producers = List.map 
       (function (ido, p) ->
-	 let sym, actual_parameters = 
-	   Parameters.unapp p in
-	 let sym, actual_parameters = 	      
-	   try 
-	     match List.assoc sym.value subst with
-	       | ParameterVar x ->
-		   x, subst_parameters subst actual_parameters
+         let sym, actual_parameters = 
+           Parameters.unapp p in
+         let sym, actual_parameters =         
+           try 
+             match List.assoc sym.value subst with
+               | ParameterVar x ->
+                   x, subst_parameters subst actual_parameters
 
-	       | ParameterApp (x, ps) ->
-		   assert (actual_parameters = []);
-		   x, ps
-		       
-	   with Not_found -> 
-	     sym, subst_parameters subst actual_parameters
-	 in
-	   (* Instantiate the definition of the producer. *)
-	   (expand_branches subst sym actual_parameters, Positions.value ido))
+               | ParameterApp (x, ps) ->
+                   assert (actual_parameters = []);
+                   x, ps
+                       
+           with Not_found -> 
+             sym, subst_parameters subst actual_parameters
+         in
+           (* Instantiate the definition of the producer. *)
+           (expand_branches subst sym actual_parameters, Positions.value ido))
       pbranch.pr_producers
     in
       {
         branch_position          = pbranch.pr_branch_position;
-	producers		 = new_producers;
-	action			 = pbranch.pr_action;
-	branch_prec_annotation   = pbranch.pr_branch_prec_annotation;
-	branch_production_level  = pbranch.pr_branch_production_level;
+        producers                = new_producers;
+        action                   = pbranch.pr_action;
+        branch_prec_annotation   = pbranch.pr_branch_prec_annotation;
+        branch_production_level  = pbranch.pr_branch_production_level;
       }
 
   (* Instantiate the branches of sym for a particular set of actual
@@ -561,27 +561,27 @@ let expand p_grammar =
   and expand_branches subst sym actual_parameters =
     let nsym = name_of sym actual_parameters in
       try
-	if not (Hashtbl.mem expanded_rules nsym) then begin
-	  let prule = StringMap.find (Positions.value sym) p_grammar.p_rules in
-	  let subst = 
-	    (* Type checking ensures that parameterized non terminal 
-	       instantiations are well defined. *)
-	    assert (List.length prule.pr_parameters 
-		    = List.length actual_parameters);
-	    List.combine prule.pr_parameters actual_parameters @ subst in
-	    Hashtbl.add expanded_rules nsym 
-	      { branches = []; positions = []; inline_flag = false };
-	  let rules = List.map (expand_branch subst) prule.pr_branches in
-	    Hashtbl.replace expanded_rules nsym
-	      { 
-		branches    = rules; 
-		positions   = prule.pr_positions; 
-		inline_flag = prule.pr_inline_flag;
-	      }
-	end;
-	nsym
+        if not (Hashtbl.mem expanded_rules nsym) then begin
+          let prule = StringMap.find (Positions.value sym) p_grammar.p_rules in
+          let subst = 
+            (* Type checking ensures that parameterized non terminal 
+               instantiations are well defined. *)
+            assert (List.length prule.pr_parameters 
+                    = List.length actual_parameters);
+            List.combine prule.pr_parameters actual_parameters @ subst in
+            Hashtbl.add expanded_rules nsym 
+              { branches = []; positions = []; inline_flag = false };
+          let rules = List.map (expand_branch subst) prule.pr_branches in
+            Hashtbl.replace expanded_rules nsym
+              { 
+                branches    = rules; 
+                positions   = prule.pr_positions; 
+                inline_flag = prule.pr_inline_flag;
+              }
+        end;
+        nsym
       (* If [sym] is a terminal, then it is not in [p_grammar.p_rules]. 
-	 Expansion is not needed. *)
+         Expansion is not needed. *)
       with Not_found -> Positions.value sym 
   in
 
@@ -619,31 +619,31 @@ let expand p_grammar =
   let start_symbols = StringMap.domain (p_grammar.p_start_symbols) in
   {
     preludes      = p_grammar.p_preludes;
-    postludes	  = p_grammar.p_postludes;
+    postludes     = p_grammar.p_postludes;
     parameters    = p_grammar.p_parameters;
     start_symbols = start_symbols;
     types         = types_from_list p_grammar.p_types;
     on_error_reduce = on_error_reduce_from_list p_grammar.p_on_error_reduce;
-    tokens	  = p_grammar.p_tokens;
-    rules	  = 
+    tokens        = p_grammar.p_tokens;
+    rules         = 
       let closed_rules = StringMap.fold 
-	(fun k prule rules -> 
-	   (* If [k] is a start symbol then it cannot be parameterized. *)
-	   if prule.pr_parameters <> [] && StringSet.mem k start_symbols then
-	     Error.error []
-	       "the start symbol %s cannot be parameterized."
-		  k;
+        (fun k prule rules -> 
+           (* If [k] is a start symbol then it cannot be parameterized. *)
+           if prule.pr_parameters <> [] && StringSet.mem k start_symbols then
+             Error.error []
+               "the start symbol %s cannot be parameterized."
+                  k;
 
-	   (* Entry points are the closed non terminals. *)
-	   if prule.pr_parameters = [] then 
-	     StringMap.add k { 
-	       branches    = List.map (expand_branch []) prule.pr_branches;
-	       positions   = prule.pr_positions;
-	       inline_flag = prule.pr_inline_flag;
-	     } rules
-	   else rules)
-	p_grammar.p_rules
-	StringMap.empty
+           (* Entry points are the closed non terminals. *)
+           if prule.pr_parameters = [] then 
+             StringMap.add k { 
+               branches    = List.map (expand_branch []) prule.pr_branches;
+               positions   = prule.pr_positions;
+               inline_flag = prule.pr_inline_flag;
+             } rules
+           else rules)
+        p_grammar.p_rules
+        StringMap.empty
       in
-	Hashtbl.fold StringMap.add expanded_rules closed_rules 
+        Hashtbl.fold StringMap.add expanded_rules closed_rules 
   }

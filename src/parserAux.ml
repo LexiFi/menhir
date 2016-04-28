@@ -29,23 +29,23 @@ let check_production_group right_hand_sides =
   begin
     match right_hand_sides with
     | [] ->
-	assert false
+        assert false
     | (producers, _, _, _) :: right_hand_sides ->
-	let ids = defined_identifiers producers in
-	List.iter (fun (producers, _, _, _) ->
-	  let ids' = defined_identifiers producers in
-	  try
-	    let id =
-	      IdSet.choose (IdSet.union
-				  (IdSet.diff ids ids')
-				  (IdSet.diff ids' ids))
-	    in
-	    Error.error [Positions.position id]
-	      "two productions that share a semantic action must define\n\
-	       exactly the same identifiers."
-	  with Not_found ->
-	    ()
-	  ) right_hand_sides
+        let ids = defined_identifiers producers in
+        List.iter (fun (producers, _, _, _) ->
+          let ids' = defined_identifiers producers in
+          try
+            let id =
+              IdSet.choose (IdSet.union
+                                  (IdSet.diff ids ids')
+                                  (IdSet.diff ids' ids))
+            in
+            Error.error [Positions.position id]
+              "two productions that share a semantic action must define\n\
+               exactly the same identifiers."
+          with Not_found ->
+            ()
+          ) right_hand_sides
   end
 
 (* [normalize_producer i p] assigns a name of the form [_i]

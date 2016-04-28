@@ -44,9 +44,9 @@ type precedence_level =
                                     
 type token_properties =
     {
-	       tk_filename      : filename;
-	       tk_ocamltype     : Stretch.ocamltype option;
-	       tk_position	: Positions.t;
+               tk_filename      : filename;
+               tk_ocamltype     : Stretch.ocamltype option;
+               tk_position      : Positions.t;
       mutable  tk_associativity : token_associativity;
       mutable  tk_precedence    : precedence_level;
       mutable  tk_is_declared   : bool; 
@@ -106,20 +106,20 @@ type producer =
 
 type parameterized_branch =
     { 
-      pr_branch_position	   : Positions.t;
-      pr_producers		   : producer list;
-      pr_action			   : action; 
+      pr_branch_position           : Positions.t;
+      pr_producers                 : producer list;
+      pr_action                    : action; 
       pr_branch_prec_annotation    : branch_prec_annotation;
       pr_branch_production_level   : branch_production_level
     }
 
 type parameterized_rule =
     {
-      pr_public_flag	   : bool;
-      pr_inline_flag	   : bool;
-      pr_nt		   : nonterminal;
-      pr_positions	   : Positions.t list;
-      pr_parameters	   : symbol list;
-      pr_branches	   : parameterized_branch list;
+      pr_public_flag       : bool;
+      pr_inline_flag       : bool;
+      pr_nt                : nonterminal;
+      pr_positions         : Positions.t list;
+      pr_parameters        : symbol list;
+      pr_branches          : parameterized_branch list;
     }
 

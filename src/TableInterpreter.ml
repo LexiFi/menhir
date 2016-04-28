@@ -15,13 +15,13 @@ module Make (T : TableFormat.TABLES)
 
   type semantic_value =
       Obj.t
-	  
+          
   let token2terminal =
     T.token2terminal
-	
+        
   let token2value =
     T.token2value
-	
+        
   let error_terminal =
     T.error_terminal
 
@@ -57,21 +57,21 @@ module Make (T : TableFormat.TABLES)
   let action state terminal value shift reduce fail env =
     match PackedIntArray.unflatten1 T.error state terminal with
     | 1 ->
-	let action = unmarshal2 T.action state terminal in
-	let opcode = action land 0b11
-	and param = action lsr 2 in
-	if opcode >= 0b10 then
-	  (* 0b10 : shift/discard *)
-	  (* 0b11 : shift/nodiscard *)
-	  let please_discard = (opcode = 0b10) in
-	  shift env please_discard terminal value param
-	else
-	  (* 0b01 : reduce *)
-	  (* 0b00 : cannot happen *)
-	  reduce env param
+        let action = unmarshal2 T.action state terminal in
+        let opcode = action land 0b11
+        and param = action lsr 2 in
+        if opcode >= 0b10 then
+          (* 0b10 : shift/discard *)
+          (* 0b11 : shift/nodiscard *)
+          let please_discard = (opcode = 0b10) in
+          shift env please_discard terminal value param
+        else
+          (* 0b01 : reduce *)
+          (* 0b00 : cannot happen *)
+          reduce env param
     | c ->
-	assert (c = 0);
-	fail env
+        assert (c = 0);
+        fail env
   
   let goto state prod =
     let code = unmarshal2 T.goto state (PackedIntArray.get T.lhs prod) in
@@ -79,12 +79,12 @@ module Make (T : TableFormat.TABLES)
     code - 1
 
   exception Error =
-	T.Error
+        T.Error
 
   type semantic_action =
       (state, semantic_value, token) EngineTypes.env ->
       (state, semantic_value)        EngineTypes.stack
-	
+        
   let semantic_action prod =
     (* Indexing into the array [T.semantic_action] is off by [T.start],
        because the start productions do not have entries in this array. *)
@@ -104,21 +104,21 @@ module Make (T : TableFormat.TABLES)
       | Some _ ->
           fprintf stderr "State %d:\n%!" state
       | None ->
-	  ()
+          ()
     
     let shift terminal state =
       match T.trace with
       | Some (terminals, _) ->
           fprintf stderr "Shifting (%s) to state %d\n%!" terminals.(terminal) state
       | None ->
-	  ()
+          ()
     
     let reduce_or_accept prod =
       match T.trace with
       | Some (_, productions) ->
           fprintf stderr "%s\n%!" productions.(prod)
       | None ->
-	  ()
+          ()
     
     let lookahead_token token startp endp =
       match T.trace with
@@ -128,28 +128,28 @@ module Make (T : TableFormat.TABLES)
             startp.Lexing.pos_cnum
             endp.Lexing.pos_cnum
       | None ->
-	  ()
+          ()
     
     let initiating_error_handling () =
       match T.trace with
       | Some _ ->
           fprintf stderr "Initiating error handling\n%!"
       | None ->
-	  ()
+          ()
     
     let resuming_error_handling () =
       match T.trace with
       | Some _ ->
           fprintf stderr "Resuming error handling\n%!"
       | None ->
-	  ()
+          ()
     
     let handling_error state =
       match T.trace with
       | Some _ ->
           fprintf stderr "Handling error in state %d\n%!" state
       | None ->
-	  ()
+          ()
     
   end
   

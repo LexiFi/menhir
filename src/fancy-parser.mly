@@ -55,10 +55,10 @@ grammar:
   ds = declaration* PERCENTPERCENT rs = rule* t = trailer
     { 
       { 
-	pg_filename          = ""; (* filled in by the caller *)
-	pg_declarations      = List.flatten ds;
-	pg_rules	     = rs @ ParserAux.rules();
-	pg_trailer           = t
+        pg_filename          = ""; (* filled in by the caller *)
+        pg_declarations      = List.flatten ds;
+        pg_rules             = rs @ ParserAux.rules();
+        pg_trailer           = t
       }
     }
 
@@ -79,9 +79,9 @@ declaration:
     {
       match t with
       | None ->
-	  List.map (Positions.map (fun nonterminal -> DStart nonterminal)) nts
+          List.map (Positions.map (fun nonterminal -> DStart nonterminal)) nts
       | Some t ->
-	  Misc.mapd (fun ntloc ->
+          Misc.mapd (fun ntloc ->
             Positions.mapd (fun nt -> DStart nt, DType (t, ParameterVar ntloc)) ntloc) nts
     }
 
@@ -223,13 +223,13 @@ production_group:
            is within bounds. *)
         let action : Syntax.identifier option array -> Action.t = action in
         let pr_action = action (ParserAux.producer_names producers) in
-	{
-	  pr_producers;
-	  pr_action;
-	  pr_branch_prec_annotation   = ParserAux.override pos oprec1 oprec2;
-	  pr_branch_production_level  = level;
-	  pr_branch_position          = pos
-	})
+        {
+          pr_producers;
+          pr_action;
+          pr_branch_prec_annotation   = ParserAux.override pos oprec1 oprec2;
+          pr_branch_production_level  = level;
+          pr_branch_position          = pos
+        })
       productions
     }
 

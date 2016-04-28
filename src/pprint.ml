@@ -263,16 +263,16 @@ module Renderer (Output : OUTPUT) = struct
 
   let rec commit channel = function
     | OEmpty ->
-	()
+        ()
     | OChar (c, output) ->
-	commit channel output;
-	Output.char channel c
+        commit channel output;
+        Output.char channel c
     | OString (s, ofs, len, output) ->
-	commit channel output;
-	Output.substring channel s ofs len
+        commit channel output;
+        Output.substring channel s ofs len
     | OBlank (n, output) ->
-	commit channel output;
-	blanks channel n
+        commit channel output;
+        blanks channel n
 
   (* The renderer's abstract machine. *)
 
@@ -306,19 +306,19 @@ module Renderer (Output : OUTPUT) = struct
        and continue. *)
 
     | Empty, _ ->
-	shift stack state
+        shift stack state
 
     (* The first piece of input is a character. Emit it and continue. *)
 
     | Char c, _ ->
-	emit_char stack state c
+        emit_char stack state c
 
     (* The first piece of input is a string. Emit it and continue. *)
 
     | String (s, ofs, len), _ ->
-	emit_string stack state s ofs len
+        emit_string stack state s ofs len
     | Blank n, _ ->
-	emit_blanks stack state n
+        emit_blanks stack state n
 
     (* The first piece of input is a hard newline instruction. Such an
        instruction is valid only when flattening mode is off. *)
@@ -330,37 +330,37 @@ module Renderer (Output : OUTPUT) = struct
        continue. *)
 
     | HardLine, flattening ->
-	assert (not flattening); (* flattening mode must be off. *)
-	assert (stack = []);     (* since flattening mode is off, the stack must be empty. *)
-	Output.char state.channel '\n';
-	let i = state.indent1 in
-	blanks state.channel i;
-	state.column <- i;
-	state.indentation <- i;
-	shift stack state
+        assert (not flattening); (* flattening mode must be off. *)
+        assert (stack = []);     (* since flattening mode is off, the stack must be empty. *)
+        Output.char state.channel '\n';
+        let i = state.indent1 in
+        blanks state.channel i;
+        state.column <- i;
+        state.indentation <- i;
+        shift stack state
 
     (* The first piece of input is an [IfFlat] conditional instruction. *)
 
     | IfFlat (doc, _), true
     | IfFlat (_, doc), false ->
-	state.input1 <- doc;
-	run stack state
+        state.input1 <- doc;
+        run stack state
 
     (* The first piece of input is a concatenation operator. We take it
        apart and queue both documents in the input sequence. *)
 
     | Cat (doc1, doc2), _ ->
-	state.input1 <- doc1;
-	state.input <- ICons (state.indent1, state.flatten1, doc2, state.input);
-	run stack state
+        state.input1 <- doc1;
+        state.input <- ICons (state.indent1, state.flatten1, doc2, state.input);
+        run stack state
 
     (* The first piece of input is a [Nest] operator. We increase the amount
        of indentation to be applied to the first input document. *)
 
     | Nest (j, doc), _ ->
-	state.indent1 <- state.indent1 + j;
-	state.input1 <- doc;
-	run stack state
+        state.indent1 <- state.indent1 + j;
+        state.input1 <- doc;
+        run stack state
 
     (* The first piece of input is a [Group] operator, and flattening mode
        is currently off. This introduces a choice point: either we flatten
@@ -374,30 +374,30 @@ module Renderer (Output : OUTPUT) = struct
        modifications. This is a fork. *)
 
     | Group doc, false ->
-	state.input1 <- doc;
-	run (state :: stack) { state with flatten1 = true }
+        state.input1 <- doc;
+        run (state :: stack) { state with flatten1 = true }
 
     (* The first piece of input is a [Group] operator, and flattening mode
        is currently on. The operator is ignored. *)
 
     | Group doc, true ->
-	state.input1 <- doc;
-	run stack state
+        state.input1 <- doc;
+        run stack state
 
     (* The first piece of input is a [Column] operator. The current column
        is fed into it, so as to produce a document, with which we continue. *)
 
     | Column f, _ ->
-	state.input1 <- f state.column;
-	run stack state
+        state.input1 <- f state.column;
+        run stack state
 
     (* The first piece of input is a [Column] operator. The current
        indentation level is fed into it, so as to produce a document, with
        which we continue. *)
 
     | Nesting f, _ ->
-	state.input1 <- f state.indentation;
-	run stack state
+        state.input1 <- f state.indentation;
+        run stack state
 
   (* [shift] discards the first document in the input sequence, so that the
      second input document, if there is one, becomes first. The renderer stops
@@ -417,41 +417,41 @@ module Renderer (Output : OUTPUT) = struct
     | resumption :: stack
       when state.column > state.width
         || state.column - state.indentation > state.ribbon ->
-	run stack resumption
+        run stack resumption
     | _ ->
 
-	match state.input with
-	| INil ->
+        match state.input with
+        | INil ->
 
-	    (* End of input. Commit any buffered output and stop. *)
+            (* End of input. Commit any buffered output and stop. *)
 
-	    commit state.channel state.output
+            commit state.channel state.output
 
-	| ICons (indent, flatten, head, tail) ->
+        | ICons (indent, flatten, head, tail) ->
 
-	    (* There is an input document. Move it one slot ahead and
-	       check if we are leaving flattening mode. *)
+            (* There is an input document. Move it one slot ahead and
+               check if we are leaving flattening mode. *)
 
-	    state.indent1 <- indent;
-	    state.input1 <- head;
-	    state.input <- tail;
-	    if state.flatten1 && not flatten then begin
+            state.indent1 <- indent;
+            state.input1 <- head;
+            state.input <- tail;
+            if state.flatten1 && not flatten then begin
 
-	      (* Leaving flattening mode means success: we have flattened
-		 a certain group, and fitted it all on a line, without
-		 reaching a failure point. We would now like to commit our
-		 decision to flatten this group. This is a Prolog cut. We
-		 discard the stack of choice points, replacing it with an
-		 empty stack, and commit all buffered output. *)
+              (* Leaving flattening mode means success: we have flattened
+                 a certain group, and fitted it all on a line, without
+                 reaching a failure point. We would now like to commit our
+                 decision to flatten this group. This is a Prolog cut. We
+                 discard the stack of choice points, replacing it with an
+                 empty stack, and commit all buffered output. *)
 
-	      state.flatten1 <- flatten; (* false *)
-	      commit state.channel state.output;
-	      state.output <- OEmpty;
-	      run [] state
+              state.flatten1 <- flatten; (* false *)
+              commit state.channel state.output;
+              state.output <- OEmpty;
+              run [] state
 
-	    end
-	    else
-	      run stack state
+            end
+            else
+              run stack state
 
   (* [emit_char] prints a character (either to the output channel or to the
      output buffer), increments the current column, discards the first piece
@@ -460,9 +460,9 @@ module Renderer (Output : OUTPUT) = struct
   and emit_char stack state c =
     begin match stack with
     | [] ->
-	Output.char state.channel c
+        Output.char state.channel c
     | _ ->
-	state.output <- OChar (c, state.output)
+        state.output <- OChar (c, state.output)
     end;
     state.column <- state.column + 1;
     shift stack state
@@ -474,9 +474,9 @@ module Renderer (Output : OUTPUT) = struct
   and emit_string stack state s ofs len =
     begin match stack with
     | [] ->
-	Output.substring state.channel s ofs len
+        Output.substring state.channel s ofs len
     | _ ->
-	state.output <- OString (s, ofs, len, state.output)
+        state.output <- OString (s, ofs, len, state.output)
     end;
     state.column <- state.column + len;
     shift stack state
@@ -488,9 +488,9 @@ module Renderer (Output : OUTPUT) = struct
   and emit_blanks stack state n =
     begin match stack with
     | [] ->
-	blanks state.channel n
+        blanks state.channel n
     | _ ->
-	state.output <- OBlank (n, state.output)
+        state.output <- OBlank (n, state.output)
     end;
     state.column <- state.column + n;
     shift stack state
@@ -523,30 +523,30 @@ module Renderer (Output : OUTPUT) = struct
 
     let rec scan = function
       | Empty ->
-	  ()
+          ()
       | Char c ->
-	  Output.char channel c;
-	  column := !column + 1
+          Output.char channel c;
+          column := !column + 1
       | String (s, ofs, len) ->
-	  Output.substring channel s ofs len;
-	  column := !column + len
+          Output.substring channel s ofs len;
+          column := !column + len
       | Blank n ->
-	  blanks channel n;
-	  column := !column + n
+          blanks channel n;
+          column := !column + n
       | HardLine ->
-	  Output.char channel '\n';
-	  column := 0
+          Output.char channel '\n';
+          column := 0
       | Cat (doc1, doc2) ->
-	  scan doc1;
-	  scan doc2
+          scan doc1;
+          scan doc2
       | IfFlat (doc, _)
       | Nest (_, doc)
       | Group doc ->
-	  scan doc
+          scan doc
       | Column f ->
-	  scan (f !column)
+          scan (f !column)
       | Nesting f ->
-	  scan (f 0)
+          scan (f 0)
     in
 
     scan document
@@ -697,9 +697,9 @@ let words s =
     | '\t'
     | '\n'
     | '\r' ->
-	blank accu (i + 1)
+        blank accu (i + 1)
     | _ ->
-	word break1 accu i (i + 1)
+        word break1 accu i (i + 1)
   and word prefix accu i j = (* we have skipped over at least one non-blank character *)
     if j = n then
       accu ^^ group (prefix ^^ substring s i (j - i))
@@ -708,9 +708,9 @@ let words s =
     | '\t'
     | '\n'
     | '\r' ->
-	blank (accu ^^ group (prefix ^^ substring s i (j - i))) (j + 1)
+        blank (accu ^^ group (prefix ^^ substring s i (j - i))) (j + 1)
     | _ ->
-	word prefix accu i (j + 1)
+        word prefix accu i (j + 1)
   in
   if n = 0 then
     empty
@@ -720,9 +720,9 @@ let words s =
     | '\t'
     | '\n'
     | '\r' ->
-	blank empty 1
+        blank empty 1
     | _ ->
-	word empty empty 0 1
+        word empty empty 0 1
 
 let enclose l r x   = l ^^ x ^^ r
 

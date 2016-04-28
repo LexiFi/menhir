@@ -42,36 +42,36 @@ let inline_valdefs (defs : valdef list) : valdef list =
       ()
     else
       try
-	let _, def = Hashtbl.find table id in
+        let _, def = Hashtbl.find table id in
 
-	(* This is a globally defined identifier. Increment its usage
-	   count. If it was never visited, enqueue its definition for
+        (* This is a globally defined identifier. Increment its usage
+           count. If it was never visited, enqueue its definition for
            exploration. *)
 
-	let n =
-	  try
-	    StringMap.find id !usage
-	  with Not_found ->
-	    Queue.add def queue;
-	    0
-	in
-	usage := StringMap.add id (n + 1) !usage
+        let n =
+          try
+            StringMap.find id !usage
+          with Not_found ->
+            Queue.add def queue;
+            0
+        in
+        usage := StringMap.add id (n + 1) !usage
 
       with Not_found ->
-	(* This identifier is not global. It is either local or a
-	   reference to some external library, e.g. ocaml's standard
-	   library. *)
-	()
+        (* This identifier is not global. It is either local or a
+           reference to some external library, e.g. ocaml's standard
+           library. *)
+        ()
   in
 
   (* Look for occurrences of identifiers inside expressions. *)
 
   let o =
     object
-	inherit [ StringSet.t, unit ] Traverse.fold
-	inherit locals table
-	method! evar locals () id =
-	  visit locals id
+        inherit [ StringSet.t, unit ] Traverse.fold
+        inherit locals table
+        method! evar locals () id =
+          visit locals id
     end
   in
 
@@ -112,18 +112,18 @@ let inline_valdefs (defs : valdef list) : valdef list =
     | EVar _
     | EData (_, [])
     | ERecordAccess (EVar _, _) ->
-	true
+        true
     | EMagic e ->
-	is_simple_arg e
+        is_simple_arg e
     | _ ->
-	false
+        false
   in
 
   let is_simple_app = function
     | EApp (EVar _, actuals) ->
-	List.for_all is_simple_arg actuals
+        List.for_all is_simple_arg actuals
     | _ ->
-	false
+        false
   in
 
   (* Taking a fresh instance of a type scheme. Ugly. *)
@@ -137,21 +137,21 @@ let inline_valdefs (defs : valdef list) : valdef list =
     fun scheme ->
       let mapping = List.map fresh scheme.quantifiers in
       let rec sub typ =
-	match typ with
-	| TypTextual _ ->
-	    typ
-	| TypVar v ->
-	    begin try
-	      TypVar (List.assoc v mapping)
-	    with Not_found ->
-	      typ
-	    end
-	| TypApp (f, typs) ->
-	    TypApp (f, List.map sub typs)
-	| TypTuple typs ->
-	    TypTuple (List.map sub typs)
-	| TypArrow (typ1, typ2) ->
-	    TypArrow (sub typ1, sub typ2)
+        match typ with
+        | TypTextual _ ->
+            typ
+        | TypVar v ->
+            begin try
+              TypVar (List.assoc v mapping)
+            with Not_found ->
+              typ
+            end
+        | TypApp (f, typs) ->
+            TypApp (f, List.map sub typs)
+        | TypTuple typs ->
+            TypTuple (List.map sub typs)
+        | TypArrow (typ1, typ2) ->
+            TypArrow (sub typ1, sub typ2)
       in
       sub scheme.body
   in
@@ -161,13 +161,13 @@ let inline_valdefs (defs : valdef list) : valdef list =
   let rec annotate formals body typ =
     match formals, typ with
     | [], _ ->
-	[], EAnnot (body, type2scheme typ)
+        [], EAnnot (body, type2scheme typ)
     | formal :: formals, TypArrow (targ, tres) ->
-	let formals, body = annotate formals body tres in
-	PAnnot (formal, targ) :: formals, body
+        let formals, body = annotate formals body tres in
+        PAnnot (formal, targ) :: formals, body
     | _ :: _, _ ->
-	(* Type annotation has insufficient arity. *)
-	assert false
+        (* Type annotation has insufficient arity. *)
+        assert false
   in
 
   (* The heart of the inliner: rewriting a function call to a [let]
@@ -188,11 +188,11 @@ let inline_valdefs (defs : valdef list) : valdef list =
     | Some scheme
       when not Settings.infer ->
 
-	let formals, body = annotate formals body (instance scheme) in
-	mlet formals actuals body
+        let formals, body = annotate formals body (instance scheme) in
+        mlet formals actuals body
 
     | _ ->
-	mlet formals actuals body
+        mlet formals actuals body
   in
 
   (* Look for occurrences of identifiers inside expressions, branches,
@@ -204,45 +204,45 @@ let inline_valdefs (defs : valdef list) : valdef list =
       inherit [ StringSet.t ] Traverse.map as super
       inherit locals table
       method! eapp locals e actuals =
-	match e with
-	| EVar id when
-	    (Hashtbl.mem table id) &&       (* a global identifier *)
-	    (not (StringSet.mem id locals)) (* not hidden by a local identifier *)
-	  ->
+        match e with
+        | EVar id when
+            (Hashtbl.mem table id) &&       (* a global identifier *)
+            (not (StringSet.mem id locals)) (* not hidden by a local identifier *)
+          ->
 
-	    let _, def = Hashtbl.find table id in (* cannot fail, thanks to the above check *)
+            let _, def = Hashtbl.find table id in (* cannot fail, thanks to the above check *)
 
-	    let formals, body, oscheme =
-	      match def with
-	      | { valval = EFun (formals, body) } ->
-		  formals, body, None
-	      | { valval = EAnnot (EFun (formals, body), scheme) } ->
-		  formals, body, Some scheme
-	      | { valval = _ } ->
-		  (* The definition is not a function definition. This should not
-		     happen in the kind of code that we generate. *)
-		  assert false
-	    in
+            let formals, body, oscheme =
+              match def with
+              | { valval = EFun (formals, body) } ->
+                  formals, body, None
+              | { valval = EAnnot (EFun (formals, body), scheme) } ->
+                  formals, body, Some scheme
+              | { valval = _ } ->
+                  (* The definition is not a function definition. This should not
+                     happen in the kind of code that we generate. *)
+                  assert false
+            in
 
-	    assert (StringMap.mem id usage);
-	    if StringMap.find id usage = 1 || is_simple_app body then
+            assert (StringMap.mem id usage);
+            if StringMap.find id usage = 1 || is_simple_app body then
 
-	      (* The definition can be inlined, with beta reduction. *)
+              (* The definition can be inlined, with beta reduction. *)
 
-	      inline formals (self#exprs locals actuals) (EComment (id, self#expr locals body)) oscheme
+              inline formals (self#exprs locals actuals) (EComment (id, self#expr locals body)) oscheme
 
-	    else begin
+            else begin
 
-	      (* The definition cannot be inlined. *)
+              (* The definition cannot be inlined. *)
 
-	      enqueue def;
-	      super#eapp locals e actuals
+              enqueue def;
+              super#eapp locals e actuals
 
-	    end
+            end
 
-	| _ ->
-	    (* The thing in function position is not a reference to a global. *)
-	    super#eapp locals e actuals
+        | _ ->
+            (* The thing in function position is not a reference to a global. *)
+            super#eapp locals e actuals
 
     end
   in

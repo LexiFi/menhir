@@ -18,16 +18,16 @@ open Syntax
 type branch =
     {
       branch_position           : Positions.t;
-      producers			: (symbol * identifier) list; (* TEMPORARY convention renversée
+      producers                 : (symbol * identifier) list; (* TEMPORARY convention renversée
                                     par rapport à syntax.mli; faire un type record au lieu d'une paire? *)
-      action			: action;
-      branch_prec_annotation	: branch_prec_annotation;
+      action                    : action;
+      branch_prec_annotation    : branch_prec_annotation;
       branch_production_level   : branch_production_level
     }
 
 type rule = 
     {
-      branches		   : branch list;
+      branches             : branch list;
       positions            : Positions.t list;
       (* This flag is not relevant after the NonTerminalInlining.inline pass. *)
       inline_flag          : bool;
@@ -35,14 +35,14 @@ type rule =
 
 type grammar = 
     {
-      preludes	           : Stretch.t list;
-      postludes	           : Syntax.trailer list;
+      preludes             : Stretch.t list;
+      postludes            : Syntax.trailer list;
       parameters           : Stretch.t list;
       start_symbols        : StringSet.t;
       types                : Stretch.ocamltype StringMap.t;
       on_error_reduce      : StringSet.t;
-      tokens	           : Syntax.token_properties StringMap.t;
-      rules	           : rule StringMap.t;
+      tokens               : Syntax.token_properties StringMap.t;
+      rules                : rule StringMap.t;
     }
 
 (* [tokens grammar] is a list of all (real) tokens in the grammar

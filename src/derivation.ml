@@ -88,10 +88,10 @@ let build pos rhs forest comment =
       assert false
   | Symbol.N _ as symbol ->
       {
-	prefix = [];
-	focus = TRooted (symbol, forest);
-	suffix = array_to_list rhs (pos + 1) length;
-	comment = (match comment with None -> "" | Some comment -> comment)
+        prefix = [];
+        focus = TRooted (symbol, forest);
+        suffix = array_to_list rhs (pos + 1) length;
+        comment = (match comment with None -> "" | Some comment -> comment)
       }
 
 let prepend symbol forest =
@@ -234,12 +234,12 @@ let rec common_tree ctree1 tree2 : (ctree * cforest * forest) option =
       None
   | CRooted (symbol1, cforest1), TRooted (symbol2, forest2) ->
       if Symbol.equal symbol1 symbol2 then
-	let cforest, cforest1, forest2 =
-	  common_forest cforest1 forest2
-	in
-	Some (CRooted (symbol1, cforest), cforest1, forest2)
+        let cforest, cforest1, forest2 =
+          common_forest cforest1 forest2
+        in
+        Some (CRooted (symbol1, cforest), cforest1, forest2)
       else
-	None
+        None
 
 and common_forest cforest1 forest2 : cforest * cforest * forest =
   match cforest1 with
@@ -250,20 +250,20 @@ and common_forest cforest1 forest2 : cforest * cforest * forest =
       && Symbol.lequal forest1.suffix forest2.suffix
       && forest1.comment = forest2.comment
       then begin
-	match common_tree forest1.focus forest2.focus with
-	| None ->
-	    CHole, cforest1, forest2
-	| Some (ctree, csubforest1, subforest2) ->
-	    let cforest = {
-	      prefix = forest1.prefix;
-	      focus = ctree;
-	      suffix = forest1.suffix;
-	      comment = forest1.comment
-	    } in
-	    CCons cforest, csubforest1, subforest2
+        match common_tree forest1.focus forest2.focus with
+        | None ->
+            CHole, cforest1, forest2
+        | Some (ctree, csubforest1, subforest2) ->
+            let cforest = {
+              prefix = forest1.prefix;
+              focus = ctree;
+              suffix = forest1.suffix;
+              comment = forest1.comment
+            } in
+            CCons cforest, csubforest1, subforest2
       end
       else
-	CHole, cforest1, forest2
+        CHole, cforest1, forest2
 
 (* [factor] factors the maximal common forest context out of a nonempty family
    of forests. We assume that the family is represented as a map indexed by
@@ -276,34 +276,34 @@ let factor forests =
       match accu with
       | None ->
 
-	  (* First time through the loop, so [forest] is the first forest
-	     that we examine. Punch it, so as to produce a maximal forest
-	     context and a residual forest. *)
+          (* First time through the loop, so [forest] is the first forest
+             that we examine. Punch it, so as to produce a maximal forest
+             context and a residual forest. *)
 
-	  let context, residual = punch_forest forest in
-	  Some (context, Item.Map.singleton item residual)
+          let context, residual = punch_forest forest in
+          Some (context, Item.Map.singleton item residual)
 
       | Some (context, residuals) ->
 
           (* Another iteration through the loop. [context] and [residuals] are
-	     the maximal common context and the residuals of the forests
-	     examined so far. *)
+             the maximal common context and the residuals of the forests
+             examined so far. *)
 
           (* Combine the common context obtained so far with the forest at hand.
-	     This yields a new, smaller common context, as well as residuals for
-	     the previous common context and for the forest at hand. *)
+             This yields a new, smaller common context, as well as residuals for
+             the previous common context and for the forest at hand. *)
 
-	  let context, contextr, forestr = common_forest context forest in
+          let context, contextr, forestr = common_forest context forest in
    
           (* The residual forests are now: (i) the residual forest [forestr];
-	     and (ii) the previous residual forests [residuals], each of which
-	     must be placed with the residual context [contextr]. *)
+             and (ii) the previous residual forests [residuals], each of which
+             must be placed with the residual context [contextr]. *)
 
           let residuals =
-	    Item.Map.add item forestr (Item.Map.map (fill_forest contextr) residuals)
-	  in
+            Item.Map.add item forestr (Item.Map.map (fill_forest contextr) residuals)
+          in
 
-	  Some (context, residuals)
+          Some (context, residuals)
 
     ) forests None
   with

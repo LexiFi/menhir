@@ -10,8 +10,8 @@
   let fail lexbuf =
     raise (Error
       (Printf.sprintf
-	 "failed to make sense of ocamldep's output (character %d).\n"
-	 lexbuf.lex_curr_p.pos_cnum)
+         "failed to make sense of ocamldep's output (character %d).\n"
+         lexbuf.lex_curr_p.pos_cnum)
     )
 
 }

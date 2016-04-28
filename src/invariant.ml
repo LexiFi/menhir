@@ -88,20 +88,20 @@ module StateVector = struct
         equal v1 v2
     | _, _ ->
         (* Because all heights are known ahead of time, we are able
-	   to (and careful to) compare only vectors of equal length. *)
+           to (and careful to) compare only vectors of equal length. *)
         assert false
 
   let rec join v1 v2 =
     match v1, v2 with
     | [], [] ->
-	[]
+        []
     | states1 :: v1, states2 :: v2 ->
-	Lr1.NodeSet.union states1 states2 ::
-	join v1 v2
+        Lr1.NodeSet.union states1 states2 ::
+        join v1 v2
     | _, _ ->
         (* Because all heights are known ahead of time, we are able
-	   to (and careful to) compare only vectors of equal length. *)
-	assert false
+           to (and careful to) compare only vectors of equal length. *)
+        assert false
 
   let push v x =
     x :: v
@@ -156,7 +156,7 @@ module StateLattice = struct
     | Bottom ->
         Bottom
     | NonBottom v ->
-	NonBottom (StateVector.truncate h v)
+        NonBottom (StateVector.truncate h v)
 
   let is_maximal _ =
     false
@@ -183,31 +183,31 @@ let stack_states : Lr1.node -> property =
     match Lr1.incoming_symbol node with
 
     | None ->
-	assert (Lr1.predecessors node = []);
+        assert (Lr1.predecessors node = []);
         assert (stack_height node = 0);
 
-	(* If [node] is a start state, then the stack at [node] may be (in
-	   fact, must be) the empty stack. *)
+        (* If [node] is a start state, then the stack at [node] may be (in
+           fact, must be) the empty stack. *)
 
-	empty
+        empty
 
     | Some _symbol ->
 
-	(* If [node] is not a start state, then include the contribution of
-	   every incoming transition. We compute a join over all predecessors.
-	   The contribution of one predecessor is the abstract value found at
-	   this predecessor, extended with a new cell for this transition, and
-	   truncated to the stack height at [node], so as to avoid obtaining a
-	   vector that is longer than expected/necessary. *)
+        (* If [node] is not a start state, then include the contribution of
+           every incoming transition. We compute a join over all predecessors.
+           The contribution of one predecessor is the abstract value found at
+           this predecessor, extended with a new cell for this transition, and
+           truncated to the stack height at [node], so as to avoid obtaining a
+           vector that is longer than expected/necessary. *)
 
-	let height = stack_height node in
+        let height = stack_height node in
 
-	List.fold_left (fun v predecessor ->
-	  join v
-	    (truncate height
-	      (push (get predecessor) (Lr1.NodeSet.singleton predecessor))
-	    )
-	) bottom (Lr1.predecessors node)
+        List.fold_left (fun v predecessor ->
+          join v
+            (truncate height
+              (push (get predecessor) (Lr1.NodeSet.singleton predecessor))
+            )
+        ) bottom (Lr1.predecessors node)
 
   )
 
@@ -232,10 +232,10 @@ let production_where : Lr1.NodeSet.t ProductionMap.t =
     TerminalMap.fold (fun _ prods accu ->
       let prod = Misc.single prods in
       let nodes =
-	try
-	  ProductionMap.lookup prod accu
-	with Not_found ->
-	  Lr1.NodeSet.empty
+        try
+          ProductionMap.lookup prod accu
+        with Not_found ->
+          Lr1.NodeSet.empty
       in
       ProductionMap.add prod (Lr1.NodeSet.add node nodes) accu
     ) (Lr1.reductions node) accu
@@ -266,15 +266,15 @@ let () =
     if Lr1.NodeSet.is_empty (production_where prod) then
       match Production.classify prod with
       | Some nt ->
-	  incr count;
-	  Error.grammar_warning
-	    (Nonterminal.positions nt)
-	    "symbol %s is never accepted." (Nonterminal.print false nt)
+          incr count;
+          Error.grammar_warning
+            (Nonterminal.positions nt)
+            "symbol %s is never accepted." (Nonterminal.print false nt)
       | None ->
-	  incr count;
-	  Error.grammar_warning
-	    (Production.positions prod)
-	    "production %sis never reduced." (Production.print prod)
+          incr count;
+          Error.grammar_warning
+            (Production.positions prod)
+            "production %sis never reduced." (Production.print prod)
   );
   if !count > 0 then
     Error.grammar_warning []
@@ -293,9 +293,9 @@ let production_states : Production.index -> StateLattice.property =
     let height = Production.length prod in
     Lr1.NodeSet.fold (fun node accu ->
       join accu
-	(truncate height 
-	   (NonBottom (stack_states node))
-	)
+        (truncate height 
+           (NonBottom (stack_states node))
+        )
     ) nodes bottom
   )
 
@@ -362,9 +362,9 @@ let () =
   Production.iter (fun prod ->
     match production_states prod with
     | Bottom ->
-	()
+        ()
     | NonBottom v ->
-	share v
+        share v
   )
 
 (* Enforce condition (2) above. *)
@@ -373,12 +373,12 @@ let () =
   Nonterminal.iter (fun nt ->
     let count = 
       Lr1.targets (fun count _ _ ->
-	count + 1
+        count + 1
       ) 0 (Symbol.N nt)
     in
     if count > 1 then
       Lr1.targets (fun () sources _ ->
-	List.iter represent sources
+        List.iter represent sources
       ) () (Symbol.N nt)
   )
 
@@ -403,7 +403,7 @@ let () =
     let v = stack_states node in
     List.iter (fun states ->
       if Lr1.NodeSet.cardinal states >= 2 && handlers states then
-	represents states
+        represents states
     ) v
   )
 
@@ -414,15 +414,15 @@ let () =
     if Action.has_syntaxerror (Production.action prod) then
       match production_states prod with
       | Bottom ->
-	  ()
+          ()
       | NonBottom v ->
-  	  let sites = production_where prod in
-	  let length = Production.length prod in
-	  if length = 0 then
-	    Lr1.NodeSet.iter represent sites
-	  else
-	    let states = List.nth v (length - 1) in
-	    represents states
+          let sites = production_where prod in
+          let length = Production.length prod in
+          if length = 0 then
+            Lr1.NodeSet.iter represent sites
+          else
+            let states = List.nth v (length - 1) in
+            represents states
   )
 
 (* Define accessors. *)
@@ -488,8 +488,8 @@ let prodstack prod : word =
       assert false
   | NonBottom v ->
       List.combine
-	(convert (Production.rhs prod))
-	v
+        (convert (Production.rhs prod))
+        v
 
 (* [gotostack nt] is the structure of the stack when a shift
    transition over nonterminal [nt] is about to be taken. It
@@ -499,7 +499,7 @@ let gotostack : Nonterminal.t -> word =
   Nonterminal.tabulate (fun nt ->
     let sources =
       Lr1.targets (fun accu sources _ ->
-	List.fold_right Lr1.NodeSet.add sources accu
+        List.fold_right Lr1.NodeSet.add sources accu
       ) Lr1.NodeSet.empty (Symbol.N nt)
     in
     [ Symbol.N nt, sources ]
@@ -553,44 +553,44 @@ let rewind node : instruction =
     match w with
     | [] ->
 
-	(* I believe that every stack description either is definite
-	   (that is, ends with [TailEmpty]) or contains at least one
-	   represented state. Thus, if we find an empty [w], this
-	   means that the stack is definitely empty. *)
+        (* I believe that every stack description either is definite
+           (that is, ends with [TailEmpty]) or contains at least one
+           represented state. Thus, if we find an empty [w], this
+           means that the stack is definitely empty. *)
 
         Die
 
     | ((_, states) as cell) :: w ->
 
-	if representeds states then
+        if representeds states then
 
-	  (* Here is a represented state. We will pop this
-	     cell and no more. *)
+          (* Here is a represented state. We will pop this
+             cell and no more. *)
 
-	  DownTo ([ cell ], Represented)
+          DownTo ([ cell ], Represented)
 
-	else if handlers states then begin
+        else if handlers states then begin
 
-	  (* Here is an unrepresented state that can handle
-	     errors. The cell must hold a singleton set of states, so
-	     we know which state to jump to, even though it isn't
-	     represented. *)
+          (* Here is an unrepresented state that can handle
+             errors. The cell must hold a singleton set of states, so
+             we know which state to jump to, even though it isn't
+             represented. *)
 
-	  assert (Lr1.NodeSet.cardinal states = 1);
-	  let state = Lr1.NodeSet.choose states in
-	  DownTo ([ cell ], UnRepresented state)
+          assert (Lr1.NodeSet.cardinal states = 1);
+          let state = Lr1.NodeSet.choose states in
+          DownTo ([ cell ], UnRepresented state)
 
-	end
-	else
+        end
+        else
 
-	  (* Here is an unrepresented state that does not handle
-	     errors. Pop this cell and look further. *)
+          (* Here is an unrepresented state that does not handle
+             errors. Pop this cell and look further. *)
 
-	  match rewind w with
-	  | Die ->
-	      Die
-	  | DownTo (w, st) ->
-	      DownTo (cell :: w, st)
+          match rewind w with
+          | Die ->
+              Die
+          | DownTo (w, st) ->
+              DownTo (cell :: w, st)
 
   in
   rewind w
@@ -725,10 +725,10 @@ let () =
           (* If the semantic action mentions [$startpos($i)], then the
              [i]-th symbol in the right-hand side must keep track of
              its start position. Similarly for end positions. *)
-	  Array.iteri (fun i id' ->
-	    if id = id' then
+          Array.iteri (fun i id' ->
+            if id = id' then
               record_ConVar true (rhs.(i), where)
-	  ) ids
+          ) ids
     ) (Action.keywords action)
 
   ); (* end of loop on productions *)
@@ -814,12 +814,12 @@ let errorpeekers =
   let nts : SymbolSet.t =
     Lr1.fold (fun nts node ->
       try
-	let prods = TerminalMap.lookup Terminal.error (Lr1.reductions node) in
-	let prod = Misc.single prods in
-	let nt = Production.nt prod in
-	SymbolSet.add (Symbol.N nt) nts
+        let prods = TerminalMap.lookup Terminal.error (Lr1.reductions node) in
+        let prod = Misc.single prods in
+        let nt = Production.nt prod in
+        SymbolSet.add (Symbol.N nt) nts
       with Not_found ->
-	nts
+        nts
     ) SymbolSet.empty
   in
   (* ... then compute the set of all target states of all transitions
@@ -888,11 +888,11 @@ let (has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) opti
       let reduction = ProductionMap.is_singleton (Lr1.invert (Lr1.reductions s)) in
       match reduction with
       | Some _ ->
-	  if SymbolMap.purelynonterminal (Lr1.transitions s)
+          if SymbolMap.purelynonterminal (Lr1.transitions s)
           then reduction
           else None
       | None ->
-	  reduction
+          reduction
 
   )
 

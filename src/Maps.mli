@@ -44,7 +44,7 @@ end
 module PersistentMapsToImperativeMaps
   (M : PERSISTENT_MAPS)
      : IMPERATIVE_MAPS with type key = M.key
-		        and type 'data t = 'data M.t ref
+                        and type 'data t = 'data M.t ref
 
 (* An implementation of imperative maps can be made to satisfy the interface
    of a single imperative map. This map is obtained via a single call to [create]. *)
@@ -53,7 +53,7 @@ module ImperativeMapsToImperativeMap
   (M : IMPERATIVE_MAPS)
   (D : sig type data end)
      : IMPERATIVE_MAP with type key = M.key
-		       and type data = D.data
+                       and type data = D.data
 
 (* An implementation of imperative maps as arrays is possible if keys
    are consecutive integers. *)

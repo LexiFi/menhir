@@ -70,9 +70,9 @@ let inline grammar =
   let rec fresh ?(c=0) names prefix =
     let name = prefix^string_of_int c in
       if StringSet.mem name names then
-	fresh ~c:(c+1) names prefix
+        fresh ~c:(c+1) names prefix
       else 
-	name
+        name
   in
 
   let use_inline = ref false in
@@ -103,23 +103,23 @@ let inline grammar =
   let rec find_inline_producer b = 
     let prefix, nt, p, psym, suffix = 
       let rec chop_inline i (prefix, suffix) =
-	match suffix with
-	  | [] -> 
-	      raise NoInlining
+        match suffix with
+          | [] -> 
+              raise NoInlining
 
-	  | ((nt, id) as x) :: xs ->
-	      try
-		let r = StringMap.find nt grammar.rules in
-		if r.inline_flag then 
-		    (* We have to inline the rule [r] into [b] between
-		       [prefix] and [xs]. *)
-		  List.rev prefix, nt, r, id, xs
-		else 
-		  chop_inline (i + 1) (x :: prefix, xs) 
-	      with Not_found -> 
-		chop_inline (i + 1) (x :: prefix, xs) 
+          | ((nt, id) as x) :: xs ->
+              try
+                let r = StringMap.find nt grammar.rules in
+                if r.inline_flag then 
+                    (* We have to inline the rule [r] into [b] between
+                       [prefix] and [xs]. *)
+                  List.rev prefix, nt, r, id, xs
+                else 
+                  chop_inline (i + 1) (x :: prefix, xs) 
+              with Not_found -> 
+                chop_inline (i + 1) (x :: prefix, xs) 
       in
-	chop_inline 1 ([], b.producers)
+        chop_inline 1 ([], b.producers)
     in
       prefix, expand_rule nt p, nt, psym, suffix
 
@@ -134,15 +134,15 @@ let inline grammar =
     (* Compute a renaming and the new inlined producers' names. *)
     let phi, producers' =
       List.fold_left (fun (phi, producers) (p, x) -> 
-	if StringSet.mem x producers_names then
-	  let x' = fresh producers_names x in
-	  ((x, x') :: phi, (p, x') :: producers)
-	else 
-	  (phi, (p, x) :: producers)
+        if StringSet.mem x producers_names then
+          let x' = fresh producers_names x in
+          ((x, x') :: phi, (p, x') :: producers)
+        else 
+          (phi, (p, x) :: producers)
       ) ([], []) producers
     in
       phi, List.rev producers'
-	
+        
   (* Inline the non terminals that can be inlined in [b]. We use the 
      ListMonad to combine the results. *)
   and expand_branch (b : branch) : branch ListMonad.m =
@@ -151,7 +151,7 @@ let inline grammar =
       let prefix, p, nt, c, suffix = find_inline_producer b in
       use_inline := true;
       (* Inline a branch of [nt] at position [prefix] ... [suffix] in
-	 the branch [b]. *)
+         the branch [b]. *)
       let inline_branch pb =
 
         (* 2015/11/18. The interaction of %prec and %inline is not documented.
@@ -179,9 +179,9 @@ let inline grammar =
           )
         );
 
-	(* Rename the producers of this branch is they conflict with
-	   the name of the host's producers. *)
-	let phi, inlined_producers = rename_if_necessary b pb.producers in
+        (* Rename the producers of this branch is they conflict with
+           the name of the host's producers. *)
+        let phi, inlined_producers = rename_if_necessary b pb.producers in
 
         (* After inlining, the producers are as follows. *)
         let producers = prefix @ inlined_producers @ suffix in
@@ -224,9 +224,9 @@ let inline grammar =
              production is the start production of the outer production.
              This is true only if the inner production is non-epsilon. *)
 
-	in
+        in
 
-	let endp =
+        let endp =
           if inlined_producers > 0 then
             (* If the inner production is non-epsilon, things are easy, then its end
                position is the end position of its last element. *)
@@ -251,12 +251,12 @@ let inline grammar =
             Before, WhereEnd
         in
 
-	(* Rename the outer and inner semantic action. *)
-	let outer_action =
-	  Action.rename (rename_sw_outer (c, startp, endp)) [] b.action
-	and action' =
-	  Action.rename (rename_sw_inner beforeendp) phi pb.action
-	in
+        (* Rename the outer and inner semantic action. *)
+        let outer_action =
+          Action.rename (rename_sw_outer (c, startp, endp)) [] b.action
+        and action' =
+          Action.rename (rename_sw_inner beforeendp) phi pb.action
+        in
 
         (* 2015/11/18. If the callee has a %prec annotation (which implies
            the caller does not have one, and the callee appears in tail
@@ -271,11 +271,11 @@ let inline grammar =
               b.branch_prec_annotation
         in
 
-	{ b with
-	  producers;
-	  action = Action.compose c action' outer_action;
+        { b with
+          producers;
+          action = Action.compose c action' outer_action;
           branch_prec_annotation;
-	}
+        }
       in
       List.map inline_branch p.branches >>= expand_branch
 
@@ -286,12 +286,12 @@ let inline grammar =
   and expand_rule k r = 
     try 
       (match expanded_state k with
-	 | BeingExpanded ->
-    	     Error.error
-	       r.positions
-	       "there is a cycle in the definition of %s." k
-	 | Expanded r ->
-	     r)
+         | BeingExpanded ->
+             Error.error
+               r.positions
+               "there is a cycle in the definition of %s." k
+         | Expanded r ->
+             r)
     with Not_found ->
       mark_as_being_expanded k;
       mark_as_expanded k { r with branches = r.branches >>= expand_branch }
@@ -302,7 +302,7 @@ let inline grammar =
     if Settings.coq then
       StringMap.iter 
         (fun _ r -> 
-	   if r.inline_flag then
+           if r.inline_flag then
              Error.error r.positions
                "%%inline is not supported by the Coq back-end.")
         grammar.rules
@@ -314,13 +314,13 @@ let inline grammar =
     StringMap.mapi expand_rule grammar.rules
   and useful_types = 
       StringMap.filter 
-	(fun k _ -> try not (StringMap.find k grammar.rules).inline_flag
-	 with Not_found -> true)
-	grammar.types
+        (fun k _ -> try not (StringMap.find k grammar.rules).inline_flag
+         with Not_found -> true)
+        grammar.types
   in
 
     { grammar with 
-	rules = StringMap.filter (fun _ r -> not r.inline_flag) expanded_rules;
-	types = useful_types
+        rules = StringMap.filter (fun _ r -> not r.inline_flag) expanded_rules;
+        types = useful_types
     }, !use_inline
       

@@ -31,17 +31,17 @@ class virtual ['env] env = object(self)
   method pat env = function
     | PWildcard
     | PUnit ->
-	env
+        env
     | PVar id ->
-	self#pvar env id
+        self#pvar env id
     | PTuple ps
     | POr ps
     | PData (_, ps) ->
-	self#pats env ps
+        self#pats env ps
     | PAnnot (p, _) ->
         self#pat env p
     | PRecord fps ->
-	self#fpats env fps
+        self#fpats env fps
 
   method pats env ps =
     List.fold_left self#pat env ps
@@ -113,9 +113,9 @@ class virtual ['env] map = object (self)
       | EPatComment (s, p, e) ->
           self#epatcomment env s p e
       | EArray es ->
-	  self#earray env es
+          self#earray env es
       | EArrayAccess (e, i) ->
-	  self#earrayaccess env e i
+          self#earrayaccess env e i
     with NoChange ->
       e
   
@@ -393,9 +393,9 @@ class virtual ['env, 'a] fold = object (self)
     | EPatComment (s, p, e) ->
         self#epatcomment env accu s p e
     | EArray es ->
-	self#earray env accu es
+        self#earray env accu es
     | EArrayAccess (e, i) ->
-	self#earrayaccess env accu e i
+        self#earrayaccess env accu e i
 
   method evar (_env : 'env) (accu : 'a) _x =
     accu

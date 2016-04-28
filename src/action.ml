@@ -137,8 +137,8 @@ let keywords action =
 
 let print f action = 
   let module P = Printer.Make (struct let f = f 
-				      let locate_stretches = None 
-			       end) 
+                                      let locate_stretches = None 
+                               end) 
   in
     P.expr action.expr
 

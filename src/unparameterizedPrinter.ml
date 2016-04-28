@@ -17,17 +17,17 @@ let print_start_symbols b g =
 let rec insert_in_partitions item m = function
   | [] -> 
       [ (m, [ item ]) ]
-	
+        
   | (m', items) :: partitions when Mark.same m m' -> 
       (m', item :: items) :: partitions
-	
+        
   | t :: partitions ->
       t :: (insert_in_partitions item m partitions)
      
 let insert (undefined, partitions) = function
   | (item, UndefinedPrecedence) ->
       ((item, 0) :: undefined, partitions)
-	
+        
   | (item, PrecedenceLevel (m, v, _, _)) ->
       (undefined, insert_in_partitions (item, v) m partitions)
 
@@ -35,9 +35,9 @@ let print_ocamltype ocamltype =
   Printf.sprintf " <%s>" (
     match ocamltype with
     | Declared stretch ->
-	stretch.stretch_raw_content
+        stretch.stretch_raw_content
     | Inferred t ->
-	t
+        t
     )
 
 let print_assoc = function
@@ -66,42 +66,42 @@ let print_tokens mode b g =
     let prop = StringMap.find token g.tokens in
     if prop.tk_is_declared then
       Printf.fprintf b "%%token%s %s\n"
-	begin match mode with
-	| PrintNormal
-	| PrintUnitActions ->
-	    Misc.o2s prop.tk_ocamltype print_ocamltype
-	| PrintUnitActionsUnitTokens ->
-	    "" (* omitted ocamltype after %token means <unit> *)
-	end
-	token
+        begin match mode with
+        | PrintNormal
+        | PrintUnitActions ->
+            Misc.o2s prop.tk_ocamltype print_ocamltype
+        | PrintUnitActionsUnitTokens ->
+            "" (* omitted ocamltype after %token means <unit> *)
+        end
+        token
   ) ordered_tokens;
 
   ignore (List.fold_left 
-	    (fun last_prop (token, v) -> 
-	       let prop = StringMap.find token g.tokens in 
-		 match last_prop with
+            (fun last_prop (token, v) -> 
+               let prop = StringMap.find token g.tokens in 
+                 match last_prop with
 
-		   | None ->
-		       if prop.tk_associativity = UndefinedAssoc then
-			 None
-		       else (
-			 Printf.fprintf b "%s %s "
-			   (print_assoc prop.tk_associativity) token;
-			 Some v)
-			 
-		   | Some v' when v <> v' -> 
-		       if prop.tk_associativity = UndefinedAssoc then
-			 None
-		       else (
-			 Printf.fprintf b "\n%s %s "
-			   (print_assoc prop.tk_associativity) token;
-			 Some v)
-			 
-		   | Some _ -> 
-		       Printf.fprintf b "%s " token;
-		       last_prop
-			 
-	    ) None ordered_tokens);
+                   | None ->
+                       if prop.tk_associativity = UndefinedAssoc then
+                         None
+                       else (
+                         Printf.fprintf b "%s %s "
+                           (print_assoc prop.tk_associativity) token;
+                         Some v)
+                         
+                   | Some v' when v <> v' -> 
+                       if prop.tk_associativity = UndefinedAssoc then
+                         None
+                       else (
+                         Printf.fprintf b "\n%s %s "
+                           (print_assoc prop.tk_associativity) token;
+                         Some v)
+                         
+                   | Some _ -> 
+                       Printf.fprintf b "%s " token;
+                       last_prop
+                         
+            ) None ordered_tokens);
   Printf.fprintf b "\n"
 
 let print_types mode b g = 
@@ -109,10 +109,10 @@ let print_types mode b g =
     Printf.fprintf b "%%type%s %s\n" 
       begin match mode with
       | PrintNormal ->
-	  print_ocamltype ty
+          print_ocamltype ty
       | PrintUnitActions
       | PrintUnitActionsUnitTokens ->
-	  " <unit>"
+          " <unit>"
       end
       (Misc.normalize symbol)
   ) g.types
@@ -151,29 +151,29 @@ let branches_order r r' =
   let branch_order b b' = 
     match b.branch_production_level, b'.branch_production_level with
       | ProductionLevel (m, l), ProductionLevel (m', l') ->
-	  if Mark.same m m' then
-	    if l < l' then
-	      -1
-	    else if l > l' then
-	      1
-	    else 
-	      0
-	  else 0
+          if Mark.same m m' then
+            if l < l' then
+              -1
+            else if l > l' then
+              1
+            else 
+              0
+          else 0
   in
   let rec lexical_order bs bs' = 
     match bs, bs' with
       | [], [] ->
-	  0
+          0
       | [], _ ->
-	  -1
+          -1
       | _, [] ->
-	  1
+          1
       | b :: bs, b' :: bs' ->
-	  match branch_order b b' with
-	    | 0 -> 
-		lexical_order bs bs'
-	    | x -> 
-		x
+          match branch_order b b' with
+            | 0 -> 
+                lexical_order bs bs'
+            | x -> 
+                x
   in
     lexical_order r.branches r'.branches
 

@@ -35,7 +35,7 @@ let version =
 type construction_mode =
   | ModeCanonical     (* --canonical: canonical Knuth LR(1) automaton *)
   | ModeInclusionOnly (* --no-pager : states are merged when there is an inclusion
-			              relationship *)
+                                      relationship *)
   | ModePager         (* normal mode: states are merged as per Pager's criterion *)
   | ModeLALR          (* --lalr     : states are merged as in an LALR generator,
                                       i.e. as soon as they have the same LR(0) core *)
@@ -313,17 +313,17 @@ let () =
       ()
   | SuggestCompFlags ->
       if !table then
-	if Installation.ocamlfind then
-	  printf "-package menhirLib\n%!"
-	else
-	  printf "-I %s\n%!" Installation.libdir;
+        if Installation.ocamlfind then
+          printf "-package menhirLib\n%!"
+        else
+          printf "-I %s\n%!" Installation.libdir;
       exit 0
   | SuggestLinkFlags extension ->
       if !table then
-	if Installation.ocamlfind then
-	  printf "-linkpkg\n%!"
-	else
-	  printf "menhirLib.%s\n%!" extension;
+        if Installation.ocamlfind then
+          printf "-linkpkg\n%!"
+        else
+          printf "menhirLib.%s\n%!" extension;
       exit 0
   | SuggestWhereIsMenhirLibSource ->
       if Installation.ocamlfind then
@@ -349,13 +349,13 @@ let base =
   if !base = "" then
     match filenames with
     | [] ->
-	fprintf stderr "%s\n" usage;
-	exit 1
+        fprintf stderr "%s\n" usage;
+        exit 1
     | [ filename ] ->
-	Filename.chop_suffix filename (if !coq then ".vy" else ".mly")
+        Filename.chop_suffix filename (if !coq then ".vy" else ".mly")
     | _ ->
-	fprintf stderr "Error: you must specify --base when providing multiple input files.\n";
-	exit 1
+        fprintf stderr "Error: you must specify --base when providing multiple input files.\n";
+        exit 1
   else
     !base
 

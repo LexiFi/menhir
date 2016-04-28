@@ -326,7 +326,7 @@ module Make (T : TABLE) = struct
     else begin
 
       (* The stack is nonempty. Pop a cell, updating the current state
-	 with that found in the popped cell, and try again. *)
+         with that found in the popped cell, and try again. *)
 
       let env = { env with
         stack = next;

@@ -103,7 +103,7 @@ module Closure (L : Lookahead.S) = struct
   type node = {
 
       (* Nodes are sequentially numbered so as to allow applying
-	 Tarjan's algorithm (below). *)
+         Tarjan's algorithm (below). *)
 
       num: int;
 
@@ -112,29 +112,29 @@ module Closure (L : Lookahead.S) = struct
       item: t;
 
       (* All of the epsilon transitions that leave a node have the
-	 same behavior with respect to lookahead information. *)
+         same behavior with respect to lookahead information. *)
 
       (* The lookahead set transmitted along an epsilon transition is
-	 either a constant, or the union of a constant and the lookahead
-	 set at the source node. The former case corresponds to a source
-	 item whose trailer is not nullable, the latter to a source item
-	 whose trailer is nullable. *)
+         either a constant, or the union of a constant and the lookahead
+         set at the source node. The former case corresponds to a source
+         item whose trailer is not nullable, the latter to a source item
+         whose trailer is nullable. *)
 
       epsilon_constant: L.t;
       epsilon_transmits: bool;
 
       (* Each node carries pointers to its successors through
-	 epsilon transitions. This field is never modified
-	 once initialization is over. *)
+         epsilon transitions. This field is never modified
+         once initialization is over. *)
 
       mutable epsilon_transitions: node list;
 
       (* The following fields are transient, that is, only used
-	 temporarily during graph traversals. Marks are used to
-	 recognize which nodes have been traversed already. Lists
-	 of predecessors are used to record which edges have been
-	 traversed. Lookahead information is attached with each
-	 node. *)
+         temporarily during graph traversals. Marks are used to
+         recognize which nodes have been traversed already. Lists
+         of predecessors are used to record which edges have been
+         traversed. Lookahead information is attached with each
+         node. *)
 
       mutable mark: Mark.t;
       mutable predecessors: node list;
@@ -160,34 +160,34 @@ module Closure (L : Lookahead.S) = struct
       let length = Array.length rhs in
       mapping.(Production.p2i prod) <- Array.init (length+1) (fun pos ->
 
-	let item = import (prod, pos) in
-	let num = !count in
-	count := num + 1;
+        let item = import (prod, pos) in
+        let num = !count in
+        count := num + 1;
 
-	(* The lookahead set transmitted through an epsilon
-	   transition is the FIRST set of the remainder of
-	   the source item, plus, if that is nullable, the
-	   lookahead set of the source item. *)
+        (* The lookahead set transmitted through an epsilon
+           transition is the FIRST set of the remainder of
+           the source item, plus, if that is nullable, the
+           lookahead set of the source item. *)
 
-	let constant, transmits =
-	  if pos < length then
-	    let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
-	    L.constant first, nullable
-	  else
-	    (* No epsilon transitions leave this item. *)
-	    L.empty, false
-	in
-	  
-	{
-	  num = num;
-	  item = item;
-	  epsilon_constant = constant;
-  	  epsilon_transmits = transmits;
-	  epsilon_transitions = []; (* temporary placeholder *)
-	  mark = Mark.none;
-	  predecessors = [];
-  	  lookahead = L.empty;
-	}
+        let constant, transmits =
+          if pos < length then
+            let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
+            L.constant first, nullable
+          else
+            (* No epsilon transitions leave this item. *)
+            L.empty, false
+        in
+          
+        {
+          num = num;
+          item = item;
+          epsilon_constant = constant;
+          epsilon_transmits = transmits;
+          epsilon_transitions = []; (* temporary placeholder *)
+          mark = Mark.none;
+          predecessors = [];
+          lookahead = L.empty;
+        }
 
       )
     )
@@ -200,17 +200,17 @@ module Closure (L : Lookahead.S) = struct
       let length = Array.length rhs in
       Array.iteri (fun pos node ->
 
-	node.epsilon_transitions <-
-	  if pos < length then
-	    match rhs.(pos) with
-	    | Symbol.N nt ->
-		Production.foldnt nt [] (fun prod nodes ->
-		  (item2node (import (prod, 0))) :: nodes
-		)
-	    | Symbol.T _ ->
-		[]
-	  else
-	    []
+        node.epsilon_transitions <-
+          if pos < length then
+            match rhs.(pos) with
+            | Symbol.N nt ->
+                Production.foldnt nt [] (fun prod nodes ->
+                  (item2node (import (prod, 0))) :: nodes
+                )
+            | Symbol.T _ ->
+                []
+          else
+            []
 
       ) mapping.(Production.p2i prod)
     )
@@ -249,12 +249,12 @@ module Closure (L : Lookahead.S) = struct
 
     let iter f =
       Array.iter (fun nodes ->
-	Array.iter f nodes
+        Array.iter f nodes
       ) mapping
 
     let successors f node =
       if node.epsilon_transmits then
-	List.iter f node.epsilon_transitions
+        List.iter f node.epsilon_transitions
 
   end
 
@@ -275,17 +275,17 @@ module Closure (L : Lookahead.S) = struct
        let scc = T.scc node in
        match scc with
        | [] ->
-	   ()
+           ()
        | [ node ] ->
 
-	   (* This is a strongly connected component of one node. Check
-	      whether it carries a self-loop. Forbidding self-loops is not
-	      strictly required by the code that follows, but is consistent
-	      with the fact that we forbid cycles of length greater than 1. *)
+           (* This is a strongly connected component of one node. Check
+              whether it carries a self-loop. Forbidding self-loops is not
+              strictly required by the code that follows, but is consistent
+              with the fact that we forbid cycles of length greater than 1. *)
 
-	   P.successors (fun successor ->
-	     if successor.num = node.num then
-	       cycle scc
+           P.successors (fun successor ->
+             if successor.num = node.num then
+               cycle scc
            ) node
 
        | _ ->
@@ -293,7 +293,7 @@ module Closure (L : Lookahead.S) = struct
            (* This is a strongly connected component of at least two
               elements. *)
 
-	   cycle scc
+           cycle scc
      )
 
   (* Closure computation. *)
@@ -317,24 +317,24 @@ module Closure (L : Lookahead.S) = struct
 
     let rec visit father transmits toks node =
       if Mark.same node.mark this then begin
-	(* Node has been visited already. *)
-	node.lookahead <- L.union toks node.lookahead;
-	if transmits then
-	  node.predecessors <- father :: node.predecessors
+        (* Node has been visited already. *)
+        node.lookahead <- L.union toks node.lookahead;
+        if transmits then
+          node.predecessors <- father :: node.predecessors
       end
       else begin
-	(* Node is new. *)
-	node.predecessors <- if transmits then [ father ] else [];
-	node.lookahead <- toks;
-	follow node
+        (* Node is new. *)
+        node.predecessors <- if transmits then [ father ] else [];
+        node.lookahead <- toks;
+        follow node
       end
 
     and follow node =
       node.mark <- this;
       nodes := node :: !nodes;
       List.iter
-	(visit node node.epsilon_transmits node.epsilon_constant)
-	node.epsilon_transitions
+        (visit node node.epsilon_transmits node.epsilon_constant)
+        node.epsilon_transitions
 
     in
 
@@ -354,13 +354,13 @@ module Closure (L : Lookahead.S) = struct
 
     let rec walk node =
       if not (Mark.same node.mark this) then begin
-	(* Node is new. *)
-	node.mark <- this;
-	(* Explore all predecessors and merge their lookahead
-	   sets into the current node's own lookahead set. *)
-	List.iter (fun predecessor ->
-	  walk predecessor;
-	  node.lookahead <- L.union predecessor.lookahead node.lookahead
+        (* Node is new. *)
+        node.mark <- this;
+        (* Explore all predecessors and merge their lookahead
+           sets into the current node's own lookahead set. *)
+        List.iter (fun predecessor ->
+          walk predecessor;
+          node.lookahead <- L.union predecessor.lookahead node.lookahead
         ) node.predecessors
       end
     in

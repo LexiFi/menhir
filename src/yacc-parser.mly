@@ -43,10 +43,10 @@ grammar:
   declarations PERCENTPERCENT rules trailer
     { 
       { 
-	pg_filename          = ""; (* filled in by the caller *)
-	pg_declarations      = List.rev $1;
-	pg_rules	     = $3;
-	pg_trailer           = $4 
+        pg_filename          = ""; (* filled in by the caller *)
+        pg_declarations      = List.rev $1;
+        pg_rules             = $3;
+        pg_trailer           = $4 
       }
     }
 
@@ -173,11 +173,11 @@ rule:
     {
       let public, inline = $1 in
       { pr_public_flag = public; 
-	pr_inline_flag = inline;
-	pr_nt          = Positions.value $2;
-	pr_positions   = [ Positions.position $2 ];
-	pr_parameters  = $3;
-	pr_branches    = List.flatten ($6 :: List.rev $7)
+        pr_inline_flag = inline;
+        pr_nt          = Positions.value $2;
+        pr_positions   = [ Positions.position $2 ];
+        pr_parameters  = $3;
+        pr_branches    = List.flatten ($6 :: List.rev $7)
       }
     }
 
@@ -277,13 +277,13 @@ production_group:
         (* Distribute the semantic action. Also, check that every [$i]
            is within bounds. *)
         let pr_action = action (ParserAux.producer_names producers) in
-	{
-	  pr_producers;
-	  pr_action;
-	  pr_branch_prec_annotation   = ParserAux.override pos oprec1 oprec2;
-	  pr_branch_production_level  = level;
-	  pr_branch_position          = pos
-	})
+        {
+          pr_producers;
+          pr_action;
+          pr_branch_prec_annotation   = ParserAux.override pos oprec1 oprec2;
+          pr_branch_production_level  = level;
+          pr_branch_position          = pos
+        })
       productions
     }
 

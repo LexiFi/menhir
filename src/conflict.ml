@@ -49,14 +49,14 @@ let rec follow derivation offset' = function
   | (item, offset) :: configs ->
       let _, _, rhs, pos, _ = Item.def item in
       let derivation =
-	if offset = offset' then
-	  (* This is an epsilon transition. Put a new root node on top of
-	     the existing derivation. *)
-	  Derivation.build pos rhs derivation None
-	else
-	  (* This was a shift transition. Tack symbol in front of the
-	     forest. *)
-	  Derivation.prepend rhs.(pos) derivation
+        if offset = offset' then
+          (* This is an epsilon transition. Put a new root node on top of
+             the existing derivation. *)
+          Derivation.build pos rhs derivation None
+        else
+          (* This was a shift transition. Tack symbol in front of the
+             forest. *)
+          Derivation.prepend rhs.(pos) derivation
       in
       follow derivation offset configs
 
@@ -105,36 +105,36 @@ let explain_shift_item
     Misc.qiter (function (item, offset) as config ->
 
       (* If the item we're looking at is the goal item and if
-	 we have read all of the input symbols, stop. *)
+         we have read all of the input symbols, stop. *)
 
       if (Item.equal item stop) && (offset = n) then
-	raise Done;
+        raise Done;
 
       (* Otherwise, explore the transitions out of this item. *)
 
       let prod, _, rhs, pos, length = Item.def item in
 
       (* Shift transition, followed only if the symbol matches
-	 the symbol found in the input string. *)
+         the symbol found in the input string. *)
 
       if (pos < length)
       && (offset < n)
       && (Symbol.equal rhs.(pos) input.(offset)) then begin
-	let config' = (Item.import (prod, pos+1), offset+1) in
-	enqueue (Some config) config'
+        let config' = (Item.import (prod, pos+1), offset+1) in
+        enqueue (Some config) config'
       end;
 
       (* Epsilon transitions. *)
 
       if pos < length then
-	match rhs.(pos) with
-	| Symbol.N nt ->
-	    Production.iternt nt (fun prod ->
-	      let config' = (Item.import (prod, 0), offset) in
-	      enqueue (Some config) config'
+        match rhs.(pos) with
+        | Symbol.N nt ->
+            Production.iternt nt (fun prod ->
+              let config' = (Item.import (prod, 0), offset) in
+              enqueue (Some config) config'
             )
-	| Symbol.T _ ->
-	    ()
+        | Symbol.T _ ->
+            ()
 
     ) queue;
     assert false
@@ -187,65 +187,65 @@ let rec follow1 tok derivation offset' = function
   | [] ->
       assert (Terminal.equal tok Terminal.sharp);
       (* One could emit a comment saying that the lookahead token is
-	 initially [#]. That comment would have to be displayed above
-	 the derivation, though, and there is no support for that
-	 at the moment, so let's skip it. *)
+         initially [#]. That comment would have to be displayed above
+         the derivation, though, and there is no support for that
+         at the moment, so let's skip it. *)
       derivation
   | (item, _, offset) :: configs ->
       let prod, _, rhs, pos, length = Item.def item in
       if offset = offset' then
 
-	(* This is an epsilon transition. Attack a new line and add
-	   a comment that explains why the lookahead symbol is
-	   produced or inherited. *)
-	
-	let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
+        (* This is an epsilon transition. Attack a new line and add
+           a comment that explains why the lookahead symbol is
+           produced or inherited. *)
+        
+        let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
 
-	if TerminalSet.mem tok first then
+        if TerminalSet.mem tok first then
 
-	  (* The lookahead symbol is produced (and perhaps also inherited,
-	     but let's ignore that). *)
+          (* The lookahead symbol is produced (and perhaps also inherited,
+             but let's ignore that). *)
 
-	  let e = Analysis.explain_first_rhs tok rhs (pos + 1) in
-	  let comment =
-	    "lookahead token appears" ^ (if e = "" then "" else " because " ^ e)
-	  in
-	  let derivation =
-	    Derivation.build pos rhs derivation (Some comment)
-	  in
+          let e = Analysis.explain_first_rhs tok rhs (pos + 1) in
+          let comment =
+            "lookahead token appears" ^ (if e = "" then "" else " because " ^ e)
+          in
+          let derivation =
+            Derivation.build pos rhs derivation (Some comment)
+          in
 
-	  (* Print the rest of the derivation without paying attention to
-	     the lookahead symbols. *)
+          (* Print the rest of the derivation without paying attention to
+             the lookahead symbols. *)
 
-	  follow derivation offset (List.map config1toconfig0 configs)
+          follow derivation offset (List.map config1toconfig0 configs)
 
-	else begin
+        else begin
 
-	  (* The lookahead symbol is not produced, so it is definitely inherited. *)
+          (* The lookahead symbol is not produced, so it is definitely inherited. *)
 
-	  assert nullable;
+          assert nullable;
 
-	  let comment =
-	    "lookahead token is inherited" ^
-	    (if pos + 1 < length then Printf.sprintf " because %scan vanish" (Symbol.printao (pos + 1) rhs) else "")
-	  in
-	  let derivation =
-	    Derivation.build pos rhs derivation (Some comment)
-	  in
+          let comment =
+            "lookahead token is inherited" ^
+            (if pos + 1 < length then Printf.sprintf " because %scan vanish" (Symbol.printao (pos + 1) rhs) else "")
+          in
+          let derivation =
+            Derivation.build pos rhs derivation (Some comment)
+          in
 
-	  follow1 tok derivation offset configs
+          follow1 tok derivation offset configs
 
-	end
+        end
 
       else
 
-	(* This is a shift transition. Tack symbol in front of forest. *)
+        (* This is a shift transition. Tack symbol in front of forest. *)
 
-	let derivation = 
-	  Derivation.prepend rhs.(pos) derivation
-	in
+        let derivation = 
+          Derivation.prepend rhs.(pos) derivation
+        in
 
-	follow1 tok derivation offset configs
+        follow1 tok derivation offset configs
 
 (* Symbolic execution is performed in the same manner as above. *)
 
@@ -285,41 +285,41 @@ let explain_reduce_item
     Misc.qiter (function (item, lookahead, offset) as config ->
 
       (* If the item we're looking at is the goal item and if
-	 we have read all of the input symbols, stop. *)
+         we have read all of the input symbols, stop. *)
 
       if (Item.equal item stop) && lookahead && (offset = n) then
-	raise Done;
+        raise Done;
 
       (* Otherwise, explore the transitions out of this item. *)
 
       let prod, _nt, rhs, pos, length = Item.def item in
 
       (* Shift transition, followed only if the symbol matches
-	 the symbol found in the input string. *)
+         the symbol found in the input string. *)
 
       if (pos < length)
       && (offset < n)
       && (Symbol.equal rhs.(pos) input.(offset)) then begin
-	let config' = (Item.import (prod, pos+1), lookahead, offset+1) in
-	enqueue (Some config) config'
+        let config' = (Item.import (prod, pos+1), lookahead, offset+1) in
+        enqueue (Some config) config'
       end;
 
       (* Epsilon transitions. *)
 
       if pos < length then
-	match rhs.(pos) with
-	| Symbol.N nt ->
-	    let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
-	    let first : bool = TerminalSet.mem tok first in
-	    let lookahead' =
-	      if nullable then first || lookahead else first
-	    in
-	    Production.iternt nt (fun prod ->
-	      let config' = (Item.import (prod, 0), lookahead', offset) in
-	      enqueue (Some config) config'
+        match rhs.(pos) with
+        | Symbol.N nt ->
+            let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
+            let first : bool = TerminalSet.mem tok first in
+            let lookahead' =
+              if nullable then first || lookahead else first
+            in
+            Production.iternt nt (fun prod ->
+              let config' = (Item.import (prod, 0), lookahead', offset) in
+              enqueue (Some config) config'
             )
-	| Symbol.T _ ->
-	    ()
+        | Symbol.T _ ->
+            ()
 
     ) queue;
     assert false
@@ -343,46 +343,46 @@ let () =
     try
 
       (* Construct a partial LR(1) automaton, looking for a conflict
-	 in a state that corresponds to this node. Because Pager's
-	 algorithm can merge two states as soon as one of them has a
-	 conflict, we can't be too specific about the conflict that we
-	 expect to find in the canonical automaton. So, we must supply
-	 a set of conflict tokens and accept any kind of conflict that
-	 involves one of them. *)
+         in a state that corresponds to this node. Because Pager's
+         algorithm can merge two states as soon as one of them has a
+         conflict, we can't be too specific about the conflict that we
+         expect to find in the canonical automaton. So, we must supply
+         a set of conflict tokens and accept any kind of conflict that
+         involves one of them. *)
 
       (* TEMPORARY with the new compatibility criterion, we can be
-	 sure that every conflict token is indeed involved in a
-	 conflict. Exploit that? Avoid focusing on a single token? *)
+         sure that every conflict token is indeed involved in a
+         conflict. Exploit that? Avoid focusing on a single token? *)
 
       let module P = Lr1partial.Run (struct
-	let tokens = toks
-	let goal = node
+        let tokens = toks
+        let goal = node
       end) in
 
       let closure =
-	Lr0.closure P.goal in
+        Lr0.closure P.goal in
 
       (* Determine what kind of conflict was found. *)
 
       let shift, reduce = Item.Map.fold (fun item toks (shift, reduce) ->
-	match Item.classify item with
-	| Item.Shift (Symbol.T tok, _)
-	  when Terminal.equal tok P.token ->
-	      shift + 1, reduce
-	| Item.Reduce _
-	  when TerminalSet.mem P.token toks ->
-	    shift, reduce + 1
-	| _ ->
-	    shift, reduce
+        match Item.classify item with
+        | Item.Shift (Symbol.T tok, _)
+          when Terminal.equal tok P.token ->
+              shift + 1, reduce
+        | Item.Reduce _
+          when TerminalSet.mem P.token toks ->
+            shift, reduce + 1
+        | _ ->
+            shift, reduce
       ) closure (0, 0) in
 
       let kind =
-	if (shift > 0) && (reduce > 1) then
-	  "shift/reduce/reduce"
-	else if (shift > 0) then
-	  "shift/reduce"
-	else
-	  "reduce/reduce"
+        if (shift > 0) && (reduce > 1) then
+          "shift/reduce/reduce"
+        else if (shift > 0) then
+          "shift/reduce"
+        else
+          "reduce/reduce"
       in
 
       (* Explain how the conflict state is reached. *)
@@ -391,84 +391,84 @@ let () =
 
       Printf.fprintf out "\n\
         ** Conflict (%s) in state %d.\n\
-	** Token%s involved: %s\n%s\
-	** This state is reached from %s after reading:\n\n%s\n"
+        ** Token%s involved: %s\n%s\
+        ** This state is reached from %s after reading:\n\n%s\n"
       kind (Lr1.number node)
       (if TerminalSet.cardinal toks > 1 then "s" else "")
       (TerminalSet.print toks)
       (if TerminalSet.cardinal toks > 1 then
-	Printf.sprintf "** The following explanations concentrate on token %s.\n" (Terminal.print P.token)
+        Printf.sprintf "** The following explanations concentrate on token %s.\n" (Terminal.print P.token)
       else "")
       (Nonterminal.print false (Item.startnt P.source))
       (Symbol.printa P.path);
 
       (* Examine the items in that state, focusing on one particular
-	 token. Out of the shift items, we explain just one -- this
-	 seems enough. We explain each of the reduce items. *)
+         token. Out of the shift items, we explain just one -- this
+         seems enough. We explain each of the reduce items. *)
 
       (* First, build a mapping of items to derivations. *)
 
       let (_ : bool), derivations =
-	Item.Map.fold (fun item toks (still_looking_for_shift_item, derivations) ->
-	  match Item.classify item with
+        Item.Map.fold (fun item toks (still_looking_for_shift_item, derivations) ->
+          match Item.classify item with
 
-	  | Item.Shift (Symbol.T tok, _)
-	    when still_looking_for_shift_item && (Terminal.equal tok P.token) ->
+          | Item.Shift (Symbol.T tok, _)
+            when still_looking_for_shift_item && (Terminal.equal tok P.token) ->
 
-	      false,
-	      let derivation = explain_shift_item P.source P.path item in
-	      Item.Map.add item derivation derivations
+              false,
+              let derivation = explain_shift_item P.source P.path item in
+              Item.Map.add item derivation derivations
 
-	  | Item.Reduce _
-	    when TerminalSet.mem P.token toks ->
+          | Item.Reduce _
+            when TerminalSet.mem P.token toks ->
 
-	      still_looking_for_shift_item,
-	      let derivation = explain_reduce_item P.token P.source P.path item in
-	      Item.Map.add item derivation derivations
+              still_looking_for_shift_item,
+              let derivation = explain_reduce_item P.token P.source P.path item in
+              Item.Map.add item derivation derivations
 
-	  | _ ->
+          | _ ->
 
-	      still_looking_for_shift_item,
-	      derivations
+              still_looking_for_shift_item,
+              derivations
 
         ) closure (true, Item.Map.empty)
       in
 
       (* Factor out the common context among all derivations, so as to avoid
-	 repeating it. This helps prevent derivation trees from drifting too
-	 far away towards the right. It also helps produce sub-derivations
+         repeating it. This helps prevent derivation trees from drifting too
+         far away towards the right. It also helps produce sub-derivations
          that are quite compact. *)
 
       let context, derivations =
-	Derivation.factor derivations
+        Derivation.factor derivations
       in
 
       (* Display the common context. *)
 
       Printf.fprintf out
-	"\n** The derivations that appear below have the following common factor:\
-	 \n** (The question mark symbol (?) represents the spot where the derivations begin to differ.)\n\n";
+        "\n** The derivations that appear below have the following common factor:\
+         \n** (The question mark symbol (?) represents the spot where the derivations begin to differ.)\n\n";
       Derivation.printc out context;
 
       (* Then, display the sub-derivations. *)
 
       Item.Map.iter (fun item derivation ->
 
-	Printf.fprintf out
-	  "\n** In state %d, looking ahead at %s, "
-	  (Lr1.number node)
-	  (Terminal.print P.token);
+        Printf.fprintf out
+          "\n** In state %d, looking ahead at %s, "
+          (Lr1.number node)
+          (Terminal.print P.token);
 
-	begin match Item.classify item with
-	| Item.Shift _ ->
-	    Printf.fprintf out "shifting is permitted\n** because of the following sub-derivation:\n\n"
-	| Item.Reduce prod ->
-	    Printf.fprintf out
-	      "reducing production\n** %s\n** is permitted because of the following sub-derivation:\n\n"
-	      (Production.print prod)
-	end;
+        begin match Item.classify item with
+        | Item.Shift _ ->
+            Printf.fprintf out "shifting is permitted\n** because of the following sub-derivation:\n\n"
+        | Item.Reduce prod ->
+            Printf.fprintf out
+              "reducing production\n** %s\n** is permitted because of the following sub-derivation:\n\n"
+              (Production.print prod)
+        end;
 
-	Derivation.print out derivation
+        Derivation.print out derivation
 
       ) derivations;
 
@@ -485,8 +485,8 @@ let () =
 
       Printf.fprintf out "\n\
         ** Conflict (unexplainable) in state %d.\n\
-	** Token%s involved: %s\n\
-	** %s.\n%!"
+        ** Token%s involved: %s\n\
+        ** %s.\n%!"
       (Lr1.number node)
       (if TerminalSet.cardinal toks > 1 then "s" else "")
       (TerminalSet.print toks)

@@ -33,7 +33,7 @@ end
 module PersistentMapsToImperativeMaps
   (M : PERSISTENT_MAPS)
      : IMPERATIVE_MAPS with type key = M.key
-		        and type 'data t = 'data M.t ref
+                        and type 'data t = 'data M.t ref
 = struct
 
   type key =
@@ -63,7 +63,7 @@ module ImperativeMapsToImperativeMap
   (M : IMPERATIVE_MAPS)
   (D : sig type data end)
      : IMPERATIVE_MAP with type key = M.key
-		       and type data = D.data
+                       and type data = D.data
 = struct
 
   type key =
@@ -113,17 +113,17 @@ module ArrayAsImperativeMaps
   let find key m =
     match m.(key) with
     | None ->
-	raise Not_found
+        raise Not_found
     | Some data ->
-	data
+        data
 
   let iter f m =
     Array.iteri (fun key data ->
       match data with
       | None ->
-	  ()
+          ()
       | Some data ->
-	  f key data
+          f key data
     ) m
 
 end

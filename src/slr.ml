@@ -75,9 +75,9 @@ let reductions (s : Lr0.concretelr1state) : Production.index list TerminalMap.t 
   Item.Map.fold (fun item toks reductions ->
     match Item.classify item with
     | Item.Reduce prod ->
-	addl prod toks reductions
+        addl prod toks reductions
     | Item.Shift _ ->
-	reductions
+        reductions
   ) s TerminalMap.empty
 
 (* The following function turns a closed LR(1) state into a set of shift
@@ -136,10 +136,10 @@ let count_slr_violations () : int =
     if not (state_is_ok s) then begin
       incr count;
       if tell_me_everything then
-	Printf.fprintf
-	  stderr
-	  "The following SLR(1) state has a conflict:\n%s"
-	  (Lr0.print_concrete "" s)
+        Printf.fprintf
+          stderr
+          "The following SLR(1) state has a conflict:\n%s"
+          (Lr0.print_concrete "" s)
     end
   done;
 

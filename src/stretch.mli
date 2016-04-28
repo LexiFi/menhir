@@ -9,12 +9,12 @@
    See [Lexer.mk_stretch] and its various call sites in [Lexer]. *)
 
 type t = {
-    stretch_filename	: string;
-    stretch_linenum	: int;
-    stretch_linecount	: int;
-    stretch_raw_content	: string;
-    stretch_content	: string;
-    stretch_keywords	: Keyword.keyword list
+    stretch_filename    : string;
+    stretch_linenum     : int;
+    stretch_linecount   : int;
+    stretch_raw_content : string;
+    stretch_content     : string;
+    stretch_keywords    : Keyword.keyword list
   } 
 
 (* An OCaml type is either a stretch (if it was found in some

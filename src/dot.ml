@@ -52,23 +52,23 @@ let print_style = function
       ""
   | Some style ->
       let style =
-	match style with
-	| Solid ->
-	    "solid"
-	| Dashed ->
-	    "dashed"
-	| Dotted ->
-	    "dotted"
-	| Bold ->
-	    "bold"
-	| Invisible ->
-	    "invis"
-	| Filled ->
-	    "filled"
-	| Diagonals ->
-	    "diagonals"
-	| Rounded ->
-	    "rounded"
+        match style with
+        | Solid ->
+            "solid"
+        | Dashed ->
+            "dashed"
+        | Dotted ->
+            "dotted"
+        | Bold ->
+            "bold"
+        | Invisible ->
+            "invis"
+        | Filled ->
+            "filled"
+        | Diagonals ->
+            "diagonals"
+        | Rounded ->
+            "rounded"
       in
       sprintf ", style = %s" style
 
@@ -77,7 +77,7 @@ let print_shape = function
       ""
   | Some shape ->
       let shape =
-	match shape with
+        match shape with
         | Box ->
             "box"
         | Oval ->
@@ -120,30 +120,30 @@ end) = struct
     ) size;
     begin match orientation with
       | Portrait ->
-	  fprintf f "orientation = portrait;\n"
+          fprintf f "orientation = portrait;\n"
       | Landscape ->
-	  fprintf f "orientation = landscape;\n"
+          fprintf f "orientation = landscape;\n"
     end;
     begin match rankdir with
       | LeftToRight ->
-	  fprintf f "rankdir = LR;\n"
+          fprintf f "rankdir = LR;\n"
       | TopToBottom ->
-	  fprintf f "rankdir = TB;\n"
+          fprintf f "rankdir = TB;\n"
     end;
     begin match ratio with
       | Compress ->
-	  fprintf f "ratio = compress;\n"
+          fprintf f "ratio = compress;\n"
       | Fill ->
-	  fprintf f "ratio = fill;\n"
+          fprintf f "ratio = fill;\n"
       | Auto ->
-	  fprintf f "ratio = auto;\n"
+          fprintf f "ratio = auto;\n"
     end;
 
     G.iter (fun ?shape ?style ~label vertex ->
       fprintf f "%s [ label=\"%s\"%s%s ] ;\n"
-	(G.name vertex)
-	label
-	(print_style style)
+        (G.name vertex)
+        label
+        (print_style style)
         (print_shape shape)
     );
 
@@ -152,12 +152,12 @@ end) = struct
       ignore style;
       ignore label;
       G.successors (fun ?style ~label destination ->
-	fprintf f "%s %s %s [ label=\"%s\"%s ] ;\n"
-	  (G.name source)
-	  (if directed then "->" else "--")
-	  (G.name destination)
-	  label
-	  (print_style style)
+        fprintf f "%s %s %s [ label=\"%s\"%s ] ;\n"
+          (G.name source)
+          (if directed then "->" else "--")
+          (G.name destination)
+          label
+          (print_style style)
       ) source
     );
 

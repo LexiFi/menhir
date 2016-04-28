@@ -69,15 +69,15 @@ let transitions (state : 'a Item.Map.t) : 'a Item.Map.t SymbolMap.t =
   Item.Map.fold (fun item toks transitions ->
     match Item.classify item with
     | Item.Shift (symbol, item') ->
-	let items : 'a Item.Map.t =
-	  try
-	    SymbolMap.find symbol transitions
-	  with Not_found ->
-	    Item.Map.empty
-	in
-	SymbolMap.add symbol (Item.Map.add item' toks items) transitions
+        let items : 'a Item.Map.t =
+          try
+            SymbolMap.find symbol transitions
+          with Not_found ->
+            Item.Map.empty
+        in
+        SymbolMap.add symbol (Item.Map.add item' toks items) transitions
     | Item.Reduce _ ->
-	transitions
+        transitions
   ) state SymbolMap.empty
 
 (* ------------------------------------------------------------------------ *)
@@ -90,9 +90,9 @@ let reductions (state : 'a Item.Map.t) : ('a * Production.index) list =
   Item.Map.fold (fun item toks accu ->
     match Item.classify item with
     | Item.Reduce prod ->
-	(toks, prod) :: accu
+        (toks, prod) :: accu
     | Item.Shift _ ->
-	accu
+        accu
   ) state []
 
 (* ------------------------------------------------------------------------ *)
@@ -162,7 +162,7 @@ let rec explore (symbol : Symbol.t option) (state : Item.Set.t) : node =
 
     let (_ : int), (symbolic_state : SymbolicClosure.state) =
       Item.Set.fold (fun item (i, symbolic_state) ->
-	i+1, Item.Map.add item (SymbolicLookahead.variable i) symbolic_state
+        i+1, Item.Map.add item (SymbolicLookahead.variable i) symbolic_state
       ) state (0, Item.Map.empty) in
 
     (* Compute the symbolic closure. *)
@@ -180,10 +180,10 @@ let rec explore (symbol : Symbol.t option) (state : Item.Set.t) : node =
     InfiniteArray.set _transitions k (SymbolMap.mapi (fun symbol symbolic_state ->
       let (k : node) = explore (Some symbol) (Item.Map.domain symbolic_state) in
       let lookahead : SymbolicLookahead.t array =
-	Array.make (Item.Map.cardinal symbolic_state) SymbolicLookahead.empty in
+        Array.make (Item.Map.cardinal symbolic_state) SymbolicLookahead.empty in
       let (_ : int) = Item.Map.fold (fun _ s i ->
-	lookahead.(i) <- s;
-	i+1
+        lookahead.(i) <- s;
+        i+1
       ) symbolic_state 0 in
       ((k, lookahead) : symbolic_transition_target)
     ) (transitions closure));
@@ -413,34 +413,34 @@ let compatible (k1, toksr1) (k2, toksr2) =
       let toksr1i = toksr1.(i)
       and toksr2i = toksr2.(i) in
       let rec loopj j =
-	if j = i then
-	  true
-	else
-	  let toksr1j = toksr1.(j)
-	  and toksr2j = toksr2.(j) in
+        if j = i then
+          true
+        else
+          let toksr1j = toksr1.(j)
+          and toksr2j = toksr2.(j) in
 
-	  (* The two states are compatible at (i, j) if every conflict
-	     token in the merged state already was a conflict token in
-	     one of the two original states. This could be written as
-	     follows:
+          (* The two states are compatible at (i, j) if every conflict
+             token in the merged state already was a conflict token in
+             one of the two original states. This could be written as
+             follows:
 
             TerminalSet.subset
-	      (TerminalSet.inter (TerminalSet.union toksr1i toksr2i) (TerminalSet.union toksr1j toksr2j))
-	      (TerminalSet.union (TerminalSet.inter toksr1i toksr1j) (TerminalSet.inter toksr2i toksr2j))
+              (TerminalSet.inter (TerminalSet.union toksr1i toksr2i) (TerminalSet.union toksr1j toksr2j))
+              (TerminalSet.union (TerminalSet.inter toksr1i toksr1j) (TerminalSet.inter toksr2i toksr2j))
 
-	     but is easily seen (on paper) to be equivalent to:
+             but is easily seen (on paper) to be equivalent to:
 
           *)
 
-	     TerminalSet.subset
-	       (TerminalSet.inter toksr2i toksr1j)
-	       (TerminalSet.union toksr1i toksr2j)
-	  &&
-	     TerminalSet.subset
-	       (TerminalSet.inter toksr1i toksr2j)
-	       (TerminalSet.union toksr2i toksr1j)
-	  &&
-	     loopj (j+1)
+             TerminalSet.subset
+               (TerminalSet.inter toksr2i toksr1j)
+               (TerminalSet.union toksr1i toksr2j)
+          &&
+             TerminalSet.subset
+               (TerminalSet.inter toksr1i toksr2j)
+               (TerminalSet.union toksr2i toksr1j)
+          &&
+             loopj (j+1)
       in
       loopj 0 && loopi (i+1)
   in
@@ -478,14 +478,14 @@ let eos_compatible  (k1, toksr1) (k2, toksr2) =
       let toks1 = toksr1.(i)
       and toks2 = toksr2.(i) in
       begin
-	if TerminalSet.mem Terminal.sharp toks1 && TerminalSet.is_singleton toks1 then
-	  (* "#" is alone in one set: it must be a member of the other set. *)
-	  TerminalSet.mem Terminal.sharp toks2
-	else if TerminalSet.mem Terminal.sharp toks2 && TerminalSet.is_singleton toks2 then
-	  (* Symmetric condition. *)
-	  TerminalSet.mem Terminal.sharp toks1
-	else
-	  true
+        if TerminalSet.mem Terminal.sharp toks1 && TerminalSet.is_singleton toks1 then
+          (* "#" is alone in one set: it must be a member of the other set. *)
+          TerminalSet.mem Terminal.sharp toks2
+        else if TerminalSet.mem Terminal.sharp toks2 && TerminalSet.is_singleton toks2 then
+          (* Symmetric condition. *)
+          TerminalSet.mem Terminal.sharp toks1
+        else
+          true
       end
       && loop (i+1)
   in
@@ -529,14 +529,14 @@ let error_compatible  (k1, toksr1) (k2, toksr2) =
       let toks1 = toksr1.(i)
       and toks2 = toksr2.(i) in
       begin
-	if TerminalSet.mem Terminal.error toks1 then
-	  (* [error] is a member of one set: it must be a member of the other set. *)
-	  TerminalSet.mem Terminal.error toks2
-	else if TerminalSet.mem Terminal.error toks2 then
-	  (* Symmetric condition. *)
-	  TerminalSet.mem Terminal.error toks1
-	else
-	  true
+        if TerminalSet.mem Terminal.error toks1 then
+          (* [error] is a member of one set: it must be a member of the other set. *)
+          TerminalSet.mem Terminal.error toks2
+        else if TerminalSet.mem Terminal.error toks2 then
+          (* Symmetric condition. *)
+          TerminalSet.mem Terminal.error toks1
+        else
+          true
       end
       && loop (i+1)
   in

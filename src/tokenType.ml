@@ -142,8 +142,8 @@ let produce_tokentypes grammar =
   | Settings.TokenTypeOnly ->
 
       (* Create both an .mli file and an .ml file. This is made
-	 necessary by the fact that the two can be different
-	 when there are functor parameters. *)
+         necessary by the fact that the two can be different
+         when there are functor parameters. *)
 
       let i =
         tokentypedef grammar @
@@ -153,19 +153,19 @@ let produce_tokentypes grammar =
       in
 
       let module P = 
-	Printer.Make (struct 
-			let f = open_out (Settings.base ^ ".mli")
-			let locate_stretches = None 
-		      end) 
+        Printer.Make (struct 
+                        let f = open_out (Settings.base ^ ".mli")
+                        let locate_stretches = None 
+                      end) 
       in
       P.interface [
         IIFunctor (grammar.parameters, i)
       ];
       let module P = 
-	Printer.Make (struct 
-			let f = open_out (Settings.base ^ ".ml")
-			let locate_stretches = None 
-		      end) 
+        Printer.Make (struct 
+                        let f = open_out (Settings.base ^ ".ml")
+                        let locate_stretches = None 
+                      end) 
       in
       P.program [
         SIFunctor (grammar.parameters,

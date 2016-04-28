@@ -37,8 +37,8 @@ let parse_version version =
       get 4, get 6
     ) else
       begin
-	Printf.eprintf "Failed to retrieve ocaml version.\n";
-	exit 1
+        Printf.eprintf "Failed to retrieve ocaml version.\n";
+        exit 1
       end
 
 (* The user can compare its version with three different orderings:
@@ -84,7 +84,7 @@ let compare_version (major, minor, p, a) (major', minor', p', a') =
   if major = major' then 
     if minor = minor' then
       if strict then
-	(p = p') && (a = a')
+        (p = p') && (a = a')
       else true
     else compare minor minor'
   else 
@@ -94,19 +94,19 @@ let _ =
 
   match !version with
     | None ->
-	Printf.printf "%s\n%!" Sys.ocaml_version
+        Printf.printf "%s\n%!" Sys.ocaml_version
 
     | Some version ->
-	let ov = parse_version Sys.ocaml_version 
-	and uv = parse_version version in
-	if compare_version ov uv then begin
-	  if !verbose then
-	    Printf.printf "Version %s is OK.\n%!" Sys.ocaml_version;
-	  exit 0
-	end
-	else begin
-	  if !verbose then
-	    Printf.printf "%s is NOT OK: version %s %swas required.%!\n" Sys.ocaml_version version compare_str;
-	  exit 1
-	end
+        let ov = parse_version Sys.ocaml_version 
+        and uv = parse_version version in
+        if compare_version ov uv then begin
+          if !verbose then
+            Printf.printf "Version %s is OK.\n%!" Sys.ocaml_version;
+          exit 0
+        end
+        else begin
+          if !verbose then
+            Printf.printf "%s is NOT OK: version %s %swas required.%!\n" Sys.ocaml_version version compare_str;
+          exit 1
+        end
 

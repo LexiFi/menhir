@@ -93,59 +93,59 @@ end) = struct
       (* Otherwise, create a new node. *)
 
       let node = {
-	state = state;
-	ancestor = ancestor;
-	shadow = shadow;
+        state = state;
+        ancestor = ancestor;
+        shadow = shadow;
       } in
 
       map.(k) <- node :: similar;
       Queue.add node queue;
 
       (* Check whether this is a goal node. A node [N] is a goal node
-	 if (i) [N] has a conflict involving one of the tokens of
-	 interest and (ii) [N] corresponds to the goal node, that is,
-	 the path that leads to [N] in the canonical LR(1) automaton
-	 leads to the goal node in the merged LR(1) automaton. Note
-	 that these conditions do not uniquely define [N]. *)
+         if (i) [N] has a conflict involving one of the tokens of
+         interest and (ii) [N] corresponds to the goal node, that is,
+         the path that leads to [N] in the canonical LR(1) automaton
+         leads to the goal node in the merged LR(1) automaton. Note
+         that these conditions do not uniquely define [N]. *)
 
       if shadow == X.goal then
-	let can_reduce =
-	  ref TerminalSet.empty in
-	let reductions1 : Production.index list TerminalMap.t =
-	  Lr1.reductions shadow in
-	List.iter (fun (toks, prod) ->
-	  TerminalSet.iter (fun tok ->
+        let can_reduce =
+          ref TerminalSet.empty in
+        let reductions1 : Production.index list TerminalMap.t =
+          Lr1.reductions shadow in
+        List.iter (fun (toks, prod) ->
+          TerminalSet.iter (fun tok ->
 
-	    (* We are looking at a [(tok, prod)] pair -- a reduction
-	       in the canonical automaton state. *)
+            (* We are looking at a [(tok, prod)] pair -- a reduction
+               in the canonical automaton state. *)
 
-	    (* Check that this reduction, which exists in the canonical
-	       automaton state, also exists in the merged automaton --
-	       that is, it wasn't suppressed by conflict resolution. *)
+            (* Check that this reduction, which exists in the canonical
+               automaton state, also exists in the merged automaton --
+               that is, it wasn't suppressed by conflict resolution. *)
 
-	    if List.mem prod (TerminalMap.lookup tok reductions1) then 
+            if List.mem prod (TerminalMap.lookup tok reductions1) then 
 
-	      try
-		let (_ : Lr1.node) =
-		  SymbolMap.find (Symbol.T tok) (Lr1.transitions shadow)
-		in
-		(* Shift/reduce conflict. *)
-		raise (Goal (node, tok))
-	      with Not_found ->
-		let toks = !can_reduce in
-		(* We rely on the property that [TerminalSet.add tok toks]
-		   preserves physical equality when [tok] is a member of
-		   [toks]. *)
-		let toks' = TerminalSet.add tok toks in
-		if toks == toks' then
-		  (* Reduce/reduce conflict. *)
-		  raise (Goal (node, tok))
-		else
-		  (* No conflict so far. *)
-		  can_reduce := toks'
+              try
+                let (_ : Lr1.node) =
+                  SymbolMap.find (Symbol.T tok) (Lr1.transitions shadow)
+                in
+                (* Shift/reduce conflict. *)
+                raise (Goal (node, tok))
+              with Not_found ->
+                let toks = !can_reduce in
+                (* We rely on the property that [TerminalSet.add tok toks]
+                   preserves physical equality when [tok] is a member of
+                   [toks]. *)
+                let toks' = TerminalSet.add tok toks in
+                if toks == toks' then
+                  (* Reduce/reduce conflict. *)
+                  raise (Goal (node, tok))
+                else
+                  (* No conflict so far. *)
+                  can_reduce := toks'
 
-	  ) toks
-	) (Lr0.reductions state)
+          ) toks
+        ) (Lr0.reductions state)
 
     end
 
@@ -157,34 +157,34 @@ end) = struct
     try
 
       ProductionMap.iter (fun (prod : Production.index) (k : Lr0.node) ->
-	let shadow = try
-	    ProductionMap.find prod Lr1.entry
-	  with Not_found ->
-	    assert false
-	in
-	if relevant shadow then
-	  explore None shadow (restrict (Lr0.start k))
+        let shadow = try
+            ProductionMap.find prod Lr1.entry
+          with Not_found ->
+            assert false
+        in
+        if relevant shadow then
+          explore None shadow (restrict (Lr0.start k))
       ) Lr0.entry;
 
       Misc.qiter (fun node ->
-	SymbolMap.iter (fun symbol state ->
-	  try
-	    let shadow =
-	      SymbolMap.find symbol (Lr1.transitions node.shadow) in
-	    if relevant shadow then
-	      explore (Some (symbol, node)) shadow (restrict state)
-	  with Not_found ->
-	    (* No shadow. This can happen if a shift/reduce conflict
+        SymbolMap.iter (fun symbol state ->
+          try
+            let shadow =
+              SymbolMap.find symbol (Lr1.transitions node.shadow) in
+            if relevant shadow then
+              explore (Some (symbol, node)) shadow (restrict state)
+          with Not_found ->
+            (* No shadow. This can happen if a shift/reduce conflict
                was resolved in favor in reduce. Ignore that transition. *)
             ()
-	) (Lr0.transitions node.state)
+        ) (Lr0.transitions node.state)
       ) queue;
 
       (* We didn't find a goal node. This shouldn't happen! If the
-	 goal node in the merged LR(1) automaton has a conflict,
-	 then there should exist a node with a conflict in the
-	 canonical automaton as well. Otherwise, Pager's construction
-	 is incorrect. *)
+         goal node in the merged LR(1) automaton has a conflict,
+         then there should exist a node with a conflict in the
+         canonical automaton as well. Otherwise, Pager's construction
+         is incorrect. *)
       
       raise Oops
 
@@ -199,9 +199,9 @@ end) = struct
     let rec follow path node =
       match node.ancestor with
       | None ->
-	  Lr1.start2item node.shadow, Array.of_list path
+          Lr1.start2item node.shadow, Array.of_list path
       | Some (symbol, node) ->
-	  follow (symbol :: path) node
+          follow (symbol :: path) node
     in
     follow [] goal
 

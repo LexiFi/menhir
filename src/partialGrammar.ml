@@ -28,48 +28,48 @@ let join_declaration filename (grammar : grammar) decl =
 
   | DToken (ocamltype, terminal) ->
       let token_property = 
-	try
+        try
 
-	  (* Retrieve any previous definition for this token. *)
+          (* Retrieve any previous definition for this token. *)
 
-	  let token_property =
-	    StringMap.find terminal grammar.p_tokens
-	  in
+          let token_property =
+            StringMap.find terminal grammar.p_tokens
+          in
 
-	  (* If the previous definition was actually a %token declaration
-	     (as opposed to a %left, %right, or %nonassoc specification),
-	     signal an error. *)
+          (* If the previous definition was actually a %token declaration
+             (as opposed to a %left, %right, or %nonassoc specification),
+             signal an error. *)
 
-	  if token_property.tk_is_declared then
-	    Error.errorp decl
-	      "the token %s has multiple definitions." terminal
+          if token_property.tk_is_declared then
+            Error.errorp decl
+              "the token %s has multiple definitions." terminal
 
-	  (* Otherwise, update the previous definition. *)
+          (* Otherwise, update the previous definition. *)
 
-	  else 
-	    { token_property with 
-	      tk_is_declared = true;
-	      tk_ocamltype   = ocamltype;
-	      tk_filename    = filename;
-	      tk_position    = decl.position;
-	    }
+          else 
+            { token_property with 
+              tk_is_declared = true;
+              tk_ocamltype   = ocamltype;
+              tk_filename    = filename;
+              tk_position    = decl.position;
+            }
 
-	with Not_found -> 
+        with Not_found -> 
 
-	  (* If no previous definition exists, create one. *)
+          (* If no previous definition exists, create one. *)
 
-	  { 
-	    tk_filename      = filename; 
-	    tk_ocamltype     = ocamltype;
-	    tk_associativity = UndefinedAssoc;
-	    tk_precedence    = UndefinedPrecedence;
-	    tk_position      = decl.position;
-	    tk_is_declared   = true
-	  } 
+          { 
+            tk_filename      = filename; 
+            tk_ocamltype     = ocamltype;
+            tk_associativity = UndefinedAssoc;
+            tk_precedence    = UndefinedPrecedence;
+            tk_position      = decl.position;
+            tk_is_declared   = true
+          } 
 
       in
       { grammar with
-	p_tokens = StringMap.add terminal token_property grammar.p_tokens }
+        p_tokens = StringMap.add terminal token_property grammar.p_tokens }
 
   (* Start symbols. *)
 
@@ -94,32 +94,32 @@ let join_declaration filename (grammar : grammar) decl =
   | DTokenProperties (terminal, assoc, prec) ->
 
       (* Retrieve the property record for this token, creating one
-	 if none existed (but without deeming the token to have been
-	 declared). *)
+         if none existed (but without deeming the token to have been
+         declared). *)
 
       let token_properties, grammar = 
-	try 
-	  StringMap.find terminal grammar.p_tokens, grammar
-	with Not_found -> 
-	  let p = { 
-	    tk_filename      = filename; 
-	    tk_ocamltype     = None;
-	    tk_associativity = UndefinedAssoc;
-	    tk_precedence    = prec;
-	    tk_is_declared   = false;
-	    (* Will be updated later. *)
-	    tk_position	     = decl.position;
-	  } in 
-	  p, { grammar with 
-	       p_tokens = StringMap.add terminal p grammar.p_tokens }
+        try 
+          StringMap.find terminal grammar.p_tokens, grammar
+        with Not_found -> 
+          let p = { 
+            tk_filename      = filename; 
+            tk_ocamltype     = None;
+            tk_associativity = UndefinedAssoc;
+            tk_precedence    = prec;
+            tk_is_declared   = false;
+            (* Will be updated later. *)
+            tk_position      = decl.position;
+          } in 
+          p, { grammar with 
+               p_tokens = StringMap.add terminal p grammar.p_tokens }
       in
 
       (* Reject duplicate precedence declarations. *)
 
       if token_properties.tk_associativity <> UndefinedAssoc then 
-	Error.error
-	  [ decl.position; token_properties.tk_position ]
-	  "there are multiple precedence declarations for token %s." terminal;
+        Error.error
+          [ decl.position; token_properties.tk_position ]
+          "there are multiple precedence declarations for token %s." terminal;
 
       (* Record the new declaration. *)
 
@@ -196,8 +196,8 @@ let alphaconvert_rule parameters prule =
     List.combine parameters (List.map (fun x -> fresh ~hint:x ()) parameters)
   in
     { prule with
-	pr_parameters  = List.map (Misc.support_assoc phi) prule.pr_parameters;
-	pr_branches    = rewrite_branches phi prule.pr_branches
+        pr_parameters  = List.map (Misc.support_assoc phi) prule.pr_parameters;
+        pr_branches    = rewrite_branches phi prule.pr_branches
     }
 
 (* Rewrite a rule taking bounded names into account. We rename parameters
@@ -214,8 +214,8 @@ let rewrite_rule phi prule =
     alphaconvert_rule captured_parameters prule
   in
     { prule with
-	pr_nt = rewrite_nonterminal phi prule.pr_nt;
-	pr_branches = rewrite_branches phi prule.pr_branches }
+        pr_nt = rewrite_nonterminal phi prule.pr_nt;
+        pr_branches = rewrite_branches phi prule.pr_branches }
       
 let rewrite_rules phi rules =
   List.map (rewrite_rule phi) rules
@@ -305,29 +305,29 @@ let store_symbol (symbols : symbol_table) symbol kind =
   try
     let sym_info = find_symbol symbols symbol in
       match sym_info, kind with
-	  
-	(* There are two definitions of the same symbol in one
-	   particular unit. This is forbidden. *)
-	| (PublicNonTerminal p | PrivateNonTerminal p),
-	  (PublicNonTerminal p' | PrivateNonTerminal p') ->
-	    Error.error [ p; p'] 
-		 "the nonterminal symbol %s is multiply defined."
-		 symbol
+          
+        (* There are two definitions of the same symbol in one
+           particular unit. This is forbidden. *)
+        | (PublicNonTerminal p | PrivateNonTerminal p),
+          (PublicNonTerminal p' | PrivateNonTerminal p') ->
+            Error.error [ p; p'] 
+                 "the nonterminal symbol %s is multiply defined."
+                 symbol
 
-	(* The symbol is known to be a token but declared as a non terminal.*)
-	| (Token tkp, (PrivateNonTerminal p | PublicNonTerminal p)) 
-	| ((PrivateNonTerminal p | PublicNonTerminal p), Token tkp) ->
-	    Error.error [ p; tkp.tk_position ]
-		 "the identifier %s is a reference to a token."
-		 symbol
+        (* The symbol is known to be a token but declared as a non terminal.*)
+        | (Token tkp, (PrivateNonTerminal p | PublicNonTerminal p)) 
+        | ((PrivateNonTerminal p | PublicNonTerminal p), Token tkp) ->
+            Error.error [ p; tkp.tk_position ]
+                 "the identifier %s is a reference to a token."
+                 symbol
 
-	(* We do not gain any piece of information. *)
-	| _, DontKnow _ | Token _, Token _ ->
-	    symbols 
+        (* We do not gain any piece of information. *)
+        | _, DontKnow _ | Token _, Token _ ->
+            symbols 
 
-	(* We learn that the symbol is a non terminal or a token. *)
-	| DontKnow _, _ ->
-	    replace_in_symbol_table symbols symbol kind
+        (* We learn that the symbol is a non terminal or a token. *)
+        | DontKnow _, _ ->
+            replace_in_symbol_table symbols symbol kind
 
   with Not_found ->
     add_in_symbol_table symbols symbol kind
@@ -348,8 +348,8 @@ let non_terminal_is_not_a_token tokens symbol positions =
   try
     let tkp = StringMap.find symbol tokens in
       Error.error (positions @ [ tkp.tk_position ])
-	 "the identifier %s is a reference to a token."
-	 symbol
+         "the identifier %s is a reference to a token."
+         symbol
   with Not_found -> ()
 
 let store_public_nonterminal tokens symbols symbol positions =
@@ -386,8 +386,8 @@ let string_of_symbol_table t =
       s'
   in
     Hashtbl.iter (fun k v -> Buffer.add_string b 
-		    (Printf.sprintf "%s: %s\n" 
-		       (fill_blank k) (string_of_kind v))) t;
+                    (Printf.sprintf "%s: %s\n" 
+                       (fill_blank k) (string_of_kind v))) t;
     Buffer.contents b
 *)
 
@@ -395,10 +395,10 @@ let is_private_symbol t x =
   try
     match Hashtbl.find t x with
       | PrivateNonTerminal _ ->
-	  true
-	    
+          true
+            
       | _ ->
-	  false
+          false
   with Not_found -> 
     false
 
@@ -407,10 +407,10 @@ let is_public_symbol t x =
   try
     match Hashtbl.find t x with
       | PublicNonTerminal _ ->
-	  true
-	    
+          true
+            
       | _ ->
-	  false
+          false
   with Not_found -> 
     false
 *)
@@ -438,37 +438,37 @@ let symbols_of grammar (pgrammar : ConcreteSyntax.grammar) =
   let symbols_of_rule symbols prule = 
     let rec store_except_rule_parameters = 
       fun symbols (symbol, parameters) ->
-	(* Rule parameters are bound locally, so they are not taken into
-	   account. *)
-	if List.mem symbol.value prule.pr_parameters then
-	  symbols
-	else 
-	  (* Otherwise, mark this symbol as being used and analyse its
-	     parameters. *)
-	  List.fold_left 
-	    (fun symbols -> function 
-	       | ParameterApp (symbol, parameters) -> 
-		   store_except_rule_parameters symbols (symbol, parameters)
-	       | ParameterVar symbol ->
-		   store_except_rule_parameters symbols (symbol, [])
-	    )
-	    (store_used_symbol symbol.position tokens symbols symbol.value) parameters
+        (* Rule parameters are bound locally, so they are not taken into
+           account. *)
+        if List.mem symbol.value prule.pr_parameters then
+          symbols
+        else 
+          (* Otherwise, mark this symbol as being used and analyse its
+             parameters. *)
+          List.fold_left 
+            (fun symbols -> function 
+               | ParameterApp (symbol, parameters) -> 
+                   store_except_rule_parameters symbols (symbol, parameters)
+               | ParameterVar symbol ->
+                   store_except_rule_parameters symbols (symbol, [])
+            )
+            (store_used_symbol symbol.position tokens symbols symbol.value) parameters
     in
       
     (* Analyse each branch. *)
     let symbols = List.fold_left (fun symbols branch ->
       List.fold_left (fun symbols (_, p) -> 
-	let symbol, parameters = Parameters.unapp p in
-	store_except_rule_parameters symbols (symbol, parameters)
+        let symbol, parameters = Parameters.unapp p in
+        store_except_rule_parameters symbols (symbol, parameters)
       ) symbols branch.pr_producers
     ) symbols prule.pr_branches
     in
       (* Store the symbol declaration. *)
       if prule.pr_public_flag 
-	|| StringMap.mem prule.pr_nt grammar.p_start_symbols then 
-	store_public_nonterminal tokens symbols prule.pr_nt prule.pr_positions
+        || StringMap.mem prule.pr_nt grammar.p_start_symbols then 
+        store_public_nonterminal tokens symbols prule.pr_nt prule.pr_positions
       else
-	store_private_nonterminal tokens symbols prule.pr_nt prule.pr_positions
+        store_private_nonterminal tokens symbols prule.pr_nt prule.pr_positions
   in
     List.fold_left symbols_of_rule (empty_symbol_table ()) pgrammar.pg_rules
 
@@ -486,20 +486,20 @@ let merge_rules symbols pgs =
   let _ = 
     List.iter 
       (iter_on_only_used_symbols 
-	 (fun k pos -> if not (StringSet.mem k public_symbols) then
-	    Error.error [ pos ]
-	      "%s is undefined." k))
+         (fun k pos -> if not (StringSet.mem k public_symbols) then
+            Error.error [ pos ]
+              "%s is undefined." k))
       symbols
   in
   (* Detect private symbol clashes and rename them if necessary. *)
   let detect_private_symbol_clashes = 
     fold_on_private_symbols 
       (fun (defined, clashes) symbol ->
-	 if StringSet.mem symbol defined 
-	   || StringSet.mem symbol public_symbols then
-	   (defined, StringSet.add symbol clashes)
-	 else 
-	   (StringSet.add symbol defined, clashes))
+         if StringSet.mem symbol defined 
+           || StringSet.mem symbol public_symbols then
+           (defined, StringSet.add symbol clashes)
+         else 
+           (StringSet.add symbol defined, clashes))
   in 
   let _private_symbols, clashes = 
     List.fold_left detect_private_symbol_clashes (StringSet.empty, StringSet.empty) symbols
@@ -507,19 +507,19 @@ let merge_rules symbols pgs =
   let rpgs = List.map 
     (fun (symbol_table, pg) ->
        let renaming = 
-	 StringSet.fold 
-	   (fun x phi ->
-	      if is_private_symbol symbol_table x then begin
-		  let x' = rename x pg.pg_filename in
-		    Printf.fprintf stderr
-		      "Note: the nonterminal symbol %s (from %s) is renamed %s.\n"
-		      x pg.pg_filename x';
-		    (x, x') :: phi
-		end
-	      else phi)
-	   clashes []    
+         StringSet.fold 
+           (fun x phi ->
+              if is_private_symbol symbol_table x then begin
+                  let x' = rename x pg.pg_filename in
+                    Printf.fprintf stderr
+                      "Note: the nonterminal symbol %s (from %s) is renamed %s.\n"
+                      x pg.pg_filename x';
+                    (x, x') :: phi
+                end
+              else phi)
+           clashes []    
        in
-	 rewrite_grammar renaming pg)
+         rewrite_grammar renaming pg)
     pgs
   in
     
@@ -528,40 +528,40 @@ let merge_rules symbols pgs =
        private symbols have already been resolved, these copies are safe. *)
     List.fold_left 
       (fun rules rpg -> List.fold_left 
-	 (fun rules r -> 
-	    let r = 
-	      try
-		let r' = StringMap.find r.pr_nt rules in
-		let positions = r.pr_positions @ r'.pr_positions in
-		let ra, ra' = 
-		  List.length r.pr_parameters, 
-		  List.length r'.pr_parameters 		  
-		in
-		  (* The arity of the parameterized symbols must be constant.*)
-		  if ra <> ra' then 
-		    Error.error positions 
-		      "the symbol %s is defined with arities %d and %d."
-			 r.pr_nt ra ra'
-		  else if r.pr_inline_flag <> r'.pr_inline_flag then
-		    Error.error positions
-			 "not all definitions of %s are marked %%inline." r.pr_nt
-		  else 
-		    (* We combine the different branches. The parameters 
-		       could have different names, we rename them with
-		       the fresh names assigned earlier (see the next 
-		       comment). *)
-		    let phi = List.combine r.pr_parameters r'.pr_parameters in
-		    let rbr = rewrite_branches phi r.pr_branches in
-		      { r' with 
-			  pr_positions = positions;
-			  pr_branches  = rbr @ r'.pr_branches 
-		      } 
-	      with Not_found ->
-		(* We alphaconvert the rule in order to avoid the capture of 
-		   private symbols coming from another unit. *)
-		alphaconvert_rule r.pr_parameters r
-	    in
-	      StringMap.add r.pr_nt r rules) rules rpg.pg_rules)
+         (fun rules r -> 
+            let r = 
+              try
+                let r' = StringMap.find r.pr_nt rules in
+                let positions = r.pr_positions @ r'.pr_positions in
+                let ra, ra' = 
+                  List.length r.pr_parameters, 
+                  List.length r'.pr_parameters            
+                in
+                  (* The arity of the parameterized symbols must be constant.*)
+                  if ra <> ra' then 
+                    Error.error positions 
+                      "the symbol %s is defined with arities %d and %d."
+                         r.pr_nt ra ra'
+                  else if r.pr_inline_flag <> r'.pr_inline_flag then
+                    Error.error positions
+                         "not all definitions of %s are marked %%inline." r.pr_nt
+                  else 
+                    (* We combine the different branches. The parameters 
+                       could have different names, we rename them with
+                       the fresh names assigned earlier (see the next 
+                       comment). *)
+                    let phi = List.combine r.pr_parameters r'.pr_parameters in
+                    let rbr = rewrite_branches phi r.pr_branches in
+                      { r' with 
+                          pr_positions = positions;
+                          pr_branches  = rbr @ r'.pr_branches 
+                      } 
+              with Not_found ->
+                (* We alphaconvert the rule in order to avoid the capture of 
+                   private symbols coming from another unit. *)
+                alphaconvert_rule r.pr_parameters r
+            in
+              StringMap.add r.pr_nt r rules) rules rpg.pg_rules)
       StringMap.empty rpgs
 
 let empty_grammar =
@@ -587,12 +587,12 @@ let check_parameterized_grammar_is_well_defined grammar =
   StringMap.iter 
     (fun nonterminal p ->
        if not (StringMap.mem nonterminal grammar.p_rules) then
-	 Error.error [p] "the start symbol %s is undefined." nonterminal;
+         Error.error [p] "the start symbol %s is undefined." nonterminal;
        if not (List.exists (function 
                             | ParameterVar { value = id }, _ -> id = nonterminal
                             | _ -> false) grammar.p_types) then
-	 Error.error [p]
-	   "the type of the start symbol %s is unspecified." nonterminal;
+         Error.error [p]
+           "the type of the start symbol %s is unspecified." nonterminal;
     ) grammar.p_start_symbols;
 
   let parameter_head_symb = function
@@ -628,47 +628,47 @@ let check_parameterized_grammar_is_well_defined grammar =
       mark_token_as_used s;
     
     if not (StringMap.mem s grammar.p_rules
-	   || StringMap.mem s grammar.p_tokens
-	   || List.mem s prule.pr_parameters
-	   || List.mem s reserved) then
+           || StringMap.mem s grammar.p_tokens
+           || List.mem s prule.pr_parameters
+           || List.mem s reserved) then
       Error.error [ p ] "%s is undefined." s
   in
     StringMap.iter
       (fun k prule -> List.iter
 
-	 (* Check each branch. *)
-	 (fun { pr_producers = producers; 
-	        pr_branch_prec_annotation;
-	      } -> ignore (List.fold_left
+         (* Check each branch. *)
+         (fun { pr_producers = producers; 
+                pr_branch_prec_annotation;
+              } -> ignore (List.fold_left
 
-	    (* Check the producers. *)
+            (* Check the producers. *)
             (fun already_seen (id, p) ->
-	       let symbol, parameters = Parameters.unapp p in
-	       let s = symbol.value and p = symbol.position in
-	       let already_seen = 
-		 (* Check the producer id is unique. *)
-		 if StringSet.mem id.value already_seen then
-		   Error.error [ id.position ]
-			"there are multiple producers named %s in this sequence." 
-			id.value;
-		 StringSet.add id.value already_seen
-	       in
+               let symbol, parameters = Parameters.unapp p in
+               let s = symbol.value and p = symbol.position in
+               let already_seen = 
+                 (* Check the producer id is unique. *)
+                 if StringSet.mem id.value already_seen then
+                   Error.error [ id.position ]
+                        "there are multiple producers named %s in this sequence." 
+                        id.value;
+                 StringSet.add id.value already_seen
+               in
 
-		 (* Check that the producer is defined somewhere. *)
-		 check_identifier_reference grammar prule s p;
-		 StringMap.iter (check_identifier_reference grammar prule) 
-		   (List.fold_left Parameters.identifiers StringMap.empty parameters);
+                 (* Check that the producer is defined somewhere. *)
+                 check_identifier_reference grammar prule s p;
+                 StringMap.iter (check_identifier_reference grammar prule) 
+                   (List.fold_left Parameters.identifiers StringMap.empty parameters);
 
-		 (* If this producer seems to be a reference to a token, make sure it
+                 (* If this producer seems to be a reference to a token, make sure it
                     is a real token, as opposed to a pseudo-token introduced in a
                     priority declaration. *)
-		 (try
+                 (try
                     if not ((StringMap.find s grammar.p_tokens).tk_is_declared
                            || List.mem s reserved) then 
-		      Error.errorp symbol
-			"%s has not been declared as a token." s
-		  with Not_found -> ());
-		 already_seen
+                      Error.errorp symbol
+                        "%s has not been declared as a token." s
+                  with Not_found -> ());
+                 already_seen
 
             ) StringSet.empty producers);
 
@@ -677,22 +677,22 @@ let check_parameterized_grammar_is_well_defined grammar =
               | None -> ()
 
               | Some terminal ->
-		  check_identifier_reference grammar prule 
-		    terminal.value terminal.position;
+                  check_identifier_reference grammar prule 
+                    terminal.value terminal.position;
 
-		  (* Furthermore, the symbol following %prec must be a valid
-		     token identifier. *)  
+                  (* Furthermore, the symbol following %prec must be a valid
+                     token identifier. *)  
                   if not (StringMap.mem terminal.value grammar.p_tokens) then
-		    Error.errorp terminal
-		      "%s is undefined." terminal.value)
+                    Error.errorp terminal
+                      "%s is undefined." terminal.value)
 
-	 prule.pr_branches;
+         prule.pr_branches;
 
-	 (* It is forbidden to use %inline on a %start symbol. *)
-	 if (prule.pr_inline_flag 
-	     && StringMap.mem k grammar.p_start_symbols) then
-	   Error.error prule.pr_positions 
-		"%s cannot be both a start symbol and inlined." k;
+         (* It is forbidden to use %inline on a %start symbol. *)
+         if (prule.pr_inline_flag 
+             && StringMap.mem k grammar.p_start_symbols) then
+           Error.error prule.pr_positions 
+                "%s cannot be both a start symbol and inlined." k;
 
       ) grammar.p_rules;
     

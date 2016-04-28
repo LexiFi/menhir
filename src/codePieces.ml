@@ -71,8 +71,8 @@ let semvtypent nt =
   | None ->
 
       (* [nt] has unknown type. If we we have run [Infer], then this
-	 can't happen. However, running type inference is only an
-	 option, so we still have to deal with that case. *)
+         can't happen. However, running type inference is only an
+         option, so we still have to deal with that case. *)
 
       TypVar (ntvar nt)
 
@@ -179,15 +179,15 @@ let destructuretokendef name codomain bindsemv branch = {
   valval =
     EAnnot (
       EFun ([ PVar token ],
-	EMatch (EVar token,
-	  Terminal.fold (fun tok branches ->
-	    if Terminal.pseudo tok then
-	      branches
-	    else
-	      { branchpat = (if bindsemv then tokpatv else tokpat) tok;
-		branchbody = branch tok } :: branches
-	  ) []
-	)
+        EMatch (EVar token,
+          Terminal.fold (fun tok branches ->
+            if Terminal.pseudo tok then
+              branches
+            else
+              { branchpat = (if bindsemv then tokpatv else tokpat) tok;
+                branchbody = branch tok } :: branches
+          ) []
+        )
       ),
       type2scheme (arrow TokenType.ttoken codomain)
     )

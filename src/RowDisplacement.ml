@@ -82,13 +82,13 @@ let compress
 
     let rec loop (j : int) (rank : int) (row : 'a row) =
       if j < 0 then
-	i, rank, row
+        i, rank, row
       else
-	let x = line.(j) in
-	if insignificant x then
-	  loop (j - 1) rank row
-	else
-	  loop (j - 1) (1 + rank) ((j, x) :: row)
+        let x = line.(j) in
+        if insignificant x then
+          loop (j - 1) rank row
+        else
+          loop (j - 1) (1 + rank) ((j, x) :: row)
     in
 
     loop (n - 1) 0 []
@@ -138,31 +138,31 @@ let compress
 
     let rec loop = function
       | [] ->
-	  true
+          true
       | (j, x) :: row ->
 
-	  (* [x] is a significant element. *)
+          (* [x] is a significant element. *)
 
-	  (* By hypothesis, [k + j] is nonnegative. If it is greater than or
-	     equal to the current length of the data array, stop -- the row
-	     fits. *)
+          (* By hypothesis, [k + j] is nonnegative. If it is greater than or
+             equal to the current length of the data array, stop -- the row
+             fits. *)
 
-	  assert (k + j >= 0);
+          assert (k + j >= 0);
 
-	  if k + j >= d then
-	    true
+          if k + j >= d then
+            true
 
-	  (* We now know that [k + j] is within bounds of the data
-	     array. Check whether it is compatible with the element [y] found
-	     there. If it is, continue. If it isn't, stop -- the row does not
-	     fit. *)
+          (* We now know that [k + j] is within bounds of the data
+             array. Check whether it is compatible with the element [y] found
+             there. If it is, continue. If it isn't, stop -- the row does not
+             fit. *)
 
-	  else
-	    let y = InfiniteArray.get data (k + j) in
-	    if insignificant y || equal x y then
-	      loop row
-	    else
-	      false
+          else
+            let y = InfiniteArray.get data (k + j) in
+            if insignificant y || equal x y then
+              loop row
+            else
+              false
 
     in
     loop row
@@ -191,19 +191,19 @@ let compress
   let fit row =
     match row with
     | [] ->
-	0 (* irrelevant *)
+        0 (* irrelevant *)
     | (j, _) :: _ ->
-	fit (-j) row
+        fit (-j) row
   in
 
   (* Write [row] at (compatible) offset [k]. *)
 
   let rec write k = function
     | [] ->
-	()
+        ()
     | (j, x) :: row ->
-	InfiniteArray.set data (k + j) x;
-	write k row
+        InfiniteArray.set data (k + j) x;
+        write k row
   in
 
   (* Iterate over the sorted array of rows. Fit and write each row at

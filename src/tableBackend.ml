@@ -220,15 +220,15 @@ let reducebody prod =
     ) ::
     ( PVar startp,
       if length > 0 then
-	EVar (Printf.sprintf "_startpos_%s_" ids.(0))
+        EVar (Printf.sprintf "_startpos_%s_" ids.(0))
       else
         endpos_of_top_stack_cell
     ) ::
     ( PVar endp,
       if length > 0 then
-	EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1))
+        EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1))
       else
-	EVar startp
+        EVar startp
     ) :: []
   in
 
@@ -274,17 +274,17 @@ let semantic_action prod =
       (* Access the stack and current state via the environment. *)
 
       (* In fact, the current state needs be bound here only if this is
-	 an epsilon production. Otherwise, the variable [state] will be
-	 bound by the pattern produced by [reducecellparams] above. *)
+         an epsilon production. Otherwise, the variable [state] will be
+         bound by the pattern produced by [reducecellparams] above. *)
 
       ELet (
 
-	[ PVar stack, ERecordAccess (EVar env, fstack) ] @
-	  (if Production.length prod = 0 then [ PVar state, ERecordAccess (EVar env, fcurrent) ] else []),
+        [ PVar stack, ERecordAccess (EVar env, fstack) ] @
+          (if Production.length prod = 0 then [ PVar state, ERecordAccess (EVar env, fcurrent) ] else []),
 
-	(* Then, *)
+        (* Then, *)
 
-	reducebody prod
+        reducebody prod
 
       )
 
@@ -293,11 +293,11 @@ let semantic_action prod =
       (* For productions that are never reduced, generate no code. *)
 
       (* We do this mainly because [Invariant.prodstack] does not
-	 support productions that are never reduced. *)
+         support productions that are never reduced. *)
       
       EComment (
-	"a production never reduced",
-	EApp (EVar "assert", [ EData ("false", []) ])
+        "a production never reduced",
+        EApp (EVar "assert", [ EData ("false", []) ])
       )
 
   )
@@ -490,38 +490,38 @@ let action node t =
   | Some _ ->
 
       (* [node] has a default reduction; in that case, the action
-	 table is never looked up. *)
+         table is never looked up. *)
 
       hole
 
   | None ->
 
       try
-	let target = SymbolMap.find (Symbol.T t) (Lr1.transitions node) in
+        let target = SymbolMap.find (Symbol.T t) (Lr1.transitions node) in
 
-	(* [node] has a transition to [target]. If [target] has a default
-	   reduction on [#], use [ShiftNoDiscard], otherwise [ShiftDiscard]. *)
+        (* [node] has a transition to [target]. If [target] has a default
+           reduction on [#], use [ShiftNoDiscard], otherwise [ShiftDiscard]. *)
 
-	match Invariant.has_default_reduction target with
-	| Some (_, toks) when TerminalSet.mem Terminal.sharp toks ->
-	    assert (TerminalSet.cardinal toks = 1);
-	    encode_ShiftNoDiscard target
-	| _ ->
-	    encode_ShiftDiscard target
+        match Invariant.has_default_reduction target with
+        | Some (_, toks) when TerminalSet.mem Terminal.sharp toks ->
+            assert (TerminalSet.cardinal toks = 1);
+            encode_ShiftNoDiscard target
+        | _ ->
+            encode_ShiftDiscard target
 
       with Not_found ->
-	try
+        try
 
-	  (* [node] has a reduction. *)
+          (* [node] has a reduction. *)
 
-	  let prod = Misc.single (TerminalMap.find t (Lr1.reductions node)) in
-	  encode_Reduce prod
+          let prod = Misc.single (TerminalMap.find t (Lr1.reductions node)) in
+          encode_Reduce prod
 
-	with Not_found ->
+        with Not_found ->
 
-	  (* [node] has no action. *)
+          (* [node] has no action. *)
 
-	  encode_Fail
+          encode_Fail
 
 (* In the error bitmap and in the action table, the row that corresponds to the
    [#] pseudo-terminal is never accessed. Thus, we do not create this row. This
@@ -566,9 +566,9 @@ let action =
     "action",
     marshal2 "action" Lr1.n (Terminal.n - 1) (
       Lr1.map (fun node ->
-	Terminal.mapx (fun t ->
-	  action node t
-	)
+        Terminal.mapx (fun t ->
+          action node t
+        )
       )
     )
   )
@@ -578,9 +578,9 @@ let goto =
     "goto",
     marshal2 "goto" Lr1.n Nonterminal.n (
       Lr1.map (fun node ->
-	Nonterminal.map (fun nt ->
-	  goto node nt
-	)
+        Nonterminal.map (fun nt ->
+          goto node nt
+        )
       )
     )
   )
@@ -602,7 +602,7 @@ let default_reduction =
     "default_reduction",
     marshal1_list (
       Lr1.map (fun node ->
-	default_reduction node
+        default_reduction node
       )
     )
   )
@@ -612,7 +612,7 @@ let lhs =
     "lhs",
     marshal1 (
       Production.amap (fun prod ->
-	Nonterminal.n2i (Production.nt prod)
+        Nonterminal.n2i (Production.nt prod)
       )
     )
   )
@@ -644,10 +644,10 @@ let trace =
     "trace",
     if Settings.trace then
       EData ("Some", [
-	ETuple [
-	  EArray (Terminal.map (stringwrap Terminal.print));
-	  EArray (Production.map (stringwrap reduce_or_accept));
-	]
+        ETuple [
+          EArray (Terminal.map (stringwrap Terminal.print));
+          EArray (Production.map (stringwrap reduce_or_accept));
+        ]
       ])
     else
       EData ("None", [])
@@ -672,11 +672,11 @@ let token2value =
     true
     (fun tok ->
       ERepr (
-	match Terminal.ocamltype tok with
-	| None ->
-	    EUnit
-	| Some _ ->
-	    EVar semv
+        match Terminal.ocamltype tok with
+        | None ->
+            EUnit
+        | Some _ ->
+            EVar semv
       )
     )
 
