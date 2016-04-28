@@ -1,31 +1,31 @@
 type 'a m = 'a list
 
-let return x = 
-  [ x ] 
+let return x =
+  [ x ]
 
-let bind l f = 
+let bind l f =
   List.flatten (List.map f l)
 
-let ( >>= ) l f = 
+let ( >>= ) l f =
   bind l f
 
-(* 
+(*
    1. (return x) >>= f == f x
 
-   bind [ x ] f 
-   = List.flatten (List.map f [ x ]) 
-   = f x 
+   bind [ x ] f
+   = List.flatten (List.map f [ x ])
+   = f x
 
    2. m >>= return == m
 
-   bind l return 
+   bind l return
    = List.flatten (List.map (fun x -> [ x ]) (x1::x2::..::xn))
-   = List.flatten ([x1]::...::[xn]) 
+   = List.flatten ([x1]::...::[xn])
    = x1::...::xn
    = l
 
    3. (m >>= f) >>= g == m >>= (\x -> f x >>= g)
-   
+
    bind (bind l f) g
    = List.flatten (List.map g (List.flatten (List.map f (x1::...::xn))))
    = List.flatten (List.map g (f x1 :: f x2 :: ... :: f xn))

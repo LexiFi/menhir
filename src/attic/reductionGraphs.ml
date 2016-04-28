@@ -10,7 +10,7 @@
    can take us from [s1] to [s2]. Every edge is labeled with its effect on the
    size of the stack. *)
 
-(* This graph is built with respect to a fixed lookahead token [tok]. We 
+(* This graph is built with respect to a fixed lookahead token [tok]. We
    consider only the reductions that are permitted with [tok] is the next
    token on the stream. *)
 
@@ -140,7 +140,7 @@ let make_reduction_graph tok =
         let edges = List.filter acceptable edges in
         (* Augment the table. *)
         adjacency := Lr1.NodeMap.add source edges !adjacency
-      ) 
+      )
 
     let successors (action : int -> node -> unit) source : unit =
       let edges =

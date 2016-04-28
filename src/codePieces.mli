@@ -15,7 +15,7 @@ val ntvar : Nonterminal.t -> string
 
 (* The variable that holds the environment. This is a parameter to all
    functions. We do not make it a global variable because we wish to
-   preserve re-entrancy. *) 
+   preserve re-entrancy. *)
 
 val env : string
 

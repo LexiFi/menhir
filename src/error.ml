@@ -66,7 +66,7 @@ let errors =
   ref false
 
 let display continuation header positions format =
-  List.iter (fun position -> 
+  List.iter (fun position ->
     fprintf stderr "%s:\n" (Positions.string_of_pos position)
   ) positions;
   Printf.kfprintf
@@ -78,19 +78,19 @@ let error positions format =
   display
     (fun _ -> exit 1)
     "Error: "
-    positions format 
+    positions format
 
 let signal positions format =
   display
     (fun _ -> errors := true)
     "Error: "
-    positions format 
+    positions format
 
 let warning positions format =
   display
     (fun _ -> ())
     "Warning: "
-    positions format 
+    positions format
 
 let errors () =
   !errors

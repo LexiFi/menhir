@@ -171,7 +171,7 @@ let inline_valdefs (defs : valdef list) : valdef list =
   in
 
   (* The heart of the inliner: rewriting a function call to a [let]
-     expression. 
+     expression.
 
      If there was a type annotation at the function definition site,
      it is dropped, provided [--infer] was enabled. Otherwise, it is
@@ -264,7 +264,7 @@ let inline_valdefs (defs : valdef list) : valdef list =
   Error.logC 1 (fun f ->
     Printf.fprintf f "%d functions before inlining, %d functions after inlining.\n"
        before (List.length valdefs));
-  
+
   Time.tick "Inlining";
 
   valdefs

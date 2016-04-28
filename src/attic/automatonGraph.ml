@@ -18,7 +18,7 @@ module G = struct
     Lr1.transitions s |> SymbolMap.iter (fun symbol s' ->
       action ~label:(Symbol.print symbol) s'
     )
-      
+
   let iter (action: ?shape:Dot.shape -> ?style:Dot.style -> label:string -> vertex -> unit) : unit =
     Lr1.iter (fun s ->
       let has_reduction =

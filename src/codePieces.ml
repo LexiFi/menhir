@@ -213,5 +213,5 @@ let excvaldef = {
   valpublic = false;
   valpat = PVar parse_error;
   valval = EData (Interface.excname, [])
-} 
+}
 

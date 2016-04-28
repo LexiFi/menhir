@@ -195,7 +195,7 @@ let interpret ((_, toks) as sentence) : unit =
   with EndOfStream ->
 
     (* Lexer failure. *)
-    
+
     Printf.printf "OVERSHOOT"
 
   end;
@@ -665,7 +665,7 @@ let () =
     and runs2 = List.map filter_run runs2 in
     let table1 = message_table false runs1
     and table2 = message_table false runs2 in
-    
+
     (* Check that the domain of [table1] is a subset of the domain of [table2]. *)
     table1 |> Lr1.NodeMap.iter (fun s ((poss1, _), _) ->
       if not (Lr1.NodeMap.mem s table2) then

@@ -59,7 +59,7 @@ x = X
 
    In particular, if there is no [baz], what we get is a semantic action
    embedded in the middle of a rule. For instance,
-   
+
      foo embedded({ action1 }) bar { action2 }
 
    is equivalent to:

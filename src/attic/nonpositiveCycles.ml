@@ -65,7 +65,7 @@ end) = struct
      is initialized to infinity. Then, we iterate over all edges, and copy them
      into the distance matrix. *)
 
-  (* Note that, by default, [d.(i).(i)] is not initialized to zero: it is 
+  (* Note that, by default, [d.(i).(i)] is not initialized to zero: it is
      initialized to infinity. This is because we are looking for paths of
      non-zero length. In other words, we are computing a transitive closure,
      not a reflexive, transitive closure. *)

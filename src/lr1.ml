@@ -608,7 +608,7 @@ let () =
 
           end
           else
-            let () = 
+            let () =
               match prods with
               | []
               | [ _ ] ->
@@ -648,7 +648,7 @@ let () =
       ) node.transitions
     end
   in
-  
+
   ProductionMap.iter (fun _ node -> visit None node) entry
 
 let nodes =
@@ -700,11 +700,11 @@ let foldx f =
             | Some _ -> f accu node)
 
 let iterx f =
-  iter (fun node -> 
-    match incoming_symbol node with 
-      | None -> () 
+  iter (fun node ->
+    match incoming_symbol node with
+      | None -> ()
       | Some _ -> f node)
- 
+
 (* -------------------------------------------------------------------------- *)
 (* Our output channel. *)
 
@@ -835,7 +835,7 @@ let invert reductions : TerminalSet.t ProductionMap.t =
     in
     ProductionMap.add prod (TerminalSet.add tok toks) inverse
   ) reductions ProductionMap.empty
-    
+
 (* ------------------------------------------------------------------------ *)
 (* [has_beforeend s] tests whether the state [s] can reduce a production
    whose semantic action uses [$endpos($0)]. Note that [$startpos] and
@@ -934,7 +934,7 @@ let rec best choice = function
       | None ->
           (* The cause for not knowing which production is best could be:
              1- the productions originate in different source files;
-             2- they are derived, via inlining, from the same production. *) 
+             2- they are derived, via inlining, from the same production. *)
           Error.signal
             (Production.positions choice @ Production.positions prod)
                "do not know how to resolve a reduce/reduce conflict\n\
@@ -1004,7 +1004,7 @@ let default_conflict_resolution () =
   in
 
   fold (fun () node ->
-    
+
     try
       let prods, reductions = TerminalMap.lookup_and_remove Terminal.sharp node.reductions in
       let prod = Misc.single prods in

@@ -15,22 +15,22 @@ module Make (T : TableFormat.TABLES)
 
   type semantic_value =
       Obj.t
-          
+
   let token2terminal =
     T.token2terminal
-        
+
   let token2value =
     T.token2value
-        
+
   let error_terminal =
     T.error_terminal
 
   let error_value =
     Obj.repr ()
-  
+
   type production =
       int
-  
+
   let default_reduction state defred nodefred env =
     let code = PackedIntArray.get T.default_reduction state in
     if code = 0 then
@@ -40,7 +40,7 @@ module Make (T : TableFormat.TABLES)
 
   let is_start prod =
     prod < T.start
-  
+
   (* This auxiliary function helps access a compressed, two-dimensional
      matrix, like the action and goto tables. *)
 
@@ -72,7 +72,7 @@ module Make (T : TableFormat.TABLES)
     | c ->
         assert (c = 0);
         fail env
-  
+
   let goto state prod =
     let code = unmarshal2 T.goto state (PackedIntArray.get T.lhs prod) in
     (* code = 1 + state *)
@@ -84,42 +84,42 @@ module Make (T : TableFormat.TABLES)
   type semantic_action =
       (state, semantic_value, token) EngineTypes.env ->
       (state, semantic_value)        EngineTypes.stack
-        
+
   let semantic_action prod =
     (* Indexing into the array [T.semantic_action] is off by [T.start],
        because the start productions do not have entries in this array. *)
     T.semantic_action.(prod - T.start)
-  
+
   (* If [T.trace] is [None], then the logging functions do nothing. *)
 
   let log =
     match T.trace with Some _ -> true | None -> false
 
   module Log = struct
-    
+
     open Printf
-    
+
     let state state =
       match T.trace with
       | Some _ ->
           fprintf stderr "State %d:\n%!" state
       | None ->
           ()
-    
+
     let shift terminal state =
       match T.trace with
       | Some (terminals, _) ->
           fprintf stderr "Shifting (%s) to state %d\n%!" terminals.(terminal) state
       | None ->
           ()
-    
+
     let reduce_or_accept prod =
       match T.trace with
       | Some (_, productions) ->
           fprintf stderr "%s\n%!" productions.(prod)
       | None ->
           ()
-    
+
     let lookahead_token token startp endp =
       match T.trace with
       | Some (terminals, _) ->
@@ -129,29 +129,29 @@ module Make (T : TableFormat.TABLES)
             endp.Lexing.pos_cnum
       | None ->
           ()
-    
+
     let initiating_error_handling () =
       match T.trace with
       | Some _ ->
           fprintf stderr "Initiating error handling\n%!"
       | None ->
           ()
-    
+
     let resuming_error_handling () =
       match T.trace with
       | Some _ ->
           fprintf stderr "Resuming error handling\n%!"
       | None ->
           ()
-    
+
     let handling_error state =
       match T.trace with
       | Some _ ->
           fprintf stderr "Handling error in state %d\n%!" state
       | None ->
           ()
-    
+
   end
-  
+
 end)
 

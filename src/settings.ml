@@ -118,16 +118,16 @@ let logG, logA, logC =
 let timings =
   ref false
 
-let filenames = 
+let filenames =
   ref StringSet.empty
 
-let no_stdlib = 
+let no_stdlib =
   ref false
 
 let stdlib_path =
   ref Installation.libdir
 
-let insert name = 
+let insert name =
   filenames := StringSet.add name !filenames
 
 let interpret =
@@ -139,13 +139,13 @@ let interpret_show_cst =
 let interpret_error =
   ref false
 
-let table = 
+let table =
   ref false
 
 let inspection =
   ref false
 
-let coq = 
+let coq =
   ref false
 
 let coq_no_complete =
@@ -339,7 +339,7 @@ let () =
 (* ------------------------------------------------------------------------- *)
 (* Export the settings. *)
 
-let stdlib_filename = 
+let stdlib_filename =
   !stdlib_path ^ "/standard.mly"
 
 let filenames =
@@ -359,10 +359,10 @@ let base =
   else
     !base
 
-let filenames = 
+let filenames =
   if !no_stdlib || !coq then
     filenames
-  else 
+  else
     stdlib_filename :: filenames
 
 let token_type_mode =
@@ -434,7 +434,7 @@ let interpret_show_cst =
 let interpret_error =
   !interpret_error
 
-let table = 
+let table =
   !table
 
 let inspection =
@@ -446,7 +446,7 @@ let () =
     exit 1
   end
 
-let coq = 
+let coq =
   !coq
 
 let coq_no_complete =

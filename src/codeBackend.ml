@@ -554,7 +554,7 @@ let curry = function
 let curryif flag t =
   if flag then curry t else t
 
-(* Types for stack cells. 
+(* Types for stack cells.
 
    [celltype tailtype holds_state symbol] returns the type of a stack
    cell. The parameter [tailtype] is the type of the tail of the
@@ -577,7 +577,7 @@ let celltype tailtype holds_state symbol _ =
     elementif (Invariant.startp symbol) tposition
   )
 
-(* Types for stacks. 
+(* Types for stacks.
 
    [stacktype s] is the type of the stack at state [s]. [reducestacktype prod]
    is the type of the stack when about to reduce production [prod].
@@ -626,7 +626,7 @@ let gototypescheme nt =
 
 let reduce_expects_state_param prod =
   let nt = Production.nt prod in
-  Production.length prod = 0 && 
+  Production.length prod = 0 &&
   Invariant.fold (fun _ holds_state _ _ -> holds_state) false (Invariant.gotostack nt)
 
 (* The type of the [reduce] function. If shiftreduce optimization
@@ -843,7 +843,7 @@ let reducebranch toks prod s =
       tokspat toks;
     branchbody =
       call_reduce prod s
-  } 
+  }
 
 (* Code for shifting from state [s] to state [s'] via the token [tok].
    This produces a branch, to be inserted in a [run] function for
@@ -1350,7 +1350,7 @@ let gotodef nt = {
     false;
   valpat =
     PVar (goto nt);
-  valval = 
+  valval =
     EAnnot (EFun (gotoparams pvar nt, gotopushcell nt (gotobody nt)), gototypescheme nt)
 }
 
@@ -1390,7 +1390,7 @@ let errorbody s =
         else
           e
       in
-        
+
       handle s (
         extrapop (
           call_reduce prod s
@@ -1476,15 +1476,15 @@ let errorcasedef =
    This is a public definition.
 
    The code initializes a parser environment, an empty stack, and invokes
-   [run]. 
-   
+   [run].
+
    2015/11/11. If the state [s] can reduce an epsilon production whose left-hand
    symbol keeps track of its start or end position, or if [s] can reduce any
    production that mentions [$endpos($0)], then the initial stack should contain
    a sentinel cell with a valid [endp] field at offset 1. For simplicity, we
    always create a sentinel cell. *)
 
-let entrydef s = 
+let entrydef s =
   let nt = Item.startnt (Lr1.start2item s) in
   let lexer = "lexer"
   and lexbuf = "lexbuf" in
@@ -1506,7 +1506,7 @@ let entrydef s =
                ),
                entrytypescheme Front.grammar (Nonterminal.print true nt)
              )
-  } 
+  }
 
 (* ------------------------------------------------------------------------ *)
 (* Code production for auxiliary functions. *)
@@ -1517,7 +1517,7 @@ let entrydef s =
 let assertfalsedef = {
   valpublic = false;
   valpat = PVar assertfalse;
-  valval = 
+  valval =
     EAnnot (
       EFun ([ PUnit ],
         blet ([
@@ -1604,7 +1604,7 @@ let initenvdef =
   {
     valpublic = false;
     valpat = PVar initenv;
-    valval = 
+    valval =
       EAnnot (
         EFun ( [ PVar lexer; PVar lexbuf ],
           blet (
@@ -1622,7 +1622,7 @@ let initenvdef =
         ),
         type2scheme (marrow [ tlexer; tlexbuf ] tenv)
       )
-  } 
+  }
 
 (* ------------------------------------------------------------------------ *)
 (* Here is complete code for the parser. *)
@@ -1680,7 +1680,7 @@ let () =
 
 let () =
   if not !can_die then
-    Error.logC 1 (fun f -> Printf.fprintf f 
+    Error.logC 1 (fun f -> Printf.fprintf f
       "The generated parser cannot raise Error.\n")
 
 let () =

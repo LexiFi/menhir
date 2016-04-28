@@ -13,7 +13,7 @@ module T = struct
 
   let number =
     Lr1.number
-   
+
   type token =
       Terminal.t
 
@@ -62,7 +62,7 @@ module T = struct
           shift env false tok value s'
       | _ ->
           shift env true tok value s'
-          
+
     (* There is no such transition. Look for a reduction. *)
 
     with Not_found ->

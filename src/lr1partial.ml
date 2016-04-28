@@ -123,7 +123,7 @@ end) = struct
                automaton state, also exists in the merged automaton --
                that is, it wasn't suppressed by conflict resolution. *)
 
-            if List.mem prod (TerminalMap.lookup tok reductions1) then 
+            if List.mem prod (TerminalMap.lookup tok reductions1) then
 
               try
                 let (_ : Lr1.node) =
@@ -185,12 +185,12 @@ end) = struct
          then there should exist a node with a conflict in the
          canonical automaton as well. Otherwise, Pager's construction
          is incorrect. *)
-      
+
       raise Oops
 
     with Goal (node, tok) ->
       node, tok
-  
+
   (* Query the goal node that was found about the shortest path from
      it to one of the entry nodes. *)
 

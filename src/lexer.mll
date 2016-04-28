@@ -217,7 +217,7 @@ let no_monsters monsters =
 
 (* Creates a stretch. *)
 
-let mk_stretch pos1 pos2 parenthesize monsters = 
+let mk_stretch pos1 pos2 parenthesize monsters =
   (* Read the specified chunk of the file. *)
   let ofs1 = pos1.pos_cnum
   and ofs2 = pos2.pos_cnum in
@@ -333,7 +333,7 @@ let uppercase = ['A'-'Z' '\192'-'\214' '\216'-'\222']
 
 let identchar = ['A'-'Z' 'a'-'z' '_' '\192'-'\214' '\216'-'\246' '\248'-'\255' '0'-'9'] (* '\'' forbidden *)
 
-let poskeyword = 
+let poskeyword =
   '$'
   (("symbolstart" | "start" | "end") as where)
   (("pos" | "ofs") as flavor)
@@ -597,7 +597,7 @@ and ocamlcomment openingpos = parse
 (* Skip O'Caml strings. *)
 
 and string openingpos = parse
-| '"' 
+| '"'
    { () }
 | '\\' newline
 | newline
@@ -606,7 +606,7 @@ and string openingpos = parse
    (* Upon finding a backslash, skip the character that follows,
       unless it is a newline. Pretty crude, but should work. *)
    { string openingpos lexbuf }
-| eof 
+| eof
    { error1 openingpos "unterminated OCaml string." }
 | _
    { string openingpos lexbuf }
@@ -625,7 +625,7 @@ and char = parse
 | '\\' ['0'-'9'] ['0'-'9'] ['0'-'9'] "'"
 | '\\' 'x' ['0'-'9' 'a'-'f' 'A'-'F'] ['0'-'9' 'a'-'f' 'A'-'F'] "'"
 | ""
-   { () } 
+   { () }
 
 (* ------------------------------------------------------------------------ *)
 

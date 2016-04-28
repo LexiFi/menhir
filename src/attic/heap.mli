@@ -30,7 +30,7 @@ module Imperative(X: Ordered) : sig
   (* Type of imperative heaps.
      (In the following [n] refers to the number of elements in the heap) *)
 
-  type t 
+  type t
 
   (* [create c] creates a new heap, with initial capacity of [c] *)
   val create : int -> t

@@ -3,10 +3,10 @@
 
 open Lexing
 
-type t = 
-    { 
-      start_p : Lexing.position; 
-      end_p   : Lexing.position 
+type t =
+    {
+      start_p : Lexing.position;
+      end_p   : Lexing.position
     }
 
 type 'a located =
@@ -45,13 +45,13 @@ let mapd f v =
   { value = w1; position = pos },
   { value = w2; position = pos }
 
-let dummy = 
+let dummy =
   {
     start_p = Lexing.dummy_pos;
     end_p   = Lexing.dummy_pos
   }
 
-let unknown_pos v = 
+let unknown_pos v =
   {
     value     = v;
     position  = dummy
@@ -61,7 +61,7 @@ let start_of_position p = p.start_p
 
 let end_of_position p = p.end_p
 
-let filename_of_position p = 
+let filename_of_position p =
   p.start_p.Lexing.pos_fname
 
 let line p =
@@ -85,17 +85,17 @@ let lex_join x1 x2 =
   end_p   = x2
 }
 
-let join_located l1 l2 f = 
+let join_located l1 l2 f =
   {
     value    = f l1.value l2.value;
     position = join l1.position l2.position;
   }
 
-let string_of_lex_pos p = 
+let string_of_lex_pos p =
   let c = p.pos_cnum - p.pos_bol in
   (string_of_int p.pos_lnum)^":"^(string_of_int c)
 
-let string_of_pos p = 
+let string_of_pos p =
   let filename = filename_of_position p in
   (* [filename] is hopefully not "". *)
   let l = line p.start_p in
@@ -107,24 +107,24 @@ let pos_or_undef = function
   | Some x -> x
 
 let cpos lexbuf =
-  { 
+  {
     start_p = Lexing.lexeme_start_p lexbuf;
-    end_p   = Lexing.lexeme_end_p   lexbuf; 
+    end_p   = Lexing.lexeme_end_p   lexbuf;
   }
 
 let with_cpos lexbuf v =
   with_pos (cpos lexbuf) v
 
-let string_of_cpos lexbuf = 
+let string_of_cpos lexbuf =
   string_of_pos (cpos lexbuf)
 
-let joinf f t1 t2 = 
+let joinf f t1 t2 =
   join (f t1) (f t2)
 
 let ljoinf f =
   List.fold_left (fun p t -> join p (f t)) dummy
 
-let join_located_list ls f = 
+let join_located_list ls f =
   {
     value     = f (List.map (fun l -> l.value) ls);
     position  = ljoinf (fun x -> x.position) ls

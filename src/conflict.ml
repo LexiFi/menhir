@@ -198,7 +198,7 @@ let rec follow1 tok derivation offset' = function
         (* This is an epsilon transition. Attack a new line and add
            a comment that explains why the lookahead symbol is
            produced or inherited. *)
-        
+
         let nullable, first = Analysis.nullable_first_prod prod (pos + 1) in
 
         if TerminalSet.mem tok first then
@@ -241,7 +241,7 @@ let rec follow1 tok derivation offset' = function
 
         (* This is a shift transition. Tack symbol in front of forest. *)
 
-        let derivation = 
+        let derivation =
           Derivation.prepend rhs.(pos) derivation
         in
 
@@ -475,7 +475,7 @@ let () =
       flush out
 
     with Lr1partial.Oops ->
-      
+
       (* Ha ha! We were unable to explain this conflict. This could happen
          because the automaton was butchered by conflict resolution directives,
          or because [--lalr] was enabled and we have unexplainable LALR conflicts.

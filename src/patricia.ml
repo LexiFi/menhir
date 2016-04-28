@@ -360,7 +360,7 @@ module Make (X : Endianness.S) = struct
 
     let rec union s t =
       match s, t with
-        
+
       | Empty, _ ->
           t
       | (Leaf _ | Branch _), Empty ->
@@ -995,7 +995,7 @@ end
 
   (* Back to the world of maps. Let us now describe the relationship which exists between maps and their domains. *)
 
-  (* [domain m] returns [m]'s domain. *) 
+  (* [domain m] returns [m]'s domain. *)
 
   let rec domain = function
     | Empty ->
@@ -1044,7 +1044,7 @@ end
           if Domain.mem k t then Empty else s
       | _, Domain.Leaf k ->
           remove k s
-      
+
       | Branch(p, m, s0, s1), Domain.Branch(q, n, t0, t1) ->
           if (p = q) && (m = n) then
 

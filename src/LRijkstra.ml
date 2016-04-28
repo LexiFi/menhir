@@ -484,7 +484,7 @@ type fact = {
 
 (* To save memory (and therefore time), we encode a fact in a single OCaml
    integer value. This is made possible by the fact that tries, words, and
-   terminal symbols are represented as (or can be encoded as) integers. 
+   terminal symbols are represented as (or can be encoded as) integers.
    This admittedly horrible hack allows us to save roughly a factor of 2
    in space, and to gain 10% in time. *)
 
@@ -682,7 +682,7 @@ let () =
    (whose word has minimal length). Indeed, we are not interested in keeping
    track of several words that produce the same effect. Only the shortest such
    word is of interest.
-   
+
    Thus, the total number of facts accumulated by the algorithm is at most
    [T.n^2], where [T] is the total size of the tries that we have constructed,
    and [n] is the number of terminal symbols. (This number can be quite large.
@@ -797,7 +797,7 @@ end
 (* The module [E] is in charge of recording the non-terminal edges that we have
    discovered, or more precisely, the conditions under which these edges can be
    taken.
-   
+
    It maintains a set of quadruples [s, nt, w, z], where such a quadruple means
    that in the state [s], the outgoing edge labeled [nt] can be taken by
    consuming the word [w], under the assumption that the next symbol is [z].
@@ -972,7 +972,7 @@ let new_fact fact =
   (* Throughout this rather long function, there is just one [fact]. Let's
      name its components right now, so as to avoid accessing them several
      times. (That could be costly, as it requires decoding the fact.) *)
-  let position = position fact 
+  let position = position fact
   and lookahead = lookahead fact
   and word = word fact in
   let source = Trie.source position
@@ -981,7 +981,7 @@ let new_fact fact =
   (* 1. View [fact] as a vertex. Examine the transitions out of [current].
      For every transition labeled by a symbol [sym] and into a state
      [target], ... *)
-  
+
   Lr1.transitions current |> SymbolMap.iter (fun sym target ->
     (* ... try to follow this transition in the trie [position],
        down to a child which we call [child]. *)
@@ -994,7 +994,7 @@ let new_fact fact =
         ()
 
     | child, Symbol.T t ->
-          
+
         (* 1a. The transition exists in the trie, and [sym] is in fact a
            terminal symbol [t]. We note that [t] cannot be the [error] token,
            because the trie does not have any edges labeled [error]. *)
@@ -1005,7 +1005,7 @@ let new_fact fact =
         (* If the lookahead assumption [lookahead] is compatible with
            [t], then we derive a new fact, where one more edge has been taken,
            and enqueue this new fact for later examination. *)
-        
+
         (* The state [target] is solid, i.e., its incoming symbol is terminal.
            This state is always entered without consideration for the next
            lookahead symbol. Thus, we can use [any] as the lookahead assumption
@@ -1033,7 +1033,7 @@ let new_fact fact =
 
         (* It could be the case that, due to a default reduction, the answer
            to our query does not depend on [z], and we are wasting work.
-           However, allowing [z] to be [any] in [E.query], and taking 
+           However, allowing [z] to be [any] in [E.query], and taking
            advantage of this to increase performance, seems difficult. *)
 
         let foreach = foreach_terminal_not_causing_an_error target in

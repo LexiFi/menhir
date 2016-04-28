@@ -36,7 +36,7 @@ val check_production_group:
    A missing identifier in the [i]-th position receives the conventional
    name [_i]. *)
 
-val normalize_producers: 
+val normalize_producers:
   (Positions.t * identifier Positions.located option * parameter) list ->
   producer list
 

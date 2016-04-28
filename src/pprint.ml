@@ -110,7 +110,7 @@ type document =
 (* A signature for document renderers. *)
 
 module type RENDERER = sig
-  
+
   (* Output channels. *)
 
   type channel

@@ -38,13 +38,13 @@ let rec fold f init = function
 
   | ParameterApp (p, ps) ->
       f (List.fold_left (fold f) init ps) p
-        
-let identifiers m p = 
+
+let identifiers m p =
   fold (fun acu x -> StringMap.add x.value x.position acu) m p
 
 type t = parameter
 
-let rec equal x y = 
+let rec equal x y =
   match x, y with
     | ParameterVar x, ParameterVar y when x.value = y.value ->
         true
@@ -58,7 +58,7 @@ let hash = function
       Hashtbl.hash (Positions.value x)
 
 let position = function
-  | ParameterVar x 
+  | ParameterVar x
   | ParameterApp (x, _) ->
       Positions.position x
 

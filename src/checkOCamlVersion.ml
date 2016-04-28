@@ -9,15 +9,15 @@
 let mnum = "\\([0-9]+\\)"
 
 (* version = major.minor[.patchlevel][+additional-info]. *)
-let version_regexp = 
-  Str.regexp 
+let version_regexp =
+  Str.regexp
     (Printf.sprintf "%s\\.%s\\(\\.%s\\)?\\(\\+\\(.+\\)\\)?" mnum mnum mnum)
 
 let must field = function
   | None -> failwith (Printf.sprintf "\"%s\" field is undefined." field)
   | Some s -> s
 
-let as_int s = 
+let as_int s =
   try
     int_of_string s
   with Failure _ ->
@@ -25,15 +25,15 @@ let as_int s =
     exit 1
 
 let parse_version version =
-  let get i = 
+  let get i =
     try
       Some (Str.matched_group i version)
     with Not_found ->
       None
   in
     if Str.string_match version_regexp version 0 then (
-      as_int (must "major" (get 1)), 
-      as_int (must "minor" (get 2)), 
+      as_int (must "major" (get 1)),
+      as_int (must "minor" (get 2)),
       get 4, get 6
     ) else
       begin
@@ -54,25 +54,25 @@ let verbose = ref false
 let options = Arg.align
   [
     "--eq", Arg.Set eq, " Is the version equal to <version> ?";
-    "--eq-strict", Arg.Set eq_strict, 
+    "--eq-strict", Arg.Set eq_strict,
     " Is the version strictly equal to <version> ? \
       (taking into account patchlevel and additional information)";
     "--gt", Arg.Set gt, " Is the version newer than <version> ? (default)";
     "--lt", Arg.Set lt, " Is the version older than <version> ?";
     "--verbose", Arg.Set verbose, " Show version."
   ]
-  
+
 let usage = "check-ocaml-version [options] <version>\n"
 
 let version = ref None
 
-let set_version s = 
+let set_version s =
   version := Some s
 
 let _ =
   Arg.parse options set_version usage
 
-let compare, compare_str, strict = 
+let compare, compare_str, strict =
   match !eq, !gt, !lt with
     | true, false, false -> ( = ) , "", !eq_strict
     | false, true, false -> ( >= ), "or greater ", false
@@ -81,14 +81,14 @@ let compare, compare_str, strict =
     | _ -> failwith "(eq|gt|lt) flags must be used independently"
 
 let compare_version (major, minor, p, a) (major', minor', p', a') =
-  if major = major' then 
+  if major = major' then
     if minor = minor' then
       if strict then
         (p = p') && (a = a')
       else true
     else compare minor minor'
-  else 
-    compare major major' 
+  else
+    compare major major'
 
 let _ =
 
@@ -97,7 +97,7 @@ let _ =
         Printf.printf "%s\n%!" Sys.ocaml_version
 
     | Some version ->
-        let ov = parse_version Sys.ocaml_version 
+        let ov = parse_version Sys.ocaml_version
         and uv = parse_version version in
         if compare_version ov uv then begin
           if !verbose then

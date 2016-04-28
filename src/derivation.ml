@@ -294,7 +294,7 @@ let factor forests =
              the previous common context and for the forest at hand. *)
 
           let context, contextr, forestr = common_forest context forest in
-   
+
           (* The residual forests are now: (i) the residual forest [forestr];
              and (ii) the previous residual forests [residuals], each of which
              must be placed with the residual context [contextr]. *)

@@ -1,4 +1,4 @@
-type grammar = 
+type grammar =
     {
       p_preludes           : Stretch.t list;
       p_postludes          : Syntax.trailer list;

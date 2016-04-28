@@ -105,6 +105,6 @@ and busy segments opening just_saw_a_newline = parse
            updated based on [buf.lex_abs_pos + buf.lex_curr_pos]. *)
       tag, content, lexbuf
     ) segments
-      
+
 }
 

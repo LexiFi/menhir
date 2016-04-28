@@ -229,7 +229,7 @@ module type SYMBOLS = sig
      ['a symbol]. This type is useful in situations where the index ['a]
      is not statically known. *)
 
-  type xsymbol = 
+  type xsymbol =
     | X : 'a symbol -> xsymbol
 
 end

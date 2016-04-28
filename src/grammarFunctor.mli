@@ -81,7 +81,7 @@ module Nonterminal : sig
   (* Iteration over all nonterminals, except the start nonterminals. *)
 
   val iterx: (t -> unit) -> unit
-  val foldx: (t -> 'a -> 'a) -> 'a -> 'a 
+  val foldx: (t -> 'a -> 'a) -> 'a -> 'a
 
   (* Tabulation of a function over nonterminals. *)
 

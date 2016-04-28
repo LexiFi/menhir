@@ -74,7 +74,7 @@ let scheme qs t =
   {
     quantifiers = qs;
     body = t
-  } 
+  }
 
 (* Building a type scheme with no quantifiers out of a type. *)
 
@@ -210,7 +210,7 @@ let interface_item_to_structure_item = function
       [ SITypeDefs defs ]
   | IIFunctor (_, _)
   | IIValDecls _
-  | IIInclude _ 
+  | IIInclude _
   | IIModule (_, _)
   | IIComment _ ->
       []

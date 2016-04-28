@@ -13,9 +13,9 @@ open Positions
 
 %}
 
-%token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL 
+%token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL
 %token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
-%token <string Positions.located> LID UID 
+%token <string Positions.located> LID UID
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
@@ -41,12 +41,12 @@ open Positions
 
 grammar:
   declarations PERCENTPERCENT rules trailer
-    { 
-      { 
+    {
+      {
         pg_filename          = ""; (* filled in by the caller *)
         pg_declarations      = List.rev $1;
         pg_rules             = $3;
-        pg_trailer           = $4 
+        pg_trailer           = $4
       }
     }
 
@@ -82,7 +82,7 @@ declaration:
 
 | START OCAMLTYPE nonterminals
     /* %start <ocamltype> foo is syntactic sugar for %start foo %type <ocamltype> foo */
-    { Misc.mapd (fun ntloc -> 
+    { Misc.mapd (fun ntloc ->
         Positions.mapd (fun nt -> DStart nt, DType ($2, ParameterVar ntloc)) ntloc) $3 }
 
 | priority_keyword symbols
@@ -172,7 +172,7 @@ rule:
   production_group production_groups
     {
       let public, inline = $1 in
-      { pr_public_flag = public; 
+      { pr_public_flag = public;
         pr_inline_flag = inline;
         pr_nt          = Positions.value $2;
         pr_positions   = [ Positions.position $2 ];
@@ -218,7 +218,7 @@ optional_actuals:
     { $2 }
 
 actuals_comma:
-  actual 
+  actual
     { [ $1 ] }
 | actual COMMA actuals_comma
     { $1 :: $3 }
@@ -319,7 +319,7 @@ production:
     }
 
 producers:
-  /* epsilon */ 
+  /* epsilon */
     { [] }
 | producers producer
     { $2 :: $1 }

@@ -42,14 +42,14 @@ module TokPrecedence = struct
   let levelip id properties =
     lazy (use id), properties.tk_precedence
 
-  let leveli id = 
+  let leveli id =
     let properties =
       try
         StringMap.find id grammar.tokens
       with Not_found ->
         assert false (* well-formedness check has been performed earlier *)
     in
-    levelip id properties    
+    levelip id properties
 
   (* This function prints warnings about useless precedence declarations
      for terminal symbols (%left, %right, %nonassoc). It should be invoked
@@ -88,7 +88,7 @@ module Nonterminal = struct
 
   let original_nonterminals =
     nonterminals grammar
-  
+
   let start =
     List.length new_start_nonterminals
 
@@ -215,7 +215,7 @@ module Terminal = struct
   let real t =
     error <> t && t <> sharp
 
-  let token_properties = 
+  let token_properties =
     let not_so_dummy_properties = (* applicable to [error] and [#] *)
       {
         tk_filename      = "__primitives__";
@@ -227,8 +227,8 @@ module Terminal = struct
       }
     in
     Array.init n (fun tok ->
-      try 
-         StringMap.find name.(tok) grammar.tokens 
+      try
+         StringMap.find name.(tok) grammar.tokens
        with Not_found ->
          assert (tok = sharp || tok = error);
          not_so_dummy_properties
@@ -240,7 +240,7 @@ module Terminal = struct
         Printf.fprintf f "Grammar has %d terminal symbols.\n" (n - 2)
       )
 
-  let precedence_level tok = 
+  let precedence_level tok =
     TokPrecedence.levelip (print tok) token_properties.(tok)
 
   let associativity tok =
@@ -363,7 +363,7 @@ end
 
 module TerminalSet = struct
 
-  include CompressedBitSet 
+  include CompressedBitSet
 
   let print toks =
     Misc.separated_iter_to_string Terminal.print " " (fun f -> iter f toks)
@@ -575,10 +575,10 @@ module Production = struct
       NonterminalMap.add nt k startprods
     ) grammar.start_symbols (0, NonterminalMap.empty)
 
-  let prec_decl : symbol located option array = 
+  let prec_decl : symbol located option array =
     Array.make n None
 
-  let production_level : branch_production_level array = 
+  let production_level : branch_production_level array =
     (* The start productions should receive this dummy level, I suppose.
        We use a fresh mark, so a reduce/reduce conflict that involves a
        start production will not be solved. *)
@@ -842,7 +842,7 @@ module GenericAnalysis
 
     (* [terminal] maps a terminal symbol to a property. *)
     val terminal: Terminal.t -> property
-    
+
     (* [disjunction] abstracts a binary alternative. That is, when we analyze
        an alternative between several productions, we compute a property for
        each of them independently, then we combine these properties using
@@ -896,7 +896,7 @@ end = struct
         S.terminal tok
     | Symbol.N nt ->
         (* Recursive call to the analysis, via [get]. *)
-        get nt    
+        get nt
 
   (* Analysis of (a suffix of) a production [prod], starting at index [i]. *)
 
@@ -1363,20 +1363,20 @@ module Precedence = struct
 
   type order = Lt | Gt | Eq | Ic
 
-  let precedence_order p1 p2 = 
+  let precedence_order p1 p2 =
     match p1, p2 with
       | UndefinedPrecedence, _
-      | _, UndefinedPrecedence -> 
+      | _, UndefinedPrecedence ->
           Ic
       | PrecedenceLevel (m1, l1, _, _), PrecedenceLevel (m2, l2, _, _) ->
           if not (Mark.same m1 m2) then
             Ic
           else
-            if l1 > l2 then 
-              Gt 
-            else if l1 < l2 then 
+            if l1 > l2 then
+              Gt
+            else if l1 < l2 then
               Lt
-            else 
+            else
               Eq
 
   let production_order p1 p2 =
@@ -1385,18 +1385,18 @@ module Precedence = struct
           if not (Mark.same m1 m2) then
             Ic
           else
-            if l1 > l2 then 
-              Gt 
-            else if l1 < l2 then 
+            if l1 > l2 then
+              Gt
+            else if l1 < l2 then
               Lt
-            else 
+            else
               Eq
 
   let shift_reduce tok prod =
     let fact1, tokp  = Terminal.precedence_level tok
     and fact2, prodp = Production.precedence prod in
     match precedence_order tokp prodp with
-   
+
       (* Our information is inconclusive. Drop [fact1] and [fact2],
          that is, do not record that this information was useful. *)
 
@@ -1414,7 +1414,7 @@ module Precedence = struct
         | Ic ->
             assert false (* already dispatched *)
 
-        | Eq -> 
+        | Eq ->
             begin
               match Terminal.associativity tok with
               | LeftAssoc  -> ChooseReduce
@@ -1433,24 +1433,24 @@ module Precedence = struct
 
 
   let reduce_reduce prod1 prod2 =
-    let pl1 = Production.production_level.(prod1) 
+    let pl1 = Production.production_level.(prod1)
     and pl2 = Production.production_level.(prod2) in
     match production_order pl1 pl2 with
-    | Lt -> 
+    | Lt ->
         Some prod1
-    | Gt -> 
+    | Gt ->
         Some prod2
-    | Eq -> 
+    | Eq ->
         (* The order is strict except in the presence of parameterized
            non-terminals and/or inlining. Two productions can have the same
            precedence level if they originate, via macro-expansion or via
            inlining, from a single production in the source grammar. *)
         None
-    | Ic -> 
+    | Ic ->
         None
 
 end
-  
+
 (* This function prints warnings about useless precedence declarations for
    terminal symbols (%left, %right, %nonassoc) and productions (%prec). It
    should be invoked after only the automaton has been constructed. *)

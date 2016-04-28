@@ -62,14 +62,14 @@ let tabulateo number fold n f =
   in
   get, !c
 
-module IntSet = Set.Make (struct 
+module IntSet = Set.Make (struct
                             type t = int
                             let compare = ( - )
                           end)
 
 type 'a iter = ('a -> unit) -> unit
 
-let separated_iter_to_string printer separator iter = 
+let separated_iter_to_string printer separator iter =
   let b = Buffer.create 32 in
   let first = ref true in
   iter (fun x ->
@@ -84,7 +84,7 @@ let separated_iter_to_string printer separator iter =
   );
   Buffer.contents b
 
-let separated_list_to_string printer separator xs = 
+let separated_list_to_string printer separator xs =
   separated_iter_to_string printer separator (fun f -> List.iter f xs)
 
 let terminated_iter_to_string printer terminator iter =
@@ -98,19 +98,19 @@ let terminated_iter_to_string printer terminator iter =
 let terminated_list_to_string printer terminator xs =
   terminated_iter_to_string printer terminator (fun f -> List.iter f xs)
 
-let index_map string_map = 
+let index_map string_map =
   let n = StringMap.cardinal string_map in
   let a = Array.make n None in
-  let conv, _ = StringMap.fold 
+  let conv, _ = StringMap.fold
     (fun k v (conv, idx) ->
        a.(idx) <- Some (k, v);
        StringMap.add k idx conv, idx + 1)
-    string_map (StringMap.empty, 0) 
+    string_map (StringMap.empty, 0)
   in
     ((fun n -> snd (unSome a.(n))),
      (fun k -> StringMap.find k conv),
      (fun n -> fst (unSome a.(n))))
-  
+
 let support_assoc l x =
   try
     List.assoc x l
@@ -250,7 +250,7 @@ let postincrement r =
   x
 
 (* [map_opt f l] returns the list of [y]s such that [f x = Some y] where [x]
-   is in [l], preserving the order of elements of [l]. *) 
+   is in [l], preserving the order of elements of [l]. *)
 let map_opt f l =
   List.(rev (fold_left (fun ys x ->
     match f x with

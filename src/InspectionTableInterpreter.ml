@@ -18,7 +18,7 @@ end) = struct
     | T : 'a terminal -> 'a symbol
     | N : 'a nonterminal -> 'a symbol
 
-  type xsymbol = 
+  type xsymbol =
     | X : 'a symbol -> xsymbol
 
 end

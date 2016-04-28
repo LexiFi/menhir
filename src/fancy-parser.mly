@@ -21,7 +21,7 @@ open Positions
 
 %token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL
 %token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
-%token <string Positions.located> LID UID 
+%token <string Positions.located> LID UID
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
@@ -53,8 +53,8 @@ open Positions
 
 grammar:
   ds = declaration* PERCENTPERCENT rs = rule* t = trailer
-    { 
-      { 
+    {
+      {
         pg_filename          = ""; (* filled in by the caller *)
         pg_declarations      = List.flatten ds;
         pg_rules             = rs @ ParserAux.rules();
@@ -171,11 +171,11 @@ rule:
   COLON
   optional_bar
   branches = branches
-    { 
+    {
       let public, inline = flags in
       {
-        pr_public_flag = public; 
-        pr_inline_flag = inline; 
+        pr_public_flag = public;
+        pr_inline_flag = inline;
         pr_nt          = Positions.value symbol;
         pr_positions   = [ Positions.position symbol ];
         pr_parameters  = List.map Positions.value params;

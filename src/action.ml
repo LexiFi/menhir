@@ -19,7 +19,7 @@ type t = {
 
 (* Creation. *)
 
-let from_stretch s = { 
+let from_stretch s = {
   expr      = IL.ETextual s;
   filenames = [ s.Stretch.stretch_filename ];
   keywords  = KeywordSet.of_list s.Stretch.stretch_keywords
@@ -36,7 +36,7 @@ let define keyword keywords f action =
 
 (* Composition, used during inlining. *)
 
-let compose x a1 a2 = 
+let compose x a1 a2 =
   (* 2015/07/20: there used to be a call to [parenthesize_stretch] here,
      which would insert parentheses around every stretch in [a1]. This is
      not necessary, as far as I can see, since every stretch that represents
@@ -54,10 +54,10 @@ type subst =
   (string * string) list
 
 let apply (phi : subst) (s : string) : string =
-  try 
+  try
     List.assoc s phi
   with Not_found ->
-    s 
+    s
 
 let apply_subject (phi : subst) (subject : subject) : subject =
   match subject with
@@ -88,7 +88,7 @@ let rename_keyword (f : sw -> sw option) (phi : subst ref) keyword : keyword =
   | SyntaxError ->
       SyntaxError
   | Position (subject, where, flavor) ->
-      let subject', where' = 
+      let subject', where' =
         match f (subject, where) with
         | Some (subject', where') ->
             subject', where'
@@ -107,7 +107,7 @@ let rename_keyword (f : sw -> sw option) (phi : subst ref) keyword : keyword =
    returning [Some _], or to not transform it, by returning [None]. (In the
    latter case, [phi] still applies to the keyword.) *)
 
-let rename f phi a = 
+let rename f phi a =
 
   (* Rename all keywords, growing [phi] as we go. *)
   let keywords = a.keywords in
@@ -120,25 +120,25 @@ let rename f phi a =
   let phi = List.map (fun (x, y) -> IL.PVar x, IL.EVar y) phi in
   let expr = IL.ELet (phi, a.expr) in
 
-  { 
+  {
     expr      = expr;
     filenames = a.filenames;
     keywords  = keywords;
   }
 
-let to_il_expr action = 
+let to_il_expr action =
   action.expr
 
-let filenames action = 
+let filenames action =
   action.filenames
 
-let keywords action = 
+let keywords action =
   action.keywords
 
-let print f action = 
-  let module P = Printer.Make (struct let f = f 
-                                      let locate_stretches = None 
-                               end) 
+let print f action =
+  let module P = Printer.Make (struct let f = f
+                                      let locate_stretches = None
+                               end)
   in
     P.expr action.expr
 

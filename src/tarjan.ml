@@ -56,7 +56,7 @@ end) = struct
 
       mutable scc: G.node list
 
-    } 
+    }
 
   (* Define a mapping from external nodes to internal ones. Here, we
      simply use each node's index as an entry into a global array. *)

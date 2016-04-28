@@ -147,7 +147,7 @@ module StateLattice = struct
   let push v x =
     match v with
     | Bottom ->
-        Bottom 
+        Bottom
     | NonBottom v ->
         NonBottom (StateVector.push v x)
 
@@ -293,7 +293,7 @@ let production_states : Production.index -> StateLattice.property =
     let height = Production.length prod in
     Lr1.NodeSet.fold (fun node accu ->
       join accu
-        (truncate height 
+        (truncate height
            (NonBottom (stack_states node))
         )
     ) nodes bottom
@@ -371,7 +371,7 @@ let () =
 
 let () =
   Nonterminal.iter (fun nt ->
-    let count = 
+    let count =
       Lr1.targets (fun count _ _ ->
         count + 1
       ) 0 (Symbol.N nt)

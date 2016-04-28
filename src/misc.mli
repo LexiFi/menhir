@@ -64,7 +64,7 @@ val ( $$ ) : 'a -> ('a -> 'b) -> 'b
 module IntSet    : Set.S with type elt = int
 
 (* [separated_list_to_string printer sep l] converts [l] into a string
-   representation built by using [printer] on each element and [sep] as 
+   representation built by using [printer] on each element and [sep] as
    a separator. *)
 
 type 'a iter = ('a -> unit) -> unit
@@ -73,22 +73,22 @@ val separated_iter_to_string:  ('a -> string) -> string -> 'a iter -> string
 val separated_list_to_string:  ('a -> string) -> string -> 'a list -> string
 
 (* [terminated_list_to_string printer term l] converts [l] into a string
-   representation built by using [printer] on each element and [term] as 
+   representation built by using [printer] on each element and [term] as
    a terminator. *)
 
 val terminated_list_to_string: ('a -> string) -> string -> 'a list -> string
 val terminated_iter_to_string: ('a -> string) -> string -> 'a iter -> string
 
 (* [index_map f] returns a triple (indexed_f, domain_indexation, domain_array).
-   [indexed_f] is a mapping from [0..n-1] to the elements of the map [f] 
-   ([n] being the size of the image of [f]). 
-   [domain_indexation] is a mapping from the domain of the map [f] to indexes. 
-   [domain_array] is a mapping from the indexes to the domain of [f]. 
+   [indexed_f] is a mapping from [0..n-1] to the elements of the map [f]
+   ([n] being the size of the image of [f]).
+   [domain_indexation] is a mapping from the domain of the map [f] to indexes.
+   [domain_array] is a mapping from the indexes to the domain of [f].
    The indexation implements [f] ie:
    - forall x in domain(m), indexed_f (domain_indexation x) = f (x).
    - forall x in domain(m), domain_array (domain_indexation x) = x. *)
 
-val index_map 
+val index_map
   : 'a StringMap.t -> (int -> 'a) * (string -> int) * (int -> string)
 
 (* [support_assoc l x] returns the second component of the first couple
@@ -160,7 +160,7 @@ val normalize: string -> string
 val postincrement: int ref -> int
 
 (* [map_opt f l] returns the list of [y]s such that [f x = Some y] where [x]
-   is in [l], preserving the order of elements of [l]. *) 
+   is in [l], preserving the order of elements of [l]. *)
 val map_opt : ('a -> 'b option) -> 'a list -> 'b list
 
 (* [new_intern capacity] creates a new service for interning (hash-consing)

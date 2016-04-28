@@ -296,7 +296,7 @@ module Workset : sig
 
   (* [insert node] inserts [node] into the workset. [node] must have no
      successors. *)
-  val insert: node -> unit  
+  val insert: node -> unit
 
   (* [repeat f] repeatedly applies [f] to a node extracted out of the
      workset, until the workset becomes empty. [f] is allowed to use
@@ -304,7 +304,7 @@ module Workset : sig
   val repeat: (node -> unit) -> unit
 
   (* That's it! *)
-end 
+end
 = struct
 
   (* Initialize the workset. *)

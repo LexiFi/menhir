@@ -31,7 +31,7 @@ let load_partial_grammar filename =
 
 (* Read all of the grammar files that are named on the command line. *)
 
-let partial_grammars = 
+let partial_grammars =
   List.map load_partial_grammar Settings.filenames
 
 let () =
@@ -41,7 +41,7 @@ let () =
 
 (* If several grammar files were specified, merge them. *)
 
-let parameterized_grammar = 
+let parameterized_grammar =
   PartialGrammar.join_partial_grammars partial_grammars
 
 (* ------------------------------------------------------------------------- *)
@@ -49,7 +49,7 @@ let parameterized_grammar =
 (* Expand away all applications of parameterized nonterminal symbols, so as to
    obtain a grammar without parameterized nonterminal symbols. *)
 
-let grammar = 
+let grammar =
   ParameterizedGrammar.expand parameterized_grammar
 
 let () =
@@ -139,7 +139,7 @@ let grammar =
 
 let grammar =
   if Settings.inline then begin
-    let grammar, inlined = 
+    let grammar, inlined =
       NonTerminalDefinitionInlining.inline grammar
     in
     if not Settings.infer && inlined && not skipping_parser_generation then
@@ -149,7 +149,7 @@ let grammar =
     Time.tick "Inlining";
     grammar
   end
-  else 
+  else
     grammar
 
 (* ------------------------------------------------------------------------- *)

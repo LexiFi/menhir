@@ -89,7 +89,7 @@ let anonymous pos branches =
   let symbol = fresh() in
   (* Construct its definition. Note that it is implicitly marked %inline. *)
   let rule = {
-    pr_public_flag = false; 
+    pr_public_flag = false;
     pr_inline_flag = true;
     pr_nt          = symbol;
     pr_positions   = [ pos ]; (* this list is not allowed to be empty *)

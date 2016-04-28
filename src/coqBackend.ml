@@ -85,7 +85,7 @@ module Run (T: sig end) = struct
     if Front.grammar.UnparameterizedSyntax.parameters <> [] then
       Error.error [] "the Coq back-end does not support %%parameter."
 
-  (* Optimized because if we extract some constants to the right caml term, 
+  (* Optimized because if we extract some constants to the right caml term,
      the ocaml inlining+constant unfolding replaces that by the actual constant *)
   let rec write_optimized_int31 f n =
     match n with
@@ -429,7 +429,7 @@ module Run (T: sig end) = struct
 
     Lr1.fold_entry (fun _prod node startnt _t () ->
           let funName = Nonterminal.print true startnt in
-          fprintf f "Definition %s := Parser.parse safe Aut.%s.\n\n" 
+          fprintf f "Definition %s := Parser.parse safe Aut.%s.\n\n"
             funName (print_init node);
 
           fprintf f "Theorem %s_correct iterator buffer:\n" funName;

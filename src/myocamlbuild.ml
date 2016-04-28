@@ -246,7 +246,7 @@ let parser_configuration () =
     "parser.mly"
   ;
   (* Create [Driver.ml] by copying the appropriate source file. *)
-  copy_rule "create Driver.ml" 
+  copy_rule "create Driver.ml"
     (* source: *)
     (if fancy() then "fancyDriver.ml" else "yaccDriver.ml")
     (* target: *)

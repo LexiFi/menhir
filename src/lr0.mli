@@ -58,7 +58,7 @@ val core: lr1state -> node
 
 (* One can create an LR(1) start state out of an LR(0) start
    node. *)
- 
+
 val start: node -> lr1state
 
 (* Information about the transitions and reductions at a state. *)

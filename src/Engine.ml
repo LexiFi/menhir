@@ -69,7 +69,7 @@ module Make (T : TABLE) = struct
   let rec run env please_discard : semantic_value checkpoint =
 
     (* Log the fact that we just entered this state. *)
-    
+
     if log then
       Log.state env.current;
 
@@ -346,7 +346,7 @@ module Make (T : TABLE) = struct
   (* [start s] begins the parsing process. *)
 
   let start (s : state) (initial : Lexing.position) : semantic_value checkpoint =
-    
+
     (* Build an empty stack. This is a dummy cell, which is its own successor.
        Its [next] field WILL be accessed by [error_fail] if an error occurs and
        is propagated all the way until the stack is empty. Its [endp] field WILL

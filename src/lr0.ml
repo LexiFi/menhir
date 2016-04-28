@@ -26,7 +26,7 @@ module SymbolicLookahead = struct
     and vars = CompressedBitSet.union vars1 vars2 in
     if toks2 == toks && vars2 == vars then
       s2
-    else   
+    else
       (toks, vars)
 
   let variable (var : int) : t =

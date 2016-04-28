@@ -142,7 +142,7 @@ val soft_surround: int -> document -> document -> document -> document -> docume
 
 (* [seq indent break empty_seq open_seq sep_seq close_seq contents] *)
 val seq: int -> document -> document -> document -> document -> document ->
-         document list -> document 
+         document list -> document
 
 (* [seq1 open_seq sep_seq close_seq contents]
      Flat layout: [open_seq][contents][sep_seq]...[sep_seq][contents][close_seq]
@@ -180,7 +180,7 @@ end
 (* A signature for document renderers. *)
 
 module type RENDERER = sig
-  
+
   (* Output channels. *)
 
   type channel

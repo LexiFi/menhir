@@ -24,7 +24,7 @@ let rec pcst b = function
       Printf.bprintf b "%s" (Terminal.print tok)
 
   | CstNonTerminal (prod, csts) ->
-      
+
       (* A node is denoted by a bracketed, whitespace-separated list,
          whose head is a non-terminal symbol (followed with a colon)
          and whose tail consists of the node's descendants. *)
@@ -66,7 +66,7 @@ let print =
    the same as that used by the above printer; the only difference is
    that the [Pprint] library is used to manage indentation. *)
 
-open Pprint 
+open Pprint
 
 let rec build : cst -> document = function
   | CstTerminal tok ->

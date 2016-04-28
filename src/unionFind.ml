@@ -19,7 +19,7 @@
     of elements in the class) and of the class's descriptor. *)
 type 'a point = {
     mutable link: 'a link
-  } 
+  }
 
 and 'a link =
   | Info of 'a info
@@ -28,13 +28,13 @@ and 'a link =
 and 'a info = {
     mutable weight: int;
     mutable descriptor: 'a
-  } 
+  }
 
 (** [fresh desc] creates a fresh point and returns it. It forms an
     equivalence class of its own, whose descriptor is [desc]. *)
 let fresh desc = {
   link = Info { weight = 1; descriptor = desc }
-} 
+}
 
 (** [repr point] returns the representative element of [point]'s
     equivalence class. It is found by starting at [point] and following
@@ -72,7 +72,7 @@ let rec find point =
   | Link { link = Link _ } ->
       find (repr point)
 
-let rec change point v = 
+let rec change point v =
   match point.link with
   | Info info
   | Link { link = Info info } ->

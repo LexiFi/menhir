@@ -87,7 +87,7 @@ located_sentence: sentence
 /* An optional sentence. */
 optional_sentence:
 | EOF
-    { None } 
+    { None }
 | sentence
     { Some (strip_sentence $1) }
 
@@ -101,8 +101,8 @@ sentence:
 
 /* A list of terminal symbols. */
 terminals:
-| 
-    { [] } 
+|
+    { [] }
 | TERMINAL terminals
     { $1 :: $2 }
 

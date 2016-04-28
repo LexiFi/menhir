@@ -38,16 +38,16 @@ module PersistentMapsToImperativeMaps
 
   type key =
       M.key
-  
+
   type 'data t =
       'data M.t ref
-      
+
   let create () =
     ref M.empty
 
   let clear t =
     t := M.empty
-    
+
   let add k d t =
     t := M.add k d !t
 

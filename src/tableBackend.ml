@@ -294,7 +294,7 @@ let semantic_action prod =
 
       (* We do this mainly because [Invariant.prodstack] does not
          support productions that are never reduced. *)
-      
+
       EComment (
         "a production never reduced",
         EApp (EVar "assert", [ EData ("false", []) ])
@@ -973,7 +973,7 @@ let grammar =
   Front.grammar
 
 let program =
- 
+
   [ SIFunctor (grammar.parameters,
 
     (* Make a reference to [MenhirLib.StaticVersion.require_XXXXXXXX], where

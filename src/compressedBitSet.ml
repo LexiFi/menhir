@@ -22,7 +22,7 @@ let is_empty = function
   | C _ ->
       false
 
-let add i s = 
+let add i s =
   let ioffset = i mod word_size in
   let iaddr = i - ioffset
   and imask = 1 lsl ioffset in
@@ -50,11 +50,11 @@ let add i s =
             C (addr, ss, qs')
   in
   add s
-    
-let singleton i = 
+
+let singleton i =
    add i N
 
-let remove i s = 
+let remove i s =
   let ioffset = i mod word_size in
   let iaddr = i - ioffset
   and imask = 1 lsl ioffset in
@@ -82,8 +82,8 @@ let remove i s =
             C (addr, ss, qs')
   in
   remove s
-    
-let rec fold f s accu = 
+
+let rec fold f s accu =
   match s with
   | N ->
       accu
@@ -112,33 +112,33 @@ let is_singleton s =
   | N ->
       false
 
-let cardinal s = 
+let cardinal s =
   fold (fun _ m -> m + 1) s 0
 
 let elements s =
   fold (fun tl hd -> tl :: hd) s []
 
-let rec subset s1 s2 = 
+let rec subset s1 s2 =
   match s1, s2 with
   | N, _ ->
       true
   | _, N ->
       false
-  | C (addr1, ss1, qs1), C (addr2, ss2, qs2) -> 
+  | C (addr1, ss1, qs1), C (addr2, ss2, qs2) ->
       if addr1 < addr2 then
         false
       else if addr1 = addr2 then
-        if (ss1 land ss2) <> ss1 then 
+        if (ss1 land ss2) <> ss1 then
           false
         else
           subset qs1 qs2
-      else 
+      else
         subset s1 qs2
 
 let mem i s =
   subset (singleton i) s
 
-let rec union s1 s2 =  
+let rec union s1 s2 =
   match s1, s2 with
   | N, s
   | s, N ->
@@ -150,17 +150,17 @@ let rec union s1 s2 =
         let s = union s1 qs2 in
         if s == qs2 then
           s2
-        else 
+        else
           C (addr2, ss2, s)
-      else 
+      else
         let ss = ss1 lor ss2 in
         let s = union qs1 qs2 in
-        if ss == ss2 && s == qs2 then 
-          s2 
+        if ss == ss2 && s == qs2 then
+          s2
         else
           C (addr1, ss, s)
 
-let rec inter s1 s2 =  
+let rec inter s1 s2 =
   match s1, s2 with
   | N, _
   | _, N ->
@@ -170,7 +170,7 @@ let rec inter s1 s2 =
         inter qs1 s2
       else if addr1 > addr2 then
         inter s1 qs2
-      else 
+      else
         let ss = ss1 land ss2 in
         let s = inter qs1 qs2 in
         if ss = 0 then
@@ -183,7 +183,7 @@ let rec inter s1 s2 =
 
 exception Found of int
 
-let choose s = 
+let choose s =
   try
     iter (fun x ->
       raise (Found x)
@@ -192,7 +192,7 @@ let choose s =
   with Found x ->
     x
 
-let rec compare s1 s2 = 
+let rec compare s1 s2 =
   match s1, s2 with
       N, N ->  0
     | _, N ->  1
@@ -207,19 +207,19 @@ let rec compare s1 s2 =
 let equal s1 s2 =
   compare s1 s2 = 0
 
-let rec disjoint s1 s2 = 
+let rec disjoint s1 s2 =
   match s1, s2 with
   | N, _
   | _, N ->
       true
-  | C (addr1, ss1, qs1), C (addr2, ss2, qs2) -> 
+  | C (addr1, ss1, qs1), C (addr2, ss2, qs2) ->
       if addr1 = addr2 then
-        if (ss1 land ss2) = 0 then 
+        if (ss1 land ss2) = 0 then
           disjoint qs1 qs2
-        else 
+        else
           false
-      else if addr1 < addr2 then 
+      else if addr1 < addr2 then
         disjoint qs1 s2
-      else 
+      else
         disjoint s1 qs2
 

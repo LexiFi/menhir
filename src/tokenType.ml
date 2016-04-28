@@ -152,20 +152,20 @@ let produce_tokentypes grammar =
         )
       in
 
-      let module P = 
-        Printer.Make (struct 
+      let module P =
+        Printer.Make (struct
                         let f = open_out (Settings.base ^ ".mli")
-                        let locate_stretches = None 
-                      end) 
+                        let locate_stretches = None
+                      end)
       in
       P.interface [
         IIFunctor (grammar.parameters, i)
       ];
-      let module P = 
-        Printer.Make (struct 
+      let module P =
+        Printer.Make (struct
                         let f = open_out (Settings.base ^ ".ml")
-                        let locate_stretches = None 
-                      end) 
+                        let locate_stretches = None
+                      end)
       in
       P.program [
         SIFunctor (grammar.parameters,

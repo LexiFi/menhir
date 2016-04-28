@@ -177,7 +177,7 @@ module Closure (L : Lookahead.S) = struct
             (* No epsilon transitions leave this item. *)
             L.empty, false
         in
-          
+
         {
           num = num;
           item = item;
@@ -191,7 +191,7 @@ module Closure (L : Lookahead.S) = struct
 
       )
     )
-  
+
   (* At each node, compute transitions. *)
 
   let () =

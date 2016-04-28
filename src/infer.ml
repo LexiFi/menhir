@@ -135,7 +135,7 @@ let program grammar =
      productions that derive from the standard library are reflected
      first, so that type errors are not reported in them. *)
 
-  let bindings1, bindings2 = 
+  let bindings1, bindings2 =
     StringMap.fold (fun symbol rule (bindings1, bindings2) ->
       List.fold_left (fun (bindings1, bindings2) branch ->
         if is_standard branch then

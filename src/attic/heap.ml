@@ -29,16 +29,16 @@ exception EmptyHeap
 module Imperative(X : Ordered) = struct
 
   (* The heap is encoded in the array [data], where elements are stored
-     from [0] to [size - 1]. From an element stored at [i], the left 
+     from [0] to [size - 1]. From an element stored at [i], the left
      (resp. right) subtree, if any, is rooted at [2*i+1] (resp. [2*i+2]). *)
 
   type t = { mutable size : int; mutable data : X.t array }
 
   (* When [create n] is called, we cannot allocate the array, since there is
-     no known value of type [X.t]; we'll wait for the first addition to 
+     no known value of type [X.t]; we'll wait for the first addition to
      do it, and we remember this situation with a negative size. *)
 
-  let create n = 
+  let create n =
     if n <= 0 then invalid_arg "create";
     { size = -n; data = [||] }
 
@@ -90,13 +90,13 @@ module Imperative(X : Ordered) = struct
     let rec movedown i =
       let j = 2 * i + 1 in
       if j < n then
-        let j = 
-          let j' = j + 1 in 
-          if j' < n && X.compare d.(j') d.(j) > 0 then j' else j 
+        let j =
+          let j' = j + 1 in
+          if j' < n && X.compare d.(j') d.(j) > 0 then j' else j
         in
-        if X.compare d.(j) x > 0 then begin 
-          d.(i) <- d.(j); 
-          movedown j 
+        if X.compare d.(j) x > 0 then begin
+          d.(i) <- d.(j);
+          movedown j
         end else
           d.(i) <- x
       else
@@ -106,7 +106,7 @@ module Imperative(X : Ordered) = struct
 
   let pop_maximum h = let m = maximum h in remove h; m
 
-  let iter f h = 
+  let iter f h =
     let d = h.data in
     for i = 0 to h.size - 1 do f d.(i) done
 

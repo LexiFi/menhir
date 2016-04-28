@@ -15,7 +15,7 @@ type t = {
     stretch_raw_content : string;
     stretch_content     : string;
     stretch_keywords    : Keyword.keyword list
-  } 
+  }
 
 (* An OCaml type is either a stretch (if it was found in some
    source file) or a string (if it was inferred via [Infer]). *)

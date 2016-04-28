@@ -26,7 +26,7 @@ let trim grammar =
     let reachable =
       StringSet.fold (fun symbol visited ->
         visit grammar visited symbol
-      ) grammar.start_symbols StringSet.empty 
+      ) grammar.start_symbols StringSet.empty
     in
     StringMap.iter (fun symbol rule ->
       if not (StringSet.mem symbol reachable) then

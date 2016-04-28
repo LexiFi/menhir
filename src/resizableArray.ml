@@ -12,7 +12,7 @@ type 'a t = {
     mutable size: int;
     (* The physical array, whose length is at least [size]. *)
     mutable table: 'a array
-  } 
+  }
 
 let make capacity default init =
   (* [capacity] must be nonzero, so that doubling it actually
