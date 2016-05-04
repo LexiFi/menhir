@@ -102,7 +102,7 @@ module Run (T: sig end) = struct
 
   let write_inductive_alphabet f name constrs =
     fprintf f "Inductive %s' : Set :=" name;
-    List.iter (fprintf f "\n  | %s") constrs;
+    List.iter (fprintf f "\n| %s") constrs;
     fprintf f ".\n";
     fprintf f "Definition %s := %s'.\n\n" name name;
     if List.length constrs > 0 then
@@ -119,7 +119,7 @@ module Run (T: sig end) = struct
         fprintf f "    surj := (fun n => match n return _ with ";
         iteri (fprintf f "| %d => %s ");
         fprintf f "| _ => %s end)%%int31;\n" (List.hd constrs);
-        fprintf f "  inj_bound := %d%%int31 }.\n" (List.length constrs);
+        fprintf f "    inj_bound := %d%%int31 }.\n" (List.length constrs);
       end
     else
       begin
@@ -145,7 +145,7 @@ module Run (T: sig end) = struct
     fprintf f "  match t with\n";
     Terminal.iter (fun terminal ->
       if not (Terminal.pseudo terminal) then
-        fprintf f "    | %s => %s%%type\n"
+        fprintf f "  | %s => %s%%type\n"
           (print_term terminal)
           (try print_type (Terminal.ocamltype terminal) with Not_found -> "unit")
     );
@@ -154,15 +154,15 @@ module Run (T: sig end) = struct
     fprintf f "Definition nonterminal_semantic_type (nt:nonterminal) : Type:=\n";
     fprintf f "  match nt with\n";
     Nonterminal.iterx (fun nonterminal ->
-                         fprintf f "    | %s => %s%%type\n"
+                         fprintf f "  | %s => %s%%type\n"
                            (print_nterm nonterminal)
                            (print_type (Nonterminal.ocamltype nonterminal)));
     fprintf f "  end.\n\n";
 
     fprintf f "Definition symbol_semantic_type (s:symbol) : Type:=\n";
     fprintf f "  match s with\n";
-    fprintf f "    | T t => terminal_semantic_type t\n";
-    fprintf f "    | NT nt => nonterminal_semantic_type nt\n";
+    fprintf f "  | T t => terminal_semantic_type t\n";
+    fprintf f "  | NT nt => nonterminal_semantic_type nt\n";
     fprintf f "  end.\n\n"
 
   let write_productions f =
@@ -182,15 +182,15 @@ module Run (T: sig end) = struct
     fprintf f "  in\n";
     fprintf f "  match p with\n";
     Production.iterx (fun prod ->
-      fprintf f "    | %s => box\n" (print_prod prod);
-      fprintf f "      (%s, [%s])\n"
+      fprintf f "  | %s => box\n" (print_prod prod);
+      fprintf f "    (%s, [%s])\n"
         (print_nterm (Production.nt prod))
         (String.concat "; "
            (List.map print_symbol (List.rev (Array.to_list (Production.rhs prod)))));
       if Production.length prod = 0 then
-        fprintf f "      (\n"
+        fprintf f "    (\n"
       else
-        fprintf f "      (fun %s =>\n"
+        fprintf f "    (fun %s =>\n"
           (String.concat " " (List.rev (Array.to_list (Production.identifiers prod))));
       if Settings.coq_no_actions then
         fprintf f "()"
@@ -210,7 +210,7 @@ module Run (T: sig end) = struct
     fprintf f "Definition nullable_nterm (nt:nonterminal) : bool :=\n";
     fprintf f "  match nt with\n";
     Nonterminal.iterx (fun nt ->
-      fprintf f "    | %s => %b\n"
+      fprintf f "  | %s => %b\n"
         (print_nterm nt)
         (Analysis.nullable nt));
     fprintf f "  end.\n\n";
@@ -219,7 +219,7 @@ module Run (T: sig end) = struct
     fprintf f "  match nt with\n";
     Nonterminal.iterx (fun nt ->
       let firstSet = Analysis.first nt in
-      fprintf f "    | %s => [" (print_nterm nt);
+      fprintf f "  | %s => [" (print_nterm nt);
       let first = ref true in
       TerminalSet.iter (fun t ->
         if !first then first := false else fprintf f "; ";
@@ -255,7 +255,7 @@ module Run (T: sig end) = struct
     fprintf f "Definition start_nt (init:initstate) : nonterminal :=\n";
     fprintf f "  match init with\n";
     Lr1.fold_entry (fun _prod node startnt _t () ->
-      fprintf f "    | %s => %s\n" (print_init node) (print_nterm startnt)
+      fprintf f "  | %s => %s\n" (print_init node) (print_nterm startnt)
     ) ();
     fprintf f "  end.\n\n"
 
@@ -263,31 +263,31 @@ module Run (T: sig end) = struct
     fprintf f "Definition action_table (state:state) : action :=\n";
     fprintf f "  match state with\n";
     lr1_iter_nonfinal (fun node ->
-      fprintf f "    | %s => " (print_st node);
+      fprintf f "  | %s => " (print_st node);
       match Invariant.has_default_reduction node with
         | Some (prod, _) ->
           fprintf f "Default_reduce_act %s\n" (print_prod prod)
         | None ->
           fprintf f "Lookahead_act (fun terminal:terminal =>\n";
-          fprintf f "      match terminal return lookahead_action terminal with\n";
+          fprintf f "    match terminal return lookahead_action terminal with\n";
           let has_fail = ref false in
           Terminal.iter (fun t ->
             if not (Terminal.pseudo t) then
               begin
                 try
                   let target = SymbolMap.find (Symbol.T t) (Lr1.transitions node) in
-                  fprintf f "        | %s => Shift_act %s (eq_refl _)\n" (print_term t) (print_nis target)
+                  fprintf f "    | %s => Shift_act %s (eq_refl _)\n" (print_term t) (print_nis target)
                 with Not_found ->
                   try
                     let prod =
                       Misc.single (TerminalMap.find t (Lr1.reductions node))
                     in
-                    fprintf f "        | %s => Reduce_act %s\n" (print_term t) (print_prod prod)
+                    fprintf f "    | %s => Reduce_act %s\n" (print_term t) (print_prod prod)
                   with Not_found -> has_fail := true
               end);
           if !has_fail then
-            fprintf f "        | _ => Fail_act\n";
-          fprintf f "      end)\n"
+            fprintf f "    | _ => Fail_act\n";
+          fprintf f "    end)\n"
     );
     fprintf f "  end.\n\n"
 
@@ -299,11 +299,11 @@ module Run (T: sig end) = struct
       Nonterminal.iterx (fun nt ->
         try
           let target = SymbolMap.find (Symbol.N nt) (Lr1.transitions node) in
-          fprintf f "    | %s, %s => " (print_st node) (print_nterm nt);
+          fprintf f "  | %s, %s => " (print_st node) (print_nterm nt);
           if is_final_state target then fprintf f "None"
           else fprintf f "Some (exist _ %s (eq_refl _))\n" (print_nis target)
         with Not_found -> has_none := true));
-    if !has_none then fprintf f "    | _, _ => None\n";
+    if !has_none then fprintf f "  | _, _ => None\n";
     fprintf f "  end.\n\n"
 
   let write_last_symb f =
@@ -311,7 +311,7 @@ module Run (T: sig end) = struct
     fprintf f "  match noninitstate with\n";
     lr1_iterx_nonfinal (fun node ->
       match Lr1.incoming_symbol node with
-        | Some s -> fprintf f "    | %s => %s\n" (print_nis node) (print_symbol s)
+        | Some s -> fprintf f "  | %s => %s\n" (print_nis node) (print_symbol s)
         | None -> assert false);
     fprintf f "  end.\n\n"
 
@@ -324,69 +324,96 @@ module Run (T: sig end) = struct
           (Invariant.fold (fun l _ symb _ -> print_symbol symb::l)
              [] (Invariant.stack node)))
       in
-      fprintf f "    | %s => [%s]\n" (print_nis node) s);
+      fprintf f "  | %s => [%s]\n" (print_nis node) s);
     fprintf f "  end.\n";
     fprintf f "Extract Constant past_symb_of_non_init_state => \"fun _ -> assert false\".\n\n"
 
+  module NodeSetMap = Map.Make(Lr1.NodeSet)
   let write_past_states f =
-    fprintf f "Definition past_state_of_non_init_state (s:noninitstate) : list (state -> bool) :=\n";
-    fprintf f "  match s with\n";
+    let get_stateset_id =
+      let memo = ref NodeSetMap.empty in
+      let next_id = ref 1 in
+      fun stateset ->
+        try NodeSetMap.find stateset !memo
+        with
+        | Not_found ->
+           let id = sprintf "state_set_%d" !next_id in
+           memo := NodeSetMap.add stateset id !memo;
+           incr next_id;
+           fprintf f "Definition %s (s:state) : bool :=\n" id;
+           fprintf f "  match s with\n";
+           fprintf f "  ";
+           Lr1.NodeSet.iter (fun st -> fprintf f "| %s " (print_st st)) stateset;
+           fprintf f "=> true\n";
+           fprintf f "  | _ => false\n";
+           fprintf f "  end.\n";
+           fprintf f "Extract Inlined Constant %s => \"assert false\".\n\n" id;
+           id
+    in
+    let b = Buffer.create 256 in
+    bprintf b "Definition past_state_of_non_init_state (s:noninitstate) : list (state -> bool) :=\n";
+    bprintf b "  match s with\n";
     lr1_iterx_nonfinal (fun node ->
       let s =
-        String.concat ";\n        " (Invariant.fold
-          (fun accu _ _ states ->
-             let b = Buffer.create 16 in
-             bprintf b "fun s:state =>\n";
-             bprintf b "          match s return bool with\n";
-             bprintf b "            ";
-             Lr1.NodeSet.iter
-               (fun st -> bprintf b "| %s " (print_st st)) states;
-             bprintf b "=> true\n";
-             bprintf b "            | _ => false\n";
-             bprintf b "          end";
-             Buffer.contents b::accu)
-          [] (Invariant.stack node))
+        String.concat "; "
+          (Invariant.fold (fun accu _ _ states -> get_stateset_id states::accu)
+            [] (Invariant.stack node))
       in
-      fprintf f "    | %s =>\n      [ %s ]\n" (print_nis node) s);
-    fprintf f "  end.\n\n";
+      bprintf b "  | %s => [ %s ]\n" (print_nis node) s);
+    bprintf b "  end.\n";
+    Buffer.output_buffer f b;
     fprintf f "Extract Constant past_state_of_non_init_state => \"fun _ -> assert false\".\n\n"
 
+  module TerminalSetMap = Map.Make(TerminalSet)
   let write_items f =
     if not Settings.coq_no_complete then
       begin
+        let get_lookaheadset_id =
+          let memo = ref TerminalSetMap.empty in
+          let next_id = ref 1 in
+          fun lookaheadset ->
+            let lookaheadset =
+              if TerminalSet.mem Terminal.sharp lookaheadset then TerminalSet.universe
+              else lookaheadset
+            in
+            try TerminalSetMap.find lookaheadset !memo
+            with Not_found ->
+              let id = sprintf "lookahead_set_%d" !next_id in
+              memo := TerminalSetMap.add lookaheadset id !memo;
+              incr next_id;
+              fprintf f "Definition %s : list terminal :=\n  [" id;
+              let first = ref true in
+              TerminalSet.iter (fun lookahead ->
+                if !first then first := false
+                else fprintf f "; ";
+                fprintf f "%s" (print_term lookahead)
+              ) lookaheadset;
+              fprintf f "].\nExtract Inlined Constant %s => \"assert false\".\n\n" id;
+              id
+        in
+        let b = Buffer.create 256 in
         lr1_iter_nonfinal (fun node ->
-          fprintf f "Definition items_of_state_%d : list item :=\n" (Lr1.number node);
-          fprintf f "  [ ";
+          bprintf b "Definition items_of_state_%d : list item :=\n" (Lr1.number node);
+          bprintf b "  [ ";
           let first = ref true in
           Item.Map.iter (fun item lookaheads ->
             let prod, pos = Item.export item in
             if not (Production.is_start prod) then begin
                 if !first then first := false
-                else fprintf f ";\n    ";
-                fprintf f "{| prod_item := %s;\n" (print_prod prod);
-                fprintf f "      dot_pos_item := %d;\n" pos;
-                fprintf f "      lookaheads_item := [";
-                let first = ref true in
-                let lookaheads =
-                  if TerminalSet.mem Terminal.sharp lookaheads then TerminalSet.universe
-                  else lookaheads
-                in
-                TerminalSet.iter (fun lookahead ->
-                  if !first then first := false
-                  else fprintf f "; ";
-                  fprintf f "%s" (print_term lookahead)
-                ) lookaheads;
-                fprintf f "] |}"
+                else bprintf b ";\n    ";
+                bprintf b "{| prod_item := %s; dot_pos_item := %d; lookaheads_item := %s |}"
+                        (print_prod prod) pos (get_lookaheadset_id lookaheads);
             end
           )  (Lr0.closure (Lr0.export (Lr1.state node)));
-          fprintf f " ].\n";
-          fprintf f "Extract Inlined Constant items_of_state_%d => \"assert false\".\n\n" (Lr1.number node)
+          bprintf b " ].\n";
+          bprintf b "Extract Inlined Constant items_of_state_%d => \"assert false\".\n\n" (Lr1.number node)
         );
+        Buffer.output_buffer f b;
 
         fprintf f "Definition items_of_state (s:state) : list item :=\n";
         fprintf f "  match s with\n";
         lr1_iter_nonfinal (fun node ->
-          fprintf f "    | %s => items_of_state_%d\n" (print_st node) (Lr1.number node));
+          fprintf f "  | %s => items_of_state_%d\n" (print_st node) (Lr1.number node));
         fprintf f "  end.\n";
       end
     else
@@ -434,11 +461,11 @@ module Run (T: sig end) = struct
 
           fprintf f "Theorem %s_correct iterator buffer:\n" funName;
           fprintf f "  match %s iterator buffer with\n" funName;
-          fprintf f "    | Parser.Inter.Parsed_pr sem buffer_new =>\n";
-          fprintf f "      exists word,\n";
-          fprintf f "        buffer = Parser.Inter.app_str word buffer_new /\\\n";
-          fprintf f "        inhabited (Gram.parse_tree (%s) word sem)\n" (print_symbol (Symbol.N startnt));
-          fprintf f "    | _ => True\n";
+          fprintf f "  | Parser.Inter.Parsed_pr sem buffer_new =>\n";
+          fprintf f "    exists word,\n";
+          fprintf f "      buffer = Parser.Inter.app_str word buffer_new /\\\n";
+          fprintf f "      inhabited (Gram.parse_tree (%s) word sem)\n" (print_symbol (Symbol.N startnt));
+          fprintf f "  | _ => True\n";
           fprintf f "  end.\n";
           fprintf f "Proof. apply Parser.parse_correct. Qed.\n\n";
 
@@ -448,11 +475,11 @@ module Run (T: sig end) = struct
                 funName (print_type (Nonterminal.ocamltype startnt));
               fprintf f "  forall tree:Gram.parse_tree (%s) word output,\n" (print_symbol (Symbol.N startnt));
               fprintf f "  match %s iterator (Parser.Inter.app_str word buffer_end) with\n" funName;
-              fprintf f "    | Parser.Inter.Fail_pr => False\n";
-              fprintf f "    | Parser.Inter.Parsed_pr output_res buffer_end_res =>\n";
-              fprintf f "      output_res = output /\\ buffer_end_res = buffer_end  /\\\n";
-              fprintf f "      le (Gram.pt_size tree) iterator\n";
-              fprintf f "    | Parser.Inter.Timeout_pr => lt iterator (Gram.pt_size tree)\n";
+              fprintf f "  | Parser.Inter.Fail_pr => False\n";
+              fprintf f "  | Parser.Inter.Parsed_pr output_res buffer_end_res =>\n";
+              fprintf f "    output_res = output /\\ buffer_end_res = buffer_end  /\\\n";
+              fprintf f "    le (Gram.pt_size tree) iterator\n";
+              fprintf f "  | Parser.Inter.Timeout_pr => lt iterator (Gram.pt_size tree)\n";
               fprintf f "  end.\n";
               fprintf f "Proof. apply Parser.parse_complete with (init:=Aut.%s); exact complete. Qed.\n\n" (print_init node);
             end
