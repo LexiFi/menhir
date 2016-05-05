@@ -189,7 +189,9 @@ let print_rules mode b g =
     let first = ref true in
     List.iter (fun br ->
       (* Menhir accepts a leading "|", but bison does not. Let's not print it. *)
-      if !first then first := false else Printf.fprintf b "| ";
+      let sep = if !first then "  " else "| " in
+      first := false;
+      Printf.fprintf b "%s" sep;
       print_branch mode b br
     ) r.branches
   ) ordered_rules
@@ -215,4 +217,3 @@ let print mode f g =
   | PrintUnitActionsUnitTokens ->
       ()
   end
-
