@@ -25,6 +25,31 @@
 * Look into the format of bison's tables, and see if we could produce
   them.
 
+* standard library: define "%public %inline epsilon: {}", which allows using
+  "epsilon" as a marker for an empty right-hand side.
+
+* Inspired by BtYacc inherited attributes, which are just syntactic sugar
+  for embedded semantic actions and accesses to the stack at $0, $-1, etc.
+  In other words, a way of using the LR stack for parameter passing.
+  Could Menhir offer something like this? (in a safe way)
+  Every non-terminal symbol would have a "stack type" (a hypothesis about
+  the types of the semantic values on the stack). By default, empty.
+  If non-empty, introduces names for the semantic values.
+  e.g.
+    list<sum>: /* empty */                  { sum }
+             | i = INT sum' = list<sum + i> { sum' }
+  This allows left-to-right-carried state in a list, even though the list
+  is right-recursive, and without using mutable state.
+  (But is that really interesting?)
+  Desugared to:
+    list: /* assumes an integer sum is on the stack */
+      sum = POP { sum }
+    | sum = POP i = INT PUSH<sum + i> sum' = list { sum' }
+  One could read "POP" as a normal nonterminal symbol (of ocaml type int)
+  and read "PUSH" as a primitive embedded action that reduces the empty
+  word to a POP symbol.
+  So if we have embedded actions, we can encode inherited attributes.
+
 * Installation problems.
   - put menhirLib.{ml,mli} in a different directory;
   - avoid using "share/" for architecture-dependent files
@@ -273,4 +298,3 @@
   problème est que l'erreur est forcément rapportée dans le
   fichier .ml engendré. Et ça résoudrait le problème du cas
   où on n'utilise que $startpos(v) et pas v.
-
