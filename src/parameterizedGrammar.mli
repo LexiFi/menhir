@@ -10,6 +10,4 @@
    sanitized via [Misc.normalize] when printed in a context where a
    valid identifier is expected. *)
 
-val expand : InternalSyntax.grammar -> UnparameterizedSyntax.grammar
-
-
+val expand : Syntax.grammar -> UnparameterizedSyntax.grammar

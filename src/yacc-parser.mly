@@ -20,7 +20,7 @@ open Positions
 %token <Stretch.t Lazy.t> PERCENTPERCENT
 %token <Syntax.identifier option array -> Syntax.action> ACTION
 %start grammar
-%type <Syntax.grammar> grammar
+%type <Syntax.partial_grammar> grammar
 
 /* These declarations solve a shift-reduce conflict in favor of
    shifting: when the declaration of a non-terminal symbol begins with

@@ -1,3 +1,13 @@
+(* The type [partial_grammar] describes the abstract syntax that is produced
+   by the parsers (yacc-parser and fancy-parser).
+
+   The type [grammar] describes the abstract syntax that is obtained after one
+   or more partial grammars are joined (see [PartialGrammar]). It differs in
+   that declarations are organized in a more useful way and a number of
+   well-formedness checks have been performed. *)
+
+(* ------------------------------------------------------------------------ *)
+
 (* Terminals and nonterminal symbols are strings. Identifiers
    (which are used to refer to a symbol's semantic value) are
    strings. A file name is a string. *)
@@ -17,15 +27,23 @@ type identifier =
 type filename =
     string
 
+(* ------------------------------------------------------------------------ *)
+
 (* A trailer is a source file fragment. *)
 
 type trailer =
     Stretch.t
 
+(* ------------------------------------------------------------------------ *)
+
 (* OCaml semantic actions are represented as stretches. *)
 
 type action =
     Action.t
+
+(* ------------------------------------------------------------------------ *)
+
+(* Information about tokens. *)
 
 type token_associativity =
     LeftAssoc
@@ -51,6 +69,8 @@ type token_properties =
       mutable  tk_precedence    : precedence_level;
       mutable  tk_is_declared   : bool;
     }
+
+(* ------------------------------------------------------------------------ *)
 
 type parameter =
   | ParameterVar of symbol Positions.located
@@ -123,10 +143,22 @@ type parameterized_rule =
       pr_branches          : parameterized_branch list;
     }
 
-type grammar =
+type partial_grammar =
     {
       pg_filename          : filename;
       pg_declarations      : declaration Positions.located list;
       pg_rules             : parameterized_rule list;
       pg_trailer           : trailer option;
+    }
+
+type grammar =
+    {
+      p_preludes           : Stretch.t list;
+      p_postludes          : trailer list;
+      p_parameters         : Stretch.t list;
+      p_start_symbols      : Positions.t StringMap.t;
+      p_types              : (parameter * Stretch.ocamltype Positions.located) list;
+      p_tokens             : token_properties StringMap.t;
+      p_rules              : parameterized_rule StringMap.t;
+      p_on_error_reduce    : parameter list;
     }

@@ -29,7 +29,7 @@ open Positions
 /* ------------------------------------------------------------------------- */
 /* Start symbol. */
 
-%start <Syntax.grammar> grammar
+%start <Syntax.partial_grammar> grammar
 
 /* ------------------------------------------------------------------------- */
 /* Priorities. */

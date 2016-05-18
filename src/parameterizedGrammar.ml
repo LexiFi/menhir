@@ -1,7 +1,6 @@
 open Positions
 open Syntax
 open UnparameterizedSyntax
-open InternalSyntax
 open Misc
 
 (* Inference for non terminals. *)
@@ -249,7 +248,7 @@ let rec parameter_type env = function
            [Star] otherwise it is the flexible variable. *)
         star_variable
 
-let check_grammar p_grammar =
+let check_grammar (p_grammar : Syntax.grammar) =
   (* [n] is the grammar size. *)
   let n        = StringMap.cardinal p_grammar.p_rules in
 
