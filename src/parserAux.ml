@@ -71,42 +71,6 @@ let override pos o1 o2 =
   | _, None ->
       o1
 
-(* Support for on-the-fly expansion of anonymous rules. Whenever such
-   a rule is encountered, we create a fresh non-terminal symbol, add
-   a definition of this symbol to a global variable, and return a
-   reference to this symbol. Quick and dirty. So, in the end, clean. *)
-
-let fresh : unit -> string =
-  let next = ref 0 in
-  fun () ->
-    Printf.sprintf "__anonymous_%d" (Misc.postincrement next)
-
-let rules =
-  ref []
-
-let anonymous pos branches =
-  (* Generate a fresh non-terminal symbol. *)
-  let symbol = fresh() in
-  (* Construct its definition. Note that it is implicitly marked %inline. *)
-  let rule = {
-    pr_public_flag = false;
-    pr_inline_flag = true;
-    pr_nt          = symbol;
-    pr_positions   = [ pos ]; (* this list is not allowed to be empty *)
-    pr_parameters  = [];
-    pr_branches    = branches
-  } in
-  (* Record this definition. *)
-  rules := rule :: !rules;
-  (* Return the symbol that stands for it. *)
-  symbol
-
-let rules () =
-  let result = !rules in
-  (* Reset the global state, in case we need to read several .mly files. *)
-  rules := [];
-  result
-
 (* Only unnamed producers can be referred to using positional identifiers.
    Besides, such positions must be taken in the interval [1
    .. List.length producers]. The output array [p] is such that
@@ -116,4 +80,3 @@ let producer_names producers =
   producers
   |> List.map (fun (_, oid, _) -> Option.map Positions.value oid)
   |> Array.of_list
-

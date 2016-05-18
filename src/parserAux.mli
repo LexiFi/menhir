@@ -46,15 +46,6 @@ val normalize_producers:
 
 val override: Positions.t -> 'a option -> 'a option -> 'a option
 
-(* Support for on-the-fly expansion of anonymous rules. When such a
-   rule is encountered, invoke [anonymous], which creates a fresh
-   non-terminal symbol, records the definition of this symbol to a
-   global variable, and returns this symbol. In the end, invoke
-   [rules], so as to obtain a list of all recorded definitions. *)
-
-val anonymous: Positions.t -> parameterized_branch list -> string
-val rules: unit -> parameterized_rule list
-
 (* [producer_names producers] returns an array [names] such that
    [names.(idx) = None] if the (idx + 1)-th producer is unnamed
    and [names.(idx) = Some id] if it is called [id]. *)

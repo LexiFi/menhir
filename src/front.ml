@@ -39,6 +39,13 @@ let () =
 
 (* ------------------------------------------------------------------------- *)
 
+(* Eliminate anonymous rules. *)
+
+let partial_grammars =
+  List.map Anonymous.transform_partial_grammar partial_grammars
+
+(* ------------------------------------------------------------------------- *)
+
 (* If several grammar files were specified, merge them. *)
 
 let parameterized_grammar =

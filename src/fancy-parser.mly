@@ -56,7 +56,7 @@ grammar:
       {
         pg_filename          = ""; (* filled in by the caller *)
         pg_declarations      = List.flatten ds;
-        pg_rules             = rs @ ParserAux.rules();
+        pg_rules             = rs;
         pg_trailer           = t
       }
     }
@@ -309,9 +309,13 @@ lax_actual:
 (* 3- *)
 | /* leading bar disallowed */
   branches = branches
-    { let position = position (with_poss $startpos $endpos ()) in
-      let symbol = ParserAux.anonymous position branches in
-      ParameterVar (with_pos position symbol) }
+    { ParameterAnonymous (with_poss $startpos $endpos branches) }
+    (* 2016/05/18: we used to eliminate anonymous rules on the fly during
+       parsing. However, when an anonymous rule appears in a parameterized
+       definition, the fresh nonterminal symbol that is created should be
+       parameterized. This was not done, and is not easy to do on the fly,
+       as it requires inherited attributes (or a way of simulating them).
+       We now use explicit abstract syntax for anonymous rules. *)
 
 /* ------------------------------------------------------------------------- */
 /* Formal or actual parameter lists are delimited with parentheses and
