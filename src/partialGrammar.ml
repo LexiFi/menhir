@@ -198,7 +198,7 @@ let alphaconvert_rule parameters prule =
         pr_branches    = rewrite_branches phi prule.pr_branches
     }
 
-(* Rewrite a rule taking bounded names into account. We rename parameters
+(* Rewrite a rule taking bound names into account. We rename parameters
    to avoid capture. *)
 let rewrite_rule phi prule =
   let ids =
