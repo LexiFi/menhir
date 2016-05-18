@@ -271,7 +271,7 @@ type symbol_kind =
   (* The nonterminal is declared public at a particular position. *)
   | PublicNonTerminal of Positions.t
 
-  (* The nonterminal is not declared public at a particular position. *)
+  (* The nonterminal is declared (nonpublic) at a particular position. *)
   | PrivateNonTerminal of Positions.t
 
   (* The symbol is a token. *)
@@ -312,7 +312,7 @@ let store_symbol (symbols : symbol_table) symbol kind =
                  "the nonterminal symbol %s is multiply defined."
                  symbol
 
-        (* The symbol is known to be a token but declared as a non terminal.*)
+        (* The symbol is known to be a token but declared as a nonterminal.*)
         | (Token tkp, (PrivateNonTerminal p | PublicNonTerminal p))
         | ((PrivateNonTerminal p | PublicNonTerminal p), Token tkp) ->
             Error.error [ p; tkp.tk_position ]
@@ -323,7 +323,7 @@ let store_symbol (symbols : symbol_table) symbol kind =
         | _, DontKnow _ | Token _, Token _ ->
             symbols
 
-        (* We learn that the symbol is a non terminal or a token. *)
+        (* We learn that the symbol is a nonterminal or a token. *)
         | DontKnow _, _ ->
             replace_in_symbol_table symbols symbol kind
 
@@ -331,10 +331,13 @@ let store_symbol (symbols : symbol_table) symbol kind =
     add_in_symbol_table symbols symbol kind
 
 let store_used_symbol position tokens symbols symbol =
-  try
-    store_symbol symbols symbol (Token (StringMap.find symbol tokens))
-  with Not_found ->
-    store_symbol symbols symbol (DontKnow position)
+  let kind =
+    try
+      Token (StringMap.find symbol tokens)
+    with Not_found ->
+      DontKnow position
+  in
+  store_symbol symbols symbol kind
 
 let non_terminal_is_not_reserved symbol positions =
   if symbol = "error" then
@@ -394,7 +397,6 @@ let is_private_symbol t x =
     match Hashtbl.find t x with
       | PrivateNonTerminal _ ->
           true
-
       | _ ->
           false
   with Not_found ->
@@ -436,17 +438,16 @@ let symbols_of grammar (pgrammar : Syntax.partial_grammar) =
   let symbols_of_rule symbols prule =
     let rec store_except_rule_parameters symbols parameter =
       let symbol, parameters = Parameters.unapp parameter in
-      (* Rule parameters are bound locally, so they are not taken into account. *)
-      if List.mem symbol.value prule.pr_parameters then
-        (* TEMPORARY probable BUG: even if the symbol is locally bound, its
-           parameters should still be examined! *)
-        symbols
-      else
-        (* Otherwise, mark this symbol as used and analyse its parameters. *)
-        List.fold_left
-          store_except_rule_parameters
-          (store_used_symbol symbol.position tokens symbols symbol.value)
-          parameters
+      (* Process the reference to [symbol]. *)
+      let symbols =
+        if List.mem symbol.value prule.pr_parameters then
+          (* Rule parameters are bound locally, so they are not taken into account. *)
+          symbols
+        else
+          store_used_symbol symbol.position tokens symbols symbol.value
+      in
+      (* Process the parameters. *)
+      List.fold_left store_except_rule_parameters symbols parameters
     in
 
     (* Analyse each branch. *)
