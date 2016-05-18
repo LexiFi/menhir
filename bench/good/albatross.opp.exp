@@ -240,19 +240,19 @@ let predicate_of_expression (info:info) (e:expression): expression =
 %%
 
 file:
-_1 = use_block _2 = optsemi _3 = decls
+  _1 = use_block _2 = optsemi _3 = decls
     {                          (_1, List.rev _3)}
 | _1 = decls
     {        ([], List.rev _1 )}
 
 decls:
-
+  
     {    ( [] )}
 | _1 = decls _2 = optsemi _3 = decl
     {                       ( _3::_1 )}
 
 decl:
-_1 = class_declaration
+  _1 = class_declaration
     {                      ( _1 )}
 | _1 = named_feature
     {                      ( _1 )}
@@ -262,7 +262,7 @@ _1 = class_declaration
     {                      ( _1 )}
 
 use_block_opt:
-
+  
     {    ( [] )}
 | _1 = decl
     {       ( [] )}
@@ -270,28 +270,28 @@ use_block_opt:
     {            ( _1 )}
 
 use_block:
-_1 = KWuse _2 = module_list _3 = KWend
+  _1 = KWuse _2 = module_list _3 = KWend
     {                            ( List.rev _2 )}
 
 module_list:
-_1 = one_module
+  _1 = one_module
     {                ( [_1] )}
 | _1 = one_module _2 = separator _3 = module_list
     {                                     ( _1 :: _3 )}
 
 one_module:
-_1 = dotted_id_list
+  _1 = dotted_id_list
     {                            (
   withinfo (rhs_info 1) (List.hd _1, List.tl _1)
 )}
 
 formal_generic:
-_1 = UIDENTIFIER _2 = COLON _3 = type_nt
+  _1 = UIDENTIFIER _2 = COLON _3 = type_nt
     {                            ( Formal_generic (withinfo (rhs_info 1) _1,
                                               withinfo (rhs_info 3) _3) )}
 
 ass_feat:
-_1 = proof_all_expr
+  _1 = proof_all_expr
     {                         (
   let entlst, req, impl, ens = _1 in
   let bdy = req, Some impl, ens in
@@ -299,39 +299,39 @@ _1 = proof_all_expr
 )}
 
 ass_req:
-_1 = KWrequire _2 = ass_seq
+  _1 = KWrequire _2 = ass_seq
     {                      ( List.rev _2 )}
 | _1 = KWrequire _2 = ass_seq _3 = separator
     {                                ( List.rev _2 )}
 
 ass_req_opt:
-
+  
     {    ( [] )}
 | _1 = ass_req
     {            ( _1 )}
 
 ass_check:
-_1 = KWproof _2 = proof_seq _3 = separator
+  _1 = KWproof _2 = proof_seq _3 = separator
     {                                       ( List.rev _2 )}
 
 ass_ens:
-_1 = KWensure _2 = ass_seq
+  _1 = KWensure _2 = ass_seq
     {                          ( List.rev _2 )}
 
 ass_seq:
-_1 = info_expr
+  _1 = info_expr
     {                                        ( [_1] )}
 | _1 = ass_seq _2 = separator _3 = info_expr
     {                                        ( _3::_1 )}
 
 proof_seq:
-_1 = proof_expr
+  _1 = proof_expr
     {               ( [_1] )}
 | _1 = proof_seq _2 = separator _3 = proof_expr
     {                                   ( _3::_1 )}
 
 proof_expr:
-_1 = info_expr
+  _1 = info_expr
     {              ( _1 )}
 | _1 = proof_expr_struct
     {                      ( _1 )}
@@ -345,21 +345,21 @@ _1 = info_expr
 )}
 
 proof_all_expr:
-_1 = KWall _2 = formal_arguments_opt _3 = opt_nl _4 = ass_req_opt _5 = ass_imp _6 = ass_ens _7 = KWend
+  _1 = KWall _2 = formal_arguments_opt _3 = opt_nl _4 = ass_req_opt _5 = ass_imp _6 = ass_ens _7 = KWend
     {                              (
   let entlst = withinfo (rhs_info 2) _2 in
   entlst, _4, _5, _6
 )}
 
 proof_all_expr_inner:
-_1 = KWall _2 = formal_arguments _3 = opt_nl _4 = ass_req_opt _5 = ass_imp _6 = ass_ens _7 = KWend
+  _1 = KWall _2 = formal_arguments _3 = opt_nl _4 = ass_req_opt _5 = ass_imp _6 = ass_ens _7 = KWend
     {          (
   let entlst = withinfo (rhs_info 2) _2 in
   entlst, _4, _5, _6
 )}
 
 proof_expr_struct:
-_1 = ass_req _2 = ass_check _3 = ass_ens _4 = KWend
+  _1 = ass_req _2 = ass_check _3 = ass_ens _4 = KWend
     {                                   (
   let is_do = false in
   let impl  = Impdefined (None,is_do,_2) in
@@ -380,7 +380,7 @@ _1 = ass_req _2 = ass_check _3 = ass_ens _4 = KWend
 )}
 
 ass_imp:
-
+  
     {    ( Impdefined (None,false,[]) )}
 | _1 = ass_check
     {                        ( Impdefined (None,false,_1) )}
@@ -395,7 +395,7 @@ ass_imp:
 )}
 
 header_mark:
-
+  
     {  ( No_hmark )}
 | _1 = KWimmutable
     {              ( Immutable_hmark )}
@@ -405,7 +405,7 @@ header_mark:
     {              ( Deferred_hmark  )}
 
 class_declaration:
-_1 = header_mark _2 = KWclass _3 = class_name _4 = class_generics _5 = create_clause _6 = inherit_clause _7 = KWend
+  _1 = header_mark _2 = KWclass _3 = class_name _4 = class_generics _5 = create_clause _6 = inherit_clause _7 = KWend
     {        (
   Class_declaration( withinfo (rhs_info 3) _1,
                      withinfo (rhs_info 3) _3,
@@ -415,51 +415,51 @@ _1 = header_mark _2 = KWclass _3 = class_name _4 = class_generics _5 = create_cl
 )}
 
 class_name:
-_1 = UIDENTIFIER
+  _1 = UIDENTIFIER
     {                ( [], _1 )}
 | _1 = path _2 = UIDENTIFIER
     {                     ( _1, _2 )}
 
 class_generics:
-
+  
     {    ( [] )}
 | _1 = LBRACKET _2 = uidentifier_list _3 = RBRACKET
     {                                       ( _2 )}
 
 inherit_clause:
-
+  
     {    ( [] )}
 | _1 = KWinherit _2 = parent_list
     {                        ( _2 )}
 
 parent_list:
-_1 = parent
+  _1 = parent
     {           ( [_1] )}
 | _1 = parent _2 = optsemi _3 = parent_list
     {                               ( _1::_3 )}
 
 parent:
-_1 = optghost _2 = type_nt _3 = feature_adaptation
+  _1 = optghost _2 = type_nt _3 = feature_adaptation
     {                                            ( _1, withinfo (rhs_info 2) _2, _3 )}
 
 feature_adaptation:
-
+  
     {    ( [] )}
 | _1 = KWrename _2 = rename_list _3 = KWend
     {                               ( _2 )}
 
 rename_list:
-_1 = rename_item
+  _1 = rename_item
     {                 ( [_1] )}
 | _1 = rename_item _2 = optsemi _3 = rename_list
     {                                     ( _1::_3 )}
 
 rename_item:
-_1 = name_sig _2 = KWas _3 = nameopconst
+  _1 = name_sig _2 = KWas _3 = nameopconst
     {                               ( _1,_3 )}
 
 name_sig:
-_1 = nameopconst
+  _1 = nameopconst
     {                ( _1,[],None )}
 | _1 = nameopconst _2 = LPAREN _3 = type_list _4 = RPAREN
     {                                        ( _1,_3,None )}
@@ -467,41 +467,41 @@ _1 = nameopconst
     {                                                      ( _1,_3, Some _6 )}
 
 create_clause:
-
+  
     {    ( withinfo UNKNOWN [] )}
 | _1 = KWcreate _2 = constructor_list
     {                            ( withinfo (rhs_info 1) _2 )}
 
 constructor_list:
-_1 = constructor
+  _1 = constructor
     {                ( [_1] )}
 | _1 = constructor _2 = separator _3 = constructor_list
     {                                           ( _1::_3 )}
 
 constructor:
-_1 = nameopconst_info _2 = formal_arguments_opt
+  _1 = nameopconst_info _2 = formal_arguments_opt
     {                                                   (
   _1, _2
    )}
 
 path:
-_1 = dotted_id_list _2 = DOT
+  _1 = dotted_id_list _2 = DOT
     {                         ( _1 )}
 
 dotted_id_list:
-_1 = LIDENTIFIER %prec LOWEST_PREC
+  _1 = LIDENTIFIER %prec LOWEST_PREC
     {                                   ( [_1] )}
 | _1 = dotted_id_list _2 = DOT _3 = LIDENTIFIER
     {                                   ( _3::_1 )}
 
 type_nt:
-_1 = elem_type %prec LOWEST_PREC
+  _1 = elem_type %prec LOWEST_PREC
     {                                    ( _1 )}
 | _1 = arrow_type
     {                  ( _1 )}
 
 elem_type:
-_1 = simple_type
+  _1 = simple_type
     {                 ( _1 )}
 | _1 = tuple_type
     {                 ( _1 )}
@@ -515,7 +515,7 @@ _1 = simple_type
     {                          ( Paren_type _2 )}
 
 simple_type:
-_1 = UIDENTIFIER _2 = actual_generics
+  _1 = UIDENTIFIER _2 = actual_generics
     {                                (
   Normal_type ([],_1,_2)
 )}
@@ -525,47 +525,47 @@ _1 = UIDENTIFIER _2 = actual_generics
 )}
 
 actual_generics:
- %prec LOWEST_PREC
+   %prec LOWEST_PREC
     {                      ([])}
 | _1 = LBRACKET _2 = type_list _3 = RBRACKET
     {                                ( _2 )}
 
 arrow_type:
-_1 = elem_type _2 = ARROW _3 = type_nt
+  _1 = elem_type _2 = ARROW _3 = type_nt
     {                                    (
   Arrow_type (_1,_3)
 )}
 
 qmark_type:
-_1 = elem_type _2 = QMARK
+  _1 = elem_type _2 = QMARK
     {                              ( QMark_type _1 )}
 
 star_type:
-_1 = elem_type _2 = TIMES
+  _1 = elem_type _2 = TIMES
     {                              ( Star_type _1 )}
 
 list_type:
-_1 = LBRACKET _2 = elem_type _3 = RBRACKET
+  _1 = LBRACKET _2 = elem_type _3 = RBRACKET
     {                                        ( List_type _2 )}
 
 tuple_type:
-_1 = LPAREN _2 = type_list_min2 _3 = RPAREN
+  _1 = LPAREN _2 = type_list_min2 _3 = RPAREN
     {                                           ( Tuple_type _2 )}
 
 type_list_min2:
-_1 = type_nt _2 = COMMA _3 = type_nt
+  _1 = type_nt _2 = COMMA _3 = type_nt
     {                        ( [_1;_3] )}
 | _1 = type_nt _2 = COMMA _3 = type_list_min2
     {                               ( _1::_3 )}
 
 type_list:
-_1 = type_nt
+  _1 = type_nt
     {          ( [_1])}
 | _1 = type_list_min2
     {                 ( _1 )}
 
 named_feature:
-_1 = nameopconst_info _2 = formal_arguments_info _3 = return_type_opt _4 = optsemi _5 = feature_body_opt
+  _1 = nameopconst_info _2 = formal_arguments_info _3 = return_type_opt _4 = optsemi _5 = feature_body_opt
     {                     (
   Named_feature (_1, _2, _3, false, _5, None)
 )}
@@ -583,17 +583,17 @@ _1 = nameopconst_info _2 = formal_arguments_info _3 = return_type_opt _4 = optse
 )}
 
 nameopconst_info:
-_1 = nameopconst
+  _1 = nameopconst
     {                              ( withinfo (rhs_info 1) _1 )}
 
 nameopconst:
-_1 = LIDENTIFIER
+  _1 = LIDENTIFIER
     {                       ( FNname _1 )}
 | _1 = featopconst
     {                       ( _1 )}
 
 featopconst:
-_1 = LPAREN _2 = operator _3 = RPAREN
+  _1 = LPAREN _2 = operator _3 = RPAREN
     {                           ( FNoperator _2)}
 | _1 = KWtrue
     {                           ( FNtrue )}
@@ -603,7 +603,7 @@ _1 = LPAREN _2 = operator _3 = RPAREN
     {                           ( FNnumber _1 )}
 
 return_type:
-_1 = COLON _2 = elem_type
+  _1 = COLON _2 = elem_type
     {                            ( withinfo (rhs_info 2) (_2,false,false) )}
 | _1 = COLON _2 = KWghost _3 = elem_type
     {                            ( withinfo (rhs_info 3) (_3,false,true)  )}
@@ -611,19 +611,19 @@ _1 = COLON _2 = elem_type
     {                            ( withinfo (rhs_info 3) (_3,true,false)  )}
 
 return_type_opt:
-
+  
     {    ( None )}
 | _1 = return_type
     {                ( Some _1 )}
 
 feature_body_opt:
- %prec LOWEST_PREC
+   %prec LOWEST_PREC
     {                      ( None )}
 | _1 = feature_body
     {                      ( Some _1 )}
 
 feature_body:
-_1 = require_block _2 = feature_implementation _3 = ensure_block _4 = KWend
+  _1 = require_block _2 = feature_implementation _3 = ensure_block _4 = KWend
     {    ( _1, Some _2, _3 )}
 | _1 = require_block _2 = feature_implementation _3 = KWend
     {                                                ( _1, Some _2, [] )}
@@ -639,7 +639,7 @@ _1 = require_block _2 = feature_implementation _3 = ensure_block _4 = KWend
     {                                                ( [], None,    _1 )}
 
 feature_implementation:
-_1 = KWdeferred
+  _1 = KWdeferred
     {                         ( Impdeferred )}
 | _1 = implementation_note
     {                         ( _1 )}
@@ -647,43 +647,43 @@ _1 = KWdeferred
     {                         ( _1 )}
 
 implementation_block:
-_1 = local_block _2 = do_block
+  _1 = local_block _2 = do_block
     {                            ( Impdefined(_1,true, _2) )}
 | _1 = local_block _2 = proof_block
     {                            ( Impdefined(_1,false,_2) )}
 
 require_block:
-_1 = KWrequire _2 = compound
+  _1 = KWrequire _2 = compound
     {                       ( _2 )}
 
 require_block_opt:
-
+  
     {    ( [] )}
 | _1 = require_block
     {                  ( _1 )}
 
 proof_block:
-_1 = KWproof _2 = compound
+  _1 = KWproof _2 = compound
     {                     ( _2 )}
 
 do_block:
-_1 = KWdo _2 = compound
+  _1 = KWdo _2 = compound
     {                        ( _2 )}
 
 local_block:
-
+  
     {    ( None )}
 | _1 = KWlocal _2 = local_list
     {                       ( Some _2 )}
 
 local_list:
-_1 = local_declaration
+  _1 = local_declaration
     {                      ( [_1] )}
 | _1 = local_declaration _2 = SEMICOL _3 = local_list
     {                                         ( _1::_3)}
 
 local_declaration:
-_1 = entity_list
+  _1 = entity_list
     {                ( Unassigned _1 )}
 | _1 = entity_list _2 = ASSIGN _3 = expr
     {                            ( Assigned (_1,_3) )}
@@ -693,7 +693,7 @@ _1 = entity_list
 )}
 
 implementation_note:
-_1 = KWnote _2 = LIDENTIFIER _3 = optsemi
+  _1 = KWnote _2 = LIDENTIFIER _3 = optsemi
     {                                                (
   let str = ST.string _2
   in
@@ -704,57 +704,57 @@ _1 = KWnote _2 = LIDENTIFIER _3 = optsemi
 )}
 
 ensure_block:
-_1 = KWensure _2 = compound
+  _1 = KWensure _2 = compound
     {                      ( _2 )}
 
 entity_list:
-_1 = entity_group
+  _1 = entity_group
     {                 ( [_1] )}
 | _1 = entity_group _2 = COMMA _3 = entity_list
     {                                   ( _1::_3 )}
 
 entity_group:
-_1 = identifier_list
+  _1 = identifier_list
     {                    ( Untyped_entities _1 )}
 | _1 = identifier_list _2 = COLON _3 = type_nt
     {                                  ( Typed_entities (_1,_3) )}
 
 identifier_list:
-_1 = LIDENTIFIER %prec LOWEST_PREC
+  _1 = LIDENTIFIER %prec LOWEST_PREC
     {                                  ( [_1] )}
 | _1 = LIDENTIFIER _2 = COMMA _3 = identifier_list
     {                                      ( _1::_3 )}
 
 formal_arguments_info:
-_1 = formal_arguments
+  _1 = formal_arguments
     {                                        ( withinfo (rhs_info 1) _1 )}
 
 formal_arguments_opt:
-
+  
     {    ( [] )}
 | _1 = formal_arguments
     {                     ( _1 )}
 
 formal_arguments:
-_1 = LPAREN _2 = entity_list _3 = RPAREN
+  _1 = LPAREN _2 = entity_list _3 = RPAREN
     {                                            ( _2 )}
 
 compound:
-_1 = compound_list
+  _1 = compound_list
     {                        ( _1 )}
 
 compound_list:
-_1 = info_expr _2 = optsemi
+  _1 = info_expr _2 = optsemi
     {                       ( [_1] )}
 | _1 = info_expr _2 = SEMICOL _3 = compound_list
     {                                    ( _1::_3 )}
 
 info_expr:
-_1 = expr %prec LOWEST_PREC
+  _1 = expr %prec LOWEST_PREC
     {                                  ( withinfo (rhs_info 1) _1 )}
 
 expr:
-_1 = atomic_expr
+  _1 = atomic_expr
     {                                  ( _1 )}
 | _1 = operator_expr
     {                                  ( _1 )}
@@ -827,7 +827,7 @@ _1 = atomic_expr
     {                   ( _1 )}
 
 atomic_expr:
-_1 = KWResult
+  _1 = KWResult
     {                                  ( ExpResult )}
 | _1 = NUMBER
     {                                  ( Expnumber _1 )}
@@ -843,7 +843,7 @@ _1 = KWResult
 )}
 
 operator_expr:
-_1 = expr _2 = PLUS _3 = expr
+  _1 = expr _2 = PLUS _3 = expr
     {                                  ( Binexp (Plusop,_1,_3) )}
 | _1 = expr _2 = MINUS _3 = expr
     {                                  ( Binexp (Minusop,_1,_3) )}
@@ -897,7 +897,7 @@ _1 = expr _2 = PLUS _3 = expr
     {                                  ( Binexp (DArrowop,_1,_3) )}
 
 operator:
-_1 = PLUS
+  _1 = PLUS
     {              ( Plusop )}
 | _1 = MINUS
     {              ( Minusop )}
@@ -951,25 +951,25 @@ _1 = PLUS
     {              ( Bracketop )}
 
 optghost:
-
+  
     {    ( false )}
 | _1 = KWghost
     {          ( true )}
 
 optsemi:
- %prec LOWEST_PREC
+   %prec LOWEST_PREC
     {                      (())}
 | _1 = SEMICOL
     {            (())}
 
 uidentifier_list:
-_1 = UIDENTIFIER
+  _1 = UIDENTIFIER
     {                ( [_1] )}
 | _1 = UIDENTIFIER _2 = COMMA _3 = uidentifier_list
     {                                       ( _1::_3 )}
 
 opt_nl:
-
+  
     {    (())}
 | _1 = SEMICOL
     {            (())}
@@ -977,45 +977,45 @@ opt_nl:
     {            (())}
 
 separator:
-_1 = SEMICOL
+  _1 = SEMICOL
     {             (())}
 | _1 = NEWLINE
     {             (())}
 
 exp_conditional:
-_1 = KWif _2 = exp_then_part_list _3 = exp_else_part _4 = KWend
+  _1 = KWif _2 = exp_then_part_list _3 = exp_else_part _4 = KWend
     {                                                ( Expif (_2,_3) )}
 
 exp_then_part_list:
-_1 = exp_then_part
+  _1 = exp_then_part
     {                  ( [_1] )}
 | _1 = exp_then_part _2 = KWelseif _3 = exp_then_part_list
     {                                               ( _1::_3 )}
 
 exp_then_part:
-_1 = expr _2 = KWthen _3 = expr
+  _1 = expr _2 = KWthen _3 = expr
     {                     ( _1, _3 )}
 
 exp_else_part:
-
+  
     {    ( None )}
 | _1 = KWelse _2 = expr
     {                ( Some _2 )}
 
 exp_inspect:
-_1 = KWinspect _2 = expr _3 = exp_case_list _4 = KWend
+  _1 = KWinspect _2 = expr _3 = exp_case_list _4 = KWend
     {                                       (
   Expinspect (_2,_3)
     )}
 
 exp_case_list:
-_1 = exp_case
+  _1 = exp_case
     {             ( [_1] )}
 | _1 = exp_case _2 = exp_case_list
     {                           ( _1 :: _2 )}
 
 exp_case:
-_1 = KWcase _2 = expr _3 = KWthen _4 = expr
+  _1 = KWcase _2 = expr _3 = KWthen _4 = expr
     {                                  ( _2, _4 )}
 
 %%

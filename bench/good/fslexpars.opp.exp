@@ -38,59 +38,59 @@ open Fslexast
 %%
 
 spec:
-_1 = codeopt _2 = macros _3 = RULE _4 = rules _5 = codeopt
+  _1 = codeopt _2 = macros _3 = RULE _4 = rules _5 = codeopt
     {                                        ( { topcode=_1;macros=_2;rules=_4;botcode=_5 } )}
 
 codeopt:
-_1 = CODE
+  _1 = CODE
     {              ( _1 )}
 | 
     {                       ( "", Parsing.symbol_start_pos () )}
 
 macros:
-
+  
     {         ( [] )}
 | _1 = macro _2 = macros
     {                               ( _1 :: _2 )}
 
 macro:
-_1 = LET _2 = IDENT _3 = EQUALS _4 = regexp
+  _1 = LET _2 = IDENT _3 = EQUALS _4 = regexp
     {                               ( (_2, _4) )}
 
 rules:
-_1 = rule _2 = AND _3 = rules
+  _1 = rule _2 = AND _3 = rules
     {                      ( _1 :: _3 )}
 | _1 = rule
     {                                          ( [_1] )}
 
 rule:
-_1 = IDENT _2 = args _3 = EQUALS _4 = PARSE _5 = optbar _6 = clauses
+  _1 = IDENT _2 = args _3 = EQUALS _4 = PARSE _5 = optbar _6 = clauses
     {                                             ( (_1,_2,_6) )}
 
 args:
-
+  
     {      ( [] )}
 | _1 = IDENT _2 = args
     {                          ( _1 :: _2 )}
 
 optbar:
-
+  
     {        ( )}
 | _1 = BAR
     {                  ( )}
 
 clauses:
-_1 = clause _2 = BAR _3 = clauses
+  _1 = clause _2 = BAR _3 = clauses
     {                            (_1 :: _3 )}
 | _1 = clause
     {                                                 ( [_1] )}
 
 clause:
-_1 = regexp _2 = CODE
+  _1 = regexp _2 = CODE
     {                    ( _1, _2 )}
 
 regexp:
-_1 = CHAR
+  _1 = CHAR
     {       ( Inp(LChar _1) )}
 | _1 = EOF
     {      ( Inp(LEof) )}
@@ -118,7 +118,7 @@ _1 = CHAR
     {                              ( Alt(foldi(fun n l -> if List.mem (Char.chr n) _3 then l else Inp(LChar (Char.chr n))::l) 255 []) )}
 
 charset:
-_1 = CHAR
+  _1 = CHAR
     {        ( [_1] )}
 | _1 = CHAR _2 = DASH _3 = CHAR
     {                  ( mapi(fun n -> Char.chr (n+Char.code _1)) (Char.code _3 - Char.code _1) )}

@@ -243,29 +243,29 @@ open Parser_cpp_mly_helper
 %%
 
 main:
-_1 = translation_unit _2 = EOF
+  _1 = translation_unit _2 = EOF
     {                            ( _1 )}
 
 translation_unit:
-_1 = external_declaration
+  _1 = external_declaration
     {                                             ( [DeclElem _1] )}
 | _1 = translation_unit _2 = external_declaration
     {                                             ( _1 @ [DeclElem _2] )}
 
 external_declaration:
-_1 = function_definition
+  _1 = function_definition
     {                                  ( Func (FunctionOrMethod _1) )}
 | _1 = block_declaration
     {                                  ( BlockDecl _1 )}
 
 id_expression:
-_1 = unqualified_id
+  _1 = unqualified_id
     {                  ( noQscope, _1 )}
 | _1 = qualified_id
     {                ( _1 )}
 
 unqualified_id:
-_1 = TIdent
+  _1 = TIdent
     {                          ( IdIdent _1 )}
 | _1 = operator_function_id
     {                          ( _1 )}
@@ -273,15 +273,15 @@ _1 = TIdent
     {                          ( _1 )}
 
 operator_function_id:
-_1 = Toperator _2 = operator_kind
+  _1 = Toperator _2 = operator_kind
     {    ( IdOperator (_1, _2) )}
 
 conversion_function_id:
-_1 = Toperator _2 = conversion_type_id
+  _1 = Toperator _2 = conversion_type_id
     {    ( IdConverter (_1, _2) )}
 
 operator_kind:
-_1 = TEqEq
+  _1 = TEqEq
     {          ( BinaryOp (Logical Eq),    [_1] )}
 | _1 = TNotEq
     {          ( BinaryOp (Logical NotEq), [_1] )}
@@ -349,51 +349,51 @@ _1 = TEqEq
     {                               ( AllocOp DeleteArrayOp, [_1;_2;_3] )}
 
 qualified_id:
-_1 = nested_name_specifier _2 = unqualified_id
+  _1 = nested_name_specifier _2 = unqualified_id
     {   ( _1, _2 )}
 
 nested_name_specifier:
-_1 = class_or_namespace_name_for_qualifier _2 = TColCol _3 = nested_name_specifier_opt
+  _1 = class_or_namespace_name_for_qualifier _2 = TColCol _3 = nested_name_specifier_opt
     {   ( (_1, _2)::_3 )}
 
 class_or_namespace_name_for_qualifier:
-_1 = TIdent_ClassnameInQualifier
+  _1 = TIdent_ClassnameInQualifier
     {     ( QClassname _1 )}
 | _1 = TIdent_TemplatenameInQualifier _2 = TInf_Template _3 = template_argument_list _4 = TSup_Template
     {     ( QTemplateId (_1, (_2, _3, _4)) )}
 
 enum_name_or_typedef_name_or_simple_class_name:
-_1 = TIdent_Typedef
+  _1 = TIdent_Typedef
     {                  ( _1 )}
 
 namespace_name:
-_1 = TIdent
+  _1 = TIdent
     {          ( _1 )}
 
 nested_name_specifier2:
-_1 = class_or_namespace_name_for_qualifier2 _2 = TColCol_BeforeTypedef _3 = nested_name_specifier_opt2
+  _1 = class_or_namespace_name_for_qualifier2 _2 = TColCol_BeforeTypedef _3 = nested_name_specifier_opt2
     {     ( (_1, _2)::_3 )}
 
 class_or_namespace_name_for_qualifier2:
-_1 = TIdent_ClassnameInQualifier_BeforeTypedef
+  _1 = TIdent_ClassnameInQualifier_BeforeTypedef
     {     ( QClassname _1  )}
 | _1 = TIdent_TemplatenameInQualifier_BeforeTypedef _2 = TInf_Template _3 = template_argument_list _4 = TSup_Template
     {     ( QTemplateId (_1, (_2, _3, _4)) )}
 
 ident:
-_1 = TIdent
+  _1 = TIdent
     {                  ( _1 )}
 | _1 = TIdent_Typedef
     {                  ( _1 )}
 
 expr:
-_1 = assign_expr
+  _1 = assign_expr
     {                           ( _1 )}
 | _1 = expr _2 = TComma _3 = assign_expr
     {                           ( mk_e (Sequence (_1,_3)) [_2] )}
 
 assign_expr:
-_1 = cond_expr
+  _1 = cond_expr
     {                                 ( _1 )}
 | _1 = cast_expr _2 = TAssign _3 = assign_expr
     {                                 ( mk_e(Assignment (_1,fst _2,_3)) [snd _2])}
@@ -403,13 +403,13 @@ _1 = cond_expr
     {                                 ( mk_e (Throw _2) [_1] )}
 
 cond_expr:
-_1 = arith_expr
+  _1 = arith_expr
     {                ( _1 )}
 | _1 = arith_expr _2 = TWhy _3 = expr_opt _4 = TCol _5 = assign_expr
     {     ( mk_e (CondExpr (_1,_3,_5)) [_2;_4] )}
 
 arith_expr:
-_1 = pm_expr
+  _1 = pm_expr
     {                               ( _1 )}
 | _1 = arith_expr _2 = TMul _3 = arith_expr
     {                                 ( mk_e(Binary (_1, Arith Mul,      _3)) [_2] )}
@@ -449,7 +449,7 @@ _1 = pm_expr
     {                                 ( mk_e(Binary (_1, Logical OrLog,  _3)) [_2] )}
 
 pm_expr:
-_1 = cast_expr
+  _1 = cast_expr
     {             ( _1 )}
 | _1 = pm_expr _2 = TDotStar _3 = cast_expr
     {     ( mk_e(RecordStarAccess   (_1,_3)) [_2])}
@@ -457,13 +457,13 @@ _1 = cast_expr
     {     ( mk_e(RecordPtStarAccess (_1,_3)) [_2])}
 
 cast_expr:
-_1 = unary_expr
+  _1 = unary_expr
     {                                     ( _1 )}
 | _1 = TOPar _2 = type_id _3 = TCPar _4 = cast_expr
     {                                 ( mk_e(Cast ((_1, _2, _3), _4)) noii )}
 
 unary_expr:
-_1 = postfix_expr
+  _1 = postfix_expr
     {                                   ( _1 )}
 | _1 = TInc _2 = unary_expr
     {                                   ( mk_e(Infix (_2, Inc))    [_1] )}
@@ -481,7 +481,7 @@ _1 = postfix_expr
     {                 ( _1 )}
 
 unary_op:
-_1 = TAnd
+  _1 = TAnd
     {          ( GetRef,     _1 )}
 | _1 = TMul
     {          ( DeRef,      _1 )}
@@ -497,7 +497,7 @@ _1 = TAnd
     {           ( GetRefLabel, _1 )}
 
 postfix_expr:
-_1 = primary_expr
+  _1 = primary_expr
     {                              ( _1 )}
 | _1 = postfix_expr _2 = TOCro _3 = expr _4 = TCCro
     {     ( mk_e(ArrayAccess (_1, (_2, _3, _4))) noii )}
@@ -523,7 +523,7 @@ _1 = primary_expr
     {                         ( _1 )}
 
 primary_expr:
-_1 = TInt
+  _1 = TInt
     {           ( mk_e(C (Int    (fst _1))) [snd _1] )}
 | _1 = TFloat
     {           ( mk_e(C (Float  (fst _1))) [snd _1] )}
@@ -547,7 +547,7 @@ _1 = TInt
     {                        ( _1 )}
 
 primary_cplusplus_id:
-_1 = id_expression
+  _1 = id_expression
     {     ( let name = (None, fst _1, snd _1) in 
        mk_e (Id (name, noIdInfo())) []  )}
 | _1 = TColCol _2 = TIdent
@@ -562,13 +562,13 @@ _1 = id_expression
        mk_e (Id (name, noIdInfo())) [] )}
 
 cast_operator_expr:
-_1 = cpp_cast_operator _2 = TInf_Template _3 = type_id _4 = TSup_Template _5 = TOPar _6 = expr _7 = TCPar
+  _1 = cpp_cast_operator _2 = TInf_Template _3 = type_id _4 = TSup_Template _5 = TOPar _6 = expr _7 = TCPar
     {     ( mk_e (CplusplusCast (_1, (_2, _3, _4), (_5, _6, _7))) noii )}
 | _1 = cpp_cast_operator _2 = TOPar _3 = expr _4 = TCPar
     {     ( mk_e ExprTodo noii )}
 
 cpp_cast_operator:
-_1 = Tstatic_cast
+  _1 = Tstatic_cast
     {                     ( Static_cast, _1 )}
 | _1 = Tdynamic_cast
     {                     ( Dynamic_cast, _1 )}
@@ -578,7 +578,7 @@ _1 = Tstatic_cast
     {                     ( Reinterpret_cast, _1 )}
 
 cast_constructor_expr:
-_1 = TIdent_TypedefConstr _2 = TOPar _3 = argument_list_opt _4 = TCPar
+  _1 = TIdent_TypedefConstr _2 = TOPar _3 = argument_list_opt _4 = TCPar
     {     ( let name = None, noQscope, IdIdent _1 in
        let ft = nQ, (TypeName name, noii) in
        mk_e(ConstructedObject (ft, (_2, _3, _4))) noii  
@@ -589,47 +589,47 @@ _1 = TIdent_TypedefConstr _2 = TOPar _3 = argument_list_opt _4 = TCPar
      )}
 
 new_expr:
-_1 = tcolcol_opt _2 = Tnew _3 = new_placement_opt _4 = new_type_id _5 = new_initializer_opt
+  _1 = tcolcol_opt _2 = Tnew _3 = new_placement_opt _4 = new_type_id _5 = new_initializer_opt
     {     ( mk_e (New (_1, _2, _3, _4, _5)) noii  )}
 
 delete_expr:
-_1 = tcolcol_opt _2 = Tdelete _3 = cast_expr
+  _1 = tcolcol_opt _2 = Tdelete _3 = cast_expr
     {     ( mk_e (Delete (_1, _3)) [_2] )}
 | _1 = tcolcol_opt _2 = Tdelete _3 = TOCro_new _4 = TCCro_new _5 = cast_expr
     {     ( mk_e (DeleteArray (_1, _5)) [_2;_3;_4] )}
 
 new_placement:
-_1 = TOPar _2 = argument_list _3 = TCPar
+  _1 = TOPar _2 = argument_list _3 = TCPar
     {                             ( (_1, _2, _3) )}
 
 new_initializer:
-_1 = TOPar _2 = argument_list_opt _3 = TCPar
+  _1 = TOPar _2 = argument_list_opt _3 = TCPar
     {                                 ( (_1, _2, _3) )}
 
 compound_literal_expr:
-_1 = TOPar _2 = type_id _3 = TCPar _4 = TOBrace _5 = TCBrace
+  _1 = TOPar _2 = type_id _3 = TCPar _4 = TOBrace _5 = TCBrace
     {     ( mk_e(GccConstructor ((_1, _2, _3), (_4, [], _5))) noii )}
 | _1 = TOPar _2 = type_id _3 = TCPar _4 = TOBrace _5 = initialize_list _6 = gcc_comma_opt _7 = TCBrace
     {     ( mk_e(GccConstructor ((_1, _2, _3), (_4, List.rev _5, _7))) noii )}
 
 string_elem:
-_1 = TString
+  _1 = TString
     {           ( [snd _1] )}
 | _1 = TIdent_MacroString
     {                      ( [_1] )}
 
 argument:
-_1 = assign_expr
+  _1 = assign_expr
     {               ( Left _1 )}
 | _1 = type_id
     {           ( Right (ArgType _1)  )}
 
 const_expr:
-_1 = cond_expr
+  _1 = cond_expr
     {                      ( _1  )}
 
 basic_type_2:
-_1 = Tchar_Constr
+  _1 = Tchar_Constr
     {                   ( (BaseType (IntType CChar)), [_1])}
 | _1 = Tint_Constr
     {                   ( (BaseType (IntType (Si (Signed,CInt)))), [_1])}
@@ -647,7 +647,7 @@ _1 = Tchar_Constr
     {                   ( (BaseType (IntType CBool)),         [_1] )}
 
 statement:
-_1 = compound
+  _1 = compound
     {                   ( Compound _1, noii )}
 | _1 = expr_statement
     {                   ( ExprStatement(fst _1), snd _1 )}
@@ -669,15 +669,15 @@ _1 = compound
     {             ( _1 )}
 
 compound:
-_1 = TOBrace _2 = statement_list_opt _3 = TCBrace
+  _1 = TOBrace _2 = statement_list_opt _3 = TCBrace
     {                                      ( (_1, _2, _3) )}
 
 expr_statement:
-_1 = expr_opt _2 = TPtVirg
+  _1 = expr_opt _2 = TPtVirg
     {                    ( _1, [_2] )}
 
 labeled:
-_1 = ident _2 = TCol _3 = statement
+  _1 = ident _2 = TCol _3 = statement
     {                                     ( Label (fst _1, _3),  [snd _1; _2] )}
 | _1 = Tcase _2 = const_expr _3 = TCol _4 = statement
     {                                     ( Case (_2, _4),       [_1; _3] )}
@@ -687,7 +687,7 @@ _1 = ident _2 = TCol _3 = statement
     {                                     ( Default _3,             [_1; _2] )}
 
 selection:
-_1 = Tif _2 = TOPar _3 = expr _4 = TCPar _5 = statement %prec LOW_PRIORITY_RULE
+  _1 = Tif _2 = TOPar _3 = expr _4 = TCPar _5 = statement %prec LOW_PRIORITY_RULE
     {     ( If (_1, (_2, _3, _4), _5, None, (ExprStatement None, [])), noii )}
 | _1 = Tif _2 = TOPar _3 = expr _4 = TCPar _5 = statement _6 = Telse _7 = statement
     {     ( If (_1, (_2, _3, _4), _5, Some _6, _7), noii )}
@@ -695,7 +695,7 @@ _1 = Tif _2 = TOPar _3 = expr _4 = TCPar _5 = statement %prec LOW_PRIORITY_RULE
     {     ( Switch (_1, (_2, _3, _4), _5), noii )}
 
 iteration:
-_1 = Twhile _2 = TOPar _3 = expr _4 = TCPar _5 = statement
+  _1 = Twhile _2 = TOPar _3 = expr _4 = TCPar _5 = statement
     {     ( While (_1, (_2, _3, _4), _5), noii )}
 | _1 = Tdo _2 = statement _3 = Twhile _4 = TOPar _5 = expr _6 = TCPar _7 = TPtVirg
     {     ( DoWhile (_1, _2, _3, (_4, _5, _6), _7), noii )}
@@ -705,7 +705,7 @@ _1 = Twhile _2 = TOPar _3 = expr _4 = TCPar _5 = statement
     {     ( MacroIteration (_1, (_2, _3, _4), _5), noii )}
 
 jump:
-_1 = Tgoto _2 = ident
+  _1 = Tgoto _2 = ident
     {                ( Goto (fst _2),  [_1;snd _2] )}
 | _1 = Tcontinue
     {                ( Continue,       [_1] )}
@@ -719,19 +719,19 @@ _1 = Tgoto _2 = ident
     {                   ( GotoComputed _3, [_1;_2] )}
 
 statement_list_opt:
-
+  
     {                 ( [] )}
 | _1 = statement_list
     {                  ( _1 )}
 
 statement_list:
-_1 = statement_seq
+  _1 = statement_seq
     {                 ( [_1] )}
 | _1 = statement_list _2 = statement_seq
     {                                ( _1 @ [_2] )}
 
 statement_seq:
-_1 = statement
+  _1 = statement
     {             ( StmtElem _1 )}
 | _1 = cpp_directive
     {     ( CppDirectiveStmt _1 )}
@@ -739,25 +739,25 @@ _1 = statement
     {     ( IfdefStmt _1 )}
 
 declaration_statement:
-_1 = block_declaration
+  _1 = block_declaration
     {                     ( DeclStmt _1, noii )}
 
 try_block:
-_1 = Ttry _2 = compound _3 = handler_list
+  _1 = Ttry _2 = compound _3 = handler_list
     {                              ( Try (_1, _2, _3), noii )}
 
 handler:
-_1 = Tcatch _2 = TOPar _3 = exception_decl _4 = TCPar _5 = compound
+  _1 = Tcatch _2 = TOPar _3 = exception_decl _4 = TCPar _5 = compound
     {                                              ( (_1, (_2, _3, _4), _5) )}
 
 exception_decl:
-_1 = parameter_decl
+  _1 = parameter_decl
     {                  ( ExnDecl _1 )}
 | _1 = TEllipsis
     {                  ( ExnDeclEllipsis _1 )}
 
 type_spec:
-_1 = simple_type_specifier
+  _1 = simple_type_specifier
     {                         ( _1 )}
 | _1 = elaborated_type_specifier
     {                             ( _1 )}
@@ -767,7 +767,7 @@ _1 = simple_type_specifier
     {                   ( Right3 (StructDef _1), noii )}
 
 simple_type_specifier:
-_1 = Tvoid
+  _1 = Tvoid
     {                        ( Right3 (BaseType Void),            [_1] )}
 | _1 = Tchar
     {                        ( Right3 (BaseType (IntType CChar)), [_1])}
@@ -797,7 +797,7 @@ _1 = Tvoid
     {                     ( Right3 (TypeName _1), noii )}
 
 elaborated_type_specifier:
-_1 = Tenum _2 = ident
+  _1 = Tenum _2 = ident
     {     ( Right3 (EnumName (_1, _2)), noii )}
 | _1 = class_key _2 = ident
     {     ( Right3 (StructUnionName (_1, _2)), noii )}
@@ -805,7 +805,7 @@ _1 = Tenum _2 = ident
     {     ( Right3 (TypenameKwd (_1, _2)), noii )}
 
 type_cplusplus_id:
-_1 = type_name
+  _1 = type_name
     {                                    ( None, noQscope, _1 )}
 | _1 = nested_name_specifier2 _2 = type_name
     {                                    ( None, _1, _2 )}
@@ -815,23 +815,23 @@ _1 = type_name
     {     ( Some _1, _2, _3 )}
 
 type_name:
-_1 = enum_name_or_typedef_name_or_simple_class_name
+  _1 = enum_name_or_typedef_name_or_simple_class_name
     {                                                  ( IdIdent _1 )}
 | _1 = template_id
     {               ( _1 )}
 
 template_id:
-_1 = TIdent_Templatename _2 = TInf_Template _3 = template_argument_list _4 = TSup_Template
+  _1 = TIdent_Templatename _2 = TInf_Template _3 = template_argument_list _4 = TSup_Template
     {    ( IdTemplateId (_1, (_2, _3, _4)) )}
 
 template_argument:
-_1 = type_id
+  _1 = type_id
     {               ( Left _1 )}
 | _1 = assign_expr
     {               ( Right _1 )}
 
 cv_qualif:
-_1 = Tconst
+  _1 = Tconst
     {             ( {const=Some _1; volatile=None} )}
 | _1 = Tvolatile
     {             ( {const=None ; volatile=Some _1} )}
@@ -839,13 +839,13 @@ _1 = Tconst
     {             ( (* TODO *) {const=None ; volatile=None} )}
 
 declarator:
-_1 = pointer _2 = direct_d
+  _1 = pointer _2 = direct_d
     {                    ( (fst _2, fun x -> x +> _1 +> (snd _2)  ) )}
 | _1 = direct_d
     {                    ( _1  )}
 
 pointer:
-_1 = TMul
+  _1 = TMul
     {                               ( fun x ->(nQ,         (Pointer x,     [_1])))}
 | _1 = TMul _2 = cv_qualif_list
     {                               ( fun x ->(_2.qualifD, (Pointer x,     [_1])))}
@@ -859,7 +859,7 @@ _1 = TMul
     {                               ( fun x ->(nQ,    (Reference (_2 x),[_1])))}
 
 direct_d:
-_1 = declarator_id
+  _1 = declarator_id
     {     ( (_1, fun x -> x) )}
 | _1 = TOPar _2 = declarator _3 = TCPar
     {     ( (fst _2, fun x -> (nQ, (ParenType (_1, (snd _2) x, _3), noii))) )}
@@ -881,11 +881,11 @@ _1 = declarator_id
      )}
 
 declarator_id:
-_1 = tcolcol_opt _2 = id_expression
+  _1 = tcolcol_opt _2 = id_expression
     {     ( (_1, fst _2, snd _2) )}
 
 abstract_declarator:
-_1 = pointer
+  _1 = pointer
     {                                      ( _1 )}
 | _1 = direct_abstract_declarator
     {                                      ( _1 )}
@@ -893,7 +893,7 @@ _1 = pointer
     {                                      ( fun x -> x +> _2 +> _1 )}
 
 direct_abstract_declarator:
-_1 = TOPar _2 = abstract_declarator _3 = TCPar
+  _1 = TOPar _2 = abstract_declarator _3 = TCPar
     {     ( (fun x -> (nQ, (ParenType (_1, _2 x, _3), noii))) )}
 | _1 = TOCro _2 = TCCro
     {     ( fun x ->   (nQ, (Array ((_1,None, _2), x), noii)))}
@@ -921,13 +921,13 @@ _1 = TOPar _2 = abstract_declarator _3 = TCPar
          ft_dots = snd _3; ft_const = _5; ft_throw = _6; }, noii)) )}
 
 parameter_type_list:
-_1 = parameter_list
+  _1 = parameter_list
     {                                   ( _1, None )}
 | _1 = parameter_list _2 = TComma _3 = TEllipsis
     {                                   ( _1, Some (_2,_3) )}
 
 parameter_decl:
-_1 = decl_spec _2 = declarator
+  _1 = decl_spec _2 = declarator
     {     ( let (t_ret,reg) = type_and_register_from_decl _1 in
        let (name, ftyp) = fixNameForParam _2 in
        { p_name = Some name; p_type = ftyp t_ret;
@@ -954,13 +954,13 @@ _1 = decl_spec _2 = declarator
          p_register = reg; p_val = Some(_2,_3) } )}
 
 parameter_list:
-_1 = parameter_decl2
+  _1 = parameter_decl2
     {                                         ( [_1, []] )}
 | _1 = parameter_list _2 = TComma _3 = parameter_decl2
     {                                         ( _1 @ [_3,  [_2]] )}
 
 parameter_decl2:
-_1 = parameter_decl
+  _1 = parameter_decl
     {                  ( _1 )}
 | _1 = TIdent
     {     ( 
@@ -969,7 +969,7 @@ _1 = parameter_decl
      )}
 
 exception_specification:
-_1 = Tthrow _2 = TOPar _3 = TCPar
+  _1 = Tthrow _2 = TOPar _3 = TCPar
     {                      ( (_1, (_2, [], _3)) )}
 | _1 = Tthrow _2 = TOPar _3 = exn_name _4 = TCPar
     {                               ( (_1, (_2, [Left _3], _4)) )}
@@ -977,17 +977,17 @@ _1 = Tthrow _2 = TOPar _3 = TCPar
     {     ( (_1, (_2, [Left _3; Right _4; Left _5], _6))  )}
 
 exn_name:
-_1 = ident
+  _1 = ident
     {     ( None, [], IdIdent _1 )}
 
 const_opt:
-_1 = Tconst
+  _1 = Tconst
     {                 ( Some _1 )}
 | 
     {                 ( None )}
 
 spec_qualif_list:
-_1 = type_spec
+  _1 = type_spec
     {                                ( addTypeD _1 nullDecl )}
 | _1 = cv_qualif
     {                                ( {nullDecl with qualifD = _1} )}
@@ -997,25 +997,25 @@ _1 = type_spec
     {                                ( addQualifD _1 _2 )}
 
 cv_qualif_list:
-_1 = cv_qualif
+  _1 = cv_qualif
     {                              ( {nullDecl with qualifD = _1 } )}
 | _1 = cv_qualif_list _2 = cv_qualif
     {                              ( addQualifD _2 _1 )}
 
 type_id:
-_1 = spec_qualif_list
+  _1 = spec_qualif_list
     {     ( let (t_ret, _, _) = type_and_storage_from_decl _1 in  t_ret )}
 | _1 = spec_qualif_list _2 = abstract_declarator
     {     ( let (t_ret, _, _) = type_and_storage_from_decl _1 in _2 t_ret )}
 
 new_type_id:
-_1 = spec_qualif_list %prec LOW_PRIORITY_RULE
+  _1 = spec_qualif_list %prec LOW_PRIORITY_RULE
     {     ( let (t_ret, _, _) = type_and_storage_from_decl _1 in  t_ret )}
 | _1 = spec_qualif_list _2 = new_declarator
     {     ( let (t_ret, _, _) = type_and_storage_from_decl _1 in (* TODOAST *) t_ret )}
 
 new_declarator:
-_1 = ptr_operator _2 = new_declarator
+  _1 = ptr_operator _2 = new_declarator
     {     ( () )}
 | _1 = ptr_operator %prec LOW_PRIORITY_RULE
     {     ( () )}
@@ -1023,19 +1023,19 @@ _1 = ptr_operator _2 = new_declarator
     {     ( () )}
 
 ptr_operator:
-_1 = TMul
+  _1 = TMul
     {        ( () )}
 | _1 = TAnd
     {        ( () )}
 
 direct_new_declarator:
-_1 = TOCro _2 = expr _3 = TCCro
+  _1 = TOCro _2 = expr _3 = TCCro
     {                    ( () )}
 | _1 = direct_new_declarator _2 = TOCro _3 = expr _4 = TCCro
     {                                          ( () )}
 
 conversion_type_id:
-_1 = simple_type_specifier _2 = conversion_declarator
+  _1 = simple_type_specifier _2 = conversion_declarator
     {     ( let tx = addTypeD _1 nullDecl in
        let (t_ret, _, _) = type_and_storage_from_decl tx in t_ret 
      )}
@@ -1045,19 +1045,19 @@ _1 = simple_type_specifier _2 = conversion_declarator
      )}
 
 conversion_declarator:
-_1 = ptr_operator _2 = conversion_declarator
+  _1 = ptr_operator _2 = conversion_declarator
     {     ( () )}
 | _1 = ptr_operator %prec LOW_PRIORITY_RULE
     {     ( () )}
 
 class_specifier:
-_1 = class_head _2 = TOBrace _3 = member_specification_opt _4 = TCBrace
+  _1 = class_head _2 = TOBrace _3 = member_specification_opt _4 = TCBrace
     {     ( let (kind, nameopt, baseopt) = _1 in
        { c_kind = kind; c_name = nameopt; 
          c_inherit = baseopt; c_members = (_2, _3, _4) } )}
 
 class_head:
-_1 = class_key
+  _1 = class_key
     {     ( _1, None, None )}
 | _1 = class_key _2 = ident _3 = base_clause_opt
     {     ( let name = None, noQscope, IdIdent _2 in
@@ -1067,7 +1067,7 @@ _1 = class_key
        _1, Some name, _4 )}
 
 class_key:
-_1 = Tstruct
+  _1 = Tstruct
     {             ( Struct, _1 )}
 | _1 = Tunion
     {             ( Union, _1 )}
@@ -1075,11 +1075,11 @@ _1 = Tstruct
     {             ( Class, _1 )}
 
 base_clause:
-_1 = TCol _2 = base_specifier_list
+  _1 = TCol _2 = base_specifier_list
     {                            ( _1, _2 )}
 
 base_specifier:
-_1 = class_name
+  _1 = class_name
     {     ( { i_name = _1; i_virtual = None; i_access = None } )}
 | _1 = access_specifier _2 = class_name
     {     ( { i_name = _2; i_virtual = None; i_access = Some _1 } )}
@@ -1087,19 +1087,19 @@ _1 = class_name
     {     ( { i_name = _3; i_virtual = Some _1; i_access = Some _2 } )}
 
 class_name:
-_1 = type_cplusplus_id
+  _1 = type_cplusplus_id
     {                      ( _1 )}
 | _1 = TIdent
     {                      ( None, noQscope, IdIdent _1 )}
 
 member_specification:
-_1 = member_declaration _2 = member_specification_opt
+  _1 = member_declaration _2 = member_specification_opt
     {     ( ClassElem _1::_2 )}
 | _1 = access_specifier _2 = TCol _3 = member_specification_opt
     {     ( ClassElem (Access (_1, _2))::_3 )}
 
 access_specifier:
-_1 = Tpublic
+  _1 = Tpublic
     {              ( Public, _1 )}
 | _1 = Tprivate
     {              ( Private, _1 )}
@@ -1107,7 +1107,7 @@ _1 = Tpublic
     {              ( Protected, _1 )}
 
 member_declaration:
-_1 = field_declaration
+  _1 = field_declaration
     {                          ( fixFieldOrMethodDecl _1 )}
 | _1 = function_definition
     {                          ( MemberFunc (FunctionOrMethod _1) )}
@@ -1125,7 +1125,7 @@ _1 = field_declaration
     {              ( EmptyField _1 )}
 
 field_declaration:
-_1 = decl_spec _2 = TPtVirg
+  _1 = decl_spec _2 = TPtVirg
     {     ( (* gccext: allow empty elements if it is a structdef or enumdef *)
        let (t_ret, sto, _inline) = type_and_storage_from_decl _1 in
        let onedecl = { v_namei = None; v_type = t_ret; v_storage = sto } in
@@ -1137,7 +1137,7 @@ _1 = decl_spec _2 = TPtVirg
      )}
 
 member_declarator:
-_1 = declarator
+  _1 = declarator
     {     ( let (name, partialt) = _1 in (fun t_ret sto -> 
        FieldDecl {
          v_namei = Some (name, None);
@@ -1158,7 +1158,7 @@ _1 = declarator
     {     ( (fun t_ret _stoTODO -> BitField (None, _1, t_ret, _2)) )}
 
 ctor_dtor_member:
-_1 = ctor_spec _2 = TIdent_Constructor _3 = TOPar _4 = parameter_type_list_opt _5 = TCPar _6 = ctor_mem_initializer_list_opt _7 = compound
+  _1 = ctor_spec _2 = TIdent_Constructor _3 = TOPar _4 = parameter_type_list_opt _5 = TCPar _6 = ctor_mem_initializer_list_opt _7 = compound
     {     ( MemberFunc (Constructor (mk_constructor _2 (_3, _4, _5) _7)) )}
 | _1 = ctor_spec _2 = TIdent_Constructor _3 = TOPar _4 = parameter_type_list_opt _5 = TCPar _6 = TPtVirg
     {     ( MemberDecl (ConstructorDecl (_2, (_3, opt_to_list_params _4, _5), _6)) )}
@@ -1168,7 +1168,7 @@ _1 = ctor_spec _2 = TIdent_Constructor _3 = TOPar _4 = parameter_type_list_opt _
     {     ( MemberDecl (DestructorDecl (_2, _3, (_4, _5, _6), _7, _8)) )}
 
 ctor_spec:
-_1 = Texplicit
+  _1 = Texplicit
     {             ( )}
 | _1 = Tinline
     {           ( )}
@@ -1176,7 +1176,7 @@ _1 = Texplicit
     {                 ( )}
 
 dtor_spec:
-_1 = Tvirtual
+  _1 = Tvirtual
     {            ( )}
 | _1 = Tinline
     {           ( )}
@@ -1184,33 +1184,33 @@ _1 = Tvirtual
     {                 ( )}
 
 ctor_mem_initializer_list_opt:
-_1 = TCol _2 = mem_initializer_list
+  _1 = TCol _2 = mem_initializer_list
     {                             ( () )}
 | 
     {                   ( () )}
 
 mem_initializer:
-_1 = mem_initializer_id _2 = TOPar _3 = argument_list_opt _4 = TCPar
+  _1 = mem_initializer_id _2 = TOPar _3 = argument_list_opt _4 = TCPar
     {                                                    ( () )}
 
 mem_initializer_id:
-_1 = primary_cplusplus_id
+  _1 = primary_cplusplus_id
     {                        ( () )}
 
 enum_specifier:
-_1 = Tenum _2 = TOBrace _3 = enumerator_list _4 = gcc_comma_opt _5 = TCBrace
+  _1 = Tenum _2 = TOBrace _3 = enumerator_list _4 = gcc_comma_opt _5 = TCBrace
     {     ( EnumDef (_1, None, (_2, _3, _5)) (*$4*) )}
 | _1 = Tenum _2 = ident _3 = TOBrace _4 = enumerator_list _5 = gcc_comma_opt _6 = TCBrace
     {     ( EnumDef (_1, Some _2, (_3, _4, _6)) (*$5*) )}
 
 enumerator:
-_1 = ident
+  _1 = ident
     {                        ( { e_name = _1; e_val = None; } )}
 | _1 = ident _2 = TEq _3 = const_expr
     {                        ( { e_name = _1; e_val = Some (_2, _3); } )}
 
 simple_declaration:
-_1 = decl_spec _2 = TPtVirg
+  _1 = decl_spec _2 = TPtVirg
     {     ( let (t_ret, sto, _inline) = type_and_storage_from_decl _1 in 
        DeclList ([{v_namei = None; v_type = t_ret; v_storage = sto},noii],_2)
      )}
@@ -1233,7 +1233,7 @@ _1 = decl_spec _2 = TPtVirg
     {     ( MacroDecl ([_1;_2], _3, (_4, _5, _6), _7) )}
 
 decl_spec:
-_1 = storage_class_spec
+  _1 = storage_class_spec
     {                           ( {nullDecl with storageD = _1 } )}
 | _1 = type_spec
     {                           ( addTypeD _1 nullDecl )}
@@ -1259,13 +1259,13 @@ _1 = storage_class_spec
     {                                ( addInlineD _1 _2 (*TODO*))}
 
 function_spec:
-_1 = Tinline
+  _1 = Tinline
     {           ( Inline, _1 )}
 | _1 = Tvirtual
     {            ( Virtual, _1 )}
 
 storage_class_spec:
-_1 = Tstatic
+  _1 = Tstatic
     {                ( Sto (Static,  _1) )}
 | _1 = Textern
     {                ( Sto (Extern,  _1) )}
@@ -1277,7 +1277,7 @@ _1 = Tstatic
     {                ( Sto (Register,_1) (*TODO*) )}
 
 init_declarator:
-_1 = declaratori
+  _1 = declaratori
     {                                ( (_1, None) )}
 | _1 = declaratori _2 = TEq _3 = initialize
     {                                ( (_1, Some (EqInit (_2, _3))) )}
@@ -1285,17 +1285,17 @@ _1 = declaratori
     {     ( (_1, Some (ObjInit (_2, _3, _4))) )}
 
 declaratori:
-_1 = declarator
+  _1 = declarator
     {                             ( _1 )}
 | _1 = declarator _2 = gcc_asm_decl
     {                             ( _1 )}
 
 gcc_asm_decl:
-_1 = Tasm _2 = volatile_opt _3 = TOPar _4 = asmbody _5 = TCPar
+  _1 = Tasm _2 = volatile_opt _3 = TOPar _4 = asmbody _5 = TCPar
     {                                                (  )}
 
 initialize:
-_1 = assign_expr
+  _1 = assign_expr
     {     ( InitExpr _1 )}
 | _1 = TOBrace _2 = initialize_list _3 = gcc_comma_opt_struct _4 = TCBrace
     {     ( InitList (_1, List.rev _2, _4) (*$3*) )}
@@ -1303,13 +1303,13 @@ _1 = assign_expr
     {     ( InitList (_1, [], _2) )}
 
 initialize_list:
-_1 = initialize2
+  _1 = initialize2
     {                                      ( [_1,   []] )}
 | _1 = initialize_list _2 = TComma _3 = initialize2
     {                                      ( (_3,  [_2])::_1 )}
 
 initialize2:
-_1 = cond_expr
+  _1 = cond_expr
     {     ( InitExpr _1 )}
 | _1 = TOBrace _2 = initialize_list _3 = gcc_comma_opt_struct _4 = TCBrace
     {     ( InitList (_1, List.rev _2, _4) (*$3*) )}
@@ -1325,17 +1325,17 @@ _1 = cond_expr
     {     ( InitDesignators ([DesignatorIndex(_1, _2, _3)], _4, _5) )}
 
 designator:
-_1 = TDot _2 = ident
+  _1 = TDot _2 = ident
     {     ( DesignatorField (_1, _2) )}
 
 gcc_comma_opt_struct:
-_1 = TComma
+  _1 = TComma
     {                    ( Some _1 )}
 | 
     {                    ( None  )}
 
 block_declaration:
-_1 = simple_declaration
+  _1 = simple_declaration
     {                      ( _1 )}
 | _1 = asm_definition
     {                      ( _1 )}
@@ -1347,35 +1347,35 @@ _1 = simple_declaration
     {                     ( _1 )}
 
 namespace_alias_definition:
-_1 = Tnamespace _2 = TIdent _3 = TEq _4 = tcolcol_opt _5 = nested_name_specifier_opt _6 = namespace_name _7 = TPtVirg
+  _1 = Tnamespace _2 = TIdent _3 = TEq _4 = tcolcol_opt _5 = nested_name_specifier_opt _6 = namespace_name _7 = TPtVirg
     {     ( let name = _4, _5, IdIdent _6 in NameSpaceAlias (_1, _2, _3, name, _7) )}
 
 using_directive:
-_1 = Tusing _2 = Tnamespace _3 = tcolcol_opt _4 = nested_name_specifier_opt _5 = namespace_name _6 = TPtVirg
+  _1 = Tusing _2 = Tnamespace _3 = tcolcol_opt _4 = nested_name_specifier_opt _5 = namespace_name _6 = TPtVirg
     {     ( let name = _3, _4, IdIdent _5 in UsingDirective (_1, _2, name, _6) )}
 
 using_declaration:
-_1 = Tusing _2 = typename_opt _3 = tcolcol_opt _4 = nested_name_specifier _5 = unqualified_id _6 = TPtVirg
+  _1 = Tusing _2 = typename_opt _3 = tcolcol_opt _4 = nested_name_specifier _5 = unqualified_id _6 = TPtVirg
     {     ( let name = (_3, _4, _5) in _1, name, _6 (*$2*) )}
 | _1 = Tusing _2 = typename_opt _3 = tcolcol_opt _4 = unqualified_id _5 = TPtVirg
     {     ( let name = (_3, [], _4) in _1, name, _5 (*$2*) )}
 
 asm_definition:
-_1 = Tasm _2 = volatile_opt _3 = TOPar _4 = asmbody _5 = TCPar _6 = TPtVirg
+  _1 = Tasm _2 = volatile_opt _3 = TOPar _4 = asmbody _5 = TCPar _6 = TPtVirg
     {     ( Asm(_1, _2, (_3, _4, _5), _6) )}
 
 asmbody:
-_1 = string_list _2 = colon_asm_list
+  _1 = string_list _2 = colon_asm_list
     {                               ( _1, _2 )}
 | _1 = string_list
     {               ( _1, [] )}
 
 colon_asm:
-_1 = TCol _2 = colon_option_list
+  _1 = TCol _2 = colon_option_list
     {                          ( Colon _2, [_1]   )}
 
 colon_option:
-_1 = TString
+  _1 = TString
     {                                ( ColonMisc, [snd _1] )}
 | _1 = TString _2 = TOPar _3 = asm_expr _4 = TCPar
     {                                ( ColonExpr (_2, _3, _4), [snd _1] )}
@@ -1387,11 +1387,11 @@ _1 = TString
     {                                    ( ColonMisc, [] )}
 
 asm_expr:
-_1 = assign_expr
+  _1 = assign_expr
     {                      ( _1 )}
 
 declaration:
-_1 = block_declaration
+  _1 = block_declaration
     {                                     ( BlockDecl _1 )}
 | _1 = function_definition
     {                                     ( Func (FunctionOrMethod _1) )}
@@ -1409,19 +1409,19 @@ _1 = block_declaration
     {              ( EmptyDef _1 )}
 
 declaration_list_opt:
-
+  
     {                 ( [] )}
 | _1 = declaration_list
     {                    ( _1 )}
 
 declaration_list:
-_1 = declaration_seq
+  _1 = declaration_seq
     {                                    ( [_1]   )}
 | _1 = declaration_list _2 = declaration_seq
     {                                    ( _1 @ [_2] )}
 
 declaration_seq:
-_1 = declaration
+  _1 = declaration
     {               ( DeclElem _1 )}
 | _1 = cpp_directive
     {     ( CppDirectiveDecl _1 )}
@@ -1429,39 +1429,39 @@ _1 = declaration
     {     ( IfdefDecl _1 )}
 
 template_declaration:
-_1 = Ttemplate _2 = TInf_Template _3 = template_parameter_list _4 = TSup_Template _5 = declaration
+  _1 = Ttemplate _2 = TInf_Template _3 = template_parameter_list _4 = TSup_Template _5 = declaration
     {   ( (_1, (_2, _3, _4), _5) )}
 
 explicit_specialization:
-_1 = Ttemplate _2 = TInf_Template _3 = TSup_Template _4 = declaration
+  _1 = Ttemplate _2 = TInf_Template _3 = TSup_Template _4 = declaration
     {     ( TemplateSpecialization (_1, (_2, (), _3), _4) )}
 
 template_parameter:
-_1 = parameter_decl
+  _1 = parameter_decl
     {                  ( _1 )}
 
 linkage_specification:
-_1 = Textern _2 = TString _3 = declaration
+  _1 = Textern _2 = TString _3 = declaration
     {     ( ExternC (_1, (snd _2), _3) )}
 | _1 = Textern _2 = TString _3 = TOBrace _4 = declaration_list_opt _5 = TCBrace
     {     ( ExternCList (_1, (snd _2), (_3, _4, _5)) )}
 
 namespace_definition:
-_1 = named_namespace_definition
+  _1 = named_namespace_definition
     {                                ( _1 )}
 | _1 = unnamed_namespace_definition
     {                                ( _1 )}
 
 named_namespace_definition:
-_1 = Tnamespace _2 = TIdent _3 = TOBrace _4 = declaration_list_opt _5 = TCBrace
+  _1 = Tnamespace _2 = TIdent _3 = TOBrace _4 = declaration_list_opt _5 = TCBrace
     {     ( NameSpace (_1, _2, (_3, _4, _5)) )}
 
 unnamed_namespace_definition:
-_1 = Tnamespace _2 = TOBrace _3 = declaration_list_opt _4 = TCBrace
+  _1 = Tnamespace _2 = TOBrace _3 = declaration_list_opt _4 = TCBrace
     {     ( NameSpaceAnon (_1, (_2, _3, _4)) )}
 
 ctor_dtor:
-_1 = nested_name_specifier _2 = TIdent_Constructor _3 = TOPar _4 = parameter_type_list_opt _5 = TCPar _6 = ctor_mem_initializer_list_opt _7 = compound
+  _1 = nested_name_specifier _2 = TIdent_Constructor _3 = TOPar _4 = parameter_type_list_opt _5 = TCPar _6 = ctor_mem_initializer_list_opt _7 = compound
     {     ( DeclTodo )}
 | _1 = nested_name_specifier _2 = TTilde _3 = ident _4 = TOPar _5 = void_opt _6 = TCPar _7 = compound
     {     ( DeclTodo )}
@@ -1471,17 +1471,17 @@ _1 = nested_name_specifier _2 = TIdent_Constructor _3 = TOPar _4 = parameter_typ
     {     ( DeclTodo )}
 
 function_definition:
-_1 = start_fun _2 = compound
+  _1 = start_fun _2 = compound
     {     ( fixFunc (_1, _2) )}
 
 start_fun:
-_1 = decl_spec _2 = declarator
+  _1 = decl_spec _2 = declarator
     {     ( let (t_ret, sto) = type_and_storage_for_funcdef_from_decl _1 in
        (fst _2, fixOldCDecl ((snd _2) t_ret), sto)
      )}
 
 cpp_directive:
-_1 = TInclude
+  _1 = TInclude
     {     ( let (_include_str, filename, tok) = _1 in
        (* redo some lexing work :( *)
        let inc_kind, path = 
@@ -1502,7 +1502,7 @@ _1 = TInclude
     {                      ( PragmaAndCo _1 )}
 
 define_val:
-_1 = expr
+  _1 = expr
     {             ( DefineExpr _1 )}
 | _1 = statement
     {             ( DefineStmt _1 )}
@@ -1521,7 +1521,7 @@ _1 = expr
     {                   ( DefineEmpty )}
 
 param_define:
-_1 = ident
+  _1 = ident
     {                       ( fst _1, [snd _1] )}
 | _1 = TDefParamVariadic
     {                        ( fst _1, [snd _1] )}
@@ -1533,7 +1533,7 @@ _1 = ident
     {                        ( "new", [_1] )}
 
 cpp_ifdef_directive:
-_1 = TIfdef
+  _1 = TIfdef
     {              ( Ifdef, _1 )}
 | _1 = TIfdefelse
     {              ( IfdefElse, _1 )}
@@ -1549,7 +1549,7 @@ _1 = TIfdef
     {                 ( Ifdef, snd _1 )}
 
 cpp_other:
-_1 = TIdent _2 = TOPar _3 = argument_list _4 = TCPar _5 = TPtVirg
+  _1 = TIdent _2 = TOPar _3 = argument_list _4 = TCPar _5 = TPtVirg
     {     ( MacroTop (_1, (_2, _3, _4), Some _5) )}
 | _1 = TIdent _2 = TOPar _3 = argument_list _4 = TCPar_EOL
     {     ( MacroTop (_1, (_2, _3, _4), None) )}
@@ -1557,13 +1557,13 @@ _1 = TIdent _2 = TOPar _3 = argument_list _4 = TCPar _5 = TPtVirg
     {                  ( MacroVarTop (_1, _2) )}
 
 toplevel:
-_1 = toplevel_aux
+  _1 = toplevel_aux
     {                ( Some _1 )}
 | _1 = EOF
     {                ( None )}
 
 toplevel_aux:
-_1 = declaration
+  _1 = declaration
     {                       ( DeclElem _1 )}
 | _1 = cpp_directive
     {                       ( CppDirectiveDecl _1 )}
@@ -1575,49 +1575,49 @@ _1 = declaration
     {           ( DeclElem (EmptyDef _1) )}
 
 string_list:
-_1 = string_elem
+  _1 = string_elem
     {               ( _1 )}
 | _1 = string_list _2 = string_elem
     {                           ( _1 @ _2 )}
 
 colon_asm_list:
-_1 = colon_asm
+  _1 = colon_asm
     {             ( [_1] )}
 | _1 = colon_asm_list _2 = colon_asm
     {                             ( _1 @ [_2] )}
 
 colon_option_list:
-_1 = colon_option
+  _1 = colon_option
     {                ( [_1, []] )}
 | _1 = colon_option_list _2 = TComma _3 = colon_option
     {                                         ( _1 @ [_3, [_2]] )}
 
 argument_list:
-_1 = argument
+  _1 = argument
     {                                      ( [_1, []] )}
 | _1 = argument_list _2 = TComma _3 = argument
     {                                 ( _1 @ [_3,    [_2]] )}
 
 enumerator_list:
-_1 = enumerator
+  _1 = enumerator
     {                                     ( [_1,          []]   )}
 | _1 = enumerator_list _2 = TComma _3 = enumerator
     {                                     ( _1 @ [_3,    [_2]] )}
 
 init_declarator_list:
-_1 = init_declarator
+  _1 = init_declarator
     {                                               ( [_1,   []] )}
 | _1 = init_declarator_list _2 = TComma _3 = init_declarator
     {                                               ( _1 @ [_3,     [_2]] )}
 
 member_declarator_list:
-_1 = member_declarator
+  _1 = member_declarator
     {                                                 ( [_1,   []] )}
 | _1 = member_declarator_list _2 = TComma _3 = member_declarator
     {                                                   ( _1 @ [_3,     [_2]] )}
 
 param_define_list_opt:
-
+  
     {                   ( [] )}
 | _1 = param_define
     {                                          ( [_1, []] )}
@@ -1625,151 +1625,151 @@ param_define_list_opt:
     {                                              ( _1 @ [_3, [_2]] )}
 
 designator_list:
-_1 = designator
+  _1 = designator
     {              ( [_1] )}
 | _1 = designator_list _2 = designator
     {                              ( _1 @ [_2] )}
 
 handler_list:
-_1 = handler
+  _1 = handler
     {           ( [_1] )}
 | _1 = handler_list _2 = handler
     {                        ( _1 @ [_2] )}
 
 mem_initializer_list:
-_1 = mem_initializer
+  _1 = mem_initializer
     {                                             ( [_1, []] )}
 | _1 = mem_initializer_list _2 = TComma _3 = mem_initializer
     {                                                ( _1 @ [_3, [_2]] )}
 
 template_argument_list:
-_1 = template_argument
+  _1 = template_argument
     {                     ( [_1, []] )}
 | _1 = template_argument_list _2 = TComma _3 = template_argument
     {                                                   ( _1 @ [_3, [_2]] )}
 
 template_parameter_list:
-_1 = template_parameter
+  _1 = template_parameter
     {                      ( [_1, []] )}
 | _1 = template_parameter_list _2 = TComma _3 = template_parameter
     {                                                     ( _1 @ [_3, [_2]] )}
 
 base_specifier_list:
-_1 = base_specifier
+  _1 = base_specifier
     {                                                ( [_1,           []] )}
 | _1 = base_specifier_list _2 = TComma _3 = base_specifier
     {                                                ( _1 @ [_3,     [_2]] )}
 
 gcc_comma_opt:
-_1 = TComma
+  _1 = TComma
     {          (  [_1] )}
 | 
     {                    (  []  )}
 
 comma_opt:
-_1 = TComma
+  _1 = TComma
     {          ( [_1] )}
 | 
     {   ( [] )}
 
 assign_expr_opt:
-_1 = assign_expr
+  _1 = assign_expr
     {                   ( Some _1 )}
 | 
     {                   ( None )}
 
 expr_opt:
-_1 = expr
+  _1 = expr
     {                   ( Some _1 )}
 | 
     {                   ( None )}
 
 argument_list_opt:
-_1 = argument_list
+  _1 = argument_list
     {                 ( _1 )}
 | 
     {                 ( [] )}
 
 parameter_type_list_opt:
-_1 = parameter_type_list
+  _1 = parameter_type_list
     {                       ( Some _1 )}
 | 
     {                       ( None )}
 
 member_specification_opt:
-_1 = member_specification
+  _1 = member_specification
     {                        ( _1 )}
 | 
     {                        ( [] )}
 
 nested_name_specifier_opt:
-_1 = nested_name_specifier
+  _1 = nested_name_specifier
     {                         ( _1 )}
 | 
     {                         ( [] )}
 
 nested_name_specifier_opt2:
-_1 = nested_name_specifier2
+  _1 = nested_name_specifier2
     {                          ( _1 )}
 | 
     {                          ( [] )}
 
 exn_spec_opt:
-_1 = exception_specification
+  _1 = exception_specification
     {                           ( Some _1 )}
 | 
     {                           ( None )}
 
 new_placement_opt:
-_1 = new_placement
+  _1 = new_placement
     {                 ( Some _1 )}
 | 
     {                 ( None )}
 
 new_initializer_opt:
-_1 = new_initializer
+  _1 = new_initializer
     {                   ( Some _1 )}
 | 
     {                 ( None )}
 
 base_clause_opt:
-_1 = base_clause
+  _1 = base_clause
     {                 ( Some _1 )}
 | 
     {                 ( None )}
 
 typename_opt:
-_1 = Ttypename
+  _1 = Ttypename
     {                 ( [_1] )}
 | 
     {                 ( [] )}
 
 template_opt:
-_1 = Ttemplate
+  _1 = Ttemplate
     {                 ( [_1] )}
 | 
     {                 ( [] )}
 
 void_opt:
-_1 = Tvoid
+  _1 = Tvoid
     {                 ( Some _1 )}
 | 
     {                 ( None )}
 
 inline_opt:
-_1 = Tinline
+  _1 = Tinline
     {                   ( Some _1 )}
 | 
     {                 ( None )}
 
 volatile_opt:
-_1 = Tvolatile
+  _1 = Tvolatile
     {                 ( Some _1 )}
 | 
     {                 ( None )}
 
 tcolcol_opt:
-_1 = TColCol
+  _1 = TColCol
     {                   ( Some _1 )}
 | 
     {                   ( None )}

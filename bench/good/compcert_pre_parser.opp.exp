@@ -124,31 +124,31 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %%
 
 general_identifier:
-i = VAR_NAME
+  i = VAR_NAME
     {    ( i )}
 | i = TYPEDEF_NAME
     {    ( i )}
 
 string_literals_list:
-_1 = STRING_LITERAL
+  _1 = STRING_LITERAL
     {    ()}
 | _1 = string_literals_list _2 = STRING_LITERAL
     {    ()}
 
 push_context:
- %prec highPrec
+   %prec highPrec
     {                            ( !push_context () )}
 
 pop_context:
-
+  
     {              ( !pop_context () )}
 
 in_context_declaration_list_:
-_1 = push_context x = declaration_list _3 = pop_context
+  _1 = push_context x = declaration_list _3 = pop_context
     {                                  ( x )}
 
 in_context_compcert_pre_parser_option_parameter_type_list__:
-_1 = push_context _3 = pop_context
+  _1 = push_context _3 = pop_context
     {let x =
       ( None )
 in
@@ -161,7 +161,7 @@ in
                                   ( x )}
 
 in_context_compcert_pre_parser_option_block_item_list__:
-_1 = push_context _3 = pop_context
+  _1 = push_context _3 = pop_context
     {let x =
       ( None )
 in
@@ -174,7 +174,7 @@ in
                                   ( x )}
 
 declare_varname_fst_declarator__:
-x0 = declarator
+  x0 = declarator
     {let i =
   let x = x0 in
       ( fst x )
@@ -182,11 +182,11 @@ in
          ( declare_varname i; i )}
 
 declare_varname_enumerator_:
-i = enumerator
+  i = enumerator
     {         ( declare_varname i; i )}
 
 declare_typename_fst_declarator__:
-x0 = declarator
+  x0 = declarator
     {let i =
   let x = x0 in
       ( fst x )
@@ -194,7 +194,7 @@ in
          ( declare_typename i; i )}
 
 primary_expression:
-i = VAR_NAME
+  i = VAR_NAME
     {    ( set_id_type i VarId )}
 | _1 = CONSTANT
     {    ()}
@@ -207,7 +207,7 @@ i = VAR_NAME
     ( unclosed "(" ")" _startpos__1_ _endpos )}
 
 postfix_expression:
-_1 = primary_expression
+  _1 = primary_expression
     {    ()}
 | _1 = postfix_expression _2 = LBRACK _3 = expression _4 = RBRACK
     {    ()}
@@ -277,13 +277,13 @@ let _endpos = _endpos__7_ in
     ( unclosed "{" "}" _startpos__4_ _endpos )}
 
 argument_expression_list:
-_1 = assignment_expression
+  _1 = assignment_expression
     {    ()}
 | _1 = argument_expression_list _2 = COMMA _3 = assignment_expression
     {    ()}
 
 unary_expression:
-_1 = postfix_expression
+  _1 = postfix_expression
     {    ()}
 | _1 = INC _2 = unary_expression
     {    ()}
@@ -301,7 +301,7 @@ _1 = postfix_expression
     {    ()}
 
 unary_operator:
-_1 = AND
+  _1 = AND
     {    ()}
 | _1 = STAR
     {    ()}
@@ -315,13 +315,13 @@ _1 = AND
     {    ()}
 
 cast_expression:
-_1 = unary_expression
+  _1 = unary_expression
     {    ()}
 | _1 = LPAREN _2 = type_name _3 = RPAREN _4 = cast_expression
     {    ()}
 
 multiplicative_expression:
-_1 = cast_expression
+  _1 = cast_expression
     {    ()}
 | _1 = multiplicative_expression _2 = STAR _3 = cast_expression
     {    ()}
@@ -331,7 +331,7 @@ _1 = cast_expression
     {    ()}
 
 additive_expression:
-_1 = multiplicative_expression
+  _1 = multiplicative_expression
     {    ()}
 | _1 = additive_expression _2 = PLUS _3 = multiplicative_expression
     {    ()}
@@ -339,7 +339,7 @@ _1 = multiplicative_expression
     {    ()}
 
 shift_expression:
-_1 = additive_expression
+  _1 = additive_expression
     {    ()}
 | _1 = shift_expression _2 = LEFT _3 = additive_expression
     {    ()}
@@ -347,7 +347,7 @@ _1 = additive_expression
     {    ()}
 
 relational_expression:
-_1 = shift_expression
+  _1 = shift_expression
     {    ()}
 | _1 = relational_expression _2 = LT _3 = shift_expression
     {    ()}
@@ -359,7 +359,7 @@ _1 = shift_expression
     {    ()}
 
 equality_expression:
-_1 = relational_expression
+  _1 = relational_expression
     {    ()}
 | _1 = equality_expression _2 = EQEQ _3 = relational_expression
     {    ()}
@@ -367,49 +367,49 @@ _1 = relational_expression
     {    ()}
 
 and_expression:
-_1 = equality_expression
+  _1 = equality_expression
     {    ()}
 | _1 = and_expression _2 = AND _3 = equality_expression
     {    ()}
 
 exclusive_or_expression:
-_1 = and_expression
+  _1 = and_expression
     {    ()}
 | _1 = exclusive_or_expression _2 = HAT _3 = and_expression
     {    ()}
 
 inclusive_or_expression:
-_1 = exclusive_or_expression
+  _1 = exclusive_or_expression
     {    ()}
 | _1 = inclusive_or_expression _2 = BAR _3 = exclusive_or_expression
     {    ()}
 
 logical_and_expression:
-_1 = inclusive_or_expression
+  _1 = inclusive_or_expression
     {    ()}
 | _1 = logical_and_expression _2 = ANDAND _3 = inclusive_or_expression
     {    ()}
 
 logical_or_expression:
-_1 = logical_and_expression
+  _1 = logical_and_expression
     {    ()}
 | _1 = logical_or_expression _2 = BARBAR _3 = logical_and_expression
     {    ()}
 
 conditional_expression:
-_1 = logical_or_expression
+  _1 = logical_or_expression
     {    ()}
 | _1 = logical_or_expression _2 = QUESTION _3 = expression _4 = COLON _5 = conditional_expression
     {    ()}
 
 assignment_expression:
-_1 = conditional_expression
+  _1 = conditional_expression
     {    ()}
 | _1 = unary_expression _2 = assignment_operator _3 = assignment_expression
     {    ()}
 
 assignment_operator:
-_1 = EQ
+  _1 = EQ
     {    ()}
 | _1 = MUL_ASSIGN
     {    ()}
@@ -433,17 +433,17 @@ _1 = EQ
     {    ()}
 
 expression:
-_1 = assignment_expression
+  _1 = assignment_expression
     {    ()}
 | _1 = expression _2 = COMMA _3 = assignment_expression
     {    ()}
 
 constant_expression:
-_1 = conditional_expression
+  _1 = conditional_expression
     {    ()}
 
 declaration:
-_1 = declaration_specifiers _3 = SEMICOLON
+  _1 = declaration_specifiers _3 = SEMICOLON
     {let _2 =
       ( None )
 in
@@ -467,7 +467,7 @@ in
     ()}
 
 declaration_specifiers_no_type:
-_1 = storage_class_specifier_no_typedef
+  _1 = storage_class_specifier_no_typedef
     {let _2 =
       ( None )
 in
@@ -502,7 +502,7 @@ in
     ()}
 
 declaration_specifiers_no_typedef_name:
-_1 = storage_class_specifier_no_typedef
+  _1 = storage_class_specifier_no_typedef
     {let _2 =
       ( None )
 in
@@ -548,7 +548,7 @@ in
     ()}
 
 declaration_specifiers:
-i = TYPEDEF_NAME
+  i = TYPEDEF_NAME
     {let _3 =
       ( None )
 in
@@ -622,7 +622,7 @@ in
     ()}
 
 declaration_specifiers_typedef:
-_2 = TYPEDEF i = TYPEDEF_NAME
+  _2 = TYPEDEF i = TYPEDEF_NAME
     {let _5 =
       ( None )
 in
@@ -1024,29 +1024,29 @@ in
     ()}
 
 init_declarator_list:
-_1 = init_declarator
+  _1 = init_declarator
     {    ()}
 | _1 = init_declarator_list _2 = COMMA _3 = init_declarator
     {    ()}
 
 init_declarator:
-_1 = declare_varname_fst_declarator__
+  _1 = declare_varname_fst_declarator__
     {    ( )}
 | _1 = declare_varname_fst_declarator__ _2 = EQ _3 = c_initializer
     {    ( )}
 
 typedef_declarator_list:
-_1 = typedef_declarator
+  _1 = typedef_declarator
     {    ()}
 | _1 = typedef_declarator_list _2 = COMMA _3 = typedef_declarator
     {    ()}
 
 typedef_declarator:
-_1 = declare_typename_fst_declarator__
+  _1 = declare_typename_fst_declarator__
     {    ( )}
 
 storage_class_specifier_no_typedef:
-_1 = EXTERN
+  _1 = EXTERN
     {    ()}
 | _1 = STATIC
     {    ()}
@@ -1056,7 +1056,7 @@ _1 = EXTERN
     {    ()}
 
 type_specifier_no_typedef_name:
-_1 = VOID
+  _1 = VOID
     {    ()}
 | _1 = CHAR
     {    ()}
@@ -1082,7 +1082,7 @@ _1 = VOID
     {    ()}
 
 struct_or_union_specifier:
-_1 = struct_or_union _2 = attribute_specifier_list _3 = LBRACE _4 = struct_declaration_list _5 = RBRACE
+  _1 = struct_or_union _2 = attribute_specifier_list _3 = LBRACE _4 = struct_declaration_list _5 = RBRACE
     {    ()}
 | _1 = struct_or_union _2 = attribute_specifier_list i = general_identifier _4 = LBRACE _5 = struct_declaration_list _6 = RBRACE
     {    ( set_id_type i OtherId )}
@@ -1096,19 +1096,19 @@ _1 = struct_or_union _2 = attribute_specifier_list _3 = LBRACE _4 = struct_decla
     ( unclosed "{" "}" _startpos__4_ _endpos )}
 
 struct_or_union:
-_1 = STRUCT
+  _1 = STRUCT
     {    ()}
 | _1 = UNION
     {    ()}
 
 struct_declaration_list:
-
+  
     {    ()}
 | _1 = struct_declaration_list _2 = struct_declaration
     {    ()}
 
 struct_declaration:
-_1 = specifier_qualifier_list _3 = SEMICOLON
+  _1 = specifier_qualifier_list _3 = SEMICOLON
     {let _2 =
       ( None )
 in
@@ -1121,7 +1121,7 @@ in
     ()}
 
 specifier_qualifier_list:
-i = TYPEDEF_NAME
+  i = TYPEDEF_NAME
     {let _3 =
       ( None )
 in
@@ -1195,7 +1195,7 @@ in
     ()}
 
 specifier_qualifier_list_no_typedef_name:
-_1 = type_specifier_no_typedef_name
+  _1 = type_specifier_no_typedef_name
     {let _2 =
       ( None )
 in
@@ -1219,13 +1219,13 @@ in
     ()}
 
 struct_declarator_list:
-_1 = struct_declarator
+  _1 = struct_declarator
     {    ()}
 | _1 = struct_declarator_list _2 = COMMA _3 = struct_declarator
     {    ()}
 
 struct_declarator:
-_1 = declarator
+  _1 = declarator
     {    ()}
 | _2 = COLON _3 = constant_expression
     {let _1 =
@@ -1240,7 +1240,7 @@ in
     ()}
 
 enum_specifier:
-_1 = ENUM _2 = attribute_specifier_list _3 = LBRACE _4 = enumerator_list _6 = RBRACE
+  _1 = ENUM _2 = attribute_specifier_list _3 = LBRACE _4 = enumerator_list _6 = RBRACE
     {let _5 =
       ( None )
 in
@@ -1292,23 +1292,23 @@ let _endpos = _endpos__7_ in
     ( unclosed "{" "}" _startpos__4_ _endpos )}
 
 enumerator_list:
-_1 = declare_varname_enumerator_
+  _1 = declare_varname_enumerator_
     {    ()}
 | _1 = enumerator_list _2 = COMMA _3 = declare_varname_enumerator_
     {    ()}
 
 enumerator:
-i = enumeration_constant
+  i = enumeration_constant
     {    ( i )}
 | i = enumeration_constant _2 = EQ _3 = constant_expression
     {    ( i )}
 
 enumeration_constant:
-i = general_identifier
+  i = general_identifier
     {    ( set_id_type i VarId; i )}
 
 type_qualifier:
-_1 = CONST
+  _1 = CONST
     {    ()}
 | _1 = RESTRICT
     {    ()}
@@ -1318,13 +1318,13 @@ _1 = CONST
     {    ()}
 
 attribute_specifier_list:
-
+  
     {    ()}
 | _1 = attribute_specifier_list _2 = attribute_specifier
     {    ()}
 
 attribute_specifier:
-_1 = ATTRIBUTE _2 = LPAREN _3 = LPAREN _4 = gcc_attribute_list _5 = RPAREN _6 = RPAREN
+  _1 = ATTRIBUTE _2 = LPAREN _3 = LPAREN _4 = gcc_attribute_list _5 = RPAREN _6 = RPAREN
     {    ()}
 | _1 = PACKED _2 = LPAREN _3 = argument_expression_list _4 = RPAREN
     {    ()}
@@ -1334,13 +1334,13 @@ _1 = ATTRIBUTE _2 = LPAREN _3 = LPAREN _4 = gcc_attribute_list _5 = RPAREN _6 = 
     {    ()}
 
 gcc_attribute_list:
-_1 = gcc_attribute
+  _1 = gcc_attribute
     {    ()}
 | _1 = gcc_attribute_list _2 = COMMA _3 = gcc_attribute
     {    ()}
 
 gcc_attribute:
-
+  
     {    ()}
 | _1 = gcc_attribute_word
     {    ()}
@@ -1359,7 +1359,7 @@ in
     {    ( set_id_type i VarId )}
 
 gcc_attribute_word:
-i = general_identifier
+  i = general_identifier
     {    ( set_id_type i OtherId )}
 | _1 = CONST
     {    ()}
@@ -1367,11 +1367,11 @@ i = general_identifier
     {    ()}
 
 function_specifier:
-_1 = INLINE
+  _1 = INLINE
     {    ()}
 
 declarator:
-x = direct_declarator _3 = attribute_specifier_list
+  x = direct_declarator _3 = attribute_specifier_list
     {let _1 =
       ( None )
 in
@@ -1384,7 +1384,7 @@ in
     ( x )}
 
 direct_declarator:
-i = general_identifier
+  i = general_identifier
     {    ( set_id_type i VarId; (i, None) )}
 | _1 = LPAREN x = declarator _3 = RPAREN
     {    ( x )}
@@ -1430,7 +1430,7 @@ in
       | Some _ -> x )}
 
 pointer:
-_1 = STAR
+  _1 = STAR
     {let _2 =
       ( None )
 in
@@ -1454,7 +1454,7 @@ in
     ()}
 
 type_qualifier_list:
-_2 = type_qualifier
+  _2 = type_qualifier
     {let _1 =
       ( None )
 in
@@ -1467,19 +1467,19 @@ in
     ()}
 
 parameter_type_list:
-l = parameter_list
+  l = parameter_list
     {    ( l )}
 | l = parameter_list _2 = COMMA _3 = ELLIPSIS
     {    ( l )}
 
 parameter_list:
-i = parameter_declaration
+  i = parameter_declaration
     {    ( [i] )}
 | l = parameter_list _2 = COMMA i = parameter_declaration
     {    ( i::l )}
 
 parameter_declaration:
-_1 = declaration_specifiers id = declare_varname_fst_declarator__
+  _1 = declaration_specifiers id = declare_varname_fst_declarator__
     {    ( Some id )}
 | _1 = declaration_specifiers
     {let _2 =
@@ -1494,7 +1494,7 @@ in
     ( None )}
 
 type_name:
-_1 = specifier_qualifier_list
+  _1 = specifier_qualifier_list
     {let _2 =
       ( None )
 in
@@ -1507,7 +1507,7 @@ in
     ()}
 
 abstract_declarator:
-_1 = pointer
+  _1 = pointer
     {    ()}
 | _2 = direct_abstract_declarator
     {let _1 =
@@ -1522,7 +1522,7 @@ in
     ()}
 
 direct_abstract_declarator:
-_1 = LPAREN _2 = abstract_declarator _3 = RPAREN
+  _1 = LPAREN _2 = abstract_declarator _3 = RPAREN
     {    ()}
 | _2 = LBRACK _5 = RBRACK
     {let _4 =
@@ -1637,7 +1637,7 @@ in
     ()}
 
 c_initializer:
-_1 = assignment_expression
+  _1 = assignment_expression
     {    ()}
 | _1 = LBRACE _2 = initializer_list _4 = RBRACE
     {let _3 =
@@ -1665,7 +1665,7 @@ let _endpos = _endpos__4_ in
     ( unclosed "{" "}" _startpos__1_ _endpos )}
 
 initializer_list:
-_2 = c_initializer
+  _2 = c_initializer
     {let _1 =
       ( None )
 in
@@ -1689,11 +1689,11 @@ in
     ()}
 
 designation:
-_1 = designator_list _2 = EQ
+  _1 = designator_list _2 = EQ
     {    ()}
 
 designator_list:
-_2 = designator
+  _2 = designator
     {let _1 =
       ( None )
 in
@@ -1706,13 +1706,13 @@ in
     ()}
 
 designator:
-_1 = LBRACK _2 = constant_expression _3 = RBRACK
+  _1 = LBRACK _2 = constant_expression _3 = RBRACK
     {    ()}
 | _1 = DOT i = general_identifier
     {    ( set_id_type i OtherId )}
 
 statement_finish:
-_1 = labeled_statement_statement_finish_
+  _1 = labeled_statement_statement_finish_
     {    ()}
 | _1 = compound_statement
     {    ()}
@@ -1728,7 +1728,7 @@ _1 = labeled_statement_statement_finish_
     {    ()}
 
 statement_intern:
-_1 = labeled_statement_statement_intern_
+  _1 = labeled_statement_statement_intern_
     {    ()}
 | _1 = compound_statement
     {    ()}
@@ -1744,7 +1744,7 @@ _1 = labeled_statement_statement_intern_
     {    ()}
 
 labeled_statement_statement_intern_:
-i = general_identifier _2 = COLON _3 = statement_intern
+  i = general_identifier _2 = COLON _3 = statement_intern
     {    ( set_id_type i OtherId )}
 | _1 = CASE _2 = constant_expression _3 = COLON _4 = statement_intern
     {    ()}
@@ -1752,7 +1752,7 @@ i = general_identifier _2 = COLON _3 = statement_intern
     {    ()}
 
 labeled_statement_statement_finish_:
-i = general_identifier _2 = COLON _3 = statement_finish
+  i = general_identifier _2 = COLON _3 = statement_finish
     {    ( set_id_type i OtherId )}
 | _1 = CASE _2 = constant_expression _3 = COLON _4 = statement_finish
     {    ()}
@@ -1760,14 +1760,14 @@ i = general_identifier _2 = COLON _3 = statement_finish
     {    ()}
 
 compound_statement:
-_1 = LBRACE _2 = in_context_compcert_pre_parser_option_block_item_list__ _3 = RBRACE
+  _1 = LBRACE _2 = in_context_compcert_pre_parser_option_block_item_list__ _3 = RBRACE
     {    ()}
 | _1 = LBRACE _2 = in_context_compcert_pre_parser_option_block_item_list__ _3 = error
     {let _endpos = _endpos__3_ in
     ( unclosed "{" "}" _startpos__1_ _endpos )}
 
 block_item_list:
-_2 = block_item
+  _2 = block_item
     {let _1 =
       ( None )
 in
@@ -1780,7 +1780,7 @@ in
     ()}
 
 block_item:
-_1 = declaration
+  _1 = declaration
     {    ()}
 | _1 = statement_finish
     {    ()}
@@ -1788,7 +1788,7 @@ _1 = declaration
     {    ()}
 
 expression_statement:
-_2 = SEMICOLON
+  _2 = SEMICOLON
     {let _1 =
       ( None )
 in
@@ -1801,7 +1801,7 @@ in
     ()}
 
 selection_statement_finish:
-_1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_finish
+  _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_finish
     {    ()}
 | _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_intern _6 = ELSE _7 = statement_finish
     {    ()}
@@ -1809,13 +1809,13 @@ _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_finish
     {    ()}
 
 selection_statement_intern:
-_1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_intern _6 = ELSE _7 = statement_intern
+  _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_intern _6 = ELSE _7 = statement_intern
     {    ()}
 | _1 = SWITCH _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_intern
     {    ()}
 
 iteration_statement_statement_intern_:
-_1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_intern
+  _1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_intern
     {    ()}
 | _1 = DO _2 = statement_finish _3 = WHILE _4 = LPAREN _5 = expression _6 = RPAREN _7 = SEMICOLON
     {    ()}
@@ -1957,7 +1957,7 @@ in
     ()}
 
 iteration_statement_statement_finish_:
-_1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_finish
+  _1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_finish
     {    ()}
 | _1 = DO _2 = statement_finish _3 = WHILE _4 = LPAREN _5 = expression _6 = RPAREN _7 = SEMICOLON
     {    ()}
@@ -2099,7 +2099,7 @@ in
     ()}
 
 jump_statement:
-_1 = GOTO i = general_identifier _3 = SEMICOLON
+  _1 = GOTO i = general_identifier _3 = SEMICOLON
     {    ( set_id_type i OtherId )}
 | _1 = CONTINUE _2 = SEMICOLON
     {    ()}
@@ -2118,11 +2118,11 @@ in
     ()}
 
 asm_statement:
-_1 = ASM _2 = asm_attributes _3 = LPAREN _4 = string_literals_list _5 = asm_arguments _6 = RPAREN _7 = SEMICOLON
+  _1 = ASM _2 = asm_attributes _3 = LPAREN _4 = string_literals_list _5 = asm_arguments _6 = RPAREN _7 = SEMICOLON
     {    ()}
 
 asm_attributes:
-
+  
     {    ()}
 | _1 = CONST _2 = asm_attributes
     {    ()}
@@ -2130,7 +2130,7 @@ asm_attributes:
     {    ()}
 
 asm_arguments:
-
+  
     {    ()}
 | _1 = COLON _2 = asm_operands
     {    ()}
@@ -2140,35 +2140,35 @@ asm_arguments:
     {    ()}
 
 asm_operands:
-
+  
     {    ()}
 | _1 = asm_operands_ne
     {    ()}
 
 asm_operands_ne:
-_1 = asm_operands_ne _2 = COMMA _3 = asm_operand
+  _1 = asm_operands_ne _2 = COMMA _3 = asm_operand
     {    ()}
 | _1 = asm_operand
     {    ()}
 
 asm_operand:
-_1 = asm_op_name _2 = string_literals_list _3 = LPAREN _4 = expression _5 = RPAREN
+  _1 = asm_op_name _2 = string_literals_list _3 = LPAREN _4 = expression _5 = RPAREN
     {    ()}
 
 asm_op_name:
-
+  
     {                                        ()}
 | _1 = LBRACK i = general_identifier _3 = RBRACK
     {                                        ( set_id_type i OtherId )}
 
 asm_flags:
-_1 = string_literals_list
+  _1 = string_literals_list
     {    ()}
 | _1 = string_literals_list _2 = COMMA _3 = asm_flags
     {    ()}
 
 translation_unit_file:
-_1 = translation_unit _2 = EOF
+  _1 = translation_unit _2 = EOF
     {    ()}
 | _1 = EOF
     {    ()}
@@ -2177,7 +2177,7 @@ _1 = translation_unit _2 = EOF
     ( syntax_error _endpos )}
 
 translation_unit:
-_1 = external_declaration
+  _1 = external_declaration
     {    ()}
 | _1 = translation_unit _2 = external_declaration
     {    ()}
@@ -2187,7 +2187,7 @@ _1 = external_declaration
     {    ()}
 
 external_declaration:
-_1 = function_definition
+  _1 = function_definition
     {    ()}
 | _1 = declaration
     {    ()}
@@ -2195,7 +2195,7 @@ _1 = function_definition
     {    ()}
 
 function_definition_begin:
-_1 = declaration_specifiers x = direct_declarator
+  _1 = declaration_specifiers x = direct_declarator
     {let _2 =
       ( None )
 in
@@ -2251,19 +2251,19 @@ in
     )}
 
 identifier_list:
-id = VAR_NAME
+  id = VAR_NAME
     {    ( [id] )}
 | idl = identifier_list _2 = COMMA id = VAR_NAME
     {    ( id :: idl )}
 
 declaration_list:
-
+  
     {    ( )}
 | _1 = declaration_list _2 = declaration
     {    ( )}
 
 function_definition:
-_1 = function_definition_begin _2 = LBRACE _4 = pop_context _5 = RBRACE
+  _1 = function_definition_begin _2 = LBRACE _4 = pop_context _5 = RBRACE
     {let _3 =
       ( None )
 in

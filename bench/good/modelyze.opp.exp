@@ -161,11 +161,11 @@ Warning: the token MYAPP is unused.
 %%
 
 main:
-_1 = top
+  _1 = top
     {      ( _1 )}
 
 top:
-_1 = EOF
+  _1 = EOF
     {      ( [] )}
 | _1 = DEF _2 = identparen _3 = parenparamlist _4 = EQ _5 = term _6 = top
     {      ( let fi = mkinfo _1.i (tm_info _5) in
@@ -197,27 +197,27 @@ _1 = EOF
         TopInclude(fi,Symtbl.add (modname ^. us".moz"))::_3 )}
 
 identparen:
-_1 = IDENT _2 = LPAREN
+  _1 = IDENT _2 = LPAREN
     {    ( _1.v )}
 | _1 = IDENTPAREN
     {    ( _1.v )}
 
 ty:
-_1 = tyarrow
+  _1 = tyarrow
     {      ( _1 )}
 | _1 = tyarrow _2 = DARROW _3 = ty
     {      ( let fi = mkinfo (ty_info _1) (ty_info _3) in
 	TyMap(fi,_2.l,_1,_3) )}
 
 tyarrow:
-_1 = tyatom
+  _1 = tyatom
     {      ( _1 )}
 | _1 = tyatom _2 = ARROW _3 = tyarrow
     {      ( let fi = mkinfo (ty_info _1) (ty_info _3) in
 	TyArrow(fi,_2.l,_1,_3) )}
 
 tyatom:
-_1 = IDENT
+  _1 = IDENT
     {      ( TyIdent(_1.i,_1.l,_1.v) )}
 | _1 = INT
     {      ( TyInt(_1.i,_1.l) )}
@@ -256,13 +256,13 @@ _1 = IDENT
     {      ( TyDAESolver(_1.i,_1.l) )}
 
 revtypetupleseq:
-_1 = ty
+  _1 = ty
     {        ([_1])}
 | _1 = revtypetupleseq _2 = COMMA _3 = ty
     {        (_3::_1)}
 
 deconpat:
-_1 = SYM _2 = COLON _3 = ty
+  _1 = SYM _2 = COLON _3 = ty
     {      ( let fi = mkinfo _1.i (ty_info _3) in
         MPatSym(fi,TySym(_1.i, 0, _3)) )}
 | _1 = IDENT _2 = IDENT
@@ -272,13 +272,13 @@ _1 = SYM _2 = COLON _3 = ty
         MPatLift(fi,_2.v,_4) )}
 
 letpat:
-_1 = IDENT
+  _1 = IDENT
     {      ( _1.v )}
 | _1 = USCORE
     {      ( wildcard )}
 
 term:
-_1 = semi_op
+  _1 = semi_op
     {      ( _1 )}
 | _1 = FUN _2 = IDENT _3 = COLON _4 = tyatom _5 = ARROW _6 = term
     {      ( let fi = mkinfo _1.i (tm_info _6) in
@@ -336,19 +336,19 @@ _1 = semi_op
        TmDAESolverOp(fi,_1.l,op,List.rev _4) )}
 
 op_atom_list_rev:
-
+  
     {     ( [] )}
 | _1 = atom_list_rev
     {     ( _1 )}
 
 atom_list_rev:
-_1 = atom
+  _1 = atom
     {      ( [_1] )}
 | _1 = atom_list_rev _2 = atom
     {      ( _2::_1 )}
 
 matchcases:
-_1 = BAR _2 = pattern _3 = op_guard _4 = ARROW _5 = term
+  _1 = BAR _2 = pattern _3 = op_guard _4 = ARROW _5 = term
     {      ( let fi = mkinfo _1.i (tm_info _5) in
 	[PCase(fi,[_2],_3,[],_5)] )}
 | _1 = matchcases _2 = BAR _3 = pattern _4 = op_guard _5 = ARROW _6 = term
@@ -356,24 +356,24 @@ _1 = BAR _2 = pattern _3 = op_guard _4 = ARROW _5 = term
 	(PCase(fi,[_3],_4,[],_6))::_1 )}
 
 op_guard:
-
+  
     {      ( None )}
 | _1 = IF _2 = term
     {      ( Some _2 )}
 
 pattern:
-_1 = pat_cons
+  _1 = pat_cons
     {      ( _1 )}
 
 pat_cons:
-_1 = pat_op
+  _1 = pat_op
     {      ( _1 )}
 | _1 = pat_op _2 = CONS _3 = pat_cons
     {      ( let fi = mkinfo (pat_info _1) (pat_info _3) in
 	PatCons(fi,_1,_3) )}
 
 pat_op:
-_1 = pat_left
+  _1 = pat_left
     {      ( _1 )}
 | _1 = pat_op _2 = EQ _3 = pat_op
     {      ( mk_binpat_op (mkpatinfo _1 _3) _2.l "(=)" _1 _3 )}
@@ -447,7 +447,7 @@ _1 = pat_left
     {      ( mk_unpat_op (mkinfo _1.i (pat_info _2)) _1.l "(--.)" _2 )}
 
 pat_left:
-_1 = pat_atom
+  _1 = pat_atom
     {      ( _1 )}
 | _1 = pat_left _2 = pat_atom
     {      ( let fi = mkinfo (pat_info _1) (pat_info _2) in
@@ -457,7 +457,7 @@ _1 = pat_atom
         PatLift(fi,_2.v,_4) )}
 
 pat_atom:
-_1 = IDENT
+  _1 = IDENT
     {      ( PatVar(_1.i,_1.v,true) )}
 | _1 = TRUE
     {      ( PatExpr(_1.i,TmConst(_1.i,_1.l,ConstBool(true))) )}
@@ -492,19 +492,19 @@ _1 = IDENT
     {      ( PatWildcard(_1.i) )}
 
 revpatseq:
-_1 = pattern
+  _1 = pattern
     {        ([_1])}
 | _1 = revpatseq _2 = COMMA _3 = pattern
     {        (_3::_1)}
 
 parenparamlist:
-_1 = revtmtyseq _2 = RPAREN _3 = rettype
+  _1 = revtmtyseq _2 = RPAREN _3 = rettype
     {      ( (_1,_3) )}
 | _1 = RPAREN
     {      ( ([wildcard,TyUnit(_1.i,_1.l)],None) )}
 
 rettype:
-
+  
     {    ( None )}
 | _1 = COLON _2 = tyatom
     {    ( Some(_2) )}
@@ -512,29 +512,29 @@ rettype:
     {    ( Some(_2) )}
 
 revtmtyseq:
-_1 = param
+  _1 = param
     {        ([_1])}
 | _1 = revtmtyseq _2 = COMMA _3 = param
     {        (_3::_1)}
 
 param:
-_1 = IDENT _2 = COLON _3 = tyatom
+  _1 = IDENT _2 = COLON _3 = tyatom
     {      ( (_1.v,_3) )}
 
 semi_op:
-_1 = cons
+  _1 = cons
     {      ( _1 )}
 | _1 = cons _2 = SEMI _3 = semi_op
     {      ( mk_binop (mktminfo _1 _3) _2.l "(;)" _1 _3 )}
 
 cons:
-_1 = op
+  _1 = op
     {      ( _1 )}
 | _1 = op _2 = CONS _3 = cons
     {      ( TmCons(mktminfo _1 _3,_2.l,_1,_3) )}
 
 op:
-_1 = app_left
+  _1 = app_left
     {      ( _1 )}
 | _1 = op _2 = EQ _3 = op
     {      ( mk_binop (mktminfo _1 _3) _2.l "(=)" _1 _3 )}
@@ -611,7 +611,7 @@ _1 = app_left
         TmEqual(fi,_2.l,_1,_3) )}
 
 app_left:
-_1 = atom
+  _1 = atom
     {      ( _1 )}
 | _1 = IDENTPAREN _2 = RPAREN
     {      ( let t1 = TmVar(_1.i,_1.v,0) in 
@@ -656,13 +656,13 @@ _1 = atom
     {      ( TmApp(mktminfo _3 _5,0,_3,_5,true) )}
 
 app_right:
-_1 = atom
+  _1 = atom
     {      ( (0,_1) )}
 | _1 = METAAPP _2 = atom
     {      ( (_1.l,_2) )}
 
 atom:
-_1 = IDENT
+  _1 = IDENT
     {      ( if _1.l = 0 then TmVar(_1.i,_1.v,0)
         else  (TmVar(_1.i,_1.v,0)) )}
 | _1 = TRUE
@@ -703,13 +703,13 @@ _1 = IDENT
     {      ( TmSymStr(tm_info _3,_3) )}
 
 revidentseq:
-_1 = IDENT
+  _1 = IDENT
     {        ([_1.v])}
 | _1 = revidentseq _2 = COMMA _3 = IDENT
     {        ((_3.v)::_1)}
 
 revtmseq:
-_1 = term
+  _1 = term
     {        ([_1])}
 | _1 = revtmseq _2 = COMMA _3 = term
     {        (_3::_1)}

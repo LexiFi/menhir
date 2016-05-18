@@ -143,7 +143,7 @@ let parse_error str =
 %%
 
 atom:
-_1 = Identifier
+  _1 = Identifier
     {               ( IdExpr (fst _1, snd _1)      )}
 | _1 = literal
     {            ( LiteralExpr (fst _1, snd _1) )}
@@ -151,7 +151,7 @@ _1 = Identifier
     {              ( _1			       )}
 
 enclosure:
-_1 = parenth_form
+  _1 = parenth_form
     {                 ( _1 )}
 | _1 = list_display
     {                 ( _1 )}
@@ -161,7 +161,7 @@ _1 = parenth_form
     {                     ( _1 )}
 
 literal:
-_1 = String
+  _1 = String
     {           ( StrLiteral     (fst _1, snd _1), snd _1 )}
 | _1 = Integer
     {            ( IntLiteral     (fst _1, snd _1), snd _1 )}
@@ -173,7 +173,7 @@ _1 = String
     {              ( ImagLiteral    (fst _1, snd _1), snd _1 )}
 
 parenth_form:
-_1 = Leftparen _2 = Rightparen
+  _1 = Leftparen _2 = Rightparen
     {                         ( TupleExpr ([], union_pos _1 _2) )}
 | _1 = Leftparen _2 = expr_list_without_comma _3 = Rightparen
     {      (  let (el,_) = _2 in
@@ -186,29 +186,29 @@ _1 = Leftparen _2 = Rightparen
     {      ( TupleExpr (fst _2, union_pos _1 _4) )}
 
 list_display:
-_1 = Leftbracket _2 = Rightbracket
+  _1 = Leftbracket _2 = Rightbracket
     {                             ( ListExpr (List [], union_pos _1 _2) )}
 | _1 = Leftbracket _2 = listmaker _3 = Rightbracket
     {                                      ( ListExpr (_2, union_pos _1 _3)      )}
 
 listmaker:
-_1 = expr_list
+  _1 = expr_list
     {              ( List (fst _1) )}
 
 dict_display:
-_1 = Leftbrace _2 = Rightbrace
+  _1 = Leftbrace _2 = Rightbrace
     {                          ( DictExpr ([], union_pos _1 _2)     )}
 | _1 = Leftbrace _2 = key_datum_list _3 = Rightbrace
     {                                       ( DictExpr (fst _2, union_pos _1 _3) )}
 
 key_datum_list:
-_1 = key_datum_list_without_comma
+  _1 = key_datum_list_without_comma
     {                                       ( _1				 )}
 | _1 = key_datum_list_without_comma _2 = Comma
     {                                       ( (fst _1, union_pos (snd _1) _2) )}
 
 key_datum_list_without_comma:
-_1 = key_datum
+  _1 = key_datum
     {               ( let (e1,e2,p) = _1 in ([(e1, e2)], p) )}
 | _1 = key_datum_list_without_comma _2 = Comma _3 = key_datum
     {      (  let (kdl,p1) = _1 in
@@ -217,15 +217,15 @@ _1 = key_datum
       )}
 
 key_datum:
-_1 = expression _2 = Colon _3 = expression
+  _1 = expression _2 = Colon _3 = expression
     {      ( (_1, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 string_conversion:
-_1 = Backquote _2 = expr_list_without_comma _3 = Backquote
+  _1 = Backquote _2 = expr_list_without_comma _3 = Backquote
     {      ( StrConvExpr (fst _2, union_pos _1 _3) )}
 
 primary:
-_1 = atom
+  _1 = atom
     {          ( _1 )}
 | _1 = attributeref
     {                 ( _1 )}
@@ -235,27 +235,27 @@ _1 = atom
     {          ( _1 )}
 
 attributeref:
-_1 = primary _2 = Period _3 = Identifier
+  _1 = primary _2 = Period _3 = Identifier
     {      ( AttrRefExpr (_1, fst _3, union_pos (pos_of_expr _1) (snd _3)) )}
 
 slicing:
-_1 = primary _2 = Leftbracket _3 = slice_list _4 = Rightbracket
+  _1 = primary _2 = Leftbracket _3 = slice_list _4 = Rightbracket
     {      ( SliceExpr (_1, fst _3, union_pos (pos_of_expr _1) _4) )}
 
 slice_list:
-_1 = slice_list_without_comma
+  _1 = slice_list_without_comma
     {                               ( _1                              )}
 | _1 = slice_list_without_comma _2 = Comma
     {                                   ( (fst _1, union_pos (snd _1) _2) )}
 
 slice_list_without_comma:
-_1 = slice_item
+  _1 = slice_item
     {                   ( ([fst _1], snd _1) )}
 | _1 = slice_list_without_comma _2 = Comma _3 = slice_item
     {      ( ((fst _1) @ [fst _3], union_pos (snd _1) (snd _3)) )}
 
 slice_item:
-_1 = expression
+  _1 = expression
     {                ( ExprSlice (_1), pos_of_expr _1 )}
 | _1 = short_slice
     {                 ( _1 )}
@@ -278,7 +278,7 @@ _1 = expression
     {              ( ExtSlice ([IdExpr (ellipsis, no_pos)]), _1 )}
 
 short_slice:
-_1 = Colon
+  _1 = Colon
     {          ( SimpleSlice(zero, IdExpr(sys_maxint, no_pos)), _1 )}
 | _1 = expression _2 = Colon
     {                    ( SimpleSlice(_1, IdExpr(sys_maxint, no_pos)), union_pos (pos_of_expr _1) _2 )}
@@ -288,13 +288,13 @@ _1 = Colon
     {      ( SimpleSlice(_1, _3), union_pos (pos_of_expr _1) (pos_of_expr _3) )}
 
 call:
-_1 = primary _2 = Leftparen _3 = Rightparen
+  _1 = primary _2 = Leftparen _3 = Rightparen
     {      ( CallExpr(_1, [], union_pos (pos_of_expr _1) _3) )}
 | _1 = primary _2 = Leftparen _3 = arg_list _4 = Rightparen
     {      ( CallExpr (_1, List.rev _3, union_pos (pos_of_expr _1) _4) )}
 
 arg_list:
-_1 = arg_comma_star _2 = argument _3 = optional_comma
+  _1 = arg_comma_star _2 = argument _3 = optional_comma
     {                                          ( _2 :: _1 )}
 | _1 = arg_comma_star _2 = Star _3 = atom
     {      ( StarArg (_3, pos_of_expr _3) :: _1 )}
@@ -304,13 +304,13 @@ _1 = arg_comma_star _2 = argument _3 = optional_comma
     {      ( StarStarArg (_3, pos_of_expr _3) :: _1 )}
 
 arg_comma_star:
-
+  
     {     ( [] )}
 | _1 = arg_comma_star _2 = argument _3 = Comma
     {                                 ( _2 :: _1 )}
 
 argument:
-_1 = expression
+  _1 = expression
     {                ( let p = pos_of_expr _1 in PosArg (_1, p) )}
 | _1 = Identifier _2 = Equal _3 = expression
     {      (  let pos = union_pos (snd _1) (pos_of_expr _3) in
@@ -318,19 +318,19 @@ _1 = expression
       )}
 
 optional_comma:
-
+  
     {         ( () )}
 | _1 = Comma
     {         ( () )}
 
 power:
-_1 = primary
+  _1 = primary
     {              ( _1 )}
 | _1 = primary _2 = StarStar _3 = u_expr
     {      ( OpExpr (_1, StarStar, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 u_expr:
-_1 = power
+  _1 = power
     {            ( _1                                                      )}
 | _1 = Dash _2 = u_expr
     {                  ( OpExpr (zero, Dash, _2, union_pos _1 (pos_of_expr _2))  )}
@@ -340,7 +340,7 @@ _1 = power
     {                  ( OpExpr (zero, Tilde, _2, union_pos _1 (pos_of_expr _2)) )}
 
 m_expr:
-_1 = u_expr
+  _1 = u_expr
     {           ( _1 )}
 | _1 = m_expr _2 = Star _3 = u_expr
     {      ( OpExpr (_1, Star, _3, union_pos (pos_of_expr _1) (pos_of_expr _3))    )}
@@ -350,7 +350,7 @@ _1 = u_expr
     {      ( OpExpr (_1, Percent, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 a_expr:
-_1 = m_expr
+  _1 = m_expr
     {           ( _1 )}
 | _1 = a_expr _2 = Plus _3 = m_expr
     {      ( OpExpr (_1, Plus, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
@@ -358,7 +358,7 @@ _1 = m_expr
     {      ( OpExpr (_1, Dash, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 shift_expr:
-_1 = a_expr
+  _1 = a_expr
     {            ( _1 )}
 | _1 = shift_expr _2 = Leftshift _3 = a_expr
     {      ( OpExpr (_1, Leftshift, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
@@ -366,31 +366,31 @@ _1 = a_expr
     {      ( OpExpr (_1, Rightshift, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 and_expr:
-_1 = shift_expr
+  _1 = shift_expr
     {                 ( _1 )}
 | _1 = and_expr _2 = Ampersand _3 = shift_expr
     {      ( OpExpr (_1, Ampersand, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 xor_expr:
-_1 = and_expr
+  _1 = and_expr
     {              ( _1 )}
 | _1 = xor_expr _2 = Caret _3 = and_expr
     {      ( OpExpr (_1, Caret, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 or_expr:
-_1 = xor_expr
+  _1 = xor_expr
     {             ( _1 )}
 | _1 = or_expr _2 = Bar _3 = xor_expr
     {      ( OpExpr (_1, Bar, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 comparison:
-_1 = or_expr
+  _1 = or_expr
     {               ( _1 )}
 | _1 = comparison _2 = comp_operator _3 = or_expr
     {      ( OpExpr(_1, _2, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 comp_operator:
-_1 = Lessthan
+  _1 = Lessthan
     {              ( Lessthan	)}
 | _1 = Greaterthan
     {                 ( Greaterthan	)}
@@ -412,37 +412,37 @@ _1 = Lessthan
     {            ( NotIn		)}
 
 expression:
-_1 = or_test
+  _1 = or_test
     {           ( _1 )}
 | _1 = lambda_form
     {               ( _1 )}
 
 or_test:
-_1 = and_test
+  _1 = and_test
     {              ( _1 )}
 | _1 = or_test _2 = Or _3 = and_test
     {      ( OpExpr(_1, Or, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 and_test:
-_1 = not_test
+  _1 = not_test
     {               ( _1 )}
 | _1 = and_test _2 = And _3 = not_test
     {      ( OpExpr(_1, And, _3, union_pos (pos_of_expr _1) (pos_of_expr _3)) )}
 
 not_test:
-_1 = comparison
+  _1 = comparison
     {                ( _1 )}
 | _1 = Not _2 = not_test
     {                 ( OpExpr(zero, Not, _2, union_pos _1 (pos_of_expr _2)) )}
 
 lambda_form:
-_1 = Lambda _2 = Colon _3 = expression
+  _1 = Lambda _2 = Colon _3 = expression
     {      ( FuncExpr([], [ReturnStmt(_3, no_pos)], union_pos _1 (pos_of_expr _3)) )}
 | _1 = Lambda _2 = parameter_list _3 = Colon _4 = expression
     {      ( FuncExpr(fst _2, [ReturnStmt(_4, no_pos)], union_pos _1 (pos_of_expr _4)) )}
 
 expr_list_without_comma:
-_1 = expression
+  _1 = expression
     {                  ( [_1], pos_of_expr _1 )}
 | _1 = expr_list_without_comma _2 = Comma _3 = expression
     {      (  let (el,elp) = _1 in
@@ -450,13 +450,13 @@ _1 = expression
       )}
 
 expr_list:
-_1 = expr_list_without_comma
+  _1 = expr_list_without_comma
     {                             ( _1				    )}
 | _1 = expr_list_without_comma _2 = Comma
     {                                  ( (fst _1), union_pos (snd _1) _2 )}
 
 simple_stmt:
-_1 = expression_stmt
+  _1 = expression_stmt
     {                     ( _1 )}
 | _1 = assert_stmt
     {                  ( _1 )}
@@ -484,17 +484,17 @@ _1 = expression_stmt
     {                  ( _1 )}
 
 expression_stmt:
-_1 = expr_list
+  _1 = expr_list
     {             ( let (el,elp) = _1 in ExprList (el, elp) )}
 
 assert_stmt:
-_1 = Assert _2 = expression
+  _1 = Assert _2 = expression
     {      ( AssertStmt(_2, None, union_pos _1 (pos_of_expr _2)) )}
 | _1 = Assert _2 = expression _3 = Comma _4 = expression
     {      ( AssertStmt(_2, Some _4, union_pos _1 (pos_of_expr _4)) )}
 
 assignment_stmt:
-_1 = expr_list _2 = Equal _3 = expr_list
+  _1 = expr_list _2 = Equal _3 = expr_list
     {      (  let (el1,p1) = _1 in
 	 let (el2,p2) = _3 in
 	 AssignStmt ([el1], el2, union_pos p1 p2)
@@ -509,13 +509,13 @@ _1 = expr_list _2 = Equal _3 = expr_list
       )}
 
 target_list:
-_1 = target_list_without_comma
+  _1 = target_list_without_comma
     {                                 ( _1 )}
 | _1 = target_list_without_comma _2 = Comma
     {                                    ( let (tl,tlp) = _1 in (tl, union_pos tlp _2) )}
 
 target_list_without_comma:
-_1 = primary
+  _1 = primary
     {              ( [_1], pos_of_expr _1 )}
 | _1 = target_list_without_comma _2 = Comma _3 = primary
     {      (  let (tl,tlp) = _1 in
@@ -523,13 +523,13 @@ _1 = primary
       )}
 
 augmented_assignment_stmt:
-_1 = primary _2 = augop _3 = expr_list
+  _1 = primary _2 = augop _3 = expr_list
     {      (  let (el,elp) = _3 in
 	 AugAssignStmt (_1, _2, el, union_pos (pos_of_expr _1) elp)
       )}
 
 augop:
-_1 = PlusEqual
+  _1 = PlusEqual
     {              ( PlusEqual       )}
 | _1 = DashEqual
     {              ( DashEqual       )}
@@ -553,15 +553,15 @@ _1 = PlusEqual
     {             ( BarEqual        )}
 
 pass_stmt:
-_1 = Pass
+  _1 = Pass
     {         ( PassStmt _1 )}
 
 del_stmt:
-_1 = Del _2 = target_list
+  _1 = Del _2 = target_list
     {                   ( let (tl,tlp) = _2 in DelStmt (tl, union_pos _1 tlp) )}
 
 print_stmt:
-_1 = Print
+  _1 = Print
     {           ( PrintStmt (none_expr, [], _1) )}
 | _1 = Print _2 = expr_list
     {      ( let (el,elp) = _2 in PrintStmt (none_expr, el, union_pos _1 elp) )}
@@ -571,7 +571,7 @@ _1 = Print
     {      ( let (el,elp) = _5 in PrintStmt (_3, el, union_pos _1 elp) )}
 
 return_stmt:
-_1 = Return
+  _1 = Return
     {           ( ReturnStmt (none_expr, _1) )}
 | _1 = Return _2 = expr_list
     {      (  let (el,elp) = _2 in
@@ -582,7 +582,7 @@ _1 = Return
       )}
 
 raise_stmt:
-_1 = Raise
+  _1 = Raise
     {           ( RaiseStmt (none_expr, none_expr, none_expr, _1) )}
 | _1 = Raise _2 = expression
     {      ( RaiseStmt (_2, none_expr, none_expr, union_pos _1 (pos_of_expr _2)) )}
@@ -592,15 +592,15 @@ _1 = Raise
     {      ( RaiseStmt (_2, _4, _6, union_pos _1 (pos_of_expr _6)) )}
 
 break_stmt:
-_1 = Break
+  _1 = Break
     {         ( BreakStmt _1 )}
 
 continue_stmt:
-_1 = Continue
+  _1 = Continue
     {            ( ContStmt _1 )}
 
 import_stmt:
-_1 = Import _2 = module_list
+  _1 = Import _2 = module_list
     {      (  let (ml,mlp) = _2 in
 	 ImportStmt ([], ml, union_pos _1 mlp)
       )}
@@ -615,7 +615,7 @@ _1 = Import _2 = module_list
       )}
 
 module_list:
-_1 = module_name
+  _1 = module_name
     {                 ( let (mn,mnp) = _1 in [mn, none], mnp )}
 | _1 = module_name _2 = Identifier _3 = Identifier
     {      (  let (s,_) = _2 in
@@ -644,7 +644,7 @@ _1 = module_name
       )}
 
 module_name:
-_1 = Identifier
+  _1 = Identifier
     {               ( let (s,p) = _1 in [s], p )}
 | _1 = module_name _2 = Period _3 = Identifier
     {      (  let (mn,mnp) = _1 in
@@ -653,7 +653,7 @@ _1 = Identifier
       )}
 
 import_ident_list:
-_1 = Identifier
+  _1 = Identifier
     {              ( let (id,idp) = _1 in [[id], none], idp )}
 | _1 = Identifier _2 = Identifier _3 = Identifier
     {      (  let (s,_) = _2 in
@@ -681,11 +681,11 @@ _1 = Identifier
       )}
 
 global_stmt:
-_1 = Global _2 = identifier_list
+  _1 = Global _2 = identifier_list
     {      ( let (il,ilp) = _2 in GlobalStmt (il, union_pos _1 ilp) )}
 
 identifier_list:
-_1 = Identifier
+  _1 = Identifier
     {                 ( let (id,idp) = _1 in [id], idp )}
 | _1 = identifier_list _2 = Comma _3 = Identifier
     {      (  let (il,ilp) = _1 in
@@ -694,7 +694,7 @@ _1 = Identifier
       )}
 
 compound_stmt:
-_1 = if_stmt
+  _1 = if_stmt
     {           ( _1 )}
 | _1 = while_stmt
     {              ( _1 )}
@@ -708,13 +708,13 @@ _1 = if_stmt
     {            ( _1 )}
 
 suite:
-_1 = stmt_list _2 = Newline
+  _1 = stmt_list _2 = Newline
     {                         ( _1 )}
 | _1 = Newline _2 = Indent _3 = statement_plus _4 = Dedent
     {                                         ( _3 )}
 
 statement_plus:
-_1 = statement
+  _1 = statement
     {               ( [_1], pos_of_stmt _1 )}
 | _1 = statement_plus _2 = statement
     {      (  let (stp,stpp) = _1 in
@@ -722,25 +722,25 @@ _1 = statement
       )}
 
 statement:
-_1 = stmt_list _2 = Newline
+  _1 = stmt_list _2 = Newline
     {                      ( let (sl,slp) = _1 in StmtList (sl, slp) )}
 | _1 = compound_stmt
     {                  ( _1                                      )}
 
 stmt_list:
-_1 = stmt_list_without_semicolon
+  _1 = stmt_list_without_semicolon
     {                                 ( _1 )}
 | _1 = stmt_list_without_semicolon _2 = Semicolon
     {      ( let (sl,slp) = _1 in sl, union_pos slp _2 )}
 
 stmt_list_without_semicolon:
-_1 = simple_stmt
+  _1 = simple_stmt
     {                ( [_1], pos_of_stmt _1 )}
 | _1 = stmt_list_without_semicolon _2 = Semicolon _3 = simple_stmt
     {      ( let (sl,slp) = _1 in _3 :: sl, union_pos slp (pos_of_stmt _3) )}
 
 if_stmt:
-_1 = If _2 = expression _3 = Colon _4 = suite
+  _1 = If _2 = expression _3 = Colon _4 = suite
     {      ( let (s,sp) = _4 in IfStmt (_2, s, [], union_pos _1 sp) )}
 | _1 = If _2 = expression _3 = Colon _4 = suite _5 = elif_list
     {      (  let (s,sp) = _4 in
@@ -749,7 +749,7 @@ _1 = If _2 = expression _3 = Colon _4 = suite
       )}
 
 elif_list:
-_1 = Else _2 = Colon _3 = suite
+  _1 = Else _2 = Colon _3 = suite
     {                     ( let (s,sp) = _3 in s, union_pos _1 sp )}
 | _1 = Elif _2 = expression _3 = Colon _4 = suite
     {      (  let (s,sp) = _4 in
@@ -764,7 +764,7 @@ _1 = Else _2 = Colon _3 = suite
       )}
 
 while_stmt:
-_1 = While _2 = expression _3 = Colon _4 = suite
+  _1 = While _2 = expression _3 = Colon _4 = suite
     {      ( let (s,sp) = _4 in WhileStmt (_2, s, [], sp) )}
 | _1 = While _2 = expression _3 = Colon _4 = suite _5 = Else _6 = Colon _7 = suite
     {      (  let (s1,sp1) = _4 in
@@ -773,7 +773,7 @@ _1 = While _2 = expression _3 = Colon _4 = suite
       )}
 
 for_stmt:
-_1 = For _2 = target_list _3 = In _4 = expr_list _5 = Colon _6 = suite
+  _1 = For _2 = target_list _3 = In _4 = expr_list _5 = Colon _6 = suite
     {      (  let (tl,tlp) = _2 in
 	 let (el,elp) = _4 in
 	 let (s,sp) = _6 in
@@ -788,13 +788,13 @@ _1 = For _2 = target_list _3 = In _4 = expr_list _5 = Colon _6 = suite
       )}
 
 try_stmt:
-_1 = try_exc_stmt
+  _1 = try_exc_stmt
     {                 ( _1 )}
 | _1 = try_fin_stmt
     {                 ( _1 )}
 
 try_exc_stmt:
-_1 = Try _2 = Colon _3 = suite _4 = exc_list
+  _1 = Try _2 = Colon _3 = suite _4 = exc_list
     {      (  let (s,sp) = _3 in
 	 let (el,elp) = _4 in
 	 TryStmt (s, el, [], union_pos _1 elp)
@@ -807,7 +807,7 @@ _1 = Try _2 = Colon _3 = suite _4 = exc_list
       )}
 
 exc_list:
-_1 = exc_item
+  _1 = exc_item
     {             ( let a, b, c, d = _1 in [a, b, c], d )}
 | _1 = exc_list _2 = exc_item
     {      (  let (el,elp) = _1 in
@@ -816,7 +816,7 @@ _1 = exc_item
       )}
 
 exc_item:
-_1 = Except _2 = Colon _3 = suite
+  _1 = Except _2 = Colon _3 = suite
     {      ( let (s,sp) = _3 in none_expr, none_expr, s, union_pos _1 sp )}
 | _1 = Except _2 = expression _3 = Colon _4 = suite
     {      ( let (s,sp) = _4 in _2, none_expr, s, union_pos _1 sp )}
@@ -824,14 +824,14 @@ _1 = Except _2 = Colon _3 = suite
     {      ( let (s,sp) = _6 in _2, _4, s, union_pos _1 sp )}
 
 try_fin_stmt:
-_1 = Try _2 = Colon _3 = suite _4 = Finally _5 = Colon _6 = suite
+  _1 = Try _2 = Colon _3 = suite _4 = Finally _5 = Colon _6 = suite
     {      (  let (s1,sp1) = _3 in
 	 let (s2,sp2) = _6 in
 	 TryStmt (s1, [], s2, union_pos _1 sp2)
       )}
 
 funcdef:
-_1 = Def _2 = Identifier _3 = Leftparen _4 = Rightparen _5 = Colon _6 = suite
+  _1 = Def _2 = Identifier _3 = Leftparen _4 = Rightparen _5 = Colon _6 = suite
     {      (  let (id,idp) = _2 in
 	 let (s,sp) = _6 in
 	 FuncDef (id, [], s, union_pos _1 sp)
@@ -844,7 +844,7 @@ _1 = Def _2 = Identifier _3 = Leftparen _4 = Rightparen _5 = Colon _6 = suite
       )}
 
 parameter_list:
-_1 = defparams _2 = optional_comma
+  _1 = defparams _2 = optional_comma
     {                             ( _1 )}
 | _1 = defparams _2 = Comma _3 = Star _4 = Identifier
     {      (  let (dp,dpp) = _1 in
@@ -875,37 +875,37 @@ _1 = defparams _2 = optional_comma
       )}
 
 defparams:
-_1 = defparam
+  _1 = defparam
     {              ( [_1], pos_of_param _1 )}
 | _1 = defparams _2 = Comma _3 = defparam
     {      ( let (pl,plp) = _1 in pl @ [_3], union_pos plp (pos_of_param _3) )}
 
 defparam:
-_1 = parameter
+  _1 = parameter
     {               ( _1 )}
 | _1 = parameter _2 = Equal _3 = expression
     {      (  DefParam (_1, _3, union_pos (pos_of_param _1) (pos_of_expr _3)) )}
 
 parameter:
-_1 = Identifier
+  _1 = Identifier
     {                ( let (id,idp) = _1 in IdParam (id, idp) )}
 | _1 = Leftparen _2 = sublist _3 = Rightparen
     {      ( let (sl,slp) = _2 in SublistParam (sl, union_pos _1 _3) )}
 
 sublist:
-_1 = sublist_without_comma
+  _1 = sublist_without_comma
     {                         ( _1 )}
 | _1 = sublist_without_comma _2 = Comma
     {                               ( _1 )}
 
 sublist_without_comma:
-_1 = parameter
+  _1 = parameter
     {                 ( [_1], pos_of_param _1 )}
 | _1 = sublist_without_comma _2 = Comma _3 = parameter
     {      ( let (sl,slp) = _1 in sl @ [_3], union_pos slp (pos_of_param _3) )}
 
 classdef:
-_1 = Class _2 = Identifier _3 = Colon _4 = suite
+  _1 = Class _2 = Identifier _3 = Colon _4 = suite
     {      (  let (id,idp) = _2 in
 	 let (s,sp) = _4 in
 	 ClassDef (id, [], s, union_pos _1 sp)
@@ -917,17 +917,17 @@ _1 = Class _2 = Identifier _3 = Colon _4 = suite
       )}
 
 inheritance:
-_1 = Leftparen _2 = Rightparen
+  _1 = Leftparen _2 = Rightparen
     {                          ( []     )}
 | _1 = Leftparen _2 = expr_list _3 = Rightparen
     {                                  ( fst _2 )}
 
 file_input:
-_1 = file_input_list
+  _1 = file_input_list
     {                     ( List.rev _1 )}
 
 file_input_list:
-_1 = Newline
+  _1 = Newline
     {             ( []        )}
 | _1 = statement
     {               ( [_1]      )}

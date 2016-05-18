@@ -86,31 +86,31 @@ open Ast_css
 %%
 
 stylesheet:
-_1 = s_star _2 = statement_star _3 = EOF
+  _1 = s_star _2 = statement_star _3 = EOF
     {                              ( _2 )}
 
 statement:
-_1 = rule
+  _1 = rule
     {        ( _1 (* `Rule *) )}
 
 rule:
-_1 = selector_list _2 = declaration_block
+  _1 = selector_list _2 = declaration_block
     {                                                                 ((_1, _2))}
 
 selector_list:
-_1 = selector_separated_nonempty_list_COMMA
+  _1 = selector_separated_nonempty_list_COMMA
     {                                                                 (_1)}
 
 selector:
-_1 = simple_selector _2 = combination_star
+  _1 = simple_selector _2 = combination_star
     {                                                                ((_1, _2))}
 
 combination:
-_1 = combinator _2 = simple_selector
+  _1 = combinator _2 = simple_selector
     {                                                                 ((_1, _2))}
 
 combinator:
-_1 = S
+  _1 = S
     {           ( Descendant )}
 | _1 = TILDE
     {           ( GeneralSibling )}
@@ -120,7 +120,7 @@ _1 = S
     {           ( Child )}
 
 simple_selector:
-_1 = element _2 = qualifier_star
+  _1 = element _2 = qualifier_star
     {     ( Explicit (_1, _2) )}
 | _1 = qualifier_plus
     {     ( let hd, tl = 
@@ -132,13 +132,13 @@ _1 = element _2 = qualifier_star
    )}
 
 element:
-_1 = IDENT
+  _1 = IDENT
     {            ( Tag (fst _1) )}
 | _1 = ASTERISK
     {            ( Universal )}
 
 qualifier:
-_1 = HASH
+  _1 = HASH
     {     ( Id (fst _1) )}
 | _1 = PERIOD _2 = IDENT
     {     ( Class (fst _2) )}
@@ -152,7 +152,7 @@ _1 = HASH
     {     ( SelFunc (fst _1, _2) )}
 
 function_args:
-_1 = qualifier_plus
+  _1 = qualifier_plus
     {                  ( Qualified _1 )}
 | _1 = NTH
     {                  ( Nth (fst _1) )}
@@ -160,7 +160,7 @@ _1 = qualifier_plus
     {                  ( Nth (fst _1) )}
 
 attr_operation:
-
+  
     {                                ( AttrExists )}
 | _1 = ATTR_EQUALS _2 = attr_operand
     {                                ( AttrEquals _2 )}
@@ -176,29 +176,29 @@ attr_operation:
     {                                ( AttrSubstring _2 )}
 
 attr_operand:
-_1 = IDENT
+  _1 = IDENT
     {           ( fst _1 )}
 | _1 = TString
     {           ( fst _1 )}
 
 declaration_block:
-_1 = OPEN_CURLY _2 = declaration_plus _3 = CLOSE_CURLY
+  _1 = OPEN_CURLY _2 = declaration_plus _3 = CLOSE_CURLY
     {                                                 ( _2 )}
 
 declaration:
-_1 = IDENT _2 = COLON _3 = expr _4 = boption_IMPORTANT _5 = SEMICOLON
+  _1 = IDENT _2 = COLON _3 = expr _4 = boption_IMPORTANT _5 = SEMICOLON
     {                                                 ( (fst _1, _3, _4) )}
 
 expr:
-_1 = sentence_separated_nonempty_list_COMMA
+  _1 = sentence_separated_nonempty_list_COMMA
     {                                              ( _1 )}
 
 sentence:
-_1 = term_separated_nonempty_list_sopt
+  _1 = term_separated_nonempty_list_sopt
     {                                              ( _1 )}
 
 term:
-_1 = calc
+  _1 = calc
     {           ( Calc _1 )}
 | _1 = TString
     {           ( String (fst _1) )}
@@ -214,67 +214,67 @@ _1 = calc
     {           ( Slash )}
 
 calc:
-_1 = VAR
+  _1 = VAR
     {            ( Varref (fst (_1)) )}
 | _1 = QUANTITY
     {            ( Quantity (0., Some (fst _1)) (* TODO parse_quantity *) )}
 
 selector_separated_nonempty_list_COMMA:
-_1 = selector
+  _1 = selector
     {            ( [_1] )}
 | _1 = selector_separated_nonempty_list_COMMA _2 = COMMA _3 = selector
     {                                                         ( _1 @ [_3] )}
 
 sentence_separated_nonempty_list_COMMA:
-_1 = sentence
+  _1 = sentence
     {            ( [_1] )}
 | _1 = sentence_separated_nonempty_list_COMMA _2 = COMMA _3 = sentence
     {                                                         ( _1 @ [_3] )}
 
 term_separated_nonempty_list_sopt:
-_1 = term
+  _1 = term
     {        ( [_1] )}
 | _1 = term_separated_nonempty_list_sopt _2 = S _3 = term
     {                                            ( _1 @ [_3] )}
 
 statement_star:
-_1 = statement_star _2 = statement
+  _1 = statement_star _2 = statement
     {                            ( _1 @ [_2] )}
 | 
     {                 ( [] )}
 
 combination_star:
-_1 = combination_star _2 = combination
+  _1 = combination_star _2 = combination
     {                                ( _1 @ [_2] )}
 | 
     {                 ( [] )}
 
 qualifier_star:
-_1 = qualifier_star _2 = qualifier
+  _1 = qualifier_star _2 = qualifier
     {                            ( _1 @ [_2] )}
 | 
     {                 ( [] )}
 
 s_star:
-_1 = s_star _2 = S
+  _1 = s_star _2 = S
     {            ( [] )}
 | 
     {                 ( [] )}
 
 qualifier_plus:
-_1 = qualifier
+  _1 = qualifier
     {             ( [_1] )}
 | _1 = qualifier_plus _2 = qualifier
     {                            ( _1 @ [_2] )}
 
 declaration_plus:
-_1 = declaration
+  _1 = declaration
     {               ( [_1] )}
 | _1 = declaration_plus _2 = declaration
     {                                ( _1 @ [_2] )}
 
 boption_IMPORTANT:
-
+  
     {                 ( false )}
 | _1 = IMPORTANT
     {             ( true )}

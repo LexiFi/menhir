@@ -176,21 +176,21 @@ let intersect_attrs attrs1 attrs2 =
 %%
 
 top:
-_1 = specs _2 = EOF
+  _1 = specs _2 = EOF
     {            ( (*print_string "Start Symbol reduced, end of recognition\n########################\n"*) )}
 
 LocatedID:
-_1 = ID
+  _1 = ID
     {    ( Irg.add_pos _1 !Lexer.file !Lexer.line; _1 )}
 
 specs:
-_1 = MachineSpec
+  _1 = MachineSpec
     {               (   )}
 | _1 = specs _2 = MachineSpec
     {                     (   )}
 
 MachineSpec:
-_1 = LetDef
+  _1 = LetDef
     {             ( Irg.add_symbol (fst _1) (snd _1) )}
 | _1 = TypeSpec
     {               ( Sem.add_spec (fst _1) (snd _1) )}
@@ -214,27 +214,27 @@ _1 = LetDef
     {             ( Irg.add_symbol (fst _1) (snd _1); Irg.add_canon (fst _1) (snd _1) )}
 
 LetDef:
-_1 = LET _2 = LocatedID _3 = EQ _4 = LetExpr
+  _1 = LET _2 = LocatedID _3 = EQ _4 = LetExpr
     {                          (  Irg.add_pos (_2) !(Lexer.file) _1;(_2, Irg.LET (_2, Sem.eval_const _4)) )}
 
 ResourceSpec:
-_1 = RESOURCE _2 = ResourceList
+  _1 = RESOURCE _2 = ResourceList
     {                       ( List.iter (fun e->Irg.add_pos e !(Lexer.file) _1) _2)}
 
 ResourceList:
-_1 = Resource
+  _1 = Resource
     {            ( [_1] )}
 | _1 = ResourceList _2 = COMMA _3 = Resource
     {                              ( _3::_1 )}
 
 Resource:
-_1 = LocatedID
+  _1 = LocatedID
     {                 ( Irg.add_symbol _1 (Irg.RES _1); _1 )}
 | _1 = LocatedID _2 = LBRACK _3 = CARD_CONST _4 = RBRACK
     {                                     ( Irg.add_symbol _1 (Irg.RES _1); _1 )}
 
 CanonSpec:
-_1 = CANON _2 = STRING_CONST _3 = LPAREN _4 = TypeList _5 = RPAREN
+  _1 = CANON _2 = STRING_CONST _3 = LPAREN _4 = TypeList _5 = RPAREN
     { (
 		(_2, Irg.CANON_DEF(_2, Irg.CANON_FUNC, Irg.NO_TYPE, _4))
 	)}
@@ -256,23 +256,23 @@ _1 = CANON _2 = STRING_CONST _3 = LPAREN _4 = TypeList _5 = RPAREN
 	)}
 
 TypeList:
-_1 = Type
+  _1 = Type
     {        ( [_1] )}
 | _1 = TypeList _2 = COMMA _3 = Type
     {                       ( _3::_1 )}
 
 ExceptionSpec:
-_1 = EXCEPTION _2 = IdentifierList
+  _1 = EXCEPTION _2 = IdentifierList
     {                          ( List.iter (fun id -> (Irg.add_pos id !(Lexer.file) _1;(Irg.add_symbol id (Irg.EXN id)))) _2 )}
 
 IdentifierList:
-_1 = ID
+  _1 = ID
     {       ( [_1] )}
 | _1 = IdentifierList _2 = COMMA _3 = ID
     {                           ( _3::_1 )}
 
 TypeSpec:
-_1 = TYPE _2 = LocatedID _3 = EQ _4 = TypeExpr
+  _1 = TYPE _2 = LocatedID _3 = EQ _4 = TypeExpr
     {                            (
 					Irg.add_pos _2 !(Lexer.file) _1;
 					Irg.complete_incomplete_enum_poss _2;	(* needed for enums *)
@@ -280,7 +280,7 @@ _1 = TYPE _2 = LocatedID _3 = EQ _4 = TypeExpr
 				)}
 
 TypeExpr:
-_1 = BOOL
+  _1 = BOOL
     {  ( Irg.BOOL )}
 | _1 = INT _2 = LPAREN _3 = LetExpr _4 = RPAREN
     {  ( Irg.INT (Sem.to_int (Sem.eval_const _3)) )}
@@ -324,60 +324,60 @@ _1 = BOOL
 		)}
 
 LetExpr:
-_1 = Expr
+  _1 = Expr
     {       ( _1 )}
 
 MemorySpec:
-_1 = MEM _2 = LocatedID _3 = LBRACK _4 = MemPart _5 = RBRACK _6 = OptionalMemAttrDefList
+  _1 = MEM _2 = LocatedID _3 = LBRACK _4 = MemPart _5 = RBRACK _6 = OptionalMemAttrDefList
     {  (
 			Irg.add_pos _2 !(Lexer.file) _1;
 			_2, Irg.MEM (_2, fst _4, snd _4, _6)
 		)}
 
 RegisterSpec:
-_1 = REG _2 = LocatedID _3 = LBRACK _4 = RegPart _5 = RBRACK _6 = OptionalMemAttrDefList
+  _1 = REG _2 = LocatedID _3 = LBRACK _4 = RegPart _5 = RBRACK _6 = OptionalMemAttrDefList
     {  (
 			Irg.add_pos _2 !(Lexer.file) _1;
 			_2, Irg.REG (_2, fst _4, snd _4, _6) )}
 
 VarSpec:
-_1 = VAR _2 = LocatedID _3 = LBRACK _4 = RegPart _5 = RBRACK
+  _1 = VAR _2 = LocatedID _3 = LBRACK _4 = RegPart _5 = RBRACK
     {  (
 			Irg.add_pos _2 !(Lexer.file) _1;
 			_2, Irg.VAR (_2, fst _4, snd _4) )}
 
 MemPart:
-_1 = LetExpr _2 = COMMA _3 = Type
+  _1 = LetExpr _2 = COMMA _3 = Type
     {                      ( Sem.to_int (Sem.eval_const _1), _3 )}
 | _1 = LetExpr
     {            ( Sem.to_int (Sem.eval_const _1), Irg.INT 8 )}
 
 RegPart:
-_1 = LetExpr _2 = COMMA _3 = Type
+  _1 = LetExpr _2 = COMMA _3 = Type
     {                      ( Sem.to_int (Sem.eval_const _1), _3 )}
 | _1 = Type
     {         ( 1, _1 )}
 
 Type:
-_1 = TypeExpr
+  _1 = TypeExpr
     {           ( _1 )}
 | _1 = ID
     {       ( Sem.type_from_id _1 )}
 
 OptionalMemAttrDefList:
-
+  
     {              ( [] )}
 | _1 = MemAttrDefList
     {                  ( _1 )}
 
 MemAttrDefList:
-_1 = MemAttrDef
+  _1 = MemAttrDef
     {              ( [_1] )}
 | _1 = MemAttrDefList _2 = MemAttrDef
     {                            ( _2::_1 )}
 
 MemAttrDef:
-_1 = VOLATILE _2 = EQ _3 = LetExpr
+  _1 = VOLATILE _2 = EQ _3 = LetExpr
     {  ( Irg.ATTR_EXPR ("volatile", Irg.CONST (Irg.NO_TYPE, (Sem.eval_const _3))) )}
 | _1 = INITIALA _2 = EQ _3 = LetExpr
     {  ( Irg.ATTR_EXPR ("init", Irg.CONST (Irg.NO_TYPE, Sem.eval_const _3)) )}
@@ -393,20 +393,20 @@ _1 = VOLATILE _2 = EQ _3 = LetExpr
     {  ( Irg.ATTR_STAT (_1, _4) )}
 
 MemLocation:
-_1 = MemLocBase
+  _1 = MemLocBase
     {  ( Irg.LOC_REF (Sem.get_loc_ref_type (fst _1), fst _1, snd _1, Irg.NONE, Irg.NONE) )}
 | _1 = MemLocBase _2 = BIT_LEFT _3 = Bit_Expr _4 = DOUBLE_DOT _5 = Bit_Expr _6 = GT
     {  ( 
 		Irg.LOC_REF (Sem.get_loc_ref_type (fst _1), fst _1, snd _1, _3, _5) )}
 
 MemLocBase:
-_1 = ID
+  _1 = ID
     {  ( (_1, Irg.NONE) )}
 | _1 = ID _2 = LBRACK _3 = Expr _4 = RBRACK
     {  ( (_1, _3) )}
 
 ModeSpec:
-_1 = MODE _2 = LocatedID _3 = LPAREN _4 = ParamList _5 = RPAREN _6 = OptionalModeExpr _7 = AttrDefList
+  _1 = MODE _2 = LocatedID _3 = LPAREN _4 = ParamList _5 = RPAREN _6 = OptionalModeExpr _7 = AttrDefList
     {  (
 			Sem.check_image _2 _4;
 			Irg.add_pos _2 !(Lexer.file) _1;
@@ -421,13 +421,13 @@ _1 = MODE _2 = LocatedID _3 = LPAREN _4 = ParamList _5 = RPAREN _6 = OptionalMod
 		)}
 
 OptionalModeExpr:
-
+  
     {             ( Irg.NONE )}
 | _1 = EQ _2 = Expr
     {           ( _2 )}
 
 OpSpec:
-_1 = OP _2 = LocatedID _3 = LPAREN _4 = ParamList _5 = RPAREN _6 = AttrDefList
+  _1 = OP _2 = LocatedID _3 = LPAREN _4 = ParamList _5 = RPAREN _6 = AttrDefList
     {  (
 			Sem.check_image _2 _4;
 			Irg.param_unstack _4;
@@ -438,7 +438,7 @@ _1 = OP _2 = LocatedID _3 = LPAREN _4 = ParamList _5 = RPAREN _6 = AttrDefList
     {  ( _2, Irg.OR_OP (_2, _4) )}
 
 ExtendSpec:
-_1 = ExtendHeader _2 = AttrDefList
+  _1 = ExtendHeader _2 = AttrDefList
     {  (
 			let (syms, pars, cattrs) = _1 in
 			let extend_spec s =
@@ -457,11 +457,11 @@ _1 = ExtendHeader _2 = AttrDefList
 		)}
 
 ExtendHeader:
-_1 = EXTEND _2 = ExtendIDList
+  _1 = EXTEND _2 = ExtendIDList
     {                     ( let (_, pars, attrs) = _2 in Irg.attr_stack attrs; Irg.param_stack pars; _2 )}
 
 ExtendIDList:
-_1 = ID
+  _1 = ID
     {  ( let (sym, pars, attrs) = get_spec_extend _1 in ([sym], pars, attrs) )}
 | _1 = ExtendIDList _2 = COMMA _3 = ID
     {  (
@@ -471,13 +471,13 @@ _1 = ID
 		)}
 
 Identifier_Or_List:
-_1 = ID
+  _1 = ID
     {           ( [_1] )}
 | _1 = Identifier_Or_List _2 = PIPE _3 = ID
     {                                ( _3::_1 )}
 
 ParamList:
-
+  
     {                  ( [] )}
 | _1 = ParamListPart
     {                    ( Irg.add_param _1; [_1] )}
@@ -485,29 +485,29 @@ ParamList:
     {                                ( Irg.add_param _3; _3::_1 )}
 
 ParamListPart:
-_1 = ID _2 = COLON _3 = ParaType
+  _1 = ID _2 = COLON _3 = ParaType
     {                       ( Sem.check_param_exists _1; (_1, _3) )}
 
 ParaType:
-_1 = TypeExpr
+  _1 = TypeExpr
     {          ( Irg.TYPE_EXPR _1 )}
 | _1 = ID
     {      ( Irg.TYPE_ID _1 )}
 
 AttrDefList:
-
+  
     {               ( [] )}
 | _1 = NOAttrDefList
     {                  ( _1 )}
 
 NOAttrDefList:
-_1 = AttrDef
+  _1 = AttrDef
     {              ( Irg.add_attr _1; [_1] )}
 | _1 = NOAttrDefList _2 = AttrDef
     {                        ( Irg.add_attr _2; _2::_1 )}
 
 AttrDef:
-_1 = ID _2 = EQ _3 = Expr
+  _1 = ID _2 = EQ _3 = Expr
     {  ( Irg.ATTR_EXPR (_1, _3) )}
 | _1 = ID _2 = EQ _3 = LBRACE _4 = Sequence _5 = RBRACE
     {  ( Irg.ATTR_STAT (_1, _4) )}
@@ -521,23 +521,23 @@ _1 = ID _2 = EQ _3 = Expr
     {  ( Irg.ATTR_USES )}
 
 AttrExpr:
-_1 = Expr
+  _1 = Expr
     {  ( eline _1 )}
 
 Sequence:
-
+  
     {             ( Irg.NOP )}
 | _1 = StatementList _2 = SEMI
     {                     ( _1 )}
 
 StatementList:
-_1 = Statement
+  _1 = Statement
     {           ( line _1 )}
 | _1 = StatementList _2 = SEMI _3 = Statement
     {                               ( line(Irg.SEQ (_1, line _3)) )}
 
 Statement:
-
+  
     {  ( Irg.NOP )}
 | _1 = ACTION
     {  ( Irg.EVAL "action" )}
@@ -561,7 +561,7 @@ Statement:
     {  ( Irg.ERROR _3 )}
 
 ArgList:
-
+  
     {             ( [] )}
 | _1 = Expr
     {       ( [_1] )}
@@ -569,13 +569,13 @@ ArgList:
     {                      ( _3::_1 )}
 
 Opt_Bit_Optr:
-
+  
     {  ( None )}
 | _1 = BIT_LEFT _2 = Bit_Expr _3 = DOUBLE_DOT _4 = Bit_Expr _5 = GT
     {  ( None )}
 
 Location:
-_1 = ID
+  _1 = ID
     {  ( if (Sem.is_location _1) || (Sem.is_loc_spe _1) || (Sem.is_loc_mode _1)
 			then	Irg.LOC_REF (Sem.get_loc_ref_type _1, _1, Irg.NONE, Irg.NONE, Irg.NONE)
 			else
@@ -634,45 +634,45 @@ _1 = ID
 		)}
 
 ConditionalStatement:
-_1 = IF _2 = Expr _3 = THEN _4 = Sequence _5 = OptionalElse _6 = ENDIF
+  _1 = IF _2 = Expr _3 = THEN _4 = Sequence _5 = OptionalElse _6 = ENDIF
     {  ( Irg.IF_STAT (_2, _4, _5) )}
 | _1 = SWITCH _2 = LPAREN _3 = Expr _4 = RPAREN _5 = LBRACE _6 = CaseBody _7 = RBRACE
     {  (Irg.SWITCH_STAT (_3, fst _6, snd _6))}
 
 OptionalElse:
-
+  
     {             ( Irg.NOP )}
 | _1 = ELSE _2 = Sequence
     {                ( _2 )}
 
 CaseBody:
-_1 = CaseList
+  _1 = CaseList
     {          ( (_1,Irg.NOP) )}
 | _1 = OptCaseList _2 = Default _3 = OptCaseList
     {                                  ( (_1@_3,_2) )}
 
 OptCaseList:
-
+  
     {             ( [] )}
 | _1 = CaseList
     {           ( _1 )}
 
 CaseList:
-_1 = CaseStat
+  _1 = CaseStat
     {             ( [_1]	)}
 | _1 = CaseList _2 = CaseStat
     {                     ( _2::_1 )}
 
 CaseStat:
-_1 = CASE _2 = Expr _3 = COLON _4 = Sequence
+  _1 = CASE _2 = Expr _3 = COLON _4 = Sequence
     {                          ( (_2,_4) )}
 
 Default:
-_1 = DEFAULT _2 = COLON _3 = Sequence
+  _1 = DEFAULT _2 = COLON _3 = Sequence
     {                        (_3)}
 
 Expr:
-_1 = COERCE _2 = LPAREN _3 = Type _4 = COMMA _5 = Expr _6 = RPAREN
+  _1 = COERCE _2 = LPAREN _3 = Type _4 = COMMA _5 = Expr _6 = RPAREN
     {  (
 			if not (_3 = Irg.STRING)
 				then
@@ -888,7 +888,7 @@ _1 = COERCE _2 = LPAREN _3 = Type _4 = COMMA _5 = Expr _6 = RPAREN
     {  ( eline (Irg.CONST (fst _1, snd _1)) )}
 
 Constant:
-_1 = FIXED_CONST
+  _1 = FIXED_CONST
     {  ( (Irg.FLOAT(23, 9), Irg.FIXED_CONST  _1) )}
 | _1 = CARD_CONST
     {  ( (Irg.CARD 32, Irg.CARD_CONST _1) )}
@@ -909,7 +909,7 @@ _1 = FIXED_CONST
     {  ( (Irg.CARD (snd _1), Irg.CARD_CONST_64 (fst _1)) )}
 
 Bit_Expr:
-_1 = ID
+  _1 = ID
     {  (Sem.test_data _1 false; let v = Sem.get_data_expr_attr _1 in if v != Irg.NONE then eline (v) else eline (Irg.REF _1)  )}
 | _1 = MINUS _2 = Bit_Expr
     {  ( eline (Sem.get_unop _2 Irg.NEG) )}
@@ -952,57 +952,57 @@ _1 = ID
 		)}
 
 CaseExprBody:
-_1 = CaseExprList
+  _1 = CaseExprList
     {              ( (_1,Irg.NONE) )}
 | _1 = OptCaseExprList _2 = ExprDefault _3 = OptCaseExprList
     {                                              ( (_1@_3,_2) )}
 
 OptCaseExprList:
-
+  
     {            ( [] )}
 | _1 = CaseExprList
     {               ( _1 )}
 
 CaseExprList:
-_1 = CaseExprStat
+  _1 = CaseExprStat
     {              ( [_1] )}
 | _1 = CaseExprList _2 = CaseExprStat
     {                              ( _2::_1 )}
 
 CaseExprStat:
-_1 = CASE _2 = Expr _3 = COLON _4 = Expr
+  _1 = CASE _2 = Expr _3 = COLON _4 = Expr
     {                      ( (_2,_4) )}
 
 ExprDefault:
-_1 = DEFAULT _2 = COLON _3 = Expr
+  _1 = DEFAULT _2 = COLON _3 = Expr
     {                    ( _3 )}
 
 UsesDef:
-_1 = UsesOrSequence
+  _1 = UsesOrSequence
     {                ( )}
 | _1 = UsesDef _2 = COMMA _3 = UsesOrSequence
     {                               ( )}
 
 UsesOrSequence:
-_1 = UsesIfAtom
+  _1 = UsesIfAtom
     {               ( )}
 | _1 = UsesOrSequence _2 = PIPE _3 = UsesIfAtom
     {                                 ( )}
 
 UsesIfAtom:
-_1 = UsesIndirectAtom
+  _1 = UsesIndirectAtom
     {                  ( )}
 | _1 = IF _2 = Expr _3 = THEN _4 = UsesIfAtom _5 = OptionalElseAtom _6 = ENDIF
     {                                                 ( )}
 
 OptionalElseAtom:
-
+  
     {             ( )}
 | _1 = ELSE _2 = UsesIfAtom
     {                  ( )}
 
 UsesIndirectAtom:
-_1 = UsesCondAtom
+  _1 = UsesCondAtom
     {              ( )}
 | _1 = ID _2 = DOT _3 = USES
     {                ( )}
@@ -1014,17 +1014,17 @@ _1 = UsesCondAtom
     {                                                ( )}
 
 UsesCondAtom:
-_1 = UsesAndAtom
+  _1 = UsesAndAtom
     {             ( )}
 | _1 = LBRACE _2 = Expr _3 = RBRACE _4 = UsesAndAtom
     {                                 ( )}
 
 UsesAndAtom:
-_1 = UsesLocationList _2 = UsesActionList
+  _1 = UsesLocationList _2 = UsesActionList
     {                                   ( )}
 
 UsesActionList:
-
+  
     {              ( )}
 | _1 = ActionTimeList _2 = OptionalAction
     {                                ( )}
@@ -1032,49 +1032,49 @@ UsesActionList:
     {                               ( )}
 
 ActionTimeList:
-_1 = SHARP _2 = LBRACE _3 = Expr _4 = RBRACE
+  _1 = SHARP _2 = LBRACE _3 = Expr _4 = RBRACE
     {                          ( )}
 | _1 = ActionTimeList _2 = COLON _3 = UsesActionAttr _4 = SHARP _5 = LBRACE _6 = Expr _7 = RBRACE
     {                                                                ( )}
 
 TimeActionList:
-_1 = COLON _2 = UsesActionAttr
+  _1 = COLON _2 = UsesActionAttr
     {                      ( )}
 | _1 = TimeActionList _2 = SHARP _3 = LBRACE _4 = Expr _5 = RBRACE _6 = COLON _7 = UsesActionAttr
     {                                                                ( )}
 
 OptionalAction:
-
+  
     {             ( )}
 | _1 = COLON _2 = UsesActionAttr
     {                       ( )}
 
 OptionalTime:
-
+  
     {             ( )}
 | _1 = SHARP _2 = LBRACE _3 = Expr _4 = RBRACE
     {                           ( )}
 
 UsesActionAttr:
-_1 = ID
+  _1 = ID
     {      ( )}
 | _1 = ACTION
     {            ( )}
 
 UsesLocationList:
-_1 = UsesLocation
+  _1 = UsesLocation
     {              ( )}
 | _1 = UsesLocationList _2 = AMPERS _3 = UsesLocation
     {                                         ( )}
 
 UsesLocation:
-_1 = ID _2 = Opt_Bit_Optr
+  _1 = ID _2 = Opt_Bit_Optr
     {                 ( )}
 | _1 = ID _2 = LBRACK _3 = Expr _4 = RBRACK _5 = Opt_SecDim _6 = Opt_Bit_Optr
     {                                                ( )}
 
 Opt_SecDim:
-
+  
     {              ( )}
 | _1 = LBRACK _2 = RBRACK
     {                ( )}

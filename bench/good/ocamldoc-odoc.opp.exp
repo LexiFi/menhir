@@ -47,11 +47,11 @@ let print_DEBUG s = print_string s; print_newline ()
 %%
 
 see_info:
-_1 = see_ref _2 = Desc
+  _1 = see_ref _2 = Desc
     {               ( (_1, _2) )}
 
 see_ref:
-_1 = See_url
+  _1 = See_url
     {            ( Odoc_types.See_url _1 )}
 | _1 = See_file
     {           ( Odoc_types.See_file _1 )}
@@ -59,23 +59,23 @@ _1 = See_url
     {          ( Odoc_types.See_doc _1 )}
 
 main:
-_1 = Description
+  _1 = Description
     {              ( Some _1 )}
 | _1 = EOF
     {      ( None )}
 
 info_part2:
-_1 = element_list _2 = EOF
+  _1 = element_list _2 = EOF
     {                   ( () )}
 
 element_list:
-_1 = element
+  _1 = element
     {          ( () )}
 | _1 = element _2 = element_list
     {                       ( () )}
 
 element:
-_1 = param
+  _1 = param
     {        ( () )}
 | _1 = author
     {         ( () )}
@@ -95,7 +95,7 @@ _1 = param
     {         ( () )}
 
 param:
-_1 = T_PARAM _2 = Desc
+  _1 = T_PARAM _2 = Desc
     {    ( 
       (* isolate the identificator *)
       (* we only look for simple id, no pattern nor tuples *)
@@ -118,27 +118,27 @@ _1 = T_PARAM _2 = Desc
     )}
 
 author:
-_1 = T_AUTHOR _2 = Desc
+  _1 = T_AUTHOR _2 = Desc
     {                  ( authors := !authors @ [ _2 ] )}
 
 version:
-_1 = T_VERSION _2 = Desc
+  _1 = T_VERSION _2 = Desc
     {                   ( version := Some _2 )}
 
 see:
-_1 = T_SEE _2 = Desc
+  _1 = T_SEE _2 = Desc
     {               ( sees := !sees @ [_2] )}
 
 since:
-_1 = T_SINCE _2 = Desc
+  _1 = T_SINCE _2 = Desc
     {                 ( since := Some _2 )}
 
 deprecated:
-_1 = T_DEPRECATED _2 = Desc
+  _1 = T_DEPRECATED _2 = Desc
     {                      ( deprecated := Some _2 )}
 
 raise_exc:
-_1 = T_RAISES _2 = Desc
+  _1 = T_RAISES _2 = Desc
     {    ( 
       (* isolate the exception construtor name *)
       let s = _2 in
@@ -159,11 +159,11 @@ _1 = T_RAISES _2 = Desc
     )}
 
 return:
-_1 = T_RETURN _2 = Desc
+  _1 = T_RETURN _2 = Desc
     {                  ( return_value := Some _2 )}
 
 custom:
-_1 = T_CUSTOM _2 = Desc
+  _1 = T_CUSTOM _2 = Desc
     {                  ( customs := !customs @ [(_1, _2)] )}
 
 %%

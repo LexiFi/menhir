@@ -110,65 +110,65 @@ let connect_ports () =
 %%
 
 netlist:
-_1 = scope
+  _1 = scope
     {           ( connect_ports (); let scope = current_scope () in clear_tables (); scope )}
 
 scope:
-_1 = Parenl _2 = Scope _3 = scope_name _4 = Parenl _5 = scope_items _6 = Parenr _7 = Parenr
+  _1 = Parenl _2 = Scope _3 = scope_name _4 = Parenl _5 = scope_items _6 = Parenr _7 = Parenr
     {                                                              ( () )}
 
 scope_name:
-_1 = name _2 = name
+  _1 = name _2 = name
     {              ( push_scope (if is_root_scope () then create_root_scope _1 else create_sub_scope (current_scope ()) _1 _2) )}
 
 scope_items:
-
+  
     {                            ( () )}
 | _1 = scope_items _2 = scope_item
     {                            ( () )}
 
 scope_item:
-_1 = scope
+  _1 = scope
     {           ( pop_scope () )}
 | _1 = cell
     {           ( () )}
 
 string:
-_1 = String
+  _1 = String
     {           ( format_string (fst _1) )}
 
 integer:
-_1 = Integer
+  _1 = Integer
     {            ( int_of_string (fst _1) )}
 
 integers_0:
-
+  
     {                       ( [] )}
 | _1 = integers_0 _2 = integer
     {                       ( _2 :: _1 )}
 
 integers:
-_1 = integers_0
+  _1 = integers_0
     {               ( List.rev _1 )}
 
 width:
-_1 = integer
+  _1 = integer
     {            ( _1 )}
 
 name:
-_1 = string
+  _1 = string
     {           ( _1 )}
 
 id:
-_1 = integer
+  _1 = integer
     {            ( _1 )}
 
 bit:
-_1 = integer
+  _1 = integer
     {            ( _1 )}
 
 cell:
-_1 = Parenl _2 = Input _3 = id _4 = name _5 = width _6 = Parenr
+  _1 = Parenl _2 = Input _3 = id _4 = name _5 = width _6 = Parenr
     {                                                         ( let cell = create_input (current_scope ()) _4 _5 in add_cell _3 cell )}
 | _1 = Parenl _2 = Output _3 = id _4 = name _5 = width _6 = id _7 = Parenr
     {                                                         ( let cell, data = create_output (current_scope ()) _4 _5 in add_cell _3 cell; add_port data _6 )}

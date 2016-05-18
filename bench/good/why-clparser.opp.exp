@@ -145,7 +145,7 @@ Warning: the token UNION is unused.
 %%
 
 lexpr:
-_1 = lexpr _2 = IMPLIES _3 = lexpr
+  _1 = lexpr _2 = IMPLIES _3 = lexpr
     {                      ( info (PLimplies (_1, _3)) )}
 | _1 = lexpr _2 = IFF _3 = lexpr
     {                  ( info (PLiff (_1, _3)) )}
@@ -237,13 +237,13 @@ _1 = lexpr _2 = IMPLIES _3 = lexpr
     {                                               ( info (PLnamed (_1, _3)) )}
 
 lexpr_option:
-
+  
     {                ( None )}
 | _1 = lexpr
     {                ( Some _1 )}
 
 logic_type:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {             ( LTvar _1 )}
 | _1 = IDENTIFIER _2 = stars
     {                   ( _2 (LTvar _1) )}
@@ -251,7 +251,7 @@ _1 = IDENTIFIER
     {                    ( _1 )}
 
 logic_type_not_id:
-_1 = VOID
+  _1 = VOID
     {                 ( LTvoid )}
 | _1 = CHAR
     {                 ( LTint )}
@@ -295,13 +295,13 @@ _1 = VOID
     {                         ( LTpointer _1 )}
 
 stars:
-_1 = STAR
+  _1 = STAR
     {       ( fun t -> LTpointer t )}
 | _1 = stars _2 = STAR
     {             ( fun t -> _1 (LTpointer t) )}
 
 relation:
-_1 = LT
+  _1 = LT
     {          ( Lt )}
 | _1 = GT
     {          ( Gt )}
@@ -315,35 +315,35 @@ _1 = LT
     {          ( Neq )}
 
 lexpr_list:
-
+  
     {                ( [] )}
 | _1 = ne_lexpr_list
     {                 ( _1 )}
 
 ne_lexpr_list:
-_1 = lexpr
+  _1 = lexpr
     {                           ( [_1] )}
 | _1 = lexpr _2 = COMMA _3 = ne_lexpr_list
     {                            ( _1 :: _3 )}
 
 pre_condition:
-
+  
     {                ( None )}
 | _1 = REQUIRES _2 = lexpr
     {                 ( Some _2 )}
 
 post_condition:
-
+  
     {                 ( None )}
 | _1 = ENSURES _2 = lexpr
     {                ( Some _2 )}
 
 spec:
-_1 = pre_condition _2 = effects _3 = post_condition _4 = decreases
+  _1 = pre_condition _2 = effects _3 = post_condition _4 = decreases
     {    ( { requires = _1; assigns = _2; ensures = _3; decreases = _4 } )}
 
 loop_annot:
-_1 = invariant _2 = loop_effects _3 = variant
+  _1 = invariant _2 = loop_effects _3 = variant
     {    ( { invariant = Some _1; loop_assigns = _2; variant = Some _3 } )}
 | _1 = loop_effects _2 = variant
     {    ( { invariant = None; loop_assigns = _1; variant = Some _2 } )}
@@ -353,27 +353,27 @@ _1 = invariant _2 = loop_effects _3 = variant
     {    ( { invariant = None; loop_assigns = Some _1; variant = None } )}
 
 invariant:
-_1 = INVARIANT _2 = lexpr
+  _1 = INVARIANT _2 = lexpr
     {                  ( _2 )}
 
 variant:
-_1 = VARIANT _2 = lexpr _3 = FOR _4 = IDENTIFIER
+  _1 = VARIANT _2 = lexpr _3 = FOR _4 = IDENTIFIER
     {                               ( (_2, Some _4) )}
 | _1 = VARIANT _2 = lexpr
     {                               ( (_2, None) )}
 
 decreases:
-
+  
     {                  ( None )}
 | _1 = DECREASES _2 = variant
     {                    ( Some _2 )}
 
 annot:
-_1 = annotation _2 = EOF
+  _1 = annotation _2 = EOF
     {                   ( _1 )}
 
 annotation:
-_1 = decl
+  _1 = decl
     {                   ( Adecl [_1] )}
 | _1 = ghost_decl
     {                   ( Adecl _1 )}
@@ -389,11 +389,11 @@ _1 = decl
     {                   ( Acode_annot(GhostSet(_2,_4)) )}
 
 ghost_lvalue:
-_1 = lexpr
+  _1 = lexpr
     {                    ( _1 )}
 
 effects:
-
+  
     {                ( None )}
 | _1 = ASSIGNS _2 = locations
     {                    ( Some _2 )}
@@ -401,29 +401,29 @@ effects:
     {                  ( Some [] )}
 
 loop_effects:
-
+  
     {                ( None )}
 | _1 = ne_loop_effects
     {                  ( Some _1 )}
 
 ne_loop_effects:
-_1 = LOOP_ASSIGNS _2 = locations
+  _1 = LOOP_ASSIGNS _2 = locations
     {                         ( _2 )}
 | _1 = LOOP_ASSIGNS _2 = NOTHING
     {                       ( [] )}
 
 locations:
-_1 = location
+  _1 = location
     {           ( [_1] )}
 | _1 = location _2 = COMMA _3 = locations
     {                           ( _1 :: _3 )}
 
 location:
-_1 = lexpr
+  _1 = lexpr
     {        ( _1 )}
 
 decl:
-_1 = LOGIC _2 = logic_type _3 = IDENTIFIER _4 = LPAR _5 = parameters _6 = RPAR
+  _1 = LOGIC _2 = logic_type _3 = IDENTIFIER _4 = LPAR _5 = parameters _6 = RPAR
     {    ( LDlogic (Info.default_logic_info _3, _2, _5, []) )}
 | _1 = LOGIC _2 = logic_type _3 = IDENTIFIER _4 = LPAR _5 = parameters _6 = RPAR _7 = READS _8 = locations
     {    ( LDlogic (Info.default_logic_info _3, _2, _5, _8) )}
@@ -441,11 +441,11 @@ _1 = LOGIC _2 = logic_type _3 = IDENTIFIER _4 = LPAR _5 = parameters _6 = RPAR
     {                                   ( LDinvariant (_2, _4) )}
 
 ghost_decl:
-_1 = GHOST _2 = type_specifier _3 = init_declarator_list
+  _1 = GHOST _2 = type_specifier _3 = init_declarator_list
     {      ( List.map (ghost _2) _3 )}
 
 type_specifier:
-_1 = CHAR
+  _1 = CHAR
     {       ( Cast_misc.noattr (CTint (Unsigned, Char)) )}
 | _1 = INT
     {      ( Cast_misc.noattr (CTint (Signed, Int)) )}
@@ -455,41 +455,41 @@ _1 = CHAR
     {         ( Cast_misc.noattr (CTfloat Double) )}
 
 parameters:
-
+  
     {                 ( [] )}
 | _1 = ne_parameters
     {                ( _1 )}
 
 ne_parameters:
-_1 = parameter
+  _1 = parameter
     {            ( [_1] )}
 | _1 = parameter _2 = COMMA _3 = ne_parameters
     {                                ( _1 :: _3 )}
 
 parameter:
-_1 = logic_type _2 = IDENTIFIER
+  _1 = logic_type _2 = IDENTIFIER
     {                        ( (_1, _2) )}
 | _1 = logic_type _2 = IDENTIFIER _3 = LSQUARE _4 = RSQUARE
     {                                        ( (LTarray _1, _2) )}
 
 init_declarator_list:
-_1 = init_declarator
+  _1 = init_declarator
     {                          ( [_1] )}
 | _1 = init_declarator_list _2 = COMMA _3 = init_declarator
     {                                                     ( _1 @ [_3] )}
 
 init_declarator:
-_1 = declarator
+  _1 = declarator
     {            ( let (id,d) = _1 in (id,d, None) )}
 | _1 = declarator _2 = EQUAL _3 = c_initializer
     {     ( let (id,d) = _1 in (id,d, Some _3) )}
 
 declarator:
-_1 = direct_declarator
+  _1 = direct_declarator
     {                              ( _1 )}
 
 direct_declarator:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {            ( _1, Dsimple )}
 | _1 = direct_declarator _2 = LSQUARE _3 = lexpr _4 = RSQUARE
     {     ( let id,d = _1 in id, Darray (d, Some _3) )}
@@ -497,7 +497,7 @@ _1 = IDENTIFIER
     {     ( let id,d = _1 in id, Darray (d, None) )}
 
 c_initializer:
-_1 = lexpr
+  _1 = lexpr
     {                ( Iexpr _1 )}
 | _1 = LBRACE _2 = c_initializer_list _3 = RBRACE
     {                                           ( Ilist _2 )}
@@ -505,7 +505,7 @@ _1 = lexpr
     {                                                 ( Ilist _2 )}
 
 c_initializer_list:
-_1 = c_initializer
+  _1 = c_initializer
     {                        ( [_1] )}
 | _1 = c_initializer_list _2 = COMMA _3 = c_initializer
     {                                                 ( _1 @ [_3] )}

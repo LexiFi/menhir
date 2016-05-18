@@ -32,7 +32,7 @@ open Fsub.Raw
 %%
 
 toplevel:
-_1 = EOF
+  _1 = EOF
     {      ( TopEOF )}
 | _1 = Term _2 = SEMI _3 = toplevel
     {      ( TopEval (_1, _3) )}
@@ -42,17 +42,17 @@ _1 = EOF
     {      ( TopTermBind (_1, _2, _4) )}
 
 Binder:
-_1 = COLON _2 = Type
+  _1 = COLON _2 = Type
     {      ( _2 )}
 
 Type:
-_1 = ArrowType
+  _1 = ArrowType
     {      ( _1 )}
 | _1 = ALL _2 = UCID _3 = OType _4 = DOT _5 = Type
     {      ( TForall (_2, _3, _5) )}
 
 AType:
-_1 = LPAREN _2 = Type _3 = RPAREN
+  _1 = LPAREN _2 = Type _3 = RPAREN
     {      ( _2 )}
 | _1 = UCID
     {      ( TVar _1 )}
@@ -62,19 +62,19 @@ _1 = LPAREN _2 = Type _3 = RPAREN
     {      ( TRecord _2 )}
 
 TyBinder:
-
+  
     {      ( TTop )}
 | _1 = LEQ _2 = Type
     {      ( _2 )}
 
 ArrowType:
-_1 = AType _2 = ARROW _3 = ArrowType
+  _1 = AType _2 = ARROW _3 = ArrowType
     {     ( TArrow (_1, _3) )}
 | _1 = AType
     {     ( _1 )}
 
 Term:
-_1 = AppTerm
+  _1 = AppTerm
     {      ( _1 )}
 | _1 = LAMBDA _2 = LCID _3 = COLON _4 = Type _5 = DOT _6 = Term
     {      ( EAbs (_2, _4, _6) )}
@@ -84,7 +84,7 @@ _1 = AppTerm
     {      ( ETyAbs (_2, _3, _5) )}
 
 AppTerm:
-_1 = PathTerm
+  _1 = PathTerm
     {      ( _1 )}
 | _1 = AppTerm _2 = PathTerm
     {      ( EApp (_1, _2) )}
@@ -92,31 +92,31 @@ _1 = PathTerm
     {      ( ETyApp (_1, _3) )}
 
 PathTerm:
-_1 = PathTerm _2 = DOT _3 = LCID
+  _1 = PathTerm _2 = DOT _3 = LCID
     {      ( EProj (_1, _3) )}
 | _1 = ATerm
     {      ( _1 )}
 
 FieldTypes:
-
+  
     {      ( StringMap.empty )}
 | _1 = NEFieldTypes
     {      ( _1 )}
 
 NEFieldTypes:
-_1 = LCID _2 = COLON _3 = Type
+  _1 = LCID _2 = COLON _3 = Type
     {      ( StringMap.singleton _1 _3 )}
 | _1 = LCID _2 = COLON _3 = Type _4 = COMMA _5 = NEFieldTypes
     {      ( StringMap.add _1 _3 _5 )}
 
 TermSeq:
-_1 = Term
+  _1 = Term
     {      ( _1 )}
 | _1 = Term _2 = SEMI _3 = TermSeq
     {      ( ELet (PWildcard, _1, _3) )}
 
 ATerm:
-_1 = LPAREN _2 = TermSeq _3 = RPAREN
+  _1 = LPAREN _2 = TermSeq _3 = RPAREN
     {      ( _2 )}
 | _1 = LCID
     {      ( EVar _1 )}
@@ -124,25 +124,25 @@ _1 = LPAREN _2 = TermSeq _3 = RPAREN
     {      ( ERecord _2 )}
 
 Fields:
-
+  
     {      ( StringMap.empty )}
 | _1 = NEFields
     {      ( _1 )}
 
 NEFields:
-_1 = LCID _2 = EQ _3 = Term
+  _1 = LCID _2 = EQ _3 = Term
     {      ( StringMap.singleton _1 _3 )}
 | _1 = LCID _2 = EQ _3 = Term _4 = COMMA _5 = NEFields
     {      ( StringMap.add _1 _3 _5 )}
 
 OType:
-
+  
     {      ( TTop)}
 | _1 = LEQ _2 = Type
     {      ( _2 )}
 
 Pattern:
-_1 = USCORE
+  _1 = USCORE
     {      ( PWildcard )}
 | _1 = LCID _2 = COLON _3 = Type
     {      ( PVar (_1, _3) )}
@@ -150,13 +150,13 @@ _1 = USCORE
     {      ( PRecord _2 )}
 
 PatFields:
-
+  
     {      ( StringMap.empty )}
 | _1 = NEPatFields
     {      ( _1 )}
 
 NEPatFields:
-_1 = LCID _2 = EQ _3 = Pattern
+  _1 = LCID _2 = EQ _3 = Pattern
     {      ( StringMap.singleton _1 _3 )}
 | _1 = LCID _2 = EQ _3 = Pattern _4 = COMMA _5 = NEPatFields
     {      ( StringMap.add _1 _3 _5 )}

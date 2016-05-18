@@ -481,13 +481,13 @@ let check_pragma_content content =
 %%
 
 xquerymodule:
-_1 = mainmodule
+  _1 = mainmodule
     {      ( EMainModule _1 )}
 | _1 = librarymodule
     {      ( ELibraryModule _1 )}
 
 opt_version:
-
+  
     {      ( () )}
 | _1 = XQUERYVERSION _2 = STRING _3 = opt_encoding _4 = SEMICOLON
     {      ( let version = _2 in
@@ -495,7 +495,7 @@ opt_version:
         check_version version encoding )}
 
 opt_encoding:
-
+  
     {      ( None )}
 | _1 = ENCODING _2 = STRING
     {      ( let s = _2 in
@@ -505,7 +505,7 @@ opt_encoding:
 	end )}
 
 mainmodule:
-_1 = opt_version _2 = prolog _3 = statements _4 = EOF
+  _1 = opt_version _2 = prolog _3 = statements _4 = EOF
     {      ( let prolog = _2
         and statements = _3 in
 (* Still allowing main modules without statements for now
@@ -519,18 +519,18 @@ _1 = opt_version _2 = prolog _3 = statements _4 = EOF
 	pmain_module_statements = statements } )}
 
 librarymodule:
-_1 = opt_version _2 = moduledecl _3 = prolog _4 = EOF
+  _1 = opt_version _2 = moduledecl _3 = prolog _4 = EOF
     {      ( let moddecl = _2 in
         let prolog = _3 in
         { plibrary_module_decl = moddecl;
 	  plibrary_module_prolog = prolog } )}
 
 moduledecl:
-_1 = MODULENAMESPACE _2 = NCNAME _3 = EQUALS _4 = STRING _5 = opt_interface _6 = SEMICOLON
+  _1 = MODULENAMESPACE _2 = NCNAME _3 = EQUALS _4 = STRING _5 = opt_interface _6 = SEMICOLON
     {      ( (_2,_4,_5) )}
 
 opt_interface:
-
+  
     {      ( None )}
 | _1 = IMPLEMENT _2 = STRING
     {      ( Some (_2, None) )}
@@ -538,7 +538,7 @@ opt_interface:
     {      ( Some (_2, Some _4) )}
 
 interface:
-_1 = opt_version _2 = interfacedecl _3 = prolog _4 = EOF
+  _1 = opt_version _2 = interfacedecl _3 = prolog _4 = EOF
     {      ( (* Woe is me --- hacking a global variable into the parser *)
         parsing_interface := false;
 	let infdecl = _2 and 
@@ -560,13 +560,13 @@ _1 = opt_version _2 = interfacedecl _3 = prolog _4 = EOF
       )}
 
 interfacedecl:
-_1 = INTERFACENAMESPACE _2 = NCNAME _3 = EQUALS _4 = STRING _5 = SEMICOLON
+  _1 = INTERFACENAMESPACE _2 = NCNAME _3 = EQUALS _4 = STRING _5 = SEMICOLON
     {      ( parsing_interface := true;
 	(_2,_4) 
       )}
 
 prolog:
-_1 = setters_and_first_declaration_list _2 = second_declaration_list
+  _1 = setters_and_first_declaration_list _2 = second_declaration_list
     {      ( let (nsd1,nsd2,issds) = _1 in
         let (vfd,kd) = _2 in
 	  { pprolog_xschemas = issds;
@@ -575,7 +575,7 @@ _1 = setters_and_first_declaration_list _2 = second_declaration_list
 	    pprolog_indices = kd } )}
 
 setters_and_first_declaration_list:
-
+  
     {      ( ([],[],[]) )}
 | _1 = DECLAREBOUNDARYSPACE _2 = STRIP _3 = SEMICOLON _4 = setters_and_first_declaration_list
     {      ( let (nsd,nsd2,issds) = _4 in
@@ -670,7 +670,7 @@ setters_and_first_declaration_list:
         (nsd1,nsd, one_schema :: schemas) )}
 
 second_declaration_list:
-
+  
     {      ( ([],[]) )}
 | _1 = DECLAREVARIABLE _2 = qname _3 = opt_type_declaration _4 = COLONEQUALS _5 = expr _6 = SEMICOLON _7 = second_declaration_list
     {      ( let (vfd,kd) = _7 in
@@ -772,7 +772,7 @@ second_declaration_list:
         (vfd, newindex :: kd) )}
 
 statements:
-
+  
     {      ( single_statement (); [] )}
 | _1 = statement
     {      ( _1 :: [] )}
@@ -780,11 +780,11 @@ statements:
     {      ( single_statement (); _1 :: _3  )}
 
 statement:
-_1 = expr
+  _1 = expr
     {      ( mkexpr (EList _1) )}
 
 paramlist:
-_1 = param
+  _1 = param
     {      ( let (t,v) = _1 in
         (t :: [], v :: []) )}
 | _1 = param _2 = COMMA _3 = paramlist
@@ -793,13 +793,13 @@ _1 = param
         (t :: pt, v :: pv) )}
 
 param:
-_1 = variable _2 = AS _3 = sequencetype
+  _1 = variable _2 = AS _3 = sequencetype
     {      ( (Some _3,_1) )}
 | _1 = variable
     {      ( (None,_1) )}
 
 expr_single:
-_1 = expr_single _2 = OR _3 = expr_single
+  _1 = expr_single _2 = OR _3 = expr_single
     {      ( mkexpr (EBinaryOp(_1,BEOr,_3)) )}
 | _1 = expr_single _2 = AND _3 = expr_single
     {      ( mkexpr (EBinaryOp(_1,BEAnd,_3)) )}
@@ -922,13 +922,13 @@ _1 = expr_single _2 = OR _3 = expr_single
     {      ( wrap_dxq (fun () -> mkexpr (EEvalClosure(_2))) )}
 
 collation:
-
+  
     {      ( None )}
 | _1 = COLLATION _2 = STRING
     {      ( Some _2 )}
 
 sortspeclist:
-_1 = sortspec _2 = collation
+  _1 = sortspec _2 = collation
     {      ( let (a,b,c) = _1 in
         (a,b,c,_2) :: [] )}
 | _1 = sortspec _2 = collation _3 = COMMA _4 = sortspeclist
@@ -936,7 +936,7 @@ _1 = sortspec _2 = collation
         (a,b,c,_2) :: _4 )}
 
 sortspec:
-_1 = expr_single
+  _1 = expr_single
     {      ( (_1,Ascending,None) )}
 | _1 = expr_single _2 = ASCENDING
     {      ( (_1,Ascending,None) )}
@@ -956,25 +956,25 @@ _1 = expr_single
     {      ( (_1,Descending,Some EmptyLeast) )}
 
 bindings:
-_1 = qname _2 = opt_type_declaration _3 = IN _4 = expr_single
+  _1 = qname _2 = opt_type_declaration _3 = IN _4 = expr_single
     {      (  [(_2, _1, _4)] )}
 | _1 = qname _2 = opt_type_declaration _3 = IN _4 = expr_single _5 = COMMA _6 = DOLLAR _7 = bindings
     {      (  (_2, _1, _4) :: _7 )}
 
 opt_positional_var:
-
+  
     {      ( None )}
 | _1 = AT _2 = variable
     {      ( Some _2 )}
 
 for_let_clause:
-_1 = FORDOLLAR _2 = qname _3 = opt_type_declaration _4 = opt_positional_var _5 = IN _6 = expr_single _7 = for_clause
+  _1 = FORDOLLAR _2 = qname _3 = opt_type_declaration _4 = opt_positional_var _5 = IN _6 = expr_single _7 = for_clause
     {      ( (mkfl_expr (EFor (_3, _2, _4, _6))) :: _7 )}
 | _1 = LETDOLLAR _2 = qname _3 = opt_type_declaration _4 = COLONEQUALS _5 = expr_single _6 = let_clause
     {      ( (mkfl_expr (ELet (_3, _2, _5))) :: _6 )}
 
 for_clause:
-
+  
     {      ( [] )}
 | _1 = COMMA _2 = variable _3 = opt_type_declaration _4 = opt_positional_var _5 = IN _6 = expr_single _7 = for_clause
     {      ( (mkfl_expr (EFor (_3, _2, _4, _6))) :: _7 )}
@@ -982,7 +982,7 @@ for_clause:
     {      ( _1 )}
 
 let_clause:
-
+  
     {      ( [] )}
 | _1 = COMMA _2 = variable _3 = opt_type_declaration _4 = COLONEQUALS _5 = expr_single _6 = let_clause
     {      ( (mkfl_expr (ELet (_3, _2, _5))) :: _6 )}
@@ -990,7 +990,7 @@ let_clause:
     {      ( _1 )}
 
 where_order_clause:
-
+  
     {      ( (None,None) )}
 | _1 = where_clause
     {      ( (Some _1,None) )}
@@ -1000,39 +1000,39 @@ where_order_clause:
     {      ( (Some _1, Some _2) )}
 
 where_clause:
-_1 = WHERE _2 = expr_single
+  _1 = WHERE _2 = expr_single
     {      ( _2 )}
 
 order_clause:
-_1 = ORDERBY _2 = sortspeclist
+  _1 = ORDERBY _2 = sortspeclist
     {      ( (NonStable, _2) )}
 | _1 = STABLEORDERBY _2 = sortspeclist
     {      ( (Stable, _2) )}
 
 return_clause:
-_1 = RETURN _2 = expr_single
+  _1 = RETURN _2 = expr_single
     {      ( _2 )}
 
 opt_variable:
-
+  
     {      ( None )}
 | _1 = variable
     {      ( Some _1 )}
 
 opt_variable_as:
-
+  
     {      ( None )}
 | _1 = variable _2 = AS
     {      ( Some _1 )}
 
 case_clause_list:
-_1 = CASE _2 = opt_variable_as _3 = sequencetype _4 = RETURN _5 = expr_single _6 = DEFAULT _7 = opt_variable _8 = RETURN _9 = expr_single
+  _1 = CASE _2 = opt_variable_as _3 = sequencetype _4 = RETURN _5 = expr_single _6 = DEFAULT _7 = opt_variable _8 = RETURN _9 = expr_single
     {      ( (mkpattern (Case (_3)), _2, _5) :: (mkpattern (Default), _7, _9) :: [] )}
 | _1 = CASE _2 = opt_variable_as _3 = sequencetype _4 = RETURN _5 = expr_single _6 = case_clause_list
     {      ( (mkpattern (Case (_3)), _2, _5) :: _6 )}
 
 pathexpr:
-_1 = relativepathexpr
+  _1 = relativepathexpr
     {      ( _1 )}
 | _1 = SLASH
     {      ( mkexpr ERoot )}
@@ -1052,7 +1052,7 @@ _1 = relativepathexpr
 	| _ -> mkexpr (EPath (PSlashSlash(mkexpr ERoot, _2))) )}
 
 relativepathexpr:
-_1 = stepexpr
+  _1 = stepexpr
     {      ( _1 )}
 | _1 = relativepathexpr _2 = SLASH _3 = stepexpr
     {      ( mkexpr (EPath (PSlash(_1, _3))) )}
@@ -1060,13 +1060,13 @@ _1 = stepexpr
     {      ( mkexpr (EPath (PSlashSlash(_1, _3))) )}
 
 stepexpr:
-_1 = axisstepexpr
+  _1 = axisstepexpr
     {      ( _1 )}
 | _1 = otherstepexpr
     {      ( _1 )}
 
 axisstepexpr:
-_1 = AXIS _2 = nodetest
+  _1 = AXIS _2 = nodetest
     {      ( let axis = _1 in
         mkexpr (EPath(PAxis (axis,_2))) )}
 | _1 = AXIS _2 = nodetest _3 = stepqualifiers
@@ -1080,13 +1080,13 @@ _1 = AXIS _2 = nodetest
         mkexpr (EPath(PStepQualifiers (false,axis_expr,_3))) )}
 
 otherstepexpr:
-_1 = primaryexpr
+  _1 = primaryexpr
     {      ( _1 )}
 | _1 = primaryexpr _2 = stepqualifiers
     {      ( mkexpr (EPath (PStepQualifiers (true,_1,_2))) )}
 
 stepqualifiers:
-_1 = LBRACK _2 = expr _3 = RBRACK
+  _1 = LBRACK _2 = expr _3 = RBRACK
     {      ( let expr = mkexpr (EList _2) in
         (mkstep_qualifier (PredicateQualifier expr)) :: [] )}
 | _1 = LBRACK _2 = expr _3 = RBRACK _4 = stepqualifiers
@@ -1094,21 +1094,21 @@ _1 = LBRACK _2 = expr _3 = RBRACK
         (mkstep_qualifier (PredicateQualifier expr)) :: _4 )}
 
 transform_copy_clause:
-_1 = COPYDOLLAR _2 = qname _3 = COLONEQUALS _4 = expr_single _5 = copyvar_clause
+  _1 = COPYDOLLAR _2 = qname _3 = COLONEQUALS _4 = expr_single _5 = copyvar_clause
     {      ( (mkcopyvar_expr (_2, _4)) :: _5 )}
 
 copyvar_clause:
-
+  
     {      ( [] )}
 | _1 = COMMA _2 = variable _3 = COLONEQUALS _4 = expr_single _5 = copyvar_clause
     {      ( (mkcopyvar_expr (_2, _4)) :: _5 )}
 
 modify_clause:
-_1 = MODIFY _2 = expr_single
+  _1 = MODIFY _2 = expr_single
     {      ( _2 )}
 
 primaryexpr:
-_1 = DOT
+  _1 = DOT
     {      ( mkexpr ESelf )}
 | _1 = DOTDOT
     {      ( mkexpr EParent )}
@@ -1194,7 +1194,7 @@ _1 = DOT
     {      ( wrap_p (fun () -> _2) )}
 
 extensionexpr:
-_1 = PRAGMA _2 = LCURLY _3 = expr _4 = RCURLY
+  _1 = PRAGMA _2 = LCURLY _3 = expr _4 = RCURLY
     {      ( let (name,content) = _1 in
         check_pragma_content content;
         mkexpr (EPragma(name,content,_3)) :: [] )}
@@ -1204,51 +1204,51 @@ _1 = PRAGMA _2 = LCURLY _3 = expr _4 = RCURLY
         mkexpr (EPragma(name,content,_2)) :: [] )}
 
 expr:
-_1 = expr_single
+  _1 = expr_single
     {      ( _1 :: [] )}
 | _1 = expr_single _2 = COMMA _3 = expr
     {      ( _1 :: _3 )}
 
 block:
-_1 = block_decl_list _2 = block_exprs
+  _1 = block_decl_list _2 = block_exprs
     {      ( mkexpr(EBlock (_1,_2)) )}
 
 block_exprs:
-_1 = expr _2 = SEMICOLON _3 = block_exprs
+  _1 = expr _2 = SEMICOLON _3 = block_exprs
     {      ( wrap_p (fun () -> (mkexpr (EList _1)) :: _3) )}
 | _1 = expr
     {      ( mkexpr (EList _1) :: [] )}
 
 block_sub_decl:
-
+  
     {      ([])}
 | _1 = COMMA _2 = variable _3 = opt_type_declaration _4 = COLONEQUALS _5 = expr_single _6 = block_sub_decl
     {      ( (mkblock_decl_expr (_3,_2,_5)) :: _6 )}
 
 block_decl:
-_1 = DECLAREDOLLAR _2 = qname _3 = opt_type_declaration _4 = COLONEQUALS _5 = expr_single _6 = block_sub_decl
+  _1 = DECLAREDOLLAR _2 = qname _3 = opt_type_declaration _4 = COLONEQUALS _5 = expr_single _6 = block_sub_decl
     {      ( (mkblock_decl_expr (_3,_2,_5)) :: _6 )}
 
 block_decl_list:
-_1 = block_decl _2 = SEMICOLON _3 = block_decl_list
+  _1 = block_decl _2 = SEMICOLON _3 = block_decl_list
     {      ( wrap_p (fun () -> _1 @ _3 ))}
 | 
     {      ( [] )}
 
 variable:
-_1 = VARNAME
+  _1 = VARNAME
     {      ( _1 )}
 | _1 = DOLLAR _2 = qname
     {      ( _2 )}
 
 literal:
-_1 = numericliteral
+  _1 = numericliteral
     {      ( _1 )}
 | _1 = stringliteral
     {      ( _1 )}
 
 numericliteral:
-_1 = integer
+  _1 = integer
     {      ( mkexpr (EScalar (IntegerLiteral _1)) )}
 | _1 = decimal
     {      ( mkexpr (EScalar (DecimalLiteral _1)) )}
@@ -1256,29 +1256,29 @@ _1 = integer
     {      ( mkexpr (EScalar (DoubleLiteral _1)) )}
 
 stringliteral:
-_1 = STRING
+  _1 = STRING
     {      ( mkexpr (EScalar (StringLiteral _1)) )}
 
 nodetest:
-_1 = nametest
+  _1 = nametest
     {      ( (PNameTest _1) )}
 | _1 = kindtest _2 = RPAR
     {      ( (PNodeKindTest (_1)) )}
 
 nametest:
-_1 = qname
+  _1 = qname
     {      ( _1 )}
 | _1 = wildcard
     {      ( _1 )}
 
 qname:
-_1 = NCNAME
+  _1 = NCNAME
     {      ( (NSDefaultElementPrefix,_1) )}
 | _1 = QNAME
     {      ( _1 )}
 
 wildcard:
-_1 = STAR
+  _1 = STAR
     {      ( (NSWildcardPrefix,"*") )}
 | _1 = NCNAMESTAR
     {      ( (NSPrefix _1,"*") )}
@@ -1286,7 +1286,7 @@ _1 = STAR
     {      ( (NSWildcardPrefix, _1) )}
 
 attrlist:
-
+  
     {      ( [] )}
 | _1 = S
     {      ( [] )}
@@ -1302,7 +1302,7 @@ attrlist:
         (mkexpr (EAttrFixed (qname,real_att_content))) :: previous_attributes )}
 
 attributecontent:
-_1 = ATTRIBUTETEXT
+  _1 = ATTRIBUTETEXT
     {      ( let text = _1 in
         if text = "" then
 	  []
@@ -1321,7 +1321,7 @@ _1 = ATTRIBUTETEXT
 	(mkexpr (EText text)) :: (mkexpr (EText entity_ref_text)) :: _2 )}
 
 elementcontent:
-_1 = TEXTLCLOSINGTAG
+  _1 = TEXTLCLOSINGTAG
     {      ( (mkexpr (EText _1)) :: [] )}
 | _1 = LCLOSINGTAG
     {      ( [] )}
@@ -1348,13 +1348,13 @@ _1 = TEXTLCLOSINGTAG
         (mkexpr (EText text)) :: (mkexpr (EText entity_ref_text)) :: _2 )}
 
 opt_whitespace:
-
+  
     {      ( () )}
 | _1 = S
     {      ( () )}
 
 eq:
-_1 = EQUALS
+  _1 = EQUALS
     {           ( () )}
 | _1 = S _2 = EQUALS
     {             ( () )}
@@ -1364,25 +1364,25 @@ _1 = EQUALS
     {               ( () )}
 
 start_declare_fun:
-_1 = DECLAREFUNCTION
+  _1 = DECLAREFUNCTION
     {      ( NonUpdating )}
 | _1 = DECLAREUPDATINGFUNCTION
     {      ( Updating )}
 
 nillable:
-
+  
     {      ( NonNillable )}
 | _1 = NILLABLE
     {      ( Nillable )}
 
 nested_stype_spec:
-_1 = qname
+  _1 = qname
     {      ( mkstype_specifier (STypeRef _1) )}
 | _1 = stype_derivation
     {      ( mkstype_specifier (SAnonymous _1) )}
 
 stype_specifier_union:
-_1 = NONE
+  _1 = NONE
     {      ( [] )}
 | _1 = nested_stype_spec
     {      ( _1 :: [] )}
@@ -1390,7 +1390,7 @@ _1 = NONE
     {      ( _1 :: _3 )}
 
 stype_derivation:
-_1 = RESTRICTS _2 = nested_stype_spec
+  _1 = RESTRICTS _2 = nested_stype_spec
     {      ( SRestriction _2 )}
 | _1 = LISTOF _2 = nested_stype_spec
     {      ( SList _2 )}
@@ -1398,7 +1398,7 @@ _1 = RESTRICTS _2 = nested_stype_spec
     {      ( SUnion _3 )}
 
 stype_specifier:
-_1 = OFSIMPLETYPE _2 = qname
+  _1 = OFSIMPLETYPE _2 = qname
     {      ( let ssd = STypeRef _2 in
         mkstype_specifier ssd )}
 | _1 = stype_derivation
@@ -1406,7 +1406,7 @@ _1 = OFSIMPLETYPE _2 = qname
         mkstype_specifier ssd )}
 
 deriv_mixed:
-
+  
     {      ( (None,NonMixed) )}
 | _1 = MIXED
     {      ( (None,Mixed) )}
@@ -1420,19 +1420,19 @@ deriv_mixed:
     {      ( (Some (TExtension _2), Mixed) )}
 
 extype:
-_1 = xtype
+  _1 = xtype
     {      ( (None,_1) )}
 | _1 = xtype _2 = SEMICOLON _3 = axtype
     {      ( (Some _1,_3) )}
 
 ctype_derivation:
-_1 = deriv_mixed _2 = LCURLY _3 = extype _4 = RCURLY
+  _1 = deriv_mixed _2 = LCURLY _3 = extype _4 = RCURLY
     {      ( let (deriv,mixed) = _1 in
         let (attr_xtype,elem_xtype) = _3 in
         (deriv,attr_xtype,mixed,elem_xtype) )}
 
 ctype_specifier:
-_1 = OFTYPE _2 = qname
+  _1 = OFTYPE _2 = qname
     {      ( let csd = TTypeRef _2 in
         mkctype_specifier csd )}
 | _1 = ctype_derivation
@@ -1440,13 +1440,13 @@ _1 = OFTYPE _2 = qname
         mkctype_specifier csd )}
 
 xtype_specifier:
-_1 = stype_specifier
+  _1 = stype_specifier
     {      ( TSpecSimple _1 )}
 | _1 = ctype_specifier
     {      ( TSpecComplex _1 )}
 
 axtype:
-_1 = ATTRIBUTE _2 = qname
+  _1 = ATTRIBUTE _2 = qname
     {      ( mkxtype (TAttributeRef (_2)) )}
 | _1 = ATTRIBUTE _2 = nameclass _3 = stype_specifier
     {      ( mkxtype (TAttributeLocal (_2,_3)) )}
@@ -1464,7 +1464,7 @@ _1 = ATTRIBUTE _2 = qname
     {      ( _2 )}
 
 xtype:
-_1 = qname
+  _1 = qname
     {      ( mkxtype (TAtomicRef _1) )}
 | _1 = ELEMENT _2 = qname
     {      ( mkxtype (TElementRef _2) )}
@@ -1502,7 +1502,7 @@ _1 = qname
     {      ( _2 )}
 
 sequencetype:
-_1 = EMPTYSEQUENCELPAR _2 = RPAR
+  _1 = EMPTYSEQUENCELPAR _2 = RPAR
     {      ( mksequencetype(ITEmpty, None) )}
 | _1 = qname_occurrence
     {      ( _1 )}
@@ -1510,7 +1510,7 @@ _1 = EMPTYSEQUENCELPAR _2 = RPAR
     {      ( mksequencetype(_1, _3) )}
 
 item_occurrence:
-
+  
     {    ( None )}
 | _1 = ISTAR
     {      ( Some(Occurrence.occurs 0, Occurrence.unbounded) )}
@@ -1520,19 +1520,19 @@ item_occurrence:
     {      ( Some(Occurrence.occurs 0, Occurrence.occurs 1) )}
 
 singletype:
-_1 = QNAME
+  _1 = QNAME
     {      ( mksequencetype(ITAtomic _1,None) )}
 | _1 = QNAMEQUESTION
     {      ( mksequencetype(ITAtomic _1,Some(Occurrence.occurs 0, Occurrence.occurs 1)) )}
 
 opt_type_declaration:
-
+  
     {      ( None )}
 | _1 = AS _2 = sequencetype
     {      ( Some _2 )}
 
 optelementref:
-
+  
     {      ( None )}
 | _1 = STAR
     {      ( None )}
@@ -1544,7 +1544,7 @@ optelementref:
     {      ( (Some (_1,Some _3)) )}
 
 optattributeref:
-
+  
     {      ( None )}
 | _1 = STAR
     {      ( None )}
@@ -1556,7 +1556,7 @@ optattributeref:
     {      ( (Some (_1,Some _3)) )}
 
 qname_occurrence:
-_1 = QNAME
+  _1 = QNAME
     {      ( mksequencetype(ITAtomic _1,None) )}
 | _1 = QNAMESTAR
     {      ( mksequencetype(ITAtomic _1,Some(Occurrence.occurs 0, Occurrence.unbounded)) )}
@@ -1566,13 +1566,13 @@ _1 = QNAME
     {      ( mksequencetype(ITAtomic _1,Some(Occurrence.occurs 0, Occurrence.occurs 1)) )}
 
 documentnode_kindtest:
-_1 = ELEMENTLPAR _2 = optelementref _3 = RPAR
+  _1 = ELEMENTLPAR _2 = optelementref _3 = RPAR
     {      ( (ElementTest _2) )}
 | _1 = SCHEMAELEMENTLPAR _2 = qname _3 = RPAR
     {      ( (SchemaElementTest _2) )}
 
 kindtest:
-_1 = ELEMENTLPAR _2 = optelementref
+  _1 = ELEMENTLPAR _2 = optelementref
     {      ( ElementKind (ElementTest _2) )}
 | _1 = SCHEMAELEMENTLPAR _2 = qname
     {      ( ElementKind (SchemaElementTest _2) )}
@@ -1598,7 +1598,7 @@ _1 = ELEMENTLPAR _2 = optelementref
     {      ( DocumentKind (Some (_2)) )}
 
 itemtype:
-_1 = kindtest
+  _1 = kindtest
     {      ( ITKindTest _1 )}
 | _1 = TYPELPAR _2 = qname
     {      ( ITTypeRef _2 )}
@@ -1610,7 +1610,7 @@ _1 = kindtest
     {      ( ITAnyString )}
 
 substitutes_for_nillable:
-
+  
     {      ( (TNonSubstitutesFor,NonNillable) )}
 | _1 = SUBSTITUTESFOR _2 = qname
     {      ( (TSubstitutesFor _2,NonNillable) )}
@@ -1620,24 +1620,24 @@ substitutes_for_nillable:
     {      ( (TSubstitutesFor _2,Nillable) )}
 
 xelem_derivation:
-_1 = substitutes_for_nillable _2 = xtype_specifier
+  _1 = substitutes_for_nillable _2 = xtype_specifier
     {      ( let (sf,nil) = _1 in
         (sf,nil,_2) )}
 
 namespace_decls:
-
+  
     {      ( [] )}
 | _1 = DECLARENAMESPACE _2 = NCNAME _3 = EQUALS _4 = STRING _5 = SEMICOLON _6 = namespace_decls
     {      ( (_2,NSUri _4) :: _6 )}
 
 type_decls:
-
+  
     {      ( [] )}
 | _1 = typedefinition _2 = type_decls
     {      ( _1 :: _2 )}
 
 typedefinition:
-_1 = DECLAREATTRIBUTE _2 = stype_specifier _3 = SEMICOLON
+  _1 = DECLAREATTRIBUTE _2 = stype_specifier _3 = SEMICOLON
     {      ( mkissd (TAttributeDecl (_1,_2)) )}
 | _1 = DECLAREELEMENT _2 = xelem_derivation _3 = SEMICOLON
     {      ( mkissd (TElementDecl (_1,_2)) )}
@@ -1651,34 +1651,34 @@ _1 = DECLAREATTRIBUTE _2 = stype_specifier _3 = SEMICOLON
     {      ( mkissd (TAttrGroupDecl (_1,_3)) )}
 
 schema_decl:
-_1 = DECLARESCHEMALCURLY _2 = namespace_decls _3 = schema_decls _4 = type_decls _5 = RCURLY _6 = SEMICOLON
+  _1 = DECLARESCHEMALCURLY _2 = namespace_decls _3 = schema_decls _4 = type_decls _5 = RCURLY _6 = SEMICOLON
     {      ( let nss = _2 
         and schemas = _3
         and issds = _4 in
         fmkschema schemas nss issds )}
 
 schema_decls:
-
+  
     {      ( [] )}
 | _1 = schema_decl _2 = schema_decls
     {      ( _1 :: _2 )}
 
 nameclass:
-_1 = qname
+  _1 = qname
     {      ( _1 )}
 | _1 = wildcard
     {      ( _1 )}
 
 integer:
-_1 = INT
+  _1 = INT
     {        ( _1 )}
 
 decimal:
-_1 = DECIMAL
+  _1 = DECIMAL
     {            ( _1 )}
 
 stringlit:
-_1 = STRING
+  _1 = STRING
     {           ( _1 )}
 
 %%

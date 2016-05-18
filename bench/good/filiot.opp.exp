@@ -120,13 +120,13 @@ contact : filiot@lifl.fr
 %%
 
 main:
-_1 = Body _2 = EOF
+  _1 = Body _2 = EOF
     {           ( _1 )}
 | 
     {  ( raise( Fatal_error "empty input file") )}
 
 Body:
-_1 = Formula _2 = POINTVIRGULE
+  _1 = Formula _2 = POINTVIRGULE
     {                       ( ([], _1) )}
 | _1 = VAR _2 = VariablesDec _3 = Formula _4 = POINTVIRGULE
     {                                         ( (_2, _3) )}
@@ -135,13 +135,13 @@ _1 = Formula _2 = POINTVIRGULE
 			      "no given formula")) )}
 
 VariablesDec:
-_1 = STR _2 = POINTVIRGULE
+  _1 = STR _2 = POINTVIRGULE
     {                   ( [_1, pos_item 1] )}
 | _1 = STR _2 = COMMA _3 = VariablesDec
     {                         ( (_1, pos_item 1) :: _3 )}
 
 Formula:
-_1 = LPAR _2 = Formula _3 = RPAR
+  _1 = LPAR _2 = Formula _3 = RPAR
     {                    ( _2 )}
 | _1 = TRUE
     {       ( True )}
@@ -207,13 +207,13 @@ _1 = LPAR _2 = Formula _3 = RPAR
     {                          ( Implies (_1, _3, pos_rule ()) )}
 
 QuantVariablesDec:
-_1 = STR _2 = SEMICOLON
+  _1 = STR _2 = SEMICOLON
     {                ( [_1, pos_item 1] )}
 | _1 = STR _2 = COMMA _3 = QuantVariablesDec
     {                              ( (_1, pos_item 1) :: _3 )}
 
 BinPredPref:
-_1 = CHILD
+  _1 = CHILD
     {        ( fun x y -> Child (x,y) )}
 | _1 = FC
     {     (fun x y -> First_child (x,y) )}
@@ -225,7 +225,7 @@ _1 = CHILD
     {      ( fun x y -> Lab (x,y) )}
 
 BinPredInf:
-_1 = IN
+  _1 = IN
     {       ( fun x y -> Is_in (x,y) )}
 | _1 = NOTIN
     {          ( fun x y -> Neg (Is_in (x,y), pos_rule ()) )}

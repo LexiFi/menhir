@@ -134,13 +134,13 @@ end
 %%
 
 program:
-_1 = decls _2 = EOFX
+  _1 = decls _2 = EOFX
     {                     ( $$ := node("prog", _1);)}
 | _1 = error _2 = decls _3 = EOFX
     {                    ()}
 
 decls:
-
+  
     {        ( $$ := EmptyNode )}
 | _1 = decls _2 = decl
     {              (
@@ -149,7 +149,7 @@ decls:
 	      )}
 
 decl:
-_1 = record
+  _1 = record
     {()}
 | _1 = proc
     {()}
@@ -167,7 +167,7 @@ _1 = record
     {()}
 
 initiallysection:
-
+  
     {                  ( $$ := EmptyNode )}
 | _1 = INITIALLY _2 = SEMICOL _3 = locals _4 = initial _5 = procbody
     {                                             (
@@ -179,13 +179,13 @@ initiallysection:
 	)}
 
 optsemi:
-
+  
     {          ( $$ := EmptyNode )}
 | _1 = SEMICOL
     {                  ()}
 
 cl:
-_1 = classhead _2 = SEMICOL _3 = END
+  _1 = classhead _2 = SEMICOL _3 = END
     {                           (
    $$ := node("class", _1, _2, _3)
    )}
@@ -195,13 +195,13 @@ _1 = classhead _2 = SEMICOL _3 = END
    )}
 
 classhead:
-_1 = CLASS _2 = IDENT _3 = supers _4 = LPAREN _5 = arglist _6 = RPAREN
+  _1 = CLASS _2 = IDENT _3 = supers _4 = LPAREN _5 = arglist _6 = RPAREN
     {                                                     (
    $$ := node("classhead", _1,_2,_3,_4,_5,_6)
    )}
 
 supers:
-
+  
     {        ( $$ := EmptyNode )}
 | _1 = COLON _2 = IDENT _3 = supers
     {                        ( $$ := node("supers", _1, _2, _3) )}
@@ -209,13 +209,13 @@ supers:
     {                             ( $$ := node("supers", _1, _2, _3) )}
 
 packageref:
-_1 = IDENT _2 = COLONCOLON _3 = IDENT
+  _1 = IDENT _2 = COLONCOLON _3 = IDENT
     {                                    ( $$ := node("packageref", _1,_2,_3) )}
 | _1 = COLONCOLON _2 = IDENT
     {                      ( $$ := node("packageref", _1,_2) )}
 
 methods:
-
+  
     {         ( $$ := EmptyNode )}
 | _1 = meth _2 = methods
     {                  ( $$ := node("methods", _1,_2) )}
@@ -225,17 +225,17 @@ methods:
     {                    ( $$ := node("methods", _1,_2) )}
 
 invocable:
-_1 = INVOCABLE _2 = invoclist
+  _1 = INVOCABLE _2 = invoclist
     {                                ( $$ := node("invocable", _1, _2);)}
 
 invoclist:
-_1 = invocop
+  _1 = invocop
     {                    ()}
 | _1 = invoclist _2 = COMMA _3 = invocop
     {                             ( $$ := node("invoclist", _1,_2,_3);)}
 
 invocop:
-_1 = IDENT
+  _1 = IDENT
     {                 ()}
 | _1 = STRINGLIT
     {              ()}
@@ -243,53 +243,53 @@ _1 = IDENT
     {                           ($$ := node("invocop3", _1,_2,_3);)}
 
 package:
-_1 = PACKAGE _2 = lnkfile
+  _1 = PACKAGE _2 = lnkfile
     {                          (
    $$ := node("package", _1, _2)
    )}
 
 import:
-_1 = IMPORT _2 = lnklist
+  _1 = IMPORT _2 = lnklist
     {                        (
    $$ := node("import", _1,_2)
    )}
 
 link:
-_1 = LINK _2 = lnklist
+  _1 = LINK _2 = lnklist
     {                    ( 
    $$ := node("link", _1,_2); 
    )}
 
 lnklist:
-_1 = lnkfile
+  _1 = lnkfile
     {                  ()}
 | _1 = lnklist _2 = COMMA _3 = lnkfile
     {                         ( $$ := node("lnklist", _1,_2,_3); )}
 
 lnkfile:
-_1 = IDENT
+  _1 = IDENT
     {                ()}
 | _1 = STRINGLIT
     {             ()}
 
 global:
-_1 = GLOBAL _2 = idlist
+  _1 = GLOBAL _2 = idlist
     {                       ( $$ := node("global", _1,_2) )}
 
 record:
-_1 = RECORD _2 = IDENT _3 = LPAREN _4 = fldlist _5 = RPAREN
+  _1 = RECORD _2 = IDENT _3 = LPAREN _4 = fldlist _5 = RPAREN
     {                                            (
 		$$ := node("record", _1,_2,_3,_4,_5)
 		)}
 
 fldlist:
-
+  
     {          ( $$ := EmptyNode )}
 | _1 = idlist
     {          ()}
 
 meth:
-_1 = ABSTRACT _2 = methhead
+  _1 = ABSTRACT _2 = methhead
     {                         (
                 $$ := node("method", _1,_2)
                 )}
@@ -299,19 +299,19 @@ _1 = ABSTRACT _2 = methhead
                 )}
 
 prochead:
-_1 = PROCEDURE _2 = IDENT _3 = LPAREN _4 = arglist _5 = RPAREN
+  _1 = PROCEDURE _2 = IDENT _3 = LPAREN _4 = arglist _5 = RPAREN
     {                                                (
    $$ := node("procedure", _1,_2,_3,_4,_5)
 	)}
 
 methhead:
-_1 = METHOD _2 = IDENT _3 = LPAREN _4 = arglist _5 = RPAREN
+  _1 = METHOD _2 = IDENT _3 = LPAREN _4 = arglist _5 = RPAREN
     {                                             (
    $$ := node("methhead", _1,_2,_3,_4,_5)
 	)}
 
 arglist:
-
+  
     {          ( $$ := EmptyNode )}
 | _1 = parmlist
     {            ( $$ := node("arglist", _1) )}
@@ -319,19 +319,19 @@ arglist:
     {                          ( $$ := node("arglist", _1,_2,_3) )}
 
 idlist:
-_1 = IDENT
+  _1 = IDENT
     {               ()}
 | _1 = idlist _2 = COMMA _3 = IDENT
     {                      ( $$ := node("idlist", _1,_2,_3) )}
 
 parmlist:
-_1 = arg
+  _1 = arg
     {              ()}
 | _1 = parmlist _2 = COMMA _3 = arg
     {                      ( $$ := node("parmlist", _1,_2,_3) )}
 
 arg:
-_1 = IDENT
+  _1 = IDENT
     {            ()}
 | _1 = IDENT _2 = COLON _3 = IDENT
     {                     ( $$ := node("arg2", _1, _2, _3) )}
@@ -341,19 +341,19 @@ _1 = IDENT
     {                                   ( $$ := node("arg4", _1, _2, _3, _4, _5) )}
 
 locals:
-
+  
     {         ( $$ := EmptyNode;)}
 | _1 = locals _2 = retention _3 = idlist _4 = SEMICOL
     {                                   ( $$ := node("locals2", _1,_2,_3,";");)}
 
 retention:
-_1 = LOCAL
+  _1 = LOCAL
     {          ()}
 | _1 = STATIC
     {          ()}
 
 initial:
-
+  
     {          ( $$ := EmptyNode )}
 | _1 = ICONINITIAL _2 = expr _3 = SEMICOL
     {                            (
@@ -361,19 +361,19 @@ initial:
 	      )}
 
 procbody:
-
+  
     {          ( $$ := EmptyNode )}
 | _1 = nexpr _2 = SEMICOL _3 = procbody
     {                          ( $$ := node("procbody", _1,";",_3);)}
 
 nexpr:
-
+  
     {        ( $$ := EmptyNode )}
 | _1 = expr
     {        ()}
 
 expr:
-_1 = expr1a
+  _1 = expr1a
     {              ()}
 | _1 = expr _2 = AND _3 = expr1a
     {                   ( $$ := node("and", _1,_2,_3) )}
@@ -381,13 +381,13 @@ _1 = expr1a
     {                ( $$ := node("error"); )}
 
 expr1a:
-_1 = expr1
+  _1 = expr1
     {               ()}
 | _1 = expr1a _2 = QMARK _3 = expr1
     {                      ( $$ := node("binques", _1,_2,_3);)}
 
 expr1:
-_1 = expr2
+  _1 = expr2
     {              ()}
 | _1 = expr2 _2 = SWAP _3 = expr1
     {                         ( $$ := node("swap", _1,_2,_3);)}
@@ -455,7 +455,7 @@ _1 = expr2
     {                         ( $$ := node("Baugact", _1,_2,_3);)}
 
 expr2:
-_1 = expr3
+  _1 = expr3
     {              ()}
 | _1 = expr2 _2 = TO _3 = expr3
     {                  ( $$ := node("to", _1,_2,_3);)}
@@ -463,13 +463,13 @@ _1 = expr3
     {                           ( $$ := node("toby", _1,_2,_3,_4,_5);)}
 
 expr3:
-_1 = expr4
+  _1 = expr4
     {              ()}
 | _1 = expr4 _2 = BAR _3 = expr3
     {                   ($$ := node(BAR, _1,_2,_3);)}
 
 expr4:
-_1 = expr5
+  _1 = expr5
     {              ()}
 | _1 = expr4 _2 = SEQ _3 = expr5
     {                   ( $$ := node("Bseq", _1,_2,_3);)}
@@ -501,7 +501,7 @@ _1 = expr5
     {                      ( $$ := node("Bneqv", _1,_2,_3);)}
 
 expr5:
-_1 = expr6
+  _1 = expr6
     {              ()}
 | _1 = expr5 _2 = CONCAT _3 = expr6
     {                      ( $$ := node("Bcat", _1,_2,_3);)}
@@ -509,7 +509,7 @@ _1 = expr6
     {                       ( $$ := node("Blcat", _1,_2,_3);)}
 
 expr6:
-_1 = expr7
+  _1 = expr7
     {              ()}
 | _1 = expr6 _2 = PLUS _3 = expr7
     {                    ( $$ := node("Bplus", _1,_2,_3);)}
@@ -521,7 +521,7 @@ _1 = expr7
     {                     ( $$ := node("Bminus", _1,_2,_3);)}
 
 expr7:
-_1 = expr8
+  _1 = expr8
     {              ()}
 | _1 = expr7 _2 = STAR _3 = expr8
     {                    ( $$ := node("Bstar", _1,_2,_3);)}
@@ -533,13 +533,13 @@ _1 = expr8
     {                   ( $$ := node("Bmod", _1,_2,_3);)}
 
 expr8:
-_1 = expr9
+  _1 = expr9
     {              ()}
 | _1 = expr9 _2 = CARET _3 = expr8
     {                     ( $$ := node("Bcaret", _1,_2,_3);)}
 
 expr9:
-_1 = expr10
+  _1 = expr10
     {               ()}
 | _1 = expr9 _2 = BACKSLASH _3 = expr10
     {                          ( $$ := node("limit", _1,_2,_3);)}
@@ -549,7 +549,7 @@ _1 = expr10
     {                     ( $$ := node("apply", _1,_2,_3);)}
 
 expr10:
-_1 = expr11
+  _1 = expr11
     {                ()}
 | _1 = AT _2 = expr10
     {             ( $$ := node("uat", _1,_2);)}
@@ -601,7 +601,7 @@ _1 = expr11
     {                    ( $$ := node("ubackslash", _1,_2);)}
 
 expr11:
-_1 = literal
+  _1 = literal
     {          ()}
 | _1 = section
     {          ()}
@@ -671,29 +671,29 @@ _1 = literal
     {             ( $$ := node("keyword",_1,_2);)}
 
 kwhile:
-_1 = WHILE _2 = expr
+  _1 = WHILE _2 = expr
     {                    ( $$ := node("While0", _1,_2);)}
 | _1 = WHILE _2 = expr _3 = DO _4 = expr
     {                      ( $$ := node("While1", _1,_2,_3,_4);)}
 
 until:
-_1 = UNTIL _2 = expr
+  _1 = UNTIL _2 = expr
     {                   ( $$ := node("until", _1,_2);)}
 | _1 = UNTIL _2 = expr _3 = DO _4 = expr
     {                      ( $$ := node("until1", _1,_2,_3,_4);)}
 
 every:
-_1 = EVERY _2 = expr
+  _1 = EVERY _2 = expr
     {                   ( $$ := node("every", _1,_2);)}
 | _1 = EVERY _2 = expr _3 = DO _4 = expr
     {                      ( $$ := node("every1", _1,_2,_3,_4);)}
 
 repeat:
-_1 = REPEAT _2 = expr
+  _1 = REPEAT _2 = expr
     {                     ( $$ := node("repeat", _1,_2);)}
 
 return:
-_1 = FAIL
+  _1 = FAIL
     {              ()}
 | _1 = RETURN _2 = nexpr
     {                ( $$ := node("return", _1, _2);)}
@@ -703,29 +703,29 @@ _1 = FAIL
     {                               ( $$ := node("Suspend1", _1,_2,_3,_4);)}
 
 kif:
-_1 = IF _2 = expr _3 = THEN _4 = expr
+  _1 = IF _2 = expr _3 = THEN _4 = expr
     {                        ( $$ := node("If0", _1,_2,_3,_4);)}
 | _1 = IF _2 = expr _3 = THEN _4 = expr _5 = ELSE _6 = expr
     {                               ( $$ := node("If1", _1,_2,_3,_4,_5,_6);)}
 
 case:
-_1 = CASE _2 = expr _3 = OF _4 = LBRACE _5 = caselist _6 = RBRACE
+  _1 = CASE _2 = expr _3 = OF _4 = LBRACE _5 = caselist _6 = RBRACE
     {                                           ( $$ := node("Case", _1,_2,_3,_4,_5,_6);)}
 
 caselist:
-_1 = cclause
+  _1 = cclause
     {                  ()}
 | _1 = caselist _2 = SEMICOL _3 = cclause
     {                            ( $$ := node("Caselist", _1,";",_3);)}
 
 cclause:
-_1 = DEFAULT _2 = COLON _3 = expr
+  _1 = DEFAULT _2 = COLON _3 = expr
     {                             ( $$ := node("cclause0", _1,_2,_3);)}
 | _1 = expr _2 = COLON _3 = expr
     {                   ( $$ := node("cclause1", _1,_2,_3);)}
 
 exprlist:
-_1 = nexpr
+  _1 = nexpr
     {                ()}
 | _1 = exprlist _2 = COMMA _3 = nexpr
     {                        (
@@ -737,13 +737,13 @@ _1 = nexpr
 	   )}
 
 pdcolist:
-_1 = nexpr
+  _1 = nexpr
     {                ( $$ := node("pdcolist0", _1) )}
 | _1 = pdcolist _2 = COMMA _3 = nexpr
     {                        ( $$ := node("pdcolist1", _1,_2,_3); )}
 
 literal:
-_1 = INTLIT
+  _1 = INTLIT
     {           ()}
 | _1 = REALLIT
     {           ()}
@@ -753,11 +753,11 @@ _1 = INTLIT
     {           ()}
 
 section:
-_1 = expr11 _2 = LBRACK _3 = expr _4 = sectop _5 = expr _6 = RBRACK
+  _1 = expr11 _2 = LBRACK _3 = expr _4 = sectop _5 = expr _6 = RBRACK
     {                                                ( $$ := node("section", _1,_2,_3,_4,_5,_6);)}
 
 sectop:
-_1 = COLON
+  _1 = COLON
     {          ()}
 | _1 = PCOLON
     {          ()}
@@ -765,13 +765,13 @@ _1 = COLON
     {          ()}
 
 compound:
-_1 = nexpr
+  _1 = nexpr
     {                ()}
 | _1 = nexpr _2 = SEMICOL _3 = compound
     {                          ( $$ := node("compound", _1,";",_3);)}
 
 proc:
-_1 = prochead _2 = error _3 = procbody _4 = END
+  _1 = prochead _2 = error _3 = procbody _4 = END
     {                                   ( $$ := node("error", _1,_3,_4); )}
 | _1 = prochead _2 = SEMICOL _3 = locals _4 = initial _5 = procbody _6 = END
     {                                                       (

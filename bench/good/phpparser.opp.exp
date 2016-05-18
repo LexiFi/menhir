@@ -134,7 +134,7 @@ let makeTokenData () =
 %%
 
 constant_literal:
-_1 = T_NULL
+  _1 = T_NULL
     {                        (     Null(makeTokenData()) )}
 | _1 = T_INT_LITERAL
     {                        (      Int(makeTokenData(),_1) )}
@@ -144,13 +144,13 @@ _1 = T_NULL
     {                        ( StringSQ(makeTokenData(),_1) )}
 
 literal:
-_1 = constant_literal
+  _1 = constant_literal
     {                        ( ConstLiteral(_1) )}
 | _1 = T_STRING_LITERAL_D
     {                        ( StringDQ(makeTokenData(),_1) )}
 
 predefined_type:
-_1 = T_BOOL
+  _1 = T_BOOL
     {                        ( TypeBool  (makeTokenData()) )}
 | _1 = T_FLOAT
     {                        ( TypeFloat (makeTokenData()) )}
@@ -160,43 +160,43 @@ _1 = T_BOOL
     {                        ( TypeString(makeTokenData()) )}
 
 identifier:
-_1 = T_IDENTIFIER
+  _1 = T_IDENTIFIER
     {                           ( Identifier(makeTokenData(),_1) )}
 
 variable:
-_1 = T_DOLLAR _2 = T_IDENTIFIER
+  _1 = T_DOLLAR _2 = T_IDENTIFIER
     {                           ( Variable(makeTokenData(),_2) )}
 
 identifier_variable:
-_1 = identifier
+  _1 = identifier
     {                     ( IdentVar_ident(_1) )}
 | _1 = variable
     {                     ( IdentVar_var  (_1) )}
 
 atomic_expression_noiv:
-_1 = literal
+  _1 = literal
     {                                            ( _1 )}
 | _1 = T_LPAREN _2 = expression _3 = T_RPAREN
     {                                            ( _2 )}
 
 new_expression_noiv:
-_1 = atomic_expression_noiv
+  _1 = atomic_expression_noiv
     {                                                         ( _1 )}
 | _1 = T_NEW _2 = identifier _3 = T_LPAREN _4 = expression_list _5 = T_RPAREN
     {                                                         ( New(_2, _4) )}
 
 rarrow_chain:
-
+  
     {                                                 ( [] )}
 | _1 = rarrow_chain _2 = T_RARROW _3 = identifier_variable
     {                                                 ( _3::_1 )}
 
 nonempty_rarrow_chain:
-_1 = rarrow_chain _2 = T_RARROW _3 = identifier_variable
+  _1 = rarrow_chain _2 = T_RARROW _3 = identifier_variable
     {                                                 ( _3::_1 )}
 
 object_member_expression_noiv:
-_1 = new_expression_noiv _2 = rarrow_chain
+  _1 = new_expression_noiv _2 = rarrow_chain
     {                                      ( Dereference(_1,                             _2) )}
 | _1 = T_DOLLAR _2 = T_THIS _3 = rarrow_chain
     {                                      ( Dereference(VarExpr(This(makeTokenData())), _3) )}
@@ -204,7 +204,7 @@ _1 = new_expression_noiv _2 = rarrow_chain
     {                                      ( Dereference(VarExpr(_1),                    _2) )}
 
 static_reference_chain_noiv:
-_1 = object_member_expression_noiv
+  _1 = object_member_expression_noiv
     {                                                                  ( _1 )}
 | _1 = T_PARENT _2 = T_COLON_2 _3 = identifier_variable _4 = rarrow_chain
     {                                                                  ( Parent(_3::_4) )}
@@ -214,13 +214,13 @@ _1 = object_member_expression_noiv
     {                                                                  ( StaticReferenceChain(_1, _3::_4) )}
 
 array_expression_noiv:
-_1 = static_reference_chain_noiv
+  _1 = static_reference_chain_noiv
     {                                                      ( _1     )}
 | _1 = array_expression _2 = T_LBRACS _3 = expression _4 = T_RBRACS
     {                                                      ( ArrayExpr(_1,_3) )}
 
 array_expression:
-_1 = array_expression_noiv
+  _1 = array_expression_noiv
     {                                    ( _1 )}
 | _1 = identifier
     {                                    ( IdentExpr(_1) )}
@@ -228,23 +228,23 @@ _1 = array_expression_noiv
     {                                    (   VarExpr(_1) )}
 
 lvalue_novariable:
-_1 = array_expression_noiv
+  _1 = array_expression_noiv
     {                             ( _1 )}
 | _1 = identifier
     {                             ( IdentExpr(_1) )}
 
 function_call_expression_basic:
-_1 = array_expression _2 = T_LPAREN _3 = expression_list _4 = T_RPAREN
+  _1 = array_expression _2 = T_LPAREN _3 = expression_list _4 = T_RPAREN
     {                                                         ( FunCallExpr(_1, _3)  )}
 
 function_call_expression:
-_1 = array_expression
+  _1 = array_expression
     {                                     ( _1 )}
 | _1 = function_call_expression_basic
     {                                     ( _1 )}
 
 crement_expression:
-_1 = function_call_expression
+  _1 = function_call_expression
     {                                                      ( _1 )}
 | _1 = function_call_expression _2 = T_MINUS_2
     {                                                      ( PostDecrement(_1) )}
@@ -256,7 +256,7 @@ _1 = function_call_expression
     {                                                      (  PreIncrement(_2) )}
 
 unary_expression:
-_1 = crement_expression
+  _1 = crement_expression
     {                                                         ( _1 )}
 | _1 = T_PLUS _2 = crement_expression %prec T_UPLUS
     {                                                         ( _2 )}
@@ -268,19 +268,19 @@ _1 = crement_expression
     {                                                         ( TypeCast(_2,_4) )}
 
 instanceof_expression:
-_1 = unary_expression
+  _1 = unary_expression
     {                                                ( _1 )}
 | _1 = unary_expression _2 = T_INSTANCEOF _3 = identifier
     {                                                ( InstanceOf(_1,_3) )}
 
 logical_not_expression:
-_1 = instanceof_expression
+  _1 = instanceof_expression
     {                                                      ( _1 )}
 | _1 = T_EXCLAMATION _2 = logical_not_expression
     {                                                      ( LogicalNot(_2) )}
 
 arithmetic_expression:
-_1 = logical_not_expression
+  _1 = logical_not_expression
     {                                                                ( _1 )}
 | _1 = arithmetic_expression _2 = T_ASTERISK _3 = logical_not_expression
     {                                                                ( Multiplication(_1,_3) )}
@@ -290,7 +290,7 @@ _1 = logical_not_expression
     {                                                                ( Modulo(_1,_3) )}
 
 arithmetic_string_expression:
-_1 = arithmetic_expression
+  _1 = arithmetic_expression
     {                                                                ( _1 )}
 | _1 = arithmetic_string_expression _2 = T_PLUS _3 = arithmetic_expression
     {                                                                (   Plus(_1,_3) )}
@@ -300,7 +300,7 @@ _1 = arithmetic_expression
     {                                                                ( Concat(_1,_3) )}
 
 shift_expression:
-_1 = arithmetic_string_expression
+  _1 = arithmetic_string_expression
     {                                                                ( _1 )}
 | _1 = shift_expression _2 = T_LT_LT _3 = arithmetic_string_expression
     {                                                                ( ShiftLeft(_1,_3) )}
@@ -308,7 +308,7 @@ _1 = arithmetic_string_expression
     {                                                                ( ShiftRight(_1,_3) )}
 
 comparison_expression:
-_1 = shift_expression
+  _1 = shift_expression
     {                                                                ( _1 )}
 | _1 = shift_expression _2 = T_LT _3 = shift_expression
     {                                                                ( IsSmaller(_1,_3) )}
@@ -322,7 +322,7 @@ _1 = shift_expression
     {                                                                ( LogicalNot(IsEqual(_1,_3)) )}
 
 comparison_expression_weak:
-_1 = comparison_expression
+  _1 = comparison_expression
     {                                                                ( _1 )}
 | _1 = comparison_expression _2 = T_EQ_EQ _3 = comparison_expression
     {                                                                (            IsEqual(_1,_3) )}
@@ -334,43 +334,43 @@ _1 = comparison_expression
     {                                                                ( LogicalNot(IsIdentical(_1,_3)) )}
 
 bitwise_and_expression:
-_1 = comparison_expression_weak
+  _1 = comparison_expression_weak
     {                                                                    ( _1 )}
 | _1 = bitwise_and_expression _2 = T_AMPERSAND _3 = comparison_expression_weak
     {                                                                    ( BitwiseAnd(_1,_3) )}
 
 bitwise_xor_expression:
-_1 = bitwise_and_expression
+  _1 = bitwise_and_expression
     {                                                                    ( _1 )}
 | _1 = bitwise_xor_expression _2 = T_CARET _3 = bitwise_and_expression
     {                                                                    ( BitwiseXor(_1,_3) )}
 
 bitwise_or_expression:
-_1 = bitwise_xor_expression
+  _1 = bitwise_xor_expression
     {                                                                    ( _1 )}
 | _1 = bitwise_or_expression _2 = T_BAR _3 = bitwise_xor_expression
     {                                                                    ( BitwiseOr(_1,_3) )}
 
 logical_and_expression_strong:
-_1 = bitwise_or_expression
+  _1 = bitwise_or_expression
     {                                                                        ( _1 )}
 | _1 = logical_and_expression_strong _2 = T_AMPERSAND_2 _3 = bitwise_or_expression
     {                                                                        ( LogicalAnd(_1,_3) )}
 
 logical_or_expression_strong:
-_1 = logical_and_expression_strong
+  _1 = logical_and_expression_strong
     {                                                                        ( _1 )}
 | _1 = logical_or_expression_strong _2 = T_BAR_2 _3 = logical_and_expression_strong
     {                                                                        ( LogicalOr(_1,_3) )}
 
 ternary_choice_expression:
-_1 = logical_or_expression_strong
+  _1 = logical_or_expression_strong
     {                                                                        ( _1 )}
 | _1 = logical_or_expression_strong _2 = T_QUESTION _3 = logical_or_expression_strong _4 = T_COLON _5 = logical_or_expression_strong
     {                                                                                                                ( TernaryChoice(_1,_3,_5) )}
 
 assignment_expression:
-_1 = ternary_choice_expression
+  _1 = ternary_choice_expression
     {                                                                     ( _1 )}
 | _1 = ternary_choice_expression _2 = T_EQ _3 = assignment_expression
     {                                                                     ( AssignExpr(_1,                   _3) )}
@@ -398,57 +398,57 @@ _1 = ternary_choice_expression
     {                                                                     ( AssignExpr(_1,     ShiftRight(_1,_3)) )}
 
 logical_and_expression_weak:
-_1 = assignment_expression
+  _1 = assignment_expression
     {                                                                  ( _1 )}
 | _1 = logical_and_expression_weak _2 = T_AND _3 = assignment_expression
     {                                                                  ( LogicalAnd(_1, _3) )}
 
 logical_xor_expression_weak:
-_1 = logical_and_expression_weak
+  _1 = logical_and_expression_weak
     {                                                                  ( _1 )}
 | _1 = logical_xor_expression_weak _2 = T_XOR _3 = logical_and_expression_weak
     {                                                                  ( LogicalXor(_1, _3) )}
 
 logical_or_expression_weak:
-_1 = logical_xor_expression_weak
+  _1 = logical_xor_expression_weak
     {                                                                  ( _1 )}
 | _1 = logical_or_expression_weak _2 = T_OR _3 = logical_xor_expression_weak
     {                                                                  ( LogicalOr(_1, _3) )}
 
 expression:
-_1 = logical_or_expression_weak
+  _1 = logical_or_expression_weak
     {                                                                  ( _1 )}
 
 expression_list_suffx:
-
+  
     {                                                ( [] )}
 | _1 = T_COMMA _2 = expression _3 = expression_list_suffx
     {                                                ( _2::_3 )}
 
 expression_list:
-
+  
     {                                        ( [] )}
 | _1 = expression _2 = expression_list_suffx
     {                                        ( _1::_2 )}
 
 formal_argument:
-_1 = variable
+  _1 = variable
     {                                   (      FormalArg(_1) )}
 | _1 = identifier _2 = variable
     {                                   ( TypedFormalArg(_1,_2) )}
 
 formal_argument_with_default:
-_1 = formal_argument _2 = T_EQ _3 = constant_literal
+  _1 = formal_argument _2 = T_EQ _3 = constant_literal
     {                                           ( FormalArgWDefault(_1,_3) )}
 
 nonempty_formal_argument_list_with_defaults:
-_1 = formal_argument_with_default
+  _1 = formal_argument_with_default
     {                                                                                     ( [_1] )}
 | _1 = formal_argument_with_default _2 = T_COMMA _3 = nonempty_formal_argument_list_with_defaults
     {                                                                                     ( _1::_3 )}
 
 nonempty_formal_argument_list:
-_1 = formal_argument
+  _1 = formal_argument
     {                                                                                ( ([_1],[]) )}
 | _1 = formal_argument _2 = T_COMMA _3 = nonempty_formal_argument_list
     {                                                                                ( (_1::(fst _3), snd _3) )}
@@ -456,17 +456,17 @@ _1 = formal_argument
     {                                                                                ( ([], _1) )}
 
 formal_argument_list:
-
+  
     {                                   ( ([],[]) )}
 | _1 = nonempty_formal_argument_list
     {                                   (  _1 )}
 
 function_definition:
-_1 = T_FUNCTION _2 = identifier _3 = T_LPAREN _4 = formal_argument_list _5 = T_RPAREN _6 = block_statement
+  _1 = T_FUNCTION _2 = identifier _3 = T_LPAREN _4 = formal_argument_list _5 = T_RPAREN _6 = block_statement
     {                                                                                   ( Function(_2, _4, _6) )}
 
 class_item_visibility:
-
+  
     {                                                ( Public )}
 | _1 = T_PUBLIC
     {                                                ( Public )}
@@ -476,19 +476,19 @@ class_item_visibility:
     {                                                ( Private )}
 
 method_definition:
-_1 = class_item_visibility _2 = T_STATIC _3 = function_definition
+  _1 = class_item_visibility _2 = T_STATIC _3 = function_definition
     {                                                            (   StaticMethod(_1,_3) )}
 | _1 = class_item_visibility _2 = function_definition
     {                                                            ( InstanceMethod(_1,_2) )}
 
 field_definition:
-_1 = class_item_visibility _2 = T_STATIC _3 = variable_declaration
+  _1 = class_item_visibility _2 = T_STATIC _3 = variable_declaration
     {                                                                          ( StaticVar  (_1,_3) )}
 | _1 = class_item_visibility _2 = T_CONST _3 = identifier _4 = T_EQ _5 = expression _6 = T_SEMICOLON
     {                                                                          ( StaticConst(_1,_3,_5) )}
 
 class_item_list:
-
+  
     {                                           ( [] )}
 | _1 = method_definition _2 = class_item_list
     {                                           ( _1::_2 )}
@@ -496,49 +496,49 @@ class_item_list:
     {                                           ( _1::_2 )}
 
 abstract_clause:
-
+  
     {                   ( Concrete )}
 | _1 = T_ABSTRACT
     {                   ( Abstract )}
 
 extends_clause:
-
+  
     {                            ( RootClass )}
 | _1 = T_EXTENDS _2 = identifier
     {                            ( Extends(_2) )}
 
 class_definition:
-_1 = abstract_clause _2 = T_CLASS _3 = identifier _4 = extends_clause _5 = T_LBRACC _6 = class_item_list _7 = T_RBRACC
+  _1 = abstract_clause _2 = T_CLASS _3 = identifier _4 = extends_clause _5 = T_LBRACC _6 = class_item_list _7 = T_RBRACC
     {                                                                                        ( Class(_1, _3, _4, _6) )}
 
 assignment_statement:
-_1 = lvalue_novariable _2 = T_EQ _3 = expression _4 = T_SEMICOLON
+  _1 = lvalue_novariable _2 = T_EQ _3 = expression _4 = T_SEMICOLON
     {                                                     ( AssignStmt(_1, _3) )}
 
 variable_declaration:
-_1 = variable _2 = T_SEMICOLON
+  _1 = variable _2 = T_SEMICOLON
     {                                           ( VarDecl     (_1)    )}
 | _1 = variable _2 = T_EQ _3 = expression _4 = T_SEMICOLON
     {                                           ( VarDeclAssig(_1,_3) )}
 
 function_call_statement:
-_1 = function_call_expression_basic _2 = T_SEMICOLON
+  _1 = function_call_expression_basic _2 = T_SEMICOLON
     {                                                        ( FunCallStmt(funCallExprAsPair _1) )}
 
 break_statement:
-_1 = T_BREAK _2 = T_SEMICOLON
+  _1 = T_BREAK _2 = T_SEMICOLON
     {                                       ( Break(makeTokenData()) )}
 
 return_statement:
-_1 = T_RETURN _2 = expression _3 = T_SEMICOLON
+  _1 = T_RETURN _2 = expression _3 = T_SEMICOLON
     {                                       ( Return(_2) )}
 
 throw_statement:
-_1 = T_THROW _2 = expression _3 = T_SEMICOLON
+  _1 = T_THROW _2 = expression _3 = T_SEMICOLON
     {                                       ( Throw(_2) )}
 
 simple_statement:
-_1 = variable_declaration
+  _1 = variable_declaration
     {                                  ( VarDeclStmt(_1) )}
 | _1 = assignment_statement
     {                                  ( _1 )}
@@ -552,31 +552,31 @@ _1 = variable_declaration
     {                                  ( _1 )}
 
 statement_list:
-
+  
     {                               ( [] )}
 | _1 = statement _2 = statement_list
     {                               ( _1::_2 )}
 
 block_statement:
-_1 = T_LBRACC _2 = statement_list _3 = T_RBRACC
+  _1 = T_LBRACC _2 = statement_list _3 = T_RBRACC
     {                                        ( BlockStmt(_2) )}
 
 switch_item_sepa:
-_1 = T_COLON
+  _1 = T_COLON
     {                      ()}
 | _1 = T_SEMICOLON
     {                      ()}
 
 switch_case:
-_1 = T_CASE _2 = expression _3 = switch_item_sepa _4 = statement_list
+  _1 = T_CASE _2 = expression _3 = switch_item_sepa _4 = statement_list
     {                                                      ( (SwCase(_2), BlockStmt(_4)) )}
 
 switch_default:
-_1 = T_DEFAULT _2 = switch_item_sepa _3 = statement_list
+  _1 = T_DEFAULT _2 = switch_item_sepa _3 = statement_list
     {                                                      ( (SwDefault,  BlockStmt(_3)) )}
 
 switch_item_list:
-
+  
     {                                                      ( [] )}
 | _1 = switch_default
     {                                                      ( [_1] )}
@@ -584,35 +584,35 @@ switch_item_list:
     {                                                      ( _1::_2 )}
 
 switch_statement:
-_1 = T_SWITCH _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = T_LBRACC _6 = switch_item_list _7 = T_RBRACC
+  _1 = T_SWITCH _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = T_LBRACC _6 = switch_item_list _7 = T_RBRACC
     {                                                                                ( SwitchStmt(_3, _6) )}
 
 catch:
-_1 = T_CATCH _2 = T_LPAREN _3 = formal_argument _4 = T_RPAREN _5 = block_statement
+  _1 = T_CATCH _2 = T_LPAREN _3 = formal_argument _4 = T_RPAREN _5 = block_statement
     {                                                                ( (_3,_5) )}
 
 nonempty_catch_list:
-_1 = catch
+  _1 = catch
     {                                    ( [_1] )}
 | _1 = catch _2 = nonempty_catch_list
     {                                    ( _1::_2 )}
 
 try_catch_statement:
-_1 = T_TRY _2 = block_statement _3 = nonempty_catch_list
+  _1 = T_TRY _2 = block_statement _3 = nonempty_catch_list
     {                                                    ( TryCatch(_2,_3) )}
 
 if_statement_unmatched:
-_1 = T_IF _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = statement
+  _1 = T_IF _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = statement
     {                                                                                                  (     If(_3,_5)    )}
 | _1 = T_IF _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = statement_no_unmatched_if _6 = T_ELSE _7 = if_statement_unmatched
     {                                                                                                  ( IfElse(_3,_5,_7) )}
 
 if_statement_matched:
-_1 = T_IF _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = statement_no_unmatched_if _6 = T_ELSE _7 = statement_no_unmatched_if
+  _1 = T_IF _2 = T_LPAREN _3 = expression _4 = T_RPAREN _5 = statement_no_unmatched_if _6 = T_ELSE _7 = statement_no_unmatched_if
     {                                                                                                  ( IfElse(_3,_5,_7) )}
 
 compound_statement_no_unmatched_if:
-_1 = block_statement
+  _1 = block_statement
     {                                        ( _1 )}
 | _1 = switch_statement
     {                                        ( _1 )}
@@ -622,19 +622,19 @@ _1 = block_statement
     {                                        ( _1 )}
 
 statement_no_unmatched_if:
-_1 = simple_statement
+  _1 = simple_statement
     {                                        ( _1 )}
 | _1 = compound_statement_no_unmatched_if
     {                                        ( _1 )}
 
 statement:
-_1 = statement_no_unmatched_if
+  _1 = statement_no_unmatched_if
     {                                        ( _1 )}
 | _1 = if_statement_unmatched
     {                                        ( _1 )}
 
 single_php_source_file_item_list:
-
+  
     {                                                            ( [] )}
 | _1 = class_definition _2 = single_php_source_file_item_list
     {                                                            ( (PHPClass    (_1))::_2  )}
@@ -644,7 +644,7 @@ single_php_source_file_item_list:
     {                                                            ( (PHPStatement(_1))::_2  )}
 
 single_php_source_file:
-_1 = T_PHPSL _2 = single_php_source_file_item_list _3 = T_PHPE
+  _1 = T_PHPSL _2 = single_php_source_file_item_list _3 = T_PHPE
     {                                                          ( PHPSourceFile(_2) )}
 
 %%

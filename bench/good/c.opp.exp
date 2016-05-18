@@ -86,7 +86,7 @@
 %%
 
 primary_expression:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     { ()}
 | _1 = CONSTANT
     { ()}
@@ -96,7 +96,7 @@ _1 = IDENTIFIER
     { ()}
 
 postfix_expression:
-_1 = primary_expression
+  _1 = primary_expression
     { ()}
 | _1 = postfix_expression _2 = LBRACK _3 = expression _4 = RBRACK
     { ()}
@@ -114,13 +114,13 @@ _1 = primary_expression
     { ()}
 
 argument_expression_list:
-_1 = assignment_expression
+  _1 = assignment_expression
     { ()}
 | _1 = argument_expression_list _2 = COMMA _3 = assignment_expression
     { ()}
 
 unary_expression:
-_1 = postfix_expression
+  _1 = postfix_expression
     { ()}
 | _1 = INC_OP _2 = unary_expression
     { ()}
@@ -134,7 +134,7 @@ _1 = postfix_expression
     { ()}
 
 unary_operator:
-_1 = AMPERSAND
+  _1 = AMPERSAND
     { ()}
 | _1 = STAR
     { ()}
@@ -148,13 +148,13 @@ _1 = AMPERSAND
     { ()}
 
 cast_expression:
-_1 = unary_expression
+  _1 = unary_expression
     { ()}
 | _1 = LPAREN _2 = type_name _3 = RPAREN _4 = cast_expression
     { ()}
 
 multiplicative_expression:
-_1 = cast_expression
+  _1 = cast_expression
     { ()}
 | _1 = multiplicative_expression _2 = STAR _3 = cast_expression
     { ()}
@@ -164,7 +164,7 @@ _1 = cast_expression
     { ()}
 
 additive_expression:
-_1 = multiplicative_expression
+  _1 = multiplicative_expression
     { ()}
 | _1 = additive_expression _2 = PLUS _3 = multiplicative_expression
     { ()}
@@ -172,7 +172,7 @@ _1 = multiplicative_expression
     { ()}
 
 shift_expression:
-_1 = additive_expression
+  _1 = additive_expression
     { ()}
 | _1 = shift_expression _2 = LEFT_OP _3 = additive_expression
     { ()}
@@ -180,7 +180,7 @@ _1 = additive_expression
     { ()}
 
 relational_expression:
-_1 = shift_expression
+  _1 = shift_expression
     { ()}
 | _1 = relational_expression _2 = LT _3 = shift_expression
     { ()}
@@ -192,7 +192,7 @@ _1 = shift_expression
     { ()}
 
 equality_expression:
-_1 = relational_expression
+  _1 = relational_expression
     { ()}
 | _1 = equality_expression _2 = EQ_OP _3 = relational_expression
     { ()}
@@ -200,49 +200,49 @@ _1 = relational_expression
     { ()}
 
 and_expression:
-_1 = equality_expression
+  _1 = equality_expression
     { ()}
 | _1 = and_expression _2 = AMPERSAND _3 = equality_expression
     { ()}
 
 exclusive_or_expression:
-_1 = and_expression
+  _1 = and_expression
     { ()}
 | _1 = exclusive_or_expression _2 = HAT _3 = and_expression
     { ()}
 
 inclusive_or_expression:
-_1 = exclusive_or_expression
+  _1 = exclusive_or_expression
     { ()}
 | _1 = inclusive_or_expression _2 = BAR _3 = exclusive_or_expression
     { ()}
 
 logical_and_expression:
-_1 = inclusive_or_expression
+  _1 = inclusive_or_expression
     { ()}
 | _1 = logical_and_expression _2 = AND_OP _3 = inclusive_or_expression
     { ()}
 
 logical_or_expression:
-_1 = logical_and_expression
+  _1 = logical_and_expression
     { ()}
 | _1 = logical_or_expression _2 = OR_OP _3 = logical_and_expression
     { ()}
 
 conditional_expression:
-_1 = logical_or_expression
+  _1 = logical_or_expression
     { ()}
 | _1 = logical_or_expression _2 = QUESTION _3 = expression _4 = COLON _5 = conditional_expression
     { ()}
 
 assignment_expression:
-_1 = conditional_expression
+  _1 = conditional_expression
     { ()}
 | _1 = unary_expression _2 = assignment_operator _3 = assignment_expression
     { ()}
 
 assignment_operator:
-_1 = EQUAL
+  _1 = EQUAL
     { ()}
 | _1 = MUL_ASSIGN
     { ()}
@@ -266,23 +266,23 @@ _1 = EQUAL
     { ()}
 
 expression:
-_1 = assignment_expression
+  _1 = assignment_expression
     { ()}
 | _1 = expression _2 = COMMA _3 = assignment_expression
     { ()}
 
 constant_expression:
-_1 = conditional_expression
+  _1 = conditional_expression
     { ()}
 
 declaration:
-_1 = declaration_specifiers _2 = SEMICOLON
+  _1 = declaration_specifiers _2 = SEMICOLON
     { ()}
 | _1 = declaration_specifiers _2 = init_declarator_list _3 = SEMICOLON
     { ()}
 
 declaration_specifiers:
-_1 = storage_class_specifier
+  _1 = storage_class_specifier
     { ()}
 | _1 = storage_class_specifier _2 = declaration_specifiers
     { ()}
@@ -296,19 +296,19 @@ _1 = storage_class_specifier
     { ()}
 
 init_declarator_list:
-_1 = init_declarator
+  _1 = init_declarator
     { ()}
 | _1 = init_declarator_list _2 = COMMA _3 = init_declarator
     { ()}
 
 init_declarator:
-_1 = declarator
+  _1 = declarator
     { ()}
 | _1 = declarator _2 = EQUAL _3 = c_initializer
     { ()}
 
 storage_class_specifier:
-_1 = TYPEDEF
+  _1 = TYPEDEF
     { ()}
 | _1 = EXTERN
     { ()}
@@ -320,7 +320,7 @@ _1 = TYPEDEF
     { ()}
 
 type_specifier:
-_1 = VOID
+  _1 = VOID
     { ()}
 | _1 = CHAR
     { ()}
@@ -346,7 +346,7 @@ _1 = VOID
     { ()}
 
 struct_or_union_specifier:
-_1 = struct_or_union _2 = IDENTIFIER _3 = LBRACE _4 = struct_declaration_list _5 = RBRACE
+  _1 = struct_or_union _2 = IDENTIFIER _3 = LBRACE _4 = struct_declaration_list _5 = RBRACE
     { ()}
 | _1 = struct_or_union _2 = LBRACE _3 = struct_declaration_list _4 = RBRACE
     { ()}
@@ -354,23 +354,23 @@ _1 = struct_or_union _2 = IDENTIFIER _3 = LBRACE _4 = struct_declaration_list _5
     { ()}
 
 struct_or_union:
-_1 = STRUCT
+  _1 = STRUCT
     { ()}
 | _1 = UNION
     { ()}
 
 struct_declaration_list:
-_1 = struct_declaration
+  _1 = struct_declaration
     { ()}
 | _1 = struct_declaration_list _2 = struct_declaration
     { ()}
 
 struct_declaration:
-_1 = specifier_qualifier_list _2 = struct_declarator_list _3 = SEMICOLON
+  _1 = specifier_qualifier_list _2 = struct_declarator_list _3 = SEMICOLON
     { ()}
 
 specifier_qualifier_list:
-_1 = type_specifier _2 = specifier_qualifier_list
+  _1 = type_specifier _2 = specifier_qualifier_list
     { ()}
 | _1 = type_specifier
     { ()}
@@ -380,13 +380,13 @@ _1 = type_specifier _2 = specifier_qualifier_list
     { ()}
 
 struct_declarator_list:
-_1 = struct_declarator
+  _1 = struct_declarator
     { ()}
 | _1 = struct_declarator_list _2 = COMMA _3 = struct_declarator
     { ()}
 
 struct_declarator:
-_1 = declarator
+  _1 = declarator
     { ()}
 | _1 = COLON _2 = constant_expression
     { ()}
@@ -394,7 +394,7 @@ _1 = declarator
     { ()}
 
 enum_specifier:
-_1 = ENUM _2 = LBRACE _3 = enumerator_list _4 = RBRACE
+  _1 = ENUM _2 = LBRACE _3 = enumerator_list _4 = RBRACE
     { ()}
 | _1 = ENUM _2 = IDENTIFIER _3 = LBRACE _4 = enumerator_list _5 = RBRACE
     { ()}
@@ -402,31 +402,31 @@ _1 = ENUM _2 = LBRACE _3 = enumerator_list _4 = RBRACE
     { ()}
 
 enumerator_list:
-_1 = enumerator
+  _1 = enumerator
     { ()}
 | _1 = enumerator_list _2 = COMMA _3 = enumerator
     { ()}
 
 enumerator:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     { ()}
 | _1 = IDENTIFIER _2 = EQUAL _3 = constant_expression
     { ()}
 
 type_qualifier:
-_1 = CONST
+  _1 = CONST
     { ()}
 | _1 = VOLATILE
     { ()}
 
 declarator:
-_1 = pointer _2 = direct_declarator
+  _1 = pointer _2 = direct_declarator
     { ()}
 | _1 = direct_declarator
     { ()}
 
 direct_declarator:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     { ()}
 | _1 = LPAREN _2 = declarator _3 = RPAREN
     { ()}
@@ -442,7 +442,7 @@ _1 = IDENTIFIER
     { ()}
 
 pointer:
-_1 = STAR
+  _1 = STAR
     { ()}
 | _1 = STAR _2 = type_qualifier_list
     { ()}
@@ -452,25 +452,25 @@ _1 = STAR
     { ()}
 
 type_qualifier_list:
-_1 = type_qualifier
+  _1 = type_qualifier
     { ()}
 | _1 = type_qualifier_list _2 = type_qualifier
     { ()}
 
 parameter_type_list:
-_1 = parameter_list
+  _1 = parameter_list
     { ()}
 | _1 = parameter_list _2 = COMMA _3 = ELLIPSIS
     { ()}
 
 parameter_list:
-_1 = parameter_declaration
+  _1 = parameter_declaration
     { ()}
 | _1 = parameter_list _2 = COMMA _3 = parameter_declaration
     { ()}
 
 parameter_declaration:
-_1 = declaration_specifiers _2 = declarator
+  _1 = declaration_specifiers _2 = declarator
     { ()}
 | _1 = declaration_specifiers _2 = abstract_declarator
     { ()}
@@ -478,19 +478,19 @@ _1 = declaration_specifiers _2 = declarator
     { ()}
 
 identifier_list:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     { ()}
 | _1 = identifier_list _2 = COMMA _3 = IDENTIFIER
     { ()}
 
 type_name:
-_1 = specifier_qualifier_list
+  _1 = specifier_qualifier_list
     { ()}
 | _1 = specifier_qualifier_list _2 = abstract_declarator
     { ()}
 
 abstract_declarator:
-_1 = pointer
+  _1 = pointer
     { ()}
 | _1 = direct_abstract_declarator
     { ()}
@@ -498,7 +498,7 @@ _1 = pointer
     { ()}
 
 direct_abstract_declarator:
-_1 = LPAREN _2 = abstract_declarator _3 = RPAREN
+  _1 = LPAREN _2 = abstract_declarator _3 = RPAREN
     { ()}
 | _1 = LBRACK _2 = RBRACK
     { ()}
@@ -518,7 +518,7 @@ _1 = LPAREN _2 = abstract_declarator _3 = RPAREN
     { ()}
 
 c_initializer:
-_1 = assignment_expression
+  _1 = assignment_expression
     { ()}
 | _1 = LBRACE _2 = c_initializer_list _3 = RBRACE
     { ()}
@@ -526,13 +526,13 @@ _1 = assignment_expression
     { ()}
 
 c_initializer_list:
-_1 = c_initializer
+  _1 = c_initializer
     { ()}
 | _1 = c_initializer_list _2 = COMMA _3 = c_initializer
     { ()}
 
 statement:
-_1 = labeled_statement
+  _1 = labeled_statement
     { ()}
 | _1 = compound_statement
     { ()}
@@ -546,7 +546,7 @@ _1 = labeled_statement
     { ()}
 
 labeled_statement:
-_1 = IDENTIFIER _2 = COLON _3 = statement
+  _1 = IDENTIFIER _2 = COLON _3 = statement
     { ()}
 | _1 = CASE _2 = constant_expression _3 = COLON _4 = statement
     { ()}
@@ -554,7 +554,7 @@ _1 = IDENTIFIER _2 = COLON _3 = statement
     { ()}
 
 compound_statement:
-_1 = LBRACE _2 = RBRACE
+  _1 = LBRACE _2 = RBRACE
     { ()}
 | _1 = LBRACE _2 = statement_list _3 = RBRACE
     { ()}
@@ -564,25 +564,25 @@ _1 = LBRACE _2 = RBRACE
     { ()}
 
 declaration_list:
-_1 = declaration
+  _1 = declaration
     { ()}
 | _1 = declaration_list _2 = declaration
     { ()}
 
 statement_list:
-_1 = statement
+  _1 = statement
     { ()}
 | _1 = statement_list _2 = statement
     { ()}
 
 expression_statement:
-_1 = SEMICOLON
+  _1 = SEMICOLON
     { ()}
 | _1 = expression _2 = SEMICOLON
     { ()}
 
 selection_statement:
-_1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement
+  _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement
     { ()}
 | _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement _6 = ELSE _7 = statement
     { ()}
@@ -590,7 +590,7 @@ _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement
     { ()}
 
 iteration_statement:
-_1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement
+  _1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement
     { ()}
 | _1 = DO _2 = statement _3 = WHILE _4 = LPAREN _5 = expression _6 = RPAREN _7 = SEMICOLON
     { ()}
@@ -600,7 +600,7 @@ _1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement
     { ()}
 
 jump_statement:
-_1 = GOTO _2 = IDENTIFIER _3 = SEMICOLON
+  _1 = GOTO _2 = IDENTIFIER _3 = SEMICOLON
     { ()}
 | _1 = CONTINUE _2 = SEMICOLON
     { ()}
@@ -612,19 +612,19 @@ _1 = GOTO _2 = IDENTIFIER _3 = SEMICOLON
     { ()}
 
 translation_unit:
-_1 = external_declaration
+  _1 = external_declaration
     { ()}
 | _1 = translation_unit _2 = external_declaration
     { ()}
 
 external_declaration:
-_1 = function_definition
+  _1 = function_definition
     { ()}
 | _1 = declaration
     { ()}
 
 function_definition:
-_1 = declaration_specifiers _2 = declarator _3 = declaration_list _4 = compound_statement
+  _1 = declaration_specifiers _2 = declarator _3 = declaration_list _4 = compound_statement
     { ()}
 | _1 = declaration_specifiers _2 = declarator _3 = compound_statement
     { ()}

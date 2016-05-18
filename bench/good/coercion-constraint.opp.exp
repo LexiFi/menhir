@@ -139,11 +139,11 @@ type row =
 %%
 
 tconstraint:
-_1 = constraint_exp _2 = EOF
+  _1 = constraint_exp _2 = EOF
     {                                ( _1 )}
 
 constraint_exp:
-_1 = LET _2 = let_envs _3 = IN _4 = constraint_exp
+  _1 = LET _2 = let_envs _3 = IN _4 = constraint_exp
     {                                        ( clet _2 _4 )}
 | _1 = EXISTS _2 = vars _3 = DOT _4 = constraint_exp
     {                                 ( cexists _1 _2 _4 )}
@@ -151,13 +151,13 @@ _1 = LET _2 = let_envs _3 = IN _4 = constraint_exp
     {                  ( _1 )}
 
 constraint_exp1:
-_1 = conjunction
+  _1 = conjunction
     {                ( conjunction _1 )}
 | _1 = constraint_exp0
     {                  ( _1 )}
 
 constraint_exp0:
-_1 = TRUE
+  _1 = TRUE
     {                  ( fun _ -> CTrue _1 )}
 | _1 = FALSE
     {                   ( fun _ -> CFalse _1 )}
@@ -171,20 +171,20 @@ _1 = TRUE
     {                                ( _2 )}
 
 let_env:
-_1 = opt_env_vars _2 = opt_constraint _3 = opt_env_ids
+  _1 = opt_env_vars _2 = opt_constraint _3 = opt_env_ids
     {                                          ( 
     (* FIXME: Fix positions. *)
     scheme undefined_position _1 _2 _3 
   )}
 
 let_envs:
-_1 = let_env
+  _1 = let_env
     {             ( fun p -> [ _1 p ] )}
 | _1 = let_env _2 = AND _3 = let_envs
     {                          ( fun p -> (_1 p) :: (_3 p) )}
 
 opt_env_vars:
-
+  
     {                  ( ([], []) )}
 | _1 = FORALL _2 = LBRACE _3 = vars _4 = RBRACE _5 = opt_vars
     {                                       ( (snd (List.split _3), 
@@ -193,19 +193,19 @@ opt_env_vars:
     {                ( ([], (snd (List.split _2))) )}
 
 opt_vars:
-
+  
     {                      ( [] )}
 | _1 = vars
     {       ( _1 )}
 
 vars:
-_1 = var
+  _1 = var
     {              ( [ _1 ] )}
 | _1 = var _2 = vars
     {               ( _1 :: _2 )}
 
 var:
-_1 = LID
+  _1 = LID
     {         ( _1 )}
 | _1 = ARROW
     {        ( (_1, "->") )}
@@ -213,55 +213,55 @@ _1 = LID
     {        ( (_1, "*") )}
 
 opt_constraint:
-
+  
     {  ( fun pool -> CTrue undefined_position )}
 | _1 = LBRACKET _2 = constraint_exp _3 = RBRACKET
     {                                         ( _2 )}
 
 opt_env_ids:
-
+  
     {                  ( [] )}
 | _1 = LPAREN _2 = env_ids _3 = RPAREN
     {                           ( _2 )}
 
 env_id:
-_1 = LID _2 = COLON _3 = typ
+  _1 = LID _2 = COLON _3 = typ
     {                         ( (snd _1, _3) )}
 
 env_ids:
-_1 = env_id
+  _1 = env_id
     {  ( [ _1 ] )}
 | _1 = env_id _2 = SEMI _3 = env_ids
     {      ( _1 :: _3 )}
 
 conjunction:
-_1 = constraint_exp0 _2 = AND _3 = constraint_exp0
+  _1 = constraint_exp0 _2 = AND _3 = constraint_exp0
     {                                                 ( [ _1; _3  ] )}
 | _1 = constraint_exp0 _2 = AND _3 = conjunction
     {                                  ( _1 :: _3 )}
 
 attributes:
-_1 = typ
+  _1 = typ
     {               ( [], _1 )}
 | _1 = attribute _2 = SEMI _3 = attributes
     {                                  ( _1 :: (fst _3), snd _3 )}
 
 attribute:
-_1 = LID _2 = COLON _3 = typ
+  _1 = LID _2 = COLON _3 = typ
     {                        ( snd _1, _3 )}
 
 typ:
-_1 = type2
+  _1 = type2
     {                                                    ( _1 )}
 
 type2:
-_1 = type10 _2 = ARROW _3 = type2
+  _1 = type10 _2 = ARROW _3 = type2
     {  ( arrow_type (tjoin _1 _3) _1 _3  )}
 | _1 = type10
     {                                                     ( _1 )}
 
 type10:
-_1 = star_types
+  _1 = star_types
     {( match _1 with
     | [] -> assert false
     | [ a ] -> a
@@ -269,19 +269,19 @@ _1 = star_types
 )}
 
 star_types:
-_1 = type1 _2 = TIMES _3 = star_types
+  _1 = type1 _2 = TIMES _3 = star_types
     {                                                     ( _1 :: _3 )}
 | _1 = type1
     {                 ( [ _1 ] )}
 
 type1:
-_1 = type0
+  _1 = type0
     {        ( _1 )}
 | _1 = BACKSLASH _2 = type0
     {                         ( TypRowUniform (_1, _2) )}
 
 type0:
-_1 = type00s
+  _1 = type00s
     {  ( 
     match _1 with
 	[] -> assert false
@@ -294,7 +294,7 @@ _1 = type00s
   )}
 
 type00:
-_1 = LID
+  _1 = LID
     {                                                    ( TypVar (fst _1, snd _1) )}
 | _1 = LBRACE _2 = attributes _3 = RBRACE
     {                                 ( TypRowCons 
@@ -309,13 +309,13 @@ _1 = LID
 							(_2 :: _4) )}
 
 type00s:
-_1 = type00
+  _1 = type00
     {                      ( [ _1 ] )}
 | _1 = type00 _2 = type00s
     {                       ( _1 :: _2 )}
 
 types:
-_1 = typ
+  _1 = typ
     {                                                    ( [ _1 ] )}
 | _1 = typ _2 = COMMA _3 = types
     {                                                    ( _1 :: _3 )}

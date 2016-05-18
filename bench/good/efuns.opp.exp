@@ -23,13 +23,13 @@
 %%
 
 parse_passwd:
-_1 = passwd_line _2 = EOL _3 = parse_passwd
+  _1 = passwd_line _2 = EOL _3 = parse_passwd
     {                                ( _1 :: _3 )}
 | _1 = passwd_line _2 = EOF
     {                                ( [_1] )}
 
 passwd_line:
-_1 = IDENT _2 = SEP _3 = passwd_line
+  _1 = IDENT _2 = SEP _3 = passwd_line
     {                         ( _1 :: _3 )}
 | _1 = SEP _2 = passwd_line
     {                         ( "" :: _2 )}
@@ -39,7 +39,7 @@ _1 = IDENT _2 = SEP _3 = passwd_line
     {                         ( [""] )}
 
 parse_filename:
-_1 = TILDE _2 = parse_filename
+  _1 = TILDE _2 = parse_filename
     {                         ( TILDE :: _2 )}
 | _1 = SEP _2 = parse_filename
     {                         ( SEP :: _2 )}

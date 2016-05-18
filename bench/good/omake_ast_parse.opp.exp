@@ -196,19 +196,19 @@ let rule2 multiple target ploc source loc2 body =
 %%
 
 string:
-_1 = TokEof
+  _1 = TokEof
     {          ( raise End_of_file )}
 | _1 = text _2 = TokEol _3 = TokEof
     {          ( NoBody, sequence_exp _1 _2 )}
 
 shell:
-_1 = TokEof
+  _1 = TokEof
     {          ( raise End_of_file )}
 | _1 = shell_line _2 = TokEof
     {          ( _1 )}
 
 shell_line:
-_1 = opt_white _2 = TokEol
+  _1 = opt_white _2 = TokEol
     {          ( NoBody, sequence_exp [] _2 )}
 | _1 = TokKeyword _2 = TokWhite _3 = keyword_text_optcolon _4 = TokEol
     {          ( let id, loc1 = _1 in
@@ -384,11 +384,11 @@ _1 = opt_white _2 = TokEol
           )}
 
 deps:
-_1 = rev_deps _2 = TokEof
+  _1 = rev_deps _2 = TokEof
     {          ( List.rev _1 )}
 
 rev_deps:
-
+  
     {          ( [] )}
 | _1 = rev_deps _2 = dep
     {          ( _2 :: _1 )}
@@ -396,7 +396,7 @@ rev_deps:
     {          ( _1 )}
 
 dep:
-_1 = target _2 = TokColon _3 = target _4 = TokEol
+  _1 = target _2 = TokColon _3 = target _4 = TokEol
     {          ( let _, loc2 = _2 in
             let target, loc1 =
                match _1 with
@@ -414,7 +414,7 @@ _1 = target _2 = TokColon _3 = target _4 = TokEol
           )}
 
 apply:
-_1 = TokDollar _2 = opt_white _3 = TokLeftParen _4 = opt_white _5 = method_name _6 = opt_apply_args _7 = TokRightParen
+  _1 = TokDollar _2 = opt_white _3 = TokLeftParen _4 = opt_white _5 = method_name _6 = opt_apply_args _7 = TokRightParen
     {          ( let _, strategy, loc1 = _1 in
             let _, loc2 = _7 in
             let idl, _ = _5 in
@@ -458,7 +458,7 @@ _1 = TokDollar _2 = opt_white _3 = TokLeftParen _4 = opt_white _5 = method_name 
           )}
 
 var_quote_opt_white:
-_1 = var_quote
+  _1 = var_quote
     {          ( _1 )}
 | _1 = var_quote_white
     {          ( let strategy, id, _, loc = _1 in
@@ -466,39 +466,39 @@ _1 = var_quote
           )}
 
 var_quote_white:
-_1 = var_quote _2 = TokWhite
+  _1 = var_quote _2 = TokWhite
     {          ( let strategy, id, loc = _1 in
             let s, _ = _2 in
                strategy, id, s, loc
           )}
 
 var_quote:
-_1 = TokVarQuote
+  _1 = TokVarQuote
     {          ( _1 )}
 
 quote_opt_white:
-_1 = var_quote_opt_white
+  _1 = var_quote_opt_white
     {          ( var_quote _1 )}
 
 quote_white:
-_1 = var_quote_white
+  _1 = var_quote_white
     {          ( let strategy, id, s, loc = _1 in
             let e, _ = var_quote (strategy, id, loc) in
                e, s, loc
           )}
 
 quote:
-_1 = var_quote
+  _1 = var_quote
     {          ( var_quote _1 )}
 
 method_name:
-_1 = rev_method_name
+  _1 = rev_method_name
     {          ( let idl, loc = _1 in
                List.rev idl, loc
           )}
 
 rev_method_name:
-_1 = id
+  _1 = id
     {          ( let id, loc = _1 in
                [id], loc
           )}
@@ -509,7 +509,7 @@ _1 = id
           )}
 
 id:
-_1 = TokId
+  _1 = TokId
     {          ( _1 )}
 | _1 = TokKeyword
     {          ( _1 )}
@@ -519,7 +519,7 @@ _1 = TokId
     {          ( _1 )}
 
 opt_id_list:
-
+  
     {          ( [] )}
 | _1 = opt_id_list _2 = white
     {          ( _1 )}
@@ -529,7 +529,7 @@ opt_id_list:
           )}
 
 other_id_target:
-_1 = method_id_opt_white
+  _1 = method_id_opt_white
     {          ( let idl, loc = _1 in
                method_id_string_exp idl loc, loc
           )}
@@ -541,7 +541,7 @@ _1 = method_id_opt_white
     {          ( _1 )}
 
 method_id_opt_white:
-_1 = rev_method_id
+  _1 = rev_method_id
     {          ( let id, loc = _1 in
                List.rev id, loc
           )}
@@ -551,7 +551,7 @@ _1 = rev_method_id
           )}
 
 method_id_prefix_opt_white:
-_1 = rev_method_id_prefix
+  _1 = rev_method_id_prefix
     {          ( let id, loc = _1 in
                List.rev id, loc
           )}
@@ -561,7 +561,7 @@ _1 = rev_method_id_prefix
           )}
 
 rev_method_id_white:
-_1 = rev_method_id _2 = TokWhite
+  _1 = rev_method_id _2 = TokWhite
     {          ( let id, loc1 = _1 in
             let s, loc2 = _2 in
             let loc = union_loc loc1 loc2 in
@@ -569,7 +569,7 @@ _1 = rev_method_id _2 = TokWhite
           )}
 
 rev_method_id_prefix_white:
-_1 = rev_method_id_prefix _2 = TokWhite
+  _1 = rev_method_id_prefix _2 = TokWhite
     {          ( let id, loc1 = _1 in
             let s, loc2 = _2 in
             let loc = union_loc loc1 loc2 in
@@ -577,7 +577,7 @@ _1 = rev_method_id_prefix _2 = TokWhite
           )}
 
 rev_method_id:
-_1 = TokId
+  _1 = TokId
     {          ( let id, loc = _1 in
                [id], loc
           )}
@@ -589,7 +589,7 @@ _1 = TokId
           )}
 
 rev_method_id_prefix:
-_1 = rev_method_id _2 = TokDot
+  _1 = rev_method_id _2 = TokDot
     {          ( let idl, loc1 = _1 in
             let _, loc2 = _2 in
             let loc = union_loc loc1 loc2 in
@@ -615,13 +615,13 @@ _1 = rev_method_id _2 = TokDot
           )}
 
 other_target:
-_1 = rev_other_target
+  _1 = rev_other_target
     {          ( let l, loc = _1 in
                sequence_exp (List.rev l) loc, loc
           )}
 
 rev_other_target:
-_1 = other_start
+  _1 = other_start
     {          ( let e, loc = _1 in
                [e], loc
           )}
@@ -675,7 +675,7 @@ _1 = other_start
           )}
 
 source:
-_1 = target
+  _1 = target
     {         ( match _1 with
               Some (e, _) ->
                  SymbolTable.add SymbolTable.empty normal_sym e
@@ -693,7 +693,7 @@ _1 = target
          )}
 
 source_nonapply:
-_1 = source_target
+  _1 = source_target
     {         ( match _1 with
               Some (e, _) ->
                  SymbolTable.add SymbolTable.empty normal_sym e
@@ -711,7 +711,7 @@ _1 = source_target
          )}
 
 source_target:
-
+  
     {          ( None )}
 | _1 = other_id_target
     {          ( Some _1 )}
@@ -719,11 +719,11 @@ source_target:
     {          ( Some _1 )}
 
 text:
-_1 = rev_text
+  _1 = rev_text
     {          ( List.rev _1 )}
 
 rev_text:
-
+  
     {          ( [] )}
 | _1 = rev_text _2 = text_next
     {          ( let e, _ = _2 in
@@ -731,7 +731,7 @@ rev_text:
           )}
 
 target:
-_1 = opt_white
+  _1 = opt_white
     {          ( None )}
 | _1 = opt_white _2 = rev_target
     {          ( let l, loc = _2 in
@@ -739,7 +739,7 @@ _1 = opt_white
           )}
 
 rev_target:
-_1 = target_start
+  _1 = target_start
     {          ( let e, loc = _1 in
                [e], loc
           )}
@@ -750,7 +750,7 @@ _1 = target_start
           )}
 
 keyword_text_optcolon:
-
+  
     {          ( None )}
 | _1 = rev_keyword_text
     {          ( let code, _, el, loc = _1 in
@@ -758,7 +758,7 @@ keyword_text_optcolon:
           )}
 
 rev_keyword_text:
-_1 = keyword_target_start
+  _1 = keyword_target_start
     {          ( let e, loc = _1 in
                OptBody, [], [e], loc
           )}
@@ -786,13 +786,13 @@ _1 = keyword_target_start
           )}
 
 text_nonempty:
-_1 = rev_text_nonempty
+  _1 = rev_text_nonempty
     {          ( let l, loc = _1 in
                sequence_exp (List.rev l) loc
           )}
 
 rev_text_nonempty:
-_1 = text_nonwhite
+  _1 = text_nonwhite
     {          ( let e, loc = _1 in
                [e], loc
           )}
@@ -803,19 +803,19 @@ _1 = text_nonwhite
           )}
 
 opt_args:
-_1 = opt_white
+  _1 = opt_white
     {          ( [] )}
 | _1 = args
     {          ( _1 )}
 
 opt_apply_args:
-_1 = opt_white
+  _1 = opt_white
     {          ( [] )}
 | _1 = white _2 = args
     {          ( _2 )}
 
 args:
-_1 = rev_args
+  _1 = rev_args
     {          ( List.rev _1 )}
 | _1 = rev_arrow_args
     {          ( List.rev _1 )}
@@ -823,29 +823,29 @@ _1 = rev_args
     {          ( List.rev_append _1 (List.rev _3) )}
 
 rev_arrow_args:
-_1 = arrow_arg
+  _1 = arrow_arg
     {          ( [_1] )}
 | _1 = rev_arrow_args _2 = TokComma _3 = arrow_arg
     {          ( _3 :: _1 )}
 
 arrow_arg:
-_1 = rev_args _2 = TokArrow _3 = opt_white _4 = rev_any_arg
+  _1 = rev_args _2 = TokArrow _3 = opt_white _4 = rev_any_arg
     {          ( let el, loc2 = _4 in
                NormalArg (ArrowArg (get_fun_params (List.rev _1), sequence_exp (List.rev el) loc2))
           )}
 
 rev_args:
-_1 = arg
+  _1 = arg
     {          ( [_1] )}
 | _1 = rev_args _2 = TokComma _3 = arg
     {          ( _3 :: _1 )}
 
 arg:
-_1 = opt_white _2 = arg_inner
+  _1 = opt_white _2 = arg_inner
     {          ( _2 )}
 
 arg_inner:
-_1 = rev_normal_arg
+  _1 = rev_normal_arg
     {          ( let el, loc = _1 in
             let e = sequence_exp (List.rev el) loc in
                NormalArg (ExpArg e)
@@ -871,21 +871,21 @@ _1 = rev_normal_arg
           )}
 
 arg_id:
-_1 = id _2 = opt_white
+  _1 = id _2 = opt_white
     {          ( let id = _1 in
             let _, loc = id in
                id, _2, loc
           )}
 
 arg_key:
-_1 = TokKey _2 = opt_white
+  _1 = TokKey _2 = opt_white
     {          ( let id = _1 in
             let _, loc = id in
                id, _2, loc
           )}
 
 rev_any_arg:
-_1 = paren_arg_any_start
+  _1 = paren_arg_any_start
     {          ( let e, loc = _1 in
                [e], loc
           )}
@@ -896,7 +896,7 @@ _1 = paren_arg_any_start
           )}
 
 rev_normal_arg:
-_1 = arg_key _2 = paren_arg_next_noneq
+  _1 = arg_key _2 = paren_arg_next_noneq
     {          ( let (id, loc0), w, loc1 = _1 in
             let id = StringIdExp (id, loc0) in
             let e, loc2 = _2 in
@@ -933,31 +933,31 @@ _1 = arg_key _2 = paren_arg_next_noneq
           )}
 
 paren_arg_any_start:
-_1 = arg_any_start
+  _1 = arg_any_start
     {   ( _1 )}
 | _1 = paren_arg
     {   ( _1 )}
 
 paren_arg_next_noneq:
-_1 = arg_next_noneq
+  _1 = arg_next_noneq
     {   ( _1 )}
 | _1 = paren_arg
     {   ( _1 )}
 
 paren_arg_start:
-_1 = arg_start
+  _1 = arg_start
     {   ( _1 )}
 | _1 = paren_arg
     {   ( _1 )}
 
 paren_arg_next:
-_1 = arg_next
+  _1 = arg_next
     {   ( _1 )}
 | _1 = paren_arg
     {   ( _1 )}
 
 paren_arg:
-_1 = TokLeftParen _2 = rev_paren_text _3 = TokRightParen
+  _1 = TokLeftParen _2 = rev_paren_text _3 = TokRightParen
     {          ( let s1, loc1 = _1 in
             let sl = _2 in
             let s3, loc3 = _3 in
@@ -967,7 +967,7 @@ _1 = TokLeftParen _2 = rev_paren_text _3 = TokRightParen
           )}
 
 rev_paren_text:
-
+  
     {   ( [] )}
 | _1 = rev_paren_text _2 = paren_next
     {   ( let s, _ = _2 in
@@ -979,7 +979,7 @@ rev_paren_text:
           )}
 
 colon:
-_1 = TokNamedColon
+  _1 = TokNamedColon
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 | _1 = TokDoubleColon
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -987,11 +987,11 @@ _1 = TokNamedColon
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 
 white:
-_1 = TokWhite
+  _1 = TokWhite
     {  ( let (s, loc) = _1 in StringWhiteExp (s, loc), loc )}
 
 text_next:
-_1 = TokWhite
+  _1 = TokWhite
     {  ( let (s, loc) = _1 in StringWhiteExp (s, loc), loc )}
 | _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1037,7 +1037,7 @@ _1 = TokWhite
     {  ( _1 )}
 
 text_nonwhite:
-_1 = TokOp
+  _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 | _1 = TokLeftParen
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1081,7 +1081,7 @@ _1 = TokOp
     {  ( _1 )}
 
 target_next:
-_1 = TokWhite
+  _1 = TokWhite
     {  ( let (s, loc) = _1 in StringWhiteExp (s, loc), loc )}
 | _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1121,7 +1121,7 @@ _1 = TokWhite
     {  ( _1 )}
 
 target_start:
-_1 = TokOp
+  _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 | _1 = TokLeftParen
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1159,7 +1159,7 @@ _1 = TokOp
     {  ( _1 )}
 
 keyword_target_start:
-_1 = TokOp
+  _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 | _1 = TokRightParen
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1195,7 +1195,7 @@ _1 = TokOp
     {  ( _1 )}
 
 paren_next:
-_1 = TokWhite
+  _1 = TokWhite
     {  ( let (s, loc) = _1 in StringWhiteExp (s, loc), loc )}
 | _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1237,7 +1237,7 @@ _1 = TokWhite
     {  ( _1 )}
 
 arg_next:
-_1 = TokWhite
+  _1 = TokWhite
     {  ( let (s, loc) = _1 in StringWhiteExp (s, loc), loc )}
 | _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1275,7 +1275,7 @@ _1 = TokWhite
     {  ( _1 )}
 
 arg_start:
-_1 = TokOp
+  _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 | _1 = TokColon
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1301,7 +1301,7 @@ _1 = TokOp
     {  ( _1 )}
 
 arg_any_start:
-_1 = TokOp
+  _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 | _1 = TokColon
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1337,7 +1337,7 @@ _1 = TokOp
     {  ( _1 )}
 
 arg_next_noneq:
-_1 = TokOp
+  _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 | _1 = TokColon
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1371,7 +1371,7 @@ _1 = TokOp
     {  ( _1 )}
 
 other_start:
-_1 = TokOp
+  _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 | _1 = TokLeftParen
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1399,7 +1399,7 @@ _1 = TokOp
     {  ( _1 )}
 
 other_method_id_white:
-_1 = TokWhite
+  _1 = TokWhite
     {  ( let (s, loc) = _1 in StringWhiteExp (s, loc), loc )}
 | _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1433,7 +1433,7 @@ _1 = TokWhite
     {  ( _1 )}
 
 other_method_id:
-_1 = TokOp
+  _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 | _1 = TokRightParen
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1463,7 +1463,7 @@ _1 = TokOp
     {  ( _1 )}
 
 other_method_id_prefix_white:
-_1 = TokWhite
+  _1 = TokWhite
     {  ( let (s, loc) = _1 in StringWhiteExp (s, loc), loc )}
 | _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1493,7 +1493,7 @@ _1 = TokWhite
     {  ( _1 )}
 
 other_method_id_prefix:
-_1 = TokOp
+  _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 | _1 = TokLeftParen
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1521,7 +1521,7 @@ _1 = TokOp
     {  ( _1 )}
 
 other_quote_id_white:
-_1 = TokWhite
+  _1 = TokWhite
     {  ( let (s, loc) = _1 in StringWhiteExp (s, loc), loc )}
 | _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1559,7 +1559,7 @@ _1 = TokWhite
     {  ( _1 )}
 
 other_quote_id:
-_1 = TokOp
+  _1 = TokOp
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
 | _1 = TokLeftParen
     {  ( let (s, loc) = _1 in StringOpExp (s, loc), loc )}
@@ -1595,19 +1595,19 @@ _1 = TokOp
     {  ( _1 )}
 
 opt_literal_colon:
-
+  
     {          ( OptBody )}
 | _1 = colon _2 = opt_white
     {          ( ColonBody )}
 
 opt_colon:
-_1 = opt_white
+  _1 = opt_white
     {          ( OptBody )}
 | _1 = opt_white _2 = colon _3 = opt_white
     {          ( ColonBody )}
 
 opt_white:
-
+  
     {          ( None )}
 | _1 = TokWhite
     {          ( Some _1 )}

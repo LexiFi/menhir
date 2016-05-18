@@ -61,7 +61,7 @@ let to_seq c =
 %%
 
 promela:
-_1 = PROMELA_NEVER _2 = PROMELA_LBRACE _3 = states _4 = PROMELA_RBRACE _5 = EOF
+  _1 = PROMELA_NEVER _2 = PROMELA_LBRACE _3 = states _4 = PROMELA_RBRACE _5 = EOF
     {                                                                 ( 
 	    let states=
 	      Hashtbl.fold (fun _ st l -> 
@@ -90,13 +90,13 @@ _1 = PROMELA_NEVER _2 = PROMELA_LBRACE _3 = states _4 = PROMELA_RBRACE _5 = EOF
 	    (states , _3) )}
 
 states:
-_1 = states _2 = PROMELA_SEMICOLON _3 = state
+  _1 = states _2 = PROMELA_SEMICOLON _3 = state
     {                                         ( _1@_3 )}
 | _1 = state
     {         ( _1 )}
 
 state:
-_1 = state_labels _2 = state_body
+  _1 = state_labels _2 = state_body
     {                                  (
 	  let (stl,trans)=_1 in
 	  let (trl,force_final)=_2 in
@@ -124,7 +124,7 @@ _1 = state_labels _2 = state_body
 	)}
 
 state_labels:
-_1 = label _2 = state_labels
+  _1 = label _2 = state_labels
     {                             ( 
 	    let (stl1,trl1)=_1 in
 	    let (stl2,trl2)=_2 in
@@ -134,7 +134,7 @@ _1 = label _2 = state_labels
     {         ( _1 )}
 
 label:
-_1 = PROMELA_LABEL _2 = PROMELA_COLON
+  _1 = PROMELA_LABEL _2 = PROMELA_COLON
     {                                      (
 	  begin
             (* Step 0 : trans is the set of new transitions and old 
@@ -190,7 +190,7 @@ _1 = PROMELA_LABEL _2 = PROMELA_COLON
 	)}
 
 state_body:
-_1 = PROMELA_IF _2 = transitions _3 = PROMELA_FI
+  _1 = PROMELA_IF _2 = transitions _3 = PROMELA_FI
     {                                            ( (_2,false) )}
 | _1 = PROMELA_SKIP
     {                ( ([],false) )}
@@ -200,13 +200,13 @@ _1 = PROMELA_IF _2 = transitions _3 = PROMELA_FI
     {                                                            ( ([],true) )}
 
 transitions:
-_1 = transitions _2 = transition
+  _1 = transitions _2 = transition
     {                                 ( _1@[_2] )}
 | _1 = transition
     {              ( [_1] )}
 
 transition:
-_1 = PROMELA_DOUBLE_COLON _2 = guard _3 = PROMELA_RIGHT_ARROW _4 = PROMELA_GOTO _5 = PROMELA_LABEL
+  _1 = PROMELA_DOUBLE_COLON _2 = guard _3 = PROMELA_RIGHT_ARROW _4 = PROMELA_GOTO _5 = PROMELA_LABEL
     {                                                       (
 	  let s=
 	    try
@@ -221,7 +221,7 @@ _1 = PROMELA_DOUBLE_COLON _2 = guard _3 = PROMELA_RIGHT_ARROW _4 = PROMELA_GOTO 
 	)}
 
 guard:
-_1 = PROMELA_CALLORRETURNOF
+  _1 = PROMELA_CALLORRETURNOF
     {                          ( POr(PCall (_1,None), PReturn _1) )}
 | _1 = PROMELA_CALLOF
     {                         ( PCall (_1,None) )}
@@ -243,7 +243,7 @@ _1 = PROMELA_CALLORRETURNOF
     {                         ( _1 )}
 
 logic_relation:
-_1 = arith_relation _2 = PROMELA_EQ _3 = arith_relation
+  _1 = arith_relation _2 = PROMELA_EQ _3 = arith_relation
     {                                             ( PRel(Eq, _1, _3) )}
 | _1 = arith_relation _2 = PROMELA_LT _3 = arith_relation
     {                                             ( PRel(Lt, _1, _3) )}
@@ -259,7 +259,7 @@ _1 = arith_relation _2 = PROMELA_EQ _3 = arith_relation
     {                  ( PRel(Neq,_1, PCst(IntConstant "0")) )}
 
 arith_relation:
-_1 = arith_relation_mul _2 = PROMELA_PLUS _3 = arith_relation
+  _1 = arith_relation_mul _2 = PROMELA_PLUS _3 = arith_relation
     {            ( PBinop(Badd, _1 , _3))}
 | _1 = arith_relation_mul _2 = PROMELA_MINUS _3 = arith_relation
     {            ( PBinop(Bsub,_1,_3) )}
@@ -267,7 +267,7 @@ _1 = arith_relation_mul _2 = PROMELA_PLUS _3 = arith_relation
     {                      ( _1 )}
 
 arith_relation_mul:
-_1 = arith_relation_mul _2 = PROMELA_DIV _3 = access_or_const
+  _1 = arith_relation_mul _2 = PROMELA_DIV _3 = access_or_const
     {            ( PBinop(Bdiv,_1,_3) )}
 | _1 = arith_relation_mul _2 = PROMELA_STAR _3 = access_or_const
     {            ( PBinop(Bmul,_1,_3) )}
@@ -277,7 +277,7 @@ _1 = arith_relation_mul _2 = PROMELA_DIV _3 = access_or_const
     {                   ( _1 )}
 
 access_or_const:
-_1 = PROMELA_INT
+  _1 = PROMELA_INT
     {                      ( PCst(IntConstant _1) )}
 | _1 = PROMELA_MINUS _2 = PROMELA_INT
     {            ( PUnop (Uminus, PCst (IntConstant _2)) )}
@@ -287,19 +287,19 @@ _1 = PROMELA_INT
     {                                                ( _2 )}
 
 access:
-_1 = access _2 = PROMELA_DOT _3 = PROMELA_LABEL
+  _1 = access _2 = PROMELA_DOT _3 = PROMELA_LABEL
     {                                    ( PField (_1,_3) )}
 | _1 = access_array
     {                (_1)}
 
 access_array:
-_1 = access_array _2 = PROMELA_LEFT_SQUARE _3 = access_or_const _4 = PROMELA_RIGHT_SQUARE
+  _1 = access_array _2 = PROMELA_LEFT_SQUARE _3 = access_or_const _4 = PROMELA_RIGHT_SQUARE
     {     ( PArrget(_1,_3) )}
 | _1 = access_leaf
     {                   (_1)}
 
 access_leaf:
-_1 = PROMELA_STAR _2 = access
+  _1 = PROMELA_STAR _2 = access
     {                              ( PUnop(Ustar,_2) )}
 | _1 = PROMELA_LABEL _2 = PROMELA_FUNC _3 = PROMELA_DOT _4 = PROMELA_LABEL
     {                                                        ( PPrm(_1,_4) )}

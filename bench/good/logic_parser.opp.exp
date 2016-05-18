@@ -388,53 +388,53 @@ Warning: the token highest is unused.
 %%
 
 enter_kw_c_mode:
-
+  
     {            ( enter_kw_c_mode () )}
 
 exit_kw_c_mode:
-
+  
     {            ( exit_kw_c_mode () )}
 
 enter_rt_type:
-
+  
     {            ( if is_rt_type () then enter_rt_type_mode () )}
 
 exit_rt_type:
-
+  
     {            ( if is_rt_type () then exit_rt_type_mode () )}
 
 begin_rt_type:
-
+  
     {            ( set_rt_type () )}
 
 end_rt_type:
-
+  
     {            ( reset_rt_type () )}
 
 lexpr_list:
-
+  
     {                ( [] )}
 | _1 = ne_lexpr_list
     {                 ( _1 )}
 
 ne_lexpr_list:
-_1 = lexpr
+  _1 = lexpr
     {                           ( [_1] )}
 | _1 = lexpr _2 = COMMA _3 = ne_lexpr_list
     {                            ( _1 :: _3 )}
 
 lexpr_eof:
-_1 = full_lexpr _2 = EOF
+  _1 = full_lexpr _2 = EOF
     {                 ( _1 )}
 
 lexpr_option:
-
+  
     {                ( None )}
 | _1 = lexpr
     {                ( Some _1 )}
 
 lexpr:
-_1 = lexpr _2 = IMPLIES _3 = lexpr
+  _1 = lexpr _2 = IMPLIES _3 = lexpr
     {                      ( info (PLimplies (_1, _3)) )}
 | _1 = lexpr _2 = IFF _3 = lexpr
     {                  ( info (PLiff (_1, _3)) )}
@@ -471,7 +471,7 @@ _1 = lexpr _2 = IMPLIES _3 = lexpr
     {                                ( _1 )}
 
 lexpr_rel:
-_1 = lexpr_end_rel %prec prec_no_rel
+  _1 = lexpr_end_rel %prec prec_no_rel
     {                                  ( _1 )}
 | _1 = lexpr_inner _2 = rel_list %prec prec_rel_list
     {      ( let rel, rhs, _, oth_rel = _2 in
@@ -483,7 +483,7 @@ _1 = lexpr_end_rel %prec prec_no_rel
       )}
 
 lexpr_binder:
-_1 = LET _2 = bounded_var _3 = EQUAL _4 = lexpr _5 = SEMICOLON _6 = lexpr %prec LET
+  _1 = LET _2 = bounded_var _3 = EQUAL _4 = lexpr _5 = SEMICOLON _6 = lexpr %prec LET
     {                                                        (info (PLlet(_2,_4,_6)))}
 | _1 = FORALL _2 = binders _3 = SEMICOLON _4 = lexpr %prec prec_forall
     {      ( info (PLforall (_2, _4)) )}
@@ -493,7 +493,7 @@ _1 = LET _2 = bounded_var _3 = EQUAL _4 = lexpr _5 = SEMICOLON _6 = lexpr %prec 
     {      ( info (PLlambda (_2,_4)) )}
 
 lexpr_end_rel:
-_1 = lexpr_inner %prec prec_no_rel
+  _1 = lexpr_inner %prec prec_no_rel
     {                                ( _1 )}
 | _1 = lexpr_binder
     {               ( _1 )}
@@ -501,7 +501,7 @@ _1 = lexpr_inner %prec prec_no_rel
     {                   ( info (PLnot _2) )}
 
 rel_list:
-_1 = relation _2 = lexpr_end_rel %prec prec_rel_list
+  _1 = relation _2 = lexpr_end_rel %prec prec_rel_list
     {  ( _1, _2, fst(relation_sense _1 Unknown), None )}
 | _1 = relation _2 = lexpr_inner _3 = rel_list %prec prec_rel_list
     {  (
@@ -525,7 +525,7 @@ _1 = relation _2 = lexpr_end_rel %prec prec_rel_list
   )}
 
 relation:
-_1 = LT
+  _1 = LT
     {        ( Lt )}
 | _1 = GT
     {        ( Gt )}
@@ -546,7 +546,7 @@ _1 = LT
     )}
 
 lexpr_inner:
-_1 = string
+  _1 = string
     {         (
       let (is_wide,content) = _1 in
       let cst = if is_wide then
@@ -708,13 +708,13 @@ _1 = string
 	  (fun a (path,upd_val) -> info (PLupdate(a,path,upd_val))) _2 _4 )}
 
 ne_label_args:
-_1 = identifier_or_typename
+  _1 = identifier_or_typename
     {                         ( [ _1 ] )}
 | _1 = identifier_or_typename _2 = COMMA _3 = ne_label_args
     {                                             ( _1 :: _3 )}
 
 string:
-_1 = STRING_LITERAL
+  _1 = STRING_LITERAL
     {                 ( _1 )}
 | _1 = string _2 = STRING_LITERAL
     {                        (
@@ -724,69 +724,69 @@ _1 = STRING_LITERAL
     )}
 
 range:
-_1 = lexpr_option _2 = DOTDOT _3 = lexpr_option
+  _1 = lexpr_option _2 = DOTDOT _3 = lexpr_option
     {                                   ( info (PLrange(_1,_3)) )}
 
 field_path_elt:
-_1 = DOT _2 = identifier_or_typename
+  _1 = DOT _2 = identifier_or_typename
     {                             ( _2 )}
 
 field_init_elt:
-_1 = field_path_elt _2 = EQUAL _3 = lexpr
+  _1 = field_path_elt _2 = EQUAL _3 = lexpr
     {                             ( (_1, _3) )}
 
 field_init:
-_1 = field_init_elt
+  _1 = field_init_elt
     {                                  ( [_1] )}
 | _1 = field_init_elt _2 = COMMA _3 = field_init
     {                                  ( _1::_3 )}
 
 array_path_elt:
-_1 = LSQUARE _2 = lexpr _3 = RSQUARE
+  _1 = LSQUARE _2 = lexpr _3 = RSQUARE
     {                             ( _2 )}
 | _1 = LSQUARE _2 = range _3 = RSQUARE
     {                             ( _2 )}
 
 array_init_elt:
-_1 = array_path_elt _2 = EQUAL _3 = lexpr
+  _1 = array_path_elt _2 = EQUAL _3 = lexpr
     {                             ( (_1, _3) )}
 
 array_init:
-_1 = array_init_elt
+  _1 = array_init_elt
     {                                  ( [_1] )}
 | _1 = array_init_elt _2 = COMMA _3 = array_init
     {                                  ( _1::_3 )}
 
 update:
-_1 = update_elt
+  _1 = update_elt
     {                              ( [_1] )}
 | _1 = update_elt _2 = COMMA _3 = update
     {                          ( _1::_3 )}
 
 update_elt:
-_1 = path _2 = EQUAL _3 = lexpr
+  _1 = path _2 = EQUAL _3 = lexpr
     {                                  ( _1, PLupdateTerm _3 )}
 | _1 = path _2 = EQUAL _3 = LBRACE _4 = WITH _5 = update _6 = RBRACE
     {                                       ( _1, PLupdateCont _5 )}
 
 path:
-_1 = path_elt
+  _1 = path_elt
     {                ( [_1] )}
 | _1 = path_elt _2 = path
     {                ( _1::_2 )}
 
 path_elt:
-_1 = field_path_elt
+  _1 = field_path_elt
     {                 ( PLpathField _1 )}
 | _1 = array_path_elt
     {                 ( PLpathIndex _1 )}
 
 binders:
-_1 = binders_reentrance
+  _1 = binders_reentrance
     {                     ( let (_lt, vars) = _1 in vars )}
 
 binders_reentrance:
-_1 = decl_spec
+  _1 = decl_spec
     {            ( let (lt, var) = _1 in (lt, [var]) )}
 | _1 = binders_reentrance _2 = COMMA _3 = decl_spec
     {    ( let _, vars = _1 in
@@ -799,11 +799,11 @@ _1 = decl_spec
     )}
 
 decl_spec:
-_1 = type_spec _2 = var_spec
+  _1 = type_spec _2 = var_spec
     {                     ( (_1, let (modif, name) = _2 in (modif _1, name))  )}
 
 var_spec:
-_1 = var_spec_bis
+  _1 = var_spec_bis
     {                     ( let (outer, inner,name) = _1 in
                        ((fun x -> outer (inner x)), name))}
 | _1 = stars _2 = var_spec_bis
@@ -811,19 +811,19 @@ _1 = var_spec_bis
       ((fun x -> outer (inner (_1 x))), name) )}
 
 constant:
-_1 = CONSTANT
+  _1 = CONSTANT
     {             ( _1 )}
 | _1 = CONSTANT10
     {             ( IntConstant _1 )}
 
 constant_option:
-_1 = constant
+  _1 = constant
     {            ( Some _1 )}
 | 
     {              ( None )}
 
 var_spec_bis:
-_1 = identifier
+  _1 = identifier
     {                 ( ((fun x -> x),(fun x -> x), _1) )}
 | _1 = var_spec_bis _2 = LSQUARE _3 = constant_option _4 = RSQUARE
     {      ( let (outer, inner, name) = _1 in
@@ -838,7 +838,7 @@ _1 = identifier
       )}
 
 abs_param_type_list:
-
+  
     {                 ( [ ] )}
 | _1 = abs_param_list
     {                 ( _1 )}
@@ -849,43 +849,43 @@ abs_param_type_list:
   )}
 
 abs_param_list:
-_1 = abs_param
+  _1 = abs_param
     {            ( [ _1 ] )}
 | _1 = abs_param_list _2 = COMMA _3 = abs_param
     {                                 ( _1 @ [ _3 ] )}
 
 abs_param:
-_1 = logic_type
+  _1 = logic_type
     {             ( _1 )}
 
 id_as_typename:
-_1 = identifier
+  _1 = identifier
     {             ( LTnamed(_1, []) )}
 
 ne_parameters:
-_1 = parameter
+  _1 = parameter
     {            ( [_1] )}
 | _1 = parameter _2 = COMMA _3 = ne_parameters
     {                                ( _1 :: _3 )}
 
 parameter:
-_1 = type_spec _2 = var_spec
+  _1 = type_spec _2 = var_spec
     {                     ( let (modif, name) = _2 in (modif _1, name))}
 | _1 = id_as_typename _2 = var_spec
     {                          ( let (modif, name) = _2 in (modif _1, name) )}
 
 logic_type:
-_1 = type_spec _2 = abs_spec_option
+  _1 = type_spec _2 = abs_spec_option
     {                            ( _2 _1 )}
 
 cv:
-_1 = CONST
+  _1 = CONST
     {        ( )}
 | _1 = VOLATILE
     {           ( )}
 
 type_spec_cv:
-_1 = type_spec
+  _1 = type_spec
     {               ( _1 )}
 | _1 = cv _2 = type_spec
     {                  ( _2 )}
@@ -893,29 +893,29 @@ _1 = type_spec
     {                  ( _1 )}
 
 cast_logic_type:
-_1 = type_spec_cv _2 = abs_spec_cv_option
+  _1 = type_spec_cv _2 = abs_spec_cv_option
     {                                   ( _2 _1 )}
 
 logic_rt_type:
-_1 = id_as_typename
+  _1 = id_as_typename
     {                 ( _1 )}
 | _1 = begin_rt_type _2 = logic_type _3 = end_rt_type
     {                                       ( _2 )}
 
 abs_spec_option:
- %prec TYPENAME
+   %prec TYPENAME
     {                              ( fun t -> t )}
 | _1 = abs_spec
     {           ( _1 )}
 
 abs_spec_cv_option:
- %prec TYPENAME
+   %prec TYPENAME
     {                              ( fun t -> t )}
 | _1 = abs_spec_cv
     {              ( _1 )}
 
 abs_spec:
-_1 = tabs
+  _1 = tabs
     {                          ( _1 )}
 | _1 = stars %prec TYPENAME
     {                                         ( _1 )}
@@ -931,7 +931,7 @@ _1 = tabs
     {                                         ( _1 )}
 
 abs_spec_cv:
-_1 = tabs
+  _1 = tabs
     {                               ( _1 )}
 | _1 = stars_cv %prec TYPENAME
     {                                               ( _1 )}
@@ -947,25 +947,25 @@ _1 = tabs
     {                                               ( _1 )}
 
 abs_spec_bis:
-_1 = LPAR _2 = abs_spec _3 = RPAR
+  _1 = LPAR _2 = abs_spec _3 = RPAR
     {                     ( _2 )}
 | _1 = abs_spec_bis _2 = LPAR _3 = abs_param_type_list _4 = RPAR
     {                                             ( fun t -> _1 (LTarrow(_3,t)) )}
 
 abs_spec_bis_cv:
-_1 = LPAR _2 = abs_spec_cv _3 = RPAR
+  _1 = LPAR _2 = abs_spec_cv _3 = RPAR
     {                        ( _2 )}
 | _1 = abs_spec_bis_cv _2 = LPAR _3 = abs_param_type_list _4 = RPAR
     {                                                ( fun t -> _1 (LTarrow(_3,t)) )}
 
 stars:
-_1 = STAR
+  _1 = STAR
     {                ( fun t -> LTpointer t )}
 | _1 = stars _2 = STAR
     {                ( fun t -> _1 (LTpointer t) )}
 
 stars_cv:
-_1 = STAR
+  _1 = STAR
     {                ( fun t -> LTpointer t )}
 | _1 = STAR _2 = cv
     {                ( fun t -> LTpointer t )}
@@ -975,7 +975,7 @@ _1 = STAR
     {                   ( fun t -> _1 (LTpointer t) )}
 
 tabs:
-_1 = LSQUARE _2 = constant_option _3 = RSQUARE %prec TYPENAME
+  _1 = LSQUARE _2 = constant_option _3 = RSQUARE %prec TYPENAME
     {    (
       fun t -> LTarray (t,_2)
     )}
@@ -985,7 +985,7 @@ _1 = LSQUARE _2 = constant_option _3 = RSQUARE %prec TYPENAME
     )}
 
 type_spec:
-_1 = INTEGER
+  _1 = INTEGER
     {                 ( LTinteger )}
 | _1 = REAL
     {                 ( LTreal )}
@@ -1057,69 +1057,69 @@ _1 = INTEGER
     {      ( LTnamed(_1,_4) )}
 
 ne_logic_type_list:
-_1 = logic_type
+  _1 = logic_type
     {                                      ( [_1] )}
 | _1 = logic_type _2 = COMMA _3 = enter_rt_type _4 = ne_logic_type_list
     {                                                    ( _1 :: _4 )}
 
 full_lexpr:
-_1 = enter_kw_c_mode _2 = lexpr _3 = exit_kw_c_mode
+  _1 = enter_kw_c_mode _2 = lexpr _3 = exit_kw_c_mode
     {                                       ( _2 )}
 
 full_identifier:
-_1 = enter_kw_c_mode _2 = identifier _3 = exit_kw_c_mode
+  _1 = enter_kw_c_mode _2 = identifier _3 = exit_kw_c_mode
     {                                            ( _2 )}
 
 full_identifier_or_typename:
-_1 = enter_kw_c_mode _2 = identifier_or_typename _3 = exit_kw_c_mode
+  _1 = enter_kw_c_mode _2 = identifier_or_typename _3 = exit_kw_c_mode
     {                                                        ( _2 )}
 
 full_parameters:
-_1 = enter_kw_c_mode _2 = ne_parameters _3 = exit_kw_c_mode
+  _1 = enter_kw_c_mode _2 = ne_parameters _3 = exit_kw_c_mode
     {                                               ( _2 )}
 
 full_parameter:
-_1 = enter_kw_c_mode _2 = parameter _3 = exit_kw_c_mode
+  _1 = enter_kw_c_mode _2 = parameter _3 = exit_kw_c_mode
     {                                           ( _2 )}
 
 full_zones:
-_1 = enter_kw_c_mode _2 = zones _3 = exit_kw_c_mode
+  _1 = enter_kw_c_mode _2 = zones _3 = exit_kw_c_mode
     {                                        ( _2 )}
 
 full_ne_lexpr_list:
-_1 = enter_kw_c_mode _2 = ne_lexpr_list _3 = exit_kw_c_mode
+  _1 = enter_kw_c_mode _2 = ne_lexpr_list _3 = exit_kw_c_mode
     {                                             ( _2 )}
 
 full_logic_type:
-_1 = enter_kw_c_mode _2 = logic_type _3 = exit_kw_c_mode
+  _1 = enter_kw_c_mode _2 = logic_type _3 = exit_kw_c_mode
     {                                            ( _2 )}
 
 full_logic_rt_type:
-_1 = enter_kw_c_mode _2 = logic_rt_type _3 = exit_kw_c_mode
+  _1 = enter_kw_c_mode _2 = logic_rt_type _3 = exit_kw_c_mode
     {                                               ( _2 )}
 
 full_assigns:
-_1 = enter_kw_c_mode _2 = assigns _3 = exit_kw_c_mode
+  _1 = enter_kw_c_mode _2 = assigns _3 = exit_kw_c_mode
     {                                         ( _2 )}
 
 ext_spec:
-_1 = ext_global_clauses_opt _2 = ext_module_specs_opt _3 = ext_global_specs_opt _4 = EOF
+  _1 = ext_global_clauses_opt _2 = ext_module_specs_opt _3 = ext_global_specs_opt _4 = EOF
     {                                                                        ( ("",_1,_2)::_3 )}
 
 ext_global_clauses_opt:
-
+  
     {                       ( [] )}
 | _1 = ext_global_clauses
     {                       ( _1 )}
 
 ext_global_clauses:
-_1 = ext_global_clause
+  _1 = ext_global_clause
     {                                       ( [_1] )}
 | _1 = ext_global_clause _2 = ext_global_clauses
     {                                       ( _1::_2 )}
 
 ext_global_clause:
-_1 = decl
+  _1 = decl
     {        ( Ext_decl (loc_decl _1) )}
 | _1 = EXT_LET _2 = any_identifier _3 = EQUAL _4 = full_lexpr _5 = SEMICOLON
     {                                                    ( Ext_macro (_2, _4) )}
@@ -1127,47 +1127,47 @@ _1 = decl
     {                           ( let b,s = _2 in Ext_include(b,s, loc()) )}
 
 ext_global_specs_opt:
-
+  
     {                     ( [] )}
 | _1 = ext_global_specs
     {                     ( _1 )}
 
 ext_global_specs:
-_1 = ext_global_spec
+  _1 = ext_global_spec
     {                                   ( [_1] )}
 | _1 = ext_global_spec _2 = ext_global_specs
     {                                   ( _1::_2 )}
 
 ext_global_spec:
-_1 = ext_module_markup _2 = ext_global_clauses_opt _3 = ext_module_specs
+  _1 = ext_module_markup _2 = ext_global_clauses_opt _3 = ext_module_specs
     {    ( (_1,_2,_3) )}
 | _1 = ext_module_markup
     {    ( (_1,[],[]) )}
 
 ext_module_specs_opt:
-
+  
     {                    ( [] )}
 | _1 = ext_module_specs
     {                    ( _1 )}
 
 ext_module_specs:
-_1 = ext_module_spec
+  _1 = ext_module_spec
     {                                   ( [_1] )}
 | _1 = ext_module_spec _2 = ext_module_specs
     {                                   ( _1::_2 )}
 
 ext_module_spec:
-_1 = ext_function_markup _2 = ext_function_specs_opt
+  _1 = ext_function_markup _2 = ext_function_specs_opt
     {                                             ( (_1,_2) )}
 
 ext_function_specs_opt:
-
+  
     {                      ( [] )}
 | _1 = ext_function_specs
     {                      ( _1 )}
 
 ext_function_specs:
-_1 = ext_at_loop_markup
+  _1 = ext_at_loop_markup
     {                      ( [])}
 | _1 = ext_at_stmt_markup
     {                      ( [])}
@@ -1177,7 +1177,7 @@ _1 = ext_at_loop_markup
     {                                       ( _1::_2 )}
 
 ext_function_spec:
-_1 = ext_global_clause
+  _1 = ext_global_clause
     {    ( Ext_glob _1 )}
 | _1 = ext_at_loop_markup _2 = ext_stmt_loop_spec
     {    ( Ext_loop_spec(_1,_2,loc()) )}
@@ -1187,49 +1187,49 @@ _1 = ext_global_clause
     {    ( let s,pos = _2 in Ext_spec (s,pos) )}
 
 ext_stmt_loop_spec:
-_1 = annotation
+  _1 = annotation
     {             ( _1 )}
 | _1 = ext_contract_markup _2 = contract
     {                               ( let s, pos = _2 in Acode_annot (pos, AStmtSpec ([],s)) )}
 
 ext_identifier_opt:
-
+  
     {                 ( "" )}
 | _1 = ext_identifier
     {                 ( _1 )}
 
 ext_identifier:
-_1 = any_identifier
+  _1 = any_identifier
     {                 ( _1 )}
 
 ext_module_markup:
-_1 = MODULE _2 = ext_identifier _3 = COLON
+  _1 = MODULE _2 = ext_identifier _3 = COLON
     {                              ( _2 )}
 
 ext_function_markup:
-_1 = FUNCTION _2 = ext_identifier _3 = COLON
+  _1 = FUNCTION _2 = ext_identifier _3 = COLON
     {                                ( _2, loc() )}
 
 ext_contract_markup:
-_1 = CONTRACT _2 = ext_identifier_opt _3 = COLON
+  _1 = CONTRACT _2 = ext_identifier_opt _3 = COLON
     {                                    ( _2 )}
 
 ext_at_loop_markup:
-_1 = EXT_AT _2 = LOOP _3 = CONSTANT10 _4 = COLON
+  _1 = EXT_AT _2 = LOOP _3 = CONSTANT10 _4 = COLON
     {                               ( _3 )}
 
 ext_at_stmt_markup:
-_1 = EXT_AT _2 = CONSTANT10 _3 = COLON
+  _1 = EXT_AT _2 = CONSTANT10 _3 = COLON
     {                              ( _2 )}
 | _1 = EXT_AT _2 = any_identifier _3 = COLON
     {                              ( _2 )}
 
 spec:
-_1 = contract _2 = EOF
+  _1 = contract _2 = EOF
     {               ( _1 )}
 
 contract:
-_1 = requires _2 = terminates _3 = decreases _4 = simple_clauses _5 = behaviors _6 = complete_or_disjoint
+  _1 = requires _2 = terminates _3 = decreases _4 = simple_clauses _5 = behaviors _6 = complete_or_disjoint
     {    ( let requires=_1 in
       let (allocation,assigns,post_cond,extended) = _4 in
       let behaviors = _5 in
@@ -1288,7 +1288,7 @@ _1 = requires _2 = terminates _3 = decreases _4 = simple_clauses _5 = behaviors 
     {      ( clause_order 7 "post-condition" "complete or disjoint" )}
 
 clause_kw:
-_1 = REQUIRES
+  _1 = REQUIRES
     {           ( "requires" )}
 | _1 = ASSUMES
     {          ("assumes")}
@@ -1314,61 +1314,61 @@ _1 = REQUIRES
     {      ( "end of annotation" )}
 
 requires:
-
+  
     {                ( [] )}
 | _1 = ne_requires
     {              ( _1 )}
 
 ne_requires:
-_1 = REQUIRES _2 = full_lexpr _3 = SEMICOLON _4 = requires
+  _1 = REQUIRES _2 = full_lexpr _3 = SEMICOLON _4 = requires
     {                                         ( _2::_4 )}
 | _1 = REQUIRES _2 = full_lexpr _3 = clause_kw
     {                                ( missing 2 ";" _3)}
 
 terminates:
-
+  
     {                             ( None )}
 | _1 = ne_terminates
     {                ( Some _1 )}
 
 ne_terminates:
-_1 = TERMINATES _2 = full_lexpr _3 = SEMICOLON
+  _1 = TERMINATES _2 = full_lexpr _3 = SEMICOLON
     {                                  ( _2 )}
 | _1 = TERMINATES _2 = full_lexpr _3 = clause_kw
     {                                  ( missing 2 ";" _3 )}
 
 decreases:
-
+  
     {                  ( None )}
 | _1 = ne_decreases
     {               ( Some _1 )}
 
 ne_decreases:
-_1 = DECREASES _2 = variant _3 = SEMICOLON
+  _1 = DECREASES _2 = variant _3 = SEMICOLON
     {                              ( _2 )}
 | _1 = DECREASES _2 = variant _3 = clause_kw
     {                              ( missing 2 ";" _3 )}
 
 variant:
-_1 = full_lexpr _2 = FOR _3 = any_identifier
+  _1 = full_lexpr _2 = FOR _3 = any_identifier
     {                                ( (_1, Some _3) )}
 | _1 = full_lexpr
     {                                ( (_1, None) )}
 
 simple_clauses:
-
+  
     {                ( FreeAllocAny,WritesAny,[],[] )}
 | _1 = ne_simple_clauses
     {                    ( _1 )}
 
 allocation:
-_1 = ALLOCATES _2 = full_zones
+  _1 = ALLOCATES _2 = full_zones
     {                       ( FreeAlloc([],_2) )}
 | _1 = FREES _2 = full_zones
     {                   ( FreeAlloc(_2,[]) )}
 
 ne_simple_clauses:
-_1 = post_cond_kind _2 = full_lexpr _3 = SEMICOLON _4 = simple_clauses
+  _1 = post_cond_kind _2 = full_lexpr _3 = SEMICOLON _4 = simple_clauses
     {    ( let allocation,assigns,post_cond,extended = _4 in allocation,assigns,((_1,_2)::post_cond),extended )}
 | _1 = allocation _2 = SEMICOLON _3 = simple_clauses
     {    ( let allocation,assigns,post_cond,extended = _3 in
@@ -1394,21 +1394,21 @@ _1 = post_cond_kind _2 = full_lexpr _3 = SEMICOLON _4 = simple_clauses
     {                              ( missing 1 ";" _2 )}
 
 grammar_extension:
-_1 = grammar_extension_name _2 = full_zones
+  _1 = grammar_extension_name _2 = full_zones
     {                                    ( _1,_2 )}
 
 post_cond_kind:
-_1 = post_cond
+  _1 = post_cond
     {            ( fst _1 )}
 
 behaviors:
-
+  
     {                ( [] )}
 | _1 = ne_behaviors
     {               ( _1 )}
 
 ne_behaviors:
-_1 = BEHAVIOR _2 = behavior_name _3 = COLON _4 = behavior_body _5 = behaviors
+  _1 = BEHAVIOR _2 = behavior_name _3 = COLON _4 = behavior_body _5 = behaviors
     {      ( let (assumes,requires,(allocation,assigns,post_cond,extended)) = _4 in
 	let behaviors = _5 in
 	let allocation = Some allocation in
@@ -1420,7 +1420,7 @@ _1 = BEHAVIOR _2 = behavior_name _3 = COLON _4 = behavior_body _5 = behaviors
       )}
 
 behavior_body:
-_1 = assumes _2 = requires _3 = simple_clauses
+  _1 = assumes _2 = requires _3 = simple_clauses
     {                                  ( _1,_2,_3 )}
 | _1 = assumes _2 = ne_requires _3 = ASSUMES
     {      ( clause_order 3 "assumes" "requires" )}
@@ -1430,7 +1430,7 @@ _1 = assumes _2 = requires _3 = simple_clauses
     {      ( clause_order 4 "requires" "assigns or post-condition" )}
 
 assumes:
-
+  
     {                ( [] )}
 | _1 = ASSUMES _2 = full_lexpr _3 = SEMICOLON _4 = assumes
     {                                       ( _2::_4 )}
@@ -1438,13 +1438,13 @@ assumes:
     {                               ( missing 2 ";" _3 )}
 
 complete_or_disjoint:
-
+  
     {                ( [],[] )}
 | _1 = ne_complete_or_disjoint
     {                          ( _1 )}
 
 ne_complete_or_disjoint:
-_1 = COMPLETE _2 = BEHAVIORS _3 = behavior_name_list _4 = SEMICOLON _5 = complete_or_disjoint
+  _1 = COMPLETE _2 = BEHAVIORS _3 = behavior_name_list _4 = SEMICOLON _5 = complete_or_disjoint
     {      ( let complete,disjoint = _5 in _3::complete, disjoint )}
 | _1 = DISJOINT _2 = BEHAVIORS _3 = behavior_name_list _4 = SEMICOLON _5 = complete_or_disjoint
     {      ( let complete,disjoint = _5 in complete,_3::disjoint )}
@@ -1454,23 +1454,23 @@ _1 = COMPLETE _2 = BEHAVIORS _3 = behavior_name_list _4 = SEMICOLON _5 = complet
     {                                                     ( missing 3 ";" _4 )}
 
 assigns:
-_1 = zones
+  _1 = zones
     {        ( List.map (fun x -> (x,FromAny)) _1 )}
 | _1 = ne_zones _2 = FROM _3 = zones
     {                      (List.map (fun x -> (x, From _3)) _1)}
 
 zones:
-_1 = ne_zones
+  _1 = ne_zones
     {           ( _1 )}
 | _1 = NOTHING
     {           ( [] )}
 
 ne_zones:
-_1 = ne_lexpr_list
+  _1 = ne_lexpr_list
     {                ( _1 )}
 
 annot:
-_1 = annotation _2 = EOF
+  _1 = annotation _2 = EOF
     {                  ( _1 )}
 | _1 = is_spec _2 = any _3 = EOF
     {                  ( Aspec )}
@@ -1480,7 +1480,7 @@ _1 = annotation _2 = EOF
     {                                              ( Acustom(loc (),_2, _4) )}
 
 custom_tree:
-_1 = TYPE _2 = type_spec
+  _1 = TYPE _2 = type_spec
     {                  ( CustomType _2 )}
 | _1 = LOGIC _2 = lexpr %prec prec_named
     {                                  ( CustomLexpr _2 )}
@@ -1490,13 +1490,13 @@ _1 = TYPE _2 = type_spec
     {                                                                   ( CustomOther(_1,_3) )}
 
 custom_tree_list:
-_1 = custom_tree
+  _1 = custom_tree
     {                ( [_1] )}
 | _1 = custom_tree _2 = COMMA _3 = custom_tree_list
     {                                      ( _1::_3 )}
 
 annotation:
-_1 = loop_annotations
+  _1 = loop_annotations
     {      ( let (b,v,p) = _1 in
 	(* TODO: do better, do not lose the structure ! *)
 	let l = b@v@p in
@@ -1514,7 +1514,7 @@ _1 = loop_annotations
     {                              ( Aattribute_annot (loc (), _1) )}
 
 loop_annotations:
-_1 = loop_annot_stack
+  _1 = loop_annot_stack
     {    ( let (i,fa,a,b,v,p) = _1 in
       let invs = List.map (fun i -> AInvariant([],true,i)) i in
       let oth = match a with
@@ -1532,7 +1532,7 @@ _1 = loop_annot_stack
     )}
 
 loop_annot_stack:
-_1 = loop_invariant _2 = loop_annot_opt
+  _1 = loop_invariant _2 = loop_annot_opt
     {    ( let (i,fa,a,b,v,p) = _2 in (_1::i,fa,a,b,v,p) )}
 | _1 = loop_effects _2 = loop_annot_opt
     {    ( let (i,fa,a,b,v,p) = _2 in (i,fa,concat_assigns a _1,b,v,p) )}
@@ -1578,35 +1578,35 @@ _1 = loop_invariant _2 = loop_annot_opt
   )}
 
 loop_annot_opt:
-
+  
     {    ( ([], FreeAllocAny, WritesAny, [], [], []) )}
 | _1 = loop_annot_stack
     {    ( _1 )}
 
 loop_effects:
-_1 = LOOP _2 = ASSIGNS _3 = full_assigns _4 = SEMICOLON
+  _1 = LOOP _2 = ASSIGNS _3 = full_assigns _4 = SEMICOLON
     {                                      ( _3 )}
 
 loop_allocation:
-_1 = LOOP _2 = allocation _3 = SEMICOLON
+  _1 = LOOP _2 = allocation _3 = SEMICOLON
     {                            ( _2 )}
 
 loop_invariant:
-_1 = LOOP _2 = INVARIANT _3 = full_lexpr _4 = SEMICOLON
+  _1 = LOOP _2 = INVARIANT _3 = full_lexpr _4 = SEMICOLON
     {                                      ( _3 )}
 
 loop_variant:
-_1 = LOOP _2 = VARIANT _3 = variant _4 = SEMICOLON
+  _1 = LOOP _2 = VARIANT _3 = variant _4 = SEMICOLON
     {                                 ( loc(),_3 )}
 
 loop_grammar_extension:
-_1 = LOOP _2 = grammar_extension _3 = SEMICOLON
+  _1 = LOOP _2 = grammar_extension _3 = SEMICOLON
     {                                   (
     raise (Not_well_formed (loc(),"Grammar extension for loop annotations is not yet implemented"))
   )}
 
 loop_pragma:
-_1 = LOOP _2 = PRAGMA _3 = any_identifier _4 = full_ne_lexpr_list _5 = SEMICOLON
+  _1 = LOOP _2 = PRAGMA _3 = any_identifier _4 = full_ne_lexpr_list _5 = SEMICOLON
     {  ( if _3 = "UNROLL_LOOP" || _3 = "UNROLL" then
       (if _3 <> "UNROLL" then
 	 Format.eprintf "Warning: use of deprecated keyword '%s'.\nShould use 'UNROLL' instead.@." _3;
@@ -1618,7 +1618,7 @@ _1 = LOOP _2 = PRAGMA _3 = any_identifier _4 = full_ne_lexpr_list _5 = SEMICOLON
     else raise (Not_well_formed (loc(),"Unknown loop pragma")) )}
 
 beg_code_annotation:
-_1 = IMPACT
+  _1 = IMPACT
     {         ()}
 | _1 = SLICE
     {        ()}
@@ -1630,7 +1630,7 @@ _1 = IMPACT
     {            ()}
 
 code_annotation:
-_1 = slice_pragma
+  _1 = slice_pragma
     {                   ( APragma (Slice_pragma _1) )}
 | _1 = impact_pragma
     {                   ( APragma (Impact_pragma _1) )}
@@ -1644,7 +1644,7 @@ _1 = slice_pragma
     {                                 ( AInvariant ([],false,_2) )}
 
 slice_pragma:
-_1 = SLICE _2 = PRAGMA _3 = any_identifier _4 = full_lexpr _5 = SEMICOLON
+  _1 = SLICE _2 = PRAGMA _3 = any_identifier _4 = full_lexpr _5 = SEMICOLON
     {    ( if _3 = "expr" then SPexpr _4
       else raise (Not_well_formed (loc(), "Unknown slice pragma")) )}
 | _1 = SLICE _2 = PRAGMA _3 = any_identifier _4 = SEMICOLON
@@ -1653,7 +1653,7 @@ _1 = SLICE _2 = PRAGMA _3 = any_identifier _4 = full_lexpr _5 = SEMICOLON
       else raise (Not_well_formed (loc(), "Unknown slice pragma")) )}
 
 impact_pragma:
-_1 = IMPACT _2 = PRAGMA _3 = any_identifier _4 = full_lexpr _5 = SEMICOLON
+  _1 = IMPACT _2 = PRAGMA _3 = any_identifier _4 = full_lexpr _5 = SEMICOLON
     {    ( if _3 = "expr" then IPexpr _4
       else raise (Not_well_formed (loc(), "Unknown impact pragma")) )}
 | _1 = IMPACT _2 = PRAGMA _3 = any_identifier _4 = SEMICOLON
@@ -1661,13 +1661,13 @@ _1 = IMPACT _2 = PRAGMA _3 = any_identifier _4 = full_lexpr _5 = SEMICOLON
       else raise (Not_well_formed (loc(), "Unknown impact pragma")) )}
 
 decl_list:
-_1 = decl
+  _1 = decl
     {                  ( [loc_decl _1] )}
 | _1 = decl _2 = decl_list
     {                  ( (loc_decl _1) :: _2 )}
 
 decl:
-_1 = GLOBAL _2 = INVARIANT _3 = any_identifier _4 = COLON _5 = full_lexpr _6 = SEMICOLON
+  _1 = GLOBAL _2 = INVARIANT _3 = any_identifier _4 = COLON _5 = full_lexpr _6 = SEMICOLON
     {    ( LDinvariant (_3, _5) )}
 | _1 = VOLATILE _2 = ne_zones _3 = volatile_opt _4 = SEMICOLON
     {                                           ( LDvolatile (_2, _3) )}
@@ -1681,7 +1681,7 @@ _1 = GLOBAL _2 = INVARIANT _3 = any_identifier _4 = COLON _5 = full_lexpr _6 = S
     {                        ( _1 )}
 
 volatile_opt:
-
+  
     {              ( None, None )}
 | _1 = READS _2 = any_identifier _3 = volatile_opt
     {              ( let read,write=_3 in
@@ -1699,33 +1699,33 @@ volatile_opt:
 	      )}
 
 type_annot:
-_1 = TYPE _2 = INVARIANT _3 = any_identifier _4 = LPAR _5 = full_parameter _6 = RPAR _7 = EQUAL _8 = full_lexpr _9 = SEMICOLON
+  _1 = TYPE _2 = INVARIANT _3 = any_identifier _4 = LPAR _5 = full_parameter _6 = RPAR _7 = EQUAL _8 = full_lexpr _9 = SEMICOLON
     {  ( let typ,name = _5 in{ inv_name = _3; this_name = name; this_type = typ; inv = _8; } )}
 
 opt_semicolon:
-
+  
     {                ( )}
 | _1 = SEMICOLON
     {            ( )}
 
 model_annot:
-_1 = MODEL _2 = type_spec _3 = LBRACE _4 = full_parameter _5 = opt_semicolon _6 = RBRACE _7 = SEMICOLON
+  _1 = MODEL _2 = type_spec _3 = LBRACE _4 = full_parameter _5 = opt_semicolon _6 = RBRACE _7 = SEMICOLON
     {  ( let typ,name = _4 in 
     { model_for_type = _2; model_name = name; model_type = typ; } 
   )}
 
 poly_id_type:
-_1 = full_identifier
+  _1 = full_identifier
     {    ( enter_type_variables_scope []; (_1,[]) )}
 | _1 = full_identifier _2 = LT _3 = ne_tvar_list _4 = GT
     {        ( enter_type_variables_scope _3; (_1,_3) )}
 
 poly_id_type_add_typename:
-_1 = poly_id_type
+  _1 = poly_id_type
     {               ( let (id,_) = _1 in Logic_env.add_typename id; _1 )}
 
 poly_id:
-_1 = poly_id_type
+  _1 = poly_id_type
     {               ( let (id,tvar) = _1 in (id,[],tvar) )}
 | _1 = full_identifier _2 = LBRACE _3 = ne_label_list _4 = RBRACE
     {      ( enter_type_variables_scope []; (_1,_3,[]) )}
@@ -1733,17 +1733,17 @@ _1 = poly_id_type
     {      ( enter_type_variables_scope _6; _1,_3,_6 )}
 
 opt_parameters:
-
+  
     {              ( [] )}
 | _1 = parameters
     {             ( _1 )}
 
 parameters:
-_1 = LPAR _2 = full_parameters _3 = RPAR
+  _1 = LPAR _2 = full_parameters _3 = RPAR
     {                            ( _2 )}
 
 logic_def:
-_1 = LOGIC _2 = full_logic_rt_type _3 = poly_id _4 = opt_parameters _5 = EQUAL _6 = full_lexpr _7 = SEMICOLON
+  _1 = LOGIC _2 = full_logic_rt_type _3 = poly_id _4 = opt_parameters _5 = EQUAL _6 = full_lexpr _7 = SEMICOLON
     {    ( let (id, labels, tvars) = _3 in
       exit_type_variables_scope ();
       LDlogic_def (id, labels, tvars, _2, _4, _6) )}
@@ -1768,7 +1768,7 @@ _1 = LOGIC _2 = full_logic_rt_type _3 = poly_id _4 = opt_parameters _5 = EQUAL _
         )}
 
 deprecated_logic_decl:
-_1 = LOGIC _2 = full_logic_rt_type _3 = poly_id _4 = opt_parameters _5 = SEMICOLON
+  _1 = LOGIC _2 = full_logic_rt_type _3 = poly_id _4 = opt_parameters _5 = SEMICOLON
     {    ( let (id, labels, tvars) = _3 in
       let source = fst (loc ()) in
       exit_type_variables_scope ();
@@ -1796,13 +1796,13 @@ _1 = LOGIC _2 = full_logic_rt_type _3 = poly_id _4 = opt_parameters _5 = SEMICOL
     )}
 
 logic_decls:
-
+  
     {    ( [] )}
 | _1 = logic_decl_loc _2 = logic_decls
     {    ( _1::_2 )}
 
 logic_decl:
-_1 = logic_def
+  _1 = logic_def
     {             ( _1 )}
 | _1 = LOGIC _2 = full_logic_rt_type _3 = poly_id _4 = opt_parameters _5 = reads_clause _6 = SEMICOLON
     {    ( let (id, labels, tvars) = _3 in
@@ -1823,47 +1823,47 @@ _1 = logic_def
       LDlemma (id, true, labels, tvars, _4) )}
 
 logic_decl_loc:
-_1 = logic_decl
+  _1 = logic_decl
     {             ( loc_decl _1 )}
 
 reads_clause:
-
+  
     {                ( None )}
 | _1 = READS _2 = zones
     {              ( Some _2 )}
 
 typedef:
-_1 = ne_datacons_list
+  _1 = ne_datacons_list
     {                   ( TDsum _1 )}
 | _1 = full_logic_type
     {                  ( TDsyn _1 )}
 
 datacons_list:
-
+  
     {                ( [] )}
 | _1 = PIPE _2 = datacons _3 = datacons_list
     {                              ( _2 :: _3 )}
 
 ne_datacons_list:
-_1 = datacons _2 = datacons_list
+  _1 = datacons _2 = datacons_list
     {                         ( _1 :: _2 )}
 | _1 = PIPE _2 = datacons _3 = datacons_list
     {                              ( _2 :: _3 )}
 
 datacons:
-_1 = full_identifier
+  _1 = full_identifier
     {                  ( (_1,[]) )}
 | _1 = full_identifier _2 = LPAR _3 = ne_type_list _4 = RPAR
     {                                         ( (_1,_3) )}
 
 ne_type_list:
-_1 = full_logic_type
+  _1 = full_logic_type
     {                  ( [_1] )}
 | _1 = full_logic_type _2 = COMMA _3 = ne_type_list
     {                                     ( _1::_3 )}
 
 indcases:
-
+  
     {    ( [] )}
 | _1 = CASE _2 = poly_id _3 = COLON _4 = full_lexpr _5 = SEMICOLON _6 = indcases
     {    ( let (id,labels,tvars) = _2 in
@@ -1871,26 +1871,26 @@ indcases:
       (id,labels,tvars,_4)::_6 )}
 
 ne_tvar_list:
-_1 = full_identifier
+  _1 = full_identifier
     {                                     ( [_1] )}
 | _1 = full_identifier _2 = COMMA _3 = ne_tvar_list
     {                                     ( _1 :: _3 )}
 
 ne_label_list:
-_1 = label_name
+  _1 = label_name
     {                                 ( [_1] )}
 | _1 = label_name _2 = COMMA _3 = ne_label_list
     {                                 ( _1 :: _3 )}
 
 opt_label_1:
-_1 = opt_label_list
+  _1 = opt_label_list
     {                 ( match _1 with 
 		     | [] -> None
 		     | l::[] -> Some l
 		     | _ -> raise (Not_well_formed (loc(),"Only one label is allowed")) )}
 
 opt_label_2:
-_1 = opt_label_list
+  _1 = opt_label_list
     {                 ( match _1 with 
 		     | [] -> None
 		     | l1::l2::[] -> Some (l1,l2)
@@ -1898,55 +1898,55 @@ _1 = opt_label_list
 		     | _ -> raise (Not_well_formed (loc(),"Only two labels are allowed")) )}
 
 opt_label_list:
-
+  
     {                              ( [] )}
 | _1 = LBRACE _2 = ne_label_list _3 = RBRACE
     {                              ( _2 )}
 
 label_name:
-_1 = any_identifier
+  _1 = any_identifier
     {                 ( _1 )}
 
 behavior_name_list:
-
+  
     {                        ( [] )}
 | _1 = ne_behavior_name_list
     {                        ( _1 )}
 
 ne_behavior_name_list:
-_1 = behavior_name
+  _1 = behavior_name
     {                                            ( [_1] )}
 | _1 = behavior_name _2 = COMMA _3 = ne_behavior_name_list
     {                                            (_1 :: _3)}
 
 behavior_name:
-_1 = any_identifier
+  _1 = any_identifier
     {                 ( _1 )}
 
 any_identifier:
-_1 = identifier_or_typename
+  _1 = identifier_or_typename
     {                         ( _1 )}
 | _1 = keyword
     {          ( _1 )}
 
 any_identifier_non_logic:
-_1 = identifier_or_typename
+  _1 = identifier_or_typename
     {                         ( _1 )}
 | _1 = non_logic_keyword
     {                    ( _1 )}
 
 identifier_or_typename:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {             ( _1 )}
 | _1 = TYPENAME
     {           ( _1 )}
 
 identifier:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {             ( _1 )}
 
 bounded_var:
-_1 = identifier
+  _1 = identifier
     {             ( _1 )}
 | _1 = TYPENAME
     {    ( raise
@@ -1955,7 +1955,7 @@ _1 = identifier
     )}
 
 c_keyword:
-_1 = CASE
+  _1 = CASE
     {       ( "case" )}
 | _1 = CHAR
     {       ( "char" )}
@@ -1997,13 +1997,13 @@ _1 = CASE
     {       ( "void" )}
 
 acsl_c_keyword:
-_1 = FOR
+  _1 = FOR
     {      ( "for" )}
 | _1 = VOLATILE
     {           ( "volatile" )}
 
 post_cond:
-_1 = ENSURES
+  _1 = ENSURES
     {          ( Normal, "normal" )}
 | _1 = EXITS
     {          ( Exits, "exits" )}
@@ -2015,7 +2015,7 @@ _1 = ENSURES
     {          ( Returns, "returns" )}
 
 is_acsl_spec:
-_1 = post_cond
+  _1 = post_cond
     {             ( snd _1 )}
 | _1 = ASSIGNS
     {             ( "assigns" )}
@@ -2037,7 +2037,7 @@ _1 = post_cond
     {             ( "disjoint" )}
 
 is_acsl_decl_or_code_annot:
-_1 = ASSERT
+  _1 = ASSERT
     {            ( "assert" )}
 | _1 = ASSUMES
     {            ( "assumes" )}
@@ -2071,7 +2071,7 @@ _1 = ASSERT
     {            ( "axiomatic" )}
 
 is_acsl_other:
-_1 = BEHAVIORS
+  _1 = BEHAVIORS
     {            ( "behaviors" )}
 | _1 = INTEGER
     {          ( "integer" )}
@@ -2085,7 +2085,7 @@ _1 = BEHAVIORS
     {         ( "writes" )}
 
 is_ext_spec:
-_1 = CONTRACT
+  _1 = CONTRACT
     {           ( "contract" )}
 | _1 = FUNCTION
     {           ( "function" )}
@@ -2099,13 +2099,13 @@ _1 = CONTRACT
     {           ( "let" )}
 
 keyword:
-_1 = LOGIC
+  _1 = LOGIC
     {            ( "logic" )}
 | _1 = non_logic_keyword
     {                    ( _1 )}
 
 non_logic_keyword:
-_1 = c_keyword
+  _1 = c_keyword
     {                 ( _1 )}
 | _1 = acsl_c_keyword
     {                 ( _1 )}
@@ -2121,7 +2121,7 @@ _1 = c_keyword
     {         ( "custom" )}
 
 grammar_extension_name:
-_1 = full_identifier_or_typename
+  _1 = full_identifier_or_typename
     {                              ( check_registered _1 )}
 | _1 = is_acsl_other
     {                ( check_registered _1 )}
@@ -2129,13 +2129,13 @@ _1 = full_identifier_or_typename
     {                ( check_registered _1 )}
 
 is_spec:
-_1 = is_acsl_spec
+  _1 = is_acsl_spec
     {               ( () )}
 | _1 = grammar_extension_name
     {                         ( () )}
 
 bs_keyword:
-_1 = ALLOCABLE
+  _1 = ALLOCABLE
     {            ( () )}
 | _1 = ALLOCATION
     {             ( () )}
@@ -2207,7 +2207,7 @@ _1 = ALLOCABLE
     {       ( () )}
 
 wildcard:
-_1 = any_identifier
+  _1 = any_identifier
     {                 ( () )}
 | _1 = bs_keyword
     {             ( () )}
@@ -2313,7 +2313,7 @@ _1 = any_identifier
     {        ( () )}
 
 any:
-_1 = wildcard
+  _1 = wildcard
     {           ( () )}
 | _1 = wildcard _2 = any
     {               ( () )}

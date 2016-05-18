@@ -197,17 +197,17 @@ let rec ty_app ts t =
 %%
 
 parse:
-_1 = decls _2 = EOF
+  _1 = decls _2 = EOF
     {                                        ( List.rev _1 )}
 
 parse_input_line:
-_1 = goal_decl _2 = DOT
+  _1 = goal_decl _2 = DOT
     {                                        ( [mk_toplevel_decl _1] )}
 | _1 = EOF
     {                                        ( raise End_of_file )}
 
 goal_decl:
-_1 = goal
+  _1 = goal
     {                                        ( Query(_1) )}
 | _1 = directive
     {                                        ( _1 )}
@@ -215,13 +215,13 @@ _1 = goal
     {                                        ( _1 )}
 
 decls:
-_1 = decls _2 = decl _3 = DOT
+  _1 = decls _2 = decl _3 = DOT
     {                                        ( _2::_1 )}
 | 
     {                                        ( [] )}
 
 decl:
-_1 = sig_decl
+  _1 = sig_decl
     {                                        ( mk_decl _1)}
 | _1 = prog
     {                                        ( mk_decl (ClauseDecl(_1)))}
@@ -238,7 +238,7 @@ _1 = sig_decl
 					)}
 
 sig_decl:
-_1 = ID _2 = COLON _3 = kind
+  _1 = ID _2 = COLON _3 = kind
     {                                        ( KindDecl(_1,_3) )}
 | _1 = ID _2 = COLON _3 = ty
     {                                        ( SymDecl(_1,_3) )}
@@ -253,13 +253,13 @@ _1 = ID _2 = COLON _3 = kind
                                           TypeDefn(_2,List.rev rvs,_5) )}
 
 vars:
-
+  
     {                                        ( [] )}
 | _1 = vars _2 = ID
     {                                        ( Var.mkvar' _2::_1 )}
 
 kind:
-_1 = TYPE
+  _1 = TYPE
     {                                        ( TypeK )}
 | _1 = NAME_TYPE
     {                                        ( NameK )}
@@ -267,7 +267,7 @@ _1 = TYPE
     {                                        ( ArrowK(_1,_3) )}
 
 directive:
-_1 = USE _2 = LITERAL
+  _1 = USE _2 = LITERAL
     {                                        ( UseDirective(_2) )}
 | _1 = TRACE _2 = INT
     {                                        ( TraceDirective (_2) )}
@@ -281,7 +281,7 @@ _1 = USE _2 = LITERAL
     {                                 ( HelpDirective(None) )}
 
 infix_decl:
-_1 = INFIXN _2 = ID _3 = INT
+  _1 = INFIXN _2 = ID _3 = INT
     {                                        ( add_sym _2 _3 Non;
 			                  InfixDecl(Non,_2,_3) )}
 | _1 = INFIXL _2 = ID _3 = INT
@@ -292,19 +292,19 @@ _1 = INFIXN _2 = ID _3 = INT
 			                  InfixDecl(Right,_2,_3) )}
 
 prog:
-_1 = preterm
+  _1 = preterm
     {                                       ( _1 )}
 | _1 = dcg_rule
     {                                ( _1 )}
 
 dcg_rule:
-_1 = app_or_qid _2 = DCG_ARROW _3 = dcg_term
+  _1 = app_or_qid _2 = DCG_ARROW _3 = dcg_term
     {                                       ( translate_dcg _1 _3 )}
 | _1 = app_or_qid _2 = DCG_ARROW _3 = dcg_term _4 = SLASH _5 = constr
     {                                       ( Constr(translate_dcg _1 _3,_5) )}
 
 dcg_term:
-_1 = LBRACE _2 = preterm _3 = RBRACE
+  _1 = LBRACE _2 = preterm _3 = RBRACE
     {                                       ( Goal _2 )}
 | _1 = dcg_term _2 = COMMA _3 = dcg_term
     {                                ( Seq (_1,_3) )}
@@ -318,11 +318,11 @@ _1 = LBRACE _2 = preterm _3 = RBRACE
     {                                ( Literal _1 )}
 
 goal:
-_1 = preterm
+  _1 = preterm
     {                                       ( _1 )}
 
 quantifier:
-_1 = FORALL
+  _1 = FORALL
     {                                       ( QForall )}
 | _1 = EXISTS
     {                                       ( QExists )}
@@ -330,19 +330,19 @@ _1 = FORALL
     {                                       ( QNew )}
 
 qv:
-_1 = ID
+  _1 = ID
     {                                        ( (Var.mkvar' _1,UnderscoreTy) )}
 | _1 = ID _2 = COLON _3 = ty
     {                                        ( (Var.mkvar' _1,_3) )}
 
 qlist:
-_1 = qv
+  _1 = qv
     {                                        ( [_1] )}
 | _1 = qlist _2 = COMMA _3 = qv
     {                                        ( _3::_1 )}
 
 const:
-_1 = UNDERSCORE
+  _1 = UNDERSCORE
     {                                        ( Underscore )}
 | _1 = CUT
     {                                        ( Cut )}
@@ -360,13 +360,13 @@ _1 = UNDERSCORE
     {                                        ( CharC _1 )}
 
 qual_id:
-_1 = QUAL_ID
+  _1 = QUAL_ID
     {                                        ( _1 )}
 | _1 = ID
     {                                        ( Rel(Base(_1)) )}
 
 preterm0:
-_1 = LPAREN _2 = preterm _3 = RPAREN
+  _1 = LPAREN _2 = preterm _3 = RPAREN
     {                                        ( _2 )}
 | _1 = qual_id
     {                                        ( Atomic(_1,[]) )}
@@ -387,13 +387,13 @@ _1 = LPAREN _2 = preterm _3 = RPAREN
 						    Var.mkvar' _4,_6) )}
 
 constr:
-_1 = ID _2 = HASH _3 = ID
+  _1 = ID _2 = HASH _3 = ID
     {                                        ( [(Var.mkvar' _1,Var.mkvar' _3)] )}
 | _1 = constr _2 = COMMA _3 = ID _4 = HASH _5 = ID
     {                                        ( (Var.mkvar' _3,Var.mkvar' _5)::_1 )}
 
 preterm:
-_1 = quantifier _2 = qlist _3 = DOT _4 = preterm
+  _1 = quantifier _2 = qlist _3 = DOT _4 = preterm
     {                                        ( do_quantify _1 (List.rev _2) _4 )}
 | _1 = ID _2 = BACKSLASH _3 = preterm
     {                                        ( Abs (Var.mkvar' _1,_3) )}
@@ -432,7 +432,7 @@ _1 = quantifier _2 = qlist _3 = DOT _4 = preterm
     {                                        (_1)}
 
 preterm_brack:
-_1 = ID _2 = BACKSLASH _3 = preterm_brack
+  _1 = ID _2 = BACKSLASH _3 = preterm_brack
     {                                        ( Abs (Var.mkvar' _1,_3))}
 | _1 = preterm_brack _2 = CONS _3 = preterm_brack
     {                                        ( Cons(_1,_3) )}
@@ -443,13 +443,13 @@ _1 = ID _2 = BACKSLASH _3 = preterm_brack
     {                                        ( _1 )}
 
 preterms_brack:
-_1 = preterm_brack
+  _1 = preterm_brack
     {                                        ( [_1] )}
 | _1 = preterms_brack _2 = COMMA _3 = preterm_brack
     {                                        ( _3::_1 )}
 
 infixl_preterm:
-_1 = preterm _2 = INFIXL1 _3 = preterm
+  _1 = preterm _2 = INFIXL1 _3 = preterm
     {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
 | _1 = preterm _2 = INFIXL2 _3 = preterm
     {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
@@ -469,7 +469,7 @@ _1 = preterm _2 = INFIXL1 _3 = preterm
     {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
 
 infixr_preterm:
-_1 = preterm _2 = INFIXR1 _3 = preterm
+  _1 = preterm _2 = INFIXR1 _3 = preterm
     {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
 | _1 = preterm _2 = INFIXR2 _3 = preterm
     {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
@@ -489,7 +489,7 @@ _1 = preterm _2 = INFIXR1 _3 = preterm
     {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
 
 infixn_preterm:
-_1 = preterm _2 = INFIXN1 _3 = preterm
+  _1 = preterm _2 = INFIXN1 _3 = preterm
     {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
 | _1 = preterm _2 = INFIXN2 _3 = preterm
     {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
@@ -509,28 +509,28 @@ _1 = preterm _2 = INFIXN1 _3 = preterm
     {                                        ( Atomic(Rel(Base _2),[_1;_3]) )}
 
 app:
-_1 = qual_id _2 = preterm0
+  _1 = qual_id _2 = preterm0
     {                                        ( (_1,[_2]) )}
 | _1 = app _2 = preterm0
     {                                        ( let (h,tl) = _1 in 
                                           (h,_2::tl) )}
 
 app_or_qid:
-_1 = app
+  _1 = app
     {                                        ( let (hd,tl) = _1 in 
 	                                  (hd,List.rev tl) )}
 | _1 = qual_id
     {                                        ( (_1,[]) )}
 
 tyapp:
-_1 = qual_id _2 = ty0
+  _1 = qual_id _2 = ty0
     {                                        ( (_1,[_2]) )}
 | _1 = tyapp _2 = ty0
     {                                        ( let (ds,ss) = _1 in 
                                           (ds,_2::ss) )}
 
 ty:
-_1 = ty _2 = ARROW _3 = ty
+  _1 = ty _2 = ARROW _3 = ty
     {                                        ( ArrowTy(_1,_3) )}
 | _1 = tyapp
     {                                        ( let ds,ss = _1 in 
@@ -541,13 +541,13 @@ _1 = ty _2 = ARROW _3 = ty
     {                                        ( _1 )}
 
 comma_tys:
-_1 = ty
+  _1 = ty
     {                                        ( _1 )}
 | _1 = ty _2 = COMMA _3 = comma_tys
     {                                        ( PairTy(_1,_3) )}
 
 ty0:
-_1 = LPAREN _2 = comma_tys _3 = RPAREN
+  _1 = LPAREN _2 = comma_tys _3 = RPAREN
     {                                        ( _2 )}
 | _1 = UNDERSCORE
     {                                        ( UnderscoreTy )}
@@ -559,7 +559,7 @@ _1 = LPAREN _2 = comma_tys _3 = RPAREN
     {                                        ( UnitTy )}
 
 ty0s:
-_1 = ty0s _2 = ty0
+  _1 = ty0s _2 = ty0
     {                                        ( _2 :: _1 )}
 | 
     {                                        ( [] )}

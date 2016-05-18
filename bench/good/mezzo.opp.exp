@@ -113,22 +113,22 @@ open ParserUtils
 %%
 
 existential_quantifiers:
-_1 = LBRACE bs = right_flexible_list_COMMA_type_binding_ _3 = RBRACE
+  _1 = LBRACE bs = right_flexible_list_COMMA_type_binding_ _3 = RBRACE
     {    ( bs )}
 
 atomic_type_binding:
-x = variable
+  x = variable
     {let _endpos = _endpos_x_ in
     ( x, KType, (_startpos_x_, _endpos) )}
 | _1 = LPAREN b = type_binding _3 = RPAREN
     {    ( b )}
 
 atomic_type_binding_with_variance:
-v = variance b = atomic_type_binding
+  v = variance b = atomic_type_binding
     {    ( v, b )}
 
 atomic_kind:
-_1 = LPAREN kind0 = atomic_kind _3 = RPAREN
+  _1 = LPAREN kind0 = atomic_kind _3 = RPAREN
     {let kind =
   let kind = kind0 in
       ( kind )
@@ -142,7 +142,7 @@ in
     {    ( KPerm )}
 
 generic_datacon_application_right_flexible_list_SEMI_data_field_pattern__:
-d00 = maybe_qualified_datacon_
+  d00 = maybe_qualified_datacon_
     {let x =
   let d0 = d00 in
   let x =
@@ -167,7 +167,7 @@ in
     ( x )}
 
 generic_datacon_application_right_flexible_list_SEMI_data_field_expression__:
-d00 = maybe_qualified_datacon_
+  d00 = maybe_qualified_datacon_
     {let x =
   let d0 = d00 in
   let x =
@@ -192,7 +192,7 @@ in
     ( x )}
 
 generic_datacon_application_data_type_def_branch_content_:
-d00 = maybe_qualified_datacon_
+  d00 = maybe_qualified_datacon_
     {let x =
   let d0 = d00 in
   let x =
@@ -217,7 +217,7 @@ in
     ( x )}
 
 data_field_def:
-fs = separated_nonempty_list_COMMA_variable_ _2 = COLON x00 = raw_normal_type
+  fs = separated_nonempty_list_COMMA_variable_ _2 = COLON x00 = raw_normal_type
     {let ty =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -257,7 +257,7 @@ in
     {    ( [ `FieldValue (f, TySingleton (TyVar (Unqualified f))) ] )}
 
 data_type_def_branch_content:
-fss0 = right_flexible_list_SEMI_data_field_def_
+  fss0 = right_flexible_list_SEMI_data_field_def_
     {let fs =
   let fss = fss0 in
       ( List.flatten fss )
@@ -284,11 +284,11 @@ in
     ( fs @ [ `FieldPermission perm ] )}
 
 fact:
-_1 = FACT cs = separated_nonempty_list_DBLARROW_mode_constraint_
+  _1 = FACT cs = separated_nonempty_list_DBLARROW_mode_constraint_
     {    ( match List.rev cs with goal :: hypotheses -> Fact (List.rev hypotheses, goal) | [] -> assert false )}
 
 concrete_data_type_def:
-x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
+  x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
     {let rhs =
   let xs0 = xs00 in
   let bs =
@@ -339,7 +339,7 @@ in
     ( { lhs = lhs KType; rhs = Concrete (flavor, rhs, a) } )}
 
 abstract_data_type_def:
-x0 = variable ys0 = list_atomic_type_binding_with_variance_ facts = list_fact_
+  x0 = variable ys0 = list_atomic_type_binding_with_variance_ facts = list_fact_
     {let k =
       ( KType )
 in
@@ -379,7 +379,7 @@ in
     ( { lhs = lhs k; rhs = Abstract facts } )}
 
 abbreviation_def:
-x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL x000 = raw_fat_type
+  x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL x000 = raw_fat_type
     {let t =
   let _endpos_x00_ = _endpos_x000_ in
   let _startpos_x00_ = _startpos_x000_ in
@@ -457,7 +457,7 @@ in
     ( { lhs = lhs k; rhs = Abbrev t } )}
 
 data_field_pattern:
-f = variable _2 = EQUAL x000 = raw_loose_pattern
+  f = variable _2 = EQUAL x000 = raw_loose_pattern
     {let p =
   let _endpos_x00_ = _endpos_x000_ in
   let _startpos_x00_ = _startpos_x000_ in
@@ -482,7 +482,7 @@ in
     {    ( f, PVar f )}
 
 parenthesized_tuple_components:
-x00 = raw_fragile_expression
+  x00 = raw_fragile_expression
     {let e =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -512,7 +512,7 @@ in
     ( e1 :: e2 )}
 
 option_preceded_ADOPTS_arbitrary_type__:
-
+  
     {    ( None )}
 | _10 = ADOPTS x0000 = raw_fat_type
     {let x =
@@ -544,13 +544,13 @@ in
     ( Some x )}
 
 nonempty_list_warn_error_:
-x = warn_error
+  x = warn_error
     {    ( [ x ] )}
 | x = warn_error xs = nonempty_list_warn_error_
     {    ( x :: xs )}
 
 variable:
-x = LIDENT
+  x = LIDENT
     {      ( Variable.register x )}
 | _1 = LPAREN x = OPPREFIX _3 = RPAREN
     {      ( Variable.register x )}
@@ -634,7 +634,7 @@ in
       ( Variable.register x )}
 
 maybe_qualified_variable_:
-x = variable
+  x = variable
     {    ( Unqualified x )}
 | name0 = LIDENT _2 = COLONCOLON x = variable
     {let m =
@@ -644,7 +644,7 @@ in
     ( Qualified (m, x) )}
 
 maybe_qualified_datacon_:
-datacon0 = UIDENT
+  datacon0 = UIDENT
     {let x =
   let datacon = datacon0 in
       ( Datacon.register datacon )
@@ -662,7 +662,7 @@ in
     ( Qualified (m, x) )}
 
 reverse_left_flexible_list_BAR_data_type_def_branch_:
-
+  
     {    ( [] )}
 | x00 = raw_normal_type_no_adopts
     {let x =
@@ -750,11 +750,11 @@ in
     ( x :: xs )}
 
 type_parameters:
-_1 = LBRACKET bs = right_flexible_list_COMMA_type_binding_ _3 = RBRACKET
+  _1 = LBRACKET bs = right_flexible_list_COMMA_type_binding_ _3 = RBRACKET
     {    ( bs )}
 
 variance:
-_1 = PLUS
+  _1 = PLUS
     {    ( Covariant )}
 | _1 = MINUS
     {    ( Contravariant )}
@@ -762,7 +762,7 @@ _1 = PLUS
     {    ( Invariant )}
 
 type_binding:
-b = atomic_type_binding
+  b = atomic_type_binding
     {    ( b )}
 | x = variable _2 = COLON kind0 = atomic_kind
     {let kind =
@@ -774,7 +774,7 @@ let _endpos = _endpos_kind_ in
     ( x, kind, (_startpos_x_, _endpos) )}
 
 raw_parenthetic_type:
-_1 = LPAREN _2 = RPAREN
+  _1 = LPAREN _2 = RPAREN
     {    ( TyTuple [] )}
 | _1 = LPAREN x000 = raw_fat_type _3 = RPAREN
     {let ty =
@@ -799,7 +799,7 @@ in
     ( ty )}
 
 raw_atomic_type:
-ty = raw_parenthetic_type
+  ty = raw_parenthetic_type
     {    ( ty )}
 | _1 = UNKNOWN
     {    ( TyUnknown )}
@@ -826,7 +826,7 @@ let _endpos = _endpos_b_ in
     ( mk_concrete (_startpos_b_, _endpos) b None )}
 
 raw_tight_type:
-ty = raw_atomic_type
+  ty = raw_atomic_type
     {    ( ty )}
 | _1 = EQUAL x0 = maybe_qualified_variable_
     {let x =
@@ -873,7 +873,7 @@ in
     ( ty )}
 
 raw_normal_type_no_adopts:
-ty0 = raw_tight_type
+  ty0 = raw_tight_type
     {let x =
   let ty = ty0 in
       ( ty )
@@ -949,7 +949,7 @@ in
     ( x )}
 
 raw_normal_type:
-ty0 = raw_tight_type
+  ty0 = raw_tight_type
     {let t =
   let ty = ty0 in
       ( ty )
@@ -1033,7 +1033,7 @@ let _endpos = _endpos_t_ in
     ( mk_concrete (_startpos_b_, _endpos) b (Some t) )}
 
 raw_loose_type:
-ty = raw_normal_type
+  ty = raw_normal_type
     {    ( ty )}
 | x0 = maybe_qualified_variable_ _2 = AT x00 = raw_normal_type
     {let ty =
@@ -1096,7 +1096,7 @@ in
     ( ty )}
 
 raw_consumes_type:
-ty = raw_loose_type
+  ty = raw_loose_type
     {    ( ty )}
 | _1 = CONSUMES x00 = raw_loose_type
     {let ty =
@@ -1115,7 +1115,7 @@ in
     ( TyConsumes ty )}
 
 raw_very_loose_type:
-ty = raw_consumes_type
+  ty = raw_consumes_type
     {    ( ty )}
 | x00 = raw_consumes_type _2 = STAR x01 = raw_very_loose_type
     {let ty2 =
@@ -1170,7 +1170,7 @@ in
     ( TyTuple tcs )}
 
 raw_fat_type:
-ty = raw_very_loose_type
+  ty = raw_very_loose_type
     {    ( ty )}
 | x00 = raw_fat_type _2 = BAR x01 = raw_very_loose_type
     {let ty2 =
@@ -1252,13 +1252,13 @@ in
     ( TyAnd (c, ty) )}
 
 mode:
-_1 = EXCLUSIVE
+  _1 = EXCLUSIVE
     {    ( Mode.ModeExclusive )}
 | _1 = DUPLICABLE
     {    ( Mode.ModeDuplicable )}
 
 raw_atomic_pattern:
-_1 = LPAREN _2 = RPAREN
+  _1 = LPAREN _2 = RPAREN
     {    ( PTuple [] )}
 | _1 = LPAREN x000 = raw_loose_pattern _3 = RPAREN
     {let p =
@@ -1293,7 +1293,7 @@ in
     {    ( PAny )}
 
 raw_normal_pattern:
-p = raw_atomic_pattern
+  p = raw_atomic_pattern
     {    ( p )}
 | x000 = raw_atomic_pattern _20 = COMMA x20 = separated_nonempty_list_COMMA_atomic_pattern_
     {let ps =
@@ -1335,7 +1335,7 @@ in
     ( PAs (p, v) )}
 
 raw_loose_pattern:
-p = raw_normal_pattern
+  p = raw_normal_pattern
     {    ( p )}
 | x00 = raw_loose_pattern _2 = COLON x01 = raw_normal_type
     {let t =
@@ -1367,7 +1367,7 @@ in
     ( PConstraint (p, t) )}
 
 raw_atomic_expression:
-o = OPPREFIX x00 = raw_atomic_expression
+  o = OPPREFIX x00 = raw_atomic_expression
     {let e =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -1429,19 +1429,19 @@ in
     {    ( match es with [ e ] -> e | _ -> ETuple es )}
 
 data_field_expression:
-f = variable _2 = EQUAL e = reasonable_expression
+  f = variable _2 = EQUAL e = reasonable_expression
     {    ( f, e )}
 | f = variable
     {    ( f, EVar (Unqualified f) )}
 
 explain:
-
+  
     {    ( false )}
 | _1 = EXPLAIN
     {    ( true )}
 
 raw_tight_expression:
-x00 = raw_tight_expression _2 = DOT f = variable
+  x00 = raw_tight_expression _2 = DOT f = variable
     {let e =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -1459,7 +1459,7 @@ in
     {    ( a )}
 
 raw_application_expression:
-x00 = raw_application_expression x01 = raw_tight_expression
+  x00 = raw_application_expression x01 = raw_tight_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
   let _startpos_x0_ = _startpos_x01_ in
@@ -1503,7 +1503,7 @@ in
     {    ( e )}
 
 type_application_component:
-x00 = raw_normal_type
+  x00 = raw_normal_type
     {let t =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -1535,7 +1535,7 @@ in
     ( Named (v, t) )}
 
 raw_algebraic_expression:
-x00 = raw_algebraic_expression o0 = OPINFIX0a x01 = raw_algebraic_expression
+  x00 = raw_algebraic_expression o0 = OPINFIX0a x01 = raw_algebraic_expression
     {let e2 =
   let _endpos_x0_ = _endpos_x01_ in
   let _startpos_x0_ = _startpos_x01_ in
@@ -1969,7 +1969,7 @@ in
     {    ( e )}
 
 raw_tuple_or_raw_reasonable_expression_:
-x000 = raw_algebraic_expression _20 = COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
+  x000 = raw_algebraic_expression _20 = COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
     {let es =
   let _endpos_x00_ = _endpos_x000_ in
   let _startpos_x00_ = _startpos_x000_ in
@@ -1995,7 +1995,7 @@ in
     {    ( e )}
 
 raw_tuple_or_raw_fragile_expression_:
-x000 = raw_algebraic_expression _20 = COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
+  x000 = raw_algebraic_expression _20 = COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
     {let es =
   let _endpos_x00_ = _endpos_x000_ in
   let _startpos_x00_ = _startpos_x000_ in
@@ -2021,7 +2021,7 @@ in
     {    ( e )}
 
 reasonable_expression:
-x0 = raw_reasonable_expression
+  x0 = raw_reasonable_expression
     {let e =
   let _endpos_x_ = _endpos_x0_ in
   let _startpos_x_ = _startpos_x0_ in
@@ -2031,7 +2031,7 @@ in
     ( e )}
 
 raw_reasonable_expression:
-_1 = IF b = explain x000 = raw_tuple_or_raw_fragile_expression_ _4 = THEN x00 = raw_tuple_or_raw_reasonable_expression_
+  _1 = IF b = explain x000 = raw_tuple_or_raw_fragile_expression_ _4 = THEN x00 = raw_tuple_or_raw_reasonable_expression_
     {let e2 =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -2383,7 +2383,7 @@ in
     {    ( e )}
 
 optional_preserving:
-_1 = PRESERVING x000 = raw_fat_type
+  _1 = PRESERVING x000 = raw_fat_type
     {let p =
   let _endpos_x00_ = _endpos_x000_ in
   let _startpos_x00_ = _startpos_x000_ in
@@ -2408,7 +2408,7 @@ in
     {    ( TyEmpty )}
 
 raw_fragile_expression:
-e1 = reasonable_expression _2 = SEMI x00 = raw_tuple_or_raw_fragile_expression_
+  e1 = reasonable_expression _2 = SEMI x00 = raw_tuple_or_raw_fragile_expression_
     {let e2 =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -2533,25 +2533,25 @@ in
     {    ( e )}
 
 rec_flag:
-_1 = REC
+  _1 = REC
     {    ( Recursive )}
 | 
     {    ( Nonrecursive )}
 
 loption_type_parameters_:
-
+  
     {    ( [] )}
 | x = type_parameters
     {    ( x )}
 
 loption_separated_nonempty_list_AND_definition__:
-
+  
     {    ( [] )}
 | x = separated_nonempty_list_AND_definition_
     {    ( x )}
 
 list_terminated_mode_constraint_DBLARROW__:
-
+  
     {    ( [] )}
 | m00 = mode x0000 = raw_atomic_type _20 = DBLARROW xs = list_terminated_mode_constraint_DBLARROW__
     {let x =
@@ -2585,19 +2585,19 @@ in
     ( x :: xs )}
 
 list_interface_item_:
-
+  
     {    ( [] )}
 | x = interface_item xs = list_interface_item_
     {    ( x :: xs )}
 
 list_implementation_item_:
-
+  
     {    ( [] )}
 | x = implementation_item xs = list_implementation_item_
     {    ( x :: xs )}
 
 direction:
-_1 = TO
+  _1 = TO
     {    ( To )}
 | _1 = DOWNTO
     {    ( Downto )}
@@ -2607,7 +2607,7 @@ _1 = TO
     {    ( Above )}
 
 definition:
-x00 = raw_normal_pattern _2 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
+  x00 = raw_normal_pattern _2 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
     {let e =
   let _endpos_x00_ = _endpos_x000_ in
   let _startpos_x00_ = _startpos_x000_ in
@@ -2731,7 +2731,7 @@ in
     ( PConstraint (p, t), ELocated (EBuiltin b, (_startpos__5_, _endpos__5_)) )}
 
 anonymous_function:
-type_parameters = loption_type_parameters_ cs = list_terminated_mode_constraint_DBLARROW__ x00 = raw_parenthetic_type _4 = COLON x01 = raw_normal_type _6 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
+  type_parameters = loption_type_parameters_ cs = list_terminated_mode_constraint_DBLARROW__ x00 = raw_parenthetic_type _4 = COLON x01 = raw_normal_type _6 = EQUAL x000 = raw_tuple_or_raw_fragile_expression_
     {let body =
   let _endpos_x00_ = _endpos_x000_ in
   let _startpos_x00_ = _startpos_x000_ in
@@ -2783,7 +2783,7 @@ let _startpos_formal_ = _startpos_x00_ in
       EFun (type_parameters, formal, result, body) )}
 
 definition_group:
-_1 = VAL flag0 = rec_flag xs00 = loption_separated_nonempty_list_AND_definition__
+  _1 = VAL flag0 = rec_flag xs00 = loption_separated_nonempty_list_AND_definition__
     {let flag_defs =
   let xs0 = xs00 in
   let flag = flag0 in
@@ -2800,7 +2800,7 @@ let _endpos = _endpos_flag_defs_ in
       ValueDefinitions (loc, flag, defs) )}
 
 value_declaration:
-_1 = VAL x0 = variable _3 = COLON x000 = raw_fat_type
+  _1 = VAL x0 = variable _3 = COLON x000 = raw_fat_type
     {let ty =
   let _endpos_x00_ = _endpos_x000_ in
   let _startpos_x00_ = _startpos_x000_ in
@@ -2830,7 +2830,7 @@ in
     ( ValueDeclaration (x, ty) )}
 
 implementation_item:
-_100 = DATA defs00 = separated_nonempty_list_AND_concrete_data_type_def_
+  _100 = DATA defs00 = separated_nonempty_list_AND_concrete_data_type_def_
     {let item =
   let _endpos_defs0_ = _endpos_defs00_ in
   let _startpos_defs0_ = _startpos_defs00_ in
@@ -2896,31 +2896,31 @@ in
     ( item )}
 
 implementation:
-items = list_implementation_item_ _2 = EOF
+  items = list_implementation_item_ _2 = EOF
     {    ( items )}
 
 warn_error_list:
-ws = nonempty_list_warn_error_ _2 = EOF
+  ws = nonempty_list_warn_error_ _2 = EOF
     {  ( ws )}
 
 warn_error:
-f = flag r = range
+  f = flag r = range
     {  ( f, r )}
 
 list_fact_:
-
+  
     {    ( [] )}
 | x = fact xs = list_fact_
     {    ( x :: xs )}
 
 list_atomic_type_binding_with_variance_:
-
+  
     {    ( [] )}
 | x = atomic_type_binding_with_variance xs = list_atomic_type_binding_with_variance_
     {    ( x :: xs )}
 
 separated_nonempty_list_DBLARROW_mode_constraint_:
-m0 = mode x000 = raw_atomic_type
+  m0 = mode x000 = raw_atomic_type
     {let x =
   let _endpos_x00_ = _endpos_x000_ in
   let _startpos_x00_ = _startpos_x000_ in
@@ -2966,19 +2966,19 @@ in
     ( x :: xs )}
 
 separated_nonempty_list_COMMA_variable_:
-x = variable
+  x = variable
     {    ( [ x ] )}
 | x = variable _2 = COMMA xs = separated_nonempty_list_COMMA_variable_
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_type_application_component_:
-x = type_application_component
+  x = type_application_component
     {    ( [ x ] )}
 | x = type_application_component _2 = COMMA xs = separated_nonempty_list_COMMA_type_application_component_
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_consumes_type_:
-x00 = raw_consumes_type
+  x00 = raw_consumes_type
     {let x =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -3010,7 +3010,7 @@ in
     ( x :: xs )}
 
 separated_nonempty_list_COMMA_atomic_pattern_:
-x00 = raw_atomic_pattern
+  x00 = raw_atomic_pattern
     {let x =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -3042,7 +3042,7 @@ in
     ( x :: xs )}
 
 separated_nonempty_list_COMMA_algebraic_expression_:
-x00 = raw_algebraic_expression
+  x00 = raw_algebraic_expression
     {let x =
   let _endpos_x0_ = _endpos_x00_ in
   let _startpos_x0_ = _startpos_x00_ in
@@ -3072,19 +3072,19 @@ in
     ( x :: xs )}
 
 separated_nonempty_list_AND_definition_:
-x = definition
+  x = definition
     {    ( [ x ] )}
 | x = definition _2 = AND xs = separated_nonempty_list_AND_definition_
     {    ( x :: xs )}
 
 separated_nonempty_list_AND_concrete_data_type_def_:
-x = concrete_data_type_def
+  x = concrete_data_type_def
     {    ( [ x ] )}
 | x = concrete_data_type_def _2 = AND xs = separated_nonempty_list_AND_concrete_data_type_def_
     {    ( x :: xs )}
 
 right_flexible_list_SEMI_data_field_pattern_:
-
+  
     {    ( [] )}
 | x = data_field_pattern
     {    ( [x] )}
@@ -3092,7 +3092,7 @@ right_flexible_list_SEMI_data_field_pattern_:
     {    ( x :: xs )}
 
 right_flexible_list_SEMI_data_field_expression_:
-
+  
     {    ( [] )}
 | x = data_field_expression
     {    ( [x] )}
@@ -3100,7 +3100,7 @@ right_flexible_list_SEMI_data_field_expression_:
     {    ( x :: xs )}
 
 right_flexible_list_SEMI_data_field_def_:
-
+  
     {    ( [] )}
 | x = data_field_def
     {    ( [x] )}
@@ -3108,7 +3108,7 @@ right_flexible_list_SEMI_data_field_def_:
     {    ( x :: xs )}
 
 right_flexible_list_COMMA_type_binding_:
-
+  
     {    ( [] )}
 | x = type_binding
     {    ( [x] )}
@@ -3116,7 +3116,7 @@ right_flexible_list_COMMA_type_binding_:
     {    ( x :: xs )}
 
 reverse_left_flexible_list_BAR_match_branch_:
-
+  
     {    ( [] )}
 | x001 = raw_normal_pattern _20 = ARROW x0000 = raw_tuple_or_raw_fragile_expression_
     {let x =
@@ -3206,7 +3206,7 @@ in
     ( x :: xs )}
 
 interface_item:
-_100 = DATA defs00 = separated_nonempty_list_AND_concrete_data_type_def_
+  _100 = DATA defs00 = separated_nonempty_list_AND_concrete_data_type_def_
     {let item =
   let _endpos_defs0_ = _endpos_defs00_ in
   let _startpos_defs0_ = _startpos_defs00_ in
@@ -3272,11 +3272,11 @@ in
     ( item )}
 
 interface:
-items = list_interface_item_ _2 = EOF
+  items = list_interface_item_ _2 = EOF
     {  ( items )}
 
 flag:
-_1 = AT
+  _1 = AT
     {  ( ClFlags.CError )}
 | _1 = MINUS
     {  ( ClFlags.CSilent )}
@@ -3284,7 +3284,7 @@ _1 = AT
     {  ( ClFlags.CWarning )}
 
 range:
-i = INT
+  i = INT
     {  ( i, i )}
 | i = INT _2 = DOT _3 = DOT j = INT
     {  ( i, j )}

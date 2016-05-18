@@ -298,7 +298,7 @@ let make_datatype fi vars prims (name:string) (args:(string * ty) list) (constrs
 %%
 
 toplevel:
-_1 = EOF
+  _1 = EOF
     {      ( fun vars prims -> ([], vars) )}
 | _1 = command _2 = SEMISEMI _3 = toplevel
     {      ( fun vars prims ->
@@ -318,7 +318,7 @@ _1 = EOF
       )}
 
 command:
-_1 = term
+  _1 = term
     {      ( fun vars prims ->
           let t = _1 vars prims in (Eval(tm_info t, t), vars) )}
 | _1 = Let
@@ -335,19 +335,19 @@ _1 = term
       )}
 
 AssumeWord:
-_1 = ASSUMENOT
+  _1 = ASSUMENOT
     {              ( false )}
 | _1 = ASSUME
     {              ( true )}
 
 Environment:
-
+  
     {                        ( fun vars prims -> empty_ctx )}
 | _1 = NonEmptyEnvironment
     {                        ( _1 )}
 
 NonEmptyEnvironment:
-_1 = Assumption
+  _1 = Assumption
     {               ( fun vars prims -> 
                    let var, bind = _1 vars prims in
                    add_binding empty_ctx var bind )}
@@ -360,7 +360,7 @@ _1 = Assumption
       )}
 
 Assumption:
-_1 = ID _2 = COLON _3 = ident_free_term _4 = MaybeEqTerm
+  _1 = ID _2 = COLON _3 = ident_free_term _4 = MaybeEqTerm
     {      ( fun vars prims ->
           _1.v, VarBind(_3 vars prims, _4 vars prims) )}
 | _1 = ID _2 = COLON _3 = ident_free_term _4 = DOT _5 = term _6 = MaybeEqTerm
@@ -375,13 +375,13 @@ _1 = ID _2 = COLON _3 = ident_free_term _4 = MaybeEqTerm
             _6 vars prims) )}
 
 MaybeEqTerm:
-
+  
     {                   ( fun vars prims -> None )}
 | _1 = EQEQ _2 = term
     {                   ( fun vars prims -> Some (_2 vars prims) )}
 
 Let:
-_1 = LET _2 = ID _3 = ParamSeq _4 = MaybeTy _5 = EQ _6 = term
+  _1 = LET _2 = ID _3 = ParamSeq _4 = MaybeTy _5 = EQ _6 = term
     {      ( fun vars prims ->
           let params = _3 vars prims in
           let vars' =  (List.rev_map fst params) @ vars in
@@ -396,7 +396,7 @@ _1 = LET _2 = ID _3 = ParamSeq _4 = MaybeTy _5 = EQ _6 = term
       )}
 
 Datatype:
-_1 = DATATYPE _2 = ID _3 = ParamSeq _4 = EQ _5 = ConstructorSeq
+  _1 = DATATYPE _2 = ID _3 = ParamSeq _4 = EQ _5 = ConstructorSeq
     {                                         ( 
     fun vars prims -> 
       let params = _3 vars prims in
@@ -405,7 +405,7 @@ _1 = DATATYPE _2 = ID _3 = ParamSeq _4 = EQ _5 = ConstructorSeq
  )}
 
 ConstructorSeq:
-_1 = Constructor %prec VBAR
+  _1 = Constructor %prec VBAR
     {                               ( fun vars prims -> (_1 vars prims)::[] )}
 | _1 = Constructor _2 = VBAR _3 = ConstructorSeq
     {                                     ( 
@@ -413,7 +413,7 @@ _1 = Constructor %prec VBAR
 	)}
 
 Constructor:
-_1 = ID _2 = OF _3 = ParamSeq
+  _1 = ID _2 = OF _3 = ParamSeq
     {      ( fun vars prims -> (_1.v, _3 vars prims) )}
 | _1 = ID
     {      ( fun vars prims ->
@@ -424,11 +424,11 @@ _1 = ID _2 = OF _3 = ParamSeq
           (_1.v, []) )}
 
 Type:
-_1 = term %prec ALWAYS_SHIFT
+  _1 = term %prec ALWAYS_SHIFT
     {                               ( _1 )}
 
 term:
-_1 = ID _2 = COLON _3 = ident_free_term _4 = DOT _5 = term
+  _1 = ID _2 = COLON _3 = ident_free_term _4 = DOT _5 = term
     {      ( fun vars prims ->
           make_refinement _1.i  vars _1.v 
             (_3 vars prims) 
@@ -446,7 +446,7 @@ _1 = ID _2 = COLON _3 = ident_free_term _4 = DOT _5 = term
     {                                  ( _1 )}
 
 ident_free_term:
-_1 = LPAREN _2 = term _3 = RPAREN
+  _1 = LPAREN _2 = term _3 = RPAREN
     {                       ( _2 )}
 | _1 = ID
     {       ( fun vars prims ->
@@ -593,7 +593,7 @@ _1 = LPAREN _2 = term _3 = RPAREN
              TmFun(fi, "_", ph3, _6 ("_"::vars) prims) ] )}
 
 ParamSeq:
-
+  
     {      ( fun vars prims -> [] )}
 | _1 = Param _2 = ParamSeq
     {      ( fun vars prims -> 
@@ -601,7 +601,7 @@ ParamSeq:
           (x,ty) :: (_2 (x::vars) prims) )}
 
 Param:
-_1 = ID
+  _1 = ID
     {      ( fun vars prims -> _1.v, tm_prim ~fi:_1.i "Dynamic" )}
 | _1 = LPAREN _2 = ID _3 = COLON _4 = term _5 = RPAREN
     {      ( fun vars prims -> _2.v, _4 vars prims )}
@@ -612,19 +612,19 @@ _1 = ID
           _2.v, make_refinement _2.i vars _2.v ty refine )}
 
 MaybeTy:
-_1 = COLON _2 = term
+  _1 = COLON _2 = term
     {                ( fun vars prims -> Some (_2 vars prims) )}
 | 
     {                ( fun vars prims -> None )}
 
 LabelColonTyList:
-_1 = NonEmptyLabelColonTyList
+  _1 = NonEmptyLabelColonTyList
     {                             ( _1 )}
 | 
     {                             ( fun vars prims -> [] )}
 
 NonEmptyLabelColonTyList:
-_1 = ID _2 = COLON _3 = Type
+  _1 = ID _2 = COLON _3 = Type
     {      ( fun vars prims ->
           [_1.v, _3 vars prims] )}
 | _1 = ID _2 = COLON _3 = Type _4 = COMMA _5 = NonEmptyLabelColonTyList

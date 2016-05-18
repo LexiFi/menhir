@@ -61,63 +61,63 @@ open Pp
 %%
 
 main:
-_1 = PROGRAM _2 = vars _3 = definitions _4 = body _5 = endtok
+  _1 = PROGRAM _2 = vars _3 = definitions _4 = body _5 = endtok
     {    ( {global_vars = _2; definitions = _3; main = _4 } )}
 
 endtok:
-_1 = SEMISEMI
+  _1 = SEMISEMI
     {           (())}
 | _1 = DOT
     {           (())}
 
 vars:
-_1 = VAR _2 = args2
+  _1 = VAR _2 = args2
     {                              ( _2 )}
 | 
     {                              ( [] )}
 
 args2:
-_1 = declvar _2 = SEMI _3 = args2
+  _1 = declvar _2 = SEMI _3 = args2
     {                     ( _1 @ _3 )}
 | 
     {                     ( [] )}
 
 idents:
-_1 = IDENT _2 = COMMA _3 = idents
+  _1 = IDENT _2 = COMMA _3 = idents
     {                     (_1 :: _3 )}
 | _1 = IDENT
     {                     ( [ _1 ] )}
 
 declvar:
-_1 = idents _2 = COLON _3 = type_expr
+  _1 = idents _2 = COLON _3 = type_expr
     {                                   ( List.map (fun x -> x, _3) _1 )}
 
 definitions:
-_1 = fonction _2 = SEMI _3 = definitions
+  _1 = fonction _2 = SEMI _3 = definitions
     {                                      ( _1 :: _3 )}
 | 
     {                                      ( [] )}
 
 fonction:
-_1 = FUNCTION _2 = IDENT _3 = LPAREN _4 = args _5 = RPAREN _6 = COLON _7 = type_expr _8 = SEMI _9 = vars _10 = body
+  _1 = FUNCTION _2 = IDENT _3 = LPAREN _4 = args _5 = RPAREN _6 = COLON _7 = type_expr _8 = SEMI _9 = vars _10 = body
     {    ( _2, { arguments = _4; result = Some _7; local_vars = _9; body = _10 } )}
 | _1 = PROCEDURE _2 = IDENT _3 = LPAREN _4 = args _5 = RPAREN _6 = SEMI _7 = vars _8 = body
     {    ( _2, { arguments = _4; result = None; local_vars = _7; body = _8 } )}
 
 args:
-_1 = declvar _2 = args1
+  _1 = declvar _2 = args1
     {                                      ( _1 @ _2 )}
 | 
     {                                      ( [] )}
 
 args1:
-_1 = SEMI _2 = declvar _3 = args1
+  _1 = SEMI _2 = declvar _3 = args1
     {                                      ( _2 @ _3 )}
 | 
     {                                      ( [] )}
 
 instruction:
-_1 = IDENT _2 = COLONEQUAL _3 = expression
+  _1 = IDENT _2 = COLONEQUAL _3 = expression
     {                                      ( Set (_1, _3) )}
 | _1 = BEGIN _2 = bloc _3 = END
     {                                      ( Sequence _2 )}
@@ -137,35 +137,35 @@ _1 = IDENT _2 = COLONEQUAL _3 = expression
     {                                      ( Seti (_1, _3, _6) )}
 
 body:
-_1 = BEGIN _2 = bloc _3 = END
+  _1 = BEGIN _2 = bloc _3 = END
     {                                      ( _2 )}
 
 bloc:
-_1 = instruction _2 = bloc1
+  _1 = instruction _2 = bloc1
     {                                      ( _1 :: _2 )}
 | 
     {                                      ( [] )}
 
 bloc1:
-_1 = SEMI _2 = instruction _3 = bloc1
+  _1 = SEMI _2 = instruction _3 = bloc1
     {                                      ( _2 :: _3 )}
 | 
     {                                      ( [] )}
 
 arguments:
-_1 = expression _2 = arguments1
+  _1 = expression _2 = arguments1
     {                                      ( _1 :: _2 )}
 | 
     {                                      ( [] )}
 
 arguments1:
-_1 = COMMA _2 = expression _3 = arguments1
+  _1 = COMMA _2 = expression _3 = arguments1
     {                                      ( _2 :: _3 )}
 | 
     {                                      ( [] )}
 
 expression:
-_1 = LPAREN _2 = expression _3 = RPAREN
+  _1 = LPAREN _2 = expression _3 = RPAREN
     {                                      ( _2 )}
 | _1 = INT
     {                                      ( Int _1 )}
@@ -201,7 +201,7 @@ _1 = LPAREN _2 = expression _3 = RPAREN
     {                                      ( Bin (Ne, _1, _3) )}
 
 array_expression:
-_1 = IDENT
+  _1 = IDENT
     {        ( Get _1 )}
 | _1 = array_expression _2 = LBRACKET _3 = expression _4 = RBRACKET
     {                                                ( Geti (_1, _3) )}
@@ -211,13 +211,13 @@ _1 = IDENT
     {                           ( _2 )}
 
 call_expression:
-_1 = IDENT _2 = LPAREN _3 = arguments _4 = RPAREN
+  _1 = IDENT _2 = LPAREN _3 = arguments _4 = RPAREN
     {                                      ( Function_call (_1, _3) )}
 | _1 = ALLOC _2 = LPAREN _3 = expression _4 = COLON _5 = type_expr _6 = RPAREN
     {                                      ( Alloc (_3,_5) )}
 
 type_expr:
-_1 = INTEGER
+  _1 = INTEGER
     {                                       ( Integer )}
 | _1 = BOOLEAN
     {                                       ( Boolean )}

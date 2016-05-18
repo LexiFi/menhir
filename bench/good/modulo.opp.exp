@@ -95,17 +95,17 @@ let infix id e1 e2 =
 %%
 
 program:
-_1 = declarations _2 = PROG _3 = expression _4 = EOF
+  _1 = declarations _2 = PROG _3 = expression _4 = EOF
     {                                                                ( _1, _3 )}
 
 declarations:
-
+  
     {                                                                ( [] )}
 | _1 = declaration _2 = declarations
     {                                                                ( _1 :: _2 )}
 
 declaration:
-_1 = FIELD _2 = LID _3 = formals _4 = EQUAL _5 = scheme
+  _1 = FIELD _2 = LID _3 = formals _4 = EQUAL _5 = scheme
     {                                                                ( DeclField (_2, false, _3, _5) )}
 | _1 = FIELD _2 = MUTABLE _3 = LID _4 = formals _5 = EQUAL _6 = scheme
     {                                                                ( DeclField (_3, true, _4, _6) )}
@@ -115,13 +115,13 @@ _1 = FIELD _2 = LID _3 = formals _4 = EQUAL _5 = scheme
     {                                                                ( DeclData (_2, _3, _6) )}
 
 formals:
-
+  
     {                                                                ( [] )}
 | _1 = formal _2 = formals
     {                                                                ( _1 :: _2 )}
 
 formal:
-_1 = LID
+  _1 = LID
     {                                                                ( "", _1, KindUnification.variable() )}
 | _1 = LID _2 = COLON _3 = LID
     {                                                                ( _1, _3, KindUnification.variable() )}
@@ -131,37 +131,37 @@ _1 = LID
     {                                                                ( _1, _4, _6 )}
 
 kind:
-_1 = STAR
+  _1 = STAR
     {                                                                ( KindUnification.star )}
 
 scheme:
-_1 = forall _2 = typ
+  _1 = forall _2 = typ
     {                                                                ( _1, _2 )}
 
 forall:
-
+  
     {                                                                ( [] )}
 | _1 = FORALL _2 = quantifiers _3 = DOT
     {                                                                ( _2 )}
 
 quantifiers:
-_1 = quantifier
+  _1 = quantifier
     {                                                                ( [ _1 ] )}
 | _1 = quantifiers _2 = quantifier
     {                                                                ( _2 :: _1 )}
 
 quantifier:
-_1 = LID
+  _1 = LID
     {                                                                ( _1, KindUnification.variable() )}
 | _1 = LPAREN _2 = LID _3 = COLONCOLON _4 = kind _5 = RPAREN
     {                                                                ( _2, _4 )}
 
 typ:
-_1 = type2
+  _1 = type2
     {                                                                ( _1 )}
 
 type2:
-_1 = BACKSLASH _2 = formal _3 = DOT _4 = type2
+  _1 = BACKSLASH _2 = formal _3 = DOT _4 = type2
     {                                                                ( let p, id, k = _2 in
                                                                   TypAbs (p, id, k, _4) )}
 | _1 = type1 _2 = ARROW _3 = type2
@@ -170,7 +170,7 @@ _1 = BACKSLASH _2 = formal _3 = DOT _4 = type2
     {                                                                ( _1 )}
 
 type1:
-_1 = type1 _2 = type0
+  _1 = type1 _2 = type0
     {                                                                ( TypApp (_1, "", _2) )}
 | _1 = type1 _2 = LID _3 = COLON _4 = type0
     {                                                                ( TypApp (_1, _2, _4) )}
@@ -178,7 +178,7 @@ _1 = type1 _2 = type0
     {                                                                ( _1 )}
 
 type0:
-_1 = LID
+  _1 = LID
     {                                                                ( TypVar _1 )}
 | _1 = INT
     {                                                                ( TypInteger )}
@@ -194,13 +194,13 @@ _1 = LID
     {                                                                ( TypTuple (_2 :: _4) )}
 
 types:
-_1 = typ
+  _1 = typ
     {                                                                ( [ _1 ] )}
 | _1 = typ _2 = COMMA _3 = types
     {                                                                ( _1 :: _3 )}
 
 row:
-
+  
     {                                                                ( TypRowEmpty )}
 | _1 = LID
     {                                                                ( TypVar _1 )}
@@ -210,13 +210,13 @@ row:
     {                                                                ( TypRowCons (_1, _3) )}
 
 row_entry:
-_1 = MINUS _2 = LID
+  _1 = MINUS _2 = LID
     {                                                                ( _2, None )}
 | _1 = PLUS _2 = LID _3 = actuals
     {                                                                ( _2, Some _3 )}
 
 actuals:
-
+  
     {                                                                ( [] )}
 | _1 = type0 _2 = actuals
     {                                                                ( ("", _1) :: _2 )}
@@ -224,27 +224,27 @@ actuals:
     {                                                                ( (_1, _3) :: _4 )}
 
 data_cases:
-_1 = data_case
+  _1 = data_case
     {                                                                ( [ _1 ] )}
 | _1 = data_cases _2 = BAR _3 = data_case
     {                                                                ( _3 :: _1 )}
 
 data_case:
-_1 = UID _2 = data_params
+  _1 = UID _2 = data_params
     {                                                                ( _1, _2 )}
 
 data_params:
-
+  
     {                                                                ( [] )}
 | _1 = type0 _2 = data_params
     {                                                                ( _1 :: _2 )}
 
 expression:
-_1 = expression400
+  _1 = expression400
     {                                                                ( _1 )}
 
 expression400:
-_1 = BACKSLASH _2 = pattern _3 = DOT _4 = expression400
+  _1 = BACKSLASH _2 = pattern _3 = DOT _4 = expression400
     {                                                                ( EAbs (_2, _4) )}
 | _1 = binding _2 = IN _3 = expression400
     {                                                                ( EBinding (_1, _3) )}
@@ -256,13 +256,13 @@ _1 = BACKSLASH _2 = pattern _3 = DOT _4 = expression400
     {                                                                ( _1 )}
 
 expression300:
-_1 = expression0 _2 = DOT _3 = LID _4 = LEFTARROW _5 = expression100
+  _1 = expression0 _2 = DOT _3 = LID _4 = LEFTARROW _5 = expression100
     {                                                                ( ERecordUpdate (_1, _3, _5) )}
 | _1 = expression200
     {                                                                ( _1 )}
 
 expression200:
-_1 = expression200 _2 = INFIXOP0 _3 = expression200
+  _1 = expression200 _2 = INFIXOP0 _3 = expression200
     {                                                                ( infix _2 _1 _3 )}
 | _1 = expression200 _2 = INFIXOP1 _3 = expression200
     {                                                                ( infix _2 _1 _3 )}
@@ -282,7 +282,7 @@ _1 = expression200 _2 = INFIXOP0 _3 = expression200
     {                                                                ( _1 )}
 
 expression100:
-_1 = expression100 _2 = expression0
+  _1 = expression100 _2 = expression0
     {                                                                ( EApp (_1, _2) )}
 | _1 = DISPLAY _2 = expression0
     {                                                                ( EDisplay _2 )}
@@ -290,7 +290,7 @@ _1 = expression100 _2 = expression0
     {                                                                ( _1 )}
 
 expression0:
-_1 = LID
+  _1 = LID
     {                                                                ( EVar _1 )}
 | _1 = UID
     {                                                                ( EData _1 )}
@@ -314,19 +314,19 @@ _1 = LID
     {                                                                ( EMatch (_2, List.rev _5) )}
 
 expressions:
-_1 = expression
+  _1 = expression
     {                                                                ( [ _1 ] )}
 | _1 = expression _2 = COMMA _3 = expressions
     {                                                                ( _1 :: _3 )}
 
 bindings:
-
+  
     {                                                                ( [] )}
 | _1 = binding _2 = bindings
     {                                                                ( _1 :: _2 )}
 
 binding:
-_1 = LET _2 = IMPORT _3 = record_fields _4 = FROM _5 = expression
+  _1 = LET _2 = IMPORT _3 = record_fields _4 = FROM _5 = expression
     {                                                                ( BindImport (Binds, _3, _5) )}
 | _1 = LET _2 = IMPORT _3 = EXPORT _4 = record_fields _5 = FROM _6 = expression
     {                                                                ( BindImport (BindsAndDefines, _4, _6) )}
@@ -338,27 +338,27 @@ _1 = LET _2 = IMPORT _3 = record_fields _4 = FROM _5 = expression
     {                                                                ( BindRecValue _3 )}
 
 type_definitions:
-_1 = type_definition
+  _1 = type_definition
     {                                                                ( [ _1 ] )}
 | _1 = type_definitions _2 = AND _3 = type_definition
     {                                                                ( _3 :: _1 )}
 
 value_definitions:
-_1 = value_definition
+  _1 = value_definition
     {                                                                ( [ _1 ] )}
 | _1 = value_definitions _2 = AND _3 = value_definition
     {                                                                ( _3 :: _1 )}
 
 value_definition:
-_1 = forall _2 = pattern0 _3 = equal_expression
+  _1 = forall _2 = pattern0 _3 = equal_expression
     {                                                                ( (_1, _2, _3) )}
 
 type_definition:
-_1 = LID _2 = formals _3 = EQUAL _4 = typ
+  _1 = LID _2 = formals _3 = EQUAL _4 = typ
     {                                                                ( (_1, abs_type _2 _4) )}
 
 equal_expression:
-_1 = EQUAL _2 = expression
+  _1 = EQUAL _2 = expression
     {                                                                ( _2 )}
 | _1 = COLONCOLON _2 = typ _3 = EQUAL _4 = expression
     {                                                                ( ETypeConstraint (_4, _2) )}
@@ -366,23 +366,23 @@ _1 = EQUAL _2 = expression
     {                                                                ( EAbs (_1, _2) )}
 
 record_fields:
-_1 = LID
+  _1 = LID
     {                                                                ( [ _1 ] )}
 | _1 = record_fields _2 = COMMA _3 = LID
     {                                                                ( _3 :: _1 )}
 
 pattern:
-_1 = pattern3
+  _1 = pattern3
     {                                                                ( _1 )}
 
 pattern3:
-_1 = pattern2
+  _1 = pattern2
     {                                                                ( _1 )}
 | _1 = pattern3 _2 = COLONCOLON _3 = typ
     {                                                                ( PTypeConstraint (_1, _3) )}
 
 pattern2:
-_1 = pattern1
+  _1 = pattern1
     {                                                                ( _1 )}
 | _1 = LID _2 = AS _3 = pattern2
     {                                                                ( PAlias (Binds, _1, _3) )}
@@ -390,13 +390,13 @@ _1 = pattern1
     {                                                                ( PAlias (BindsAndDefines, _2, _4) )}
 
 pattern1:
-_1 = pattern0
+  _1 = pattern0
     {                                                                ( _1 )}
 | _1 = UID _2 = pattern0s
     {                                                                ( PData (_1, List.rev _2) )}
 
 pattern0:
-_1 = LID
+  _1 = LID
     {                                                                ( PVar (Binds, _1) )}
 | _1 = EXPORT _2 = LID
     {                                                                ( PVar (BindsAndDefines, _2) )}
@@ -416,19 +416,19 @@ _1 = LID
     {                                                                ( PTuple (_2 :: _4) )}
 
 pattern0s:
-
+  
     {                                                                ( [] )}
 | _1 = pattern0s _2 = pattern0
     {                                                                ( _2 :: _1 )}
 
 patterns:
-_1 = pattern
+  _1 = pattern
     {                                                                ( [ _1 ] )}
 | _1 = pattern _2 = COMMA _3 = patterns
     {                                                                ( _1 :: _3 )}
 
 row_pattern:
-
+  
     {                                                                ( [] )}
 | _1 = VALUE _2 = LID _3 = EQUAL _4 = pattern0 _5 = row_pattern
     {                                                                ( (_2, _4) :: _5 )}
@@ -438,17 +438,17 @@ row_pattern:
     {                                                                ( (_3, PVar (BindsAndDefines, _3)) :: _4 )}
 
 cases:
-_1 = case
+  _1 = case
     {                                                                ( [ _1 ] )}
 | _1 = cases _2 = BAR _3 = case
     {                                                                ( _3 :: _1 )}
 
 case:
-_1 = pattern2 _2 = ARROW _3 = expression
+  _1 = pattern2 _2 = ARROW _3 = expression
     {                                                                ( _1, _3 )}
 
 opt_bar:
-
+  
     {                                                                ( () )}
 | _1 = BAR
     {                                                                ( () )}

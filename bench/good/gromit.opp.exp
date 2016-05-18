@@ -39,7 +39,7 @@ let failure index message =
 %%
 
 signature:
-_1 = SIGNATURE _2 = BEGIN _3 = lattice_list _4 = END _5 = PRIORITY _6 = constructor_list
+  _1 = SIGNATURE _2 = BEGIN _3 = lattice_list _4 = END _5 = PRIORITY _6 = constructor_list
     {      ( _3, _6 )}
 | _1 = SIGNATURE _2 = BEGIN _3 = lattice_list _4 = END _5 = error
     {      ( failure 5 "PRIORITY expected" )}
@@ -49,7 +49,7 @@ _1 = SIGNATURE _2 = BEGIN _3 = lattice_list _4 = END _5 = PRIORITY _6 = construc
     {      ( failure 1 "SIGNATURE expected" )}
 
 lattice_list:
-_1 = lattice
+  _1 = lattice
     {      ( [ _1 ] )}
 | _1 = lattice _2 = lattice_list
     {      ( _1 :: _2 )}
@@ -57,7 +57,7 @@ _1 = lattice
     {      ( failure 1 "END or LATTICE expected" )}
 
 lattice:
-_1 = LATTICE _2 = UIDENT _3 = BEGIN _4 = lattice_component_list _5 = END
+  _1 = LATTICE _2 = UIDENT _3 = BEGIN _4 = lattice_component_list _5 = END
     {      ( Lattice(_2, _4) )}
 | _1 = LATTICE _2 = UIDENT _3 = error
     {      ( failure 3 "BEGIN expected" )}
@@ -65,7 +65,7 @@ _1 = LATTICE _2 = UIDENT _3 = BEGIN _4 = lattice_component_list _5 = END
     {      ( failure 2 "lattice name (uppercase) expected" )}
 
 lattice_component_list:
-_1 = component
+  _1 = component
     {      ( [ _1 ] )}
 | _1 = component _2 = lattice_component_list
     {      ( _1 :: _2 )}
@@ -73,7 +73,7 @@ _1 = component
     {      ( failure 1 "CONSTRUCTOR, COVARIANT, CONTRAVARIANT, LET or END expected" )}
 
 component:
-_1 = CONSTRUCTOR _2 = UIDENT _3 = arity _4 = PRINTED _5 = label_or_token_list _6 = LBRACK _7 = QUOTE _8 = UIDENT _9 = RBRACK
+  _1 = CONSTRUCTOR _2 = UIDENT _3 = arity _4 = PRINTED _5 = label_or_token_list _6 = LBRACK _7 = QUOTE _8 = UIDENT _9 = RBRACK
     {      ( ComponentConstructor(_2, _3, (_5, _8)) )}
 | _1 = CONSTRUCTOR _2 = UIDENT _3 = arity _4 = PRINTED _5 = label_or_token_list _6 = LBRACK _7 = QUOTE _8 = UIDENT _9 = error
     {      ( failure 9 "']' expected" )}
@@ -111,7 +111,7 @@ _1 = CONSTRUCTOR _2 = UIDENT _3 = arity _4 = PRINTED _5 = label_or_token_list _6
     {      ( failure 2 "constructor name (uppercase) expected" )}
 
 arity:
-
+  
     {      ( [] )}
 | _1 = LBRACE _2 = label_comma_list _3 = RBRACE
     {      ( _2 )}
@@ -119,7 +119,7 @@ arity:
     {      ( failure 1 "PRINTED expected" )}
 
 label_comma_list:
-_1 = LIDENT
+  _1 = LIDENT
     {      ( [ _1 ] )}
 | _1 = LIDENT _2 = COMMA _3 = label_comma_list
     {      ( _1 :: _3 )}
@@ -129,23 +129,23 @@ _1 = LIDENT
     {      ( failure 1 "label name (lowercase) expected" )}
 
 variance:
-_1 = COVARIANT
+  _1 = COVARIANT
     {      ( Covariant )}
 | _1 = CONTRAVARIANT
     {      ( Contravariant )}
 
 label_or_token_list:
-_1 = first_label_or_token _2 = label_or_token_list0
+  _1 = first_label_or_token _2 = label_or_token_list0
     {      ( _1 :: _2 )}
 
 label_or_token_list0:
-
+  
     {      ( [] )}
 | _1 = next_label_or_token _2 = label_or_token_list0
     {      ( _1 :: _2 )}
 
 first_label_or_token:
-_1 = LIDENT
+  _1 = LIDENT
     {      ( Label (_1, false) )}
 | _1 = QUOTE _2 = UIDENT
     {      ( Token _2 )}
@@ -161,7 +161,7 @@ _1 = LIDENT
     {      ( failure 1 "label name (lowercase), '(' or token (quoted uppercase name) expected" )}
 
 next_label_or_token:
-_1 = LIDENT
+  _1 = LIDENT
     {      ( Label (_1, false) )}
 | _1 = QUOTE _2 = UIDENT
     {      ( Token _2 )}
@@ -177,7 +177,7 @@ _1 = LIDENT
     {      ( failure 1 "label name (lowercase), '(', token (quoted uppercase name) or '[' expected" )}
 
 constructor_list:
-
+  
     {      ( [] )}
 | _1 = UIDENT _2 = constructor_list
     {      ( _1 :: _2 )}

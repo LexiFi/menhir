@@ -286,54 +286,54 @@ let make_opt_expr opt_expr def_expr =
 %%
 
 prog:
-_1 = opt_package_stmt _2 = opt_import_list _3 = class_or_interface_defs _4 = TokEof
+  _1 = opt_package_stmt _2 = opt_import_list _3 = class_or_interface_defs _4 = TokEof
     {          ( {  prog_package = _1;
                prog_imports = _2;
                prog_defs    = _3 }
           )}
 
 opt_package_stmt:
-
+  
     {      ( None )}
 | _1 = TokPackage _2 = rev_dotted_name _3 = TokSemi
     {      ( Some (List.rev _2, union_pos _1 _3) )}
 
 opt_import_list:
-
+  
     {      ( [] )}
 | _1 = rev_import_list
     {      ( List.rev _1 )}
 
 rev_import_list:
-_1 = import_stmt
+  _1 = import_stmt
     {      ( [_1] )}
 | _1 = rev_import_list _2 = import_stmt
     {      ( _2 :: _1 )}
 
 import_stmt:
-_1 = TokImport _2 = rev_dotted_name _3 = TokSemi
+  _1 = TokImport _2 = rev_dotted_name _3 = TokSemi
     {      ( List.rev _2, union_pos _1 _3 )}
 | _1 = TokImport _2 = rev_dotted_name _3 = TokDot _4 = TokStar _5 = TokSemi
     {      ( List.rev (star_sym :: _2), union_pos _1 _5 )}
 
 rev_dotted_name:
-_1 = TokId
+  _1 = TokId
     {      ( [fst _1] )}
 | _1 = rev_dotted_name _2 = TokDot _3 = TokId
     {      ( (fst _3) :: _1 )}
 
 class_or_interface_defs:
-_1 = rev_class_or_interface_defs
+  _1 = rev_class_or_interface_defs
     {          ( List.rev _1 )}
 
 rev_class_or_interface_defs:
-
+  
     {          ( [] )}
 | _1 = rev_class_or_interface_defs _2 = class_or_interface_def
     {          ( _2 :: _1 )}
 
 class_or_interface_def:
-_1 = rev_type_mod_list _2 = class_or_interface_def_content
+  _1 = rev_type_mod_list _2 = class_or_interface_def_content
     {          ( (* Add type modifier information *)
             match _2 with
                TypeDef (_, v, ty, pos) ->
@@ -345,13 +345,13 @@ _1 = rev_type_mod_list _2 = class_or_interface_def_content
           )}
 
 class_or_interface_def_content:
-_1 = class_def
+  _1 = class_def
     {          ( _1 )}
 | _1 = interface_def
     {          ( _1 )}
 
 interface_def:
-_1 = TokInterface _2 = TokId _3 = opt_extends_list _4 = TokLeftBrace _5 = rev_interface_body _6 = TokRightBrace
+  _1 = TokInterface _2 = TokId _3 = opt_extends_list _4 = TokLeftBrace _5 = rev_interface_body _6 = TokRightBrace
     {          ( let pos = union_pos _1 _6 in
             let v, _ = _2 in
             let ty = TypeInterface (v, _3, List.rev _5, pos) in
@@ -359,52 +359,52 @@ _1 = TokInterface _2 = TokId _3 = opt_extends_list _4 = TokLeftBrace _5 = rev_in
           )}
 
 class_def:
-_1 = TokClass _2 = TokId _3 = opt_extends _4 = opt_implements _5 = TokLeftBrace _6 = class_body _7 = TokRightBrace
+  _1 = TokClass _2 = TokId _3 = opt_extends _4 = opt_implements _5 = TokLeftBrace _6 = class_body _7 = TokRightBrace
     {          ( let pos = union_pos _1 _7 in
             let v, _ = _2 in
                ClassDef ([], v, _3, _4, _6, pos)
           )}
 
 opt_extends_list:
-
+  
     {          ( [] )}
 | _1 = TokExtends _2 = var_list
     {          ( List.map fst _2 )}
 
 opt_extends:
-
+  
     {          ( object_sym )}
 | _1 = TokExtends _2 = TokId
     {          ( fst _2 )}
 
 opt_implements:
-
+  
     {          ( [] )}
 | _1 = TokImplements _2 = var_list
     {          ( List.map fst _2 )}
 
 var_list:
-_1 = rev_var_list
+  _1 = rev_var_list
     {          ( List.rev _1 )}
 
 rev_var_list:
-_1 = TokId
+  _1 = TokId
     {          ( [_1] )}
 | _1 = rev_var_list _2 = TokComma _3 = TokId
     {          ( _3 :: _1 )}
 
 rev_interface_body:
-
+  
     {          ( [] )}
 | _1 = rev_interface_body _2 = rev_var_decl_list _3 = TokSemi
     {          ( _2 @ _1 )}
 
 class_body:
-_1 = rev_member_defs
+  _1 = rev_member_defs
     {          ( List.rev _1 )}
 
 rev_member_defs:
-
+  
     {          ( [] )}
 | _1 = rev_member_defs _2 = rev_type_mod_list _3 = member_def
     {          ( let ty_mods = List.rev _2 in
@@ -422,7 +422,7 @@ rev_member_defs:
           )}
 
 member_def:
-_1 = var_defs
+  _1 = var_defs
     {          ( _1 )}
 | _1 = fun_def
     {          ( _1 )}
@@ -430,13 +430,13 @@ _1 = var_defs
     {          ( _1 )}
 
 rev_type_mod_list:
-
+  
     {          ( [] )}
 | _1 = rev_type_mod_list _2 = type_mod
     {          ( _2 :: _1 )}
 
 type_mod:
-_1 = TokPublic
+  _1 = TokPublic
     {          ( ModPublic _1 )}
 | _1 = TokProtected
     {          ( ModProtected _1 )}
@@ -463,13 +463,13 @@ _1 = TokPublic
                (StringError "'const' is reserved, but not a Java keyword"))) )}
 
 type_spec:
-_1 = id_brackets
+  _1 = id_brackets
     {          ( let id, nest, pos = _1 in
                make_type id nest pos
           )}
 
 id_brackets:
-_1 = TokId
+  _1 = TokId
     {          ( let id, pos = _1 in
                id, 0, pos
           )}
@@ -481,7 +481,7 @@ _1 = TokId
           )}
 
 brackets:
-_1 = TokDoubleBrack
+  _1 = TokDoubleBrack
     {          ( 1, _1 )}
 | _1 = brackets _2 = TokDoubleBrack
     {          ( let count, pos1 = _1 in
@@ -489,49 +489,49 @@ _1 = TokDoubleBrack
           )}
 
 opt_var_decl_list:
-
+  
     {          ( [] )}
 | _1 = var_decl_list
     {          ( _1 )}
 
 var_decl_list:
-_1 = rev_var_decl_list
+  _1 = rev_var_decl_list
     {          ( List.rev _1 )}
 
 rev_var_decl_list:
-_1 = var_decl
+  _1 = var_decl
     {          ( [_1] )}
 | _1 = rev_var_decl_list _2 = TokComma _3 = var_decl
     {          ( _3 :: _1 )}
 
 var_decl:
-_1 = type_spec _2 = direct_decl
+  _1 = type_spec _2 = direct_decl
     {          ( make_var_decl _1 _2 )}
 
 var_defs:
-_1 = type_spec _2 = init_def_list _3 = TokSemi
+  _1 = type_spec _2 = init_def_list _3 = TokSemi
     {          ( let pos = union_pos (pos_of_type _1) _3 in
                VarDefs ([], make_var_init_decls _1 _2, pos)
           )}
 
 init_def_list:
-_1 = rev_init_def_list
+  _1 = rev_init_def_list
     {          ( List.rev _1 )}
 
 rev_init_def_list:
-_1 = init_def
+  _1 = init_def
     {          ( [_1] )}
 | _1 = rev_init_def_list _2 = TokComma _3 = init_def
     {          ( _3 :: _1 )}
 
 init_def:
-_1 = direct_decl
+  _1 = direct_decl
     {          ( _1, None )}
 | _1 = direct_decl _2 = TokEq _3 = expr
     {          ( _1, Some _3 )}
 
 direct_decl:
-_1 = id_brackets
+  _1 = id_brackets
     {          ( let id, nest, pos = _1 in
                make_var_name id nest pos
           )}
@@ -539,7 +539,7 @@ _1 = id_brackets
     {          ( _1 )}
 
 fun_decl:
-_1 = id_brackets _2 = TokLeftParen _3 = opt_var_decl_list _4 = TokRightParen
+  _1 = id_brackets _2 = TokLeftParen _3 = opt_var_decl_list _4 = TokRightParen
     {          ( let id, nest, pos1 = _1 in
             let name = make_var_name id nest pos1 in
             let pos = union_pos pos1 _4 in
@@ -555,21 +555,21 @@ _1 = id_brackets _2 = TokLeftParen _3 = opt_var_decl_list _4 = TokRightParen
           )}
 
 fun_def:
-_1 = type_spec _2 = direct_decl _3 = TokLeftBrace _4 = stmt_list _5 = TokRightBrace
+  _1 = type_spec _2 = direct_decl _3 = TokLeftBrace _4 = stmt_list _5 = TokRightBrace
     {          ( make_fun_def [] _1 _2 _4 _5 )}
 
 const_def:
-_1 = direct_decl _2 = TokLeftBrace _3 = stmt_list _4 = TokRightBrace
+  _1 = direct_decl _2 = TokLeftBrace _3 = stmt_list _4 = TokRightBrace
     {          ( make_const_def [] _1 _3 _4 )}
 
 expr:
-_1 = ncast_expr
+  _1 = ncast_expr
     {          ( _1 )}
 | _1 = cast_expr
     {          ( _1 )}
 
 ncast_expr:
-_1 = TokInt
+  _1 = TokInt
     {          ( let i, pos = _1 in
                IntExpr (i, pos)
           )}
@@ -656,7 +656,7 @@ _1 = TokInt
           )}
 
 cast_expr:
-_1 = TokId
+  _1 = TokId
     {          ( let id, pos = _1 in
                VarExpr (id, pos)
           )}
@@ -693,7 +693,7 @@ _1 = TokId
           )}
 
 new_expr:
-_1 = new_array _2 = rev_brackets
+  _1 = new_array _2 = rev_brackets
     {          ( let id, pos1 = var_of_var_name _1 in
             let dimens, pos2 = _2 in
             let pos = union_pos pos1 pos2 in
@@ -710,7 +710,7 @@ _1 = new_array _2 = rev_brackets
           )}
 
 new_array:
-_1 = new_type
+  _1 = new_type
     {           ( _1 )}
 | _1 = TokId
     {           ( let id, pos = _1 in
@@ -718,7 +718,7 @@ _1 = new_type
            )}
 
 new_type:
-_1 = new_type _2 = TokDoubleBrack
+  _1 = new_type _2 = TokDoubleBrack
     {           ( let pos = union_pos (pos_of_var_name _1) _2 in
                VarNameArray (_1, pos)
            )}
@@ -742,11 +742,11 @@ _1 = new_type _2 = TokDoubleBrack
            )}
 
 new_const:
-_1 = TokId _2 = TokLeftParen _3 = TokRightParen
+  _1 = TokId _2 = TokLeftParen _3 = TokRightParen
     {           ( _1 )}
 
 rev_brackets:
-_1 = TokLeftBrack _2 = expr _3 = TokRightBrack %prec prec_subscript
+  _1 = TokLeftBrack _2 = expr _3 = TokRightBrack %prec prec_subscript
     {          ( let pos = union_pos _1 _3 in
                [_2], pos
           )}
@@ -757,19 +757,19 @@ _1 = TokLeftBrack _2 = expr _3 = TokRightBrack %prec prec_subscript
           )}
 
 opt_label:
-
+  
     {         ( None )}
 | _1 = TokId
     {         ( Some (fst _1) )}
 
 opt_expr:
-
+  
     {          ( None )}
 | _1 = expr
     {          ( Some _1 )}
 
 stmt:
-_1 = TokSemi
+  _1 = TokSemi
     {          ( SeqExpr ([], _1) )}
 | _1 = expr _2 = TokSemi
     {          ( _1 )}
@@ -832,7 +832,7 @@ _1 = TokSemi
           )}
 
 rev_catches:
-
+  
     {          ( [] )}
 | _1 = rev_catches _2 = TokCatch _3 = TokLeftParen _4 = TokId _5 = TokId _6 = TokRightParen _7 = TokLeftBrace _8 = stmt_list _9 = TokRightBrace %prec TokCatch
     {          ( let pos = union_pos _7 _9 in
@@ -840,7 +840,7 @@ rev_catches:
           )}
 
 opt_finally:
-
+  
     {          ( None )}
 | _1 = TokFinally _2 = TokLeftBrace _3 = stmt_list _4 = TokRightBrace %prec TokFinally
     {          ( let pos = union_pos _1 _4 in
@@ -848,29 +848,29 @@ opt_finally:
           )}
 
 stmt_list:
-_1 = rev_stmt_list
+  _1 = rev_stmt_list
     {          ( List.rev _1 )}
 
 rev_stmt_list:
-
+  
     {          ( [] )}
 | _1 = rev_stmt_list _2 = stmt
     {          ( _2 :: _1 )}
 
 arg_list:
-
+  
     {          ( [] )}
 | _1 = rev_arg_list
     {          ( List.rev _1 )}
 
 rev_arg_list:
-_1 = expr
+  _1 = expr
     {          ( [_1] )}
 | _1 = rev_arg_list _2 = TokComma _3 = expr
     {          ( _3 :: _1 )}
 
 binop:
-_1 = TokPlus
+  _1 = TokPlus
     {          ( PlusOp )}
 | _1 = TokMinus
     {          ( MinusOp )}

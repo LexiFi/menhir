@@ -46,11 +46,11 @@ open Types
 %%
 
 main:
-_1 = texpr _2 = Eof
+  _1 = texpr _2 = Eof
     {                            ( _1 )}
 
 texpr:
-_1 = IDENT
+  _1 = IDENT
     {                            ( TBase _1)}
 | _1 = LPAR _2 = texpr _3 = RPAR
     {                            ( _2 )}
@@ -62,13 +62,13 @@ _1 = IDENT
     {                                           ( Trec(List.rev _2) )}
 
 type_binding_list:
-_1 = type_binding
+  _1 = type_binding
     {                ([_1])}
 | _1 = type_binding_list _2 = AND _3 = type_binding
     {                                      (_3 :: _1)}
 
 type_binding:
-_1 = IDENT _2 = EQ _3 = texpr
+  _1 = IDENT _2 = EQ _3 = texpr
     {                       ((_1,_3))}
 
 %%

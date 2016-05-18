@@ -105,13 +105,13 @@ let hyp_counter = ref 0;;
 %%
 
 theory:
-_1 = EOF
+  _1 = EOF
     {                      ( [] )}
 | _1 = phrase _2 = theory
     {                      ( _1 :: _2 )}
 
 phrase:
-_1 = DEF _2 = IDENT _3 = OPEN _4 = ident_list _5 = CLOSE _6 = expr
+  _1 = DEF _2 = IDENT _3 = OPEN _4 = ident_list _5 = CLOSE _6 = expr
     {                                         ( Def (DefReal (_2, _4, _6)) )}
 | _1 = int_opt _2 = hyp_name _3 = expr
     {                                         ( Hyp (_2, _3, _1) )}
@@ -120,7 +120,7 @@ _1 = DEF _2 = IDENT _3 = OPEN _4 = ident_list _5 = CLOSE _6 = expr
                                            Hyp ("_Zgoal", enot _2, 0) )}
 
 expr:
-_1 = IDENT
+  _1 = IDENT
     {                                         ( evar _1 )}
 | _1 = OPEN _2 = IDENT _3 = expr_list _4 = CLOSE
     {                                         ( eapp (_2, _3) )}
@@ -152,49 +152,49 @@ _1 = IDENT
     {                                         ( eapp ("=", [_3; _4]) )}
 
 expr_list:
-_1 = expr _2 = expr_list
+  _1 = expr _2 = expr_list
     {                       ( _1 :: _2 )}
 | 
     {                       ( [] )}
 
 lambda:
-_1 = OPEN _2 = OPEN _3 = IDENT _4 = STRING _5 = CLOSE _6 = expr _7 = CLOSE
+  _1 = OPEN _2 = OPEN _3 = IDENT _4 = STRING _5 = CLOSE _6 = expr _7 = CLOSE
     {                                                 ( (evar _3, _4, _6) )}
 | _1 = OPEN _2 = OPEN _3 = IDENT _4 = CLOSE _5 = expr _6 = CLOSE
     {                                                 ( (evar _3, "", _5) )}
 
 ident_list:
-
+  
     {                      ( [] )}
 | _1 = IDENT _2 = ident_list
     {                      ( evar _1 :: _2 )}
 
 int_opt:
-
+  
     {                      ( 1 )}
 | _1 = INT
     {                      ( _1 )}
 
 hyp_name:
-
+  
     {                      ( incr hyp_counter; Printf.sprintf "_hyp%d" !hyp_counter )}
 | _1 = STRING
     {                      ( incr hyp_counter; _1 )}
 
 tpfile:
-_1 = EOF
+  _1 = EOF
     {                      ( [] )}
 | _1 = tpphrase _2 = tpfile
     {                      ( _1 :: _2 )}
 
 tpphrase:
-_1 = INCLUDE _2 = OPEN _3 = STRING _4 = CLOSE _5 = DOT
+  _1 = INCLUDE _2 = OPEN _3 = STRING _4 = CLOSE _5 = DOT
     {                                   ( Phrase.Include _3 )}
 | _1 = INPUT_FORMULA _2 = OPEN _3 = LIDENT _4 = COMMA _5 = LIDENT _6 = COMMA _7 = tpformula _8 = CLOSE _9 = DOT
     {                                   ( Phrase.Formula (_3, _5, _7) )}
 
 tpexpr:
-_1 = UIDENT
+  _1 = UIDENT
     {                                           ( evar (_1) )}
 | _1 = LIDENT _2 = tparguments
     {                                           ( eapp (_1, _2) )}
@@ -202,19 +202,19 @@ _1 = UIDENT
     {                                           ( eapp ("=", [_3; _5]) )}
 
 tparguments:
-_1 = OPEN _2 = tpexpr_list _3 = CLOSE
+  _1 = OPEN _2 = tpexpr_list _3 = CLOSE
     {                                   ( _2 )}
 | 
     {                                   ( [] )}
 
 tpexpr_list:
-_1 = tpexpr _2 = COMMA _3 = tpexpr_list
+  _1 = tpexpr _2 = COMMA _3 = tpexpr_list
     {                                   ( _1 :: _3 )}
 | _1 = tpexpr
     {                                   ( [_1] )}
 
 tpformula:
-_1 = tpatom
+  _1 = tpatom
     {                                   ( _1 )}
 | _1 = tpatom _2 = AND _3 = tpformula
     {                                   ( eand (_1, _3) )}
@@ -234,7 +234,7 @@ _1 = tpatom
     {                                   ( enot (eand (_1, _3)) )}
 
 tpatom:
-_1 = ALL _2 = LBRACKET _3 = tpvar_list _4 = RBRACKET _5 = COLON _6 = tpatom
+  _1 = ALL _2 = LBRACKET _3 = tpvar_list _4 = RBRACKET _5 = COLON _6 = tpatom
     {                                   ( mk_quant eall _3 _6 )}
 | _1 = EX _2 = LBRACKET _3 = tpvar_list _4 = RBRACKET _5 = COLON _6 = tpatom
     {                                   ( mk_quant eex _3 _6 )}
@@ -246,19 +246,19 @@ _1 = ALL _2 = LBRACKET _3 = tpvar_list _4 = RBRACKET _5 = COLON _6 = tpatom
     {                                   ( _1 )}
 
 tpvar_list:
-_1 = UIDENT _2 = COMMA _3 = tpvar_list
+  _1 = UIDENT _2 = COMMA _3 = tpvar_list
     {                                   ( evar _1 :: _3 )}
 | _1 = UIDENT
     {                                   ( [evar _1] )}
 
 coqfile:
-_1 = LOCAL _2 = IDENT _3 = COLON _4 = coqexpr _5 = COLONEQUAL _6 = TOBE _7 = coqexpr _8 = coq_hyp_def_list _9 = QED _10 = EOF
+  _1 = LOCAL _2 = IDENT _3 = COLON _4 = coqexpr _5 = COLONEQUAL _6 = TOBE _7 = coqexpr _8 = coq_hyp_def_list _9 = QED _10 = EOF
     {      ( (_2, Hyp ("_Zgoal", enot _4, 0) :: _8) )}
 | _1 = BEGINPROOF _2 = coqexpr _3 = coq_hyp_def_list _4 = ENDPROOF _5 = EOF
     {      ( (_1, Hyp ("_Zgoal", enot _2, 0) :: _3) )}
 
 coqexpr:
-_1 = OPEN _2 = coqexpr _3 = CLOSE
+  _1 = OPEN _2 = coqexpr _3 = CLOSE
     {      ( _2 )}
 | _1 = OPEN _2 = IDENT _3 = COLON _4 = IDENT _5 = CLOSE _6 = coqexpr %prec forall
     {      ( eall (evar _2, _4, _6) )}
@@ -292,39 +292,39 @@ _1 = OPEN _2 = coqexpr _3 = CLOSE
     {      ( Expr.substitute [(evar _2, _4)] _6 )}
 
 coqapplication:
-_1 = OPEN _2 = IDENT _3 = coqexpr_list1 _4 = CLOSE
+  _1 = OPEN _2 = IDENT _3 = coqexpr_list1 _4 = CLOSE
     {      ( (_2, _3) )}
 | _1 = OPEN _2 = coqapplication _3 = coqexpr_list1 _4 = CLOSE
     {      ( let (sym, args1) = _2 in (sym, args1 @ _3) )}
 
 coqexpr_list1:
-_1 = coqexpr
+  _1 = coqexpr
     {                         ( [_1] )}
 | _1 = coqexpr _2 = coqexpr_list1
     {                          ( _1 :: _2 )}
 
 id_or_coqexpr:
-_1 = IDENT
+  _1 = IDENT
     {           ( _1 )}
 | _1 = STRING
     {           ( _1 )}
 
 coqhyp:
-_1 = id_or_coqexpr _2 = COLON _3 = coqexpr
+  _1 = id_or_coqexpr _2 = COLON _3 = coqexpr
     {                                 ( Hyp (_1, _3, 1) )}
 
 coqhyp_list:
-
+  
     {                         ( [] )}
 | _1 = coqhyp _2 = coqhyp_list
     {                         ( _1 :: _2 )}
 
 coqdef:
-_1 = id_or_coqexpr _2 = COLONEQUAL _3 = coqparam_expr
+  _1 = id_or_coqexpr _2 = COLONEQUAL _3 = coqparam_expr
     {      ( let (params, expr) = _3 in Def (DefReal (_1, params, expr)) )}
 
 coqparam_expr:
-_1 = coqexpr
+  _1 = coqexpr
     {      ( ([], _1) )}
 | _1 = LBRACKET _2 = IDENT _3 = COLON _4 = IDENT _5 = RBRACKET _6 = coqparam_expr
     {      ( let (params, expr) = _6 in ((evar _2) :: params, expr) )}
@@ -332,13 +332,13 @@ _1 = coqexpr
     {      ( let (params, expr) = _8 in ((evar _3) :: params, expr) )}
 
 coqdef_list:
-
+  
     {                          ( [] )}
 | _1 = coqdef _2 = coqdef_list
     {                          ( _1 :: _2 )}
 
 coq_hyp_def_list:
-_1 = BY _2 = coqhyp_list _3 = coq_hyp_def_list
+  _1 = BY _2 = coqhyp_list _3 = coq_hyp_def_list
     {      ( _2 @ _3 )}
 | _1 = BYDEF _2 = coqdef_list _3 = coq_hyp_def_list
     {      ( _2 @ _3 )}

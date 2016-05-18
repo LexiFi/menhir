@@ -317,39 +317,39 @@ Warning: symbol recdFieldTypes is unreachable from any of the start symbol(s).
 %%
 
 inputFragment:
-_1 = file
+  _1 = file
     {   ( Inl _1 )}
 | _1 = decl _2 = decls _3 = EOF
     {   ( Inr (_1::_2) )}
 
 file:
-_1 = maybe_pragma_light _2 = moduleList
+  _1 = maybe_pragma_light _2 = moduleList
     {      ( _2 )}
 
 moduleList:
-_1 = modul _2 = moduleList
+  _1 = modul _2 = moduleList
     {      ( _1::_2 )}
 | _1 = EOF
     {      ( [] )}
 
 modul:
-_1 = MODULE _2 = qname _3 = decls _4 = endopt
+  _1 = MODULE _2 = qname _3 = decls _4 = endopt
     {        ( Module(_2, _3) )}
 
 endopt:
-_1 = END
+  _1 = END
     {         ()}
 | 
     {         ()}
 
 maybe_pragma_light:
-
+  
     {        ()}
 | _1 = PRAGMALIGHT _2 = STRING
     {        ()}
 
 pragma:
-_1 = PRAGMA_SET_OPTIONS _2 = STRING
+  _1 = PRAGMA_SET_OPTIONS _2 = STRING
     { ( 
 	   let s = string_of_bytes _2 in
 	   if s = "--no_fs_typ_app"
@@ -360,7 +360,7 @@ _1 = PRAGMA_SET_OPTIONS _2 = STRING
     { ( ResetOptions )}
 
 decls:
-
+  
     {      ( [] )}
 | _1 = SEMICOLON_SEMICOLON _2 = term
     {      ( [mk_decl (Main _2) (rhs2 parseState 1 2)] )}
@@ -368,11 +368,11 @@ decls:
     {      ( (_1::_2) )}
 
 decl:
-_1 = decl2
+  _1 = decl2
     {          ( mk_decl _1 (rhs parseState 1) )}
 
 decl2:
-_1 = OPEN _2 = qname
+  _1 = OPEN _2 = qname
     {      ( Open _2 )}
 | _1 = kind_abbrev
     {      ( _1 )}
@@ -398,17 +398,17 @@ _1 = OPEN _2 = qname
     {   ( Pragma _1 )}
 
 tycon:
-_1 = qualifiers _2 = TYPE _3 = tyconDefinition _4 = tyconDefinitions
+  _1 = qualifiers _2 = TYPE _3 = tyconDefinition _4 = tyconDefinitions
     {      ( Tycon (_1, _3::_4) )}
 | _1 = qualifiers _2 = EFFECT _3 = tyconDefinition
     {   ( Tycon(Effect::_1, [_3]) )}
 
 kind_abbrev:
-_1 = KIND _2 = name _3 = binders _4 = EQUALS _5 = kind
+  _1 = KIND _2 = name _3 = binders _4 = EQUALS _5 = kind
     {      ( KindAbbrev(_2, _3, _5) )}
 
 new_effect:
-_1 = name _2 = binders _3 = EQUALS _4 = simpleTerm
+  _1 = name _2 = binders _3 = EQUALS _4 = simpleTerm
     {   (
 		 RedefineEffect(_1, _2, _4)
 	  )}
@@ -418,19 +418,19 @@ _1 = name _2 = binders _3 = EQUALS _4 = simpleTerm
 	  )}
 
 effect_decl:
-_1 = ident _2 = EQUALS _3 = simpleTerm
+  _1 = ident _2 = EQUALS _3 = simpleTerm
     { (
 		mk_decl (Tycon ([], [TyconAbbrev(_1, [], None, _3)])) (rhs2 parseState 1 3)
 	)}
 
 more_effect_decls:
-
+  
     {                    ( []     )}
 | _1 = SEMICOLON _2 = effect_decl _3 = more_effect_decls
     {                                            ( _2::_3 )}
 
 sub_effect:
-_1 = qname _2 = SQUIGGLY_RARROW _3 = qname _4 = EQUALS _5 = simpleTerm
+  _1 = qname _2 = SQUIGGLY_RARROW _3 = qname _4 = EQUALS _5 = simpleTerm
     {      (
         { 
           msource=_1;
@@ -440,7 +440,7 @@ _1 = qname _2 = SQUIGGLY_RARROW _3 = qname _4 = EQUALS _5 = simpleTerm
       )}
 
 qualifier:
-_1 = LOGIC
+  _1 = LOGIC
     {                 ( Logic )}
 | _1 = ASSUME
     {                 ( Assumption )}
@@ -454,45 +454,45 @@ _1 = LOGIC
     {                 ( Private )}
 
 qualifiers:
-
+  
     {                         ( [] )}
 | _1 = qualifier _2 = qualifiers
     {                         ( _1::_2 )}
 
 assumeTag:
-_1 = ASSUME
+  _1 = ASSUME
     {           ( [Assumption] )}
 
 tyconDefinition:
-_1 = eitherName _2 = typars _3 = ascribeKindOpt _4 = tyconDefn
+  _1 = eitherName _2 = typars _3 = ascribeKindOpt _4 = tyconDefn
     {      ( _4 _1 _2 _3 )}
 
 tyconDefinitions:
-
+  
     {      ( [] )}
 | _1 = AND _2 = tyconDefinition _3 = tyconDefinitions
     {      ( _2::_3 )}
 
 maybeFocus:
-
+  
     {     ( false )}
 | _1 = SQUIGGLY_RARROW
     {                    ( true )}
 
 recopt:
-_1 = maybeFocus _2 = REC
+  _1 = maybeFocus _2 = REC
     {                        ( true, _1 )}
 | 
     {                        ( false, false )}
 
 letbindings:
-_1 = AND _2 = maybeFocus _3 = letbinding _4 = letbindings
+  _1 = AND _2 = maybeFocus _3 = letbinding _4 = letbindings
     {      ( (_2, _3)::_4 )}
 | 
     {      ( [] )}
 
 letbinding:
-_1 = pattern _2 = ascribeTypOpt _3 = EQUALS _4 = term
+  _1 = pattern _2 = ascribeTypOpt _3 = EQUALS _4 = term
     {      ( 
         match _2 with 
           | None -> (_1, _4)
@@ -500,11 +500,11 @@ _1 = pattern _2 = ascribeTypOpt _3 = EQUALS _4 = term
       )}
 
 pattern:
-_1 = tuplePattern
+  _1 = tuplePattern
     {                 ( _1 )}
 
 tuplePattern:
-_1 = listPattern _2 = patternListComma
+  _1 = listPattern _2 = patternListComma
     {      (
         match _2 with 
           | [] -> _1
@@ -512,13 +512,13 @@ _1 = listPattern _2 = patternListComma
       )}
 
 patternListComma:
-
+  
     {      ( [] )}
 | _1 = COMMA _2 = listPattern _3 = patternListComma
     {                                       ( _2::_3 )}
 
 listPattern:
-_1 = appPattern _2 = consPattern
+  _1 = appPattern _2 = consPattern
     {      ( 
         match _2 with 
           | None -> _1
@@ -526,7 +526,7 @@ _1 = appPattern _2 = consPattern
       )}
 
 consPattern:
-
+  
     {     ( None )}
 | _1 = COLON_COLON _2 = appPattern _3 = consPattern
     {      ( 
@@ -536,7 +536,7 @@ consPattern:
       )}
 
 appPattern:
-_1 = atomicPattern _2 = atomicPatterns
+  _1 = atomicPattern _2 = atomicPatterns
     {      ( 
         let hd = _1 in 
         let r = rhs parseState 1 in 
@@ -546,27 +546,27 @@ _1 = atomicPattern _2 = atomicPatterns
       )}
 
 atomicPatterns:
-
+  
     {       ( [] )}
 | _1 = atomicPattern _2 = atomicPatterns
     {                                 ( _1::_2 )}
 
 atomicPattern:
-_1 = atomicPattern2
+  _1 = atomicPattern2
     {                   ( mk_pattern _1 (rhs parseState 1) )}
 
 atomicPattern2:
-_1 = nonTvarPattern2
+  _1 = nonTvarPattern2
     {                    ( _1 )}
 | _1 = tvar
     {          ( PatTvar (_1, false) )}
 
 nonTvarPattern:
-_1 = nonTvarPattern2
+  _1 = nonTvarPattern2
     {                    ( mk_pattern _1 (rhs parseState 1) )}
 
 nonTvarPattern2:
-_1 = UNDERSCORE
+  _1 = UNDERSCORE
     {               ( PatWild )}
 | _1 = constant
     {             ( PatConst _1 )}
@@ -589,7 +589,7 @@ _1 = UNDERSCORE
       )}
 
 ascriptionOrPattern:
-_1 = nonTvarPattern _2 = COLON _3 = typ _4 = refineOpt
+  _1 = nonTvarPattern _2 = COLON _3 = typ _4 = refineOpt
     {      ( 
 		match _4 with
 		  | None -> PatAscribed(_1, _3) 
@@ -604,29 +604,29 @@ _1 = nonTvarPattern _2 = COLON _3 = typ _4 = refineOpt
     {                            ( _1.pat )}
 
 patternListSemiColon:
-
+  
     {      ( [] )}
 | _1 = appPattern _2 = patternListSemiColonRest
     {                                        ( _1::_2 )}
 
 patternListSemiColonRest:
-
+  
     {     ( [] )}
 | _1 = SEMICOLON _2 = appPattern _3 = patternListSemiColonRest
     {                                                  ( _2::_3 )}
 
 recordPattern:
-_1 = lid _2 = EQUALS _3 = pattern _4 = moreFieldPatterns
+  _1 = lid _2 = EQUALS _3 = pattern _4 = moreFieldPatterns
     {                                         ( (_1,_3)::_4 )}
 
 moreFieldPatterns:
-
+  
     {    ( [] )}
 | _1 = SEMICOLON _2 = lid _3 = EQUALS _4 = pattern _5 = moreFieldPatterns
     {                                                   ( (_2,_4)::_5 )}
 
 binder:
-_1 = ident
+  _1 = ident
     {          ( mk_binder (Variable(_1)) (rhs parseState 1) Type None  )}
 | _1 = tvar
     {          ( mk_binder (TVariable(_1)) (rhs parseState 1) Kind None  )}
@@ -634,17 +634,17 @@ _1 = ident
     {  ( mkRefinedBinder _3 _5 _6 (rhs2 parseState 1 7) _2 )}
 
 typars:
-_1 = tvarinsts
+  _1 = tvarinsts
     {                           ( _1 )}
 | _1 = binders
     {                           ( _1 )}
 
 tvarinsts:
-_1 = TYP_APP_LESS _2 = tvars _3 = TYP_APP_GREATER
+  _1 = TYP_APP_LESS _2 = tvars _3 = TYP_APP_GREATER
     {                                          ( List.map (fun tv -> mk_binder (TVariable(tv)) tv.idRange Kind None) _2 )}
 
 aqual_opt:
-_1 = HASH
+  _1 = HASH
     {           ( Some Implicit )}
 | _1 = EQUALS
     {           ( Some Equality )}
@@ -652,13 +652,13 @@ _1 = HASH
     {           ( None )}
 
 binders:
-_1 = binder _2 = binders
+  _1 = binder _2 = binders
     {                   ( _1::_2 )}
 | 
     {                   ( []     )}
 
 tyconDefn:
-
+  
     {                  ( (fun id binders kopt -> TyconAbstract(id, binders, kopt)) )}
 | _1 = EQUALS _2 = typ
     {                  ( (fun id binders kopt -> TyconAbbrev(id, binders, kopt, _2)) )}
@@ -668,7 +668,7 @@ tyconDefn:
     {                        ( (fun id binders kopt -> TyconVariant(id, binders, kopt, _2)) )}
 
 recordFields:
-_1 = SEMICOLON _2 = recordFieldDecl _3 = recordFields
+  _1 = SEMICOLON _2 = recordFieldDecl _3 = recordFields
     {      ( _2::_3 )}
 | _1 = SEMICOLON
     {              ( [] )}
@@ -676,105 +676,105 @@ _1 = SEMICOLON _2 = recordFieldDecl _3 = recordFields
     {      ( [] )}
 
 constructors:
-
+  
     {      ( [] )}
 | _1 = constructors _2 = constructorDecl
     {      ( _1@[_2] )}
 
 recordFieldDecl:
-_1 = ident _2 = COLON _3 = tmTuple
+  _1 = ident _2 = COLON _3 = tmTuple
     {      ( (_1, _3) )}
 
 constructorDecl:
-_1 = BAR _2 = name _3 = COLON _4 = typ
+  _1 = BAR _2 = name _3 = COLON _4 = typ
     {      ( (_2,Some _4,false) )}
 | _1 = BAR _2 = name _3 = of_typ
     {      ( (_2,_3,true) )}
 
 of_typ:
-
+  
     {           (  None )}
 | _1 = OF _2 = typ
     {           ( Some _2 )}
 
 eitherQname:
-_1 = eitherpath
+  _1 = eitherpath
     {               ( lid_of_ids _1 )}
 
 eitherpath:
-_1 = ident
+  _1 = ident
     {          ( [_1] )}
 | _1 = name _2 = maybeMorePath
     {                       ( _1::_2 )}
 
 maybeMorePath:
-
+  
     {       ( [] )}
 | _1 = DOT _2 = eitherpath
     {                    ( _2 )}
 
 lid:
-_1 = idpath
+  _1 = idpath
     {           ( lid_of_ids _1 )}
 
 qname:
-_1 = namepath
+  _1 = namepath
     {             ( lid_of_ids _1 )}
 
 eitherName:
-_1 = ident
+  _1 = ident
     {          ( _1 )}
 | _1 = name
     {          ( _1 )}
 
 ident:
-_1 = IDENT
+  _1 = IDENT
     {      ( mk_ident(_1, rhs parseState 1))}
 
 name:
-_1 = NAME
+  _1 = NAME
     {      ( mk_ident(_1, rhs parseState 1) )}
 
 tvars:
-_1 = TVAR
+  _1 = TVAR
     {                        ( [mk_ident(_1, rhs parseState 1)] )}
 | _1 = TVAR _2 = COMMA _3 = tvars
     {                        ( mk_ident(_1, rhs parseState 1) ::_3 )}
 
 tvar:
-_1 = TVAR
+  _1 = TVAR
     {      ( mk_ident(_1, rhs parseState 1) )}
 
 namepath:
-_1 = name
+  _1 = name
     {      ( [_1] )}
 | _1 = name _2 = DOT _3 = namepath
     {      ( _1::_3 )}
 
 idpath:
-_1 = ident
+  _1 = ident
     {      ( [_1] )}
 | _1 = name _2 = DOT _3 = idpath
     {      ( _1::_3 )}
 
 ascribeTypOpt:
-
+  
     {                 ( None )}
 | _1 = COLON _2 = product
     {                  ( Some _2 )}
 
 ascribeKindOpt:
-
+  
     {                  ( None )}
 | _1 = COLON _2 = kind
     {                ( Some _2 )}
 
 kind:
-_1 = product
+  _1 = product
     {            ( {_1 with level=Kind} )}
 
 typ:
-_1 = simpleTerm
+  _1 = simpleTerm
     {                ( _1 )}
 | _1 = FORALL _2 = binders _3 = DOT _4 = qpat _5 = noSeqTerm
     {      (
@@ -786,13 +786,13 @@ _1 = simpleTerm
       )}
 
 term:
-_1 = noSeqTerm
+  _1 = noSeqTerm
     {      ( _1 )}
 | _1 = noSeqTerm _2 = SEMICOLON _3 = term
     {      ( mk_term (Seq(_1, _3)) (rhs2 parseState 1 3) Expr )}
 
 noSeqTerm:
-_1 = typ
+  _1 = typ
     {         ( _1 )}
 | _1 = REQUIRES _2 = label_opt _3 = typ
     {     (
@@ -842,25 +842,25 @@ _1 = typ
       )}
 
 label_opt:
-
+  
     {                           ( None )}
 | _1 = DOLLAR _2 = STRING
     {                           ( Some (string_of_bytes _2) )}
 
 qpat:
-
+  
     {      ( [] )}
 | _1 = LBRACE_COLON_PATTERN _2 = appTerm _3 = morePats _4 = RBRACE
     {      ( _2::_3 )}
 
 morePats:
-
+  
     {     ( [] )}
 | _1 = SEMICOLON _2 = appTerm _3 = morePats
     {                                ( _2::_3 )}
 
 simpleTerm:
-_1 = tmIff
+  _1 = tmIff
     {          ( _1 )}
 | _1 = FUN _2 = atomicPattern _3 = atomicPatterns _4 = funArrow _5 = term
     {      (
@@ -868,25 +868,25 @@ _1 = tmIff
       )}
 
 patternBranches:
-
+  
     {      ( [] )}
 | _1 = patternBranches _2 = patternBranch
     {      ( _1@[_2] )}
 
 maybeBar:
-
+  
     {        (())}
 | _1 = BAR
     {        (())}
 
 maybeFocusArrow:
-_1 = RARROW
+  _1 = RARROW
     {                    ( false )}
 | _1 = SQUIGGLY_RARROW
     {                    ( true )}
 
 firstPatternBranch:
-_1 = maybeBar _2 = disjunctivePattern _3 = maybeWhen _4 = maybeFocusArrow _5 = term
+  _1 = maybeBar _2 = disjunctivePattern _3 = maybeWhen _4 = maybeFocusArrow _5 = term
     {      ( 
         let pat = match _2 with 
           | [p] -> p 
@@ -895,7 +895,7 @@ _1 = maybeBar _2 = disjunctivePattern _3 = maybeWhen _4 = maybeFocusArrow _5 = t
       )}
 
 patternBranch:
-_1 = BAR _2 = disjunctivePattern _3 = maybeWhen _4 = maybeFocusArrow _5 = term
+  _1 = BAR _2 = disjunctivePattern _3 = maybeWhen _4 = maybeFocusArrow _5 = term
     {      ( 
         let pat = match _2 with 
           | [p] -> p 
@@ -904,23 +904,23 @@ _1 = BAR _2 = disjunctivePattern _3 = maybeWhen _4 = maybeFocusArrow _5 = term
       )}
 
 disjunctivePattern:
-_1 = pattern
+  _1 = pattern
     {                ( [_1] )}
 | _1 = pattern _2 = BAR _3 = disjunctivePattern
     {                                   ( _1::_3 )}
 
 maybeWhen:
-
+  
     {                ( None )}
 | _1 = WHEN _2 = appTerm
     {                 ( Some _2 )}
 
 funArrow:
-_1 = RARROW
+  _1 = RARROW
     {           ( fun t r -> mk_term t r Un )}
 
 tmIff:
-_1 = tmImplies _2 = IFF _3 = tmIff
+  _1 = tmImplies _2 = IFF _3 = tmIff
     {      (
         mk_term (Op("<==>", [_1; _3])) (rhs2 parseState 1 3) Formula
       )}
@@ -928,7 +928,7 @@ _1 = tmImplies _2 = IFF _3 = tmIff
     {      ( _1 )}
 
 tmImplies:
-_1 = tmDisjunction _2 = IMPLIES _3 = tmImplies
+  _1 = tmDisjunction _2 = IMPLIES _3 = tmImplies
     {      (
         mk_term (Op("==>", [_1; _3])) (rhs2 parseState 1 3) Formula
       )}
@@ -936,19 +936,19 @@ _1 = tmDisjunction _2 = IMPLIES _3 = tmImplies
     {      ( _1 )}
 
 tmDisjunction:
-_1 = tmDisjunction _2 = DISJUNCTION _3 = tmConjunction
+  _1 = tmDisjunction _2 = DISJUNCTION _3 = tmConjunction
     {      ( mk_term (Op("\\/", [_1;_3])) (rhs2 parseState 1 3) Formula )}
 | _1 = tmConjunction
     {      ( _1 )}
 
 tmConjunction:
-_1 = tmConjunction _2 = CONJUNCTION _3 = tmTuple
+  _1 = tmConjunction _2 = CONJUNCTION _3 = tmTuple
     {      ( mk_term (Op("/\\", [_1;_3])) (rhs2 parseState 1 3) Formula )}
 | _1 = tmTuple
     {      ( _1 )}
 
 tmTuple:
-_1 = tupleN
+  _1 = tupleN
     {      (
         match _1 with 
           | [x] -> x
@@ -956,7 +956,7 @@ _1 = tupleN
       )}
 
 tmEq:
-_1 = tmEq _2 = COLON_EQUALS _3 = tmOr
+  _1 = tmEq _2 = COLON_EQUALS _3 = tmOr
     {      (
         mk_term (Op(":=", [_1; _3])) (rhs2 parseState 1 3) Un
       )}
@@ -964,37 +964,37 @@ _1 = tmEq _2 = COLON_EQUALS _3 = tmOr
     {      ( _1 )}
 
 tmOr:
-_1 = tmOr _2 = BAR_BAR _3 = tmAnd
+  _1 = tmOr _2 = BAR_BAR _3 = tmAnd
     {      ( mk_term (Op("||", [_1; _3])) (rhs2 parseState 1 3) Un)}
 | _1 = tmAnd
     {      ( _1 )}
 
 tmAnd:
-_1 = tmAnd _2 = AMP_AMP _3 = cmpTerm
+  _1 = tmAnd _2 = AMP_AMP _3 = cmpTerm
     {      ( mk_term (Op("&&", [_1;_3])) (rhs2 parseState 1 3) Un)}
 | _1 = cmpTerm
     {      ( _1 )}
 
 cmpTerm:
-_1 = cmpTerm _2 = comparisonOp _3 = tmCons
+  _1 = cmpTerm _2 = comparisonOp _3 = tmCons
     {      ( mk_term (Op(_2, [_1;_3])) (rhs2 parseState 1 3) Expr )}
 | _1 = tmCons
     {      ( _1 )}
 
 comparisonOp:
-_1 = CUSTOM_OP
+  _1 = CUSTOM_OP
     {              ( _1 )}
 | _1 = EQUALS
     {              ( "=" )}
 
 tmCons:
-_1 = product _2 = COLON_COLON _3 = tmCons
+  _1 = product _2 = COLON_COLON _3 = tmCons
     {      ( consTerm (rhs parseState 2) _1 _3 )}
 | _1 = product
     {      ( _1 )}
 
 product:
-_1 = productDomain _2 = RARROW _3 = product
+  _1 = productDomain _2 = RARROW _3 = product
     {  (
 		let aq, tm = _1 in 
 		let b = match extract_named_refinement tm with 
@@ -1007,13 +1007,13 @@ _1 = productDomain _2 = RARROW _3 = product
     {   ( _1 )}
 
 productDomain:
-_1 = aqual _2 = dtupleTerm
+  _1 = aqual _2 = dtupleTerm
     {                     ( (Some _1, _2) )}
 | _1 = dtupleTerm
     {                    ( (None, _1)    )}
 
 dtupleTerm:
-_1 = arithTerm _2 = AMP _3 = dtupleTerm
+  _1 = arithTerm _2 = AMP _3 = dtupleTerm
     {      ( 
 		let x, t, f = match extract_named_refinement _1 with 
 			| Some (x, t, f) -> x, t, f
@@ -1029,23 +1029,23 @@ _1 = arithTerm _2 = AMP _3 = dtupleTerm
     {  ( _1 )}
 
 arithTerm:
-_1 = plusOp
+  _1 = plusOp
     {   ( _1 )}
 
 plusOp:
-_1 = minusOp _2 = PLUS_OP _3 = plusOp
+  _1 = minusOp _2 = PLUS_OP _3 = plusOp
     {      ( mk_term (Op("+", [_1;_3])) (rhs2 parseState 1 3) Un)}
 | _1 = minusOp
     {   ( _1 )}
 
 minusOp:
-_1 = minusOp _2 = MINUS_OP _3 = starDivModTerm
+  _1 = minusOp _2 = MINUS_OP _3 = starDivModTerm
     {      ( mk_term (Op("-", [_1;_3])) (rhs2 parseState 1 3) Un)}
 | _1 = starDivModTerm
     {      ( _1 )}
 
 starDivModTerm:
-_1 = refinementTerm _2 = STAR _3 = starDivModTerm
+  _1 = refinementTerm _2 = STAR _3 = starDivModTerm
     {      ( 
         mk_term (Op("*", [_1;_3])) (rhs2 parseState 1 3) Un
       )}
@@ -1057,7 +1057,7 @@ _1 = refinementTerm _2 = STAR _3 = starDivModTerm
       )}
 
 refinementTerm:
-_1 = ident _2 = COLON _3 = appTerm
+  _1 = ident _2 = COLON _3 = appTerm
     {      (
         mk_term (NamedTyp(_1, _3)) (rhs2 parseState 1 3) Type 
       )}
@@ -1072,19 +1072,19 @@ _1 = ident _2 = COLON _3 = appTerm
     {              ( _1 )}
 
 aqual:
-_1 = HASH
+  _1 = HASH
     {              ( Implicit )}
 | _1 = EQUALS
     {              ( Equality )}
 
 refineOpt:
-
+  
     {                          ( None )}
 | _1 = LBRACE _2 = formula _3 = RBRACE
     {                          ( Some _2 )}
 
 unaryTerm:
-_1 = PLUS_OP _2 = atomicTerm
+  _1 = PLUS_OP _2 = atomicTerm
     {      ( mk_term (Op("+", [_2])) (rhs2 parseState 1 3) Expr )}
 | _1 = MINUS_OP _2 = atomicTerm
     {      ( mk_term (Op("-", [_2])) (rhs2 parseState 1 3) Expr )}
@@ -1094,17 +1094,17 @@ _1 = PLUS_OP _2 = atomicTerm
     {            ( _1 )}
 
 appTerm:
-_1 = atomicTerm _2 = hashAtomicTerms
+  _1 = atomicTerm _2 = hashAtomicTerms
     {      (
         mkApp _1 _2 (rhs2 parseState 1 2)
       )}
 
 formula:
-_1 = noSeqTerm
+  _1 = noSeqTerm
     {      ( {_1 with level=Formula} )}
 
 atomicTerm:
-_1 = UNDERSCORE
+  _1 = UNDERSCORE
     {               ( mk_term Wild (rhs parseState 1) Un )}
 | _1 = ASSERT
     {             ( mk_term (Var assert_lid) (rhs parseState 1) Expr )}
@@ -1130,19 +1130,19 @@ _1 = UNDERSCORE
     {      ( _2 )}
 
 maybeFieldProjections:
-
+  
     {       ( [] )}
 | _1 = maybeFieldProjections _2 = DOT _3 = ident
     {      ( _1@[_3] )}
 
 targs:
-_1 = atomicTerm
+  _1 = atomicTerm
     {               ( [_1] )}
 | _1 = atomicTerm _2 = COMMA _3 = targs
     {                           ( _1::_3 )}
 
 maybeInsts:
-
+  
     {       ( (fun x -> x) )}
 | _1 = TYP_APP_LESS _2 = targs _3 = TYP_APP_GREATER
     {      (
@@ -1151,7 +1151,7 @@ maybeInsts:
       )}
 
 projectionLHS:
-_1 = eitherQname _2 = maybeInsts
+  _1 = eitherQname _2 = maybeInsts
     {      ( 
         let t = if is_name _1 then Name _1 else Var _1 in
         _2 (mk_term t (rhs parseState 1) Un) 
@@ -1178,25 +1178,25 @@ _1 = eitherQname _2 = maybeInsts
 	  )}
 
 commaTermList:
-
+  
     {     ( [] )}
 | _1 = appTerm _2 = moreCommaTerms
     {      ( _1::_2 )}
 
 moreCommaTerms:
-
+  
     {      ( [] )}
 | _1 = COMMA _2 = appTerm _3 = moreCommaTerms
     {      ( _2::_3 )}
 
 semiColonTermList:
-
+  
     {     ( [] )}
 | _1 = noSeqTerm _2 = moreSemiColonTerms
     {      ( _1::_2 )}
 
 moreSemiColonTerms:
-
+  
     {      ( [] )}
 | _1 = SEMICOLON
     {              ( [] )}
@@ -1204,11 +1204,11 @@ moreSemiColonTerms:
     {      ( _2::_3 )}
 
 recordExp:
-_1 = appTerm _2 = recordExpRest
+  _1 = appTerm _2 = recordExpRest
     {      ( _2 _1 (lhs parseState) )}
 
 recordExpRest:
-_1 = WITH _2 = recordFieldAssignment _3 = recordFieldAssignments
+  _1 = WITH _2 = recordFieldAssignment _3 = recordFieldAssignments
     {      (
         (fun e r -> mk_term (Record(Some e, _2::_3)) (union_ranges r (rhs2 parseState 1 3)) Expr)
       )}
@@ -1221,11 +1221,11 @@ _1 = WITH _2 = recordFieldAssignment _3 = recordFieldAssignments
       )}
 
 recordFieldAssignment:
-_1 = lid _2 = EQUALS _3 = simpleTerm
+  _1 = lid _2 = EQUALS _3 = simpleTerm
     {      ( (_1,_3) )}
 
 recordFieldAssignments:
-
+  
     {              ( [] )}
 | _1 = SEMICOLON
     {              ( [] )}
@@ -1233,37 +1233,37 @@ recordFieldAssignments:
     {     ( _2::_3 )}
 
 maybeWithSort:
-
+  
     {        ( fun x r -> x )}
 | _1 = hasSort _2 = simpleTerm
     {        ( fun x r -> mk_term (Ascribed(x,{_2 with level=_1})) (union_ranges r (rhs2 parseState 1 2)) _1 )}
 
 hasSort:
-_1 = SUBTYPE
+  _1 = SUBTYPE
     {            ( Expr )}
 | _1 = SUBKIND
     {            ( Type )}
 
 maybeHash:
-
+  
     {         ( Nothing )}
 | _1 = HASH
     {         ( Hash )}
 
 hashAtomicTerms:
-
+  
     {           ( [] )}
 | _1 = maybeHash _2 = atomicTerm _3 = hashAtomicTerms
     {                                         ( (_2, _1)::_3 )}
 
 tupleN:
-_1 = tmEq
+  _1 = tmEq
     {                               ( [_1] )}
 | _1 = tmEq _2 = COMMA _3 = tupleN
     {                            ( _1::_3 )}
 
 constant:
-_1 = LPAREN_RPAREN
+  _1 = LPAREN_RPAREN
     {                  ( Const_unit )}
 | _1 = INT
     {  (

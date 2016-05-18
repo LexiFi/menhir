@@ -52,17 +52,17 @@ let n    = None		(* just to save space 	*)
 %%
 
 document:
-_1 = prolog _2 = topelement _3 = misc _4 = EOF
+  _1 = prolog _2 = topelement _3 = misc _4 = EOF
     {                                            ( XML(_1,_2,_3) )}
 
 topelement:
-_1 = element
+  _1 = element
     {                                            ( setContext DataContext;
                                               _1
                                             )}
 
 prolog:
-_1 = xmldecl _2 = misc
+  _1 = xmldecl _2 = misc
     {                                            ( Prolog(_1,None    ,_2   ) )}
 | _1 = xmldecl _2 = misc _3 = doctype _4 = misc
     {                                            ( Prolog(_1,Some(_3),_2@_4) )}
@@ -72,7 +72,7 @@ _1 = xmldecl _2 = misc
     {                                            ( Prolog(n ,None    ,_1   ) )}
 
 misc:
-
+  
     {                                            (     [] )}
 | _1 = misc _2 = pi
     {                                            ( _2::_1 )}
@@ -82,19 +82,19 @@ misc:
     {                                            (     _1 )}
 
 dtdopen:
-_1 = DTDOPEN
+  _1 = DTDOPEN
     {                                            ( setContext DeclContext)}
 
 dtdclose:
-_1 = DTDCLOSE
+  _1 = DTDCLOSE
     {                                            ( setContext DataContext )}
 
 doctype:
-_1 = dtdopen _2 = NAME _3 = ext _4 = markup _5 = dtdclose
+  _1 = dtdopen _2 = NAME _3 = ext _4 = markup _5 = dtdclose
     {                                            ( DTD(_2,_3) )}
 
 ext:
-
+  
     {                                            ( None )}
 | _1 = SYSTEM _2 = STRING
     {                                            ( Some (DTDsys(_2))    )}
@@ -102,13 +102,13 @@ ext:
     {                                            ( Some (DTDpub(_2,_3)) )}
 
 markup:
-
+  
     {                                            ( None )}
 | _1 = error
     {                                            ( error "DTDs are unsupported" )}
 
 element:
-_1 = emptyElemTag
+  _1 = emptyElemTag
     {                                            ( let (n,a) = _1 in
                                                 single n a  
                                             )}
@@ -122,45 +122,45 @@ _1 = emptyElemTag
                                             )}
 
 opn:
-_1 = OPEN
+  _1 = OPEN
     {                                            ( setContext ElementContext; _1 )}
 
 opnslash:
-_1 = OPENSLASH
+  _1 = OPENSLASH
     {                                            ( setContext ElementContext; _1 )}
 
 cls:
-_1 = CLOSE
+  _1 = CLOSE
     {                                            ( setContext DataContext  )}
 
 slashcls:
-_1 = SLASHCLOSE
+  _1 = SLASHCLOSE
     {                                            ( setContext DataContext  )}
 
 sTag:
-_1 = opn _2 = attributes _3 = cls
+  _1 = opn _2 = attributes _3 = cls
     {                                            ( (_1,_2) )}
 
 eTag:
-_1 = opnslash _2 = cls
+  _1 = opnslash _2 = cls
     {                                            (  _1     )}
 
 emptyElemTag:
-_1 = opn _2 = attributes _3 = slashcls
+  _1 = opn _2 = attributes _3 = slashcls
     {                                            ( (_1,_2) )}
 
 attributes:
-
+  
     {                                            (     []  )}
 | _1 = attributes _2 = attribute
     {                                            ( _2::_1  )}
 
 attribute:
-_1 = NAME _2 = EQ _3 = STRING
+  _1 = NAME _2 = EQ _3 = STRING
     {                                            ( (_1,_3) )}
 
 content:
-
+  
     {                                            ( empty                    	)}
 | _1 = content _2 = CHUNK
     {                                            ( _1 ^^ chunk _2     	)}
@@ -174,15 +174,15 @@ content:
     {                                            ( _1                        )}
 
 xmlopen:
-_1 = XMLOPEN
+  _1 = XMLOPEN
     {                                            ( setContext DeclContext)}
 
 xmlclose:
-_1 = XMLCLOSE
+  _1 = XMLCLOSE
     {                                            ( setContext DataContext )}
 
 xmlinfo:
-_1 = version _2 = encoding _3 = sddecl
+  _1 = version _2 = encoding _3 = sddecl
     {                                            ( (_1,_2,Some _3) )}
 | _1 = version
     {                                            ( (_1,n ,None   ) )}
@@ -192,7 +192,7 @@ _1 = version _2 = encoding _3 = sddecl
     {                                            ( (_1,n ,Some _2) )}
 
 xmldecl:
-_1 = xmlopen _2 = xmlinfo _3 = xmlclose
+  _1 = xmlopen _2 = xmlinfo _3 = xmlclose
     {                                            ( match _2 with    
                                               (vers,enc,sa) ->
                                               Some (XMLDecl(
@@ -203,15 +203,15 @@ _1 = xmlopen _2 = xmlinfo _3 = xmlclose
                                             )}
 
 version:
-_1 = VERSION _2 = EQ _3 = STRING
+  _1 = VERSION _2 = EQ _3 = STRING
     {                                            ( _3 )}
 
 encoding:
-_1 = ENCODING _2 = EQ _3 = STRING
+  _1 = ENCODING _2 = EQ _3 = STRING
     {                                            ( Some _3 )}
 
 sddecl:
-_1 = STANDALONE _2 = EQ _3 = STRING
+  _1 = STANDALONE _2 = EQ _3 = STRING
     {                                            ( match _3 with
                                             | "yes" -> true
                                             | "no"  -> false
@@ -219,17 +219,17 @@ _1 = STANDALONE _2 = EQ _3 = STRING
                                             )}
 
 piopen:
-_1 = PIOPEN
+  _1 = PIOPEN
     {                                            ( setContext PiContext; _1)}
 
 pi:
-_1 = piopen _2 = picontent _3 = PICLOSE
+  _1 = piopen _2 = picontent _3 = PICLOSE
     {                                            ( setContext DataContext;
                                                   (_1,List.rev _2)
                                             )}
 
 picontent:
-
+  
     {                                            ( []        )}
 | _1 = picontent _2 = WORD
     {                                            ( _2 :: _1  )}

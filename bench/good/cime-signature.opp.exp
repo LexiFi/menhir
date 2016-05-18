@@ -24,13 +24,13 @@
 %%
 
 signature:
-_1 = EOF
+  _1 = EOF
     {                            ( [] )}
 | _1 = decl _2 = SEMICOLON _3 = signature
     {                            ( _1::_3 )}
 
 decl:
-_1 = op_list _2 = COLON _3 = fix _4 = arity
+  _1 = op_list _2 = COLON _3 = fix _4 = arity
     {  ( let t,a = _4
     in
       if _3=INFIX & a<>2
@@ -39,7 +39,7 @@ _1 = op_list _2 = COLON _3 = fix _4 = arity
   )}
 
 fix:
-_1 = KW_PREFIX
+  _1 = KW_PREFIX
     {                ( PREFIX )}
 | _1 = KW_INFIX
     {                ( INFIX  )}
@@ -49,7 +49,7 @@ _1 = KW_PREFIX
     {                ( DEFAULT )}
 
 arity:
-_1 = KW_C
+  _1 = KW_C
     {               ( (C,2) )}
 | _1 = KW_AC
     {               ( (AC,2) )}
@@ -63,13 +63,13 @@ _1 = KW_C
     {               ( (FREE,int_of_string _1) )}
 
 op_list:
-_1 = ident
+  _1 = ident
     {                       ( [_1] )}
 | _1 = ident _2 = COMMA _3 = op_list
     {                       ( _1::_3 )}
 
 ident:
-_1 = IDENT
+  _1 = IDENT
     {        ( _1 )}
 | _1 = INT
     {        ( _1 )}

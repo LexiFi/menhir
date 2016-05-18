@@ -377,13 +377,13 @@
 %%
 
 file:
-_1 = translation_unit _2 = EOF
+  _1 = translation_unit _2 = EOF
     {                               ( _1 )}
 | _1 = EOF
     {              ( [] )}
 
 primary_expression:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {                     ( locate (CEvar _1) )}
 | _1 = CONSTANT
     {                   ( locate (CEconstant _1) )}
@@ -393,7 +393,7 @@ _1 = IDENTIFIER
     {                               ( _2 )}
 
 postfix_expression:
-_1 = primary_expression
+  _1 = primary_expression
     {            ( _1 )}
 | _1 = postfix_expression _2 = LSQUARE _3 = expression _4 = RSQUARE
     {     ( locate (CEarrget (_1, _3)) )}
@@ -411,13 +411,13 @@ _1 = primary_expression
     {     ( locate (CEincr (Upostfix_dec, _1)) )}
 
 argument_expression_list:
-_1 = assignment_expression
+  _1 = assignment_expression
     {                                ( [_1] )}
 | _1 = argument_expression_list _2 = COMMA _3 = assignment_expression
     {                                                               ( _1 @ [_3] )}
 
 unary_expression:
-_1 = postfix_expression
+  _1 = postfix_expression
     {                             ( _1 )}
 | _1 = INC_OP _2 = unary_expression
     {                                  ( locate (CEincr (Uprefix_inc, _2)) )}
@@ -431,7 +431,7 @@ _1 = postfix_expression
     {     ( let s,d = _3 in locate (CEsizeof (interp_type false s d)) )}
 
 unary_operator:
-_1 = AMP
+  _1 = AMP
     {              ( Uamp )}
 | _1 = STAR
     {               ( Ustar )}
@@ -445,13 +445,13 @@ _1 = AMP
     {              ( Unot )}
 
 cast_expression:
-_1 = unary_expression
+  _1 = unary_expression
     {                           ( _1 )}
 | _1 = LPAR _2 = type_name _3 = RPAR _4 = cast_expression
     {     ( let s,d = _2 in locate (CEcast (interp_type false s d, _4)) )}
 
 multiplicative_expression:
-_1 = cast_expression
+  _1 = cast_expression
     {            ( _1 )}
 | _1 = multiplicative_expression _2 = STAR _3 = cast_expression
     {     ( locate (CEbinary (_1, Bmul, _3)) )}
@@ -461,7 +461,7 @@ _1 = cast_expression
     {     ( locate (CEbinary (_1, Bmod, _3)) )}
 
 additive_expression:
-_1 = multiplicative_expression
+  _1 = multiplicative_expression
     {           ( _1 )}
 | _1 = additive_expression _2 = PLUS _3 = multiplicative_expression
     {     ( locate (CEbinary (_1, Badd, _3)) )}
@@ -469,7 +469,7 @@ _1 = multiplicative_expression
     {     ( locate (CEbinary (_1, Bsub, _3)) )}
 
 shift_expression:
-_1 = additive_expression
+  _1 = additive_expression
     {                              ( _1 )}
 | _1 = shift_expression _2 = LEFT_OP _3 = additive_expression
     {     ( locate (CEbinary (_1, Bshift_left, _3)) )}
@@ -477,7 +477,7 @@ _1 = additive_expression
     {     ( locate (CEbinary (_1, Bshift_right, _3)) )}
 
 relational_expression:
-_1 = shift_expression
+  _1 = shift_expression
     {            ( _1 )}
 | _1 = relational_expression _2 = LT _3 = shift_expression
     {     ( locate (CEbinary (_1, Blt, _3)) )}
@@ -489,7 +489,7 @@ _1 = shift_expression
     {     ( locate (CEbinary (_1, Bge, _3)) )}
 
 equality_expression:
-_1 = relational_expression
+  _1 = relational_expression
     {            ( _1 )}
 | _1 = equality_expression _2 = EQ_OP _3 = relational_expression
     {     ( locate (CEbinary (_1, Beq, _3)) )}
@@ -497,43 +497,43 @@ _1 = relational_expression
     {     ( locate (CEbinary (_1, Bneq, _3)) )}
 
 and_expression:
-_1 = equality_expression
+  _1 = equality_expression
     {            ( _1 )}
 | _1 = and_expression _2 = AMP _3 = equality_expression
     {     ( locate (CEbinary (_1, Bbw_and, _3)) )}
 
 exclusive_or_expression:
-_1 = and_expression
+  _1 = and_expression
     {            ( _1 )}
 | _1 = exclusive_or_expression _2 = HAT _3 = and_expression
     {     ( locate (CEbinary (_1, Bbw_xor, _3)) )}
 
 inclusive_or_expression:
-_1 = exclusive_or_expression
+  _1 = exclusive_or_expression
     {            ( _1 )}
 | _1 = inclusive_or_expression _2 = PIPE _3 = exclusive_or_expression
     {     ( locate (CEbinary (_1, Bbw_or, _3)) )}
 
 logical_and_expression:
-_1 = inclusive_or_expression
+  _1 = inclusive_or_expression
     {            ( _1 )}
 | _1 = logical_and_expression _2 = AND_OP _3 = inclusive_or_expression
     {     ( locate (CEbinary (_1, Band, _3)) )}
 
 logical_or_expression:
-_1 = logical_and_expression
+  _1 = logical_and_expression
     {            ( _1 )}
 | _1 = logical_or_expression _2 = OR_OP _3 = logical_and_expression
     {     ( locate (CEbinary (_1, Bor, _3)) )}
 
 conditional_expression:
-_1 = logical_or_expression
+  _1 = logical_or_expression
     {            ( _1 )}
 | _1 = logical_or_expression _2 = QUESTION _3 = expression _4 = COLON _5 = conditional_expression
     {     ( locate (CEcond (_1, _3, _5)) )}
 
 assignment_expression:
-_1 = conditional_expression
+  _1 = conditional_expression
     {            ( _1 )}
 | _1 = unary_expression _2 = assignment_operator _3 = assignment_expression
     {     ( locate (match _2 with
@@ -550,7 +550,7 @@ _1 = conditional_expression
 			| Aor -> CEassign_op (_1, Bbw_or, _3)) )}
 
 assignment_operator:
-_1 = EQUAL
+  _1 = EQUAL
     {                ( Aequal )}
 | _1 = MUL_ASSIGN
     {                     ( Amul )}
@@ -574,17 +574,17 @@ _1 = EQUAL
     {                    ( Aor )}
 
 expression:
-_1 = assignment_expression
+  _1 = assignment_expression
     {                                ( _1 )}
 | _1 = expression _2 = COMMA _3 = assignment_expression
     {                                                 ( locate (CEseq (_1, _3)) )}
 
 constant_expression:
-_1 = conditional_expression
+  _1 = conditional_expression
     {                                 ( _1 )}
 
 declaration:
-_1 = declaration_specifiers _2 = SEMICOLON
+  _1 = declaration_specifiers _2 = SEMICOLON
     {            ( type_declarations _1 )}
 | _1 = declaration_specifiers _2 = init_declarator_list _3 = attributes_opt _4 = SEMICOLON
     {     ( List.map locate (declaration _1 _2) )}
@@ -595,7 +595,7 @@ _1 = declaration_specifiers _2 = SEMICOLON
 	      List.map (fun d -> locate (Cspecdecl (ofs,d))) d )}
 
 declaration_specifiers:
-_1 = storage_class_specifier %prec specs
+  _1 = storage_class_specifier %prec specs
     {                                              ( [_1] )}
 | _1 = storage_class_specifier _2 = declaration_specifiers
     {                                                         ( _1 :: _2 )}
@@ -609,7 +609,7 @@ _1 = storage_class_specifier %prec specs
     {                                                ( _1 :: _2 )}
 
 declaration_specifiers_no_name:
-_1 = storage_class_specifier %prec specs
+  _1 = storage_class_specifier %prec specs
     {                                              ( [_1] )}
 | _1 = storage_class_specifier _2 = declaration_specifiers_no_name
     {                                                                 ( _1 :: _2 )}
@@ -623,19 +623,19 @@ _1 = storage_class_specifier %prec specs
     {                                                ( _1 :: _2 )}
 
 init_declarator_list:
-_1 = init_declarator
+  _1 = init_declarator
     {                          ( [_1] )}
 | _1 = init_declarator_list _2 = COMMA _3 = init_declarator
     {                                                     ( _1 @ [_3] )}
 
 init_declarator:
-_1 = declarator
+  _1 = declarator
     {            ( _1, None )}
 | _1 = declarator _2 = EQUAL _3 = c_initializer
     {     ( _1, Some _3 )}
 
 storage_class_specifier:
-_1 = TYPEDEF
+  _1 = TYPEDEF
     {                  ( Stypedef )}
 | _1 = EXTERN
     {                 ( Sstorage Extern )}
@@ -647,13 +647,13 @@ _1 = TYPEDEF
     {                   ( Sstorage Register )}
 
 type_specifier:
-_1 = type_specifier_no_name
+  _1 = type_specifier_no_name
     {                                 ( _1 )}
 | _1 = TYPE_NAME
     {                    ( Stype (CTvar _1) )}
 
 type_specifier_no_name:
-_1 = VOID
+  _1 = VOID
     {               ( Stype CTvoid )}
 | _1 = CHAR
     {               ( Stype (CTint (Unsigned, Char)) )}
@@ -677,13 +677,13 @@ _1 = VOID
     {                         ( _1 )}
 
 identifier:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {                     ( _1 )}
 | _1 = TYPE_NAME
     {                     ( _1 )}
 
 struct_or_union_specifier:
-_1 = struct_or_union _2 = identifier _3 = LBRACE _4 = struct_declaration_list _5 = RBRACE
+  _1 = struct_or_union _2 = identifier _3 = LBRACE _4 = struct_declaration_list _5 = RBRACE
     {            ( if _1 then 
 		Sstruct_decl (Some _2, _4) 
 	      else 
@@ -694,23 +694,23 @@ _1 = struct_or_union _2 = identifier _3 = LBRACE _4 = struct_declaration_list _5
     {     ( Stype (if _1 then CTstruct (_2, Tag) else CTunion (_2, Tag)) )}
 
 struct_or_union:
-_1 = STRUCT
+  _1 = STRUCT
     {                 ( true )}
 | _1 = UNION
     {                ( false )}
 
 struct_declaration_list:
-_1 = struct_declaration
+  _1 = struct_declaration
     {                             ( _1 )}
 | _1 = struct_declaration_list _2 = struct_declaration
     {                                                     ( _1 @ _2 )}
 
 struct_declaration:
-_1 = specifier_qualifier_list _2 = struct_declarator_list _3 = SEMICOLON
+  _1 = specifier_qualifier_list _2 = struct_declarator_list _3 = SEMICOLON
     {            ( let s = _1 in List.map (fun ((id,d),bf) -> s,d,id,bf) _2 )}
 
 specifier_qualifier_list:
-_1 = type_specifier _2 = specifier_qualifier_list_no_name
+  _1 = type_specifier _2 = specifier_qualifier_list_no_name
     {                                                          ( _1 :: _2 )}
 | _1 = type_specifier
     {                         ( [_1] )}
@@ -720,7 +720,7 @@ _1 = type_specifier _2 = specifier_qualifier_list_no_name
     {                                     ( [_1] )}
 
 specifier_qualifier_list_no_name:
-_1 = type_specifier_no_name _2 = specifier_qualifier_list_no_name
+  _1 = type_specifier_no_name _2 = specifier_qualifier_list_no_name
     {                                                                  ( _1 :: _2 )}
 | _1 = type_specifier_no_name
     {                                 ( [_1] )}
@@ -730,13 +730,13 @@ _1 = type_specifier_no_name _2 = specifier_qualifier_list_no_name
     {                         ( [_1] )}
 
 struct_declarator_list:
-_1 = struct_declarator
+  _1 = struct_declarator
     {                            ( [_1] )}
 | _1 = struct_declarator_list _2 = COMMA _3 = struct_declarator
     {                                                         ( _1 @ [_3] )}
 
 struct_declarator:
-_1 = declarator
+  _1 = declarator
     {            ( _1, None )}
 | _1 = COLON _2 = constant_expression
     {     ( ("_", Dsimple), Some _2 )}
@@ -744,7 +744,7 @@ _1 = declarator
     {     ( _1, Some _3 )}
 
 enum_specifier:
-_1 = ENUM _2 = LBRACE _3 = enumerator_list _4 = RBRACE
+  _1 = ENUM _2 = LBRACE _3 = enumerator_list _4 = RBRACE
     {            ( Stype (CTenum (fresh_name None, Decl _3)) )}
 | _1 = ENUM _2 = identifier _3 = LBRACE _4 = enumerator_list _5 = RBRACE
     {     ( Stype (CTenum (_2, Decl _4)) )}
@@ -752,19 +752,19 @@ _1 = ENUM _2 = LBRACE _3 = enumerator_list _4 = RBRACE
     {     ( Stype (CTenum (_2, Tag)) )}
 
 enumerator_list:
-_1 = enumerator
+  _1 = enumerator
     {                     ( [_1] )}
 | _1 = enumerator_list _2 = COMMA _3 = enumerator
     {                                           ( _1 @ [_3] )}
 
 enumerator:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {                     ( _1, None )}
 | _1 = IDENTIFIER _2 = EQUAL _3 = constant_expression
     {                                               ( _1, Some _3 )}
 
 type_qualifier:
-_1 = CONST
+  _1 = CONST
     {                ( Sconst )}
 | _1 = VOLATILE
     {                   ( Svolatile )}
@@ -772,13 +772,13 @@ _1 = CONST
     {            ( dwarning "ignored __restrict"; Srestrict )}
 
 declarator:
-_1 = pointer _2 = direct_declarator
+  _1 = pointer _2 = direct_declarator
     {                                    ( let id,d = _2 in id, _1 d )}
 | _1 = direct_declarator
     {                            ( _1 )}
 
 direct_declarator:
-_1 = identifier
+  _1 = identifier
     {            ( _1, Dsimple )}
 | _1 = LPAR _2 = declarator _3 = RPAR
     {     ( _2 )}
@@ -795,13 +795,13 @@ _1 = identifier
     {            ( let id,d = _1 in id, Dfunction (d, []) )}
 
 loop_annot:
-_1 = LOOP_ANNOT
+  _1 = LOOP_ANNOT
     {                                       ( _1 )}
 |  %prec no_annot
     {                                       ( symbol_start (), no_loop_annot )}
 
 pointer:
-_1 = STAR
+  _1 = STAR
     {               ( fun d -> Dpointer d )}
 | _1 = STAR _2 = type_qualifier_list
     {     ( dwarning "ignored qualifiers"; fun d -> Dpointer d )}
@@ -811,25 +811,25 @@ _1 = STAR
     {     ( dwarning "ignored qualifiers"; fun d -> Dpointer (_3 d) )}
 
 type_qualifier_list:
-_1 = type_qualifier
+  _1 = type_qualifier
     {                         ( [_1] )}
 | _1 = type_qualifier_list _2 = type_qualifier
     {                                             ( _1 @ [_2] )}
 
 parameter_type_list:
-_1 = parameter_list
+  _1 = parameter_list
     {                         ( _1 )}
 | _1 = parameter_list _2 = COMMA _3 = ELLIPSIS
     {                                        ( dwarning "ignored <...>"; _1 )}
 
 parameter_list:
-_1 = parameter_declaration
+  _1 = parameter_declaration
     {                                ( [_1] )}
 | _1 = parameter_list _2 = COMMA _3 = parameter_declaration
     {                                                     ( _1 @ [_3] )}
 
 parameter_declaration:
-_1 = declaration_specifiers _2 = declarator
+  _1 = declaration_specifiers _2 = declarator
     {            ( let id,d = _2 in _1, d, id )}
 | _1 = declaration_specifiers _2 = abstract_declarator
     {     ( _1, _2, "_" )}
@@ -837,19 +837,19 @@ _1 = declaration_specifiers _2 = declarator
     {     ( (_1, Dsimple, "_") )}
 
 identifier_list:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {                     ( [_1] )}
 | _1 = identifier_list _2 = COMMA _3 = IDENTIFIER
     {                                           ( _1 @ [_3] )}
 
 type_name:
-_1 = specifier_qualifier_list
+  _1 = specifier_qualifier_list
     {                                   ( _1, Dsimple )}
 | _1 = specifier_qualifier_list _2 = abstract_declarator
     {                                                       ( _1, _2 )}
 
 abstract_declarator:
-_1 = pointer
+  _1 = pointer
     {                  ( _1 Dsimple )}
 | _1 = direct_abstract_declarator
     {                                     ( _1 )}
@@ -857,7 +857,7 @@ _1 = pointer
     {                                             ( _1 _2 )}
 
 direct_abstract_declarator:
-_1 = LPAR _2 = abstract_declarator _3 = RPAR
+  _1 = LPAR _2 = abstract_declarator _3 = RPAR
     {            ( _2 )}
 | _1 = LSQUARE _2 = RSQUARE
     {     ( Darray (Dsimple, None) )}
@@ -877,7 +877,7 @@ _1 = LPAR _2 = abstract_declarator _3 = RPAR
     {     ( Dfunction (_1, _3) )}
 
 c_initializer:
-_1 = assignment_expression
+  _1 = assignment_expression
     {                                ( Iexpr _1 )}
 | _1 = LBRACE _2 = c_initializer_list _3 = RBRACE
     {                                           ( Ilist _2 )}
@@ -885,13 +885,13 @@ _1 = assignment_expression
     {                                                 ( Ilist _2 )}
 
 c_initializer_list:
-_1 = c_initializer
+  _1 = c_initializer
     {                        ( [_1] )}
 | _1 = c_initializer_list _2 = COMMA _3 = c_initializer
     {                                                 ( _1 @ [_3] )}
 
 statement:
-_1 = labeled_statement
+  _1 = labeled_statement
     {                            ( _1 )}
 | _1 = compound_statement
     {                             ( locate (CSblock _1) )}
@@ -907,7 +907,7 @@ _1 = labeled_statement
     {                  ( locate (CSspec (_1,_2)) )}
 
 labeled_statement:
-_1 = identifier _2 = COLON _3 = statement
+  _1 = identifier _2 = COLON _3 = statement
     {                                            ( locate (CSlabel (_1, _3)) )}
 | _1 = CASE _2 = constant_expression _3 = COLON _4 = statement
     {                                                   ( locate (CScase (_2, _4)) )}
@@ -915,7 +915,7 @@ _1 = identifier _2 = COLON _3 = statement
     {                                  ( locate (CSdefault(_3)) )}
 
 compound_statement:
-_1 = compound_statement_LBRACE _2 = RBRACE
+  _1 = compound_statement_LBRACE _2 = RBRACE
     {            ( Ctypes.pop (); [], [] )}
 | _1 = compound_statement_LBRACE _2 = statement_list _3 = RBRACE
     {     ( Ctypes.pop (); [], _2 )}
@@ -925,23 +925,23 @@ _1 = compound_statement_LBRACE _2 = RBRACE
     {     ( Ctypes.pop (); _2, _3 )}
 
 compound_statement_LBRACE:
-_1 = LBRACE
+  _1 = LBRACE
     {         ( Ctypes.push () )}
 
 declaration_list:
-_1 = declaration
+  _1 = declaration
     {                      ( _1 )}
 | _1 = declaration_list _2 = declaration
     {                                       ( _1 @ _2 )}
 
 statement_list:
-_1 = statement
+  _1 = statement
     {                    ( [_1] )}
 | _1 = statement_list _2 = statement
     {                                   ( _1 @ [_2] )}
 
 expression_statement:
-_1 = SEMICOLON
+  _1 = SEMICOLON
     {                    ( locate CSnop )}
 | _1 = CODE_ANNOT
     {              ( locate (CSannot _1) )}
@@ -949,7 +949,7 @@ _1 = SEMICOLON
     {                               ( locate (CSexpr _1) )}
 
 selection_statement:
-_1 = IF _2 = LPAR _3 = expression _4 = RPAR _5 = statement
+  _1 = IF _2 = LPAR _3 = expression _4 = RPAR _5 = statement
     {            ( locate (CSif (_3, _5, locate CSnop)) )}
 | _1 = IF _2 = LPAR _3 = expression _4 = RPAR _5 = statement _6 = ELSE _7 = statement
     {     ( locate (CSif (_3, _5, _7)) )}
@@ -957,7 +957,7 @@ _1 = IF _2 = LPAR _3 = expression _4 = RPAR _5 = statement
     {     ( locate (CSswitch (_3, _5)) )}
 
 iteration_statement:
-_1 = loop_annot _2 = WHILE _3 = LPAR _4 = expression _5 = RPAR _6 = statement
+  _1 = loop_annot _2 = WHILE _3 = LPAR _4 = expression _5 = RPAR _6 = statement
     {            ( locate (CSwhile (_1, _4, _6)) )}
 | _1 = loop_annot _2 = DO _3 = statement _4 = WHILE _5 = LPAR _6 = expression _7 = RPAR _8 = SEMICOLON
     {     ( locate (CSdowhile (_1, _3, _6)) )}
@@ -969,7 +969,7 @@ _1 = loop_annot _2 = WHILE _3 = LPAR _4 = expression _5 = RPAR _6 = statement
 			     _6, _8)) )}
 
 jump_statement:
-_1 = GOTO _2 = identifier _3 = SEMICOLON
+  _1 = GOTO _2 = identifier _3 = SEMICOLON
     {                                           ( locate (CSgoto _2) )}
 | _1 = CONTINUE _2 = SEMICOLON
     {                             ( locate CScontinue )}
@@ -981,19 +981,19 @@ _1 = GOTO _2 = identifier _3 = SEMICOLON
     {                                      ( locate (CSreturn (Some _2)) )}
 
 translation_unit:
-_1 = external_declaration
+  _1 = external_declaration
     {                               ( _1 )}
 | _1 = translation_unit _2 = external_declaration
     {                                                ( _1 @ _2 )}
 
 external_declaration:
-_1 = function_definition
+  _1 = function_definition
     {                              ( [_1] )}
 | _1 = declaration
     {                      ( _1 )}
 
 function_definition:
-_1 = function_prototype _2 = compound_statement
+  _1 = function_prototype _2 = compound_statement
     {            ( Ctypes.pop (); (* pushed by function_prototype *)
 	      let ty,id,pl = _1 in
 	      let bl = locate_i 2 (CSblock _2) in
@@ -1005,7 +1005,7 @@ _1 = function_prototype _2 = compound_statement
 	      locate (Cfundef (Some _1, ty, id, pl, bl)) )}
 
 function_prototype:
-_1 = declaration_specifiers _2 = declarator _3 = declaration_list
+  _1 = declaration_specifiers _2 = declarator _3 = declaration_list
     {            ( Ctypes.push (); function_declaration _1 _2 _3 )}
 | _1 = declaration_specifiers _2 = declarator
     {     ( Ctypes.push (); function_declaration _1 _2 [] )}
@@ -1015,29 +1015,29 @@ _1 = declaration_specifiers _2 = declarator _3 = declaration_list
     {     ( Ctypes.push (); function_declaration [] _1 [] )}
 
 attributes_opt:
-
+  
     {              ()}
 | _1 = attributes
     {             ( dwarning "ignored attributes" )}
 
 attributes:
-_1 = attribute
+  _1 = attribute
     {            ()}
 | _1 = attributes _2 = attribute
     {                       ()}
 
 attribute:
-_1 = ATTRIBUTE _2 = LPAR _3 = LPAR _4 = attribute_list _5 = RPAR _6 = RPAR
+  _1 = ATTRIBUTE _2 = LPAR _3 = LPAR _4 = attribute_list _5 = RPAR _6 = RPAR
     {                                               ()}
 
 attribute_list:
-_1 = attrib
+  _1 = attrib
     {         ()}
 | _1 = attribute_list _2 = COMMA _3 = attrib
     {                              ()}
 
 attrib:
-
+  
     {              ()}
 | _1 = identifier
     {             ()}

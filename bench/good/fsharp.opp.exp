@@ -420,7 +420,7 @@ let checkForMultipleAugmentations m a1 a2 =
 %%
 
 interaction:
-_1 = opt_itop_seps _2 = interactiveExprOrDefinitions
+  _1 = opt_itop_seps _2 = interactiveExprOrDefinitions
     {     ( IDefns (_2,lhs()) )}
 | _1 = opt_itop_seps _2 = hashDirective _3 = interactiveTerminator
     {     ( _2 )}
@@ -428,29 +428,29 @@ _1 = opt_itop_seps _2 = interactiveExprOrDefinitions
     {     ( _2 )}
 
 hashDirective:
-_1 = HASH _2 = IDENT _3 = hashDirectiveArgs
+  _1 = HASH _2 = IDENT _3 = hashDirectiveArgs
     {     ( IHash (_2,_3,lhs()) )}
 | _1 = HASH_KEYWORD _2 = hashDirectiveArgs
     {     ( IHash (_1,_2,lhs()) )}
 
 hashDirectiveArg:
-_1 = STRING
+  _1 = STRING
     {     ( Bytes.unicode_bytes_as_string _1 )}
 
 hashDirectiveArgs:
-
+  
     {     ( [] )}
 | _1 = hashDirectiveArgs _2 = hashDirectiveArg
     {     ( _1 @ [_2] )}
 
 interactiveTerminator:
-_1 = SEMICOLON_SEMICOLON
+  _1 = SEMICOLON_SEMICOLON
     {                        ()}
 | _1 = EOF
     {            ()}
 
 interactiveDefinitions:
-_1 = moduleOrNamespaceDefn _2 = interactiveDefinitions
+  _1 = moduleOrNamespaceDefn _2 = interactiveDefinitions
     {                                                 ( _1 @ _2 )}
 | _1 = moduleOrNamespaceDefn _2 = itop_seps _3 = interactiveExprOrDefinitions
     {                                                                 ( _1 @ _3 )}
@@ -458,7 +458,7 @@ _1 = moduleOrNamespaceDefn _2 = interactiveDefinitions
     {                          ( [] )}
 
 interactiveExprOrDefinitions:
-_1 = declExpr _2 = itop_seps _3 = interactiveExprOrDefinitions
+  _1 = declExpr _2 = itop_seps _3 = interactiveExprOrDefinitions
     {      ( Def_let(false,[mk_Do  (false,_1,rhs 1)], rhs 1) :: _3 )}
 | _1 = declExpr _2 = interactiveTerminator
     {      ( [ Def_let(false,[mk_Do  (false,_1,rhs 1)], rhs 1) ] )}
@@ -466,55 +466,55 @@ _1 = declExpr _2 = itop_seps _3 = interactiveExprOrDefinitions
     {                           ( _1 )}
 
 signatureFile:
-_1 = namespaceSpecs _2 = EOF
+  _1 = namespaceSpecs _2 = EOF
     {     ( check_eof_error_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY _1 _2 )}
 
 implementationFile:
-_1 = namespaceImpls _2 = EOF
+  _1 = namespaceImpls _2 = EOF
     {     ( check_eof_error_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY _1 _2 )}
 
 moduleIntro:
-_1 = MODULE _2 = grab_doc _3 = opt_access _4 = path
+  _1 = MODULE _2 = grab_doc _3 = opt_access _4 = path
     {                                    ( _4,true,_2,_3 )}
 
 namespaceIntro:
-_1 = NAMESPACE _2 = grab_doc _3 = path
+  _1 = NAMESPACE _2 = grab_doc _3 = path
     {                            ( _3,false,_2  )}
 
 namespaceSpecs:
-_1 = moduleSpec
+  _1 = moduleSpec
     {                 ( [ (_1 ([],emptyXMLDoc)) ] )}
 | _1 = namespaceSpecList
     {                      ( _1 )}
 
 namespaceSpecList:
-_1 = namespaceSpec _2 = namespaceSpecList
+  _1 = namespaceSpec _2 = namespaceSpecList
     {                                    ( _1 :: _2 )}
 | _1 = namespaceSpec
     {                  ( [_1] )}
 
 namespaceSpec:
-_1 = opt_attributes _2 = namespaceIntro _3 = deprecated_opt_equals _4 = moduleSpec
+  _1 = opt_attributes _2 = namespaceIntro _3 = deprecated_opt_equals _4 = moduleSpec
     {     ( let path,_,xml = _2 in (_4 (path,xml)) )}
 
 namespaceImpls:
-_1 = moduleImpl
+  _1 = moduleImpl
     {                 ( [ (_1 ([],emptyXMLDoc)) ] )}
 | _1 = namespaceImplList
     {                      ( _1 )}
 
 namespaceImplList:
-_1 = namespaceImpl _2 = namespaceImplList
+  _1 = namespaceImpl _2 = namespaceImplList
     {                                    ( _1 :: _2 )}
 | _1 = namespaceImpl
     {                  ( [_1] )}
 
 namespaceImpl:
-_1 = opt_attributes _2 = namespaceIntro _3 = deprecated_opt_equals _4 = moduleImpl
+  _1 = opt_attributes _2 = namespaceIntro _3 = deprecated_opt_equals _4 = moduleImpl
     {     ( let path,_,xml = _2 in (_4 (path,xml)) )}
 
 moduleSpec:
-_1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = specifications
+  _1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = specifications
     {    ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
       let m = (rhs2 3 4) in
       (fun (path,_) -> 
@@ -529,7 +529,7 @@ _1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = specification
         | _ -> AnonNamespaceFragmentSpec(path,false, _1, xml,[],m))  )}
 
 moduleImpl:
-_1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = exprOrDefinitions
+  _1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = exprOrDefinitions
     {    ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
       let m = (rhs2 3 4) in 
       (fun (path,_) -> 
@@ -544,7 +544,7 @@ _1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = exprOrDefinit
         | _ -> AnonNamespaceFragmentImpl(path,false, _1, xml,[],m)) )}
 
 specifications:
-_1 = moduleOrNamespaceSpfn _2 = opt_top_seps _3 = specifications
+  _1 = moduleOrNamespaceSpfn _2 = opt_top_seps _3 = specifications
     {      ( _1 :: _3 )}
 | _1 = hashDirective _2 = top_sep _3 = specifications
     {      ( Spec_hash (_1,rhs2 1 1) :: _3 )}
@@ -554,7 +554,7 @@ _1 = moduleOrNamespaceSpfn _2 = opt_top_seps _3 = specifications
     {      ( [] )}
 
 exprOrDefinitions:
-_1 = declExpr _2 = top_seps _3 = exprOrDefinitions
+  _1 = declExpr _2 = top_seps _3 = exprOrDefinitions
     {      ( Def_let(false,[mk_Do  (false,_1,rhs 1)], rhs 1) :: _3 )}
 | _1 = declExpr
     {      ( [ Def_let(false,[mk_Do  (false,_1,rhs 1)], rhs 1) ] )}
@@ -562,7 +562,7 @@ _1 = declExpr _2 = top_seps _3 = exprOrDefinitions
     {                           ( _1 )}
 
 moduleOrNamespaceDefns:
-_1 = moduleOrNamespaceDefn _2 = moduleOrNamespaceDefns
+  _1 = moduleOrNamespaceDefn _2 = moduleOrNamespaceDefns
     {      (  _1 @ _2 )}
 | _1 = moduleOrNamespaceDefn _2 = top_seps _3 = exprOrDefinitions
     {      (  _1 @ _3 )}
@@ -576,7 +576,7 @@ _1 = moduleOrNamespaceDefn _2 = moduleOrNamespaceDefns
     {      ( [] )}
 
 moduleOrNamespaceDefn:
-_1 = defnBindings %prec decl_let
+  _1 = defnBindings %prec decl_let
     {      ( new_arg_uniq_ref := 0;
         mkDefnBindings (lhs()) _1 [] None (lhs())  )}
 | _1 = hardwhiteDefnBindings %prec decl_let
@@ -628,13 +628,13 @@ _1 = defnBindings %prec decl_let
     {      ( [Def_open(_1,rhs 1)] )}
 
 namedModuleAbbrevBlock:
-_1 = OBLOCKBEGIN _2 = path _3 = OBLOCKEND
+  _1 = OBLOCKBEGIN _2 = path _3 = OBLOCKEND
     {       ( _2 )}
 | _1 = path
     {       ( _1 )}
 
 namedModuleDefnBlock:
-_1 = OBLOCKBEGIN _2 = wrappedNamedModuleDefn _3 = OBLOCKEND
+  _1 = OBLOCKBEGIN _2 = wrappedNamedModuleDefn _3 = OBLOCKEND
     {       ( _2 )}
 | _1 = OBLOCKBEGIN _2 = moduleOrNamespaceDefns _3 = OBLOCKEND
     {       ( _2 )}
@@ -647,7 +647,7 @@ _1 = OBLOCKBEGIN _2 = wrappedNamedModuleDefn _3 = OBLOCKEND
     {       ( _1 )}
 
 wrappedNamedModuleDefn:
-_1 = structOrBegin _2 = exprOrDefinitions _3 = END
+  _1 = structOrBegin _2 = exprOrDefinitions _3 = END
     {       ( _2 )}
 | _1 = structOrBegin _2 = exprOrDefinitions _3 = recover
     {       ( report_parse_error_at (rhs 1) "unmatched 'begin' or 'struct'";  
@@ -656,7 +656,7 @@ _1 = structOrBegin _2 = exprOrDefinitions _3 = END
     {       ( [] )}
 
 opt_signature:
-
+  
     {       ( None )}
 | _1 = COLON _2 = moduleSpecBlock
     {       ( deprecated "Signature types must be given in a .fsi or .mli file" (lhs());
@@ -666,11 +666,11 @@ opt_signature:
          Some(Sign_named(_2)) )}
 
 tyconDefnAugmentation:
-_1 = WITH _2 = classDefnBlock _3 = decl_end
+  _1 = WITH _2 = classDefnBlock _3 = decl_end
     {     ( _2 )}
 
 moduleOrNamespaceSpfn:
-_1 = valSpfn
+  _1 = valSpfn
     {      ( _1 )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = colonOrEquals _5 = namedModuleAbbrevBlock
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
@@ -704,7 +704,7 @@ _1 = valSpfn
     {              ( Spec_open (_2, rhs2 1 2) )}
 
 valSpfn:
-_1 = opt_attributes _2 = opt_decl_visibility _3 = VAL _4 = opt_attributes _5 = opt_inline _6 = opt_mutable _7 = opt_access _8 = nameop _9 = grab_doc _10 = opt_explicitValTyparDecls _11 = COLON _12 = topTypeWithTypeConstraints _13 = opt_literalValue
+  _1 = opt_attributes _2 = opt_decl_visibility _3 = VAL _4 = opt_attributes _5 = opt_inline _6 = opt_mutable _7 = opt_access _8 = nameop _9 = grab_doc _10 = opt_explicitValTyparDecls _11 = COLON _12 = topTypeWithTypeConstraints _13 = opt_literalValue
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
         (let attr1,attr2,inlineFlag,mutableFlag,vis2,id,doc,explicitValTyparDecls,(ty,arity),konst = (_1),(_4),(_5),(_6),(_7),(_8),(_9),(_10),(_12),(_13) in 
         if attr2 <> [] then warning(Error("This syntactic location for attributes is deprecated. Attributes should be placed before 'val'",rhs 4));
@@ -714,13 +714,13 @@ _1 = opt_attributes _2 = opt_decl_visibility _3 = VAL _4 = opt_attributes _5 = o
       )}
 
 opt_literalValue:
-
+  
     {    ( None )}
 | _1 = EQUALS _2 = declExpr
     {                    ( Some(_2) )}
 
 moduleSpecBlock:
-_1 = OBLOCKBEGIN _2 = specifications _3 = OBLOCKEND
+  _1 = OBLOCKBEGIN _2 = specifications _3 = OBLOCKEND
     {                                                        ( _2 )}
 | _1 = OBLOCKBEGIN _2 = sigOrBegin _3 = specifications _4 = END _5 = OBLOCKEND
     {                                                        ( _3 )}
@@ -728,29 +728,29 @@ _1 = OBLOCKBEGIN _2 = specifications _3 = OBLOCKEND
     {                                              ( _2 )}
 
 opt_attributes:
-_1 = attributes
+  _1 = attributes
     {                                              ( _1 )}
 |  %prec prec_opt_attributes_none
     {                                              ( [] )}
 
 attributes:
-_1 = attributeList
+  _1 = attributeList
     {     ( _1 )}
 | _1 = attributeList _2 = attributes
     {     ( _1 @ _2 )}
 
 attributeList:
-_1 = LBRACK_LESS _2 = attributeListElements _3 = opt_seps _4 = GREATER_RBRACK _5 = opt_OBLOCKSEP
+  _1 = LBRACK_LESS _2 = attributeListElements _3 = opt_seps _4 = GREATER_RBRACK _5 = opt_OBLOCKSEP
     {                                                                             (  matchPair 1 4; _2 )}
 
 attributeListElements:
-_1 = attribute
+  _1 = attribute
     {     ( [_1] )}
 | _1 = attributeListElements _2 = seps _3 = attribute
     {     ( _1 @ [_3] )}
 
 attribute:
-_1 = path _2 = opt_HIGH_PRECEDENCE_APP _3 = opt_argExprAfterType
+  _1 = path _2 = opt_HIGH_PRECEDENCE_APP _3 = opt_argExprAfterType
     {     ( let arg = match _3 with None -> mksyn_unit (lhs()) | Some e -> e in 
        Attr(_1,arg,None,lhs()) )}
 | _1 = attributeTarget _2 = COLON _3 = path _4 = opt_HIGH_PRECEDENCE_APP _5 = opt_argExprAfterType
@@ -758,7 +758,7 @@ _1 = path _2 = opt_HIGH_PRECEDENCE_APP _3 = opt_argExprAfterType
        Attr(_3,arg,Some _1,lhs()) )}
 
 attributeTarget:
-_1 = MODULE
+  _1 = MODULE
     {           ( ident("module",lhs()) )}
 | _1 = TYPE
     {         ( ident("type",lhs()) )}
@@ -769,27 +769,27 @@ _1 = MODULE
                          ident("return",lhs()) )}
 
 grab_doc:
-
+  
     {     ( grabXML() )}
 
 tyconSpfns:
-_1 = TYPE _2 = tyconSpfn_list
+  _1 = TYPE _2 = tyconSpfn_list
     {     ( _2 )}
 
 tyconSpfn_list:
-_1 = tyconSpfn _2 = AND _3 = tyconSpfn_list
+  _1 = tyconSpfn _2 = AND _3 = tyconSpfn_list
     {     ( _1 :: _3 )}
 | _1 = tyconSpfn
     {     ( [_1] )}
 
 tyconSpfn:
-_1 = componentInfo _2 = EQUALS _3 = tyconSpfnRhsBlock
+  _1 = componentInfo _2 = EQUALS _3 = tyconSpfnRhsBlock
     {      ( _3 _1 )}
 | _1 = componentInfo _2 = opt_classSpfn
     {      ( TyconSpfn(_1,TyconSpfnRepr_simple (TyconCore_repr_hidden (lhs()),lhs()),_2,lhs()) )}
 
 tyconSpfnRhsBlock:
-_1 = OBLOCKBEGIN _2 = tyconSpfnRhs _3 = opt_OBLOCKSEP _4 = classSpfnMembers _5 = opt_classSpfn _6 = OBLOCKEND _7 = opt_classSpfn
+  _1 = OBLOCKBEGIN _2 = tyconSpfnRhs _3 = opt_OBLOCKSEP _4 = classSpfnMembers _5 = opt_classSpfn _6 = OBLOCKEND _7 = opt_classSpfn
     {     ( let m = lhs() in 
        (fun nameInfo -> 
            _2 nameInfo (checkForMultipleAugmentations m (_4 @ _5) _7)) )}
@@ -799,7 +799,7 @@ _1 = OBLOCKBEGIN _2 = tyconSpfnRhs _3 = opt_OBLOCKSEP _4 = classSpfnMembers _5 =
            _1 nameInfo _2) )}
 
 tyconSpfnRhs:
-_1 = tyconDefnOrSpfnSimpleRepr
+  _1 = tyconDefnOrSpfnSimpleRepr
     {     ( let m = lhs() in 
        (fun nameInfo augmentation -> 
            TyconSpfn(nameInfo,TyconSpfnRepr_simple (_1,m),augmentation,m)) )}
@@ -816,7 +816,7 @@ _1 = tyconDefnOrSpfnSimpleRepr
            TyconSpfn(nameInfo,TyconSpfnRepr_class (TyconDelegate (ty,arity),[invoke],m),[],m)) )}
 
 tyconClassSpfn:
-_1 = classSpfnBlockKindUnspecified
+  _1 = classSpfnBlockKindUnspecified
     {     ( (TyconUnspecified, _1) )}
 | _1 = classOrInterfaceOrStruct _2 = classSpfnBlock _3 = END
     {     ( (_1,_2) )}
@@ -827,23 +827,23 @@ _1 = classSpfnBlockKindUnspecified
     {     ( (* silent recovery *) (_1,[]) )}
 
 classSpfnBlockKindUnspecified:
-_1 = OBLOCKBEGIN _2 = classSpfnMembers _3 = OBLOCKEND
+  _1 = OBLOCKBEGIN _2 = classSpfnMembers _3 = OBLOCKEND
     {     ( _2 )}
 
 classSpfnBlock:
-_1 = OBLOCKBEGIN _2 = classSpfnMembers _3 = OBLOCKEND
+  _1 = OBLOCKBEGIN _2 = classSpfnMembers _3 = OBLOCKEND
     {                                            ( _2 )}
 | _1 = classSpfnMembers
     {                     ( _1 )}
 
 classSpfnMembers:
-_1 = classMemberSpfn _2 = opt_seps _3 = classSpfnMembers
+  _1 = classMemberSpfn _2 = opt_seps _3 = classSpfnMembers
     {     ( _1 :: _3 )}
 | 
     {     ( []  )}
 
 memberFlags:
-_1 = STATIC _2 = MEMBER
+  _1 = STATIC _2 = MEMBER
     {                    ( (fun q k -> staticFlags q k) )}
 | _1 = MEMBER
     {                    ( (fun q k -> nonVirtualFlags q k) )}
@@ -857,7 +857,7 @@ _1 = STATIC _2 = MEMBER
     {                   ( (fun q k -> overrideFlags q k) )}
 
 memberSpecFlags:
-_1 = memberFlags
+  _1 = memberFlags
     {                ( _1 )}
 | _1 = ABSTRACT
     {                    ( (fun q k -> abstractFlags q k) )}
@@ -865,7 +865,7 @@ _1 = memberFlags
     {                    ( (fun q k -> abstractFlags q k) )}
 
 classMemberSpfnGetSet:
-
+  
     {    ( (fun arity -> (match arity with TopValSynData([],_) -> MemberKindPropertyGet | _ -> MemberKindMember)) )}
 | _1 = WITH _2 = classMemberSpfnGetSetElements
     {    ( (fun arity -> _2) )}
@@ -876,7 +876,7 @@ classMemberSpfnGetSet:
        (fun arity -> _2) )}
 
 classMemberSpfnGetSetElements:
-_1 = identop
+  _1 = identop
     {    ( (let (id:ident) = _1 in 
        if id.idText = "get" then MemberKindPropertyGet 
        else if id.idText = "set" then MemberKindPropertySet 
@@ -889,7 +889,7 @@ _1 = identop
       MemberKindPropertyGetSet )}
 
 classMemberSpfn:
-_1 = opt_attributes _2 = opt_decl_visibility _3 = memberSpecFlags _4 = opt_inline _5 = grab_doc _6 = opt_access _7 = nameop _8 = opt_explicitValTyparDecls _9 = COLON _10 = topTypeWithTypeConstraints _11 = classMemberSpfnGetSet _12 = opt_literalValue
+  _1 = opt_attributes _2 = opt_decl_visibility _3 = memberSpecFlags _4 = opt_inline _5 = grab_doc _6 = opt_access _7 = nameop _8 = opt_explicitValTyparDecls _9 = COLON _10 = topTypeWithTypeConstraints _11 = classMemberSpfnGetSet _12 = opt_literalValue
     {     ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
        let inlineFlag,doc,vis2,id,explicitValTyparDecls,(ty,arity),optLiteralValue = _4,_5,_6,_7,_8,_10,_12 in
        let m = rhs2 3 11 in 
@@ -920,20 +920,20 @@ _1 = opt_attributes _2 = opt_decl_visibility _3 = memberSpecFlags _4 = opt_inlin
        ClassMemberSpfn_binding(valSpfn, ctorMemFlags  (computeOverloadQualifier _1),m) )}
 
 componentInfo:
-_1 = opt_attributes _2 = grab_doc _3 = tyconNameAndTyparDecls _4 = opt_typeConstraints
+  _1 = opt_attributes _2 = grab_doc _3 = tyconNameAndTyparDecls _4 = opt_typeConstraints
     {     ( startName(rhs 2); 
        let a,b,c,tpcs1,vis = _3 in 
        let tpcs2 = _4 in 
        ComponentInfo(_1,TMK_Tycon,a,(tpcs1 @ tpcs2),b,_2,c,vis,rhs2 3 3)  )}
 
 tyconDefnList:
-_1 = AND _2 = tyconDefn _3 = tyconDefnList
+  _1 = AND _2 = tyconDefn _3 = tyconDefnList
     {     ( _2 :: _3 )}
 | 
     {     ( [] )}
 
 tyconDefn:
-_1 = componentInfo _2 = EQUALS _3 = tyconDefnRhsBlock
+  _1 = componentInfo _2 = EQUALS _3 = tyconDefnRhsBlock
     {     ( let tcDefRepr,members = _3 in
        TyconDefn(_1,tcDefRepr,members,lhs()) (* <-- mark changed *) )}
 | _1 = componentInfo _2 = opt_HIGH_PRECEDENCE_APP _3 = simplePatterns _4 = opt_as _5 = EQUALS _6 = tyconDefnRhsBlock
@@ -947,7 +947,7 @@ _1 = componentInfo _2 = EQUALS _3 = tyconDefnRhsBlock
        TyconDefn(_1,tcDefRepr,members,lhs()) (* <-- mark changed *) )}
 
 tyconDefnRhsBlock:
-_1 = OBLOCKBEGIN _2 = tyconDefnRhs _3 = opt_OBLOCKSEP _4 = classDefnMembers _5 = opt_classDefn _6 = OBLOCKEND _7 = opt_classDefn
+  _1 = OBLOCKBEGIN _2 = tyconDefnRhs _3 = opt_OBLOCKSEP _4 = classDefnMembers _5 = opt_classDefn _6 = OBLOCKEND _7 = opt_classDefn
     {     ( let m = lhs() in 
        _2 (checkForMultipleAugmentations m (_4 @ _5) _7) )}
 | _1 = tyconDefnRhs _2 = opt_classDefn
@@ -955,7 +955,7 @@ _1 = OBLOCKBEGIN _2 = tyconDefnRhs _3 = opt_OBLOCKSEP _4 = classDefnMembers _5 =
        _1 _2 )}
 
 tyconDefnRhs:
-_1 = tyconDefnOrSpfnSimpleRepr
+  _1 = tyconDefnOrSpfnSimpleRepr
     {     ( let m = lhs() in (fun augmentation -> TyconDefnRepr_simple (_1,m),augmentation) )}
 | _1 = tyconClassDefn
     {     ( let m = lhs() in (fun augmentation -> TyconDefnRepr_class (fst _1,snd _1,m),augmentation) )}
@@ -969,7 +969,7 @@ _1 = tyconDefnOrSpfnSimpleRepr
            TyconDefnRepr_class (TyconDelegate (ty,arity),[invoke],m),[]) )}
 
 tyconClassDefn:
-_1 = classDefnBlockKindUnspecified
+  _1 = classDefnBlockKindUnspecified
     {     ( (TyconUnspecified, _1) )}
 | _1 = classOrInterfaceOrStruct _2 = classDefnBlock _3 = END
     {     ( (_1,_2) )}
@@ -980,17 +980,17 @@ _1 = classDefnBlockKindUnspecified
     {     ( (* silent recovery *) (_1,[]) )}
 
 classDefnBlockKindUnspecified:
-_1 = OBLOCKBEGIN _2 = classDefnMembers _3 = OBLOCKEND
+  _1 = OBLOCKBEGIN _2 = classDefnMembers _3 = OBLOCKEND
     {     ( _2 )}
 
 classDefnBlock:
-_1 = OBLOCKBEGIN _2 = classDefnMembers _3 = OBLOCKEND
+  _1 = OBLOCKBEGIN _2 = classDefnMembers _3 = OBLOCKEND
     {                                            ( _2 )}
 | _1 = classDefnMembers
     {                     ( _1 )}
 
 classDefnMembers:
-_1 = classDefnMember _2 = opt_seps _3 = classDefnMembers
+  _1 = classDefnMember _2 = opt_seps _3 = classDefnMembers
     {     ( _1 @  _3 )}
 | _1 = error _2 = classDefnMembers
     {     ( _2 )}
@@ -998,7 +998,7 @@ _1 = classDefnMember _2 = opt_seps _3 = classDefnMembers
     {     ( [] )}
 
 classDefnMemberGetSet:
-_1 = WITH _2 = classDefnMemberGetSetElements
+  _1 = WITH _2 = classDefnMemberGetSetElements
     {     ( _2  )}
 | _1 = OWITH _2 = classDefnMemberGetSetElements _3 = OEND
     {     ( _2  )}
@@ -1007,17 +1007,17 @@ _1 = WITH _2 = classDefnMemberGetSetElements
        _2  )}
 
 classDefnMemberGetSetElements:
-_1 = classDefnMemberGetSetElement
+  _1 = classDefnMemberGetSetElement
     {     ( [_1]  )}
 | _1 = classDefnMemberGetSetElement _2 = AND _3 = classDefnMemberGetSetElement
     {     ( [_1;_3] )}
 
 classDefnMemberGetSetElement:
-_1 = opt_inline _2 = bindingPattern _3 = opt_topReturnTypeWithTypeConstraints _4 = EQUALS _5 = typedSeqExprBlock
+  _1 = opt_inline _2 = bindingPattern _3 = opt_topReturnTypeWithTypeConstraints _4 = EQUALS _5 = typedSeqExprBlock
     {     ( (_1,_2,_3,_5,rhs 5) )}
 
 memberCore:
-_1 = opt_inline _2 = bindingPattern _3 = opt_topReturnTypeWithTypeConstraints _4 = EQUALS _5 = typedSeqExprBlock
+  _1 = opt_inline _2 = bindingPattern _3 = opt_topReturnTypeWithTypeConstraints _4 = EQUALS _5 = typedSeqExprBlock
     {     (  let wholem = rhs2 2 5 in 
         let bindm = rhs 2 in 
         let rhsm = rhs 5 in 
@@ -1106,13 +1106,13 @@ _1 = opt_inline _2 = bindingPattern _3 = opt_topReturnTypeWithTypeConstraints _4
        )}
 
 abstractMemberFlags:
-_1 = ABSTRACT
+  _1 = ABSTRACT
     {             ()}
 | _1 = ABSTRACT _2 = MEMBER
     {                    ()}
 
 classDefnMember:
-_1 = opt_attributes _2 = opt_decl_visibility _3 = defnBindings
+  _1 = opt_attributes _2 = opt_decl_visibility _3 = defnBindings
     {     ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
        [mkClassMemberLocalBindings false (rhs2 3 3) _1 _2 _3] )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = hardwhiteDefnBindings
@@ -1166,19 +1166,19 @@ _1 = opt_attributes _2 = opt_decl_visibility _3 = defnBindings
         [ ClassMemberDefn_tycon(_5,None,rhs2 3 5) ] )}
 
 atomicPatternLongIdent:
-_1 = pathop
+  _1 = pathop
     {           ( (None,_1) )}
 | _1 = access _2 = pathop
     {                  ( (Some(_1), _2) )}
 
 opt_access:
-
+  
     {           ( None )}
 | _1 = access
     {           ( Some(_1) )}
 
 access:
-_1 = PRIVATE
+  _1 = PRIVATE
     {            ( accessPrivate )}
 | _1 = PUBLIC
     {           ( (accessPublic) )}
@@ -1186,71 +1186,71 @@ _1 = PRIVATE
     {             ( accessInternal )}
 
 opt_decl_visibility:
-_1 = access
+  _1 = access
     {           ( Some(_1) )}
 | 
     {     ( None )}
 
 opt_interfaceImplDefn:
-_1 = WITH _2 = objectImplementationBlock _3 = decl_end
+  _1 = WITH _2 = objectImplementationBlock _3 = decl_end
     {                                            ( Some(_2) )}
 | 
     {                               ( None )}
 
 opt_classDefn:
-_1 = WITH _2 = classDefnBlock _3 = decl_end
+  _1 = WITH _2 = classDefnBlock _3 = decl_end
     {                                 ( _2 )}
 | 
     {                              ( [] )}
 
 opt_classSpfn:
-_1 = WITH _2 = classSpfnBlock _3 = decl_end
+  _1 = WITH _2 = classSpfnBlock _3 = decl_end
     {                                 ( _2 )}
 | 
     {                       ( [] )}
 
 inheritsDefn:
-_1 = INHERIT _2 = appType _3 = opt_as
+  _1 = INHERIT _2 = appType _3 = opt_as
     {     (  ClassMemberDefn_inherit(_2,_3,lhs()) )}
 | _1 = INHERIT _2 = appType _3 = opt_HIGH_PRECEDENCE_APP _4 = argExprAfterType _5 = opt_as
     {     (  ClassMemberDefn_implicit_inherit(_2,_4,_5,lhs()) )}
 
 opt_as:
-_1 = asSpec
+  _1 = asSpec
     {           ( Some(_1) )}
 | 
     {           ( None )}
 
 asSpec:
-_1 = AS _2 = ident
+  _1 = AS _2 = ident
     {             ( startName(rhs 2); _2 )}
 
 objectImplementationBlock:
-_1 = OBLOCKBEGIN _2 = objectImplementationMembers _3 = OBLOCKEND
+  _1 = OBLOCKBEGIN _2 = objectImplementationMembers _3 = OBLOCKEND
     {                                                      ( _2 )}
 | _1 = objectImplementationMembers
     {                                ( _1 )}
 
 objectImplementationMembers:
-_1 = objectImplementationMember _2 = opt_seps _3 = objectImplementationMembers
+  _1 = objectImplementationMember _2 = opt_seps _3 = objectImplementationMembers
     {                                                                    ( _1 @  _3 )}
 | _1 = objectImplementationMember _2 = opt_seps
     {                                        ( _1 )}
 
 objectImplementationMember:
-_1 = opt_attributes _2 = memberOrOverride _3 = memberCore _4 = opt_ODECLEND
+  _1 = opt_attributes _2 = memberOrOverride _3 = memberCore _4 = opt_ODECLEND
     {     ( _3 None overrideFlags _1 )}
 | _1 = opt_attributes _2 = memberOrOverride _3 = error
     {                                          ( [] )}
 
 memberOrOverride:
-_1 = MEMBER
+  _1 = MEMBER
     {           ()}
 | _1 = OVERRIDE
     {             ()}
 
 tyconDefnOrSpfnSimpleRepr:
-_1 = typ
+  _1 = typ
     {     ( TyconCore_abbrev (_1, lhs()) )}
 | _1 = unionRepr
     {     ( if List.exists (function Choice1 _ -> true | _ -> false) _1 then 
@@ -1265,7 +1265,7 @@ _1 = typ
         _2 )}
 
 braceFieldDeclList:
-_1 = LBRACE _2 = recdFieldDeclList _3 = RBRACE
+  _1 = LBRACE _2 = recdFieldDeclList _3 = RBRACE
     {     ( matchPair 1 3;   _2 )}
 | _1 = LBRACE _2 = recdFieldDeclList _3 = recover
     {     ( _2 )}
@@ -1273,13 +1273,13 @@ _1 = LBRACE _2 = recdFieldDeclList _3 = RBRACE
     {     ( matchPair 1 3;   [] )}
 
 inlineAssemblyTyconRepr:
-_1 = HASH _2 = STRING _3 = opt_HASH
+  _1 = HASH _2 = STRING _3 = opt_HASH
     {     ( libraryOnly (lhs());
        let lhsm = lhs() in 
        TyconCore_asm (parse_il_typ _2 (rhs 2),lhsm) )}
 
 classOrInterfaceOrStruct:
-_1 = CLASS
+  _1 = CLASS
     {              ( TyconClass )}
 | _1 = INTERFACE
     {              ( TyconInterface )}
@@ -1287,13 +1287,13 @@ _1 = CLASS
     {              ( TyconStruct )}
 
 interfaceMember:
-_1 = INTERFACE
+  _1 = INTERFACE
     {              ( )}
 | _1 = OINTERFACE_MEMBER
     {                         ( )}
 
 tyconNameAndTyparDecls:
-_1 = opt_access _2 = path
+  _1 = opt_access _2 = path
     {      ( startName(rhs 2); [], _2,false,[],_1 )}
 | _1 = opt_access _2 = prefixTyparDecls _3 = path
     {      (startName(rhs 3);  _2, _3,false,[],_1 )}
@@ -1303,27 +1303,27 @@ _1 = opt_access _2 = path
         tps, _2,true,tpcs,_1 )}
 
 prefixTyparDecls:
-_1 = typar
+  _1 = typar
     {          ( [ TyparDecl([],_1) ] )}
 | _1 = LPAREN _2 = prefixTyparDeclList _3 = RPAREN
     {                                      (  matchPair 1 3; List.rev _2 )}
 
 prefixTyparDeclList:
-_1 = prefixTyparDeclList _2 = COMMA _3 = typarDecl
+  _1 = prefixTyparDeclList _2 = COMMA _3 = typarDecl
     {                                        ( _3 :: _1 )}
 | _1 = typarDecl
     {              ( [_1] )}
 
 typarDecl:
-_1 = opt_attributes _2 = typar
+  _1 = opt_attributes _2 = typar
     {                         ( TyparDecl(_1,_2) )}
 
 postfixTyparDecls:
-_1 = opt_HIGH_PRECEDENCE_TYAPP _2 = LESS _3 = prefixTyparDeclList _4 = opt_typeConstraints _5 = GREATER
+  _1 = opt_HIGH_PRECEDENCE_TYAPP _2 = LESS _3 = prefixTyparDeclList _4 = opt_typeConstraints _5 = GREATER
     {                                                                                   ( List.rev _3, _4 )}
 
 explicitValTyparDeclsCore:
-_1 = prefixTyparDeclList _2 = COMMA _3 = DOT_DOT
+  _1 = prefixTyparDeclList _2 = COMMA _3 = DOT_DOT
     {      ( deprecated "this declaration form is deprecated. Either specify all relevant type parameters or none" (lhs());
         (List.rev _1,true) )}
 | _1 = DOT_DOT
@@ -1335,36 +1335,36 @@ _1 = prefixTyparDeclList _2 = COMMA _3 = DOT_DOT
     {      ( ([],false) )}
 
 explicitValTyparDecls:
-_1 = opt_HIGH_PRECEDENCE_TYAPP _2 = LESS _3 = explicitValTyparDeclsCore _4 = opt_typeConstraints _5 = GREATER
+  _1 = opt_HIGH_PRECEDENCE_TYAPP _2 = LESS _3 = explicitValTyparDeclsCore _4 = opt_typeConstraints _5 = GREATER
     {      ( let tps,flex = _3 in 
          ValTyparDecls(tps,flex,_4) )}
 
 opt_explicitValTyparDecls:
-_1 = explicitValTyparDecls
+  _1 = explicitValTyparDecls
     {      ( _1 )}
 | 
     {      ( ValTyparDecls([],true,[]) )}
 
 opt_explicitValTyparDecls2:
-_1 = explicitValTyparDecls
+  _1 = explicitValTyparDecls
     {      ( Some _1 )}
 | 
     {      ( None )}
 
 opt_typeConstraints:
-
+  
     {     ( [] )}
 | _1 = WHEN _2 = typeConstraints
     {     ( List.rev _2 )}
 
 typeConstraints:
-_1 = typeConstraints _2 = AND _3 = typeConstraint
+  _1 = typeConstraints _2 = AND _3 = typeConstraint
     {                                       ( _3 :: _1 )}
 | _1 = typeConstraint
     {                   ( [_1] )}
 
 typeConstraint:
-_1 = DEFAULT _2 = typar _3 = COLON _4 = typ
+  _1 = DEFAULT _2 = typar _3 = COLON _4 = typ
     {      ( libraryOnly (lhs()); WhereTyparDefaultsToType(_2,_4,lhs()) )}
 | _1 = typar _2 = COLON_GREATER _3 = typ
     {      ( WhereTyparSubtypeOfType(_1,_3,lhs()) )}
@@ -1387,7 +1387,7 @@ _1 = DEFAULT _2 = typar _3 = COLON _4 = typ
         | nm -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) ("unexpected identifier: '"^ nm ^"'") )}
 
 unionRepr:
-_1 = BAR _2 = attrUnionCaseDecls
+  _1 = BAR _2 = attrUnionCaseDecls
     {     ( _2 )}
 | _1 = firstUnionCaseDeclOfMany _2 = BAR _3 = attrUnionCaseDecls
     {     ( _1 :: _3 )}
@@ -1395,13 +1395,13 @@ _1 = BAR _2 = attrUnionCaseDecls
     {     ( [_1] )}
 
 attrUnionCaseDecls:
-_1 = attrUnionCaseDecl _2 = BAR _3 = attrUnionCaseDecls
+  _1 = attrUnionCaseDecl _2 = BAR _3 = attrUnionCaseDecls
     {                                              ( _1 :: _3 )}
 | _1 = attrUnionCaseDecl
     {                      ( [ _1 ] )}
 
 attrUnionCaseDecl:
-_1 = opt_attributes _2 = opt_access _3 = grab_doc _4 = unionCaseName _5 = opt_OBLOCKSEP
+  _1 = opt_attributes _2 = opt_access _3 = grab_doc _4 = unionCaseName _5 = opt_OBLOCKSEP
     {      ( startName(rhs 1); Choice2 (UnionConstr ( _1, _4,ConstrFields [],_3,_2,rhs 4)) )}
 | _1 = opt_attributes _2 = opt_access _3 = grab_doc _4 = unionCaseName _5 = OF _6 = unionCaseRepr _7 = opt_OBLOCKSEP
     {      ( startName(rhs 1); Choice2 (UnionConstr ( _1, _4,ConstrFields _6,_3,_2,rhs2 4 6)) )}
@@ -1414,7 +1414,7 @@ _1 = opt_attributes _2 = opt_access _3 = grab_doc _4 = unionCaseName _5 = opt_OB
         Choice1 (EnumConstr ( _1, _4,_6,_3,rhs2 4 6)) )}
 
 unionCaseName:
-_1 = nameop
+  _1 = nameop
     {      ( _1 )}
 | _1 = LPAREN _2 = COLON_COLON _3 = RPAREN
     {      (  matchPair 1 3; ident(opname_Cons,rhs 2) )}
@@ -1422,7 +1422,7 @@ _1 = nameop
     {      (  matchPair 1 4; ident(opname_Nil,rhs2 2 3) )}
 
 firstUnionCaseDeclOfMany:
-_1 = ident _2 = opt_OBLOCKSEP
+  _1 = ident _2 = opt_OBLOCKSEP
     {      ( startName(rhs 1); Choice2 (UnionConstr ( [], _1,ConstrFields [],emptyXMLDoc,None,lhs())) )}
 | _1 = ident _2 = EQUALS _3 = constant _4 = opt_OBLOCKSEP
     {      ( startName(rhs 1); Choice1 (EnumConstr ([],_1,_3,emptyXMLDoc,lhs())) )}
@@ -1430,11 +1430,11 @@ _1 = ident _2 = opt_OBLOCKSEP
     {      ( _1 )}
 
 firstUnionCaseDecl:
-_1 = ident _2 = OF _3 = unionCaseRepr
+  _1 = ident _2 = OF _3 = unionCaseRepr
     {     ( startName(rhs 1); Choice2 (UnionConstr ( [],_1,ConstrFields _3,emptyXMLDoc,None,lhs())) )}
 
 unionCaseRepr:
-_1 = braceFieldDeclList
+  _1 = braceFieldDeclList
     {     ( warning(Error("This declaration form is deprecated. Consider using a separate record type instead",lhs())); _1 )}
 | _1 = appType _2 = STAR _3 = tupleTypeElements
     {     ( List.map anon_field_of_typ (_1 :: _3) )}
@@ -1442,51 +1442,51 @@ _1 = braceFieldDeclList
     {     ( [anon_field_of_typ _1] )}
 
 recdFieldDeclList:
-_1 = recdFieldDecl _2 = seps _3 = recdFieldDeclList
+  _1 = recdFieldDecl _2 = seps _3 = recdFieldDeclList
     {     ( _1 :: _3 )}
 | _1 = recdFieldDecl _2 = opt_seps
     {     ( [_1] )}
 
 recdFieldDecl:
-_1 = opt_attributes _2 = fieldDecl
+  _1 = opt_attributes _2 = fieldDecl
     {     ( _2 _1 false )}
 
 fieldDecl:
-_1 = opt_mutable _2 = opt_access _3 = ident _4 = grab_doc _5 = COLON _6 = polyType
+  _1 = opt_mutable _2 = opt_access _3 = ident _4 = grab_doc _5 = COLON _6 = polyType
     {     ( startName(rhs 3); 
        let rhsm = rhs2 3 6 in 
        (fun attrs stat -> Field(attrs, stat,Some _3,_6,_1,_4,_2,rhsm)) )}
 
 exconDefn:
-_1 = exconCore _2 = opt_classDefn
+  _1 = exconCore _2 = opt_classDefn
     {     ( ExconDefn(_1,_2, lhs()) )}
 
 exconSpfn:
-_1 = exconCore _2 = opt_classSpfn
+  _1 = exconCore _2 = opt_classSpfn
     {     ( ExconSpfn(_1,_2,lhs()) )}
 
 exconCore:
-_1 = EXCEPTION _2 = opt_attributes _3 = grab_doc _4 = opt_access _5 = exconIntro _6 = exconRepr
+  _1 = EXCEPTION _2 = opt_attributes _3 = grab_doc _4 = opt_access _5 = exconIntro _6 = exconRepr
     {     ( ExconCore(_2,_5, _6,_3,_4,lhs()) )}
 
 exconIntro:
-_1 = ident
+  _1 = ident
     {      ( startName(rhs 1); UnionConstr ( [], _1,ConstrFields [],emptyXMLDoc,None,lhs()) )}
 | _1 = ident _2 = OF _3 = unionCaseRepr
     {      ( startName(rhs 1); UnionConstr ( [], _1,ConstrFields _3,emptyXMLDoc,None,lhs()) )}
 
 exconRepr:
-
+  
     {                ( None )}
 | _1 = EQUALS _2 = path
     {                ( Some (_2) )}
 
 openDecl:
-_1 = OPEN _2 = path
+  _1 = OPEN _2 = path
     {               ( _2 )}
 
 defnBindings:
-_1 = LET _2 = opt_rec _3 = localBindings
+  _1 = LET _2 = opt_rec _3 = localBindings
     {      ( let letm = rhs 1 in 
         let isUse,isRec,bindingsPreAttrs = _1,_2,_3 in 
         (* the first binding swallow any attributes prior to the 'let' *)
@@ -1495,7 +1495,7 @@ _1 = LET _2 = opt_rec _3 = localBindings
     {      ( lhs(), false,false,_1  )}
 
 doBinding:
-_1 = DO _2 = typedSeqExprBlock
+  _1 = DO _2 = typedSeqExprBlock
     {      ( let letm = rhs 1 in 
         let wholem = rhs2 1 2 in 
         (* any attributes prior to the 'let' are left free, e.g. become top-level attributes *)
@@ -1503,7 +1503,7 @@ _1 = DO _2 = typedSeqExprBlock
         letm,false,false,(fun attrs vis -> attrs,[mk_Do (true,_2,wholem)]) )}
 
 hardwhiteLetBindings:
-_1 = OLET _2 = opt_rec _3 = localBindings _4 = hardwhiteDefnBindingsTerminator
+  _1 = OLET _2 = opt_rec _3 = localBindings _4 = hardwhiteDefnBindingsTerminator
     {      ( _4 (rhs 1);  (* report unterminated error *)
         let letm = rhs 1 in 
         let isUse,isRec,bindingsPreAttrs = _1,_2,_3 in 
@@ -1511,7 +1511,7 @@ _1 = OLET _2 = opt_rec _3 = localBindings _4 = hardwhiteDefnBindingsTerminator
         letm,isRec,isUse,(fun attrs vis -> [],bindingsPreAttrs attrs vis) )}
 
 hardwhiteDoBinding:
-_1 = ODO _2 = typedSeqExprBlock _3 = hardwhiteDefnBindingsTerminator
+  _1 = ODO _2 = typedSeqExprBlock _3 = hardwhiteDefnBindingsTerminator
     {      ( _3 (rhs 1);  (* report unterminated error *)
         let letm = rhs 1 in 
         let wholem = rhs2 1 2 in 
@@ -1520,19 +1520,19 @@ _1 = ODO _2 = typedSeqExprBlock _3 = hardwhiteDefnBindingsTerminator
         letm,false,false,(fun attrs vis -> attrs,[mk_Do (true,_2,wholem)]) )}
 
 hardwhiteDefnBindings:
-_1 = hardwhiteLetBindings
+  _1 = hardwhiteLetBindings
     {                         ( _1 )}
 | _1 = hardwhiteDoBinding
     {                        ( _1 )}
 
 hardwhiteDefnBindingsTerminator:
-_1 = ODECLEND
+  _1 = ODECLEND
     {     ( (fun m -> ()) )}
 | _1 = recover
     {     ( (fun m -> report_parse_error_at m "unmatched 'let' or 'do'") )}
 
 cPrototype:
-_1 = EXTERN _2 = cRetType _3 = opt_access _4 = ident _5 = opt_HIGH_PRECEDENCE_APP _6 = LPAREN _7 = cArgs _8 = RPAREN
+  _1 = EXTERN _2 = cRetType _3 = opt_access _4 = ident _5 = opt_HIGH_PRECEDENCE_APP _6 = LPAREN _7 = cArgs _8 = RPAREN
     {      ( let rty,vis,nm,args  = _2,_3,_4,_7 in 
         let nmm = rhs 4 in 
         let argsm = rhs 7 in 
@@ -1543,7 +1543,7 @@ _1 = EXTERN _2 = cRetType _3 = opt_access _4 = ident _5 = opt_HIGH_PRECEDENCE_AP
         (fun attrs vis -> [], [mksyn_binding (grabXML(),Pat_lid ([nm],Some(noInferredTypars),[Pat_tuple(args,argsm)],vis,nmm)) vis false false bindm wholem (Some(rty)) rhsexpr rhsm [] attrs None]) )}
 
 cArgs:
-_1 = cMoreArgs
+  _1 = cMoreArgs
     {     ( List.rev _1 )}
 | _1 = cArg
     {     ( [_1] )}
@@ -1551,19 +1551,19 @@ _1 = cMoreArgs
     {     ( [] )}
 
 cMoreArgs:
-_1 = cMoreArgs _2 = COMMA _3 = cArg
+  _1 = cMoreArgs _2 = COMMA _3 = cArg
     {     ( _3 :: _1 )}
 | _1 = cArg _2 = COMMA _3 = cArg
     {     ( [_3; _1] )}
 
 cArg:
-_1 = opt_attributes _2 = cType
+  _1 = opt_attributes _2 = cType
     {     ( let m = lhs() in Pat_typed(Pat_wild m,_2,m) |> addAttribs _1 )}
 | _1 = opt_attributes _2 = cType _3 = ident
     {     ( let m = lhs() in Pat_as (Pat_typed(Pat_wild m,_2,m),_3,false,None,m) |> addAttribs _1 )}
 
 cType:
-_1 = ident
+  _1 = ident
     {     ( let m = lhs() in Type_app([_1],[],m) )}
 | _1 = cType _2 = opt_HIGH_PRECEDENCE_APP _3 = LBRACK _4 = RBRACK
     {     ( let m = lhs() in Type_app([ident("[]",m)],[_1],m) )}
@@ -1575,26 +1575,26 @@ _1 = ident
     {     ( let m = lhs() in Type_app([ident("nativeint",m)],[],m) )}
 
 cRetType:
-_1 = opt_attributes _2 = cType
+  _1 = opt_attributes _2 = cType
     {     ( (_2,TopArgSynData(_1,false,None)),rhs 2 )}
 | _1 = opt_attributes _2 = VOID
     {     ( let m = rhs 2 in (Type_app([ident("unit",m)],[],m),TopArgSynData(_1,false,None)),m )}
 
 localBindings:
-_1 = attr_localBinding _2 = more_localBindings
+  _1 = attr_localBinding _2 = more_localBindings
     {      ( (fun attrs vis -> 
            match _1 with 
            | Some x -> (x attrs vis None true ::  _2) 
            | None -> _2) )}
 
 more_localBindings:
-_1 = AND _2 = attr_localBinding _3 = more_localBindings
+  _1 = AND _2 = attr_localBinding _3 = more_localBindings
     {      ( (match _2 with Some x -> x [] None None false :: _3 | None -> _3) )}
 |  %prec prec_no_more_attr_bindings
     {      ( [] )}
 
 attr_localBinding:
-_1 = DO _2 = typedSeqExprBlock
+  _1 = DO _2 = typedSeqExprBlock
     {      ( let m = rhs2 1 2 in 
         Some(fun _ _ _ isFirst -> 
           if isFirst then deprecated "Consider using 'let _ = expr in expr' or simply 'expr; expr' instead" m;
@@ -1606,7 +1606,7 @@ _1 = DO _2 = typedSeqExprBlock
     {      ( None )}
 
 localBinding:
-_1 = opt_inline _2 = opt_mutable _3 = bindingPattern _4 = opt_topReturnTypeWithTypeConstraints _5 = EQUALS _6 = typedExprWithStaticOptimizationsBlock
+  _1 = opt_inline _2 = opt_mutable _3 = bindingPattern _4 = opt_topReturnTypeWithTypeConstraints _5 = EQUALS _6 = typedExprWithStaticOptimizationsBlock
     {      ( let bindm = rhs 3 in 
         let wholem = rhs 6 in 
         let expr,opts = _6 in
@@ -1625,37 +1625,37 @@ _1 = opt_inline _2 = opt_mutable _3 = bindingPattern _4 = opt_topReturnTypeWithT
             bindingBuilder vis _1 _2 bindm wholem optReturnType (arbExpr()) rhsm [] attrs memberInfo)  )}
 
 typedExprWithStaticOptimizationsBlock:
-_1 = OBLOCKBEGIN _2 = typedExprWithStaticOptimizations _3 = OBLOCKEND
+  _1 = OBLOCKBEGIN _2 = typedExprWithStaticOptimizations _3 = OBLOCKEND
     {                                                           ( _2 )}
 | _1 = typedExprWithStaticOptimizations
     {                                     ( _1 )}
 
 typedExprWithStaticOptimizations:
-_1 = typedSeqExpr _2 = opt_staticOptimizations
+  _1 = typedSeqExpr _2 = opt_staticOptimizations
     {                                         ( _1,_2 )}
 
 opt_staticOptimizations:
-_1 = opt_staticOptimizations _2 = staticOptimization
+  _1 = opt_staticOptimizations _2 = staticOptimization
     {                                               ( _2 :: _1 )}
 | 
     {    ( [] )}
 
 staticOptimization:
-_1 = WHEN _2 = staticOptimizationConditions _3 = EQUALS _4 = typedSeqExpr
+  _1 = WHEN _2 = staticOptimizationConditions _3 = EQUALS _4 = typedSeqExpr
     {                                                          ( (_2,_4) )}
 
 staticOptimizationConditions:
-_1 = staticOptimizationConditions _2 = AND _3 = staticOptimizationCondition
+  _1 = staticOptimizationConditions _2 = AND _3 = staticOptimizationCondition
     {                                                                 ( _3 :: _1 )}
 | _1 = staticOptimizationCondition
     {                                ( [_1 ] )}
 
 staticOptimizationCondition:
-_1 = typar _2 = COLON _3 = typ
+  _1 = typar _2 = COLON _3 = typ
     {                    ( WhenTyparTyconEqualsTycon(_1,_3,lhs()) )}
 
 constant:
-_1 = INT8
+  _1 = INT8
     {         ( Const_int8 _1 )}
 | _1 = UINT8
     {          ( Const_uint8 _1 )}
@@ -1693,11 +1693,11 @@ _1 = INT8
     {              ( Const_bytearray (_1,lhs()) )}
 
 bindingPattern:
-_1 = headBindingPattern _2 = grab_doc
+  _1 = headBindingPattern _2 = grab_doc
     {      (  mksyn_binding (_2,_1) )}
 
 simplePattern:
-_1 = ident
+  _1 = ident
     {      ( startName(rhs 1); SPat_as (_1,false,false,rhs 1) )}
 | _1 = QMARK _2 = ident
     {      ( startName(rhs 2); SPat_as (_2,false,true,rhs 2) )}
@@ -1709,13 +1709,13 @@ _1 = ident
         SPat_attrib(_2,_1,lhsm) )}
 
 simplePatternCommaList:
-_1 = simplePattern
+  _1 = simplePattern
     {                  ( [_1] )}
 | _1 = simplePattern _2 = COMMA _3 = simplePatternCommaList
     {                                               ( _1 :: _3 )}
 
 simplePatterns:
-_1 = LPAREN _2 = simplePatternCommaList _3 = RPAREN
+  _1 = LPAREN _2 = simplePatternCommaList _3 = RPAREN
     {                                         ( _2 )}
 | _1 = LPAREN _2 = RPAREN
     {                  ( [] )}
@@ -1727,7 +1727,7 @@ _1 = LPAREN _2 = simplePatternCommaList _3 = RPAREN
     {                   (  report_parse_error_at (rhs 1) "unmatched '('"; [] )}
 
 headBindingPattern:
-_1 = headBindingPattern _2 = AS _3 = ident
+  _1 = headBindingPattern _2 = AS _3 = ident
     {      ( startName(rhs 3); Pat_as (_1,_3,false,None,rhs2 1 3) )}
 | _1 = headBindingPattern _2 = BAR _3 = headBindingPattern
     {      ( Pat_disj(_1,_3,rhs2 1 3) )}
@@ -1741,19 +1741,19 @@ _1 = headBindingPattern _2 = AS _3 = ident
     {      ( _1 )}
 
 tuplePatternElements:
-_1 = tuplePatternElements _2 = COMMA _3 = headBindingPattern
+  _1 = tuplePatternElements _2 = COMMA _3 = headBindingPattern
     {                                                  ( _3 :: _1 )}
 | _1 = headBindingPattern _2 = COMMA _3 = headBindingPattern
     {                                                ( _3 :: _1 :: [] )}
 
 conjPatternElements:
-_1 = conjPatternElements _2 = AMP _3 = headBindingPattern
+  _1 = conjPatternElements _2 = AMP _3 = headBindingPattern
     {                                               ( _3 :: _1 )}
 | _1 = headBindingPattern _2 = AMP _3 = headBindingPattern
     {                                              ( _3 :: _1 :: [] )}
 
 constrPattern:
-_1 = atomicPatternLongIdent _2 = explicitValTyparDecls
+  _1 = atomicPatternLongIdent _2 = explicitValTyparDecls
     {                                                                                                          ( let vis,lid = _1 in Pat_lid (lid,Some _2,[],vis,lhs()) )}
 | _1 = atomicPatternLongIdent _2 = opt_explicitValTyparDecls2 _3 = atomicPatterns %prec pat_app
     {                                                                                                          ( let vis,lid = _1 in Pat_lid (lid,_2,_3,vis,lhs()) )}
@@ -1765,7 +1765,7 @@ _1 = atomicPatternLongIdent _2 = explicitValTyparDecls
     {                  ( _1 )}
 
 atomicPatterns:
-_1 = atomicPattern _2 = atomicPatterns %prec pat_args
+  _1 = atomicPattern _2 = atomicPatterns %prec pat_args
     {                                                ( _1 :: _2 )}
 | _1 = atomicPattern _2 = HIGH_PRECEDENCE_APP _3 = atomicPatterns
     {      ( report_parse_error_at (rhs 1) "Successive patterns should be separated by spaces or tupled";
@@ -1774,7 +1774,7 @@ _1 = atomicPattern _2 = atomicPatterns %prec pat_args
     {                  ( [_1] )}
 
 atomicPattern:
-_1 = quoteExpr
+  _1 = quoteExpr
     {      ( Pat_expr(_1,lhs()) )}
 | _1 = CHAR _2 = DOT_DOT _3 = CHAR
     {                      ( Pat_range (_1,_3,rhs2 1 3) )}
@@ -1819,13 +1819,13 @@ _1 = quoteExpr
     {                   (  report_parse_error_at (rhs 1) "unmatched '('"; Pat_wild (lhs()))}
 
 parenPatternBody:
-_1 = parenPattern
+  _1 = parenPattern
     {      ( (fun m -> _1) )}
 | 
     {      ( (fun m -> Pat_const(Const_unit,m)) )}
 
 parenPattern:
-_1 = parenPattern _2 = AS _3 = ident
+  _1 = parenPattern _2 = AS _3 = ident
     {      ( startName(rhs 3); Pat_as (_1,_3,false,None,rhs2 1 3) )}
 | _1 = parenPattern _2 = BAR _3 = parenPattern
     {      ( Pat_disj(_1,_3,rhs2 1 3) )}
@@ -1848,53 +1848,53 @@ _1 = parenPattern _2 = AS _3 = ident
     {                  ( _1 )}
 
 tupleParenPatternElements:
-_1 = tupleParenPatternElements _2 = COMMA _3 = parenPattern
+  _1 = tupleParenPatternElements _2 = COMMA _3 = parenPattern
     {                                                  ( _3 :: _1 )}
 | _1 = parenPattern _2 = COMMA _3 = parenPattern
     {                                     ( _3 :: _1 :: [] )}
 
 conjParenPatternElements:
-_1 = conjParenPatternElements _2 = AMP _3 = parenPattern
+  _1 = conjParenPatternElements _2 = AMP _3 = parenPattern
     {                                              ( _3 :: _1 )}
 | _1 = parenPattern _2 = AMP _3 = parenPattern
     {                                  ( _3 :: _1 :: [] )}
 
 recordPatternElements:
-_1 = path _2 = EQUALS _3 = parenPattern _4 = moreRecordPatternElements
+  _1 = path _2 = EQUALS _3 = parenPattern _4 = moreRecordPatternElements
     {      ( Pat_recd ((frontAndBack _1,_3) :: List.rev _4,lhs()) )}
 
 moreRecordPatternElements:
-_1 = moreRecordPatternElements _2 = seps _3 = path _4 = EQUALS _5 = parenPattern
+  _1 = moreRecordPatternElements _2 = seps _3 = path _4 = EQUALS _5 = parenPattern
     {     ( (frontAndBack _3,_5)::_1 )}
 | 
     {     ( [] )}
 
 listPatternElements:
-_1 = parenPattern _2 = moreListPatternElements
+  _1 = parenPattern _2 = moreListPatternElements
     {    ( _1 :: List.rev _2 )}
 | 
     {    ( [] )}
 
 moreListPatternElements:
-_1 = moreListPatternElements _2 = seps _3 = parenPattern
+  _1 = moreListPatternElements _2 = seps _3 = parenPattern
     {     ( _3 :: _1 )}
 | 
     {     ( [] )}
 
 typedSeqExprBlock:
-_1 = OBLOCKBEGIN _2 = typedSeqExpr _3 = OBLOCKEND
+  _1 = OBLOCKBEGIN _2 = typedSeqExpr _3 = OBLOCKEND
     {                                       ( _2 )}
 | _1 = typedSeqExpr
     {                 ( _1 )}
 
 typedSeqExprBlockR:
-_1 = typedSeqExpr _2 = ORIGHT_BLOCK_END
+  _1 = typedSeqExpr _2 = ORIGHT_BLOCK_END
     {                                  ( _1 )}
 | _1 = typedSeqExpr
     {                 ( _1 )}
 
 typedSeqExpr:
-_1 = seqExpr _2 = COLON _3 = typeWithTypeConstraints
+  _1 = seqExpr _2 = COLON _3 = typeWithTypeConstraints
     {                                                        ( Expr_typed (_1,_3, lhs()) )}
 | _1 = seqExpr _2 = COLON_QMARK _3 = typ %prec expr_isinst
     {                                                        ( Expr_isinst(_1,_3,lhs()) )}
@@ -1906,7 +1906,7 @@ _1 = seqExpr _2 = COLON _3 = typeWithTypeConstraints
     {            ( _1 )}
 
 seqExpr:
-_1 = declExpr _2 = seps _3 = seqExpr
+  _1 = declExpr _2 = seps _3 = seqExpr
     {                                          ( Expr_seq(true,_1,_3,lhs()) )}
 | _1 = declExpr _2 = seps
     {                                          ( _1 )}
@@ -1918,13 +1918,13 @@ _1 = declExpr _2 = seps _3 = seqExpr
     {                                                                             ( Expr_seq(false,_1,_4,lhs()) )}
 
 recover:
-_1 = error
+  _1 = error
     {               ( )}
 | _1 = EOF
     {                          (report_parse_error_at (lhs()) "syntax error at end of file" )}
 
 declExpr:
-_1 = defnBindings _2 = IN _3 = typedSeqExpr %prec expr_let
+  _1 = defnBindings _2 = IN _3 = typedSeqExpr %prec expr_let
     {     ( mkLocalBindings (rhs2 1 3) _1 _3 )}
 | _1 = defnBindings _2 = IN _3 = error %prec expr_let
     {     ( mkLocalBindings (rhs2 1 2) _1 (arbExpr()) )}
@@ -2035,13 +2035,13 @@ _1 = defnBindings _2 = IN _3 = typedSeqExpr %prec expr_let
     {                                           ( _1 )}
 
 withClausses:
-_1 = WITH _2 = withPatternClauses
+  _1 = WITH _2 = withPatternClauses
     {                                  ( _2 )}
 | _1 = OWITH _2 = withPatternClauses _3 = OEND
     {                                  ( _2 )}
 
 withPatternClauses:
-_1 = patternClauses
+  _1 = patternClauses
     {                   ( _1 )}
 | _1 = BAR _2 = patternClauses
     {    (  (* startName(rhs 1); *) (* hack - register as name so intellisense tells us the name '|' when this trigger fires *)
@@ -2053,11 +2053,11 @@ _1 = patternClauses
     {    (  (* silent recovery *)  [] )}
 
 patternAndGuard:
-_1 = parenPattern _2 = patternGuard
+  _1 = parenPattern _2 = patternGuard
     {      ( _1, _2, rhs 1 )}
 
 patternClauses:
-_1 = patternAndGuard _2 = patternResult %prec prec_pat_pat_action
+  _1 = patternAndGuard _2 = patternResult %prec prec_pat_pat_action
     {     ( let pat,guard,patm = _1 in [Clause(pat,guard,_2,patm)]  )}
 | _1 = patternAndGuard _2 = patternResult _3 = BAR _4 = patternClauses
     {     ( startName(rhs 3); (* hack - register as name so intellisense tells us the name '|' when this trigger fires *) 
@@ -2069,27 +2069,27 @@ _1 = patternAndGuard _2 = patternResult %prec prec_pat_pat_action
     {     ( let pat,guard,patm = _1 in [Clause(pat,guard,_2,patm)] (* silent recovery *) )}
 
 patternGuard:
-_1 = WHEN _2 = declExpr
+  _1 = WHEN _2 = declExpr
     {     ( Some _2 )}
 | 
     {     ( None )}
 
 patternResult:
-_1 = RARROW _2 = typedSeqExprBlockR
+  _1 = RARROW _2 = typedSeqExprBlockR
     {     ( _2 )}
 
 ifExprCases:
-_1 = ifExprThen _2 = ifExprElifs
+  _1 = ifExprThen _2 = ifExprElifs
     {                           ( (fun g m -> Expr_cond(g,_1,_2,m)) )}
 
 ifExprThen:
-_1 = THEN _2 = declExpr %prec prec_then_if
+  _1 = THEN _2 = declExpr %prec prec_then_if
     {                                      ( _2 )}
 | _1 = OTHEN _2 = OBLOCKBEGIN _3 = typedSeqExpr _4 = OBLOCKEND %prec prec_then_if
     {                                                                 ( _3 )}
 
 ifExprElifs:
-
+  
     {      ( None )}
 | _1 = ELSE _2 = declExpr
     {      ( Some _2 )}
@@ -2099,13 +2099,13 @@ ifExprElifs:
     {      ( Some (_3 _2 (lhs())) )}
 
 tupleExpr:
-_1 = tupleExpr _2 = COMMA _3 = declExpr
+  _1 = tupleExpr _2 = COMMA _3 = declExpr
     {      ( nextParameter (rhspos 2); _3 :: _1 )}
 | _1 = declExpr _2 = COMMA _3 = declExpr
     {      ( nextParameter (rhspos 2); _3 :: _1 :: [] )}
 
 minusExpr:
-_1 = MINUS _2 = minusExpr %prec expr_prefix_plus_minus
+  _1 = MINUS _2 = minusExpr %prec expr_prefix_plus_minus
     {      ( mksyn_prefix (lhs()) "~-" _2 )}
 | _1 = PLUS_MINUS_OP _2 = minusExpr
     {      ( mksyn_prefix (lhs()) ("~"^(_1)) _2 )}
@@ -2132,20 +2132,20 @@ _1 = MINUS _2 = minusExpr %prec expr_prefix_plus_minus
     {      ( _1 )}
 
 appExpr:
-_1 = appExpr _2 = argExprNoHPA %prec expr_app
+  _1 = appExpr _2 = argExprNoHPA %prec expr_app
     {      ( Expr_app (_1,_2,lhs())  )}
 | _1 = argExpr
     {      ( let arg,_ = _1 in 
         arg )}
 
 argExprNoHPA:
-_1 = argExpr
+  _1 = argExpr
     {      ( let arg,hpa = _1 in 
         if hpa then report_parse_error_at (rhs 1) "Successive arguments should be separated by spaces or tupled, and arguments involving function or method applications should be parenthesized";
         arg )}
 
 argExpr:
-_1 = argExpr _2 = HIGH_PRECEDENCE_APP _3 = argExpr
+  _1 = argExpr _2 = HIGH_PRECEDENCE_APP _3 = argExpr
     {      ( let arg1,_ = _1 in 
         let arg2,_ = _3 in 
         Expr_app (arg1,arg2,lhs()),true  )}
@@ -2176,7 +2176,7 @@ _1 = argExpr _2 = HIGH_PRECEDENCE_APP _3 = argExpr
     {      ( _1,false )}
 
 argExprQualification:
-_1 = identop
+  _1 = identop
     {      ( let idm = rhs 1 in 
         (fun e lhsm dotm -> 
               qualifyNameIfAlongside dotm idm; 
@@ -2211,7 +2211,7 @@ _1 = identop
         (fun e lhsm dotm -> qualifyName dotm dotm; mksyn_dot_lbrack_slice2_get lhsm e _2 _4) )}
 
 optRange:
-_1 = declExpr _2 = DOT_DOT _3 = declExpr
+  _1 = declExpr _2 = DOT_DOT _3 = declExpr
     {                              ( mk_optional (rhs 1) (Some _1), mk_optional (rhs 3) (Some _3) )}
 | _1 = declExpr _2 = DOT_DOT
     {                     ( mk_optional (rhs 1) (Some _1), mk_optional (rhs 2) None )}
@@ -2221,7 +2221,7 @@ _1 = declExpr _2 = DOT_DOT _3 = declExpr
     {         ( mk_optional (rhs 1) None, mk_optional (rhs 1) None )}
 
 argExprAfterType:
-_1 = constant
+  _1 = constant
     {      ( Expr_const (_1,range_of_synconst _1 (lhs())) )}
 | _1 = parenExpr
     {      ( _1 )}
@@ -2243,7 +2243,7 @@ _1 = constant
     {      ( Expr_hole((ref None, None),lhs()) )}
 
 beginEndExpr:
-_1 = BEGIN _2 = typedSeqExpr _3 = END
+  _1 = BEGIN _2 = typedSeqExpr _3 = END
     {      ( Expr_paren(_2,rhs2 1 3) )}
 | _1 = BEGIN _2 = typedSeqExpr _3 = recover
     {      ( report_parse_error_at (rhs 1) "unmatched 'begin'"; _2 )}
@@ -2253,7 +2253,7 @@ _1 = BEGIN _2 = typedSeqExpr _3 = END
     {      ( mksyn_unit (lhs()) )}
 
 quoteExpr:
-_1 = LQUOTE _2 = typedSeqExpr _3 = RQUOTE
+  _1 = LQUOTE _2 = typedSeqExpr _3 = RQUOTE
     {      ( matchPair 1 3; 
         if _1 <> _3 then report_parse_error_at (rhs 1) ("mismatched quotation, beginning with '"^ fst _1 ^ "'");  
         (Expr_quote(mksyn_item (lhs()) (compileOpName (fst _1)), snd _1,_2,lhs())) )}
@@ -2263,7 +2263,7 @@ _1 = LQUOTE _2 = typedSeqExpr _3 = RQUOTE
     {      ( matchPair 1 3; (* silent recovery *) Expr_quote(mksyn_item (lhs()) (compileOpName (fst _1)),snd _1,arbExpr(),lhs())  )}
 
 arrayExpr:
-_1 = LBRACK_BAR _2 = listExprElements _3 = BAR_RBRACK
+  _1 = LBRACK_BAR _2 = listExprElements _3 = BAR_RBRACK
     {      (  matchPair 1 3; _2 (lhs()) false )}
 | _1 = LBRACK_BAR _2 = listExprElements _3 = recover
     {      ( report_parse_error_at (rhs 1) "unmatched '[|'"; 
@@ -2272,7 +2272,7 @@ _1 = LBRACK_BAR _2 = listExprElements _3 = BAR_RBRACK
     {      (  matchPair 1 3; (* silent recovery *) Expr_array_or_list(true,[ ], lhs()) )}
 
 parenExpr:
-_1 = LPAREN _2 = parenExprBody _3 = RPAREN
+  _1 = LPAREN _2 = parenExprBody _3 = RPAREN
     {      ( startParameters (rhspos 1); endParameters (rhspos 3); matchPair 1 3; _2 (rhs2 1 3) )}
 | _1 = LPAREN _2 = parenExprBody _3 = recover
     {      ( startParameters (rhspos 1); endParameters (rhspos 3); report_parse_error_at (rhs 1) "unmatched '('"; let lhsm = rhs2 1 2 in Expr_paren(_2 lhsm,lhsm) )}
@@ -2282,7 +2282,7 @@ _1 = LPAREN _2 = parenExprBody _3 = RPAREN
     {      (  startParameters (rhspos 1); endParameters (rhspos 2); report_parse_error_at (rhs 1) "unmatched '('"; arbExpr()  )}
 
 parenExprBody:
-
+  
     {      (  (fun m -> Expr_const(Const_unit,m)) )}
 | _1 = TYPE _2 = typ
     {      (  (fun  m -> Expr_typeof(_2,m)) )}
@@ -2296,13 +2296,13 @@ parenExprBody:
     {      ( _1 )}
 
 staticallyKnownHeadTypars:
-_1 = staticallyKnownHeadTypar
+  _1 = staticallyKnownHeadTypar
     {                             ( [_1] )}
 | _1 = LPAREN _2 = staticallyKnownHeadTypar _3 = OR _4 = staticallyKnownHeadTypar _5 = RPAREN
     {                                                                       ( [_2 ; _4 ] )}
 
 braceExpr:
-_1 = LBRACE _2 = braceExprBody _3 = RBRACE
+  _1 = LBRACE _2 = braceExprBody _3 = RBRACE
     {     (  matchPair 1 3; _2 (lhs()) )}
 | _1 = LBRACE _2 = braceExprBody _3 = recover
     {     ( report_parse_error_at (rhs 1) "unmatched '{'" ; _2 (lhs()) )}
@@ -2310,7 +2310,7 @@ _1 = LBRACE _2 = braceExprBody _3 = RBRACE
     {     ( matchPair 1 3; (* silent recovery *) arbExpr()  )}
 
 braceExprBody:
-_1 = recdExpr
+  _1 = recdExpr
     {     (  (fun m -> let a,b,c = _1 in Expr_recd(a,b,c,m)) )}
 | _1 = objExpr
     {     ( _1 )}
@@ -2318,7 +2318,7 @@ _1 = recdExpr
     {     ( _1  )}
 
 listExprElements:
-_1 = monadicExprInitial
+  _1 = monadicExprInitial
     {     ( (fun lhsm isList -> if isList then Expr_list_of_seq(_1 lhsm,lhsm) else Expr_array_of_seq(_1 lhsm,lhsm) ) )}
 | _1 = declExpr _2 = moreListExprElements _3 = opt_seps
     {     ( (fun lhsm isList -> let elems = (_1 :: List.rev _2) in Expr_array_or_list(not isList, elems, lhsm)) )}
@@ -2326,19 +2326,19 @@ _1 = monadicExprInitial
     {     ( (fun lhsm isList -> Expr_array_or_list(not isList,[ ], lhsm)) )}
 
 moreListExprElements:
-_1 = moreListExprElements _2 = seps _3 = declExpr
+  _1 = moreListExprElements _2 = seps _3 = declExpr
     {     ( _3 :: _1 )}
 | 
     {     ( [] )}
 
 monadicExprInitial:
-_1 = monadicExprNonEmptyInitial
+  _1 = monadicExprNonEmptyInitial
     {     ( (fun lhsm -> Expr_comprehension(_1,lhsm)) )}
 | _1 = rangeSequenceExpr
     {     ( _1 )}
 
 rangeSequenceExpr:
-_1 = declExpr _2 = TO _3 = declExpr %prec expr_let
+  _1 = declExpr _2 = TO _3 = declExpr %prec expr_let
     {     ( deprecated "use 'expr .. expr' instead" (lhs()); (fun m -> mksyn_infix m m _1 ".." _3) )}
 | _1 = declExpr _2 = DOT_DOT _3 = declExpr
     {     ( (fun m -> mksyn_infix m m _1 ".." _3) )}
@@ -2346,23 +2346,23 @@ _1 = declExpr _2 = TO _3 = declExpr %prec expr_let
     {     ( (fun m -> mksyn_trifix m ".. .." _1 _3 _5) )}
 
 monadicExprNonEmptyNonInitial:
-_1 = monadicExprNonEmptyInitial
+  _1 = monadicExprNonEmptyInitial
     {                               ( _1 )}
 
 monadicExprNonEmptyNonInitialBlock:
-_1 = OBLOCKBEGIN _2 = monadicExprNonEmptyNonInitial _3 = OBLOCKEND
+  _1 = OBLOCKBEGIN _2 = monadicExprNonEmptyNonInitial _3 = OBLOCKEND
     {                                                        ( _2 )}
 | _1 = monadicExprNonEmptyNonInitial
     {                                  ( _1 )}
 
 monadicExprNonEmptyNonInitialBlockR:
-_1 = monadicExprNonEmptyNonInitial _2 = ORIGHT_BLOCK_END
+  _1 = monadicExprNonEmptyNonInitial _2 = ORIGHT_BLOCK_END
     {                                                   ( _1 )}
 | _1 = monadicExprNonEmptyNonInitial
     {                                  ( _1 )}
 
 monadicExprNonEmptyInitial:
-_1 = monadicExprNonEmptyInitial _2 = OBLOCKSEP _3 = monadicExprNonEmptyInitial
+  _1 = monadicExprNonEmptyInitial _2 = OBLOCKSEP _3 = monadicExprNonEmptyInitial
     {     ( Comp_sum(_1,_3,rhs 1, rhs 3) )}
 | _1 = FOR _2 = forLoopBinder _3 = monadicSingleLineQualifiersThenArrowThenExprR %prec decl_let
     {     ( let a,b= _2 in Comp_for(true,a,b,_3 (rhs 2)) )}
@@ -2400,13 +2400,13 @@ _1 = monadicExprNonEmptyInitial _2 = OBLOCKSEP _3 = monadicExprNonEmptyInitial
     {     ( Comp_yieldm((false,false),_2) )}
 
 monadicWithClauses:
-_1 = WITH _2 = monadicWithPatternClauses %prec expr_match
+  _1 = WITH _2 = monadicWithPatternClauses %prec expr_match
     {     ( _2 )}
 | _1 = OWITH _2 = monadicWithPatternClauses _3 = OEND %prec expr_match
     {     ( _2 )}
 
 monadicExprBindings:
-_1 = hardwhiteLetBindings _2 = OBLOCKSEP _3 = monadicExprNonEmptyNonInitial %prec decl_let
+  _1 = hardwhiteLetBindings _2 = OBLOCKSEP _3 = monadicExprNonEmptyNonInitial %prec decl_let
     {     ( mkComprehensionBindings (rhs 1) _1 _3 )}
 | _1 = hardwhiteLetBindings _2 = monadicExprNonEmptyNonInitial %prec decl_let
     {     ( mkComprehensionBindings (rhs 1) _1 _2 )}
@@ -2432,7 +2432,7 @@ _1 = hardwhiteLetBindings _2 = OBLOCKSEP _3 = monadicExprNonEmptyNonInitial %pre
     {     ( Comp_bind(false,Some "let",None,_2,_5) )}
 
 monadicExpr:
-_1 = monadicExprNonEmptyNonInitial
+  _1 = monadicExprNonEmptyNonInitial
     {                                  ( _1 )}
 | 
     {    ( Comp_zero )}
@@ -2440,27 +2440,27 @@ _1 = monadicExprNonEmptyNonInitial
     {          ( (* silent recovery *) Comp_zero )}
 
 monadicWhenCondition:
-_1 = WHEN _2 = declExpr
+  _1 = WHEN _2 = declExpr
     {     ( _2 )}
 
 monadicWithPatternClauses:
-_1 = monadicPatternClauses
+  _1 = monadicPatternClauses
     {                          ( _1 )}
 | _1 = BAR _2 = monadicPatternClauses
     {                              (  _2 )}
 
 monadicPatternClauses:
-_1 = patternAndGuard _2 = monadicPatternResult %prec prec_pat_pat_action
+  _1 = patternAndGuard _2 = monadicPatternResult %prec prec_pat_pat_action
     {     ( let pat,guard,patm = _1 in [CompClause(pat,guard,_2,patm)]  )}
 | _1 = patternAndGuard _2 = monadicPatternResult _3 = BAR _4 = monadicPatternClauses
     {     ( let pat,guard,patm = _1 in CompClause(pat,guard,_2,patm) :: _4 )}
 
 monadicPatternResult:
-_1 = RARROW _2 = monadicExprNonEmptyNonInitialBlockR
+  _1 = RARROW _2 = monadicExprNonEmptyNonInitialBlockR
     {     ( _2 )}
 
 monadicSingleLineQualifiersThenArrowThenExprR:
-_1 = RARROW _2 = typedSeqExprBlockR
+  _1 = RARROW _2 = typedSeqExprBlockR
     {                              ( (fun m -> Comp_yield((true,false),_2)) )}
 | _1 = RARROW2 _2 = typedSeqExprBlockR
     {                               ( (fun m -> Comp_yieldm((true,false),_2)) )}
@@ -2482,13 +2482,13 @@ _1 = RARROW _2 = typedSeqExprBlockR
            Comp_cond(true,_1,_3 m,Comp_zero)) )}
 
 monadicIfExprThen:
-_1 = THEN _2 = monadicExprNonEmptyNonInitial %prec prec_then_if
+  _1 = THEN _2 = monadicExprNonEmptyNonInitial %prec prec_then_if
     {                                                           ( _2 )}
 | _1 = OTHEN _2 = OBLOCKBEGIN _3 = monadicExprNonEmptyNonInitial _4 = OBLOCKEND %prec prec_then_if
     {                                                                                  ( _3 )}
 
 monadicIfExprElifs:
-
+  
     {      ( Comp_zero )}
 | _1 = ELSE _2 = monadicExprNonEmptyNonInitial
     {      ( _2 )}
@@ -2498,11 +2498,11 @@ monadicIfExprElifs:
     {      ( _3 _2  )}
 
 monadicIfExprCases:
-_1 = monadicIfExprThen _2 = monadicIfExprElifs
+  _1 = monadicIfExprThen _2 = monadicIfExprElifs
     {                                         ( (fun g -> Comp_cond(false,g,_1,_2)) )}
 
 forLoopBinder:
-_1 = parenPattern _2 = IN _3 = declExpr
+  _1 = parenPattern _2 = IN _3 = declExpr
     {     ( (_1, _3) )}
 | _1 = parenPattern _2 = IN _3 = rangeSequenceExpr
     {     ( (_1, _3 (rhs 3)) )}
@@ -2510,35 +2510,35 @@ _1 = parenPattern _2 = IN _3 = declExpr
     {     ( (_1, arbExpr()) )}
 
 forLoopRange:
-_1 = parenPattern _2 = EQUALS _3 = declExpr _4 = direction _5 = declExpr
+  _1 = parenPattern _2 = EQUALS _3 = declExpr _4 = direction _5 = declExpr
     {                                                      ( id_of_pat (rhs 1) _1,_3,_4,_5 )}
 
 inlineAssemblyExpr:
-_1 = HASH _2 = STRING _3 = opt_inlineAssemblyTypeArg _4 = opt_curriedArgExprs _5 = opt_inlineAssemblyReturnTypes _6 = opt_HASH
+  _1 = HASH _2 = STRING _3 = opt_inlineAssemblyTypeArg _4 = opt_curriedArgExprs _5 = opt_inlineAssemblyReturnTypes _6 = opt_HASH
     {      ( libraryOnly (lhs());
         let s,sm = _2,rhs 2 in
         (fun m -> Expr_asm (parse_il_instrs s sm,_3,List.rev _4,_5,m)) )}
 
 opt_curriedArgExprs:
-_1 = opt_curriedArgExprs _2 = argExprNoHPA %prec expr_args
+  _1 = opt_curriedArgExprs _2 = argExprNoHPA %prec expr_args
     {                                                      ( _2 :: _1 )}
 | 
     {     ( [] )}
 
 opt_argExprAfterType:
-
+  
     {     ( None )}
 | _1 = argExprAfterType
     {                      ( Some(_1) )}
 
 opt_inlineAssemblyTypeArg:
-
+  
     {     ( [] )}
 | _1 = TYPE _2 = LPAREN _3 = typ _4 = RPAREN
     {                            (  matchPair 2 4; [_3] )}
 
 opt_inlineAssemblyReturnTypes:
-
+  
     {     ( [] )}
 | _1 = COLON _2 = typ
     {     ( [_2] )}
@@ -2546,7 +2546,7 @@ opt_inlineAssemblyReturnTypes:
     {     (  matchPair 2 3; [] )}
 
 recdExpr:
-
+  
     {     ( (None,None, []) )}
 | _1 = INHERIT _2 = appType _3 = opt_HIGH_PRECEDENCE_APP _4 = opt_argExprAfterType _5 = recdExprBindings _6 = opt_seps
     {     ( let arg = match _4 with None -> mksyn_unit (lhs()) | Some e -> e in 
@@ -2561,29 +2561,29 @@ recdExpr:
     {     (  (None,Some _1,(frontAndBack _3,_5):: List.rev _6) )}
 
 recdExprBindings:
-_1 = recdExprBindings _2 = seps _3 = path _4 = EQUALS _5 = declExpr
+  _1 = recdExprBindings _2 = seps _3 = path _4 = EQUALS _5 = declExpr
     {                                               ( (frontAndBack _3,_5) :: _1 )}
 | 
     {                                               ( [] )}
 
 objExpr:
-_1 = objExprBaseCall _2 = opt_objExprBindings _3 = opt_OBLOCKSEP _4 = objExprInterfaces
+  _1 = objExprBaseCall _2 = opt_objExprBindings _3 = opt_OBLOCKSEP _4 = objExprInterfaces
     {     ( (fun m -> let (a,b) = _1 in Expr_impl(a,b,_2,_4, m)) )}
 
 objExprBaseCall:
-_1 = NEW _2 = appType _3 = opt_HIGH_PRECEDENCE_APP _4 = opt_argExprAfterType _5 = opt_as
+  _1 = NEW _2 = appType _3 = opt_HIGH_PRECEDENCE_APP _4 = opt_argExprAfterType _5 = opt_as
     {     ( startName(rhs 5); 
        let argInfo = match _4 with None -> None | Some e -> Some(e,_5) in 
        (_2, argInfo) )}
 
 opt_objExprBindings:
-_1 = objExprBindings
+  _1 = objExprBindings
     {                    ( _1 )}
 | 
     {                    ( [] )}
 
 objExprBindings:
-_1 = WITH _2 = localBindings
+  _1 = WITH _2 = localBindings
     {                       ( (_2 [] None) )}
 | _1 = OWITH _2 = localBindings _3 = OEND
     {                             ( (_2 [] None) )}
@@ -2601,7 +2601,7 @@ _1 = WITH _2 = localBindings
                           | ClassMemberDefn_tycon(_,_,m) -> errorR(Error("This member is not permitted in an object implementation",m)); None)) )}
 
 objExprInterfaces:
- %prec prec_interfaces_prefix
+   %prec prec_interfaces_prefix
     {                                 ( [] )}
 | _1 = objExprInterface _2 = objExprInterfaces
     {                                       ( _1 :: _2 )}
@@ -2609,17 +2609,17 @@ objExprInterfaces:
     {                            ( (* silent recovery *) _2 )}
 
 objExprInterface:
-_1 = interfaceMember _2 = appType _3 = opt_objExprBindings _4 = opt_decl_end _5 = opt_OBLOCKSEP
+  _1 = interfaceMember _2 = appType _3 = opt_objExprBindings _4 = opt_decl_end _5 = opt_OBLOCKSEP
     {    ( InterfaceImpl(_2, _3, lhs()) )}
 
 direction:
-_1 = TO
+  _1 = TO
     {           ( true )}
 | _1 = DOWNTO
     {           ( false )}
 
 anonLambdaExpr:
-_1 = FUN _2 = atomicPatterns _3 = RARROW _4 = typedSeqExprBlock
+  _1 = FUN _2 = atomicPatterns _3 = RARROW _4 = typedSeqExprBlock
     {     ( mksyn_match_lambdas false (lhs()) _2 _4 )}
 | _1 = FUN _2 = atomicPatterns _3 = RARROW _4 = error
     {     ( mksyn_match_lambdas false (lhs()) _2 (arbExpr()) )}
@@ -2629,7 +2629,7 @@ _1 = FUN _2 = atomicPatterns _3 = RARROW _4 = typedSeqExprBlock
     {     ( mksyn_match_lambdas false (rhs2 1 3) _2 (arbExpr()) )}
 
 anonMatchingExpr:
-_1 = FUNCTION _2 = opt_bar _3 = patternClauses %prec expr_function
+  _1 = FUNCTION _2 = opt_bar _3 = patternClauses %prec expr_function
     {      ( mksyn_match_lambda false false (lhs()) _3 )}
 | _1 = OFUNCTION _2 = opt_bar _3 = patternClauses _4 = OEND %prec expr_function
     {      ( mksyn_match_lambda false false (lhs()) _3 )}
@@ -2638,13 +2638,13 @@ _1 = FUNCTION _2 = opt_bar _3 = patternClauses %prec expr_function
         mksyn_match_lambda false false (lhs()) _3 )}
 
 typeWithTypeConstraints:
-_1 = typ %prec prec_wheretyp_prefix
+  _1 = typ %prec prec_wheretyp_prefix
     {                                   ( _1 )}
 | _1 = typ _2 = WHEN _3 = typeConstraints
     {     ( Type_with_global_constraints(_1, List.rev _3,lhs()) )}
 
 topTypeWithTypeConstraints:
-_1 = topType
+  _1 = topType
     {     ( _1 )}
 | _1 = topType _2 = WHEN _3 = typeConstraints
     {     ( let ty,arity = _1 in 
@@ -2652,7 +2652,7 @@ _1 = topType
         Type_with_global_constraints(ty,List.rev _3,lhs()), arity )}
 
 opt_topReturnTypeWithTypeConstraints:
-
+  
     {     ( None )}
 | _1 = COLON _2 = topTypeWithTypeConstraints
     {     ( let ty,arity = _2 in 
@@ -2660,7 +2660,7 @@ opt_topReturnTypeWithTypeConstraints:
        Some ((ty,arity),rhs 2) )}
 
 topType:
-_1 = topTupleType _2 = RARROW _3 = topType
+  _1 = topTupleType _2 = RARROW _3 = topType
     {     ( let dty,dmdata= _1 in 
        let rty,(TopValSynData(dmdatas,rmdata)) = _3 in 
        Type_fun(dty,rty,lhs()), (TopValSynData(dmdata::dmdatas, rmdata)) )}
@@ -2668,19 +2668,19 @@ _1 = topTupleType _2 = RARROW _3 = topType
     {     ( let ty,rmdata = _1 in ty, (TopValSynData([],(match rmdata with [md] -> md | _ -> SynArgInfo.unnamedRetVal))) )}
 
 topTupleType:
-_1 = topAppType _2 = STAR _3 = topTupleTypeElements
+  _1 = topAppType _2 = STAR _3 = topTupleTypeElements
     {     ( let ty,mdata = _1 in let tys,mdatas = List.split _3 in (Type_tuple(ty ::tys, lhs())),(mdata :: mdatas) )}
 | _1 = topAppType
     {     ( let ty,mdata = _1 in ty,[mdata] )}
 
 topTupleTypeElements:
-_1 = topAppType _2 = STAR _3 = topTupleTypeElements
+  _1 = topAppType _2 = STAR _3 = topTupleTypeElements
     {                                               ( _1 :: _3 )}
 | _1 = topAppType %prec prec_toptuptyptail_prefix
     {                                               ( [_1] )}
 
 topAppType:
-_1 = attributes _2 = appType _3 = COLON _4 = appType
+  _1 = attributes _2 = appType _3 = COLON _4 = appType
     {     ( match _2 with 
        | Type_app([id],_,_) -> _4,TopArgSynData(_1,false,Some id)
        | _ -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 2) "syntax error in labelled type argument"  )}
@@ -2698,31 +2698,31 @@ _1 = attributes _2 = appType _3 = COLON _4 = appType
     {     ( _1,TopArgSynData([],false,None) )}
 
 polyType:
-_1 = typar _2 = DOT _3 = typ
+  _1 = typar _2 = DOT _3 = typ
     {                  ( Type_forall(TyparDecl([],_1),_3,lhs()) )}
 | _1 = typ
     {        ( _1 )}
 
 typ:
-_1 = tupleType _2 = RARROW _3 = typ
+  _1 = tupleType _2 = RARROW _3 = typ
     {                          ( Type_fun(_1,_3,lhs()) )}
 | _1 = tupleType %prec prec_typ_prefix
     {                                    ( _1 )}
 
 tupleType:
-_1 = appType _2 = STAR _3 = tupleTypeElements
+  _1 = appType _2 = STAR _3 = tupleTypeElements
     {                                   ( Type_tuple(_1 :: _3,lhs()) )}
 | _1 = appType %prec prec_tuptyp_prefix
     {                                     ( _1 )}
 
 tupleTypeElements:
-_1 = appType _2 = STAR _3 = tupleTypeElements
+  _1 = appType _2 = STAR _3 = tupleTypeElements
     {                                                ( _1 :: _3 )}
 | _1 = appType %prec prec_tuptyptail_prefix
     {                                         ( [_1] )}
 
 appType:
-_1 = appType _2 = arrayTypeSuffix
+  _1 = appType _2 = arrayTypeSuffix
     {      (  Type_arr(_2,_1,lhs()) )}
 | _1 = appType _2 = HIGH_PRECEDENCE_APP _3 = arrayTypeSuffix
     {      (  Type_arr(_3,_1,lhs()) )}
@@ -2742,7 +2742,7 @@ _1 = appType _2 = arrayTypeSuffix
     {      (  matchPair 1 3; mksyn_anon_constraint _3 (lhs()) )}
 
 arrayTypeSuffix:
-_1 = LBRACK _2 = RBRACK
+  _1 = LBRACK _2 = RBRACK
     {      (  matchPair 1 2; 1 )}
 | _1 = LBRACK _2 = COMMA _3 = RBRACK
     {      (  matchPair 1 3; 2 )}
@@ -2752,17 +2752,17 @@ _1 = LBRACK _2 = RBRACK
     {      (  matchPair 1 5; 4 )}
 
 appTypePrexifArguments:
-_1 = typ _2 = COMMA _3 = typ _4 = typeListElements
+  _1 = typ _2 = COMMA _3 = typ _4 = typeListElements
     {                                   ( _1 :: _3 :: List.rev _4 )}
 
 typeListElements:
-_1 = typeListElements _2 = COMMA _3 = typ
+  _1 = typeListElements _2 = COMMA _3 = typ
     {                               ( _3 :: _1 )}
 | 
     {                         ( [] )}
 
 atomType:
-_1 = HASH _2 = atomType
+  _1 = HASH _2 = atomType
     {     ( mksyn_anon_constraint _2 (lhs()) )}
 | _1 = typar
     {     ( Type_var (_1,lhs()) )}
@@ -2784,13 +2784,13 @@ _1 = HASH _2 = atomType
     {     ( Type_proj_then_app(_1,_3,_4,lhs()) )}
 
 typeArgs:
-_1 = typeArgsActual
+  _1 = typeArgsActual
     {     ( _1 )}
 | _1 = HIGH_PRECEDENCE_TYAPP _2 = typeArgsActual
     {     ( _2 )}
 
 typeArgsActual:
-_1 = LESS _2 = GREATER
+  _1 = LESS _2 = GREATER
     {     ( [] )}
 | _1 = LESS _2 = typ _3 = GREATER
     {     ( [_2] )}
@@ -2798,7 +2798,7 @@ _1 = LESS _2 = GREATER
     {     ( _2 :: _4 :: List.rev _5 )}
 
 typar:
-_1 = QUOTE _2 = ident
+  _1 = QUOTE _2 = ident
     {     (  let id = mksyn_id (lhs()) (_2).idText in
         Typar(id ,NoStaticReq,false) )}
 | _1 = DOLLAR _2 = ident
@@ -2809,16 +2809,16 @@ _1 = QUOTE _2 = ident
     {     ( _1 )}
 
 staticallyKnownHeadTypar:
-_1 = INFIX_AT_HAT_OP _2 = ident
+  _1 = INFIX_AT_HAT_OP _2 = ident
     {    (  if _1 <> "^" then report_parse_error_at (rhs 1) "syntax error: unexpeced type paramter specification";
        Typar(_2,HeadTypeStaticReq,false) )}
 
 ident:
-_1 = IDENT
+  _1 = IDENT
     {     ( ident(_1,rhs 1) )}
 
 path:
-_1 = ident
+  _1 = ident
     {     ( startName(rhs 1); [_1] )}
 | _1 = path _2 = DOT _3 = ident
     {     ( qualifyNameIfAlongside(rhs 2) (rhs 3); (* silent recovery *) _1 @ [_3] )}
@@ -2826,7 +2826,7 @@ _1 = ident
     {     ( qualifyName(rhs 2) (rhs 2); (* silent recovery *) _1  )}
 
 identop:
-_1 = ident
+  _1 = ident
     {     ( _1 )}
 | _1 = LPAREN _2 = operatorName _3 = RPAREN
     {     (  matchPair 1 3; ident(compileOpName _2,rhs 2) )}
@@ -2836,7 +2836,7 @@ _1 = ident
     {                                              ( ident(("|"^String.concat "|" (List.rev _2) ^ "|_|" ),rhs2 2 5) )}
 
 operatorName:
-_1 = PREFIX_OP
+  _1 = PREFIX_OP
     {              ( _1 )}
 | _1 = INFIX_STAR_STAR_OP
     {                        ( _1 )}
@@ -2893,13 +2893,13 @@ _1 = PREFIX_OP
         fst _1 )}
 
 barNames:
-_1 = BAR _2 = IDENT
+  _1 = BAR _2 = IDENT
     {              ( [_2] )}
 | _1 = barNames _2 = BAR _3 = IDENT
     {                       ( _3 :: _1 )}
 
 pathop:
-_1 = identop
+  _1 = identop
     {     ( startName(rhs 1); [_1] )}
 | _1 = path _2 = DOT _3 = identop
     {     ( qualifyNameIfAlongside(rhs 2) (rhs 3); _1 @ [_3] )}
@@ -2907,11 +2907,11 @@ _1 = identop
     {     ( qualifyName(rhs 2) (rhs 2); (* silent recovery *) _1 )}
 
 nameop:
-_1 = identop
+  _1 = identop
     {             ( startName(rhs 1); _1 )}
 
 top_sep:
-_1 = SEMICOLON
+  _1 = SEMICOLON
     {              ( )}
 | _1 = SEMICOLON_SEMICOLON
     {                        ( )}
@@ -2919,37 +2919,37 @@ _1 = SEMICOLON
     {              ( )}
 
 top_seps:
-_1 = top_sep
+  _1 = top_sep
     {                                ( )}
 | _1 = top_sep _2 = top_seps
     {                     ( )}
 
 itop_sep:
-_1 = SEMICOLON
+  _1 = SEMICOLON
     {              ( )}
 | _1 = OBLOCKSEP
     {              ( )}
 
 itop_seps:
-_1 = itop_sep
+  _1 = itop_sep
     {                                 ( )}
 | _1 = itop_sep _2 = itop_seps
     {                       ( )}
 
 opt_itop_seps:
-_1 = itop_sep _2 = opt_itop_seps
+  _1 = itop_sep _2 = opt_itop_seps
     {                           ( )}
 | 
     {                           ( )}
 
 opt_top_seps:
-_1 = top_sep _2 = opt_top_seps
+  _1 = top_sep _2 = opt_top_seps
     {                         ( )}
 | 
     {                         ( )}
 
 seps:
-_1 = OBLOCKSEP
+  _1 = OBLOCKSEP
     {              ( )}
 | _1 = SEMICOLON
     {              ( )}
@@ -2959,7 +2959,7 @@ _1 = OBLOCKSEP
     {                        ( )}
 
 decl_end:
-_1 = ODECLEND
+  _1 = ODECLEND
     {      ( )}
 | _1 = OEND
     {      ( (* report_parse_warning_at (rhs 2) "this 'end' token is not needed in #light syntax and should  be omitted. A future release of the language may require this";  *)  )}
@@ -2967,7 +2967,7 @@ _1 = ODECLEND
     {      ()}
 
 opt_decl_end:
-_1 = ODECLEND
+  _1 = ODECLEND
     {      ()}
 | _1 = OEND
     {      ( (* report_parse_warning_at (rhs 2) "this 'end' token is not needed in #light syntax and should be omitted. A future release of the language may require this";   *)  )}
@@ -2977,97 +2977,97 @@ _1 = ODECLEND
     {      ()}
 
 opt_ODECLEND:
-_1 = ODECLEND
+  _1 = ODECLEND
     {             ( )}
 | 
     {             ( )}
 
 deprecated_opt_equals:
-_1 = EQUALS
+  _1 = EQUALS
     {              ( deprecated "No '=' symbol should follow a 'namespace' declaration" (lhs()) )}
 | 
     {              (  )}
 
 opt_OBLOCKSEP:
-_1 = OBLOCKSEP
+  _1 = OBLOCKSEP
     {              ( )}
 | 
     {             ( )}
 
 opt_seps:
-_1 = seps
+  _1 = seps
     {         ( )}
 | 
     {         ( )}
 
 opt_rec:
-_1 = REC
+  _1 = REC
     {        ( true )}
 | 
     {        ( false )}
 
 opt_bar:
-_1 = BAR
+  _1 = BAR
     {        ( )}
 | 
     {        ( )}
 
 opt_inline:
-_1 = INLINE
+  _1 = INLINE
     {           ( true )}
 | 
     {           ( false )}
 
 opt_mutable:
-_1 = MUTABLE
+  _1 = MUTABLE
     {            ( true )}
 | 
     {            ( false )}
 
 do_or_odo:
-_1 = DO
+  _1 = DO
     {        ( )}
 | _1 = ODO
     {        ( )}
 
 done_term:
-_1 = DONE
+  _1 = DONE
     {         ( )}
 | _1 = ODECLEND
     {             ( )}
 
 structOrBegin:
-_1 = STRUCT
+  _1 = STRUCT
     {           ( )}
 | _1 = BEGIN
     {          ( )}
 
 sigOrBegin:
-_1 = SIG
+  _1 = SIG
     {        ( )}
 | _1 = BEGIN
     {          ( )}
 
 colonOrEquals:
-_1 = COLON
+  _1 = COLON
     {          ( )}
 | _1 = EQUALS
     {           ( )}
 
 opt_HASH:
-_1 = HASH
+  _1 = HASH
     {         ()}
 | 
     {         ( report_parse_warning "this expression form is deprecated - use balanced (# ... #) instead"  )}
 
 opt_HIGH_PRECEDENCE_APP:
-_1 = HIGH_PRECEDENCE_APP
+  _1 = HIGH_PRECEDENCE_APP
     {                        ( )}
 | 
     {       ( )}
 
 opt_HIGH_PRECEDENCE_TYAPP:
-_1 = HIGH_PRECEDENCE_TYAPP
+  _1 = HIGH_PRECEDENCE_TYAPP
     {                          ( )}
 | 
     {       ( )}

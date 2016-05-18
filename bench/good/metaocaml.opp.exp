@@ -405,15 +405,15 @@ let bigarray_set arr arg newval =
 %%
 
 implementation:
-_1 = structure _2 = EOF
+  _1 = structure _2 = EOF
     {                                         ( _1 )}
 
 interface:
-_1 = signature _2 = EOF
+  _1 = signature _2 = EOF
     {                                         ( List.rev _1 )}
 
 toplevel_phrase:
-_1 = top_structure _2 = SEMISEMI
+  _1 = top_structure _2 = SEMISEMI
     {                                         ( Ptop_def _1 )}
 | _1 = seq_expr _2 = SEMISEMI
     {                                         ( Ptop_def[ghstrexp _1] )}
@@ -423,19 +423,19 @@ _1 = top_structure _2 = SEMISEMI
     {                                         ( raise End_of_file )}
 
 top_structure:
-_1 = structure_item
+  _1 = structure_item
     {                                         ( [_1] )}
 | _1 = structure_item _2 = top_structure
     {                                         ( _1 :: _2 )}
 
 use_file:
-_1 = use_file_tail
+  _1 = use_file_tail
     {                                         ( _1 )}
 | _1 = seq_expr _2 = use_file_tail
     {                                         ( Ptop_def[ghstrexp _1] :: _2 )}
 
 use_file_tail:
-_1 = EOF
+  _1 = EOF
     {                                                ( [] )}
 | _1 = SEMISEMI _2 = EOF
     {                                                ( [] )}
@@ -451,7 +451,7 @@ _1 = EOF
     {                                                ( _1 :: _2 )}
 
 module_expr:
-_1 = mod_longident
+  _1 = mod_longident
     {      ( mkmod(Pmod_ident _1) )}
 | _1 = STRUCT _2 = structure _3 = END
     {      ( mkmod(Pmod_structure(_2)) )}
@@ -473,13 +473,13 @@ _1 = mod_longident
     {      ( unclosed "(" 1 ")" 3 )}
 
 structure:
-_1 = structure_tail
+  _1 = structure_tail
     {                                                ( _1 )}
 | _1 = seq_expr _2 = structure_tail
     {                                                ( ghstrexp _1 :: _2 )}
 
 structure_tail:
-
+  
     {                                                ( [] )}
 | _1 = SEMISEMI
     {                                                ( [] )}
@@ -491,7 +491,7 @@ structure_tail:
     {                                                ( _1 :: _2 )}
 
 structure_item:
-_1 = LET _2 = rec_flag _3 = let_bindings
+  _1 = LET _2 = rec_flag _3 = let_bindings
     {      ( match _3 with
           [{ppat_desc = Ppat_any}, exp] -> mkstr(Pstr_eval exp)
         | _ -> mkstr(Pstr_value(_2, List.rev _3)) )}
@@ -519,7 +519,7 @@ _1 = LET _2 = rec_flag _3 = let_bindings
     {      ( mkstr(Pstr_include _2) )}
 
 module_binding:
-_1 = EQUAL _2 = module_expr
+  _1 = EQUAL _2 = module_expr
     {      ( _2 )}
 | _1 = COLON _2 = module_type _3 = EQUAL _4 = module_expr
     {      ( mkmod(Pmod_constraint(_4, _2)) )}
@@ -527,17 +527,17 @@ _1 = EQUAL _2 = module_expr
     {      ( mkmod(Pmod_functor(_2, _4, _6)) )}
 
 module_rec_bindings:
-_1 = module_rec_binding
+  _1 = module_rec_binding
     {                                                  ( [_1] )}
 | _1 = module_rec_bindings _2 = AND _3 = module_rec_binding
     {                                                  ( _3 :: _1 )}
 
 module_rec_binding:
-_1 = UIDENT _2 = COLON _3 = module_type _4 = EQUAL _5 = module_expr
+  _1 = UIDENT _2 = COLON _3 = module_type _4 = EQUAL _5 = module_expr
     {                                                  ( (_1, _3, _5) )}
 
 module_type:
-_1 = mty_longident
+  _1 = mty_longident
     {      ( mkmty(Pmty_ident _1) )}
 | _1 = SIG _2 = signature _3 = END
     {      ( mkmty(Pmty_signature(List.rev _2)) )}
@@ -553,7 +553,7 @@ _1 = mty_longident
     {      ( unclosed "(" 1 ")" 3 )}
 
 signature:
-
+  
     {                                                ( [] )}
 | _1 = signature _2 = signature_item
     {                                                ( _2 :: _1 )}
@@ -561,7 +561,7 @@ signature:
     {                                                ( _2 :: _1 )}
 
 signature_item:
-_1 = VAL _2 = val_ident_colon _3 = core_type
+  _1 = VAL _2 = val_ident_colon _3 = core_type
     {      ( mksig(Psig_value(_2, {pval_type = _3; pval_prim = []})) )}
 | _1 = EXTERNAL _2 = val_ident_colon _3 = core_type _4 = EQUAL _5 = primitive_declaration
     {      ( mksig(Psig_value(_2, {pval_type = _3; pval_prim = _5})) )}
@@ -587,36 +587,36 @@ _1 = VAL _2 = val_ident_colon _3 = core_type
     {      ( mksig(Psig_class_type (List.rev _3)) )}
 
 module_declaration:
-_1 = COLON _2 = module_type
+  _1 = COLON _2 = module_type
     {      ( _2 )}
 | _1 = LPAREN _2 = UIDENT _3 = COLON _4 = module_type _5 = RPAREN _6 = module_declaration
     {      ( mkmty(Pmty_functor(_2, _4, _6)) )}
 
 module_rec_declarations:
-_1 = module_rec_declaration
+  _1 = module_rec_declaration
     {                                                        ( [_1] )}
 | _1 = module_rec_declarations _2 = AND _3 = module_rec_declaration
     {                                                        ( _3 :: _1 )}
 
 module_rec_declaration:
-_1 = UIDENT _2 = COLON _3 = module_type
+  _1 = UIDENT _2 = COLON _3 = module_type
     {                                                        ( (_1, _3) )}
 
 class_declarations:
-_1 = class_declarations _2 = AND _3 = class_declaration
+  _1 = class_declarations _2 = AND _3 = class_declaration
     {                                                ( _3 :: _1 )}
 | _1 = class_declaration
     {                                                ( [_1] )}
 
 class_declaration:
-_1 = virtual_flag _2 = class_type_parameters _3 = LIDENT _4 = class_fun_binding
+  _1 = virtual_flag _2 = class_type_parameters _3 = LIDENT _4 = class_fun_binding
     {      ( let params, variance = List.split (fst _2) in
         {pci_virt = _1; pci_params = params, snd _2;
          pci_name = _3; pci_expr = _4; pci_variance = variance;
          pci_loc = symbol_rloc ()} )}
 
 class_fun_binding:
-_1 = EQUAL _2 = class_expr
+  _1 = EQUAL _2 = class_expr
     {      ( _2 )}
 | _1 = COLON _2 = class_type _3 = EQUAL _4 = class_expr
     {      ( mkclass(Pcl_constraint(_4, _2)) )}
@@ -624,19 +624,19 @@ _1 = EQUAL _2 = class_expr
     {      ( let (l,o,p) = _1 in mkclass(Pcl_fun(l, o, p, _2)) )}
 
 class_type_parameters:
-
+  
     {                                                ( [], symbol_gloc () )}
 | _1 = LBRACKET _2 = type_parameter_list _3 = RBRACKET
     {                                                ( List.rev _2, symbol_rloc () )}
 
 class_fun_def:
-_1 = labeled_simple_pattern _2 = MINUSGREATER _3 = class_expr
+  _1 = labeled_simple_pattern _2 = MINUSGREATER _3 = class_expr
     {      ( let (l,o,p) = _1 in mkclass(Pcl_fun(l, o, p, _3)) )}
 | _1 = labeled_simple_pattern _2 = class_fun_def
     {      ( let (l,o,p) = _1 in mkclass(Pcl_fun(l, o, p, _2)) )}
 
 class_expr:
-_1 = class_simple_expr
+  _1 = class_simple_expr
     {      ( _1 )}
 | _1 = FUN _2 = class_fun_def
     {      ( _2 )}
@@ -646,7 +646,7 @@ _1 = class_simple_expr
     {      ( mkclass(Pcl_let (_2, List.rev _3, _5)) )}
 
 class_simple_expr:
-_1 = LBRACKET _2 = core_type_comma_list _3 = RBRACKET _4 = class_longident
+  _1 = LBRACKET _2 = core_type_comma_list _3 = RBRACKET _4 = class_longident
     {      ( mkclass(Pcl_constr(_4, List.rev _2)) )}
 | _1 = class_longident
     {      ( mkclass(Pcl_constr(_1, [])) )}
@@ -664,11 +664,11 @@ _1 = LBRACKET _2 = core_type_comma_list _3 = RBRACKET _4 = class_longident
     {      ( unclosed "(" 1 ")" 3 )}
 
 class_structure:
-_1 = class_self_pattern _2 = class_fields
+  _1 = class_self_pattern _2 = class_fields
     {      ( _1, List.rev _2 )}
 
 class_self_pattern:
-_1 = LPAREN _2 = pattern _3 = RPAREN
+  _1 = LPAREN _2 = pattern _3 = RPAREN
     {      ( reloc_pat _2 )}
 | _1 = LPAREN _2 = pattern _3 = COLON _4 = core_type _5 = RPAREN
     {      ( mkpat(Ppat_constraint(_2, _4)) )}
@@ -676,7 +676,7 @@ _1 = LPAREN _2 = pattern _3 = RPAREN
     {      ( ghpat(Ppat_any) )}
 
 class_fields:
-
+  
     {      ( [] )}
 | _1 = class_fields _2 = INHERIT _3 = class_expr _4 = parent_binder
     {      ( Pcf_inher (_3, _4) :: _1 )}
@@ -692,26 +692,26 @@ class_fields:
     {      ( Pcf_init _3 :: _1 )}
 
 parent_binder:
-_1 = AS _2 = LIDENT
+  _1 = AS _2 = LIDENT
     {          ( Some _2 )}
 | 
     {          (None)}
 
 value:
-_1 = mutable_flag _2 = label _3 = EQUAL _4 = seq_expr
+  _1 = mutable_flag _2 = label _3 = EQUAL _4 = seq_expr
     {          ( _2, _1, _4, symbol_rloc () )}
 | _1 = mutable_flag _2 = label _3 = type_constraint _4 = EQUAL _5 = seq_expr
     {          ( _2, _1, (let (t, t') = _3 in ghexp(Pexp_constraint(_5, t, t'))),
             symbol_rloc () )}
 
 virtual_method:
-_1 = METHOD _2 = PRIVATE _3 = VIRTUAL _4 = label _5 = COLON _6 = poly_type
+  _1 = METHOD _2 = PRIVATE _3 = VIRTUAL _4 = label _5 = COLON _6 = poly_type
     {      ( _4, Private, _6, symbol_rloc () )}
 | _1 = METHOD _2 = VIRTUAL _3 = private_flag _4 = label _5 = COLON _6 = poly_type
     {      ( _4, _3, _6, symbol_rloc () )}
 
 concrete_method:
-_1 = METHOD _2 = private_flag _3 = label _4 = strict_binding
+  _1 = METHOD _2 = private_flag _3 = label _4 = strict_binding
     {      ( _3, _2, ghexp(Pexp_poly (_4, None)), symbol_rloc () )}
 | _1 = METHOD _2 = private_flag _3 = label _4 = COLON _5 = poly_type _6 = EQUAL _7 = seq_expr
     {      ( _3, _2, ghexp(Pexp_poly(_7,Some _5)), symbol_rloc () )}
@@ -719,7 +719,7 @@ _1 = METHOD _2 = private_flag _3 = label _4 = strict_binding
     {      ( _3, _2, ghexp(Pexp_poly(_6,Some _4)), symbol_rloc () )}
 
 class_type:
-_1 = class_signature
+  _1 = class_signature
     {      ( _1 )}
 | _1 = QUESTION _2 = LIDENT _3 = COLON _4 = simple_core_type_or_tuple _5 = MINUSGREATER _6 = class_type
     {      ( mkcty(Pcty_fun("?" ^ _2 ,
@@ -737,7 +737,7 @@ _1 = class_signature
     {      ( mkcty(Pcty_fun("", _1, _3)) )}
 
 class_signature:
-_1 = LBRACKET _2 = core_type_comma_list _3 = RBRACKET _4 = clty_longident
+  _1 = LBRACKET _2 = core_type_comma_list _3 = RBRACKET _4 = clty_longident
     {      ( mkcty(Pcty_constr (_4, List.rev _2)) )}
 | _1 = clty_longident
     {      ( mkcty(Pcty_constr (_1, [])) )}
@@ -747,17 +747,17 @@ _1 = LBRACKET _2 = core_type_comma_list _3 = RBRACKET _4 = clty_longident
     {      ( unclosed "object" 1 "end" 3 )}
 
 class_sig_body:
-_1 = class_self_type _2 = class_sig_fields
+  _1 = class_self_type _2 = class_sig_fields
     {      ( _1, List.rev _2 )}
 
 class_self_type:
-_1 = LPAREN _2 = core_type _3 = RPAREN
+  _1 = LPAREN _2 = core_type _3 = RPAREN
     {      ( _2 )}
 | 
     {      ( mktyp(Ptyp_any) )}
 
 class_sig_fields:
-
+  
     {                                                ( [] )}
 | _1 = class_sig_fields _2 = INHERIT _3 = class_signature
     {                                                ( Pctf_inher _3 :: _1 )}
@@ -771,45 +771,45 @@ class_sig_fields:
     {                                                ( Pctf_cstr  _3 :: _1 )}
 
 value_type:
-_1 = mutable_flag _2 = label _3 = COLON _4 = core_type
+  _1 = mutable_flag _2 = label _3 = COLON _4 = core_type
     {      ( _2, _1, Some _4, symbol_rloc () )}
 
 method_type:
-_1 = METHOD _2 = private_flag _3 = label _4 = COLON _5 = poly_type
+  _1 = METHOD _2 = private_flag _3 = label _4 = COLON _5 = poly_type
     {      ( _3, _2, _5, symbol_rloc () )}
 
 constrain:
-_1 = core_type _2 = EQUAL _3 = core_type
+  _1 = core_type _2 = EQUAL _3 = core_type
     {                                           ( _1, _3, symbol_rloc () )}
 
 class_descriptions:
-_1 = class_descriptions _2 = AND _3 = class_description
+  _1 = class_descriptions _2 = AND _3 = class_description
     {                                                ( _3 :: _1 )}
 | _1 = class_description
     {                                                ( [_1] )}
 
 class_description:
-_1 = virtual_flag _2 = class_type_parameters _3 = LIDENT _4 = COLON _5 = class_type
+  _1 = virtual_flag _2 = class_type_parameters _3 = LIDENT _4 = COLON _5 = class_type
     {      ( let params, variance = List.split (fst _2) in
         {pci_virt = _1; pci_params = params, snd _2;
          pci_name = _3; pci_expr = _5; pci_variance = variance;
          pci_loc = symbol_rloc ()} )}
 
 class_type_declarations:
-_1 = class_type_declarations _2 = AND _3 = class_type_declaration
+  _1 = class_type_declarations _2 = AND _3 = class_type_declaration
     {                                                        ( _3 :: _1 )}
 | _1 = class_type_declaration
     {                                                        ( [_1] )}
 
 class_type_declaration:
-_1 = virtual_flag _2 = class_type_parameters _3 = LIDENT _4 = EQUAL _5 = class_signature
+  _1 = virtual_flag _2 = class_type_parameters _3 = LIDENT _4 = EQUAL _5 = class_signature
     {      ( let params, variance = List.split (fst _2) in
         {pci_virt = _1; pci_params = params, snd _2;
          pci_name = _3; pci_expr = _5; pci_variance = variance;
          pci_loc = symbol_rloc ()} )}
 
 seq_expr:
-_1 = expr %prec below_SEMI
+  _1 = expr %prec below_SEMI
     {                                  ( _1 )}
 | _1 = expr _2 = SEMI
     {                                  ( reloc_exp _1 )}
@@ -817,7 +817,7 @@ _1 = expr %prec below_SEMI
     {                                  ( mkexp(Pexp_sequence(_1, _3)) )}
 
 labeled_simple_pattern:
-_1 = QUESTION _2 = LPAREN _3 = label_let_pattern _4 = opt_default _5 = RPAREN
+  _1 = QUESTION _2 = LPAREN _3 = label_let_pattern _4 = opt_default _5 = RPAREN
     {      ( ("?" ^ fst _3, _4, snd _3) )}
 | _1 = QUESTION _2 = label_var
     {      ( ("?" ^ fst _2, None, snd _2) )}
@@ -835,33 +835,33 @@ _1 = QUESTION _2 = LPAREN _3 = label_let_pattern _4 = opt_default _5 = RPAREN
     {      ( ("", None, _1) )}
 
 pattern_var:
-_1 = LIDENT
+  _1 = LIDENT
     {              ( mkpat(Ppat_var _1) )}
 
 opt_default:
-
+  
     {                                        ( None )}
 | _1 = EQUAL _2 = seq_expr
     {                                        ( Some _2 )}
 
 label_let_pattern:
-_1 = label_var
+  _1 = label_var
     {      ( _1 )}
 | _1 = label_var _2 = COLON _3 = core_type
     {      ( let (lab, pat) = _1 in (lab, mkpat(Ppat_constraint(pat, _3))) )}
 
 label_var:
-_1 = LIDENT
+  _1 = LIDENT
     {              ( (_1, mkpat(Ppat_var _1)) )}
 
 let_pattern:
-_1 = pattern
+  _1 = pattern
     {      ( _1 )}
 | _1 = pattern _2 = COLON _3 = core_type
     {      ( mkpat(Ppat_constraint(_1, _3)) )}
 
 expr:
-_1 = simple_expr %prec below_SHARP
+  _1 = simple_expr %prec below_SHARP
     {      ( _1 )}
 | _1 = simple_expr _2 = simple_labeled_expr_list
     {      ( mkexp(Pexp_apply(_1, List.rev _2)) )}
@@ -961,7 +961,7 @@ _1 = simple_expr %prec below_SHARP
     {      ( unclosed "object" 1 "end" 3 )}
 
 simple_expr:
-_1 = val_longident
+  _1 = val_longident
     {      ( mkexp(Pexp_ident _1) )}
 | _1 = constant
     {      ( mkexp(Pexp_constant _1) )}
@@ -1055,19 +1055,19 @@ _1 = val_longident
     {      ( mkexp(Pexp_send(_1, _3)) )}
 
 simple_labeled_expr_list:
-_1 = labeled_simple_expr
+  _1 = labeled_simple_expr
     {      ( [_1] )}
 | _1 = simple_labeled_expr_list _2 = labeled_simple_expr
     {      ( _2 :: _1 )}
 
 labeled_simple_expr:
-_1 = simple_expr %prec below_SHARP
+  _1 = simple_expr %prec below_SHARP
     {      ( ("", _1) )}
 | _1 = label_expr
     {      ( _1 )}
 
 label_expr:
-_1 = LABEL _2 = simple_expr %prec below_SHARP
+  _1 = LABEL _2 = simple_expr %prec below_SHARP
     {      ( (_1, _2) )}
 | _1 = TILDE _2 = label_ident
     {      ( _2 )}
@@ -1077,65 +1077,65 @@ _1 = LABEL _2 = simple_expr %prec below_SHARP
     {      ( ("?" ^ _1, _2) )}
 
 label_ident:
-_1 = LIDENT
+  _1 = LIDENT
     {             ( (_1, mkexp(Pexp_ident(Lident _1))) )}
 
 let_bindings:
-_1 = let_binding
+  _1 = let_binding
     {                                                ( [_1] )}
 | _1 = let_bindings _2 = AND _3 = let_binding
     {                                                ( _3 :: _1 )}
 
 let_binding:
-_1 = val_ident _2 = fun_binding
+  _1 = val_ident _2 = fun_binding
     {      ( ({ppat_desc = Ppat_var _1; ppat_loc = rhs_loc 1; ppat_ext = None}, _2) )}
 | _1 = pattern _2 = EQUAL _3 = seq_expr
     {      ( (_1, _3) )}
 
 fun_binding:
-_1 = strict_binding
+  _1 = strict_binding
     {      ( _1 )}
 | _1 = type_constraint _2 = EQUAL _3 = seq_expr
     {      ( let (t, t') = _1 in ghexp(Pexp_constraint(_3, t, t')) )}
 
 strict_binding:
-_1 = EQUAL _2 = seq_expr
+  _1 = EQUAL _2 = seq_expr
     {      ( _2 )}
 | _1 = labeled_simple_pattern _2 = fun_binding
     {      ( let (l, o, p) = _1 in ghexp(Pexp_function(l, o, [p, _2])) )}
 
 match_cases:
-_1 = pattern _2 = match_action
+  _1 = pattern _2 = match_action
     {                                                ( [_1, _2] )}
 | _1 = match_cases _2 = BAR _3 = pattern _4 = match_action
     {                                                ( (_3, _4) :: _1 )}
 
 fun_def:
-_1 = match_action
+  _1 = match_action
     {                                                ( _1 )}
 | _1 = labeled_simple_pattern _2 = fun_def
     {      ( let (l,o,p) = _1 in ghexp(Pexp_function(l, o, [p, _2])) )}
 
 match_action:
-_1 = MINUSGREATER _2 = seq_expr
+  _1 = MINUSGREATER _2 = seq_expr
     {                                                ( _2 )}
 | _1 = WHEN _2 = seq_expr _3 = MINUSGREATER _4 = seq_expr
     {                                                ( mkexp(Pexp_when(_2, _4)) )}
 
 expr_comma_list:
-_1 = expr_comma_list _2 = COMMA _3 = expr
+  _1 = expr_comma_list _2 = COMMA _3 = expr
     {                                                ( _3 :: _1 )}
 | _1 = expr _2 = COMMA _3 = expr
     {                                                ( [_3; _1] )}
 
 record_expr:
-_1 = simple_expr _2 = WITH _3 = lbl_expr_list _4 = opt_semi
+  _1 = simple_expr _2 = WITH _3 = lbl_expr_list _4 = opt_semi
     {                                                ( (Some _1, List.rev _3) )}
 | _1 = lbl_expr_list _2 = opt_semi
     {                                                ( (None, List.rev _1) )}
 
 record_expr_gcc:
-_1 = RUN_GCC _2 = WITH _3 = lbl_expr_list _4 = opt_semi
+  _1 = RUN_GCC _2 = WITH _3 = lbl_expr_list _4 = opt_semi
     {  ( let q = Ldot((Lident "Trx"), "run_gcc") in
       (Some (ghexp( Pexp_ident(q))), List.rev _3) )}
 | _1 = RUN_GCC
@@ -1145,7 +1145,7 @@ _1 = RUN_GCC _2 = WITH _3 = lbl_expr_list _4 = opt_semi
     {                                                ( (None, List.rev _1) )}
 
 record_expr_icc:
-_1 = RUN_ICC _2 = WITH _3 = lbl_expr_list _4 = opt_semi
+  _1 = RUN_ICC _2 = WITH _3 = lbl_expr_list _4 = opt_semi
     {  ( let q = Ldot((Lident "Trx"), "run_icc") in
       (Some (ghexp( Pexp_ident(q))), List.rev _3) )}
 | _1 = RUN_ICC
@@ -1155,7 +1155,7 @@ _1 = RUN_ICC _2 = WITH _3 = lbl_expr_list _4 = opt_semi
     {                                                ( (None, List.rev _1) )}
 
 record_expr_f90:
-_1 = RUN_F90 _2 = WITH _3 = lbl_expr_list _4 = opt_semi
+  _1 = RUN_F90 _2 = WITH _3 = lbl_expr_list _4 = opt_semi
     {  ( let q = Ldot((Lident "Trx"), "run_f90") in
       (Some (ghexp( Pexp_ident(q))), List.rev _3) )}
 | _1 = RUN_F90
@@ -1165,25 +1165,25 @@ _1 = RUN_F90 _2 = WITH _3 = lbl_expr_list _4 = opt_semi
     {                                                 ( (None, List.rev _1) )}
 
 lbl_expr_list:
-_1 = label_longident _2 = EQUAL _3 = expr
+  _1 = label_longident _2 = EQUAL _3 = expr
     {      ( [_1,_3] )}
 | _1 = lbl_expr_list _2 = SEMI _3 = label_longident _4 = EQUAL _5 = expr
     {      ( (_3, _5) :: _1 )}
 
 field_expr_list:
-_1 = label _2 = EQUAL _3 = expr
+  _1 = label _2 = EQUAL _3 = expr
     {      ( [_1,_3] )}
 | _1 = field_expr_list _2 = SEMI _3 = label _4 = EQUAL _5 = expr
     {      ( (_3, _5) :: _1 )}
 
 expr_semi_list:
-_1 = expr
+  _1 = expr
     {                                                ( [_1] )}
 | _1 = expr_semi_list _2 = SEMI _3 = expr
     {                                                ( _3 :: _1 )}
 
 type_constraint:
-_1 = COLON _2 = core_type
+  _1 = COLON _2 = core_type
     {                                                ( (Some _2, None) )}
 | _1 = COLON _2 = core_type _3 = COLONGREATER _4 = core_type
     {                                                ( (Some _2, Some _4) )}
@@ -1195,7 +1195,7 @@ _1 = COLON _2 = core_type
     {                                                ( syntax_error() )}
 
 pattern:
-_1 = simple_pattern
+  _1 = simple_pattern
     {      ( _1 )}
 | _1 = pattern _2 = AS _3 = val_ident
     {      ( mkpat(Ppat_alias(_1, _3)) )}
@@ -1212,7 +1212,7 @@ _1 = simple_pattern
     {      ( mkpat(Ppat_or(_1, _3)) )}
 
 simple_pattern:
-_1 = val_ident %prec below_EQUAL
+  _1 = val_ident %prec below_EQUAL
     {      ( mkpat(Ppat_var _1) )}
 | _1 = UNDERSCORE
     {      ( mkpat(Ppat_any) )}
@@ -1250,37 +1250,37 @@ _1 = val_ident %prec below_EQUAL
     {      ( unclosed "(" 1 ")" 5 )}
 
 pattern_comma_list:
-_1 = pattern_comma_list _2 = COMMA _3 = pattern
+  _1 = pattern_comma_list _2 = COMMA _3 = pattern
     {                                                ( _3 :: _1 )}
 | _1 = pattern _2 = COMMA _3 = pattern
     {                                                ( [_3; _1] )}
 
 pattern_semi_list:
-_1 = pattern
+  _1 = pattern
     {                                                ( [_1] )}
 | _1 = pattern_semi_list _2 = SEMI _3 = pattern
     {                                                ( _3 :: _1 )}
 
 lbl_pattern_list:
-_1 = label_longident _2 = EQUAL _3 = pattern
+  _1 = label_longident _2 = EQUAL _3 = pattern
     {                                                ( [(_1, _3)] )}
 | _1 = lbl_pattern_list _2 = SEMI _3 = label_longident _4 = EQUAL _5 = pattern
     {                                                        ( (_3, _5) :: _1 )}
 
 primitive_declaration:
-_1 = STRING
+  _1 = STRING
     {                                                ( [_1] )}
 | _1 = STRING _2 = primitive_declaration
     {                                                ( _1 :: _2 )}
 
 type_declarations:
-_1 = type_declaration
+  _1 = type_declaration
     {                                                ( [_1] )}
 | _1 = type_declarations _2 = AND _3 = type_declaration
     {                                                ( _3 :: _1 )}
 
 type_declaration:
-_1 = type_parameters _2 = LIDENT _3 = type_kind _4 = constraints
+  _1 = type_parameters _2 = LIDENT _3 = type_kind _4 = constraints
     {      ( let (params, variance) = List.split _1 in
         let (kind, manifest) = _3 in
         (_2, {ptype_params = params;
@@ -1291,13 +1291,13 @@ _1 = type_parameters _2 = LIDENT _3 = type_kind _4 = constraints
               ptype_loc = symbol_rloc()}) )}
 
 constraints:
-_1 = constraints _2 = CONSTRAINT _3 = constrain
+  _1 = constraints _2 = CONSTRAINT _3 = constrain
     {                                                ( _3 :: _1 )}
 | 
     {                                                ( [] )}
 
 type_kind:
-
+  
     {      ( (Ptype_abstract, None) )}
 | _1 = EQUAL _2 = core_type
     {      ( (Ptype_abstract, Some _2) )}
@@ -1315,7 +1315,7 @@ type_kind:
     {      ( (Ptype_record(List.rev _6, _4), Some _2) )}
 
 type_parameters:
-
+  
     {                                                ( [] )}
 | _1 = type_parameter
     {                                                ( [_1] )}
@@ -1323,11 +1323,11 @@ type_parameters:
     {                                                ( List.rev _2 )}
 
 type_parameter:
-_1 = type_variance _2 = QUOTE _3 = ident
+  _1 = type_variance _2 = QUOTE _3 = ident
     {                                                ( _3, _1 )}
 
 type_variance:
-
+  
     {                                                ( false, false )}
 | _1 = PLUS
     {                                                ( true, false )}
@@ -1335,45 +1335,45 @@ type_variance:
     {                                                ( false, true )}
 
 type_parameter_list:
-_1 = type_parameter
+  _1 = type_parameter
     {                                                ( [_1] )}
 | _1 = type_parameter_list _2 = COMMA _3 = type_parameter
     {                                                ( _3 :: _1 )}
 
 constructor_declarations:
-_1 = constructor_declaration
+  _1 = constructor_declaration
     {                                                ( [_1] )}
 | _1 = constructor_declarations _2 = BAR _3 = constructor_declaration
     {                                                         ( _3 :: _1 )}
 
 constructor_declaration:
-_1 = constr_ident _2 = constructor_arguments
+  _1 = constr_ident _2 = constructor_arguments
     {                                                ( (_1, _2) )}
 
 constructor_arguments:
-
+  
     {                                                ( [] )}
 | _1 = OF _2 = core_type_list
     {                                                ( List.rev _2 )}
 
 label_declarations:
-_1 = label_declaration
+  _1 = label_declaration
     {                                                ( [_1] )}
 | _1 = label_declarations _2 = SEMI _3 = label_declaration
     {                                                ( _3 :: _1 )}
 
 label_declaration:
-_1 = mutable_flag _2 = label _3 = COLON _4 = poly_type
+  _1 = mutable_flag _2 = label _3 = COLON _4 = poly_type
     {                                                ( (_2, _1, _4) )}
 
 with_constraints:
-_1 = with_constraint
+  _1 = with_constraint
     {                                                ( [_1] )}
 | _1 = with_constraints _2 = AND _3 = with_constraint
     {                                                ( _3 :: _1 )}
 
 with_constraint:
-_1 = TYPE _2 = type_parameters _3 = label_longident _4 = EQUAL _5 = core_type _6 = constraints
+  _1 = TYPE _2 = type_parameters _3 = label_longident _4 = EQUAL _5 = core_type _6 = constraints
     {      ( let params, variance = List.split _2 in
         (_3, Pwith_type {ptype_params = params;
                          ptype_cstrs = List.rev _6;
@@ -1385,25 +1385,25 @@ _1 = TYPE _2 = type_parameters _3 = label_longident _4 = EQUAL _5 = core_type _6
     {      ( (_2, Pwith_module _4) )}
 
 typevar_list:
-_1 = QUOTE _2 = ident
+  _1 = QUOTE _2 = ident
     {                                                ( [_2] )}
 | _1 = typevar_list _2 = QUOTE _3 = ident
     {                                                ( _3 :: _1 )}
 
 poly_type:
-_1 = core_type
+  _1 = core_type
     {          ( mktyp(Ptyp_poly([], _1)) )}
 | _1 = typevar_list _2 = DOT _3 = core_type
     {          ( mktyp(Ptyp_poly(List.rev _1, _3)) )}
 
 core_type:
-_1 = core_type2
+  _1 = core_type2
     {      ( _1 )}
 | _1 = core_type2 _2 = AS _3 = QUOTE _4 = ident
     {      ( mktyp(Ptyp_alias(_1, _4)) )}
 
 core_type2:
-_1 = simple_core_type_or_tuple
+  _1 = simple_core_type_or_tuple
     {      ( _1 )}
 | _1 = QUESTION _2 = LIDENT _3 = COLON _4 = core_type2 _5 = MINUSGREATER _6 = core_type2
     {      ( mktyp(Ptyp_arrow("?" ^ _2 ,
@@ -1421,13 +1421,13 @@ _1 = simple_core_type_or_tuple
     {      ( mktyp(Ptyp_annotation(_2, [ _3 ])) )}
 
 simple_core_type:
-_1 = simple_core_type2 %prec below_SHARP
+  _1 = simple_core_type2 %prec below_SHARP
     {      ( _1 )}
 | _1 = LPAREN _2 = core_type_comma_list _3 = RPAREN %prec below_SHARP
     {      ( match _2 with [sty] -> sty | _ -> raise Parse_error )}
 
 simple_core_type2:
-_1 = QUOTE _2 = ident
+  _1 = QUOTE _2 = ident
     {      ( mktyp(Ptyp_var _2) )}
 | _1 = UNDERSCORE
     {      ( mktyp(Ptyp_any) )}
@@ -1463,67 +1463,67 @@ _1 = QUOTE _2 = ident
     {      ( mktyp(Ptyp_variant(List.rev _3, true, Some (List.rev _5))) )}
 
 row_field_list:
-_1 = row_field
+  _1 = row_field
     {                                                ( [_1] )}
 | _1 = row_field_list _2 = BAR _3 = row_field
     {                                                ( _3 :: _1 )}
 
 row_field:
-_1 = tag_field
+  _1 = tag_field
     {                                                ( _1 )}
 | _1 = simple_core_type2
     {                                                ( Rinherit _1 )}
 
 tag_field:
-_1 = name_tag _2 = OF _3 = opt_ampersand _4 = amper_type_list
+  _1 = name_tag _2 = OF _3 = opt_ampersand _4 = amper_type_list
     {      ( Rtag (_1, _3, List.rev _4) )}
 | _1 = name_tag
     {      ( Rtag (_1, true, []) )}
 
 opt_ampersand:
-_1 = AMPERSAND
+  _1 = AMPERSAND
     {                                                ( true )}
 | 
     {                                                ( false )}
 
 amper_type_list:
-_1 = core_type
+  _1 = core_type
     {                                                ( [_1] )}
 | _1 = amper_type_list _2 = AMPERSAND _3 = core_type
     {                                                ( _3 :: _1 )}
 
 opt_present:
-_1 = LBRACKETGREATER _2 = name_tag_list _3 = RBRACKET
+  _1 = LBRACKETGREATER _2 = name_tag_list _3 = RBRACKET
     {                                                ( List.rev _2 )}
 | 
     {                                                ( [] )}
 
 name_tag_list:
-_1 = name_tag
+  _1 = name_tag
     {                                                ( [_1] )}
 | _1 = name_tag_list _2 = name_tag
     {                                                ( _2 :: _1 )}
 
 simple_core_type_or_tuple:
-_1 = simple_core_type
+  _1 = simple_core_type
     {                                                ( _1 )}
 | _1 = simple_core_type _2 = STAR _3 = core_type_list
     {      ( mktyp(Ptyp_tuple(_1 :: List.rev _3)) )}
 
 core_type_comma_list:
-_1 = core_type
+  _1 = core_type
     {                                                ( [_1] )}
 | _1 = core_type_comma_list _2 = COMMA _3 = core_type
     {                                                ( _3 :: _1 )}
 
 core_type_list:
-_1 = simple_core_type
+  _1 = simple_core_type
     {                                                ( [_1] )}
 | _1 = core_type_list _2 = STAR _3 = simple_core_type
     {                                                ( _3 :: _1 )}
 
 meth_list:
-_1 = field _2 = SEMI _3 = meth_list
+  _1 = field _2 = SEMI _3 = meth_list
     {                                                ( _1 :: _3 )}
 | _1 = field _2 = opt_semi
     {                                                ( [_1] )}
@@ -1531,15 +1531,15 @@ _1 = field _2 = SEMI _3 = meth_list
     {                                                ( [mkfield Pfield_var] )}
 
 field:
-_1 = label _2 = COLON _3 = poly_type
+  _1 = label _2 = COLON _3 = poly_type
     {                                                ( mkfield(Pfield(_1, _3)) )}
 
 label:
-_1 = LIDENT
+  _1 = LIDENT
     {                                                ( _1 )}
 
 constant:
-_1 = INT
+  _1 = INT
     {                                                ( Const_int _1 )}
 | _1 = CHAR
     {                                                ( Const_char _1 )}
@@ -1555,7 +1555,7 @@ _1 = INT
     {                                                ( Const_nativeint _1 )}
 
 signed_constant:
-_1 = constant
+  _1 = constant
     {                                                ( _1 )}
 | _1 = MINUS _2 = INT
     {                                                ( Const_int(- _2) )}
@@ -1569,19 +1569,19 @@ _1 = constant
     {                                                ( Const_nativeint(Nativeint.neg _2) )}
 
 ident:
-_1 = UIDENT
+  _1 = UIDENT
     {                                                ( _1 )}
 | _1 = LIDENT
     {                                                ( _1 )}
 
 val_ident:
-_1 = LIDENT
+  _1 = LIDENT
     {                                                ( _1 )}
 | _1 = LPAREN _2 = operator _3 = RPAREN
     {                                                ( _2 )}
 
 val_ident_colon:
-_1 = LIDENT _2 = COLON
+  _1 = LIDENT _2 = COLON
     {                                                ( _1 )}
 | _1 = LPAREN _2 = operator _3 = RPAREN _4 = COLON
     {                                                ( _2 )}
@@ -1589,7 +1589,7 @@ _1 = LIDENT _2 = COLON
     {                                                ( _1 )}
 
 operator:
-_1 = PREFIXOP
+  _1 = PREFIXOP
     {                                                ( _1 )}
 | _1 = INFIXOP0
     {                                                ( _1 )}
@@ -1627,7 +1627,7 @@ _1 = PREFIXOP
     {                                                ( ":=" )}
 
 constr_ident:
-_1 = UIDENT
+  _1 = UIDENT
     {                                                ( _1 )}
 | _1 = LPAREN _2 = RPAREN
     {                                                ( "()" )}
@@ -1639,13 +1639,13 @@ _1 = UIDENT
     {                                                ( "true" )}
 
 val_longident:
-_1 = val_ident
+  _1 = val_ident
     {                                                ( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = val_ident
     {                                                ( Ldot(_1, _3) )}
 
 constr_longident:
-_1 = mod_longident %prec below_DOT
+  _1 = mod_longident %prec below_DOT
     {                                                ( _1 )}
 | _1 = LBRACKET _2 = RBRACKET
     {                                                ( Lident "[]" )}
@@ -1657,47 +1657,47 @@ _1 = mod_longident %prec below_DOT
     {                                                ( Lident "true" )}
 
 econstr_longident:
-_1 = emod_longident %prec below_DOT
+  _1 = emod_longident %prec below_DOT
     {                                                ( _1 )}
 
 label_longident:
-_1 = LIDENT
+  _1 = LIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = LIDENT
     {                                                ( Ldot(_1, _3) )}
 
 type_longident:
-_1 = LIDENT
+  _1 = LIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_ext_longident _2 = DOT _3 = LIDENT
     {                                                ( Ldot(_1, _3) )}
 
 mod_longident:
-_1 = UIDENT
+  _1 = UIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = UIDENT
     {                                                ( Ldot(_1, _3) )}
 
 emod_longident:
-_1 = EUIDENT
+  _1 = EUIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = EUIDENT
     {                                                ( Ldot(_1, _3) )}
 
 destr_longident:
-_1 = UIDENTI
+  _1 = UIDENTI
     {                                                ( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = UIDENTI
     {                                                ( Ldot(_1, _3))}
 
 edestr_longident:
-_1 = EUIDENTI
+  _1 = EUIDENTI
     {                                                ( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = EUIDENTI
     {                                                ( Ldot(_1, _3) )}
 
 mod_ext_longident:
-_1 = UIDENT
+  _1 = UIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_ext_longident _2 = DOT _3 = UIDENT
     {                                                ( Ldot(_1, _3) )}
@@ -1705,25 +1705,25 @@ _1 = UIDENT
     {                                                      ( Lapply(_1, _3) )}
 
 mty_longident:
-_1 = ident
+  _1 = ident
     {                                                ( Lident _1 )}
 | _1 = mod_ext_longident _2 = DOT _3 = ident
     {                                                ( Ldot(_1, _3) )}
 
 clty_longident:
-_1 = LIDENT
+  _1 = LIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_ext_longident _2 = DOT _3 = LIDENT
     {                                                ( Ldot(_1, _3) )}
 
 class_longident:
-_1 = LIDENT
+  _1 = LIDENT
     {                                                ( Lident _1 )}
 | _1 = mod_longident _2 = DOT _3 = LIDENT
     {                                                ( Ldot(_1, _3) )}
 
 toplevel_directive:
-_1 = SHARP _2 = ident
+  _1 = SHARP _2 = ident
     {                                ( Ptop_dir(_2, Pdir_none) )}
 | _1 = SHARP _2 = ident _3 = STRING
     {                                ( Ptop_dir(_2, Pdir_string _3) )}
@@ -1737,53 +1737,53 @@ _1 = SHARP _2 = ident
     {                                ( Ptop_dir(_2, Pdir_bool true) )}
 
 name_tag:
-_1 = BACKQUOTE _2 = ident
+  _1 = BACKQUOTE _2 = ident
     {                                                ( _2 )}
 
 rec_flag:
-
+  
     {                                                ( Nonrecursive )}
 | _1 = REC
     {                                                ( Recursive )}
 
 direction_flag:
-_1 = TO
+  _1 = TO
     {                                                ( Upto )}
 | _1 = DOWNTO
     {                                                ( Downto )}
 
 private_flag:
-
+  
     {                                                ( Public )}
 | _1 = PRIVATE
     {                                                ( Private )}
 
 mutable_flag:
-
+  
     {                                                ( Immutable )}
 | _1 = MUTABLE
     {                                                ( Mutable )}
 
 virtual_flag:
-
+  
     {                                                ( Concrete )}
 | _1 = VIRTUAL
     {                                                ( Virtual )}
 
 opt_bar:
-
+  
     {                                                ( () )}
 | _1 = BAR
     {                                                ( () )}
 
 opt_semi:
-
+  
     {                                                ( () )}
 | _1 = SEMI
     {                                                ( () )}
 
 subtractive:
-_1 = MINUS
+  _1 = MINUS
     {                                                ( "-" )}
 | _1 = MINUSDOT
     {                                                ( "-." )}

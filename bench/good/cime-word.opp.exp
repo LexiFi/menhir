@@ -30,17 +30,17 @@
 %%
 
 word_eof:
-_1 = word _2 = EOF
+  _1 = word _2 = EOF
     {           ( _1 )}
 
 word:
-
+  
     {    ( [] )}
 | _1 = factor _2 = word
     {    ( _1 @ _2 )}
 
 factor:
-_1 = IDENT
+  _1 = IDENT
     {    ( [_1] )}
 | _1 = factor _2 = POWER _3 = expo
     {    ( word_power _1 _3 )}
@@ -48,7 +48,7 @@ _1 = IDENT
     {    ( _2 )}
 
 expo:
-_1 = INT
+  _1 = INT
     {       ( _1 )}
 | _1 = IDENT
     {      ( 
@@ -60,11 +60,11 @@ _1 = INT
       )}
 
 rule_set_eof:
-_1 = rule_set _2 = EOF
+  _1 = rule_set _2 = EOF
     {                           ( _1 )}
 
 rule_set:
-
+  
     {    ( [] )}
 | _1 = rule
     {    ( [_1] )}
@@ -72,11 +72,11 @@ rule_set:
     {    ( _1::_3 )}
 
 rule:
-_1 = word _2 = ARROW _3 = word
+  _1 = word _2 = ARROW _3 = word
     {                          ( (_1,_3) )}
 
 precedence_eof:
-_1 = precedence _2 = EOF
+  _1 = precedence _2 = EOF
     {  ( 
     let order = identity_ordering (Pervasives.compare : symbol_id -> symbol_id -> int)
     in 
@@ -85,7 +85,7 @@ _1 = precedence _2 = EOF
   )}
 
 precedence:
-
+  
     {                                ( [] )}
 | _1 = ordered_list
     {                  ( [_1] )}
@@ -93,7 +93,7 @@ precedence:
     {                                ( _1::_3 )}
 
 ordered_list:
-_1 = IDENT
+  _1 = IDENT
     {            ( One(_1) )}
 | _1 = IDENT _2 = EQ _3 = ordered_list
     {                         ( Eq(_1,_3) )}

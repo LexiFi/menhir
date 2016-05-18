@@ -142,47 +142,47 @@ let mkref pos e =
 %%
 
 program:
-_1 = bindings _2 = EOF
+  _1 = bindings _2 = EOF
     {                                                    ( List.rev _1 )}
 
 forall:
-
+  
     {                                                    ( [] )}
 | _1 = FORALL _2 = quantifiers _3 = DOT
     {                                                    ( _2 )}
 
 quantifiers:
-_1 = quantifier
+  _1 = quantifier
     {                                                    ( [ _1 ] )}
 | _1 = quantifier _2 = quantifiers
     {                                                    ( _1 :: _2 )}
 
 quantifier:
-_1 = LID
+  _1 = LID
     {                                                    ( _1 )}
 
 attributes:
-_1 = typ
+  _1 = typ
     {               ( [], _1 )}
 | _1 = attribute _2 = SEMI _3 = attributes
     {                                  ( _1 :: (fst _3), snd _3 )}
 
 attribute:
-_1 = LID _2 = COLON _3 = typ
+  _1 = LID _2 = COLON _3 = typ
     {                        ( snd _1, _3 )}
 
 typ:
-_1 = type2
+  _1 = type2
     {                                                    ( _1 )}
 
 type2:
-_1 = type10 _2 = ARROW _3 = type2
+  _1 = type10 _2 = ARROW _3 = type2
     {  ( arrow_type (tjoin _1 _3) _1 _3  )}
 | _1 = type10
     {                                                     ( _1 )}
 
 type10:
-_1 = star_types
+  _1 = star_types
     {( match _1 with
     | [] -> assert false
     | [ a ] -> a
@@ -190,19 +190,19 @@ _1 = star_types
 )}
 
 star_types:
-_1 = type1 _2 = STAR _3 = star_types
+  _1 = type1 _2 = STAR _3 = star_types
     {                                                    ( _1 :: _3 )}
 | _1 = type1
     {                 ( [ _1 ] )}
 
 type1:
-_1 = type0
+  _1 = type0
     {        ( _1 )}
 | _1 = BACKSLASH _2 = type0
     {                         ( TypRowUniform (_1, _2) )}
 
 type0:
-_1 = type00s
+  _1 = type00s
     {  ( 
     match _1 with
 	[] -> assert false
@@ -217,7 +217,7 @@ _1 = type00s
     {            ( ref_type _1 _2 )}
 
 type00:
-_1 = LID
+  _1 = LID
     {                                                    ( TypVar (fst _1, snd _1) )}
 | _1 = LBRACE _2 = attributes _3 = RBRACE
     {      ( let pos = join _1 _3 in
@@ -233,23 +233,23 @@ _1 = LID
 							(_2 :: _4) )}
 
 type00s:
-_1 = type00
+  _1 = type00
     {                      ( [ _1 ] )}
 | _1 = type00 _2 = type00s
     {                       ( _1 :: _2 )}
 
 types:
-_1 = typ
+  _1 = typ
     {                                                    ( [ _1 ] )}
 | _1 = typ _2 = COMMA _3 = types
     {                                                    ( _1 :: _3 )}
 
 expression:
-_1 = expression400
+  _1 = expression400
     {                                                    ( _1 )}
 
 expression400:
-_1 = BACKSLASH _2 = pattern _3 = DOT _4 = expression400
+  _1 = BACKSLASH _2 = pattern _3 = DOT _4 = expression400
     {( 
   ELambda (join _1 (position _4), _2, _4) 
 )}
@@ -275,20 +275,20 @@ _1 = BACKSLASH _2 = pattern _3 = DOT _4 = expression400
     {                                                    ( _1 )}
 
 clauses:
-_1 = clause
+  _1 = clause
     {                 ( [ _1 ] )}
 | _1 = clauses _2 = BAR _3 = clause
     {                            ( _3 :: _1 )}
 
 clause:
-_1 = pattern _2 = DARROW _3 = expression
+  _1 = pattern _2 = DARROW _3 = expression
     {                                  ( (join 
 							 (pposition _1)
 							 (position _3),
 						       _1, _3) )}
 
 expression300:
-_1 = expression50 _2 = DOT _3 = LID _4 = LEFTARROW _5 = expression100
+  _1 = expression50 _2 = DOT _3 = LID _4 = LEFTARROW _5 = expression100
     {  ( 
     ERecordUpdate (joine _1 _5, _1, snd _3, _5) 
   )}
@@ -296,7 +296,7 @@ _1 = expression50 _2 = DOT _3 = LID _4 = LEFTARROW _5 = expression100
     {                                                    ( _1 )}
 
 expression200:
-_1 = expression200 _2 = INFIXOP0 _3 = expression200
+  _1 = expression200 _2 = INFIXOP0 _3 = expression200
     {                                                    ( infix _2 _1 _3 )}
 | _1 = expression200 _2 = INFIXOP1 _3 = expression200
     {                                                    ( infix _2 _1 _3 )}
@@ -312,7 +312,7 @@ _1 = expression200 _2 = INFIXOP0 _3 = expression200
     {                                                    ( _1 )}
 
 expression100:
-_1 = expression100 _2 = expression0
+  _1 = expression100 _2 = expression0
     {  ( 
     match _1 with
 	EDCon (p, k, args) -> EDCon (p, k, args @ [ _2 ])
@@ -322,7 +322,7 @@ _1 = expression100 _2 = expression0
     {                                                    ( _1 )}
 
 expression50:
-_1 = expression50 _2 = DOT _3 = LID
+  _1 = expression50 _2 = DOT _3 = LID
     {  ( 
     ERecordAccess (join (position _1) (fst _3), _1, snd _3) 
   )}
@@ -330,7 +330,7 @@ _1 = expression50 _2 = DOT _3 = LID
     {                        ( _1 )}
 
 expression10:
-_1 = expression0
+  _1 = expression0
     {                       ( _1 )}
 | _1 = expression0 _2 = ASSIGN _3 = expression0
     {                                       ( assign (joine _1 _3)
@@ -350,7 +350,7 @@ _1 = expression0
 						     )}
 
 expression0:
-_1 = LID
+  _1 = LID
     {                                                     ( EVar (fst _1, snd _1) )}
 | _1 = UID
     {( 
@@ -401,13 +401,13 @@ _1 = LID
     {                                                     ( tuple (join _1 _5) (_2 :: _4) )}
 
 expressions:
-_1 = expression
+  _1 = expression
     {                                                     ( [ _1 ] )}
 | _1 = expression _2 = COMMA _3 = expressions
     {                                                     ( _1 :: _3 )}
 
 record_bindings:
-
+  
     {                ( [] )}
 | _1 = record_binding
     {                 ( [ _1 ] )}
@@ -415,17 +415,17 @@ record_bindings:
     {                                     ( _1 :: _3 )}
 
 record_binding:
-_1 = LID _2 = EQUAL _3 = expression
+  _1 = LID _2 = EQUAL _3 = expression
     {                       ( (snd _1, _3) )}
 
 bindings:
-
+  
     {                                                     ( [] )}
 | _1 = bindings _2 = binding
     {                                                     ( _2 :: _1 )}
 
 binding:
-_1 = LET _2 = value_definitions
+  _1 = LET _2 = value_definitions
     {  (
     BindValue (join _1 (vlposition _2), _2) 
   )}
@@ -438,52 +438,52 @@ _1 = LET _2 = value_definitions
 								_2) )}
 
 type_definitions:
-_1 = type_definition
+  _1 = type_definition
     {                         ( [ _1 ] )}
 | _1 = type_definitions _2 = AND _3 = type_definition
     {                                             ( _3 :: _1 )}
 
 type_definition:
-_1 = LID _2 = COLON _3 = kind _4 = EQUAL _5 = algebraic_datatype_definitions
+  _1 = LID _2 = COLON _3 = kind _4 = EQUAL _5 = algebraic_datatype_definitions
     {  ( (fst _1, snd _3, snd _1, DAlgebraic _5) )}
 
 kind:
-_1 = STAR
+  _1 = STAR
     {           ( (_1, KStar) )}
 | _1 = STAR _2 = ARROW _3 = kind
     {                  ( (join _1 (fst _3), KArrow (KStar, snd _3)) )}
 
 algebraic_datatype_definitions:
-_1 = algebraic_datatype_definition
+  _1 = algebraic_datatype_definition
     {                                       ( [ _1 ] )}
 | _1 = algebraic_datatype_definition _2 = BAR _3 = algebraic_datatype_definitions
     {                                                                   ( _1 :: _3 )}
 
 algebraic_datatype_definition:
-_1 = UID _2 = COLON _3 = scheme
+  _1 = UID _2 = COLON _3 = scheme
     {                            ( (fst _1, snd _1, 
 							 snd (List.split 
 								(fst _3)), 
 							 snd _3) )}
 
 scheme:
-_1 = forall _2 = typ
+  _1 = forall _2 = typ
     {                   ( (_1, _2) )}
 
 value_definitions:
-_1 = value_definition
+  _1 = value_definition
     {                                                      ( [ _1 ] )}
 | _1 = value_definitions _2 = AND _3 = value_definition
     {                                                      ( _3 :: _1 )}
 
 value_definition:
-_1 = forall _2 = pattern0 _3 = equal_expression
+  _1 = forall _2 = pattern0 _3 = equal_expression
     {                                                      ( (position _3, 
 							 snd (List.split _1), 
 							 _2, _3) )}
 
 equal_expression:
-_1 = EQUAL _2 = expression
+  _1 = EQUAL _2 = expression
     {                                                      ( _2 )}
 | _1 = COLON _2 = typ _3 = EQUAL _4 = expression
     {      ( ETypeConstraint 
@@ -495,11 +495,11 @@ _1 = EQUAL _2 = expression
 							     (position _2), _1, _2) )}
 
 pattern:
-_1 = pattern3
+  _1 = pattern3
     {                                                       ( _1 )}
 
 pattern3:
-_1 = pattern2
+  _1 = pattern2
     {                                                       ( _1 )}
 | _1 = pattern3 _2 = COLON _3 = typ
     {      ( PTypeConstraint 
@@ -509,7 +509,7 @@ _1 = pattern2
       )}
 
 pattern2:
-_1 = pattern1
+  _1 = pattern1
     {                                                       ( _1 )}
 | _1 = LID _2 = AS _3 = pattern2
     {                                                       ( PAlias 
@@ -517,7 +517,7 @@ _1 = pattern1
 							    snd _1, _3) )}
 
 pattern1:
-_1 = pattern10
+  _1 = pattern10
     {                       ( _1 )}
 | _1 = pattern10 _2 = BAR _3 = pattern1
     {                                   ( POr (pjoin _1 _3, [_1 ; _3]) )}
@@ -525,7 +525,7 @@ _1 = pattern10
     {                                   ( PAnd (pjoin _1 _3,[_1; _3]) )}
 
 pattern10:
-_1 = pattern0
+  _1 = pattern0
     {           ( _1 )}
 | _1 = UID _2 = pattern1s
     {      ( PData 
@@ -543,7 +543,7 @@ _1 = pattern0
       )}
 
 pattern0:
-_1 = LID
+  _1 = LID
     {                                                        ( PVar (fst _1, snd _1) )}
 | _1 = UID
     {      ( PData (fst _1, [], snd _1, []) )}
@@ -573,17 +573,17 @@ _1 = LID
     (_2 :: _4) )}
 
 localvars:
-_1 = LBRACKET _2 = quantifiers _3 = RBRACKET
+  _1 = LBRACKET _2 = quantifiers _3 = RBRACKET
     {                               ( snd (List.split _2) )}
 
 patterns:
-_1 = pattern
+  _1 = pattern
     {                                                        ( [ _1 ] )}
 | _1 = pattern _2 = COMMA _3 = patterns
     {                                                        ( _1 :: _3 )}
 
 pattern1s:
-_1 = pattern0
+  _1 = pattern0
     {                ( [ _1 ] )}
 | _1 = pattern0 _2 = pattern1s
     {                         ( _1 :: _2 )}

@@ -2237,25 +2237,25 @@ Warning: the token TRIPLE is unused.
 %%
 
 file:
-_1 = group
+  _1 = group
     {             ( _1 )}
 | _1 = ENDOFFILE
     {             ( ENDOFFILE )}
 
 group:
-_1 = head _2 = LCURLY _3 = statements _4 = RCURLY
+  _1 = head _2 = LCURLY _3 = statements _4 = RCURLY
     {                                      ( TRIPLE(GROUP, _1, TLIST _3); )}
 | _1 = head _2 = LCURLY _3 = RCURLY
     {                             ( _1 )}
 
 statements:
-_1 = statement
+  _1 = statement
     {             ( [ _1 ] )}
 | _1 = statements _2 = statement
     {                         ( _1 @ [ _2 ] )}
 
 statement:
-_1 = simple_attr
+  _1 = simple_attr
     {               ( _1 )}
 | _1 = complex_attr
     {                ( _1 )}
@@ -2267,7 +2267,7 @@ _1 = simple_attr
     {          ( _1 )}
 
 simple_attr:
-_1 = ID _2 = COLON _3 = attr_val_expr _4 = SEMI
+  _1 = ID _2 = COLON _3 = attr_val_expr _4 = SEMI
     {                               ( TRIPLE(SIMPLE, _1, _3) )}
 | _1 = ID _2 = COLON _3 = attr_val_expr
     {                          ( TRIPLE(SIMPLE, _1, _3) )}
@@ -2277,37 +2277,37 @@ _1 = ID _2 = COLON _3 = attr_val_expr _4 = SEMI
     {                ( _1 )}
 
 complex_attr:
-_1 = head _2 = SEMI
+  _1 = head _2 = SEMI
     {             ( _1 )}
 
 head:
-_1 = ID _2 = LPAR _3 = param_list _4 = RPAR
+  _1 = ID _2 = LPAR _3 = param_list _4 = RPAR
     {                           ( TRIPLE(HEAD, _1, TLIST _3) )}
 | _1 = ID _2 = LPAR _3 = RPAR
     {                                  ( _1 )}
 
 param_list:
-_1 = attr_val
+  _1 = attr_val
     {            ( [ _1 ] )}
 | _1 = param_list _2 = COMMA _3 = attr_val
     {                                    ( _1 @ [ _3 ] )}
 
 define:
-_1 = KW_DEFINE _2 = LPAR _3 = s_or_i _4 = COMMA _5 = s_or_i _6 = COMMA _7 = s_or_i _8 = RPAR _9 = SEMI
+  _1 = KW_DEFINE _2 = LPAR _3 = s_or_i _4 = COMMA _5 = s_or_i _6 = COMMA _7 = s_or_i _8 = RPAR _9 = SEMI
     {                ( QUADRUPLE(KW_DEFINE, _3, _5, _7) )}
 
 define_group:
-_1 = KW_DEFINE_GROUP _2 = LPAR _3 = s_or_i _4 = COMMA _5 = s_or_i _6 = RPAR _7 = SEMI
+  _1 = KW_DEFINE_GROUP _2 = LPAR _3 = s_or_i _4 = COMMA _5 = s_or_i _6 = RPAR _7 = SEMI
     {            ( TRIPLE(KW_DEFINE_GROUP,_3,_5) )}
 
 s_or_i:
-_1 = STRING
+  _1 = STRING
     {        ( STRING _1 )}
 | _1 = ID
     {      ( _1 )}
 
 attr_val:
-_1 = NUM
+  _1 = NUM
     {     ( NUM _1 )}
 | _1 = s_or_i
     {          ( _1 )}
@@ -2319,7 +2319,7 @@ _1 = NUM
     {            ( KW_FALSE )}
 
 attr_val_expr:
-_1 = STRING
+  _1 = STRING
     {                       ( STRING _1 )}
 | _1 = KW_TRUE
     {           ( KW_TRUE )}
@@ -2329,7 +2329,7 @@ _1 = STRING
     {        ( _1 )}
 
 expr:
-_1 = expr _2 = PLUS _3 = expr
+  _1 = expr _2 = PLUS _3 = expr
     {           (
 	   TRIPLE(PLUS, _1, _3);
            )}

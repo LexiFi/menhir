@@ -129,19 +129,19 @@ let invalid n s = error n ("Invalid " ^ s)
 %%
 
 spec:
-_1 = lines _2 = EOF
+  _1 = lines _2 = EOF
     {                    ( let spec = List.fold_left replace_line base_spec _1 in
                       let curr_p = Parsing.symbol_end_pos () in
                       { spec with EL.specfile = curr_p.Lexing.pos_fname } )}
 
 lines:
-_1 = line _2 = lines
+  _1 = line _2 = lines
     {                    ( _1 :: _2 )}
 | 
     {                    ( [] )}
 
 line:
-_1 = package_line
+  _1 = package_line
     {                        ( _1 )}
 | _1 = version_line
     {                        ( _1 )}
@@ -173,7 +173,7 @@ _1 = package_line
     {                        ( _1 )}
 
 package_line:
-_1 = PACKAGE _2 = PKGNAME _3 = EOL
+  _1 = PACKAGE _2 = PKGNAME _3 = EOL
     {                            ( let (c, n) = _2 in Package (c, n) )}
 | _1 = PACKAGE _2 = PKGNAME _3 = error _4 = EOL
     {                                ( trail 3 "package name" )}
@@ -181,7 +181,7 @@ _1 = PACKAGE _2 = PKGNAME _3 = EOL
     {                            ( missing "package name" )}
 
 version_line:
-_1 = VERSION _2 = STRING _3 = EOL
+  _1 = VERSION _2 = STRING _3 = EOL
     {                            ( Version _2 )}
 | _1 = VERSION _2 = STRING _3 = error _4 = EOL
     {                               ( trail 3 "version number" )}
@@ -189,7 +189,7 @@ _1 = VERSION _2 = STRING _3 = EOL
     {                            ( missing "version number" )}
 
 revision_line:
-_1 = REVISION _2 = INT _3 = EOL
+  _1 = REVISION _2 = INT _3 = EOL
     {                            ( Revision _2 )}
 | _1 = REVISION _2 = INT _3 = error _4 = EOL
     {                             ( trail 3 "revision number" )}
@@ -197,15 +197,15 @@ _1 = REVISION _2 = INT _3 = EOL
     {                             ( missing "revision number" )}
 
 depends_line:
-_1 = DEPENDS _2 = deps _3 = EOL
+  _1 = DEPENDS _2 = deps _3 = EOL
     {                            ( Depends _2 )}
 
 build_depends_line:
-_1 = BUILD_DEPENDS _2 = deps _3 = EOL
+  _1 = BUILD_DEPENDS _2 = deps _3 = EOL
     {                             ( Build_Depends _2 )}
 
 sources_line:
-_1 = SOURCES _2 = STRING _3 = EOL
+  _1 = SOURCES _2 = STRING _3 = EOL
     {                            ( Sources _2 )}
 | _1 = SOURCES _2 = STRING _3 = error _4 = EOL
     {                               ( trail 3 "sources url" )}
@@ -213,7 +213,7 @@ _1 = SOURCES _2 = STRING _3 = EOL
     {                            ( missing "sources url" )}
 
 unpacksto_line:
-_1 = UNPACKSTO _2 = STRING _3 = EOL
+  _1 = UNPACKSTO _2 = STRING _3 = EOL
     {                            ( Unpacks_To _2 )}
 | _1 = UNPACKSTO _2 = STRING _3 = error _4 = EOL
     {                                 ( trail 3 "`unpacks to' directory" )}
@@ -221,7 +221,7 @@ _1 = UNPACKSTO _2 = STRING _3 = EOL
     {                              ( missing "`unpacks to' directory" )}
 
 homepage_line:
-_1 = HOMEPAGE _2 = STRING _3 = EOL
+  _1 = HOMEPAGE _2 = STRING _3 = EOL
     {                            ( Homepage _2 )}
 | _1 = HOMEPAGE _2 = STRING _3 = error _4 = EOL
     {                                ( trail 3 "homepage url" )}
@@ -229,27 +229,27 @@ _1 = HOMEPAGE _2 = STRING _3 = EOL
     {                             ( missing "homepage url" )}
 
 maintainer_line:
-_1 = MAINTAINER _2 = STRING _3 = EOL
+  _1 = MAINTAINER _2 = STRING _3 = EOL
     {                            ( Maintainer _2 )}
 
 options_line:
-_1 = OPTIONS _2 = options _3 = EOL
+  _1 = OPTIONS _2 = options _3 = EOL
     {                            ( Options _2 )}
 
 docfiles_line:
-_1 = DOCFILES _2 = docfiles _3 = EOL
+  _1 = DOCFILES _2 = docfiles _3 = EOL
     {                            ( Docfiles _2 )}
 
 description_line:
-_1 = DESCRIPTION _2 = STRINGPAIR
+  _1 = DESCRIPTION _2 = STRINGPAIR
     {                             ( let (s, l) = _2 in Description (s, l) )}
 
 confopts_line:
-_1 = CONFOPTS _2 = confopts _3 = EOL
+  _1 = CONFOPTS _2 = confopts _3 = EOL
     {                               ( Confopts _2 )}
 
 bytecode_target_line:
-_1 = BC_TARGET _2 = STRING _3 = EOL
+  _1 = BC_TARGET _2 = STRING _3 = EOL
     {                            ( Bytecode_Target _2 )}
 | _1 = BC_TARGET _2 = STRING _3 = error _4 = EOL
     {                                 ( trail 3 "bytecode target" )}
@@ -257,7 +257,7 @@ _1 = BC_TARGET _2 = STRING _3 = EOL
     {                            ( missing "bytecode target" )}
 
 opt_target_line:
-_1 = OPT_TARGET _2 = STRING _3 = EOL
+  _1 = OPT_TARGET _2 = STRING _3 = EOL
     {                            ( Opt_Target _2 )}
 | _1 = OPT_TARGET _2 = STRING _3 = error _4 = EOL
     {                                  ( trail 3 "opt target" )}
@@ -265,7 +265,7 @@ _1 = OPT_TARGET _2 = STRING _3 = EOL
     {                            ( missing "opt target" )}
 
 deps:
-_1 = dep _2 = COMMA _3 = deps
+  _1 = dep _2 = COMMA _3 = deps
     {                    ( _1 :: _3 )}
 | _1 = dep
     {                    ( [_1] )}
@@ -275,7 +275,7 @@ _1 = dep _2 = COMMA _3 = deps
     {                    ( [] )}
 
 dep:
-_1 = PKGNAME _2 = LPAREN _3 = RELOP _4 = STRING _5 = RPAREN
+  _1 = PKGNAME _2 = LPAREN _3 = RELOP _4 = STRING _5 = RPAREN
     {        ( let (cat, name) = _1 in (cat, name, Some (_3, _4)) )}
 | _1 = PKGNAME
     {        ( let (cat, name) = _1 in (cat, name, None) )}
@@ -283,7 +283,7 @@ _1 = PKGNAME _2 = LPAREN _3 = RELOP _4 = STRING _5 = RPAREN
     {        ( invalid 1 "dependency" )}
 
 options:
-_1 = OPTION _2 = COMMA _3 = options
+  _1 = OPTION _2 = COMMA _3 = options
     {                            ( _1 :: _3 )}
 | _1 = OPTION
     {                            ( [_1] )}
@@ -295,7 +295,7 @@ _1 = OPTION _2 = COMMA _3 = options
     {                            ( [] )}
 
 docfiles:
-_1 = STRING _2 = COMMA _3 = docfiles
+  _1 = STRING _2 = COMMA _3 = docfiles
     {                            ( _1 :: _3 )}
 | _1 = STRING
     {                            ( [_1] )}
@@ -307,7 +307,7 @@ _1 = STRING _2 = COMMA _3 = docfiles
     {                            ( [] )}
 
 confopts:
-
+  
     {                            ( [] )}
 
 %%

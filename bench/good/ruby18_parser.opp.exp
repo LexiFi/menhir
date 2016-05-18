@@ -164,26 +164,26 @@ Warning: the token EOF is unused.
 %%
 
 program:
-_1 = program_e1 _2 = compstmt
+  _1 = program_e1 _2 = compstmt
     {                    ( _2 )}
 
 program_e1:
-
+  
     {                  ( state.lex_state <- Expr_beg )}
 
 bodystmt:
-_1 = compstmt _2 = opt_rescue _3 = opt_else _4 = opt_ensure
+  _1 = compstmt _2 = opt_rescue _3 = opt_else _4 = opt_ensure
     {                    ( { body = _1;
                         body_rescues = _2;
                         body_else = _3;
                         body_ensure = _4 } )}
 
 compstmt:
-_1 = stmts _2 = opt_terms
+  _1 = stmts _2 = opt_terms
     {                    ( _1 @ _2 )}
 
 stmts:
-_1 = none
+  _1 = none
     {                    ( [] )}
 | _1 = stmt
     {                    ( [_1] )}
@@ -193,7 +193,7 @@ _1 = none
     {                    ( [_2] )}
 
 stmt:
-_1 = K_ALIAS _2 = fitem _3 = stmt_e1 _4 = fitem
+  _1 = K_ALIAS _2 = fitem _3 = stmt_e1 _4 = fitem
     {                    ( Alias (_2, _4, annot _1) )}
 | _1 = K_ALIAS _2 = GVAR _3 = GVAR
     {                    ( Alias (fst _2, fst _3, annot _1) )}
@@ -239,19 +239,19 @@ _1 = K_ALIAS _2 = fitem _3 = stmt_e1 _4 = fitem
     {                    ( expr_stmt _1 )}
 
 stmt_e1:
-
+  
     {                  ( state.lex_state <- Expr_fname;
                     (*result = self.lexer.lineno*)
                     0 )}
 
 stmt_e2:
-
+  
     {                  ( if state.in_def > 0 || state.in_single > 0 then
                       yyerror "BEGIN in method";
                     Env.extend state.env )}
 
 expr:
-_1 = command_call
+  _1 = command_call
     {                    ( _1 )}
 | _1 = expr _2 = K_AND _3 = expr
     {                    ( logop `And _1 _3 )}
@@ -265,11 +265,11 @@ _1 = command_call
     {                    ( _1 )}
 
 expr_value:
-_1 = expr
+  _1 = expr
     {                    ( _1 )}
 
 command_call:
-_1 = command
+  _1 = command
     {                    ( _1 )}
 | _1 = block_command
     {                    ( _1 )}
@@ -281,7 +281,7 @@ _1 = command
     {                    ( Next (ret_args _2, annot _1) )}
 
 block_command:
-_1 = block_call
+  _1 = block_call
     {                    ( _1 )}
 | _1 = block_call _2 = DOT _3 = operation2 _4 = command_args
     {                    ( new_call _1 (fst _3) _4 ~annot:(annot (snd _3)) )}
@@ -289,19 +289,19 @@ _1 = block_call
     {                    ( new_call _1 (fst _3) _4 ~annot:(annot (snd _3)) )}
 
 cmd_brace_block:
-_1 = LBRACE_ARG _2 = cmd_brace_block_e1 _3 = opt_block_var _4 = compstmt _5 = RCURLY_error
+  _1 = LBRACE_ARG _2 = cmd_brace_block_e1 _3 = opt_block_var _4 = compstmt _5 = RCURLY_error
     {                    ( let blk = { blk_vars = _3; blk_body = _4 } in
                         Env.unextend state.env ;
                         blk )}
 
 cmd_brace_block_e1:
-
+  
     {                    ( Env.extend ~dyn:true state.env;
                       (* TODO result = self.lexer.lineno*)
                       ())}
 
 command:
-_1 = operation _2 = command_args %prec LOWEST
+  _1 = operation _2 = command_args %prec LOWEST
     {                    ( new_fcall (fst _1) _2 ~annot:(annot (snd _1)) )}
 | _1 = operation _2 = command_args _3 = cmd_brace_block
     {                    ( new_fcall (fst _1) _2 ~block:(Some _3) ~annot:(annot (snd _1)) )}
@@ -319,19 +319,19 @@ _1 = operation _2 = command_args %prec LOWEST
     {                    ( new_yield _2 ~annot:(annot _1) )}
 
 mlhs:
-_1 = mlhs_basic
+  _1 = mlhs_basic
     {                    ( _1 )}
 | _1 = LPAREN _2 = mlhs_entry _3 = RPAREN
     {                    ( _2 )}
 
 mlhs_entry:
-_1 = mlhs_basic
+  _1 = mlhs_basic
     {                    ( _1 )}
 | _1 = LPAREN _2 = mlhs_entry _3 = RPAREN
     {                    ( [Lhs_dstr _2] )}
 
 mlhs_basic:
-_1 = mlhs_head
+  _1 = mlhs_head
     {                    ( _1 )}
 | _1 = mlhs_head _2 = mlhs_item
     {                    ( _1 @ [_2] )}
@@ -345,19 +345,19 @@ _1 = mlhs_head
     {                    ( [Lhs_star] )}
 
 mlhs_item:
-_1 = mlhs_node
+  _1 = mlhs_node
     {                    ( _1 )}
 | _1 = LPAREN _2 = mlhs_entry _3 = RPAREN
     {                    ( Lhs_dstr _2 )}
 
 mlhs_head:
-_1 = mlhs_item _2 = COMMA
+  _1 = mlhs_item _2 = COMMA
     {                    ( [_1] )}
 | _1 = mlhs_head _2 = mlhs_item _3 = COMMA
     {                    ( _1 @ [_2] )}
 
 mlhs_node:
-_1 = variable
+  _1 = variable
     {                    ( assignable (fst _1) ~annot:(annot (snd _1)) )}
 | _1 = primary_value _2 = LB _3 = aref_args _4 = RBRACK
     {                    ( Lhs_aref (_1, _3) )}
@@ -377,7 +377,7 @@ _1 = variable
                       Lhs_var (Var_const (Cpath_absolute (Cpath_name (fst _2)))) )}
 
 lhs:
-_1 = variable
+  _1 = variable
     {                    ( assignable (fst _1) ~annot:(annot (snd _1)) )}
 | _1 = primary_value _2 = LB _3 = aref_args _4 = RBRACK
     {                    ( Lhs_aref (_1, _3) )}
@@ -397,13 +397,13 @@ _1 = variable
                       Lhs_var (Var_const (Cpath_absolute (Cpath_name (fst _2)))) )}
 
 cname:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {                    ( yyerror "class/module name must be CONSTANT" )}
 | _1 = CONSTANT
     {                    ( _1 )}
 
 cpath:
-_1 = COLON3 _2 = cname
+  _1 = COLON3 _2 = cname
     {                    ( Cpath_absolute (Cpath_name (fst _2)) )}
 | _1 = cname
     {                    ( Cpath_name (fst _1) )}
@@ -411,7 +411,7 @@ _1 = COLON3 _2 = cname
     {                    ( Cpath_relative (_1, fst _3) )}
 
 fname:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {                    ( _1 )}
 | _1 = CONSTANT
     {                    ( _1 )}
@@ -425,23 +425,23 @@ _1 = IDENTIFIER
                       _1 )}
 
 fitem:
-_1 = fname
+  _1 = fname
     {                         ( fst _1 )}
 | _1 = symbol
     {                         ( fst _1 )}
 
 undef_list:
-_1 = fitem
+  _1 = fitem
     {                    ( [_1] )}
 | _1 = undef_list _2 = COMMA _3 = undef_list_e1 _4 = fitem
     {                    ( _1 @ [_4] )}
 
 undef_list_e1:
-
+  
     {                  ( state.lex_state <- Expr_fname )}
 
 op:
-_1 = PIPE
+  _1 = PIPE
     {                            ( "|", _1 )}
 | _1 = CARET
     {                            ( "^", _1 )}
@@ -495,7 +495,7 @@ _1 = PIPE
     {                            ( "`", _1 )}
 
 reswords:
-_1 = K__LINE__
+  _1 = K__LINE__
     {                                    ( "__LINE__", _1 )}
 | _1 = K__FILE__
     {                                    ( "__FILE__", _1 )}
@@ -579,7 +579,7 @@ _1 = K__LINE__
     {                                    ( "rescue", _1 )}
 
 arg:
-_1 = lhs _2 = EQL _3 = arg
+  _1 = lhs _2 = EQL _3 = arg
     {                    ( Assign (_1, _3, Asgn_single, dummy_annot) )}
 | _1 = lhs _2 = EQL _3 = arg _4 = K_RESCUE_MOD _5 = arg
     {                    ( Assign (_1,
@@ -694,11 +694,11 @@ _1 = lhs _2 = EQL _3 = arg
     {                    ( _1 )}
 
 arg_value:
-_1 = arg
+  _1 = arg
     {                    ( _1 )}
 
 aref_args:
-_1 = none
+  _1 = none
     {                    ( [] )}
 | _1 = command _2 = opt_nl
     {                    ( warning "parenthesize argument(s) for future version";
@@ -713,7 +713,7 @@ _1 = none
     {                    ( [Arg_splat _2] )}
 
 paren_args:
-_1 = LPAREN2 _2 = none _3 = RPAREN
+  _1 = LPAREN2 _2 = none _3 = RPAREN
     {                    ( [] )}
 | _1 = LPAREN2 _2 = call_args _3 = opt_nl _4 = RPAREN
     {                    ( _2 )}
@@ -725,13 +725,13 @@ _1 = LPAREN2 _2 = none _3 = RPAREN
                       _2 @ [Arg_value _4] )}
 
 opt_paren_args:
-_1 = none
+  _1 = none
     {                    ( [] )}
 | _1 = paren_args
     {                    ( _1 )}
 
 call_args:
-_1 = command
+  _1 = command
     {                    ( warning "parenthesize argument(s) for future version";
                       [] )}
 | _1 = args _2 = opt_block_arg
@@ -752,7 +752,7 @@ _1 = command
     {                    ( [_1] )}
 
 call_args2:
-_1 = arg_value _2 = COMMA _3 = args _4 = opt_block_arg
+  _1 = arg_value _2 = COMMA _3 = args _4 = opt_block_arg
     {                    ( (Arg_value _1 :: _3) @ _4 )}
 | _1 = arg_value _2 = COMMA _3 = block_arg
     {                    ( Arg_value _1 :: [_3] )}
@@ -778,18 +778,18 @@ _1 = arg_value _2 = COMMA _3 = args _4 = opt_block_arg
     {                    ( [_1] )}
 
 command_args:
-_1 = command_args_e1 _2 = open_args
+  _1 = command_args_e1 _2 = open_args
     {                    ( state.cmdarg_stack <- Stack_state.of_list _1;
                       _2 )}
 
 command_args_e1:
-
+  
     {                    ( let list = Stack_state.to_list state.cmdarg_stack in
                         Stack_state.push state.cmdarg_stack true;
                         list )}
 
 open_args:
-_1 = call_args
+  _1 = call_args
     {                    ( _1 )}
 | _1 = LPAREN_ARG _2 = open_args_e1 _3 = RPAREN
     {                    ( warning "don't put space before argument parentheses";
@@ -799,27 +799,27 @@ _1 = call_args
                       _2 )}
 
 open_args_e1:
-
+  
     {                  ( state.lex_state <- Expr_endarg )}
 
 block_arg:
-_1 = AMPER _2 = arg_value
+  _1 = AMPER _2 = arg_value
     {                    ( Arg_block _2 )}
 
 opt_block_arg:
-_1 = COMMA _2 = block_arg
+  _1 = COMMA _2 = block_arg
     {                    ( [_2] )}
 | _1 = none_block_pass
     {                    ( [] )}
 
 args:
-_1 = arg_value
+  _1 = arg_value
     {                    ( [Arg_value _1] )}
 | _1 = args _2 = COMMA _3 = arg_value
     {                    ( _1 @ [Arg_value _3] )}
 
 mrhs:
-_1 = args _2 = COMMA _3 = arg_value
+  _1 = args _2 = COMMA _3 = arg_value
     {                    ( _1 @ [Arg_value _3] )}
 | _1 = args _2 = COMMA _3 = STAR _4 = arg_value
     {                    ( _1 @ [Arg_splat _4] )}
@@ -827,7 +827,7 @@ _1 = args _2 = COMMA _3 = arg_value
     {                    ( [Arg_splat _2] )}
 
 primary:
-_1 = literal
+  _1 = literal
     {                    ( _1 )}
 | _1 = strings
     {                    ( _1 )}
@@ -933,63 +933,63 @@ _1 = literal
     {                    ( Retry (annot _1) )}
 
 primary_e1:
-
+  
     {                  ( state.lex_state <- Expr_endarg )}
 
 primary_e2:
-
+  
     {                  ( Stack_state.push state.cond_stack true )}
 
 primary_e3:
-
+  
     {                  ( Stack_state.pop state.cond_stack )}
 
 primary_e4:
-
+  
     {                  ( if state.in_def > 0 || state.in_single > 0 then
                       yyerror "class definition in method body";
                     Env.extend state.env )}
 
 primary_e5:
-
+  
     {                  ( let in_def = state.in_def in
                       state.in_def <- 0;
                       in_def )}
 
 primary_e6:
-
+  
     {                  ( let in_single = state.in_single in
                       state.in_single <- 0;
                       Env.extend state.env;
                       in_single )}
 
 primary_e7:
-
+  
     {                  ( if state.in_def > 0 || state.in_single > 0 then
                       yyerror "module definition in method body";
                     Env.extend state.env )}
 
 primary_e8:
-
+  
     {                  ( state.in_def <- succ state.in_def;
                     Env.extend state.env )}
 
 primary_e9:
-
+  
     {                  ( state.lex_state <- Expr_fname )}
 
 primary_e10:
-
+  
     {                  ( state.in_single <- succ state.in_single;
                     Env.extend state.env;
                     state.lex_state <- Expr_end )}
 
 primary_value:
-_1 = primary
+  _1 = primary
     {                    ( _1 )}
 
 then_:
-_1 = term
+  _1 = term
     {                              ( () )}
 | _1 = COLON
     {                              ( () )}
@@ -999,7 +999,7 @@ _1 = term
     {                              ( () )}
 
 do_:
-_1 = term
+  _1 = term
     {                            ( () )}
 | _1 = COLON
     {                            ( () )}
@@ -1007,25 +1007,25 @@ _1 = term
     {                            ( () )}
 
 if_tail:
-_1 = opt_else
+  _1 = opt_else
     {                    ( _1 )}
 | _1 = K_ELSIF _2 = expr_value _3 = then_ _4 = compstmt _5 = if_tail
     {                    ( [expr_stmt (If (_2, _4, _5, annot _1))] )}
 
 opt_else:
-_1 = none
+  _1 = none
     {                    ( [] )}
 | _1 = K_ELSE _2 = compstmt
     {                    ( _2 )}
 
 block_var:
-_1 = lhs
+  _1 = lhs
     {                    ( _1 )}
 | _1 = mlhs
     {                    ( Lhs_dstr _1 )}
 
 opt_block_var:
-_1 = none
+  _1 = none
     {                    ( [] )}
 | _1 = PIPE _2 = PIPE
     {                    ( [] )}
@@ -1037,17 +1037,17 @@ _1 = none
     {                    ( _2 )}
 
 do_block:
-_1 = K_DO_BLOCK _2 = do_block_e1 _3 = opt_block_var _4 = compstmt _5 = K_END_error
+  _1 = K_DO_BLOCK _2 = do_block_e1 _3 = opt_block_var _4 = compstmt _5 = K_END_error
     {                    ( let blk = { blk_vars = _3; blk_body = _4 } in
                         Env.unextend state.env;
                         blk )}
 
 do_block_e1:
-
+  
     {                  ( Env.extend ~dyn:true state.env )}
 
 block_call:
-_1 = command _2 = do_block
+  _1 = command _2 = do_block
     {                    ( (* TODO check for block argument *)
                       match _1 with
                       | Call (recv, id, args, _, annot) ->
@@ -1065,7 +1065,7 @@ _1 = command _2 = do_block
     {                    ( new_call _1 (fst _3) _4 ~annot:(annot (snd _3)) )}
 
 method_call:
-_1 = operation _2 = paren_args
+  _1 = operation _2 = paren_args
     {                    ( new_fcall (fst _1) _2 ~annot:(annot (snd _1)) )}
 | _1 = primary_value _2 = DOT _3 = operation2 _4 = opt_paren_args
     {                    ( new_call _1 (fst _3) _4 ~annot:(annot (snd _3)) )}
@@ -1079,7 +1079,7 @@ _1 = operation _2 = paren_args
     {                    ( Super (None, None, annot _1) )}
 
 brace_block:
-_1 = LCURLY _2 = brace_block_e1 _3 = opt_block_var _4 = compstmt _5 = RCURLY_error
+  _1 = LCURLY _2 = brace_block_e1 _3 = opt_block_var _4 = compstmt _5 = RCURLY_error
     {                    ( let blk = { blk_vars = _3; blk_body = _4 } in
                         Env.unextend state.env;
                         blk )}
@@ -1089,15 +1089,15 @@ _1 = LCURLY _2 = brace_block_e1 _3 = opt_block_var _4 = compstmt _5 = RCURLY_err
                         blk )}
 
 brace_block_e1:
-
+  
     {                  ( Env.extend ~dyn:true state.env )}
 
 case_body:
-_1 = K_WHEN _2 = when_args _3 = then_ _4 = compstmt _5 = cases
+  _1 = K_WHEN _2 = when_args _3 = then_ _4 = compstmt _5 = cases
     {                    ( (_2, _4) :: _5 )}
 
 when_args:
-_1 = args
+  _1 = args
     {                    ( _1 )}
 | _1 = args _2 = COMMA _3 = STAR _4 = arg_value
     {                    ( _1 @ [Arg_splat _4] )}
@@ -1105,13 +1105,13 @@ _1 = args
     {                    ( [Arg_splat _2] )}
 
 cases:
-_1 = case_body
+  _1 = case_body
     {                    ( _1 )}
 | _1 = none
     {                    ( [] )}
 
 opt_rescue:
-_1 = K_RESCUE _2 = exc_list _3 = exc_var _4 = then_ _5 = compstmt _6 = opt_rescue
+  _1 = K_RESCUE _2 = exc_list _3 = exc_var _4 = then_ _5 = compstmt _6 = opt_rescue
     {                    ( let body =
                         match _3 with
                         | Some lhs ->
@@ -1124,7 +1124,7 @@ _1 = K_RESCUE _2 = exc_list _3 = exc_var _4 = then_ _5 = compstmt _6 = opt_rescu
     {                    ( [] )}
 
 exc_list:
-_1 = arg_value
+  _1 = arg_value
     {                    ( [Arg_value _1] )}
 | _1 = mrhs
     {                    ( _1 )}
@@ -1132,19 +1132,19 @@ _1 = arg_value
     {                    ( [] )}
 
 exc_var:
-_1 = ASSOC _2 = lhs
+  _1 = ASSOC _2 = lhs
     {                    ( Some _2 )}
 | _1 = none
     {                    ( None )}
 
 opt_ensure:
-_1 = K_ENSURE _2 = compstmt
+  _1 = K_ENSURE _2 = compstmt
     {                    ( _2 )}
 | _1 = none
     {                    ( [] )}
 
 literal:
-_1 = numeric
+  _1 = numeric
     {                    ( let lit_val =
                         match fst _1 with
                         | `Int num ->
@@ -1160,71 +1160,71 @@ _1 = numeric
     {                          ( _1 )}
 
 strings:
-_1 = string
+  _1 = string
     {                    ( _1 )}
 
 string:
-_1 = string1
+  _1 = string1
     {                    ( _1 )}
 | _1 = string _2 = string1
     {                    ( literal_concat _1 _2 )}
 
 string1:
-_1 = STRING_BEG _2 = string_contents _3 = STRING_END
+  _1 = STRING_BEG _2 = string_contents _3 = STRING_END
     {                    ( Literal (Lit_string _2, annot _1) )}
 
 xstring:
-_1 = XSTRING_BEG _2 = xstring_contents _3 = STRING_END
+  _1 = XSTRING_BEG _2 = xstring_contents _3 = STRING_END
     {                    ( Literal (Lit_xstring _2, annot _1) )}
 
 regexp:
-_1 = REGEXP_BEG _2 = xstring_contents _3 = REGEXP_END
+  _1 = REGEXP_BEG _2 = xstring_contents _3 = REGEXP_END
     {                    ( new_regexp _2 "TODO" ~annot:(annot _1) )}
 
 words:
-_1 = WORDS_BEG _2 = SPACE _3 = STRING_END
+  _1 = WORDS_BEG _2 = SPACE _3 = STRING_END
     {                    ( Array ([], annot _1) )}
 | _1 = WORDS_BEG _2 = word_list _3 = STRING_END
     {                    ( Array (_2, annot _1) )}
 
 word_list:
-_1 = none
+  _1 = none
     {                    ( [] )}
 | _1 = word_list _2 = word _3 = SPACE
     {                    ( _1 @ [Arg_value _2] )}
 
 word:
-_1 = string_content
+  _1 = string_content
     {                    ( Literal (Lit_string [fst _1], annot (snd _1)) )}
 | _1 = word _2 = string_content
     {                    ( literal_concat _1 (Literal (Lit_string [fst _2], annot (snd _2))) )}
 
 awords:
-_1 = QWORDS_BEG _2 = SPACE _3 = STRING_END
+  _1 = QWORDS_BEG _2 = SPACE _3 = STRING_END
     {                    ( Array ([], annot _1) )}
 | _1 = QWORDS_BEG _2 = qword_list _3 = STRING_END
     {                    ( Array (_2, annot _1) )}
 
 qword_list:
-_1 = none
+  _1 = none
     {                    ( [] )}
 | _1 = qword_list _2 = STRING_CONTENT _3 = SPACE
     {                    ( _1 @ [Arg_value (Literal (Lit_string [Str_contents (fst _2)], annot (snd _2)))] )}
 
 string_contents:
-_1 = none
+  _1 = none
     {                    ( [] )}
 | _1 = string_contents _2 = string_content
     {                    ( _1 @ [(fst _2)] )}
 
 xstring_contents:
-_1 = none
+  _1 = none
     {                    ( [] )}
 | _1 = xstring_contents _2 = string_content
     {                    ( _1 @ [(fst _2)] )}
 
 string_content:
-_1 = STRING_CONTENT
+  _1 = STRING_CONTENT
     {                    ( Str_contents (fst _1), snd _1 )}
 | _1 = STRING_DVAR _2 = string_content_e1 _3 = string_dvar
     {                    ( state.lex_strterm <- _2;
@@ -1236,14 +1236,14 @@ _1 = STRING_CONTENT
                       Str_interpol (Seq (_3, dummy_annot)), _1 )}
 
 string_content_e1:
-
+  
     {                   ( let ret = state.lex_strterm in
                        state.lex_strterm <- None;
                        state.lex_state <- Expr_beg;
                        ret )}
 
 string_content_e2:
-
+  
     {                   ( let ret = state.lex_strterm in
                        state.lex_strterm <- None;
                        state.lex_state <- Expr_beg;
@@ -1252,7 +1252,7 @@ string_content_e2:
                        ret )}
 
 string_dvar:
-_1 = GVAR
+  _1 = GVAR
     {                       ( Variable (Var_global (fst _1), annot (snd _1)) )}
 | _1 = IVAR
     {                       ( Variable (Var_instance (fst _1), annot (snd _1)) )}
@@ -1260,12 +1260,12 @@ _1 = GVAR
     {                       ( Variable (Var_class (fst _1), annot (snd _1)) )}
 
 symbol:
-_1 = SYMBEG _2 = sym
+  _1 = SYMBEG _2 = sym
     {                    ( state.lex_state <- Expr_end;
                       _2 )}
 
 sym:
-_1 = fname
+  _1 = fname
     {                        ( _1 )}
 | _1 = IVAR
     {                        ( _1 )}
@@ -1275,11 +1275,11 @@ _1 = fname
     {                        ( _1 )}
 
 dsym:
-_1 = SYMBEG _2 = xstring_contents _3 = STRING_END
+  _1 = SYMBEG _2 = xstring_contents _3 = STRING_END
     {                    ( Literal (Lit_symbol _2, annot _1) )}
 
 numeric:
-_1 = INTEGER
+  _1 = INTEGER
     {                    ( `Int (fst _1), snd _1 )}
 | _1 = FLOAT
     {                    ( `Float (fst _1), snd _1 )}
@@ -1289,7 +1289,7 @@ _1 = INTEGER
     {                    ( `Float ~-.(fst _2), _1 )}
 
 variable:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {                             ( _1 )}
 | _1 = IVAR
     {                             ( _1 )}
@@ -1313,15 +1313,15 @@ _1 = IDENTIFIER
     {                             ( "__LINE__", _1 )}
 
 var_ref:
-_1 = variable
+  _1 = variable
     {                    ( gettable (fst _1) ~annot:(annot (snd _1)) )}
 
 var_lhs:
-_1 = variable
+  _1 = variable
     {                    ( assignable (fst _1) ~annot:(annot (snd _1)) )}
 
 superclass:
-_1 = term
+  _1 = term
     {                    ( None )}
 | _1 = LT _2 = superclass_e1 _3 = expr_value _4 = term
     {                    ( Some _3 )}
@@ -1329,18 +1329,18 @@ _1 = term
     {                    ( None )}
 
 superclass_e1:
-
+  
     {                    ( state.lex_state <- Expr_beg )}
 
 f_arglist:
-_1 = LPAREN2 _2 = f_args _3 = opt_nl _4 = RPAREN
+  _1 = LPAREN2 _2 = f_args _3 = opt_nl _4 = RPAREN
     {                    ( state.lex_state <- Expr_beg;
                       _2 )}
 | _1 = f_args _2 = term
     {                    ( _1 )}
 
 f_args:
-_1 = f_arg _2 = COMMA _3 = f_optarg _4 = COMMA _5 = f_rest_arg _6 = opt_f_block_arg
+  _1 = f_arg _2 = COMMA _3 = f_optarg _4 = COMMA _5 = f_rest_arg _6 = opt_f_block_arg
     {                    ( formal_params _1 _3 _5 _6 )}
 | _1 = f_arg _2 = COMMA _3 = f_optarg _4 = opt_f_block_arg
     {                    ( formal_params _1 _3 [] _4 )}
@@ -1360,7 +1360,7 @@ _1 = f_arg _2 = COMMA _3 = f_optarg _4 = COMMA _5 = f_rest_arg _6 = opt_f_block_
     {                    ( formal_params [] [] [] [] )}
 
 f_norm_arg:
-_1 = CONSTANT
+  _1 = CONSTANT
     {                    ( yyerror ("formal argument cannot be a constant: " ^ fst _1) )}
 | _1 = IVAR
     {                    ( yyerror "formal argument cannot be an instance variable" )}
@@ -1371,30 +1371,30 @@ _1 = CONSTANT
                       Param_req (fst _1) )}
 
 f_arg:
-_1 = f_norm_arg
+  _1 = f_norm_arg
     {                    ( [_1] )}
 | _1 = f_arg _2 = COMMA _3 = f_norm_arg
     {                    ( _1 @ [_3] )}
 
 f_opt:
-_1 = IDENTIFIER _2 = EQL _3 = arg_value
+  _1 = IDENTIFIER _2 = EQL _3 = arg_value
     {                    ( ignore (assignable (fst _1));
                       Param_opt (fst _1, _3) )}
 
 f_optarg:
-_1 = f_opt
+  _1 = f_opt
     {                    ( [_1] )}
 | _1 = f_optarg _2 = COMMA _3 = f_opt
     {                    ( _1 @ [_3] )}
 
 restarg_mark:
-_1 = STAR2
+  _1 = STAR2
     {                        ( _1 )}
 | _1 = STAR
     {                        ( _1 )}
 
 f_rest_arg:
-_1 = restarg_mark _2 = IDENTIFIER
+  _1 = restarg_mark _2 = IDENTIFIER
     {                    ( ignore (assignable (fst _2));
                       [Param_rest (fst _2)] )}
 | _1 = restarg_mark
@@ -1402,25 +1402,25 @@ _1 = restarg_mark _2 = IDENTIFIER
                       [Param_star] )}
 
 blkarg_mark:
-_1 = AMPER2
+  _1 = AMPER2
     {                         ( _1 )}
 | _1 = AMPER
     {                         ( _1 )}
 
 f_block_arg:
-_1 = blkarg_mark _2 = IDENTIFIER
+  _1 = blkarg_mark _2 = IDENTIFIER
     {                    ( let id = fst _2 in
                         Env.add state.env id `Lvar;
                         [Param_block id] )}
 
 opt_f_block_arg:
-_1 = COMMA _2 = f_block_arg
+  _1 = COMMA _2 = f_block_arg
     {                    ( _2 )}
 | 
     {                    ( [] )}
 
 singleton:
-_1 = var_ref
+  _1 = var_ref
     {                    ( _1 )}
 | _1 = LPAREN2 _2 = singleton_e1 _3 = expr _4 = opt_nl _5 = RPAREN
     {                    ( 
@@ -1431,11 +1431,11 @@ _1 = var_ref
                         _3 )}
 
 singleton_e1:
-
+  
     {                  ( state.lex_state <- Expr_beg )}
 
 assoc_list:
-_1 = none
+  _1 = none
     {                    ( [] )}
 | _1 = assocs _2 = trailer
     {                    ( _1 )}
@@ -1448,17 +1448,17 @@ _1 = none
                       in work _1 )}
 
 assocs:
-_1 = assoc
+  _1 = assoc
     {                    ( _1 )}
 | _1 = assocs _2 = COMMA _3 = assoc
     {                    ( _1 @ _3 )}
 
 assoc:
-_1 = arg_value _2 = ASSOC _3 = arg_value
+  _1 = arg_value _2 = ASSOC _3 = arg_value
     {                    ( [_1, _3] )}
 
 operation:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {                             ( _1 )}
 | _1 = CONSTANT
     {                             ( _1 )}
@@ -1466,7 +1466,7 @@ _1 = IDENTIFIER
     {                             ( _1 )}
 
 operation2:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {                             ( _1 )}
 | _1 = CONSTANT
     {                             ( _1 )}
@@ -1476,7 +1476,7 @@ _1 = IDENTIFIER
     {                             ( _1 )}
 
 operation3:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {                             ( _1 )}
 | _1 = FID
     {                             ( _1 )}
@@ -1484,19 +1484,19 @@ _1 = IDENTIFIER
     {                             ( _1 )}
 
 dot_or_colon:
-_1 = DOT
+  _1 = DOT
     {                         ( _1 )}
 | _1 = COLON2
     {                         ( _1 )}
 
 opt_terms:
-
+  
     {                  ( [] )}
 | _1 = terms
     {                          ( _1 )}
 
 opt_nl:
-
+  
     {                  ( () )}
 | _1 = COMMENT
     {                          ( () )}
@@ -1504,7 +1504,7 @@ opt_nl:
     {                          ( () )}
 
 trailer:
-
+  
     {                  ( () )}
 | _1 = COMMENT
     {                          ( () )}
@@ -1514,7 +1514,7 @@ trailer:
     {                          ( () )}
 
 term:
-_1 = SEMI
+  _1 = SEMI
     {                          ( [] )}
 | _1 = COMMENT
     {                          ( [Comment (fst _1, annot (snd _1))] )}
@@ -1522,27 +1522,27 @@ _1 = SEMI
     {                          ( [] )}
 
 terms:
-_1 = term
+  _1 = term
     {                             ( _1 )}
 | _1 = term _2 = terms
     {                             ( _1 @ _2 )}
 
 none:
-
+  
     {                  ( () )}
 
 none_block_pass:
-
+  
     {                  ( () )}
 
 RCURLY_error:
-_1 = RCURLY
+  _1 = RCURLY
     {                         ( () )}
 | _1 = error
     {                                        ( () )}
 
 K_END_error:
-_1 = K_END
+  _1 = K_END
     {                        ( () )}
 | _1 = error
     {                                       ( () )}

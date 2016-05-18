@@ -48,7 +48,7 @@ open Fp;;
 %%
 
 cmd:
-_1 = LDef _2 = Lident _3 = Laff _4 = fct _5 = Leol
+  _1 = LDef _2 = Lident _3 = Laff _4 = fct _5 = Leol
     {                            ( Def(_2,_4) )}
 | _1 = LUndef _2 = Lident _3 = Leol
     {                            ( Undef _2 )}
@@ -66,7 +66,7 @@ _1 = LDef _2 = Lident _3 = Laff _4 = fct _5 = Leol
     {                            ( None )}
 
 exp:
-_1 = LT
+  _1 = LT
     {                    ( T )}
 | _1 = LF
     {                    ( F )}
@@ -84,7 +84,7 @@ _1 = LT
     {                    ( App(_1, _3) )}
 
 fatom:
-_1 = Lprim
+  _1 = Lprim
     {                    ( Prim _1 )}
 | _1 = Ls
     {                    ( Sel _1 )}
@@ -108,25 +108,25 @@ _1 = Lprim
     {                         ( _2 )}
 
 fct:
-_1 = comp _2 = Lcond _3 = comp _4 = Lscl _5 = fct
+  _1 = comp _2 = Lcond _3 = comp _4 = Lscl _5 = fct
     {                             ( Condition(_1,_3,_5) )}
 | _1 = comp
     {                             ( _1 )}
 
 comp:
-_1 = fatom _2 = Lo _3 = comp
+  _1 = fatom _2 = Lo _3 = comp
     {                   ( Composition(_1,_3) )}
 | _1 = fatom
     {                   ( _1 )}
 
 fp_list:
-_1 = exp _2 = Lcom _3 = fp_list
+  _1 = exp _2 = Lcom _3 = fp_list
     {                   ( _1 :: _3 )}
 | _1 = exp
     {                   ( [ _1 ] )}
 
 fctlist:
-_1 = fct _2 = Lcom _3 = fctlist
+  _1 = fct _2 = Lcom _3 = fctlist
     {                     ( _1 :: _3 )}
 | _1 = fct
     {                     ( [ _1 ] )}

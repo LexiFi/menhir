@@ -91,7 +91,7 @@ open Interpreter
 %%
 
 phrase:
-_1 = SHARP _2 = IDENT
+  _1 = SHARP _2 = IDENT
     {                             ( PhraseDirective _2 )}
 | _1 = LET _2 = binding_list _3 = SEMISEMI
     {                                         ( PhraseLet(false, _2) )}
@@ -109,7 +109,7 @@ _1 = SHARP _2 = IDENT
     {                                                                ( PhraseAbstractType (_2, _4) )}
 
 expression:
-_1 = expression3
+  _1 = expression3
     {                            ( _1 )}
 | _1 = FUNCTION _2 = function_match
     {                                   ( VGeneralFun _2 )}
@@ -127,13 +127,13 @@ _1 = expression3
     {                                                                ( VGeneralTry (_2, _4) )}
 
 expression3:
-_1 = expression2
+  _1 = expression2
     {                      ( _1 )}
 | _1 = expression2 _2 = SEMI _3 = expression
     {                                    ( VApp(VGeneralFun [[PWildcard], _3], _1) )}
 
 expression2:
-_1 = expression1
+  _1 = expression1
     {                      ( _1 )}
 | _1 = IF _2 = expression1 _3 = THEN _4 = expression2 _5 = ELSE _6 = expression2
     {                                                      ( VIf (_2, _4, _6) )}
@@ -143,7 +143,7 @@ _1 = expression1
     {                                      ( VApp (VApp(VVar ":=", _1), _3) )}
 
 expression1:
-_1 = expression0
+  _1 = expression0
     {                     ( _1 )}
 | _1 = CONSTRUCTOR _2 = expression0
     {                               ( VConstruct (_1, _2) )}
@@ -155,7 +155,7 @@ _1 = expression0
     {                                                        ( VApp (VVar "ref", _2) )}
 
 expression0:
-_1 = IDENT
+  _1 = IDENT
     {                ( VVar _1 )}
 | _1 = CONSTRUCTOR
     {                     ( VConstruct (_1, VConstant ConstUnit) )}
@@ -183,7 +183,7 @@ _1 = IDENT
     {                                                        ( VApp (VApp (VSymRecordConcat, _1), _3) )}
 
 constant:
-_1 = INTCONST
+  _1 = INTCONST
     {                  ( ConstInt _1 )}
 | _1 = FALSE
     {               ( ConstBool false )}
@@ -199,11 +199,11 @@ _1 = INTCONST
     {                                                        ( ConstString _1 )}
 
 label_expression:
-_1 = IDENT _2 = EQUAL _3 = expression2
+  _1 = IDENT _2 = EQUAL _3 = expression2
     {                               ( _1, _3 )}
 
 label_expression_list:
-
+  
     {                      ( [] )}
 | _1 = label_expression
     {                         ( [_1] )}
@@ -211,7 +211,7 @@ label_expression_list:
     {                                                 ( _1 :: _3 )}
 
 expr_semi_list:
-
+  
     {                                                        ( [] )}
 | _1 = expression2
     {                                                        ( [_1] )}
@@ -219,25 +219,25 @@ expr_semi_list:
     {                                                        ( _1 :: _3 )}
 
 fun_match:
-_1 = simple_pattern_list _2 = ARROW _3 = expression _4 = BAR _5 = fun_match
+  _1 = simple_pattern_list _2 = ARROW _3 = expression _4 = BAR _5 = fun_match
     {                                                       ( (_1, _3) :: _5 )}
 | _1 = simple_pattern_list _2 = ARROW _3 = expression
     {                                          ( [_1, _3] )}
 
 function_match:
-_1 = pattern _2 = ARROW _3 = expression _4 = BAR _5 = function_match
+  _1 = pattern _2 = ARROW _3 = expression _4 = BAR _5 = function_match
     {                                                 ( ([_1], _3) :: _5 )}
 | _1 = pattern _2 = ARROW _3 = expression
     {                                ( [[_1], _3] )}
 
 try_match:
-_1 = pattern _2 = ARROW _3 = expression _4 = BAR _5 = try_match
+  _1 = pattern _2 = ARROW _3 = expression _4 = BAR _5 = try_match
     {                                            ( (_1, _3) :: _5 )}
 | _1 = pattern _2 = ARROW _3 = expression
     {                                ( [_1, _3] )}
 
 simple_pattern:
-_1 = UNDERSCORE
+  _1 = UNDERSCORE
     {                           ( PWildcard )}
 | _1 = IDENT
     {               ( PVar _1 )}
@@ -251,7 +251,7 @@ _1 = UNDERSCORE
     {                                       ( PRecord _2 )}
 
 pattern:
-_1 = simple_pattern
+  _1 = simple_pattern
     {                                                        ( _1 )}
 | _1 = pattern _2 = AS _3 = IDENT
     {                         ( PAlias (_1, _3) )}
@@ -265,11 +265,11 @@ _1 = simple_pattern
     {                                                        ( POr (_1, _3) )}
 
 label_pattern:
-_1 = IDENT _2 = EQUAL _3 = pattern
+  _1 = IDENT _2 = EQUAL _3 = pattern
     {                            ( _1, _3 )}
 
 label_pattern_list:
-
+  
     {                      ( [] )}
 | _1 = label_pattern
     {                      ( [_1] )}
@@ -277,25 +277,25 @@ label_pattern_list:
     {                                           ( _1 :: _3 )}
 
 simple_pattern_list:
-_1 = simple_pattern
+  _1 = simple_pattern
     {                       ( [_1] )}
 | _1 = simple_pattern _2 = simple_pattern_list
     {                                         ( _1 :: _2 )}
 
 binding_list:
-_1 = binding _2 = AND _3 = binding_list
+  _1 = binding _2 = AND _3 = binding_list
     {                                                        ( _1 :: _3 )}
 | _1 = binding
     {                                                        ( [_1] )}
 
 binding:
-_1 = pattern _2 = EQUAL _3 = expression
+  _1 = pattern _2 = EQUAL _3 = expression
     {                                       ( (_1, _3) )}
 | _1 = IDENT _2 = simple_pattern_list _3 = EQUAL _4 = expression
     {                                                        ( (PVar _1, VGeneralFun [_2, _4]) )}
 
 constrained_type:
-_1 = type1
+  _1 = type1
     {                  ( _1, TEBottom, [] )}
 | _1 = type1 _2 = RAISES _3 = type1
     {                                                                                ( _1, _3, [] )}
@@ -305,7 +305,7 @@ _1 = type1
     {                                                                         ( _1, _3, _6 )}
 
 type_scheme:
-_1 = type1
+  _1 = type1
     {                  ( [], _1, TEBottom, [] )}
 | _1 = type1 _2 = RAISES _3 = type1
     {                                                                                ( [], _1, _3, [] )}
@@ -323,19 +323,19 @@ _1 = type1
     {                                                                                         ( _2, _5, _7, _10 )}
 
 type_comma_list:
-_1 = type1
+  _1 = type1
     {               ( [_1] )}
 | _1 = type1 _2 = COMMA _3 = type_comma_list
     {                                     ( _1 :: _3 )}
 
 type1:
-_1 = type0
+  _1 = type0
     {               ( _1 )}
 | _1 = type0 _2 = ARROW _3 = type1 _4 = RAISES _5 = type0
     {                                                        ( TEAbstract ("->", [_1; _5; _3]) )}
 
 type0:
-_1 = INT
+  _1 = INT
     {              ( TEAbstract("int", []) )}
 | _1 = BOOL
     {              ( TEAbstract("bool", []) )}
@@ -373,7 +373,7 @@ _1 = INT
     {                            ( _2 )}
 
 variable_leader:
-_1 = QUOTE
+  _1 = QUOTE
     {               ( () )}
 | _1 = PLUS
     {              ( () )}
@@ -383,19 +383,19 @@ _1 = QUOTE
     {                 ( () )}
 
 record_row:
-_1 = row_type
+  _1 = row_type
     {                  ( [], _1 )}
 | _1 = IDENT _2 = COLON _3 = row_type _4 = SEMI _5 = record_row
     {                                          ( let entries, rest = _5 in (_1, _3) :: entries, rest )}
 
 variant_row:
-_1 = row_type
+  _1 = row_type
     {                  ( [], _1 )}
 | _1 = CONSTRUCTOR _2 = COLON _3 = row_type _4 = SEMI _5 = variant_row
     {                                                 ( let entries, rest = _5 in (_1, _3) :: entries, rest )}
 
 row_type:
-_1 = ABS
+  _1 = ABS
     {              ( TEAbsent )}
 | _1 = PRE _2 = type1
     {                   ( TEPresent _2 )}
@@ -407,13 +407,13 @@ _1 = ABS
     {               ( _1 )}
 
 coercion_list:
-_1 = coercion
+  _1 = coercion
     {                  ( _1 )}
 | _1 = coercion _2 = SEMI _3 = coercion_list
     {                                   ( _1 @ _3 )}
 
 coercion:
-_1 = type_comma_list _2 = COERCE _3 = type_comma_list
+  _1 = type_comma_list _2 = COERCE _3 = type_comma_list
     {                                                        ( [_1, _3] )}
 | _1 = type_comma_list _2 = COERCE _3 = type1 _4 = COERCE _5 = type_comma_list
     {                                                        ( [(_1, [_3]); ([_3], _5)] )}
@@ -421,23 +421,23 @@ _1 = type_comma_list _2 = COERCE _3 = type_comma_list
     {                          ( [([_1], [_3]); ([_3], [_1])] )}
 
 context:
-_1 = context_entry
+  _1 = context_entry
     {                      ( [_1] )}
 | _1 = context_entry _2 = SEMI _3 = context
     {                                  ( _1 :: _3 )}
 
 context_entry:
-_1 = IDENT _2 = COLON _3 = type1
+  _1 = IDENT _2 = COLON _3 = type1
     {                          ( _1, _3 )}
 
 variance_comma_list:
-_1 = variance
+  _1 = variance
     {                                                        ( [_1] )}
 | _1 = variance _2 = COMMA _3 = variance_comma_list
     {                                                        ( _1 :: _3 )}
 
 variance:
-_1 = PLUS
+  _1 = PLUS
     {                                                        ( true )}
 | _1 = MINUS
     {                                                        ( false )}

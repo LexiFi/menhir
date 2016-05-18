@@ -137,11 +137,11 @@ let rec break_dotted_name nsn =
 %%
 
 top_level_program:
-_1 = program _2 = ENDOFFILE
+  _1 = program _2 = ENDOFFILE
     { ( _1 )}
 
 program:
-_1 = code_list
+  _1 = code_list
     {  ( let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 
 		  in { cond_decl_list=List.rev cl 
 		     ; atom_decl_list=List.rev al
@@ -158,7 +158,7 @@ _1 = code_list
 		     } )}
 
 code_list:
-_1 = code_list _2 = main_fn
+  _1 = code_list _2 = main_fn
     { ( trace_thing "code_list"; 
 	  let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 in
 	  let findsrc s = 
@@ -216,53 +216,53 @@ _1 = code_list _2 = main_fn
           [],[],[],[],[],[],[],[],[],[],[],[] )}
 
 mod_inst:
-_1 = external_opt _2 = INSTANCE _3 = namespaced_ident _4 = IDENTIFIER _5 = where_guard_indentifications_opt _6 = SEMI
+  _1 = external_opt _2 = INSTANCE _3 = namespaced_ident _4 = IDENTIFIER _5 = where_guard_indentifications_opt _6 = SEMI
     { ( trace_thing "mod_inst"
         ; { externalinst=_1; modsourcename=_3; modinstname=_4; guardaliases = _5 } )}
 
 where_guard_indentifications_opt:
-_1 = WHERE _2 = guard_indentification_list
+  _1 = WHERE _2 = guard_indentification_list
     {        ( _2 )}
 | 
     {        ( [] )}
 
 guard_indentification_list:
-_1 = guard_identification
+  _1 = guard_identification
     {        ( [ _1 ] )}
 | _1 = guard_identification _2 = COMMA _3 = guard_indentification_list
     {        ( _1::_3 )}
 
 guard_identification:
-_1 = IDENTIFIER _2 = EQUALS _3 = IDENTIFIER
+  _1 = IDENTIFIER _2 = EQUALS _3 = IDENTIFIER
     {        ( _1, _3 )}
 
 mod_decl:
-_1 = mod_modifier_list _2 = MODULE _3 = namespaced_ident _4 = BEGIN _5 = program _6 = END
+  _1 = mod_modifier_list _2 = MODULE _3 = namespaced_ident _4 = BEGIN _5 = program _6 = END
     { ( trace_thing "mod_decl"; 
 	  { modulename=_3
 	  ; isstaticmodule=List.mem "static" _1
 	  ; programdef=_5 } )}
 
 mod_modifier_list:
-
+  
     { ( [] )}
 | _1 = mod_modifier _2 = mod_modifier_list
     { ( _1::_2 )}
 
 mod_modifier:
-_1 = STATIC
+  _1 = STATIC
     { ( "static" )}
 
 plugin_depends_decl:
-_1 = DEPENDS _2 = namespaced_ident _3 = SEMI
+  _1 = DEPENDS _2 = namespaced_ident _3 = SEMI
     { ( trace_thing "plugin_depends_def"; _2 )}
 
 plugin_decl:
-_1 = PLUGIN _2 = namespaced_ident _3 = BEGIN _4 = program _5 = END
+  _1 = PLUGIN _2 = namespaced_ident _3 = BEGIN _4 = program _5 = END
     {        ( trace_thing "plugin_def"; { pluginname=_2; pluginprogramdef=_4 } )}
 
 namespaced_ident:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     { ( trace_thing "namespaced_ident"; _1 )}
 | _1 = IDENTIFIER _2 = DOUBLECOLON _3 = namespaced_ident
     { ( let i,ip1,ip2 = _1 in
@@ -270,11 +270,11 @@ _1 = IDENTIFIER
 	  in  trace_thing "namespaced_ident"; (i^"::"^d,ip1,dp2) )}
 
 term_decl:
-_1 = TERMINATE _2 = namespaced_ident _3 = SEMI
+  _1 = TERMINATE _2 = namespaced_ident _3 = SEMI
     {        ( _2 )}
 
 source_or_initial_or_door:
-_1 = SOURCE
+  _1 = SOURCE
     {        ( 0 )}
 | _1 = INITIAL
     {        ( 1 )}
@@ -282,7 +282,7 @@ _1 = SOURCE
     {        ( 2 )}
 
 main_fn:
-_1 = source_or_initial_or_door _2 = namespaced_ident _3 = SEMI
+  _1 = source_or_initial_or_door _2 = namespaced_ident _3 = SEMI
     { ( trace_thing "main_fn"; 
 	  ({ sourcename =_2
           ; sourcefunction=strip_position _2
@@ -309,12 +309,12 @@ _1 = source_or_initial_or_door _2 = namespaced_ident _3 = SEMI
 	  ) )}
 
 cond_decl:
-_1 = external_opt _2 = CONDITION _3 = namespaced_ident _4 = simple_arg_list _5 = ARROW _6 = BOOL _7 = SEMI
+  _1 = external_opt _2 = CONDITION _3 = namespaced_ident _4 = simple_arg_list _5 = ARROW _6 = BOOL _7 = SEMI
     { ( trace_thing "cond_decl"; 
 	  { externalcond=_1; condname=_3; condfunction=strip_position _3; condinputs=_4 } )}
 
 atom_type:
-_1 = EXCLUSIVE
+  _1 = EXCLUSIVE
     { ( "exclusive" )}
 | _1 = READWRITE
     { ( "readwrite" )}
@@ -326,19 +326,19 @@ _1 = EXCLUSIVE
     { ( "free" )}
 
 atom_mod:
-_1 = UNORDERED
+  _1 = UNORDERED
     {        ( "unordered" )}
 | _1 = GC
     {        ( "gc" )}
 
 atom_mod_opt_list:
-
+  
     {        ( [] )}
 | _1 = SLASH _2 = atom_mod _3 = atom_mod_opt_list
     {        ( _2::_3 )}
 
 atom_decl:
-_1 = external_opt _2 = atom_type _3 = atom_mod_opt_list _4 = namespaced_ident _5 = simple_arg_list _6 = ARROW _7 = data_type _8 = SEMI
+  _1 = external_opt _2 = atom_type _3 = atom_mod_opt_list _4 = namespaced_ident _5 = simple_arg_list _6 = ARROW _7 = data_type _8 = SEMI
     { ( trace_thing "atom_decl"; 
 	  { externalatom=_1
           ; atomname=_4
@@ -349,17 +349,17 @@ _1 = external_opt _2 = atom_type _3 = atom_mod_opt_list _4 = namespaced_ident _5
           } )}
 
 external_opt:
-_1 = EXTERNAL
+  _1 = EXTERNAL
     {        ( true )}
 | 
     {        ( false )}
 
 guard_order_decl:
-_1 = PRECEDENCE _2 = guard_order_list _3 = SEMI
+  _1 = PRECEDENCE _2 = guard_order_list _3 = SEMI
     {        ( _2 )}
 
 guard_order_list:
-_1 = ident _2 = LESSTHAN _3 = ident
+  _1 = ident _2 = LESSTHAN _3 = ident
     {        ( [(_1,_3)] )}
 | _1 = ident _2 = LESSTHAN _3 = guard_order_list
     {        ( let rhs = match _3 with 
@@ -368,13 +368,13 @@ _1 = ident _2 = LESSTHAN _3 = ident
           in  (_1,rhs)::_3 )}
 
 node_target_arg_list:
-_1 = ELLIPSIS
+  _1 = ELLIPSIS
     { ( None )}
 | _1 = simple_arg_list
     { ( Some _1 )}
 
 node_decl:
-_1 = external_opt _2 = NODE _3 = node_mod_list _4 = namespaced_ident _5 = arg_list _6 = ARROW _7 = node_target_arg_list _8 = SEMI
+  _1 = external_opt _2 = NODE _3 = node_mod_list _4 = namespaced_ident _5 = arg_list _6 = ARROW _7 = node_target_arg_list _8 = SEMI
     { ( trace_thing "node_decl"; 
           let clean_cpp_uninterpreted args grefs =
                 let strargs = List.map (fun x -> strip_position x.name) args in
@@ -444,7 +444,7 @@ _1 = external_opt _2 = NODE _3 = node_mod_list _4 = namespaced_ident _5 = arg_li
 	)}
 
 node_mod_list:
-
+  
     { ( trace_thing "node_mod_list"; [] )}
 | _1 = DETACHED _2 = node_mod_list
     { ( trace_thing "node_mod_list"; "detached"::_2 )}
@@ -454,19 +454,19 @@ node_mod_list:
     { ( trace_thing "node_mod_list"; "mutable"::_2 )}
 
 simple_arg_list:
-_1 = LEFT_PAREN _2 = typed_item_list _3 = RIGHT_PAREN
+  _1 = LEFT_PAREN _2 = typed_item_list _3 = RIGHT_PAREN
     { ( _2 )}
 | _1 = LEFT_PAREN _2 = RIGHT_PAREN
     { ( [] )}
 
 typed_item_list:
-_1 = typed_item_list _2 = COMMA _3 = typed_item
+  _1 = typed_item_list _2 = COMMA _3 = typed_item
     { ( _1 @ [_3] )}
 | _1 = typed_item
     { ( [ _1 ] )}
 
 data_type:
-_1 = type_mod_opt _2 = raw_data_type _3 = star_list
+  _1 = type_mod_opt _2 = raw_data_type _3 = star_list
     { ( let stars, pos2 = _3 in
 	  let rt,pos1,_ = _2 in
 	  if pos2 = noposition then { dctypemod=_1; dctype=_2 }
@@ -474,7 +474,7 @@ _1 = type_mod_opt _2 = raw_data_type _3 = star_list
 	)}
 
 star_list:
-_1 = star_list _2 = STAR
+  _1 = star_list _2 = STAR
     { ( let ses,_ = _1 in 
 	  let _,pend = _2 in
 	  ses^"*", pend
@@ -488,13 +488,13 @@ _1 = star_list _2 = STAR
     { ( ("",noposition) )}
 
 type_mod_opt:
-_1 = CONST
+  _1 = CONST
     { ( let p1,p2 = _1 in ("const",p1,p2) )}
 | 
     { ( ("",noposition,noposition) )}
 
 template_item_list:
-_1 = template_item_list _2 = COMMA _3 = template_item
+  _1 = template_item_list _2 = COMMA _3 = template_item
     { ( let (a,pa1,pa2) = _1 in
 	  let (b,pb1,pb2) = _3
 	  in  (a^","^b,pa1,pb2) )}
@@ -502,14 +502,14 @@ _1 = template_item_list _2 = COMMA _3 = template_item
     { ( _1 )}
 
 template_item:
-_1 = NUMBER
+  _1 = NUMBER
     { ( let n,p1,p2 = _1 in (string_of_int n),p1,p2 )}
 | _1 = data_type
     { ( let (a,pa1,pa2),(b,pb1,pb2) = _1.dctypemod, _1.dctype
 	  in  (a^b,pa1,pb2) )}
 
 raw_data_type:
-_1 = BOOL
+  _1 = BOOL
     { ( let p1,p2 = _1 in ("bool",p1,p2) )}
 | _1 = IDENTIFIER
     { ( _1 )}
@@ -527,7 +527,7 @@ _1 = BOOL
 	  in  (i^"<"^t^">",ip1,pend) )}
 
 typed_item:
-_1 = data_type
+  _1 = data_type
     { ( let _,_,pend = _1.dctype in
 	  { ctypemod=_1.dctypemod; ctype=_1.dctype; name=("",pend,pend) } 
 	)}
@@ -535,25 +535,25 @@ _1 = data_type
     { ( { ctypemod=_1.dctypemod; ctype=_1.dctype; name=_2 } )}
 
 arg_list:
-_1 = LEFT_PAREN _2 = RIGHT_PAREN
+  _1 = LEFT_PAREN _2 = RIGHT_PAREN
     { ( trace_thing "arg_list"; [] )}
 | _1 = LEFT_PAREN _2 = typed_or_guardref_item_list _3 = RIGHT_PAREN
     { ( trace_thing "arg_list"; _2 )}
 
 typed_or_guardref_item_list:
-_1 = typed_or_guardref_item_list _2 = COMMA _3 = typed_or_guardref_item
+  _1 = typed_or_guardref_item_list _2 = COMMA _3 = typed_or_guardref_item
     { ( trace_thing "typed_or_guardref_item_list"; _1 @ [ _3 ] )}
 | _1 = typed_or_guardref_item
     { ( trace_thing "typed_or_guardref_item_list"; [ _1 ] )}
 
 typed_or_guardref_item:
-_1 = typed_item
+  _1 = typed_item
     { ( trace_thing "typed_or_guardref_item"; Typed _1 )}
 | _1 = guardref_item
     { ( trace_thing "typed_or_guardref_item"; GuardRef _1 )}
 
 guardref_item:
-_1 = GUARD _2 = IDENTIFIER _3 = guardref_modifier_list _4 = LEFT_PAREN _5 = uninterpreted_cpp_code_comma_list _6 = RIGHT_PAREN _7 = as_named_opt _8 = if_condition_opt
+  _1 = GUARD _2 = IDENTIFIER _3 = guardref_modifier_list _4 = LEFT_PAREN _5 = uninterpreted_cpp_code_comma_list _6 = RIGHT_PAREN _7 = as_named_opt _8 = if_condition_opt
     { ( trace_thing "guardref_item"; 
 	  ( (*guardname= *) _2
           , (*arguments= *) _5
@@ -562,7 +562,7 @@ _1 = GUARD _2 = IDENTIFIER _3 = guardref_modifier_list _4 = LEFT_PAREN _5 = unin
           , (*guardcond= *) _8 ) )}
 
 guardref_modifier_list:
-_1 = SLASH _2 = READ _3 = guardref_modifier_list
+  _1 = SLASH _2 = READ _3 = guardref_modifier_list
     { ( trace_thing "guardref_modifier_list"; (Read::_3) )}
 | _1 = SLASH _2 = WRITE _3 = guardref_modifier_list
     { ( trace_thing "guardref_modifier_list"; (Write::_3) )}
@@ -574,25 +574,25 @@ _1 = SLASH _2 = READ _3 = guardref_modifier_list
     { ( trace_thing "guardref_modifier_list"; [] )}
 
 as_named_opt:
-_1 = AS _2 = IDENTIFIER
+  _1 = AS _2 = IDENTIFIER
     { ( Some _2 )}
 | 
     { ( None )}
 
 if_condition_opt:
-
+  
     {        ( [] )}
 | _1 = IF _2 = uninterpreted_cpp_code
     {        ( _2 )}
 
 uninterpreted_cpp_code:
-
+  
     {        ( [] )}
 | _1 = uninterpreted_cpp_code_fragment _2 = uninterpreted_cpp_code
     {        ( _1 @ _2 )}
 
 uninterpreted_cpp_code_fragment:
-_1 = NUMBER
+  _1 = NUMBER
     {        ( let n,_,_ = _1 in [string_of_int n] )}
 | _1 = ident
     {        ( let s,_,_ = _1 in break_dotted_name s )}
@@ -636,7 +636,7 @@ _1 = NUMBER
     {        ( ("."::_2) )}
 
 uninterpreted_cpp_code_comma_list:
-_1 = uninterpreted_cpp_code
+  _1 = uninterpreted_cpp_code
     {        ( match _1 with 
                 [] -> []
                 | _ -> [_1] )}
@@ -644,11 +644,11 @@ _1 = uninterpreted_cpp_code
     {        ( _1::_3 )}
 
 expr_part:
-_1 = assn _2 = SEMI
+  _1 = assn _2 = SEMI
     { ( _1 )}
 
 assn:
-_1 = IDENTIFIER _2 = EQUALS _3 = ident_list
+  _1 = IDENTIFIER _2 = EQUALS _3 = ident_list
     { ( { exprname=_1; condbinding=[]; successors=_3; etype=Choice } )}
 | _1 = IDENTIFIER _2 = COLON _3 = LEFT_SQ_BRACE _4 = comma_list _5 = RIGHT_SQ_BRACE _6 = EQUALS _7 = ident_list
     { ( { exprname=_1; condbinding=_4; successors=_7; etype=Choice } )}
@@ -659,13 +659,13 @@ _1 = IDENTIFIER _2 = EQUALS _3 = ident_list
           in { exprname=("&"^id,p1,p2); condbinding=[]; successors=[_3]; etype=Concurrent } )}
 
 par_ident_list:
-_1 = par_ident_list _2 = AMPERSAND _3 = namespaced_ident
+  _1 = par_ident_list _2 = AMPERSAND _3 = namespaced_ident
     { ( _1 @ [ _3 ] )}
 | _1 = namespaced_ident
     { ( [ _1 ] )}
 
 ident_list:
-_1 = ident_list _2 = PIPE _3 = namespaced_ident
+  _1 = ident_list _2 = PIPE _3 = namespaced_ident
     { ( _1 @ [ _3 ] )}
 | _1 = namespaced_ident
     { ( [ _1 ] )}
@@ -673,11 +673,11 @@ _1 = ident_list _2 = PIPE _3 = namespaced_ident
     { ( [] )}
 
 ident:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     { ( _1 )}
 
 comma_list:
-_1 = comma_list _2 = COMMA _3 = IDENTIFIER
+  _1 = comma_list _2 = COMMA _3 = IDENTIFIER
     { ( _1 @ [ Ident _3 ] )}
 | _1 = comma_list _2 = COMMA _3 = STAR
     { ( _1 @ [ Star ] )}
@@ -687,7 +687,7 @@ _1 = comma_list _2 = COMMA _3 = IDENTIFIER
     { ( [ Ident _1 ] )}
 
 err_def:
-_1 = HANDLE _2 = ERROR _3 = ident_list _4 = PIPE _5 = namespaced_ident _6 = SEMI
+  _1 = HANDLE _2 = ERROR _3 = ident_list _4 = PIPE _5 = namespaced_ident _6 = SEMI
     { ( { onnodes=_3; handler=_5 } )}
 
 %%

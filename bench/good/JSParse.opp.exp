@@ -236,11 +236,11 @@ let string_of_constant c =
 %%
 
 program:
-_1 = source_elements _2 = Leof
+  _1 = source_elements _2 = Leof
     {     (Program ((default_annotation (sndo3 _1) _2), (fsto3 _1)))}
 
 source_elements:
-_1 = Leof
+  _1 = Leof
     {                                 ( ([], _1, _1))}
 | _1 = source_element
     {                                 ( ([fsto3 _1], sndo3 _1, trdo3 _1) )}
@@ -249,14 +249,14 @@ _1 = Leof
 				                    sndo3 _1, trdo3 _2) )}
 
 source_element:
-_1 = statement
+  _1 = statement
     {    ((Statement ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1), 
       sndo3 _1, trdo3 _1))}
 | _1 = function_declaration
     {                       (_1)}
 
 function_declaration:
-_1 = KWfunction _2 = identifier _3 = Llparen _4 = formal_parameter_list _5 = Lrparen _6 = Llbrace _7 = function_body _8 = Lrbrace
+  _1 = KWfunction _2 = identifier _3 = Llparen _4 = formal_parameter_list _5 = Lrparen _6 = Llbrace _7 = function_body _8 = Lrbrace
     {  ((Function_declaration ((default_annotation _1 _8),"",fsto3 _2, fsto3 _4,None, fsto3 _7),
     _1, _8))}
 | _1 = LCcomment _2 = KWfunction _3 = identifier _4 = Llparen _5 = formal_parameter_list _6 = Lrparen _7 = Llbrace _8 = function_body _9 = Lrbrace
@@ -264,7 +264,7 @@ _1 = KWfunction _2 = identifier _3 = Llparen _4 = formal_parameter_list _5 = Lrp
     fst _1, _9) )}
 
 function_expression:
-_1 = KWfunction _2 = Llparen _3 = formal_parameter_list _4 = Lrparen _5 = Llbrace _6 = function_body _7 = Lrbrace
+  _1 = KWfunction _2 = Llparen _3 = formal_parameter_list _4 = Lrparen _5 = Llbrace _6 = function_body _7 = Lrbrace
     {    ((Function_expression ((default_annotation _1 _7), None, None, fsto3 _3, None, fsto3 _6), _1, _7))}
 | _1 = KWfunction _2 = identifier _3 = Llparen _4 = formal_parameter_list _5 = Lrparen _6 = Llbrace _7 = function_body _8 = Lrbrace
     {    ((Function_expression ((default_annotation _1 _8), None, (Some (fsto3 _2)), fsto3 _4, None, fsto3 _7),
@@ -281,7 +281,7 @@ _1 = KWfunction _2 = Llparen _3 = formal_parameter_list _4 = Lrparen _5 = Llbrac
       _1, _9))}
 
 formal_parameter_list:
-
+  
     {                                          (([], null_annotation, null_annotation))}
 | _1 = identifier
     {                                          (([fsto3 _1], sndo3 _1, trdo3 _1))}
@@ -289,11 +289,11 @@ formal_parameter_list:
     {                                          (((fsto3 _1) @ [fsto3 _3], sndo3 _1, trdo3 _3))}
 
 function_body:
-_1 = source_elements
+  _1 = source_elements
     {                  (_1)}
 
 statement:
-_1 = block
+  _1 = block
     {                       (_1)}
 | _1 = variable_statement
     {                       (_1)}
@@ -325,84 +325,84 @@ _1 = block
     {                                  (_1)}
 
 block:
-_1 = Llbrace _2 = optional_statement_list _3 = Lrbrace
+  _1 = Llbrace _2 = optional_statement_list _3 = Lrbrace
     {  ((Block ((default_annotation _1 _3), fsto3 _2), _1, _3))}
 
 optional_statement_list:
-
+  
     {                                     (([], null_annotation,null_annotation))}
 | _1 = non_empty_statement_list
     {                                     (_1)}
 
 non_empty_statement_list:
-_1 = statement
+  _1 = statement
     {  (([fsto3 _1], sndo3 _1, trdo3 _1))}
 | _1 = non_empty_statement_list _2 = statement
     {  ((((fsto3 _1) @ [fsto3 _2]), sndo3 _1, trdo3 _2))}
 
 variable_statement:
-_1 = KWvar _2 = variable_declaration_list _3 = Lsemicolon
+  _1 = KWvar _2 = variable_declaration_list _3 = Lsemicolon
     {  ((Variable_declaration 
       ((default_annotation _1 _3), (fsto3 _2)), 
       _1, _3))}
 
 variable_declaration_list:
-_1 = variable_declaration
+  _1 = variable_declaration
     {    (([fsto3 _1], sndo3 _1, trdo3 _1))}
 | _1 = variable_declaration_list _2 = Lcomma _3 = variable_declaration
     {    ((((fsto3 _1) @ [fsto3 _3]), sndo3 _1, trdo3 _3))}
 
 variable_declaration_list_no_in:
-_1 = variable_declaration_no_in
+  _1 = variable_declaration_no_in
     {    (([fsto3 _1], sndo3 _1, trdo3 _1))}
 | _1 = variable_declaration_list_no_in _2 = Lcomma _3 = variable_declaration_no_in
     {    ((((fsto3 _1) @ [fsto3 _3]), sndo3 _1, trdo3 _3))}
 
 variable_declaration:
-_1 = identifier
+  _1 = identifier
     {                         ((((fsto3 _1), None), sndo3 _1, trdo3 _1))}
 | _1 = identifier _2 = initialiser
     {                         ((((fsto3 _1), Some (fsto3 _2)), sndo3 _1, trdo3 _2))}
 
 variable_declaration_no_in:
-_1 = identifier
+  _1 = identifier
     {                               ((((fsto3 _1), None), sndo3 _1, trdo3 _1))}
 | _1 = identifier _2 = initialiser_no_in
     {                               ((((fsto3 _1), Some (fsto3 _2)), sndo3 _1, trdo3 _2))}
 
 initialiser:
-_1 = Lassign _2 = assignment_expression
+  _1 = Lassign _2 = assignment_expression
     {                                (((fsto3 _2), _1, trdo3 _2))}
 
 initialiser_no_in:
-_1 = Lassign _2 = assignment_expression_no_in
+  _1 = Lassign _2 = assignment_expression_no_in
     {                                      (((fsto3 _2), _1, trdo3 _2))}
 
 empty_statement:
-_1 = Lsemicolon
+  _1 = Lsemicolon
     {             ((Skip (default_annotation _1 _1), _1, _1))}
 
 expression_statement:
-_1 = init_expression _2 = Lsemicolon
+  _1 = init_expression _2 = Lsemicolon
     {                             ((Expression ((default_annotation (sndo3 _1) _2), (fsto3 _1)),
 			       sndo3 _1, _2))}
 
 if_statement:
-_1 = KWif _2 = Llparen _3 = expression _4 = Lrparen _5 = statement _6 = KWelse _7 = statement
+  _1 = KWif _2 = Llparen _3 = expression _4 = Lrparen _5 = statement _6 = KWelse _7 = statement
     {    ((If ((default_annotation _1 (trdo3 _7)), fsto3 _3, fsto3 _5, Some (fsto3 _7)),
      _1, trdo3 _7))}
 | _1 = KWif _2 = Llparen _3 = expression _4 = Lrparen _5 = statement
     {    ((If ((default_annotation _1 (trdo3 _5)), fsto3 _3, fsto3 _5, None), _1, trdo3 _5))}
 
 switch_statement:
-_1 = KWswitch _2 = Llparen _3 = expression _4 = Lrparen _5 = case_block
+  _1 = KWswitch _2 = Llparen _3 = expression _4 = Lrparen _5 = case_block
     {    ((Switch ((default_annotation _1 (trdo3 _5)), 
 	      fsto3 _3, (fsto3 (fsto3 _5)), 
 	      (sndo3 (fsto3 _5)), (trdo3 (fsto3 _5))),
       _1, trdo3 _5))}
 
 case_block:
-_1 = Llbrace _2 = case_clauses _3 = Lrbrace
+  _1 = Llbrace _2 = case_clauses _3 = Lrbrace
     {                                                           (((fsto3 _2, None, []), _1, _3))}
 | _1 = Llbrace _2 = Lrbrace
     {                                                           ((([], None, []), _1, _2))}
@@ -416,25 +416,25 @@ _1 = Llbrace _2 = case_clauses _3 = Lrbrace
     {    (((fsto3 _2, Some (fsto3 _3), fsto3 _4), _1, _5))}
 
 case_clauses:
-_1 = case_clause
+  _1 = case_clause
     {                           (([fsto3 _1], sndo3 _1, trdo3 _1))}
 | _1 = case_clauses _2 = case_clause
     {                           (((fsto3 _1) @ [fsto3 _2], sndo3 _1, trdo3 _2))}
 
 case_clause:
-_1 = KWcase _2 = expression _3 = Lcolon
+  _1 = KWcase _2 = expression _3 = Lcolon
     {                                                    (((fsto3 _2, None), _1, _3))}
 | _1 = KWcase _2 = expression _3 = Lcolon _4 = non_empty_statement_list
     {    (((fsto3 _2, Some (fsto3 _4)), _1, trdo3 _4))}
 
 default_clause:
-_1 = KWdefault _2 = Lcolon
+  _1 = KWdefault _2 = Lcolon
     {                                            ((None, _1, _2))}
 | _1 = KWdefault _2 = Lcolon _3 = non_empty_statement_list
     {                                            ((Some (fsto3 _3), _1, trdo3 _3))}
 
 iteration_statement:
-_1 = KWdo _2 = statement _3 = KWwhile _4 = Llparen _5 = expression _6 = Lrparen _7 = Lsemicolon
+  _1 = KWdo _2 = statement _3 = KWwhile _4 = Llparen _5 = expression _6 = Lrparen _7 = Lsemicolon
     {    ((Do ((default_annotation _1 _7), fsto3 _2, fsto3 _5), _1, _7))}
 | _1 = KWwhile _2 = Llparen _3 = expression _4 = Lrparen _5 = statement
     {    ((While ((default_annotation _1 (trdo3 _5)), fsto3 _3, fsto3 _5), _1, trdo3 _5))}
@@ -452,7 +452,7 @@ _1 = KWdo _2 = statement _3 = KWwhile _4 = Llparen _5 = expression _6 = Lrparen 
       _1, trdo3 _9))}
 
 for_bracket:
-_1 = optional_expression_no_in _2 = Lsemicolon _3 = optional_expression _4 = Lsemicolon _5 = optional_expression
+  _1 = optional_expression_no_in _2 = Lsemicolon _3 = optional_expression _4 = Lsemicolon _5 = optional_expression
     {    ((Regular ((default_annotation (sndo3 _1) (trdo3 _5)), fsto3 _1, fsto3 _3, fsto3 _5),
       sndo3 _1, trdo3 _5))}
 | _1 = KWvar _2 = variable_declaration_list_no_in _3 = Lsemicolon _4 = optional_expression _5 = Lsemicolon _6 = optional_expression
@@ -466,19 +466,19 @@ _1 = optional_expression_no_in _2 = Lsemicolon _3 = optional_expression _4 = Lse
       _1, trdo3 _4))}
 
 optional_expression:
-
+  
     {             ((None, null_annotation, null_annotation))}
 | _1 = expression
     {             ((Some (fsto3 _1), sndo3 _1, trdo3 _1))}
 
 optional_expression_no_in:
-
+  
     {                   ((None, null_annotation, null_annotation))}
 | _1 = expression_no_in
     {                   ((Some (fsto3 _1), sndo3 _1, trdo3 _1))}
 
 continue_statement:
-_1 = KWcontinue _2 = identifier _3 = Lsemicolon
+  _1 = KWcontinue _2 = identifier _3 = Lsemicolon
     {  (if (different_line _1 (sndo3 _2))
    then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line _1))
    else (Continue ((default_annotation _1 _3),Some (fsto3 _2)), _1, _3))}
@@ -488,7 +488,7 @@ _1 = KWcontinue _2 = identifier _3 = Lsemicolon
    else (Continue ((default_annotation _1 _2), None), _1, _2))}
 
 break_statement:
-_1 = KWbreak _2 = identifier _3 = Lsemicolon
+  _1 = KWbreak _2 = identifier _3 = Lsemicolon
     {    (if (different_line (sndo3 _2)  _1) 
     then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line _1))
     else (Break ((default_annotation _1 _3), Some (fsto3 _2)), _1, _3))}
@@ -498,7 +498,7 @@ _1 = KWbreak _2 = identifier _3 = Lsemicolon
     else (Break ((default_annotation _1 _2), None), _1, _2))}
 
 return_statement:
-_1 = KWreturn _2 = expression _3 = Lsemicolon
+  _1 = KWreturn _2 = expression _3 = Lsemicolon
     {    (if different_line (sndo3 _2) _1
     then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line _1))
     else (Return ((default_annotation _1 _3), Some (fsto3 _2)), _1, _3))}
@@ -508,11 +508,11 @@ _1 = KWreturn _2 = expression _3 = Lsemicolon
     else (Return ((default_annotation _1 _2), None), _1, _2))}
 
 with_statement:
-_1 = KWwith _2 = Llparen _3 = expression _4 = Lrparen _5 = statement
+  _1 = KWwith _2 = Llparen _3 = expression _4 = Lrparen _5 = statement
     {    ((With ((default_annotation _1 (trdo3 _5)), fsto3 _3, fsto3 _5), _1, trdo3 _5))}
 
 labelled_statement:
-_1 = identifier _2 = Lcolon _3 = statement
+  _1 = identifier _2 = Lcolon _3 = statement
     {    ((Labelled_statement ((default_annotation 
 			     (sndo3 _1) 
 			     (trdo3 _3)), 
@@ -520,13 +520,13 @@ _1 = identifier _2 = Lcolon _3 = statement
       sndo3 _1, trdo3 _3))}
 
 throw_statement:
-_1 = KWthrow _2 = expression _3 = Lsemicolon
+  _1 = KWthrow _2 = expression _3 = Lsemicolon
     {    (if (different_line (sndo3 _2) _1)
     then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line _1))
     else (Throw ((default_annotation _1 _3), fsto3 _2), _1, _3))}
 
 try_statement:
-_1 = KWtry _2 = block _3 = catch_prod
+  _1 = KWtry _2 = block _3 = catch_prod
     {    ((Try_catch_finally ((default_annotation _1 (trdo3 _3)), 
 			 fsto3 _2, (Some (fsto3 _3)), None),
       _1, trdo3 _3))}
@@ -540,54 +540,54 @@ _1 = KWtry _2 = block _3 = catch_prod
       _1, trdo3 _4))}
 
 catch_prod:
-_1 = KWcatch _2 = Llparen _3 = identifier _4 = Lrparen _5 = block
+  _1 = KWcatch _2 = Llparen _3 = identifier _4 = Lrparen _5 = block
     {                                           (((fsto3 _3, fsto3 _5), _1, trdo3 _5))}
 
 finally_prod:
-_1 = KWfinally _2 = block
+  _1 = KWfinally _2 = block
     {                  ((fsto3 _2, _1, trdo3 _2))}
 
 default_xml_namespace_statement:
-_1 = CKWdefaultxmlnamespace _2 = Lassign _3 = expression _4 = Lsemicolon
+  _1 = CKWdefaultxmlnamespace _2 = Lassign _3 = expression _4 = Lsemicolon
     {      ((DefaultXMLNamespace ((default_annotation _1 _4), fsto3 _3), _1, _4))}
 
 expression:
-_1 = sequence_of_expression
+  _1 = sequence_of_expression
     {    ( (Sequence 
         ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1),
         sndo3 _1, trdo3 _1)
     )}
 
 expression_no_in:
-_1 = sequence_of_expression_no_in
+  _1 = sequence_of_expression_no_in
     {    ((Sequence ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1),
       sndo3 _1, trdo3 _1))}
 
 init_expression:
-_1 = sequence_of_init_expression
+  _1 = sequence_of_init_expression
     {    ((Sequence ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1),
       sndo3 _1, trdo3 _1))}
 
 sequence_of_expression:
-_1 = assignment_expression
+  _1 = assignment_expression
     {    (([fsto3 _1], sndo3 _1, trdo3 _1))}
 | _1 = sequence_of_expression _2 = Lcomma _3 = assignment_expression
     {    (((fsto3 _1) @ [fsto3 _3], sndo3 _1, trdo3 _3))}
 
 sequence_of_expression_no_in:
-_1 = assignment_expression_no_in
+  _1 = assignment_expression_no_in
     {    (([fsto3 _1], sndo3 _1, trdo3 _1))}
 | _1 = sequence_of_expression_no_in _2 = Lcomma _3 = assignment_expression_no_in
     {    (((fsto3 _1) @ [fsto3 _3], sndo3 _1, trdo3 _3))}
 
 sequence_of_init_expression:
-_1 = assignment_init_expression
+  _1 = assignment_init_expression
     {    (([fsto3 _1], sndo3 _1, trdo3 _1))}
 | _1 = sequence_of_init_expression _2 = Lcomma _3 = assignment_expression
     {    (((fsto3 _1) @ [fsto3 _3], sndo3 _1, trdo3 _3))}
 
 member_expression:
-_1 = primary_expression
+  _1 = primary_expression
     {    (_1)}
 | _1 = function_expression
     {    (_1)}
@@ -616,7 +616,7 @@ _1 = primary_expression
       sndo3 _1, _5))}
 
 member_init_expression:
-_1 = primary_init_expression
+  _1 = primary_init_expression
     {    (_1)}
 | _1 = member_init_expression _2 = Llbracket _3 = expression _4 = Lrbracket
     {    ((Array_access ((default_annotation (sndo3 _1) _4), fsto3 _1, fsto3 _3),
@@ -644,7 +644,7 @@ _1 = primary_init_expression
       sndo3 _1, _5))}
 
 primary_expression:
-_1 = KWthis
+  _1 = KWthis
     {  ( (This _1,_1,_1))}
 | _1 = identifier
     {    ((Variable ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1), sndo3 _1, trdo3 _1))}
@@ -667,7 +667,7 @@ _1 = KWthis
     {                             (_1)}
 
 primary_init_expression:
-_1 = KWthis
+  _1 = KWthis
     {  ( (This _1,_1,_1))}
 | _1 = identifier
     {    ((Variable ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1), 
@@ -682,7 +682,7 @@ _1 = KWthis
     {                                  ((fsto3 _2, _1, _3))}
 
 literal:
-_1 = numeric_literal
+  _1 = numeric_literal
     {                  (_1)}
 | _1 = Lnull
     {                  ((Null (default_annotation _1 _1), _1, _1))}
@@ -695,20 +695,20 @@ _1 = numeric_literal
 		    (fst _1), (fst _1)))}
 
 numeric_literal:
-_1 = Lfloat
+  _1 = Lfloat
     {           ((Number ((default_annotation (fst _1) (fst _1)), (snd _1)), fst _1, fst _1))}
 | _1 = Lint
     {           ((Number ((default_annotation (fst _1) (fst _1)), (float_of_int (snd _1))), 
 	     fst _1, fst _1))}
 
 array_literal:
-_1 = Llbracket _2 = Lrbracket
+  _1 = Llbracket _2 = Lrbracket
     {                                             (([], _1, _2))}
 | _1 = Llbracket _2 = non_empty_element_list _3 = Lrbracket
     {                                             ((fsto3 _2, _1, _3))}
 
 non_empty_element_list:
-_1 = assignment_expression
+  _1 = assignment_expression
     {                                                      (([Some (fsto3 _1)], sndo3 _1, trdo3 _1))}
 | _1 = non_empty_element_list _2 = Lcomma _3 = assignment_expression
     {    (((fsto3 _1) @ [Some (fsto3 _3)], sndo3 _1, trdo3 _3))}
@@ -718,17 +718,17 @@ _1 = assignment_expression
     {    (((fsto3 _1) @ [(fsto3 _3)], sndo3 _1, trdo3 _3))}
 
 elision:
-_1 = Lcomma
+  _1 = Lcomma
     {                 ((None, _1, _1))}
 
 object_literal:
-_1 = Llbrace _2 = Lrbrace
+  _1 = Llbrace _2 = Lrbrace
     {                                               (([], _1, _2))}
 | _1 = Llbrace _2 = property_name_and_value_list _3 = Lrbrace
     {                                               ((fsto3 _2, _1, _3))}
 
 identifier:
-_1 = Lident
+  _1 = Lident
     {    ((Identifier ((default_annotation (fst _1) (fst _1)), (snd _1)), fst _1, fst _1))}
 | _1 = CKWeach
     {    ((Identifier ((default_annotation _1 _1),"each"), _1, _1))}
@@ -738,7 +738,7 @@ _1 = Lident
     {    ((Identifier ((default_annotation _1 _1),"xml"), _1, _1))}
 
 property_identifier:
-_1 = attribute_identifier
+  _1 = attribute_identifier
     {                                                (_1)}
 | _1 = qualified_identifier
     {                                                (_1)}
@@ -746,7 +746,7 @@ _1 = attribute_identifier
     {                                                (_1)}
 
 attribute_identifier:
-_1 = Lat _2 = property_selector
+  _1 = Lat _2 = property_selector
     {    ((AttributeIdentifier ((default_annotation _1 (trdo3 _2)), (fsto3 _2)), _1, trdo3 _2))}
 | _1 = Lat _2 = qualified_identifier
     {    ((AttributeIdentifier ((default_annotation _1 (trdo3 _2)), (fsto3 _2)), _1, trdo3 _2))}
@@ -754,13 +754,13 @@ _1 = Lat _2 = property_selector
     {    ((AttributeIdentifierExp ((default_annotation _1 _4), (fsto3 _3)), _1, _4))}
 
 property_selector:
-_1 = identifier
+  _1 = identifier
     {                      (_1)}
 | _1 = wildcard_identifier
     {                      (_1)}
 
 qualified_identifier:
-_1 = property_selector _2 = Ldcolon _3 = property_selector
+  _1 = property_selector _2 = Ldcolon _3 = property_selector
     {    ((QualifiedIdentifier ((default_annotation (sndo3 _1) (trdo3 _3)), 
 			   (fsto3 _1), (fsto3 _3)),
       sndo3 _1, trdo3 _3))}
@@ -769,11 +769,11 @@ _1 = property_selector _2 = Ldcolon _3 = property_selector
       sndo3 _1, _5))}
 
 wildcard_identifier:
-_1 = Lstar
+  _1 = Lstar
     {        ((Wildcard (default_annotation _1 _1), _1, _1))}
 
 xml_initialiser:
-_1 = xml_markup
+  _1 = xml_markup
     {              (((XMLInitialiser ((default_annotation (sndo3 _1) (trdo3 _1)),(fsto3 _1))),
 		sndo3 _1, trdo3 _1))}
 | _1 = xml_element
@@ -781,7 +781,7 @@ _1 = xml_markup
 		sndo3 _1, trdo3 _1))}
 
 xml_element:
-_1 = XMLotag_open _2 = xml_tag_content_option _3 = XMLempty_tag_close
+  _1 = XMLotag_open _2 = xml_tag_content_option _3 = XMLempty_tag_close
     {           ((XMLElementEmpty ((default_annotation _1 _3), (fsto3 _2)), _1, _3))}
 | _1 = XMLotag_open _2 = xml_tag_content_option _3 = XMLtag_close _4 = xml_element_content _5 = XMLctag_open _6 = xml_tag_content_option _7 = XMLtag_close
     {    ((XMLElement ((default_annotation _1 _7),(fsto3 _2), Some (fsto3 _4), (fsto3 _6)),
@@ -790,7 +790,7 @@ _1 = XMLotag_open _2 = xml_tag_content_option _3 = XMLempty_tag_close
     {    ((XMLElement ((default_annotation _1 _6),(fsto3 _2), None, (fsto3 _5)), _1, _6))}
 
 xml_element_content:
-_1 = xml_markup
+  _1 = xml_markup
     {    ((XMLElementContent ((default_annotation (sndo3 _1) (trdo3 _1)), (fsto3 _1), None),
       sndo3 _1, trdo3 _1))}
 | _1 = xml_markup _2 = xml_element_content
@@ -824,17 +824,17 @@ _1 = xml_markup
       _1, _3))}
 
 xml_list_initialiser:
-_1 = XMLotag_open _2 = XMLtag_close _3 = xml_element_content _4 = XMLctag_open _5 = XMLtag_close
+  _1 = XMLotag_open _2 = XMLtag_close _3 = xml_element_content _4 = XMLctag_open _5 = XMLtag_close
     {    ((XMLListInitialiser ((default_annotation _1 _5),(fsto3 _3)), _1, _5))}
 
 xml_tag_content_option:
-_1 = xml_tag_content
+  _1 = xml_tag_content
     {                                             (([(fsto3 _1)], sndo3 _1, trdo3 _1))}
 | _1 = xml_tag_content _2 = xml_tag_content_option
     {                                             (([(fsto3 _1)] @ (fsto3 _2), sndo3 _1, trdo3 _2))}
 
 xml_tag_content:
-_1 = XMLtag_chars
+  _1 = XMLtag_chars
     {    ((XMLTagChars ((default_annotation (fst _1) (fst _1)),(snd _1)), fst _1, fst _1))}
 | _1 = XMLwhitespace
     {    ((XMLWhitespace (default_annotation _1 _1), _1, _1))}
@@ -846,7 +846,7 @@ _1 = XMLtag_chars
     {    ((XMLAssignAttr ((default_annotation _1 (fst _2)), (snd _2)), _1, fst _2))}
 
 xml_markup:
-_1 = XMLcomment
+  _1 = XMLcomment
     {             ((XMLComment ((default_annotation (fst _1) (fst _1)),(snd _1)), fst _1, fst _1))}
 | _1 = XMLcdata
     {             ((XMLCDATA ((default_annotation (fst _1) (fst _1)),(snd _1)), fst _1, fst _1))}
@@ -854,13 +854,13 @@ _1 = XMLcomment
     {             ((XMLPI ((default_annotation (fst _1) (fst _1)),(snd _1)), fst _1, fst _1))}
 
 property_name_and_value_list:
-_1 = property_name _2 = Lcolon _3 = assignment_expression
+  _1 = property_name _2 = Lcolon _3 = assignment_expression
     {    (([((fsto3 _1), (fsto3 _3))], sndo3 _1, trdo3 _3))}
 | _1 = property_name_and_value_list _2 = Lcomma _3 = property_name _4 = Lcolon _5 = assignment_expression
     {    (((fsto3 _1) @ [((fsto3 _3), (fsto3 _5))], sndo3 _1, trdo3 _5))}
 
 property_name:
-_1 = identifier
+  _1 = identifier
     {    (((DynamicName ((default_annotation (sndo3 _1) (trdo3 _1)),(fsto3 _1))), 
       sndo3 _1, trdo3 _1))}
 | _1 = Lstring
@@ -872,7 +872,7 @@ _1 = identifier
       sndo3 _1, trdo3 _1))}
 
 new_expression:
-_1 = member_expression
+  _1 = member_expression
     {                            (_1)}
 | _1 = KWnew _2 = new_expression
     {                            ((New_expression ((default_annotation _1 (trdo3 _2)),
@@ -880,7 +880,7 @@ _1 = member_expression
 			      _1, trdo3 _2))}
 
 new_init_expression:
-_1 = member_init_expression
+  _1 = member_init_expression
     {                            (_1)}
 | _1 = KWnew _2 = new_expression
     {                            ((New_expression ((default_annotation _1 (trdo3 _2)),
@@ -888,7 +888,7 @@ _1 = member_init_expression
 			      _1, trdo3 _2))}
 
 call_expression:
-_1 = member_expression _2 = arguments
+  _1 = member_expression _2 = arguments
     {    ((Function_call ((default_annotation (sndo3 _1) (trdo3 _2)),
 		     (fsto3 _1), (fsto3 _2)),
       sndo3 _1, trdo3 _2))}
@@ -922,7 +922,7 @@ _1 = member_expression _2 = arguments
       sndo3 _1, _5))}
 
 call_init_expression:
-_1 = member_init_expression _2 = arguments
+  _1 = member_init_expression _2 = arguments
     {    ((Function_call ((default_annotation (sndo3 _1) (trdo3 _2)),
 		     (fsto3 _1), (fsto3 _2)),
       sndo3 _1, trdo3 _2))}
@@ -956,31 +956,31 @@ _1 = member_init_expression _2 = arguments
       sndo3 _1, _5))}
 
 arguments:
-_1 = Llparen _2 = Lrparen
+  _1 = Llparen _2 = Lrparen
     {                                (([], _1, _2))}
 | _1 = Llparen _2 = argument_list _3 = Lrparen
     {                                (((fsto3 _2), _1, _3))}
 
 argument_list:
-_1 = assignment_expression
+  _1 = assignment_expression
     {                                             (([(fsto3 _1)], sndo3 _1, trdo3 _1))}
 | _1 = argument_list _2 = Lcomma _3 = assignment_expression
     {                                             (((fsto3 _1) @ [(fsto3 _3)], sndo3 _1, trdo3 _3))}
 
 left_hand_side_expression:
-_1 = new_expression
+  _1 = new_expression
     {                       (_1)}
 | _1 = call_expression
     {                       (_1)}
 
 left_hand_side_init_expression:
-_1 = new_init_expression
+  _1 = new_init_expression
     {                       (_1)}
 | _1 = call_init_expression
     {                       (_1)}
 
 postfix_expression:
-_1 = left_hand_side_expression
+  _1 = left_hand_side_expression
     {    (_1)}
 | _1 = left_hand_side_expression _2 = Lincr
     {    ( if (different_line (trdo3 _1)  _2)
@@ -996,7 +996,7 @@ _1 = left_hand_side_expression
       sndo3 _1, _2))}
 
 postfix_init_expression:
-_1 = left_hand_side_init_expression
+  _1 = left_hand_side_init_expression
     {    (_1)}
 | _1 = left_hand_side_init_expression _2 = Lincr
     {    (if (different_line (sndo3 _1) _2) 
@@ -1012,7 +1012,7 @@ _1 = left_hand_side_init_expression
       sndo3 _1, _2))}
 
 unary_expression:
-_1 = postfix_expression
+  _1 = postfix_expression
     {                                 (_1)}
 | _1 = KWdelete _2 = unary_expression
     {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
@@ -1052,7 +1052,7 @@ _1 = postfix_expression
       _1, trdo3 _2))}
 
 unary_init_expression:
-_1 = postfix_init_expression
+  _1 = postfix_init_expression
     {                            (_1)}
 | _1 = KWdelete _2 = unary_expression
     {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
@@ -1092,7 +1092,7 @@ _1 = postfix_init_expression
       _1, trdo3 _2))}
 
 multiplicative_expression:
-_1 = unary_expression
+  _1 = unary_expression
     {                                                         (_1)}
 | _1 = multiplicative_expression _2 = Lstar _3 = unary_expression
     {                                                         ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Star (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1102,7 +1102,7 @@ _1 = unary_expression
     {                                                         ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Rem (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 multiplicative_init_expression:
-_1 = unary_init_expression
+  _1 = unary_init_expression
     {    (_1)}
 | _1 = multiplicative_init_expression _2 = Lstar _3 = unary_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Star (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1112,7 +1112,7 @@ _1 = unary_init_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Rem (default_annotation _2 _2) , (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 additive_expression:
-_1 = multiplicative_expression
+  _1 = multiplicative_expression
     {                                                       (_1)}
 | _1 = additive_expression _2 = Lplus _3 = multiplicative_expression
     {                                                       ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Plus (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1120,7 +1120,7 @@ _1 = multiplicative_expression
     {                                                       ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Minus (default_annotation _2 _2) , (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 additive_init_expression:
-_1 = multiplicative_init_expression
+  _1 = multiplicative_init_expression
     {    (_1)}
 | _1 = additive_init_expression _2 = Lplus _3 = multiplicative_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Plus (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1128,7 +1128,7 @@ _1 = multiplicative_init_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Minus (default_annotation _2 _2) , (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 shift_expression:
-_1 = additive_expression
+  _1 = additive_expression
     {    (_1)}
 | _1 = shift_expression _2 = Llshift _3 = additive_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Lshift (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1138,7 +1138,7 @@ _1 = additive_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Runsignedshift (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 shift_init_expression:
-_1 = additive_init_expression
+  _1 = additive_init_expression
     {    (_1)}
 | _1 = shift_init_expression _2 = Llshift _3 = additive_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Lshift (default_annotation _2 _2) , (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1148,7 +1148,7 @@ _1 = additive_init_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Runsignedshift (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 relational_expression:
-_1 = shift_expression
+  _1 = shift_expression
     {    (_1)}
 | _1 = relational_expression _2 = Lless _3 = shift_expression
     {    ( (Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Less (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1164,7 +1164,7 @@ _1 = shift_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), In (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 relational_expression_no_in:
-_1 = shift_expression
+  _1 = shift_expression
     {    (_1)}
 | _1 = relational_expression_no_in _2 = Lless _3 = shift_expression
     {    ( (Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Less (default_annotation _2 _2) , (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1178,7 +1178,7 @@ _1 = shift_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Instanceof (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 relational_init_expression:
-_1 = shift_init_expression
+  _1 = shift_init_expression
     {    (_1)}
 | _1 = relational_init_expression _2 = Lless _3 = shift_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Less (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1194,7 +1194,7 @@ _1 = shift_init_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), In (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 equality_expression:
-_1 = relational_expression
+  _1 = relational_expression
     {                                                          (_1)}
 | _1 = equality_expression _2 = Leq _3 = relational_expression
     {((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Eq (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1206,7 +1206,7 @@ _1 = relational_expression
     {((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Neq (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 equality_expression_no_in:
-_1 = relational_expression_no_in
+  _1 = relational_expression_no_in
     {    (_1)}
 | _1 = equality_expression_no_in _2 = Leq _3 = relational_expression_no_in
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Eq (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1218,7 +1218,7 @@ _1 = relational_expression_no_in
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Neq (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 equality_init_expression:
-_1 = relational_init_expression
+  _1 = relational_init_expression
     {                                                        (_1)}
 | _1 = equality_init_expression _2 = Leq _3 = relational_expression
     {                                                        ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Eq (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
@@ -1230,97 +1230,97 @@ _1 = relational_init_expression
     {                                                        ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Neq (default_annotation _2 _2) , (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 bitwise_and_expression:
-_1 = equality_expression
+  _1 = equality_expression
     {                                                      (_1)}
 | _1 = bitwise_and_expression _2 = Lbit_and _3 = equality_expression
     {                                                      ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Bit_and (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 bitwise_and_expression_no_in:
-_1 = equality_expression_no_in
+  _1 = equality_expression_no_in
     {                             (_1)}
 | _1 = bitwise_and_expression_no_in _2 = Lbit_and _3 = equality_expression_no_in
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Bit_and (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 bitwise_and_init_expression:
-_1 = equality_init_expression
+  _1 = equality_init_expression
     {                            (_1)}
 | _1 = bitwise_and_init_expression _2 = Lbit_and _3 = equality_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Bit_and (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 bitwise_xor_expression:
-_1 = bitwise_and_expression
+  _1 = bitwise_and_expression
     {                                                     (_1)}
 | _1 = bitwise_xor_expression _2 = Lxor _3 = bitwise_and_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Xor (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 bitwise_xor_expression_no_in:
-_1 = bitwise_and_expression_no_in
+  _1 = bitwise_and_expression_no_in
     {    (_1)}
 | _1 = bitwise_xor_expression_no_in _2 = Lxor _3 = bitwise_and_expression_no_in
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Xor (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 bitwise_xor_init_expression:
-_1 = bitwise_and_init_expression
+  _1 = bitwise_and_init_expression
     {    (_1)}
 | _1 = bitwise_xor_init_expression _2 = Lxor _3 = bitwise_and_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Xor (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 bitwise_or_expression:
-_1 = bitwise_xor_expression
+  _1 = bitwise_xor_expression
     {    (_1)}
 | _1 = bitwise_or_expression _2 = Lbit_or _3 = bitwise_xor_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Bit_or (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 bitwise_or_expression_no_in:
-_1 = bitwise_xor_expression_no_in
+  _1 = bitwise_xor_expression_no_in
     {    (_1)}
 | _1 = bitwise_or_expression_no_in _2 = Lbit_or _3 = bitwise_xor_expression_no_in
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Bit_or (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 bitwise_or_init_expression:
-_1 = bitwise_xor_init_expression
+  _1 = bitwise_xor_init_expression
     {    (_1)}
 | _1 = bitwise_or_init_expression _2 = Lbit_or _3 = bitwise_xor_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Bit_or (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 logical_and_expression:
-_1 = bitwise_or_expression
+  _1 = bitwise_or_expression
     {    (_1)}
 | _1 = logical_and_expression _2 = Lsc_and _3 = bitwise_or_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Sc_and (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 logical_and_expression_no_in:
-_1 = bitwise_or_expression_no_in
+  _1 = bitwise_or_expression_no_in
     {    (_1)}
 | _1 = logical_and_expression_no_in _2 = Lsc_and _3 = bitwise_or_expression_no_in
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Sc_and (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 logical_and_init_expression:
-_1 = bitwise_or_init_expression
+  _1 = bitwise_or_init_expression
     {    (_1)}
 | _1 = logical_and_init_expression _2 = Lsc_and _3 = bitwise_or_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Sc_and (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 logical_or_expression:
-_1 = logical_and_expression
+  _1 = logical_and_expression
     {    (_1)}
 | _1 = logical_or_expression _2 = Lsc_or _3 = logical_and_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Sc_or (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 logical_or_expression_no_in:
-_1 = logical_and_expression_no_in
+  _1 = logical_and_expression_no_in
     {    (_1)}
 | _1 = logical_or_expression_no_in _2 = Lsc_or _3 = logical_and_expression_no_in
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Sc_or (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 logical_or_init_expression:
-_1 = logical_and_init_expression
+  _1 = logical_and_init_expression
     {    (_1)}
 | _1 = logical_or_init_expression _2 = Lsc_or _3 = logical_and_expression
     {    ((Binop ((default_annotation (sndo3 _1) (trdo3 _3)),(fsto3 _1), Sc_or (default_annotation _2 _2), (fsto3 _3)), sndo3 _1, trdo3 _3))}
 
 conditional_expression:
-_1 = logical_or_expression
+  _1 = logical_or_expression
     {    (_1)}
 | _1 = logical_or_expression _2 = Lhook _3 = assignment_expression _4 = Lcolon _5 = assignment_expression
     {    ((Conditional ((default_annotation (sndo3 _1) (trdo3 _5)),
@@ -1328,7 +1328,7 @@ _1 = logical_or_expression
       sndo3 _1, trdo3 _5))}
 
 conditional_expression_no_in:
-_1 = logical_or_expression_no_in
+  _1 = logical_or_expression_no_in
     {    (_1)}
 | _1 = logical_or_expression_no_in _2 = Lhook _3 = assignment_expression_no_in _4 = Lcolon _5 = assignment_expression_no_in
     {    ((Conditional ((default_annotation (sndo3 _1) (trdo3 _5)),
@@ -1336,7 +1336,7 @@ _1 = logical_or_expression_no_in
       sndo3 _1, trdo3 _5))}
 
 conditional_init_expression:
-_1 = logical_or_init_expression
+  _1 = logical_or_init_expression
     {    (_1)}
 | _1 = logical_or_init_expression _2 = Lhook _3 = assignment_expression _4 = Lcolon _5 = assignment_expression
     {    ((Conditional ((default_annotation (sndo3 _1) (trdo3 _5)),
@@ -1344,7 +1344,7 @@ _1 = logical_or_init_expression
       sndo3 _1, trdo3 _5))}
 
 assignment_expression:
-_1 = conditional_expression
+  _1 = conditional_expression
     {    (_1)}
 | _1 = left_hand_side_expression _2 = assignment_operator _3 = assignment_expression
     {    ((Assign ((default_annotation (sndo3 _1) (trdo3 _3)),
@@ -1352,7 +1352,7 @@ _1 = conditional_expression
       sndo3 _1, trdo3 _3))}
 
 assignment_expression_no_in:
-_1 = conditional_expression_no_in
+  _1 = conditional_expression_no_in
     {    (_1)}
 | _1 = left_hand_side_expression _2 = assignment_operator _3 = assignment_expression_no_in
     {    ((Assign ((default_annotation (sndo3 _1) (trdo3 _3)),
@@ -1360,7 +1360,7 @@ _1 = conditional_expression_no_in
       sndo3 _1, trdo3 _3))}
 
 assignment_init_expression:
-_1 = conditional_init_expression
+  _1 = conditional_init_expression
     {    (_1)}
 | _1 = left_hand_side_init_expression _2 = assignment_operator _3 = assignment_expression
     {    ((Assign ((default_annotation (sndo3 _1) (trdo3 _3)),
@@ -1368,7 +1368,7 @@ _1 = conditional_init_expression
       sndo3 _1, trdo3 _3))}
 
 assignment_operator:
-_1 = Lassign
+  _1 = Lassign
     {                        ((Regular_assign (default_annotation _1 _1), _1, _1))}
 | _1 = Lstarassign
     {                        ((Star_assign (default_annotation _1 _1), _1, _1))}

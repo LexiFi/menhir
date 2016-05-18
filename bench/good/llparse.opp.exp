@@ -351,17 +351,17 @@ let process_toplevels t =
 %%
 
 main:
-_1 = toplevel_list
+  _1 = toplevel_list
     {                ( process_toplevels _1 )}
 
 toplevel_list:
-_1 = Eof
+  _1 = Eof
     {                ( [] )}
 | _1 = toplevel _2 = toplevel_list
     {                         ( _1::_2 )}
 
 toplevel:
-_1 = Kw_declare _2 = function_header
+  _1 = Kw_declare _2 = function_header
     {                                               ( Fun _2 )}
 | _1 = Kw_define _2 = function_header _3 = function_body
     {                                               ( _2.Llabs.fblocks <- _3; Fun _2 )}
@@ -427,13 +427,13 @@ _1 = Kw_declare _2 = function_header
     {                                                                             ( Attrgrp(_2, _5) )}
 
 aliasee:
-_1 = type_value
+  _1 = type_value
     {             ( (None, _1) )}
 | _1 = Kw_addrspace _2 = Lparen _3 = APInt _4 = Rparen _5 = typ _6 = Comma _7 = type_value
     {                                                        ( (Some(int_of_string _3, _5) , _7) )}
 
 selection_kind:
-_1 = Kw_any
+  _1 = Kw_any
     {                  ( Llabs.SK_any )}
 | _1 = Kw_exactmatch
     {                  ( Llabs.SK_exactmatch )}
@@ -445,25 +445,25 @@ _1 = Kw_any
     {                  ( Llabs.SK_samesize )}
 
 global_eq:
-_1 = GlobalID _2 = Equal
+  _1 = GlobalID _2 = Equal
     {                  ( _1 )}
 | _1 = GlobalVar _2 = Equal
     {                  ( _1 )}
 
 string_list:
-
+  
     {                             ( [] )}
 | _1 = StringConstant _2 = string_list
     {                             ( _1::_2 )}
 
 mdlist:
-
+  
     {                       ( [] )}
 | _1 = Exclaim _2 = APInt _3 = mdlist
     {                       ( (int_of_string _2)::_3 )}
 
 mdnodevector:
-_1 = value
+  _1 = value
     {                                ( [_1] )}
 | _1 = typ _2 = value
     {                                ( [_2] )}
@@ -473,13 +473,13 @@ _1 = value
     {                                ( (_2)::_4 )}
 
 constant_or_global:
-_1 = Kw_constant
+  _1 = Kw_constant
     {              ( true )}
 | _1 = Kw_global
     {              ( false )}
 
 function_header:
-_1 = opt_linkage _2 = opt_visibility _3 = opt_dll_storageclass _4 = opt_callingconv _5 = return_attributes _6 = typ _7 = global_name _8 = argument_list _9 = opt_unnamed_addr _10 = function_attributes _11 = opt_section _12 = opt_comdat _13 = opt_align _14 = opt_gc _15 = opt_prefix
+  _1 = opt_linkage _2 = opt_visibility _3 = opt_dll_storageclass _4 = opt_callingconv _5 = return_attributes _6 = typ _7 = global_name _8 = argument_list _9 = opt_unnamed_addr _10 = function_attributes _11 = opt_section _12 = opt_comdat _13 = opt_align _14 = opt_gc _15 = opt_prefix
     {                             (
                                {Llabs.flinkage = _1;
                                 Llabs.fvisibility = _2;
@@ -500,13 +500,13 @@ _1 = opt_linkage _2 = opt_visibility _3 = opt_dll_storageclass _4 = opt_callingc
                              )}
 
 typ:
-_1 = Kw_void
+  _1 = Kw_void
     {                ( Llabs.Void )}
 | _1 = non_void_type
     {                ( _1 )}
 
 non_void_type:
-_1 = I
+  _1 = I
     {                                       ( Llabs.Integer _1 )}
 | _1 = Kw_half
     {                                       ( Llabs.Half )}
@@ -548,23 +548,23 @@ _1 = I
     {                                       ( Llabs.Funtyp(_1, fst _2, snd _2) )}
 
 type_list:
-_1 = typ
+  _1 = typ
     {                      ( [_1] )}
 | _1 = typ _2 = Comma _3 = type_list
     {                      ( _1::_3 )}
 
 global_name:
-_1 = GlobalID
+  _1 = GlobalID
     {            ( _1 )}
 | _1 = GlobalVar
     {            ( _1 )}
 
 argument_list:
-_1 = Lparen _2 = arg_type_list _3 = Rparen
+  _1 = Lparen _2 = arg_type_list _3 = Rparen
     {                            ( _2 )}
 
 arg_type_list:
-
+  
     {                               ( ([], false) )}
 | _1 = DotDotDot
     {                               ( ([], true))}
@@ -574,31 +574,31 @@ arg_type_list:
     {                               ( (_1::(fst _3), snd _3) )}
 
 arg_type:
-_1 = typ _2 = param_attribute_list
+  _1 = typ _2 = param_attribute_list
     {                                    ( (_1, _2, None) )}
 | _1 = typ _2 = param_attribute_list _3 = LocalVar
     {                                    ( (_1, _2, Some _3) )}
 
 opt_section:
-
+  
     {                            ( None )}
 | _1 = Kw_section _2 = StringConstant
     {                            ( Some _2 )}
 
 opt_align:
-
+  
     {                 ( None )}
 | _1 = Kw_align _2 = APInt
     {                 ( Some(int_of_string _2) )}
 
 opt_inbounds:
-
+  
     {              ( false )}
 | _1 = Kw_inbounds
     {              ( true )}
 
 opt_tail:
-
+  
     {              ( Llabs.TCK_None )}
 | _1 = Kw_tail
     {              ( Llabs.TCK_Tail )}
@@ -606,19 +606,19 @@ opt_tail:
     {              ( Llabs.TCK_MustTail )}
 
 opt_cleanup:
-
+  
     {              ( false )}
 | _1 = Kw_cleanup
     {              ( true )}
 
 opt_comdat:
-
+  
     {                      ( None )}
 | _1 = Kw_comdat _2 = ComdatVar
     {                      ( Some _2 )}
 
 opt_section_align_comdat:
-
+  
     {                                                       ( (None    , None                  , None) )}
 | _1 = Comma _2 = Kw_section _3 = StringConstant
     {                                                       ( (Some _3 , None                  , None) )}
@@ -630,43 +630,43 @@ opt_section_align_comdat:
     {                                                       ( (None    , None                  , Some _3) )}
 
 align_metadata:
-_1 = instruction_metadata
+  _1 = instruction_metadata
     {                       ( (None, _1) )}
 | _1 = Comma _2 = Kw_align _3 = APInt _4 = instruction_metadata
     {                                            ( (Some(int_of_string _3), _4) )}
 
 opt_gc:
-
+  
     {                       ( None )}
 | _1 = Kw_gc _2 = StringConstant
     {                       ( Some _2 )}
 
 opt_prefix:
-
+  
     {                      ( None )}
 | _1 = Kw_prefix _2 = typ _3 = value
     {                      ( Some(_2, _3) )}
 
 opt_atomic:
-
+  
     {              ( false )}
 | _1 = Kw_atomic
     {              ( true )}
 
 opt_weak:
-
+  
     {              ( false )}
 | _1 = Kw_weak
     {              ( true )}
 
 opt_volatile:
-
+  
     {              ( false )}
 | _1 = Kw_volatile
     {              ( true )}
 
 value:
-_1 = GlobalID
+  _1 = GlobalID
     {                                                                                            ( Llabs.Var _1 )}
 | _1 = GlobalVar
     {                                                                                            ( Llabs.Var _1 )}
@@ -788,7 +788,7 @@ _1 = GlobalID
     {                                                                                            ( Llabs.Select         _3 )}
 
 mdvalue:
-_1 = APInt
+  _1 = APInt
     {                             ( Llabs.Mdnode(int_of_string _1) )}
 | _1 = StringConstant
     {                             ( Llabs.Mdstring _1 )}
@@ -796,19 +796,19 @@ _1 = APInt
     {                             ( Llabs.Mdnodevector _2 )}
 
 type_value_LIST_metadata:
-_1 = type_value _2 = instruction_metadata
+  _1 = type_value _2 = instruction_metadata
     {                                            ( ([_1], _2) )}
 | _1 = type_value _2 = Comma _3 = type_value_LIST_metadata
     {                                            ( (_1::(fst _3), snd _3) )}
 
 type_value_LIST:
-_1 = type_value
+  _1 = type_value
     {                                   ( [_1] )}
 | _1 = type_value _2 = Comma _3 = type_value_LIST
     {                                   ( _1::_3 )}
 
 type_value_list:
-
+  
     {                                   ( [] )}
 | _1 = type_value
     {                                   ( [_1] )}
@@ -816,19 +816,19 @@ type_value_list:
     {                                   ( _1::_3 )}
 
 index_list:
-_1 = Comma _2 = APInt
+  _1 = Comma _2 = APInt
     {                         ( [(int_of_string _2)] )}
 | _1 = Comma _2 = APInt _3 = index_list
     {                         ( (int_of_string _2)::_3 )}
 
 index_list_metadata:
-_1 = Comma _2 = APInt _3 = instruction_metadata
+  _1 = Comma _2 = APInt _3 = instruction_metadata
     {                                              ( [(int_of_string _2)], _3 )}
 | _1 = Comma _2 = APInt _3 = index_list_metadata
     {                                              ( (int_of_string _2)::(fst _3), snd _3 )}
 
 fcmp_predicate:
-_1 = Kw_oeq
+  _1 = Kw_oeq
     {           ( Llabs.F.Oeq   )}
 | _1 = Kw_one
     {           ( Llabs.F.One   )}
@@ -862,7 +862,7 @@ _1 = Kw_oeq
     {           ( Llabs.F.False )}
 
 icmp_predicate:
-_1 = Kw_eq
+  _1 = Kw_eq
     {         ( Llabs.I.Eq  )}
 | _1 = Kw_ne
     {         ( Llabs.I.Ne  )}
@@ -884,29 +884,29 @@ _1 = Kw_eq
     {         ( Llabs.I.Uge )}
 
 function_body:
-_1 = Lbrace _2 = basicblock_list _3 = Rbrace
+  _1 = Lbrace _2 = basicblock_list _3 = Rbrace
     {                                ( _2 )}
 
 basicblock_list:
-_1 = basicblock
+  _1 = basicblock
     {                             ( [_1] )}
 | _1 = basicblock _2 = basicblock_list
     {                             ( _1::_2 )}
 
 basicblock:
-_1 = LabelStr _2 = instruction_list
+  _1 = LabelStr _2 = instruction_list
     {                            ( {Llabs.bname=Llabs.Name(false, _1); Llabs.binstrs=_2} )}
 | _1 = instruction_list
     {                            ( {Llabs.bname=Llabs.Id(false, -1); Llabs.binstrs=_1} )}
 
 instruction_list:
-_1 = terminator_instruction
+  _1 = terminator_instruction
     {                         ( [_1] )}
 | _1 = instruction _2 = instruction_list
     {                               ( _1::_2 )}
 
 instruction_metadata:
-
+  
     {              ( [] )}
 | _1 = Comma _2 = MetadataVar _3 = Exclaim _4 = APInt _5 = instruction_metadata
     {                                                       ( (_2,Llabs.Mdnode(int_of_string _4))::_5 )}
@@ -914,19 +914,19 @@ instruction_metadata:
     {                                                                            ( (_2,Llabs.Mdnodevector _5)::_7 )}
 
 local_eq:
-_1 = LocalVarID _2 = Equal
+  _1 = LocalVarID _2 = Equal
     {                   ( _1 )}
 | _1 = LocalVar _2 = Equal
     {                   ( _1 )}
 
 opt_local:
-
+  
     {              ( None )}
 | _1 = local_eq
     {              ( Some _1 )}
 
 instruction:
-_1 = local_eq _2 = Kw_add _3 = opt_nuw_nsw _4 = type_value _5 = Comma _6 = value _7 = instruction_metadata
+  _1 = local_eq _2 = Kw_add _3 = opt_nuw_nsw _4 = type_value _5 = Comma _6 = value _7 = instruction_metadata
     {                                                                               ( Some _1, Llabs.Add(fst _3, snd _3, _4, _6, _7) )}
 | _1 = local_eq _2 = Kw_sub _3 = opt_nuw_nsw _4 = type_value _5 = Comma _6 = value _7 = instruction_metadata
     {                                                                               ( Some _1, Llabs.Sub(fst _3, snd _3, _4, _6, _7) )}
@@ -1028,7 +1028,7 @@ _1 = local_eq _2 = Kw_add _3 = opt_nuw_nsw _4 = type_value _5 = Comma _6 = value
     {                                                                               ( Some _1, Llabs.Insertvalue(_3, _5, fst _6, snd _6) )}
 
 binop:
-_1 = Kw_xchg
+  _1 = Kw_xchg
     {          ( Llabs.Xchg )}
 | _1 = Kw_add
     {          ( Llabs.Add  )}
@@ -1052,13 +1052,13 @@ _1 = Kw_xchg
     {          ( Llabs.Umin )}
 
 phi_list_metadata:
-_1 = Lsquare _2 = value _3 = Comma _4 = value _5 = Rsquare _6 = instruction_metadata
+  _1 = Lsquare _2 = value _3 = Comma _4 = value _5 = Rsquare _6 = instruction_metadata
     {                                                            ( [(_2, _4)], _6 )}
 | _1 = Lsquare _2 = value _3 = Comma _4 = value _5 = Rsquare _6 = Comma _7 = phi_list_metadata
     {                                                            ( (_2, _4)::(fst _7), snd _7 )}
 
 landingpad_list:
-_1 = Kw_catch _2 = typ _3 = value
+  _1 = Kw_catch _2 = typ _3 = value
     {                                      ( [Llabs.Catch(_2, _3)] )}
 | _1 = Kw_filter _2 = typ _3 = value
     {                                      ( [Llabs.Filter(_2, _3)] )}
@@ -1068,7 +1068,7 @@ _1 = Kw_catch _2 = typ _3 = value
     {                                      ( (Llabs.Filter(_2, _3))::_4 )}
 
 ordering:
-_1 = Kw_unordered
+  _1 = Kw_unordered
     {               ( Llabs.Unordered )}
 | _1 = Kw_monotonic
     {               ( Llabs.Monotonic )}
@@ -1082,19 +1082,19 @@ _1 = Kw_unordered
     {               ( Llabs.Seq_cst   )}
 
 opt_singlethread:
-
+  
     {                            ( false )}
 | _1 = Kw_singlethread
     {                            ( true )}
 
 scopeandordering:
-
+  
     {                            ( None )}
 | _1 = opt_singlethread _2 = ordering
     {                            ( Some(_1, _2) )}
 
 alloc_metadata:
-_1 = Kw_inalloca _2 = typ _3 = Comma _4 = type_value _5 = Comma _6 = Kw_align _7 = APInt _8 = instruction_metadata
+  _1 = Kw_inalloca _2 = typ _3 = Comma _4 = type_value _5 = Comma _6 = Kw_align _7 = APInt _8 = instruction_metadata
     {                                                                             ( Llabs.Alloca(true,  _2, Some _4, Some(int_of_string _7), _8) )}
 | _1 = Kw_inalloca _2 = typ _3 = Comma _4 = type_value _5 = instruction_metadata
     {                                                                             ( Llabs.Alloca(true,  _2, Some _4, None, _5) )}
@@ -1112,13 +1112,13 @@ _1 = Kw_inalloca _2 = typ _3 = Comma _4 = type_value _5 = Comma _6 = Kw_align _7
     {                                                                             ( Llabs.Alloca(false, _1, None, None, _2) )}
 
 fast_math_flags:
-
+  
     {                                 ( [] )}
 | _1 = fast_math_flag _2 = fast_math_flags
     {                                 ( _1::_2 )}
 
 fast_math_flag:
-_1 = Kw_fast
+  _1 = Kw_fast
     {          ( Llabs.Fast )}
 | _1 = Kw_nnan
     {          ( Llabs.Nnan )}
@@ -1130,7 +1130,7 @@ _1 = Kw_fast
     {          ( Llabs.Arcp )}
 
 terminator_instruction:
-_1 = Kw_unreachable _2 = instruction_metadata
+  _1 = Kw_unreachable _2 = instruction_metadata
     {                                                                                        ( None, Llabs.Unreachable _2 )}
 | _1 = Kw_ret _2 = Kw_void _3 = instruction_metadata
     {                                                                                        ( None, Llabs.Return(None,_3) )}
@@ -1150,13 +1150,13 @@ _1 = Kw_unreachable _2 = instruction_metadata
     {                                                                                                                                                                         ( Some _1, Llabs.Invoke(_3, _4, _5, _6, _8, _10, _12, _14, _15) )}
 
 call_attributes:
-
+  
     {                                 ( [] )}
 | _1 = call_attribute _2 = call_attributes
     {                                 ( _1::_2 )}
 
 call_attribute:
-_1 = AttrGrpID
+  _1 = AttrGrpID
     {              ( Llabs.Attrgrp(_1) )}
 | _1 = Kw_noreturn
     {              ( Llabs.Noreturn )}
@@ -1168,13 +1168,13 @@ _1 = AttrGrpID
     {              ( Llabs.Readonly )}
 
 function_attributes:
-
+  
     {                                         ( [] )}
 | _1 = function_attribute _2 = function_attributes
     {                                         ( _1::_2 )}
 
 function_attribute:
-_1 = AttrGrpID
+  _1 = AttrGrpID
     {                                           ( Llabs.Attrgrp(_1) )}
 | _1 = StringConstant _2 = Equal _3 = StringConstant
     {                                           ( Llabs.Attr(_1, Some _3) )}
@@ -1236,13 +1236,13 @@ _1 = AttrGrpID
     {                                           ( Llabs.Uwtable          )}
 
 group_attributes:
-
+  
     {                                   ( [] )}
 | _1 = group_attribute _2 = group_attributes
     {                                   ( _1::_2 )}
 
 group_attribute:
-_1 = StringConstant
+  _1 = StringConstant
     {                                      ( Llabs.Attr(_1, None) )}
 | _1 = StringConstant _2 = Equal _3 = StringConstant
     {                                      ( Llabs.Attr(_1, Some _3) )}
@@ -1306,7 +1306,7 @@ _1 = StringConstant
     {                                      ( Llabs.Uwtable         )}
 
 param_list:
-
+  
     {                         ( [] )}
 | _1 = param
     {                         ( [_1] )}
@@ -1314,17 +1314,17 @@ param_list:
     {                         ( _1::_3 )}
 
 param:
-_1 = typ _2 = param_attribute_list _3 = value
+  _1 = typ _2 = param_attribute_list _3 = value
     {                                 ( (_1, _2, _3) )}
 
 param_attribute_list:
-
+  
     {                                       ( [] )}
 | _1 = param_attribute _2 = param_attribute_list
     {                                       ( _1::_2 )}
 
 param_attribute:
-_1 = Kw_align _2 = APInt
+  _1 = Kw_align _2 = APInt
     {                                         ( Llabs.Align(int_of_string _2)           )}
 | _1 = Kw_byval
     {                                         ( Llabs.Byval                             )}
@@ -1356,41 +1356,41 @@ _1 = Kw_align _2 = APInt
     {                                         ( Llabs.Zeroext                           )}
 
 jump_table:
-
+  
     {                                         ( [] )}
 | _1 = type_value _2 = Comma _3 = type_value _4 = jump_table
     {                                         ( (_1,_3)::_4 )}
 
 type_value:
-_1 = typ _2 = value
+  _1 = typ _2 = value
     {            ( (_1, _2) )}
 
 opt_sideeffect:
-
+  
     {                ( false )}
 | _1 = Kw_sideeffect
     {                ( true )}
 
 opt_alignstack:
-
+  
     {                ( false )}
 | _1 = Kw_alignstack
     {                ( true )}
 
 opt_inteldialect:
-
+  
     {                  ( false )}
 | _1 = Kw_inteldialect
     {                  ( true )}
 
 opt_exact:
-
+  
     {              ( false )}
 | _1 = Kw_exact
     {              ( true )}
 
 opt_nuw_nsw:
-
+  
     {                ( (false, false) )}
 | _1 = Kw_nuw _2 = Kw_nsw
     {                ( (true, true)   )}
@@ -1402,7 +1402,7 @@ opt_nuw_nsw:
     {                ( (false, true)  )}
 
 opt_thread_local:
-
+  
     {                                                ( None )}
 | _1 = Kw_thread_local
     {                                                ( Some None )}
@@ -1414,25 +1414,25 @@ opt_thread_local:
     {                                                ( Some (Some Llabs.Localexec) )}
 
 opt_addrspace:
-
+  
     {                                   ( None )}
 | _1 = Kw_addrspace _2 = Lparen _3 = APInt _4 = Rparen
     {                                   ( Some (int_of_string _3) )}
 
 opt_unnamed_addr:
-
+  
     {                  ( false )}
 | _1 = Kw_unnamed_addr
     {                  ( true )}
 
 opt_externally_initialized:
-
+  
     {                            ( false )}
 | _1 = Kw_externally_initialized
     {                            ( true )}
 
 opt_dll_storageclass:
-
+  
     {               ( None )}
 | _1 = Kw_dllimport
     {               ( Some Llabs.Dllimport )}
@@ -1440,19 +1440,19 @@ opt_dll_storageclass:
     {               ( Some Llabs.Dllexport )}
 
 opt_linkage:
-_1 = external_linkage
+  _1 = external_linkage
     {                       ( Some _1 )}
 | _1 = non_external_linkage
     {                       ( _1 )}
 
 external_linkage:
-_1 = Kw_extern_weak
+  _1 = Kw_extern_weak
     {                 ( Llabs.Extern_weak )}
 | _1 = Kw_external
     {                 ( Llabs.External )}
 
 non_external_linkage:
-
+  
     {                          ( None )}
 | _1 = Kw_private
     {                          ( Some Llabs.Private )}
@@ -1478,7 +1478,7 @@ non_external_linkage:
     {                          ( Some Llabs.Common )}
 
 opt_visibility:
-
+  
     {               ( None )}
 | _1 = Kw_default
     {               ( Some Llabs.Default )}
@@ -1488,7 +1488,7 @@ opt_visibility:
     {               ( Some Llabs.Protected )}
 
 opt_callingconv:
-
+  
     {                       ( None )}
 | _1 = Kw_ccc
     {                       ( Some Llabs.Ccc               )}
@@ -1538,13 +1538,13 @@ opt_callingconv:
     {                       ( Some Llabs.Cc                )}
 
 return_attributes:
-
+  
     {                                     ( [] )}
 | _1 = return_attribute _2 = return_attributes
     {                                     ( _1::_2 )}
 
 return_attribute:
-_1 = Kw_dereferenceable _2 = Lparen _3 = APInt _4 = Rparen
+  _1 = Kw_dereferenceable _2 = Lparen _3 = APInt _4 = Rparen
     {                                         ( Llabs.Dereferenceable(int_of_string _3) )}
 | _1 = Kw_inreg
     {                                         ( Llabs.Inreg                             )}

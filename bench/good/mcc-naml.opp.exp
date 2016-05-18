@@ -243,27 +243,27 @@ let string_to_list s =
 %%
 
 topstmt:
-_1 = def _2 = TokSemiSemi
+  _1 = def _2 = TokSemiSemi
     {                           ( Some _1 )}
 | _1 = TokEOF
     {                   ( None )}
 
 prog:
-_1 = def_list _2 = TokEOF
+  _1 = def_list _2 = TokEOF
     {                           ( _1 )}
 
 interface:
-_1 = spec_list _2 = TokEOF
+  _1 = spec_list _2 = TokEOF
     {                            ( _1 )}
 
 ident:
-_1 = TokId
+  _1 = TokId
     {                  ( _1 )}
 | _1 = TokLParen _2 = operator _3 = TokRParen
     {                                    ( _2 )}
 
 cap_ident:
-_1 = TokCapId
+  _1 = TokCapId
     {                    ( _1 )}
 | _1 = TokLParen _2 = TokRParen
     {                            ( unit_sym, union_pos _1 _2 )}
@@ -271,31 +271,31 @@ _1 = TokCapId
     {                            ( list_nil_sym, union_pos _1 _2 )}
 
 mpath:
-_1 = TokCapId
+  _1 = TokCapId
     {                 ( [_1] )}
 | _1 = TokCapId _2 = TokDot _3 = mpath
     {                            ( _1 :: _3 )}
 
 vpath:
-_1 = ident
+  _1 = ident
     {              ( let (s, p) = _1 in [], s, p )}
 | _1 = TokCapId _2 = TokDot _3 = vpath
     {                            ( let (s, p) = _1 and (m, s2, p2) = _3 in ((s,p)::m, s2, union_pos p p2) )}
 
 pure_vpath:
-_1 = TokId
+  _1 = TokId
     {                                ( let (s, p) = _1 in [], s, p )}
 | _1 = TokCapId _2 = TokDot _3 = vpath
     {                                ( let (s, p) = _1 and (m, s2, p2) = _3 in ((s,p)::m, s2, union_pos p p2) )}
 
 vpath_cap:
-_1 = cap_ident
+  _1 = cap_ident
     {                   ( let (s, p) = _1 in [], s, p )}
 | _1 = TokCapId _2 = TokDot _3 = vpath_cap
     {                                ( let (s, p) = _1 and (m, s2, p2) = _3 in ((s,p)::m, s2, union_pos p p2) )}
 
 operator:
-_1 = TokOpPreN1
+  _1 = TokOpPreN1
     {                      ( _1 )}
 | _1 = TokOpMinus
     {                      ( Symbol.add "-", _1 )}
@@ -325,7 +325,7 @@ _1 = TokOpPreN1
     {                    ( Symbol.add "*", _1 )}
 
 ext_mpath:
-_1 = TokCapId
+  _1 = TokCapId
     {                   ( let (s,p) = _1 in VarEmpath (s,p) )}
 | _1 = ext_mpath _2 = TokDot _3 = ext_mpath
     {                                  ( ProjEmpath (_1, _3, union_pos (pos_of_empath _1) (pos_of_empath _3)) )}
@@ -333,7 +333,7 @@ _1 = TokCapId
     {                                              ( ApplyEmpath (_1, _3, union_pos (pos_of_empath _1) _4) )}
 
 module_type:
-_1 = mpath
+  _1 = mpath
     {               ( VarModtype (_1, pos_of_mpath _1) )}
 | _1 = TokLParen _2 = module_type _3 = TokRParen
     {                                        ( _2 )}
@@ -345,7 +345,7 @@ _1 = mpath
     {        ( FunctorModtype (fst _3, _5, _8, union_pos _1 (pos_of_modtype _8)) )}
 
 module_type_constraints:
-_1 = module_type _2 = TokWith _3 = TokType _4 = type_params _5 = pure_vpath _6 = TokEq _7 = type_expr
+  _1 = module_type _2 = TokWith _3 = TokType _4 = type_params _5 = pure_vpath _6 = TokEq _7 = type_expr
     {        ( ConstraintTypeModtype (_1, fst _4, _5, _7, union_pos (pos_of_modtype _1) (pos_of_type _7)) )}
 | _1 = module_type _2 = TokWith _3 = mpath _4 = TokEq _5 = ext_mpath
     { ( ConstraintModModtype (_1, _3, _5, union_pos (pos_of_modtype _1) (pos_of_empath _5)) )}
@@ -355,7 +355,7 @@ _1 = module_type _2 = TokWith _3 = TokType _4 = type_params _5 = pure_vpath _6 =
     {        ( ConstraintModModtype (_1, _3, _5, union_pos (pos_of_modtype _1) (pos_of_empath _5)) )}
 
 spec_list:
-
+  
     {        ( [] )}
 | _1 = spec_list _2 = spec
     {                          ( _1 @ [_2] )}
@@ -363,7 +363,7 @@ spec_list:
     {                                    ( _1 @ [_3] )}
 
 spec:
-_1 = TokVal _2 = ident _3 = TokIs _4 = type_expr
+  _1 = TokVal _2 = ident _3 = TokIs _4 = type_expr
     {                                     ( ValSpec (fst _2, _4, union_pos _1 (pos_of_type _4)) )}
 | _1 = TokExternal _2 = ident _3 = TokIs _4 = type_expr _5 = TokEq _6 = TokString
     {                                                        ( let  (s, p) = _6 in ExternSpec (fst _2, _4, s, union_pos _1 p) )}
@@ -386,13 +386,13 @@ _1 = TokVal _2 = ident _3 = TokIs _4 = type_expr
     {                              ( IncludeSpec (_2, union_pos _1 (pos_of_empath _2)) )}
 
 module_args:
-
+  
     {            ( [] )}
 | _1 = module_args _2 = TokLParen _3 = TokCapId _4 = TokIs _5 = module_type _6 = TokRParen
     {                                                                   ( _1 @ [fst _3, _5] )}
 
 module_expr:
-_1 = mpath
+  _1 = mpath
     {                 ( VarMod (_1, pos_of_mpath _1) )}
 | _1 = TokLParen _2 = module_expr _3 = TokRParen
     {                                        ( _2 )}
@@ -406,7 +406,7 @@ _1 = mpath
     {        ( FunctorMod (fst _3, _5, _8, union_pos _1 (pos_of_modexp _8)) )}
 
 def_list:
-
+  
     {        ([])}
 | _1 = def _2 = def_list
     {                        ( _1 :: _2 )}
@@ -414,7 +414,7 @@ def_list:
     {                                   ( _1 :: _3 )}
 
 def:
-_1 = TokLet _2 = let_rec_opt _3 = let_binding_list
+  _1 = TokLet _2 = let_rec_opt _3 = let_binding_list
     {                                           ( let (_,_,p) = list_last _3 in LetMod (_2, _3, union_pos _1 p) )}
 | _1 = TokExternal _2 = ident _3 = TokIs _4 = type_expr _5 = TokEq _6 = TokString
     {                                                        ( let (s, p) = _6 in ExternMod (fst _2, _4, s, union_pos _1 p) )}
@@ -435,23 +435,23 @@ _1 = TokLet _2 = let_rec_opt _3 = let_binding_list
             ModMod (fst _2, make_functor_expr _3 (make_constrain_expr _6 _4 p) p, p) )}
 
 module_contrain_opt:
-
+  
     {       ( None )}
 | _1 = TokIs _2 = module_type
     {                            ( Some _2 )}
 
 type_definition:
-_1 = TokType _2 = type_def_list
+  _1 = TokType _2 = type_def_list
     {                            ( let (_, _, _, _, p) = list_last _2 in _2, union_pos _1 p )}
 
 type_def_list:
-_1 = type_def
+  _1 = type_def
     {                     ( [_1] )}
 | _1 = type_def _2 = TokAnd _3 = type_def_list
     {                                    ( _1::_3 )}
 
 type_def:
-_1 = type_params _2 = TokId _3 = type_info
+  _1 = type_params _2 = TokId _3 = type_info
     { (
 	    let (pl, p) = _1 in
 	    let (s, _) = _2 in
@@ -460,7 +460,7 @@ _1 = type_params _2 = TokId _3 = type_info
 	)}
 
 type_params:
-
+  
     {       ( [], Naml_parse_state.current_position () )}
 | _1 = TokMeta _2 = TokId
     {                        ( let (s, p) = _2 in [s], union_pos _1 p )}
@@ -468,13 +468,13 @@ type_params:
     {                                          ( _2, union_pos _1 _3 )}
 
 type_param_list:
-_1 = TokMeta _2 = TokId
+  _1 = TokMeta _2 = TokId
     {                       ( [fst _2] )}
 | _1 = type_param_list _2 = TokComma _3 = TokMeta _4 = TokId
     {                                             ( _1 @ [fst _4] )}
 
 type_info:
-
+  
     {            ( None, None, Naml_parse_state.current_position () )}
 | _1 = TokEq _2 = type_expr
     {                               ( Some _2, None, pos_of_type _2 )}
@@ -488,7 +488,7 @@ type_info:
     {                                                                    ( let p = union_pos _4 _6 in (Some _2, Some (TypeRecord (_5, p)), p) )}
 
 constr_decl_list:
-_1 = constr_decl
+  _1 = constr_decl
     {                      ( let (s, t, p) = _1 in [s, t], p )}
 | _1 = constr_decl_list _2 = TokAlt _3 = constr_decl
     { (
@@ -498,37 +498,37 @@ _1 = constr_decl
 	)}
 
 field_decl_list:
-_1 = field_decl_list_aux
+  _1 = field_decl_list_aux
     {                              ( _1 )}
 | _1 = field_decl_list_aux _2 = TokSemi
     {                                    ( _1 )}
 
 field_decl_list_aux:
-_1 = mutable_opt _2 = TokId _3 = TokIs _4 = type_expr
+  _1 = mutable_opt _2 = TokId _3 = TokIs _4 = type_expr
     {                                               ( [_1, fst _2, _4] )}
 | _1 = field_decl_list_aux _2 = TokSemi _3 = mutable_opt _4 = TokId _5 = TokIs _6 = type_expr
     {                                                                    ( _1 @ [_3, fst _4, _6] )}
 
 constr_decl:
-_1 = cap_ident
+  _1 = cap_ident
     {        ( let (s, p) = _1 in s, [], p )}
 | _1 = constr_cap_ident _2 = TokOf _3 = type_tuple_aux
     {        ( let (s, p) = _1 in s, _3, union_pos p (pos_of_type (list_last _3)) )}
 
 constr_cap_ident:
-_1 = cap_ident
+  _1 = cap_ident
     {                  ( _1 )}
 | _1 = TokCons
     {                ( list_cons_sym, _1 )}
 
 mutable_opt:
-
+  
     {                    ( false )}
 | _1 = TokMutable
     {                    ( true )}
 
 exception_def:
-_1 = exception_def_simp
+  _1 = exception_def_simp
     {                            ( let (s, t, p) = _1 in ExnMod (ExnCons (s, t, p), p) )}
 | _1 = TokException _2 = cap_ident _3 = TokEq _4 = vpath_cap
     { (
@@ -539,7 +539,7 @@ _1 = exception_def_simp
 	)}
 
 exception_def_simp:
-_1 = TokException _2 = cap_ident
+  _1 = TokException _2 = cap_ident
     {        (
             let (id, p) = _2 in
             let p = union_pos _1 p in
@@ -553,31 +553,31 @@ _1 = TokException _2 = cap_ident
         )}
 
 let_rec_opt:
-
+  
     {   ( false )}
 | _1 = TokRec
     {              ( true )}
 
 type_expr:
-_1 = type_tuple _2 = TokRArrow _3 = type_expr
+  _1 = type_tuple _2 = TokRArrow _3 = type_expr
     {                                     ( TypeFun (_1, _3, union_pos (pos_of_type _1) (pos_of_type _3)) )}
 | _1 = type_tuple
     {                       ( _1 )}
 
 type_tuple:
-_1 = type_tuple_aux _2 = TokStar _3 = type_expr_limited
+  _1 = type_tuple_aux _2 = TokStar _3 = type_expr_limited
     {                                               ( TypeTuple (_1 @ [_3], union_pos (pos_of_type (List.hd _1)) (pos_of_type _3)) )}
 | _1 = type_expr_limited
     {                           ( _1 )}
 
 type_tuple_aux:
-_1 = type_tuple_aux _2 = TokStar _3 = type_expr_limited
+  _1 = type_tuple_aux _2 = TokStar _3 = type_expr_limited
     {                                               ( _1 @ [_3] )}
 | _1 = type_expr_limited
     {                           ( [_1] )}
 
 type_expr_limited:
-_1 = TokMeta _2 = TokId
+  _1 = TokMeta _2 = TokId
     {                             ( let (s, p) = _2 in TypeVar (s, union_pos _1 p) )}
 | _1 = TokAny
     {                       ( TypeAny _1 )}
@@ -591,13 +591,13 @@ _1 = TokMeta _2 = TokId
     {                                                                    ( TypeId (_2 @ [_4], _6, union_pos _1 _5) )}
 
 type_expr_list:
-_1 = type_expr
+  _1 = type_expr
     {                   ( [_1] )}
 | _1 = type_expr_list _2 = TokComma _3 = type_expr
     {                                        ( _1 @ [_3] )}
 
 pattern:
-_1 = pattern_no_tuple
+  _1 = pattern_no_tuple
     {                          ( _1 )}
 | _1 = pattern_no_tuple _2 = TokComma _3 = pattern_tuple %prec prec_pat_tuple
     {                                                                   ( TuplePat (_1 :: _3, union_pos (pos_of_pattern _1) (pos_of_pattern (list_last _3))) )}
@@ -616,7 +616,7 @@ _1 = pattern_no_tuple
             ConsPat (([],list_cons_sym,_4), TuplePat ([ap; _5], p2), p2) )}
 
 pattern_no_tuple:
-_1 = pattern_limited
+  _1 = pattern_limited
     {                         ( _1 )}
 | _1 = vpath_cap _2 = pattern_no_tuple %prec prec_pat_cons
     {                                                      ( let (_,_,p) = _1 in ConsPat (_1, _2, union_pos p (pos_of_pattern _2)) )}
@@ -625,7 +625,7 @@ _1 = pattern_limited
             ConsPat (([],list_cons_sym,_2), TuplePat ([_1; _3], p), p) )}
 
 pattern_limited:
-_1 = ident
+  _1 = ident
     {                 ( let s,p = _1 in IdPat (s, p) )}
 | _1 = TokAny
     {                  ( AnyPat _1 )}
@@ -645,13 +645,13 @@ _1 = ident
     {        ( let s,p = _1 in ArrayPat (List.map (fun c -> ConstPat (CharConst (c,p),p)) (string_to_list s), p) )}
 
 pattern_tuple:
-_1 = pattern_no_tuple
+  _1 = pattern_no_tuple
     {                          ( [_1] )}
 | _1 = pattern_no_tuple _2 = TokComma _3 = pattern_tuple
     {                                              ( _1 :: _3 )}
 
 pattern_record:
-_1 = vpath _2 = TokEq _3 = pattern
+  _1 = vpath _2 = TokEq _3 = pattern
     {                                ( [_1, _3] )}
 | _1 = vpath _2 = TokEq _3 = pattern _4 = TokSemi
     {                                       ( [_1, _3] )}
@@ -659,19 +659,19 @@ _1 = vpath _2 = TokEq _3 = pattern
     {                                                    ( (_1, _3) :: _5 )}
 
 pattern_list:
-_1 = pattern
+  _1 = pattern
     {                 ( [_1] )}
 | _1 = pattern _2 = TokSemi _3 = pattern_list
     {                                   ( (_1) :: _3 )}
 
 let_binding_list:
-_1 = let_binding
+  _1 = let_binding
     {                        ( [_1] )}
 | _1 = let_binding _2 = TokAnd _3 = let_binding_list
     {                                            ( _1 :: _3 )}
 
 let_binding:
-_1 = pattern _2 = TokEq _3 = expr
+  _1 = pattern _2 = TokEq _3 = expr
     {                              ( _1, _3, union_pos (pos_of_pattern _1) (pos_of_expr _3) )}
 | _1 = pattern _2 = TokIs _3 = type_expr _4 = TokEq _5 = expr
     {                                            ( let p = pos_of_pattern _1 in (TySpecPat (_1, _3, union_pos p (pos_of_type _3)), _5, union_pos p (pos_of_expr _5)) )}
@@ -683,35 +683,35 @@ _1 = pattern _2 = TokEq _3 = expr
             IdPat (s,p), make_function_nest p _2 None (TySpecExpr (_6, _4, p)), p )}
 
 param_list:
-_1 = pattern_limited
+  _1 = pattern_limited
     {                        ( [_1] )}
 | _1 = pattern_limited _2 = param_list
     {                                 ( (_1) :: _2 )}
 
 pattern_match_list:
-_1 = pattern_match %prec prec_expr_n19
+  _1 = pattern_match %prec prec_expr_n19
     {                                           ( let (m, p) = _1 in [m], p )}
 | _1 = pattern_match _2 = TokAlt _3 = pattern_match_list %prec prec_expr_n19
     {                                                                  ( let (m, p) = _1 and (l, p2) = _3 in m :: l, union_pos p p2 )}
 
 pattern_match:
-_1 = pattern _2 = when_opt _3 = TokRArrow _4 = expr %prec prec_expr_n19
+  _1 = pattern _2 = when_opt _3 = TokRArrow _4 = expr %prec prec_expr_n19
     {                                                           ( (_1, _2, _4), union_pos (pos_of_pattern _1) (pos_of_expr _4) )}
 
 when_opt:
-
+  
     {      ( None )}
 | _1 = TokWhen _2 = expr
     {                      ( Some _2 )}
 
 const_expr:
-_1 = vpath_cap
+  _1 = vpath_cap
     {                   ( let (_,_,p) = _1 in CConsConst (_1, p) )}
 | _1 = const_expr_not_cons
     {                           ( _1 )}
 
 const_expr_not_cons:
-_1 = TokInt
+  _1 = TokInt
     {                ( let (v, p) = _1 in IntConst (v, p) )}
 | _1 = TokFloat
     {                  ( let (v, p) = _1 in FloatConst (v, p) )}
@@ -719,7 +719,7 @@ _1 = TokInt
     {                 ( let (v, p) = _1 in CharConst (v, p) )}
 
 expr:
-_1 = expr _2 = TokCons _3 = expr
+  _1 = expr _2 = TokCons _3 = expr
     { ( let p = union_pos (pos_of_expr _1) (pos_of_expr _3) in
             ConsExpr (([],list_cons_sym,_2), TupleExpr ([_1; _3], p), p) )}
 | _1 = TokOpMinus _2 = expr %prec prec_expr_n5
@@ -793,7 +793,7 @@ _1 = expr _2 = TokCons _3 = expr
     {                   ( let (_,_,p) = _1 in ConstExpr (CConsConst (_1, p), p) )}
 
 expr_fun:
-_1 = expr_fun _2 = expr_arg
+  _1 = expr_fun _2 = expr_arg
     { ( let p = union_pos (pos_of_expr _1) (pos_of_expr _2) in
           match _1 with
               ApplyExpr (f, al, _) -> ApplyExpr (f, al @ [_2], p)
@@ -804,13 +804,13 @@ _1 = expr_fun _2 = expr_arg
     {                   ( _1 )}
 
 expr_arg:
-_1 = expr_simp
+  _1 = expr_simp
     {                ( _1 )}
 | _1 = vpath_cap
     {                ( let (_,_,p) = _1 in ConstExpr (CConsConst (_1, p), p) )}
 
 expr_simp:
-_1 = const_expr_not_cons %prec prec_expr_const
+  _1 = const_expr_not_cons %prec prec_expr_const
     { ( ConstExpr (_1, pos_of_const _1) )}
 | _1 = vpath
     {                      ( let (_,_,p) = _1 in VarExpr (_1, p) )}
@@ -848,13 +848,13 @@ _1 = const_expr_not_cons %prec prec_expr_const
     {        ( ArrayEltExpr (_1, _4, union_pos (pos_of_expr _1) _5) )}
 
 expr_record_aux:
-_1 = vpath _2 = TokEq _3 = expr
+  _1 = vpath _2 = TokEq _3 = expr
     {                              ( [_1, _3] )}
 | _1 = expr_record_aux _2 = TokSemi _3 = vpath _4 = TokEq _5 = expr
     {                                                   ( (_3, _5) :: _1 )}
 
 expr_record:
-_1 = expr_record_aux
+  _1 = expr_record_aux
     {                       ( _1 )}
 | _1 = expr_record_aux _2 = TokSemi
     {                              ( _1 )}

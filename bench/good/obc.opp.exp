@@ -133,44 +133,44 @@ let mkTypexpr tx = makeTypexpr (tx, lloc ())
 %%
 
 program:
-_1 = MODULE _2 = modname _3 = semi _4 = imports _5 = block _6 = opt_ident _7 = DOT
+  _1 = MODULE _2 = modname _3 = semi _4 = imports _5 = block _6 = opt_ident _7 = DOT
     { ( check_end _2.x_name _6 (rloc 6); 
 	  Module (_2, _4, _5, ref []) )}
 
 modname:
-_1 = name
+  _1 = name
     {           ( check_modname _1.x_name; _1 )}
 
 imports:
-_1 = import
+  _1 = import
     {             ( [_1] )}
 | _1 = imports _2 = COMMA _3 = import
     {                         ( _1 @ [_3] )}
 
 import:
-_1 = name
+  _1 = name
     {           ( (_1, _1.x_name, ref 0) )}
 | _1 = name _2 = ASSIGN _3 = IDENT
     {                       ( (_1, _3, ref 0) )}
 
 block:
-_1 = decls _2 = body _3 = END
+  _1 = decls _2 = body _3 = END
     {                    ( Block (_1, _2, ref 0) )}
 
 body:
-
+  
     {                  ( makeStmt (SkipStmt, no_loc) )}
 | _1 = BEGIN _2 = stmts
     {                  ( _2 )}
 
 decls:
-
+  
     {                  ( [] )}
 | _1 = decls _2 = decl
     {                 ( _1 @ _2 )}
 
 decl:
-_1 = CONST _2 = const_decls
+  _1 = CONST _2 = const_decls
     {                       ( _2 )}
 | _1 = VAR _2 = var_decls
     {                   ( _2 )}
@@ -182,37 +182,37 @@ _1 = CONST _2 = const_decls
     {                  ( [] )}
 
 const_decls:
-_1 = const_decl
+  _1 = const_decl
     {                 ( [_1] )}
 | _1 = const_decl _2 = const_decls
     {                           ( _1 :: _2 )}
 
 const_decl:
-_1 = defid _2 = EQUAL _3 = expr _4 = semi
+  _1 = defid _2 = EQUAL _3 = expr _4 = semi
     {                          ( ConstDecl (_1, _3) )}
 
 type_decls:
-_1 = type_decl
+  _1 = type_decl
     {                ( [_1] )}
 | _1 = type_decl _2 = type_decls
     {                         ( _1 :: _2 )}
 
 type_decl:
-_1 = defid _2 = EQUAL _3 = typexpr _4 = semi
+  _1 = defid _2 = EQUAL _3 = typexpr _4 = semi
     {                              ( TypeDecl (_1, _3) )}
 
 var_decls:
-_1 = var_decl
+  _1 = var_decl
     {               ( [_1] )}
 | _1 = var_decl _2 = var_decls
     {                        ( _1 :: _2 )}
 
 var_decl:
-_1 = defids _2 = COLON _3 = typexpr _4 = semi
+  _1 = defids _2 = COLON _3 = typexpr _4 = semi
     {                              ( VarDecl (VarDef, _1, _3) )}
 
 proc:
-_1 = PROCEDURE _2 = defid _3 = params _4 = semi _5 = block _6 = opt_ident _7 = semi
+  _1 = PROCEDURE _2 = defid _3 = params _4 = semi _5 = block _6 = opt_ident _7 = semi
     {      ( check_end _2.x_name _6 (rloc 6);
         ProcDecl (Procedure, _2, _3, _5) )}
 | _1 = PROCEDURE _2 = receiver _3 = defid _4 = params _5 = semi _6 = block _7 = opt_ident _8 = semi
@@ -228,13 +228,13 @@ _1 = PROCEDURE _2 = defid _3 = params _4 = semi _5 = block _6 = opt_ident _7 = s
     {      ( DummyDecl )}
 
 receiver:
-_1 = LPAR _2 = defid _3 = COLON _4 = typename _5 = RPAR
+  _1 = LPAR _2 = defid _3 = COLON _4 = typename _5 = RPAR
     {      ( VarDecl(ParamDef, [_2], _4) )}
 | _1 = LPAR _2 = VAR _3 = defid _4 = COLON _5 = typename _6 = RPAR
     {      ( VarDecl(VParamDef, [_3], _5) )}
 
 params:
-
+  
     {                  ( Heading ([], None) )}
 | _1 = LPAR _2 = RPAR _3 = result
     {                      ( Heading ([], _3) )}
@@ -242,37 +242,37 @@ params:
     {                             ( Heading (_2, _4) )}
 
 formals:
-_1 = formal
+  _1 = formal
     {             ( [_1] )}
 | _1 = formal _2 = semi _3 = formals
     {                         ( _1 :: _3 )}
 
 formal:
-_1 = defids _2 = COLON _3 = typexpr
+  _1 = defids _2 = COLON _3 = typexpr
     {                         ( VarDecl (ParamDef, _1, _3) )}
 | _1 = VAR _2 = defids _3 = COLON _4 = typexpr
     {                             ( VarDecl (VParamDef, _2, _4) )}
 
 result:
-
+  
     {                  ( None )}
 | _1 = COLON _2 = qualid
     {                  ( Some _2 )}
 
 opt_ident:
-
+  
     {                  ( None )}
 | _1 = IDENT
     {            ( Some _1 )}
 
 stmts:
-_1 = stmts_a
+  _1 = stmts_a
     {              ( makeStmt (SeqStmt (List.rev _1), lloc ()) )}
 | _1 = stmts_b
     {              ( makeStmt (SeqStmt (List.rev _1), lloc ()) )}
 
 stmts_a:
-
+  
     {                  ( [] )}
 | _1 = stmts_a _2 = SEMI
     {                  ( _1 )}
@@ -282,7 +282,7 @@ stmts_a:
     {                        ( _1 )}
 
 stmts_b:
-_1 = stmts_a _2 = stmt0
+  _1 = stmts_a _2 = stmt0
     {                   ( makeStmt (_2, rloc 2) :: _1 )}
 | _1 = stmts_a _2 = stmt1
     {                   ( makeStmt (_2, rloc 2) :: _1 )}
@@ -290,17 +290,17 @@ _1 = stmts_a _2 = stmt0
     {                          ( makeStmt (_3, rloc 3) :: _1 )}
 
 missing:
- %prec error
+   %prec error
     {                            ( parse_error "missing ';'" )}
 
 stmt0:
-_1 = designator _2 = ASSIGN _3 = expr
+  _1 = designator _2 = ASSIGN _3 = expr
     {                           ( Assign (_1, _3) )}
 | _1 = designator
     {                 ( ProcCall (make_call _1) )}
 
 stmt1:
-_1 = RETURN
+  _1 = RETURN
     {              ( Return None )}
 | _1 = RETURN _2 = expr
     {                  ( Return (Some _2) )}
@@ -332,7 +332,7 @@ _1 = RETURN
     {            ( ErrStmt )}
 
 if_chain:
-_1 = IF _2 = expr _3 = THEN _4 = stmts
+  _1 = IF _2 = expr _3 = THEN _4 = stmts
     {                        ( [(_2,_4)] )}
 | _1 = IF _2 = error _3 = stmts
     {                    ( [] )}
@@ -342,53 +342,53 @@ _1 = IF _2 = expr _3 = THEN _4 = stmts
     {                               ( _1 )}
 
 else_part:
-
+  
     {                  ( None )}
 | _1 = ELSE _2 = stmts
     {                 ( Some _2 )}
 
 case_arms:
-_1 = case_arm
+  _1 = case_arm
     {               ( _1 )}
 | _1 = case_arm _2 = VBAR _3 = case_arms
     {                            ( _1 @ _3 )}
 
 case_arm:
-
+  
     {                  ( [] )}
 | _1 = elements _2 = COLON _3 = stmts
     {                         ( [(_1, _3)] )}
 
 elements:
-_1 = element
+  _1 = element
     {              ( [_1] )}
 | _1 = element _2 = COMMA _3 = elements
     {                           ( _1 :: _3 )}
 
 element:
-_1 = expr
+  _1 = expr
     {           ( Single _1 )}
 | _1 = expr _2 = DOTDOT _3 = expr
     {                      ( Range (_1, _3) )}
 
 with_branches:
-_1 = with_branch
+  _1 = with_branch
     {                  ( [_1] )}
 | _1 = with_branch _2 = VBAR _3 = with_branches
     {                                   ( _1 :: _3 )}
 
 with_branch:
-_1 = name _2 = COLON _3 = qualid _4 = DO _5 = stmts
+  _1 = name _2 = COLON _3 = qualid _4 = DO _5 = stmts
     {                               ( (_1, _3, _5) )}
 
 by_part:
-
+  
     {                  ( mkExpr (Const (IntVal Int32.one, numtype)) )}
 | _1 = BY _2 = expr
     {              ( _2 )}
 
 expr:
-_1 = simple %prec error
+  _1 = simple %prec error
     {                        ( _1 )}
 | _1 = simple _2 = RELOP _3 = simple
     {                         ( mkExpr (Binop (_2, _1, _3)) )}
@@ -398,7 +398,7 @@ _1 = simple %prec error
     {                      ( mkExpr (TypeTest (_1, _3)) )}
 
 simple:
-_1 = term %prec error
+  _1 = term %prec error
     {                      ( fix _1 )}
 | _1 = PLUS _2 = term
     {                ( mkExpr (Monop (Uplus, fix _2)) )}
@@ -412,7 +412,7 @@ _1 = term %prec error
     {                       ( mkExpr (Binop (_2, _1, fix _3)) )}
 
 term:
-_1 = factor
+  _1 = factor
     {             ( _1 )}
 | _1 = term _2 = MULOP _3 = factor
     {                       ( mkExpr (Binop (_2, fix _1, fix _3)) )}
@@ -420,7 +420,7 @@ _1 = factor
     {                      ( mkExpr (Binop (Times, fix _1, fix _3)) )}
 
 factor:
-_1 = NUMBER
+  _1 = NUMBER
     {             ( mkExpr (Const (IntVal _1, numtype)) )}
 | _1 = DECIMAL
     {              ( mkExpr (Decimal _1) )}
@@ -451,7 +451,7 @@ _1 = NUMBER
 				  raise Parse_error )}
 
 designator:
-_1 = name
+  _1 = name
     {           ( mkExpr (Name _1) )}
 | _1 = designator _2 = UPARROW
     {                        ( mkExpr (Deref _1) )}
@@ -467,7 +467,7 @@ _1 = name
     {                        ( mkExpr (FuncCall (_1, _2)) )}
 
 actuals:
-_1 = LPAR _2 = RPAR
+  _1 = LPAR _2 = RPAR
     {                ( [] )}
 | _1 = LPAR _2 = exprs _3 = RPAR
     {                     ( _2 )}
@@ -478,13 +478,13 @@ _1 = LPAR _2 = RPAR
 				  raise Parse_error )}
 
 exprs:
-_1 = expr %prec error
+  _1 = expr %prec error
     {                      ( [_1] )}
 | _1 = expr _2 = COMMA _3 = exprs
     {                      ( _1 :: _3 )}
 
 typexpr:
-_1 = typename
+  _1 = typename
     {               ( _1 )}
 | _1 = LPAR _2 = defids _3 = RPAR
     {                      ( mkTypexpr (Enum _2) )}
@@ -501,55 +501,55 @@ _1 = typename
     {                      ( mkTypexpr (Proc _2) )}
 
 typename:
-_1 = qualid
+  _1 = qualid
     {             ( mkTypexpr (TypeName _1) )}
 
 absmark:
-
+  
     {                  ( false )}
 | _1 = ABSTRACT
     {               ( true )}
 
 parent:
-
+  
     {                  ( None )}
 | _1 = LPAR _2 = typename _3 = RPAR
     {                        ( Some _2 )}
 
 fields:
-_1 = fieldlist
+  _1 = fieldlist
     {                ( _1 )}
 | _1 = fieldlist _2 = SEMI _3 = fields
     {                          ( _1 @ _3 )}
 
 fieldlist:
-
+  
     {                  ( [] )}
 | _1 = defids _2 = COLON _3 = typexpr
     {                         ( [VarDecl (FieldDef, _1, _3)] )}
 
 qualid:
-_1 = IDENT %prec DOT
+  _1 = IDENT %prec DOT
     {                     ( makeName (!current, _1, lloc ()) )}
 | _1 = IDENT _2 = DOT _3 = IDENT
     {                     ( makeName (_1, _3, lloc ()) )}
 
 name:
-_1 = IDENT
+  _1 = IDENT
     {            ( makeName (!current, _1, lloc ()) )}
 
 defids:
-_1 = defid
+  _1 = defid
     {            ( [_1] )}
 | _1 = defid _2 = COMMA _3 = defids
     {                        ( _1 :: _3 )}
 
 defid:
-_1 = IDENT _2 = export
+  _1 = IDENT _2 = export
     {                  ( makeDefId (_1, _2, rloc 1) )}
 
 export:
-
+  
     {                  ( Private )}
 | _1 = MINUS
     {            ( ReadOnly )}
@@ -557,7 +557,7 @@ export:
     {           ( Visible )}
 
 semi:
-_1 = SEMI
+  _1 = SEMI
     {           ( () )}
 | _1 = COMMA
     {            ( parse_error "expected ';'" )}

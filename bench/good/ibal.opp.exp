@@ -161,13 +161,13 @@ Warning: the token NOTEQUAL is unused.
 %%
 
 top:
-_1 = expr
+  _1 = expr
     {                                        ( Code _1 )}
 | _1 = decl
     {                                        ( Decl _1 )}
 
 expr:
-_1 = expr1
+  _1 = expr1
     {            ( _1 )}
 | _1 = expr2
     {            ( _1 )}
@@ -177,11 +177,11 @@ _1 = expr1
     {            ( _1 )}
 
 expr1:
-_1 = integer
+  _1 = integer
     {                                       ( make_code (Integer _1) )}
 
 expr_nonint:
-_1 = expr2
+  _1 = expr2
     {            ( _1 )}
 | _1 = expr3
     {            ( _1 )}
@@ -189,7 +189,7 @@ _1 = expr2
     {                   ( _1 )}
 
 expr2:
-_1 = longvar
+  _1 = longvar
     {                                        ( make_code (Var _1) )}
 | _1 = LPAREN _2 = expr _3 = RPAREN
     {                                        ( _2 )}
@@ -201,7 +201,7 @@ _1 = longvar
     {                                            ( make_code (Appl (_1, _3 :: _5)) )}
 
 expr3:
-_1 = string
+  _1 = string
     {                                        ( make_code (Con _1) )}
 | _1 = MINUS _2 = expr_nonint
     {                                       ( make_prim (int_unary_minus, [_2]) )}
@@ -300,7 +300,7 @@ _1 = string
     {                             ( make_code (LetPragma (_2,_4)) )}
 
 expr4:
-_1 = expr _2 = PLUS _3 = expr
+  _1 = expr _2 = PLUS _3 = expr
     {                                        ( make_prim (int_plus, [_1;_3]) )}
 | _1 = expr _2 = MINUS _3 = expr
     {                                         ( make_prim (int_minus, [_1;_3]) )}
@@ -328,7 +328,7 @@ _1 = expr _2 = PLUS _3 = expr
     {                            ( clear_tyvars (); make_code (Typed (_1, quantify _3)) )}
 
 expr_nonint4:
-_1 = expr_nonint _2 = PLUS _3 = expr
+  _1 = expr_nonint _2 = PLUS _3 = expr
     {                                               ( make_prim (int_plus, [_1;_3]) )}
 | _1 = expr_nonint _2 = MINUS _3 = expr
     {                                                ( make_prim (int_minus, [_1;_3]) )}
@@ -356,19 +356,19 @@ _1 = expr_nonint _2 = PLUS _3 = expr
     {                                   ( clear_tyvars (); make_code (Typed (_1, quantify _3)) )}
 
 opt_decls:
-
+  
     {                ( [] )}
 | _1 = decls
     {                                                ( _1 )}
 
 decls:
-_1 = decl _2 = opt_semicolon
+  _1 = decl _2 = opt_semicolon
     {                                           ( [_1] )}
 | _1 = decl _2 = opt_semicolon _3 = decls
     {                                           ( _1 :: _3 )}
 
 let_decl:
-_1 = LIDENT _2 = EQUALS _3 = expr
+  _1 = LIDENT _2 = EQUALS _3 = expr
     {                                                 ( (_1,_3) )}
 | _1 = LIDENT _2 = COLON _3 = type_expr _4 = EQUALS _5 = expr
     {                                                 ( (_1, make_code (Typed (_5, quantify _3))) )}
@@ -382,17 +382,17 @@ _1 = LIDENT _2 = EQUALS _3 = expr
     {  ( (_1, make_code (Typed (make_code (Fix (_1,[_2],_6)), quantify _4))) )}
 
 opt_given:
-
+  
     {                      ( [] )}
 | _1 = GIVEN _2 = longvars
     {                      ( _2 )}
 
 decide_decl:
-_1 = DECIDE _2 = LIDENT _3 = values _4 = opt_given
+  _1 = DECIDE _2 = LIDENT _3 = values _4 = opt_given
     {                                      ( (_2, (_3, _4)) )}
 
 decl:
-_1 = let_decl
+  _1 = let_decl
     {                                         ( make_decl (Vardef (fst _1, snd _1, true)) )}
 | _1 = PRIVATE _2 = let_decl
     {                                         ( make_decl (Vardef (fst _2, snd _2, false)) )}
@@ -418,7 +418,7 @@ _1 = let_decl
     {  ( clear_tyvars (); make_decl (Tycondef (new_name _2, _3, _5)) )}
 
 obs:
-_1 = longvar
+  _1 = longvar
     {               ( (_1, BVal true) )}
 | _1 = NOT _2 = longvar
     {                   ( (_2, BVal false) )}
@@ -426,7 +426,7 @@ _1 = longvar
     {                          ( (_1, _3) )}
 
 values:
-
+  
     {                                    ( [ Bool false; Bool true ] )}
 | _1 = FROM _2 = strings
     {                                    ( map (fun x -> Symbol x) _2 )}
@@ -434,47 +434,47 @@ values:
     {                                    ( map (fun x -> Int x) (list_of_ints _2 _4) )}
 
 opt_paren_type_args:
-_1 = opt_type_args
+  _1 = opt_type_args
     {                                    ( _1 )}
 | _1 = LSQUARE _2 = opt_type_args _3 = RSQUARE
     {                                     ( _2 )}
 
 opt_type_args:
-
+  
     {                ( [] )}
 | _1 = type_args
     {                 ( _1 )}
 
 type_args:
-_1 = new_type_var
+  _1 = new_type_var
     {                         ( [_1] )}
 | _1 = new_type_var _2 = COMMA _3 = type_args
     {                                    ( _1 :: _3 )}
 
 param_decl:
-_1 = ident _2 = EQUALS _3 = LSQUARE _4 = params _5 = RSQUARE
+  _1 = ident _2 = EQUALS _3 = LSQUARE _4 = params _5 = RSQUARE
     {                                             ( (_1, _4) )}
 | _1 = ident _2 = NATURAL
     {                      ( (_1, make_list _2 0.0) )}
 
 param_decls:
-_1 = param_decl
+  _1 = param_decl
     {                           ( [_1] )}
 | _1 = param_decl _2 = SEMICOLON _3 = param_decls
     {                                        ( _1 :: _3 )}
 
 type_expr:
-_1 = arrow_type_expr
+  _1 = arrow_type_expr
     {                            ( _1 )}
 | _1 = other_type_expr
     {                       ( _1 )}
 
 arrow_type_expr:
-_1 = arrow_type_exprs _2 = MAPSTO _3 = type_expr
+  _1 = arrow_type_exprs _2 = MAPSTO _3 = type_expr
     {                                         ( Arrow (_1,_3,[]) )}
 
 other_type_expr:
-_1 = SYMBOL
+  _1 = SYMBOL
     {              ( Types.Symbol )}
 | _1 = BOOL
     {            ( Types.Bool )}
@@ -494,7 +494,7 @@ _1 = SYMBOL
     {                               ( _2 )}
 
 arrow_type_exprs:
-_1 = LPAREN _2 = RPAREN
+  _1 = LPAREN _2 = RPAREN
     {                     ( [] )}
 | _1 = LPAREN _2 = type_expr _3 = RPAREN
     {                               ( [_2] )}
@@ -502,17 +502,17 @@ _1 = LPAREN _2 = RPAREN
     {                                                ( _2 :: _4 )}
 
 tycon_expr:
-_1 = tycon_item
+  _1 = tycon_item
     {                        ( [_1] )}
 | _1 = tycon_item _2 = BAR _3 = tycon_expr
     {                                 ( _1 :: _3 )}
 
 tycon_item:
-_1 = UIDENT _2 = opt_paren_type_exprs
+  _1 = UIDENT _2 = opt_paren_type_exprs
     {                                         ( (_1, _2) )}
 
 opt_paren_type_exprs:
-
+  
     {       ( [] )}
 | _1 = type_expr
     {                 ( [_1] )}
@@ -520,13 +520,13 @@ opt_paren_type_exprs:
     {                                                ( _2 :: _4 )}
 
 opt_sqparen_type_exprs:
-_1 = opt_type_exprs
+  _1 = opt_type_exprs
     {                                        ( _1 )}
 | _1 = LSQUARE _2 = opt_type_exprs _3 = RSQUARE
     {                                      ( _2 )}
 
 opt_paren_exprs:
-
+  
     {                  ( [] )}
 | _1 = expr
     {            ( [_1] )}
@@ -534,71 +534,71 @@ opt_paren_exprs:
     {                                      ( _2 :: _4 )}
 
 new_type_var:
-_1 = LIDENT
+  _1 = LIDENT
     {                      ( new_tyvar_for_name _1 )}
 
 opt_type_exprs:
-
+  
     {                 ( [] )}
 | _1 = type_exprs
     {                  ( _1 )}
 
 type_exprs:
-_1 = type_expr
+  _1 = type_expr
     {                       ( [_1] )}
 | _1 = type_expr _2 = COMMA _3 = type_exprs
     {                                  ( _1 :: _3 )}
 
 named_type_expr:
-_1 = LIDENT _2 = COLON _3 = type_expr
+  _1 = LIDENT _2 = COLON _3 = type_expr
     {                                         ( (_1, _3) )}
 
 opt_named_type_exprs:
-
+  
     {                       ( [] )}
 | _1 = named_type_exprs
     {                         ( _1 )}
 
 named_type_exprs:
-_1 = named_type_expr
+  _1 = named_type_expr
     {                                   ( [_1] )}
 | _1 = named_type_expr _2 = COMMA _3 = named_type_exprs
     {                                              ( _1 :: _3 )}
 
 clauses:
-_1 = clauses1
+  _1 = clauses1
     {                      ( _1 )}
 | _1 = HASH _2 = clauses1
     {                      ( _2 )}
 
 clauses1:
-_1 = clause
+  _1 = clause
     {                                         ( [_1] )}
 | _1 = clause _2 = HASH _3 = clauses1
     {                                          ( _1 :: _3 )}
 
 clause:
-_1 = pat _2 = COLON _3 = expr
+  _1 = pat _2 = COLON _3 = expr
     {                                       ( (_1, _3) )}
 
 rew_clauses:
-_1 = rew_clauses1
+  _1 = rew_clauses1
     {                           ( _1 )}
 | _1 = HASH _2 = rew_clauses1
     {                         ( _2 )}
 
 rew_clauses1:
-_1 = rew_clause
+  _1 = rew_clause
     {                                        ( [_1] )}
 | _1 = rew_clause _2 = HASH _3 = rew_clauses1
     {                                        ( _1 :: _3 )}
 
 rew_clause:
-_1 = pat _2 = COLON _3 = float
+  _1 = pat _2 = COLON _3 = float
     {                                        ( (_1, _3) )}
 
 pat:
-_1 = ANY
+  _1 = ANY
     {                                        ( Any )}
 | _1 = LIDENT
     {                                         ( Bind (_1) )}
@@ -622,19 +622,19 @@ _1 = ANY
     {                                          ( Conspat (_1,_2) )}
 
 integer:
-_1 = NATURAL
+  _1 = NATURAL
     {                  ( _1 )}
 | _1 = MINUS _2 = NATURAL
     {                     ( -_2 )}
 
 string_choices:
-_1 = string
+  _1 = string
     {                           ( [ _1 ] )}
 | _1 = string _2 = BAR _3 = string_choices
     {                                 ( _1 :: _3 )}
 
 opt_paren_pats:
-
+  
     {                 ( [] )}
 | _1 = pat
     {           ( [_1] )}
@@ -642,79 +642,79 @@ opt_paren_pats:
     {                                    ( _2 :: _4 )}
 
 opt_named_pats:
-
+  
     {                 ( [] )}
 | _1 = named_pats
     {                  ( _1 )}
 
 pats:
-_1 = pat
+  _1 = pat
     {                                        ( [_1] )}
 | _1 = pat _2 = COMMA _3 = pats
     {                                        ( _1 :: _3 )}
 
 named_pats:
-_1 = named_pat
+  _1 = named_pat
     {                                        ( [_1] )}
 | _1 = named_pat _2 = COMMA _3 = named_pats
     {                                        ( _1 :: _3 )}
 
 named_pat:
-_1 = LIDENT _2 = COLON _3 = pat
+  _1 = LIDENT _2 = COLON _3 = pat
     {                                         ( (_1, _3) )}
 
 exprs:
-_1 = expr
+  _1 = expr
     {                                       ( [_1] )}
 | _1 = expr _2 = COMMA _3 = exprs
     {                                       ( _1 :: _3 )}
 
 opt_named_exprs:
-
+  
     {                                            ( [] )}
 | _1 = named_exprs
     {                                       ( _1 )}
 
 named_exprs:
-_1 = named_expr
+  _1 = named_expr
     {                                       ( [_1] )}
 | _1 = named_expr _2 = COMMA _3 = named_exprs
     {                                       ( _1 :: _3 )}
 
 named_expr:
-_1 = LIDENT _2 = COLON _3 = expr
+  _1 = LIDENT _2 = COLON _3 = expr
     {                                         ( (_1, _3) )}
 
 weighted_exprs:
-_1 = weighted_expr
+  _1 = weighted_expr
     {                                       ( [_1] )}
 | _1 = weighted_expr _2 = COMMA _3 = weighted_exprs
     {                                          ( _1 :: _3 )}
 
 weighted_expr:
-_1 = POSFLOAT _2 = COLON _3 = expr
+  _1 = POSFLOAT _2 = COLON _3 = expr
     {                                             ( (_1,_3) )}
 
 params:
-_1 = POSFLOAT
+  _1 = POSFLOAT
     {                                           ( [_1] )}
 | _1 = POSFLOAT _2 = COMMA _3 = params
     {                                           ( _1 :: _3 )}
 
 opt_vars:
-
+  
     {                                            ( [] )}
 | _1 = vars
     {                                       ( _1 )}
 
 vars:
-_1 = LIDENT
+  _1 = LIDENT
     {                                        ( [_1] )}
 | _1 = LIDENT _2 = COMMA _3 = vars
     {                                    ( _1 :: _3 )}
 
 ulongvar:
-_1 = UIDENT
+  _1 = UIDENT
     {                  ( [_1] )}
 | _1 = LIDENT _2 = DOT _3 = ulongvar
     {                           ( _1 :: _3 )}
@@ -722,7 +722,7 @@ _1 = UIDENT
     {                           ( _1 :: _3 )}
 
 longvar:
-_1 = LIDENT
+  _1 = LIDENT
     {                 ( [_1] )}
 | _1 = LIDENT _2 = DOT _3 = longvar
     {                          ( _1 :: _3 )}
@@ -730,37 +730,37 @@ _1 = LIDENT
     {                          ( _1 :: _3 )}
 
 longvars:
-_1 = longvar
+  _1 = longvar
     {                                      ( [_1] )}
 | _1 = longvar _2 = COMMA _3 = longvars
     {                                      ( _1 :: _3 )}
 
 string:
-_1 = QUOTE _2 = ident
+  _1 = QUOTE _2 = ident
     {                     ( _2 )}
 | _1 = STRING
     {              ( _1 )}
 
 strings:
-_1 = string
+  _1 = string
     {                 ( [ _1 ] )}
 | _1 = string _2 = COMMA _3 = strings
     {                            ( _1 :: _3 )}
 
 opt_semicolon:
-
+  
     {                   ()}
 | _1 = SEMICOLON
     {                   ()}
 
 float:
-_1 = POSFLOAT
+  _1 = POSFLOAT
     {                 ( _1 )}
 | _1 = MINUS _2 = POSFLOAT
     {                      ( -. _2 )}
 
 ident:
-_1 = LIDENT
+  _1 = LIDENT
     {               (_1)}
 | _1 = UIDENT
     {              (_1)}

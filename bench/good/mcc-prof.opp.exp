@@ -42,23 +42,23 @@ let pos_of_single = function
 %%
 
 main:
-_1 = expr_list _2 = TokEof
+  _1 = expr_list _2 = TokEof
     {                              ( _1 )}
 
 expr_list:
-_1 = expr
+  _1 = expr
     {                              ( [_1] )}
 | _1 = expr_list _2 = TokSemi _3 = expr
     {                              ( _1 @ [_3] )}
 
 expr:
-_1 = item
+  _1 = item
     {                              ( Single _1 )}
 | _1 = multi
     {                              ( Multi _1 )}
 
 item:
-_1 = TokId
+  _1 = TokId
     {                              ( VarExpr (fst _1, snd _1) )}
 | _1 = item _2 = TokPlus _3 = item
     {                              ( PlusExpr (_1, _3, union_pos (pos_of_single _1) (pos_of_single _3)) )}
@@ -78,19 +78,19 @@ _1 = TokId
     {                              ( NumExpr (fst _1, snd _1) )}
 
 item_list:
-_1 = item
+  _1 = item
     {                              ( [_1] )}
 | _1 = item_list _2 = TokComma _3 = item
     {                              ( _1 @ [_3] )}
 
 item_result:
-_1 = TokAverage _2 = TokLeftParen _3 = multi _4 = TokRightParen
+  _1 = TokAverage _2 = TokLeftParen _3 = multi _4 = TokRightParen
     {                              ( Average (_3, union_pos _1 _4) )}
 | _1 = TokPrint _2 = TokLeftParen _3 = TokString _4 = TokRightParen
     {                              ( PrintExpr (fst _3, snd _3) )}
 
 multi:
-_1 = TokPercentages _2 = TokLeftParen _3 = multi _4 = TokRightParen
+  _1 = TokPercentages _2 = TokLeftParen _3 = multi _4 = TokRightParen
     {                              ( Percentages (_3, union_pos _1 _4) )}
 | _1 = TokLeftBrack _2 = item_list _3 = TokRightBrack
     {                              ( ListExpr (_2, union_pos _1 _3) )}

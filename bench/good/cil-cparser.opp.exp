@@ -344,15 +344,15 @@ let trd3 (_, _, result) = result
 %%
 
 interpret:
-_1 = file _2 = EOF
+  _1 = file _2 = EOF
     {              (_1)}
 
 file:
-_1 = globals
+  _1 = globals
     {                 (_1)}
 
 globals:
-
+  
     {                                        ( [] )}
 | _1 = global _2 = globals
     {                                        ( _1 :: _2 )}
@@ -360,11 +360,11 @@ globals:
     {                                        ( _2 )}
 
 location:
- %prec IDENT
+   %prec IDENT
     {                               ( currentLoc () )}
 
 global:
-_1 = declaration
+  _1 = declaration
     {                                        ( _1 )}
 | _1 = function_def
     {                                        ( _1 )}
@@ -409,7 +409,7 @@ _1 = declaration
     {                           ( PRAGMA (VARIABLE "parse_error", _1) )}
 
 id_or_typename:
-_1 = IDENT
+  _1 = IDENT
     {             (fst _1)}
 | _1 = NAMED_TYPE
     {                  (fst _1)}
@@ -417,13 +417,13 @@ _1 = IDENT
     {                                        ( "@name(" ^ fst _3 ^ ")" )}
 
 maybecomma:
-
+  
     {                                        ( () )}
 | _1 = COMMA
     {                                        ( () )}
 
 primary_expression:
-_1 = IDENT
+  _1 = IDENT
     {          (VARIABLE (fst _1), snd _1)}
 | _1 = constant
     {          (CONSTANT (fst _1), snd _1)}
@@ -435,7 +435,7 @@ _1 = IDENT
     {                         ( EXPR_PATTERN(fst _3), _1 )}
 
 postfix_expression:
-_1 = primary_expression
+  _1 = primary_expression
     {                        ( _1 )}
 | _1 = postfix_expression _2 = bracket_comma_expression
     {   (INDEX (fst _1, smooth_expression _2), snd _1)}
@@ -457,7 +457,7 @@ _1 = primary_expression
     {          ( CAST(_2, COMPOUND_INIT _5), _1 )}
 
 unary_expression:
-_1 = postfix_expression
+  _1 = postfix_expression
     {                        ( _1 )}
 | _1 = PLUS_PLUS _2 = unary_expression
     {          (UNARY (PREINCR, fst _2), _1)}
@@ -487,13 +487,13 @@ _1 = postfix_expression
     {                               ( LABELADDR (fst _2), _1 )}
 
 cast_expression:
-_1 = unary_expression
+  _1 = unary_expression
     {                         ( _1 )}
 | _1 = LPAREN _2 = type_name _3 = RPAREN _4 = cast_expression
     {           ( CAST(_2, SINGLE_INIT (fst _4)), _1 )}
 
 multiplicative_expression:
-_1 = cast_expression
+  _1 = cast_expression
     {                         ( _1 )}
 | _1 = multiplicative_expression _2 = STAR _3 = cast_expression
     {   (BINARY(MUL, fst _1, fst _3), snd _1)}
@@ -503,7 +503,7 @@ _1 = cast_expression
     {   (BINARY(MOD, fst _1, fst _3), snd _1)}
 
 additive_expression:
-_1 = multiplicative_expression
+  _1 = multiplicative_expression
     {                        ( _1 )}
 | _1 = additive_expression _2 = PLUS _3 = multiplicative_expression
     {   (BINARY(ADD, fst _1, fst _3), snd _1)}
@@ -511,7 +511,7 @@ _1 = multiplicative_expression
     {   (BINARY(SUB, fst _1, fst _3), snd _1)}
 
 shift_expression:
-_1 = additive_expression
+  _1 = additive_expression
     {                         ( _1 )}
 | _1 = shift_expression _2 = INF_INF _3 = additive_expression
     {   (BINARY(SHL, fst _1, fst _3), snd _1)}
@@ -519,7 +519,7 @@ _1 = additive_expression
     {   (BINARY(SHR, fst _1, fst _3), snd _1)}
 
 relational_expression:
-_1 = shift_expression
+  _1 = shift_expression
     {                        ( _1 )}
 | _1 = relational_expression _2 = INF _3 = shift_expression
     {   (BINARY(LT, fst _1, fst _3), snd _1)}
@@ -531,7 +531,7 @@ _1 = shift_expression
     {   (BINARY(GE, fst _1, fst _3), snd _1)}
 
 equality_expression:
-_1 = relational_expression
+  _1 = relational_expression
     {                        ( _1 )}
 | _1 = equality_expression _2 = EQ_EQ _3 = relational_expression
     {   (BINARY(EQ, fst _1, fst _3), snd _1)}
@@ -539,43 +539,43 @@ _1 = relational_expression
     {   (BINARY(NE, fst _1, fst _3), snd _1)}
 
 bitwise_and_expression:
-_1 = equality_expression
+  _1 = equality_expression
     {                       ( _1 )}
 | _1 = bitwise_and_expression _2 = AND _3 = equality_expression
     {   (BINARY(BAND, fst _1, fst _3), snd _1)}
 
 bitwise_xor_expression:
-_1 = bitwise_and_expression
+  _1 = bitwise_and_expression
     {                       ( _1 )}
 | _1 = bitwise_xor_expression _2 = CIRC _3 = bitwise_and_expression
     {   (BINARY(XOR, fst _1, fst _3), snd _1)}
 
 bitwise_or_expression:
-_1 = bitwise_xor_expression
+  _1 = bitwise_xor_expression
     {                        ( _1 )}
 | _1 = bitwise_or_expression _2 = PIPE _3 = bitwise_xor_expression
     {   (BINARY(BOR, fst _1, fst _3), snd _1)}
 
 logical_and_expression:
-_1 = bitwise_or_expression
+  _1 = bitwise_or_expression
     {                        ( _1 )}
 | _1 = logical_and_expression _2 = AND_AND _3 = bitwise_or_expression
     {   (BINARY(AND, fst _1, fst _3), snd _1)}
 
 logical_or_expression:
-_1 = logical_and_expression
+  _1 = logical_and_expression
     {                        ( _1 )}
 | _1 = logical_or_expression _2 = PIPE_PIPE _3 = logical_and_expression
     {   (BINARY(OR, fst _1, fst _3), snd _1)}
 
 conditional_expression:
-_1 = logical_or_expression
+  _1 = logical_or_expression
     {                         ( _1 )}
 | _1 = logical_or_expression _2 = QUEST _3 = opt_expression _4 = COLON _5 = conditional_expression
     {   (QUESTION (fst _1, _3, fst _5), snd _1)}
 
 assignment_expression:
-_1 = conditional_expression
+  _1 = conditional_expression
     {                         ( _1 )}
 | _1 = cast_expression _2 = EQ _3 = assignment_expression
     {   (BINARY(ASSIGN, fst _1, fst _3), snd _1)}
@@ -601,11 +601,11 @@ _1 = conditional_expression
     {   (BINARY(SHR_ASSIGN, fst _1, fst _3), snd _1)}
 
 expression:
-_1 = assignment_expression
+  _1 = assignment_expression
     {                        ( _1 )}
 
 constant:
-_1 = CST_INT
+  _1 = CST_INT
     {               (CONST_INT (fst _1), snd _1)}
 | _1 = CST_FLOAT
     {                 (CONST_FLOAT (fst _1), snd _1)}
@@ -619,21 +619,21 @@ _1 = CST_INT
     {                   (CONST_WSTRING (fst _1), snd _1)}
 
 string_constant:
-_1 = string_list
+  _1 = string_list
     {                                        (intlist_to_string (fst _1), snd _1 )}
 
 one_string_constant:
-_1 = CST_STRING
+  _1 = CST_STRING
     {                                        (intlist_to_string (fst _1) )}
 
 string_list:
-_1 = one_string
+  _1 = one_string
     {                                        ( _1 )}
 | _1 = string_list _2 = one_string
     {                                        ( (fst _1) @ (fst _2), snd _1 )}
 
 wstring_list:
-_1 = CST_WSTRING
+  _1 = CST_WSTRING
     {                                        ( _1 )}
 | _1 = wstring_list _2 = one_string
     {                                        ( (fst _1) @ (fst _2), snd _1 )}
@@ -641,7 +641,7 @@ _1 = CST_WSTRING
     {                                        ( (fst _1) @ (fst _2), snd _1 )}
 
 one_string:
-_1 = CST_STRING
+  _1 = CST_STRING
     {                  (_1)}
 | _1 = FUNCTION__
     {                                        ((Cabs.explodeStringToInts 
@@ -651,25 +651,25 @@ _1 = CST_STRING
 					    !currentFunctionName), _1)}
 
 init_expression:
-_1 = expression
+  _1 = expression
     {                        ( SINGLE_INIT (fst _1) )}
 | _1 = LBRACE _2 = initialiser_list_opt _3 = RBRACE
     {   ( COMPOUND_INIT _2)}
 
 initialiser_list:
-_1 = initialiser
+  _1 = initialiser
     {                                            ( [_1] )}
 | _1 = initialiser _2 = COMMA _3 = initialiser_list_opt
     {                                            ( _1 :: _3 )}
 
 initialiser_list_opt:
-
+  
     {                                            ( [] )}
 | _1 = initialiser_list
     {                                            ( _1 )}
 
 initialiser:
-_1 = init_designators _2 = eq_opt _3 = init_expression
+  _1 = init_designators _2 = eq_opt _3 = init_expression
     {                                            ( (_1, _3) )}
 | _1 = gcc_init_designators _2 = init_expression
     {                                         ( (_1, _2) )}
@@ -677,13 +677,13 @@ _1 = init_designators _2 = eq_opt _3 = init_expression
     {                                        ( (NEXT_INIT, _1) )}
 
 eq_opt:
-_1 = EQ
+  _1 = EQ
     {                             ( () )}
 | 
     {                                 ( () )}
 
 init_designators:
-_1 = DOT _2 = id_or_typename _3 = init_designators_opt
+  _1 = DOT _2 = id_or_typename _3 = init_designators_opt
     {                                                 ( INFIELD_INIT(_2, _3) )}
 | _1 = LBRACKET _2 = expression _3 = RBRACKET _4 = init_designators_opt
     {                                        ( ATINDEX_INIT(fst _2, _4) )}
@@ -691,29 +691,29 @@ _1 = DOT _2 = id_or_typename _3 = init_designators_opt
     {                                        ( ATINDEXRANGE_INIT(fst _2, fst _4) )}
 
 init_designators_opt:
-
+  
     {                                        ( NEXT_INIT )}
 | _1 = init_designators
     {                                        ( _1 )}
 
 gcc_init_designators:
-_1 = id_or_typename _2 = COLON
+  _1 = id_or_typename _2 = COLON
     {                                        ( INFIELD_INIT(_1, NEXT_INIT) )}
 
 arguments:
-
+  
     {                                    ( [] )}
 | _1 = comma_expression
     {                                    ( fst _1 )}
 
 opt_expression:
-
+  
     {          (NOTHING)}
 | _1 = comma_expression
     {          (smooth_expression (fst _1))}
 
 comma_expression:
-_1 = expression
+  _1 = expression
     {                                           ([fst _1], snd _1)}
 | _1 = expression _2 = COMMA _3 = comma_expression
     {                                                  ( fst _1 :: fst _3, snd _1 )}
@@ -721,25 +721,25 @@ _1 = expression
     {                                                  ( _3 )}
 
 comma_expression_opt:
-
+  
     {                                    ( NOTHING )}
 | _1 = comma_expression
     {                                    ( smooth_expression (fst _1) )}
 
 paren_comma_expression:
-_1 = LPAREN _2 = comma_expression _3 = RPAREN
+  _1 = LPAREN _2 = comma_expression _3 = RPAREN
     {                                                   ( _2 )}
 | _1 = LPAREN _2 = error _3 = RPAREN
     {                                                   ( [], _1 )}
 
 bracket_comma_expression:
-_1 = LBRACKET _2 = comma_expression _3 = RBRACKET
+  _1 = LBRACKET _2 = comma_expression _3 = RBRACKET
     {                                                       ( fst _2 )}
 | _1 = LBRACKET _2 = error _3 = RBRACKET
     {                                                       ( [] )}
 
 block:
-_1 = block_begin _2 = local_labels _3 = block_attrs _4 = block_element_list _5 = RBRACE
+  _1 = block_begin _2 = local_labels _3 = block_attrs _4 = block_element_list _5 = RBRACE
     {                                         (!Lexerhack.pop_context();
                                           { blabels = _2;
                                             battrs = _3;
@@ -754,17 +754,17 @@ _1 = block_begin _2 = local_labels _3 = block_attrs _4 = block_element_list _5 =
                                          )}
 
 block_begin:
-_1 = LBRACE
+  _1 = LBRACE
     {                           (!Lexerhack.push_context (); _1)}
 
 block_attrs:
-
+  
     {                                                            ( [] )}
 | _1 = BLOCKATTRIBUTE _2 = paren_attr_list_ne
     {                                        ( [("__blockattribute__", _2)] )}
 
 block_element_list:
-
+  
     {                                         ( [] )}
 | _1 = declaration _2 = block_element_list
     {                                         ( DEFINITION(_1) :: _2 )}
@@ -775,19 +775,19 @@ block_element_list:
                                                     snd _1)] )}
 
 local_labels:
-
+  
     {                                                     ( [] )}
 | _1 = LABEL__ _2 = local_label_names _3 = SEMICOLON _4 = local_labels
     {                                                     ( _2 @ _4 )}
 
 local_label_names:
-_1 = IDENT
+  _1 = IDENT
     {                                         ( [ fst _1 ] )}
 | _1 = IDENT _2 = COMMA _3 = local_label_names
     {                                         ( fst _1 :: _3 )}
 
 statement:
-_1 = SEMICOLON
+  _1 = SEMICOLON
     {               (NOP _1 )}
 | _1 = comma_expression _2 = SEMICOLON
     {          (COMPUTATION (smooth_expression (fst _1), snd _1))}
@@ -846,31 +846,31 @@ _1 = SEMICOLON
     {                                 ( (NOP _2))}
 
 for_clause:
-_1 = opt_expression _2 = SEMICOLON
+  _1 = opt_expression _2 = SEMICOLON
     {                                 ( FC_EXP _1 )}
 | _1 = declaration
     {                                 ( FC_DECL _1 )}
 
 declaration:
-_1 = decl_spec_list _2 = init_declarator_list _3 = SEMICOLON
+  _1 = decl_spec_list _2 = init_declarator_list _3 = SEMICOLON
     {                                       ( doDeclaration (snd _1) (fst _1) _2 )}
 | _1 = decl_spec_list _2 = SEMICOLON
     {                                    ( doDeclaration (snd _1) (fst _1) [] )}
 
 init_declarator_list:
-_1 = init_declarator
+  _1 = init_declarator
     {                                                 ( [_1] )}
 | _1 = init_declarator _2 = COMMA _3 = init_declarator_list
     {                                                 ( _1 :: _3 )}
 
 init_declarator:
-_1 = declarator
+  _1 = declarator
     {                                        ( (_1, NO_INIT) )}
 | _1 = declarator _2 = EQ _3 = init_expression
     {                                        ( (_1, _3) )}
 
 decl_spec_list:
-_1 = TYPEDEF _2 = decl_spec_list_opt
+  _1 = TYPEDEF _2 = decl_spec_list_opt
     {                                        ( SpecTypedef :: _2, _1  )}
 | _1 = EXTERN _2 = decl_spec_list_opt
     {                                        ( SpecStorage EXTERN :: _2, _1 )}
@@ -892,19 +892,19 @@ _1 = TYPEDEF _2 = decl_spec_list_opt
     {                                        ( [ SpecPattern(fst _3) ], _1 )}
 
 decl_spec_list_opt:
- %prec NAMED_TYPE
+   %prec NAMED_TYPE
     {                                        ( [] )}
 | _1 = decl_spec_list
     {                                        ( fst _1 )}
 
 decl_spec_list_opt_no_named:
- %prec IDENT
+   %prec IDENT
     {                                        ( [] )}
 | _1 = decl_spec_list
     {                                        ( fst _1 )}
 
 type_spec:
-_1 = VOID
+  _1 = VOID
     {                    ( Tvoid, _1)}
 | _1 = CHAR
     {                    ( Tchar, _1 )}
@@ -963,7 +963,7 @@ _1 = VOID
                                           TtypeofT (s, d), _1 )}
 
 struct_decl_list:
-
+  
     {                                         ( [] )}
 | _1 = decl_spec_list _2 = SEMICOLON _3 = struct_decl_list
     {                                         ( (fst _1, 
@@ -977,13 +977,13 @@ struct_decl_list:
     {                                          ( _3 )}
 
 field_decl_list:
-_1 = field_decl
+  _1 = field_decl
     {                                         ( [_1] )}
 | _1 = field_decl _2 = COMMA _3 = field_decl_list
     {                                         ( _1 :: _3 )}
 
 field_decl:
-_1 = declarator
+  _1 = declarator
     {                                    ( (_1, None) )}
 | _1 = declarator _2 = COLON _3 = expression
     {                                    ( (_1, Some (fst _3)) )}
@@ -991,7 +991,7 @@ _1 = declarator
     {                                    ( (missingFieldDecl, Some (fst _2)) )}
 
 enum_list:
-_1 = enumerator
+  _1 = enumerator
     {                  ([_1])}
 | _1 = enum_list _2 = COMMA _3 = enumerator
     {                                       (_1 @ [_3])}
@@ -999,18 +999,18 @@ _1 = enumerator
     {                                        ( _1 )}
 
 enumerator:
-_1 = IDENT
+  _1 = IDENT
     {            ((fst _1, NOTHING, snd _1))}
 | _1 = IDENT _2 = EQ _3 = expression
     {                         ((fst _1, fst _3, snd _1))}
 
 declarator:
-_1 = pointer_opt _2 = direct_decl _3 = attributes_with_asm
+  _1 = pointer_opt _2 = direct_decl _3 = attributes_with_asm
     {                                         ( let (n, decl) = _2 in
                                            (n, applyPointer (fst _1) decl, _3, snd _1) )}
 
 direct_decl:
-_1 = id_or_typename
+  _1 = id_or_typename
     {                                   ( (_1, JUSTBASE) )}
 | _1 = LPAREN _2 = attributes _3 = declarator _4 = RPAREN
     {                                   ( let (n,decl,al,loc) = _3 in
@@ -1029,11 +1029,11 @@ _1 = id_or_typename
                                    )}
 
 parameter_list_startscope:
-_1 = LPAREN
+  _1 = LPAREN
     {                                   ( !Lexerhack.push_context () )}
 
 rest_par_list:
-
+  
     {                                   ( ([], false) )}
 | _1 = parameter_decl _2 = rest_par_list1
     {                                   ( let (params, isva) = _2 in 
@@ -1041,7 +1041,7 @@ rest_par_list:
                                    )}
 
 rest_par_list1:
-
+  
     {                                        ( ([], false) )}
 | _1 = COMMA _2 = ELLIPSIS
     {                                        ( ([], true) )}
@@ -1051,7 +1051,7 @@ rest_par_list1:
                                         )}
 
 parameter_decl:
-_1 = decl_spec_list _2 = declarator
+  _1 = decl_spec_list _2 = declarator
     {                                          ( (fst _1, _2) )}
 | _1 = decl_spec_list _2 = abstract_decl
     {                                          ( let d, a = _2 in
@@ -1062,12 +1062,12 @@ _1 = decl_spec_list _2 = declarator
     {                                          ( _2 )}
 
 old_proto_decl:
-_1 = pointer_opt _2 = direct_old_proto_decl
+  _1 = pointer_opt _2 = direct_old_proto_decl
     {                                      ( let (n, decl, a) = _2 in
 					  (n, applyPointer (fst _1) decl, a, snd _1) )}
 
 direct_old_proto_decl:
-_1 = direct_decl _2 = LPAREN _3 = old_parameter_list_ne _4 = RPAREN _5 = old_pardef_list
+  _1 = direct_decl _2 = LPAREN _3 = old_parameter_list_ne _4 = RPAREN _5 = old_pardef_list
     {                                   ( let par_decl, isva = doOldParDecl _3 _5 in
                                      let n, decl = _1 in
                                      (n, PROTO(decl, par_decl, isva), [])
@@ -1078,14 +1078,14 @@ _1 = direct_decl _2 = LPAREN _3 = old_parameter_list_ne _4 = RPAREN _5 = old_par
                                    )}
 
 old_parameter_list_ne:
-_1 = IDENT
+  _1 = IDENT
     {                                               ( [fst _1] )}
 | _1 = IDENT _2 = COMMA _3 = old_parameter_list_ne
     {                                               ( let rest = _3 in
                                                  (fst _1 :: rest) )}
 
 old_pardef_list:
-
+  
     {                                          ( ([], false) )}
 | _1 = decl_spec_list _2 = old_pardef _3 = SEMICOLON _4 = ELLIPSIS
     {                                          ( ([(fst _1, _2)], true) )}
@@ -1095,7 +1095,7 @@ old_pardef_list:
                                           )}
 
 old_pardef:
-_1 = declarator
+  _1 = declarator
     {                                          ( [_1] )}
 | _1 = declarator _2 = COMMA _3 = old_pardef
     {                                          ( _1 :: _3 )}
@@ -1103,17 +1103,17 @@ _1 = declarator
     {                                          ( [] )}
 
 pointer:
-_1 = STAR _2 = attributes _3 = pointer_opt
+  _1 = STAR _2 = attributes _3 = pointer_opt
     {                                ( _2 :: fst _3, _1 )}
 
 pointer_opt:
-
+  
     {                                 ( [], currentLoc () )}
 | _1 = pointer
     {                                 ( _1 )}
 
 type_name:
-_1 = decl_spec_list _2 = abstract_decl
+  _1 = decl_spec_list _2 = abstract_decl
     {                               ( let d, a = _2 in
                                  if a <> [] then begin
                                    parse_error "attributes in type name";
@@ -1125,13 +1125,13 @@ _1 = decl_spec_list _2 = abstract_decl
     {                               ( (fst _1, JUSTBASE) )}
 
 abstract_decl:
-_1 = pointer_opt _2 = abs_direct_decl _3 = attributes
+  _1 = pointer_opt _2 = abs_direct_decl _3 = attributes
     {                                          ( applyPointer (fst _1) _2, _3 )}
 | _1 = pointer
     {                                          ( applyPointer (fst _1) JUSTBASE, [] )}
 
 abs_direct_decl:
-_1 = LPAREN _2 = attributes _3 = abstract_decl _4 = RPAREN
+  _1 = LPAREN _2 = attributes _3 = abstract_decl _4 = RPAREN
     {                                   ( let d, a = _3 in
                                      PARENTYPE (_2, d, a)
                                    )}
@@ -1146,13 +1146,13 @@ _1 = LPAREN _2 = attributes _3 = abstract_decl _4 = RPAREN
                                    )}
 
 abs_direct_decl_opt:
-_1 = abs_direct_decl
+  _1 = abs_direct_decl
     {                                    ( _1 )}
 | 
     {                                    ( JUSTBASE )}
 
 function_def:
-_1 = function_def_start _2 = block
+  _1 = function_def_start _2 = block
     {          ( let (loc, specs, decl) = _1 in
             currentFunctionName := "<__FUNCTION__ used outside any functions>";
             !Lexerhack.pop_context (); (* The context pushed by 
@@ -1161,7 +1161,7 @@ _1 = function_def_start _2 = block
           )}
 
 function_def_start:
-_1 = decl_spec_list _2 = declarator
+  _1 = decl_spec_list _2 = declarator
     {                            ( announceFunctionName _2;
                               (snd _1, fst _1, _2)
                             )}
@@ -1202,7 +1202,7 @@ _1 = decl_spec_list _2 = declarator
                             )}
 
 cvspec:
-_1 = CONST
+  _1 = CONST
     {                                        ( SpecCV(CV_CONST), _1 )}
 | _1 = VOLATILE
     {                                        ( SpecCV(CV_VOLATILE), _1 )}
@@ -1210,13 +1210,13 @@ _1 = CONST
     {                                        ( SpecCV(CV_RESTRICT), _1 )}
 
 attributes:
-
+  
     {                   ( [])}
 | _1 = attribute _2 = attributes
     {                                 ( fst _1 :: _2 )}
 
 attributes_with_asm:
-
+  
     {                                        ( [] )}
 | _1 = attribute _2 = attributes_with_asm
     {                                        ( fst _1 :: _2 )}
@@ -1225,7 +1225,7 @@ attributes_with_asm:
 					   [CONSTANT(CONST_STRING (fst _3))]) :: _5 )}
 
 attribute_nocv:
-_1 = ATTRIBUTE _2 = LPAREN _3 = paren_attr_list_ne _4 = RPAREN
+  _1 = ATTRIBUTE _2 = LPAREN _3 = paren_attr_list_ne _4 = RPAREN
     {                                        ( ("__attribute__", _3), _1 )}
 | _1 = DECLSPEC _2 = paren_attr_list_ne
     {                                        ( ("__declspec", _2), _1 )}
@@ -1235,7 +1235,7 @@ _1 = ATTRIBUTE _2 = LPAREN _3 = paren_attr_list_ne _4 = RPAREN
     {                                        ( ("__thread",[]), _1 )}
 
 attribute:
-_1 = attribute_nocv
+  _1 = attribute_nocv
     {                                        ( _1 )}
 | _1 = CONST
     {                                        ( ("const", []), _1 )}
@@ -1245,19 +1245,19 @@ _1 = attribute_nocv
     {                                        ( ("volatile",[]), _1 )}
 
 just_attribute:
-_1 = ATTRIBUTE _2 = LPAREN _3 = paren_attr_list_ne _4 = RPAREN
+  _1 = ATTRIBUTE _2 = LPAREN _3 = paren_attr_list_ne _4 = RPAREN
     {                                        ( ("__attribute__", _3) )}
 | _1 = DECLSPEC _2 = paren_attr_list_ne
     {                                        ( ("__declspec", _2) )}
 
 just_attributes:
-_1 = just_attribute
+  _1 = just_attribute
     {                                        ( [_1] )}
 | _1 = just_attribute _2 = just_attributes
     {                                        ( _1 :: _2 )}
 
 primary_attr:
-_1 = IDENT
+  _1 = IDENT
     {             ( VARIABLE (fst _1) )}
 | _1 = NAMED_TYPE
     {                  ( VARIABLE (fst _1) )}
@@ -1281,7 +1281,7 @@ _1 = IDENT
     {                                         ( VARIABLE ("__noreturn__") )}
 
 postfix_attr:
-_1 = primary_attr
+  _1 = primary_attr
     {                                         ( _1 )}
 | _1 = IDENT _2 = LPAREN _3 = RPAREN
     {                                         ( CALL(VARIABLE (fst _1), [VARIABLE ""]) )}
@@ -1293,7 +1293,7 @@ _1 = primary_attr
     {                                         (MEMBEROF (_1, _3))}
 
 unary_attr:
-_1 = postfix_attr
+  _1 = postfix_attr
     {                                         ( _1 )}
 | _1 = SIZEOF _2 = unary_expression
     {                                         (EXPR_SIZEOF (fst _2) )}
@@ -1317,11 +1317,11 @@ _1 = postfix_attr
     {                                        (UNARY (BNOT, _2))}
 
 cast_attr:
-_1 = unary_attr
+  _1 = unary_attr
     {                                         ( _1 )}
 
 multiplicative_attr:
-_1 = cast_attr
+  _1 = cast_attr
     {                                        ( _1 )}
 | _1 = multiplicative_attr _2 = STAR _3 = cast_attr
     {                                        (BINARY(MUL ,_1 , _3))}
@@ -1331,7 +1331,7 @@ _1 = cast_attr
     {                                          (BINARY(MOD ,_1 , _3))}
 
 additive_attr:
-_1 = multiplicative_attr
+  _1 = multiplicative_attr
     {                                        ( _1 )}
 | _1 = additive_attr _2 = PLUS _3 = multiplicative_attr
     {                                            (BINARY(ADD ,_1 , _3))}
@@ -1339,7 +1339,7 @@ _1 = multiplicative_attr
     {                                            (BINARY(SUB ,_1 , _3))}
 
 shift_attr:
-_1 = additive_attr
+  _1 = additive_attr
     {                                        ( _1 )}
 | _1 = shift_attr _2 = INF_INF _3 = additive_attr
     {                                     (BINARY(SHL ,_1 , _3))}
@@ -1347,7 +1347,7 @@ _1 = additive_attr
     {                                     (BINARY(SHR ,_1 , _3))}
 
 relational_attr:
-_1 = shift_attr
+  _1 = shift_attr
     {                                        ( _1 )}
 | _1 = relational_attr _2 = INF _3 = shift_attr
     {                                   (BINARY(LT ,_1 , _3))}
@@ -1359,7 +1359,7 @@ _1 = shift_attr
     {                                      (BINARY(GE ,_1 , _3))}
 
 equality_attr:
-_1 = relational_attr
+  _1 = relational_attr
     {                                        ( _1 )}
 | _1 = equality_attr _2 = EQ_EQ _3 = relational_attr
     {                                            (BINARY(EQ ,_1 , _3))}
@@ -1367,41 +1367,41 @@ _1 = relational_attr
     {                                            (BINARY(NE ,_1 , _3))}
 
 bitwise_and_attr:
-_1 = equality_attr
+  _1 = equality_attr
     {                                        ( _1 )}
 | _1 = bitwise_and_attr _2 = AND _3 = equality_attr
     {                                       (BINARY(BAND ,_1 , _3))}
 
 bitwise_xor_attr:
-_1 = bitwise_and_attr
+  _1 = bitwise_and_attr
     {                                           ( _1 )}
 | _1 = bitwise_xor_attr _2 = CIRC _3 = bitwise_and_attr
     {                                           (BINARY(XOR ,_1 , _3))}
 
 bitwise_or_attr:
-_1 = bitwise_xor_attr
+  _1 = bitwise_xor_attr
     {                                          ( _1 )}
 | _1 = bitwise_or_attr _2 = PIPE _3 = bitwise_xor_attr
     {                                          (BINARY(BOR ,_1 , _3))}
 
 logical_and_attr:
-_1 = bitwise_or_attr
+  _1 = bitwise_or_attr
     {                                                ( _1 )}
 | _1 = logical_and_attr _2 = AND_AND _3 = bitwise_or_attr
     {                                             (BINARY(AND ,_1 , _3))}
 
 logical_or_attr:
-_1 = logical_and_attr
+  _1 = logical_and_attr
     {                                               ( _1 )}
 | _1 = logical_or_attr _2 = PIPE_PIPE _3 = logical_and_attr
     {                                               (BINARY(OR ,_1 , _3))}
 
 attr:
-_1 = logical_or_attr
+  _1 = logical_or_attr
     {                                         ( _1 )}
 
 attr_list_ne:
-_1 = attr
+  _1 = attr
     {                                         ( [_1] )}
 | _1 = attr _2 = COMMA _3 = attr_list_ne
     {                                         ( _1 :: _3 )}
@@ -1409,13 +1409,13 @@ _1 = attr
     {                                         ( _3 )}
 
 paren_attr_list_ne:
-_1 = LPAREN _2 = attr_list_ne _3 = RPAREN
+  _1 = LPAREN _2 = attr_list_ne _3 = RPAREN
     {                                         ( _2 )}
 | _1 = LPAREN _2 = error _3 = RPAREN
     {                                         ( [] )}
 
 asmattr:
-
+  
     {                                        ( [] )}
 | _1 = VOLATILE _2 = asmattr
     {                                        ( ("volatile", []) :: _2 )}
@@ -1423,50 +1423,50 @@ asmattr:
     {                                        ( ("const", []) :: _2 )}
 
 asmtemplate:
-_1 = one_string_constant
+  _1 = one_string_constant
     {                                                 ( [_1] )}
 | _1 = one_string_constant _2 = asmtemplate
     {                                                 ( _1 :: _2 )}
 
 asmoutputs:
-
+  
     {                        ( ([], [], []) )}
 | _1 = COLON _2 = asmoperands _3 = asminputs
     {                        ( let (ins, clobs) = _3 in
                           (_2, ins, clobs) )}
 
 asmoperands:
-
+  
     {                                        ( [] )}
 | _1 = asmoperandsne
     {                                        ( List.rev _1 )}
 
 asmoperandsne:
-_1 = asmoperand
+  _1 = asmoperand
     {                                        ( [_1] )}
 | _1 = asmoperandsne _2 = COMMA _3 = asmoperand
     {                                        ( _3 :: _1 )}
 
 asmoperand:
-_1 = string_constant _2 = LPAREN _3 = expression _4 = RPAREN
+  _1 = string_constant _2 = LPAREN _3 = expression _4 = RPAREN
     {                                                 ( (fst _1, fst _3) )}
 | _1 = string_constant _2 = LPAREN _3 = error _4 = RPAREN
     {                                                 ( (fst _1, NOTHING ) )}
 
 asminputs:
-
+  
     {                             ( ([], []) )}
 | _1 = COLON _2 = asmoperands _3 = asmclobber
     {                        ( (_2, _3) )}
 
 asmclobber:
-
+  
     {                                        ( [] )}
 | _1 = COLON _2 = asmcloberlst_ne
     {                                        ( _2 )}
 
 asmcloberlst_ne:
-_1 = one_string_constant
+  _1 = one_string_constant
     {                                                 ( [_1] )}
 | _1 = one_string_constant _2 = COMMA _3 = asmcloberlst_ne
     {                                                 ( _1 :: _3 )}

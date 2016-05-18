@@ -45,7 +45,7 @@ let parse_fc buffer =
 %%
 
 program:
-_1 = source_block_list _2 = TokEof
+  _1 = source_block_list _2 = TokEof
     {                               ( _1 )}
 | _1 = source_block_list
     {                         ( _1 )}
@@ -53,13 +53,13 @@ _1 = source_block_list _2 = TokEof
     {               ( [] )}
 
 source_block_list:
-_1 = source_block_list _2 = source_block
+  _1 = source_block_list _2 = source_block
     {        ( _1 @ _2 )}
 | _1 = source_block
     {                    ( _1 )}
 
 source_block:
-_1 = pascal_block
+  _1 = pascal_block
     {                    ( _1 )}
 | _1 = pasqual_block
     {                     ( _1 )}
@@ -69,19 +69,19 @@ _1 = pascal_block
     {                     ( _1 )}
 
 pascal_block:
-_1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokPascal _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
+  _1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokPascal _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
     {        ( parse_pascal (fst _7) )}
 
 pasqual_block:
-_1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokPasqual _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
+  _1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokPasqual _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
     {    ( parse_pasqual (fst _7) )}
 
 fc_block:
-_1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokFC _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
+  _1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokFC _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
     {    ( parse_fc (fst _7) )}
 
 generic_block:
-_1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokString _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
+  _1 = TokLt _2 = TokLanguage _3 = TokEq _4 = TokString _5 = TokSource _6 = TokEq _7 = TokSourceString _8 = TokGt
     {        ( match String.lowercase (fst _4) with
 				      "pascal" ->
 					parse_pascal (fst _7)

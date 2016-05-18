@@ -100,29 +100,29 @@ open Cminor
 %%
 
 prog:
-_1 = global_declarations _2 = proc_list _3 = EOF
+  _1 = global_declarations _2 = proc_list _3 = EOF
     {      ( { prog_procs = List.rev _2;
           prog_main = "main";
           prog_vars = List.rev _1; } )}
 
 global_declarations:
-
+  
     {                                                ( [] )}
 | _1 = global_declarations _2 = global_declaration
     {                                                ( _2 :: _1 )}
 
 global_declaration:
-_1 = VAR _2 = STRINGLIT _3 = LBRACKET _4 = INTLIT _5 = RBRACKET
+  _1 = VAR _2 = STRINGLIT _3 = LBRACKET _4 = INTLIT _5 = RBRACKET
     {                                                ( (_2, Int32.to_int _4, 4) )}
 
 proc_list:
-
+  
     {                                                ( [] )}
 | _1 = proc_list _2 = proc
     {                                                ( _2 :: _1 )}
 
 proc:
-_1 = STRINGLIT _2 = LPAREN _3 = parameters _4 = RPAREN _5 = opt_type _6 = LBRACE _7 = stack_declaration _8 = var_declarations _9 = stmt_list _10 = RBRACE
+  _1 = STRINGLIT _2 = LPAREN _3 = parameters _4 = RPAREN _5 = opt_type _6 = LBRACE _7 = stack_declaration _8 = var_declarations _9 = stmt_list _10 = RBRACE
     {      ( { proc_name = _1;
           proc_return = _5;
           proc_params = List.rev _3;
@@ -131,39 +131,39 @@ _1 = STRINGLIT _2 = LPAREN _3 = parameters _4 = RPAREN _5 = opt_type _6 = LBRACE
           proc_body = List.rev _9 } )}
 
 parameters:
-
+  
     {                                                ( [] )}
 | _1 = parameter_list
     {                                                ( _1 )}
 
 parameter_list:
-_1 = parameter
+  _1 = parameter
     {                                                ( [_1] )}
 | _1 = parameter_list _2 = COMMA _3 = parameter
     {                                                ( _3 :: _1 )}
 
 parameter:
-_1 = IDENT _2 = COLON _3 = type_
+  _1 = IDENT _2 = COLON _3 = type_
     {                                                ( (_1, _3) )}
 
 stack_declaration:
-
+  
     {                                                ( 0 )}
 | _1 = STACK _2 = INTLIT
     {                                                ( Int32.to_int _2 )}
 
 var_declarations:
-
+  
     {                                                ( [] )}
 | _1 = var_declarations _2 = var_declaration
     {                                                ( _2 @ _1 )}
 
 var_declaration:
-_1 = VAR _2 = parameter_list _3 = SEMICOLON
+  _1 = VAR _2 = parameter_list _3 = SEMICOLON
     {                                                ( _2 )}
 
 stmt:
-_1 = expr _2 = SEMICOLON
+  _1 = expr _2 = SEMICOLON
     {                                                ( Sexpr _1 )}
 | _1 = IF _2 = LPAREN _3 = expr _4 = RPAREN _5 = stmts _6 = ELSE _7 = stmts
     {                                                ( Sifthenelse(_3, _5, _7) )}
@@ -183,41 +183,41 @@ _1 = expr _2 = SEMICOLON
     {                                                ( Sreturn (Some _2) )}
 
 stmts:
-_1 = LBRACE _2 = stmt_list _3 = RBRACE
+  _1 = LBRACE _2 = stmt_list _3 = RBRACE
     {                                                ( List.rev _2 )}
 | _1 = stmt
     {                                                ( [_1] )}
 
 stmt_list:
-
+  
     {                                                ( [] )}
 | _1 = stmt_list _2 = stmt
     {                                                ( _2 :: _1 )}
 
 switch_cases:
-
+  
     {                                                ( [] )}
 | _1 = switch_cases _2 = switch_case
     {                                                ( _2 :: _1 )}
 
 switch_case:
-_1 = case_list _2 = stmt_list
+  _1 = case_list _2 = stmt_list
     {                                                ( (List.rev _1, List.rev _2) )}
 | _1 = DEFAULT _2 = COLON _3 = stmt_list
     {                                                ( ([], List.rev _3) )}
 
 case_list:
-_1 = case
+  _1 = case
     {                                                ( [_1] )}
 | _1 = case_list _2 = case
     {                                                ( _2 :: _1 )}
 
 case:
-_1 = CASE _2 = INTLIT _3 = COLON
+  _1 = CASE _2 = INTLIT _3 = COLON
     {                                                ( _2 )}
 
 expr:
-_1 = LPAREN _2 = expr _3 = RPAREN
+  _1 = LPAREN _2 = expr _3 = RPAREN
     {                                                ( _2 )}
 | _1 = IDENT
     {                                                ( Evar _1 )}
@@ -343,19 +343,19 @@ _1 = LPAREN _2 = expr _3 = RPAREN
     {                                                ( Esequence2(_1, _3) )}
 
 expr_list:
-
+  
     {                                                ( [] )}
 | _1 = expr_list_1
     {                                                ( List.rev _1 )}
 
 expr_list_1:
-_1 = expr %prec COMMA
+  _1 = expr %prec COMMA
     {                                                ( [_1] )}
 | _1 = expr_list_1 _2 = COMMA _3 = expr
     {                                                ( _3 :: _1 )}
 
 memory_chunk:
-_1 = INT8S
+  _1 = INT8S
     {                                                ( Mint8signed )}
 | _1 = INT8U
     {                                                ( Mint8unsigned )}
@@ -375,13 +375,13 @@ _1 = INT8S
     {                                                ( Mfloat64 )}
 
 type_:
-_1 = INT
+  _1 = INT
     {                                                ( Tint )}
 | _1 = FLOAT
     {                                                ( Tfloat )}
 
 opt_type:
-
+  
     {                                                ( None )}
 | _1 = COLON _2 = type_
     {                                                ( Some(_2) )}

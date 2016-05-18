@@ -79,13 +79,13 @@ Warning: the token TokQuery is unused.
 %%
 
 prog:
-_1 = TokEof
+  _1 = TokEof
     {               ( [] )}
 | _1 = expr _2 = prog
     {               ( _1 :: _2 )}
 
 expr:
-_1 = input_output_statement
+  _1 = input_output_statement
     {                           ( _1 )}
 | _1 = open_statement
     {                           ( _1 )}
@@ -101,7 +101,7 @@ _1 = input_output_statement
     {                           ( _1 )}
 
 in_pattern_expr:
-_1 = opcode_name _2 = in_operand_list_opt _3 = inst_modifier_list_opt
+  _1 = opcode_name _2 = in_operand_list_opt _3 = inst_modifier_list_opt
     {                                                          (
       let opcode, pos = _1 in
       let operands = _2 in
@@ -123,7 +123,7 @@ _1 = opcode_name _2 = in_operand_list_opt _3 = inst_modifier_list_opt
    )}
 
 out_pattern_expr:
-_1 = opcode_name _2 = out_operand_list_opt
+  _1 = opcode_name _2 = out_operand_list_opt
     {                                    (
       let opcode, pos = _1 in
       let operands = _2 in
@@ -159,31 +159,31 @@ _1 = opcode_name _2 = out_operand_list_opt
    )}
 
 in_pattern_list:
-_1 = in_pattern_expr _2 = TokSemi _3 = in_pattern_list
+  _1 = in_pattern_expr _2 = TokSemi _3 = in_pattern_list
     {                                           ( _1 :: _3 )}
 | _1 = in_pattern_expr _2 = TokSemi
     {                           ( [_1] )}
 
 out_pattern_list:
-_1 = out_pattern_expr _2 = TokSemi _3 = out_pattern_list
+  _1 = out_pattern_expr _2 = TokSemi _3 = out_pattern_list
     {                                             ( _1 :: _3 )}
 | _1 = out_pattern_expr _2 = TokSemi
     {                            ( [_1] )}
 
 out_pattern_list_opt:
-_1 = out_pattern_list
+  _1 = out_pattern_list
     {                    ( _1 )}
 | 
     {   ( [] )}
 
 opcode_name:
-_1 = TokCapIdent
+  _1 = TokCapIdent
     {               ( _1 )}
 | _1 = TokIdent
     {            ( _1 )}
 
 out_integer_list:
-_1 = TokInt _2 = TokComma _3 = out_integer_list
+  _1 = TokInt _2 = TokComma _3 = out_integer_list
     {                                    (
       let i, pos1 = _1 in
       let ls, pos2 = _3 in
@@ -197,7 +197,7 @@ _1 = TokInt _2 = TokComma _3 = out_integer_list
    )}
 
 in_operand:
-_1 = TokCapIdent
+  _1 = TokCapIdent
     {               (
       let ident, pos = _1 in
          OpConstructor (ident, pos)
@@ -270,7 +270,7 @@ _1 = TokCapIdent
    )}
 
 out_operand:
-_1 = TokCapIdent
+  _1 = TokCapIdent
     {               (
       let ident, pos = _1 in
          OpConstructor (ident, pos)
@@ -328,37 +328,37 @@ _1 = TokCapIdent
    )}
 
 in_operand_list:
-_1 = in_operand _2 = TokComma _3 = in_operand_list
+  _1 = in_operand _2 = TokComma _3 = in_operand_list
     {                                       ( _1 :: _3 )}
 | _1 = in_operand
     {              ( [_1] )}
 
 out_operand_list:
-_1 = out_operand _2 = TokComma _3 = out_operand_list
+  _1 = out_operand _2 = TokComma _3 = out_operand_list
     {                                         ( _1 :: _3 )}
 | _1 = out_operand
     {               ( [_1] )}
 
 in_operand_list_opt:
-_1 = in_operand_list
+  _1 = in_operand_list
     {                   ( _1 )}
 | 
     {   ( [] )}
 
 out_operand_list_opt:
-_1 = out_operand_list
+  _1 = out_operand_list
     {                    ( _1 )}
 | 
     {   ( [] )}
 
 in_operand_name:
-_1 = TokUnder
+  _1 = TokUnder
     {            ( new_symbol_string "wild", _1 )}
 | _1 = TokIdent
     {            ( _1 )}
 
 value_reg:
-_1 = in_operand_name
+  _1 = in_operand_name
     {                   (
       let ident, pos = _1 in
          ValueReg ident, pos
@@ -370,7 +370,7 @@ _1 = in_operand_name
    )}
 
 in_operand_stack_index:
-_1 = TokLParen _2 = value_reg _3 = TokRParen
+  _1 = TokLParen _2 = value_reg _3 = TokRParen
     {                                 ( 
       let value, _ = _2 in
          value
@@ -379,13 +379,13 @@ _1 = TokLParen _2 = value_reg _3 = TokRParen
     {   ( ValueInt Int32.zero )}
 
 out_operand_stack_index:
-_1 = TokLParen _2 = arith_expr _3 = TokRParen
+  _1 = TokLParen _2 = arith_expr _3 = TokRParen
     {                                  ( _2 )}
 | 
     {   ( ArithInt (Int32.zero, !Moogle_state.current_pos) )}
 
 operand_modifier:
-_1 = TokBang _2 = TokIdent
+  _1 = TokBang _2 = TokIdent
     {                    (
       let ident, pos = _2 in
       let pos = union_pos _1 pos in
@@ -402,19 +402,19 @@ _1 = TokBang _2 = TokIdent
    )}
 
 operand_modifier_list:
-_1 = operand_modifier _2 = operand_modifier_list
+  _1 = operand_modifier _2 = operand_modifier_list
     {                                          ( _1 :: _2 )}
 | _1 = operand_modifier
     {                    ( [_1] )}
 
 operand_modifier_list_opt:
-_1 = operand_modifier_list
+  _1 = operand_modifier_list
     {                         ( _1 )}
 | 
     {   ( [] )}
 
 inst_modifier:
-_1 = TokPreserves _2 = preserves_item
+  _1 = TokPreserves _2 = preserves_item
     {                               ( [_2] )}
 | _1 = TokPreserves _2 = TokLBrack _3 = preserves_list _4 = TokRBrack
     {                                                   ( _3 )}
@@ -441,25 +441,25 @@ _1 = TokPreserves _2 = preserves_item
    )}
 
 inst_modifier_list:
-_1 = inst_modifier _2 = inst_modifier_list
+  _1 = inst_modifier _2 = inst_modifier_list
     {                                    ( _1 @ _2 )}
 | _1 = inst_modifier
     {                 ( _1 )}
 
 inst_modifier_list_opt:
-_1 = TokColon _2 = inst_modifier_list
+  _1 = TokColon _2 = inst_modifier_list
     {                               ( _2 )}
 | 
     {   ( [] )}
 
 preserves_list:
-_1 = preserves_item _2 = TokSemi _3 = preserves_list
+  _1 = preserves_item _2 = TokSemi _3 = preserves_list
     {                                         ( _1 :: _3 )}
 | _1 = preserves_item
     {                  ( [_1] )}
 
 preserves_item:
-_1 = TokMemory
+  _1 = TokMemory
     {             ( InstPreservesMem _1 )}
 | _1 = TokIdent
     {            (
@@ -468,13 +468,13 @@ _1 = TokMemory
    )}
 
 ignores_list:
-_1 = ignores_item _2 = TokSemi _3 = ignores_list
+  _1 = ignores_item _2 = TokSemi _3 = ignores_list
     {                                     ( _1 :: _3 )}
 | _1 = ignores_item
     {                ( [_1] )}
 
 ignores_item:
-_1 = TokMemory
+  _1 = TokMemory
     {             ( InstIgnoresMem _1 )}
 | _1 = TokIdent
     {            (
@@ -483,20 +483,20 @@ _1 = TokMemory
    )}
 
 dead_list:
-_1 = dead_item _2 = TokSemi _3 = dead_list
+  _1 = dead_item _2 = TokSemi _3 = dead_list
     {                               ( _1 :: _3 )}
 | _1 = dead_item
     {             ( [_1] )}
 
 dead_item:
-_1 = TokIdent
+  _1 = TokIdent
     {            (
       let ident, pos = _1 in
          InstNotLive (ident, pos)
    )}
 
 input_output_statement:
-_1 = io_input_list _2 = io_output_list
+  _1 = io_input_list _2 = io_output_list
     {                                (
       let inputs, pos1 = _1 in
       let outputs, pos2 = _2 in
@@ -505,7 +505,7 @@ _1 = io_input_list _2 = io_output_list
    )}
 
 io_input:
-_1 = TokInput _2 = io_name _3 = TokColon _4 = in_pattern_list _5 = TokWhen _6 = clause_expr
+  _1 = TokInput _2 = io_name _3 = TokColon _4 = in_pattern_list _5 = TokWhen _6 = clause_expr
     {                                                                 (
       let name = _2 in
       let insts = _4 in
@@ -524,7 +524,7 @@ _1 = TokInput _2 = io_name _3 = TokColon _4 = in_pattern_list _5 = TokWhen _6 = 
    )}
 
 io_input_list:
-_1 = io_input _2 = io_input_list
+  _1 = io_input _2 = io_input_list
     {                          ( 
       let input, pos1 = _1 in
       let inputs, pos2 = _2 in
@@ -538,7 +538,7 @@ _1 = io_input _2 = io_input_list
    )}
 
 io_name:
-_1 = TokString
+  _1 = TokString
     {             (
       let name, _ = _1 in
          Some name
@@ -547,7 +547,7 @@ _1 = TokString
     {   ( None )}
 
 io_output:
-_1 = TokOutput _2 = TokWhen _3 = clause_expr _4 = TokColon _5 = out_pattern_list_opt
+  _1 = TokOutput _2 = TokWhen _3 = clause_expr _4 = TokColon _5 = out_pattern_list_opt
     {                                                               (
       let clause = _3 in
       let pos = union_pos_out_inst_list _1 _5 in
@@ -560,7 +560,7 @@ _1 = TokOutput _2 = TokWhen _3 = clause_expr _4 = TokColon _5 = out_pattern_list
    )}
 
 io_output_list:
-_1 = io_output _2 = io_output_list
+  _1 = io_output _2 = io_output_list
     {                            ( 
       let output, pos1 = _1 in
       let outputs, pos2 = _2 in
@@ -574,7 +574,7 @@ _1 = io_output _2 = io_output_list
    )}
 
 arith_expr:
-_1 = TokIdent
+  _1 = TokIdent
     {            (
       let ident, pos = _1 in
          ArithReg (ident, pos)
@@ -616,25 +616,25 @@ _1 = TokIdent
    )}
 
 arith_expr_list:
-_1 = arith_expr _2 = TokComma _3 = arith_expr_list
+  _1 = arith_expr _2 = TokComma _3 = arith_expr_list
     {                                       ( _1 :: _3 )}
 | _1 = arith_expr
     {              ( [_1] )}
 
 plus_minus_op:
-_1 = TokPlus
+  _1 = TokPlus
     {           ( PlusOp )}
 | _1 = TokMinus
     {            ( MinusOp )}
 
 logical_op:
-_1 = TokAmp
+  _1 = TokAmp
     {          ( AndOp )}
 | _1 = TokPipe
     {           ( OrOp )}
 
 shift_op:
-_1 = TokShl
+  _1 = TokShl
     {          ( ShlOp )}
 | _1 = TokSar
     {          ( SarOp )}
@@ -642,7 +642,7 @@ _1 = TokShl
     {          ( ShrOp )}
 
 unary_op:
-_1 = TokMinus
+  _1 = TokMinus
     {            ( UMinusOp, _1 )}
 | _1 = TokTilde
     {            ( UNotOp, _1 )}
@@ -654,7 +654,7 @@ _1 = TokMinus
     {           ( ULog2Op, _1 )}
 
 clause_expr:
-_1 = TokLParen _2 = clause_expr _3 = TokRParen
+  _1 = TokLParen _2 = clause_expr _3 = TokRParen
     {                                   ( _2 )}
 | _1 = TokOCaml
     {            ( 
@@ -684,7 +684,7 @@ _1 = TokLParen _2 = clause_expr _3 = TokRParen
    )}
 
 relop:
-_1 = TokEqual
+  _1 = TokEqual
     {                     ( EqOp )}
 | _1 = TokNotEqual
     {                     ( NeqOp )}
@@ -698,13 +698,13 @@ _1 = TokEqual
     {                     ( GeOp )}
 
 bool_op:
-_1 = TokAmpAmp
+  _1 = TokAmpAmp
     {                     ( BAndOp )}
 | _1 = TokPipePipe
     {                     ( BOrOp )}
 
 open_statement:
-_1 = TokOpen _2 = TokCapIdent
+  _1 = TokOpen _2 = TokCapIdent
     {                       (
       let ident, pos = _2 in
       let pos = union_pos _1 pos in
@@ -712,7 +712,7 @@ _1 = TokOpen _2 = TokCapIdent
    )}
 
 name_statement:
-_1 = TokName _2 = TokString
+  _1 = TokName _2 = TokString
     {                     (
       let name, pos = _2 in
       let pos = union_pos _1 pos in
@@ -720,7 +720,7 @@ _1 = TokName _2 = TokString
    )}
 
 register_statement:
-_1 = TokRegisters _2 = TokColon _3 = register_list
+  _1 = TokRegisters _2 = TokColon _3 = register_list
     {                                       (
       let regs, pos = _3 in
       let pos = union_pos _1 pos in
@@ -728,7 +728,7 @@ _1 = TokRegisters _2 = TokColon _3 = register_list
    )}
 
 register_list:
-_1 = register _2 = TokSemi _3 = register_list
+  _1 = register _2 = TokSemi _3 = register_list
     {                                  ( 
       let r, pos1 = _1 in
       let regs, pos2 = _3 in
@@ -743,7 +743,7 @@ _1 = register _2 = TokSemi _3 = register_list
    )}
 
 register:
-_1 = TokPercent _2 = TokIdent
+  _1 = TokPercent _2 = TokIdent
     {                       (
       let r, pos = _2 in
       let pos = union_pos _1 pos in
@@ -757,7 +757,7 @@ _1 = TokPercent _2 = TokIdent
    )}
 
 instruction_statement:
-_1 = TokInsts _2 = instruction_tags _3 = TokColon _4 = instruction_list
+  _1 = TokInsts _2 = instruction_tags _3 = TokColon _4 = instruction_list
     {                                                       (
       let tags = List.map fst _2 in
       let insts, pos = _4 in
@@ -768,13 +768,13 @@ _1 = TokInsts _2 = instruction_tags _3 = TokColon _4 = instruction_list
    )}
 
 instruction_tags:
-_1 = TokIdent _2 = instruction_tags
+  _1 = TokIdent _2 = instruction_tags
     {                             ( _1 :: _2 )}
 | 
     {   ( [] )}
 
 instruction_list:
-_1 = instruction _2 = TokSemi _3 = instruction_list
+  _1 = instruction _2 = TokSemi _3 = instruction_list
     {                                        (
       let Instruction (_, _, _, _, _, pos1) = _1 in
       let insts, pos2 = _3 in
@@ -789,7 +789,7 @@ _1 = instruction _2 = TokSemi _3 = instruction_list
    )}
 
 instruction:
-_1 = instruction_data _2 = TokColon _3 = instruction_tag_list
+  _1 = instruction_data _2 = TokColon _3 = instruction_tag_list
     {                                                  (
       let name, op, cons, consop, pos1 = _1 in
       let tags, pos2 = _3 in
@@ -803,7 +803,7 @@ _1 = instruction_data _2 = TokColon _3 = instruction_tag_list
    )}
 
 instruction_data:
-_1 = TokIdent _2 = TokArrow _3 = TokCapIdent
+  _1 = TokIdent _2 = TokArrow _3 = TokCapIdent
     {                                 (
       let name, pos1 = _1 in
       let cons, pos2 = _3 in
@@ -830,7 +830,7 @@ _1 = TokIdent _2 = TokArrow _3 = TokCapIdent
    )}
 
 instruction_tag_list:
-_1 = TokIdent _2 = instruction_tag_list
+  _1 = TokIdent _2 = instruction_tag_list
     {                                 (
       let tag, pos1 = _1 in
       let tags, pos2 = _2 in
@@ -843,7 +843,7 @@ _1 = TokIdent _2 = instruction_tag_list
    )}
 
 transform_statement:
-_1 = TokTrans _2 = TokIdent _3 = symbol_list_opt _4 = TokColon _5 = transform_list
+  _1 = TokTrans _2 = TokIdent _3 = symbol_list_opt _4 = TokColon _5 = transform_list
     {                                                             (
       let name, _ = _2 in
       let args = _3 in
@@ -853,7 +853,7 @@ _1 = TokTrans _2 = TokIdent _3 = symbol_list_opt _4 = TokColon _5 = transform_li
    )}
 
 transform_list:
-_1 = transform _2 = TokSemi _3 = transform_list
+  _1 = transform _2 = TokSemi _3 = transform_list
     {                                    (
       let Transform (_, _, _, _, pos1) = _1 in
       let insts, pos2 = _3 in
@@ -868,7 +868,7 @@ _1 = transform _2 = TokSemi _3 = transform_list
    )}
 
 transform:
-_1 = TokIdent _2 = in_operand_list_opt _3 = TokArrow _4 = TokIdent _5 = out_operand_list_opt
+  _1 = TokIdent _2 = in_operand_list_opt _3 = TokArrow _4 = TokIdent _5 = out_operand_list_opt
     {                                                                       (
       let opcode1, pos1 = _1 in
       let operand1 = _2 in
@@ -879,7 +879,7 @@ _1 = TokIdent _2 = in_operand_list_opt _3 = TokArrow _4 = TokIdent _5 = out_oper
    )}
 
 symbol_list:
-_1 = TokIdent _2 = TokComma _3 = symbol_list
+  _1 = TokIdent _2 = TokComma _3 = symbol_list
     {                                 ( 
       let ident, _ = _1 in
          ident :: _3 
@@ -891,13 +891,13 @@ _1 = TokIdent _2 = TokComma _3 = symbol_list
    )}
 
 symbol_list_opt:
-_1 = symbol_list
+  _1 = symbol_list
     {               ( _1 )}
 | 
     {   ( [] )}
 
 trivial_statement:
-_1 = TokTrivial _2 = TokIdent
+  _1 = TokTrivial _2 = TokIdent
     {                       (
       let ident, pos = _2 in
       let pos = union_pos _1 pos in

@@ -40,13 +40,13 @@ open Tables
 %%
 
 TypeName:
-_1 = IDENT
+  _1 = IDENT
     {         ( String.uncapitalize _1 )}
 | _1 = WIDGET
     {          ( "widget" )}
 
 Type0:
-_1 = TYINT
+  _1 = TYINT
     {      ( Int )}
 | _1 = TYFLOAT
     {      ( Float )}
@@ -60,13 +60,13 @@ _1 = TYINT
     {      ( UserDefined _1 )}
 
 Type0_5:
-_1 = Type0 _2 = SLASH _3 = Type0
+  _1 = Type0 _2 = SLASH _3 = Type0
     {                      ( if !Flags.camltk then _1 else _3 )}
 | _1 = Type0
     {          ( _1 )}
 
 Type1:
-_1 = Type0_5
+  _1 = Type0_5
     {      ( _1 )}
 | _1 = TypeName _2 = LPAREN _3 = IDENT _4 = RPAREN
     {     ( Subtype (_1, _3) )}
@@ -80,31 +80,31 @@ _1 = Type0_5
     {      ( Product _2 )}
 
 Type2:
-_1 = Type1
+  _1 = Type1
     {     ( _1 )}
 | _1 = Type2 _2 = LIST
     {     ( List _1 )}
 
 Labeled_type2:
-_1 = Type2
+  _1 = Type2
     {      ( "", _1 )}
 | _1 = IDENT _2 = COLON _3 = Type2
     {      ( _1, _3 )}
 
 Type_list:
-_1 = Type2 _2 = COMMA _3 = Type_list
+  _1 = Type2 _2 = COMMA _3 = Type_list
     {      ( _1 :: _3 )}
 | _1 = Type2
     {      ( [_1] )}
 
 Type_record:
-_1 = Labeled_type2 _2 = COMMA _3 = Type_record
+  _1 = Labeled_type2 _2 = COMMA _3 = Type_record
     {      ( _1 :: _3 )}
 | _1 = Labeled_type2
     {      ( [_1] )}
 
 FType:
-_1 = LPAREN _2 = RPAREN
+  _1 = LPAREN _2 = RPAREN
     {      ( Unit )}
 | _1 = LPAREN _2 = Type2 _3 = RPAREN
     {      ( _2 )}
@@ -112,19 +112,19 @@ _1 = LPAREN _2 = RPAREN
     {      ( Record _2 )}
 
 Type:
-_1 = Type2
+  _1 = Type2
     {      ( _1 )}
 | _1 = FUNCTION _2 = FType
     {      ( Function _2 )}
 
 SimpleArg:
-_1 = STRING
+  _1 = STRING
     {      (StringArg _1)}
 | _1 = Type
     {      (TypeArg ("", _1) )}
 
 Arg:
-_1 = STRING
+  _1 = STRING
     {      (StringArg _1)}
 | _1 = Type
     {      (TypeArg ("", _1) )}
@@ -144,27 +144,27 @@ _1 = STRING
     {      ( _1 )}
 
 SimpleArgList:
-_1 = SimpleArg _2 = SEMICOLON _3 = SimpleArgList
+  _1 = SimpleArg _2 = SEMICOLON _3 = SimpleArgList
     {       ( _1 :: _3)}
 | _1 = SimpleArg
     {      ( [_1] )}
 
 ArgList:
-_1 = Arg _2 = SEMICOLON _3 = ArgList
+  _1 = Arg _2 = SEMICOLON _3 = ArgList
     {       ( _1 :: _3)}
 | _1 = Arg
     {      ( [_1] )}
 
 DefaultList:
-_1 = LBRACKET _2 = LBRACE _3 = ArgList _4 = RBRACE _5 = RBRACKET
+  _1 = LBRACKET _2 = LBRACE _3 = ArgList _4 = RBRACE _5 = RBRACKET
     {      (_3)}
 
 Template:
-_1 = LBRACKET _2 = ArgList _3 = RBRACKET
+  _1 = LBRACKET _2 = ArgList _3 = RBRACKET
     {      ( ListArg _2 )}
 
 Constructor:
-_1 = IDENT _2 = Template
+  _1 = IDENT _2 = Template
     {      ({ component = Constructor; 
          ml_name = _1;
          var_name = getvarname _1 _2;
@@ -180,41 +180,41 @@ _1 = IDENT _2 = Template
          safe = true })}
 
 AbbrevConstructor:
-_1 = Constructor
+  _1 = Constructor
     {      ( Full _1 )}
 | _1 = IDENT
     {      ( Abbrev _1 )}
 
 Constructors:
-_1 = Constructor _2 = Constructors
+  _1 = Constructor _2 = Constructors
     {   ( _1 :: _2 )}
 | _1 = Constructor
     {   ( [_1] )}
 
 AbbrevConstructors:
-_1 = AbbrevConstructor _2 = AbbrevConstructors
+  _1 = AbbrevConstructor _2 = AbbrevConstructors
     {   ( _1 :: _2 )}
 | _1 = AbbrevConstructor
     {   ( [_1] )}
 
 Safe:
-
+  
     {  ( true )}
 | _1 = UNSAFE
     {  ( false )}
 
 Command:
-_1 = Safe _2 = FUNCTION _3 = FType _4 = IDENT _5 = Template
+  _1 = Safe _2 = FUNCTION _3 = FType _4 = IDENT _5 = Template
     {     ({component = Command; ml_name = _4; var_name = "";
        template = _5; result = _3; safe = _1 })}
 
 External:
-_1 = Safe _2 = EXTERNAL _3 = IDENT _4 = STRING
+  _1 = Safe _2 = EXTERNAL _3 = IDENT _4 = STRING
     {     ({component = External; ml_name = _3; var_name = "";
        template = StringArg _4; result = Unit; safe = _1})}
 
 Option:
-_1 = OPTION _2 = IDENT _3 = Template
+  _1 = OPTION _2 = IDENT _3 = Template
     {     ({component = Constructor; ml_name = _2; var_name = getvarname _2 _3;
        template = _3; result = Unit; safe = true })}
 | _1 = OPTION _2 = IDENT _3 = LPAREN _4 = IDENT _5 = RPAREN _6 = Template
@@ -224,7 +224,7 @@ _1 = OPTION _2 = IDENT _3 = Template
     {     ( retrieve_option _2 )}
 
 WidgetComponents:
-
+  
     {  ( [] )}
 | _1 = Command _2 = WidgetComponents
     {  ( _1 :: _2 )}
@@ -234,7 +234,7 @@ WidgetComponents:
     {  ( _1 :: _2 )}
 
 ModuleComponents:
-
+  
     {  ( [] )}
 | _1 = Command _2 = ModuleComponents
     {  ( _1 :: _2 )}
@@ -242,13 +242,13 @@ ModuleComponents:
     {  ( _1 :: _2 )}
 
 ParserArity:
-
+  
     {  ( OneToken )}
 | _1 = SEQUENCE
     {  ( MultipleToken )}
 
 entry:
-_1 = TYPE _2 = ParserArity _3 = TypeName _4 = LBRACE _5 = Constructors _6 = RBRACE
+  _1 = TYPE _2 = ParserArity _3 = TypeName _4 = LBRACE _5 = Constructors _6 = RBRACE
     {    ( enter_type _3 _2 _5 )}
 | _1 = VARIANT _2 = TYPE _3 = ParserArity _4 = TypeName _5 = LBRACE _6 = Constructors _7 = RBRACE
     {    ( enter_type _4 _3 _6 ~variant: true )}

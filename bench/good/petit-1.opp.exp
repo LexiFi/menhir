@@ -66,7 +66,7 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %%
 
 typ:
-_1 = INTEGER
+  _1 = INTEGER
     {    ( TypInt )}
 | _1 = BOOLEAN
     {    ( TypBool )}
@@ -74,7 +74,7 @@ _1 = INTEGER
     {    ( TypArray t )}
 
 expression:
-e = raw_expression
+  e = raw_expression
     {let _endpos = _endpos_e_ in
 let _startpos = _startpos_e_ in
     ( Location.make _startpos _endpos e )}
@@ -82,7 +82,7 @@ let _startpos = _startpos_e_ in
     {    ( e )}
 
 raw_expression:
-i = INTCONST
+  i = INTCONST
     {    ( EConst (ConstInt i) )}
 | b = BOOLCONST
     {    ( EConst (ConstBool b) )}
@@ -162,19 +162,19 @@ in
     {    ( EArrayAlloc (t, e) )}
 
 condition:
-e = expression
+  e = expression
     {    ( CExpression e )}
 | c = nontrivial_condition
     {    ( c )}
 
 lvalue:
-id = ID
+  id = ID
     {    ( fun e -> ISetVar (id, e) )}
 | a = expression _2 = LBRACKET i = expression _4 = RBRACKET
     {    ( fun e -> IArraySet (a, i, e) )}
 
 procedure:
-_1 = FUNCTION f = ID _3 = LPAREN formals = separated_bindings _5 = RPAREN _6 = COLON t0 = typ _8 = SEMICOLON locals = variables body = block _11 = SEMICOLON
+  _1 = FUNCTION f = ID _3 = LPAREN formals = separated_bindings _5 = RPAREN _6 = COLON t0 = typ _8 = SEMICOLON locals = variables body = block _11 = SEMICOLON
     {let result =
   let t = t0 in
       ( Some t )
@@ -201,7 +201,7 @@ in
     )}
 
 separated_bindings:
-xs0 = loption_separated_nonempty_list_SEMICOLON_binding__
+  xs0 = loption_separated_nonempty_list_SEMICOLON_binding__
     {let bindings =
   let xs = xs0 in
       ( xs )
@@ -209,15 +209,15 @@ in
     ( List.flatten bindings )}
 
 terminated_bindings:
-bindings = nonempty_list_terminated_binding_SEMICOLON__
+  bindings = nonempty_list_terminated_binding_SEMICOLON__
     {    ( List.flatten bindings )}
 
 variables:
-vars = loption_preceded_VAR_terminated_bindings__
+  vars = loption_preceded_VAR_terminated_bindings__
     {    ( vars )}
 
 program:
-_1 = PROGRAM globals = variables defs = list_procedure_ main = block _5 = DOT
+  _1 = PROGRAM globals = variables defs = list_procedure_ main = block _5 = DOT
     {    ({
        globals = globals;
        defs = defs;
@@ -225,25 +225,25 @@ _1 = PROGRAM globals = variables defs = list_procedure_ main = block _5 = DOT
     })}
 
 loption_separated_nonempty_list_SEMICOLON_instruction__:
-
+  
     {    ( [] )}
 | x = separated_nonempty_list_SEMICOLON_instruction_
     {    ( x )}
 
 loption_separated_nonempty_list_SEMICOLON_binding__:
-
+  
     {    ( [] )}
 | x = separated_nonempty_list_SEMICOLON_binding_
     {    ( x )}
 
 loption_separated_nonempty_list_COMMA_expression__:
-
+  
     {    ( [] )}
 | x = separated_nonempty_list_COMMA_expression_
     {    ( x )}
 
 loption_preceded_VAR_terminated_bindings__:
-
+  
     {    ( [] )}
 | _10 = VAR x0 = terminated_bindings
     {let x =
@@ -254,13 +254,13 @@ in
     ( x )}
 
 list_procedure_:
-
+  
     {    ( [] )}
 | x = procedure xs = list_procedure_
     {    ( x :: xs )}
 
 nonempty_list_terminated_binding_SEMICOLON__:
-x0 = binding _20 = SEMICOLON
+  x0 = binding _20 = SEMICOLON
     {let x =
   let _2 = _20 in
   let x = x0 in
@@ -276,31 +276,31 @@ in
     ( x :: xs )}
 
 separated_nonempty_list_SEMICOLON_instruction_:
-x = instruction
+  x = instruction
     {    ( [ x ] )}
 | x = instruction _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_instruction_
     {    ( x :: xs )}
 
 separated_nonempty_list_SEMICOLON_binding_:
-x = binding
+  x = binding
     {    ( [ x ] )}
 | x = binding _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_binding_
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_expression_:
-x = expression
+  x = expression
     {    ( [ x ] )}
 | x = expression _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_ID_:
-x = ID
+  x = ID
     {    ( [ x ] )}
 | x = ID _2 = COMMA xs = separated_nonempty_list_COMMA_ID_
     {    ( x :: xs )}
 
 nontrivial_condition:
-_1 = NOT c = condition
+  _1 = NOT c = condition
     {    ( CNot c )}
 | c1 = condition _2 = AND c2 = condition
     {    ( CAnd (c1, c2) )}
@@ -310,7 +310,7 @@ _1 = NOT c = condition
     {    ( c )}
 
 instruction:
-c = callee _2 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expression__ _4 = RPAREN
+  c = callee _2 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expression__ _4 = RPAREN
     {let actuals =
   let xs = xs0 in
       ( xs )
@@ -332,7 +332,7 @@ let _startpos = _startpos__1_ in
     {    ( IWhile (c, b) )}
 
 block:
-_1 = BEGIN xs0 = loption_separated_nonempty_list_SEMICOLON_instruction__ _3 = END
+  _1 = BEGIN xs0 = loption_separated_nonempty_list_SEMICOLON_instruction__ _3 = END
     {let is =
   let xs = xs0 in
       ( xs )
@@ -340,13 +340,13 @@ in
     ( ISeq is )}
 
 instruction_or_block:
-i = instruction
+  i = instruction
     {    ( i )}
 | b = block
     {    ( b )}
 
 callee:
-_1 = WRITE
+  _1 = WRITE
     {    ( CPrimitiveFunction Write )}
 | _1 = WRITELN
     {    ( CPrimitiveFunction Writeln )}
@@ -354,7 +354,7 @@ _1 = WRITE
     {    ( CUserFunction (Location.content id))}
 
 binding:
-ids = separated_nonempty_list_COMMA_ID_ _2 = COLON t = typ
+  ids = separated_nonempty_list_COMMA_ID_ _2 = COLON t = typ
     {    ( List.map (fun id -> (id, t)) ids )}
 
 %%

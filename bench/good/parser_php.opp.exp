@@ -297,11 +297,11 @@ module PI = Parse_info
 %%
 
 main:
-_1 = top_statement_list _2 = EOF
+  _1 = top_statement_list _2 = EOF
     {                             ( H.squash_stmt_list _1 @ [FinalDef _2] )}
 
 top_statement:
-_1 = statement
+  _1 = statement
     {                                        ( StmtList [_1] )}
 | _1 = constant_declaration_statement
     {                                        ( ConstantDef _1 )}
@@ -317,7 +317,7 @@ _1 = statement
     {                                        ( _1 )}
 
 sgrep_spatch_pattern:
-_1 = expr _2 = EOF
+  _1 = expr _2 = EOF
     {                 ( Expr _1 )}
 | _1 = statement _2 = EOF
     {                 ( Stmt2 _1 )}
@@ -327,7 +327,7 @@ _1 = expr _2 = EOF
     {                   ( Hint2 _2 )}
 
 statement:
-_1 = expr _2 = TSEMICOLON
+  _1 = expr _2 = TSEMICOLON
     {                                ( ExprStmt(_1,_2) )}
 | _1 = TSEMICOLON
     {                                          ( EmptyStmt(_1) )}
@@ -398,7 +398,7 @@ _1 = expr _2 = TSEMICOLON
     {     ( Declare(_1,(_2,_3,_4),_5) )}
 
 inner_statement:
-_1 = statement
+  _1 = statement
     {                                        ( _1 )}
 | _1 = function_declaration_statement
     {                                  ( FuncDefNested _1 )}
@@ -406,19 +406,19 @@ _1 = statement
     {                                ( ClassDefNested _1 )}
 
 for_expr:
-
+  
     {                     ( [] )}
 | _1 = non_empty_for_expr
     {                      ( _1 )}
 
 foreach_variable:
-_1 = expr
+  _1 = expr
     {              ( None, _1 )}
 | _1 = TAND _2 = expr
     {              ( Some _1, _2 )}
 
 foreach_pattern:
-_1 = foreach_variable
+  _1 = foreach_variable
     {      ( ForeachVar _1 )}
 | _1 = foreach_variable _2 = T_ARROW _3 = foreach_pattern
     {      ( ForeachArrow(ForeachVar _1,_2,_3) )}
@@ -426,7 +426,7 @@ _1 = foreach_variable
     {     ( ForeachList(_1,(_2,_3,_4)) )}
 
 switch_case_list:
-_1 = TOBRACE _2 = case_list _3 = TCBRACE
+  _1 = TOBRACE _2 = case_list _3 = TCBRACE
     {     ( CaseList(_1,None,_2,_3) )}
 | _1 = TOBRACE _2 = TSEMICOLON _3 = case_list _4 = TCBRACE
     {     ( CaseList(_1, Some _2, _3, _4) )}
@@ -438,11 +438,11 @@ _1 = TOBRACE _2 = case_list _3 = TCBRACE
     {                     ( H.failwith_xhp_ambiguity_colon (snd _1) )}
 
 case_list:
-_1 = case_list_rev
+  _1 = case_list_rev
     {                         ( List.rev _1 )}
 
 case_list_rev:
-
+  
     {                 ( [] )}
 | _1 = case_list_rev _2 = T_CASE _3 = expr _4 = case_separator _5 = inner_statement_list
     {     ( Case(_2,_3,_4,_5)::_1   )}
@@ -450,7 +450,7 @@ case_list_rev:
     {     ( Default(_2,_3,_4)::_1 )}
 
 case_separator:
-_1 = TCOLON
+  _1 = TCOLON
     {              ( _1 )}
 | _1 = TSEMICOLON
     {              ( _1 )}
@@ -458,70 +458,70 @@ _1 = TCOLON
     {                     ( H.failwith_xhp_ambiguity_colon (snd _1) )}
 
 while_statement:
-_1 = statement
+  _1 = statement
     {                                                     ( SingleStmt _1 )}
 | _1 = TCOLON _2 = inner_statement_list _3 = T_ENDWHILE _4 = TSEMICOLON
     {                                                     ( ColonStmt(_1,_2,_3,_4) )}
 
 for_statement:
-_1 = statement
+  _1 = statement
     {                                                   ( SingleStmt _1 )}
 | _1 = TCOLON _2 = inner_statement_list _3 = T_ENDFOR _4 = TSEMICOLON
     {                                                   ( ColonStmt(_1,_2,_3,_4) )}
 
 foreach_statement:
-_1 = statement
+  _1 = statement
     {                                                       ( SingleStmt _1 )}
 | _1 = TCOLON _2 = inner_statement_list _3 = T_ENDFOREACH _4 = TSEMICOLON
     {                                                       ( ColonStmt(_1,_2,_3,_4))}
 
 declare_statement:
-_1 = statement
+  _1 = statement
     {                                                       ( SingleStmt _1 )}
 | _1 = TCOLON _2 = inner_statement_list _3 = T_ENDDECLARE _4 = TSEMICOLON
     {                                                       ( ColonStmt(_1,_2,_3,_4))}
 
 elseif_list:
-
+  
     {                 ( [] )}
 | _1 = elseif_list _2 = T_ELSEIF _3 = TOPAR _4 = expr _5 = TCPAR _6 = statement
     {                                                    ( _1 @ [_2,(_3,_4,_5),_6])}
 
 new_elseif_list:
-
+  
     {                 ( [] )}
 | _1 = new_elseif_list _2 = T_ELSEIF _3 = TOPAR _4 = expr _5 = TCPAR _6 = TCOLON _7 = inner_statement_list
     {     ( _1 @ [_2,(_3,_4,_5),_6,_7] )}
 
 else_single:
-_1 = T_ELSE _2 = statement
+  _1 = T_ELSE _2 = statement
     {                                           ( Some(_1,_2) )}
 |  %prec LOW_PRIORITY_RULE
     {                                           ( None )}
 
 new_else_single:
-
+  
     {                                      ( None )}
 | _1 = T_ELSE _2 = TCOLON _3 = inner_statement_list
     {                                      ( Some(_1,_2,_3) )}
 
 additional_catch:
-_1 = T_CATCH _2 = TOPAR _3 = class_name _4 = T_VARIABLE _5 = TCPAR _6 = TOBRACE _7 = inner_statement_list _8 = TCBRACE
+  _1 = T_CATCH _2 = TOPAR _3 = class_name _4 = T_VARIABLE _5 = TCPAR _6 = TOBRACE _7 = inner_statement_list _8 = TCBRACE
     {     ( let catch_block = (_6, _7, _8) in
        let catch = (_1, (_2, (_3, DName _4), _5), catch_block) in
        catch
      )}
 
 finally_clause:
-_1 = T_FINALLY _2 = TOBRACE _3 = inner_statement_list _4 = TCBRACE
+  _1 = T_FINALLY _2 = TOBRACE _3 = inner_statement_list _4 = TCBRACE
     {     ( (_1, (_2, _3, _4)) )}
 
 declare:
-_1 = ident _2 = TEQ _3 = static_scalar
+  _1 = ident _2 = TEQ _3 = static_scalar
     {                                   ( Name _1, (_2, _3) )}
 
 global_var:
-_1 = T_VARIABLE
+  _1 = T_VARIABLE
     {                ( GlobalVar (DName _1) )}
 | _1 = TDOLLAR _2 = expr
     {                   ( GlobalDollar (_1, _2) )}
@@ -529,23 +529,23 @@ _1 = T_VARIABLE
     {                                ( GlobalDollarExpr (_1, (_2, _3, _4)) )}
 
 static_var:
-_1 = T_VARIABLE
+  _1 = T_VARIABLE
     {                                ( (DName _1, None) )}
 | _1 = T_VARIABLE _2 = TEQ _3 = static_scalar
     {                                ( (DName _1, Some (_2, _3)) )}
 
 unset_variable:
-_1 = expr
+  _1 = expr
     {                     ( _1 )}
 
 use_filename:
-_1 = T_CONSTANT_ENCAPSED_STRING
+  _1 = T_CONSTANT_ENCAPSED_STRING
     {                                     ( UseDirect _1 )}
 | _1 = TOPAR _2 = T_CONSTANT_ENCAPSED_STRING _3 = TCPAR
     {                                          ( UseParen (_1, _2, _3) )}
 
 constant_declaration_statement:
-_1 = T_CONST _2 = ident _3 = TEQ _4 = static_scalar _5 = TSEMICOLON
+  _1 = T_CONST _2 = ident _3 = TEQ _4 = static_scalar _5 = TSEMICOLON
     {   ( { cst_toks = (_1, _3, _5); cst_name = Name _2; cst_val = _4;
        cst_type = None} )}
 | _1 = T_CONST _2 = type_php _3 = ident _4 = TEQ _5 = static_scalar _6 = TSEMICOLON
@@ -553,13 +553,13 @@ _1 = T_CONST _2 = ident _3 = TEQ _4 = static_scalar _5 = TSEMICOLON
        cst_type = Some _2 } )}
 
 function_declaration_statement:
-_1 = unticked_function_declaration_statement
+  _1 = unticked_function_declaration_statement
     {                                                      ( _1 )}
 | _1 = attributes _2 = unticked_function_declaration_statement
     {     ( { _2 with f_attrs = Some _1 } )}
 
 unticked_function_declaration_statement:
-_1 = async_opt _2 = T_FUNCTION _3 = is_reference _4 = ident _5 = type_params_opt _6 = TOPAR _7 = parameter_list _8 = TCPAR _9 = return_type_opt _10 = function_body
+  _1 = async_opt _2 = T_FUNCTION _3 = is_reference _4 = ident _5 = type_params_opt _6 = TOPAR _7 = parameter_list _8 = TCPAR _9 = return_type_opt _10 = function_body
     {   ( { f_tok = _2; f_ref = _3; f_name = Name _4; f_params = (_6, _7, _8);
        f_tparams = _5;
        f_return_type = _9; f_body = _10;
@@ -568,19 +568,19 @@ _1 = async_opt _2 = T_FUNCTION _3 = is_reference _4 = ident _5 = type_params_opt
     } )}
 
 function_body:
-_1 = TOBRACE _2 = inner_statement_list _3 = TCBRACE
+  _1 = TOBRACE _2 = inner_statement_list _3 = TCBRACE
     {                                            ( (_1, _2, _3)  )}
 | _1 = TSEMICOLON
     {              ( (* ugly: *) (Ast.fakeInfo"", [], _1) )}
 
 async_opt:
-
+  
     {                 ( [] )}
 | _1 = T_ASYNC
     {           ( [Async,(_1)] )}
 
 parameter_list:
-
+  
     {                              ( [] )}
 | _1 = non_empty_parameter_list
     {                              ( _1 )}
@@ -588,7 +588,7 @@ parameter_list:
     {                                    ( _1 @ [Right3 _2] )}
 
 parameter_or_dots:
-_1 = parameter
+  _1 = parameter
     {             ( Left3 _1 )}
 | _1 = T_ELLIPSIS
     {              ( Middle3 _1 )}
@@ -596,11 +596,11 @@ _1 = parameter
     {     ( Left3 (H.mk_param _2) (* todo: with is_variadic = true *) )}
 
 parameter:
-_1 = attributes_opt _2 = ctor_modifier_opt _3 = at_opt _4 = type_php_opt _5 = parameter_bis
+  _1 = attributes_opt _2 = ctor_modifier_opt _3 = at_opt _4 = type_php_opt _5 = parameter_bis
     {      ( { _5 with p_modifier = _2; p_attrs = _1; p_type = _4; p_soft_type= _3;})}
 
 parameter_bis:
-_1 = T_VARIABLE
+  _1 = T_VARIABLE
     {     ( H.mk_param _1 )}
 | _1 = TAND _2 = T_VARIABLE
     {     ( let p = H.mk_param _2 in {p with p_ref=Some _1} )}
@@ -610,7 +610,7 @@ _1 = T_VARIABLE
     {     ( let p = H.mk_param _2 in {p with p_ref=Some _1; p_default=Some(_3,_4)})}
 
 ctor_modifier:
-_1 = T_PUBLIC
+  _1 = T_PUBLIC
     {               ( Public,(_1) )}
 | _1 = T_PROTECTED
     {                                             ( Protected,(_1) )}
@@ -618,13 +618,13 @@ _1 = T_PUBLIC
     {               ( Private,(_1) )}
 
 is_reference:
-
+  
     {                  ( None )}
 | _1 = TAND
     {           ( Some _1 )}
 
 lexical_vars:
-
+  
     {                  ( None )}
 | _1 = T_USE _2 = TOPAR _3 = non_empty_lexical_var_list _4 = TCPAR
     {                                                (
@@ -634,31 +634,31 @@ lexical_vars:
    )}
 
 non_empty_lexical_var_list:
-_1 = non_empty_lexical_var_list_bis
+  _1 = non_empty_lexical_var_list_bis
     {                                  ( _1 )}
 | _1 = non_empty_lexical_var_list_bis _2 = TCOMMA
     {                                         ( _1 @ [Right _2] )}
 
 non_empty_lexical_var_list_bis:
-_1 = lexical_var
+  _1 = lexical_var
     {     ( [Left _1] )}
 | _1 = non_empty_lexical_var_list_bis _2 = TCOMMA _3 = lexical_var
     {     ( _1 @ [Right _2; Left _3] )}
 
 lexical_var:
-_1 = T_VARIABLE
+  _1 = T_VARIABLE
     {                    ( (None, DName _1) )}
 | _1 = TAND _2 = T_VARIABLE
     {                    ( (Some _1, DName _2) )}
 
 class_declaration_statement:
-_1 = unticked_class_declaration_statement
+  _1 = unticked_class_declaration_statement
     {     ( _1 )}
 | _1 = attributes _2 = unticked_class_declaration_statement
     {     ( { _2 with c_attrs = Some _1 } )}
 
 unticked_class_declaration_statement:
-_1 = class_entry_type _2 = ident_class_name _3 = type_params_opt _4 = extends_from _5 = implements_list _6 = TOBRACE _7 = class_statement_list _8 = TCBRACE
+  _1 = class_entry_type _2 = ident_class_name _3 = type_params_opt _4 = extends_from _5 = implements_list _6 = TOBRACE _7 = class_statement_list _8 = TCBRACE
     {     ( { c_type = _1; c_name = _2; c_extends = _4; c_tparams = _3;
          c_implements = _5; c_body = _6, _7, _8;
          c_attrs = None;
@@ -690,7 +690,7 @@ _1 = class_entry_type _2 = ident_class_name _3 = type_params_opt _4 = extends_fr
      )}
 
 class_entry_type:
-_1 = T_CLASS
+  _1 = T_CLASS
     {                   ( ClassRegular _1 )}
 | _1 = T_ABSTRACT _2 = T_FINAL _3 = T_CLASS
     {                              ( ClassAbstractFinal (_1, _2, _3) )}
@@ -702,25 +702,25 @@ _1 = T_CLASS
     {                      ( ClassFinal (_1, _2) )}
 
 extends_from:
-
+  
     {                          ( None )}
 | _1 = T_EXTENDS _2 = class_name_no_array
     {                                 ( Some (_1, _2)  )}
 
 interface_extends_list:
-
+  
     {                            ( None )}
 | _1 = T_EXTENDS _2 = class_name_list
     {                             ( Some(_1,_2) )}
 
 implements_list:
-
+  
     {                               ( None )}
 | _1 = T_IMPLEMENTS _2 = class_name_list
     {                                ( Some(_1, _2) )}
 
 class_statement:
-_1 = T_ABSTRACT _2 = T_CONST _3 = ident _4 = TSEMICOLON
+  _1 = T_ABSTRACT _2 = T_CONST _3 = ident _4 = TSEMICOLON
     {     ( let const = (Name _3, None) in
        let const_list = [Left const] in
        ClassConstants(Some _1, _2, None, const_list, _4) )}
@@ -784,11 +784,11 @@ _1 = T_ABSTRACT _2 = T_CONST _3 = ident _4 = TSEMICOLON
     {     ( TraitConstraint (_1, _2, _3, _4) )}
 
 enum_statement:
-_1 = class_constant_declaration _2 = TSEMICOLON
+  _1 = class_constant_declaration _2 = TSEMICOLON
     {     ( ClassConstants(None, _2, None, [Left _1], _2) )}
 
 method_declaration:
-_1 = method_modifiers _2 = T_FUNCTION _3 = is_reference _4 = ident_method_name _5 = type_params_opt _6 = TOPAR _7 = parameter_list _8 = TCPAR _9 = return_type_opt _10 = method_body
+  _1 = method_modifiers _2 = T_FUNCTION _3 = is_reference _4 = ident_method_name _5 = type_params_opt _6 = TOPAR _7 = parameter_list _8 = TCPAR _9 = return_type_opt _10 = method_body
     {     ( let body, function_type = _10 in
        ({ f_tok = _2; f_ref = _3; f_name = Name _4; f_tparams = _5;
           f_params = (_6, _7, _8); f_return_type = _9;
@@ -798,23 +798,23 @@ _1 = method_modifiers _2 = T_FUNCTION _3 = is_reference _4 = ident_method_name _
      )}
 
 class_constant_declaration:
-_1 = ident _2 = TEQ _3 = static_scalar
+  _1 = ident _2 = TEQ _3 = static_scalar
     {                                                    ( ((Name _1), Some (_2, _3)) )}
 
 variable_modifiers:
-_1 = T_VAR
+  _1 = T_VAR
     {            ( NoModifiers _1 )}
 | _1 = non_empty_member_modifiers
     {                               ( VModifiers _1 )}
 
 class_variable:
-_1 = T_VARIABLE
+  _1 = T_VARIABLE
     {                ( (DName _1, None) )}
 | _1 = T_VARIABLE _2 = TEQ _3 = static_scalar
     {                                ( (DName _1, Some (_2, _3)) )}
 
 member_modifier:
-_1 = T_PUBLIC
+  _1 = T_PUBLIC
     {               ( Public,(_1) )}
 | _1 = T_PROTECTED
     {                                             ( Protected,(_1) )}
@@ -830,19 +830,19 @@ _1 = T_PUBLIC
     {           ( Async,(_1) )}
 
 method_body:
-_1 = TOBRACE _2 = inner_statement_list _3 = TCBRACE
+  _1 = TOBRACE _2 = inner_statement_list _3 = TCBRACE
     {                                        ( (_1, _2, _3), MethodRegular )}
 | _1 = TSEMICOLON
     {              ( (* ugly: *) (Ast.fakeInfo"", [], _1), MethodAbstract )}
 
 xhp_attribute_decl:
-_1 = T_XHP_COLONID_DEF
+  _1 = T_XHP_COLONID_DEF
     {     ( XhpAttrInherit _1 )}
 | _1 = xhp_attribute_decl_type _2 = xhp_attr_name _3 = xhp_attribute_default _4 = xhp_attribute_is_required
     {     ( XhpAttrDecl (_1, ((PI.str_of_info _2, _2)), _3, _4) )}
 
 xhp_attribute_decl_type:
-_1 = T_ENUM _2 = TOBRACE _3 = xhp_enum_list _4 = TCBRACE
+  _1 = T_ENUM _2 = TOBRACE _3 = xhp_enum_list _4 = TCBRACE
     {     ( XhpAttrEnum (_1, (_2, _3, _4)) )}
 | _1 = T_VAR
     {                ( XhpAttrVar _1 )}
@@ -850,23 +850,23 @@ _1 = T_ENUM _2 = TOBRACE _3 = xhp_enum_list _4 = TCBRACE
     {            ( XhpAttrType _1 )}
 
 xhp_attribute_default:
-
+  
     {                     ( None )}
 | _1 = TEQ _2 = static_scalar
     {                     ( Some (_1, _2) )}
 
 xhp_attribute_is_required:
-
+  
     {                  ( None )}
 | _1 = T_XHP_REQUIRED
     {                  ( Some _1 )}
 
 xhp_enum:
-_1 = constant
+  _1 = constant
     {            ( _1 )}
 
 xhp_attr_name:
-_1 = ident_xhp_attr_name_atom
+  _1 = ident_xhp_attr_name_atom
     {                            ( _1 )}
 | _1 = xhp_attr_name _2 = TMINUS _3 = ident_xhp_attr_name_atom
     {     ( let s = PI.str_of_info _1 ^  PI.str_of_info _2 ^ PI.str_of_info _3 in
@@ -878,7 +878,7 @@ _1 = ident_xhp_attr_name_atom
      )}
 
 xhp_children_decl:
-_1 = T_XHP_ANY
+  _1 = T_XHP_ANY
     {             ( XhpChildAny _1 )}
 | _1 = T_EMPTY
     {             ( XhpChildEmpty _1 )}
@@ -886,7 +886,7 @@ _1 = T_XHP_ANY
     {                           ( _1 )}
 
 xhp_children_paren_expr:
-_1 = TOPAR _2 = xhp_children_decl_expr _3 = TCPAR
+  _1 = TOPAR _2 = xhp_children_decl_expr _3 = TCPAR
     {     ( XhpChildParen (_1, _2, _3) )}
 | _1 = TOPAR _2 = xhp_children_decl_expr _3 = TCPAR _4 = TMUL
     {     ( XhpChildMul (XhpChildParen (_1, _2, _3), _4) )}
@@ -896,7 +896,7 @@ _1 = TOPAR _2 = xhp_children_decl_expr _3 = TCPAR
     {     ( XhpChildPlus (XhpChildParen (_1, _2, _3), _4) )}
 
 xhp_children_decl_expr:
-_1 = xhp_children_paren_expr
+  _1 = xhp_children_paren_expr
     {                           ( _1 )}
 | _1 = xhp_children_decl_tag
     {                         ( _1 )}
@@ -912,7 +912,7 @@ _1 = xhp_children_paren_expr
     {     ( XhpChildAlternative (_1, _2, _3) )}
 
 xhp_children_decl_tag:
-_1 = T_XHP_ANY
+  _1 = T_XHP_ANY
     {                       ( XhpChildAny (_1) )}
 | _1 = T_XHP_PCDATA
     {                       ( XhpChildPcdata (_1) )}
@@ -922,39 +922,39 @@ _1 = T_XHP_ANY
     {                       ( XhpChildCategory _1 )}
 
 xhp_category:
-_1 = T_XHP_PERCENTID_DEF
+  _1 = T_XHP_PERCENTID_DEF
     {                       ( _1 )}
 
 trait_rule:
-_1 = trait_precedence_rule
+  _1 = trait_precedence_rule
     {                          ( _1 )}
 | _1 = trait_alias_rule
     {                          ( _1 )}
 
 trait_precedence_rule:
-_1 = qualified_name_for_traits _2 = TCOLCOL _3 = T_IDENT _4 = T_INSTEADOF _5 = class_name_list _6 = TSEMICOLON
+  _1 = qualified_name_for_traits _2 = TCOLCOL _3 = T_IDENT _4 = T_INSTEADOF _5 = class_name_list _6 = TSEMICOLON
     {   ( InsteadOf (_1, _2, Name _3, _4, _5, _6) )}
 
 trait_alias_rule:
-_1 = trait_alias_rule_method _2 = T_AS _3 = method_modifiers _4 = T_IDENT _5 = TSEMICOLON
+  _1 = trait_alias_rule_method _2 = T_AS _3 = method_modifiers _4 = T_IDENT _5 = TSEMICOLON
     {   ( As (_1, _2, _3, Some (Name _4), _5) )}
 | _1 = trait_alias_rule_method _2 = T_AS _3 = non_empty_member_modifiers _4 = TSEMICOLON
     {   ( As (_1, _2, _3, None, _4) )}
 
 trait_alias_rule_method:
-_1 = qualified_name_for_traits _2 = TCOLCOL _3 = T_IDENT
+  _1 = qualified_name_for_traits _2 = TCOLCOL _3 = T_IDENT
     {                                             ( Right (_1, _2, Name _3) )}
 | _1 = T_IDENT
     {           ( Left (Name _1) )}
 
 trait_constraint_kind:
-_1 = T_EXTENDS
+  _1 = T_EXTENDS
     {                ( MustExtend, _1 )}
 | _1 = T_IMPLEMENTS
     {                ( MustImplement, _1 )}
 
 type_declaration:
-_1 = T_TYPE _2 = ident _3 = type_params_opt _4 = type_constr_opt _5 = TEQ _6 = type_php_or_shape _7 = TSEMICOLON
+  _1 = T_TYPE _2 = ident _3 = type_params_opt _4 = type_constr_opt _5 = TEQ _6 = type_php_or_shape _7 = TSEMICOLON
     {     ( { t_tok = _1; t_name = Name _2; t_tparams = _3; t_tconstraint = _4;
          t_tokeq = _5; t_kind = Alias _6; t_sc = _7; }
      )}
@@ -964,35 +964,35 @@ _1 = T_TYPE _2 = ident _3 = type_params_opt _4 = type_constr_opt _5 = TEQ _6 = t
      )}
 
 type_php_or_shape:
-_1 = type_php
+  _1 = type_php
     {            ( _1 )}
 | _1 = T_SHAPE _2 = TOPAR _3 = shape_field_list _4 = TCPAR
     {                                        ( HintShape (_1, (_2, _3, _4)) )}
 
 shape_field:
-_1 = expr _2 = T_ARROW _3 = type_php
+  _1 = expr _2 = T_ARROW _3 = type_php
     {                                   ( _1, _2, _3 )}
 
 type_constr_opt:
-_1 = T_AS _2 = type_php
+  _1 = T_AS _2 = type_php
     {                  ( Some (_1, _2) )}
 | 
     {                  ( None )}
 
 type_params_opt:
-
+  
     {                                       ( None )}
 | _1 = TSMALLER _2 = type_params_list _3 = TGREATER
     {                                       ( Some (_1, _2, _3) )}
 
 type_params_list:
-_1 = type_param
+  _1 = type_param
     {                                       ( [Left _1] )}
 | _1 = type_param _2 = TCOMMA _3 = type_params_list
     {                                       ( [Left _1; Right _2] @ _3 )}
 
 type_param:
-_1 = variance_opt _2 = ident
+  _1 = variance_opt _2 = ident
     {                                       ( TParam (Name _2) )}
 | _1 = variance_opt _2 = ident _3 = T_AS _4 = TQUESTION _5 = class_name
     {                                                 ( TParamConstraint (Name _2, _3, HintQuestion (_4, _5)) )}
@@ -1004,7 +1004,7 @@ _1 = variance_opt _2 = ident
     {                                          ( TParamConstraint (Name _2, _3, _4) )}
 
 variance_opt:
-
+  
     {                    (None)}
 | _1 = TMINUS
     {          ( Some _1 )}
@@ -1012,13 +1012,13 @@ variance_opt:
     {          ( Some _1 )}
 
 type_php:
-_1 = primary_type_php
+  _1 = primary_type_php
     {                    ( _1 )}
 | _1 = type_php _2 = TCOLCOL _3 = primary_type_php
     {                                     ( HintTypeConst (_1, _2, _3) )}
 
 primary_type_php:
-_1 = class_name
+  _1 = class_name
     {              ( _1 )}
 | _1 = T_SELF
     {              ( Hint (Self _1, None) )}
@@ -1032,7 +1032,7 @@ _1 = class_name
     {     ( HintCallback (_1, (_2, (_3, _4, _5), Some _6), _7))}
 
 type_php_or_dots_list:
-
+  
     {                                     ( [] )}
 | _1 = non_empty_type_php_or_dots_list
     {                                     ( _1 )}
@@ -1040,43 +1040,43 @@ type_php_or_dots_list:
     {                                          ( _1 @ [Right3 _2] )}
 
 type_php_or_dots:
-_1 = type_php
+  _1 = type_php
     {            ( Left3 _1 )}
 | _1 = T_ELLIPSIS
     {                 ( Middle3 _1 )}
 
 type_arguments:
-
+  
     {                              ( None )}
 | _1 = TSMALLER _2 = type_arg_list _3 = TGREATER
     {                                    ( Some (_1, _2, _3) )}
 
 type_arg_list:
-_1 = type_php
+  _1 = type_php
     {      ( [Left _1])}
 | _1 = type_php _2 = TCOMMA _3 = type_arg_list
     {      ( (Left _1)::(Right _2):: _3 )}
 
 return_type:
-_1 = TCOLON _2 = at_opt _3 = type_php
+  _1 = TCOLON _2 = at_opt _3 = type_php
     {                                                    ( _1, _2, _3 )}
 
 attributes:
-_1 = T_SL _2 = attribute_list _3 = T_SR
+  _1 = T_SL _2 = attribute_list _3 = T_SR
     {                                     ( (_1, _2, _3) )}
 
 attribute:
-_1 = ident
+  _1 = ident
     {     ( Attribute _1 )}
 | _1 = ident _2 = TOPAR _3 = attribute_argument_list _4 = TCPAR
     {     ( AttributeWithArgs (_1, (_2, _3, _4)) )}
 
 attribute_argument:
-_1 = static_scalar
+  _1 = static_scalar
     {                                  ( _1 )}
 
 expr:
-_1 = simple_expr
+  _1 = simple_expr
     {               ( _1 )}
 | _1 = simple_expr _2 = TEQ _3 = expr
     {                        ( Assign(_1,_2, _3) )}
@@ -1241,7 +1241,7 @@ _1 = simple_expr
     {     ( AssignList(_1,(_2,_3,_4),_5,_6) )}
 
 simple_expr:
-_1 = new_expr
+  _1 = new_expr
     {            ( _1 )}
 | _1 = call_expr
     {             ( _1 )}
@@ -1249,7 +1249,7 @@ _1 = new_expr
     {     ( Collection (_1, (_2, _3, _4)) )}
 
 new_expr:
-_1 = member_expr
+  _1 = member_expr
     {               ( _1 )}
 | _1 = T_NEW _2 = member_expr
     {                     ( New (_1, _2, None) )}
@@ -1257,7 +1257,7 @@ _1 = member_expr
     {                               ( New (_1, _2, Some _3) )}
 
 call_expr:
-_1 = member_expr _2 = arguments
+  _1 = member_expr _2 = arguments
     {                         ( Call (_1, _2) )}
 | _1 = call_expr _2 = arguments
     {                       ( Call (_1, _2) )}
@@ -1271,7 +1271,7 @@ _1 = member_expr _2 = arguments
     {     ( ObjGet(_1,_2, (BraceIdent (_3, _4, _5))) )}
 
 member_expr:
-_1 = primary_expr
+  _1 = primary_expr
     {                ( _1 )}
 | _1 = member_expr _2 = TOBRA _3 = dim_offset _4 = TCBRA
     {                                      ( ArrayGet(_1, (_2, _3, _4)) )}
@@ -1287,7 +1287,7 @@ _1 = primary_expr
     {     ( ClassGet(_1, _2, Id (XName [QI (Name("class", _3))])) )}
 
 primary_expr:
-_1 = constant
+  _1 = constant
     {            ( Sc (C _1) )}
 | _1 = qualified_class_name
     {                        ( Id _1  )}
@@ -1321,7 +1321,7 @@ _1 = constant
     {                        ( ParenExpr(_1,_2,_3) )}
 
 constant:
-_1 = T_LNUMBER
+  _1 = T_LNUMBER
     {                ( Int(_1) )}
 | _1 = T_DNUMBER
     {                ( Double(_1) )}
@@ -1345,11 +1345,11 @@ _1 = T_LNUMBER
     {                 ( PreProcess(NamespaceC, _1) )}
 
 static_scalar:
-_1 = expr
+  _1 = expr
     {                    ( _1 )}
 
 assignment_list_element:
-_1 = expr
+  _1 = expr
     {           ( ListVar _1 )}
 | _1 = T_LIST _2 = TOPAR _3 = assignment_list _4 = TCPAR
     {                                      ( ListList (_1, (_2, _3, _4)) )}
@@ -1357,11 +1357,11 @@ _1 = expr
     {                   ( ListEmpty )}
 
 array_pair_list:
-_1 = array_pair_list_rev
+  _1 = array_pair_list_rev
     {                                     ( List.rev _1 )}
 
 array_pair:
-_1 = expr
+  _1 = expr
     {                  ( (ArrayExpr _1) )}
 | _1 = TAND _2 = expr
     {                      ( (ArrayRef (_1,_2)) )}
@@ -1371,11 +1371,11 @@ _1 = expr
     {                          ( (ArrayArrowRef(_1,_2,_3,_4)) )}
 
 arguments:
-_1 = TOPAR _2 = function_call_argument_list _3 = TCPAR
+  _1 = TOPAR _2 = function_call_argument_list _3 = TCPAR
     {                                                   ( (_1, _2, _3) )}
 
 function_call_argument:
-_1 = expr
+  _1 = expr
     {        ( (Arg (_1)) )}
 | _1 = TAND _2 = expr
     {               ( (ArgRef(_1, _2)) )}
@@ -1383,7 +1383,7 @@ _1 = expr
     {                        ( (ArgUnpack(_1, _2)) )}
 
 encaps:
-_1 = T_ENCAPSED_AND_WHITESPACE
+  _1 = T_ENCAPSED_AND_WHITESPACE
     {     ( EncapsString _1 )}
 | _1 = T_VARIABLE
     {     ( EncapsVar (H.mk_var _1)  )}
@@ -1411,7 +1411,7 @@ _1 = T_ENCAPSED_AND_WHITESPACE
     {                                           ( EncapsExpr (_1, _2, _3) )}
 
 encaps_var_offset:
-_1 = T_IDENT
+  _1 = T_IDENT
     {           (
      (* It looks like an ident but as we are in encaps_var_offset,
       * PHP allows array access inside strings to omit the quote
@@ -1434,13 +1434,13 @@ _1 = T_IDENT
    )}
 
 xhp_html:
-_1 = T_XHP_OPEN_TAG _2 = xhp_attributes _3 = T_XHP_GT _4 = xhp_children _5 = T_XHP_CLOSE_TAG
+  _1 = T_XHP_OPEN_TAG _2 = xhp_attributes _3 = T_XHP_GT _4 = xhp_children _5 = T_XHP_CLOSE_TAG
     {     ( Xhp (_1, _2, _3, _4, _5)  )}
 | _1 = T_XHP_OPEN_TAG _2 = xhp_attributes _3 = T_XHP_SLASH_GT
     {     ( XhpSingleton (_1, _2, _3) )}
 
 xhp_child:
-_1 = T_XHP_TEXT
+  _1 = T_XHP_TEXT
     {                        ( XhpText _1 )}
 | _1 = xhp_html
     {                        ( XhpNested _1 )}
@@ -1448,11 +1448,11 @@ _1 = T_XHP_TEXT
     {                        ( XhpExpr (_1, _2, _3) )}
 
 xhp_attribute:
-_1 = T_XHP_ATTR _2 = TEQ _3 = xhp_attribute_value
+  _1 = T_XHP_ATTR _2 = TEQ _3 = xhp_attribute_value
     {                                      ( _1, _2, _3 )}
 
 xhp_attribute_value:
-_1 = TGUIL _2 = encaps_list _3 = TGUIL
+  _1 = TGUIL _2 = encaps_list _3 = TGUIL
     {                           ( XhpAttrString (_1, _2, _3) )}
 | _1 = TOBRACE _2 = expr _3 = TCBRACE
     {                           ( XhpAttrExpr (_1, _2, _3) )}
@@ -1460,7 +1460,7 @@ _1 = TGUIL _2 = encaps_list _3 = TGUIL
     {              ( H.sgrep_guard (SgrepXhpAttrValueMvar (_1)) )}
 
 lambda_expr:
-_1 = T_VARIABLE _2 = lambda_body
+  _1 = T_VARIABLE _2 = lambda_body
     {     (
        let sl_tok, sl_body = _2 in
        let sl_params = SLSingleParam (H.mk_param _1) in
@@ -1495,19 +1495,19 @@ _1 = T_VARIABLE _2 = lambda_body
      )}
 
 lambda_body:
-_1 = T_DOUBLE_ARROW _2 = TOBRACE _3 = inner_statement_list _4 = TCBRACE
+  _1 = T_DOUBLE_ARROW _2 = TOBRACE _3 = inner_statement_list _4 = TCBRACE
     {                                                       ( (Some _1, SLBody (_2, _3, _4)) )}
 | _1 = T_DOUBLE_ARROW _2 = expr
     {                       ( (Some _1, SLExpr _2) )}
 
 dim_offset:
-
+  
     {                   ( None )}
 | _1 = expr
     {            ( Some _1 )}
 
 exit_expr:
-
+  
     {                 ( None )}
 | _1 = TOPAR _2 = TCPAR
     {                ( Some(_1, None, _2) )}
@@ -1515,7 +1515,7 @@ exit_expr:
     {                    ( Some(_1, Some _2, _3) )}
 
 ident:
-_1 = T_IDENT
+  _1 = T_IDENT
     {           ( _1 )}
 | _1 = T_XHP_ATTRIBUTE
     {                   ( PI.str_of_info _1, _1 )}
@@ -1537,13 +1537,13 @@ _1 = T_IDENT
     {               ( PI.str_of_info _1, _1 )}
 
 ident_class_name:
-_1 = ident
+  _1 = ident
     {                      ( Name _1 )}
 | _1 = T_XHP_COLONID_DEF
     {                      ( XhpName _1 )}
 
 ident_method_name:
-_1 = ident
+  _1 = ident
     {         ( _1 )}
 | _1 = T_PARENT
     {            ( "parent", _1 )}
@@ -1553,7 +1553,7 @@ _1 = ident
     {            ( "async", _1 )}
 
 ident_xhp_attr_name_atom:
-_1 = ident
+  _1 = ident
     {         ( snd _1 )}
 | _1 = T_ECHO
     {          ( _1 )}
@@ -1703,7 +1703,7 @@ _1 = ident
     {                            ( _1 )}
 
 namespace_declaration:
-_1 = T_NAMESPACE _2 = namespace_name _3 = TSEMICOLON
+  _1 = T_NAMESPACE _2 = namespace_name _3 = TSEMICOLON
     {     ( NamespaceDef (_1, _2, _3) )}
 | _1 = T_NAMESPACE _2 = namespace_name _3 = TOBRACE _4 = top_statement_list _5 = TCBRACE
     {     ( NamespaceBracketDef (_1, Some _2, (_3, H.squash_stmt_list _4, _5)) )}
@@ -1711,17 +1711,17 @@ _1 = T_NAMESPACE _2 = namespace_name _3 = TSEMICOLON
     {     ( NamespaceBracketDef (_1, None, (_2, H.squash_stmt_list _3, _4)) )}
 
 use_declaration:
-_1 = T_USE _2 = use_declaration_name_list _3 = TSEMICOLON
+  _1 = T_USE _2 = use_declaration_name_list _3 = TSEMICOLON
     {                                              ( NamespaceUse (_1, _2, _3) )}
 
 namespace_name:
-_1 = ident
+  _1 = ident
     {                                   ( [QI (Name _1)] )}
 | _1 = namespace_name _2 = TANTISLASH _3 = ident
     {                                   ( _1 @ [QITok _2; QI (Name _3)] )}
 
 use_declaration_name:
-_1 = namespace_name
+  _1 = namespace_name
     {                  ( ImportNamespace _1 )}
 | _1 = namespace_name _2 = T_AS _3 = ident
     {                             ( AliasNamespace (_1, _2, Name _3) )}
@@ -1731,7 +1731,7 @@ _1 = namespace_name
     {     ( AliasNamespace (QITok _1::_2, _3, Name _4) )}
 
 qualified_name:
-_1 = namespace_name
+  _1 = namespace_name
     {                                         ( XName _1 )}
 | _1 = TANTISLASH _2 = namespace_name
     {                                         ( XName (QITok _1::_2) )}
@@ -1739,157 +1739,157 @@ _1 = namespace_name
     {     ( XName (QI (Name ("namespace", _1))::QITok _2::_3) )}
 
 qualified_class_name:
-_1 = qualified_name
+  _1 = qualified_name
     {                   ( _1 )}
 | _1 = T_XHP_COLONID_DEF
     {                      ( XName [QI (XhpName _1)] )}
 
 qualified_class_name_or_array:
-_1 = qualified_class_name
+  _1 = qualified_class_name
     {                        ( _1 )}
 | _1 = T_ARRAY
     {           ( XName [QI (Name ("array", _1))] )}
 
 qualified_name_for_traits:
-_1 = qualified_class_name
+  _1 = qualified_class_name
     {                                                ( _1 )}
 
 class_name:
-_1 = qualified_class_name_or_array _2 = type_arguments
+  _1 = qualified_class_name_or_array _2 = type_arguments
     {  ( Hint (_1, _2) )}
 
 class_name_no_array:
-_1 = qualified_class_name _2 = type_arguments
+  _1 = qualified_class_name _2 = type_arguments
     {  ( Hint (_1, _2) )}
 
 top_statement_list:
-_1 = top_statement_list _2 = top_statement
+  _1 = top_statement_list _2 = top_statement
     {                                     ( _1 @ [_2] )}
 | 
     {                 ( [] )}
 
 inner_statement_list:
-_1 = inner_statement_list _2 = inner_statement
+  _1 = inner_statement_list _2 = inner_statement
     {                                         ( _1 @ [_2] )}
 | 
     {                 ( [] )}
 
 class_statement_list:
-_1 = class_statement_list _2 = class_statement
+  _1 = class_statement_list _2 = class_statement
     {                                        ( _1 @ [_2] )}
 | 
     {                 ( [] )}
 
 enum_statement_list:
-_1 = enum_statement_list _2 = enum_statement
+  _1 = enum_statement_list _2 = enum_statement
     {                                      ( _1 @ [_2] )}
 | 
     {                 ( [] )}
 
 trait_rules:
-_1 = trait_rules _2 = trait_rule
+  _1 = trait_rules _2 = trait_rule
     {                          ( _1 @ [_2] )}
 | 
     {                 ( [] )}
 
 additional_catches:
-_1 = non_empty_additional_catches
+  _1 = non_empty_additional_catches
     {                                ( _1 )}
 | 
     {                 ( [] )}
 
 non_empty_additional_catches:
-_1 = additional_catch
+  _1 = additional_catch
     {                                                 ( [_1] )}
 | _1 = non_empty_additional_catches _2 = additional_catch
     {                                                 ( _1 @ [_2] )}
 
 optional_finally_clause:
-_1 = finally_clause
+  _1 = finally_clause
     {                  ( [_1] )}
 | 
     {                  ( [] )}
 
 method_modifiers:
-
+  
     {                    ( [] )}
 | _1 = non_empty_member_modifiers
     {                                ( _1 )}
 
 non_empty_member_modifiers:
-_1 = member_modifier
+  _1 = member_modifier
     {                      ( [_1] )}
 | _1 = non_empty_member_modifiers _2 = member_modifier
     {                                              ( _1 @ [_2] )}
 
 unset_variables:
-_1 = unset_variable
+  _1 = unset_variable
     {                  ( [Left _1] )}
 | _1 = unset_variables _2 = TCOMMA _3 = unset_variable
     {                                         ( _1 @ [Right _2; Left _3] )}
 
 global_var_list:
-_1 = global_var
+  _1 = global_var
     {                 ( [Left _1] )}
 | _1 = global_var_list _2 = TCOMMA _3 = global_var
     {                                     ( _1 @ [Right _2; Left _3] )}
 
 echo_expr_list:
-_1 = expr
+  _1 = expr
     {              ( [Left _1] )}
 | _1 = echo_expr_list _2 = TCOMMA _3 = expr
     {                                   ( _1 @ [Right _2; Left _3] )}
 
 expr_list:
-_1 = expr
+  _1 = expr
     {              ( [Left _1] )}
 | _1 = expr_list _2 = TCOMMA _3 = expr
     {                              ( _1 @ [Right _2; Left _3] )}
 
 use_declaration_name_list:
-_1 = use_declaration_name
+  _1 = use_declaration_name
     {     ( [Left _1] )}
 | _1 = use_declaration_name_list _2 = TCOMMA _3 = use_declaration_name
     {     ( _1@[Right _2;Left _3] )}
 
 declare_list:
-_1 = declare
+  _1 = declare
     {                               ( [Left _1] )}
 | _1 = declare_list _2 = TCOMMA _3 = declare
     {                               ( _1 @ [Right _2; Left _3] )}
 
 non_empty_for_expr:
-_1 = expr
+  _1 = expr
     {                      ( [Left _1] )}
 | _1 = non_empty_for_expr _2 = TCOMMA _3 = expr
     {                                   ( _1 @ [Right _2; Left _3] )}
 
 xhp_attribute_decls:
-_1 = xhp_attribute_decl
+  _1 = xhp_attribute_decl
     {                      ( [Left _1] )}
 | _1 = xhp_attribute_decls _2 = TCOMMA _3 = xhp_attribute_decl
     {                                                 ( _1 @ [Right _2; Left _3] )}
 
 xhp_enum_list:
-_1 = xhp_enum
+  _1 = xhp_enum
     {            ( [Left _1] )}
 | _1 = xhp_enum_list _2 = TCOMMA _3 = xhp_enum
     {                                 ( _1 @ [Right _2; Left _3] )}
 
 xhp_category_list:
-_1 = xhp_category
+  _1 = xhp_category
     {                ( [Left _1] )}
 | _1 = xhp_category_list _2 = TCOMMA _3 = xhp_category
     {                                         ( _1 @ [Right _2; Left _3] )}
 
 attribute_list:
-_1 = attribute
+  _1 = attribute
     {                   ( [Left _1] )}
 | _1 = attribute_list _2 = TCOMMA _3 = attribute
     {                                           ( _1 @ [Right _2; Left _3] )}
 
 attribute_argument_list:
-
+  
     {                 ( [] )}
 | _1 = attribute_argument
     {                      ( [Left _1] )}
@@ -1897,91 +1897,91 @@ attribute_argument_list:
     {                                                     ( _1@[Right _2; Left _3])}
 
 static_var_list:
-_1 = static_var
+  _1 = static_var
     {                                     ( [Left _1] )}
 | _1 = static_var_list _2 = TCOMMA _3 = static_var
     {                                     ( _1 @ [Right _2; Left _3] )}
 
 class_variable_declaration:
-_1 = class_variable
+  _1 = class_variable
     {                     ( [Left _1] )}
 | _1 = class_variable_declaration _2 = TCOMMA _3 = class_variable
     {                                                    ( _1@[Right _2;Left _3] )}
 
 non_empty_parameter_list:
-_1 = parameter_or_dots
+  _1 = parameter_or_dots
     {                                                      ( [_1] )}
 | _1 = non_empty_parameter_list _2 = TCOMMA _3 = parameter_or_dots
     {                                                      ( _1 @ [Right3 _2; _3] )}
 
 non_empty_type_php_or_dots_list:
-_1 = type_php_or_dots
+  _1 = type_php_or_dots
     {                                                        ( [_1] )}
 | _1 = non_empty_type_php_or_dots_list _2 = TCOMMA _3 = type_php_or_dots
     {                                                           ( _1 @ [Right3 _2; _3])}
 
 non_empty_type_php_list:
-_1 = non_empty_type_php_list_bis
+  _1 = non_empty_type_php_list_bis
     {                               ( _1 )}
 | _1 = non_empty_type_php_list_bis _2 = TCOMMA
     {                                      ( _1 @ [Right _2] )}
 
 non_empty_type_php_list_bis:
-_1 = type_php
+  _1 = type_php
     {                                           ( [Left _1] )}
 | _1 = non_empty_type_php_list_bis _2 = TCOMMA _3 = type_php
     {                                                ( _1 @ [Right _2; Left _3] )}
 
 class_name_list:
-_1 = class_name_no_array
+  _1 = class_name_no_array
     {                       ( [Left _1] )}
 | _1 = class_name_list _2 = TCOMMA _3 = class_name_no_array
     {                                              ( _1 @ [Right _2; Left _3])}
 
 class_constants_declaration:
-_1 = class_constant_declaration
+  _1 = class_constant_declaration
     {                              ( [Left _1] )}
 | _1 = class_constants_declaration _2 = TCOMMA _3 = class_constant_declaration
     {     ( _1 @ [Right _2; Left _3] )}
 
 possible_comma:
-
+  
     {                 ( [] )}
 | _1 = TCOMMA
     {                 ( [Right _1] )}
 
 return_type_opt:
-_1 = return_type
+  _1 = return_type
     {                     ( Some _1 )}
 | 
     {                     ( None )}
 
 attributes_opt:
-_1 = attributes
+  _1 = attributes
     {                  ( Some _1 )}
 | 
     {                  ( None )}
 
 type_php_opt:
-_1 = type_php
+  _1 = type_php
     {                  ( Some _1 )}
 | 
     {                  ( None )}
 
 at_opt:
-_1 = T__AT
+  _1 = T__AT
     {                  ( Some _1 )}
 | 
     {                  ( None )}
 
 ctor_modifier_opt:
-_1 = ctor_modifier
+  _1 = ctor_modifier
     {                       ( Some _1 )}
 | 
     {                  ( None )}
 
 function_call_argument_list:
-
+  
     {                                              ( [] )}
 | _1 = non_empty_function_call_argument_list
     {                                              ( _1 )}
@@ -1989,19 +1989,19 @@ function_call_argument_list:
     {                                                 ( _1 @ [Right _2] )}
 
 non_empty_function_call_argument_list:
-_1 = function_call_argument
+  _1 = function_call_argument
     {                          ( [Left _1] )}
 | _1 = non_empty_function_call_argument_list _2 = TCOMMA _3 = function_call_argument
     {      ( _1 @ [Right _2; Left _3] )}
 
 assignment_list:
-_1 = assignment_list_element
+  _1 = assignment_list_element
     {                                                  ( [Left _1] )}
 | _1 = assignment_list _2 = TCOMMA _3 = assignment_list_element
     {                                                  ( _1 @ [Right _2; Left _3] )}
 
 shape_field_list:
-
+  
     {                 ( [] )}
 | _1 = non_empty_shape_field_list
     {                              ( _1 )}
@@ -2009,37 +2009,37 @@ shape_field_list:
     {                                     ( _1 @ [Right _2] )}
 
 non_empty_shape_field_list:
-_1 = shape_field
+  _1 = shape_field
     {                 ( [Left _1] )}
 | _1 = non_empty_shape_field_list _2 = TCOMMA _3 = shape_field
     {                                                  ( _1 @ [Right _2; Left _3] )}
 
 non_empty_array_pair_list_rev:
-_1 = array_pair
+  _1 = array_pair
     {              ( [Left _1] )}
 | _1 = non_empty_array_pair_list_rev _2 = TCOMMA _3 = array_pair
     {                                                    ( Left _3::Right _2::_1 )}
 
 array_pair_list_rev:
-
+  
     {                 ( [] )}
 | _1 = non_empty_array_pair_list_rev _2 = possible_comma
     {                                                ( _2@_1 )}
 
 encaps_list:
-_1 = encaps_list _2 = encaps
+  _1 = encaps_list _2 = encaps
     {                                       ( _1 @ [_2] )}
 | 
     {                 ( [] )}
 
 xhp_attributes:
-_1 = xhp_attributes _2 = xhp_attribute
+  _1 = xhp_attributes _2 = xhp_attribute
     {                                ( _1 @ [_2] )}
 | 
     {                 ( [] )}
 
 xhp_children:
-_1 = xhp_children _2 = xhp_child
+  _1 = xhp_children _2 = xhp_child
     {                          ( _1 @ [_2] )}
 | 
     {                 ( [] )}

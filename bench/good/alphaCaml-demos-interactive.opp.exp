@@ -15,7 +15,7 @@ open Syntax.Raw
 %%
 
 expr:
-_1 = VAR
+  _1 = VAR
     {    ( EVar _1 )}
 | _1 = CONST
     {    ( EConst _1 )}
@@ -25,7 +25,7 @@ _1 = VAR
     {    ( EFail )}
 
 declarations:
-_1 = VAR _2 = EQUAL _3 = expr _4 = EOF
+  _1 = VAR _2 = EQUAL _3 = expr _4 = EOF
     {    ( D (_1, _3, Suspension.create (fun () -> !ParserFix.declarations())) )}
 
 %%

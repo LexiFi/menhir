@@ -19,11 +19,11 @@ open Rc_ast
 %%
 
 rcfile:
-_1 = rclines _2 = EOF
+  _1 = rclines _2 = EOF
     {                                                ( _1            )}
 
 rclines:
-
+  
     {                                                ( empty         )}
 | _1 = rclines _2 = rcline
     {                                                ( let (id,rc) = _2 in
@@ -31,13 +31,13 @@ rclines:
                                                 )}
 
 rcline:
-_1 = ID _2 = EQUAL _3 = value
+  _1 = ID _2 = EQUAL _3 = value
     {                                                ( (_1,_3)       )}
 | _1 = ID _2 = EQUAL _3 = values
     {                                                ( (_1,RClist(List.rev _3))  )}
 
 value:
-_1 = ID
+  _1 = ID
     {                                                ( RCstr(_1)     )}
 | _1 = STR
     {                                                ( RCstr(_1)     )}
@@ -51,7 +51,7 @@ _1 = ID
     {                                                ( RCfloat(_1)   )}
 
 values:
-_1 = value _2 = COMMA _3 = value
+  _1 = value _2 = COMMA _3 = value
     {                                                ( [_3  ; _1]    )}
 | _1 = values _2 = COMMA _3 = value
     {                                                (  _3 :: _1     )}

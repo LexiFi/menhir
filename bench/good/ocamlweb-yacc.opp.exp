@@ -32,26 +32,26 @@
 %%
 
 yacc_definitions:
-_1 = header _2 = tokendecls _3 = Tmark _4 = rules _5 = header _6 = EOF
+  _1 = header _2 = tokendecls _3 = Tmark _4 = rules _5 = header _6 = EOF
     {      ( { header = _1 ; 
 	  decls = _2;
 	  rules = _4;
 	  trailer = _5 } )}
 
 header:
-_1 = Taction
+  _1 = Taction
     {      ( _1 )}
 | 
     {    ( dummy_loc )}
 
 tokendecls:
-_1 = tokendecl _2 = tokendecls
+  _1 = tokendecl _2 = tokendecls
     {    ( _1::_2 )}
 | 
     {    ( [] )}
 
 tokendecl:
-_1 = Ttoken _2 = Ttypedecl _3 = idlist
+  _1 = Ttoken _2 = Ttypedecl _3 = idlist
     {      ( Typed_tokens(_2,_3) )}
 | _1 = Ttoken _2 = idlist
     {      ( Untyped_tokens(_2) )}
@@ -67,38 +67,38 @@ _1 = Ttoken _2 = Ttypedecl _3 = idlist
     {      ( Tokens_assoc(_2) )}
 
 idlist:
-_1 = Tident
+  _1 = Tident
     {    ( [_1] )}
 | _1 = Tident _2 = idlist
     {    ( _1 :: _2 )}
 
 rules:
-
+  
     {    ( [] )}
 | _1 = general_rule _2 = rules
     {    ( _1 :: _2 )}
 
 general_rule:
-_1 = rule _2 = Tsemicolon
+  _1 = rule _2 = Tsemicolon
     {      ( _1 )}
 | _1 = rule
     {      ( Yacc_syntax.issue_warning "ocamlyacc documentation recommends adding a semicolon at end of each grammar rules";
       _1 )}
 
 rule:
-_1 = Tident _2 = Tcolon _3 = right_part
+  _1 = Tident _2 = Tcolon _3 = right_part
     {    ( (_1,_3) )}
 | _1 = Tident _2 = Tcolon _3 = Tor _4 = right_part
     {    ( (_1,_4) )}
 
 right_part:
-_1 = word _2 = Taction
+  _1 = word _2 = Taction
     {    ( [(_1,_2)] )}
 | _1 = word _2 = Taction _3 = Tor _4 = right_part
     {    ( (_1,_2) :: _4 )}
 
 word:
-
+  
     {    ( [] )}
 | _1 = Tident _2 = word
     {    ( _1 :: _2 )}

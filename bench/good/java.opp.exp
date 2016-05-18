@@ -166,31 +166,31 @@ Warning: the token VOLATILE is unused.
 %%
 
 compilation_unit:
-_1 = package_declaration _2 = import_declarations _3 = type_declarations _4 = EOF
+  _1 = package_declaration _2 = import_declarations _3 = type_declarations _4 = EOF
     {    ( { cu_package = _1 ;
 	cu_imports = _2 ;
 	cu_type_decls = _3} )}
 
 package_declaration:
-
+  
     {    ( [] )}
 | _1 = PACKAGE _2 = name _3 = SEMICOLON
     {    ( _2 )}
 
 import_declarations:
-
+  
     {    ( [] )}
 | _1 = IMPORT _2 = import_declaration _3 = SEMICOLON _4 = import_declarations
     {    ( _2::_4 )}
 
 import_declaration:
-_1 = name _2 = DOT _3 = STAR
+  _1 = name _2 = DOT _3 = STAR
     {    ( Import_package(_1) )}
 | _1 = name
     {    ( Import_class_or_interface(_1) )}
 
 type_declarations:
-
+  
     {    ( [] )}
 | _1 = type_declaration _2 = type_declarations
     {    ( _1::_2 )}
@@ -198,25 +198,25 @@ type_declarations:
     {    ( _2 )}
 
 doc_comment:
-
+  
     {    ( "" )}
 | _1 = DOC_COMMENT
     {    ( _1 )}
 
 jml_loop_annot:
-
+  
     {    ( default_loop_annotation )}
 | _1 = JML_LOOP_ANNOTATION
     {    ( _1 )}
 
 type_declaration:
-_1 = doc_comment _2 = class_declaration
+  _1 = doc_comment _2 = class_declaration
     {    ( (_1,Class(_2)) )}
 | _1 = doc_comment _2 = interface_declaration
     {    ( (_1,Interface(_2)) )}
 
 class_declaration:
-_1 = modifiers _2 = CLASS _3 = ident _4 = extends_decl _5 = implements_decl _6 = LEFTBRACE _7 = field_declarations _8 = RIGHTBRACE
+  _1 = modifiers _2 = CLASS _3 = ident _4 = extends_decl _5 = implements_decl _6 = LEFTBRACE _7 = field_declarations _8 = RIGHTBRACE
     {    ( { class_modifiers = _1;
 	class_name = _3;
 	class_extends = _4;
@@ -224,25 +224,25 @@ _1 = modifiers _2 = CLASS _3 = ident _4 = extends_decl _5 = implements_decl _6 =
 	class_fields = _7 })}
 
 extends_decl:
-
+  
     {    ( None )}
 | _1 = EXTENDS _2 = name
     {    ( Some _2 )}
 
 implements_decl:
-
+  
     {    ( [] )}
 | _1 = IMPLEMENTS _2 = name_comma_list
     {    ( _2 )}
 
 field_declarations:
-
+  
     {    ( [] )}
 | _1 = field_declaration _2 = field_declarations
     {    ( _1::_2 )}
 
 field_declaration:
-_1 = doc_comment _2 = method_declaration
+  _1 = doc_comment _2 = method_declaration
     {    ( (_1,_2) )}
 | _1 = doc_comment _2 = constructor_declaration
     {    ( (_1,Constructor(_2)) )}
@@ -254,23 +254,23 @@ _1 = doc_comment _2 = method_declaration
     {    ( (_1,Specification(_2)) )}
 
 jml_declaration:
-_1 = JML_DECLARATIONS
+  _1 = JML_DECLARATIONS
     {    ( _1 )}
 
 variable_declaration:
-_1 = modifiers _2 = type_expr _3 = variable_declarators _4 = SEMICOLON
+  _1 = modifiers _2 = type_expr _3 = variable_declarators _4 = SEMICOLON
     {    ( { variable_modifiers = _1 ;
 	variable_type = _2 ;
 	variable_decls = _3 } )}
 
 variable_declarators:
-_1 = variable_declarator
+  _1 = variable_declarator
     {    ( [_1] )}
 | _1 = variable_declarator _2 = COMMA _3 = variable_declarators
     {    ( _1::_3 )}
 
 variable_declarator:
-_1 = variable_declarator_id
+  _1 = variable_declarator_id
     {    ( { variable_id = _1 ;
 	variable_initializer = None } )}
 | _1 = variable_declarator_id _2 = EQ _3 = variable_initializer
@@ -278,19 +278,19 @@ _1 = variable_declarator_id
 	variable_initializer = Some _3 } )}
 
 variable_declarator_id:
-_1 = ident
+  _1 = ident
     {    ( let (loc,id)=_1 in Simple_id(loc,id) )}
 | _1 = variable_declarator_id _2 = LEFTBRACKET _3 = RIGHTBRACKET
     {    ( Array_id(_1) )}
 
 variable_initializer:
-_1 = expr
+  _1 = expr
     {    ( Simple_initializer(_1) )}
 | _1 = LEFTBRACE _2 = variable_initializers _3 = RIGHTBRACE
     {    ( Array_initializer(_2) )}
 
 variable_initializers:
-
+  
     {    ( [] )}
 | _1 = variable_initializer
     {    ( [_1] )}
@@ -298,15 +298,15 @@ variable_initializers:
     {    ( _1::_3 )}
 
 static_initializer:
-_1 = STATIC _2 = block
+  _1 = STATIC _2 = block
     {    ( _2 )}
 
 method_declaration:
-_1 = method_header _2 = method_body
+  _1 = method_header _2 = method_body
     {    ( Method(_1,_2) )}
 
 method_header:
-_1 = method_specification _2 = modifiers _3 = type_expr _4 = method_declarator _5 = throws_decl
+  _1 = method_specification _2 = modifiers _3 = type_expr _4 = method_declarator _5 = throws_decl
     {    ( { method_specification = _1 ;
 	method_modifiers = _2 ;
 	method_return_type = Some(_3) ;
@@ -332,49 +332,49 @@ _1 = method_specification _2 = modifiers _3 = type_expr _4 = method_declarator _
 	method_throws = _4 } )}
 
 method_specification:
-_1 = JML_METHOD_SPECIFICATION
+  _1 = JML_METHOD_SPECIFICATION
     {    ( _1 )}
 | _1 = JML_METHOD_SPECIFICATION _2 = method_specification
     {    ( concat_specs _1 _2 )}
 
 method_declarator:
-_1 = ident _2 = method_parameters
+  _1 = ident _2 = method_parameters
     {    ( Simple_method_declarator(_1,_2) )}
 | _1 = method_declarator _2 = LEFTBRACKET _3 = RIGHTBRACKET
     {    ( Array_method_declarator(_1) )}
 
 method_parameters:
-_1 = LEFTPAR _2 = RIGHTPAR
+  _1 = LEFTPAR _2 = RIGHTPAR
     {    ( [] )}
 | _1 = LEFTPAR _2 = parameter_comma_list _3 = RIGHTPAR
     {    ( _2 )}
 
 parameter_comma_list:
-_1 = parameter
+  _1 = parameter
     {    ( [_1] )}
 | _1 = parameter _2 = COMMA _3 = parameter_comma_list
     {    ( _1::_3 )}
 
 parameter:
-_1 = type_expr _2 = ident
+  _1 = type_expr _2 = ident
     {    ( Simple_parameter(_1,_2) )}
 | _1 = parameter _2 = LEFTBRACKET _3 = RIGHTBRACKET
     {    ( Array_parameter(_1) )}
 
 throws_decl:
-
+  
     {    ( [] )}
 | _1 = THROWS _2 = name_comma_list
     {    ( _2 )}
 
 method_body:
-_1 = block
+  _1 = block
     {    ( Some(_1) )}
 | _1 = SEMICOLON
     {    ( None )}
 
 constructor_declaration:
-_1 = method_specification _2 = modifiers _3 = ident _4 = method_parameters _5 = throws_decl _6 = constructor_body
+  _1 = method_specification _2 = modifiers _3 = ident _4 = method_parameters _5 = throws_decl _6 = constructor_body
     {    ( { constr_specification = _1 ;
 	constr_modifiers = _2 ;
 	constr_name = _3 ;
@@ -390,7 +390,7 @@ _1 = method_specification _2 = modifiers _3 = ident _4 = method_parameters _5 = 
 	constr_body = _5 } )}
 
 constructor_body:
-_1 = LEFTBRACE _2 = explicit_constructor_invocation _3 = statements _4 = RIGHTBRACE
+  _1 = LEFTBRACE _2 = explicit_constructor_invocation _3 = statements _4 = RIGHTBRACE
     {    ( (_2,_3) )}
 | _1 = LEFTBRACE _2 = statements _3 = RIGHTBRACE
     {    ( (Invoke_none,_2) )}
@@ -398,44 +398,44 @@ _1 = LEFTBRACE _2 = explicit_constructor_invocation _3 = statements _4 = RIGHTBR
     {    ( (Invoke_none,[]) )}
 
 explicit_constructor_invocation:
-_1 = THIS _2 = LEFTPAR _3 = argument_list _4 = RIGHTPAR _5 = SEMICOLON
+  _1 = THIS _2 = LEFTPAR _3 = argument_list _4 = RIGHTPAR _5 = SEMICOLON
     {    ( Invoke_this(_3) )}
 | _1 = SUPER _2 = LEFTPAR _3 = argument_list _4 = RIGHTPAR _5 = SEMICOLON
     {    ( Invoke_super(_3) )}
 
 argument_list:
-
+  
     {    ( [] )}
 | _1 = expr_comma_list
     {    ( _1 )}
 
 interface_declaration:
-_1 = modifiers _2 = INTERFACE _3 = ident _4 = extends_interfaces_decl _5 = LEFTBRACE _6 = interface_member_declarations _7 = RIGHTBRACE
+  _1 = modifiers _2 = INTERFACE _3 = ident _4 = extends_interfaces_decl _5 = LEFTBRACE _6 = interface_member_declarations _7 = RIGHTBRACE
     {    ( { interface_modifiers = _1;
 	interface_name = _3;
 	interface_extends = _4;
 	interface_members = _6 })}
 
 extends_interfaces_decl:
-
+  
     {    ( [] )}
 | _1 = EXTENDS _2 = name_comma_list
     {    ( _2 )}
 
 interface_member_declarations:
-
+  
     {    ( [] )}
 | _1 = interface_member_declaration _2 = interface_member_declarations
     {    ( _1::_2 )}
 
 interface_member_declaration:
-_1 = doc_comment _2 = variable_declaration
+  _1 = doc_comment _2 = variable_declaration
     {    ( (_1,Constant_declaration(_2)) )}
 | _1 = doc_comment _2 = method_header _3 = SEMICOLON
     {    ( (_1,Method_header(_2)) )}
 
 base_type:
-_1 = SHORT
+  _1 = SHORT
     {    ( "short" )}
 | _1 = BOOLEAN
     {    ( "boolean" )}
@@ -453,7 +453,7 @@ _1 = SHORT
     {    ( "double" )}
 
 type_expr:
-_1 = name
+  _1 = name
     {    ( Type_name(_1) )}
 | _1 = base_type
     {    ( Base_type(_1) )}
@@ -461,7 +461,7 @@ _1 = name
     {    ( Array_type_expr(_1) )}
 
 array_type_expr:
-_1 = base_type _2 = LEFTBRACKET _3 = RIGHTBRACKET
+  _1 = base_type _2 = LEFTBRACKET _3 = RIGHTBRACKET
     {    ( Base_type(_1) )}
 | _1 = name _2 = LEFTBRACKET _3 = RIGHTBRACKET
     {    ( Type_name(_1) )}
@@ -469,13 +469,13 @@ _1 = base_type _2 = LEFTBRACKET _3 = RIGHTBRACKET
     {    ( Array_type_expr(_1) )}
 
 modifiers:
-
+  
     {    ( [] )}
 | _1 = modifier _2 = modifiers
     {    ( _1::_2 )}
 
 modifier:
-_1 = STATIC
+  _1 = STATIC
     {    ( `STATIC )}
 | _1 = FINAL
     {    ( `FINAL )}
@@ -499,23 +499,23 @@ _1 = STATIC
     {    ( `SPEC_PUBLIC )}
 
 block:
-_1 = LEFTBRACE _2 = statements _3 = RIGHTBRACE
+  _1 = LEFTBRACE _2 = statements _3 = RIGHTBRACE
     {    ( _2 )}
 
 statements:
-_1 = statement _2 = statements
+  _1 = statement _2 = statements
     {    ( _1::_2 )}
 | 
     {    ( [] )}
 
 local_variable_declaration:
-_1 = type_expr _2 = variable_declarators
+  _1 = type_expr _2 = variable_declarators
     {    ( { variable_modifiers = [] ;
 	variable_type = _1 ;
 	variable_decls = _2 } )}
 
 statement:
-_1 = annotated_statement
+  _1 = annotated_statement
     {                      ( _1 )}
 | _1 = jml_loop_annot _2 = WHILE _3 = LEFTPAR _4 = expr _5 = RIGHTPAR _6 = statement %prec WHILE
     {    ( mk_statement (extend_loc _2) (While(_1,_4,_6)) )}
@@ -529,14 +529,14 @@ _1 = annotated_statement
     {    ( mk_statement_no_loc (Jml_assert(_1)) )}
 
 annotated_statement:
-_1 = JML_METHOD_SPECIFICATION _2 = other_statement
+  _1 = JML_METHOD_SPECIFICATION _2 = other_statement
     {    ( mk_statement _2.statement_loc 
 	(Annotated(to_statement_spec _1,_2)) )}
 | _1 = other_statement
     {    ( _1 )}
 
 other_statement:
-_1 = expr _2 = SEMICOLON
+  _1 = expr _2 = SEMICOLON
     {    ( mk_statement _1.expr_loc (Expr(_1)) )}
 | _1 = SEMICOLON
     {    ( mk_statement_no_loc Skip )}
@@ -579,13 +579,13 @@ _1 = expr _2 = SEMICOLON
     {    ( mk_statement (extend_loc _1) (Synchronized(_3,_5)) )}
 
 for_cond:
-_1 = expr
+  _1 = expr
     {    ( _1 )}
 | 
     {    ( mk_expr_no_loc (Lit(Bool(true))) )}
 
 switch_block:
-
+  
     {    ( [] )}
 | _1 = switch_labels
     {    ( [(_1,[])] )}
@@ -593,29 +593,29 @@ switch_block:
     {    ( (_1,_2::_3)::_4 )}
 
 switch_labels:
-_1 = switch_label
+  _1 = switch_label
     {    ( [_1] )}
 | _1 = switch_label _2 = switch_labels
     {    ( _1::_2 )}
 
 switch_label:
-_1 = CASE _2 = expr _3 = COLON
+  _1 = CASE _2 = expr _3 = COLON
     {    ( Case(_2) )}
 | _1 = DEFAULT _2 = COLON
     {    ( Default )}
 
 catch_clauses:
-_1 = catch_clause
+  _1 = catch_clause
     {    ( [_1] )}
 | _1 = catch_clause _2 = catch_clauses
     {    ( _1::_2 )}
 
 catch_clause:
-_1 = CATCH _2 = LEFTPAR _3 = parameter _4 = RIGHTPAR _5 = block
+  _1 = CATCH _2 = LEFTPAR _3 = parameter _4 = RIGHTPAR _5 = block
     {    ( (_3,_5) )}
 
 field_access:
-_1 = SUPER _2 = DOT _3 = ident
+  _1 = SUPER _2 = DOT _3 = ident
     {    ( let (l,_) as id = _3 in
       (merge_locs _1 l, Super_access(id)) )}
 | _1 = primary_expr _2 = DOT _3 = ident
@@ -623,13 +623,13 @@ _1 = SUPER _2 = DOT _3 = ident
       (merge_locs e.expr_loc l,Primary_access(e,id)) )}
 
 primary_expr:
-_1 = primary_no_new_array
+  _1 = primary_no_new_array
     {    ( _1 )}
 | _1 = array_creation_expression
     {    ( _1 )}
 
 primary_no_new_array:
-_1 = INTEGER
+  _1 = INTEGER
     {    ( let (loc,n)=_1 in mk_lit loc (Int(n)) )}
 | _1 = REAL
     {    ( let (loc,r)=_1 in mk_lit loc (Float(r)) )}
@@ -676,7 +676,7 @@ _1 = INTEGER
       mk_expr l (Array_access(a,b)) )}
 
 array_access:
-_1 = primary_no_new_array _2 = LEFTBRACKET _3 = expr _4 = RIGHTBRACKET
+  _1 = primary_no_new_array _2 = LEFTBRACKET _3 = expr _4 = RIGHTBRACKET
     {    ( let e=_1 in
       (extend_loc e.expr_loc,e,_3) )}
 | _1 = name _2 = LEFTBRACKET _3 = expr _4 = RIGHTBRACKET
@@ -684,7 +684,7 @@ _1 = primary_no_new_array _2 = LEFTBRACKET _3 = expr _4 = RIGHTBRACKET
       (extend_loc e.expr_loc,e,_3) )}
 
 array_creation_expression:
-_1 = NEW _2 = base_type _3 = array_dims
+  _1 = NEW _2 = base_type _3 = array_dims
     {    ( let l = _1 in
       mk_expr 
 	(extend_loc l)
@@ -696,19 +696,19 @@ _1 = NEW _2 = base_type _3 = array_dims
 	(Array_creation(build_array_creation_expr (Type_name(_2)) _3)) )}
 
 array_dims:
-_1 = LEFTBRACKET _2 = expr _3 = RIGHTBRACKET _4 = implicit_dims
+  _1 = LEFTBRACKET _2 = expr _3 = RIGHTBRACKET _4 = implicit_dims
     {    ( ([_2],_4) )}
 | _1 = LEFTBRACKET _2 = expr _3 = RIGHTBRACKET _4 = array_dims
     {    ( let (a,b) = _4 in (_2::a,b) )}
 
 implicit_dims:
-
+  
     {    ( 0 )}
 | _1 = LEFTBRACKET _2 = RIGHTBRACKET _3 = implicit_dims
     {    ( succ _3 )}
 
 castable_expr:
-_1 = primary_expr
+  _1 = primary_expr
     {    ( _1 )}
 | _1 = name
     {    ( expand_name _1 )}
@@ -716,7 +716,7 @@ _1 = primary_expr
     {    ( _1 )}
 
 non_basic_cast:
-_1 = LEFTPAR _2 = array_type_expr _3 = RIGHTPAR _4 = castable_expr %prec CAST
+  _1 = LEFTPAR _2 = array_type_expr _3 = RIGHTPAR _4 = castable_expr %prec CAST
     {    ( let l=_1 and e=_4 in
       mk_expr 
 	(merge_locs l e.expr_loc) 
@@ -728,25 +728,25 @@ _1 = LEFTPAR _2 = array_type_expr _3 = RIGHTPAR _4 = castable_expr %prec CAST
 	(Cast(Type_name(_2),e)) )}
 
 statement_expr_list:
-
+  
     {    ( [] )}
 | _1 = statement_expr_ne_list
     {    ( _1 )}
 
 statement_expr_ne_list:
-_1 = expr
+  _1 = expr
     {    ( [mk_statement _1.expr_loc (Expr(_1))] )}
 | _1 = expr _2 = COMMA _3 = statement_expr_ne_list
     {    ( (mk_statement _1.expr_loc (Expr(_1)))::_3 )}
 
 expr:
-_1 = name
+  _1 = name
     {    ( expand_name _1 )}
 | _1 = expr_no_name
     {    ( _1 )}
 
 expr_no_name:
-_1 = name _2 = assign_op _3 = expr %prec ASSIGNOP
+  _1 = name _2 = assign_op _3 = expr %prec ASSIGNOP
     {    ( let n = _1 in
       let e = expand_name n in
       mk_expr 
@@ -872,31 +872,31 @@ _1 = name _2 = assign_op _3 = expr %prec ASSIGNOP
 	(Instanceof(e,_3)) )}
 
 expr_comma_list:
-_1 = expr
+  _1 = expr
     {    ( [_1] )}
 | _1 = expr _2 = COMMA _3 = expr_comma_list
     {    ( _1::_3 )}
 
 assign_op:
-_1 = EQ
+  _1 = EQ
     {    ( "=" )}
 | _1 = ASSIGNOP
     {    ( _1 )}
 
 name:
-_1 = ident
+  _1 = ident
     {    ( [_1] )}
 | _1 = name _2 = DOT _3 = ident
     {    ( _3::_1 )}
 
 name_comma_list:
-_1 = name
+  _1 = name
     {    ( [_1] )}
 | _1 = name _2 = COMMA _3 = name_comma_list
     {    ( _1::_3 )}
 
 ident:
-_1 = ID
+  _1 = ID
     {    ( _1 )}
 
 %%

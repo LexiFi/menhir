@@ -141,7 +141,7 @@ let parse_error s =
 %%
 
 file:
-_1 = file_application _2 = EOF
+  _1 = file_application _2 = EOF
     {    (
       CfParserUtil.set_env "";
       (snd _1)
@@ -157,19 +157,19 @@ _1 = file_application _2 = EOF
     )}
 
 file_application:
-_1 = component_ports _2 = IS _3 = statements
+  _1 = component_ports _2 = IS _3 = statements
     {                                     ( (_1, CfAst.Apply (CfParserUtil.current_file_loc (), "", CfAst.Comp (CfParserUtil.current_file_loc (), "", _1, _3), CfParserUtil.free_arg_list (CfParserUtil.current_file_loc ()) _1)) )}
 | _1 = component_ports _2 = name_space_sugar
     {                                     ( (_1, CfAst.Apply (CfParserUtil.current_file_loc (), "", CfAst.Comp (CfParserUtil.current_file_loc (), "", _1, _2), CfParserUtil.free_arg_list (CfParserUtil.current_file_loc ()) _1)) )}
 
 statements:
-
+  
     {                          ( [] )}
 | _1 = statements _2 = statement
     {                          ( _1 @ [_2] )}
 
 statement:
-_1 = name_space
+  _1 = name_space
     {                    ( CfAst.ApplyStmt _1 )}
 | _1 = ifelse
     {                    ( _1 )}
@@ -181,31 +181,31 @@ _1 = name_space
     {                    ( CfAst.ConnectStmt _1 )}
 
 name_space:
-_1 = LOCAL _2 = locals _3 = IS _4 = statements _5 = END
+  _1 = LOCAL _2 = locals _3 = IS _4 = statements _5 = END
     {                                    ( CfParserUtil.application_expr_of_namespace (fst _1) "" _2 _4 )}
 
 name_space_sugar:
-_1 = WITH _2 = locals _3 = IS _4 = statements
+  _1 = WITH _2 = locals _3 = IS _4 = statements
     {                              ( [CfParserUtil.application_of_namespace (fst _1) "" _2 _4] )}
 
 locals:
-_1 = local
+  _1 = local
     {          ( [_1] )}
 | _1 = locals _2 = local
     {                 ( _1 @ [_2] )}
 
 local:
-_1 = IDENTIFIER
+  _1 = IDENTIFIER
     {               ( snd _1 )}
 
 ifelse:
-_1 = IF _2 = expression _3 = statements _4 = ifelse_else
+  _1 = IF _2 = expression _3 = statements _4 = ifelse_else
     {                                               ( CfParserUtil.conditional_of_ifelse (fst _1) _2 _3 _4 )}
 | _1 = IF _2 = expression _3 = name_space_sugar _4 = ifelse_else
     {                                               ( CfParserUtil.conditional_of_ifelse (fst _1) _2 _3 _4 )}
 
 ifelse_else:
-_1 = END
+  _1 = END
     {                                                ( [] )}
 | _1 = ELSE _2 = statements _3 = END
     {                                                ( _2 )}
@@ -217,19 +217,19 @@ _1 = END
     {                                                ( [CfParserUtil.conditional_of_ifelse (fst _1) _2 _3 _4] )}
 
 component_named:
-_1 = COMPONENT _2 = IDENTIFIER _3 = component_ports _4 = IS _5 = statements _6 = END
+  _1 = COMPONENT _2 = IDENTIFIER _3 = component_ports _4 = IS _5 = statements _6 = END
     {                                                               ( CfParserUtil.stmt_of_comp_named (fst _1) _2 _3 _5 )}
 | _1 = COMPONENT _2 = IDENTIFIER _3 = component_ports _4 = name_space_sugar _5 = END
     {                                                               ( CfParserUtil.stmt_of_comp_named (fst _1) _2 _3 _4 )}
 
 expression:
-_1 = expression_nonop
+  _1 = expression_nonop
     {                     ( _1 )}
 | _1 = expression_op
     {                     ( _1 )}
 
 expression_nonop:
-_1 = PAREN_LEFT _2 = expression _3 = PAREN_RIGHT
+  _1 = PAREN_LEFT _2 = expression _3 = PAREN_RIGHT
     {                                       ( _2 )}
 | _1 = STRING
     {                                       ( CfParserUtil.application_of_string (fst _1) (CfParserUtil.format_string (snd _1)) )}
@@ -269,7 +269,7 @@ _1 = PAREN_LEFT _2 = expression _3 = PAREN_RIGHT
     {                                       ( _1 )}
 
 expression_op:
-_1 = connect
+  _1 = connect
     {                                       ( _1 )}
 | _1 = prefix
     {                                       ( _1 )}
@@ -281,75 +281,75 @@ _1 = connect
     {                                       ( _1 )}
 
 list_sugar:
-_1 = BRACKET_LEFT _2 = list_sugar_items _3 = BRACKET_RIGHT
+  _1 = BRACKET_LEFT _2 = list_sugar_items _3 = BRACKET_RIGHT
     {                                                 ( _2 )}
 
 dot:
-_1 = expression_nonop _2 = OP_DOT _3 = IDENTIFIER
+  _1 = expression_nonop _2 = OP_DOT _3 = IDENTIFIER
     {                                       ( CfAst.DotName     (fst _2, _1, snd _3) )}
 | _1 = expression_nonop _2 = OP_DOT _3 = INTEGER
     {                                       ( CfAst.DotPosition (fst _2, _1, snd _3) )}
 
 vector_select:
-_1 = expression_nonop _2 = OP_VEC_SELECT _3 = expression_nonop
+  _1 = expression_nonop _2 = OP_VEC_SELECT _3 = expression_nonop
     {                                                    ( CfParserUtil.application_of_infix _2 _1 _3 )}
 
 import_file:
-_1 = IMPORT _2 = STRING
+  _1 = IMPORT _2 = STRING
     {                  ( CfAst.Name (fst _1, CfParserUtil.add_import (CfParserUtil.format_string (snd _2))) )}
 
 record:
-_1 = PAREN_LEFT _2 = record_fields _3 = PAREN_RIGHT
+  _1 = PAREN_LEFT _2 = record_fields _3 = PAREN_RIGHT
     {                                            ( CfAst.Record (fst _1, List.rev _2) )}
 | _1 = PAREN_LEFT _2 = PAREN_RIGHT
     {                                            ( CfAst.Record (fst _1, []) )}
 
 record_fields:
-_1 = IDENTIFIER _2 = COLON _3 = expression_nonop
+  _1 = IDENTIFIER _2 = COLON _3 = expression_nonop
     {                                                     ( [(snd _1, _3)] )}
 | _1 = record_fields _2 = IDENTIFIER _3 = COLON _4 = expression_nonop
     {                                                     ( (snd _2, _4) :: _1 )}
 
 nil:
-_1 = BRACKET_LEFT _2 = BRACKET_RIGHT
+  _1 = BRACKET_LEFT _2 = BRACKET_RIGHT
     {                                 ( CfAst.Record (fst _1, []) )}
 
 component_anon:
-_1 = COMP _2 = component_ports _3 = IS _4 = statements _5 = END
+  _1 = COMP _2 = component_ports _3 = IS _4 = statements _5 = END
     {                                               ( CfAst.Comp (fst _1, "", _2, _4) )}
 | _1 = COMP _2 = component_ports _3 = name_space_sugar _4 = END
     {                                               ( CfAst.Comp (fst _1, "", _2, _3) )}
 
 component_ports:
-
+  
     {                                                ( [] )}
 | _1 = component_ports _2 = direction_marker _3 = IDENTIFIER
     {                                                ( _1 @ [snd _3] )}
 
 primitive:
-_1 = PRIM _2 = IDENTIFIER _3 = component_ports _4 = END
+  _1 = PRIM _2 = IDENTIFIER _3 = component_ports _4 = END
     {                                         ( CfAst.Prim (fst _1, snd _2, _3) )}
 
 application:
-_1 = BRACE_LEFT _2 = expression_nonop _3 = arguments _4 = BRACE_RIGHT
+  _1 = BRACE_LEFT _2 = expression_nonop _3 = arguments _4 = BRACE_RIGHT
     {    ( CfAst.Apply (fst _1, "", _2, _3) )}
 | _1 = BRACE_LEFT _2 = IDENTIFIER _3 = COLON _4 = expression_nonop _5 = arguments _6 = BRACE_RIGHT
     {    ( CfParserUtil.connect_name (fst _3) _2 (CfAst.Apply (fst _1, snd _2, _4, _5)) )}
 
 func:
-_1 = BRACE_LEFT _2 = expression_nonop _3 = arguments _4 = direction_marker _5 = DOLLAR _6 = arguments _7 = BRACE_RIGHT
+  _1 = BRACE_LEFT _2 = expression_nonop _3 = arguments _4 = direction_marker _5 = DOLLAR _6 = arguments _7 = BRACE_RIGHT
     {    ( CfParserUtil.select_position (fst _5)                                        (CfAst.Apply (fst _1, "", _2, (_3 @ (CfAst.Free (fst _5) :: _6))))  (List.length _3 + 1) )}
 | _1 = BRACE_LEFT _2 = IDENTIFIER _3 = COLON _4 = expression_nonop _5 = arguments _6 = direction_marker _7 = DOLLAR _8 = arguments _9 = BRACE_RIGHT
     {    ( CfParserUtil.select_position (fst _7) (CfParserUtil.connect_name (fst _3) _2 (CfAst.Apply (fst _1, snd _2, _4, (_5 @ (CfAst.Free (fst _7) :: _8))))) (List.length _5 + 1) )}
 
 arguments:
-
+  
     {                                                ( [] )}
 | _1 = arguments _2 = direction_marker _3 = expression_nonop
     {                                                ( _1 @ [_3] )}
 
 direction_marker:
-
+  
     {           ( () )}
 | _1 = OP_ADD
     {           ( () )}
@@ -359,7 +359,7 @@ direction_marker:
     {           ( () )}
 
 connect:
-_1 = expression _2 = OP_UNIFY _3 = expression
+  _1 = expression _2 = OP_UNIFY _3 = expression
     {                                           ( CfAst.Connect (fst _2, _1, _3) )}
 | _1 = expression _2 = OP_CONNECT_LEFT _3 = expression
     {                                           ( CfAst.Connect (fst _2, _1, _3) )}
@@ -367,7 +367,7 @@ _1 = expression _2 = OP_UNIFY _3 = expression
     {                                           ( CfAst.Connect (fst _2, _3, _1) )}
 
 prefix:
-_1 = OP_NOT _2 = expression
+  _1 = OP_NOT _2 = expression
     {                              ( CfParserUtil.application_of_prefix _1 _2 )}
 | _1 = OP_BW_NOT _2 = expression
     {                              ( CfParserUtil.application_of_prefix _1 _2 )}
@@ -395,7 +395,7 @@ _1 = OP_NOT _2 = expression
     {                              ( CfParserUtil.application_of_prefix _1 _2 )}
 
 infix:
-_1 = expression _2 = OP_BW_OR _3 = expression
+  _1 = expression _2 = OP_BW_OR _3 = expression
     {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
 | _1 = expression _2 = OP_VEC_OR _3 = expression
     {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
@@ -499,11 +499,11 @@ _1 = expression _2 = OP_BW_OR _3 = expression
     {                                              ( CfParserUtil.application_of_infix _2 _1 _3 )}
 
 trifix:
-_1 = expression _2 = OP_VEC_THEN _3 = expression _4 = OP_VEC_ELSE _5 = expression
+  _1 = expression _2 = OP_VEC_THEN _3 = expression _4 = OP_VEC_ELSE _5 = expression
     {                                                              ( CfParserUtil.application_of_trifix _2 _1 _3 _5 )}
 
 conditional:
-_1 = expression _2 = OP_AND _3 = expression
+  _1 = expression _2 = OP_AND _3 = expression
     {                                                      ( CfAst.Cond (fst _2, _1, _3, _1) )}
 | _1 = expression _2 = OP_OR _3 = expression
     {                                                      ( CfAst.Cond (fst _2, _1, _1, _3) )}
@@ -511,7 +511,7 @@ _1 = expression _2 = OP_AND _3 = expression
     {                                                      ( CfAst.Cond (fst _2, _1, _3, _5) )}
 
 list_sugar_items:
-_1 = expression_nonop
+  _1 = expression_nonop
     {                                                              ( CfParserUtil.application_of_infix (CfAst.expr_loc _1, "::") _1 (CfAst.Record (CfAst.expr_loc _1, [])) )}
 | _1 = expression_nonop _2 = list_sugar_items
     {                                                              ( CfParserUtil.application_of_infix (CfAst.expr_loc _1, "::") _1 _2 )}

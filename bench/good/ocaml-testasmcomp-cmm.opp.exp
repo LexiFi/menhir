@@ -126,7 +126,7 @@ let access_array base numelt size =
 %%
 
 phrase:
-_1 = fundecl
+  _1 = fundecl
     {                ( Cfunction _1 )}
 | _1 = datadecl
     {                ( Cdata _1 )}
@@ -134,28 +134,28 @@ _1 = fundecl
     {                ( raise End_of_file )}
 
 fundecl:
-_1 = LPAREN _2 = FUNCTION _3 = STRING _4 = LPAREN _5 = params _6 = RPAREN _7 = sequence _8 = RPAREN
+  _1 = LPAREN _2 = FUNCTION _3 = STRING _4 = LPAREN _5 = params _6 = RPAREN _7 = sequence _8 = RPAREN
     {      ( List.iter (fun (id, ty) -> unbind_ident id) _5;
         {fun_name = _3; fun_args = _5; fun_body = _7; fun_fast = true} )}
 
 params:
-_1 = oneparam _2 = params
+  _1 = oneparam _2 = params
     {                        ( _1 :: _2 )}
 | 
     {                        ( [] )}
 
 oneparam:
-_1 = IDENT _2 = COLON _3 = machtype
+  _1 = IDENT _2 = COLON _3 = machtype
     {                         ( (bind_ident _1, _3) )}
 
 machtype:
-_1 = UNIT
+  _1 = UNIT
     {                                ( [||] )}
 | _1 = componentlist
     {                                ( Array.of_list(List.rev _1) )}
 
 component:
-_1 = ADDR
+  _1 = ADDR
     {                                ( Addr )}
 | _1 = INT
     {                                ( Int )}
@@ -163,13 +163,13 @@ _1 = ADDR
     {                                ( Float )}
 
 componentlist:
-_1 = component
+  _1 = component
     {                                 ( [_1] )}
 | _1 = componentlist _2 = STAR _3 = component
     {                                 ( _3 :: _1 )}
 
 expr:
-_1 = INTCONST
+  _1 = INTCONST
     {                ( Cconst_int _1 )}
 | _1 = FLOATCONST
     {                ( Cconst_float _1 )}
@@ -229,29 +229,29 @@ _1 = INTCONST
     {      ( Cop(Cstore Double_u, [access_array _3 _4 Arch.size_float; _5]) )}
 
 exprlist:
-_1 = exprlist _2 = expr
+  _1 = exprlist _2 = expr
     {                                ( _2 :: _1 )}
 | 
     {                                ( [] )}
 
 letdef:
-_1 = oneletdef
+  _1 = oneletdef
     {                                ( [_1] )}
 | _1 = LPAREN _2 = letdefmult _3 = RPAREN
     {                                ( _2 )}
 
 letdefmult:
-
+  
     {                                ( [] )}
 | _1 = oneletdef _2 = letdefmult
     {                                ( _1 :: _2 )}
 
 oneletdef:
-_1 = IDENT _2 = expr
+  _1 = IDENT _2 = expr
     {                                ( (bind_ident _1, _2) )}
 
 chunk:
-_1 = UNSIGNED _2 = BYTE
+  _1 = UNSIGNED _2 = BYTE
     {                                ( Byte_unsigned )}
 | _1 = SIGNED _2 = BYTE
     {                                ( Byte_signed )}
@@ -275,7 +275,7 @@ _1 = UNSIGNED _2 = BYTE
     {                                ( Double_u )}
 
 unaryop:
-_1 = LOAD _2 = chunk
+  _1 = LOAD _2 = chunk
     {                                ( Cload _2 )}
 | _1 = ALLOC
     {                                ( Calloc )}
@@ -289,7 +289,7 @@ _1 = LOAD _2 = chunk
     {                                ( Cabsf )}
 
 binaryop:
-_1 = STORE _2 = chunk
+  _1 = STORE _2 = chunk
     {                                ( Cstore _2 )}
 | _1 = ADDI
     {                                ( Caddi )}
@@ -363,39 +363,39 @@ _1 = STORE _2 = chunk
     {                                ( Ccheckbound )}
 
 sequence:
-_1 = expr _2 = sequence
+  _1 = expr _2 = sequence
     {                                ( Csequence(_1, _2) )}
 | _1 = expr
     {                                ( _1 )}
 
 caselist:
-_1 = onecase _2 = sequence _3 = caselist
+  _1 = onecase _2 = sequence _3 = caselist
     {                                ( (_1, _2) :: _3 )}
 | 
     {                                ( [] )}
 
 onecase:
-_1 = CASE _2 = INTCONST _3 = COLON _4 = onecase
+  _1 = CASE _2 = INTCONST _3 = COLON _4 = onecase
     {                                ( _2 :: _4 )}
 | _1 = CASE _2 = INTCONST _3 = COLON
     {                                ( [_2] )}
 
 bind_ident:
-_1 = IDENT
+  _1 = IDENT
     {                                ( bind_ident _1 )}
 
 datadecl:
-_1 = LPAREN _2 = datalist _3 = RPAREN
+  _1 = LPAREN _2 = datalist _3 = RPAREN
     {                                ( List.rev _2 )}
 
 datalist:
-_1 = datalist _2 = dataitem
+  _1 = datalist _2 = dataitem
     {                                ( _2 :: _1 )}
 | 
     {                                ( [] )}
 
 dataitem:
-_1 = STRING _2 = COLON
+  _1 = STRING _2 = COLON
     {                                ( Cdefine_symbol _1 )}
 | _1 = INTCONST _2 = COLON
     {                                ( Cdefine_label _1 )}

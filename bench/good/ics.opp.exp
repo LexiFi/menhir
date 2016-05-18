@@ -275,29 +275,29 @@ let name_of_rename = Name.of_string "v"
 %%
 
 termeof:
-_1 = term _2 = EOF
+  _1 = term _2 = EOF
     {                             ( _1 )}
 
 atomeof:
-_1 = atom _2 = EOF
+  _1 = atom _2 = EOF
     {                             ( _1 )}
 
 propeof:
-_1 = prop _2 = EOF
+  _1 = prop _2 = EOF
     {                             ( _1 )}
 
 commandseof:
-_1 = command _2 = EOF
+  _1 = command _2 = EOF
     {                             ( () )}
 
 commands:
-_1 = command _2 = DOT
+  _1 = command _2 = DOT
     {                  ( () )}
 | _1 = EOF
     {                  ( raise End_of_file )}
 
 commandsequence:
-_1 = command _2 = DOT _3 = commandsequence
+  _1 = command _2 = DOT _3 = commandsequence
     {                                 ( () )}
 | _1 = command _2 = DOT
     {                                 ( () )}
@@ -305,7 +305,7 @@ _1 = command _2 = DOT _3 = commandsequence
     {                                 ( raise End_of_file )}
 
 prop:
-_1 = LBRA _2 = prop _3 = RBRA
+  _1 = LBRA _2 = prop _3 = RBRA
     {                                  ( _2 )}
 | _1 = name
     {                                  ( try Istate.prop_of _1 with Not_found -> Prop.mk_var _1 )}
@@ -327,27 +327,27 @@ _1 = LBRA _2 = prop _3 = RBRA
     {                                  ( Prop.mk_ite _2 _4 _6 )}
 
 int:
-_1 = INTCONST
+  _1 = INTCONST
     {               ( _1 )}
 
 rat:
-_1 = int
+  _1 = int
     {            ( Q.of_int _1 )}
 | _1 = RATCONST
     {            ( _1 )}
 
 name:
-_1 = IDENT
+  _1 = IDENT
     {             ( Name.of_string _1 )}
 
 namelist:
-_1 = name
+  _1 = name
     {                      ( [_1] )}
 | _1 = namelist _2 = COMMA _3 = name
     {                      ( _3 :: _1 )}
 
 term:
-_1 = var
+  _1 = var
     {                   ( _1 )}
 | _1 = app
     {                   ( _1 )}
@@ -373,7 +373,7 @@ _1 = var
     {                   ( _1 )}
 
 var:
-_1 = name
+  _1 = name
     {        ( try
 	    match Istate.entry_of _1 with
 	      | Symtab.Def(Symtab.Term(a)) -> a
@@ -385,15 +385,15 @@ _1 = name
     {         ( Term.Var.mk_var _1 _3 )}
 
 app:
-_1 = funsym _2 = LPAR _3 = termlist _4 = RPAR
+  _1 = funsym _2 = LPAR _3 = termlist _4 = RPAR
     {                                   ( Term.App.mk_app _1 (List.rev _3) )}
 
 funsym:
-_1 = name
+  _1 = name
     {                                   ( Sym.Uninterp.make _1 )}
 
 ics_list:
-_1 = term _2 = LISTCONS _3 = term
+  _1 = term _2 = LISTCONS _3 = term
     {                                ( Coproduct.mk_inj 1 (Product.mk_cons _1 _3) )}
 | _1 = HEAD _2 = LPAR _3 = term _4 = RPAR
     {                                ( Product.mk_car (Coproduct.mk_out 1 _3) )}
@@ -403,7 +403,7 @@ _1 = term _2 = LISTCONS _3 = term
     {                                ( Coproduct.mk_inj 0 (Bitvector.mk_eps()) )}
 
 apply:
-_1 = term _2 = APPLY _3 = term
+  _1 = term _2 = APPLY _3 = term
     {                                ( Apply.mk_apply _1 _3 )}
 | _1 = S
     {                                ( Apply.mk_s () )}
@@ -424,13 +424,13 @@ _1 = term _2 = APPLY _3 = term
 				  abstract_star body nl )}
 
 boolean:
-_1 = TRUE
+  _1 = TRUE
     {                                ( Boolean.mk_true() )}
 | _1 = FALSE
     {                                ( Boolean.mk_false() )}
 
 arith:
-_1 = rat
+  _1 = rat
     {                                ( Arith.mk_num _1 )}
 | _1 = term _2 = PLUS _3 = term
     {                                ( Arith.mk_add _1 _3 )}
@@ -444,7 +444,7 @@ _1 = rat
     {                                ( Pprod.mk_expt _1 _3 )}
 
 product:
-_1 = CONS _2 = LPAR _3 = term _4 = COMMA _5 = term _6 = RPAR
+  _1 = CONS _2 = LPAR _3 = term _4 = COMMA _5 = term _6 = RPAR
     {                                 ( Product.mk_cons _3 _5 )}
 | _1 = CAR _2 = LPAR _3 = term _4 = RPAR
     {                                 ( Product.mk_car _3 )}
@@ -452,7 +452,7 @@ _1 = CONS _2 = LPAR _3 = term _4 = COMMA _5 = term _6 = RPAR
     {                                 ( Product.mk_cdr _3 )}
 
 coproduct:
-_1 = INL _2 = LPAR _3 = term _4 = RPAR
+  _1 = INL _2 = LPAR _3 = term _4 = RPAR
     {                                        ( Coproduct.mk_inl _3 )}
 | _1 = INR _2 = LPAR _3 = term _4 = RPAR
     {                                        ( Coproduct.mk_inr _3 )}
@@ -466,7 +466,7 @@ _1 = INL _2 = LPAR _3 = term _4 = RPAR
     {                                        ( Coproduct.mk_out _3 _6 )}
 
 array:
-_1 = CREATE _2 = LPAR _3 = term _4 = RPAR
+  _1 = CREATE _2 = LPAR _3 = term _4 = RPAR
     {                             ( Funarr.mk_create _3 )}
 | _1 = term _2 = LBRA _3 = term _4 = ASSIGN _5 = term _6 = RBRA
     {                                  ( Funarr.mk_update Term.is_equal _1 _3 _5 )}
@@ -474,7 +474,7 @@ _1 = CREATE _2 = LPAR _3 = term _4 = RPAR
     {                             ( Funarr.mk_select Term.is_equal _1 _3 )}
 
 propset:
-_1 = EMPTY
+  _1 = EMPTY
     {                                 ( Propset.mk_empty() )}
 | _1 = FULL
     {                                 ( Propset.mk_full() )}
@@ -486,7 +486,7 @@ _1 = EMPTY
     {                                 ( Propset.mk_compl _2 )}
 
 bv:
-_1 = BVCONST
+  _1 = BVCONST
     {                              ( Bitvector.mk_const (Bitv.from_string _1)  )}
 | _1 = CONC _2 = LBRA _3 = INTCONST _4 = COMMA _5 = INTCONST _6 = RBRA _7 = LPAR _8 = term _9 = COMMA _10 = term _11 = RPAR
     {                              ( Bitvector.mk_conc _3 _5 _8 _10 )}
@@ -518,7 +518,7 @@ _1 = BVCONST
 	     raise (Invalid_argument (Term.to_string _1 ^ " not a bitvector.")) )}
 
 atom:
-_1 = FF
+  _1 = FF
     {                           ( Atom.mk_false )}
 | _1 = TT
     {                           ( Atom.mk_true )}
@@ -538,19 +538,19 @@ _1 = FF
     {                           ( Atom.mk_equal (Propset.mk_inter _1 _3, _1) )}
 
 dom:
-_1 = INT
+  _1 = INT
     {               ( Dom.Int )}
 | _1 = REAL
     {               ( Dom.Real )}
 
 cnstrnt:
-_1 = dom
+  _1 = dom
     {               ( Var.Cnstrnt.Real(_1) )}
 | _1 = signature
     {               ( Var.Cnstrnt.Bitvector(_1) )}
 
 termlist:
-
+  
     {                      ( [] )}
 | _1 = term
     {                      ( [_1] )}
@@ -558,7 +558,7 @@ termlist:
     {                      ( _3 :: _1 )}
 
 atomlist:
-
+  
     {                      ( [] )}
 | _1 = atom
     {                      ( [_1] )}
@@ -566,11 +566,11 @@ atomlist:
     {                      ( _3 :: _1 )}
 
 signature:
-_1 = BV _2 = LBRA _3 = INTCONST _4 = RBRA
+  _1 = BV _2 = LBRA _3 = INTCONST _4 = RBRA
     {                            ( _3 )}
 
 command:
-_1 = CAN _2 = term
+  _1 = CAN _2 = term
     {                            ( Istate.do_can _2 )}
 | _1 = SIMPLIFY _2 = atom
     {                            ( Istate.do_simplify _2 )}
@@ -664,15 +664,15 @@ _1 = CAN _2 = term
     {                            ( _1 )}
 
 optvarspecs:
-
+  
     {                           ( [] )}
 
 varname:
-_1 = IDENT
+  _1 = IDENT
     {                           ( Istate.Parameters.of_string _1 )}
 
 value:
-_1 = IDENT
+  _1 = IDENT
     {                           ( _1 )}
 | _1 = TRUE
     {                           ( "true" )}
@@ -680,22 +680,22 @@ _1 = IDENT
     {                           ( "false" )}
 
 identlist:
-_1 = IDENT
+  _1 = IDENT
     {                            ( [_1] )}
 | _1 = identlist _2 = COMMA _3 = IDENT
     {                            ( _3 :: _1 )}
 
 th:
-_1 = IDENT
+  _1 = IDENT
     {           ( Th.of_string _1 )}
 
 eqth:
-_1 = IDENT
+  _1 = IDENT
     {  ( try Some(Th.of_string _1)
     with exc -> if _1 = "v" then None else raise exc )}
 
 help:
-_1 = HELP
+  _1 = HELP
     {                            ( Istate.do_help Istate.All )}
 | _1 = HELP _2 = CAN
     {                            ( Istate.do_help (Istate.Command("can")) )}
@@ -779,7 +779,7 @@ _1 = HELP
     {                            ( Istate.do_help (Istate.Command("undo")) )}
 
 optname:
-
+  
     {                            ( None )}
 | _1 = KLAMMERAFFE _2 = name
     {                            ( Some(_2) )}

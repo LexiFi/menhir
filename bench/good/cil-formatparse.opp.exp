@@ -445,7 +445,7 @@ type maybeInit =
 %%
 
 expression:
-_1 = ARG_e
+  _1 = ARG_e
     {                       (  (* Count arguments eagerly *) 
                             let currentArg = _1 in 
                             ((fun args ->
@@ -610,7 +610,7 @@ _1 = ARG_e
                          )}
 
 argu:
-_1 = ARG_u
+  _1 = ARG_u
     {                       ( let currentArg = _1 in
                          ((fun args ->
                            match getArg currentArg args with
@@ -621,7 +621,7 @@ _1 = ARG_u
                        )}
 
 argb:
-_1 = ARG_b
+  _1 = ARG_b
     {                       ( let currentArg = _1 in
                          ((fun args ->
                            match getArg currentArg args with
@@ -632,7 +632,7 @@ _1 = ARG_b
                        )}
 
 constant:
-_1 = ARG_d
+  _1 = ARG_d
     {                       ( let currentArg = _1 in
                            ((fun args ->
                              match getArg currentArg args with
@@ -667,7 +667,7 @@ _1 = ARG_d
                          )}
 
 lval:
-_1 = ARG_l
+  _1 = ARG_l
     {                      ( let currentArg = _1 in
                            ((fun args -> 
                                 match getArg currentArg args with 
@@ -736,7 +736,7 @@ _1 = ARG_l
               )}
 
 argv:
-_1 = ARG_v
+  _1 = ARG_v
     {                       ( let currentArg = _1 in
                          ((fun args ->
                            match getArg currentArg args with
@@ -756,7 +756,7 @@ _1 = ARG_v
                        )}
 
 offset:
-_1 = ARG_o
+  _1 = ARG_o
     {                     ( let currentArg = _1 in
                             ((fun t args -> 
                                 match getArg currentArg args with 
@@ -802,7 +802,7 @@ _1 = ARG_o
                     )}
 
 typename:
-_1 = one_formal
+  _1 = one_formal
     {                      ( ((fun args -> 
                             let (_, ft, _) = (fst _1) args in
                             ft),
@@ -811,7 +811,7 @@ _1 = one_formal
                       )}
 
 one_formal:
-_1 = type_spec _2 = attributes _3 = decl
+  _1 = type_spec _2 = attributes _3 = decl
     {                   ( ((fun args -> 
                         let tal = (fst _2) args in
                         let ts = (fst _1) tal args in
@@ -840,7 +840,7 @@ _1 = type_spec _2 = attributes _3 = decl
                    )}
 
 type_spec:
-_1 = ARG_t
+  _1 = ARG_t
     {                ( let currentArg = _1 in
                      ((fun al args -> 
                        match getArg currentArg args with 
@@ -937,7 +937,7 @@ _1 = ARG_t
                    )}
 
 decl:
-_1 = STAR _2 = attributes _3 = decl
+  _1 = STAR _2 = attributes _3 = decl
     {                    ( ((fun ts args -> 
                          let al = (fst _2) args in
                          (fst _3) (TPtr(ts, al)) args),
@@ -955,7 +955,7 @@ _1 = STAR _2 = attributes _3 = decl
     {                ( _1 )}
 
 direct_decl:
-
+  
     {                   ( ((fun ts args -> ("", ts, [])),
 
                       (* Match any name in this case *)
@@ -1017,7 +1017,7 @@ direct_decl:
                    )}
 
 parameters:
-
+  
     {                   ( ((fun args -> (None, false)),
 
                      (* Match any formals *)
@@ -1038,7 +1038,7 @@ parameters:
                    )}
 
 parameters_ne:
-_1 = ELLIPSIS
+  _1 = ELLIPSIS
     {                   ( ((fun args -> ([], true)),
 
                       (function 
@@ -1090,7 +1090,7 @@ _1 = ELLIPSIS
                    )}
 
 exp_opt:
-
+  
     {                   ( ((fun args -> None),
                       (* Match anything if the pattern does not have a len *)
                       (fun _ -> Some [])) )}
@@ -1112,7 +1112,7 @@ exp_opt:
                    )}
 
 attributes:
-
+  
     {                  ( ((fun args -> []), 
                      (fun attrs -> Some [])) )}
 | _1 = ARG_A
@@ -1135,7 +1135,7 @@ attributes:
                   )}
 
 attribute:
-_1 = CONST
+  _1 = CONST
     {                                        ( doAttr "const" None )}
 | _1 = RESTRICT
     {                                        ( doAttr "restrict" None )}
@@ -1145,13 +1145,13 @@ _1 = CONST
     {                                        ( _4 )}
 
 attr:
-_1 = IDENT
+  _1 = IDENT
     {                          ( doAttr _1 None )}
 | _1 = IDENT _2 = LPAREN _3 = attr_args_ne _4 = RPAREN
     {                          ( doAttr _1 (Some _3) )}
 
 attr_args_ne:
-_1 = attr_arg
+  _1 = attr_arg
     {                                 ( ((fun args -> [ (fst _1) args ]),
 
                                     (fun aargs -> match aargs with 
@@ -1182,7 +1182,7 @@ _1 = attr_arg
                         )}
 
 attr_arg:
-_1 = IDENT
+  _1 = IDENT
     {                     ( ((fun args -> ACons(_1, [])),
 
                         (fun aarg -> match aarg with 
@@ -1208,7 +1208,7 @@ _1 = IDENT
                      )}
 
 instr:
-_1 = ARG_i _2 = SEMICOLON
+  _1 = ARG_i _2 = SEMICOLON
     {                        ( let currentArg = _1 in
                           ((fun loc args -> 
                                 match getArg currentArg args with 
@@ -1308,7 +1308,7 @@ _1 = ARG_i _2 = SEMICOLON
                      )}
 
 arglo:
-_1 = ARG_lo
+  _1 = ARG_lo
     {                         ( let currentArg = _1 in
                            ((fun args -> 
                              let res = 
@@ -1322,7 +1322,7 @@ _1 = ARG_lo
                          )}
 
 arguments:
-
+  
     {                  ( ((fun args -> []), 
 
                      (fun actuals -> match actuals with 
@@ -1333,7 +1333,7 @@ arguments:
     {                  ( _1 )}
 
 arguments_ne:
-_1 = expression
+  _1 = expression
     {                  ( ((fun args -> [ (fst _1) args ]),
 
                      (fun actuals -> match actuals with 
@@ -1362,7 +1362,7 @@ _1 = expression
                   )}
 
 stmt:
-_1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = stmt %prec IF
+  _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = stmt %prec IF
     {                  ( (fun mkTemp loc args -> 
                          mkStmt (If((fst _3) args, 
                                     mkBlock [ _5 mkTemp loc args ],
@@ -1421,7 +1421,7 @@ _1 = IF _2 = LPAREN _3 = expression _4 = RPAREN _5 = stmt %prec IF
                        | a -> wrongArgType currentArg "stmt" a) )}
 
 stmt_list:
-
+  
     {                 ( (fun mkTemp loc args -> []) )}
 | _1 = ARG_S
     {                 ( let currentArg = _1 in
@@ -1461,7 +1461,7 @@ stmt_list:
                  )}
 
 instr_list:
-_1 = instr %prec COMMA
+  _1 = instr %prec COMMA
     {                 ( (fun loc args -> [ ((fst _1) loc args) ]) )}
 | _1 = ARG_I
     {                 ( let currentArg = _1 in
@@ -1477,7 +1477,7 @@ _1 = instr %prec COMMA
                  )}
 
 maybe_init:
-
+  
     {                                ( (fun args -> NoInit) )}
 | _1 = EQ _2 = expression
     {                                ( (fun args -> InitExp ((fst _2) args)) )}
