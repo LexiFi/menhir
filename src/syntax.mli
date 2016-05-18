@@ -43,7 +43,7 @@ type action =
 
 (* ------------------------------------------------------------------------ *)
 
-(* Information about tokens. *)
+(* Information about tokens. (Only after joining.) *)
 
 type token_associativity =
     LeftAssoc
@@ -72,12 +72,19 @@ type token_properties =
 
 (* ------------------------------------------------------------------------ *)
 
+(* A parameter is either just a symbol, or an application of a symbol to
+   a tuple of parameters. *)
+
 type parameter =
   | ParameterVar of symbol Positions.located
   | ParameterApp of symbol Positions.located * parameters
 
 and parameters =
     parameter list
+
+(* ------------------------------------------------------------------------ *)
+
+(* A declaration. (Only before joining.) *)
 
 type declaration =
 
@@ -109,11 +116,15 @@ type declaration =
 
   | DOnErrorReduce of parameter
 
+(* ------------------------------------------------------------------------ *)
+
 (* A [%prec] annotation is optional. A production can carry at most one.
    If there is one, it is a symbol name. See [ParserAux]. *)
 
 type branch_prec_annotation =
     symbol Positions.located option
+
+(* ------------------------------------------------------------------------ *)
 
 (* A "production level" is used to solve reduce/reduce conflicts. It reflects
    which production appears first in the grammar. See [ParserAux]. *)
@@ -121,8 +132,17 @@ type branch_prec_annotation =
 type branch_production_level =
   | ProductionLevel of Mark.t * int
 
+(* ------------------------------------------------------------------------ *)
+
+(* A producer is a pair of identifier and a parameter. In concrete syntax,
+   it could be [e = expr], for instance. *)
+
 type producer =
     identifier Positions.located * parameter
+
+(* ------------------------------------------------------------------------ *)
+
+(* A branch contains a series of producers and a semantic action. *)
 
 type parameterized_branch =
     {
@@ -132,6 +152,10 @@ type parameterized_branch =
       pr_branch_prec_annotation    : branch_prec_annotation;
       pr_branch_production_level   : branch_production_level
     }
+
+(* ------------------------------------------------------------------------ *)
+
+(* A rule has a header and several branches. *)
 
 type parameterized_rule =
     {
@@ -143,13 +167,29 @@ type parameterized_rule =
       pr_branches          : parameterized_branch list;
     }
 
+(* ------------------------------------------------------------------------ *)
+
+(* A partial grammar. (Only before joining.) *)
+
 type partial_grammar =
     {
       pg_filename          : filename;
+      pg_trailer           : trailer option;
       pg_declarations      : declaration Positions.located list;
       pg_rules             : parameterized_rule list;
-      pg_trailer           : trailer option;
     }
+
+(* ------------------------------------------------------------------------ *)
+
+(* A grammar. (Only after joining.) *)
+
+(* The differences with partial grammars (above) are as follows:
+   1. the file name is gone (there could be several file names, anyway).
+   2. there can be several trailers, now known as postludes.
+   3. declarations are organized by kind: preludes, functor %parameters,
+      %start symbols, %types, %tokens, %on_error_reduce.
+   4. rules are stored in a map, indexed by symbol names, instead of a list.
+ *)
 
 type grammar =
     {
@@ -159,6 +199,6 @@ type grammar =
       p_start_symbols      : Positions.t StringMap.t;
       p_types              : (parameter * Stretch.ocamltype Positions.located) list;
       p_tokens             : token_properties StringMap.t;
-      p_rules              : parameterized_rule StringMap.t;
       p_on_error_reduce    : parameter list;
+      p_rules              : parameterized_rule StringMap.t;
     }
