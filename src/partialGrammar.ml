@@ -434,30 +434,25 @@ let iter_on_only_used_symbols f t =
 let symbols_of grammar (pgrammar : Syntax.partial_grammar) =
   let tokens = grammar.p_tokens in
   let symbols_of_rule symbols prule =
-    let rec store_except_rule_parameters =
-      fun symbols (symbol, parameters) ->
-        (* Rule parameters are bound locally, so they are not taken into
-           account. *)
-        if List.mem symbol.value prule.pr_parameters then
-          symbols
-        else
-          (* Otherwise, mark this symbol as being used and analyse its
-             parameters. *)
-          List.fold_left
-            (fun symbols -> function
-               | ParameterApp (symbol, parameters) ->
-                   store_except_rule_parameters symbols (symbol, parameters)
-               | ParameterVar symbol ->
-                   store_except_rule_parameters symbols (symbol, [])
-            )
-            (store_used_symbol symbol.position tokens symbols symbol.value) parameters
+    let rec store_except_rule_parameters symbols parameter =
+      let symbol, parameters = Parameters.unapp parameter in
+      (* Rule parameters are bound locally, so they are not taken into account. *)
+      if List.mem symbol.value prule.pr_parameters then
+        (* TEMPORARY probable BUG: even if the symbol is locally bound, its
+           parameters should still be examined! *)
+        symbols
+      else
+        (* Otherwise, mark this symbol as used and analyse its parameters. *)
+        List.fold_left
+          store_except_rule_parameters
+          (store_used_symbol symbol.position tokens symbols symbol.value)
+          parameters
     in
 
     (* Analyse each branch. *)
     let symbols = List.fold_left (fun symbols branch ->
       List.fold_left (fun symbols (_, p) ->
-        let symbol, parameters = Parameters.unapp p in
-        store_except_rule_parameters symbols (symbol, parameters)
+        store_except_rule_parameters symbols p
       ) symbols branch.pr_producers
     ) symbols prule.pr_branches
     in
@@ -593,18 +588,13 @@ let check_parameterized_grammar_is_well_defined grammar =
            "the type of the start symbol %s is unspecified." nonterminal;
     ) grammar.p_start_symbols;
 
-  let parameter_head_symb = function
-    | ParameterVar id -> id
-    | ParameterApp (id, _) -> id
-  in
-
   (* Every %type definition has, at its head, a nonterminal symbol. *)
   (* Same check for %on_error_reduce definitions. *)
   (* Apparently we do not check the parameters at this point. Maybe this is
      done later, or not at all. *)
   let check (kind : string) (ps : Syntax.parameter list) =
     List.iter (fun p ->
-      let head_symb = parameter_head_symb p in
+      let (head_symb, _) = Parameters.unapp p in
       if not (StringMap.mem (value head_symb) grammar.p_rules) then
         Error.error [Parameters.position p]
              "this should be a nonterminal symbol.\n\

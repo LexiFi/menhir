@@ -229,7 +229,7 @@ let check positions env k expected_type =
 
 
 (* An identifier can be used either in a total application or as a
-   higher-order non terminal (no partial application is allowed). *)
+   higher-order nonterminal (no partial application is allowed). *)
 let rec parameter_type env = function
   | ParameterVar x ->
       lookup x.value env
@@ -247,6 +247,10 @@ let rec parameter_type env = function
         (* Similarly, if it was a total application the result is
            [Star] otherwise it is the flexible variable. *)
         star_variable
+
+  | ParameterAnonymous _ ->
+      (* Anonymous rules are eliminated early on. *)
+      assert false
 
 let check_grammar (p_grammar : Syntax.grammar) =
   (* [n] is the grammar size. *)
@@ -446,13 +450,22 @@ let rec subst_parameter subst = function
 
           | ParameterApp _ ->
               (* Type-checking ensures that we cannot do partial
-                 application. Consequently, if an higher-order non terminal
+                 application. Consequently, if a higher-order nonterminal
                  is an actual argument, it cannot be the result of a
                  partial application. *)
               assert false
 
+          | ParameterAnonymous _ ->
+              (* Anonymous rules are eliminated early on. *)
+              assert false
+
       with Not_found ->
           ParameterApp (x, List.map (subst_parameter subst) ps))
+
+  | ParameterAnonymous _ ->
+      (* Anonymous rules are eliminated early on. *)
+      assert false
+
 
 let subst_parameters subst =
   List.map (subst_parameter subst)
@@ -513,6 +526,11 @@ let expand p_grammar =
           (Positions.value x)
           (separated_list_to_string mangle "," ps)
 
+    | ParameterAnonymous _ ->
+        (* Anonymous rules are eliminated early on. *)
+        assert false
+
+
   in
   let name_of symbol parameters =
     let param = ParameterApp (symbol, parameters) in
@@ -539,6 +557,10 @@ let expand p_grammar =
                | ParameterApp (x, ps) ->
                    assert (actual_parameters = []);
                    x, ps
+
+               | ParameterAnonymous _ ->
+                   (* Anonymous rules are eliminated early on. *)
+                   assert false
 
            with Not_found ->
              sym, subst_parameters subst actual_parameters

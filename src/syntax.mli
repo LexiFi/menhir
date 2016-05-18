@@ -72,15 +72,68 @@ type token_properties =
 
 (* ------------------------------------------------------------------------ *)
 
-(* A parameter is either just a symbol, or an application of a symbol to
-   a tuple of parameters. *)
+(* A [%prec] annotation is optional. A production can carry at most one.
+   If there is one, it is a symbol name. See [ParserAux]. *)
+
+type branch_prec_annotation =
+    symbol Positions.located option
+
+(* ------------------------------------------------------------------------ *)
+
+(* A "production level" is used to solve reduce/reduce conflicts. It reflects
+   which production appears first in the grammar. See [ParserAux]. *)
+
+type branch_production_level =
+  | ProductionLevel of Mark.t * int
+
+(* ------------------------------------------------------------------------ *)
+
+(* A parameter is either just a symbol or an application of a symbol to a
+   nonempty tuple of parameters. Before anonymous rules have been eliminated,
+   it can also be an anonymous rule, represented as a list of branches. *)
 
 type parameter =
   | ParameterVar of symbol Positions.located
   | ParameterApp of symbol Positions.located * parameters
+  | ParameterAnonymous of parameterized_branch list Positions.located
 
 and parameters =
     parameter list
+
+(* ------------------------------------------------------------------------ *)
+
+(* A producer is a pair of identifier and a parameter. In concrete syntax,
+   it could be [e = expr], for instance. *)
+
+and producer =
+    identifier Positions.located * parameter
+
+(* ------------------------------------------------------------------------ *)
+
+(* A branch contains a series of producers and a semantic action. *)
+
+and parameterized_branch =
+    {
+      pr_branch_position           : Positions.t;
+      pr_producers                 : producer list;
+      pr_action                    : action;
+      pr_branch_prec_annotation    : branch_prec_annotation;
+      pr_branch_production_level   : branch_production_level
+    }
+
+(* ------------------------------------------------------------------------ *)
+
+(* A rule has a header and several branches. *)
+
+type parameterized_rule =
+    {
+      pr_public_flag       : bool;
+      pr_inline_flag       : bool;
+      pr_nt                : nonterminal;
+      pr_positions         : Positions.t list;
+      pr_parameters        : symbol list;
+      pr_branches          : parameterized_branch list;
+    }
 
 (* ------------------------------------------------------------------------ *)
 
@@ -115,57 +168,6 @@ type declaration =
     (* On-error-reduce declaration. *)
 
   | DOnErrorReduce of parameter
-
-(* ------------------------------------------------------------------------ *)
-
-(* A [%prec] annotation is optional. A production can carry at most one.
-   If there is one, it is a symbol name. See [ParserAux]. *)
-
-type branch_prec_annotation =
-    symbol Positions.located option
-
-(* ------------------------------------------------------------------------ *)
-
-(* A "production level" is used to solve reduce/reduce conflicts. It reflects
-   which production appears first in the grammar. See [ParserAux]. *)
-
-type branch_production_level =
-  | ProductionLevel of Mark.t * int
-
-(* ------------------------------------------------------------------------ *)
-
-(* A producer is a pair of identifier and a parameter. In concrete syntax,
-   it could be [e = expr], for instance. *)
-
-type producer =
-    identifier Positions.located * parameter
-
-(* ------------------------------------------------------------------------ *)
-
-(* A branch contains a series of producers and a semantic action. *)
-
-type parameterized_branch =
-    {
-      pr_branch_position           : Positions.t;
-      pr_producers                 : producer list;
-      pr_action                    : action;
-      pr_branch_prec_annotation    : branch_prec_annotation;
-      pr_branch_production_level   : branch_production_level
-    }
-
-(* ------------------------------------------------------------------------ *)
-
-(* A rule has a header and several branches. *)
-
-type parameterized_rule =
-    {
-      pr_public_flag       : bool;
-      pr_inline_flag       : bool;
-      pr_nt                : nonterminal;
-      pr_positions         : Positions.t list;
-      pr_parameters        : symbol list;
-      pr_branches          : parameterized_branch list;
-    }
 
 (* ------------------------------------------------------------------------ *)
 

@@ -10,57 +10,62 @@ let app p ps =
   | _ ->
       ParameterApp (p, ps)
 
-let oapp1 o p =
-  match o with
-  | None ->
-      p
-  | Some var ->
-      ParameterApp (var, [ p ])
-
 let unapp = function
   | ParameterVar x ->
       (x, [])
-
   | ParameterApp (p, ps) ->
       (p, ps)
+  | ParameterAnonymous _ ->
+      (* Anonymous rules are eliminated early on. *)
+      assert false
 
 let rec map f = function
   | ParameterVar x ->
       ParameterVar (f x)
-
   | ParameterApp (p, ps) ->
       ParameterApp (f p, List.map (map f) ps)
-
+  | ParameterAnonymous _ ->
+      (* Anonymous rules are eliminated early on. *)
+      assert false
 
 let rec fold f init = function
   | ParameterVar x ->
       f init x
-
   | ParameterApp (p, ps) ->
       f (List.fold_left (fold f) init ps) p
+  | ParameterAnonymous _ ->
+      (* Anonymous rules are eliminated early on. *)
+      assert false
 
 let identifiers m p =
-  fold (fun acu x -> StringMap.add x.value x.position acu) m p
+  fold (fun accu x -> StringMap.add x.value x.position accu) m p
 
 type t = parameter
 
 let rec equal x y =
   match x, y with
-    | ParameterVar x, ParameterVar y when x.value = y.value ->
-        true
+    | ParameterVar x, ParameterVar y ->
+        x.value = y.value
     | ParameterApp (p1, p2), ParameterApp (p1', p2') ->
         p1.value = p1'.value && List.for_all2 equal p2 p2'
-    | _ -> false
+    | _ ->
+        (* Anonymous rules are eliminated early on. *)
+        false
 
 let hash = function
   | ParameterVar x
   | ParameterApp (x, _) ->
       Hashtbl.hash (Positions.value x)
+  | ParameterAnonymous _ ->
+      (* Anonymous rules are eliminated early on. *)
+      assert false
 
 let position = function
   | ParameterVar x
   | ParameterApp (x, _) ->
       Positions.position x
+  | ParameterAnonymous bs ->
+      Positions.position bs
 
 let with_pos p =
   Positions.with_pos (position p) p
