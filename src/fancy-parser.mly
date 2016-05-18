@@ -10,7 +10,6 @@
 
 %{
 
-open ConcreteSyntax
 open Syntax
 open Positions
 
@@ -30,7 +29,7 @@ open Positions
 /* ------------------------------------------------------------------------- */
 /* Start symbol. */
 
-%start <ConcreteSyntax.grammar> grammar
+%start <Syntax.grammar> grammar
 
 /* ------------------------------------------------------------------------- */
 /* Priorities. */
@@ -344,4 +343,3 @@ trailer:
     { Some (Lazy.force p) }
 
 %%
-

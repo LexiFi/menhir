@@ -1,6 +1,5 @@
 open Misc
 open Syntax
-open ConcreteSyntax
 open InternalSyntax
 open Positions
 
@@ -433,7 +432,7 @@ let iter_on_only_used_symbols f t =
        | _ -> ())
     t
 
-let symbols_of grammar (pgrammar : ConcreteSyntax.grammar) =
+let symbols_of grammar (pgrammar : Syntax.grammar) =
   let tokens = grammar.p_tokens in
   let symbols_of_rule symbols prule =
     let rec store_except_rule_parameters =

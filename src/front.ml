@@ -19,7 +19,7 @@ let load_partial_grammar filename =
     let lexbuf = Lexing.from_string contents in
     lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
     let grammar =
-      { (Driver.grammar Lexer.main lexbuf) with ConcreteSyntax.pg_filename = filename }
+      { (Driver.grammar Lexer.main lexbuf) with Syntax.pg_filename = filename }
     in
     Error.file_contents := None;
     grammar
@@ -164,4 +164,3 @@ let () =
       exit 0
   | Settings.PMNormal ->
       ()
-

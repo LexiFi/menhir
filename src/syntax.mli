@@ -123,3 +123,10 @@ type parameterized_rule =
       pr_branches          : parameterized_branch list;
     }
 
+type grammar =
+    {
+      pg_filename          : filename;
+      pg_declarations      : declaration Positions.located list;
+      pg_rules             : parameterized_rule list;
+      pg_trailer           : trailer option;
+    }
