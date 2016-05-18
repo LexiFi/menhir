@@ -2,7 +2,7 @@
    anonymous rules nested in anonymous rules. */
 
 %token<int> A B C D EOF
-%start<int list> phrase
+%start<int> phrase
 
 %%
 

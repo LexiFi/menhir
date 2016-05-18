@@ -7,6 +7,28 @@ open Syntax
 
 (* ------------------------------------------------------------------------ *)
 
+(* Computing the free names of some syntactic categories. *)
+
+let rec fn_parameter accu p =
+  (* [p] cannot be [ParameterAnonymous _]. *)
+  let x, ps = Parameters.unapp p in
+  let accu = StringSet.add (Positions.value x) accu in
+  fn_parameters accu ps
+
+and fn_parameters accu ps =
+  List.fold_left fn_parameter accu ps
+
+let fn_producer accu (_, p) =
+  fn_parameter accu p
+
+let fn_branch accu branch =
+  List.fold_left fn_producer accu branch.pr_producers
+
+let fn_branches accu branches =
+  List.fold_left fn_branch accu branches
+
+(* ------------------------------------------------------------------------ *)
+
 (* This functor makes it easy to share mutable internal state between
    the functions that follow. *)
 
@@ -42,6 +64,14 @@ let var (symbol : symbol) : parameter =
   ParameterVar (Positions.with_pos Positions.dummy symbol)
 
 let anonymous pos (parameters : symbol list) (branches : parameterized_branch list) : parameter =
+  (* Compute the free symbols of [branches]. They should form a subset
+     of [parameters], although we have not yet checked this. We create
+     a definition that is parameterized only over the parameters that
+     actually occur free in the definition -- i.e., a definition without
+     useless parameters. This seems important, as (in some situations)
+     it avoids duplication and leads to fewer states in the automaton. *)
+  let used = fn_branches StringSet.empty branches in
+  let parameters = List.filter (fun x -> StringSet.mem x used) parameters in
   (* Generate a fresh non-terminal symbol. *)
   let symbol = fresh() in
   (* Construct its definition. Note that it is implicitly marked %inline. *)
@@ -57,7 +87,6 @@ let anonymous pos (parameters : symbol list) (branches : parameterized_branch li
   rules := rule :: !rules;
   (* Return the symbol that stands for it. *)
   Parameters.app (Positions.with_pos pos symbol) (List.map var parameters)
-      (* TEMPORARY should use as few parameters as possible *)
 
 (* ------------------------------------------------------------------------ *)
 
