@@ -145,7 +145,7 @@ switch.
 \docswitch{\odump} This switch causes a description of the automaton
 to be written to the file \nt{basename}\automaton.
 
-\docswitch{\oechoerrors \nt{filename}} This switch causes \menhir to 
+\docswitch{\oechoerrors \nt{filename}} This switch causes \menhir to
 read the \messages file \nt{filename} and to produce on the standard output
 channel just the input sentences. (That is, all messages, blank lines, and
 comments are filtered out.) For more information, see \sref{sec:errors:new}.
@@ -355,7 +355,7 @@ logged to the standard error channel. This is analogous to \texttt{ocamlrun}'s
 \texttt{p=1} parameter, except this switch must be enabled at compile time:
 one cannot selectively enable or disable tracing at runtime.
 
-\docswitch{\oupdateerrors \nt{filename}} This switch causes \menhir to 
+\docswitch{\oupdateerrors \nt{filename}} This switch causes \menhir to
 read the \messages file \nt{filename} and to produce on the standard output
 channel a new \messages file that is identical, except the auto-generated
 comments have been re-generated. For more information,
@@ -1407,7 +1407,7 @@ fringe?
   }
   child { node {\nt{opt\_semi}} }
   child { node {\nt{decls}} }
-;    
+;
 \end{tikzpicture}
 \end{center}
 \caption{A partial derivation tree that justifies reducing}
@@ -1477,7 +1477,7 @@ derivation tree where the next symbol on the fringe, following
 token.
 
 To sum up, there exists a partial derivation tree whose
-fringe begins the conflict string, followed with the conflict token.
+fringe begins with the conflict string, followed with the conflict token.
 Furthermore, in that derivation tree, the dot occupies the rightmost position
 in the last level. As in our previous example, this means that, after the
 automaton has recognized the conflict string and peeked at the conflict token,
@@ -1620,13 +1620,13 @@ expr -> expr . PLUS expr [ # TIMES PLUS ]
 expr -> expr PLUS expr . [ # TIMES PLUS ]
 expr -> expr . TIMES expr [ # TIMES PLUS ]
 -- On TIMES shift to state 3
--- On # PLUS reduce production expr -> expr PLUS expr 
+-- On # PLUS reduce production expr -> expr PLUS expr
 
 State 4:
 expr -> expr . PLUS expr [ # TIMES PLUS ]
 expr -> expr . TIMES expr [ # TIMES PLUS ]
 expr -> expr TIMES expr . [ # TIMES PLUS ]
--- On # TIMES PLUS reduce production expr -> expr TIMES expr 
+-- On # TIMES PLUS reduce production expr -> expr TIMES expr
 
 State 2:
 expr' -> expr . [ # ]
@@ -1826,7 +1826,7 @@ side, and does not affect \verb+$endpos+.
     \menhir assumes that the lexer never produces a token whose start and end
     positions are equal. Second, \menhir assumes that two positions produced
     by the lexer are equal if and only if they are physically equal. If the
-    lexer violates either of these assumptions, the computation of 
+    lexer violates either of these assumptions, the computation of
     \ksymbolstartpos could produce a result that differs from
     \texttt{Parsing.symbol\_start\_pos()}.
 }}
@@ -2345,7 +2345,7 @@ of the stream is the topmost element of the stack. (The type \verb+'a stream+
 is defined in the module \menhirlibgeneral.)
 This stream is empty if the parser is in an initial state, and non-empty otherwise.
 % (Which initial state? -- no way to know...)
-In the latter case, 
+In the latter case,
 the current state of the LR(1) automaton is found in the topmost stack element.
 
 %% val stack
@@ -2448,7 +2448,7 @@ type \verb+'a symbol+. It is useful in situations where the index \verb+'a+ is
 not statically known. It is (always) defined as follows:
 %
 \begin{verbatim}
-  type xsymbol = 
+  type xsymbol =
     | X : 'a symbol -> xsymbol
 \end{verbatim}
 
@@ -2693,8 +2693,8 @@ and may complain about some word not being ``a known non-terminal symbol'').
 
 \begin{figure}
 \begin{verbatim}
-grammar: TYPE UID 
-grammar: TYPE OCAMLTYPE UID PREC 
+grammar: TYPE UID
+grammar: TYPE OCAMLTYPE UID PREC
 
 # A (handwritten) comment.
 
@@ -2709,7 +2709,7 @@ Examples of well-formed declarations:
 
 \begin{figure}
 \begin{verbatim}
-grammar: TYPE UID 
+grammar: TYPE UID
 ##
 ## Ends in an error in state: 1.
 ##
@@ -2718,9 +2718,9 @@ grammar: TYPE UID
 ##   ON_ERROR_REDUCE NONASSOC LEFT INLINE HEADER EOF COLON ]
 ##
 ## The known suffix of the stack is as follows:
-## TYPE 
+## TYPE
 ##
-grammar: TYPE OCAMLTYPE UID PREC 
+grammar: TYPE OCAMLTYPE UID PREC
 ##
 ## Ends in an error in state: 5.
 ##
@@ -2730,7 +2730,7 @@ grammar: TYPE OCAMLTYPE UID PREC
 ##   INLINE HEADER EOF COMMA COLON ]
 ##
 ## The known suffix of the stack is as follows:
-## symbol 
+## symbol
 ##
 
 # A (handwritten) comment.
@@ -2919,7 +2919,7 @@ this description.
 
 \begin{figure}
 \begin{verbatim}
-program: ID COLON ID LPAREN 
+program: ID COLON ID LPAREN
 ##
 ## Ends in an error in state: 8.
 ##
@@ -2927,7 +2927,7 @@ program: ID COLON ID LPAREN
 ## typ1 -> typ0 . ARROW typ1 [ SEMICOLON RPAREN ]
 ##
 ## The known suffix of the stack is as follows:
-## typ0 
+## typ0
 ##
 \end{verbatim}
 \caption{A problematic error state in the grammar of \fref{fig:declarations}, due to over-approximation}
@@ -2996,21 +2996,21 @@ beginning of the program) is buried in the automaton's stack.
 
 \begin{figure}
 \begin{verbatim}
-program: ID COLON ID LPAREN 
+program: ID COLON ID LPAREN
 ##
 ## Ends in an error in state: 15.
 ##
 ## program -> declaration . SEMICOLON [ # ]
 ##
 ## The known suffix of the stack is as follows:
-## declaration 
+## declaration
 ##
 ## WARNING: This example involves spurious reductions.
 ## This implies that, although the LR(1) items shown above provide an
 ## accurate view of the past (what has been recognized so far), they
 ## may provide an INCOMPLETE view of the future (what was expected next).
-## In state 8, spurious reduction of production typ1 -> typ0 
-## In state 11, spurious reduction of production declaration -> ID COLON typ1 
+## In state 8, spurious reduction of production typ1 -> typ0
+## In state 11, spurious reduction of production declaration -> ID COLON typ1
 ##
 \end{verbatim}
 \caption{A problematic error state in the grammar of \fref{fig:declarations:onerrorreduce}, due to under-approximation}
@@ -3046,7 +3046,7 @@ a 23-state automaton. Using \olisterrors, we find that an error can be
 detected in 11 of these 23~states, and by manual inspection of the
 auto-generated comments, we find that for each of these 11~states, writing an
 accurate diagnostic message is easy. In summary, we have selectively duplicated
-just enough states so as to split the problematic error state into two 
+just enough states so as to split the problematic error state into two
 non-problematic error states.
 
 % Je me demande s'il n'y a pas un lien avec la traduction de LR(k+1) vers LR(k)...
