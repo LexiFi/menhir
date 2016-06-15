@@ -269,9 +269,7 @@ let parser_configuration () =
 (* Compilation flags for Menhir. *)
 
 let flags () =
-  (* -inline 1000 *)
-  flag ["ocaml"; "compile"; "native"] (S [A "-inline"; A "1000"]);
-  (* -noassert *)
+  (* -noassert (if enabled by tag) *)
   flag ["ocaml"; "compile"; "noassert"] (S [A "-noassert"]);
   (* nazi warnings *)
   flag ["ocaml"; "compile"; "my_warnings"] (S[A "-w"; A "@1..49-4-9-41-44"])
