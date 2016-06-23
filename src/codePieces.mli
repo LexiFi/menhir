@@ -109,11 +109,17 @@ val destructuretokendef: string -> typ -> bool -> (Terminal.t -> expr) -> valdef
 
 (* A global variable holds the exception [Error]. *)
 
-(* The definition of this global variable. *)
-
-val excvaldef: valdef
-
 (* A reference to this global variable. *)
 
 val errorval: expr
 
+(* ------------------------------------------------------------------------ *)
+
+(* The structure items [mbasics grammar] define and include the internal
+   sub-module [Basics], which contains the definitions of the exception
+   [Error] and of the type [token]. Then, they define the global variable
+   mentioned above, which holds the exception [Error]. *)
+
+val basics: string
+
+val mbasics: UnparameterizedSyntax.grammar -> structure

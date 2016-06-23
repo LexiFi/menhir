@@ -63,9 +63,6 @@ let staticVersion =
 
 (* The following are names of internal sub-modules. *)
 
-let basics =
-  "Basics"
-
 let tables =
   "Tables"
 
@@ -990,16 +987,7 @@ let program =
        sub-module. This sub-module is used again below, as part of the
        application of the functor [TableInterpreter.Make]. *)
 
-    SIModuleDef (basics, MStruct (
-      SIExcDefs [ excdef ] ::
-      interface_to_structure (
-        tokentypedef grammar
-      )
-    )) ::
-
-    SIInclude (MVar basics) ::
-
-    SIValDefs (false, [ excvaldef ]) ::
+    mbasics grammar @
 
     (* In order to avoid hiding user-defined identifiers, only the
        exception [Error] and the type [token] should be defined (at
@@ -1101,4 +1089,3 @@ let () =
   Time.tick "Producing abstract syntax"
 
 end
-

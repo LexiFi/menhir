@@ -1636,13 +1636,7 @@ let program =
 
   [ SIFunctor (grammar.parameters,
 
-    SIExcDefs [ excdef ] ::
-
-    SIValDefs (false, [ excvaldef ]) ::
-
-    interface_to_structure (
-      tokentypedef grammar
-    ) @
+    mbasics grammar @
 
     SITypeDefs [ envtypedef; statetypedef ] ::
 
@@ -1687,4 +1681,3 @@ let () =
   Time.tick "Producing abstract syntax"
 
 end
-

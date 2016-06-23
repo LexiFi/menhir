@@ -209,9 +209,34 @@ let parse_error =
 let errorval =
   EVar parse_error
 
+let basics =
+  "Basics"
+
 let excvaldef = {
   valpublic = false;
   valpat = PVar parse_error;
-  valval = EData (Interface.excname, [])
+  valval = EData (basics ^ "." ^ Interface.excname, [])
+    (* 2016/06/23 We now use the qualified name [Basics.Error], instead of
+       just [Error], so as to avoid OCaml's warning 41. *)
 }
 
+(* ------------------------------------------------------------------------ *)
+
+(* Define the internal sub-module [Basics], which contains the definitions
+   of the exception [Error] and of the type [token]. Then, include this
+   sub-module. This is used both in the code and table back-ends. *)
+
+let mbasics grammar = [
+
+  SIModuleDef (basics, MStruct (
+    SIExcDefs [ Interface.excdef ] ::
+    interface_to_structure (
+      TokenType.tokentypedef grammar
+    )
+  ));
+
+  SIInclude (MVar basics);
+
+  SIValDefs (false, [ excvaldef ]);
+
+]
