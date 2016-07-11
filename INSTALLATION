@@ -1,39 +1,46 @@
+------------------------------------------------------------------------------
+
 REQUIREMENTS
 
 You need Objective Caml 4.02 or later, ocamlbuild, and GNU make.
 
-HOW TO INSTALL
+------------------------------------------------------------------------------
 
-If you wish to install via ocamlfind, make sure that ocamlfind is in
-your PATH. (Remember that prefixing a command with sudo affects its
-PATH.)
+CONFIGURATION CHOICES
 
-Run the following commands:
+1- PREFIX
 
-  make PREFIX=/usr/local all
-  make PREFIX=/usr/local install
-
-If your machine does not have the native code Objective Caml compiler
-(ocamlopt), but does have the bytecode compiler (ocamlc), then instead
-of the above command, use:
-
-  make PREFIX=/usr/local TARGET=byte all
-  make PREFIX=/usr/local TARGET=byte install
-
-The value of the PREFIX variable can be changed to control where
-the software, the standard library, and the documentation should
-be stored. These files are copied to the following places:
+The value of the PREFIX variable can be changed to control where the software,
+the standard library, and the documentation are stored. These files are copied
+to the following places:
 
   $PREFIX/bin/
   $PREFIX/share/menhir/
   $PREFIX/doc/menhir/
 
-The support library, MenhirLib, is either installed via ocamlfind or placed
-within $PREFIX/share/menhir. By default, ocamlfind is used if it is found in
-the PATH. This decision may be overridden by setting USE_OCAMLFIND to either
-true or false when running "make all".
+PREFIX must be set when invoking "make all" and "make install" (see below).
 
-Menhir's --suggest options help determine where and how MenhirLib was installed.
+2- USE_OCAMLFIND
 
-The documentation includes a reference manual and a number of demos.
+The support library, MenhirLib, is either installed via ocamlfind or installed
+directly in the directory $PREFIX/share/menhir. Installing via ocamlfind is
+recommended (and is the default). It requires the "ocamlfind" executable to be
+found in the PATH. An explicit choice can be made by setting USE_OCAMLFIND to
+"true" or "false" when running "make all" (see below).
 
+3- TARGET
+
+If your machine does not have the native code Objective Caml compiler
+(ocamlopt), but does have the bytecode compiler (ocamlc), then you
+should define "TARGET=byte" when running "make all" and "make install".
+
+------------------------------------------------------------------------------
+
+COMPILATION & INSTALLATION
+
+Compile and install as follows:
+
+       make PREFIX=/usr/local USE_OCAMLFIND=true all
+  sudo make PREFIX=/usr/local install
+
+(If necessary, adjust PREFIX, USE_OCAMLFIND and TARGET as described above.)
