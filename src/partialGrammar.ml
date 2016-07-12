@@ -83,9 +83,9 @@ let join_declaration filename (grammar : grammar) decl =
 
   (* Reductions on error for nonterminals. *)
 
-  | DOnErrorReduce (nonterminal) ->
+  | DOnErrorReduce (nonterminal, prec) ->
       { grammar with
-        p_on_error_reduce = nonterminal :: grammar.p_on_error_reduce }
+        p_on_error_reduce = (nonterminal, prec) :: grammar.p_on_error_reduce }
 
   (* Token associativity and precedence. *)
 
@@ -603,7 +603,7 @@ let check_parameterized_grammar_is_well_defined grammar =
     ) ps
   in
   check "%type" (List.map fst grammar.p_types);
-  check "%on_error_reduce" grammar.p_on_error_reduce;
+  check "%on_error_reduce" (List.map fst grammar.p_on_error_reduce);
 
   (* Every reference to a symbol is well defined. *)
   let reserved = [ "error" ] in

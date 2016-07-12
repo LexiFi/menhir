@@ -623,18 +623,18 @@ let expand p_grammar =
   in
 
   (* Process %on_error_reduce declarations. *)
-  let rec on_error_reduce_from_list (ps : Syntax.parameter list) : StringSet.t =
+  let rec on_error_reduce_from_list (ps : (Syntax.parameter * 'p) list) : 'p StringMap.t =
     match ps with
     | [] ->
-        StringSet.empty
-    | nt :: ps ->
+        StringMap.empty
+    | (nt, prec) :: ps ->
         let accu = on_error_reduce_from_list ps in
         let mangled = mangle nt in
-        if StringSet.mem mangled accu then
+        if StringMap.mem mangled accu then
           Error.error [Parameters.position nt]
                "there are multiple %%on_error_reduce declarations for nonterminal %s."
                mangled;
-        StringSet.add mangled accu
+        StringMap.add mangled prec accu
   in
 
   let start_symbols = StringMap.domain (p_grammar.p_start_symbols) in

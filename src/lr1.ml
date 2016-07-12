@@ -1115,7 +1115,7 @@ let extra_reductions () =
       let productions = invert (reductions node) in
       (* Keep only those whose left-hand symbol is marked [%on_error_reduce]. *)
       let productions = ProductionMap.filter (fun prod _ ->
-        StringSet.mem (lhs prod) OnErrorReduce.declarations
+        StringMap.mem (lhs prod) OnErrorReduce.declarations
       ) productions in
       (* Check if this only one such production remains. *)
       match ProductionMap.is_singleton productions with
@@ -1145,7 +1145,7 @@ let extra_reductions () =
       Printf.fprintf f "Extra reductions on error were added in %d states.\n" !extra
     );
   (* Warn about useless %on_error_reduce declarations. *)
-  StringSet.iter (fun nt ->
+  StringMap.iter (fun nt _prec ->
     if not (StringSet.mem nt !extra_nts) then
       Error.grammar_warning []
         "the declaration %%on_error_reduce %s is never useful." nt

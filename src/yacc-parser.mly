@@ -92,7 +92,8 @@ declaration:
     { [ unknown_pos (DParameter $2) ] }
 
 | ON_ERROR_REDUCE actuals
-    { List.map (Positions.map (fun nt -> DOnErrorReduce nt))
+    { let prec = ParserAux.new_on_error_reduce_level() in
+      List.map (Positions.map (fun nt -> DOnErrorReduce (nt, prec)))
         (List.map Parameters.with_pos $2) }
 
 optional_ocamltype:

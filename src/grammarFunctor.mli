@@ -519,8 +519,10 @@ end
 
 module OnErrorReduce : sig
 
-  (* This is the set of %on_error_reduce declarations. *)
-  val declarations: StringSet.t
+  (* This is the set of %on_error_reduce declarations. Each declaration
+     carries a level, which is used when several declarations are
+     applicable in a single state. *)
+  val declarations: Syntax.on_error_reduce_level StringMap.t
 
 end
 
@@ -536,5 +538,3 @@ val diagnostics: unit -> unit
 (* ------------------------------------------------------------------------ *)
 
 end (* module Make *)
-
-

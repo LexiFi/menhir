@@ -96,7 +96,8 @@ declaration:
     { [ with_poss $startpos $endpos (DParameter t) ] }
 
 | ON_ERROR_REDUCE ss = clist(strict_actual)
-    { List.map (Positions.map (fun nt -> DOnErrorReduce nt))
+    { let prec = ParserAux.new_on_error_reduce_level() in
+      List.map (Positions.map (fun nt -> DOnErrorReduce (nt, prec)))
         (List.map Parameters.with_pos ss) }
 
 /* This production recognizes tokens that are valid in the rules section,

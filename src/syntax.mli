@@ -88,6 +88,15 @@ type branch_production_level =
 
 (* ------------------------------------------------------------------------ *)
 
+(* A level is attached to every [%on_error_reduce] declaration. It is used
+   to decide what to do when several such declarations are applicable in a
+   single state. *)
+
+type on_error_reduce_level =
+  branch_production_level (* we re-use the above type, to save code *)
+
+(* ------------------------------------------------------------------------ *)
+
 (* A parameter is either just a symbol or an application of a symbol to a
    nonempty tuple of parameters. Before anonymous rules have been eliminated,
    it can also be an anonymous rule, represented as a list of branches. *)
@@ -167,7 +176,7 @@ type declaration =
 
     (* On-error-reduce declaration. *)
 
-  | DOnErrorReduce of parameter
+  | DOnErrorReduce of parameter * on_error_reduce_level
 
 (* ------------------------------------------------------------------------ *)
 
@@ -201,6 +210,6 @@ type grammar =
       p_start_symbols      : Positions.t StringMap.t;
       p_types              : (parameter * Stretch.ocamltype Positions.located) list;
       p_tokens             : token_properties StringMap.t;
-      p_on_error_reduce    : parameter list;
+      p_on_error_reduce    : (parameter * on_error_reduce_level) list;
       p_rules              : parameterized_rule StringMap.t;
     }

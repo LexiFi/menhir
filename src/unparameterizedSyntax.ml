@@ -40,7 +40,7 @@ type grammar =
       parameters           : Stretch.t list;
       start_symbols        : StringSet.t;
       types                : Stretch.ocamltype StringMap.t;
-      on_error_reduce      : StringSet.t;
+      on_error_reduce      : on_error_reduce_level StringMap.t;
       tokens               : Syntax.token_properties StringMap.t;
       rules                : rule StringMap.t;
     }
@@ -87,4 +87,3 @@ let ocamltype_of_start_symbol grammar symbol : Stretch.ocamltype =
   with Not_found ->
     (* Every start symbol should have a type. *)
     assert false
-

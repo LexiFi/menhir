@@ -13,6 +13,11 @@ let new_production_level =
     incr c;
     ProductionLevel (Error.get_filemark (), !c)
 
+let new_on_error_reduce_level =
+  new_production_level
+    (* the counter is shared with [new_production_level],
+       but this is irrelevant *)
+
 module IdSet = Set.Make (struct
   type t = identifier located
   let compare id1 id2 =
