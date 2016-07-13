@@ -531,12 +531,12 @@ module OnErrorReduce : sig
   val iter: (Nonterminal.t -> unit) -> unit
 
   (* When two [%on_error_reduce] declarations are applicable in a single
-     state, they can be compared, using [compare], to test if one of them
+     state, they can be compared, using [preferable], to test if one of them
      takes precedence over the other. This is a partial order; two symbols may
-     be incomparable (either because they appear one the same line, or because
+     be incomparable (either because they appear on the same line, or because
      they originate in different files). *)
 
-  val compare: Nonterminal.t -> Nonterminal.t -> Nonterminal.t option
+  val preferable: Nonterminal.t -> Nonterminal.t -> bool
 
 end
 

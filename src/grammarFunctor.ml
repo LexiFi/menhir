@@ -1493,7 +1493,8 @@ module OnErrorReduce = struct
 
   open Precedence
 
-  let compare nt1 nt2 =
+  let preferable nt1 nt2 =
+    assert (nt1 <> nt2);
     let prec1, prec2 =
       try
         StringMap.find (print nt1) declarations,
@@ -1508,13 +1509,13 @@ module OnErrorReduce = struct
         (* [prec1] is a higher integer than [prec2], therefore comes later
            in the file. By analogy with [%left] and friends, we give higher
            priority to later declarations. *)
-        Some nt1
+        true
     | Lt ->
-        Some nt2
+        false
     | Eq
     | Ic ->
         (* We could issue a warning or an information message in these cases. *)
-        None
+        false
 
 end
 
