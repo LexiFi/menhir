@@ -924,10 +924,6 @@ let () =
    among the list [prod :: prods]. It fails if no best choice
    exists. *)
 
-(* TEMPORARY it seems to me that this code can fail even when a best
-   choice exists; e.g. productions 1 and 2 are incomparable, but
-   production 3 is better than both 1 and 2. *)
-
 let rec best choice = function
   | [] ->
       choice
