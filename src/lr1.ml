@@ -924,6 +924,10 @@ let () =
    among the list [prod :: prods]. It fails if no best choice
    exists. *)
 
+(* TEMPORARY it seems to me that this code can fail even when a best
+   choice exists; e.g. productions 1 and 2 are incomparable, but
+   production 3 is better than both 1 and 2. *)
+
 let rec best choice = function
   | [] ->
       choice
@@ -1102,39 +1106,42 @@ let extra =
 let extra_nts =
   ref NonterminalSet.empty
 
+let extra_reductions_in_node node =
+  (* Compute the productions which this node can reduce. *)
+  let productions : _ ProductionMap.t = invert (reductions node) in
+  let prods : Production.index list =
+    ProductionMap.fold (fun prod _ prods -> prod :: prods) productions []
+  in
+  (* Keep only those whose left-hand symbol is marked [%on_error_reduce]. *)
+  let prods = List.filter OnErrorReduce.reduce prods in
+  (* Check if this only one such production remains. *)
+  match prods with
+  | []
+  | _ :: _ :: _ ->
+      ()
+  | [ prod ] ->
+      let acceptable = acceptable_tokens node in
+      (* An extra reduction is possible. Replace every error action with
+         a reduction of [prod]. If we replace at least one error action
+         with a reduction, update [extra] and [extra_nts]. *)
+      let triggered = lazy (
+        incr extra;
+        extra_nts := NonterminalSet.add (Production.nt prod) !extra_nts
+      ) in
+      Terminal.iter_real (fun tok ->
+        if not (TerminalSet.mem tok acceptable) then begin
+          node.reductions <- TerminalMap.add tok [ prod ] node.reductions;
+          Lazy.force triggered
+        end
+      )
+
 let extra_reductions () =
+  (* Examine every node. *)
   iter (fun node ->
     (* Just like a default reduction, an extra reduction should be forbidden
        (it seems) if [forbid_default_reduction] is set. *)
-    if not node.forbid_default_reduction then begin
-
-      (* Compute the productions which this node can reduce. *)
-      let productions = invert (reductions node) in
-      (* Keep only those whose left-hand symbol is marked [%on_error_reduce]. *)
-      let productions = ProductionMap.filter (fun prod _ ->
-        OnErrorReduce.reduce prod
-      ) productions in
-      (* Check if this only one such production remains. *)
-      match ProductionMap.is_singleton productions with
-      | None ->
-          ()
-      | Some (prod, _) ->
-          let acceptable = acceptable_tokens node in
-          (* An extra reduction is possible. Replace every error action with
-             a reduction of [prod]. If we replace at least one error action
-             with a reduction, update [extra] and [extra_nts]. *)
-          let triggered = lazy (
-            incr extra;
-            extra_nts := NonterminalSet.add (Production.nt prod) !extra_nts
-          ) in
-          Terminal.iter_real (fun tok ->
-            if not (TerminalSet.mem tok acceptable) then begin
-              node.reductions <- TerminalMap.add tok [ prod ] node.reductions;
-              Lazy.force triggered
-            end
-          )
-
-    end
+    if not node.forbid_default_reduction then
+      extra_reductions_in_node node
   );
   (* Info message. *)
   if !extra > 0 then
