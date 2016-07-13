@@ -178,3 +178,8 @@ val new_intern: int -> (string -> string) * (unit -> unit)
    so far. *)
 val new_encode_decode: int -> (string -> int) * (int -> string) * (unit -> unit)
 
+(* If [xs] is a nonempty list and [preferable] is a partial order on elements,
+   then [best preferable xs] returns the best (least) element of [xs], if there
+   is one. Its complexity is quadratic. *)
+
+val best: ('a -> 'a -> bool) -> 'a list -> 'a option

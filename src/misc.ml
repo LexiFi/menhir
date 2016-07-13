@@ -317,3 +317,27 @@ let new_encode_decode capacity =
   in
   encode, decode, verbose
 
+let rec best (preferable : 'a -> 'a -> bool) (xs : 'a list) : 'a option =
+  match xs with
+  | [] ->
+      assert false
+  | [x] ->
+      Some x
+  | x :: xs ->
+      (* If [x] is preferable to every element of [xs], then it is the
+         best element of [x :: xs]. *)
+      if List.for_all (preferable x) xs then
+        Some x
+      else
+        match best preferable xs with
+        | Some y ->
+            if preferable y x then
+              (* If [y] is the best element of [xs] and [y] is preferable to
+                 [x], then [y] is the best element of [x :: xs]. *)
+              Some y
+            else
+              (* There is no best element. *)
+              None
+        | None ->
+            (* There is no best element. *)
+            None
