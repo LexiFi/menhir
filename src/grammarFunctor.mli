@@ -515,14 +515,28 @@ module Precedence : sig
 end
 
 (* ------------------------------------------------------------------------ *)
-(* %on_error_reduce declarations. *)
+(* [%on_error_reduce] declarations. *)
 
 module OnErrorReduce : sig
 
-  (* This is the set of %on_error_reduce declarations. Each declaration
-     carries a level, which is used when several declarations are
-     applicable in a single state. *)
-  val declarations: Syntax.on_error_reduce_level StringMap.t
+  (* [reduce prod] tells whether the left-hand side of [prod] (a nonterminal
+     symbol) appears in an [%on_error_reduce] declaration. *)
+
+  val reduce: Production.index -> bool
+
+  (* [iter f] applies the function [f] in turn, in an arbitrary order, to
+     every nonterminal symbol that appears in an [%on_error_reduce]
+     declaration. *)
+
+  val iter: (Nonterminal.t -> unit) -> unit
+
+  (* When two [%on_error_reduce] declarations are applicable in a single
+     state, they can be compared, using [compare], to test if one of them
+     takes precedence over the other. This is a partial order; two symbols may
+     be incomparable (either because they appear one the same line, or because
+     they originate in different files). *)
+
+  val compare: Nonterminal.t -> Nonterminal.t -> Nonterminal.t option
 
 end
 

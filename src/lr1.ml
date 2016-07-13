@@ -1100,10 +1100,7 @@ let extra =
 (* The set of nonterminal symbols in the left-hand side of an extra reduction. *)
 
 let extra_nts =
-  ref StringSet.empty
-
-let lhs prod : string =
-  Nonterminal.print false (Production.nt prod)
+  ref NonterminalSet.empty
 
 let extra_reductions () =
   iter (fun node ->
@@ -1115,7 +1112,7 @@ let extra_reductions () =
       let productions = invert (reductions node) in
       (* Keep only those whose left-hand symbol is marked [%on_error_reduce]. *)
       let productions = ProductionMap.filter (fun prod _ ->
-        StringMap.mem (lhs prod) OnErrorReduce.declarations
+        OnErrorReduce.reduce prod
       ) productions in
       (* Check if this only one such production remains. *)
       match ProductionMap.is_singleton productions with
@@ -1128,7 +1125,7 @@ let extra_reductions () =
              with a reduction, update [extra] and [extra_nts]. *)
           let triggered = lazy (
             incr extra;
-            extra_nts := StringSet.add (lhs prod) !extra_nts
+            extra_nts := NonterminalSet.add (Production.nt prod) !extra_nts
           ) in
           Terminal.iter_real (fun tok ->
             if not (TerminalSet.mem tok acceptable) then begin
@@ -1145,11 +1142,12 @@ let extra_reductions () =
       Printf.fprintf f "Extra reductions on error were added in %d states.\n" !extra
     );
   (* Warn about useless %on_error_reduce declarations. *)
-  StringMap.iter (fun nt _prec ->
-    if not (StringSet.mem nt !extra_nts) then
+  OnErrorReduce.iter (fun nt ->
+    if not (NonterminalSet.mem nt !extra_nts) then
       Error.grammar_warning []
-        "the declaration %%on_error_reduce %s is never useful." nt
-  ) OnErrorReduce.declarations
+        "the declaration %%on_error_reduce %s is never useful."
+        (Nonterminal.print false nt)
+  )
 
 (* ------------------------------------------------------------------------ *)
 (* Define [fold_entry], which in some cases facilitates the use of [entry]. *)

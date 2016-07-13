@@ -1464,12 +1464,60 @@ let diagnostics () =
 
 module OnErrorReduce = struct
 
-  let declarations =
+  (* We keep a [StringMap] internally, and convert back and forth between
+     the types [Nonterminal.t] and [string] when querying this map. This
+     is not very elegant, and could be changed if desired. *)
+
+  let declarations : Syntax.on_error_reduce_level StringMap.t =
     grammar.on_error_reduce
+
+  let print (nt : Nonterminal.t) : string =
+    Nonterminal.print false nt
+
+  let lookup (nt : string) : Nonterminal.t =
+    try
+      Nonterminal.lookup nt
+    with Not_found ->
+      (* If this fails, then we have an [%on_error_reduce] declaration
+         for an invalid symbol. *)
+      assert false
+
+  let reduce prod =
+    let nt = Production.nt prod in
+    StringMap.mem (print nt) declarations
+
+  let iter f =
+    StringMap.iter (fun nt _prec ->
+      f (lookup nt)
+    ) declarations
+
+  open Precedence
+
+  let compare nt1 nt2 =
+    let prec1, prec2 =
+      try
+        StringMap.find (print nt1) declarations,
+        StringMap.find (print nt2) declarations
+      with Not_found ->
+        (* [compare] should be used to compare two symbols for which
+           there exist [%on_error_reduce] declarations. *)
+        assert false
+    in
+    match production_order prec1 prec2 with
+    | Gt ->
+        (* [prec1] is a higher integer than [prec2], therefore comes later
+           in the file. By analogy with [%left] and friends, we give higher
+           priority to later declarations. *)
+        Some nt1
+    | Lt ->
+        Some nt2
+    | Eq
+    | Ic ->
+        (* We could issue a warning or an information message in these cases. *)
+        None
 
 end
 
 (* ------------------------------------------------------------------------ *)
 
 end (* module Make *)
-
