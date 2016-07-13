@@ -1493,14 +1493,22 @@ module OnErrorReduce = struct
 
   open Precedence
 
-  let preferable nt1 nt2 =
-    assert (nt1 <> nt2);
+  let preferable prod1 prod2 =
+    (* The two productions that we are comparing must be distinct. *)
+    assert (prod1 <> prod2);
+    let nt1 = Production.nt prod1
+    and nt2 = Production.nt prod2 in
+    (* If they have the same left-hand side (which seems rather unlikely?),
+       declare them incomparable. *)
+    nt1 <> nt2 &&
+    (* Otherwise, look up the priority levels associated with their left-hand
+       symbols. *)
     let prec1, prec2 =
       try
         StringMap.find (print nt1) declarations,
         StringMap.find (print nt2) declarations
       with Not_found ->
-        (* [compare] should be used to compare two symbols for which
+        (* [preferable] should be used to compare two symbols for which
            there exist [%on_error_reduce] declarations. *)
         assert false
     in

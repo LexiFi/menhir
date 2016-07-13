@@ -530,13 +530,12 @@ module OnErrorReduce : sig
 
   val iter: (Nonterminal.t -> unit) -> unit
 
-  (* When two [%on_error_reduce] declarations are applicable in a single
-     state, they can be compared, using [preferable], to test if one of them
-     takes precedence over the other. This is a partial order; two symbols may
-     be incomparable (either because they appear on the same line, or because
-     they originate in different files). *)
+  (* When two productions could be reduced, in a single state, due to
+     [%on_error_reduce] declarations, these productions can be compared, using
+     [preferable], to test if one of them takes precedence over the other.
+     This is a partial order; two productions may be incomparable. *)
 
-  val preferable: Nonterminal.t -> Nonterminal.t -> bool
+  val preferable: Production.index -> Production.index -> bool
 
 end
 
