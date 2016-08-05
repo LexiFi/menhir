@@ -373,74 +373,75 @@ let check_grammar (p_grammar : Syntax.grammar) =
     p_grammar.p_rules []
   in
 
-    (* We traverse the graph checking each parameterized non terminal
-       definition is well-formed. *)
-    RulesGraph.iter
-      (fun i ->
-         let params    = parameters i
-         and iname     = name i
-         and repr      = ConnectedComponents.representative i
-         and positions = positions i
-         in
+  (* We traverse the graph checking each parameterized non terminal
+     definition is well-formed. *)
+  RulesGraph.iter (fun i ->
+    let params    = parameters i
+    and iname     = name i
+    and repr      = ConnectedComponents.representative i
+    and positions = positions i
+    in
 
-         (* The environment is augmented with the parameters whose types are
-            unknown. *)
-         let env' = List.map
-           (fun k -> (k, (positions, fresh_flexible_variable ()))) params
-         in
-         let env = env' @ env in
+    (* The environment is augmented with the parameters whose types are
+       unknown. *)
+    let env' = List.map
+      (fun k -> (k, (positions, fresh_flexible_variable ()))) params
+    in
+    let env = env' @ env in
 
-         (* The type of the parameterized non terminal is constrained to be
-            [expected_ty]. *)
-         let check_type () =
-           check positions env iname (Arrow (List.map (fun (_, (_, t)) -> t) env'))
-         in
+    (* The type of the parameterized non terminal is constrained to be
+       [expected_ty]. *)
+    let check_type () =
+      check positions env iname (Arrow (List.map (fun (_, (_, t)) -> t) env'))
+    in
 
-         (* We check the number of parameters. *)
-         let check_parameters () =
-           let parameters_len = List.length params in
-             (* The component is visited for the first time. *)
-             if marked_components.(repr) = unseen then
-               marked_components.(repr) <- parameters_len
-             else (* Otherwise, we check that the arity is homogeneous
-                     in the component. *)
-               if marked_components.(repr) <> parameters_len then
-                 Error.error positions
-                      "mutually recursive definitions must have the same parameters.\n\
-                       This is not the case for %s and %s."
-                         (name repr) iname
-         in
+    (* We check the number of parameters. *)
+    let check_parameters () =
+      let parameters_len = List.length params in
+        (* The component is visited for the first time. *)
+        if marked_components.(repr) = unseen then
+          marked_components.(repr) <- parameters_len
+        else (* Otherwise, we check that the arity is homogeneous
+                in the component. *)
+          if marked_components.(repr) <> parameters_len then
+            Error.error positions
+                 "mutually recursive definitions must have the same parameters.\n\
+                  This is not the case for %s and %s."
+                    (name repr) iname
+    in
 
-        (* In each production rule, the parameterized non terminal
-           of the same component must be instantiated with the same
-           formal arguments. *)
-         let check_producers () =
-           List.iter
-             (fun { pr_producers = symbols } -> List.iter
-                (function (_, p) ->
-                   (* We take the use of each symbol into account. *)
-                   check_parameter_type env p;
-                   (* If it is in the same component, check in addition that
-                      the arguments are the formal arguments. *)
-                   let symbol, actuals = Parameters.unapp p in
-                   try
-                     let idx = conv symbol.value in
-                       if ConnectedComponents.representative idx = repr then
-                         if not (actual_parameters_as_formal actuals params)
-                         then
-                           Error.error [ symbol.position ]
-                                "mutually recursive definitions must have the same \
-                                 parameters.\n\
-                                 This is not the case for %s."
-                                 (let name1, name2 = (name idx), (name i) in
-                                    if name1 <> name2 then name1 ^ " and "^ name2
-                                    else name1)
-                   with _ -> ())
-                    symbols) (branches i)
-         in
-           check_type ();
-           check_parameters ();
-           check_producers ())
+    (* In each production rule, the parameterized non terminal
+       of the same component must be instantiated with the same
+       formal arguments. *)
+    let check_producers () =
+      List.iter
+        (fun { pr_producers = symbols } -> List.iter
+           (function (_, p) ->
+              (* We take the use of each symbol into account. *)
+              check_parameter_type env p;
+              (* If it is in the same component, check in addition that
+                 the arguments are the formal arguments. *)
+              let symbol, actuals = Parameters.unapp p in
+              try
+                let idx = conv symbol.value in
+                  if ConnectedComponents.representative idx = repr then
+                    if not (actual_parameters_as_formal actuals params)
+                    then
+                      Error.error [ symbol.position ]
+                           "mutually recursive definitions must have the same \
+                            parameters.\n\
+                            This is not the case for %s."
+                            (let name1, name2 = (name idx), (name i) in
+                               if name1 <> name2 then name1 ^ " and "^ name2
+                               else name1)
+              with _ -> ())
+               symbols) (branches i)
+    in
+
+    check_type();
+    check_parameters();
+    check_producers()
+  )
 
 
 let rec subst_parameter subst = function
