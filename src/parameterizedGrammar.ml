@@ -198,7 +198,7 @@ let lookup (x : string) (env: environment) =
   with Not_found -> star_variable
 
 (* This function checks that the symbol [k] has the type [expected_type]. *)
-let check positions env k expected_type =
+let check positions env k expected_type : unit =
   let inference_var = lookup k env in
   let checking_var = fresh_structured_variable expected_type in
     try
@@ -253,6 +253,14 @@ let rec parameter_type env = function
   | ParameterAnonymous _ ->
       (* Anonymous rules are eliminated early on. *)
       assert false
+
+let check_parameter_type env p : unit =
+  let symbol, actuals = Parameters.unapp p in
+  let expected_ty =
+    if actuals = [] then star
+    else Arrow (List.map (parameter_type env) actuals)
+  in
+  check [ symbol.position ] env symbol.value expected_ty
 
 let check_grammar (p_grammar : Syntax.grammar) =
   (* [n] is the grammar size. *)
@@ -410,13 +418,11 @@ let check_grammar (p_grammar : Syntax.grammar) =
            List.iter
              (fun { pr_producers = symbols } -> List.iter
                 (function (_, p) ->
-                   let symbol, actuals = Parameters.unapp p in
                    (* We take the use of each symbol into account. *)
-                     check [ symbol.position ] env symbol.value
-                       (if actuals = [] then star else
-                          Arrow (List.map (parameter_type env) actuals));
+                   check_parameter_type env p;
                    (* If it is in the same component, check in addition that
                       the arguments are the formal arguments. *)
+                   let symbol, actuals = Parameters.unapp p in
                    try
                      let idx = conv symbol.value in
                        if ConnectedComponents.representative idx = repr then
