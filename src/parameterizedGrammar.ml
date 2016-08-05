@@ -189,8 +189,10 @@ type environment =
 (* [lookup x env] returns the type related to [x] in the typing environment
    [env].
    By convention, identifiers that are not in [env] are terminals. They are
-   given the type [Star]. *)
-let lookup x (env: environment) =
+   given the type [Star]. (This seems a rather fragile convention, as it
+   relies on the fact that the well-definedness of every identifier has
+   been previously checked; see [PartialGrammar]. -fpottier) *)
+let lookup (x : string) (env: environment) =
   try
     snd (List.assoc x env)
   with Not_found -> star_variable
