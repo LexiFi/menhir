@@ -308,19 +308,20 @@ let inline grammar =
         grammar.rules
   in
 
-    (* To expand a grammar, we expand all its rules and remove
-       the %inline rules. *)
+  (* To expand a grammar, we expand all its rules and remove
+     the %inline rules. *)
   let expanded_rules =
     StringMap.mapi expand_rule grammar.rules
-  and useful_types =
-      StringMap.filter
-        (fun k _ -> try not (StringMap.find k grammar.rules).inline_flag
-         with Not_found -> true)
-        grammar.types
   in
 
-    { grammar with
-        rules = StringMap.filter (fun _ r -> not r.inline_flag) expanded_rules;
-        types = useful_types
-    }, !use_inline
+  let useful (k : string) : bool =
+    try
+      not (StringMap.find k grammar.rules).inline_flag
+    with Not_found ->
+      true (* could be: assert false? *)
+  in
 
+  { grammar with
+      rules = StringMap.filter (fun _ r -> not r.inline_flag) expanded_rules;
+      types = StringMap.filter (fun k _ -> useful k) grammar.types;
+  }, !use_inline
