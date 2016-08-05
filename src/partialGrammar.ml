@@ -589,24 +589,35 @@ let check_parameterized_grammar_is_well_defined grammar =
            "the type of the start symbol %s is unspecified." nonterminal;
     ) grammar.p_start_symbols;
 
-  (* Every %type definition has, at its head, a nonterminal symbol. *)
+  (* Every %type definition refers to well-defined (terminal or nonterminal)
+     symbols and has, at its head, a nonterminal symbol. *)
   (* Same check for %on_error_reduce definitions. *)
-  (* Apparently we do not check the parameters at this point. Maybe this is
-     done later, or not at all. *)
-  let check (kind : string) (ps : Syntax.parameter list) =
-    List.iter (fun p ->
-      let (head_symb, _) = Parameters.unapp p in
-      if not (StringMap.mem (value head_symb) grammar.p_rules) then
-        Error.error [Parameters.position p]
+
+  let reserved = [ "error" ] in
+
+  let rec check (kind : string) (must_be_nonterminal : bool) (p : Syntax.parameter) =
+    (* Destructure head and arguments. *)
+    let head, ps = Parameters.unapp p in
+    let head = value head in
+    (* Check if [head] is a nonterminal or terminal symbol. *)
+    let is_nonterminal = StringMap.mem head grammar.p_rules
+    and is_terminal = StringMap.mem head grammar.p_tokens || List.mem head reserved in
+    (* If [head] is not satisfactory, error. *)
+    if (must_be_nonterminal && not is_nonterminal) then
+      Error.error [Parameters.position p]
              "this should be a nonterminal symbol.\n\
-              %s declarations are applicable only to nonterminal symbols." kind
-    ) ps
+              %s declarations are applicable only to nonterminal symbols." kind;
+    if not (is_terminal || is_nonterminal) then
+      Error.error [Parameters.position p]
+             "%s is undefined." head;
+    (* Then, check the arguments. *)
+    List.iter (check kind false) ps
   in
-  check "%type" (List.map fst grammar.p_types);
-  check "%on_error_reduce" (List.map fst grammar.p_on_error_reduce);
+
+  List.iter (check "%type" true) (List.map fst grammar.p_types);
+  List.iter (check "%on_error_reduce" true) (List.map fst grammar.p_on_error_reduce);
 
   (* Every reference to a symbol is well defined. *)
-  let reserved = [ "error" ] in
   let used_tokens = ref StringSet.empty in
   let mark_token_as_used token =
     used_tokens := StringSet.add token !used_tokens
