@@ -441,8 +441,16 @@ let check_grammar (p_grammar : Syntax.grammar) =
     check_type();
     check_parameters();
     check_producers()
-  )
+  );
 
+  (* Check that every %type and %on_error_reduce declaration mentions a
+     well-typed term. *)
+  List.iter (fun (p, _) ->
+    check_parameter_type env p
+  ) p_grammar.p_types;
+  List.iter (fun (p, _) ->
+    check_parameter_type env p
+  ) p_grammar.p_on_error_reduce
 
 let rec subst_parameter subst = function
   | ParameterVar x ->
