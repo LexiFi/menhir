@@ -1,7 +1,5 @@
-(* This script parses OCaml's version and confronts it with a user-provided
-   version. It is meant to be run by invoking [ocaml checkOCamlVersion.ml]. *)
-
-#load "str.cma"
+(* This module parses ocaml version and confronts it with a user-provided
+   version. *)
 
 (* According to OCaml's manual, the Sys.ocaml_version value follows the
    regexp [version_regexp].
