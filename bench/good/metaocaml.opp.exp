@@ -241,134 +241,134 @@ let bigarray_set arr arg newval =
 %start interface
 %start toplevel_phrase
 %start use_file
-%token WHILE
-%token WHEN
-%token VIRTUAL
-%token VAL
-%token UNDERSCORE
-%token TYPE
-%token TRY
-%token TO
-%token TILDE
-%token STRUCT
-%token SIG
-%token SEMISEMI
-%token RUN_ICC
-%token RUN_GCC
-%token RUN_F90
-%token RPAREN
-%token REC
-%token RBRACKET
-%token RBRACE
-%token QUOTE
-%token QUESTIONQUESTION
-%token QUESTION
-%token PRIVATE
-%token <string> OPTLABEL
-%token OPEN
-%token OF
-%token OBJECT
-%token MUTABLE
-%token MODULE
-%token METHOD
-%token MATCH
-%token LBRACKETLESS
-%token LBRACKETGREATER
-%token LAZY
-%token <string> LABEL
-%token INITIALIZER
-%token INHERIT
-%token INCLUDE
-%token IF
-%token GREATERRBRACKET
-%token GREATERRBRACE
-%token GREATERDOT
-%token FUNCTOR
-%token FUN
-%token FOR
-%token EXTERNAL
-%token EXCEPTION
-%token EOF
-%token END
-%token DOWNTO
-%token DOTTILDE
-%token DOTPOND
-%token DOTLESS
-%token DOTDOT
-%token DOTBANGF
-%token DOTBANGC
-%token DOTBANG
-%token DONE
-%token DO
-%token CONSTRAINT
-%token COLONGREATER
-%token COLON
-%token CLASS
-%token BARRBRACKET
-%token BANGLBRACE
-%token ASSERT
-%token IN
-%token SEMI
-%token LET
-%token WITH
-%token FUNCTION
-%token AND
-%token THEN
-%token ELSE
-%token LESSMINUS
-%token COLONEQUAL
-%token AS
-%token BAR
-%token COMMA
-%token MINUSGREATER
-%token OR
-%token BARBAR
-%token AMPERSAND
 %token AMPERAMPER
-%token LESS
-%token <string> INFIXOP0
-%token GREATER
-%token EQUAL
-%token <string> INFIXOP1
+%token AMPERSAND
+%token AND
+%token AS
+%token ASSERT
+%token BACKQUOTE
+%token BANGLBRACE
+%token BAR
+%token BARBAR
+%token BARRBRACKET
+%token BEGIN
+%token <char> CHAR
+%token CLASS
+%token COLON
 %token COLONCOLON
-%token PLUS
-%token MINUSDOT
-%token MINUS
+%token COLONEQUAL
+%token COLONGREATER
+%token COMMA
+%token CONSTRAINT
+%token DO
+%token DONE
+%token DOT
+%token DOTBANG
+%token DOTBANGC
+%token DOTBANGF
+%token DOTDOT
+%token DOTLESS
+%token DOTPOND
+%token DOTTILDE
+%token DOWNTO
+%token ELSE
+%token END
+%token EOF
+%token EQUAL
+%token <string> EUIDENT
+%token <string> EUIDENTI
+%token EXCEPTION
+%token EXTERNAL
+%token FALSE
+%token <string> FLOAT
+%token FOR
+%token FUN
+%token FUNCTION
+%token FUNCTOR
+%token GREATER
+%token GREATERDOT
+%token GREATERRBRACE
+%token GREATERRBRACKET
+%token IF
+%token IN
+%token INCLUDE
+%token <string> INFIXOP0
+%token <string> INFIXOP1
 %token <string> INFIXOP2
-%token STAR
 %token <string> INFIXOP3
 %token <string> INFIXOP4
-%token SHARP
-%token DOT
-%token <string> UIDENTI
-%token <string> UIDENT
-%token TRUE
-%token <string> STRING
-%token <string> PREFIXOP
-%token NEW
-%token <nativeint> NATIVEINT
-%token LPAREN
-%token <string> LIDENT
-%token LBRACKETBAR
-%token LBRACKET
-%token LBRACELESS
-%token LBRACE
-%token <int64> INT64
-%token <int32> INT32
+%token INHERIT
+%token INITIALIZER
 %token <int> INT
-%token <string> FLOAT
-%token FALSE
-%token <string> EUIDENTI
-%token <string> EUIDENT
-%token <char> CHAR
-%token BEGIN
-%token BACKQUOTE
+%token <int32> INT32
+%token <int64> INT64
+%token <string> LABEL
+%token LAZY
+%token LBRACE
+%token LBRACELESS
+%token LBRACKET
+%token LBRACKETBAR
+%token LBRACKETGREATER
+%token LBRACKETLESS
+%token LESS
+%token LESSMINUS
+%token LET
+%token <string> LIDENT
+%token LPAREN
+%token MATCH
+%token METHOD
+%token MINUS
+%token MINUSDOT
+%token MINUSGREATER
+%token MODULE
+%token MUTABLE
+%token <nativeint> NATIVEINT
+%token NEW
+%token OBJECT
+%token OF
+%token OPEN
+%token <string> OPTLABEL
+%token OR
+%token PLUS
+%token <string> PREFIXOP
+%token PRIVATE
+%token QUESTION
+%token QUESTIONQUESTION
+%token QUOTE
+%token RBRACE
+%token RBRACKET
+%token REC
+%token RPAREN
+%token RUN_F90
+%token RUN_GCC
+%token RUN_ICC
+%token SEMI
+%token SEMISEMI
+%token SHARP
+%token SIG
+%token STAR
+%token <string> STRING
+%token STRUCT
+%token THEN
+%token TILDE
+%token TO
+%token TRUE
+%token TRY
+%token TYPE
+%token <string> UIDENT
+%token <string> UIDENTI
+%token UNDERSCORE
+%token VAL
+%token VIRTUAL
+%token WHEN
+%token WHILE
+%token WITH
 %nonassoc IN 
 %nonassoc below_SEMI 
 %nonassoc SEMI 
 %nonassoc LET 
 %nonassoc below_WITH 
-%nonassoc WITH FUNCTION 
+%nonassoc FUNCTION WITH 
 %nonassoc AND 
 %nonassoc THEN 
 %nonassoc ELSE 
@@ -379,14 +379,14 @@ let bigarray_set arr arg newval =
 %nonassoc below_COMMA 
 %left COMMA 
 %right MINUSGREATER 
-%right OR BARBAR 
-%right AMPERSAND AMPERAMPER 
+%right BARBAR OR 
+%right AMPERAMPER AMPERSAND 
 %nonassoc below_EQUAL 
-%left LESS INFIXOP0 GREATER EQUAL 
+%left EQUAL GREATER INFIXOP0 LESS 
 %right INFIXOP1 
 %right COLONCOLON 
-%left PLUS MINUSDOT MINUS INFIXOP2 
-%left STAR INFIXOP3 
+%left INFIXOP2 MINUS MINUSDOT PLUS 
+%left INFIXOP3 STAR 
 %right INFIXOP4 
 %nonassoc prec_unary_minus 
 %nonassoc prec_constant_constructor 
@@ -397,7 +397,7 @@ let bigarray_set arr arg newval =
 %nonassoc SHARP 
 %nonassoc below_DOT 
 %nonassoc DOT 
-%nonassoc UIDENTI UIDENT TRUE STRING PREFIXOP NEW NATIVEINT LPAREN LIDENT LBRACKETBAR LBRACKET LBRACELESS LBRACE INT64 INT32 INT FLOAT FALSE EUIDENTI EUIDENT CHAR BEGIN BACKQUOTE 
+%nonassoc BACKQUOTE BEGIN CHAR EUIDENT EUIDENTI FALSE FLOAT INT INT32 INT64 LBRACE LBRACELESS LBRACKET LBRACKETBAR LIDENT LPAREN NATIVEINT NEW PREFIXOP STRING TRUE UIDENT UIDENTI 
 %type <Parsetree.structure> implementation
 %type <Parsetree.signature> interface
 %type <Parsetree.toplevel_phrase> toplevel_phrase
