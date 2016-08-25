@@ -126,15 +126,15 @@ let join_declaration filename (grammar : grammar) decl =
       grammar
 
 (* ------------------------------------------------------------------------- *)
-(* This stores an optional trailer into a grammar.
-   Trailers are stored in an arbitrary order. *)
+(* This stores an optional postlude into a grammar.
+   Postludes are stored in an arbitrary order. *)
 
-let join_trailer trailer grammar =
-  match trailer with
+let join_postlude postlude grammar =
+  match postlude with
   | None ->
       grammar
-  | Some trailer ->
-      { grammar with p_postludes = trailer :: grammar.p_postludes }
+  | Some postlude ->
+      { grammar with p_postludes = postlude :: grammar.p_postludes }
 
 (* ------------------------------------------------------------------------- *)
 (* We rewrite definitions when nonterminals are renamed. The
@@ -573,7 +573,7 @@ let empty_grammar =
 let join grammar pgrammar =
   let filename = pgrammar.pg_filename in
     List.fold_left (join_declaration filename) grammar pgrammar.pg_declarations
-    $$ join_trailer pgrammar.pg_trailer
+    $$ join_postlude pgrammar.pg_postlude
 
 let check_parameterized_grammar_is_well_defined grammar =
 

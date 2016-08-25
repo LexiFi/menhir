@@ -29,9 +29,9 @@ type filename =
 
 (* ------------------------------------------------------------------------ *)
 
-(* A trailer is a source file fragment. *)
+(* A postlude is a source file fragment. *)
 
-type trailer =
+type postlude =
     Stretch.t
 
 (* ------------------------------------------------------------------------ *)
@@ -185,7 +185,7 @@ type declaration =
 type partial_grammar =
     {
       pg_filename          : filename;
-      pg_trailer           : trailer option;
+      pg_postlude           : postlude option;
       pg_declarations      : declaration Positions.located list;
       pg_rules             : parameterized_rule list;
     }
@@ -196,7 +196,7 @@ type partial_grammar =
 
 (* The differences with partial grammars (above) are as follows:
    1. the file name is gone (there could be several file names, anyway).
-   2. there can be several trailers, now known as postludes.
+   2. there can be several postludes.
    3. declarations are organized by kind: preludes, functor %parameters,
       %start symbols, %types, %tokens, %on_error_reduce.
    4. rules are stored in a map, indexed by symbol names, instead of a list.
@@ -205,7 +205,7 @@ type partial_grammar =
 type grammar =
     {
       p_preludes           : Stretch.t list;
-      p_postludes          : trailer list;
+      p_postludes          : postlude list;
       p_parameters         : Stretch.t list;
       p_start_symbols      : Positions.t StringMap.t;
       p_types              : (parameter * Stretch.ocamltype Positions.located) list;

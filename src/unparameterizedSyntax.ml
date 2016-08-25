@@ -36,7 +36,7 @@ type rule =
 type grammar =
     {
       preludes             : Stretch.t list;
-      postludes            : Syntax.trailer list;
+      postludes            : Syntax.postlude list;
       parameters           : Stretch.t list;
       start_symbols        : StringSet.t;
       types                : Stretch.ocamltype StringMap.t;

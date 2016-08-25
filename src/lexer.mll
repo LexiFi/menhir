@@ -632,7 +632,7 @@ and char = parse
 (* Read until the end of the file. This is used after finding a %%
    that marks the end of the grammar specification. We update the
    current position as we go. This allows us to build a stretch
-   for the trailer. *)
+   for the postlude. *)
 
 and finish = parse
 | newline
@@ -641,4 +641,3 @@ and finish = parse
     { lexeme_start_p lexbuf }
 | _
     { finish lexbuf }
-

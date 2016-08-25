@@ -48,16 +48,16 @@ open Positions
 
 /* ------------------------------------------------------------------------- */
 /* A grammar consists of declarations and rules, followed by an optional
-   trailer, which we do not parse. */
+   postlude, which we do not parse. */
 
 grammar:
-  ds = declaration* PERCENTPERCENT rs = rule* t = trailer
+  ds = declaration* PERCENTPERCENT rs = rule* t = postlude
     {
       {
         pg_filename          = ""; (* filled in by the caller *)
         pg_declarations      = List.flatten ds;
         pg_rules             = rs;
-        pg_trailer           = t
+        pg_postlude          = t
       }
     }
 
@@ -339,12 +339,12 @@ modifier:
     { with_poss $startpos $endpos "list" }
 
 /* ------------------------------------------------------------------------- */
-/* A trailer is announced by %%, but is optional. */
+/* A postlude is announced by %%, but is optional. */
 
-trailer:
+postlude:
   EOF
     { None }
-| p = PERCENTPERCENT /* followed by actual trailer */
+| p = PERCENTPERCENT /* followed by actual postlude */
     { Some (Lazy.force p) }
 
 %%

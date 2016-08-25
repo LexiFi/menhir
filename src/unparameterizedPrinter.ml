@@ -141,7 +141,7 @@ let print_branch mode f branch =
   end;
   Printf.fprintf f "}\n"
 
-let print_trailers b g =
+let print_postludes b g =
   List.iter (fun stretch -> Printf.fprintf b "%s\n" stretch.stretch_raw_content) g.postludes
 
 (* Because the resolution of reduce/reduce conflicts is implicitly dictated by
@@ -212,7 +212,7 @@ let print mode f g =
   Printf.fprintf f "\n%%%%\n";
   begin match mode with
   | PrintNormal ->
-      print_trailers f g
+      print_postludes f g
   | PrintUnitActions
   | PrintUnitActionsUnitTokens ->
       ()

@@ -36,23 +36,23 @@ open Positions
 
 /* ------------------------------------------------------------------------- */
 /* A grammar consists of declarations and rules, followed by an optional
-   trailer, which we do not parse. */
+   postlude, which we do not parse. */
 
 grammar:
-  declarations PERCENTPERCENT rules trailer
+  declarations PERCENTPERCENT rules postlude
     {
       {
         pg_filename          = ""; (* filled in by the caller *)
         pg_declarations      = List.rev $1;
         pg_rules             = $3;
-        pg_trailer           = $4
+        pg_postlude          = $4
       }
     }
 
-trailer:
+postlude:
   EOF
     { None }
-| PERCENTPERCENT /* followed by actual trailer */
+| PERCENTPERCENT /* followed by actual postlude */
     { Some (Lazy.force $1) }
 
 /* ------------------------------------------------------------------------- */
