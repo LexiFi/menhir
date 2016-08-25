@@ -24,7 +24,7 @@ let rec insert_in_partitions item m = function
   | [] ->
       [ (m, [ item ]) ]
 
-  | (m', items) :: partitions when Error.same_input_file m m' ->
+  | (m', items) :: partitions when InputFile.same_input_file m m' ->
       (m', item :: items) :: partitions
 
   | t :: partitions ->
@@ -173,7 +173,7 @@ let branches_order r r' =
   let branch_order b b' =
     match b.branch_production_level, b'.branch_production_level with
     | ProductionLevel (m, l), ProductionLevel (m', l') ->
-        compare_pairs Error.compare_input_files Pervasives.compare (m, l) (m', l')
+        compare_pairs InputFile.compare_input_files Pervasives.compare (m, l) (m', l')
   in
   (* TEMPORARY I don't think we need a lexicographic ordering here *)
   let rec lexical_order bs bs' =

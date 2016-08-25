@@ -58,7 +58,7 @@ type precedence_level =
      value of type [input_file] is used to record an item's origin. The
      positions allow locating certain warnings. *)
 
-  | PrecedenceLevel of Error.input_file * int * Lexing.position * Lexing.position
+  | PrecedenceLevel of InputFile.input_file * int * Lexing.position * Lexing.position
 
 type token_properties =
     {
@@ -84,7 +84,7 @@ type branch_prec_annotation =
    which production appears first in the grammar. See [ParserAux]. *)
 
 type branch_production_level =
-  | ProductionLevel of Error.input_file * int
+  | ProductionLevel of InputFile.input_file * int
 
 (* ------------------------------------------------------------------------ *)
 

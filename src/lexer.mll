@@ -32,7 +32,7 @@ let savestart lexbuf f =
 (* Extracts a chunk out of the source file. *)
 
 let chunk ofs1 ofs2 =
-  let contents = Error.get_file_contents() in
+  let contents = InputFile.get_file_contents() in
   let len = ofs2 - ofs1 in
   String.sub contents ofs1 len
 
@@ -243,7 +243,7 @@ let mk_stretch pos1 pos2 parenthesize monsters =
       (String.make (pos1.pos_cnum - pos1.pos_bol) ' ') ^ content
   in
   Stretch.({
-    stretch_filename = Error.get_input_file_name();
+    stretch_filename = InputFile.get_input_file_name();
     stretch_linenum = pos1.pos_lnum;
     stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
     stretch_content = content;

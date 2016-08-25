@@ -1,27 +1,4 @@
-(* This module helps report errors and maintains some information
-   about the source file that is being read. *)
-
-(* ---------------------------------------------------------------------------- *)
-
-(* Call [set_filename] before lexing and parsing in order to inform
-   the module [Error] about the name of the file that is being
-   examined. *)
-
-(* TEMPORARY limiter ou supprimer ou commenter cette interface stateful *)
-
-val new_input_file: string -> unit
-
-val get_input_file_name: unit -> string
-
-type input_file
-val builtin_input_file: input_file
-val same_input_file: input_file -> input_file -> bool
-val compare_input_files: input_file -> input_file -> int
-val get_input_file: unit -> input_file
-
-val file_contents: string option ref
-
-val get_file_contents: unit -> string
+(* This module helps report errors. *)
 
 (* ---------------------------------------------------------------------------- *)
 
