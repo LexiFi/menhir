@@ -13,30 +13,6 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %type <(int, int) either> phrase
 %%
 
-phrase:
-  _10 = C _20 = list___anonymous_0_A_B__ _11 = D _21 = list___anonymous_0_A_B__ _3 = EOF
-    {let ys =
-  let _2 = _21 in
-  let _1 = _11 in
-      ( _1 )
-in
-let xs =
-  let _2 = _20 in
-  let _1 = _10 in
-      ( _1 )
-in
-    ( xs @ ys )}
-
-other:
-  _1 = seplist_A_ _2 = EOF
-    {                 ()}
-
-seplist_A_:
-  _1 = A
-    {    ()}
-| _1 = A _2 = embedded___anonymous_1_ _3 = seplist_A_
-    {                                     ()}
-
 embedded___anonymous_1_:
   _10 = C
     {let x =
@@ -66,6 +42,30 @@ in
             ( Right y )
 in
     ( x :: xs )}
+
+phrase:
+  _10 = C _20 = list___anonymous_0_A_B__ _11 = D _21 = list___anonymous_0_A_B__ _3 = EOF
+    {let ys =
+  let _2 = _21 in
+  let _1 = _11 in
+      ( _1 )
+in
+let xs =
+  let _2 = _20 in
+  let _1 = _10 in
+      ( _1 )
+in
+    ( xs @ ys )}
+
+other:
+  _1 = seplist_A_ _2 = EOF
+    {                 ()}
+
+seplist_A_:
+  _1 = A
+    {    ()}
+| _1 = A _2 = embedded___anonymous_1_ _3 = seplist_A_
+    {                                     ()}
 
 %%
 

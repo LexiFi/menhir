@@ -185,6 +185,246 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %type <Syntax.typedef> modelica_type_definition
 %%
 
+option_annotation_:
+  
+    {    ( None )}
+| x = annotation
+    {    ( Some x )}
+
+option_array_subscripts_:
+  
+    {    ( None )}
+| x = array_subscripts
+    {    ( Some x )}
+
+option_class_modification_:
+  
+    {    ( None )}
+| x = class_modification
+    {    ( Some x )}
+
+option_composition_annotation_:
+  
+    {    ( None )}
+| x = composition_annotation
+    {    ( Some x )}
+
+option_composition_external_:
+  
+    {    ( None )}
+| x = composition_external
+    {    ( Some x )}
+
+option_constraining_clause_:
+  
+    {    ( None )}
+| x = constraining_clause
+    {    ( Some x )}
+
+option_decl_condition_:
+  
+    {    ( None )}
+| x = decl_condition
+    {    ( Some x )}
+
+option_index_range_:
+  
+    {    ( None )}
+| x = index_range
+    {    ( Some x )}
+
+option_lexpr_:
+  
+    {    ( None )}
+| x = lexpr
+    {    ( Some x )}
+
+option_modification_:
+  
+    {    ( None )}
+| x = modification
+    {    ( Some x )}
+
+option_preceded_COLON_simple_expr__:
+  
+    {    ( None )}
+| _10 = COLON x0 = simple_expr
+    {let x =
+  let x = x0 in
+  let _1 = _10 in
+      ( x )
+in
+    ( Some x )}
+
+option_preceded_binder_expr__:
+  
+    {    ( None )}
+| _100 = EQ x0 = expr
+    {let x =
+  let x = x0 in
+  let _10 = _100 in
+  let _1 =
+    let _1 = _10 in
+                ()
+  in
+      ( x )
+in
+    ( Some x )}
+| _100 = COLONEQ x0 = expr
+    {let x =
+  let x = x0 in
+  let _10 = _100 in
+  let _1 =
+    let _1 = _10 in
+                             ()
+  in
+      ( x )
+in
+    ( Some x )}
+
+option_str_:
+  
+    {    ( None )}
+| x = str
+    {    ( Some x )}
+
+option_within_clause_:
+  
+    {    ( None )}
+| x = within_clause
+    {    ( Some x )}
+
+loption_separated_nonempty_list_COMMA_expr__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_expr_
+    {    ( x )}
+
+loption_separated_nonempty_list_DOT_ident__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_DOT_ident_
+    {    ( x )}
+
+list_else_if_:
+  
+    {    ( [] )}
+| x = else_if xs = list_else_if_
+    {    ( x :: xs )}
+
+list_elseif_equation_:
+  
+    {    ( [] )}
+| x = elseif_equation xs = list_elseif_equation_
+    {    ( x :: xs )}
+
+list_elseif_statement_:
+  
+    {    ( [] )}
+| x = elseif_statement xs = list_elseif_statement_
+    {    ( x :: xs )}
+
+list_elsewhen_equation_:
+  
+    {    ( [] )}
+| x = elsewhen_equation xs = list_elsewhen_equation_
+    {    ( x :: xs )}
+
+list_elsewhen_statement_:
+  
+    {    ( [] )}
+| x = elsewhen_statement xs = list_elsewhen_statement_
+    {    ( x :: xs )}
+
+list_equation_:
+  
+    {    ( [] )}
+| x = equation xs = list_equation_
+    {    ( x :: xs )}
+
+list_index_:
+  
+    {    ( [] )}
+| x = index xs = list_index_
+    {    ( x :: xs )}
+
+list_preceded_COMMA_option_lexpr___:
+  
+    {    ( [] )}
+| _10 = COMMA x0 = option_lexpr_ xs = list_preceded_COMMA_option_lexpr___
+    {let x =
+  let x = x0 in
+  let _1 = _10 in
+      ( x )
+in
+    ( x :: xs )}
+
+list_statement_:
+  
+    {    ( [] )}
+| x = statement xs = list_statement_
+    {    ( x :: xs )}
+
+list_type_definition_clause_:
+  
+    {    ( [] )}
+| x = type_definition_clause xs = list_type_definition_clause_
+    {    ( x :: xs )}
+
+nonempty_list_statement_:
+  x = statement
+    {    ( [ x ] )}
+| x = statement xs = nonempty_list_statement_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_declaration_:
+  x = declaration
+    {    ( [ x ] )}
+| x = declaration _2 = COMMA xs = separated_nonempty_list_COMMA_declaration_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_enum_literal_:
+  x = enum_literal
+    {    ( [ x ] )}
+| x = enum_literal _2 = COMMA xs = separated_nonempty_list_COMMA_enum_literal_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_expr_:
+  x = expr
+    {    ( [ x ] )}
+| x = expr _2 = COMMA xs = separated_nonempty_list_COMMA_expr_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_ident_:
+  x = ident
+    {    ( [ x ] )}
+| x = ident _2 = COMMA xs = separated_nonempty_list_COMMA_ident_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_index_:
+  x = index
+    {    ( [ x ] )}
+| x = index _2 = COMMA xs = separated_nonempty_list_COMMA_index_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_named_argument_:
+  x = named_argument
+    {    ( [ x ] )}
+| x = named_argument _2 = COMMA xs = separated_nonempty_list_COMMA_named_argument_
+    {    ( x :: xs )}
+
+separated_nonempty_list_DOT_ident_:
+  x = ident
+    {    ( [ x ] )}
+| x = ident _2 = DOT xs = separated_nonempty_list_DOT_ident_
+    {    ( x :: xs )}
+
+separated_nonempty_list_SEMICOLON_separated_nonempty_list_COMMA_expr__:
+  x = separated_nonempty_list_COMMA_expr_
+    {    ( [ x ] )}
+| x = separated_nonempty_list_COMMA_expr_ _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_separated_nonempty_list_COMMA_expr__
+    {    ( x :: xs )}
+
 modelica_stored_definition:
   within = option_within_clause_ toplevel_defs = list_type_definition_clause_ _3 = EOF
     {                                                                                                             ( { within; toplevel_defs } )}
@@ -242,165 +482,6 @@ expr:
     {        ( no_attr (Range (match second with Some end_ -> { start; step=Some first; end_ } 
                                           | None -> {start; step=None; end_=first} ) )
         )}
-
-else_if:
-  _1 = ELSEIF guard = expr _3 = THEN elsethen = expr
-    {                                                 ( {guard; elsethen} )}
-
-index_range:
-  _1 = IN e = expr
-    {                          ( e )}
-
-index:
-  variable = ident range = option_index_range_
-    {                                                     ( { variable ; range } )}
-
-named_argument:
-  argument_name = ident _2 = EQ argument = expr
-    {                                                      ( {argument_name ; argument } )}
-
-option_modification_:
-  
-    {    ( None )}
-| x = modification
-    {    ( Some x )}
-
-option_lexpr_:
-  
-    {    ( None )}
-| x = lexpr
-    {    ( Some x )}
-
-option_index_range_:
-  
-    {    ( None )}
-| x = index_range
-    {    ( Some x )}
-
-option_decl_condition_:
-  
-    {    ( None )}
-| x = decl_condition
-    {    ( Some x )}
-
-option_constraining_clause_:
-  
-    {    ( None )}
-| x = constraining_clause
-    {    ( Some x )}
-
-option_composition_external_:
-  
-    {    ( None )}
-| x = composition_external
-    {    ( Some x )}
-
-option_composition_annotation_:
-  
-    {    ( None )}
-| x = composition_annotation
-    {    ( Some x )}
-
-option_class_modification_:
-  
-    {    ( None )}
-| x = class_modification
-    {    ( Some x )}
-
-option_array_subscripts_:
-  
-    {    ( None )}
-| x = array_subscripts
-    {    ( Some x )}
-
-option_annotation_:
-  
-    {    ( None )}
-| x = annotation
-    {    ( Some x )}
-
-list_type_definition_clause_:
-  
-    {    ( [] )}
-| x = type_definition_clause xs = list_type_definition_clause_
-    {    ( x :: xs )}
-
-list_statement_:
-  
-    {    ( [] )}
-| x = statement xs = list_statement_
-    {    ( x :: xs )}
-
-list_preceded_COMMA_option_lexpr___:
-  
-    {    ( [] )}
-| _10 = COMMA x0 = option_lexpr_ xs = list_preceded_COMMA_option_lexpr___
-    {let x =
-  let x = x0 in
-  let _1 = _10 in
-      ( x )
-in
-    ( x :: xs )}
-
-list_index_:
-  
-    {    ( [] )}
-| x = index xs = list_index_
-    {    ( x :: xs )}
-
-list_equation_:
-  
-    {    ( [] )}
-| x = equation xs = list_equation_
-    {    ( x :: xs )}
-
-list_elsewhen_statement_:
-  
-    {    ( [] )}
-| x = elsewhen_statement xs = list_elsewhen_statement_
-    {    ( x :: xs )}
-
-list_elsewhen_equation_:
-  
-    {    ( [] )}
-| x = elsewhen_equation xs = list_elsewhen_equation_
-    {    ( x :: xs )}
-
-list_elseif_statement_:
-  
-    {    ( [] )}
-| x = elseif_statement xs = list_elseif_statement_
-    {    ( x :: xs )}
-
-list_elseif_equation_:
-  
-    {    ( [] )}
-| x = elseif_equation xs = list_elseif_equation_
-    {    ( x :: xs )}
-
-list_else_if_:
-  
-    {    ( [] )}
-| x = else_if xs = list_else_if_
-    {    ( x :: xs )}
-
-nonempty_list_statement_:
-  x = statement
-    {    ( [ x ] )}
-| x = statement xs = nonempty_list_statement_
-    {    ( x :: xs )}
-
-separated_nonempty_list_SEMICOLON_separated_nonempty_list_COMMA_expr__:
-  x = separated_nonempty_list_COMMA_expr_
-    {    ( [ x ] )}
-| x = separated_nonempty_list_COMMA_expr_ _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_separated_nonempty_list_COMMA_expr__
-    {    ( x :: xs )}
-
-separated_nonempty_list_DOT_ident_:
-  x = ident
-    {    ( [ x ] )}
-| x = ident _2 = DOT xs = separated_nonempty_list_DOT_ident_
-    {    ( x :: xs )}
 
 simple_expr:
   _1 = TRUE
@@ -494,6 +575,18 @@ simple_expr:
 | _1 = NOT e = simple_expr %prec Not
     {                        ( no_attr (Not e) )}
 
+else_if:
+  _1 = ELSEIF guard = expr _3 = THEN elsethen = expr
+    {                                                 ( {guard; elsethen} )}
+
+index_range:
+  _1 = IN e = expr
+    {                          ( e )}
+
+index:
+  variable = ident range = option_index_range_
+    {                                                     ( { variable ; range } )}
+
 array_args:
   xs0 = loption_separated_nonempty_list_COMMA_expr__
     {let es =
@@ -513,6 +606,10 @@ function_args:
     {                                        ( ([], m) )}
 | exp = expr _2 = FOR idxs = separated_nonempty_list_COMMA_index_
     {                                                                            ( ([no_attr (Compr { exp ; idxs })], []) )}
+
+named_argument:
+  argument_name = ident _2 = EQ argument = expr
+    {                                                      ( {argument_name ; argument } )}
 
 named_function_args:
   args = separated_nonempty_list_COMMA_named_argument_
@@ -546,101 +643,6 @@ elsewhen_statement:
   _1 = ELSEWHEN guard = expr _3 = THEN elsethen = list_statement_
     {                                                                         ( { guard ; elsethen } )}
 
-patterns:
-  p = option_lexpr_ ps = list_preceded_COMMA_option_lexpr___
-    {                                                                   ( p::ps )}
-
-option_within_clause_:
-  
-    {    ( None )}
-| x = within_clause
-    {    ( Some x )}
-
-option_str_:
-  
-    {    ( None )}
-| x = str
-    {    ( Some x )}
-
-option_preceded_COLON_simple_expr__:
-  
-    {    ( None )}
-| _10 = COLON x0 = simple_expr
-    {let x =
-  let x = x0 in
-  let _1 = _10 in
-      ( x )
-in
-    ( Some x )}
-
-modification_arguments_head:
-  m = modification_arguments
-    {                                                         ( m )}
-| 
-    {                              ( { types = [] ; components = [] ; modifications = [] } )}
-
-option_preceded_binder_expr__:
-  
-    {    ( None )}
-| _100 = EQ x0 = expr
-    {let x =
-  let x = x0 in
-  let _10 = _100 in
-  let _1 =
-    let _1 = _10 in
-                ()
-  in
-      ( x )
-in
-    ( Some x )}
-| _100 = COLONEQ x0 = expr
-    {let x =
-  let x = x0 in
-  let _10 = _100 in
-  let _1 =
-    let _1 = _10 in
-                             ()
-  in
-      ( x )
-in
-    ( Some x )}
-
-separated_nonempty_list_COMMA_named_argument_:
-  x = named_argument
-    {    ( [ x ] )}
-| x = named_argument _2 = COMMA xs = separated_nonempty_list_COMMA_named_argument_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_index_:
-  x = index
-    {    ( [ x ] )}
-| x = index _2 = COMMA xs = separated_nonempty_list_COMMA_index_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_ident_:
-  x = ident
-    {    ( [ x ] )}
-| x = ident _2 = COMMA xs = separated_nonempty_list_COMMA_ident_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_expr_:
-  x = expr
-    {    ( [ x ] )}
-| x = expr _2 = COMMA xs = separated_nonempty_list_COMMA_expr_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_enum_literal_:
-  x = enum_literal
-    {    ( [ x ] )}
-| x = enum_literal _2 = COMMA xs = separated_nonempty_list_COMMA_enum_literal_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_declaration_:
-  x = declaration
-    {    ( [ x ] )}
-| x = declaration _2 = COMMA xs = separated_nonempty_list_COMMA_declaration_
-    {    ( x :: xs )}
-
 component_reference:
   x = IDENT
     {                                ( no_attr (Ide x) )}
@@ -658,6 +660,10 @@ lexpr:
     {                                ( r )}
 | _1 = LPAREN ps = patterns _3 = RPAREN
     {                                  ( no_attr (OutputExpression ps) )}
+
+patterns:
+  p = option_lexpr_ ps = list_preceded_COMMA_option_lexpr___
+    {                                                                   ( p::ps )}
 
 statement_body:
   procedure = component_reference _2 = LPAREN arguments = function_args _4 = RPAREN
@@ -747,6 +753,12 @@ class_modification:
   _1 = LPAREN m = modification_arguments_head _3 = RPAREN
     {                                                                 ( m )}
 
+modification_arguments_head:
+  m = modification_arguments
+    {                                                         ( m )}
+| 
+    {                              ( { types = [] ; components = [] ; modifications = [] } )}
+
 modification_arguments:
   _1 = REDECLARE redecl_each = flag_EACH_ type_final = flag_FINAL_ type_replaceable = flag_REPLACEABLE_ partial = flag_PARTIAL_ sort = type_sort td_name = ident _8 = EQ type_exp = type_expression comment = comment cns = option_constraining_clause_ rest = modification_arguments_tail
     {                         ( { rest with types = { 
@@ -817,32 +829,8 @@ extends:
   _1 = EXTENDS ext_type = type_expression ext_annotation = option_annotation_
     {                                                                               ( { ext_type ; ext_annotation } )}
 
-loption_separated_nonempty_list_DOT_ident__:
-  
-    {    ( [] )}
-| x = separated_nonempty_list_DOT_ident_
-    {    ( x )}
-
-loption_separated_nonempty_list_COMMA_expr__:
-  
-    {    ( [] )}
-| x = separated_nonempty_list_COMMA_expr_
-    {    ( x )}
-
-flag_REPLACEABLE_:
-  _1 = REPLACEABLE
-    {             ( true )}
-| 
-    {                        ( false )}
-
-flag_PARTIAL_:
-  _1 = PARTIAL
-    {             ( true )}
-| 
-    {                        ( false )}
-
-flag_FINAL_:
-  _1 = FINAL
+flag_EACH_:
+  _1 = EACH
     {             ( true )}
 | 
     {                        ( false )}
@@ -853,8 +841,20 @@ flag_ENCAPSULATED_:
 | 
     {                        ( false )}
 
-flag_EACH_:
-  _1 = EACH
+flag_FINAL_:
+  _1 = FINAL
+    {             ( true )}
+| 
+    {                        ( false )}
+
+flag_PARTIAL_:
+  _1 = PARTIAL
+    {             ( true )}
+| 
+    {                        ( false )}
+
+flag_REPLACEABLE_:
+  _1 = REPLACEABLE
     {             ( true )}
 | 
     {                        ( false )}

@@ -96,6 +96,114 @@ let mk_pos = Lib.position_of_lexing
 %type <LustreAst.t> main
 %%
 
+option_SEMICOLON_:
+  
+    {    ( None )}
+| x = SEMICOLON
+    {    ( Some x )}
+
+option_STRUCT_:
+  
+    {    ( None )}
+| x = STRUCT
+    {    ( Some x )}
+
+option_node_sep_:
+  
+    {    ( None )}
+| x = node_sep
+    {    ( Some x )}
+
+boption_CONST_:
+  
+    {    ( false )}
+| _1 = CONST
+    {    ( true )}
+
+loption_separated_nonempty_list_COMMA_expr__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_expr_
+    {    ( x )}
+
+loption_static_params_:
+  
+    {    ( [] )}
+| x = static_params
+    {    ( x )}
+
+list_contract_clause_:
+  
+    {    ( [] )}
+| x = contract_clause xs = list_contract_clause_
+    {    ( x :: xs )}
+
+list_decl_:
+  
+    {    ( [] )}
+| x = decl xs = list_decl_
+    {    ( x :: xs )}
+
+list_node_equation_:
+  
+    {    ( [] )}
+| x = node_equation xs = list_node_equation_
+    {    ( x :: xs )}
+
+list_node_local_decl_:
+  
+    {    ( [] )}
+| x = node_local_decl xs = list_node_local_decl_
+    {    ( x :: xs )}
+
+nonempty_list_const_decl_body_:
+  x = const_decl_body
+    {    ( [ x ] )}
+| x = const_decl_body xs = nonempty_list_const_decl_body_
+    {    ( x :: xs )}
+
+nonempty_list_one_index_:
+  x = one_index
+    {    ( [ x ] )}
+| x = one_index xs = nonempty_list_one_index_
+    {    ( x :: xs )}
+
+nonempty_list_var_decl_:
+  x = var_decl
+    {    ( [ x ] )}
+| x = var_decl xs = nonempty_list_var_decl_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_array_slice_:
+  x = array_slice
+    {    ( [ x ] )}
+| x = array_slice _2 = COMMA xs = separated_nonempty_list_COMMA_array_slice_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_expr_:
+  x = expr
+    {    ( [ x ] )}
+| x = expr _2 = COMMA xs = separated_nonempty_list_COMMA_expr_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_ident_:
+  x = ident
+    {    ( [ x ] )}
+| x = ident _2 = COMMA xs = separated_nonempty_list_COMMA_ident_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_lustre_type_:
+  x = lustre_type
+    {    ( [ x ] )}
+| x = lustre_type _2 = COMMA xs = separated_nonempty_list_COMMA_lustre_type_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_struct_item_:
+  x = struct_item
+    {    ( [ x ] )}
+| x = struct_item _2 = COMMA xs = separated_nonempty_list_COMMA_struct_item_
+    {    ( x :: xs )}
+
 main:
   p = list_decl_ _2 = EOF
     {                         ( List.flatten p )}
@@ -138,84 +246,6 @@ const_decl_body:
 | c = typed_ident _2 = EQUALS e = expr _4 = SEMICOLON
     {let _startpos = _startpos_c_ in
     ( let (s, t) = c in [A.TypedConst (mk_pos _startpos, s, e, t)] )}
-
-array_type:
-  t = lustre_type _2 = CARET s = expr
-    {                                     ( t, s )}
-
-enum_type:
-  _1 = ENUM _2 = LCURLYBRACKET l = ident_list _4 = RCURLYBRACKET
-    {                                                             ( l )}
-
-func_decl:
-  _1 = FUNCTION n = ident i = tlist_LPAREN_SEMICOLON_RPAREN_typed_idents_ _4 = RETURNS o = tlist_LPAREN_SEMICOLON_RPAREN_typed_idents_ _6 = SEMICOLON
-    {    ( (n, List.flatten i, List.flatten o)  )}
-
-node_decl:
-  _1 = NODE n = ident p = loption_static_params_ i = tlist_LPAREN_SEMICOLON_RPAREN_const_clocked_typed_idents_ _5 = RETURNS o = tlist_LPAREN_SEMICOLON_RPAREN_clocked_typed_idents_ _7 = SEMICOLON r = contract l = list_node_local_decl_ _10 = LET e = list_node_equation_ _12 = TEL _13 = option_node_sep_
-    {    ( (n, 
-       p,
-       List.flatten i, 
-       List.flatten o, 
-       (List.flatten l), 
-       e,
-       r)  )}
-
-node_param_inst:
-  _1 = NODE n = ident _3 = EQUALS s = ident p = tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_node_call_static_param_ _6 = SEMICOLON
-    {    ( (n, s, p) )}
-
-contract:
-  l = list_contract_clause_
-    {                              ( l )}
-
-loption_static_params_:
-  
-    {    ( [] )}
-| x = static_params
-    {    ( x )}
-
-loption_separated_nonempty_list_COMMA_expr__:
-  
-    {    ( [] )}
-| x = separated_nonempty_list_COMMA_expr_
-    {    ( x )}
-
-list_node_local_decl_:
-  
-    {    ( [] )}
-| x = node_local_decl xs = list_node_local_decl_
-    {    ( x :: xs )}
-
-list_node_equation_:
-  
-    {    ( [] )}
-| x = node_equation xs = list_node_equation_
-    {    ( x :: xs )}
-
-list_decl_:
-  
-    {    ( [] )}
-| x = decl xs = list_decl_
-    {    ( x :: xs )}
-
-list_contract_clause_:
-  
-    {    ( [] )}
-| x = contract_clause xs = list_contract_clause_
-    {    ( x :: xs )}
-
-nonempty_list_one_index_:
-  x = one_index
-    {    ( [ x ] )}
-| x = one_index xs = nonempty_list_one_index_
-    {    ( x :: xs )}
-
-nonempty_list_const_decl_body_:
-  x = const_decl_body
-    {    ( [ x ] )}
-| x = const_decl_body xs = nonempty_list_const_decl_body_
-    {    ( x :: xs )}
 
 type_decl:
   _1 = TYPE l = ident_list _3 = SEMICOLON
@@ -267,11 +297,41 @@ record_type:
   _1 = option_STRUCT_ f = tlist_LCURLYBRACKET_SEMICOLON_RCURLYBRACKET_typed_idents_
     {    ( List.flatten f  )}
 
+array_type:
+  t = lustre_type _2 = CARET s = expr
+    {                                     ( t, s )}
+
+enum_type:
+  _1 = ENUM _2 = LCURLYBRACKET l = ident_list _4 = RCURLYBRACKET
+    {                                                             ( l )}
+
+func_decl:
+  _1 = FUNCTION n = ident i = tlist_LPAREN_SEMICOLON_RPAREN_typed_idents_ _4 = RETURNS o = tlist_LPAREN_SEMICOLON_RPAREN_typed_idents_ _6 = SEMICOLON
+    {    ( (n, List.flatten i, List.flatten o)  )}
+
+node_decl:
+  _1 = NODE n = ident p = loption_static_params_ i = tlist_LPAREN_SEMICOLON_RPAREN_const_clocked_typed_idents_ _5 = RETURNS o = tlist_LPAREN_SEMICOLON_RPAREN_clocked_typed_idents_ _7 = SEMICOLON r = contract l = list_node_local_decl_ _10 = LET e = list_node_equation_ _12 = TEL _13 = option_node_sep_
+    {    ( (n, 
+       p,
+       List.flatten i, 
+       List.flatten o, 
+       (List.flatten l), 
+       e,
+       r)  )}
+
+node_param_inst:
+  _1 = NODE n = ident _3 = EQUALS s = ident p = tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_node_call_static_param_ _6 = SEMICOLON
+    {    ( (n, s, p) )}
+
 node_sep:
   _1 = DOT
     {                          ( )}
 | _1 = SEMICOLON
     {                          ( )}
+
+contract:
+  l = list_contract_clause_
+    {                              ( l )}
 
 contract_clause:
   _1 = REQUIRES e = expr _3 = SEMICOLON
@@ -514,20 +574,6 @@ record_field_assign:
   s = ident _2 = EQUALS e = expr
     {                                                 ( (s, e) )}
 
-lustre_type_list:
-  l = separated_nonempty_list_COMMA_lustre_type_
-    {                                                    ( l )}
-
-const_typed_idents:
-  o = boption_CONST_ l = typed_idents
-    {    ( List.map (function (e, t) -> (e, t, o)) l )}
-
-boption_CONST_:
-  
-    {    ( false )}
-| _1 = CONST
-    {    ( true )}
-
 clock_expr:
   c = ident
     {              ( A.ClockPos c )}
@@ -550,153 +596,17 @@ ident_list:
   l = separated_nonempty_list_COMMA_ident_
     {                                              ( l )}
 
+lustre_type_list:
+  l = separated_nonempty_list_COMMA_lustre_type_
+    {                                                    ( l )}
+
 typed_idents:
   l = separated_nonempty_list_COMMA_ident_ _2 = COLON t = lustre_type
     {    ( List.map (function e -> (e, t)) l )}
 
-tlist_tail_SEMICOLON_RPAREN_typed_idents_:
-  x = typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
-    {                                      ( [ x ] )}
-| x = typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_typed_idents_
-    {    ( x :: xs )}
-
-tlist_tail_SEMICOLON_RPAREN_const_typed_idents_:
-  x = const_typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
-    {                                      ( [ x ] )}
-| x = const_typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_const_typed_idents_
-    {    ( x :: xs )}
-
-tlist_tail_SEMICOLON_RPAREN_const_clocked_typed_idents_:
-  x = const_clocked_typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
-    {                                      ( [ x ] )}
-| x = const_clocked_typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_const_clocked_typed_idents_
-    {    ( x :: xs )}
-
-tlist_tail_SEMICOLON_RPAREN_clocked_typed_idents_:
-  x = clocked_typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
-    {                                      ( [ x ] )}
-| x = clocked_typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_clocked_typed_idents_
-    {    ( x :: xs )}
-
-tlist_tail_SEMICOLON_RPARAMBRACKET_static_param_:
-  x = static_param _2 = option_SEMICOLON_ _3 = RPARAMBRACKET
-    {                                      ( [ x ] )}
-| x = static_param _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPARAMBRACKET_static_param_
-    {    ( x :: xs )}
-
-tlist_tail_SEMICOLON_RPARAMBRACKET_node_call_static_param_:
-  x = node_call_static_param _2 = option_SEMICOLON_ _3 = RPARAMBRACKET
-    {                                      ( [ x ] )}
-| x = node_call_static_param _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPARAMBRACKET_node_call_static_param_
-    {    ( x :: xs )}
-
-tlist_tail_SEMICOLON_RCURLYBRACKET_typed_idents_:
-  x = typed_idents _2 = option_SEMICOLON_ _3 = RCURLYBRACKET
-    {                                      ( [ x ] )}
-| x = typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RCURLYBRACKET_typed_idents_
-    {    ( x :: xs )}
-
-tlist_tail_SEMICOLON_RCURLYBRACKET_record_field_assign_:
-  x = record_field_assign _2 = option_SEMICOLON_ _3 = RCURLYBRACKET
-    {                                      ( [ x ] )}
-| x = record_field_assign _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RCURLYBRACKET_record_field_assign_
-    {    ( x :: xs )}
-
-tlist_LPAREN_SEMICOLON_RPAREN_typed_idents_:
-  _1 = LPAREN l = tlist_tail_SEMICOLON_RPAREN_typed_idents_
-    {                                                   ( l )}
-| _1 = LPAREN _2 = RPAREN
-    {                     ( [ ] )}
-
-tlist_LPAREN_SEMICOLON_RPAREN_const_clocked_typed_idents_:
-  _1 = LPAREN l = tlist_tail_SEMICOLON_RPAREN_const_clocked_typed_idents_
-    {                                                   ( l )}
-| _1 = LPAREN _2 = RPAREN
-    {                     ( [ ] )}
-
-tlist_LPAREN_SEMICOLON_RPAREN_clocked_typed_idents_:
-  _1 = LPAREN l = tlist_tail_SEMICOLON_RPAREN_clocked_typed_idents_
-    {                                                   ( l )}
-| _1 = LPAREN _2 = RPAREN
-    {                     ( [ ] )}
-
-tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_static_param_:
-  _1 = LPARAMBRACKET l = tlist_tail_SEMICOLON_RPARAMBRACKET_static_param_
-    {                                                   ( l )}
-| _1 = LPARAMBRACKET _2 = RPARAMBRACKET
-    {                     ( [ ] )}
-
-tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_node_call_static_param_:
-  _1 = LPARAMBRACKET l = tlist_tail_SEMICOLON_RPARAMBRACKET_node_call_static_param_
-    {                                                   ( l )}
-| _1 = LPARAMBRACKET _2 = RPARAMBRACKET
-    {                     ( [ ] )}
-
-tlist_LCURLYBRACKET_SEMICOLON_RCURLYBRACKET_typed_idents_:
-  _1 = LCURLYBRACKET l = tlist_tail_SEMICOLON_RCURLYBRACKET_typed_idents_
-    {                                                   ( l )}
-| _1 = LCURLYBRACKET _2 = RCURLYBRACKET
-    {                     ( [ ] )}
-
-tlist_LCURLYBRACKET_SEMICOLON_RCURLYBRACKET_record_field_assign_:
-  _1 = LCURLYBRACKET l = tlist_tail_SEMICOLON_RCURLYBRACKET_record_field_assign_
-    {                                                   ( l )}
-| _1 = LCURLYBRACKET _2 = RCURLYBRACKET
-    {                     ( [ ] )}
-
-option_node_sep_:
-  
-    {    ( None )}
-| x = node_sep
-    {    ( Some x )}
-
-option_STRUCT_:
-  
-    {    ( None )}
-| x = STRUCT
-    {    ( Some x )}
-
-option_SEMICOLON_:
-  
-    {    ( None )}
-| x = SEMICOLON
-    {    ( Some x )}
-
-nonempty_list_var_decl_:
-  x = var_decl
-    {    ( [ x ] )}
-| x = var_decl xs = nonempty_list_var_decl_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_struct_item_:
-  x = struct_item
-    {    ( [ x ] )}
-| x = struct_item _2 = COMMA xs = separated_nonempty_list_COMMA_struct_item_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_lustre_type_:
-  x = lustre_type
-    {    ( [ x ] )}
-| x = lustre_type _2 = COMMA xs = separated_nonempty_list_COMMA_lustre_type_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_ident_:
-  x = ident
-    {    ( [ x ] )}
-| x = ident _2 = COMMA xs = separated_nonempty_list_COMMA_ident_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_expr_:
-  x = expr
-    {    ( [ x ] )}
-| x = expr _2 = COMMA xs = separated_nonempty_list_COMMA_expr_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_array_slice_:
-  x = array_slice
-    {    ( [ x ] )}
-| x = array_slice _2 = COMMA xs = separated_nonempty_list_COMMA_array_slice_
-    {    ( x :: xs )}
+const_typed_idents:
+  o = boption_CONST_ l = typed_idents
+    {    ( List.map (function (e, t) -> (e, t, o)) l )}
 
 clocked_typed_idents:
   l = typed_idents
@@ -733,6 +643,96 @@ const_clocked_typed_idents:
 | _1 = LPAREN h = const_typed_idents _3 = SEMICOLON l = tlist_tail_SEMICOLON_RPAREN_const_typed_idents_ _5 = WHEN c = clock_expr
     {let _startpos = _startpos__1_ in
     ( List.map (function (e, t, o) -> (mk_pos _startpos, e, t, c, o)) (h @ (List.flatten l)) )}
+
+tlist_tail_SEMICOLON_RCURLYBRACKET_record_field_assign_:
+  x = record_field_assign _2 = option_SEMICOLON_ _3 = RCURLYBRACKET
+    {                                      ( [ x ] )}
+| x = record_field_assign _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RCURLYBRACKET_record_field_assign_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RCURLYBRACKET_typed_idents_:
+  x = typed_idents _2 = option_SEMICOLON_ _3 = RCURLYBRACKET
+    {                                      ( [ x ] )}
+| x = typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RCURLYBRACKET_typed_idents_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RPARAMBRACKET_node_call_static_param_:
+  x = node_call_static_param _2 = option_SEMICOLON_ _3 = RPARAMBRACKET
+    {                                      ( [ x ] )}
+| x = node_call_static_param _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPARAMBRACKET_node_call_static_param_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RPARAMBRACKET_static_param_:
+  x = static_param _2 = option_SEMICOLON_ _3 = RPARAMBRACKET
+    {                                      ( [ x ] )}
+| x = static_param _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPARAMBRACKET_static_param_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RPAREN_clocked_typed_idents_:
+  x = clocked_typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
+    {                                      ( [ x ] )}
+| x = clocked_typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_clocked_typed_idents_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RPAREN_const_clocked_typed_idents_:
+  x = const_clocked_typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
+    {                                      ( [ x ] )}
+| x = const_clocked_typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_const_clocked_typed_idents_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RPAREN_const_typed_idents_:
+  x = const_typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
+    {                                      ( [ x ] )}
+| x = const_typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_const_typed_idents_
+    {    ( x :: xs )}
+
+tlist_tail_SEMICOLON_RPAREN_typed_idents_:
+  x = typed_idents _2 = option_SEMICOLON_ _3 = RPAREN
+    {                                      ( [ x ] )}
+| x = typed_idents _2 = SEMICOLON xs = tlist_tail_SEMICOLON_RPAREN_typed_idents_
+    {    ( x :: xs )}
+
+tlist_LCURLYBRACKET_SEMICOLON_RCURLYBRACKET_record_field_assign_:
+  _1 = LCURLYBRACKET l = tlist_tail_SEMICOLON_RCURLYBRACKET_record_field_assign_
+    {                                                   ( l )}
+| _1 = LCURLYBRACKET _2 = RCURLYBRACKET
+    {                     ( [ ] )}
+
+tlist_LCURLYBRACKET_SEMICOLON_RCURLYBRACKET_typed_idents_:
+  _1 = LCURLYBRACKET l = tlist_tail_SEMICOLON_RCURLYBRACKET_typed_idents_
+    {                                                   ( l )}
+| _1 = LCURLYBRACKET _2 = RCURLYBRACKET
+    {                     ( [ ] )}
+
+tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_node_call_static_param_:
+  _1 = LPARAMBRACKET l = tlist_tail_SEMICOLON_RPARAMBRACKET_node_call_static_param_
+    {                                                   ( l )}
+| _1 = LPARAMBRACKET _2 = RPARAMBRACKET
+    {                     ( [ ] )}
+
+tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_static_param_:
+  _1 = LPARAMBRACKET l = tlist_tail_SEMICOLON_RPARAMBRACKET_static_param_
+    {                                                   ( l )}
+| _1 = LPARAMBRACKET _2 = RPARAMBRACKET
+    {                     ( [ ] )}
+
+tlist_LPAREN_SEMICOLON_RPAREN_clocked_typed_idents_:
+  _1 = LPAREN l = tlist_tail_SEMICOLON_RPAREN_clocked_typed_idents_
+    {                                                   ( l )}
+| _1 = LPAREN _2 = RPAREN
+    {                     ( [ ] )}
+
+tlist_LPAREN_SEMICOLON_RPAREN_const_clocked_typed_idents_:
+  _1 = LPAREN l = tlist_tail_SEMICOLON_RPAREN_const_clocked_typed_idents_
+    {                                                   ( l )}
+| _1 = LPAREN _2 = RPAREN
+    {                     ( [ ] )}
+
+tlist_LPAREN_SEMICOLON_RPAREN_typed_idents_:
+  _1 = LPAREN l = tlist_tail_SEMICOLON_RPAREN_typed_idents_
+    {                                                   ( l )}
+| _1 = LPAREN _2 = RPAREN
+    {                     ( [ ] )}
 
 one_index:
   _1 = DOT i = ident

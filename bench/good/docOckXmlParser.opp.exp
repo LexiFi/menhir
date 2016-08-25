@@ -1,5 +1,6 @@
 Warning: you are using the standard library and/or the %inline keyword. We
 recommend switching on --infer in order to avoid obscure type error messages.
+%parameter< Root : sig type t end >
 %{
 
 open DocOckPaths
@@ -172,60 +173,148 @@ let relax_class_type_reference cltyp =
 %type <Root.t DocOckTypes.Unit.t> unit
 %%
 
-name:
-  _1 = NAME data = Data _3 = CLOSE
-    {      ( data )}
+option_argument_label_:
+  
+    {    ( None )}
+| x = argument_label
+    {    ( Some x )}
 
-signature_identifier:
-  md = module_identifier
-    {      ( Identifier.signature_of_module md )}
-| mty = module_type_identifier
-    {      ( Identifier.signature_of_module_type mty )}
+option_digest_:
+  
+    {    ( None )}
+| x = digest
+    {    ( Some x )}
 
-type_identifier:
-  _1 = TYPE sg = signature_identifier data = Data _4 = CLOSE
-    {      ( Identifier.Type(sg, data) )}
-| _1 = TYPE data = Data _3 = CLOSE
-    {      ( Identifier.CoreType data )}
+option_label_identifier_:
+  
+    {    ( None )}
+| x = label_identifier
+    {    ( Some x )}
 
-value_identifier:
-  _1 = VALUE sg = signature_identifier data = Data _4 = CLOSE
-    {      ( Identifier.Value(sg, data) )}
+option_location_:
+  
+    {    ( None )}
+| x = location
+    {    ( Some x )}
 
-nonempty_list_name_:
-  x = name
-    {    ( [ x ] )}
-| x = name xs = nonempty_list_name_
+option_module_type_expr_:
+  
+    {    ( None )}
+| x = module_type_expr
+    {    ( Some x )}
+
+option_source_:
+  
+    {    ( None )}
+| x = source
+    {    ( Some x )}
+
+option_type_expr_:
+  
+    {    ( None )}
+| x = type_expr
+    {    ( Some x )}
+
+option_type_representation_:
+  
+    {    ( None )}
+| x = type_representation
+    {    ( Some x )}
+
+option_variance_:
+  
+    {    ( None )}
+| x = variance
+    {    ( Some x )}
+
+list_class_signature_item_:
+  
+    {    ( [] )}
+| x = class_signature_item xs = list_class_signature_item_
     {    ( x :: xs )}
 
-nonempty_list_module_argument_:
-  x = module_argument
-    {    ( [ x ] )}
-| x = module_argument xs = nonempty_list_module_argument_
+list_module_reference_:
+  
+    {    ( [] )}
+| x = module_reference xs = list_module_reference_
     {    ( x :: xs )}
 
-nonempty_list_item_:
-  x = item
-    {    ( [ x ] )}
-| x = item xs = nonempty_list_item_
+list_name_:
+  
+    {    ( [] )}
+| x = name xs = list_name_
     {    ( x :: xs )}
 
-nonempty_list_field_:
-  x = field
-    {    ( [ x ] )}
-| x = field xs = nonempty_list_field_
+list_object_method_:
+  
+    {    ( [] )}
+| x = object_method xs = list_object_method_
     {    ( x :: xs )}
 
-nonempty_list_external_primitive_:
-  x = external_primitive
-    {    ( [ x ] )}
-| x = external_primitive xs = nonempty_list_external_primitive_
+list_package_substitution_:
+  
+    {    ( [] )}
+| x = package_substitution xs = list_package_substitution_
     {    ( x :: xs )}
 
-nonempty_list_extension_constructor_:
-  x = extension_constructor
-    {    ( [ x ] )}
-| x = extension_constructor xs = nonempty_list_extension_constructor_
+list_packed_item_:
+  
+    {    ( [] )}
+| x = packed_item xs = list_packed_item_
+    {    ( x :: xs )}
+
+list_poly_variant_element_:
+  
+    {    ( [] )}
+| x = poly_variant_element xs = list_poly_variant_element_
+    {    ( x :: xs )}
+
+list_signature_item_:
+  
+    {    ( [] )}
+| x = signature_item xs = list_signature_item_
+    {    ( x :: xs )}
+
+list_tag_:
+  
+    {    ( [] )}
+| x = tag xs = list_tag_
+    {    ( x :: xs )}
+
+list_text_element_:
+  
+    {    ( [] )}
+| x = text_element xs = list_text_element_
+    {    ( x :: xs )}
+
+list_type_constraint_:
+  
+    {    ( [] )}
+| x = type_constraint xs = list_type_constraint_
+    {    ( x :: xs )}
+
+list_type_expr_:
+  
+    {    ( [] )}
+| x = type_expr xs = list_type_expr_
+    {    ( x :: xs )}
+
+list_type_parameter_:
+  
+    {    ( [] )}
+| x = type_parameter xs = list_type_parameter_
+    {    ( x :: xs )}
+
+list_type_subst_parameter_:
+  
+    {    ( [] )}
+| x = type_subst_parameter xs = list_type_subst_parameter_
+    {    ( x :: xs )}
+
+list_unit_import_:
+  
+    {    ( [] )}
+| x = unit_import xs = list_unit_import_
     {    ( x :: xs )}
 
 nonempty_list_constructor_:
@@ -234,28 +323,68 @@ nonempty_list_constructor_:
 | x = constructor xs = nonempty_list_constructor_
     {    ( x :: xs )}
 
-flag_VIRTUAL_:
-  
-    {      ( false )}
-| _1 = VIRTUAL _2 = CLOSE
-    {      ( true )}
+nonempty_list_extension_constructor_:
+  x = extension_constructor
+    {    ( [ x ] )}
+| x = extension_constructor xs = nonempty_list_extension_constructor_
+    {    ( x :: xs )}
 
-flag_PRIVATE_:
-  
-    {      ( false )}
-| _1 = PRIVATE _2 = CLOSE
-    {      ( true )}
+nonempty_list_external_primitive_:
+  x = external_primitive
+    {    ( [ x ] )}
+| x = external_primitive xs = nonempty_list_external_primitive_
+    {    ( x :: xs )}
 
-flag_OPEN_:
-  
-    {      ( false )}
-| _1 = OPEN _2 = CLOSE
-    {      ( true )}
+nonempty_list_field_:
+  x = field
+    {    ( [ x ] )}
+| x = field xs = nonempty_list_field_
+    {    ( x :: xs )}
 
-flag_MUTABLE_:
+nonempty_list_item_:
+  x = item
+    {    ( [ x ] )}
+| x = item xs = nonempty_list_item_
+    {    ( x :: xs )}
+
+nonempty_list_module_argument_:
+  x = module_argument
+    {    ( [ x ] )}
+| x = module_argument xs = nonempty_list_module_argument_
+    {    ( x :: xs )}
+
+nonempty_list_name_:
+  x = name
+    {    ( [ x ] )}
+| x = name xs = nonempty_list_name_
+    {    ( x :: xs )}
+
+nonempty_list_substitution_:
+  x = substitution
+    {    ( [ x ] )}
+| x = substitution xs = nonempty_list_substitution_
+    {    ( x :: xs )}
+
+nonempty_list_text_element_:
+  x = text_element
+    {    ( [ x ] )}
+| x = text_element xs = nonempty_list_text_element_
+    {    ( x :: xs )}
+
+nonempty_list_type_expr_:
+  x = type_expr
+    {    ( [ x ] )}
+| x = type_expr xs = nonempty_list_type_expr_
+    {    ( x :: xs )}
+
+name:
+  _1 = NAME data = Data _3 = CLOSE
+    {      ( data )}
+
+flag_CONSTANT_:
   
     {      ( false )}
-| _1 = MUTABLE _2 = CLOSE
+| _1 = CONSTANT _2 = CLOSE
     {      ( true )}
 
 flag_INTERFACE_:
@@ -264,10 +393,28 @@ flag_INTERFACE_:
 | _1 = INTERFACE _2 = CLOSE
     {      ( true )}
 
-flag_CONSTANT_:
+flag_MUTABLE_:
   
     {      ( false )}
-| _1 = CONSTANT _2 = CLOSE
+| _1 = MUTABLE _2 = CLOSE
+    {      ( true )}
+
+flag_OPEN_:
+  
+    {      ( false )}
+| _1 = OPEN _2 = CLOSE
+    {      ( true )}
+
+flag_PRIVATE_:
+  
+    {      ( false )}
+| _1 = PRIVATE _2 = CLOSE
+    {      ( true )}
+
+flag_VIRTUAL_:
+  
+    {      ( false )}
+| _1 = VIRTUAL _2 = CLOSE
     {      ( true )}
 
 module_identifier:
@@ -283,6 +430,18 @@ module_identifier:
 module_type_identifier:
   _1 = MODULE_TYPE sg = signature_identifier data = Data _4 = CLOSE
     {      ( Identifier.ModuleType(sg, data) )}
+
+signature_identifier:
+  md = module_identifier
+    {      ( Identifier.signature_of_module md )}
+| mty = module_type_identifier
+    {      ( Identifier.signature_of_module_type mty )}
+
+type_identifier:
+  _1 = TYPE sg = signature_identifier data = Data _4 = CLOSE
+    {      ( Identifier.Type(sg, data) )}
+| _1 = TYPE data = Data _3 = CLOSE
+    {      ( Identifier.CoreType data )}
 
 constructor_identifier:
   _1 = CONSTRUCTOR sg = type_identifier data = Data _4 = CLOSE
@@ -301,6 +460,10 @@ exception_identifier:
     {      ( Identifier.Exception(sg, data) )}
 | _1 = EXCEPTION data = Data _3 = CLOSE
     {      ( Identifier.CoreException data )}
+
+value_identifier:
+  _1 = VALUE sg = signature_identifier data = Data _4 = CLOSE
+    {      ( Identifier.Value(sg, data) )}
 
 class_identifier:
   _1 = CLASS sg = signature_identifier data = Data _4 = CLOSE
@@ -336,6 +499,52 @@ parent_identifier:
 | typ = type_identifier
     {    ( Identifier.parent_of_datatype typ )}
 
+element_identifier:
+  id = module_identifier
+    {    ( Identifier.any id )}
+| id = module_type_identifier
+    {    ( Identifier.any id )}
+| id = type_identifier
+    {    ( Identifier.any id )}
+| id = constructor_identifier
+    {    ( Identifier.any id )}
+| id = field_identifier
+    {    ( Identifier.any id )}
+| id = extension_identifier
+    {    ( Identifier.any id )}
+| id = exception_identifier
+    {    ( Identifier.any id )}
+| id = value_identifier
+    {    ( Identifier.any id )}
+| id = class_identifier
+    {    ( Identifier.any id )}
+| id = class_type_identifier
+    {    ( Identifier.any id )}
+| id = method_identifier
+    {    ( Identifier.any id )}
+| id = instance_variable_identifier
+    {    ( Identifier.any id )}
+| id = label_identifier
+    {    ( Identifier.any id )}
+
+module_resolved_path:
+  _1 = IDENTIFIER id = module_identifier _3 = CLOSE
+    {      ( Path.Resolved.ident_module id )}
+| _1 = SUBST sub = module_type_resolved_path p = module_resolved_path _4 = CLOSE
+    {      ( Path.Resolved.Subst(sub, p) )}
+| _1 = SUBST_ALIAS sub = module_resolved_path p = module_resolved_path _4 = CLOSE
+    {      ( Path.Resolved.SubstAlias(sub, p) )}
+| _1 = MODULE md = module_resolved_path data = Data _4 = CLOSE
+    {      ( Path.Resolved.Module(md, data) )}
+| _1 = APPLY md = module_resolved_path arg = module_path _4 = CLOSE
+    {      ( Path.Resolved.Apply(md, arg) )}
+
+module_type_resolved_path:
+  _1 = IDENTIFIER id = module_type_identifier _3 = CLOSE
+    {      ( Path.Resolved.ident_module_type id )}
+| _1 = MODULE_TYPE md = module_resolved_path data = Data _4 = CLOSE
+    {      ( Path.Resolved.ModuleType(md, data) )}
+
 type_resolved_path:
   _1 = IDENTIFIER id = type_identifier _3 = CLOSE
     {      ( Path.Resolved.ident_type id )}
@@ -344,11 +553,55 @@ type_resolved_path:
 | cltyp = class_type_resolved_path
     {      ( relax_class_type_path cltyp )}
 
+class_resolved_path:
+  _1 = IDENTIFIER id = class_identifier _3 = CLOSE
+    {      ( Path.Resolved.ident_class id )}
+| _1 = CLASS md = module_resolved_path data = Data _4 = CLOSE
+    {      ( Path.Resolved.Class(md, data) )}
+
+class_type_resolved_path:
+  _1 = IDENTIFIER id = class_type_identifier _3 = CLOSE
+    {      ( Path.Resolved.ident_class_type id )}
+| _1 = CLASS_TYPE md = module_resolved_path data = Data _4 = CLOSE
+    {      ( Path.Resolved.ClassType(md, data) )}
+| cl = class_resolved_path
+    {      ( relax_class_path cl )}
+
+module_path:
+  _1 = RESOLVED path = module_resolved_path _3 = CLOSE
+    {      ( Path.Resolved path )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Path.Root data )}
+| _1 = DOT md = module_path data = Data _4 = CLOSE
+    {      ( Path.Dot(md, data) )}
+| _1 = APPLY md = module_path arg = module_path _4 = CLOSE
+    {      ( Path.Apply(md, arg) )}
+
+module_type_path:
+  _1 = RESOLVED path = module_type_resolved_path _3 = CLOSE
+    {      ( Path.Resolved path )}
+| _1 = DOT md = module_path data = Data _4 = CLOSE
+    {      ( Path.Dot(md, data) )}
+
 type_path:
   _1 = RESOLVED path = type_resolved_path _3 = CLOSE
     {      ( Path.Resolved path )}
 | _1 = DOT md = module_path data = Data _4 = CLOSE
     {      ( Path.Dot(md, data) )}
+
+class_type_path:
+  _1 = RESOLVED path = class_type_resolved_path _3 = CLOSE
+    {      ( Path.Resolved path )}
+| _1 = DOT md = module_path data = Data _4 = CLOSE
+    {      ( Path.Dot(md, data) )}
+
+module_resolved_fragment:
+  _1 = SUBST sub = module_type_resolved_path p = module_resolved_fragment _4 = CLOSE
+    {      ( Fragment.Resolved.Subst(sub, p) )}
+| _1 = SUBST_ALIAS sub = module_resolved_path p = module_resolved_fragment _4 = CLOSE
+    {      ( Fragment.Resolved.SubstAlias(sub, p) )}
+| _1 = MODULE md = signature_resolved_fragment data = Data _4 = CLOSE
+    {      ( Fragment.Resolved.Module(md, data) )}
 
 type_resolved_fragment:
   _1 = TYPE md = signature_resolved_fragment data = Data _4 = CLOSE
@@ -374,11 +627,29 @@ signature_fragment:
 | _1 = DOT md = signature_fragment data = Data _4 = CLOSE
     {      ( Fragment.Dot(md, data) )}
 
+module_fragment:
+  _1 = RESOLVED frag = module_resolved_fragment _3 = CLOSE
+    {      ( Fragment.Resolved frag )}
+| _1 = DOT md = signature_fragment data = Data _4 = CLOSE
+    {      ( Fragment.Dot(md, data) )}
+
 type_fragment:
   _1 = RESOLVED frag = type_resolved_fragment _3 = CLOSE
     {      ( Fragment.Resolved frag )}
 | _1 = DOT md = signature_fragment data = Data _4 = CLOSE
     {      ( Fragment.Dot(md, data) )}
+
+module_resolved_reference:
+  _1 = IDENTIFIER id = module_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_module id )}
+| _1 = MODULE sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Module(sg, data) )}
+
+module_type_resolved_reference:
+  _1 = IDENTIFIER id = module_type_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_module_type id )}
+| _1 = MODULE_TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.ModuleType(sg, data) )}
 
 signature_resolved_reference:
   md = module_resolved_reference
@@ -386,17 +657,83 @@ signature_resolved_reference:
 | mty = module_type_resolved_reference
     {      ( Reference.Resolved.signature_of_module_type mty )}
 
+datatype_resolved_reference:
+  _1 = IDENTIFIER id = type_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_type id )}
+| _1 = TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Type(sg, data) )}
+
 type_resolved_reference:
   typ = datatype_resolved_reference
     {      ( relax_datatype_reference typ )}
 | cltyp = class_type_resolved_reference
     {      ( relax_class_type_reference cltyp )}
 
+constructor_resolved_reference:
+  _1 = IDENTIFIER id = constructor_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_constructor id )}
+| _1 = CONSTRUCTOR sg = datatype_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Constructor(sg, data) )}
+| ext = extension_resolved_reference
+    {      ( relax_extension_reference ext )}
+
+field_resolved_reference:
+  _1 = IDENTIFIER id = field_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_field id )}
+| _1 = FIELD sg = datatype_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Field(sg, data) )}
+
+exception_resolved_reference:
+  _1 = IDENTIFIER id = exception_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_exception id )}
+| _1 = EXCEPTION sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Exception(sg, data) )}
+
+extension_resolved_reference:
+  _1 = IDENTIFIER id = extension_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_extension id )}
+| _1 = EXTENSION sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Extension(sg, data) )}
+| exn = exception_resolved_reference
+    {      ( relax_exception_reference exn )}
+
 value_resolved_reference:
   _1 = IDENTIFIER id = value_identifier _3 = CLOSE
     {      ( Reference.Resolved.ident_value id )}
 | _1 = VALUE sg = signature_resolved_reference data = Data _4 = CLOSE
     {      ( Reference.Resolved.Value(sg, data) )}
+
+class_resolved_reference:
+  _1 = IDENTIFIER id = class_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_class id )}
+| _1 = CLASS sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Class(sg, data) )}
+
+class_type_resolved_reference:
+  _1 = IDENTIFIER id = class_type_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_class_type id )}
+| _1 = CLASS_TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.ClassType(sg, data) )}
+| cl = class_resolved_reference
+    {      ( relax_class_reference cl )}
+
+method_resolved_reference:
+  _1 = IDENTIFIER id = method_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_method id )}
+| _1 = METHOD sg = class_type_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Method(sg, data) )}
+
+instance_variable_resolved_reference:
+  _1 = IDENTIFIER id = instance_variable_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_instance_variable id )}
+| _1 = INSTANCE_VARIABLE sg = class_type_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.InstanceVariable(sg, data) )}
+
+label_resolved_reference:
+  _1 = IDENTIFIER id = label_identifier _3 = CLOSE
+    {      ( Reference.Resolved.ident_label id )}
+| _1 = LABEL sg = parent_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Label(sg, data) )}
 
 parent_resolved_reference:
   sg = signature_resolved_reference
@@ -406,8 +743,86 @@ parent_resolved_reference:
 | t = datatype_resolved_reference
     {      ( Reference.Resolved.parent_of_datatype t )}
 
+element_resolved_reference:
+  _1 = IDENTIFIER id = element_identifier _3 = CLOSE
+    {      ( Reference.Resolved.Identifier id )}
+| _1 = MODULE sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Module(sg, data) )}
+| _1 = MODULE_TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.ModuleType(sg, data) )}
+| _1 = TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Type(sg, data) )}
+| _1 = CONSTRUCTOR sg = datatype_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Constructor(sg, data) )}
+| _1 = FIELD sg = datatype_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Field(sg, data) )}
+| _1 = EXCEPTION sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Exception(sg, data) )}
+| _1 = EXTENSION sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Extension(sg, data) )}
+| _1 = VALUE sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Value(sg, data) )}
+| _1 = CLASS sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Class(sg, data) )}
+| _1 = CLASS_TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.ClassType(sg, data) )}
+| _1 = METHOD sg = class_type_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Method(sg, data) )}
+| _1 = INSTANCE_VARIABLE sg = class_type_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.InstanceVariable(sg, data) )}
+| _1 = LABEL sg = parent_resolved_reference data = Data _4 = CLOSE
+    {      ( Reference.Resolved.Label(sg, data) )}
+
+module_reference:
+  _1 = RESOLVED rf = module_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
+module_type_reference:
+  _1 = RESOLVED rf = module_type_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
 type_reference:
   _1 = RESOLVED rf = type_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
+constructor_reference:
+  _1 = RESOLVED rf = constructor_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
+field_reference:
+  _1 = RESOLVED rf = field_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
+extension_reference:
+  _1 = RESOLVED rf = extension_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
+exception_reference:
+  _1 = RESOLVED rf = exception_resolved_reference _3 = CLOSE
     {      ( Reference.Resolved rf )}
 | _1 = ROOT data = Data _3 = CLOSE
     {      ( Reference.Root data )}
@@ -422,8 +837,56 @@ value_reference:
 | _1 = DOT p = parent_reference data = Data _4 = CLOSE
     {      ( Reference.Dot(p, data) )}
 
+class_reference:
+  _1 = RESOLVED rf = class_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
+class_type_reference:
+  _1 = RESOLVED rf = class_type_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
+method_reference:
+  _1 = RESOLVED rf = method_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
+instance_variable_reference:
+  _1 = RESOLVED rf = instance_variable_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
+label_reference:
+  _1 = RESOLVED rf = label_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
 parent_reference:
   _1 = RESOLVED rf = parent_resolved_reference _3 = CLOSE
+    {      ( Reference.Resolved rf )}
+| _1 = ROOT data = Data _3 = CLOSE
+    {      ( Reference.Root data )}
+| _1 = DOT p = parent_reference data = Data _4 = CLOSE
+    {      ( Reference.Dot(p, data) )}
+
+element_reference:
+  _1 = RESOLVED rf = element_resolved_reference _3 = CLOSE
     {      ( Reference.Resolved rf )}
 | _1 = ROOT data = Data _3 = CLOSE
     {      ( Reference.Root data )}
@@ -469,6 +932,14 @@ special:
     {      ( Documentation.Modules modules )}
 | _1 = INDEX _2 = CLOSE
     {      ( Documentation.Index )}
+
+item:
+  _1 = ITEM elems0 = list_text_element_ _3 = CLOSE
+    {let text =
+  let elems = elems0 in
+        ( elems )
+in
+      ( text )}
 
 text_element:
   data = Data
@@ -655,628 +1126,6 @@ in
 in
       ( Documentation.Tag(name, text) )}
 
-position:
-  _1 = POSITION line = line column = column _4 = CLOSE
-    {    ( Documentation.Error.Position.{line; column} )}
-
-offset:
-  _1 = OFFSET start = position finish = position _4 = CLOSE
-    {    ( Documentation.Error.Offset.{start; finish} )}
-
-poly_variant_kind:
-  _1 = FIXED _2 = CLOSE
-    {      ( TypeExpr.Variant.Fixed )}
-| _1 = CLOSED names = list_name_ _3 = CLOSE
-    {      ( TypeExpr.Variant.Closed names )}
-| _1 = OPEN _2 = CLOSE
-    {      ( TypeExpr.Variant.Open )}
-
-poly_variant_element:
-  _1 = TYPE expr = type_expr _3 = CLOSE
-    {      ( TypeExpr.Variant.Type expr )}
-| _1 = CONSTRUCTOR data = Data constant = flag_CONSTANT_ types = list_type_expr_ _5 = CLOSE
-    {      ( TypeExpr.Variant.Constructor(data, constant, types) )}
-
-poly_variant:
-  kind = poly_variant_kind elements = list_poly_variant_element_
-    {      ( TypeExpr.Variant.{kind; elements} )}
-
-object_method:
-  name = name type_ = type_expr
-    {      ( TypeExpr.Object.{name; type_} )}
-
-object_:
-  methods = list_object_method_ open_ = flag_OPEN_
-    {      ( TypeExpr.Object.{methods; open_} )}
-
-package_substitution:
-  frag = type_fragment expr = type_expr
-    {      ( (frag, expr) )}
-
-package:
-  path = module_type_path substitutions = list_package_substitution_
-    {      ( TypeExpr.Package.{path; substitutions} )}
-
-type_expr:
-  _1 = VAR data = Data _3 = CLOSE
-    {      ( TypeExpr.Var data )}
-| _1 = ANY _2 = CLOSE
-    {      ( TypeExpr.Any )}
-| _1 = ALIAS expr = type_expr data = Data _4 = CLOSE
-    {      ( TypeExpr.Alias(expr, data) )}
-| _1 = ARROW lbl = option_argument_label_ arg = type_expr res = type_expr _5 = CLOSE
-    {      ( TypeExpr.Arrow(lbl, arg, res) )}
-| _1 = TUPLE types = nonempty_list_type_expr_ _3 = CLOSE
-    {      ( TypeExpr.Tuple types )}
-| _1 = PATH p = type_path params = list_type_expr_ _4 = CLOSE
-    {      ( TypeExpr.Constr(p, params) )}
-| _1 = POLY_VARIANT v = poly_variant _3 = CLOSE
-    {      ( TypeExpr.Variant v )}
-| _1 = OBJECT o = object_ _3 = CLOSE
-    {      ( TypeExpr.Object o )}
-| _1 = CLASS p = class_type_path params = list_type_expr_ _4 = CLOSE
-    {      ( TypeExpr.Class(p, params) )}
-| _1 = POLY names = nonempty_list_name_ expr = type_expr _4 = CLOSE
-    {      ( TypeExpr.Poly(names, expr) )}
-| _1 = PACKAGE pkg = package _3 = CLOSE
-    {      ( TypeExpr.Package pkg )}
-
-type_representation:
-  _1 = VARIANT constructors = nonempty_list_constructor_ _3 = CLOSE
-    {      ( TypeDecl.Representation.Variant constructors )}
-| _1 = RECORD fields = nonempty_list_field_ _3 = CLOSE
-    {      ( TypeDecl.Representation.Record fields )}
-| _1 = EXTENSIBLE _2 = CLOSE
-    {      ( TypeDecl.Representation.Extensible )}
-
-variance:
-  _1 = POS _2 = CLOSE
-    {      ( TypeDecl.Pos )}
-| _1 = NEG _2 = CLOSE
-    {      ( TypeDecl.Neg )}
-
-type_parameter:
-  _1 = PARAM v = option_variance_ _3 = CLOSE
-    {      ( (TypeDecl.Any, v) )}
-| _1 = PARAM name = Data v = option_variance_ _4 = CLOSE
-    {      ( (TypeDecl.Var name, v) )}
-
-type_subst_parameter:
-  _1 = PARAM name = Data _3 = CLOSE
-    {      ( name )}
-
-type_constraint:
-  _1 = CONSTRAINT expr1 = type_expr expr2 = type_expr _4 = CLOSE
-    {      ( (expr1, expr2) )}
-
-type_equation:
-  params = list_type_parameter_ private_ = flag_PRIVATE_ manifest = option_type_expr_ constraints = list_type_constraint_
-    {        ( let open TypeDecl.Equation in
-            {params; private_; manifest; constraints} )}
-
-substitution:
-  _1 = MODULE frag = module_fragment eq = module_decl _4 = CLOSE
-    {      ( ModuleType.ModuleEq(frag, eq) )}
-| _1 = MODULE_SUBST frag = module_fragment p = module_path _4 = CLOSE
-    {      ( ModuleType.ModuleSubst(frag, p) )}
-| _1 = TYPE frag = type_fragment eq = type_equation _4 = CLOSE
-    {      ( ModuleType.TypeEq(frag, eq) )}
-| _1 = TYPE_SUBST frag = type_fragment params = list_type_subst_parameter_ p = type_path _5 = CLOSE
-    {        ( ModuleType.TypeSubst(frag, params, p) )}
-
-signature_item:
-  _1 = VALUE id = value_identifier doc = doc type_ = type_expr _5 = CLOSE
-    {      ( let open Signature in
-        let open Value in
-          Value {id;doc;type_} )}
-| _1 = EXTERNAL id = value_identifier doc = doc type_ = type_expr primitives = nonempty_list_external_primitive_ _6 = CLOSE
-    {        ( let open Signature in
-          let open External in
-            External {id; doc; type_; primitives} )}
-| _1 = TYPE id = type_identifier doc = doc equation = type_equation representation = option_type_representation_ _6 = CLOSE
-    {        ( let open Signature in
-          let open TypeDecl in
-            Type {id; doc; equation; representation} )}
-| _1 = EXTENSION type_path = type_path doc = doc type_params = list_type_parameter_ private_ = flag_PRIVATE_ constructors = nonempty_list_extension_constructor_ _7 = CLOSE
-    {        ( let open Signature in
-          let open Extension in
-            TypExt {type_path; doc; type_params; private_; constructors} )}
-| _1 = EXCEPTION id = exception_identifier doc = doc args = constructor_arguments res = constructor_result _6 = CLOSE
-    {        ( let open Signature in
-          let open Exception in
-            Exception {id; doc; args; res} )}
-| _1 = CLASS id = class_identifier doc = doc params = list_type_parameter_ virtual_ = flag_VIRTUAL_ type_ = class_decl _7 = CLOSE
-    {        ( let open Signature in
-          let open Class in
-            Class {id; doc; virtual_; params; type_} )}
-| _1 = CLASS_TYPE id = class_type_identifier doc = doc params = list_type_parameter_ virtual_ = flag_VIRTUAL_ expr = class_type_expr _7 = CLOSE
-    {        ( let open Signature in
-          let open ClassType in
-            ClassType {id; doc; virtual_; params; expr} )}
-| _1 = MODULE id = module_identifier doc = doc type_ = module_decl _5 = CLOSE
-    {      ( let open Signature in
-        let open Module in
-           Module {id; doc; type_} )}
-| _1 = MODULE_TYPE id = module_type_identifier doc = doc expr = option_module_type_expr_ _5 = CLOSE
-    {      ( let open Signature in
-        let open ModuleType in
-          ModuleType {id; doc; expr} )}
-| _1 = INCLUDE expr = module_type_expr _3 = CLOSE
-    {      ( Signature.Include expr )}
-| comment = comment
-    {      ( Signature.Comment comment )}
-
-unit_import:
-  _1 = IMPORT data = Data digest = option_digest_ _4 = CLOSE
-    {      ( Unit.Import.Unresolved(data, digest) )}
-| _1 = IMPORT base = Base _3 = CLOSE
-    {      ( Unit.Import.Resolved base )}
-
-source_file:
-  _1 = FILE data = Data _3 = CLOSE
-    {      ( data )}
-
-source_build_dir:
-  _1 = DIR data = Data _3 = CLOSE
-    {      ( data )}
-
-source:
-  _1 = SOURCE file = source_file build_dir = source_build_dir digest = digest _5 = CLOSE
-    {      ( let open Unit.Source in
-          {file; build_dir; digest} )}
-
-packed_item:
-  _1 = ITEM id = module_identifier path = module_path _4 = CLOSE
-    {      ( let open Unit.Packed in
-          {id; path} )}
-
-unit_content:
-  _1 = MODULE items = list_signature_item_ _3 = CLOSE
-    {      ( Unit.Module items )}
-| _1 = PACK items = list_packed_item_ _3 = CLOSE
-    {      ( Unit.Pack items )}
-
-unit:
-  _1 = UNIT id = module_identifier doc = doc digest = digest imports = list_unit_import_ source = option_source_ interface = flag_INTERFACE_ content = unit_content _9 = CLOSE
-    {          ( let open Unit in
-              {id; doc; digest; imports; source; interface; content} )}
-
-option_variance_:
-  
-    {    ( None )}
-| x = variance
-    {    ( Some x )}
-
-option_type_representation_:
-  
-    {    ( None )}
-| x = type_representation
-    {    ( Some x )}
-
-option_type_expr_:
-  
-    {    ( None )}
-| x = type_expr
-    {    ( Some x )}
-
-option_source_:
-  
-    {    ( None )}
-| x = source
-    {    ( Some x )}
-
-option_module_type_expr_:
-  
-    {    ( None )}
-| x = module_type_expr
-    {    ( Some x )}
-
-option_location_:
-  
-    {    ( None )}
-| x = location
-    {    ( Some x )}
-
-option_label_identifier_:
-  
-    {    ( None )}
-| x = label_identifier
-    {    ( Some x )}
-
-option_digest_:
-  
-    {    ( None )}
-| x = digest
-    {    ( Some x )}
-
-option_argument_label_:
-  
-    {    ( None )}
-| x = argument_label
-    {    ( Some x )}
-
-nonempty_list_type_expr_:
-  x = type_expr
-    {    ( [ x ] )}
-| x = type_expr xs = nonempty_list_type_expr_
-    {    ( x :: xs )}
-
-nonempty_list_text_element_:
-  x = text_element
-    {    ( [ x ] )}
-| x = text_element xs = nonempty_list_text_element_
-    {    ( x :: xs )}
-
-nonempty_list_substitution_:
-  x = substitution
-    {    ( [ x ] )}
-| x = substitution xs = nonempty_list_substitution_
-    {    ( x :: xs )}
-
-element_identifier:
-  id = module_identifier
-    {    ( Identifier.any id )}
-| id = module_type_identifier
-    {    ( Identifier.any id )}
-| id = type_identifier
-    {    ( Identifier.any id )}
-| id = constructor_identifier
-    {    ( Identifier.any id )}
-| id = field_identifier
-    {    ( Identifier.any id )}
-| id = extension_identifier
-    {    ( Identifier.any id )}
-| id = exception_identifier
-    {    ( Identifier.any id )}
-| id = value_identifier
-    {    ( Identifier.any id )}
-| id = class_identifier
-    {    ( Identifier.any id )}
-| id = class_type_identifier
-    {    ( Identifier.any id )}
-| id = method_identifier
-    {    ( Identifier.any id )}
-| id = instance_variable_identifier
-    {    ( Identifier.any id )}
-| id = label_identifier
-    {    ( Identifier.any id )}
-
-module_resolved_path:
-  _1 = IDENTIFIER id = module_identifier _3 = CLOSE
-    {      ( Path.Resolved.ident_module id )}
-| _1 = SUBST sub = module_type_resolved_path p = module_resolved_path _4 = CLOSE
-    {      ( Path.Resolved.Subst(sub, p) )}
-| _1 = SUBST_ALIAS sub = module_resolved_path p = module_resolved_path _4 = CLOSE
-    {      ( Path.Resolved.SubstAlias(sub, p) )}
-| _1 = MODULE md = module_resolved_path data = Data _4 = CLOSE
-    {      ( Path.Resolved.Module(md, data) )}
-| _1 = APPLY md = module_resolved_path arg = module_path _4 = CLOSE
-    {      ( Path.Resolved.Apply(md, arg) )}
-
-module_type_resolved_path:
-  _1 = IDENTIFIER id = module_type_identifier _3 = CLOSE
-    {      ( Path.Resolved.ident_module_type id )}
-| _1 = MODULE_TYPE md = module_resolved_path data = Data _4 = CLOSE
-    {      ( Path.Resolved.ModuleType(md, data) )}
-
-class_resolved_path:
-  _1 = IDENTIFIER id = class_identifier _3 = CLOSE
-    {      ( Path.Resolved.ident_class id )}
-| _1 = CLASS md = module_resolved_path data = Data _4 = CLOSE
-    {      ( Path.Resolved.Class(md, data) )}
-
-class_type_resolved_path:
-  _1 = IDENTIFIER id = class_type_identifier _3 = CLOSE
-    {      ( Path.Resolved.ident_class_type id )}
-| _1 = CLASS_TYPE md = module_resolved_path data = Data _4 = CLOSE
-    {      ( Path.Resolved.ClassType(md, data) )}
-| cl = class_resolved_path
-    {      ( relax_class_path cl )}
-
-module_path:
-  _1 = RESOLVED path = module_resolved_path _3 = CLOSE
-    {      ( Path.Resolved path )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Path.Root data )}
-| _1 = DOT md = module_path data = Data _4 = CLOSE
-    {      ( Path.Dot(md, data) )}
-| _1 = APPLY md = module_path arg = module_path _4 = CLOSE
-    {      ( Path.Apply(md, arg) )}
-
-module_type_path:
-  _1 = RESOLVED path = module_type_resolved_path _3 = CLOSE
-    {      ( Path.Resolved path )}
-| _1 = DOT md = module_path data = Data _4 = CLOSE
-    {      ( Path.Dot(md, data) )}
-
-class_type_path:
-  _1 = RESOLVED path = class_type_resolved_path _3 = CLOSE
-    {      ( Path.Resolved path )}
-| _1 = DOT md = module_path data = Data _4 = CLOSE
-    {      ( Path.Dot(md, data) )}
-
-module_resolved_fragment:
-  _1 = SUBST sub = module_type_resolved_path p = module_resolved_fragment _4 = CLOSE
-    {      ( Fragment.Resolved.Subst(sub, p) )}
-| _1 = SUBST_ALIAS sub = module_resolved_path p = module_resolved_fragment _4 = CLOSE
-    {      ( Fragment.Resolved.SubstAlias(sub, p) )}
-| _1 = MODULE md = signature_resolved_fragment data = Data _4 = CLOSE
-    {      ( Fragment.Resolved.Module(md, data) )}
-
-module_fragment:
-  _1 = RESOLVED frag = module_resolved_fragment _3 = CLOSE
-    {      ( Fragment.Resolved frag )}
-| _1 = DOT md = signature_fragment data = Data _4 = CLOSE
-    {      ( Fragment.Dot(md, data) )}
-
-module_resolved_reference:
-  _1 = IDENTIFIER id = module_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_module id )}
-| _1 = MODULE sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Module(sg, data) )}
-
-module_type_resolved_reference:
-  _1 = IDENTIFIER id = module_type_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_module_type id )}
-| _1 = MODULE_TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.ModuleType(sg, data) )}
-
-datatype_resolved_reference:
-  _1 = IDENTIFIER id = type_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_type id )}
-| _1 = TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Type(sg, data) )}
-
-constructor_resolved_reference:
-  _1 = IDENTIFIER id = constructor_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_constructor id )}
-| _1 = CONSTRUCTOR sg = datatype_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Constructor(sg, data) )}
-| ext = extension_resolved_reference
-    {      ( relax_extension_reference ext )}
-
-exception_resolved_reference:
-  _1 = IDENTIFIER id = exception_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_exception id )}
-| _1 = EXCEPTION sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Exception(sg, data) )}
-
-extension_resolved_reference:
-  _1 = IDENTIFIER id = extension_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_extension id )}
-| _1 = EXTENSION sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Extension(sg, data) )}
-| exn = exception_resolved_reference
-    {      ( relax_exception_reference exn )}
-
-class_resolved_reference:
-  _1 = IDENTIFIER id = class_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_class id )}
-| _1 = CLASS sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Class(sg, data) )}
-
-class_type_resolved_reference:
-  _1 = IDENTIFIER id = class_type_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_class_type id )}
-| _1 = CLASS_TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.ClassType(sg, data) )}
-| cl = class_resolved_reference
-    {      ( relax_class_reference cl )}
-
-method_resolved_reference:
-  _1 = IDENTIFIER id = method_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_method id )}
-| _1 = METHOD sg = class_type_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Method(sg, data) )}
-
-list_type_expr_:
-  
-    {    ( [] )}
-| x = type_expr xs = list_type_expr_
-    {    ( x :: xs )}
-
-list_type_constraint_:
-  
-    {    ( [] )}
-| x = type_constraint xs = list_type_constraint_
-    {    ( x :: xs )}
-
-list_text_element_:
-  
-    {    ( [] )}
-| x = text_element xs = list_text_element_
-    {    ( x :: xs )}
-
-list_tag_:
-  
-    {    ( [] )}
-| x = tag xs = list_tag_
-    {    ( x :: xs )}
-
-list_signature_item_:
-  
-    {    ( [] )}
-| x = signature_item xs = list_signature_item_
-    {    ( x :: xs )}
-
-list_poly_variant_element_:
-  
-    {    ( [] )}
-| x = poly_variant_element xs = list_poly_variant_element_
-    {    ( x :: xs )}
-
-list_packed_item_:
-  
-    {    ( [] )}
-| x = packed_item xs = list_packed_item_
-    {    ( x :: xs )}
-
-list_package_substitution_:
-  
-    {    ( [] )}
-| x = package_substitution xs = list_package_substitution_
-    {    ( x :: xs )}
-
-list_object_method_:
-  
-    {    ( [] )}
-| x = object_method xs = list_object_method_
-    {    ( x :: xs )}
-
-list_name_:
-  
-    {    ( [] )}
-| x = name xs = list_name_
-    {    ( x :: xs )}
-
-list_module_reference_:
-  
-    {    ( [] )}
-| x = module_reference xs = list_module_reference_
-    {    ( x :: xs )}
-
-list_class_signature_item_:
-  
-    {    ( [] )}
-| x = class_signature_item xs = list_class_signature_item_
-    {    ( x :: xs )}
-
-field_resolved_reference:
-  _1 = IDENTIFIER id = field_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_field id )}
-| _1 = FIELD sg = datatype_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Field(sg, data) )}
-
-instance_variable_resolved_reference:
-  _1 = IDENTIFIER id = instance_variable_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_instance_variable id )}
-| _1 = INSTANCE_VARIABLE sg = class_type_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.InstanceVariable(sg, data) )}
-
-label_resolved_reference:
-  _1 = IDENTIFIER id = label_identifier _3 = CLOSE
-    {      ( Reference.Resolved.ident_label id )}
-| _1 = LABEL sg = parent_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Label(sg, data) )}
-
-element_resolved_reference:
-  _1 = IDENTIFIER id = element_identifier _3 = CLOSE
-    {      ( Reference.Resolved.Identifier id )}
-| _1 = MODULE sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Module(sg, data) )}
-| _1 = MODULE_TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.ModuleType(sg, data) )}
-| _1 = TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Type(sg, data) )}
-| _1 = CONSTRUCTOR sg = datatype_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Constructor(sg, data) )}
-| _1 = FIELD sg = datatype_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Field(sg, data) )}
-| _1 = EXCEPTION sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Exception(sg, data) )}
-| _1 = EXTENSION sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Extension(sg, data) )}
-| _1 = VALUE sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Value(sg, data) )}
-| _1 = CLASS sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Class(sg, data) )}
-| _1 = CLASS_TYPE sg = signature_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.ClassType(sg, data) )}
-| _1 = METHOD sg = class_type_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Method(sg, data) )}
-| _1 = INSTANCE_VARIABLE sg = class_type_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.InstanceVariable(sg, data) )}
-| _1 = LABEL sg = parent_resolved_reference data = Data _4 = CLOSE
-    {      ( Reference.Resolved.Label(sg, data) )}
-
-constructor_reference:
-  _1 = RESOLVED rf = constructor_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
-
-field_reference:
-  _1 = RESOLVED rf = field_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
-
-extension_reference:
-  _1 = RESOLVED rf = extension_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
-
-exception_reference:
-  _1 = RESOLVED rf = exception_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
-
-class_reference:
-  _1 = RESOLVED rf = class_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
-
-class_type_reference:
-  _1 = RESOLVED rf = class_type_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
-
-method_reference:
-  _1 = RESOLVED rf = method_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
-
-instance_variable_reference:
-  _1 = RESOLVED rf = instance_variable_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
-
-label_reference:
-  _1 = RESOLVED rf = label_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
-
-element_reference:
-  _1 = RESOLVED rf = element_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
-
-item:
-  _1 = ITEM elems0 = list_text_element_ _3 = CLOSE
-    {let text =
-  let elems = elems0 in
-        ( elems )
-in
-      ( text )}
-
 int:
   data = Data
     {    ( try
@@ -1290,6 +1139,14 @@ line:
 column:
   _1 = COLUMN column = int _3 = CLOSE
     {    ( column )}
+
+position:
+  _1 = POSITION line = line column = column _4 = CLOSE
+    {    ( Documentation.Error.Position.{line; column} )}
+
+offset:
+  _1 = OFFSET start = position finish = position _4 = CLOSE
+    {    ( Documentation.Error.Offset.{start; finish} )}
 
 filename:
   _1 = FILENAME data = Data _3 = CLOSE
@@ -1335,11 +1192,69 @@ in
 | _1 = STOP _2 = CLOSE
     {      ( Documentation.Stop )}
 
+poly_variant_kind:
+  _1 = FIXED _2 = CLOSE
+    {      ( TypeExpr.Variant.Fixed )}
+| _1 = CLOSED names = list_name_ _3 = CLOSE
+    {      ( TypeExpr.Variant.Closed names )}
+| _1 = OPEN _2 = CLOSE
+    {      ( TypeExpr.Variant.Open )}
+
+poly_variant_element:
+  _1 = TYPE expr = type_expr _3 = CLOSE
+    {      ( TypeExpr.Variant.Type expr )}
+| _1 = CONSTRUCTOR data = Data constant = flag_CONSTANT_ types = list_type_expr_ _5 = CLOSE
+    {      ( TypeExpr.Variant.Constructor(data, constant, types) )}
+
+poly_variant:
+  kind = poly_variant_kind elements = list_poly_variant_element_
+    {      ( TypeExpr.Variant.{kind; elements} )}
+
+object_method:
+  name = name type_ = type_expr
+    {      ( TypeExpr.Object.{name; type_} )}
+
+object_:
+  methods = list_object_method_ open_ = flag_OPEN_
+    {      ( TypeExpr.Object.{methods; open_} )}
+
+package_substitution:
+  frag = type_fragment expr = type_expr
+    {      ( (frag, expr) )}
+
+package:
+  path = module_type_path substitutions = list_package_substitution_
+    {      ( TypeExpr.Package.{path; substitutions} )}
+
 argument_label:
   _1 = LABEL data = Data _3 = CLOSE
     {      ( TypeExpr.Label data )}
 | _1 = OPTIONAL data = Data _3 = CLOSE
     {      ( TypeExpr.Optional data )}
+
+type_expr:
+  _1 = VAR data = Data _3 = CLOSE
+    {      ( TypeExpr.Var data )}
+| _1 = ANY _2 = CLOSE
+    {      ( TypeExpr.Any )}
+| _1 = ALIAS expr = type_expr data = Data _4 = CLOSE
+    {      ( TypeExpr.Alias(expr, data) )}
+| _1 = ARROW lbl = option_argument_label_ arg = type_expr res = type_expr _5 = CLOSE
+    {      ( TypeExpr.Arrow(lbl, arg, res) )}
+| _1 = TUPLE types = nonempty_list_type_expr_ _3 = CLOSE
+    {      ( TypeExpr.Tuple types )}
+| _1 = PATH p = type_path params = list_type_expr_ _4 = CLOSE
+    {      ( TypeExpr.Constr(p, params) )}
+| _1 = POLY_VARIANT v = poly_variant _3 = CLOSE
+    {      ( TypeExpr.Variant v )}
+| _1 = OBJECT o = object_ _3 = CLOSE
+    {      ( TypeExpr.Object o )}
+| _1 = CLASS p = class_type_path params = list_type_expr_ _4 = CLOSE
+    {      ( TypeExpr.Class(p, params) )}
+| _1 = POLY names = nonempty_list_name_ expr = type_expr _4 = CLOSE
+    {      ( TypeExpr.Poly(names, expr) )}
+| _1 = PACKAGE pkg = package _3 = CLOSE
+    {      ( TypeExpr.Package pkg )}
 
 external_primitive:
   _1 = PRIMITIVE data = Data _3 = CLOSE
@@ -1364,6 +1279,39 @@ constructor:
 field:
   _1 = FIELD id = field_identifier doc = doc mutable_ = flag_MUTABLE_ type_ = type_expr _6 = CLOSE
     {      ( TypeDecl.Field.{id; doc; mutable_; type_} )}
+
+type_representation:
+  _1 = VARIANT constructors = nonempty_list_constructor_ _3 = CLOSE
+    {      ( TypeDecl.Representation.Variant constructors )}
+| _1 = RECORD fields = nonempty_list_field_ _3 = CLOSE
+    {      ( TypeDecl.Representation.Record fields )}
+| _1 = EXTENSIBLE _2 = CLOSE
+    {      ( TypeDecl.Representation.Extensible )}
+
+variance:
+  _1 = POS _2 = CLOSE
+    {      ( TypeDecl.Pos )}
+| _1 = NEG _2 = CLOSE
+    {      ( TypeDecl.Neg )}
+
+type_parameter:
+  _1 = PARAM v = option_variance_ _3 = CLOSE
+    {      ( (TypeDecl.Any, v) )}
+| _1 = PARAM name = Data v = option_variance_ _4 = CLOSE
+    {      ( (TypeDecl.Var name, v) )}
+
+type_subst_parameter:
+  _1 = PARAM name = Data _3 = CLOSE
+    {      ( name )}
+
+type_constraint:
+  _1 = CONSTRAINT expr1 = type_expr expr2 = type_expr _4 = CLOSE
+    {      ( (expr1, expr2) )}
+
+type_equation:
+  params = list_type_parameter_ private_ = flag_PRIVATE_ manifest = option_type_expr_ constraints = list_type_constraint_
+    {        ( let open TypeDecl.Equation in
+            {params; private_; manifest; constraints} )}
 
 extension_constructor:
   _1 = CONSTRUCTOR id = extension_identifier doc = doc args = constructor_arguments res = constructor_result _6 = CLOSE
@@ -1404,55 +1352,21 @@ module_decl:
 | _1 = TYPE expr = module_type_expr _3 = CLOSE
     {      ( Module.ModuleType expr )}
 
+substitution:
+  _1 = MODULE frag = module_fragment eq = module_decl _4 = CLOSE
+    {      ( ModuleType.ModuleEq(frag, eq) )}
+| _1 = MODULE_SUBST frag = module_fragment p = module_path _4 = CLOSE
+    {      ( ModuleType.ModuleSubst(frag, p) )}
+| _1 = TYPE frag = type_fragment eq = type_equation _4 = CLOSE
+    {      ( ModuleType.TypeEq(frag, eq) )}
+| _1 = TYPE_SUBST frag = type_fragment params = list_type_subst_parameter_ p = type_path _5 = CLOSE
+    {        ( ModuleType.TypeSubst(frag, params, p) )}
+
 module_argument:
   _1 = Argument id = module_identifier expr = module_type_expr _4 = CLOSE
     {      ( Some(id, expr) )}
 | _1 = Argument _2 = CLOSE
     {      ( None )}
-
-digest:
-  _1 = DIGEST data = Data _3 = CLOSE
-    {      ( try
-          Digest.from_hex data
-        with Invalid_argument _ -> (raise _eRR) )}
-
-file:
-  _1 = DTD unit = unit _3 = EOF
-    {      ( unit )}
-
-list_unit_import_:
-  
-    {    ( [] )}
-| x = unit_import xs = list_unit_import_
-    {    ( x :: xs )}
-
-list_type_subst_parameter_:
-  
-    {    ( [] )}
-| x = type_subst_parameter xs = list_type_subst_parameter_
-    {    ( x :: xs )}
-
-list_type_parameter_:
-  
-    {    ( [] )}
-| x = type_parameter xs = list_type_parameter_
-    {    ( x :: xs )}
-
-module_reference:
-  _1 = RESOLVED rf = module_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
-
-module_type_reference:
-  _1 = RESOLVED rf = module_type_resolved_reference _3 = CLOSE
-    {      ( Reference.Resolved rf )}
-| _1 = ROOT data = Data _3 = CLOSE
-    {      ( Reference.Root data )}
-| _1 = DOT p = parent_reference data = Data _4 = CLOSE
-    {      ( Reference.Dot(p, data) )}
 
 module_type_expr:
   p = module_type_path
@@ -1467,6 +1381,93 @@ module_type_expr:
     {      ( ModuleType.With(expr, substs) )}
 | _1 = TYPEOF md = module_decl _3 = CLOSE
     {      ( ModuleType.TypeOf md )}
+
+signature_item:
+  _1 = VALUE id = value_identifier doc = doc type_ = type_expr _5 = CLOSE
+    {      ( let open Signature in
+        let open Value in
+          Value {id;doc;type_} )}
+| _1 = EXTERNAL id = value_identifier doc = doc type_ = type_expr primitives = nonempty_list_external_primitive_ _6 = CLOSE
+    {        ( let open Signature in
+          let open External in
+            External {id; doc; type_; primitives} )}
+| _1 = TYPE id = type_identifier doc = doc equation = type_equation representation = option_type_representation_ _6 = CLOSE
+    {        ( let open Signature in
+          let open TypeDecl in
+            Type {id; doc; equation; representation} )}
+| _1 = EXTENSION type_path = type_path doc = doc type_params = list_type_parameter_ private_ = flag_PRIVATE_ constructors = nonempty_list_extension_constructor_ _7 = CLOSE
+    {        ( let open Signature in
+          let open Extension in
+            TypExt {type_path; doc; type_params; private_; constructors} )}
+| _1 = EXCEPTION id = exception_identifier doc = doc args = constructor_arguments res = constructor_result _6 = CLOSE
+    {        ( let open Signature in
+          let open Exception in
+            Exception {id; doc; args; res} )}
+| _1 = CLASS id = class_identifier doc = doc params = list_type_parameter_ virtual_ = flag_VIRTUAL_ type_ = class_decl _7 = CLOSE
+    {        ( let open Signature in
+          let open Class in
+            Class {id; doc; virtual_; params; type_} )}
+| _1 = CLASS_TYPE id = class_type_identifier doc = doc params = list_type_parameter_ virtual_ = flag_VIRTUAL_ expr = class_type_expr _7 = CLOSE
+    {        ( let open Signature in
+          let open ClassType in
+            ClassType {id; doc; virtual_; params; expr} )}
+| _1 = MODULE id = module_identifier doc = doc type_ = module_decl _5 = CLOSE
+    {      ( let open Signature in
+        let open Module in
+           Module {id; doc; type_} )}
+| _1 = MODULE_TYPE id = module_type_identifier doc = doc expr = option_module_type_expr_ _5 = CLOSE
+    {      ( let open Signature in
+        let open ModuleType in
+          ModuleType {id; doc; expr} )}
+| _1 = INCLUDE expr = module_type_expr _3 = CLOSE
+    {      ( Signature.Include expr )}
+| comment = comment
+    {      ( Signature.Comment comment )}
+
+digest:
+  _1 = DIGEST data = Data _3 = CLOSE
+    {      ( try
+          Digest.from_hex data
+        with Invalid_argument _ -> (raise _eRR) )}
+
+unit_import:
+  _1 = IMPORT data = Data digest = option_digest_ _4 = CLOSE
+    {      ( Unit.Import.Unresolved(data, digest) )}
+| _1 = IMPORT base = Base _3 = CLOSE
+    {      ( Unit.Import.Resolved base )}
+
+source_file:
+  _1 = FILE data = Data _3 = CLOSE
+    {      ( data )}
+
+source_build_dir:
+  _1 = DIR data = Data _3 = CLOSE
+    {      ( data )}
+
+source:
+  _1 = SOURCE file = source_file build_dir = source_build_dir digest = digest _5 = CLOSE
+    {      ( let open Unit.Source in
+          {file; build_dir; digest} )}
+
+packed_item:
+  _1 = ITEM id = module_identifier path = module_path _4 = CLOSE
+    {      ( let open Unit.Packed in
+          {id; path} )}
+
+unit_content:
+  _1 = MODULE items = list_signature_item_ _3 = CLOSE
+    {      ( Unit.Module items )}
+| _1 = PACK items = list_packed_item_ _3 = CLOSE
+    {      ( Unit.Pack items )}
+
+unit:
+  _1 = UNIT id = module_identifier doc = doc digest = digest imports = list_unit_import_ source = option_source_ interface = flag_INTERFACE_ content = unit_content _9 = CLOSE
+    {          ( let open Unit in
+              {id; doc; digest; imports; source; interface; content} )}
+
+file:
+  _1 = DTD unit = unit _3 = EOF
+    {      ( unit )}
 
 %%
 

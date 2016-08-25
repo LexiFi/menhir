@@ -65,6 +65,81 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %type <LPP.program> program
 %%
 
+loption_preceded_VAR_terminated_bindings__:
+  
+    {    ( [] )}
+| _10 = VAR x0 = terminated_bindings
+    {let x =
+  let x = x0 in
+  let _1 = _10 in
+      ( x )
+in
+    ( x )}
+
+loption_separated_nonempty_list_COMMA_expression__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_expression_
+    {    ( x )}
+
+loption_separated_nonempty_list_SEMICOLON_binding__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_SEMICOLON_binding_
+    {    ( x )}
+
+loption_separated_nonempty_list_SEMICOLON_instruction__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_SEMICOLON_instruction_
+    {    ( x )}
+
+list_procedure_:
+  
+    {    ( [] )}
+| x = procedure xs = list_procedure_
+    {    ( x :: xs )}
+
+nonempty_list_terminated_binding_SEMICOLON__:
+  x0 = binding _20 = SEMICOLON
+    {let x =
+  let _2 = _20 in
+  let x = x0 in
+      ( x )
+in
+    ( [ x ] )}
+| x0 = binding _20 = SEMICOLON xs = nonempty_list_terminated_binding_SEMICOLON__
+    {let x =
+  let _2 = _20 in
+  let x = x0 in
+      ( x )
+in
+    ( x :: xs )}
+
+separated_nonempty_list_COMMA_ID_:
+  x = ID
+    {    ( [ x ] )}
+| x = ID _2 = COMMA xs = separated_nonempty_list_COMMA_ID_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_expression_:
+  x = expression
+    {    ( [ x ] )}
+| x = expression _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
+    {    ( x :: xs )}
+
+separated_nonempty_list_SEMICOLON_binding_:
+  x = binding
+    {    ( [ x ] )}
+| x = binding _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_binding_
+    {    ( x :: xs )}
+
+separated_nonempty_list_SEMICOLON_instruction_:
+  x = instruction
+    {    ( [ x ] )}
+| x = instruction _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_instruction_
+    {    ( x :: xs )}
+
 typ:
   _1 = INTEGER
     {    ( TypInt )}
@@ -161,6 +236,16 @@ in
 | _1 = NEW _2 = ARRAY _3 = OF t = typ _5 = LBRACKET e = expression _7 = RBRACKET
     {    ( EArrayAlloc (t, e) )}
 
+nontrivial_condition:
+  _1 = NOT c = condition
+    {    ( CNot c )}
+| c1 = condition _2 = AND c2 = condition
+    {    ( CAnd (c1, c2) )}
+| c1 = condition _2 = OR c2 = condition
+    {    ( COr (c1, c2) )}
+| _1 = LPAREN c = nontrivial_condition _3 = RPAREN
+    {    ( c )}
+
 condition:
   e = expression
     {    ( CExpression e )}
@@ -172,142 +257,6 @@ lvalue:
     {    ( fun e -> ISetVar (id, e) )}
 | a = expression _2 = LBRACKET i = expression _4 = RBRACKET
     {    ( fun e -> IArraySet (a, i, e) )}
-
-procedure:
-  _1 = FUNCTION f = ID _3 = LPAREN formals = separated_bindings _5 = RPAREN _6 = COLON t0 = typ _8 = SEMICOLON locals = variables body = block _11 = SEMICOLON
-    {let result =
-  let t = t0 in
-      ( Some t )
-in
-    (
-      f, {
-        formals = formals;
-        result = result;
-        locals = locals;
-        body = body
-      }
-    )}
-| _1 = PROCEDURE f = ID _3 = LPAREN formals = separated_bindings _5 = RPAREN _7 = SEMICOLON locals = variables body = block _10 = SEMICOLON
-    {let result =
-      ( None )
-in
-    (
-      f, {
-        formals = formals;
-        result = result;
-        locals = locals;
-        body = body
-      }
-    )}
-
-separated_bindings:
-  xs0 = loption_separated_nonempty_list_SEMICOLON_binding__
-    {let bindings =
-  let xs = xs0 in
-      ( xs )
-in
-    ( List.flatten bindings )}
-
-terminated_bindings:
-  bindings = nonempty_list_terminated_binding_SEMICOLON__
-    {    ( List.flatten bindings )}
-
-variables:
-  vars = loption_preceded_VAR_terminated_bindings__
-    {    ( vars )}
-
-program:
-  _1 = PROGRAM globals = variables defs = list_procedure_ main = block _5 = DOT
-    {    ({
-       globals = globals;
-       defs = defs;
-       main = main
-    })}
-
-loption_separated_nonempty_list_SEMICOLON_instruction__:
-  
-    {    ( [] )}
-| x = separated_nonempty_list_SEMICOLON_instruction_
-    {    ( x )}
-
-loption_separated_nonempty_list_SEMICOLON_binding__:
-  
-    {    ( [] )}
-| x = separated_nonempty_list_SEMICOLON_binding_
-    {    ( x )}
-
-loption_separated_nonempty_list_COMMA_expression__:
-  
-    {    ( [] )}
-| x = separated_nonempty_list_COMMA_expression_
-    {    ( x )}
-
-loption_preceded_VAR_terminated_bindings__:
-  
-    {    ( [] )}
-| _10 = VAR x0 = terminated_bindings
-    {let x =
-  let x = x0 in
-  let _1 = _10 in
-      ( x )
-in
-    ( x )}
-
-list_procedure_:
-  
-    {    ( [] )}
-| x = procedure xs = list_procedure_
-    {    ( x :: xs )}
-
-nonempty_list_terminated_binding_SEMICOLON__:
-  x0 = binding _20 = SEMICOLON
-    {let x =
-  let _2 = _20 in
-  let x = x0 in
-      ( x )
-in
-    ( [ x ] )}
-| x0 = binding _20 = SEMICOLON xs = nonempty_list_terminated_binding_SEMICOLON__
-    {let x =
-  let _2 = _20 in
-  let x = x0 in
-      ( x )
-in
-    ( x :: xs )}
-
-separated_nonempty_list_SEMICOLON_instruction_:
-  x = instruction
-    {    ( [ x ] )}
-| x = instruction _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_instruction_
-    {    ( x :: xs )}
-
-separated_nonempty_list_SEMICOLON_binding_:
-  x = binding
-    {    ( [ x ] )}
-| x = binding _2 = SEMICOLON xs = separated_nonempty_list_SEMICOLON_binding_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_expression_:
-  x = expression
-    {    ( [ x ] )}
-| x = expression _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_ID_:
-  x = ID
-    {    ( [ x ] )}
-| x = ID _2 = COMMA xs = separated_nonempty_list_COMMA_ID_
-    {    ( x :: xs )}
-
-nontrivial_condition:
-  _1 = NOT c = condition
-    {    ( CNot c )}
-| c1 = condition _2 = AND c2 = condition
-    {    ( CAnd (c1, c2) )}
-| c1 = condition _2 = OR c2 = condition
-    {    ( COr (c1, c2) )}
-| _1 = LPAREN c = nontrivial_condition _3 = RPAREN
-    {    ( c )}
 
 instruction:
   c = callee _2 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expression__ _4 = RPAREN
@@ -353,9 +302,60 @@ callee:
 | id = ID
     {    ( CUserFunction (Location.content id))}
 
+procedure:
+  _1 = FUNCTION f = ID _3 = LPAREN formals = separated_bindings _5 = RPAREN _6 = COLON t0 = typ _8 = SEMICOLON locals = variables body = block _11 = SEMICOLON
+    {let result =
+  let t = t0 in
+      ( Some t )
+in
+    (
+      f, {
+        formals = formals;
+        result = result;
+        locals = locals;
+        body = body
+      }
+    )}
+| _1 = PROCEDURE f = ID _3 = LPAREN formals = separated_bindings _5 = RPAREN _7 = SEMICOLON locals = variables body = block _10 = SEMICOLON
+    {let result =
+      ( None )
+in
+    (
+      f, {
+        formals = formals;
+        result = result;
+        locals = locals;
+        body = body
+      }
+    )}
+
+separated_bindings:
+  xs0 = loption_separated_nonempty_list_SEMICOLON_binding__
+    {let bindings =
+  let xs = xs0 in
+      ( xs )
+in
+    ( List.flatten bindings )}
+
+terminated_bindings:
+  bindings = nonempty_list_terminated_binding_SEMICOLON__
+    {    ( List.flatten bindings )}
+
 binding:
   ids = separated_nonempty_list_COMMA_ID_ _2 = COLON t = typ
     {    ( List.map (fun id -> (id, t)) ids )}
+
+variables:
+  vars = loption_preceded_VAR_terminated_bindings__
+    {    ( vars )}
+
+program:
+  _1 = PROGRAM globals = variables defs = list_procedure_ main = block _5 = DOT
+    {    ({
+       globals = globals;
+       defs = defs;
+       main = main
+    })}
 
 %%
 

@@ -560,20 +560,20 @@ statement_safe:
 | _1 = jump_statement
     { ()}
 
-labeled_statement_statement_safe_:
-  _1 = IDENTIFIER _2 = COLON _3 = statement_safe
-    { ()}
-| _1 = CASE _2 = constant_expression _3 = COLON _4 = statement_safe
-    { ()}
-| _1 = DEFAULT _2 = COLON _3 = statement_safe
-    { ()}
-
 labeled_statement_statement_dangerous_:
   _1 = IDENTIFIER _2 = COLON _3 = statement_dangerous
     { ()}
 | _1 = CASE _2 = constant_expression _3 = COLON _4 = statement_dangerous
     { ()}
 | _1 = DEFAULT _2 = COLON _3 = statement_dangerous
+    { ()}
+
+labeled_statement_statement_safe_:
+  _1 = IDENTIFIER _2 = COLON _3 = statement_safe
+    { ()}
+| _1 = CASE _2 = constant_expression _3 = COLON _4 = statement_safe
+    { ()}
+| _1 = DEFAULT _2 = COLON _3 = statement_safe
     { ()}
 
 compound_statement:
@@ -618,16 +618,6 @@ selection_statement_safe:
 | _1 = SWITCH _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_safe
     { ()}
 
-iteration_statement_statement_safe_:
-  _1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_safe
-    { ()}
-| _1 = DO _2 = statement_dangerous _3 = WHILE _4 = LPAREN _5 = expression _6 = RPAREN _7 = SEMICOLON
-    { ()}
-| _1 = FOR _2 = LPAREN _3 = expression_statement _4 = expression_statement _5 = RPAREN _6 = statement_safe
-    { ()}
-| _1 = FOR _2 = LPAREN _3 = expression_statement _4 = expression_statement _5 = expression _6 = RPAREN _7 = statement_safe
-    { ()}
-
 iteration_statement_statement_dangerous_:
   _1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_dangerous
     { ()}
@@ -636,6 +626,16 @@ iteration_statement_statement_dangerous_:
 | _1 = FOR _2 = LPAREN _3 = expression_statement _4 = expression_statement _5 = RPAREN _6 = statement_dangerous
     { ()}
 | _1 = FOR _2 = LPAREN _3 = expression_statement _4 = expression_statement _5 = expression _6 = RPAREN _7 = statement_dangerous
+    { ()}
+
+iteration_statement_statement_safe_:
+  _1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_safe
+    { ()}
+| _1 = DO _2 = statement_dangerous _3 = WHILE _4 = LPAREN _5 = expression _6 = RPAREN _7 = SEMICOLON
+    { ()}
+| _1 = FOR _2 = LPAREN _3 = expression_statement _4 = expression_statement _5 = RPAREN _6 = statement_safe
+    { ()}
+| _1 = FOR _2 = LPAREN _3 = expression_statement _4 = expression_statement _5 = expression _6 = RPAREN _7 = statement_safe
     { ()}
 
 jump_statement:

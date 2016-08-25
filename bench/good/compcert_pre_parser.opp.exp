@@ -143,9 +143,18 @@ pop_context:
   
     {              ( !pop_context () )}
 
-in_context_declaration_list_:
-  _1 = push_context x = declaration_list _3 = pop_context
-    {                                  ( x )}
+in_context_compcert_pre_parser_option_block_item_list__:
+  _1 = push_context _3 = pop_context
+    {let x =
+      ( None )
+in
+                                  ( x )}
+| _1 = push_context x0 = block_item_list _3 = pop_context
+    {let x =
+  let x = x0 in
+      ( Some x )
+in
+                                  ( x )}
 
 in_context_compcert_pre_parser_option_parameter_type_list__:
   _1 = push_context _3 = pop_context
@@ -160,18 +169,13 @@ in
 in
                                   ( x )}
 
-in_context_compcert_pre_parser_option_block_item_list__:
-  _1 = push_context _3 = pop_context
-    {let x =
-      ( None )
-in
-                                  ( x )}
-| _1 = push_context x0 = block_item_list _3 = pop_context
-    {let x =
-  let x = x0 in
-      ( Some x )
-in
-                                  ( x )}
+in_context_declaration_list_:
+  _1 = push_context x = declaration_list _3 = pop_context
+    {                                  ( x )}
+
+declare_varname_enumerator_:
+  i = enumerator
+    {         ( declare_varname i; i )}
 
 declare_varname_fst_declarator__:
   x0 = declarator
@@ -180,10 +184,6 @@ declare_varname_fst_declarator__:
       ( fst x )
 in
          ( declare_varname i; i )}
-
-declare_varname_enumerator_:
-  i = enumerator
-    {         ( declare_varname i; i )}
 
 declare_typename_fst_declarator__:
   x0 = declarator
@@ -1743,20 +1743,20 @@ statement_intern:
 | _1 = asm_statement
     {    ()}
 
-labeled_statement_statement_intern_:
-  i = general_identifier _2 = COLON _3 = statement_intern
-    {    ( set_id_type i OtherId )}
-| _1 = CASE _2 = constant_expression _3 = COLON _4 = statement_intern
-    {    ()}
-| _1 = DEFAULT _2 = COLON _3 = statement_intern
-    {    ()}
-
 labeled_statement_statement_finish_:
   i = general_identifier _2 = COLON _3 = statement_finish
     {    ( set_id_type i OtherId )}
 | _1 = CASE _2 = constant_expression _3 = COLON _4 = statement_finish
     {    ()}
 | _1 = DEFAULT _2 = COLON _3 = statement_finish
+    {    ()}
+
+labeled_statement_statement_intern_:
+  i = general_identifier _2 = COLON _3 = statement_intern
+    {    ( set_id_type i OtherId )}
+| _1 = CASE _2 = constant_expression _3 = COLON _4 = statement_intern
+    {    ()}
+| _1 = DEFAULT _2 = COLON _3 = statement_intern
     {    ()}
 
 compound_statement:
@@ -1813,148 +1813,6 @@ selection_statement_intern:
     {    ()}
 | _1 = SWITCH _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_intern
     {    ()}
-
-iteration_statement_statement_intern_:
-  _1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_intern
-    {    ()}
-| _1 = DO _2 = statement_finish _3 = WHILE _4 = LPAREN _5 = expression _6 = RPAREN _7 = SEMICOLON
-    {    ()}
-| _1 = FOR _2 = LPAREN _4 = SEMICOLON _6 = SEMICOLON _8 = RPAREN _9 = statement_intern
-    {let _7 =
-      ( None )
-in
-let _5 =
-      ( None )
-in
-let _3 =
-      ( None )
-in
-    ()}
-| _1 = FOR _2 = LPAREN _4 = SEMICOLON _6 = SEMICOLON x0 = expression _8 = RPAREN _9 = statement_intern
-    {let _7 =
-  let x = x0 in
-      ( Some x )
-in
-let _5 =
-      ( None )
-in
-let _3 =
-      ( None )
-in
-    ()}
-| _1 = FOR _2 = LPAREN _4 = SEMICOLON x0 = expression _6 = SEMICOLON _8 = RPAREN _9 = statement_intern
-    {let _7 =
-      ( None )
-in
-let _5 =
-  let x = x0 in
-      ( Some x )
-in
-let _3 =
-      ( None )
-in
-    ()}
-| _1 = FOR _2 = LPAREN _4 = SEMICOLON x0 = expression _6 = SEMICOLON x1 = expression _8 = RPAREN _9 = statement_intern
-    {let _7 =
-  let x = x1 in
-      ( Some x )
-in
-let _5 =
-  let x = x0 in
-      ( Some x )
-in
-let _3 =
-      ( None )
-in
-    ()}
-| _1 = FOR _2 = LPAREN x0 = expression _4 = SEMICOLON _6 = SEMICOLON _8 = RPAREN _9 = statement_intern
-    {let _7 =
-      ( None )
-in
-let _5 =
-      ( None )
-in
-let _3 =
-  let x = x0 in
-      ( Some x )
-in
-    ()}
-| _1 = FOR _2 = LPAREN x0 = expression _4 = SEMICOLON _6 = SEMICOLON x1 = expression _8 = RPAREN _9 = statement_intern
-    {let _7 =
-  let x = x1 in
-      ( Some x )
-in
-let _5 =
-      ( None )
-in
-let _3 =
-  let x = x0 in
-      ( Some x )
-in
-    ()}
-| _1 = FOR _2 = LPAREN x0 = expression _4 = SEMICOLON x1 = expression _6 = SEMICOLON _8 = RPAREN _9 = statement_intern
-    {let _7 =
-      ( None )
-in
-let _5 =
-  let x = x1 in
-      ( Some x )
-in
-let _3 =
-  let x = x0 in
-      ( Some x )
-in
-    ()}
-| _1 = FOR _2 = LPAREN x0 = expression _4 = SEMICOLON x1 = expression _6 = SEMICOLON x2 = expression _8 = RPAREN _9 = statement_intern
-    {let _7 =
-  let x = x2 in
-      ( Some x )
-in
-let _5 =
-  let x = x1 in
-      ( Some x )
-in
-let _3 =
-  let x = x0 in
-      ( Some x )
-in
-    ()}
-| _1 = FOR _2 = LPAREN _3 = push_context _4 = declaration _6 = SEMICOLON _8 = RPAREN _9 = statement_intern _10 = pop_context
-    {let _7 =
-      ( None )
-in
-let _5 =
-      ( None )
-in
-    ()}
-| _1 = FOR _2 = LPAREN _3 = push_context _4 = declaration _6 = SEMICOLON x0 = expression _8 = RPAREN _9 = statement_intern _10 = pop_context
-    {let _7 =
-  let x = x0 in
-      ( Some x )
-in
-let _5 =
-      ( None )
-in
-    ()}
-| _1 = FOR _2 = LPAREN _3 = push_context _4 = declaration x0 = expression _6 = SEMICOLON _8 = RPAREN _9 = statement_intern _10 = pop_context
-    {let _7 =
-      ( None )
-in
-let _5 =
-  let x = x0 in
-      ( Some x )
-in
-    ()}
-| _1 = FOR _2 = LPAREN _3 = push_context _4 = declaration x0 = expression _6 = SEMICOLON x1 = expression _8 = RPAREN _9 = statement_intern _10 = pop_context
-    {let _7 =
-  let x = x1 in
-      ( Some x )
-in
-let _5 =
-  let x = x0 in
-      ( Some x )
-in
-    ()}
 
 iteration_statement_statement_finish_:
   _1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_finish
@@ -2088,6 +1946,148 @@ let _5 =
 in
     ()}
 | _1 = FOR _2 = LPAREN _3 = push_context _4 = declaration x0 = expression _6 = SEMICOLON x1 = expression _8 = RPAREN _9 = statement_finish _10 = pop_context
+    {let _7 =
+  let x = x1 in
+      ( Some x )
+in
+let _5 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
+
+iteration_statement_statement_intern_:
+  _1 = WHILE _2 = LPAREN _3 = expression _4 = RPAREN _5 = statement_intern
+    {    ()}
+| _1 = DO _2 = statement_finish _3 = WHILE _4 = LPAREN _5 = expression _6 = RPAREN _7 = SEMICOLON
+    {    ()}
+| _1 = FOR _2 = LPAREN _4 = SEMICOLON _6 = SEMICOLON _8 = RPAREN _9 = statement_intern
+    {let _7 =
+      ( None )
+in
+let _5 =
+      ( None )
+in
+let _3 =
+      ( None )
+in
+    ()}
+| _1 = FOR _2 = LPAREN _4 = SEMICOLON _6 = SEMICOLON x0 = expression _8 = RPAREN _9 = statement_intern
+    {let _7 =
+  let x = x0 in
+      ( Some x )
+in
+let _5 =
+      ( None )
+in
+let _3 =
+      ( None )
+in
+    ()}
+| _1 = FOR _2 = LPAREN _4 = SEMICOLON x0 = expression _6 = SEMICOLON _8 = RPAREN _9 = statement_intern
+    {let _7 =
+      ( None )
+in
+let _5 =
+  let x = x0 in
+      ( Some x )
+in
+let _3 =
+      ( None )
+in
+    ()}
+| _1 = FOR _2 = LPAREN _4 = SEMICOLON x0 = expression _6 = SEMICOLON x1 = expression _8 = RPAREN _9 = statement_intern
+    {let _7 =
+  let x = x1 in
+      ( Some x )
+in
+let _5 =
+  let x = x0 in
+      ( Some x )
+in
+let _3 =
+      ( None )
+in
+    ()}
+| _1 = FOR _2 = LPAREN x0 = expression _4 = SEMICOLON _6 = SEMICOLON _8 = RPAREN _9 = statement_intern
+    {let _7 =
+      ( None )
+in
+let _5 =
+      ( None )
+in
+let _3 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
+| _1 = FOR _2 = LPAREN x0 = expression _4 = SEMICOLON _6 = SEMICOLON x1 = expression _8 = RPAREN _9 = statement_intern
+    {let _7 =
+  let x = x1 in
+      ( Some x )
+in
+let _5 =
+      ( None )
+in
+let _3 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
+| _1 = FOR _2 = LPAREN x0 = expression _4 = SEMICOLON x1 = expression _6 = SEMICOLON _8 = RPAREN _9 = statement_intern
+    {let _7 =
+      ( None )
+in
+let _5 =
+  let x = x1 in
+      ( Some x )
+in
+let _3 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
+| _1 = FOR _2 = LPAREN x0 = expression _4 = SEMICOLON x1 = expression _6 = SEMICOLON x2 = expression _8 = RPAREN _9 = statement_intern
+    {let _7 =
+  let x = x2 in
+      ( Some x )
+in
+let _5 =
+  let x = x1 in
+      ( Some x )
+in
+let _3 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
+| _1 = FOR _2 = LPAREN _3 = push_context _4 = declaration _6 = SEMICOLON _8 = RPAREN _9 = statement_intern _10 = pop_context
+    {let _7 =
+      ( None )
+in
+let _5 =
+      ( None )
+in
+    ()}
+| _1 = FOR _2 = LPAREN _3 = push_context _4 = declaration _6 = SEMICOLON x0 = expression _8 = RPAREN _9 = statement_intern _10 = pop_context
+    {let _7 =
+  let x = x0 in
+      ( Some x )
+in
+let _5 =
+      ( None )
+in
+    ()}
+| _1 = FOR _2 = LPAREN _3 = push_context _4 = declaration x0 = expression _6 = SEMICOLON _8 = RPAREN _9 = statement_intern _10 = pop_context
+    {let _7 =
+      ( None )
+in
+let _5 =
+  let x = x0 in
+      ( Some x )
+in
+    ()}
+| _1 = FOR _2 = LPAREN _3 = push_context _4 = declaration x0 = expression _6 = SEMICOLON x1 = expression _8 = RPAREN _9 = statement_intern _10 = pop_context
     {let _7 =
   let x = x1 in
       ( Some x )

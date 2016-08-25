@@ -73,35 +73,15 @@ recommend switching on --infer in order to avoid obscure type error messages.
 %type <Syntax.declarations> program
 %%
 
-kind_variable:
-  id = IDENTIFIER
-    {    ( mkid kind_sort id )}
+list_declaration_:
+  
+    {    ( [] )}
+| x = declaration xs = list_declaration_
+    {    ( x :: xs )}
 
-type_variable:
-  id = IDENTIFIER
-    {    ( mkid type_sort id )}
-
-term_variable:
-  id = IDENTIFIER
-    {    ( mkid term_sort id )}
-
-quantifier:
-  _1 = FORALL
-    {    ( QForall )}
-| _1 = EXISTS
-    {    ( QExists )}
-
-statement:
-  x0 = ty2 _2 = EQ x1 = ty2
-    {let ty2 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
-  let _endpos = _endpos_x_ in
-  let _startpos = _startpos_x_ in
-      ( ((_startpos, _endpos), x) )
-in
-let ty1 =
+nonempty_list_loc_term_variable__:
+  x0 = term_variable
+    {let x =
   let _endpos_x_ = _endpos_x0_ in
   let _startpos_x_ = _startpos_x0_ in
   let x = x0 in
@@ -109,19 +89,17 @@ let ty1 =
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
-    ( SEquation (ty1, ty2) )}
-| _1 = FORALL b = type_binder _3 = DOT s = statement
-    {    ( bind b mksforall (Error.dummy, s) )}
-
-program:
-  ds = list_declaration_ _2 = EOF
-    {    ( List.flatten ds )}
-
-list_declaration_:
-  
-    {    ( [] )}
-| x = declaration xs = list_declaration_
-    {    ( x :: xs )}
+    ( [ x ] )}
+| x0 = term_variable xs = nonempty_list_loc_term_variable__
+    {let x =
+  let _endpos_x_ = _endpos_x0_ in
+  let _startpos_x_ = _startpos_x0_ in
+  let x = x0 in
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+      ( ((_startpos, _endpos), x) )
+in
+    ( x :: xs )}
 
 nonempty_list_loc_type_variable__:
   x0 = type_variable
@@ -145,27 +123,17 @@ in
 in
     ( x :: xs )}
 
-nonempty_list_loc_term_variable__:
-  x0 = term_variable
-    {let x =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
-  let _endpos = _endpos_x_ in
-  let _startpos = _startpos_x_ in
-      ( ((_startpos, _endpos), x) )
-in
-    ( [ x ] )}
-| x0 = term_variable xs = nonempty_list_loc_term_variable__
-    {let x =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
-  let _endpos = _endpos_x_ in
-  let _startpos = _startpos_x_ in
-      ( ((_startpos, _endpos), x) )
-in
-    ( x :: xs )}
+kind_variable:
+  id = IDENTIFIER
+    {    ( mkid kind_sort id )}
+
+type_variable:
+  id = IDENTIFIER
+    {    ( mkid type_sort id )}
+
+term_variable:
+  id = IDENTIFIER
+    {    ( mkid term_sort id )}
 
 kind0:
   _1 = STAR
@@ -196,6 +164,12 @@ type_binder:
       ( kind )
 in
     ( ids, Some kind )}
+
+quantifier:
+  _1 = FORALL
+    {    ( QForall )}
+| _1 = EXISTS
+    {    ( QExists )}
 
 ty0:
   id = type_variable
@@ -363,6 +337,28 @@ in
       ( ((_startpos, _endpos), x) )
 in
     ( bind b (mktyquantified q ty) ty )}
+
+statement:
+  x0 = ty2 _2 = EQ x1 = ty2
+    {let ty2 =
+  let _endpos_x_ = _endpos_x1_ in
+  let _startpos_x_ = _startpos_x1_ in
+  let x = x1 in
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+      ( ((_startpos, _endpos), x) )
+in
+let ty1 =
+  let _endpos_x_ = _endpos_x0_ in
+  let _startpos_x_ = _startpos_x0_ in
+  let x = x0 in
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+      ( ((_startpos, _endpos), x) )
+in
+    ( SEquation (ty1, ty2) )}
+| _1 = FORALL b = type_binder _3 = DOT s = statement
+    {    ( bind b mksforall (Error.dummy, s) )}
 
 term_variable_or_wildcard:
   id = term_variable
@@ -874,6 +870,10 @@ in
     ( [ DTerm (id, ty, t) ] )}
 | filename = INCLUDE
     {    ( !ParserBootstrap.load_and_parse filename )}
+
+program:
+  ds = list_declaration_ _2 = EOF
+    {    ( List.flatten ds )}
 
 %%
 

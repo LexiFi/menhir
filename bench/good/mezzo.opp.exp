@@ -112,405 +112,6 @@ open ParserUtils
 %type <(ClFlags.flag * (int * int)) list> warn_error_list
 %%
 
-existential_quantifiers:
-  _1 = LBRACE bs = right_flexible_list_COMMA_type_binding_ _3 = RBRACE
-    {    ( bs )}
-
-atomic_type_binding:
-  x = variable
-    {let _endpos = _endpos_x_ in
-    ( x, KType, (_startpos_x_, _endpos) )}
-| _1 = LPAREN b = type_binding _3 = RPAREN
-    {    ( b )}
-
-atomic_type_binding_with_variance:
-  v = variance b = atomic_type_binding
-    {    ( v, b )}
-
-atomic_kind:
-  _1 = LPAREN kind0 = atomic_kind _3 = RPAREN
-    {let kind =
-  let kind = kind0 in
-      ( kind )
-in
-    ( kind )}
-| _1 = VALUE
-    {    ( KValue )}
-| _1 = TYPE
-    {    ( KType )}
-| _1 = PERM
-    {    ( KPerm )}
-
-generic_datacon_application_right_flexible_list_SEMI_data_field_pattern__:
-  d00 = maybe_qualified_datacon_
-    {let x =
-  let d0 = d00 in
-  let x =
-    let d = d0 in
-        ( mk_datacon_reference d )
-  in
-      ( x, [] )
-in
-    ( x )}
-| d00 = maybe_qualified_datacon_ _20 = LBRACE y0 = right_flexible_list_SEMI_data_field_pattern_ _40 = RBRACE
-    {let x =
-  let _4 = _40 in
-  let y = y0 in
-  let _2 = _20 in
-  let d0 = d00 in
-  let x =
-    let d = d0 in
-        ( mk_datacon_reference d )
-  in
-      ( x, y )
-in
-    ( x )}
-
-generic_datacon_application_right_flexible_list_SEMI_data_field_expression__:
-  d00 = maybe_qualified_datacon_
-    {let x =
-  let d0 = d00 in
-  let x =
-    let d = d0 in
-        ( mk_datacon_reference d )
-  in
-      ( x, [] )
-in
-    ( x )}
-| d00 = maybe_qualified_datacon_ _20 = LBRACE y0 = right_flexible_list_SEMI_data_field_expression_ _40 = RBRACE
-    {let x =
-  let _4 = _40 in
-  let y = y0 in
-  let _2 = _20 in
-  let d0 = d00 in
-  let x =
-    let d = d0 in
-        ( mk_datacon_reference d )
-  in
-      ( x, y )
-in
-    ( x )}
-
-generic_datacon_application_data_type_def_branch_content_:
-  d00 = maybe_qualified_datacon_
-    {let x =
-  let d0 = d00 in
-  let x =
-    let d = d0 in
-        ( mk_datacon_reference d )
-  in
-      ( x, [] )
-in
-    ( x )}
-| d00 = maybe_qualified_datacon_ _20 = LBRACE y0 = data_type_def_branch_content _40 = RBRACE
-    {let x =
-  let _4 = _40 in
-  let y = y0 in
-  let _2 = _20 in
-  let d0 = d00 in
-  let x =
-    let d = d0 in
-        ( mk_datacon_reference d )
-  in
-      ( x, y )
-in
-    ( x )}
-
-data_field_def:
-  fs = separated_nonempty_list_COMMA_variable_ _2 = COLON x00 = raw_normal_type
-    {let ty =
-  let _endpos_x0_ = _endpos_x00_ in
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let ty =
-    let _endpos_x_ = _endpos_x0_ in
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-    let _endpos = _endpos_x_ in
-        ( TyLocated (x, (_startpos_x_, _endpos)) )
-  in
-      ( ty )
-in
-    ( List.map (fun f -> `FieldValue (f, ty)) fs )}
-| fs = separated_nonempty_list_COMMA_variable_ _2 = COLONCOLON x00 = raw_normal_type
-    {let ty =
-  let _endpos_x0_ = _endpos_x00_ in
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let ty =
-    let _endpos_x_ = _endpos_x0_ in
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-    let _endpos = _endpos_x_ in
-        ( TyLocated (x, (_startpos_x_, _endpos)) )
-  in
-      ( ty )
-in
-    ( List.map (fun f -> `FieldBindingValue (f, ty)) fs )}
-| f = variable _2 = EQUAL x0 = maybe_qualified_variable_
-    {let y =
-  let x = x0 in
-      ( TyVar x )
-in
-    ( [ `FieldValue (f, TySingleton y) ] )}
-| f = variable
-    {    ( [ `FieldValue (f, TySingleton (TyVar (Unqualified f))) ] )}
-
-data_type_def_branch_content:
-  fss0 = right_flexible_list_SEMI_data_field_def_
-    {let fs =
-  let fss = fss0 in
-      ( List.flatten fss )
-in
-    ( fs )}
-| fss0 = right_flexible_list_SEMI_data_field_def_ _2 = BAR x00 = raw_very_loose_type
-    {let perm =
-  let _endpos_x0_ = _endpos_x00_ in
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let ty =
-    let _endpos_x_ = _endpos_x0_ in
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-    let _endpos = _endpos_x_ in
-        ( TyLocated (x, (_startpos_x_, _endpos)) )
-  in
-      ( ty )
-in
-let fs =
-  let fss = fss0 in
-      ( List.flatten fss )
-in
-    ( fs @ [ `FieldPermission perm ] )}
-
-fact:
-  _1 = FACT cs = separated_nonempty_list_DBLARROW_mode_constraint_
-    {    ( match List.rev cs with goal :: hypotheses -> Fact (List.rev hypotheses, goal) | [] -> assert false )}
-
-concrete_data_type_def:
-  x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
-    {let rhs =
-  let xs0 = xs00 in
-  let bs =
-    let xs = xs0 in
-        ( List.rev xs )
-  in
-      ( bs )
-in
-let lhs =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let ys = ys0 in
-  let x = x0 in
-      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
-      fun kind ->
-        (x, kind, (_startpos_x_, _endpos_x_)),
-        ys
-    )
-in
-let flavor =
-      ( DataTypeFlavor.Immutable )
-in
-    ( { lhs = lhs KType; rhs = Concrete (flavor, rhs, a) } )}
-| _10 = MUTABLE x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
-    {let rhs =
-  let xs0 = xs00 in
-  let bs =
-    let xs = xs0 in
-        ( List.rev xs )
-  in
-      ( bs )
-in
-let lhs =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let ys = ys0 in
-  let x = x0 in
-      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
-      fun kind ->
-        (x, kind, (_startpos_x_, _endpos_x_)),
-        ys
-    )
-in
-let flavor =
-  let _1 = _10 in
-      ( DataTypeFlavor.Mutable )
-in
-    ( { lhs = lhs KType; rhs = Concrete (flavor, rhs, a) } )}
-
-abstract_data_type_def:
-  x0 = variable ys0 = list_atomic_type_binding_with_variance_ facts = list_fact_
-    {let k =
-      ( KType )
-in
-let lhs =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let ys = ys0 in
-  let x = x0 in
-      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
-      fun kind ->
-        (x, kind, (_startpos_x_, _endpos_x_)),
-        ys
-    )
-in
-    ( { lhs = lhs k; rhs = Abstract facts } )}
-| x0 = variable ys0 = list_atomic_type_binding_with_variance_ _10 = COLON kind00 = atomic_kind facts = list_fact_
-    {let k =
-  let kind0 = kind00 in
-  let _1 = _10 in
-  let k =
-    let kind = kind0 in
-        ( kind )
-  in
-      ( k )
-in
-let lhs =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let ys = ys0 in
-  let x = x0 in
-      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
-      fun kind ->
-        (x, kind, (_startpos_x_, _endpos_x_)),
-        ys
-    )
-in
-    ( { lhs = lhs k; rhs = Abstract facts } )}
-
-abbreviation_def:
-  x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL x000 = raw_fat_type
-    {let t =
-  let _endpos_x00_ = _endpos_x000_ in
-  let _startpos_x00_ = _startpos_x000_ in
-  let x00 = x000 in
-  let ty =
-    let _endpos_x0_ = _endpos_x00_ in
-    let _startpos_x0_ = _startpos_x00_ in
-    let x0 = x00 in
-    let ty =
-      let _endpos_x_ = _endpos_x0_ in
-      let _startpos_x_ = _startpos_x0_ in
-      let x = x0 in
-      let _endpos = _endpos_x_ in
-          ( TyLocated (x, (_startpos_x_, _endpos)) )
-    in
-      ( ty )
-  in
-      ( ty )
-in
-let k =
-      ( KType )
-in
-let lhs =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let ys = ys0 in
-  let x = x0 in
-      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
-      fun kind ->
-        (x, kind, (_startpos_x_, _endpos_x_)),
-        ys
-    )
-in
-    ( { lhs = lhs k; rhs = Abbrev t } )}
-| x0 = variable ys0 = list_atomic_type_binding_with_variance_ _10 = COLON kind00 = atomic_kind _3 = EQUAL x000 = raw_fat_type
-    {let t =
-  let _endpos_x00_ = _endpos_x000_ in
-  let _startpos_x00_ = _startpos_x000_ in
-  let x00 = x000 in
-  let ty =
-    let _endpos_x0_ = _endpos_x00_ in
-    let _startpos_x0_ = _startpos_x00_ in
-    let x0 = x00 in
-    let ty =
-      let _endpos_x_ = _endpos_x0_ in
-      let _startpos_x_ = _startpos_x0_ in
-      let x = x0 in
-      let _endpos = _endpos_x_ in
-          ( TyLocated (x, (_startpos_x_, _endpos)) )
-    in
-      ( ty )
-  in
-      ( ty )
-in
-let k =
-  let kind0 = kind00 in
-  let _1 = _10 in
-  let k =
-    let kind = kind0 in
-        ( kind )
-  in
-      ( k )
-in
-let lhs =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let ys = ys0 in
-  let x = x0 in
-      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
-      fun kind ->
-        (x, kind, (_startpos_x_, _endpos_x_)),
-        ys
-    )
-in
-    ( { lhs = lhs k; rhs = Abbrev t } )}
-
-data_field_pattern:
-  f = variable _2 = EQUAL x000 = raw_loose_pattern
-    {let p =
-  let _endpos_x00_ = _endpos_x000_ in
-  let _startpos_x00_ = _startpos_x000_ in
-  let x00 = x000 in
-  let p =
-    let _endpos_x0_ = _endpos_x00_ in
-    let _startpos_x0_ = _startpos_x00_ in
-    let x0 = x00 in
-    let p =
-      let _endpos_x_ = _endpos_x0_ in
-      let _startpos_x_ = _startpos_x0_ in
-      let x = x0 in
-      let _endpos = _endpos_x_ in
-          ( PLocated (x, (_startpos_x_, _endpos)) )
-    in
-        ( p )
-  in
-      ( p )
-in
-    ( f, p )}
-| f = variable
-    {    ( f, PVar f )}
-
-parenthesized_tuple_components:
-  x00 = raw_fragile_expression
-    {let e =
-  let _endpos_x0_ = _endpos_x00_ in
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let e =
-    let _endpos_x_ = _endpos_x0_ in
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-        ( ELocated (x, (_startpos_x_, _endpos_x_)) )
-  in
-      ( e )
-in
-    ( [ e ] )}
-| x00 = raw_algebraic_expression _2 = COMMA e2 = parenthesized_tuple_components
-    {let e1 =
-  let _endpos_x0_ = _endpos_x00_ in
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let e =
-    let _endpos_x_ = _endpos_x0_ in
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-        ( ELocated (x, (_startpos_x_, _endpos_x_)) )
-  in
-      ( e )
-in
-    ( e1 :: e2 )}
-
 option_preceded_ADOPTS_arbitrary_type__:
   
     {    ( None )}
@@ -543,11 +144,245 @@ option_preceded_ADOPTS_arbitrary_type__:
 in
     ( Some x )}
 
+loption_separated_nonempty_list_AND_definition__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_AND_definition_
+    {    ( x )}
+
+loption_type_parameters_:
+  
+    {    ( [] )}
+| x = type_parameters
+    {    ( x )}
+
+list_atomic_type_binding_with_variance_:
+  
+    {    ( [] )}
+| x = atomic_type_binding_with_variance xs = list_atomic_type_binding_with_variance_
+    {    ( x :: xs )}
+
+list_fact_:
+  
+    {    ( [] )}
+| x = fact xs = list_fact_
+    {    ( x :: xs )}
+
+list_implementation_item_:
+  
+    {    ( [] )}
+| x = implementation_item xs = list_implementation_item_
+    {    ( x :: xs )}
+
+list_interface_item_:
+  
+    {    ( [] )}
+| x = interface_item xs = list_interface_item_
+    {    ( x :: xs )}
+
+list_terminated_mode_constraint_DBLARROW__:
+  
+    {    ( [] )}
+| m00 = mode x0000 = raw_atomic_type _20 = DBLARROW xs = list_terminated_mode_constraint_DBLARROW__
+    {let x =
+  let _endpos_x000_ = _endpos_x0000_ in
+  let _startpos_x000_ = _startpos_x0000_ in
+  let _2 = _20 in
+  let x000 = x0000 in
+  let m0 = m00 in
+  let x =
+    let _endpos_x00_ = _endpos_x000_ in
+    let _startpos_x00_ = _startpos_x000_ in
+    let x00 = x000 in
+    let m = m0 in
+    let t =
+      let _endpos_x0_ = _endpos_x00_ in
+      let _startpos_x0_ = _startpos_x00_ in
+      let x0 = x00 in
+      let ty =
+        let _endpos_x_ = _endpos_x0_ in
+        let _startpos_x_ = _startpos_x0_ in
+        let x = x0 in
+        let _endpos = _endpos_x_ in
+            ( TyLocated (x, (_startpos_x_, _endpos)) )
+      in
+          ( ty )
+    in
+        ( m, t )
+  in
+      ( x )
+in
+    ( x :: xs )}
+
 nonempty_list_warn_error_:
   x = warn_error
     {    ( [ x ] )}
 | x = warn_error xs = nonempty_list_warn_error_
     {    ( x :: xs )}
+
+separated_nonempty_list_AND_concrete_data_type_def_:
+  x = concrete_data_type_def
+    {    ( [ x ] )}
+| x = concrete_data_type_def _2 = AND xs = separated_nonempty_list_AND_concrete_data_type_def_
+    {    ( x :: xs )}
+
+separated_nonempty_list_AND_definition_:
+  x = definition
+    {    ( [ x ] )}
+| x = definition _2 = AND xs = separated_nonempty_list_AND_definition_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_algebraic_expression_:
+  x00 = raw_algebraic_expression
+    {let x =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+        ( ELocated (x, (_startpos_x_, _endpos_x_)) )
+  in
+      ( e )
+in
+    ( [ x ] )}
+| x00 = raw_algebraic_expression _2 = COMMA xs = separated_nonempty_list_COMMA_algebraic_expression_
+    {let x =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+        ( ELocated (x, (_startpos_x_, _endpos_x_)) )
+  in
+      ( e )
+in
+    ( x :: xs )}
+
+separated_nonempty_list_COMMA_atomic_pattern_:
+  x00 = raw_atomic_pattern
+    {let x =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let p =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+        ( PLocated (x, (_startpos_x_, _endpos)) )
+  in
+      ( p )
+in
+    ( [ x ] )}
+| x00 = raw_atomic_pattern _2 = COMMA xs = separated_nonempty_list_COMMA_atomic_pattern_
+    {let x =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let p =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+        ( PLocated (x, (_startpos_x_, _endpos)) )
+  in
+      ( p )
+in
+    ( x :: xs )}
+
+separated_nonempty_list_COMMA_consumes_type_:
+  x00 = raw_consumes_type
+    {let x =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+        ( TyLocated (x, (_startpos_x_, _endpos)) )
+  in
+      ( ty )
+in
+    ( [ x ] )}
+| x00 = raw_consumes_type _2 = COMMA xs = separated_nonempty_list_COMMA_consumes_type_
+    {let x =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+        ( TyLocated (x, (_startpos_x_, _endpos)) )
+  in
+      ( ty )
+in
+    ( x :: xs )}
+
+separated_nonempty_list_COMMA_type_application_component_:
+  x = type_application_component
+    {    ( [ x ] )}
+| x = type_application_component _2 = COMMA xs = separated_nonempty_list_COMMA_type_application_component_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_variable_:
+  x = variable
+    {    ( [ x ] )}
+| x = variable _2 = COMMA xs = separated_nonempty_list_COMMA_variable_
+    {    ( x :: xs )}
+
+separated_nonempty_list_DBLARROW_mode_constraint_:
+  m0 = mode x000 = raw_atomic_type
+    {let x =
+  let _endpos_x00_ = _endpos_x000_ in
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let m = m0 in
+  let t =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _endpos_x_ = _endpos_x0_ in
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      let _endpos = _endpos_x_ in
+          ( TyLocated (x, (_startpos_x_, _endpos)) )
+    in
+        ( ty )
+  in
+      ( m, t )
+in
+    ( [ x ] )}
+| m0 = mode x000 = raw_atomic_type _2 = DBLARROW xs = separated_nonempty_list_DBLARROW_mode_constraint_
+    {let x =
+  let _endpos_x00_ = _endpos_x000_ in
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let m = m0 in
+  let t =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _endpos_x_ = _endpos_x0_ in
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      let _endpos = _endpos_x_ in
+          ( TyLocated (x, (_startpos_x_, _endpos)) )
+    in
+        ( ty )
+  in
+      ( m, t )
+in
+    ( x :: xs )}
 
 variable:
   x = LIDENT
@@ -633,16 +468,6 @@ in
 in
       ( Variable.register x )}
 
-maybe_qualified_variable_:
-  x = variable
-    {    ( Unqualified x )}
-| name0 = LIDENT _2 = COLONCOLON x = variable
-    {let m =
-  let name = name0 in
-      ( Module.register name )
-in
-    ( Qualified (m, x) )}
-
 maybe_qualified_datacon_:
   datacon0 = UIDENT
     {let x =
@@ -660,6 +485,48 @@ let m =
       ( Module.register name )
 in
     ( Qualified (m, x) )}
+
+maybe_qualified_variable_:
+  x = variable
+    {    ( Unqualified x )}
+| name0 = LIDENT _2 = COLONCOLON x = variable
+    {let m =
+  let name = name0 in
+      ( Module.register name )
+in
+    ( Qualified (m, x) )}
+
+right_flexible_list_COMMA_type_binding_:
+  
+    {    ( [] )}
+| x = type_binding
+    {    ( [x] )}
+| x = type_binding _2 = COMMA xs = right_flexible_list_COMMA_type_binding_
+    {    ( x :: xs )}
+
+right_flexible_list_SEMI_data_field_def_:
+  
+    {    ( [] )}
+| x = data_field_def
+    {    ( [x] )}
+| x = data_field_def _2 = SEMI xs = right_flexible_list_SEMI_data_field_def_
+    {    ( x :: xs )}
+
+right_flexible_list_SEMI_data_field_expression_:
+  
+    {    ( [] )}
+| x = data_field_expression
+    {    ( [x] )}
+| x = data_field_expression _2 = SEMI xs = right_flexible_list_SEMI_data_field_expression_
+    {    ( x :: xs )}
+
+right_flexible_list_SEMI_data_field_pattern_:
+  
+    {    ( [] )}
+| x = data_field_pattern
+    {    ( [x] )}
+| x = data_field_pattern _2 = SEMI xs = right_flexible_list_SEMI_data_field_pattern_
+    {    ( x :: xs )}
 
 reverse_left_flexible_list_BAR_data_type_def_branch_:
   
@@ -749,9 +616,110 @@ in
 in
     ( x :: xs )}
 
+reverse_left_flexible_list_BAR_match_branch_:
+  
+    {    ( [] )}
+| x001 = raw_normal_pattern _20 = ARROW x0000 = raw_tuple_or_raw_fragile_expression_
+    {let x =
+  let _endpos_x000_ = _endpos_x0000_ in
+  let _startpos_x000_ = _startpos_x0000_ in
+  let _endpos_x00_ = _endpos_x001_ in
+  let _startpos_x00_ = _startpos_x001_ in
+  let x000 = x0000 in
+  let _2 = _20 in
+  let x00 = x001 in
+  let e =
+    let _endpos_x00_ = _endpos_x000_ in
+    let _startpos_x00_ = _startpos_x000_ in
+    let x00 = x000 in
+    let e =
+      let _endpos_x0_ = _endpos_x00_ in
+      let _startpos_x0_ = _startpos_x00_ in
+      let x0 = x00 in
+      let e =
+        let _endpos_x_ = _endpos_x0_ in
+        let _startpos_x_ = _startpos_x0_ in
+        let x = x0 in
+            ( ELocated (x, (_startpos_x_, _endpos_x_)) )
+      in
+          ( e )
+    in
+        ( e )
+  in
+  let p =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let p =
+      let _endpos_x_ = _endpos_x0_ in
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      let _endpos = _endpos_x_ in
+          ( PLocated (x, (_startpos_x_, _endpos)) )
+    in
+        ( p )
+  in
+      ( p, e )
+in
+    ( [x] )}
+| xs = reverse_left_flexible_list_BAR_match_branch_ _2 = BAR x001 = raw_normal_pattern _20 = ARROW x0000 = raw_tuple_or_raw_fragile_expression_
+    {let x =
+  let _endpos_x000_ = _endpos_x0000_ in
+  let _startpos_x000_ = _startpos_x0000_ in
+  let _endpos_x00_ = _endpos_x001_ in
+  let _startpos_x00_ = _startpos_x001_ in
+  let x000 = x0000 in
+  let _2 = _20 in
+  let x00 = x001 in
+  let e =
+    let _endpos_x00_ = _endpos_x000_ in
+    let _startpos_x00_ = _startpos_x000_ in
+    let x00 = x000 in
+    let e =
+      let _endpos_x0_ = _endpos_x00_ in
+      let _startpos_x0_ = _startpos_x00_ in
+      let x0 = x00 in
+      let e =
+        let _endpos_x_ = _endpos_x0_ in
+        let _startpos_x_ = _startpos_x0_ in
+        let x = x0 in
+            ( ELocated (x, (_startpos_x_, _endpos_x_)) )
+      in
+          ( e )
+    in
+        ( e )
+  in
+  let p =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let p =
+      let _endpos_x_ = _endpos_x0_ in
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      let _endpos = _endpos_x_ in
+          ( PLocated (x, (_startpos_x_, _endpos)) )
+    in
+        ( p )
+  in
+      ( p, e )
+in
+    ( x :: xs )}
+
 type_parameters:
   _1 = LBRACKET bs = right_flexible_list_COMMA_type_binding_ _3 = RBRACKET
     {    ( bs )}
+
+existential_quantifiers:
+  _1 = LBRACE bs = right_flexible_list_COMMA_type_binding_ _3 = RBRACE
+    {    ( bs )}
+
+atomic_type_binding:
+  x = variable
+    {let _endpos = _endpos_x_ in
+    ( x, KType, (_startpos_x_, _endpos) )}
+| _1 = LPAREN b = type_binding _3 = RPAREN
+    {    ( b )}
 
 variance:
   _1 = PLUS
@@ -760,6 +728,10 @@ variance:
     {    ( Contravariant )}
 | 
     {    ( Invariant )}
+
+atomic_type_binding_with_variance:
+  v = variance b = atomic_type_binding
+    {    ( v, b )}
 
 type_binding:
   b = atomic_type_binding
@@ -772,6 +744,20 @@ in
 let _endpos_kind_ = _endpos_kind0_ in
 let _endpos = _endpos_kind_ in
     ( x, kind, (_startpos_x_, _endpos) )}
+
+atomic_kind:
+  _1 = LPAREN kind0 = atomic_kind _3 = RPAREN
+    {let kind =
+  let kind = kind0 in
+      ( kind )
+in
+    ( kind )}
+| _1 = VALUE
+    {    ( KValue )}
+| _1 = TYPE
+    {    ( KType )}
+| _1 = PERM
+    {    ( KPerm )}
 
 raw_parenthetic_type:
   _1 = LPAREN _2 = RPAREN
@@ -1257,6 +1243,321 @@ mode:
 | _1 = DUPLICABLE
     {    ( Mode.ModeDuplicable )}
 
+generic_datacon_application_data_type_def_branch_content_:
+  d00 = maybe_qualified_datacon_
+    {let x =
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+        ( mk_datacon_reference d )
+  in
+      ( x, [] )
+in
+    ( x )}
+| d00 = maybe_qualified_datacon_ _20 = LBRACE y0 = data_type_def_branch_content _40 = RBRACE
+    {let x =
+  let _4 = _40 in
+  let y = y0 in
+  let _2 = _20 in
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+        ( mk_datacon_reference d )
+  in
+      ( x, y )
+in
+    ( x )}
+
+generic_datacon_application_right_flexible_list_SEMI_data_field_expression__:
+  d00 = maybe_qualified_datacon_
+    {let x =
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+        ( mk_datacon_reference d )
+  in
+      ( x, [] )
+in
+    ( x )}
+| d00 = maybe_qualified_datacon_ _20 = LBRACE y0 = right_flexible_list_SEMI_data_field_expression_ _40 = RBRACE
+    {let x =
+  let _4 = _40 in
+  let y = y0 in
+  let _2 = _20 in
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+        ( mk_datacon_reference d )
+  in
+      ( x, y )
+in
+    ( x )}
+
+generic_datacon_application_right_flexible_list_SEMI_data_field_pattern__:
+  d00 = maybe_qualified_datacon_
+    {let x =
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+        ( mk_datacon_reference d )
+  in
+      ( x, [] )
+in
+    ( x )}
+| d00 = maybe_qualified_datacon_ _20 = LBRACE y0 = right_flexible_list_SEMI_data_field_pattern_ _40 = RBRACE
+    {let x =
+  let _4 = _40 in
+  let y = y0 in
+  let _2 = _20 in
+  let d0 = d00 in
+  let x =
+    let d = d0 in
+        ( mk_datacon_reference d )
+  in
+      ( x, y )
+in
+    ( x )}
+
+data_field_def:
+  fs = separated_nonempty_list_COMMA_variable_ _2 = COLON x00 = raw_normal_type
+    {let ty =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+        ( TyLocated (x, (_startpos_x_, _endpos)) )
+  in
+      ( ty )
+in
+    ( List.map (fun f -> `FieldValue (f, ty)) fs )}
+| fs = separated_nonempty_list_COMMA_variable_ _2 = COLONCOLON x00 = raw_normal_type
+    {let ty =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+        ( TyLocated (x, (_startpos_x_, _endpos)) )
+  in
+      ( ty )
+in
+    ( List.map (fun f -> `FieldBindingValue (f, ty)) fs )}
+| f = variable _2 = EQUAL x0 = maybe_qualified_variable_
+    {let y =
+  let x = x0 in
+      ( TyVar x )
+in
+    ( [ `FieldValue (f, TySingleton y) ] )}
+| f = variable
+    {    ( [ `FieldValue (f, TySingleton (TyVar (Unqualified f))) ] )}
+
+data_type_def_branch_content:
+  fss0 = right_flexible_list_SEMI_data_field_def_
+    {let fs =
+  let fss = fss0 in
+      ( List.flatten fss )
+in
+    ( fs )}
+| fss0 = right_flexible_list_SEMI_data_field_def_ _2 = BAR x00 = raw_very_loose_type
+    {let perm =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let ty =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+        ( TyLocated (x, (_startpos_x_, _endpos)) )
+  in
+      ( ty )
+in
+let fs =
+  let fss = fss0 in
+      ( List.flatten fss )
+in
+    ( fs @ [ `FieldPermission perm ] )}
+
+fact:
+  _1 = FACT cs = separated_nonempty_list_DBLARROW_mode_constraint_
+    {    ( match List.rev cs with goal :: hypotheses -> Fact (List.rev hypotheses, goal) | [] -> assert false )}
+
+concrete_data_type_def:
+  x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
+    {let rhs =
+  let xs0 = xs00 in
+  let bs =
+    let xs = xs0 in
+        ( List.rev xs )
+  in
+      ( bs )
+in
+let lhs =
+  let _endpos_x_ = _endpos_x0_ in
+  let _startpos_x_ = _startpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, (_startpos_x_, _endpos_x_)),
+        ys
+    )
+in
+let flavor =
+      ( DataTypeFlavor.Immutable )
+in
+    ( { lhs = lhs KType; rhs = Concrete (flavor, rhs, a) } )}
+| _10 = MUTABLE x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL xs00 = reverse_left_flexible_list_BAR_data_type_def_branch_ a = option_preceded_ADOPTS_arbitrary_type__
+    {let rhs =
+  let xs0 = xs00 in
+  let bs =
+    let xs = xs0 in
+        ( List.rev xs )
+  in
+      ( bs )
+in
+let lhs =
+  let _endpos_x_ = _endpos_x0_ in
+  let _startpos_x_ = _startpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, (_startpos_x_, _endpos_x_)),
+        ys
+    )
+in
+let flavor =
+  let _1 = _10 in
+      ( DataTypeFlavor.Mutable )
+in
+    ( { lhs = lhs KType; rhs = Concrete (flavor, rhs, a) } )}
+
+abstract_data_type_def:
+  x0 = variable ys0 = list_atomic_type_binding_with_variance_ facts = list_fact_
+    {let k =
+      ( KType )
+in
+let lhs =
+  let _endpos_x_ = _endpos_x0_ in
+  let _startpos_x_ = _startpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, (_startpos_x_, _endpos_x_)),
+        ys
+    )
+in
+    ( { lhs = lhs k; rhs = Abstract facts } )}
+| x0 = variable ys0 = list_atomic_type_binding_with_variance_ _10 = COLON kind00 = atomic_kind facts = list_fact_
+    {let k =
+  let kind0 = kind00 in
+  let _1 = _10 in
+  let k =
+    let kind = kind0 in
+        ( kind )
+  in
+      ( k )
+in
+let lhs =
+  let _endpos_x_ = _endpos_x0_ in
+  let _startpos_x_ = _startpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, (_startpos_x_, _endpos_x_)),
+        ys
+    )
+in
+    ( { lhs = lhs k; rhs = Abstract facts } )}
+
+abbreviation_def:
+  x0 = variable ys0 = list_atomic_type_binding_with_variance_ _3 = EQUAL x000 = raw_fat_type
+    {let t =
+  let _endpos_x00_ = _endpos_x000_ in
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let ty =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _endpos_x_ = _endpos_x0_ in
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      let _endpos = _endpos_x_ in
+          ( TyLocated (x, (_startpos_x_, _endpos)) )
+    in
+      ( ty )
+  in
+      ( ty )
+in
+let k =
+      ( KType )
+in
+let lhs =
+  let _endpos_x_ = _endpos_x0_ in
+  let _startpos_x_ = _startpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, (_startpos_x_, _endpos_x_)),
+        ys
+    )
+in
+    ( { lhs = lhs k; rhs = Abbrev t } )}
+| x0 = variable ys0 = list_atomic_type_binding_with_variance_ _10 = COLON kind00 = atomic_kind _3 = EQUAL x000 = raw_fat_type
+    {let t =
+  let _endpos_x00_ = _endpos_x000_ in
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let ty =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let ty =
+      let _endpos_x_ = _endpos_x0_ in
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      let _endpos = _endpos_x_ in
+          ( TyLocated (x, (_startpos_x_, _endpos)) )
+    in
+      ( ty )
+  in
+      ( ty )
+in
+let k =
+  let kind0 = kind00 in
+  let _1 = _10 in
+  let k =
+    let kind = kind0 in
+        ( kind )
+  in
+      ( k )
+in
+let lhs =
+  let _endpos_x_ = _endpos_x0_ in
+  let _startpos_x_ = _startpos_x0_ in
+  let ys = ys0 in
+  let x = x0 in
+      ( (* A little hack: we don't know the kind yet, so we abstract over it. *)
+      fun kind ->
+        (x, kind, (_startpos_x_, _endpos_x_)),
+        ys
+    )
+in
+    ( { lhs = lhs k; rhs = Abbrev t } )}
+
 raw_atomic_pattern:
   _1 = LPAREN _2 = RPAREN
     {    ( PTuple [] )}
@@ -1291,6 +1592,31 @@ in
     {    ( PVar x )}
 | _1 = UNDERSCORE
     {    ( PAny )}
+
+data_field_pattern:
+  f = variable _2 = EQUAL x000 = raw_loose_pattern
+    {let p =
+  let _endpos_x00_ = _endpos_x000_ in
+  let _startpos_x00_ = _startpos_x000_ in
+  let x00 = x000 in
+  let p =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let p =
+      let _endpos_x_ = _endpos_x0_ in
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+      let _endpos = _endpos_x_ in
+          ( PLocated (x, (_startpos_x_, _endpos)) )
+    in
+        ( p )
+  in
+      ( p )
+in
+    ( f, p )}
+| f = variable
+    {    ( f, PVar f )}
 
 raw_normal_pattern:
   p = raw_atomic_pattern
@@ -1427,6 +1753,36 @@ in
     {    ( match es with [ e ] -> e | _ -> ETuple es )}
 | _1 = BEGIN es = parenthesized_tuple_components _3 = END
     {    ( match es with [ e ] -> e | _ -> ETuple es )}
+
+parenthesized_tuple_components:
+  x00 = raw_fragile_expression
+    {let e =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+        ( ELocated (x, (_startpos_x_, _endpos_x_)) )
+  in
+      ( e )
+in
+    ( [ e ] )}
+| x00 = raw_algebraic_expression _2 = COMMA e2 = parenthesized_tuple_components
+    {let e1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let e =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+        ( ELocated (x, (_startpos_x_, _endpos_x_)) )
+  in
+      ( e )
+in
+    ( e1 :: e2 )}
 
 data_field_expression:
   f = variable _2 = EQUAL e = reasonable_expression
@@ -1968,32 +2324,6 @@ in
 | e = raw_application_expression
     {    ( e )}
 
-raw_tuple_or_raw_reasonable_expression_:
-  x000 = raw_algebraic_expression _20 = COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
-    {let es =
-  let _endpos_x00_ = _endpos_x000_ in
-  let _startpos_x00_ = _startpos_x000_ in
-  let x2 = x20 in
-  let _2 = _20 in
-  let x00 = x000 in
-  let x1 =
-    let _endpos_x0_ = _endpos_x00_ in
-    let _startpos_x0_ = _startpos_x00_ in
-    let x0 = x00 in
-    let e =
-      let _endpos_x_ = _endpos_x0_ in
-      let _startpos_x_ = _startpos_x0_ in
-      let x = x0 in
-          ( ELocated (x, (_startpos_x_, _endpos_x_)) )
-    in
-        ( e )
-  in
-      ( x1 :: x2 )
-in
-    ( ETuple es )}
-| e = raw_reasonable_expression
-    {    ( e )}
-
 raw_tuple_or_raw_fragile_expression_:
   x000 = raw_algebraic_expression _20 = COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
     {let es =
@@ -2018,6 +2348,32 @@ raw_tuple_or_raw_fragile_expression_:
 in
     ( ETuple es )}
 | e = raw_fragile_expression
+    {    ( e )}
+
+raw_tuple_or_raw_reasonable_expression_:
+  x000 = raw_algebraic_expression _20 = COMMA x20 = separated_nonempty_list_COMMA_algebraic_expression_
+    {let es =
+  let _endpos_x00_ = _endpos_x000_ in
+  let _startpos_x00_ = _startpos_x000_ in
+  let x2 = x20 in
+  let _2 = _20 in
+  let x00 = x000 in
+  let x1 =
+    let _endpos_x0_ = _endpos_x00_ in
+    let _startpos_x0_ = _startpos_x00_ in
+    let x0 = x00 in
+    let e =
+      let _endpos_x_ = _endpos_x0_ in
+      let _startpos_x_ = _startpos_x0_ in
+      let x = x0 in
+          ( ELocated (x, (_startpos_x_, _endpos_x_)) )
+    in
+        ( e )
+  in
+      ( x1 :: x2 )
+in
+    ( ETuple es )}
+| e = raw_reasonable_expression
     {    ( e )}
 
 reasonable_expression:
@@ -2538,64 +2894,6 @@ rec_flag:
 | 
     {    ( Nonrecursive )}
 
-loption_type_parameters_:
-  
-    {    ( [] )}
-| x = type_parameters
-    {    ( x )}
-
-loption_separated_nonempty_list_AND_definition__:
-  
-    {    ( [] )}
-| x = separated_nonempty_list_AND_definition_
-    {    ( x )}
-
-list_terminated_mode_constraint_DBLARROW__:
-  
-    {    ( [] )}
-| m00 = mode x0000 = raw_atomic_type _20 = DBLARROW xs = list_terminated_mode_constraint_DBLARROW__
-    {let x =
-  let _endpos_x000_ = _endpos_x0000_ in
-  let _startpos_x000_ = _startpos_x0000_ in
-  let _2 = _20 in
-  let x000 = x0000 in
-  let m0 = m00 in
-  let x =
-    let _endpos_x00_ = _endpos_x000_ in
-    let _startpos_x00_ = _startpos_x000_ in
-    let x00 = x000 in
-    let m = m0 in
-    let t =
-      let _endpos_x0_ = _endpos_x00_ in
-      let _startpos_x0_ = _startpos_x00_ in
-      let x0 = x00 in
-      let ty =
-        let _endpos_x_ = _endpos_x0_ in
-        let _startpos_x_ = _startpos_x0_ in
-        let x = x0 in
-        let _endpos = _endpos_x_ in
-            ( TyLocated (x, (_startpos_x_, _endpos)) )
-      in
-          ( ty )
-    in
-        ( m, t )
-  in
-      ( x )
-in
-    ( x :: xs )}
-
-list_interface_item_:
-  
-    {    ( [] )}
-| x = interface_item xs = list_interface_item_
-    {    ( x :: xs )}
-
-list_implementation_item_:
-  
-    {    ( [] )}
-| x = implementation_item xs = list_implementation_item_
-    {    ( x :: xs )}
-
 direction:
   _1 = TO
     {    ( To )}
@@ -2899,312 +3197,6 @@ implementation:
   items = list_implementation_item_ _2 = EOF
     {    ( items )}
 
-warn_error_list:
-  ws = nonempty_list_warn_error_ _2 = EOF
-    {  ( ws )}
-
-warn_error:
-  f = flag r = range
-    {  ( f, r )}
-
-list_fact_:
-  
-    {    ( [] )}
-| x = fact xs = list_fact_
-    {    ( x :: xs )}
-
-list_atomic_type_binding_with_variance_:
-  
-    {    ( [] )}
-| x = atomic_type_binding_with_variance xs = list_atomic_type_binding_with_variance_
-    {    ( x :: xs )}
-
-separated_nonempty_list_DBLARROW_mode_constraint_:
-  m0 = mode x000 = raw_atomic_type
-    {let x =
-  let _endpos_x00_ = _endpos_x000_ in
-  let _startpos_x00_ = _startpos_x000_ in
-  let x00 = x000 in
-  let m = m0 in
-  let t =
-    let _endpos_x0_ = _endpos_x00_ in
-    let _startpos_x0_ = _startpos_x00_ in
-    let x0 = x00 in
-    let ty =
-      let _endpos_x_ = _endpos_x0_ in
-      let _startpos_x_ = _startpos_x0_ in
-      let x = x0 in
-      let _endpos = _endpos_x_ in
-          ( TyLocated (x, (_startpos_x_, _endpos)) )
-    in
-        ( ty )
-  in
-      ( m, t )
-in
-    ( [ x ] )}
-| m0 = mode x000 = raw_atomic_type _2 = DBLARROW xs = separated_nonempty_list_DBLARROW_mode_constraint_
-    {let x =
-  let _endpos_x00_ = _endpos_x000_ in
-  let _startpos_x00_ = _startpos_x000_ in
-  let x00 = x000 in
-  let m = m0 in
-  let t =
-    let _endpos_x0_ = _endpos_x00_ in
-    let _startpos_x0_ = _startpos_x00_ in
-    let x0 = x00 in
-    let ty =
-      let _endpos_x_ = _endpos_x0_ in
-      let _startpos_x_ = _startpos_x0_ in
-      let x = x0 in
-      let _endpos = _endpos_x_ in
-          ( TyLocated (x, (_startpos_x_, _endpos)) )
-    in
-        ( ty )
-  in
-      ( m, t )
-in
-    ( x :: xs )}
-
-separated_nonempty_list_COMMA_variable_:
-  x = variable
-    {    ( [ x ] )}
-| x = variable _2 = COMMA xs = separated_nonempty_list_COMMA_variable_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_type_application_component_:
-  x = type_application_component
-    {    ( [ x ] )}
-| x = type_application_component _2 = COMMA xs = separated_nonempty_list_COMMA_type_application_component_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_consumes_type_:
-  x00 = raw_consumes_type
-    {let x =
-  let _endpos_x0_ = _endpos_x00_ in
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let ty =
-    let _endpos_x_ = _endpos_x0_ in
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-    let _endpos = _endpos_x_ in
-        ( TyLocated (x, (_startpos_x_, _endpos)) )
-  in
-      ( ty )
-in
-    ( [ x ] )}
-| x00 = raw_consumes_type _2 = COMMA xs = separated_nonempty_list_COMMA_consumes_type_
-    {let x =
-  let _endpos_x0_ = _endpos_x00_ in
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let ty =
-    let _endpos_x_ = _endpos_x0_ in
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-    let _endpos = _endpos_x_ in
-        ( TyLocated (x, (_startpos_x_, _endpos)) )
-  in
-      ( ty )
-in
-    ( x :: xs )}
-
-separated_nonempty_list_COMMA_atomic_pattern_:
-  x00 = raw_atomic_pattern
-    {let x =
-  let _endpos_x0_ = _endpos_x00_ in
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let p =
-    let _endpos_x_ = _endpos_x0_ in
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-    let _endpos = _endpos_x_ in
-        ( PLocated (x, (_startpos_x_, _endpos)) )
-  in
-      ( p )
-in
-    ( [ x ] )}
-| x00 = raw_atomic_pattern _2 = COMMA xs = separated_nonempty_list_COMMA_atomic_pattern_
-    {let x =
-  let _endpos_x0_ = _endpos_x00_ in
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let p =
-    let _endpos_x_ = _endpos_x0_ in
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-    let _endpos = _endpos_x_ in
-        ( PLocated (x, (_startpos_x_, _endpos)) )
-  in
-      ( p )
-in
-    ( x :: xs )}
-
-separated_nonempty_list_COMMA_algebraic_expression_:
-  x00 = raw_algebraic_expression
-    {let x =
-  let _endpos_x0_ = _endpos_x00_ in
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let e =
-    let _endpos_x_ = _endpos_x0_ in
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-        ( ELocated (x, (_startpos_x_, _endpos_x_)) )
-  in
-      ( e )
-in
-    ( [ x ] )}
-| x00 = raw_algebraic_expression _2 = COMMA xs = separated_nonempty_list_COMMA_algebraic_expression_
-    {let x =
-  let _endpos_x0_ = _endpos_x00_ in
-  let _startpos_x0_ = _startpos_x00_ in
-  let x0 = x00 in
-  let e =
-    let _endpos_x_ = _endpos_x0_ in
-    let _startpos_x_ = _startpos_x0_ in
-    let x = x0 in
-        ( ELocated (x, (_startpos_x_, _endpos_x_)) )
-  in
-      ( e )
-in
-    ( x :: xs )}
-
-separated_nonempty_list_AND_definition_:
-  x = definition
-    {    ( [ x ] )}
-| x = definition _2 = AND xs = separated_nonempty_list_AND_definition_
-    {    ( x :: xs )}
-
-separated_nonempty_list_AND_concrete_data_type_def_:
-  x = concrete_data_type_def
-    {    ( [ x ] )}
-| x = concrete_data_type_def _2 = AND xs = separated_nonempty_list_AND_concrete_data_type_def_
-    {    ( x :: xs )}
-
-right_flexible_list_SEMI_data_field_pattern_:
-  
-    {    ( [] )}
-| x = data_field_pattern
-    {    ( [x] )}
-| x = data_field_pattern _2 = SEMI xs = right_flexible_list_SEMI_data_field_pattern_
-    {    ( x :: xs )}
-
-right_flexible_list_SEMI_data_field_expression_:
-  
-    {    ( [] )}
-| x = data_field_expression
-    {    ( [x] )}
-| x = data_field_expression _2 = SEMI xs = right_flexible_list_SEMI_data_field_expression_
-    {    ( x :: xs )}
-
-right_flexible_list_SEMI_data_field_def_:
-  
-    {    ( [] )}
-| x = data_field_def
-    {    ( [x] )}
-| x = data_field_def _2 = SEMI xs = right_flexible_list_SEMI_data_field_def_
-    {    ( x :: xs )}
-
-right_flexible_list_COMMA_type_binding_:
-  
-    {    ( [] )}
-| x = type_binding
-    {    ( [x] )}
-| x = type_binding _2 = COMMA xs = right_flexible_list_COMMA_type_binding_
-    {    ( x :: xs )}
-
-reverse_left_flexible_list_BAR_match_branch_:
-  
-    {    ( [] )}
-| x001 = raw_normal_pattern _20 = ARROW x0000 = raw_tuple_or_raw_fragile_expression_
-    {let x =
-  let _endpos_x000_ = _endpos_x0000_ in
-  let _startpos_x000_ = _startpos_x0000_ in
-  let _endpos_x00_ = _endpos_x001_ in
-  let _startpos_x00_ = _startpos_x001_ in
-  let x000 = x0000 in
-  let _2 = _20 in
-  let x00 = x001 in
-  let e =
-    let _endpos_x00_ = _endpos_x000_ in
-    let _startpos_x00_ = _startpos_x000_ in
-    let x00 = x000 in
-    let e =
-      let _endpos_x0_ = _endpos_x00_ in
-      let _startpos_x0_ = _startpos_x00_ in
-      let x0 = x00 in
-      let e =
-        let _endpos_x_ = _endpos_x0_ in
-        let _startpos_x_ = _startpos_x0_ in
-        let x = x0 in
-            ( ELocated (x, (_startpos_x_, _endpos_x_)) )
-      in
-          ( e )
-    in
-        ( e )
-  in
-  let p =
-    let _endpos_x0_ = _endpos_x00_ in
-    let _startpos_x0_ = _startpos_x00_ in
-    let x0 = x00 in
-    let p =
-      let _endpos_x_ = _endpos_x0_ in
-      let _startpos_x_ = _startpos_x0_ in
-      let x = x0 in
-      let _endpos = _endpos_x_ in
-          ( PLocated (x, (_startpos_x_, _endpos)) )
-    in
-        ( p )
-  in
-      ( p, e )
-in
-    ( [x] )}
-| xs = reverse_left_flexible_list_BAR_match_branch_ _2 = BAR x001 = raw_normal_pattern _20 = ARROW x0000 = raw_tuple_or_raw_fragile_expression_
-    {let x =
-  let _endpos_x000_ = _endpos_x0000_ in
-  let _startpos_x000_ = _startpos_x0000_ in
-  let _endpos_x00_ = _endpos_x001_ in
-  let _startpos_x00_ = _startpos_x001_ in
-  let x000 = x0000 in
-  let _2 = _20 in
-  let x00 = x001 in
-  let e =
-    let _endpos_x00_ = _endpos_x000_ in
-    let _startpos_x00_ = _startpos_x000_ in
-    let x00 = x000 in
-    let e =
-      let _endpos_x0_ = _endpos_x00_ in
-      let _startpos_x0_ = _startpos_x00_ in
-      let x0 = x00 in
-      let e =
-        let _endpos_x_ = _endpos_x0_ in
-        let _startpos_x_ = _startpos_x0_ in
-        let x = x0 in
-            ( ELocated (x, (_startpos_x_, _endpos_x_)) )
-      in
-          ( e )
-    in
-        ( e )
-  in
-  let p =
-    let _endpos_x0_ = _endpos_x00_ in
-    let _startpos_x0_ = _startpos_x00_ in
-    let x0 = x00 in
-    let p =
-      let _endpos_x_ = _endpos_x0_ in
-      let _startpos_x_ = _startpos_x0_ in
-      let x = x0 in
-      let _endpos = _endpos_x_ in
-          ( PLocated (x, (_startpos_x_, _endpos)) )
-    in
-        ( p )
-  in
-      ( p, e )
-in
-    ( x :: xs )}
-
 interface_item:
   _100 = DATA defs00 = separated_nonempty_list_AND_concrete_data_type_def_
     {let item =
@@ -3274,6 +3266,14 @@ in
 interface:
   items = list_interface_item_ _2 = EOF
     {  ( items )}
+
+warn_error_list:
+  ws = nonempty_list_warn_error_ _2 = EOF
+    {  ( ws )}
+
+warn_error:
+  f = flag r = range
+    {  ( f, r )}
 
 flag:
   _1 = AT
