@@ -42,10 +42,17 @@ bootstrap: .versioncheck stage1 stage2 stage3
 # ----------------------------------------------------------------------------
 # Checking the version of the OCaml compiler.
 
+# We explicitly build checkOCamlVersion as an OCaml binary program,
+# instead of running it as a script, because that would require
+# #loading str.cma, which is not supported on (some versions of?)
+# Windows.
+
 .versioncheck:
 	@ echo Checking that OCaml is recent enough...
-	@$(OCAMLBUILD) -build-dir _stage1 checkOCamlVersion.byte
-	@ _stage1/checkOCamlVersion.byte --verbose --gt "4.02"
+	@ rm -rf _versioncheck
+	@$(OCAMLBUILD) -build-dir _versioncheck checkOCamlVersion.byte
+	@ _versioncheck/checkOCamlVersion.byte --verbose --gt "4.02"
+	@ rm -rf _versioncheck
 	@ touch $@
 
 # ----------------------------------------------------------------------------
