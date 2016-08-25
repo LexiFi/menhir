@@ -20,23 +20,6 @@ let print_start_symbols b g =
     Printf.fprintf b "%%start %s\n" (Misc.normalize symbol)
   ) g.start_symbols
 
-let rec insert_in_partitions item m = function
-  | [] ->
-      [ (m, [ item ]) ]
-
-  | (m', items) :: partitions when InputFile.same_input_file m m' ->
-      (m', item :: items) :: partitions
-
-  | t :: partitions ->
-      t :: (insert_in_partitions item m partitions)
-
-let insert (undefined, partitions) = function
-  | (item, UndefinedPrecedence) ->
-      ((item, 0) :: undefined, partitions)
-
-  | (item, PrecedenceLevel (m, v, _, _)) ->
-      (undefined, insert_in_partitions (item, v) m partitions)
-
 let print_ocamltype ocamltype =
   Printf.sprintf " <%s>" (
     match ocamltype with
@@ -59,20 +42,25 @@ let print_assoc = function
   | UndefinedAssoc ->
       ""
 
+let compare_pairs compare1 compare2 (x1, x2) (y1, y2) =
+  let c = compare1 x1 y1 in
+  if c <> 0 then c
+  else compare2 x2 y2
+
+let compare_tokens (_token, prop) (_token', prop') =
+  match prop.tk_precedence, prop'.tk_precedence with
+  | UndefinedPrecedence, UndefinedPrecedence ->
+      0
+  | UndefinedPrecedence, PrecedenceLevel _ ->
+      -1
+  | PrecedenceLevel _, UndefinedPrecedence ->
+      1
+  | PrecedenceLevel (m, v, _, _), PrecedenceLevel (m', v', _, _) ->
+      compare_pairs InputFile.compare_input_files Pervasives.compare (m, v) (m', v')
+
 let print_tokens mode b g =
-  (* Sort tokens wrt precedence. *)
-  let undefined, partition_tokens =
-    StringMap.fold (fun token prop acu ->
-      insert acu (token, prop.tk_precedence)
-    ) g.tokens ([], [])
-  in
-  let ordered_tokens =
-    List.fold_left (fun acu (_, ms) ->
-      acu @ List.sort (fun (_, v) (_, v') -> compare v v') ms
-    ) undefined partition_tokens
-  in
-  List.iter (fun (token, _) ->
-    let prop = StringMap.find token g.tokens in
+  (* Print the %token declarations. *)
+  StringMap.iter (fun token prop ->
     if prop.tk_is_declared then
       Printf.fprintf b "%%token%s %s\n"
         begin match mode with
@@ -83,34 +71,30 @@ let print_tokens mode b g =
             "" (* omitted ocamltype after %token means <unit> *)
         end
         token
+  ) g.tokens;
+  (* Sort the tokens wrt. precedence. *)
+  let ordered_tokens = List.sort compare_tokens (StringMap.bindings g.tokens) in
+  (* Print the precedence declarations: %left, %right, %nonassoc.
+     This code is a bit trickier than I would like. *)
+  let last_prop : token_properties option ref = ref None in
+  List.iter (fun (token, (prop : token_properties)) ->
+    match !last_prop with
+    | Some prop' when prop.tk_precedence = prop'.tk_precedence ->
+        (* Continue an existing declaration. *)
+        Printf.fprintf b "%s " token
+    | _ ->
+        if prop.tk_precedence = UndefinedPrecedence then
+          assert (!last_prop = None)
+        else begin
+          (* This is a new priority level. End the previous declaration,
+             if there was one, then produce a new declaration. *)
+          if !last_prop <> None then
+            Printf.fprintf b "\n";
+          Printf.fprintf b "%s %s "
+            (print_assoc prop.tk_associativity) token;
+          last_prop := Some prop
+        end
   ) ordered_tokens;
-
-  ignore (List.fold_left
-            (fun last_prop (token, v) ->
-               let prop = StringMap.find token g.tokens in
-                 match last_prop with
-
-                   | None ->
-                       if prop.tk_associativity = UndefinedAssoc then
-                         None
-                       else (
-                         Printf.fprintf b "%s %s "
-                           (print_assoc prop.tk_associativity) token;
-                         Some v)
-
-                   | Some v' when v <> v' ->
-                       if prop.tk_associativity = UndefinedAssoc then
-                         None
-                       else (
-                         Printf.fprintf b "\n%s %s "
-                           (print_assoc prop.tk_associativity) token;
-                         Some v)
-
-                   | Some _ ->
-                       Printf.fprintf b "%s " token;
-                       last_prop
-
-            ) None ordered_tokens);
   Printf.fprintf b "\n"
 
 let print_types mode b g =
@@ -163,11 +147,6 @@ let print_postludes b g =
    specified on the command line. However, this behavior is undocumented, and
    should not be exploited. (In previous versions of Menhir, the function passed
    to [List.sort] was not transitive, so it did not make any sense!) *)
-
-let compare_pairs compare1 compare2 (x1, x2) (y1, y2) =
-  let c = compare1 x1 y1 in
-  if c <> 0 then c
-  else compare2 x2 y2
 
 let compare_branches (b : branch) (b' : branch) =
   match b.branch_production_level, b'.branch_production_level with
