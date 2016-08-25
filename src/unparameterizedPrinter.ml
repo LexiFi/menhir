@@ -169,37 +169,25 @@ let compare_pairs compare1 compare2 (x1, x2) (y1, y2) =
   if c <> 0 then c
   else compare2 x2 y2
 
-let branches_order r r' =
-  let branch_order b b' =
-    match b.branch_production_level, b'.branch_production_level with
-    | ProductionLevel (m, l), ProductionLevel (m', l') ->
-        compare_pairs InputFile.compare_input_files Pervasives.compare (m, l) (m', l')
-  in
-  (* TEMPORARY I don't think we need a lexicographic ordering here *)
-  let rec lexical_order bs bs' =
-    match bs, bs' with
-      | [], [] ->
-          0
-      | [], _ ->
-          -1
-      | _, [] ->
-          1
-      | b :: bs, b' :: bs' ->
-          match branch_order b b' with
-            | 0 ->
-                lexical_order bs bs'
-            | x ->
-                x
-  in
-    lexical_order r.branches r'.branches
+let compare_branches (b : branch) (b' : branch) =
+  match b.branch_production_level, b'.branch_production_level with
+  | ProductionLevel (m, l), ProductionLevel (m', l') ->
+      compare_pairs InputFile.compare_input_files Pervasives.compare (m, l) (m', l')
+
+let compare_rules (_nt, (r : rule)) (_nt', (r' : rule)) =
+  match r.branches, r'.branches with
+  | [], [] ->
+      0
+  | [], _ ->
+      -1
+  | _, [] ->
+      1
+  | b :: _, b' :: _ ->
+      (* To compare two rules, it suffices to compare their first productions. *)
+      compare_branches b b'
 
 let print_rules mode b g =
-  let rules_as_list =
-    StringMap.fold (fun nt r acu -> (nt, r) :: acu) g.rules []
-  in
-  let ordered_rules =
-    List.sort (fun (_nt, r) (_nt', r') -> branches_order r r') rules_as_list
-  in
+  let rules = List.sort compare_rules (StringMap.bindings g.rules) in
   List.iter (fun (nt, r) ->
     Printf.fprintf b "\n%s:\n" (Misc.normalize nt);
     let first = ref true in
@@ -210,7 +198,7 @@ let print_rules mode b g =
       Printf.fprintf b "%s" sep;
       print_branch mode b br
     ) r.branches
-  ) ordered_rules
+  ) rules
 
 let print mode f g =
   List.iter (print_parameter f) g.parameters;
