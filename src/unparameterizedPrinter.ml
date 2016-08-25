@@ -40,6 +40,9 @@ let print_ocamltype ocamltype =
         t
     )
 
+let print_parameter f stretch =
+  Printf.fprintf f "%%parameter<%s>\n" stretch.stretch_raw_content
+
 let print_assoc = function
   | LeftAssoc ->
       Printf.sprintf "%%left"
@@ -197,6 +200,7 @@ let print_rules mode b g =
   ) ordered_rules
 
 let print mode f g =
+  List.iter (print_parameter f) g.parameters;
   begin match mode with
   | PrintNormal ->
       print_preludes f g
