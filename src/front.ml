@@ -10,7 +10,7 @@ let load_partial_grammar filename =
     Error.error []
       "argument file names should end in %s. \"%s\" is not accepted."
       validExt filename;
-  Error.set_filename filename;
+  Error.new_input_file filename;
   try
 
     let contents = IO.read_whole_file filename in

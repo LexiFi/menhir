@@ -55,10 +55,10 @@ type precedence_level =
     UndefinedPrecedence
 
   (* Items are incomparable when they originate in different files. A
-     brand of type [Mark.t] is used to record an item's origin. The
+     value of type [input_file] is used to record an item's origin. The
      positions allow locating certain warnings. *)
 
-  | PrecedenceLevel of Mark.t * int * Lexing.position * Lexing.position
+  | PrecedenceLevel of Error.input_file * int * Lexing.position * Lexing.position
 
 type token_properties =
     {
@@ -84,7 +84,7 @@ type branch_prec_annotation =
    which production appears first in the grammar. See [ParserAux]. *)
 
 type branch_production_level =
-  | ProductionLevel of Mark.t * int
+  | ProductionLevel of Error.input_file * int
 
 (* ------------------------------------------------------------------------ *)
 

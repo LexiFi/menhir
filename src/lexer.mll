@@ -243,7 +243,7 @@ let mk_stretch pos1 pos2 parenthesize monsters =
       (String.make (pos1.pos_cnum - pos1.pos_bol) ' ') ^ content
   in
   Stretch.({
-    stretch_filename = Error.get_filename();
+    stretch_filename = Error.get_input_file_name();
     stretch_linenum = pos1.pos_lnum;
     stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
     stretch_content = content;

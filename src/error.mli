@@ -9,11 +9,15 @@
 
 (* TEMPORARY limiter ou supprimer ou commenter cette interface stateful *)
 
-val set_filename: string -> unit
+val new_input_file: string -> unit
 
-val get_filename: unit -> string
+val get_input_file_name: unit -> string
 
-val get_filemark: unit -> Mark.t
+type input_file
+val builtin_input_file: input_file
+val same_input_file: input_file -> input_file -> bool
+val compare_input_files: input_file -> input_file -> int
+val get_input_file: unit -> input_file
 
 val file_contents: string option ref
 
@@ -62,4 +66,3 @@ val warning: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
    [errors] and stop the program if any errors have been reported. *)
 
 val grammar_warning: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
-

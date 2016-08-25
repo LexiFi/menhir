@@ -24,7 +24,7 @@ let rec insert_in_partitions item m = function
   | [] ->
       [ (m, [ item ]) ]
 
-  | (m', items) :: partitions when Mark.same m m' ->
+  | (m', items) :: partitions when Error.same_input_file m m' ->
       (m', item :: items) :: partitions
 
   | t :: partitions ->
@@ -156,19 +156,26 @@ let print_postludes b g =
 (* Because the resolution of reduce/reduce conflicts is implicitly dictated by
    the order in which productions appear in the grammar, the printer should be
    careful to preserve this order. *)
+
+(* 2016/08/25: As noted above, when two productions originate in different files,
+   we have a problem. We MUST print them in some order, even though they should
+   be incomparable. In that case, we use the order in which the source files are
+   specified on the command line. However, this behavior is undocumented, and
+   should not be exploited. (In previous versions of Menhir, the function passed
+   to [List.sort] was not transitive, so it did not make any sense!) *)
+
+let compare_pairs compare1 compare2 (x1, x2) (y1, y2) =
+  let c = compare1 x1 y1 in
+  if c <> 0 then c
+  else compare2 x2 y2
+
 let branches_order r r' =
   let branch_order b b' =
     match b.branch_production_level, b'.branch_production_level with
-      | ProductionLevel (m, l), ProductionLevel (m', l') ->
-          if Mark.same m m' then
-            if l < l' then
-              -1
-            else if l > l' then
-              1
-            else
-              0
-          else 0
+    | ProductionLevel (m, l), ProductionLevel (m', l') ->
+        compare_pairs Error.compare_input_files Pervasives.compare (m, l) (m', l')
   in
+  (* TEMPORARY I don't think we need a lexicographic ordering here *)
   let rec lexical_order bs bs' =
     match bs, bs' with
       | [], [] ->
