@@ -4,6 +4,12 @@ open Stretch
 open UnparameterizedSyntax
 open Settings
 
+(* When the original grammar is split over several files, it may be IMPOSSIBLE
+   to print it out into a single file, as this will introduce a total ordering
+   (between rules, between priority declarations, between %on_error_reduce
+   declarations) that did not exist originally. We currently do not warn about
+   this problem. Nobody has ever complained about it. *)
+
 let print_preludes f g =
   List.iter (fun prelude ->
     Printf.fprintf f "%%{%s%%}\n" prelude.stretch_raw_content
