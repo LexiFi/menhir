@@ -142,10 +142,13 @@ let print_postludes b g =
    should not be exploited. (In previous versions of Menhir, the function passed
    to [List.sort] was not transitive, so it did not make any sense!) *)
 
-let compare_branches (b : branch) (b' : branch) =
-  match b.branch_production_level, b'.branch_production_level with
+let compare_branch_production_levels bpl bpl' =
+  match bpl, bpl' with
   | ProductionLevel (m, l), ProductionLevel (m', l') ->
       compare_pairs InputFile.compare_input_files Pervasives.compare (m, l) (m', l')
+
+let compare_branches (b : branch) (b' : branch) =
+  compare_branch_production_levels b.branch_production_level b'.branch_production_level
 
 let compare_rules (_nt, (r : rule)) (_nt', (r' : rule)) =
   match r.branches, r'.branches with
@@ -173,6 +176,23 @@ let print_rules mode b g =
     ) r.branches
   ) rules
 
+let print_on_error_reduce_declarations f g =
+  let cmp (_nt, oel) (_nt', oel') =
+    compare_branch_production_levels oel oel'
+  in
+  let levels : (string * on_error_reduce_level) list list =
+    Misc.levels cmp (List.sort cmp (
+      StringMap.bindings g.on_error_reduce
+    ))
+  in
+  List.iter (fun level ->
+    Printf.fprintf f "%%on_error_reduce";
+    List.iter (fun (nt, _level) ->
+      Printf.fprintf f " %s" nt
+    ) level;
+    Printf.fprintf f "\n"
+  ) levels
+
 let print mode f g =
   List.iter (print_parameter f) g.parameters;
   begin match mode with
@@ -185,6 +205,7 @@ let print mode f g =
   print_start_symbols f g;
   print_tokens mode f g;
   print_types mode f g;
+  print_on_error_reduce_declarations f g;
   Printf.fprintf f "%%%%\n";
   print_rules mode f g;
   Printf.fprintf f "\n%%%%\n";
