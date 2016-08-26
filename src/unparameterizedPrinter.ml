@@ -72,30 +72,24 @@ let print_tokens mode b g =
         end
         token
   ) g.tokens;
-  (* Sort the tokens wrt. precedence. *)
-  let ordered_tokens = List.sort compare_tokens (StringMap.bindings g.tokens) in
-  (* Print the precedence declarations: %left, %right, %nonassoc.
-     This code is a bit trickier than I would like. *)
-  let last_prop : token_properties option ref = ref None in
-  List.iter (fun (token, (prop : token_properties)) ->
-    match !last_prop with
-    | Some prop' when prop.tk_precedence = prop'.tk_precedence ->
-        (* Continue an existing declaration. *)
-        Printf.fprintf b "%s " token
-    | _ ->
-        if prop.tk_precedence = UndefinedPrecedence then
-          assert (!last_prop = None)
-        else begin
-          (* This is a new priority level. End the previous declaration,
-             if there was one, then produce a new declaration. *)
-          if !last_prop <> None then
-            Printf.fprintf b "\n";
-          Printf.fprintf b "%s %s "
-            (print_assoc prop.tk_associativity) token;
-          last_prop := Some prop
-        end
-  ) ordered_tokens;
-  Printf.fprintf b "\n"
+  (* Sort the tokens wrt. precedence, and group them into levels. *)
+  let levels : (string * token_properties) list list =
+    Misc.levels compare_tokens (List.sort compare_tokens (
+      StringMap.bindings g.tokens
+    ))
+  in
+  (* Print the precedence declarations: %left, %right, %nonassoc. *)
+  List.iter (fun level ->
+    let (_token, prop) = try List.hd level with Failure _ -> assert false in
+    (* Do nothing about the tokens that have no precedence. *)
+    if prop.tk_precedence <> UndefinedPrecedence then begin
+      Printf.fprintf b "%s" (print_assoc prop.tk_associativity);
+      List.iter (fun (token, _prop) ->
+        Printf.fprintf b " %s" token
+      ) level;
+      Printf.fprintf b "\n"
+    end
+  ) levels
 
 let print_types mode b g =
   StringMap.iter (fun symbol ty ->
