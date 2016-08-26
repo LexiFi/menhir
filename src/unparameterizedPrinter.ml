@@ -15,9 +15,9 @@ let print_preludes f g =
     Printf.fprintf f "%%{%s%%}\n" prelude.stretch_raw_content
   ) g.preludes
 
-let print_start_symbols b g =
+let print_start_symbols f g =
   StringSet.iter (fun symbol ->
-    Printf.fprintf b "%%start %s\n" (Misc.normalize symbol)
+    Printf.fprintf f "%%start %s\n" (Misc.normalize symbol)
   ) g.start_symbols
 
 let print_ocamltype ocamltype =
@@ -58,11 +58,11 @@ let compare_tokens (_token, prop) (_token', prop') =
   | PrecedenceLevel (m, v, _, _), PrecedenceLevel (m', v', _, _) ->
       compare_pairs InputFile.compare_input_files Pervasives.compare (m, v) (m', v')
 
-let print_tokens mode b g =
+let print_tokens mode f g =
   (* Print the %token declarations. *)
   StringMap.iter (fun token prop ->
     if prop.tk_is_declared then
-      Printf.fprintf b "%%token%s %s\n"
+      Printf.fprintf f "%%token%s %s\n"
         begin match mode with
         | PrintNormal
         | PrintUnitActions ->
@@ -83,17 +83,17 @@ let print_tokens mode b g =
     let (_token, prop) = try List.hd level with Failure _ -> assert false in
     (* Do nothing about the tokens that have no precedence. *)
     if prop.tk_precedence <> UndefinedPrecedence then begin
-      Printf.fprintf b "%s" (print_assoc prop.tk_associativity);
+      Printf.fprintf f "%s" (print_assoc prop.tk_associativity);
       List.iter (fun (token, _prop) ->
-        Printf.fprintf b " %s" token
+        Printf.fprintf f " %s" token
       ) level;
-      Printf.fprintf b "\n"
+      Printf.fprintf f "\n"
     end
   ) levels
 
-let print_types mode b g =
+let print_types mode f g =
   StringMap.iter (fun symbol ty ->
-    Printf.fprintf b "%%type%s %s\n"
+    Printf.fprintf f "%%type%s %s\n"
       begin match mode with
       | PrintNormal ->
           print_ocamltype ty
@@ -128,8 +128,8 @@ let print_branch mode f branch =
   end;
   Printf.fprintf f "}\n"
 
-let print_postludes b g =
-  List.iter (fun stretch -> Printf.fprintf b "%s\n" stretch.stretch_raw_content) g.postludes
+let print_postludes f g =
+  List.iter (fun stretch -> Printf.fprintf f "%s\n" stretch.stretch_raw_content) g.postludes
 
 (* Because the resolution of reduce/reduce conflicts is implicitly dictated by
    the order in which productions appear in the grammar, the printer should be
@@ -162,17 +162,17 @@ let compare_rules (_nt, (r : rule)) (_nt', (r' : rule)) =
       (* To compare two rules, it suffices to compare their first productions. *)
       compare_branches b b'
 
-let print_rules mode b g =
+let print_rules mode f g =
   let rules = List.sort compare_rules (StringMap.bindings g.rules) in
   List.iter (fun (nt, r) ->
-    Printf.fprintf b "\n%s:\n" (Misc.normalize nt);
+    Printf.fprintf f "\n%s:\n" (Misc.normalize nt);
     let first = ref true in
     List.iter (fun br ->
       (* Menhir accepts a leading "|", but bison does not. Let's not print it. *)
       let sep = if !first then "  " else "| " in
       first := false;
-      Printf.fprintf b "%s" sep;
-      print_branch mode b br
+      Printf.fprintf f "%s" sep;
+      print_branch mode f br
     ) r.branches
   ) rules
 
