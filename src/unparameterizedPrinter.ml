@@ -169,12 +169,11 @@ let print_rules mode f g =
   let rules = List.sort compare_rules (StringMap.bindings g.rules) in
   List.iter (fun (nt, r) ->
     fprintf f "\n%s:\n" (Misc.normalize nt);
-    let first = ref true in
+    (* Menhir accepts a leading "|", but bison does not. Let's not print it.
+       So, we print a bar-separated list. *)
+    let sep = Misc.once ("  ") ("| ") in
     List.iter (fun br ->
-      (* Menhir accepts a leading "|", but bison does not. Let's not print it. *)
-      let sep = if !first then "  " else "| " in
-      first := false;
-      fprintf f "%s" sep;
+      fprintf f "%s" (sep());
       print_branch mode f br
     ) r.branches
   ) rules
