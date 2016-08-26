@@ -363,3 +363,10 @@ let levels cmp xs =
   | x1 :: xs ->
       let ys1, yss = levels1 cmp x1 xs in
       ys1 :: yss
+
+let once x y =
+  let s = ref x in
+  fun () ->
+    let result = !s in
+    s := y;
+    result

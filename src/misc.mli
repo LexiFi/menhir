@@ -189,3 +189,8 @@ val best: ('a -> 'a -> bool) -> 'a list -> 'a option
    run of adjacent equal elements. Every level is a nonempty list. *)
 
 val levels: ('a -> 'a -> int) -> 'a list -> 'a list list
+
+(* [once x y] produces a function [f] which produces [x] the first time it
+   is called and produces [y] forever thereafter. *)
+
+val once: 'a -> 'a -> (unit -> 'a)
