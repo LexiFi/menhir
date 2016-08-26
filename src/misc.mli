@@ -183,3 +183,9 @@ val new_encode_decode: int -> (string -> int) * (int -> string) * (unit -> unit)
    is quadratic. *)
 
 val best: ('a -> 'a -> bool) -> 'a list -> 'a option
+
+(* Assuming that the list [xs] is sorted with respect to the ordering [cmp],
+   [levels cmp xs] is the list of levels of [xs], where a level is a maximal
+   run of adjacent equal elements. Every level is a nonempty list. *)
+
+val levels: ('a -> 'a -> int) -> 'a list -> 'a list list

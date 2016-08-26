@@ -344,3 +344,22 @@ let rec best (preferable : 'a -> 'a -> bool) (xs : 'a list) : 'a option =
         | None ->
             (* There is no best element. *)
             None
+
+let rec levels1 cmp x1 xs =
+  match xs with
+  | [] ->
+      [x1], []
+  | x2 :: xs ->
+      let ys1, yss = levels1 cmp x2 xs in
+      if cmp x1 x2 = 0 then
+        x1 :: ys1, yss
+      else
+        [x1], ys1 :: yss
+
+let levels cmp xs =
+  match xs with
+  | [] ->
+      []
+  | x1 :: xs ->
+      let ys1, yss = levels1 cmp x1 xs in
+      ys1 :: yss
