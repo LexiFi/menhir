@@ -1,3 +1,4 @@
+open Printf
 open Positions
 open Syntax
 open Stretch
@@ -12,12 +13,17 @@ open Settings
 
 let print_preludes f g =
   List.iter (fun prelude ->
-    Printf.fprintf f "%%{%s%%}\n" prelude.stretch_raw_content
+    fprintf f "%%{%s%%}\n" prelude.stretch_raw_content
   ) g.preludes
+
+let print_postludes f g =
+  List.iter (fun postlude ->
+    fprintf f "%s\n" postlude.stretch_raw_content
+  ) g.postludes
 
 let print_start_symbols f g =
   StringSet.iter (fun symbol ->
-    Printf.fprintf f "%%start %s\n" (Misc.normalize symbol)
+    fprintf f "%%start %s\n" (Misc.normalize symbol)
   ) g.start_symbols
 
 let print_ocamltype ocamltype =
@@ -30,7 +36,7 @@ let print_ocamltype ocamltype =
     )
 
 let print_parameter f stretch =
-  Printf.fprintf f "%%parameter<%s>\n" stretch.stretch_raw_content
+  fprintf f "%%parameter<%s>\n" stretch.stretch_raw_content
 
 let print_assoc = function
   | LeftAssoc ->
@@ -62,7 +68,7 @@ let print_tokens mode f g =
   (* Print the %token declarations. *)
   StringMap.iter (fun token prop ->
     if prop.tk_is_declared then
-      Printf.fprintf f "%%token%s %s\n"
+      fprintf f "%%token%s %s\n"
         begin match mode with
         | PrintNormal
         | PrintUnitActions ->
@@ -83,17 +89,17 @@ let print_tokens mode f g =
     let (_token, prop) = try List.hd level with Failure _ -> assert false in
     (* Do nothing about the tokens that have no precedence. *)
     if prop.tk_precedence <> UndefinedPrecedence then begin
-      Printf.fprintf f "%s" (print_assoc prop.tk_associativity);
+      fprintf f "%s" (print_assoc prop.tk_associativity);
       List.iter (fun (token, _prop) ->
-        Printf.fprintf f " %s" token
+        fprintf f " %s" token
       ) level;
-      Printf.fprintf f "\n"
+      fprintf f "\n"
     end
   ) levels
 
 let print_types mode f g =
   StringMap.iter (fun symbol ty ->
-    Printf.fprintf f "%%type%s %s\n"
+    fprintf f "%%type%s %s\n"
       begin match mode with
       | PrintNormal ->
           print_ocamltype ty
@@ -116,7 +122,7 @@ let string_of_producer mode (symbol, ido) =
   binding mode ido ^ (Misc.normalize symbol)
 
 let print_branch mode f branch =
-  Printf.fprintf f "%s%s\n    {"
+  fprintf f "%s%s\n    {"
     (String.concat " " (List.map (string_of_producer mode) branch.producers))
     (Misc.o2s branch.branch_prec_annotation (fun x -> " %prec "^x.value));
   begin match mode with
@@ -126,10 +132,7 @@ let print_branch mode f branch =
   | PrintUnitActionsUnitTokens ->
       () (* Printing a pair of empty braces is fine. *)
   end;
-  Printf.fprintf f "}\n"
-
-let print_postludes f g =
-  List.iter (fun stretch -> Printf.fprintf f "%s\n" stretch.stretch_raw_content) g.postludes
+  fprintf f "}\n"
 
 (* Because the resolution of reduce/reduce conflicts is implicitly dictated by
    the order in which productions appear in the grammar, the printer should be
@@ -165,13 +168,13 @@ let compare_rules (_nt, (r : rule)) (_nt', (r' : rule)) =
 let print_rules mode f g =
   let rules = List.sort compare_rules (StringMap.bindings g.rules) in
   List.iter (fun (nt, r) ->
-    Printf.fprintf f "\n%s:\n" (Misc.normalize nt);
+    fprintf f "\n%s:\n" (Misc.normalize nt);
     let first = ref true in
     List.iter (fun br ->
       (* Menhir accepts a leading "|", but bison does not. Let's not print it. *)
       let sep = if !first then "  " else "| " in
       first := false;
-      Printf.fprintf f "%s" sep;
+      fprintf f "%s" sep;
       print_branch mode f br
     ) r.branches
   ) rules
@@ -186,33 +189,21 @@ let print_on_error_reduce_declarations f g =
     ))
   in
   List.iter (fun level ->
-    Printf.fprintf f "%%on_error_reduce";
+    fprintf f "%%on_error_reduce";
     List.iter (fun (nt, _level) ->
-      Printf.fprintf f " %s" nt
+      fprintf f " %s" nt
     ) level;
-    Printf.fprintf f "\n"
+    fprintf f "\n"
   ) levels
 
 let print mode f g =
   List.iter (print_parameter f) g.parameters;
-  begin match mode with
-  | PrintNormal ->
-      print_preludes f g
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
-      ()
-  end;
+  if mode = PrintNormal then print_preludes f g;
   print_start_symbols f g;
   print_tokens mode f g;
   print_types mode f g;
   print_on_error_reduce_declarations f g;
-  Printf.fprintf f "%%%%\n";
+  fprintf f "%%%%\n";
   print_rules mode f g;
-  Printf.fprintf f "\n%%%%\n";
-  begin match mode with
-  | PrintNormal ->
-      print_postludes f g
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
-      ()
-  end
+  fprintf f "\n%%%%\n";
+  if mode = PrintNormal then print_postludes f g
