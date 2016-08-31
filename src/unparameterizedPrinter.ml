@@ -11,6 +11,76 @@ open Settings
    declarations) that did not exist originally. We currently do not warn about
    this problem. Nobody has ever complained about it. *)
 
+(* -------------------------------------------------------------------------- *)
+
+(* Printing an OCaml type. *)
+
+let print_ocamltype ty : string =
+  Printf.sprintf " <%s>" (
+    match ty with
+    | Declared stretch ->
+        stretch.stretch_raw_content
+    | Inferred t ->
+        t
+    )
+
+(* -------------------------------------------------------------------------- *)
+
+(* Auxiliary functions that depend on the printing mode. *)
+
+(* [PrintNormal] is the normal mode: the result is a Menhir grammar.
+   [PrintUnitActions] causes all OCaml code to be suppressed: the
+   semantic actions to be replaced with unit actions, preludes and
+   postludes disappear, %parameter declarations disappear. Every
+   %type declaration carries the [unit] type.
+   [PrintUnitActionsUnitTokens] in addition declares every token
+   to carry a semantic value of type [unit]. *)
+
+let print_token_type mode (prop : token_properties) =
+  match mode with
+  | PrintNormal
+  | PrintUnitActions ->
+      Misc.o2s prop.tk_ocamltype print_ocamltype
+  | PrintUnitActionsUnitTokens ->
+      "" (* omitted ocamltype after %token means <unit> *)
+
+let print_ocamltype_or_unit mode ty =
+  match mode with
+  | PrintNormal ->
+      print_ocamltype ty
+  | PrintUnitActions
+  | PrintUnitActionsUnitTokens ->
+      " <unit>"
+
+let print_binding mode id =
+  match mode with
+  | PrintNormal ->
+      id ^ " = "
+  | PrintUnitActions
+  | PrintUnitActionsUnitTokens ->
+      (* no need to bind a semantic value *)
+      ""
+
+let if_normal mode f x =
+  match mode with
+  | PrintNormal ->
+      f x
+  | PrintUnitActions
+  | PrintUnitActionsUnitTokens ->
+      (* In these modes, all OCaml code is omitted: semantic actions,
+         preludes, postludes, etc. *)
+      ()
+
+let print_action f mode action =
+  fprintf f "{";
+  if_normal mode (Action.print f) action;
+    (* In non-normal modes, we print a pair of empty braces, which is fine. *)
+  fprintf f "}\n"
+
+(* -------------------------------------------------------------------------- *)
+
+(* Printing functions. *)
+
 let print_preludes f g =
   List.iter (fun prelude ->
     fprintf f "%%{%s%%}\n" prelude.stretch_raw_content
@@ -26,17 +96,11 @@ let print_start_symbols f g =
     fprintf f "%%start %s\n" (Misc.normalize symbol)
   ) g.start_symbols
 
-let print_ocamltype ocamltype =
-  Printf.sprintf " <%s>" (
-    match ocamltype with
-    | Declared stretch ->
-        stretch.stretch_raw_content
-    | Inferred t ->
-        t
-    )
-
 let print_parameter f stretch =
   fprintf f "%%parameter<%s>\n" stretch.stretch_raw_content
+
+let print_parameters f g =
+  List.iter (print_parameter f) g.parameters
 
 let print_assoc = function
   | LeftAssoc ->
@@ -68,15 +132,7 @@ let print_tokens mode f g =
   (* Print the %token declarations. *)
   StringMap.iter (fun token prop ->
     if prop.tk_is_declared then
-      fprintf f "%%token%s %s\n"
-        begin match mode with
-        | PrintNormal
-        | PrintUnitActions ->
-            Misc.o2s prop.tk_ocamltype print_ocamltype
-        | PrintUnitActionsUnitTokens ->
-            "" (* omitted ocamltype after %token means <unit> *)
-        end
-        token
+      fprintf f "%%token%s %s\n" (print_token_type mode prop) token
   ) g.tokens;
   (* Sort the tokens wrt. precedence, and group them into levels. *)
   let levels : (string * token_properties) list list =
@@ -100,39 +156,18 @@ let print_tokens mode f g =
 let print_types mode f g =
   StringMap.iter (fun symbol ty ->
     fprintf f "%%type%s %s\n"
-      begin match mode with
-      | PrintNormal ->
-          print_ocamltype ty
-      | PrintUnitActions
-      | PrintUnitActionsUnitTokens ->
-          " <unit>"
-      end
+      (print_ocamltype_or_unit mode ty)
       (Misc.normalize symbol)
   ) g.types
 
-let binding mode id =
-  match mode with
-  | PrintNormal ->
-      id ^ " = "
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
-      ""
-
-let string_of_producer mode (symbol, ido) =
-  binding mode ido ^ (Misc.normalize symbol)
+let string_of_producer mode (symbol, id) =
+  print_binding mode id ^ (Misc.normalize symbol)
 
 let print_branch mode f branch =
-  fprintf f "%s%s\n    {"
+  fprintf f "%s%s\n    "
     (String.concat " " (List.map (string_of_producer mode) branch.producers))
     (Misc.o2s branch.branch_prec_annotation (fun x -> " %prec "^x.value));
-  begin match mode with
-  | PrintNormal ->
-      Action.print f branch.action
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
-      () (* Printing a pair of empty braces is fine. *)
-  end;
-  fprintf f "}\n"
+  print_action f mode branch.action
 
 (* Because the resolution of reduce/reduce conflicts is implicitly dictated by
    the order in which productions appear in the grammar, the printer should be
@@ -196,8 +231,8 @@ let print_on_error_reduce_declarations f g =
   ) levels
 
 let print mode f g =
-  List.iter (print_parameter f) g.parameters;
-  if mode = PrintNormal then print_preludes f g;
+  if_normal mode (print_parameters f) g;
+  if_normal mode (print_preludes f) g;
   print_start_symbols f g;
   print_tokens mode f g;
   print_types mode f g;
@@ -205,4 +240,4 @@ let print mode f g =
   fprintf f "%%%%\n";
   print_rules mode f g;
   fprintf f "\n%%%%\n";
-  if mode = PrintNormal then print_postludes f g
+  if_normal mode (print_postludes f) g
