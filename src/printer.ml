@@ -730,3 +730,15 @@ let expr e =
   flush X.f
 
 end
+
+(* ------------------------------------------------------------------------- *)
+(* Common instantiations. *)
+
+let print_expr f e =
+  let module P =
+    Make (struct
+      let f = f
+      let locate_stretches = None
+    end)
+  in
+  P.expr e

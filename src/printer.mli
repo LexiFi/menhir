@@ -25,3 +25,6 @@ end) : sig
 
 end
 
+(* Common instantiations. *)
+
+val print_expr: out_channel -> IL.expr -> unit (* no #line directives *)
