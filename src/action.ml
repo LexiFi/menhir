@@ -136,15 +136,10 @@ let keywords action =
   action.keywords
 
 let print f action =
-  let module P = Printer.Make (struct let f = f
-                                      let locate_stretches = None
-                               end)
-  in
-    P.expr action.expr
+  Printer.print_expr f action.expr
 
 let has_syntaxerror action =
   KeywordSet.mem SyntaxError (keywords action)
 
 let has_beforeend action =
   KeywordSet.mem (Position (Before, WhereEnd, FlavorPosition)) action.keywords
-
