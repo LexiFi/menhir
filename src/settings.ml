@@ -69,6 +69,7 @@ let noprefix =
 
 type print_mode =
     | PrintNormal
+    | PrintForOCamlyacc
     | PrintUnitActions
     | PrintUnitActionsUnitTokens
 
@@ -243,6 +244,8 @@ let options = Arg.align [
   "--ocamldep", Arg.Set_string ocamldep, "<command> Specifies how ocamldep should be invoked";
   "--only-preprocess", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintNormal),
                        " Print grammar and exit";
+  "--only-preprocess-for-ocamlyacc", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintForOCamlyacc),
+                       " Print grammar in ocamlyacc format and exit";
   "--only-preprocess-u", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintUnitActions),
                          " Print grammar with unit actions and exit";
   "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintUnitActionsUnitTokens),
@@ -490,4 +493,3 @@ let update_errors =
 
 let echo_errors =
   !echo_errors
-

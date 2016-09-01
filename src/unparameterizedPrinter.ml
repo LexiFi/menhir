@@ -29,16 +29,25 @@ let print_ocamltype ty : string =
 (* Auxiliary functions that depend on the printing mode. *)
 
 (* [PrintNormal] is the normal mode: the result is a Menhir grammar.
+
+   [PrintForOCamlyacc] is close to the normal mode, but attempts to
+   produces ocamlyacc-compatible output. This means, in particular,
+   that we cannot bind identifiers to semantic values, but must use
+   [$i] instead.
+
    [PrintUnitActions] causes all OCaml code to be suppressed: the
    semantic actions to be replaced with unit actions, preludes and
    postludes disappear, %parameter declarations disappear. Every
    %type declaration carries the [unit] type.
+
    [PrintUnitActionsUnitTokens] in addition declares every token
-   to carry a semantic value of type [unit]. *)
+   to carry a semantic value of type [unit].
+ *)
 
 let print_token_type mode (prop : token_properties) =
   match mode with
   | PrintNormal
+  | PrintForOCamlyacc
   | PrintUnitActions ->
       Misc.o2s prop.tk_ocamltype print_ocamltype
   | PrintUnitActionsUnitTokens ->
@@ -46,7 +55,8 @@ let print_token_type mode (prop : token_properties) =
 
 let print_ocamltype_or_unit mode ty =
   match mode with
-  | PrintNormal ->
+  | PrintNormal
+  | PrintForOCamlyacc ->
       print_ocamltype ty
   | PrintUnitActions
   | PrintUnitActionsUnitTokens ->
@@ -56,14 +66,25 @@ let print_binding mode id =
   match mode with
   | PrintNormal ->
       id ^ " = "
+  | PrintForOCamlyacc
   | PrintUnitActions
   | PrintUnitActionsUnitTokens ->
-      (* no need to bind a semantic value *)
+      (* need not, or must not, bind a semantic value *)
       ""
 
 let if_normal mode f x =
   match mode with
   | PrintNormal ->
+      f x
+  | PrintForOCamlyacc
+  | PrintUnitActions
+  | PrintUnitActionsUnitTokens ->
+      ()
+
+let if_ocaml_code_permitted mode f x =
+  match mode with
+  | PrintNormal
+  | PrintForOCamlyacc ->
       f x
   | PrintUnitActions
   | PrintUnitActionsUnitTokens ->
@@ -71,11 +92,29 @@ let if_normal mode f x =
          preludes, postludes, etc. *)
       ()
 
-let print_action f mode action =
-  fprintf f "{";
-  if_normal mode (Action.print f) action;
-    (* In non-normal modes, we print a pair of empty braces, which is fine. *)
-  fprintf f "}\n"
+let print_semantic_action f mode branch =
+  let e = Action.to_il_expr branch.action in
+  match mode with
+  | PrintUnitActions
+  | PrintUnitActionsUnitTokens ->
+      (* In the unit-action modes, we print a pair of empty braces, which is fine. *)
+      ()
+  | PrintNormal ->
+      Printer.print_expr f e
+  | PrintForOCamlyacc ->
+       (* In ocamlyacc-compatibility mode, the code must be wrapped in
+          [let]-bindings whose right-hand side uses the [$i] keywords. *)
+      let bindings =
+        List.mapi (fun i (_symbol, id) ->
+          (* Define the variable [id] as a synonym for [$(i+1)]. *)
+          IL.PVar id, IL.EVar (sprintf "$%d" (i + 1))
+        ) branch.producers
+      in
+      (* We can use a nested sequence of [let/in] definitions, as
+         opposed to a single [let/and] definitions, because the
+         identifiers that we bind are pairwise distinct. *)
+      let e = IL.ELet (bindings, e) in
+      Printer.print_expr f e
 
 (* -------------------------------------------------------------------------- *)
 
@@ -160,14 +199,20 @@ let print_types mode f g =
       (Misc.normalize symbol)
   ) g.types
 
-let string_of_producer mode (symbol, id) =
-  print_binding mode id ^ (Misc.normalize symbol)
-
 let print_branch mode f branch =
-  fprintf f "%s%s\n    "
-    (String.concat " " (List.map (string_of_producer mode) branch.producers))
-    (Misc.o2s branch.branch_prec_annotation (fun x -> " %prec "^x.value));
-  print_action f mode branch.action
+  (* Print the producers. *)
+  let sep = Misc.once "" " " in
+  List.iter (fun (symbol, id) ->
+    fprintf f "%s%s%s" (sep()) (print_binding mode id) (Misc.normalize symbol)
+  ) branch.producers;
+  (* Print the %prec annotation, if there is one. *)
+  Option.iter (fun x ->
+    fprintf f " %%prec %s" x.value
+  ) branch.branch_prec_annotation;
+  (* Newline, indentation, semantic action. *)
+  fprintf f "\n    {";
+  print_semantic_action f mode branch;
+  fprintf f "}\n"
 
 (* Because the resolution of reduce/reduce conflicts is implicitly dictated by
    the order in which productions appear in the grammar, the printer should be
@@ -232,12 +277,12 @@ let print_on_error_reduce_declarations f g =
 
 let print mode f g =
   if_normal mode (print_parameters f) g;
-  if_normal mode (print_preludes f) g;
+  if_ocaml_code_permitted mode (print_preludes f) g;
   print_start_symbols f g;
   print_tokens mode f g;
   print_types mode f g;
-  print_on_error_reduce_declarations f g;
+  if_normal mode (print_on_error_reduce_declarations f) g;
   fprintf f "%%%%\n";
   print_rules mode f g;
   fprintf f "\n%%%%\n";
-  if_normal mode (print_postludes f) g
+  if_ocaml_code_permitted mode (print_postludes f) g
