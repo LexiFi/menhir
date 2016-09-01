@@ -92,7 +92,7 @@ let if_ocaml_code_permitted mode f x =
          preludes, postludes, etc. *)
       ()
 
-let print_semantic_action f mode branch =
+let print_semantic_action f g mode branch =
   let e = Action.to_il_expr branch.action in
   match mode with
   | PrintUnitActions
@@ -103,12 +103,27 @@ let print_semantic_action f mode branch =
       Printer.print_expr f e
   | PrintForOCamlyacc ->
        (* In ocamlyacc-compatibility mode, the code must be wrapped in
-          [let]-bindings whose right-hand side uses the [$i] keywords. *)
+          [let]-bindings whose right-hand side uses the [$i] keywords.
+          As an exception to this rule, if [symbol] is a terminal symbol
+          which has been declared *not* to carry a semantic value, then
+          its semantic value must not be referred to -- ocamlyacc does
+          not allow it. *)
       let bindings =
-        List.mapi (fun i (_symbol, id) ->
+        List.mapi (fun i (symbol, id) ->
+          let is_unit_token =
+            try
+              let prop = StringMap.find symbol g.tokens in
+              prop.tk_ocamltype = None
+            with Not_found ->
+              false
+          in
           (* Define the variable [id] as a synonym for [$(i+1)]. *)
-          IL.PVar id, IL.EVar (sprintf "$%d" (i + 1))
+          (if is_unit_token then IL.PWildcard else IL.PVar id),
+          IL.EVar (sprintf "$%d" (i + 1))
         ) branch.producers
+      in
+      let bindings =
+        List.filter (function (IL.PWildcard, _) -> false | _ -> true) bindings
       in
       (* We can use a nested sequence of [let/in] definitions, as
          opposed to a single [let/and] definitions, because the
@@ -199,7 +214,7 @@ let print_types mode f g =
       (Misc.normalize symbol)
   ) g.types
 
-let print_branch mode f branch =
+let print_branch mode f g branch =
   (* Print the producers. *)
   let sep = Misc.once "" " " in
   List.iter (fun (symbol, id) ->
@@ -211,7 +226,7 @@ let print_branch mode f branch =
   ) branch.branch_prec_annotation;
   (* Newline, indentation, semantic action. *)
   fprintf f "\n    {";
-  print_semantic_action f mode branch;
+  print_semantic_action f g mode branch;
   fprintf f "}\n"
 
 (* Because the resolution of reduce/reduce conflicts is implicitly dictated by
@@ -254,7 +269,7 @@ let print_rules mode f g =
     let sep = Misc.once ("  ") ("| ") in
     List.iter (fun br ->
       fprintf f "%s" (sep());
-      print_branch mode f br
+      print_branch mode f g br
     ) r.branches
   ) rules
 
