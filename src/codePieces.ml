@@ -70,7 +70,7 @@ let semvtypent nt =
   match Nonterminal.ocamltype nt with
   | None ->
 
-      (* [nt] has unknown type. If we we have run [Infer], then this
+      (* [nt] has unknown type. If we have run [Infer], then this
          can't happen. However, running type inference is only an
          option, so we still have to deal with that case. *)
 
