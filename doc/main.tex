@@ -1719,7 +1719,11 @@ When an \ocamllex-generated lexical analyzer produces a token, it updates
 two fields, named \verb+lex_start_p+ and \verb+lex_curr_p+, in its environment
 record, whose type is \verb+Lexing.lexbuf+. Each of these fields holds a value
 of type \verb+Lexing.position+. Together, they represent the token's start and
-end positions within the text that is being scanned. A position consists
+end positions within the text that is being scanned. These fields are read by
+Menhir after calling the lexical analyzer, so \textbf{it is the lexical
+  analyzer's responsibility} to correctly set these fields.
+
+A position consists
 mainly of an offset (the position's \verb+pos_cnum+ field), but also holds
 information about the current file name, the current line number, and the
 current offset within the current line. (Not all \ocamllex-generated analyzers
