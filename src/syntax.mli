@@ -29,9 +29,9 @@ type filename =
 
 (* ------------------------------------------------------------------------ *)
 
-(* A trailer is a source file fragment. *)
+(* A postlude is a source file fragment. *)
 
-type trailer =
+type postlude =
     Stretch.t
 
 (* ------------------------------------------------------------------------ *)
@@ -55,10 +55,10 @@ type precedence_level =
     UndefinedPrecedence
 
   (* Items are incomparable when they originate in different files. A
-     brand of type [Mark.t] is used to record an item's origin. The
+     value of type [input_file] is used to record an item's origin. The
      positions allow locating certain warnings. *)
 
-  | PrecedenceLevel of Mark.t * int * Lexing.position * Lexing.position
+  | PrecedenceLevel of InputFile.input_file * int * Lexing.position * Lexing.position
 
 type token_properties =
     {
@@ -84,7 +84,16 @@ type branch_prec_annotation =
    which production appears first in the grammar. See [ParserAux]. *)
 
 type branch_production_level =
-  | ProductionLevel of Mark.t * int
+  | ProductionLevel of InputFile.input_file * int
+
+(* ------------------------------------------------------------------------ *)
+
+(* A level is attached to every [%on_error_reduce] declaration. It is used
+   to decide what to do when several such declarations are applicable in a
+   single state. *)
+
+type on_error_reduce_level =
+  branch_production_level (* we re-use the above type, to save code *)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -167,7 +176,7 @@ type declaration =
 
     (* On-error-reduce declaration. *)
 
-  | DOnErrorReduce of parameter
+  | DOnErrorReduce of parameter * on_error_reduce_level
 
 (* ------------------------------------------------------------------------ *)
 
@@ -176,7 +185,7 @@ type declaration =
 type partial_grammar =
     {
       pg_filename          : filename;
-      pg_trailer           : trailer option;
+      pg_postlude           : postlude option;
       pg_declarations      : declaration Positions.located list;
       pg_rules             : parameterized_rule list;
     }
@@ -187,7 +196,7 @@ type partial_grammar =
 
 (* The differences with partial grammars (above) are as follows:
    1. the file name is gone (there could be several file names, anyway).
-   2. there can be several trailers, now known as postludes.
+   2. there can be several postludes.
    3. declarations are organized by kind: preludes, functor %parameters,
       %start symbols, %types, %tokens, %on_error_reduce.
    4. rules are stored in a map, indexed by symbol names, instead of a list.
@@ -196,11 +205,11 @@ type partial_grammar =
 type grammar =
     {
       p_preludes           : Stretch.t list;
-      p_postludes          : trailer list;
+      p_postludes          : postlude list;
       p_parameters         : Stretch.t list;
       p_start_symbols      : Positions.t StringMap.t;
       p_types              : (parameter * Stretch.ocamltype Positions.located) list;
       p_tokens             : token_properties StringMap.t;
-      p_on_error_reduce    : parameter list;
+      p_on_error_reduce    : (parameter * on_error_reduce_level) list;
       p_rules              : parameterized_rule StringMap.t;
     }

@@ -51,11 +51,10 @@ export CDPATH=
 # -------------------------------------------------------------------------
 
 # Distribution.
+
 # The version number is automatically set to the current date,
 # unless DATE is defined on the command line.
-ifndef $(DATE)
 DATE     := $(shell /bin/date +%Y%m%d)
-endif
 
 PACKAGE  := menhir-$(DATE)
 CURRENT  := $(shell pwd)
@@ -269,4 +268,3 @@ pin:
 
 unpin:
 	opam pin remove menhir
-

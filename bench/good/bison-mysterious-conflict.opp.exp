@@ -1,10 +1,15 @@
 %start def
-%token ID
-%token COMMA
 %token COLON
-
+%token COMMA
+%token ID
 %type <unit> def
 %%
+
+separated_nonempty_list_COMMA_name_:
+  x = name
+    {    ( [ x ] )}
+| x = name _2 = COMMA xs = separated_nonempty_list_COMMA_name_
+    {    ( x :: xs )}
 
 def:
   _1 = param_spec _2 = return_spec _3 = COMMA
@@ -29,12 +34,6 @@ typ:
 name:
   _1 = ID
     {    ( () )}
-
-separated_nonempty_list_COMMA_name_:
-  x = name
-    {    ( [ x ] )}
-| x = name _2 = COMMA xs = separated_nonempty_list_COMMA_name_
-    {    ( x :: xs )}
 
 %%
 

@@ -557,24 +557,29 @@ A declaration of the form:
 \end{quote}
 marks the nonterminal symbols $\nt{lid}_1, \ldots, \nt{lid}_n$ as
 potentially eligible for reduction when an invalid token is found.
+This may cause one or more extra reduction steps to be performed
+before the error is detected.
 
 More precisely, this declaration affects the automaton as follows. Let us say
 that a production $\nt{lid} \rightarrow \ldots$ is ``reducible on error'' if
 its left-hand symbol~\nt{lid} appears in a \donerrorreduce declaration. After
 the automaton has been constructed and after any conflicts have been resolved,
-in every state~$s$, the following rule is applied:
-\begin{quote}
-  If the set of all productions that are ready to be reduced in state~$s$ and
-  are reducible on error is a singleton set $\{ p \}$, then in state~$s$ every
-  error action is replaced with a reduction of the production~$p$.
-\end{quote}
-In other words, for every terminal symbol~$t$, if the automaton's action table
+in every state~$s$, the following algorithm is applied:
+\begin{enumerate}
+\item Construct the set of all productions that are ready to be reduced in
+  state~$s$ and are reducible on error;
+\item Test if one of them, say $p$, has higher ``on-error-reduce-priority''
+  than every other production in this set;
+\item If so, in state~$s$, replace every error action with a reduction of the
+  production~$p$.
+(In other words, for every terminal symbol~$t$, if the action table
 says: ``in state~$s$, when the next input symbol is~$t$, fail'', then this
-table entry is replaced with: ``in state~$s$, when the next input symbol
-is~$t$, reduce production~$p$''.
+entry is replaced with: ``in state~$s$, when the next input symbol
+is~$t$, reduce production~$p$''.)
+\end{enumerate}
 
-If this rule fires in state~$s$, then an error can never be detected in
-state~$s$, since all error actions in state~$s$ are replaced with reduce
+If step 3 above is executed in state~$s$, then an error can never be detected
+in state~$s$, since all error actions in state~$s$ are replaced with reduce
 actions. Error detection is deferred: at least one reduction takes place
 before the error is detected. It is a ``spurious'' reduction: in a canonical
 LR(1) automaton, it would not take place.
@@ -593,6 +598,15 @@ Like a \dtype declaration, an \donerrorreduce declaration may concern not only
 a nonterminal symbol, such as, say, \texttt{expression}, but also a fully
 applied parameterized nonterminal symbol, such as \texttt{list(expression)} or
 \texttt{separated\_list(COMMA, option(expression))}.
+
+The ``on-error-reduce-priority'' of a production is that of its left-hand
+symbol. The ``on-error-reduce-priority'' of a nonterminal symbol is determined
+implicitly by the order of \donerrorreduce declarations. In the declaration
+$\donerrorreduce\;\nt{lid}_1 \ldots \nt{lid}_n$, the symbols $\nt{lid}_1, \ldots,
+\nt{lid}_n$ have the same ``on-error-reduce-priority''. They have higher
+``on-error-reduce-priority'' than the symbols listed in previous
+\donerrorreduce declarations, and lower ``on-error-reduce-priority''
+than those listed in later \donerrorreduce declarations.
 
 \subsection{Rules}
 
@@ -1705,7 +1719,11 @@ When an \ocamllex-generated lexical analyzer produces a token, it updates
 two fields, named \verb+lex_start_p+ and \verb+lex_curr_p+, in its environment
 record, whose type is \verb+Lexing.lexbuf+. Each of these fields holds a value
 of type \verb+Lexing.position+. Together, they represent the token's start and
-end positions within the text that is being scanned. A position consists
+end positions within the text that is being scanned. These fields are read by
+Menhir after calling the lexical analyzer, so \textbf{it is the lexical
+  analyzer's responsibility} to correctly set these fields.
+
+A position consists
 mainly of an offset (the position's \verb+pos_cnum+ field), but also holds
 information about the current file name, the current line number, and the
 current offset within the current line. (Not all \ocamllex-generated analyzers
@@ -3198,12 +3216,19 @@ The generated file contains several modules:
   while establishing the soundness and completeness of the parser.
 \end{itemize}
 
-The type of the terminal symbols is an inductive type, with one constructor
-for each terminal symbol. A~terminal symbol per se does not carry a the
-semantic value. We also define the type \verb+token+ of tokens, that is,
-dependent pairs of a terminal symbol and a semantic value of an appropriate
-type for this symbol. We model the lexer as an object of type
-\verb+Streams.Stream token+, that is, an infinite stream of tokens.
+The type~\verb+terminal+ of the terminal symbols is an inductive type, with
+one constructor for each terminal symbol. A terminal symbol named \verb+Foo+
+in the \verb+.vy+ file is named \verb+Foo't+ in Coq. A~terminal symbol per se
+does not carry a the semantic value.
+
+We also define the type \verb+token+ of tokens, that is, dependent pairs of a
+terminal symbol and a semantic value of an appropriate type for this symbol.
+We model the lexer as an object of type \verb+Streams.Stream token+, that is,
+an infinite stream of tokens.
+
+The type~\verb+nonterminal+ of the non-terminal symbols is an inductive type,
+with one constructor for each non-terminal symbol. A non-terminal symbol named
+\verb+Bar+ in the \verb+.vy+ file is named \verb+Bar'nt+ in Coq.
 
 The proof of termination of an LR(1) parser in the case of invalid input seems
 far from obvious. We did not find such a proof in the literature. In an

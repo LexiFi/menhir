@@ -36,23 +36,23 @@ open Positions
 
 /* ------------------------------------------------------------------------- */
 /* A grammar consists of declarations and rules, followed by an optional
-   trailer, which we do not parse. */
+   postlude, which we do not parse. */
 
 grammar:
-  declarations PERCENTPERCENT rules trailer
+  declarations PERCENTPERCENT rules postlude
     {
       {
         pg_filename          = ""; (* filled in by the caller *)
         pg_declarations      = List.rev $1;
         pg_rules             = $3;
-        pg_trailer           = $4
+        pg_postlude          = $4
       }
     }
 
-trailer:
+postlude:
   EOF
     { None }
-| PERCENTPERCENT /* followed by actual trailer */
+| PERCENTPERCENT /* followed by actual postlude */
     { Some (Lazy.force $1) }
 
 /* ------------------------------------------------------------------------- */
@@ -92,7 +92,8 @@ declaration:
     { [ unknown_pos (DParameter $2) ] }
 
 | ON_ERROR_REDUCE actuals
-    { List.map (Positions.map (fun nt -> DOnErrorReduce nt))
+    { let prec = ParserAux.new_on_error_reduce_level() in
+      List.map (Positions.map (fun nt -> DOnErrorReduce (nt, prec)))
         (List.map Parameters.with_pos $2) }
 
 optional_ocamltype:

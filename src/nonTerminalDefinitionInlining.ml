@@ -308,19 +308,32 @@ let inline grammar =
         grammar.rules
   in
 
-    (* To expand a grammar, we expand all its rules and remove
-       the %inline rules. *)
+  (* To expand a grammar, we expand all its rules and remove
+     the %inline rules. *)
   let expanded_rules =
     StringMap.mapi expand_rule grammar.rules
-  and useful_types =
-      StringMap.filter
-        (fun k _ -> try not (StringMap.find k grammar.rules).inline_flag
-         with Not_found -> true)
-        grammar.types
   in
 
-    { grammar with
-        rules = StringMap.filter (fun _ r -> not r.inline_flag) expanded_rules;
-        types = useful_types
-    }, !use_inline
+  let useful (k : string) : bool =
+    try
+      not (StringMap.find k grammar.rules).inline_flag
+    with Not_found ->
+      true (* could be: assert false? *)
+  in
 
+  (* Remove %on_error_reduce declarations for symbols that are expanded away,
+     and warn about them, at the same time. *)
+  let useful_warn (k : string) : bool =
+    let u = useful k in
+    if not u then
+      Error.grammar_warning []
+        "the declaration %%on_error_reduce %s\n\
+          has no effect, since this symbol is marked %%inline and is expanded away." k;
+    u
+  in
+
+  { grammar with
+      rules = StringMap.filter (fun _ r -> not r.inline_flag) expanded_rules;
+      types = StringMap.filter (fun k _ -> useful k) grammar.types;
+      on_error_reduce = StringMap.filter (fun k _ -> useful_warn k) grammar.on_error_reduce;
+  }, !use_inline

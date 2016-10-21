@@ -22,154 +22,424 @@ let mk_boolean = mk_lit ~typ: xsd_boolean;;
 
 %}
 %start query
-%token YEAR
-%token WHERE
-%token <string> Var2
-%token <string> Var1
-%token VALUES
-%token UUID
-%token URI
-%token UNION
-%token UNDEF
-%token UCASE
-%token TZ
-%token TIMEZONE
-%token <string> String_literal
-%token SUM
-%token SUBSTR
-%token STRUUID
-%token STRSTARTS
-%token STRLEN
-%token STRLANG
-%token STRENDS
-%token STRDT
-%token STRBEFORE
-%token STRAFTER
-%token STR
-%token SILENT
-%token SHA512
-%token SHA384
-%token SHA256
-%token SHA1
-%token SERVICE
-%token SEPARATOR
-%token SEMICOLON
-%token SELECT
-%token SECONDS
-%token SAMPLE
-%token SAMETERM
-%token RPAR
-%token ROUND
-%token REPLACE
-%token REGEX
-%token REDUCED
-%token RBRACKET
-%token RBRACE
-%token RAND
-%token QM
-%token <Rdf_sparql_types.pname_ns> Pname_ns
-%token <Rdf_sparql_types.prefixed_name> Pname_ln
-%token PREFIX
-%token PIPE
-%token ORDER
-%token OPTIONAL
-%token OFFSET
-%token NOW
-%token NIL
-%token NAMED
-%token MONTH
-%token MINUTES
-%token MIN
-%token MD5
-%token MAX
-%token <string> Langtag
-%token LPAR
-%token LIMIT
-%token LCASE
-%token LBRACKET
-%token LBRACE
-%token LANGMATCHES
-%token LANG
-%token <Rdf_sparql_types.rel_iri> Iriref_
-%token <string> Integer_positive
-%token <string> Integer_negative
-%token <string> Integer
-%token ISURI
-%token ISNUMERIC
-%token ISLITERAL
-%token ISIRI
-%token ISBLANK
-%token IRI
-%token IF
-%token HOURS
-%token HAVING
-%token HATHAT
-%token HAT
-%token GROUP_CONCAT
-%token GROUP
-%token GRAPH
-%token FROM
-%token FLOOR
-%token FILTER
-%token EXISTS
-%token EOF
-%token ENCODE_FOR_URI
-%token <string> Double_positive
-%token <string> Double_negative
-%token <string> Double
-%token <string> Decimal_positive
-%token <string> Decimal_negative
-%token <string> Decimal
-%token DOT
-%token DISTINCT
-%token DESCRIBE
-%token DESC
-%token DAY
-%token DATATYPE
-%token COUNT
-%token CONTAINS
-%token CONSTRUCT
-%token CONCAT
-%token COMMA
-%token COALESCE
-%token CEIL
-%token <string> Boolean
-%token <string> Blank_node_label
-%token BY
-%token BOUND
-%token BNODE
-%token BIND
-%token BASE
-%token AVG
-%token ASK
-%token ASC
-%token AS
-%token ANON
-%token ABS
 %token A
+%token ABS
 %token AMPAMP
-%token PIPEPIPE
-%token NOTEQUAL
-%token NOT
-%token LTE
-%token LT
-%token IN
-%token GTE
-%token GT
-%token EQUAL
-%token PLUS
-%token MINUS
-%token STAR
-%token SLASH
+%token ANON
+%token AS
+%token ASC
+%token ASK
+%token AVG
 %token BANG
-%left AMPAMP 
-%left PIPEPIPE 
-%nonassoc NOTEQUAL NOT LTE LT IN GTE GT EQUAL 
-%left PLUS MINUS 
-%left STAR SLASH 
-%nonassoc BANG 
+%token BASE
+%token BIND
+%token BNODE
+%token BOUND
+%token BY
+%token <string> Blank_node_label
+%token <string> Boolean
+%token CEIL
+%token COALESCE
+%token COMMA
+%token CONCAT
+%token CONSTRUCT
+%token CONTAINS
+%token COUNT
+%token DATATYPE
+%token DAY
+%token DESC
+%token DESCRIBE
+%token DISTINCT
+%token DOT
+%token <string> Decimal
+%token <string> Decimal_negative
+%token <string> Decimal_positive
+%token <string> Double
+%token <string> Double_negative
+%token <string> Double_positive
+%token ENCODE_FOR_URI
+%token EOF
+%token EQUAL
+%token EXISTS
+%token FILTER
+%token FLOOR
+%token FROM
+%token GRAPH
+%token GROUP
+%token GROUP_CONCAT
+%token GT
+%token GTE
+%token HAT
+%token HATHAT
+%token HAVING
+%token HOURS
+%token IF
+%token IN
+%token IRI
+%token ISBLANK
+%token ISIRI
+%token ISLITERAL
+%token ISNUMERIC
+%token ISURI
+%token <string> Integer
+%token <string> Integer_negative
+%token <string> Integer_positive
+%token <Rdf_sparql_types.rel_iri> Iriref_
+%token LANG
+%token LANGMATCHES
+%token LBRACE
+%token LBRACKET
+%token LCASE
+%token LIMIT
+%token LPAR
+%token LT
+%token LTE
+%token <string> Langtag
+%token MAX
+%token MD5
+%token MIN
+%token MINUS
+%token MINUTES
+%token MONTH
+%token NAMED
+%token NIL
+%token NOT
+%token NOTEQUAL
+%token NOW
+%token OFFSET
+%token OPTIONAL
+%token ORDER
+%token PIPE
+%token PIPEPIPE
+%token PLUS
+%token PREFIX
+%token <Rdf_sparql_types.prefixed_name> Pname_ln
+%token <Rdf_sparql_types.pname_ns> Pname_ns
+%token QM
+%token RAND
+%token RBRACE
+%token RBRACKET
+%token REDUCED
+%token REGEX
+%token REPLACE
+%token ROUND
+%token RPAR
+%token SAMETERM
+%token SAMPLE
+%token SECONDS
+%token SELECT
+%token SEMICOLON
+%token SEPARATOR
+%token SERVICE
+%token SHA1
+%token SHA256
+%token SHA384
+%token SHA512
+%token SILENT
+%token SLASH
+%token STAR
+%token STR
+%token STRAFTER
+%token STRBEFORE
+%token STRDT
+%token STRENDS
+%token STRLANG
+%token STRLEN
+%token STRSTARTS
+%token STRUUID
+%token SUBSTR
+%token SUM
+%token <string> String_literal
+%token TIMEZONE
+%token TZ
+%token UCASE
+%token UNDEF
+%token UNION
+%token URI
+%token UUID
+%token VALUES
+%token <string> Var1
+%token <string> Var2
+%token WHERE
+%token YEAR
+%left AMPAMP
+%left PIPEPIPE
+%nonassoc EQUAL GT GTE IN LT LTE NOT NOTEQUAL
+%left MINUS PLUS
+%left SLASH STAR
+%nonassoc BANG
 %type <Rdf_sparql_types.query> query
 %%
+
+option_DISTINCT_:
+  
+    {    ( None )}
+| x = DISTINCT
+    {    ( Some x )}
+
+option_DOT_:
+  
+    {    ( None )}
+| x = DOT
+    {    ( Some x )}
+
+option_SILENT_:
+  
+    {    ( None )}
+| x = SILENT
+    {    ( Some x )}
+
+option_WHERE_:
+  
+    {    ( None )}
+| x = WHERE
+    {    ( Some x )}
+
+option_construct_triples_:
+  
+    {    ( None )}
+| x = construct_triples
+    {    ( Some x )}
+
+option_group_clause_:
+  
+    {    ( None )}
+| x = group_clause
+    {    ( Some x )}
+
+option_having_clause_:
+  
+    {    ( None )}
+| x = having_clause
+    {    ( Some x )}
+
+option_limit_clause_:
+  
+    {    ( None )}
+| x = limit_clause
+    {    ( Some x )}
+
+option_limit_offset_clause_:
+  
+    {    ( None )}
+| x = limit_offset_clause
+    {    ( Some x )}
+
+option_offset_clause_:
+  
+    {    ( None )}
+| x = offset_clause
+    {    ( Some x )}
+
+option_order_clause_:
+  
+    {    ( None )}
+| x = order_clause
+    {    ( Some x )}
+
+option_path_mod_:
+  
+    {    ( None )}
+| x = path_mod
+    {    ( Some x )}
+
+option_property_list_not_empty_:
+  
+    {    ( None )}
+| x = property_list_not_empty
+    {    ( Some x )}
+
+option_property_list_path_not_empty_:
+  
+    {    ( None )}
+| x = property_list_path_not_empty
+    {    ( Some x )}
+
+option_select_flag_:
+  
+    {    ( None )}
+| x = select_flag
+    {    ( Some x )}
+
+option_triples_block_:
+  
+    {    ( None )}
+| x = triples_block
+    {    ( Some x )}
+
+option_triples_block_details_:
+  
+    {    ( None )}
+| x = triples_block_details
+    {    ( Some x )}
+
+option_triples_block_details2_:
+  
+    {    ( None )}
+| x = triples_block_details2
+    {    ( Some x )}
+
+option_values_clause__:
+  
+    {    ( None )}
+| x = values_clause_
+    {    ( Some x )}
+
+option_verb_object_list_:
+  
+    {    ( None )}
+| x = verb_object_list
+    {    ( Some x )}
+
+option_verbp_object_list_:
+  
+    {    ( None )}
+| x = verbp_object_list
+    {    ( Some x )}
+
+option_where_clause_:
+  
+    {    ( None )}
+| x = where_clause
+    {    ( Some x )}
+
+loption_separated_nonempty_list_PIPE_path_one_in_property_set__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_PIPE_path_one_in_property_set_
+    {    ( x )}
+
+list_data_block_value_:
+  
+    {    ( [] )}
+| x = data_block_value xs = list_data_block_value_
+    {    ( x :: xs )}
+
+list_data_block_values_or_nil_:
+  
+    {    ( [] )}
+| x = data_block_values_or_nil xs = list_data_block_values_or_nil_
+    {    ( x :: xs )}
+
+list_dataset_clause_:
+  
+    {    ( [] )}
+| x = dataset_clause xs = list_dataset_clause_
+    {    ( x :: xs )}
+
+list_gp_triples_:
+  
+    {    ( [] )}
+| x = gp_triples xs = list_gp_triples_
+    {    ( x :: xs )}
+
+list_prologue_item_:
+  
+    {    ( [] )}
+| x = prologue_item xs = list_prologue_item_
+    {    ( x :: xs )}
+
+list_var_:
+  
+    {    ( [] )}
+| x = var xs = list_var_
+    {    ( x :: xs )}
+
+list_verb_object_list_l_:
+  
+    {    ( [] )}
+| x = verb_object_list_l xs = list_verb_object_list_l_
+    {    ( x :: xs )}
+
+list_verbp_object_list_l_:
+  
+    {    ( [] )}
+| x = verbp_object_list_l xs = list_verbp_object_list_l_
+    {    ( x :: xs )}
+
+nonempty_list_graph_node_:
+  x = graph_node
+    {    ( [ x ] )}
+| x = graph_node xs = nonempty_list_graph_node_
+    {    ( x :: xs )}
+
+nonempty_list_graph_node_path_:
+  x = graph_node_path
+    {    ( [ x ] )}
+| x = graph_node_path xs = nonempty_list_graph_node_path_
+    {    ( x :: xs )}
+
+nonempty_list_group_condition_:
+  x = group_condition
+    {    ( [ x ] )}
+| x = group_condition xs = nonempty_list_group_condition_
+    {    ( x :: xs )}
+
+nonempty_list_having_condition_:
+  x = having_condition
+    {    ( [ x ] )}
+| x = having_condition xs = nonempty_list_having_condition_
+    {    ( x :: xs )}
+
+nonempty_list_order_condition_:
+  x = order_condition
+    {    ( [ x ] )}
+| x = order_condition xs = nonempty_list_order_condition_
+    {    ( x :: xs )}
+
+nonempty_list_select_var_:
+  x = select_var
+    {    ( [ x ] )}
+| x = select_var xs = nonempty_list_select_var_
+    {    ( x :: xs )}
+
+nonempty_list_var_or_iri_:
+  x = var_or_iri
+    {    ( [ x ] )}
+| x = var_or_iri xs = nonempty_list_var_or_iri_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_expression_:
+  x = expression
+    {    ( [ x ] )}
+| x = expression _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_object__:
+  x = object_
+    {    ( [ x ] )}
+| x = object_ _2 = COMMA xs = separated_nonempty_list_COMMA_object__
+    {    ( x :: xs )}
+
+separated_nonempty_list_COMMA_object_path_:
+  x = object_path
+    {    ( [ x ] )}
+| x = object_path _2 = COMMA xs = separated_nonempty_list_COMMA_object_path_
+    {    ( x :: xs )}
+
+separated_nonempty_list_PIPE_path_one_in_property_set_:
+  x = path_one_in_property_set
+    {    ( [ x ] )}
+| x = path_one_in_property_set _2 = PIPE xs = separated_nonempty_list_PIPE_path_one_in_property_set_
+    {    ( x :: xs )}
+
+separated_nonempty_list_PIPE_path_sequence_:
+  x = path_sequence
+    {    ( [ x ] )}
+| x = path_sequence _2 = PIPE xs = separated_nonempty_list_PIPE_path_sequence_
+    {    ( x :: xs )}
+
+separated_nonempty_list_SLASH_path_elt_or_inverse_:
+  x = path_elt_or_inverse
+    {    ( [ x ] )}
+| x = path_elt_or_inverse _2 = SLASH xs = separated_nonempty_list_SLASH_path_elt_or_inverse_
+    {    ( x :: xs )}
+
+separated_nonempty_list_UNION_group_graph_pattern_:
+  x = group_graph_pattern
+    {    ( [ x ] )}
+| x = group_graph_pattern _2 = UNION xs = separated_nonempty_list_UNION_group_graph_pattern_
+    {    ( x :: xs )}
 
 query:
   p = prologue k = query_kind v = values_clause _4 = EOF
@@ -251,202 +521,6 @@ select_clause:
     }
   )}
 
-source_selector:
-  _1 = iri
-    {                     ( _1 )}
-
-prefixed_name:
-  _1 = Pname_ns
-    {           (
-    { pname_loc = mk_loc _startpos__1_ _endpos__1_ ;
-      pname_ns = _1 ;
-      pname_local = None ;
-    }
-  )}
-| _1 = Pname_ln
-    {           (
-    _1
-  )}
-
-solution_modifier:
-  g = option_group_clause_ h = option_having_clause_ o = option_order_clause_ lo = option_limit_offset_clause_
-    {  (
-    let loc = mk_loc _startpos_g_ _endpos_lo_ in
-    { solmod_loc = loc ;
-      solmod_group = (match g with None -> [] | Some l -> l) ;
-      solmod_having = (match h with None -> [] | Some l -> l) ;
-      solmod_order = o ;
-      solmod_limoff = lo ;
-    }
-  )}
-
-order_clause:
-  _1 = ORDER _2 = BY l = nonempty_list_order_condition_
-    {                                            ( l )}
-
-subselect:
-  sel = select_clause w = where_clause sol = solution_modifier v = values_clause
-    {  (
-   let loc = mk_loc _startpos_sel_ _endpos_v_ in
-   {
-    subsel_loc = loc ;
-    subsel_select = sel ;
-    subsel_where = w ;
-    subsel_modifier = sol ;
-    subsel_values = v ;
-   }
-  )}
-
-triples_block:
-  l = triples_block_details
-    {  (
-    let loc = mk_loc _startpos_l_ _endpos_l_ in
-    Triples
-      { triples_loc = loc ;
-        triples = l ;
-      }
-  )}
-
-triples_block_details:
-  s = triples_same_subject_path rest = option_triples_block_details2_
-    {  (
-    match rest with
-      None -> [s]
-    | Some l -> s :: l
-  )}
-
-service_graph_pattern:
-  _1 = SERVICE silent = option_SILENT_ vi = var_or_iri g = group_graph_pattern
-    {  (
-    let loc = mk_loc _startpos__1_ _endpos_g_ in
-    let t =
-      { servgp_loc = loc ;
-        servgp_silent = silent <> None ;
-        servgp_name = vi ;
-        servgp_pat = g ;
-      }
-    in
-    Service t
-  )}
-
-string:
-  _1 = String_literal
-    {                       ( _1 )}
-
-substring_expression:
-  _1 = SUBSTR _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = RPAR
-    {  ( Bic_fun("SUBSTR", [e1 ; e2]) )}
-| _1 = SUBSTR _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = RPAR
-    {  ( Bic_fun ("SUBSTR", [e1 ; e2 ; e3]) )}
-
-str_replace_expression:
-  _1 = REPLACE _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = RPAR
-    {  ( Bic_fun("REPLACE", [e1 ; e2 ; e3]) )}
-| _1 = REPLACE _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = COMMA e4 = expression _10 = RPAR
-    {  ( Bic_fun ("REPLACE", [e1 ;e2 ; e3 ; e4]) )}
-
-option_triples_block_details2_:
-  
-    {    ( None )}
-| x = triples_block_details2
-    {    ( Some x )}
-
-option_triples_block_details_:
-  
-    {    ( None )}
-| x = triples_block_details
-    {    ( Some x )}
-
-option_triples_block_:
-  
-    {    ( None )}
-| x = triples_block
-    {    ( Some x )}
-
-option_select_flag_:
-  
-    {    ( None )}
-| x = select_flag
-    {    ( Some x )}
-
-option_property_list_path_not_empty_:
-  
-    {    ( None )}
-| x = property_list_path_not_empty
-    {    ( Some x )}
-
-option_property_list_not_empty_:
-  
-    {    ( None )}
-| x = property_list_not_empty
-    {    ( Some x )}
-
-option_path_mod_:
-  
-    {    ( None )}
-| x = path_mod
-    {    ( Some x )}
-
-option_order_clause_:
-  
-    {    ( None )}
-| x = order_clause
-    {    ( Some x )}
-
-option_offset_clause_:
-  
-    {    ( None )}
-| x = offset_clause
-    {    ( Some x )}
-
-option_limit_offset_clause_:
-  
-    {    ( None )}
-| x = limit_offset_clause
-    {    ( Some x )}
-
-separated_nonempty_list_UNION_group_graph_pattern_:
-  x = group_graph_pattern
-    {    ( [ x ] )}
-| x = group_graph_pattern _2 = UNION xs = separated_nonempty_list_UNION_group_graph_pattern_
-    {    ( x :: xs )}
-
-separated_nonempty_list_SLASH_path_elt_or_inverse_:
-  x = path_elt_or_inverse
-    {    ( [ x ] )}
-| x = path_elt_or_inverse _2 = SLASH xs = separated_nonempty_list_SLASH_path_elt_or_inverse_
-    {    ( x :: xs )}
-
-separated_nonempty_list_PIPE_path_sequence_:
-  x = path_sequence
-    {    ( [ x ] )}
-| x = path_sequence _2 = PIPE xs = separated_nonempty_list_PIPE_path_sequence_
-    {    ( x :: xs )}
-
-separated_nonempty_list_PIPE_path_one_in_property_set_:
-  x = path_one_in_property_set
-    {    ( [ x ] )}
-| x = path_one_in_property_set _2 = PIPE xs = separated_nonempty_list_PIPE_path_one_in_property_set_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_object_path_:
-  x = object_path
-    {    ( [ x ] )}
-| x = object_path _2 = COMMA xs = separated_nonempty_list_COMMA_object_path_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_object__:
-  x = object_
-    {    ( [ x ] )}
-| x = object_ _2 = COMMA xs = separated_nonempty_list_COMMA_object__
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_expression_:
-  x = expression
-    {    ( [ x ] )}
-| x = expression _2 = COMMA xs = separated_nonempty_list_COMMA_expression_
-    {    ( x :: xs )}
-
 select_flag:
   _1 = DISTINCT
     {           ( Distinct )}
@@ -509,11 +583,28 @@ dataset_clause:
 | _1 = FROM _2 = NAMED _3 = source_selector
     {                             ( NamedGraphClause _3 )}
 
+source_selector:
+  _1 = iri
+    {                     ( _1 )}
+
 iri:
   _1 = Iriref_
     {          ( Rdf_sparql_types.Reliri _1 )}
 | _1 = prefixed_name
     {                ( Rdf_sparql_types.PrefixedName _1 )}
+
+prefixed_name:
+  _1 = Pname_ns
+    {           (
+    { pname_loc = mk_loc _startpos__1_ _endpos__1_ ;
+      pname_ns = _1 ;
+      pname_local = None ;
+    }
+  )}
+| _1 = Pname_ln
+    {           (
+    _1
+  )}
 
 values_clause:
   _1 = option_values_clause__
@@ -550,6 +641,12 @@ inline_data_full:
     }
   )}
 
+nil_or_var_list:
+  _1 = NIL
+    {      ( [] )}
+| _1 = LPAR l = list_var_ _3 = RPAR
+    {                        ( l )}
+
 data_block_values_or_nil:
   _1 = NIL
     {      ( Nil )}
@@ -567,6 +664,18 @@ data_block_value:
     {                  ( DataBlockValueBoolean _1 )}
 | _1 = UNDEF
     {        ( DataBlockValueUndef )}
+
+solution_modifier:
+  g = option_group_clause_ h = option_having_clause_ o = option_order_clause_ lo = option_limit_offset_clause_
+    {  (
+    let loc = mk_loc _startpos_g_ _endpos_lo_ in
+    { solmod_loc = loc ;
+      solmod_group = (match g with None -> [] | Some l -> l) ;
+      solmod_having = (match h with None -> [] | Some l -> l) ;
+      solmod_order = o ;
+      solmod_limoff = lo ;
+    }
+  )}
 
 group_clause:
   _1 = GROUP _2 = BY l = nonempty_list_group_condition_
@@ -597,6 +706,40 @@ group_var:
     { grpvar_loc = loc ; grpvar_expr = Some e ; grpvar = None }
   )}
 
+limit_offset_clause:
+  l = limit_clause o = option_offset_clause_
+    {  (
+    let loc = mk_loc _startpos_l_ _endpos_o_ in
+    { limoff_loc = loc ; limoff_limit = Some l ; limoff_offset = o }
+  )}
+| o = offset_clause l = option_limit_clause_
+    {  (
+    let loc = mk_loc _startpos_o_ _endpos_l_ in
+    { limoff_loc = loc ; limoff_limit = l ; limoff_offset = Some o }
+  )}
+
+limit_clause:
+  _1 = LIMIT _2 = Integer
+    {                            ( int_of_string _2 )}
+
+offset_clause:
+  _1 = OFFSET _2 = Integer
+    {                              ( int_of_string _2 )}
+
+order_clause:
+  _1 = ORDER _2 = BY l = nonempty_list_order_condition_
+    {                                            ( l )}
+
+order_condition:
+  _1 = ASC _2 = bracketted_expression
+    {                            ( OrderAsc _2 )}
+| _1 = DESC _2 = bracketted_expression
+    {                             ( OrderDesc _2 )}
+| _1 = constraint_
+    {              ( OrderConstr _1 )}
+| _1 = var
+    {      ( OrderVar _1 )}
+
 having_clause:
   _1 = HAVING l = nonempty_list_having_condition_
     {                                           ( l )}
@@ -617,11 +760,28 @@ constraint_:
 | _1 = function_call
     {                ( ConstrFunctionCall _1 )}
 
+where_clause:
+  _1 = option_WHERE_ _2 = group_graph_pattern
+    {                                    ( _2 )}
+
 group_graph_pattern:
   _1 = LBRACE _2 = subselect _3 = RBRACE
     {                          ( SubSelect _2 )}
 | _1 = LBRACE _2 = group_graph_pattern_sub _3 = RBRACE
     {                                        ( GGPSub _2 )}
+
+subselect:
+  sel = select_clause w = where_clause sol = solution_modifier v = values_clause
+    {  (
+   let loc = mk_loc _startpos_sel_ _endpos_v_ in
+   {
+    subsel_loc = loc ;
+    subsel_select = sel ;
+    subsel_where = w ;
+    subsel_modifier = sol ;
+    subsel_values = v ;
+   }
+  )}
 
 group_graph_pattern_sub:
   t = option_triples_block_ l = list_gp_triples_
@@ -647,193 +807,23 @@ gp_triples:
   gp = graph_pattern_not_triples _2 = option_DOT_ t = option_triples_block_
     {  ( (gp, t) )}
 
-graph_node:
-  _1 = var_or_term
-    {              ( GraphNodeVT _1 )}
-| _1 = triples_node
-    {               ( GraphNodeTriples _1 )}
-
-collection:
-  _1 = LPAR _2 = nonempty_list_graph_node_ _3 = RPAR
-    {                                    ( _2 )}
-
-blank_node_property_list:
-  _1 = LBRACKET _2 = property_list_not_empty _3 = RBRACKET
-    {                                          ( _2 )}
-
-graph_term:
-  _1 = iri
-    {      ( GraphTermIri _1 )}
-| _1 = rdf_literal
-    {              ( GraphTermLit _1 )}
-| _1 = numeric_literal
-    {                  ( GraphTermNumeric _1 )}
-| _1 = boolean_literal
-    {                  ( GraphTermBoolean _1 )}
-| _1 = blank_node
-    {             ( GraphTermBlank _1 )}
-| _1 = NIL
-    {      ( GraphTermNil )}
-
-graph_pattern_not_triples:
-  _1 = group_of_union_graph_pattern
-    {                               ( _1 )}
-| _1 = optional_graph_pattern
-    {                         ( _1 )}
-| _1 = minus_graph_pattern
-    {                      ( _1 )}
-| _1 = graph_graph_pattern
-    {                      ( _1 )}
-| _1 = service_graph_pattern
-    {                        ( _1 )}
-| _1 = filter
-    {         ( _1 )}
-| _1 = bind
-    {       ( _1 )}
-| _1 = inline_data
-    {              ( _1 )}
-
-group_of_union_graph_pattern:
-  l = separated_nonempty_list_UNION_group_graph_pattern_
-    {                                                        ( Union l )}
-
-minus_graph_pattern:
-  _1 = MINUS g = group_graph_pattern
-    {                              ( Minus g )}
-
-graph_graph_pattern:
-  _1 = GRAPH vi = var_or_iri g = group_graph_pattern
+triples_block:
+  l = triples_block_details
     {  (
-    let loc = mk_loc _startpos__1_ _endpos_g_ in
-    let t =
-      { graphgp_loc = loc ;
-        graphgp_name = vi ;
-        graphgp_pat = g ;
+    let loc = mk_loc _startpos_l_ _endpos_l_ in
+    Triples
+      { triples_loc = loc ;
+        triples = l ;
       }
-    in
-    GGP t
   )}
 
-filter:
-  _1 = FILTER _2 = constraint_
-    {                           ( Filter _2 )}
-
-bind:
-  _1 = BIND _2 = LPAR e = expression _4 = AS v = var _6 = RPAR
+triples_block_details:
+  s = triples_same_subject_path rest = option_triples_block_details2_
     {  (
-    let loc = mk_loc _startpos__1_ _endpos__6_ in
-    let t =
-      { bind_loc = loc ;
-        bind_expr = e ;
-        bind_var = v ;
-      }
-    in
-    Bind t
+    match rest with
+      None -> [s]
+    | Some l -> s :: l
   )}
-
-inline_data:
-  _1 = VALUES _2 = datablock
-    {                   ( InlineData _2 )}
-
-loption_separated_nonempty_list_PIPE_path_one_in_property_set__:
-  
-    {    ( [] )}
-| x = separated_nonempty_list_PIPE_path_one_in_property_set_
-    {    ( x )}
-
-list_verbp_object_list_l_:
-  
-    {    ( [] )}
-| x = verbp_object_list_l xs = list_verbp_object_list_l_
-    {    ( x :: xs )}
-
-list_data_block_values_or_nil_:
-  
-    {    ( [] )}
-| x = data_block_values_or_nil xs = list_data_block_values_or_nil_
-    {    ( x :: xs )}
-
-list_data_block_value_:
-  
-    {    ( [] )}
-| x = data_block_value xs = list_data_block_value_
-    {    ( x :: xs )}
-
-nonempty_list_select_var_:
-  x = select_var
-    {    ( [ x ] )}
-| x = select_var xs = nonempty_list_select_var_
-    {    ( x :: xs )}
-
-nonempty_list_order_condition_:
-  x = order_condition
-    {    ( [ x ] )}
-| x = order_condition xs = nonempty_list_order_condition_
-    {    ( x :: xs )}
-
-nonempty_list_having_condition_:
-  x = having_condition
-    {    ( [ x ] )}
-| x = having_condition xs = nonempty_list_having_condition_
-    {    ( x :: xs )}
-
-nonempty_list_group_condition_:
-  x = group_condition
-    {    ( [ x ] )}
-| x = group_condition xs = nonempty_list_group_condition_
-    {    ( x :: xs )}
-
-nonempty_list_graph_node_path_:
-  x = graph_node_path
-    {    ( [ x ] )}
-| x = graph_node_path xs = nonempty_list_graph_node_path_
-    {    ( x :: xs )}
-
-nonempty_list_graph_node_:
-  x = graph_node
-    {    ( [ x ] )}
-| x = graph_node xs = nonempty_list_graph_node_
-    {    ( x :: xs )}
-
-nil_or_var_list:
-  _1 = NIL
-    {      ( [] )}
-| _1 = LPAR l = list_var_ _3 = RPAR
-    {                        ( l )}
-
-limit_offset_clause:
-  l = limit_clause o = option_offset_clause_
-    {  (
-    let loc = mk_loc _startpos_l_ _endpos_o_ in
-    { limoff_loc = loc ; limoff_limit = Some l ; limoff_offset = o }
-  )}
-| o = offset_clause l = option_limit_clause_
-    {  (
-    let loc = mk_loc _startpos_o_ _endpos_l_ in
-    { limoff_loc = loc ; limoff_limit = l ; limoff_offset = Some o }
-  )}
-
-limit_clause:
-  _1 = LIMIT _2 = Integer
-    {                            ( int_of_string _2 )}
-
-offset_clause:
-  _1 = OFFSET _2 = Integer
-    {                              ( int_of_string _2 )}
-
-order_condition:
-  _1 = ASC _2 = bracketted_expression
-    {                            ( OrderAsc _2 )}
-| _1 = DESC _2 = bracketted_expression
-    {                             ( OrderDesc _2 )}
-| _1 = constraint_
-    {              ( OrderConstr _1 )}
-| _1 = var
-    {      ( OrderVar _1 )}
-
-where_clause:
-  _1 = option_WHERE_ _2 = group_graph_pattern
-    {                                    ( _2 )}
 
 triples_block_details2:
   _1 = DOT t = option_triples_block_details_
@@ -900,11 +890,25 @@ verb_path_or_simple:
 | _1 = var
     {      ( VerbVar _1 )}
 
+graph_node:
+  _1 = var_or_term
+    {              ( GraphNodeVT _1 )}
+| _1 = triples_node
+    {               ( GraphNodeTriples _1 )}
+
 triples_node:
   _1 = collection
     {             ( TNodeCollection _1 )}
 | _1 = blank_node_property_list
     {                           ( TNodeBlank _1 )}
+
+collection:
+  _1 = LPAR _2 = nonempty_list_graph_node_ _3 = RPAR
+    {                                    ( _2 )}
+
+blank_node_property_list:
+  _1 = LBRACKET _2 = property_list_not_empty _3 = RBRACKET
+    {                                          ( _2 )}
 
 property_list:
   l = option_property_list_not_empty_
@@ -975,9 +979,97 @@ var:
     { var_loc = loc ; var_name = s }
   )}
 
+graph_term:
+  _1 = iri
+    {      ( GraphTermIri _1 )}
+| _1 = rdf_literal
+    {              ( GraphTermLit _1 )}
+| _1 = numeric_literal
+    {                  ( GraphTermNumeric _1 )}
+| _1 = boolean_literal
+    {                  ( GraphTermBoolean _1 )}
+| _1 = blank_node
+    {             ( GraphTermBlank _1 )}
+| _1 = NIL
+    {      ( GraphTermNil )}
+
+graph_pattern_not_triples:
+  _1 = group_of_union_graph_pattern
+    {                               ( _1 )}
+| _1 = optional_graph_pattern
+    {                         ( _1 )}
+| _1 = minus_graph_pattern
+    {                      ( _1 )}
+| _1 = graph_graph_pattern
+    {                      ( _1 )}
+| _1 = service_graph_pattern
+    {                        ( _1 )}
+| _1 = filter
+    {         ( _1 )}
+| _1 = bind
+    {       ( _1 )}
+| _1 = inline_data
+    {              ( _1 )}
+
+group_of_union_graph_pattern:
+  l = separated_nonempty_list_UNION_group_graph_pattern_
+    {                                                        ( Union l )}
+
 optional_graph_pattern:
   _1 = OPTIONAL g = group_graph_pattern
     {                                 ( Optional g )}
+
+minus_graph_pattern:
+  _1 = MINUS g = group_graph_pattern
+    {                              ( Minus g )}
+
+graph_graph_pattern:
+  _1 = GRAPH vi = var_or_iri g = group_graph_pattern
+    {  (
+    let loc = mk_loc _startpos__1_ _endpos_g_ in
+    let t =
+      { graphgp_loc = loc ;
+        graphgp_name = vi ;
+        graphgp_pat = g ;
+      }
+    in
+    GGP t
+  )}
+
+service_graph_pattern:
+  _1 = SERVICE silent = option_SILENT_ vi = var_or_iri g = group_graph_pattern
+    {  (
+    let loc = mk_loc _startpos__1_ _endpos_g_ in
+    let t =
+      { servgp_loc = loc ;
+        servgp_silent = silent <> None ;
+        servgp_name = vi ;
+        servgp_pat = g ;
+      }
+    in
+    Service t
+  )}
+
+filter:
+  _1 = FILTER _2 = constraint_
+    {                           ( Filter _2 )}
+
+bind:
+  _1 = BIND _2 = LPAR e = expression _4 = AS v = var _6 = RPAR
+    {  (
+    let loc = mk_loc _startpos__1_ _endpos__6_ in
+    let t =
+      { bind_loc = loc ;
+        bind_expr = e ;
+        bind_var = v ;
+      }
+    in
+    Bind t
+  )}
+
+inline_data:
+  _1 = VALUES _2 = datablock
+    {                   ( InlineData _2 )}
 
 object_list_path:
   _1 = separated_nonempty_list_COMMA_object_path_
@@ -1101,6 +1193,14 @@ arg_list:
     { argl_loc = loc ; argl_distinct = o <> None ; argl = l }
   )}
 
+iri_or_function:
+  iri = iri
+    {  (
+    EIri iri
+  )}
+| _1 = function_call
+    {                ( EFuncall _1 )}
+
 function_call:
   i = iri a = arg_list
     {  (
@@ -1178,213 +1278,6 @@ relational_expression:
   )}
 | _1 = numexp
     {         ( _1 )}
-
-expression_list:
-  _1 = NIL
-    {      ( [] )}
-| _1 = LPAR l = separated_nonempty_list_COMMA_expression_ _3 = RPAR
-    {                                                         ( l )}
-
-primary_expression:
-  _1 = bracketted_expression
-    {                        ( _1 )}
-| bic = built_in_call
-    {                    (
-    { expr_loc = mk_loc _startpos_bic_ _endpos_bic_ ;
-      expr = EBic bic ;
-    }
-  )}
-| lit = rdf_literal
-    {                  (
-    { expr_loc = mk_loc _startpos_lit_ _endpos_lit_ ;
-      expr = ELit lit ;
-    }
-  )}
-| lit = numeric_literal
-    {                      (
-  { expr_loc = mk_loc _startpos_lit_ _endpos_lit_ ;
-      expr = ENumeric lit ;
-    }
-  )}
-| lit = boolean_literal
-    {                      (
-    { expr_loc = mk_loc _startpos_lit_ _endpos_lit_ ;
-      expr = EBoolean lit ;
-    }
-  )}
-| v = var
-    {        (
-    { expr_loc = mk_loc _startpos_v_ _endpos_v_ ;
-      expr = EVar v ;
-    }
-  )}
-| x = iri_or_function
-    {                    (
-    { expr_loc = mk_loc _startpos_x_ _endpos_x_ ;
-      expr = x ;
-    }
-  )}
-
-numeric_literal:
-  _1 = numeric_literal_
-    {  (
-    let loc = mk_loc _startpos__1_ _endpos__1_ in
-    { rdf_lit_loc = loc ;
-      rdf_lit = _1 ;
-      rdf_lit_type = None ;
-    }
-  )}
-
-boolean_literal:
-  _1 = Boolean
-    {          (
-    let loc = mk_loc _startpos__1_ _endpos__1_ in
-    { rdf_lit_loc = loc ;
-      rdf_lit = mk_boolean _1 ;
-      rdf_lit_type = None ;
-    }
-  )}
-
-rdf_literal:
-  r = rdf_literal_
-    {  (
-    let loc = mk_loc _startpos_r_ _endpos_r_ in
-    let (s, lang, typ) = r in
-    { rdf_lit_loc = loc ;
-      rdf_lit = mk_lit ?lang s ;
-      rdf_lit_type = typ ;
-    }
-  )}
-
-rdf_literal_:
-  s = string
-    {           ( (s, None, None) )}
-| s = string _2 = HATHAT iri = iri
-    {                          ( (s, None, Some iri) )}
-| s = string t = Langtag
-    {                     ( (s, Some t, None) )}
-
-regexp_expression:
-  _1 = REGEX _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = RPAR
-    {  ( Bic_fun("REGEX", [e1 ; e2]) )}
-| _1 = REGEX _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = RPAR
-    {  ( Bic_fun ("REGEX", [e1 ; e2 ; e3]) )}
-
-option_where_clause_:
-  
-    {    ( None )}
-| x = where_clause
-    {    ( Some x )}
-
-option_verbp_object_list_:
-  
-    {    ( None )}
-| x = verbp_object_list
-    {    ( Some x )}
-
-option_verb_object_list_:
-  
-    {    ( None )}
-| x = verb_object_list
-    {    ( Some x )}
-
-option_values_clause__:
-  
-    {    ( None )}
-| x = values_clause_
-    {    ( Some x )}
-
-option_limit_clause_:
-  
-    {    ( None )}
-| x = limit_clause
-    {    ( Some x )}
-
-option_having_clause_:
-  
-    {    ( None )}
-| x = having_clause
-    {    ( Some x )}
-
-option_group_clause_:
-  
-    {    ( None )}
-| x = group_clause
-    {    ( Some x )}
-
-option_construct_triples_:
-  
-    {    ( None )}
-| x = construct_triples
-    {    ( Some x )}
-
-option_WHERE_:
-  
-    {    ( None )}
-| x = WHERE
-    {    ( Some x )}
-
-option_SILENT_:
-  
-    {    ( None )}
-| x = SILENT
-    {    ( Some x )}
-
-option_DOT_:
-  
-    {    ( None )}
-| x = DOT
-    {    ( Some x )}
-
-option_DISTINCT_:
-  
-    {    ( None )}
-| x = DISTINCT
-    {    ( Some x )}
-
-list_verb_object_list_l_:
-  
-    {    ( [] )}
-| x = verb_object_list_l xs = list_verb_object_list_l_
-    {    ( x :: xs )}
-
-list_var_:
-  
-    {    ( [] )}
-| x = var xs = list_var_
-    {    ( x :: xs )}
-
-list_prologue_item_:
-  
-    {    ( [] )}
-| x = prologue_item xs = list_prologue_item_
-    {    ( x :: xs )}
-
-list_gp_triples_:
-  
-    {    ( [] )}
-| x = gp_triples xs = list_gp_triples_
-    {    ( x :: xs )}
-
-list_dataset_clause_:
-  
-    {    ( [] )}
-| x = dataset_clause xs = list_dataset_clause_
-    {    ( x :: xs )}
-
-nonempty_list_var_or_iri_:
-  x = var_or_iri
-    {    ( [ x ] )}
-| x = var_or_iri xs = nonempty_list_var_or_iri_
-    {    ( x :: xs )}
-
-iri_or_function:
-  iri = iri
-    {  (
-    EIri iri
-  )}
-| _1 = function_call
-    {                ( EFuncall _1 )}
 
 numexp:
   e = primary_expression
@@ -1472,6 +1365,62 @@ numexp:
     }
   )}
 
+expression_list:
+  _1 = NIL
+    {      ( [] )}
+| _1 = LPAR l = separated_nonempty_list_COMMA_expression_ _3 = RPAR
+    {                                                         ( l )}
+
+primary_expression:
+  _1 = bracketted_expression
+    {                        ( _1 )}
+| bic = built_in_call
+    {                    (
+    { expr_loc = mk_loc _startpos_bic_ _endpos_bic_ ;
+      expr = EBic bic ;
+    }
+  )}
+| lit = rdf_literal
+    {                  (
+    { expr_loc = mk_loc _startpos_lit_ _endpos_lit_ ;
+      expr = ELit lit ;
+    }
+  )}
+| lit = numeric_literal
+    {                      (
+  { expr_loc = mk_loc _startpos_lit_ _endpos_lit_ ;
+      expr = ENumeric lit ;
+    }
+  )}
+| lit = boolean_literal
+    {                      (
+    { expr_loc = mk_loc _startpos_lit_ _endpos_lit_ ;
+      expr = EBoolean lit ;
+    }
+  )}
+| v = var
+    {        (
+    { expr_loc = mk_loc _startpos_v_ _endpos_v_ ;
+      expr = EVar v ;
+    }
+  )}
+| x = iri_or_function
+    {                    (
+    { expr_loc = mk_loc _startpos_x_ _endpos_x_ ;
+      expr = x ;
+    }
+  )}
+
+numeric_literal:
+  _1 = numeric_literal_
+    {  (
+    let loc = mk_loc _startpos__1_ _endpos__1_ in
+    { rdf_lit_loc = loc ;
+      rdf_lit = _1 ;
+      rdf_lit_type = None ;
+    }
+  )}
+
 numeric_literal_:
   _1 = numeric_literal_unsigned
     {                           ( _1 )}
@@ -1503,6 +1452,39 @@ numeric_literal_negative:
     {                   ( mk_decimal _1 )}
 | _1 = Double_negative
     {                  ( mk_double _1 )}
+
+boolean_literal:
+  _1 = Boolean
+    {          (
+    let loc = mk_loc _startpos__1_ _endpos__1_ in
+    { rdf_lit_loc = loc ;
+      rdf_lit = mk_boolean _1 ;
+      rdf_lit_type = None ;
+    }
+  )}
+
+string:
+  _1 = String_literal
+    {                       ( _1 )}
+
+rdf_literal:
+  r = rdf_literal_
+    {  (
+    let loc = mk_loc _startpos_r_ _endpos_r_ in
+    let (s, lang, typ) = r in
+    { rdf_lit_loc = loc ;
+      rdf_lit = mk_lit ?lang s ;
+      rdf_lit_type = typ ;
+    }
+  )}
+
+rdf_literal_:
+  s = string
+    {           ( (s, None, None) )}
+| s = string _2 = HATHAT iri = iri
+    {                          ( (s, None, Some iri) )}
+| s = string t = Langtag
+    {                     ( (s, Some t, None) )}
 
 built_in_call:
   _1 = aggregate
@@ -1617,6 +1599,24 @@ built_in_call:
     {                               ( Bic_EXISTS g )}
 | _1 = NOT _2 = EXISTS g = group_graph_pattern
     {                                   ( Bic_NOTEXISTS g )}
+
+regexp_expression:
+  _1 = REGEX _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = RPAR
+    {  ( Bic_fun("REGEX", [e1 ; e2]) )}
+| _1 = REGEX _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = RPAR
+    {  ( Bic_fun ("REGEX", [e1 ; e2 ; e3]) )}
+
+substring_expression:
+  _1 = SUBSTR _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = RPAR
+    {  ( Bic_fun("SUBSTR", [e1 ; e2]) )}
+| _1 = SUBSTR _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = RPAR
+    {  ( Bic_fun ("SUBSTR", [e1 ; e2 ; e3]) )}
+
+str_replace_expression:
+  _1 = REPLACE _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = RPAR
+    {  ( Bic_fun("REPLACE", [e1 ; e2 ; e3]) )}
+| _1 = REPLACE _2 = LPAR e1 = expression _4 = COMMA e2 = expression _6 = COMMA e3 = expression _8 = COMMA e4 = expression _10 = RPAR
+    {  ( Bic_fun ("REPLACE", [e1 ;e2 ; e3 ; e4]) )}
 
 aggregate:
   _1 = COUNT _2 = LPAR d = option_DISTINCT_ _4 = STAR _5 = RPAR

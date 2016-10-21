@@ -1,23 +1,4 @@
-(* This module helps report errors and maintains some information
-   about the source file that is being read. *)
-
-(* ---------------------------------------------------------------------------- *)
-
-(* Call [set_filename] before lexing and parsing in order to inform
-   the module [Error] about the name of the file that is being
-   examined. *)
-
-(* TEMPORARY limiter ou supprimer ou commenter cette interface stateful *)
-
-val set_filename: string -> unit
-
-val get_filename: unit -> string
-
-val get_filemark: unit -> Mark.t
-
-val file_contents: string option ref
-
-val get_file_contents: unit -> string
+(* This module helps report errors. *)
 
 (* ---------------------------------------------------------------------------- *)
 
@@ -62,4 +43,3 @@ val warning: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
    [errors] and stop the program if any errors have been reported. *)
 
 val grammar_warning: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
-

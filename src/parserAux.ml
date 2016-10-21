@@ -5,13 +5,18 @@ let new_precedence_level =
   let c = ref 0 in
   fun pos1 pos2 ->
     incr c;
-    PrecedenceLevel (Error.get_filemark (), !c, pos1, pos2)
+    PrecedenceLevel (InputFile.get_input_file (), !c, pos1, pos2)
 
 let new_production_level =
   let c = ref 0 in
   fun () ->
     incr c;
-    ProductionLevel (Error.get_filemark (), !c)
+    ProductionLevel (InputFile.get_input_file (), !c)
+
+let new_on_error_reduce_level =
+  new_production_level
+    (* the counter is shared with [new_production_level],
+       but this is irrelevant *)
 
 module IdSet = Set.Make (struct
   type t = identifier located

@@ -515,12 +515,27 @@ module Precedence : sig
 end
 
 (* ------------------------------------------------------------------------ *)
-(* %on_error_reduce declarations. *)
+(* [%on_error_reduce] declarations. *)
 
 module OnErrorReduce : sig
 
-  (* This is the set of %on_error_reduce declarations. *)
-  val declarations: StringSet.t
+  (* [reduce prod] tells whether the left-hand side of [prod] (a nonterminal
+     symbol) appears in an [%on_error_reduce] declaration. *)
+
+  val reduce: Production.index -> bool
+
+  (* [iter f] applies the function [f] in turn, in an arbitrary order, to
+     every nonterminal symbol that appears in an [%on_error_reduce]
+     declaration. *)
+
+  val iter: (Nonterminal.t -> unit) -> unit
+
+  (* When two productions could be reduced, in a single state, due to
+     [%on_error_reduce] declarations, these productions can be compared, using
+     [preferable], to test if one of them takes precedence over the other.
+     This is a partial order; two productions may be incomparable. *)
+
+  val preferable: Production.index -> Production.index -> bool
 
 end
 
@@ -536,5 +551,3 @@ val diagnostics: unit -> unit
 (* ------------------------------------------------------------------------ *)
 
 end (* module Make *)
-
-

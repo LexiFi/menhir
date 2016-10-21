@@ -170,23 +170,22 @@ install:
 	mkdir -p $(libdir)
 	install -m 644 $(MLYLIB) $(libdir)
 	@if `$(BUILDDIR)/menhir.$(TARGET) --suggest-ocamlfind` ; then \
-	  echo Installing MenhirLib via ocamlfind. ; \
+	  echo 'Installing MenhirLib via ocamlfind.' ; \
 	  ocamlfind install menhirLib src/META $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) ; \
 	else \
-	  echo Installing MenhirLib manually. ; \
+	  echo 'Installing MenhirLib manually.' ; \
 	  install -m 644 $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) $(libdir) ; \
 	fi
 # Install the documentation, if it has been built.
 	if [ -f manual.pdf ] ; then \
-	  mkdir -p $(docdir) ; \
-	  mkdir -p $(mandir) ; \
-	  cp -r $(DOCS) $(docdir) ; \
+	  mkdir -p $(docdir) $(mandir) && \
+	  cp -r $(DOCS) $(docdir) && \
 	  cp -r $(MANS) $(mandir) ; \
 	fi
 
 uninstall:
 	@if `$(bindir)/$(MENHIREXE) --suggest-ocamlfind` ; then \
-	  echo Un-installing MenhirLib via ocamlfind. ; \
+	  echo 'Un-installing MenhirLib via ocamlfind.' ; \
 	  ocamlfind remove menhirLib ; \
 	fi
 	rm -rf $(bindir)/$(MENHIREXE)

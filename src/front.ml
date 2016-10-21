@@ -10,19 +10,18 @@ let load_partial_grammar filename =
     Error.error []
       "argument file names should end in %s. \"%s\" is not accepted."
       validExt filename;
-  Error.set_filename filename;
+  InputFile.new_input_file filename;
   try
 
     let contents = IO.read_whole_file filename in
-    Error.file_contents := Some contents;
-    let open Lexing in
-    let lexbuf = Lexing.from_string contents in
-    lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
-    let grammar =
-      { (Driver.grammar Lexer.main lexbuf) with Syntax.pg_filename = filename }
-    in
-    Error.file_contents := None;
-    grammar
+    InputFile.with_file_contents contents (fun () ->
+      let open Lexing in
+      let lexbuf = Lexing.from_string contents in
+      lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
+      (* the grammar: *)
+      { (Driver.grammar Lexer.main lexbuf)
+        with Syntax.pg_filename = filename }
+    )
 
   with Sys_error msg ->
     Error.error [] "%s" msg

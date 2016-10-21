@@ -1069,19 +1069,19 @@ let default_conflict_resolution () =
     Error.grammar_warning [] "%d states have an end-of-stream conflict." !ambiguities
 
 (* ------------------------------------------------------------------------ *)
-(* Extra reductions. 2015/10/19 *)
+(* Extra reductions. *)
 
-(* If a state can reduce one production whose left-hand symbol has been marked
-   [%on_error_reduce], and only one such production, then every error action
-   in this state is replaced with a reduction action. This is done even though
-   this state may have outgoing shift transitions: thus, we are forcing one
-   interpretation of the past, among several possible interpretations. *)
+(* 2015/10/19 Original implementation. *)
+(* 2016/07/13 Use priority levels to choose which productions to reduce
+              when several productions are eligible. *)
 
-(* The above is the lax interpretation of the criterion. In a stricter
-   interpretation, one could require the state to be able to reduce only
-   one production, and furthermore require this production to be marked.
-   In practice, the lax interpretation makes [%on_error_reduce] more
-   powerful, and this extra power seems useful. *)
+(* If a state can reduce some productions whose left-hand symbol has been
+   marked [%on_error_reduce], and if one such production [prod] is preferable
+   to every other (according to the priority rules of [%on_error_reduce]
+   declarations), then every error action in this state is replaced with a
+   reduction of [prod]. This is done even though this state may have outgoing
+   shift transitions: thus, we are forcing one interpretation of the past,
+   among several possible interpretations. *)
 
 (* The code below looks like the decision on a default reduction in
    [Invariant], except we do not impose the absence of outgoing terminal
@@ -1097,59 +1097,69 @@ let default_conflict_resolution () =
 let extra =
   ref 0
 
+(* A count of how many states have more than one eligible production, but one
+   is preferable to every other (so priority plays a role). *)
+
+let prioritized =
+  ref 0
+
 (* The set of nonterminal symbols in the left-hand side of an extra reduction. *)
 
 let extra_nts =
-  ref StringSet.empty
+  ref NonterminalSet.empty
 
-let lhs prod : string =
-  Nonterminal.print false (Production.nt prod)
+let extra_reductions_in_node node =
+  (* Compute the productions which this node can reduce. *)
+  let productions : _ ProductionMap.t = invert (reductions node) in
+  let prods : Production.index list =
+    ProductionMap.fold (fun prod _ prods -> prod :: prods) productions []
+  in
+  (* Keep only those whose left-hand symbol is marked [%on_error_reduce]. *)
+  let prods = List.filter OnErrorReduce.reduce prods in
+  (* Check if one of them is preferable to every other one. *)
+  match Misc.best OnErrorReduce.preferable prods with
+  | None ->
+      (* Either no production is marked [%on_error_reduce], or several of them
+         are marked and none is preferable. *)
+      ()
+  | Some prod ->
+      let acceptable = acceptable_tokens node in
+      (* An extra reduction is possible. Replace every error action with
+         a reduction of [prod]. If we replace at least one error action
+         with a reduction, update [extra] and [extra_nts]. *)
+      let triggered = lazy (
+        incr extra;
+        if List.length prods > 1 then incr prioritized;
+        extra_nts := NonterminalSet.add (Production.nt prod) !extra_nts
+      ) in
+      Terminal.iter_real (fun tok ->
+        if not (TerminalSet.mem tok acceptable) then begin
+          node.reductions <- TerminalMap.add tok [ prod ] node.reductions;
+          Lazy.force triggered
+        end
+      )
 
 let extra_reductions () =
+  (* Examine every node. *)
   iter (fun node ->
     (* Just like a default reduction, an extra reduction should be forbidden
        (it seems) if [forbid_default_reduction] is set. *)
-    if not node.forbid_default_reduction then begin
-
-      (* Compute the productions which this node can reduce. *)
-      let productions = invert (reductions node) in
-      (* Keep only those whose left-hand symbol is marked [%on_error_reduce]. *)
-      let productions = ProductionMap.filter (fun prod _ ->
-        StringSet.mem (lhs prod) OnErrorReduce.declarations
-      ) productions in
-      (* Check if this only one such production remains. *)
-      match ProductionMap.is_singleton productions with
-      | None ->
-          ()
-      | Some (prod, _) ->
-          let acceptable = acceptable_tokens node in
-          (* An extra reduction is possible. Replace every error action with
-             a reduction of [prod]. If we replace at least one error action
-             with a reduction, update [extra] and [extra_nts]. *)
-          let triggered = lazy (
-            incr extra;
-            extra_nts := StringSet.add (lhs prod) !extra_nts
-          ) in
-          Terminal.iter_real (fun tok ->
-            if not (TerminalSet.mem tok acceptable) then begin
-              node.reductions <- TerminalMap.add tok [ prod ] node.reductions;
-              Lazy.force triggered
-            end
-          )
-
-    end
+    if not node.forbid_default_reduction then
+      extra_reductions_in_node node
   );
   (* Info message. *)
   if !extra > 0 then
     Error.logA 1 (fun f ->
-      Printf.fprintf f "Extra reductions on error were added in %d states.\n" !extra
+      Printf.fprintf f "Extra reductions on error were added in %d states.\n" !extra;
+      Printf.fprintf f "Priority played a role in %d of these states.\n" !prioritized
     );
   (* Warn about useless %on_error_reduce declarations. *)
-  StringSet.iter (fun nt ->
-    if not (StringSet.mem nt !extra_nts) then
+  OnErrorReduce.iter (fun nt ->
+    if not (NonterminalSet.mem nt !extra_nts) then
       Error.grammar_warning []
-        "the declaration %%on_error_reduce %s is never useful." nt
-  ) OnErrorReduce.declarations
+        "the declaration %%on_error_reduce %s is never useful."
+        (Nonterminal.print false nt)
+  )
 
 (* ------------------------------------------------------------------------ *)
 (* Define [fold_entry], which in some cases facilitates the use of [entry]. *)

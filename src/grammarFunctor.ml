@@ -579,10 +579,10 @@ module Production = struct
     Array.make n None
 
   let production_level : branch_production_level array =
-    (* The start productions should receive this dummy level, I suppose.
-       We use a fresh mark, so a reduce/reduce conflict that involves a
-       start production will not be solved. *)
-    let dummy = ProductionLevel (Mark.fresh(), 0) in
+    (* The start productions receive a level that pretends that they
+       originate in a fictitious "builtin" file. So, a reduce/reduce
+       conflict that involves a start production will not be solved. *)
+    let dummy = ProductionLevel (InputFile.builtin_input_file, 0) in
     Array.make n dummy
 
   let (_ : int) = StringMap.fold (fun nonterminal { branches = branches } k ->
@@ -1369,7 +1369,7 @@ module Precedence = struct
       | _, UndefinedPrecedence ->
           Ic
       | PrecedenceLevel (m1, l1, _, _), PrecedenceLevel (m2, l2, _, _) ->
-          if not (Mark.same m1 m2) then
+          if not (InputFile.same_input_file m1 m2) then
             Ic
           else
             if l1 > l2 then
@@ -1382,7 +1382,7 @@ module Precedence = struct
   let production_order p1 p2 =
     match p1, p2 with
       | ProductionLevel (m1, l1), ProductionLevel (m2, l2) ->
-          if not (Mark.same m1 m2) then
+          if not (InputFile.same_input_file m1 m2) then
             Ic
           else
             if l1 > l2 then
@@ -1464,12 +1464,69 @@ let diagnostics () =
 
 module OnErrorReduce = struct
 
-  let declarations =
+  (* We keep a [StringMap] internally, and convert back and forth between
+     the types [Nonterminal.t] and [string] when querying this map. This
+     is not very elegant, and could be changed if desired. *)
+
+  let declarations : Syntax.on_error_reduce_level StringMap.t =
     grammar.on_error_reduce
+
+  let print (nt : Nonterminal.t) : string =
+    Nonterminal.print false nt
+
+  let lookup (nt : string) : Nonterminal.t =
+    try
+      Nonterminal.lookup nt
+    with Not_found ->
+      (* If this fails, then we have an [%on_error_reduce] declaration
+         for an invalid symbol. *)
+      assert false
+
+  let reduce prod =
+    let nt = Production.nt prod in
+    StringMap.mem (print nt) declarations
+
+  let iter f =
+    StringMap.iter (fun nt _prec ->
+      f (lookup nt)
+    ) declarations
+
+  open Precedence
+
+  let preferable prod1 prod2 =
+    (* The two productions that we are comparing must be distinct. *)
+    assert (prod1 <> prod2);
+    let nt1 = Production.nt prod1
+    and nt2 = Production.nt prod2 in
+    (* If they have the same left-hand side (which seems rather unlikely?),
+       declare them incomparable. *)
+    nt1 <> nt2 &&
+    (* Otherwise, look up the priority levels associated with their left-hand
+       symbols. *)
+    let prec1, prec2 =
+      try
+        StringMap.find (print nt1) declarations,
+        StringMap.find (print nt2) declarations
+      with Not_found ->
+        (* [preferable] should be used to compare two symbols for which
+           there exist [%on_error_reduce] declarations. *)
+        assert false
+    in
+    match production_order prec1 prec2 with
+    | Gt ->
+        (* [prec1] is a higher integer than [prec2], therefore comes later
+           in the file. By analogy with [%left] and friends, we give higher
+           priority to later declarations. *)
+        true
+    | Lt ->
+        false
+    | Eq
+    | Ic ->
+        (* We could issue a warning or an information message in these cases. *)
+        false
 
 end
 
 (* ------------------------------------------------------------------------ *)
 
 end (* module Make *)
-

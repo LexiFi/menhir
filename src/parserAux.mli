@@ -24,6 +24,11 @@ val new_precedence_level: Lexing.position -> Lexing.position -> precedence_level
 
 val new_production_level: unit -> branch_production_level
 
+(* [new_on_error_reduce_level()] creates a new level, which is attached to an
+   [%on_error_reduce] declaration. *)
+
+val new_on_error_reduce_level: unit -> on_error_reduce_level
+
 (* [check_production_group] accepts a production group and checks that all
    productions in the group define the same set of identifiers. *)
 

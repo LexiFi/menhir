@@ -24,241 +24,241 @@ let (@@) f x = f x
 %start parse_type
 %start parse_unit
 %start test
-%token <string> WC_TYPE
-%token <string> WC_EXPR
-%token <string> WC_DECL
-%token <string> TK_WSTRING_LITERAL
-%token <string> TK_WCHAR_CONSTANT
-%token <string> TK_TYPEDEF_NAME
-%token TK_TILDE
-%token <string> TK_STRING_LITERAL
-%token TK_STAR_EQ
-%token TK_STAR
-%token TK_SLASH_EQ
-%token TK_SLASH
-%token TK_SEMICOLON
-%token TK_RSQBRACK
-%token TK_RBRACK
-%token TK_RBRACE
-%token TK_QMARK
-%token TK_PLUS_EQ
-%token TK_PLUS
-%token TK_PIPE_EQ
-%token TK_PIPEPIPE
-%token TK_PIPE
-%token TK_PERIOD
-%token TK_PERCENT_EQ
-%token TK_PERCENT
-%token <string * string option> TK_OCTAL_CONSTANT
-%token TK_NE
-%token TK_MINUS_EQ
-%token TK_MINUS
-%token TK_LTLT_EQ
-%token TK_LTLT
-%token TK_LSQBRACK
-%token TK_LESS_EQ
-%token TK_LESS
-%token TK_LBRACK
-%token TK_LBRACE
-%token <string * string option> TK_INTEGER_CONSTANT
-%token <string> TK_INCLUDE
-%token TK_INC
-%token <string> TK_IDENTIFIER
-%token <string * string option> TK_HEX_FLOATING_CONSTANT
-%token <string * string option> TK_HEX_CONSTANT
-%token TK_GTGT_EQ
-%token TK_GTGT
-%token TK_GREATER_EQ
-%token TK_GREATER
-%token <string * string option> TK_FLOATING_CONSTANT
-%token TK_EXMARK
-%token TK_EQUALS
-%token TK_EQEQ
-%token TK_ELLIPSIS
-%token TK_DEC
-%token TK_COMMA
-%token TK_COLON
-%token <string> TK_CHAR_CONSTANT
-%token TK_CARET_EQ
-%token TK_CARET
-%token <string * string option> TK_BIN_CONSTANT
-%token TK_ARROW
-%token TK_AND_EQ
-%token TK_ANDAND
-%token TK_AND
-%token KW_WHILE
-%token KW_WCHAR_T
-%token KW_VOLATILE
-%token KW_VOID
-%token KW_VA_LIST
-%token KW_VA_ARG
-%token KW_UNSIGNED
-%token KW_UNION
-%token KW_TYPES_COMPATIBLE_P
-%token KW_TYPEOF
-%token KW_TYPEDEF
-%token KW_THREAD
-%token KW_SWITCH
-%token KW_STRUCT
-%token KW_STATIC
-%token KW_SIZEOF
-%token KW_SIGNED
-%token KW_SHORT
-%token KW_RETURN
-%token KW_RESTRICT
-%token KW_REGISTER
-%token KW_REAL
-%token KW_OFFSETOF
-%token KW_LONG
-%token KW_LABEL
-%token <int> KW_INTN
-%token KW_INT
-%token KW_INLINE
-%token KW_IMAG
-%token KW_GOTO
-%token KW_FOR
-%token <int> KW_FLOATN
-%token KW_FLOAT
-%token KW_FASTCALL
-%token KW_EXTERN
-%token KW_EXTENSION
-%token KW_ENUM
-%token KW_DOUBLE
-%token KW_DO
-%token KW_DEFAULT
-%token KW_DECLSPEC
-%token <int> KW_DECIMALN
-%token KW_DATATYPE
-%token KW_CONTINUE
-%token KW_CONST
-%token KW_COMPLEX
-%token KW_CHAR
-%token KW_CASE
-%token KW_BREAK
-%token KW_BOOL
-%token KW_AUTO
-%token KW_ATTR_WEAKREF
-%token KW_ATTR_WEAK
-%token KW_ATTR_WARN_UNUSED_RESULT
-%token KW_ATTR_VLIW
-%token KW_ATTR_VISIBILITY
-%token KW_ATTR_VERSION_ID
-%token KW_ATTR_VECTOR_SIZE
-%token KW_ATTR_USED
-%token KW_ATTR_UNUSED
-%token KW_ATTR_TRAP_EXIT
-%token KW_ATTR_TRANSPARENT_UNION
-%token KW_ATTR_TLS_MODEL
-%token KW_ATTR_TINY_DATA
-%token KW_ATTR_TINY
-%token KW_ATTR_THISCALL
-%token KW_ATTR_TARGET
-%token KW_ATTR_SYSV_ABI
-%token KW_ATTR_SYSCALL_LINKAGE
-%token KW_ATTR_STDCALL
-%token KW_ATTR_SSEREGPARM
-%token KW_ATTR_SP_SWITCH
-%token KW_ATTR_SPU_VECTOR
-%token KW_ATTR_SIGNAL
-%token KW_ATTR_SHORT_CALL
-%token KW_ATTR_SHORTCALL
-%token KW_ATTR_SHARED
-%token KW_ATTR_SENTINEL
-%token KW_ATTR_SELECTANY
-%token KW_ATTR_SECTION
-%token KW_ATTR_SAVE_VOLATILES
-%token KW_ATTR_SAVEALL
-%token KW_ATTR_RETURNS_TWICE
-%token KW_ATTR_RESBANK
-%token KW_ATTR_REGPARM
-%token KW_ATTR_PURE
-%token KW_ATTR_PROGMEM
-%token KW_ATTR_PCS
-%token KW_ATTR_PACKED
-%token KW_ATTR_OS_TASK
-%token KW_ATTR_OS_MAIN
-%token KW_ATTR_OPTIMIZE
-%token KW_ATTR_NO_SPLIT_STACK
-%token KW_ATTR_NO_INSTRUMENT_FUNCTION
-%token KW_ATTR_NOTSHARED
-%token KW_ATTR_NOTHROW
-%token KW_ATTR_NORETURN
-%token KW_ATTR_NONNULL
-%token KW_ATTR_NOMIPS16
-%token KW_ATTR_NOINLINE
-%token KW_ATTR_NOCOMMON
-%token KW_ATTR_NOCLONE
-%token KW_ATTR_NMI_HANDLER
-%token KW_ATTR_NESTING
-%token KW_ATTR_NEAR
-%token KW_ATTR_NAKED
-%token KW_ATTR_MS_STRUCT
-%token KW_ATTR_MS_HOOK_PROLOGUE
-%token KW_ATTR_MS_ABI
-%token KW_ATTR_MODEL
-%token KW_ATTR_MODE
-%token KW_ATTR_MIPS16
-%token KW_ATTR_MAY_ALIAS
-%token KW_ATTR_MALLOC
-%token KW_ATTR_LONG_CALL
-%token KW_ATTR_LONGCALL
-%token KW_ATTR_LEAF
-%token KW_ATTR_L2
-%token KW_ATTR_L1_TEXT
-%token KW_ATTR_L1_DATA_B
-%token KW_ATTR_L1_DATA_A
-%token KW_ATTR_L1_DATA
-%token KW_ATTR_KSPISUSP
-%token KW_ATTR_ISR
-%token KW_ATTR_IO
-%token KW_ATTR_INTERRUPT_THREAD
-%token KW_ATTR_INTERRUPT_HANDLER
-%token KW_ATTR_INTERRUPT
-%token KW_ATTR_IFUNC
-%token KW_ATTR_HOT
-%token KW_ATTR_GNU_INLINE
-%token KW_ATTR_GCC_STRUCT
-%token KW_ATTR_FUNCTION_VECTOR
-%token KW_ATTR_FORMAT_ARG
-%token KW_ATTR_FORMAT
-%token KW_ATTR_FORCE_ALIGN_ARG_POINTER
-%token KW_ATTR_FLATTEN
-%token KW_ATTR_FAST_INTERRUPT
-%token KW_ATTR_FASTCALL
-%token KW_ATTR_FAR
-%token KW_ATTR_EXTERNALLY_VISIBLE
-%token KW_ATTR_EXCEPTION_HANDLER
-%token KW_ATTR_EIGHTBIT_DATA
-%token KW_ATTR_DLLIMPORT
-%token KW_ATTR_DLLEXPORT
-%token KW_ATTR_DISINTERRUPT
-%token KW_ATTR_DESTRUCTOR
-%token KW_ATTR_DEPRECATED
-%token KW_ATTR_CONSTRUCTOR
-%token KW_ATTR_CONST
-%token KW_ATTR_COMMON
-%token KW_ATTR_COLD
-%token KW_ATTR_CLEANUP
-%token KW_ATTR_CDECL
-%token KW_ATTR_CB
-%token KW_ATTR_CALLEE_POP_AGGREGATE_RETURN
-%token KW_ATTR_BELOW100
-%token KW_ATTR_BASED
-%token KW_ATTR_BACK_SWITCH
-%token KW_ATTR_ARTIFICIAL
-%token KW_ATTR_ALWAYS_INLINE
-%token KW_ATTR_ALTIVEC
-%token KW_ATTR_ALLOC_SIZE
-%token KW_ATTR_ALIGNED
-%token KW_ATTR_ALIAS
-%token KW_ATTRIBUTE
-%token KW_ASM
-%token KW_ALIGNOF
 %token EOF
-%token KW_IF
+%token KW_ALIGNOF
+%token KW_ASM
+%token KW_ATTRIBUTE
+%token KW_ATTR_ALIAS
+%token KW_ATTR_ALIGNED
+%token KW_ATTR_ALLOC_SIZE
+%token KW_ATTR_ALTIVEC
+%token KW_ATTR_ALWAYS_INLINE
+%token KW_ATTR_ARTIFICIAL
+%token KW_ATTR_BACK_SWITCH
+%token KW_ATTR_BASED
+%token KW_ATTR_BELOW100
+%token KW_ATTR_CALLEE_POP_AGGREGATE_RETURN
+%token KW_ATTR_CB
+%token KW_ATTR_CDECL
+%token KW_ATTR_CLEANUP
+%token KW_ATTR_COLD
+%token KW_ATTR_COMMON
+%token KW_ATTR_CONST
+%token KW_ATTR_CONSTRUCTOR
+%token KW_ATTR_DEPRECATED
+%token KW_ATTR_DESTRUCTOR
+%token KW_ATTR_DISINTERRUPT
+%token KW_ATTR_DLLEXPORT
+%token KW_ATTR_DLLIMPORT
+%token KW_ATTR_EIGHTBIT_DATA
+%token KW_ATTR_EXCEPTION_HANDLER
+%token KW_ATTR_EXTERNALLY_VISIBLE
+%token KW_ATTR_FAR
+%token KW_ATTR_FASTCALL
+%token KW_ATTR_FAST_INTERRUPT
+%token KW_ATTR_FLATTEN
+%token KW_ATTR_FORCE_ALIGN_ARG_POINTER
+%token KW_ATTR_FORMAT
+%token KW_ATTR_FORMAT_ARG
+%token KW_ATTR_FUNCTION_VECTOR
+%token KW_ATTR_GCC_STRUCT
+%token KW_ATTR_GNU_INLINE
+%token KW_ATTR_HOT
+%token KW_ATTR_IFUNC
+%token KW_ATTR_INTERRUPT
+%token KW_ATTR_INTERRUPT_HANDLER
+%token KW_ATTR_INTERRUPT_THREAD
+%token KW_ATTR_IO
+%token KW_ATTR_ISR
+%token KW_ATTR_KSPISUSP
+%token KW_ATTR_L1_DATA
+%token KW_ATTR_L1_DATA_A
+%token KW_ATTR_L1_DATA_B
+%token KW_ATTR_L1_TEXT
+%token KW_ATTR_L2
+%token KW_ATTR_LEAF
+%token KW_ATTR_LONGCALL
+%token KW_ATTR_LONG_CALL
+%token KW_ATTR_MALLOC
+%token KW_ATTR_MAY_ALIAS
+%token KW_ATTR_MIPS16
+%token KW_ATTR_MODE
+%token KW_ATTR_MODEL
+%token KW_ATTR_MS_ABI
+%token KW_ATTR_MS_HOOK_PROLOGUE
+%token KW_ATTR_MS_STRUCT
+%token KW_ATTR_NAKED
+%token KW_ATTR_NEAR
+%token KW_ATTR_NESTING
+%token KW_ATTR_NMI_HANDLER
+%token KW_ATTR_NOCLONE
+%token KW_ATTR_NOCOMMON
+%token KW_ATTR_NOINLINE
+%token KW_ATTR_NOMIPS16
+%token KW_ATTR_NONNULL
+%token KW_ATTR_NORETURN
+%token KW_ATTR_NOTHROW
+%token KW_ATTR_NOTSHARED
+%token KW_ATTR_NO_INSTRUMENT_FUNCTION
+%token KW_ATTR_NO_SPLIT_STACK
+%token KW_ATTR_OPTIMIZE
+%token KW_ATTR_OS_MAIN
+%token KW_ATTR_OS_TASK
+%token KW_ATTR_PACKED
+%token KW_ATTR_PCS
+%token KW_ATTR_PROGMEM
+%token KW_ATTR_PURE
+%token KW_ATTR_REGPARM
+%token KW_ATTR_RESBANK
+%token KW_ATTR_RETURNS_TWICE
+%token KW_ATTR_SAVEALL
+%token KW_ATTR_SAVE_VOLATILES
+%token KW_ATTR_SECTION
+%token KW_ATTR_SELECTANY
+%token KW_ATTR_SENTINEL
+%token KW_ATTR_SHARED
+%token KW_ATTR_SHORTCALL
+%token KW_ATTR_SHORT_CALL
+%token KW_ATTR_SIGNAL
+%token KW_ATTR_SPU_VECTOR
+%token KW_ATTR_SP_SWITCH
+%token KW_ATTR_SSEREGPARM
+%token KW_ATTR_STDCALL
+%token KW_ATTR_SYSCALL_LINKAGE
+%token KW_ATTR_SYSV_ABI
+%token KW_ATTR_TARGET
+%token KW_ATTR_THISCALL
+%token KW_ATTR_TINY
+%token KW_ATTR_TINY_DATA
+%token KW_ATTR_TLS_MODEL
+%token KW_ATTR_TRANSPARENT_UNION
+%token KW_ATTR_TRAP_EXIT
+%token KW_ATTR_UNUSED
+%token KW_ATTR_USED
+%token KW_ATTR_VECTOR_SIZE
+%token KW_ATTR_VERSION_ID
+%token KW_ATTR_VISIBILITY
+%token KW_ATTR_VLIW
+%token KW_ATTR_WARN_UNUSED_RESULT
+%token KW_ATTR_WEAK
+%token KW_ATTR_WEAKREF
+%token KW_AUTO
+%token KW_BOOL
+%token KW_BREAK
+%token KW_CASE
+%token KW_CHAR
+%token KW_COMPLEX
+%token KW_CONST
+%token KW_CONTINUE
+%token KW_DATATYPE
+%token <int> KW_DECIMALN
+%token KW_DECLSPEC
+%token KW_DEFAULT
+%token KW_DO
+%token KW_DOUBLE
 %token KW_ELSE
-%nonassoc KW_IF 
-%nonassoc KW_ELSE 
+%token KW_ENUM
+%token KW_EXTENSION
+%token KW_EXTERN
+%token KW_FASTCALL
+%token KW_FLOAT
+%token <int> KW_FLOATN
+%token KW_FOR
+%token KW_GOTO
+%token KW_IF
+%token KW_IMAG
+%token KW_INLINE
+%token KW_INT
+%token <int> KW_INTN
+%token KW_LABEL
+%token KW_LONG
+%token KW_OFFSETOF
+%token KW_REAL
+%token KW_REGISTER
+%token KW_RESTRICT
+%token KW_RETURN
+%token KW_SHORT
+%token KW_SIGNED
+%token KW_SIZEOF
+%token KW_STATIC
+%token KW_STRUCT
+%token KW_SWITCH
+%token KW_THREAD
+%token KW_TYPEDEF
+%token KW_TYPEOF
+%token KW_TYPES_COMPATIBLE_P
+%token KW_UNION
+%token KW_UNSIGNED
+%token KW_VA_ARG
+%token KW_VA_LIST
+%token KW_VOID
+%token KW_VOLATILE
+%token KW_WCHAR_T
+%token KW_WHILE
+%token TK_AND
+%token TK_ANDAND
+%token TK_AND_EQ
+%token TK_ARROW
+%token <string * string option> TK_BIN_CONSTANT
+%token TK_CARET
+%token TK_CARET_EQ
+%token <string> TK_CHAR_CONSTANT
+%token TK_COLON
+%token TK_COMMA
+%token TK_DEC
+%token TK_ELLIPSIS
+%token TK_EQEQ
+%token TK_EQUALS
+%token TK_EXMARK
+%token <string * string option> TK_FLOATING_CONSTANT
+%token TK_GREATER
+%token TK_GREATER_EQ
+%token TK_GTGT
+%token TK_GTGT_EQ
+%token <string * string option> TK_HEX_CONSTANT
+%token <string * string option> TK_HEX_FLOATING_CONSTANT
+%token <string> TK_IDENTIFIER
+%token TK_INC
+%token <string> TK_INCLUDE
+%token <string * string option> TK_INTEGER_CONSTANT
+%token TK_LBRACE
+%token TK_LBRACK
+%token TK_LESS
+%token TK_LESS_EQ
+%token TK_LSQBRACK
+%token TK_LTLT
+%token TK_LTLT_EQ
+%token TK_MINUS
+%token TK_MINUS_EQ
+%token TK_NE
+%token <string * string option> TK_OCTAL_CONSTANT
+%token TK_PERCENT
+%token TK_PERCENT_EQ
+%token TK_PERIOD
+%token TK_PIPE
+%token TK_PIPEPIPE
+%token TK_PIPE_EQ
+%token TK_PLUS
+%token TK_PLUS_EQ
+%token TK_QMARK
+%token TK_RBRACE
+%token TK_RBRACK
+%token TK_RSQBRACK
+%token TK_SEMICOLON
+%token TK_SLASH
+%token TK_SLASH_EQ
+%token TK_STAR
+%token TK_STAR_EQ
+%token <string> TK_STRING_LITERAL
+%token TK_TILDE
+%token <string> TK_TYPEDEF_NAME
+%token <string> TK_WCHAR_CONSTANT
+%token <string> TK_WSTRING_LITERAL
+%token <string> WC_DECL
+%token <string> WC_EXPR
+%token <string> WC_TYPE
+%nonassoc KW_IF
+%nonassoc KW_ELSE
 %type <Ast.decl> parse_decl
 %type <Ast.expr> parse_expr
 %type <Ast.stmt> parse_stmt
@@ -1629,106 +1629,46 @@ asm_clobbered:
   _1 = nonempty_list_TK_STRING_LITERAL_
     {  ( _1 )}
 
-sep_TK_PIPE_datatype_declarator_:
-  _1 = sep_rev_TK_PIPE_datatype_declarator_
-    {                       ( List.rev _1 )}
-
-sep_TK_COMMA_simple_identifier_declarator_:
-  _1 = sep_rev_TK_COMMA_simple_identifier_declarator_
-    {                       ( List.rev _1 )}
-
-sep_TK_COMMA_numeric_literal_:
-  _1 = sep_rev_TK_COMMA_numeric_literal_
-    {                       ( List.rev _1 )}
-
-sep_TK_COMMA_datatype_member_:
-  _1 = sep_rev_TK_COMMA_datatype_member_
-    {                       ( List.rev _1 )}
-
-sep_TK_COMMA_attrib_:
-  _1 = sep_rev_TK_COMMA_attrib_
-    {                       ( List.rev _1 )}
-
-sep_TK_COMMA_assignment_expression_:
-  _1 = sep_rev_TK_COMMA_assignment_expression_
-    {                       ( List.rev _1 )}
-
-sep_TK_COMMA_asm_clobbered_:
-  _1 = sep_rev_TK_COMMA_asm_clobbered_
+sep_TK_COMMA_TK_IDENTIFIER_:
+  _1 = sep_rev_TK_COMMA_TK_IDENTIFIER_
     {                       ( List.rev _1 )}
 
 sep_TK_COMMA_asm_argument_:
   _1 = sep_rev_TK_COMMA_asm_argument_
     {                       ( List.rev _1 )}
 
-sep_TK_COMMA_TK_IDENTIFIER_:
-  _1 = sep_rev_TK_COMMA_TK_IDENTIFIER_
+sep_TK_COMMA_asm_clobbered_:
+  _1 = sep_rev_TK_COMMA_asm_clobbered_
     {                       ( List.rev _1 )}
 
-sep_rev_TK_SEMICOLON_parameter_type_list_:
-  _1 = parameter_type_list
-    {  ( [_1] )}
-| _1 = sep_rev_TK_SEMICOLON_parameter_type_list_ _2 = TK_SEMICOLON _3 = parameter_type_list
-    {  ( _3 :: _1 )}
+sep_TK_COMMA_assignment_expression_:
+  _1 = sep_rev_TK_COMMA_assignment_expression_
+    {                       ( List.rev _1 )}
 
-sep_rev_TK_PIPE_datatype_declarator_:
-  _1 = datatype_declarator
-    {  ( [_1] )}
-| _1 = sep_rev_TK_PIPE_datatype_declarator_ _2 = TK_PIPE _3 = datatype_declarator
-    {  ( _3 :: _1 )}
+sep_TK_COMMA_attrib_:
+  _1 = sep_rev_TK_COMMA_attrib_
+    {                       ( List.rev _1 )}
 
-sep_rev_TK_COMMA_simple_identifier_declarator_:
-  _1 = simple_identifier_declarator
-    {  ( [_1] )}
-| _1 = sep_rev_TK_COMMA_simple_identifier_declarator_ _2 = TK_COMMA _3 = simple_identifier_declarator
-    {  ( _3 :: _1 )}
+sep_TK_COMMA_datatype_member_:
+  _1 = sep_rev_TK_COMMA_datatype_member_
+    {                       ( List.rev _1 )}
 
-sep_rev_TK_COMMA_parameter_declaration_:
-  _1 = parameter_declaration
-    {  ( [_1] )}
-| _1 = sep_rev_TK_COMMA_parameter_declaration_ _2 = TK_COMMA _3 = parameter_declaration
-    {  ( _3 :: _1 )}
+sep_TK_COMMA_numeric_literal_:
+  _1 = sep_rev_TK_COMMA_numeric_literal_
+    {                       ( List.rev _1 )}
 
-sep_rev_TK_COMMA_numeric_literal_:
-  _1 = numeric_literal
-    {  ( [_1] )}
-| _1 = sep_rev_TK_COMMA_numeric_literal_ _2 = TK_COMMA _3 = numeric_literal
-    {  ( _3 :: _1 )}
+sep_TK_COMMA_simple_identifier_declarator_:
+  _1 = sep_rev_TK_COMMA_simple_identifier_declarator_
+    {                       ( List.rev _1 )}
 
-sep_rev_TK_COMMA_initialiser_:
-  _1 = initialiser
-    {  ( [_1] )}
-| _1 = sep_rev_TK_COMMA_initialiser_ _2 = TK_COMMA _3 = initialiser
-    {  ( _3 :: _1 )}
+sep_TK_PIPE_datatype_declarator_:
+  _1 = sep_rev_TK_PIPE_datatype_declarator_
+    {                       ( List.rev _1 )}
 
-sep_rev_TK_COMMA_enumerator_:
-  _1 = enumerator
+sep_rev_TK_COMMA_TK_IDENTIFIER_:
+  _1 = TK_IDENTIFIER
     {  ( [_1] )}
-| _1 = sep_rev_TK_COMMA_enumerator_ _2 = TK_COMMA _3 = enumerator
-    {  ( _3 :: _1 )}
-
-sep_rev_TK_COMMA_datatype_member_:
-  _1 = datatype_member
-    {  ( [_1] )}
-| _1 = sep_rev_TK_COMMA_datatype_member_ _2 = TK_COMMA _3 = datatype_member
-    {  ( _3 :: _1 )}
-
-sep_rev_TK_COMMA_attrib_:
-  _1 = attrib
-    {  ( [_1] )}
-| _1 = sep_rev_TK_COMMA_attrib_ _2 = TK_COMMA _3 = attrib
-    {  ( _3 :: _1 )}
-
-sep_rev_TK_COMMA_assignment_expression_:
-  _1 = assignment_expression
-    {  ( [_1] )}
-| _1 = sep_rev_TK_COMMA_assignment_expression_ _2 = TK_COMMA _3 = assignment_expression
-    {  ( _3 :: _1 )}
-
-sep_rev_TK_COMMA_asm_clobbered_:
-  _1 = asm_clobbered
-    {  ( [_1] )}
-| _1 = sep_rev_TK_COMMA_asm_clobbered_ _2 = TK_COMMA _3 = asm_clobbered
+| _1 = sep_rev_TK_COMMA_TK_IDENTIFIER_ _2 = TK_COMMA _3 = TK_IDENTIFIER
     {  ( _3 :: _1 )}
 
 sep_rev_TK_COMMA_asm_argument_:
@@ -1737,28 +1677,88 @@ sep_rev_TK_COMMA_asm_argument_:
 | _1 = sep_rev_TK_COMMA_asm_argument_ _2 = TK_COMMA _3 = asm_argument
     {  ( _3 :: _1 )}
 
-sep_rev_TK_COMMA_TK_IDENTIFIER_:
-  _1 = TK_IDENTIFIER
+sep_rev_TK_COMMA_asm_clobbered_:
+  _1 = asm_clobbered
     {  ( [_1] )}
-| _1 = sep_rev_TK_COMMA_TK_IDENTIFIER_ _2 = TK_COMMA _3 = TK_IDENTIFIER
+| _1 = sep_rev_TK_COMMA_asm_clobbered_ _2 = TK_COMMA _3 = asm_clobbered
     {  ( _3 :: _1 )}
 
-list_statement_or_declaration_:
-  _1 = list_rev_statement_or_declaration_
+sep_rev_TK_COMMA_assignment_expression_:
+  _1 = assignment_expression
+    {  ( [_1] )}
+| _1 = sep_rev_TK_COMMA_assignment_expression_ _2 = TK_COMMA _3 = assignment_expression
+    {  ( _3 :: _1 )}
+
+sep_rev_TK_COMMA_attrib_:
+  _1 = attrib
+    {  ( [_1] )}
+| _1 = sep_rev_TK_COMMA_attrib_ _2 = TK_COMMA _3 = attrib
+    {  ( _3 :: _1 )}
+
+sep_rev_TK_COMMA_datatype_member_:
+  _1 = datatype_member
+    {  ( [_1] )}
+| _1 = sep_rev_TK_COMMA_datatype_member_ _2 = TK_COMMA _3 = datatype_member
+    {  ( _3 :: _1 )}
+
+sep_rev_TK_COMMA_enumerator_:
+  _1 = enumerator
+    {  ( [_1] )}
+| _1 = sep_rev_TK_COMMA_enumerator_ _2 = TK_COMMA _3 = enumerator
+    {  ( _3 :: _1 )}
+
+sep_rev_TK_COMMA_initialiser_:
+  _1 = initialiser
+    {  ( [_1] )}
+| _1 = sep_rev_TK_COMMA_initialiser_ _2 = TK_COMMA _3 = initialiser
+    {  ( _3 :: _1 )}
+
+sep_rev_TK_COMMA_numeric_literal_:
+  _1 = numeric_literal
+    {  ( [_1] )}
+| _1 = sep_rev_TK_COMMA_numeric_literal_ _2 = TK_COMMA _3 = numeric_literal
+    {  ( _3 :: _1 )}
+
+sep_rev_TK_COMMA_parameter_declaration_:
+  _1 = parameter_declaration
+    {  ( [_1] )}
+| _1 = sep_rev_TK_COMMA_parameter_declaration_ _2 = TK_COMMA _3 = parameter_declaration
+    {  ( _3 :: _1 )}
+
+sep_rev_TK_COMMA_simple_identifier_declarator_:
+  _1 = simple_identifier_declarator
+    {  ( [_1] )}
+| _1 = sep_rev_TK_COMMA_simple_identifier_declarator_ _2 = TK_COMMA _3 = simple_identifier_declarator
+    {  ( _3 :: _1 )}
+
+sep_rev_TK_PIPE_datatype_declarator_:
+  _1 = datatype_declarator
+    {  ( [_1] )}
+| _1 = sep_rev_TK_PIPE_datatype_declarator_ _2 = TK_PIPE _3 = datatype_declarator
+    {  ( _3 :: _1 )}
+
+sep_rev_TK_SEMICOLON_parameter_type_list_:
+  _1 = parameter_type_list
+    {  ( [_1] )}
+| _1 = sep_rev_TK_SEMICOLON_parameter_type_list_ _2 = TK_SEMICOLON _3 = parameter_type_list
+    {  ( _3 :: _1 )}
+
+list_attribute_:
+  _1 = list_rev_attribute_
     {                     ( List.rev _1 )}
 
 list_declaration_:
   _1 = list_rev_declaration_
     {                     ( List.rev _1 )}
 
-list_attribute_:
-  _1 = list_rev_attribute_
+list_statement_or_declaration_:
+  _1 = list_rev_statement_or_declaration_
     {                     ( List.rev _1 )}
 
-list_rev_statement_or_declaration_:
+list_rev_attribute_:
   
     {  ( [] )}
-| _1 = list_rev_statement_or_declaration_ _2 = statement_or_declaration
+| _1 = list_rev_attribute_ _2 = attribute
     {  ( _2 :: _1 )}
 
 list_rev_declaration_:
@@ -1767,68 +1767,44 @@ list_rev_declaration_:
 | _1 = list_rev_declaration_ _2 = declaration
     {  ( _2 :: _1 )}
 
-list_rev_attribute_:
+list_rev_statement_or_declaration_:
   
     {  ( [] )}
-| _1 = list_rev_attribute_ _2 = attribute
+| _1 = list_rev_statement_or_declaration_ _2 = statement_or_declaration
     {  ( _2 :: _1 )}
 
-nonempty_list_type_qualifier_:
-  _1 = nonempty_list_rev_type_qualifier_
-    {                                       ( List.rev _1 )}
-
-nonempty_list_simple_string_literal_:
-  _1 = nonempty_list_rev_simple_string_literal_
-    {                                       ( List.rev _1 )}
-
-nonempty_list_pointer_type_qualifier_:
-  _1 = nonempty_list_rev_pointer_type_qualifier_
-    {                                       ( List.rev _1 )}
-
-nonempty_list_member_designator_:
-  _1 = nonempty_list_rev_member_designator_
-    {                                       ( List.rev _1 )}
-
-nonempty_list_attribute_:
-  _1 = nonempty_list_rev_attribute_
+nonempty_list_TK_STRING_LITERAL_:
+  _1 = nonempty_list_rev_TK_STRING_LITERAL_
     {                                       ( List.rev _1 )}
 
 nonempty_list_array_abstract_declarator_:
   _1 = nonempty_list_rev_array_abstract_declarator_
     {                                       ( List.rev _1 )}
 
-nonempty_list_TK_STRING_LITERAL_:
-  _1 = nonempty_list_rev_TK_STRING_LITERAL_
+nonempty_list_attribute_:
+  _1 = nonempty_list_rev_attribute_
     {                                       ( List.rev _1 )}
 
-nonempty_list_rev_type_qualifier_:
-  _1 = type_qualifier
-    {  ( [_1] )}
-| _1 = nonempty_list_rev_type_qualifier_ _2 = type_qualifier
-    {  ( _2 :: _1 )}
+nonempty_list_member_designator_:
+  _1 = nonempty_list_rev_member_designator_
+    {                                       ( List.rev _1 )}
 
-nonempty_list_rev_simple_string_literal_:
-  _1 = simple_string_literal
-    {  ( [_1] )}
-| _1 = nonempty_list_rev_simple_string_literal_ _2 = simple_string_literal
-    {  ( _2 :: _1 )}
+nonempty_list_pointer_type_qualifier_:
+  _1 = nonempty_list_rev_pointer_type_qualifier_
+    {                                       ( List.rev _1 )}
 
-nonempty_list_rev_pointer_type_qualifier_:
-  _1 = pointer_type_qualifier
-    {  ( [_1] )}
-| _1 = nonempty_list_rev_pointer_type_qualifier_ _2 = pointer_type_qualifier
-    {  ( _2 :: _1 )}
+nonempty_list_simple_string_literal_:
+  _1 = nonempty_list_rev_simple_string_literal_
+    {                                       ( List.rev _1 )}
 
-nonempty_list_rev_member_designator_:
-  _1 = member_designator
-    {  ( [_1] )}
-| _1 = nonempty_list_rev_member_designator_ _2 = member_designator
-    {  ( _2 :: _1 )}
+nonempty_list_type_qualifier_:
+  _1 = nonempty_list_rev_type_qualifier_
+    {                                       ( List.rev _1 )}
 
-nonempty_list_rev_attribute_:
-  _1 = attribute
+nonempty_list_rev_TK_STRING_LITERAL_:
+  _1 = TK_STRING_LITERAL
     {  ( [_1] )}
-| _1 = nonempty_list_rev_attribute_ _2 = attribute
+| _1 = nonempty_list_rev_TK_STRING_LITERAL_ _2 = TK_STRING_LITERAL
     {  ( _2 :: _1 )}
 
 nonempty_list_rev_array_abstract_declarator_:
@@ -1837,88 +1813,40 @@ nonempty_list_rev_array_abstract_declarator_:
 | _1 = nonempty_list_rev_array_abstract_declarator_ _2 = array_abstract_declarator
     {  ( _2 :: _1 )}
 
-nonempty_list_rev_TK_STRING_LITERAL_:
-  _1 = TK_STRING_LITERAL
+nonempty_list_rev_attribute_:
+  _1 = attribute
     {  ( [_1] )}
-| _1 = nonempty_list_rev_TK_STRING_LITERAL_ _2 = TK_STRING_LITERAL
+| _1 = nonempty_list_rev_attribute_ _2 = attribute
     {  ( _2 :: _1 )}
 
-option_sep_TK_COMMA_attrib__:
-  
-    {  ( None )}
-| _1 = sep_TK_COMMA_attrib_
-    {  ( Some _1 )}
+nonempty_list_rev_member_designator_:
+  _1 = member_designator
+    {  ( [_1] )}
+| _1 = nonempty_list_rev_member_designator_ _2 = member_designator
+    {  ( _2 :: _1 )}
 
-option_sep_TK_COMMA_assignment_expression__:
-  
-    {  ( None )}
-| _1 = sep_TK_COMMA_assignment_expression_
-    {  ( Some _1 )}
+nonempty_list_rev_pointer_type_qualifier_:
+  _1 = pointer_type_qualifier
+    {  ( [_1] )}
+| _1 = nonempty_list_rev_pointer_type_qualifier_ _2 = pointer_type_qualifier
+    {  ( _2 :: _1 )}
 
-option_sep_TK_COMMA_asm_clobbered__:
-  
-    {  ( None )}
-| _1 = sep_TK_COMMA_asm_clobbered_
-    {  ( Some _1 )}
+nonempty_list_rev_simple_string_literal_:
+  _1 = simple_string_literal
+    {  ( [_1] )}
+| _1 = nonempty_list_rev_simple_string_literal_ _2 = simple_string_literal
+    {  ( _2 :: _1 )}
 
-option_paren_numeric_literal__:
-  
-    {  ( None )}
-| _1 = paren_numeric_literal_
-    {  ( Some _1 )}
+nonempty_list_rev_type_qualifier_:
+  _1 = type_qualifier
+    {  ( [_1] )}
+| _1 = nonempty_list_rev_type_qualifier_ _2 = type_qualifier
+    {  ( _2 :: _1 )}
 
-option_forward_parameter_type_list_:
+option_KW_EXTENSION_:
   
     {  ( None )}
-| _1 = forward_parameter_type_list
-    {  ( Some _1 )}
-
-option_expression_:
-  
-    {  ( None )}
-| _1 = expression
-    {  ( Some _1 )}
-
-option_enumerator_value_:
-  
-    {  ( None )}
-| _1 = enumerator_value
-    {  ( Some _1 )}
-
-option_decl_initialiser_:
-  
-    {  ( None )}
-| _1 = decl_initialiser
-    {  ( Some _1 )}
-
-option_constant_expression_:
-  
-    {  ( None )}
-| _1 = constant_expression
-    {  ( Some _1 )}
-
-option_bit_field_size_:
-  
-    {  ( None )}
-| _1 = bit_field_size
-    {  ( Some _1 )}
-
-option_asm_declaration_specifier_:
-  
-    {  ( None )}
-| _1 = asm_declaration_specifier
-    {  ( Some _1 )}
-
-option_asm_argument_list_:
-  
-    {  ( None )}
-| _1 = asm_argument_list
-    {  ( Some _1 )}
-
-option_TK_EQUALS_:
-  
-    {  ( None )}
-| _1 = TK_EQUALS
+| _1 = KW_EXTENSION
     {  ( Some _1 )}
 
 option_TK_COMMA_:
@@ -1927,10 +1855,82 @@ option_TK_COMMA_:
 | _1 = TK_COMMA
     {  ( Some _1 )}
 
-option_KW_EXTENSION_:
+option_TK_EQUALS_:
   
     {  ( None )}
-| _1 = KW_EXTENSION
+| _1 = TK_EQUALS
+    {  ( Some _1 )}
+
+option_asm_argument_list_:
+  
+    {  ( None )}
+| _1 = asm_argument_list
+    {  ( Some _1 )}
+
+option_asm_declaration_specifier_:
+  
+    {  ( None )}
+| _1 = asm_declaration_specifier
+    {  ( Some _1 )}
+
+option_bit_field_size_:
+  
+    {  ( None )}
+| _1 = bit_field_size
+    {  ( Some _1 )}
+
+option_constant_expression_:
+  
+    {  ( None )}
+| _1 = constant_expression
+    {  ( Some _1 )}
+
+option_decl_initialiser_:
+  
+    {  ( None )}
+| _1 = decl_initialiser
+    {  ( Some _1 )}
+
+option_enumerator_value_:
+  
+    {  ( None )}
+| _1 = enumerator_value
+    {  ( Some _1 )}
+
+option_expression_:
+  
+    {  ( None )}
+| _1 = expression
+    {  ( Some _1 )}
+
+option_forward_parameter_type_list_:
+  
+    {  ( None )}
+| _1 = forward_parameter_type_list
+    {  ( Some _1 )}
+
+option_paren_numeric_literal__:
+  
+    {  ( None )}
+| _1 = paren_numeric_literal_
+    {  ( Some _1 )}
+
+option_sep_TK_COMMA_asm_clobbered__:
+  
+    {  ( None )}
+| _1 = sep_TK_COMMA_asm_clobbered_
+    {  ( Some _1 )}
+
+option_sep_TK_COMMA_assignment_expression__:
+  
+    {  ( None )}
+| _1 = sep_TK_COMMA_assignment_expression_
+    {  ( Some _1 )}
+
+option_sep_TK_COMMA_attrib__:
+  
+    {  ( None )}
+| _1 = sep_TK_COMMA_attrib_
     {  ( Some _1 )}
 
 boption_KW_VOLATILE_:
@@ -1947,16 +1947,10 @@ attribute:
 | _1 = KW_FASTCALL
     {  ( ["fastcall", []] )}
 
-paren_string_literal_:
-  _1 = TK_LBRACK _2 = string_literal _3 = TK_RBRACK
+paren_identifier_:
+  _1 = TK_LBRACK _2 = identifier _3 = TK_RBRACK
     {  ( _2 )}
-| _1 = TK_LBRACK _2 = paren_string_literal_ _3 = TK_RBRACK
-    {  ( _2 )}
-
-paren_sep_TK_COMMA_numeric_literal__:
-  _1 = TK_LBRACK _2 = sep_TK_COMMA_numeric_literal_ _3 = TK_RBRACK
-    {  ( _2 )}
-| _1 = TK_LBRACK _2 = paren_sep_TK_COMMA_numeric_literal__ _3 = TK_RBRACK
+| _1 = TK_LBRACK _2 = paren_identifier_ _3 = TK_RBRACK
     {  ( _2 )}
 
 paren_numeric_literal_:
@@ -1965,10 +1959,16 @@ paren_numeric_literal_:
 | _1 = TK_LBRACK _2 = paren_numeric_literal_ _3 = TK_RBRACK
     {  ( _2 )}
 
-paren_identifier_:
-  _1 = TK_LBRACK _2 = identifier _3 = TK_RBRACK
+paren_sep_TK_COMMA_numeric_literal__:
+  _1 = TK_LBRACK _2 = sep_TK_COMMA_numeric_literal_ _3 = TK_RBRACK
     {  ( _2 )}
-| _1 = TK_LBRACK _2 = paren_identifier_ _3 = TK_RBRACK
+| _1 = TK_LBRACK _2 = paren_sep_TK_COMMA_numeric_literal__ _3 = TK_RBRACK
+    {  ( _2 )}
+
+paren_string_literal_:
+  _1 = TK_LBRACK _2 = string_literal _3 = TK_RBRACK
+    {  ( _2 )}
+| _1 = TK_LBRACK _2 = paren_string_literal_ _3 = TK_RBRACK
     {  ( _2 )}
 
 attrib:

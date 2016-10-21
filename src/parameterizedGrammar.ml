@@ -189,14 +189,16 @@ type environment =
 (* [lookup x env] returns the type related to [x] in the typing environment
    [env].
    By convention, identifiers that are not in [env] are terminals. They are
-   given the type [Star]. *)
-let lookup x (env: environment) =
+   given the type [Star]. (This seems a rather fragile convention, as it
+   relies on the fact that the well-definedness of every identifier has
+   been previously checked; see [PartialGrammar]. -fpottier) *)
+let lookup (x : string) (env: environment) =
   try
     snd (List.assoc x env)
   with Not_found -> star_variable
 
 (* This function checks that the symbol [k] has the type [expected_type]. *)
-let check positions env k expected_type =
+let check positions env k expected_type : unit =
   let inference_var = lookup k env in
   let checking_var = fresh_structured_variable expected_type in
     try
@@ -251,6 +253,14 @@ let rec parameter_type env = function
   | ParameterAnonymous _ ->
       (* Anonymous rules are eliminated early on. *)
       assert false
+
+let check_parameter_type env p : unit =
+  let symbol, actuals = Parameters.unapp p in
+  let expected_ty =
+    if actuals = [] then star
+    else Arrow (List.map (parameter_type env) actuals)
+  in
+  check [ symbol.position ] env symbol.value expected_ty
 
 let check_grammar (p_grammar : Syntax.grammar) =
   (* [n] is the grammar size. *)
@@ -363,77 +373,84 @@ let check_grammar (p_grammar : Syntax.grammar) =
     p_grammar.p_rules []
   in
 
-    (* We traverse the graph checking each parameterized non terminal
-       definition is well-formed. *)
-    RulesGraph.iter
-      (fun i ->
-         let params    = parameters i
-         and iname     = name i
-         and repr      = ConnectedComponents.representative i
-         and positions = positions i
-         in
+  (* We traverse the graph checking each parameterized non terminal
+     definition is well-formed. *)
+  RulesGraph.iter (fun i ->
+    let params    = parameters i
+    and iname     = name i
+    and repr      = ConnectedComponents.representative i
+    and positions = positions i
+    in
 
-         (* The environment is augmented with the parameters whose types are
-            unknown. *)
-         let env' = List.map
-           (fun k -> (k, (positions, fresh_flexible_variable ()))) params
-         in
-         let env = env' @ env in
+    (* The environment is augmented with the parameters whose types are
+       unknown. *)
+    let env' = List.map
+      (fun k -> (k, (positions, fresh_flexible_variable ()))) params
+    in
+    let env = env' @ env in
 
-         (* The type of the parameterized non terminal is constrained to be
-            [expected_ty]. *)
-         let check_type () =
-           check positions env iname (Arrow (List.map (fun (_, (_, t)) -> t) env'))
-         in
+    (* The type of the parameterized non terminal is constrained to be
+       [expected_ty]. *)
+    let check_type () =
+      check positions env iname (Arrow (List.map (fun (_, (_, t)) -> t) env'))
+    in
 
-         (* We check the number of parameters. *)
-         let check_parameters () =
-           let parameters_len = List.length params in
-             (* The component is visited for the first time. *)
-             if marked_components.(repr) = unseen then
-               marked_components.(repr) <- parameters_len
-             else (* Otherwise, we check that the arity is homogeneous
-                     in the component. *)
-               if marked_components.(repr) <> parameters_len then
-                 Error.error positions
-                      "mutually recursive definitions must have the same parameters.\n\
-                       This is not the case for %s and %s."
-                         (name repr) iname
-         in
+    (* We check the number of parameters. *)
+    let check_parameters () =
+      let parameters_len = List.length params in
+        (* The component is visited for the first time. *)
+        if marked_components.(repr) = unseen then
+          marked_components.(repr) <- parameters_len
+        else (* Otherwise, we check that the arity is homogeneous
+                in the component. *)
+          if marked_components.(repr) <> parameters_len then
+            Error.error positions
+                 "mutually recursive definitions must have the same parameters.\n\
+                  This is not the case for %s and %s."
+                    (name repr) iname
+    in
 
-        (* In each production rule, the parameterized non terminal
-           of the same component must be instantiated with the same
-           formal arguments. *)
-         let check_producers () =
-           List.iter
-             (fun { pr_producers = symbols } -> List.iter
-                (function (_, p) ->
-                   let symbol, actuals = Parameters.unapp p in
-                   (* We take the use of each symbol into account. *)
-                     check [ symbol.position ] env symbol.value
-                       (if actuals = [] then star else
-                          Arrow (List.map (parameter_type env) actuals));
-                   (* If it is in the same component, check in addition that
-                      the arguments are the formal arguments. *)
-                   try
-                     let idx = conv symbol.value in
-                       if ConnectedComponents.representative idx = repr then
-                         if not (actual_parameters_as_formal actuals params)
-                         then
-                           Error.error [ symbol.position ]
-                                "mutually recursive definitions must have the same \
-                                 parameters.\n\
-                                 This is not the case for %s."
-                                 (let name1, name2 = (name idx), (name i) in
-                                    if name1 <> name2 then name1 ^ " and "^ name2
-                                    else name1)
-                   with _ -> ())
-                    symbols) (branches i)
-         in
-           check_type ();
-           check_parameters ();
-           check_producers ())
+    (* In each production rule, the parameterized non terminal
+       of the same component must be instantiated with the same
+       formal arguments. *)
+    let check_producers () =
+      List.iter
+        (fun { pr_producers = symbols } -> List.iter
+           (function (_, p) ->
+              (* We take the use of each symbol into account. *)
+              check_parameter_type env p;
+              (* If it is in the same component, check in addition that
+                 the arguments are the formal arguments. *)
+              let symbol, actuals = Parameters.unapp p in
+              try
+                let idx = conv symbol.value in
+                  if ConnectedComponents.representative idx = repr then
+                    if not (actual_parameters_as_formal actuals params)
+                    then
+                      Error.error [ symbol.position ]
+                           "mutually recursive definitions must have the same \
+                            parameters.\n\
+                            This is not the case for %s."
+                            (let name1, name2 = (name idx), (name i) in
+                               if name1 <> name2 then name1 ^ " and "^ name2
+                               else name1)
+              with _ -> ())
+               symbols) (branches i)
+    in
 
+    check_type();
+    check_parameters();
+    check_producers()
+  );
+
+  (* Check that every %type and %on_error_reduce declaration mentions a
+     well-typed term. *)
+  List.iter (fun (p, _) ->
+    check_parameter_type env p
+  ) p_grammar.p_types;
+  List.iter (fun (p, _) ->
+    check_parameter_type env p
+  ) p_grammar.p_on_error_reduce
 
 let rec subst_parameter subst = function
   | ParameterVar x ->
@@ -623,18 +640,18 @@ let expand p_grammar =
   in
 
   (* Process %on_error_reduce declarations. *)
-  let rec on_error_reduce_from_list (ps : Syntax.parameter list) : StringSet.t =
+  let rec on_error_reduce_from_list (ps : (Syntax.parameter * 'p) list) : 'p StringMap.t =
     match ps with
     | [] ->
-        StringSet.empty
-    | nt :: ps ->
+        StringMap.empty
+    | (nt, prec) :: ps ->
         let accu = on_error_reduce_from_list ps in
         let mangled = mangle nt in
-        if StringSet.mem mangled accu then
+        if StringMap.mem mangled accu then
           Error.error [Parameters.position nt]
                "there are multiple %%on_error_reduce declarations for nonterminal %s."
                mangled;
-        StringSet.add mangled accu
+        StringMap.add mangled prec accu
   in
 
   let start_symbols = StringMap.domain (p_grammar.p_start_symbols) in

@@ -4,17 +4,46 @@ recommend switching on --infer in order to avoid obscure type error messages.
   open Prolog
 %}
 %start clauses
-%token <string> VARIABLE
-%token RPARENT
-%token LPARENT
-%token INFERS
-%token <string> IDENTIFIER
-%token EOF
-%token DOT
 %token COMMA
-
+%token DOT
+%token EOF
+%token <string> IDENTIFIER
+%token INFERS
+%token LPARENT
+%token RPARENT
+%token <string> VARIABLE
 %type <Prolog.clause list> clauses
 %%
+
+option_params_:
+  
+    {    ( None )}
+| x = params
+    {    ( Some x )}
+
+loption_separated_nonempty_list_COMMA_term__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_COMMA_term_
+    {    ( x )}
+
+loption_separated_nonempty_list_DOT_clause__:
+  
+    {    ( [] )}
+| x = separated_nonempty_list_DOT_clause_
+    {    ( x )}
+
+separated_nonempty_list_COMMA_term_:
+  x = term
+    {    ( [ x ] )}
+| x = term _2 = COMMA xs = separated_nonempty_list_COMMA_term_
+    {    ( x :: xs )}
+
+separated_nonempty_list_DOT_clause_:
+  x = clause
+    {    ( [ x ] )}
+| x = clause _2 = DOT xs = separated_nonempty_list_DOT_clause_
+    {    ( x :: xs )}
 
 clauses:
   xs0 = loption_separated_nonempty_list_DOT_clause__ _2 = EOF
@@ -23,6 +52,16 @@ clauses:
       ( xs )
 in
                                                      ( clauses )}
+
+clause:
+  tm = term _2 = INFERS xs0 = loption_separated_nonempty_list_COMMA_term__
+    {let ts =
+  let xs = xs0 in
+      ( xs )
+in
+                                                        ( (tm, ts) )}
+| fact = term
+    {                 ( (fact, []) )}
 
 term:
   name = IDENTIFIER p = option_params_
@@ -46,46 +85,6 @@ params:
       ( x )
 in
          ( terms )}
-
-option_params_:
-  
-    {    ( None )}
-| x = params
-    {    ( Some x )}
-
-loption_separated_nonempty_list_DOT_clause__:
-  
-    {    ( [] )}
-| x = separated_nonempty_list_DOT_clause_
-    {    ( x )}
-
-loption_separated_nonempty_list_COMMA_term__:
-  
-    {    ( [] )}
-| x = separated_nonempty_list_COMMA_term_
-    {    ( x )}
-
-separated_nonempty_list_DOT_clause_:
-  x = clause
-    {    ( [ x ] )}
-| x = clause _2 = DOT xs = separated_nonempty_list_DOT_clause_
-    {    ( x :: xs )}
-
-separated_nonempty_list_COMMA_term_:
-  x = term
-    {    ( [ x ] )}
-| x = term _2 = COMMA xs = separated_nonempty_list_COMMA_term_
-    {    ( x :: xs )}
-
-clause:
-  tm = term _2 = INFERS xs0 = loption_separated_nonempty_list_COMMA_term__
-    {let ts =
-  let xs = xs0 in
-      ( xs )
-in
-                                                        ( (tm, ts) )}
-| fact = term
-    {                 ( (fact, []) )}
 
 %%
 

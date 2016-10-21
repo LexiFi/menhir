@@ -35,5 +35,8 @@ let trim grammar =
              "symbol %s is unreachable from any of the start symbol(s)."
                symbol
     ) grammar.rules;
-    { grammar with rules = StringMap.restrict reachable grammar.rules }
-
+    { grammar with
+      rules = StringMap.restrict reachable grammar.rules;
+      types = StringMap.restrict reachable grammar.types;
+      on_error_reduce = StringMap.restrict reachable grammar.on_error_reduce;
+    }

@@ -178,3 +178,19 @@ val new_intern: int -> (string -> string) * (unit -> unit)
    so far. *)
 val new_encode_decode: int -> (string -> int) * (int -> string) * (unit -> unit)
 
+(* If [preferable] is a partial order on elements, then [best preferable xs]
+   returns the best (least) element of [xs], if there is one. Its complexity
+   is quadratic. *)
+
+val best: ('a -> 'a -> bool) -> 'a list -> 'a option
+
+(* Assuming that the list [xs] is sorted with respect to the ordering [cmp],
+   [levels cmp xs] is the list of levels of [xs], where a level is a maximal
+   run of adjacent equal elements. Every level is a nonempty list. *)
+
+val levels: ('a -> 'a -> int) -> 'a list -> 'a list list
+
+(* [once x y] produces a function [f] which produces [x] the first time it
+   is called and produces [y] forever thereafter. *)
+
+val once: 'a -> 'a -> (unit -> 'a)

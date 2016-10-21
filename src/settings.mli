@@ -51,6 +51,7 @@ val trace: bool
 
 type print_mode =
     | PrintNormal
+    | PrintForOCamlyacc
     | PrintUnitActions
     | PrintUnitActionsUnitTokens
 
@@ -207,4 +208,3 @@ val update_errors: string option
    no comments). *)
 
 val echo_errors: string option
-

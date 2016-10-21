@@ -1,3 +1,27 @@
+2016/09/01:
+New command line switch --only-preprocess-for-ocamlyacc, supposed to
+print the grammar in a form that ocamlyacc can accept. Currently
+unfinished (in particular, no support for the position keywords)
+and undocumented.
+
+2016/08/26:
+Fixes in the output of --only-preprocess:
+  The order of productions is now preserved.
+    (It was not. This matters if there are reduce/reduce conflicts.)
+  %parameter directives are now printed. (They were not).
+  %on_error_reduce directives are now printed. (They were not.)
+
+2016/08/25:
+Makefile fix, undoing a change made on 2016/03/03, which caused installation
+to fail under (some versions of?) Windows where dynamic linking is not
+supported. (Reported by Andrew Appel.)
+
+2016/08/05:
+%on_error_reduce declarations now have implicit priority levels, so as to
+tell Menhir what to do when two such declarations are applicable.
+Also, the well-formedness checks on %type and %on_error_reduce declarations
+have been reinforced.
+
 2016/06/23:
 A small change in the generated code (both in the code and table back-ends) so
 as to avoid OCaml's warning 41. The warning would arise (when compiling a
@@ -13,7 +37,7 @@ parameterizes it only over the parameters that it actually needs.
 
 2016/05/04:
 In the Coq backend, split the largest definitions into smaller
-ones. This circumvenents a limitation of vm_compute on 32 bit
+ones. This circumvents a limitation of vm_compute on 32 bit
 machines. This also enables us to perform sharing between
 definitions, so that the generated files are much smaller.
 

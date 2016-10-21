@@ -20,140 +20,271 @@ recommend switching on --infer in order to avoid obscure type error messages.
 
 %}
 %start translation_unit_file
-%token <Cabs.cabsloc> XOR_ASSIGN
-%token <Cabs.cabsloc> WHILE
-%token <Cabs.cabsloc> VOLATILE
-%token <Cabs.cabsloc> VOID
-%token <string * Pre_parser_aux.identifier_type ref * Cabs.cabsloc> VAR_NAME
-%token <Cabs.cabsloc> UNSIGNED
-%token <Cabs.cabsloc> UNION
-%token <Cabs.cabsloc> UNDERSCORE_BOOL
-%token <Cabs.cabsloc> TYPEDEF
-%token <Cabs.cabsloc> TILDE
-%token <Cabs.cabsloc> SWITCH
-%token <Cabs.cabsloc> SUB_ASSIGN
-%token <Cabs.cabsloc> STRUCT
-%token <bool * int64 list * Cabs.cabsloc> STRING_LITERAL
-%token <Cabs.cabsloc> STATIC
-%token <Cabs.cabsloc> STAR
-%token <Cabs.cabsloc> SLASH
-%token <Cabs.cabsloc> SIZEOF
-%token <Cabs.cabsloc> SIGNED
-%token <Cabs.cabsloc> SHORT
-%token <Cabs.cabsloc> SEMICOLON
-%token <Cabs.cabsloc> RPAREN
-%token <Cabs.cabsloc> RIGHT_ASSIGN
-%token <Cabs.cabsloc> RIGHT
-%token <Cabs.cabsloc> RETURN
-%token <Cabs.cabsloc> RESTRICT
-%token <Cabs.cabsloc> REGISTER
-%token <Cabs.cabsloc> RBRACK
-%token <Cabs.cabsloc> RBRACE
-%token <Cabs.cabsloc> QUESTION
-%token <Cabs.cabsloc> PTR
-%token <string> PRE_NAME
-%token <string * Cabs.cabsloc> PRAGMA
-%token <Cabs.cabsloc> PLUS
-%token <Cabs.cabsloc> PERCENT
-%token <Cabs.cabsloc> PACKED
-%token <Cabs.cabsloc> OR_ASSIGN
-%token <Cabs.cabsloc> NEQ
-%token <Cabs.cabsloc> MUL_ASSIGN
-%token <Cabs.cabsloc> MOD_ASSIGN
-%token <Cabs.cabsloc> MINUS
-%token <Cabs.cabsloc> LT
-%token <Cabs.cabsloc> LPAREN
-%token <Cabs.cabsloc> LONG
-%token <Cabs.cabsloc> LEQ
-%token <Cabs.cabsloc> LEFT_ASSIGN
-%token <Cabs.cabsloc> LEFT
-%token <Cabs.cabsloc> LBRACK
-%token <Cabs.cabsloc> LBRACE
-%token <Cabs.cabsloc> INT
-%token <Cabs.cabsloc> INLINE
-%token <Cabs.cabsloc> INC
-%token <Cabs.cabsloc> IF
-%token <Cabs.cabsloc> HAT
-%token <Cabs.cabsloc> GT
-%token <Cabs.cabsloc> GOTO
-%token <Cabs.cabsloc> GEQ
-%token <Cabs.cabsloc> FOR
-%token <Cabs.cabsloc> FLOAT
-%token <Cabs.cabsloc> EXTERN
-%token <Cabs.cabsloc> EQEQ
-%token <Cabs.cabsloc> EQ
-%token EOF
-%token <Cabs.cabsloc> ENUM
-%token <Cabs.cabsloc> ELLIPSIS
-%token <Cabs.cabsloc> DOUBLE
-%token <Cabs.cabsloc> DOT
-%token <Cabs.cabsloc> DO
-%token <Cabs.cabsloc> DIV_ASSIGN
-%token <Cabs.cabsloc> DEFAULT
-%token <Cabs.cabsloc> DEC
-%token <Cabs.cabsloc> CONTINUE
-%token <Cabs.constant * Cabs.cabsloc> CONSTANT
-%token <Cabs.cabsloc> CONST
-%token <Cabs.cabsloc> COMMA
-%token <Cabs.cabsloc> COLON
-%token <Cabs.cabsloc> CHAR
-%token <Cabs.cabsloc> CASE
-%token <Cabs.cabsloc> BUILTIN_VA_ARG
-%token <Cabs.cabsloc> BREAK
-%token <Cabs.cabsloc> BARBAR
-%token <Cabs.cabsloc> BAR
-%token <Cabs.cabsloc> BANG
-%token <Cabs.cabsloc> AUTO
-%token <Cabs.cabsloc> ATTRIBUTE
-%token <Cabs.cabsloc> ASM
-%token <Cabs.cabsloc> AND_ASSIGN
-%token <Cabs.cabsloc> ANDAND
-%token <Cabs.cabsloc> AND
-%token <Cabs.cabsloc> ALIGNOF
-%token <Cabs.cabsloc> ALIGNAS
 %token <Cabs.cabsloc> ADD_ASSIGN
-%token <string * Pre_parser_aux.identifier_type ref * Cabs.cabsloc> TYPEDEF_NAME
+%token <Cabs.cabsloc> ALIGNAS
+%token <Cabs.cabsloc> ALIGNOF
+%token <Cabs.cabsloc> AND
+%token <Cabs.cabsloc> ANDAND
+%token <Cabs.cabsloc> AND_ASSIGN
+%token <Cabs.cabsloc> ASM
+%token <Cabs.cabsloc> ATTRIBUTE
+%token <Cabs.cabsloc> AUTO
+%token <Cabs.cabsloc> BANG
+%token <Cabs.cabsloc> BAR
+%token <Cabs.cabsloc> BARBAR
+%token <Cabs.cabsloc> BREAK
+%token <Cabs.cabsloc> BUILTIN_VA_ARG
+%token <Cabs.cabsloc> CASE
+%token <Cabs.cabsloc> CHAR
+%token <Cabs.cabsloc> COLON
+%token <Cabs.cabsloc> COMMA
+%token <Cabs.cabsloc> CONST
+%token <Cabs.constant * Cabs.cabsloc> CONSTANT
+%token <Cabs.cabsloc> CONTINUE
+%token <Cabs.cabsloc> DEC
+%token <Cabs.cabsloc> DEFAULT
+%token <Cabs.cabsloc> DIV_ASSIGN
+%token <Cabs.cabsloc> DO
+%token <Cabs.cabsloc> DOT
+%token <Cabs.cabsloc> DOUBLE
+%token <Cabs.cabsloc> ELLIPSIS
 %token <Cabs.cabsloc> ELSE
-%nonassoc lowPrec1 
-%nonassoc TYPEDEF_NAME 
-%nonassoc lowPrec2 
-%nonassoc ELSE 
+%token <Cabs.cabsloc> ENUM
+%token EOF
+%token <Cabs.cabsloc> EQ
+%token <Cabs.cabsloc> EQEQ
+%token <Cabs.cabsloc> EXTERN
+%token <Cabs.cabsloc> FLOAT
+%token <Cabs.cabsloc> FOR
+%token <Cabs.cabsloc> GEQ
+%token <Cabs.cabsloc> GOTO
+%token <Cabs.cabsloc> GT
+%token <Cabs.cabsloc> HAT
+%token <Cabs.cabsloc> IF
+%token <Cabs.cabsloc> INC
+%token <Cabs.cabsloc> INLINE
+%token <Cabs.cabsloc> INT
+%token <Cabs.cabsloc> LBRACE
+%token <Cabs.cabsloc> LBRACK
+%token <Cabs.cabsloc> LEFT
+%token <Cabs.cabsloc> LEFT_ASSIGN
+%token <Cabs.cabsloc> LEQ
+%token <Cabs.cabsloc> LONG
+%token <Cabs.cabsloc> LPAREN
+%token <Cabs.cabsloc> LT
+%token <Cabs.cabsloc> MINUS
+%token <Cabs.cabsloc> MOD_ASSIGN
+%token <Cabs.cabsloc> MUL_ASSIGN
+%token <Cabs.cabsloc> NEQ
+%token <Cabs.cabsloc> OR_ASSIGN
+%token <Cabs.cabsloc> PACKED
+%token <Cabs.cabsloc> PERCENT
+%token <Cabs.cabsloc> PLUS
+%token <string * Cabs.cabsloc> PRAGMA
+%token <string> PRE_NAME
+%token <Cabs.cabsloc> PTR
+%token <Cabs.cabsloc> QUESTION
+%token <Cabs.cabsloc> RBRACE
+%token <Cabs.cabsloc> RBRACK
+%token <Cabs.cabsloc> REGISTER
+%token <Cabs.cabsloc> RESTRICT
+%token <Cabs.cabsloc> RETURN
+%token <Cabs.cabsloc> RIGHT
+%token <Cabs.cabsloc> RIGHT_ASSIGN
+%token <Cabs.cabsloc> RPAREN
+%token <Cabs.cabsloc> SEMICOLON
+%token <Cabs.cabsloc> SHORT
+%token <Cabs.cabsloc> SIGNED
+%token <Cabs.cabsloc> SIZEOF
+%token <Cabs.cabsloc> SLASH
+%token <Cabs.cabsloc> STAR
+%token <Cabs.cabsloc> STATIC
+%token <bool * int64 list * Cabs.cabsloc> STRING_LITERAL
+%token <Cabs.cabsloc> STRUCT
+%token <Cabs.cabsloc> SUB_ASSIGN
+%token <Cabs.cabsloc> SWITCH
+%token <Cabs.cabsloc> TILDE
+%token <Cabs.cabsloc> TYPEDEF
+%token <string * Pre_parser_aux.identifier_type ref * Cabs.cabsloc> TYPEDEF_NAME
+%token <Cabs.cabsloc> UNDERSCORE_BOOL
+%token <Cabs.cabsloc> UNION
+%token <Cabs.cabsloc> UNSIGNED
+%token <string * Pre_parser_aux.identifier_type ref * Cabs.cabsloc> VAR_NAME
+%token <Cabs.cabsloc> VOID
+%token <Cabs.cabsloc> VOLATILE
+%token <Cabs.cabsloc> WHILE
+%token <Cabs.cabsloc> XOR_ASSIGN
+%nonassoc lowPrec1
+%nonassoc TYPEDEF_NAME
+%nonassoc lowPrec2
+%nonassoc ELSE
 %type <unit> translation_unit_file
+%on_error_reduce abstract_declarator(parameter_declaration) abstract_declarator(type_name) additive_expression and_expression asm_flags asm_operands assignment_expression attribute_specifier_list cast_expression conditional_expression declarator declarator_noattrend enum_specifier equality_expression exclusive_or_expression expression inclusive_or_expression init_declarator logical_and_expression logical_or_expression multiplicative_expression option(abstract_declarator(type_name)) postfix_expression primary_expression relational_expression rlist(declaration_specifier_no_type) selection_statement shift_expression specifier_qualifier_list(struct_declaration) specifier_qualifier_list(type_name) struct_or_union_specifier unary_expression
 %%
 
-option_typedef_declarator_list_:
+option_COMMA_:
   
     {let o =
       ( None )
 in
     ( o )}
-| x0 = typedef_declarator_list
+| x0 = COMMA
     {let o =
   let x = x0 in
       ( Some x )
 in
     ( o )}
 
-option_type_qualifier_list_:
+option_abstract_declarator_parameter_declaration__:
   
     {let o =
       ( None )
 in
     ( o )}
-| x0 = type_qualifier_list
+| x0 = abstract_declarator_parameter_declaration_
     {let o =
   let x = x0 in
       ( Some x )
 in
     ( o )}
 
-option_struct_declarator_list_:
+option_abstract_declarator_type_name__:
   
     {let o =
       ( None )
 in
     ( o )}
-| x0 = struct_declarator_list
+| x0 = abstract_declarator_type_name_
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_argument_expression_list_:
+  
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = argument_expression_list
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_block_item_list_:
+  
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = block_item_list
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_context_parameter_type_list_:
+  
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = context_parameter_type_list
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_declarator_:
+  
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = declarator
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_designation_:
+  
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = designation
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_designator_list_:
+  
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = designator_list
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_direct_abstract_declarator_:
+  
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = direct_abstract_declarator
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_expression_:
+  
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = expression
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_identifier_list_:
+  
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = identifier_list
+    {let o =
+  let x = x0 in
+      ( Some x )
+in
+    ( o )}
+
+option_init_declarator_list_:
+  
+    {let o =
+      ( None )
+in
+    ( o )}
+| x0 = init_declarator_list
     {let o =
   let x = x0 in
       ( Some x )
@@ -177,182 +308,52 @@ in
 in
     ( o )}
 
-option_init_declarator_list_:
+option_struct_declarator_list_:
   
     {let o =
       ( None )
 in
     ( o )}
-| x0 = init_declarator_list
+| x0 = struct_declarator_list
     {let o =
   let x = x0 in
       ( Some x )
 in
     ( o )}
 
-option_identifier_list_:
+option_type_qualifier_list_:
   
     {let o =
       ( None )
 in
     ( o )}
-| x0 = identifier_list
+| x0 = type_qualifier_list
     {let o =
   let x = x0 in
       ( Some x )
 in
     ( o )}
 
-option_expression_:
+option_typedef_declarator_list_:
   
     {let o =
       ( None )
 in
     ( o )}
-| x0 = expression
+| x0 = typedef_declarator_list
     {let o =
   let x = x0 in
       ( Some x )
 in
     ( o )}
 
-option_direct_abstract_declarator_:
-  
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = direct_abstract_declarator
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-option_designator_list_:
-  
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = designator_list
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-option_designation_:
-  
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = designation
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-option_declarator_:
-  
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = declarator
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-option_context_parameter_type_list_:
-  
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = context_parameter_type_list
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-option_block_item_list_:
-  
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = block_item_list
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-option_argument_expression_list_:
-  
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = argument_expression_list
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-option_abstract_declarator_type_name__:
-  
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = abstract_declarator_type_name_
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-option_abstract_declarator_parameter_declaration__:
-  
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = abstract_declarator_parameter_declaration_
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-option_COMMA_:
-  
-    {let o =
-      ( None )
-in
-    ( o )}
-| x0 = COMMA
-    {let o =
-  let x = x0 in
-      ( Some x )
-in
-    ( o )}
-
-optional_expression_SEMICOLON_:
-  _2 = SEMICOLON
+optional_assignment_expression_RBRACK_:
+  _2 = RBRACK
     {let _1 =
       ( None )
 in
                ()}
-| x0 = expression _2 = SEMICOLON
+| x0 = assignment_expression _2 = RBRACK
     {let _1 =
   let x = x0 in
       ( Some x )
@@ -372,66 +373,18 @@ in
 in
                ()}
 
-optional_assignment_expression_RBRACK_:
-  _2 = RBRACK
+optional_expression_SEMICOLON_:
+  _2 = SEMICOLON
     {let _1 =
       ( None )
 in
                ()}
-| x0 = assignment_expression _2 = RBRACK
+| x0 = expression _2 = SEMICOLON
     {let _1 =
   let x = x0 in
       ( Some x )
 in
                ()}
-
-list_specifier_qualifier_no_typedef_name_:
-  
-    {let _1 =
-                ()
-in
-              ()}
-| _10 = list_specifier_qualifier_no_typedef_name_ _20 = specifier_qualifier_no_typedef_name
-    {let _1 =
-  let _2 = _20 in
-  let _1 = _10 in
-                ()
-in
-              ()}
-
-list_pointer1_:
-  
-    {let _1 =
-                ()
-in
-              ()}
-| _11 = list_pointer1_ _100 = STAR _200 = option_type_qualifier_list_
-    {let _1 =
-  let _20 = _200 in
-  let _10 = _100 in
-  let _1 = _11 in
-  let _2 =
-    let _2 = _20 in
-    let _1 = _10 in
-        ()
-  in
-                ()
-in
-              ()}
-
-list_declaration_specifier_no_typedef_name_:
-  
-    {let _1 =
-                ()
-in
-              ()}
-| _10 = list_declaration_specifier_no_typedef_name_ _20 = declaration_specifier_no_typedef_name
-    {let _1 =
-  let _2 = _20 in
-  let _1 = _10 in
-                ()
-in
-              ()}
 
 list_declaration_specifier_no_type_:
   
@@ -480,6 +433,54 @@ in
     let _1 = _10 in
         ()
   in
+                ()
+in
+              ()}
+
+list_declaration_specifier_no_typedef_name_:
+  
+    {let _1 =
+                ()
+in
+              ()}
+| _10 = list_declaration_specifier_no_typedef_name_ _20 = declaration_specifier_no_typedef_name
+    {let _1 =
+  let _2 = _20 in
+  let _1 = _10 in
+                ()
+in
+              ()}
+
+list_pointer1_:
+  
+    {let _1 =
+                ()
+in
+              ()}
+| _11 = list_pointer1_ _100 = STAR _200 = option_type_qualifier_list_
+    {let _1 =
+  let _20 = _200 in
+  let _10 = _100 in
+  let _1 = _11 in
+  let _2 =
+    let _2 = _20 in
+    let _1 = _10 in
+        ()
+  in
+                ()
+in
+              ()}
+
+list_specifier_qualifier_no_typedef_name_:
+  
+    {let _1 =
+                ()
+in
+              ()}
+| _10 = list_specifier_qualifier_no_typedef_name_ _20 = specifier_qualifier_no_typedef_name
+    {let _1 =
+  let _2 = _20 in
+  let _1 = _10 in
                 ()
 in
               ()}
@@ -559,16 +560,16 @@ save_context:
   
     {              ( !save_context () )}
 
-declare_varname_enumerator_:
-  i = enumerator
+declare_varname_declarator_:
+  i = declarator
     {         ( declare_varname (fst i); i )}
 
 declare_varname_declarator_noattrend_:
   i = declarator_noattrend
     {         ( declare_varname (fst i); i )}
 
-declare_varname_declarator_:
-  i = declarator
+declare_varname_enumerator_:
+  i = enumerator
     {         ( declare_varname (fst i); i )}
 
 declare_typename_declarator_:
@@ -800,14 +801,14 @@ expression:
 | _1 = expression _2 = COMMA _3 = assignment_expression
     {    ()}
 
-declaration_external_declaration_:
-  _1 = declaration_specifiers_declaration_external_declaration__ _2 = option_init_declarator_list_ _3 = SEMICOLON
+declaration_block_item_:
+  _1 = declaration_specifiers_declaration_block_item__ _2 = option_init_declarator_list_ _3 = SEMICOLON
     {    ()}
 | _1 = declaration_specifiers_typedef _2 = option_typedef_declarator_list_ _3 = SEMICOLON
     {    ()}
 
-declaration_block_item_:
-  _1 = declaration_specifiers_declaration_block_item__ _2 = option_init_declarator_list_ _3 = SEMICOLON
+declaration_external_declaration_:
+  _1 = declaration_specifiers_declaration_external_declaration__ _2 = option_init_declarator_list_ _3 = SEMICOLON
     {    ()}
 | _1 = declaration_specifiers_typedef _2 = option_typedef_declarator_list_ _3 = SEMICOLON
     {    ()}
@@ -864,7 +865,7 @@ in
 | _1 = type_specifier_no_typedef_name
     {    ()}
 
-declaration_specifiers_parameter_declaration_:
+declaration_specifiers_declaration_block_item__:
   _2 = typedef_name _3 = list_declaration_specifier_no_type_
     {let _1 =
       ( None )
@@ -912,7 +913,7 @@ in
 in
     ()}
 
-declaration_specifiers_declaration_block_item__:
+declaration_specifiers_parameter_declaration_:
   _2 = typedef_name _3 = list_declaration_specifier_no_type_
     {let _1 =
       ( None )
@@ -1034,7 +1035,7 @@ struct_declaration:
   _1 = specifier_qualifier_list_struct_declaration_ _2 = option_struct_declarator_list_ _3 = SEMICOLON
     {    ()}
 
-specifier_qualifier_list_type_name_:
+specifier_qualifier_list_struct_declaration_:
   _2 = typedef_name _3 = option_type_qualifier_list_
     {let _1 =
       ( None )
@@ -1058,7 +1059,7 @@ in
 in
     ()}
 
-specifier_qualifier_list_struct_declaration_:
+specifier_qualifier_list_type_name_:
   _2 = typedef_name _3 = option_type_qualifier_list_
     {let _1 =
       ( None )
@@ -1299,7 +1300,7 @@ type_name:
   _1 = specifier_qualifier_list_type_name_ _2 = option_abstract_declarator_type_name__
     {    ()}
 
-abstract_declarator_type_name_:
+abstract_declarator_parameter_declaration_:
   _11 = list_pointer1_ _100 = STAR _200 = option_type_qualifier_list_
     {let _1 =
   let _20 = _200 in
@@ -1338,7 +1339,7 @@ in
 in
     ()}
 
-abstract_declarator_parameter_declaration_:
+abstract_declarator_type_name_:
   _11 = list_pointer1_ _100 = STAR _200 = option_type_qualifier_list_
     {let _1 =
   let _20 = _200 in
