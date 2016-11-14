@@ -103,13 +103,10 @@ let print_semantic_action f g mode branch =
       Printer.print_expr f e
   | PrintForOCamlyacc ->
        (* In ocamlyacc-compatibility mode, the code must be wrapped in
-          [let]-bindings whose right-hand side uses the [$i] keywords.
-          As an exception to this rule, if [symbol] is a terminal symbol
-          which has been declared *not* to carry a semantic value, then
-          its semantic value must not be referred to -- ocamlyacc does
-          not allow it. *)
+          [let]-bindings whose right-hand side uses the [$i] keywords. *)
       let bindings =
         List.mapi (fun i (symbol, id) ->
+          (* Test if [symbol] is a terminal symbol whose type is [unit]. *)
           let is_unit_token =
             try
               let prop = StringMap.find symbol g.tokens in
@@ -118,8 +115,15 @@ let print_semantic_action f g mode branch =
               false
           in
           (* Define the variable [id] as a synonym for [$(i+1)]. *)
-          (if is_unit_token then IL.PWildcard else IL.PVar id),
-          IL.EVar (sprintf "$%d" (i + 1))
+          (* As an exception to this rule, if [symbol] is a terminal symbol
+             which has been declared *not* to carry a semantic value, then
+             we cannot use [$(i+1)] -- ocamlyacc does not allow it -- so we
+             use the unit value instead. *)
+          IL.PVar id,
+          if is_unit_token then
+            IL.EUnit
+          else
+            IL.EVar (sprintf "$%d" (i + 1))
         ) branch.producers
       in
       let bindings =
