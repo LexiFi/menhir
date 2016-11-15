@@ -101,14 +101,8 @@ let print_binding id =
 
 (* -------------------------------------------------------------------------- *)
 
-let if_normal_mode f x =
-  match mode with
-  | PrintNormal ->
-      f x
-  | PrintForOCamlyacc
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
-      ()
+(* Testing whether it is permitted to print OCaml code (semantic actions,
+   prelude, postlude). *)
 
 let if_ocaml_code_permitted f x =
   match mode with
@@ -120,6 +114,10 @@ let if_ocaml_code_permitted f x =
       (* In these modes, all OCaml code is omitted: semantic actions,
          preludes, postludes, etc. *)
       ()
+
+(* -------------------------------------------------------------------------- *)
+
+(* Printing a semantic action. *)
 
 let print_semantic_action f g branch =
   let e = Action.to_il_expr branch.action in
@@ -166,7 +164,7 @@ let print_semantic_action f g branch =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Printing functions. *)
+(* Printing preludes and postludes. *)
 
 let print_preludes f g =
   List.iter (fun prelude ->
@@ -178,16 +176,37 @@ let print_postludes f g =
     fprintf f "%s\n" postlude.stretch_raw_content
   ) g.postludes
 
+(* -------------------------------------------------------------------------- *)
+
+(* Printing %start declarations. *)
+
 let print_start_symbols f g =
   StringSet.iter (fun symbol ->
     fprintf f "%%start %s\n" (Misc.normalize symbol)
   ) g.start_symbols
 
+(* -------------------------------------------------------------------------- *)
+
+(* Printing %parameter declarations. *)
+
 let print_parameter f stretch =
   fprintf f "%%parameter<%s>\n" stretch.stretch_raw_content
 
 let print_parameters f g =
-  List.iter (print_parameter f) g.parameters
+  match mode with
+  | PrintNormal ->
+      List.iter (print_parameter f) g.parameters
+  | PrintForOCamlyacc
+  | PrintUnitActions
+  | PrintUnitActionsUnitTokens ->
+       (* %parameter declarations are not supported by ocamlyacc,
+          and presumably become useless when the semantic actions
+          are removed. *)
+      ()
+
+(* -------------------------------------------------------------------------- *)
+
+(* Printing token declarations and precedence declarations. *)
 
 let print_assoc = function
   | LeftAssoc ->
@@ -240,12 +259,20 @@ let print_tokens f g =
     end
   ) levels
 
+(* -------------------------------------------------------------------------- *)
+
+(* Printing %type declarations. *)
+
 let print_types f g =
   StringMap.iter (fun symbol ty ->
     fprintf f "%%type%s %s\n"
       (print_nonterminal_type ty)
       (Misc.normalize symbol)
   ) g.types
+
+(* -------------------------------------------------------------------------- *)
+
+(* Printing branches and rules. *)
 
 let print_branch f g branch =
   (* Print the producers. *)
@@ -306,6 +333,10 @@ let print_rules f g =
     ) r.branches
   ) rules
 
+(* -------------------------------------------------------------------------- *)
+
+(* Printing %on_error_reduce declarations. *)
+
 let print_on_error_reduce_declarations f g =
   let cmp (_nt, oel) (_nt', oel') =
     compare_branch_production_levels oel oel'
@@ -323,13 +354,27 @@ let print_on_error_reduce_declarations f g =
     fprintf f "\n"
   ) levels
 
+let print_on_error_reduce_declarations f g =
+  match mode with
+  | PrintNormal
+  | PrintUnitActions
+  | PrintUnitActionsUnitTokens ->
+      print_on_error_reduce_declarations f g
+  | PrintForOCamlyacc ->
+      (* %on_error_reduce declarations are not supported by ocamlyacc *)
+      ()
+
+(* -------------------------------------------------------------------------- *)
+
+(* The main entry point. *)
+
 let print f g =
-  if_normal_mode (print_parameters f) g;
+  print_parameters f g;
   if_ocaml_code_permitted (print_preludes f) g;
   print_start_symbols f g;
   print_tokens f g;
   print_types f g;
-  if_normal_mode (print_on_error_reduce_declarations f) g;
+  print_on_error_reduce_declarations f g;
   fprintf f "%%%%\n";
   print_rules f g;
   fprintf f "\n%%%%\n";
