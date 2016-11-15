@@ -148,10 +148,13 @@ let print_semantic_action f g branch =
             IL.EVar (sprintf "$%d" (i + 1))
         ) branch.producers
       in
-      (* We can use a nested sequence of [let/in] definitions, as
-         opposed to a single [let/and] definitions, because the
-         identifiers that we bind are pairwise distinct. *)
-      let e = IL.ELet (bindings, e) in
+      (* The identifiers that we bind are pairwise distinct. *)
+      (* We must use simultaneous bindings (that is, a [let/and] form), as
+          opposed to a cascade of [let] bindings. Indeed, ocamlyacc internally
+          translates [$i] to [_i] (just like us!), so name captures will occur
+          unless we restrict the use of [$i] to the outermost scope. (Reported
+          by Kenji Maillard.) *)
+      let e = CodeBits.eletand (bindings, e) in
       Printer.print_expr f e
 
 (* -------------------------------------------------------------------------- *)
