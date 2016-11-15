@@ -148,9 +148,6 @@ let print_semantic_action f g branch =
             IL.EVar (sprintf "$%d" (i + 1))
         ) branch.producers
       in
-      let bindings =
-        List.filter (function (IL.PWildcard, _) -> false | _ -> true) bindings
-      in
       (* We can use a nested sequence of [let/in] definitions, as
          opposed to a single [let/and] definitions, because the
          identifiers that we bind are pairwise distinct. *)
