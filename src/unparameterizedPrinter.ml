@@ -44,12 +44,24 @@ let print_ocamltype ty : string =
    to carry a semantic value of type [unit].
  *)
 
+let print_ocamltype mode ty : string =
+  let s = print_ocamltype ty in
+  match mode with
+  | PrintForOCamlyacc ->
+      (* ocamlyacc does not allow a %type declaration to contain
+         a new line. *)
+      String.map (function '\r' | '\n' -> ' ' | c -> c) s
+  | PrintNormal
+  | PrintUnitActions
+  | PrintUnitActionsUnitTokens ->
+      s
+
 let print_token_type mode (prop : token_properties) =
   match mode with
   | PrintNormal
   | PrintForOCamlyacc
   | PrintUnitActions ->
-      Misc.o2s prop.tk_ocamltype print_ocamltype
+      Misc.o2s prop.tk_ocamltype (print_ocamltype mode)
   | PrintUnitActionsUnitTokens ->
       "" (* omitted ocamltype after %token means <unit> *)
 
@@ -57,7 +69,7 @@ let print_ocamltype_or_unit mode ty =
   match mode with
   | PrintNormal
   | PrintForOCamlyacc ->
-      print_ocamltype ty
+      print_ocamltype mode ty
   | PrintUnitActions
   | PrintUnitActionsUnitTokens ->
       " <unit>"
