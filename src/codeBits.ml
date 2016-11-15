@@ -114,6 +114,21 @@ let blet (bindings, body) =
 let mlet formals actuals body =
   blet (List.combine formals actuals, body)
 
+(* Simulating a [let/and] construct using tuples. *)
+
+let eletand (bindings, body) =
+  match bindings with
+  | [] ->
+      (* special case: zero bindings *)
+      body
+  | [ _ ] ->
+      (* special case: one binding *)
+      ELet (bindings, body)
+  | _ :: _ :: _ ->
+      (* general case: at least two bindings *)
+      let pats, exprs = List.split bindings in
+      ELet ([ PTuple pats, ETuple exprs ], body)
+
 (* [eraisenotfound] is an expression that raises [Not_found]. *)
 
 let eraisenotfound =
@@ -225,4 +240,3 @@ let with_types wk name tys =
   List.fold_left (fun mt (params, name, ty) ->
     MTWithType (mt, params, name, wk, ty)
   ) (MTNamedModuleType name) tys
-
