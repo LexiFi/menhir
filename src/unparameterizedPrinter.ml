@@ -21,13 +21,13 @@ open Settings
    ocamlyacc-compatible output. This means, in particular, that we cannot bind
    identifiers to semantic values, but must use [$i] instead.
 
-   [PrintUnitActions] causes all OCaml code to be suppressed: the semantic
+   [PrintUnitActions _] causes all OCaml code to be suppressed: the semantic
    actions are replaced with unit actions, preludes and postludes disappear,
    %parameter declarations disappear. Every %type declaration carries the
    [unit] type.
 
-   [PrintUnitActionsUnitTokens] in addition declares that every token carries
-   a semantic value of type [unit].
+   [PrintUnitActions true] in addition declares that every token carries a
+   semantic value of type [unit].
 
  *)
 
@@ -55,8 +55,7 @@ let print_ocamltype ty : string =
          a new line. Replace it with a space. *)
       String.map (function '\r' | '\n' -> ' ' | c -> c) s
   | PrintNormal
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions _ ->
       s
 
 (* -------------------------------------------------------------------------- *)
@@ -67,9 +66,9 @@ let print_token_type (prop : token_properties) =
   match mode with
   | PrintNormal
   | PrintForOCamlyacc
-  | PrintUnitActions ->
+  | PrintUnitActions false ->
       Misc.o2s prop.tk_ocamltype print_ocamltype
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions true ->
       "" (* omitted ocamltype after %token means <unit> *)
 
 (* -------------------------------------------------------------------------- *)
@@ -81,8 +80,7 @@ let print_nonterminal_type ty =
   | PrintNormal
   | PrintForOCamlyacc ->
       print_ocamltype ty
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions _ ->
       " <unit>"
 
 (* -------------------------------------------------------------------------- *)
@@ -94,8 +92,7 @@ let print_binding id =
   | PrintNormal ->
       id ^ " = "
   | PrintForOCamlyacc
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions _ ->
       (* need not, or must not, bind a semantic value *)
       ""
 
@@ -109,8 +106,7 @@ let if_ocaml_code_permitted f x =
   | PrintNormal
   | PrintForOCamlyacc ->
       f x
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions _ ->
       (* In these modes, all OCaml code is omitted: semantic actions,
          preludes, postludes, etc. *)
       ()
@@ -122,8 +118,7 @@ let if_ocaml_code_permitted f x =
 let print_semantic_action f g branch =
   let e = Action.to_il_expr branch.action in
   match mode with
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions _ ->
       (* In the unit-action modes, we print a pair of empty braces, which is fine. *)
       ()
   | PrintNormal ->
@@ -197,8 +192,7 @@ let print_parameters f g =
   | PrintNormal ->
       List.iter (print_parameter f) g.parameters
   | PrintForOCamlyacc
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions _ ->
        (* %parameter declarations are not supported by ocamlyacc,
           and presumably become useless when the semantic actions
           are removed. *)
@@ -357,8 +351,7 @@ let print_on_error_reduce_declarations f g =
 let print_on_error_reduce_declarations f g =
   match mode with
   | PrintNormal
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions _ ->
       print_on_error_reduce_declarations f g
   | PrintForOCamlyacc ->
       (* %on_error_reduce declarations are not supported by ocamlyacc *)

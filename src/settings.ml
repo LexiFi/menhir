@@ -70,8 +70,7 @@ let noprefix =
 type print_mode =
     | PrintNormal
     | PrintForOCamlyacc
-    | PrintUnitActions
-    | PrintUnitActionsUnitTokens
+    | PrintUnitActions of bool       (* if true, declare unit tokens *)
 
 type preprocess_mode =
     | PMNormal                       (* preprocess and continue *)
@@ -246,9 +245,9 @@ let options = Arg.align [
                        " Print grammar and exit";
   "--only-preprocess-for-ocamlyacc", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintForOCamlyacc),
                        " Print grammar in ocamlyacc format and exit";
-  "--only-preprocess-u", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintUnitActions),
+  "--only-preprocess-u", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions false)),
                          " Print grammar with unit actions and exit";
-  "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintUnitActionsUnitTokens),
+  "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions true)),
                           " Print grammar with unit actions & tokens and exit";
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
   "--raw-depend", Arg.Unit (fun () -> depend := OMRaw), " Invoke ocamldep and echo its raw output";
