@@ -230,7 +230,7 @@ module Run (T: sig end) = struct
 
   let write_grammar f =
     fprintf f "Module Import Gram <: Grammar.T.\n\n";
-    fprintf f "Local Obligation Tactic := intro x; case x; reflexivity.\n\n";
+    fprintf f "Local Obligation Tactic := let x := fresh in intro x; case x; reflexivity.\n\n";
     write_terminals f;
     write_nonterminals f;
     fprintf f "Include Grammar.Symbol.\n\n";
@@ -422,7 +422,7 @@ module Run (T: sig end) = struct
 
   let write_automaton f =
     fprintf f "Module Aut <: Automaton.T.\n\n";
-    fprintf f "Local Obligation Tactic := intro x; case x; reflexivity.\n\n";
+    fprintf f "Local Obligation Tactic := let x := fresh in intro x; case x; reflexivity.\n\n";
     fprintf f "Module Gram := Gram.\n";
     fprintf f "Module GramDefs := Gram.\n\n";
     write_nullable_first f;
