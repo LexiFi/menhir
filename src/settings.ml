@@ -124,8 +124,19 @@ let filenames =
 let no_stdlib =
   ref false
 
+(* By default, [stdlib_path] is [Installation.libdir], that is, the directory
+   that was specified when Menhir was compiled. This is overridden by the
+   environment variable $MENHIR_STDLIB, if it is defined, and by the --stdlib
+   command line option, if present. *)
+
 let stdlib_path =
   ref Installation.libdir
+
+let () =
+  try
+    stdlib_path := Sys.getenv "MENHIR_STDLIB"
+  with Not_found ->
+    ()
 
 let insert name =
   filenames := StringSet.add name !filenames
