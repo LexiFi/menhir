@@ -169,7 +169,7 @@ install:
 # Install the library.
 	mkdir -p $(libdir)
 	install -m 644 $(MLYLIB) $(libdir)
-	@if `$(BUILDDIR)/menhir.$(TARGET) --suggest-ocamlfind` ; then \
+	@if `$(BUILDDIR)/menhir.$(TARGET) --suggest-ocamlfind | tr -d '\r'` ; then \
 	  echo 'Installing MenhirLib via ocamlfind.' ; \
 	  ocamlfind install menhirLib src/META $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) ; \
 	else \
