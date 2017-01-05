@@ -43,6 +43,10 @@ val pat2var: pattern -> string
 val blet: (pattern * expr) list * expr -> expr
 val mlet: pattern list -> expr list -> expr -> expr
 
+(* Simulating a [let/and] construct. *)
+
+val eletand: (pattern * expr) list * expr -> expr
+
 (* [eraisenotfound] is an expression that raises [Not_found]. *)
 
 val eraisenotfound: expr
@@ -89,4 +93,3 @@ val interface_to_structure: interface -> structure
 (* Constructing a named module type together with a list of "with type"
    constraints. *)
 val with_types: IL.with_kind -> string -> (string list * string * IL.typ) list -> IL.module_type
-

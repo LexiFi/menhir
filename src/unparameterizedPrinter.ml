@@ -6,10 +6,33 @@ open UnparameterizedSyntax
 open Settings
 
 (* When the original grammar is split over several files, it may be IMPOSSIBLE
-   to print it out into a single file, as this will introduce a total ordering
+   to print it out into a single file, as that would introduce a total ordering
    (between rules, between priority declarations, between %on_error_reduce
    declarations) that did not exist originally. We currently do not warn about
    this problem. Nobody has ever complained about it. *)
+
+(* -------------------------------------------------------------------------- *)
+
+(* The printing mode. *)
+
+(* [PrintNormal] is the normal mode: the result is a Menhir grammar.
+
+   [PrintForOCamlyacc] is close to the normal mode, but attempts to produce
+   ocamlyacc-compatible output. This means, in particular, that we cannot bind
+   identifiers to semantic values, but must use [$i] instead.
+
+   [PrintUnitActions _] causes all OCaml code to be suppressed: the semantic
+   actions are replaced with unit actions, preludes and postludes disappear,
+   %parameter declarations disappear. Every %type declaration carries the
+   [unit] type.
+
+   [PrintUnitActions true] in addition declares that every token carries a
+   semantic value of type [unit].
+
+ *)
+
+module Print (X : sig val mode : Settings.print_mode end) = struct
+open X
 
 (* -------------------------------------------------------------------------- *)
 
@@ -24,92 +47,88 @@ let print_ocamltype ty : string =
         t
     )
 
+let print_ocamltype ty : string =
+  let s = print_ocamltype ty in
+  match mode with
+  | PrintForOCamlyacc ->
+      (* ocamlyacc does not allow a %type declaration to contain
+         a new line. Replace it with a space. *)
+      String.map (function '\r' | '\n' -> ' ' | c -> c) s
+  | PrintNormal
+  | PrintUnitActions _ ->
+      s
+
 (* -------------------------------------------------------------------------- *)
 
-(* Auxiliary functions that depend on the printing mode. *)
+(* Printing the type of a terminal symbol. *)
 
-(* [PrintNormal] is the normal mode: the result is a Menhir grammar.
-
-   [PrintForOCamlyacc] is close to the normal mode, but attempts to
-   produces ocamlyacc-compatible output. This means, in particular,
-   that we cannot bind identifiers to semantic values, but must use
-   [$i] instead.
-
-   [PrintUnitActions] causes all OCaml code to be suppressed: the
-   semantic actions to be replaced with unit actions, preludes and
-   postludes disappear, %parameter declarations disappear. Every
-   %type declaration carries the [unit] type.
-
-   [PrintUnitActionsUnitTokens] in addition declares every token
-   to carry a semantic value of type [unit].
- *)
-
-let print_token_type mode (prop : token_properties) =
+let print_token_type (prop : token_properties) =
   match mode with
   | PrintNormal
   | PrintForOCamlyacc
-  | PrintUnitActions ->
+  | PrintUnitActions false ->
       Misc.o2s prop.tk_ocamltype print_ocamltype
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions true ->
       "" (* omitted ocamltype after %token means <unit> *)
 
-let print_ocamltype_or_unit mode ty =
+(* -------------------------------------------------------------------------- *)
+
+(* Printing the type of a nonterminal symbol. *)
+
+let print_nonterminal_type ty =
   match mode with
   | PrintNormal
   | PrintForOCamlyacc ->
       print_ocamltype ty
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions _ ->
       " <unit>"
 
-let print_binding mode id =
+(* -------------------------------------------------------------------------- *)
+
+(* Printing a binding for a semantic value. *)
+
+let print_binding id =
   match mode with
   | PrintNormal ->
       id ^ " = "
   | PrintForOCamlyacc
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions _ ->
       (* need not, or must not, bind a semantic value *)
       ""
 
-let if_normal mode f x =
-  match mode with
-  | PrintNormal ->
-      f x
-  | PrintForOCamlyacc
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
-      ()
+(* -------------------------------------------------------------------------- *)
 
-let if_ocaml_code_permitted mode f x =
+(* Testing whether it is permitted to print OCaml code (semantic actions,
+   prelude, postlude). *)
+
+let if_ocaml_code_permitted f x =
   match mode with
   | PrintNormal
   | PrintForOCamlyacc ->
       f x
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions _ ->
       (* In these modes, all OCaml code is omitted: semantic actions,
          preludes, postludes, etc. *)
       ()
 
-let print_semantic_action f g mode branch =
+(* -------------------------------------------------------------------------- *)
+
+(* Printing a semantic action. *)
+
+let print_semantic_action f g branch =
   let e = Action.to_il_expr branch.action in
   match mode with
-  | PrintUnitActions
-  | PrintUnitActionsUnitTokens ->
+  | PrintUnitActions _ ->
       (* In the unit-action modes, we print a pair of empty braces, which is fine. *)
       ()
   | PrintNormal ->
       Printer.print_expr f e
   | PrintForOCamlyacc ->
        (* In ocamlyacc-compatibility mode, the code must be wrapped in
-          [let]-bindings whose right-hand side uses the [$i] keywords.
-          As an exception to this rule, if [symbol] is a terminal symbol
-          which has been declared *not* to carry a semantic value, then
-          its semantic value must not be referred to -- ocamlyacc does
-          not allow it. *)
+          [let]-bindings whose right-hand side uses the [$i] keywords. *)
       let bindings =
         List.mapi (fun i (symbol, id) ->
+          (* Test if [symbol] is a terminal symbol whose type is [unit]. *)
           let is_unit_token =
             try
               let prop = StringMap.find symbol g.tokens in
@@ -118,22 +137,29 @@ let print_semantic_action f g mode branch =
               false
           in
           (* Define the variable [id] as a synonym for [$(i+1)]. *)
-          (if is_unit_token then IL.PWildcard else IL.PVar id),
-          IL.EVar (sprintf "$%d" (i + 1))
+          (* As an exception to this rule, if [symbol] is a terminal symbol
+             which has been declared *not* to carry a semantic value, then
+             we cannot use [$(i+1)] -- ocamlyacc does not allow it -- so we
+             use the unit value instead. *)
+          IL.PVar id,
+          if is_unit_token then
+            IL.EUnit
+          else
+            IL.EVar (sprintf "$%d" (i + 1))
         ) branch.producers
       in
-      let bindings =
-        List.filter (function (IL.PWildcard, _) -> false | _ -> true) bindings
-      in
-      (* We can use a nested sequence of [let/in] definitions, as
-         opposed to a single [let/and] definitions, because the
-         identifiers that we bind are pairwise distinct. *)
-      let e = IL.ELet (bindings, e) in
+      (* The identifiers that we bind are pairwise distinct. *)
+      (* We must use simultaneous bindings (that is, a [let/and] form), as
+          opposed to a cascade of [let] bindings. Indeed, ocamlyacc internally
+          translates [$i] to [_i] (just like us!), so name captures will occur
+          unless we restrict the use of [$i] to the outermost scope. (Reported
+          by Kenji Maillard.) *)
+      let e = CodeBits.eletand (bindings, e) in
       Printer.print_expr f e
 
 (* -------------------------------------------------------------------------- *)
 
-(* Printing functions. *)
+(* Printing preludes and postludes. *)
 
 let print_preludes f g =
   List.iter (fun prelude ->
@@ -145,16 +171,36 @@ let print_postludes f g =
     fprintf f "%s\n" postlude.stretch_raw_content
   ) g.postludes
 
+(* -------------------------------------------------------------------------- *)
+
+(* Printing %start declarations. *)
+
 let print_start_symbols f g =
   StringSet.iter (fun symbol ->
     fprintf f "%%start %s\n" (Misc.normalize symbol)
   ) g.start_symbols
 
+(* -------------------------------------------------------------------------- *)
+
+(* Printing %parameter declarations. *)
+
 let print_parameter f stretch =
   fprintf f "%%parameter<%s>\n" stretch.stretch_raw_content
 
 let print_parameters f g =
-  List.iter (print_parameter f) g.parameters
+  match mode with
+  | PrintNormal ->
+      List.iter (print_parameter f) g.parameters
+  | PrintForOCamlyacc
+  | PrintUnitActions _ ->
+       (* %parameter declarations are not supported by ocamlyacc,
+          and presumably become useless when the semantic actions
+          are removed. *)
+      ()
+
+(* -------------------------------------------------------------------------- *)
+
+(* Printing token declarations and precedence declarations. *)
 
 let print_assoc = function
   | LeftAssoc ->
@@ -182,11 +228,11 @@ let compare_tokens (_token, prop) (_token', prop') =
   | PrecedenceLevel (m, v, _, _), PrecedenceLevel (m', v', _, _) ->
       compare_pairs InputFile.compare_input_files Pervasives.compare (m, v) (m', v')
 
-let print_tokens mode f g =
+let print_tokens f g =
   (* Print the %token declarations. *)
   StringMap.iter (fun token prop ->
     if prop.tk_is_declared then
-      fprintf f "%%token%s %s\n" (print_token_type mode prop) token
+      fprintf f "%%token%s %s\n" (print_token_type prop) token
   ) g.tokens;
   (* Sort the tokens wrt. precedence, and group them into levels. *)
   let levels : (string * token_properties) list list =
@@ -207,18 +253,26 @@ let print_tokens mode f g =
     end
   ) levels
 
-let print_types mode f g =
+(* -------------------------------------------------------------------------- *)
+
+(* Printing %type declarations. *)
+
+let print_types f g =
   StringMap.iter (fun symbol ty ->
     fprintf f "%%type%s %s\n"
-      (print_ocamltype_or_unit mode ty)
+      (print_nonterminal_type ty)
       (Misc.normalize symbol)
   ) g.types
 
-let print_branch mode f g branch =
+(* -------------------------------------------------------------------------- *)
+
+(* Printing branches and rules. *)
+
+let print_branch f g branch =
   (* Print the producers. *)
   let sep = Misc.once "" " " in
   List.iter (fun (symbol, id) ->
-    fprintf f "%s%s%s" (sep()) (print_binding mode id) (Misc.normalize symbol)
+    fprintf f "%s%s%s" (sep()) (print_binding id) (Misc.normalize symbol)
   ) branch.producers;
   (* Print the %prec annotation, if there is one. *)
   Option.iter (fun x ->
@@ -226,7 +280,7 @@ let print_branch mode f g branch =
   ) branch.branch_prec_annotation;
   (* Newline, indentation, semantic action. *)
   fprintf f "\n    {";
-  print_semantic_action f g mode branch;
+  print_semantic_action f g branch;
   fprintf f "}\n"
 
 (* Because the resolution of reduce/reduce conflicts is implicitly dictated by
@@ -260,7 +314,7 @@ let compare_rules (_nt, (r : rule)) (_nt', (r' : rule)) =
       (* To compare two rules, it suffices to compare their first productions. *)
       compare_branches b b'
 
-let print_rules mode f g =
+let print_rules f g =
   let rules = List.sort compare_rules (StringMap.bindings g.rules) in
   List.iter (fun (nt, r) ->
     fprintf f "\n%s:\n" (Misc.normalize nt);
@@ -269,9 +323,13 @@ let print_rules mode f g =
     let sep = Misc.once ("  ") ("| ") in
     List.iter (fun br ->
       fprintf f "%s" (sep());
-      print_branch mode f g br
+      print_branch f g br
     ) r.branches
   ) rules
+
+(* -------------------------------------------------------------------------- *)
+
+(* Printing %on_error_reduce declarations. *)
 
 let print_on_error_reduce_declarations f g =
   let cmp (_nt, oel) (_nt', oel') =
@@ -290,14 +348,33 @@ let print_on_error_reduce_declarations f g =
     fprintf f "\n"
   ) levels
 
-let print mode f g =
-  if_normal mode (print_parameters f) g;
-  if_ocaml_code_permitted mode (print_preludes f) g;
+let print_on_error_reduce_declarations f g =
+  match mode with
+  | PrintNormal
+  | PrintUnitActions _ ->
+      print_on_error_reduce_declarations f g
+  | PrintForOCamlyacc ->
+      (* %on_error_reduce declarations are not supported by ocamlyacc *)
+      ()
+
+(* -------------------------------------------------------------------------- *)
+
+(* The main entry point. *)
+
+let print f g =
+  print_parameters f g;
+  if_ocaml_code_permitted (print_preludes f) g;
   print_start_symbols f g;
-  print_tokens mode f g;
-  print_types mode f g;
-  if_normal mode (print_on_error_reduce_declarations f) g;
+  print_tokens f g;
+  print_types f g;
+  print_on_error_reduce_declarations f g;
   fprintf f "%%%%\n";
-  print_rules mode f g;
+  print_rules f g;
   fprintf f "\n%%%%\n";
-  if_ocaml_code_permitted mode (print_postludes f) g
+  if_ocaml_code_permitted (print_postludes f) g
+
+end
+
+let print mode =
+  let module P = Print(struct let mode = mode end) in
+  P.print

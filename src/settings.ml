@@ -70,8 +70,7 @@ let noprefix =
 type print_mode =
     | PrintNormal
     | PrintForOCamlyacc
-    | PrintUnitActions
-    | PrintUnitActionsUnitTokens
+    | PrintUnitActions of bool       (* if true, declare unit tokens *)
 
 type preprocess_mode =
     | PMNormal                       (* preprocess and continue *)
@@ -125,8 +124,19 @@ let filenames =
 let no_stdlib =
   ref false
 
+(* By default, [stdlib_path] is [Installation.libdir], that is, the directory
+   that was specified when Menhir was compiled. This is overridden by the
+   environment variable $MENHIR_STDLIB, if it is defined, and by the --stdlib
+   command line option, if present. *)
+
 let stdlib_path =
   ref Installation.libdir
+
+let () =
+  try
+    stdlib_path := Sys.getenv "MENHIR_STDLIB"
+  with Not_found ->
+    ()
 
 let insert name =
   filenames := StringSet.add name !filenames
@@ -246,9 +256,9 @@ let options = Arg.align [
                        " Print grammar and exit";
   "--only-preprocess-for-ocamlyacc", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintForOCamlyacc),
                        " Print grammar in ocamlyacc format and exit";
-  "--only-preprocess-u", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintUnitActions),
+  "--only-preprocess-u", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions false)),
                          " Print grammar with unit actions and exit";
-  "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess PrintUnitActionsUnitTokens),
+  "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions true)),
                           " Print grammar with unit actions & tokens and exit";
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
   "--raw-depend", Arg.Unit (fun () -> depend := OMRaw), " Invoke ocamldep and echo its raw output";

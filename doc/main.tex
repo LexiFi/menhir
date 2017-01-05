@@ -239,9 +239,8 @@ channel. When \nt{level} is 2, the \emph{nullable}, \emph{FIRST}, and
 grammar specification to be ignored. This is especially useful in order
 to understand whether these keywords help solve any conflicts.
 
-\docswitch{\onostdlib} This switch causes the standard library \emph{not}
-to be implicitly joined with the grammar specifications whose names are
-explicitly provided on the command line.
+\docswitch{\onostdlib} This switch instructs Menhir to \emph{not} use
+its standard library (\sref{sec:library}).
 
 \docswitch{\oocamlc \nt{command}} This switch controls how \ocamlc is
 invoked (when \oinfer is used). It allows setting both the name of
@@ -274,6 +273,11 @@ intended for use with \omake or \ocamlbuild, which perform their own
 postprocessing.
 An end user who uses \ocamlbuild does not need to mention this switch:
 \ocamlbuild uses it automatically.
+
+\docswitch{\ostdlib \nt{directory}} This switch controls the directory where
+the standard library (\sref{sec:library}) is found. It takes precedence over
+both the installation-time directory and the directory that may be specified
+via the environment variable \verb+$MENHIR_STDLIB+.
 
 \docswitch{\ostrict} This switch causes several warnings about the grammar
 and about the automaton to be considered errors. This includes warnings about
@@ -321,11 +325,6 @@ query menhirLib}.
 \docswitch{\osuggestocamlfind} This switch causes \menhir to print a Boolean
 value (i.e., either \texttt{true} or \texttt{false}), which indicates whether
 \menhirlib was installed via \ocamlfind.
-
-\docswitch{\ostdlib \nt{directory}} This switch controls the directory
-where the standard library is found. It allows overriding the default
-directory that is set at installation time. The trailing \texttt{/} character
-is optional.
 
 \docswitch{\otable} This switch causes \menhir to use its table-based
 back-end, as opposed to its (default) code-based back-end. When \otable is
@@ -1136,6 +1135,18 @@ more elaborate notions. For instance, the following rule:
 causes \nt{plist}(\nt{X}) to recognize a list of \nt{X}'s, where the empty
 list is represented by the empty string, and a non-empty list is delimited
 with parentheses and comma-separated.
+
+The standard library is stored in a file named \texttt{standard.mly}, which is
+installed at the same time as Menhir. By default, Menhir attempts to find this
+file in the directory where this file was installed. This can be overridden by
+setting the environment variable
+\verb+$MENHIR_STDLIB+. If defined, this variable should contain the path of
+the directory where \texttt{standard.mly} is stored. (This path may
+end with a \texttt{/} character.) This can be overridden also via the
+command line switch \ostdlib.
+%
+The command line switch \onostdlib instructs Menhir to \emph{not} load the
+standard library.
 
 % ---------------------------------------------------------------------------------------------------------------------
 
