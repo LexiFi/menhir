@@ -3,7 +3,7 @@
 \documentclass[onecolumn,11pt,nocopyrightspace,preprint]{sigplanconf}
 \usepackage{amstext}
 \usepackage[T1]{fontenc}
-\usepackage[latin1]{inputenc}
+\usepackage[utf8]{inputenc}
 \usepackage{moreverb}
 \usepackage{tikz}
 \usepackage{xspace}
@@ -24,7 +24,7 @@
 
 \begin{document}
 
-\authorinfo{François Pottier\and Yann Régis-Gianas}
+\authorinfo{FranÃ§ois Pottier\and Yann RÃ©gis-Gianas}
 	   {INRIA}
 	   {\{Francois.Pottier, Yann.Regis-Gianas\}@inria.fr}
 
@@ -1066,8 +1066,8 @@ which takes place \emph{after} the second operand has been recognized, whereas
 in the absence of inlining it takes place as soon as the operator has been
 recognized.
 
-% Du coup, ça change l'ordre des effets, dans cet exemple, de infixe
-% à postfixe.
+% Du coup, Ã§a change l'ordre des effets, dans cet exemple, de infixe
+% Ã  postfixe.
 
 \subsection{The standard library}
 \label{sec:library}
@@ -1559,10 +1559,10 @@ so you should not care how they are resolved.
 with \ocamlyacc's. Yet, \menhir attempts to be more user-friendly by warning
 about a class of so-called ``end-of-stream conflicts''.
 
-% TEMPORARY il faut noter que \menhir n'est pas conforme à ocamlyacc en
-% présence de conflits end-of-stream; apparemment il part dans le mur
+% TEMPORARY il faut noter que \menhir n'est pas conforme Ã  ocamlyacc en
+% prÃ©sence de conflits end-of-stream; apparemment il part dans le mur
 % en exigeant toujours le token suivant, alors que ocamlyacc est capable
-% de s'arrêter (comment?); cf. problème de S. Hinderer (avril 2015).
+% de s'arrÃªter (comment?); cf. problÃ¨me de S. Hinderer (avril 2015).
 
 \paragraph{How the end of stream is handled}
 
@@ -1841,12 +1841,12 @@ positions coincide, and returns the start position of the symbol \verb+variable+
 
 % On pourrait souligner que $symbolstartpos renvoie la $startpos du premier
 % symbole non vide, et non pas la $symbolstartpos du premier symbole non vide.
-% Donc ça peut rester un peu contre-intuitif, et ne pas correspondre
-% exactement à ce que l'on attend. D'ailleurs, le calcul de $symbolstartpos
-% est préservé par %inline (on obtient cela très facilement en éliminant
-% $symbolstartpos avant l'inlining) mais ne correspond pas à ce que donnerait
-% $symbolstartpos après un inlining manuel. Fondamentalement, cette notion de
-% $symbolstartpos ne tourne pas très rond.
+% Donc Ã§a peut rester un peu contre-intuitif, et ne pas correspondre
+% exactement Ã  ce que l'on attend. D'ailleurs, le calcul de $symbolstartpos
+% est prÃ©servÃ© par %inline (on obtient cela trÃ¨s facilement en Ã©liminant
+% $symbolstartpos avant l'inlining) mais ne correspond pas Ã  ce que donnerait
+% $symbolstartpos aprÃ¨s un inlining manuel. Fondamentalement, cette notion de
+% $symbolstartpos ne tourne pas trÃ¨s rond.
 
 There is no keyword \verb+$symbolendpos+. Indeed, the problem
 with \verb+$startpos+ is due to the asymmetry in the definition
@@ -1930,9 +1930,9 @@ their symbolic names. Writing, say, ``\texttt{12+32\textbackslash n}'' instead
 of \texttt{INT PLUS INT EOL} is not permitted. \menhir would not be able to
 make sense of such a concrete notation, since it does not have a lexer for it.
 
-% On pourrait documenter le fait qu'une phrase finie est transformée par \menhir
+% On pourrait documenter le fait qu'une phrase finie est transformÃ©e par \menhir
 % en un flot de tokens potentiellement infinie, avec un suffixe infini EOF ...
-% Mais c'est un hack, qui pourrait changer à l'avenir.
+% Mais c'est un hack, qui pourrait changer Ã  l'avenir.
 
 \subsection{Outcomes}
 \label{sec:outcomes}
@@ -2076,7 +2076,7 @@ generated file \texttt{parser.mli} contains the following declaration:
 \begin{verbatim}
   val main: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> thing
 \end{verbatim}
-% On ne montre pas la définition de l'exception Error.
+% On ne montre pas la dÃ©finition de l'exception Error.
 This function expects two arguments, namely: a lexer, which typically is produced by
 \ocamllex and has type \verb+Lexing.lexbuf -> token+; and a lexing buffer,
 which has type \verb+Lexing.lexbuf+. This API is compatible with
@@ -3080,7 +3080,7 @@ just enough states so as to split the problematic error state into two
 non-problematic error states.
 
 % Je me demande s'il n'y a pas un lien avec la traduction de LR(k+1) vers LR(k)...
-% On voit que le FOLLOW est intégré au symbole nonterminal.
+% On voit que le FOLLOW est intÃ©grÃ© au symbole nonterminal.
 
 \paragraph{Reductions on error}
 
@@ -3240,7 +3240,7 @@ We also define the type \verb+token+ of tokens, that is, dependent pairs of a
 terminal symbol and a semantic value of an appropriate type for this symbol.
 We model the lexer as an object of type \verb+Streams.Stream token+, that is,
 an infinite stream of tokens.
-% TEMPORARY documenter que du coup, après extraction, la seule façon pour un
+% TEMPORARY documenter que du coup, aprÃ¨s extraction, la seule faÃ§on pour un
 % lexer OCaml de produire des tokens, c'est d'utiliser Obj.magic
 % cf. la fonction compute_token_stream dans le Lexer.mll de Compcert:
 %   Cons (Coq_existT (t, Obj.magic v), Lazy.from_fun compute_token_stream)
@@ -3288,11 +3288,11 @@ For each entry point \verb+entry+ of the grammar, \menhir generates a
 parsing function \verb+entry+, whose type is
 \verb+nat -> Stream token -> parse_result+.
 
-% jh: Je suis un peu embêté, parce que init est
-% en réalité de type initstate, mais je n'ai pas envie d'en parler
-% dans la doc. Tout ce qui importe, c'est que le premier paramètre de
+% jh: Je suis un peu embÃªtÃ©, parce que init est
+% en rÃ©alitÃ© de type initstate, mais je n'ai pas envie d'en parler
+% dans la doc. Tout ce qui importe, c'est que le premier paramÃ¨tre de
 % Parsed_pr a un type compatible avec le type que l'utilisateur a
-% donné.
+% donnÃ©.
 
 Two theorems are provided, named \verb+entry_point_correct+ and
 \verb+entry_point_complete+. The correctness theorem states that, if a word (a
@@ -3306,28 +3306,28 @@ These results imply that the grammar is unambiguous: for every input, there is
 at most one valid interpretation. This is proved by another generated theorem,
 named \verb+Parser.unambiguous+.
 
-% jh: Pas besoin de prouver la terminaison pour avoir la non-ambiguïté, car
-% les cas de non-terminaison ne concernent que les entrées invalides.
+% jh: Pas besoin de prouver la terminaison pour avoir la non-ambiguÃ¯tÃ©, car
+% les cas de non-terminaison ne concernent que les entrÃ©es invalides.
 % fp: bien vu!
 
-% fp: ce serait intéressant d'avoir un certificat comme quoi la grammaire est
-% bien LR(1), mais peut-être qu'on s'en fout. C'est bien de savoir qu'elle
-% est non-ambiguë.
+% fp: ce serait intÃ©ressant d'avoir un certificat comme quoi la grammaire est
+% bien LR(1), mais peut-Ãªtre qu'on s'en fout. C'est bien de savoir qu'elle
+% est non-ambiguÃ«.
 
 % jh: Je ne sais pas ce que c'est qu'un certificat comme quoi la grammaire
 % est LR(1), en pratique...
-% fp: Ce serait une preuve d'un théorème, exprimé uniquement en termes de
-% la grammaire, comme quoi la grammaire est LR(1). Il y a une définition
-% de cette propriété dans le textbook de Aho et Ullman, si je me rappelle
+% fp: Ce serait une preuve d'un thÃ©orÃ¨me, exprimÃ© uniquement en termes de
+% la grammaire, comme quoi la grammaire est LR(1). Il y a une dÃ©finition
+% de cette propriÃ©tÃ© dans le textbook de Aho et Ullman, si je me rappelle
 % bien. Mais peu importe.
 
-% fp: On pourrait aussi souhaiter un théorème comme quoi le parser ne lit
+% fp: On pourrait aussi souhaiter un thÃ©orÃ¨me comme quoi le parser ne lit
 % pas le stream trop loin...
 
 % jh: pour vraiment prouver cela, il faudrait inverser le
-% controle. Sinon, comme résultat un peu moins fort, dans la version
+% controle. Sinon, comme rÃ©sultat un peu moins fort, dans la version
 % actuelle, on renvoie le stream restant, et on prouve qu'il
-% correspond bien à la fin du Stream.
+% correspond bien Ã  la fin du Stream.
 
 The parsers produced by \menhir's Coq back-end must be linked with a Coq
 library, which can be found in the CompCert tree~\cite{compcert,compcert-github}, in the
@@ -3336,8 +3336,8 @@ subdirectory. CompCert can be used as
 an example if one wishes to use \menhir to generate a formally verified parser
 as part of some other project.
 
-% fp: ce pourrait être bien de documenter les directives nécessaires pour
-% extraire du code efficace. D'après Xavier ce morceau de extraction.v
+% fp: ce pourrait Ãªtre bien de documenter les directives nÃ©cessaires pour
+% extraire du code efficace. D'aprÃ¨s Xavier ce morceau de extraction.v
 % est pertinent:
 \begin{comment}
 (* Int31 *)
@@ -3349,14 +3349,14 @@ Extract Constant Int31.compare31 => "Camlcoq.Int31.compare".
 Extract Constant Int31.On => "0".
 Extract Constant Int31.In => "1".
 \end{comment}
-% Peut-être en faire aussi un fichier de librairie?
+% Peut-Ãªtre en faire aussi un fichier de librairie?
 
 % ---------------------------------------------------------------------------------------------------------------------
 
 \section{Comparison with \ocamlyacc}
 
-% TEMPORARY idéalement, il faudrait documenter la différence de comportement
-% sur les réductions par défaut (sur des symboles autres que #).
+% TEMPORARY idÃ©alement, il faudrait documenter la diffÃ©rence de comportement
+% sur les rÃ©ductions par dÃ©faut (sur des symboles autres que #).
 
 Here is an incomplete list of the differences between \ocamlyacc and \menhir.
 The list is roughly sorted by decreasing order of importance.
@@ -3559,7 +3559,7 @@ more compact code.
 When asked to produce tables, \menhir performs compression via first-fit
 row displacement, as described by Tarjan and Yao~\cite{tarjan-yao-79}.
 Double displacement is not used. The action table is made sparse by
-factoring out an error matrix, as suggested by Dencker, Dürre, and
+factoring out an error matrix, as suggested by Dencker, DÃ¼rre, and
 Heuft~\cite{dencker-84}.
 
 The type-theoretic tricks that triggered our interest in LR
@@ -3580,11 +3580,11 @@ Pottier~\citeyear{pottier-reachability-cc-2016}.
 \section{Acknowledgements}
 
 \menhir's interpreter (\ointerpret) and table-based back-end (\otable) were
-implemented by Guillaume Bau, Raja Boujbel, and François Pottier. The project
+implemented by Guillaume Bau, Raja Boujbel, and FranÃ§ois Pottier. The project
 was generously funded by Jane Street Capital, LLC through the ``OCaml Summer
 Project'' initiative.
 
-Frédéric Bour provided motivation and an initial implementation for the
+FrÃ©dÃ©ric Bour provided motivation and an initial implementation for the
 incremental API and inspection API.
 
 Jacques-Henri Jourdan designed and implemented the Coq back-end and did the
@@ -3600,7 +3600,7 @@ Gabriel Scherer provided motivation for investigating Jeffery's technique.
 
 \end{document}
 
-% LocalWords:  Yann Régis Gianas Regis inria Menhir filename mly basename Coq
+% LocalWords:  Yann RÃ©gis Gianas Regis inria Menhir filename mly basename Coq
 % LocalWords:  coq vy tt Coq's iox Menhir's nonterminal graphviz nullable calc
 % LocalWords:  inline postprocessed postprocessing ocamlc bytecode linkpkg cmo
 % LocalWords:  menhirLib ocamlopt cmx qa ocamlrun runtime uid productiongroups
@@ -3612,5 +3612,5 @@ Gabriel Scherer provided motivation for investigating Jeffery's technique.
 % LocalWords:  syntaxerror whitespace EOL cst API lexing MenhirInterpreter pc
 % LocalWords:  InputNeeded HandlingError env CompCert Aut se nat init cparser
 % LocalWords:  validator subdirectory EBNF reentrant eos typecheck menhir ulex
-% LocalWords:  DeRemer Pennello's Tarjan Yao Dencker Dürre Heuft Bau Raja LLC
-% LocalWords:  Acknowledgements Boujbel Frédéric Bour
+% LocalWords:  DeRemer Pennello's Tarjan Yao Dencker DÃ¼rre Heuft Bau Raja LLC
+% LocalWords:  Acknowledgements Boujbel FrÃ©dÃ©ric Bour
