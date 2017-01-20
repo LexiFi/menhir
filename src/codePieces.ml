@@ -210,7 +210,9 @@ let errorval =
   EVar parse_error
 
 let basics =
-  "Basics"
+  "MenhirBasics"
+  (* 2017/01/20 The name [basics] must be an unlikely name, as it might
+     otherwise hide a user-defined module by the same name. *)
 
 let excvaldef = {
   valpublic = false;
