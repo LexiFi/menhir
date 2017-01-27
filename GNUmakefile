@@ -6,7 +6,7 @@
 
 SHELL := bash
 
-.PHONY: all test clean package check api export godi opam local unlocal pin unpin
+.PHONY: all test clean package check api export opam local unlocal pin unpin
 
 # -------------------------------------------------------------------------
 
@@ -212,7 +212,7 @@ export: api
 	  cvs up && \
 	  $(SED) --in-place=.bak "s/menhir-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/$(PACKAGE)/" menhir.xml && \
 	  cvs commit -m "Updated Menhir's version number." && \
-	  if [ -x /opt/godi/bin/cduce ] ; then $(MAKE) export ; fi
+	  if command -v cduce >/dev/null ; then $(MAKE) export ; fi
 
 # -------------------------------------------------------------------------
 
