@@ -6,7 +6,7 @@
 
 SHELL := bash
 
-.PHONY: all test clean package check api export opam local unlocal pin unpin
+.PHONY: all test clean package check api export tag opam local unlocal pin unpin
 
 # -------------------------------------------------------------------------
 
@@ -213,6 +213,13 @@ export: api
 	  $(SED) --in-place=.bak "s/menhir-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/$(PACKAGE)/" menhir.xml && \
 	  cvs commit -m "Updated Menhir's version number." && \
 	  if command -v cduce >/dev/null ; then $(MAKE) export ; fi
+
+# -------------------------------------------------------------------------
+
+# Creating a git tag.
+
+tag:
+	git tag -a $(DATE) -m "Release $(DATE)."
 
 # -------------------------------------------------------------------------
 
