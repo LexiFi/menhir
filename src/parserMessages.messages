@@ -35,12 +35,14 @@ grammar: TOKEN TYPE
 grammar: TOKEN OCAMLTYPE TYPE
 grammar: TOKEN UID STAR
 grammar: TOKEN UID COMMA TYPE
+grammar: TOKEN UID ATTRIBUTE STAR
 
 Ill-formed %token declaration.
 Examples of well-formed declarations:
   %token FOO
   %token DOT SEMICOLON
   %token <string> LID UID
+  %token FOO [@cost 0]
 
 # ----------------------------------------------------------------------------
 
@@ -105,14 +107,17 @@ Examples of well-formed rules:
 # ----------------------------------------------------------------------------
 
 grammar: PERCENTPERCENT UID UID
+grammar: PERCENTPERCENT LID ATTRIBUTE UID
 
 Ill-formed rule.
 Either a parenthesized, comma-delimited list of formal parameters
+or an attribute
 or a colon is expected at this point.
 Examples of well-formed rules:
   main: e = expr EOL { e }
   expr: i = INT { i } | e1 = expr PLUS e2 = expr { e1 + e2 }
   option(X): { None } | x = X { Some x }
+  main [@cost 0]: e = expr EOL { e }
 
 # ----------------------------------------------------------------------------
 
@@ -143,6 +148,7 @@ Examples of well-formed rules:
 # ----------------------------------------------------------------------------
 
 grammar: PERCENTPERCENT UID COLON UID TYPE
+grammar: PERCENTPERCENT UID COLON UID ATTRIBUTE TYPE
 grammar: PERCENTPERCENT UID COLON LID TYPE
 grammar: PERCENTPERCENT UID COLON LID EQUAL TYPE
 grammar: PERCENTPERCENT UID COLON UID PLUS TYPE
@@ -159,6 +165,7 @@ Examples of well-formed producers:
   es = list(terminated(expr, SEMI))
   es = list(e = expr SEMI { e })
   xs = list(x = var { Some x } | WILDCARD { None })
+  expr [@cost 0]
 
 # The following sentences are similar, but have an open parenthesis.
 # Suggesting that a parenthesis could be closed seems a safe bet. These
@@ -286,6 +293,20 @@ Examples of well-formed actual parameters:
   separated_list(COMMA, expr)
 
 # ------------------------------------------------------------------------------
+
+grammar: PERCENTATTRIBUTE TYPE
+grammar: PERCENTATTRIBUTE UID COMMA TYPE
+grammar: PERCENTATTRIBUTE UID TYPE
+grammar: PERCENTATTRIBUTE UID PLUS TYPE
+grammar: PERCENTATTRIBUTE UID LPAREN TYPE
+grammar: PERCENTATTRIBUTE UID ATTRIBUTE UID
+
+Ill-formed %attribute declaration.
+An %attribute declaration should contain a nonempty list of symbols,
+followed with a nonempty list of attributes.
+Examples of well-formed declarations:
+  %attribute FOO [@printer "foo"]
+  %attribute bar BAZ [@printer "bar/BAZ"] [@cost 2.0]
 
 # Local Variables:
 # mode: shell-script
