@@ -451,7 +451,6 @@ rule main = parse
       let closingpos = attribute openingpos lexbuf in
       let pos = Positions.lex_join openingpos closingpos in
       let attr = mk_stretch stretchpos closingpos false [] in
-      Printf.fprintf stderr "Coucou\n%!";
       if percent = "" then
         (* No [%] sign: this is a normal attribute. *)
         ATTRIBUTE (Positions.with_pos pos id, attr)
