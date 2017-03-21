@@ -43,6 +43,17 @@ type action =
 
 (* ------------------------------------------------------------------------ *)
 
+(* An attribute consists of an attribute name and an attribute payload. The
+   payload is an uninterpreted stretch of source text. *)
+
+type attribute =
+    string Positions.located * Stretch.t
+
+type attributes =
+    attribute list
+
+(* ------------------------------------------------------------------------ *)
+
 (* Information about tokens. (Only after joining.) *)
 
 type token_associativity =

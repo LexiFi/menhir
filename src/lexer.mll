@@ -333,6 +333,8 @@ let uppercase = ['A'-'Z' '\192'-'\214' '\216'-'\222']
 
 let identchar = ['A'-'Z' 'a'-'z' '_' '\192'-'\214' '\216'-'\246' '\248'-'\255' '0'-'9'] (* '\'' forbidden *)
 
+let attributechar = identchar | '.'
+
 let poskeyword =
   '$'
   (("symbolstart" | "start" | "end") as where)
@@ -370,6 +372,8 @@ rule main = parse
     { PARAMETER }
 | "%inline"
     { INLINE }
+| "%attribute"
+    { PERCENTATTRIBUTE }
 | "%on_error_reduce"
     { ON_ERROR_REDUCE }
 | "%%"
@@ -441,6 +445,20 @@ rule main = parse
             Action.from_stretch stretch
         )
       ) }
+| ('%'? as percent) "[@" (attributechar+ as id) whitespace*
+    { let openingpos = lexeme_start_p lexbuf in
+      let stretchpos = lexeme_end_p lexbuf in
+      let closingpos = attribute openingpos lexbuf in
+      let pos = Positions.lex_join openingpos closingpos in
+      let attr = mk_stretch stretchpos closingpos false [] in
+      Printf.fprintf stderr "Coucou\n%!";
+      if percent = "" then
+        (* No [%] sign: this is a normal attribute. *)
+        ATTRIBUTE (Positions.with_pos pos id, attr)
+      else
+        (* A [%] sign is present: this is a grammar-wide attribute. *)
+        GRAMMARATTRIBUTE (Positions.with_pos pos id, attr)
+    }
 | eof
     { EOF }
 | _
@@ -572,6 +590,40 @@ and parentheses openingpos monsters = parse
     { error1 openingpos "unbalanced opening parenthesis." }
 | _
     { parentheses openingpos monsters lexbuf }
+
+(* ------------------------------------------------------------------------ *)
+
+(* Collect an attribute payload, which is terminated by a closing square
+   bracket. Nested square brackets must be properly counted. Nested curly
+   brackets and nested parentheses are also kept track of, so as to better
+   report errors when they are not balanced. *)
+
+and attribute openingpos = parse
+| '['
+    { let _ = attribute (lexeme_start_p lexbuf) lexbuf in
+      attribute openingpos lexbuf }
+| ']'
+    { lexeme_start_p lexbuf }
+| '{'
+    { let _, _ = action false (lexeme_start_p lexbuf) [] lexbuf in
+      attribute openingpos lexbuf }
+| '('
+    { let _, _ = parentheses (lexeme_start_p lexbuf) [] lexbuf in
+      attribute openingpos lexbuf }
+| '"'
+    { string (lexeme_start_p lexbuf) lexbuf; attribute openingpos lexbuf }
+| "'"
+    { char lexbuf; attribute openingpos lexbuf }
+| "(*"
+    { ocamlcomment (lexeme_start_p lexbuf) lexbuf; attribute openingpos lexbuf }
+| newline
+    { new_line lexbuf; attribute openingpos lexbuf }
+| '}'
+| ')'
+| eof
+    { error1 openingpos "unbalanced opening bracket." }
+| _
+    { attribute openingpos lexbuf }
 
 (* ------------------------------------------------------------------------ *)
 

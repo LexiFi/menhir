@@ -25,6 +25,8 @@ open Positions
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
 %token <Syntax.identifier option array -> Action.t> ACTION
+%token <Syntax.attribute> ATTRIBUTE GRAMMARATTRIBUTE
+%token PERCENTATTRIBUTE
 
 /* ------------------------------------------------------------------------- */
 /* Start symbol. */
