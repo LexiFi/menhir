@@ -9,7 +9,7 @@ open Syntax
 
 (* Computing the free names of some syntactic categories. *)
 
-let rec fn_parameter accu p =
+let rec fn_parameter accu (p : parameter) =
   (* [p] cannot be [ParameterAnonymous _]. *)
   let x, ps = Parameters.unapp p in
   let accu = StringSet.add (Positions.value x) accu in
@@ -18,7 +18,7 @@ let rec fn_parameter accu p =
 and fn_parameters accu ps =
   List.fold_left fn_parameter accu ps
 
-let fn_producer accu (_, p) =
+let fn_producer accu ((_, p, _) : producer) =
   fn_parameter accu p
 
 let fn_branch accu branch =
@@ -74,12 +74,15 @@ let anonymous pos (parameters : symbol list) (branches : parameterized_branch li
   let parameters = List.filter (fun x -> StringSet.mem x used) parameters in
   (* Generate a fresh non-terminal symbol. *)
   let symbol = fresh() in
-  (* Construct its definition. Note that it is implicitly marked %inline. *)
+  (* Construct its definition. Note that it is implicitly marked %inline.
+     Also, it does not carry any attributes; this is consistent
+     with the fact that %inline symbols cannot carry attributes. *)
   let rule = {
     pr_public_flag = false;
     pr_inline_flag = true;
     pr_nt          = symbol;
     pr_positions   = [ pos ]; (* this list is not allowed to be empty *)
+    pr_attributes  = [];
     pr_parameters  = parameters;
     pr_branches    = branches
   } in
@@ -106,8 +109,8 @@ let rec transform_parameter (parameters : symbol list) (p : parameter) : paramet
       (* This is where the real work is done. *)
       anonymous pos parameters branches
 
-and transform_producer parameters (x, p) =
-  x, transform_parameter parameters p
+and transform_producer parameters ((x, p, attrs) : producer) =
+  x, transform_parameter parameters p, attrs
 
 and transform_parameterized_branch parameters branch =
   let pr_producers =

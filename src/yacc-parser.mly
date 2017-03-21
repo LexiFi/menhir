@@ -23,6 +23,8 @@ open Positions
 %token <Syntax.attribute> ATTRIBUTE GRAMMARATTRIBUTE
 %token PERCENTATTRIBUTE
 %start grammar
+%type <ParserAux.early_producer> producer
+%type <ParserAux.early_production> production
 %type <Syntax.partial_grammar> grammar
 
 /* These declarations solve a shift-reduce conflict in favor of
@@ -73,7 +75,7 @@ declaration:
     { [ unknown_pos (DCode $1) ] }
 
 | TOKEN optional_ocamltype terminals
-    { List.map (Positions.map (fun terminal -> DToken ($2, terminal))) $3 }
+    { List.map (Positions.map (fun (terminal, attrs) -> DToken ($2, terminal, attrs))) $3 }
 
 | START nonterminals
     { List.map (Positions.map (fun nonterminal -> DStart nonterminal)) $2 }
@@ -93,6 +95,12 @@ declaration:
 
 | PARAMETER OCAMLTYPE
     { [ unknown_pos (DParameter $2) ] }
+
+| GRAMMARATTRIBUTE
+    { [ unknown_pos (DGrammarAttribute $1) ] }
+
+| PERCENTATTRIBUTE actuals attributes
+    { [ unknown_pos (DSymbolAttributes ($2, $3)) ] }
 
 | ON_ERROR_REDUCE actuals
     { let prec = ParserAux.new_on_error_reduce_level() in
@@ -139,6 +147,11 @@ optional_comma:
 | COMMA
     { () }
 
+attributes:
+  /* epsilon */
+    { [] }
+| ATTRIBUTE attributes { $1 :: $2 }
+
 /* ------------------------------------------------------------------------- */
 /* Terminals must begin with an uppercase letter. Nonterminals that are
    declared to be start symbols must begin with a lowercase letter. */
@@ -146,8 +159,8 @@ optional_comma:
 terminals:
   /* epsilon */
     { [] }
-| terminals optional_comma UID
-    { $3 :: $1 }
+| terminals optional_comma UID attributes
+    { (Positions.map (fun uid -> (uid, $4)) $3) :: $1 }
 
 nonterminals:
   /* epsilon */
@@ -169,6 +182,7 @@ rules:
 rule:
   flags
   symbol
+  attributes
   optional_formal_parameters
   COLON
   optional_bar
@@ -179,8 +193,9 @@ rule:
         pr_inline_flag = inline;
         pr_nt          = Positions.value $2;
         pr_positions   = [ Positions.position $2 ];
-        pr_parameters  = $3;
-        pr_branches    = List.flatten ($6 :: List.rev $7)
+        pr_attributes  = $3;
+        pr_parameters  = $4;
+        pr_branches    = List.flatten ($7 :: List.rev $8)
       }
     }
 
@@ -329,12 +344,12 @@ producers:
 
 /* ------------------------------------------------------------------------- */
 /* A producer is an actual parameter, possibly preceded by a
-   binding. */
+   binding, and possibly followed with attributes. */
 
 producer:
-| actual
-    { Positions.lex_join (symbol_start_pos()) (symbol_end_pos()), None, $1 }
-| LID EQUAL actual
-    { Positions.lex_join (symbol_start_pos()) (symbol_end_pos()), Some $1, $3 }
+|           actual attributes
+    { Positions.lex_join (symbol_start_pos()) (symbol_end_pos()),    None, $1, $2 }
+| LID EQUAL actual attributes
+    { Positions.lex_join (symbol_start_pos()) (symbol_end_pos()), Some $1, $3, $4 }
 
 %%

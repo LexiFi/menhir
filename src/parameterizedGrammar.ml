@@ -284,7 +284,7 @@ let check_grammar (p_grammar : Syntax.grammar) =
       (* We only are interested by parameterized non terminals. *)
       if parameters node <> [] then
         List.fold_left (fun succs { pr_producers = symbols } ->
-          List.fold_left (fun succs -> function (_, p) ->
+          List.fold_left (fun succs -> function (_, p, _) ->
             let symbol, _ = Parameters.unapp p in
             try
               let symbol_node = conv symbol.value in
@@ -416,7 +416,7 @@ let check_grammar (p_grammar : Syntax.grammar) =
     let check_producers () =
       List.iter
         (fun { pr_producers = symbols } -> List.iter
-           (function (_, p) ->
+           (function (_, p, _) ->
               (* We take the use of each symbol into account. *)
               check_parameter_type env p;
               (* If it is in the same component, check in addition that
@@ -562,7 +562,7 @@ let expand p_grammar =
      instantiate the parameterized branch. *)
   let rec expand_branch subst pbranch =
     let new_producers = List.map
-      (function (ido, p) ->
+      (function (ido, p, _) ->
          let sym, actual_parameters =
            Parameters.unapp p in
          let sym, actual_parameters =

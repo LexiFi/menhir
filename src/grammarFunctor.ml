@@ -224,6 +224,7 @@ module Terminal = struct
         tk_ocamltype     = None;
         tk_is_declared   = true;
         tk_position      = Positions.dummy;
+        tk_attributes    = [];
       }
     in
     Array.init n (fun tok ->

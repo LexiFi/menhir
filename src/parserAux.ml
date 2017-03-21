@@ -1,6 +1,24 @@
 open Positions
 open Syntax
 
+type early_producer =
+  Positions.t *
+  identifier located option *
+  parameter *
+  attributes
+
+type early_producers =
+  early_producer list
+
+type early_production =
+  early_producers *
+  string located option * (* optional precedence *)
+  branch_production_level *
+  Positions.t
+
+type early_productions =
+  early_production list
+
 let new_precedence_level =
   let c = ref 0 in
   fun pos1 pos2 ->
@@ -24,13 +42,13 @@ module IdSet = Set.Make (struct
     compare (value id1) (value id2)
 end)
 
-let defined_identifiers (_, ido, _) accu =
+let defined_identifiers (_, ido, _, _) accu =
   Option.fold IdSet.add ido accu
 
-let defined_identifiers producers =
+let defined_identifiers (producers : early_producers) =
   List.fold_right defined_identifiers producers IdSet.empty
 
-let check_production_group right_hand_sides =
+let check_production_group (right_hand_sides : early_productions) =
   match right_hand_sides with
   | [] ->
       (* A production group cannot be empty. *)
@@ -56,15 +74,15 @@ let check_production_group right_hand_sides =
 
 (* [normalize_producer i p] assigns a name of the form [_i]
    to the unnamed producer [p]. *)
-let normalize_producer i (pos, opt_identifier, parameter) =
+let normalize_producer i (pos, opt_identifier, parameter, attrs) =
   let id =
     match opt_identifier with
       | Some id -> id
       | None -> Positions.with_pos pos ("_" ^ string_of_int (i + 1))
   in
-  (id, parameter)
+  (id, parameter, attrs)
 
-let normalize_producers producers =
+let normalize_producers (producers : early_producers) : producer list =
   List.mapi normalize_producer producers
 
 let override pos o1 o2 =
@@ -82,7 +100,7 @@ let override pos o1 o2 =
    .. List.length producers]. The output array [p] is such that
    [p.(idx) = Some x] if [idx] must be referred to using [x], not
    [$(idx + 1)]. *)
-let producer_names producers =
+let producer_names (producers : early_producers) =
   producers
-  |> List.map (fun (_, oid, _) -> Option.map Positions.value oid)
+  |> List.map (fun (_, oid, _, _) -> Option.map Positions.value oid)
   |> Array.of_list

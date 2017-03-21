@@ -29,8 +29,10 @@ open Positions
 %token PERCENTATTRIBUTE
 
 /* ------------------------------------------------------------------------- */
-/* Start symbol. */
+/* Type annotations and start symbol. */
 
+%type <ParserAux.early_producer> producer
+%type <ParserAux.early_production> production
 %start <Syntax.partial_grammar> grammar
 
 /* ------------------------------------------------------------------------- */
@@ -72,8 +74,8 @@ declaration:
 | h = HEADER /* lexically delimited by %{ ... %} */
     { [ with_poss $startpos $endpos (DCode h) ] }
 
-| TOKEN t = OCAMLTYPE? ts = clist(terminal)
-    { List.map (Positions.map (fun terminal -> DToken (t, terminal))) ts }
+| TOKEN ty = OCAMLTYPE? ts = clist(terminal)
+    { List.map (Positions.map (fun (terminal, attrs) -> DToken (ty, terminal, attrs))) ts }
 
 | START t = OCAMLTYPE? nts = clist(nonterminal)
     /* %start <ocamltype> foo is syntactic sugar for %start foo %type <ocamltype> foo */
@@ -96,6 +98,12 @@ declaration:
 
 | PARAMETER t = OCAMLTYPE
     { [ with_poss $startpos $endpos (DParameter t) ] }
+
+| attr = GRAMMARATTRIBUTE
+    { [ with_poss $startpos $endpos (DGrammarAttribute attr) ] }
+
+| PERCENTATTRIBUTE actuals = clist(strict_actual) attrs = ATTRIBUTE+
+    { [ with_poss $startpos $endpos (DSymbolAttributes (actuals, attrs)) ] }
 
 | ON_ERROR_REDUCE ss = clist(strict_actual)
     { let prec = ParserAux.new_on_error_reduce_level() in
@@ -154,8 +162,8 @@ symbol:
    declared to be start symbols must begin with a lowercase letter. */
 
 %inline terminal:
-  id = UID
-    { id }
+  id = UID attrs = ATTRIBUTE*
+    { Positions.map (fun uid -> (uid, attrs)) id }
 
 %inline nonterminal:
   id = LID
@@ -169,6 +177,7 @@ symbol:
 rule:
   flags = flags                                             /* flags */
   symbol = symbol                                           /* the symbol that is being defined */
+  attributes = ATTRIBUTE*
   params = plist(symbol)                                    /* formal parameters */
   COLON
   optional_bar
@@ -180,6 +189,7 @@ rule:
         pr_inline_flag = inline;
         pr_nt          = Positions.value symbol;
         pr_positions   = [ Positions.position symbol ];
+        pr_attributes  = attributes;
         pr_parameters  = List.map Positions.value params;
         pr_branches    = branches
       }
@@ -253,7 +263,7 @@ production:
 
 /* ------------------------------------------------------------------------- */
 /* A producer is an actual parameter, possibly preceded by a
-   binding.
+   binding, and possibly followed with attributes.
 
    Because both [ioption] and [terminated] are defined as inlined by
    the standard library, this definition expands to two productions,
@@ -265,8 +275,8 @@ production:
    empty [option] or to shift. */
 
 producer:
-| id = ioption(terminated(LID, EQUAL)) p = actual
-    { position (with_poss $startpos $endpos ()), id, p }
+| id = ioption(terminated(LID, EQUAL)) p = actual attrs = ATTRIBUTE*
+    { position (with_poss $startpos $endpos ()), id, p, attrs }
 
 /* ------------------------------------------------------------------------- */
 /* The ideal syntax of actual parameters includes:

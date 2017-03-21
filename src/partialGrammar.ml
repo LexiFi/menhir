@@ -24,7 +24,7 @@ let join_declaration filename (grammar : grammar) decl =
      difficult by the fact that %token and %left-%right-%nonassoc
      declarations are independent. *)
 
-  | DToken (ocamltype, terminal) ->
+  | DToken (ocamltype, terminal, attributes) ->
       let token_property =
         try
 
@@ -40,17 +40,17 @@ let join_declaration filename (grammar : grammar) decl =
 
           if token_property.tk_is_declared then
             Error.errorp decl
-              "the token %s has multiple definitions." terminal
+              "the token %s has multiple definitions." terminal;
 
           (* Otherwise, update the previous definition. *)
 
-          else
-            { token_property with
-              tk_is_declared = true;
-              tk_ocamltype   = ocamltype;
-              tk_filename    = filename;
-              tk_position    = decl.position;
-            }
+          { token_property with
+            tk_is_declared = true;
+            tk_ocamltype   = ocamltype;
+            tk_filename    = filename;
+            tk_position    = decl.position;
+            tk_attributes  = attributes;
+          }
 
         with Not_found ->
 
@@ -62,6 +62,7 @@ let join_declaration filename (grammar : grammar) decl =
             tk_associativity = UndefinedAssoc;
             tk_precedence    = UndefinedPrecedence;
             tk_position      = decl.position;
+            tk_attributes    = attributes;
             tk_is_declared   = true
           }
 
@@ -105,6 +106,7 @@ let join_declaration filename (grammar : grammar) decl =
             tk_associativity = UndefinedAssoc;
             tk_precedence    = prec;
             tk_is_declared   = false;
+            tk_attributes    = [];
             (* Will be updated later. *)
             tk_position      = decl.position;
           } in
@@ -124,6 +126,14 @@ let join_declaration filename (grammar : grammar) decl =
       token_properties.tk_precedence <- prec;
       token_properties.tk_associativity <- assoc;
       grammar
+
+  | DGrammarAttribute attr ->
+      { grammar with
+        p_grammar_attributes = attr :: grammar.p_grammar_attributes }
+
+  | DSymbolAttributes (actuals, attrs) ->
+      { grammar with
+        p_symbol_attributes = (actuals, attrs) :: grammar.p_symbol_attributes }
 
 (* ------------------------------------------------------------------------- *)
 (* This stores an optional postlude into a grammar.
@@ -152,11 +162,11 @@ let rewrite_nonterminal (phi : renaming) nonterminal =
 let rewrite_parameter phi parameter =
   Parameters.map (Positions.map (Misc.support_assoc phi)) parameter
 
-let rewrite_element phi (ido, parameter) =
-  ido, rewrite_parameter phi parameter
+let rewrite_producer phi ((ido, parameter, attrs) : producer) =
+  ido, rewrite_parameter phi parameter, attrs
 
 let rewrite_branch phi ({ pr_producers = producers } as branch) =
-  { branch with pr_producers = List.map (rewrite_element phi) producers }
+  { branch with pr_producers = List.map (rewrite_producer phi) producers }
 
 let rewrite_branches phi branches =
   match phi with
@@ -452,7 +462,7 @@ let symbols_of grammar (pgrammar : Syntax.partial_grammar) =
 
     (* Analyse each branch. *)
     let symbols = List.fold_left (fun symbols branch ->
-      List.fold_left (fun symbols (_, p) ->
+      List.fold_left (fun symbols (_, p, _) ->
         store_except_rule_parameters symbols p
       ) symbols branch.pr_producers
     ) symbols prule.pr_branches
@@ -548,7 +558,8 @@ let merge_rules symbols pgs =
                     let rbr = rewrite_branches phi r.pr_branches in
                       { r' with
                           pr_positions = positions;
-                          pr_branches  = rbr @ r'.pr_branches
+                          pr_branches  = rbr @ r'.pr_branches;
+                          pr_attributes = r.pr_attributes @ r'.pr_attributes;
                       }
               with Not_found ->
                 (* We alphaconvert the rule in order to avoid the capture of
@@ -568,6 +579,8 @@ let empty_grammar =
     p_tokens                  = StringMap.empty;
     p_rules                   = StringMap.empty;
     p_on_error_reduce         = [];
+    p_grammar_attributes      = [];
+    p_symbol_attributes       = [];
   }
 
 let join grammar pgrammar =
@@ -642,7 +655,7 @@ let check_parameterized_grammar_is_well_defined grammar =
               } -> ignore (List.fold_left
 
             (* Check the producers. *)
-            (fun already_seen (id, p) ->
+            (fun already_seen (id, p, _) ->
                let symbol, parameters = Parameters.unapp p in
                let s = symbol.value and p = symbol.position in
                let already_seen =

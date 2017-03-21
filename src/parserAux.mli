@@ -1,7 +1,28 @@
 (* This module provides utilities that are shared by the two versions
    of the parser. *)
 
+open Positions
 open Syntax
+
+(* A few types used in the parser. *)
+
+type early_producer =
+  Positions.t *
+  identifier located option *
+  parameter *
+  attributes
+
+type early_producers =
+  early_producer list
+
+type early_production =
+  early_producers *
+  string located option * (* optional precedence *)
+  branch_production_level *
+  Positions.t
+
+type early_productions =
+  early_production list
 
 (* [new_precedence_level pos1 pos2] creates a new precendence level, which is
    stronger than any levels previously created by this function. It should be
@@ -32,18 +53,14 @@ val new_on_error_reduce_level: unit -> on_error_reduce_level
 (* [check_production_group] accepts a production group and checks that all
    productions in the group define the same set of identifiers. *)
 
-val check_production_group:
-  ((Positions.t * identifier Positions.located option * parameter) list * 'a * 'b * 'c) list ->
-  unit
+val check_production_group: early_productions -> unit
 
 (* [normalize_producers] accepts a list of producers where identifiers are
    optional and returns a list of producers where identifiers are mandatory.
    A missing identifier in the [i]-th position receives the conventional
    name [_i]. *)
 
-val normalize_producers:
-  (Positions.t * identifier Positions.located option * parameter) list ->
-  producer list
+val normalize_producers: early_producers -> producer list
 
 (* [override pos oprec1 oprec2] decides which of the two optional
    %prec declarations [oprec1] and [oprec2] applies to a
@@ -54,6 +71,4 @@ val override: Positions.t -> 'a option -> 'a option -> 'a option
 (* [producer_names producers] returns an array [names] such that
    [names.(idx) = None] if the (idx + 1)-th producer is unnamed
    and [names.(idx) = Some id] if it is called [id]. *)
-val producer_names :
-  (_ * Syntax.identifier Positions.located option * _) list ->
-  Syntax.identifier option array
+val producer_names: early_producers -> identifier option array

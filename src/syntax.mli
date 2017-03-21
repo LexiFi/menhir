@@ -52,6 +52,20 @@ type attribute =
 type attributes =
     attribute list
 
+(* Attributes allow the user to annotate the grammar with information that is
+   ignored by Menhir, but can be exploited by other tools, via the SDK. *)
+
+(* Attributes can be attached in the following places:
+
+   - with the grammar:         %[@bar ...]
+   - with a terminal symbol:   %token FOO [@bar ...]
+   - with a rule:              foo(X) [@bar ...]: ...
+   - with a producer:          e = foo(quux) [@bar ...]
+   - with an arbitrary symbol: %attribute FOO foo(quux) [@bar ...]
+
+   After expanding away parameterized nonterminal symbols, things become
+   a bit simpler, as %attribute declarations are desugared away. *)
+
 (* ------------------------------------------------------------------------ *)
 
 (* Information about tokens. (Only after joining.) *)
@@ -76,6 +90,7 @@ type token_properties =
                tk_filename      : filename;
                tk_ocamltype     : Stretch.ocamltype option;
                tk_position      : Positions.t;
+               tk_attributes    : attributes;
       mutable  tk_associativity : token_associativity;
       mutable  tk_precedence    : precedence_level;
       mutable  tk_is_declared   : bool;
@@ -126,7 +141,7 @@ and parameters =
    it could be [e = expr], for instance. *)
 
 and producer =
-    identifier Positions.located * parameter
+    identifier Positions.located * parameter * attributes
 
 (* ------------------------------------------------------------------------ *)
 
@@ -151,6 +166,7 @@ type parameterized_rule =
       pr_inline_flag       : bool;
       pr_nt                : nonterminal;
       pr_positions         : Positions.t list;
+      pr_attributes        : attributes;
       pr_parameters        : symbol list;
       pr_branches          : parameterized_branch list;
     }
@@ -171,7 +187,7 @@ type declaration =
 
     (* Terminal symbol (token) declaration. *)
 
-  | DToken of Stretch.ocamltype option * terminal
+  | DToken of Stretch.ocamltype option * terminal * attributes
 
     (* Start symbol declaration. *)
 
@@ -184,6 +200,14 @@ type declaration =
     (* Type declaration. *)
 
   | DType of Stretch.ocamltype * parameter
+
+    (* Grammar-level attribute declaration. *)
+
+  | DGrammarAttribute of attribute
+
+    (* Attributes shared among multiple symbols, i.e., [%attribute]. *)
+
+  | DSymbolAttributes of parameter list * attributes
 
     (* On-error-reduce declaration. *)
 
@@ -208,8 +232,9 @@ type partial_grammar =
 (* The differences with partial grammars (above) are as follows:
    1. the file name is gone (there could be several file names, anyway).
    2. there can be several postludes.
-   3. declarations are organized by kind: preludes, functor %parameters,
-      %start symbols, %types, %tokens, %on_error_reduce.
+   3. declarations are organized by kind: preludes, postludes,
+      functor %parameters, %start symbols, %types, %tokens, %on_error_reduce,
+      grammar attributes, %attributes.
    4. rules are stored in a map, indexed by symbol names, instead of a list.
  *)
 
@@ -222,5 +247,7 @@ type grammar =
       p_types              : (parameter * Stretch.ocamltype Positions.located) list;
       p_tokens             : token_properties StringMap.t;
       p_on_error_reduce    : (parameter * on_error_reduce_level) list;
+      p_grammar_attributes : attributes;
+      p_symbol_attributes  : (parameter list * attributes) list;
       p_rules              : parameterized_rule StringMap.t;
     }
