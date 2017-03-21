@@ -490,7 +490,7 @@ and ocamltype openingpos = parse
 
 and action percent openingpos monsters = parse
 | '{'
-    { let _, monsters = action false (lexeme_end_p lexbuf) monsters lexbuf in
+    { let _, monsters = action false (lexeme_start_p lexbuf) monsters lexbuf in
       action percent openingpos monsters lexbuf }
 | ("}" | "%}") as delimiter
     { match percent, delimiter with
@@ -503,7 +503,7 @@ and action percent openingpos monsters = parse
           error1 openingpos "unbalanced opening brace."
     }
 | '('
-    { let _, monsters = parentheses (lexeme_end_p lexbuf) monsters lexbuf in
+    { let _, monsters = parentheses (lexeme_start_p lexbuf) monsters lexbuf in
       action percent openingpos monsters lexbuf }
 | '$' (['0'-'9']+ as i)
     { let monster = dollar (cpos lexbuf) (int_of_string i) in
@@ -538,12 +538,12 @@ and action percent openingpos monsters = parse
 
 and parentheses openingpos monsters = parse
 | '('
-    { let _, monsters = parentheses (lexeme_end_p lexbuf) monsters lexbuf in
+    { let _, monsters = parentheses (lexeme_start_p lexbuf) monsters lexbuf in
       parentheses openingpos monsters lexbuf }
 | ')'
     { lexeme_start_p lexbuf, monsters }
 | '{'
-    { let _, monsters = action false (lexeme_end_p lexbuf) monsters lexbuf in
+    { let _, monsters = action false (lexeme_start_p lexbuf) monsters lexbuf in
       parentheses openingpos monsters lexbuf }
 | '$' (['0'-'9']+ as i)
     { let monster = dollar (cpos lexbuf) (int_of_string i) in
