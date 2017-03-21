@@ -1,6 +1,7 @@
 /* This is the crude version of the parser. It is meant to be processed
    by ocamlyacc. Its existence is necessary for bootstrapping. It is kept
    in sync with [fancy-parser], with a few differences:
+   0.  [yacc-parser] produces dummy position information;
    1. [fancy-parser] exploits many features of Menhir;
    2. [fancy-parser] performs slightly more refined error handling;
    3. [fancy-parser] supports anonymous rules. */
