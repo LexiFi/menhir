@@ -431,12 +431,13 @@ rule main = parse
       ) }
 | "{"
     { savestart lexbuf (fun lexbuf ->
-        let openingpos = lexeme_end_p lexbuf in
+        let openingpos = lexeme_start_p lexbuf in
+        let stretchpos = lexeme_end_p lexbuf in
         let closingpos, monsters = action false openingpos [] lexbuf in
         ACTION (
           fun (producers : string option array) ->
             List.iter (fun monster -> monster.check producers) monsters;
-            let stretch = mk_stretch openingpos closingpos true monsters in
+            let stretch = mk_stretch stretchpos closingpos true monsters in
             Action.from_stretch stretch
         )
       ) }
