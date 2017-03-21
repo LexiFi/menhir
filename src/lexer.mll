@@ -423,10 +423,11 @@ rule main = parse
     { savestart lexbuf (ocamltype (lexeme_end_p lexbuf)) }
 | "%{"
     { savestart lexbuf (fun lexbuf ->
-        let openingpos = lexeme_end_p lexbuf in
+        let openingpos = lexeme_start_p lexbuf in
+        let stretchpos = lexeme_end_p lexbuf in
         let closingpos, monsters = action true openingpos [] lexbuf in
         no_monsters monsters;
-        HEADER (mk_stretch openingpos closingpos false [])
+        HEADER (mk_stretch stretchpos closingpos false [])
       ) }
 | "{"
     { savestart lexbuf (fun lexbuf ->
