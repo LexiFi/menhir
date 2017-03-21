@@ -536,6 +536,9 @@ and action percent openingpos monsters = parse
 
 (* ------------------------------------------------------------------------ *)
 
+(* Inside a semantic action, we keep track of nested parentheses, so as to
+   better report errors when they are not balanced. *)
+
 and parentheses openingpos monsters = parse
 | '('
     { let _, monsters = parentheses (lexeme_start_p lexbuf) monsters lexbuf in
