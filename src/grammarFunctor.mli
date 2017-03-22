@@ -70,6 +70,10 @@ module Nonterminal : sig
 
   val ocamltype_of_start_symbol: t -> Stretch.ocamltype
 
+  (* Creation of a table indexed by nonterminals. *)
+
+  val init: (t -> 'a) -> 'a array
+
   (* Iteration over nonterminals. The order in which elements are
      examined, and the order of [map]'s output list, correspond to the
      numeric indices produced by [n2i] above. *)
@@ -97,6 +101,11 @@ module Nonterminal : sig
      symbols. *)
 
   val is_start: t -> bool
+
+  (* [attributes nt] is the list of attributes attached with the nonterminal
+     symbol [nt]. *)
+
+  val attributes: t -> Syntax.attribute list
 
 end
 
@@ -167,6 +176,10 @@ module Terminal : sig
   val pseudo: t -> bool
   val real: t -> bool
 
+  (* Creation of a table indexed by terminals. *)
+
+  val init: (t -> 'a) -> 'a array
+
   (* Iteration over terminals. The order in which elements are
      examined, and the order of [map]'s output list, correspond to the
      numeric indices produced by [t2i] above. *)
@@ -182,6 +195,11 @@ module Terminal : sig
   (* [iter_real] offers iteration over all real terminals. *)
 
   val iter_real: (t -> unit) -> unit
+
+  (* [attributes t] is the list of attributes attached with the terminal
+     symbol [t]. *)
+
+  val attributes: t -> Syntax.attribute list
 
   (* The sub-module [Word] offers an implementation of words (that is,
      sequences) of terminal symbols. It is used by [LRijkstra]. We
@@ -352,6 +370,19 @@ module Production : sig
 
   val positions: index -> Positions.t list
 
+  (* [lhs_attributes prod] returns the attributes attached with the
+     head symbol of the production [prod]. It is equivalent to
+     [Nonterminal.attributes (nt prod)]. [rhs_attributes prod] returns
+     an array of the attributes attached with each element in the
+     right-hand side of the production [prod]. *)
+
+  val lhs_attributes: index -> Syntax.attributes
+  val rhs_attributes: index -> Syntax.attributes array
+
+  (* Creation of a table indexed by productions. *)
+
+  val init: (index -> 'a) -> 'a array
+
   (* Iteration over all productions. The order in which elements
      are examined, and the order of [map]'s output list, correspond
      to the numeric indices produced by [p2i] above. *)
@@ -465,6 +496,10 @@ module Analysis : sig
      [nt] in a valid sentence. *)
 
   val follow: Nonterminal.t -> TerminalSet.t
+
+  (* [attributes] are the attributes attached with the grammar. *)
+
+  val attributes: Syntax.attributes
 
 end
 

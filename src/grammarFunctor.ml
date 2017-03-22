@@ -118,6 +118,9 @@ module Nonterminal = struct
   let positions nt =
     (StringMap.find (print false nt) grammar.rules).positions
 
+  let init f =
+    Array.init n f
+
   let iter f =
     Misc.iteri n f
 
@@ -152,6 +155,18 @@ module Nonterminal = struct
 
   let tabulate f =
     Array.get (Array.init n f)
+
+  let attributes : Syntax.attributes array =
+    Array.make n []
+
+  let () =
+    StringMap.iter (fun nonterminal { attributes = attrs } ->
+      let nt = lookup nonterminal in
+      attributes.(nt) <- attrs
+    ) grammar.rules
+
+  let attributes nt =
+    attributes.(nt)
 
 end
 
@@ -250,6 +265,9 @@ module Terminal = struct
   let ocamltype tok =
     token_properties.(tok).tk_ocamltype
 
+  let init f =
+    Array.init n f
+
   let iter f =
     Misc.iteri n f
 
@@ -279,6 +297,9 @@ module Terminal = struct
       Some (lookup "EOF")
     with Not_found ->
       None
+
+  let attributes tok =
+    token_properties.(tok).tk_attributes
 
   (* The sub-module [Word] offers an implementation of words (that is,
      sequences) of terminal symbols. It is used by [LRijkstra]. We
@@ -563,6 +584,9 @@ module Production = struct
   let positions : Positions.t list array =
     Array.make n []
 
+  let rhs_attributes : Syntax.attributes array array =
+    Array.make n [||]
+
   let (start : int),
       (startprods : index NonterminalMap.t) =
     StringSet.fold (fun nonterminal (k, startprods) ->
@@ -586,13 +610,14 @@ module Production = struct
     let dummy = ProductionLevel (InputFile.builtin_input_file, 0) in
     Array.make n dummy
 
-  let (_ : int) = StringMap.fold (fun nonterminal { branches = branches } k ->
+  let (_ : int) = StringMap.fold (fun nonterminal { branches } k ->
     let nt = Nonterminal.lookup nonterminal in
     let k' = List.fold_left (fun k branch ->
       let symbols = Array.of_list branch.producers in
       table.(k) <- (nt, Array.map (fun producer -> Symbol.lookup (producer_symbol producer)) symbols);
       identifiers.(k) <- Array.map producer_identifier symbols;
       actions.(k) <- Some branch.action;
+      rhs_attributes.(k) <- Array.map producer_attributes symbols;
       production_level.(k) <- branch.branch_production_level;
       prec_decl.(k) <- branch.branch_prec_annotation;
       positions.(k) <- [ branch.branch_position ];
@@ -602,8 +627,7 @@ module Production = struct
     k'
   ) grammar.rules start
 
-  (* Iteration over the productions associated with a specific
-     nonterminal. *)
+  (* Iteration over the productions associated with a specific nonterminal. *)
 
   let iternt nt f =
     let k, k' = ntprods.(nt) in
@@ -677,6 +701,12 @@ module Production = struct
   let positions prod =
     positions.(prod)
 
+  let lhs_attributes prod =
+    Nonterminal.attributes (nt prod)
+
+  let rhs_attributes prod =
+    rhs_attributes.(prod)
+
   let startsymbol2startprod nt =
     try
       NonterminalMap.find nt startprods
@@ -684,6 +714,9 @@ module Production = struct
       assert false (* [nt] is not a start symbol *)
 
   (* Iteration. *)
+
+  let init f =
+    Array.init n f
 
   let iter f =
     Misc.iteri n f
@@ -1348,6 +1381,9 @@ module Analysis = struct
     convert (explain tok rhs i)
 
   let follow = follow
+
+  let attributes =
+    grammar.gr_attributes
 
 end
 
