@@ -19,7 +19,7 @@ endif
 # ----------------------------------------------------------------------------
 # Ocamlbuild tool and settings.
 
-OCAMLBUILD := ocamlbuild -classic-display -j 0 -cflags "-safe-string -bin-annot"
+OCAMLBUILD := ocamlbuild -classic-display -j 0
 
 # ----------------------------------------------------------------------------
 # For everyday development.
