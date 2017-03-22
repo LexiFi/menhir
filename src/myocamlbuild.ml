@@ -95,7 +95,8 @@ let noncomment s =
 
 let cmx (m : string) : string =
   let candidate = m ^ ".cmx" in
-  if Sys.file_exists (m ^ ".ml") then candidate else Compatibility.String.uncapitalize_ascii candidate
+  if Sys.file_exists (m ^ ".ml") then candidate
+  else Compatibility.String.uncapitalize_ascii candidate
 
 (* ---------------------------------------------------------------------------- *)
 
