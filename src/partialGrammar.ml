@@ -588,6 +588,19 @@ let join grammar pgrammar =
     List.fold_left (join_declaration filename) grammar pgrammar.pg_declarations
     $$ join_postlude pgrammar.pg_postlude
 
+(* If a rule is marked %inline, then it must not carry an attribute. *)
+let check_inline_attribute prule =
+  match prule.pr_inline_flag, prule.pr_attributes with
+  | true, (id, _payload) :: _attributes ->
+      Error.error
+        [Positions.position id]
+        "the nonterminal symbol %s is declared %%inline.\n\
+         It cannot carry an attribute."
+        prule.pr_nt
+  | true, []
+  | false, _ ->
+      ()
+
 let check_parameterized_grammar_is_well_defined grammar =
 
   (* Every start symbol is defined and has a %type declaration. *)
@@ -706,6 +719,9 @@ let check_parameterized_grammar_is_well_defined grammar =
              && StringMap.mem k grammar.p_start_symbols) then
            Error.error prule.pr_positions
                 "%s cannot be both a start symbol and inlined." k;
+
+         (* If a rule is marked %inline, then it must not carry an attribute. *)
+         check_inline_attribute prule
 
       ) grammar.p_rules;
 

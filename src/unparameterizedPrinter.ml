@@ -113,6 +113,18 @@ let if_ocaml_code_permitted f x =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Testing whether attributes should be printed. *)
+
+let attributes_printed : bool =
+  match mode with
+  | PrintNormal
+  | PrintUnitActions _ ->
+      true
+  | PrintForOCamlyacc ->
+      false
+
+(* -------------------------------------------------------------------------- *)
+
 (* Printing a semantic action. *)
 
 let print_semantic_action f g branch =
@@ -127,7 +139,9 @@ let print_semantic_action f g branch =
        (* In ocamlyacc-compatibility mode, the code must be wrapped in
           [let]-bindings whose right-hand side uses the [$i] keywords. *)
       let bindings =
-        List.mapi (fun i (symbol, id) ->
+        List.mapi (fun i producer ->
+          let id = producer_identifier producer
+          and symbol = producer_symbol producer in
           (* Test if [symbol] is a terminal symbol whose type is [unit]. *)
           let is_unit_token =
             try
@@ -200,6 +214,19 @@ let print_parameters f g =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Printing attributes. *)
+
+let print_attribute f ((name, payload) : attribute) =
+  if attributes_printed then
+    fprintf f " [@%s %s]"
+      (Positions.value name)
+      payload.stretch_raw_content
+
+let print_attributes f attrs =
+  List.iter (print_attribute f) attrs
+
+(* -------------------------------------------------------------------------- *)
+
 (* Printing token declarations and precedence declarations. *)
 
 let print_assoc = function
@@ -232,7 +259,10 @@ let print_tokens f g =
   (* Print the %token declarations. *)
   StringMap.iter (fun token prop ->
     if prop.tk_is_declared then
-      fprintf f "%%token%s %s\n" (print_token_type prop) token
+      fprintf f "%%token%s %s%a\n"
+        (print_token_type prop)
+        token
+        print_attributes prop.tk_attributes
   ) g.tokens;
   (* Sort the tokens wrt. precedence, and group them into levels. *)
   let levels : (string * token_properties) list list =
@@ -268,12 +298,17 @@ let print_types f g =
 
 (* Printing branches and rules. *)
 
+let print_producer sep f producer =
+  fprintf f "%s%s%s%a"
+    (sep())
+    (print_binding (producer_identifier producer))
+    (Misc.normalize (producer_symbol producer))
+    print_attributes (producer_attributes producer)
+
 let print_branch f g branch =
   (* Print the producers. *)
   let sep = Misc.once "" " " in
-  List.iter (fun (symbol, id) ->
-    fprintf f "%s%s%s" (sep()) (print_binding id) (Misc.normalize symbol)
-  ) branch.producers;
+  List.iter (print_producer sep f) branch.producers;
   (* Print the %prec annotation, if there is one. *)
   Option.iter (fun x ->
     fprintf f " %%prec %s" x.value
@@ -314,18 +349,19 @@ let compare_rules (_nt, (r : rule)) (_nt', (r' : rule)) =
       (* To compare two rules, it suffices to compare their first productions. *)
       compare_branches b b'
 
+let print_rule f g (nt, r) =
+  fprintf f "\n%s%a:\n" (Misc.normalize nt) print_attributes r.attributes;
+  (* Menhir accepts a leading "|", but bison does not. Let's not print it.
+     So, we print a bar-separated list. *)
+  let sep = Misc.once ("  ") ("| ") in
+  List.iter (fun br ->
+    fprintf f "%s" (sep());
+    print_branch f g br
+  ) r.branches
+
 let print_rules f g =
   let rules = List.sort compare_rules (StringMap.bindings g.rules) in
-  List.iter (fun (nt, r) ->
-    fprintf f "\n%s:\n" (Misc.normalize nt);
-    (* Menhir accepts a leading "|", but bison does not. Let's not print it.
-       So, we print a bar-separated list. *)
-    let sep = Misc.once ("  ") ("| ") in
-    List.iter (fun br ->
-      fprintf f "%s" (sep());
-      print_branch f g br
-    ) r.branches
-  ) rules
+  List.iter (print_rule f g) rules
 
 (* -------------------------------------------------------------------------- *)
 
@@ -359,6 +395,19 @@ let print_on_error_reduce_declarations f g =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Printing %attribute declarations. *)
+
+let print_grammar_attribute f ((name, payload) : attribute) =
+  if attributes_printed then
+    fprintf f "%%[@%s %s]\n"
+      (Positions.value name)
+      payload.stretch_raw_content
+
+let print_grammar_attributes f g =
+  List.iter (print_grammar_attribute f) g.gr_attributes
+
+(* -------------------------------------------------------------------------- *)
+
 (* The main entry point. *)
 
 let print f g =
@@ -368,6 +417,7 @@ let print f g =
   print_tokens f g;
   print_types f g;
   print_on_error_reduce_declarations f g;
+  print_grammar_attributes f g;
   fprintf f "%%%%\n";
   print_rules f g;
   fprintf f "\n%%%%\n";

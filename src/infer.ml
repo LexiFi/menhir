@@ -65,9 +65,10 @@ let actiondef grammar symbol branch =
      depend on the production's right-hand side. *)
 
   let formals =
-    List.fold_left (fun formals (symbol, id) ->
-      let id, startp, endp, starto, endo =
-        id,
+    List.fold_left (fun formals producer ->
+      let symbol = producer_symbol producer
+      and id = producer_identifier producer in
+      let startp, endp, starto, endo =
         Printf.sprintf "_startpos_%s_" id,
         Printf.sprintf "_endpos_%s_" id,
         Printf.sprintf "_startofs_%s_" id,
@@ -351,4 +352,3 @@ let infer grammar =
   in
 
   { grammar with types = types }
-

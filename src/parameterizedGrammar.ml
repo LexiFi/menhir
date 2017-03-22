@@ -284,7 +284,7 @@ let check_grammar (p_grammar : Syntax.grammar) =
       (* We only are interested by parameterized non terminals. *)
       if parameters node <> [] then
         List.fold_left (fun succs { pr_producers = symbols } ->
-          List.fold_left (fun succs -> function (_, p, _) ->
+          List.fold_left (fun succs (_, p, _) ->
             let symbol, _ = Parameters.unapp p in
             try
               let symbol_node = conv symbol.value in
@@ -495,6 +495,13 @@ let names_of_p_grammar p_grammar =
           p_grammar.p_rules)
 *)
 
+let dummy : rule =
+  { branches = [];
+    positions = [];
+    inline_flag = false;
+    attributes = [];
+  }
+
 let expand p_grammar =
   (* Check that it is safe to expand this parameterized grammar. *)
   check_grammar p_grammar;
@@ -558,13 +565,41 @@ let expand p_grammar =
       InstanceTable.add rule_names param name;
       name
   in
+
+  (* Now is the time to eliminate (desugar) %attribute declarations. We build
+     a table of these declarations, and look up this table so as to place
+     appropriate attributes on terminal and nonterminal symbols. *)
+
+  let symbol_attributes : parameter -> attributes =
+    let table = InstanceTable.create 7 in
+    List.iter (fun (actuals, attributes) ->
+      List.iter (fun actual ->
+        let attributes', used =
+          try InstanceTable.find table actual
+          with Not_found -> [], ref false
+        in
+        InstanceTable.replace table actual (attributes @ attributes', used)
+      ) actuals
+    ) p_grammar.p_symbol_attributes;
+    fun actual ->
+      match InstanceTable.find table actual with
+      | (attrs, used) -> used := true; attrs
+      | exception Not_found -> []
+  in
+
+  (* This auxiliary function transfers information from the
+     table [symbol_attributes] towards terminal symbols. *)
+
+  let decorate tok prop : token_properties =
+    let attrs = symbol_attributes (ParameterVar (Positions.unknown_pos tok)) in
+    { prop with tk_attributes = attrs @ prop.tk_attributes }
+  in
+
   (* Given the substitution [subst] from parameters to non terminal, we
      instantiate the parameterized branch. *)
   let rec expand_branch subst pbranch =
-    let new_producers = List.map
-      (function (ido, p, _) ->
-         let sym, actual_parameters =
-           Parameters.unapp p in
+    let new_producers = List.map (fun (ido, p, attrs) ->
+         let sym, actual_parameters = Parameters.unapp p in
          let sym, actual_parameters =
            try
              match List.assoc sym.value subst with
@@ -582,9 +617,11 @@ let expand p_grammar =
            with Not_found ->
              sym, subst_parameters subst actual_parameters
          in
-           (* Instantiate the definition of the producer. *)
-           (expand_branches subst sym actual_parameters, Positions.value ido))
-      pbranch.pr_producers
+         (* Instantiate the definition of the producer. *)
+         { producer_identifier = Positions.value ido;
+           producer_symbol = expand_branches subst sym actual_parameters;
+           producer_attributes = attrs }
+      ) pbranch.pr_producers
     in
       {
         branch_position          = pbranch.pr_branch_position;
@@ -596,31 +633,43 @@ let expand p_grammar =
 
   (* Instantiate the branches of sym for a particular set of actual
      parameters. *)
-  and expand_branches subst sym actual_parameters =
-    let nsym = name_of sym actual_parameters in
-      try
-        if not (Hashtbl.mem expanded_rules nsym) then begin
-          let prule = StringMap.find (Positions.value sym) p_grammar.p_rules in
+  and expand_branches subst sym actual_parameters : symbol =
+    match StringMap.find (Positions.value sym) p_grammar.p_rules with
+    | exception Not_found ->
+        (* [sym] is a terminal symbol. Expansion is not needed. *)
+        Positions.value sym
+    | prule ->
+        let nsym = name_of sym actual_parameters in
+        (* Check up front if [nsym] is marked, so as to deal with it just once. *)
+        if Hashtbl.mem expanded_rules nsym then
+          nsym
+        else begin
+          (* Type checking ensures that parameterized nonterminal symbols
+             are applied to an appropriate number of arguments. *)
+          assert (List.length prule.pr_parameters =
+                  List.length actual_parameters);
           let subst =
-            (* Type checking ensures that parameterized non terminal
-               instantiations are well defined. *)
-            assert (List.length prule.pr_parameters
-                    = List.length actual_parameters);
-            List.combine prule.pr_parameters actual_parameters @ subst in
-            Hashtbl.add expanded_rules nsym
-              { branches = []; positions = []; inline_flag = false };
-          let rules = List.map (expand_branch subst) prule.pr_branches in
-            Hashtbl.replace expanded_rules nsym
-              {
-                branches    = rules;
-                positions   = prule.pr_positions;
-                inline_flag = prule.pr_inline_flag;
-              }
-        end;
-        nsym
-      (* If [sym] is a terminal, then it is not in [p_grammar.p_rules].
-         Expansion is not needed. *)
-      with Not_found -> Positions.value sym
+            List.combine prule.pr_parameters actual_parameters @ subst
+          in
+          (* Mark [nsym] up front, so as to avoid running in circles. *)
+          Hashtbl.add expanded_rules nsym dummy;
+          (* The attributes carried by the expanded symbol [nsym] are those
+             carried by the original parameterized symbol [sym], plus those
+             found in %attribute declarations for [nsym], plus those found
+             in %attribute declarations for [sym]. *)
+          let attributes =
+            symbol_attributes (ParameterApp (sym, actual_parameters)) @
+            symbol_attributes (ParameterVar sym) @
+            prule.pr_attributes
+          in
+          Hashtbl.replace expanded_rules nsym {
+            branches    = List.map (expand_branch subst) prule.pr_branches;
+            positions   = prule.pr_positions;
+            inline_flag = prule.pr_inline_flag;
+            attributes  = attributes;
+          };
+          nsym
+        end
   in
 
   (* Process %type declarations. *)
@@ -662,7 +711,8 @@ let expand p_grammar =
     start_symbols = start_symbols;
     types         = types_from_list p_grammar.p_types;
     on_error_reduce = on_error_reduce_from_list p_grammar.p_on_error_reduce;
-    tokens        = p_grammar.p_tokens;
+    tokens        = StringMap.mapi decorate p_grammar.p_tokens;
+    gr_attributes = p_grammar.p_grammar_attributes;
     rules         =
       let closed_rules = StringMap.fold
         (fun k prule rules ->
@@ -672,16 +722,22 @@ let expand p_grammar =
                "the start symbol %s cannot be parameterized."
                   k;
 
-           (* Entry points are the closed non terminals. *)
+           (* Entry points are the closed nonterminals. *)
            if prule.pr_parameters = [] then
+             let attributes =
+               symbol_attributes (ParameterVar (Positions.unknown_pos k)) @
+               prule.pr_attributes
+             in
              StringMap.add k {
                branches    = List.map (expand_branch []) prule.pr_branches;
                positions   = prule.pr_positions;
                inline_flag = prule.pr_inline_flag;
+               attributes  = attributes;
              } rules
            else rules)
         p_grammar.p_rules
         StringMap.empty
       in
+        (* FIXME: warn about symbol_attributes not applying to any actual *)
         Hashtbl.fold StringMap.add expanded_rules closed_rules
   }

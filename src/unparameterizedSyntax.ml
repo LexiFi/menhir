@@ -15,11 +15,20 @@
 *)
 open Syntax
 
+type producer =
+  {
+    producer_identifier : identifier;
+    producer_symbol     : symbol;
+    producer_attributes : attributes;
+  }
+
+type producers =
+  producer list
+
 type branch =
     {
       branch_position           : Positions.t;
-      producers                 : (symbol * identifier) list; (* TEMPORARY convention renversée
-                                    par rapport à syntax.mli; faire un type record au lieu d'une paire? *)
+      producers                 : producers;
       action                    : action;
       branch_prec_annotation    : branch_prec_annotation;
       branch_production_level   : branch_production_level
@@ -31,6 +40,7 @@ type rule =
       positions            : Positions.t list;
       (* This flag is not relevant after the NonTerminalInlining.inline pass. *)
       inline_flag          : bool;
+      attributes           : attributes;
     }
 
 type grammar =
@@ -42,8 +52,15 @@ type grammar =
       types                : Stretch.ocamltype StringMap.t;
       on_error_reduce      : on_error_reduce_level StringMap.t;
       tokens               : Syntax.token_properties StringMap.t;
+      gr_attributes        : attributes;
       rules                : rule StringMap.t;
     }
+
+(* Accessors for the type [producer]. *)
+
+let producer_identifier { producer_identifier } = producer_identifier
+let producer_symbol { producer_symbol } = producer_symbol
+let producer_attributes { producer_attributes } = producer_attributes
 
 (* [tokens grammar] is a list of all (real) tokens in the grammar
    [grammar]. The special tokens "#" and "error" are not included.

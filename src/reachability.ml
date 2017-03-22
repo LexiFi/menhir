@@ -16,8 +16,8 @@ let rec visit grammar visited symbol =
 and visitb grammar visited { producers = symbols } =
   List.fold_left (visits grammar) visited symbols
 
-and visits grammar visited (symbol, _) =
-  visit grammar visited symbol
+and visits grammar visited producer =
+  visit grammar visited (producer_symbol producer)
 
 let trim grammar =
   if StringSet.cardinal grammar.start_symbols = 0 then

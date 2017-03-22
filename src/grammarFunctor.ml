@@ -590,8 +590,8 @@ module Production = struct
     let nt = Nonterminal.lookup nonterminal in
     let k' = List.fold_left (fun k branch ->
       let symbols = Array.of_list branch.producers in
-      table.(k) <- (nt, Array.map (fun (v, _) -> Symbol.lookup v) symbols);
-      identifiers.(k) <- Array.map snd symbols;
+      table.(k) <- (nt, Array.map (fun producer -> Symbol.lookup (producer_symbol producer)) symbols);
+      identifiers.(k) <- Array.map producer_identifier symbols;
       actions.(k) <- Some branch.action;
       production_level.(k) <- branch.branch_production_level;
       prec_decl.(k) <- branch.branch_prec_annotation;

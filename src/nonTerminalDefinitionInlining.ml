@@ -15,8 +15,7 @@ type 'a color =
 
 let index2id producers i =
   try
-    let (_, x) = List.nth producers i in
-    x
+    producer_identifier (List.nth producers i)
   with Failure _ ->
     assert false (* should not happen *)
 
@@ -56,14 +55,28 @@ let rename_sw_inner beforeendp (subject, where) : (subject * where) option =
          [KeywordExpansion]. *)
       assert false
 
+(* This auxiliary function checks that a use site of an %inline symbol does
+   not carry any attributes. *)
+
+let check_no_producer_attributes producer =
+  match producer_attributes producer with
+  | [] ->
+      ()
+  | (id, _payload) :: _attributes ->
+      Error.error
+        [Positions.position id]
+        "the nonterminal symbol %s is declared %%inline.\n\
+         A use of it cannot carry an attribute."
+        (producer_symbol producer)
+
+let names (producers : producers) : StringSet.t =
+  List.fold_left (fun s producer ->
+    StringSet.add (producer_identifier producer) s
+  ) StringSet.empty producers
+
 (* Inline a grammar. The resulting grammar does not contain any definitions
    that can be inlined. *)
 let inline grammar =
-
-  let names producers =
-    List.fold_left (fun s (_, x) -> StringSet.add x s)
-      StringSet.empty producers
-  in
 
   (* This function returns a fresh name beginning with [prefix] and
      that is not in the set of names [names]. *)
@@ -95,33 +108,37 @@ let inline grammar =
     r
   in
 
-  (* This function traverses the producers of the branch [b] and find
-     the first non terminal that can be inlined. If it finds one, it
-     inlines its branches into [b], that's why this function can return
-     several branches. If it does not find one non terminal to be
-     inlined, it raises [NoInlining]. *)
-  let rec find_inline_producer b =
-    let prefix, nt, p, psym, suffix =
-      let rec chop_inline i (prefix, suffix) =
-        match suffix with
-          | [] ->
-              raise NoInlining
+  (* [find_inline_producer b] traverses the producers of the branch [b] and
+     looks for the first nonterminal symbol that can be inlined. If it finds
+     one, it inlines its branches into [b], which is why this function can
+     return several branches. Otherwise, it raises [NoInlining]. *)
+  let rec chop_inline (prefix, suffix) =
+    match suffix with
+    | [] ->
+        raise NoInlining
+    | x :: xs ->
+        let nt = producer_symbol x
+        and id = producer_identifier x in
+        try
+          let r = StringMap.find nt grammar.rules in
+          if r.inline_flag then begin
+            (* We have checked earlier than an %inline symbol does not carry
+               any attributes. In addition, we now check that the use site of
+               this symbol does not carry any attributes either. Thus, we need
+               not worry about propagating these attributes through inlining. *)
+            check_no_producer_attributes x;
+            (* We inline the rule [r] into [b] between [prefix] and [xs]. *)
+            List.rev prefix, nt, r, id, xs
+          end
+          else
+            chop_inline (x :: prefix, xs)
+        with Not_found ->
+          chop_inline (x :: prefix, xs)
+  in
 
-          | ((nt, id) as x) :: xs ->
-              try
-                let r = StringMap.find nt grammar.rules in
-                if r.inline_flag then
-                    (* We have to inline the rule [r] into [b] between
-                       [prefix] and [xs]. *)
-                  List.rev prefix, nt, r, id, xs
-                else
-                  chop_inline (i + 1) (x :: prefix, xs)
-              with Not_found ->
-                chop_inline (i + 1) (x :: prefix, xs)
-      in
-        chop_inline 1 ([], b.producers)
-    in
-      prefix, expand_rule nt p, nt, psym, suffix
+  let rec find_inline_producer b =
+    let prefix, nt, p, psym, suffix = chop_inline ([], b.producers) in
+    prefix, expand_rule nt p, nt, psym, suffix
 
   (* We have to rename producers' names of the inlined production
      if they clash with the producers' names of the branch into
@@ -133,12 +150,13 @@ let inline grammar =
 
     (* Compute a renaming and the new inlined producers' names. *)
     let phi, producers' =
-      List.fold_left (fun (phi, producers) (p, x) ->
+      List.fold_left (fun (phi, producers) producer ->
+        let x = producer_identifier producer in
         if StringSet.mem x producers_names then
           let x' = fresh producers_names x in
-          ((x, x') :: phi, (p, x') :: producers)
+          ((x, x') :: phi, { producer with producer_identifier = x' } :: producers)
         else
-          (phi, (p, x) :: producers)
+          (phi, producer :: producers)
       ) ([], []) producers
     in
       phi, List.rev producers'
@@ -179,7 +197,7 @@ let inline grammar =
           )
         );
 
-        (* Rename the producers of this branch is they conflict with
+        (* Rename the producers of this branch if they conflict with
            the name of the host's producers. *)
         let phi, inlined_producers = rename_if_necessary b pb.producers in
 
