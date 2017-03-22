@@ -207,3 +207,8 @@ val update_errors: string option
    no comments). *)
 
 val echo_errors: string option
+
+(* This flag causes Menhir to produce a [.cmly] file, which contains a
+   binary-format description of the grammar and automaton. *)
+
+val cmly: bool

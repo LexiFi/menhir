@@ -217,9 +217,13 @@ let echo_errors =
 let set_echo_errors filename =
   echo_errors := Some filename
 
+let cmly =
+  ref false
+
 let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
+  "--cmly", Arg.Set cmly, " Write a .cmly file";
   "--comment", Arg.Set comment, " Include comments in the generated code";
   "--compare-errors", Arg.String add_compare_errors, "<filename> (used twice) Compare two .messages files.";
   "--compile-errors", Arg.String set_compile_errors, "<filename> Compile a .messages file to OCaml code.";
@@ -227,19 +231,19 @@ let options = Arg.align [
   "--coq-no-complete", Arg.Set coq_no_complete, " Do not generate a proof of completeness";
   "--coq-no-actions", Arg.Set coq_no_actions, " Ignore semantic actions in the Coq output";
   "--depend", Arg.Unit (fun () -> depend := OMPostprocess), " Invoke ocamldep and display dependencies";
-  "--dump", Arg.Set dump, " Describe the automaton in <basename>.automaton";
+  "--dump", Arg.Set dump, " Write an .automaton file";
   "--echo-errors", Arg.String set_echo_errors, "<filename> Echo the sentences in a .messages file";
   "--error-recovery", Arg.Set recovery, " (no longer supported)";
   "--explain", Arg.Set explain, " Explain conflicts in <basename>.conflicts";
   "--external-tokens", Arg.String codeonly, "<module> Import token type definition from <module>";
   "--fixed-exception", Arg.Set fixedexc, " Declares Error = Parsing.Parse_error";
   "--follow-construction", Arg.Set follow, " (undocumented)";
-  "--graph", Arg.Set graph, " Write grammar's dependency graph to <basename>.dot";
-  "--infer", Arg.Set infer, " Invoke ocamlc for ahead of time type inference";
-  "--inspection", Arg.Set inspection, " Generate the inspection API (requires --table)";
+  "--graph", Arg.Set graph, " Write a dependency graph to a .dot file";
+  "--infer", Arg.Set infer, " Invoke ocamlc to do type inference";
+  "--inspection", Arg.Set inspection, " Generate the inspection API";
   "--interpret", Arg.Set interpret, " Interpret the sentences provided on stdin";
   "--interpret-show-cst", Arg.Set interpret_show_cst, " Show a concrete syntax tree upon acceptance";
-  "--interpret-error", Arg.Set interpret_error, " Interpret one sentence that should end in an error";
+  "--interpret-error", Arg.Set interpret_error, " Interpret an error sentence";
   "--lalr", Arg.Unit (fun () -> construction_mode := ModeLALR), " Construct an LALR(1) automaton";
   "--list-errors", Arg.Set list_errors, " Produce a list of erroneous inputs";
   "--log-automaton", Arg.Set_int logA, "<level> Log information about the automaton";
@@ -259,7 +263,7 @@ let options = Arg.align [
   "--only-preprocess-u", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions false)),
                          " Print grammar with unit actions and exit";
   "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions true)),
-                          " Print grammar with unit actions & tokens and exit";
+                          " Print grammar with unit actions & tokens";
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
   "--raw-depend", Arg.Unit (fun () -> depend := OMRaw), " Invoke ocamldep and echo its raw output";
   "--stdlib", Arg.Set_string stdlib_path, "<directory> Specify where the standard library lies";
@@ -273,10 +277,10 @@ let options = Arg.align [
   "--suggest-menhirLib", Arg.Unit (fun () -> suggestion := SuggestWhereIsMenhirLibSource),
                          " Suggest where is MenhirLib";
   "--suggest-ocamlfind", Arg.Unit (fun () -> suggestion := SuggestUseOcamlfind),
-                         " Show whether Menhir was installed using ocamlfind";
+                         " Show if Menhir was installed using ocamlfind";
   "--table", Arg.Set table, " Use the table-based back-end";
   "--timings", Arg.Set timings, " Display internal timings";
-  "--trace", Arg.Set trace, " Include tracing instructions in the generated code";
+  "--trace", Arg.Set trace, " Generate tracing instructions";
   "--unused-token", Arg.String ignore_unused_token, "<token> Do not warn that <token> is unused";
   "--unused-tokens", Arg.Set ignore_all_unused_tokens, " Do not warn about any unused token";
   "--update-errors", Arg.String set_update_errors, "<filename> Update auto-comments in a .messages file";
@@ -503,3 +507,6 @@ let update_errors =
 
 let echo_errors =
   !echo_errors
+
+let cmly =
+  !cmly
