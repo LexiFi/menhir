@@ -1,18 +1,3 @@
-(* A parameterized branch may instantiate parameterized non terminals.
-   If the parameterized branch contributes to the definition of a
-   parameterized terminal, then the instantiation of parameterized
-   non terminals that are defined simultaneously must only be done with
-   formal parameters.
-   Furthermore, all the parameterized non terminals that are in a common
-   mutual recursive definition must have the same arity.
-   These conditions are sufficient to ensure termination of expansion.
-   For example:
-   C[x] : ...            // This definition does not involve A or B.
-   A[x,y] : B[x,y] C[Y]  // This mutual recursive definition is ok.
-   B[x,y] : A[x,y]
-   D[x] : E[D[x]]        // This one is incorrect.
-   E[y] : D[y]
-*)
 open Syntax
 
 type producer =

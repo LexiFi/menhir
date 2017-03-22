@@ -3,7 +3,29 @@ open Syntax
 open UnparameterizedSyntax
 open Misc
 
-(* Inference for non terminals. *)
+(* Inside its own definition, a parameterized nonterminal symbol foo(X, Y)
+   can be applied only to its formal parameters:  that is, using foo(X, Y)
+   is permitted, but using foo(Y, X) or foo(X, list(Y)) is not.
+
+   If foo(X, Y) is defined in a mutually recursive manner with bar(X, Y),
+   then this restriction extends to both foo and bar. Furthermore, in such
+   a case, foo and bar must have the same arity, that is, the same formal
+   parameters.
+
+   These conditions are sufficient to ensure the termination of expansion.
+
+   For example:
+   C(x)   : ...            // This definition does not involve A or B.
+   A(x,y) : B(x,y) C(Y)    // This mutually recursive definition is ok.
+   B(x,y) : A(x,y)
+   D(x)   : E(D(x))        // This one is incorrect.
+   E(y)   : D(y)
+
+*)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Sort inference for nonterminal symbols. *)
 
 (* Unification variables convey [variable_info] to describe
    the multi-equation they take part of. *)
