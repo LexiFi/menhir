@@ -69,3 +69,11 @@ let position = function
 
 let with_pos p =
   Positions.with_pos (position p) p
+
+let rec print = function
+  | ParameterVar x ->
+      x.value
+  | ParameterApp (x, ps) ->
+      x.value ^ "(" ^ Misc.separated_list_to_string print ", " ps ^ ")"
+  | ParameterAnonymous _ ->
+      assert false

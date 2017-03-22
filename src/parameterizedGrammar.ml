@@ -571,21 +571,38 @@ end) = struct
      a table of these declarations, and look up this table so as to place
      appropriate attributes on terminal and nonterminal symbols. *)
 
-  let symbol_attributes : parameter -> attributes =
-    let table = InstanceTable.create 7 in
+  let symbol_attributes_table =
+    InstanceTable.create 7
+
+  let () =
     List.iter (fun (actuals, attributes) ->
       List.iter (fun actual ->
         let attributes', used =
-          try InstanceTable.find table actual
+          try InstanceTable.find symbol_attributes_table actual
           with Not_found -> [], ref false
         in
-        InstanceTable.replace table actual (attributes @ attributes', used)
+        InstanceTable.replace symbol_attributes_table actual
+          (attributes @ attributes', used)
       ) actuals
-    ) p_grammar.p_symbol_attributes;
-    fun actual ->
-      match InstanceTable.find table actual with
-      | (attrs, used) -> used := true; attrs
-      | exception Not_found -> []
+    ) p_grammar.p_symbol_attributes
+
+  let symbol_attributes (actual : parameter) : attributes =
+    try
+      let attrs, used = InstanceTable.find symbol_attributes_table actual in
+      used := true;
+      attrs
+    with Not_found ->
+      []
+
+  let symbol_attributes_warnings () =
+    InstanceTable.iter (fun actual (attributes, used) ->
+      if not !used then
+        List.iter (fun (id, _payload) ->
+          Error.warning [Positions.position id]
+            "this attribute could not be transferred to the symbol %s"
+            (Parameters.print actual)
+        ) attributes
+    ) symbol_attributes_table
 
   (* This auxiliary function transfers information from the
      table [symbol_attributes] towards terminal symbols. *)
@@ -723,7 +740,9 @@ end) = struct
     rules           = Hashtbl.fold StringMap.add expanded_rules StringMap.empty
   }
 
-  (* FIXME: warn about symbol_attributes not applying to any actual *)
+  (* If some %attribute declarations are unused, warn about it. *)
+  let () =
+    symbol_attributes_warnings()
 
 end
 
