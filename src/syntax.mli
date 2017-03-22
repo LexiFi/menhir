@@ -138,7 +138,7 @@ and parameters =
 (* ------------------------------------------------------------------------ *)
 
 (* A producer is a pair of identifier and a parameter. In concrete syntax,
-   it could be [e = expr], for instance. *)
+   it could be [e = expr], for instance. It carries a number of attributes. *)
 
 and producer =
     identifier Positions.located * parameter * attributes
