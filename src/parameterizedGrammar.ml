@@ -115,13 +115,11 @@ and paren_var (white, black) x =
           (s, p)
     end
 
-let string_of_nt_type ?colors t =
-  (* TEMPORARY note: always called without a [colors] argument! *)
-  string_of ?colors paren_nt_type t
+let string_of_nt_type t =
+  string_of paren_nt_type t
 
-let string_of_var ?colors v =
-  (* TEMPORARY note: always called without a [colors] argument! *)
-  string_of ?colors paren_var v
+let string_of_var v =
+  string_of paren_var v
 
 (* for debugging:
 
