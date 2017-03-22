@@ -699,25 +699,17 @@ end) = struct
                mangled;
         StringMap.add mangled prec accu
 
-  (* TEMPORARY this repeats some of the logic in [expand_branches] *)
-  let closed_rules =
-    StringMap.fold (fun k prule rules ->
-      (* If [k] is a start symbol then it cannot be parameterized. *)
-      if prule.pr_parameters <> [] && StringMap.mem k p_grammar.p_start_symbols then
-        Error.error [] "the start symbol %s cannot be parameterized." k;
-
-      (* The entry points are the nonparameterized nonterminal symbols. *)
+  (* The entry points are the nonparameterized nonterminal symbols. (Not just
+     the start symbols, as we haven't run the reachability analysis, and the
+     grammar may contain unreachable parts, which we still want to expand.)
+     Because a start symbol cannot be parameterized (which the type analysis
+     guarantees), all of the start symbols are entry points. *)
+  let () =
+    StringMap.iter (fun nt prule ->
       if prule.pr_parameters = [] then
-        StringMap.add k {
-          branches    = List.map (expand_branch []) prule.pr_branches;
-          positions   = prule.pr_positions;
-          inline_flag = prule.pr_inline_flag;
-          attributes  = symbol_attributes (ParameterVar (Positions.unknown_pos k)) @
-                        prule.pr_attributes
-        } rules
-      else
-        rules
-    ) p_grammar.p_rules StringMap.empty
+        let (_ : symbol) = expand_branches [] (Positions.unknown_pos nt) [] in
+        ()
+    ) p_grammar.p_rules
 
   let grammar = {
     preludes        = p_grammar.p_preludes;
@@ -728,7 +720,7 @@ end) = struct
     on_error_reduce = on_error_reduce_from_list p_grammar.p_on_error_reduce;
     tokens          = StringMap.mapi decorate p_grammar.p_tokens;
     gr_attributes   = p_grammar.p_grammar_attributes;
-    rules           = Hashtbl.fold StringMap.add expanded_rules closed_rules
+    rules           = Hashtbl.fold StringMap.add expanded_rules StringMap.empty
   }
 
   (* FIXME: warn about symbol_attributes not applying to any actual *)
