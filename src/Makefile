@@ -37,7 +37,10 @@ library:
 # ----------------------------------------------------------------------------
 # Building Menhir from scratch (a.k.a. bootstrapping).
 
-bootstrap: .versioncheck stage1 stage2 stage3
+bootstrap: .versioncheck
+	@ $(MAKE) stage1
+	@ $(MAKE) stage2
+	@ $(MAKE) stage3
 
 # ----------------------------------------------------------------------------
 # Checking the version of the OCaml compiler.
