@@ -120,8 +120,9 @@ all:
 	else \
 	  echo "let ocamlfind = false" >> src/installation.ml ; \
 	fi
-# Compile the library modules and the Menhir executable.
-	@ $(MAKE) -C src library bootstrap
+# Compile the Menhir executable.
+# This causes MenhirLib to be compiled, too, as it is used inside Menhir.
+	@ $(MAKE) -C src bootstrap
 # The source file menhirLib.ml is created by concatenating all of the source
 # files that make up MenhirLib. This file is not needed to compile Menhir or
 # MenhirLib. It is installed at the same time as MenhirLib and is copied by
