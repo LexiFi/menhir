@@ -100,9 +100,12 @@ MENHIRLIB_MODULES := $(shell grep -ve "^[ \t\n\r]*\#" src/menhirLib.mlpack)
 
 # ----------------------------------------------------------------------------
 
-# The directory where things are built.
+# The directories where things are built.
 
+# For Menhir and MenhirLib.
 BUILDDIR := src/_stage2
+# For MenhirSdk.
+SDKDIR   := src/_sdk
 
 # ----------------------------------------------------------------------------
 
@@ -122,7 +125,8 @@ all:
 	fi
 # Compile the Menhir executable.
 # This causes MenhirLib to be compiled, too, as it is used inside Menhir.
-	@ $(MAKE) -C src bootstrap
+# Compile MenhirSdk.
+	@ $(MAKE) -C src bootstrap sdk
 # The source file menhirLib.ml is created by concatenating all of the source
 # files that make up MenhirLib. This file is not needed to compile Menhir or
 # MenhirLib. It is installed at the same time as MenhirLib and is copied by
@@ -160,6 +164,15 @@ ifneq ($(TARGET),byte)
 MENHIRLIB       := $(MENHIRLIB) menhirLib.cmx menhirLib.$(OBJ)
 endif
 
+# -------------------------------------------------------------------------
+
+# The files that should be installed as part of menhirSdk.
+
+MENHIRSDK       := menhirSdk.cmi menhirSdk.cmo
+ifneq ($(TARGET),byte)
+MENHIRSDK       := $(MENHIRSDK) menhirSdk.cmx menhirSdk.$(OBJ)
+endif
+
 # ----------------------------------------------------------------------------
 # Installation.
 
@@ -167,15 +180,21 @@ install:
 # Install the executable.
 	mkdir -p $(bindir)
 	install $(BUILDDIR)/menhir.$(TARGET) $(bindir)/$(MENHIREXE)
-# Install the library.
+# Install Menhir's standard library.
 	mkdir -p $(libdir)
 	install -m 644 $(MLYLIB) $(libdir)
+# Install MenhirLib and MenhirSdk.
 	@if `$(BUILDDIR)/menhir.$(TARGET) --suggest-ocamlfind | tr -d '\r'` ; then \
-	  echo 'Installing MenhirLib via ocamlfind.' ; \
-	  ocamlfind install menhirLib src/META $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) ; \
+	  echo 'Installing MenhirLib and MenhirSdk via ocamlfind.' ; \
+	  cp -f src/menhirLib.META META ; \
+	  ocamlfind install menhirLib META $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) ; \
+	  cp -f src/menhirSdk.META META ; \
+	  ocamlfind install menhirSdk META $(patsubst %,$(SDKDIR)/%,$(MENHIRSDK)) ; \
+	  rm -f META ; \
 	else \
-	  echo 'Installing MenhirLib manually.' ; \
+	  echo 'Installing MenhirLib and MenhirSdk manually.' ; \
 	  install -m 644 $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) $(libdir) ; \
+	  install -m 644 $(patsubst %,$(SDKDIR)/%,$(MENHIRSDK)) $(libdir) ; \
 	fi
 # Install the documentation, if it has been built.
 	if [ -f manual.pdf ] ; then \
