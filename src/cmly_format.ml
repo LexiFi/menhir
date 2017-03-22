@@ -1,0 +1,87 @@
+(* This module defines the data that is stored in .cmly files. In short, a
+   .cmly file contains a value of type [grammar], defined below. *)
+
+(* The type definitions in this module are used by [Cmly_write], which writes
+   a .cmly file, and by [Cmly_read], which reads a .cmly file. They should not
+   be used anywhere else. *)
+
+(* All entities (terminal symbols, nonterminal symbols, and so on) are
+   represented as integers. These integers serve as indices into arrays. This
+   enables simple and efficient hashing, comparison, indexing, etc. *)
+
+type terminal    = int
+type nonterminal = int
+type production  = int
+type lr0         = int
+type lr1         = int
+
+type attribute =
+  string Positions.located * Stretch.t
+
+type attributes =
+  attribute list
+
+type terminal_def = {
+  t_name: string;
+  t_kind: [`REGULAR | `ERROR | `EOF | `PSEUDO];
+  t_type: Stretch.ocamltype option;
+  t_attributes: attributes;
+}
+
+type nonterminal_def = {
+  n_name: string;
+  n_kind: [`REGULAR | `START];
+  n_mangled_name: string;
+  n_type: Stretch.ocamltype option;
+  n_positions: Positions.t list;
+  n_is_nullable: bool;
+  n_first: terminal list;
+  n_attributes: attributes;
+}
+
+type symbol =
+  | T of terminal
+  | N of nonterminal
+
+type identifier = string
+
+type action = {
+  a_expr: IL.expr;
+  a_keywords: Keyword.keyword list;
+  a_filenames: string list;
+}
+
+type producer_def =
+  symbol * identifier * attributes
+
+type production_def = {
+  p_kind: [`REGULAR | `START];
+  p_lhs: nonterminal;
+  p_rhs: producer_def array;
+  p_positions: Positions.t list;
+  p_action: action option;
+  p_attributes: attributes;
+}
+
+type lr0_state_def = {
+  lr0_incoming: symbol option;
+  lr0_items: (production * int) list;
+}
+
+type lr1_state_def = {
+  lr1_lr0: lr0;
+  lr1_transitions: (symbol * lr1) list;
+  lr1_reductions: (terminal * production list) list;
+}
+
+type grammar = {
+  g_basename     : string;
+  g_terminals    : terminal_def    array;
+  g_nonterminals : nonterminal_def array;
+  g_productions  : production_def  array;
+  g_lr0_states   : lr0_state_def   array;
+  g_lr1_states   : lr1_state_def   array;
+  g_entry_points : (production * lr1) list;
+  g_attributes   : attributes;
+  g_parameters   : Stretch.t list;
+}
