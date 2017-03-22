@@ -452,6 +452,10 @@ let check_grammar (p_grammar : Syntax.grammar) =
     check_parameter_type env p
   ) p_grammar.p_on_error_reduce
 
+(* -------------------------------------------------------------------------- *)
+
+(* Auxiliary functions for expansion. *)
+
 let rec subst_parameter subst = function
   | ParameterVar x ->
       (try
@@ -487,14 +491,6 @@ let rec subst_parameter subst = function
 let subst_parameters subst =
   List.map (subst_parameter subst)
 
-(* TEMPORARY why unused?
-let names_of_p_grammar p_grammar =
-  StringMap.fold (fun tok _ acu -> StringSet.add tok acu)
-    p_grammar.p_tokens StringSet.empty
-    $$ (StringMap.fold (fun nt _ acu -> StringSet.add nt acu)
-          p_grammar.p_rules)
-*)
-
 let dummy : rule =
   { branches = [];
     positions = [];
@@ -502,9 +498,41 @@ let dummy : rule =
     attributes = [];
   }
 
-let expand p_grammar =
+(* [mangle p] chooses a name for the new nonterminal symbol that corresponds
+   to the parameter [p]. *)
+
+let rec mangle = function
+  | ParameterVar x
+  | ParameterApp (x, []) ->
+      Positions.value x
+  | ParameterApp (x, ps) ->
+
+      (* We include parentheses and commas in the names that we
+         assign to expanded nonterminals, because that is more
+         readable and acceptable in many situations. We replace them
+         with underscores in situations where these characters are
+         not valid. *)
+
+      Printf.sprintf "%s(%s)"
+        (Positions.value x)
+        (separated_list_to_string mangle "," ps)
+
+  | ParameterAnonymous _ ->
+      (* Anonymous rules are eliminated early on. *)
+      assert false
+
+(* -------------------------------------------------------------------------- *)
+
+(* Expansion. *)
+
+module Expand (X : sig
+  val p_grammar: Syntax.grammar
+end) = struct
+  open X
+
   (* Check that it is safe to expand this parameterized grammar. *)
-  check_grammar p_grammar;
+  let () =
+    check_grammar p_grammar
 
   (* Set up a mechanism that ensures that names are unique -- and, in
      fact, ensures the stronger condition that normalized names are
@@ -512,7 +540,7 @@ let expand p_grammar =
 
   let names =
     ref (StringSet.empty)
-  in
+
   let ensure_fresh name =
     let normalized_name = Misc.normalize name in
     if StringSet.mem normalized_name !names then
@@ -520,42 +548,16 @@ let expand p_grammar =
         "internal name clash over %s" normalized_name;
     names := StringSet.add normalized_name !names;
     name
-  in
+
   let expanded_rules =
     Hashtbl.create 13
-  in
-  let module InstanceTable =
+
+  module InstanceTable =
     Hashtbl.Make (Parameters)
-  in
+
   let rule_names =
     InstanceTable.create 13
-  in
 
-  (* [mangle p] chooses a name for the new nonterminal symbol that corresponds
-     to the parameter [p]. *)
-
-  let rec mangle = function
-    | ParameterVar x
-    | ParameterApp (x, []) ->
-        Positions.value x
-    | ParameterApp (x, ps) ->
-
-        (* We include parentheses and commas in the names that we
-           assign to expanded nonterminals, because that is more
-           readable and acceptable in many situations. We replace them
-           with underscores in situations where these characters are
-           not valid. *)
-
-        Printf.sprintf "%s(%s)"
-          (Positions.value x)
-          (separated_list_to_string mangle "," ps)
-
-    | ParameterAnonymous _ ->
-        (* Anonymous rules are eliminated early on. *)
-        assert false
-
-
-  in
   let name_of symbol parameters =
     let param = ParameterApp (symbol, parameters) in
     try
@@ -564,7 +566,6 @@ let expand p_grammar =
       let name = ensure_fresh (mangle param) in
       InstanceTable.add rule_names param name;
       name
-  in
 
   (* Now is the time to eliminate (desugar) %attribute declarations. We build
      a table of these declarations, and look up this table so as to place
@@ -585,7 +586,6 @@ let expand p_grammar =
       match InstanceTable.find table actual with
       | (attrs, used) -> used := true; attrs
       | exception Not_found -> []
-  in
 
   (* This auxiliary function transfers information from the
      table [symbol_attributes] towards terminal symbols. *)
@@ -593,43 +593,42 @@ let expand p_grammar =
   let decorate tok prop : token_properties =
     let attrs = symbol_attributes (ParameterVar (Positions.unknown_pos tok)) in
     { prop with tk_attributes = attrs @ prop.tk_attributes }
-  in
 
   (* Given the substitution [subst] from parameters to non terminal, we
      instantiate the parameterized branch. *)
   let rec expand_branch subst pbranch =
     let new_producers = List.map (fun (ido, p, attrs) ->
-         let sym, actual_parameters = Parameters.unapp p in
-         let sym, actual_parameters =
-           try
-             match List.assoc sym.value subst with
-               | ParameterVar x ->
-                   x, subst_parameters subst actual_parameters
+      let sym, actual_parameters = Parameters.unapp p in
+      let sym, actual_parameters =
+        try
+          match List.assoc sym.value subst with
+          | ParameterVar x ->
+              x, subst_parameters subst actual_parameters
 
-               | ParameterApp (x, ps) ->
-                   assert (actual_parameters = []);
-                   x, ps
+          | ParameterApp (x, ps) ->
+              assert (actual_parameters = []);
+              x, ps
 
-               | ParameterAnonymous _ ->
-                   (* Anonymous rules are eliminated early on. *)
-                   assert false
+          | ParameterAnonymous _ ->
+              (* Anonymous rules are eliminated early on. *)
+              assert false
 
-           with Not_found ->
-             sym, subst_parameters subst actual_parameters
-         in
-         (* Instantiate the definition of the producer. *)
-         { producer_identifier = Positions.value ido;
-           producer_symbol = expand_branches subst sym actual_parameters;
-           producer_attributes = attrs }
-      ) pbranch.pr_producers
-    in
-      {
-        branch_position          = pbranch.pr_branch_position;
-        producers                = new_producers;
-        action                   = pbranch.pr_action;
-        branch_prec_annotation   = pbranch.pr_branch_prec_annotation;
-        branch_production_level  = pbranch.pr_branch_production_level;
-      }
+        with Not_found ->
+          sym, subst_parameters subst actual_parameters
+      in
+      (* Instantiate the definition of the producer. *)
+      { producer_identifier = Positions.value ido;
+        producer_symbol = expand_branches subst sym actual_parameters;
+        producer_attributes = attrs }
+    ) pbranch.pr_producers
+  in
+  {
+    branch_position          = pbranch.pr_branch_position;
+    producers                = new_producers;
+    action                   = pbranch.pr_action;
+    branch_prec_annotation   = pbranch.pr_branch_prec_annotation;
+    branch_production_level  = pbranch.pr_branch_production_level;
+  }
 
   (* Instantiate the branches of sym for a particular set of actual
      parameters. *)
@@ -670,7 +669,6 @@ let expand p_grammar =
           };
           nsym
         end
-  in
 
   (* Process %type declarations. *)
   let rec types_from_list
@@ -686,7 +684,6 @@ let expand p_grammar =
                "there are multiple %%type declarations for nonterminal %s."
                mangled;
         StringMap.add mangled (Positions.value ty) accu
-  in
 
   (* Process %on_error_reduce declarations. *)
   let rec on_error_reduce_from_list (ps : (Syntax.parameter * 'p) list) : 'p StringMap.t =
@@ -701,43 +698,43 @@ let expand p_grammar =
                "there are multiple %%on_error_reduce declarations for nonterminal %s."
                mangled;
         StringMap.add mangled prec accu
-  in
 
-  let start_symbols = StringMap.domain (p_grammar.p_start_symbols) in
-  {
-    preludes      = p_grammar.p_preludes;
-    postludes     = p_grammar.p_postludes;
-    parameters    = p_grammar.p_parameters;
-    start_symbols = start_symbols;
-    types         = types_from_list p_grammar.p_types;
+  (* TEMPORARY this repeats some of the logic in [expand_branches] *)
+  let closed_rules =
+    StringMap.fold (fun k prule rules ->
+      (* If [k] is a start symbol then it cannot be parameterized. *)
+      if prule.pr_parameters <> [] && StringMap.mem k p_grammar.p_start_symbols then
+        Error.error [] "the start symbol %s cannot be parameterized." k;
+
+      (* The entry points are the nonparameterized nonterminal symbols. *)
+      if prule.pr_parameters = [] then
+        StringMap.add k {
+          branches    = List.map (expand_branch []) prule.pr_branches;
+          positions   = prule.pr_positions;
+          inline_flag = prule.pr_inline_flag;
+          attributes  = symbol_attributes (ParameterVar (Positions.unknown_pos k)) @
+                        prule.pr_attributes
+        } rules
+      else
+        rules
+    ) p_grammar.p_rules StringMap.empty
+
+  let grammar = {
+    preludes        = p_grammar.p_preludes;
+    postludes       = p_grammar.p_postludes;
+    parameters      = p_grammar.p_parameters;
+    start_symbols   = StringMap.domain (p_grammar.p_start_symbols);
+    types           = types_from_list p_grammar.p_types;
     on_error_reduce = on_error_reduce_from_list p_grammar.p_on_error_reduce;
-    tokens        = StringMap.mapi decorate p_grammar.p_tokens;
-    gr_attributes = p_grammar.p_grammar_attributes;
-    rules         =
-      let closed_rules = StringMap.fold
-        (fun k prule rules ->
-           (* If [k] is a start symbol then it cannot be parameterized. *)
-           if prule.pr_parameters <> [] && StringSet.mem k start_symbols then
-             Error.error []
-               "the start symbol %s cannot be parameterized."
-                  k;
-
-           (* Entry points are the closed nonterminals. *)
-           if prule.pr_parameters = [] then
-             let attributes =
-               symbol_attributes (ParameterVar (Positions.unknown_pos k)) @
-               prule.pr_attributes
-             in
-             StringMap.add k {
-               branches    = List.map (expand_branch []) prule.pr_branches;
-               positions   = prule.pr_positions;
-               inline_flag = prule.pr_inline_flag;
-               attributes  = attributes;
-             } rules
-           else rules)
-        p_grammar.p_rules
-        StringMap.empty
-      in
-        (* FIXME: warn about symbol_attributes not applying to any actual *)
-        Hashtbl.fold StringMap.add expanded_rules closed_rules
+    tokens          = StringMap.mapi decorate p_grammar.p_tokens;
+    gr_attributes   = p_grammar.p_grammar_attributes;
+    rules           = Hashtbl.fold StringMap.add expanded_rules closed_rules
   }
+
+  (* FIXME: warn about symbol_attributes not applying to any actual *)
+
+end
+
+let expand p_grammar =
+  let module E = Expand(struct let p_grammar = p_grammar end) in
+  E.grammar
