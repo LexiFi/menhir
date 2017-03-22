@@ -1,7 +1,27 @@
 open Syntax
 
-type producer =
-  {
+(* This is the abstract syntax for an unparameterized grammar, that is,
+   a grammar that does not have any parameterized nonterminal symbols.
+   Such a grammar is obtained as the result of an expansion phase, which
+   is implemented in [ParameterizedGrammar]. *)
+
+(* In an unparameterized grammar, %attribute declarations can be desugared
+   away. This is also done during the above-mentioned expansion phase.
+
+   Thus, in an unparameterized grammar, attributes can be attached in the
+   following places:
+
+   - with the grammar:          field [gr_attributes] of [grammar]
+   - with a terminal symbol:    field [tk_attributes] of [token_properties]
+   - with a nonterminal symbol: field [attributes] of [rule]
+   - with a producer:           field [producer_attributes] of [producer]   *)
+
+(* ------------------------------------------------------------------------ *)
+
+(* A producer is a pair of identifier and a symbol. In concrete syntax, it
+   could be [e = expr], for instance. It carries a number of attributes. *)
+
+type producer = {
     producer_identifier : identifier;
     producer_symbol     : symbol;
     producer_attributes : attributes;
@@ -10,42 +30,60 @@ type producer =
 type producers =
   producer list
 
-type branch =
-    {
-      branch_position           : Positions.t;
-      producers                 : producers;
-      action                    : action;
-      branch_prec_annotation    : branch_prec_annotation;
-      branch_production_level   : branch_production_level
-    }
+(* ------------------------------------------------------------------------ *)
 
-type rule =
-    {
-      branches             : branch list;
-      positions            : Positions.t list;
-      (* This flag is not relevant after the NonTerminalInlining.inline pass. *)
-      inline_flag          : bool;
-      attributes           : attributes;
-    }
+(* A branch contains a series of producers and a semantic action. It is the
+   same as in the surface syntax; see [Syntax]. *)
 
-type grammar =
-    {
-      preludes             : Stretch.t list;
-      postludes            : Syntax.postlude list;
-      parameters           : Stretch.t list;
-      start_symbols        : StringSet.t;
-      types                : Stretch.ocamltype StringMap.t;
-      on_error_reduce      : on_error_reduce_level StringMap.t;
-      tokens               : Syntax.token_properties StringMap.t;
-      gr_attributes        : attributes;
-      rules                : rule StringMap.t;
-    }
+type branch = {
+    branch_position         : Positions.t;
+    producers               : producers;
+    action                  : action;
+    branch_prec_annotation  : branch_prec_annotation;
+    branch_production_level : branch_production_level
+  }
+
+(* ------------------------------------------------------------------------ *)
+
+(* A rule consists mainly of several brahches. In contrast with the surface
+   syntax, it has no parameters. *)
+
+(* The [%inline] flag is no longer relevant after [NonTerminalInlining]. *)
+
+type rule = {
+    branches    : branch list;
+    positions   : Positions.t list;
+    inline_flag : bool;
+    attributes  : attributes;
+  }
+
+(* ------------------------------------------------------------------------ *)
+
+(* A grammar is essentially the same as in the surface syntax; see [Syntax].
+   The main difference is that [%attribute] declarations, represented by
+   the field [p_symbol_attributes] in the surface syntax, has disappeared. *)
+
+type grammar =  {
+    preludes        : Stretch.t list;
+    postludes       : Syntax.postlude list;
+    parameters      : Stretch.t list;
+    start_symbols   : StringSet.t;
+    types           : Stretch.ocamltype StringMap.t;
+    tokens          : Syntax.token_properties StringMap.t;
+    on_error_reduce : on_error_reduce_level StringMap.t;
+    gr_attributes   : attributes;
+    rules           : rule StringMap.t;
+  }
+
+(* -------------------------------------------------------------------------- *)
 
 (* Accessors for the type [producer]. *)
 
 let producer_identifier { producer_identifier } = producer_identifier
 let producer_symbol { producer_symbol } = producer_symbol
 let producer_attributes { producer_attributes } = producer_attributes
+
+(* -------------------------------------------------------------------------- *)
 
 (* [tokens grammar] is a list of all (real) tokens in the grammar
    [grammar]. The special tokens "#" and "error" are not included.
