@@ -205,8 +205,9 @@ install:
 
 uninstall:
 	@if `$(bindir)/$(MENHIREXE) --suggest-ocamlfind` ; then \
-	  echo 'Un-installing MenhirLib via ocamlfind.' ; \
+	  echo 'Un-installing MenhirLib and MenhirSdk via ocamlfind.' ; \
 	  ocamlfind remove menhirLib ; \
+	  ocamlfind remove menhirSdk ; \
 	fi
 	rm -rf $(bindir)/$(MENHIREXE)
 	rm -rf $(libdir)
