@@ -1,19 +1,10 @@
-.PHONY: everyday library bootstrap stage1 stage2 stage3 clean
+.PHONY: everyday bootstrap stage1 stage2 stage3 clean
 
 # ----------------------------------------------------------------------------
 # Choose a target.
 
 ifndef TARGET
   TARGET := native
-endif
-
-# ----------------------------------------------------------------------------
-# Define the files that form the library.
-
-ifeq ($(TARGET),byte)
-  LIBFILES := menhirLib.cmo
-else
-  LIBFILES := menhirLib.cmo menhirLib.cmx
 endif
 
 # ----------------------------------------------------------------------------
@@ -27,12 +18,6 @@ OCAMLBUILD := ocamlbuild -classic-display -j 0
 # the source code is correct.
 
 everyday: installation.ml stage1
-
-# ----------------------------------------------------------------------------
-# Building MenhirLib.
-
-library:
-	$(OCAMLBUILD) $(LIBFILES)
 
 # ----------------------------------------------------------------------------
 # Building Menhir from scratch (a.k.a. bootstrapping).
