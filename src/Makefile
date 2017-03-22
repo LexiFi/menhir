@@ -1,4 +1,4 @@
-.PHONY: everyday bootstrap stage1 stage2 stage3 clean
+.PHONY: everyday bootstrap stage1 stage2 stage3 sdk clean
 
 # ----------------------------------------------------------------------------
 # Choose a target.
@@ -84,8 +84,26 @@ stage3:
 	  done; \
 	  echo "Bootstrap successful."
 
+# -------------------------------------------------------------------------
+
+# The ocamlbuild targets that should be used to build menhirSdk.
+
+MENHIRSDK       := menhirSdk.cmo
+ifneq ($(TARGET),byte)
+MENHIRSDK       := $(MENHIRSDK) menhirSdk.cmx
+endif
+
+# ----------------------------------------------------------------------------
+# Building menhirSdk.
+
+sdk:
+	@ $(OCAMLBUILD) \
+	    -build-dir _sdk \
+	    -tag sdk \
+	    $(MENHIRSDK)
+
 # ----------------------------------------------------------------------------
 # Cleaning up.
 
 clean::
-	rm -rf .versioncheck _stage1 _stage2 _stage3
+	rm -rf .versioncheck _stage1 _stage2 _stage3 _sdk

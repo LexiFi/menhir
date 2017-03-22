@@ -270,6 +270,18 @@ let parser_configuration () =
 
 (* ---------------------------------------------------------------------------- *)
 
+(* If the tag [sdk] is provided, then the modules listed in [menhirSdk.mlpack]
+   must be built using [for-pack(MenhirSdk)]. Otherwise, we are building Menhir
+   and menhirLib, so the modules listed in [menhirLib.mlpack] must be built using
+   [for-pack(MenhirLib)]. There could be a nonempty intersection between the two,
+   which is why we do not supply both sets of flags at once. *)
+
+let sdk () : bool =
+  mark_tag_used "sdk";
+  Tags.mem "sdk" (tags_of_pathname "")
+
+(* ---------------------------------------------------------------------------- *)
+
 (* Compilation flags for Menhir. *)
 
 let flags () =
@@ -287,6 +299,6 @@ let () =
     (* Add our rules after the standard ones. *)
     parser_configuration();
     flags();
-    for_pack "menhirLib";
+    if sdk() then for_pack "menhirSdk" else for_pack "menhirLib"
   | _ -> ()
   )
