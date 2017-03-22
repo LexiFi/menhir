@@ -88,15 +88,16 @@ let noncomment s =
 
 (* ---------------------------------------------------------------------------- *)
 
-(* If [m] is the name of a module, [cmx m] is the name of its [.cmx] file. There
-   are two candidate names, because of OCaml's convention where the first letter
-   of the file name is capitalized to obtain the module name. We decide between
-   the two by testing whether an [.ml] file exists. *)
+(* If [m] is the name of a module, [cmx m] are the possible names of its
+   [.cmx] file. There are two candidate names, because of OCaml's convention
+   where the first letter of the file name is capitalized to obtain the module
+   name. We do *not* decide between them by accessing the file system, because
+   we do not understand or control when ocamlbuild copies files to the build
+   directory. *)
 
-let cmx (m : string) : string =
+let cmx (m : string) : string list =
   let candidate = m ^ ".cmx" in
-  if Sys.file_exists (m ^ ".ml") then candidate
-  else Compatibility.String.uncapitalize_ascii candidate
+  [ candidate; Compatibility.String.uncapitalize_ascii candidate ]
 
 (* ---------------------------------------------------------------------------- *)
 
@@ -113,7 +114,9 @@ let for_pack (basename : string) =
   let library = Compatibility.String.capitalize_ascii basename in
   let tags = [ Printf.sprintf "for-pack(%s)" library ] in
   List.iter (fun m ->
-    tag_file (cmx m) tags
+    List.iter (fun candidate ->
+      tag_file candidate tags
+    ) (cmx m)
   ) modules
 
 (* ---------------------------------------------------------------------------- *)
