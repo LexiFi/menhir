@@ -268,14 +268,6 @@ let rename nonterminal filename =
       (use_name name; name)
 
 (* ------------------------------------------------------------------------- *)
-(* A nonterminal is considered public if it is declared using %public
-   or %start. *)
-
-(* TEMPORARY why unused?
-let is_public grammar prule =
-  prule.pr_public_flag || StringMap.mem prule.pr_nt grammar.p_start_symbols
-*)
-(* ------------------------------------------------------------------------- *)
 type symbol_kind =
 
   (* The nonterminal is declared public at a particular position. *)
@@ -412,19 +404,6 @@ let is_private_symbol t x =
   with Not_found ->
     false
 
-(* TEMPORARY why unused?
-let is_public_symbol t x =
-  try
-    match Hashtbl.find t x with
-      | PublicNonTerminal _ ->
-          true
-
-      | _ ->
-          false
-  with Not_found ->
-    false
-*)
-
 let fold_on_private_symbols f init t =
   Hashtbl.fold
     (fun k -> function PrivateNonTerminal _ -> (fun acu -> f acu k)
@@ -468,6 +447,8 @@ let symbols_of grammar (pgrammar : Syntax.partial_grammar) =
     ) symbols prule.pr_branches
     in
       (* Store the symbol declaration. *)
+      (* A nonterminal symbol is considered public if it is declared using
+         %public or %start. *)
       if prule.pr_public_flag
         || StringMap.mem prule.pr_nt grammar.p_start_symbols then
         store_public_nonterminal tokens symbols prule.pr_nt prule.pr_positions
