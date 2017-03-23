@@ -268,7 +268,7 @@ local:
 	sudo PATH="$(PATH)" $(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=true install
 
 unlocal:
-	sudo PATH="$(PATH)" $(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=true uninstall
+	sudo PATH="$(PATH)" $(MAKE) -f Makefile PREFIX=/usr/local USE_OCAMLFIND=true uninstall
 
 pin:
 	opam pin add menhir `pwd` -k git
