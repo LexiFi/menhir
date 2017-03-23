@@ -1,10 +1,9 @@
 .PHONY: all test clean
 
-# Find Menhir.
-ifndef MENHIR
-  MENHIR := $(shell ../find-menhir.sh)
-endif
-
+# The Menhir executable in the PATH and the library MenhirSdk
+# should agree on their version number, or this test will fail
+# complaining that magic strings do not match.
+MENHIR     := menhir
 OCAMLBUILD := ocamlbuild -use-ocamlfind
 MAIN       := generate
 EXECUTABLE := menhir-generate-printers
@@ -16,7 +15,8 @@ all:
 
 TEST       := ../../bench/good/parser_raw
 
-test:
+test: all
+	rm -f $(TEST).cmly
 	$(MENHIR) --cmly $(TEST).mly
 	./$(EXECUTABLE) $(TEST).cmly
 
