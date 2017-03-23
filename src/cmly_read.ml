@@ -81,6 +81,7 @@ module Make (G : sig val grammar : grammar end) : GRAMMAR = struct
   type lr1         = int
   type item        = production * int
   type ocamltype   = string
+  type ocamlexpr   = string
 
   module Attribute = struct
 

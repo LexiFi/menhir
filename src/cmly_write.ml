@@ -68,7 +68,7 @@ let symbol (sym : Symbol.t) : symbol =
 
 let action (a : Action.t) : action =
   {
-    a_expr = Action.to_il_expr a;
+    a_expr = Printer.string_of_expr (Action.to_il_expr a);
     a_keywords = Keyword.KeywordSet.elements (Action.keywords a);
     a_filenames = Action.filenames a;
   }

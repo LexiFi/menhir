@@ -15,7 +15,8 @@ type production  = int
 type lr0         = int
 type lr1         = int
 
-type ocamltype = string
+type ocamltype   = string
+type ocamlexpr   = string
 
 type attribute = {
   a_label: string;
@@ -51,7 +52,7 @@ type symbol =
 type identifier = string
 
 type action = {
-  a_expr: IL.expr;
+  a_expr: ocamlexpr;
   a_keywords: Keyword.keyword list;
   a_filenames: string list;
 }

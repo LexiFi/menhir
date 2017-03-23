@@ -27,6 +27,7 @@ module type GRAMMAR = sig
   type lr1         = private int
   type item        = production * int
   type ocamltype   = string
+  type ocamlexpr   = string
 
   module Attribute : sig
     type t
@@ -73,7 +74,7 @@ module type GRAMMAR = sig
 
   module Action : sig
     type t
-    val expr         : t -> IL.expr
+    val expr         : t -> ocamlexpr
     val keywords     : t -> Keyword.keyword list
     val filenames    : t -> string list
   end
