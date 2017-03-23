@@ -29,12 +29,18 @@ module type GRAMMAR = sig
   type ocamltype   = string
   type ocamlexpr   = string
 
+  module Range : sig
+    type t
+    val startp: t -> Lexing.position
+    val endp: t -> Lexing.position
+  end
+
   module Attribute : sig
     type t
     val label        : t -> string
     val has_label    : string -> t -> bool
     val payload      : t -> string
-    val position     : t -> Positions.t
+    val position     : t -> Range.t
   end
 
   module Grammar : sig
@@ -58,7 +64,7 @@ module type GRAMMAR = sig
     val mangled_name : t -> string
     val kind         : t -> [`REGULAR | `START]
     val typ          : t -> ocamltype option
-    val positions    : t -> Positions.t list
+    val positions    : t -> Range.t list
     val nullable     : t -> bool
     val first        : t -> terminal list
     val attributes   : t -> Attribute.t list
@@ -83,7 +89,7 @@ module type GRAMMAR = sig
     val kind         : t -> [`REGULAR | `START]
     val lhs          : t -> nonterminal
     val rhs          : t -> (symbol * identifier * Attribute.t list) array
-    val positions    : t -> Positions.t list
+    val positions    : t -> Range.t list
     val action       : t -> Action.t option
     val attributes   : t -> Attribute.t list
   end

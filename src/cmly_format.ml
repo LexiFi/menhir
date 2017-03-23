@@ -18,10 +18,15 @@ type lr1         = int
 type ocamltype   = string
 type ocamlexpr   = string
 
+type range = {
+  r_start: Lexing.position;
+  r_end: Lexing.position;
+}
+
 type attribute = {
   a_label: string;
   a_payload: string;
-  a_position: Positions.t;
+  a_position: range;
 }
 
 type attributes =
@@ -39,7 +44,7 @@ type nonterminal_def = {
   n_kind: [`REGULAR | `START];
   n_mangled_name: string;
   n_type: ocamltype option;
-  n_positions: Positions.t list;
+  n_positions: range list;
   n_nullable: bool;
   n_first: terminal list;
   n_attributes: attributes;
@@ -63,7 +68,7 @@ type production_def = {
   p_kind: [`REGULAR | `START];
   p_lhs: nonterminal;
   p_rhs: producer_def array;
-  p_positions: Positions.t list;
+  p_positions: range list;
   p_action: action option;
   p_attributes: attributes;
 }

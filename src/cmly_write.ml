@@ -18,11 +18,20 @@ let ocamltype (typo : Stretch.ocamltype option) : ocamltype option =
   | Some typ ->
       Some (ocamltype typ)
 
+let range (pos : Positions.t) : range =
+  {
+    r_start = Positions.start_of_position pos;
+    r_end   = Positions.end_of_position pos;
+  }
+
+let ranges =
+  List.map range
+
 let attribute (label, payload : Syntax.attribute) : attribute =
   {
     a_label    = Positions.value label;
     a_payload  = raw_content payload;
-    a_position = Positions.position label;
+    a_position = range (Positions.position label);
   }
 
 let attributes : Syntax.attributes -> attributes =
@@ -55,7 +64,7 @@ let nonterminal (nt : Nonterminal.t) : nonterminal_def =
     n_name = Nonterminal.print false nt;
     n_mangled_name = Nonterminal.print true nt;
     n_type = if is_start then None else ocamltype (Nonterminal.ocamltype nt);
-    n_positions = if is_start then [] else Nonterminal.positions nt;
+    n_positions = if is_start then [] else ranges (Nonterminal.positions nt);
     n_nullable = Analysis.nullable nt;
     n_first = List.map Terminal.t2i (TerminalSet.elements (Analysis.first nt));
     n_attributes = if is_start then [] else attributes (Nonterminal.attributes nt);
@@ -88,7 +97,7 @@ let production (prod : Production.index) : production_def =
     p_kind = if Production.is_start prod then `START else `REGULAR;
     p_lhs = Nonterminal.n2i (Production.nt prod);
     p_rhs = rhs prod;
-    p_positions = Production.positions prod;
+    p_positions = ranges (Production.positions prod);
     p_action = if Production.is_start prod then None
                else Some (action (Production.action prod));
     p_attributes = attributes (Production.lhs_attributes prod);

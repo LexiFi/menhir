@@ -83,6 +83,19 @@ module Make (G : sig val grammar : grammar end) : GRAMMAR = struct
   type ocamltype   = string
   type ocamlexpr   = string
 
+  module Range = struct
+
+    type t =
+      Cmly_format.range
+
+    let startp range =
+      range.r_start
+
+    let endp range =
+      range.r_end
+
+  end
+
   module Attribute = struct
 
     type t =
