@@ -154,7 +154,6 @@ module Make (G : sig val grammar : grammar end) : GRAMMAR = struct
     type t = action
     let expr      t = t.a_expr
     let keywords  t = t.a_keywords
-    let filenames t = t.a_filenames
   end
 
   module Production = struct

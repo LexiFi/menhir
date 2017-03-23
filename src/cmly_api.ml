@@ -76,7 +76,6 @@ module type GRAMMAR = sig
     type t
     val expr         : t -> ocamlexpr
     val keywords     : t -> Keyword.keyword list
-    val filenames    : t -> string list
   end
 
   module Production : sig

@@ -54,7 +54,6 @@ type identifier = string
 type action = {
   a_expr: ocamlexpr;
   a_keywords: Keyword.keyword list;
-  a_filenames: string list;
 }
 
 type producer_def =
