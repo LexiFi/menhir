@@ -25,6 +25,8 @@ end) : sig
 
 end
 
-(* Common instantiations. *)
+(* Common instantiations. In the following two functions, [locate_stretches]
+   is [None], so no #line directives are printed. *)
 
-val print_expr: out_channel -> IL.expr -> unit (* no #line directives *)
+val     print_expr: out_channel -> IL.expr -> unit
+val string_of_expr:                IL.expr -> string

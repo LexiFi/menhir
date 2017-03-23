@@ -1,13 +1,20 @@
 (* A pretty-printer for [IL]. *)
 
 open IL
-open Printf
 
-module Make (X : sig
+module PreliminaryMake (X : sig
+
+  (* We assume that the following types and functions are given. This
+     allows us to work both with buffers of type [Buffer.t] and with
+     output channels of type [out_channel]. *)
+
+  type channel
+  val fprintf: channel -> ('a, channel, unit) format -> 'a
+  val output_substring: channel -> string -> int -> int -> unit
 
   (* This is the channel that is being written to. *)
 
-  val f: out_channel
+  val f: channel
 
   (* This controls the way we print OCaml stretches (types and
      semantic actions). We either surround them with #line directives
@@ -20,6 +27,16 @@ module Make (X : sig
   val locate_stretches: string option
 
 end) = struct
+open X
+
+let output_char f c =
+  fprintf f "%c" c
+
+let output_string f s =
+  fprintf f "%s" s
+
+let flush f =
+  fprintf f "%!"
 
 (* ------------------------------------------------------------------------- *)
 (* Dealing with newlines and indentation. *)
@@ -732,6 +749,36 @@ let expr e =
 end
 
 (* ------------------------------------------------------------------------- *)
+(* Instantiation with output channels. *)
+
+module Make (X : sig
+  val f: out_channel
+  val locate_stretches: string option
+end) = struct
+  include PreliminaryMake(struct
+    type channel = out_channel
+    include X
+    let fprintf = Printf.fprintf
+    let output_substring = output_substring
+  end)
+end
+
+(* ------------------------------------------------------------------------- *)
+(* Instantiation with buffers. *)
+
+module MakeBuffered (X : sig
+  val f: Buffer.t
+  val locate_stretches: string option
+end) = struct
+  include PreliminaryMake(struct
+    type channel = Buffer.t
+    include X
+    let fprintf = Printf.bprintf
+    let output_substring = Buffer.add_substring
+  end)
+end
+
+(* ------------------------------------------------------------------------- *)
 (* Common instantiations. *)
 
 let print_expr f e =
@@ -742,3 +789,14 @@ let print_expr f e =
     end)
   in
   P.expr e
+
+let string_of_expr e =
+  let b = Buffer.create 512 in
+  let module P =
+    MakeBuffered (struct
+      let f = b
+      let locate_stretches = None
+    end)
+  in
+  P.expr e;
+  Buffer.contents b
