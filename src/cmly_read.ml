@@ -8,12 +8,13 @@ open Cmly_api
 exception Error of string
 
 let read (ic : in_channel) : grammar =
-  (* .cmly file format: version string ++ grammar *)
+  (* .cmly file format: CMLY ++ version string ++ grammar *)
+  let magic = "CMLY" ^ Version.version in
   try
-    let m = really_input_string ic (String.length Version.version) in
-    if m <> Version.version then
-      raise (Error (Printf.sprintf "Invalid magic number in .cmly file.\n\
-                 Expecting %S, but got %S." Version.version m))
+    let m = really_input_string ic (String.length magic) in
+    if m <> magic then
+      raise (Error (Printf.sprintf "Invalid magic string in .cmly file.\n\
+                 Expecting %S, but got %S." magic m))
     else
       (input_value ic : grammar)
   with

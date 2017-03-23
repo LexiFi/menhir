@@ -149,8 +149,9 @@ let encode () : grammar =
   }
 
 let write oc t =
-  (* .cmly file format: version string ++ grammar *)
-  output_string oc Version.version;
+  (* .cmly file format: CMLY ++ version string ++ grammar *)
+  let magic = "CMLY" ^ Version.version in
+  output_string oc magic;
   output_value oc (t : grammar)
 
 let write filename =
