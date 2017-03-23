@@ -26,25 +26,9 @@ end)
 
 (* ------------------------------------------------------------------------ *)
 
-(* Auxiliary functions. *)
-
-let newline () =
-  printf "\n"
-
-let is_attribute name (name', _payload : attribute) =
-  name = Positions.value name'
-
-let payload (_, payload : attribute) : string =
-  payload.Stretch.stretch_raw_content
-
-let string_of_type = function
-  | Stretch.Inferred s -> s
-  | Stretch.Declared s -> s.Stretch.stretch_raw_content
-
-(* ------------------------------------------------------------------------ *)
-
 (* All names which refer to Menhir's inspection API are qualified with this
-   module name. *)
+   module name. We do not [open] this module because that might hide some
+    names exploited by the user within attributes. *)
 
 let menhir =
   "MenhirInterpreter"
@@ -61,10 +45,10 @@ let module_name =
     |> String.capitalize_ascii
 
 let header () =
-  printf "open %s\n" module_name;
+  printf "open %s\n\n" module_name;
   List.iter (fun attr ->
-    if is_attribute "header" attr then
-      printf "%s\n" (payload attr)
+    if Attribute.has_label "header" attr then
+      printf "%s\n" (Attribute.payload attr)
   ) Grammar.attributes
 
 (* ------------------------------------------------------------------------ *)
@@ -74,8 +58,8 @@ let header () =
 
 let name default attrs =
   try
-    let attr = List.find (is_attribute "name") attrs in
-    payload attr
+    let attr = List.find (Attribute.has_label "name") attrs in
+    Attribute.payload attr
   with Not_found ->
     sprintf "%S" default
 
@@ -104,7 +88,8 @@ let print_symbol () =
           (name (Nonterminal.name n) (Nonterminal.attributes n))
     | `START ->
         ()
-  )
+  );
+  printf "\n"
 
 (* ------------------------------------------------------------------------ *)
 
@@ -115,8 +100,8 @@ let print_symbol () =
 
 let printer default attrs =
   try
-    let attr = List.find (is_attribute "printer") attrs in
-    sprintf "(%s)" (payload attr)
+    let attr = List.find (Attribute.has_label "printer") attrs in
+    sprintf "(%s)" (Attribute.payload attr)
   with Not_found ->
     sprintf "(fun _ -> %s)" (name default attrs)
 
@@ -147,7 +132,8 @@ let print_value () =
         (printer (Nonterminal.name n) (Nonterminal.attributes n))
     | `START ->
         ()
-  )
+  );
+  printf "\n"
 
 (* [print_token()] generates code for a [print_token] function, which
    converts a token to a string. The type of the token is [token].
@@ -173,7 +159,8 @@ let print_token () =
           value
     | `ERROR | `PSEUDO | `EOF ->
         ()
-  )
+  );
+  printf "\n"
 
 (* ------------------------------------------------------------------------ *)
 
@@ -181,9 +168,6 @@ let print_token () =
 
 let () =
   header();
-  newline();
   print_symbol();
-  newline();
   print_value();
-  newline();
   print_token()

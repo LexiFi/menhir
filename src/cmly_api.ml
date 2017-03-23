@@ -26,26 +26,29 @@ module type GRAMMAR = sig
   type lr0         = private int
   type lr1         = private int
   type item        = production * int
+  type ocamltype   = string
 
-  type attribute =
-    string Positions.located * Stretch.t
-
-  type attributes =
-    attribute list
+  module Attribute : sig
+    type t
+    val label        : t -> string
+    val has_label    : string -> t -> bool
+    val payload      : t -> string
+    val position     : t -> Positions.t
+  end
 
   module Grammar : sig
     val basename     : string
     val entry_points : (production * lr1) list
-    val attributes   : attributes
-    val parameters   : Stretch.t list
+    val attributes   : Attribute.t list
+    val parameters   : string list (* %parameter declarations *)
   end
 
   module Terminal : sig
     include INDEXED with type t = terminal
     val name         : t -> string
     val kind         : t -> [`REGULAR | `ERROR | `EOF | `PSEUDO]
-    val typ          : t -> Stretch.ocamltype option
-    val attributes   : t -> attributes
+    val typ          : t -> ocamltype option
+    val attributes   : t -> Attribute.t list
   end
 
   module Nonterminal : sig
@@ -53,11 +56,11 @@ module type GRAMMAR = sig
     val name         : t -> string
     val mangled_name : t -> string
     val kind         : t -> [`REGULAR | `START]
-    val typ          : t -> Stretch.ocamltype option
+    val typ          : t -> ocamltype option
     val positions    : t -> Positions.t list
-    val is_nullable  : t -> bool
+    val nullable     : t -> bool
     val first        : t -> terminal list
-    val attributes   : t -> attributes
+    val attributes   : t -> Attribute.t list
   end
 
   type symbol =
@@ -79,10 +82,10 @@ module type GRAMMAR = sig
     include INDEXED with type t = production
     val kind         : t -> [`REGULAR | `START]
     val lhs          : t -> nonterminal
-    val rhs          : t -> (symbol * identifier * attributes) array
+    val rhs          : t -> (symbol * identifier * Attribute.t list) array
     val positions    : t -> Positions.t list
     val action       : t -> Action.t option
-    val attributes   : t -> attributes
+    val attributes   : t -> Attribute.t list
   end
 
   module Lr0 : sig

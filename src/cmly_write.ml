@@ -1,6 +1,33 @@
 open Grammar
 open Cmly_format
 
+let raw_content stretch =
+  stretch.Stretch.stretch_raw_content
+
+let ocamltype (typ : Stretch.ocamltype) : ocamltype =
+  match typ with
+  | Stretch.Declared stretch ->
+      raw_content stretch
+  | Stretch.Inferred typ ->
+      typ
+
+let ocamltype (typo : Stretch.ocamltype option) : ocamltype option =
+  match typo with
+  | None ->
+      None
+  | Some typ ->
+      Some (ocamltype typ)
+
+let attribute (label, payload : Syntax.attribute) : attribute =
+  {
+    a_label    = Positions.value label;
+    a_payload  = raw_content payload;
+    a_position = Positions.position label;
+  }
+
+let attributes : Syntax.attributes -> attributes =
+  List.map attribute
+
 let terminal (t : Terminal.t) : terminal_def =
   {
     t_kind = (
@@ -17,8 +44,8 @@ let terminal (t : Terminal.t) : terminal_def =
         `REGULAR
     );
     t_name = Terminal.print t;
-    t_type = Terminal.ocamltype t;
-    t_attributes = Terminal.attributes t;
+    t_type = ocamltype (Terminal.ocamltype t);
+    t_attributes = attributes (Terminal.attributes t);
   }
 
 let nonterminal (nt : Nonterminal.t) : nonterminal_def =
@@ -27,11 +54,11 @@ let nonterminal (nt : Nonterminal.t) : nonterminal_def =
     n_kind = if is_start then `START else `REGULAR;
     n_name = Nonterminal.print false nt;
     n_mangled_name = Nonterminal.print true nt;
-    n_type = if is_start then None else Nonterminal.ocamltype nt;
+    n_type = if is_start then None else ocamltype (Nonterminal.ocamltype nt);
     n_positions = if is_start then [] else Nonterminal.positions nt;
-    n_is_nullable = Analysis.nullable nt;
+    n_nullable = Analysis.nullable nt;
     n_first = List.map Terminal.t2i (TerminalSet.elements (Analysis.first nt));
-    n_attributes = if is_start then [] else Nonterminal.attributes nt;
+    n_attributes = if is_start then [] else attributes (Nonterminal.attributes nt);
   }
 
 let symbol (sym : Symbol.t) : symbol =
@@ -53,8 +80,8 @@ let rhs (prod : Production.index) : producer_def array =
   | None ->
       Array.mapi (fun i sym ->
         let id = (Production.identifiers prod).(i) in
-        let attributes = (Production.rhs_attributes prod).(i) in
-        symbol sym, id, attributes
+        let attrs = attributes (Production.rhs_attributes prod).(i) in
+        symbol sym, id, attrs
       ) (Production.rhs prod)
 
 let production (prod : Production.index) : production_def =
@@ -65,7 +92,7 @@ let production (prod : Production.index) : production_def =
     p_positions = Production.positions prod;
     p_action = if Production.is_start prod then None
                else Some (action (Production.action prod));
-    p_attributes = Production.lhs_attributes prod;
+    p_attributes = attributes (Production.lhs_attributes prod);
   }
 
 let item (i : Item.t) : production * int =
@@ -106,8 +133,8 @@ let encode () : grammar =
     g_lr0_states   = Array.init Lr0.n lr0_state;
     g_lr1_states   = Array.of_list (Lr1.map lr1_state);
     g_entry_points = ProductionMap.fold entry_point Lr1.entry [];
-    g_attributes   = Analysis.attributes;
-    g_parameters   = Front.grammar.UnparameterizedSyntax.parameters;
+    g_attributes   = attributes Analysis.attributes;
+    g_parameters   = List.map raw_content Front.grammar.UnparameterizedSyntax.parameters;
   }
 
 let write oc t =

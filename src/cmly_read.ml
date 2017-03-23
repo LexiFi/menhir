@@ -80,12 +80,26 @@ module Make (G : sig val grammar : grammar end) : GRAMMAR = struct
   type lr0         = int
   type lr1         = int
   type item        = production * int
+  type ocamltype   = string
 
-  type attribute =
-    string Positions.located * Stretch.t
+  module Attribute = struct
 
-  type attributes =
-    attribute list
+    type t =
+      Cmly_format.attribute
+
+    let label attr =
+      attr.a_label
+
+    let has_label label attr =
+      label = attr.a_label
+
+    let payload attr =
+      attr.a_payload
+
+    let position attr =
+      attr.a_position
+
+  end
 
   module Grammar = struct
     let basename     = grammar.g_basename
@@ -113,7 +127,7 @@ module Make (G : sig val grammar : grammar end) : GRAMMAR = struct
     let kind         i = table.(i).n_kind
     let typ          i = table.(i).n_type
     let positions    i = table.(i).n_positions
-    let is_nullable  i = table.(i).n_is_nullable
+    let nullable     i = table.(i).n_nullable
     let first        i = table.(i).n_first
     let attributes   i = table.(i).n_attributes
     include Index(struct

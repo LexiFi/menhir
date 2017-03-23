@@ -15,8 +15,13 @@ type production  = int
 type lr0         = int
 type lr1         = int
 
-type attribute =
-  string Positions.located * Stretch.t
+type ocamltype = string
+
+type attribute = {
+  a_label: string;
+  a_payload: string;
+  a_position: Positions.t;
+}
 
 type attributes =
   attribute list
@@ -24,7 +29,7 @@ type attributes =
 type terminal_def = {
   t_name: string;
   t_kind: [`REGULAR | `ERROR | `EOF | `PSEUDO];
-  t_type: Stretch.ocamltype option;
+  t_type: ocamltype option;
   t_attributes: attributes;
 }
 
@@ -32,9 +37,9 @@ type nonterminal_def = {
   n_name: string;
   n_kind: [`REGULAR | `START];
   n_mangled_name: string;
-  n_type: Stretch.ocamltype option;
+  n_type: ocamltype option;
   n_positions: Positions.t list;
-  n_is_nullable: bool;
+  n_nullable: bool;
   n_first: terminal list;
   n_attributes: attributes;
 }
@@ -83,5 +88,5 @@ type grammar = {
   g_lr1_states   : lr1_state_def   array;
   g_entry_points : (production * lr1) list;
   g_attributes   : attributes;
-  g_parameters   : Stretch.t list;
+  g_parameters   : string list;
 }
