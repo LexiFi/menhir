@@ -47,10 +47,12 @@ module type GRAMMAR = sig
   end
 
   module Grammar : sig
+    val preludes     : string list
+    val postludes    : string list
     val basename     : string
+    val parameters   : string list (* %parameter declarations *)
     val entry_points : (production * lr1) list
     val attributes   : Attribute.t list
-    val parameters   : string list (* %parameter declarations *)
   end
 
   module Terminal : sig

@@ -1,3 +1,4 @@
+open UnparameterizedSyntax
 open Grammar
 open Cmly_format
 
@@ -135,6 +136,8 @@ let entry_point prod node xs : (production * lr1) list =
 let encode () : grammar =
   {
     g_basename     = Settings.base;
+    g_preludes     = List.map raw_content Front.grammar.preludes;
+    g_postludes    = List.map raw_content Front.grammar.postludes;
     g_terminals    = Terminal.init terminal;
     g_nonterminals = Nonterminal.init nonterminal;
     g_productions  = Production.init production;
@@ -142,7 +145,7 @@ let encode () : grammar =
     g_lr1_states   = Array.of_list (Lr1.map lr1_state);
     g_entry_points = ProductionMap.fold entry_point Lr1.entry [];
     g_attributes   = attributes Analysis.attributes;
-    g_parameters   = List.map raw_content Front.grammar.UnparameterizedSyntax.parameters;
+    g_parameters   = List.map raw_content Front.grammar.parameters;
   }
 
 let write oc t =

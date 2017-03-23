@@ -86,6 +86,8 @@ type lr1_state_def = {
 
 type grammar = {
   g_basename     : string;
+  g_preludes     : string list;
+  g_postludes    : string list;
   g_terminals    : terminal_def    array;
   g_nonterminals : nonterminal_def array;
   g_productions  : production_def  array;

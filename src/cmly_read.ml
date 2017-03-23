@@ -117,6 +117,8 @@ module Make (G : sig val grammar : grammar end) : GRAMMAR = struct
 
   module Grammar = struct
     let basename     = grammar.g_basename
+    let preludes     = grammar.g_preludes
+    let postludes    = grammar.g_postludes
     let entry_points = grammar.g_entry_points
     let attributes   = grammar.g_attributes
     let parameters   = grammar.g_parameters
