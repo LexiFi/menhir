@@ -14,9 +14,9 @@ type flavor =
    start position of the first nonempty element in a production. *)
 
 type where =
-| WhereSymbolStart
-| WhereStart
-| WhereEnd
+  | WhereSymbolStart
+  | WhereStart
+  | WhereEnd
 
 (* The user can request position information about a production's
    left-hand side or about one of the symbols in its right-hand
@@ -46,11 +46,8 @@ type keyword =
 val posvar: subject -> where -> flavor -> string
 
 (* Sets of keywords. *)
+
 module KeywordSet : sig
-
   include Set.S with type elt = keyword
-
   val map: (keyword -> keyword) -> t -> t
-
 end
-
