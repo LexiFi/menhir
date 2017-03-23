@@ -3,6 +3,9 @@
    access to the description of the grammar and automaton contained
    in this file. *)
 
+(* This API is currently entirely self-contained, except for a reference
+   to the module [Keyword], which is also part of [MenhirSdk]. *)
+
 (* The module type [INDEXED] describes a type [t] whose elements are
    in a bijection with an integer interval of the form [0..count). *)
 
