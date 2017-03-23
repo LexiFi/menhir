@@ -130,8 +130,8 @@ let lr1_state (node : Lr1.node) : lr1_state_def =
       TerminalMap.fold_rev add (Lr1.reductions node) []
   }
 
-let entry_point prod node xs : (production * lr1) list =
-  (Production.p2i prod, Lr1.number node) :: xs
+let entry_point prod node nt _typ accu : (nonterminal * production * lr1) list =
+  (Nonterminal.n2i nt, Production.p2i prod, Lr1.number node) :: accu
 
 let encode () : grammar =
   {
@@ -143,7 +143,7 @@ let encode () : grammar =
     g_productions  = Production.init production;
     g_lr0_states   = Array.init Lr0.n lr0_state;
     g_lr1_states   = Array.of_list (Lr1.map lr1_state);
-    g_entry_points = ProductionMap.fold entry_point Lr1.entry [];
+    g_entry_points = Lr1.fold_entry entry_point [];
     g_attributes   = attributes Analysis.attributes;
     g_parameters   = List.map raw_content Front.grammar.parameters;
   }

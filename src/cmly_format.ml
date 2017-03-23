@@ -93,7 +93,7 @@ type grammar = {
   g_productions  : production_def  array;
   g_lr0_states   : lr0_state_def   array;
   g_lr1_states   : lr1_state_def   array;
-  g_entry_points : (production * lr1) list;
+  g_entry_points : (nonterminal * production * lr1) list;
   g_attributes   : attributes;
   g_parameters   : string list;
 }
