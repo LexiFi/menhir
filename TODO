@@ -175,6 +175,12 @@
       Need a way of feeding the parser a nonterminal symbol.
       Or a way of applying a semantic action to a vector of semantic values.
 
+* Instead of directly invoking ocamlc (in --infer mode), Menhir could
+  dump an .actions.ml file,
+  expect the build system to invoke "ocamlc -i" and create .actions.mli,
+  and continue (in a second invocation) from there.
+  (Suggestion by Fabrice Le Fessant.)
+
 * Test and document --lalr (maybe). Explain that it is (probably)
   incompatible in principle with --explain. Modify the code to fail
   gracefully when the problem arises.
@@ -297,13 +303,3 @@
   qu'il est inutile), il faudrait pouvoir déclarer %neutral
   (whatever) et obtenir un niveau au statut non-spécifié (d'où
   erreur si on tente de consulter ce statut).
-
-* Prévoir une sortie --ocamlyacc qui affiche la grammaire sans
-  les liaisons des valeurs sémantiques et sans les actions
-  sémantiques?
-
-* Faire le nécessaire pour empêcher les warnings d'ocaml 3.09
-  sur les valeurs sémantiques nommées et non utilisées? Le
-  problème est que l'erreur est forcément rapportée dans le
-  fichier .ml engendré. Et ça résoudrait le problème du cas
-  où on n'utilise que $startpos(v) et pas v.
