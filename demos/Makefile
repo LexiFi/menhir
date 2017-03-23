@@ -1,14 +1,23 @@
-DEMOS := calc calc-two calc-param calc-incremental calc-inspection
+# The following demos require menhirLib:
+#   calc-incremental
+#   calc-inspection
+# The following demos require menhirSdk:
+#   generate-printers
+
+DEMOS := \
+  calc \
+  calc-two \
+  calc-param \
+  calc-incremental \
+  calc-inspection \
+  generate-printers \
 
 .PHONY: all clean
 
-all:
+all clean::
 	@for i in $(DEMOS) ; do \
-	  $(MAKE) -C $$i ; \
+	  $(MAKE) -C $$i $@ ; \
 	done
 
-clean:
+clean::
 	/bin/rm -f *~ .*~
-	@for i in $(DEMOS) ; do \
-	  $(MAKE) -C $$i clean ; \
-	done
