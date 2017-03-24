@@ -201,8 +201,9 @@ module Terminal : sig
   val fold: (t -> 'a -> 'a) -> 'a -> 'a
   val map: (t -> 'a) -> 'a list
 
-  (* [mapx] offers iteration over all terminals except [#]. *)
+  (* Iteration over all terminals except [#]. *)
 
+  val foldx: (t -> 'a -> 'a) -> 'a -> 'a
   val mapx: (t -> 'a) -> 'a list
 
   (* [iter_real] offers iteration over all real terminals. *)

@@ -292,6 +292,8 @@ module Terminal = struct
 
   let () =
     assert (sharp = n - 1)
+  let foldx f accu =
+    Misc.foldi sharp f accu
   let mapx f =
     Misc.mapi sharp f
 
