@@ -33,6 +33,9 @@ module T = struct
   type terminal =
       Terminal.t
 
+  type nonterminal =
+      Nonterminal.t
+
   type semantic_value =
       cst
 
@@ -89,11 +92,14 @@ module T = struct
       with Not_found ->
         fail env
 
-  let goto (s : state) (prod : production) : state =
+  let goto_nt (s : state) (nt : nonterminal) : state =
     try
-      SymbolMap.find (Symbol.N (Production.nt prod)) (Lr1.transitions s)
+      SymbolMap.find (Symbol.N nt) (Lr1.transitions s)
     with Not_found ->
       assert false
+
+  let goto_prod (s : state) (prod : production) : state =
+    goto_nt s (Production.nt prod)
 
   open MenhirLib.EngineTypes
 
@@ -369,4 +375,3 @@ let check_error_path log nt input =
   in
 
   loop (E.start entry Lexing.dummy_pos) []
-

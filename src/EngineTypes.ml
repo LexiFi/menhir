@@ -113,6 +113,10 @@ module type TABLE = sig
 
   type terminal
 
+  (* The type of nonterminal symbols. *)
+
+  type nonterminal
+
   (* The type of semantic values. *)
 
   type semantic_value
@@ -198,13 +202,15 @@ module type TABLE = sig
     ('env -> 'answer) ->
     'env -> 'answer
 
-  (* This is the automaton's goto table. It maps a pair of a state and a
-     production to a new state.
+  (* This is the automaton's goto table. This table maps a pair of a state
+     and a nonterminal symbol to a new state. By extension, it also maps a
+     pair of a state and a production to a new state. *)
 
-     This convention is slightly different from the textbook approach. The
-     goto table is usually indexed by a state and a non-terminal symbol. *)
+  (* This function can be applied to [s] and [nt] ONLY if the state [s] has
+     an outgoing transition labeled [nt]. Otherwise, its result is undefined. *)
 
-  val goto: state -> production -> state
+  val goto_nt  : state -> nonterminal -> state
+  val goto_prod: state -> production  -> state
 
   (* [is_start prod] tells whether the production [prod] is a start production. *)
 
@@ -370,4 +376,3 @@ module type ENGINE = sig
      and type 'a checkpoint := 'a checkpoint
 
 end
-

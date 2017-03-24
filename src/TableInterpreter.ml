@@ -26,6 +26,9 @@ module Make (T : TableFormat.TABLES)
   type terminal =
       int
 
+  type nonterminal =
+      int
+
   type semantic_value =
       Obj.t
 
@@ -86,10 +89,13 @@ module Make (T : TableFormat.TABLES)
         assert (c = 0);
         fail env
 
-  let goto state prod =
-    let code = unmarshal2 T.goto state (PackedIntArray.get T.lhs prod) in
+  let goto_nt state nt =
+    let code = unmarshal2 T.goto state nt in
     (* code = 1 + state *)
     code - 1
+
+  let goto_prod state prod =
+    goto_nt state (PackedIntArray.get T.lhs prod)
 
   exception Error =
         T.Error
@@ -167,4 +173,3 @@ module Make (T : TableFormat.TABLES)
   end
 
 end)
-

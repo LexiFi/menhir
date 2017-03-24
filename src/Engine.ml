@@ -253,7 +253,7 @@ module Make (T : TABLE) = struct
            by consulting the goto table at the return state and at
            production [prod]. *)
 
-        let current = T.goto stack.state prod in
+        let current = T.goto_prod stack.state prod in
         let env = { env with stack; current } in
         run env false
 
