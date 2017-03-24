@@ -434,7 +434,7 @@ module Make (T : TABLE) = struct
     | InputNeeded env ->
         Obj.magic discard env
     | _ ->
-        raise (Invalid_argument "offer expects InputNeeded")
+        invalid_arg "offer expects InputNeeded"
 
   let resume : 'a . 'a checkpoint -> 'a checkpoint = function
     | HandlingError env ->
@@ -444,7 +444,7 @@ module Make (T : TABLE) = struct
     | AboutToReduce (env, prod) ->
         Obj.magic reduce env prod
     | _ ->
-        raise (Invalid_argument "resume expects HandlingError | AboutToReduce")
+        invalid_arg "resume expects HandlingError | AboutToReduce"
 
   (* --------------------------------------------------------------------------- *)
   (* --------------------------------------------------------------------------- *)
@@ -725,4 +725,3 @@ module Make (T : TABLE) = struct
       env
 
 end
-
