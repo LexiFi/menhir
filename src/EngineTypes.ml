@@ -134,6 +134,10 @@ module type TABLE = sig
   val error_terminal: terminal
   val error_value: semantic_value
 
+  (* [foreach_terminal] allows iterating over all terminal symbols. *)
+
+  val foreach_terminal: (terminal -> 'a -> 'a) -> 'a -> 'a
+
   (* The type of productions. *)
 
   type production

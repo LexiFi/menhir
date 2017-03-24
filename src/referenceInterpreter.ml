@@ -51,6 +51,9 @@ module T = struct
   let error_value =
     CstError
 
+  let foreach_terminal =
+    Terminal.foldx
+
   type production =
       Production.index
 

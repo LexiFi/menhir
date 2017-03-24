@@ -44,6 +44,26 @@ module Make (T : TableFormat.TABLES)
   let error_value =
     Obj.repr ()
 
+  (* The function [foreach_terminal] exploits the fact that the
+     first component of [T.error] is [Terminal.n - 1], i.e., the
+     number of terminal symbols, including [error] but not [#]. *)
+
+  (* There is similar code in [InspectionTableInterpreter]. The
+     code there contains an additional conversion of the type
+     [terminal] to the type [xsymbol]. *)
+
+  let rec foldij i j f accu =
+    if i = j then
+      accu
+    else
+      foldij (i + 1) j f (f i accu)
+
+  let foreach_terminal f accu =
+    let n, _ = T.error in
+    foldij 0 n (fun i accu ->
+      f i accu
+    ) accu
+
   type production =
       int
 
