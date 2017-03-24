@@ -49,7 +49,7 @@
     with an explicit keyword? %public?
 
 * Look into the format of bison's tables, and see if we could produce
-  them.
+  them. Could hopefully/possibly be implemented using the .cmly API.
 
 * standard library: define "%public %inline epsilon: {}", which allows using
   "epsilon" as a marker for an empty right-hand side.
@@ -134,13 +134,10 @@
     à savoir éliminer toutes les autres actions. Que fait
     ocamlyacc?
 
-* autoriser %token FOO "foo"
-  pour pouvoir afficher les tokens sous forme plus lisible
-  et auto-générer une fonction (ou une table) print_terminal
-
-* autoriser %token FOO (unused)
-  (syntaxe concrète à déterminer)
+* autoriser %token FOO [@unused]
   équivalent à --unused-token FOO sur la ligne de commande.
+  Add an analogous mechanism for nonterminals that are known
+  to be unreachable.
 
 * Produce well-chosen (predictable) names for anonymous rules?
 
@@ -150,18 +147,9 @@
 
 * Add left-recursive lists to the standard library.
 
-* Define [print_result].
+* Define [print_checkpoint].
   Define a printer that shows the states in the stack.
   Try computing a set of expected symbols in the current state.
-
-* Generate default printers for terminal and nonterminal.
-  Using modular implicits, generate terminal2token and
-  nonterminal2value.
-
-* document that --depend may produce inaccurate dependencies
-  for parser.cmi and that it is recommended to use --raw-depend
-  --ocamldep "ocamldep -modules" and work from there (which is
-  what ocamlbuild does).
 
 * Suite des patchs de Frédéric Bour.
     API d'inspection complète.
@@ -209,10 +197,6 @@
 * Clarifier si ocamlbuild doit recevoir -use-ocamlfind, -no-ocamlfind,
   ou rien; tester en particulier sous Windows?
   Modifier la doc pour recommander ocamlfind.
-
-* ajouter une possibilité de désactiver certains warnings (utile pour
-  le cours de compilation où on démarre avec une grammaire à trous),
-  par exemple les non-terminaux inaccessibles
 
 * BUG: la directive $type<...> nt donne lieu à un message d'erreur bizarre
   si le non-terminal nt n'existe pas. (Jacques-Henri.)
@@ -264,11 +248,6 @@
 * si une variable est inutilisée dans une action sémantique, le
   warning est affiché dans le code produit.
 
-* si une parenthèse est mal fermée dans une action sémantique,
-  l'erreur de syntaxe peut être détectée par OCaml en dehors
-  des actions sémantiques. Bétonner en mettant une séquence
-  improbable de begin/end/parenthèseses autour de l'action?
-
 * BUG: solving a shift/reduce conflict in favor of reduction can
   cut a path that was required in order to explain another conflict.
   (see e.g. belloeil.mly) (et le reduced_parser.mly d'Adrien Guatto)
@@ -287,8 +266,6 @@
   réductions par défaut?
 
 * expliquer aussi les conflits end-of-stream
-
-* Documenter l'emploi d'ocamlbuild.
 
 * Lorsqu'on crée un pseudo-lexème pour utiliser dans les
   directives %prec, la question de savoir s'il est associatif
