@@ -39,6 +39,14 @@
       parameterize the type 'a env again
       ajouter la bijection entre production et int (i2p, p2i)
 
+* Suite des patchs de Frédéric Bour.
+    API d'inspection complète.
+      Documenter loop_handle_undo, loop_test, acceptable.
+      Exposer le nombre d'états (pour la mémoisation).
+      Idem pour les productions.
+      Fonctions d'affichage pour les types terminal, nonterminal, etc.?
+      Fonctions d'isomorphisme entre token et 'a terminal * 'a?
+
 * Allow splitting a nonterminal symbol (in a file or over multiple files).
   with an explicit keyword? %public?
 
@@ -66,15 +74,8 @@
   - put menhirLib.{ml,mli} in a different directory;
   - avoid using "share/" for architecture-dependent files
 
-* Add a flag to ignore all semantic actions, replacing them with unit,
-  and replace all %type declarations with unit. Use it to build a more
-  serious test suite in bench/good.
-
 * Look for "artificial dependency" and remove them.
   Make sure every module is explicitly called.
-
-* Develop an alternate src/Makefile that does not require ocamlbuild?
-  Could use OCamlMakefile instead, for instance.
 
 * A %type declaration with parameters is not properly checked;
   it could be useless or even ill-typed.
@@ -108,13 +109,11 @@
 * Pénible que l'API d'inspection ne donne pas accès
   à l'état courant lorsque la pile est vide (état initial donc).
   Pourrait-on exposer cet état? Polymorphe? incoming_symbol
-  devrait alors produit une option. Et le cas Nil du type
+  devrait alors produire une option. Et le cas Nil du type
   stream devrait contenir l'état initial...
   attention, car si on lui applique la fonction items, on va
   obtenir un item spécial S' -> S # qui va poser problème.
   Exposer l'état initial avec un type différent lr1initial?
-  De toute façon il faudra compliquer la notion de explanation
-  qui ne pourra plus toujours être basée sur un item...
 
 * gros BUG à corriger: il ne faut pas exiger le prochain token
   AVANT une réduction par défaut. Il faut suivre ocamlyacc et
@@ -148,18 +147,6 @@
   Define a printer that shows the states in the stack.
   Try computing a set of expected symbols in the current state.
 
-* Suite des patchs de Frédéric Bour.
-    API d'inspection complète.
-      Documenter loop_handle_undo, loop_test, acceptable.
-      Exposer le nombre d'états (pour la mémoisation).
-      Idem pour les productions.
-      Fonctions d'affichage pour les types terminal, nonterminal, etc.?
-      Fonctions d'isomorphisme entre token et 'a terminal * 'a?
-    Librairie(s) pour la gestion des erreurs.
-    Librairie pour la complétion du parsing.
-      Need a way of feeding the parser a nonterminal symbol.
-      Or a way of applying a semantic action to a vector of semantic values.
-
 * Instead of directly invoking ocamlc (in --infer mode), Menhir could
   dump an .actions.ml file,
   expect the build system to invoke "ocamlc -i" and create .actions.mli,
@@ -190,10 +177,6 @@
 
 * bundle the Coq library with menhir, and add demos/calc-coq
   to show how it is used
-
-* Clarifier si ocamlbuild doit recevoir -use-ocamlfind, -no-ocamlfind,
-  ou rien; tester en particulier sous Windows?
-  Modifier la doc pour recommander ocamlfind.
 
 * BUG: la directive $type<...> nt donne lieu à un message d'erreur bizarre
   si le non-terminal nt n'existe pas. (Jacques-Henri.)
