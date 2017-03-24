@@ -87,9 +87,6 @@ module Make (T : TableFormat.TABLES)
       table
       i j
 
-  (* This auxiliary function helps access a flattened, two-dimensional
-     matrix, like the error bitmap. *)
-
   let action state terminal value shift reduce fail env =
     match PackedIntArray.unflatten1 T.error state terminal with
     | 1 ->
