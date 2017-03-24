@@ -1,14 +1,3 @@
-(* invariant.mli *)
-
-(* [may_reduce s prod] tells whether state [s] may reduce production [prod]. *)
-
-val may_reduce: Lr1.node -> Production.index -> bool
-
-(* invariant.ml *)
-
-let may_reduce node prod =
-  Lr1.NodeSet.mem node (production_where prod)
-
 (* tableBackend.ml *)
 
 (* Encodings of entries in the enabled reductions bitmap. *)

@@ -264,6 +264,9 @@ let production_where (prod : Production.index) : Lr1.NodeSet.t =
     (* The production [prod] is never reduced. *)
     Lr1.NodeSet.empty
 
+let may_reduce node prod =
+  Lr1.NodeSet.mem node (production_where prod)
+
 let ever_reduced prod =
   not (Lr1.NodeSet.is_empty (production_where prod))
 
@@ -929,4 +932,3 @@ let () =
 let () =
   if Error.errors() then
     exit 1
-
