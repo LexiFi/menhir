@@ -724,4 +724,106 @@ module Make (T : TABLE) = struct
       (fun _env -> false)
       env
 
+  (* --------------------------------------------------------------------------- *)
+
+  (* TEMPORARY add calls to new [Log] functions? : log [pop], [feed], [force] *)
+
+  (* TEMPORARY potential danger:
+     - messing up the lookahead *)
+
+  let _pop (env : env) : env option =
+    let cell = env.stack in
+    let next = cell.next in
+    if next == cell then
+      None
+    else
+      Some { env with stack = next; current = cell.state }
+
+  (* TEMPORARY potential danger:
+     - attempting to take a transition that does not exist
+       (checked at runtime; raises Invalid_argument)
+     - supplying a semantic value of incorrect type (statically checked
+       by correlating 'a nonterminal with 'a)
+     - messing up the lookahead (i.e. moving to a state where the lookahead
+       symbol cannot be [t], yet is [t]) (or moving to a state where we
+       we should not ask for one more symbol, yet constructing [InputNeeded])
+       -- NOT PREVENTED *)
+
+  let _feed_nonterminal nt startp semv endp (env : env) : env =
+    let source : state = env.current in
+    match T.maybe_goto_nt source nt with
+    | None ->
+        invalid_arg "feed_nonterminal: outgoing transition does not exist"
+    | Some (target : state) ->
+        (* Push a new cell onto the stack, containing the identity of the state
+           that we are leaving. The semantic value [semv] and positions [startp]
+           and [endp] contained in the new cell are provided by the caller. *)
+        let stack = { state = source; semv; startp; endp; next = env.stack } in
+        (* Move to the target state. *)
+        { env with stack; current = target }
+
+  let _feed_terminal terminal startp semv endp (env : env) : env =
+    T.action
+      env.current
+      terminal
+      semv
+      (fun env _please_discard terminal semv s' ->
+        if log then
+          Log.shift terminal s';
+        let stack = {
+          state = env.current; semv; startp; endp; next = env.stack;
+        } in
+        { env with stack; current = s' }
+      )
+      (fun _env _prod ->
+        invalid_arg "cannot reduce")
+      (fun _env ->
+        invalid_arg "cannot reduce")
+      env
+
+  (* TEMPORARY potential danger:
+     - should invoke this ONLY when the stack shape allows this reduction!
+       otherwise the semantic action could crash.
+       (checked at runtime; raises Invalid_argument)
+     - semantic action can raise [Error] *)
+
+  (* This function is analogous to [reduce], except that it does not continue
+     by calling [run env] or [initiate env]. Instead, it returns [env] to the
+     user, or raises [Error]. *)
+
+  let _force_reduction prod (env : env) : env =
+    (* Check if this reduction is permitted. This check is REALLY important.
+       The stack must have the correct shape: that is, it must be sufficiently
+       high, and must contain semantic values of appropriate types, otherwise
+       the semantic action will crash and burn. *)
+    if not (T.may_reduce env.current prod) then
+      invalid_arg "force_reduction: this reduction is not permitted in this state"
+    else begin
+      (* Log a reduction event. *)
+      if log then
+        Log.reduce_or_accept prod;
+      (* Invoke the semantic action. *)
+      let stack = T.semantic_action prod env in
+      (* Perform a goto transition. *)
+      let current = T.goto_prod stack.state prod in
+      { env with stack; current }
+    end
+
+  let _has_default_reduction (state : _ lr1state) : production option =
+    T.default_reduction state
+      (fun () prod -> Some prod)
+      (fun () -> None)
+      ()
+
+  (* TEMPORARY potential danger:
+     - violates the invariant that an input token is normally demanded only
+       in a state [s] whose incoming symbol is a terminal symbol
+       and which does not have a default reduction on [#]
+       (so the lookahead can still be messed up)
+       (not really problematic? but worth noting)
+     - for type safety, should correlate 'a env with 'a checkpoint
+   *)
+  let _input_needed (env : env) : 'a checkpoint =
+    InputNeeded env
+
 end
