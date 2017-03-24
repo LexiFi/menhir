@@ -206,11 +206,16 @@ module type TABLE = sig
      and a nonterminal symbol to a new state. By extension, it also maps a
      pair of a state and a production to a new state. *)
 
-  (* This function can be applied to [s] and [nt] ONLY if the state [s] has
-     an outgoing transition labeled [nt]. Otherwise, its result is undefined. *)
+  (* The function [goto_nt] can be applied to [s] and [nt] ONLY if the state
+     [s] has an outgoing transition labeled [nt]. Otherwise, its result is
+     undefined. Similarly, the call [goto_prod prod s] is permitted ONLY if
+     the state [s] has an outgoing transition labeled with the nonterminal
+     symbol [lhs prod]. The function [maybe_goto_nt] involves an additional
+     dynamic check and CAN be called even if there is no outgoing transition. *)
 
-  val goto_nt  : state -> nonterminal -> state
-  val goto_prod: state -> production  -> state
+  val       goto_nt  : state -> nonterminal -> state
+  val       goto_prod: state -> production  -> state
+  val maybe_goto_nt:   state -> nonterminal -> state option
 
   (* [is_start prod] tells whether the production [prod] is a start production. *)
 

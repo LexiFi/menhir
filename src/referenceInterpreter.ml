@@ -101,6 +101,12 @@ module T = struct
   let goto_prod (s : state) (prod : production) : state =
     goto_nt s (Production.nt prod)
 
+  let maybe_goto_nt (s : state) (nt : nonterminal) : state option =
+    try
+      Some (SymbolMap.find (Symbol.N nt) (Lr1.transitions s))
+    with Not_found ->
+      None
+
   open MenhirLib.EngineTypes
 
   exception Error

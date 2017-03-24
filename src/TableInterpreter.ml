@@ -97,6 +97,13 @@ module Make (T : TableFormat.TABLES)
   let goto_prod state prod =
     goto_nt state (PackedIntArray.get T.lhs prod)
 
+  let maybe_goto_nt state nt =
+    let code = unmarshal2 T.goto state nt in
+    (* If [code] is 0, there is no outgoing transition.
+       If [code] is [1 + state], there is a transition towards [state]. *)
+    assert (0 <= code);
+    if code = 0 then None else Some (code - 1)
+
   exception Error =
         T.Error
 
