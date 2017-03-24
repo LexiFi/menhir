@@ -133,6 +133,39 @@ module Make (T : TableFormat.TABLES)
        because the start productions do not have entries in this array. *)
     T.semantic_action.(prod - T.start)
 
+  (* [may_reduce state prod] tests whether the state [state] is capable of
+     reducing the production [prod]. This information could be determined
+     in constant time if we were willing to create a bitmap for it, but
+     that would take up a lot of space. Instead, we obtain this information
+     by iterating over a line in the action table. This is costly, but this
+     function is not normally used by the LR engine anyway; it is supposed
+     to be used only by programmers who wish to develop error recovery
+     strategies. *)
+
+  (* In the future, if desired, we could memoize this function, so as
+     to pay the cost in (memory) space only if and where this function
+     is actually used. We could also replace [foreach_terminal] with a
+     function [exists_terminal] which stops as soon as the accumulator
+     is [true]. *)
+
+  let may_reduce state prod =
+    (* Test if there is a default reduction of [prod]. *)
+    default_reduction state
+      (fun () prod' -> prod = prod')
+      (fun () ->
+        (* If not, then for each terminal [t], ... *)
+        foreach_terminal (fun t accu ->
+          accu ||
+          (* ... test if there is a reduction of [prod] on [t]. *)
+          action state t ()
+            (* shift:  *) (fun () _ _ () _ -> false)
+            (* reduce: *) (fun () prod' -> prod = prod')
+            (* fail:   *) (fun () -> false)
+            ()
+        ) false
+      )
+      ()
+
   (* If [T.trace] is [None], then the logging functions do nothing. *)
 
   let log =

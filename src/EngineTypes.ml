@@ -253,6 +253,14 @@ module type TABLE = sig
 
   val semantic_action: production -> semantic_action
 
+  (* [may_reduce state prod] tests whether the state [state] is capable of
+     reducing the production [prod]. This function is currently costly and
+     is not used by the core LR engine. It is used in the implementation
+     of certain functions, such as [force_reduction], which allow the engine
+     to be driven programmatically. *)
+
+  val may_reduce: state -> production -> bool
+
   (* The LR engine requires a number of hooks, which are used for logging. *)
 
   (* The comments below indicate the conventional messages that correspond

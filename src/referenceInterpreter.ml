@@ -191,6 +191,9 @@ module T = struct
         next = !stack
       }
 
+  let may_reduce =
+    Invariant.may_reduce
+
   (* The logging functions that follow are called only if [log] is [true]. *)
 
   module Log = struct
