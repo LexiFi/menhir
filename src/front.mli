@@ -1,3 +1,16 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                   Menhir                                   *)
+(*                                                                            *)
+(*                       François Pottier, Inria Paris                        *)
+(*              Yann Régis-Gianas, PPS, Université Paris Diderot              *)
+(*                                                                            *)
+(*  Copyright Inria. All rights reserved. This file is distributed under the  *)
+(*  terms of the GNU General Public License version 2, as described in the    *)
+(*  file LICENSE.                                                             *)
+(*                                                                            *)
+(******************************************************************************)
+
 (* This module drives the front-end. It opens and parses the input files,
    which yields a number of partial grammars. It joins these grammars, expands
    them to get rid of parameterized nonterminals, and performs reachability

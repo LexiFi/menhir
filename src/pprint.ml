@@ -1,3 +1,16 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                   Menhir                                   *)
+(*                                                                            *)
+(*                       François Pottier, Inria Paris                        *)
+(*              Yann Régis-Gianas, PPS, Université Paris Diderot              *)
+(*                                                                            *)
+(*  Copyright Inria. All rights reserved. This file is distributed under the  *)
+(*  terms of the GNU General Public License version 2, as described in the    *)
+(*  file LICENSE.                                                             *)
+(*                                                                            *)
+(******************************************************************************)
+
 (* This is an adaptation of Daan Leijen's [PPrint] library, which itself is
    based on the ideas developed by Philip Wadler in ``A Prettier Printer''.
    For more information, see:

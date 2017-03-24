@@ -1,3 +1,16 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                   Menhir                                   *)
+(*                                                                            *)
+(*                       François Pottier, Inria Paris                        *)
+(*              Yann Régis-Gianas, PPS, Université Paris Diderot              *)
+(*                                                                            *)
+(*  Copyright Inria. All rights reserved. This file is distributed under the  *)
+(*  terms of the GNU General Public License version 2, as described in the    *)
+(*  file LICENSE.                                                             *)
+(*                                                                            *)
+(******************************************************************************)
+
 (* The type [partial_grammar] describes the abstract syntax that is produced
    by the parsers (yacc-parser and fancy-parser).
 

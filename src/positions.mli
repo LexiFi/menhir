@@ -1,3 +1,16 @@
+(******************************************************************************)
+(*                                                                            *)
+(*                                   Menhir                                   *)
+(*                                                                            *)
+(*                       FranÃ§ois Pottier, Inria Paris                        *)
+(*              Yann RÃ©gis-Gianas, PPS, UniversitÃ© Paris Diderot              *)
+(*                                                                            *)
+(*  Copyright Inria. All rights reserved. This file is distributed under the  *)
+(*  terms of the GNU General Public License version 2, as described in the    *)
+(*  file LICENSE.                                                             *)
+(*                                                                            *)
+(******************************************************************************)
+
 (* TEMPORARY faire un peu le ménage dans cette interface pléthorique? *)
 
 (** Extension of standard library's positions. *)

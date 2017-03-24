@@ -1,3 +1,16 @@
+/******************************************************************************/
+/*                                                                            */
+/*                                   Menhir                                   */
+/*                                                                            */
+/*                       François Pottier, Inria Paris                        */
+/*              Yann Régis-Gianas, PPS, Université Paris Diderot              */
+/*                                                                            */
+/*  Copyright Inria. All rights reserved. This file is distributed under the  */
+/*  terms of the GNU General Public License version 2, as described in the    */
+/*  file LICENSE.                                                             */
+/*                                                                            */
+/******************************************************************************/
+
 /* This is the crude version of the parser. It is meant to be processed
    by ocamlyacc. Its existence is necessary for bootstrapping. It is kept
    in sync with [fancy-parser], with a few differences:

@@ -6,7 +6,7 @@
 
 SHELL := bash
 
-.PHONY: all test clean package check api export tag opam local unlocal pin unpin
+.PHONY: all test clean headache package check api export tag opam local unlocal pin unpin
 
 # -------------------------------------------------------------------------
 
@@ -59,9 +59,6 @@ DATE     := $(shell /bin/date +%Y%m%d)
 PACKAGE  := menhir-$(DATE)
 CURRENT  := $(shell pwd)
 TARBALL  := $(CURRENT)/$(PACKAGE).tar.gz
-HEADACHE := headache
-SRCHEAD  := $(CURRENT)/header
-LIBHEAD  := $(CURRENT)/lgpl-header
 
 # -------------------------------------------------------------------------
 
@@ -89,6 +86,34 @@ MENHIRLIB_FILES   := $(shell for m in $(MENHIRLIB_MODULES) ; do \
 
 # -------------------------------------------------------------------------
 
+# Propagating an appropriate header into every file.
+
+# This requires a version of headache that supports UTF-8; please use
+# https://github.com/fpottier/headache
+
+# This used to be done at release time and not in the repository, but
+# it is preferable to do in it the repository too, for two reasons: 1-
+# the repository is (or will be) publicly accessible; and 2- this makes
+# it easier to understand the line numbers that we sometimes receive as
+# part of bug reports.
+
+# Menhir's standard library (standard.mly) as well as the source files
+# in MenhirLib carry the "library" license, while every other file
+# carries the "regular" license.
+
+HEADACHE := headache
+SRCHEAD  := $(CURRENT)/headers/regular-header
+LIBHEAD  := $(CURRENT)/headers/library-header
+
+headache:
+	@ cd src && find . -regex ".*\.ml\(i\|y\|l\)?" \
+	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
+	@ for file in src/standard.mly $(MENHIRLIB_FILES) ; do \
+	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
+	  done
+
+# -------------------------------------------------------------------------
+
 # Creating a tarball for distribution.
 
 package: clean
@@ -100,16 +125,6 @@ package: clean
 	@ cp -fr src/*.ml{,i,y,l,pack} src/*.messages src/Makefile src/*.META $(PACKAGE)/src
 	@ grep -v my_warnings src/_tags > $(PACKAGE)/src/_tags
 	@ $(MAKE) -C $(PACKAGE)/demos clean
-# Insert headers.
-# Note that standard.mly as well as the source files in MenhirLib carry the
-# "library" license, while every other file carries the regular "source code"
-# license.
-	@ echo "-> Inserting headers."
-	@ cd $(PACKAGE) && find . -regex ".*\.ml\(i\|y\|l\)?" \
-	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
-	@ cd $(PACKAGE) && for file in src/standard.mly $(MENHIRLIB_FILES) ; do \
-	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
-	  done
 # Set the version number into the files that mention it. These
 # include version.ml, StaticVersion.{ml,mli}, version.tex, META.
 	@ echo "-> Setting version to $(DATE)."
