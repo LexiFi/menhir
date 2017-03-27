@@ -47,6 +47,14 @@
       Fonctions d'affichage pour les types terminal, nonterminal, etc.?
       Fonctions d'isomorphisme entre token et 'a terminal * 'a?
 
+* BUG: the warning "this production is never reduced" is sound but incomplete.
+  See never_reduced.mly:
+  a: b B | B {}
+  b:         {}
+  where we get a warning that "b -> " is never reduced, but actually (as a
+  result) "a -> b B" is never reduced either. Reword the current warning?
+  Document the problem? Develop a new warning based on LRijkstra?
+
 * Allow splitting a nonterminal symbol (in a file or over multiple files).
   with an explicit keyword? %public?
 
@@ -56,10 +64,6 @@
 * explain how to simulate inherited attributes in the manual
   (cf. post by David Chemouil on mailing list)
 
-* Installation problems.
-  - put menhirLib.{ml,mli} in a different directory;
-  - avoid using "share/" for architecture-dependent files
-
 * Look for "artificial dependency" and remove them.
   Make sure every module is explicitly called.
 
@@ -67,18 +71,13 @@
   it could be useless or even ill-typed.
   Same for %on_error_reduce.
 
-* Is it true that the warning "this production is never reduced" is
-  sound but incomplete? i.e. certain states could be unreachable and
-  we do not know it (but LRijkstra can tell us).
-  Take never_reduced.mly and see if we can have a production that is
-  never reduced *and no warning about it*. (Just place it behind
-  another production that is never reduced.) Document this fact.
-
 * If the right-hand side of a production provably generates the empty
   language, remove this production. (Must remove it explicitly, otherwise
   we lose the property that errors are detected as early as possible.
   Also, this avoids triggering the detection of epsilon-cycles, which
   assumes that all symbols are inhabited.)
+  Currently we warn about nonterminals that generate the empty language.
+  Maybe we need a %void annotation when this is intended?
   Document this trick: the empty language can be defined by "void: void"
   and can be used as an actual parameter in parameterized definitions.
   This allows making extensible definitions and instantiating them with
