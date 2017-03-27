@@ -1,0 +1,28 @@
+This file contains a series of ideas and remarks that could be in
+the TODO list -- except I do not intend to do anything about them,
+for now.
+
+* Incompatibility with ocamlyacc: Menhir discards the lookahead token when
+  entering error mode, whereas ocamlyacc doesn't. (Reported by Frédéric Bour.)
+
+* Look into the format of Bison's tables, and see if we could produce such
+  tables upon demand. This could hopefully / possibly be implemented outside
+  Menhir using the .cmly API.
+
+* Implement $0, $-1, etc.
+  (Along the lines of Bison. They are a potentially dangerous feature, as
+   they allow peeking into the stack, which requires the shape of the stack
+   to be known / guessed by the programmer.)
+  Propose a named syntax, perhaps <x> foo: ...
+    where the name x is bound to the value in the topmost stack cell.
+  Ensure that the mechanism is type-safe.
+    (Is --infer required? I don't think so. Just issue type constraints.)
+    (Requires an analysis so that the shape of the stack is known. The
+     existing analysis in Invariant may be sufficient.)
+  Implement it in both back-ends.
+  On top of this mechanism, it is easy to implement mid-rule actions (à la Bison).
+  On top of that, it should be easy to implement inherited attributes (à la BtYacc).
+  --
+  However, my impression so far is that the whole thing is of interest
+  mainly to people who are doing lexer hacks. Otherwise, it is much easier
+  to just parse, produce a tree, and transform the tree afterwards.
