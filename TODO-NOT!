@@ -2,6 +2,31 @@ This file contains a series of ideas and remarks that could be in
 the TODO list -- except I do not intend to do anything about them,
 for now.
 
+* Incompatibility with ocamlyacc/yacc/bison: these tools guarantee
+  to perform a default reduction without looking ahead at the next
+  token, whereas Menhir does not.
+  (See messages by Tiphaine Turpin from 30/08/2011 on.)
+  - Changing this behavior would involve changing both back-ends.
+  - Changing this behavior could break existing Menhir parsers.
+    (Make it a command line option.)
+  - This affects only people who are doing lexical feedback.
+  - Suggestion by Frédéric Bour: allow annotating a production with %default
+    to indicate that it should always be a default reduction. (Not sure why
+    this helps, though.)
+  - Think about end-of-stream conflicts, too.
+    If there is a default reduction, there is no end-of-stream conflict.
+      (Do we report one at the moment?)
+    If there is a conflict, why do we arbitrarily solve it in favor of
+    looking ahead (eliminating the reduction on #)? What does ocamlyacc do?
+
+* Idea following our work with Jacques-Henri: allow asserting that the
+  distinction between certain tokens (say, {A, B, C}) cannot influence
+  which action is chosen. Or (maybe) asserting that no reduction can take
+  place when the lookahead symbol is one of {A, B, C}. The goal is to ensure
+  that a lexer hack is robust, i.e., even if the lexer cannot reliably
+  distinguish between A, B, C, this cannot cause the parser to become
+  misguided.
+
 * Incompatibility with ocamlyacc: Menhir discards the lookahead token when
   entering error mode, whereas ocamlyacc doesn't. (Reported by Frédéric Bour.)
 
