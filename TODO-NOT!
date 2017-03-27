@@ -51,3 +51,18 @@ for now.
   However, my impression so far is that the whole thing is of interest
   mainly to people who are doing lexer hacks. Otherwise, it is much easier
   to just parse, produce a tree, and transform the tree afterwards.
+
+* Instead of directly invoking ocamlc (in --infer mode), Menhir could
+  dump an .actions.ml file,
+  expect the build system to invoke "ocamlc -i" and create .actions.mli,
+  and continue (in a second invocation) from there.
+  (Suggestion by Fabrice Le Fessant.)
+
+* Try generating a canonical automaton, resolving conflicts, and THEN
+  minimizing the automaton. Would the result be close to IELR(1)?
+  (Unfortunately, producing a canonical automaton remains a bit costly:
+  8 seconds for OCaml's grammar.)
+
+* Why does --canonical --table consume a huge amount of time on a large grammar?
+  (3m57s for ocaml.mly, versus 16s without --table)
+  Display how much time is spent compressing tables.
