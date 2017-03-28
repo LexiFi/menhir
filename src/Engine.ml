@@ -745,44 +745,6 @@ module Make (T : TABLE) = struct
       Some { env with stack = next; current = cell.state }
 
   (* TEMPORARY potential danger:
-     - attempting to take a transition that does not exist
-       (checked at runtime; raises Invalid_argument)
-     - supplying a semantic value of incorrect type (statically checked
-       by correlating 'a nonterminal with 'a) *)
-
-  let _feed_nonterminal nt startp semv endp (env : env) : env =
-    let source : state = env.current in
-    match T.maybe_goto_nt source nt with
-    | None ->
-        invalid_arg "feed_nonterminal: outgoing transition does not exist"
-    | Some (target : state) ->
-        (* Push a new cell onto the stack, containing the identity of the state
-           that we are leaving. The semantic value [semv] and positions [startp]
-           and [endp] contained in the new cell are provided by the caller. *)
-        let stack = { state = source; semv; startp; endp; next = env.stack } in
-        (* Move to the target state. *)
-        { env with stack; current = target }
-
-  let _feed_terminal terminal startp semv endp (env : env) : env =
-    T.action
-      env.current
-      terminal
-      semv
-      (fun env _please_discard terminal semv s' ->
-        if log then
-          Log.shift terminal s';
-        let stack = {
-          state = env.current; semv; startp; endp; next = env.stack;
-        } in
-        { env with stack; current = s' }
-      )
-      (fun _env _prod ->
-        invalid_arg "cannot reduce")
-      (fun _env ->
-        invalid_arg "cannot reduce")
-      env
-
-  (* TEMPORARY potential danger:
      - should invoke this ONLY when the stack shape allows this reduction!
        otherwise the semantic action could crash.
        (checked at runtime; raises Invalid_argument)
