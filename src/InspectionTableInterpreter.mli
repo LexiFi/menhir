@@ -31,13 +31,16 @@ end)
    [InspectionTableFormat]. *)
 
 module Make
-  (B : TableFormat.TABLES)
-  (T : InspectionTableFormat.TABLES
-       with type 'a lr1state = int)
-  (ET : EngineTypes.TABLE)
+  (TT : TableFormat.TABLES)
+  (IT : InspectionTableFormat.TABLES
+        with type 'a lr1state = int)
+  (ET : EngineTypes.TABLE
+        with type terminal = int
+         and type nonterminal = int
+         and type semantic_value = Obj.t)
 
 : IncrementalEngine.INSPECTION
-  with type 'a terminal := 'a T.terminal
-   and type 'a nonterminal := 'a T.nonterminal
-   and type 'a lr1state := 'a T.lr1state
+  with type 'a terminal := 'a IT.terminal
+   and type 'a nonterminal := 'a IT.nonterminal
+   and type 'a lr1state := 'a IT.lr1state
    and type production := int

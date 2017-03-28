@@ -44,7 +44,10 @@ module Make
   (TT : TableFormat.TABLES)
   (IT : InspectionTableFormat.TABLES
         with type 'a lr1state = int)
-  (ET : EngineTypes.TABLE)
+  (ET : EngineTypes.TABLE
+        with type terminal = int
+         and type nonterminal = int
+         and type semantic_value = Obj.t)
 = struct
 
   (* Including [IT] is an easy way of inheriting the definitions of the types
