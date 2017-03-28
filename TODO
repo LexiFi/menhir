@@ -9,6 +9,18 @@
   - --cmly command line flag
   - menhirSdk; document the .cmly API...?
   - demo of menhirSdk: generate-printers
+  - menhirLib: new functions
+      find_default_reduction
+      pop
+      force_reduction
+      input_needed
+      feed (inspection API)
+    menhirLib: incompatible change of type 'a env
+
+* Implementing may_reduce by looping over the action table may be too
+  conservative? There may be situations where there is no reduce action
+  in the table (because they were killed off by conflict resolution) yet
+  this state is still capable of reducing this production.
 
 * move to gitlab.inria.fr
   see https://help.github.com/articles/splitting-a-subfolder-out-into-a-new-repository/
@@ -56,6 +68,8 @@
   Document the problem? Develop a new warning based on LRijkstra?
   By the same token, some states could be unreachable, without us knowing.
   What should we do about it?
+  Note that the incremental API may allow reaching some states that LRijkstra
+  would declare unreachable -- so, be careful.
 
 * Allow splitting a nonterminal symbol (in a file or over multiple files).
   with an explicit keyword? %public?
