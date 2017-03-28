@@ -38,6 +38,7 @@ module Make
         with type terminal = int
          and type nonterminal = int
          and type semantic_value = Obj.t)
+  (E  : sig type env = (ET.state, ET.semantic_value, ET.token) EngineTypes.env end)
 
 : IncrementalEngine.INSPECTION
   with type 'a terminal := 'a IT.terminal

@@ -48,6 +48,7 @@ module Make
         with type terminal = int
          and type nonterminal = int
          and type semantic_value = Obj.t)
+  (E  : sig type env = (ET.state, ET.semantic_value, ET.token) EngineTypes.env end)
 = struct
 
   (* Including [IT] is an easy way of inheriting the definitions of the types
@@ -227,7 +228,7 @@ module Make
 
   open EngineTypes
 
-  let _feed_nonterminal nt startp semv endp env =
+  let _feed_nonterminal nt startp semv endp (env : E.env) =
     let source : ET.state = env.current in
     match ET.maybe_goto_nt source nt with
     | None ->

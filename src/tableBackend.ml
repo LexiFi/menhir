@@ -1067,7 +1067,7 @@ let program =
         SIInclude (MVar symbols) ::
 
         (* Apply the functor [InspectionTableInterpreter.Make], which expects
-           three arguments. *)
+           four arguments. *)
         SIInclude (mapp (MVar make_inspection) [
           (* Argument 1, of type [TableFormat.TABLES]. *)
           MVar tables;
@@ -1096,6 +1096,8 @@ let program =
           );
           (* Argument 3, of type [EngineTypes.TABLE]. *)
           MVar et;
+          (* Argument 4, of type [EngineTypes.ENGINE with ...]. *)
+          MVar ti;
         ]) ::
 
         []
