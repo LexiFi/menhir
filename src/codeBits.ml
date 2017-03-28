@@ -253,3 +253,9 @@ let with_types wk name tys =
   List.fold_left (fun mt (params, name, ty) ->
     MTWithType (mt, params, name, wk, ty)
   ) (MTNamedModuleType name) tys
+
+let mapp me1 me2 =
+  MApp (me1, me2)
+
+let mapp me1 mes2 =
+  List.fold_left mapp me1 mes2
