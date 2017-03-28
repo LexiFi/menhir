@@ -41,7 +41,7 @@ end
 (* The code functor. *)
 
 module Make
-  (B : TableFormat.TABLES)
+  (TT : TableFormat.TABLES)
   (T : InspectionTableFormat.TABLES
        with type 'a lr1state = int)
 = struct
@@ -84,7 +84,7 @@ module Make
      start symbols. *)
 
   let n2i (nt : 'a T.nonterminal) : int =
-    let answer = B.start + Obj.magic nt in
+    let answer = TT.start + Obj.magic nt in
     assert (T.nonterminal answer = X (N nt)); (* TEMPORARY roundtrip *)
     answer
 
@@ -137,11 +137,11 @@ module Make
     | T.X symbol ->
         Obj.magic symbol
 
-  (* The function [lhs] reads the table [B.lhs] and uses [T.nonterminal]
+  (* The function [lhs] reads the table [TT.lhs] and uses [T.nonterminal]
      to decode the symbol. *)
 
   let lhs prod =
-    T.nonterminal (PackedIntArray.get B.lhs prod)
+    T.nonterminal (PackedIntArray.get TT.lhs prod)
 
   (* The function [rhs] reads the table [T.rhs] and uses [decode_symbol]
      to decode the symbol. *)
@@ -191,7 +191,7 @@ module Make
         first nt t
 
   (* The function [foreach_terminal] exploits the fact that the
-     first component of [B.error] is [Terminal.n - 1], i.e., the
+     first component of [TT.error] is [Terminal.n - 1], i.e., the
      number of terminal symbols, including [error] but not [#]. *)
 
   let rec foldij i j f accu =
@@ -201,15 +201,15 @@ module Make
       foldij (i + 1) j f (f i accu)
 
   let foreach_terminal f accu =
-    let n, _ = B.error in
+    let n, _ = TT.error in
     foldij 0 n (fun i accu ->
       f (T.terminal i) accu
     ) accu
 
   let foreach_terminal_but_error f accu =
-    let n, _ = B.error in
+    let n, _ = TT.error in
     foldij 0 n (fun i accu ->
-      if i = B.error_terminal then
+      if i = TT.error_terminal then
         accu
       else
         f (T.terminal i) accu
