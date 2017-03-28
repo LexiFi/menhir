@@ -29,8 +29,11 @@ module Run (T : sig end) = struct
 let menhirlib =
   "MenhirLib"
 
+let make_engine_table =
+  menhirlib ^ ".TableInterpreter.MakeEngineTable"
+
 let make_engine =
-  menhirlib ^ ".TableInterpreter.Make"
+  menhirlib ^ ".Engine.Make"
 
 let make_symbol =
   menhirlib ^ ".InspectionTableInterpreter.Symbols"
@@ -81,6 +84,9 @@ let tables =
 
 let symbols =
   "Symbols"
+
+let et =
+  "ET"
 
 let ti =
   "TI"
@@ -1038,8 +1044,10 @@ let program =
 
     SIModuleDef (interpreter, MStruct (
 
-      (* Apply the functor [TableInterpreter.Make] to the tables. *)
-      SIModuleDef (ti, MApp (MVar make_engine, MVar tables)) ::
+      (* Apply the functor [TableInterpreter.MakeEngineTable] to the tables. *)
+      SIModuleDef (et, MApp (MVar make_engine_table, MVar tables)) ::
+      (* Apply the functor [Engine.Make] to obtain an engine. *)
+      SIModuleDef (ti, MApp (MVar make_engine, MVar et)) ::
       SIInclude (MVar ti) ::
 
       listiflazy Settings.inspection (fun () ->

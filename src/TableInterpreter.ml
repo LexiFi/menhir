@@ -11,9 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module Make (T : TableFormat.TABLES)
-
-= Engine.Make (struct
+module MakeEngineTable (T : TableFormat.TABLES) = struct
 
   type state =
       int
@@ -229,4 +227,4 @@ module Make (T : TableFormat.TABLES)
 
   end
 
-end)
+end
