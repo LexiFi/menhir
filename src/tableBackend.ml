@@ -1066,29 +1066,32 @@ let program =
 
         SIInclude (MVar symbols) ::
 
-        SIInclude (MApp (MApp (MVar make_inspection, MVar tables), MStruct (
-          (* This module must satisfy [InspectionTableFormat.TABLES]. *)
-          (* [lr1state] *)
-          SIInclude (MVar ti) ::
-          (* [terminal], [nonterminal]. *)
-          SIInclude (MVar symbols) ::
-          (* This functor application builds the types [symbol] and [xsymbol]
-             in terms of the types [terminal] and [nonterminal]. This saves
-             us the trouble of generating these definitions. *)
-          SIInclude (MApp (MVar make_symbol, MVar symbols)) ::
-          SIValDefs (false,
-            terminal() ::
-            nonterminal() ::
-            lr0_incoming() ::
-            rhs() ::
-            lr0_core() ::
-            lr0_items() ::
-            nullable() ::
-            first() ::
+        SIInclude (mapp (MVar make_inspection) [
+          MVar tables;
+          MStruct (
+            (* This module must satisfy [InspectionTableFormat.TABLES]. *)
+            (* [lr1state] *)
+            SIInclude (MVar ti) ::
+            (* [terminal], [nonterminal]. *)
+            SIInclude (MVar symbols) ::
+            (* This functor application builds the types [symbol] and [xsymbol]
+               in terms of the types [terminal] and [nonterminal]. This saves
+               us the trouble of generating these definitions. *)
+            SIInclude (MApp (MVar make_symbol, MVar symbols)) ::
+            SIValDefs (false,
+              terminal() ::
+              nonterminal() ::
+              lr0_incoming() ::
+              rhs() ::
+              lr0_core() ::
+              lr0_items() ::
+              nullable() ::
+              first() ::
+              []
+            ) ::
             []
-          ) ::
-          []
-        ))) ::
+          );
+        ]) ::
 
         []
 
