@@ -19,3 +19,4 @@ module Make (T : TABLE) : ENGINE with type state = T.state
                                   and type token = T.token
                                   and type semantic_value = T.semantic_value
                                   and type production = T.production
+                                  and type env = (T.state, T.semantic_value, T.token) EngineTypes.env
