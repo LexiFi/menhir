@@ -34,10 +34,10 @@ module Make
   (B : TableFormat.TABLES)
   (T : InspectionTableFormat.TABLES
        with type 'a lr1state = int)
+  (ET : EngineTypes.TABLE)
 
 : IncrementalEngine.INSPECTION
   with type 'a terminal := 'a T.terminal
    and type 'a nonterminal := 'a T.nonterminal
    and type 'a lr1state := 'a T.lr1state
    and type production := int
-
