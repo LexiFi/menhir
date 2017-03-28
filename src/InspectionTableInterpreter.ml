@@ -42,14 +42,14 @@ end
 
 module Make
   (TT : TableFormat.TABLES)
-  (T : InspectionTableFormat.TABLES
-       with type 'a lr1state = int)
+  (IT : InspectionTableFormat.TABLES
+        with type 'a lr1state = int)
 = struct
 
-  (* Including [T] is an easy way of inheriting the definitions of the types
+  (* Including [IT] is an easy way of inheriting the definitions of the types
      [symbol] and [xsymbol]. *)
 
-  include T
+  include IT
 
   (* This auxiliary function decodes a packed linearized array, as created by
      [TableBackend.linearize_and_marshal1]. Here, we read a row all at once. *)
@@ -63,7 +63,7 @@ module Make
   (* This auxiliary function decodes a symbol. The encoding was done by
      [encode_symbol] or [encode_symbol_option] in the table back-end. *)
 
-  let decode_symbol (symbol : int) : T.xsymbol =
+  let decode_symbol (symbol : int) : IT.xsymbol =
     (* If [symbol] is 0, then we have no symbol. This could mean e.g.
        that the function [incoming_symbol] has been applied to an
        initial state. In principle, this cannot happen. *)
@@ -72,9 +72,9 @@ module Make
     let kind = symbol land 1 in
     let symbol = symbol lsr 1 in
     if kind = 0 then
-      T.terminal (symbol - 1)
+      IT.terminal (symbol - 1)
     else
-      T.nonterminal symbol
+      IT.nonterminal symbol
 
   (* These auxiliary functions convert a symbol to its integer code. For speed
      and for convenience, we use an unsafe type cast. This relies on the fact
@@ -83,14 +83,14 @@ module Make
      nonterminal symbols, we add [start] to account for the presence of the
      start symbols. *)
 
-  let n2i (nt : 'a T.nonterminal) : int =
+  let n2i (nt : 'a IT.nonterminal) : int =
     let answer = TT.start + Obj.magic nt in
-    assert (T.nonterminal answer = X (N nt)); (* TEMPORARY roundtrip *)
+    assert (IT.nonterminal answer = X (N nt)); (* TEMPORARY roundtrip *)
     answer
 
-  let t2i (t : 'a T.terminal) : int =
+  let t2i (t : 'a IT.terminal) : int =
     let answer = Obj.magic t in
-    assert (T.terminal answer = X (T t)); (* TEMPORARY roundtrip *)
+    assert (IT.terminal answer = X (T t)); (* TEMPORARY roundtrip *)
     answer
 
   (* Ordering functions. *)
@@ -123,34 +123,34 @@ module Make
     (* Subtraction is safe because overflow is impossible. *)
     if c <> 0 then c else index1 - index2
 
-  (* The function [incoming_symbol] goes through the tables [T.lr0_core] and
-     [T.lr0_incoming]. This yields a representation of type [xsymbol], out of
+  (* The function [incoming_symbol] goes through the tables [IT.lr0_core] and
+     [IT.lr0_incoming]. This yields a representation of type [xsymbol], out of
      which we strip the [X] quantifier, so as to get a naked symbol. This last
      step is ill-typed and potentially dangerous. It is safe only because this
      function is used at type ['a lr1state -> 'a symbol], which forces an
      appropriate choice of ['a]. *)
 
-  let incoming_symbol (s : 'a T.lr1state) : 'a T.symbol =
-    let core = PackedIntArray.get T.lr0_core s in
-    let symbol = decode_symbol (PackedIntArray.get T.lr0_incoming core) in
+  let incoming_symbol (s : 'a IT.lr1state) : 'a IT.symbol =
+    let core = PackedIntArray.get IT.lr0_core s in
+    let symbol = decode_symbol (PackedIntArray.get IT.lr0_incoming core) in
     match symbol with
-    | T.X symbol ->
+    | IT.X symbol ->
         Obj.magic symbol
 
-  (* The function [lhs] reads the table [TT.lhs] and uses [T.nonterminal]
+  (* The function [lhs] reads the table [TT.lhs] and uses [IT.nonterminal]
      to decode the symbol. *)
 
   let lhs prod =
-    T.nonterminal (PackedIntArray.get TT.lhs prod)
+    IT.nonterminal (PackedIntArray.get TT.lhs prod)
 
-  (* The function [rhs] reads the table [T.rhs] and uses [decode_symbol]
+  (* The function [rhs] reads the table [IT.rhs] and uses [decode_symbol]
      to decode the symbol. *)
 
   let rhs prod =
-    List.map decode_symbol (read_packed_linearized T.rhs prod)
+    List.map decode_symbol (read_packed_linearized IT.rhs prod)
 
   (* The function [items] maps the LR(1) state [s] to its LR(0) core,
-     then uses [core] as an index into the table [T.lr0_items]. The
+     then uses [core] as an index into the table [IT.lr0_items]. The
      items are then decoded by the function [export] below, which is
      essentially a copy of [Item.export]. *)
 
@@ -162,12 +162,12 @@ module Make
 
   let items s =
     (* Map [s] to its LR(0) core. *)
-    let core = PackedIntArray.get T.lr0_core s in
-    (* Now use [core] to look up the table [T.lr0_items]. *)
-    List.map export (read_packed_linearized T.lr0_items core)
+    let core = PackedIntArray.get IT.lr0_core s in
+    (* Now use [core] to look up the table [IT.lr0_items]. *)
+    List.map export (read_packed_linearized IT.lr0_items core)
 
   (* The function [nullable] maps the nonterminal symbol [nt] to its
-     integer code, which it uses to look up the array [T.nullable].
+     integer code, which it uses to look up the array [IT.nullable].
      This yields 0 or 1, which we map back to a Boolean result. *)
 
   let decode_bool i =
@@ -175,13 +175,13 @@ module Make
     i = 1
 
   let nullable nt =
-    decode_bool (PackedIntArray.get1 T.nullable (n2i nt))
+    decode_bool (PackedIntArray.get1 IT.nullable (n2i nt))
 
   (* The function [first] maps the symbols [nt] and [t] to their integer
-     codes, which it uses to look up the matrix [T.first]. *)
+     codes, which it uses to look up the matrix [IT.first]. *)
 
   let first nt t =
-    decode_bool (PackedIntArray.unflatten1 T.first (n2i nt) (t2i t))
+    decode_bool (PackedIntArray.unflatten1 IT.first (n2i nt) (t2i t))
 
   let xfirst symbol t =
     match symbol with
@@ -203,7 +203,7 @@ module Make
   let foreach_terminal f accu =
     let n, _ = TT.error in
     foldij 0 n (fun i accu ->
-      f (T.terminal i) accu
+      f (IT.terminal i) accu
     ) accu
 
   let foreach_terminal_but_error f accu =
@@ -212,7 +212,7 @@ module Make
       if i = TT.error_terminal then
         accu
       else
-        f (T.terminal i) accu
+        f (IT.terminal i) accu
     ) accu
 
 end
