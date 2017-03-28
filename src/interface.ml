@@ -117,7 +117,8 @@ let inspection_api grammar () =
         [ a ], "lr1state", tlr1state (TypVar a);
         [], "production", TypApp ("production", []);
         [ a ], TokenType.tctokengadt, TokenType.ttokengadt (TypVar a);
-        [ a ], NonterminalType.tcnonterminalgadt, NonterminalType.tnonterminalgadt (TypVar a)
+        [ a ], NonterminalType.tcnonterminalgadt, NonterminalType.tnonterminalgadt (TypVar a);
+        [], "env", TypApp ("env", []);
       ]
   ) ::
 
@@ -190,4 +191,3 @@ let write grammar () =
   end) in
   P.interface (interface grammar);
   close_out mli
-

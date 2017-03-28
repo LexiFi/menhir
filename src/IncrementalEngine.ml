@@ -367,6 +367,20 @@ module type INSPECTION = sig
   val foreach_terminal:           (xsymbol -> 'a -> 'a) -> 'a -> 'a
   val foreach_terminal_but_error: (xsymbol -> 'a -> 'a) -> 'a -> 'a
 
+  (* The type [env] is meant to be the same as in [INCREMENTAL_ENGINE]. *)
+
+  type env
+
+  (* [feed symbol startp semv endp env] forces the parser to consume the
+     (terminal or nonterminal) symbol [symbol], accompanied with the semantic
+     value [semv] and with the positions [startp] and [endp]. Thus, the
+     automaton makes a transition, and reaches a new state. The stack grows by
+     one cell. This operation is permitted only if the current state (as
+     determined by [env]) has an outgoing transition labeled with [symbol].
+     Otherwise, [Invalid_argument _] is raised. *)
+
+  val feed: 'a symbol -> Lexing.position -> 'a -> Lexing.position -> env -> env
+
 end
 
 (* This signature combines the incremental API and the inspection API. *)
@@ -378,5 +392,6 @@ module type EVERYTHING = sig
   include INSPECTION
     with type 'a lr1state := 'a lr1state
     with type production := production
+    with type env := env
 
 end

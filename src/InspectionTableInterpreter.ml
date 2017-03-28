@@ -220,20 +220,26 @@ module Make
         f (IT.terminal i) accu
     ) accu
 
+  (* ------------------------------------------------------------------------ *)
+
+  open ET
+  open EngineTypes
+
   (* TEMPORARY potential danger:
      - attempting to take a transition that does not exist
        (checked at runtime; raises Invalid_argument)
      - supplying a semantic value of incorrect type (statically checked
        by correlating 'a nonterminal with 'a) *)
 
-  open EngineTypes
+  let feed_failure () =
+    invalid_arg "feed: outgoing transition does not exist"
 
-  let _feed_nonterminal nt startp semv endp (env : E.env) =
-    let source : ET.state = env.current in
+  let feed_nonterminal nt startp semv endp (env : E.env) =
+    let source : state = env.current in
     match ET.maybe_goto_nt source nt with
     | None ->
-        invalid_arg "feed_nonterminal: outgoing transition does not exist"
-    | Some (target : ET.state) ->
+        feed_failure()
+    | Some (target : state) ->
         (* Push a new cell onto the stack, containing the identity of the state
            that we are leaving. The semantic value [semv] and positions [startp]
            and [endp] contained in the new cell are provided by the caller. *)
@@ -241,23 +247,29 @@ module Make
         (* Move to the target state. *)
         { env with stack; current = target }
 
-  let _feed_terminal terminal startp semv endp env =
+  let feed_terminal terminal startp semv endp env =
     ET.action
       env.current
       terminal
       semv
       (fun env _please_discard terminal semv s' ->
-        if ET.log then
-          ET.Log.shift terminal s';
+        if log then
+          Log.shift terminal s';
         let stack = {
           state = env.current; semv; startp; endp; next = env.stack;
         } in
         { env with stack; current = s' }
       )
-      (fun _env _prod ->
-        invalid_arg "cannot reduce")
-      (fun _env ->
-        invalid_arg "cannot reduce")
+      (fun _env _prod -> feed_failure())
+      (fun _env ->       feed_failure())
       env
+
+  let feed symbol startp semv endp env =
+    let semv : semantic_value = Obj.repr semv in
+    match symbol with
+    | N nt ->
+        feed_nonterminal (n2i nt) startp semv endp env
+    | T terminal ->
+        feed_terminal (t2i terminal) startp semv endp env
 
 end

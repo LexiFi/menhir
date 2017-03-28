@@ -45,3 +45,4 @@ module Make
    and type 'a nonterminal := 'a IT.nonterminal
    and type 'a lr1state := 'a IT.lr1state
    and type production := int
+   and type env := E.env
