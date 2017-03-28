@@ -653,6 +653,12 @@ module Make (T : TABLE) = struct
   type 'a lr1state =
       state
 
+  let find_default_reduction (state : _ lr1state) : production option =
+    T.default_reduction state
+      (fun () prod -> Some prod)
+      (fun () -> None)
+      ()
+
   (* --------------------------------------------------------------------------- *)
 
   (* Stack inspection. *)
@@ -727,12 +733,10 @@ module Make (T : TABLE) = struct
 
   (* --------------------------------------------------------------------------- *)
 
+  (* TEMPORARY comment *)
   (* TEMPORARY add calls to new [Log] functions? : log [pop], [feed], [force] *)
 
-  (* TEMPORARY potential danger:
-     - messing up the lookahead *)
-
-  let _pop (env : env) : env option =
+  let pop (env : env) : env option =
     let cell = env.stack in
     let next = cell.next in
     if next == cell then
@@ -744,11 +748,7 @@ module Make (T : TABLE) = struct
      - attempting to take a transition that does not exist
        (checked at runtime; raises Invalid_argument)
      - supplying a semantic value of incorrect type (statically checked
-       by correlating 'a nonterminal with 'a)
-     - messing up the lookahead (i.e. moving to a state where the lookahead
-       symbol cannot be [t], yet is [t]) (or moving to a state where we
-       we should not ask for one more symbol, yet constructing [InputNeeded])
-       -- NOT PREVENTED *)
+       by correlating 'a nonterminal with 'a) *)
 
   let _feed_nonterminal nt startp semv endp (env : env) : env =
     let source : state = env.current in
@@ -792,7 +792,7 @@ module Make (T : TABLE) = struct
      by calling [run env] or [initiate env]. Instead, it returns [env] to the
      user, or raises [Error]. *)
 
-  let _force_reduction prod (env : env) : env =
+  let force_reduction prod (env : env) : env =
     (* Check if this reduction is permitted. This check is REALLY important.
        The stack must have the correct shape: that is, it must be sufficiently
        high, and must contain semantic values of appropriate types, otherwise
@@ -810,13 +810,11 @@ module Make (T : TABLE) = struct
       { env with stack; current }
     end
 
-  let _has_default_reduction (state : _ lr1state) : production option =
-    T.default_reduction state
-      (fun () prod -> Some prod)
-      (fun () -> None)
-      ()
-
   (* TEMPORARY potential danger:
+     - messing up the lookahead (i.e. moving to a state where the lookahead
+       symbol cannot be [t], yet is [t]) (or moving to a state where we
+       we should not ask for one more symbol, yet constructing [InputNeeded])
+       -- NOT PREVENTED
      - violates the invariant that an input token is normally demanded only
        in a state [s] whose incoming symbol is a terminal symbol
        and which does not have a default reduction on [#]
@@ -824,7 +822,7 @@ module Make (T : TABLE) = struct
        (not really problematic? but worth noting)
      - for type safety, should correlate 'a env with 'a checkpoint
    *)
-  let _input_needed (env : env) : 'a checkpoint =
+  let input_needed (env : env) : 'a checkpoint =
     InputNeeded env
 
 end
