@@ -29,3 +29,5 @@ module MakeEngineTable
      and type token = T.token
      and type semantic_value = Obj.t
      and type production = int
+     and type terminal = int
+     and type nonterminal = int
