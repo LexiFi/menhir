@@ -224,6 +224,14 @@ module Make
 
   (* ------------------------------------------------------------------------ *)
 
+  (* The following is the implementation of the function [feed]. This function
+     is logically part of the LR engine, so it would be nice if it were placed
+     in the module [Engine], but it must be placed here because, to ensure
+     type safety, its arguments must be a symbol of type ['a symbol] and a
+     semantic value of type ['a]. The type ['a symbol] is not available in
+     [Engine]. It is available here. *)
+
+
   open ET
   open EngineTypes
 
