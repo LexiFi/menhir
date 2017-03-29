@@ -782,9 +782,6 @@ module Make (T : TABLE) = struct
     if not (T.may_reduce env.current prod) then
       invalid_arg "force_reduction: this reduction is not permitted in this state"
     else begin
-      (* Log a reduction event. *)
-      if log then
-        Log.reduce_or_accept prod;
       (* Invoke the semantic action. *)
       let stack = T.semantic_action prod env in
       (* Perform a goto transition. *)
