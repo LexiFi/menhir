@@ -454,7 +454,7 @@ module Make (T : TABLE) = struct
     | AboutToReduce (env, prod) ->
         Obj.magic reduce env prod
     | _ ->
-        invalid_arg "resume expects HandlingError | AboutToReduce"
+        invalid_arg "resume expects HandlingError | Shifting | AboutToReduce"
 
   (* ------------------------------------------------------------------------ *)
   (* ------------------------------------------------------------------------ *)
