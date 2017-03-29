@@ -48,7 +48,9 @@ module Make
         with type terminal = int
          and type nonterminal = int
          and type semantic_value = Obj.t)
-  (E  : sig type 'a env = (ET.state, ET.semantic_value, ET.token) EngineTypes.env end)
+  (E : sig
+     type 'a env = (ET.state, ET.semantic_value, ET.token) EngineTypes.env
+   end)
 = struct
 
   (* Including [IT] is an easy way of inheriting the definitions of the types
