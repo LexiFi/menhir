@@ -233,25 +233,34 @@ module Make
      semantic value of type ['a]. The type ['a symbol] is not available in
      [Engine]. It is available here. *)
 
-
-  open ET
   open EngineTypes
+  open ET
+  open E
 
-  (* TEMPORARY potential danger:
-     - attempting to take a transition that does not exist
-       (checked at runtime; raises Invalid_argument)
-     - supplying a semantic value of incorrect type (statically checked
-       by correlating 'a nonterminal with 'a) *)
+  (* [feed] fails if the current state does not have an outgoing transition
+     labeled with the desired symbol. This check is carried out at runtime. *)
 
   let feed_failure () =
     invalid_arg "feed: outgoing transition does not exist"
 
-  let feed_nonterminal nt startp semv endp (env : _ E.env) =
-    let source : state = env.current in
+  (* Feeding a nonterminal symbol [nt]. Here, [nt] has type [nonterminal],
+     which is a synonym for [int], and [semv] has type [semantic_value],
+     which is a synonym for [Obj.t]. This type is unsafe, because pushing
+     a semantic value of arbitrary type into the stack can later cause a
+     semantic action to crash and burn. The function [feed] is given a safe
+     type below. *)
+
+  let feed_nonterminal
+        (nt : nonterminal) startp (semv : semantic_value) endp (env : 'b env)
+      : 'b env
+  =
+    (* Check if the source state has an outgoing transition labeled [nt].
+       This is done by consulting the [goto] table. *)
+    let source = env.current in
     match ET.maybe_goto_nt source nt with
     | None ->
         feed_failure()
-    | Some (target : state) ->
+    | Some target ->
         (* Push a new cell onto the stack, containing the identity of the state
            that we are leaving. The semantic value [semv] and positions [startp]
            and [endp] contained in the new cell are provided by the caller. *)
@@ -259,24 +268,29 @@ module Make
         (* Move to the target state. *)
         { env with stack; current = target }
 
-  let feed_terminal terminal startp semv endp env =
-    ET.action
-      env.current
-      terminal
-      semv
-      (fun env _please_discard terminal semv s' ->
-        if log then
-          Log.shift terminal s';
-        let stack = {
-          state = env.current; semv; startp; endp; next = env.stack;
-        } in
-        { env with stack; current = s' }
-      )
-      (fun _env _prod -> feed_failure())
-      (fun _env ->       feed_failure())
-      env
+  let reduce   _env _prod = feed_failure()
+  let initiate _env       = feed_failure()
 
-  let feed symbol startp semv endp env =
+  let feed_terminal
+        (terminal : terminal) startp (semv : semantic_value) endp (env : 'b env)
+      : 'b env
+  =
+    (* Check if the source state has an outgoing transition labeled [terminal].
+       This is done by consulting the [action] table. *)
+    let source = env.current in
+    ET.action source terminal semv
+      (fun env _please_discard _terminal semv target ->
+        (* There is indeed a transition toward the state [target].
+           Push a new cell onto the stack and move to the target state. *)
+        let stack = { state = source; semv; startp; endp; next = env.stack } in
+        { env with stack; current = target }
+      ) reduce initiate env
+
+  (* The type assigned to [feed] ensures that the type of the semantic value
+     [semv] is appropriate: it must be the semantic-value type of the symbol
+     [symbol]. *)
+
+  let feed (symbol : 'a symbol) startp (semv : 'a) endp env =
     let semv : semantic_value = Obj.repr semv in
     match symbol with
     | N nt ->
