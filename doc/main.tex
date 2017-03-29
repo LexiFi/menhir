@@ -2125,11 +2125,14 @@ the name of the start symbol.) The generated file \texttt{parser.mli} contains
 the following declaration:
 \begin{verbatim}
   module Incremental : sig
-    val main: Lexing.position -> thing MenhirInterpreter.checkpoint
+    val main: position -> thing MenhirInterpreter.checkpoint
   end
 \end{verbatim}
 The argument is the initial position. If the lexer is based on an OCaml
 lexing buffer, this argument should be \verb+lexbuf.lex_curr_p+.
+In \sref{sec:incremental} and \sref{sec:inspection},
+the type \verb+position+ is a synonym for \verb+Lexing.position+.
+
 We emphasize that the function \verb+Incremental.main+ does not parse
 anything. It constructs a checkpoint which serves as a \emph{starting}
 point. The functions \verb+offer+ and \verb+resume+, described below, are used
@@ -2217,7 +2220,7 @@ transitions and possibly handle errors in a different manner, if desired.
 \begin{verbatim}
   val offer:
     'a checkpoint ->
-    token * Lexing.position * Lexing.position ->
+    token * position * position ->
     'a checkpoint
 \end{verbatim}
 
@@ -2256,7 +2259,7 @@ give a few more type definitions.
 
 \begin{verbatim}
   type supplier =
-    unit -> token * Lexing.position * Lexing.position
+    unit -> token * position * position
 \end{verbatim}
 
 A token supplier is a function of no arguments which delivers a new token
@@ -2347,7 +2350,7 @@ The states of the LR(1) automaton are numbered (from 0 and up).
 
 \begin{verbatim}
   type element =
-    | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
+    | Element: 'a lr1state * 'a * position * position -> element
 \end{verbatim}
 
 The type \verb+element+ describes one entry in the stack of the LR(1)
@@ -2396,7 +2399,7 @@ constant time.
 %% val positions
 
 \begin{verbatim}
-  val positions: env -> Lexing.position * Lexing.position
+  val positions: env -> position * position
 \end{verbatim}
 
 The function \verb+positions+ returns the start and end positions of the

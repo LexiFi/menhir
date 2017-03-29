@@ -11,6 +11,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
+type position = Lexing.position
+
 open General
 
 (* This signature describes the incremental LR engine. *)
@@ -78,7 +80,7 @@ module type INCREMENTAL_ENGINE = sig
 
   val offer:
     'a checkpoint ->
-    token * Lexing.position * Lexing.position ->
+    token * position * position ->
     'a checkpoint
 
   (* [resume] allows the user to resume the parser after it has suspended
@@ -94,7 +96,7 @@ module type INCREMENTAL_ENGINE = sig
      (together with its start and end positions) every time it is called. *)
 
   type supplier =
-    unit -> token * Lexing.position * Lexing.position
+    unit -> token * position * position
 
   (* A pair of a lexer and a lexing buffer can be easily turned into a supplier. *)
 
@@ -180,7 +182,7 @@ module type INCREMENTAL_ENGINE = sig
      hypothetical token, and may be picked up by the semantic actions. We
      suggest using the position where the error was detected. *)
 
-  val acceptable: 'a checkpoint -> token -> Lexing.position -> bool
+  val acceptable: 'a checkpoint -> token -> position -> bool
 
   (* [pop env] returns a new environment, where the parser's top stack cell
      has been popped off. (If the stack is empty, [None] is returned.) This
@@ -236,7 +238,7 @@ module type INCREMENTAL_ENGINE = sig
      has type ['a]. In other words, the type [element] is an existential type. *)
 
   type element =
-    | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
+    | Element: 'a lr1state * 'a * position * position -> element
 
   (* The parser's stack is (or, more precisely, can be viewed as) a stream of
      elements. The type [stream] is defined by the module [General]. *)
@@ -255,7 +257,7 @@ module type INCREMENTAL_ENGINE = sig
      invoked in an initial state, this function returns a pair of twice the
      initial position. *)
 
-  val positions: 'a env -> Lexing.position * Lexing.position
+  val positions: 'a env -> position * position
 
   (* This tells whether the parser is about to perform a default reduction.
      In particular, when applied to an environment taken from a result of
@@ -391,7 +393,7 @@ module type INSPECTION = sig
      determined by [env]) has an outgoing transition labeled with [symbol].
      Otherwise, [Invalid_argument _] is raised. *)
 
-  val feed: 'a symbol -> Lexing.position -> 'a -> Lexing.position -> 'b env -> 'b env
+  val feed: 'a symbol -> position -> 'a -> position -> 'b env -> 'b env
 
 end
 
