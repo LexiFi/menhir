@@ -38,11 +38,11 @@ module Make
         with type terminal = int
          and type nonterminal = int
          and type semantic_value = Obj.t)
-  (E  : sig type env = (ET.state, ET.semantic_value, ET.token) EngineTypes.env end)
+  (E  : sig type 'a env = (ET.state, ET.semantic_value, ET.token) EngineTypes.env end)
 
 : IncrementalEngine.INSPECTION
   with type 'a terminal := 'a IT.terminal
    and type 'a nonterminal := 'a IT.nonterminal
    and type 'a lr1state := 'a IT.lr1state
    and type production := int
-   and type env := E.env
+   and type 'a env := 'a E.env

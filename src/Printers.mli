@@ -66,12 +66,11 @@ module Make
      as a number; then the list of its LR(0) items is printed. (Ending with
      a newline.) *)
 
-  val print_current_state: env -> unit
+  val print_current_state: 'a env -> unit
 
   (* Printing a summary of the stack and current state. This function just
      calls [print_stack] and [print_current_state] in succession. *)
 
-  val print_env: env -> unit
+  val print_env: 'a env -> unit
 
 end
-

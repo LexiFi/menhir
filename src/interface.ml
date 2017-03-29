@@ -118,7 +118,7 @@ let inspection_api grammar () =
         [], "production", TypApp ("production", []);
         [ a ], TokenType.tctokengadt, TokenType.ttokengadt (TypVar a);
         [ a ], NonterminalType.tcnonterminalgadt, NonterminalType.tnonterminalgadt (TypVar a);
-        [], "env", TypApp ("env", []);
+        [ a ], "env", TypApp ("env", [ TypVar a ]);
       ]
   ) ::
 

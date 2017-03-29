@@ -48,7 +48,7 @@ module Make
         with type terminal = int
          and type nonterminal = int
          and type semantic_value = Obj.t)
-  (E  : sig type env = (ET.state, ET.semantic_value, ET.token) EngineTypes.env end)
+  (E  : sig type 'a env = (ET.state, ET.semantic_value, ET.token) EngineTypes.env end)
 = struct
 
   (* Including [IT] is an easy way of inheriting the definitions of the types
@@ -234,7 +234,7 @@ module Make
   let feed_failure () =
     invalid_arg "feed: outgoing transition does not exist"
 
-  let feed_nonterminal nt startp semv endp (env : E.env) =
+  let feed_nonterminal nt startp semv endp (env : _ E.env) =
     let source : state = env.current in
     match ET.maybe_goto_nt source nt with
     | None ->

@@ -27,7 +27,7 @@ module Make (T : TABLE) = struct
 
   include T
 
-  type env =
+  type 'a env =
       (state, semantic_value, token) EngineTypes.env
 
   (* --------------------------------------------------------------------------- *)
@@ -40,11 +40,16 @@ module Make (T : TABLE) = struct
      (i.e., continuations) that do not make sense. (Such continuations could
      potentially violate the LR invariant and lead to crashes.) *)
 
+  (* 2017/03/29 Although [checkpoint] is a private type, we now expose a
+     constructor function, [input_needed]. This function allows manufacturing
+     a checkpoint out of an environment. For this reason, the type [env] must
+     also be parameterized with ['a]. *)
+
   type 'a checkpoint =
-    | InputNeeded of env
-    | Shifting of env * env * bool
-    | AboutToReduce of env * production
-    | HandlingError of env
+    | InputNeeded of 'a env
+    | Shifting of 'a env * 'a env * bool
+    | AboutToReduce of 'a env * production
+    | HandlingError of 'a env
     | Accepted of 'a
     | Rejected
 
@@ -736,7 +741,7 @@ module Make (T : TABLE) = struct
   (* TEMPORARY comment *)
   (* TEMPORARY add calls to new [Log] functions? : log [pop], [feed], [force] *)
 
-  let pop (env : env) : env option =
+  let pop (env : 'a env) : 'a env option =
     let cell = env.stack in
     let next = cell.next in
     if next == cell then
@@ -754,7 +759,7 @@ module Make (T : TABLE) = struct
      by calling [run env] or [initiate env]. Instead, it returns [env] to the
      user, or raises [Error]. *)
 
-  let force_reduction prod (env : env) : env =
+  let force_reduction prod (env : 'a env) : 'a env =
     (* Check if this reduction is permitted. This check is REALLY important.
        The stack must have the correct shape: that is, it must be sufficiently
        high, and must contain semantic values of appropriate types, otherwise
@@ -784,7 +789,7 @@ module Make (T : TABLE) = struct
        (not really problematic? but worth noting)
      - for type safety, should correlate 'a env with 'a checkpoint
    *)
-  let input_needed (env : env) : 'a checkpoint =
+  let input_needed (env : 'a env) : 'a checkpoint =
     InputNeeded env
 
 end

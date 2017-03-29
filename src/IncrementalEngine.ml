@@ -47,15 +47,27 @@ module type INCREMENTAL_ENGINE = sig
   (* [HandlingError] is an intermediate checkpoint. It means that the parser has
      detected an error and is currently handling it, in several steps. *)
 
-  type env
+  (* A value of type ['a env] represents a configuration of the automaton:
+     current state, stack, lookahead token, etc. The parameter ['a] is the
+     type of the semantic value that will eventually be produced if the parser
+     succeeds. *)
+
+  (* In normal operation, the parser works with checkpoints: see the functions
+     [offer] and [resume]. However, it is also possible to work directly with
+     environments (see the functions [pop], [force_reduction], and [feed]) and
+     to reconstruct a checkpoint out of an environment (see [input_needed]).
+     This is considered advanced functionality; its purpose is to allow error
+     recovery strategies to be programmed by the user. *)
+
+  type 'a env
 
   type production
 
   type 'a checkpoint = private
-    | InputNeeded of env
-    | Shifting of env * env * bool
-    | AboutToReduce of env * production
-    | HandlingError of env
+    | InputNeeded of 'a env
+    | Shifting of 'a env * 'a env * bool
+    | AboutToReduce of 'a env * production
+    | HandlingError of 'a env
     | Accepted of 'a
     | Rejected
 
@@ -150,7 +162,7 @@ module type INCREMENTAL_ENGINE = sig
      their side-effects be harmless (replayable). *)
 
   val loop_test:
-    (env -> 'accu -> 'accu) ->
+    ('a env -> 'accu -> 'accu) ->
     'a checkpoint -> 'accu -> 'accu
 
   (* The function [loop_test] can be used, after an error has been detected, to
@@ -175,7 +187,7 @@ module type INCREMENTAL_ENGINE = sig
      amounts to pretending that the (terminal or nonterminal) symbol that
      corresponds to this stack cell has not been read. *)
 
-  val pop: env -> env option
+  val pop: 'a env -> 'a env option
 
   (* [force_reduction prod env] should be called only if in the current state
      (as determined by [env]) the parser is capable of reducing the production
@@ -184,7 +196,7 @@ module type INCREMENTAL_ENGINE = sig
      effects!) and the automaton makes a goto (nonterminal) transition. If
      this condition is not satisfied, [Invalid_argument _] is raised. *)
 
-  val force_reduction: production -> env -> env
+  val force_reduction: production -> 'a env -> 'a env
 
   (* [input_needed env] returns [InputNeeded env]. That is, out of an [env]
      that might have been obtained via a series of calls to the functions
@@ -200,7 +212,7 @@ module type INCREMENTAL_ENGINE = sig
      Menhir's new error reporting facility, this could cause the parser to
      reach an error state for which no error message has been prepared. *)
 
-  val input_needed: env -> 'a checkpoint
+  val input_needed: 'a env -> 'a checkpoint
 
   (* The abstract type ['a lr1state] describes the non-initial states of the
      LR(1) automaton. The index ['a] represents the type of the semantic value
@@ -237,20 +249,20 @@ module type INCREMENTAL_ENGINE = sig
      automaton's current state is the one found in the top element of the
      stack. *)
 
-  val stack: env -> stack
+  val stack: 'a env -> stack
 
   (* These are the start and end positions of the current lookahead token. If
      invoked in an initial state, this function returns a pair of twice the
      initial position. *)
 
-  val positions: env -> Lexing.position * Lexing.position
+  val positions: 'a env -> Lexing.position * Lexing.position
 
   (* This tells whether the parser is about to perform a default reduction.
      In particular, when applied to an environment taken from a result of
      the form [AboutToReduce (env, prod)], this tells whether the reduction
      that is about to take place is a default reduction. *)
 
-  val has_default_reduction: env -> bool
+  val has_default_reduction: 'a env -> bool
 
 end
 
@@ -369,7 +381,7 @@ module type INSPECTION = sig
 
   (* The type [env] is meant to be the same as in [INCREMENTAL_ENGINE]. *)
 
-  type env
+  type 'a env
 
   (* [feed symbol startp semv endp env] forces the parser to consume the
      (terminal or nonterminal) symbol [symbol], accompanied with the semantic
@@ -379,7 +391,7 @@ module type INSPECTION = sig
      determined by [env]) has an outgoing transition labeled with [symbol].
      Otherwise, [Invalid_argument _] is raised. *)
 
-  val feed: 'a symbol -> Lexing.position -> 'a -> Lexing.position -> env -> env
+  val feed: 'a symbol -> Lexing.position -> 'a -> Lexing.position -> 'b env -> 'b env
 
 end
 
@@ -392,6 +404,6 @@ module type EVERYTHING = sig
   include INSPECTION
     with type 'a lr1state := 'a lr1state
     with type production := production
-    with type env := env
+    with type 'a env := 'a env
 
 end
