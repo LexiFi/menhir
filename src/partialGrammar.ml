@@ -315,35 +315,35 @@ let empty_symbol_table () : symbol_table =
   Hashtbl.create 13
 
 let store_symbol (symbols : symbol_table) symbol kind =
-  try
-    let sym_info = find_symbol symbols symbol in
-      match sym_info, kind with
+  match find_symbol symbols symbol, kind with
 
-        (* There are two definitions of the same symbol in one
-           particular unit. This is forbidden. *)
-        | (PublicNonTerminal p | PrivateNonTerminal p),
-          (PublicNonTerminal p' | PrivateNonTerminal p') ->
-            Error.error [ p; p']
-                 "the nonterminal symbol %s is multiply defined."
-                 symbol
+  (* The symbol is not known so far. Add it. *)
+  | exception Not_found ->
+      add_in_symbol_table symbols symbol kind
 
-        (* The symbol is known to be a token but declared as a nonterminal.*)
-        | (Token tkp, (PrivateNonTerminal p | PublicNonTerminal p))
-        | ((PrivateNonTerminal p | PublicNonTerminal p), Token tkp) ->
-            Error.error [ p; tkp.tk_position ]
-                 "the identifier %s is a reference to a token."
-                 symbol
+  (* There are two definitions of this symbol in one unit.
+     This is forbidden. *)
+  | (PublicNonTerminal p | PrivateNonTerminal p),
+    (PublicNonTerminal p' | PrivateNonTerminal p') ->
+      Error.error [ p; p']
+        "the nonterminal symbol %s is multiply defined."
+        symbol
 
-        (* We do not gain any piece of information. *)
-        | _, DontKnow _ | Token _, Token _ ->
-            symbols
+  (* The symbol is known to be a token but declared as a nonterminal.*)
+  | (Token tkp, (PrivateNonTerminal p | PublicNonTerminal p))
+  | ((PrivateNonTerminal p | PublicNonTerminal p), Token tkp) ->
+      Error.error [ p; tkp.tk_position ]
+           "the identifier %s is a reference to a token."
+           symbol
 
-        (* We learn that the symbol is a nonterminal or a token. *)
-        | DontKnow _, _ ->
-            replace_in_symbol_table symbols symbol kind
+  (* We do not gain any piece of information. *)
+  | _, DontKnow _
+  | Token _, Token _ ->
+      symbols
 
-  with Not_found ->
-    add_in_symbol_table symbols symbol kind
+  (* We learn that the symbol is a nonterminal or a token. *)
+  | DontKnow _, _ ->
+      replace_in_symbol_table symbols symbol kind
 
 let store_used_symbol position tokens symbols symbol =
   let kind =
