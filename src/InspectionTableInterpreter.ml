@@ -61,7 +61,9 @@ module Make
   (* This auxiliary function decodes a packed linearized array, as created by
      [TableBackend.linearize_and_marshal1]. Here, we read a row all at once. *)
 
-  let read_packed_linearized ((data, entry) : PackedIntArray.t * PackedIntArray.t) (i : int) : int list =
+  let read_packed_linearized
+    (data, entry : PackedIntArray.t * PackedIntArray.t) (i : int) : int list
+  =
     LinearizedArray.read_row_via
       (PackedIntArray.get data)
       (PackedIntArray.get entry)
