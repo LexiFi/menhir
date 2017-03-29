@@ -22,3 +22,10 @@ module Make (T : TABLE)
    and type semantic_value = T.semantic_value
    and type production = T.production
    and type env = (T.state, T.semantic_value, T.token) EngineTypes.env
+
+(* We would prefer not to expose the definition of the type [env].
+   However, it must be exposed because some of the code in the
+   inspection API needs access to the engine's internals; see
+   [InspectionTableInterpreter]. Everything would be simpler if
+   --inspection was always ON, but that would lead to bigger parse
+   tables for everybody. *)
