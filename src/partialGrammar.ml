@@ -321,24 +321,31 @@ let store_symbol (symbols : symbol_table) symbol kind =
   | exception Not_found ->
       add_in_symbol_table symbols symbol kind
 
-  (* There are two definitions of this symbol in one unit.
+  (* There are two definitions of this symbol in one grammatical unit
+     (that is, one .mly file), and at least one of them is private.
      This is forbidden. *)
-  | (PublicNonTerminal p | PrivateNonTerminal p),
-    (PublicNonTerminal p' | PrivateNonTerminal p') ->
+  | PrivateNonTerminal p, PrivateNonTerminal p'
+  | PublicNonTerminal p, PrivateNonTerminal p'
+  | PrivateNonTerminal p, PublicNonTerminal p' ->
       Error.error [ p; p']
-        "the nonterminal symbol %s is multiply defined."
+        "the nonterminal symbol %s is multiply defined.\n\
+         Only %%public symbols can have split definitions."
         symbol
 
   (* The symbol is known to be a token but declared as a nonterminal.*)
-  | (Token tkp, (PrivateNonTerminal p | PublicNonTerminal p))
-  | ((PrivateNonTerminal p | PublicNonTerminal p), Token tkp) ->
+  | Token tkp, (PrivateNonTerminal p | PublicNonTerminal p)
+  | (PrivateNonTerminal p | PublicNonTerminal p), Token tkp ->
       Error.error [ p; tkp.tk_position ]
            "the identifier %s is a reference to a token."
            symbol
 
-  (* We do not gain any piece of information. *)
+  (* In the following cases, we do not gain any piece of information.
+     As of 2017/03/29, splitting the definition of a %public nonterminal
+     symbol is permitted. (It used to be permitted over multiple units,
+     but forbidden within a single unit.) *)
   | _, DontKnow _
-  | Token _, Token _ ->
+  | Token _, Token _
+  | PublicNonTerminal _, PublicNonTerminal _ ->
       symbols
 
   (* We learn that the symbol is a nonterminal or a token. *)
