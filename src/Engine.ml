@@ -756,29 +756,37 @@ module Make (T : TABLE) = struct
      reason, we move its definition to [InspectionTableInterpreter], where
      the inspection API is available. *)
 
+  (* [pop] pops one stack cell. It cannot go wrong. *)
+
   let pop (env : 'a env) : 'a env option =
     let cell = env.stack in
     let next = cell.next in
     if next == cell then
+      (* The stack is empty. *)
       None
     else
+      (* The stack is nonempty. Pop off one cell. *)
       Some { env with stack = next; current = cell.state }
 
-  (* TEMPORARY potential danger:
-     - should invoke this ONLY when the stack shape allows this reduction!
-       otherwise the semantic action could crash.
-       (checked at runtime; raises Invalid_argument)
-     - semantic action can raise [Error] *)
+  (* [force_reduction] is analogous to [reduce], except that it does not
+     continue by calling [run env] or [initiate env]. Instead, it returns
+     [env] to the user. *)
 
-  (* This function is analogous to [reduce], except that it does not continue
-     by calling [run env] or [initiate env]. Instead, it returns [env] to the
-     user, or raises [Error]. *)
+  (* [force_reduction] is dangerous insofar as it executes a semantic action.
+     This semantic action could have side effects: nontermination, state,
+     exceptions, input/output, etc. *)
 
   let force_reduction prod (env : 'a env) : 'a env =
     (* Check if this reduction is permitted. This check is REALLY important.
        The stack must have the correct shape: that is, it must be sufficiently
        high, and must contain semantic values of appropriate types, otherwise
        the semantic action will crash and burn. *)
+    (* We currently check whether the current state is WILLING to reduce this
+       production (i.e., there is a reduction action in the action table row
+       associated with this state), whereas it would be more liberal to check
+       whether this state is CAPABLE of reducing this production (i.e., the
+       stack has an appropriate shape). We currently have no means of
+       performing such a check. *)
     if not (T.may_reduce env.current prod) then
       invalid_arg "force_reduction: this reduction is not permitted in this state"
     else begin
@@ -789,18 +797,23 @@ module Make (T : TABLE) = struct
       { env with stack; current }
     end
 
-  (* TEMPORARY potential danger:
-     - messing up the lookahead (i.e. moving to a state where the lookahead
-       symbol cannot be [t], yet is [t]) (or moving to a state where we
-       we should not ask for one more symbol, yet constructing [InputNeeded])
-       -- NOT PREVENTED
-     - violates the invariant that an input token is normally demanded only
-       in a state [s] whose incoming symbol is a terminal symbol
-       and which does not have a default reduction on [#]
-       (so the lookahead can still be messed up)
-       (not really problematic? but worth noting)
-     - for type safety, should correlate 'a env with 'a checkpoint
-   *)
+  (* The environment manipulation functions -- [pop] and [force_reduction]
+     above, plus [feed] -- manipulate the automaton's stack and current state,
+     but do not affect the automaton's lookahead symbol. When the function
+     [input_needed] is used to go back from an environment to a checkpoint
+     (and therefore, resume normal parsing), the lookahead symbol is clobbered
+     anyway, since the only action that the user can take is to call [offer].
+     So far, so good. One problem, though, is that this call to [offer] may
+     well place the automaton in a configuration of a state [s] and a
+     lookahead symbol [t] that is normally unreachable. Also, perhaps the
+     state [s] is a state where an input symbol normally is never demanded, so
+     this [InputNeeded] checkpoint is fishy. There does not seem to be a deep
+     problem here, but, when programming an error recovery strategy, one
+     should pay some attention to this issue. Ideally, perhaps, one should use
+     [input_needed] only in a state [s] where an input symbol is normally
+     demanded, that is, a state [s] whose incoming symbol is a terminal symbol
+     and which does not have a default reduction on [#]. *)
+
   let input_needed (env : 'a env) : 'a checkpoint =
     InputNeeded env
 
