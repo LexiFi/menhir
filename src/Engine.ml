@@ -742,8 +742,19 @@ module Make (T : TABLE) = struct
 
   (* ------------------------------------------------------------------------ *)
 
-  (* TEMPORARY comment *)
-  (* TEMPORARY add calls to new [Log] functions? : log [pop], [feed], [force] *)
+  (* The following functions work at the level of environments (as opposed to
+     checkpoints). The function [pop] causes the automaton to go back into the
+     past, pretending that the last input symbol has never been read. The
+     function [force_reduction] causes the automaton to re-interpret the past,
+     by recognizing the right-hand side of a production and reducing this
+     production. The function [feed] causes the automaton to progress into the
+     future by pretending that a (terminal or nonterminal) symbol has been
+     read. *)
+
+  (* The function [feed] would ideally be defined here. However, for this
+     function to be type-safe, the GADT ['a symbol] is needed. For this
+     reason, we move its definition to [InspectionTableInterpreter], where
+     the inspection API is available. *)
 
   let pop (env : 'a env) : 'a env option =
     let cell = env.stack in
