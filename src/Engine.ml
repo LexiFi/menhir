@@ -4,13 +4,14 @@
 (*                                                                            *)
 (*                       François Pottier, Inria Paris                        *)
 (*              Yann Régis-Gianas, PPS, Université Paris Diderot              *)
-(*                                                                            *)
+(* *)
 (*  Copyright Inria. All rights reserved. This file is distributed under the  *)
 (*  terms of the GNU Library General Public License version 2, with a         *)
 (*  special exception on linking, as described in the file LICENSE.           *)
 (*                                                                            *)
 (******************************************************************************)
 
+type position = Lexing.position
 open EngineTypes
 
 (* The LR parsing engine. *)
@@ -30,15 +31,16 @@ module Make (T : TABLE) = struct
   type 'a env =
       (state, semantic_value, token) EngineTypes.env
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* The type [checkpoint] represents an intermediate or final result of the
      parser. See [EngineTypes]. *)
 
   (* The type [checkpoint] is presented to the user as a private type (see
-     [IncrementalEngine]). This prevents the user from manufacturing checkpoints
-     (i.e., continuations) that do not make sense. (Such continuations could
-     potentially violate the LR invariant and lead to crashes.) *)
+     [IncrementalEngine]). This prevents the user from manufacturing
+     checkpoints (i.e., continuations) that do not make sense. (Such
+     continuations could potentially violate the LR invariant and lead to
+     crashes.) *)
 
   (* 2017/03/29 Although [checkpoint] is a private type, we now expose a
      constructor function, [input_needed]. This function allows manufacturing
@@ -53,7 +55,7 @@ module Make (T : TABLE) = struct
     | Accepted of 'a
     | Rejected
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* In the code-based back-end, the [run] function is sometimes responsible
      for pushing a new cell on the stack. This is motivated by code sharing
@@ -70,8 +72,9 @@ module Make (T : TABLE) = struct
      requesting the next token might drive the lexer off the end of the input
      stream.)
 
-     If, on the other hand, [run] is invoked after performing a goto transition,
-     or invoked directly by an entry point, then there is nothing to discard.
+     If, on the other hand, [run] is invoked after performing a goto
+     transition, or invoked directly by an entry point, then there is nothing
+     to discard.
 
      These two cases are reflected in [CodeBackend.gettoken].
 
@@ -163,7 +166,7 @@ module Make (T : TABLE) = struct
         initiate                       (* failure continuation *)
         env
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* This function takes care of shift transitions along a terminal symbol.
      (Goto transitions are taken care of within [reduce] below.) The symbol
@@ -207,7 +210,7 @@ module Make (T : TABLE) = struct
 
     Shifting (env, new_env, please_discard)
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* The function [announce_reduce] stops the parser and returns a checkpoint
      which allows the parser to be resumed by calling [reduce]. *)
@@ -275,7 +278,7 @@ module Make (T : TABLE) = struct
     (* Finish. *)
     Accepted v
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* The following functions deal with errors. *)
 
@@ -308,7 +311,8 @@ module Make (T : TABLE) = struct
 
   and error_shift env please_discard terminal value s' =
 
-    (* Here, [terminal] is [T.error_terminal], and [value] is [T.error_value]. *)
+    (* Here, [terminal] is [T.error_terminal],
+       and [value] is [T.error_value]. *)
 
     assert (terminal = T.error_terminal && value = T.error_value);
 
@@ -357,14 +361,14 @@ module Make (T : TABLE) = struct
 
   (* End of the nest of tail recursive functions. *)
 
-  (* --------------------------------------------------------------------------- *)
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
+  (* ------------------------------------------------------------------------ *)
 
   (* The incremental interface. See [EngineTypes]. *)
 
   (* [start s] begins the parsing process. *)
 
-  let start (s : state) (initial : Lexing.position) : semantic_value checkpoint =
+  let start (s : state) (initial : position) : semantic_value checkpoint =
 
     (* Build an empty stack. This is a dummy cell, which is its own successor.
        Its [next] field WILL be accessed by [error_fail] if an error occurs and
@@ -434,7 +438,7 @@ module Make (T : TABLE) = struct
      [t checkpoint] where [t] is the type of the start symbol.) *)
 
   let offer : 'a . 'a checkpoint ->
-                   token * Lexing.position * Lexing.position ->
+                   token * position * position ->
                    'a checkpoint
   = function
     | InputNeeded env ->
@@ -452,17 +456,17 @@ module Make (T : TABLE) = struct
     | _ ->
         invalid_arg "resume expects HandlingError | AboutToReduce"
 
-  (* --------------------------------------------------------------------------- *)
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
+  (* ------------------------------------------------------------------------ *)
 
   (* The traditional interface. See [EngineTypes]. *)
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* Wrapping a lexer and lexbuf as a token supplier. *)
 
   type supplier =
-    unit -> token * Lexing.position * Lexing.position
+    unit -> token * position * position
 
   let lexer_lexbuf_to_supplier
       (lexer : Lexing.lexbuf -> token)
@@ -474,15 +478,15 @@ module Make (T : TABLE) = struct
       and endp = lexbuf.Lexing.lex_curr_p in
       token, startp, endp
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* The main loop repeatedly handles intermediate checkpoints, until a final
      checkpoint is obtained. This allows implementing the monolithic interface
      ([entry]) in terms of the incremental interface ([start], [offer],
      [handle], [reduce]). *)
 
-  (* By convention, acceptance is reported by returning a semantic value, whereas
-     rejection is reported by raising [Error]. *)
+  (* By convention, acceptance is reported by returning a semantic value,
+     whereas rejection is reported by raising [Error]. *)
 
   (* [loop] is polymorphic in ['a]. No cheating is involved in achieving this.
      All of the cheating resides in the types assigned to [offer] and [handle]
@@ -517,7 +521,7 @@ module Make (T : TABLE) = struct
     let initial = lexbuf.Lexing.lex_curr_p in
     loop (lexer_lexbuf_to_supplier lexer lexbuf) (start s initial)
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* [loop_handle] stops if it encounters an error, and at this point, invokes
      its failure continuation, without letting Menhir do its own traditional
@@ -542,17 +546,17 @@ module Make (T : TABLE) = struct
            success continuation. *)
         succeed v
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* [loop_handle_undo] is analogous to [loop_handle], except it passes a pair
      of checkpoints to the failure continuation.
 
-     The first (and oldest) checkpoint is the last [InputNeeded] checkpoint that
-     was encountered before the error was detected. The second (and newest)
-     checkpoint is where the error was detected, as in [loop_handle]. Going back
-     to the first checkpoint can be thought of as undoing any reductions that
-     were performed after seeing the problematic token. (These reductions must
-     be default reductions or spurious reductions.) *)
+     The first (and oldest) checkpoint is the last [InputNeeded] checkpoint
+     that was encountered before the error was detected. The second (and
+     newest) checkpoint is where the error was detected, as in [loop_handle].
+     Going back to the first checkpoint can be thought of as undoing any
+     reductions that were performed after seeing the problematic token. (These
+     reductions must be default reductions or spurious reductions.) *)
 
   let rec loop_handle_undo succeed fail read (inputneeded, checkpoint) =
     match checkpoint with
@@ -621,7 +625,7 @@ module Make (T : TABLE) = struct
            it can request another token or terminate. *)
         assert false
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* The function [loop_test] can be used, after an error has been detected, to
      dynamically test which tokens would have been accepted at this point. We
@@ -643,7 +647,7 @@ module Make (T : TABLE) = struct
     let checkpoint = offer checkpoint triple in
     loop_test (fun _env _accu -> true) checkpoint false
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* The type ['a lr1state] describes the (non-initial) states of the LR(1)
      automaton. The index ['a] represents the type of the semantic value
@@ -664,7 +668,7 @@ module Make (T : TABLE) = struct
       (fun () -> None)
       ()
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* Stack inspection. *)
 
@@ -674,7 +678,7 @@ module Make (T : TABLE) = struct
      type [element] is an existential type. *)
 
   type element =
-    | Element: 'a lr1state * 'a * Lexing.position * Lexing.position -> element
+    | Element: 'a lr1state * 'a * position * position -> element
 
   open General
 
@@ -715,14 +719,14 @@ module Make (T : TABLE) = struct
   let stack env : element stream =
     stack env.stack env.current
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* Access to the position of the lookahead token. *)
 
   let positions { triple = (_, startp, endp); _ } =
     startp, endp
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* Access to information about default reductions. *)
 
@@ -736,7 +740,7 @@ module Make (T : TABLE) = struct
       (fun _env -> false)
       env
 
-  (* --------------------------------------------------------------------------- *)
+  (* ------------------------------------------------------------------------ *)
 
   (* TEMPORARY comment *)
   (* TEMPORARY add calls to new [Log] functions? : log [pop], [feed], [force] *)
