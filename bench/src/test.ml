@@ -9,6 +9,8 @@ open Auxiliary
    -- set the verbosity on the command line
    -- allow running just one test?
    -- allow recreating all expected output files (just remove them and run)
+   -- also check the contents of .conflicts and .automaton?
+   -- run menhir --explain with -lg 2 -la 2 -lc 2
  *)
 
 (* -------------------------------------------------------------------------- *)
@@ -235,6 +237,29 @@ let process_positive_test basenames : unit =
   let cmd = sep ("cd" :: good :: "&&" :: "diff" :: oppexp :: oppout :: []) in
   if command (silent cmd) <> 0 then
     fail id "menhir --only-preprocess accepts %s,\nbut produces incorrect output.\n(%s)\n"
+      (thisfile basenames)
+      cmd;
+
+  (* Run menhir. *)
+  let out = id ^ ".out" in
+  let cmd = sep (
+    "cd" :: good :: "&&" ::
+    menhir :: "--explain" :: base :: flags
+           :: mlys basenames @ sprintf ">%s" out :: "2>&1" :: []
+  ) in
+  if command cmd <> 0 then begin
+    let cmd = sep ["more"; good_slash out] in
+    fail id "menhir fails on %s.\n%s\n" (thisfile basenames) cmd
+  end;
+
+  (* Check that the file [exp] exists. *)
+  let exp = id ^ ".exp" in
+  check_expected good id out exp;
+
+  (* Check that the output coincides with what was expected. *)
+  let cmd = sep ("cd" :: good :: "&&" :: "diff" :: exp :: out :: []) in
+  if command (silent cmd) <> 0 then
+    fail id "menhir --explain accepts %s,\nbut produces incorrect output.\n(%s)\n"
       (thisfile basenames)
       cmd;
 
