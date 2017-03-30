@@ -22,6 +22,15 @@ let log level format =
       print_string s
   ) format
 
+(* Extend [fail] to display an information message along the way.
+   The message is immediately emitted by the worker, depending on
+   the verbosity level, whereas the failure message is sent back
+   to the master. *)
+
+let fail id format =
+  log 1 "[FAIL] %s\n%!" id;
+  fail format
+
 (* -------------------------------------------------------------------------- *)
 
 (* Paths. *)
@@ -35,6 +44,9 @@ let src =
 
 let bad =
   root ^ "/bench/bad"
+
+let bad_slash filename =
+  bad ^ "/" ^ filename
 
 (* We use the stage 2 executable (i.e., Menhir compiled by Menhir)
    because it has better syntax error messages and we want to test
@@ -96,7 +108,8 @@ let prepare (bits : string list) : command =
   cmd
 
 let process_negative_test basenames : unit =
-  (* Informational message. *)
+
+  (* Display an information message. *)
   let id = id basenames in
   log 1 "Testing %s...\n%!" id;
 
@@ -111,26 +124,33 @@ let process_negative_test basenames : unit =
     "cd" :: bad :: "&&" ::
     menhir :: base :: mlys basenames @ sprintf ">%s" result :: "2>&1" :: []
   ) in
+  if command cmd = 0 then
+    fail id "menhir should not accept %s.\n" (thisfile basenames);
 
-  if command cmd = 0 then begin
-    log 1 "[FAIL] %s\n%!" id;
-    fail "menhir should not accept %s.\n" (thisfile basenames)
+  (* Check that the file [expected] exists. If it does not exist, create
+     it, but fail and invite the user to review it. *)
+  let expected = id ^ ".expected" in
+  if not (file_exists (bad_slash expected)) then begin
+    let cmd = prepare ["cd"; bad; "&&"; "mv"; result; expected] in
+    if command cmd = 0 then
+      let cmd = prepare ["more"; bad_slash expected] in
+      fail id "The file %s did not exist.\n\
+               I have just created it. Please review it.\n%s\n"
+        expected cmd
   end;
 
   (* Check that the output coincides with what was expected. *)
-  let expected = id ^ ".expected" in
   let cmd = prepare (
     "cd" :: bad :: "&&" ::
     "diff" :: expected :: result :: []
   ) in
-  if succeeds cmd then
-    log 1 "[OK] %s\n%!" id
-  else begin
-    log 1 "[FAIL] %s\n%!" id;
-    fail "menhir correctly rejects %s, with incorrect output.\n(%s)\n"
+  if command (silent cmd) <> 0 then
+    fail id "menhir correctly rejects %s, with incorrect output.\n(%s)\n"
       (thisfile basenames)
-      cmd
-  end
+      cmd;
+
+  (* Succeed. *)
+  log 1 "[OK] %s\n%!" id
 
 let process input : output =
   try

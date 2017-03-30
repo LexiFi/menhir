@@ -96,9 +96,6 @@ let get_number_of_cores () =
 let silent command : command =
   command ^ " >/dev/null 2>/dev/null"
 
-let succeeds command : bool =
-  Sys.command (silent command) = 0
-
 (* [groups eq xs] segments the list [xs] into a list of groups, where several
    consecutive elements belong in the same group if they are equivalent in the
    sense of the function [eq]. *)
