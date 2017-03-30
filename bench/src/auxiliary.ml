@@ -140,3 +140,13 @@ let chop_numeric_suffix s =
 
 let equal_up_to_numeric_suffix s1 s2 =
   chop_numeric_suffix s1 = chop_numeric_suffix s2
+
+(* [sep ss] separates the strings in the list [ss] with a space,
+   and concatenates everything, producing a single string. *)
+
+let sep (ss : string list) : string =
+  match ss with
+  | [] ->
+      ""
+  | s :: ss ->
+      List.fold_left (fun s1 s2 -> s1 ^ " " ^ s2) s ss

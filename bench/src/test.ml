@@ -24,19 +24,34 @@ let menhir =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Tests. *)
-
-type input =
-  (* A negative test input is a list of basenames, without the .mly extension.
-     These files must be passed together to menhir. *)
-  | NegativeTest of filename list
+(* Test files and groups of test files. *)
 
 let id basenames =
   (* A name for a group of test files. *)
   if length basenames = 1 then
     hd basenames
   else
-    sprintf "%s[0-9] (%d files)" (chop_numeric_suffix (hd basenames)) (length basenames)
+    sprintf "%s[0-9] (%d files)"
+      (chop_numeric_suffix (hd basenames))
+      (length basenames)
+
+let thisfile basenames =
+  if length basenames > 1 then "these input files" else "this input file"
+
+let mly basename =
+  basename ^ ".mly"
+
+let mlys =
+  map mly
+
+(* -------------------------------------------------------------------------- *)
+
+(* Tests. *)
+
+type input =
+  (* A negative test input is a list of basenames, without the .mly extension.
+     These files must be passed together to menhir. *)
+  | NegativeTest of filename list
 
 let print_input = function
   | NegativeTest basenames ->
@@ -54,18 +69,15 @@ type outputs = output list
 
 let process input : output =
   match input with
+
   | NegativeTest basenames ->
       let id = id basenames in
       printf "Testing %s...\n%!" id;
-      let filenames = map (fun basename -> basename ^ ".mly") basenames in
-      let command = fold_left (fun s1 s2 -> s1 ^ " " ^ s2) menhir filenames in
+      let command = sep (menhir :: mlys basenames) in
       if succeeds command then begin
         printf "[FAIL] %s\n%!" id;
-        let message =
-          sprintf "menhir should not accept %s."
-            (if length basenames > 1 then "these input files" else "this input file")
-        in
-        input, Failure message
+        let msg = sprintf "menhir should not accept %s." (thisfile basenames) in
+        input, Failure msg
       end
       else begin
         printf "[OK] %s\n%!" id;
