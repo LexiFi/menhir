@@ -5,17 +5,39 @@ open Filename
 open Printf
 open Auxiliary
 
-(* TEMPORARY:
-   -- set the verbosity on the command line
-   -- allow running just one test?
+(* TODO:
    -- also check the contents of .conflicts and .automaton?
    -- run menhir --explain with -lg 2 -la 2 -lc 2
  *)
 
 (* -------------------------------------------------------------------------- *)
 
+(* Settings. *)
+
 let create_expected =
-  true
+  ref false
+
+let verbosity =
+  ref 0
+
+let usage =
+  sprintf "Usage: %s\n" argv.(0)
+
+let spec = Arg.align [
+  "--create-expected", Arg.Set create_expected,
+                       " recreate the expected-output files";
+  "--verbosity",       Arg.Int ((:=) verbosity),
+                       " set the verbosity level (0-2)";
+]
+
+let () =
+  Arg.parse spec (fun _ -> ()) usage
+
+let create_expected =
+  !create_expected
+
+let verbosity =
+  !verbosity
 
 (* -------------------------------------------------------------------------- *)
 
@@ -24,9 +46,6 @@ let create_expected =
 (* 0 is minimal verbosity;
    1 shows some progress messages;
    2 is maximal verbosity. *)
-
-let verbosity =
-  1
 
 let log level format =
   kprintf (fun s ->
