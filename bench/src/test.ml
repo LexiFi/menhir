@@ -27,11 +27,20 @@ let menhir =
 (* Tests. *)
 
 type input =
-  | NegativeTest of string (* basename *)
+  (* A negative test input is a list of basenames, without the .mly extension.
+     These files must be passed together to menhir. *)
+  | NegativeTest of filename list
+
+let id basenames =
+  (* A name for a group of test files. *)
+  if length basenames = 1 then
+    hd basenames
+  else
+    sprintf "%s[0-9] (%d files)" (chop_numeric_suffix (hd basenames)) (length basenames)
 
 let print_input = function
-  | NegativeTest basename ->
-      basename
+  | NegativeTest basenames ->
+      hd basenames
 
 type outcome =
   | Success
@@ -45,15 +54,21 @@ type outputs = output list
 
 let process input : output =
   match input with
-  | NegativeTest basename ->
-      printf "Testing %s...\n%!" basename;
-      let command = sprintf "%s %s.mly" menhir basename in
+  | NegativeTest basenames ->
+      let id = id basenames in
+      printf "Testing %s...\n%!" id;
+      let filenames = map (fun basename -> basename ^ ".mly") basenames in
+      let command = fold_left (fun s1 s2 -> s1 ^ " " ^ s2) menhir filenames in
       if succeeds command then begin
-        printf "[FAIL] %s\n%!" basename;
-        input, Failure (sprintf "menhir should not accept %s.mly." basename)
+        printf "[FAIL] %s\n%!" id;
+        let message =
+          sprintf "menhir should not accept %s."
+            (if length basenames > 1 then "these input files" else "this input file")
+        in
+        input, Failure message
       end
       else begin
-        printf "[OK] %s\n%!" basename;
+        printf "[OK] %s\n%!" id;
         input, Success
       end
 
@@ -72,13 +87,18 @@ let run (inputs : inputs) : outputs =
 
 (* Main. *)
 
+(* Menhir can accept several .mly files at once. By convention, if several
+   files have the same name up to a numeric suffix, then they belong in a
+   single group and should be fed together to Menhir. *)
+
 let negative : inputs =
      readdir bad
   |> to_list
   |> filter (has_suffix ".mly")
   |> map chop_extension
   |> sort compare
-  |> map (fun basename -> NegativeTest basename)
+  |> groups equal_up_to_numeric_suffix
+  |> map (fun basenames -> NegativeTest basenames)
 
 let inputs =
   negative
