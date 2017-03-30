@@ -5,6 +5,12 @@ open Filename
 open Printf
 open Auxiliary
 
+(* TEMPORARY:
+   -- set the verbosity on the command line
+   -- allow running just one test?
+   -- allow recreating all expected output files (just remove them and run)
+ *)
+
 (* -------------------------------------------------------------------------- *)
 
 (* Logging. *)
@@ -14,7 +20,7 @@ open Auxiliary
    2 is maximal verbosity. *)
 
 let verbosity =
-  2
+  1
 
 let log level format =
   kprintf (fun s ->
@@ -31,12 +37,11 @@ let fail id format =
   log 1 "[FAIL] %s\n%!" id;
   fail format
 
-(* When preparing an external command, log it along the way. *)
+(* When issuing an external command, log it along the way. *)
 
-let prepare (bits : string list) : command =
-  let cmd = sep bits in
+let command cmd =
   log 2 "%s\n%!" cmd;
-  cmd
+  command cmd
 
 (* -------------------------------------------------------------------------- *)
 
@@ -127,13 +132,32 @@ let print_output (input, outcome) =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Auxiliary functions. *)
+
+let check_expected directory id result expected =
+  (* Check that the file [expected] exists. If it does not exist, create
+     it by renaming [result] to [expected]. Nevertheless, fail, and invite
+     the user to review the newly created file. *)
+  if not (file_exists (directory ^ "/" ^ expected)) then begin
+    let cmd = sep ["cd"; directory; "&&"; "mv"; result; expected] in
+    if command cmd = 0 then
+      let cmd = sep ["more"; directory ^ "/" ^ expected] in
+      fail id "The file %s did not exist.\n\
+               I have just created it. Please review it.\n%s\n"
+        expected cmd
+    else
+      fail id "The file %s does not exist.\n" expected
+  end
+
+(* -------------------------------------------------------------------------- *)
+
 (* Running a negative test. *)
 
 let process_negative_test basenames : unit =
 
   (* Display an information message. *)
   let id = id basenames in
-  log 1 "Testing %s...\n%!" id;
+  log 2 "Testing %s...\n%!" id;
 
   (* A --base option is needed for groups of several files. *)
   let base = if length basenames > 1 then sprintf "--base %s" id else "" in
@@ -142,30 +166,19 @@ let process_negative_test basenames : unit =
   let result = id ^ ".result" in
 
   (* Run Menhir in the directory bad/. *)
-  let cmd = prepare (
+  let cmd = sep (
     "cd" :: bad :: "&&" ::
     menhir :: base :: mlys basenames @ sprintf ">%s" result :: "2>&1" :: []
   ) in
   if command cmd = 0 then
     fail id "menhir should not accept %s.\n" (thisfile basenames);
 
-  (* Check that the file [expected] exists. If it does not exist, create
-     it, but fail and invite the user to review it. *)
+  (* Check that the file [expected] exists. *)
   let expected = id ^ ".expected" in
-  if not (file_exists (bad_slash expected)) then begin
-    let cmd = prepare ["cd"; bad; "&&"; "mv"; result; expected] in
-    if command cmd = 0 then
-      let cmd = prepare ["more"; bad_slash expected] in
-      fail id "The file %s did not exist.\n\
-               I have just created it. Please review it.\n%s\n"
-        expected cmd
-  end;
+  check_expected bad id result expected;
 
   (* Check that the output coincides with what was expected. *)
-  let cmd = prepare (
-    "cd" :: bad :: "&&" ::
-    "diff" :: expected :: result :: []
-  ) in
+  let cmd = sep ("cd" :: bad :: "&&" :: "diff" :: expected :: result :: []) in
   if command (silent cmd) <> 0 then
     fail id "menhir correctly rejects %s, with incorrect output.\n(%s)\n"
       (thisfile basenames)
@@ -191,7 +204,7 @@ let process_positive_test basenames : unit =
 
   (* Display an information message. *)
   let id = id basenames in
-  log 1 "Testing %s...\n%!" id;
+  log 2 "Testing %s...\n%!" id;
 
   (* A --base option is needed for groups of several files. *)
   let base = if length basenames > 1 then sprintf "--base %s" id else "" in
@@ -204,13 +217,26 @@ let process_positive_test basenames : unit =
 
   (* Run menhir --only-preprocess. *)
   let oppout = id ^ ".opp.out" in
-  let cmd = prepare (
+  let cmd = sep (
     "cd" :: good :: "&&" ::
-    menhir :: base :: flags ::
-              mlys basenames @ sprintf ">%s" oppout :: "2>&1" :: []
+    menhir :: "--only-preprocess" :: base :: flags
+           :: mlys basenames @ sprintf ">%s" oppout :: "2>&1" :: []
   ) in
-  if command cmd <> 0 then
-    fail id "menhir rejects %s.\n" (thisfile basenames);
+  if command cmd <> 0 then begin
+    let cmd = sep ["more"; good_slash oppout] in
+    fail id "menhir rejects %s.\n%s\n" (thisfile basenames) cmd
+  end;
+
+  (* Check that the file [oppexp] exists. *)
+  let oppexp = id ^ ".opp.exp" in
+  check_expected good id oppout oppexp;
+
+  (* Check that the output coincides with what was expected. *)
+  let cmd = sep ("cd" :: good :: "&&" :: "diff" :: oppexp :: oppout :: []) in
+  if command (silent cmd) <> 0 then
+    fail id "menhir --only-preprocess accepts %s,\nbut produces incorrect output.\n(%s)\n"
+      (thisfile basenames)
+      cmd;
 
   (* Succeed. *)
   log 1 "[OK] %s\n%!" id
