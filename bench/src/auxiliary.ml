@@ -117,7 +117,7 @@ let rec groups1 eq groups x group ys =
       if eq x y then
         groups1 eq groups x (y :: group) ys
       else
-        groups0 eq (group :: groups) (y :: ys)
+        groups0 eq (List.rev group :: groups) (y :: ys)
 
 and groups0 eq groups ys =
   match ys with
@@ -140,6 +140,13 @@ let chop_numeric_suffix s =
 
 let equal_up_to_numeric_suffix s1 s2 =
   chop_numeric_suffix s1 = chop_numeric_suffix s2
+
+let dash_numeric_suffix =
+  Str.regexp "-[0-9]*$"
+
+let chop_dash_numeric_suffix s =
+  let offset = Str.search_forward dash_numeric_suffix s 0 in
+  String.sub s 0 offset
 
 (* [sep ss] separates the strings in the list [ss] with a space,
    and concatenates everything, producing a single string. *)

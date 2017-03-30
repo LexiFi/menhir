@@ -7,6 +7,7 @@ all:
 	$(OCAMLBUILD) $(TARGET)
 
 test: all
+	$(MAKE) -C ../../src bootstrap
 	./$(TARGET)
 
 clean:
