@@ -145,10 +145,11 @@ let chop_dash_numeric_suffix s =
   let offset = Str.search_forward dash_numeric_suffix s 0 in
   String.sub s 0 offset
 
-(* [sep ss] separates the strings in the list [ss] with a space,
+(* [sep ss] separates the nonempty strings in the list [ss] with a space,
    and concatenates everything, producing a single string. *)
 
 let sep (ss : string list) : string =
+  let ss = List.filter (fun s -> String.length s > 0) ss in
   match ss with
   | [] ->
       ""

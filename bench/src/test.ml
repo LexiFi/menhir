@@ -7,14 +7,14 @@ open Auxiliary
 
 (* -------------------------------------------------------------------------- *)
 
-(* Settings. *)
+(* Logging. *)
 
 (* 0 is minimal verbosity;
    1 shows some progress messages;
    2 is maximal verbosity. *)
 
 let verbosity =
-  1
+  2
 
 let log level format =
   kprintf (fun s ->
@@ -31,6 +31,13 @@ let fail id format =
   log 1 "[FAIL] %s\n%!" id;
   fail format
 
+(* When preparing an external command, log it along the way. *)
+
+let prepare (bits : string list) : command =
+  let cmd = sep bits in
+  log 2 "%s\n%!" cmd;
+  cmd
+
 (* -------------------------------------------------------------------------- *)
 
 (* Paths. *)
@@ -41,6 +48,12 @@ let root =
 
 let src =
   root ^ "/src"
+
+let good =
+  root ^ "/bench/good"
+
+let good_slash filename =
+  good ^ "/" ^ filename
 
 let bad =
   root ^ "/bench/bad"
@@ -75,15 +88,21 @@ let mlys =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Tests. *)
+(* Test inputs and outputs. *)
+
+(* A test input is a list of basenames, without the .mly extension.
+   These files must be passed together to menhir. *)
 
 type input =
-  (* A negative test input is a list of basenames, without the .mly extension.
-     These files must be passed together to menhir. *)
   | NegativeTest of filename list
+  | PositiveTest of filename list
+
+type inputs = input list
 
 let print_input = function
   | NegativeTest basenames ->
+      id basenames
+  | PositiveTest basenames ->
       id basenames
 
 type outcome =
@@ -99,13 +118,16 @@ let print_outcome = function
 type output =
   input * outcome
 
-type inputs = input list
 type outputs = output list
 
-let prepare (bits : string list) : command =
-  let cmd = sep bits in
-  log 2 "%s\n%!" cmd;
-  cmd
+let print_output (input, outcome) =
+  printf "\n[FAIL] %s\n%s"
+    (print_input input)
+    (print_outcome outcome)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Running a negative test. *)
 
 let process_negative_test basenames : unit =
 
@@ -152,11 +174,58 @@ let process_negative_test basenames : unit =
   (* Succeed. *)
   log 1 "[OK] %s\n%!" id
 
+(* -------------------------------------------------------------------------- *)
+
+(* Running a positive test. *)
+
+(*
+  Conventions:
+  The file %.flags   (if it exists) stores extra flags for Menhir.
+  The file %.opp.out stores the output of menhir --only-preprocess.
+  The file %.opp.exp stores its expected output.
+  The file %.out     stores the output of menhir.
+  The file %.exp     stores its expected output.
+ *)
+
+let process_positive_test basenames : unit =
+
+  (* Display an information message. *)
+  let id = id basenames in
+  log 1 "Testing %s...\n%!" id;
+
+  (* A --base option is needed for groups of several files. *)
+  let base = if length basenames > 1 then sprintf "--base %s" id else "" in
+
+  (* Extra flags. *)
+  let flags = id ^ ".flags" in
+  let flags =
+    if file_exists (good_slash flags) then sprintf "`cat %s`" flags else ""
+  in
+
+  (* Run menhir --only-preprocess. *)
+  let oppout = id ^ ".opp.out" in
+  let cmd = prepare (
+    "cd" :: good :: "&&" ::
+    menhir :: base :: flags ::
+              mlys basenames @ sprintf ">%s" oppout :: "2>&1" :: []
+  ) in
+  if command cmd <> 0 then
+    fail id "menhir rejects %s.\n" (thisfile basenames);
+
+  (* Succeed. *)
+  log 1 "[OK] %s\n%!" id
+
+(* -------------------------------------------------------------------------- *)
+
+(* Running a test. *)
+
 let process input : output =
   try
     begin match input with
     | NegativeTest basenames ->
         process_negative_test basenames
+    | PositiveTest basenames ->
+        process_positive_test basenames
     end;
     input, OK
   with Failure msg ->
@@ -181,21 +250,28 @@ let run (inputs : inputs) : outputs =
    files have the same name up to a numeric suffix, then they belong in a
    single group and should be fed together to Menhir. *)
 
-let negative : inputs =
-     readdir bad
+let inputs directory : filename list list =
+     readdir directory
   |> to_list
   |> filter (has_suffix ".mly")
   |> map chop_extension
   |> sort compare
   |> groups equal_up_to_numeric_suffix
+
+let positive : inputs =
+     inputs good
+  |> map (fun basenames -> PositiveTest basenames)
+
+let negative : inputs =
+     inputs bad
   |> map (fun basenames -> NegativeTest basenames)
 
 let inputs =
-  negative
+  positive @ negative
 
 let outputs : outputs =
   printf "Preparing to run %d tests...\n%!" (length inputs);
-  run negative
+  run inputs
 
 let successful, failed =
   partition (fun (_, o) -> o = OK) outputs
