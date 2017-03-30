@@ -8,10 +8,14 @@ open Auxiliary
 (* TEMPORARY:
    -- set the verbosity on the command line
    -- allow running just one test?
-   -- allow recreating all expected output files (just remove them and run)
    -- also check the contents of .conflicts and .automaton?
    -- run menhir --explain with -lg 2 -la 2 -lc 2
  *)
+
+(* -------------------------------------------------------------------------- *)
+
+let create_expected =
+  true
 
 (* -------------------------------------------------------------------------- *)
 
@@ -137,18 +141,23 @@ let print_output (input, outcome) =
 (* Auxiliary functions. *)
 
 let check_expected directory id result expected =
-  (* Check that the file [expected] exists. If it does not exist, create
-     it by renaming [result] to [expected]. Nevertheless, fail, and invite
-     the user to review the newly created file. *)
-  if not (file_exists (directory ^ "/" ^ expected)) then begin
-    let cmd = sep ["cd"; directory; "&&"; "mv"; result; expected] in
-    if command cmd = 0 then
-      let cmd = sep ["more"; directory ^ "/" ^ expected] in
-      fail id "The file %s did not exist.\n\
-               I have just created it. Please review it.\n%s\n"
-        expected cmd
-    else
-      fail id "The file %s does not exist.\n" expected
+  let cmd = sep ["cd"; directory; "&&"; "cp"; "-f"; result; expected] in
+  let copy() =
+    if command cmd <> 0 then
+      fail id "Failed to create %s.\n" expected
+  in
+  (* If we are supposed to create the [expected] file, do so. *)
+  if create_expected then
+    copy()
+  (* Otherwise, check that the file [expected] exists. If it does not exist,
+     create it by renaming [result] to [expected], then fail and invite the
+     user to review the newly created file. *)
+  else if not (file_exists (directory ^ "/" ^ expected)) then begin
+    copy();
+    let cmd = sep ["more"; directory ^ "/" ^ expected] in
+    fail id "The file %s did not exist.\n\
+             I have just created it. Please review it.\n%s\n"
+      expected cmd
   end
 
 (* -------------------------------------------------------------------------- *)
