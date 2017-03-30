@@ -8,11 +8,6 @@
 SHELL=/bin/bash
 SRC=../../src
 MENHIR=$(SRC)/_stage2/menhir.native --dump --explain --stdlib $(SRC)
-CAMLC           := $(shell if ocamlfind ocamlc -v >/dev/null 2>&1 ; \
-                       then echo ocamlfind ocamlc ; \
-		       elif ocamlc.opt -v >/dev/null 2>&1 ; \
-                       then echo ocamlc.opt ; \
-		       else echo ocamlc ; fi)
 
 # Some tests involve several input files. The naming convention for
 # these tests is /name/-[1-9].mly.
@@ -154,4 +149,3 @@ list:
 clean::
 	rm -f *.log
 #	rm -f lr.csv
-
