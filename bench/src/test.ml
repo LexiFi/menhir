@@ -70,10 +70,24 @@ type outputs = output list
 let process input : output =
   match input with
 
+  (* A negative test. *)
   | NegativeTest basenames ->
+
+      (* Informational message. *)
       let id = id basenames in
       printf "Testing %s...\n%!" id;
-      let command = sep (menhir :: mlys basenames) in
+
+      (* A --base option is needed for groups of several files. *)
+      let base =
+        if length basenames > 1 then
+          sprintf "--base %s" (chop_numeric_suffix (hd basenames))
+        else
+          ""
+      in
+
+      (* Run Menhir. *)
+      let command = sep (menhir :: base :: mlys basenames) in
+
       if succeeds command then begin
         printf "[FAIL] %s\n%!" id;
         let msg = sprintf "menhir should not accept %s." (thisfile basenames) in
