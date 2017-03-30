@@ -7,7 +7,6 @@ open Auxiliary
 
 (* TODO:
    -- also check the contents of .conflicts and .automaton?
-   -- run menhir --explain with -lg 2 -la 2 -lc 2
  *)
 
 (* -------------------------------------------------------------------------- *)
@@ -272,7 +271,7 @@ let process_positive_test basenames : unit =
   let out = id ^ ".out" in
   let cmd = sep (
     "cd" :: good :: "&&" ::
-    menhir :: "--explain" :: base :: flags
+    menhir :: "--explain -lg 2 -la 2 -lc 2" :: base :: flags
            :: mlys basenames @ sprintf ">%s" out :: "2>&1" :: []
   ) in
   if command cmd <> 0 then begin
