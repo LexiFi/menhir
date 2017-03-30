@@ -79,13 +79,13 @@ let src =
   root ^ "/src"
 
 let good =
-  root ^ "/bench/good"
+  root ^ "/test/good"
 
 let good_slash filename =
   good ^ "/" ^ filename
 
 let bad =
-  root ^ "/bench/bad"
+  root ^ "/test/bad"
 
 let bad_slash filename =
   bad ^ "/" ^ filename

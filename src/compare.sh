@@ -10,7 +10,7 @@
 # Use as follows:
 # OPT=--lalr ./compare.sh ocaml
 
-BENCH=../bench/good
+BENCH=../test/good
 MENHIR=_stage1/menhir.native
 BASE="-v -lg 1"
 

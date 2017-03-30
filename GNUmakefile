@@ -30,14 +30,14 @@ MD5SUM  := $(shell if hash md5  2>/dev/null ; then echo "md5 -r" ; else echo md5
 # or that MENHIR is properly set.
 
 test:
-	$(MAKE) -C bench
+	$(MAKE) -C test
 
 # -------------------------------------------------------------------------
 
 # Cleaning up.
 
 clean:
-	@ for i in bench demos src ; do \
+	@ for i in test demos src ; do \
 	  $(MAKE) -C $$i $@ ; \
 	done
 	@ $(MAKE) -rs -C doc $@

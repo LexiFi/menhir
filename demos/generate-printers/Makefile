@@ -13,7 +13,7 @@ all:
 	rm -f $(MAIN).native
 	cp -f _build/$(MAIN).native $(EXECUTABLE)
 
-TEST       := ../../bench/good/parser_raw
+TEST       := ../../test/good/parser_raw
 
 test: all
 	rm -f $(TEST).cmly
