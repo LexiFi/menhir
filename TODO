@@ -1,5 +1,4 @@
 * Remove the unsafe type casts in Printers, InspectionTableInterpreter.
-  Remove the BIG HACK where the initial state is assumed to be 0.
 
 * Document the recent additions (CHANGES + doc).
   - attributes in .mly files
@@ -23,6 +22,7 @@
       production numbers (production_index, find_production)
       error_state
     menhirLib: possibly incompatible change of type 'a env
+  - Send CompCert pull request.
 
 * Implementing may_reduce by looping over the action table may be too
   conservative? There may be situations where there is no reduce action
@@ -45,11 +45,12 @@
   Should we avoid producing it?
   Should we check that it is not used?
 
-* Suite des patchs de Frédéric Bour.
-    API d'inspection complète.
-      Exposer le nombre d'états (pour la mémoisation).
-      Idem pour les productions.
-      Fonctions d'isomorphisme entre token et 'a terminal * 'a?
+* Possible extensions to the inspection API:
+  - expose the number of states (useful for memoisation).
+  - expose the number of productions.
+  - expose an isomorphism between token and xtoken = exists 'a. ('a terminal * 'a)
+      T.token2terminal, T.token2value offer one direction
+      the other direction would have to be generated
 
 * BUG: the warning "this production is never reduced" is sound but incomplete.
   See never_reduced.mly:
