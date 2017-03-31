@@ -33,7 +33,7 @@ If your machine does not have the native code OCaml compiler (`ocamlopt`), but
 does have the bytecode compiler (`ocamlc`), then you should define `TARGET=byte`
 when running `make all` and `make install`.
 
-## Compilation And Installation
+## Compilation and Installation
 
 Compile and install as follows:
 
