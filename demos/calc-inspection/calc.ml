@@ -45,7 +45,7 @@ let process (line : string) =
   | Lexer.Error msg ->
       Printf.fprintf stderr "%s%!" msg
   | E.Error ((startp, _), explanations) ->
-     print_explanations startp explanations
+      print_explanations startp explanations
 
 let process (optional_line : string option) =
   match optional_line with
@@ -60,7 +60,6 @@ let rec repeat channel =
   process optional_line;
   if continue then
     repeat channel
-  
+
 let () =
   repeat (from_channel stdin)
-
