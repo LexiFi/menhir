@@ -52,7 +52,7 @@ module Make
      printer. It uses [print_element] if provided by the user; otherwise
      it uses [print_element_as_symbol]. (Ending with a newline.) *)
 
-  val print_stack: stack -> unit
+  val print_stack: 'a env -> unit
 
   (* Printing an item. (Ending with a newline.) *)
 

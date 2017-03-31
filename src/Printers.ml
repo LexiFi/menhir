@@ -66,13 +66,20 @@ module Make
     | None ->
         print_element_as_symbol
 
-  (* Printing a stack as a list of symbols. *)
+  (* Printing a stack as a list of symbols. Stack bottom on the left,
+     stack top on the right. *)
 
-  let print_stack stack =
-    General.foldr (fun element () ->
-      print_element element;
-      print space
-    ) stack ();
+  let rec print_stack env =
+    match top env, pop env with
+    | Some element, Some env ->
+        print_stack env;
+        print space;
+        print_element element
+    | _, _ ->
+        ()
+
+  let print_stack env =
+    print_stack env;
     print newline
 
   (* Printing an item. *)
@@ -97,17 +104,17 @@ module Make
 
   let print_current_state env =
     print "Current LR(1) state: ";
-    match Lazy.force (stack env) with
-    | General.Nil ->
-        print "<some initial state>";
+    match top env with
+    | None ->
+        print "<some initial state>"; (* TEMPORARY unsatisfactory *)
         print newline
-    | General.Cons (Element (current, _, _, _), _) ->
+    | Some (Element (current, _, _, _)) ->
         print (string_of_int (number current));
         print newline;
         List.iter print_item (items current)
 
   let print_env env =
-    print_stack (stack env);
+    print_stack env;
     print_current_state env;
     print newline
 
