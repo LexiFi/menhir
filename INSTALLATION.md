@@ -13,7 +13,8 @@ to the following places:
 ```
   $PREFIX/bin/
   $PREFIX/share/menhir/
-  $PREFIX/doc/menhir/
+  $PREFIX/share/doc/menhir/
+  $PREFIX/share/man/man1/
 ```
 
 `PREFIX` must be set when invoking `make all` and `make install` (see below).
@@ -41,4 +42,4 @@ Compile and install as follows:
   sudo make PREFIX=/usr/local install
 ```
 
-(If necessary, adjust `PREFIX`, `USE_OCAMLFIND` and `TARGET` as described above.)
+If necessary, adjust `PREFIX`, `USE_OCAMLFIND` and `TARGET` as described above.
