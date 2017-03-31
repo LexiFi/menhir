@@ -142,8 +142,11 @@ module Make
             (* Build a dummy token for the terminal symbol [t]. *)
             let token = (terminal2token t, pos, pos) in
             (* Submit it to the parser. Accumulate explanations. *)
-            let checkpoint = offer checkpoint token in
-            I.loop_test (accumulate t) checkpoint explanations
+            match shifts (offer checkpoint token) with
+            | None ->
+                explanations
+            | Some env ->
+                accumulate t env explanations
       ) []
     )
 

@@ -152,24 +152,22 @@ module type INCREMENTAL_ENGINE = sig
     ('a checkpoint -> 'a checkpoint -> 'answer) ->
     supplier -> 'a checkpoint -> 'answer
 
-  (* [loop_test f checkpoint accu] assumes that [checkpoint] has been obtained
-     by submitting a token to the parser. It runs the parser from [checkpoint],
-     through an arbitrary number of reductions, until the parser either accepts
-     this token (i.e., shifts) or rejects it (i.e., signals an error). If the
-     parser decides to shift, then the accumulator is updated by applying the
-     user function [f] to the [env] just before shifting and to the old [accu].
-     Otherwise, the accumulator is not updated, i.e., [accu] is returned. *)
+  (* [shifts checkpoint] assumes that [checkpoint] has been obtained by
+     submitting a token to the parser. It runs the parser from [checkpoint],
+     through an arbitrary number of reductions, until the parser either
+     accepts this token (i.e., shifts) or rejects it (i.e., signals an error).
+     If the parser decides to shift, then [Some env] is returned, where [env]
+     is the parser's state just before shifting. Otherwise, [None] is
+     returned. *)
 
   (* It is desirable that the semantic actions be side-effect free, or that
      their side-effects be harmless (replayable). *)
 
-  val loop_test:
-    ('a env -> 'accu -> 'accu) ->
-    'a checkpoint -> 'accu -> 'accu
+  val shifts: 'a checkpoint -> 'a env option
 
-  (* The function [loop_test] can be used, after an error has been detected, to
-     dynamically test which tokens would have been accepted at this point. We
-     provide this test, ready for use. *)
+  (* The function [acceptable] allows testing, after an error has been
+     detected, which tokens would have been accepted at this point. It is
+     implemented using [shifts]. *)
 
   (* For completeness, one must undo any spurious reductions before carrying out
      this test -- that is, one must apply [acceptable] to the FIRST checkpoint
