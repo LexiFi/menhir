@@ -16,11 +16,12 @@
   - menhirLib: new functions
       loop_handle_undo, shifts, acceptable
       find_default_reduction
-      pop
+      pop, top, equal, drop, get
       force_reduction
       input_needed
       feed (inspection API)
       production numbers (production_index, find_production)
+      error_state
     menhirLib: possibly incompatible change of type 'a env
 
 * Implementing may_reduce by looping over the action table may be too
@@ -43,15 +44,6 @@
   but --only-preprocess produces it.
   Should we avoid producing it?
   Should we check that it is not used?
-
-* Discussion with Frédéric Bour.
-  - Engine: offer richer API
-      new stack inspection API, without streams
-        stack_next pourrait renvoyer une somme (stack + initial)
-        allows comparing stacks
-        allows exposing current state even when it is an initial state?
-        meta-initial state with transition to the real initial states?
-      remonter aussi la fonction element: 'a checkpoint -> int -> element de CompCert
 
 * Suite des patchs de Frédéric Bour.
     API d'inspection complète.
