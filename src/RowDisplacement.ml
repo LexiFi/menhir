@@ -16,7 +16,7 @@
 
 (* This idea reportedly appears in Aho and Ullman's ``Principles
    of Compiler Design'' (1977). It is evaluated in Tarjan and Yao's
-   ``Storing a Sparse Table'' (1979) and in Dencker, Dürre, and Heuft's
+   ``Storing a Sparse Table'' (1979) and in Dencker, DÃ¼rre, and Heuft's
    ``Optimization of Parser Tables for Portable Compilers'' (1984). *)
 
 (* A compressed table is represented as a pair of arrays. The
@@ -256,4 +256,3 @@ let get (displacement, data) i j =
 let getget get_displacement get_data (displacement, data) i j =
   let k = decode (get_displacement displacement i) in
   get_data data (k + j)
-

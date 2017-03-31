@@ -478,7 +478,7 @@ let compatible (k1, toksr1) (k2, toksr2) =
    but I am not 100% sure, that it does indeed prevent end-of-stream
    conflicts and that it is stable.
 
-   Thanks to Sébastien Hinderer for reporting the bug caused by the
+   Thanks to SÃ©bastien Hinderer for reporting the bug caused by the
    absence of this extra criterion. *)
 
 let eos_compatible  (k1, toksr1) (k2, toksr2) =
@@ -529,7 +529,7 @@ let eos_compatible  (k1, toksr1) (k2, toksr2) =
    be error-incompatible. Error-compatibility requires equality of
    the lookahead sets, restricted to [error].
 
-   Thanks to Didier Rémy for reporting a bug caused by the absence
+   Thanks to Didier RÃ©my for reporting a bug caused by the absence
    of this extra criterion. *)
 
 let error_compatible  (k1, toksr1) (k2, toksr2) =
@@ -571,4 +571,3 @@ let restrict toks (k, toksr) =
   k, Array.map (fun toksri ->
     TerminalSet.inter toksri toks
   ) toksr
-

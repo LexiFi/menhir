@@ -59,7 +59,7 @@ module type TABLES = sig
 
   val default_reduction: PackedIntArray.t
 
-  (* Menhir follows Dencker, Dürre and Heuft, who point out that, although the
+  (* Menhir follows Dencker, DÃ¼rre and Heuft, who point out that, although the
      action table is not sparse by nature (i.e., the error entries are
      significant), it can be made sparse by first factoring out a binary error
      matrix, then replacing the error entries in the action table with undefined
@@ -135,4 +135,3 @@ module type TABLES = sig
   val trace: (string array * string array) option
 
 end
-

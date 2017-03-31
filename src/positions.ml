@@ -11,9 +11,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* TEMPORARY vérifier que ces fonctions sont utilisées partout et
-             de façon cohérente; interaction avec [Error]? *)
-
 open Lexing
 
 type t =
@@ -165,4 +162,3 @@ let print (pos : Lexing.position) =
       pos.pos_lnum
       pos.pos_bol
       pos.pos_cnum
-

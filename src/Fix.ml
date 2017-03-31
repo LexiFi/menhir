@@ -112,7 +112,7 @@ end
      [predecessors] only offers an amortized complexity bound. This is good
      enough for our purposes, and, in practice, is more efficient by a
      constant factor. This simplification was suggested by Arthur
-     Charguéraud. *)
+     CharguÃ©raud. *)
 
   type 'data node = {
 

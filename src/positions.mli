@@ -11,7 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* TEMPORARY faire un peu le ménage dans cette interface pléthorique? *)
+(* TEMPORARY clean up this over-complicated API? *)
 
 (** Extension of standard library's positions. *)
 
