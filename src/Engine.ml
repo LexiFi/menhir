@@ -823,4 +823,22 @@ module Make (T : TABLE) = struct
   let input_needed (env : 'a env) : 'a checkpoint =
     InputNeeded env
 
+  (* The following functions are compositions of [top] and [pop]. *)
+
+  let rec drop i env =
+    if i = 0 then
+      Some env
+    else match pop env with
+    | None ->
+        None
+    | Some env ->
+        drop (i - 1) env
+
+  let get i env =
+    match drop i env with
+    | None ->
+        None
+    | Some env ->
+        top env
+
 end
