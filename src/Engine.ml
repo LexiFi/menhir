@@ -710,6 +710,14 @@ module Make (T : TABLE) = struct
     else
       Some (Element (env.current, cell.semv, cell.startp, cell.endp))
 
+  (* [equal] compares the stacks for physical equality, and compares the
+     current states via their numbers (this seems cleaner than using OCaml's
+     polymorphic equality). *)
+
+  let equal env1 env2 =
+    env1.stack == env2.stack &&
+    number env1.current = number env2.current
+
   (* ------------------------------------------------------------------------ *)
 
   (* Access to the position of the lookahead token. *)
