@@ -65,6 +65,19 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
   type production =
       int
 
+  (* In principle, only non-start productions are exposed to the user,
+     at type [production] or at type [int]. This is checked dynamically. *)
+  let non_start_production i =
+    assert (T.start <= i && i - T.start < Array.length T.semantic_action)
+
+  let production_index i =
+    non_start_production i;
+    i
+
+  let find_production i =
+    non_start_production i;
+    i
+
   let default_reduction state defred nodefred env =
     let code = PackedIntArray.get T.default_reduction state in
     if code = 0 then

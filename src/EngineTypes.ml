@@ -142,6 +142,9 @@ module type TABLE = sig
 
   type production
 
+  val production_index: production -> int
+  val find_production: int -> production
+
   (* If a state [s] has a default reduction on production [prod], then, upon
      entering [s], the automaton should reduce [prod] without consulting the
      lookahead token. The following function allows determining which states

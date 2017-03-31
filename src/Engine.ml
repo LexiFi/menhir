@@ -23,8 +23,9 @@ open EngineTypes
 
 module Make (T : TABLE) = struct
 
-  (* This propagates type and exception definitions. The function [number],
-     too, is defined by this [include] declaration. *)
+  (* This propagates type and exception definitions. The functions [number],
+     [production_index], [find_production], too, are defined by this [include]
+     declaration. *)
 
   include T
 

@@ -226,6 +226,13 @@ module type INCREMENTAL_ENGINE = sig
 
   val number: _ lr1state -> int
 
+  (* Productions are numbered. *)
+
+  (* [find_production i] requires the index [i] to be valid. Use with care. *)
+
+  val production_index: production -> int
+  val find_production: int -> production
+
   (* [find_default_reduction s] returns [Some prod] if the state [s] has a
      default reduction of production [prod], and returns [None] otherwise. *)
 

@@ -57,6 +57,9 @@ module T = struct
   type production =
       Production.index
 
+  let production_index = Production.p2i
+  let find_production  = Production.i2p
+
   let default_reduction (s : state) defred nodefred env =
     match Invariant.has_default_reduction s with
     | Some (prod, _) ->
