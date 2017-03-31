@@ -102,7 +102,7 @@ module Make
         print "<some initial state>";
         print newline
     | General.Cons (Element (current, _, _, _), _) ->
-        print (string_of_int (Obj.magic current)); (* TEMPORARY safe conversion needed *)
+        print (string_of_int (number current));
         print newline;
         List.iter print_item (items current)
 
@@ -112,4 +112,3 @@ module Make
     print newline
 
 end
-
