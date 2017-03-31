@@ -94,12 +94,14 @@ module Make
 
   let n2i (nt : 'a IT.nonterminal) : int =
     let answer = TT.start + Obj.magic nt in
-    assert (IT.nonterminal answer = X (N nt)); (* TEMPORARY roundtrip *)
+    (* For safety, check that the above cast produced a correct result. *)
+    assert (IT.nonterminal answer = X (N nt));
     answer
 
   let t2i (t : 'a IT.terminal) : int =
     let answer = Obj.magic t in
-    assert (IT.terminal answer = X (T t)); (* TEMPORARY roundtrip *)
+    (* For safety, check that the above cast produced a correct result. *)
+    assert (IT.terminal answer = X (T t));
     answer
 
   (* Ordering functions. *)
