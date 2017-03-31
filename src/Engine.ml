@@ -4,7 +4,7 @@
 (*                                                                            *)
 (*                       François Pottier, Inria Paris                        *)
 (*              Yann Régis-Gianas, PPS, Université Paris Diderot              *)
-(* *)
+(*                                                                            *)
 (*  Copyright Inria. All rights reserved. This file is distributed under the  *)
 (*  terms of the GNU Library General Public License version 2, with a         *)
 (*  special exception on linking, as described in the file LICENSE.           *)
@@ -825,17 +825,17 @@ module Make (T : TABLE) = struct
 
   (* The following functions are compositions of [top] and [pop]. *)
 
-  let rec drop i env =
+  let rec pop_many i env =
     if i = 0 then
       Some env
     else match pop env with
     | None ->
         None
     | Some env ->
-        drop (i - 1) env
+        pop_many (i - 1) env
 
   let get i env =
-    match drop i env with
+    match pop_many i env with
     | None ->
         None
     | Some env ->
