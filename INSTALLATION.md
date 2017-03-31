@@ -1,46 +1,44 @@
-------------------------------------------------------------------------------
-
-REQUIREMENTS
+## Requirements
 
 You need OCaml 4.02 or later, ocamlbuild, and GNU make.
 
-------------------------------------------------------------------------------
+## Configuration Choices
 
-CONFIGURATION CHOICES
+### `PREFIX`
 
-1- PREFIX
-
-The value of the PREFIX variable can be changed to control where the software,
+The value of the `PREFIX` variable can be changed to control where the software,
 the standard library, and the documentation are stored. These files are copied
 to the following places:
 
+```
   $PREFIX/bin/
   $PREFIX/share/menhir/
   $PREFIX/doc/menhir/
+```
 
-PREFIX must be set when invoking "make all" and "make install" (see below).
+`PREFIX` must be set when invoking `make all` and `make install` (see below).
 
-2- USE_OCAMLFIND
+### `USE_OCAMLFIND`
 
-The support libraries, MenhirLib and MenhirSdk, are installed either via
-ocamlfind or directly in the directory $PREFIX/share/menhir. Installing via
-ocamlfind is recommended (and is the default). It requires the "ocamlfind"
-executable to be found in the PATH. An explicit choice can be made by setting
-USE_OCAMLFIND to "true" or "false" when running "make all" (see below).
+The support libraries, `MenhirLib` and `MenhirSdk`, are installed either via
+ocamlfind or directly in the directory `$PREFIX/share/menhir`. Installing via
+ocamlfind is recommended (and is the default). It requires the `ocamlfind`
+executable to be found in the `PATH`. An explicit choice can be made by setting
+`USE_OCAMLFIND` to `true` or `false` when running `make all` (see below).
 
-3- TARGET
+### `TARGET`
 
-If your machine does not have the native code OCaml compiler (ocamlopt), but
-does have the bytecode compiler (ocamlc), then you should define "TARGET=byte"
-when running "make all" and "make install".
+If your machine does not have the native code OCaml compiler (`ocamlopt`), but
+does have the bytecode compiler (`ocamlc`), then you should define `TARGET=byte`
+when running `make all` and `make install`.
 
-------------------------------------------------------------------------------
-
-COMPILATION & INSTALLATION
+## Compilation And Installation
 
 Compile and install as follows:
 
+```
        make PREFIX=/usr/local USE_OCAMLFIND=true all
   sudo make PREFIX=/usr/local install
+```
 
-(If necessary, adjust PREFIX, USE_OCAMLFIND and TARGET as described above.)
+(If necessary, adjust `PREFIX`, `USE_OCAMLFIND` and `TARGET` as described above.)
