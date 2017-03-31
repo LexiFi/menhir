@@ -248,7 +248,11 @@ module type INCREMENTAL_ENGINE = sig
   (* The parser's stack is (or, more precisely, can be viewed as) a stream of
      elements. The type [stream] is defined by the module [General]. *)
 
-  type stack =
+  (* As of 2017/03/31, the type [stack] and the function [stack] are DEPRECATED.
+     They might be removed in the future. An alternative way of inspecting the
+     stack is via the functions [top] and [pop]. *)
+
+  type stack = (* DEPRECATED *)
     element stream
 
   (* This is the parser's stack, a stream of elements. This stream is empty if
@@ -256,7 +260,12 @@ module type INCREMENTAL_ENGINE = sig
      automaton's current state is the one found in the top element of the
      stack. *)
 
-  val stack: 'a env -> stack
+  val stack: 'a env -> stack (* DEPRECATED *)
+
+  (* [top env] returns the parser's top stack cell. If the stack is empty,
+     [None] is returned. *)
+
+  val top: 'a env -> element option
 
   (* These are the start and end positions of the current lookahead token. If
      invoked in an initial state, this function returns a pair of twice the

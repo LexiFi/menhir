@@ -652,6 +652,10 @@ module Make (T : TABLE) = struct
      value associated with (the incoming symbol of) this state. Note that the
      type [element] is an existential type. *)
 
+  (* As of 2017/03/31, the type [stack] and the function [stack] are DEPRECATED.
+     If desired, they could now be implemented outside Menhir, by relying on
+     the functions [top] and [pop]. *)
+
   type element =
     | Element: 'a lr1state * 'a * position * position -> element
 
@@ -693,6 +697,18 @@ module Make (T : TABLE) = struct
 
   let stack env : element stream =
     stack env.stack env.current
+
+  (* As explained above, the function [top] allows access to the top stack
+     element only if the stack is nonempty, i.e., only if the current state
+     is not an initial state. *)
+
+  let top env : element option =
+    let cell = env.stack in
+    let next = cell.next in
+    if next == cell then
+      None
+    else
+      Some (Element (env.current, cell.semv, cell.startp, cell.endp))
 
   (* ------------------------------------------------------------------------ *)
 
