@@ -41,6 +41,9 @@ val weed: ('a -> 'a -> int) -> 'a list -> 'a list
 
 (* --------------------------------------------------------------------------- *)
 
+(* As of 2017/03/31, the type [stream] is DEPRECATED. It might be removed in
+   the future. *)
+
 (* A stream is a list whose elements are produced on demand. *)
 
 type 'a stream =
@@ -57,4 +60,3 @@ val length: 'a stream -> int
 (* Folding over a stream. *)
 
 val foldr: ('a -> 'b -> 'b) -> 'a stream -> 'b -> 'b
-

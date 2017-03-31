@@ -248,9 +248,9 @@ module type INCREMENTAL_ENGINE = sig
   (* The parser's stack is (or, more precisely, can be viewed as) a stream of
      elements. The type [stream] is defined by the module [General]. *)
 
-  (* As of 2017/03/31, the type [stack] and the function [stack] are DEPRECATED.
-     They might be removed in the future. An alternative way of inspecting the
-     stack is via the functions [top] and [pop]. *)
+  (* As of 2017/03/31, the types [stream] and [stack] and the function [stack]
+     are DEPRECATED. They might be removed in the future. An alternative way
+     of inspecting the stack is via the functions [top] and [pop]. *)
 
   type stack = (* DEPRECATED *)
     element stream
