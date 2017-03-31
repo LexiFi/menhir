@@ -271,8 +271,6 @@ let interpret log nt lexer lexbuf =
    sentences that [LRijkstra] produces do lead to an error in the expected
    state. *)
 
-open MenhirLib.General (* streams *)
-
 type spurious_reduction =
   Lr1.node * Production.index
 
@@ -315,10 +313,10 @@ let check_error_path log nt input =
 
   let current env =
     (* Peek at the stack. If empty, then we must be in the initial state. *)
-    match Lazy.force (E.stack env) with
-    | Nil ->
+    match E.top env with
+    | None ->
         entry
-    | Cons (E.Element (s, _, _, _), _) ->
+    | Some (E.Element (s, _, _, _)) ->
         s
   in
 
