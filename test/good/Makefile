@@ -7,7 +7,7 @@ MENHIR=$(SRC)/_stage2/menhir.native --dump --explain --stdlib $(SRC)
 # The test scripts are now written in OCaml.
 
 test expected:
-	@ $(MAKE) -C ../src test
+	@ $(MAKE) -C ../src $@
 
 clean::
 	rm -f *~ *.ml *.mli *.conflicts *.automaton

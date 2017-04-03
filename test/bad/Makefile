@@ -4,7 +4,7 @@
 # The test scripts are now written in OCaml.
 
 test expected:
-	@ $(MAKE) -C ../src test
+	@ $(MAKE) -C ../src $@
 
 clean::
 	rm -f *~ *.ml *.mli *.conflicts *.automaton
