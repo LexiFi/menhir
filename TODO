@@ -1,6 +1,9 @@
-* Remove the unsafe type casts in Printers, InspectionTableInterpreter.
+* Push tags of old repo (forge) into new repo.
+  update repo URL in opam (use public URL)
+  git@gitlab.inria.fr:fpottier/menhir.git
 
 * Document the recent additions (CHANGES + doc).
+  - slightly nicer syntax error messages
   - attributes in .mly files
     rationale / purpose
     syntax of attributes
@@ -15,26 +18,27 @@
   - menhirLib: new functions
       loop_handle_undo, shifts, acceptable
       find_default_reduction
-      pop, top, equal, drop, get
+      pop, top, equal, pop_many, get
       force_reduction
       input_needed
       feed (inspection API)
       production numbers (production_index, find_production)
-      error_state
+      current_state_number
     menhirLib: possibly incompatible change of type 'a env
+    MenhirLib.Printers: incompatible type change of print_stack
+    deprecated streams, [stack], MenhirLib.General.
+    MenhirLib.ErrorReports: new module
   - Send CompCert pull request.
+
+* Move more of ErrorReports from CompCert to MenhirLib.
 
 * Implementing may_reduce by looping over the action table may be too
   conservative? There may be situations where there is no reduce action
   in the table (because they were killed off by conflict resolution) yet
   this state is still capable of reducing this production.
 
-* move to gitlab.inria.fr
-  see https://help.github.com/articles/splitting-a-subfolder-out-into-a-new-repository/
-
 * clean up this TODO file! and use gitlab issues for known bugs.
-
-* see if ErrorReports could be part of MenhirLib.
+  Use Markdown format for CHANGES, etc.
 
 * see if --only-preprocess-for-ocamlyacc could be implemented.
   Re-introduce $1 keywords.
@@ -46,6 +50,7 @@
   Should we check that it is not used?
 
 * Possible extensions to the inspection API:
+  - offer a way of mapping an initial state (number) back to its nonterminal symbol
   - expose the number of states (useful for memoisation).
   - expose the number of productions.
   - expose an isomorphism between token and xtoken = exists 'a. ('a terminal * 'a)
