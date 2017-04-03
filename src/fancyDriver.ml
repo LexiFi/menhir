@@ -22,7 +22,7 @@ open Parser.MenhirInterpreter (* incremental API to our parser *)
 
 (* [fail] is invoked if a syntax error is encountered. *)
 
-let fail lexbuf env =
+let fail buffer lexbuf env =
   (* The parser has suspended itself because of a syntax error. Stop.
      Find out which state the parser is currently in. *)
   let s : int = current_state_number env in
@@ -38,23 +38,29 @@ let fail lexbuf env =
     with Not_found ->
       Printf.sprintf "Unknown syntax error (in state %d).\n" s
   in
+  (* Show the two tokens between which the error took place. *)
+  let where = MenhirLib.ErrorReports.show InputFile.chunk buffer in
   (* Hack: remove the final newline, because [Error.error] adds one. *)
   let message = String.sub message 0 (String.length message - 1) in
   (* Display our message and die. *)
-  Error.error (Positions.lexbuf lexbuf) "syntax error.\n%s" message
+  Error.error (Positions.lexbuf lexbuf) "syntax error %s.\n%s" where message
 
-let fail lexbuf checkpoint =
+let fail buffer lexbuf checkpoint =
   match checkpoint with
   | HandlingError env ->
-      fail lexbuf env
+      fail buffer lexbuf env
   | _ ->
       assert false (* this cannot happen *)
 
 (* The entry point. *)
 
 let grammar lexer lexbuf =
+
+  (* Keep track of the last two tokens in a buffer. *)
+  let buffer, lexer = MenhirLib.ErrorReports.wrap lexer in
+
   loop_handle
     (fun v -> v)
-    (fail lexbuf)
+    (fail buffer lexbuf)
     (lexer_lexbuf_to_supplier lexer lexbuf)
     (Parser.Incremental.grammar lexbuf.Lexing.lex_curr_p)
