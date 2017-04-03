@@ -44,7 +44,9 @@ let savestart lexbuf f =
 
 (* Extracts a chunk out of the source file. *)
 
-let chunk ofs1 ofs2 =
+let chunk pos1 pos2 =
+  let ofs1 = pos1.pos_cnum
+  and ofs2 = pos2.pos_cnum in
   let contents = InputFile.get_file_contents() in
   let len = ofs2 - ofs1 in
   String.sub contents ofs1 len
@@ -232,9 +234,7 @@ let no_monsters monsters =
 
 let mk_stretch pos1 pos2 parenthesize monsters =
   (* Read the specified chunk of the file. *)
-  let ofs1 = pos1.pos_cnum
-  and ofs2 = pos2.pos_cnum in
-  let raw_content : string = chunk ofs1 ofs2 in
+  let raw_content : string = chunk pos1 pos2 in
   (* Transform the monsters, if there are any. (This explicit test
      allows saving one string copy and keeping just one live copy.) *)
   let content : string =
@@ -243,7 +243,7 @@ let mk_stretch pos1 pos2 parenthesize monsters =
         raw_content
     | _ :: _ ->
         let content : bytes = Bytes.of_string raw_content in
-        List.iter (fun monster -> monster.transform ofs1 content) monsters;
+        List.iter (fun monster -> monster.transform pos1.pos_cnum content) monsters;
         Bytes.unsafe_to_string content
   in
   (* Add whitespace so that the column numbers match those of the source file.
