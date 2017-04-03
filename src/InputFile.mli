@@ -53,7 +53,11 @@ val compare_input_files: input_file -> input_file -> int
 
 (* [with_file_contents contents f] records that the contents of the current
    input file is [contents] while the action [f] runs. The function [f] can
-   then call [get_file_contents()] to retrieve [contents]. *)
+   then call [chunk] (below) to retrieve certain segments of [contents]. *)
 
 val with_file_contents: string -> (unit -> 'a) -> 'a
-val get_file_contents: unit -> string
+
+(* [chunk pos1 pos2] extracts a chunk out of the current input file, delimited
+   by the positions [pos1] and [pos2]. *)
+
+val chunk: (Lexing.position * Lexing.position) -> string

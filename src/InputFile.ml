@@ -94,3 +94,12 @@ let with_file_contents contents f =
   let result = f() in
   file_contents := None; (* avoid memory leak *)
   result
+
+open Lexing
+
+let chunk (pos1, pos2) =
+  let ofs1 = pos1.pos_cnum
+  and ofs2 = pos2.pos_cnum in
+  let contents = get_file_contents() in
+  let len = ofs2 - ofs1 in
+  String.sub contents ofs1 len
