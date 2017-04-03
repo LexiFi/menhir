@@ -22,10 +22,10 @@ open Parser.MenhirInterpreter (* incremental API to our parser *)
 
 (* [fail] is invoked if a syntax error is encountered. *)
 
-let fail lexbuf checkpoint =
+let fail lexbuf env =
   (* The parser has suspended itself because of a syntax error. Stop.
      Find out which state the parser is currently in. *)
-  let s : int = error_state checkpoint in
+  let s : int = current_state_number env in
   (* Display a nice error message. In principle, the table found in
      [ParserMessages] should be complete, so we should obtain
      a nice message. If [Not_found] is raised, we produce a generic
@@ -42,6 +42,13 @@ let fail lexbuf checkpoint =
   let message = String.sub message 0 (String.length message - 1) in
   (* Display our message and die. *)
   Error.error (Positions.lexbuf lexbuf) "syntax error.\n%s" message
+
+let fail lexbuf checkpoint =
+  match checkpoint with
+  | HandlingError env ->
+      fail lexbuf env
+  | _ ->
+      assert false (* this cannot happen *)
 
 (* The entry point. *)
 

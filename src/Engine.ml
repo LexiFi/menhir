@@ -718,12 +718,8 @@ module Make (T : TABLE) = struct
     env1.stack == env2.stack &&
     number env1.current = number env2.current
 
-  let error_state checkpoint =
-    match checkpoint with
-    | HandlingError env ->
-        number env.current
-    | _ ->
-        invalid_arg "error_state expects HandlingError"
+  let current_state_number env =
+    number env.current
 
   (* ------------------------------------------------------------------------ *)
 
