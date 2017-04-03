@@ -1,1 +1,1 @@
-%token Je Ne Crois Pas Que Ceci Ressemble %% à une grammaire ah non oh non mais ça: si { () } %%
+%token I DO NOT Think This Looks Like %% A Grammar, Oh Really No But This: does { () } %%
