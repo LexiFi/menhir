@@ -262,8 +262,9 @@ module type INCREMENTAL_ENGINE = sig
 
   val stack: 'a env -> stack (* DEPRECATED *)
 
-  (* [top env] returns the parser's top stack cell. If the stack is empty,
-     [None] is returned. *)
+  (* [top env] returns the parser's top stack cell. (If the stack is empty,
+     [None] is returned.) The state contained in this stack cell is the
+     current state of the automaton. *)
 
   val top: 'a env -> element option
 
