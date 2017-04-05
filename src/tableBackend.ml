@@ -206,7 +206,7 @@ let endpos_of_top_stack_cell =
 
 let reducebody prod =
 
-  let nt, _rhs = Production.def prod
+  let nt, rhs = Production.def prod
   and ids = Production.identifiers prod
   and length = Production.length prod in
 
@@ -216,12 +216,15 @@ let reducebody prod =
 
   (* At the same time, build a series of casts. *)
 
+  (* We want a [fold] that begins with the deepest cells in the stack.
+     Folding from left to right on [rhs] is appropriate. *)
+
   let (_ : int), pat, casts =
-    Invariant.fold (fun (i, pat, casts) (_ : bool) symbol _ ->
+    Array.fold_left (fun (i, pat, casts) symbol ->
       i + 1,
       reducecellparams prod i symbol pat,
       reducecellcasts prod i symbol casts
-    ) (0, PVar stack, []) (Invariant.prodstack prod)
+    ) (0, PVar stack, []) rhs
   in
 
   (* Determine beforeend/start/end positions for the left-hand side of the
