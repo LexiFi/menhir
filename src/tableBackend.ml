@@ -143,7 +143,7 @@ let define_and_measure (x, e) =
 
 (* Code generation for semantic actions. *)
 
-(* The functions [reducecellparams] and [reducebody] are adpated from
+(* The functions [reducecellparams] and [reducebody] are adapted from
    [CodeBackend]. *)
 
 (* Things are slightly more regular here than in the code-based
