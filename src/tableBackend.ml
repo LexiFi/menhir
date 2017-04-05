@@ -288,37 +288,20 @@ let semantic_action prod =
   EFun (
     [ PVar env ],
 
-    if Invariant.ever_reduced prod then
+    (* Access the stack and current state via the environment. *)
 
-      (* Access the stack and current state via the environment. *)
+    (* In fact, the current state needs be bound here only if this is
+       an epsilon production. Otherwise, the variable [state] will be
+       bound by the pattern produced by [reducecellparams] above. *)
 
-      (* In fact, the current state needs be bound here only if this is
-         an epsilon production. Otherwise, the variable [state] will be
-         bound by the pattern produced by [reducecellparams] above. *)
+    ELet (
 
-      ELet (
+      [ PVar stack, ERecordAccess (EVar env, fstack) ] @
+        (if Production.length prod = 0 then [ PVar state, ERecordAccess (EVar env, fcurrent) ] else []),
 
-        [ PVar stack, ERecordAccess (EVar env, fstack) ] @
-          (if Production.length prod = 0 then [ PVar state, ERecordAccess (EVar env, fcurrent) ] else []),
+      reducebody prod
 
-        (* Then, *)
-
-        reducebody prod
-
-      )
-
-    else
-
-      (* For productions that are never reduced, generate no code. *)
-
-      (* We do this mainly because [Invariant.prodstack] does not
-         support productions that are never reduced. *)
-
-      EComment (
-        "a production never reduced",
-        EApp (EVar "assert", [ EData ("false", []) ])
-      )
-
+    )
   )
 
 (* Export the number of start productions. *)
