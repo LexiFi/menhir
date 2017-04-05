@@ -714,6 +714,12 @@ module Make (T : TABLE) = struct
      current states via their numbers (this seems cleaner than using OCaml's
      polymorphic equality). *)
 
+  (* The two fields that are not compared by [equal], namely [error] and
+     [triple], are overwritten by the function [discard], which handles
+     [InputNeeded] checkpoints. Thus, if [equal env1 env2] holds, then the
+     checkpoints [input_needed env1] and [input_needed env2] are
+     equivalent: they lead the parser to behave in the same way. *)
+
   let equal env1 env2 =
     env1.stack == env2.stack &&
     number env1.current = number env2.current
