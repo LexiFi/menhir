@@ -290,11 +290,13 @@ module type INCREMENTAL_ENGINE = sig
   val current_state_number: 'a env -> int
 
   (* [equal env1 env2] tells whether the parser configurations [env1] and
-     [env2] are equal in the sense that the automaton's current state is
-     the same in [env1] and [env2] and the stack is *physically* the same
-     in [env1] and [env2]. If [equal env1 env2] is [true], then the list
-     of stack elements, as observed via [pop] and [top], must be the same
-     in [env1] and [env2]. The function [equal] has time complexity O(1). *)
+     [env2] are equal in the sense that the automaton's current state is the
+     same in [env1] and [env2] and the stack is *physically* the same in
+     [env1] and [env2]. If [equal env1 env2] is [true], then the list of stack
+     elements, as observed via [pop] and [top], must be the same in [env1] and
+     [env2]. Also, if [equal env1 env2], then the checkpoints [input_needed
+     env1] and [input_needed env2] are equivalent. The function [equal] has
+     time complexity O(1). *)
 
   val equal: 'a env -> 'a env -> bool
 
