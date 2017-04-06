@@ -6,7 +6,7 @@
 
 SHELL := bash
 
-.PHONY: all test clean headache package check api export tag opam local unlocal pin unpin
+.PHONY: all test clean headache package check api export tag opam local unlocal pin unpin mdl
 
 # -------------------------------------------------------------------------
 
@@ -290,3 +290,13 @@ pin:
 
 unpin:
 	opam pin remove menhir
+
+# -------------------------------------------------------------------------
+
+# Running the Markdown linter on our Markdown files.
+
+# For an explanation of mdl's error messages, see:
+# https://github.com/mivok/markdownlint/blob/master/docs/RULES.md
+
+mdl:
+	@ mdl *.md
