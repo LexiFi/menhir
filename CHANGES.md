@@ -20,12 +20,17 @@
   ignored by Menhir's back-ends, but are written to `.cmly` files, thus
   can be exploited by external tools via MenhirSdk. (Suggested by Frédéric Bour.)
 
-* The definition of a %public nonterminal symbol can now be split into several
-  parts within a single .mly file. (This used to be permitted only over
-  multiple .mly files.) (Suggested by Frédéric Bour.)
+* The definition of a `%public` nonterminal symbol can now be split into several
+  parts within a single `.mly` file. (This used to be permitted only over
+  multiple `.mly` files.) (Suggested by Frédéric Bour.)
 
 * Improved the syntax error message that is displayed when a `.mly` file
   is incorrect: the previous and next token are shown.
+
+* The type `stack` and the function `stack` in the incremental API are
+  deprecated. The new functions `top` and `pop` can be used instead to
+  inspect the parser's stack. The module `MenhirLib.General` is deprecated
+  as well. Deprecated functionality will be removed in the future.
 
 * Fixed a bug where the module name `Basics` was shadowed (that is, if the user's
   project happened to contain a toplevel module by this name, then it could not
