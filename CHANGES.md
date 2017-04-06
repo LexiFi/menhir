@@ -1,14 +1,31 @@
 # Changes
 
-## 2017/03/24
+## 2017/XX/XX
 
-* Changed Menhir's license from QPL to GPLv2. MenhirLib remains under LGPLv2.
+* Changed Menhir's license from QPL to GPLv2.
+  MenhirLib remains under LGPLv2, with a linking exception.
 
-## 2017/01/20
+* Moved the repository to
+  [gitlab.inria.fr](https://gitlab.inria.fr/fpottier/menhir/).
+
+* Introduced a new command line switch, `--cmly`, which causes Menhir to
+  create a `.cmly` file, containing a description of the grammar and
+  automaton. (Suggested by Frédéric Bour.)
+
+* Introduced a new library, MenhirSdk, which allows reading a `.cmly` file.
+  The purpose of this library is to allow external tools to take advantage
+  of the work performed by Menhir's front-end. (Suggested by Frédéric Bour.)
+
+* Introduced new syntax for attributes in a `.mly` file. Attributes are
+  ignored by Menhir's back-ends, but are written to `.cmly` files, thus
+  can be exploited by external tools via MenhirSdk. (Suggested by Frédéric Bour.)
+
+* Improved the syntax error message that is displayed when a `.mly` file
+  is incorrect: the previous and next token are shown.
 
 * Fixed a bug where the module name `Basics` was shadowed (that is, if the user's
   project happened to contain a toplevel module by this name, then it could not
-  be referred to from an `.mly` file). (Reported by François Thiré.)
+  be referred to from a `.mly` file). (Reported by François Thiré.)
 
 ## 2017/01/01
 
