@@ -177,15 +177,10 @@ val default_conflict_resolution: unit -> unit
 val extra_reductions: unit -> unit
 
 (* ------------------------------------------------------------------------- *)
-(* Information about which productions are reduced and where. It is an error
-   to call one of these functions before default conflict resolution has taken
-   place. *)
+(* Information about which productions are reduced and where. *)
 
 (* [production_where prod] is the set of all states [s] where production
-   [prod] might be reduced. *)
+   [prod] might be reduced. It is an error to call this functios before
+   default conflict resolution has taken place. *)
 
 val production_where: Production.index -> NodeSet.t
-
-(* [may_reduce s prod] tells whether state [s] may reduce production [prod]. *)
-
-val may_reduce: node -> Production.index -> bool

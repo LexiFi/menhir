@@ -194,8 +194,8 @@ module T = struct
         next = !stack
       }
 
-  let may_reduce =
-    Lr1.may_reduce
+  let may_reduce node prod =
+    Lr1.NodeSet.mem node (Lr1.production_where prod)
 
   (* The logging functions that follow are called only if [log] is [true]. *)
 

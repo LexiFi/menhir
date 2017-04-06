@@ -938,8 +938,8 @@ let () =
 
 (* For each production, compute where (that is, in which states) this
    production can be reduced. This computation is done AFTER default conflict
-   resolution (see below). It is an error to call any of the accessor
-   functions before default conflict resolution has taken place. *)
+   resolution (see below). It is an error to call the accessor function
+   [production_where] before default conflict resolution has taken place. *)
 
 let production_where : NodeSet.t ProductionMap.t option ref =
   ref None
@@ -974,9 +974,6 @@ let production_where (prod : Production.index) : NodeSet.t =
       with Not_found ->
         (* The production [prod] is never reduced. *)
         NodeSet.empty
-
-let may_reduce node prod =
-  NodeSet.mem node (production_where prod)
 
 (* ------------------------------------------------------------------------ *)
 (* When requested by the code generator, apply default conflict
