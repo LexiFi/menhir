@@ -630,13 +630,13 @@ let check_parameterized_grammar_is_well_defined grammar =
     let is_nonterminal = StringMap.mem head grammar.p_rules
     and is_terminal = StringMap.mem head grammar.p_tokens || List.mem head reserved in
     (* If [head] is not satisfactory, error. *)
-    if (must_be_nonterminal && not is_nonterminal) then
-      Error.error [Parameters.position p]
-             "this should be a nonterminal symbol.\n\
-              %s declarations are applicable only to nonterminal symbols." kind;
     if not (is_terminal || is_nonterminal) then
       Error.error [Parameters.position p]
              "%s is undefined." head;
+    if (must_be_nonterminal && not is_nonterminal) then
+      Error.error [Parameters.position p]
+             "%s is a terminal symbol,\n\
+              but %s declarations are applicable only to nonterminal symbols." (Parameters.print p) kind;
     (* Then, check the arguments. *)
     List.iter (check kind false) ps
   in
