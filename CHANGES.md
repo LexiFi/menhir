@@ -27,6 +27,9 @@
 * Improved the syntax error message that is displayed when a `.mly` file
   is incorrect: the previous and next token are shown.
 
+* Possibly incompatible change in the incremental API: the type `'a env`
+  becomes parameterized.
+
 * The type `stack` and the function `stack` in the incremental API are
   deprecated. The new functions `top` and `pop` can be used instead to
   inspect the parser's stack. The module `MenhirLib.General` is deprecated
