@@ -1146,13 +1146,16 @@ let default_conflict_resolution () =
    among several possible interpretations. *)
 
 (* The code below looks like the decision on a default reduction in
-   [Invariant], except we do not impose the absence of outgoing terminal
+   [Default], except we do not impose the absence of outgoing terminal
    transitions. Also, we actually modify the automaton, so the back-ends, the
    reference interpreter, etc., need not be aware of this feature, whereas
    they are aware of default reductions. *)
 
 (* This code can run before we decide on the default reductions; this does
    not affect which default reductions will be permitted. *)
+
+(* This code does not affect which productions can be reduced where. Thus,
+   it is OK for it to run after [initialize_production_where()]. *)
 
 (* A count of how many states receive extra reductions through this mechanism. *)
 
