@@ -20,6 +20,10 @@
   ignored by Menhir's back-ends, but are written to `.cmly` files, thus
   can be exploited by external tools via MenhirSdk. (Suggested by Frédéric Bour.)
 
+* The definition of a %public nonterminal symbol can now be split into several
+  parts within a single .mly file. (This used to be permitted only over
+  multiple .mly files.) (Suggested by Frédéric Bour.)
+
 * Improved the syntax error message that is displayed when a `.mly` file
   is incorrect: the previous and next token are shown.
 
