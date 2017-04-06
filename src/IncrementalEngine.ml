@@ -167,7 +167,8 @@ module type INCREMENTAL_ENGINE = sig
 
   (* The function [acceptable] allows testing, after an error has been
      detected, which tokens would have been accepted at this point. It is
-     implemented using [shifts]. *)
+     implemented using [shifts]. Its argument should be an [InputNeeded]
+     checkpoint. *)
 
   (* For completeness, one must undo any spurious reductions before carrying out
      this test -- that is, one must apply [acceptable] to the FIRST checkpoint
