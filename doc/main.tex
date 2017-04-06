@@ -77,10 +77,11 @@ reports and suggestions are welcome!
 \begin{quote}
 \cmenhir \nt{option} \ldots \nt{option} \nt{filename} \ldots \nt{filename}
 \end{quote}
-Each of the file names must end with \texttt{.mly} and denotes a partial
+Each of the file names must end with \mly (unless \ocoq is used,
+in which case it must end with \vy) and denotes a partial
 grammar specification. These partial grammar specifications are joined
 (\sref{sec:split}) to form a single, self-contained grammar specification,
-which is then processed. A number of optional command line switches allow
+which is then processed. The following optional command line switches allow
 controlling many aspects of the process.
 
 \docswitch{\obase \nt{basename}} This switch controls the base name
@@ -89,9 +90,13 @@ files named \nt{basename}\texttt{.ml} and \nt{basename}\texttt{.mli}. Note
 that \nt{basename} can contain occurrences of the \texttt{/} character, so it
 really specifies a path and a base name. When only one \nt{filename} is
 provided on the command line, the default \nt{basename} is obtained by
-depriving \nt{filename} of its final \texttt{.mly} suffix. When multiple file
+depriving \nt{filename} of its final \mly suffix. When multiple file
 names are provided on the command line, no default base name exists, so that
 the \obase switch \emph{must} be used.
+
+\docswitch{\ocmly} This switch causes Menhir to produce a \cmly file in
+addition to its normal operation. This file contains a (binary-form)
+representation of the grammar and automaton (see \sref{sec:sdk}).
 
 \docswitch{\ocomment} This switch causes a few comments to be inserted into the
 \ocaml code that is written to the \ml file.
@@ -115,11 +120,11 @@ irredundant. For more information, see \sref{sec:errors:new}.
 \docswitch{\ocoq} This switch causes \menhir to produce Coq code. See \sref{sec:coq}.
 
 \docswitch{\ocoqnoactions} (Used in conjunction with \ocoq.) This switch
-causes the semantic actions present in the \texttt{.vy} file to be ignored and
+causes the semantic actions present in the \vy file to be ignored and
 replaced with \verb+tt+, the unique inhabitant of Coq's \verb+unit+ type. This
 feature can be used to test the Coq back-end with a standard grammar, that is, a
 grammar that contains \ocaml semantic actions. Just rename the file from
-\texttt{.mly} to \texttt{.vy} and set this switch.
+\mly to \vy and set this switch.
 
 \docswitch{\ocoqnocomplete} (Used in conjunction with \ocoq.) This switch
 disables the generation of the proof of completeness of the parser
@@ -447,9 +452,12 @@ must be fully qualified.
 
 The syntax of grammar specifications appears in \fref{fig:syntax}. (For
 compatibility with \ocamlyacc, some specifications that do not fully adhere to
-this syntax are also accepted.)
+this syntax are also accepted.) Attributes are not documented in
+\fref{fig:syntax}: see \sref{sec:attributes}.
+
 
 \subsection{Declarations}
+\label{sec:decls}
 
 A specification file begins with a sequence of declarations, ended by a
 mandatory \percentpercent keyword.
@@ -509,7 +517,7 @@ A declaration of one of the following forms:
 \dleft $\nt{uid}_1 \ldots \nt{uid}_n$ \\
 \dright $\nt{uid}_1 \ldots \nt{uid}_n$
 \end{quote}
-attributes both a \emph{priority level} and an \emph{associativity status} to
+assigns both a \emph{priority level} and an \emph{associativity status} to
 the symbols $\nt{uid}_1, \ldots, \nt{uid}_n$. The priority level assigned to
 $\nt{uid}_1, \ldots, \nt{uid}_n$ is not defined explicitly: instead, it is
 defined to be higher than the priority level assigned by the previous
@@ -2370,33 +2378,6 @@ far, the type \verb+'a lr1state+ is abstract, so there is no way of
 inspecting~\verb+s+. The inspection API (\sref{sec:inspection}) offers further
 tools for this purpose.
 
-%% type stack
-
-\begin{verbatim}
-  type stack =
-    element stream
-\end{verbatim}
-
-A parser stack can be viewed as a stream of elements, where the first element
-of the stream is the topmost element of the stack. (The type \verb+'a stream+
-is defined in the module \menhirlibgeneral.)
-This stream is empty if the parser is in an initial state, and non-empty otherwise.
-% (Which initial state? -- no way to know...)
-In the latter case,
-the current state of the LR(1) automaton is found in the topmost stack element.
-
-%% val stack
-
-\begin{verbatim}
-  val stack: env -> stack
-\end{verbatim}
-
-The function \verb+stack+ offers a view of the parser's stack as a stream of
-elements. This stream is computed on-demand. (The internal representation of
-the stack may be different, so a conversion is necessary.) Invoking the
-function \verb+stack+, and demanding the next element of the stream, takes
-constant time.
-
 %% val positions
 
 \begin{verbatim}
@@ -3189,14 +3170,14 @@ compiler~\cite{compcert}.
 
 Setting the \ocoq switch on the command line enables the Coq back-end.  When
 this switch is set, \menhir expects an input file whose name ends
-in \texttt{.vy} and generates a Coq file whose name ends
+in \vy and generates a Coq file whose name ends
 in \texttt{.v}.
 
-Like a \texttt{.mly} file, a \texttt{.vy} file is a grammar specification,
+Like a \mly file, a \vy file is a grammar specification,
 with embedded semantic actions. The only difference is that the semantic
-actions in a \texttt{.vy} file are expressed in Coq instead
-of \ocaml. A \texttt{.vy} file otherwise uses the same syntax as
-a \texttt{.mly} file. CompCert's
+actions in a \vy file are expressed in Coq instead
+of \ocaml. A \vy file otherwise uses the same syntax as
+a \mly file. CompCert's
 \compcertgithubfile{cparser/Parser.vy}
 serves as an example.
 
@@ -3354,6 +3335,153 @@ Extract Constant Int31.On => "0".
 Extract Constant Int31.In => "1".
 \end{comment}
 % Peut-être en faire aussi un fichier de librairie?
+
+% ------------------------------------------------------------------------------
+
+\section{Building grammarware on top of Menhir}
+\label{sec:grammarware}
+
+It is possible to build a variety of grammar-processing tools,
+also known as ``grammarware''~\cite{klint-laemmel-verhoef-05},
+on top of Menhir's front-end. Indeed, Menhir offers a facility
+for dumping a \cmly file, which contains a (binary-form) representation
+of the grammar and automaton,
+as well as a library, \menhirsdk,
+for (programmatically) reading and exploiting a \cmly file.
+These facilities are described in \sref{sec:sdk}.
+%
+Furthermore, Menhir allows decorating a grammar with ``attributes'',
+which are ignored by Menhir's back-ends,
+yet are written to the \cmly file,
+thus can be exploited by other tools, via \menhirsdk.
+%
+Attributes are described in \sref{sec:attributes}.
+
+\subsection{Menhir's SDK}
+\label{sec:sdk}
+
+The command line option \ocmly causes Menhir to produce a \cmly file in
+addition to its normal operation. This file contains a (binary-form)
+representation of the grammar and automaton. This is the grammar that
+is obtained after the following steps have been carried out:
+\begin{itemize}
+\item joining multiple \mly files, if necessary; % in fact, always (due to standard.mly)
+\item eliminating anonymous rules;
+\item expanding away parameterized nonterminal symbols;
+\item removing unreachable nonterminal symbols;
+\item performing OCaml type inference, if the \oinfer switch is used;
+\item inlining away nonterminal symbols that are decorated with \dinline.
+\end{itemize}
+
+The library \menhirsdk offers an API for reading a \cmly file.
+The functor \repo{src/cmly_read.mli}{\texttt{MenhirSdk.Cmly\_read.Read}}
+reads such a file and produces a module whose signature is
+\repo{src/cmly_api.ml}{\texttt{MenhirSdk.Cmly\_api.GRAMMAR}}.
+This API is not explained in this document; for details,
+the reader is expected to follow the above links.
+
+% TEMPORARY mention the demo generate-printers
+% as an example of both the SDK and attributes
+%   (possibly make it an independent package)
+
+\subsection{Attributes}
+\label{sec:attributes}
+
+Attributes are decorations that can be placed in \mly files.
+They are ignored by Menhir's back-ends,
+but are written to \cmly files,
+thus can be exploited by other tools, via \menhirsdk.
+
+An attribute consists of a name and a payload. An attribute name is an OCaml
+identifier, such as \texttt{cost}, or a list of OCaml identifiers, separated
+with dots, such as \texttt{my.name}. An attribute payload is an OCaml
+expression of arbitrary type, such as \texttt{1} or \verb+"&&"+ or \verb+print_int+.
+Following the syntax of OCaml's attributes, an attribute's name and payload
+are separated with one or more spaces, and are delimited by \verb+@[+ and
+\verb+]+. Thus, \verb+@[cost 1]+ and \verb+@[printer print_int]+ are examples
+of attributes.
+
+An attribute can be attached at one of four levels:
+% grammar-level attributes, %[@foo ...]
+% terminal attribute, %token BAR @[foo ...]
+% nonterminal attribute, bar @[foo ...]: ...
+% producer attribute, e = expr @[foo ...]
+\begin{enumerate}
+
+\item An attribute can be attached with the grammar.
+  Such an attribute must be preceded with a \verb+%+ sign and must appear
+  in the declarations section (\sref{sec:decls}). For example, the following
+  is a valid declaration:
+\begin{verbatim}
+  %@[trace true]
+\end{verbatim}
+
+\item An attribute can be attached with a terminal symbol.
+  Such an attribute must follow the declaration of this symbol.
+  For example, the following is a valid declaration of the terminal symbol \verb+INT+:
+\begin{verbatim}
+  %token<int> INT @[cost 0] @[printer print_int]
+\end{verbatim}
+
+\item An attribute can be attached with a nonterminal symbol.
+  Such an attribute must appear inside the rule that defines this symbol,
+  immediately after the name of this symbol. For instance, the following is a valid
+  definition of the nonterminal symbol \verb+expr+:
+\begin{verbatim}
+  expr @[default EConst 0]:
+    i = INT                  { EConst i }
+  | e1 = expr PLUS e2 = expr { EAdd (e1, e2) }
+\end{verbatim}
+  An attribute can be attached with a parameterized nonterminal symbol:
+\begin{verbatim}
+  option @[default None] (X):
+          { None }
+  | x = X { Some x }
+\end{verbatim}
+  An attribute cannot be attached with a nonterminal symbol that is
+  decorated with the \dinline keyword.
+
+\item An attribute can be attached with a producer (\sref{sec:producers}),
+  that is, with an occurrence of a terminal or nonterminal symbol in the
+  right-hand side of a production. Such an attribute must appear immediately
+  after the producer. For instance, in the following rule,
+  an attribute is attached with the producer \verb+expr*+:
+\begin{verbatim}
+  exprs:
+    LPAREN es = expr* @[list true] RPAREN { es }
+\end{verbatim}
+
+\end{enumerate}
+
+% %attribute declarations:
+
+As a convenience, it is possible to attach many attributes with many (terminal
+and nonterminal) symbols in one go, via an \dattribute declaration, which must
+be placed in the declarations section (\sref{sec:decls}).
+For instance, the following declaration attaches both of the attributes
+\verb+@[cost 0]+ and \verb+@[precious false]+
+with each of the symbols
+\verb+INT+ and \verb+id+:
+\begin{verbatim}
+  %attribute INT id @[cost 0] @[precious false]
+\end{verbatim}
+An \dattribute declaration can be considered syntactic sugar: it is desugared
+away in terms of the four forms of attributes presented earlier. (The command
+line switch \oonlypreprocess can be used to see how it is desugared.)
+
+% Interaction of %attribute declarations and parameterized nonterminals:
+
+If an attribute is attached with a parameterized nonterminal symbol, then,
+when this symbol is expanded away, the attribute is transmitted to every
+instance. For instance, in an earlier example, the attribute
+\verb+@[default None]+ was attached with the parameterized symbol
+\verb+option+. Then, every instance of \verb+option+, such as
+\verb+option(expr)+, \verb+option(COMMA)+, and so on, inherits this
+attribute. To attach an attribute with one specific
+instance only, one can use an \dattribute declaration. For instance,
+the declaration \verb+%attribute option(expr) @[cost 10]+ attaches
+an attribute with the nonterminal symbol \verb+option(expr)+, but
+not with the symbol \verb+option(COMMA)+.
 
 % ------------------------------------------------------------------------------
 
@@ -3589,7 +3717,10 @@ was generously funded by Jane Street Capital, LLC through the ``OCaml Summer
 Project'' initiative.
 
 Frédéric Bour provided motivation and an initial implementation for the
-incremental API and inspection API.
+incremental API, for the inspection API, for attributes, and for \menhirsdk.
+\href{https://github.com/ocaml/merlin}{Merlin}, an emacs mode for OCaml,
+contains an impressive incremental, syntax-error-tolerant OCaml parser,
+which is based on Menhir and has been a driving force for Menhir's APIs.
 
 Jacques-Henri Jourdan designed and implemented the Coq back-end and did the
 Coq proofs for it.
