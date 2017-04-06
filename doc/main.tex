@@ -2330,6 +2330,48 @@ stack until a state that can act on the \error token is found) does not get a
 chance to run. Instead, the user can implement her own error handling code, in
 the \verb+fail+ continuation.
 
+%% val loop_handle_undo
+
+\begin{verbatim}
+  val loop_handle_undo:
+    ('a -> 'answer) ->
+    ('a checkpoint -> 'a checkpoint -> 'answer) ->
+    supplier -> 'a checkpoint -> 'answer
+\end{verbatim}
+
+\verb+loop_handle_undo+ is analogous to \verb+loop_handle+, but passes a pair
+of checkpoints (instead of a single checkpoint) to the failure continuation.
+%
+The first (and oldest) checkpoint that is passed to the failure continuation
+is the last \verb+InputNeeded+ checkpoint that was encountered before the
+error was detected. The second (and newest) checkpoint is where the error was
+detected. (This is the same checkpoint that \verb+loop_handle+ would pass to
+its failure continuation.) Going back to the first checkpoint can be thought
+of as undoing any reductions that were performed after seeing the problematic
+token. (These reductions must be default reductions or spurious reductions.)
+This can be useful to someone who wishes to implement an error explanation or
+error recovery mechanism.
+
+\verb+loop_handle_undo+ must be applied to an \verb+InputNeeded+ checkpoint.
+The initial checkpoint produced by \verb+Incremental.main+ is of this form.
+
+%% val shifts
+
+\begin{verbatim}
+  val shifts: 'a checkpoint -> 'a env option
+\end{verbatim}
+
+\verb+shifts checkpoint+ assumes that \verb+checkpoint+ has been obtained by
+submitting a token to the parser. It runs the parser from \verb+checkpoint+,
+through an arbitrary number of reductions, until the parser either accepts
+this token (i.e., shifts) or rejects it (i.e., signals an error). If the
+parser decides to shift, then \verb+Some env+ is returned, where \verb+env+ is
+the parser's state just before shifting. Otherwise, \verb+None+ is returned.
+This can be used to test whether the parser is willing to accept a certain
+token. This function, should be used with caution, though, as it causes
+semantic actions to be executed. It is desirable that the semantic actions be
+side-effect-free, or that their side-effects be harmless.
+
 %% type 'a lr1state
 
 \begin{verbatim}
