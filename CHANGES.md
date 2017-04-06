@@ -50,472 +50,567 @@
     * `%on_error_reduce` directives are now printed. (They were not.)
 
 ## 2016/08/25:
-Makefile fix, undoing a change made on 2016/03/03, which caused installation
-to fail under (some versions of?) Windows where dynamic linking is not
-supported. (Reported by Andrew Appel.)
+
+* `Makefile` fix, undoing a change made on 2016/03/03, which caused installation
+  to fail under (some versions of?) Windows where dynamic linking is not
+  supported. (Reported by Andrew Appel.)
 
 ## 2016/08/05:
-%on_error_reduce declarations now have implicit priority levels, so as to
-tell Menhir what to do when two such declarations are applicable.
-Also, the well-formedness checks on %type and %on_error_reduce declarations
-have been reinforced.
+
+* `%on_error_reduce` declarations now have implicit priority levels, so as to
+  tell Menhir what to do when two such declarations are applicable.
+  Also, the well-formedness checks on `%type` and `%on_error_reduce` declarations
+  have been reinforced.
 
 ## 2016/06/23:
-A small change in the generated code (both in the code and table back-ends) so
-as to avoid OCaml's warning 41. The warning would arise (when compiling a
-generated parser with OCaml 4.03) because Menhir's exception [Error] has the
-same name as the data constructor [Error] in OCaml's pervasive library.
-(Reported by Bernhard Schommer.)
+
+* A small change in the generated code (both in the code and table back-ends) so
+  as to avoid OCaml's warning 41. The warning would arise (when compiling a
+  generated parser with OCaml 4.03) because Menhir's exception `Error` has the
+  same name as the data constructor `Error` in OCaml's pervasive library.
+  (Reported by Bernhard Schommer.)
 
 ## 2016/05/18:
-Anonymous rules now work also when used inside a parameterized rule.
-(This did not work until now.) When an anonymous rule is hoisted out
-of a parameterized rule, it may itself become parameterized. Menhir
-parameterizes it only over the parameters that it actually needs.
+
+* Anonymous rules now work also when used inside a parameterized rule.
+  (This did not work until now.) When an anonymous rule is hoisted out
+  of a parameterized rule, it may itself become parameterized. Menhir
+  parameterizes it only over the parameters that it actually needs.
 
 ## 2016/05/04:
-In the Coq backend, split the largest definitions into smaller
-ones. This circumvents a limitation of vm_compute on 32 bit
-machines. This also enables us to perform sharing between
-definitions, so that the generated files are much smaller.
+
+* In the Coq backend, split the largest definitions into smaller
+  ones. This circumvents a limitation of vm_compute on 32 bit
+  machines. This also enables us to perform sharing between
+  definitions, so that the generated files are much smaller.
 
 ## 2016/04/10:
-When printing a grammar (which is done by the --only-preprocess options),
-remove the leading bar '|', for compatibility with yacc and bison.
+
+* When printing a grammar (which is done by the `--only-preprocess` options),
+  remove the leading bar `|`, for compatibility with `yacc` and `bison`.
 
 ## 2016/03/11:
-In the code back-end, generate type annotations when extracting a semantic
-value out of the stack. When working with a semantic value of some function
-type, OCaml would incorrectly warn that this function does not use its
-argument. This warning should now be gone.
+
+* In the code back-end, generate type annotations when extracting a semantic
+  value out of the stack. When working with a semantic value of some function
+  type, OCaml would incorrectly warn that this function does not use its
+  argument. This warning should now be gone.
 
 ## 2016/03/03:
-Makefile changes, so as to support ocamlbuild 4.03, which seems to have
-stricter hygiene rules than previous versions.
+
+* Makefile changes, so as to support `ocamlbuild` 4.03, which seems to have
+  stricter hygiene rules than previous versions.
 
 ## 2015/12/30:
-Prevented an incorrect installation that would take place if USE_OCAMLFIND
-was given during "make all" but not during "make install". Added a command
-line directive --suggest-ocamlfind.
+
+* Prevented an incorrect installation that would take place if `USE_OCAMLFIND`
+  was given during `make all` but not during `make install`. Added a command
+  line directive `--suggest-ocamlfind`.
 
 ## 2015/11/11:
-Fixed a severe bug in Menhir 20151110 which (when using the code back-end)
-could cause a generated parser to crash. Thanks to ygrek for reporting the
-bug.
+
+* Fixed a severe bug in Menhir 20151110 which (when using the code back-end)
+  could cause a generated parser to crash. Thanks to ygrek for reporting the
+  bug.
 
 ## 2015/11/11:
-The code produced by version XXXXXXXX of menhir --table can now be linked only
-against a matching version of MenhirLib. If an incorrect version of MenhirLib
-is installed, the OCaml compiler should complain that
-[MenhirLib.StaticVersion.require_XXXXXXXX] is undefined.
+
+  The code produced by version `XXXXXXXX` of `menhir --table` can now be linked only
+  against a matching version of MenhirLib. If an incorrect version of MenhirLib
+  is installed, the OCaml compiler should complain that
+  `MenhirLib.StaticVersion.require_XXXXXXXX` is undefined.
 
 ## 2015/11/10:
-Optimized the computation of $symbolstartpos, based on a couple of assumptions
-about the lexer. (See the manual.)
+
+* Optimized the computation of `$symbolstartpos`, based on a couple of assumptions
+  about the lexer. (See the manual.)
 
 ## 2015/11/04:
-Modified the treatment of %inline so that the positions that are computed are
-the same, regardless of whether %inline is used. This property did not hold
-until now. It now does. Of course, this means that the positions computed by
-the new Menhir are not the same as those computed by older versions of Menhir.
+
+* Modified the treatment of `%inline` so that the positions that are computed are
+  the same, regardless of whether `%inline` is used. This property did not hold
+  until now. It now does. Of course, this means that the positions computed by
+  the new Menhir are not the same as those computed by older versions of Menhir.
 
 ## 2015/11/04:
-Fixed a bug in the treatment of %inline that would lead to an incorrect
-position being computed when the caller and callee had a variable by the
-same name.
+
+* Fixed a bug in the treatment of `%inline` that would lead to an incorrect
+  position being computed when the caller and callee had a variable by the
+  same name.
 
 ## 2015/11/04:
-Modified Menhir so as to compute the start and end positions in the exact same
-way as ocamlyacc. (There used to be a difference in the treatment of epsilon
-productions.) Of course, this means that the positions computed by the new
-Menhir are not the same as those computed by older versions of Menhir. Added
-the keyword $symbolstartpos so as to simulate Parsing.symbol_start_pos()
-in the ocamlyacc world. The keyword $startpos sometimes produces a position
-that is too far off to the left; $symbolstartpos produces a more accurate
-position.
+
+* Modified Menhir so as to compute the start and end positions in the exact same
+  way as `ocamlyacc`. (There used to be a difference in the treatment of epsilon
+  productions.) Of course, this means that the positions computed by the new
+  Menhir are not the same as those computed by older versions of Menhir. Added
+  the keyword `$symbolstartpos` so as to simulate `Parsing.symbol_start_pos()`
+  in the `ocamlyacc` world. The keyword `$startpos` sometimes produces a position
+  that is too far off to the left; `$symbolstartpos` produces a more accurate
+  position.
 
 ## 2015/11/04:
-Incompatible change of the incremental API: instead of a unit argument, the
-entry points (which are named after the start symbols) now require an initial
-position, which typically should be [lexbuf.lex_curr_p].
+
+* Incompatible change of the incremental API: instead of a unit argument, the
+  entry points (which are named after the start symbols) now require an initial
+  position, which typically should be `lexbuf.lex_curr_p`.
 
 ## 2015/11/03:
-Fix-fix-and-re-fix the Makefile in an attempt to allow installation under
-opam/Windows. Thanks to Daniel Weil for patient explanations and testing.
+
+* Fix-fix-and-re-fix the `Makefile` in an attempt to allow installation under
+  opam/Windows. Thanks to Daniel Weil for patient explanations and testing.
 
 ## 2015/10/29:
-MenhirLib is now installed in both binary and source forms.
-"menhir --suggest-menhirLib" reports where MenhirLib is installed.
-This can be used to retrieve a snapshot of MenhirLib in source form
-and include it in your project (if you wish to use --table mode, yet
-do not wish to have a dependency on MenhirLib).
+
+* MenhirLib is now installed in both binary and source forms.
+  `menhir --suggest-menhirLib` reports where MenhirLib is installed.
+  This can be used to retrieve a snapshot of MenhirLib in source form
+  and include it in your project (if you wish to use `--table` mode, yet
+  do not wish to have a dependency on MenhirLib).
 
 ## 2015/10/26:
-Allow --list-errors to work on 32-bit machines (with low hard limits).
-This should fix a problem whereby the 2015/10/23 release could not
-bootstrap on a 32-bit machine.
+
+* Allow `--list-errors` to work on 32-bit machines (with low hard limits).
+  This should fix a problem whereby the 2015/10/23 release could not
+  bootstrap on a 32-bit machine.
 
 ## 2015/10/23:
-New declaration "%on_error_reduce foo", where foo is a nonterminal symbol.
-This modifies the automaton as follows. In every state where a production of
-the form "foo -> ..." is ready to be reduced, every error action is replaced
-with a reduction of this production. (If there is a conflict between several
-productions that could be reduced in this manner, nothing is done.) This does
-not affect the language that is accepted by the automaton, but delays the
-detection of an error: more reductions take place before the error is
-detected.
+
+* New declaration `%on_error_reduce foo`, where `foo` is a nonterminal symbol.
+  This modifies the automaton as follows. In every state where a production of
+  the form `foo -> ...` is ready to be reduced, every error action is replaced
+  with a reduction of this production. (If there is a conflict between several
+  productions that could be reduced in this manner, nothing is done.) This does
+  not affect the language that is accepted by the automaton, but delays the
+  detection of an error: more reductions take place before the error is
+  detected.
 
 ## 2015/10/23:
-Fixed a bug whereby Menhir would warn about a useless %prec declaration,
-even though it was useful. This would happen when the declaration was
-duplicated (by inlining or by macro-expansion) and some but not all of
-the copies were useful.
+
+* Fixed a bug whereby Menhir would warn about a useless `%prec` declaration,
+  even though it was useful. This would happen when the declaration was
+  duplicated (by inlining or by macro-expansion) and some but not all of
+  the copies were useful.
 
 ## 2015/10/23:
-Added [has_default_reduction] to the incremental API.
+
+* Added `has_default_reduction` to the incremental API.
 
 ## 2015/10/23:
-Modified the meaning of --canonical to allow default reductions to take
-place. This implies no loss of precision in terms of lookahead sets,
-and should allow gaining more contextual information when a syntax
-error is encountered. (It should also lead to a smaller automaton.)
+
+* Modified the meaning of `--canonical` to allow default reductions to take
+  place. This implies no loss of precision in terms of lookahead sets,
+  and should allow gaining more contextual information when a syntax
+  error is encountered. (It should also lead to a smaller automaton.)
 
 ## 2015/10/23:
-A brand new set of tools to work on syntax errors.
-New command --list-errors, which produces a list of input sentences which
-are representative of all possible syntax errors. (Costly.)
-New command --interpret-error, which confirms that one particular input
-sentence ends in a syntax error, and prints the number of the state in
-which this error occurs.
-New command --compile-errors, which compiles a list of erroneous sentences
-(together with error messages) to OCaml code.
-New command --compare-errors, which compares two lists of erroneous sentences
-to check if they cover the same error states.
-New command --update-errors, which updates the auto-generated comments in
-a list of erroneous sentences.
-New command --echo-errors, which removes all comments and messages from
-a list of erroneous sentences, and echoes just the sentences.
+
+* A brand new set of tools to work on syntax errors.
+* New command `--list-errors`, which produces a list of input sentences which
+  are representative of all possible syntax errors. (Costly.)
+* New command `--interpret-error`, which confirms that one particular input
+  sentence ends in a syntax error, and prints the number of the state in
+  which this error occurs.
+* New command `--compile-errors`, which compiles a list of erroneous sentences
+  (together with error messages) to OCaml code.
+* New command `--compare-errors`, which compares two lists of erroneous sentences
+  to check if they cover the same error states.
+* New command `--update-errors`, which updates the auto-generated comments in
+  a list of erroneous sentences.
+* New command `--echo-errors`, which removes all comments and messages from
+  a list of erroneous sentences, and echoes just the sentences.
 
 ## 2015/10/16:
-Additions to the incremental API.
-A [supplier] is a function that produces tokens on demand.
-[lexer_lexbuf_to_supplier] turns a lexer and a lexbuf into a supplier.
-[loop] is a ready-made made main parsing loop.
-[loop_handle] is a variant that lets the user do her own error handling.
-[loop_handle_undo] is a variant that additionally allows undoing the last
-  few "spurious" reductions.
-[number] maps a state of the LR(1) automaton to its number.
+
+* Additions to the incremental API.
+    * A `supplier` is a function that produces tokens on demand.
+    * `lexer_lexbuf_to_supplier` turns a lexer and a lexbuf into a supplier.
+    * `loop` is a ready-made made main parsing loop.
+    * `loop_handle` is a variant that lets the user do her own error handling.
+    * `loop_handle_undo` is a variant that additionally allows undoing the last
+      few "spurious" reductions.
+    * `number` maps a state of the LR(1) automaton to its number.
 
 ## 2015/10/16:
-Incompatible change of the incremental API: renamed the type ['a result]
-to ['a checkpoint]. This is a better name anyway, and should help avoid
-confusion with the type ['a result] introduced in OCaml 4.03.
+
+* Incompatible change of the incremental API: renamed the type `'a result`
+  to `'a checkpoint`. This is a better name anyway, and should help avoid
+  confusion with the type `'a result` introduced in OCaml 4.03.
 
 ## 2015/10/12:
-Avoid using $(shell pwd) in Makefile, for better Windows compatibility.
+
+* Avoid using `$(shell pwd)` in `Makefile`, for better Windows compatibility.
 
 ## 2015/10/05:
-Fixed a bug where inconsistent OCaml code was generated when --table
-and --external-tokens were used together. (Reported by Darin Morrison.)
+
+* Fixed a bug where inconsistent OCaml code was generated when `--table`
+  and `--external-tokens` were used together. (Reported by Darin Morrison.)
 
 ## 2015/10/05:
-In --infer mode, leave the .ml file around (instead of removing it) if
-ocamlc fails, so we have a chance to understand what's wrong.
+
+* In `--infer` mode, leave the `.ml` file around (instead of removing it) if
+  `ocamlc` fails, so we have a chance to understand what's wrong.
 
 ## 2015/09/21:
-Re-established some error messages concerning the mis-use of $i which
-had disappeared on 2015/06/29.
+
+* Re-established some error messages concerning the mis-use of `$i` which
+  had disappeared on 2015/06/29.
 
 ## 2015/09/11:
-Fixed the mysterious message that would appear when a nonterminal symbol
-begins with an uppercase letter and --infer is turned on. Clarified the
-documentation to indicate that a (non-start) nonterminal symbol can begin
-with an uppercase letter, but this is not recommended.
+
+* Fixed the mysterious message that would appear when a nonterminal symbol
+  begins with an uppercase letter and `--infer` is turned on. Clarified the
+  documentation to indicate that a (non-start) nonterminal symbol can begin
+  with an uppercase letter, but this is not recommended.
 
 ## 2015/08/27:
-New option --inspection (added last January, documented only now). This
-generates an inspection API which allows inspecting the automaton's stack,
-among other things. This API can in principle be used to write custom code
-for error reporting, error recovery, etc. It is not yet mature and may
-change in the future.
+
+* New option `--inspection` (added last January, documented only now). This
+  generates an inspection API which allows inspecting the automaton's stack,
+  among other things. This API can in principle be used to write custom code
+  for error reporting, error recovery, etc. It is not yet mature and may
+  change in the future.
 
 ## 2015/07/20:
-Added the command line options --unused-token <symbol> and --unused-tokens.
+
+* Added the command line options `--unused-token <symbol>` and `--unused-tokens`.
 
 ## 2015/06/29:
-Changed the treatment of the positional keywords $i. They are now
-rewritten into variables of the form '_i' where 'i' is an integer.
-Users are advised not to use variables of this form inside semantic
-actions.
+
+* Changed the treatment of the positional keywords `$i`. They are now
+  rewritten into variables of the form `_i` where `i` is an integer.
+  Users are advised not to use variables of this form inside semantic
+  actions.
 
 ## 2015/02/11:
-Added support for anonymous rules. This allows writing, e.g.,
-list(e = expression SEMI { e })
-whereas previously one should have written
-list(terminated(e, SEMI)).
+
+* Added support for anonymous rules. This allows writing, e.g.,
+  `list(e = expression SEMI { e })`
+  whereas previously one should have written
+  `list(terminated(e, SEMI))`.
 
 ## 2015/02/09:
-Moved all of the demos to ocamlbuild (instead of make).
+
+* Moved all of the demos to `ocamlbuild` (instead of `make`).
 
 ## 2015/01/18:
-Incompatible change of the incremental API.
-The incremental API now exposes shift events too.
+
+* Incompatible change of the incremental API.
+  The incremental API now exposes shift events too.
 
 ## 2015/01/16:
-Fixed a couple bugs in Makefile and src/Makefile which would cause
-compilation and installation to fail with "TARGET=byte". (Reported
-by Jérémie Courrèges-Anglas and Daniel Dickman.)
+
+* Fixed a couple bugs in `Makefile` and `src/Makefile` which would cause
+  compilation and installation to fail with `TARGET=byte`. (Reported
+  by Jérémie Courrèges-Anglas and Daniel Dickman.)
 
 ## 2015/01/01:
-Incompatible change of the incremental API.
-The entry point main_incremental is now named Incremental.main.
+
+* Incompatible change of the incremental API.
+  The entry point `main_incremental` is now named `Incremental.main`.
 
 ## 2014/12/29:
-Incompatible change of the incremental API.
-The API now exposes reduction events.
-The type 'a result is now private.
-The type env is no longer parameterized.
-[handle] is renamed to [resume].
-[offer] and [resume] now expect a result, not an environment.
+
+* Incompatible change of the incremental API.
+    * The API now exposes reduction events.
+    * The type `'a result` is now private.
+    * The type `env` is no longer parameterized.
+    * `handle` is renamed to `resume`.
+    * `offer` and `resume` now expect a result, not an environment.
 
 ## 2014/12/22:
-Documented the Coq back-end (designed and implemented by Jacques-Henri Jourdan).
+
+* Documented the Coq back-end (designed and implemented by Jacques-Henri Jourdan).
 
 ## 2014/12/15:
-New incremental API (in --table mode only), inspired by Frédéric Bour.
+
+* New incremental API (in `--table` mode only), inspired by Frédéric Bour.
 
 ## 2014/12/11:
-Menhir now reports an error if one of the start symbols produces
-either the empty language or the singleton language {epsilon}.
 
-Although some people out there actually define a start symbol that recognizes
-{epsilon} (and use it as a way of initializing or re-initializing some global
-state), this is considered bad style. Furthermore, by ruling out this case, we
-are able to simplify the table back-end a little bit.
+* Menhir now reports an error if one of the start symbols produces
+  either the empty language or the singleton language {epsilon}.
+
+* Although some people out there actually define a start symbol that recognizes
+  {epsilon} (and use it as a way of initializing or re-initializing some global
+  state), this is considered bad style. Furthermore, by ruling out this case, we
+  are able to simplify the table back-end a little bit.
 
 ## 2014/12/12:
-A speed improvement in the code back-end.
+
+* A speed improvement in the code back-end.
 
 ## 2014/12/08:
-Menhir now requires OCaml 4.02 (instead of 3.09).
+
+* Menhir now requires OCaml 4.02 (instead of 3.09).
 
 ## 2014/12/02:
-Removed support for the $previouserror keyword.
-Removed support for --error-recovery mode.
+
+* Removed support for the `$previouserror` keyword.
+* Removed support for `--error-recovery` mode.
 
 ## 2014/02/18:
-In the Coq backend, use ' instead of _ as separator in identifiers.
-Also, correct a serious bug that was inadvertently introduced on
-2013/03/01 (r319).
 
-2014/02/14
-Lexer fix so as to support an open variant type [> ...] within
-a %type<...> declaration.
+* In the Coq backend, use `'` instead of `_` as separator in identifiers.
+  Also, correct a serious bug that was inadvertently introduced on
+  2013/03/01 (r319).
 
-2013/12/16
-Updated the Makefile so that install no longer depends on all.
-Updated the demos so that the lexer does not invoke "exit 0"
-when encoutering eof. (This should be more intuitive.)
+## 2014/02/14:
+
+* Lexer fix so as to support an open variant type `[> ...]` within
+  a `%type<...>` declaration.
+
+## 2013/12/16:
+
+* Updated the `Makefile` so that `install` no longer depends on `all`.
+
+* Updated the demos so that the lexer does not invoke `exit 0`
+  when encoutering `eof`. (This should be more intuitive.)
 
 ## 2013/09/11:
-Fixed a newline conversion problem that would prevent Menhir from
-building on Windows when using ocaml 4.01.
+
+* Fixed a newline conversion problem that would prevent Menhir from
+  building on Windows when using ocaml 4.01.
 
 ## 2013/03/02:
-Switched to ocamlbuild. Many thanks to Daniel Weil for offering
-very useful guidance.
+
+* Switched to ocamlbuild. Many thanks to Daniel Weil for offering
+  very useful guidance.
 
 ## 2013/01/16:
-"menhir --depend" was broken since someone added new whitespace in the output
-of ocamldep. Fixed.
+
+* `menhir --depend` was broken since someone added new whitespace in the output
+  of `ocamldep`. Fixed.
 
 ## 2012/12/19:
-Fixed a compilation problem that would arise when a file produced
-by Menhir on a 64-bit platform was compiled by ocaml on a 32-bit
-platform.
+
+* Fixed a compilation problem that would arise when a file produced
+  by Menhir on a 64-bit platform was compiled by ocaml on a 32-bit
+  platform.
 
 ## 2012/08/25:
-Performance improvements in the computation of various information
-about the automaton (module [Invariant]). The improvements will be
-noticeable only for very large automata.
+
+* Performance improvements in the computation of various information
+  about the automaton (module `Invariant`). The improvements will be
+  noticeable only for very large automata.
 
 ## 2012/06/07:
-The option --log-grammar 3 (and above) now causes the FOLLOW sets for
-*terminal* symbols to be computed and displayed.
+
+* The option `--log-grammar 3` (and above) now causes the `FOLLOW` sets for
+  terminal symbols to be computed and displayed.
 
 ## 2012/05/25:
-Added the flag --canonical, which causes Menhir to produce a canonical LR(1)
-automaton in the style of Knuth. This means that no merging of states takes
-place during the construction of the automaton, and that no default reductions
-are allowed.
+
+* Added the flag `--canonical`, which causes Menhir to produce a canonical LR(1)
+  automaton in the style of Knuth. This means that no merging of states takes
+  place during the construction of the automaton, and that no default reductions
+  are allowed.
 
 ## 2012/01/23:
-Fixed a bug whereby a %nonassoc declaration was not respected. This
-declaration requests that a shift/reduce conflict be reduced in favor of
-neither shifting nor reducing, that is, a syntax error must occur. However,
-due to an unforeseen interaction with the "default reduction" mechanism, this
-declaration was sometimes ignored and reduction would take place.
+
+* Fixed a bug whereby a `%nonassoc` declaration was not respected. This
+  declaration requests that a shift/reduce conflict be reduced in favor of
+  neither shifting nor reducing, that is, a syntax error must occur. However,
+  due to an unforeseen interaction with the default reduction mechanism, this
+  declaration was sometimes ignored and reduction would take place.
 
 ## 2012/01/09:
-Changes in the (undocumented) Coq back-end so as to match the ESOP 2012
-paper.
+
+* Changes in the (undocumented) Coq back-end so as to match the ESOP 2012
+  paper.
 
 ## 2011/10/19:
-The Makefile now tests whether Unix or Windows is used (the test is performed
-by evaluating Sys.os_type under ocaml) and changes a couple settings accordingly:
-- the executable file name is either menhir or menhir.exe
-- the object file suffix is either .o or .obj
+
+* The `Makefile` now tests whether Unix or Windows is used (the test is performed
+  by evaluating `Sys.os_type` under `ocaml`) and changes a couple settings accordingly:
+    * the executable file name is either `menhir` or `menhir.exe`
+    * the object file suffix is either `.o` or `.obj`
 
 ## 2011/10/19:
-Added --strict, which causes many warnings about the grammar and about the
-automaton to be considered errors.
+
+* Added `--strict`, which causes many warnings about the grammar and about the
+  automaton to be considered errors.
 
 ## 2011/10/19:
-The # annotations that are inserted in the generated .ml file now retain their
-full path. (That is, we no longer use [Filename.basename].) This implies that
-the # annotations depend on how menhir is invoked -- e.g.  "menhir
-foo/bar.mly" and "cd foo && menhir bar.mly" will produce different
-results. Nevertheless, this seems reasonable and useful (e.g. in conjunction
-with ocamlbuild and a hierarchy of files). Thanks to Daniel Weil.
+
+* The `#` annotations that are inserted in the generated `.ml` file now retain their
+  full path. (That is, we no longer use `Filename.basename`.) This implies that
+  the `#` annotations depend on how Menhir is invoked
+  -- e.g., `menhir foo/bar.mly` and `cd foo && menhir bar.mly` will produce different
+  results. Nevertheless, this seems reasonable and useful (e.g., in conjunction
+  with `ocamlbuild` and a hierarchy of files). Thanks to Daniel Weil.
 
 ## 2011/10/06:
-With the -lg 1 switch, Menhir now indicates whether the grammar is SLR(1).
+
+* With the `-lg 1` switch, Menhir now indicates whether the grammar is SLR(1).
 
 ## 2011/05/24:
-Removed the lock in ocamldep.wrapper. It is the responsibility of the user
-to avoid interferences with other processes (or other instances of the script)
-that create and/or remove files.
+
+* Removed the lock in `ocamldep.wrapper`. It is the responsibility of the user
+  to avoid interferences with other processes (or other instances of the script)
+  that create and/or remove files.
 
 ## 2011/04/28:
-The (internal) computation of the automaton's invariant was broken and has
-been fixed. Surprisingly, this does not seem to affect the generated code,
-(which was correct,) so no observable bug is fixed. Hopefully no bug is
-introduced!
+
+* The (internal) computation of the automaton's invariant was broken and has
+  been fixed. Surprisingly, this does not seem to affect the generated code,
+  (which was correct,) so no observable bug is fixed. Hopefully no bug is
+  introduced!
 
 ## 2011/04/07:
-The grammar description files (.mly) are now read in up front and stored in
-memory while they are parsed. This allows us to avoid the use of pos_in and
-seek_in, which do not work correctly when CRLF conversion is being performed.
+
+* The grammar description files (`.mly`) are now read in up front and stored in
+  memory while they are parsed. This allows us to avoid the use of `pos_in` and
+  `seek_in`, which do not work correctly when CRLF conversion is being performed.
 
 ## 2011/04/05:
-Fixed a bug in the type inference module (for parameterized non-terminals)
-which would cause an infinite loop.
+
+* Fixed a bug in the type inference module (for parameterized non-terminals)
+  which would cause an infinite loop.
 
 ## 2011/01/24:
-Fixed a bug that would cause an assertion failure in the generated parser
-in some situations where the input stream was incorrect and the grammar
-involved the error token. The fix might cause grammars that use the error
-token to behave differently (hopefully more accurately) as of now.
+
+* Fixed a bug that would cause an assertion failure in the generated parser
+  in some situations where the input stream was incorrect and the grammar
+  involved the error token. The fix might cause grammars that use the error
+  token to behave differently (hopefully more accurately) as of now.
 
 ## 2009/06/18:
-Makefile changes: build and install only the bytecode version of menhirLib
-when TARGET=byte is set.
+
+* `Makefile` changes: build and install only the bytecode version of MenhirLib
+  when `TARGET=byte` is set.
 
 ## 2009/02/06:
-Fixed ocamldep.wrapper to avoid quoting the name of the ocaml command.
-This is hoped to fix a compilation problem under MinGW.
+
+* Fixed `ocamldep.wrapper` to avoid quoting the name of the `ocaml` command.
+  This is hoped to fix a compilation problem under MinGW.
 
 ## 2009/02/04:
-A Makefile fix to avoid a problem under Windows/Cygwin.
-Renamed the ocaml-check-version script so as to avoid a warning.
+
+* A `Makefile` fix to avoid a problem under Windows/Cygwin.
+* Renamed the `ocaml-check-version` script so as to avoid a warning.
 
 ## 2008/09/05:
-Ocaml summer project: added --interpret, --table, and --suggest-*.
+
+* Ocaml summer project: added `--interpret`, `--table`, and `--suggest-*`.
 
 ## 2008/08/06:
-Fixed a problem that would cause the code inliner to abort when a semantic
-value and a non-terminal symbol happened to have the same name.
+
+* Fixed a problem that would cause the code inliner to abort when a semantic
+  value and a non-terminal symbol happened to have the same name.
 
 ## 2008/08/06:
-Removed code sharing.
+
+* Removed code sharing.
 
 ## 2008/06/20:
-Removed an incorrect assertion that caused failures (lr1.ml, line 134).
+
+* Removed an incorrect assertion that caused failures (`lr1.ml`, line 134).
 
 ## 2007/12/05:
-Disabled code sharing by default, as it is currently broken. (See Yann's
-message; assertion failure at runtime.)
+
+* Disabled code sharing by default, as it is currently broken. (See Yann's
+  message; assertion failure at runtime.)
 
 ## 2007/12/01:
-Added an optimization to share code among states that have identical
-outgoing transition tables.
+
+* Added an optimization to share code among states that have identical
+  outgoing transition tables.
 
 ## 2007/08/30:
-Small Makefile change: create an executable file for check-ocaml-version in
-order to work around the absence of dynamic loading on some platforms.
+
+* Small `Makefile` change: create an executable file for `check-ocaml-version` in
+  order to work around the absence of dynamic loading on some platforms.
 
 ## 2007/05/20:
-Made a fundamental change in the construction of the LR(1) automaton
-in order to eliminate a bug that could lead to spurious conflicts --
-thanks to Ketti for submitting a bug report.
+
+* Made a fundamental change in the construction of the LR(1) automaton
+  in order to eliminate a bug that could lead to spurious conflicts --
+  thanks to Ketti for submitting a bug report.
 
 ## 2007/05/18:
-Added --follow-construction to help understand the construction of the
-LR(1) automaton (very verbose).
+
+* Added `--follow-construction` to help understand the construction of the
+  LR(1) automaton (very verbose).
 
 ## 2007/05/11:
-Code generation: more explicit qualifications with Pervasives so as
-to avoid capture when the user redefines some of the built-in operators,
-such as (+).
-Added a new demo (calc-param) that shows how to use %parameter.
+
+* Code generation: more explicit qualifications with `Pervasives` so as
+  to avoid capture when the user redefines some of the built-in operators,
+  such as `(+)`.
+* Added a new demo (`calc-param`) that shows how to use `%parameter`.
 
 ## 2007/03/22:
-Makefile improvements (check for PREFIX; bootstrap in bytecode now
-also available). Slight changes to OMakefile.shared.
+
+* `Makefile` improvements (check for `PREFIX`; bootstrap in bytecode now
+  also available). Slight changes to `OMakefile.shared`.
 
 ## 2007/02/15:
-Portability fix in Makefile and Makefile.shared (avoided "which").
+
+* Portability fix in `Makefile` and `Makefile.shared` (avoided `which`).
 
 ## 2006/12/15:
-Portability fix in Makefile.shared (replaced "&>" with "2>&1 >").
+
+* Portability fix in `Makefile.shared` (replaced `&>` with `2>&1 >`).
 
 ## 2006/06/23:
-Made a slight restriction to Pager's criterion so as to never introduce
-fake conflict tokens (see Lr0.compatible). This might help make conflict
-explanations more accurate in the future.
+
+* Made a slight restriction to Pager's criterion so as to never introduce
+  fake conflict tokens (see `Lr0.compatible`). This might help make conflict
+  explanations more accurate in the future.
 
 ## 2006/06/16:
-Fixed bug that would cause positions to become invalid after %inlining.
+
+* Fixed bug that would cause positions to become invalid after inlining.
 
 ## 2006/06/15:
-Fixed --depend to be more lenient when analyzing ocamldep's output.
-Added --raw-depend which transmits ocamldep's output unchanged (for
-use in conjunction with omake).
+
+* Fixed `--depend` to be more lenient when analyzing `ocamldep`'s output.
+* Added `--raw-depend` which transmits `ocamldep`'s output unchanged (for
+  use in conjunction with `omake`).
 
 ## 2006/06/12:
-Fixed bug that would cause --only-preprocess to print %token declarations
-also for pseudo-tokens.
-Fixed bug that caused some precedence declarations to be incorrectly
-reported as useless.
-Improved things so that useless pseudo-tokens now also cause warnings.
-Fixed bug that would cause %type directives for terminal symbols to
-be incorrectly accepted.
-Fixed bug that would occur when a semantic action containing $i keywords
-was %inlined.
+
+* Fixed bug that would cause `--only-preprocess` to print `%token` declarations
+  also for pseudo-tokens.
+* Fixed bug that caused some precedence declarations to be incorrectly
+  reported as useless.
+* Improved things so that useless pseudo-tokens now also cause warnings.
+* Fixed bug that would cause `%type` directives for terminal symbols to
+  be incorrectly accepted.
+* Fixed bug that would occur when a semantic action containing `$i` keywords
+  was inlined.
 
 ## 2006/05/05:
-Fixed problem that caused some end-of-stream conflicts not to be reported.
-Fixed Pager's compatibility criterion to avoid creating end-of-stream conflicts.
+
+* Fixed problem that caused some end-of-stream conflicts not to be reported.
+* Fixed Pager's compatibility criterion to avoid creating end-of-stream conflicts.
 
 ## 2006/04/21:
-Fixed problem that allowed generating incorrect but apparently well-typed
-Objective Caml code when a semantic action was ill-typed and --infer was
-omitted.
+
+* Fixed problem that allowed generating incorrect but apparently well-typed
+  Objective Caml code when a semantic action was ill-typed and `--infer` was
+  omitted.
 
 ## 2006/03/29:
-Improved conflict reports by factoring out maximal common derivation contexts.
+
+* Improved conflict reports by factoring out maximal common derivation contexts.
 
 ## 2006/03/28:
-Fixed bug that could arise when explaining a conflict in a non-LALR(1) grammar.
+
+* Fixed bug that could arise when explaining a conflict in a non-LALR(1) grammar.
 
 ## 2006/03/27:
-Changed count of reduce/reduce conflicts to allow a comparison with ocamlyacc's diagnostics.
-When refusing to resolve a conflict, report all diagnostics before dying.
+
+* Changed count of reduce/reduce conflicts to allow a comparison with `ocamlyacc`'s diagnostics.
+* When refusing to resolve a conflict, report all diagnostics before dying.
 
 ## 2006/03/18:
-Added display of FOLLOW sets when using --log-grammar 2.
-Added --graph option.
-Fixed behavior of --depend option.
+
+* Added display of `FOLLOW` sets when using `--log-grammar 2`.
+* Added `--graph` option.
+* Fixed behavior of `--depend` option.
 
 ## 2006/01/06:
-Removed reversed lists from the standard library.
+
+* Removed reversed lists from the standard library.
