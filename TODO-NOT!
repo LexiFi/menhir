@@ -81,3 +81,15 @@ for now.
   and calling it inside CodeBackend, CoqBackend, and Interpret (complicated).
   Or perhaps just running the computation on demand (using lazy)
   but that makes timing more difficult.
+
+* The warning "this production is never reduced" is sound but incomplete.
+  See never_reduced.mly:
+  a: b B | B {}
+  b:         {}
+  where we get a warning that "b -> " is never reduced, but actually (as a
+  result) "a -> b B" is never reduced either. Reword the current warning?
+  Document the problem? Develop a new warning based on LRijkstra?
+  By the same token, some states could be unreachable, without us knowing.
+  What should we do about it?
+  Note that the incremental API may allow reaching some states that LRijkstra
+  would declare unreachable -- so, be careful.
