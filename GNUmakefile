@@ -281,4 +281,4 @@ unpin:
 # https://github.com/mivok/markdownlint/blob/master/docs/RULES.md
 
 mdl:
-	@ mdl *.md
+	@ mdl *.md */*.md
