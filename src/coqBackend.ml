@@ -38,7 +38,7 @@ module Run (T: sig end) = struct
             | Stretch.Inferred _ -> assert false (* We cannot infer coq types *)
 
   let is_final_state node =
-    match Invariant.has_default_reduction node with
+    match Default.has_default_reduction node with
       | Some (prod, _) -> Production.is_start prod
       | None -> false
 
@@ -277,7 +277,7 @@ module Run (T: sig end) = struct
     fprintf f "  match state with\n";
     lr1_iter_nonfinal (fun node ->
       fprintf f "  | %s => " (print_st node);
-      match Invariant.has_default_reduction node with
+      match Default.has_default_reduction node with
         | Some (prod, _) ->
           fprintf f "Default_reduce_act %s\n" (print_prod prod)
         | None ->

@@ -488,7 +488,7 @@ let marshal2 name m n (matrix : int list list) =
 (* The action table. *)
 
 let action node t =
-  match Invariant.has_default_reduction node with
+  match Default.has_default_reduction node with
   | Some _ ->
 
       (* [node] has a default reduction; in that case, the action
@@ -504,7 +504,7 @@ let action node t =
         (* [node] has a transition to [target]. If [target] has a default
            reduction on [#], use [ShiftNoDiscard], otherwise [ShiftDiscard]. *)
 
-        match Invariant.has_default_reduction target with
+        match Default.has_default_reduction target with
         | Some (_, toks) when TerminalSet.mem Terminal.sharp toks ->
             assert (TerminalSet.cardinal toks = 1);
             encode_ShiftNoDiscard target
@@ -555,7 +555,7 @@ let error node t =
 (* The default reductions table. *)
 
 let default_reduction node =
-  match Invariant.has_default_reduction node with
+  match Default.has_default_reduction node with
   | Some (prod, _) ->
       encode_DefRed prod
   | None ->

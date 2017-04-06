@@ -369,7 +369,7 @@ let gotopushes : Nonterminal.t -> bool =
     not (
       Lr1.targets (fun accu _ target ->
         accu &&
-        match Invariant.has_default_reduction target with
+        match Default.has_default_reduction target with
         | Some (prod, _) ->
             Production.length prod > 0
         | None -> false
@@ -440,7 +440,7 @@ let (shiftreduce : Production.index -> bool), shiftreducecount =
        default reduction. *)
 
     Invariant.fold_reduced (fun s accu ->
-      accu && (match Invariant.has_default_reduction s with None -> false | Some _ -> true)
+      accu && (match Default.has_default_reduction s with None -> false | Some _ -> true)
            && (runpushes s)
     ) prod true
 
@@ -474,7 +474,7 @@ let () =
       else
         Lr1.targets (fun accu _ target ->
           accu &&
-          match Invariant.has_default_reduction target with
+          match Default.has_default_reduction target with
           | Some (prod, _) ->
               shiftreduce prod
           | None ->
@@ -1059,7 +1059,7 @@ let initiate s =
 
 let rundef s : valdef =
 
-  match Invariant.has_default_reduction s with
+  match Default.has_default_reduction s with
   | Some (prod, toks) as defred ->
 
       (* Perform reduction without looking ahead.

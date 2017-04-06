@@ -926,8 +926,13 @@ let () =
   else if !reduce_reduce > 1 then
     Error.grammar_warning [] "%d states have reduce/reduce conflicts." !reduce_reduce
 
-(* There is a global check for errors at the end of [Invariant], so we do
-   not need to check & stop here. *)
+(* ------------------------------------------------------------------------ *)
+
+(* If any fatal error was signaled up to this point, stop now. *)
+
+let () =
+  if Error.errors() then
+    exit 1
 
 (* ------------------------------------------------------------------------ *)
 (* When requested by the code generator, apply default conflict

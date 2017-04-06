@@ -11,7 +11,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module I = Invariant (* artificial dependency; ensures that [Invariant] runs first *)
+module I = Invariant (* artificial dependency *)
+module D = Default   (* artificial dependency *)
 
 (* --------------------------------------------------------------------------- *)
 
@@ -774,4 +775,3 @@ let () =
 
     exit 0
   )
-

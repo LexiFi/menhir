@@ -139,7 +139,7 @@ let reductions_on s z : Production.index list =
 
 let has_reduction s z : Production.index option =
   assert (Terminal.real z);
-  match Invariant.has_default_reduction s with
+  match Default.has_default_reduction s with
   | Some (prod, _) ->
       Some prod
   | None ->
@@ -155,7 +155,7 @@ let has_reduction s z : Production.index option =
    reduction). *)
 
 let can_reduce s prod =
-  match Invariant.has_default_reduction s with
+  match Default.has_default_reduction s with
   | Some (prod', _) when prod = prod' ->
       true
   | _ ->
@@ -170,7 +170,7 @@ let can_reduce s prod =
 
 let causes_an_error s z : bool =
   assert (Terminal.real z);
-  match Invariant.has_default_reduction s with
+  match Default.has_default_reduction s with
   | Some _ ->
       false
   | None ->
@@ -189,7 +189,7 @@ let foreach_terminal =
    [causes_an_error]. This implementation is significantly more efficient. *)
 
 let foreach_terminal_not_causing_an_error s f =
-  match Invariant.has_default_reduction s with
+  match Default.has_default_reduction s with
   | Some _ ->
       (* There is a default reduction. No symbol causes an error. *)
       foreach_terminal f
@@ -1087,7 +1087,7 @@ let new_fact fact =
        [prod, z] such that the [current] state can reduce [prod] on [z]
        and [position] accepts [prod]. *)
 
-    match Invariant.has_default_reduction current with
+    match Default.has_default_reduction current with
     | Some (prod, _) ->
         if Trie.accepts prod position then
           (* [new_edge] does not accept [any] as its 4th parameter, so we
@@ -1390,4 +1390,3 @@ let () =
 (* ------------------------------------------------------------------------ *)
 
 end
-
