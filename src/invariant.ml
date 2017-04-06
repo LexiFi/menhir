@@ -276,6 +276,13 @@ let fold_reduced f prod accu =
 (* ------------------------------------------------------------------------ *)
 (* Warn about productions that are never reduced. *)
 
+(* These are productions that can never, ever be reduced, because there is
+   no state that is willing to reduce them. There could be other productions
+   that are never reduced because the only states that are willing to reduce
+   them are unreachable. We do not report those. In fact, through the use of
+   the inspection API, it might be possible to bring the automaton into a
+   state where one of those productions can be reduced. *)
+
 let () =
   let count = ref 0 in
   Production.iter (fun prod ->
