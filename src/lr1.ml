@@ -935,6 +935,56 @@ let () =
     exit 1
 
 (* ------------------------------------------------------------------------ *)
+
+(* For each production, compute where (that is, in which states) this
+   production can be reduced. This computation is done AFTER default conflict
+   resolution (see below). It is an error to call the accessor functions
+   [may_reduce], [ever_reduced], [fold_reduced] before conflict resolution. *)
+
+let production_where : NodeSet.t ProductionMap.t option ref =
+  ref None
+
+let initialize_production_where () =
+  production_where := Some (
+    fold (fun accu node ->
+      TerminalMap.fold (fun _ prods accu ->
+        let prod = Misc.single prods in
+        let nodes =
+          try
+            ProductionMap.lookup prod accu
+          with Not_found ->
+            NodeSet.empty
+        in
+        ProductionMap.add prod (NodeSet.add node nodes) accu
+      ) (reductions node) accu
+    ) ProductionMap.empty
+  )
+
+let production_where (prod : Production.index) : NodeSet.t =
+  match !production_where with
+  | None ->
+      (* It is an error to call this function before conflict resolution. *)
+      assert false
+  | Some production_where ->
+      try
+        (* Production [prod] may be reduced at [nodes]. *)
+        let nodes = ProductionMap.lookup prod production_where in
+        assert (not (NodeSet.is_empty nodes));
+        nodes
+      with Not_found ->
+        (* The production [prod] is never reduced. *)
+        NodeSet.empty
+
+let may_reduce node prod =
+  NodeSet.mem node (production_where prod)
+
+let ever_reduced prod =
+  not (NodeSet.is_empty (production_where prod))
+
+let fold_reduced f prod accu =
+  NodeSet.fold f (production_where prod) accu
+
+(* ------------------------------------------------------------------------ *)
 (* When requested by the code generator, apply default conflict
    resolution to ensure that the automaton is deterministic. *)
 
@@ -1084,7 +1134,10 @@ let default_conflict_resolution () =
   if !ambiguities = 1 then
     Error.grammar_warning [] "one state has an end-of-stream conflict."
   else if !ambiguities > 1 then
-    Error.grammar_warning [] "%d states have an end-of-stream conflict." !ambiguities
+    Error.grammar_warning [] "%d states have an end-of-stream conflict." !ambiguities;
+
+  (* We can now compute where productions are reduced. *)
+  initialize_production_where()
 
 (* ------------------------------------------------------------------------ *)
 (* Extra reductions. *)

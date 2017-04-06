@@ -237,43 +237,6 @@ let stack_states (node : Lr1.node) : StateVector.property =
       v
 
 (* ------------------------------------------------------------------------ *)
-(* For each production, compute where (that is, in which states) this
-   production can be reduced. *)
-
-let production_where : Lr1.NodeSet.t ProductionMap.t =
-  Lr1.fold (fun accu node ->
-    TerminalMap.fold (fun _ prods accu ->
-      let prod = Misc.single prods in
-      let nodes =
-        try
-          ProductionMap.lookup prod accu
-        with Not_found ->
-          Lr1.NodeSet.empty
-      in
-      ProductionMap.add prod (Lr1.NodeSet.add node nodes) accu
-    ) (Lr1.reductions node) accu
-  ) ProductionMap.empty
-
-let production_where (prod : Production.index) : Lr1.NodeSet.t =
-  try
-    (* Production [prod] may be reduced at [nodes]. *)
-    let nodes = ProductionMap.lookup prod production_where in
-    assert (not (Lr1.NodeSet.is_empty nodes));
-    nodes
-  with Not_found ->
-    (* The production [prod] is never reduced. *)
-    Lr1.NodeSet.empty
-
-let may_reduce node prod =
-  Lr1.NodeSet.mem node (production_where prod)
-
-let ever_reduced prod =
-  not (Lr1.NodeSet.is_empty (production_where prod))
-
-let fold_reduced f prod accu =
-  Lr1.NodeSet.fold f (production_where prod) accu
-
-(* ------------------------------------------------------------------------ *)
 (* Warn about productions that are never reduced. *)
 
 (* These are productions that can never, ever be reduced, because there is
@@ -286,7 +249,7 @@ let fold_reduced f prod accu =
 let () =
   let count = ref 0 in
   Production.iter (fun prod ->
-    if Lr1.NodeSet.is_empty (production_where prod) then
+    if Lr1.NodeSet.is_empty (Lr1.production_where prod) then
       match Production.classify prod with
       | Some nt ->
           incr count;
@@ -312,7 +275,7 @@ let () =
 
 let production_states : Production.index -> StateLattice.property =
   Production.tabulate (fun prod ->
-    let nodes = production_where prod in
+    let nodes = Lr1.production_where prod in
     let height = Production.length prod in
     Lr1.NodeSet.fold (fun node accu ->
       join accu
@@ -439,7 +402,7 @@ let () =
       | Bottom ->
           ()
       | NonBottom v ->
-          let sites = production_where prod in
+          let sites = Lr1.production_where prod in
           let length = Production.length prod in
           if length = 0 then
             Lr1.NodeSet.iter represent sites

@@ -195,7 +195,7 @@ module T = struct
       }
 
   let may_reduce =
-    Invariant.may_reduce
+    Lr1.may_reduce
 
   (* The logging functions that follow are called only if [log] is [true]. *)
 

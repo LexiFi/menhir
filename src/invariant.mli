@@ -114,22 +114,6 @@ val endp: Symbol.t -> bool
 val errorpeeker: Lr1.node -> bool
 
 (* ------------------------------------------------------------------------- *)
-(* Information about which productions are reduced and where. *)
-
-(* [may_reduce s prod] tells whether state [s] may reduce production [prod]. *)
-
-val may_reduce: Lr1.node -> Production.index -> bool
-
-(* [ever_reduced prod] tells whether production [prod] is ever reduced. *)
-
-val ever_reduced: Production.index -> bool
-
-(* [fold_reduced prod] folds over all states that can reduce
-   production [prod]. *)
-
-val fold_reduced: (Lr1.node -> 'a -> 'a) -> Production.index -> 'a -> 'a
-
-(* ------------------------------------------------------------------------- *)
 (* Miscellaneous. *)
 
 (* [universal symbol] tells whether every represented state has an

@@ -176,3 +176,25 @@ val default_conflict_resolution: unit -> unit
 
 val extra_reductions: unit -> unit
 
+(* ------------------------------------------------------------------------- *)
+(* Information about which productions are reduced and where. It is an error
+   to call one of these functions before default conflict resolution has taken
+   place. *)
+
+(* [production_where prod] is the set of all states [s] where production
+   [prod] might be reduced. *)
+
+val production_where: Production.index -> NodeSet.t
+
+(* [may_reduce s prod] tells whether state [s] may reduce production [prod]. *)
+
+val may_reduce: node -> Production.index -> bool
+
+(* [ever_reduced prod] tells whether production [prod] is ever reduced. *)
+
+val ever_reduced: Production.index -> bool
+
+(* [fold_reduced prod] folds over all states that can reduce
+   production [prod]. *)
+
+val fold_reduced: (node -> 'a -> 'a) -> Production.index -> 'a -> 'a

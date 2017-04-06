@@ -439,7 +439,7 @@ let (shiftreduce : Production.index -> bool), shiftreducecount =
     (* Check that all call sites push a stack cell and have a
        default reduction. *)
 
-    Invariant.fold_reduced (fun s accu ->
+    Lr1.fold_reduced (fun s accu ->
       accu && (match Default.has_default_reduction s with None -> false | Some _ -> true)
            && (runpushes s)
     ) prod true
@@ -1665,7 +1665,7 @@ let program =
       Nonterminal.foldx (fun nt defs ->
         gotodef nt :: defs
       ) (Production.fold (fun prod defs ->
-        if Invariant.ever_reduced prod then
+        if Lr1.ever_reduced prod then
           reducedef prod :: defs
         else
           defs
