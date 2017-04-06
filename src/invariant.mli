@@ -11,8 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module discovers and publishes information about the
-   automaton.
+(* This module discovers and publishes information about the automaton.
 
    It determines the shape of the stack when a state is about to be
    entered, when a production is about to be reduced, and when a goto
@@ -23,7 +22,11 @@
    need to keep track of (start or end) positions.
 
    It also determines which automaton states could have to deal with an
-   [error] token. *)
+   [error] token.
+
+   The information computed in this module is used in the code back-end,
+   in the Coq back-end, and in the automated production of .messages files.
+   It is not used in the table back-end. *)
 
 open Grammar
 
