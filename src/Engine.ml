@@ -605,7 +605,7 @@ module Make (T : TABLE) = struct
         shifts (resume checkpoint)
     | HandlingError _ ->
         (* The parser fails, which means it rejects the terminal symbol
-           that we have fed it. Do not update the accumulator. *)
+           that we have fed it. *)
         None
     | InputNeeded _
     | Accepted _
