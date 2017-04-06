@@ -27,24 +27,27 @@
   (Jacques-Henri Jourdan.)
 
 ## 2016/11/15:
-Fix in --only-preprocess-for-ocamlyacc mode: avoid printing newline characters
-inside a %type declaration, as this is forbidden by ocamlyacc. (Reported by
-Kenji Maillard.)
-Fix in --only-preprocess-for-ocamlyacc mode: avoid variable capture caused by
-ocamlyacc internally translating $i to _i. (Reported by Kenji Maillard.)
+
+* Fix in `--only-preprocess-for-ocamlyacc` mode: avoid printing newline characters
+  inside a `%type` declaration, as this is forbidden by `ocamlyacc`. (Reported by
+  Kenji Maillard.)
+* Fix in `--only-preprocess-for-ocamlyacc` mode: avoid variable capture caused by
+  `ocamlyacc` internally translating `$i` to `_i`. (Reported by Kenji Maillard.)
 
 ## 2016/09/01:
-New command line switch --only-preprocess-for-ocamlyacc, supposed to print the
-grammar in a form that ocamlyacc can accept. As of now, this feature is
-incomplete (in particular, support for Menhir's position keywords is missing),
-untested, and undocumented. It could be removed in the future.
+
+* New command line switch `--only-preprocess-for-ocamlyacc`, supposed to print the
+  grammar in a form that `ocamlyacc` can accept. As of now, this feature is
+  incomplete (in particular, support for Menhir's position keywords is missing),
+  untested, and undocumented. It could be removed in the future.
 
 ## 2016/08/26:
-Fixes in the output of --only-preprocess:
-  The order of productions is now preserved.
-    (It was not. This matters if there are reduce/reduce conflicts.)
-  %parameter directives are now printed. (They were not).
-  %on_error_reduce directives are now printed. (They were not.)
+
+* Fixes in the output of `--only-preprocess`:
+    * The order of productions is now preserved.
+        (It was not. This matters if there are reduce/reduce conflicts.)
+    * `%parameter` directives are now printed. (They were not).
+    * `%on_error_reduce` directives are now printed. (They were not.)
 
 ## 2016/08/25:
 Makefile fix, undoing a change made on 2016/03/03, which caused installation
