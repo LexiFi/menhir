@@ -6,7 +6,7 @@
 
 SHELL := bash
 
-.PHONY: all test clean headache package check api export tag opam local unlocal pin unpin mdl
+.PHONY: all test clean headache package check export tag opam local unlocal pin unpin mdl
 
 # -------------------------------------------------------------------------
 
@@ -194,34 +194,16 @@ check:
 
 # -------------------------------------------------------------------------
 
-# Generating HTML documentation for certain API files.
-
-%.mli.html: %.mli
-	caml2html -nf $<
-
-%.ml.html: %.ml
-	caml2html -nf $<
-
-# -------------------------------------------------------------------------
-
 # Copying the tarball to my Web site.
 
 RSYNC   := scp -p -C
 TARGET  := yquem.inria.fr:public_html/menhir/
 PAGE    := /home/fpottier/dev/page
-API     := src/Convert.mli.html \
-	   src/IncrementalEngine.ml.html \
-	   src/General.mli.html
 
-api: $(API)
-
-export: api
+export:
 # Copier l'archive et la doc vers yquem.
 	$(RSYNC) $(TARBALL) $(TARGET)
 	$(RSYNC) $(PACKAGE)/manual.pdf $(TARGET)
-	$(RSYNC) CHANGES $(TARGET)
-# Copier l'API vers la page Web.
-	$(RSYNC) $(API) $(TARGET)
 # Mettre à jour la page Web de Menhir avec le nouveau numéro de version.
 	cd $(PAGE) && \
 	  cvs up && \
