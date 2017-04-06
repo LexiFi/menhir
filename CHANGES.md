@@ -1,3 +1,5 @@
+# Changes
+
 ## 2017/03/24
 
 * Changed Menhir's license from QPL to GPLv2. MenhirLib remains under LGPLv2.
@@ -14,8 +16,6 @@
   `standard.mly`. This environment variable overrides the installation-time
   default setting, and is itself overridden by the `--stdlib` command line
   switch. (Requested by Jonathan Protzenko.)
-
-## 2017/01/01
 
 * `Makefile` fix: filter out `'\r'` in the output of `menhir --suggest-ocamlfind`,
   so that the `Makefile` works when Menhir is compiled as a Windows executable.
@@ -44,10 +44,10 @@
 ## 2016/08/26
 
 * Fixes in the output of `--only-preprocess`:
-    * The order of productions is now preserved.
-        (It was not. This matters if there are reduce/reduce conflicts.)
-    * `%parameter` directives are now printed. (They were not).
-    * `%on_error_reduce` directives are now printed. (They were not.)
+  * The order of productions is now preserved.
+      (It was not. This matters if there are reduce/reduce conflicts.)
+  * `%parameter` directives are now printed. (They were not).
+  * `%on_error_reduce` directives are now printed. (They were not.)
 
 ## 2016/08/25
 
@@ -113,9 +113,7 @@
   could cause a generated parser to crash. Thanks to ygrek for reporting the
   bug.
 
-## 2015/11/11
-
-  The code produced by version `XXXXXXXX` of `menhir --table` can now be linked only
+* The code produced by version `XXXXXXXX` of `menhir --table` can now be linked only
   against a matching version of MenhirLib. If an incorrect version of MenhirLib
   is installed, the OCaml compiler should complain that
   `MenhirLib.StaticVersion.require_XXXXXXXX` is undefined.
@@ -132,13 +130,9 @@
   until now. It now does. Of course, this means that the positions computed by
   the new Menhir are not the same as those computed by older versions of Menhir.
 
-## 2015/11/04
-
 * Fixed a bug in the treatment of `%inline` that would lead to an incorrect
   position being computed when the caller and callee had a variable by the
   same name.
-
-## 2015/11/04
 
 * Modified Menhir so as to compute the start and end positions in the exact same
   way as `ocamlyacc`. (There used to be a difference in the treatment of epsilon
@@ -148,8 +142,6 @@
   in the `ocamlyacc` world. The keyword `$startpos` sometimes produces a position
   that is too far off to the left; `$symbolstartpos` produces a more accurate
   position.
-
-## 2015/11/04
 
 * Incompatible change of the incremental API: instead of a unit argument, the
   entry points (which are named after the start symbols) now require an initial
@@ -185,25 +177,17 @@
   detection of an error: more reductions take place before the error is
   detected.
 
-## 2015/10/23
-
 * Fixed a bug whereby Menhir would warn about a useless `%prec` declaration,
   even though it was useful. This would happen when the declaration was
   duplicated (by inlining or by macro-expansion) and some but not all of
   the copies were useful.
 
-## 2015/10/23
-
 * Added `has_default_reduction` to the incremental API.
-
-## 2015/10/23
 
 * Modified the meaning of `--canonical` to allow default reductions to take
   place. This implies no loss of precision in terms of lookahead sets,
   and should allow gaining more contextual information when a syntax
   error is encountered. (It should also lead to a smaller automaton.)
-
-## 2015/10/23
 
 * A brand new set of tools to work on syntax errors.
 * New command `--list-errors`, which produces a list of input sentences which
@@ -223,15 +207,13 @@
 ## 2015/10/16
 
 * Additions to the incremental API.
-    * A `supplier` is a function that produces tokens on demand.
-    * `lexer_lexbuf_to_supplier` turns a lexer and a lexbuf into a supplier.
-    * `loop` is a ready-made made main parsing loop.
-    * `loop_handle` is a variant that lets the user do her own error handling.
-    * `loop_handle_undo` is a variant that additionally allows undoing the last
-      few "spurious" reductions.
-    * `number` maps a state of the LR(1) automaton to its number.
-
-## 2015/10/16
+  * A `supplier` is a function that produces tokens on demand.
+  * `lexer_lexbuf_to_supplier` turns a lexer and a lexbuf into a supplier.
+  * `loop` is a ready-made made main parsing loop.
+  * `loop_handle` is a variant that lets the user do her own error handling.
+  * `loop_handle_undo` is a variant that additionally allows undoing the last
+    few "spurious" reductions.
+  * `number` maps a state of the LR(1) automaton to its number.
 
 * Incompatible change of the incremental API: renamed the type `'a result`
   to `'a checkpoint`. This is a better name anyway, and should help avoid
@@ -245,8 +227,6 @@
 
 * Fixed a bug where inconsistent OCaml code was generated when `--table`
   and `--external-tokens` were used together. (Reported by Darin Morrison.)
-
-## 2015/10/05
 
 * In `--infer` mode, leave the `.ml` file around (instead of removing it) if
   `ocamlc` fails, so we have a chance to understand what's wrong.
@@ -312,11 +292,11 @@
 ## 2014/12/29
 
 * Incompatible change of the incremental API.
-    * The API now exposes reduction events.
-    * The type `'a result` is now private.
-    * The type `env` is no longer parameterized.
-    * `handle` is renamed to `resume`.
-    * `offer` and `resume` now expect a result, not an environment.
+  * The API now exposes reduction events.
+  * The type `'a result` is now private.
+  * The type `env` is no longer parameterized.
+  * `handle` is renamed to `resume`.
+  * `offer` and `resume` now expect a result, not an environment.
 
 ## 2014/12/22
 
@@ -423,15 +403,11 @@
 
 * The `Makefile` now tests whether Unix or Windows is used (the test is performed
   by evaluating `Sys.os_type` under `ocaml`) and changes a couple settings accordingly:
-    * the executable file name is either `menhir` or `menhir.exe`
-    * the object file suffix is either `.o` or `.obj`
-
-## 2011/10/19
+  * the executable file name is either `menhir` or `menhir.exe`
+  * the object file suffix is either `.o` or `.obj`
 
 * Added `--strict`, which causes many warnings about the grammar and about the
   automaton to be considered errors.
-
-## 2011/10/19
 
 * The `#` annotations that are inserted in the generated `.ml` file now retain their
   full path. (That is, we no longer use `Filename.basename`.) This implies that
@@ -498,8 +474,6 @@
 
 * Fixed a problem that would cause the code inliner to abort when a semantic
   value and a non-terminal symbol happened to have the same name.
-
-## 2008/08/06
 
 * Removed code sharing.
 
@@ -602,7 +576,8 @@
 
 ## 2006/03/27
 
-* Changed count of reduce/reduce conflicts to allow a comparison with `ocamlyacc`'s diagnostics.
+* Changed count of reduce/reduce conflicts to allow a comparison
+  with `ocamlyacc`'s diagnostics.
 * When refusing to resolve a conflict, report all diagnostics before dying.
 
 ## 2006/03/18
