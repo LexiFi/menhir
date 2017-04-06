@@ -3,24 +3,28 @@
 * Changed Menhir's license from QPL to GPLv2. MenhirLib remains under LGPLv2.
 
 ## 2017/01/20:
-Fix a bug where the module name "Basics" was shadowed (that is, if the user's
-project happened to contain a toplevel module by this name, then it could not
-be referred to from an .mly file). (Reported by François Thiré.)
+
+* Fixed a bug where the module name `Basics` was shadowed (that is, if the user's
+  project happened to contain a toplevel module by this name, then it could not
+  be referred to from an `.mly` file). (Reported by François Thiré.)
 
 ## 2017/01/01:
-Add $MENHIR_STDLIB as a way of controlling where Menhir looks for the file
-standard.mly. This environment variable overrides the installation-time
-default setting, and is itself overridden by the --stdlib command line
-switch. (Requested by Jonathan Protzenko.)
+
+* Add `$MENHIR_STDLIB` as a way of controlling where Menhir looks for the file
+  `standard.mly`. This environment variable overrides the installation-time
+  default setting, and is itself overridden by the `--stdlib` command line
+  switch. (Requested by Jonathan Protzenko.)
 
 ## 2017/01/01:
-Makefile fix: filter out '\r' in the output of menhir --suggest-ocamlfind,
-so that the Makefile works when Menhir is compiled as a Windows executable.
-(Suggested by Jonathan Protzenko.)
+
+* `Makefile` fix: filter out `'\r'` in the output of `menhir --suggest-ocamlfind`,
+  so that the `Makefile` works when Menhir is compiled as a Windows executable.
+  (Suggested by Jonathan Protzenko.)
 
 ## 2016/12/01:
-Updated the Coq back-end for compatibility with Coq 8.6.
-(Jacques-Henri Jourdan.)
+
+* Updated the Coq back-end for compatibility with Coq 8.6.
+  (Jacques-Henri Jourdan.)
 
 ## 2016/11/15:
 Fix in --only-preprocess-for-ocamlyacc mode: avoid printing newline characters
