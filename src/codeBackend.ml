@@ -439,10 +439,10 @@ let (shiftreduce : Production.index -> bool), shiftreducecount =
     (* Check that all call sites push a stack cell and have a
        default reduction. *)
 
-    Lr1.fold_reduced (fun s accu ->
+    Lr1.NodeSet.fold (fun s accu ->
       accu && (match Default.has_default_reduction s with None -> false | Some _ -> true)
            && (runpushes s)
-    ) prod true
+    ) (Lr1.production_where prod) true
 
   )
 

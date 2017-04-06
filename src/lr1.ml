@@ -938,8 +938,8 @@ let () =
 
 (* For each production, compute where (that is, in which states) this
    production can be reduced. This computation is done AFTER default conflict
-   resolution (see below). It is an error to call the accessor functions
-   [may_reduce], [ever_reduced], [fold_reduced] before conflict resolution. *)
+   resolution (see below). It is an error to call any of the accessor
+   functions before default conflict resolution has taken place. *)
 
 let production_where : NodeSet.t ProductionMap.t option ref =
   ref None
@@ -980,9 +980,6 @@ let may_reduce node prod =
 
 let ever_reduced prod =
   not (NodeSet.is_empty (production_where prod))
-
-let fold_reduced f prod accu =
-  NodeSet.fold f (production_where prod) accu
 
 (* ------------------------------------------------------------------------ *)
 (* When requested by the code generator, apply default conflict
