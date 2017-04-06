@@ -2369,8 +2369,28 @@ parser decides to shift, then \verb+Some env+ is returned, where \verb+env+ is
 the parser's state just before shifting. Otherwise, \verb+None+ is returned.
 This can be used to test whether the parser is willing to accept a certain
 token. This function, should be used with caution, though, as it causes
-semantic actions to be executed. It is desirable that the semantic actions be
+semantic actions to be executed. It is desirable that all semantic actions be
 side-effect-free, or that their side-effects be harmless.
+
+%% val acceptable
+
+\begin{verbatim}
+  val acceptable: 'a checkpoint -> token -> position -> bool
+\end{verbatim}
+
+\verb+acceptable checkpoint token pos+ requires \verb+checkpoint+ to be an
+\verb+InputNeeded+ checkpoint. It returns \verb+true+ iff the parser is
+willing to shift this token.
+%
+This can be used to test, after an error has been detected, which tokens would
+have been accepted at this point. To do this, one would typically use
+\verb+loop_handle_undo+ to get access to the last \verb+InputNeeded+
+checkpoint that was encountered before the error was detected, and apply
+\verb+acceptable+ to that checkpoint.
+
+\verb+acceptable+ is implemented using \verb+shifts+, so, like \verb+shifts+,
+it causes certain semantic actions to be executed. It is desirable that all
+semantic actions be side-effect-free, or that their side-effects be harmless.
 
 %% type 'a lr1state
 
