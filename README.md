@@ -1,3 +1,5 @@
+# Menhir
+
 Menhir is an LR(1) parser generator for OCaml.
 
 Menhir has a [home page](http://gallium.inria.fr/~fpottier/menhir/).

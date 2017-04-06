@@ -1,3 +1,5 @@
+# Installation
+
 ## Requirements
 
 You need OCaml 4.02 or later, ocamlbuild, and GNU make.
