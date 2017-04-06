@@ -237,36 +237,6 @@ let stack_states (node : Lr1.node) : StateVector.property =
       v
 
 (* ------------------------------------------------------------------------ *)
-(* Warn about productions that are never reduced. *)
-
-(* These are productions that can never, ever be reduced, because there is
-   no state that is willing to reduce them. There could be other productions
-   that are never reduced because the only states that are willing to reduce
-   them are unreachable. We do not report those. In fact, through the use of
-   the inspection API, it might be possible to bring the automaton into a
-   state where one of those productions can be reduced. *)
-
-let () =
-  let count = ref 0 in
-  Production.iter (fun prod ->
-    if Lr1.NodeSet.is_empty (Lr1.production_where prod) then
-      match Production.classify prod with
-      | Some nt ->
-          incr count;
-          Error.grammar_warning
-            (Nonterminal.positions nt)
-            "symbol %s is never accepted." (Nonterminal.print false nt)
-      | None ->
-          incr count;
-          Error.grammar_warning
-            (Production.positions prod)
-            "production %sis never reduced." (Production.print prod)
-  );
-  if !count > 0 then
-    Error.grammar_warning []
-      "in total, %d productions are never reduced." !count
-
-(* ------------------------------------------------------------------------ *)
 (* From the above information, deduce, for each production, the states that
    may appear in the stack when this production is reduced. *)
 

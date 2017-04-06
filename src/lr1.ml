@@ -976,6 +976,36 @@ let production_where (prod : Production.index) : NodeSet.t =
         NodeSet.empty
 
 (* ------------------------------------------------------------------------ *)
+(* Warn about productions that are never reduced. *)
+
+(* These are productions that can never, ever be reduced, because there is
+   no state that is willing to reduce them. There could be other productions
+   that are never reduced because the only states that are willing to reduce
+   them are unreachable. We do not report those. In fact, through the use of
+   the inspection API, it might be possible to bring the automaton into a
+   state where one of those productions can be reduced. *)
+
+let warn_about_productions_never_reduced () =
+  let count = ref 0 in
+  Production.iter (fun prod ->
+    if NodeSet.is_empty (production_where prod) then
+      match Production.classify prod with
+      | Some nt ->
+          incr count;
+          Error.grammar_warning
+            (Nonterminal.positions nt)
+            "symbol %s is never accepted." (Nonterminal.print false nt)
+      | None ->
+          incr count;
+          Error.grammar_warning
+            (Production.positions prod)
+            "production %sis never reduced." (Production.print prod)
+  );
+  if !count > 0 then
+    Error.grammar_warning []
+      "in total, %d productions are never reduced." !count
+
+(* ------------------------------------------------------------------------ *)
 (* When requested by the code generator, apply default conflict
    resolution to ensure that the automaton is deterministic. *)
 
@@ -1128,7 +1158,8 @@ let default_conflict_resolution () =
     Error.grammar_warning [] "%d states have an end-of-stream conflict." !ambiguities;
 
   (* We can now compute where productions are reduced. *)
-  initialize_production_where()
+  initialize_production_where();
+  warn_about_productions_never_reduced()
 
 (* ------------------------------------------------------------------------ *)
 (* Extra reductions. *)
