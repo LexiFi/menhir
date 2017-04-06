@@ -20,5 +20,5 @@ For manual installation, see [INSTALLATION.md](INSTALLATION.md).
 
 ## Contributors
 
-* Frédéric Bour (incremental engine, inspection API)
+* Frédéric Bour (incremental engine, inspection API, attributes, SDK)
 * Jacques-Henri Jourdan (Coq back-end)
