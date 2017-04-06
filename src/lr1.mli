@@ -189,7 +189,3 @@ val production_where: Production.index -> NodeSet.t
 (* [may_reduce s prod] tells whether state [s] may reduce production [prod]. *)
 
 val may_reduce: node -> Production.index -> bool
-
-(* [ever_reduced prod] tells whether production [prod] is ever reduced. *)
-
-val ever_reduced: Production.index -> bool

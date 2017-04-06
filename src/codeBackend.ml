@@ -1665,10 +1665,10 @@ let program =
       Nonterminal.foldx (fun nt defs ->
         gotodef nt :: defs
       ) (Production.fold (fun prod defs ->
-        if Lr1.ever_reduced prod then
-          reducedef prod :: defs
-        else
+        if Lr1.NodeSet.is_empty (Lr1.production_where prod) then
           defs
+        else
+          reducedef prod :: defs
       ) [ discarddef; initenvdef; printtokendef; assertfalsedef; errorcasedef ])))
     ) ::
 

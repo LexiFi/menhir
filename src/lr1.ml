@@ -978,9 +978,6 @@ let production_where (prod : Production.index) : NodeSet.t =
 let may_reduce node prod =
   NodeSet.mem node (production_where prod)
 
-let ever_reduced prod =
-  not (NodeSet.is_empty (production_where prod))
-
 (* ------------------------------------------------------------------------ *)
 (* When requested by the code generator, apply default conflict
    resolution to ensure that the automaton is deterministic. *)
