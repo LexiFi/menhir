@@ -269,8 +269,8 @@ module type INCREMENTAL_ENGINE = sig
 
   val top: 'a env -> element option
 
-  (* [pop_many i env] pops [i] cells off the automaton's stack. This is done by
-     invoking [pop] [i] times in succession. Thus, [pop_many 1] is [pop]. The
+  (* [pop_many i env] pops [i] cells off the automaton's stack. This is done
+     via [i] successive invocations of [pop]. Thus, [pop_many 1] is [pop]. The
      index [i] must be nonnegative. The time complexity is O(i). *)
 
   val pop_many: int -> 'a env -> 'a env option
