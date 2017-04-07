@@ -362,7 +362,7 @@ let check_error_path log nt input =
            Furthermore, if a spurious reduction has taken place already,
            then this is also a spurious reduction. *)
         let spurious =
-          if looking_at_last_token() && not (E.has_default_reduction env)
+          if looking_at_last_token() && not (E.env_has_default_reduction env)
           || spurious <> []
           then
             (current env, prod) :: spurious

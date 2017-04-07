@@ -312,7 +312,7 @@ module type INCREMENTAL_ENGINE = sig
      the form [AboutToReduce (env, prod)], this tells whether the reduction
      that is about to take place is a default reduction. *)
 
-  val has_default_reduction: 'a env -> bool
+  val env_has_default_reduction: 'a env -> bool
 
 end
 

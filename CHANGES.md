@@ -27,8 +27,10 @@
 * Improved the syntax error message that is displayed when a `.mly` file
   is incorrect: the previous and next token are shown.
 
-* Possibly incompatible change in the incremental API: the type `'a env`
-  becomes parameterized.
+* Incompatible change in the incremental API: the type `env` becomes `'a env`.
+
+* Incompatible change in the incremental API: the function
+  `has_default_reduction` is renamed `env_has_default_reduction`.
 
 * The type `stack` and the function `stack` in the incremental API are
   deprecated. The new functions `top` and `pop` can be used instead to
