@@ -2527,16 +2527,20 @@ a pair of twice the initial position that was passed as an argument
 to \verb+main+.
 
 %% val has_default_reduction
+%% val state_has_default_reduction
 
 \begin{verbatim}
   val env_has_default_reduction: 'a env -> bool
+  val state_has_default_reduction: _ lr1state -> bool
 \end{verbatim}
 
-The function \verb+env_has_default_reduction+
-tells whether the parser is about to perform a default reduction.
-In particular, when applied to an environment \verb+env+ taken from a result of
-the form \verb+AboutToReduce (env, prod)+, it tells whether the reduction
-that is about to take place is a default reduction.
+When applied to an environment \verb+env+ taken from a checkpoint of the form
+\verb+AboutToReduce (env, prod)+, the function
+\verb+env_has_default_reduction+ tells whether the reduction that is about to
+take place is a default reduction.
+
+\verb+state_has_default_reduction s+ tells whether the state \verb+s+ has a default
+reduction. This includes the case where \verb+s+ is an accepting state.
 
 % ------------------------------------------------------------------------------
 
