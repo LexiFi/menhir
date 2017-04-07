@@ -798,6 +798,9 @@ module Make (T : TABLE) = struct
     if not (T.may_reduce env.current prod) then
       invalid_arg "force_reduction: this reduction is not permitted in this state"
     else begin
+      (* We do not expose the start productions to the user, so this cannot be
+         a start production. Hence, it has a semantic action. *)
+      assert (not (T.is_start prod));
       (* Invoke the semantic action. *)
       let stack = T.semantic_action prod env in
       (* Perform a goto transition. *)
