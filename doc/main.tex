@@ -2548,6 +2548,22 @@ than or equal to the number of elements in the stack, \verb+None+ is returned.
 \verb+get+ is implemented using \verb+pop_many+ and \verb+top+: its time
 complexity is $O(i)$.
 
+%% val equal
+
+\begin{verbatim}
+  val equal: 'a env -> 'a env -> bool
+\end{verbatim}
+
+\verb+equal env1 env2+ tells whether the parser configurations \verb+env1+ and
+\verb+env2+ are equal in the sense that the automaton's current state is the
+same in \verb+env1+ and \verb+env2+ and the stack is \emph{physically} the
+same in \verb+env1+ and \verb+env2+. If \verb+equal env1 env2+ is \verb+true+,
+then the sequence of the stack elements, as observed via \verb+pop+ and
+\verb+top+, must be the same in \verb+env1+ and \verb+env2+. Also, if
+\verb+equal env1 env2+ holds, then the checkpoints \verb+input_needed env1+
+and \verb+input_needed env2+ must be equivalent. The function \verb+equal+ has
+time complexity $O(1)$.
+
 %% val positions
 
 \begin{verbatim}
