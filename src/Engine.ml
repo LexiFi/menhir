@@ -637,12 +637,6 @@ module Make (T : TABLE) = struct
   type 'a lr1state =
       state
 
-  let find_default_reduction (state : _ lr1state) : production option =
-    T.default_reduction state
-      (fun () prod -> Some prod)
-      (fun () -> None)
-      ()
-
   (* ------------------------------------------------------------------------ *)
 
   (* Stack inspection. *)
@@ -738,15 +732,22 @@ module Make (T : TABLE) = struct
 
   (* Access to information about default reductions. *)
 
-  (* We can make this a function of states, or a function of environments. For
-     now, the latter appears simpler. *)
+  (* This can be a function of states, or a function of environments.
+     We offer both. *)
 
-  let env_has_default_reduction env : bool =
-    T.default_reduction
-      env.current
+  (* Instead of a Boolean result, we could return a [production option].
+     However, we would have to explicitly test whether [prod] is a start
+     production, and in that case, return [None], I suppose. Indeed, we
+     have decided not to expose the start productions. *)
+
+  let state_has_default_reduction (state : _ lr1state) : bool =
+    T.default_reduction state
       (fun _env _prod -> true)
       (fun _env -> false)
-      env
+      ()
+
+  let env_has_default_reduction env =
+    state_has_default_reduction env.current
 
   (* ------------------------------------------------------------------------ *)
 

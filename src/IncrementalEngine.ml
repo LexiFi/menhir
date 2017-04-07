@@ -232,11 +232,6 @@ module type INCREMENTAL_ENGINE = sig
   val production_index: production -> int
   val find_production: int -> production
 
-  (* [find_default_reduction s] returns [Some prod] if the state [s] has a
-     default reduction of production [prod], and returns [None] otherwise. *)
-
-  val find_default_reduction: _ lr1state -> production option
-
   (* An element is a pair of a non-initial state [s] and a semantic value [v]
      associated with the incoming symbol of this state. The idea is, the value
      [v] was pushed onto the stack just before the state [s] was entered. Thus,
@@ -307,12 +302,17 @@ module type INCREMENTAL_ENGINE = sig
 
   val positions: 'a env -> position * position
 
-  (* This tells whether the parser is about to perform a default reduction.
-     In particular, when applied to an environment taken from a result of
-     the form [AboutToReduce (env, prod)], this tells whether the reduction
-     that is about to take place is a default reduction. *)
+  (* When applied to an environment taken from a checkpoint of the form
+     [AboutToReduce (env, prod)], the function [env_has_default_reduction]
+     tells whether the reduction that is about to take place is a default
+     reduction. *)
 
   val env_has_default_reduction: 'a env -> bool
+
+  (* [state_has_default_reduction s] tells whether the state [s] has a default
+     reduction. This includes the case where [s] is an accepting state. *)
+
+  val state_has_default_reduction: _ lr1state -> bool
 
 end
 
