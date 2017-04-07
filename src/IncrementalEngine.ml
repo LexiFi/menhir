@@ -24,6 +24,12 @@ module type INCREMENTAL_ENGINE = sig
 
   type token
 
+  (* A value of type [production] is (an index for) a production. The start
+     productions (which do not exist in an \mly file, but are constructed by
+     Menhir internally) are not part of this type. *)
+
+  type production
+
   (* The type ['a checkpoint] represents an intermediate or final state of the
      parser. An intermediate checkpoint is a suspension: it records the parser's
      current state, and allows parsing to be resumed. The parameter ['a] is
@@ -62,8 +68,6 @@ module type INCREMENTAL_ENGINE = sig
      recovery strategies to be programmed by the user. *)
 
   type 'a env
-
-  type production
 
   type 'a checkpoint = private
     | InputNeeded of 'a env
