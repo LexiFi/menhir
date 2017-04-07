@@ -275,7 +275,7 @@ module type INCREMENTAL_ENGINE = sig
 
   val pop_many: int -> 'a env -> 'a env option
 
-  (* [get i env] returns the parser's [i]-th stack cell. The index [i] is
+  (* [get i env] returns the parser's [i]-th stack element. The index [i] is
      0-based: thus, [get 0] is [top]. If [i] is greater than or equal to the
      number of elements in the stack, [None] is returned. The time complexity
      is O(i). *)
