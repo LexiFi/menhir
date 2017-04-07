@@ -2394,6 +2394,58 @@ checkpoint that was encountered before the error was detected, and apply
 it causes certain semantic actions to be executed. It is desirable that all
 semantic actions be side-effect-free, or that their side-effects be harmless.
 
+%% val pop
+
+\begin{verbatim}
+  val pop: 'a env -> 'a env option
+\end{verbatim}
+
+\verb+pop env+ returns a new environment, where the parser's top stack cell
+has been popped off. (If the stack is empty, \verb+None+ is returned.) This
+amounts to pretending that the (terminal or nonterminal) symbol that
+corresponds to this stack cell has not been read.
+
+\verb+pop+ is part of a group of several functions that construct values of
+type \verb+_ env+: see also \verb+force_reduction+ and \verb+feed+. These
+functions allow driving the automaton without feeding any actual input into
+it: they can be used to program an error recovery mechanism. Once the desired
+configuration has been reached, the function \verb+input_needed+ can be used
+to construct a checkpoint and resume normal parsing.
+
+%% val force_reduction
+
+\begin{verbatim}
+  val force_reduction: production -> 'a env -> 'a env
+\end{verbatim}
+
+\verb+force_reduction prod env+ can be called only if in the state \verb+env+
+the parser is capable of reducing the production \verb+prod+. If this
+condition is satisfied, then this production is reduced, which means that its
+semantic action is executed (this can have side effects!) and the automaton
+makes a goto (nonterminal) transition. If this condition is not satisfied, an
+\verb+Invalid_argument+ exception is raised.
+
+%% val input_needed
+
+\begin{verbatim}
+  val input_needed: 'a env -> 'a checkpoint
+\end{verbatim}
+
+\verb+input_needed env+ returns \verb+InputNeeded env+. Thus, out of a parser
+state that might have been obtained via a series of calls to the functions
+\verb+pop+, \verb+force_reduction+, \verb+feed+, and so on, it produces a
+checkpoint, which can be used to resume normal parsing, by supplying this
+checkpoint as an argument to \verb+offer+.
+
+This function should be used with some care. It could ``mess up the
+lookahead'' in the sense that it allows parsing to resume in an arbitrary
+state \verb+s+ with an arbitrary lookahead symbol \verb+t+, even though
+Menhir's reachability analysis (which is carried out via the \olisterrors
+switch) might well think that it is impossible to reach this particular
+configuration. If one is using Menhir's new error reporting facility
+(\sref{sec:errors:new}), this could cause the parser to reach an error state
+for which no error message has been prepared.
+
 %% type 'a lr1state
 
 \begin{verbatim}
@@ -2419,6 +2471,26 @@ type \verb+element+, which follows.
 \end{verbatim}
 
 The states of the LR(1) automaton are numbered (from 0 and up).
+
+%% val production_index
+%% val find_production
+
+\begin{verbatim}
+  val production_index: production -> int
+  val find_production: int -> production
+\end{verbatim}
+
+Productions are numbered. (The set of indices of all productions forms an
+interval, which does \emph{not} necessarily begin at 0.)
+%
+The function \verb+production_index+ converts a production to an integer
+number, whereas the function \verb+find_production+ carries out the reverse
+conversion. It is an error to apply \verb+find_production+ to an invalid
+index.
+%
+The ``start productions'' (which do not exist in an \mly file, but are
+constructed by Menhir internally) are \emph{not} part of the set of
+productions represented by the type \verb+production+.
 
 %% type element
 
