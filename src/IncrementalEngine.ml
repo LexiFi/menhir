@@ -190,12 +190,12 @@ module type INCREMENTAL_ENGINE = sig
 
   val pop: 'a env -> 'a env option
 
-  (* [force_reduction prod env] should be called only if in the current state
-     (as determined by [env]) the parser is capable of reducing the production
-     [prod]. If this condition is satisfied, then this production is reduced,
-     which means that its semantic action is executed (this can have side
-     effects!) and the automaton makes a goto (nonterminal) transition. If
-     this condition is not satisfied, [Invalid_argument _] is raised. *)
+  (* [force_reduction prod env] should be called only if in the state [env]
+     the parser is capable of reducing the production [prod]. If this
+     condition is satisfied, then this production is reduced, which means that
+     its semantic action is executed (this can have side effects!) and the
+     automaton makes a goto (nonterminal) transition. If this condition is not
+     satisfied, [Invalid_argument _] is raised. *)
 
   val force_reduction: production -> 'a env -> 'a env
 
