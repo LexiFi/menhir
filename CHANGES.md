@@ -44,6 +44,11 @@
   inspect the parser's stack. The module `MenhirLib.General` is deprecated
   as well. Deprecated functionality will be removed in the future.
 
+* Incompatible change in the incremental API: the type of the function
+  `print_stack` in the result signature of the functor
+  `MenhirLib.Printers.Make` changes to `'a env -> unit`.
+   (Anyway, as of now, `MenhirLib.Printers` remains undocumented.)
+
 * Improved the syntax error message that is displayed when a `.mly` file
   is incorrect: the previous and next token are shown.
 
