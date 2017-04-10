@@ -34,6 +34,11 @@
   `production_index`, `find_production`.
   (Suggested by Frédéric Bour.)
 
+* New module `MenhirLib.ErrorReports`. This module is supposed to offer
+  auxiliary functions that help produce good syntax error messages.
+  This module does not yet contain much functionality and is expected
+  to evolve in the future.
+
 * Incompatible change in the incremental API: the type `env` becomes `'a env`.
 
 * Incompatible change in the incremental API: the function
