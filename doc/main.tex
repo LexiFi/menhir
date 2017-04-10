@@ -2775,6 +2775,19 @@ The function \verb+foreach_terminal_but_error+ enumerates the terminal symbols, 
   val foreach_terminal_but_error: (xsymbol -> 'a -> 'a) -> 'a -> 'a
 \end{verbatim}
 
+%% val feed
+
+\verb+feed symbol startp semv endp env+ causes the parser to consume the
+(terminal or nonterminal) symbol \verb+symbol+, accompanied with the semantic
+value \verb+semv+ and with the start and end positions \verb+startp+ and
+\verb+endp+. Thus, the automaton makes a transition, and reaches a new state.
+The stack grows by one cell. This operation is permitted only if the current
+state (as determined by \verb+env+) has an outgoing transition labeled with
+\verb+symbol+. Otherwise, an \verb+Invalid_argument+ exception is raised.
+\begin{verbatim}
+  val feed: 'a symbol -> position -> 'a -> position -> 'b env -> 'b env
+\end{verbatim}
+
 % TEMPORARY
 % document the modules that use the inspection API: Printers
 % document MenhirLib.General?

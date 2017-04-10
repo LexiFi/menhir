@@ -438,13 +438,13 @@ module type INSPECTION = sig
 
   type 'a env
 
-  (* [feed symbol startp semv endp env] forces the parser to consume the
+  (* [feed symbol startp semv endp env] causes the parser to consume the
      (terminal or nonterminal) symbol [symbol], accompanied with the semantic
-     value [semv] and with the positions [startp] and [endp]. Thus, the
-     automaton makes a transition, and reaches a new state. The stack grows by
-     one cell. This operation is permitted only if the current state (as
-     determined by [env]) has an outgoing transition labeled with [symbol].
-     Otherwise, [Invalid_argument _] is raised. *)
+     value [semv] and with the start and end positions [startp] and [endp].
+     Thus, the automaton makes a transition, and reaches a new state. The
+     stack grows by one cell. This operation is permitted only if the current
+     state (as determined by [env]) has an outgoing transition labeled with
+     [symbol]. Otherwise, [Invalid_argument _] is raised. *)
 
   val feed: 'a symbol -> position -> 'a -> position -> 'b env -> 'b env
 
