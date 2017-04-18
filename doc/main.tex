@@ -2129,8 +2129,12 @@ $O(n)$ space in memory.
 % TEMPORARY actually, live parsing also requires a way of performing
 % error recovery, up to a complete parse... as in Merlin.
 
+% ------------------------------------------------------------------------------
+
+\subsubsection{Starting the parser}
+
 In this API, the parser is started by invoking
-\verb+Incremental.main+. (Recall that we assume \verb+main+ is
+\verb+Incremental.main+. (Recall that we assume that \verb+main+ is
 the name of the start symbol.) The generated file \texttt{parser.mli} contains
 the following declaration:
 \begin{verbatim}
@@ -2148,6 +2152,11 @@ anything. It constructs a checkpoint which serves as a \emph{starting}
 point. The functions \verb+offer+ and \verb+resume+, described below, are used
 to drive the parser.
 
+% ------------------------------------------------------------------------------
+
+\subsubsection{Driving the parser}
+\label{sec:incremental:driving}
+
 The sub-module \menhirinterpreter is also part of the incremental API.
 Its declaration, which appears in the generated file \texttt{parser.mli}, is as
 follows:
@@ -2156,9 +2165,13 @@ follows:
     with type token = token
 \end{verbatim}
 The signature \verb+INCREMENTAL_ENGINE+, defined in the module
-\menhirlibincrementalengine, contains the following elements.
-Please keep in mind that, from the outside, these elements should be referred
-to with an appropriate prefix: e.g., the type \verb+checkpoint+ should be referred
+\menhirlibincrementalengine, contains many types and functions,
+which are described in the rest of this section
+(\sref{sec:incremental:driving}) and in the following sections
+(\sref{sec:incremental:inspecting}, \sref{sec:incremental:updating}).
+
+Please keep in mind that, from the outside, these types and functions should be referred
+to with an appropriate prefix. For instance, the type \verb+checkpoint+ should be referred
 to as \verb+MenhirInterpreter.checkpoint+, or
 \verb+Parser.MenhirInterpreter.checkpoint+, depending on which modules the user
 chooses to open.
@@ -2266,10 +2279,6 @@ The incremental API subsumes the monolithic API. Indeed, \verb+main+ can be
 \verb+Incremental.main+, then calling \verb+offer+ and
 \verb+resume+ in a loop, until a final checkpoint is obtained.
 
-Although the type \verb+env+ is opaque, a parser state can be inspected via a
-few accessor functions, which we are about to describe. Before we do so, we
-give a few more type definitions.
-
 %% type supplier
 
 \begin{verbatim}
@@ -2286,9 +2295,7 @@ as an argument.
 
 \begin{verbatim}
   val lexer_lexbuf_to_supplier:
-    (Lexing.lexbuf -> token) ->
-    Lexing.lexbuf ->
-    supplier
+    (Lexing.lexbuf -> token) -> Lexing.lexbuf -> supplier
 \end{verbatim}
 
 The function \verb+lexer_lexbuf_to_supplier+, applied to a lexer and to a
@@ -2298,9 +2305,10 @@ lexing buffer, produces a fresh supplier.
 
 The functions \verb+offer+ and \verb+resume+, documented above, are sufficient
 to write a parser loop. One can imagine many variations of such a loop, which
-is why we expose \verb+offer+ and \verb+resume+ in the first place!.
+is why we expose \verb+offer+ and \verb+resume+ in the first place.
 Nevertheless, some variations are so common that it is worth providing them,
-ready for use.
+ready for use. The following functions are implemented on top of \verb+offer+
+and \verb+resume+.
 
 %% val loop
 
@@ -2323,9 +2331,9 @@ API on top of the incremental API.)
 \end{verbatim}
 
 \verb+loop_handle succeed fail supplier checkpoint+ begins parsing from
-\verb+checkpoint+, reading tokens from \verb+supplier+. It continues parsing until
-it reaches a checkpoint of the form \verb+Accepted v+ or \verb+HandlingError env+
-(or \verb+Rejected+, but that should not happen, as \verb+HandlingError _+
+\verb+checkpoint+, reading tokens from \verb+supplier+. It continues until
+it reaches a checkpoint of the form \verb+Accepted v+ or \verb+HandlingError _+
+(or~\verb+Rejected+, but that should not happen, as \verb+HandlingError _+
 will be observed first). In the former case, it calls \verb+succeed v+. In
 the latter case, it calls \verb+fail+ with this checkpoint. It cannot
 raise \verb+Error+.
@@ -2373,7 +2381,7 @@ this token (i.e., shifts) or rejects it (i.e., signals an error). If the
 parser decides to shift, then \verb+Some env+ is returned, where \verb+env+ is
 the parser's state just before shifting. Otherwise, \verb+None+ is returned.
 This can be used to test whether the parser is willing to accept a certain
-token. This function, should be used with caution, though, as it causes
+token. This function should be used with caution, though, as it causes
 semantic actions to be executed. It is desirable that all semantic actions be
 side-effect-free, or that their side-effects be harmless.
 
@@ -2397,57 +2405,14 @@ checkpoint that was encountered before the error was detected, and apply
 it causes certain semantic actions to be executed. It is desirable that all
 semantic actions be side-effect-free, or that their side-effects be harmless.
 
-%% val pop
+% ------------------------------------------------------------------------------
 
-\begin{verbatim}
-  val pop: 'a env -> 'a env option
-\end{verbatim}
+\subsubsection{Inspecting the parser's state}
+\label{sec:incremental:inspecting}
 
-\verb+pop env+ returns a new environment, where the parser's top stack cell
-has been popped off. (If the stack is empty, \verb+None+ is returned.) This
-amounts to pretending that the (terminal or nonterminal) symbol that
-corresponds to this stack cell has not been read.
-
-\verb+pop+ is part of a group of several functions that construct values of
-type \verb+_ env+: see also \verb+force_reduction+ and \verb+feed+. These
-functions allow driving the automaton without feeding any actual input into
-it: they can be used to program an error recovery mechanism. Once the desired
-configuration has been reached, the function \verb+input_needed+ can be used
-to construct a checkpoint and resume normal parsing.
-
-%% val force_reduction
-
-\begin{verbatim}
-  val force_reduction: production -> 'a env -> 'a env
-\end{verbatim}
-
-\verb+force_reduction prod env+ can be called only if in the state \verb+env+
-the parser is capable of reducing the production \verb+prod+. If this
-condition is satisfied, then this production is reduced, which means that its
-semantic action is executed (this can have side effects!) and the automaton
-makes a goto (nonterminal) transition. If this condition is not satisfied, an
-\verb+Invalid_argument+ exception is raised.
-
-%% val input_needed
-
-\begin{verbatim}
-  val input_needed: 'a env -> 'a checkpoint
-\end{verbatim}
-
-\verb+input_needed env+ returns \verb+InputNeeded env+. Thus, out of a parser
-state that might have been obtained via a series of calls to the functions
-\verb+pop+, \verb+force_reduction+, \verb+feed+, and so on, it produces a
-checkpoint, which can be used to resume normal parsing, by supplying this
-checkpoint as an argument to \verb+offer+.
-
-This function should be used with some care. It could ``mess up the
-lookahead'' in the sense that it allows parsing to resume in an arbitrary
-state \verb+s+ with an arbitrary lookahead symbol \verb+t+, even though
-Menhir's reachability analysis (which is carried out via the \olisterrors
-switch) might well think that it is impossible to reach this particular
-configuration. If one is using Menhir's new error reporting facility
-(\sref{sec:errors:new}), this could cause the parser to reach an error state
-for which no error message has been prepared.
+Although the type \verb+env+ is opaque, a parser state can be inspected via a
+few accessor functions, which are described in this section. The following
+types and functions are contained in the \verb+MenhirInterpreter+ sub-module.
 
 %% type 'a lr1state
 
@@ -2465,7 +2430,7 @@ of the state~\verb+s+.
 %
 The index \verb+'a+ is the type of the semantic values associated with $A$.
 The role played by \verb+'a+ is clarified in the definition of the
-type \verb+element+, which follows.
+type \verb+element+, which appears further on.
 
 %% val number
 
@@ -2474,6 +2439,7 @@ type \verb+element+, which follows.
 \end{verbatim}
 
 The states of the LR(1) automaton are numbered (from 0 and up).
+The function \verb+number+ maps a state to its number.
 
 %% val production_index
 %% val find_production
@@ -2575,8 +2541,9 @@ same in \verb+env1+ and \verb+env2+. If \verb+equal env1 env2+ is \verb+true+,
 then the sequence of the stack elements, as observed via \verb+pop+ and
 \verb+top+, must be the same in \verb+env1+ and \verb+env2+. Also, if
 \verb+equal env1 env2+ holds, then the checkpoints \verb+input_needed env1+
-and \verb+input_needed env2+ must be equivalent. The function \verb+equal+ has
-time complexity $O(1)$.
+and \verb+input_needed env2+ must be equivalent. (The function
+\verb+input_needed+ is documented in \sref{sec:incremental:updating}.)
+The function \verb+equal+ has time complexity $O(1)$.
 
 %% val positions
 
@@ -2607,13 +2574,83 @@ reduction. This includes the case where \verb+s+ is an accepting state.
 
 % ------------------------------------------------------------------------------
 
+\subsubsection{Updating the parser's state}
+\label{sec:incremental:updating}
+
+The functions presented in the previous section
+(\sref{sec:incremental:inspecting}) allow inspecting parser states of type
+\verb+'a checkpoint+ and \verb+'a env+. However, so far, there are no
+functions for manufacturing new parser states, except \verb+offer+ and
+\verb+resume+, which create new checkpoints by feeding tokens, one by one, to
+the parser.
+
+In this section, a small number of functions are provided for manufacturing
+new parser states of type \verb+'a env+ and \verb+'a checkpoint+. These
+functions allow going far back into the past and jumping ahead into the
+future, so to speak. In other words, they allow driving the parser in other
+ways than by feeding tokens into it. The functions \verb+pop+,
+\verb+force_reduction+ and \verb+feed+ (part of the inspection API; see
+\sref{sec:inspection}) construct values of type \verb+'a env+. The function
+\verb+input_needed+ constructs values of type \verb+'a checkpoint+ and thereby
+allows resuming parsing in normal mode (via \verb+offer+). Together, these
+functions can be used to implement error handling and error recovery
+strategies.
+
+%% val pop
+
+\begin{verbatim}
+  val pop: 'a env -> 'a env option
+\end{verbatim}
+
+\verb+pop env+ returns a new environment, where the parser's top stack cell
+has been popped off. (If the stack is empty, \verb+None+ is returned.) This
+amounts to pretending that the (terminal or nonterminal) symbol that
+corresponds to this stack cell has not been read.
+
+%% val force_reduction
+
+\begin{verbatim}
+  val force_reduction: production -> 'a env -> 'a env
+\end{verbatim}
+
+\verb+force_reduction prod env+ can be called only if in the state \verb+env+
+the parser is capable of reducing the production \verb+prod+. If this
+condition is satisfied, then this production is reduced, which means that its
+semantic action is executed (this can have side effects!) and the automaton
+makes a goto (nonterminal) transition. If this condition is not satisfied, an
+\verb+Invalid_argument+ exception is raised.
+
+%% val input_needed
+
+\begin{verbatim}
+  val input_needed: 'a env -> 'a checkpoint
+\end{verbatim}
+
+\verb+input_needed env+ returns \verb+InputNeeded env+. Thus, out of a parser
+state that might have been obtained via a series of calls to the functions
+\verb+pop+, \verb+force_reduction+, \verb+feed+, and so on, it produces a
+checkpoint, which can be used to resume normal parsing, by supplying this
+checkpoint as an argument to \verb+offer+.
+
+This function should be used with some care. It could ``mess up the
+lookahead'' in the sense that it allows parsing to resume in an arbitrary
+state \verb+s+ with an arbitrary lookahead symbol \verb+t+, even though
+Menhir's reachability analysis (which is carried out via the \olisterrors
+switch) might well think that it is impossible to reach this particular
+configuration. If one is using Menhir's new error reporting facility
+(\sref{sec:errors:new}), this could cause the parser to reach an error state
+for which no error message has been prepared.
+
+% ------------------------------------------------------------------------------
+
 \subsection{Inspection API}
 \label{sec:inspection}
 
 If \oinspection is set, \menhir offers an inspection API in addition to the
-monolithic and incremental APIs. Like the incremental API, the inspection API
-is found in the sub-module \menhirinterpreter. It offers the following types
-and functions.
+monolithic and incremental APIs. (The reason why this is not done by default
+is that this requires more tables to be generated, thus making the generated
+parser larger.) Like the incremental API, the inspection API is found in the
+sub-module \menhirinterpreter. It offers the following types and functions.
 
 %% type _ terminal
 
