@@ -187,38 +187,6 @@ module type INCREMENTAL_ENGINE = sig
 
   val acceptable: 'a checkpoint -> token -> position -> bool
 
-  (* [pop env] returns a new environment, where the parser's top stack cell
-     has been popped off. (If the stack is empty, [None] is returned.) This
-     amounts to pretending that the (terminal or nonterminal) symbol that
-     corresponds to this stack cell has not been read. *)
-
-  val pop: 'a env -> 'a env option
-
-  (* [force_reduction prod env] should be called only if in the state [env]
-     the parser is capable of reducing the production [prod]. If this
-     condition is satisfied, then this production is reduced, which means that
-     its semantic action is executed (this can have side effects!) and the
-     automaton makes a goto (nonterminal) transition. If this condition is not
-     satisfied, [Invalid_argument _] is raised. *)
-
-  val force_reduction: production -> 'a env -> 'a env
-
-  (* [input_needed env] returns [InputNeeded env]. That is, out of an [env]
-     that might have been obtained via a series of calls to the functions
-     [pop], [force_reduction], [feed], etc., it produces a checkpoint, which
-     can be used to resume normal parsing, by supplying this checkpoint as an
-     argument to [offer]. *)
-
-  (* This function should be used with some care. It could "mess up the
-     lookahead" in the sense that it allows parsing to resume in an arbitrary
-     state [s] with an arbitrary lookahead symbol [t], even though Menhir's
-     reachability analysis (menhir --list-errors) might well think that it is
-     impossible to reach this particular configuration. If one is using
-     Menhir's new error reporting facility, this could cause the parser to
-     reach an error state for which no error message has been prepared. *)
-
-  val input_needed: 'a env -> 'a checkpoint
-
   (* The abstract type ['a lr1state] describes the non-initial states of the
      LR(1) automaton. The index ['a] represents the type of the semantic value
      associated with this state's incoming symbol. *)
@@ -318,6 +286,38 @@ module type INCREMENTAL_ENGINE = sig
      reduction. This includes the case where [s] is an accepting state. *)
 
   val state_has_default_reduction: _ lr1state -> bool
+
+  (* [pop env] returns a new environment, where the parser's top stack cell
+     has been popped off. (If the stack is empty, [None] is returned.) This
+     amounts to pretending that the (terminal or nonterminal) symbol that
+     corresponds to this stack cell has not been read. *)
+
+  val pop: 'a env -> 'a env option
+
+  (* [force_reduction prod env] should be called only if in the state [env]
+     the parser is capable of reducing the production [prod]. If this
+     condition is satisfied, then this production is reduced, which means that
+     its semantic action is executed (this can have side effects!) and the
+     automaton makes a goto (nonterminal) transition. If this condition is not
+     satisfied, [Invalid_argument _] is raised. *)
+
+  val force_reduction: production -> 'a env -> 'a env
+
+  (* [input_needed env] returns [InputNeeded env]. That is, out of an [env]
+     that might have been obtained via a series of calls to the functions
+     [pop], [force_reduction], [feed], etc., it produces a checkpoint, which
+     can be used to resume normal parsing, by supplying this checkpoint as an
+     argument to [offer]. *)
+
+  (* This function should be used with some care. It could "mess up the
+     lookahead" in the sense that it allows parsing to resume in an arbitrary
+     state [s] with an arbitrary lookahead symbol [t], even though Menhir's
+     reachability analysis (menhir --list-errors) might well think that it is
+     impossible to reach this particular configuration. If one is using
+     Menhir's new error reporting facility, this could cause the parser to
+     reach an error state for which no error message has been prepared. *)
+
+  val input_needed: 'a env -> 'a checkpoint
 
 end
 
