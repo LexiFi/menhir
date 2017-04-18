@@ -67,7 +67,7 @@ TARBALL  := $(CURRENT)/$(PACKAGE).tar.gz
 # This does not include the src/ and doc/ directories, which require
 # special treatment.
 
-DISTRIBUTED_FILES := CHANGES INSTALLATION.md LICENSE Makefile README.md demos
+DISTRIBUTED_FILES := CHANGES.md INSTALLATION.md LICENSE Makefile README.md demos
 
 # -------------------------------------------------------------------------
 
