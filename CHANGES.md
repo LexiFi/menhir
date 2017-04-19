@@ -1,6 +1,6 @@
 # Changes
 
-## 2017/XX/XX
+## 2017/04/18
 
 * Changed Menhir's license from QPL to GPLv2.
   MenhirLib remains under LGPLv2, with a linking exception.
