@@ -13,6 +13,9 @@
    reading anything. Yet, it will read an arbitrarily long sequence of
    A's and fail only upon encountering EOF. */
 
+/* The problem has nothing to do with merging of states. Indeed, even
+   the canonical LR(1) automaton exhibits this problem. */
+
 %token A EOF
 %start<unit> main
 
