@@ -148,9 +148,6 @@ let filenames action =
 let keywords action =
   action.keywords
 
-let print f action =
-  Printer.print_expr f action.expr
-
 let has_syntaxerror action =
   KeywordSet.mem SyntaxError (keywords action)
 

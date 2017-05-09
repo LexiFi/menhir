@@ -63,9 +63,6 @@ val filenames: t -> string list
 (** [keywords a] is the set of keywords used in the semantic action [a]. *)
 val keywords: t -> KeywordSet.t
 
-(** [print f a] prints [a] to channel [f]. *)
-val print: out_channel -> t -> unit
-
 (** [from_stretch s] builds an action out of a textual piece of code. *)
 val from_stretch: Stretch.t -> t
 

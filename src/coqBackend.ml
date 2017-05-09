@@ -208,7 +208,7 @@ module Run (T: sig end) = struct
       if Settings.coq_no_actions then
         fprintf f "()"
       else
-        Action.print f (Production.action prod);
+        Printer.print_expr f (Action.to_il_expr (Production.action prod));
       fprintf f "\n)\n");
     fprintf f "  end.\n\n";
 
