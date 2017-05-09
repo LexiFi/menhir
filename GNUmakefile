@@ -252,7 +252,7 @@ opam:
 	  git status
 # Ask for review.
 	@ echo "If happy, please run:"
-	@ echo "  cd $(OPAM)/packages/menhir && git commit -a && git push && firefox https://github.com/"
+	@ echo "  cd $(OPAM)/packages/menhir && git commit -a && git push && firefox https://github.com/fpottier/opam-repository.git"
 	@ echo "and issue a pull request."
 
 # -------------------------------------------------------------------------
