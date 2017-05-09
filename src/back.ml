@@ -35,16 +35,16 @@ let write program =
     let filename = Settings.base ^ ".ml"
     let f = open_out filename
     let locate_stretches =
-      if Settings.infer then
-        (* Typechecking should not fail at this stage. Omit #line directives. *)
-        None
-      else
-        (* 2011/10/19: do not use [Filename.basename]. The [#] annotations that
-           we insert in the [.ml] file must retain their full path. This does
-           mean that the [#] annotations depend on how menhir is invoked -- e.g.
-           [menhir foo/bar.mly] and [cd foo && menhir bar.mly] will produce
-           different files. Nevertheless, this seems useful/reasonable. *)
-        Some filename
+      (* 2017/05/09: always include line number directives in generated .ml
+         files. Indeed, they affect the semantics of [assert] instructions
+         in the semantic actions. *)
+      (* 2011/10/19: do not use [Filename.basename]. The line number
+         directives that we insert in the [.ml] file must retain their full
+         path. This does mean that the line number directives depend on how
+         menhir is invoked -- e.g. [menhir foo/bar.mly] and [cd foo && menhir
+         bar.mly] will produce different files. Nevertheless, this seems
+         useful/reasonable. *)
+      Some filename
   end) in
   P.program program
 
