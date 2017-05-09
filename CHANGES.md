@@ -1,5 +1,13 @@
 # Changes
 
+## 2017/05/09
+
+* Menhir now always places OCaml line number directives in the generated `.ml`
+  file. (Until now, this was done only when `--infer` was off.) Thus, if a
+  semantic action contains an `assert` statement, the file name and line
+  number information carried by the `Assert_failure` exception should now be
+  correct. (Reported by Helmut Brandl.)
+
 ## 2017/04/18
 
 * Changed Menhir's license from QPL to GPLv2.
