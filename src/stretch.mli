@@ -13,7 +13,7 @@
 
 (* A stretch is a fragment of a source file. It holds the file name,
    the line number, and the line count (that is, the length) of the
-   fragment. These are used for generating #line directives when the
+   fragment. These are used to generate line number directives when the
    fragment is copied to an output file. It also holds the textual
    content of the fragment, as a string. The [raw_content] field holds
    the text that was found in the source file, while the [content]
@@ -36,4 +36,3 @@ type t = {
 type ocamltype =
   | Declared of t
   | Inferred of string
-

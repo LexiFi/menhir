@@ -29,13 +29,19 @@ module PreliminaryMake (X : sig
 
   val f: channel
 
-  (* This controls the way we print OCaml stretches (types and
-     semantic actions). We either surround them with #line directives
-     (for better error reports if the generated code is ill - typed) or
-     don't (for better readability). The value is either [None] -- do
-     not provide #line directives -- or [Some filename] -- do provide
-     them. [filename] is the name of the file that is being written
-     to. *)
+  (* [locate_stretches] controls the way we print OCaml stretches (types and
+     semantic actions). If it is [Some filename], then we surround them with
+     OCaml line number directives of the form # <line number> <filename>. If
+     it is [None], then we don't. *)
+
+  (* Providing line number directives allows the OCaml typechecker to report
+     type errors in the .mly file, instead of in the generated .ml / .mli
+     files. Line number directives also affect the dynamic semantics of any
+     [assert] statements contained in semantic actions: when they are provided,
+     the [Assert_failure] exception carries a location in the .mly file. As a
+     general rule of thumb, line number directives should always be provided,
+     except perhaps where we think that they decrease readability (e.g., in a
+     generated .mli file). *)
 
   val locate_stretches: string option
 
@@ -87,7 +93,7 @@ let indent ofs producer f x =
   producer f x;
   indentation := old_indentation
 
-(* This produces a #line directive. *)
+(* This produces a line number directive. *)
 
 let sharp f line file =
   fprintf f "%t# %d \"%s\"%t" rawnl line file rawnl
