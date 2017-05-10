@@ -30,9 +30,10 @@ module PreliminaryMake (X : sig
   val f: channel
 
   (* [locate_stretches] controls the way we print OCaml stretches (types and
-     semantic actions). If it is [Some filename], then we surround them with
-     OCaml line number directives of the form # <line number> <filename>. If
-     it is [None], then we don't. *)
+     semantic actions). If it is [Some dstfilename], where [dstfilename] is
+     the name of the file that is being written, then we surround stretches
+     with OCaml line number directives of the form # <line number> <filename>.
+     If it is [None], then we don't. *)
 
   (* Providing line number directives allows the OCaml typechecker to report
      type errors in the .mly file, instead of in the generated .ml / .mli
