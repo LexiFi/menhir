@@ -23,3 +23,4 @@ test: all
 clean:
 	rm -f *~ .*~
 	$(OCAMLBUILD) -clean
+	rm -f $(EXECUTABLE)
