@@ -1,5 +1,10 @@
 # Changes
 
+## 2017/06/07
+
+* Removed an undeclared dependency of MenhirSdk on Unix. (Reported and fixed
+  by Frédéric Bour.)
+
 ## 2017/05/09
 
 * Menhir now always places OCaml line number directives in the generated `.ml`

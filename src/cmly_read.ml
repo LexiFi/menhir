@@ -37,9 +37,13 @@ let read (ic : in_channel) : grammar =
 
 let read (filename : string) : grammar =
   let ic = open_in_bin filename in
-  IO.try_finally
-    (fun () -> read ic)
-    (fun () -> close_in_noerr ic)
+  match read ic with
+  | x ->
+      close_in_noerr ic;
+      x
+  | exception exn ->
+      close_in_noerr ic;
+      raise exn
 
 (* ------------------------------------------------------------------------ *)
 

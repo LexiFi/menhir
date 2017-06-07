@@ -123,6 +123,7 @@ package: clean
 	@ mkdir -p $(PACKAGE)/src
 	@ cp -fr $(DISTRIBUTED_FILES) $(PACKAGE)
 	@ cp -fr src/*.ml{,i,y,l,pack} src/*.messages src/Makefile src/*.META $(PACKAGE)/src
+	@ rm -f $(PACKAGE)/src/installation.ml
 	@ grep -v my_warnings src/_tags > $(PACKAGE)/src/_tags
 	@ $(MAKE) -C $(PACKAGE)/demos clean
 # Set the version number into the files that mention it. These
@@ -158,14 +159,16 @@ check:
 # so that is what we do. For this reason, we must check first that
 # ocamlfind does not already have some version of menhirLib.
 	@ if ocamlfind query menhirLib >/dev/null 2>/dev/null ; then \
-	  echo "Error: menhirLib is already installed." ; \
-	  echo "Please remove it first by running this command:" ; \
 	  if opam list -i menhir >/dev/null ; then \
-	    echo "  opam remove menhir" ; \
+	    echo "Warning: menhir is already installed." ; \
+	    read -p "Can I remove it [Enter/^C]?" -n 1 -r ; \
+	    opam remove menhir ; \
 	  else \
-	    echo "  ocamlfind remove menhirLib" ; \
+	    echo "Warning: menhirLib is already installed." ; \
+	    read -p "Can I remove it [Enter/^C]?" -n 1 -r ; \
+	    ocamlfind remove menhirLib ; \
+	    ocamlfind remove menhirSdk || true ; \
 	  fi ; \
-	  exit 1 ; \
 	fi
 	@ TEMPDIR=`mktemp -d /tmp/menhir-test.XXXXXX` && { \
 	echo "   * Extracting. " && \
