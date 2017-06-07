@@ -123,6 +123,7 @@ package: clean
 	@ mkdir -p $(PACKAGE)/src
 	@ cp -fr $(DISTRIBUTED_FILES) $(PACKAGE)
 	@ cp -fr src/*.ml{,i,y,l,pack} src/*.messages src/Makefile src/*.META $(PACKAGE)/src
+	@ rm -f $(PACKAGE)/src/installation.ml
 	@ grep -v my_warnings src/_tags > $(PACKAGE)/src/_tags
 	@ $(MAKE) -C $(PACKAGE)/demos clean
 # Set the version number into the files that mention it. These
