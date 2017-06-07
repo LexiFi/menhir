@@ -8,6 +8,7 @@ else
 fi
 
 BUILD=$SRC/_stage1
+SDKDIR=$SRC/_sdk
 
 MENHIR=$BUILD/menhir.native
 
