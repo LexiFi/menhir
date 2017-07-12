@@ -140,7 +140,10 @@ package: clean
 	@ make -C $(PACKAGE)/doc clean all
 	@ mv $(PACKAGE)/doc/main.pdf $(PACKAGE)/manual.pdf
 	@ mv $(PACKAGE)/doc/menhir.1 $(PACKAGE)/
-	@ rm -rf $(PACKAGE)/doc
+# Include a copy of the sources of the documentation,
+# as Debian requires this for the PDF to be included
+# in their package.
+	@ make -C $(PACKAGE)/doc clean
 # Create the tarball.
 	@ echo "-> Tarball creation."
 	tar --exclude=.gitignore -cvz -f $(TARBALL) $(PACKAGE)
