@@ -1,5 +1,13 @@
 # Changes
 
+## 2017/07/12
+
+* Include the LaTeX sources of the manual in the official `.tar.gz` archive.
+  This should allow the manual to be included as part of the Debian package.
+
+* Mention [Obelisk](https://github.com/Lelio-Brun/Obelisk),
+  a pretty-printer for `.mly` files, in the manual.
+
 ## 2017/06/07
 
 * Removed an undeclared dependency of MenhirSdk on Unix. (Reported and fixed
