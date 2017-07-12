@@ -11,6 +11,9 @@ endif
 # Ocamlbuild tool and settings.
 
 OCAMLBUILD := ocamlbuild -classic-display -j 0
+ifeq ($(TARGET),byte)
+  OCAMLBUILD := $(OCAMLBUILD) -byte-plugin
+endif
 
 # ----------------------------------------------------------------------------
 # For everyday development.
