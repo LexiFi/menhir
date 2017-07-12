@@ -14,4 +14,4 @@ loop:
 	latexmk -pdf -pvc main
 
 clean:
-	rm -f *.log *.aux *.bbl *.blg *.out *.toc *~ main.pdf
+	rm -f `cat .gitignore`
