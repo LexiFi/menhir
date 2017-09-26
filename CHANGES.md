@@ -1,5 +1,12 @@
 # Changes
 
+## 2017/09/26
+
+* `Makefile` fix: when determining whether the suffix `.exe` should be used,
+  one should test whether the OS is Windows,
+  not whether the compiler is MSVC.
+  (Suggested by Jonathan Protzenko.)
+
 ## 2017/07/12
 
 * Include the LaTeX sources of the manual in the official `.tar.gz` archive.

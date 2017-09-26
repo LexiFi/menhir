@@ -57,17 +57,23 @@ MLYLIB          := src/standard.mly
 
 # A few settings differ on Windows versus Unix.
 
-# If the compiler is MSVC, then the name of the executable file ends in .exe,
-# and object file names end in .obj instead of .o.
+# If the compiler is MSVC, then object file names end in .obj instead of .o.
 
 ifneq (,$(shell ocamlc -config | grep -E "ccomp_type: msvc"))
-  MENHIREXE    := menhir.exe
   OBJ          := obj
 # LIBSUFFIX    := lib
 else
-  MENHIREXE    := menhir
   OBJ          := o
 # LIBSUFFIX    := a
+endif
+
+# If we are under Windows (regardless of whether we are using MSVC or mingw)
+# then the name of the executable file ends in .exe.
+
+ifeq ($(OS),Windows_NT)
+  MENHIREXE    := menhir.exe
+else
+  MENHIREXE    := menhir
 endif
 
 # The path $(installation_libdir), which is recorded in src/installation.ml (see
