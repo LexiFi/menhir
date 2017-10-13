@@ -25,26 +25,10 @@ everyday: installation.ml stage1
 # ----------------------------------------------------------------------------
 # Building Menhir from scratch (a.k.a. bootstrapping).
 
-bootstrap: .versioncheck
+bootstrap:
 	@ $(MAKE) stage1
 	@ $(MAKE) stage2
 	@ $(MAKE) stage3
-
-# ----------------------------------------------------------------------------
-# Checking the version of the OCaml compiler.
-
-# We explicitly build checkOCamlVersion as an OCaml binary program,
-# instead of running it as a script, because that would require
-# #loading str.cma, which is not supported on (some versions of?)
-# Windows.
-
-.versioncheck:
-	@ echo Checking that OCaml is recent enough...
-	@ rm -rf _versioncheck
-	@ $(OCAMLBUILD) -build-dir _versioncheck checkOCamlVersion.byte
-	@ _versioncheck/checkOCamlVersion.byte --verbose --gt "4.02"
-	@ rm -rf _versioncheck
-	@ touch $@
 
 # ----------------------------------------------------------------------------
 # Stage 1.
@@ -109,4 +93,4 @@ sdk:
 # Cleaning up.
 
 clean::
-	rm -rf .versioncheck _stage1 _stage2 _stage3 _sdk
+	rm -rf _stage1 _stage2 _stage3 _sdk

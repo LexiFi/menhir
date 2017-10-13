@@ -1,5 +1,11 @@
 # Changes
 
+## 2017/10/13
+
+* Remove the OCaml version check at installation time, for greater simplicity,
+  and because for some reason it did not work properly under Cygwin.
+  (Reported by Andrew Appel.)
+
 ## 2017/09/26
 
 * `Makefile` fix: when determining whether the suffix `.exe` should be used,
