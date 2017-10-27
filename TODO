@@ -14,6 +14,9 @@
 * Move more of ErrorReports from CompCert to MenhirLib.
   In [show], might want to apply [shorten] to the output of [f].
 
+* Clean up the calc-inspection demo, which uses an undocumented/unfinished
+  approach to error reporting.
+
 * clean up this TODO file! and use gitlab issues for known bugs?
 
 * Contribute ocamlbuild rules for dealing with .messages files.
@@ -76,6 +79,13 @@
   sur la page Web), ajouter le back-end Coq, l'API incrémentale
   et l'API d'inspection, les règles anonymes, la gestion fine des
   erreurs de syntaxe...
+
+* Document the fact that (ocaml)yacc and Menhir do not have the same
+  behavior concerning default reductions (one performs the default
+  reduction *before* calling the lexer, the other does it the other
+  way around). The difference is observable only when the semantic
+  action has a side effect which influences the lexer (i.e., only
+  when there is a "lexer hack").
 
 * Pénible que l'API d'inspection ne donne pas accès
   à l'état courant lorsque la pile est vide (état initial donc).
@@ -172,3 +182,7 @@
 * dans le dump de l'automate, rajouter les transitions qui ont
   ete supprimees par resolution de conflits. Afficher aussi les
   réductions par défaut?
+
+* Read Chen and Pager's paper, "An Extension Of The Unit Production
+  Elimination Algorithm", and find out whether such an optimization
+  would be useful (beneficial) in the context of Menhir.
