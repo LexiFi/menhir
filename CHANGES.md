@@ -1,5 +1,10 @@
 # Changes
 
+## 2017/11/12
+
+* Documentation: clarify the fact that `%type` declarations should carry types
+  whose meaning does not depend on the headers `%{ ... %}`.
+
 ## 2017/10/13
 
 * Remove the OCaml version check at installation time, for greater simplicity,

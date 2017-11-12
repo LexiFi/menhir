@@ -463,6 +463,7 @@ A specification file begins with a sequence of declarations, ended by a
 mandatory \percentpercent keyword.
 
 \subsubsection{Headers}
+\label{sec:decls:headers}
 
 A header is a piece of \ocaml code, surrounded with \dheader{and}. It is
 copied verbatim at the beginning of the \ml file. It typically contains \ocaml
@@ -539,12 +540,19 @@ assigns an \ocaml type to each of the nonterminal symbols $\nt{lid}_1, \ldots, \
 For start symbols, providing an \ocaml type is mandatory, but is usually done as part of the
 \dstart declaration. For other symbols, it is optional. Providing type information can improve
 the quality of \ocaml's type error messages.
-% TEMPORARY type information can be mandatory in --coq mode; document?
 
 A \dtype declaration may concern not only a nonterminal symbol, such as, say,
 \texttt{expression}, but also a fully applied parameterized nonterminal
 symbol, such as \texttt{list(expression)} or \texttt{separated\_list(COMMA,
   option(expression))}.
+
+The types provided as part of \dtype declarations are copied verbatim to the
+\ml and \mli files. In contrast, headers (\sref{sec:decls:headers}) are copied
+to the \ml file only. For this reason, the types provided as part of \dtype
+declarations must make sense both in the presence and in the absence of these
+headers. They should typically be fully qualified types.
+
+% TEMPORARY type information can be mandatory in --coq mode; document?
 
 \subsubsection{Start symbols}
 \label{sec:start}
