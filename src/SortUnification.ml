@@ -54,6 +54,20 @@ let arrow (args : variable list) : variable =
 let star : variable =
   arrow []
 
+let fresh () =
+  fresh None
+
+(* Sort accessors. *)
+
+let domain (x : variable) : variable list =
+  match structure x with
+  | Some (Arrow xs) ->
+      xs
+  | None ->
+      (* It is up to our caller to ensure that [domain] is never applied
+         to a unification variable that carries no structure. *)
+      assert false
+
 (* -------------------------------------------------------------------------- *)
 
 (* A printer. *)
