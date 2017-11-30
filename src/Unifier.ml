@@ -132,10 +132,11 @@ let rec unify (v1 : variable) (v2 : variable) : unit =
     (* Read the two descriptors BEFORE calling [union]. *)
     let desc1 = UnionFind.get v1
     and desc2 = UnionFind.get v2 in
-    (* Merge the equivalence classes. *)
-    UnionFind.union v1 v2;
     (* Recursively unify the two descriptors. *)
-    UnionFind.set v1 (unify_descriptors desc1 desc2)
+    UnionFind.set v1 (unify_descriptors desc1 desc2);
+    (* Merge the equivalence classes. Do this LAST so we get more meaningful
+       output if unification fails and we have to print the two terms. *)
+    UnionFind.union v1 v2
   end
 
 (* -------------------------------------------------------------------------- *)
