@@ -37,3 +37,11 @@ let project = function
   | None ->
       (* Presumably, an error message has already been printed. *)
       exit 1
+
+let multiply m o1 o2 =
+  match o1, o2 with
+  | None, o
+  | o, None ->
+      o
+  | Some x1, Some x2 ->
+      Some (m x1 x2)
