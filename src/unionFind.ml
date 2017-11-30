@@ -70,9 +70,9 @@ let rec repr point =
   | Info _ ->
       point
 
-(** [find point] returns the descriptor associated with [point]'s
+(** [get point] returns the descriptor associated with [point]'s
     equivalence class. *)
-let rec find point =
+let rec get point =
 
   (* By not calling [repr] immediately, we optimize the common cases
      where the path starting at [point] has length 0 or 1, at the
@@ -83,7 +83,7 @@ let rec find point =
   | Link { link = Info info } ->
       info.descriptor
   | Link { link = Link _ } ->
-      find (repr point)
+      get (repr point)
 
 let rec set point v =
   match point.link with

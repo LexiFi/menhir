@@ -25,9 +25,9 @@ type 'a point
     equivalence class of its own, whose descriptor is [desc]. *)
 val fresh: 'a -> 'a point
 
-(** [find point] returns the descriptor associated with [point]'s
+(** [get point] returns the descriptor associated with [point]'s
     equivalence class. *)
-val find: 'a point -> 'a
+val get: 'a point -> 'a
 
 (** [union point1 point2] merges the equivalence classes associated
     with [point1] and [point2] into a single class whose descriptor is

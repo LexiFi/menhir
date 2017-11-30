@@ -71,7 +71,7 @@ let var_name =
     ^ let d = !name_counter / 26 in if d = 0 then "" else string_of_int d
   in
     fun v ->
-      let repr = UnionFind.find v in
+      let repr = UnionFind.get v in
         match repr.name with
             None -> let name = next_name () in repr.name <- Some name; name
           | Some x -> x
@@ -111,7 +111,7 @@ let rec paren_nt_type colors = function
         args^" -> *", true
 
 and paren_var (white, black) x =
-  let descr = UnionFind.find x in
+  let descr = UnionFind.get x in
     if Mark.same descr.mark white then begin
       descr.mark <- black;
       var_name x, false
@@ -150,7 +150,7 @@ let dfs action x =
   let black = Mark.fresh () in
 
   let rec visit_var x =
-    let descr = UnionFind.find x in
+    let descr = UnionFind.get x in
     if not (Mark.same descr.mark black) then begin
       descr.mark <- black;
       action x;
@@ -191,7 +191,7 @@ exception BadArityError of int * int
 
 let rec unify_var toplevel x y =
   if not (UnionFind.equivalent x y) then
-    let reprx, repry = UnionFind.find x, UnionFind.find y in
+    let reprx, repry = UnionFind.get x, UnionFind.get y in
       match reprx.structure, repry.structure with
           None, Some _    -> occurs_check x y; UnionFind.union x y
         | Some _, None    -> occurs_check y x; UnionFind.union y x

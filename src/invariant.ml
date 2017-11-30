@@ -384,7 +384,7 @@ let () =
 (* Define accessors. *)
 
 let represented state =
-  UnionFind.find (represented state)
+  UnionFind.get (represented state)
 
 let representeds states =
   if Lr1.NodeSet.is_empty states then
