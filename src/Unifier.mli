@@ -35,6 +35,10 @@ module Make (S : STRUCTURE) : sig
 
   val fresh: variable S.structure option -> variable
 
+  (* [structure x] returns the structure (currently) carried by variable [x]. *)
+
+  val structure: variable -> variable S.structure option
+
   (* [unify x y] attempts to unify the terms represented by the variables
      [x] and [y]. The creation of cycles is not permitted; an eager occurs
      check rules them out. *)
