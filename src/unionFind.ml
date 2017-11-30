@@ -127,11 +127,3 @@ let union point1 point2 =
     belong to the same equivalence class. *)
 let equivalent point1 point2 =
   repr point1 == repr point2
-
-(** [redundant] maps all members of an equivalence class, but one, to
-    [true]. *)
-let redundant = function
-  | { link = Link _ } ->
-      true
-  | { link = Info _ } ->
-      false

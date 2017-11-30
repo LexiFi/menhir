@@ -39,9 +39,5 @@ val union: 'a point -> 'a point -> unit
     belong to the same equivalence class. *)
 val equivalent: 'a point -> 'a point -> bool
 
-(** [redundant] maps all members of an equivalence class, but one, to
-    [true]. *)
-val redundant: 'a point -> bool
-
 (** [change p d] updates the descriptor of [p] to [d]. *)
 val change: 'a point -> 'a -> unit
