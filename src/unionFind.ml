@@ -94,11 +94,9 @@ let rec change point v =
       change (repr point) v
 
 (** [union point1 point2] merges the equivalence classes associated
-    with [point1] and [point2] (which must be distinct) into a single
-    class whose descriptor is that originally associated with [point2].
-
-    The fact that [point1] and [point2] do not originally belong to the
-    same class guarantees that we do not create a cycle in the graph.
+    with [point1] and [point2] into a single class whose descriptor is
+    that originally associated with [point2]. It does nothing if [point1]
+    and [point2] already are in the same class.
 
     The weights are used to determine whether [point1] should be made
     to point to [point2], or vice-versa. By making the representative
@@ -108,33 +106,27 @@ let rec change point v =
 let union point1 point2 =
   let point1 = repr point1
   and point2 = repr point2 in
-  assert (point1 != point2);
-  match point1.link, point2.link with
-  | Info info1, Info info2 ->
-      let weight1 = info1.weight
-      and weight2 = info2.weight in
-      if weight1 >= weight2 then begin
-        point2.link <- Link point1;
-        info1.weight <- weight1 + weight2;
-        info1.descriptor <- info2.descriptor
-      end
-      else begin
-        point1.link <- Link point2;
-        info2.weight <- weight1 + weight2
-      end
-  | _, _ ->
-      assert false (* [repr] guarantees that [link] matches [Info _]. *)
+  if point1 != point2 then
+    match point1.link, point2.link with
+    | Info info1, Info info2 ->
+        let weight1 = info1.weight
+        and weight2 = info2.weight in
+        if weight1 >= weight2 then begin
+          point2.link <- Link point1;
+          info1.weight <- weight1 + weight2;
+          info1.descriptor <- info2.descriptor
+        end
+        else begin
+          point1.link <- Link point2;
+          info2.weight <- weight1 + weight2
+        end
+    | _, _ ->
+        assert false (* [repr] guarantees that [link] matches [Info _]. *)
 
 (** [equivalent point1 point2] tells whether [point1] and [point2]
     belong to the same equivalence class. *)
 let equivalent point1 point2 =
   repr point1 == repr point2
-
-(** [eunion point1 point2] is identical to [union], except it does
-    nothing if [point1] and [point2] are already equivalent. *)
-let eunion point1 point2 =
-  if not (equivalent point1 point2) then
-    union point1 point2
 
 (** [redundant] maps all members of an equivalence class, but one, to
     [true]. *)
@@ -143,4 +135,3 @@ let redundant = function
       true
   | { link = Info _ } ->
       false
-

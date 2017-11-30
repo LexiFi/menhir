@@ -30,17 +30,14 @@ val fresh: 'a -> 'a point
 val find: 'a point -> 'a
 
 (** [union point1 point2] merges the equivalence classes associated
-    with [point1] and [point2] (which must be distinct) into a single
-    class whose descriptor is that originally associated with [point2]. *)
+    with [point1] and [point2] into a single class whose descriptor is
+    that originally associated with [point2]. It does nothing if [point1]
+    and [point2] already are in the same class. *)
 val union: 'a point -> 'a point -> unit
 
 (** [equivalent point1 point2] tells whether [point1] and [point2]
     belong to the same equivalence class. *)
 val equivalent: 'a point -> 'a point -> bool
-
-(** [eunion point1 point2] is identical to [union], except it does
-    nothing if [point1] and [point2] are already equivalent. *)
-val eunion: 'a point -> 'a point -> unit
 
 (** [redundant] maps all members of an equivalence class, but one, to
     [true]. *)

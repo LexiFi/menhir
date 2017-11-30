@@ -307,7 +307,7 @@ let share (v : StateVector.property) =
   List.iter (fun states ->
     let dummy = UnionFind.fresh false in
     Lr1.NodeSet.iter (fun state ->
-      UnionFind.eunion dummy (represented state)
+      UnionFind.union dummy (represented state)
     ) states
   ) v
 
