@@ -85,13 +85,13 @@ let rec find point =
   | Link { link = Link _ } ->
       find (repr point)
 
-let rec change point v =
+let rec set point v =
   match point.link with
   | Info info
   | Link { link = Info info } ->
       info.descriptor <- v
   | Link { link = Link _ } ->
-      change (repr point) v
+      set (repr point) v
 
 (** [union point1 point2] merges the equivalence classes associated
     with [point1] and [point2] into a single class whose descriptor is

@@ -296,7 +296,7 @@ let represented state =
 (* Setters. *)
 
 let represent state =
-  UnionFind.change (represented state) true
+  UnionFind.set (represented state) true
 
 let represents states =
   represent (Lr1.NodeSet.choose states)

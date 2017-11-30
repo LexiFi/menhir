@@ -39,5 +39,5 @@ val union: 'a point -> 'a point -> unit
     belong to the same equivalence class. *)
 val equivalent: 'a point -> 'a point -> bool
 
-(** [change p d] updates the descriptor of [p] to [d]. *)
-val change: 'a point -> 'a -> unit
+(** [set p d] updates the descriptor of [p] to [d]. *)
+val set: 'a point -> 'a -> unit
