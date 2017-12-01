@@ -68,27 +68,47 @@ let domain (x : variable) : variable list option =
 
 (* -------------------------------------------------------------------------- *)
 
+(* A name generator for unification variables. *)
+
+let make_gensym () : unit -> string =
+  let c = ref 0 in
+  let gensym () =
+    let n = Misc.postincrement c in
+    Printf.sprintf "%c%s"
+      (char_of_int (Char.code 'a' + n mod 26))
+      (let d = n / 26 in if d = 0 then "" else string_of_int d)
+  in
+  gensym
+
+(* A memoized name generator. *)
+
+let make_name () : int -> string =
+  let gensym = make_gensym() in
+  Memoize.Int.memoize (fun _x -> gensym())
+
+(* -------------------------------------------------------------------------- *)
+
 (* A printer. *)
 
-let rec print (b : Buffer.t) (sort : sort) =
+let rec print name (b : Buffer.t) (sort : sort) =
   match sort with
   | TVar x ->
-      Printf.bprintf b "?sort%02d" x
+      Printf.bprintf b "%s" (name x)
   | TNode (S.Arrow []) ->
       Printf.bprintf b "*"
   | TNode (S.Arrow (sort :: sorts)) ->
       (* Always parenthesize the domain, so there is no ambiguity. *)
       Printf.bprintf b "(%a%a) -> *"
-        print sort
-        print_comma_sorts sorts
+        (print name) sort
+        (print_comma_sorts name) sorts
 
-and print_comma_sorts b sorts =
-  List.iter (print_comma_sort b) sorts
+and print_comma_sorts name b sorts =
+  List.iter (print_comma_sort name b) sorts
 
-and print_comma_sort b sort =
-  Printf.bprintf b ", %a" print sort
+and print_comma_sort name b sort =
+  Printf.bprintf b ", %a" (print name) sort
 
 let print sort : string =
   let b = Buffer.create 32 in
-  print b sort;
+  print (make_name()) b sort;
   Buffer.contents b
