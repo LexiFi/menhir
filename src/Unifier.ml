@@ -75,21 +75,12 @@ let structure v =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [r++]. *)
-
-let postincrement r =
-  let v = !r in
-  r := v + 1;
-  v
-
-(* -------------------------------------------------------------------------- *)
-
 (* [fresh] creates a fresh variable with specified structure. *)
 
 let fresh =
   let c = ref 0 in
   fun structure ->
-    let id = postincrement c in
+    let id = Misc.postincrement c in
     let mark = Mark.none in
     UnionFind.fresh { id; structure; mark }
 
