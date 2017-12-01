@@ -3,6 +3,16 @@ open SortUnification
 
 (* -------------------------------------------------------------------------- *)
 
+(* Error messages. *)
+
+let bad_arity positions expected_arity actual_arity =
+  let n1 = expected_arity and n2 = actual_arity in
+  Error.error positions
+    "does this symbol expect %d or %d arguments?"
+    (min n1 n2) (max n1 n2)
+
+(* -------------------------------------------------------------------------- *)
+
 (* An environment maps (terminal and nonterminal) symbols to unification
    variables. *)
 
@@ -19,6 +29,7 @@ let find x env : variable =
   try
     Env.find x env
   with Not_found ->
+    Printf.eprintf "UNKNOWN: %s\n%!" x; (* TEMPORARY *)
     assert false (* unbound terminal or nonterminal symbol *)
 
 let extend env (xvs : (symbol * variable) list) =
@@ -49,15 +60,18 @@ let rec check_parameter env (param : parameter) (expected : variable) =
   | ParameterVar x ->
       let x = Positions.value x in
       unify (find x env) expected
-  | ParameterApp (x, actuals) ->
-      let x = Positions.value x in
+  | ParameterApp (sym, actuals) ->
+      let x = Positions.value sym in
       (* This application has sort [star]. *)
       unify star expected;
       (* Retrieve the expected sort of each parameter. The call to
          [domain] cannot fail because every nonterminal symbol has
          an arrow sort. *)
       let expected = domain (find x env) in
-      (* TEMPORARY check arity *)
+      let expected_arity = List.length expected
+      and actual_arity = List.length actuals in
+      if expected_arity <> actual_arity then
+        bad_arity [Positions.position sym] expected_arity actual_arity;
       (* Check the sort of each actual parameter. *)
       List.iter2 (check_parameter env) actuals expected
   | ParameterAnonymous _ ->
@@ -121,10 +135,9 @@ let check_grammar env (g : grammar) : unit =
   try
     check_grammar env g
   with
-  | Unify (v1, v2) ->
+  | Unify (_x, _y)
+  | Occurs (_x, _y) ->
       assert false (* TEMPORARY *)
-  | Occurs (v1, v2) ->
-      assert false
 
 (* -------------------------------------------------------------------------- *)
 
@@ -138,6 +151,9 @@ let infer_grammar (g : grammar) : sort Env.t =
     StringMap.fold (fun tok _ env ->
       Env.add tok star env
     ) g.p_tokens Env.empty
+  in
+  let env =
+    Env.add "error" star env
   in
 
   let env =
