@@ -180,7 +180,26 @@ let check_grammar env g =
   StringMap.iter (fun nt position ->
     let sym = Positions.with_pos position nt in
     unify sym star (find nt env)
-  ) g.p_start_symbols
+  ) g.p_start_symbols;
+
+  (* Every symbol that appears in a [%type] declaration must have sort [star]. *)
+  List.iter (fun (param, _) ->
+    check_parameter env param star
+  ) g.p_types;
+
+  (* Same rule for [%on_error_reduce] declarations. *)
+  List.iter (fun (param, _) ->
+    check_parameter env param star
+  ) g.p_on_error_reduce;
+
+  (* The symbols that appear in [%attribute] declarations must be well-sorted.
+     Their sort is not necessarily [star]: it is legal to attach an attribute
+     with a parameterized symbol. *)
+  List.iter (fun (params, _) ->
+    List.iter (fun param ->
+      check_parameter env param (fresh())
+    ) params
+  ) g.p_symbol_attributes
 
 (* -------------------------------------------------------------------------- *)
 
