@@ -6,14 +6,27 @@ open SortUnification
 
 (* -------------------------------------------------------------------------- *)
 
-(* Error messages. *)
+(* Error handling. *)
 
-let check_arity positions expected_arity actual_arity =
-  if expected_arity <> actual_arity then
-    error positions
-      "does this symbol expect %d or %d arguments?"
-      (min expected_arity actual_arity)
-      (max expected_arity actual_arity)
+let print (v : variable) : string =
+  print (decode v)
+
+(* In [check_arity], in principle, [arity1] is the expected arity and [arity2]
+   is the actual arity. This distinction does not make much sense, though, as
+   we do not know which is wrong, the declaration site or the use site. So, we
+   display a neutral error message. *)
+
+let check_arity sym arity1 arity2 =
+  let plural = max arity1 arity2 > 1 in
+  if arity1 <> arity2 then
+    error [position sym]
+      "does the symbol \"%s\" expect %d or %d argument%s?"
+      (value sym)
+      (min arity1 arity2)
+      (max arity1 arity2)
+      (if plural then "s" else "")
+
+(* This variant of [unify] is used when no unification error can arise. *)
 
 let unify_cannot_fail sort1 sort2 =
   try
@@ -23,25 +36,26 @@ let unify_cannot_fail sort1 sort2 =
       (* If the caller is right, this unification step cannot fail! *)
       assert false
 
-let print (v : variable) : string =
-  print (decode v)
+(* In [unify], in principle, [sort1] is the expected sort and [sort2] is the
+   actual sort. Again, this distinction does not make much sense, so we
+   display a neutral error message. *)
 
-let unify positions sort1 sort2 =
+let unify sym sort1 sort2 =
   try
     unify sort1 sort2
   with
   | Unify (v1, v2) ->
-      error positions
-       "how is this symbol parameterized?\n\
+      error [position sym]
+       "how is the symbol \"%s\" parameterized?\n\
         It is used at sorts %s and %s.\n\
         The sort %s is not compatible with the sort %s."
-        (print sort1) (print sort2) (print v1) (print v2)
+        (value sym) (print sort1) (print sort2) (print v1) (print v2)
   | Occurs (v1, v2) ->
-      error positions
-       "how is this symbol parameterized?\n\
+      error [position sym]
+       "how is the symbol \"%s\" parameterized?\n\
         It is used at sorts %s and %s.\n\
         The sort %s cannot be unified with the sort %s."
-        (print sort1) (print sort2) (print v1) (print v2)
+        (value sym) (print sort1) (print sort2) (print v1) (print v2)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -90,11 +104,11 @@ let rec check_parameter env (param : parameter) (expected : variable) =
   match param with
   | ParameterVar sym ->
       let x = value sym in
-      unify [position sym] (find x env) expected
+      unify sym expected (find x env)
   | ParameterApp (sym, actuals) ->
       let x = value sym in
       (* This application has sort [star]. *)
-      unify [position sym] star expected;
+      unify sym expected star;
       (* Retrieve the expected sort of each parameter. Two cases arise: if [x]
          has already been assigned an arrow sort, then we can retrieve its
          domain, which gives us the expected sort of each actual parameter;
@@ -109,8 +123,7 @@ let rec check_parameter env (param : parameter) (expected : variable) =
       let expected =
         match domain v with
         | Some expected ->
-            check_arity [position sym]
-              (List.length expected) (List.length actuals);
+            check_arity sym (List.length expected) (List.length actuals);
             expected
         | None ->
             let _, expected = allocate actuals in
@@ -165,7 +178,8 @@ let check_grammar env g =
 
   (* The start symbols must have sort [star]. *)
   StringMap.iter (fun nt position ->
-    unify [position] (find nt env) star
+    let sym = Positions.with_pos position nt in
+    unify sym star (find nt env)
   ) g.p_start_symbols
 
 (* -------------------------------------------------------------------------- *)
