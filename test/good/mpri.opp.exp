@@ -1,0 +1,235 @@
+Warning: you are using the standard library and/or the %inline keyword. We
+recommend switching on --infer in order to avoid obscure type error messages.
+%{
+
+open RawLambda
+
+%}
+%start entry
+%token <RawLambda.binop> ADDOP
+%token ARROW
+%token EOF
+%token EQ
+%token FUN
+%token <string> IDENT
+%token IN
+%token <int> INTLITERAL
+%token LET
+%token LPAREN
+%token <RawLambda.binop> MULOP
+%token PRINT
+%token REC
+%token RPAREN
+%type <RawLambda.term> entry
+%%
+
+entry:
+  x00 = any_term_ _2 = EOF
+    {let t =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let t =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+    let _startpos = _startpos_x_ in
+        ( { place = (_startpos, _endpos); value = x } )
+  in
+      ( t )
+in
+    ( t )}
+
+atomic_term_:
+  _1 = LPAREN x00 = any_term_ _3 = RPAREN
+    {let t =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let t =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+    let _startpos = _startpos_x_ in
+        ( { place = (_startpos, _endpos); value = x } )
+  in
+      ( t )
+in
+    ( t.value )}
+| x = IDENT
+    {    ( Var x )}
+| i = INTLITERAL
+    {    ( Lit i )}
+
+application_term_:
+  t = atomic_term_
+    {    ( t )}
+| x0 = application_term_ x1 = atomic_term_
+    {let t2 =
+  let _endpos_x_ = _endpos_x1_ in
+  let _startpos_x_ = _startpos_x1_ in
+  let x = x1 in
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+      ( { place = (_startpos, _endpos); value = x } )
+in
+let t1 =
+  let _endpos_x_ = _endpos_x0_ in
+  let _startpos_x_ = _startpos_x0_ in
+  let x = x0 in
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+      ( { place = (_startpos, _endpos); value = x } )
+in
+    ( App (t1, t2) )}
+| _1 = PRINT x0 = atomic_term_
+    {let t2 =
+  let _endpos_x_ = _endpos_x0_ in
+  let _startpos_x_ = _startpos_x0_ in
+  let x = x0 in
+  let _endpos = _endpos_x_ in
+  let _startpos = _startpos_x_ in
+      ( { place = (_startpos, _endpos); value = x } )
+in
+    ( Print t2 )}
+
+any_term_:
+  t0 = left_associative_level_multiplicative_term__ADDOP_mkbinop_
+    {let t =
+  let t = t0 in
+      ( t )
+in
+    ( t )}
+| _1 = FUN x = IDENT _3 = ARROW x00 = any_term_
+    {let t =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let t =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+    let _startpos = _startpos_x_ in
+        ( { place = (_startpos, _endpos); value = x } )
+  in
+      ( t )
+in
+    ( Lam (x, t) )}
+| _1 = LET mode = recursive x = IDENT _4 = EQ x00 = any_term_ _6 = IN x01 = any_term_
+    {let t2 =
+  let _endpos_x0_ = _endpos_x01_ in
+  let _startpos_x0_ = _startpos_x01_ in
+  let x0 = x01 in
+  let t =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+    let _startpos = _startpos_x_ in
+        ( { place = (_startpos, _endpos); value = x } )
+  in
+      ( t )
+in
+let t1 =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x0 = x00 in
+  let t =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+    let _startpos = _startpos_x_ in
+        ( { place = (_startpos, _endpos); value = x } )
+  in
+      ( t )
+in
+    ( Let (mode, x, t1, t2) )}
+
+left_associative_level_application_term__MULOP_mkbinop_:
+  t = application_term_
+    {    ( t )}
+| x00 = left_associative_level_application_term__MULOP_mkbinop_ op0 = MULOP x10 = application_term_
+    {let t =
+  let _endpos_x1_ = _endpos_x10_ in
+  let _startpos_x1_ = _startpos_x10_ in
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let x1 = x10 in
+  let op = op0 in
+  let x0 = x00 in
+  let t2 =
+    let _endpos_x_ = _endpos_x1_ in
+    let _startpos_x_ = _startpos_x1_ in
+    let x = x1 in
+    let _endpos = _endpos_x_ in
+    let _startpos = _startpos_x_ in
+        ( { place = (_startpos, _endpos); value = x } )
+  in
+  let t1 =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+    let _startpos = _startpos_x_ in
+        ( { place = (_startpos, _endpos); value = x } )
+  in
+      ( BinOp (t1, op, t2) )
+in
+    ( t )}
+
+left_associative_level_multiplicative_term__ADDOP_mkbinop_:
+  t0 = left_associative_level_application_term__MULOP_mkbinop_
+    {let t =
+  let t = t0 in
+      ( t )
+in
+    ( t )}
+| x00 = left_associative_level_multiplicative_term__ADDOP_mkbinop_ op0 = ADDOP t000 = left_associative_level_application_term__MULOP_mkbinop_
+    {let t =
+  let _endpos_x0_ = _endpos_x00_ in
+  let _startpos_x0_ = _startpos_x00_ in
+  let _endpos_t00_ = _endpos_t000_ in
+  let _startpos_t00_ = _startpos_t000_ in
+  let t00 = t000 in
+  let op = op0 in
+  let x0 = x00 in
+  let t2 =
+    let _endpos_t0_ = _endpos_t00_ in
+    let _startpos_t0_ = _startpos_t00_ in
+    let t0 = t00 in
+    let x =
+      let t = t0 in
+          ( t )
+    in
+    let _endpos_x_ = _endpos_t0_ in
+    let _startpos_x_ = _startpos_t0_ in
+    let _endpos = _endpos_x_ in
+    let _startpos = _startpos_x_ in
+        ( { place = (_startpos, _endpos); value = x } )
+  in
+  let t1 =
+    let _endpos_x_ = _endpos_x0_ in
+    let _startpos_x_ = _startpos_x0_ in
+    let x = x0 in
+    let _endpos = _endpos_x_ in
+    let _startpos = _startpos_x_ in
+        ( { place = (_startpos, _endpos); value = x } )
+  in
+      ( BinOp (t1, op, t2) )
+in
+    ( t )}
+
+recursive:
+  _1 = REC
+    {      ( Recursive )}
+| 
+    {      ( NonRecursive )}
+
+%%
+
+
+
