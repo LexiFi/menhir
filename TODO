@@ -37,9 +37,6 @@
       T.token2terminal, T.token2value offer one direction (token -> xtoken)
       the other direction would have to be generated
 
-* standard library: define "%public %inline epsilon: {}", which allows using
-  "epsilon" as a marker for an empty right-hand side.
-
 * explain how to simulate inherited attributes in the manual
   (cf. post by David Chemouil on mailing list)
 
@@ -106,10 +103,17 @@
 * Produce well-chosen (predictable) names for anonymous rules?
 
 * In the standard library, possibly rename "anonymous" and "embedded" and
-  document them. The non-inline version allows embedding an action in the
-  middle of a rule.
+  document them. Document WHEN they were added.
 
-* Add left-recursive lists to the standard library.
+* Add standard library support for specifying arithmetic-expression-levels?
+  Check connection with parsec (chainl1).
+  More generally, find inspiration in parsec combinators.
+  https://hackage.haskell.org/package/parsec-3.1.11/docs/Text-Parsec-Combinator.html
+
+* Document left_flex_list and right_flex_list. Document WHEN they were added.
+
+* standard library: define "%public %inline epsilon: {}", which allows using
+  "epsilon" as a marker for an empty right-hand side. Document WHEN added.
 
 * Define [print_checkpoint].
   Define a printer that shows the states in the stack.
@@ -186,3 +190,7 @@
 * Read Chen and Pager's paper, "An Extension Of The Unit Production
   Elimination Algorithm", and find out whether such an optimization
   would be useful (beneficial) in the context of Menhir.
+
+* Ideally, [PartialGrammar] should avoid renaming the parameters of
+  a rule, when there is no need to do so. The renamed parameter is
+  visible in sort unification error messages.
