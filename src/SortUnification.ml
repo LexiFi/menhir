@@ -28,7 +28,7 @@ module S = struct
     if n1 = n2 then
       List.iter2 f xs1 xs2
     else
-      raise Iter2 (* TEMPORARY *)
+      raise Iter2
 
 end
 
