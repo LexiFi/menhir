@@ -214,9 +214,6 @@ let rec subst_parameter subst = function
       assert false
 
 
-let subst_parameters subst =
-  List.map (subst_parameter subst)
-
 let dummy : rule =
   { branches = [];
     positions = [];
@@ -341,24 +338,8 @@ end) = struct
      instantiate the parameterized branch. *)
   let rec expand_branch subst pbranch =
     let new_producers = List.map (fun (ido, p, attrs) ->
+      let p = subst_parameter subst p in
       let sym, actual_parameters = Parameters.unapp p in
-      let sym, actual_parameters =
-        try
-          match List.assoc sym.value subst with
-          | ParameterVar x ->
-              x, subst_parameters subst actual_parameters
-
-          | ParameterApp (x, ps) ->
-              assert (actual_parameters = []);
-              x, ps
-
-          | ParameterAnonymous _ ->
-              (* Anonymous rules are eliminated early on. *)
-              assert false
-
-        with Not_found ->
-          sym, subst_parameters subst actual_parameters
-      in
       (* Instantiate the definition of the producer. *)
       { producer_identifier = Positions.value ido;
         producer_symbol = expand_branches subst sym actual_parameters;
