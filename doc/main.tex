@@ -3659,15 +3659,15 @@ identifier, such as \texttt{cost}, or a list of OCaml identifiers, separated
 with dots, such as \texttt{my.name}. An attribute payload is an OCaml
 expression of arbitrary type, such as \texttt{1} or \verb+"&&"+ or \verb+print_int+.
 Following the syntax of OCaml's attributes, an attribute's name and payload
-are separated with one or more spaces, and are delimited by \verb+@[+ and
-\verb+]+. Thus, \verb+@[cost 1]+ and \verb+@[printer print_int]+ are examples
+are separated with one or more spaces, and are delimited by \verb+[@+ and
+\verb+]+. Thus, \verb+[@cost 1]+ and \verb+[@printer print_int]+ are examples
 of attributes.
 
 An attribute can be attached at one of four levels:
 % grammar-level attributes, %[@foo ...]
-% terminal attribute, %token BAR @[foo ...]
-% nonterminal attribute, bar @[foo ...]: ...
-% producer attribute, e = expr @[foo ...]
+% terminal attribute, %token BAR [@foo ...]
+% nonterminal attribute, bar [@foo ...]: ...
+% producer attribute, e = expr [@foo ...]
 \begin{enumerate}
 
 \item An attribute can be attached with the grammar.
@@ -3675,14 +3675,14 @@ An attribute can be attached at one of four levels:
   in the declarations section (\sref{sec:decls}). For example, the following
   is a valid declaration:
 \begin{verbatim}
-  %@[trace true]
+  %[@trace true]
 \end{verbatim}
 
 \item An attribute can be attached with a terminal symbol.
   Such an attribute must follow the declaration of this symbol.
   For example, the following is a valid declaration of the terminal symbol \verb+INT+:
 \begin{verbatim}
-  %token<int> INT @[cost 0] @[printer print_int]
+  %token<int> INT [@cost 0] [@printer print_int]
 \end{verbatim}
 
 \item An attribute can be attached with a nonterminal symbol.
@@ -3690,13 +3690,13 @@ An attribute can be attached at one of four levels:
   immediately after the name of this symbol. For instance, the following is a valid
   definition of the nonterminal symbol \verb+expr+:
 \begin{verbatim}
-  expr @[default EConst 0]:
+  expr [@default EConst 0]:
     i = INT                  { EConst i }
   | e1 = expr PLUS e2 = expr { EAdd (e1, e2) }
 \end{verbatim}
   An attribute can be attached with a parameterized nonterminal symbol:
 \begin{verbatim}
-  option @[default None] (X):
+  option [@default None] (X):
           { None }
   | x = X { Some x }
 \end{verbatim}
@@ -3710,7 +3710,7 @@ An attribute can be attached at one of four levels:
   an attribute is attached with the producer \verb+expr*+:
 \begin{verbatim}
   exprs:
-    LPAREN es = expr* @[list true] RPAREN { es }
+    LPAREN es = expr* [@list true] RPAREN { es }
 \end{verbatim}
 
 \end{enumerate}
@@ -3721,11 +3721,11 @@ As a convenience, it is possible to attach many attributes with many (terminal
 and nonterminal) symbols in one go, via an \dattribute declaration, which must
 be placed in the declarations section (\sref{sec:decls}).
 For instance, the following declaration attaches both of the attributes
-\verb+@[cost 0]+ and \verb+@[precious false]+
+\verb+[@cost 0]+ and \verb+[@precious false]+
 with each of the symbols
 \verb+INT+ and \verb+id+:
 \begin{verbatim}
-  %attribute INT id @[cost 0] @[precious false]
+  %attribute INT id [@cost 0] [@precious false]
 \end{verbatim}
 An \dattribute declaration can be considered syntactic sugar: it is desugared
 away in terms of the four forms of attributes presented earlier. (The command
@@ -3736,12 +3736,12 @@ line switch \oonlypreprocess can be used to see how it is desugared.)
 If an attribute is attached with a parameterized nonterminal symbol, then,
 when this symbol is expanded away, the attribute is transmitted to every
 instance. For instance, in an earlier example, the attribute
-\verb+@[default None]+ was attached with the parameterized symbol
+\verb+[@default None]+ was attached with the parameterized symbol
 \verb+option+. Then, every instance of \verb+option+, such as
 \verb+option(expr)+, \verb+option(COMMA)+, and so on, inherits this
 attribute. To attach an attribute with one specific
 instance only, one can use an \dattribute declaration. For instance,
-the declaration \verb+%attribute option(expr) @[cost 10]+ attaches
+the declaration \verb+%attribute option(expr) [@cost 10]+ attaches
 an attribute with the nonterminal symbol \verb+option(expr)+, but
 not with the symbol \verb+option(COMMA)+.
 
