@@ -26,10 +26,10 @@ val star: variable
 val arrow: variable list -> variable
 val fresh: unit -> variable
 
-(* [domain] is the opposite of [arrow]. If [x] has been unified with an
-   arrow, then [domain x] returns its domain. Otherwise, it fails. Use
-   with caution. *)
-val domain: variable -> variable list
+(* [domain] is the opposite of [arrow]. If [x] has been unified with an arrow,
+   then [domain x] returns its domain. Otherwise, it returns [None]. Use with
+   caution. *)
+val domain: variable -> variable list option
 
 exception Unify of variable * variable
 exception Occurs of variable * variable

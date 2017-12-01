@@ -1,3 +1,6 @@
+let value    = Positions.value
+let position = Positions.position
+let error    = Error.error
 open Syntax
 open SortUnification
 
@@ -5,11 +8,33 @@ open SortUnification
 
 (* Error messages. *)
 
-let bad_arity positions expected_arity actual_arity =
-  let n1 = expected_arity and n2 = actual_arity in
-  Error.error positions
-    "does this symbol expect %d or %d arguments?"
-    (min n1 n2) (max n1 n2)
+let check_arity positions expected_arity actual_arity =
+  if expected_arity <> actual_arity then
+    error positions
+      "does this symbol expect %d or %d arguments?"
+      (min expected_arity actual_arity)
+      (max expected_arity actual_arity)
+
+let unify_cannot_fail sort1 sort2 =
+  try
+    unify sort1 sort2
+  with
+  | Unify _ | Occurs _ ->
+      (* If the caller is right, this unification step cannot fail! *)
+      assert false
+
+let unify positions sort1 sort2 =
+  try
+    unify sort1 sort2
+  with
+  | Unify (v1, v2)
+  | Occurs (v1, v2) ->
+      let print v = print (decode v) in
+      error positions
+       "how is this symbol parameterized?\n\
+        It is used at sorts %s and %s.\n\
+        The sort %s is not compatible with the sort %s."
+        (print sort1) (print sort2) (print v1) (print v2)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -29,7 +54,6 @@ let find x env : variable =
   try
     Env.find x env
   with Not_found ->
-    Printf.eprintf "UNKNOWN: %s\n%!" x; (* TEMPORARY *)
     assert false (* unbound terminal or nonterminal symbol *)
 
 let extend env (xvs : (symbol * variable) list) =
@@ -57,21 +81,35 @@ let allocate (xs : 'a list) : ('a * variable) list * variable list =
 
 let rec check_parameter env (param : parameter) (expected : variable) =
   match param with
-  | ParameterVar x ->
-      let x = Positions.value x in
-      unify (find x env) expected
+  | ParameterVar sym ->
+      let x = value sym in
+      unify [position sym] (find x env) expected
   | ParameterApp (sym, actuals) ->
-      let x = Positions.value sym in
+      let x = value sym in
       (* This application has sort [star]. *)
-      unify star expected;
-      (* Retrieve the expected sort of each parameter. The call to
-         [domain] cannot fail because every nonterminal symbol has
-         an arrow sort. *)
-      let expected = domain (find x env) in
-      let expected_arity = List.length expected
-      and actual_arity = List.length actuals in
-      if expected_arity <> actual_arity then
-        bad_arity [Positions.position sym] expected_arity actual_arity;
+      unify [position sym] star expected;
+      (* Retrieve the expected sort of each parameter. Two cases arise: if [x]
+         has already been assigned an arrow sort, then we can retrieve its
+         domain, which gives us the expected sort of each actual parameter;
+         otherwise, we just make up a fresh arrow sort of appropriate arity.
+         We could avoid this case distinction and always use the latter
+         method, but the former method, when applicable, yields better error
+         messages. If [sym] is a toplevel (nonterminal or terminal) symbol,
+         then we will be in the first case, as we have been careful to
+         initially assign an arrow sort of appropriate arity to each such
+         symbol. *)
+      let v = find x env in
+      let expected =
+        match domain v with
+        | Some expected ->
+            check_arity [position sym]
+              (List.length expected) (List.length actuals);
+            expected
+        | None ->
+            let _, expected = allocate actuals in
+            unify_cannot_fail v (arrow expected);
+            expected
+      in
       (* Check the sort of each actual parameter. *)
       List.iter2 (check_parameter env) actuals expected
   | ParameterAnonymous _ ->
@@ -100,11 +138,7 @@ let enter_rule env (nt : symbol) (rule : parameterized_rule) : env =
   (* Connect these variables with the sort of the symbol [nt]. *)
   (* Because it is performed first, this particular unification
      cannot fail. *)
-  begin try
-    unify (find nt env) (arrow domain)
-  with Unify _ | Occurs _ ->
-    assert false
-  end;
+  unify_cannot_fail (find nt env) (arrow domain);
 
   (* Extend the environment. *)
   extend env formals
@@ -123,21 +157,9 @@ let check_grammar env g =
   StringMap.iter (check_rule env) g.p_rules;
 
   (* The start symbols must have sort [star]. *)
-  StringMap.iter (fun nt _ ->
-    unify (find nt env) star
+  StringMap.iter (fun nt position ->
+    unify [position] (find nt env) star
   ) g.p_start_symbols
-
-(* -------------------------------------------------------------------------- *)
-
-(* This wrapper catches unification errors and displays error messages. *)
-
-let check_grammar env (g : grammar) : unit =
-  try
-    check_grammar env g
-  with
-  | Unify (_x, _y)
-  | Occurs (_x, _y) ->
-      assert false (* TEMPORARY *)
 
 (* -------------------------------------------------------------------------- *)
 

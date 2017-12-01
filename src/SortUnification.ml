@@ -59,14 +59,12 @@ let fresh () =
 
 (* Sort accessors. *)
 
-let domain (x : variable) : variable list =
+let domain (x : variable) : variable list option =
   match structure x with
   | Some (Arrow xs) ->
-      xs
+      Some xs
   | None ->
-      (* It is up to our caller to ensure that [domain] is never applied
-         to a unification variable that carries no structure. *)
-      assert false
+      None
 
 (* -------------------------------------------------------------------------- *)
 
