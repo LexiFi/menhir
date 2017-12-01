@@ -23,17 +23,24 @@ let unify_cannot_fail sort1 sort2 =
       (* If the caller is right, this unification step cannot fail! *)
       assert false
 
+let print (v : variable) : string =
+  print (decode v)
+
 let unify positions sort1 sort2 =
   try
     unify sort1 sort2
   with
-  | Unify (v1, v2)
-  | Occurs (v1, v2) ->
-      let print v = print (decode v) in
+  | Unify (v1, v2) ->
       error positions
        "how is this symbol parameterized?\n\
         It is used at sorts %s and %s.\n\
         The sort %s is not compatible with the sort %s."
+        (print sort1) (print sort2) (print v1) (print v2)
+  | Occurs (v1, v2) ->
+      error positions
+       "how is this symbol parameterized?\n\
+        It is used at sorts %s and %s.\n\
+        The sort %s cannot be unified with the sort %s."
         (print sort1) (print sort2) (print v1) (print v2)
 
 (* -------------------------------------------------------------------------- *)
