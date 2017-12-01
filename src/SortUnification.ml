@@ -44,6 +44,9 @@ type sort = term =
   | TVar of int
   | TNode of sort structure
 
+type ground_sort =
+  | GArrow of ground_sort list
+
 (* -------------------------------------------------------------------------- *)
 
 (* Sort constructors. *)
@@ -65,6 +68,21 @@ let domain (x : variable) : variable list option =
       Some xs
   | None ->
       None
+
+(* -------------------------------------------------------------------------- *)
+
+(* Converting between sorts and ground sorts. *)
+
+let rec ground (s : sort) : ground_sort =
+  match s with
+  | TVar _ ->
+      (* All variables are replaced with [*]. *)
+      GArrow []
+  | TNode (Arrow ss) ->
+      GArrow (List.map ground ss)
+
+let rec unground (GArrow ss : ground_sort) : sort =
+  TNode (Arrow (List.map unground ss))
 
 (* -------------------------------------------------------------------------- *)
 

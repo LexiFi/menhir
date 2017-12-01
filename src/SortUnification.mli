@@ -16,6 +16,9 @@ type sort =
   | TVar of int
   | TNode of sort structure
 
+type ground_sort =
+  | GArrow of ground_sort list
+
 (* -------------------------------------------------------------------------- *)
 
 (* Sort unification. *)
@@ -38,6 +41,11 @@ val unify: variable -> variable -> unit
 (* Once unification is over, a unification variable can be decoded as a sort. *)
 
 val decode: variable -> sort
+
+(* Grounding a sort replaces all sort variables with the sort [*]. *)
+
+val ground: sort -> ground_sort
+val unground: ground_sort -> sort
 
 (* -------------------------------------------------------------------------- *)
 
