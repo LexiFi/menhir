@@ -641,8 +641,15 @@ let check_parameterized_grammar_is_well_defined grammar =
     List.iter (check kind false) ps
   in
 
-  List.iter (check "%type" true) (List.map fst grammar.p_types);
-  List.iter (check "%on_error_reduce" true) (List.map fst grammar.p_on_error_reduce);
+  let check_fst kind must_be_nonterminal (p, _) =
+    check kind must_be_nonterminal p
+  in
+
+  List.iter (check_fst "%type" true) grammar.p_types;
+  List.iter (check_fst "%on_error_reduce" true) grammar.p_on_error_reduce;
+  List.iter (fun (params, _) ->
+    List.iter (check "%attribute" false) params
+  ) grammar.p_symbol_attributes;
 
   (* Every reference to a symbol is well defined. *)
   let used_tokens = ref StringSet.empty in
