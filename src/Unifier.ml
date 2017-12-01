@@ -126,40 +126,33 @@ let occurs_check x y =
 
 let rec unify (v1 : variable) (v2 : variable) : unit =
   if not (UnionFind.equivalent v1 v2) then begin
-    (* Prevent the creation of cycles. *)
-    occurs_check v1 v2;
-    occurs_check v2 v1;
-    (* Read the two descriptors BEFORE calling [union]. *)
     let desc1 = UnionFind.get v1
     and desc2 = UnionFind.get v2 in
-    (* Recursively unify the two descriptors. *)
-    UnionFind.set v1 (unify_descriptors desc1 desc2);
-    (* Merge the equivalence classes. Do this LAST so we get more meaningful
-       output if unification fails and we have to print the two terms. *)
-    UnionFind.union v1 v2
+    (* Unify the two descriptors. *)
+    let desc =
+      match desc1.structure, desc2.structure with
+      | None, None   ->
+          (* variable/variable *)
+          desc1
+      | None, Some _ ->
+          (* variable/term *)
+          occurs_check v1 v2;
+          desc2
+      | Some _, None ->
+          (* term/variable *)
+          occurs_check v2 v1;
+          desc1
+      | Some s1, Some s2 ->
+          (* term/term *)
+          S.iter2 unify s1 s2;
+          { desc1 with structure = Some s1 }
+    in
+    (* Merge the equivalence classes. Do this last, so we get more meaningful
+       output if the recursive call (above) fails and we have to print the
+       two terms. *)
+    UnionFind.union v1 v2;
+    UnionFind.set v1 desc
   end
-
-(* -------------------------------------------------------------------------- *)
-
-(* [unify_descriptors desc1 desc2] combines the descriptors [desc1] and
-   [desc2], producing a descriptor for the merged equivalence class. *)
-
-and unify_descriptors desc1 desc2 =
-  let structure = unify_structures desc1.structure desc2.structure in
-  { desc1 with structure }
-    (* the choice of [id] is arbitrary; the value of [mark] is irrelevant *)
-
-(* -------------------------------------------------------------------------- *)
-
-(* [unify_structures structure1 structure2] combines two structures. If one of
-   them is undefined, we just keep the other. If both are defined, we unify
-   them recursively. *)
-
-and unify_structures structure1 structure2 =
-  Option.multiply (fun t1 t2 ->
-    S.iter2 unify t1 t2;
-    t2 (* arbitrary; [t1] and [t2] are now equal anyway *)
-  ) structure1 structure2
 
 (* -------------------------------------------------------------------------- *)
 
