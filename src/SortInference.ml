@@ -8,9 +8,6 @@ open SortUnification
 
 (* Error handling. *)
 
-let print (v : variable) : string =
-  print (decode v)
-
 (* In [check_arity], in principle, [arity1] is the expected arity and [arity2]
    is the actual arity. This distinction does not make much sense, though, as
    we do not know which is wrong, the declaration site or the use site. So, we
@@ -45,12 +42,14 @@ let unify sym sort1 sort2 =
     unify sort1 sort2
   with
   | Unify (v1, v2) ->
+      let print v = print (decode v) in
       error [position sym]
        "how is the symbol \"%s\" parameterized?\n\
         It is used at sorts %s and %s.\n\
         The sort %s is not compatible with the sort %s."
         (value sym) (print sort1) (print sort2) (print v1) (print v2)
   | Occurs (v1, v2) ->
+      let print v = print (decode v) in
       error [position sym]
        "how is the symbol \"%s\" parameterized?\n\
         It is used at sorts %s and %s.\n\
@@ -203,7 +202,7 @@ let check_grammar env g =
 
 (* -------------------------------------------------------------------------- *)
 
-let infer_grammar (g : grammar) : sort Env.t =
+let infer_grammar (g : grammar) : ground_sort Env.t =
 
   (* For each (terminal or nonterminal) symbol, allocate a unification
      variable. The terminal symbols have sort [star], so we can use
@@ -233,9 +232,23 @@ let infer_grammar (g : grammar) : sort Env.t =
 
   check_grammar env g;
 
-  (* TEMPORARY ground any unassigned sort variables? *)
-
   (* Decode the environment, so our user doesn't have to deal with
      unification variables. *)
 
-  Env.map decode env
+  let env = Env.map decode env in
+
+  (* Ground any unassigned sort variables. (These should occur only in
+     unreachable parts of the grammar.) This guarantees that the user
+     does not have to deal with sort variables. *)
+
+  let env = Env.map ground env in
+
+  (* At log level 3, display the inferred sort of every symbol. *)
+
+  Error.logG 3 (fun f ->
+    Env.iter (fun x gsort ->
+      Printf.fprintf f "%s :: %s\n" x (print (unground gsort))
+    ) env
+  );
+
+  env
