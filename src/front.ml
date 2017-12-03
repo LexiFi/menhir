@@ -76,7 +76,8 @@ let (_ : SortUnification.ground_sort StringMap.t) =
    obtain a grammar without parameterized nonterminal symbols. *)
 
 let grammar =
-  ParameterizedGrammar.expand parameterized_grammar
+  CheckSafeParameterizedGrammar.check parameterized_grammar;
+  ExpandParameterizedGrammar.expand parameterized_grammar
 
 let () =
   Time.tick "Joining and expanding"
