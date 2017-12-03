@@ -106,7 +106,7 @@ SRCHEAD  := $(CURRENT)/headers/regular-header
 LIBHEAD  := $(CURRENT)/headers/library-header
 
 headache:
-	@ cd src && find . -regex ".*\.ml\(i\|y\|l\)?" \
+	@ cd src && find -E . -regex ".*\.ml(i|y|l)?" \
 	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
 	@ for file in src/standard.mly $(MENHIRLIB_FILES) ; do \
 	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
