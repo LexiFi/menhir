@@ -329,6 +329,15 @@ let new_encode_decode capacity =
   in
   encode, decode, verbose
 
+let new_claim () =
+  let names = ref StringSet.empty in
+  let claim name =
+    if StringSet.mem name !names then
+      Error.error [] "internal name clash over %s" name;
+    names := StringSet.add name !names
+  in
+  claim
+
 let rec best (preferable : 'a -> 'a -> bool) (xs : 'a list) : 'a option =
   match xs with
   | [] ->

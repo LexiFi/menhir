@@ -191,6 +191,11 @@ val new_intern: int -> (string -> string) * (unit -> unit)
    so far. *)
 val new_encode_decode: int -> (string -> int) * (int -> string) * (unit -> unit)
 
+(* [new_claim()] creates a new service for claiming names. It returns a
+   function [claim] of type [int -> unit] such that the call [claim x]
+   succeeds if and only if [claim x] has never been called before. *)
+val new_claim: unit -> (string -> unit)
+
 (* If [preferable] is a partial order on elements, then [best preferable xs]
    returns the best (least) element of [xs], if there is one. Its complexity
    is quadratic. *)
