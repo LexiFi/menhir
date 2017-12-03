@@ -669,10 +669,19 @@ let check_parameterized_grammar_is_well_defined grammar =
       Error.error [ p ] "%s is undefined." s
   in
     StringMap.iter
-      (fun k prule -> List.iter
+      (fun k prule ->
+
+         (* The formal parameters of each rule must have distinct names. *)
+         prule.pr_parameters
+           |> List.sort compare
+           |> Misc.dup compare
+           |> Option.iter (fun x ->
+                Error.error prule.pr_positions
+                  "several parameters of this rule are named \"%s\"." x
+              );
 
          (* Check each branch. *)
-         (fun { pr_producers = producers;
+         List.iter (fun { pr_producers = producers;
                 pr_branch_prec_annotation;
               } -> ignore (List.fold_left
 

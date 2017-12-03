@@ -151,7 +151,6 @@ let check_branch env (branch : parameterized_branch) =
 let enter_rule env (nt : symbol) (rule : parameterized_rule) : env =
 
   (* For each formal parameter, allocate a fresh variable. *)
-  (* TEMPORARY should we check that the formals have distinct names? *)
   let formals, domain = allocate rule.pr_parameters in
 
   (* Connect these variables with the sort of the symbol [nt]. *)
