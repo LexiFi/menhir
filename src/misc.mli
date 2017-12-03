@@ -208,6 +208,11 @@ val best: ('a -> 'a -> bool) -> 'a list -> 'a option
 
 val levels: ('a -> 'a -> int) -> 'a list -> 'a list list
 
+(* Assuming that the list [xs] is sorted with respect to the ordering [cmp],
+   [dup cmp xs] returns a duplicate element of the list [xs], if one exists. *)
+
+val dup: ('a -> 'a -> int) -> 'a list -> 'a option
+
 (* [once x y] produces a function [f] which produces [x] the first time it
    is called and produces [y] forever thereafter. *)
 
