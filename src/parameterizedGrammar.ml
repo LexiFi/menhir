@@ -265,17 +265,11 @@ end) = struct
   module InstanceTable =
     Hashtbl.Make (Parameters)
 
-  let rule_names =
-    InstanceTable.create 13
+  module M =
+    Memoize.MakeViaHashtbl(Parameters)
 
-  let name_of symbol parameters =
-    let param = ParameterApp (symbol, parameters) in
-    try
-      InstanceTable.find rule_names param
-    with Not_found ->
-      let name = ensure_fresh (mangle param) in
-      InstanceTable.add rule_names param name;
-      name
+  let name_of =
+    M.memoize (fun param -> ensure_fresh (mangle param))
 
   (* Now is the time to eliminate (desugar) %attribute declarations. We build
      a table of these declarations, and look up this table so as to place
@@ -349,7 +343,7 @@ end) = struct
         (* [sym] is a terminal symbol. Expansion is not needed. *)
         Positions.value sym
     | prule ->
-        let nsym = name_of sym actual_parameters in
+        let nsym = name_of (ParameterApp (sym, actual_parameters)) in
         (* Check up front if [nsym] is marked, so as to deal with it just once. *)
         if Hashtbl.mem expanded_rules nsym then
           nsym
