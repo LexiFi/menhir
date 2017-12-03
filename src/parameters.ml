@@ -83,10 +83,14 @@ let position = function
 let with_pos p =
   Positions.with_pos (position p) p
 
-let rec print = function
-  | ParameterVar x ->
+let rec print with_spaces = function
+  | ParameterVar x
+  | ParameterApp (x, []) ->
       x.value
   | ParameterApp (x, ps) ->
-      x.value ^ "(" ^ Misc.separated_list_to_string print ", " ps ^ ")"
+      let separator = if with_spaces then ", " else "," in
+      Printf.sprintf "%s(%s)"
+        x.value
+        (Misc.separated_list_to_string (print with_spaces) separator ps)
   | ParameterAnonymous _ ->
       assert false

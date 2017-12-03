@@ -636,7 +636,8 @@ let check_parameterized_grammar_is_well_defined grammar =
     if (must_be_nonterminal && not is_nonterminal) then
       Error.error [Parameters.position p]
              "%s is a terminal symbol,\n\
-              but %s declarations are applicable only to nonterminal symbols." (Parameters.print p) kind;
+              but %s declarations are applicable only to nonterminal symbols."
+             (Parameters.print true p) kind;
     (* Then, check the arguments. *)
     List.iter (check kind false) ps
   in

@@ -224,25 +224,12 @@ let dummy : rule =
 (* [mangle p] chooses a name for the new nonterminal symbol that corresponds
    to the parameter [p]. *)
 
-let rec mangle = function
-  | ParameterVar x
-  | ParameterApp (x, []) ->
-      Positions.value x
-  | ParameterApp (x, ps) ->
+(* We include parentheses and commas in this name, because that is readable
+   and acceptable in many situations. We replace them with underscores in
+   situations where these characters are not valid. *)
 
-      (* We include parentheses and commas in the names that we
-         assign to expanded nonterminals, because that is more
-         readable and acceptable in many situations. We replace them
-         with underscores in situations where these characters are
-         not valid. *)
-
-      Printf.sprintf "%s(%s)"
-        (Positions.value x)
-        (separated_list_to_string mangle "," ps)
-
-  | ParameterAnonymous _ ->
-      (* Anonymous rules are eliminated early on. *)
-      assert false
+let mangle p =
+  Parameters.print false p
 
 (* -------------------------------------------------------------------------- *)
 
@@ -323,7 +310,7 @@ end) = struct
         List.iter (fun (id, _payload) ->
           Error.warning [Positions.position id]
             "this attribute could not be transferred to the symbol %s"
-            (Parameters.print actual)
+            (Parameters.print true actual)
         ) attributes
     ) symbol_attributes_table
 
