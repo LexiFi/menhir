@@ -244,36 +244,33 @@ end) = struct
   let () =
     check_grammar p_grammar
 
-  (* Set up a mechanism that ensures that names are unique -- and, in
-     fact, ensures the stronger condition that normalized names are
-     unique. *)
-
-  let names =
-    ref (StringSet.empty)
-
-  let ensure_fresh name =
-    let normalized_name = Misc.normalize name in
-    if StringSet.mem normalized_name !names then
-      Error.error []
-        "internal name clash over %s" normalized_name;
-    names := StringSet.add normalized_name !names;
-    name
-
+  (* Set up a table that stores the rules of the new grammar. *)
   let expanded_rules =
     Hashtbl.create 13
 
-  module InstanceTable =
-    Hashtbl.Make (Parameters)
 
-  module M =
-    Memoize.MakeViaHashtbl(Parameters)
+  (* On top of the function [mangle], we set up a mechanism that checks that
+     every (normalized) mangled name is unique. (Indeed, in principle, there
+     could be clashes, although in practice this is unlikely.) We must check
+     that every application of [mangle] to a *new* argument yields a *new*
+     (normalized) result. This is succinctly expressed by combining a claim
+     and a memoizer. *)
 
-  let name_of =
-    M.memoize (fun param -> ensure_fresh (mangle param))
+  let name_of : parameter -> string =
+    let ensure_fresh = Misc.new_claim() in
+    let module M = Memoize.MakeViaHashtbl(Parameters) in
+    M.memoize (fun param ->
+      let name = mangle param in
+      ensure_fresh (Misc.normalize name);
+      name
+    )
 
   (* Now is the time to eliminate (desugar) %attribute declarations. We build
      a table of these declarations, and look up this table so as to place
      appropriate attributes on terminal and nonterminal symbols. *)
+
+  module InstanceTable =
+    Hashtbl.Make (Parameters)
 
   let symbol_attributes_table =
     InstanceTable.create 7
