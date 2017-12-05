@@ -65,19 +65,19 @@ let parameterized_grammar =
 
 (* ------------------------------------------------------------------------- *)
 
-(* Check that the grammar is well-sorted. *)
+(* Check that the grammar is well-sorted; infer the sort of every symbol. *)
 
-let (_ : SortUnification.ground_sort StringMap.t) =
-  SortInference.infer_grammar parameterized_grammar
+let sorts =
+  SortInference.infer parameterized_grammar
 
 (* ------------------------------------------------------------------------- *)
 
-(* Expand away all applications of parameterized nonterminal symbols, so as to
-   obtain a grammar without parameterized nonterminal symbols. *)
+(* Expand away all applications of parameterized nonterminal symbols, so as
+   to obtain a grammar without parameterized nonterminal symbols. *)
 
 let grammar =
   CheckSafeParameterizedGrammar.check parameterized_grammar;
-  ExpandParameterizedGrammar.expand parameterized_grammar
+  Drop.drop (SelectiveExpansion.expand sorts parameterized_grammar)
 
 let () =
   Time.tick "Joining and expanding"
