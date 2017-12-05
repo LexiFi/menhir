@@ -37,3 +37,19 @@ let project = function
   | None ->
       (* Presumably, an error message has already been printed. *)
       exit 1
+
+let equal equal o1 o2 =
+  match o1, o2 with
+  | None, None ->
+      true
+  | Some x1, Some x2 ->
+      equal x1 x2
+  | None, Some _
+  | Some _, None ->
+      false
+
+let hash hash = function
+  | Some x ->
+      hash x
+  | None ->
+      Hashtbl.hash None
