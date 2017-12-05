@@ -32,6 +32,8 @@ type sort =
 type ground_sort =
   | GArrow of ground_sort list
 
+val ground_star: ground_sort
+
 (* -------------------------------------------------------------------------- *)
 
 (* Sort unification. *)

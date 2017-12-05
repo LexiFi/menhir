@@ -60,6 +60,9 @@ type sort = term =
 type ground_sort =
   | GArrow of ground_sort list
 
+let ground_star =
+  GArrow []
+
 (* -------------------------------------------------------------------------- *)
 
 (* Sort constructors. *)
