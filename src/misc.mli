@@ -217,3 +217,11 @@ val dup: ('a -> 'a -> int) -> 'a list -> 'a option
    is called and produces [y] forever thereafter. *)
 
 val once: 'a -> 'a -> (unit -> 'a)
+
+(* Equality and hashing for lists, parameterized over equality and hashing
+   for elements. *)
+
+module ListExtras : sig
+  val equal: ('a -> 'a -> bool) -> 'a list -> 'a list -> bool
+  val hash: ('a -> int) -> 'a list -> int
+end

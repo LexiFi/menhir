@@ -408,3 +408,9 @@ let once x y =
     let result = !s in
     s := y;
     result
+
+module ListExtras = struct
+  let equal = List.for_all2
+  let hash hash xs =
+    Hashtbl.hash (List.map hash xs)
+end
