@@ -18,4 +18,6 @@ open SortUnification
    rejecting the grammar if it is ill-sorted. It returns a map of
    (terminal and nonterminal) symbols to ground sorts. *)
 
-val infer_grammar: grammar -> ground_sort StringMap.t
+type sorts = ground_sort StringMap.t
+
+val infer_grammar: grammar -> sorts
