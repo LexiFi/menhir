@@ -20,4 +20,4 @@ open SortUnification
 
 type sorts = ground_sort StringMap.t
 
-val infer_grammar: grammar -> sorts
+val infer: grammar -> sorts

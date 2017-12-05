@@ -217,7 +217,7 @@ let check_grammar env g =
 type sorts =
   ground_sort Env.t
 
-let infer_grammar (g : grammar) : sorts =
+let infer (g : grammar) : sorts =
 
   (* For each (terminal or nonterminal) symbol, allocate a unification
      variable. The terminal symbols have sort [star], so we can use
