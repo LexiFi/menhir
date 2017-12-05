@@ -74,7 +74,7 @@ type rule = {
 
 (* A grammar is essentially the same as in the surface syntax; see [Syntax].
    The main difference is that [%attribute] declarations, represented by
-   the field [p_symbol_attributes] in the surface syntax, has disappeared. *)
+   the field [p_symbol_attributes] in the surface syntax, have disappeared. *)
 
 type grammar =  {
     preludes        : Stretch.t list;
