@@ -32,6 +32,13 @@ let unapp = function
       (* Anonymous rules are eliminated early on. *)
       assert false
 
+let unvar = function
+  | ParameterVar x ->
+      x
+  | ParameterApp _
+  | ParameterAnonymous _ ->
+      assert false
+
 let rec map f = function
   | ParameterVar x ->
       ParameterVar (f x)
