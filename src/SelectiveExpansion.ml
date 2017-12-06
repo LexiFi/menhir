@@ -339,6 +339,15 @@ let subst_branches env branches =
 
 (* -------------------------------------------------------------------------- *)
 
+(* A quick and dirty way of mapping a name to a fresh name. *)
+
+let freshen : string -> string =
+  let c = ref 0 in
+  fun x ->
+    Printf.sprintf "%s__menhir__%d" x (Misc.postincrement c)
+
+(* -------------------------------------------------------------------------- *)
+
 (* [instantiation_env] expects the formal parameters of a rule, [formals], and
    an instantiation [inst] that dictates how this rule must be specialized. It
    returns an environment [env] that can be used to perform specialization and
@@ -355,8 +364,13 @@ let instantiation_env formals inst : env * symbol list =
             param, residuals
         | None ->
             (* This formal parameter is not instantiated. *)
-            (* We map it to itself. TEMPORARY avoid capture by freshening;
-               required if [formal] occurs free in [inst] *)
+            (* We would like to map it to itself. *)
+            (* However, we must in principle be a bit careful: if a toplevel
+               symbol by the same name as [formal] appears free in the codomain
+               of the environment that we are building, then we will run intro
+               trouble. We avoid this problem by systematically renaming every
+               formal parameter to a fresh unlikely name. *)
+            let formal = freshen formal in
             ParameterVar (unknown formal),
             formal :: residuals
       in
