@@ -17,7 +17,7 @@
 
 (* Reading a grammar from a file. *)
 
-let load_partial_grammar filename =
+let load_partial_grammar filename : Syntax.partial_grammar =
   let validExt = if Settings.coq then ".vy" else ".mly" in
   if not (Filename.check_suffix filename validExt) then
     Error.error []
@@ -43,7 +43,7 @@ let load_partial_grammar filename =
 
 (* Read all of the grammar files that are named on the command line. *)
 
-let partial_grammars =
+let grammars : Syntax.partial_grammar list =
   List.map load_partial_grammar Settings.filenames
 
 let () =
@@ -53,31 +53,32 @@ let () =
 
 (* Eliminate anonymous rules. *)
 
-let partial_grammars =
-  List.map Anonymous.transform_partial_grammar partial_grammars
+let grammars : Syntax.partial_grammar list =
+  List.map Anonymous.transform_partial_grammar grammars
 
 (* ------------------------------------------------------------------------- *)
 
 (* If several grammar files were specified, merge them. *)
 
-let parameterized_grammar =
-  PartialGrammar.join_partial_grammars partial_grammars
+let grammar : Syntax.grammar =
+  PartialGrammar.join_partial_grammars grammars
 
 (* ------------------------------------------------------------------------- *)
 
 (* Check that the grammar is well-sorted; infer the sort of every symbol. *)
 
 let sorts =
-  SortInference.infer parameterized_grammar
+  SortInference.infer grammar
 
 (* ------------------------------------------------------------------------- *)
 
 (* Expand away all applications of parameterized nonterminal symbols, so as
    to obtain a grammar without parameterized nonterminal symbols. *)
 
-let grammar =
-  CheckSafeParameterizedGrammar.check parameterized_grammar;
-  Drop.drop (SelectiveExpansion.expand sorts parameterized_grammar)
+let grammar : UnparameterizedSyntax.grammar =
+  (* TEMPORARY do selective expansion first *)
+  CheckSafeParameterizedGrammar.check grammar;
+  Drop.drop (SelectiveExpansion.expand SelectiveExpansion.ExpandAll sorts grammar)
 
 let () =
   Time.tick "Joining and expanding"

@@ -18,6 +18,14 @@ open Syntax
 
 (* -------------------------------------------------------------------------- *)
 
+(* Expansion modes. *)
+
+type mode =
+  | ExpandHigherSort
+  | ExpandAll
+
+(* -------------------------------------------------------------------------- *)
+
 (* Expansion can be understood as traversing a graph where every vertex is
    labeled with a pair of a nonterminal symbol [nt] and an instantiation of
    the formal parameters of [nt]. *)
@@ -124,6 +132,8 @@ and subst_parameters env params =
 (* For syntactic convenience, the rest of this file is a functor. *)
 
 module Run (G : sig
+  (* Expansion mode. *)
+  val mode: mode
   (* Sort information. *)
   val sorts: SortInference.sorts
   (* The grammar [g] whose expansion is desired. *)
@@ -262,6 +272,8 @@ let mangle : label -> nonterminal =
 let recognize (param : parameter) : parameter =
   (* [param] must have sort [star], in an appropriate sort environment. *)
   match param with
+  | ParameterAnonymous _ ->
+      assert false
   | ParameterVar _ ->
       param
   | ParameterApp (sym, ps) ->
@@ -270,14 +282,21 @@ let recognize (param : parameter) : parameter =
       (* This symbol is applied to at least one argument, so cannot be
          a terminal symbol. It must be either a nonterminal symbol or
          an (uninstantiated) formal parameter of the current rule. *)
-      (* Full specialization. *)
-      let label = (x, List.map (fun p -> Some p) ps)
-      and residuals = [] in
-      enqueue label;
-      let sym = mangle label in
-      Parameters.app (unknown sym) residuals
-  | ParameterAnonymous _ ->
-      assert false
+      (* Actually, in both modes, formal parameters of higher sort are
+         expanded away, so [sym] cannot be an uninstantiated parameter
+         of the current rule. It must be a nonterminal symbol. We can
+         therefore look up its sort in the toplevel environment [sorts]. *)
+      match mode with
+      | ExpandAll ->
+          (* Full specialization. *)
+          let label = (x, List.map (fun p -> Some p) ps)
+          and residuals = [] in
+          enqueue label;
+          let sym = mangle label in
+          Parameters.app (unknown sym) residuals
+      | ExpandHigherSort ->
+          (* Expansion of only the parameters of higher sort. *)
+          assert false
 
 (* -------------------------------------------------------------------------- *)
 
@@ -464,6 +483,10 @@ end (* of the functor *)
 
 (* Re-package the above functor as a function. *)
 
-let expand sorts g =
-  let module G = Run(struct let sorts = sorts let g = g end) in
+let expand mode sorts g =
+  let module G = Run(struct
+    let mode = mode
+    let sorts = sorts
+    let g = g
+  end) in
   G.g
