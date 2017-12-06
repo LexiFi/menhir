@@ -58,10 +58,6 @@ val tabulateo: ('a -> int) -> ((unit -> 'a -> unit) -> unit -> unit) -> int -> (
 
 val ( $$ ) : 'a -> ('a -> 'b) -> 'b
 
-(* Sets of strings and maps over strings. *)
-
-module IntSet    : Set.S with type elt = int
-
 (* [separated_list_to_string printer sep l] converts [l] into a string
    representation built by using [printer] on each element and [sep] as
    a separator. *)

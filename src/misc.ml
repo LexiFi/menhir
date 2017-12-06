@@ -80,11 +80,6 @@ let tabulateo number fold n f =
   in
   get, !c
 
-module IntSet = Set.Make (struct
-                            type t = int
-                            let compare = ( - )
-                          end)
-
 type 'a iter = ('a -> unit) -> unit
 
 let separated_iter_to_string printer separator iter =
