@@ -90,14 +90,10 @@ let successors_parameter (f : edge -> formal -> unit) x (param : parameter) =
          then there is an edge to the formal [nt, i]. Whether it is a safe
          or dangerous edge depends on whether [x] occurs shallow or deep. *)
       List.iteri (fun i param ->
-        if Parameters.occurs_shallow x param then begin
-          if debug then Printf.eprintf "->(safe) %s/%d\n" nt i;
+        if Parameters.occurs_shallow x param then
           f Safe (nt, i)
-        end
-        else if Parameters.occurs_deep x param then begin
-          if debug then Printf.eprintf "->(dangerous) %s/%d\n" nt i;
+        else if Parameters.occurs_deep x param then
           f Dangerous (nt, i)
-        end
       ) params
   | ParameterAnonymous _ ->
       assert false
@@ -109,7 +105,6 @@ let successors_branch f x (branch : parameterized_branch) =
   List.iter (successors_producer f x) branch.pr_producers
 
 let successors f ((nt, i) : formal) =
-  if debug then Printf.eprintf "Edges out of %s/%d:\n" nt i;
   let rule = try StringMap.find nt g.p_rules with Not_found -> assert false in
   let x  = try List.nth rule.pr_parameters i with Failure _ -> assert false in
   List.iter (successors_branch f x) rule.pr_branches
@@ -125,6 +120,19 @@ module G = struct
   let successors f = successors (fun _ target -> f target)
   let iter f = Array.iter f formals
 end
+
+(* -------------------------------------------------------------------------- *)
+
+(* Display the graph. *)
+
+let () =
+  if debug then
+    G.iter (fun (x, i) ->
+      successors (fun edge (y, j) ->
+        let kind = match edge with Safe -> "safe" | Dangerous -> "dangerous" in
+        Printf.eprintf "%s/%d ->(%s) %s/%d\n" x i kind y j
+      ) (x, i)
+    )
 
 (* -------------------------------------------------------------------------- *)
 
