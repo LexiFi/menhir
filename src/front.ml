@@ -76,9 +76,21 @@ let sorts =
    to obtain a grammar without parameterized nonterminal symbols. *)
 
 let grammar : UnparameterizedSyntax.grammar =
-  (* TEMPORARY do selective expansion first *)
-  CheckSafeParameterizedGrammar.check grammar;
-  Drop.drop (SelectiveExpansion.expand SelectiveExpansion.ExpandAll sorts grammar)
+  let module S = SelectiveExpansion in
+  (* First, perform a selective expansion: expand away all parameters of
+     higher sort, keeping the parameters of sort [*]. This process always
+     terminates. *)
+  let grammar1 = S.expand S.ExpandHigherSort sorts grammar in
+  (* This "first-order parameterized grammar" can then be submitted to
+     the termination check. *)
+  CheckSafeParameterizedGrammar.check grammar1;
+  (* If it passes the check, then full expansion is safe. We drop [grammar1]
+     and start over from [grammar]. This is required in order to get correct
+     names. (Expanding [grammar1] would yield an equivalent grammar, with
+     more complicated names, reflecting the two steps of expansion.) *)
+  let grammar = S.expand S.ExpandAll sorts grammar in
+  (* This yields an unparameterized grammar. *)
+  Drop.drop grammar
 
 let () =
   Time.tick "Joining and expanding"
