@@ -11,168 +11,166 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Positions
+let value = Positions.value
 open Syntax
-open Misc
 
-(* Inside its own definition, a parameterized nonterminal symbol foo(X, Y)
-   can be applied only to its formal parameters:  that is, using foo(X, Y)
-   is permitted, but using foo(Y, X) or foo(X, list(Y)) is not.
+(* This test accepts a parameterized grammar, with the restriction that all
+   parameters must have sort [*]. This implies that the head of every
+   application must be a toplevel nonterminal symbol: it cannot be a formal
+   parameter of the current rule. *)
 
-   If foo(X, Y) is defined in a mutually recursive manner with bar(X, Y),
-   then this restriction extends to both foo and bar. Furthermore, in such
-   a case, foo and bar must have the same arity, that is, the same formal
-   parameters.
+(* -------------------------------------------------------------------------- *)
 
-   These conditions are sufficient to ensure the termination of expansion.
+(* This flag causes graph edges to be logged on the standard error channel. *)
 
-   For example:
-   C(x)   : ...            // This definition does not involve A or B.
-   A(x,y) : B(x,y) C(Y)    // This mutually recursive definition is ok.
-   B(x,y) : A(x,y)
-   D(x)   : E(D(x))        // This one is incorrect.
-   E(y)   : D(y)
+let debug = false
 
-*)
+(* -------------------------------------------------------------------------- *)
 
-let check (p_grammar : Syntax.grammar) =
-  (* [n] is the grammar size. *)
-  let n        = StringMap.cardinal p_grammar.p_rules in
+(* For syntactic convenience, the code is wrapped in a functor. *)
 
-  (* The successors of the non terminal [N] are its producers. It
-     induce a graph over the non terminals and its successor function
-     is implemented by [successors]. Non terminals are indexed using
-     [nt].
-  *)
-  let nt, conv, _iconv = index_map p_grammar.p_rules in
-  let parameters, name, branches, positions =
-    (fun n -> (nt n).pr_parameters), (fun n -> (nt n).pr_nt),
-    (fun n -> (nt n).pr_branches), (fun n -> (nt n).pr_positions)
-  in
+module Run (G : sig val g : grammar end) = struct
+open G
 
-  (* The successors function is implemented as an array using the
-     indexing previously created. *)
-  let successors =
-    Array.init n (fun node ->
-      (* We only are interested by parameterized non terminals. *)
-      if parameters node <> [] then
-        List.fold_left (fun succs { pr_producers = symbols } ->
-          List.fold_left (fun succs (_, p, _) ->
-            let symbol, _ = Parameters.unapp p in
-            try
-              let symbol_node = conv symbol.value in
-                (* [symbol] is a parameterized non terminal, we add it
-                   to the successors set. *)
-                if parameters symbol_node <> [] then
-                  IntSet.add symbol_node succs
-                else
-                  succs
-            with Not_found ->
-              (* [symbol] is a token, it is not interesting for type inference
-                 purpose. *)
-              succs
-          ) succs symbols
-        ) IntSet.empty (branches node)
-      else
-        Misc.IntSet.empty
-    )
-  in
+(* -------------------------------------------------------------------------- *)
 
-  (* The successors function and the indexing induce the following graph
-     module. *)
-  let module RulesGraph =
-      struct
+(* We build a graph whose vertices are all formal parameters of all rules. A
+   formal parameter is represented as a pair of a nonterminal symbol and a
+   0-based integer index (the number of this parameter within this rule).
+   We use OCaml's generic equality and hash functions at this type. *)
 
-        type node = int
+type formal =
+  symbol * int
 
-        let n = n
+let formals (nt, rule) : formal list =
+  let arity = List.length rule.pr_parameters in
+  Misc.mapi arity (fun i -> nt, i)
 
-        let index node =
-          node
+let formals : formal array =
+  StringMap.bindings g.p_rules
+  |> List.map formals
+  |> List.concat
+  |> Array.of_list
 
-        let successors f node =
-          IntSet.iter f successors.(node)
+(* -------------------------------------------------------------------------- *)
 
-        let iter f =
-          for i = 0 to n - 1 do
-            f i
-          done
+(* The graph edges are as follows. First, for every rule of the following form:
 
-      end
-  in
-  let module ConnectedComponents = Tarjan.Run (RulesGraph) in
-    (* We check that:
-       - all the parameterized definitions of a particular component
-       have the same number of parameters.
-       - every parameterized non terminal definition always uses
-       parameterized definitions of the same component with its
-       formal parameters.
+     F(..., X, ...):           # where X is the i-th formal parameter of F
+       ... G(..., X, ...) ...  # where X is the j-th actual parameter of G
 
-       Components are marked during the traversal:
-       -1 means unvisited
-       n with n > 0 is the number of parameters of the clique.
-    *)
-  let unseen = -1 in
-  let marked_components = Array.make n unseen in
+   there is a "safe" edge from the formal parameter F/i to the formal G/j. This
+   reflects the fact that there is a flow from F/i to G/j. It is "safe" in the
+   sense that it is not size-increasing: the same parameter X is passed from F
+   to G.
 
-  (* [actual_parameters_as_formal] is the well-formedness checker for
-     parameterized non terminal application. *)
-  let actual_parameters_as_formal actual_parameters formal_parameters =
-    List.for_all2 (fun y -> (function ParameterVar x -> x.value = y
-                              | _ -> false))
-      formal_parameters actual_parameters
-  in
+   Second, for every rule of the following form:
 
-  (* We traverse the graph checking each parameterized non terminal
-     definition is well-formed. *)
-  RulesGraph.iter (fun i ->
-    let params    = parameters i
-    and iname     = name i
-    and repr      = ConnectedComponents.representative i
-    and positions = positions i
-    in
+     F(..., X, ...):           # where X is the i-th formal parameter of F
+       ... G(..., H(..., X, ...) , ...) ...
+                               # where H(...) is the j-th actual parameter of G
 
-    (* We check the number of parameters. *)
-    let check_parameters () =
-      let parameters_len = List.length params in
-        (* The component is visited for the first time. *)
-        if marked_components.(repr) = unseen then
-          marked_components.(repr) <- parameters_len
-        else (* Otherwise, we check that the arity is homogeneous
-                in the component. *)
-          if marked_components.(repr) <> parameters_len then
-            Error.error positions
-                 "mutually recursive definitions must have the same parameters.\n\
-                  This is not the case for %s and %s."
-                    (name repr) iname
-    in
+   there is a "dangerous" edge from the formal parameter F/i to the formal G/j.
+   This reflects the fact that there is a flow from F/i to G/j. This flow is
+   "dangerous" in the sense that it is size-increasing: X is transformed to
+   H(..., X, ...). *)
 
-    (* In each production rule, the parameterized non terminal
-       of the same component must be instantiated with the same
-       formal arguments. *)
-    let check_producers () =
-      List.iter
-        (fun { pr_producers = symbols } -> List.iter
-           (function (_, p, _) ->
-              (* If it is in the same component, check in addition that
-                 the arguments are the formal arguments. *)
-              let symbol, actuals = Parameters.unapp p in
-              try
-                let idx = conv symbol.value in
-                  if ConnectedComponents.representative idx = repr then
-                    if not (actual_parameters_as_formal actuals params)
-                    then
-                      Error.error [ symbol.position ]
-                           "mutually recursive definitions must have the same \
-                            parameters.\n\
-                            This is not the case for %s."
-                            (let name1, name2 = (name idx), (name i) in
-                               if name1 <> name2 then name1 ^ " and "^ name2
-                               else name1)
-              with _ -> ())
-               symbols) (branches i)
-    in
+type edge =
+  | Safe
+  | Dangerous
 
-    check_parameters();
-    check_producers()
+let successors_parameter (f : edge -> formal -> unit) x (param : parameter) =
+  match param with
+  | ParameterVar _ ->
+      (* This is not an application. No successors. *)
+      ()
+  | ParameterApp (sym, params) ->
+      let nt = value sym in
+      (* If [x] occurs in the [i]-th actual parameter of this application,
+         then there is an edge to the formal [nt, i]. Whether it is a safe
+         or dangerous edge depends on whether [x] occurs shallow or deep. *)
+      List.iteri (fun i param ->
+        if Parameters.occurs_shallow x param then begin
+          if debug then Printf.eprintf "->(safe) %s/%d\n" nt i;
+          f Safe (nt, i)
+        end
+        else if Parameters.occurs_deep x param then begin
+          if debug then Printf.eprintf "->(dangerous) %s/%d\n" nt i;
+          f Dangerous (nt, i)
+        end
+      ) params
+  | ParameterAnonymous _ ->
+      assert false
+
+let successors_producer f x ((_, param, _) : producer) =
+  successors_parameter f x param
+
+let successors_branch f x (branch : parameterized_branch) =
+  List.iter (successors_producer f x) branch.pr_producers
+
+let successors f ((nt, i) : formal) =
+  if debug then Printf.eprintf "Edges out of %s/%d:\n" nt i;
+  let rule = try StringMap.find nt g.p_rules with Not_found -> assert false in
+  let x  = try List.nth rule.pr_parameters i with Failure _ -> assert false in
+  List.iter (successors_branch f x) rule.pr_branches
+
+(* -------------------------------------------------------------------------- *)
+
+(* We now have a full description of the graph. *)
+
+module G = struct
+  type node = formal
+  let n = Array.length formals
+  let index = Misc.inverse formals
+  let successors f = successors (fun _ target -> f target)
+  let iter f = Array.iter f formals
+end
+
+(* -------------------------------------------------------------------------- *)
+
+(* Compute its strongly connected components, ignoring the distinction between
+   safe and dangerous edges. *)
+
+module T = Tarjan.Run(G)
+
+(* -------------------------------------------------------------------------- *)
+
+(* The safety criterion is: no dangerous edge is part of a cycle. Indeed, if
+   this criterion is satisfied, then expansion must terminate: only a finite
+   number of well-sorted terms (involving toplevel symbols and applications)
+   can arise. (This sentence is not a proof!) Conversely, if a dangerous edge
+   appears in a cycle, then expansion will not terminate. (That is, unless the
+   dangerous cycle is unreachable. We choose to reject it anyway in that case.)
+   In other words, this criterion is sound and complete. *)
+
+(* Checking that no dangerous edge is part of a cycle is done by examining the
+   source and destination of every dangerous edge and ensuring that they lie
+   in distinct components. *)
+
+let () =
+  G.iter (fun source ->
+    successors (fun edge target ->
+      match edge with
+      | Safe ->
+          ()
+      | Dangerous ->
+          if T.representative source = T.representative target then
+            let (nt, i) = source in
+            Error.error []
+              "the parameterized nonterminal symbols in this grammar\n\
+               cannot be expanded away: expansion would not terminate.\n\
+               The %s formal parameter of \"%s\" grows without bound."
+              (Misc.nth (i + 1)) nt
+
+    ) source
   )
+
+end (* of the functor *)
+
+(* -------------------------------------------------------------------------- *)
+
+(* Re-package the above functor as a function. *)
+
+let check g =
+  let module T = Run(struct let g = g end) in
+  ()

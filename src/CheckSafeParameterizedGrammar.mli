@@ -11,8 +11,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* [check] determines whether a parameterized grammar is safe for expansion,
-   that is, whether the process of expanding away its parameterized symbols is
-   guaranteed to terminate. *)
+(* This test accepts a parameterized grammar, with the restriction that all
+   parameters must have sort [*]. Parameters of higher sort must be eliminated
+   prior to running this test: see [SelectiveExpansion]. *)
+
+(* This test succeeds if and only if the expansion of this grammar is safe,
+   that is, terminates. *)
 
 val check: Syntax.grammar -> unit
