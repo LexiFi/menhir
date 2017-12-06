@@ -45,20 +45,6 @@ val tabulate: int -> (int -> 'a) -> (int -> 'a)
 
 val tabulateb: int -> (int -> bool) -> (int -> bool) * int
 
-(* [tabulatef number fold n dummy f] returns a function that is extensionally
-   equal to [f], but relies on an internal array. Arguments to [f] are of type
-   ['a] and are mapped by [number] into the range [0..n). [fold] allows
-   folding over the domain of [f]. [dummy] is used to initialize the internal
-   array. Its value has no impact if [fold] is surjective. *)
-
-val tabulatef:
-  ('a -> int) ->
-  ((unit -> 'a -> unit) -> unit -> unit) ->
-  int ->
-  'b ->
-  ('a -> 'b) ->
-  ('a -> 'b)
-
 (* [tabulateo number fold n f] returns a function that is
    extensionally equal to [f], but relies on an internal
    array. Arguments to [f] are of type ['a] and are mapped by [number]

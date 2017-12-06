@@ -48,6 +48,12 @@ let tabulateb n f =
     if element then count + 1 else count
   ) 0 a
 
+(* [tabulatef number fold n dummy f] returns a function that is extensionally
+   equal to [f], but relies on an internal array. Arguments to [f] are of type
+   ['a] and are mapped by [number] into the range [0..n). [fold] allows
+   folding over the domain of [f]. [dummy] is used to initialize the internal
+   array. Its value has no impact if [fold] is surjective. *)
+
 let tabulatef number fold n dummy f =
   let a = Array.make n dummy in
   let () = fold (fun () element ->
