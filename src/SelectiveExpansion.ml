@@ -181,9 +181,7 @@ let enqueue, repeatedly =
   let enqueue label =
     Queue.add label queue
   and repeatedly visit =
-    while not (Queue.is_empty queue) do
-      visit (Queue.take queue)
-    done
+    Misc.qiter visit queue
   in
   enqueue, repeatedly
 
