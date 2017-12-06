@@ -259,31 +259,6 @@ let map_opt f l =
       | Some y -> y :: ys
   ) [] l))
 
-let new_intern capacity =
-  (* Set up a a hash table, mapping strings to unique integers. *)
-  let module H = Hashtbl.Make(struct
-    type t = string
-    let equal = (=)
-    let hash = Hashtbl.hash
-  end) in
-  let table = H.create capacity in
-  (* This counts the calls to [intern]. *)
-  let c = ref 0 in
-  (* A string is mapped to a unique string, as follows. *)
-  let intern s =
-    c := !c + 1;
-    try
-      H.find table s
-    with Not_found ->
-      H.add table s s;
-      s
-  and verbose () =
-    Printf.fprintf stderr
-      "%d calls to intern; %d unique strings.\n%!"
-      !c (H.length table)
-  in
-  intern, verbose
-
 let new_encode_decode capacity =
   (* Set up a a hash table, mapping strings to unique integers. *)
   let module H = Hashtbl.Make(struct
