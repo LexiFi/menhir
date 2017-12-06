@@ -13,8 +13,8 @@
 
 let value    = Positions.value
 let unknown  = Positions.unknown_pos
-let star     = SortUnification.ground_star
 open Syntax
+open GroundSort
 
 (* -------------------------------------------------------------------------- *)
 

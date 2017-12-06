@@ -20,7 +20,7 @@
      sort ::= (sort, ..., sort) -> *
 
    where the arity (the number of sorts on the left-hand side of the arrow)
-   can be zero. *)
+   can be zero. See [GroundSort]. *)
 
 type 'a structure =
   | Arrow of 'a list
@@ -28,11 +28,6 @@ type 'a structure =
 type sort =
   | TVar of int
   | TNode of sort structure
-
-type ground_sort =
-  | GArrow of ground_sort list
-
-val ground_star: ground_sort
 
 (* -------------------------------------------------------------------------- *)
 
@@ -59,8 +54,8 @@ val decode: variable -> sort
 
 (* Grounding a sort replaces all sort variables with the sort [*]. *)
 
-val ground: sort -> ground_sort
-val unground: ground_sort -> sort
+val ground: sort -> GroundSort.sort
+val unground: GroundSort.sort -> sort
 
 (* -------------------------------------------------------------------------- *)
 

@@ -215,7 +215,7 @@ let check_grammar env g =
 (* -------------------------------------------------------------------------- *)
 
 type sorts =
-  ground_sort Env.t
+  GroundSort.sort Env.t
 
 let infer (g : grammar) : sorts =
 

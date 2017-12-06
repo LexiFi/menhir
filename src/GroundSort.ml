@@ -11,13 +11,12 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Syntax
-open GroundSort
+type sort =
+  | GArrow of sort list
 
-(* [infer_grammar g] performs sort inference for the grammar [g],
-   rejecting the grammar if it is ill-sorted. It returns a map of
-   (terminal and nonterminal) symbols to ground sorts. *)
+let star =
+  GArrow []
 
-type sorts = sort StringMap.t
-
-val infer: grammar -> sorts
+let domain sort =
+  let GArrow sorts = sort in
+  sorts

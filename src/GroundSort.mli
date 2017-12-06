@@ -11,13 +11,16 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Syntax
-open GroundSort
+(* The syntax of sorts is:
 
-(* [infer_grammar g] performs sort inference for the grammar [g],
-   rejecting the grammar if it is ill-sorted. It returns a map of
-   (terminal and nonterminal) symbols to ground sorts. *)
+     sort ::= (sort, ..., sort) -> *
 
-type sorts = sort StringMap.t
+   where the arity (the number of sorts on the left-hand side of the arrow)
+   can be zero. *)
 
-val infer: grammar -> sorts
+type sort =
+  | GArrow of sort list
+
+val star: sort
+
+val domain: sort -> sort list
