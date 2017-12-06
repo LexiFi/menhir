@@ -346,7 +346,7 @@ let instantiation_env formals inst : env * symbol list =
       Env.add formal param env, residuals
     ) formals inst (Env.empty, [])
   in
-  env, List.rev residuals
+  env, residuals
 
 (* -------------------------------------------------------------------------- *)
 
