@@ -110,18 +110,17 @@ let terminated_iter_to_string printer terminator iter =
 let terminated_list_to_string printer terminator xs =
   terminated_iter_to_string printer terminator (fun f -> List.iter f xs)
 
-let index_map string_map =
-  let n = StringMap.cardinal string_map in
-  let a = Array.make n None in
-  let conv, _ = StringMap.fold
-    (fun k v (conv, idx) ->
-       a.(idx) <- Some (k, v);
-       StringMap.add k idx conv, idx + 1)
-    string_map (StringMap.empty, 0)
-  in
-    ((fun n -> snd (unSome a.(n))),
-     (fun k -> StringMap.find k conv),
-     (fun n -> fst (unSome a.(n))))
+let inverse (a : 'a array) : 'a -> int =
+  let table = Hashtbl.create (Array.length a) in
+  Array.iteri (fun i data ->
+    assert (not (Hashtbl.mem table data));
+    Hashtbl.add table data i
+  ) a;
+  fun data ->
+    try
+      Hashtbl.find table data
+    with Not_found ->
+      assert false
 
 let support_assoc l x =
   try
@@ -414,3 +413,9 @@ module ListExtras = struct
   let hash hash xs =
     Hashtbl.hash (List.map hash xs)
 end
+
+let nth = function
+  | 1 -> "first"
+  | 2 -> "second"
+  | 3 -> "third"
+  | i -> Printf.sprintf "%dth" i

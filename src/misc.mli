@@ -92,17 +92,12 @@ val separated_list_to_string:  ('a -> string) -> string -> 'a list -> string
 val terminated_list_to_string: ('a -> string) -> string -> 'a list -> string
 val terminated_iter_to_string: ('a -> string) -> string -> 'a iter -> string
 
-(* [index_map f] returns a triple (indexed_f, domain_indexation, domain_array).
-   [indexed_f] is a mapping from [0..n-1] to the elements of the map [f]
-   ([n] being the size of the image of [f]).
-   [domain_indexation] is a mapping from the domain of the map [f] to indexes.
-   [domain_array] is a mapping from the indexes to the domain of [f].
-   The indexation implements [f] ie:
-   - forall x in domain(m), indexed_f (domain_indexation x) = f (x).
-   - forall x in domain(m), domain_array (domain_indexation x) = x. *)
+(* If [a] is an array, therefore a mapping of integers to elements, then
+   [inverse a] computes its inverse, a mapping of elements to integers.
+   The type ['a] of elements must support the use of OCaml's generic
+   equality and hashing functions. *)
 
-val index_map
-  : 'a StringMap.t -> (int -> 'a) * (string -> int) * (int -> string)
+val inverse: 'a array -> ('a -> int)
 
 (* [support_assoc l x] returns the second component of the first couple
    in [l] whose first component is [x]. If it does not exist, it returns
@@ -225,3 +220,7 @@ module ListExtras : sig
   val equal: ('a -> 'a -> bool) -> 'a list -> 'a list -> bool
   val hash: ('a -> int) -> 'a list -> int
 end
+
+(* A nice way of printing "nth" in English, for concrete values of [n]. *)
+
+val nth: int -> string
