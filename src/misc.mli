@@ -67,13 +67,6 @@ type 'a iter = ('a -> unit) -> unit
 val separated_iter_to_string:  ('a -> string) -> string -> 'a iter -> string
 val separated_list_to_string:  ('a -> string) -> string -> 'a list -> string
 
-(* [terminated_list_to_string printer term l] converts [l] into a string
-   representation built by using [printer] on each element and [term] as
-   a terminator. *)
-
-val terminated_list_to_string: ('a -> string) -> string -> 'a list -> string
-val terminated_iter_to_string: ('a -> string) -> string -> 'a iter -> string
-
 (* If [a] is an array, therefore a mapping of integers to elements, then
    [inverse a] computes its inverse, a mapping of elements to integers.
    The type ['a] of elements must support the use of OCaml's generic

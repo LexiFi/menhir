@@ -100,17 +100,6 @@ let separated_iter_to_string printer separator iter =
 let separated_list_to_string printer separator xs =
   separated_iter_to_string printer separator (fun f -> List.iter f xs)
 
-let terminated_iter_to_string printer terminator iter =
-  let b = Buffer.create 32 in
-  iter (fun x ->
-    Buffer.add_string b (printer x);
-    Buffer.add_string b terminator
-  );
-  Buffer.contents b
-
-let terminated_list_to_string printer terminator xs =
-  terminated_iter_to_string printer terminator (fun f -> List.iter f xs)
-
 let inverse (a : 'a array) : 'a -> int =
   let table = Hashtbl.create (Array.length a) in
   Array.iteri (fun i data ->
