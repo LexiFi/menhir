@@ -425,15 +425,15 @@ let unthingify_parameter rules thing =
   match thing with
   | TargetParameterOfSortStar param ->
       (* This parameter has sort [star]. Keep it. *)
-     [ param ]
+     Some param
   | SourceParameterOfHigherSort param ->
       (* This parameter has higher sort. It must be a symbol.
          Keep it if it still appears in the expanded grammar. *)
      let symbol = value (Parameters.unvar param) in
-     if StringMap.mem symbol rules then [ param ] else []
+     if StringMap.mem symbol rules then Some param else None
 
 let unthingify_attribute_declaration rules (params, attrs) =
-  (List.concat (List.map (unthingify_parameter rules) params), attrs)
+  (Misc.map_opt (unthingify_parameter rules) params, attrs)
 
 let unthingify_attribute_declarations rules decls =
   List.map (unthingify_attribute_declaration rules) decls
