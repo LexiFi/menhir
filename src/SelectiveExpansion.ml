@@ -269,7 +269,7 @@ let mangle : label -> nonterminal =
    be recognized as an application of the symbol [G(Y)] to no residual
    arguments. *)
 
-let recognize (param : parameter) : parameter =
+let rec recognize (param : parameter) : parameter =
   (* [param] must have sort [star], in an appropriate sort environment. *)
   match param with
   | ParameterAnonymous _ ->
@@ -286,17 +286,34 @@ let recognize (param : parameter) : parameter =
          expanded away, so [sym] cannot be an uninstantiated parameter
          of the current rule. It must be a nonterminal symbol. We can
          therefore look up its sort in the toplevel environment [sorts]. *)
-      match mode with
-      | ExpandAll ->
-          (* Full specialization. *)
-          let label = (x, List.map (fun p -> Some p) ps)
-          and residuals = [] in
-          enqueue label;
-          let sym = mangle label in
-          Parameters.app (unknown sym) residuals
-      | ExpandHigherSort ->
-          (* Expansion of only the parameters of higher sort. *)
-          assert false
+      let inst, residuals =
+        match mode with
+        | ExpandAll ->
+            (* Expansion of all parameters. *)
+            let inst = List.map (fun p -> Some p) ps
+            and residuals = [] in
+            inst, residuals
+        | ExpandHigherSort ->
+            (* Expansion of only the parameters of higher sort. *)
+            let ss : sort list = domain (sort (ParameterVar sym)) in
+            assert (List.length ps = List.length ss);
+            let pss = List.combine ps ss in
+            let inst =
+              pss
+              |> List.map (fun (param, sort) ->
+                   if sort = star then None else Some param)
+            in
+            let residuals =
+              pss
+              |> List.filter (fun (_, sort) -> sort = star)
+              |> List.map (fun (param, _) -> recognize param)
+            in
+            inst, residuals
+      in
+      let label = (x, inst) in
+      enqueue label;
+      let sym = mangle label in
+      Parameters.app (unknown sym) residuals
 
 (* -------------------------------------------------------------------------- *)
 
