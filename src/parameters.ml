@@ -60,6 +60,34 @@ let rec fold f init = function
 let identifiers m p =
   fold (fun accu x -> StringMap.add x.value x.position accu) m p
 
+let rec occurs (x : symbol) (p : parameter) =
+  match p with
+  | ParameterVar y ->
+      x = y.value
+  | ParameterApp (y, ps) ->
+      x = y.value || List.exists (occurs x) ps
+  | ParameterAnonymous _ ->
+      assert false
+
+let occurs_shallow (x : symbol) (p : parameter) =
+  match p with
+  | ParameterVar y ->
+      x = y.value
+  | ParameterApp (y, _) ->
+      assert (x <> y.value);
+      false
+  | ParameterAnonymous _ ->
+      assert false
+
+let occurs_deep (x : symbol) (p : parameter) =
+  match p with
+  | ParameterVar _ ->
+      false
+  | ParameterApp (_, ps) ->
+      List.exists (occurs x) ps
+  | ParameterAnonymous _ ->
+      assert false
+
 type t = parameter
 
 let rec equal x y =
