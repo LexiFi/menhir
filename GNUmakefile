@@ -104,9 +104,10 @@ MENHIRLIB_FILES   := $(shell for m in $(MENHIRLIB_MODULES) ; do \
 HEADACHE := headache
 SRCHEAD  := $(CURRENT)/headers/regular-header
 LIBHEAD  := $(CURRENT)/headers/library-header
+FIND     := $(shell if command -v gfind >/dev/null ; then echo gfind ; else echo find ; fi)
 
 headache:
-	@ cd src && find -E . -regex ".*\.ml(i|y|l)?" \
+	@ cd src && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
 	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
 	@ for file in src/standard.mly $(MENHIRLIB_FILES) ; do \
 	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
