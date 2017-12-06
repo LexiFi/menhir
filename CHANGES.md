@@ -1,5 +1,13 @@
 # Changes
 
+## 2017/12/06
+
+* Fix the termination test that takes place before parameterized symbols are
+  expanded away. The previous test was both unsound (it would accept grammars
+  whose termination did not terminate) and incomplete (it would reject
+  grammars whose termination did terminate). The new test is believed to be
+  sound and complete.
+
 ## 2017/11/12
 
 * Documentation: clarify the fact that `%type` declarations should carry types
