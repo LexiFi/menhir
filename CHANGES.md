@@ -4,9 +4,9 @@
 
 * Fix the termination test that takes place before parameterized symbols are
   expanded away. The previous test was both unsound (it would accept grammars
-  whose expansion did not terminate) and incomplete (it would reject
-  grammars whose expansion did terminate). The new test is believed to be
-  sound and complete.
+  whose expansion did not terminate) and incomplete (it would reject grammars
+  whose expansion did terminate). The new test is believed to be sound and
+  complete. (Thanks to Martin Bodin for prompting us to look into this issue.)
 
 ## 2017/11/12
 
