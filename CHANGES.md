@@ -1,5 +1,11 @@
 # Changes
 
+## 2017/12/22
+
+* Add a flag `--unused-precedence-levels` to suppress all warnings about
+  useless `%left`, `%right`, `%nonassoc` and `%prec` declarations.
+  (Suggested by Zachary Tatlock.)
+
 ## 2017/12/06
 
 * Fix the termination test that takes place before parameterized symbols are

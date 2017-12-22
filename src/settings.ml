@@ -203,6 +203,9 @@ let ignore_unused_token t =
 let ignore_all_unused_tokens =
   ref false
 
+let ignore_all_unused_precedence_levels =
+  ref false
+
 let list_errors =
   ref false
 
@@ -294,6 +297,7 @@ let options = Arg.align [
   "--table", Arg.Set table, " Use the table-based back-end";
   "--timings", Arg.Set timings, " Display internal timings";
   "--trace", Arg.Set trace, " Generate tracing instructions";
+  "--unused-precedence-levels", Arg.Set ignore_all_unused_precedence_levels, " Do not warn about unused precedence levels";
   "--unused-token", Arg.String ignore_unused_token, "<token> Do not warn that <token> is unused";
   "--unused-tokens", Arg.Set ignore_all_unused_tokens, " Do not warn about any unused token";
   "--update-errors", Arg.String set_update_errors, "<filename> Update auto-comments in a .messages file";
@@ -496,6 +500,9 @@ let ignored_unused_tokens =
 
 let ignore_all_unused_tokens =
   !ignore_all_unused_tokens
+
+let ignore_all_unused_precedence_levels =
+  !ignore_all_unused_precedence_levels
 
 let list_errors =
   !list_errors

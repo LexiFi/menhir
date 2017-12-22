@@ -192,6 +192,10 @@ val ignored_unused_tokens: StringSet.t
 
 val ignore_all_unused_tokens: bool
 
+(* This flag suppresses all warnings about unused precedence levels. *)
+
+val ignore_all_unused_precedence_levels: bool
+
 (* This flag causes Menhir to produce a list of erroneous input sentences.
    Enough sentences are computed to produce exactly one error in every state
    where an error can occur. *)

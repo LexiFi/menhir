@@ -1508,8 +1508,10 @@ end
    should be invoked after only the automaton has been constructed. *)
 
 let diagnostics () =
-  TokPrecedence.diagnostics();
-  Production.diagnostics()
+  if not Settings.ignore_all_unused_precedence_levels then begin
+    TokPrecedence.diagnostics();
+    Production.diagnostics()
+  end
 
 (* ------------------------------------------------------------------------ *)
 (* %on_error_reduce declarations. *)
