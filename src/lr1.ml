@@ -1002,8 +1002,9 @@ let warn_about_productions_never_reduced () =
             "production %sis never reduced." (Production.print prod)
   );
   if !count > 0 then
+    let plural_mark, be = if !count > 1 then ("s", "are") else ("", "is") in
     Error.grammar_warning []
-      "in total, %d productions are never reduced." !count
+      "in total, %d production%s %s never reduced." !count plural_mark be
 
 (* ------------------------------------------------------------------------ *)
 (* When requested by the code generator, apply default conflict
