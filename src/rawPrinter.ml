@@ -15,7 +15,6 @@
    facilitate diffs. *)
 
 open IL
-open Printf
 
 module Make (X : sig
 
@@ -41,7 +40,7 @@ let maxindent =
   120
 
 let whitespace =
-  String.make maxindent ' '
+  Bytes.make maxindent ' '
 
 let indentation =
   ref 0
@@ -211,13 +210,10 @@ and string s =
 and int k =
   node (string_of_int k) []
 
-and bool b =
-  node (if b then "true" else "false") []
-
-and scheme s =
+and scheme _s =
   string "omitted" (* TEMPORARY to be completed, someday *)
 
-and typ t =
+and typ _t =
   string "omitted" (* TEMPORARY to be completed, someday *)
 
 (* ------------------------------------------------------------------------- *)
@@ -227,4 +223,3 @@ let expr e =
   print_tree X.f (expr e)
 
 end
-
