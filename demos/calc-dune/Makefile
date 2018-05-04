@@ -1,16 +1,9 @@
 .PHONY: all clean test
 
-# Find Menhir.
-ifndef MENHIR
-  MENHIR := $(shell ../find-menhir.sh)
-endif
-
-MENHIRFLAGS     := # --infer
-
-MAIN            := calc
+EXECUTABLE := calc.exe
 
 all:
-	jbuilder build $(MAIN).exe
+	jbuilder build $(EXECUTABLE)
 
 clean:
 	jbuilder clean
@@ -18,4 +11,4 @@ clean:
 
 test: all
 	@echo "The following command should print 42:"
-	echo "(1 + 2 * 10) * 2" | ./$(MAIN).exe
+	echo "(1 + 2 * 10) * 2" | ./$(EXECUTABLE)
