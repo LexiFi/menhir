@@ -3,6 +3,8 @@
 #   calc-inspection
 # The following demos require menhirSdk:
 #   generate-printers
+# The following demos require dune (a.k.a. jbuilder):
+#   calc-dune
 
 DEMOS := \
   calc \
@@ -11,6 +13,7 @@ DEMOS := \
   calc-incremental \
   calc-inspection \
   generate-printers \
+  calc-dune \
 
 .PHONY: all clean
 
