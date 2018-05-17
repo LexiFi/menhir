@@ -105,7 +105,7 @@ depriving \nt{filename} of its final \mly suffix. When multiple file
 names are provided on the command line, no default base name exists, so that
 the \obase switch \emph{must} be used.
 
-\docswitch{\ocmly} This switch causes Menhir to produce a \cmly file in
+\docswitch{\ocmly} This switch causes \menhir to produce a \cmly file in
 addition to its normal operation. This file contains a (binary-form)
 representation of the grammar and automaton (see \sref{sec:sdk}).
 
@@ -123,7 +123,7 @@ For more information, see \sref{sec:errors:new}.
 
 \docswitch{\ocompileerrors \nt{filename}} This switch causes \menhir to read the
 file \nt{filename}, which must obey the \messages file format, and to compile
-it to an OCaml function that maps a state number to a message. The OCaml code
+it to an \ocaml function that maps a state number to a message. The \ocaml code
 is sent to the standard output channel. At the same time, \menhir checks that
 the collection of input sentences in the file \nt{filename} is correct and
 irredundant. For more information, see \sref{sec:errors:new}.
@@ -178,7 +178,7 @@ vertices are the grammar's nonterminal symbols. There is a directed edge from
 vertex $A$ to vertex $B$ if the definition of $A$ refers to $B$. The file is
 in a format that is suitable for processing by the \emph{graphviz} toolkit.
 
-\docswitch{\oinfer} See \sref{sec:build}.
+\docswitch{\oinfer, \oinferwrite, \oinferread} See \sref{sec:build}.
 
 \docswitch{\oinspection} This switch requires \otable. It causes \menhir to generate
 not only the monolithic and incremental APIs (\sref{sec:monolithic},
@@ -222,7 +222,7 @@ channel. When \nt{level} is 2, the \emph{nullable}, \emph{FIRST}, and
 grammar specification to be ignored. This is especially useful in order
 to understand whether these keywords help solve any conflicts.
 
-\docswitch{\onostdlib} This switch instructs Menhir to \emph{not} use
+\docswitch{\onostdlib} This switch instructs \menhir to \emph{not} use
 its standard library (\sref{sec:library}).
 
 \docswitch{\oocamlc \nt{command}} See \sref{sec:build}.
@@ -343,10 +343,10 @@ must be fully qualified.
    \sepspacelist{\nt{declaration}}
    \percentpercent
    \sepspacelist{\nt{rule}}
-   \optional{\percentpercent \textit{OCaml code}} \\
+   \optional{\percentpercent \textit{\ocaml code}} \\
 
 \nt{declaration} \is
-   \dheader{\textit{OCaml code}} \\
+   \dheader{\textit{\ocaml code}} \\
 && \dparameter \ocamlparam \\
 && \dtoken \optional{\ocamltype} \sepspacelist{\nt{uid}} \\
 && \dnonassoc \sepspacelist{\nt{uid}} \\
@@ -1094,7 +1094,7 @@ list is represented by the empty string, and a non-empty list is delimited
 with parentheses and comma-separated.
 
 The standard library is stored in a file named \texttt{standard.mly}, which is
-installed at the same time as Menhir. By default, Menhir attempts to find this
+installed at the same time as \menhir. By default, \menhir attempts to find this
 file in the directory where this file was installed. This can be overridden by
 setting the environment variable
 \verb+$MENHIR_STDLIB+. If defined, this variable should contain the path of
@@ -1102,7 +1102,7 @@ the directory where \texttt{standard.mly} is stored. (This path may
 end with a \texttt{/} character.) This can be overridden also via the
 command line switch \ostdlib.
 %
-The command line switch \onostdlib instructs Menhir to \emph{not} load the
+The command line switch \onostdlib instructs \menhir to \emph{not} load the
 standard library.
 
 % ------------------------------------------------------------------------------
@@ -1694,7 +1694,7 @@ two fields, named \verb+lex_start_p+ and \verb+lex_curr_p+, in its environment
 record, whose type is \verb+Lexing.lexbuf+. Each of these fields holds a value
 of type \verb+Lexing.position+. Together, they represent the token's start and
 end positions within the text that is being scanned. These fields are read by
-Menhir after calling the lexical analyzer, so \textbf{it is the lexical
+\menhir after calling the lexical analyzer, so \textbf{it is the lexical
   analyzer's responsibility} to correctly set these fields.
 
 A position consists
@@ -1823,7 +1823,7 @@ side, and does not affect \verb+$endpos+.
     \texttt{Parsing.symbol\_start\_pos()}.
 }}
 
-The positions computed by Menhir are exactly the same as those computed by
+The positions computed by \menhir are exactly the same as those computed by
 \verb+ocamlyacc+\fineprint. More precisely, \fref{fig:pos:mapping} sums up how
 to translate a call to the \texttt{Parsing} module, as used in an \ocamlyacc
 grammar, to a \menhir keyword.
@@ -2091,7 +2091,7 @@ the following declaration:
     val main: position -> thing MenhirInterpreter.checkpoint
   end
 \end{verbatim}
-The argument is the initial position. If the lexer is based on an OCaml
+The argument is the initial position. If the lexer is based on an \ocaml
 lexing buffer, this argument should be \verb+lexbuf.lex_curr_p+.
 In \sref{sec:incremental} and \sref{sec:inspection},
 the type \verb+position+ is a synonym for \verb+Lexing.position+.
@@ -2151,7 +2151,7 @@ eventually be produced if the parser succeeds.
 The abstract type \verb+production+ represents a production of the grammar.
 %
 The ``start productions'' (which do not exist in an \mly file, but are
-constructed by Menhir internally) are \emph{not} part of this type.
+constructed by \menhir internally) are \emph{not} part of this type.
 
 %% type 'a checkpoint
 
@@ -2287,7 +2287,7 @@ will be observed first). In the former case, it calls \verb+succeed v+. In
 the latter case, it calls \verb+fail+ with this checkpoint. It cannot
 raise \verb+Error+.
 
-This means that Menhir's traditional error-handling procedure (which pops the
+This means that \menhir's traditional error-handling procedure (which pops the
 stack until a state that can act on the \error token is found) does not get a
 chance to run. Instead, the user can implement her own error handling code, in
 the \verb+fail+ continuation.
@@ -2584,9 +2584,9 @@ checkpoint as an argument to \verb+offer+.
 This function should be used with some care. It could ``mess up the
 lookahead'' in the sense that it allows parsing to resume in an arbitrary
 state \verb+s+ with an arbitrary lookahead symbol \verb+t+, even though
-Menhir's reachability analysis (which is carried out via the \olisterrors
+\menhir's reachability analysis (which is carried out via the \olisterrors
 switch) might well think that it is impossible to reach this particular
-configuration. If one is using Menhir's new error reporting facility
+configuration. If one is using \menhir's new error reporting facility
 (\sref{sec:errors:new}), this could cause the parser to reach an error state
 for which no error message has been prepared.
 
@@ -3032,7 +3032,7 @@ all, or causes an error too early. It also fails if two sentences lead to the
 same error state.
 %
 If the file is correct and irredundant, then (as its name suggests) this
-command compiles the \messages file down to an OCaml function, whose code
+command compiles the \messages file down to an \ocaml function, whose code
 is printed on the standard output channel. This function, named \verb+message+,
 has type \verb+int -> string+, and maps a state number to a message. It
 raises the exception \verb+Not_found+ if its argument is not the number of
@@ -3165,7 +3165,7 @@ According to this grammar, a ``program'' is either a declaration between
 parentheses or a declaration followed with a semicolon. A ``declaration'' is
 an identifier, followed with a colon, followed with a type. A ``type'' is an
 identifier, a type between parentheses, or a function type in the style of
-OCaml.
+\ocaml.
 
 The (noncanonical) automaton produced by \menhir for this grammar has 17~states.
 Using \olisterrors, we find that an error can be detected in 10 of these
@@ -3347,7 +3347,7 @@ error handling. The ``pre-parser'' is where syntax errors are detected: see
 % names, but that is an independent issue.)
 A database of erroneous input sentences and (templates for) diagnostic messages is stored in
 \compcertgithubfile{cparser/handcrafted.messages}. It is compiled, using \ocompileerrors,
-to an OCaml file named \texttt{cparser/pre\_parser\_messages.ml}. The
+to an \ocaml file named \texttt{cparser/pre\_parser\_messages.ml}. The
 function \verb+Pre_parser_messages.message+, which maps a state number to (a template for) a
 diagnostic message, is called from
 \compcertgithubfile{cparser/ErrorReports.ml},
@@ -3541,29 +3541,29 @@ Extract Constant Int31.In => "1".
 
 % ------------------------------------------------------------------------------
 
-\section{Building grammarware on top of Menhir}
+\section{Building grammarware on top of \menhir}
 \label{sec:grammarware}
 
 It is possible to build a variety of grammar-processing tools,
 also known as ``grammarware''~\cite{klint-laemmel-verhoef-05},
-on top of Menhir's front-end. Indeed, Menhir offers a facility
+on top of \menhir's front-end. Indeed, \menhir offers a facility
 for dumping a \cmly file, which contains a (binary-form) representation
 of the grammar and automaton,
 as well as a library, \menhirsdk,
 for (programmatically) reading and exploiting a \cmly file.
 These facilities are described in \sref{sec:sdk}.
 %
-Furthermore, Menhir allows decorating a grammar with ``attributes'',
-which are ignored by Menhir's back-ends,
+Furthermore, \menhir allows decorating a grammar with ``attributes'',
+which are ignored by \menhir's back-ends,
 yet are written to the \cmly file,
 thus can be exploited by other tools, via \menhirsdk.
 %
 Attributes are described in \sref{sec:attributes}.
 
-\subsection{Menhir's SDK}
+\subsection{\menhir's SDK}
 \label{sec:sdk}
 
-The command line option \ocmly causes Menhir to produce a \cmly file in
+The command line option \ocmly causes \menhir to produce a \cmly file in
 addition to its normal operation. This file contains a (binary-form)
 representation of the grammar and automaton. This is the grammar that
 is obtained after the following steps have been carried out:
@@ -3572,7 +3572,7 @@ is obtained after the following steps have been carried out:
 \item eliminating anonymous rules;
 \item expanding away parameterized nonterminal symbols;
 \item removing unreachable nonterminal symbols;
-\item performing OCaml type inference, if the \oinfer switch is used;
+\item performing \ocaml type inference, if the \oinfer switch is used;
 \item inlining away nonterminal symbols that are decorated with \dinline.
 \end{itemize}
 
@@ -3591,15 +3591,15 @@ the reader is expected to follow the above links.
 \label{sec:attributes}
 
 Attributes are decorations that can be placed in \mly files.
-They are ignored by Menhir's back-ends,
+They are ignored by \menhir's back-ends,
 but are written to \cmly files,
 thus can be exploited by other tools, via \menhirsdk.
 
-An attribute consists of a name and a payload. An attribute name is an OCaml
-identifier, such as \texttt{cost}, or a list of OCaml identifiers, separated
-with dots, such as \texttt{my.name}. An attribute payload is an OCaml
+An attribute consists of a name and a payload. An attribute name is an \ocaml
+identifier, such as \texttt{cost}, or a list of \ocaml identifiers, separated
+with dots, such as \texttt{my.name}. An attribute payload is an \ocaml
 expression of arbitrary type, such as \texttt{1} or \verb+"&&"+ or \verb+print_int+.
-Following the syntax of OCaml's attributes, an attribute's name and payload
+Following the syntax of \ocaml's attributes, an attribute's name and payload
 are separated with one or more spaces, and are delimited by \verb+[@+ and
 \verb+]+. Thus, \verb+[@cost 1]+ and \verb+[@printer print_int]+ are examples
 of attributes.
@@ -3816,7 +3816,28 @@ line options that are passed to it.
 \subsubsection{Obtaining \ocaml type information without calling the \ocaml compiler}
 \label{sec:build:infer:indirect}
 
-To be written. % TEMPORARY
+The third approach is to let \menhir request and receive \ocaml type
+information \emph{without} allowing \menhir to invoke the \ocaml compiler.
+There is nothing magic about this: to achieve this, \menhir must be invoked
+twice, and the \ocaml compiler must be invoked (by the user, or by the build
+system) in between. This is done as follows.
+
+\docswitch{\oinferwrite \nt{mockfilename}} When invoked in this mode, \menhir does
+not generate a parser. Instead, generates a mock \ml file, named
+\nt{mockfilename}, which contains just the semantic actions. Then, it stops.
+
+\docskip
+
+It is then up to the user (or to the build system) to invoke \verb+ocamlc -i+
+so as to type-check the mock \ml file and infer its signature. The output of
+this command should be redirected to some file \nt{sigfilename}. Then, \menhir
+can be invoked again, as follows.
+
+\docswitch{\oinferread \nt{sigfilename}} When invoked in this mode, \menhir
+assumes that the file \nt{sigfilename} contains the result of running
+\verb+ocamlc -i+ on the file \nt{mockfilename}. It reads and parses this file,
+so as to obtain the \ocaml type of every semantic action, then proceeds
+normally to generate a parser.
 
 \subsection{Compilation flags}
 \label{sec:build:flags}
@@ -3993,7 +4014,7 @@ with built-in support for \menhir, such as \ocamlbuild or \dune.
 
 \question{How do I use \menhir with \ocamlbuild?}
 Pass \verb+-use-ocamlfind -use-menhir+ to \ocamlbuild.
-% (Assuming that Menhir was installed via ocamlfind.)
+% (Assuming that \menhir was installed via ocamlfind.)
 To pass options to \menhir,
 pass \verb+-menhir "menhir <options>"+ to \ocamlbuild.
 To use \menhir's table-based back-end,
@@ -4123,9 +4144,9 @@ Project'' initiative.
 
 Frédéric Bour provided motivation and an initial implementation for the
 incremental API, for the inspection API, for attributes, and for \menhirsdk.
-\href{https://github.com/ocaml/merlin}{Merlin}, an emacs mode for OCaml,
-contains an impressive incremental, syntax-error-tolerant OCaml parser,
-which is based on Menhir and has been a driving force for Menhir's APIs.
+\href{https://github.com/ocaml/merlin}{Merlin}, an emacs mode for \ocaml,
+contains an impressive incremental, syntax-error-tolerant \ocaml parser,
+which is based on \menhir and has been a driving force for \menhir's APIs.
 
 Jacques-Henri Jourdan designed and implemented the Coq back-end and did the
 Coq proofs for it.
