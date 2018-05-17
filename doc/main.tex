@@ -145,23 +145,7 @@ sense of \sref{sec:conflicts:benign}). This can be desirable also because, for
 a complex grammar, completeness may require a heavy certificate and its
 validation by Coq may take time.
 
-\docswitch{\odepend} This switch causes \menhir to generate dependency information
-for use in conjunction with \make. When invoked in this mode, \menhir does not
-generate a parser. Instead, it examines the grammar specification and prints a
-list of prerequisites for the targets \nt{basename}\texttt{.cm[iox]},
-\nt{basename}\texttt{.ml}, and \nt{basename}\texttt{.mli}. This list is intended
-to be textually included within a \Makefile. It is important to note that
-\nt{basename}\texttt{.ml} and \nt{basename}\texttt{.mli} can have
-\texttt{.cm[iox]} prerequisites. This is because, when the \oinfer switch
-is used, \menhir infers types by invoking \ocamlc, and \ocamlc itself requires
-the \ocaml modules that the grammar specification depends upon to have been
-compiled first.
-% The file \distrib{demos/obsolete/Makefile.shared} exploits the \odepend switch.
-An end user who uses \ocamlbuild does not need this switch.
-
-When in \odepend mode, \menhir computes dependencies by invoking \ocamldep.
-The command that is used to run \ocamldep is controlled by the \oocamldep
-switch.
+\docswitch{\odepend} See \sref{sec:build}.
 
 \docswitch{\odump} This switch causes a description of the automaton
 to be written to the file \nt{basename}\automaton.
@@ -194,22 +178,7 @@ vertices are the grammar's nonterminal symbols. There is a directed edge from
 vertex $A$ to vertex $B$ if the definition of $A$ refers to $B$. The file is
 in a format that is suitable for processing by the \emph{graphviz} toolkit.
 
-\docswitch{\oinfer} This switch causes the semantic actions to be checked for
-type consistency \emph{before} the parser is generated. This is done by
-invoking the \ocaml compiler. Use of \oinfer is \textbf{strongly recommended},
-because it helps obtain consistent, well-located type error messages,
-especially when advanced features such as \menhir's standard library or
-\dinline keyword are exploited. One downside of \oinfer is that the \ocaml
-compiler usually needs to consult a few \texttt{.cm[iox]} files. This means
-that these files must have been created first, requiring \Makefile changes and
-use of the \odepend switch. The file \distrib{demos/obsolete/Makefile.shared} suggests
-how to deal with this difficulty. A better option is to avoid \make altogether
-and use \ocamlbuild, which has built-in knowledge of \menhir. Using
-\ocamlbuild is \textbf{strongly recommended}!
-
-% There is a slight catch with \oinfer. The types inferred by \ocamlc are valid
-% in the toplevel context, but can change meaning when inserted into a local
-% context.
+\docswitch{\oinfer} See \sref{sec:build}.
 
 \docswitch{\oinspection} This switch requires \otable. It causes \menhir to generate
 not only the monolithic and incremental APIs (\sref{sec:monolithic},
@@ -256,13 +225,9 @@ to understand whether these keywords help solve any conflicts.
 \docswitch{\onostdlib} This switch instructs Menhir to \emph{not} use
 its standard library (\sref{sec:library}).
 
-\docswitch{\oocamlc \nt{command}} This switch controls how \ocamlc is
-invoked (when \oinfer is used). It allows setting both the name of
-the executable and the command line options that are passed to it.
+\docswitch{\oocamlc \nt{command}} See \sref{sec:build}.
 
-\docswitch{\oocamldep \nt{command}} This switch controls how \ocamldep is
-invoked (when \odepend is used). It allows setting both the name of the
-executable and the command line options that are passed to it.
+\docswitch{\oocamldep \nt{command}} See \sref{sec:build}.
 
 \docswitch{\oonlypreprocess} This switch causes the grammar specifications
 to be transformed up to the point where the automaton's construction can
@@ -280,13 +245,7 @@ type, which is written to the files \nt{basename}\texttt{.ml} and
 a single set of tokens is to be shared between several parsers. The directory
 \distrib{demos/calc-two} contains a demo that illustrates the use of this switch.
 
-\docswitch{\orawdepend} This switch is analogous to \odepend, except that
-\ocamldep's output is not postprocessed by \menhir; it is echoed without
-change. This switch is not suitable for direct use with \make; it is
-intended for use with \omake or \ocamlbuild, which perform their own
-postprocessing.
-An end user who uses \ocamlbuild does not need to mention this switch:
-\ocamlbuild uses it automatically.
+\docswitch{\orawdepend} See \sref{sec:build}.
 
 \docswitch{\ostdlib \nt{directory}} This switch controls the directory where
 the standard library (\sref{sec:library}) is found. It takes precedence over
@@ -300,45 +259,7 @@ language, unreachable non-terminal symbols, productions that are never
 reduced, conflicts that are not resolved by precedence declarations, and
 end-of-stream conflicts.
 
-\docswitch{\osuggestcomp} This switch causes \menhir to print a set of
-suggested compilation flags, and exit. These flags are intended to be passed
-to the \ocaml compilers (\ocamlc or \ocamlopt) when compiling and linking the
-parser generated by \menhir. What are these flags? In the absence of the
-\otable switch, they are empty. When \otable is set, these flags ensure that
-\menhirlib is visible to the \ocaml compiler. If the support library
-\menhirlib was installed via \ocamlfind, a \texttt{-package} directive is
-issued; otherwise, a \texttt{-I} directive is used.
-% The file \distrib{demos/obsolete/Makefile.shared} shows how to exploit
-% the \texttt{--suggest-*} switches.
-
-\docswitch{\osuggestlinkb} This switch causes \menhir to print a set of
-suggested link flags, and exit. These flags are intended to be passed to
-\texttt{ocamlc} when producing a bytecode executable. What are these flags? In
-the absence of the \otable switch, they are empty. When \otable is set, these
-flags ensure that \menhirlib is linked in. If the support library \menhirlib
-was installed via \ocamlfind, a \texttt{-linkpkg} directive is issued;
-otherwise, the object file \texttt{menhirLib.cmo} is named.
-% The file \distrib{demos/obsolete/Makefile.shared} shows how to exploit
-% the \texttt{--suggest-*} switches.
-
-\docswitch{\osuggestlinko} This switch causes \menhir to print a set of
-suggested link flags, and exit. These flags are intended to be passed to
-\texttt{ocamlopt} when producing a native code executable. What are these
-flags? In the absence of the \otable switch, they are empty. When \otable is
-set, these flags ensure that \menhirlib is linked in. If the support library
-\menhirlib was installed via \ocamlfind, a \texttt{-linkpkg} directive is
-issued; otherwise, the object file \texttt{menhirLib.cmx} is named.
-% The file \distrib{demos/obsolete/Makefile.shared} shows how to exploit
-% the \texttt{--suggest-*} switches.
-
-\docswitch{\osuggestmenhirlib} This switch causes \menhir to print (the
-absolute path of) the directory where \menhirlib was installed. If \menhirlib
-was installed via \ocamlfind, this is equivalent to calling \texttt{ocamlfind
-query menhirLib}.
-
-\docswitch{\osuggestocamlfind} This switch causes \menhir to print a Boolean
-value (i.e., either \texttt{true} or \texttt{false}), which indicates whether
-\menhirlib was installed via \ocamlfind.
+\docswitch{\oo{suggest-*}} See \sref{sec:build}.
 
 \docswitch{\otable} This switch causes \menhir to use its table-based
 back-end, as opposed to its (default) code-based back-end. When \otable is
@@ -3767,6 +3688,184 @@ not with the symbol \verb+option(COMMA)+.
 
 % ------------------------------------------------------------------------------
 
+\section{Interaction with build systems}
+\label{sec:build}
+
+This section explains some details of the compilation workflow, including
+\ocaml type inference and its repercussions on dependency analysis
+(\sref{sec:build:infer}) and compilation flags (\sref{sec:build:flags}).
+%
+This material should be of interest only to authors of build systems
+who wish to build support for \menhir into their system.
+%
+Ordinary users should skip this section and use a build system that knows
+about \menhir, such as \ocamlbuild or \dune.
+
+\subsection{\ocaml type inference and dependency analysis}
+\label{sec:build:infer}
+
+In an ideal world, the semantic actions in a \mly file should be well-typed
+according to the \ocaml type discipline, and their types should be known to
+\menhir, which may need this knowledge. (When \oinspection is set, \menhir
+needs to know the \ocaml type of every nonterminal symbol.)
+%
+To address this problem, three approaches exist:
+\begin{itemize}
+\item Ignore the problem and let \menhir run without \ocaml type information
+      (\sref{sec:build:infer:none}).
+\item Let \menhir obtain \ocaml type information
+      by invoking the \ocaml compiler
+      (\sref{sec:build:infer:direct}).
+\item Let \menhir request and receive \ocaml type information
+      without invoking the \ocaml compiler
+      (\sref{sec:build:infer:indirect}).
+\end{itemize}
+
+\subsubsection{Running without \ocaml type information}
+\label{sec:build:infer:none}
+
+The simplest thing to do is to run \menhir \emph{without} any of the flags
+described in the following (\sref{sec:build:infer:direct},
+\sref{sec:build:infer:indirect}).
+%
+Then, the semantic actions are \emph{not} type-checked,
+and their \ocaml type is \emph{not} inferred.
+%
+(This is analogous to using \ocamlyacc.)
+%
+The drawbacks of this approach are as follows:
+\begin{itemize}
+\item A type error in a semantic action is detected only when the \ml
+      file produced by \menhir is type-checked. The location of the
+      type error, as reported by the \ocaml compiler, can be
+      suboptimal.
+      % I think that the type error should be reported inside a semantic
+      % action (we produce # directives for this purpose). Yet I am not
+      % certain that this will be the case. Plus, the type error could be
+      % reported inside Menhir's standard library, whereas when --infer is
+      % used, we place the standard library first, so as to ensure that no
+      % type error is found inside it. (See [infer.ml].)
+\item Unless a \dtype declaration for every nonterminal symbol is
+      given, the inspection API cannot be generated, that is,
+      \oinspection must be turned off.
+\end{itemize}
+
+\subsubsection{Obtaining \ocaml type information by calling the \ocaml compiler}
+\label{sec:build:infer:direct}
+
+The second approach is to let \menhir invoke the \ocaml compiler so as to
+type-check the semantic actions and infer their types. This is done by
+invoking \menhir with the \oinfer switch, as follows.
+
+\docswitch{\oinfer} This switch causes the semantic actions to be checked for
+type consistency \emph{before} the parser is generated. To do so, \menhir
+generates a mock \ml file, which contains just the semantic actions, and
+invokes the \ocaml compiler, under the form \verb+ocamlc -i+, so as to
+type-check this file and infer the types of the semantic actions. \menhir then
+reads this information and produces real \ml and \mli files.
+
+% There is a slight catch with \oinfer. The types inferred by \ocamlc are valid
+% in the toplevel context, but can change meaning when inserted into a local
+% context.
+
+\docswitch{\oocamlc \nt{command}} This switch controls how \ocamlc is invoked.
+It allows setting both the name of the executable and the command line options
+that are passed to it.
+
+\docskip
+
+One difficulty with the this approach is that the \ocaml compiler usually
+needs to consult a few \texttt{.cm[iox]} files. Indeed, if the \mly file
+contains a reference to an external \ocaml module, say \texttt{A}, then the
+\ocaml compiler typically needs to read one or more files named
+\texttt{A.cm[iox]}.
+
+This implies that these files must have been created first. But how is one
+supposed to know, exactly, which files should be created first? One must scan
+the \mly file so as to find out which external modules it depends upon. In
+other words, a dependency analysis is required. This analysis can be carried
+out by invoking \menhir with the \odepend switch, as follows.
+
+\docswitch{\odepend} This switch causes \menhir to generate dependency
+information for use in conjunction with \make. When invoked in this mode,
+\menhir does not generate a parser. Instead, it examines the grammar
+specification and prints a list of prerequisites for the targets
+\nt{basename}\texttt{.cm[iox]}, \nt{basename}\texttt{.ml}, and
+\nt{basename}\texttt{.mli}. This list is intended to be textually included
+within a \Makefile.
+%
+% It is important to note that \nt{basename}\texttt{.ml} and
+% \nt{basename}\texttt{.mli} can have \texttt{.cm[iox]} prerequisites. This is
+% because, when the \oinfer switch is used, \menhir infers types by invoking
+% \ocamlc, and \ocamlc itself requires the \ocaml modules that the grammar
+% specification depends upon to have been compiled first.
+%
+To produce this list, \menhir generates a mock \ml file, which contains just
+the semantic actions, invokes \ocamldep, and postprocesses its output.
+
+\docswitch{\orawdepend} This switch is analogous to \odepend. However, in this
+case, \ocamldep's output is \emph{not} postprocessed by \menhir: it is echoed
+without change. This switch is not suitable for direct use with \make; it is
+intended for use with \omake or \ocamlbuild, which perform their own
+postprocessing.
+
+\docswitch{\oocamldep \nt{command}} This switch controls how \ocamldep is
+invoked. It allows setting both the name of the executable and the command
+line options that are passed to it.
+
+\subsubsection{Obtaining \ocaml type information without calling the \ocaml compiler}
+\label{sec:build:infer:indirect}
+
+To be written. % TEMPORARY
+
+\subsection{Compilation flags}
+\label{sec:build:flags}
+
+The following switches allow querying \menhir so as to find out which
+compilation flags should be passed to the \ocaml compiler and linker.
+
+\docswitch{\osuggestcomp} This switch causes \menhir to print a set of
+suggested compilation flags, and exit. These flags are intended to be passed
+to the \ocaml compilers (\ocamlc or \ocamlopt) when compiling and linking the
+parser generated by \menhir. What are these flags? In the absence of the
+\otable switch, they are empty. When \otable is set, these flags ensure that
+\menhirlib is visible to the \ocaml compiler. If the support library
+\menhirlib was installed via \ocamlfind, a \texttt{-package} directive is
+issued; otherwise, a \texttt{-I} directive is used.
+% The file \distrib{demos/obsolete/Makefile.shared} shows how to exploit
+% the \texttt{--suggest-*} switches.
+
+\docswitch{\osuggestlinkb} This switch causes \menhir to print a set of
+suggested link flags, and exit. These flags are intended to be passed to
+\texttt{ocamlc} when producing a bytecode executable. What are these flags? In
+the absence of the \otable switch, they are empty. When \otable is set, these
+flags ensure that \menhirlib is linked in. If the support library \menhirlib
+was installed via \ocamlfind, a \texttt{-linkpkg} directive is issued;
+otherwise, the object file \texttt{menhirLib.cmo} is named.
+% The file \distrib{demos/obsolete/Makefile.shared} shows how to exploit
+% the \texttt{--suggest-*} switches.
+
+\docswitch{\osuggestlinko} This switch causes \menhir to print a set of
+suggested link flags, and exit. These flags are intended to be passed to
+\texttt{ocamlopt} when producing a native code executable. What are these
+flags? In the absence of the \otable switch, they are empty. When \otable is
+set, these flags ensure that \menhirlib is linked in. If the support library
+\menhirlib was installed via \ocamlfind, a \texttt{-linkpkg} directive is
+issued; otherwise, the object file \texttt{menhirLib.cmx} is named.
+% The file \distrib{demos/obsolete/Makefile.shared} shows how to exploit
+% the \texttt{--suggest-*} switches.
+
+\docswitch{\osuggestmenhirlib} This switch causes \menhir to print (the
+absolute path of) the directory where \menhirlib was installed. If \menhirlib
+was installed via \ocamlfind, this is equivalent to calling \texttt{ocamlfind
+query menhirLib}.
+
+\docswitch{\osuggestocamlfind} This switch causes \menhir to print a Boolean
+value (i.e., either \texttt{true} or \texttt{false}), which indicates whether
+\menhirlib was installed via \ocamlfind.
+
+% ------------------------------------------------------------------------------
+
 \section{Comparison with \ocamlyacc}
 
 % TEMPORARY idéalement, il faudrait documenter la différence de comportement
@@ -3885,16 +3984,37 @@ scientific) benchmark suggests that the parsers produced by \ocamlyacc and
 \texttt{menhir} are between 2 and 5 times faster. This benchmark excludes the
 time spent in the lexer and in the semantic actions.
 
-\question{How do I write \Makefile rules for Menhir?}
-This can be quite difficult, especially when \oinfer is used.
-Look at \distrib{demos/obsolete/Makefile.shared} or (better) use \ocamlbuild,
-which has built-in compilation rules for \ocaml and \menhir.
-% TEMPORARY document the use of \ocamlbuild (and point to the demos)
-% basic scenario: ocamlbuild -use-menhir
-% what to add for the table back-end? (--table and -package menhirLib)
-%   or use the --suggest options?
-% advanced scenario: multi-module, use .mlypack
-% advanced scenario: --only-tokens and -external-tokens, use .mlypack + _tags + myocamlbuild.ml
+\question{How do I write \Makefile rules for \menhir?}
+This can a bit tricky. % understatement
+If you must do this, see \sref{sec:build}.
+% and look at \distrib{demos/obsolete/Makefile.shared}.
+It is recommended instead to use a build system
+with built-in support for \menhir, such as \ocamlbuild or \dune.
+
+\question{How do I use \menhir with \ocamlbuild?}
+Pass \verb+-use-ocamlfind -use-menhir+ to \ocamlbuild.
+% (Assuming that Menhir was installed via ocamlfind.)
+To pass options to \menhir,
+pass \verb+-menhir "menhir <options>"+ to \ocamlbuild.
+To use \menhir's table-based back-end,
+pass \verb+-menhir "menhir --table"+ to \ocamlbuild,
+and either
+pass \verb+-package menhirLib+ to \ocamlbuild
+or add the tag \verb+package(menhirLib)+ in the \verb+_tags+ file.
+To combine multiple \mly files,
+say \verb+a.mly+ and \verb+b.mly+,
+into a single parser,
+say \verb+parser.{ml,mli}+,
+create a file named \verb+parser.mlypack+
+that contains the module names \verb+A B+.
+See the \distrib{demos} directory for examples.
+
+% Advanced scenario: to use --only-tokens and -external-tokens,
+% use .mlypack + _tags + myocamlbuild.ml. Not explained here,
+% but \distrib{demos/calc-two} contains an example.
+
+\question{How do I use \menhir with \dune?}
+To be written. % TEMPORARY
 
 \question{\menhir reports \emph{more} shift/reduce conflicts than
 \ocamlyacc! How come?} \ocamlyacc sometimes merges two states
