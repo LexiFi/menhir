@@ -2,7 +2,9 @@
 
 export TEXINPUTS=.:
 
-TEXDEPS = $(wildcard *.tex) $(wildcard *.bib) $(wildcard *.sty) $(wildcard *.mly)
+DEPS = $(wildcard *.tex) $(wildcard *.bib) $(wildcard *.sty) $(wildcard *.mly)
+
+SED := $(shell if hash gsed 2>/dev/null ; then echo gsed ; else echo sed ; fi)
 
 all: main.pdf
 
@@ -20,7 +22,7 @@ main.html: main.tex $(DEPS) $(wildcard *.hva)
 	@# asks for (padding:0px;) while the TeX rendering
 	@# inserts spacing between columns. Change this
 	@# to {padding:1px;}
-	sed -i s/cellpadding0/cellpadding1/ main.html
+	$(SED) -i -e "s/cellpadding0/cellpadding1/" main.html
 
 loop:
 	latexmk -pdf -pvc main
