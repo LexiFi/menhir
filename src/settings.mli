@@ -73,25 +73,27 @@ type preprocess_mode =
 
 val preprocess_mode: preprocess_mode
 
-(* Whether one should invoke ocamlc in order to infer types for all
-   nonterminals. *)
+(* Whether and how OCaml type inference (for semantic actions and nonterminal
+   symbols) should be performed. See the manual for details. *)
 
-val infer: bool
+type infer_mode =
+    (* Perform no type inference. This is the default mode. *)
+  | IMNone
+    (* Perform type inference by invoking ocamlc directly. *)
+  | IMInfer                (* --infer *)
+  | IMDependRaw            (* --raw-depend *)
+  | IMDependPostprocess    (* --depend *)
+    (* Perform type inference by writing a mock .ml file and
+       reading the corresponding inferred .mli file. *)
+  | IMWriteQuery of string (* --infer-write-query <filename> *)
+  | IMReadReply of string  (* --infer-read-reply <filename> *)
+
+val infer: infer_mode
 
 (* Whether one should inline the non terminal definitions marked
    with the %inline keyword. *)
 
 val inline: bool
-
-(* Whether and how one should invoke ocamldep in order to compute and
-   display dependencies. *)
-
-type ocamldep_mode =
-  | OMNone        (* do not invoke ocamldep *)
-  | OMRaw         (* invoke ocamldep and echo its raw output *)
-  | OMPostprocess (* invoke ocamldep and postprocess its output *)
-
-val depend: ocamldep_mode
 
 (* Whether comments should be printed or discarded. *)
 

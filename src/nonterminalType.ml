@@ -70,17 +70,28 @@ let nonterminalgadtdef grammar =
          is an approximation of the real [.mli] file. When we are
          not in [--(raw)-depend] mode, though, this is a problem.
          We display an error message and stop. *)
-      match Settings.depend with
-      | Settings.OMRaw
-      | Settings.OMPostprocess ->
+      Settings.(match infer with
+      | IMDependRaw
+      | IMDependPostprocess ->
           "The indexed type of nonterminal symbols (mock!).",
           []
-      | Settings.OMNone ->
+      | IMNone ->
           Error.error [] "\
             the type of the nonterminal symbol %s is unknown.\n\
             When --inspection is set, the type of every nonterminal symbol must be known.\n\
-            Please use --infer or specify the type of every symbol via %%type declarations."
+            Please enable type inference (see --infer and --infer-read-reply)\n\
+            or specify the type of every symbol via %%type declarations."
             nt
+      | IMInfer
+      | IMReadReply _ ->
+          (* This should not happen: when [--infer] or [--infer-read-reply]
+             is set, the types of all nonterminal symbols should be known. *)
+          assert false
+      | IMWriteQuery _ ->
+          (* This should not happen: when [--infer-write-query] is set, we
+             write a mock [.ml] file, but no [.mli] file, so this function
+             should never be called. *)
+          assert false)
 
   in
   [

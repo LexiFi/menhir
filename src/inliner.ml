@@ -186,20 +186,19 @@ let inline_valdefs (defs : valdef list) : valdef list =
   (* The heart of the inliner: rewriting a function call to a [let]
      expression.
 
-     If there was a type annotation at the function definition site,
-     it is dropped, provided [--infer] was enabled. Otherwise, it is
-     kept, because, due to the presence of [EMagic] expressions in the
-     code, dropping a type annotation could cause an ill-typed program
-     to become apparently well-typed. Keeping a type annotation
-     requires taking a fresh instance of the type scheme, because
-     OCaml doesn't have support for locally and existentially bound
-     type variables. Yuck. *)
+     If there was a type annotation at the function definition site, it is
+     dropped, provided the semantic actions have been type-checked. Otherwise,
+     it is kept, because, due to the presence of [EMagic] expressions in the
+     code, dropping a type annotation could cause an ill-typed program to
+     become apparently well-typed. Keeping a type annotation requires taking a
+     fresh instance of the type scheme, because OCaml doesn't have support for
+     locally and existentially bound type variables. Yuck. *)
 
   let inline formals actuals body oscheme =
     assert (List.length actuals = List.length formals);
     match oscheme with
     | Some scheme
-      when not Settings.infer ->
+      when not Front.ocaml_types_have_been_checked ->
 
         let formals, body = annotate formals body (instance scheme) in
         mlet formals actuals body
@@ -320,4 +319,3 @@ let inline (p : program) : program =
     inline_structure p
   else
     p
-

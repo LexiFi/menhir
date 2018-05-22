@@ -20,3 +20,12 @@
 
 val grammar: UnparameterizedSyntax.grammar
 
+(* This flag tells whether the semantic actions have been type-checked. It is
+   set if and only if either [--infer] or [--infer-read-reply] is in use. Note
+   that the presence of a %type declaration for every nonterminal symbol is
+   *not* sufficient for this flag to be set. Note also that, when
+   [--infer-read-reply] is set, it could be the case that we have an
+   out-of-date inferred [.mli] file, so the semantic actions could still be
+   ill-typed. (The user is then at fault.) *)
+
+val ocaml_types_have_been_checked: bool

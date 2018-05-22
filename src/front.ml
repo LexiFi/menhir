@@ -115,16 +115,11 @@ let () =
 
 (* ------------------------------------------------------------------------- *)
 
+(* If [--infer] was specified on the command line, perform type inference.
+   The OCaml type of every nonterminal symbol is then known. *)
+
 (* If [--depend] or [--raw-depend] was specified on the command line,
    perform dependency analysis and stop. *)
-
-let () =
-  match Settings.depend with
-  | Settings.OMRaw
-  | Settings.OMPostprocess ->
-      Infer.depend grammar (* never returns *)
-  | Settings.OMNone ->
-      ()
 
 (* The purpose of [--depend] and [--raw-depend] is to support [--infer].
    Indeed, [--infer] is implemented by producing a mock [.ml] file (which
@@ -135,35 +130,33 @@ let () =
    [.mli] file, even though in principle it should be unnecessary -- see
    comment in [nonterminalType.mli]. *)
 
-(* ------------------------------------------------------------------------- *)
+(* If [--infer-write-query] was specified on the command line, write a
+   mock [.ml] file and stop. It is then up to the user (or build system)
+   to invoke [ocamlc -i] on this file, so as to do type inference. *)
 
-(* If some flags imply that we will NOT produce an OCaml parser, then there
-   is no need to perform type inference, so we act as if --infer was absent.
-   This saves time and dependency nightmares. *)
+(* If [--infer-read-reply] was specified on the command line, read the
+   inferred [.mli] file. The OCaml type of every nonterminal symbol is
+   then known, just as with [--infer]. *)
 
-let skipping_parser_generation =
-  Settings.coq ||
-  Settings.compile_errors <> None ||
-  Settings.interpret_error ||
-  Settings.list_errors ||
-  Settings.compare_errors <> None ||
-  Settings.update_errors <> None ||
-  Settings.echo_errors <> None ||
-  false
-    (* maybe also: [preprocess_mode <> PMNormal] *)
-
-(* ------------------------------------------------------------------------- *)
-
-(* If [--infer] was specified on the command line, perform type inference.
-   The OCaml type of every nonterminal is then known. *)
-
-let grammar =
-  if Settings.infer && not skipping_parser_generation then
-    let grammar = Infer.infer grammar in
-    Time.tick "Inferring types for nonterminals";
-    grammar
-  else
-    grammar
+let grammar, ocaml_types_have_been_checked =
+  Settings.(match infer with
+  | IMNone ->
+      grammar, false
+  | IMInfer ->
+      let grammar = Infer.infer grammar in
+      Time.tick "Inferring types for nonterminals";
+      grammar, true
+  | IMDependRaw ->
+      Infer.depend false grammar         (* never returns *)
+  | IMDependPostprocess ->
+      Infer.depend true grammar          (* never returns *)
+  | IMWriteQuery filename ->
+      Infer.write_query filename grammar (* never returns *)
+  | IMReadReply filename ->
+      let grammar = Infer.read_reply filename grammar in
+      Time.tick "Reading inferred types for nonterminals";
+      grammar, true
+  )
 
 (* ------------------------------------------------------------------------- *)
 
@@ -179,13 +172,10 @@ let grammar =
 
 let grammar =
   if Settings.inline then begin
-    let grammar, inlined =
-      NonTerminalDefinitionInlining.inline grammar
-    in
-    if not Settings.infer && inlined && not skipping_parser_generation then
-      Error.warning []
-        "you are using the standard library and/or the %%inline keyword. We\n\
-         recommend switching on --infer in order to avoid obscure type error messages.";
+    let grammar, (_ : bool) = NonTerminalDefinitionInlining.inline grammar in
+    (* 2018/05/23 Removed the warning that was issued when %inline was used
+       but --infer was turned off. Most people should use ocamlbuild or dune
+       anyway. *)
     Time.tick "Inlining";
     grammar
   end

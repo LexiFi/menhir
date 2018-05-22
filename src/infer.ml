@@ -37,7 +37,8 @@ let encode symbol =
 
 let decode s =
   let n = String.length s in
-  assert (n >= 3 && String.sub s 0 3 = "xv_");
+  if not (n >= 3 && String.sub s 0 3 = "xv_") then
+    Lexmli.fail();
   String.sub s 3 (n - 3)
 
 (* The name of the temporary file. *)
@@ -207,11 +208,11 @@ let program grammar =
 (* ------------------------------------------------------------------------- *)
 (* Writing the program associated with a grammar to a file. *)
 
-let write grammar () =
-  let ml = open_out mlname in
+let write grammar filename () =
+  let ml = open_out filename in
   let module P = Printer.Make (struct
     let f = ml
-    let locate_stretches = Some mlname
+    let locate_stretches = Some filename
   end) in
   P.program (program grammar);
   close_out ml
@@ -225,7 +226,7 @@ type entry =
 type line =
     entry (* target *) * entry list (* dependencies *)
 
-let depend grammar =
+let depend postprocess grammar =
 
   (* Create an [.ml] file and an [.mli] file, then invoke ocamldep to
      compute dependencies for us. *)
@@ -244,7 +245,7 @@ let depend grammar =
     Option.project (
       IO.moving_away mlname (fun () ->
       IO.moving_away mliname (fun () ->
-      IO.with_file mlname (write grammar) (fun () ->
+      IO.with_file mlname (write grammar mlname) (fun () ->
       IO.with_file mliname (Interface.write grammar) (fun () ->
       IO.invoke ocamldep_command
     )))))
@@ -259,49 +260,42 @@ let depend grammar =
      postprocessing of [ocamldep]'s output. For normal [make] users, who use
      [--depend], some postprocessing is required, which is performed below. *)
 
-  begin match Settings.depend with
-  | Settings.OMNone ->
-      assert false (* we wouldn't be here in the first place *)
-  | Settings.OMRaw ->
-      ()
-  | Settings.OMPostprocess ->
+  if postprocess then begin
 
-      (* Make sense out of ocamldep's output. *)
+    (* Make sense out of ocamldep's output. *)
 
-      let lexbuf = Lexing.from_string output in
-      let lines : line list =
-        try
-          Lexdep.main lexbuf
-        with Lexdep.Error msg ->
-          (* Echo the error message, followed with ocamldep's output. *)
-          Error.error [] "%s" (msg ^ output)
-      in
+    let lexbuf = Lexing.from_string output in
+    let lines : line list =
+      try
+        Lexdep.main lexbuf
+      with Lexdep.Error msg ->
+        (* Echo the error message, followed with ocamldep's output. *)
+        Error.error [] "%s" (msg ^ output)
+    in
 
-      (* Look for the line that concerns the [.cmo] target, and echo a
-         modified version of this line, where the [.cmo] target is
-         replaced with [.ml] and [.mli] targets, and where the dependency
-         over the [.cmi] file is dropped.
+    (* Look for the line that concerns the [.cmo] target, and echo a
+       modified version of this line, where the [.cmo] target is
+       replaced with [.ml] and [.mli] targets, and where the dependency
+       over the [.cmi] file is dropped.
 
-         In doing so, we assume that the user's [Makefile] supports
-         bytecode compilation, so that it makes sense to request [bar.cmo]
-         to be built, as opposed to [bar.cmx]. This is not optimal, but
-         will do. [camldep] exhibits the same behavior. *)
+       In doing so, we assume that the user's [Makefile] supports
+       bytecode compilation, so that it makes sense to request [bar.cmo]
+       to be built, as opposed to [bar.cmx]. This is not optimal, but
+       will do. [camldep] exhibits the same behavior. *)
 
-      (* TEMPORARY allow ocamldep to be called with flag -native. *)
-
-      List.iter (fun ((_, target_filename), dependencies) ->
-        if Filename.check_suffix target_filename ".cmo" then
-          let dependencies = List.filter (fun (basename, _) ->
-            basename <> base
-          ) dependencies in
-          if List.length dependencies > 0 then begin
-            Printf.printf "%s.ml %s.mli:" base base;
-            List.iter (fun (_basename, filename) ->
-              Printf.printf " %s" filename
-            ) dependencies;
-            Printf.printf "\n%!"
-          end
-      ) lines
+    List.iter (fun ((_, target_filename), dependencies) ->
+      if Filename.check_suffix target_filename ".cmo" then
+        let dependencies = List.filter (fun (basename, _) ->
+          basename <> base
+        ) dependencies in
+        if List.length dependencies > 0 then begin
+          Printf.printf "%s.ml %s.mli:" base base;
+          List.iter (fun (_basename, filename) ->
+            Printf.printf " %s" filename
+          ) dependencies;
+          Printf.printf "\n%!"
+        end
+    ) lines
 
   end;
 
@@ -310,30 +304,11 @@ let depend grammar =
   exit 0
 
 (* ------------------------------------------------------------------------- *)
-(* Inferring types for a grammar's nonterminals. *)
+(* Augmenting a grammar with inferred type information. *)
 
-let infer grammar =
+(* The parameter [output] is supposed to contain the output of [ocamlc -i]. *)
 
-  (* Invoke ocamlc to do type inference for us. *)
-
-  let ocamlc_command =
-    Printf.sprintf "%s -c -i %s" Settings.ocamlc (Filename.quote mlname)
-  in
-
-  let output =
-    write grammar ();
-    match IO.invoke ocamlc_command with
-    | Some result ->
-        Sys.remove mlname;
-        result
-    | None ->
-        (* 2015/10/05: intentionally do not remove the [.ml] file if [ocamlc]
-           fails. (Or if an exception is thrown.) We cannot understand why
-           [ocaml] complains if we can't see the [.ml] file. *)
-        exit 1
-  in
-
-  (* Make sense out of ocamlc's output. *)
+let read_reply (output : string) grammar =
 
   let env : (string * int * int) list =
     Lexmli.main (Lexing.from_string output)
@@ -353,7 +328,10 @@ let infer grammar =
         try
           List.assoc (Misc.normalize symbol) env
         with Not_found ->
-          assert false
+          (* No type information was inferred for this symbol.
+             Perhaps the mock [.ml] file or the inferred [.mli] file
+             are out of date. Fail gracefully. *)
+          Error.error [] "found no inferred type for %s." symbol
       in
       if StringMap.mem symbol grammar.types then
         (* If there was a declared type, keep it. *)
@@ -365,3 +343,42 @@ let infer grammar =
   in
 
   { grammar with types = types }
+
+
+(* ------------------------------------------------------------------------- *)
+(* Inferring types for a grammar's nonterminals. *)
+
+let infer grammar =
+
+  (* Invoke ocamlc to do type inference for us. *)
+
+  let ocamlc_command =
+    Printf.sprintf "%s -c -i %s" Settings.ocamlc (Filename.quote mlname)
+  in
+
+  let output =
+    write grammar mlname ();
+    match IO.invoke ocamlc_command with
+    | Some result ->
+        Sys.remove mlname;
+        result
+    | None ->
+        (* 2015/10/05: intentionally do not remove the [.ml] file if [ocamlc]
+           fails. (Or if an exception is thrown.) *)
+        exit 1
+  in
+
+  (* Make sense out of ocamlc's output. *)
+
+  read_reply output grammar
+
+(* ------------------------------------------------------------------------- *)
+
+let write_query filename grammar =
+  write grammar filename ();
+  exit 0
+
+(* ------------------------------------------------------------------------- *)
+
+let read_reply filename grammar =
+  read_reply (IO.read_whole_file filename) grammar

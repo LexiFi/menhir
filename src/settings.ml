@@ -99,19 +99,70 @@ let v () =
   dump := true;
   explain := true
 
-let infer =
-  ref false
-
 let inline =
   ref true
 
-type ocamldep_mode =
-  | OMNone        (* do not invoke ocamldep *)
-  | OMRaw         (* invoke ocamldep and echo its raw output *)
-  | OMPostprocess (* invoke ocamldep and postprocess its output *)
+type infer_mode =
+    (* Perform no type inference. This is the default mode. *)
+  | IMNone
+    (* Perform type inference by invoking ocamlc directly. *)
+  | IMInfer                (* --infer *)
+  | IMDependRaw            (* --raw-depend *)
+  | IMDependPostprocess    (* --depend *)
+    (* Perform type inference by writing a mock .ml file and
+       reading the corresponding inferred .mli file. *)
+  | IMWriteQuery of string (* --infer-write-query <filename> *)
+  | IMReadReply of string  (* --infer-read-reply <filename> *)
 
-let depend =
-  ref OMNone
+let show_infer_mode = function
+  | IMNone ->
+      ""
+  | IMInfer ->
+      "--infer"
+  | IMDependRaw ->
+      "--raw-depend"
+  | IMDependPostprocess ->
+      "--depend"
+  | IMWriteQuery _ ->
+      "--infer-write-query"
+  | IMReadReply _ ->
+      "--infer-read-reply"
+
+let infer =
+  ref IMNone
+
+let set_infer_mode mode2 =
+  let mode1 = !infer in
+  match mode1, mode2 with
+  | IMNone, _ ->
+      infer := mode2
+  (* It is valid to specify [--infer] in conjunction with [--depend] or
+     [--raw-depend]. The latter command then takes precedence. This is
+     for compatibility with Menhir prior to 2018/05/23. *)
+  | IMInfer, (IMInfer | IMDependRaw | IMDependPostprocess) ->
+      infer := mode2
+  | (IMDependRaw | IMDependPostprocess), IMInfer ->
+      ()
+  | _, _ ->
+      fprintf stderr "Error: you cannot use both %s and %s.\n"
+        (show_infer_mode mode1)
+        (show_infer_mode mode2);
+      exit 1
+
+let enable_infer () =
+  set_infer_mode IMInfer
+
+let enable_depend () =
+  set_infer_mode IMDependPostprocess
+
+let enable_raw_depend () =
+  set_infer_mode IMDependRaw
+
+let enable_write_query filename =
+  set_infer_mode (IMWriteQuery filename)
+
+let enable_read_reply filename =
+  set_infer_mode (IMReadReply filename)
 
 let code_inlining =
   ref true
@@ -241,12 +292,12 @@ let options = Arg.align [
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
   "--cmly", Arg.Set cmly, " Write a .cmly file";
   "--comment", Arg.Set comment, " Include comments in the generated code";
-  "--compare-errors", Arg.String add_compare_errors, "<filename> (used twice) Compare two .messages files.";
-  "--compile-errors", Arg.String set_compile_errors, "<filename> Compile a .messages file to OCaml code.";
+  "--compare-errors", Arg.String add_compare_errors, "<filename> (used twice) Compare two .messages files";
+  "--compile-errors", Arg.String set_compile_errors, "<filename> Compile a .messages file to OCaml code";
   "--coq", Arg.Set coq, " Generate a formally verified parser, in Coq";
   "--coq-no-complete", Arg.Set coq_no_complete, " Do not generate a proof of completeness";
   "--coq-no-actions", Arg.Set coq_no_actions, " Ignore semantic actions in the Coq output";
-  "--depend", Arg.Unit (fun () -> depend := OMPostprocess), " Invoke ocamldep and display dependencies";
+  "--depend", Arg.Unit enable_depend, " Invoke ocamldep and display dependencies";
   "--dump", Arg.Set dump, " Write an .automaton file";
   "--echo-errors", Arg.String set_echo_errors, "<filename> Echo the sentences in a .messages file";
   "--error-recovery", Arg.Set recovery, " (no longer supported)";
@@ -255,7 +306,9 @@ let options = Arg.align [
   "--fixed-exception", Arg.Set fixedexc, " Declares Error = Parsing.Parse_error";
   "--follow-construction", Arg.Set follow, " (undocumented)";
   "--graph", Arg.Set graph, " Write a dependency graph to a .dot file";
-  "--infer", Arg.Set infer, " Invoke ocamlc to do type inference";
+  "--infer", Arg.Unit enable_infer, " Invoke ocamlc to do type inference";
+  "--infer-write-query", Arg.String enable_write_query, "<filename> Write mock .ml file";
+  "--infer-read-reply", Arg.String enable_read_reply, "<filename> Read inferred .mli file";
   "--inspection", Arg.Set inspection, " Generate the inspection API";
   "--interpret", Arg.Set interpret, " Interpret the sentences provided on stdin";
   "--interpret-show-cst", Arg.Set interpret_show_cst, " Show a concrete syntax tree upon acceptance";
@@ -266,7 +319,7 @@ let options = Arg.align [
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
-  "--no-inline", Arg.Clear inline, " Ignore the %inline keyword.";
+  "--no-inline", Arg.Clear inline, " Ignore the %inline keyword";
   "--no-pager", Arg.Unit (fun () -> if !construction_mode = ModePager then construction_mode := ModeInclusionOnly), " (undocumented)";
   "--no-prefix", Arg.Set noprefix, " (undocumented)";
   "--no-stdlib", Arg.Set no_stdlib, " Do not load the standard library";
@@ -281,7 +334,7 @@ let options = Arg.align [
   "--only-preprocess-uu", Arg.Unit (fun () -> preprocess_mode := PMOnlyPreprocess (PrintUnitActions true)),
                           " Print grammar with unit actions & tokens";
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
-  "--raw-depend", Arg.Unit (fun () -> depend := OMRaw), " Invoke ocamldep and echo its raw output";
+  "--raw-depend", Arg.Unit enable_raw_depend, " Invoke ocamldep and echo its raw output";
   "--stdlib", Arg.Set_string stdlib_path, "<directory> Specify where the standard library lies";
   "--strict", Arg.Set strict, " Warnings about the grammar are errors";
   "--suggest-comp-flags", Arg.Unit (fun () -> suggestion := SuggestCompFlags),
@@ -429,14 +482,8 @@ let () =
 let noprefix =
   !noprefix
 
-let infer =
-  !infer
-
 let code_inlining =
   !code_inlining
-
-let depend =
-  !depend
 
 let inline =
   !inline
@@ -530,3 +577,28 @@ let echo_errors =
 
 let cmly =
   !cmly
+
+let infer =
+  !infer
+
+(* If some flags imply that we will NOT produce an OCaml parser, then there is
+   no need to perform type inference, so [--infer] is ignored. This saves time
+   and dependency nightmares. *)
+
+let skipping_parser_generation =
+  coq ||
+  compile_errors <> None ||
+  interpret_error ||
+  list_errors ||
+  compare_errors <> None ||
+  update_errors <> None ||
+  echo_errors <> None ||
+  false
+    (* maybe also: [preprocess_mode <> PMNormal] *)
+
+let infer =
+  match infer with
+  | IMInfer when skipping_parser_generation ->
+      IMNone
+  | _ ->
+      infer
