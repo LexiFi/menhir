@@ -15,7 +15,7 @@ DEMOS := \
   calc-inspection \
   generate-printers \
 
-.PHONY: all clean
+.PHONY: all clean realclean
 
 all clean::
 	@for i in $(DEMOS) ; do \
@@ -24,3 +24,6 @@ all clean::
 
 clean::
 	/bin/rm -f *~ .*~
+
+realclean: clean
+	make -C calc-dune clean
