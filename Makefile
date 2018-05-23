@@ -11,6 +11,7 @@
 #   demos
 #   menhir.1
 #   manual.pdf
+#   manual.html
 #   src
 #   Makefile (this one)
 
@@ -50,7 +51,7 @@ docdir		:= $(PREFIX)/share/doc/menhir
 libdir	        := $(PREFIX)/share/menhir
 mandir          := $(PREFIX)/share/man/man1
 MANS            := menhir.1
-DOCS            := manual.pdf demos
+DOCS            := manual.pdf manual.html demos
 MLYLIB          := src/standard.mly
 
 # ----------------------------------------------------------------------------
