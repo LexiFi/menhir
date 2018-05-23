@@ -1,12 +1,13 @@
 .PHONY: all clean test
 
+DUNE       := jbuilder
 EXECUTABLE := calc.exe
 
 all:
-	jbuilder build $(EXECUTABLE)
+	$(DUNE) build $(EXECUTABLE)
 
 clean:
-	jbuilder clean
+	$(DUNE) clean
 	rm -f *~ .*~
 
 test: all
