@@ -307,6 +307,7 @@ let options = Arg.align [
   "--follow-construction", Arg.Set follow, " (undocumented)";
   "--graph", Arg.Set graph, " Write a dependency graph to a .dot file";
   "--infer", Arg.Unit enable_infer, " Invoke ocamlc to do type inference";
+  "--infer-protocol-supported", Arg.Unit (fun () -> exit 0), " Stop with exit code 0";
   "--infer-write-query", Arg.String enable_write_query, "<filename> Write mock .ml file";
   "--infer-read-reply", Arg.String enable_read_reply, "<filename> Read inferred .mli file";
   "--inspection", Arg.Set inspection, " Generate the inspection API";
