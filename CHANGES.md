@@ -1,5 +1,19 @@
 # Changes
 
+## 2018/05/23
+
+* New commands `--infer-write-query`, `--infer-read-reply`, and
+  `--infer-protocol-supported`. These commands remove the need
+  for Menhir to invoke `ocamlc` and `ocamldep` behind the scenes,
+  and make it easier to write correct build rules for Menhir projects.
+  The command line options `--infer`, `--raw-depend` and `--depend`
+  remain supported, but are no longer preferred. (Suggested by
+  Fabrice Le Fessant.)
+
+* Remove the warning that was issued when `%inline` was used but `--infer`
+  was turned off. Most people should use a build system that knows how to
+  enable OCaml type inference, such as `ocamlbuild` or `dune`.
+
 ## 2017/12/22
 
 * Add a flag `--unused-precedence-levels` to suppress all warnings about
