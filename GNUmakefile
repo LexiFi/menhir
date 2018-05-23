@@ -126,7 +126,9 @@ package: clean
 	@ cp -fr src/*.ml{,i,y,l,pack} src/*.messages src/Makefile src/*.META $(PACKAGE)/src
 	@ rm -f $(PACKAGE)/src/installation.ml
 	@ grep -v my_warnings src/_tags > $(PACKAGE)/src/_tags
-	@ $(MAKE) -C $(PACKAGE)/demos clean
+# Clean up the demos, including those that are not built by default
+# because they require dune.
+	@ $(MAKE) -C $(PACKAGE)/demos realclean
 # Set the version number into the files that mention it. These
 # include version.ml, StaticVersion.{ml,mli}, version.tex, META.
 	@ echo "-> Setting version to $(DATE)."
