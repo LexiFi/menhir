@@ -6,7 +6,7 @@ DEPS = $(wildcard *.tex) $(wildcard *.bib) $(wildcard *.sty) $(wildcard *.mly)
 
 SED := $(shell if hash gsed 2>/dev/null ; then echo gsed ; else echo sed ; fi)
 
-all: main.pdf
+all: main.pdf main.html
 
 %.pdf: %.tex $(DEPS)
 	pdflatex $*
