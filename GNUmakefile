@@ -128,7 +128,7 @@ package: clean
 	@ grep -v my_warnings src/_tags > $(PACKAGE)/src/_tags
 # Clean up the demos, including those that are not built by default
 # because they require dune.
-	@ $(MAKE) -C $(PACKAGE)/demos realclean
+	@ $(MAKE) -C $(PACKAGE)/demos clean
 # Set the version number into the files that mention it. These
 # include version.ml, StaticVersion.{ml,mli}, version.tex, META.
 	@ echo "-> Setting version to $(DATE)."

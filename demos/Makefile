@@ -1,12 +1,12 @@
 # The following demos require menhirLib:
 #   calc-incremental
 #   calc-inspection
+
 # The following demos require menhirSdk:
 #   generate-printers
-# The following demos require dune (a.k.a. jbuilder)
-# and assume that Menhir is already installed:
-#   calc-dune
-#   calc-incremental-dune
+
+# The demos whose name ends in -dune require dune (a.k.a. jbuilder)
+# and assume that Menhir is installed.
 
 DEMOS := \
   calc \
@@ -15,8 +15,10 @@ DEMOS := \
   calc-incremental \
   calc-inspection \
   generate-printers \
+  calc-dune \
+  calc-incremental-dune \
 
-.PHONY: all clean realclean
+.PHONY: all clean
 
 all clean::
 	@for i in $(DEMOS) ; do \
@@ -25,7 +27,3 @@ all clean::
 
 clean::
 	/bin/rm -f *~ .*~
-
-realclean: clean
-	make -C calc-dune clean
-	make -C calc-incremental-dune clean

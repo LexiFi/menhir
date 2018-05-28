@@ -4,11 +4,15 @@ DUNE       := jbuilder
 EXECUTABLE := calc.exe
 
 all:
-	$(DUNE) build $(EXECUTABLE)
+	@ if command -v $(DUNE) > /dev/null ; then \
+	  $(DUNE) build $(EXECUTABLE) ; \
+	else \
+	  echo "Error: $(DUNE) is required." ; \
+	fi
 
 clean:
-	$(DUNE) clean
-	rm -f *~ .*~
+	rm -rf `cat .gitignore`
+	rm -f *~
 
 test: all
 	@echo "The following command should print 42:"
