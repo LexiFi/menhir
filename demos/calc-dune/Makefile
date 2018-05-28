@@ -12,4 +12,4 @@ clean:
 
 test: all
 	@echo "The following command should print 42:"
-	echo "(1 + 2 * 10) * 2" | ./$(EXECUTABLE)
+	echo "(1 + 2 * 10) * 2" | ./_build/default/$(EXECUTABLE)
