@@ -17,6 +17,7 @@ DEMOS := \
   generate-printers \
   calc-dune \
   calc-incremental-dune \
+  calc-inspection-dune \
 
 .PHONY: all clean
 
