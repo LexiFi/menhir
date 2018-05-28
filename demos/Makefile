@@ -6,6 +6,7 @@
 # The following demos require dune (a.k.a. jbuilder)
 # and assume that Menhir is already installed:
 #   calc-dune
+#   calc-incremental-dune
 
 DEMOS := \
   calc \
@@ -27,3 +28,4 @@ clean::
 
 realclean: clean
 	make -C calc-dune clean
+	make -C calc-incremental-dune clean
