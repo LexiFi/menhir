@@ -143,6 +143,7 @@ package: clean
 	@ make -C $(PACKAGE)/doc clean all
 	@ mv $(PACKAGE)/doc/main.pdf $(PACKAGE)/manual.pdf
 	@ mv $(PACKAGE)/doc/main.html $(PACKAGE)/manual.html
+	@ mv $(PACKAGE)/doc/manual-figure*.png $(PACKAGE)/
 	@ mv $(PACKAGE)/doc/menhir.1 $(PACKAGE)/
 # Include a copy of the sources of the documentation,
 # as Debian requires this for the PDF to be included
@@ -212,7 +213,11 @@ PAGE    := /home/fpottier/dev/page
 
 export:
 # Copier l'archive et la doc vers yquem.
-	$(RSYNC) $(TARBALL) $(PACKAGE)/manual.pdf $(PACKAGE)/manual.html $(TARGET)
+	$(RSYNC) \
+	  $(TARBALL) \
+	  $(PACKAGE)/manual.pdf \
+	  $(PACKAGE)/manual.html $(PACKAGE)/manual-figure*.png \
+	  $(TARGET)
 # Mettre à jour la page Web de Menhir avec le nouveau numéro de version.
 	cd $(PAGE) && \
 	  cvs up && \
