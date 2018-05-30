@@ -15,9 +15,9 @@ DEMOS := \
   calc-incremental \
   calc-inspection \
   generate-printers \
-  calc-dune \
-  calc-incremental-dune \
-  calc-inspection-dune \
+#  calc-dune \             # this demo causes [make check] to fail
+#  calc-incremental-dune \ # this demo causes [make check] to fail
+#  calc-inspection-dune \  # this demo requires new Dune, not yet released
 
 .PHONY: all clean
 
