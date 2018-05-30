@@ -451,8 +451,15 @@ module Run (T: sig end) = struct
     write_items f;
     fprintf f "End Aut.\n\n"
 
+  let from_menhirlib f =
+    match Settings.coq_lib_path with
+    | None ->
+        ()
+    | Some path ->
+        fprintf f "From %s " path
+
   let write_theorems f =
-    fprintf f "Require Import Main.\n\n";
+    from_menhirlib f; fprintf f "Require Import Main.\n\n";
 
     fprintf f "Module Parser := Main.Make Aut.\n";
 
@@ -503,13 +510,13 @@ module Run (T: sig end) = struct
       List.iter (fun s -> fprintf f "%s\n\n" s.Stretch.stretch_content)
         Front.grammar.UnparameterizedSyntax.preludes;
 
-    fprintf f "Require Import List.\n";
-    fprintf f "Require Import Int31.\n";
-    fprintf f "Require Import Syntax.\n";
-    fprintf f "Require Import Tuples.\n";
-    fprintf f "Require Import Alphabet.\n";
-    fprintf f "Require Grammar.\n";
-    fprintf f "Require Automaton.\n\n";
+    fprintf f "From Coq.Lists Require Import List.\n";
+    fprintf f "From Coq.Numbers.Cyclic.Int31 Require Import Int31.\n";
+    fprintf f "From Coq.Program Require Import Syntax.\n";
+    from_menhirlib f; fprintf f "Require Import Tuples.\n";
+    from_menhirlib f; fprintf f "Require Import Alphabet.\n";
+    from_menhirlib f; fprintf f "Require Grammar.\n";
+    from_menhirlib f; fprintf f "Require Automaton.\n\n";
     fprintf f "Unset Elimination Schemes.\n\n";
     write_grammar f;
     write_automaton f;

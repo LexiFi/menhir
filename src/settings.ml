@@ -287,6 +287,9 @@ let set_echo_errors filename =
 let cmly =
   ref false
 
+let coq_lib_path =
+  ref (Some "MenhirLib")
+
 let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
@@ -295,8 +298,10 @@ let options = Arg.align [
   "--compare-errors", Arg.String add_compare_errors, "<filename> (used twice) Compare two .messages files";
   "--compile-errors", Arg.String set_compile_errors, "<filename> Compile a .messages file to OCaml code";
   "--coq", Arg.Set coq, " Generate a formally verified parser, in Coq";
-  "--coq-no-complete", Arg.Set coq_no_complete, " Do not generate a proof of completeness";
+  "--coq-lib-path", Arg.String (fun path -> coq_lib_path := Some path), "<path> How to qualify references to MenhirLib";
+  "--coq-lib-no-path", Arg.Unit (fun () -> coq_lib_path := None), " Do *not* qualify references to MenhirLib";
   "--coq-no-actions", Arg.Set coq_no_actions, " Ignore semantic actions in the Coq output";
+  "--coq-no-complete", Arg.Set coq_no_complete, " Do not generate a proof of completeness";
   "--depend", Arg.Unit enable_depend, " Invoke ocamldep and display dependencies";
   "--dump", Arg.Set dump, " Write an .automaton file";
   "--echo-errors", Arg.String set_echo_errors, "<filename> Echo the sentences in a .messages file";
@@ -578,6 +583,9 @@ let echo_errors =
 
 let cmly =
   !cmly
+
+let coq_lib_path =
+  !coq_lib_path
 
 let infer =
   !infer

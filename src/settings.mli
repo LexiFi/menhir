@@ -231,3 +231,9 @@ val echo_errors: string option
    binary-format description of the grammar and automaton. *)
 
 val cmly: bool
+
+(* This name is used in --coq mode. It appears in the generated Coq file,
+   and indicates under what name (or path) the Coq library MenhirLib is
+   known. Its default value is [Some "MenhirLib"]. *)
+
+val coq_lib_path: string option

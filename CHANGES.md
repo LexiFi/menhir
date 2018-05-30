@@ -1,5 +1,19 @@
 # Changes
 
+## 2018/05/30
+
+* In `--coq` mode, Menhir now produces references to `MenhirLib.Grammar`
+  instead of just `Grammar`, and similarly for all modules in Menhir's support
+  library.
+
+* New command line option `--coq-lib-no-path` to suppress the above behavior
+  and retain the previous (now-deprecated) behavior, that is, produce
+  unqualified references the modules in Menhir's support library.
+
+* New command line option `--coq-lib-path <path>` to indicate under what name
+  (or path) the support library has been installed. Its default value is
+  `MenhirLib`.
+
 ## 2018/05/23
 
 * New commands `--infer-write-query`, `--infer-read-reply`, and

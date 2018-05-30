@@ -130,6 +130,15 @@ irredundant. For more information, see \sref{sec:errors:new}.
 
 \docswitch{\ocoq} This switch causes \menhir to produce Coq code. See \sref{sec:coq}.
 
+\docswitch{\ocoqlibpath \nt{path}} This switch allows specifying under what name (or path) the Coq support library
+MenhirLib is known to Coq. When \menhir runs in \ocoq mode, the generated
+parser contains references to several modules in this library. This path is
+used to qualify these references. Its default value is \texttt{MenhirLib}.
+
+\docswitch{\ocoqlibnopath} This switch indicates that references to the Coq library MenhirLib
+should \emph{not} be qualified. This was the default behavior of \menhir prior to 2018/05/30.
+This switch is provided for compatibility, but normally should not be used.
+
 \docswitch{\ocoqnoactions} (Used in conjunction with \ocoq.) This switch
 causes the semantic actions present in the \vy file to be ignored and
 replaced with \verb+tt+, the unique inhabitant of Coq's \verb+unit+ type. This
@@ -3518,11 +3527,19 @@ named \verb+Parser.unambiguous+.
 % correspond bien à la fin du Stream.
 
 The parsers produced by \menhir's Coq back-end must be linked with a Coq
-library, which can be found in the CompCert tree~\cite{compcert,compcert-github}, in the
-\compcertgithubfile{cparser/validator}
-subdirectory. CompCert can be used as
+library. This library can be installed via the command \verb+opam install coq-menhirlib+.%
+%
+\footnote{This assumes that you have installed \texttt{opam}, the OCaml package manager,
+and that you have run the command \texttt{opam repo add coq-released
+https://coq.inria.fr/opam/released}.}
+%
+The Coq sources of this library can be found at
+\url{https://gitlab.inria.fr/fpottier/coq-menhirlib}.
+
+The CompCert verified compiler~\cite{compcert,compcert-github} can be used as
 an example if one wishes to use \menhir to generate a formally verified parser
-as part of some other project.
+as part of some other project. See in particular the directory
+\compcertgithubfile{cparser}.
 
 % fp: ce pourrait être bien de documenter les directives nécessaires pour
 % extraire du code efficace. D'après Xavier ce morceau de extraction.v
