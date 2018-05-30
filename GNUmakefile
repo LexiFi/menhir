@@ -37,7 +37,8 @@ PWD      := $(shell pwd)
 package:
 # Make sure the correct version can be installed.
 	@ make uninstall
-	@ make   install
+	@ make clean
+	@ make install
 
 # -------------------------------------------------------------------------
 
