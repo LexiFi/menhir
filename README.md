@@ -11,10 +11,9 @@ the grammar).
 
 ## Installation
 
-The latest released version of MenhirLib can be easily installed via
-`opam`, OCaml's package manager. Just type `opam install coq-menhirlib`.
+To install the latest released version, use `opam install coq-menhirlib`.
 
-For manual installation, use `make` followed with `make install`.
+To install from the sources, use `make` followed with `make install`.
 
 ## Authors
 
