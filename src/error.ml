@@ -15,10 +15,23 @@ open Printf
 
 (* ---------------------------------------------------------------------------- *)
 
+(* A mechanism to turn all display (logging, warnings, errors) on and off. *)
+
+let enabled =
+  ref true
+
+let enable () =
+  enabled := true
+
+let disable () =
+  enabled := false
+
+(* ---------------------------------------------------------------------------- *)
+
 (* Logging and log levels. *)
 
 let log kind verbosity msg =
-  if kind >= verbosity then
+  if kind >= verbosity && !enabled then
     Printf.fprintf stderr "%t%!" msg
 
 let logG =
@@ -37,14 +50,16 @@ let logC =
 let errors =
   ref false
 
-let display continuation header positions format =
+let print_positions f positions =
   List.iter (fun position ->
-    fprintf stderr "%s:\n" (Positions.string_of_pos position)
-  ) positions;
-  Printf.kfprintf
-    continuation
-    stderr
-    (header ^^ format ^^ "\n%!")
+    fprintf f "%s:\n" (Positions.string_of_pos position)
+  ) positions
+
+let display continuation header positions format =
+  let kprintf = if !enabled then Printf.kfprintf else Printf.ikfprintf in
+  kprintf continuation stderr
+    ("%a" ^^ header ^^ format ^^ "\n%!")
+    print_positions positions
 
 let error positions format =
   display
