@@ -310,6 +310,9 @@ let depend postprocess grammar =
 
 let read_reply (output : string) grammar =
 
+  (* See comment in module [Error]. *)
+  Error.enable();
+
   let env : (string * int * int) list =
     Lexmli.main (Lexing.from_string output)
   in

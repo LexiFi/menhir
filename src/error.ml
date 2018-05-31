@@ -28,6 +28,26 @@ let disable () =
 
 (* ---------------------------------------------------------------------------- *)
 
+(* The new OCaml type inference protocol means that Menhir is called twice, first
+   with [--infer-write-query], then with [--infer-read-reply]. This means that any
+   information messages or warnings issued before OCaml type inference takes place
+   are duplicated, unless we do something about it. To address this issue, when
+   [--infer-read-reply] is set, we disable all output until the point where we
+   read the inferred [.mli] file. Then, we enable it again and continue. *)
+
+(* An alternative idea would be to disable all output when [--infer-write-query]
+   is set. However, we would then have no output at all if this command fails. *)
+
+let () =
+  Settings.(match infer with
+  | IMReadReply _ ->
+      disable()
+  | _ ->
+      ()
+  )
+
+(* ---------------------------------------------------------------------------- *)
+
 (* Logging and log levels. *)
 
 let log kind verbosity msg =
