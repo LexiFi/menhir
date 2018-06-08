@@ -1039,6 +1039,9 @@ recognized.
 \begin{tabular}{lp{51mm}l@{}l}
 Name & Recognizes & Produces & Comment \\
 \hline\\
+\nt{endrule}(\nt{X}) & \nt{X} & $\alpha$, if \nt{X} : $\alpha$ & (inlined) \\
+\nt{midrule}(\nt{X}) & \nt{X} & $\alpha$, if \nt{X} : $\alpha$ \\
+\\
 \nt{option}(\nt{X})  & $\epsilon$ \barre \nt{X} & $\alpha$ \basic{option}, if \nt{X} : $\alpha$ \\
 \nt{ioption}(\nt{X}) & $\epsilon$ \barre \nt{X} & $\alpha$ \basic{option}, if \nt{X} : $\alpha$ & (inlined) \\
 \nt{boption}(\nt{X}) & $\epsilon$ \barre \nt{X} & \basic{bool} \\
@@ -1062,7 +1065,7 @@ Name & Recognizes & Produces & Comment \\
   & a possibly empty sequence of \nt{X}'s separated with \nt{sep}'s
   & $\alpha$ \basic{list}, if \nt{X} : $\alpha$ \\
 \nt{separated\_nonempty\_list}(\nt{sep}, \nt{X})
-  & a nonempty sequence of \nt{X}'s separated with \nt{sep}'s
+  & a nonempty sequence of \nt{X}'s \hspace{2mm} separated with \nt{sep}'s
   & $\alpha$ \basic{list}, if \nt{X} : $\alpha$ \\
 
 \end{tabular}
@@ -1113,6 +1116,85 @@ command line switch \ostdlib.
 %
 The command line switch \onostdlib instructs \menhir to \emph{not} load the
 standard library.
+
+The meaning of the symbols defined in the standard library
+(\fref{fig:standard}) should be clear in most cases. Yet, the
+symbols \nt{endrule}(\nt{X}) and \nt{midrule}(\nt{X}) deserve an explanation.
+Both take an argument \nt{X}, which typically will be instantiated with an
+anonymous rule (\sref{sec:actual}). Both are defined as a synonym
+for \nt{X}. In both cases, this allows placing an anonymous subrule in the
+middle of a rule.
+
+\newcommand{\AAA}{\nt{cat}}
+\newcommand{\BBB}{\nt{dog}}
+\newcommand{\CCC}{\nt{cow}}
+\newcommand{\XXX}{\nt{xxx}}
+
+For instance, the following is a well-formed production:
+%
+\[\begin{array}{l}
+  \AAA \quad
+  \nt{endrule}(\BBB \quad \dpaction{\nt{\ocaml code$_1$}}) \quad
+  \CCC \quad
+  \dpaction{\nt{\ocaml code$_2$}}
+\end{array}\]
+%
+This production consists of three producers, namely
+\AAA{} and
+\nt{endrule}(\BBB$\;$\dpaction{\nt{\ocaml code$_1$}}) and
+\CCC,
+and a semantic action \dpaction{\nt{\ocaml code$_2$}}.
+%
+Because \nt{endrule}(\nt{X}) is declared as an \dinline synonym for \nt{X},
+the expansion of anonymous rules (\sref{sec:actual}), followed with the
+expansion of \dinline symbols (\sref{sec:inline}), transforms the above
+production into the following:
+%
+\[\begin{array}{l}
+  \AAA \quad
+  \BBB \quad
+  \CCC \quad
+  \dpaction{\nt{\ocaml code$_1$; \ocaml code$_2$}}
+\end{array}\]
+%
+Note that \nt{\ocaml code$_1$} moves to the end of the rule, which means that
+this code is executed only after \AAA, \BBB{} and \CCC{} have
+been recognized. In this example, the use of \nt{endrule} is rather pointless,
+as the expanded code is more concise and clearer than the original code. Still,
+\nt{endrule} can be useful when its actual argument is an anonymous rule with
+multiple branches.
+
+% Let me *not* show an example. See the comments in standard.mly.
+
+\nt{midrule} is used in exactly the same way as \nt{endrule}, but its expansion
+is different. For instance, the following is a well-formed production:
+%
+\[\begin{array}{l}
+  \AAA \quad
+  \nt{midrule}(\dpaction{\nt{\ocaml code$_1$}}) \quad
+  \CCC \quad
+  \dpaction{\nt{\ocaml code$_2$}}
+\end{array}\]
+%
+(There is no \BBB{} in this example; this is intentional.)
+Because \nt{midrule}(\nt{X}) is a synonym for \nt{X}, but is not declared
+\dinline, the expansion of anonymous rules (\sref{sec:actual}), followed
+with the expansion of \dinline symbols (\sref{sec:inline}), transforms the
+above production into the following:
+%
+\[\begin{array}{l}
+  \AAA \quad
+  \XXX \quad
+  \CCC \quad
+  \dpaction{\nt{\ocaml code$_2$}}
+\end{array}\]
+%
+where the fresh nonterminal symbol $\XXX$ is separately defined by the
+rule $\XXX: \dpaction{\nt{\ocaml code$_1$}}$. Thus, $\XXX$ recognizes
+the empty string, and as soon as it is recognized, \nt{\ocaml code$_1$}
+is executed. This is known as a ``mid-rule action''.
+
+% https://www.gnu.org/software/bison/manual/html_node/Mid_002dRule-Actions.html
 
 % ------------------------------------------------------------------------------
 
@@ -4120,6 +4202,9 @@ in \sref{sec:positions}. In short, the solution is to use \verb+$symbolstartpos+
 
 \question{Can I pretty-print a grammar in ASCII, HTML, or \LaTeX{} format?}
 Yes. Have a look at \texttt{obelisk} \cite{obelisk}.
+
+\question{Does \menhir support mid-rule actions?} Yes.
+See \nt{midrule} and its explanation in \sref{sec:library}.
 
 % ------------------------------------------------------------------------------
 

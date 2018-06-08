@@ -1,5 +1,13 @@
 # Changes
 
+## 2018/06/08
+
+* Add two new parameterized nonterminal symbols, `endrule(X)` and `midrule(X)`,
+  to the standard library. These symbols have been available since 2015/02/11
+  under the names `anonymous(X)` and `embedded(X)`, but were not yet documented.
+  `endrule(X)` and `midrule(X)` are now documented,
+  while `anonymous(X)` and `embedded(X)` remain present but are deprecated.
+
 ## 2018/05/30
 
 * In `--coq` mode, Menhir now produces references to `MenhirLib.Grammar`

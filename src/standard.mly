@@ -20,70 +20,84 @@
 (* ------------------------------------------------------------------------- *)
 (* The identity. *)
 
-(* [anonymous(X)] is the same as [X]. *)
+(* [endrule(X)] is the same as [X]. *)
 
-(* This allows placing an anonymous sub-rule in the middle of a rule, as in:
+(* This allows placing an anonymous subrule in the middle of a rule, as in:
 
-     foo
-     anonymous(baz { action1 })
-     bar
+     cat
+     endrule(dog { action1 })
+     cow
      { action2 }
 
-   Because anonymous is marked %inline, everything is expanded away. So,
+   Because [endrule] is marked %inline, everything is expanded away. So,
    this is equivalent to:
 
-     foo baz bar { action1; action2 }
+     cat dog cow { action1; action2 }
 
-   Note that [action1] moves to the end of the rule. The anonymous sub-rule
+   Note that [action1] moves to the end of the rule. The anonymous subrule
    can even have several branches, as in:
 
-     foo
-     anonymous(baz { action1a } | quux { action1b })
-     bar
+     cat
+     endrule(dog { action1a } | fox { action1b })
+     cow
      { action2 }
 
    This is expanded to:
 
-     foo baz  bar { action1a; action2 }
-   | foo quux bar { action1b; action2 }
+     cat dog cow { action1a; action2 }
+   | cat fox cow { action1b; action2 }
 
 *)
+
+%public %inline endrule(X):
+x = X
+    { x }
+
+(* [anonymous(X)] is a deprecated synonym for [endrule(X)].
+   It was never documented. *)
 
 %public %inline anonymous(X):
 x = X
     { x }
 
-(* [embedded(X)] is the same as [X]. *)
+(* [midrule(X)] is the same as [X]. *)
 
-(* This allows placing an anonymous sub-rule in the middle of a rule, as in:
+(* This allows placing an anonymous subrule in the middle of a rule, as in:
 
-     foo
-     embedded(baz { action1 })
-     bar
+     cat
+     midrule(dog { action1 })
+     cow
      { action2 }
 
-   Because [embedded] is not marked %inline, this is equivalent to:
+   Because [midrule] is not marked %inline, this is equivalent to:
 
-     foo xxx bar { action2 }
+     cat xxx cow { action2 }
 
-   where the fresh non-terminal symbol [xxx] is separately defined by:
+   where the fresh nonterminal symbol [xxx] is separately defined by:
 
-     xxx: baz { action1 }
+     xxx: dog { action1 }
 
-   In particular, if there is no [baz], what we get is a semantic action
+   In particular, if there is no [dog], what we get is a semantic action
    embedded in the middle of a rule. For instance,
 
-     foo embedded({ action1 }) bar { action2 }
+     cat midrule({ action1 }) cow { action2 }
 
    is equivalent to:
 
-     foo xxx bar { action2 }
+     cat xxx cow { action2 }
 
    where [xxx] is separately defined by the rule:
 
      xxx: { action1 }
 
 *)
+
+%public midrule(X):
+x = X
+    { x }
+
+(* [embedded(X)] is a deprecated synonym for [midrule(X)].
+   It was never documented. *)
 
 %public embedded(X):
 x = X
@@ -217,4 +231,3 @@ x = X
     { x :: xs }
 
 %%
-
