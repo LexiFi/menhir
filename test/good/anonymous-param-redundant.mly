@@ -32,4 +32,4 @@ other:
    D and is NOT parameterized over X. *)
 seplist(X):
   X {}
-| X embedded(C {} | D {}) seplist(X) {}
+| X midrule(C {} | D {}) seplist(X) {}
