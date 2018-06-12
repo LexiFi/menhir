@@ -54,10 +54,6 @@ val tabulateb: int -> (int -> bool) -> (int -> bool) * int
 
 val tabulateo: ('a -> int) -> ((unit -> 'a -> unit) -> unit -> unit) -> int -> ('a -> 'b option) -> ('a -> 'b option) * int
 
-(* Reverse function application. *)
-
-val ( $$ ) : 'a -> ('a -> 'b) -> 'b
-
 (* [separated_list_to_string printer sep l] converts [l] into a string
    representation built by using [printer] on each element and [sep] as
    a separator. *)

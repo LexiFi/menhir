@@ -11,7 +11,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Misc
 open Syntax
 open Positions
 
@@ -587,7 +586,7 @@ let empty_grammar =
 let join grammar pgrammar =
   let filename = pgrammar.pg_filename in
     List.fold_left (join_declaration filename) grammar pgrammar.pg_declarations
-    $$ join_postlude pgrammar.pg_postlude
+    |> join_postlude pgrammar.pg_postlude
 
 (* If a rule is marked %inline, then it must not carry an attribute. *)
 let check_inline_attribute prule =
