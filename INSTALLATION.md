@@ -40,8 +40,8 @@ when running `make all` and `make install`.
 Compile and install as follows:
 
 ```
-       make PREFIX=/usr/local USE_OCAMLFIND=true all
-  sudo make PREFIX=/usr/local install
+       make -f Makefile PREFIX=/usr/local USE_OCAMLFIND=true all
+  sudo make -f Makefile PREFIX=/usr/local install
 ```
 
 If necessary, adjust `PREFIX`, `USE_OCAMLFIND` and `TARGET` as described above.
