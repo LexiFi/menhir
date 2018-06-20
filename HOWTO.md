@@ -20,6 +20,24 @@ This produces an executable file named `_stage2/menhir.native`.
 `make bootstrap` occasionally fails for no good reason. In that case,
 use `make clean` before attempting `make bootstrap` again.
 
+## Testing
+
+To run Menhir's test suite, just go down into the `test` directory
+and type `make test`. The package `functory` is required; install
+it first via `opam install functory`.
+
+The subdirectory `test/good` contains a number of correct `.mly` files.
+The test suite checks that Menhir accepts these files and
+compares the output of `menhir --only-preprocess` against an expected output.
+It does not check that Menhir actually produces a working parser.
+
+The subdirectory `test/bad` contains a number of incorrect `.mly` files.
+The test suite checks that Menhir rejects these files
+and produces the expected error message.
+
+Some performance and correctness checks can be found in the directory `quicktest`;
+see [quicktest/README](quicktest/README).
+
 ## About the Module Ordering
 
 Some toplevel modules have side effects and must be executed in the
