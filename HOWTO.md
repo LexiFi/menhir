@@ -25,6 +25,8 @@ use `make clean` before attempting `make bootstrap` again.
 Some toplevel modules have side effects and must be executed in the
 following order:
 
+| Module                | Task |
+| --------------------- | ---- |
 | Settings		| parses the command line |
 | PreFront		| reads the grammar description files |
 | TokenType		| deals with `--only-tokens` and exits |
