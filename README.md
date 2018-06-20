@@ -13,6 +13,8 @@ The latest released version of Menhir can be easily installed via
 
 For manual installation, see [INSTALLATION.md](INSTALLATION.md).
 
+Some instructions for developers can be found in [HOWTO.md](HOWTO.md).
+
 ## Authors
 
 * [François Pottier](Francois.Pottier@inria.fr)
