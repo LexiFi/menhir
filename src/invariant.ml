@@ -674,6 +674,9 @@ let () =
       | Position (Left, _, _) ->
           (* [$startpos] and [$endpos] have been expanded away. *)
           assert false
+      | Position (_, _, FlavorLocation) ->
+          (* [$loc] and [$sloc] have been expanded away. *)
+          assert false
       | Position (RightNamed _, WhereSymbolStart, _) ->
           (* [$symbolstartpos(x)] does not exist. *)
           assert false

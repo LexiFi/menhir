@@ -146,20 +146,22 @@ let position pos
   let ofslpar = (* offset of the opening parenthesis, if there is one *)
     1 + (* for the initial "$" *)
     String.length where +
-    3   (* for "pos" or "ofs" *)
+    3   (* for "pos" or "ofs" or "loc" *)
   in
-  let where =
+  let where' =
     match where with
     | "symbolstart" -> WhereSymbolStart
     | "start"       -> WhereStart
     | "end"         -> WhereEnd
+    | "s"           -> WhereSymbolStart
+    | ""            -> WhereStart
     | _             -> assert false
   in
   let () =
-    match where, i, x with
+    match where', i, x with
     | WhereSymbolStart, Some _, _
     | WhereSymbolStart, _, Some _ ->
-        Error.error [pos] "$symbolstart%s does not take a parameter." flavor
+        Error.error [pos] "$%s%s does not take a parameter." where flavor
     | _, _, _ ->
         ()
   in
@@ -167,13 +169,14 @@ let position pos
     match flavor with
     | "pos"   -> FlavorPosition
     | "ofs"   -> FlavorOffset
+    | "loc"   -> FlavorLocation
     | _       -> assert false
   in
   let subject, check =
     match i, x with
     | Some i, None ->
         let ii = int_of_string i in (* cannot fail *)
-        if ii = 0 && where = WhereEnd then
+        if ii = 0 && where' = WhereEnd then
           (* [$endpos($0)] *)
           Before, none
         else
@@ -205,7 +208,7 @@ let position pos
         ()
   in
   let keyword =
-    Some (Position (subject, where, flavor))
+    Some (Position (subject, where', flavor))
   in
   { pos; check; transform; keyword }
 
@@ -344,8 +347,8 @@ let attributechar = identchar | '.'
 
 let poskeyword =
   '$'
-  (("symbolstart" | "start" | "end") as where)
-  (("pos" | "ofs") as flavor)
+  (((("symbolstart" | "start" | "end") as where) (("pos" | "ofs") as flavor)) |
+   ((("s" | "") as where) ("loc" as flavor)))
   ( '(' ( '$' (['0'-'9']+ as i) | ((lowercase identchar*) as x)) ')')?
 
 let previouserror =

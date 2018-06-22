@@ -102,6 +102,31 @@ let define keyword1 f keyword2 =
        [ PVar (posvar_ keyword1) ]
        [ f (EVar (posvar_ keyword2)) ])
 
+(* A [loc] keyword is expanded away. *)
+
+let define_tuple keyword keywords =
+  Action.define
+    keyword
+    (List.fold_right KeywordSet.add keywords KeywordSet.empty)
+    (mlet
+       [ PVar (posvar_ keyword) ]
+       [ ETuple (List.map (fun keyword -> EVar (posvar_ keyword)) keywords) ])
+
+let expand_loc keyword action =
+  match keyword with
+  | Position (Left, WhereSymbolStart, FlavorLocation) -> (* $sloc *)
+      define_tuple keyword
+        [ Position (Left, WhereSymbolStart, FlavorPosition);
+          Position (Left, WhereEnd, FlavorPosition) ]
+        action
+  | Position (subject, WhereStart, FlavorLocation) -> (* $loc, $loc(x) *)
+      define_tuple keyword
+        [ Position (subject, WhereStart, FlavorPosition);
+          Position (subject, WhereEnd, FlavorPosition) ]
+        action
+  | _ ->
+      action
+
 (* An [ofs] keyword is expanded away. It is defined in terms of the
    corresponding [pos] keyword. *)
 
@@ -169,13 +194,17 @@ let expand_round f action =
   KeywordSet.fold f (Action.keywords action) action
 
 (* [expand_action] performs macro-expansion in [action]. We do this in several
-   rounds: first, expand the [ofs] keywords away; then, expand [symbolstart]
-   away; then, expand the rest. We do this in this order because each round
-   can cause new keywords to appear, which must eliminated by the following
-   rounds. *)
+   rounds: first, expand the [loc] keywords away, then expand the [ofs]
+   keywords away; then, expand [symbolstart] away; then, expand the rest. We do
+   this in this order because each round can cause new keywords to appear, which
+   must eliminated by the following rounds. *)
 
 let expand_action analysis producers action =
   let n = List.length producers in
+
+  (* Expand [loc] keywords away first. *)
+
+  let action = expand_round expand_loc action in
 
   (* The [ofs] keyword family is defined in terms of the [pos] family by
      accessing the [pos_cnum] field. Expand these keywords away first. *)

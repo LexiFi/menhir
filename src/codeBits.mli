@@ -37,6 +37,7 @@ val texn: typ
 val tposition: typ
 val tlexbuf: typ
 val tobj : typ
+val tpair: typ -> typ -> typ
 
 (* Building a type variable. *)
 

@@ -21,6 +21,7 @@
 type flavor =
   | FlavorOffset
   | FlavorPosition
+  | FlavorLocation
 
 (* The user can request position information about the $start or $end
    of a symbol. Also, $symbolstart requests the computation of the
@@ -39,7 +40,11 @@ type where =
 
    We add a new subject, [Before], which corresponds to [$endpos($0)]
    in concrete syntax. We adopt the (slightly awkward) convention that
-   when the subject is [Before], the [where] component must be [WhereEnd]. *)
+   when the subject is [Before], the [where] component must be [WhereEnd].
+
+   If [flavor] is [FlavorLocation], then [where] must be [WhereSymbolStart]
+   or [WhereStart]. In the former case, [subject] must be [Left]. In the
+   latter case, [subject] must be [Left] or [RightNamed _]. *)
 
 type subject =
   | Before

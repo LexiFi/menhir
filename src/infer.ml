@@ -88,6 +88,7 @@ let actiondef grammar symbol branch =
         Printf.sprintf "_startofs_%s_" id,
         Printf.sprintf "_endofs_%s_" id
       in
+      let loc = Printf.sprintf "_loc_%s_" id in
       let t =
         try
           let props = StringMap.find symbol grammar.tokens in
@@ -106,6 +107,7 @@ let actiondef grammar symbol branch =
       PAnnot (PVar endp, tposition) ::
       PAnnot (PVar starto, tint) ::
       PAnnot (PVar endo, tint) ::
+      PAnnot (PVar loc, tpair tposition tposition) ::
       formals
     ) [] branch.producers
   in
@@ -123,6 +125,8 @@ let actiondef grammar symbol branch =
     PAnnot (PVar "_endofs", tint) ::
     PAnnot (PVar "_endofs__0_", tint) ::
     PAnnot (PVar "_symbolstartofs", tint) ::
+    PAnnot (PVar "_sloc", tpair tposition tposition) ::
+    PAnnot (PVar "_loc", tpair tposition tposition) ::
     formals
   in
 

@@ -76,6 +76,11 @@ let tlexbuf =
 let tobj =
   TypApp ("Obj.t", [])
 
+(* The type of pairs. *)
+
+let tpair typ1 typ2 =
+  TypTuple [typ1; typ2]
+
 (* Building a type variable. *)
 
 let tvar x : typ =

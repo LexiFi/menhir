@@ -24,6 +24,7 @@
 type flavor =
   | FlavorOffset
   | FlavorPosition
+  | FlavorLocation
 
 (* The user can request position information about the $start or $end
    of a symbol. Also, $symbolstart requests the computation of the
@@ -75,9 +76,19 @@ let flavor = function
       "pos"
   | FlavorOffset ->
       "ofs"
+  | FlavorLocation ->
+      "loc"
 
 let posvar s w f =
-  Printf.sprintf "_%s%s%s" (where w) (flavor f) (subject s)
+  match w, f with
+  | _, (FlavorOffset | FlavorPosition) ->
+      Printf.sprintf "_%s%s%s" (where w) (flavor f) (subject s)
+  | WhereSymbolStart, FlavorLocation ->
+      "_sloc"
+  | WhereStart, FlavorLocation ->
+      Printf.sprintf "_loc%s" (subject s)
+  | _ ->
+      assert false
 
 (* ------------------------------------------------------------------------- *)
 (* Sets of keywords. *)
