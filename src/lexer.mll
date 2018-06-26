@@ -143,12 +143,17 @@ let position pos
   (i : string option) (x : string option)
 =
   let none _ = () in
-  let where, ofslpar (* offset of the opening parenthesis, if there is one *) =
+  let ofslpar = (* offset of the opening parenthesis, if there is one *)
+    1 + (* for the initial "$" *)
+    String.length where +
+    3   (* for "pos" or "ofs" *)
+  in
+  let where =
     match where with
-    | "symbolstart" -> WhereSymbolStart, 15
-    | "start"       -> WhereStart,        9
-    | "end"         -> WhereEnd,          7
-    | _       -> assert false
+    | "symbolstart" -> WhereSymbolStart
+    | "start"       -> WhereStart
+    | "end"         -> WhereEnd
+    | _             -> assert false
   in
   let () =
     match where, i, x with
