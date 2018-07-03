@@ -290,6 +290,9 @@ let cmly =
 let coq_lib_path =
   ref (Some "MenhirLib")
 
+(* When new command line options are added, please update both the manual
+   in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
+
 let options = Arg.align [
   "--base", Arg.Set_string base, "<basename> Specifies a base name for the output file(s)";
   "--canonical", Arg.Unit (fun () -> construction_mode := ModeCanonical), " Construct a canonical Knuth LR(1) automaton";
