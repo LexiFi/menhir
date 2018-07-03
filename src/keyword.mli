@@ -15,8 +15,13 @@
    that help deal with the keywords that we recognize within
    semantic actions. *)
 
-(* The user can request position information either at type
-   [int] (a simple offset) or at type [Lexing.position]. *)
+(* The user can request position information either at several types:
+   - a simple offset of type [int], e.g., via $startofs;
+   - a position of type [Lexing.position], e.g., via $startpos;
+   - a location, e.g., via $loc.
+   A location is currently represented as a pair of positions, but
+   this might change in the future; we may allow the user to choose
+   a custom type of locations. *)
 
 type flavor =
   | FlavorOffset
@@ -42,9 +47,11 @@ type where =
    in concrete syntax. We adopt the (slightly awkward) convention that
    when the subject is [Before], the [where] component must be [WhereEnd].
 
-   If [flavor] is [FlavorLocation], then [where] must be [WhereSymbolStart]
-   or [WhereStart]. In the former case, [subject] must be [Left]. In the
-   latter case, [subject] must be [Left] or [RightNamed _]. *)
+   If [flavor] is [FlavorLocation], then [where] must be [WhereSymbolStart] or
+   [WhereStart]. In the former case, [subject] must be [Left]; this
+   corresponds to $sloc in concrete syntax. In the latter case, [subject] must
+   be [Left] or [RightNamed _]; this corresponds to $loc and $loc(x) in
+   concrete syntax. *)
 
 type subject =
   | Before
