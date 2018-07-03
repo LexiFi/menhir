@@ -35,8 +35,10 @@ let with_pos p v =
     position  = p;
   }
 
-let with_poss p1 p2 v =
-  with_pos (p1, p2) v
+let with_loc =
+  (* The location is converted from the type [position * position]
+     to the type [t]. *)
+  with_pos
 
 let map f v =
   {

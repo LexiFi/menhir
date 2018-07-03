@@ -38,7 +38,7 @@ val position: 'a located -> t
 (** [with_pos p v] decorates [v] with a position [p]. *)
 val with_pos : t -> 'a -> 'a located
 val with_cpos: Lexing.lexbuf -> 'a -> 'a located
-val with_poss : Lexing.position -> Lexing.position -> 'a -> 'a located
+val with_loc : (Lexing.position * Lexing.position) -> 'a -> 'a located
 
 val unknown_pos : 'a -> 'a located
 

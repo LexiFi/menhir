@@ -85,7 +85,7 @@ grammar:
 declaration:
 
 | h = HEADER /* lexically delimited by %{ ... %} */
-    { [ with_poss $startpos $endpos (DCode h) ] }
+    { [ with_loc $loc (DCode h) ] }
 
 | TOKEN ty = OCAMLTYPE? ts = clist(terminal)
     { List.map (Positions.map (fun (terminal, attrs) -> DToken (ty, terminal, attrs))) ts }
@@ -110,13 +110,13 @@ declaration:
       List.map (Positions.map (fun symbol -> DTokenProperties (symbol, k, prec))) ss }
 
 | PARAMETER t = OCAMLTYPE
-    { [ with_poss $startpos $endpos (DParameter t) ] }
+    { [ with_loc $loc (DParameter t) ] }
 
 | attr = GRAMMARATTRIBUTE
-    { [ with_poss $startpos $endpos (DGrammarAttribute attr) ] }
+    { [ with_loc $loc (DGrammarAttribute attr) ] }
 
 | PERCENTATTRIBUTE actuals = clist(strict_actual) attrs = ATTRIBUTE+
-    { [ with_poss $startpos $endpos (DSymbolAttributes (actuals, attrs)) ] }
+    { [ with_loc $loc (DSymbolAttributes (actuals, attrs)) ] }
 
 | ON_ERROR_REDUCE ss = clist(strict_actual)
     { let prec = ParserAux.new_on_error_reduce_level() in
@@ -289,7 +289,7 @@ production:
 
 producer:
 | id = ioption(terminated(LID, EQUAL)) p = actual attrs = ATTRIBUTE*
-    { position (with_poss $startpos $endpos ()), id, p, attrs }
+    { position (with_loc $loc ()), id, p, attrs }
 
 /* ------------------------------------------------------------------------- */
 /* The ideal syntax of actual parameters includes:
@@ -335,7 +335,7 @@ lax_actual:
 (* 3- *)
 | /* leading bar disallowed */
   branches = branches
-    { ParameterAnonymous (with_poss $startpos $endpos branches) }
+    { ParameterAnonymous (with_loc $loc branches) }
     (* 2016/05/18: we used to eliminate anonymous rules on the fly during
        parsing. However, when an anonymous rule appears in a parameterized
        definition, the fresh nonterminal symbol that is created should be
@@ -357,11 +357,11 @@ lax_actual:
 
 modifier:
   QUESTION
-    { with_poss $startpos $endpos "option" }
+    { with_loc $loc "option" }
 | PLUS
-    { with_poss $startpos $endpos "nonempty_list" }
+    { with_loc $loc "nonempty_list" }
 | STAR
-    { with_poss $startpos $endpos "list" }
+    { with_loc $loc "list" }
 
 /* ------------------------------------------------------------------------- */
 /* A postlude is announced by %%, but is optional. */
