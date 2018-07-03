@@ -104,6 +104,10 @@ let define keyword1 f keyword2 =
 
 (* A [loc] keyword is expanded away. *)
 
+(* Since a location is represented as a pair of positions, $loc is sugar for
+   the pair ($startpos, $endpos). (Similarly for $loc(x).) Furthermore, $sloc
+   is sugar for the pair ($symbolstartpos, $endpos). *)
+
 let define_tuple keyword keywords =
   Action.define
     keyword
