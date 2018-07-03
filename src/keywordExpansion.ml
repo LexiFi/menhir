@@ -198,10 +198,10 @@ let expand_round f action =
   KeywordSet.fold f (Action.keywords action) action
 
 (* [expand_action] performs macro-expansion in [action]. We do this in several
-   rounds: first, expand the [loc] keywords away, then expand the [ofs]
-   keywords away; then, expand [symbolstart] away; then, expand the rest. We do
-   this in this order because each round can cause new keywords to appear, which
-   must eliminated by the following rounds. *)
+   rounds: first, expand the [loc] keywords away; then, expand the [ofs]
+   keywords away; then, expand [symbolstart] away; then, expand the rest. We
+   do this in this order because each round can cause new keywords to appear,
+   which must eliminated by the following rounds. *)
 
 let expand_action analysis producers action =
   let n = List.length producers in
