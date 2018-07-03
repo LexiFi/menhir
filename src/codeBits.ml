@@ -61,10 +61,22 @@ let tstring =
 let texn =
   TypApp ("exn", [])
 
+(* The type of pairs. *)
+
+let tpair typ1 typ2 =
+  TypTuple [typ1; typ2]
+
 (* The type of lexer positions. *)
 
 let tposition =
   TypApp ("Lexing.position", [])
+
+(* The type of the $loc and $sloc keywords. *)
+
+(* A location is a pair of positions. This might change in the future. *)
+
+let tlocation =
+  tpair tposition tposition
 
 (* The type of lexer buffers. *)
 
@@ -75,11 +87,6 @@ let tlexbuf =
 
 let tobj =
   TypApp ("Obj.t", [])
-
-(* The type of pairs. *)
-
-let tpair typ1 typ2 =
-  TypTuple [typ1; typ2]
 
 (* Building a type variable. *)
 

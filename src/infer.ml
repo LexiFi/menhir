@@ -107,7 +107,7 @@ let actiondef grammar symbol branch =
       PAnnot (PVar endp, tposition) ::
       PAnnot (PVar starto, tint) ::
       PAnnot (PVar endo, tint) ::
-      PAnnot (PVar loc, tpair tposition tposition) ::
+      PAnnot (PVar loc, tlocation) ::
       formals
     ) [] branch.producers
   in
@@ -125,8 +125,8 @@ let actiondef grammar symbol branch =
     PAnnot (PVar "_endofs", tint) ::
     PAnnot (PVar "_endofs__0_", tint) ::
     PAnnot (PVar "_symbolstartofs", tint) ::
-    PAnnot (PVar "_sloc", tpair tposition tposition) ::
-    PAnnot (PVar "_loc", tpair tposition tposition) ::
+    PAnnot (PVar "_sloc", tlocation) ::
+    PAnnot (PVar "_loc", tlocation) ::
     formals
   in
 
