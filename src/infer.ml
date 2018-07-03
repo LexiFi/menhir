@@ -76,7 +76,7 @@ let is_standard branch =
 (* The names and types of the conventional internal variables that
    correspond to keywords ($startpos,etc.) are hardwired in this
    code. It would be nice if these conventions were more clearly
-   isolated and perhaps moved to the [Action] module. *)
+   isolated and perhaps moved to the [Action] or [Keyword] module. *)
 
 let actiondef grammar symbol branch =
 
