@@ -143,27 +143,23 @@ let position pos
   (i : string option) (x : string option)
 =
   let none _ = () in
+  let check_no_parameter () =
+    if i <> None || x <> None then
+      Error.error [pos] "$%s%s does not take a parameter." where flavor
+  in
   let ofslpar = (* offset of the opening parenthesis, if there is one *)
     1 + (* for the initial "$" *)
     String.length where +
     3   (* for "pos" or "ofs" or "loc" *)
   in
-  let where' =
+  let where =
     match where with
-    | "symbolstart" -> WhereSymbolStart
+    | "symbolstart"
+    | "s"           -> check_no_parameter(); WhereSymbolStart
     | "start"       -> WhereStart
     | "end"         -> WhereEnd
-    | "s"           -> WhereSymbolStart
     | ""            -> WhereStart
     | _             -> assert false
-  in
-  let () =
-    match where', i, x with
-    | WhereSymbolStart, Some _, _
-    | WhereSymbolStart, _, Some _ ->
-        Error.error [pos] "$%s%s does not take a parameter." where flavor
-    | _, _, _ ->
-        ()
   in
   let flavor =
     match flavor with
@@ -176,7 +172,7 @@ let position pos
     match i, x with
     | Some i, None ->
         let ii = int_of_string i in (* cannot fail *)
-        if ii = 0 && where' = WhereEnd then
+        if ii = 0 && where = WhereEnd then
           (* [$endpos($0)] *)
           Before, none
         else
@@ -208,7 +204,7 @@ let position pos
         ()
   in
   let keyword =
-    Some (Position (subject, where', flavor))
+    Some (Position (subject, where, flavor))
   in
   { pos; check; transform; keyword }
 
