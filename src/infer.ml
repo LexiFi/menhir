@@ -73,6 +73,11 @@ let is_standard branch =
 
 (* [actiondef] turns a branch into a function definition. *)
 
+(* The names and types of the conventional internal variables that
+   correspond to keywords ($startpos,etc.) are hardwired in this
+   code. It would be nice if these conventions were more clearly
+   isolated and perhaps moved to the [Action] module. *)
+
 let actiondef grammar symbol branch =
 
   (* Construct a list of the semantic action's formal parameters that
