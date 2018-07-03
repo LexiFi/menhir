@@ -108,7 +108,7 @@ let define keyword1 f keyword2 =
    the pair ($startpos, $endpos). (Similarly for $loc(x).) Furthermore, $sloc
    is sugar for the pair ($symbolstartpos, $endpos). *)
 
-let define_tuple keyword keywords =
+let define_as_tuple keyword keywords =
   Action.define
     keyword
     (List.fold_right KeywordSet.add keywords KeywordSet.empty)
@@ -119,12 +119,12 @@ let define_tuple keyword keywords =
 let expand_loc keyword action =
   match keyword with
   | Position (Left, WhereSymbolStart, FlavorLocation) -> (* $sloc *)
-      define_tuple keyword
+      define_as_tuple keyword
         [ Position (Left, WhereSymbolStart, FlavorPosition);
           Position (Left, WhereEnd, FlavorPosition) ]
         action
   | Position (subject, WhereStart, FlavorLocation) -> (* $loc, $loc(x) *)
-      define_tuple keyword
+      define_as_tuple keyword
         [ Position (subject, WhereStart, FlavorPosition);
           Position (subject, WhereEnd, FlavorPosition) ]
         action
