@@ -341,11 +341,17 @@ let identchar = ['A'-'Z' 'a'-'z' '_' '\192'-'\214' '\216'-'\246' '\248'-'\255' '
 
 let attributechar = identchar | '.'
 
+let subject =
+  '$' (['0'-'9']+ as i)
+| ((lowercase identchar*) as x)
+
 let poskeyword =
   '$'
-  (((("symbolstart" | "start" | "end") as where) (("pos" | "ofs") as flavor)) |
-   ((("s" | "") as where) ("loc" as flavor)))
-  ( '(' ( '$' (['0'-'9']+ as i) | ((lowercase identchar*) as x)) ')')?
+  (
+    (("symbolstart" | "start" | "end") as where) (("pos" | "ofs") as flavor)
+  | (("s" | "") as where) ("loc" as flavor)
+  )
+  ( '(' subject ')' )?
 
 let previouserror =
   "$previouserror"
