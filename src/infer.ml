@@ -82,13 +82,13 @@ let actiondef grammar symbol branch =
     List.fold_left (fun formals producer ->
       let symbol = producer_symbol producer
       and id = producer_identifier producer in
-      let startp, endp, starto, endo =
+      let startp, endp, starto, endo, loc =
         Printf.sprintf "_startpos_%s_" id,
         Printf.sprintf "_endpos_%s_" id,
         Printf.sprintf "_startofs_%s_" id,
-        Printf.sprintf "_endofs_%s_" id
+        Printf.sprintf "_endofs_%s_" id,
+        Printf.sprintf "_loc_%s_" id
       in
-      let loc = Printf.sprintf "_loc_%s_" id in
       let t =
         try
           let props = StringMap.find symbol grammar.tokens in
