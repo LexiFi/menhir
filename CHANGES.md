@@ -1,5 +1,13 @@
 # Changes
 
+## 2018/07/03
+
+* New location keywords.
+  `$loc` is sugar for the pair `($startpos, $endpos)`.
+  `$loc(x)` is sugar for the pair `($startpos(x), $endpos(x))`.
+  `$sloc` is sugar for the pair `($symbolstartpos, $endpos)`.
+  (Contributed by Nicolás Ojeda Bär.)
+
 ## 2018/06/08
 
 * Add two new parameterized nonterminal symbols, `endrule(X)` and `midrule(X)`,
