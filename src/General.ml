@@ -85,3 +85,18 @@ let rec foldr f xs accu =
   | Cons (x, xs) ->
       f x (foldr f xs accu)
 
+(* --------------------------------------------------------------------------- *)
+
+
+(* The default implementation of location, a pair of lexing position. *)
+
+let get_location lexbuf =
+  (lexbuf.Lexing.lex_start_p, lexbuf.Lexing.lex_curr_p)
+
+(* The default location logger, when
+   location = (Lexing.position * Lexing.position) *)
+
+let trace_location (startp, endp) =
+  Printf.sprintf "%d-%d"
+    startp.Lexing.pos_cnum
+    endp.Lexing.pos_cnum

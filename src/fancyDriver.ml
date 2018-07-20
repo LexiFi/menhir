@@ -64,5 +64,5 @@ let grammar lexer lexbuf =
   loop_handle
     (fun v -> v)
     (fail buffer lexbuf)
-    (lexer_lexbuf_to_supplier lexer lexbuf)
+    (lexer_lexbuf_to_supplier lexer MenhirLib.General.get_location lexbuf)
     (Parser.Incremental.grammar (pos, pos))

@@ -134,7 +134,10 @@ let incremental_engine () : module_type =
     [
       [],
       "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
-      TokenType.ttoken
+      TokenType.ttoken;
+      [],
+      "location",
+      CodeBits.tlocation
     ]
 
 let incremental_entry_points grammar : interface =

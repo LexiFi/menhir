@@ -11,10 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module MakeEngineTable
-    (T : TableFormat.TABLES
-     with type location = Lexing.position * Lexing.position) =
-struct
+module MakeEngineTable (T : TableFormat.TABLES) = struct
 
   type state =
       int
@@ -213,13 +210,12 @@ struct
       | None ->
           ()
 
-    let lookahead_token token (startp, endp) =
+    let lookahead_token token location =
       match T.trace with
       | Some (terminals, _) ->
-          fprintf stderr "Lookahead token is now %s (%d-%d)\n%!"
+          fprintf stderr "Lookahead token is now %s (%s)\n%!"
             terminals.(token)
-            startp.Lexing.pos_cnum
-            endp.Lexing.pos_cnum
+            (T.trace_location location)
       | None ->
           ()
 

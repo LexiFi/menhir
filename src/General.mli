@@ -60,3 +60,14 @@ val length: 'a stream -> int
 (* Folding over a stream. *)
 
 val foldr: ('a -> 'b -> 'b) -> 'a stream -> 'b -> 'b
+
+(* --------------------------------------------------------------------------- *)
+
+(* The default implementation of location, a pair of lexing position. *)
+
+val get_location : Lexing.lexbuf -> (Lexing.position * Lexing.position)
+
+(* The default location logger, when
+   location = (Lexing.position * Lexing.position) *)
+
+val trace_location : (Lexing.position * Lexing.position) -> string

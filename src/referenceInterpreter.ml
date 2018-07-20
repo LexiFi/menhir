@@ -264,15 +264,12 @@ let interpret log nt lexer lexbuf =
   (* Update location for initial state *)
 
   lexbuf.Lexing.lex_start_p <- lexbuf.Lexing.lex_curr_p;
-
-  let locate {Lexing. lex_start_p; lex_curr_p}  =
-    (lex_start_p, lex_curr_p)
-  in
+  let get_location = MenhirLib.General.get_location in
 
   (* Run it. *)
 
   try
-    Some (E.entry (Lr1.entry_of_nt nt) lexer locate lexbuf)
+    Some (E.entry (Lr1.entry_of_nt nt) lexer get_location lexbuf)
   with T.Error ->
     None
 

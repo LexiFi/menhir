@@ -22,9 +22,7 @@
 
 (* This functor is invoked by the generated parser. *)
 
-module MakeEngineTable
-    (T : TableFormat.TABLES
-     with type location = Lexing.position * Lexing.position)
+module MakeEngineTable (T : TableFormat.TABLES)
 : EngineTypes.TABLE
     with type state = int
      and type token = T.token

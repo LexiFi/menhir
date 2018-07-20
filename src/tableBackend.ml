@@ -668,6 +668,12 @@ let location_typ = {
   typeconstraint = None;
 }
 
+let trace_location = {
+  valpublic = false;
+  valpat = PVar "trace_location";
+  valval = EVar "MenhirLib.General.trace_location";
+}
+
 (* ------------------------------------------------------------------------ *)
 
 (* Generate the two functions that map a token to its integer code and to
@@ -716,6 +722,7 @@ let monolithic_entry_point state nt t =
             EVar entry, [
               EIntConst (Lr1.number state);
               EVar lexer;
+              EVar "MenhirLib.General.get_location";
               EVar lexbuf
             ]
           )
@@ -1028,6 +1035,7 @@ let program =
         (* This is a non-recursive definition, so none of the names
            defined here are visible in the semantic actions. *)
         SIValDefs (false, [
+          trace_location;
           token2terminal;
           define ("error_terminal", EIntConst (Terminal.t2i Terminal.error));
           token2value;

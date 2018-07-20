@@ -20,13 +20,18 @@ module type TABLES = sig
 
   type token
 
+  (* This maps a token to its internal (generation-time) integer code. *)
+
+  val token2terminal: token -> int
+
   (* This is the parser's type of locations. *)
 
   type location
 
-  (* This maps a token to its internal (generation-time) integer code. *)
+  (* This turns a location into something human readable, only called when
+     logging. *)
 
-  val token2terminal: token -> int
+  val trace_location : location -> string
 
   (* This is the integer code for the error pseudo-token. *)
 
