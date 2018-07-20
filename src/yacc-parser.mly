@@ -27,7 +27,8 @@ open Positions
 %}
 
 %token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL
-%token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
+%token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER LOCATION
+%token ON_ERROR_REDUCE
 %token <string Positions.located> LID UID
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
@@ -108,6 +109,9 @@ declaration:
 
 | PARAMETER OCAMLTYPE
     { [ unknown_pos (DParameter $2) ] }
+
+| LOCATION OCAMLTYPE
+    { [ unknown_pos (DLocation $2) ] }
 
 | GRAMMARATTRIBUTE
     { [ unknown_pos (DGrammarAttribute $1) ] }

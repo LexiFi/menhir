@@ -31,6 +31,13 @@ let join_declaration filename (grammar : grammar) decl =
       { grammar with p_parameters = grammar.p_parameters @ [ stretch ] }
   | DParameter (Stretch.Inferred _) ->
       assert false
+  | DLocation (Stretch.Declared stretch) ->
+      if grammar.p_location = None then
+        { grammar with p_location = Some stretch }
+      else
+        Error.errorp decl "custom location has multiple definitions."
+  | DLocation (Stretch.Inferred _) ->
+      assert false
 
   (* Token declarations are recorded. Things are made somewhat
      difficult by the fact that %token and %left-%right-%nonassoc
@@ -574,6 +581,7 @@ let empty_grammar =
     p_preludes                = [];
     p_postludes               = [];
     p_parameters              = [];
+    p_location                = None;
     p_start_symbols           = StringMap.empty;
     p_types                   = [];
     p_tokens                  = StringMap.empty;

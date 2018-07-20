@@ -198,6 +198,10 @@ type declaration =
 
   | DParameter of Stretch.ocamltype (* really a stretch *)
 
+    (* Custom location module definition. *)
+
+  | DLocation of Stretch.ocamltype (* really a stretch *)
+
     (* Terminal symbol (token) declaration. *)
 
   | DToken of Stretch.ocamltype option * terminal * attributes
@@ -256,6 +260,7 @@ type grammar =
       p_preludes           : Stretch.t list;
       p_postludes          : postlude list;
       p_parameters         : Stretch.t list;
+      p_location           : Stretch.t option;
       p_start_symbols      : Positions.t StringMap.t;
       p_types              : (parameter * Stretch.ocamltype Positions.located) list;
       p_tokens             : token_properties StringMap.t;

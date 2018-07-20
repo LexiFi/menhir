@@ -382,6 +382,8 @@ rule main = parse
     { PUBLIC }
 | "%parameter"
     { PARAMETER }
+| "%location"
+    { LOCATION }
 | "%inline"
     { INLINE }
 | "%attribute"

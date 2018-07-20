@@ -32,7 +32,7 @@ open Positions
 /* Tokens. */
 
 %token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL
-%token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
+%token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER LOCATION ON_ERROR_REDUCE
 %token <string Positions.located> LID UID
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
@@ -111,6 +111,9 @@ declaration:
 
 | PARAMETER t = OCAMLTYPE
     { [ with_loc $loc (DParameter t) ] }
+
+| LOCATION t = OCAMLTYPE
+    { [ with_loc $loc (DLocation t) ] }
 
 | attr = GRAMMARATTRIBUTE
     { [ with_loc $loc (DGrammarAttribute attr) ] }
