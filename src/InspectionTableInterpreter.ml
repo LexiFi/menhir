@@ -49,7 +49,8 @@ module Make
          and type nonterminal = int
          and type semantic_value = Obj.t)
   (E : sig
-     type 'a env = (ET.state, ET.semantic_value, ET.token) EngineTypes.env
+     type 'a env =
+       (ET.state, ET.semantic_value, ET.token, ET.location) EngineTypes.env
    end)
 = struct
 
@@ -253,7 +254,7 @@ module Make
      type below. *)
 
   let feed_nonterminal
-        (nt : nonterminal) startp (semv : semantic_value) endp (env : 'b env)
+        (nt : nonterminal) (semv : semantic_value) location (env : 'b env)
       : 'b env
   =
     (* Check if the source state has an outgoing transition labeled [nt].
@@ -266,7 +267,7 @@ module Make
         (* Push a new cell onto the stack, containing the identity of the state
            that we are leaving. The semantic value [semv] and positions [startp]
            and [endp] contained in the new cell are provided by the caller. *)
-        let stack = { state = source; semv; startp; endp; next = env.stack } in
+        let stack = { state = source; semv; location; next = env.stack } in
         (* Move to the target state. *)
         { env with stack; current = target }
 
@@ -274,7 +275,7 @@ module Make
   let initiate _env       = feed_failure()
 
   let feed_terminal
-        (terminal : terminal) startp (semv : semantic_value) endp (env : 'b env)
+        (terminal : terminal) (semv : semantic_value) location (env : 'b env)
       : 'b env
   =
     (* Check if the source state has an outgoing transition labeled [terminal].
@@ -284,7 +285,7 @@ module Make
       (fun env _please_discard _terminal semv target ->
         (* There is indeed a transition toward the state [target].
            Push a new cell onto the stack and move to the target state. *)
-        let stack = { state = source; semv; startp; endp; next = env.stack } in
+        let stack = { state = source; semv; location; next = env.stack } in
         { env with stack; current = target }
       ) reduce initiate env
 
@@ -292,12 +293,12 @@ module Make
      [semv] is appropriate: it must be the semantic-value type of the symbol
      [symbol]. *)
 
-  let feed (symbol : 'a symbol) startp (semv : 'a) endp env =
+  let feed (symbol : 'a symbol) (semv : 'a) location env =
     let semv : semantic_value = Obj.repr semv in
     match symbol with
     | N nt ->
-        feed_nonterminal (n2i nt) startp semv endp env
+        feed_nonterminal (n2i nt) semv location env
     | T terminal ->
-        feed_terminal (t2i terminal) startp semv endp env
+        feed_terminal (t2i terminal) semv location env
 
 end

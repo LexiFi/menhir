@@ -39,7 +39,8 @@ module Make
          and type nonterminal = int
          and type semantic_value = Obj.t)
   (E : sig
-     type 'a env = (ET.state, ET.semantic_value, ET.token) EngineTypes.env
+     type 'a env =
+       (ET.state, ET.semantic_value, ET.token, ET.location) EngineTypes.env
    end)
 
 : IncrementalEngine.INSPECTION

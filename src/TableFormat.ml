@@ -20,6 +20,10 @@ module type TABLES = sig
 
   type token
 
+  (* This is the parser's type of locations. *)
+
+  type location = Lexing.position * Lexing.position
+
   (* This maps a token to its internal (generation-time) integer code. *)
 
   val token2terminal: token -> int
@@ -119,8 +123,8 @@ module type TABLES = sig
      [EngineTypes]. This table contains ONLY NON-START PRODUCTIONS, so the
      indexing is off by [start]. Be careful. *)
 
-  val semantic_action: ((int, Obj.t, token) EngineTypes.env ->
-                        (int, Obj.t)        EngineTypes.stack) array
+  val semantic_action: ((int, Obj.t, token, location) EngineTypes.env ->
+                        (int, Obj.t, location)        EngineTypes.stack) array
 
   (* The parser defines its own [Error] exception. This exception can be
      raised by semantic actions and caught by the engine, and raised by the

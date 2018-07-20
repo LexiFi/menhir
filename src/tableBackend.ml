@@ -53,11 +53,8 @@ let fstate =
 let fsemv =
   field "semv"
 
-let fstartp =
-  field "startp"
-
-let fendp =
-  field "endp"
+let flocation =
+  field "location"
 
 let fnext =
   field "next"
@@ -161,12 +158,17 @@ let define_and_measure (x, e) =
 let reducecellparams prod i _symbol (next : pattern) : pattern =
 
   let ids = Production.identifiers prod in
+  let loc =
+    PTuple [
+      PVar (Printf.sprintf "_startpos_%s_" ids.(i));
+      PVar (Printf.sprintf "_endpos_%s_" ids.(i));
+    ]
+  in
 
   PRecord [
     fstate, (if i = 0 then PVar state else PWildcard);
     fsemv, PVar ids.(i);
-    fstartp, PVar (Printf.sprintf "_startpos_%s_" ids.(i));
-    fendp, PVar (Printf.sprintf "_endpos_%s_" ids.(i));
+    flocation, loc;
     fnext, next;
   ]
 
@@ -198,7 +200,7 @@ let reducecellcasts prod i symbol casts =
    by taking the end position stored in the top stack cell (whatever it is). *)
 
 let endpos_of_top_stack_cell =
-  ERecordAccess(EVar stack, fendp)
+  EApp (EVar "Pervasives.snd", [ERecordAccess(EVar stack, flocation)])
 
 (* This is the body of the [reduce] function associated with
    production [prod]. It assumes that the variables [env] and [stack]
@@ -262,6 +264,9 @@ let reducebody prod =
   let act =
     EAnnot (Action.to_il_expr action, type2scheme (semvtypent nt))
   in
+  let positions =
+    [EVar startp; EVar endp]
+  in
 
   EComment (
     Production.print prod,
@@ -276,8 +281,7 @@ let reducebody prod =
       ERecord [                             (* the new stack cell *)
         fstate, EVar state;                 (* the current state after popping; it will be updated by [goto] *)
         fsemv, ERepr (EVar semv);           (* the newly computed semantic value *)
-        fstartp, EVar startp;               (* the newly computed start and end positions *)
-        fendp, EVar endp;
+        flocation, ETuple positions;        (* the newly computed start and end positions *)
         fnext, EVar stack;                  (* this is the stack after popping *)
       ]
 
@@ -657,6 +661,15 @@ let trace =
 
 (* ------------------------------------------------------------------------ *)
 
+let location_typ = {
+  typename = "location";
+  typeparams = [];
+  typerhs = TAbbrev tlocation;
+  typeconstraint = None;
+}
+
+(* ------------------------------------------------------------------------ *)
+
 (* Generate the two functions that map a token to its integer code and to
    its semantic value, respectively. *)
 
@@ -1009,6 +1022,8 @@ let program =
         (* The internal sub-module [basics] contains the definitions of the
            exception [Error] and of the type [token]. *)
         SIInclude (MVar basics);
+
+        SITypeDefs [location_typ];
 
         (* This is a non-recursive definition, so none of the names
            defined here are visible in the semantic actions. *)

@@ -30,6 +30,9 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
   type semantic_value =
       Obj.t
 
+  type location =
+      Lexing.position * Lexing.position
+
   let token2terminal =
     T.token2terminal
 
@@ -136,8 +139,8 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
         T.Error
 
   type semantic_action =
-      (state, semantic_value, token) EngineTypes.env ->
-      (state, semantic_value)        EngineTypes.stack
+      (state, semantic_value, token, location) EngineTypes.env ->
+      (state, semantic_value, location)        EngineTypes.stack
 
   let semantic_action prod =
     (* Indexing into the array [T.semantic_action] is off by [T.start],
@@ -207,7 +210,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
       | None ->
           ()
 
-    let lookahead_token token startp endp =
+    let lookahead_token token (startp, endp) =
       match T.trace with
       | Some (terminals, _) ->
           fprintf stderr "Lookahead token is now %s (%d-%d)\n%!"

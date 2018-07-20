@@ -39,6 +39,9 @@ module T = struct
   type semantic_value =
       cst
 
+  type location =
+    Lexing.position * Lexing.position
+
   let token2terminal (token : token) : terminal =
     token
 
@@ -124,7 +127,8 @@ module T = struct
     Production.is_start
 
   type semantic_action =
-      (state, semantic_value, token) env -> (state, semantic_value) stack
+    (state, semantic_value, token, location) env ->
+    (state, semantic_value, location) stack
 
   let semantic_action (prod : production) : semantic_action =
     fun env ->
@@ -171,11 +175,11 @@ module T = struct
         let next = !stack.next in
         assert (!stack != next);
         if k = n then begin
-          endp := !stack.endp
+          endp := fst !stack.location
         end;
         if k = 1 then begin
           current := !stack.state;
-          startp := !stack.startp
+          startp := snd !stack.location
         end;
         stack := next
 
@@ -189,8 +193,7 @@ module T = struct
       {
         state = !current;
         semv = CstNonTerminal (prod, values);
-        startp = !startp;
-        endp = !endp;
+        location = (!startp, !endp);
         next = !stack
       }
 
@@ -220,7 +223,7 @@ module T = struct
          fprintf stderr "Reducing production %s" (Production.print prod);
          prerr_newline()
 
-    let lookahead_token tok startp endp =
+    let lookahead_token tok (startp, endp) =
       fprintf stderr "Lookahead token is now %s (%d-%d)"
         (Terminal.print tok)
         startp.Lexing.pos_cnum
@@ -316,7 +319,7 @@ let check_error_path log nt input =
     match E.top env with
     | None ->
         entry
-    | Some (E.Element (s, _, _, _)) ->
+    | Some (E.Element (s, _, _)) ->
         s
   in
 
@@ -352,7 +355,8 @@ let check_error_path log nt input =
       | None ->
         OInputReadPastEnd
       | Some t ->
-        loop (E.offer checkpoint (t, Lexing.dummy_pos, Lexing.dummy_pos)) spurious
+        let location = (Lexing.dummy_pos, Lexing.dummy_pos) in
+        loop (E.offer checkpoint (t, location)) spurious
       end
     | E.Shifting _ ->
       loop (E.resume checkpoint) spurious
@@ -387,4 +391,5 @@ let check_error_path log nt input =
         assert false
   in
 
-  loop (E.start entry Lexing.dummy_pos) []
+  let loc = (Lexing.dummy_pos, Lexing.dummy_pos) in
+  loop (E.start entry loc) []

@@ -52,7 +52,7 @@ module Make
 
   let print_element_as_symbol element =
     match element with
-    | Element (s, _, _, _) ->
+    | Element (s, _, _) ->
         print_symbol (X (incoming_symbol s))
 
   (* Some of the functions that follow need an element printer. They use
@@ -108,7 +108,7 @@ module Make
     | None ->
         print "<some initial state>"; (* TEMPORARY unsatisfactory *)
         print newline
-    | Some (Element (current, _, _, _)) ->
+    | Some (Element (current, _, _)) ->
         print (string_of_int (number current));
         print newline;
         List.iter print_item (items current)

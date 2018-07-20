@@ -11,7 +11,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-type position = Lexing.position
 open EngineTypes
 
 (* The LR parsing engine. *)
@@ -30,7 +29,7 @@ module Make (T : TABLE) = struct
   include T
 
   type 'a env =
-      (state, semantic_value, token) EngineTypes.env
+      (state, semantic_value, token, location) EngineTypes.env
 
   (* ------------------------------------------------------------------------ *)
 
@@ -113,8 +112,8 @@ module Make (T : TABLE) = struct
 
   and discard env triple =
     if log then begin
-      let (token, startp, endp) = triple in
-      Log.lookahead_token (T.token2terminal token) startp endp
+      let (token, location) = triple in
+      Log.lookahead_token (T.token2terminal token) location
     end;
     let env = { env with error = false; triple } in
     check_for_default_reduction env
@@ -152,7 +151,7 @@ module Make (T : TABLE) = struct
       HandlingError env
     end
     else
-      let (token, _, _) = env.triple in
+      let (token, _) = env.triple in
 
       (* We consult the two-dimensional action table, indexed by the
          current state and the current lookahead token, in order to
@@ -189,12 +188,11 @@ module Make (T : TABLE) = struct
     (* Push a new cell onto the stack, containing the identity of the
        state that we are leaving. *)
 
-    let (_, startp, endp) = env.triple in
+    let (_, location) = env.triple in
     let stack = {
       state = env.current;
       semv = value;
-      startp;
-      endp;
+      location;
       next = env.stack;
     } in
 
@@ -369,7 +367,7 @@ module Make (T : TABLE) = struct
 
   (* [start s] begins the parsing process. *)
 
-  let start (s : state) (initial : position) : semantic_value checkpoint =
+  let start (s : state) (initial : location) : semantic_value checkpoint =
 
     (* Build an empty stack. This is a dummy cell, which is its own successor.
        Its [next] field WILL be accessed by [error_fail] if an error occurs and
@@ -380,8 +378,7 @@ module Make (T : TABLE) = struct
     let rec empty = {
       state = s;                          (* dummy *)
       semv = T.error_value;               (* dummy *)
-      startp = initial;                   (* dummy *)
-      endp = initial;
+      location = initial;                 (* dummy *)
       next = empty;
     } in
 
@@ -397,7 +394,7 @@ module Make (T : TABLE) = struct
     let dummy_token = Obj.magic () in
     let env = {
       error = false;
-      triple = (dummy_token, initial, initial); (* dummy *)
+      triple = (dummy_token, initial); (* dummy *)
       stack = empty;
       current = s;
     } in
@@ -439,7 +436,7 @@ module Make (T : TABLE) = struct
      [t checkpoint] where [t] is the type of the start symbol.) *)
 
   let offer : 'a . 'a checkpoint ->
-                   token * position * position ->
+                   token * location ->
                    'a checkpoint
   = function
     | InputNeeded env ->
@@ -467,7 +464,7 @@ module Make (T : TABLE) = struct
   (* Wrapping a lexer and lexbuf as a token supplier. *)
 
   type supplier =
-    unit -> token * position * position
+    unit -> token * location
 
   let lexer_lexbuf_to_supplier
       (lexer : Lexing.lexbuf -> token)
@@ -477,7 +474,7 @@ module Make (T : TABLE) = struct
       let token = lexer lexbuf in
       let startp = lexbuf.Lexing.lex_start_p
       and endp = lexbuf.Lexing.lex_curr_p in
-      token, startp, endp
+      token, (startp, endp)
 
   (* ------------------------------------------------------------------------ *)
 
@@ -519,8 +516,8 @@ module Make (T : TABLE) = struct
         raise Error
 
   let entry (s : state) lexer lexbuf : semantic_value =
-    let initial = lexbuf.Lexing.lex_curr_p in
-    loop (lexer_lexbuf_to_supplier lexer lexbuf) (start s initial)
+    let pos = lexbuf.Lexing.lex_curr_p in
+    loop (lexer_lexbuf_to_supplier lexer lexbuf) (start s (pos, pos))
 
   (* ------------------------------------------------------------------------ *)
 
@@ -615,8 +612,8 @@ module Make (T : TABLE) = struct
            it can request another token or terminate. *)
         assert false
 
-  let acceptable checkpoint token pos =
-    let triple = (token, pos, pos) in
+  let acceptable checkpoint token loc =
+    let triple = (token, loc) in
     let checkpoint = offer checkpoint triple in
     match shifts checkpoint with
     | None      -> false
@@ -651,7 +648,7 @@ module Make (T : TABLE) = struct
      the functions [top] and [pop]. *)
 
   type element =
-    | Element: 'a lr1state * 'a * position * position -> element
+    | Element: 'a lr1state * 'a * location -> element
 
   open General
 
@@ -683,8 +680,7 @@ module Make (T : TABLE) = struct
         let element = Element (
           current,
           cell.semv,
-          cell.startp,
-          cell.endp
+          cell.location
         ) in
         Cons (element, stack next cell.state)
     )
@@ -702,7 +698,7 @@ module Make (T : TABLE) = struct
     if next == cell then
       None
     else
-      Some (Element (env.current, cell.semv, cell.startp, cell.endp))
+      Some (Element (env.current, cell.semv, cell.location))
 
   (* [equal] compares the stacks for physical equality, and compares the
      current states via their numbers (this seems cleaner than using OCaml's
@@ -723,10 +719,10 @@ module Make (T : TABLE) = struct
 
   (* ------------------------------------------------------------------------ *)
 
-  (* Access to the position of the lookahead token. *)
+  (* Access to the location of the lookahead token. *)
 
-  let positions { triple = (_, startp, endp); _ } =
-    startp, endp
+  let location { triple = (_, location); _ } =
+    location
 
   (* ------------------------------------------------------------------------ *)
 

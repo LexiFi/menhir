@@ -59,9 +59,10 @@ let grammar lexer lexbuf =
 
   (* Keep track of the last two tokens in a buffer. *)
   let buffer, lexer = MenhirLib.ErrorReports.wrap lexer in
+  let pos = lexbuf.Lexing.lex_curr_p in
 
   loop_handle
     (fun v -> v)
     (fail buffer lexbuf)
     (lexer_lexbuf_to_supplier lexer lexbuf)
-    (Parser.Incremental.grammar lexbuf.Lexing.lex_curr_p)
+    (Parser.Incremental.grammar (pos, pos))

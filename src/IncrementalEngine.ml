@@ -11,7 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-type position = Lexing.position
+type location = Lexing.position * Lexing.position
 
 open General
 
@@ -84,7 +84,7 @@ module type INCREMENTAL_ENGINE = sig
 
   val offer:
     'a checkpoint ->
-    token * position * position ->
+    token * location ->
     'a checkpoint
 
   (* [resume] allows the user to resume the parser after it has suspended
@@ -100,7 +100,7 @@ module type INCREMENTAL_ENGINE = sig
      (together with its start and end positions) every time it is called. *)
 
   type supplier =
-    unit -> token * position * position
+    unit -> token * location
 
   (* A pair of a lexer and a lexing buffer can be easily turned into a supplier. *)
 
@@ -181,11 +181,11 @@ module type INCREMENTAL_ENGINE = sig
   (* This test causes some semantic actions to be run! The semantic actions
      should be side-effect free, or their side-effects should be harmless. *)
 
-  (* The position [pos] is used as the start and end positions of the
-     hypothetical token, and may be picked up by the semantic actions. We
-     suggest using the position where the error was detected. *)
+  (* The location is used as the location of the hypothetical token, and may be
+     picked up by the semantic actions. We suggest using the location where the
+     error was detected. *)
 
-  val acceptable: 'a checkpoint -> token -> position -> bool
+  val acceptable: 'a checkpoint -> token -> location -> bool
 
   (* The abstract type ['a lr1state] describes the non-initial states of the
      LR(1) automaton. The index ['a] represents the type of the semantic value
@@ -211,7 +211,7 @@ module type INCREMENTAL_ENGINE = sig
      has type ['a]. In other words, the type [element] is an existential type. *)
 
   type element =
-    | Element: 'a lr1state * 'a * position * position -> element
+    | Element: 'a lr1state * 'a * location -> element
 
   (* The parser's stack is (or, more precisely, can be viewed as) a stream of
      elements. The type [stream] is defined by the module [General]. *)
@@ -273,7 +273,7 @@ module type INCREMENTAL_ENGINE = sig
      invoked in an initial state, this function returns a pair of twice the
      initial position. *)
 
-  val positions: 'a env -> position * position
+  val location: 'a env -> location
 
   (* When applied to an environment taken from a checkpoint of the form
      [AboutToReduce (env, prod)], the function [env_has_default_reduction]
@@ -446,7 +446,7 @@ module type INSPECTION = sig
      state (as determined by [env]) has an outgoing transition labeled with
      [symbol]. Otherwise, [Invalid_argument _] is raised. *)
 
-  val feed: 'a symbol -> position -> 'a -> position -> 'b env -> 'b env
+  val feed: 'a symbol -> 'a -> location -> 'b env -> 'b env
 
 end
 

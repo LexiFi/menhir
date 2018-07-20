@@ -26,7 +26,7 @@
    successor -- is used to mark the bottom of the stack. The sentinel cell
    itself is not significant -- it contains dummy values. *)
 
-type ('state, 'semantic_value) stack = {
+type ('state, 'semantic_value, 'location) stack = {
 
   (* The state that we should go back to if we pop this stack cell. *)
 
@@ -42,16 +42,15 @@ type ('state, 'semantic_value) stack = {
 
   semv: 'semantic_value;
 
-  (* The start and end positions of the chunk of input that this cell
+  (* The location associated with the chunk of input that this cell
      represents. *)
 
-  startp: Lexing.position;
-  endp: Lexing.position;
+  location: 'location;
 
   (* The next cell down in the stack. If this is a self-pointer, then this
      cell is the sentinel, and the stack is conceptually empty. *)
 
-  next: ('state, 'semantic_value) stack;
+  next: ('state, 'semantic_value, 'location) stack;
 
 }
 
@@ -60,7 +59,7 @@ type ('state, 'semantic_value) stack = {
 (* A parsing environment contains all of the parser's state (except for the
    current program point). *)
 
-type ('state, 'semantic_value, 'token) env = {
+type ('state, 'semantic_value, 'token, 'location) env = {
 
   (* If this flag is true, then the first component of [env.triple] should
      be ignored, as it has been logically overwritten with the [error]
@@ -68,16 +67,16 @@ type ('state, 'semantic_value, 'token) env = {
 
   error: bool;
 
-  (* The last token that was obtained from the lexer, together with its start
-     and end positions. Warning: before the first call to the lexer has taken
+  (* The last token that was obtained from the lexer, together with its
+     location . Warning: before the first call to the lexer has taken
      place, a dummy (and possibly invalid) token is stored here. *)
 
-  triple: 'token * Lexing.position * Lexing.position;
+  triple: 'token * 'location;
 
   (* The stack. In [CodeBackend], it is passed around on its own,
      whereas, here, it is accessed via the environment. *)
 
-  stack: ('state, 'semantic_value) stack;
+  stack: ('state, 'semantic_value, 'location) stack;
 
   (* The current state. In [CodeBackend], it is passed around on its
      own, whereas, here, it is accessed via the environment. *)
@@ -120,6 +119,10 @@ module type TABLE = sig
   (* The type of semantic values. *)
 
   type semantic_value
+
+  (* The type of locations. *)
+
+  type location = Lexing.position * Lexing.position
 
   (* A token is conceptually a pair of a (non-[error]) terminal symbol and
      a semantic value. The following two functions are the pair projections. *)
@@ -252,7 +255,8 @@ module type TABLE = sig
   exception Error
 
   type semantic_action =
-      (state, semantic_value, token) env -> (state, semantic_value) stack
+        (state, semantic_value, token, location) env ->
+        (state, semantic_value, location) stack
 
   val semantic_action: production -> semantic_action
 
@@ -292,9 +296,9 @@ module type TABLE = sig
 
     val reduce_or_accept: production -> unit
 
-    (* Lookahead token is now <terminal> (<pos>-<pos>) *)
+    (* Lookahead token is now <terminal> (location) *)
 
-    val lookahead_token: terminal -> Lexing.position -> Lexing.position -> unit
+    val lookahead_token: terminal -> location -> unit
 
     (* Initiating error handling *)
 
@@ -367,12 +371,13 @@ module type INCREMENTAL_ENGINE_START = sig
      [Obj.magic] to produce safe specialized versions of [start]. *)
 
   type state
+  type location
   type semantic_value
   type 'a checkpoint
 
   val start:
     state ->
-    Lexing.position ->
+    location ->
     semantic_value checkpoint
 
 end

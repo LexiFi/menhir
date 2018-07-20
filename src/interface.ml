@@ -64,7 +64,7 @@ let incremental =
 
 let entrytypescheme_incremental grammar symbol =
   let t = TypTextual (ocamltype_of_start_symbol grammar symbol) in
-  type2scheme (marrow [ tposition ] (checkpoint t))
+  type2scheme (marrow [ tlocation ] (checkpoint t))
 
 (* -------------------------------------------------------------------------- *)
 
