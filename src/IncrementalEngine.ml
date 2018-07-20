@@ -11,8 +11,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-type location = Lexing.position * Lexing.position
-
 open General
 
 (* This signature describes the incremental LR engine. *)
@@ -23,6 +21,8 @@ open General
 module type INCREMENTAL_ENGINE = sig
 
   type token
+
+  type location
 
   (* A value of type [production] is (an index for) a production. The start
      productions (which do not exist in an \mly file, but are constructed by
@@ -106,6 +106,7 @@ module type INCREMENTAL_ENGINE = sig
 
   val lexer_lexbuf_to_supplier:
     (Lexing.lexbuf -> token) ->
+    (Lexing.lexbuf -> location) ->
     Lexing.lexbuf ->
     supplier
 
@@ -360,6 +361,8 @@ module type INSPECTION = sig
 
   include SYMBOLS
 
+  type location
+
   (* The type ['a lr1state] is meant to be the same as in [INCREMENTAL_ENGINE]. *)
 
   type 'a lr1state
@@ -460,5 +463,6 @@ module type EVERYTHING = sig
     with type 'a lr1state := 'a lr1state
     with type production := production
     with type 'a env := 'a env
+    with type location := location
 
 end

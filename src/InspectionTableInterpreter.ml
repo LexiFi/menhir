@@ -47,7 +47,8 @@ module Make
   (ET : EngineTypes.TABLE
         with type terminal = int
          and type nonterminal = int
-         and type semantic_value = Obj.t)
+         and type semantic_value = Obj.t
+         and type location = TT.location)
   (E : sig
      type 'a env =
        (ET.state, ET.semantic_value, ET.token, ET.location) EngineTypes.env
@@ -58,6 +59,8 @@ module Make
      [symbol] and [xsymbol]. *)
 
   include IT
+
+  type location = TT.location
 
   (* This auxiliary function decodes a packed linearized array, as created by
      [TableBackend.linearize_and_marshal1]. Here, we read a row all at once. *)

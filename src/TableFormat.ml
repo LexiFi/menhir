@@ -22,7 +22,7 @@ module type TABLES = sig
 
   (* This is the parser's type of locations. *)
 
-  type location = Lexing.position * Lexing.position
+  type location
 
   (* This maps a token to its internal (generation-time) integer code. *)
 

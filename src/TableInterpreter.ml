@@ -11,7 +11,10 @@
 (*                                                                            *)
 (******************************************************************************)
 
-module MakeEngineTable (T : TableFormat.TABLES) = struct
+module MakeEngineTable
+    (T : TableFormat.TABLES
+     with type location = Lexing.position * Lexing.position) =
+struct
 
   type state =
       int
@@ -31,7 +34,7 @@ module MakeEngineTable (T : TableFormat.TABLES) = struct
       Obj.t
 
   type location =
-      Lexing.position * Lexing.position
+      T.location
 
   let token2terminal =
     T.token2terminal

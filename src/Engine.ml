@@ -468,13 +468,13 @@ module Make (T : TABLE) = struct
 
   let lexer_lexbuf_to_supplier
       (lexer : Lexing.lexbuf -> token)
+      (locate : Lexing.lexbuf -> location)
       (lexbuf : Lexing.lexbuf)
   : supplier =
     fun () ->
       let token = lexer lexbuf in
-      let startp = lexbuf.Lexing.lex_start_p
-      and endp = lexbuf.Lexing.lex_curr_p in
-      token, (startp, endp)
+      let location = locate lexbuf in
+      token, location
 
   (* ------------------------------------------------------------------------ *)
 
@@ -515,9 +515,9 @@ module Make (T : TABLE) = struct
         (* The parser rejects this input. Raise an exception. *)
         raise Error
 
-  let entry (s : state) lexer lexbuf : semantic_value =
-    let pos = lexbuf.Lexing.lex_curr_p in
-    loop (lexer_lexbuf_to_supplier lexer lexbuf) (start s (pos, pos))
+  let entry (s : state) lexer locate lexbuf : semantic_value =
+    let initial = locate lexbuf in
+    loop (lexer_lexbuf_to_supplier lexer locate lexbuf) (start s initial)
 
   (* ------------------------------------------------------------------------ *)
 

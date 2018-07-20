@@ -37,7 +37,8 @@ module Make
   (ET : EngineTypes.TABLE
         with type terminal = int
          and type nonterminal = int
-         and type semantic_value = Obj.t)
+         and type semantic_value = Obj.t
+         and type location = TT.location)
   (E : sig
      type 'a env =
        (ET.state, ET.semantic_value, ET.token, ET.location) EngineTypes.env

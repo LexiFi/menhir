@@ -122,7 +122,7 @@ module type TABLE = sig
 
   (* The type of locations. *)
 
-  type location = Lexing.position * Lexing.position
+  type location
 
   (* A token is conceptually a pair of a (non-[error]) terminal symbol and
      a semantic value. The following two functions are the pair projections. *)
@@ -330,6 +330,8 @@ module type MONOLITHIC_ENGINE = sig
 
   type semantic_value
 
+  type location
+
   (* An entry point to the engine requires a start state, a lexer, and a lexing
      buffer. It either succeeds and produces a semantic value, or fails and
      raises [Error]. *)
@@ -339,6 +341,7 @@ module type MONOLITHIC_ENGINE = sig
   val entry:
     state ->
     (Lexing.lexbuf -> token) ->
+    (Lexing.lexbuf -> location) ->
     Lexing.lexbuf ->
     semantic_value
 
@@ -394,10 +397,12 @@ module type ENGINE = sig
   include IncrementalEngine.INCREMENTAL_ENGINE
     with type token := token
      and type 'a lr1state = state (* useful for us; hidden from the end user *)
+     and type location := location
 
   include INCREMENTAL_ENGINE_START
     with type state := state
      and type semantic_value := semantic_value
      and type 'a checkpoint := 'a checkpoint
+     and type location := location
 
 end

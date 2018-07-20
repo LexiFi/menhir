@@ -261,10 +261,18 @@ let interpret log nt lexer lexbuf =
     end)
   in
 
+  (* Update location for initial state *)
+
+  lexbuf.Lexing.lex_start_p <- lexbuf.Lexing.lex_curr_p;
+
+  let locate {Lexing. lex_start_p; lex_curr_p}  =
+    (lex_start_p, lex_curr_p)
+  in
+
   (* Run it. *)
 
   try
-    Some (E.entry (Lr1.entry_of_nt nt) lexer lexbuf)
+    Some (E.entry (Lr1.entry_of_nt nt) lexer locate lexbuf)
   with T.Error ->
     None
 
