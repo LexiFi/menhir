@@ -91,18 +91,20 @@ let posvar s w f =
       assert false
 
 (* ------------------------------------------------------------------------- *)
-(* Sets of keywords. *)
+(* Maps of keywords. *)
 
-module KeywordSet = struct
+module KeywordMap = struct
 
-  include Set.Make (struct
+  include Map.Make (struct
     type t = keyword
     let compare = compare
   end)
 
-  let map f keywords =
-    fold (fun keyword accu ->
-      add (f keyword) accu
+  let map_keyword f keywords =
+    fold (fun keyword value accu ->
+      add (f keyword) value accu
     ) keywords empty
 
 end
+
+type keywords = Positions.t KeywordMap.t

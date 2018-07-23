@@ -25,6 +25,9 @@ let posvar_ = function
   | _ ->
       assert false (* [posvar_] should be applied to a position keyword *)
 
+let add_keyword_with_unknown_pos keyword keywords =
+  KeywordMap.add keyword Positions.dummy keywords
+
 (* [symbolstartpos producers i n] constructs an expression which, beginning at
    index [i], looks for the first non-empty producer and returns its start
    position. If none is found, this expression returns the end position of the
@@ -55,11 +58,11 @@ let posvar_ = function
    symbols. *)
 
 let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
-: IL.expr * KeywordSet.t =
+: IL.expr * keywords =
   if i = n then
     (* Return [$endpos]. *)
     let keyword = Position (Left, WhereEnd, FlavorPosition) in
-    EVar (posvar_ keyword), KeywordSet.singleton keyword
+    EVar (posvar_ keyword), KeywordMap.singleton keyword Positions.dummy
   else
     (* [symbol] is the symbol that appears in the right-hand side at position i.
        [x] is the identifier that is bound to it. We generate code that compares
@@ -75,7 +78,7 @@ let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
     if not (nullable symbol) then
       (* The start and end positions must differ. *)
       EVar (posvar_ startp),
-      KeywordSet.singleton startp
+      KeywordMap.singleton startp Positions.dummy
     else
       let continue, keywords = symbolstartpos analysis producers (i + 1) n in
       if epsilon symbol then
@@ -89,7 +92,7 @@ let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
           EVar (posvar_ startp),
           continue
         ),
-        KeywordSet.add startp (KeywordSet.add endp keywords)
+        add_keyword_with_unknown_pos startp (add_keyword_with_unknown_pos endp keywords)
 
 (* [define keyword1 f keyword2] macro-expands [keyword1] as [f(keyword2)],
    where [f] is a function of expressions to expressions. *)
@@ -97,7 +100,7 @@ let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
 let define keyword1 f keyword2 =
   Action.define
     keyword1
-    (KeywordSet.singleton keyword2)
+    (KeywordMap.singleton keyword2 Positions.dummy)
     (mlet
        [ PVar (posvar_ keyword1) ]
        [ f (EVar (posvar_ keyword2)) ])
@@ -111,12 +114,12 @@ let define keyword1 f keyword2 =
 let define_as_tuple keyword keywords =
   Action.define
     keyword
-    (List.fold_right KeywordSet.add keywords KeywordSet.empty)
+    (List.fold_right add_keyword_with_unknown_pos keywords KeywordMap.empty)
     (mlet
        [ PVar (posvar_ keyword) ]
        [ ETuple (List.map (fun keyword -> EVar (posvar_ keyword)) keywords) ])
 
-let expand_loc keyword action =
+let expand_loc keyword _pos action =
   match keyword with
   | Position (Left, WhereSymbolStart, FlavorLocation) -> (* $sloc *)
       define_as_tuple keyword
@@ -134,7 +137,7 @@ let expand_loc keyword action =
 (* An [ofs] keyword is expanded away. It is defined in terms of the
    corresponding [pos] keyword. *)
 
-let expand_ofs keyword action =
+let expand_ofs keyword _pos action =
   match keyword with
   | Position (subject, where, FlavorOffset) ->
       define keyword
@@ -147,7 +150,7 @@ let expand_ofs keyword action =
 (* [$symbolstartpos] is expanded into a cascade of [if] constructs, modeled
    after [Parsing.symbol_start_pos]. *)
 
-let expand_symbolstartpos analysis producers n keyword action =
+let expand_symbolstartpos analysis producers n keyword _pos action =
   match keyword with
   | Position (Left, WhereSymbolStart, FlavorPosition) ->
       let expansion, keywords = symbolstartpos analysis producers 0 n in
@@ -162,7 +165,7 @@ let expand_symbolstartpos analysis producers n keyword action =
 
 (* [$startpos] and [$endpos] are expanded away.  *)
 
-let expand_startend producers n keyword action =
+let expand_startend producers n keyword _pos action =
   match keyword with
   | Position (Left, WhereStart, flavor) ->
 
@@ -195,7 +198,7 @@ let expand_startend producers n keyword action =
    rewriting rule. *)
 
 let expand_round f action =
-  KeywordSet.fold f (Action.keywords action) action
+  KeywordMap.fold f (Action.keywords action) action
 
 (* [expand_action] performs macro-expansion in [action]. We do this in several
    rounds: first, expand the [loc] keywords away; then, expand the [ofs]

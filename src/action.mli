@@ -26,7 +26,7 @@ val compose : string -> t -> t -> t
    is transformed by the function [f], which typically wraps it in some
    new [let] bindings. *)
 
-val define: keyword -> KeywordSet.t -> (IL.expr -> IL.expr) -> t -> t
+val define: keyword -> keywords -> (IL.expr -> IL.expr) -> t -> t
 
 (* Variable-to-variable substitutions, used by [rename], below. *)
 
@@ -61,7 +61,11 @@ val to_il_expr: t -> IL.expr
 val filenames: t -> string list
 
 (** [keywords a] is the set of keywords used in the semantic action [a]. *)
-val keywords: t -> KeywordSet.t
+val keywords: t -> keywords
+
+(** [keyword_position a k] returns the position in which the keyword appear in
+    the action. *)
+val keyword_position: t -> keyword -> Positions.t
 
 (** [from_stretch s] builds an action out of a textual piece of code. *)
 val from_stretch: Stretch.t -> t

@@ -26,25 +26,48 @@ type t = {
   (* The set of keywords that appear in this semantic action. They can be thought
      of as free variables that refer to positions. They must be renamed during
      inlining. *)
-  keywords  : KeywordSet.t;
+  keywords  : keywords;
 
 }
+
+let keyword_best_position pos1 pos2 =
+  let l1 = Positions.start_of_position pos1 in
+  let l2 = Positions.start_of_position pos2 in
+  if l1 = Lexing.dummy_pos || l2.Lexing.pos_cnum > l1.Lexing.pos_cnum
+  then pos2
+  else pos1
+
+let keyword_add keyword pos keywords =
+  match KeywordMap.find keyword keywords with
+  | pos' ->
+    KeywordMap.add keyword (keyword_best_position pos pos') keywords
+  | exception Not_found ->
+    KeywordMap.add keyword pos keywords
+
+let keyword_union _keyword pos1 pos2 =
+  Some (keyword_best_position pos1 pos2)
+
+let keywords_union k1 k2 = KeywordMap.union keyword_union k1 k2
 
 (* Creation. *)
 
 let from_stretch s = {
   expr      = IL.ETextual s;
   filenames = [ s.Stretch.stretch_filename ];
-  keywords  = KeywordSet.of_list s.Stretch.stretch_keywords
+  keywords  =
+    List.fold_left
+      (fun keywords (keyword, pos) -> keyword_add keyword pos keywords)
+      KeywordMap.empty s.Stretch.stretch_keywords
 }
 
 (* Defining a keyword in terms of other keywords. *)
 
 let define keyword keywords f action =
-  assert (KeywordSet.mem keyword action.keywords);
+  assert (KeywordMap.mem keyword action.keywords);
   { action with
     expr     = f action.expr;
-    keywords = KeywordSet.union keywords (KeywordSet.remove keyword action.keywords)
+    keywords = keywords_union keywords
+                 (KeywordMap.remove keyword action.keywords)
   }
 
 (* Composition, used during inlining. *)
@@ -56,7 +79,7 @@ let compose x a1 a2 =
      a semantic action is already parenthesized by the lexer. *)
   {
     expr      = IL.ELet ([ IL.PVar x, a1.expr ], a2.expr);
-    keywords  = KeywordSet.union a1.keywords a2.keywords;
+    keywords  = keywords_union a1.keywords a2.keywords;
     filenames = a1.filenames @ a2.filenames;
   }
 
@@ -125,7 +148,7 @@ let rename f phi a =
   (* Rename all keywords, growing [phi] as we go. *)
   let keywords = a.keywords in
   let phi = ref phi in
-  let keywords = KeywordSet.map (rename_keyword f phi) keywords in
+  let keywords = KeywordMap.map_keyword (rename_keyword f phi) keywords in
   let phi = !phi in
 
   (* Construct a new semantic action, where [phi] is translated into
@@ -148,8 +171,11 @@ let filenames action =
 let keywords action =
   action.keywords
 
+let keyword_position action keyword =
+  KeywordMap.find keyword action.keywords
+
 let has_syntaxerror action =
-  KeywordSet.mem SyntaxError (keywords action)
+  KeywordMap.mem SyntaxError (keywords action)
 
 let has_beforeend action =
-  KeywordSet.mem (Position (Before, WhereEnd, FlavorPosition)) action.keywords
+  KeywordMap.mem (Position (Before, WhereEnd, FlavorPosition)) action.keywords

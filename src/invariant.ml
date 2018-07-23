@@ -664,31 +664,32 @@ let () =
       record_VarVar (Symbol.N nt, WhereEnd) (rhs.(length - 1), WhereEnd)
     end;
 
-    KeywordSet.iter (function
-      | SyntaxError ->
+    KeywordMap.iter (fun key _pos ->
+        match key with
+        | SyntaxError ->
           ()
-      | Position (Before, _, _) ->
+        | Position (Before, _, _) ->
           (* Doing nothing here because [$endpos($0)] is dealt with in
              the second loop. *)
           ()
-      | Position (Left, _, _) ->
+        | Position (Left, _, _) ->
           (* [$startpos] and [$endpos] have been expanded away. *)
           assert false
-      | Position (_, _, FlavorLocation) ->
+        | Position (_, _, FlavorLocation) ->
           (* [$loc] and [$sloc] have been expanded away. *)
           assert false
-      | Position (RightNamed _, WhereSymbolStart, _) ->
+        | Position (RightNamed _, WhereSymbolStart, _) ->
           (* [$symbolstartpos(x)] does not exist. *)
           assert false
-      | Position (RightNamed id, where, _) ->
+        | Position (RightNamed id, where, _) ->
           (* If the semantic action mentions [$startpos($i)], then the
              [i]-th symbol in the right-hand side must keep track of
              its start position. Similarly for end positions. *)
           Array.iteri (fun i id' ->
-            if id = id' then
-              record_ConVar true (rhs.(i), where)
-          ) ids
-    ) (Action.keywords action)
+              if id = id' then
+                record_ConVar true (rhs.(i), where)
+            ) ids
+      ) (Action.keywords action)
 
   ); (* end of loop on productions *)
 

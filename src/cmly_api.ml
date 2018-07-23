@@ -99,7 +99,7 @@ module type GRAMMAR = sig
   module Action : sig
     type t
     val expr         : t -> ocamlexpr
-    val keywords     : t -> Keyword.keyword list
+    val keywords     : t -> (Keyword.keyword * Positions.t) list
   end
 
   module Production : sig

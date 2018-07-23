@@ -248,13 +248,16 @@ let mk_stretch pos1 pos2 parenthesize monsters =
     else
       (String.make (pos1.pos_cnum - pos1.pos_bol) ' ') ^ content
   in
+  let keyword_of_monster monster =
+    Option.map (fun keyword -> keyword, monster.pos) monster.keyword
+  in
   Stretch.({
     stretch_filename = InputFile.get_input_file_name();
     stretch_linenum = pos1.pos_lnum;
     stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
     stretch_content = content;
     stretch_raw_content = raw_content;
-    stretch_keywords = Misc.map_opt (fun monster -> monster.keyword) monsters
+    stretch_keywords = Misc.map_opt keyword_of_monster monsters
   })
 
 (* ------------------------------------------------------------------------ *)
