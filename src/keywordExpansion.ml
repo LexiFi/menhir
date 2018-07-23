@@ -245,14 +245,30 @@ let analysis grammar =
   in
   nullable, epsilon
 
+(* If the grammar provides its own location type most keywords are disabled. *)
+
+let reject_other_than_loc keyword position action =
+  match keyword with
+  | Position (_, WhereStart, FlavorLocation) -> (* $loc, $loc(x) *)
+    action
+  | Position _ ->
+    Error.error [position]
+      "this keyword cannot be used together with %%location"
+  | _ ->
+    action
+
 (* Put everything together. *)
 
-let expand_branch analysis branch =
-  { branch with action = expand_action analysis branch.producers branch.action }
+let expand_branch f branch =
+  { branch with action = f branch.producers branch.action }
 
-let expand_rule analysis rule =
-  { rule with branches = List.map (expand_branch analysis) rule.branches }
+let expand_rule f rule =
+  { rule with branches = List.map (expand_branch f) rule.branches }
 
 let expand_grammar grammar =
-  let analysis = analysis grammar in
-  { grammar with rules = StringMap.map (expand_rule analysis) grammar.rules }
+  let expansion =
+    match grammar.location with
+    | None -> expand_action (analysis grammar)
+    | Some _ -> (fun _ -> expand_round reject_other_than_loc)
+  in
+  { grammar with rules = StringMap.map (expand_rule expansion) grammar.rules }
