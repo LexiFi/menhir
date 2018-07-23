@@ -137,6 +137,7 @@ let drop (g : S.grammar) : T.grammar =
     T.preludes        = g.S.p_preludes;
     T.postludes       = g.S.p_postludes;
     T.parameters      = g.S.p_parameters;
+    T.location        = g.S.p_location;
     T.start_symbols   = StringMap.domain g.S.p_start_symbols;
     T.types           = drop_type_declarations g.S.p_types;
     T.tokens          = g.S.p_tokens;

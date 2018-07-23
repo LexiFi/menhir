@@ -80,6 +80,7 @@ type grammar =  {
     preludes        : Stretch.t list;
     postludes       : Syntax.postlude list;
     parameters      : Stretch.t list;
+    location        : Stretch.t option;
     start_symbols   : StringSet.t;
     types           : Stretch.ocamltype StringMap.t;
     tokens          : Syntax.token_properties StringMap.t;
