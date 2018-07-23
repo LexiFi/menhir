@@ -25,9 +25,6 @@ let posvar_ = function
   | _ ->
       assert false (* [posvar_] should be applied to a position keyword *)
 
-let add_keyword_with_unknown_pos keyword keywords =
-  KeywordMap.add keyword Positions.dummy keywords
-
 (* [symbolstartpos producers i n] constructs an expression which, beginning at
    index [i], looks for the first non-empty producer and returns its start
    position. If none is found, this expression returns the end position of the
@@ -57,12 +54,12 @@ let add_keyword_with_unknown_pos keyword keywords =
    symbol, once inlined, can be seen to be a sequence of empty and nonempty
    symbols. *)
 
-let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
+let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n pos
 : IL.expr * keywords =
   if i = n then
     (* Return [$endpos]. *)
     let keyword = Position (Left, WhereEnd, FlavorPosition) in
-    EVar (posvar_ keyword), KeywordMap.singleton keyword Positions.dummy
+    EVar (posvar_ keyword), KeywordMap.singleton keyword pos
   else
     (* [symbol] is the symbol that appears in the right-hand side at position i.
        [x] is the identifier that is bound to it. We generate code that compares
@@ -78,9 +75,9 @@ let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
     if not (nullable symbol) then
       (* The start and end positions must differ. *)
       EVar (posvar_ startp),
-      KeywordMap.singleton startp Positions.dummy
+      KeywordMap.singleton startp pos
     else
-      let continue, keywords = symbolstartpos analysis producers (i + 1) n in
+      let continue, keywords = symbolstartpos analysis producers (i + 1) n pos in
       if epsilon symbol then
         (* The start and end positions must be the same. *)
         continue,
@@ -92,15 +89,15 @@ let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
           EVar (posvar_ startp),
           continue
         ),
-        add_keyword_with_unknown_pos startp (add_keyword_with_unknown_pos endp keywords)
+        KeywordMap.add startp pos (KeywordMap.add endp pos keywords)
 
 (* [define keyword1 f keyword2] macro-expands [keyword1] as [f(keyword2)],
    where [f] is a function of expressions to expressions. *)
 
-let define keyword1 f keyword2 =
+let define keyword1 pos f keyword2 =
   Action.define
     keyword1
-    (KeywordMap.singleton keyword2 Positions.dummy)
+    (KeywordMap.singleton keyword2 pos)
     (mlet
        [ PVar (posvar_ keyword1) ]
        [ f (EVar (posvar_ keyword2)) ])
@@ -111,23 +108,24 @@ let define keyword1 f keyword2 =
    the pair ($startpos, $endpos). (Similarly for $loc(x).) Furthermore, $sloc
    is sugar for the pair ($symbolstartpos, $endpos). *)
 
-let define_as_tuple keyword keywords =
+let define_as_tuple keyword pos keywords =
+  let add k m = KeywordMap.add k pos m in
   Action.define
     keyword
-    (List.fold_right add_keyword_with_unknown_pos keywords KeywordMap.empty)
+    (List.fold_right add keywords KeywordMap.empty)
     (mlet
        [ PVar (posvar_ keyword) ]
        [ ETuple (List.map (fun keyword -> EVar (posvar_ keyword)) keywords) ])
 
-let expand_loc keyword _pos action =
+let expand_loc keyword pos action =
   match keyword with
   | Position (Left, WhereSymbolStart, FlavorLocation) -> (* $sloc *)
-      define_as_tuple keyword
+      define_as_tuple keyword pos
         [ Position (Left, WhereSymbolStart, FlavorPosition);
           Position (Left, WhereEnd, FlavorPosition) ]
         action
   | Position (subject, WhereStart, FlavorLocation) -> (* $loc, $loc(x) *)
-      define_as_tuple keyword
+      define_as_tuple keyword pos
         [ Position (subject, WhereStart, FlavorPosition);
           Position (subject, WhereEnd, FlavorPosition) ]
         action
@@ -137,10 +135,10 @@ let expand_loc keyword _pos action =
 (* An [ofs] keyword is expanded away. It is defined in terms of the
    corresponding [pos] keyword. *)
 
-let expand_ofs keyword _pos action =
+let expand_ofs keyword pos action =
   match keyword with
   | Position (subject, where, FlavorOffset) ->
-      define keyword
+      define keyword pos
         (fun e -> ERecordAccess (e, "Lexing.pos_cnum"))
         (Position (subject, where, FlavorPosition))
         action
@@ -150,10 +148,10 @@ let expand_ofs keyword _pos action =
 (* [$symbolstartpos] is expanded into a cascade of [if] constructs, modeled
    after [Parsing.symbol_start_pos]. *)
 
-let expand_symbolstartpos analysis producers n keyword _pos action =
+let expand_symbolstartpos analysis producers n keyword pos action =
   match keyword with
   | Position (Left, WhereSymbolStart, FlavorPosition) ->
-      let expansion, keywords = symbolstartpos analysis producers 0 n in
+      let expansion, keywords = symbolstartpos analysis producers 0 n pos in
       Action.define keyword keywords
         (mlet [ PVar (posvar_ keyword) ] [ expansion ])
         action
@@ -165,13 +163,13 @@ let expand_symbolstartpos analysis producers n keyword _pos action =
 
 (* [$startpos] and [$endpos] are expanded away.  *)
 
-let expand_startend producers n keyword _pos action =
+let expand_startend producers n keyword pos action =
   match keyword with
   | Position (Left, WhereStart, flavor) ->
 
       (* [$startpos] is defined as [$startpos($1)] if this production has
          nonzero length and [$endpos($0)] otherwise. *)
-      define keyword (fun e -> e) (
+      define keyword pos (fun e -> e) (
         if n > 0 then
           let x = producer_identifier (List.hd producers) in
           Position (RightNamed x, WhereStart, flavor)
@@ -183,7 +181,7 @@ let expand_startend producers n keyword _pos action =
 
       (* [$endpos] is defined as [$endpos($n)] if this production has
          nonzero length and [$endpos($0)] otherwise. *)
-      define keyword (fun e -> e) (
+      define keyword pos (fun e -> e) (
         if n > 0 then
           let x = producer_identifier (List.hd (List.rev producers)) in
           Position (RightNamed x, WhereEnd, flavor)
