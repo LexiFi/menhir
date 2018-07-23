@@ -53,6 +53,7 @@ val token: string
 val beforeendp: string
 val startp: string
 val endp: string
+val loc: string
 
 (* ------------------------------------------------------------------------ *)
 

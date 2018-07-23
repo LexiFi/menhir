@@ -589,6 +589,11 @@ module OnErrorReduce : sig
 end
 
 (* ------------------------------------------------------------------------ *)
+(* [%location] declaration. *)
+
+val location_module : Stretch.t option
+
+(* ------------------------------------------------------------------------ *)
 (* Diagnostics. *)
 
 (* This function prints warnings about useless precedence declarations for

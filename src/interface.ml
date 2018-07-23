@@ -17,6 +17,11 @@ open CodeBits
 
 (* -------------------------------------------------------------------------- *)
 
+(* The type of locations. *)
+
+
+(* -------------------------------------------------------------------------- *)
+
 (* The [Error] exception. *)
 
 let excname =
@@ -64,7 +69,7 @@ let incremental =
 
 let entrytypescheme_incremental grammar symbol =
   let t = TypTextual (ocamltype_of_start_symbol grammar symbol) in
-  type2scheme (marrow [ tlocation ] (checkpoint t))
+  type2scheme (marrow [ tlocation ~public:true grammar ] (checkpoint t))
 
 (* -------------------------------------------------------------------------- *)
 
@@ -128,7 +133,7 @@ let inspection_api grammar () =
 
 (* The incremental API. *)
 
-let incremental_engine () : module_type =
+let incremental_engine grammar : module_type =
   with_types WKNonDestructive
     "MenhirLib.IncrementalEngine.INCREMENTAL_ENGINE"
     [
@@ -136,8 +141,7 @@ let incremental_engine () : module_type =
       "token", (* NOT [tctoken], which is qualified if [--external-tokens] is used *)
       TokenType.ttoken;
       [],
-      "location",
-      CodeBits.tlocation
+      "location", tlocation ~public:true grammar
     ]
 
 let incremental_entry_points grammar : interface =
@@ -159,7 +163,7 @@ let incremental_api grammar () : interface =
     interpreter,
     MTSigEnd (
       IIComment "The incremental API." ::
-      IIInclude (incremental_engine()) ::
+      IIInclude (incremental_engine grammar) ::
       listiflazy Settings.inspection (inspection_api grammar)
     )
   ) ::
@@ -170,11 +174,19 @@ let incremental_api grammar () : interface =
 
 (* -------------------------------------------------------------------------- *)
 
+let location_module grammar =
+  match grammar.UnparameterizedSyntax.location with
+  | None -> []
+  | Some mpath -> [IIModuleAlias ("Location", mpath)]
+
+(* -------------------------------------------------------------------------- *)
+
 (* The complete interface of the generated parser. *)
 
 let interface grammar = [
   IIFunctor (grammar.parameters,
     monolithic_api grammar @
+    location_module grammar @
     listiflazy Settings.table (incremental_api grammar)
   )
 ]

@@ -72,6 +72,9 @@ let startp =
 let endp =
   "_endpos"
 
+let loc =
+  "_loc"
+
 (* ------------------------------------------------------------------------ *)
 
 (* Types for semantic values. *)

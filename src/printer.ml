@@ -696,6 +696,8 @@ and modexpr f = function
       structend f s
   | MApp (e1, e2) ->
       fprintf f "%a (%a)" modexpr e1 modexpr e2
+  | MTextual mpath ->
+      fprintf f "(%a)" (stretch true) mpath
 
 let valdecl f (x, ts) =
   fprintf f "val %s: %a" x typ ts.body
@@ -743,6 +745,8 @@ and interface_item f item =
         fprintf f "include %a" module_type mt
     | IIModule (name, mt) ->
         fprintf f "module %s : %a" name module_type mt
+    | IIModuleAlias (name, mpath) ->
+        fprintf f "module %s = %a" name (stretch true) mpath
     | IIComment comment ->
         fprintf f "(* %s *)" comment
     end;

@@ -5,7 +5,7 @@ ifndef MENHIR
   MENHIR := $(shell ../find-menhir.sh)
 endif
 
-MENHIRFLAGS     := --infer
+MENHIRFLAGS     := --infer --table
 
 OCAMLBUILD      := ocamlbuild -use-ocamlfind -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS)"
 

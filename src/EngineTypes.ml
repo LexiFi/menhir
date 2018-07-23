@@ -406,3 +406,18 @@ module type ENGINE = sig
      and type location := location
 
 end
+
+(* --------------------------------------------------------------------------- *)
+
+(* This signature describes the signature of locations manipulated by Menhir. *)
+
+module type LOCATION = sig
+  type t
+
+  val empty_after : t -> t
+  val join : t array -> t
+  val trace : t -> string
+  val get : Lexing.lexbuf -> t
+end
+
+module As_location(M : LOCATION) : LOCATION with type t = M.t = M

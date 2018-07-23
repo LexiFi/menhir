@@ -676,19 +676,32 @@ let () =
           (* [$startpos] and [$endpos] have been expanded away. *)
           assert false
         | Position (_, _, FlavorLocation) ->
-          (* [$loc] and [$sloc] have been expanded away. *)
-          assert false
+          begin match Grammar.location_module with
+            | None ->
+              (* [$loc] and [$sloc] have been expanded away. *)
+              assert false
+            | Some _ ->
+              (* $loc has been kept for custom locations. *)
+              ()
+          end
         | Position (RightNamed _, WhereSymbolStart, _) ->
           (* [$symbolstartpos(x)] does not exist. *)
           assert false
         | Position (RightNamed id, where, _) ->
-          (* If the semantic action mentions [$startpos($i)], then the
-             [i]-th symbol in the right-hand side must keep track of
-             its start position. Similarly for end positions. *)
-          Array.iteri (fun i id' ->
-              if id = id' then
-                record_ConVar true (rhs.(i), where)
-            ) ids
+          begin match Grammar.location_module with
+            | None ->
+              (* If the semantic action mentions [$startpos($i)], then the
+                 [i]-th symbol in the right-hand side must keep track of
+                 its start position. Similarly for end positions. *)
+              Array.iteri (fun i id' ->
+                  if id = id' then
+                    record_ConVar true (rhs.(i), where)
+                ) ids
+            | Some _ ->
+              (* $startpos when using custom locations should have been
+                 rejected before. *)
+              ()
+          end
       ) (Action.keywords action)
 
   ); (* end of loop on productions *)

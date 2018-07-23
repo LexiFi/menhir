@@ -159,10 +159,14 @@ let reducecellparams prod i _symbol (next : pattern) : pattern =
 
   let ids = Production.identifiers prod in
   let loc =
-    PTuple [
-      PVar (Printf.sprintf "_startpos_%s_" ids.(i));
-      PVar (Printf.sprintf "_endpos_%s_" ids.(i));
-    ]
+    match Grammar.location_module with
+    | None ->
+      PTuple [
+        PVar (Printf.sprintf "_startpos_%s_" ids.(i));
+        PVar (Printf.sprintf "_endpos_%s_" ids.(i));
+      ]
+    | Some _ ->
+      PVar (Printf.sprintf "_loc_%s_" ids.(i))
   in
 
   PRecord [
@@ -199,8 +203,11 @@ let reducecellcasts prod i symbol casts =
 (* 2015/11/04. The start and end positions of an epsilon production are obtained
    by taking the end position stored in the top stack cell (whatever it is). *)
 
+let location_of_top_stack_cell =
+  ERecordAccess(EVar stack, flocation)
+
 let endpos_of_top_stack_cell =
-  EApp (EVar "Pervasives.snd", [ERecordAccess(EVar stack, flocation)])
+  EApp (EVar "Pervasives.snd", [location_of_top_stack_cell])
 
 (* This is the body of the [reduce] function associated with
    production [prod]. It assumes that the variables [env] and [stack]
@@ -236,21 +243,36 @@ let reducebody prod =
      by the OCaml compiler. *)
 
   let posbindings =
-    ( PVar beforeendp,
-      endpos_of_top_stack_cell
-    ) ::
-    ( PVar startp,
-      if length > 0 then
-        EVar (Printf.sprintf "_startpos_%s_" ids.(0))
-      else
+    match Grammar.location_module with
+    | None ->
+      [ PVar beforeendp,
         endpos_of_top_stack_cell
-    ) ::
-    ( PVar endp,
-      if length > 0 then
-        EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1))
-      else
-        EVar startp
-    ) :: []
+      ; PVar startp,
+        if length > 0 then
+          EVar (Printf.sprintf "_startpos_%s_" ids.(0))
+        else
+          endpos_of_top_stack_cell
+      ; PVar endp,
+        if length > 0 then
+          EVar (Printf.sprintf "_endpos_%s_" ids.(length - 1))
+        else
+          EVar startp
+      ]
+    | Some _ ->
+      [ PVar loc,
+        if length > 0 then
+          let loc id = EVar (Printf.sprintf "_loc_%s_" id) in
+          let locs = EArray (Array.to_list (Array.map loc ids)) in
+          EApp (
+            EVar "Menhir__Location.join",
+            [locs]
+          )
+        else
+          EApp (
+            EVar "Menhir__Location.empty_after",
+            [location_of_top_stack_cell]
+          )
+      ]
   in
 
   (* This cannot be one of the start productions. *)
@@ -264,25 +286,26 @@ let reducebody prod =
   let act =
     EAnnot (Action.to_il_expr action, type2scheme (semvtypent nt))
   in
-  let positions =
-    [EVar startp; EVar endp]
+  let elocation =
+    match Grammar.location_module with
+    | None -> ETuple [EVar startp; EVar endp]
+    | Some _ -> EVar loc
   in
-
   EComment (
     Production.print prod,
     blet (
-      (pat, EVar stack) ::                  (* destructure the stack *)
-      casts @                               (* perform type casts *)
-      posbindings @                         (* bind [startp] and [endp] *)
-      [ PVar semv, act ],                   (* run the user's code and bind [semv] *)
+      (pat, EVar stack) ::           (* destructure the stack *)
+      casts @                        (* perform type casts *)
+      posbindings @                  (* bind [startp] and [endp] *)
+      [ PVar semv, act ],            (* run the user's code and bind [semv] *)
 
       (* Return a new stack, onto which we have pushed a new stack cell. *)
 
-      ERecord [                             (* the new stack cell *)
-        fstate, EVar state;                 (* the current state after popping; it will be updated by [goto] *)
-        fsemv, ERepr (EVar semv);           (* the newly computed semantic value *)
-        flocation, ETuple positions;        (* the newly computed start and end positions *)
-        fnext, EVar stack;                  (* this is the stack after popping *)
+      ERecord [                      (* the new stack cell *)
+        fstate, EVar state;          (* the current state after popping; it will be updated by [goto] *)
+        fsemv, ERepr (EVar semv);    (* the newly computed semantic value *)
+        flocation, elocation;        (* the newly computed start and end positions *)
+        fnext, EVar stack;           (* this is the stack after popping *)
       ]
 
     )
@@ -301,7 +324,9 @@ let semantic_action prod =
     ELet (
 
       [ PVar stack, ERecordAccess (EVar env, fstack) ] @
-        (if Production.length prod = 0 then [ PVar state, ERecordAccess (EVar env, fcurrent) ] else []),
+      (if Production.length prod = 0
+       then [ PVar state, ERecordAccess (EVar env, fcurrent) ]
+       else []),
 
       reducebody prod
 
@@ -661,18 +686,53 @@ let trace =
 
 (* ------------------------------------------------------------------------ *)
 
-let location_typ = {
-  typename = "location";
-  typeparams = [];
-  typerhs = TAbbrev tlocation;
-  typeconstraint = None;
-}
+let location_module =
+  match Grammar.location_module with
+  | None -> []
+  | Some path ->
+    [SIModuleDef ("Menhir__Location",
+                  MApp (MVar "MenhirLib.EngineTypes.As_location",
+                        MTextual path))]
 
-let trace_location = {
-  valpublic = false;
-  valpat = PVar "trace_location";
-  valval = EVar "MenhirLib.General.trace_location";
-}
+let post_location_module =
+  match Grammar.location_module with
+  | None -> []
+  | Some path ->
+    [SIModuleDef ("Location", MTextual path)]
+
+let location_typ =
+  match Grammar.location_module with
+  | None ->
+    { typename = "location"
+    ; typeparams = []
+    ; typerhs = TAbbrev default_tlocation
+    ; typeconstraint = None
+    }
+  | Some _ ->
+    { typename = "location"
+    ; typeparams = []
+    ; typerhs = TAbbrev (TypApp ("Menhir__Location.t", []))
+    ; typeconstraint = None
+    }
+
+
+let trace_location =
+  match Grammar.location_module with
+  | None ->
+    { valpublic = false
+    ; valpat = PVar "trace_location"
+    ; valval = EVar "MenhirLib.General.trace_location"
+    }
+  | Some _ ->
+    { valpublic = false
+    ; valpat = PVar "trace_location"
+    ; valval = EVar "Menhir__Location.trace"
+    }
+
+let get_location =
+  match Grammar.location_module with
+  | None -> "MenhirLib.General.get_location"
+  | Some _ -> "Menhir__Location.get"
 
 (* ------------------------------------------------------------------------ *)
 
@@ -722,7 +782,7 @@ let monolithic_entry_point state nt t =
             EVar entry, [
               EIntConst (Lr1.number state);
               EVar lexer;
-              EVar "MenhirLib.General.get_location";
+              EVar get_location;
               EVar lexbuf
             ]
           )
@@ -1022,6 +1082,8 @@ let program =
 
     SIStretch grammar.preludes ::
 
+    location_module @
+
     (* Define the tables. *)
 
     SIModuleDef (tables,
@@ -1029,8 +1091,6 @@ let program =
         (* The internal sub-module [basics] contains the definitions of the
            exception [Error] and of the type [token]. *)
         SIInclude (MVar basics);
-
-        SITypeDefs [location_typ];
 
         (* This is a non-recursive definition, so none of the names
            defined here are visible in the semantic actions. *)
@@ -1047,7 +1107,11 @@ let program =
           goto;
           semantic_action;
           trace;
-        ])
+        ]);
+
+        (* Define location_typ last, to satisfy the functor interface without
+           making the type location visible from the semantic actions. *)
+        SITypeDefs [location_typ];
       ]
     ) ::
 
@@ -1120,6 +1184,8 @@ let program =
     SIModuleDef (incremental, MStruct [
       SIValDefs (false, incremental_api)
     ]) ::
+
+    post_location_module @
 
     SIStretch grammar.postludes ::
 

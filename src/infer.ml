@@ -112,7 +112,7 @@ let actiondef grammar symbol branch =
       PAnnot (PVar endp, tposition) ::
       PAnnot (PVar starto, tint) ::
       PAnnot (PVar endo, tint) ::
-      PAnnot (PVar loc, tlocation) ::
+      PAnnot (PVar loc, tlocation ~public:false grammar) ::
       formals
     ) [] branch.producers
   in
@@ -130,8 +130,8 @@ let actiondef grammar symbol branch =
     PAnnot (PVar "_endofs", tint) ::
     PAnnot (PVar "_endofs__0_", tint) ::
     PAnnot (PVar "_symbolstartofs", tint) ::
-    PAnnot (PVar "_sloc", tlocation) ::
-    PAnnot (PVar "_loc", tlocation) ::
+    PAnnot (PVar "_sloc", tlocation ~public:false grammar) ::
+    PAnnot (PVar "_loc", tlocation ~public:false grammar) ::
     formals
   in
 
@@ -150,6 +150,13 @@ let actiondef grammar symbol branch =
       body
   | _ ->
       EFun (formals, body)
+
+let location_module grammar =
+  match grammar.UnparameterizedSyntax.location with
+  | None -> []
+  | Some path ->
+    let md = MApp (MVar "MenhirLib.EngineTypes.As_location", MTextual path) in
+    [SIModuleDef ("Menhir__Location", md)]
 
 (* [program] turns an entire grammar into a test program. *)
 
@@ -209,6 +216,7 @@ let program grammar =
 
   [ SIFunctor (grammar.parameters,
     interface_to_structure (tokentypedef grammar) @
+    location_module grammar @
     SIStretch grammar.preludes ::
     SIValDefs (false, [ begindef; def; enddef ]) ::
     SIStretch grammar.postludes ::

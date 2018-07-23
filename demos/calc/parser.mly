@@ -2,6 +2,7 @@
 %token PLUS MINUS TIMES DIV
 %token LPAREN RPAREN
 %token EOL
+%location<MyLocation>
 
 %left PLUS MINUS        /* lowest precedence */
 %left TIMES DIV         /* medium precedence */

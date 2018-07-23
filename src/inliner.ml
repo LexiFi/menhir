@@ -311,6 +311,8 @@ and inline_modexpr = function
       MStruct (inline_structure s)
   | MApp (e1, e2) ->
       MApp (inline_modexpr e1, inline_modexpr e2)
+  | MTextual stretch ->
+      MTextual stretch
 
 (* The external entry point. *)
 

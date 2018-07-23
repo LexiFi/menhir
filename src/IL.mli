@@ -29,6 +29,7 @@ and interface_item =
   | IIInclude of module_type
     (* Submodule. *)
   | IIModule of string * module_type
+  | IIModuleAlias of string * Stretch.t
     (* Comment. *)
   | IIComment of string
 
@@ -239,6 +240,7 @@ and modexpr =
     | MVar of string
     | MStruct of structure
     | MApp of modexpr * modexpr
+    | MTextual of Stretch.t
 
 (* Structures. *)
 

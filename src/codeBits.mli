@@ -35,7 +35,8 @@ val tint: typ
 val tstring: typ
 val texn: typ
 val tposition: typ
-val tlocation: typ
+val default_tlocation: typ
+val tlocation: public:bool -> UnparameterizedSyntax.grammar -> typ
 val tlexbuf: typ
 val tobj : typ
 

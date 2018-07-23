@@ -19,9 +19,9 @@ let rec loop lexbuf (checkpoint : int I.checkpoint) =
          and offer it to the parser, which will produce a new
          checkpoint. Then, repeat. *)
       let token = Lexer.token lexbuf in
-      let startp = lexbuf.lex_start_p
-      and endp = lexbuf.lex_curr_p in
-      let checkpoint = I.offer checkpoint (token, startp, endp) in
+      let startp = lexbuf.lex_start_pos
+      and endp = lexbuf.lex_curr_pos in
+      let checkpoint = I.offer checkpoint (token, (startp, endp)) in
       loop lexbuf checkpoint
   | I.Shifting _
   | I.AboutToReduce _ ->
@@ -57,7 +57,8 @@ let fail lexbuf (_ : int I.checkpoint) =
     (lexeme_start lexbuf)
 
 let loop lexbuf result =
-  let supplier = I.lexer_lexbuf_to_supplier Lexer.token lexbuf in
+  let get_location l = (l.Lexing.lex_start_pos, l.Lexing.lex_curr_pos) in
+  let supplier = I.lexer_lexbuf_to_supplier Lexer.token get_location lexbuf in
   I.loop_handle succeed (fail lexbuf) supplier result
 
 (* -------------------------------------------------------------------------- *)
@@ -66,8 +67,9 @@ let loop lexbuf result =
 
 let process (line : string) =
   let lexbuf = from_string line in
+  let loc = (lexbuf.lex_start_pos, lexbuf.lex_curr_pos) in
   try
-    loop lexbuf (Parser.Incremental.main lexbuf.lex_curr_p)
+    loop lexbuf (Parser.Incremental.main loc)
   with
   | Lexer.Error msg ->
       Printf.fprintf stderr "%s%!" msg
@@ -89,7 +91,7 @@ let rec repeat channel =
   process optional_line;
   if continue then
     repeat channel
-  
+
 let () =
   repeat (from_channel stdin)
 

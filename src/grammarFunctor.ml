@@ -1581,6 +1581,12 @@ module OnErrorReduce = struct
 
 end
 
+
+(* ------------------------------------------------------------------------ *)
+(* [%location] declaration. *)
+
+let location_module = G.grammar.location
+
 (* ------------------------------------------------------------------------ *)
 
 end (* module Make *)

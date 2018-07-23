@@ -1,3 +1,5 @@
+%location<MyLocation>
+
 %token <int> INT
 %token PLUS MINUS TIMES DIV
 %token LPAREN RPAREN
@@ -17,17 +19,17 @@ main:
 
 expr:
 | i = INT
-    { i }
+    { prerr_endline (MyLocation.trace $loc);i }
 | LPAREN e = expr RPAREN
-    { e }
+    { prerr_endline (MyLocation.trace $loc);e }
 | e1 = expr PLUS e2 = expr
-    { e1 + e2 }
+    { prerr_endline (MyLocation.trace $loc); e1 + e2 }
 | e1 = expr MINUS e2 = expr
-    { e1 - e2 }
+    { prerr_endline (MyLocation.trace $loc);e1 - e2 }
 | e1 = expr TIMES e2 = expr
-    { e1 * e2 }
+    { prerr_endline (MyLocation.trace $loc);e1 * e2 }
 | e1 = expr DIV e2 = expr
-    { e1 / e2 }
+    { prerr_endline (MyLocation.trace $loc);e1 / e2 }
 | MINUS e = expr %prec UMINUS
-    { - e }
+    { prerr_endline (MyLocation.trace $loc);- e }
 

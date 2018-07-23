@@ -75,8 +75,14 @@ let tposition =
 
 (* A location is a pair of positions. This might change in the future. *)
 
-let tlocation =
-  tpair tposition tposition
+let default_tlocation = tpair tposition tposition
+
+let tlocation ~public grammar =
+  match grammar.UnparameterizedSyntax.location with
+  | None -> default_tlocation
+  | Some _path ->
+    let path = if public then "Location.t" else "Menhir__Location.t" in
+    TypApp (path, [])
 
 (* The type of lexer buffers. *)
 
@@ -252,6 +258,7 @@ let interface_item_to_structure_item = function
   | IIValDecls _
   | IIInclude _
   | IIModule (_, _)
+  | IIModuleAlias (_, _)
   | IIComment _ ->
       []
 
