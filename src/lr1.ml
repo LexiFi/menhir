@@ -931,8 +931,7 @@ let () =
 (* If any fatal error was signaled up to this point, stop now. *)
 
 let () =
-  if Error.errors() then
-    exit 1
+  Error.exit()
 
 (* ------------------------------------------------------------------------ *)
 

@@ -102,6 +102,10 @@ let warning positions format =
 let errors () =
   !errors
 
+let exit () =
+  if errors() then
+    exit 1
+
 let errorp v =
   error [ Positions.position v ]
 

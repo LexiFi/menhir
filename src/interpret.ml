@@ -386,7 +386,7 @@ let target_runs : run list -> targeted_run list =
     (* Interpret all sentences, possibly displaying multiple errors. *)
     let runs = List.map (target_run_1 Error.signal) runs in
     (* Abort if an error occurred. *)
-    if Error.errors() then exit 1;
+    Error.exit();
     (* Remove the options introduced by the first phase above. *)
     let runs = List.map target_run_2 runs in
     runs
@@ -561,7 +561,7 @@ let message_table (detect_redundancy : bool) (runs : filtered_targeted_run list)
       ) table sentences_and_states
     ) Lr1.NodeMap.empty runs
   in
-  if Error.errors() then exit 1;
+  Error.exit();
   table
 
 (* --------------------------------------------------------------------------- *)
@@ -709,7 +709,7 @@ let () =
           ()
     );
 
-    if Error.errors() then exit 1;
+    Error.exit();
     exit 0
 
   )

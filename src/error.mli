@@ -48,10 +48,10 @@ val errorp: _ Positions.located -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 val signal: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
 
-(* [errors] returns [true] if [signal] was previously called. Together
-   [signal] and [errors] allow reporting multiple errors before aborting. *)
+(* [exit()] exits with exit code 1 if [signal] was previously called. Together,
+   [signal] and [exit] allow reporting multiple errors before aborting. *)
 
-val errors: unit -> bool
+val exit: unit -> unit
 
 (* [warning] is like [signal], except it does not set a flag. *)
 
