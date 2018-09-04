@@ -19,3 +19,4 @@
    the grammar is in the class SLR(1). This check is performed when the log
    level [lg] is at least 1. *)
 
+val check: unit -> unit

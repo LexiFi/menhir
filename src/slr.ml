@@ -160,7 +160,7 @@ let count_slr_violations () : int =
 
 (* At log level 1, indicate whether the grammar is SLR(1). *)
 
-let () =
+let check () =
   Error.logG 1 (fun f ->
     let count = count_slr_violations() in
     if count = 0 then
@@ -168,4 +168,3 @@ let () =
     else
       Printf.fprintf f "The grammar is not SLR(1) -- %d states have a conflict.\n" count
   )
-
