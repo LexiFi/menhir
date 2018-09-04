@@ -426,42 +426,6 @@ let setup () : unit -> sentence option =
 
 (* --------------------------------------------------------------------------- *)
 
-(* If [--interpret] is set, interpret the sentences found on the standard
-   input channel, then stop, without generating a parser. *)
-
-(* We read a series of sentences from the standard input channel. To allow
-   interactive use, we interpret each sentence as soon as it is read. *)
-
-let () =
-  if Settings.interpret then
-    let read = setup() in
-    while true do
-      match read() with
-      | None ->
-          exit 0
-      | Some sentence ->
-          interpret sentence
-    done
-
-(* --------------------------------------------------------------------------- *)
-
-(* If [--interpret-error] is set, interpret one sentence found on the standard
-   input channel, then stop, without generating a parser. *)
-
-(* We read just one sentence, confirm that this sentence ends in an error, and
-   (if that is the case) display the number of the state that is reached. *)
-
-let () =
-  if Settings.interpret_error then
-    let read = setup() in
-    match read() with
-    | None ->
-      exit 1 (* abnormal: no input *)
-    | Some sentence ->
-        interpret_error sentence (* never returns *)
-
-(* --------------------------------------------------------------------------- *)
-
 (* Display an informational message about the contents of a [.messages] file.  *)
 
 let stats (runs : run or_comment list) =
@@ -621,6 +585,49 @@ let compile_runs filename (runs : filtered_targeted_run list) : unit =
 
 (* --------------------------------------------------------------------------- *)
 
+(* The rest of this file is the function [run], internally written as a functor
+   [Run] for syntactic convenience. *)
+
+module Run (X : sig end) = struct
+
+(* --------------------------------------------------------------------------- *)
+
+(* If [--interpret] is set, interpret the sentences found on the standard
+   input channel, then stop, without generating a parser. *)
+
+(* We read a series of sentences from the standard input channel. To allow
+   interactive use, we interpret each sentence as soon as it is read. *)
+
+let () =
+  if Settings.interpret then
+    let read = setup() in
+    while true do
+      match read() with
+      | None ->
+          exit 0
+      | Some sentence ->
+          interpret sentence
+    done
+
+(* --------------------------------------------------------------------------- *)
+
+(* If [--interpret-error] is set, interpret one sentence found on the standard
+   input channel, then stop, without generating a parser. *)
+
+(* We read just one sentence, confirm that this sentence ends in an error, and
+   (if that is the case) display the number of the state that is reached. *)
+
+let () =
+  if Settings.interpret_error then
+    let read = setup() in
+    match read() with
+    | None ->
+      exit 1 (* abnormal: no input *)
+    | Some sentence ->
+        interpret_error sentence (* never returns *)
+
+(* --------------------------------------------------------------------------- *)
+
 (* If [--compile-errors <filename>] is set, compile the error message
    descriptions found in file [filename] down to OCaml code, then stop. *)
 
@@ -775,3 +782,13 @@ let () =
 
     exit 0
   )
+
+(* --------------------------------------------------------------------------- *)
+
+(* End of the functor [Run]. *)
+
+end
+
+let run () =
+  let module R = Run(struct end) in
+  ()

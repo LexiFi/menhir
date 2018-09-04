@@ -11,9 +11,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module is in charge of handling several command line options, namely
+(* [run()] is in charge of handling several command line options, namely
    [--interpret], [--interpret-error], [--compile-errors], [--compare-errors].
    If any of these options is present, the execution of Menhir stops here. *)
+
+val run: unit -> unit
 
 (* This default error message is produced by [--list-errors] when it creates a
    [.messages] file, and is recognized by [--compare-errors] when it compares
@@ -31,4 +33,3 @@ open Grammar
 
 val print_messages_item:
   Nonterminal.t * Terminal.t list * ReferenceInterpreter.target -> unit
-

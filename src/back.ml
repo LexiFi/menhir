@@ -13,7 +13,11 @@
 
 (* Driver for the back-end. *)
 
-module I = Interpret (* artificial dependency; ensures that [Interpret] runs first *)
+(* Let [Interpret] handle the command line options [--interpret],
+   [--interpret-error], [--compile-errors], [--compare-errors]. *)
+
+let () =
+  Interpret.run()
 
 (* If [--list-errors] is set, produce a list of erroneous input sentences, then stop. *)
 
