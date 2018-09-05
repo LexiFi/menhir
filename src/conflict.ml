@@ -19,12 +19,6 @@ let () =
   (* artificial dependency *)
 
 (* -------------------------------------------------------------------------- *)
-(* Our output channel. *)
-
-let out =
-  lazy (open_out (Settings.base ^ ".conflicts"))
-
-(* -------------------------------------------------------------------------- *)
 (* Explaining shift actions. *)
 
 (* The existence of a shift action stems from the existence of a shift
@@ -352,6 +346,15 @@ let explain_reduce_item
 let () =
   if Settings.explain then begin
 
+    (* 2018/09/05: when [--explain] is enabled, always create a fresh
+       .conflicts file (wiping out any pre-existing file), even if
+       there are in fact no conflicts. This should avoid confusion with
+       outdated .conflicts files. *)
+
+    let out =
+      open_out (Settings.base ^ ".conflicts")
+    in
+
     Lr1.conflicts (fun toks node ->
     try
 
@@ -399,8 +402,6 @@ let () =
       in
 
       (* Explain how the conflict state is reached. *)
-
-      let out = Lazy.force out in
 
       Printf.fprintf out "\n\
         ** Conflict (%s) in state %d.\n\
@@ -493,8 +494,6 @@ let () =
          because the automaton was butchered by conflict resolution directives,
          or because [--lalr] was enabled and we have unexplainable LALR conflicts.
          Anyway, send the error message to the .conflicts file and continue. *)
-
-      let out = Lazy.force out in
 
       Printf.fprintf out "\n\
         ** Conflict (unexplainable) in state %d.\n\

@@ -1,5 +1,15 @@
 # Changes
 
+## 2018/09/05
+
+* When `--explain` is enabled, always create a fresh `.conflicts` file
+  (wiping out any pre-existing file), even if there are in fact no conflicts.
+  This should avoid confusion with outdated `.conflicts` files.
+
+* Fix several bugs in the treatment of `--strict`. No `.conflicts` file
+  was created when `--strict` and `--explain` were both enabled. Also,
+  some warnings were not properly turned into errors by `--strict`.
+
 ## 2018/07/04
 
 * Update the `man` page, which was woefully out of date.
