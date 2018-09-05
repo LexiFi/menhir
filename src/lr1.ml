@@ -933,13 +933,6 @@ let () =
 
 (* ------------------------------------------------------------------------ *)
 
-(* If any fatal error was signaled up to this point, stop now. *)
-
-let () =
-  Error.exit_if Error.grammatical_error
-
-(* ------------------------------------------------------------------------ *)
-
 (* For each production, compute where (that is, in which states) this
    production can be reduced. This computation is done AFTER default conflict
    resolution (see below). It is an error to call the accessor function

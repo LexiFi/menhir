@@ -532,3 +532,10 @@ let () =
   Lr1.extra_reductions();
   Time.tick "Adding extra reductions"
 
+(* ------------------------------------------------------------------------ *)
+(* If any warnings about the grammar have been emitted up to this point,
+   and if [--strict] is enabled, now is the time to stop, before going
+   into the back-end. *)
+
+let () =
+  Error.exit_if Error.grammatical_error
