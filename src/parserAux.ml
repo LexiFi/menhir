@@ -101,8 +101,7 @@ let normalize_producers (producers : early_producers) : producer list =
 let override pos o1 o2 =
   match o1, o2 with
   | Some _, Some _ ->
-      Error.signal [ pos ] "this production carries two %%prec declarations.";
-      o2
+      Error.error [ pos ] "this production carries two %%prec declarations."
   | None, Some _ ->
       o2
   | _, None ->
