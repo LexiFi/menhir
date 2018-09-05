@@ -383,10 +383,12 @@ let target_run_2 : maybe_targeted_run -> targeted_run =
 
 let target_runs : run list -> targeted_run list =
   fun runs ->
+    let c = Error.new_category() in
+    let signal = Error.signal c in
     (* Interpret all sentences, possibly displaying multiple errors. *)
-    let runs = List.map (target_run_1 Error.signal) runs in
+    let runs = List.map (target_run_1 signal) runs in
     (* Abort if an error occurred. *)
-    Error.exit();
+    Error.exit_if c;
     (* Remove the options introduced by the first phase above. *)
     let runs = List.map target_run_2 runs in
     runs
@@ -509,6 +511,7 @@ let read_messages filename : run or_comment list =
 let message_table (detect_redundancy : bool) (runs : filtered_targeted_run list)
   : (located_sentence * message) Lr1.NodeMap.t =
 
+  let c = Error.new_category() in
   let table =
     List.fold_left (fun table (sentences_and_states, message) ->
       List.fold_left (fun table (sentence2, target) ->
@@ -516,7 +519,7 @@ let message_table (detect_redundancy : bool) (runs : filtered_targeted_run list)
         match Lr1.NodeMap.find s table with
         | sentence1, _ ->
             if detect_redundancy then
-              Error.signal (fst sentence1 @ fst sentence2)
+              Error.signal c (fst sentence1 @ fst sentence2)
                    "these sentences both cause an error in state %d."
                    (Lr1.number s);
             table
@@ -525,7 +528,7 @@ let message_table (detect_redundancy : bool) (runs : filtered_targeted_run list)
       ) table sentences_and_states
     ) Lr1.NodeMap.empty runs
   in
-  Error.exit();
+  Error.exit_if c;
   table
 
 (* --------------------------------------------------------------------------- *)
@@ -688,9 +691,10 @@ let () =
     and table2 = message_table false runs2 in
 
     (* Check that the domain of [table1] is a subset of the domain of [table2]. *)
+    let c = Error.new_category() in
     table1 |> Lr1.NodeMap.iter (fun s ((poss1, _), _) ->
       if not (Lr1.NodeMap.mem s table2) then
-        Error.signal poss1
+        Error.signal c poss1
           "this sentence leads to an error in state %d.\n\
            No sentence that leads to this state exists in \"%s\"."
           (Lr1.number s) filename2
@@ -716,7 +720,7 @@ let () =
           ()
     );
 
-    Error.exit();
+    Error.exit_if c;
     exit 0
 
   )

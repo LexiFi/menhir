@@ -43,23 +43,43 @@ val error: Positions.positions -> ('a, out_channel, unit, 'b) format4 -> 'a
 
 val errorp: _ Positions.located -> ('a, out_channel, unit, 'b) format4 -> 'a
 
-(* [signal] is like [error], except it does not exit immediately. It sets a
-   flag which can be tested using [errors]. *)
-
-val signal: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
-
-(* [exit()] exits with exit code 1 if [signal] was previously called. Together,
-   [signal] and [exit] allow reporting multiple errors before aborting. *)
-
-val exit: unit -> unit
-
-(* [warning] is like [signal], except it does not set a flag. *)
+(* [warning] is like [error], except it does not exit. *)
 
 val warning: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
 
-(* Certain warnings about the grammar can optionally be treated as errors.
-   The following function emits a warning or error message, via [warning] or
-   [signal]. It does not stop the program; the client must at some point call
-   [errors] and stop the program if any errors have been reported. *)
+(* ---------------------------------------------------------------------------- *)
+
+(* Delayed error reports -- where multiple errors can be reported at once. *)
+
+(* A category of errors. *)
+
+type category
+
+(* [new_category()] creates a new category of errors. *)
+
+val new_category: unit -> category
+
+(* [signal category] is like [error], except it does not exit immediately. It
+   records the fact that an error of this category has occurred. This can be
+   later detected by [exit_if category]. *)
+
+val signal: category -> Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a
+
+(* [exit_if category] exits with exit code 1 if [signal category] was
+   previously called. Together, [signal] and [exit_if] allow reporting
+   multiple errors before aborting. *)
+
+val exit_if: category -> unit
+
+(* ---------------------------------------------------------------------------- *)
+
+(* Certain warnings about the grammar can optionally be treated as errors. *)
+
+val grammatical_error: category
+
+(* [grammar_warning] emits a warning or error message, via either [warning] or
+   [signal grammatical_error]. It does not stop the program; the client must
+   at some point use [exit_if grammatical_error] and stop the program if any
+   errors have been reported. *)
 
 val grammar_warning: Positions.positions -> ('a, out_channel, unit, unit) format4 -> 'a

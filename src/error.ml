@@ -97,21 +97,28 @@ let errorp v =
 
 (* Delayed error reports -- where multiple errors can be reported at once. *)
 
-let errors =
+type category =
+  bool ref
+
+let new_category () =
   ref false
 
-let signal positions format =
+let signal category positions format =
   display
-    (fun _ -> errors := true)
+    (fun _ -> category := true)
     "Error: "
     positions format
 
-let errors () =
-  !errors
-
-let exit () =
-  if errors() then
+let exit_if category =
+  if !category then
     exit 1
 
-let grammar_warning =
-  if Settings.strict then signal else warning
+(* ---------------------------------------------------------------------------- *)
+
+(* Certain warnings about the grammar can optionally be treated as errors. *)
+
+let grammatical_error =
+  new_category()
+
+let grammar_warning pos =
+  if Settings.strict then signal grammatical_error pos else warning pos

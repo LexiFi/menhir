@@ -936,7 +936,7 @@ let () =
 (* If any fatal error was signaled up to this point, stop now. *)
 
 let () =
-  Error.exit()
+  Error.exit_if Error.grammatical_error
 
 (* ------------------------------------------------------------------------ *)
 
@@ -1029,7 +1029,7 @@ let rec best choice = function
           (* The cause for not knowing which production is best could be:
              1- the productions originate in different source files;
              2- they are derived, via inlining, from the same production. *)
-          Error.signal
+          Error.signal Error.grammatical_error
             (Production.positions choice @ Production.positions prod)
                "do not know how to resolve a reduce/reduce conflict\n\
                 between the following two productions:\n%s\n%s"
