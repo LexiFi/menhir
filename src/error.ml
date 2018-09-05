@@ -67,9 +67,6 @@ let logC =
 
 (* Errors and warnings. *)
 
-let errors =
-  ref false
-
 let print_positions f positions =
   List.iter (fun position ->
     fprintf f "%s:\n" (Positions.string_of_pos position)
@@ -87,16 +84,26 @@ let error positions format =
     "Error: "
     positions format
 
-let signal positions format =
-  display
-    (fun _ -> errors := true)
-    "Error: "
-    positions format
-
 let warning positions format =
   display
     (fun _ -> ())
     "Warning: "
+    positions format
+
+let errorp v =
+  error [ Positions.position v ]
+
+(* ---------------------------------------------------------------------------- *)
+
+(* Delayed error reports -- where multiple errors can be reported at once. *)
+
+let errors =
+  ref false
+
+let signal positions format =
+  display
+    (fun _ -> errors := true)
+    "Error: "
     positions format
 
 let errors () =
@@ -105,9 +112,6 @@ let errors () =
 let exit () =
   if errors() then
     exit 1
-
-let errorp v =
-  error [ Positions.position v ]
 
 let grammar_warning =
   if Settings.strict then signal else warning
