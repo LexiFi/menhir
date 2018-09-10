@@ -124,14 +124,13 @@ module Run (T: sig end) = struct
         fprintf f "Program Instance %sNum : Numbered %s :=\n" name name;
         fprintf f "  { inj := fun x => match x return _ with ";
         iteri (fun k constr ->
-          fprintf f "| %s => " constr;
-          write_optimized_int31 f k;
-          fprintf f " ";
+          fprintf f "\n    | %s => " constr;
+          write_optimized_int31 f k
         );
-        fprintf f "end;\n";
+        fprintf f "\n    end;\n";
         fprintf f "    surj := (fun n => match n return _ with ";
-        iteri (fprintf f "| %d => %s ");
-        fprintf f "| _ => %s end)%%int31;\n" (List.hd constrs);
+        iteri (fprintf f "\n    | %d => %s ");
+        fprintf f "\n    | _ => %s\n    end)%%int31;\n" (List.hd constrs);
         fprintf f "    inj_bound := %d%%int31 }.\n" (List.length constrs);
       end
     else

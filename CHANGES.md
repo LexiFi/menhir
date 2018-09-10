@@ -1,5 +1,10 @@
 # Changes
 
+## 2018/09/10
+
+* Coq back-end: add a few newlines in the generated file for readability.
+  (Suggested by Bernhard Schommer.)
+
 ## 2018/09/05
 
 * When `--explain` is enabled, always create a fresh `.conflicts` file
