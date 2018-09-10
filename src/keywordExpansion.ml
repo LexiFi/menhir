@@ -85,7 +85,7 @@ let rec symbolstartpos ((nullable, epsilon) as analysis) producers i n
       else
         (* In the general case, a runtime test is required. *)
         EIfThenElse (
-          EApp (EVar "Pervasives.(!=)", [ EVar (posvar_ startp); EVar (posvar_ endp) ]),
+          EApp (EVar "(!=)", [ EVar (posvar_ startp); EVar (posvar_ endp) ]),
           EVar (posvar_ startp),
           continue
         ),

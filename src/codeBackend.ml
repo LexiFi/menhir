@@ -313,7 +313,7 @@ let ptuple = function
 
 let trace (format : string) (args : expr list) : (pattern * expr) list =
   if Settings.trace then
-    [ PUnit, EApp (EVar "Printf.fprintf", (EVar "Pervasives.stderr") :: (EStringConst (format ^"\n%!")) :: args) ]
+    [ PUnit, EApp (EVar "Printf.fprintf", (EVar "stderr") :: (EStringConst (format ^"\n%!")) :: args) ]
   else
     []
 
@@ -1535,7 +1535,7 @@ let assertfalsedef = {
       EFun ([ PUnit ],
         blet ([
             PUnit, EApp (EVar "Printf.fprintf",
-                       [ EVar "Pervasives.stderr";
+                       [ EVar "stderr";
                          EStringConst "Internal failure -- please contact the parser generator's developers.\n%!" ]);
           ],
           EApp (EVar "assert", [ efalse ])

@@ -2,6 +2,10 @@
 
 ## 2018/09/10
 
+* Remove all references to `Pervasives` in the generated OCaml code.
+  These references were infrequent anyway,
+  and `Pervasives` is about to be deprecated in OCaml 4.08, it seems.
+
 * Coq back-end: add a few newlines in the generated file for readability.
   (Suggested by Bernhard Schommer.)
 
