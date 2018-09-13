@@ -1,4 +1,4 @@
-
+.PHONY: everyday bootstrap stage1 stage2 stage3 sdk clean
 
 # ----------------------------------------------------------------------------
 # Choose a target.
