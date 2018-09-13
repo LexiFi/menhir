@@ -168,7 +168,7 @@ all:
 
 MENHIRLIB       := menhirLib.mli menhirLib.ml menhirLib.cmi menhirLib.cmo
 ifneq ($(TARGET),byte)
-MENHIRLIB       := $(MENHIRLIB) menhirLib.cmx menhirLib.$(OBJ)
+MENHIRLIB       := $(MENHIRLIB) menhirLib.cmx menhirLib.cmxs menhirLib.$(OBJ)
 endif
 
 # -------------------------------------------------------------------------
@@ -177,7 +177,7 @@ endif
 
 MENHIRSDK       := menhirSdk.cmi menhirSdk.cmo
 ifneq ($(TARGET),byte)
-MENHIRSDK       := $(MENHIRSDK) menhirSdk.cmx menhirSdk.$(OBJ)
+MENHIRSDK       := $(MENHIRSDK) menhirSdk.cmx menhirSdk.cmxs menhirSdk.$(OBJ)
 endif
 
 # ----------------------------------------------------------------------------

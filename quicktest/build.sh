@@ -28,7 +28,7 @@ cp -f $SRC/menhirLib.META $SRC/META
 trap "{ rm -f $SRC/META ; }" EXIT
 if ! ocamlfind install menhirLib \
   $SRC/META $BUILD/menhirLib.cmi $BUILD/menhirLib.cmo \
-  $BUILD/menhirLib.cmx $BUILD/menhirLib.o ; then
+  $BUILD/menhirLib.cmx $BUILD/menhirLib.cmxs $BUILD/menhirLib.o ; then
   echo "Could not install MenhirLib. Stop."
   exit 1
 fi
@@ -36,7 +36,7 @@ echo "Installing new MenhirSdk..."
 cp -f $SRC/menhirSdk.META $SRC/META
 if ! ocamlfind install menhirSdk \
   $SRC/META $SDKDIR/menhirSdk.cmi $SDKDIR/menhirSdk.cmo \
-  $SDKDIR/menhirSdk.cmx $SDKDIR/menhirSdk.o; then
+  $SDKDIR/menhirSdk.cmx $SDKDIR/menhirSdk.cmxs $SDKDIR/menhirSdk.o; then
   echo "Could not install MenhirSdk. Stop."
   exit 1
 fi

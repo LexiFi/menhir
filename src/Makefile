@@ -1,4 +1,4 @@
-.PHONY: everyday bootstrap stage1 stage2 stage3 sdk clean
+
 
 # ----------------------------------------------------------------------------
 # Choose a target.
@@ -51,10 +51,15 @@ SRC   := ..
 
 FLAGS := -v -lg 1 -la 1 -lc 1 --table --infer --stdlib $(SRC) --strict --fixed-exception --canonical
 
+# Build .cmxs in case of native compilation.
+ifneq ($(TARGET),byte)
+MENHIRLIBCMXS := menhirLib.cmxs
+endif
+
 stage2:
 	@ $(OCAMLBUILD) -build-dir _stage2 -tag fancy_parser \
 	    -use-menhir -menhir "$(SRC)/_stage1/menhir.$(TARGET) $(FLAGS)" \
-	    menhir.$(TARGET)
+	    $(MENHIRLIBCMXS) menhir.$(TARGET)
 
 # ----------------------------------------------------------------------------
 # Stage 3 (optional).
@@ -77,7 +82,7 @@ stage3:
 
 MENHIRSDK       := menhirSdk.cmo
 ifneq ($(TARGET),byte)
-MENHIRSDK       := $(MENHIRSDK) menhirSdk.cmx
+MENHIRSDK       := $(MENHIRSDK) menhirSdk.cmx menhirSdk.cmxs
 endif
 
 # ----------------------------------------------------------------------------
