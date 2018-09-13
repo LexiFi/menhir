@@ -7,6 +7,11 @@ ifndef TARGET
   TARGET := native
 endif
 
+# Build .cmxs in case of native compilation.
+ifneq ($(TARGET),byte)
+MENHIRLIBCMXS := menhirLib.cmxs
+endif
+
 # ----------------------------------------------------------------------------
 # Ocamlbuild tool and settings.
 
@@ -35,7 +40,8 @@ bootstrap:
 # Build Menhir using ocamlyacc.
 
 stage1:
-	@ $(OCAMLBUILD) -build-dir _stage1 menhir.$(TARGET)
+	@ $(OCAMLBUILD) -build-dir _stage1 \
+	    $(MENHIRLIBCMXS) menhir.$(TARGET)
 
 # ----------------------------------------------------------------------------
 # Stage 2.
@@ -50,11 +56,6 @@ stage1:
 SRC   := ..
 
 FLAGS := -v -lg 1 -la 1 -lc 1 --table --infer --stdlib $(SRC) --strict --fixed-exception --canonical
-
-# Build .cmxs in case of native compilation.
-ifneq ($(TARGET),byte)
-MENHIRLIBCMXS := menhirLib.cmxs
-endif
 
 stage2:
 	@ $(OCAMLBUILD) -build-dir _stage2 -tag fancy_parser \
