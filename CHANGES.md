@@ -1,6 +1,8 @@
 # Changes
 
-## 2018/09/10
+## 2018/09/13
+
+* Install `.cmxs` files for menhirLib and menhirSdk.
 
 * Remove all references to `Pervasives` in the generated OCaml code.
   These references were infrequent anyway,
