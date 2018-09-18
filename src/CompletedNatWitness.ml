@@ -11,12 +11,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This is an enriched version of [CompletedNat], where we compute not just
-   numbers, but also sequences of matching length. *)
-
-(* A property is either [Finite (n, xs)], where [n] is a natural number and
-   [xs] is a sequence of length [n]; or [Infinity]. *)
-
 type 'a t =
 | Finite of int * 'a Seq.seq
 | Infinity
@@ -29,17 +23,6 @@ let equal p1 p2 =
       true
   | _, _ ->
       false
-
-let compare p1 p2 =
-  match p1, p2 with
-  | Finite (i1, _), Finite (i2, _) ->
-      if i1 < i2 then -1 else if i1 = i2 then 0 else 1
-  | Infinity, Infinity ->
-      0
-  | Finite _, Infinity ->
-      -1
-  | Infinity, Finite _ ->
-      1
 
 let bottom =
   Infinity
@@ -72,17 +55,6 @@ let min_lazy p1 p2 =
   | _ ->
       min p1 (p2())
 
-let min_cutoff p1 p2 =
-  match p1 with
-  | Finite (0, _) ->
-      p1
-  | Finite (i1, _) ->
-      (* Pass [i1] as a cutoff value to [p2]. *)
-      min p1 (p2 i1)
-  | Infinity ->
-      (* Pass [max_int] to indicate no cutoff. *)
-      p2 max_int
-
 let add p1 p2 =
   match p1, p2 with
   | Finite (i1, xs1), Finite (i2, xs2) ->
@@ -97,22 +69,10 @@ let add_lazy p1 p2 =
   | _ ->
       add p1 (p2())
 
-let add_cutoff cutoff p1 p2 =
-  match p1 with
-  | Infinity ->
-      Infinity
-  | Finite (i1, _) ->
-      if cutoff <= i1 then
-        (* Cut. No need to evaluate [p2]. *)
-        Infinity
-      else
-        (* Evaluate [p2], with an adjusted cutoff value. *)
-        add p1 (p2 (cutoff - i1))
-
 let print conv p =
   match p with
   | Finite (i, xs) ->
-      string_of_int i ^ " " ^
+      Printf.sprintf "(* %d *) " i ^
       String.concat " " (List.map conv (Seq.elements xs))
   | Infinity ->
       "infinity"

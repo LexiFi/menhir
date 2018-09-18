@@ -1,6 +1,6 @@
 # Changes
 
-## 2018/09/13
+## 2018/09/18
 
 * Install `.cmxs` files for menhirLib and menhirSdk.
 
@@ -10,6 +10,10 @@
 
 * Coq back-end: add a few newlines in the generated file for readability.
   (Suggested by Bernhard Schommer.)
+
+* At verbosity level `-lg 2`, for each nonterminal symbol `N`, display
+  a sentence (composed of terminal symbols) of minimal length generated
+  by `N`.
 
 ## 2018/09/05
 
