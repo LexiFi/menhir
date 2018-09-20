@@ -83,8 +83,9 @@ let print_sentence (nto, terminals) : string =
   Option.iter (fun nt ->
     Printf.bprintf b "%s: " (Nonterminal.print false nt)
   ) nto;
+  let separator = Misc.once "" " " in
   List.iter (fun t ->
-    Printf.bprintf b "%s " (Terminal.print t)
+    Printf.bprintf b "%s%s" (separator()) (Terminal.print t)
   ) terminals;
   Printf.bprintf b "\n";
   Buffer.contents b

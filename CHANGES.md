@@ -1,6 +1,6 @@
 # Changes
 
-## 2018/09/18
+## 2018/09/20
 
 * Install `.cmxs` files for menhirLib and menhirSdk.
 
@@ -10,6 +10,9 @@
 
 * Coq back-end: add a few newlines in the generated file for readability.
   (Suggested by Bernhard Schommer.)
+
+* Remove the trailing space at the end of every sentence in
+  auto-generated `.messages` files. (Suggested by Xavier Leroy.)
 
 * At verbosity level `-lg 2`, for each nonterminal symbol `N`, display
   a sentence (composed of terminal symbols) of minimal length generated
