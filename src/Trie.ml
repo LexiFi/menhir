@@ -4,7 +4,7 @@ open Grammar
 
 (* We begin with a number of auxiliary functions that provide information
    about the LR(1) automaton. These functions could perhaps be moved
-   elsewhere, e.g., inside [Lr1]. We keep them here, for now, because
+   elsewhere, e.g., inside [Default]. We keep them here, for now, because
    they are not used anywhere else. *)
 
 (* [can_reduce s prod] indicates whether state [s] is able to reduce
