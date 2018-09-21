@@ -243,6 +243,9 @@ module Terminal = struct
   let real t =
     error <> t && t <> sharp
 
+  let non_error tok =
+    tok <> error
+
   let token_properties =
     let not_so_dummy_properties = (* applicable to [error] and [#] *)
       {
@@ -463,6 +466,13 @@ module Symbol = struct
     | [], _ :: _ ->
         false
 
+  let non_error sym =
+    match sym with
+    | T tok ->
+        Terminal.non_error tok
+    | N _ ->
+        true
+
   let print = function
     | N nt ->
         Nonterminal.print false nt
@@ -564,10 +574,11 @@ module Production = struct
   let compare =
     (-)
 
-  (* Create an array of productions. Record which productions are
-     associated with every nonterminal. A new production S' -> S
-     is created for every start symbol S. It is known as a
-     start production. *)
+  (* A new production S' -> S is created for every start symbol S.
+     It is known as a start production. *)
+
+  (* Count how many productions we have, including the start productions.
+     This is [n]. *)
 
   let n : int =
     let n = StringMap.fold (fun _ { branches = branches } n ->
@@ -584,6 +595,20 @@ module Production = struct
     assert (prod >= 0 && prod < n);
     prod
 
+  (* Create a number of uninitialized tables that map a production index to
+     information about this production. *)
+
+  (* [table] maps a production to the left-hand side and right-hand side of
+     this production. [identifiers] maps a production to an array of the
+     identifiers that are used to name the elements of the right-hand side.
+     [actions] maps a production to an optional semantic action. (Only the
+     start productions have none.) [positions] maps a production to an array
+     of the positions (in the .mly file) of the elements of the right-hand
+     side. [rhs_attributes] maps a production to an array of the attributes
+     attached to the elements of the right-hand side. [prec_decl] maps a
+     production to an optional [%prec] annotation. [production_level] maps
+     a production to a production level (see [ParserAux]). *)
+
   let table : (Nonterminal.t * Symbol.t array) array =
     Array.make n (-1, [||])
 
@@ -593,14 +618,36 @@ module Production = struct
   let actions : action option array =
     Array.make n None
 
-  let ntprods : (int * int) array =
-    Array.make Nonterminal.n (-1, -1)
-
   let positions : Positions.t list array =
     Array.make n []
 
   let rhs_attributes : Syntax.attributes array array =
     Array.make n [||]
+
+  let prec_decl : symbol located option array =
+    Array.make n None
+
+  let production_level : branch_production_level array =
+    (* The start productions receive a level that pretends that they
+       originate in a fictitious "builtin" file. So, a reduce/reduce
+       conflict that involves a start production will not be solved. *)
+    let dummy = ProductionLevel (InputFile.builtin_input_file, 0) in
+    Array.make n dummy
+
+  (* [ntprods] maps a nonterminal symbol to the interval of its productions. *)
+
+  let ntprods : (int * int) array =
+    Array.make Nonterminal.n (-1, -1)
+
+  (* This Boolean flag records whether the grammar uses the [error] token. *)
+
+  let grammar_uses_error_token =
+    ref false
+
+  (* Create the start productions, populating the above arrays as appropriate.
+     [start] is the number of start productions, therefore also the index of the
+     first non-start production. [startprods] is a mapping of the start symbols
+     to the corresponding start productions. *)
 
   let (start : int),
       (startprods : index NonterminalMap.t) =
@@ -615,27 +662,25 @@ module Production = struct
       NonterminalMap.add nt k startprods
     ) grammar.start_symbols (0, NonterminalMap.empty)
 
-  let prec_decl : symbol located option array =
-    Array.make n None
+  (* Create the non-start productions, populating the above arrays. *)
 
-  let production_level : branch_production_level array =
-    (* The start productions receive a level that pretends that they
-       originate in a fictitious "builtin" file. So, a reduce/reduce
-       conflict that involves a start production will not be solved. *)
-    let dummy = ProductionLevel (InputFile.builtin_input_file, 0) in
-    Array.make n dummy
+  let producer_symbol producer =
+    Symbol.lookup (producer_symbol producer)
 
   let (_ : int) = StringMap.fold (fun nonterminal { branches } k ->
     let nt = Nonterminal.lookup nonterminal in
     let k' = List.fold_left (fun k branch ->
       let symbols = Array.of_list branch.producers in
-      table.(k) <- (nt, Array.map (fun producer -> Symbol.lookup (producer_symbol producer)) symbols);
+      let rhs = Array.map producer_symbol symbols in
+      table.(k) <- (nt, rhs);
       identifiers.(k) <- Array.map producer_identifier symbols;
       actions.(k) <- Some branch.action;
       rhs_attributes.(k) <- Array.map producer_attributes symbols;
       production_level.(k) <- branch.branch_production_level;
       prec_decl.(k) <- branch.branch_prec_annotation;
       positions.(k) <- [ branch.branch_position ];
+      if not (Array.for_all Symbol.non_error rhs) then
+        grammar_uses_error_token := true;
       k+1
     ) k branches in
     ntprods.(nt) <- (k, k');
@@ -856,6 +901,9 @@ module Production = struct
         combine fact1 fact2, level
 
 end
+
+let grammar_uses_error_token =
+  !Production.grammar_uses_error_token
 
 (* ------------------------------------------------------------------------ *)
 (* Maps over productions. *)

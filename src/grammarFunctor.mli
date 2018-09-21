@@ -184,10 +184,15 @@ module Terminal : sig
 
   val eof: t option
 
-  (* A terminal symbol is pseudo if it is [#] or [error]. It is real otherwise. *)
+  (* A terminal symbol is pseudo if it is [#] or [error]. It is real
+     otherwise. *)
 
   val pseudo: t -> bool
   val real: t -> bool
+
+  (* [non_error] returns [true] if its argument is not the [error] token. *)
+
+  val non_error: t -> bool
 
   (* Creation of a table indexed by terminals. *)
 
@@ -292,6 +297,10 @@ module Symbol : sig
 
   val equal: t -> t -> bool
   val lequal: t list -> t list -> bool
+
+  (* [non_error] returns [true] if its argument is not the [error] token. *)
+
+  val non_error: t -> bool
 
   (* These produce a string representation of a symbol, of a list of
      symbols, or of an array of symbols. The symbols are simply listed
@@ -467,6 +476,12 @@ module ProductionMap : sig
   val start: (Production.index -> 'a) -> 'a t
 
 end
+
+(* ------------------------------------------------------------------------ *)
+(* This flag tells whether the [error] token appears in at least one
+   production. *)
+
+val grammar_uses_error_token: bool
 
 (* ------------------------------------------------------------------------ *)
 (* Analysis of the grammar. *)
