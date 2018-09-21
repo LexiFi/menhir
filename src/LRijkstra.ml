@@ -90,6 +90,15 @@ let () =
 
 (* ------------------------------------------------------------------------ *)
 
+(* Produce a warning if the grammar uses the [error] pseudo-token. *)
+
+let () =
+  if grammar_uses_error_token then
+    Error.warning []
+      "--list-errors ignores all productions that involve the error token."
+
+(* ------------------------------------------------------------------------ *)
+
 (* Build a module that represents words as (hash-consed) strings. Note:
    this functor application has a side effect (it allocates memory, and
    more importantly, it may fail). *)
@@ -97,12 +106,6 @@ let () =
 module W = Terminal.Word(struct end)
 
 (* ------------------------------------------------------------------------ *)
-
-(* The [error] token may appear in the maps returned by [Lr1.transitions]
-   and [Lr1.reductions], so we sometimes need to explicitly check for it. *)
-
-let non_error z =
-  not (Terminal.equal z Terminal.error)
 
 (* We introduce a pseudo-terminal symbol [any]. It is used in several places
    later on, in particular in the [lookahead] field of a fact, to encode the
@@ -150,21 +153,6 @@ let has_reduction s z : Production.index option =
       | [] ->
           None
 
-(* [can_reduce s prod] indicates whether state [s] is able to reduce
-   production [prod] (either as a default reduction, or as a normal
-   reduction). *)
-
-let can_reduce s prod =
-  match Default.has_default_reduction s with
-  | Some (prod', _) when prod = prod' ->
-      true
-  | _ ->
-      TerminalMap.fold (fun z prods accu ->
-        (* A reduction on [#] is always a default reduction. (See [lr1.ml].) *)
-        assert (not (Terminal.equal z Terminal.sharp));
-        accu || non_error z && List.mem prod prods
-      ) (Lr1.reductions s) false
-
 (* [causes_an_error s z] tells whether state [s] will initiate an error on the
    lookahead symbol [z]. *)
 
@@ -199,7 +187,7 @@ let foreach_terminal_not_causing_an_error s f =
       TerminalMap.iter (fun z _ ->
         (* A reduction on [#] is always a default reduction. (See [lr1.ml].) *)
         assert (not (Terminal.equal z Terminal.sharp));
-        if non_error z then
+        if Terminal.non_error z then
           f z
       ) (Lr1.reductions s);
       (* Enumerate every terminal symbol [z] for which there is a
@@ -208,7 +196,7 @@ let foreach_terminal_not_causing_an_error s f =
         match sym with
         | Symbol.T z ->
             assert (not (Terminal.equal z Terminal.sharp));
-            if non_error z then
+            if Terminal.non_error z then
               f z
         | Symbol.N _ ->
             ()
@@ -226,253 +214,14 @@ let is_solid s =
   | Some (Symbol.N _) ->
       false
 
-(* [reduction_path_exists s w prod] tests whether the path determined by the
-   sequence of symbols [w] out of the state [s] exists in the automaton and
-   leads to a state where [prod] can be reduced. It further requires [w] to
-   not contain the [error] token. Finally, it it sees the [error] token, it
-   sets the flag [grammar_uses_error]. *)
-
-let grammar_uses_error =
-  ref false
-
-let rec reduction_path_exists s (w : Symbol.t list) prod : bool =
-  match w with
-  | [] ->
-      can_reduce s prod
-  | (Symbol.T t) :: _ when Terminal.equal t Terminal.error ->
-      grammar_uses_error := true;
-      false
-  | a :: w ->
-      match SymbolMap.find a (Lr1.transitions s) with
-      | s ->
-          reduction_path_exists s w prod
-      | exception Not_found ->
-          false
-
 (* ------------------------------------------------------------------------ *)
 
-(* Suppose [s] is a state that carries an outgoing edge labeled with a
-   non-terminal symbol [nt]. We are interested in finding out how this edge
-   can be taken. In order to do that, we must determine how, by starting in
-   [s], one can follow a path that corresponds to (the right-hand side of) a
-   production [prod] associated with [nt]. There are in general several such
-   productions. The paths that they determine in the automaton form a "star".
-   We represent the star rooted at [s] as a trie. For every state [s], the
-   star rooted at [s] is constructed in advance, before the algorithm runs.
-   While the algorithm runs, a point in the trie (that is, a sub-trie) tells
-   us where we come from, where we are, and which production(s) we are hoping
-   to reduce in the future. *)
+(* Instantiate [Trie]. This allocates fresh mutable state, but otherwise has
+   no effect. The construction of the tries actually takes place when
+   [Trie.stars] is invoked below. *)
 
-module Trie : sig
-
-  type trie
-
-  (* [star s] creates a (new) trie whose source is [s], populated with its
-     branches. (There is one branch for every production [prod] associated
-     with every non-terminal symbol [nt] for which [s] carries an outgoing
-     edge.) If the star turns out to be trivial then [None] is returned. *)
-  val star: Lr1.node -> trie option
-
-  (* After [star s] has been called, [size (Lr1.number s)] reports the size
-     of the trie that has been constructed for state [s]. *)
-  val size: int -> int
-
-  (* After [star] has been called a number of times, [total_size()]
-     reports the total size of the tries that have been constructed. *)
-  val total_size: unit -> int
-
-  (* Every (sub-)trie has a unique identity. (One can think of it as its
-     address.) [compare] compares the identity of two tries. This can be
-     used, e.g., to set up a map whose keys are tries. *)
-  val compare: trie -> trie -> int
-
-  (* [source t] returns the source state of the (sub-)trie [t]. This is
-     the root of the star of which [t] is a sub-trie. In other words, this
-     tells us "where we come from". *)
-  val source: trie -> Lr1.node
-
-  (* [current t] returns the current state of the (sub-)trie [t]. This is
-     the root of the sub-trie [t]. In other words, this tells us "where
-     we are". *)
-  val current: trie -> Lr1.node
-
-  (* [accepts prod t] tells whether the current state of the trie [t] is
-     the end of a branch associated with production [prod]. If so, this
-     means that we have successfully followed a path that corresponds to
-     the right-hand side of production [prod]. *)
-  val accepts: Production.index -> trie -> bool
-
-  (* [step sym t] is the immediate sub-trie of [t] along the symbol [sym].
-     This function raises [Not_found] if [t] has no child labeled [sym]. *)
-  val step: Symbol.t -> trie -> trie
-
-  (* [verbose()] outputs debugging & performance information. *)
-  val verbose: unit -> unit
-
-  (* Since every (sub-)trie has a unique identity, its identity can serve
-     as a unique integer code for this (sub-)trie. We allow this conversion,
-     both ways. This mechanism is used only as a way of saving space in the
-     encoding of facts. *)
-  val encode: trie -> int
-  val decode: int -> trie
-
-end = struct
-
-  (* A trie has the following structure. *)
-
-  type trie = {
-    (* A unique identity, used by [compare]. The trie construction code
-       ensures that these numbers are indeed unique: see [fresh], [insert],
-       [star]. *)
-    identity: int;
-    (* The root state of this star: "where we come from". *)
-    source: Lr1.node;
-    (* The current state, i.e., the root of this sub-trie: "where we are". *)
-    current: Lr1.node;
-    (* The productions that we can reduce in the current state. In other
-       words, if this list is nonempty, then the current state is the end
-       of one (or several) branches. It can nonetheless have children. *)
-    mutable productions: Production.index list;
-    (* The children, or sub-tries. *)
-    mutable transitions: trie SymbolMap.t
-    (* The two fields above are written only during the construction of a
-       trie. Once every trie has been constructed, they are frozen. *)
-  }
-
-  (* This counter is used by [mktrie] to produce unique identities. *)
-  let c = ref 0
-
-  (* We keep a mapping of integer identities to tries. Whenever a new
-     identity is assigned, this mapping must be updated. *)
-  let tries =
-    let s : Lr1.node = Obj.magic () in (* yes, this hurts *)
-    let dummy = { identity = -1; source = s; current = s;
-                  productions = []; transitions = SymbolMap.empty } in
-    MenhirLib.InfiniteArray.make dummy
-
-  (* This smart constructor creates a new trie with a unique identity. *)
-  let mktrie source current productions transitions =
-    let identity = Misc.postincrement c in
-    let t = { identity; source; current; productions; transitions } in
-    MenhirLib.InfiniteArray.set tries identity t;
-    t
-
-  (* [insert t w prod] updates the trie (in place) by adding a new branch,
-     corresponding to the sequence of symbols [w], and ending with a reduction
-     of production [prod]. We assume [reduction_path_exists w prod t.current]
-     holds, so we need not worry about this being a dead branch, and we can
-     use destructive updates without having to set up an undo mechanism. *)
-
-  let rec insert (t : trie) (w : Symbol.t list) prod : unit =
-    match w with
-    | [] ->
-        assert (can_reduce t.current prod);
-        t.productions <- prod :: t.productions
-    | a :: w ->
-        match SymbolMap.find a (Lr1.transitions t.current) with
-        | exception Not_found ->
-            assert false
-        | successor ->
-            (* Find our child at [a], or create it. *)
-            let t' =
-              try
-                SymbolMap.find a t.transitions
-              with Not_found ->
-                let t' = mktrie t.source successor [] SymbolMap.empty in
-                t.transitions <- SymbolMap.add a t' t.transitions;
-                t'
-            in
-            (* Update our child. *)
-            insert t' w prod
-
-  (* [insert t prod] inserts a new branch, corresponding to production
-     [prod], into the trie [t], which is updated in place. *)
-  let insert t prod : unit =
-    let w = Array.to_list (Production.rhs prod) in
-    (* Check whether the path [w] leads to a state where [prod] can be
-       reduced. If not, then some transition or reduction action must
-       have been suppressed by conflict resolution; or the path [w]
-       involves the [error] token. In that case, the branch is dead,
-       and is not added. This test is superfluous (i.e., it would
-       be OK to add a dead branch) but allows us to build a slightly
-       smaller star in some cases. *)
-    if reduction_path_exists t.current w prod then
-      insert t w prod
-
-  (* [fresh s] creates a new empty trie whose source is [s]. *)
-  let fresh source =
-    mktrie source source [] SymbolMap.empty
-
-  (* The star at [s] is obtained by starting with a fresh empty trie and
-     inserting into it every production [prod] whose left-hand side [nt]
-     is the label of an outgoing edge at [s]. *)
-  let star s =
-    let t = fresh s in
-    SymbolMap.iter (fun sym _ ->
-      match sym with
-      | Symbol.T _ ->
-          ()
-      | Symbol.N nt ->
-          Production.iternt nt (insert t)
-    ) (Lr1.transitions s);
-    t
-
-  (* A trie [t] is nontrivial if it has at least one branch, i.e., contains at
-     least one sub-trie whose [productions] field is nonempty. Trivia: a trie
-     of size greater than 1 is necessarily nontrivial, but the converse is not
-     true: a nontrivial trie can have size 1. (This occurs if all productions
-     have zero length.) *)
-  let trivial t =
-    t.productions = [] && SymbolMap.is_empty t.transitions
-
-  (* Redefine [star] to include a [nontrivial] test and to record the size of
-     the newly built trie. *)
-
-  let size =
-    Array.make Lr1.n (-1)
-
-  let star s =
-    let initial = !c in
-    let t = star s in
-    let final = !c in
-    size.(Lr1.number s) <- final - initial;
-    if trivial t then None else Some t
-
-  let size s =
-    assert (size.(s) >= 0);
-    size.(s)
-
-  let total_size () =
-    !c
-
-  let compare t1 t2 =
-    Pervasives.compare t1.identity t2.identity
-
-  let source t =
-    t.source
-
-  let current t =
-    t.current
-
-  let accepts prod t =
-    List.mem prod t.productions
-
-  let step a t =
-    SymbolMap.find a t.transitions (* careful: may raise [Not_found] *)
-
-  let verbose () =
-    Printf.eprintf "Total star size: %d\n%!" (total_size())
-
-  let decode i =
-    let t = MenhirLib.InfiniteArray.get tries i in
-    assert (t.identity = i); (* ensure we do not get the [dummy] trie *)
-    t
-
-  let encode t =
-    assert (decode t.identity == t); (* round-trip property *)
-    t.identity
-
-end
+module Trie =
+  Trie.Make(struct end)
 
 (* ------------------------------------------------------------------------ *)
 
@@ -608,7 +357,7 @@ let invariant2 position _word lookahead =
    lookahead assumption [z] -- which can be [any]. *)
 
 let compatible z a =
-  assert (non_error z);
+  assert (Terminal.non_error z);
   assert (Terminal.real a);
   z = any || z = a
 
@@ -638,7 +387,7 @@ let q =
 
 let enqueue position word lookahead =
   (* [lookahead] can be [any], but cannot be [error] *)
-  assert (non_error lookahead);
+  assert (Terminal.non_error lookahead);
   assert (invariant1 position word lookahead);
   assert (invariant2 position word lookahead);
   (* The length of [word] serves as the priority of this fact. *)
@@ -651,36 +400,24 @@ let enqueue position word lookahead =
 (* Construct the [star] of every state [s]. Initialize the priority queue. *)
 
 let () =
-  (* For every state [s]... *)
-  Lr1.iter (fun s ->
-    (* If the trie rooted at [s] is nontrivial...*)
-    match Trie.star s with
-    | None ->
-        ()
-    | Some position ->
-        (* ...then insert an initial fact into the priority queue. *)
-        (* In order to respect invariants 1 and 2, we must distinguish two
-           cases. If [s] is solid, then we insert a single fact, whose
-           lookahead assumption is [any]. Otherwise, we must insert one
-           initial fact for every terminal symbol [z] that does not cause
-           an error in state [s]. *)
-        let word = W.epsilon in
-        if is_solid s then
-          enqueue position word any
-        else
-          foreach_terminal_not_causing_an_error s (fun z ->
-            enqueue position word z
-          )
+  (* For every state [s], if the trie rooted at [s] is nontrivial, ... *)
+  Trie.stars (fun s position ->
+    (* ...then insert an initial fact into the priority queue. *)
+    (* In order to respect invariants 1 and 2, we must distinguish two
+       cases. If [s] is solid, then we insert a single fact, whose
+       lookahead assumption is [any]. Otherwise, we must insert one
+       initial fact for every terminal symbol [z] that does not cause
+       an error in state [s]. *)
+    let word = W.epsilon in
+    if is_solid s then
+      enqueue position word any
+    else
+      foreach_terminal_not_causing_an_error s (fun z ->
+        enqueue position word z
+      )
   );
   if X.verbose then
     Trie.verbose()
-
-(* Produce a warning if the grammar uses the [error] pseudo-token. *)
-
-let () =
-  if !grammar_uses_error then
-    Error.warning []
-      "--list-errors ignores all productions that involve the error token."
 
 (* ------------------------------------------------------------------------ *)
 
@@ -1013,7 +750,7 @@ let new_fact fact =
            because the trie does not have any edges labeled [error]. *)
         assert (Lr1.Node.compare (Trie.current child) target = 0);
         assert (is_solid target);
-        assert (non_error t);
+        assert (Terminal.non_error t);
 
         (* If the lookahead assumption [lookahead] is compatible with
            [t], then we derive a new fact, where one more edge has been taken,
@@ -1097,7 +834,7 @@ let new_fact fact =
           )
     | None ->
        TerminalMap.iter (fun z prods ->
-         if non_error z then
+         if Terminal.non_error z then
            let prod = Misc.single prods in
            if Trie.accepts prod position then
              new_edge source (Production.nt prod) word z
