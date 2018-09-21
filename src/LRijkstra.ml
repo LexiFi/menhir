@@ -891,6 +891,9 @@ let fail msg =
   Printf.eprintf "LRijkstra: internal error: %s.\n%!" msg;
   exit 1
 
+let fail format =
+  Printf.ksprintf fail format
+
 let validate nt s' w : ReferenceInterpreter.target =
   let open ReferenceInterpreter in
   match
@@ -904,11 +907,9 @@ let validate nt s' w : ReferenceInterpreter.target =
       fail "input was unexpectedly accepted"
   | OK ((state, _) as target) ->
       if Lr1.Node.compare state s' <> 0 then
-        fail (
-          Printf.sprintf "error occurred in state %d instead of %d"
-            (Lr1.number state)
-            (Lr1.number s')
-        )
+        fail "error occurred in state %d instead of %d"
+          (Lr1.number state)
+          (Lr1.number s')
       else
         target
 
