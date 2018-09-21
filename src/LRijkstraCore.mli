@@ -11,10 +11,13 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module implements [--list-errors]. Its purpose is to find, for each
-   pair of a state [s] and a terminal symbol [z] such that looking at [z] in
-   state [s] causes an error, a minimal path (starting in some initial state)
-   that actually triggers this error. *)
+open Grammar
+
+(* This is the core of the reachability analysis. After the automaton has been
+   constructed, this (expensive) analysis determines exactly under which
+   conditions each nonterminal edge in the automaton can be taken. This
+   information can then be used to determine how to reach certain states
+   in the automaton; see, e.g., [LRijkstra]. *)
 
 (* In this analysis, we explicitly ignore the [error] token. (We display a
    warning if the grammar uses this token.) Thus, we disregard any reductions
@@ -28,13 +31,38 @@ module Run (X : sig
   (* If [verbose] is set, produce various messages on [stderr]. *)
   val verbose: bool
 
-  (* If [statistics] is defined, it is interpreted as the name of
-     a file to which one line of statistics is appended. *)
-  val statistics: string option
-
 end) : sig
 
-  (* The result of this analysis is a [.messages] file. It is written to the
-     standard output channel. No result is returned. *)
+  (* A representation of words of terminal symbols. See [GrammarFunctor]. *)
+
+  module W : sig
+    type word
+    val singleton: Terminal.t -> word
+    val append: word -> word -> word
+    val length: word -> int
+    val elements: word -> Terminal.t list
+    val compare: word -> word -> int
+  end
+
+  (* [query s nt a] enumerates all words [w] and all symbols [z] such that, in
+     state [s], the outgoing edge labeled [nt] can be taken by consuming the
+     word [w], under the assumption that the next symbol is [z], and the first
+     symbol of the word [w.z] is [a]. *)
+
+  val query:
+    (* s:  *) Lr1.node ->
+    (* nt: *) Nonterminal.t ->
+    (* a:  *) Terminal.t ->
+    (* f:  *) (W.word -> Terminal.t -> unit) ->
+              unit
+
+  (* [facts] is the total number of facts discovered. [edge_facts] is the
+     total number of edge facts discovered. [total_trie_size] is the sum of
+     the sizes of the tries that are internally constructed in the module
+     [Trie]. These numbers are provided for information only. *)
+
+  val facts: int
+  val edge_facts: int
+  val total_trie_size: int
 
 end

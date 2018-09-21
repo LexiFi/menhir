@@ -83,3 +83,48 @@ let () =
 
 let () =
   Time.tick "Computing default reductions"
+
+(* ------------------------------------------------------------------------ *)
+
+(* Here are a number of auxiliary functions that provide information about the
+   LR(1) automaton. *)
+
+(* [reductions_on s z] is the list of reductions permitted in state [s] when
+   the lookahead symbol is [z]. This is a list of zero or one elements. This
+   does not take default reductions into account. [z] must be real. *)
+
+let reductions_on s z : Production.index list =
+  assert (Terminal.real z);
+  try
+    TerminalMap.find z (Lr1.reductions s)
+  with Not_found ->
+    []
+
+(* [has_reduction s z] tells whether state [s] is willing to reduce some
+   production (and if so, which one) when the lookahead symbol is [z]. It
+   takes a possible default reduction into account. [z] must be real. *)
+
+let has_reduction s z : Production.index option =
+  assert (Terminal.real z);
+  match has_default_reduction s with
+  | Some (prod, _) ->
+      Some prod
+  | None ->
+      match reductions_on s z with
+      | prod :: prods ->
+          assert (prods = []);
+          Some prod
+      | [] ->
+          None
+
+(* [causes_an_error s z] tells whether state [s] will initiate an error on the
+   lookahead symbol [z]. [z] must be real. *)
+
+let causes_an_error s z : bool =
+  assert (Terminal.real z);
+  match has_default_reduction s with
+  | Some _ ->
+      false
+  | None ->
+      reductions_on s z = [] &&
+      not (SymbolMap.mem (Symbol.T z) (Lr1.transitions s))
