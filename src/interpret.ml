@@ -605,6 +605,7 @@ module Run (X : sig end) = struct
 let () =
   if Settings.interpret then
     let read = setup() in
+    Printf.printf "Ready!\n%!";
     while true do
       match read() with
       | None ->

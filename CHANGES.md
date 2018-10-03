@@ -8,6 +8,8 @@
   These references were infrequent anyway,
   and `Pervasives` is about to be deprecated in OCaml 4.08, it seems.
 
+* In `--interpret` mode, print `Ready!` once ready to accept input.
+
 * Coq back-end: add a few newlines in the generated file for readability.
   (Suggested by Bernhard Schommer.)
 
