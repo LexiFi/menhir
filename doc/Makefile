@@ -29,7 +29,7 @@ manual.html: manual.tex $(DEPS) $(wildcard *.hva)
 # present in the manual.
 
 loop:
-	latexmk -pdf -pvc main
+	latexmk -pdf -pvc manual
 
 clean:
 	rm -f `cat .gitignore`
