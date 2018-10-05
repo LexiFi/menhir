@@ -168,6 +168,8 @@ let write oc t =
   output_value oc (t : grammar)
 
 let write filename =
-  let oc = open_out filename in
+  (* Opening in binary mode is required. This is not a text file;
+     we write to it using [output_value]. *)
+  let oc = open_out_bin filename in
   write oc (encode());
   close_out oc
