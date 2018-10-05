@@ -16,7 +16,11 @@
 
 * When writing a `.cmly` file, open it in binary mode. This should
   eliminate the failure that was observed under Windows:
-  `output_value: not a binary channel`. (Reported by Bryan Phelps.)
+  `output_value: not a binary channel`. (Reported by Bryan Phelps.
+  A fix was present in the `mingw` patches for Menhir.)
+
+* Change the logic used in the root `Makefile` to deal with Unix and Windows
+  in a uniform way. (Also inspired by the `mingw` patches for Menhir.)
 
 * Coq back-end: add a few newlines in the generated file for readability.
   (Suggested by Bernhard Schommer.)

@@ -56,26 +56,15 @@ MLYLIB          := src/standard.mly
 
 # ----------------------------------------------------------------------------
 
-# A few settings differ on Windows versus Unix.
+# The following incantations should work on both Windows and Unix,
+# and allow us to abstract away the differences.
 
-# If the compiler is MSVC, then object file names end in .obj instead of .o.
-
-ifneq (,$(shell ocamlc -config | grep -E "ccomp_type: msvc"))
-  OBJ          := obj
-# LIBSUFFIX    := lib
-else
-  OBJ          := o
-# LIBSUFFIX    := a
-endif
-
-# If we are under Windows (regardless of whether we are using MSVC or mingw)
-# then the name of the executable file ends in .exe.
-
-ifeq ($(OS),Windows_NT)
-  MENHIREXE    := menhir.exe
-else
-  MENHIREXE    := menhir
-endif
+# The extension of object files.
+OBJ := $(shell ocamlc -config | sed -n '/^ext_obj:/p' | sed 's/ext_obj: //')
+# The extension of executable files.
+EXE := $(shell ocamlc -config | sed -n '/^ext_exe:/p' | sed 's/ext_exe: //')
+# The OS type.
+OS_TYPE := $(shell ocamlc -config | sed -n '/^os_type:/p' | sed 's/os_type: //')
 
 # The path $(installation_libdir), which is recorded in src/installation.ml (see
 # below), must sometimes be translated using cygpath.
@@ -92,10 +81,10 @@ endif
 # performed if "os_type" is "Win32" or "Win64", and must not be performed if
 # "os_type" is "Cygwin" or "Unix".
 
-ifneq (,$(shell ocamlc -config | grep -E "os_type: (Win32|Win64)"))
-installation_libdir := $(shell cygpath -m $(libdir))
+ifeq ($(OS_TYPE),$(filter $(OS_TYPE),Win32 Win64))
+  installation_libdir := $(shell cygpath -m $(libdir) || echo $(libdir))
 else
-installation_libdir := $(libdir)
+  installation_libdir := $(libdir)
 endif
 
 # -------------------------------------------------------------------------
@@ -168,7 +157,7 @@ all:
 
 MENHIRLIB       := menhirLib.mli menhirLib.ml menhirLib.cmi menhirLib.cmo
 ifneq ($(TARGET),byte)
-MENHIRLIB       := $(MENHIRLIB) menhirLib.cmx menhirLib.cmxs menhirLib.$(OBJ)
+MENHIRLIB       := $(MENHIRLIB) menhirLib.cmx menhirLib.cmxs menhirLib$(OBJ)
 endif
 
 # -------------------------------------------------------------------------
@@ -177,7 +166,7 @@ endif
 
 MENHIRSDK       := menhirSdk.cmi menhirSdk.cmo
 ifneq ($(TARGET),byte)
-MENHIRSDK       := $(MENHIRSDK) menhirSdk.cmx menhirSdk.cmxs menhirSdk.$(OBJ)
+MENHIRSDK       := $(MENHIRSDK) menhirSdk.cmx menhirSdk.cmxs menhirSdk$(OBJ)
 endif
 
 # ----------------------------------------------------------------------------
@@ -186,7 +175,7 @@ endif
 install:
 # Install the executable.
 	mkdir -p $(bindir)
-	install $(BUILDDIR)/menhir.$(TARGET) $(bindir)/$(MENHIREXE)
+	install $(BUILDDIR)/menhir.$(TARGET) $(bindir)/menhir$(EXE)
 # Install Menhir's standard library.
 	mkdir -p $(libdir)
 	install -m 644 $(MLYLIB) $(libdir)
@@ -211,12 +200,12 @@ install:
 	fi
 
 uninstall:
-	@if `$(bindir)/$(MENHIREXE) --suggest-ocamlfind` ; then \
+	@if `$(bindir)/menhir$(EXE) --suggest-ocamlfind` ; then \
 	  echo 'Un-installing MenhirLib and MenhirSdk via ocamlfind.' ; \
 	  ocamlfind remove menhirLib ; \
 	  ocamlfind remove menhirSdk ; \
 	fi
-	rm -rf $(bindir)/$(MENHIREXE)
+	rm -rf $(bindir)/menhir$(EXE)
 	rm -rf $(libdir)
 	rm -rf $(docdir)
 	rm -rf $(mandir)/$(MANS)
