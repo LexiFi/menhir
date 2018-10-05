@@ -2,7 +2,7 @@
 
 ## 2018/10/05
 
-* Standard library: add `epsilon`, `rev`, `flatten`, `append`.
+* Standard library: add `rev`, `flatten`, `append`.
   Add a link from the manual to `standard.mly` in the repository.
 
 * Update the manual to explain how to use `dune` and `menhir` together.

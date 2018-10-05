@@ -147,11 +147,16 @@ x = X
 (* Sequences. *)
 
 (* [epsilon] recognizes the empty word. It can be used instead of the
-   traditional /* empty */ comment. (20181005) *)
+   traditional /* empty */ comment. *)
+
+(* NOT YET ADDED because we first need to remove the limitation that
+   every symbol must be reachable from the start symbol!
 
 %public %inline epsilon:
   /* empty */
     { () }
+
+ *)
 
 (* [pair(X, Y)] recognizes the sequence [X Y]. It produces a value of
    type ['a * 'b] if [X] and [Y] produce values of type ['a] and ['b],
