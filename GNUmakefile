@@ -253,6 +253,8 @@ opam:
 	@ cd $(OPAM)/packages/menhir && \
 	  cp -r `ls | grep menhir | tail -1` menhir.$(DATE)
 # Update the file "url".
+# TEMPORARY:
+# THIS NO LONGER WORKS; THE URL AND CHECKSUM ARE NOW STORED IN opam.
 	@ cd $(OPAM)/packages/menhir/menhir.$(DATE) && \
 	  rm url && \
 	  echo 'archive: "http://gallium.inria.fr/~fpottier/menhir/menhir-$(DATE).tar.gz"' >> url && \
