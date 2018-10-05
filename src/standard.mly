@@ -146,6 +146,13 @@ x = X
 (* ------------------------------------------------------------------------- *)
 (* Sequences. *)
 
+(* [epsilon] recognizes the empty word. It can be used instead of the
+   traditional /* empty */ comment. (20181005) *)
+
+%public %inline epsilon:
+  /* empty */
+    { () }
+
 (* [pair(X, Y)] recognizes the sequence [X Y]. It produces a value of
    type ['a * 'b] if [X] and [Y] produce values of type ['a] and ['b],
    respectively. *)
@@ -229,5 +236,29 @@ x = X
     { [ x ] }
 | x = X; separator; xs = separated_nonempty_list(separator, X)
     { x :: xs }
+
+(* ------------------------------------------------------------------------- *)
+(* List manipulation and transformation. *)
+
+(* [rev(XS)] recognizes the same language as [XS], but reverses the resulting
+   OCaml list. (20181005) *)
+
+%public %inline rev(XS):
+  xs = XS
+    { List.rev xs }
+
+(* [flatten(XSS)] recognizes the same language as [XSS], and flattens the
+   resulting OCaml list of lists. (20181005) *)
+
+%public %inline flatten(XSS):
+  xss = XSS
+    { List.flatten xss }
+
+(* [append(XS, YS)] recognizes [XS YS], and appends (concatenates) the
+   resulting OCaml lists. (20181005) *)
+
+%public %inline append(XS, YS):
+  xs = XS ys = YS
+    { xs @ ys }
 
 %%

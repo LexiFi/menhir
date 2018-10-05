@@ -875,7 +875,7 @@ again in \sref{sec:library}.)
 \nt{actual}\dstar & is syntactic sugar for & \nt{list}(\nt{actual})
 \end{tabular}
 \end{center}
-\caption{Syntactic sugar for simulating regular expressions}
+\caption{Syntactic sugar for simulating regular expressions, also known as EBNF}
 \label{fig:sugar}
 \end{figure}
 %
@@ -1039,10 +1039,12 @@ recognized.
 \begin{tabular}{lp{51mm}l@{}l}
 Name & Recognizes & Produces & Comment \\
 \hline\\
+\nt{epsilon}         & $\epsilon$               & \basic{unit} & (inlined) \\
+\\
 \nt{endrule}(\nt{X}) & \nt{X} & $\alpha$, if \nt{X} : $\alpha$ & (inlined) \\
 \nt{midrule}(\nt{X}) & \nt{X} & $\alpha$, if \nt{X} : $\alpha$ \\
 \\
-\nt{option}(\nt{X})  & $\epsilon$ \barre \nt{X} & $\alpha$ \basic{option}, if \nt{X} : $\alpha$ \\
+\nt{option}(\nt{X})  & $\epsilon$ \barre \nt{X} & $\alpha$ \basic{option}, if \nt{X} : $\alpha$ & (also \nt{X}\dquestion) \\
 \nt{ioption}(\nt{X}) & $\epsilon$ \barre \nt{X} & $\alpha$ \basic{option}, if \nt{X} : $\alpha$ & (inlined) \\
 \nt{boption}(\nt{X}) & $\epsilon$ \barre \nt{X} & \basic{bool} \\
 \nt{loption}(\nt{X}) & $\epsilon$ \barre \nt{X} & $\alpha$ \basic{list}, if \nt{X} : $\alpha$ \nt{list} \\
@@ -1057,10 +1059,12 @@ Name & Recognizes & Produces & Comment \\
 \\
 \nt{list}(\nt{X})
   & a possibly empty sequence of \nt{X}'s
-  & $\alpha$ \basic{list}, if \nt{X} : $\alpha$ \\
+  & $\alpha$ \basic{list}, if \nt{X} : $\alpha$
+  & (also \nt{X}\dstar) \\
 \nt{nonempty\_list}(\nt{X})
   & a nonempty sequence of \nt{X}'s
-  & $\alpha$ \basic{list}, if \nt{X} : $\alpha$ \\
+  & $\alpha$ \basic{list}, if \nt{X} : $\alpha$
+  & (also \nt{X}\dplus) \\
 \nt{separated\_list}(\nt{sep}, \nt{X})
   & a possibly empty sequence of \nt{X}'s separated with \nt{sep}'s
   & $\alpha$ \basic{list}, if \nt{X} : $\alpha$ \\
@@ -1068,9 +1072,26 @@ Name & Recognizes & Produces & Comment \\
   & a nonempty sequence of \nt{X}'s \hspace{2mm} separated with \nt{sep}'s
   & $\alpha$ \basic{list}, if \nt{X} : $\alpha$ \\
 
+\\
+\nt{rev}(\nt{X})
+  & \nt{X}
+  & $\alpha$ \basic{list}, if \nt{X} : $\alpha$ \basic{list}
+  & (inlined)
+\\
+\nt{flatten}(\nt{X})
+  & \nt{X}
+  & $\alpha$ \basic{list}, if \nt{X} : $\alpha$ \basic{list} \basic{list}
+  & (inlined)
+\\
+\nt{append}(\nt{X}, \nt{Y})
+  & \nt{X} \nt{Y}
+  & $\alpha$ \basic{list}, if \nt{X}, \nt{Y} : $\alpha$ \basic{list}
+  & (inlined)
+\\
+
 \end{tabular}
 \end{center}
-\caption{Summary of the standard library}
+\caption{Summary of the standard library; see \standardmly for details}
 \label{fig:standard}
 \end{figure}
 
@@ -1105,7 +1126,7 @@ causes \nt{plist}(\nt{X}) to recognize a list of \nt{X}'s, where the empty
 list is represented by the empty string, and a non-empty list is delimited
 with parentheses and comma-separated.
 
-The standard library is stored in a file named \texttt{standard.mly}, which is
+The standard library is stored in a file named \standardmly, which is
 installed at the same time as \menhir. By default, \menhir attempts to find this
 file in the directory where this file was installed. This can be overridden by
 setting the environment variable
