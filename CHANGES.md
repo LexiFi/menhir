@@ -2,6 +2,8 @@
 
 ## 2018/10/05
 
+* Update the manual to explain how to use `dune` and `menhir` together.
+
 * Install `.cmxs` files for menhirLib and menhirSdk.
 
 * Remove all references to `Pervasives` in the generated OCaml code.

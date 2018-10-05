@@ -4153,8 +4153,39 @@ See the \distrib{demos} directory for examples.
 % use .mlypack + _tags + myocamlbuild.ml. Not explained here,
 % but \distrib{demos/calc-two} contains an example.
 
-\question{How do I use \menhir with \dune?}
-To be written. % TEMPORARY
+\question{How do I use \menhir with \dune?} Please use \dune version 1.4.0
+or newer, as it has appropriate built-in rules for Menhir parsers. In the
+simplest scenario, where the parser resides in a single source
+file \texttt{parser.mly}, the \texttt{dune-project} file should contain a
+``stanza'' along the following lines:
+\begin{verbatim}
+(menhir (
+  (modules (parser))
+  (flags ("--explain" "--dump"))
+  (infer true)
+))
+\end{verbatim}
+The \oinfer switch has special status and should not be used directly;
+instead, write \texttt{(infer true)} or \texttt{(infer false)}, as done above.
+(The default is \texttt{true}.) Ordinary command line switches, like \oexplain
+and \odump, are passed as part of the \texttt{flags} line, as done above.
+%
+The directory \distrib{demos/calc-dune}
+% (and others like it)
+offers an example.
+%
+For more details, see
+\href{https://jbuilder.readthedocs.io/en/latest/menhir.html}{\dune's documentation}.
+
+% It may be necessary to specify which version of the Menhir build rules
+% one wishes to use. This is done by writing, e.g.
+% \begin{verbatim}
+% (using menhir 2.0)
+% \end{verbatim}
+% at the top level of the \texttt{dune-project} file.
+% However, my understanding is that this is usually not necessary.
+% \dune will automatically add this line for us
+% when a project is first compiled.
 
 \question{\menhir reports \emph{more} shift/reduce conflicts than
 \ocamlyacc! How come?} \ocamlyacc sometimes merges two states
