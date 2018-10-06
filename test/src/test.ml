@@ -355,8 +355,10 @@ let successful, failed =
   partition (fun (_, o) -> o = OK) outputs
 
 let () =
-  printf "%d out of %d tests are successful.\n"
-    (length successful) (length inputs);
+  let successful = length successful
+  and inputs = length inputs in
+  printf "%d out of %d tests are successful.\n" successful inputs;
   failed |> iter (fun (input, outcome) ->
     printf "\n[FAIL] %s\n%s" (print_input input) (print_outcome outcome)
-  )
+  );
+  exit (if successful = inputs then 0 else 1)
