@@ -62,6 +62,9 @@ MLYLIB          := src/standard.mly
 # The extension of object files.
 OBJ := $(shell ocamlc -config | sed -n '/^ext_obj:/p' | sed 's/ext_obj: //')
 # The extension of executable files.
+# Note: the field "ext_exe" seems to have appeared in OCaml 4.05.
+# With earlier versions of OCaml, this incantation defines $(EXE)
+# as the empty string, which could be a problem under Windows.
 EXE := $(shell ocamlc -config | sed -n '/^ext_exe:/p' | sed 's/ext_exe: //')
 # The OS type.
 OS_TYPE := $(shell ocamlc -config | sed -n '/^os_type:/p' | sed 's/os_type: //')
