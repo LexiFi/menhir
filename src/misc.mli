@@ -188,3 +188,7 @@ end
 (* A nice way of printing "nth" in English, for concrete values of [n]. *)
 
 val nth: int -> string
+
+(* [Array.for_all] *)
+
+val array_for_all : ('a -> bool) -> 'a array -> bool

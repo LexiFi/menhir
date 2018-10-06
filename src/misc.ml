@@ -382,3 +382,14 @@ let nth = function
   | 2 -> "second"
   | 3 -> "third"
   | i -> Printf.sprintf "%dth" i
+
+(* To keep compatibility with OCaml 4.02,
+   we copy [Array.for_all], which appeared
+   in 4.03. *)
+let array_for_all p a =
+  let n = Array.length a in
+  let rec loop i =
+    if i = n then true
+    else if p (Array.unsafe_get a i) then loop (succ i)
+    else false in
+  loop 0

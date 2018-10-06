@@ -679,7 +679,7 @@ module Production = struct
       production_level.(k) <- branch.branch_production_level;
       prec_decl.(k) <- branch.branch_prec_annotation;
       positions.(k) <- [ branch.branch_position ];
-      if not (Array.for_all Symbol.non_error rhs) then
+      if not (Misc.array_for_all Symbol.non_error rhs) then
         grammar_uses_error_token := true;
       k+1
     ) k branches in
