@@ -1,6 +1,6 @@
 # Changes
 
-## 2018/10/05
+## 2018/10/06
 
 * Standard library: add `rev`, `flatten`, `append`.
   Add a link from the manual to `standard.mly` in the repository.
