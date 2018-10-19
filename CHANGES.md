@@ -1,5 +1,11 @@
 # Changes
 
+## 2018/10/19
+
+* When generating OCaml code, include all record fields in record patterns,
+  even when bound to a wildcard pattern. Thus, avoid triggering OCaml's
+  warning 9.
+
 ## 2018/10/06
 
 * Standard library: add `rev`, `flatten`, `append`.

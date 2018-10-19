@@ -470,8 +470,9 @@ and pat0 f = function
   | PAnnot (p, t) ->
       fprintf f "(%a : %a)" pat p typ t
   | PRecord fps ->
-      (* In a record pattern, fields can be omitted. *)
-      let fps = List.filter (function (_, PWildcard) -> false | _ -> true) fps in
+      (* 2018/10/19. In a record pattern, we used to omit bindings of the form
+         [field = _]. However, this triggers OCaml's warning 9. We now print all
+         bindings. *)
       fprintf f "{%a%t}" (indent 2 (seplist fpat nl)) fps nl
   | p ->
       fprintf f "(%a)" pat p
