@@ -14,7 +14,7 @@ module I =
 
 let rec loop lexbuf (checkpoint : int I.checkpoint) =
   match checkpoint with
-  | I.InputNeeded env ->
+  | I.InputNeeded _env ->
       (* The parser needs a token. Request one from the lexer,
          and offer it to the parser, which will produce a new
          checkpoint. Then, repeat. *)
@@ -27,7 +27,7 @@ let rec loop lexbuf (checkpoint : int I.checkpoint) =
   | I.AboutToReduce _ ->
       let checkpoint = I.resume checkpoint in
       loop lexbuf checkpoint
-  | I.HandlingError env ->
+  | I.HandlingError _env ->
       (* The parser has suspended itself because of a syntax error. Stop. *)
       Printf.fprintf stderr
         "At offset %d: syntax error.\n%!"
@@ -39,6 +39,8 @@ let rec loop lexbuf (checkpoint : int I.checkpoint) =
       (* The parser rejects this input. This cannot happen, here, because
          we stop as soon as the parser reports [HandlingError]. *)
       assert false
+
+let _ = loop (* silence OCaml's unused-value warning about [loop] *)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -89,7 +91,6 @@ let rec repeat channel =
   process optional_line;
   if continue then
     repeat channel
-  
+
 let () =
   repeat (from_channel stdin)
-
