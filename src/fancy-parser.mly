@@ -106,7 +106,7 @@ declaration:
         (List.map Parameters.with_pos ss) }
 
 | k = priority_keyword ss = clist(symbol)
-    { let prec = ParserAux.new_precedence_level $startpos(k) $endpos(k) in
+    { let prec = ParserAux.new_precedence_level $loc(k) in
       List.map (Positions.map (fun symbol -> DTokenProperties (symbol, k, prec))) ss }
 
 | PARAMETER t = OCAMLTYPE

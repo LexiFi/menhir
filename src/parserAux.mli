@@ -37,7 +37,7 @@ type early_production =
 type early_productions =
   early_production list
 
-(* [new_precedence_level pos1 pos2] creates a new precendence level, which is
+(* [new_precedence_level (pos1, pos2)] creates a new precendence level, which is
    stronger than any levels previously created by this function. It should be
    called every time a [%left], [%right], or [%nonassoc] declaration is found.
    The positions are the positions of this declaration in the source code. The
@@ -45,7 +45,7 @@ type early_productions =
    %prec) to productions. They are used in solving shift/reduce and
    shift/reduce/reduce conflicts. *)
 
-val new_precedence_level: Lexing.position -> Lexing.position -> precedence_level
+val new_precedence_level: Lexing.position * Lexing.position -> precedence_level
 
 (* [new_production_level()] creates a new production level, which is stronger
    than any levels previously created by this function. It should be called

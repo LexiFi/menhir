@@ -34,7 +34,7 @@ type early_productions =
 
 let new_precedence_level =
   let c = ref 0 in
-  fun pos1 pos2 ->
+  fun (pos1, pos2) ->
     incr c;
     PrecedenceLevel (InputFile.get_input_file (), !c, pos1, pos2)
 
