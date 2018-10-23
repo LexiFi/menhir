@@ -129,7 +129,7 @@ declaration:
 
 | rule_specific_token
     {
-      Error.error (Positions.two $startpos $endpos)
+      Error.error [Positions.import $loc]
         "syntax error inside a declaration.\n\
          Did you perhaps forget the %%%% that separates declarations and rules?"
     }

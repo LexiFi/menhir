@@ -140,9 +140,6 @@ type positions =
 let one (pos : position) : positions =
   [ import (pos, pos) ]
 
-let two (pos1 : position) (pos2 : position) : positions =
-  [ import (pos1, pos2) ]
-
 let lexbuf (lexbuf : lexbuf) : positions =
   [ import (lexbuf.lex_start_p, lexbuf.lex_curr_p) ]
 

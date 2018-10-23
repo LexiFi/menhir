@@ -75,7 +75,7 @@ module TokPrecedence = struct
         | UndefinedPrecedence ->
             ()
         | PrecedenceLevel (_, _, pos1, pos2) ->
-            Error.grammar_warning (Positions.two pos1 pos2)
+            Error.grammar_warning [Positions.import (pos1, pos2)]
               "the precedence level assigned to %s is never useful." id
     ) grammar.tokens
 

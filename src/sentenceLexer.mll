@@ -23,7 +23,7 @@
   (* A short-hand. *)
 
   let error2 lexbuf =
-    Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p)
+    Error.error (Positions.lexbuf lexbuf)
 
 }
 
@@ -84,4 +84,3 @@ rule lex = parse
       { COLON }
   | _
       { error2 lexbuf "unexpected character." }
-

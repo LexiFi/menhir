@@ -66,7 +66,7 @@
       | None, [] ->
           Lexing.dummy_pos (* cannot happen *)
     in
-    Positions.two opening closing,
+    [Positions.import (opening, closing)],
     strip_sentence (nto, terminals)
 
 %}
@@ -118,4 +118,3 @@ terminals:
     { [] }
 | TERMINAL terminals
     { $1 :: $2 }
-

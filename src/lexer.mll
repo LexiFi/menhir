@@ -26,7 +26,7 @@ let error1 pos =
   Error.error (Positions.one pos)
 
 let error2 lexbuf =
-  Error.error (Positions.two lexbuf.lex_start_p lexbuf.lex_curr_p)
+  Error.error (Positions.lexbuf lexbuf)
 
 (* ------------------------------------------------------------------------ *)
 
