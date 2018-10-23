@@ -318,7 +318,7 @@ producer:
   symbol = symbol actuals = plist(A)
     { Parameters.app symbol actuals }
 (* 2- *)
-| p = B m = modifier
+| p = B m = located(modifier)
     { ParameterApp (m, [ p ]) }
 
 strict_actual:
@@ -334,8 +334,8 @@ lax_actual:
     { p }
 (* 3- *)
 | /* leading bar disallowed */
-  branches = branches
-    { ParameterAnonymous (with_loc $loc branches) }
+  branches = located(branches)
+    { ParameterAnonymous branches }
     (* 2016/05/18: we used to eliminate anonymous rules on the fly during
        parsing. However, when an anonymous rule appears in a parameterized
        definition, the fresh nonterminal symbol that is created should be
@@ -357,11 +357,11 @@ lax_actual:
 
 modifier:
   QUESTION
-    { with_loc $loc "option" }
+    { "option" }
 | PLUS
-    { with_loc $loc "nonempty_list" }
+    { "nonempty_list" }
 | STAR
-    { with_loc $loc "list" }
+    { "list" }
 
 /* ------------------------------------------------------------------------- */
 /* A postlude is announced by %%, but is optional. */
@@ -371,5 +371,14 @@ postlude:
     { None }
 | p = PERCENTPERCENT /* followed by actual postlude */
     { Some (Lazy.force p) }
+
+/* -------------------------------------------------------------------------- */
+
+/* [located(X)] recognizes the same language as [X] and converts the resulting
+   value from type ['a] to type ['a located]. */
+
+located(X):
+  x = X
+    { with_loc $loc x }
 
 %%
