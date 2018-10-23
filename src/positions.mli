@@ -82,7 +82,7 @@ val filename_of_position: t -> string
     starts and stops where [p2] stops. *)
 val join : t -> t -> t
 
-val lex_join : Lexing.position -> Lexing.position -> t
+val import : Lexing.position * Lexing.position -> t
 
 val ljoinf : ('a -> t) -> 'a list -> t
 

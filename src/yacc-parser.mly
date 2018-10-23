@@ -346,7 +346,7 @@ production:
     { List.rev $1,
       $2,
       ParserAux.new_production_level(),
-      Positions.lex_join (symbol_start_pos()) (symbol_end_pos())
+      Positions.import (symbol_start_pos(), symbol_end_pos())
     }
 
 producers:
@@ -361,8 +361,8 @@ producers:
 
 producer:
 |           actual attributes
-    { Positions.lex_join (symbol_start_pos()) (symbol_end_pos()),    None, $1, $2 }
+    { Positions.import (symbol_start_pos(), symbol_end_pos()),    None, $1, $2 }
 | LID EQUAL actual attributes
-    { Positions.lex_join (symbol_start_pos()) (symbol_end_pos()), Some $1, $3, $4 }
+    { Positions.import (symbol_start_pos(), symbol_end_pos()), Some $1, $3, $4 }
 
 %%

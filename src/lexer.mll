@@ -461,7 +461,7 @@ rule main = parse
     { let openingpos = lexeme_start_p lexbuf in
       let stretchpos = lexeme_end_p lexbuf in
       let closingpos = attribute openingpos lexbuf in
-      let pos = Positions.lex_join openingpos (lexeme_end_p lexbuf) in
+      let pos = Positions.import (openingpos, lexeme_end_p lexbuf) in
       let attr = mk_stretch stretchpos closingpos false [] in
       if percent = "" then
         (* No [%] sign: this is a normal attribute. *)

@@ -86,8 +86,8 @@ let join x1 x2 =
   end_of_position   (if x2 = dummy then x1 else x2)
 )
 
-let lex_join x1 x2 =
-  (x1, x2)
+let import x =
+  x
 
 let join_located l1 l2 f =
   {
@@ -138,13 +138,13 @@ type positions =
     t list
 
 let one (pos : position) : positions =
-  [ (pos, pos) ] (* or: lex_join pos pos *)
+  [ import (pos, pos) ]
 
 let two (pos1 : position) (pos2 : position) : positions =
-  [ lex_join pos1 pos2 ]
+  [ import (pos1, pos2) ]
 
 let lexbuf (lexbuf : lexbuf) : positions =
-  [ lex_join lexbuf.lex_start_p lexbuf.lex_curr_p ]
+  [ import (lexbuf.lex_start_p, lexbuf.lex_curr_p) ]
 
 let print (pos : position) =
   Printf.printf

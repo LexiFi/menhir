@@ -271,7 +271,7 @@ production:
     { producers,
       oprec,
       ParserAux.new_production_level(),
-      Positions.lex_join $startpos $endpos
+      Positions.import $loc
     }
 
 /* ------------------------------------------------------------------------- */
