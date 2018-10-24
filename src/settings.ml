@@ -290,6 +290,13 @@ let cmly =
 let coq_lib_path =
   ref (Some "MenhirLib")
 
+type dollars =
+  | DollarsDisallowed
+  | DollarsAllowed
+
+let dollars =
+  ref DollarsAllowed
+
 (* When new command line options are added, please update both the manual
    in [doc/manual.tex] and the man page in [doc/menhir.1]. *)
 
@@ -328,6 +335,7 @@ let options = Arg.align [
   "--log-code", Arg.Set_int logC, "<level> Log information about the generated code";
   "--log-grammar", Arg.Set_int logG, "<level> Log information about the grammar";
   "--no-code-inlining", Arg.Clear code_inlining, " (undocumented)";
+  "--no-dollars", Arg.Unit (fun () -> dollars := DollarsDisallowed), " Disallow $i in semantic actions";
   "--no-inline", Arg.Clear inline, " Ignore the %inline keyword";
   "--no-pager", Arg.Unit (fun () -> if !construction_mode = ModePager then construction_mode := ModeInclusionOnly), " (undocumented)";
   "--no-prefix", Arg.Set noprefix, " (undocumented)";
@@ -589,6 +597,9 @@ let cmly =
 
 let coq_lib_path =
   !coq_lib_path
+
+let dollars =
+  !dollars
 
 let infer =
   !infer

@@ -953,7 +953,7 @@ raw_reasonable_expression:
 | TAKE e1 = expression FROM e2 = reasonable_expression
     { ETake (e1, e2) }
 | GIVE e1 = expression TO e2 = reasonable_expression
-    { EGive (e1, e2) } 
+    { EGive (e1, e2) }
 | taking = TAKING e1 = expression FROM e2 = tight_expression BEGIN e = expression fin = END
     {
       taking; fin; (* avoid ocaml warnings about unused variables *)
@@ -1065,8 +1065,8 @@ definition:
     { PConstraint (p, t), e }
 | p = normal_pattern e = anonymous_function
     { p, e }
-| p = normal_pattern COLON t = normal_type EQUAL BUILTIN b = LIDENT
-    { PConstraint (p, t), ELocated (EBuiltin b, ($startpos($5), $endpos($5))) }
+| p = normal_pattern COLON t = normal_type EQUAL bb = BUILTIN b = LIDENT
+    { PConstraint (p, t), ELocated (EBuiltin b, ($startpos(bb), $endpos(bb))) }
 
 (* The syntax of anonymous function appears as part of definitions (above)
    and also, when preceded with the keyword [fun], as a stand-alone
@@ -1098,9 +1098,9 @@ anonymous_function:
 (* This is a toplevel item; it appears in implementations only. *)
 
 definition_group:
-| VAL flag_defs = definitions
+| v = VAL flag_defs = definitions
     { let flag, defs = flag_defs in
-      let loc = ($startpos($1), $endpos) in
+      let loc = ($startpos(v), $endpos) in
       ValueDefinitions (loc, flag, defs) }
 (* TEMPORARY why do we have a single location for an entire group
    of definitions? *)
@@ -1211,4 +1211,3 @@ range:
    tuple types and multi-argument function types. So, I give up and use a
    dedicated symbol, STAR, for conjunction. Somewhat analogously, yet another
    symbol, BAR, is now used for the conjunction of a type and a permission. *)
-

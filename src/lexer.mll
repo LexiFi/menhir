@@ -62,9 +62,10 @@ type monster = {
   pos: Positions.t;
 
   (* This method is passed an array of (optional) names for the producers,
-     that is, the elements of the production's right-hand side. It may
-     perform some checks and is allowed to fail. *)
-  check: string option array -> unit;
+     that is, the elements of the production's right-hand side. It is also
+     passed a flag which tells whether [$i] syntax is allowed or disallowed.
+     It may perform some checks and is allowed to fail. *)
+  check: check;
 
   (* This method transforms the keyword (in place) into a conventional
      OCaml identifier. This is done by replacing '$', '(', and ')' with
@@ -77,12 +78,21 @@ type monster = {
 
 }
 
+and check =
+  Settings.dollars -> string option array -> unit
+
+(* No check. *)
+
+let none : check =
+  fun _ _ -> ()
+
 (* ------------------------------------------------------------------------ *)
 
 (* The [$syntaxerror] monster. *)
 
 let syntaxerror pos : monster =
-  let check _ = ()
+  let check =
+    none
   and transform ofs1 content =
     (* [$syntaxerror] is replaced with
        [(raise _eRR)]. Same length. *)
@@ -102,18 +112,25 @@ let syntaxerror pos : monster =
    a mistake. (Plus, this simplies our life, as we rewrite [$i] to [_i],
    and we would have to rewrite it to a different identifier otherwise.) *)
 
-let check_dollar pos i producers =
+let check_dollar pos i : check = fun dollars producers ->
+  (* If [i] is out of range, say so. *)
   if not (0 <= i - 1 && i - 1 < Array.length producers) then
-    Error.error [pos] "$%d refers to a nonexistent symbol." i
-  else
-    producers.(i - 1) |> Option.iter (fun x ->
-      Error.error [pos] "please do not say: $%d. Instead, say: %s." i x
-    )
+    Error.error [pos] "$%d refers to a nonexistent symbol." i;
+  (* If [$i] could be referred to via a name, say so. *)
+  producers.(i - 1) |> Option.iter (fun x ->
+    Error.error [pos] "please do not say: $%d. Instead, say: %s." i x
+  );
+  (* If [$i] syntax is disallowed, say so. *)
+  match dollars with
+  | Settings.DollarsDisallowed ->
+      Error.error [pos] "please do not use $%d. Instead, name this value." i
+  | Settings.DollarsAllowed ->
+      ()
 
 (* We check that every reference to a producer [x] in a position keyword,
    such as [$startpos(x)], exists. *)
 
-let check_producer pos x producers =
+let check_producer pos x : check = fun _ producers ->
   if not (List.mem (Some x) (Array.to_list producers)) then
     Error.error [pos] "%s refers to a nonexistent symbol." x
 
@@ -122,7 +139,7 @@ let check_producer pos x producers =
 (* The [$i] monster. *)
 
 let dollar pos i : monster =
-  let check = check_dollar pos i
+  let check : check = check_dollar pos i
   and transform ofs1 content =
     (* [$i] is replaced with [_i]. Thus, it is no longer a keyword. *)
     let pos = start_of_position pos in
@@ -142,7 +159,6 @@ let position pos
   (flavor : string)
   (i : string option) (x : string option)
 =
-  let none _ = () in
   let check_no_parameter () =
     if i <> None || x <> None then
       Error.error [pos] "$%s%s does not take a parameter." where flavor
@@ -451,12 +467,13 @@ rule main = parse
         let stretchpos = lexeme_end_p lexbuf in
         let closingpos, monsters = action false openingpos [] lexbuf in
         ACTION (
-          fun (producers : string option array) ->
-            List.iter (fun monster -> monster.check producers) monsters;
+          fun dollars producers ->
+            List.iter (fun monster -> monster.check dollars producers) monsters;
             let stretch = mk_stretch stretchpos closingpos true monsters in
             Action.from_stretch stretch
         )
-      ) }
+      )
+    }
 | ('%'? as percent) "[@" (attributechar+ as id) whitespace*
     { let openingpos = lexeme_start_p lexbuf in
       let stretchpos = lexeme_end_p lexbuf in

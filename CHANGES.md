@@ -1,6 +1,8 @@
 # Changes
 
-## 2018/10/19
+## 2018/10/24
+
+* New flag `--no-dollars`, which disallows the use of `$i` in semantic actions.
 
 * When generating OCaml code, include all record fields in record patterns,
   even when bound to a wildcard pattern. Thus, avoid triggering OCaml's

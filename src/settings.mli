@@ -237,3 +237,11 @@ val cmly: bool
    known. Its default value is [Some "MenhirLib"]. *)
 
 val coq_lib_path: string option
+
+(* This flag tells whether [$i] notation in semantic actions is allowed. *)
+
+type dollars =
+  | DollarsDisallowed
+  | DollarsAllowed
+
+val dollars: dollars

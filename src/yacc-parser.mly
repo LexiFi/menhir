@@ -32,7 +32,7 @@ open Positions
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
-%token <Syntax.identifier option array -> Syntax.action> ACTION
+%token <Settings.dollars -> Syntax.identifier option array -> Action.t> ACTION
 %token <Syntax.attribute> ATTRIBUTE GRAMMARATTRIBUTE
 %token PERCENTATTRIBUTE
 %start grammar
@@ -307,7 +307,8 @@ production_group:
         let pr_producers = ParserAux.normalize_producers producers in
         (* Distribute the semantic action. Also, check that every [$i]
            is within bounds. *)
-        let pr_action = action (ParserAux.producer_names producers) in
+        let names = ParserAux.producer_names producers in
+        let pr_action = action Settings.dollars names in
         {
           pr_producers;
           pr_action;
