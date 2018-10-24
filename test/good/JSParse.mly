@@ -706,7 +706,7 @@ primary_expression :
 | object_literal
     {(Object_construction ((default_annotation (sndo3 $1) (trdo3 $1)), fsto3 $1),
       sndo3 $1, trdo3 $1)}
-| Llparen expression Lrparen {(fsto3 $2, $1, $3)};
+| Llparen expression Lrparen {(fsto3 $2, $1, $3)}
 /* EAX Extends */
 | property_identifier
     {(Property_construction ((default_annotation (sndo3 $1) (trdo3 $1)), fsto3 $1),
@@ -952,7 +952,6 @@ call_expression :
     {(Object_access ((default_annotation (sndo3 $1) (trdo3 $3)),
 		     (fsto3 $1), ((fsto3 $3))),
       sndo3 $1, trdo3 $3)}
-;
 
 /* E4X Extends */
 | call_expression Ldot property_identifier
@@ -990,7 +989,6 @@ call_init_expression :
     {(Object_access ((default_annotation (sndo3 $1) (trdo3 $3)),
 		     (fsto3 $1), ((fsto3 $3))),
       sndo3 $1, trdo3 $3)}
-;
 
 /* E4X Extends */
 | call_init_expression Ldot property_identifier

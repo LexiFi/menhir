@@ -33,13 +33,13 @@ open Positions
 
 %token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL
 %token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
+%token PERCENTATTRIBUTE SEMI
 %token <string Positions.located> LID UID
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
 %token <Settings.dollars -> Syntax.identifier option array -> Action.t> ACTION
 %token <Syntax.attribute> ATTRIBUTE GRAMMARATTRIBUTE
-%token PERCENTATTRIBUTE
 
 /* ------------------------------------------------------------------------- */
 /* Type annotations and start symbol. */
@@ -68,11 +68,14 @@ open Positions
    postlude, which we do not parse. */
 
 grammar:
-  ds = declaration* PERCENTPERCENT rs = rule* t = postlude
+  ds = flatten(declaration*)
+  PERCENTPERCENT
+  rs = flatten(rule*)
+  t = postlude
     {
       {
         pg_filename          = ""; (* filled in by the caller *)
-        pg_declarations      = List.flatten ds;
+        pg_declarations      = ds;
         pg_rules             = rs;
         pg_postlude          = t
       }
@@ -122,6 +125,9 @@ declaration:
     { let prec = ParserAux.new_on_error_reduce_level() in
       List.map (Positions.map (fun nt -> DOnErrorReduce (nt, prec)))
         (List.map Parameters.with_pos ss) }
+
+| SEMI
+    { [] }
 
 /* This production recognizes tokens that are valid in the rules section,
    but not in the declarations section. This is a hint that a %% was
@@ -197,7 +203,7 @@ rule:
   branches = branches
     {
       let public, inline = flags in
-      {
+      let rule = {
         pr_public_flag = public;
         pr_inline_flag = inline;
         pr_nt          = Positions.value symbol;
@@ -206,7 +212,10 @@ rule:
         pr_parameters  = List.map Positions.value params;
         pr_branches    = branches
       }
+      in [rule]
     }
+| SEMI
+    { [] }
 
 %inline branches:
   prods = separated_nonempty_list(BAR, production_group)
@@ -288,7 +297,7 @@ production:
    empty [option] or to shift. */
 
 producer:
-| id = ioption(terminated(LID, EQUAL)) p = actual attrs = ATTRIBUTE*
+| id = ioption(terminated(LID, EQUAL)) p = actual attrs = ATTRIBUTE* SEMI*
     { position (with_loc $loc ()), id, p, attrs }
 
 /* ------------------------------------------------------------------------- */

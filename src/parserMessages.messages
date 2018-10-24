@@ -82,6 +82,7 @@ Examples of well-formed declarations:
 # ----------------------------------------------------------------------------
 
 grammar: PERCENTPERCENT TYPE
+grammar: PERCENTPERCENT SEMI TYPE
 
 Either a rule or %% is expected at this point.
 
@@ -114,10 +115,10 @@ Either a parenthesized, comma-delimited list of formal parameters
 or an attribute
 or a colon is expected at this point.
 Examples of well-formed rules:
-  main: e = expr EOL { e }
-  expr: i = INT { i } | e1 = expr PLUS e2 = expr { e1 + e2 }
+  main: e = expr; EOL { e }
+  expr: i = INT { i } | e1 = expr; PLUS; e2 = expr { e1 + e2 }
   option(X): { None } | x = X { Some x }
-  main [@cost 0]: e = expr EOL { e }
+  main [@cost 0]: e = expr; EOL { e }
 
 # ----------------------------------------------------------------------------
 
@@ -141,13 +142,14 @@ grammar: PERCENTPERCENT UID COLON UID BAR TYPE
 Ill-formed rule.
 A list of productions is expected at this point.
 Examples of well-formed rules:
-  main: e = expr EOL { e }
-  expr: i = INT { i } | e1 = expr PLUS e2 = expr { e1 + e2 }
+  main: e = expr; EOL { e }
+  expr: i = INT { i } | e1 = expr; PLUS; e2 = expr { e1 + e2 }
   symbol: s = LID | s = UID { s }
 
 # ----------------------------------------------------------------------------
 
 grammar: PERCENTPERCENT UID COLON UID TYPE
+grammar: PERCENTPERCENT UID COLON UID SEMI TYPE
 grammar: PERCENTPERCENT UID COLON UID ATTRIBUTE TYPE
 grammar: PERCENTPERCENT UID COLON LID TYPE
 grammar: PERCENTPERCENT UID COLON LID EQUAL TYPE

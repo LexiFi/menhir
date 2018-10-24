@@ -347,7 +347,7 @@ let reserved =
 
 let newline = ('\010' | '\013' | "\013\010")
 
-let whitespace = [ ' ' '\t' ';' ]
+let whitespace = [ ' ' '\t' ]
 
 let lowercase = ['a'-'z' '\223'-'\246' '\248'-'\255' '_']
 
@@ -416,6 +416,8 @@ rule main = parse
         let closingpos = finish lexbuf in
         mk_stretch openingpos closingpos false []
       )) }
+| ";"
+    { SEMI }
 | ":"
     { COLON }
 | ","

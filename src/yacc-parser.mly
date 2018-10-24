@@ -28,13 +28,13 @@ open Positions
 
 %token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL
 %token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
+%token PERCENTATTRIBUTE SEMI
 %token <string Positions.located> LID UID
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
 %token <Settings.dollars -> Syntax.identifier option array -> Action.t> ACTION
 %token <Syntax.attribute> ATTRIBUTE GRAMMARATTRIBUTE
-%token PERCENTATTRIBUTE
 %start grammar
 %type <ParserAux.early_producer> producer
 %type <ParserAux.early_production> production
@@ -82,6 +82,8 @@ declarations:
     { [] }
 | declarations declaration
     { $2 @ $1 }
+| declarations SEMI
+    { $1 }
 
 declaration:
 | HEADER /* lexically delimited by %{ ... %} */
@@ -191,6 +193,8 @@ rules:
     { [] }
 | rules rule
     { $2 :: $1 }
+| rules SEMI
+    { $1 }
 
 rule:
   flags
@@ -361,9 +365,17 @@ producers:
    binding, and possibly followed with attributes. */
 
 producer:
-|           actual attributes
+|           actual attributes optional_semis
     { Positions.import (symbol_start_pos(), symbol_end_pos()),    None, $1, $2 }
-| LID EQUAL actual attributes
+| LID EQUAL actual attributes optional_semis
     { Positions.import (symbol_start_pos(), symbol_end_pos()), Some $1, $3, $4 }
+
+/* ------------------------------------------------------------------------- */
+/* Semicolons used to be considered whitespace by our lexer, but are no longer.
+   We must allow optional semicolons in a few conventional places. */
+
+optional_semis:
+  /* empty */         { () }
+| optional_semis SEMI { () }
 
 %%

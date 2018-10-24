@@ -2,7 +2,15 @@
 
 ## 2018/10/24
 
+* Until today, the semicolon character `;` was insignificant: it was
+  considered as whitespace by Menhir. It is now accepted only in a
+  few specific places, namely: after a declaration; after a rule;
+  after a producer. If Menhir suddenly complains about a semicolon,
+  just remove it. This change is being made in preparation for
+  further syntactic changes.
+
 * New flag `--no-dollars`, which disallows the use of `$i` in semantic actions.
+  The default behavior remains to allow the use of `$i`.
 
 * When generating OCaml code, include all record fields in record patterns,
   even when bound to a wildcard pattern. Thus, avoid triggering OCaml's
