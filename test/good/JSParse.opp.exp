@@ -68,14 +68,14 @@ File "JSParse.mly", line 45, characters 22-38:
 Warning: the token Lline_terminator is unused.
 File "JSParse.mly", line 44, characters 22-33:
 Warning: the token Lwhitespace is unused.
-%{  
+%{
   module Parsing = ParsingOwn.Make(LexingOwn)
   open Parsing
   module Lexing = Parsing.Lexing
  open Annotation
  open AST
 
-let raise_parse_error e = 
+let raise_parse_error e =
 	print_endline e;
 	raise Parse_error e
 
@@ -249,7 +249,7 @@ source_elements:
 
 source_element:
   _1 = statement
-    {    ((Statement ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1), 
+    {    ((Statement ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1),
       sndo3 _1, trdo3 _1))}
 | _1 = function_declaration
     {                       (_1)}
@@ -341,8 +341,8 @@ non_empty_statement_list:
 
 variable_statement:
   _1 = KWvar _2 = variable_declaration_list _3 = Lsemicolon
-    {  ((Variable_declaration 
-      ((default_annotation _1 _3), (fsto3 _2)), 
+    {  ((Variable_declaration
+      ((default_annotation _1 _3), (fsto3 _2)),
       _1, _3))}
 
 variable_declaration_list:
@@ -395,8 +395,8 @@ if_statement:
 
 switch_statement:
   _1 = KWswitch _2 = Llparen _3 = expression _4 = Lrparen _5 = case_block
-    {    ((Switch ((default_annotation _1 (trdo3 _5)), 
-	      fsto3 _3, (fsto3 (fsto3 _5)), 
+    {    ((Switch ((default_annotation _1 (trdo3 _5)),
+	      fsto3 _3, (fsto3 (fsto3 _5)),
 	      (sndo3 (fsto3 _5)), (trdo3 (fsto3 _5))),
       _1, trdo3 _5))}
 
@@ -444,8 +444,8 @@ iteration_statement:
 		(With_in ((default_annotation _3 _7), fsto3 _4, fsto3 _6)), fsto3 _8),
       _1, trdo3 _8))}
 | _1 = KWfor _2 = CKWeach _3 = Llparen _4 = KWvar _5 = variable_declaration_no_in _6 = KWin _7 = expression _8 = Lrparen _9 = statement
-    {    ((For_each ((default_annotation _1 (trdo3 _9)), 
-	       (With_in_and_var ((default_annotation _3 _8), 
+    {    ((For_each ((default_annotation _1 (trdo3 _9)),
+	       (With_in_and_var ((default_annotation _3 _8),
 				 fsto3 _5, fsto3 _7)),
 	       fsto3 _9),
       _1, trdo3 _9))}
@@ -482,17 +482,17 @@ continue_statement:
    then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line _1))
    else (Continue ((default_annotation _1 _3),Some (fsto3 _2)), _1, _3))}
 | _1 = KWcontinue _2 = Lsemicolon
-    {  (if (different_line _1 _2) 
+    {  (if (different_line _1 _2)
    then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line _1))
    else (Continue ((default_annotation _1 _2), None), _1, _2))}
 
 break_statement:
   _1 = KWbreak _2 = identifier _3 = Lsemicolon
-    {    (if (different_line (sndo3 _2)  _1) 
+    {    (if (different_line (sndo3 _2)  _1)
     then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line _1))
     else (Break ((default_annotation _1 _3), Some (fsto3 _2)), _1, _3))}
 | _1 = KWbreak _2 = Lsemicolon
-    {    (if (different_line _1 _2) 
+    {    (if (different_line _1 _2)
     then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line _1))
     else (Break ((default_annotation _1 _2), None), _1, _2))}
 
@@ -502,7 +502,7 @@ return_statement:
     then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line _1))
     else (Return ((default_annotation _1 _3), Some (fsto3 _2)), _1, _3))}
 | _1 = KWreturn _2 = Lsemicolon
-    {    (if (different_line _1 _2) 
+    {    (if (different_line _1 _2)
     then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line _1))
     else (Return ((default_annotation _1 _2), None), _1, _2))}
 
@@ -512,10 +512,10 @@ with_statement:
 
 labelled_statement:
   _1 = identifier _2 = Lcolon _3 = statement
-    {    ((Labelled_statement ((default_annotation 
-			     (sndo3 _1) 
-			     (trdo3 _3)), 
-			  fsto3 _1, fsto3 _3), 
+    {    ((Labelled_statement ((default_annotation
+			     (sndo3 _1)
+			     (trdo3 _3)),
+			  fsto3 _1, fsto3 _3),
       sndo3 _1, trdo3 _3))}
 
 throw_statement:
@@ -526,7 +526,7 @@ throw_statement:
 
 try_statement:
   _1 = KWtry _2 = block _3 = catch_prod
-    {    ((Try_catch_finally ((default_annotation _1 (trdo3 _3)), 
+    {    ((Try_catch_finally ((default_annotation _1 (trdo3 _3)),
 			 fsto3 _2, (Some (fsto3 _3)), None),
       _1, trdo3 _3))}
 | _1 = KWtry _2 = block _3 = finally_prod
@@ -552,7 +552,7 @@ default_xml_namespace_statement:
 
 expression:
   _1 = sequence_of_expression
-    {    ( (Sequence 
+    {    ( (Sequence
         ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1),
         sndo3 _1, trdo3 _1)
     )}
@@ -599,7 +599,7 @@ member_expression:
 | _1 = KWnew _2 = member_expression _3 = arguments
     {    ((New_expression ((default_annotation _1 (trdo3 _2)), fsto3 _2, fsto3 _3), _1, trdo3 _2))}
 | _1 = Lregexp
-    {    ((RegExp ((default_annotation (fsto3 _1) (fsto3 _1)), (sndo3 _1, trdo3 _1)), 
+    {    ((RegExp ((default_annotation (fsto3 _1) (fsto3 _1)), (sndo3 _1, trdo3 _1)),
       fsto3 _1, fsto3 _1))}
 | _1 = member_expression _2 = Ldot _3 = property_identifier
     {    ((Property_access ((default_annotation (sndo3 _1) (trdo3 _3)), fsto3 _1, fsto3 _3),
@@ -627,7 +627,7 @@ member_init_expression:
     {    ((New_expression ((default_annotation _1 (trdo3 _3)), fsto3 _2, fsto3 _3),
       _1, trdo3 _3))}
 | _1 = Lregexp
-    {    ((RegExp ((default_annotation (fsto3 _1) (fsto3 _1)), 
+    {    ((RegExp ((default_annotation (fsto3 _1) (fsto3 _1)),
 	      ((sndo3 _1), (trdo3 _1))), fsto3 _1, fsto3 _1))}
 | _1 = member_init_expression _2 = Ldot _3 = property_identifier
     {    ((Property_access ((default_annotation (sndo3 _1) (trdo3 _3)), fsto3 _1, fsto3 _3),
@@ -650,10 +650,10 @@ primary_expression:
 | _1 = literal
     {    ((Constant ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1), sndo3 _1, trdo3 _1))}
 | _1 = array_literal
-    {    ((Array_construction ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1), 
+    {    ((Array_construction ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1),
       sndo3 _1, trdo3 _1))}
 | _1 = object_literal
-    {    ((Object_construction ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1), 
+    {    ((Object_construction ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1),
       sndo3 _1, trdo3 _1))}
 | _1 = Llparen _2 = expression _3 = Lrparen
     {                             ((fsto3 _2, _1, _3))}
@@ -669,7 +669,7 @@ primary_init_expression:
   _1 = KWthis
     {  ( (This _1,_1,_1))}
 | _1 = identifier
-    {    ((Variable ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1), 
+    {    ((Variable ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1),
       sndo3 _1, trdo3 _1))}
 | _1 = literal
     {    ((Constant ((default_annotation (sndo3 _1) (trdo3 _1)), fsto3 _1),
@@ -697,7 +697,7 @@ numeric_literal:
   _1 = Lfloat
     {           ((Number ((default_annotation (fst _1) (fst _1)), (snd _1)), fst _1, fst _1))}
 | _1 = Lint
-    {           ((Number ((default_annotation (fst _1) (fst _1)), (float_of_int (snd _1))), 
+    {           ((Number ((default_annotation (fst _1) (fst _1)), (float_of_int (snd _1))),
 	     fst _1, fst _1))}
 
 array_literal:
@@ -760,7 +760,7 @@ property_selector:
 
 qualified_identifier:
   _1 = property_selector _2 = Ldcolon _3 = property_selector
-    {    ((QualifiedIdentifier ((default_annotation (sndo3 _1) (trdo3 _3)), 
+    {    ((QualifiedIdentifier ((default_annotation (sndo3 _1) (trdo3 _3)),
 			   (fsto3 _1), (fsto3 _3)),
       sndo3 _1, trdo3 _3))}
 | _1 = property_selector _2 = Ldcolon _3 = Llbracket _4 = expression _5 = Lrbracket
@@ -793,7 +793,7 @@ xml_element_content:
     {    ((XMLElementContent ((default_annotation (sndo3 _1) (trdo3 _1)), (fsto3 _1), None),
       sndo3 _1, trdo3 _1))}
 | _1 = xml_markup _2 = xml_element_content
-    {    ((XMLElementContent ((default_annotation (sndo3 _1) (trdo3 _2)), 
+    {    ((XMLElementContent ((default_annotation (sndo3 _1) (trdo3 _2)),
 			 fsto3 _1, Some (fsto3 _2)),
       sndo3 _1, trdo3 _2))}
 | _1 = XMLtext
@@ -802,7 +802,7 @@ xml_element_content:
      fst _1, fst _1))}
 | _1 = XMLtext _2 = xml_element_content
     {    ((XMLElementContent ((default_annotation (fst _1) (trdo3 _2)),
-			 XMLText ((default_annotation (fst _1) (trdo3 _2)), 
+			 XMLText ((default_annotation (fst _1) (trdo3 _2)),
 				  (snd _1)), Some (fsto3 _2)),
       fst _1, trdo3 _2))}
 | _1 = xml_element
@@ -860,7 +860,7 @@ property_name_and_value_list:
 
 property_name:
   _1 = identifier
-    {    (((DynamicName ((default_annotation (sndo3 _1) (trdo3 _1)),(fsto3 _1))), 
+    {    (((DynamicName ((default_annotation (sndo3 _1) (trdo3 _1)),(fsto3 _1))),
       sndo3 _1, trdo3 _1))}
 | _1 = Lstring
     {    (((StaticName ((default_annotation (fst _1) (fst _1)),
@@ -984,13 +984,13 @@ postfix_expression:
 | _1 = left_hand_side_expression _2 = Lincr
     {    ( if (different_line (trdo3 _1)  _2)
       then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line (trdo3 _1)))
-      else (Unop ((default_annotation (sndo3 _1) _2),(fsto3 _1), 
+      else (Unop ((default_annotation (sndo3 _1) _2),(fsto3 _1),
 	    Incr_postfix (default_annotation _2 _2)),
       sndo3 _1, _2))}
 | _1 = left_hand_side_expression _2 = Ldecr
     {    ( if (different_line (trdo3 _1) _2)
       then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line (trdo3 _1)))
-      else (Unop ((default_annotation (sndo3 _1) _2),(fsto3 _1), 
+      else (Unop ((default_annotation (sndo3 _1) _2),(fsto3 _1),
 	    Decr_postfix (default_annotation _2 _2)),
       sndo3 _1, _2))}
 
@@ -998,15 +998,15 @@ postfix_init_expression:
   _1 = left_hand_side_init_expression
     {    (_1)}
 | _1 = left_hand_side_init_expression _2 = Lincr
-    {    (if (different_line (sndo3 _1) _2) 
+    {    (if (different_line (sndo3 _1) _2)
     then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line (sndo3 _1)))
-    else (Unop ((default_annotation (sndo3 _1) _2),(fsto3 _1), 
+    else (Unop ((default_annotation (sndo3 _1) _2),(fsto3 _1),
 	    Incr_postfix (default_annotation _2 _2)),
       sndo3 _1, _2))}
 | _1 = left_hand_side_init_expression _2 = Ldecr
     {    (if (different_line (sndo3 _1) _2)
     then raise_parse_error("Illegal line terminator in line "^(string_of_starting_line (sndo3 _1)))
-    else (Unop ((default_annotation (sndo3 _1) _2),(fsto3 _1), 
+    else (Unop ((default_annotation (sndo3 _1) _2),(fsto3 _1),
 	    Decr_postfix (default_annotation _2 _2)),
       sndo3 _1, _2))}
 
@@ -1014,7 +1014,7 @@ unary_expression:
   _1 = postfix_expression
     {                                 (_1)}
 | _1 = KWdelete _2 = unary_expression
-    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 	    Delete (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = KWvoid _2 = unary_expression
@@ -1022,31 +1022,31 @@ unary_expression:
 			       Void (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = KWtypeof _2 = unary_expression
-    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 			       Typeof (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Lincr _2 = unary_expression
-    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 	    Incr_prefix (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Ldecr _2 = unary_expression
-    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 	    Decr_prefix (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Lplus _2 = unary_expression
-    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 			       Positive (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Lminus _2 = unary_expression
-    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 			       Negative (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Ltilde _2 = unary_expression
-    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 			       Tilde (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Lbang _2 = unary_expression
-    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 			       Bang (default_annotation _1 _1)),
       _1, trdo3 _2))}
 
@@ -1054,39 +1054,39 @@ unary_init_expression:
   _1 = postfix_init_expression
     {                            (_1)}
 | _1 = KWdelete _2 = unary_expression
-    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 	    Delete (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = KWvoid _2 = unary_expression
-    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 			       Void (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = KWtypeof _2 = unary_expression
-    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 			       Typeof (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Lincr _2 = unary_expression
-    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 	    Incr_prefix (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Ldecr _2 = unary_expression
-    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 	    Decr_prefix (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Lplus _2 = unary_expression
-    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 			       Positive (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Lminus _2 = unary_expression
-    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 			       Negative (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Ltilde _2 = unary_expression
-    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 			       Tilde (default_annotation _1 _1)),
       _1, trdo3 _2))}
 | _1 = Lbang _2 = unary_expression
-    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2), 
+    {    ((Unop_without_sideeffect ((default_annotation _1 (trdo3 _2)),(fsto3 _2),
 			       Bang (default_annotation _1 _1) ),
       _1, trdo3 _2))}
 

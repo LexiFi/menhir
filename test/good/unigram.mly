@@ -1,6 +1,6 @@
 /*
  * NOTE: these %token declarations are generated
- *  automatically by mktoktab from tokens.txt and 
+ *  automatically by mktoktab from tokens.txt and
  *  op.txt.
  */
 
@@ -131,7 +131,7 @@
 %token	RBRACE      /* }         */
 
 %token	DOLLAR      /* $         */
-%token  ABSTRACT    /* abstract  */       
+%token  ABSTRACT    /* abstract  */
 %{
 
 global outline, outcol, outfilename
@@ -184,7 +184,7 @@ initiallysection: { $$ := EmptyNode }
 	}
 	;
 
-optsemi : { $$ := EmptyNode } ; 
+optsemi : { $$ := EmptyNode } ;
         | SEMICOL {};
 
 cl : classhead SEMICOL END {
@@ -202,8 +202,8 @@ supers: { $$ := EmptyNode } ;
    | COLON IDENT supers { $$ := node("supers", $1, $2, $3) };
    | COLON packageref supers { $$ := node("supers", $1, $2, $3) };
 
-packageref : IDENT COLONCOLON IDENT { $$ := node("packageref", $1,$2,$3) } 
-   | COLONCOLON IDENT { $$ := node("packageref", $1,$2) }  
+packageref : IDENT COLONCOLON IDENT { $$ := node("packageref", $1,$2,$3) }
+   | COLONCOLON IDENT { $$ := node("packageref", $1,$2) }
    ;
 
 methods: { $$ := EmptyNode } ;
@@ -229,8 +229,8 @@ import	: IMPORT lnklist {
    $$ := node("import", $1,$2)
    } ;
 
-link	: LINK lnklist { 
-   $$ := node("link", $1,$2); 
+link	: LINK lnklist {
+   $$ := node("link", $1,$2);
    } ;
 
 lnklist	: lnkfile {} ;
