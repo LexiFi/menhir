@@ -6,5 +6,6 @@ test:
 	@ ./test.sh
 
 clean:
-	rm -f calc-data/*.{table,code,interpret}.{out,err}
-
+	cd calc-data && rm -f `cat .gitignore`
+	make -C calc clean
+	make -C gene clean realclean

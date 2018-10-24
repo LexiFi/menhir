@@ -18,3 +18,4 @@ clean:
 
 realclean:
 	rm -f gene.{code,table,ocamlyacc}
+	rm -f *.time *.out
