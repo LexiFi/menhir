@@ -51,7 +51,7 @@ docdir		:= $(PREFIX)/share/doc/menhir
 libdir	        := $(PREFIX)/share/menhir
 mandir          := $(PREFIX)/share/man/man1
 MANS            := menhir.1
-DOCS            := manual.pdf manual.html demos
+DOCS            := manual.pdf manual.html manual*.png demos
 MLYLIB          := src/standard.mly
 
 # ----------------------------------------------------------------------------
