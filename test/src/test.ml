@@ -194,10 +194,16 @@ let process_negative_test basenames : unit =
   (* The output is stored in this file. *)
   let result = id ^ ".result" in
 
+  (* Extra flags. *)
+  let flags = id ^ ".flags" in
+  let flags =
+    if file_exists (bad_slash flags) then sprintf "`cat %s`" flags else ""
+  in
+
   (* Run Menhir in the directory bad/. *)
   let cmd = sep (
     "cd" :: bad :: "&&" ::
-    menhir :: base :: mlys basenames @ sprintf ">%s" result :: "2>&1" :: []
+    menhir :: base :: flags :: mlys basenames @ sprintf ">%s" result :: "2>&1" :: []
   ) in
   if command cmd = 0 then
     fail id "menhir should not accept %s.\n" (thisfile basenames);
