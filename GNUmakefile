@@ -145,7 +145,7 @@ release:
 	@ git rm -rf attic headers quicktest releases src/attic test --quiet
 # Remove files that do not need to (or must not) be distributed.
 # Keep check-tarball.sh because it is used below.
-	@ git rm GNUmakefile HOWTO.md TODO* opam --quiet
+	@ git rm GNUmakefile HOWTO.md TODO* menhir.opam --quiet
 # Hardcode the version number in the files that mention it. These
 # include version.ml, StaticVersion.{ml,mli}, version.tex, META.
 	@ echo let version = \"$(DATE)\" > src/version.ml
