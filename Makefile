@@ -50,8 +50,8 @@ bindir          := $(PREFIX)/bin
 docdir		:= $(PREFIX)/share/doc/menhir
 libdir	        := $(PREFIX)/share/menhir
 mandir          := $(PREFIX)/share/man/man1
-MANS            := menhir.1
-DOCS            := manual.pdf manual.html manual*.png demos
+MANS            := doc/menhir.1
+DOCS            := doc/manual.pdf doc/manual.html doc/manual*.png demos
 MLYLIB          := src/standard.mly
 
 # ----------------------------------------------------------------------------
@@ -195,12 +195,10 @@ install:
 	  install -m 644 $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) $(libdir) ; \
 	  install -m 644 $(patsubst %,$(SDKDIR)/%,$(MENHIRSDK)) $(libdir) ; \
 	fi
-# Install the documentation, if it has been built.
-	if [ -f manual.pdf ] ; then \
-	  mkdir -p $(docdir) $(mandir) && \
-	  cp -r $(DOCS) $(docdir) && \
-	  cp -r $(MANS) $(mandir) ; \
-	fi
+# Install the documentation.
+	mkdir -p $(docdir) $(mandir)
+	cp -r $(DOCS) $(docdir)
+	cp -r $(MANS) $(mandir)
 
 uninstall:
 	@if `$(bindir)/menhir$(EXE) --suggest-ocamlfind` ; then \

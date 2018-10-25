@@ -1,17 +1,16 @@
 # -------------------------------------------------------------------------
 
-# This is the development Makefile. It is used for compiling
-# development versions and for creating the distributed package.
-# This Makefile is not distributed.
+# The main purpose of this Makefile is to help perform tests and
+# prepare releases. This is *not* the Makefile that compiles and
+# installs Menhir on a user's machine.
 
 SHELL := bash
-
-.PHONY: all test clean headache package check export tag opam local unlocal pin unpin mdl
 
 # -------------------------------------------------------------------------
 
 # A dummy entry.
 
+.PHONY: all
 all:
 	@echo Please go down into src/ if you wish to compile Menhir.
 
@@ -19,9 +18,7 @@ all:
 
 # Utilities.
 
-SED     := $(shell if hash gsed 2>/dev/null ; then echo gsed ; else echo sed ; fi)
-CUT     := $(shell if hash gcut 2>/dev/null ; then echo gcut ; else echo cut ; fi)
-MD5SUM  := $(shell if hash md5  2>/dev/null ; then echo "md5 -r" ; else echo md5sum ; fi)
+MD5SUM := $(shell if command -v md5 2>/dev/null ; then echo "md5 -r" ; else echo md5sum ; fi)
 
 # -------------------------------------------------------------------------
 
@@ -29,6 +26,7 @@ MD5SUM  := $(shell if hash md5  2>/dev/null ; then echo "md5 -r" ; else echo md5
 # Assumes that "make bootstrap" has been run in src/
 # or that MENHIR is properly set.
 
+.PHONY: test
 test:
 	$(MAKE) -C test
 
@@ -36,11 +34,11 @@ test:
 
 # Cleaning up.
 
+.PHONY: clean
 clean:
-	@ for i in test demos src ; do \
+	@ for i in test demos src quicktest doc ; do \
 	  $(MAKE) -C $$i $@ ; \
 	done
-	@ $(MAKE) -rs -C doc $@
 
 # -------------------------------------------------------------------------
 
@@ -59,15 +57,6 @@ DATE     := $(shell /bin/date +%Y%m%d)
 PACKAGE  := menhir-$(DATE)
 CURRENT  := $(shell pwd)
 TARBALL  := $(CURRENT)/$(PACKAGE).tar.gz
-
-# -------------------------------------------------------------------------
-
-# A list of files to copy without changes to the package.
-#
-# This does not include the src/ and doc/ directories, which require
-# special treatment.
-
-DISTRIBUTED_FILES := CHANGES.md INSTALLATION.md LICENSE Makefile README.md demos
 
 # -------------------------------------------------------------------------
 
@@ -106,6 +95,7 @@ SRCHEAD  := $(CURRENT)/headers/regular-header
 LIBHEAD  := $(CURRENT)/headers/library-header
 FIND     := $(shell if command -v gfind >/dev/null ; then echo gfind ; else echo find ; fi)
 
+.PHONY: headache
 headache:
 	@ cd src && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
 	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
@@ -115,126 +105,112 @@ headache:
 
 # -------------------------------------------------------------------------
 
-# Creating a tarball for distribution.
+# Creating a release.
 
-package: clean
-# Create a directory to store the distributed files temporarily.
-# In src/_tags, every line tagged "my_warnings" is removed.
-	@ rm -fr $(PACKAGE)
-	@ mkdir -p $(PACKAGE)/src
-	@ cp -fr $(DISTRIBUTED_FILES) $(PACKAGE)
-	@ cp -fr src/*.ml{,i,y,l,pack} src/*.messages src/Makefile src/*.META $(PACKAGE)/src
-	@ rm -f $(PACKAGE)/src/installation.ml
-	@ grep -v my_warnings src/_tags > $(PACKAGE)/src/_tags
-# Clean up the demos, including those that are not built by default
-# because they require dune.
-	@ $(MAKE) -C $(PACKAGE)/demos clean
-# Set the version number into the files that mention it. These
-# include version.ml, StaticVersion.{ml,mli}, version.tex, META.
-	@ echo "-> Setting version to $(DATE)."
-	@ echo let version = \"$(DATE)\" > $(PACKAGE)/src/version.ml
-	@ echo version = \"$(DATE)\" >> $(PACKAGE)/src/META
-	@ echo "let require_$(DATE) = ()" > $(PACKAGE)/src/StaticVersion.ml
-	@ echo "val require_$(DATE) : unit" > $(PACKAGE)/src/StaticVersion.mli
-# Copy and compile the documentation.
-	@ echo "-> Generating the documentation."
-	@ cp -r doc $(PACKAGE)
-	@ echo '\gdef\menhirversion{$(DATE)}' > $(PACKAGE)/doc/version.tex
-	@ make -C $(PACKAGE)/doc clean all
-	@ mv $(PACKAGE)/doc/manual.pdf $(PACKAGE)/manual.pdf
-	@ mv $(PACKAGE)/doc/manual.html $(PACKAGE)/manual.html
-	@ mv $(PACKAGE)/doc/manual*.png $(PACKAGE)/
-	@ mv $(PACKAGE)/doc/menhir.1 $(PACKAGE)/
-# Include a copy of the sources of the documentation,
-# as Debian requires this for the PDF to be included
-# in their package.
-	@ make -C $(PACKAGE)/doc clean
-# Create the tarball.
-	@ echo "-> Tarball creation."
-	tar --exclude=.gitignore -cvz -f $(TARBALL) $(PACKAGE)
-	@ echo "-> Package $(PACKAGE).tar.gz is ready."
+# A release commit is created off the main branch, on the side, and tagged.
+# Indeed, some files need to be changed or removed for a release.
 
-# -------------------------------------------------------------------------
+BRANCH := release-branch-$(DATE)
 
-# Checking the tarball that was created above.
+# The documentation files $(DOC) are copied to the directory $(LOG) on the
+# master branch, for the record. This allows us to easily access all of the
+# documentation for earlier versions of Menhir.
 
-check:
-	@ echo "-> Checking the package ..."
-# Create a temporary directory; extract, build, and install the
-# package into it; build the demos and run the test suite using
-# the installed binary.
-# Some of the demos assume Menhir has been installed using ocamlfind,
-# so that is what we do. For this reason, we must check first that
-# ocamlfind does not already have some version of menhirLib.
-	@ if ocamlfind query menhirLib >/dev/null 2>/dev/null ; then \
-	  if opam list -i menhir >/dev/null ; then \
-	    echo "Warning: menhir is already installed." ; \
-	    read -p "Can I remove it [Enter/^C]?" -n 1 -r ; \
-	    opam remove menhir ; \
-	  else \
-	    echo "Warning: menhirLib is already installed." ; \
-	    read -p "Can I remove it [Enter/^C]?" -n 1 -r ; \
-	    ocamlfind remove menhirLib ; \
-	    ocamlfind remove menhirSdk || true ; \
-	  fi ; \
+DOC     := doc/manual.pdf doc/manual.html doc/manual*.png
+RELEASE := releases/$(DATE)
+
+# Prior to making a release, one should run [make test],
+# then [make pin] and [make -C demos].
+
+.PHONY: release
+release:
+# Check if this is the master branch.
+	@ if [ "$$(git symbolic-ref --short HEAD)" != "master" ] ; then \
+	  echo "Error: this is not the master branch." ; \
+	  git branch ; \
+	  exit 1 ; \
 	fi
-	@ TEMPDIR=`mktemp -d /tmp/menhir-test.XXXXXX` && { \
-	echo "   * Extracting. " && \
-	(cd $$TEMPDIR && tar xfz $(TARBALL)) && \
-	echo "   * Compiling and installing." && \
-	mkdir $$TEMPDIR/install && \
-	(cd $$TEMPDIR/$(PACKAGE) \
-		&& make PREFIX=$$TEMPDIR/install USE_OCAMLFIND=true all install \
-	) > $$TEMPDIR/install.log 2>&1 \
-		|| (cat $$TEMPDIR/install.log; exit 1) && \
-	echo "   * Building the demos." && \
-	(cd $$TEMPDIR/$(PACKAGE) \
-		&& $(MAKE) MENHIR=$$TEMPDIR/install/bin/menhir -C demos \
-	) > $$TEMPDIR/demos.log 2>&1 \
-		|| (cat $$TEMPDIR/demos.log; exit 1) && \
-	echo "   * Running the test suite." && \
-	$(MAKE) MENHIR=$$TEMPDIR/install/bin/menhir test > $$TEMPDIR/test.log 2>&1 \
-		|| (cat $$TEMPDIR/test.log; exit 1) && \
-	echo "   * Uninstalling." && \
-	(cd $$TEMPDIR/$(PACKAGE) \
-		&& make PREFIX=$$TEMPDIR/install USE_OCAMLFIND=true uninstall \
-	) > $$TEMPDIR/uninstall.log 2>&1 \
-		|| (cat $$TEMPDIR/uninstall.log; exit 1) && \
-	rm -fr $$TEMPDIR ; }
-	@ echo "-> Package $(PACKAGE) seems ready for distribution!"
-
-# -------------------------------------------------------------------------
-
-# Copying the tarball to my Web site.
-
-RSYNC   := scp -p -C
-TARGET  := yquem.inria.fr:public_html/menhir/
-PAGE    := /home/fpottier/dev/page
-
-export:
-# Copier l'archive et la doc vers yquem.
-	$(RSYNC) \
-	  $(TARBALL) \
-	  $(PACKAGE)/manual.pdf \
-	  $(PACKAGE)/manual.html $(PACKAGE)/manual*.png \
-	  $(TARGET)
-# Mettre à jour la page Web de Menhir avec le nouveau numéro de version.
-	cd $(PAGE) && \
-	  cvs up && \
-	  $(SED) --in-place=.bak "s/menhir-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]/$(PACKAGE)/" menhir.xml && \
-	  cvs commit -m "Updated Menhir's version number." && \
-	  if command -v cduce >/dev/null ; then $(MAKE) export ; fi
-
-# -------------------------------------------------------------------------
-
-# Creating a git tag.
-
-tag:
-	git tag -a $(DATE) -m "Release $(DATE)."
+# Check if everything has been committed.
+	@ if [ -n "$$(git status --porcelain)" ] ; then \
+	    echo "Error: there remain uncommitted changes." ; \
+	    git status ; \
+	    exit 1 ; \
+	  fi
+# Compile the documentation.
+	@ echo "Building the documentation..."
+	@ make --quiet -C doc clean >/dev/null
+	@ make --quiet -C doc all   >/dev/null
+# Save a copy of the manual *in the master branch* in releases/.
+	@ echo "Committing a copy of the documentation..."
+	@ mkdir -p $(RELEASE)/doc
+	@ cp $(DOC) $(RELEASE)/doc
+	@ cd $(RELEASE)/doc && git add -f *
+	@ git commit -m "Saved documentation for release $(DATE)."
+# Set a current release pointer which allows us to have a stable URL for
+# the documentation of the latest released version.
+	@ ln -sf $(RELEASE) ./current
+	@ git add current
+	@ git commit -m "Set symbolic link to current release."
+# Create a fresh git branch and switch to it.
+	@ echo "Preparing a release commit on a fresh release branch..."
+	@ git checkout -b $(BRANCH)
+# Check in the newly compiled documentation.
+	@ git add -f $(DOC)
+# In src/_tags, remove every line tagged "my_warnings".
+	@ cd src && grep -v my_warnings _tags > _tags.new && mv _tags.new _tags
+	@ git add src/_tags
+# The file src/installation.ml is not under version control, so won't be
+# included in the archive. We nevertheless remove it, for a clean test
+# build below.
+	@ rm -f src/installation.ml
+# Remove subdirectories that do not need to (or must not) be distributed.
+	@ make --quiet -C test clean
+	@ make --quiet -C quicktest clean
+	@ git rm -rf attic headers quicktest releases src/attic test --quiet
+# Remove files that do not need to (or must not) be distributed.
+# Keep check-tarball.sh because it is used below.
+	@ git rm GNUmakefile HOWTO.md TODO* opam --quiet
+# Hardcode the version number in the files that mention it. These
+# include version.ml, StaticVersion.{ml,mli}, version.tex, META.
+	@ echo let version = \"$(DATE)\" > src/version.ml
+	@ git add src/version.ml
+	@ echo version = \"$(DATE)\" >> src/menhirLib.META
+	@ echo version = \"$(DATE)\" >> src/menhirSdk.META
+	@ git add src/menhirLib.META src/menhirSdk.META
+	@ echo "let require_$(DATE) = ()" > src/StaticVersion.ml
+	@ echo "val require_$(DATE) : unit" > src/StaticVersion.mli
+	@ git add src/StaticVersion.ml src/StaticVersion.mli
+	@ echo '\gdef\menhirversion{$(DATE)}' > doc/version.tex
+	@ git add doc/version.tex
+# Commit.
+	@ echo "Committing..."
+	@ git commit -m "Release $(DATE)." --quiet
+# Check that the build and installation seem to work.
+# We build our own archive, which is not necessarily identical to the one
+# that gitlab creates for us once we publish our release. This should be
+# good enough.
+	@ echo "Creating an archive..."
+	@ git archive --prefix=$(PACKAGE)/ --format=tar.gz --output=$(TARBALL) HEAD
+	@ echo "Checking that this archive can be compiled and installed..."
+	@ ./check-tarball.sh $(PACKAGE)
+	@ echo "Removing this archive..."
+	@ rm $(TARBALL)
+# Create a git tag.
+	@ git tag -a $(DATE) -m "Release $(DATE)."
+# Done.
+	@ echo "Done."
+	@ echo "Switching back to the master branch..."
+	@ git checkout master
+	@ echo "If happy, please type:"
+	@ echo "  git push origin $(BRANCH) && git push --tags"
+	@ echo "If unhappy, please type:"
+	@ echo "  git branch -D $(BRANCH) && git tag -d $(DATE) && git reset --hard HEAD~2"
 
 # -------------------------------------------------------------------------
 
 # Updating the opam package.
+
+# TEMPORARY out of date
 
 # This entry assumes that "make package" and "make export" have been
 # run on the same day.
@@ -242,6 +218,7 @@ tag:
 OPAM := $(HOME)/dev/opam-repository
 CSUM  = $(shell $(MD5SUM) menhir-$(DATE).tar.gz | cut -d ' ' -f 1)
 
+.PHONY: opam
 opam:
 # Update my local copy of the opam repository.
 	@ echo "Updating local opam repository..."
@@ -275,17 +252,11 @@ opam:
 
 # Re-installing locally. This can overwrite an existing local installation.
 
-local:
-	$(MAKE) package
-	$(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=true all
-	sudo PATH="$(PATH)" $(MAKE) -C $(PACKAGE) PREFIX=/usr/local USE_OCAMLFIND=true install
-
-unlocal:
-	sudo PATH="$(PATH)" $(MAKE) -f Makefile PREFIX=/usr/local USE_OCAMLFIND=true uninstall
-
+.PHONY: pin
 pin:
-	opam pin add menhir `pwd` -k git
+	opam pin add menhir .
 
+.PHONY: unpin
 unpin:
 	opam pin remove menhir
 
@@ -296,5 +267,9 @@ unpin:
 # For an explanation of mdl's error messages, see:
 # https://github.com/mivok/markdownlint/blob/master/docs/RULES.md
 
+.PHONY: mdl
 mdl:
+	@ for f in *.md ; do \
+	  cp $$f $$f.bak && expand $$f.bak > $$f && rm $$f.bak ; \
+	done
 	@ mdl *.md */*.md
