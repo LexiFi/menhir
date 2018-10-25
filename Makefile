@@ -195,10 +195,13 @@ install:
 	  install -m 644 $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) $(libdir) ; \
 	  install -m 644 $(patsubst %,$(SDKDIR)/%,$(MENHIRSDK)) $(libdir) ; \
 	fi
-# Install the documentation.
-	mkdir -p $(docdir) $(mandir)
-	cp -r $(DOCS) $(docdir)
-	cp -r $(MANS) $(mandir)
+# Install the documentation. (If building from the repository, the documentation
+# may be absent.)
+	if [ -f doc/manual.pdf ] ; then \
+	  mkdir -p $(docdir) $(mandir) ; \
+	  cp -r $(DOCS) $(docdir) ; \
+	  cp -r $(MANS) $(mandir) ; \
+	fi
 
 uninstall:
 	@if `$(bindir)/menhir$(EXE) --suggest-ocamlfind` ; then \
