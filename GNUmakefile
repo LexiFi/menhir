@@ -20,8 +20,9 @@ all:
 
 # Testing.
 
-# This assumes that [make bootstrap] has been run in src/
-# or that MENHIR is properly set.
+# This assumes that [make -C src everyday bootstrap] has been run
+# (or that MENHIR is set and points to a Menhir executable that
+# one wishes to test).
 
 .PHONY: test
 test:
