@@ -45,18 +45,18 @@ following order:
 
 | Module                | Task |
 | --------------------- | ---- |
-| Settings		| parses the command line |
-| PreFront		| reads the grammar description files |
-| TokenType		| deals with `--only-tokens` and exits |
-| Front			| deals with `--depend`, `--infer`, `--only-preprocess`, and exits |
-| Grammar		| performs a number of analyses of the grammar |
-| Lr0			| constructs the LR(0) automaton |
-| Slr			| determines whether the grammar is SLR |
-| Lr1			| constructs the LR(1) automaton |
-| Conflict		| performs default conflict resolution and explains conflicts |
-| Invariant		| performs a number of analyses of the automaton |
-| Interpret		| deals with `--interpret` and exits |
-| Back			| produces the output and exits |
+| Settings              | parses the command line |
+| PreFront              | reads the grammar description files |
+| TokenType             | deals with `--only-tokens` and exits |
+| Front                 | deals with `--depend`, `--infer`, `--only-preprocess`, and exits |
+| Grammar               | performs a number of analyses of the grammar |
+| Lr0                   | constructs the LR(0) automaton |
+| Slr                   | determines whether the grammar is SLR |
+| Lr1                   | constructs the LR(1) automaton |
+| Conflict              | performs default conflict resolution and explains conflicts |
+| Invariant             | performs a number of analyses of the automaton |
+| Interpret             | deals with `--interpret` and exits |
+| Back                  | produces the output and exits |
 
 A few artificial dependencies have been added in the code in order
 to ensure that this ordering is respected by `ocamlbuild`.
