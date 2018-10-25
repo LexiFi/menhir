@@ -368,6 +368,8 @@ must be fully qualified.
 && \dright \sepspacelist{\nt{uid}} \\
 && \dtype \ocamltype \sepspacelist{\nt{lid}} \\
 && \dstart \optional{\ocamltype} \sepspacelist{\nt{lid}} \\
+&& \dattribute \sepspacelist{\nt{actual}} \sepspacelist{\nt{attribute}} \\
+&& \kw{\%} \nt{attribute} \\ % a grammar-wide attribute
 && \donerrorreduce \sepspacelist{\nt{lid}} \\
 
 \nt{rule} \is
@@ -392,6 +394,10 @@ must be fully qualified.
    \nt{id} \optional{\dlpar\sepcommalist{\nt{actual}}\drpar} \\
 && \nt{actual} \optional{\dquestion \barre \dplus \barre \dstar} \\
 && \seplist{\ \barre}{\nt{group}} % not really allowed everywhere
+\\
+
+\nt{attribute} \is
+    \kw{[@} \nt{name} \nt{payload} \kw{]}
 
 \end{tabular}
 \end{center}
@@ -516,6 +522,16 @@ part of the \dstart declaration or via separate \dtype declarations. Each
 of $\nt{lid}_1, \ldots, \nt{lid}_n$ becomes the name of a function whose
 signature is published in the \mli file and that can be used to invoke
 the parser.
+
+\subsubsection{Attribute declarations}
+
+Attribute declarations
+of the form
+\dattribute \sepspacelist{\nt{actual}} \sepspacelist{\nt{attribute}}
+and
+\kw{\%} \nt{attribute}
+are explained
+in \sref{sec:attributes}.
 
 \subsubsection{Extra reductions on error}
 \label{sec:onerrorreduce}
