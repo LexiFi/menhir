@@ -1,10 +1,12 @@
 # -------------------------------------------------------------------------
 
-# The main purpose of this Makefile is to help perform tests and
-# prepare releases. This is *not* the Makefile that compiles and
-# installs Menhir on a user's machine.
+# This Makefile helps perform tests and prepare releases. This is *not* the
+# Makefile that compiles and installs Menhir on a user's machine.
 
+# Require bash.
 SHELL := bash
+# Prevent the built-in bash cd from displaying information.
+export CDPATH=
 
 # -------------------------------------------------------------------------
 
@@ -16,14 +18,9 @@ all:
 
 # -------------------------------------------------------------------------
 
-# Utilities.
-
-MD5SUM := $(shell if command -v md5 2>/dev/null ; then echo "md5 -r" ; else echo md5sum ; fi)
-
-# -------------------------------------------------------------------------
-
 # Testing.
-# Assumes that "make bootstrap" has been run in src/
+
+# This assumes that [make bootstrap] has been run in src/
 # or that MENHIR is properly set.
 
 .PHONY: test
@@ -39,12 +36,6 @@ clean:
 	@ for i in test demos src quicktest doc ; do \
 	  $(MAKE) -C $$i $@ ; \
 	done
-
-# -------------------------------------------------------------------------
-
-# Prevent the built-in bash cd from displaying information.
-
-export CDPATH=
 
 # -------------------------------------------------------------------------
 
@@ -136,6 +127,8 @@ release:
 	    git status ; \
 	    exit 1 ; \
 	  fi
+# Check the current package description.
+	@ opam lint
 # Create a fresh git branch and switch to it.
 	@ echo "Preparing a release commit on a fresh release branch..."
 	@ git checkout -b $(BRANCH)
@@ -202,52 +195,42 @@ release:
 	@ git commit -m "Set symbolic link to current release."
 # Done.
 	@ echo "Done."
-	@ echo "If happy, please type:"
-	@ echo "  git push origin $(BRANCH) && git push --tags"
-	@ echo "If unhappy, please type:"
-	@ echo "  git branch -D $(BRANCH) && git tag -d $(DATE) && git reset --hard HEAD~2"
+	@ echo "If happy, please type \"make publish\" and \"make opam\"."
+	@ echo "Otherwise please type \"make undo\"."
+
+.PHONY: publish
+publish:
+# Push the new branch and tag to gitlab.inria.fr.
+	@ git push origin $(BRANCH)
+	@ git push --tags
+
+.PHONY: undo
+undo:
+# Delete the new branch and tag.
+	@ git branch -D $(BRANCH)
+	@ git tag -d $(DATE)
+# Delete the two new commits on the master branch.
+	@ git reset --hard HEAD~2
 
 # -------------------------------------------------------------------------
 
-# Updating the opam package.
+# Publishing a new version of the opam package.
 
-# TEMPORARY out of date
+# This entry assumes that [make release] has been run on the same day.
 
-# This entry assumes that "make package" and "make export" have been
-# run on the same day.
+# The package name.
+THIS     := menhir
 
-OPAM := $(HOME)/dev/opam-repository
-CSUM  = $(shell $(MD5SUM) menhir-$(DATE).tar.gz | cut -d ' ' -f 1)
+# The repository URL (https).
+REPO     := https://gitlab.inria.fr/fpottier/$(THIS)
+
+# The archive URL (https).
+ARCHIVE  := $(REPO)/repository/$(DATE)/archive.tar.gz
 
 .PHONY: opam
 opam:
-# Update my local copy of the opam repository.
-	@ echo "Updating local opam repository..."
-	@ cd $(OPAM) && \
-	  git fetch upstream && \
-	  git merge upstream/master
-# Create a new Menhir package, based on the last one.
-	@ echo "Creating a new package description menhir-$(DATE)..."
-	@ cd $(OPAM)/packages/menhir && \
-	  cp -r `ls | grep menhir | tail -1` menhir.$(DATE)
-# Update the file "url".
-# TEMPORARY:
-# THIS NO LONGER WORKS; THE URL AND CHECKSUM ARE NOW STORED IN opam.
-	@ cd $(OPAM)/packages/menhir/menhir.$(DATE) && \
-	  rm url && \
-	  echo 'archive: "http://gallium.inria.fr/~fpottier/menhir/menhir-$(DATE).tar.gz"' >> url && \
-	  echo 'checksum: "$(CSUM)"' >> url
-# Copy the file "opam" from Menhir's repository to opam's.
-	@ cp -f opam $(OPAM)/packages/menhir/menhir.$(DATE)
-# Prepare a commit.
-	@ echo "Preparing a new commit..."
-	@ cd $(OPAM)/packages/menhir && \
-	  git add menhir.$(DATE) && \
-	  git status
-# Ask for review.
-	@ echo "If happy, please run:"
-	@ echo "  cd $(OPAM)/packages/menhir && git commit -a && git push && firefox https://github.com/fpottier/opam-repository.git"
-	@ echo "and issue a pull request."
+# Publish an opam description.
+	@ opam publish -v $(DATE) $(THIS) $(ARCHIVE) .
 
 # -------------------------------------------------------------------------
 
