@@ -185,13 +185,14 @@ release:
 	@ rm $(TARBALL)
 # Create a git tag.
 	@ git tag -a $(DATE) -m "Release $(DATE)."
+# Save a copy of the manual.
+	@ mkdir -p $(RELEASE)/doc
+	@ cp $(DOC) $(RELEASE)/doc
 # Switch back to the master branch.
 	@ echo "Switching back to the master branch..."
 	@ git checkout master
-# Save a copy of the manual *in the master branch* in releases/.
+# Commit a copy of the manual *in the master branch* in releases/.
 	@ echo "Committing a copy of the documentation..."
-	@ mkdir -p $(RELEASE)/doc
-	@ cp $(DOC) $(RELEASE)/doc
 	@ cd $(RELEASE)/doc && git add -f *
 	@ git commit -m "Saved documentation for release $(DATE)."
 # Set a current release pointer which allows us to have a stable URL for
