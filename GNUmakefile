@@ -191,8 +191,12 @@ release:
 	@ git commit -m "Saved documentation for release $(DATE)."
 # Done.
 	@ echo "Done."
-	@ echo "If happy, please type \"make publish\" and \"make opam\"."
-	@ echo "Otherwise please type \"make undo\"."
+	@ echo "If happy, please type:"
+	@ echo "  \"make publish\"   to push this release to gitlab.inria.fr"
+	@ echo "  \"make export\"    to upload the manual to yquem.inria.fr"
+	@ echo "  \"make opam\"      to create a new opam package"
+	@ echo "Otherwise, please type:"
+	@ echo "  \"make undo\"      to undo this release"
 
 .PHONY: publish
 publish:
@@ -207,6 +211,27 @@ undo:
 	@ git tag -d $(DATE)
 # Delete the two new commits on the master branch.
 	@ git reset --hard HEAD~1
+
+# -------------------------------------------------------------------------
+
+# Copying the documentation to François' page on yquem.
+
+# I would have like to serve these files on gitlab.inria.fr,
+# but I don't know how to make them look like native .html
+# and .pdf files.
+# Also, I don't know how to obtain a stable URL that always
+# points to the latest released version of the documentation.
+
+RSYNC   := scp -p -C
+TARGET  := yquem.inria.fr:public_html/menhir/
+PAGE    := /home/fpottier/dev/page
+
+# This assumes that [make release] has been run.
+
+.PHONY: export
+export:
+# Copy the documentation to yquem.
+	$(RSYNC) $(RELEASE)/doc/* $(TARGET)
 
 # -------------------------------------------------------------------------
 
