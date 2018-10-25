@@ -136,26 +136,9 @@ release:
 	    git status ; \
 	    exit 1 ; \
 	  fi
-# Compile the documentation.
-	@ echo "Building the documentation..."
-	@ make --quiet -C doc clean >/dev/null
-	@ make --quiet -C doc all   >/dev/null
-# Save a copy of the manual *in the master branch* in releases/.
-	@ echo "Committing a copy of the documentation..."
-	@ mkdir -p $(RELEASE)/doc
-	@ cp $(DOC) $(RELEASE)/doc
-	@ cd $(RELEASE)/doc && git add -f *
-	@ git commit -m "Saved documentation for release $(DATE)."
-# Set a current release pointer which allows us to have a stable URL for
-# the documentation of the latest released version.
-	@ ln -sf $(RELEASE) ./current
-	@ git add current
-	@ git commit -m "Set symbolic link to current release."
 # Create a fresh git branch and switch to it.
 	@ echo "Preparing a release commit on a fresh release branch..."
 	@ git checkout -b $(BRANCH)
-# Check in the newly compiled documentation.
-	@ git add -f $(DOC)
 # In src/_tags, remove every line tagged "my_warnings".
 	@ cd src && grep -v my_warnings _tags > _tags.new && mv _tags.new _tags
 	@ git add src/_tags
@@ -182,6 +165,11 @@ release:
 	@ git add src/StaticVersion.ml src/StaticVersion.mli
 	@ echo '\gdef\menhirversion{$(DATE)}' > doc/version.tex
 	@ git add doc/version.tex
+# Compile the documentation.
+	@ echo "Building the documentation..."
+	@ make --quiet -C doc clean >/dev/null
+	@ make --quiet -C doc all   >/dev/null
+	@ git add -f $(DOC)
 # Commit.
 	@ echo "Committing..."
 	@ git commit -m "Release $(DATE)." --quiet
@@ -197,10 +185,22 @@ release:
 	@ rm $(TARBALL)
 # Create a git tag.
 	@ git tag -a $(DATE) -m "Release $(DATE)."
-# Done.
-	@ echo "Done."
+# Switch back to the master branch.
 	@ echo "Switching back to the master branch..."
 	@ git checkout master
+# Save a copy of the manual *in the master branch* in releases/.
+	@ echo "Committing a copy of the documentation..."
+	@ mkdir -p $(RELEASE)/doc
+	@ cp $(DOC) $(RELEASE)/doc
+	@ cd $(RELEASE)/doc && git add -f *
+	@ git commit -m "Saved documentation for release $(DATE)."
+# Set a current release pointer which allows us to have a stable URL for
+# the documentation of the latest released version.
+	@ ln -sf $(RELEASE) ./current
+	@ git add current
+	@ git commit -m "Set symbolic link to current release."
+# Done.
+	@ echo "Done."
 	@ echo "If happy, please type:"
 	@ echo "  git push origin $(BRANCH) && git push --tags"
 	@ echo "If unhappy, please type:"
