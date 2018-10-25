@@ -1,29 +1,11 @@
-* Add a syntax for puns, "x = x".
-
 * Set up continuous integration (ci.inria.fr)...
   Check that Menhir builds (and the test pass)
   with multiple versions of OCaml.
-
-* Add an --auto-inline pass, which marks certain symbols %inline according
-  to a well-defined strategy. E.g.,
-  - mark %inline every symbol that is referenced only once
-  - mark %inline every symbol that has only one production
-      (unconditional? subject to a size constraint?)
-  - mark %inline every symbol whose productions have length <= 1
-  Ideally, do this *after* the analyses that guarantee that every symbol
-  is reachable and recognizes a nonempty language.
-  Check that the auto-%inlined symbol has no %prec annotation.
-  Document that --auto-inline requires pure semantic actions.
-    (Note that --auto-inline turns midrule into endrule!)
-  Should --auto-inline be a command line switch, or a directive %autoinline?
-  Consider adding %noinline to prevent --auto-inline from inlining a symbol.
 
 * Add a command line option to control how "MenhirLib" should be named in the
   generated code. (Suggested by Gabriel Scherer.)
 
 * Incremental API: expose a function `lookahead` of type `'a env -> token option`.
-
-* Do not host the .tar.gz archive on yquem. Look into gitlab.inria.fr.
 
 * Think about implementing Adams and Might's technique for intersecting
   a grammar with a tree automaton. (As a preprocessing step. Think about
@@ -172,8 +154,7 @@
 * Documenter la différence de philosophie avec Denny & Malloy à propos
   des conflits (cf. email à Laurence Tratt).
 
-* Accept Jacques-Henri's pull request which packages the Coq library.
-  Add demos/calc-coq to show how it is used.
+* Add demos/calc-coq to show how the Coq back-end is used.
 
 * Simplify the demos by assuming that Menhir is already installed.
   Remove find-menhir.sh.
@@ -217,8 +198,6 @@
 * (petit) BUG: --follow-construction n'affiche pas le contenu des états
   initiaux (r0)
 
-* que fait/que doit faire la combinaison --tokens-only --depend?
-
 * Préserver dirname/ dans les directives #line émises.
 
 * BUG: Boris (1.- bouclage parser sur une entrée erronée 2.- une lecture
@@ -242,10 +221,6 @@
 * dans le dump de l'automate, rajouter les transitions qui ont
   ete supprimees par resolution de conflits. Afficher aussi les
   réductions par défaut?
-
-* Read Chen and Pager's paper, "An Extension Of The Unit Production
-  Elimination Algorithm", and find out whether such an optimization
-  would be useful (beneficial) in the context of Menhir.
 
 * Ideally, [PartialGrammar] should avoid renaming the parameters of
   a rule, when there is no need to do so. The renamed parameter is
