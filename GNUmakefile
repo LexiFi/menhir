@@ -189,11 +189,6 @@ release:
 	@ echo "Committing a copy of the documentation..."
 	@ cd $(RELEASE)/doc && git add -f *
 	@ git commit -m "Saved documentation for release $(DATE)."
-# Set a current release pointer which allows us to have a stable URL for
-# the documentation of the latest released version.
-	@ ln -sf $(RELEASE) ./current
-	@ git add current
-	@ git commit -m "Set symbolic link to current release."
 # Done.
 	@ echo "Done."
 	@ echo "If happy, please type \"make publish\" and \"make opam\"."
@@ -211,7 +206,7 @@ undo:
 	@ git branch -D $(BRANCH)
 	@ git tag -d $(DATE)
 # Delete the two new commits on the master branch.
-	@ git reset --hard HEAD~2
+	@ git reset --hard HEAD~1
 
 # -------------------------------------------------------------------------
 
