@@ -1,31 +1,31 @@
-(jbuild_version 1)
-
-(ocamllex (lexer))
+(ocamllex
+  (modules lexer)
+)
 
 ; Compile tokens.mly into a definition of the type [token].
-(menhir (
-  (modules (tokens))
+(menhir
+  (modules tokens)
   (flags ("--only-tokens"))
-))
+)
 
 ; Compile reverse.mly into a parser.
-(menhir (
-  (modules (tokens reverse common))
+(menhir
+  (modules tokens reverse common)
   (merge_into reverse)
   (flags (
      "--external-tokens" "Tokens"
      "--unused-token" "LPAREN"
      "--unused-token" "RPAREN"
   ))
-))
+)
 
 ; Compile algebraic.mly into a parser.
-(menhir (
-  (modules (tokens algebraic common))
+(menhir
+  (modules tokens algebraic common)
   (merge_into algebraic)
   (flags ("--external-tokens" "Tokens"))
-))
+)
 
 (executable
-  ((name calc))
+  (name calc)
 )

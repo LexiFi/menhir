@@ -31,7 +31,7 @@ clean::
 EXTRA := \
   calc-dune \
   calc-param-dune \
-#  calc-two-dune \
+  calc-two-dune \
 #  calc-incremental-dune \
 #  calc-inspection-dune \
 #  generate-printers-dune \
