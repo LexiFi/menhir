@@ -1,8 +1,11 @@
+# These demos assume that Menhir has been installed and is available
+# under the name "menhir". This can be overridden by setting MENHIR.
+
 # The following demos require menhirLib:
 #   calc-incremental
 #   calc-inspection
 
-# The following demos require menhirSdk:
+# The following demos require menhirSdk and OCaml >= 4.03:
 #   generate-printers
 
 # The demos whose name ends in -dune require dune 1.4.

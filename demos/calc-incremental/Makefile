@@ -1,9 +1,6 @@
 .PHONY: all clean test
 
-# Find Menhir.
-ifndef MENHIR
-  MENHIR := $(shell ../find-menhir.sh)
-endif
+MENHIR          := menhir
 
 # We use the table back-end, and link against menhirLib.
 # We assume that menhirLib has been installed in such a
@@ -26,4 +23,3 @@ clean:
 test: all
 	@echo "The following command should print 42:"
 	echo "(1 + 2 * 10) * 2" | ./$(MAIN).native
-

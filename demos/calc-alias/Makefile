@@ -1,9 +1,6 @@
 .PHONY: all clean test
 
-# Find Menhir.
-ifndef MENHIR
-  MENHIR := $(shell ../find-menhir.sh)
-endif
+MENHIR          := menhir
 
 MENHIRFLAGS     := --infer
 
@@ -21,4 +18,3 @@ clean:
 test: all
 	@echo "The following command should print 42:"
 	echo "(1 + 2 * 10) * 2" | ./$(MAIN).native
-

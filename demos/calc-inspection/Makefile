@@ -1,9 +1,6 @@
 .PHONY: all clean test
 
-# Find Menhir.
-ifndef MENHIR
-  MENHIR := $(shell ../find-menhir.sh)
-endif
+MENHIR          := menhir
 
 # We use the table back-end, and link against menhirLib.
 # We assume that menhirLib has been installed in such a

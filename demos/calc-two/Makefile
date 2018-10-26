@@ -1,9 +1,6 @@
 .PHONY: all clean test
 
-# Find Menhir.
-ifndef MENHIR
-  MENHIR := $(shell ../find-menhir.sh)
-endif
+MENHIR          := menhir
 
 MENHIRFLAGS     := --infer
 
