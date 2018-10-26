@@ -10,6 +10,7 @@
 
 DEMOS := \
   calc \
+  calc-alias \
   calc-two \
   calc-param \
   calc-incremental \

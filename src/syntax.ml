@@ -21,9 +21,7 @@
 
 (* ------------------------------------------------------------------------ *)
 
-(* Terminals and nonterminal symbols are strings. Identifiers
-   (which are used to refer to a symbol's semantic value) are
-   strings. A file name is a string. *)
+(* Terminals and nonterminal symbols are strings. *)
 
 type terminal =
     string
@@ -34,8 +32,27 @@ type nonterminal =
 type symbol =
     string
 
+(* In a somewhat fragile convention, in a partial grammar, a reference to a
+   terminal symbol either is a normal identifier [LID], in which case it is
+   the name of the terminal symbol, or is a quoted identifier [QID], in which
+   case it is a token alias.
+
+   Token aliases are eliminated by replacing them with the corresponding
+   terminal symbols very early on during the joining of the partial grammars
+   -- see the function [dealias_pg] in [PartialGrammar].
+
+   In a complete grammar, there are no token aliases any longer. *)
+
+type alias =
+    string option
+
+(* Identifiers (which are used to refer to a symbol's semantic value) are
+   strings. *)
+
 type identifier =
     string
+
+(* A file name is a string. *)
 
 type filename =
     string
@@ -200,7 +217,7 @@ type declaration =
 
     (* Terminal symbol (token) declaration. *)
 
-  | DToken of Stretch.ocamltype option * terminal * attributes
+  | DToken of Stretch.ocamltype option * terminal * alias * attributes
 
     (* Start symbol declaration. *)
 
@@ -233,7 +250,7 @@ type declaration =
 type partial_grammar =
     {
       pg_filename          : filename;
-      pg_postlude           : postlude option;
+      pg_postlude          : postlude option;
       pg_declarations      : declaration Positions.located list;
       pg_rules             : parameterized_rule list;
     }
@@ -249,9 +266,9 @@ type partial_grammar =
       functor %parameters, %start symbols, %types, %tokens, %on_error_reduce,
       grammar attributes, %attributes.
    4. rules are stored in a map, indexed by symbol names, instead of a list.
+   5. token aliases have been replaced with ordinary named terminal symbols.
  *)
-
-type grammar =
+ type grammar =
     {
       p_preludes           : Stretch.t list;
       p_postludes          : postlude list;

@@ -36,7 +36,9 @@ let join_declaration filename (grammar : grammar) decl =
      difficult by the fact that %token and %left-%right-%nonassoc
      declarations are independent. *)
 
-  | DToken (ocamltype, terminal, attributes) ->
+  (* Declarations of token aliases are lost at this point. *)
+
+  | DToken (ocamltype, terminal, _alias, attributes) ->
       let token_property =
         try
 
@@ -755,13 +757,17 @@ let check_parameterized_grammar_is_well_defined grammar =
             Error.warning [p]
               "the token %s is unused." token
         ) grammar.p_tokens
-  end;
-
-  grammar
+  end
 
 let join_partial_grammars pgs =
+  (* Prior to joining the partial grammars, remove all uses of token aliases. *)
+  let pgs = ExpandTokenAliases.dealias_grammars pgs in
+  (* Join the partial grammars. *)
   let grammar = List.fold_left join empty_grammar pgs in
   let symbols = List.map (symbols_of grammar) pgs in
   let tpgs = List.combine symbols pgs in
   let rules = merge_rules symbols tpgs in
-  check_parameterized_grammar_is_well_defined { grammar with p_rules = rules }
+  let grammar = { grammar with p_rules = rules } in
+  (* Check well-formedness. *)
+  check_parameterized_grammar_is_well_defined grammar;
+  grammar

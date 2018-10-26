@@ -1,5 +1,15 @@
 # Changes
 
+## 2018/10/26
+
+* A new syntactic sugar facility, "token aliases", has been added.
+  The declaration of a terminal symbol may also declare an alias,
+  which takes the form of a name between double quotes, as in
+  `%token PLUS "+"`.
+  Thereafter, `"+"` may be used freely in place of `PLUS` throughout
+  the grammar. This makes it slightly easier to read grammars.
+  (Contributed by Perry E. Metzger.)
+
 ## 2018/10/25
 
 * Until today, the semicolon character `;` was insignificant: it was

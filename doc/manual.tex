@@ -336,6 +336,10 @@ allowed to contain the quote (\kw{'}) character. Following
 \ocaml, identifiers that begin with a lowercase letter
 (\nt{lid}) or with an uppercase letter (\nt{uid}) are distinguished.
 
+A quoted identifier \nt{qid} is a string enclosed in double quotes.
+Such a string cannot contain a double quote or a backslash.
+Quoted identifiers are used as token aliases (\sref{sec:tokens}).
+
 Comments are C-style (surrounded with \kw{/*} and \kw{*/}, cannot be nested),
 C++-style (announced by \kw{/$\!$/} and extending until the end of the line), or
 \ocaml-style (surrounded with \kw{(*} and \kw{*)}, can be nested). Of course,
@@ -362,7 +366,7 @@ must be fully qualified.
 \nt{declaration} \is
    \dheader{\textit{\ocaml code}} \\
 && \dparameter \ocamlparam \\
-&& \dtoken \optional{\ocamltype} \sepspacelist{\nt{uid}} \\
+&& \dtoken \optional{\ocamltype} \sepspacelist{\nt{uid} \optional{\nt{qid}}} \\
 && \dnonassoc \sepspacelist{\nt{uid}} \\
 && \dleft \sepspacelist{\nt{uid}} \\
 && \dright \sepspacelist{\nt{uid}} \\
@@ -453,16 +457,44 @@ This means, in particular, that the side effects of an \ocaml header are
 observed only when the functor is applied, not when it is defined.
 
 \subsubsection{Tokens}
+\label{sec:tokens}
 
 A declaration of the form:
 \begin{quote}
-\dtoken \optional{\ocamltype} $\nt{uid}_1, \ldots, \nt{uid}_n$
+\dtoken
+\optional{\ocamltype}
+$\nt{uid}_1$ \optional{$\nt{qid}_1$} $\;\ldots\;$
+$\nt{uid}_n$ \optional{$\nt{qid}_n$}
 \end{quote}
 defines the identifiers $\nt{uid}_1, \ldots, \nt{uid}_n$ as tokens, that is,
 as terminal symbols in the grammar specification and as data constructors in
-the \textit{token} type. If an \ocaml type $t$ is present, then these tokens
-are considered to carry a semantic value of type $t$, otherwise they are
-considered to carry no semantic value.
+the \textit{token} type.
+
+If an \ocaml type $t$ is present, then these tokens are considered to carry a
+semantic value of type $t$, otherwise they are considered to carry no semantic
+value.
+
+If a quoted identifier $\nt{qid}_i$ is present, then it is considered an alias
+for the terminal symbol $\nt{uid}_i$. (This feature, known as ``token
+aliases'', is borrowed from Bison.)
+% https://www.gnu.org/software/bison/manual/html_node/Token-Decl.html#Token-Decl
+Throughout the grammar, the quoted identifier $\nt{qid}_i$ is then
+synonymous with the identifier $\nt{uid}_i$.
+%
+For example, if one declares:
+\begin{verbatim}
+%token PLUS "+"
+\end{verbatim}
+then the quoted identifier \texttt{"+"} stands for the terminal symbol
+\texttt{PLUS} throughout the grammar. An example of the use of token aliases
+appears in the directory \distrib{demos/calc-alias}.
+%
+Token aliases can be used to improve the readability of a grammar. One must
+keep in mind, however, that they are just syntactic sugar: they are not
+interpreted in any way by Menhir or conveyed to tools like \ocamllex.
+%
+They could be considered confusing by a reader who mistakenly believes that
+they are interpreted as string literals.
 
 \subsubsection{Priority and associativity}
 \label{sec:assoc}

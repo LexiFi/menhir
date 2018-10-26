@@ -34,7 +34,7 @@ open Positions
 %token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL
 %token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
 %token PERCENTATTRIBUTE SEMI
-%token <string Positions.located> LID UID
+%token <string Positions.located> LID UID QID
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
@@ -90,8 +90,10 @@ declaration:
 | h = HEADER /* lexically delimited by %{ ... %} */
     { [ with_loc $loc (DCode h) ] }
 
-| TOKEN ty = OCAMLTYPE? ts = clist(terminal)
-    { List.map (Positions.map (fun (terminal, attrs) -> DToken (ty, terminal, attrs))) ts }
+| TOKEN ty = OCAMLTYPE? ts = clist(terminal_alias_attrs)
+    { List.map (Positions.map (fun (terminal, alias, attrs) ->
+        DToken (ty, terminal, alias, attrs)
+      )) ts }
 
 | START t = OCAMLTYPE? nts = clist(nonterminal)
     /* %start <ocamltype> foo is syntactic sugar for %start foo %type <ocamltype> foo */
@@ -164,25 +166,34 @@ priority_keyword:
     { xs }
 
 /* ------------------------------------------------------------------------- */
-/* A symbol is a terminal or nonterminal symbol. One would like to
-   require nonterminal symbols to begin with a lowercase letter, so as
-   to lexically distinguish them from terminal symbols, which must
-   begin with an uppercase letter. However, for compatibility with
-   ocamlyacc, this is impossible. It can be required only for
-   nonterminal symbols that are also start symbols. */
+/* A symbol is a terminal or nonterminal symbol. */
+
+/* One would like to require nonterminal symbols to begin with a lowercase
+   letter, so as to lexically distinguish them from terminal symbols, which
+   must begin with an uppercase letter. However, for compatibility with
+   ocamlyacc, this is impossible. It can be required only for nonterminal
+   symbols that are also start symbols. */
+
+/* We also accept token aliases in place of ordinary terminal symbols.
+   Token aliases are quoted strings. */
 
 symbol:
   id = LID
 | id = UID
+| id = QID
     { id }
 
 /* ------------------------------------------------------------------------- */
 /* Terminals must begin with an uppercase letter. Nonterminals that are
    declared to be start symbols must begin with a lowercase letter. */
 
-%inline terminal:
-  id = UID attrs = ATTRIBUTE*
-    { Positions.map (fun uid -> (uid, attrs)) id }
+/* In declarations, terminals must be UIDs, but we may also declare
+   token aliases, which are QIDs. */
+
+%inline terminal_alias_attrs:
+  id = UID alias = QID? attrs = ATTRIBUTE*
+    { let alias = Option.map Positions.value alias in
+      Positions.map (fun uid -> uid, alias, attrs) id }
 
 %inline nonterminal:
   id = LID

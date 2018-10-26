@@ -29,7 +29,7 @@ open Positions
 %token TOKEN TYPE LEFT RIGHT NONASSOC START PREC PUBLIC COLON BAR EOF EQUAL
 %token INLINE LPAREN RPAREN COMMA QUESTION STAR PLUS PARAMETER ON_ERROR_REDUCE
 %token PERCENTATTRIBUTE SEMI
-%token <string Positions.located> LID UID
+%token <string Positions.located> LID UID QID
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
@@ -90,7 +90,10 @@ declaration:
     { [ unknown_pos (DCode $1) ] }
 
 | TOKEN optional_ocamltype terminals
-    { List.map (Positions.map (fun (terminal, attrs) -> DToken ($2, terminal, attrs))) $3 }
+    { let ty, ts = $2, $3 in
+      List.map (Positions.map (fun (terminal, alias, attrs) ->
+        DToken (ty, terminal, alias, attrs)
+      )) ts }
 
 | START nonterminals
     { List.map (Positions.map (fun nonterminal -> DStart nonterminal)) $2 }
@@ -137,12 +140,16 @@ priority_keyword:
     { NonAssoc }
 
 /* ------------------------------------------------------------------------- */
-/* A symbol is a terminal or nonterminal symbol. One would like to
-   require nonterminal symbols to begin with a lowercase letter, so as
-   to lexically distinguish them from terminal symbols, which must
-   begin with an uppercase letter. However, for compatibility with
-   ocamlyacc, this is impossible. It can be required only for
-   nonterminal symbols that are also start symbols. */
+/* A symbol is a terminal or nonterminal symbol. */
+
+/* One would like to require nonterminal symbols to begin with a lowercase
+   letter, so as to lexically distinguish them from terminal symbols, which
+   must begin with an uppercase letter. However, for compatibility with
+   ocamlyacc, this is impossible. It can be required only for nonterminal
+   symbols that are also start symbols. */
+
+/* We also accept token aliases in place of ordinary terminal symbols.
+   Token aliases are quoted strings. */
 
 symbols:
   /* epsilon */
@@ -154,6 +161,8 @@ symbol:
   LID
     { $1 }
 | UID
+    { $1 }
+| QID
     { $1 }
 
 optional_comma:
@@ -174,14 +183,22 @@ attributes:
 terminals:
   /* epsilon */
     { [] }
-| terminals optional_comma UID attributes
-    { (Positions.map (fun uid -> (uid, $4)) $3) :: $1 }
+| terminals optional_comma UID optional_alias attributes
+    { let ts, uid, alias, attrs = $1, $3, $4, $5 in
+      let alias = Option.map Positions.value alias in
+      Positions.map (fun uid -> uid, alias, attrs) uid :: ts }
 
 nonterminals:
   /* epsilon */
     { [] }
 | nonterminals LID
     { $2 :: $1 }
+
+optional_alias:
+  /* epsilon */
+    { None }
+| QID
+    { Some $1 }
 
 /* ------------------------------------------------------------------------- */
 /* A rule defines a symbol. It is optionally declared %public, and optionally

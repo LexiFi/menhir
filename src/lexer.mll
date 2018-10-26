@@ -444,6 +444,11 @@ rule main = parse
     }
 | (uppercase identchar *) as id
     { UID (with_pos (cpos lexbuf) id) }
+(* Quoted strings, which are used as aliases for tokens.
+   For simplicity, we just disallow double quotes and backslash outright.
+   Given the use of terminal strings in grammars, this is fine. *)
+| ( "\"" ( [' ' - '~'] # ['"' '\\'] + ) "\"" ) as id
+    { QID (with_pos (cpos lexbuf) id) }
 | "//" [^ '\010' '\013']* newline (* skip C++ style comment *)
 | newline
     { new_line lexbuf; main lexbuf }
