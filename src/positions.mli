@@ -44,6 +44,7 @@ val unknown_pos : 'a -> 'a located
 
 (** [map f v] extends the decoration from [v] to [f v]. *)
 val map: ('a -> 'b) -> 'a located -> 'b located
+val pmap: (t -> 'a -> 'b) -> 'a located -> 'b located
 
 (** [iter f dv] applies [f] to the value inside [dv]. *)
 val iter: ('a -> unit) -> 'a located -> unit

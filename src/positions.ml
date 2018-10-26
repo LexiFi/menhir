@@ -46,6 +46,12 @@ let map f v =
     position  = v.position;
   }
 
+let pmap f v =
+  {
+    value     = f v.position v.value;
+    position  = v.position
+  }
+
 let iter f { value = v } =
   f v
 
