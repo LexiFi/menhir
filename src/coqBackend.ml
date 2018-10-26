@@ -82,7 +82,7 @@ module Run (T: sig end) = struct
             | Some _ -> ());
         Production.iterx (fun prod ->
           if not (Keyword.KeywordSet.is_empty (Action.keywords (Production.action prod))) then
-            Error.error [] "The Coq back-end supports none of the $ keywords."
+            Error.error [] "the Coq back-end supports none of the $ keywords."
         )
       end;
 

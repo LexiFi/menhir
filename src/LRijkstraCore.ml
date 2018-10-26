@@ -104,7 +104,7 @@ end) = struct
 let () =
   if Terminal.n > 256 then
     Error.error []
-      "The reachability analysis supports at most 256 terminal symbols.\n\
+      "the reachability analysis supports at most 256 terminal symbols.\n\
        The grammar has %d terminal symbols." Terminal.n
 
 (* ------------------------------------------------------------------------ *)
