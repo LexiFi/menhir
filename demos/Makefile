@@ -17,8 +17,8 @@ DEMOS := \
 .PHONY: all clean
 
 all clean::
-	@for i in $(DEMOS) ; do \
-	  $(MAKE) -C $$i $@ ; \
+	@ for i in $(DEMOS) ; do \
+	  $(MAKE) --no-print-directory -C $$i $@ ; \
 	done
 
 clean::
@@ -32,12 +32,12 @@ EXTRA := \
   calc-dune \
   calc-param-dune \
   calc-two-dune \
-#  calc-incremental-dune \
+  calc-incremental-dune \
+  generate-printers-dune \
 #  calc-inspection-dune \
-#  generate-printers-dune \
 
 .PHONY: extra
 extra::
-	@for i in $(EXTRA) ; do \
-	  $(MAKE) -C $$i all ; \
+	@ for i in $(EXTRA) ; do \
+	  $(MAKE) --no-print-directory -C $$i all ; \
 	done

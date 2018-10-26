@@ -4,7 +4,7 @@
 # should agree on their version number, or this test will fail
 # complaining that magic strings do not match.
 MENHIR     := menhir
-DUNE       := jbuilder
+DUNE       := dune
 MAIN       := generate
 EXECUTABLE := menhir-generate-printers
 
