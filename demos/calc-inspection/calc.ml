@@ -1,6 +1,4 @@
 open Lexing
-open MenhirLib.General
-open Parser.MenhirInterpreter
 
 (* Instantiate [MenhirLib.Printers] for our parser. This requires providing a
    few printing functions -- see [CalcPrinters]. *)

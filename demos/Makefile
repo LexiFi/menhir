@@ -5,6 +5,10 @@
 # The following demos require menhirSdk:
 #   generate-printers
 
+# The demos whose name ends in -dune require dune 1.4.
+# If dune is absent, attempting to build these demos
+# succeeds without actually doing anything.
+
 DEMOS := \
   calc \
   calc-alias \
@@ -13,6 +17,12 @@ DEMOS := \
   calc-incremental \
   calc-inspection \
   generate-printers \
+  calc-dune \
+  calc-param-dune \
+  calc-two-dune \
+  calc-incremental-dune \
+  calc-inspection-dune \
+  generate-printers-dune \
 
 .PHONY: all clean
 
@@ -23,21 +33,3 @@ all clean::
 
 clean::
 	/bin/rm -f *~ .*~
-
-# The demos whose name ends in -dune require dune
-# and assume that Menhir is installed. For now,
-# they are not built by default. (TODO)
-
-EXTRA := \
-  calc-dune \
-  calc-param-dune \
-  calc-two-dune \
-  calc-incremental-dune \
-  generate-printers-dune \
-#  calc-inspection-dune \
-
-.PHONY: extra
-extra::
-	@ for i in $(EXTRA) ; do \
-	  $(MAKE) --no-print-directory -C $$i all ; \
-	done

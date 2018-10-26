@@ -9,8 +9,12 @@ MAIN       := generate
 EXECUTABLE := menhir-generate-printers
 
 all:
-	$(DUNE) build $(MAIN).exe
-	cp -f _build/default/$(MAIN).exe $(EXECUTABLE)
+	@ if command -v $(DUNE) > /dev/null ; then \
+	  $(DUNE) build $(MAIN).exe && \
+	  cp -f _build/default/$(MAIN).exe $(EXECUTABLE) ; \
+	else \
+	  echo "Error: $(DUNE) is required." ; \
+	fi
 
 TEST       := ../../test/good/parser_raw
 
@@ -20,6 +24,6 @@ test: all
 	./$(EXECUTABLE) $(TEST).cmly
 
 clean:
-	rm -f *~ .*~
-	$(DUNE) clean
-	rm -f $(EXECUTABLE)
+	@ rm -f $(EXECUTABLE)
+	@ rm -rf `cat .gitignore`
+	@ rm -f *~

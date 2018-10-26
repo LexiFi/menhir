@@ -1,6 +1,6 @@
 .PHONY: all clean test
 
-DUNE       := jbuilder
+DUNE       := dune
 EXECUTABLE := calc.exe
 
 all:
