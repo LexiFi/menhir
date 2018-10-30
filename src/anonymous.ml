@@ -74,7 +74,7 @@ let rules =
    and return its name. *)
 
 let var (symbol : symbol) : parameter =
-  ParameterVar (Positions.with_pos Positions.dummy symbol)
+  ParameterVar (Positions.unknown_pos symbol)
 
 let anonymous pos (parameters : symbol list) (branches : parameterized_branch list) : parameter =
   (* Compute the free symbols of [branches]. They should form a subset
