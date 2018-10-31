@@ -269,7 +269,7 @@ let print_messages_auto (nt, sentence, otarget) : unit =
       ;
       Printf.printf
         "## The known suffix of the stack is as follows:\n\
-         ## %s\n\
+         ##%s\n\
          ##\n"
         (Invariant.print (Invariant.stack s'))
       ;
