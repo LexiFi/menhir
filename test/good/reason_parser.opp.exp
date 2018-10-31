@@ -1311,11 +1311,8 @@ let _symbolstartpos = _startpos_x_ in
 functor_arg:
   _1 = LPAREN _2 = RPAREN
     { ( mkloc "*" (mklocation _startpos__2_ _endpos__2_), None )}
-| _1 = LPAREN x0 = functor_arg_name _3 = COLON _4 = module_type _5 = RPAREN
+| _1 = LPAREN x = functor_arg_name _3 = COLON _4 = module_type _5 = RPAREN
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1339,11 +1336,8 @@ simple_module_expr:
     {                                                           (_1)}
 
 _simple_module_expr:
-  x0 = mod_longident
+  x = mod_longident
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1353,19 +1347,16 @@ in
     {      ( mkmod(Pmod_structure(_2)) )}
 | _1 = LPAREN _2 = module_expr _3 = COLON _4 = module_type _5 = RPAREN
     {      ( mkmod(Pmod_constraint(_2, _4)) )}
-| x0 = LPAREN _2 = module_expr _3 = COLON _4 = module_type x1 = error
+| x = LPAREN _2 = module_expr _3 = COLON _4 = module_type x' = error
     {let _5 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1413,91 +1404,76 @@ _module_expr:
     {      ( mkFunctorThatReturns _2 _4 )}
 | _1 = module_expr _2 = simple_module_expr
     {      ( mkmod (Pmod_apply(_1, _2)) )}
-| _1 = module_expr x0 = LPAREN _3 = module_expr x1 = error
+| _1 = module_expr x = LPAREN _3 = module_expr x' = error
     {let _4 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( unclosed_mod (with_txt _2 "(") (with_txt _4 ")") )}
-| x0 = LPAREN _2 = module_expr x1 = error
+| x = LPAREN _2 = module_expr x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( unclosed_mod (with_txt _1 "(") (with_txt _3 ")") )}
-| x0 = LPAREN _2 = VAL _3 = expr _4 = COLON x1 = error
+| x = LPAREN _2 = VAL _3 = expr _4 = COLON x' = error
     {let _5 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( unclosed_mod (with_txt _1 "(") (with_txt _5 ")") )}
-| x0 = LPAREN _2 = VAL _3 = expr _4 = COLONGREATER x1 = error
+| x = LPAREN _2 = VAL _3 = expr _4 = COLONGREATER x' = error
     {let _5 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( unclosed_mod (with_txt _1 "(") (with_txt _5 ")") )}
-| x0 = LPAREN _2 = VAL _3 = expr x1 = error
+| x = LPAREN _2 = VAL _3 = expr x' = error
     {let _4 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1509,11 +1485,8 @@ in
 structure:
   
     {                ( [] )}
-| x0 = error _2 = structure
+| x = error _2 = structure
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1524,11 +1497,8 @@ in
       | MenhirMessagesError errMessage -> (syntax_error_str errMessage.loc errMessage.msg) :: _2
       | _ -> (syntax_error_str _1.loc "Invalid statement") :: _2
   )}
-| x0 = error _2 = SEMI _3 = structure
+| x = error _2 = SEMI _3 = structure
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1541,11 +1511,8 @@ in
     )}
 | _1 = structure_item
     {                   ( [_1] )}
-| x0 = structure_item _2 = error _3 = structure
+| x = structure_item _2 = error _3 = structure
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1587,11 +1554,8 @@ _structure_item_without_item_extension_sugar:
     {                              (
       mkstrexp _1 _2
     )}
-| _1 = EXTERNAL x0 = val_ident _3 = COLON _4 = core_type _5 = EQUAL _6 = primitive_declaration _7 = post_item_attributes
+| _1 = EXTERNAL x = val_ident _3 = COLON _4 = core_type _5 = EQUAL _6 = primitive_declaration _7 = post_item_attributes
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1629,11 +1593,8 @@ let _symbolstartpos = _startpos__1_ in
     {                                  (
       mkstr(Pstr_recmodule(List.rev _1))
     )}
-| _1 = MODULE _2 = TYPE _3 = option_OF_ x0 = ident _5 = post_item_attributes
+| _1 = MODULE _2 = TYPE _3 = option_OF_ x = ident _5 = post_item_attributes
     {let _4 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1646,11 +1607,8 @@ let _symbolstartpos = _startpos__1_ in
       let loc = mklocation _symbolstartpos _endpos in
       mkstr(Pstr_modtype (Mtd.mk ident ~attrs:item_attrs ~loc))
     )}
-| _1 = MODULE _2 = TYPE _3 = option_OF_ x0 = ident _5 = EQUAL _6 = module_type _7 = post_item_attributes
+| _1 = MODULE _2 = TYPE _3 = option_OF_ x = ident _5 = EQUAL _6 = module_type _7 = post_item_attributes
     {let _4 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1749,11 +1707,8 @@ let _symbolstartpos = _startpos__1_ in
   )}
 
 nonlocal_module_binding_details:
-  x0 = UIDENT _2 = module_binding_body
+  x = UIDENT _2 = module_binding_body
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1781,29 +1736,23 @@ simple_module_type:
 _simple_module_type:
   _1 = LPAREN _2 = module_type _3 = RPAREN
     {      ( _2 )}
-| x0 = LPAREN _2 = module_type x1 = error
+| x = LPAREN _2 = module_type x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( unclosed_mty (with_txt _1 "(") (with_txt _3 ")"))}
-| x0 = mty_longident
+| x = mty_longident
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1811,19 +1760,16 @@ in
     ( mkmty(Pmty_ident _1) )}
 | _1 = LBRACE _2 = signature _3 = RBRACE
     {      ( mkmty(Pmty_signature _2) )}
-| x0 = LBRACE _2 = signature x1 = error
+| x = LBRACE _2 = signature x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1870,11 +1816,8 @@ _module_type:
      *)
     _1
   )}
-| _1 = LPAREN x0 = functor_arg_name _3 = COLON _4 = module_type _5 = RPAREN _6 = EQUALGREATER _7 = module_type %prec below_SEMI
+| _1 = LPAREN x = functor_arg_name _3 = COLON _4 = module_type _5 = RPAREN _6 = EQUALGREATER _7 = module_type %prec below_SEMI
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1956,11 +1899,8 @@ signature_item:
     {                                                   ( _1 )}
 
 _signature_item:
-  _1 = LET x0 = val_ident _3 = COLON _4 = core_type _5 = post_item_attributes
+  _1 = LET x = val_ident _3 = COLON _4 = core_type _5 = post_item_attributes
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -1972,11 +1912,8 @@ let _symbolstartpos = _startpos__1_ in
         let core_type_loc = mklocation _startpos__4_ _endpos__4_ in
         mksig(Psig_value (Val.mk _2 (only_core_type _4 core_type_loc) ~attrs:_5 ~loc))
     )}
-| _1 = EXTERNAL x0 = val_ident _3 = COLON _4 = core_type _5 = EQUAL _6 = primitive_declaration _7 = post_item_attributes
+| _1 = EXTERNAL x = val_ident _3 = COLON _4 = core_type _5 = EQUAL _6 = primitive_declaration _7 = post_item_attributes
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2001,11 +1938,8 @@ let _symbolstartpos = _startpos__1_ in
     {                              (
       mksig(Psig_exception _1)
     )}
-| _1 = opt_let_module x0 = UIDENT _3 = module_declaration _4 = post_item_attributes
+| _1 = opt_let_module x = UIDENT _3 = module_declaration _4 = post_item_attributes
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2016,21 +1950,18 @@ let _symbolstartpos = _startpos__1_ in
       let loc = mklocation _symbolstartpos _endpos in
       mksig(Psig_module (Md.mk _2 _3 ~attrs:_4 ~loc))
     )}
-| _1 = opt_let_module x0 = UIDENT _3 = EQUAL x1 = mod_longident _5 = post_item_attributes
+| _1 = opt_let_module x = UIDENT _3 = EQUAL x' = mod_longident _5 = post_item_attributes
     {let _4 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _endpos__4_ = _endpos_x1_ in
-let _startpos__4_ = _startpos_x1_ in
+let _endpos__4_ = _endpos_x'_ in
+let _startpos__4_ = _startpos_x'_ in
 let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2054,11 +1985,8 @@ let _symbolstartpos = _startpos__1_ in
     {                                 (
       mksig(Psig_recmodule (List.rev _1))
     )}
-| _1 = MODULE _2 = TYPE x0 = ident _4 = post_item_attributes
+| _1 = MODULE _2 = TYPE x = ident _4 = post_item_attributes
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2069,11 +1997,8 @@ let _symbolstartpos = _startpos__1_ in
       let loc = mklocation _symbolstartpos _endpos in
       mksig(Psig_modtype (Mtd.mk _3 ~attrs:_4 ~loc))
     )}
-| _1 = MODULE _2 = TYPE x0 = ident _4 = EQUAL _5 = module_type _6 = post_item_attributes
+| _1 = MODULE _2 = TYPE x = ident _4 = EQUAL _5 = module_type _6 = post_item_attributes
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2113,11 +2038,8 @@ let _symbolstartpos = _startpos__1_ in
     )}
 
 open_statement:
-  _1 = OPEN _2 = override_flag x0 = mod_longident _4 = post_item_attributes
+  _1 = OPEN _2 = override_flag x = mod_longident _4 = post_item_attributes
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2136,11 +2058,8 @@ module_declaration:
 _module_declaration:
   _1 = COLON _2 = module_type
     {      ( _2 )}
-| _1 = LPAREN x0 = UIDENT _3 = COLON _4 = module_type _5 = RPAREN _6 = module_declaration
+| _1 = LPAREN x = UIDENT _3 = COLON _4 = module_type _5 = RPAREN _6 = module_declaration
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2150,11 +2069,8 @@ in
     {      ( mkmty(Pmty_functor(mkloc "*" (mklocation _startpos__1_ _endpos__1_), None, _3)) )}
 
 module_rec_declaration_details:
-  x0 = UIDENT _2 = COLON _3 = module_type
+  x = UIDENT _2 = COLON _3 = module_type
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2218,11 +2134,8 @@ _constrained_class_declaration:
     {      ( mkclass(Pcl_constraint(_4, _2)) )}
 
 class_declaration_details:
-  _1 = virtual_flag x0 = LIDENT _3 = class_type_parameters _4 = class_fun_binding
+  _1 = virtual_flag x = LIDENT _3 = class_type_parameters _4 = class_fun_binding
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2230,11 +2143,8 @@ in
       (
        (_2, _4, _1, List.rev _3)
       )}
-| _1 = virtual_flag x0 = LIDENT _3 = class_type_parameters _4 = constrained_class_declaration
+| _1 = virtual_flag x = LIDENT _3 = class_type_parameters _4 = constrained_class_declaration
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2242,11 +2152,8 @@ in
     (
        (_2, _4, _1, List.rev _3)
     )}
-| _1 = virtual_flag x0 = LIDENT _3 = class_type_parameters _4 = EQUAL _5 = class_expr
+| _1 = virtual_flag x = LIDENT _3 = class_type_parameters _4 = EQUAL _5 = class_expr
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2340,11 +2247,8 @@ _class_expr:
     {      ( mkclass(Pcl_apply(_1, List.rev _2)) )}
 | _1 = class_expr _2 = attribute
     {      ( Cl.attr _1 _2 )}
-| _1 = CLASS x0 = class_longident
+| _1 = CLASS x = class_longident
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2352,11 +2256,8 @@ in
                                   (
       mkclass(Pcl_constr(_2, []))
     )}
-| _1 = CLASS x0 = class_longident _3 = non_arrowed_simple_core_type_list
+| _1 = CLASS x = class_longident _3 = non_arrowed_simple_core_type_list
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2372,11 +2273,8 @@ class_simple_expr:
     {                                                        (_1)}
 
 _class_simple_expr:
-  x0 = class_longident
+  x = class_longident
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2384,19 +2282,16 @@ in
     ( mkclass(Pcl_constr(_1, [])) )}
 | _1 = LBRACE _2 = class_expr_lets_and_rest _3 = RBRACE
     {                                           ( _2 )}
-| x0 = LBRACE _2 = class_expr_lets_and_rest x1 = error
+| x = LBRACE _2 = class_expr_lets_and_rest x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2404,19 +2299,16 @@ in
     ( unclosed_cl (with_txt _1 "{") (with_txt _3 "}") )}
 | _1 = LPAREN _2 = class_expr _3 = COLON _4 = class_constructor_type _5 = RPAREN
     {      ( mkclass(Pcl_constraint(_2, _4)) )}
-| x0 = LPAREN _2 = class_expr _3 = COLON _4 = class_constructor_type x1 = error
+| x = LPAREN _2 = class_expr _3 = COLON _4 = class_constructor_type x' = error
     {let _5 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2424,19 +2316,16 @@ in
       ( unclosed_cl (with_txt _1 "(") (with_txt _5 ")") )}
 | _1 = LPAREN _2 = class_expr _3 = RPAREN
     {      ( _2 )}
-| x0 = LPAREN _2 = class_expr x1 = error
+| x = LPAREN _2 = class_expr x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2480,17 +2369,14 @@ parent_binder:
     {          ( None )}
 
 value:
-  _1 = override_flag _2 = MUTABLE _3 = VIRTUAL x0 = label _5 = COLON _6 = core_type
+  _1 = override_flag _2 = MUTABLE _3 = VIRTUAL x = label _5 = COLON _6 = core_type
     {let _4 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _endpos__4_ = _endpos_x0_ in
-let _startpos__4_ = _startpos_x0_ in
+let _endpos__4_ = _endpos_x_ in
+let _startpos__4_ = _startpos_x_ in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -2504,11 +2390,8 @@ else
     )}
 | _1 = override_flag _2 = MUTABLE _3 = VIRTUAL _4 = label _5 = COLON _6 = core_type _7 = EQUAL
     {      ( not_expecting _startpos__7_ _endpos__7_ "not expecting equal - cannot specify value for virtual val" )}
-| _1 = VIRTUAL _2 = mutable_flag x0 = label _4 = COLON _5 = core_type
+| _1 = VIRTUAL _2 = mutable_flag x = label _4 = COLON _5 = core_type
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2519,26 +2402,20 @@ in
       )}
 | _1 = VIRTUAL _2 = mutable_flag _3 = label _4 = COLON _5 = core_type _6 = EQUAL
     {      ( not_expecting _startpos__6_ _endpos__6_ "not expecting equal - cannot specify value for virtual val" )}
-| _1 = override_flag _2 = mutable_flag x0 = label _4 = EQUAL _5 = expr
+| _1 = override_flag _2 = mutable_flag x = label _4 = EQUAL _5 = expr
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( _3, _2, Cfk_concrete (_1, _5) )}
-| _1 = override_flag _2 = mutable_flag x0 = label _4 = type_constraint _5 = EQUAL _6 = expr
+| _1 = override_flag _2 = mutable_flag x = label _4 = type_constraint _5 = EQUAL _6 = expr
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__3_ = _startpos_x0_ in
+let _startpos__3_ = _startpos_x_ in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -2554,27 +2431,21 @@ else
       )}
 
 method_:
-  _1 = override_flag _2 = VIRTUAL x0 = label _4 = COLON _5 = poly_type
+  _1 = override_flag _2 = VIRTUAL x = label _4 = COLON _5 = poly_type
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( if _1 = Override then syntax_error ();
         _3, Cfk_virtual _5 )}
-| _1 = override_flag x0 = label _3 = curried_binding
+| _1 = override_flag x = label _3 = curried_binding
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__2_ = _startpos_x0_ in
+let _startpos__2_ = _startpos_x_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -2582,16 +2453,13 @@ else
   _startpos__2_ in
       ( _2,
         Cfk_concrete (_1, let loc = mklocation _symbolstartpos _endpos in mkexp ~ghost:true ~loc (Pexp_poly (_3, None))) )}
-| _1 = override_flag x0 = label _3 = COLON _4 = poly_type _5 = EQUAL _6 = expr
+| _1 = override_flag x = label _3 = COLON _4 = poly_type _5 = EQUAL _6 = expr
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__2_ = _startpos_x0_ in
+let _startpos__2_ = _startpos_x_ in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -2599,16 +2467,13 @@ else
   _startpos__2_ in
       ( _2,
         Cfk_concrete (_1, let loc = mklocation _symbolstartpos _endpos in mkexp ~ghost:true ~loc (Pexp_poly(_6, Some _4))) )}
-| _1 = override_flag x0 = label _3 = EQUAL _4 = expr
+| _1 = override_flag x = label _3 = EQUAL _4 = expr
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__2_ = _startpos_x0_ in
+let _startpos__2_ = _startpos_x_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -2616,16 +2481,13 @@ else
   _startpos__2_ in
       ( _2,
         Cfk_concrete (_1, let loc = mklocation _symbolstartpos _endpos in mkexp ~ghost:true ~loc (Pexp_poly(_4, None))) )}
-| _1 = override_flag x0 = label _3 = COLON _4 = TYPE _5 = lident_list _6 = DOT _7 = core_type _8 = EQUAL _9 = expr
+| _1 = override_flag x = label _3 = COLON _4 = TYPE _5 = lident_list _6 = DOT _7 = core_type _8 = EQUAL _9 = expr
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__2_ = _startpos_x0_ in
+let _startpos__2_ = _startpos_x_ in
 let _endpos = _endpos__9_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -2693,21 +2555,15 @@ class_instance_type:
     {                                                             (_1)}
 
 _class_instance_type:
-  x0 = clty_longident
+  x = clty_longident
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( mkcty(Pcty_constr (_1, [])) )}
-| x0 = clty_longident _2 = non_arrowed_simple_core_type_list
+| x = clty_longident _2 = non_arrowed_simple_core_type_list
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2715,19 +2571,16 @@ in
       ( mkcty(Pcty_constr (_1, List.rev _2)) )}
 | _1 = LBRACE _2 = class_sig_body _3 = RBRACE
     {      ( mkcty(Pcty_signature _2) )}
-| x0 = LBRACE _2 = class_sig_body x1 = error
+| x = LBRACE _2 = class_sig_body x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2838,11 +2691,8 @@ let _symbolstartpos = _startpos__1_ in
   )}
 
 class_description_details:
-  _1 = virtual_flag x0 = LIDENT _3 = class_type_parameters _4 = COLON _5 = class_constructor_type
+  _1 = virtual_flag x = LIDENT _3 = class_type_parameters _4 = COLON _5 = class_constructor_type
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2876,11 +2726,8 @@ let _symbolstartpos = _startpos__1_ in
   )}
 
 class_type_declaration_details:
-  _1 = virtual_flag x0 = LIDENT _3 = class_type_parameters _4 = EQUAL _5 = class_instance_type
+  _1 = virtual_flag x = LIDENT _3 = class_type_parameters _4 = EQUAL _5 = class_instance_type
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2927,11 +2774,8 @@ _semi_terminated_seq_expr_row:
        * expression attributes *)
       {expr with pexp_attributes = item_attrs @ expr.pexp_attributes}
     )}
-| _1 = opt_let_module x0 = UIDENT _3 = module_binding_body _4 = post_item_attributes _5 = SEMI _6 = semi_terminated_seq_expr
+| _1 = opt_let_module x = UIDENT _3 = module_binding_body _4 = post_item_attributes _5 = SEMI _6 = semi_terminated_seq_expr
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -2940,11 +2784,8 @@ in
       let item_attrs = _4 in
       mkexp ~attrs:item_attrs (Pexp_letmodule(_2, _3, _6))
     )}
-| _1 = option_LET_ _2 = OPEN _3 = override_flag x0 = mod_longident _5 = post_item_attributes _6 = SEMI _7 = semi_terminated_seq_expr
+| _1 = option_LET_ _2 = OPEN _3 = override_flag x = mod_longident _5 = post_item_attributes _6 = SEMI _7 = semi_terminated_seq_expr
     {let _4 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3123,11 +2964,8 @@ _expr:
     {      ( mkexp (Pexp_try(_2, List.rev _4)) )}
 | _1 = TRY _2 = simple_expr _3 = WITH _4 = error
     {      ( syntax_error_exp (mklocation _startpos__4_ _endpos__4_) "Invalid try with")}
-| x0 = constr_longident _2 = simple_non_labeled_expr_list_as_tuple
+| x = constr_longident _2 = simple_non_labeled_expr_list_as_tuple
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3162,136 +3000,136 @@ let _symbolstartpos = _startpos__1_ in
         let loc = mklocation _symbolstartpos _endpos in
         mkexp_cons loc_colon (mkexp ~ghost:true ~loc (Pexp_tuple[_5;_7])) loc
       )}
-| _1 = expr _10 = INFIXOP0 _3 = expr
+| _1 = expr _1' = INFIXOP0 _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( _1 )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = INFIXOP1 _3 = expr
+| _1 = expr _1' = INFIXOP1 _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( _1 )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = INFIXOP2 _3 = expr
+| _1 = expr _1' = INFIXOP2 _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( _1 )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = INFIXOP3 _3 = expr
+| _1 = expr _1' = INFIXOP3 _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( _1 )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = SLASHGREATER _3 = expr
+| _1 = expr _1' = SLASHGREATER _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "/>" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = INFIXOP4 _3 = expr
+| _1 = expr _1' = INFIXOP4 _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( _1 )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = PLUS _3 = expr
+| _1 = expr _1' = PLUS _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "+" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = PLUSDOT _3 = expr
+| _1 = expr _1' = PLUSDOT _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "+." )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = MINUS _3 = expr
+| _1 = expr _1' = MINUS _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "-" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = MINUSDOT _3 = expr
+| _1 = expr _1' = MINUSDOT _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "-." )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = STAR _3 = expr
+| _1 = expr _1' = STAR _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "*" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = LESS _3 = expr
+| _1 = expr _1' = LESS _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "<" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = GREATER _3 = expr
+| _1 = expr _1' = GREATER _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( ">" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = OR _3 = expr
+| _1 = expr _1' = OR _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "or" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = BARBAR _3 = expr
+| _1 = expr _1' = BARBAR _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "||" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = AMPERSAND _3 = expr
+| _1 = expr _1' = AMPERSAND _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "&" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = AMPERAMPER _3 = expr
+| _1 = expr _1' = AMPERAMPER _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "&&" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = COLONEQUAL _3 = expr
+| _1 = expr _1' = COLONEQUAL _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( ":=" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = PLUSEQ _3 = expr
+| _1 = expr _1' = PLUSEQ _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "+=" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = PERCENT _3 = expr
+| _1 = expr _1' = PERCENT _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "%" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = LESSDOTDOTGREATER _3 = expr
+| _1 = expr _1' = LESSDOTDOTGREATER _3 = expr
     {let _2 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "<..>" )
 in
       ( mkinfix _1 _2 _3 )}
-| _1 = expr _10 = GREATER _20 = GREATER _3 = expr
+| _1 = expr _1' = GREATER _2' = GREATER _3 = expr
     {let _2 =
-  let _2 = _20 in
-  let _1 = _10 in
+  let _2 = _2' in
+  let _1 = _1' in
                                                   ( ">>" )
 in
       ( mkinfix _1 _2 _3 )}
@@ -3303,11 +3141,8 @@ in
     {      (
         mkuplus _1 _2
       )}
-| _1 = simple_expr _2 = DOT x0 = label_longident _4 = EQUAL _5 = expr
+| _1 = simple_expr _2 = DOT x = label_longident _4 = EQUAL _5 = expr
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3334,11 +3169,8 @@ let _symbolstartpos = _startpos__1_ in
         let loc = mklocation _symbolstartpos _endpos in
         bigarray_set ~loc _1 _4 _7
       )}
-| x0 = label _2 = EQUAL _3 = expr
+| x = label _2 = EQUAL _3 = expr
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3370,11 +3202,8 @@ simple_expr:
     {                                             (_1)}
 
 _simple_expr:
-  x0 = val_longident
+  x = val_longident
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3382,11 +3211,8 @@ in
       ( mkexp (Pexp_ident _1) )}
 | _1 = constant
     {             ( mkexp (Pexp_constant _1) )}
-| x0 = constr_longident %prec prec_constant_constructor
+| x = constr_longident %prec prec_constant_constructor
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3411,19 +3237,16 @@ in
   )}
 | _1 = LPAREN _2 = expr _3 = RPAREN
     {      ( _2 )}
-| x0 = LPAREN _2 = expr x1 = error
+| x = LPAREN _2 = expr x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3438,11 +3261,8 @@ let _symbolstartpos = _startpos__1_ in
       )}
 | _1 = LBRACE _2 = semi_terminated_seq_expr _3 = RBRACE
     {      ( _2 )}
-| _1 = LBRACE x0 = semi_terminated_seq_expr _3 = error
+| _1 = LBRACE x = semi_terminated_seq_expr _3 = error
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3450,82 +3270,64 @@ in
       ( syntax_error_exp _2.loc "SyntaxError in block" )}
 | _1 = LPAREN _2 = expr_comma_list _3 = opt_comma _4 = RPAREN
     {      ( mkexp(Pexp_tuple(List.rev _2)) )}
-| x0 = LPAREN _2 = expr_comma_list x1 = error
+| x = LPAREN _2 = expr_comma_list x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( unclosed_exp (with_txt _1 "(") (with_txt _3 ")") )}
-| _1 = simple_expr _2 = DOT x0 = label_longident
+| _1 = simple_expr _2 = DOT x = label_longident
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( mkexp(Pexp_field(_1, _3)) )}
-| x0 = mod_longident _2 = DOT _3 = LPAREN _4 = expr _5 = RPAREN
+| x = mod_longident _2 = DOT _3 = LPAREN _4 = expr _5 = RPAREN
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( mkexp(Pexp_open(Fresh, _1, _4)) )}
-| x0 = mod_longident _2 = DOT _3 = LPAREN _4 = expr_comma_list _5 = RPAREN
+| x = mod_longident _2 = DOT _3 = LPAREN _4 = expr_comma_list _5 = RPAREN
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( mkexp(Pexp_open(Fresh, _1, mkexp(Pexp_tuple(List.rev _4)))) )}
-| _1 = mod_longident _2 = DOT x0 = LPAREN _4 = expr x1 = error
+| _1 = mod_longident _2 = DOT x = LPAREN _4 = expr x' = error
     {let _5 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( unclosed_exp (with_txt _3 "(") (with_txt _5 ")") )}
-| x0 = mod_longident _2 = DOT _3 = LBRACE _4 = RBRACE
+| x = mod_longident _2 = DOT _3 = LBRACE _4 = RBRACE
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos_x0_ in
+let _startpos__1_ = _startpos_x_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
       (
@@ -3540,19 +3342,16 @@ let _symbolstartpos = _startpos__1_ in
         let loc = mklocation _symbolstartpos _endpos in
         mkexp(Pexp_apply(mkexp ~ghost:true ~loc (Pexp_ident(array_function ~loc "Array" "get")),
                          [Nolabel,_1; Nolabel,_4])) )}
-| _1 = simple_expr _2 = DOT x0 = LPAREN _4 = expr x1 = error
+| _1 = simple_expr _2 = DOT x = LPAREN _4 = expr x' = error
     {let _5 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3565,19 +3364,16 @@ let _symbolstartpos = _startpos__1_ in
         let loc = mklocation _symbolstartpos _endpos in
         mkexp(Pexp_apply(mkexp ~ghost:true ~loc (Pexp_ident(array_function ~loc "String" "get")),
                          [Nolabel,_1; Nolabel,_4])) )}
-| _1 = simple_expr _2 = DOT x0 = LBRACKET _4 = expr x1 = error
+| _1 = simple_expr _2 = DOT x = LBRACKET _4 = expr x' = error
     {let _5 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3600,19 +3396,16 @@ let _symbolstartpos = _startpos__1_ in
       )}
 | _1 = LBRACE _2 = record_expr _3 = RBRACE
     {      ( let (exten, fields) = _2 in mkexp (Pexp_record(fields, exten)) )}
-| x0 = LBRACE _2 = record_expr x1 = error
+| x = LBRACE _2 = record_expr x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3627,19 +3420,16 @@ let _symbolstartpos = _startpos__1_ in
         mkexp ~loc (Pexp_extension (mkloc ("bs.obj") loc,
                PStr [mkstrexp (mkexp ~loc (Pexp_record(fields, exten))) []]))
       )}
-| x0 = LBRACE _2 = record_expr_with_string_keys x1 = error
+| x = LBRACE _2 = record_expr_with_string_keys x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3647,53 +3437,44 @@ in
       ( unclosed_exp (with_txt _1 "{") (with_txt _3 "}"))}
 | _1 = LBRACE _2 = class_self_pattern_and_structure _3 = RBRACE
     {      ( mkexp (Pexp_object _2) )}
-| x0 = LBRACE _2 = class_self_pattern_and_structure x1 = error
+| x = LBRACE _2 = class_self_pattern_and_structure x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( unclosed_exp (with_txt _1 "{") (with_txt _3 "}") )}
-| x0 = mod_longident _2 = DOT _3 = LBRACE _4 = record_expr _5 = RBRACE
+| x = mod_longident _2 = DOT _3 = LBRACE _4 = record_expr _5 = RBRACE
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos_x0_ in
+let _startpos__1_ = _startpos_x_ in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
       ( let (exten, fields) = _4 in
         let loc = mklocation _symbolstartpos _endpos in
         let rec_exp = mkexp ~loc (Pexp_record (fields, exten)) in
         mkexp(Pexp_open(Fresh, _1, rec_exp)) )}
-| _1 = mod_longident _2 = DOT x0 = LBRACE _4 = record_expr x1 = error
+| _1 = mod_longident _2 = DOT x = LBRACE _4 = record_expr x' = error
     {let _5 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3701,19 +3482,16 @@ in
       ( unclosed_exp (with_txt _3 "{") (with_txt _5 "}") )}
 | _1 = LBRACKETBAR _2 = expr_comma_seq _3 = opt_comma _4 = BARRBRACKET
     {      ( mkexp (Pexp_array(List.rev _2)) )}
-| x0 = LBRACKETBAR _2 = expr_comma_seq _3 = opt_comma x1 = error
+| x = LBRACKETBAR _2 = expr_comma_seq _3 = opt_comma x' = error
     {let _4 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3721,16 +3499,13 @@ in
       ( unclosed_exp (with_txt _1 "[|") (with_txt _4 "|]") )}
 | _1 = LBRACKETBAR _2 = BARRBRACKET
     {      ( mkexp (Pexp_array []) )}
-| x0 = mod_longident _2 = DOT _3 = LBRACKETBAR _4 = expr_comma_seq _5 = opt_comma _6 = BARRBRACKET
+| x = mod_longident _2 = DOT _3 = LBRACKETBAR _4 = expr_comma_seq _5 = opt_comma _6 = BARRBRACKET
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos_x0_ in
+let _startpos__1_ = _startpos_x_ in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
       (
@@ -3738,19 +3513,16 @@ let _symbolstartpos = _startpos__1_ in
         let rec_exp = Exp.mk ~loc ~attrs:[] (Pexp_array(List.rev _4)) in
         mkexp(Pexp_open(Fresh, _1, rec_exp))
       )}
-| _1 = mod_longident _2 = DOT x0 = LBRACKETBAR _4 = expr_comma_seq _5 = opt_comma x1 = error
+| _1 = mod_longident _2 = DOT x = LBRACKETBAR _4 = expr_comma_seq _5 = opt_comma x' = error
     {let _6 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3760,11 +3532,8 @@ in
     {      ( let seq, ext_opt = _2 in
         let loc = mklocation _startpos__2_ _endpos__2_ in
         make_real_exp (mktailexp_extension loc seq ext_opt) )}
-| x0 = mod_longident _2 = DOT _3 = LBRACKET _4 = expr_comma_seq_extension
+| x = mod_longident _2 = DOT _3 = LBRACKET _4 = expr_comma_seq_extension
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3778,11 +3547,8 @@ in
     {      (
         mkexp(Pexp_apply(mkoperator _1 1, [Nolabel, _2]))
       )}
-| x0 = BANG _2 = simple_expr %prec below_DOT_AND_SHARP
+| x = BANG _2 = simple_expr %prec below_DOT_AND_SHARP
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3790,11 +3556,8 @@ in
       (
         mkexp(Pexp_apply(mkoperator "!" 1, [Nolabel,_2]))
       )}
-| _1 = NEW x0 = class_longident
+| _1 = NEW x = class_longident
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3802,19 +3565,16 @@ in
       ( mkexp (Pexp_new _2) )}
 | _1 = LBRACELESS _2 = field_expr_list _3 = opt_comma _4 = GREATERRBRACE
     {      ( mkexp (Pexp_override(List.rev _2)) )}
-| x0 = LBRACELESS _2 = field_expr_list _3 = opt_comma x1 = error
+| x = LBRACELESS _2 = field_expr_list _3 = opt_comma x' = error
     {let _4 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3822,16 +3582,13 @@ in
       ( unclosed_exp (with_txt _1 "{<") (with_txt _4 ">}" ) )}
 | _1 = LBRACELESS _2 = GREATERRBRACE
     {      ( mkexp (Pexp_override []))}
-| x0 = mod_longident _2 = DOT _3 = LBRACELESS _4 = field_expr_list _5 = opt_comma _6 = GREATERRBRACE
+| x = mod_longident _2 = DOT _3 = LBRACELESS _4 = field_expr_list _5 = opt_comma _6 = GREATERRBRACE
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos_x0_ in
+let _startpos__1_ = _startpos_x_ in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
       (
@@ -3839,19 +3596,16 @@ let _symbolstartpos = _startpos__1_ in
         let exp = Exp.mk ~loc ~attrs:[] (Pexp_override(List.rev _4)) in
         mkexp(Pexp_open(Fresh, _1, exp))
       )}
-| _1 = mod_longident _2 = DOT x0 = LBRACELESS _4 = field_expr_list _5 = opt_comma x1 = error
+| _1 = mod_longident _2 = DOT x = LBRACELESS _4 = field_expr_list _5 = opt_comma x' = error
     {let _6 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3859,11 +3613,8 @@ in
       ( unclosed_exp (with_txt _3 "{<") (with_txt _6 ">}") )}
 | _1 = simple_expr _2 = SHARP _3 = label
     {      ( mkexp(Pexp_send(_1, _3)) )}
-| _1 = simple_expr x0 = SHARPOP _3 = simple_expr
+| _1 = simple_expr x = SHARPOP _3 = simple_expr
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -3878,34 +3629,28 @@ let _symbolstartpos = _startpos__1_ in
         let loc = mklocation _symbolstartpos _endpos in
         mkexp (Pexp_constraint (mkexp ~ghost:true ~loc (Pexp_pack _3),
                                 mktyp ~ghost:true ~loc (Ptyp_package _5))) )}
-| x0 = LPAREN _2 = MODULE _3 = module_expr _4 = COLON x1 = error
+| x = LPAREN _2 = MODULE _3 = module_expr _4 = COLON x' = error
     {let _5 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( unclosed_exp (with_txt _1 "(") (with_txt _5 ")") )}
-| x0 = mod_longident _2 = DOT _3 = LPAREN _4 = MODULE _5 = module_expr _6 = COLON _7 = package_type _8 = RPAREN
+| x = mod_longident _2 = DOT _3 = LPAREN _4 = MODULE _5 = module_expr _6 = COLON _7 = package_type _8 = RPAREN
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos_x0_ in
+let _startpos__1_ = _startpos_x_ in
 let _endpos = _endpos__8_ in
 let _symbolstartpos = _startpos__1_ in
       (
@@ -3913,19 +3658,16 @@ let _symbolstartpos = _startpos__1_ in
         mkexp(Pexp_open(Fresh, _1,
         mkexp ~loc (Pexp_constraint (mkexp ~ghost:true ~loc (Pexp_pack _5),
                                      mktyp ~ghost:true ~loc (Ptyp_package _7))))) )}
-| _1 = mod_longident _2 = DOT x0 = LPAREN _4 = MODULE _5 = module_expr _6 = COLON x1 = error
+| _1 = mod_longident _2 = DOT x = LPAREN _4 = MODULE _5 = module_expr _6 = COLON x' = error
     {let _7 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4033,45 +3775,36 @@ let _symbolstartpos = _startpos__1_ in
     )}
 
 let_binding_body:
-  x0 = val_ident _2 = type_constraint _3 = EQUAL _4 = expr
+  x = val_ident _2 = type_constraint _3 = EQUAL _4 = expr
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
       ( let loc = mklocation _symbolstartpos _endpos in
       mkpat ~loc (Ppat_var (mkloc x loc)) )
 in
-let _startpos__1_ = _startpos_x0_ in
+let _startpos__1_ = _startpos_x_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
       (
         let loc = mklocation _symbolstartpos _endpos in
         (_1, ghexp_constraint loc _4 _2)
       )}
-| x0 = val_ident _2 = curried_binding_return_typed
+| x = val_ident _2 = curried_binding_return_typed
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
       ( let loc = mklocation _symbolstartpos _endpos in
       mkpat ~loc (Ppat_var (mkloc x loc)) )
 in
       ( (_1, _2) )}
-| x0 = val_ident _2 = COLON _3 = typevar_list _4 = DOT _5 = core_type _6 = EQUAL _7 = mark_position_exp_expr_
+| x = val_ident _2 = COLON _3 = typevar_list _4 = DOT _5 = core_type _6 = EQUAL _7 = mark_position_exp_expr_
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
       ( let loc = mklocation _symbolstartpos _endpos in
       mkpat ~loc (Ppat_var (mkloc x loc)) )
 in
-let _startpos__1_ = _startpos_x0_ in
+let _startpos__1_ = _startpos_x_ in
 let _endpos = _endpos__7_ in
 let _symbolstartpos = _startpos__1_ in
       (
@@ -4079,17 +3812,14 @@ let _symbolstartpos = _startpos__1_ in
         let core_loc = mklocation _startpos__5_ _endpos__5_ in
         (mkpat ~ghost:true ~loc (Ppat_constraint(_1, mktyp ~ghost:true (Ptyp_poly(List.rev _3, only_core_type _5 core_loc)))), _7)
       )}
-| x0 = val_ident _2 = COLON _3 = TYPE _4 = lident_list _5 = DOT _6 = core_type _7 = EQUAL _8 = mark_position_exp_expr_
+| x = val_ident _2 = COLON _3 = TYPE _4 = lident_list _5 = DOT _6 = core_type _7 = EQUAL _8 = mark_position_exp_expr_
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
       ( let loc = mklocation _symbolstartpos _endpos in
       mkpat ~loc (Ppat_var (mkloc x loc)) )
 in
-let _startpos__1_ = _startpos_x0_ in
+let _startpos__1_ = _startpos_x_ in
 let _endpos = _endpos__8_ in
 let _symbolstartpos = _startpos__1_ in
      (
@@ -4270,21 +4000,15 @@ lbl_expr_list:
     {                    ( [_1] )}
 
 lbl_expr:
-  x0 = label_longident _2 = COLON _3 = expr
+  x = label_longident _2 = COLON _3 = expr
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( (_1, _3) )}
-| x0 = label_longident
+| x = label_longident
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4328,11 +4052,8 @@ let _symbolstartpos = _startpos__1_ in
       )}
 
 non_punned_lbl_expression:
-  x0 = label_longident _2 = COLON _3 = expr
+  x = label_longident _2 = COLON _3 = expr
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4363,11 +4084,8 @@ string_literal_expr_list_that_is_not_a_single_punned_field:
     {    ( _1::_3 )}
 
 field_expr:
-  x0 = LIDENT _2 = COLON _3 = expr
+  x = LIDENT _2 = COLON _3 = expr
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4414,36 +4132,27 @@ pattern_without_or:
 _pattern_without_or:
   _1 = simple_pattern
     {      ( _1 )}
-| _1 = pattern_without_or _2 = AS x0 = val_ident
+| _1 = pattern_without_or _2 = AS x = val_ident
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( mkpat(Ppat_alias(_1, _3)) )}
-| _1 = pattern_without_or _2 = AS x0 = error
+| _1 = pattern_without_or _2 = AS x = error
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( expecting_pat (with_txt _3 "identifier") )}
-| x0 = constr_longident _2 = simple_pattern_list
+| x = constr_longident _2 = simple_pattern_list
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos_x0_ in
+let _startpos__1_ = _startpos_x_ in
 let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
     (
@@ -4460,21 +4169,15 @@ let _symbolstartpos = _startpos__1_ in
     {    (
       mkpat (Ppat_variant(_1, Some _2))
     )}
-| _1 = pattern_without_or x0 = COLONCOLON _3 = pattern_without_or
+| _1 = pattern_without_or x = COLONCOLON _3 = pattern_without_or
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( Location.raise_errorf ~loc:_2.loc ":: is not supported in Reason, please use [hd, ...tl] instead" )}
-| _1 = pattern_without_or _2 = COLONCOLON x0 = error
+| _1 = pattern_without_or _2 = COLONCOLON x = error
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4488,19 +4191,16 @@ let _symbolstartpos = _startpos__1_ in
          let loc = mklocation _symbolstartpos _endpos in
          mkpat_cons loc_coloncolon (mkpat ~ghost:true ~loc (Ppat_tuple[_5;_7])) loc
       )}
-| x0 = LPAREN _2 = COLONCOLON _3 = RPAREN _4 = LPAREN _5 = pattern_without_or _6 = COMMA _7 = pattern_without_or x1 = error
+| x = LPAREN _2 = COLONCOLON _3 = RPAREN _4 = LPAREN _5 = pattern_without_or _6 = COMMA _7 = pattern_without_or x' = error
     {let _8 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4518,11 +4218,8 @@ simple_pattern:
     {                                                   (_1)}
 
 _simple_pattern:
-  x0 = val_ident
+  x = val_ident
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4542,11 +4239,8 @@ _simple_pattern_not_ident:
     {      ( mkpat(Ppat_constant _1) )}
 | _1 = signed_constant _2 = DOTDOT _3 = signed_constant
     {      ( mkpat(Ppat_interval (_1, _3)) )}
-| x0 = constr_longident
+| x = constr_longident
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4554,11 +4248,8 @@ in
       ( mkpat(Ppat_construct(_1, None)) )}
 | _1 = name_tag
     {      ( mkpat(Ppat_variant(_1, None)) )}
-| _1 = SHARP x0 = type_longident
+| _1 = SHARP x = type_longident
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4566,19 +4257,16 @@ in
       ( mkpat(Ppat_type (_2)) )}
 | _1 = LBRACE _2 = lbl_pattern_list _3 = RBRACE
     {      ( let (fields, closed) = _2 in mkpat(Ppat_record(fields, closed)) )}
-| x0 = LBRACE _2 = lbl_pattern_list x1 = error
+| x = LBRACE _2 = lbl_pattern_list x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4588,19 +4276,16 @@ in
     {      ( let seq, ext_opt = _2 in
         let loc_rbracket = mklocation _startpos__2_ _endpos__2_ in
         make_real_pat (mktailpat_extension loc_rbracket (List.rev seq) ext_opt) )}
-| x0 = LBRACKET _2 = pattern_comma_list_extension _3 = opt_semi x1 = error
+| x = LBRACKET _2 = pattern_comma_list_extension _3 = opt_semi x' = error
     {let _4 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4610,19 +4295,16 @@ in
     {      ( mkpat(Ppat_array(List.rev _2)) )}
 | _1 = LBRACKETBAR _2 = BARRBRACKET
     {      ( mkpat(Ppat_array []) )}
-| x0 = LBRACKETBAR _2 = pattern_comma_list _3 = opt_semi x1 = error
+| x = LBRACKETBAR _2 = pattern_comma_list _3 = opt_semi x' = error
     {let _4 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4632,19 +4314,16 @@ in
     {      ( _2 )}
 | _1 = LPAREN _2 = pattern_two_or_more_comma_list _3 = RPAREN
     {      ( mkpat(Ppat_tuple(List.rev _2)) )}
-| x0 = LPAREN _2 = pattern x1 = error
+| x = LPAREN _2 = pattern x' = error
     {let _3 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4652,49 +4331,37 @@ in
       ( unclosed_pat (with_txt _1 "(") (with_txt _3 ")") )}
 | _1 = LPAREN _2 = pattern _3 = COLON _4 = core_type _5 = RPAREN
     {      ( mkpat(Ppat_constraint(_2, only_core_type _4 (mklocation _startpos__4_ _endpos__4_))) )}
-| x0 = LPAREN _2 = pattern _3 = COLON _4 = core_type x1 = error
+| x = LPAREN _2 = pattern _3 = COLON _4 = core_type x' = error
     {let _5 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( unclosed_pat (with_txt _1 "(") (with_txt _5 ")") )}
-| _1 = LPAREN _2 = pattern _3 = COLON x0 = error
+| _1 = LPAREN _2 = pattern _3 = COLON x = error
     {let _4 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( expecting_pat (with_txt _4 "type") )}
-| _1 = LPAREN _2 = MODULE x0 = UIDENT _4 = RPAREN
+| _1 = LPAREN _2 = MODULE x = UIDENT _4 = RPAREN
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( mkpat(Ppat_unpack _3) )}
-| _1 = LPAREN _2 = MODULE x0 = UIDENT _4 = COLON _5 = package_type _6 = RPAREN
+| _1 = LPAREN _2 = MODULE x = UIDENT _4 = COLON _5 = package_type _6 = RPAREN
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4705,19 +4372,16 @@ let _symbolstartpos = _startpos__1_ in
         let loc = mklocation _symbolstartpos _endpos in
         mkpat(Ppat_constraint(mkpat ~ghost:true ~loc (Ppat_unpack _3),
                               mktyp ~ghost:true ~loc (Ptyp_package _5))) )}
-| x0 = LPAREN _2 = MODULE _3 = UIDENT _4 = COLON _5 = package_type x1 = error
+| x = LPAREN _2 = MODULE _3 = UIDENT _4 = COLON _5 = package_type x' = error
     {let _6 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4777,21 +4441,15 @@ lbl_pattern_list:
     {      ( let (fields, closed) = _3 in _1 :: fields, closed )}
 
 lbl_pattern:
-  x0 = label_longident _2 = COLON _3 = pattern
+  x = label_longident _2 = COLON _3 = pattern
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( (_1,_3) )}
-| x0 = label_longident
+| x = label_longident
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4837,21 +4495,15 @@ let _symbolstartpos = _startpos__1_ in
   )}
 
 type_declaration_details:
-  x0 = UIDENT _2 = optional_type_parameters _3 = type_kind _4 = constraints
+  x = UIDENT _2 = optional_type_parameters _3 = type_kind _4 = constraints
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( Location.raise_errorf ~loc:_1.loc "A type's name need to begin with a lower-case letter or _" )}
-| x0 = LIDENT _2 = optional_type_parameters _3 = type_kind _4 = constraints
+| x = LIDENT _2 = optional_type_parameters _3 = type_kind _4 = constraints
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -4983,22 +4635,21 @@ constructor_declarations:
     {                                                                                 ( _1 :: List.rev _2 )}
 
 constructor_declaration_no_leading_bar:
-  _100 = UIDENT _2 = generalized_constructor_arguments _3 = attributes
+  _1' = UIDENT _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( _1 )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
      (
@@ -5006,24 +4657,22 @@ let _symbolstartpos = _startpos__1_ in
         let loc = mklocation _symbolstartpos _endpos in
         Type.constructor _1 ~args ?res ~loc ~attrs:_3
      )}
-| _100 = LBRACKET _200 = RBRACKET _2 = generalized_constructor_arguments _3 = attributes
+| _1' = LBRACKET _2' = RBRACKET _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__20_ = _endpos__200_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _20 = _200 in
-  let _10 = _100 in
+  let _endpos__2_ = _endpos__2'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _2 = _2' in
+  let _1 = _1' in
   let x =
-    let _2 = _20 in
-    let _1 = _10 in
                                                     ( "[]" )
   in
-  let _endpos_x_ = _endpos__20_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__2_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
      (
@@ -5031,24 +4680,22 @@ let _symbolstartpos = _startpos__1_ in
         let loc = mklocation _symbolstartpos _endpos in
         Type.constructor _1 ~args ?res ~loc ~attrs:_3
      )}
-| _100 = LPAREN _200 = RPAREN _2 = generalized_constructor_arguments _3 = attributes
+| _1' = LPAREN _2' = RPAREN _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__20_ = _endpos__200_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _20 = _200 in
-  let _10 = _100 in
+  let _endpos__2_ = _endpos__2'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _2 = _2' in
+  let _1 = _1' in
   let x =
-    let _2 = _20 in
-    let _1 = _10 in
                                                     ( "()" )
   in
-  let _endpos_x_ = _endpos__20_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__2_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
      (
@@ -5056,22 +4703,21 @@ let _symbolstartpos = _startpos__1_ in
         let loc = mklocation _symbolstartpos _endpos in
         Type.constructor _1 ~args ?res ~loc ~attrs:_3
      )}
-| _100 = COLONCOLON _2 = generalized_constructor_arguments _3 = attributes
+| _1' = COLONCOLON _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "::" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
      (
@@ -5079,22 +4725,21 @@ let _symbolstartpos = _startpos__1_ in
         let loc = mklocation _symbolstartpos _endpos in
         Type.constructor _1 ~args ?res ~loc ~attrs:_3
      )}
-| _100 = FALSE _2 = generalized_constructor_arguments _3 = attributes
+| _1' = FALSE _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "false" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
      (
@@ -5102,22 +4747,21 @@ let _symbolstartpos = _startpos__1_ in
         let loc = mklocation _symbolstartpos _endpos in
         Type.constructor _1 ~args ?res ~loc ~attrs:_3
      )}
-| _100 = TRUE _2 = generalized_constructor_arguments _3 = attributes
+| _1' = TRUE _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "true" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
      (
@@ -5127,17 +4771,16 @@ let _symbolstartpos = _startpos__1_ in
      )}
 
 constructor_declaration_leading_bar:
-  _1 = BAR _100 = UIDENT _3 = generalized_constructor_arguments _4 = attributes
+  _1 = BAR _1' = UIDENT _3 = generalized_constructor_arguments _4 = attributes
     {let _2 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( _1 )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -5149,19 +4792,17 @@ let _symbolstartpos = _startpos__1_ in
        let loc = mklocation _symbolstartpos _endpos in
        Type.constructor _2 ~args ?res ~loc ~attrs:_4
       )}
-| _1 = BAR _100 = LBRACKET _200 = RBRACKET _3 = generalized_constructor_arguments _4 = attributes
+| _1 = BAR _1' = LBRACKET _2' = RBRACKET _3 = generalized_constructor_arguments _4 = attributes
     {let _2 =
-  let _endpos__20_ = _endpos__200_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _20 = _200 in
-  let _10 = _100 in
+  let _endpos__2_ = _endpos__2'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _2 = _2' in
+  let _1 = _1' in
   let x =
-    let _2 = _20 in
-    let _1 = _10 in
                                                     ( "[]" )
   in
-  let _endpos_x_ = _endpos__20_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__2_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -5173,19 +4814,17 @@ let _symbolstartpos = _startpos__1_ in
        let loc = mklocation _symbolstartpos _endpos in
        Type.constructor _2 ~args ?res ~loc ~attrs:_4
       )}
-| _1 = BAR _100 = LPAREN _200 = RPAREN _3 = generalized_constructor_arguments _4 = attributes
+| _1 = BAR _1' = LPAREN _2' = RPAREN _3 = generalized_constructor_arguments _4 = attributes
     {let _2 =
-  let _endpos__20_ = _endpos__200_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _20 = _200 in
-  let _10 = _100 in
+  let _endpos__2_ = _endpos__2'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _2 = _2' in
+  let _1 = _1' in
   let x =
-    let _2 = _20 in
-    let _1 = _10 in
                                                     ( "()" )
   in
-  let _endpos_x_ = _endpos__20_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__2_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -5197,17 +4836,16 @@ let _symbolstartpos = _startpos__1_ in
        let loc = mklocation _symbolstartpos _endpos in
        Type.constructor _2 ~args ?res ~loc ~attrs:_4
       )}
-| _1 = BAR _100 = COLONCOLON _3 = generalized_constructor_arguments _4 = attributes
+| _1 = BAR _1' = COLONCOLON _3 = generalized_constructor_arguments _4 = attributes
     {let _2 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "::" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -5219,17 +4857,16 @@ let _symbolstartpos = _startpos__1_ in
        let loc = mklocation _symbolstartpos _endpos in
        Type.constructor _2 ~args ?res ~loc ~attrs:_4
       )}
-| _1 = BAR _100 = FALSE _3 = generalized_constructor_arguments _4 = attributes
+| _1 = BAR _1' = FALSE _3 = generalized_constructor_arguments _4 = attributes
     {let _2 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "false" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -5241,17 +4878,16 @@ let _symbolstartpos = _startpos__1_ in
        let loc = mklocation _symbolstartpos _endpos in
        Type.constructor _2 ~args ?res ~loc ~attrs:_4
       )}
-| _1 = BAR _100 = TRUE _3 = generalized_constructor_arguments _4 = attributes
+| _1 = BAR _1' = TRUE _3 = generalized_constructor_arguments _4 = attributes
     {let _2 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "true" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -5291,9 +4927,9 @@ generalized_constructor_arguments:
                                                  (  )
 in
                                           ( (_2, None) )}
-| _10 = OF _2 = constructor_arguments
+| _1' = OF _2 = constructor_arguments
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                  (  )
 in
                                           ( (_2, None) )}
@@ -5302,9 +4938,9 @@ in
                                                  (  )
 in
                                                 ( (_2,Some (only_core_type _4 (mklocation _startpos__4_ _endpos__4_))) )}
-| _10 = OF _2 = constructor_arguments _3 = COLON _4 = core_type
+| _1' = OF _2 = constructor_arguments _3 = COLON _4 = core_type
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                  (  )
 in
                                                 ( (_2,Some (only_core_type _4 (mklocation _startpos__4_ _endpos__4_))) )}
@@ -5332,16 +4968,13 @@ constructor_arguments:
       )}
 
 label_declaration:
-  _1 = mutable_flag x0 = LIDENT _3 = attributes
+  _1 = mutable_flag x = LIDENT _3 = attributes
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__2_ = _startpos_x0_ in
+let _startpos__2_ = _startpos_x_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -5352,16 +4985,13 @@ else
        let ct = mkct _2 in
        (Type.field _2 ct ~mut:_1 ~loc, _3)
       )}
-| _1 = mutable_flag x0 = LIDENT _3 = attributes _4 = COLON _5 = poly_type _6 = attributes
+| _1 = mutable_flag x = LIDENT _3 = attributes _4 = COLON _5 = poly_type _6 = attributes
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__2_ = _startpos_x0_ in
+let _startpos__2_ = _startpos_x_ in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -5379,11 +5009,8 @@ potentially_long_ident_and_optional_type_parameters:
       let lident_lident_loc = mkloc (Lident _1) loc in
       (lident_lident_loc, _2)
   )}
-| x0 = type_strictly_longident _2 = optional_type_parameters
+| x = type_strictly_longident _2 = optional_type_parameters
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -5425,131 +5052,123 @@ sig_extension_constructors:
     {      ( _3 :: _1 )}
 
 extension_constructor_declaration:
-  _100 = UIDENT _2 = generalized_constructor_arguments _3 = attributes
+  _1' = UIDENT _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( _1 )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
       ( let args, res = _2 in
         let loc = mklocation _symbolstartpos _endpos in
         Te.decl _1 ~args ?res ~loc ~attrs:_3 )}
-| _100 = LBRACKET _200 = RBRACKET _2 = generalized_constructor_arguments _3 = attributes
+| _1' = LBRACKET _2' = RBRACKET _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__20_ = _endpos__200_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _20 = _200 in
-  let _10 = _100 in
+  let _endpos__2_ = _endpos__2'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _2 = _2' in
+  let _1 = _1' in
   let x =
-    let _2 = _20 in
-    let _1 = _10 in
                                                     ( "[]" )
   in
-  let _endpos_x_ = _endpos__20_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__2_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
       ( let args, res = _2 in
         let loc = mklocation _symbolstartpos _endpos in
         Te.decl _1 ~args ?res ~loc ~attrs:_3 )}
-| _100 = LPAREN _200 = RPAREN _2 = generalized_constructor_arguments _3 = attributes
+| _1' = LPAREN _2' = RPAREN _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__20_ = _endpos__200_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _20 = _200 in
-  let _10 = _100 in
+  let _endpos__2_ = _endpos__2'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _2 = _2' in
+  let _1 = _1' in
   let x =
-    let _2 = _20 in
-    let _1 = _10 in
                                                     ( "()" )
   in
-  let _endpos_x_ = _endpos__20_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__2_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
       ( let args, res = _2 in
         let loc = mklocation _symbolstartpos _endpos in
         Te.decl _1 ~args ?res ~loc ~attrs:_3 )}
-| _100 = COLONCOLON _2 = generalized_constructor_arguments _3 = attributes
+| _1' = COLONCOLON _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "::" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
       ( let args, res = _2 in
         let loc = mklocation _symbolstartpos _endpos in
         Te.decl _1 ~args ?res ~loc ~attrs:_3 )}
-| _100 = FALSE _2 = generalized_constructor_arguments _3 = attributes
+| _1' = FALSE _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "false" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
       ( let args, res = _2 in
         let loc = mklocation _symbolstartpos _endpos in
         Te.decl _1 ~args ?res ~loc ~attrs:_3 )}
-| _100 = TRUE _2 = generalized_constructor_arguments _3 = attributes
+| _1' = TRUE _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "true" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
       ( let args, res = _2 in
@@ -5557,184 +5176,158 @@ let _symbolstartpos = _startpos__1_ in
         Te.decl _1 ~args ?res ~loc ~attrs:_3 )}
 
 extension_constructor_rebind:
-  _100 = UIDENT _2 = EQUAL x0 = constr_longident _4 = attributes
+  _1' = UIDENT _2 = EQUAL x = constr_longident _4 = attributes
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( _1 )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
       (
          let loc = mklocation _symbolstartpos _endpos in
          Te.rebind _1 _3 ~loc ~attrs:_4
       )}
-| _100 = LBRACKET _200 = RBRACKET _2 = EQUAL x0 = constr_longident _4 = attributes
+| _1' = LBRACKET _2' = RBRACKET _2 = EQUAL x = constr_longident _4 = attributes
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos__20_ = _endpos__200_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _20 = _200 in
-  let _10 = _100 in
+  let _endpos__2_ = _endpos__2'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _2 = _2' in
+  let _1 = _1' in
   let x =
-    let _2 = _20 in
-    let _1 = _10 in
                                                     ( "[]" )
   in
-  let _endpos_x_ = _endpos__20_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__2_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
       (
          let loc = mklocation _symbolstartpos _endpos in
          Te.rebind _1 _3 ~loc ~attrs:_4
       )}
-| _100 = LPAREN _200 = RPAREN _2 = EQUAL x0 = constr_longident _4 = attributes
+| _1' = LPAREN _2' = RPAREN _2 = EQUAL x = constr_longident _4 = attributes
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos__20_ = _endpos__200_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _20 = _200 in
-  let _10 = _100 in
+  let _endpos__2_ = _endpos__2'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _2 = _2' in
+  let _1 = _1' in
   let x =
-    let _2 = _20 in
-    let _1 = _10 in
                                                     ( "()" )
   in
-  let _endpos_x_ = _endpos__20_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__2_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
       (
          let loc = mklocation _symbolstartpos _endpos in
          Te.rebind _1 _3 ~loc ~attrs:_4
       )}
-| _100 = COLONCOLON _2 = EQUAL x0 = constr_longident _4 = attributes
+| _1' = COLONCOLON _2 = EQUAL x = constr_longident _4 = attributes
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "::" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
       (
          let loc = mklocation _symbolstartpos _endpos in
          Te.rebind _1 _3 ~loc ~attrs:_4
       )}
-| _100 = FALSE _2 = EQUAL x0 = constr_longident _4 = attributes
+| _1' = FALSE _2 = EQUAL x = constr_longident _4 = attributes
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "false" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
       (
          let loc = mklocation _symbolstartpos _endpos in
          Te.rebind _1 _3 ~loc ~attrs:_4
       )}
-| _100 = TRUE _2 = EQUAL x0 = constr_longident _4 = attributes
+| _1' = TRUE _2 = EQUAL x = constr_longident _4 = attributes
     {let _3 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _1 =
-  let _endpos__10_ = _endpos__100_ in
-  let _startpos__10_ = _startpos__100_ in
-  let _10 = _100 in
+  let _endpos__1_ = _endpos__1'_ in
+  let _startpos__1_ = _startpos__1'_ in
+  let _1 = _1' in
   let x =
-    let _1 = _10 in
                                                     ( "true" )
   in
-  let _endpos_x_ = _endpos__10_ in
-  let _startpos_x_ = _startpos__10_ in
+  let _endpos_x_ = _endpos__1_ in
+  let _startpos_x_ = _startpos__1_ in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _startpos__1_ = _startpos__100_ in
+let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
       (
@@ -5749,11 +5342,8 @@ with_constraints:
     {                                                ( _3 :: _1 )}
 
 with_constraint:
-  _1 = TYPE x0 = label_longident _3 = optional_type_parameters _4 = with_type_binder _5 = core_type _6 = constraints
+  _1 = TYPE x = label_longident _3 = optional_type_parameters _4 = with_type_binder _5 = core_type _6 = constraints
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -5771,17 +5361,14 @@ let _symbolstartpos = _startpos__1_ in
               ~manifest:(only_core_type _5 core_type_loc)
               ~priv:_4
               ~loc)) )}
-| _1 = TYPE x0 = label_longident _3 = optional_type_parameters _4 = COLONEQUAL _5 = core_type
+| _1 = TYPE x = label_longident _3 = optional_type_parameters _4 = COLONEQUAL _5 = core_type
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
-let _endpos__2_ = _endpos_x0_ in
-let _startpos__2_ = _startpos_x0_ in
+let _endpos__2_ = _endpos_x_ in
+let _startpos__2_ = _startpos_x_ in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
     (
@@ -5798,37 +5385,31 @@ let _symbolstartpos = _startpos__1_ in
              ~manifest:(only_core_type _5 core_type_loc)
              ~loc)
     )}
-| _1 = MODULE x0 = mod_longident _3 = EQUAL x1 = mod_ext_longident
+| _1 = MODULE x = mod_longident _3 = EQUAL x' = mod_ext_longident
     {let _4 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( Pwith_module (_2, _4) )}
-| _1 = MODULE x0 = UIDENT _3 = COLONEQUAL x1 = mod_ext_longident
+| _1 = MODULE x = UIDENT _3 = COLONEQUAL x' = mod_ext_longident
     {let _4 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
 let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -5909,21 +5490,15 @@ non_arrowed_non_simple_core_type:
     {                                                                                        (_1)}
 
 _non_arrowed_non_simple_core_type:
-  x0 = type_longident _2 = non_arrowed_simple_core_type_list
+  x = type_longident _2 = non_arrowed_simple_core_type_list
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
       ( Core_type (mktyp(Ptyp_constr(_1, List.rev _2))) )}
-| _1 = SHARP x0 = class_longident _3 = non_arrowed_simple_core_type_list
+| _1 = SHARP x = class_longident _3 = non_arrowed_simple_core_type_list
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -5952,11 +5527,8 @@ let _symbolstartpos = _startpos__1_ in
         | moreThanOne -> Core_type (mktyp(Ptyp_tuple(List.rev moreThanOne))) )}
 | _1 = QUOTE _2 = ident
     {      ( Core_type (mktyp(Ptyp_var _2)) )}
-| _1 = SHARP x0 = class_longident
+| _1 = SHARP x = class_longident
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -5964,11 +5536,8 @@ in
       ( Core_type (mktyp(Ptyp_class(_2, []))) )}
 | _1 = UNDERSCORE
     {      ( Core_type (mktyp(Ptyp_any)) )}
-| x0 = type_longident
+| x = type_longident
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -6018,21 +5587,15 @@ object_record_type:
     {      ( List.rev _3, Object_open )}
 
 package_type:
-  x0 = mty_longident
+  x = mty_longident
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
 in
                           ( (_1, []) )}
-| x0 = mty_longident _2 = WITH _3 = package_type_cstrs
+| x = mty_longident _2 = WITH _3 = package_type_cstrs
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -6040,11 +5603,8 @@ in
                                                   ( (_1, _3) )}
 
 package_type_cstr:
-  _1 = TYPE x0 = label_longident _3 = EQUAL _4 = core_type
+  _1 = TYPE x = label_longident _3 = EQUAL _4 = core_type
     {let _2 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )
@@ -6180,136 +5740,135 @@ operator:
     {                                                ( _1 )}
 | _1 = BANG
     {                                                ( "!" )}
-| _10 = INFIXOP0
+| _1' = INFIXOP0
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( _1 )
 in
                                                 ( _1 )}
-| _10 = INFIXOP1
+| _1' = INFIXOP1
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( _1 )
 in
                                                 ( _1 )}
-| _10 = INFIXOP2
+| _1' = INFIXOP2
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( _1 )
 in
                                                 ( _1 )}
-| _10 = INFIXOP3
+| _1' = INFIXOP3
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( _1 )
 in
                                                 ( _1 )}
-| _10 = SLASHGREATER
+| _1' = SLASHGREATER
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "/>" )
 in
                                                 ( _1 )}
-| _10 = INFIXOP4
+| _1' = INFIXOP4
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( _1 )
 in
                                                 ( _1 )}
-| _10 = PLUS
+| _1' = PLUS
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "+" )
 in
                                                 ( _1 )}
-| _10 = PLUSDOT
+| _1' = PLUSDOT
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "+." )
 in
                                                 ( _1 )}
-| _10 = MINUS
+| _1' = MINUS
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "-" )
 in
                                                 ( _1 )}
-| _10 = MINUSDOT
+| _1' = MINUSDOT
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "-." )
 in
                                                 ( _1 )}
-| _10 = STAR
+| _1' = STAR
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "*" )
 in
                                                 ( _1 )}
-| _10 = LESS
+| _1' = LESS
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "<" )
 in
                                                 ( _1 )}
-| _10 = GREATER
+| _1' = GREATER
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( ">" )
 in
                                                 ( _1 )}
-| _10 = OR
+| _1' = OR
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "or" )
 in
                                                 ( _1 )}
-| _10 = BARBAR
+| _1' = BARBAR
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "||" )
 in
                                                 ( _1 )}
-| _10 = AMPERSAND
+| _1' = AMPERSAND
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "&" )
 in
                                                 ( _1 )}
-| _10 = AMPERAMPER
+| _1' = AMPERAMPER
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "&&" )
 in
                                                 ( _1 )}
-| _10 = COLONEQUAL
+| _1' = COLONEQUAL
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( ":=" )
 in
                                                 ( _1 )}
-| _10 = PLUSEQ
+| _1' = PLUSEQ
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "+=" )
 in
                                                 ( _1 )}
-| _10 = PERCENT
+| _1' = PERCENT
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "%" )
 in
                                                 ( _1 )}
-| _10 = LESSDOTDOTGREATER
+| _1' = LESSDOTDOTGREATER
     {let _1 =
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( "<..>" )
 in
                                                 ( _1 )}
-| _10 = GREATER _20 = GREATER
+| _1' = GREATER _2 = GREATER
     {let _1 =
-  let _2 = _20 in
-  let _1 = _10 in
+  let _1 = _1' in
                                                   ( ">>" )
 in
                                                 ( _1 )}
@@ -6604,11 +6163,8 @@ single_attr_id:
     {         ( "with" )}
 
 attr_id:
-  x0 = single_attr_id
+  x = single_attr_id
     {let _1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _symbolstartpos = _startpos_x_ in
    ( mkloc x (mklocation _symbolstartpos _endpos) )

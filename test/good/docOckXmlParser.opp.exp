@@ -931,9 +931,8 @@ special:
     {      ( Documentation.Index )}
 
 item:
-  _1 = ITEM elems0 = list_text_element_ _3 = CLOSE
+  _1 = ITEM elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( text )}
@@ -946,9 +945,8 @@ text_element:
         ( "" )
 in
       ( Documentation.Code str )}
-| _1 = CODE data0 = Data _3 = CLOSE
+| _1 = CODE data = Data _3 = CLOSE
     {let str =
-  let data = data0 in
         ( data)
 in
       ( Documentation.Code str )}
@@ -957,9 +955,8 @@ in
         ( "" )
 in
       ( Documentation.PreCode str )}
-| _1 = PRECODE data0 = Data _3 = CLOSE
+| _1 = PRECODE data = Data _3 = CLOSE
     {let str =
-  let data = data0 in
         ( data)
 in
       ( Documentation.PreCode str )}
@@ -968,63 +965,53 @@ in
         ( "" )
 in
       ( Documentation.Verbatim str )}
-| _1 = VERBATIM data0 = Data _3 = CLOSE
+| _1 = VERBATIM data = Data _3 = CLOSE
     {let str =
-  let data = data0 in
         ( data)
 in
       ( Documentation.Verbatim str )}
-| _1 = BOLD elems0 = list_text_element_ _3 = CLOSE
+| _1 = BOLD elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.(Style(Bold, text)) )}
-| _1 = ITALIC elems0 = list_text_element_ _3 = CLOSE
+| _1 = ITALIC elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.(Style(Italic, text)) )}
-| _1 = EMPHASIZE elems0 = list_text_element_ _3 = CLOSE
+| _1 = EMPHASIZE elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.(Style(Emphasize, text)) )}
-| _1 = CENTER elems0 = list_text_element_ _3 = CLOSE
+| _1 = CENTER elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.(Style(Center, text)) )}
-| _1 = LEFT elems0 = list_text_element_ _3 = CLOSE
+| _1 = LEFT elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.(Style(Left, text)) )}
-| _1 = RIGHT elems0 = list_text_element_ _3 = CLOSE
+| _1 = RIGHT elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.(Style(Right, text)) )}
-| _1 = SUPERSCRIPT elems0 = list_text_element_ _3 = CLOSE
+| _1 = SUPERSCRIPT elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.(Style(Superscript, text)) )}
-| _1 = SUBSCRIPT elems0 = list_text_element_ _3 = CLOSE
+| _1 = SUBSCRIPT elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.(Style(Subscript, text)) )}
-| tag = Custom elems0 = list_text_element_ _3 = CLOSE
+| tag = Custom elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.(Style(Custom tag, text)) )}
@@ -1034,9 +1021,8 @@ in
     {      ( Documentation.Enum i )}
 | _1 = NEWLINE _2 = CLOSE
     {      ( Documentation.Newline )}
-| level = Title label = option_label_identifier_ elems0 = list_text_element_ _4 = CLOSE
+| level = Title label = option_label_identifier_ elems = list_text_element_ _4 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.Title(level, label, text) )}
@@ -1045,9 +1031,8 @@ in
         ( None )
 in
       ( Documentation.Reference(rf, text) )}
-| _1 = REFERENCE rf = reference elems0 = nonempty_list_text_element_ _4 = CLOSE
+| _1 = REFERENCE rf = reference elems = nonempty_list_text_element_ _4 = CLOSE
     {let text =
-  let elems = elems0 in
         ( Some elems )
 in
       ( Documentation.Reference(rf, text) )}
@@ -1056,9 +1041,8 @@ in
         ( "" )
 in
       ( Documentation.Target(target, str) )}
-| target = Target data0 = Data _3 = CLOSE
+| target = Target data = Data _3 = CLOSE
     {let str =
-  let data = data0 in
         ( data)
 in
       ( Documentation.Target(target, str) )}
@@ -1078,47 +1062,40 @@ tag:
     {      ( Documentation.Author data )}
 | _1 = VERSION data = Data _3 = CLOSE
     {      ( Documentation.Version data )}
-| _1 = SEE see = see elems0 = list_text_element_ _4 = CLOSE
+| _1 = SEE see = see elems = list_text_element_ _4 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.See(see, text) )}
 | _1 = SINCE data = Data _3 = CLOSE
     {      ( Documentation.Since data )}
-| _1 = BEFORE name = name elems0 = list_text_element_ _4 = CLOSE
+| _1 = BEFORE name = name elems = list_text_element_ _4 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.Before(name, text) )}
-| _1 = DEPRECATED elems0 = list_text_element_ _3 = CLOSE
+| _1 = DEPRECATED elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.Deprecated text )}
-| _1 = PARAM name = name elems0 = list_text_element_ _4 = CLOSE
+| _1 = PARAM name = name elems = list_text_element_ _4 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.Param(name, text) )}
-| _1 = RAISE name = name elems0 = list_text_element_ _4 = CLOSE
+| _1 = RAISE name = name elems = list_text_element_ _4 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.Raise(name, text) )}
-| _1 = RETURN elems0 = list_text_element_ _3 = CLOSE
+| _1 = RETURN elems = list_text_element_ _3 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.Return text )}
-| _1 = TAG name = name elems0 = list_text_element_ _4 = CLOSE
+| _1 = TAG name = name elems = list_text_element_ _4 = CLOSE
     {let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.Tag(name, text) )}
@@ -1160,13 +1137,12 @@ doc_error:
 doc:
   
     {    ( DocOckAttrs.empty )}
-| _1 = DOC elems0 = list_text_element_ tags0 = list_tag_ _4 = CLOSE
+| _1 = DOC elems = list_text_element_ tags' = list_tag_ _4 = CLOSE
     {let tags =
-  let tags = tags0 in
+  let tags = tags' in
         ( tags )
 in
 let text =
-  let elems = elems0 in
         ( elems )
 in
     ( Documentation.(Ok {text; tags}) )}
@@ -1174,13 +1150,12 @@ in
     {    ( Documentation.Error err )}
 
 comment:
-  _1 = COMMENT elems0 = list_text_element_ tags0 = list_tag_ _4 = CLOSE
+  _1 = COMMENT elems = list_text_element_ tags' = list_tag_ _4 = CLOSE
     {let tags =
-  let tags = tags0 in
+  let tags = tags' in
         ( tags )
 in
 let text =
-  let elems = elems0 in
         ( elems )
 in
       ( Documentation.(Documentation (Ok {text; tags})) )}

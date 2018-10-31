@@ -650,10 +650,9 @@ list_mzl_struct_decl_one__:
 list_pair_edots_when_TEllipsis_eexpr__dexpr__:
   
     {    ( [] )}
-| x0 = edots_when_TEllipsis_eexpr_ y0 = dexpr xs = list_pair_edots_when_TEllipsis_eexpr__dexpr__
+| x' = edots_when_TEllipsis_eexpr_ y = dexpr xs = list_pair_edots_when_TEllipsis_eexpr__dexpr__
     {let x =
-  let y = y0 in
-  let x = x0 in
+  let x = x' in
       ( (x, y) )
 in
     ( x :: xs )}
@@ -880,9 +879,8 @@ rule_name:
       ( None )
 in
       ( P.make_cocci_rule_name_result nm d i a e ee )}
-| x0 = pure_ident _2 = extends d = depends i = loption_choose_iso_ a = loption_disable_ e = exists ee = is_expression _8 = TArob
+| x = pure_ident _2 = extends d = depends i = loption_choose_iso_ a = loption_disable_ e = exists ee = is_expression _8 = TArob
     {let nm =
-  let x = x0 in
       ( Some x )
 in
       ( P.make_cocci_rule_name_result nm d i a e ee )}
@@ -893,9 +891,8 @@ in
       ( None )
 in
       ( P.make_script_rule_name_result lang nm d )}
-| _1 = TScript _2 = TDotDot lang = pure_ident x0 = pure_ident d = depends _6 = TArob
+| _1 = TScript _2 = TDotDot lang = pure_ident x = pure_ident d = depends _6 = TArob
     {let nm =
-  let x = x0 in
       ( Some x )
 in
       ( P.make_script_rule_name_result lang nm d )}
@@ -971,9 +968,8 @@ incl:
     {                      ( Data.Iso(Common.Left(P.id2name _2)) )}
 | _1 = TUsing _2 = TPathIsoFile
     {                      ( Data.Iso(Common.Right _2) )}
-| _1 = TVirtual l0 = separated_nonempty_list_TComma_pure_ident_
+| _1 = TVirtual l = separated_nonempty_list_TComma_pure_ident_
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( let names = List.map P.id2name ids in
@@ -986,233 +982,189 @@ in
       Data.Virt(names) )}
 
 metadec:
-  ar = arity ispure = pure _10 = TMetavariable l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+  ar = arity ispure = pure _1 = TMetavariable l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaMetaDecl(arity,name)) in
       !Data.add_meta_meta name pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TParameter l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TParameter l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaParamDecl(arity,name)) in
       !Data.add_param_meta name pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TParameter _20 = Tlist l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TParameter _2 = Tlist l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let len = Ast.AnyLen in
       let tok = check_meta(Ast.MetaParamListDecl(arity,name,len)) in
       !Data.add_paramlist_meta name len pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TExpression _20 = Tlist l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TExpression _2 = Tlist l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let len = Ast.AnyLen in
       let tok = check_meta(Ast.MetaExpListDecl(arity,name,len)) in
       !Data.add_explist_meta name len pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TType l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TType l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaTypeDecl(arity,name)) in
       !Data.add_type_meta name pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TInitialiser l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TInitialiser l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaInitDecl(arity,name)) in
       !Data.add_init_meta name pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TInitialiser _20 = Tlist l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TInitialiser _2 = Tlist l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let len = Ast.AnyLen in
       let tok = check_meta(Ast.MetaInitListDecl(arity,name,len)) in
       !Data.add_initlist_meta name len pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TStatement l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TStatement l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaStmDecl(arity,name)) in
       !Data.add_stm_meta name pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TDeclaration l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TDeclaration l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaDeclDecl(arity,name)) in
       !Data.add_decl_meta name pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TField l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TField l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaFieldDecl(arity,name)) in
       !Data.add_field_meta name pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TField _20 = Tlist l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TField _2 = Tlist l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let len = Ast.AnyLen in
       let tok = check_meta(Ast.MetaFieldListDecl(arity,name,len)) in
       !Data.add_field_list_meta name len pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TStatement _20 = Tlist l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TStatement _2 = Tlist l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaStmListDecl(arity,name)) in
       !Data.add_stmlist_meta name pure; tok) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TTypedef l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TTypedef l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity (_,name) pure check_meta ->
       if arity = Ast.NONE && pure = Ast0.Impure
       then (!Data.add_type_name name; [])
       else raise (Semantic_cocci.Semantic "bad typedef")) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TAttribute l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TAttribute l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity (_,name) pure check_meta ->
       if arity = Ast.NONE && pure = Ast0.Impure
       then (!Data.add_attribute name; [])
       else raise (Semantic_cocci.Semantic "bad attribute")) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TDeclarer _20 = TName l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TDeclarer _2 = TName l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity (_,name) pure check_meta ->
       if arity = Ast.NONE && pure = Ast0.Impure
       then (!Data.add_declarer_name name; [])
       else raise (Semantic_cocci.Semantic "bad declarer")) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TIterator _20 = TName l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TIterator _2 = TName l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity (_,name) pure check_meta ->
       if arity = Ast.NONE && pure = Ast0.Impure
       then (!Data.add_iterator_name name; [])
       else raise (Semantic_cocci.Semantic "bad iterator")) )
 in
     ( P.create_metadec ar ispure kindfn ids )}
-| _10 = TFresh _20 = TIdentifier l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_seed_ _3 = TMPtVirg
+| _1 = TFresh _2 = TIdentifier l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_seed_ _3 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun name check_meta seed ->
       let tok = check_meta(Ast.MetaFreshIdDecl(name,seed)) in
       !Data.add_fresh_id_meta name seed; tok) )
 in
     ( P.create_fresh_metadec kindfn ids )}
-| ar = arity ispure = pure _10 = TIdentifier l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_virt_re_or_not_eqid__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TIdentifier l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_virt_re_or_not_eqid__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       (
      let idfn arity name pure check_meta constraints =
        let tok = check_meta(Ast.MetaIdDecl(arity,name)) in
@@ -1235,76 +1187,63 @@ in
     function cr ->
       (P.create_metadec_with_constraints ar ispure idfn normal cr) @
       (P.create_metadec_virt ar ispure virtfn virt cr) )}
-| ar = arity ispure = pure _10 = TFunction l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_re_or_not_eqid__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TFunction l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_re_or_not_eqid__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta constraints ->
       let tok = check_meta(Ast.MetaFuncDecl(arity,name)) in
       !Data.add_func_meta name constraints pure; tok) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TLocal _20 = TFunction l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_re_or_not_eqid__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TLocal _2 = TFunction l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_re_or_not_eqid__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta constraints ->
       let tok = check_meta(Ast.MetaLocalFuncDecl(arity,name)) in
       !Data.add_local_func_meta name constraints pure;
       tok) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TDeclarer l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_re_or_not_eqid__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TDeclarer l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_re_or_not_eqid__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta constraints ->
       let tok = check_meta(Ast.MetaDeclarerDecl(arity,name)) in
       !Data.add_declarer_meta name constraints pure; tok) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TIterator l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_re_or_not_eqid__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TIterator l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_re_or_not_eqid__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta constraints ->
       let tok = check_meta(Ast.MetaIteratorDecl(arity,name)) in
       !Data.add_iterator_meta name constraints pure; tok) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TError l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TError l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta constraints ->
       let tok = check_meta(Ast.MetaErrDecl(arity,name)) in
       !Data.add_err_meta name constraints pure; tok) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure l0 = option_TLocal_ _20 = TIdExpression l1 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure l = option_TLocal_ _2 = TIdExpression l' = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l1 in
+  let l = l' in
                                            ( l )
 in
 let kindfn =
-  let _2 = _20 in
-  let l = l0 in
   let ty =
         ( None )
   in
@@ -1318,17 +1257,13 @@ let kindfn =
 	  check_meta(Ast.MetaLocalIdExpDecl(arity,name,ty))) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure l0 = option_TLocal_ _20 = TIdExpression x00 = meta_exp_type l1 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure l = option_TLocal_ _2 = TIdExpression x = meta_exp_type l' = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l1 in
+  let l = l' in
                                            ( l )
 in
 let kindfn =
-  let x0 = x00 in
-  let _2 = _20 in
-  let l = l0 in
   let ty =
-    let x = x0 in
         ( Some x )
   in
       ( (fun arity name pure check_meta constraints ->
@@ -1341,15 +1276,12 @@ let kindfn =
 	  check_meta(Ast.MetaLocalIdExpDecl(arity,name,ty))) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure l0 = option_TLocal_ _20 = TIdExpression m0 = nonempty_list_TMul_ l1 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure l = option_TLocal_ _2 = TIdExpression m = nonempty_list_TMul_ l' = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l1 in
+  let l = l' in
                                            ( l )
 in
 let kindfn =
-  let m = m0 in
-  let _2 = _20 in
-  let l = l0 in
       ( (fun arity name pure check_meta constraints ->
       let ty = Some [P.ty_pointerify Type_cocci.Unknown m] in
       match l with
@@ -1361,14 +1293,11 @@ let kindfn =
 	  check_meta(Ast.MetaLocalIdExpDecl(arity,name,ty))) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TGlobal _20 = TIdExpression l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TGlobal _2 = TIdExpression l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
   let ty =
         ( None )
   in
@@ -1377,17 +1306,12 @@ let kindfn =
       check_meta(Ast.MetaGlobalIdExpDecl(arity,name,ty))) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TGlobal _20 = TIdExpression x00 = meta_exp_type l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TGlobal _2 = TIdExpression x = meta_exp_type l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let x0 = x00 in
-  let _2 = _20 in
-  let _1 = _10 in
   let ty =
-    let x = x0 in
         ( Some x )
   in
       ( (fun arity name pure check_meta constraints ->
@@ -1395,42 +1319,33 @@ let kindfn =
       check_meta(Ast.MetaGlobalIdExpDecl(arity,name,ty))) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TGlobal _20 = TIdExpression m0 = nonempty_list_TMul_ l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TGlobal _2 = TIdExpression m = nonempty_list_TMul_ l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let m = m0 in
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta constraints ->
       let ty = Some [P.ty_pointerify Type_cocci.Unknown m] in
       !Data.add_global_idexp_meta ty name constraints pure;
       check_meta(Ast.MetaGlobalIdExpDecl(arity,name,ty))) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TExpression ty0 = expression_type l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TExpression ty = expression_type l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let ty = ty0 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta constraints ->
       let ty = Some [ty] in
       let tok = check_meta(Ast.MetaExpDecl(arity,name,ty)) in
       !Data.add_exp_meta ty name constraints pure; tok) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TConstant l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TConstant l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
   let ty =
         ( None )
   in
@@ -1439,16 +1354,12 @@ let kindfn =
       !Data.add_const_meta ty name constraints pure; tok) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TConstant x00 = meta_exp_type l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TConstant x = meta_exp_type l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let x0 = x00 in
-  let _1 = _10 in
   let ty =
-    let x = x0 in
         ( Some x )
   in
       ( (fun arity name pure check_meta constraints ->
@@ -1456,25 +1367,21 @@ let kindfn =
       !Data.add_const_meta ty name constraints pure; tok) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure _10 = TExpression l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_not_ceq_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TExpression l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_not_ceq_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta constraints ->
       let tok = check_meta(Ast.MetaExpDecl(arity,name,None)) in
       !Data.add_exp_meta None name constraints pure; tok) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure vl0 = meta_exp_type l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_not_ceq_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure vl = meta_exp_type l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_not_ceq_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
 let kindfn =
-  let vl = vl0 in
       ( (fun arity name pure check_meta constraints ->
       let ty = Some vl in
       (match constraints with
@@ -1501,9 +1408,8 @@ let kindfn =
     )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity _2 = TPosition a = option_TPosAny_ l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_x_eq_not_pos__ _5 = TMPtVirg
+| ar = arity _2 = TPosition a = option_TPosAny_ l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_x_eq_not_pos__ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( (if !Data.in_generating
@@ -1513,9 +1419,8 @@ in
       let any = match a with None -> Ast.PER | Some _ -> Ast.ALL in
       !Data.add_pos_meta name constraints any; tok in
     P.create_metadec_with_constraints ar false kindfn ids )}
-| ar = arity ispure = pure _3 = TParameter _4 = Tlist _5 = TOCro len = list_len _7 = TCCro l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _9 = TMPtVirg
+| ar = arity ispure = pure _3 = TParameter _4 = Tlist _5 = TOCro len = list_len _7 = TCCro l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _9 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( P.create_len_metadec ar ispure
@@ -1523,9 +1428,8 @@ in
 	  let tok = check_meta(Ast.MetaParamListDecl(arity,name,lenname)) in
 	  !Data.add_paramlist_meta name lenname pure; tok)
 	len ids )}
-| ar = arity ispure = pure _3 = TExpression _4 = Tlist _5 = TOCro len = list_len _7 = TCCro l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _9 = TMPtVirg
+| ar = arity ispure = pure _3 = TExpression _4 = Tlist _5 = TOCro len = list_len _7 = TCCro l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _9 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( P.create_len_metadec ar ispure
@@ -1533,9 +1437,8 @@ in
 	  let tok = check_meta(Ast.MetaExpListDecl(arity,name,lenname)) in
 	  !Data.add_explist_meta name lenname pure; tok)
 	len ids )}
-| ar = arity ispure = pure _3 = TField _4 = Tlist _5 = TOCro len = list_len _7 = TCCro l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _9 = TMPtVirg
+| ar = arity ispure = pure _3 = TField _4 = Tlist _5 = TOCro len = list_len _7 = TCCro l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _9 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( P.create_len_metadec ar ispure
@@ -1543,9 +1446,8 @@ in
 	  let tok = check_meta(Ast.MetaFieldListDecl(arity,name,lenname)) in
 	  !Data.add_field_list_meta name lenname pure; tok)
 	len ids )}
-| ar = arity ispure = pure _3 = TInitialiser _4 = Tlist _5 = TOCro len = list_len _7 = TCCro l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _9 = TMPtVirg
+| ar = arity ispure = pure _3 = TInitialiser _4 = Tlist _5 = TOCro len = list_len _7 = TCCro l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _9 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( P.create_len_metadec ar ispure
@@ -1553,18 +1455,16 @@ in
 	  let tok = check_meta(Ast.MetaInitListDecl(arity,name,lenname)) in
 	  !Data.add_initlist_meta name lenname pure; tok)
 	len ids )}
-| _1 = TSymbol l0 = separated_nonempty_list_TComma_pure_ident_ _3 = TMPtVirg
+| _1 = TSymbol l = separated_nonempty_list_TComma_pure_ident_ _3 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( (fun _ ->
         let add_sym = fun (nm,_) -> !Data.add_symbol_meta nm in
           List.iter add_sym ids; [])
     )}
-| ar = arity _2 = TFormat l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_re_only__ _4 = TMPtVirg
+| ar = arity _2 = TFormat l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_idconstraint_re_only__ _4 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( P.create_metadec_with_constraints ar Ast0.Impure
@@ -1572,9 +1472,8 @@ in
 	  let tok = check_meta(Ast.MetaFmtDecl(arity,name)) in
 	  !Data.add_fmt_meta name constraints; tok)
     ids )}
-| ar = arity _2 = TFormat _3 = Tlist l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity _2 = TFormat _3 = Tlist l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( P.create_metadec ar Ast0.Impure
@@ -1583,9 +1482,8 @@ in
 	  let tok = check_meta(Ast.MetaFragListDecl(arity,name,len)) in
 	  !Data.add_fmtlist_meta name len; tok)
 	ids )}
-| ar = arity _2 = TFormat _3 = Tlist _4 = TOCro len = list_len _6 = TCCro l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _8 = TMPtVirg
+| ar = arity _2 = TFormat _3 = Tlist _4 = TOCro len = list_len _6 = TCCro l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _8 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( P.create_len_metadec ar Ast0.Impure
@@ -1593,9 +1491,8 @@ in
 	  let tok = check_meta(Ast.MetaFragListDecl(arity,name,lenname)) in
 	  !Data.add_fmtlist_meta name lenname; tok)
 	len ids )}
-| ar = arity _2 = TBinary _3 = TOperator l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_binop_constraint_ _5 = TMPtVirg
+| ar = arity _2 = TBinary _3 = TOperator l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_binop_constraint_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( P.create_metadec_with_constraints ar Ast0.Impure
@@ -1603,9 +1500,8 @@ in
 	  let tok = check_meta(Ast.MetaBinaryOperatorDecl(arity,name)) in
 	  !Data.add_binaryOp_meta name constraints pure; tok)
         ids )}
-| ar = arity _2 = TAssignment _3 = TOperator l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_assignop_constraint_ _5 = TMPtVirg
+| ar = arity _2 = TAssignment _3 = TOperator l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_assignop_constraint_ _5 = TMPtVirg
     {let ids =
-  let l = l0 in
                                            ( l )
 in
     ( P.create_metadec_with_constraints ar Ast0.Impure
@@ -1621,9 +1517,8 @@ pure_ident_or_meta_ident_with_binop_constraint:
 binaryopconstraint:
   
     {  ( Ast0.BinaryOpNoConstraint )}
-| _1 = TEq _2 = TOBrace l0 = separated_nonempty_list_TComma_binary_operator_ _4 = TCBrace
+| _1 = TEq _2 = TOBrace l = separated_nonempty_list_TComma_binary_operator_ _4 = TCBrace
     {let ops =
-  let l = l0 in
                                            ( l )
 in
   ( Ast0.BinaryOpInSet ops )}
@@ -1637,9 +1532,8 @@ pure_ident_or_meta_ident_with_assignop_constraint:
 assignopconstraint:
   
     {  ( Ast0.AssignOpNoConstraint )}
-| _1 = TEq _2 = TOBrace l0 = separated_nonempty_list_TComma_assignment_operator_ _4 = TCBrace
+| _1 = TEq _2 = TOBrace l = separated_nonempty_list_TComma_assignment_operator_ _4 = TCBrace
     {let ops =
-  let l = l0 in
                                            ( l )
 in
   ( Ast0.AssignOpInSet ops )}
@@ -1724,9 +1618,8 @@ meta_exp_type:
     {    ( [Ast0_cocci.ast0_type_to_type true t] )}
 | t = typedef_ctype _2 = TOCro _3 = TCCro
     {    ( [Type_cocci.Array (Ast0_cocci.ast0_type_to_type true t)] )}
-| _1 = TOBrace l0 = separated_nonempty_list_TComma_ctype_ _3 = TCBrace m = list_TMul_
+| _1 = TOBrace l = separated_nonempty_list_TComma_ctype_ _3 = TCBrace m = list_TMul_
     {let t =
-  let l = l0 in
                                            ( l )
 in
     ( List.map
@@ -1810,9 +1703,8 @@ in
     then failwith "enums must be named in the iso file");
       Ast0.wrap(Ast0.EnumDef(Ast0.wrap(Ast0.EnumName(P.clt2mcode "enum" s, i)),
 			     P.clt2mcode "{" l, ids, P.clt2mcode "}" r)) )}
-| s = Tenum x0 = ident l = TOBrace ids = enum_decl_list r = TCBrace
+| s = Tenum x = ident l = TOBrace ids = enum_decl_list r = TCBrace
     {let i =
-  let x = x0 in
       ( Some x )
 in
     ( (if i = None && !Data.in_iso
@@ -1830,9 +1722,8 @@ in
       Ast0.wrap(Ast0.StructUnionDef(Ast0.wrap(Ast0.StructUnionName(s, i)),
 				    P.clt2mcode "{" l,
 				    d, P.clt2mcode "}" r)) )}
-| s = struct_or_union x0 = type_ident l = TOBrace d = struct_decl_list r = TCBrace
+| s = struct_or_union x = type_ident l = TOBrace d = struct_decl_list r = TCBrace
     {let i =
-  let x = x0 in
       ( Some x )
 in
     ( (if i = None && !Data.in_iso
@@ -1880,9 +1771,8 @@ in
 	  function (star,cv) ->
 	    P.make_cv cv (P.pointerify prev [star]))
 	(P.make_cv cv ty) m )}
-| x0 = const_vol ty = all_basic_types m = list_mul_
+| x = const_vol ty = all_basic_types m = list_mul_
     {let cv =
-  let x = x0 in
       ( Some x )
 in
     ( List.fold_left
@@ -1905,9 +1795,8 @@ mul:
       ( None )
 in
                                  ( (a,b) )}
-| a = TMul x0 = const_vol
+| a = TMul x = const_vol
     {let b =
-  let x = x0 in
       ( Some x )
 in
                                  ( (a,b) )}
@@ -1924,9 +1813,8 @@ typedef_ctype:
       ( None )
 in
     ( P.pointerify (P.make_cv cv ty) m )}
-| x0 = const_vol ty = all_basic_types m = list_TMul_
+| x = const_vol ty = all_basic_types m = list_TMul_
     {let cv =
-  let x = x0 in
       ( Some x )
 in
     ( P.pointerify (P.make_cv cv ty) m )}
@@ -1978,9 +1866,8 @@ in
   ( let (id,fn) = d in
 	 let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	 Ast0.wrap(Ast0.UnInit(None,fn idtype,id,P.clt2mcode ";" pv)) )}
-| x0 = const_vol i = pure_ident_or_symbol d = d_ident pv = TPtVirg
+| x = const_vol i = pure_ident_or_symbol d = d_ident pv = TPtVirg
     {let cv =
-  let x = x0 in
       ( Some x )
 in
   ( let (id,fn) = d in
@@ -2223,11 +2110,10 @@ arg_list_decl_:
 in
      ( let (args,vararg) = cleanup_arglist arglist in
        ((Ast0.wrap (Ast0.DOTS args)), vararg) )}
-| xs00 = reverse_separated_nonempty_llist_TComma_argorellipsis_one_arg_decl___
+| xs' = reverse_separated_nonempty_llist_TComma_argorellipsis_one_arg_decl___
     {let arglist =
-  let xs0 = xs00 in
   let xs =
-    let xs = xs0 in
+    let xs = xs' in
         ( xs )
   in
       ( xs )
@@ -2245,11 +2131,10 @@ arg_list_name_opt_decl_:
 in
      ( let (args,vararg) = cleanup_arglist arglist in
        ((Ast0.wrap (Ast0.DOTS args)), vararg) )}
-| xs00 = reverse_separated_nonempty_llist_TComma_argorellipsis_one_arg_name_opt_decl___
+| xs' = reverse_separated_nonempty_llist_TComma_argorellipsis_one_arg_name_opt_decl___
     {let arglist =
-  let xs0 = xs00 in
   let xs =
-    let xs = xs0 in
+    let xs = xs' in
         ( xs )
   in
       ( xs )
@@ -2335,9 +2220,8 @@ in
 	     (s @ i @ t, id,
 	      P.clt2mcode "(" lp, args, vararg, P.clt2mcode ")" rp,
 	      P.clt2mcode ";" pt)) )}
-| x0 = Tinline t = ctype id = fn_ident lp = TOPar arglist = arg_list_name_opt_decl_ rp = TCPar pt = TPtVirg
+| x = Tinline t = ctype id = fn_ident lp = TOPar arglist = arg_list_name_opt_decl_ rp = TCPar pt = TPtVirg
     {let i =
-  let x = x0 in
       ( Some x )
 in
 let s =
@@ -2355,12 +2239,11 @@ in
 	     (s @ i @ t, id,
 	      P.clt2mcode "(" lp, args, vararg, P.clt2mcode ")" rp,
 	      P.clt2mcode ";" pt)) )}
-| x0 = storage t = ctype id = fn_ident lp = TOPar arglist = arg_list_name_opt_decl_ rp = TCPar pt = TPtVirg
+| x = storage t = ctype id = fn_ident lp = TOPar arglist = arg_list_name_opt_decl_ rp = TCPar pt = TPtVirg
     {let i =
       ( None )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( let s = match s with None -> [] | Some s -> [Ast0.FStorage s] in
@@ -2375,13 +2258,12 @@ in
 	     (s @ i @ t, id,
 	      P.clt2mcode "(" lp, args, vararg, P.clt2mcode ")" rp,
 	      P.clt2mcode ";" pt)) )}
-| x0 = storage x1 = Tinline t = ctype id = fn_ident lp = TOPar arglist = arg_list_name_opt_decl_ rp = TCPar pt = TPtVirg
+| x = storage x' = Tinline t = ctype id = fn_ident lp = TOPar arglist = arg_list_name_opt_decl_ rp = TCPar pt = TPtVirg
     {let i =
-  let x = x1 in
+  let x = x' in
       ( Some x )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( let s = match s with None -> [] | Some s -> [Ast0.FStorage s] in
@@ -2615,9 +2497,8 @@ decl_var:
     {      ( [Ast0.wrap(Ast0.TyDecl(t,P.clt2mcode ";" pv))] )}
 | _1 = TMetaDecl
     {              ( [P.meta_decl _1] )}
-| t = ctype l0 = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
+| t = ctype l = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
     {let d =
-  let l = l0 in
                                            ( l )
 in
 let s =
@@ -2627,13 +2508,11 @@ in
 	  (function (id,fn) ->
 	    Ast0.wrap(Ast0.UnInit(s,fn t,id,P.clt2mcode ";" pv)))
 	  d )}
-| x0 = storage t = ctype l0 = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
+| x = storage t = ctype l = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
     {let d =
-  let l = l0 in
                                            ( l )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( List.map
@@ -2648,16 +2527,14 @@ in
 in
       (let (id,fn) = d in
       [Ast0.wrap(Ast0.Init(s,fn t,id,P.clt2mcode "=" q,e,P.clt2mcode ";" pv))])}
-| x0 = storage t = ctype d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage t = ctype d = d_ident q = TEq e = initialize pv = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       (let (id,fn) = d in
       [Ast0.wrap(Ast0.Init(s,fn t,id,P.clt2mcode "=" q,e,P.clt2mcode ";" pv))])}
-| i = pure_ident_or_symbol l0 = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
+| i = pure_ident_or_symbol l = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
     {let d =
-  let l = l0 in
                                            ( l )
 in
 let cv =
@@ -2672,13 +2549,11 @@ in
 	      P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	    Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)))
 	  d )}
-| x0 = const_vol i = pure_ident_or_symbol l0 = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
+| x = const_vol i = pure_ident_or_symbol l = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
     {let d =
-  let l = l0 in
                                            ( l )
 in
 let cv =
-  let x = x0 in
       ( Some x )
 in
 let s =
@@ -2690,16 +2565,14 @@ in
 	      P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	    Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)))
 	  d )}
-| x0 = storage i = pure_ident_or_symbol l0 = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
+| x = storage i = pure_ident_or_symbol l = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
     {let d =
-  let l = l0 in
                                            ( l )
 in
 let cv =
       ( None )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( List.map
@@ -2708,17 +2581,15 @@ in
 	      P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	    Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)))
 	  d )}
-| x0 = storage x1 = const_vol i = pure_ident_or_symbol l0 = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
+| x = storage x' = const_vol i = pure_ident_or_symbol l = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
     {let d =
-  let l = l0 in
                                            ( l )
 in
 let cv =
-  let x = x1 in
+  let x = x' in
       ( Some x )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( List.map
@@ -2739,9 +2610,8 @@ in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       [Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv))] )}
-| x0 = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
-  let x = x0 in
       ( Some x )
 in
 let s =
@@ -2752,12 +2622,11 @@ in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       [Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv))] )}
-| x0 = storage i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
       ( None )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -2765,13 +2634,12 @@ in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       [Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv))] )}
-| x0 = storage x1 = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage x' = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
-  let x = x1 in
+  let x = x' in
       ( Some x )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -2790,9 +2658,8 @@ in
 	       (t,P.clt2mcode "(" lp1,P.clt2mcode "*" st,P.clt2mcode ")" rp1,
 		P.clt2mcode "(" lp2,p,P.clt2mcode ")" rp2)) in
         [Ast0.wrap(Ast0.UnInit(s,fn t,id,P.clt2mcode ";" pv))] )}
-| x0 = storage t = ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar pv = TPtVirg
+| x = storage t = ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar pv = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -2808,9 +2675,8 @@ in
 in
       ( [Ast0.wrap(Ast0.MacroDecl(s,d,P.clt2mcode "(" o,e,
 				  P.clt2mcode ")" c,P.clt2mcode ";" p))] )}
-| x0 = storage d = decl_ident o = TOPar e = eexpr_list_option c = TCPar p = TPtVirg
+| x = storage d = decl_ident o = TOPar e = eexpr_list_option c = TCPar p = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( [Ast0.wrap(Ast0.MacroDecl(s,d,P.clt2mcode "(" o,e,
@@ -2824,9 +2690,8 @@ in
 	       (s,d,P.clt2mcode "(" o,e,
 		P.clt2mcode ")" c,P.clt2mcode "=" q,i,
 		P.clt2mcode ";" p))] )}
-| x0 = storage d = decl_ident o = TOPar e = eexpr_list_option c = TCPar q = TEq i = initialize p = TPtVirg
+| x = storage d = decl_ident o = TOPar e = eexpr_list_option c = TCPar q = TEq i = initialize p = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( [Ast0.wrap
@@ -2845,9 +2710,8 @@ in
 	       (t,P.clt2mcode "(" lp1,P.clt2mcode "*" st,P.clt2mcode ")" rp1,
 		P.clt2mcode "(" lp2,p,P.clt2mcode ")" rp2)) in
       [Ast0.wrap(Ast0.Init(s,fn t,id,P.clt2mcode "=" q,e,P.clt2mcode ";" pv))])}
-| x0 = storage t = ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar q = TEq e = initialize pv = TPtVirg
+| x = storage t = ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar q = TEq e = initialize pv = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -2857,9 +2721,8 @@ in
 	       (t,P.clt2mcode "(" lp1,P.clt2mcode "*" st,P.clt2mcode ")" rp1,
 		P.clt2mcode "(" lp2,p,P.clt2mcode ")" rp2)) in
       [Ast0.wrap(Ast0.Init(s,fn t,id,P.clt2mcode "=" q,e,P.clt2mcode ";" pv))])}
-| s = Ttypedef t = typedef_ctype l0 = separated_nonempty_list_TComma_typedef_ident_ pv = TPtVirg
+| s = Ttypedef t = typedef_ctype l = separated_nonempty_list_TComma_typedef_ident_ pv = TPtVirg
     {let id =
-  let l = l0 in
                                            ( l )
 in
       ( let s = P.clt2mcode "typedef" s in
@@ -2879,9 +2742,8 @@ one_decl_var:
 in
       ( let (id,fn) = d in
         Ast0.wrap(Ast0.UnInit(s,fn t,id,P.clt2mcode ";" pv)) )}
-| x0 = storage t = ctype d = d_ident pv = TPtVirg
+| x = storage t = ctype d = d_ident pv = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -2894,9 +2756,8 @@ in
 in
       ( let (id,fn) = d in
       Ast0.wrap(Ast0.Init(s,fn t,id,P.clt2mcode "=" q,e,P.clt2mcode ";" pv)) )}
-| x0 = storage t = ctype d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage t = ctype d = d_ident q = TEq e = initialize pv = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -2911,9 +2772,8 @@ in
       ( let (id,fn) = d in
         let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)) )}
-| x0 = const_vol i = pure_ident_or_symbol d = d_ident pv = TPtVirg
+| x = const_vol i = pure_ident_or_symbol d = d_ident pv = TPtVirg
     {let cv =
-  let x = x0 in
       ( Some x )
 in
 let s =
@@ -2922,24 +2782,22 @@ in
       ( let (id,fn) = d in
         let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)) )}
-| x0 = storage i = pure_ident_or_symbol d = d_ident pv = TPtVirg
+| x = storage i = pure_ident_or_symbol d = d_ident pv = TPtVirg
     {let cv =
       ( None )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
         let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)) )}
-| x0 = storage x1 = const_vol i = pure_ident_or_symbol d = d_ident pv = TPtVirg
+| x = storage x' = const_vol i = pure_ident_or_symbol d = d_ident pv = TPtVirg
     {let cv =
-  let x = x1 in
+  let x = x' in
       ( Some x )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -2957,9 +2815,8 @@ in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv)) )}
-| x0 = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
-  let x = x0 in
       ( Some x )
 in
 let s =
@@ -2970,12 +2827,11 @@ in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv)) )}
-| x0 = storage i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
       ( None )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -2983,13 +2839,12 @@ in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv)) )}
-| x0 = storage x1 = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage x' = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
-  let x = x1 in
+  let x = x' in
       ( Some x )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -3008,9 +2863,8 @@ in
 	       (t,P.clt2mcode "(" lp1,P.clt2mcode "*" st,P.clt2mcode ")" rp1,
 		P.clt2mcode "(" lp2,p,P.clt2mcode ")" rp2)) in
         Ast0.wrap(Ast0.UnInit(s,fn t,id,P.clt2mcode ";" pv)) )}
-| x0 = storage t = ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar pv = TPtVirg
+| x = storage t = ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar pv = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -3026,9 +2880,8 @@ in
 in
       ( Ast0.wrap(Ast0.MacroDecl(s,d,P.clt2mcode "(" o,e,
 				  P.clt2mcode ")" c,P.clt2mcode ";" p)) )}
-| x0 = storage d = decl_ident o = TOPar e = eexpr_list_option c = TCPar p = TPtVirg
+| x = storage d = decl_ident o = TOPar e = eexpr_list_option c = TCPar p = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( Ast0.wrap(Ast0.MacroDecl(s,d,P.clt2mcode "(" o,e,
@@ -3042,9 +2895,8 @@ in
                (s,d,P.clt2mcode "(" o,e,
                 P.clt2mcode ")" c,P.clt2mcode "=" q,i,
                 P.clt2mcode ";" p)) )}
-| x0 = storage d = decl_ident o = TOPar e = eexpr_list_option c = TCPar q = TEq i = initialize p = TPtVirg
+| x = storage d = decl_ident o = TOPar e = eexpr_list_option c = TCPar q = TEq i = initialize p = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( Ast0.wrap
@@ -3063,9 +2915,8 @@ in
 	       (t,P.clt2mcode "(" lp1,P.clt2mcode "*" st,P.clt2mcode ")" rp1,
 		P.clt2mcode "(" lp2,p,P.clt2mcode ")" rp2)) in
       Ast0.wrap(Ast0.Init(s,fn t,id,P.clt2mcode "=" q,e,P.clt2mcode ";" pv)))}
-| x0 = storage t = ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar q = TEq e = initialize pv = TPtVirg
+| x = storage t = ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar q = TEq e = initialize pv = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -4231,9 +4082,9 @@ idcstr:
 		   (function mv -> Ast.MetaIdDecl(Ast.NONE,mv)) in
 	       ([],[i])
 	   | (None,i) -> ([i],[])) )}
-| _1 = TOBrace l0 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _3 = TCBrace
+| _1 = TOBrace l' = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _3 = TCBrace
     {let l =
-  let l = l0 in
+  let l = l' in
                                            ( l )
 in
   ( (if !Data.in_iso
@@ -4276,9 +4127,9 @@ not_eqe:
 	   then failwith "constraints not allowed in a generated rule file");
 	   [Ast0.wrap(Ast0.Ident(Ast0.wrap(Ast0.Id(P.id2mcode i))))]
 	 )}
-| _1 = TNotEq _2 = TOBrace l0 = separated_nonempty_list_TComma_pure_ident_ _4 = TCBrace
+| _1 = TNotEq _2 = TOBrace l' = separated_nonempty_list_TComma_pure_ident_ _4 = TCBrace
     {let l =
-  let l = l0 in
+  let l = l' in
                                            ( l )
 in
   ( (if !Data.in_iso
@@ -4298,9 +4149,9 @@ not_ceq:
 	   (if !Data.in_generating
 	   then failwith "constraints not allowed in a generated rule file");
 	   [i] )}
-| _1 = TNotEq _2 = TOBrace l0 = separated_nonempty_list_TComma_ident_or_const_ _4 = TCBrace
+| _1 = TNotEq _2 = TOBrace l' = separated_nonempty_list_TComma_ident_or_const_ _4 = TCBrace
     {let l =
-  let l = l0 in
+  let l = l' in
                                            ( l )
 in
   ( (if !Data.in_iso
@@ -4319,9 +4170,9 @@ sub:
 	     P.check_inherited_constraint i
 	       (function mv -> Ast.MetaExpDecl(Ast.NONE,mv,None)) in
 	   [i] )}
-| _1 = TSub _2 = TOBrace l0 = separated_nonempty_list_TComma_meta_ident_ _4 = TCBrace
+| _1 = TSub _2 = TOBrace l' = separated_nonempty_list_TComma_meta_ident_ _4 = TCBrace
     {let l =
-  let l = l0 in
+  let l = l' in
                                            ( l )
 in
   ( (if !Data.in_iso
@@ -4353,9 +4204,9 @@ not_pos:
 	     P.check_inherited_constraint i
 	       (function mv -> Ast.MetaPosDecl(Ast.NONE,mv)) in
 	   [i] )}
-| _1 = TNotEq _2 = TOBrace l0 = separated_nonempty_list_TComma_meta_ident_ _4 = TCBrace
+| _1 = TNotEq _2 = TOBrace l' = separated_nonempty_list_TComma_meta_ident_ _4 = TCBrace
     {let l =
-  let l = l0 in
+  let l = l' in
                                            ( l )
 in
   ( (if !Data.in_iso
@@ -4696,49 +4547,38 @@ minus_start:
     {    ( List.map (function x -> Ast0.wrap(Ast0.OTHER(x))) _1 )}
 
 toplevel_seq_startne_toplevel_after_dots_init_:
-  a0 = TEllipsis w0 = list_whenppdecs_ b = toplevel_after_dots_init
+  a' = TEllipsis w = list_whenppdecs_ b = toplevel_after_dots_init
     {let a =
-  let w = w0 in
-  let a = a0 in
+  let a = a' in
       ( Ast0.wrap(Ast0.Dots(P.clt2mcode "..." a, List.concat w)) )
 in
                                              ( a::b )}
-| a0 = TOEllipsis w0 = list_whenppdecs_ b0 = nest_start c0 = TCEllipsis b = toplevel_after_dots_init
+| a' = TOEllipsis w = list_whenppdecs_ b' = nest_start c = TCEllipsis b = toplevel_after_dots_init
     {let a =
-  let c = c0 in
-  let b = b0 in
-  let w = w0 in
-  let a = a0 in
+  let b = b' in
+  let a = a' in
       ( Ast0.wrap(Ast0.Nest(P.clt2mcode "<..." a, b,
 			  P.clt2mcode "...>" c, List.concat w, false)) )
 in
                                               ( a::b )}
-| a0 = TPOEllipsis w0 = list_whenppdecs_ b0 = nest_start c0 = TPCEllipsis b = toplevel_after_dots_init
+| a' = TPOEllipsis w = list_whenppdecs_ b' = nest_start c = TPCEllipsis b = toplevel_after_dots_init
     {let a =
-  let c = c0 in
-  let b = b0 in
-  let w = w0 in
-  let a = a0 in
+  let b = b' in
+  let a = a' in
       ( Ast0.wrap(Ast0.Nest(P.clt2mcode "<+..." a, b,
 			  P.clt2mcode "...+>" c, List.concat w, true)) )
 in
                                               ( a::b )}
-| a0 = TOEllipsis w0 = list_whenppdecs_ b0 = nest_start c0 = TCEllipsis
+| a' = TOEllipsis w = list_whenppdecs_ b = nest_start c = TCEllipsis
     {let a =
-  let c = c0 in
-  let b = b0 in
-  let w = w0 in
-  let a = a0 in
+  let a = a' in
       ( Ast0.wrap(Ast0.Nest(P.clt2mcode "<..." a, b,
 			  P.clt2mcode "...>" c, List.concat w, false)) )
 in
                                        ( [a] )}
-| a0 = TPOEllipsis w0 = list_whenppdecs_ b0 = nest_start c0 = TPCEllipsis
+| a' = TPOEllipsis w = list_whenppdecs_ b = nest_start c = TPCEllipsis
     {let a =
-  let c = c0 in
-  let b = b0 in
-  let w = w0 in
-  let a = a0 in
+  let a = a' in
       ( Ast0.wrap(Ast0.Nest(P.clt2mcode "<+..." a, b,
 			  P.clt2mcode "...+>" c, List.concat w, true)) )
 in
@@ -5137,9 +4977,9 @@ whens_when_start_rule_elem_statement_any_strict_:
     {      ( [Ast0.WhenNot (P.clt2mcode "when" t, P.clt2mcode "!=" e, w)] )}
 | t = TWhen e = TEq w = rule_elem_statement _4 = TLineEnd
     {      ( [Ast0.WhenAlways (P.clt2mcode "when" t, P.clt2mcode "=" e, w)] )}
-| t = TWhen l0 = separated_nonempty_list_TComma_any_strict_ _3 = TLineEnd
+| t = TWhen l' = separated_nonempty_list_TComma_any_strict_ _3 = TLineEnd
     {let l =
-  let l = l0 in
+  let l = l' in
                                            ( l )
 in
       ( List.map (function x -> Ast0.WhenModifier(P.clt2mcode "when" t,x)) l )}

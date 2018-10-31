@@ -2,6 +2,11 @@
 
 ## 2018/10/31
 
+* Implement a more economical renaming scheme for OCaml variables
+  during the elimination of `%inline` symbols. This leads to slightly
+  more readable code (more reasonable variables names, fewer `let`
+  bindings).
+
 * Another attempt at removing all trailing spaces in auto-generated
   `.messages` files. (I hope I got it right, this time.)
 

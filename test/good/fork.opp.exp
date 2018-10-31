@@ -77,21 +77,21 @@ list_declaration_:
     {    ( x :: xs )}
 
 nonempty_list_loc_term_variable__:
-  x0 = term_variable
+  x' = term_variable
     {let x =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( [ x ] )}
-| x0 = term_variable xs = nonempty_list_loc_term_variable__
+| x' = term_variable xs = nonempty_list_loc_term_variable__
     {let x =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
@@ -99,21 +99,21 @@ in
     ( x :: xs )}
 
 nonempty_list_loc_type_variable__:
-  x0 = type_variable
+  x' = type_variable
     {let x =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( [ x ] )}
-| x0 = type_variable xs = nonempty_list_loc_type_variable__
+| x' = type_variable xs = nonempty_list_loc_type_variable__
     {let x =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
@@ -139,9 +139,9 @@ kind0:
     {    ( KDefined id )}
 | _1 = LATER kind = kind0
     {    ( KLater kind )}
-| _1 = LPAR kind0 = kind1 _3 = RPAR
+| _1 = LPAR kind' = kind1 _3 = RPAR
     {let kind =
-  let kind = kind0 in
+  let kind = kind' in
       ( kind )
 in
     ( kind )}
@@ -155,9 +155,9 @@ kind1:
 type_binder:
   ids = nonempty_list_loc_type_variable__
     {    ( ids, None )}
-| ids = nonempty_list_loc_type_variable__ _2 = COLON kind0 = kind1
+| ids = nonempty_list_loc_type_variable__ _2 = COLON kind' = kind1
     {let kind =
-  let kind = kind0 in
+  let kind = kind' in
       ( kind )
 in
     ( ids, Some kind )}
@@ -173,57 +173,51 @@ ty0:
     {    ( TyVar id )}
 | _1 = LPAR _2 = RPAR
     {    ( TyUnit )}
-| _1 = LPAR ty0 = ty3 _3 = RPAR
+| _1 = LPAR ty' = ty3 _3 = RPAR
     {let ty =
-  let ty = ty0 in
+  let ty = ty' in
       ( ty )
 in
     ( ty )}
-| _1 = LPAR ty00 = ty3 _3 = COLON kind0 = kind1 _5 = RPAR
+| _1 = LPAR ty' = ty3 _3 = COLON kind' = kind1 _5 = RPAR
     {let kind =
-  let kind = kind0 in
+  let kind = kind' in
       ( kind )
 in
 let ty =
-  let _endpos_ty0_ = _endpos_ty00_ in
-  let _startpos_ty0_ = _startpos_ty00_ in
-  let ty0 = ty00 in
+  let _endpos_ty_ = _endpos_ty'_ in
+  let _startpos_ty_ = _startpos_ty'_ in
+  let ty = ty' in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( TyConstraint (ty, kind) )}
-| _1 = LPAR ty00 = ty3 delimiter = COMMA ty01 = ty3 _5 = RPAR
+| _1 = LPAR ty = ty3 delimiter = COMMA ty' = ty3 _5 = RPAR
     {let ty2 =
-  let _endpos_ty0_ = _endpos_ty01_ in
-  let _startpos_ty0_ = _startpos_ty01_ in
-  let ty0 = ty01 in
+  let _endpos_ty_ = _endpos_ty'_ in
+  let _startpos_ty_ = _startpos_ty'_ in
+  let ty = ty' in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty1 =
-  let _endpos_ty0_ = _endpos_ty00_ in
-  let _startpos_ty0_ = _startpos_ty00_ in
-  let ty0 = ty00 in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
@@ -236,19 +230,16 @@ let _startpos = _startpos__1_ in
 ty1:
   ty = ty0
     {    ( ty )}
-| x0 = ty1 x1 = ty0
+| x = ty1 x' = ty0
     {let ty2 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
@@ -258,32 +249,29 @@ in
 ty2:
   ty = ty1
     {    ( ty )}
-| x0 = ty2 _2 = BACKQUOTE x1 = ty1 delimiter = BACKQUOTE x2 = ty1
+| x = ty2 _2 = BACKQUOTE x' = ty1 delimiter = BACKQUOTE x'' = ty1
     {let ty2 =
-  let _endpos_x_ = _endpos_x2_ in
-  let _startpos_x_ = _startpos_x2_ in
-  let x = x2 in
+  let _endpos_x_ = _endpos_x''_ in
+  let _startpos_x_ = _startpos_x''_ in
+  let x = x'' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
-let _startpos_ty1_ = _startpos_x0_ in
+let _startpos_ty1_ = _startpos_x_ in
 let _startpos = _startpos_ty1_ in
     ( let loc = (_startpos, _endpos_delimiter_) in
       let () = delimiter in (* avoid a warning *)
@@ -292,43 +280,34 @@ let _startpos = _startpos_ty1_ in
 ty3:
   ty = ty2
     {    ( ty )}
-| x0 = ty2 delimiter = ARROW x1 = ty3
+| x = ty2 delimiter = ARROW x' = ty3
     {let ty2 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
-let _startpos_ty1_ = _startpos_x0_ in
+let _startpos_ty1_ = _startpos_x_ in
 let _startpos = _startpos_ty1_ in
     ( let loc1 = (_startpos, _endpos_delimiter_)
       and () = delimiter in (* avoid a warning *)
       TyArrow (loc1, ty1, ty2) )}
-| _1 = LAMBDA b = type_binder _3 = DOT x0 = ty3
+| _1 = LAMBDA b = type_binder _3 = DOT x = ty3
     {let ty =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( bind b (mktyabs ty) ty )}
-| q = quantifier b = type_binder _3 = DOT x0 = ty3
+| q = quantifier b = type_binder _3 = DOT x = ty3
     {let ty =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
@@ -336,19 +315,16 @@ in
     ( bind b (mktyquantified q ty) ty )}
 
 statement:
-  x0 = ty2 _2 = EQ x1 = ty2
+  x = ty2 _2 = EQ x' = ty2
     {let ty2 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
@@ -364,17 +340,16 @@ term_variable_or_wildcard:
     {    ( None )}
 
 term_binder:
-  ids = nonempty_list_loc_term_variable__ _2 = COLON ty00 = ty3
+  ids = nonempty_list_loc_term_variable__ _2 = COLON ty' = ty3
     {let ty =
-  let _endpos_ty0_ = _endpos_ty00_ in
-  let _startpos_ty0_ = _startpos_ty00_ in
-  let ty0 = ty00 in
+  let _endpos_ty_ = _endpos_ty'_ in
+  let _startpos_ty_ = _startpos_ty'_ in
+  let ty = ty' in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
@@ -386,67 +361,60 @@ term0:
     {    ( TeVar id )}
 | _1 = LPAR _2 = RPAR
     {    ( TeUnit )}
-| _1 = LPAR t0 = term3 _3 = RPAR
+| _1 = LPAR t' = term3 _3 = RPAR
     {let t =
-  let t = t0 in
+  let t = t' in
       ( t )
 in
     ( t )}
-| _1 = LPAR t00 = term3 _3 = COLON ty00 = ty3 _5 = RPAR
+| _1 = LPAR t' = term3 _3 = COLON ty' = ty3 _5 = RPAR
     {let ty =
-  let _endpos_ty0_ = _endpos_ty00_ in
-  let _startpos_ty0_ = _startpos_ty00_ in
-  let ty0 = ty00 in
+  let _endpos_ty_ = _endpos_ty'_ in
+  let _startpos_ty_ = _startpos_ty'_ in
+  let ty = ty' in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let t =
-  let _endpos_t0_ = _endpos_t00_ in
-  let _startpos_t0_ = _startpos_t00_ in
-  let t0 = t00 in
+  let _endpos_t_ = _endpos_t'_ in
+  let _startpos_t_ = _startpos_t'_ in
+  let t = t' in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( TeConstraint (t, ty) )}
-| _1 = LPAR t00 = term3 _3 = COMMA t01 = term3 _5 = RPAR
+| _1 = LPAR t = term3 _3 = COMMA t' = term3 _5 = RPAR
     {let t2 =
-  let _endpos_t0_ = _endpos_t01_ in
-  let _startpos_t0_ = _startpos_t01_ in
-  let t0 = t01 in
+  let _endpos_t_ = _endpos_t'_ in
+  let _startpos_t_ = _startpos_t'_ in
+  let t = t' in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos_t0_ = _endpos_t00_ in
-  let _startpos_t0_ = _startpos_t00_ in
-  let t0 = t00 in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
@@ -456,43 +424,36 @@ in
 term1:
   t = term0
     {    ( t )}
-| x0 = term1 x1 = term0
+| x = term1 x' = term0
     {let t2 =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( TeApp (t1, t2) )}
-| x0 = term1 _2 = LBRACKET ty00 = ty3 _4 = RBRACKET
+| x = term1 _2 = LBRACKET ty' = ty3 _4 = RBRACKET
     {let ty =
-  let _endpos_ty0_ = _endpos_ty00_ in
-  let _startpos_ty0_ = _startpos_ty00_ in
-  let ty0 = ty00 in
+  let _endpos_ty_ = _endpos_ty'_ in
+  let _startpos_ty_ = _startpos_ty'_ in
+  let ty = ty' in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let t =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
@@ -502,32 +463,29 @@ in
 term2:
   t = term1
     {    ( t )}
-| x0 = term2 _2 = BACKQUOTE x1 = term1 delimiter = BACKQUOTE x2 = term1
+| x = term2 _2 = BACKQUOTE x' = term1 delimiter = BACKQUOTE x'' = term1
     {let t2 =
-  let _endpos_x_ = _endpos_x2_ in
-  let _startpos_x_ = _startpos_x2_ in
-  let x = x2 in
+  let _endpos_x_ = _endpos_x''_ in
+  let _startpos_x_ = _startpos_x''_ in
+  let x = x'' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let t =
-  let _endpos_x_ = _endpos_x1_ in
-  let _startpos_x_ = _startpos_x1_ in
-  let x = x1 in
+  let _endpos_x_ = _endpos_x'_ in
+  let _startpos_x_ = _startpos_x'_ in
+  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
-let _startpos_t1_ = _startpos_x0_ in
+let _startpos_t1_ = _startpos_x_ in
 let _startpos = _startpos_t1_ in
     ( let loc = (_startpos, _endpos_delimiter_) in
       let () = delimiter in (* avoid a warning *)
@@ -536,264 +494,227 @@ let _startpos = _startpos_t1_ in
 term3:
   t = term2
     {    ( t )}
-| _1 = LAMBDA b = term_binder _3 = DOT x0 = term3
+| _1 = LAMBDA b = term_binder _3 = DOT x = term3
     {let t =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( bind b (mkteabs t) t )}
-| _1 = BIGLAMBDA b = type_binder _3 = DOT x0 = term3
+| _1 = BIGLAMBDA b = type_binder _3 = DOT x = term3
     {let t =
-  let _endpos_x_ = _endpos_x0_ in
-  let _startpos_x_ = _startpos_x0_ in
-  let x = x0 in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( bind b (mktetyabs t) t )}
-| _1 = PACK ty00 = ty3 _3 = COMMA t00 = term3 _5 = AS ty01 = ty3
+| _1 = PACK ty = ty3 _3 = COMMA t' = term3 _5 = AS ty' = ty3
     {let ty1 =
-  let _endpos_ty0_ = _endpos_ty01_ in
-  let _startpos_ty0_ = _startpos_ty01_ in
-  let ty0 = ty01 in
+  let _endpos_ty_ = _endpos_ty'_ in
+  let _startpos_ty_ = _startpos_ty'_ in
+  let ty = ty' in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let t =
-  let _endpos_t0_ = _endpos_t00_ in
-  let _startpos_t0_ = _startpos_t00_ in
-  let t0 = t00 in
+  let _endpos_t_ = _endpos_t'_ in
+  let _startpos_t_ = _startpos_t'_ in
+  let t = t' in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty2 =
-  let _endpos_ty0_ = _endpos_ty00_ in
-  let _startpos_ty0_ = _startpos_ty00_ in
-  let ty0 = ty00 in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( TePack (t, ty1, ty2) )}
-| _1 = UNPACK alpha = type_variable _3 = COMMA x = term_variable _5 = EQ t00 = term3 _7 = IN t01 = term3
+| _1 = UNPACK alpha = type_variable _3 = COMMA x = term_variable _5 = EQ t = term3 _7 = IN t' = term3
     {let t2 =
-  let _endpos_t0_ = _endpos_t01_ in
-  let _startpos_t0_ = _startpos_t01_ in
-  let t0 = t01 in
+  let _endpos_t_ = _endpos_t'_ in
+  let _startpos_t_ = _startpos_t'_ in
+  let t = t' in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos_t0_ = _endpos_t00_ in
-  let _startpos_t0_ = _startpos_t00_ in
-  let t0 = t00 in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( TeUnpack (alpha, x, t1, t2) )}
-| _1 = LET id = term_variable _3 = EQ t00 = term3 _5 = IN t01 = term3
+| _1 = LET id = term_variable _3 = EQ t = term3 _5 = IN t' = term3
     {let t2 =
-  let _endpos_t0_ = _endpos_t01_ in
-  let _startpos_t0_ = _startpos_t01_ in
-  let t0 = t01 in
+  let _endpos_t_ = _endpos_t'_ in
+  let _startpos_t_ = _startpos_t'_ in
+  let t = t' in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos_t0_ = _endpos_t00_ in
-  let _startpos_t0_ = _startpos_t00_ in
-  let t0 = t00 in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( TeLet (id, t1, t2) )}
-| _1 = LET _2 = LPAR id1 = term_variable_or_wildcard _4 = COMMA id2 = term_variable_or_wildcard _6 = RPAR _7 = EQ t00 = term3 _9 = IN t01 = term3
+| _1 = LET _2 = LPAR id1 = term_variable_or_wildcard _4 = COMMA id2 = term_variable_or_wildcard _6 = RPAR _7 = EQ t = term3 _9 = IN t' = term3
     {let t2 =
-  let _endpos_t0_ = _endpos_t01_ in
-  let _startpos_t0_ = _startpos_t01_ in
-  let t0 = t01 in
+  let _endpos_t_ = _endpos_t'_ in
+  let _startpos_t_ = _startpos_t'_ in
+  let t = t' in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos_t0_ = _endpos_t00_ in
-  let _startpos_t0_ = _startpos_t00_ in
-  let t0 = t00 in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
     ( TeLetPair (id1, id2, t1, t2) )}
-| _1 = ASSERT id = term_variable _3 = COLON ty00 = ty3 _5 = IN t00 = term3
+| _1 = ASSERT id = term_variable _3 = COLON ty' = ty3 _5 = IN t' = term3
     {let t =
-  let _endpos_t0_ = _endpos_t00_ in
-  let _startpos_t0_ = _startpos_t00_ in
-  let t0 = t00 in
+  let _endpos_t_ = _endpos_t'_ in
+  let _startpos_t_ = _startpos_t'_ in
+  let t = t' in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty =
-  let _endpos_ty0_ = _endpos_ty00_ in
-  let _startpos_ty0_ = _startpos_ty00_ in
-  let ty0 = ty00 in
+  let _endpos_ty_ = _endpos_ty'_ in
+  let _startpos_ty_ = _startpos_ty'_ in
+  let ty = ty' in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
-let _endpos_ty_ = _endpos_ty00_ in
+let _endpos_ty_ = _endpos_ty'_ in
     ( let var = (_startpos_id_, _endpos_id_), TeVar id in
       let con = (_startpos_id_, _endpos_ty_), TeConstraint (var, ty) in
       TeLet (id, con, t) )}
-| _1 = LET id = term_variable _3 = COLON ty00 = ty3 _5 = EQ t00 = term3 _7 = IN t01 = term3
+| _1 = LET id = term_variable _3 = COLON ty' = ty3 _5 = EQ t = term3 _7 = IN t' = term3
     {let t2 =
-  let _endpos_t0_ = _endpos_t01_ in
-  let _startpos_t0_ = _startpos_t01_ in
-  let t0 = t01 in
+  let _endpos_t_ = _endpos_t'_ in
+  let _startpos_t_ = _startpos_t'_ in
+  let t = t' in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let t1 =
-  let _endpos_t0_ = _endpos_t00_ in
-  let _startpos_t0_ = _startpos_t00_ in
-  let t0 = t00 in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty =
-  let _endpos_ty0_ = _endpos_ty00_ in
-  let _startpos_ty0_ = _startpos_ty00_ in
-  let ty0 = ty00 in
+  let _endpos_ty_ = _endpos_ty'_ in
+  let _startpos_ty_ = _startpos_ty'_ in
+  let ty = ty' in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
-let _endpos_ty_ = _endpos_ty00_ in
+let _endpos_ty_ = _endpos_ty'_ in
     ( let con = (_startpos_id_, _endpos_ty_), TeConstraint (t1, ty) in
       TeLet (id, con, t2) )}
-| _1 = TYPE id = type_variable _3 = EQ ty00 = ty3 _5 = IN t00 = term3
+| _1 = TYPE id = type_variable _3 = EQ ty' = ty3 _5 = IN t' = term3
     {let t =
-  let _endpos_t0_ = _endpos_t00_ in
-  let _startpos_t0_ = _startpos_t00_ in
-  let t0 = t00 in
+  let _endpos_t_ = _endpos_t'_ in
+  let _startpos_t_ = _startpos_t'_ in
+  let t = t' in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty =
-  let _endpos_ty0_ = _endpos_ty00_ in
-  let _startpos_ty0_ = _startpos_ty00_ in
-  let ty0 = ty00 in
+  let _endpos_ty_ = _endpos_ty'_ in
+  let _startpos_ty_ = _startpos_ty'_ in
+  let ty = ty' in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
@@ -801,65 +722,62 @@ in
     ( TeType (id, ty, t) )}
 
 declaration:
-  _1 = KIND id = kind_variable _3 = EQ kind0 = kind1
+  _1 = KIND id = kind_variable _3 = EQ kind' = kind1
     {let kind =
-  let kind = kind0 in
+  let kind = kind' in
       ( kind )
 in
     ( [ DKind (id, kind) ] )}
-| _1 = TYPE id = type_variable _3 = COLON kind0 = kind1 _5 = EQ ty00 = ty3
+| _1 = TYPE id = type_variable _3 = COLON kind' = kind1 _5 = EQ ty' = ty3
     {let ty =
-  let _endpos_ty0_ = _endpos_ty00_ in
-  let _startpos_ty0_ = _startpos_ty00_ in
-  let ty0 = ty00 in
+  let _endpos_ty_ = _endpos_ty'_ in
+  let _startpos_ty_ = _startpos_ty'_ in
+  let ty = ty' in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let kind =
-  let kind = kind0 in
+  let kind = kind' in
       ( kind )
 in
     ( [ DType (id, kind, ty) ] )}
-| _1 = DEFAULT _2 = KIND id = type_variable _4 = COLON kind0 = kind1
+| _1 = DEFAULT _2 = KIND id = type_variable _4 = COLON kind' = kind1
     {let kind =
-  let kind = kind0 in
+  let kind = kind' in
       ( kind )
 in
     ( [ DDefaultKind (id, kind) ] )}
 | _1 = LEMMA _2 = IDENTIFIER _3 = COLON s = statement
     {    ( [ DLemma s ] )}
-| _1 = TERM id = term_variable _3 = COLON ty00 = ty3 _5 = EQ t00 = term3
+| _1 = TERM id = term_variable _3 = COLON ty' = ty3 _5 = EQ t' = term3
     {let t =
-  let _endpos_t0_ = _endpos_t00_ in
-  let _startpos_t0_ = _startpos_t00_ in
-  let t0 = t00 in
+  let _endpos_t_ = _endpos_t'_ in
+  let _startpos_t_ = _startpos_t'_ in
+  let t = t' in
   let x =
-    let t = t0 in
         ( t )
   in
-  let _endpos_x_ = _endpos_t0_ in
-  let _startpos_x_ = _startpos_t0_ in
+  let _endpos_x_ = _endpos_t_ in
+  let _startpos_x_ = _startpos_t_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )
 in
 let ty =
-  let _endpos_ty0_ = _endpos_ty00_ in
-  let _startpos_ty0_ = _startpos_ty00_ in
-  let ty0 = ty00 in
+  let _endpos_ty_ = _endpos_ty'_ in
+  let _startpos_ty_ = _startpos_ty'_ in
+  let ty = ty' in
   let x =
-    let ty = ty0 in
         ( ty )
   in
-  let _endpos_x_ = _endpos_ty0_ in
-  let _startpos_x_ = _startpos_ty0_ in
+  let _endpos_x_ = _endpos_ty_ in
+  let _startpos_x_ = _startpos_ty_ in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
       ( ((_startpos, _endpos), x) )

@@ -18,56 +18,40 @@ main:
     {    ( e )}
 
 expr:
-  i0 = INT
+  i = INT
     {let e =
-  let i = i0 in
       ( i )
 in
     ( e )}
-| _10 = LPAREN e0 = expr _30 = RPAREN
+| _1 = LPAREN e' = expr _3 = RPAREN
     {let e =
-  let _3 = _30 in
-  let e = e0 in
-  let _1 = _10 in
+  let e = e' in
       ( e )
 in
     ( e )}
-| e10 = expr _20 = PLUS e20 = expr
+| e1 = expr _2 = PLUS e2 = expr
     {let e =
-  let e2 = e20 in
-  let _2 = _20 in
-  let e1 = e10 in
       ( e1 + e2 )
 in
     ( e )}
-| e10 = expr _20 = MINUS e20 = expr
+| e1 = expr _2 = MINUS e2 = expr
     {let e =
-  let e2 = e20 in
-  let _2 = _20 in
-  let e1 = e10 in
       ( e1 - e2 )
 in
     ( e )}
-| e10 = expr _20 = TIMES e20 = expr
+| e1 = expr _2 = TIMES e2 = expr
     {let e =
-  let e2 = e20 in
-  let _2 = _20 in
-  let e1 = e10 in
       ( e1 * e2 )
 in
     ( e )}
-| e10 = expr _20 = DIV e20 = expr
+| e1 = expr _2 = DIV e2 = expr
     {let e =
-  let e2 = e20 in
-  let _2 = _20 in
-  let e1 = e10 in
       ( e1 / e2 )
 in
     ( e )}
-| _10 = MINUS e0 = expr %prec UMINUS
+| _1 = MINUS e' = expr %prec UMINUS
     {let e =
-  let e = e0 in
-  let _1 = _10 in
+  let e = e' in
       ( - e )
 in
     ( e )}

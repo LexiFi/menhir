@@ -349,10 +349,9 @@ list_mzl_statement__:
 list_pair_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__exp_decl_statement_list__:
   
     {    ( [] )}
-| x0 = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ y0 = exp_decl_statement_list xs = list_pair_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__exp_decl_statement_list__
+| x' = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ y = exp_decl_statement_list xs = list_pair_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__exp_decl_statement_list__
     {let x =
-  let y = y0 in
-  let x = x0 in
+  let x = x' in
       ( (x, y) )
 in
     ( x :: xs )}
@@ -360,10 +359,9 @@ in
 list_pair_edots_when_TEllipsis_eexpr__dexpr__:
   
     {    ( [] )}
-| x0 = edots_when_TEllipsis_eexpr_ y0 = dexpr xs = list_pair_edots_when_TEllipsis_eexpr__dexpr__
+| x' = edots_when_TEllipsis_eexpr_ y = dexpr xs = list_pair_edots_when_TEllipsis_eexpr__dexpr__
     {let x =
-  let y = y0 in
-  let x = x0 in
+  let x = x' in
       ( (x, y) )
 in
     ( x :: xs )}
@@ -464,9 +462,8 @@ in
     raise (Semantic_cocci.Semantic ("repeated rule name"))
     with Not_found -> ());
     (n,d,i) )}
-| nm = pure_ident _2 = extends d = depends x0 = choose_iso _5 = TArob
+| nm = pure_ident _2 = extends d = depends x = choose_iso _5 = TArob
     {let i =
-  let x = x0 in
       ( Some x )
 in
     ( let n = P.id2name nm in
@@ -498,9 +495,8 @@ choose_iso:
     {                     ( P.id2name _2 )}
 
 metadec:
-  ar = arity ispure = pure _10 = TIdentifier ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+  ar = arity ispure = pure _1 = TIdentifier ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaIdDecl(arity,name)) in
       !Data.add_id_meta name pure; tok) )
@@ -517,10 +513,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TFresh _20 = TIdentifier ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TFresh _2 = TIdentifier ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaFreshIdDecl(arity,name)) in
       !Data.add_id_meta name pure; tok) )
@@ -537,9 +531,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TType ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TType ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaTypeDecl(arity,name)) in
       !Data.add_type_meta name pure; tok) )
@@ -556,9 +549,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TParameter ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TParameter ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaParamDecl(arity,name)) in
       !Data.add_param_meta name pure; tok) )
@@ -575,10 +567,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TParameter _20 = Tlist ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TParameter _2 = Tlist ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaParamListDecl(arity,name)) in
       !Data.add_paramlist_meta name pure; tok))
@@ -595,9 +585,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TError ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TError ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaErrDecl(arity,name)) in
       !Data.add_err_meta name pure; tok) )
@@ -614,9 +603,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TExpression ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TExpression ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaExpDecl(arity,name,None)) in
       !Data.add_exp_meta None name pure; tok) )
@@ -633,10 +621,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TExpression _20 = Tlist ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TExpression _2 = Tlist ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaExpListDecl(arity,name)) in
       !Data.add_explist_meta name pure; tok) )
@@ -653,10 +639,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TExpression m0 = nonempty_list_TMul_ ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TExpression m = nonempty_list_TMul_ ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let m = m0 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let ty = Some [P.ty_pointerify Type_cocci.Unknown m] in
       let tok = check_meta(Ast.MetaExpDecl(arity,name,ty)) in
@@ -674,9 +658,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TStatement ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TStatement ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaStmDecl(arity,name)) in
       !Data.add_stm_meta name pure; tok) )
@@ -693,10 +676,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TStatement _20 = Tlist ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TStatement _2 = Tlist ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaStmListDecl(arity,name)) in
       !Data.add_stmlist_meta name pure; tok) )
@@ -713,9 +694,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TFunction ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TFunction ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaFuncDecl(arity,name)) in
       !Data.add_func_meta name pure; tok) )
@@ -732,10 +712,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TLocal _20 = TFunction ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TLocal _2 = TFunction ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _2 = _20 in
-  let _1 = _10 in
       ( (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaLocalFuncDecl(arity,name)) in
       !Data.add_local_func_meta name pure;
@@ -753,9 +731,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure vl0 = meta_exp_type ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure vl = meta_exp_type ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let vl = vl0 in
       ( (fun arity name pure check_meta ->
       let ty = Some vl in
       let tok = check_meta(Ast.MetaExpDecl(arity,name,ty)) in
@@ -773,11 +750,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure vl0 = meta_exp_type _20 = TOCro _30 = TCCro ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure vl = meta_exp_type _2 = TOCro _3 = TCCro ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _3 = _30 in
-  let _2 = _20 in
-  let vl = vl0 in
       ( (fun arity name pure check_meta ->
       let ty = Some (List.map (function x -> Type_cocci.Array x) vl) in
       let tok = check_meta(Ast.MetaExpDecl(arity,name,ty)) in
@@ -795,9 +769,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TConstant ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TConstant ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _1 = _10 in
   let ty =
         ( None )
   in
@@ -817,12 +790,9 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TConstant x00 = meta_exp_type ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TConstant x = meta_exp_type ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let x0 = x00 in
-  let _1 = _10 in
   let ty =
-    let x = x0 in
         ( Some x )
   in
       ( (fun arity name pure check_meta ->
@@ -841,9 +811,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TTypedef ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TTypedef ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _1 = _10 in
       ( (fun arity (_,name) pure check_meta ->
       if arity = Ast.NONE && pure = Ast0.Impure
       then (!Data.add_type_name name; [])
@@ -861,9 +830,8 @@ in
 		    function x -> P.check_meta x; [Common.Right x]) in
 	     kindfn ar rule ispure checker)
 	   ids) )}
-| ar = arity ispure = pure _10 = TDeclarer ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
+| ar = arity ispure = pure _1 = TDeclarer ids = comma_list_pure_ident_or_meta_ident_ _5 = TMPtVirg
     {let kindfn =
-  let _1 = _10 in
       ( (fun arity (_,name) pure check_meta ->
       if arity = Ast.NONE && pure = Ast0.Impure
       then (!Data.add_declarer_name name; [])
@@ -908,9 +876,8 @@ generic_ctype:
       ( None )
 in
          ( Ast0.wrap(Ast0.BaseType(P.clt2mcode Ast.CharType ty, q)) )}
-| x0 = ctype_qualif ty = Tchar
+| x = ctype_qualif ty = Tchar
     {let q =
-  let x = x0 in
       ( Some x )
 in
          ( Ast0.wrap(Ast0.BaseType(P.clt2mcode Ast.CharType ty, q)) )}
@@ -919,9 +886,8 @@ in
       ( None )
 in
          ( Ast0.wrap(Ast0.BaseType(P.clt2mcode Ast.ShortType ty, q)) )}
-| x0 = ctype_qualif ty = Tshort
+| x = ctype_qualif ty = Tshort
     {let q =
-  let x = x0 in
       ( Some x )
 in
          ( Ast0.wrap(Ast0.BaseType(P.clt2mcode Ast.ShortType ty, q)) )}
@@ -930,9 +896,8 @@ in
       ( None )
 in
          ( Ast0.wrap(Ast0.BaseType(P.clt2mcode Ast.IntType ty, q)) )}
-| x0 = ctype_qualif ty = Tint
+| x = ctype_qualif ty = Tint
     {let q =
-  let x = x0 in
       ( Some x )
 in
          ( Ast0.wrap(Ast0.BaseType(P.clt2mcode Ast.IntType ty, q)) )}
@@ -945,9 +910,8 @@ in
       ( None )
 in
          ( Ast0.wrap(Ast0.BaseType(P.clt2mcode Ast.LongType ty, q)) )}
-| x0 = ctype_qualif ty = Tlong
+| x = ctype_qualif ty = Tlong
     {let q =
-  let x = x0 in
       ( Some x )
 in
          ( Ast0.wrap(Ast0.BaseType(P.clt2mcode Ast.LongType ty, q)) )}
@@ -1000,9 +964,8 @@ in
   ( let (id,fn) = d in
 	 let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	 Ast0.wrap(Ast0.UnInit(None,fn idtype,id,P.clt2mcode ";" pv)) )}
-| x0 = const_vol i = pure_ident d = d_ident pv = TPtVirg
+| x = const_vol i = pure_ident d = d_ident pv = TPtVirg
     {let cv =
-  let x = x0 in
       ( Some x )
 in
   ( let (id,fn) = d in
@@ -1035,9 +998,8 @@ ctype:
       ( None )
 in
   ( P.pointerify (P.make_cv cv ty) m )}
-| x0 = const_vol ty = generic_ctype m = list_TMul_
+| x = const_vol ty = generic_ctype m = list_TMul_
     {let cv =
-  let x = x0 in
       ( Some x )
 in
   ( P.pointerify (P.make_cv cv ty) m )}
@@ -1048,9 +1010,8 @@ in
          ( let ty =
 	     Ast0.wrap(Ast0.BaseType(P.clt2mcode Ast.VoidType t, None)) in
 	   P.pointerify (P.make_cv cv ty) m )}
-| x0 = const_vol t = Tvoid m = nonempty_list_TMul_
+| x = const_vol t = Tvoid m = nonempty_list_TMul_
     {let cv =
-  let x = x0 in
       ( Some x )
 in
          ( let ty =
@@ -1199,9 +1160,8 @@ in
 		(Ast0.FunctionType(Some t,
 				   P.clt2mcode "(" lp, d, P.clt2mcode ")" rp)),
 	      id, P.clt2mcode ";" pt)) )}
-| x0 = storage t = ctype id = func_ident lp = TOPar d = decl_list_decl_ rp = TCPar pt = TPtVirg
+| x = storage t = ctype id = func_ident lp = TOPar d = decl_list_decl_ rp = TCPar pt = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( Ast0.wrap
@@ -1223,9 +1183,8 @@ in
 	      (Ast0.FunctionType(Some t,
 				 P.clt2mcode "(" lp, d, P.clt2mcode ")" rp)),
 	    id, P.clt2mcode ";" pt)) )}
-| x0 = storage t = Tvoid id = func_ident lp = TOPar d = decl_list_decl_ rp = TCPar pt = TPtVirg
+| x = storage t = Tvoid id = func_ident lp = TOPar d = decl_list_decl_ rp = TCPar pt = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
     ( let t = Ast0.wrap(Ast0.BaseType(P.clt2mcode Ast.VoidType t, None)) in
@@ -1420,9 +1379,8 @@ in
 	  (function (id,fn) ->
 	    Ast0.wrap(Ast0.UnInit(s,fn t,id,P.clt2mcode ";" pv)))
 	  d )}
-| x0 = storage t = ctype d = comma_list_d_ident_ pv = TPtVirg
+| x = storage t = ctype d = comma_list_d_ident_ pv = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( List.map
@@ -1437,9 +1395,8 @@ in
 in
       ( let (id,fn) = d in
       [Ast0.wrap(Ast0.Init(s,fn t,id,P.clt2mcode "=" q,e,P.clt2mcode ";" pv))] )}
-| x0 = storage t = ctype d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage t = ctype d = d_ident q = TEq e = initialize pv = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -1456,9 +1413,8 @@ in
 	    let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	    Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)))
 	  d )}
-| x0 = const_vol i = pure_ident d = comma_list_d_ident_ pv = TPtVirg
+| x = const_vol i = pure_ident d = comma_list_d_ident_ pv = TPtVirg
     {let cv =
-  let x = x0 in
       ( Some x )
 in
 let s =
@@ -1469,12 +1425,11 @@ in
 	    let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	    Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)))
 	  d )}
-| x0 = storage i = pure_ident d = comma_list_d_ident_ pv = TPtVirg
+| x = storage i = pure_ident d = comma_list_d_ident_ pv = TPtVirg
     {let cv =
       ( None )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( List.map
@@ -1482,13 +1437,12 @@ in
 	    let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	    Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)))
 	  d )}
-| x0 = storage x1 = const_vol i = pure_ident d = comma_list_d_ident_ pv = TPtVirg
+| x = storage x' = const_vol i = pure_ident d = comma_list_d_ident_ pv = TPtVirg
     {let cv =
-  let x = x1 in
+  let x = x' in
       ( Some x )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( List.map
@@ -1508,9 +1462,8 @@ in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       [Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv))] )}
-| x0 = const_vol i = pure_ident d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = const_vol i = pure_ident d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
-  let x = x0 in
       ( Some x )
 in
 let s =
@@ -1521,12 +1474,11 @@ in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       [Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv))] )}
-| x0 = storage i = pure_ident d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage i = pure_ident d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
       ( None )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -1534,13 +1486,12 @@ in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       [Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv))] )}
-| x0 = storage x1 = const_vol i = pure_ident d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage x' = const_vol i = pure_ident d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
-  let x = x1 in
+  let x = x' in
       ( Some x )
 in
 let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -1559,9 +1510,8 @@ in
 	       (t,P.clt2mcode "(" lp1,P.clt2mcode "*" st,P.clt2mcode ")" rp1,
 		P.clt2mcode "(" lp2,p,P.clt2mcode ")" rp2)) in
         [Ast0.wrap(Ast0.UnInit(s,fn t,id,P.clt2mcode ";" pv))] )}
-| x0 = storage t = fn_ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar pv = TPtVirg
+| x = storage t = fn_ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar pv = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in
@@ -1585,9 +1535,8 @@ in
 	       (t,P.clt2mcode "(" lp1,P.clt2mcode "*" st,P.clt2mcode ")" rp1,
 		P.clt2mcode "(" lp2,p,P.clt2mcode ")" rp2)) in
       [Ast0.wrap(Ast0.Init(s,fn t,id,P.clt2mcode "=" q,e,P.clt2mcode ";" pv))] )}
-| x0 = storage t = fn_ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar q = TEq e = initialize pv = TPtVirg
+| x = storage t = fn_ctype lp1 = TOPar st = TMul d = d_ident rp1 = TCPar lp2 = TOPar p = decl_list_name_opt_decl_ rp2 = TCPar q = TEq e = initialize pv = TPtVirg
     {let s =
-  let x = x0 in
       ( Some x )
 in
       ( let (id,fn) = d in

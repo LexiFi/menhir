@@ -517,9 +517,8 @@ expr:
 | _1 = CURRENT e = expr
     {let _startpos = _startpos__1_ in
                       ( A.Current (mk_pos _startpos, e) )}
-| _1 = CONDACT _2 = LPAREN e1 = expr _4 = COMMA s = ident _6 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expr__ _8 = RPAREN _9 = COMMA v = expr_list _11 = RPAREN
+| _1 = CONDACT _2 = LPAREN e1 = expr _4 = COMMA s = ident _6 = LPAREN xs = loption_separated_nonempty_list_COMMA_expr__ _8 = RPAREN _9 = COMMA v = expr_list _11 = RPAREN
     {let a =
-  let xs = xs0 in
       ( xs )
 in
 let _startpos = _startpos__1_ in
@@ -541,16 +540,14 @@ node_call_static_param:
     {                    ( t )}
 
 node_call:
-  s = ident _2 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expr__ _4 = RPAREN
+  s = ident _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_expr__ _4 = RPAREN
     {let a =
-  let xs = xs0 in
       ( xs )
 in
 let _startpos = _startpos_s_ in
     ( A.Call (mk_pos _startpos, s, a) )}
-| s = ident p = tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_node_call_static_param_ _3 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expr__ _5 = RPAREN
+| s = ident p = tlist_LPARAMBRACKET_SEMICOLON_RPARAMBRACKET_node_call_static_param_ _3 = LPAREN xs = loption_separated_nonempty_list_COMMA_expr__ _5 = RPAREN
     {let a =
-  let xs = xs0 in
       ( xs )
 in
 let _startpos = _startpos_s_ in

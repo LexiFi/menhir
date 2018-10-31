@@ -91,14 +91,14 @@ let names (producers : producers) : StringSet.t =
    that can be inlined. *)
 let inline grammar =
 
-  (* This function returns a fresh name beginning with [prefix] and
-     that is not in the set of names [names]. *)
-  let rec fresh ?(c=0) names prefix =
-    let name = prefix^string_of_int c in
-      if StringSet.mem name names then
-        fresh ~c:(c+1) names prefix
-      else
-        name
+  (* This function returns a fresh name that begins with [prefix] (although
+     this is not essential!) and that is not in the set [names]. *)
+  let rec fresh names prefix =
+    if StringSet.mem prefix names then
+      let prefix = prefix ^ "'" in
+      fresh names prefix
+    else
+      prefix
   in
 
   let use_inline = ref false in
@@ -153,26 +153,27 @@ let inline grammar =
     let prefix, nt, p, psym, suffix = chop_inline ([], b.producers) in
     prefix, expand_rule nt p, nt, psym, suffix
 
-  (* We have to rename producers' names of the inlined production
-     if they clash with the producers' names of the branch into
-     which we do the inlining. *)
+  (* We have to rename the producers [producers] of the inlined production
+     if they clash with the names of the producers of the host branch [b]. *)
   and rename_if_necessary b producers =
 
-    (* First we compute the set of names already in use. *)
-    let producers_names = names (b.producers @ producers) in
+    (* Compute the set of the names already in use in the host branch. *)
+    let used = names b.producers in
 
-    (* Compute a renaming and the new inlined producers' names. *)
-    let phi, producers' =
-      List.fold_left (fun (phi, producers) producer ->
+    (* Compute a renaming and the new names of the inlined producers. *)
+    let phi, _used, producers' =
+      List.fold_left (fun (phi, used, producers) producer ->
         let x = producer_identifier producer in
-        if StringSet.mem x producers_names then
-          let x' = fresh producers_names x in
-          ((x, x') :: phi, { producer with producer_identifier = x' } :: producers)
+        if StringSet.mem x used then
+          let x' = fresh used x in
+          (x, x') :: phi,
+          StringSet.add x' used,
+          { producer with producer_identifier = x' } :: producers
         else
-          (phi, producer :: producers)
-      ) ([], []) producers
+          (phi, used, producer :: producers)
+      ) ([], used, []) producers
     in
-      phi, List.rev producers'
+    phi, List.rev producers'
 
   (* Inline the non terminals that can be inlined in [b]. We use the
      ListMonad to combine the results. *)

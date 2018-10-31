@@ -246,10 +246,9 @@ option_modification_:
 option_preceded_COLON_simple_expr__:
   
     {    ( None )}
-| _10 = COLON x0 = simple_expr
+| _1 = COLON x' = simple_expr
     {let x =
-  let x = x0 in
-  let _1 = _10 in
+  let x = x' in
       ( x )
 in
     ( Some x )}
@@ -257,23 +256,21 @@ in
 option_preceded_binder_expr__:
   
     {    ( None )}
-| _100 = EQ x0 = expr
+| _1' = EQ x' = expr
     {let x =
-  let x = x0 in
-  let _10 = _100 in
+  let x = x' in
   let _1 =
-    let _1 = _10 in
+    let _1 = _1' in
                 ()
   in
       ( x )
 in
     ( Some x )}
-| _100 = COLONEQ x0 = expr
+| _1' = COLONEQ x' = expr
     {let x =
-  let x = x0 in
-  let _10 = _100 in
+  let x = x' in
   let _1 =
-    let _1 = _10 in
+    let _1 = _1' in
                              ()
   in
       ( x )
@@ -349,10 +346,9 @@ list_index_:
 list_preceded_COMMA_option_lexpr___:
   
     {    ( [] )}
-| _10 = COMMA x0 = option_lexpr_ xs = list_preceded_COMMA_option_lexpr___
+| _1 = COMMA x' = option_lexpr_ xs = list_preceded_COMMA_option_lexpr___
     {let x =
-  let x = x0 in
-  let _1 = _10 in
+  let x = x' in
       ( x )
 in
     ( x :: xs )}
@@ -586,9 +582,8 @@ index:
     {                                                     ( { variable ; range } )}
 
 array_args:
-  xs0 = loption_separated_nonempty_list_COMMA_expr__
+  xs = loption_separated_nonempty_list_COMMA_expr__
     {let es =
-  let xs = xs0 in
       ( xs )
 in
                                             ( es )}
@@ -872,9 +867,8 @@ type_prefix:
     {                ( { final ; scope ; replaceable } )}
 
 array_subscripts:
-  _1 = LBRACKET xs0 = loption_separated_nonempty_list_COMMA_expr__ _3 = RBRACKET
+  _1 = LBRACKET xs = loption_separated_nonempty_list_COMMA_expr__ _3 = RBRACKET
     {let dims =
-  let xs = xs0 in
       ( xs )
 in
                                                                         ( dims )}
@@ -965,23 +959,21 @@ composition:
 equation_section:
   equation = equation rest = equation_section
     {                     ( {rest with cargo = { rest.cargo with equations = equation::rest.cargo.equations } } )}
-| _10 = PUBLIC rest0 = public_composition_elements
+| _1 = PUBLIC rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                        ( rest )
 in
                                          ( rest )}
-| _10 = PROTECTED rest0 = public_composition_elements
+| _1 = PROTECTED rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                           ( rest )
 in
                                          ( rest )}
-| rest0 = cargo_sections
+| rest' = cargo_sections
     {let rest =
-  let rest = rest0 in
+  let rest = rest' in
                                                    ( rest )
 in
                                          ( rest )}
@@ -989,23 +981,21 @@ in
 initial_equation_section:
   equation = equation rest = initial_equation_section
     {                             ( {rest with cargo = { rest.cargo with initial_equations = equation::rest.cargo.initial_equations } } )}
-| _10 = PUBLIC rest0 = public_composition_elements
+| _1 = PUBLIC rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                        ( rest )
 in
                                                  ( rest )}
-| _10 = PROTECTED rest0 = public_composition_elements
+| _1 = PROTECTED rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                           ( rest )
 in
                                                  ( rest )}
-| rest0 = cargo_sections
+| rest' = cargo_sections
     {let rest =
-  let rest = rest0 in
+  let rest = rest' in
                                                    ( rest )
 in
                                                  ( rest )}
@@ -1015,85 +1005,77 @@ algorithm:
     {                                           ( stmts )}
 
 algorithm_section:
-  alg = algorithm _10 = PUBLIC rest0 = public_composition_elements
+  alg = algorithm _1 = PUBLIC rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                        ( rest )
 in
                       ( {rest with cargo = { rest.cargo with algorithms = alg::rest.cargo.algorithms } } )}
-| alg = algorithm _10 = PROTECTED rest0 = public_composition_elements
+| alg = algorithm _1 = PROTECTED rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                           ( rest )
 in
                       ( {rest with cargo = { rest.cargo with algorithms = alg::rest.cargo.algorithms } } )}
-| alg = algorithm rest0 = cargo_sections
+| alg = algorithm rest' = cargo_sections
     {let rest =
-  let rest = rest0 in
+  let rest = rest' in
                                                    ( rest )
 in
                       ( {rest with cargo = { rest.cargo with algorithms = alg::rest.cargo.algorithms } } )}
-| _10 = PUBLIC rest0 = public_composition_elements
+| _1 = PUBLIC rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                        ( rest )
 in
                                           ( rest )}
-| _10 = PROTECTED rest0 = public_composition_elements
+| _1 = PROTECTED rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                           ( rest )
 in
                                           ( rest )}
-| rest0 = cargo_sections
+| rest' = cargo_sections
     {let rest =
-  let rest = rest0 in
+  let rest = rest' in
                                                    ( rest )
 in
                                           ( rest )}
 
 initial_algorithm_section:
-  alg = algorithm _10 = PUBLIC rest0 = public_composition_elements
+  alg = algorithm _1 = PUBLIC rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                        ( rest )
 in
                               ( {rest with cargo = { rest.cargo with initial_algorithms = alg::rest.cargo.initial_algorithms } } )}
-| alg = algorithm _10 = PROTECTED rest0 = public_composition_elements
+| alg = algorithm _1 = PROTECTED rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                           ( rest )
 in
                               ( {rest with cargo = { rest.cargo with initial_algorithms = alg::rest.cargo.initial_algorithms } } )}
-| alg = algorithm rest0 = cargo_sections
+| alg = algorithm rest' = cargo_sections
     {let rest =
-  let rest = rest0 in
+  let rest = rest' in
                                                    ( rest )
 in
                               ( {rest with cargo = { rest.cargo with initial_algorithms = alg::rest.cargo.initial_algorithms } } )}
-| _10 = PUBLIC rest0 = public_composition_elements
+| _1 = PUBLIC rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                        ( rest )
 in
                                                   ( rest )}
-| _10 = PROTECTED rest0 = public_composition_elements
+| _1 = PROTECTED rest' = public_composition_elements
     {let rest =
-  let rest = rest0 in
-  let _1 = _10 in
+  let rest = rest' in
                                                                           ( rest )
 in
                                                   ( rest )}
-| rest0 = cargo_sections
+| rest' = cargo_sections
     {let rest =
-  let rest = rest0 in
+  let rest = rest' in
                                                    ( rest )
 in
                                                   ( rest )}
@@ -1151,15 +1133,13 @@ protected_composition_elements:
     {                                                        ( rest )}
 
 composition_external:
-  _1 = EXTERNAL lang = STRING lhs = external_lhs ext_ident = IDENT _5 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expr__ _7 = RPAREN annotation = option_annotation_ _9 = SEMICOLON
+  _1 = EXTERNAL lang = STRING lhs = external_lhs ext_ident = IDENT _5 = LPAREN xs = loption_separated_nonempty_list_COMMA_expr__ _7 = RPAREN annotation = option_annotation_ _9 = SEMICOLON
     {let ext_args =
-  let xs = xs0 in
       ( xs )
 in
                 ( { annotated_elem = {lang ; ext_ident; ext_lhs=Some lhs; ext_args}; annotation} )}
-| _1 = EXTERNAL lang = STRING ext_ident = IDENT _4 = LPAREN xs0 = loption_separated_nonempty_list_COMMA_expr__ _6 = RPAREN annotation = option_annotation_ _8 = SEMICOLON
+| _1 = EXTERNAL lang = STRING ext_ident = IDENT _4 = LPAREN xs = loption_separated_nonempty_list_COMMA_expr__ _6 = RPAREN annotation = option_annotation_ _8 = SEMICOLON
     {let ext_args =
-  let xs = xs0 in
       ( xs )
 in
                 ( { annotated_elem = {lang ; ext_ident; ext_lhs=None; ext_args}; annotation} )}
@@ -1173,9 +1153,8 @@ type_definition_clause:
     {                                                      ( td )}
 
 within_clause:
-  _1 = WITHIN xs0 = loption_separated_nonempty_list_DOT_ident__ _3 = SEMICOLON
+  _1 = WITHIN xs = loption_separated_nonempty_list_DOT_ident__ _3 = SEMICOLON
     {let name =
-  let xs = xs0 in
       ( xs )
 in
                                                                  ( name )}

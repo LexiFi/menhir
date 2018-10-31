@@ -85,10 +85,9 @@ list_definition_:
 list_preceded_WHERE_contrainte__:
   
     {    ( [] )}
-| _10 = WHERE x0 = contrainte xs = list_preceded_WHERE_contrainte__
+| _1 = WHERE x' = contrainte xs = list_preceded_WHERE_contrainte__
     {let x =
-  let x = x0 in
-  let _1 = _10 in
+  let x = x' in
       ( x )
 in
     ( x :: xs )}
@@ -282,25 +281,22 @@ raw_atomic_expression:
     {    ( e )}
 | _1 = BNOT e = atomic_expression
     {    ( ECall (CPrim PrimBoolNot, e) )}
-| e1 = atomic_expression _10 = CMPEQ e2 = atomic_expression
+| e1 = atomic_expression _1 = CMPEQ e2 = atomic_expression
     {let p =
-  let _1 = _10 in
       ( PrimAtomEquality )
 in
 let _endpos = _endpos_e2_ in
 let _startpos = _startpos_e1_ in
     ( ECall (CPrim p, Annotation.make (_startpos, _endpos) (EMulti [ e1; e2 ])) )}
-| e1 = atomic_expression _10 = BAND e2 = atomic_expression
+| e1 = atomic_expression _1 = BAND e2 = atomic_expression
     {let p =
-  let _1 = _10 in
       ( PrimBoolAnd )
 in
 let _endpos = _endpos_e2_ in
 let _startpos = _startpos_e1_ in
     ( ECall (CPrim p, Annotation.make (_startpos, _endpos) (EMulti [ e1; e2 ])) )}
-| e1 = atomic_expression _10 = BOR e2 = atomic_expression
+| e1 = atomic_expression _1 = BOR e2 = atomic_expression
     {let p =
-  let _1 = _10 in
       ( PrimBoolOr )
 in
 let _endpos = _endpos_e2_ in
@@ -364,13 +360,10 @@ atomic_layout:
       ( None )
 in
     ( LComponent (x, t) )}
-| x00 = ID _200 = COLON t = typ
+| x' = ID _2 = COLON t = typ
     {let x =
-  let _20 = _200 in
-  let x0 = x00 in
   let x =
-    let _2 = _20 in
-    let x = x0 in
+    let x = x' in
         ( x )
   in
       ( Some x )
