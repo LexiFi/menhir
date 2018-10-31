@@ -27,9 +27,9 @@ DEMOS := \
   calc-inspection-dune \
   generate-printers-dune \
 
-.PHONY: all clean
+.PHONY: all clean test
 
-all clean::
+all clean test::
 	@ for i in $(DEMOS) ; do \
 	  $(MAKE) --no-print-directory -C $$i $@ ; \
 	done

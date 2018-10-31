@@ -16,5 +16,5 @@ clean:
 	$(OCAMLBUILD) -clean
 
 test: all
-	@echo "The following command should print 42.0:"
+	@echo "The following command should print 42.000000:"
 	echo "(1 + 2 * 10) * 2" | ./$(MAIN).native
