@@ -1,5 +1,10 @@
 # Changes
 
+## 2018/10/31
+
+* Another attempt at removing all trailing spaces in auto-generated
+  `.messages` files. (I hope I got it right, this time.)
+
 ## 2018/10/26
 
 * A new syntactic sugar facility, "token aliases", has been added.

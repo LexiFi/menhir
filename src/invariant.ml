@@ -475,9 +475,10 @@ let fold_top f accu w =
 
 let print (w : word) =
   let b = Buffer.create 64 in
+  let separator = Misc.once "" " " in
   fold (fun () _represented symbol _states ->
-    Buffer.add_string b (Symbol.print symbol);
-    Buffer.add_char b ' '
+    Buffer.add_string b (separator());
+    Buffer.add_string b (Symbol.print symbol)
   ) () w;
   Buffer.contents b
 
