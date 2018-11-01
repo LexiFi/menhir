@@ -3,23 +3,23 @@ Warning: the token INSTR_SWITCH is unused.
 %{
 (* (c) Microsoft Corporation 2005-2007.  *)
 
-(*F# open Microsoft.Research.AbstractIL 
-open Microsoft.Research.AbstractIL.Internal 
-module Ilascii = Microsoft.Research.AbstractIL.Internal.AsciiConstants 
-module Ildiag = Microsoft.Research.AbstractIL.Diagnostics 
-module Il = Microsoft.Research.AbstractIL.IL 
-module Ilx = Microsoft.Research.AbstractIL.Extensions.ILX.Types 
-module Il = Microsoft.Research.AbstractIL.IL 
-module Illib = Microsoft.Research.AbstractIL.Internal.Library 
-F#*)  
+(*F# open Microsoft.Research.AbstractIL
+open Microsoft.Research.AbstractIL.Internal
+module Ilascii = Microsoft.Research.AbstractIL.Internal.AsciiConstants
+module Ildiag = Microsoft.Research.AbstractIL.Diagnostics
+module Il = Microsoft.Research.AbstractIL.IL
+module Ilx = Microsoft.Research.AbstractIL.Extensions.ILX.Types
+module Il = Microsoft.Research.AbstractIL.IL
+module Illib = Microsoft.Research.AbstractIL.Internal.Library
+F#*)
 
 open Illib
-open Ildiag 
-open Il     
-open Nums   
+open Ildiag
+open Il
+open Nums
 open Ilascii
 open Ilx
-  
+
 let pfailwith s = prerr_endline ("*** error: "^s); raise Parsing.Parse_error
 
 (*-----------------------------------------------------------------------
@@ -28,49 +28,49 @@ let pfailwith s = prerr_endline ("*** error: "^s); raise Parsing.Parse_error
 
 type sig_arg = SigArg of (string option * typ)  | Sentinel
 
-let decode_varargs args = 
-  let rec normals = function 
+let decode_varargs args =
+  let rec normals = function
       [] -> ([],None)
     | Sentinel :: t -> ([],Some (varargs t))
     | SigArg (_,p)::t -> let (n,r) = normals t in (p::n, r)
-  and varargs = function 
+  and varargs = function
       [] -> []
     | SigArg (_,ty):: t ->  let l = varargs t in ty::l
     | Sentinel :: t -> pfailwith "two sentinels in vararg call" in
   normals args;;
 
 (*-----------------------------------------------------------------------
- * 
+ *
  *----------------------------------------------------------------------*)
 
-type 'a resolved_at_mspec_scope = 
+type 'a resolved_at_mspec_scope =
     ResolvedAtMethodSpecScope of (genparams -> 'a)
 
 let no_mspec_scope x = ResolvedAtMethodSpecScope (fun cgparams -> x)
 let resolve_mspec_scope (ResolvedAtMethodSpecScope f) x = f x
-let resolve_mspec_scope_then (ResolvedAtMethodSpecScope f) g = 
+let resolve_mspec_scope_then (ResolvedAtMethodSpecScope f) g =
   ResolvedAtMethodSpecScope (fun x -> resolve_mspec_scope (g(f x)) x)
 
-let resolve_mspec_scope_to_formal_scope tspeco obj = 
-  match tspeco with 
+let resolve_mspec_scope_to_formal_scope tspeco obj =
+  match tspeco with
     None ->  resolve_mspec_scope obj mk_empty_gparams
   | Some tspec -> resolve_mspec_scope obj (gparams_of_inst (inst_of_tspec tspec))
 
-let resolve_mspec_scope_to_current_scope obj = 
+let resolve_mspec_scope_to_current_scope obj =
     resolve_mspec_scope obj mk_empty_gparams
 
 (*-----------------------------------------------------------------------
- * 
+ *
  *----------------------------------------------------------------------*)
 
-let find_mscorlib_aref() = 
+let find_mscorlib_aref() =
   match (!parse_ilGlobals).mscorlib_scoref with
   | ScopeRef_assembly aref -> aref
-  | _ -> ecma_mscorlib_assref (* drop back to mscorlib, why not error?? *)  
+  | _ -> ecma_mscorlib_assref (* drop back to mscorlib, why not error?? *)
 
-let find_aref nm = 
+let find_aref nm =
   if nm = "mscorlib" then find_mscorlib_aref() else
-  pfailwith ("Undefined assembly ref '" ^ nm ^ "'") 
+  pfailwith ("Undefined assembly ref '" ^ nm ^ "'")
 
 %}
 %start top_instrs
@@ -206,35 +206,35 @@ bytes_aux:
 
 methodSpec:
   _1 = methodSpecMaybeArrayMethod
-    {    ( let  data,varargs = _1 in 
+    {    ( let  data,varargs = _1 in
       mk_mspec_in_typ data,varargs )}
 
 methodSpecMaybeArrayMethod:
   _1 = callConv _2 = typ _3 = typSpec _4 = DCOLON _5 = methodName _6 = opt_actual_tyargs _7 = LPAREN _8 = sigArgs0 _9 = RPAREN
-    {       ( let callee_class_typ = resolve_mspec_scope_to_current_scope _3 in 
+    {       ( let callee_class_typ = resolve_mspec_scope_to_current_scope _3 in
          let gscope = (if Ilx.gen_is_array_ty callee_class_typ then None else Some (tspec_of_typ callee_class_typ)) in
          let argtys_n_varargs = resolve_mspec_scope_to_formal_scope gscope _8 in
-         let (argtys,varargs) = decode_varargs argtys_n_varargs in 
-         let minst = resolve_mspec_scope_to_current_scope _6 in 
-         let callee_retty = resolve_mspec_scope_to_formal_scope gscope _2 in 
+         let (argtys,varargs) = decode_varargs argtys_n_varargs in
+         let minst = resolve_mspec_scope_to_current_scope _6 in
+         let callee_retty = resolve_mspec_scope_to_formal_scope gscope _2 in
          (callee_class_typ, _1, _5, argtys, callee_retty, minst), varargs )}
 | _1 = callConv _2 = typ _3 = methodName _4 = opt_actual_tyargs _5 = LPAREN _6 = sigArgs0 _7 = RPAREN
-    {       ( let argtys_n_varargs = resolve_mspec_scope_to_formal_scope None _6 in  
-         let (argtys,varargs) = decode_varargs argtys_n_varargs in 
-         let retty = resolve_mspec_scope_to_formal_scope None _2 in 
-         let minst = resolve_mspec_scope_to_current_scope _4 in 
+    {       ( let argtys_n_varargs = resolve_mspec_scope_to_formal_scope None _6 in
+         let (argtys,varargs) = decode_varargs argtys_n_varargs in
+         let retty = resolve_mspec_scope_to_formal_scope None _2 in
+         let minst = resolve_mspec_scope_to_current_scope _4 in
          (typ_for_toplevel ScopeRef_local, _1, _3, argtys, retty, minst), varargs )}
 
 fieldSpec:
   _1 = typ _2 = typSpec _3 = DCOLON _4 = id
-    {       ( let callee_class_typ = resolve_mspec_scope_to_current_scope _2 in 
-         let tspec = tspec_of_typ callee_class_typ in 
+    {       ( let callee_class_typ = resolve_mspec_scope_to_current_scope _2 in
+         let tspec = tspec_of_typ callee_class_typ in
          let tref = tref_of_tspec tspec in
-         let callee_field_typ = resolve_mspec_scope_to_formal_scope (Some tspec) _1 in 
+         let callee_field_typ = resolve_mspec_scope_to_formal_scope (Some tspec) _1 in
          mk_fspec_in_typ (callee_class_typ, _4, callee_field_typ)
        )}
 | _1 = typ _2 = id
-    {       ( let callee_field_typ = resolve_mspec_scope_to_formal_scope None _1 in 
+    {       ( let callee_field_typ = resolve_mspec_scope_to_formal_scope None _1 in
          mk_fspec_in_typ (typ_for_toplevel ScopeRef_local, _2, callee_field_typ)
        )}
 
@@ -260,20 +260,20 @@ instr:
 | _1 = INSTR_R _2 = int64
     {        (  (_1 (NUM_R8 (i64_to_ieee64 _2))) )}
 | _1 = instr_r_head _2 = bytes _3 = RPAREN
-    {        (  let r = 
-             let b = _2 in 
-             match Bytes.length b with 
+    {        (  let r =
+             let b = _2 in
+             match Bytes.length b with
                4 -> NUM_R4 (ieee32_of_four_bytes  (Bytes.get b 0) (Bytes.get b 1) (Bytes.get b 2) (Bytes.get b 3))
              | 8 -> NUM_R8 (ieee64_of_eight_bytes  (Bytes.get b 0) (Bytes.get b 1) (Bytes.get b 2) (Bytes.get b 3) (Bytes.get b 4) (Bytes.get b 5) (Bytes.get b 6) (Bytes.get b 7))
-             | _ -> pfailwith "you must use exactly four or eight bytes when specifying a float by bytes." in 
+             | _ -> pfailwith "you must use exactly four or eight bytes when specifying a float by bytes." in
             (_1 r) )}
 | _1 = INSTR_METHOD _2 = methodSpecMaybeArrayMethod
-    {        (  
+    {        (
              begin
-               let  ((encl_typ, cc, nm, argtys, retty, minst) as data),varargs = _2 in 
-               if Ilx.gen_is_array_ty encl_typ then 
-                 (fun prefixes -> 
-                   let (shape,ty,p) = gen_dest_array_ty encl_typ in 
+               let  ((encl_typ, cc, nm, argtys, retty, minst) as data),varargs = _2 in
+               if Ilx.gen_is_array_ty encl_typ then
+                 (fun prefixes ->
+                   let (shape,ty,p) = gen_dest_array_ty encl_typ in
                    begin match nm with
                    | "Get" -> if not p then I_ldelem_any(shape,ty) else I_other (mk_ilx_ext_instr (EI_ldelem_any_erasable (shape,ty)))
                    | "Set" ->  if not  p then I_stelem_any(shape,ty) else I_other (mk_ilx_ext_instr (EI_stelem_any_erasable (shape,ty)))
@@ -281,8 +281,8 @@ instr:
                    | ".ctor" ->   if not p then I_newarr(shape,ty) else  I_other (mk_ilx_ext_instr (EI_newarr_erasable (shape,ty)))
                    | _ -> failwith "bad method on array type"
                    end)
-               else 
-               
+               else
+
                  _1 (mk_mspec_in_typ data, varargs)
              end )}
 | _1 = INSTR_FIELD _2 = fieldSpec
@@ -292,8 +292,8 @@ instr:
 | _1 = INSTR_INT_TYPE _2 = int32 _3 = typSpec
     {        (  (_1 (Int32.to_int _2,resolve_mspec_scope_to_current_scope _3)) )}
 | _1 = INSTR_VALUETYPE _2 = typSpec
-    {        ( let vtr = 
-             match resolve_mspec_scope_to_current_scope _2 with 
+    {        ( let vtr =
+             match resolve_mspec_scope_to_current_scope _2 with
                (* Type_boxed tr -> Type_value tr
              | Type_value vtr as typ -> typ
              | *) typ ->  typ in
@@ -303,10 +303,10 @@ instr:
 | _1 = INSTR_STRING _2 = bytearrayhead _3 = bytes _4 = RPAREN
     {        (  (_1 _3)  )}
 | _1 = INSTR_SIG _2 = callConv _3 = typ _4 = LPAREN _5 = sigArgs0 _6 = RPAREN
-    {        ( let argtys_n_varargs = resolve_mspec_scope_to_current_scope _5 in 
-          let (argtys,varargs) = decode_varargs argtys_n_varargs in 
-          let callee_retty = resolve_mspec_scope_to_current_scope _3 in 
-          let mref = mk_callsig (_2,argtys,callee_retty) in 
+    {        ( let argtys_n_varargs = resolve_mspec_scope_to_current_scope _5 in
+          let (argtys,varargs) = decode_varargs argtys_n_varargs in
+          let callee_retty = resolve_mspec_scope_to_current_scope _3 in
+          let mref = mk_callsig (_2,argtys,callee_retty) in
            (_1 (mref,varargs))
         )}
 | _1 = INSTR_TOK _2 = typSpec
@@ -338,7 +338,7 @@ sigArg:
   _1 = ELIPSES
     {       ( no_mspec_scope Sentinel )}
 | _1 = typ _2 = opt_id
-    {       ( resolve_mspec_scope_then _1 (fun ty -> 
+    {       ( resolve_mspec_scope_then _1 (fun ty ->
          no_mspec_scope (SigArg(_2, ty))) )}
 
 opt_id:
@@ -357,8 +357,8 @@ name1:
 
 className:
   _1 = LBRACK _2 = name1 _3 = RBRACK _4 = slashedName
-    {        ( let (enc,nm) = _4 in 
-          let aref = find_aref _2 in 
+    {        ( let (enc,nm) = _4 in
+          let aref = find_aref _2 in
           ScopeRef_assembly aref, enc, nm )}
 | _1 = slashedName
     {        ( let enc, nm = _1 in (ScopeRef_local, enc, nm) )}
@@ -371,22 +371,22 @@ slashedName:
 
 typeNameInst:
   _1 = className _2 = opt_actual_tyargs
-    {        ( let (a,b,c) = _1 in 
-          resolve_mspec_scope_then _2 (fun inst -> 
+    {        ( let (a,b,c) = _1 in
+          resolve_mspec_scope_then _2 (fun inst ->
           no_mspec_scope ( (mk_tspec ( (mk_nested_tref (a,b,c)), inst)))) )}
 
 typeName:
   _1 = className
-    {        ( let (a,b,c) = _1 in 
+    {        ( let (a,b,c) = _1 in
           no_mspec_scope ( (mk_tspec ( (mk_nested_tref (a,b,c)), mk_empty_gactuals))) )}
 | _1 = LBRACK _2 = name1 _3 = RBRACK
     {        ( (* reference to the toplevel constructs of an assembly *)
-          let aref = find_aref  _2 in 
+          let aref = find_aref  _2 in
           no_mspec_scope (tspec_for_toplevel ScopeRef_local) )}
 
 typSpec:
   _1 = typeName
-    {        ( resolve_mspec_scope_then _1 (fun tref -> 
+    {        ( resolve_mspec_scope_then _1 (fun tref ->
           no_mspec_scope (Type_boxed tref))  )}
 | _1 = typ
     {        ( _1 )}
@@ -423,13 +423,13 @@ typ:
 | _1 = OBJECT
     {       ( no_mspec_scope (!parse_ilGlobals).typ_Object )}
 | _1 = CLASS _2 = typeNameInst
-    {       ( resolve_mspec_scope_then _2 (fun tspec -> 
+    {       ( resolve_mspec_scope_then _2 (fun tspec ->
           no_mspec_scope (Type_boxed tspec)) )}
 | _1 = VALUE _2 = CLASS _3 = typeNameInst
-    {       ( resolve_mspec_scope_then _3 (fun tspec -> 
+    {       ( resolve_mspec_scope_then _3 (fun tspec ->
          no_mspec_scope (Type_value tspec)) )}
 | _1 = VALUETYPE _2 = typeNameInst
-    {       ( resolve_mspec_scope_then _2 (fun tspec -> 
+    {       ( resolve_mspec_scope_then _2 (fun tspec ->
          no_mspec_scope (Type_value tspec)) )}
 | _1 = typ _2 = LBRACK _3 = RBRACK
     {       ( resolve_mspec_scope_then _1 (fun ty -> no_mspec_scope (mk_sdarray_ty ty)) )}
@@ -444,12 +444,12 @@ typ:
 | _1 = typ _2 = STAR
     {       ( resolve_mspec_scope_then _1 (fun ty -> no_mspec_scope (Type_ptr ty)) )}
 | _1 = METHOD _2 = callConv _3 = typ _4 = STAR _5 = LPAREN _6 = sigArgs0 _7 = RPAREN
-    {        ( resolve_mspec_scope_then _3 (fun callee_retty -> 
-          resolve_mspec_scope_then _6 (fun argtys_n_varargs -> 
-          let (argtys,varargs) = decode_varargs argtys_n_varargs in 
+    {        ( resolve_mspec_scope_then _3 (fun callee_retty ->
+          resolve_mspec_scope_then _6 (fun argtys_n_varargs ->
+          let (argtys,varargs) = decode_varargs argtys_n_varargs in
           let csig = mk_callsig(_2,
                                     argtys,
-                                    callee_retty) in 
+                                    callee_retty) in
          no_mspec_scope (Type_fptr csig))) )}
 | _1 = TYPEDREF
     {       ( no_mspec_scope (!parse_ilGlobals).typ_TypedReference )}
@@ -496,7 +496,7 @@ typ:
 | _1 = BANG _2 = int32
     {       ( no_mspec_scope (Type_tyvar (int_to_u16 (i32_to_int _2)))  )}
 | _1 = BANG _2 = BANG _3 = int32
-    {       ( ResolvedAtMethodSpecScope 
+    {       ( ResolvedAtMethodSpecScope
            (fun cgparams -> Type_tyvar (int_to_u16 (i32_to_int _3 + List.length cgparams)))  )}
 
 bounds1:
@@ -543,7 +543,7 @@ opt_actual_tyargs:
   
     {        ( no_mspec_scope mk_empty_gactuals )}
 | _1 = actual_tyargs
-    {        ( resolve_mspec_scope_then _1 (fun res -> 
+    {        ( resolve_mspec_scope_then _1 (fun res ->
           no_mspec_scope  res) )}
 
 actual_tyargs:
@@ -552,11 +552,11 @@ actual_tyargs:
 
 actualTypSpecs:
   _1 = typSpec
-    {        ( resolve_mspec_scope_then _1 (fun res -> 
+    {        ( resolve_mspec_scope_then _1 (fun res ->
           no_mspec_scope [ res]) )}
 | _1 = actualTypSpecs _2 = COMMA _3 = typSpec
-    {        ( resolve_mspec_scope_then _1 (fun x -> 
-          resolve_mspec_scope_then _3 (fun y -> 
+    {        ( resolve_mspec_scope_then _1 (fun x ->
+          resolve_mspec_scope_then _3 (fun y ->
           no_mspec_scope (x @ [ y]))) )}
 
 %%

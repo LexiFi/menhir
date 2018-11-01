@@ -41,13 +41,13 @@ file:
   EOF
     { [] }
 | OPEN ftext CLOSE file
-    { 
+    {
       { cmt_start = $1;
 	cmt_end = $3;
 	cmt_content = Ftext (List.rev $2)
       } :: $4 }
 | TERMINATE file
-    { 
+    {
       { cmt_start = fst $1;
 	cmt_end = snd $1 ;
 	cmt_content = Terminate

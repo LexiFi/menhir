@@ -16,13 +16,13 @@ open Abstract_syntax;;
 
 
 
-%token <string> IDENT 
+%token <string> IDENT
 %token <Numbers.t> INTEGER
 %token <string> STRING
 %token LET FUN ARROW
 %token IF THEN ELSE
 %token AND OR NOT TRUE FALSE
-%token PLUS STAR MINUS 
+%token PLUS STAR MINUS
 %token CONCAT
 %token GE GT LE LT NEQ
 %token LEFTPAR RIGHTPAR SEMICOLON COMMA LEFTBRACE RIGHTBRACE
@@ -47,7 +47,7 @@ open Abstract_syntax;;
 
 %%
 
-command: 
+command:
   EOF                   { raise End_of_file }
 | command_aux SEMICOLON { $1 }
 ;
@@ -66,7 +66,7 @@ command_aux:
 identlist:
 | IDENT                           { [$1] }
 | IDENT COMMA identlist           { $1::$3 }
-; 
+;
 
 args:
   IDENT                     { [$1] }
@@ -76,19 +76,19 @@ args:
 expr:
 | IF expr THEN expr ELSE expr %prec IF
     { If($2,$4,$6) }
-| expr simple_expr %prec APPLY 
+| expr simple_expr %prec APPLY
     { Apply($1,$2) }
-| FUN IDENT ARROW expr    
+| FUN IDENT ARROW expr
     { Fun($2,$4) }
-| expr PLUS expr          
+| expr PLUS expr
     { Apply(Apply(Var("+"),$1),$3) }
-| expr MINUS expr  
+| expr MINUS expr
     { Apply(Apply(Var("-"),$1),$3) }
 | MINUS expr %prec UMINUS
     { Apply(Var("_minus"),$2) }
-| expr STAR expr        
+| expr STAR expr
     { Apply(Apply(Var("*"),$1),$3) }
-| expr EQUAL expr         
+| expr EQUAL expr
     { Apply(Apply(Var("="),$1),$3) }
 | expr NEQ expr           { Apply(Apply(Var("<>"),$1),$3) }
 | expr GE expr            { Apply(Apply(Var(">="),$1),$3) }
@@ -99,24 +99,24 @@ expr:
 | expr OR expr            { Apply(Apply(Var("or"),$1),$3) }
 | expr CONCAT expr            { Apply(Apply(Var("^"),$1),$3) }
 | NOT expr                { Apply(Var("not"),$2) }
-| simple_expr     
+| simple_expr
       { $1 }
 ;
 
 simple_expr:
-| IDENT                      
+| IDENT
     { Var($1) }
-| INTEGER                    
+| INTEGER
     { Integer($1) }
-| TRUE                       
+| TRUE
     { Bool(true) }
-| FALSE                      
-    { Bool(false) } 
-| STRING                     
+| FALSE
+    { Bool(false) }
+| STRING
     { String($1) }
-| LEFTPAR expr RIGHTPAR      
+| LEFTPAR expr RIGHTPAR
     { $2 }
-| LEFTPAR expr COMMA commalist RIGHTPAR 
+| LEFTPAR expr COMMA commalist RIGHTPAR
       { Tuple($2::$4) }
 | LEFTBRACE RIGHTBRACE
 	  { Set([]) }
@@ -125,14 +125,14 @@ simple_expr:
 ;
 
 commalist:
-| expr  
+| expr
     { [$1] }
 | expr COMMA commalist
     { $1::$3 }
 ;
 
 semicolonlist:
-| expr  
+| expr
     { [$1] }
 | expr SEMICOLON
     { [$1] }

@@ -116,8 +116,8 @@ let unclosed opening_name opening_num closing_name closing_num =
   raise(Syntaxerr.Error(Syntaxerr.Unclosed(rhs_loc opening_num, opening_name,
                                            rhs_loc closing_num, closing_name)))
 
-let mkloc l = 
-  let r = mkexp (Pexp_ident (Ldot (Lident "Join", "create_location"))) in 
+let mkloc l =
+  let r = mkexp (Pexp_ident (Ldot (Lident "Join", "create_location"))) in
 	mkexp (Pexp_apply (r, [mkexp (Pexp_thismodule);l]))
 
 let pproc_add list = function
@@ -235,7 +235,7 @@ let pproc_add list = function
 %token LBRACEBAR /* Join */
 %token BARRBRACE /* Join */
 %token EQUALGREATER /* Join */
-%token LESSLESSGREATERGREATER 
+%token LESSLESSGREATERGREATER
 %token LESSGREATER
 %token LBRACEBARBARRBRACE
 
@@ -513,15 +513,15 @@ expr:
   | expr INFIXOP4 expr
       { mkinfix $1 $2 $3 }
   | expr SUBTRACTIVE expr
-      { mkinfix $1 $2 $3 } 
+      { mkinfix $1 $2 $3 }
   | expr STAR expr
-      { mkinfix $1 "*" $3 } 
+      { mkinfix $1 "*" $3 }
   | expr EQUAL expr
-      { mkinfix $1 "=" $3 } 
+      { mkinfix $1 "=" $3 }
   | expr LESS expr
-      { mkinfix $1 "<" $3 } 
+      { mkinfix $1 "<" $3 }
   | expr GREATER expr
-      { mkinfix $1 ">" $3 } 
+      { mkinfix $1 ">" $3 }
   | expr OR expr
       { mkinfix $1 "or" $3 }
   | expr BARBAR expr
@@ -613,12 +613,12 @@ simple_expr:
   | LPAREN SHARP label RPAREN
       { mkexp(Pexp_function [mkpat(Ppat_var "x"),
                 mkexp(Pexp_send(mkexp(Pexp_ident (Lident"x")), $3))]) }
-  | LOC location END 
+  | LOC location END
       { Clflags.join:= true; mkloc (mkexp (Pexp_function [void_pat (),($2)])) }
 ;
 
 list_of_exprs:
-  expr                         
+  expr
   { match $1 with
         { pexp_desc = Pexp_tuple t } -> t
       | e -> [e]
@@ -637,15 +637,15 @@ simple_expr_list:
 /* BEGIN Join */
 
 def_binding:
-    join_pattern EQUAL process %prec prec_let       
+    join_pattern EQUAL process %prec prec_let
       { ($1,mkexp(Pexp_process($3))) }
 ;
 join_pattern:
     LIDENT LESS join_args GREATER      { mkpat(Ppat_channel ($1,$3,Async)) }
   | LIDENT LESSGREATER                 { mkpat(Ppat_channel ($1,[],Async)) }
-  | LIDENT LESSLESS join_args GREATERGREATER 
+  | LIDENT LESSLESS join_args GREATERGREATER
            { mkpat(Ppat_channel ($1,$3,Sync)) }
-  | LIDENT LESSLESSGREATERGREATER 
+  | LIDENT LESSLESSGREATERGREATER
            { mkpat(Ppat_channel ($1,[],Sync)) }
   | join_pattern BAR join_pattern      { mkpat(Ppat_or($1,$3)) }
 ;
@@ -679,7 +679,7 @@ location_item:
 process:
                                              { mkproc(Pproc_null)}
   | process0                                 { $1 }
-  | process0 BAR process                      
+  | process0 BAR process
      { mkproc(Pproc_par(pproc_add (pproc_add [] $1) $3)) }
   | DEF def_bindings IN process %prec prec_let
       { mkproc(Pproc_def(List.rev $2, $4)) }
@@ -708,7 +708,7 @@ process0:
   | static_expr LESSLESS static_comma_list error
       { unclosed "<<" 2 ">>" 4 }
   | IF expr THEN  process0 ELSE process0 %prec prec_if
-      { mkproc(Pproc_if($2,$4,$6)) }    
+      { mkproc(Pproc_if($2,$4,$6)) }
   | LBRACEBARBARRBRACE            { mkproc(Pproc_null) }
   | LBRACEBAR process BARRBRACE { $2 }
 ;
@@ -939,7 +939,7 @@ class_list:
 class_def:
         virtual_flag closed_flag
         class_type_parameters LIDENT simple_pattern_list self self_type EQUAL
-        constraints class_fields 
+        constraints class_fields
           { { pcl_name = $4; pcl_param = $3; pcl_args = List.rev $5;
               pcl_self = $6; pcl_self_ty = $7; pcl_cstr = List.rev $9;
               pcl_field = List.rev $10;
@@ -989,7 +989,7 @@ meth_binding:
    | type_constraint EQUAL seq_expr %prec prec_let
        { let (t, t') = $1 in (mkexp(Pexp_constraint($3, t, t')),0) }
    | simple_pattern meth_binding
-       { 
+       {
        let (s2,nparams) = $2
          in
          (mkexp(Pexp_function[$1,s2]),nparams+1) }
@@ -1272,7 +1272,7 @@ constr_ident:
   | FALSE                                       { "false" }
   | TRUE                                        { "true" }
 ;
-    
+
 val_longident:
     val_ident                                   { Lident $1 }
   | mod_longident DOT val_ident                 { Ldot($1, $3) }

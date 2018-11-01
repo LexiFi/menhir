@@ -20,17 +20,17 @@ let in_table = Growvect.create 100 voidtype
    the rest of the compiler.  *)
 
 let make_def x v k t =
-  { d_tag = x; d_module = !modname; d_export = v; d_kind = k; 
+  { d_tag = x; d_module = !modname; d_export = v; d_kind = k;
     d_used = true; d_loc = no_loc; d_type = t; d_lab = nosym;
     d_level = 0; d_offset = 0; d_param = 0; d_map = [] }
 
 let field_def x v t o =
-  { d_tag = x; d_module = !modname; d_export = v; d_kind = FieldDef; 
-    d_used = true; d_loc = no_loc; d_type = t; d_lab = nosym; 
+  { d_tag = x; d_module = !modname; d_export = v; d_kind = FieldDef;
+    d_used = true; d_loc = no_loc; d_type = t; d_lab = nosym;
     d_level = 1; d_offset = o; d_param = 0; d_map = [] }
 
 let def_type k m n (g, r, map) =
-  let t = { t_id = n; t_name = anon; t_module = m; t_level = 0; t_guts = g; 
+  let t = { t_id = n; t_name = anon; t_module = m; t_level = 0; t_guts = g;
     t_rep = r; t_desc = nosym; t_map = map } in
   Growvect.set in_table k t; t
 
@@ -111,7 +111,7 @@ def:
 | _1 = CONST _2 = ident _3 = MARK _4 = otype _5 = const
     {      ( make_def _2 _3 (ConstDef _5) _4 )}
 | _1 = STRING _2 = ident _3 = MARK _4 = int _5 = symbol
-    {      ( let d = make_def _2 Visible (StringDef _4) 
+    {      ( let d = make_def _2 Visible (StringDef _4)
 		  (new_type 0 (row (_4+1) character)) in
 	d.d_lab <- _5; d )}
 | _1 = PROCEDURE _2 = ident _3 = MARK _4 = otype
@@ -159,7 +159,7 @@ typedef:
 
 tguts:
   _1 = POINTER
-    {      ( (PointerType (make_def anon Private TypeDef voidtype), 
+    {      ( (PointerType (make_def anon Private TypeDef voidtype),
 	  addr_rep, [GC_Offset 0]) )}
 | _1 = ENUM _2 = int
     {      ( (EnumType _2, int_rep, []) )}
@@ -172,7 +172,7 @@ tguts:
 | _1 = FLEX _2 = otype
     {      ( flex _2 )}
 | _1 = prockind _2 = int _3 = otype _4 = locals _5 = END
-    {      ( let p = { p_kind = _1; p_pcount = _2; 
+    {      ( let p = { p_kind = _1; p_pcount = _2;
 		  p_result = _3; p_fparams = List.rev _4 } in
 	(ProcType p, addr_rep, []) )}
 

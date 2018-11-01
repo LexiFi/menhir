@@ -1,5 +1,5 @@
 /* CIGEN
- * 
+ *
  * C interface generator for Objective CAML.
  * (C) 1997 by Gerd Stolpmann
  *
@@ -13,7 +13,7 @@
   (* header *)
   open Ctypes
   open Cparseraux
-  
+
   let check_for_typedefs d =
   ( if List.mem S_typedef (fst(d.d_specs)) then
     (  let n = (List.map name_of_declarator (d.d_decl)) in
@@ -142,7 +142,7 @@
 
 /**** rules ****/
 
-nothing : 
+nothing :
   Endofstream { () }
 
 translation_unit :
@@ -252,7 +252,7 @@ specifier_qualifier_list :
      { (fst $2,$1::(snd $2)) }
 
 struct_declarator_list :
-    declarator 
+    declarator
       { [$1] }
   | declarator  KW_comma  struct_declarator_list
       { $1 :: $3 }
@@ -279,7 +279,7 @@ enumerator_list :
     enumerator
       { [$1] }
   | enumerator KW_comma enumerator_list
-      { $1 :: $3 } 
+      { $1 :: $3 }
 
 enumerator :
     Ident
@@ -291,7 +291,7 @@ enumerator :
 declarator :
     direct_declarator
       { $1 }
-  | pointer direct_declarator 
+  | pointer direct_declarator
       { D_pointer ($2,$1) }
 
 direct_declarator :
@@ -299,9 +299,9 @@ direct_declarator :
       { D_name $1 }
   | KW_oparen declarator KW_cparen
       { $2 }
-  | direct_declarator KW_obracket KW_cbracket 
+  | direct_declarator KW_obracket KW_cbracket
       { D_openarray $1 }
-  | direct_declarator KW_obracket Integer_unsuffixed KW_cbracket 
+  | direct_declarator KW_obracket Integer_unsuffixed KW_cbracket
       { D_array ($1,$3) }
     /* subset */
   | direct_declarator KW_oparen parameter_type_list KW_cparen

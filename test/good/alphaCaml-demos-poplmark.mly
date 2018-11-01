@@ -1,4 +1,4 @@
-/*  
+/*
  *  Parts of this file taken from the fullfsub implementation
  *  by the POPLmark team.
  *
@@ -68,9 +68,9 @@ Type :
 
 /* Atomic types are those that never need extra parentheses */
 AType :
-  | LPAREN Type RPAREN  
-      { $2 } 
-  | UCID 
+  | LPAREN Type RPAREN
+      { $2 }
+  | UCID
       { TVar $1 }
   | TTOP
       { TTop }
@@ -94,7 +94,7 @@ ArrowType :
 Term :
   | AppTerm
       { $1 }
-  | LAMBDA LCID COLON Type DOT Term 
+  | LAMBDA LCID COLON Type DOT Term
       { EAbs ($2, $4, $6) }
   | LET Pattern EQ Term IN Term
       { ELet ($2, $4, $6) }
@@ -128,16 +128,16 @@ NEFieldTypes :
       { StringMap.add $1 $3 $5 }
 
 TermSeq :
-  | Term 
+  | Term
       { $1 }
-  | Term SEMI TermSeq 
+  | Term SEMI TermSeq
       { ELet (PWildcard, $1, $3) }
 
 /* Atomic terms are ones that never require extra parentheses */
 ATerm :
-  | LPAREN TermSeq RPAREN  
-      { $2 } 
-  | LCID 
+  | LPAREN TermSeq RPAREN
+      { $2 }
+  | LCID
       { EVar $1 }
   | LCURLY Fields RCURLY
       { ERecord $2 }
@@ -157,7 +157,7 @@ NEFields :
 OType :
   | /* empty */
       { TTop}
-  | LEQ Type 
+  | LEQ Type
       { $2 }
 
 Pattern :

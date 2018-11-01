@@ -8,10 +8,10 @@ open Pp
 %token <string> IDENT
 %token <string> STRING
 %token <bool> BOOL
-%token PLUS MINUS TIMES DIV 
+%token PLUS MINUS TIMES DIV
 %token LESSGREATER LESSEQUAL GREATEREQUAL LESS GREATER EQUAL EQUALEQUAL
 %token COLON COLONEQUAL COMMA SEMI SEMISEMI DOT
-%token BEGIN END LPAREN RPAREN LBRACKET RBRACKET 
+%token BEGIN END LPAREN RPAREN LBRACKET RBRACKET
 %token IF THEN ELSE WHILE  DO
 %token VAR FUNCTION PROCEDURE PROGRAM
 %token WRITE WRITELN READ ALLOC
@@ -19,14 +19,14 @@ open Pp
 
 /* lowest precedence */
 %left LESSGREATER GREATEREQUAL LESSEQUAL LESS GREATER EQUAL EQUALEQUAL
-%left PLUS MINUS 
-%left TIMES DIV 
+%left PLUS MINUS
+%left TIMES DIV
 %nonassoc UMINUS
 
 /* highest precedence */
 
 /* the entry point */
-%start main             
+%start main
 %type <Pp.program> main
 %%
 main:
@@ -75,13 +75,13 @@ args1:
   SEMI declvar args1                  { $2 @ $3 }
 |                                     { [] }
 ;
-instruction: 
+instruction:
   IDENT COLONEQUAL expression         { Set ($1, $3) }
 | BEGIN bloc END                      { Sequence $2 }
 | IF expression THEN instruction ELSE instruction
                                       { If ($2, $4, $6) }
 | WHILE expression DO instruction     { While ($2, $4) }
-| IDENT LPAREN arguments RPAREN       { Procedure_call ($1, $3) } 
+| IDENT LPAREN arguments RPAREN       { Procedure_call ($1, $3) }
 | READ LPAREN IDENT RPAREN            { Read ($3) }
 | WRITE LPAREN expression RPAREN      { Write ($3) }
 | WRITELN LPAREN expression RPAREN    { Writeln ($3) }
@@ -122,7 +122,7 @@ expression:
 | BOOL                                { Bool $1 }
 | IDENT                               { Get $1 }
 | call_expression                     { $1 }
-| array_expression LBRACKET expression RBRACKET 
+| array_expression LBRACKET expression RBRACKET
                                       { Geti ($1, $3) }
 | expression PLUS expression          { Bin (Op Add, $1, $3) }
 | expression MINUS expression         { Bin (Op Sub, $1, $3) }
@@ -145,14 +145,14 @@ array_expression:
 ;
 
 call_expression:
-| IDENT LPAREN arguments RPAREN       { Function_call ($1, $3) } 
+| IDENT LPAREN arguments RPAREN       { Function_call ($1, $3) }
 | ALLOC LPAREN expression
          COLON type_expr RPAREN       { Alloc ($3,$5) }
-    
+
 type_expr:
   INTEGER                              { Integer }
 | REAL                                 { Real }
 | BOOLEAN                              { Boolean }
-| ARRAY OF type_expr      
+| ARRAY OF type_expr
                                        { Array ($3) }
 ;

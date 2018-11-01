@@ -8,7 +8,7 @@
  * Please see the file Dule-LICENSE for license information.
  *
  * $Id: parser.mly,v 1.49 2005/03/06 02:18:12 mikon Exp $
- */ 
+ */
 
 %{
 
@@ -20,8 +20,8 @@ open Mod_front.EDule
 let symbol_rloc () =
   Error_rep.Location.int2t (Parsing.symbol_start()) (Parsing.symbol_end())
 
-let rhs_loc n = 
-  Error_rep.Location.int2t (Parsing.rhs_start n) (Parsing.rhs_end n)   
+let rhs_loc n =
+  Error_rep.Location.int2t (Parsing.rhs_start n) (Parsing.rhs_end n)
 
 let mktyp f = (symbol_rloc(), f)
 let mkvalu t = (symbol_rloc(), t)
@@ -36,16 +36,16 @@ let mkpat lt = let f = mktyp(F_x) in
 let mkint n =
   if n < 0 then failwith "Negative integers not implemented!"
   else
-    let i2pr i = 
-      mkvalu(T_comp (mkvalu(T_pr AtIndex.mNat), 
+    let i2pr i =
+      mkvalu(T_comp (mkvalu(T_pr AtIndex.mNat),
 		     mkvalu(T_pr i)))
     in
-    let rec n2con n = 
+    let rec n2con n =
       if n = 0 then
 	i2pr AtIndex.zero
       else
 	let acc = n2con (n - 1) in
-	mkvalu(T_appl (cons (AtIndex.arg_of_succ, acc) nil, 
+	mkvalu(T_appl (cons (AtIndex.arg_of_succ, acc) nil,
 		       i2pr AtIndex.succ))
     in
     n2con n
@@ -59,8 +59,8 @@ let unclosed opening_name opening_num closing_name closing_num =
 %}
 
 /* tokens, most are from OCaml and not in use, for now
-   most of these token definitions are taken verbatim from the OCaml parser 
-   (the only other two such cases are in lexer.mll) 
+   most of these token definitions are taken verbatim from the OCaml parser
+   (the only other two such cases are in lexer.mll)
    with the oral permission obtained on ETAPS 2003 from Xavier Leroy
    to take small snippets, if necessary (sigh, those non-free licences): */
 %token AMPERAMPER
@@ -149,7 +149,7 @@ let unclosed opening_name opening_num closing_name closing_num =
 /* This has to be thought of and improved basing on OCaml parser */
 
 %nonassoc COLONGREATER
-%left     WITH 
+%left     WITH
 %left     TILDE
 %nonassoc prec_argument
 %nonassoc LPAREN
@@ -271,7 +271,7 @@ case:
 ;
 embedding:
   | valu
-      { $1 } 
+      { $1 }
   | pattern MINUSGREATER valu
       { mkvalu(T_curry (cons (AtIndex.it, $1) nil, $3)) }
   | MINUSGREATER valu
@@ -292,7 +292,7 @@ list0_declaration:
   | list0_declaration declaration               { econs $2 $1 }
 ;
 declaration:
-    pattern EQUAL valu 
+    pattern EQUAL valu
       { let (k, f) = $1 in
       (k, (f, $3)) }
   | REC pattern EQUAL valu
@@ -373,12 +373,12 @@ valu:
   | valu partial_arguments
       { mkvalu(T_pappl ($2, $1)) }
   | IF valu THEN valu ELSE valu
-      { let case = 
-	  cons (AtIndex.tt, 
-		mkvalu(T_curry (cons (AtIndex.it, 
+      { let case =
+	  cons (AtIndex.tt,
+		mkvalu(T_curry (cons (AtIndex.it,
 				      (mkwild(), mktyp(F_x))) nil, $4)))
-	 (cons (AtIndex.ff, 
-		mkvalu(T_curry (cons (AtIndex.it, 
+	 (cons (AtIndex.ff,
+		mkvalu(T_curry (cons (AtIndex.it,
 				      (mkwild(), mktyp(F_x))) nil, $6)))
 	  nil)
         in
@@ -407,9 +407,9 @@ list1_field_sp:
   | list1_field_sp SEMI field_sp                { econs $3 $1 }
 ;
 field_sp:
-    dule_label COLON sp                           
+    dule_label COLON sp
       { ($1, $3) }
-  | dule_label                                    
+  | dule_label
       { ($1, mksp(S_Ii (AtIndex.dule2sp $1))) }
 ;
 list0_param_sp:
@@ -427,7 +427,7 @@ bb_item:
     TYPE type_label                             { ($2, Bb_type) }
   | VALUE value_label COLON typ                 { ($2, Bb_value $4) }
 ;
-sp: 
+sp:
   | LBRACE list0_field_sp RBRACE
       { mksp(S_Aa $2) }
   | LBRACE list0_field_sp error
@@ -437,14 +437,14 @@ sp:
   | LBRACE LBRACE list0_field_sp error
       { unclosed "{{" 1 "}}" 4 }
   | list0_param_sp MINUSGREATER sp
-      { mksp(S_Ee ($1, $3)) } 
+      { mksp(S_Ee ($1, $3)) }
   | SIG list0_bb_item END
       { mksp(S_Bb $2) }
   | SIG list0_bb_item error
       { unclosed "sig" 1 "end" 3 }
   | sp WITH dule
       { mksp(S_Ww ($3, $1)) }
-  | sp_label 
+  | sp_label
       { mksp(S_Ii $1) }
   | LPAREN sp RPAREN
       { $2 }
@@ -471,11 +471,11 @@ list0_base_item:
   | list0_base_item base_item                   { econs $2 $1 }
 ;
 base_item:
-    TYPE type_label EQUAL typ                     
+    TYPE type_label EQUAL typ
       { ($2, Base_type $4) }
-  | VALUE value_label EQUAL valu                   
+  | VALUE value_label EQUAL valu
       { ($2, Base_value $4) }
-  | VALUE REC value_label EQUAL valu               
+  | VALUE REC value_label EQUAL valu
       { ($3, Base_value (mkvalu(T_fix ($3, $5)))) }
 ;
 def_dule:
@@ -497,7 +497,7 @@ list0_link_item:
   | list0_link_item link_item                   { $2 :: $1 }
 ;
 link_item:
-    def_dule                              
+    def_dule
       { let (i, m) = $1 in Link_Dule (i, m) }
   | MODULE def_dule
       { let (i, m) = $2 in Link_Dule (i, m) }

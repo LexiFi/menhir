@@ -7,7 +7,7 @@ let find_attr attr attrs =
   List.exists (fun a -> a == at) attrs
 let ifaceMemWithAttrs mem attrs = match mem with
   | Attribute(p, _, ro, s, t, id) -> Attribute(p, attrs, ro, s, t, id)
-  | Operation(p, _, s, q, ret, id, args) -> 
+  | Operation(p, _, s, q, ret, id, args) ->
     let q' = if (find_attr "getter" attrs) then {q with getter = true} else q in
     let q' = if (find_attr "setter" attrs) then {q' with setter = true} else q' in
     Operation(p, attrs, s, q', ret, id, args)
@@ -30,7 +30,7 @@ let noQualifiers = {static=false;getter=false;setter=false;
                     creator=false;deleter=false;legacyCaller=false}
 %}
 
-%token <Id.t> ID 
+%token <Id.t> ID
 %token <string> STRING
 %token <string> UUID
 %token <string * string> NATIVE
@@ -56,7 +56,7 @@ let noQualifiers = {static=false;getter=false;setter=false;
 %left XOR
 %left AND
 %nonassoc SHLEFT SHRIGHT
-%left PLUS MINUS 
+%left PLUS MINUS
 %left TIMES DIVIDE MOD
 
 
@@ -158,9 +158,9 @@ callbackOrInterface:
 
 callbackRestOrInterface:
   | callbackRest { $1 }
-  | interface { 
+  | interface {
     match $1 with
-    | Interface(_, id, nameOpt, members, metas, _) -> 
+    | Interface(_, id, nameOpt, members, metas, _) ->
       Interface($startpos, id, nameOpt, members, metas, IsCallbackInterface)
     | _ -> failwith "Impossible"
   }
@@ -284,12 +284,12 @@ attributeOrOperation:
   | operation { $1 }
 
 stringifierAttributeOrOperation:
-  | attribute { 
+  | attribute {
     match $1 with
     | Attribute(_, meta, readonly, _, ty, id) -> Attribute($startpos, meta, readonly, IsStringifier, ty, id)
     | _ -> failwith "Impossible"
   }
-  | operation { 
+  | operation {
     match $1 with
     | Operation(_, meta, _, quals, ret, id, args) -> Operation($startpos, meta, IsStringifier, quals, ret, id, args)
     | _ -> failwith "Impossible"
@@ -331,8 +331,8 @@ argumentList:
  | args=separated_list(COMMA, argument) { args }
 
 argument:
-  | arg=extAttrArgList(optionalOrRequiredArgument) { 
-    let (m, (io, opt, ty, dots, id, def)) = arg in 
+  | arg=extAttrArgList(optionalOrRequiredArgument) {
+    let (m, (io, opt, ty, dots, id, def)) = arg in
     if opt then (io, Optional::m, ty, dots, id, def)
     else (io, m, ty, dots, id, def) }
 
@@ -362,10 +362,10 @@ extendedAttributeList:
   | { [] }
 
 extendedAttribute:
-  | extendedAttributeNoArgs { $1 } 
-  | extendedAttributeArgList { $1 } 
-  | extendedAttributeNamedArgList { $1 } 
-  | extendedAttributeIdent { $1 } 
+  | extendedAttributeNoArgs { $1 }
+  | extendedAttributeArgList { $1 }
+  | extendedAttributeNamedArgList { $1 }
+  | extendedAttributeIdent { $1 }
 
 typeDecl:
   | singleType { $1 }
@@ -400,7 +400,7 @@ primitiveType:
   | FLOAT { Float }
   | DOUBLE { Double }
   (* | PRUnichar { Octet } *)
-  | id=identOrKeywordNotSpecial { 
+  | id=identOrKeywordNotSpecial {
     match (Id.string_of_id id) with
     | "PRUnichar" -> Octet
     | "PRUint32" -> Long Unsigned
@@ -421,7 +421,7 @@ unsignedIntegerType:
   (* | PRInt16 { Short NoUnsigned } *)
 
 integerType:
-  | BYTE { (fun u -> match u with | Unsigned -> Octet | NoUnsigned -> Byte) } 
+  | BYTE { (fun u -> match u with | Unsigned -> Octet | NoUnsigned -> Byte) }
   (* According to a comment in typedarray.idl, the 'unsigned byte' type doesn't exist,
      but is equivalent to octet *)
   | SHORT { (fun u -> Short u) }

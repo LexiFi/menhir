@@ -18,8 +18,8 @@ $Id: signature_parser.mly,v 1.6 2001/04/20 13:42:31 marche Exp $
 
 %token <string> IDENT INT
 %token COMMA COLON SEMICOLON
-%token KW_PREFIX KW_INFIX KW_POSTFIX 
-%token KW_C KW_AC KW_CONSTANT KW_UNARY KW_BINARY 
+%token KW_PREFIX KW_INFIX KW_POSTFIX
+%token KW_C KW_AC KW_CONSTANT KW_UNARY KW_BINARY
 %token EOF
 %token AS ARROW
 
@@ -45,7 +45,7 @@ sorted_signature:
 | sorted_decl SEMICOLON sorted_signature  { $1::$3 }
 ;
 
-  
+
 decl:
   op_list COLON fix arity
   { let t,a = $4
@@ -57,14 +57,14 @@ decl:
 ;
 
 sorted_decl:
- op_list COLON fix arity AS profile_list 
+ op_list COLON fix arity AS profile_list
     { let t,a = $4 in
         if $3=Infix & a<>2
           then raise (Syntax_error "Infix symbols must be binary")
-          else 
+          else
 	    if (List.exists (fun (x,y) -> (List.length x)<>a) $6)
-	    then raise (Syntax_error "Profile must be compatible with arity")  
-	    else 
+	    then raise (Syntax_error "Profile must be compatible with arity")
+	    else
 	      (($1,a,$3,t),$6)
 	    }
 ;
@@ -75,14 +75,14 @@ profile_list:
 ;
 
 profile:
-  sort_list ARROW sort   { ($1,$3) }      
+  sort_list ARROW sort   { ($1,$3) }
 ;
 
 sort_list:
   /* epsilon */         { [] }
 | sort sort_list        { $1::$2 }
 ;
-sort: 
+sort:
   IDENT                 { $1 }
 ;
 
@@ -96,7 +96,7 @@ arity:
   KW_C         { (Commutative,2) }
 | KW_AC        { (Ac,2) }
 | KW_CONSTANT  { (Free,0) }
-| KW_UNARY     { (Free,1) } 
+| KW_UNARY     { (Free,1) }
 | KW_BINARY    { (Free,2) }
 | INT          { (Free,int_of_string $1) }
 ;

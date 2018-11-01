@@ -25,14 +25,14 @@ open Test_sets
 open Shell
 open Extract
 
-let introduce_var_exist c = 
-  let rec fn_term lv t = 
+let introduce_var_exist c =
+  let rec fn_term lv t =
     match t#content with
 	Var_exist _ -> t
       | Var_univ (i, s) -> if List.mem (i, s, true) lv then t else new term (Var_exist (i, s))
       | Term (i, l, s) -> new term (Term (i, List.map (fn_term lv) l, s))
   in
-  let fn_lit lv lit = 
+  let fn_lit lv lit =
     match lit#content with
 	Lit_rule (t1, t2) -> new literal (Lit_rule ((fn_term lv t1), (fn_term lv t2)))
       | Lit_equal (t1, t2) -> new literal (Lit_equal ((fn_term lv t1), (fn_term lv t2)))
@@ -48,22 +48,22 @@ let introduce_var_exist c =
 
 (* If no ordering is specified in the specification file, we use a total ordering based on symbol codes *)
 let default_fill_order_dico () =
-  let fn c = 
+  let fn c =
     let ldef_symb = all_nonvariable_symbols c in
     let lhs,rhs = c#both_sides in
-    let lhs_head_symbol = 
-      try 
+    let lhs_head_symbol =
+      try
 	(match lhs#content with
 	    Term (f, _, _) -> f
 	  | Var_exist _| Var_univ _ -> failwith "default_fill_order_dico"
 	)
       with Not_Horn -> failwith "default_fill_order_dico"
     in
-    let r_cond_symb = try 
-      remove_el ( = ) lhs_head_symbol ldef_symb 
+    let r_cond_symb = try
+      remove_el ( = ) lhs_head_symbol ldef_symb
     with Failure "remove_el" -> failwith "default_fill_order_dico"
     in
-    let () = if !debug_mode then 
+    let () = if !debug_mode then
       let () = buffered_output c#string in
       let () = print_string "\n" in
       let () = print_int lhs_head_symbol in
@@ -73,19 +73,19 @@ let default_fill_order_dico () =
       let () = flush stdout in
 	()
     in
-    
-    let is_orientable = 
-      try 
-	let rhs_head_symbol = 
-	  try 
+
+    let is_orientable =
+      try
+	let rhs_head_symbol =
+	  try
 	    (match rhs#content with
 		 Term (f, _, _) -> f
 	       | Var_exist _| Var_univ _ -> failwith "variable"
 	    )
 	  with Not_Horn -> failwith "default_fill_order_dico"
 	in
-	  not (List.mem lhs_head_symbol (try dico_order#find rhs_head_symbol with Not_found -> [])) 
-      with Failure "variable" -> true 
+	  not (List.mem lhs_head_symbol (try dico_order#find rhs_head_symbol with Not_found -> []))
+      with Failure "variable" -> true
     in
       if is_orientable then
 	List.iter (dico_order#add_couple lhs_head_symbol) r_cond_symb
@@ -93,36 +93,36 @@ let default_fill_order_dico () =
   let () = buffered_output "Setting default greater order for symbols" in
   let () = flush stdout in
   let axioms = List.map (fun (_, _, x) -> x) !yy_axioms in
-  let () = if !debug_mode then 
+  let () = if !debug_mode then
     let () = print_string "\n Current axioms :" in
     let () = print_clause_list axioms in
     let () = print_dico_const_string () in
       ()
   in
   let _ = List.iter fn axioms in
-  let () = 
+  let () =
     try
       dico_order#merge_equivalence_relation dico_equivalence ;
     with (Failure "rehash") ->
       parse_failwith "there are incompatibilities between the order and equivalence relations"
   in
-  if !debug_mode then 
+  if !debug_mode then
     let () = print_dico_order () in
     let () = print_dico_equivalence () in
     ()
 
-let share_variables s s' = 
-  let rec fn s = 
+let share_variables s s' =
+  let rec fn s =
     match s with
 	Def_sort _ -> []
       | Abstr_sort0 str -> [str]
       | Abstr_sort1 (_, sort) -> fn sort
       | Abstr_sort2 (_, s1, s2) -> (fn s1) @ (fn s2)
-  in 
+  in
   let lvar_s = fn s in
   let lvar_s' = fn s' in
   List.exists (fun x -> List.mem x lvar_s) lvar_s'
-      
+
 
   (* to be continued  *)
 
@@ -140,11 +140,11 @@ let parse_positive_int s =
 (* Get sort id from string *)
 let find_sort_id s =
   try dico_sort_string#find_key s
-  with Failure "find_key" -> 
+  with Failure "find_key" ->
     if not (* !specif_paramete
 rized  *) true
-    then parse_failwith ("unknown sort \"" ^ s ^ "\"") 
-    else 
+    then parse_failwith ("unknown sort \"" ^ s ^ "\"")
+    else
       let () = if !debug_mode then print_string ("\nWARNING: the sort " ^ s ^ " is parameterized") in
       Abstr_sort0 s
 
@@ -169,23 +169,23 @@ let selective_add_sort d i v =
 
 
   (* tests if there is a parameterized sort in the clause content c  *)
-let test_well_founded_cl c = 
-  let fn_sort s = 
+let test_well_founded_cl c =
+  let fn_sort s =
     match s with
 	Def_sort _ -> true
-      | Abstr_sort0 _| Abstr_sort1 _ | Abstr_sort2 _ -> let () = buffered_output ("\nThe sort " ^ (sprint_sort s) ^ " is parameterized") in false 
+      | Abstr_sort0 _| Abstr_sort1 _ | Abstr_sort2 _ -> let () = buffered_output ("\nThe sort " ^ (sprint_sort s) ^ " is parameterized") in false
   in
-  let fn_term t = 
+  let fn_term t =
     match t#content with
 	Var_exist (_, s) | Var_univ (_, s) -> fn_sort s
       | Term (_, _, s) -> fn_sort s
   in
-  let fn_lit l = 
+  let fn_lit l =
     match l#content with
 	Lit_rule (t1, t2) -> (fn_term t1) && (fn_term t2)
       | Lit_equal (t1, t2) -> (fn_term t1) && (fn_term t2)
       | Lit_diff (t1, t2) -> (fn_term t1) && (fn_term t2)
-  in 
+  in
   let (negs, poss) = c in
   List.fold_right (fun x y -> fn_lit x && y) (negs @ poss) true
 
@@ -213,16 +213,16 @@ let process_specif_symbol counter s (l, rs) =
   let sort_v = List.hd new_profile in
   dico_const_profile#add v new_profile ;
   dico_const_sort#add v sort_v ;
-  dico_arities#add v (l_ar, r_ar) 
+  dico_arities#add v (l_ar, r_ar)
 
 let process_function_props list_symb prop =
-  let fn id =  
+  let fn id =
       try
 	let sym = dico_const_string#find_key id in
     	let l_ar, r_ar = dico_arities#find sym in
     	if ((l_ar = 0 && r_ar = 2) || (l_ar = 1 && r_ar = 1))
     	then dico_properties#add sym prop
-    	else parse_failwith ("symbol \"" ^ id ^ "\" has a profile incompatible with its " ^ 
+    	else parse_failwith ("symbol \"" ^ id ^ "\" has a profile incompatible with its " ^
     	(match prop with Prop_ac -> "AC" | Prop_assoc -> "ASSOC" | Prop_peano -> "") ^ " properties")
       with Failure "find_key" -> parse_failwith ("symbol \"" ^ id ^ "\" is not defined")
 	| Not_found -> failwith "raising Not_found in process_function_props"
@@ -230,9 +230,9 @@ let process_function_props list_symb prop =
   let () =  assert (  prop =  Prop_ac or prop = Prop_assoc) in
   let _ = List.map fn list_symb in
   ()
-          
 
-      
+
+
 (* Given a string and a status, update the status dictionary accordingly *)
 let add_to_status_dico c st =
   try
@@ -291,13 +291,13 @@ let add_to_incomplete_tree tk =
 	(* let () = buffered_output ("Popping " ^ (string_of_int l_ar) ^ " elements from stack") ; flush stdout in *)
 	      let l_args = pop_n_times l_ar yy_terms_stack in
 	      let r_args = list_init r_ar (Undefined: incomplete_tree pointer)
-	      in 
+	      in
 	      Defined (Iterm (id, l_args @ r_args))
             with Failure "find_key"
 	      | Not_found -> let id = code_of_var s in Defined (Ivar id)
           end
       | TT_tree t -> Defined t
-  in 
+  in
   let rec fn h t tk =
     match h with
       Undefined -> (fn1 tk) :: t
@@ -310,12 +310,12 @@ let add_to_incomplete_tree tk =
           h :: (fn2 tk t)
   and fn2 tk = function
       [] -> failwith "fn2"
-    | h :: t -> fn h t tk 
-  in 
+    | h :: t -> fn h t tk
+  in
   if incomplete_tree_is_complete !yy_incomplete_tree
   then
     begin
-      if !debug_mode then 
+      if !debug_mode then
 	buffered_output ("Pushing " ^ (sprint_incomplete_tree_pointer !yy_incomplete_tree) ^ " into stack")
       else () ;
       Stack.push !yy_incomplete_tree yy_terms_stack ;
@@ -327,7 +327,7 @@ let add_to_incomplete_tree tk =
 
 let sprint_bool flag = match flag with true -> "True" | false -> "False"
 
-(* We now process a list of identifiers (tokens) *) 
+(* We now process a list of identifiers (tokens) *)
 let process_term_tokens =
   let rec fn = function
       [] ->
@@ -344,28 +344,28 @@ let process_term_tokens =
         fn t
   in fn
 
-let is_param_defined_sort s = 
+let is_param_defined_sort s =
   match s with
       Def_sort  _ -> true
     | Abstr_sort0 _| Abstr_sort1 _ | Abstr_sort2 _ -> false
 
 
-let is_param_sort1 s = 
+let is_param_sort1 s =
   match s with
       Abstr_sort1 _ -> true
     | Def_sort _| Abstr_sort0 _ | Abstr_sort2 _ -> false
 
-let is_param_sort0 s = 
+let is_param_sort0 s =
   match s with
       Abstr_sort0 _ -> true
     | Def_sort _| Abstr_sort1 _ | Abstr_sort2 _  -> false
 
-let is_param_sort2 s = 
+let is_param_sort2 s =
   match s with
       Abstr_sort2 _ -> true
     | Abstr_sort1 _ | Abstr_sort0 _ | Def_sort _  -> false
 
-let get_id_param_sort s = 
+let get_id_param_sort s =
   match s with
       Abstr_sort1 (i, _) -> i
     | Abstr_sort2 (i, _, _) -> i
@@ -378,14 +378,14 @@ let get_id_param_sort s =
 
 let rec typecheck_incomplete_tree ps t =
   let () = if !debug_mode then buffered_output ("\nenter typecheck_incomplete_tree: the parameters ps and t are: " ^ ((sprint_param_sort ps) ^ "  " ^ (sprint_incomplete_tree_pointer t)))  in
-  match t with 
+  match t with
       Undefined -> invalid_arg "typecheck_incomplete_tree"
-    | Defined (Ivar x) -> ( 
-        try 
+    | Defined (Ivar x) -> (
+        try
           let s' = List.assoc x !yy_tmp_sorts in
-          let new_s' = 
+          let new_s' =
 	    match ps with
-		Actual_sort s'' -> 
+		Actual_sort s'' ->
 		  (try
 		    unify_sorts ps s'
 		  with Failure "unify_sorts" ->  parse_failwith ("\nConflicting types: " ^ (sprint_sort s') ^ " and " ^ (sprint_sort s''))
@@ -399,38 +399,38 @@ let rec typecheck_incomplete_tree ps t =
 	  if x < 0 then new term (Var_exist (x, new_s')) else new term (Var_univ (x, new_s'))
         with Not_found ->
           let new_s' = match ps with
-	      Actual_sort s'' -> 
+	      Actual_sort s'' ->
 		let new_s'' = expand_sorts s'' in
-		let () = yy_tmp_sorts := generic_insert_sorted (x, new_s'') !yy_tmp_sorts in 
+		let () = yy_tmp_sorts := generic_insert_sorted (x, new_s'') !yy_tmp_sorts in
 		new_s''
-            | Variable_sort x' -> 
+            | Variable_sort x' ->
 		let () = yy_tmp_equiv_dico#add_couple x x' in (* x has a fresh sort *)
 		let () = param_sort_counter := !param_sort_counter + 1 in
 		let str = ("'Undefined" ^ (string_of_int !param_sort_counter)) in
-		let () = yy_tmp_sorts := generic_insert_sorted (x, Abstr_sort0 str) !yy_tmp_sorts in 
-		Abstr_sort0 str 
+		let () = yy_tmp_sorts := generic_insert_sorted (x, Abstr_sort0 str) !yy_tmp_sorts in
+		Abstr_sort0 str
 	  in
 	  if x < 0 then new term (Var_exist (x, new_s')) else new term (Var_univ (x, new_s'))
       )
     | Defined (Iterm (x, l)) ->
-        let p = 
-	  try 
+        let p =
+	  try
 	    dico_const_profile#find x
 	  with Not_found -> parse_failwith ("constant " ^ (string_of_int x) ^ "not found in dico_const_profile")
-        in 
+        in
 	let p' =  update_profile p  in
 	let s' = List.hd p'
         and a' = List.tl p' in
         let () = match ps with
             Actual_sort s'' ->
-              (try let _ = unify_sorts ps s' in () with Failure "unify_sorts" -> 
+              (try let _ = unify_sorts ps s' in () with Failure "unify_sorts" ->
 (* 		let () = if !debug_mode then print_string ("\ncall of unify_sorts in parser.mly:  the list yy_tmp_param_sorts before application is : " ^ *)
 (* 		(List.fold_right (fun (x, s) y -> (x ^ " has associated the sort " ^ (sprint_sort s) ^ ", " ^ y)) !yy_tmp_param_sorts "")) else () in  *)
 		parse_failwith ("\n Error: sort " ^ (sprint_sort s'') ^ " is not unifiable with " ^ (sprint_sort s')) )
           | Variable_sort x' ->
               try
                 let new_x' = yy_tmp_equiv_dico#find x' in
-                List.iter (fun v -> yy_tmp_sorts := generic_insert_sorted (v, s') !yy_tmp_sorts) new_x'; 
+                List.iter (fun v -> yy_tmp_sorts := generic_insert_sorted (v, s') !yy_tmp_sorts) new_x';
                 yy_tmp_equiv_dico#remove x'
               with Not_found ->
                 yy_tmp_sorts := generic_insert_sorted (x', s') !yy_tmp_sorts
@@ -446,15 +446,15 @@ let term_with_new_sort t s =
     | Var_univ (i, _) -> new term (Var_univ (i, s))
     | Term (i, l, _) -> new term (Term (i, l, s))
 
-let literal_of_incomplete_terms lit = 
+let literal_of_incomplete_terms lit =
   let x, x', tlit = lit in
   let new_tx = x#expand_sorts in
-  let new_tx' = x'#expand_sorts in 
+  let new_tx' = x'#expand_sorts in
   let s = try unify_sorts (Actual_sort new_tx#sort) new_tx'#sort with Failure "unify_sorts" -> failwith "literal_of_incomplete_terms" in
   let t = term_with_new_sort new_tx s in
   let t' = term_with_new_sort new_tx' s in
   let () = if !debug_mode then ((print_detailed_term t); (print_detailed_term t')) in
-  match tlit with 
+  match tlit with
       Lit_equal (_, _) -> new literal (Lit_equal (t, t'))
     | Lit_rule (_, _) -> new literal (Lit_rule (t, t'))
     | Lit_diff (_, _) -> new literal (Lit_diff (t, t'))
@@ -477,16 +477,16 @@ let _ = List.iter (fun (kwd, tok) -> Hashtbl.add tests_table kwd tok)
 
 (* returns a list of clauses by deleting the min and max symbols from c *)
 
-let del_minmax c = 
-  let rec delt_minmax t = 
+let del_minmax c =
+  let rec delt_minmax t =
     match t#content with
       | Var_univ _ | Var_exist _ -> [([], t)]
-      | Term (f, l, s) -> 
+      | Term (f, l, s) ->
 	  let  megamix12 =
 	    megamix (List.fold_right (fun t lres -> (delt_minmax t) :: lres) l [])
 	  in
 	  let res = List.fold_right (
-	    fun l1'  lres -> 
+	    fun l1'  lres ->
 	      if f == id_symbol_min || f == id_symbol_max then
 		(* let _ = buffered_output ("Here delt_minmax is " ^ (dico_const_string#find f) ^ " and value is " ^ (string_of_int f)) in *)
 		let (l1, t1) = List.hd l1' in
@@ -501,42 +501,42 @@ let del_minmax c =
 		else
 		  let nl, l' =  (List.fold_right (fun (l1,t) (ll, lt) -> (l1 @ ll, t::lt)) l1' ([],[])) in
 		  (nl, new term (Term (f, l',s))) :: lres
-	  )  megamix12 [] 
+	  )  megamix12 []
 	  in
 	  if res == [] then [([], t)] else res
 
   in
-  let dellit_minmax lit = 
+  let dellit_minmax lit =
        match lit#content with
-	 | Lit_equal (tl, tr) -> 
+	 | Lit_equal (tl, tr) ->
 	   let tl' = delt_minmax tl in
 	   let tr' = delt_minmax tr in
 	   let megamix12 = megamix [tl'; tr'] in
-	   List.fold_right (fun l lres -> 
+	   List.fold_right (fun l lres ->
 	     let (l1, t1) = List.hd l in
-	     let (l2, t2) = List.hd (List.tl l) in 
+	     let (l2, t2) = List.hd (List.tl l) in
 	     [(l1@l2), new literal (Lit_equal (t1, t2))] @ lres) megamix12 []
-	 | Lit_rule (tl, tr) -> 
+	 | Lit_rule (tl, tr) ->
 	   let tl' = delt_minmax tl in
 	   let tr' = delt_minmax tr in
 	   let megamix12 = megamix [tl'; tr'] in
-	   List.fold_right (fun l lres -> 
+	   List.fold_right (fun l lres ->
 	     let (l1, t1) = List.hd l in
-	     let (l2, t2) = List.hd (List.tl l) in 
+	     let (l2, t2) = List.hd (List.tl l) in
 	     [(l1@l2), new literal (Lit_rule (t1, t2))] @ lres) megamix12 []
-	 | Lit_diff (tl, tr) -> 
+	 | Lit_diff (tl, tr) ->
 	   let tl' = delt_minmax tl in
 	   let tr' = delt_minmax tr in
 	   let megamix12 = megamix [tl'; tr'] in
-	   List.fold_right (fun l lres -> 
+	   List.fold_right (fun l lres ->
 	     let (l1, t1) = List.hd l in
-	     let (l2, t2) = List.hd (List.tl l) in 
+	     let (l2, t2) = List.hd (List.tl l) in
 	     [(l1@l2), new literal (Lit_diff (t1, t2))] @ lres) megamix12 []
-  in 
-  let rec split_f l l' len = 
-    if len == 0 then (l, l') 
-    else 
-      try 
+  in
+  let rec split_f l l' len =
+    if len == 0 then (l, l')
+    else
+      try
 	let l1 = List.hd l' in
 	split_f (l1::l) (List.tl l') (len - 1)
       with Failure "hd" ->
@@ -551,18 +551,18 @@ let del_minmax c =
     (* if nlits_mm == [] then npos_mm  *)
     (* else if npos_mm == [] then nlits_mm  *)
     (* else megamix (nlits_mm @ npos_mm) in *)
-  List.map (fun ll -> 
-    let (ln', lp') = split_f [] ll len_nlits in 
+  List.map (fun ll ->
+    let (ln', lp') = split_f [] ll len_nlits in
     let (ln1, ln) = List.fold_right (fun (lnegs, lit) (lln, llits) -> (lnegs @ lln, lit :: llits)) ln' ([],[])  in
     let (lp1, lp) = List.fold_right (fun (lposs, lit) (llp, llits) -> (lposs @ llp, lit :: llits)) lp' ([],[])  in
     let nlneg = lp1 @ ln1 @ ln in
     let nlpos = lp in
     let nlneg' = expand_sorts_list nlneg in
     let nlpos' = expand_sorts_list nlpos in
-    let () = if not !specif_parameterized && not (test_well_founded_cl (nlneg', nlpos')) then 
+    let () = if not !specif_parameterized && not (test_well_founded_cl (nlneg', nlpos')) then
       failwith "clause3: undefined types"
     in
-    new clause (nlneg', nlpos') [] ("",0,([],[])) 
+    new clause (nlneg', nlpos') [] ("",0,([],[]))
     (* c#build nlneg' nlpos' *)
   ) mm
     %}
@@ -658,7 +658,7 @@ let del_minmax c =
        TOK_START_WITH
        TOK_AUGMENTATION_STRATEGY
        TOK_GOTO
-       TOK_ADDPREMISE 
+       TOK_ADDPREMISE
        TOK_SIMPLIFY
        TOK_GREATER
        TOK_DELETE
@@ -736,13 +736,13 @@ spec_fields:
   opt_specif_constructors
   opt_specif_functions
   opt_specif_axioms
-  { 
+  {
   update_dico_free_constructors () ;
     if !free_constructors
     then buffered_output "All constructors are free"
     else () ;
     all_defined_functions := List.map (fun x -> - x) (List.tl (list_create (- !function_counter))) ;
-    all_constructors := list_create !constructor_counter 
+    all_constructors := list_create !constructor_counter
 (*     default_fill_order_dico_cc (); *)
   }
 
@@ -750,14 +750,14 @@ spec_ordering:
   opt_specif_greater
   opt_specif_equivs
   opt_specif_status
-  opt_specif_test_sets 
+  opt_specif_test_sets
   opt_specif_nullary_sorts
   opt_specif_function_props
   {
     let () = determine_ac_category () in
     (* Orient axioms *)
     let rec fn = function
-      	[] -> [] 
+      	[] -> []
       | (f, l, c)::t ->
           try
             let c' = c#orient in
@@ -768,16 +768,16 @@ spec_ordering:
             linenumber := l ;
 	    let concl = List.hd ((fun (_, p) -> p) c#content) in
 	    match concl#content with
-		Lit_equal _ 
-	      | Lit_rule _ -> 
+		Lit_equal _
+	      | Lit_rule _ ->
       		  let c' = c#force_orientation in
 		  let () = buffered_output ("\t" ^ c'#string) in
 		  (* let () = broken_order := true in  *)
 		  let () = buffered_output ("\nWARNING: the axiom [" ^ (string_of_int c#number) ^ "] is not orientable in a rewrite rule using the current order") in
 		  (f, l, c')::fn t
 
-	      | Lit_diff _ -> parse_failwith ("The axiom [" ^ (string_of_int c#number) ^ "] is not orientable") 
-    in 
+	      | Lit_diff _ -> parse_failwith ("The axiom [" ^ (string_of_int c#number) ^ "] is not orientable")
+    in
     buffered_output "Orienting axioms" ;
 (*     if !use_order *)
 (*     then *)
@@ -789,7 +789,7 @@ spec_ordering:
 
 (*    print_clause_list rewrite_system#content ;*)
 (*     buffered_output "\nThe current order is :"; *)
-    print_dico_order (); 
+    print_dico_order ();
     print_dico_equivalence ();
     buffered_output ("Computing nullary sorts") ;
     flush stdout ;
@@ -799,17 +799,17 @@ spec_ordering:
     flush stdout ;
     update_dico_nullary_individuals () ;
 
-    if !observational_proof then 
+    if !observational_proof then
       begin
 	buffered_output ("Using test-sets version " ^ (string_of_int !test_set_version)) ;
 	buffered_output "Computing test sets" ;
 	if List.length !yy_axioms > 0
 	then !compute_test_set () ;
 	!print_dico_test_set () ;
-	
+
 	compute_critical_context_set ();
       end;
-      
+
 (*     buffered_output ("Using test-sets version " ^ (string_of_int !test_set_version)) ; *)
 (*     buffered_output "Computing test sets" ; *)
 (*     if (List.length !yy_axioms > 0) && (not !int_specif_defined) (* the int sort cannot be computed with the test set version 0 in "int" theory *) *)
@@ -825,7 +825,7 @@ spec_ordering:
 spec_prop:
   opt_specif_properties
   opt_specif_priorities
-  opt_specif_critical_context_sets 
+  opt_specif_critical_context_sets
   { }
 
 spec_problem:
@@ -882,7 +882,7 @@ opt_specif_name:
 
 opt_specif_use:
   TOK_USE TOK_COLUMN list_of_idents TOK_SEMICOLUMN
-  { 
+  {
     let rec fn = function
       [] -> ()
     | h::_ ->
@@ -941,15 +941,15 @@ get_list_of_obs_sorts:
      let () = observational_proof := true in
      let k = (try (dico_sort_string#find_key $1) with Failure "find_key" -> failwith "get_list_of_obs_sorts") in
      match k with
-	 Def_sort i -> 
-	   let ref_i = ref i in 
+	 Def_sort i ->
+	   let ref_i = ref i in
 	   selective_add_sort dico_obs_sort ref_i (*obs_sort_counter*) $1
        | Abstr_sort0 _| Abstr_sort1 _ | Abstr_sort2 _  -> failwith "get_list_of_obs_sorts"
      with Not_found ->
        selective_add_sort dico_sort_string sort_counter $1
      }
 | get_list_of_obs_sorts TOK_IDENT
-  { 
+  {
     try
      let k = (try (dico_sort_string#find_key $2) with Failure "find_key" -> failwith "get_list_of_obs_sorts") in
      match k with
@@ -957,7 +957,7 @@ get_list_of_obs_sorts:
 	   let ref_i = ref i in
 	   selective_add_sort dico_obs_sort ref_i (*obs_sort_counter*) $2
        |  Abstr_sort0 _| Abstr_sort1 _| Abstr_sort2 _  -> failwith "get_list_of_obs_sorts"
-	     
+
     with Not_found ->
      selective_add_sort dico_sort_string sort_counter $2
 
@@ -1014,16 +1014,16 @@ list_of_sorts:
 | list_of_sorts ident_sort
       {$1 @ $2}
 
-ident_sort: 
+ident_sort:
   TOK_IDENT
   { let s =
       find_sort_id $1
   in [ s ] }
-| TOK_LPAR TOK_IDENT ident_sort end_of_sorts 
+| TOK_LPAR TOK_IDENT ident_sort end_of_sorts
   {let arg = List.hd $3 in
-   let s = find_sort_id $2 in 
+   let s = find_sort_id $2 in
    if $4 = [] then [ Abstr_sort1 ((def_sort_id s), arg)]
-   else 
+   else
      let arg' = List.hd $4 in
      [ Abstr_sort2 ((def_sort_id s), arg, arg')]
  }
@@ -1069,7 +1069,7 @@ list_of_symbols:
   TOK_IDENT
   { [ find_symbol_id $1 ] }
 | list_of_symbols TOK_IDENT
-  { let s = find_symbol_id $2 in 
+  { let s = find_symbol_id $2 in
     if not (List.mem s $1) then $1 @ [ find_symbol_id $2 ] else parse_failwith ($2 ^ " is duplicated") }
 
 /* Ordering specifications */
@@ -1083,7 +1083,7 @@ opt_specif_greater:
   { let () = buffered_output "No order provided" in default_fill_order_dico () }
 
 init_order_dico:
-  { 
+  {
     print_dico_const_string ();
     dico_order#init (!all_defined_functions @ !all_constructors) ;
     flush stdout }
@@ -1102,7 +1102,7 @@ specif_greater:
 
 opt_specif_equivs:
   TOK_EQUIV TOK_COLUMN init_equiv_dico list_of_equivs
-  { 
+  {
     if dico_order#empty
     then
       let () = buffered_output "Order dico is empty" in default_fill_order_dico ()
@@ -1121,7 +1121,7 @@ opt_specif_equivs:
     else
       ()
   }
-| 
+|
   { if dico_order#empty
     then
       let () = buffered_output "Order dico is empty" in default_fill_order_dico ()
@@ -1131,7 +1131,7 @@ opt_specif_equivs:
 
 
 init_equiv_dico:
-  { 
+  {
 
 (*     List.iter (fun x -> (buffered_output ("init_order_dico : x = " ^ (string_of_int x)))) (!all_defined_functions @ !all_constructors); *)
     dico_equivalence#init dico_order#keys; (* (!all_defined_functions @ !all_constructors) ; *)
@@ -1187,17 +1187,17 @@ specif_status:
     try
       let () = List.iter (fun x -> if symbol_is_ac x then failwith (dico_const_string#find x) else ()) $1
       in List.iter (fun x -> add_to_status_dico x Left) $1
-    with (Failure s) -> parse_failwith ("Symbol \"" ^ s ^ "\" is ac and must have multiset status") 
+    with (Failure s) -> parse_failwith ("Symbol \"" ^ s ^ "\" is ac and must have multiset status")
       | Not_found -> failwith "raising Not_found in specif_status"}
 | list_of_symbols TOK_RIGHTLEFT TOK_SEMICOLUMN
   { try
       let () = List.iter (fun x -> if symbol_is_ac x then failwith (dico_const_string#find x) else ()) $1
       in List.iter (fun x -> add_to_status_dico x Right) $1
-    with (Failure s) -> parse_failwith ("Symbol \"" ^ s ^ "\" is ac and must have multiset status") 
+    with (Failure s) -> parse_failwith ("Symbol \"" ^ s ^ "\" is ac and must have multiset status")
       | Not_found -> failwith "raising Not_found in specif_status"}
 | list_of_symbols TOK_MULTISET TOK_SEMICOLUMN
       { List.iter (fun x -> add_to_status_dico x Multiset) $1 }
-      
+
 opt_specif_properties:
   TOK_PROPERTIES TOK_COLUMN list_of_properties
   { buffered_output "\nSuccessfully parsed properties" ; flush stdout }
@@ -1257,7 +1257,7 @@ list_of_function_symbols:
 
 specif_fun_with_positions:
   TOK_IDENT
-  {   
+  {
     let n =
       try
 	let n = dico_const_string#find_key $1
@@ -1265,14 +1265,14 @@ specif_fun_with_positions:
 	then n
 	else parse_failwith ("symbol " ^ $1 ^ " is not a defined function")
       with Failure "find_key" -> parse_failwith ("symbol " ^ $1 ^ " is not a defined function")
-    in 
+    in
     try
       let l = (dico_ind_positions_v0#find n) in
       let all_ind_pos = Sort.list (<=) (List.map (fun p -> n, p) (list_remove_doubles (=) (List.flatten l))) in
       Ind_pos_position all_ind_pos
     with Not_found -> parse_failwith ("symbol \"" ^ $1 ^ "\" has no induction positions") }
 | TOK_IDENT TOK_LPAR list_of_positions TOK_RPAR
-  { 
+  {
     let n =
       try
         let n = dico_const_string#find_key $1
@@ -1318,7 +1318,7 @@ sym_int_couple:
 
 opt_specif_test_sets:
   TOK_TEST_SETS TOK_COLUMN list_of_test_sets
-  { 
+  {
 (*     buffered_output "\nSuccessfully parsed test sets" ;  *)
 (*     flush stdout; *)
 (*     !print_dico_test_set () *)
@@ -1336,25 +1336,25 @@ list_of_test_sets:
 
 specif_test_set:
   TOK_IDENT TOK_COLUMN list_of_terms TOK_SEMICOLUMN
-  { 
+  {
   }
 | list_of_paths TOK_COLUMN list_of_terms TOK_SEMICOLUMN
   { }
- 
+
 opt_specif_nullary_sorts:
   TOK_NULLARY_SORTS TOK_COLUMN list_of_nullary_sorts TOK_SEMICOLUMN
  {
-   let fn string = 
+   let fn string =
      let s = find_sort_id string in
-     try 
+     try
        let _ = dico_sort_nullarity#find s in
-       buffered_output ("The sort \"" ^ string ^ "\" is already in the dictionary of nullary sorts"); flush stdout 
+       buffered_output ("The sort \"" ^ string ^ "\" is already in the dictionary of nullary sorts"); flush stdout
      with Not_found -> dico_sort_nullarity#add s true
    in List.iter fn $3;
-	
-    buffered_output "\nSuccessfully parsed nullary sorts" ; 
+
+    buffered_output "\nSuccessfully parsed nullary sorts" ;
     flush stdout;
-     buffered_output "WARNING: The user introduced the following nullary sorts !" ; flush stdout;  
+     buffered_output "WARNING: The user introduced the following nullary sorts !" ; flush stdout;
     print_dico_sort_nullarity ()
   }
 | TOK_NULLARY_SORTS TOK_COLUMN
@@ -1363,13 +1363,13 @@ opt_specif_nullary_sorts:
   { }
 
 list_of_nullary_sorts:
- specif_nullary_sort 
+ specif_nullary_sort
     {[$1] }
 | list_of_nullary_sorts specif_nullary_sort
     { $1 @ [$2]}
 
 specif_nullary_sort:
- TOK_IDENT 
+ TOK_IDENT
 { $1
 }
 
@@ -1388,7 +1388,7 @@ context:
       with Not_found -> parse_failwith "The contextual variable is not in the context"
     in let var_sort = try List.assoc x (List.map (fun (x,y,_) -> (x, y)) t#variables) with Not_found -> failwith "raising Not_found in context"
     in let c = new context t#content  x
-    in let () = Critical_context_set.critical_context_set_by_var#add var_sort c 
+    in let () = Critical_context_set.critical_context_set_by_var#add var_sort c
     in c }
 
 context_specif:
@@ -1396,7 +1396,7 @@ context_specif:
    { let declared_sort = find_sort_id $1
      and contexts = $3
      in if not (List.for_all (fun c -> c#sort = declared_sort)contexts)
-            then 
+            then
                parse_failwith "A context is not of the declared sort"
             else
                (*Critical_context_set.critical_context_set#add declared_sort contexts*)
@@ -1434,7 +1434,7 @@ list_of_infs:
 
 specif_infs:
   list_of_symbols TOK_SEMICOLUMN
-  { 
+  {
 (*     let l = list_2_list_of_couples $1 *)
 (*     in List.iter (fun (x, y) -> dico_infs#add_couple y x) l  *)
     let () = dico_infs#clear in
@@ -1470,7 +1470,7 @@ specif_conjectures:
   TOK_CONJECTURES TOK_COLUMN pos_codes_false list_of_clauses_history
   { buffered_output "\nSuccessfully parsed conjectures" ;
     print_clause_list $4 ;
-    let lc = 
+    let lc =
       if !specif_LA_defined && not !specif_Rmaxs0_defined && not !specif_Rmins0_defined && not !specif_Rzmm_defined then  let res = List.fold_right (fun c l -> (del_minmax c) @ l) $4 [] in res
       else $4
     in
@@ -1494,15 +1494,15 @@ list_of_clauses:
   { $1 @ [$2] }
 
 list_of_clauses_history:
-  reset_and_clause 
+  reset_and_clause
   { [$1] }
 |  reset_and_clause history_clause
   { let () = $1#set_history $2 in [$1]}
-| list_of_clauses_history reset_and_clause 
+| list_of_clauses_history reset_and_clause
   { $1 @ [$2] }
 
 history_clause:
- one_history 
+ one_history
 {[$1]}
 |  history_clause one_history
 {$1 @ [$2]}
@@ -1512,7 +1512,7 @@ TOK_OPEN_SUBSTITUTION specif_substitution2 TOK_CLOSE_SUBSTITUTION  garbage_histo
 {($2, $5)}
 
 garbage_history:
-TOK_ON  TOK_LBRACKET TOK_IDENT TOK_RBRACKET 
+TOK_ON  TOK_LBRACKET TOK_IDENT TOK_RBRACKET
 {}
 
 reset_and_clause:
@@ -1541,10 +1541,10 @@ specif_clause2: specif_clause TOK_EOF
 
 specif_clause:
   list_of_literals
-  { 
+  {
     let l' = List.map literal_of_incomplete_terms $1 in
     let new_l' = expand_sorts_list l' in
-    let () = if not !specif_parameterized  && not (test_well_founded_cl ([], new_l')) then 
+    let () = if not !specif_parameterized  && not (test_well_founded_cl ([], new_l')) then
       failwith "clause1: undefined types"
     in
     let res = new clause ([], new_l') [] ("",0,([],[])) in
@@ -1552,10 +1552,10 @@ specif_clause:
     res
   }
 | list_of_literals TOK_IMPLIES
-  { 
+  {
     let l = List.map literal_of_incomplete_terms $1 in
     let new_l = expand_sorts_list l in
-    let () = if not !specif_parameterized && not (test_well_founded_cl (new_l, [])) then 
+    let () = if not !specif_parameterized && not (test_well_founded_cl (new_l, [])) then
       failwith "clause2: undefined types"
     in
     let res = new clause (new_l, []) [] ("",0,([],[])) in
@@ -1568,7 +1568,7 @@ specif_clause:
     let l' = List.map literal_of_incomplete_terms $3 in
     let new_l' = expand_sorts_list l' in
     let new_l = expand_sorts_list l in
-    let () = if not !specif_parameterized && not (test_well_founded_cl (new_l, new_l')) then 
+    let () = if not !specif_parameterized && not (test_well_founded_cl (new_l, new_l')) then
       failwith "clause3: undefined types"
     in
     let res = new clause (new_l, new_l') [] ("",0,([],[])) in
@@ -1578,13 +1578,13 @@ specif_clause:
 
 specif_horn_clause:
   specif_literal
-  { 
+  {
     let l' = [ literal_of_incomplete_terms $1 ] in
     let new_l' = expand_sorts_list l' in
     let lhs, _ = (List.hd new_l')#both_sides in
-    let arg_lhs = lhs#sons in 
+    let arg_lhs = lhs#sons in
     let () = if List.exists (fun t -> not (t#is_constructor_term)) arg_lhs then failwith ("one of the arguments is not a constructor term" ) in
-    let () = if not !specif_parameterized && not (test_well_founded_cl ([], new_l')) then 
+    let () = if not !specif_parameterized && not (test_well_founded_cl ([], new_l')) then
       failwith "clause4: undefined types"
     in
     let res = new clause ([], new_l') [] ("",0,([],[])) in
@@ -1592,15 +1592,15 @@ specif_horn_clause:
     res
   }
 | list_of_literals TOK_IMPLIES specif_literal
-  { 
+  {
     let l = List.map literal_of_incomplete_terms $1
     and l' = [ literal_of_incomplete_terms $3 ] in
     let new_l' = expand_sorts_list l' in
     let new_l = expand_sorts_list l in
     let lhs, _ = (List.hd new_l')#both_sides in
-    let arg_lhs = lhs#sons in 
+    let arg_lhs = lhs#sons in
     let () = if List.exists (fun t -> not (t#is_constructor_term)) arg_lhs then failwith ("one of the arguments is not a constructor term" ) in
-    let () = if not !specif_parameterized && not (test_well_founded_cl (new_l, new_l')) then 
+    let () = if not !specif_parameterized && not (test_well_founded_cl (new_l, new_l')) then
       failwith "clause5: undefined types"
     in
     let res = new clause (new_l, new_l') [] ("",0,([],[])) in
@@ -1616,20 +1616,20 @@ list_of_literals:
 
 specif_literal:
   literal_get_sides
-  { 
+  {
   let lhs, rhs, type_lit = $1 in
     let t = process_term_tokens lhs
     and t' = process_term_tokens rhs in
     let content = try (defined_content t) with
 	(Failure "defined_content") -> failwith "defined_content"
-    in 
-    let term_t, term_t' =  
+    in
+    let term_t, term_t' =
       match content with
 	  Ivar x -> (* t is a variable *)
 	    begin (* dicards PM on exceptions *)
               try
 		let s = List.assoc x !yy_tmp_sorts
-		in 
+		in
 		if x < 0 then ((new term (Var_exist (x, s))), typecheck_incomplete_tree (Actual_sort s) t')
 		else ((new term (Var_univ (x, s))), typecheck_incomplete_tree (Actual_sort s) t')
               with Not_found -> (* t has a fresh unknown sort *)
@@ -1647,7 +1647,7 @@ specif_literal:
             ((typecheck_incomplete_tree (Actual_sort s') t), typecheck_incomplete_tree (Actual_sort s')  t')
     in
     term_t, term_t', type_lit }
-  
+
 literal_get_sides:
   specif_term TOK_EQUAL specif_term
   { ($1,$3, Lit_equal (term_true, term_true)) }
@@ -1676,7 +1676,7 @@ one_token:
   { let () = check_explicit_type $2 $4 in
     [ TT_ident $2 ] }
 | TOK_LPAR list_of_term_tokens TOK_RPAR
-  { let () = if !debug_mode then (print_string"\n token list <<<<< " ; List.iter (fun x -> print_term_token x) $2) else () 
+  { let () = if !debug_mode then (print_string"\n token list <<<<< " ; List.iter (fun x -> print_term_token x) $2) else ()
   in $2}
 
 list_of_term_tokens:
@@ -1688,7 +1688,7 @@ list_of_term_tokens:
   { let content = (try (defined_content (process_term_tokens $3)) with
       (Failure "defined_content") -> failwith "defined_content")
   in $1 @ [ TT_tree content ] }
-      
+
 specif_strategies:
   TOK_STRATEGIES TOK_COLUMN list_of_strategies
   { buffered_output "\nSuccessfully parsed strategies" ;
@@ -1885,22 +1885,22 @@ specif_norm:
   { }
 
 specif_rpocompare:
-  TOK_RPOCOMPARE TOK_COLUMN two_terms  
-  { 
+  TOK_RPOCOMPARE TOK_COLUMN two_terms
+  {
      let t, t' = $3 in
     Queue.add (Rpo_token (t, t')) yy_queue }
 | TOK_RPOCOMPARE TOK_COLUMN
   { }
 
 specif_compare:
-  TOK_COMPARE TOK_COLUMN two_clauses 
+  TOK_COMPARE TOK_COLUMN two_clauses
   { let c, c' = $3 in
     Queue.add (Compare_token (c, c')) yy_queue }
 | TOK_COMPARE TOK_COLUMN
   { }
 
 specif_max_compare:
-  TOK_MAX_COMPARE TOK_COLUMN two_clauses 
+  TOK_MAX_COMPARE TOK_COLUMN two_clauses
   { let c, c' = $3 in
     Queue.add (Compare_max_token (c, c')) yy_queue }
 | TOK_MAX_COMPARE TOK_COLUMN
@@ -2002,12 +2002,12 @@ specif_substitution2:
 
 specif_var_term:
   TOK_IDENT TOK_COMA specif_term
-  { 
+  {
     let v =
       try List.assoc $1 !yy_tmp_vars
       with Not_found -> let tmp_v = newvar () in let () = yy_tmp_vars := ($1, tmp_v) :: !yy_tmp_vars in tmp_v
       in
-      
+
 (*     let s = try List.assoc v !yy_tmp_sorts2 with Not_found -> failwith "raising Not_found in specif_var_term" in *)
     let t = process_term_tokens $3 in
     let term = typecheck_incomplete_tree (Variable_sort 0) t in
@@ -2024,18 +2024,18 @@ get_term:
   { let t = process_term_tokens $1 in
     let term_t =
       match t with
-          Defined (Iterm (f, _)) -> 
+          Defined (Iterm (f, _)) ->
 	    begin
-	      let s = 
-		try 
+	      let s =
+		try
 		  dico_const_sort#find f
 		with Not_found -> parse_failwith "get_term"
-	      in 
+	      in
 	      typecheck_incomplete_tree (Actual_sort s) t
 	    end
 	| Defined (Ivar x) ->
             begin
-              let s = 
+              let s =
 		try
 		  List.assoc x !yy_tmp_sorts
 		with Not_found -> parse_failwith "unbound types"
@@ -2051,7 +2051,7 @@ list_of_terms:
 | list_of_terms TOK_COMA reset_tmp_vars get_term
   { $1 @ [$4] }
 
-pos_codes_true: 
+pos_codes_true:
   { pick_pos_codes := true }
 
 pos_codes_false:

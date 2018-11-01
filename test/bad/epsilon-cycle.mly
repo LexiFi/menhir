@@ -1,4 +1,4 @@
-%start a 
+%start a
 %type <unit> a
 %token B
 

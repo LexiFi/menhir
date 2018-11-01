@@ -1,15 +1,15 @@
 /*
  * bibtex2html - A BibTeX to HTML translator
  * Copyright (C) 1997 Jean-Christophe FILLIATRE
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * See the GNU General Public License version 2 for more details
  * (enclosed in the file GPL).
  */
@@ -56,14 +56,14 @@ command:
      { let et,key = $1 in Entry (String.uppercase et, key, $3) }
 ;
 
-entry: 
- | Tentry  
+entry:
+ | Tentry
      { let et,key = $1 in Bibtex.current_key := key; (et,key) }
 
 comma_field_list:
    field Tcomma comma_field_list
      { $1::$3 }
- | field 
+ | field
      { [$1] }
  | field Tcomma
      { [$1] }

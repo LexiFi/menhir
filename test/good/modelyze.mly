@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with Modelyze toolchain.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-%{ 
+%{
 
   open Ustring.Op
   open Utils
@@ -28,22 +28,22 @@ along with Modelyze toolchain.  If not, see <http://www.gnu.org/licenses/>.
 
   let mkpatinfo t1 t2 = mkinfo (pat_info t1) (pat_info t2)
 
-  let rec metastr n = if n = 0 then us"" else us"#" ^. metastr (n-1) 
+  let rec metastr n = if n = 0 then us"" else us"#" ^. metastr (n-1)
 
-  let mk_binop fi l op t1 t2 = 
+  let mk_binop fi l op t1 t2 =
     TmApp(fi,l,TmApp(fi,l,(TmVar(fi,Symtbl.add (us op),0)),t1,false),t2,false)
-  let mk_unop fi l op t1 = 
+  let mk_unop fi l op t1 =
     TmApp(fi,l,(TmVar(fi,Symtbl.add (us op),0)),t1,false)
 
-  let mk_binpat_op fi l op t1 t2 = 
+  let mk_binpat_op fi l op t1 t2 =
     PatSymApp(fi,PatSymApp(fi,PatExpr(fi,TmVar(fi,Symtbl.add (us op),0)),t1),t2)
 
-  let mk_unpat_op fi l op t1 = 
+  let mk_unpat_op fi l op t1 =
     PatSymApp(fi,PatExpr(fi,TmVar(fi,Symtbl.add (us op),0)),t1)
 
-  let wildcard = Symtbl.add (us"@@wildcard")  	  
+  let wildcard = Symtbl.add (us"@@wildcard")
 
-  let floatval v = TmConst(NoInfo,0,ConstReal(v)) 
+  let floatval v = TmConst(NoInfo,0,ConstReal(v))
 
 
 %}
@@ -157,12 +157,12 @@ along with Modelyze toolchain.  If not, see <http://www.gnu.org/licenses/>.
 %token <unit Ast.tokendata> QUESTIONMARK  /* "?"  */
 
 
-%start main 
+%start main
 %type <Ast.top list> main
 
 %nonassoc WITH
 %nonassoc BAR
-%nonassoc DEFUK 
+%nonassoc DEFUK
 %left SEMI EQSEMI /*prec 1*/
 %nonassoc MYAPP
 %left OR  /*prec 2*/
@@ -184,7 +184,7 @@ along with Modelyze toolchain.  If not, see <http://www.gnu.org/licenses/>.
 
 
 main:
-  | top 
+  | top
       { $1 }
 
 top:
@@ -193,11 +193,11 @@ top:
   | DEF identparen parenparamlist EQ term top
       { let fi = mkinfo $1.i (tm_info $5) in
         let (plst,endty) = $3 in
-        TopLet(fi,$2,endty,List.rev plst,$5,freein_tm $2 $5)::$6 }  
+        TopLet(fi,$2,endty,List.rev plst,$5,freein_tm $2 $5)::$6 }
   | DEF letpat EQ term top
       { let fi = mkinfo $1.i (tm_info $4) in
         TopLet(fi,$2,None,[],$4,freein_tm $2 $4)::$5 }
-  | DEF letpat COLON ty EQ term top 
+  | DEF letpat COLON ty EQ term top
       { let fi = mkinfo $1.i (tm_info $6) in
         TopLet(fi,$2,Some $4,[],$6,freein_tm $2 $6)::$7 }
   | DEF letpat COLON ty top %prec DEFUK
@@ -205,8 +205,8 @@ top:
         TopNu(fi,$2,$4)::$5 }
   | DEF IDENT COMMA revidentseq COLON ty top %prec DEFUK
       { let fi = mkinfo $1.i (ty_info $6) in
-        let nulst = List.map (fun x -> TopNu(fi,x,$6)) (List.rev $4) in        
-        TopNu(fi,$2.v,$6)::(List.append nulst $7) }  
+        let nulst = List.map (fun x -> TopNu(fi,x,$6)) (List.rev $4) in
+        TopNu(fi,$2.v,$6)::(List.append nulst $7) }
   | TYPE IDENT top
       { let fi = mkinfo $1.i $2.i in
         TopNewType(fi,$2.v)::$3 }
@@ -215,8 +215,8 @@ top:
         TopNameType(fi,$2.v,$4)::$5 }
   | INCLUDE IDENT top
       { let fi = mkinfo $1.i $2.i in
-        let modname = $2.v |> Symtbl.get |> Ustring.to_latin1 
-                      |> String.lowercase |> us in                             
+        let modname = $2.v |> Symtbl.get |> Ustring.to_latin1
+                      |> String.lowercase |> us in
         TopInclude(fi,Symtbl.add (modname ^. us".moz"))::$3 }
 
 
@@ -240,24 +240,24 @@ tyarrow:
   | tyatom ARROW tyarrow
       { let fi = mkinfo (ty_info $1) (ty_info $3) in
 	TyArrow(fi,$2.l,$1,$3) }
-    
+
 tyatom:
   | IDENT
       { TyIdent($1.i,$1.l,$1.v) }
-  | INT 
+  | INT
       { TyInt($1.i,$1.l) }
-  | REAL 
+  | REAL
       { TyReal($1.i,$1.l) }
-  | BOOL 
+  | BOOL
       { TyBool($1.i,$1.l) }
   | TYSTRING
       { TyString($1.i,$1.l) }
-  | LPAREN RPAREN 
-      { TyUnit(mkinfo $1.i $2.i,$1.l) } 
+  | LPAREN RPAREN
+      { TyUnit(mkinfo $1.i $2.i,$1.l) }
   | LSQUARE ty RSQUARE
       { TyList(mkinfo $1.i $3.i,$1.l,$2) }
   | LIST tyatom
-      { TyList(mkinfo $1.i (ty_info $2),$1.l,$2) }      
+      { TyList(mkinfo $1.i (ty_info $2),$1.l,$2) }
   | LCURLY ty RCURLY
       { TyArray(mkinfo $1.i $3.i,$1.l,$2) }
   | ARRAY tyatom
@@ -273,16 +273,16 @@ tyatom:
       { TySym(mkinfo $1.i $3.i,$1.l,$2) }
   | QUESTIONMARK
       { TyDyn($1.i, $1.l) }
-  | MAP tyatom tyatom 
+  | MAP tyatom tyatom
       { TyMap(mkinfo $1.i (ty_info $3),$1.l,$2,$3) }
-  | SET tyatom  
+  | SET tyatom
       { TySet(mkinfo $1.i (ty_info $2),$1.l,$2) }
-  | DAESOLVER 
+  | DAESOLVER
       { TyDAESolver($1.i,$1.l) }
 
-revtypetupleseq: 
+revtypetupleseq:
     |   ty
-        {[$1]}               
+        {[$1]}
     |   revtypetupleseq COMMA ty
         {$3::$1}
 
@@ -326,14 +326,14 @@ term:
         TmNu(fi,$1.l,$2,$4,$6) }
   | DEF IDENT COMMA revidentseq COLON ty SEMI term   /* A bug here */
       { let fi = mkinfo $1.i (ty_info $6) in
-        List.fold_left (fun a x -> TmNu(fi,$1.l,x,$6,a)) $8 
+        List.fold_left (fun a x -> TmNu(fi,$1.l,x,$6,a)) $8
                        ($2.v::(List.rev $4)) }
   | IF term THEN term ELSE term
       { let fi = mkinfo $1.i (tm_info $6) in
         TmIf(fi,$1.l,$2,$4,$6) }
   | LCASE term OF BAR IDENT CONS IDENT ARROW term BAR LSQUARE RSQUARE ARROW term
       { let fi = mkinfo $1.i (tm_info $14) in
-        TmLcase(fi,$1.l,$2,$5.v,$7.v,$9,$14) }  
+        TmLcase(fi,$1.l,$2,$5.v,$7.v,$9,$14) }
   | DECON term WITH deconpat THEN term ELSE term
       { let fi = mkinfo $1.i (tm_info $8) in
 	TmCase(fi,$1.l,$2,$4,$6,$8) }
@@ -346,22 +346,22 @@ term:
   | ARRAY DOT IDENT atom_list_rev
      { let fi = mkinfo $1.i (tm_info (List.hd $4)) in
        let op = mk_arrayop $3.i $3.v in
-       TmArrayOp(fi,$1.l,op,List.rev $4) } 
+       TmArrayOp(fi,$1.l,op,List.rev $4) }
   | MAP DOT IDENT op_atom_list_rev
-     { let fi = if $4 = [] then mkinfo $1.i $3.i 
+     { let fi = if $4 = [] then mkinfo $1.i $3.i
                 else mkinfo $1.i (tm_info (List.hd $4)) in
        let op = mk_mapop $3.i $3.v in
-       TmMapOp(fi,$1.l,op,List.rev $4) } 
+       TmMapOp(fi,$1.l,op,List.rev $4) }
   | SET DOT IDENT op_atom_list_rev
-     { let fi = if $4 = [] then mkinfo $1.i $3.i 
+     { let fi = if $4 = [] then mkinfo $1.i $3.i
                 else mkinfo $1.i (tm_info (List.hd $4)) in
        let op = mk_setop $3.i $3.v in
-       TmSetOp(fi,$1.l,op,List.rev $4) } 
+       TmSetOp(fi,$1.l,op,List.rev $4) }
   | DAESOLVER DOT IDENT op_atom_list_rev
-     { let fi = if $4 = [] then mkinfo $1.i $3.i 
+     { let fi = if $4 = [] then mkinfo $1.i $3.i
                 else mkinfo $1.i (tm_info (List.hd $4)) in
        let op = mk_daesolverop $3.i $3.v in
-       TmDAESolverOp(fi,$1.l,op,List.rev $4) } 
+       TmDAESolverOp(fi,$1.l,op,List.rev $4) }
 
 
 op_atom_list_rev:
@@ -376,7 +376,7 @@ atom_list_rev:
       { $2::$1 }
 
 
-  
+
 matchcases:
   | BAR pattern op_guard ARROW term
       { let fi = mkinfo $1.i (tm_info $5) in
@@ -397,9 +397,9 @@ pattern:
 pat_cons:
   | pat_op
       { $1 }
-  | pat_op CONS pat_cons 
+  | pat_op CONS pat_cons
       { let fi = mkinfo (pat_info $1) (pat_info $3) in
-	PatCons(fi,$1,$3) }      
+	PatCons(fi,$1,$3) }
 
 
 pat_op:
@@ -468,7 +468,7 @@ pat_op:
   | pat_op DOTEXP pat_op
       { mk_binpat_op (mkpatinfo $1 $3) $2.l "(^.)" $1 $3 }
   | pat_op LONGARROW pat_op
-      { mk_binpat_op (mkpatinfo $1 $3) $2.l "(-->)" $1 $3 } 
+      { mk_binpat_op (mkpatinfo $1 $3) $2.l "(-->)" $1 $3 }
 
   | pat_op SQUOTE
       { mk_unpat_op (mkinfo (pat_info $1) $2.i) $2.l "(')" $1 }
@@ -486,14 +486,14 @@ pat_left:
 	PatSymApp(fi,$1,$2) }
   | LIFT IDENT COLON tyatom
       { let fi = mkinfo $1.i (ty_info $4) in
-        PatLift(fi,$2.v,$4) } 
+        PatLift(fi,$2.v,$4) }
 
 pat_atom:
   | IDENT
       { PatVar($1.i,$1.v,true) }
-  | TRUE 
+  | TRUE
       { PatExpr($1.i,TmConst($1.i,$1.l,ConstBool(true))) }
-  | FALSE 
+  | FALSE
       { PatExpr($1.i,TmConst($1.i,$1.l,ConstBool(false))) }
   | UINT
       { PatExpr($1.i,TmConst($1.i,$1.l,ConstInt($1.v))) }
@@ -501,19 +501,19 @@ pat_atom:
       { PatExpr($1.i,TmConst($1.i,$1.l,ConstReal($1.v))) }
   | STRING
       { PatExpr($1.i,TmConst($1.i,$1.l,ConstString($1.v))) }
-  | LPAREN RPAREN 
-      { PatExpr(mkinfo $1.i $2.i,TmConst($1.i,$1.l,ConstUnit)) } 
+  | LPAREN RPAREN
+      { PatExpr(mkinfo $1.i $2.i,TmConst($1.i,$1.l,ConstUnit)) }
   | ESCAPE atom
       { PatExpr(mkinfo $1.i (tm_info $2),$2) }
   | LSQUARE RSQUARE
       { let fi = mkinfo $1.i $2.i in
-	PatNil(fi) }     
+	PatNil(fi) }
   | LSQUARE revpatseq RSQUARE
       { let fi = mkinfo $1.i $3.i in
-        List.fold_right (fun p a -> PatCons(fi,p,a)) 
-          (List.rev $2) (PatNil(fi)) } 
-  | SYM COLON tyatom 
-      { PatSym(mkinfo $1.i (ty_info $3),TySym(ty_info $3, 0, $3)) } 
+        List.fold_right (fun p a -> PatCons(fi,p,a))
+          (List.rev $2) (PatNil(fi)) }
+  | SYM COLON tyatom
+      { PatSym(mkinfo $1.i (ty_info $3),TySym(ty_info $3, 0, $3)) }
   | LPAREN revpatseq RPAREN
       { let fi = mkinfo $1.i $3.i in
         match $2 with
@@ -522,19 +522,19 @@ pat_atom:
 	  | ps -> PatTuple(fi,List.rev ps) }
   | USCORE
       { PatWildcard($1.i) }
-   
 
-revpatseq: 
+
+revpatseq:
     |   pattern
-        {[$1]}               
+        {[$1]}
     |   revpatseq COMMA pattern
         {$3::$1}
 
 parenparamlist:
   | revtmtyseq RPAREN rettype
-      { ($1,$3) } 
+      { ($1,$3) }
   | RPAREN
-      { ([wildcard,TyUnit($1.i,$1.l)],None) } 
+      { ([wildcard,TyUnit($1.i,$1.l)],None) }
 
 rettype:
     { None }
@@ -543,13 +543,13 @@ rettype:
   | ARROW tyatom
     { Some($2) }
 
-revtmtyseq: 
-    |   param 
-        {[$1]}               
+revtmtyseq:
+    |   param
+        {[$1]}
     |   revtmtyseq COMMA param
         {$3::$1}
 
-param: 
+param:
   |  IDENT COLON tyatom
       { ($1.v,$3) }
 
@@ -562,10 +562,10 @@ semi_op:
 cons:
   | op
       { $1 }
-  | op CONS cons 
-      { TmCons(mktminfo $1 $3,$2.l,$1,$3) }      
+  | op CONS cons
+      { TmCons(mktminfo $1 $3,$2.l,$1,$3) }
 
-     
+
 op:
   | app_left
       { $1 }
@@ -634,7 +634,7 @@ op:
   | op LONGARROW op
       { mk_binop (mktminfo $1 $3) $2.l "(-->)" $1 $3 }
 
-  | op SQUOTE 
+  | op SQUOTE
       { mk_unop (mkinfo (tm_info $1) $2.i) $2.l "(')" $1 }
   | SUB op %prec UNARYMINUS
       { mk_unop (mkinfo $1.i (tm_info $2)) $1.l "(--)" $2 }
@@ -652,8 +652,8 @@ op:
 app_left:
   | atom
       { $1 }
-  | IDENTPAREN RPAREN 
-      { let t1 = TmVar($1.i,$1.v,0) in 
+  | IDENTPAREN RPAREN
+      { let t1 = TmVar($1.i,$1.v,0) in
         let t2 = TmConst($2.i,0,ConstUnit) in
         TmApp(mkinfo $1.i $2.i,0,t1,t2,false) }
   | IDENTPAREN revtmseq RPAREN
@@ -664,7 +664,7 @@ app_left:
           | t::ts -> TmApp(fi,0,mkapps ts,t,false)
           | [] -> tm_ident
         in mkapps $2 }
-  | LPAREN app_left PARENAPP RPAREN 
+  | LPAREN app_left PARENAPP RPAREN
       { let t2 = TmConst($4.i,0,ConstUnit) in
         TmApp(mkinfo $1.i $4.i,0,$2,t2,false) }
   | LPAREN app_left PARENAPP revtmseq RPAREN
@@ -685,15 +685,15 @@ app_left:
         TmProj(fi,$1.l,1,$2) }
   | ERROR atom
       { let fi = mkinfo $1.i (tm_info $2) in
-        TmError(fi,$1.l,$2) }   
+        TmError(fi,$1.l,$2) }
   | SPECIALIZE atom atom
-      { TmApp(mktminfo $2 $3,0,$2,$3,true) } 
+      { TmApp(mktminfo $2 $3,0,$2,$3,true) }
   | SPECIALIZE IDENTPAREN atom RPAREN
       { let tm_ident = TmVar($2.i,$2.v,0) in
-        TmApp(mkinfo $1.i $4.i,0,tm_ident,$3,true) } 
+        TmApp(mkinfo $1.i $4.i,0,tm_ident,$3,true) }
   | SPECIALIZE LPAREN atom PARENAPP atom RPAREN
-      { TmApp(mktminfo $3 $5,0,$3,$5,true) } 
-  
+      { TmApp(mktminfo $3 $5,0,$3,$5,true) }
+
 app_right:
   | atom
       { (0,$1) }
@@ -704,9 +704,9 @@ atom:
   | IDENT
       { if $1.l = 0 then TmVar($1.i,$1.v,0)
         else  (TmVar($1.i,$1.v,0)) }
-  | TRUE 
+  | TRUE
       { TmConst($1.i,$1.l,ConstBool(true)) }
-  | FALSE 
+  | FALSE
       { TmConst($1.i,$1.l,ConstBool(false)) }
   | UINT
       { TmConst($1.i,$1.l,ConstInt($1.v)) }
@@ -718,20 +718,20 @@ atom:
       { TmConst($1.i,$1.l,ConstPrim($1.v,[])) }
   | LSQUARE RSQUARE
       { let fi = mkinfo $1.i $2.i in
-	TmNil(fi,$1.l,TyDyn(fi,$1.l)) }     
+	TmNil(fi,$1.l,TyDyn(fi,$1.l)) }
   | LSQUARE revtmseq RSQUARE
       { let fi = mkinfo $1.i $3.i in
         TmList(fi,$1.l,$2) }
   | LCURLY term RCURLY
       { $2 }
-  | LPAREN RPAREN 
-      { TmConst(mkinfo $1.i $2.i,$1.l,ConstUnit) } 
+  | LPAREN RPAREN
+      { TmConst(mkinfo $1.i $2.i,$1.l,ConstUnit) }
   | LPAREN revtmseq RPAREN
       { let fi = mkinfo $1.i $3.i in
         match $2 with
 	  | [] -> TmConst(fi,$1.l,ConstUnit)
 	  | [t] -> if $1.l = 0 then t else  t
-	  | ts ->  TmTuple(fi,$1.l,List.rev ts) } 
+	  | ts ->  TmTuple(fi,$1.l,List.rev ts) }
   | BEGIN term END
       { $2 }
   | DPRINT LPAREN term RPAREN
@@ -748,22 +748,22 @@ revidentseq:
     |   IDENT
         {[$1.v]}
     |   revidentseq COMMA IDENT
-        {($3.v)::$1} 
+        {($3.v)::$1}
 
 
-revtmseq: 
+revtmseq:
     |   term
-        {[$1]}               
+        {[$1]}
     |   revtmseq COMMA term
         {$3::$1}
 
 
 
-      
 
 
 
- 
+
+
 
 
 

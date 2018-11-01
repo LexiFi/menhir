@@ -17,7 +17,7 @@ $Id: poly_interp_parser.mly,v 1.3 2003/07/11 15:42:48 contejea Exp $
     try
       let n = Listutils.index s !current_poly_vars
       in IntPolynomials.var n
-    with 
+    with
 	Not_found -> raise (Syntax_error ("undefined variable "^s))
 ;;
 
@@ -28,7 +28,7 @@ $Id: poly_interp_parser.mly,v 1.3 2003/07/11 15:42:48 contejea Exp $
 %token <User_signatures.symbol_id> INTERP
 %token LEFT_BRA RIGHT_BRA
 %token LEFT_PAR RIGHT_PAR SEMICOLON EQUAL COMMA EOF
-%token PLUS MINUS EXP MULT 
+%token PLUS MINUS EXP MULT
 %token <Numbers.t> INT
 
 %start poly_interp_entry
@@ -75,8 +75,8 @@ poly:
 | poly MULT poly           { IntPolynomials.mult $1 $3 }
 | poly EXP INT
     { try
-	IntPolynomials.power $1 (Numbers.to_int $3) 
-      with 
+	IntPolynomials.power $1 (Numbers.to_int $3)
+      with
 	Failure("int_of_big_int") ->
 	  failwith "Exponent too large"
     }

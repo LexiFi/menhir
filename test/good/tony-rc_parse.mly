@@ -3,7 +3,7 @@
 */
 
 %{
-open Rc_ast 
+open Rc_ast
 %}
 
 /* tokens */
@@ -14,7 +14,7 @@ open Rc_ast
 %token <float>  FLOAT
 %token <int>    INT
 
-%token COMMA EQUAL TRUE FALSE EOF 
+%token COMMA EQUAL TRUE FALSE EOF
 
 
 %start                  rcfile
@@ -27,7 +27,7 @@ rcfile          : rclines EOF                   { $1            }
 rclines         : /**/                          { empty         }
                 | rclines rcline                { let (id,rc) = $2 in
                                                   add id rc $1
-                                                } 
+                                                }
 
 rcline          : ID EQUAL value                { ($1,$3)       }
                 | ID EQUAL values               { ($1,RClist(List.rev $3))  }

@@ -149,7 +149,7 @@ let rev_combine_list = function
 
 %%
 
-prog: 
+prog:
 | definitions EOF { $1 }
 ;
 
@@ -174,7 +174,7 @@ definition:
     | TOPDEF REC fundef mutual_fundefs_opt
     (* TODO: mutual *)
       { create $1 (RecDef $3) }
-    | TYPE typedef 
+    | TYPE typedef
       { create $1 $2 }
     | AND typedef
     (* TODO: mutual *)
@@ -722,7 +722,7 @@ field_decl:
     | IDENT COLON type_expr
       { $1.desc, $3 }
 
-list_: 
+list_:
     | (* empty *)
       { [] }
     | rev_list_elts
@@ -736,7 +736,7 @@ rev_list_elts:
     | rev_list_elts COMMA expr
       { $3 :: $1 }
 
-list_pattern: 
+list_pattern:
     | (* empty *) { [] }
     | rev_list_pattern_elts { List.rev $1 }
     | rev_list_pattern_elts COMMA { List.rev $1 }

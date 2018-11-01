@@ -298,7 +298,7 @@ connect
   | expression OP_CONNECT_RIGHT expression { CfAst.Connect (fst $2, $3, $1) }
   ;
 
-prefix   
+prefix
   : OP_NOT         expression { CfParserUtil.application_of_prefix $1 $2 }
   | OP_BW_NOT      expression { CfParserUtil.application_of_prefix $1 $2 }
   | OP_HEAD        expression { CfParserUtil.application_of_prefix $1 $2 }
@@ -377,7 +377,7 @@ conditional
   | expression OP_OR   expression                     { CfAst.Cond (fst $2, $1, $1, $3) }
   | expression OP_THEN expression ELSE expression     { CfAst.Cond (fst $2, $1, $3, $5) }
   ;
-  
+
 list_sugar_items
   : expression_nonop                                          { CfParserUtil.application_of_infix (CfAst.expr_loc $1, "::") $1 (CfAst.Record (CfAst.expr_loc $1, [])) }
   | expression_nonop list_sugar_items                         { CfParserUtil.application_of_infix (CfAst.expr_loc $1, "::") $1 $2 }

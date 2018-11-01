@@ -21,9 +21,9 @@ $Id: genpoly_parser.mly,v 1.5 2002/05/27 12:07:35 contejea Exp $
     try
       let n = Listutils.index s !current_poly_vars
       in GenericPolynomials.var n
-    with 
+    with
 	Not_found ->
-          GenericPolynomials.cte 
+          GenericPolynomials.cte
 	    (Fd_polynomials.var (fd_var_id_of_string s))
 ;;
 
@@ -31,7 +31,7 @@ $Id: genpoly_parser.mly,v 1.5 2002/05/27 12:07:35 contejea Exp $
     try
       let n = Listutils.index s !current_poly_vars
       in IntPolynomials.var n
-    with 
+    with
 	Not_found -> raise (Syntax_error ("undefined variable "^s))
 ;;
 
@@ -41,7 +41,7 @@ $Id: genpoly_parser.mly,v 1.5 2002/05/27 12:07:35 contejea Exp $
 %token <string> VAR
 %token <User_signatures.symbol_id Marked_dp_criteria.dupl> INTERP
 %token PARGAUCHE PARDROITE SEMICOLON EQUAL COMMA EOF
-%token PLUS MINUS EXP MULT 
+%token PLUS MINUS EXP MULT
 %token <Num.num> INT
 
 %start gen_poly_entry
@@ -57,7 +57,7 @@ $Id: genpoly_parser.mly,v 1.5 2002/05/27 12:07:35 contejea Exp $
 
 %%
 
-gen_poly_entry: 
+gen_poly_entry:
   gen_poly EOF { $1 }
 ;
 
@@ -72,8 +72,8 @@ gen_poly:
 | gen_poly MULT gen_poly   { GenericPolynomials.mult $1 $3 }
 | gen_poly EXP INT
     { try
-	GenericPolynomials.power $1 (Num.int_of_num $3) 
-      with 
+	GenericPolynomials.power $1 (Num.int_of_num $3)
+      with
 	Failure("int_of_big_int") ->
 	  failwith "Exponent too large"
     }
@@ -110,8 +110,8 @@ poly:
 | poly MULT poly           { IntPolynomials.mult $1 $3 }
 | poly EXP INT
     { try
-	IntPolynomials.power $1 (Num.int_of_num $3) 
-      with 
+	IntPolynomials.power $1 (Num.int_of_num $3)
+      with
 	Failure("int_of_big_int") ->
 	  failwith "Exponent too large"
     }

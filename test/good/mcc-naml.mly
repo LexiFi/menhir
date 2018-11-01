@@ -10,7 +10,7 @@ open Naml_ast_util
 open Naml_ast_exn
 
 let make_infix_expr op e1 e2 =
-  let (op,p) = op in 
+  let (op,p) = op in
   let up = union_pos (pos_of_expr e1) (pos_of_expr e2) in
     ApplyExpr (VarExpr (([],op,p),p), [e1; e2], up)
 
@@ -22,7 +22,7 @@ let make_function_nest p a w e =
   let p = union_pos p (pos_of_expr e) in
   let e = match w with
       None -> e
-    | Some _ -> 
+    | Some _ ->
         let u = CConsConst (([],unit_sym,p),p) in
           MatchExpr (ConstExpr (u,p), [ConstPat (u,p), w, e], p) in
   let e, a = Mc_list_util.fold_map
@@ -40,7 +40,7 @@ let make_list_nil p = CConsConst (([],list_nil_sym,p), p)
 let make_list_cons_expr_aux cp h t p =
   ConsExpr (([], list_cons_sym, cp), TupleExpr ([h; t], p), p)
 
-let make_list_cons_expr cp h t = 
+let make_list_cons_expr cp h t =
   make_list_cons_expr_aux cp h t (union_pos (pos_of_expr h) (pos_of_expr t))
 
 let rec make_list_expr = function
@@ -85,7 +85,7 @@ let make_constrain_expr e t p =
 let string_to_list s =
   let rec tol i l =
     let i = i - 1 in
-      if i < 0 then 
+      if i < 0 then
         l
       else
         tol i (s.[i] :: l)
@@ -298,7 +298,7 @@ vpath_cap:
       cap_ident			 { let (s, p) = $1 in [], s, p }
     | TokCapId TokDot vpath_cap { let (s, p) = $1 and (m, s2, p2) = $3 in ((s,p)::m, s2, union_pos p p2) }
     ;
-	
+
 /* symbol * pos */
 operator:
       TokOpPreN1		    { $1 }
@@ -355,9 +355,9 @@ spec:
     | TokExternal ident TokIs type_expr TokEq TokString	{ let  (s, p) = $6 in ExternSpec (fst $2, $4, s, union_pos $1 p) }
     | TokExternal TokType type_params TokId TokEq TokString
         { let (s, p) = $6 in ExternTypeSpec (fst $3, fst $4, s, union_pos $1 p) }
-    | type_definition					{ let (l, p) = $1 in TypeSpec (l, p) } 
+    | type_definition					{ let (l, p) = $1 in TypeSpec (l, p) }
     | exception_def_simp				{ let (s, t, p) = $1 in ExnSpec (s, t, p) }
-    | TokModule TokCapId module_args TokIs module_type 
+    | TokModule TokCapId module_args TokIs module_type
         { let p = union_pos $1 (pos_of_modtype $5) in
             ModSpec (fst $2, make_functor_type $3 $5 p, p) }
     | TokModule TokType TokCapId			{ let (s, p) = $3 in ModtypeSpec (s, None, union_pos $1 p) }
@@ -401,12 +401,12 @@ def:
     | TokInclude module_expr				{ IncludeMod ($2, union_pos $1 (pos_of_modexp $2)) }
     | TokModule TokType TokCapId TokEq module_type	{ ModtypeMod (fst $3, $5, union_pos $1 (pos_of_modtype $5)) }
     | TokModule TokCapId module_args module_contrain_opt TokEq module_expr
-        { let p = union_pos $1 (pos_of_modexp $6) in 
+        { let p = union_pos $1 (pos_of_modexp $6) in
             ModMod (fst $2, make_functor_expr $3 (make_constrain_expr $6 $4 p) p, p) }
     ;
 
 module_contrain_opt:
-			    { None } 
+			    { None }
     | TokIs module_type	    { Some $2 }
 
 type_definition:
@@ -425,7 +425,7 @@ type_def:
 	{
 	    let (pl, p) = $1 in
 	    let (s, _) = $2 in
-	    let (t, r, p2) = $3 in 
+	    let (t, r, p2) = $3 in
 		pl, s, t, r, union_pos p p2
 	}
     ;
@@ -459,7 +459,7 @@ constr_decl_list:
     | constr_decl_list TokAlt constr_decl
 	{
 	    let (s, t, p) = $3 in
-            let l, p2 = $1 in 
+            let l, p2 = $1 in
 	      l @ [s, t], union_pos p p2
 	}
     ;
@@ -476,7 +476,7 @@ field_decl_list_aux:
 
 /* symbol * ty option * pos */
 constr_decl:
-      cap_ident				
+      cap_ident
         { let (s, p) = $1 in s, [], p }
     | constr_cap_ident TokOf type_tuple_aux
         { let (s, p) = $1 in s, $3, union_pos p (pos_of_type (list_last $3)) }
@@ -535,7 +535,7 @@ type_expr:
 type_tuple:
       type_tuple_aux TokStar type_expr_limited	{ TypeTuple ($1 @ [$3], union_pos (pos_of_type (List.hd $1)) (pos_of_type $3)) }
     | type_expr_limited				{ $1 }
-      
+
 type_tuple_aux:
       type_tuple_aux TokStar type_expr_limited	{ $1 @ [$3] }
     | type_expr_limited				{ [$1] }
@@ -564,12 +564,12 @@ pattern:
     | pattern_no_tuple TokComma pattern_tuple	%prec prec_pat_tuple	{ TuplePat ($1 :: $3, union_pos (pos_of_pattern $1) (pos_of_pattern (list_last $3))) }
     | pattern TokAlt pattern			%prec prec_pat_alt	{ AltPat ($1, $3, union_pos (pos_of_pattern $1) (pos_of_pattern $3)) }
     | pattern TokAs ident			%prec prec_as		{ let s,p = $3 in AsPat ($1, s, union_pos (pos_of_pattern $1) p) }
-    | pattern TokAs ident TokComma pattern_tuple	%prec prec_as	
-        { let s,p = $3 in 
+    | pattern TokAs ident TokComma pattern_tuple	%prec prec_as
+        { let s,p = $3 in
           let ap = AsPat ($1, s, union_pos (pos_of_pattern $1) p) in
             TuplePat (ap :: $5, union_pos p (pos_of_pattern (list_last $5))) }
-    | pattern TokAs ident TokCons pattern_no_tuple	%prec prec_as	
-        { let s,p = $3 in 
+    | pattern TokAs ident TokCons pattern_no_tuple	%prec prec_as
+        { let s,p = $3 in
           let ap = AsPat ($1, s, union_pos (pos_of_pattern $1) p) in
           let p2 = union_pos p (pos_of_pattern $5) in
             ConsPat (([],list_cons_sym,$4), TuplePat ([ap; $5], p2), p2) }
@@ -578,8 +578,8 @@ pattern:
 pattern_no_tuple:
       pattern_limited				{ $1 }
     | vpath_cap pattern_no_tuple		%prec prec_pat_cons	{ let (_,_,p) = $1 in ConsPat ($1, $2, union_pos p (pos_of_pattern $2)) }
-    | pattern_no_tuple TokCons pattern_no_tuple	%prec prec_pat_listcons	
-        { let p = union_pos (pos_of_pattern $1) (pos_of_pattern $3) in 
+    | pattern_no_tuple TokCons pattern_no_tuple	%prec prec_pat_listcons
+        { let p = union_pos (pos_of_pattern $1) (pos_of_pattern $3) in
             ConsPat (([],list_cons_sym,$2), TuplePat ([$1; $3], p), p) }
     ;
 
@@ -592,7 +592,7 @@ pattern_limited:
     | TokLParen pattern TokIs type_expr	TokRParen	{ TySpecPat ($2, $4, union_pos $1 $5) }
     | TokLRecord pattern_record TokRRecord		{ RecordPat ($2, union_pos $1 $3) }
     | TokLList pattern_list TokRList			{ make_list_pat (union_pos $1 $3) $2 }
-    | TokString						
+    | TokString
         { let s,p = $1 in ArrayPat (List.map (fun c -> ConstPat (CharConst (c,p),p)) (string_to_list s), p) }
     ;
 
@@ -623,15 +623,15 @@ let_binding_list:
 
 /* binding */
 let_binding:
-      pattern TokEq expr		    { $1, $3, union_pos (pos_of_pattern $1) (pos_of_expr $3) } 
-    | pattern TokIs type_expr TokEq expr    { let p = pos_of_pattern $1 in (TySpecPat ($1, $3, union_pos p (pos_of_type $3)), $5, union_pos p (pos_of_expr $5)) } 
-    | ident param_list TokEq expr	    
+      pattern TokEq expr		    { $1, $3, union_pos (pos_of_pattern $1) (pos_of_expr $3) }
+    | pattern TokIs type_expr TokEq expr    { let p = pos_of_pattern $1 in (TySpecPat ($1, $3, union_pos p (pos_of_type $3)), $5, union_pos p (pos_of_expr $5)) }
+    | ident param_list TokEq expr
         { let (s,p) = $1 in IdPat (s,p), make_function_nest p $2 None $4, union_pos p (pos_of_expr $4) }
-    | ident param_list TokIs type_expr TokEq expr    
-        { let (s,p) = $1 in 
+    | ident param_list TokIs type_expr TokEq expr
+        { let (s,p) = $1 in
           let p2 = union_pos p (pos_of_expr $6) in
             IdPat (s,p), make_function_nest p $2 None (TySpecExpr ($6, $4, p)), p }
-      
+
     ;
 
 /* pattern list */
@@ -708,7 +708,7 @@ expr:
     | TokMatch expr TokWith pattern_match_list	%prec prec_expr_n19
 	{ let (m, p) = $4 in MatchExpr ($2, m, union_pos $1 p) }
     | TokFunction pattern_match_list		%prec prec_expr_n19
-	{ let (m, p) = $2 in 
+	{ let (m, p) = $2 in
           let s = Symbol.new_symbol_string "x" in
           let e = MatchExpr (VarExpr (([],s,p),p), m, p) in
             FunExpr ([s], e, union_pos $1 p) }
@@ -727,7 +727,7 @@ expr:
 		TupleExpr ($1 :: l, union_pos (pos_of_expr $1) p)
 	    | _ ->
 		TupleExpr ([$1; $3], union_pos (pos_of_expr $1) (pos_of_expr $3)) }
-    
+
     | expr_fun { $1 }
     | vpath_cap				{ let (_,_,p) = $1 in ConstExpr (CConsConst ($1, p), p) }
     ;
@@ -762,14 +762,14 @@ expr_simp:
     | TokLArray TokRArray					{ ArrayExpr ([], union_pos $1 $2) }
     | TokLRecord expr_record TokRRecord				{ RecordExpr (None, $2, union_pos $1 $3) }
     | TokLRecord expr_simp TokWith expr_record TokRRecord	{ RecordExpr (Some $2, $4, union_pos $1 $5) }
-    | TokString							
+    | TokString
         { let s,p = $1 in ArrayExpr (List.map (fun c -> ConstExpr (CharConst (c,p),p)) (string_to_list s), p) }
 
-    | TokWhile expr TokDo expr TokDone			
+    | TokWhile expr TokDo expr TokDone
 	{ WhileExpr ($2, $4, union_pos $1 $5) }
-    | TokFor ident TokEq expr TokTo expr TokDo expr TokDone		
+    | TokFor ident TokEq expr TokTo expr TokDo expr TokDone
 	{ let (id, _) = $2 in ForExpr (id, $4, true, $6, $8, union_pos $1 $9) }
-    | TokFor ident TokEq expr TokDownto expr TokDo expr TokDone		
+    | TokFor ident TokEq expr TokDownto expr TokDo expr TokDone
 	{ let (id, _) = $2 in ForExpr (id, $4, false, $6, $8, union_pos $1 $9) }
 
     | expr_simp TokDot vpath

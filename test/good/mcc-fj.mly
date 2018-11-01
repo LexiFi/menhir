@@ -10,7 +10,7 @@ open Fj_ast_exn
  *)
 let object_sym = Symbol.add "FjObject"
 
-(* 
+(*
  * The star symbol is used for parsing import statements
  *)
 let star_sym = Symbol.add "*"
@@ -342,7 +342,7 @@ opt_import_list:
     | rev_import_list
       { List.rev $1 }
       ;
-      
+
 rev_import_list:
       import_stmt
       { [$1] }
@@ -355,14 +355,14 @@ import_stmt:
       { List.rev $2, union_pos $1 $3 }
     | TokImport rev_dotted_name TokDot TokStar TokSemi
       { List.rev (star_sym :: $2), union_pos $1 $5 }
-      
+
 rev_dotted_name:
       TokId
       { [fst $1] }
     | rev_dotted_name TokDot TokId
       { (fst $3) :: $1 }
       ;
-      
+
 
 /************************************************************************
  * CLASS AND INTERFACES
@@ -390,7 +390,7 @@ class_or_interface_def:
                TypeDef (_, v, ty, pos) ->
                   TypeDef (List.rev $1, v, ty, pos)
              | ClassDef (_, a, b, c, d, e) ->
-                  ClassDef (List.rev $1, a, b, c, d, e) 
+                  ClassDef (List.rev $1, a, b, c, d, e)
              | _ ->
                   failwith "Internal error while parsing class/interface def."
           }
@@ -404,11 +404,11 @@ class_or_interface_def_content:
         ;
 
 /*
- * An interface definition has an optional type modifier list, an indentifier, 
+ * An interface definition has an optional type modifier list, an indentifier,
  * an optional list of super-interfaces, and a list of variable declarations.
  */
 interface_def:
-          TokInterface TokId opt_extends_list 
+          TokInterface TokId opt_extends_list
                   TokLeftBrace rev_interface_body TokRightBrace
           { let pos = union_pos $1 $6 in
             let v, _ = $2 in
@@ -424,7 +424,7 @@ interface_def:
  * the the class body.
  */
 class_def:
-          TokClass TokId opt_extends opt_implements 
+          TokClass TokId opt_extends opt_implements
                   TokLeftBrace class_body TokRightBrace
           { let pos = union_pos $1 $7 in
             let v, _ = $2 in
@@ -549,7 +549,7 @@ type_mod: TokPublic
         | TokStrictfp
           { ModStrictfp $1 }
         | TokConst
-          { raise (AstException ($1, 
+          { raise (AstException ($1,
                (StringError "'const' is reserved, but not a Java keyword"))) }
         ;
 
@@ -686,7 +686,7 @@ fun_decl:
 /*
  * Declare a function.
  */
-fun_def:  type_spec direct_decl TokLeftBrace stmt_list 
+fun_def:  type_spec direct_decl TokLeftBrace stmt_list
                TokRightBrace
           { make_fun_def [] $1 $2 $4 $5 }
         ;

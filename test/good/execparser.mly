@@ -45,11 +45,11 @@ open Auxl
 open Value
 open Ids
 
-let mkl () = 
-   [ { Location.loc_start = symbol_start_pos ();  
+let mkl () =
+   [ { Location.loc_start = symbol_start_pos ();
        Location.loc_end = symbol_end_pos () } ]
 
-let mkp () = 
+let mkp () =
    symbol_start_pos ()
 
 (* let mkl x =  *)
@@ -57,9 +57,9 @@ let mkp () =
 (* 	   Location.loc_end=symbol_end_pos ()} in *)
 (*   (\* print_string (Location.pp_t l) ; flush stdout; *\)  *)
 (*   {desc=x; loc=l} *)
-    
-let parse_error s = 
-  raise (My_parse_error ("Parse error: " ^ s ^ " " 
+
+let parse_error s =
+  raise (My_parse_error ("Parse error: " ^ s ^ " "
 	   ^ Location.pp_position2 (Parsing.symbol_end_pos () )))
 
 
@@ -69,7 +69,7 @@ let parse_error s =
 %}
 
 %token MODEL
-%token LOCATION_KINDS 
+%token LOCATION_KINDS
 %token ATOMIC
 %token NONATOMIC
 %token MUTEX
@@ -87,15 +87,15 @@ let parse_error s =
 %token <string> IDENT
 %token <string> EDGE
 %token <string> CHECK
-%token  COLON 
-%token  SEMICOLON 
+%token  COLON
+%token  SEMICOLON
 %token  DOT
-%token  EQUALS            
-%token  SLASH               
+%token  EQUALS
+%token  SLASH
 %token  LBRACE
-%token  RBRACE              
-%token  COMMA              
-%token  SAMELOC               
+%token  RBRACE
+%token  COMMA
+%token  SAMELOC
 %token  ATOMICLOCS
 %token  EDGETAIL
 %token  EDGEHEAD
@@ -111,23 +111,23 @@ let parse_error s =
 %token  TO
 %token  ALL
 %token  SHOW
-%token  EOF                  
-%token  WHITESPACE         
-%token SET 
-%token FONTSIZE 
-%token NODE_HEIGHT  
-%token NODE_WIDTH 
-%token PENWIDTH 
+%token  EOF
+%token  WHITESPACE
+%token SET
+%token FONTSIZE
+%token NODE_HEIGHT
+%token NODE_WIDTH
+%token PENWIDTH
 %token THREAD_IDS
-%token FILLED 
-%token XSCALE 
-%token YSCALE 
+%token FILLED
+%token XSCALE
+%token YSCALE
 %token RANKSEP NODESEP
-%token LEGEND 
-%token LAYOUT 
-%token NEATO_PAR 
-%token NEATO_PAR_INIT 
-%token NEATO_DOWNWARDS 
+%token LEGEND
+%token LAYOUT
+%token NEATO_PAR
+%token NEATO_PAR_INIT
+%token NEATO_DOWNWARDS
 %token <int> NUM
 %token <string> STRING
 %token <bool> BOOL
@@ -155,11 +155,11 @@ let parse_error s =
 
 
 /* main:
-    action  EOF  { $2 } 
+    action  EOF  { $2 }
 */
 
 execfile:
-   items { $1 } 
+   items { $1 }
 
 instructions :
     EOF                           { empty_raw_instructions }
@@ -168,11 +168,11 @@ instructions :
   | instruction DOT instructions  { add_raw_instructions $1 $3 }
 
 instruction :
-    command                    { {empty_raw_instructions with 
+    command                    { {empty_raw_instructions with
 				     raw_commands = [$1]} }
-  | SHOW IDENT                      { let i = 
-                                            try int_of_string $2 
-                                            with Failure "int_of_string" -> parse_error ("Show expects a number, not " ^ $2) in 
+  | SHOW IDENT                      { let i =
+                                            try int_of_string $2
+                                            with Failure "int_of_string" -> parse_error ("Show expects a number, not " ^ $2) in
                                          {empty_raw_instructions with raw_show = Some i;} }
   | SHOW ALL                         { {empty_raw_instructions with raw_show = None;} }
 
@@ -184,7 +184,7 @@ instruction :
                                                (e,List.map (fun (_,fin) -> (start,fin)) ts)
                                    in
                                    {empty_raw_instructions with
-                                    raw_constrain_rels = 
+                                    raw_constrain_rels =
                                     [ConsiderRel rel];} }
   | CONSIDER prefixed_transition_sequence { let rel =
                                            let (start,ts) = $2 in
@@ -194,7 +194,7 @@ instruction :
                                                (e,List.map (fun (_,fin) -> (start,fin)) ts)
                                    in
                                    {empty_raw_instructions with
-                                    raw_constrain_rels = 
+                                    raw_constrain_rels =
                                     [ConsiderRel rel];} }
   | IGNORE transition_sequence { let rel =
                                            let (start,ts) = $2 in
@@ -204,7 +204,7 @@ instruction :
                                                (e,List.map (fun (_,fin) -> (start,fin)) ts)
                                    in
                                    {empty_raw_instructions with
-                                    raw_constrain_rels = 
+                                    raw_constrain_rels =
                                     [IgnoreRel rel];} }
   | IGNORE prefixed_transition_sequence { let rel =
                                            let (start,ts) = $2 in
@@ -214,7 +214,7 @@ instruction :
                                                (e,List.map (fun (_,fin) -> (start,fin)) ts)
                                    in
                                    {empty_raw_instructions with
-                                    raw_constrain_rels = 
+                                    raw_constrain_rels =
                                     [IgnoreRel rel];} }
   | ADD transition_sequence    { {empty_raw_instructions with
                                      raw_add_rels = [$2]; } }
@@ -230,12 +230,12 @@ instruction :
                                         raw_remove_actions = $2; } }
   | modes                 { {empty_raw_instructions with
                                      raw_mode = $1} }
-  | IGNORE checks                    
-      { {empty_raw_instructions with 
+  | IGNORE checks
+      { {empty_raw_instructions with
 	 raw_checks = (List.map (fun c -> IgnoreCheck c) $2); } }
-  | CONSIDER checks                    
-      { {empty_raw_instructions with 
-	 raw_checks = (List.map (fun c -> ConsiderCheck c) $2); } } 
+  | CONSIDER checks
+      { {empty_raw_instructions with
+	 raw_checks = (List.map (fun c -> ConsiderCheck c) $2); } }
   | DISPLAY_ACTION action_or_name_list  { {empty_raw_instructions with
                                        raw_node_instructions = [Raw_display_n $2]; } }
   | SUPPRESS_ACTION action_or_name_list  { {empty_raw_instructions with
@@ -243,9 +243,9 @@ instruction :
   | DISPLAY_EDGE edges                 { {empty_raw_instructions with
                                         raw_edge_instructions = [Raw_display_e  (List.map (fun x -> (x,None)) $2)];} }
   | SUPPRESS_EDGE edges                 { {empty_raw_instructions with
-                                        raw_edge_instructions = [Raw_suppress_e (List.map (fun x -> (x,None)) $2)];} } 
+                                        raw_edge_instructions = [Raw_suppress_e (List.map (fun x -> (x,None)) $2)];} }
   | DISPLAY_EDGE prefixed_transition_sequence { let (start,ts) = $2 in
-                                           let e = 
+                                           let e =
                                              match ts with
                                              | (e,_) :: _ -> e
                                              | [] -> parse_error "Cannot happen: prefixed_transition_sequence w/o prefix"
@@ -253,14 +253,14 @@ instruction :
                                            {empty_raw_instructions with
                                              raw_edge_instructions = [Raw_display_e [e,Some ($2)]];}}
   | SUPPRESS_EDGE prefixed_transition_sequence { let (start,ts) = $2 in
-                                           let e = 
+                                           let e =
                                              match ts with
                                              | (e,_) :: _ -> e
                                              | [] -> parse_error "Cannot happen: prefixed_transition_sequence w/o prefix"
                                            in
                                            {empty_raw_instructions with
                                              raw_edge_instructions = [Raw_suppress_e [e,Some ($2)]];}}
- 
+
 
 modes :
     mode                   { [$1] }
@@ -285,7 +285,7 @@ mode :
   | SET THREAD_IDS EQUALS BOOL { Thread_ids $4 }
 
 
-command : 
+command :
       QUIT                        { Quit }
   | NEXT                          { Continue }
   | NONSTOP                       { StopAt Never }
@@ -300,7 +300,7 @@ command :
   | GENERATE EXCFILE FILENAME     { Generate (Exc,$3) }
   | GENERATE INSTRFILE FILENAME   { Generate (Instructions,$3) }
 
-items: 
+items:
    item items                     { $1 :: $2 }
  | EOF                            { [] }
 
@@ -308,16 +308,16 @@ item:
    MODEL COLON IDENT { Model $3 }
  | transition_sequence            { Trans $1 }
  | action_or_name                 { Trans ($1,[]) }
- | prefixed_transition_sequence   { Trans $1 } 
+ | prefixed_transition_sequence   { Trans $1 }
  | LOCATION_KINDS COLON lk              { Lk $3 }
  | output_edge_inst                    { DisplayEdgeInstr $1 }
  | suppress_edge_inst                  { SuppressEdgeInstr $1 }
  | DISPLAY_ACTION action_or_name_list DOT     { DisplayNodeInstr $2 }
  | SUPPRESS_ACTION action_or_name_list DOT    { SuppressNodeInstr $2 }
  | IGNORE checks                       { Ignore $2 }
- | SHOW IDENT DOT                      { let i = 
-                                            try int_of_string $2 
-                                            with Failure "int_of_string" -> parse_error ("Show expects a number, not " ^ $2) in 
+ | SHOW IDENT DOT                      { let i =
+                                            try int_of_string $2
+                                            with Failure "int_of_string" -> parse_error ("Show expects a number, not " ^ $2) in
                                          Show (Some i) }
  | SHOW ALL DOT                        { Show None }
 
@@ -333,7 +333,7 @@ suppress_edge_inst:
    SUPPRESS_EDGE edges from_opt to_opt DOT              { List.map (fun e -> (e,RawCrossProduct($3,$4))) $2 }
  | SUPPRESS_EDGE edges COLON action_edges DOT           { List.map (fun e -> (e,RawExact $4)) $2 }
 
-action_edges: 
+action_edges:
    action_edge                 { [$1] }
  | action_edge action_edges    { $1 :: $2 }
 
@@ -344,16 +344,16 @@ edgename:
     MO                        { match $1 with | Atomic Cmm.Seq_cst -> "sc" | _ -> parse_error "non-\"sc\" memory order appearing in relation name position"}
  |  IDENT                      { $1 }
 
-edges: 
+edges:
    edgename /* singleton */         { [$1] }
  | edgename edges                  { $1 :: $2 }
-  
+
 
 from_opt:
    /* Nothing */                       { All }
  | FROM action_or_name_list            { Actions $2 }
  | FROM ALL                            { All }
- 
+
 to_opt:
    /* Nothing */                       { All }
  | TO action_or_name_list              { Actions $2 }
@@ -386,18 +386,18 @@ action:
     IDENT SEMICOLON IDENT COLON L  location LOCKOUTCOME { Cmm.Lock($1,named_thread_id $3, $6, $7) }
   | IDENT SEMICOLON IDENT COLON U  location { Cmm.Unlock($1,named_thread_id $3,$6) }
   | IDENT SEMICOLON IDENT COLON R location  EQUALS  valu
-      { match $5 with 
+      { match $5 with
       | Nonatomic -> Cmm.Load ($1,named_thread_id $3,Cmm.NA,$6,$8)
-      | Atomic mo -> Cmm.Load ($1,named_thread_id $3,mo,$6,$8) 
+      | Atomic mo -> Cmm.Load ($1,named_thread_id $3,mo,$6,$8)
       | Mutex -> raise (Failure "parse error: R with mutex type")}
   | IDENT SEMICOLON IDENT COLON W location  EQUALS  valu
-      { match $5 with 
+      { match $5 with
       | Nonatomic -> Cmm.Store ($1,named_thread_id $3,Cmm.NA,$6,$8)
       | Atomic mo -> Cmm.Store ($1,named_thread_id $3,mo,$6,$8)
       | Mutex -> raise (Failure "parse error: W with mutex type")}
 
   | IDENT SEMICOLON IDENT COLON RMW location  EQUALS  valu SLASH valu
-      { match $5 with 
+      { match $5 with
       | Nonatomic -> raise (Failure "parse error: RMW with nonatomic order type")
       | Atomic mo -> Cmm.RMW ($1,named_thread_id $3,mo,$6,$8,$10)
       | Mutex -> raise (Failure "parse error: RMW with mutex type") }
@@ -408,7 +408,7 @@ action:
         | Atomic mo -> Cmm.Blocked_rmw ($1,named_thread_id $3,$6)
         | Mutex -> raise (Failure "parse error: BRMW with mutex type") }
   | IDENT SEMICOLON IDENT COLON F
-      { match $5 with 
+      { match $5 with
       | Nonatomic -> raise (Failure "parse error: F with nonatomic order type")
       | Atomic mo -> Cmm.Fence ($1,named_thread_id $3,mo)
       | Mutex -> raise (Failure "parse error: F with mutex type") }
@@ -422,13 +422,13 @@ valu:
 
 
 
-lk: 
+lk:
     LBRACE lk_body RBRACE { $2 }
   | LBRACE RBRACE { [] }
 
-lk_body: 
+lk_body:
     location COLON location_kind                  {      [($1,$3)] }
-  | lk_body COMMA location COLON location_kind    { $1 @ [($3,$5)] } 
+  | lk_body COMMA location COLON location_kind    { $1 @ [($3,$5)] }
 
 location_kind:
     ATOMIC    { Cmm.Atomic }
@@ -443,16 +443,16 @@ location_kind:
 
 
 skeletonexecfile:
-   skeleton_items { $1 } 
+   skeleton_items { $1 }
 
-skeleton_items: 
+skeleton_items:
    skeleton_item skeleton_items                     { $1 :: $2 }
  | EOF                            { [] }
 
-skeleton_item: 
+skeleton_item:
    skeleton_transition_sequence            { S_Trans $1 }
  | skeleton_action_or_name                 { S_Trans ($1,[]) }
- | skeleton_prefixed_transition_sequence   { S_Trans $1 } 
+ | skeleton_prefixed_transition_sequence   { S_Trans $1 }
  | SAMELOC COLON skeleton_action_set_set   { S_Sameloc $3 }
  | ATOMICLOCS COLON skeleton_action_set    { S_Atomiclocs $3 }
 
@@ -470,19 +470,19 @@ skeleton_prefixed_transition_sequence_body:
 
 
 
-skeleton_action_set_set: 
+skeleton_action_set_set:
     LBRACE skeleton_action_set_set_body RBRACE { $2 }
   | LBRACE RBRACE { [] }
 
-skeleton_action_set_set_body: 
+skeleton_action_set_set_body:
     skeleton_action_set { [$1] }
   | skeleton_action_set_set_body COMMA  skeleton_action_set  { $1 @ [$3] }
 
-skeleton_action_set: 
+skeleton_action_set:
     LBRACE skeleton_action_set_body RBRACE { $2 }
   | LBRACE RBRACE { [] }
 
-skeleton_action_set_body: 
+skeleton_action_set_body:
     skeleton_action_or_name { [$1] }
   | skeleton_action_set_body COMMA  skeleton_action_or_name  { $1 @ [$3] }
 
@@ -503,7 +503,7 @@ skeleton_mos:
   | ATOMIC { MO_Atomic }
   | LBRACE skeleton_mo_set_body RBRACE { MO_Set $2 }
 
-skeleton_mo_set_body: 
+skeleton_mo_set_body:
     MO { [$1] }
   | skeleton_mo_set_body COMMA  MO { $1 @ [$3] }
 

@@ -109,14 +109,14 @@ markup:
 element:
   _1 = emptyElemTag
     {                                            ( let (n,a) = _1 in
-                                                single n a  
+                                                single n a
                                             )}
 | _1 = sTag _2 = content _3 = eTag
     {                                            (   let (sn,a) = _1 in
                                                 let  en    = _3 in
                                                 let  c     = _2 in
                                                   if sn = en then
-                                                  element sn a c 
+                                                  element sn a c
                                                   else error ("tag mismatch")
                                             )}
 
@@ -167,7 +167,7 @@ content:
     {                                            ( _1 ^^ _2            	)}
 | _1 = content _2 = pi
     {                                            ( match _2 with
-                                              name,strings -> 
+                                              name,strings ->
                                                 _1 ^^ pi name strings   )}
 | _1 = content _2 = COMMENT
     {                                            ( _1                        )}
@@ -192,7 +192,7 @@ xmlinfo:
 
 xmldecl:
   _1 = xmlopen _2 = xmlinfo _3 = xmlclose
-    {                                            ( match _2 with    
+    {                                            ( match _2 with
                                               (vers,enc,sa) ->
                                               Some (XMLDecl(
                                                     vers,       (* version *)

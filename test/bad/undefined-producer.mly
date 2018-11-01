@@ -1,4 +1,4 @@
-%start<int> a 
+%start<int> a
 %token A
 %%
 

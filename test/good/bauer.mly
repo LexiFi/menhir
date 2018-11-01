@@ -10,12 +10,12 @@
 %%
 clauses: clauses = separated_list( DOT, clause ) EOF { clauses }
 
-clause: 
+clause:
     tm = term INFERS ts = separated_list( COMMA, term ) { (tm, ts) }
   | fact = term  { (fact, []) }
 
-term: 
-  name = IDENTIFIER p = option(params)  { 
+term:
+  name = IDENTIFIER p = option(params)  {
     let ts = match p with None -> [] | Some l -> l in
       Struct (name, ts)
   }

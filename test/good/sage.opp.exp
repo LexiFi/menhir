@@ -72,7 +72,7 @@ Warning: the token UUNIT is unused.
   open Primitives
   open Format
   open Print
-    
+
   let make_rec fi vars prims name ~args ~ret ~body =
     let arglist = args vars prims in
     let argnames, types = List.split arglist in
@@ -88,12 +88,12 @@ Warning: the token UUNIT is unused.
       | Some ty -> ty
       | None -> tm_prim ~fi "Dynamic"
     in
-    
-    
-    let fixtype = 
+
+
+    let fixtype =
       make_arrow_sequence fi vars (List.combine argnames types) ret_ty in
     let shifted_types = mapi (fun index ty -> term_shift_above 1 index ty) types in
-    
+
     make_prim_app_sequence fi vars
       "fix" []
       [fixtype;
@@ -105,8 +105,8 @@ Warning: the token UUNIT is unused.
 (*
 
 
-	
-	datatype D (x_i:S_i) = 
+
+	datatype D (x_i:S_i) =
 		C_i
 		L_i of T_i
 
@@ -114,13 +114,13 @@ Warning: the token UUNIT is unused.
 	let rec DT (z:Unit) (x_i:S_i) : * = Z:* -> (Unit -> Z) -> ... -> (Init -> Z) -> (T_1 -> Z) ... (T_n -> Z) -> Z
 	let D (x_i:S_i) = (DT unit)
 
-	let C_i (x_i:S_i) : D (x_i) = 
+	let C_i (x_i:S_i) : D (x_i) =
            fn  Z:* -> (f1:Unit -> Z) -> ... -> (..:Init -> Z) -> (..:T_1 -> Z) ... (..:T_n -> Z) -> Z => f1 unit
 
-	let L_j (x_i:S_i) (y:T_j) : D (x_i) = 
+	let L_j (x_i:S_i) (y:T_j) : D (x_i) =
            fn  Z:* -> (..:Unit -> Z) -> ... -> (..:Init -> Z) -> (f1:T_1 -> Z) ... (fn:T_n -> Z) -> Z => fj y
 
-	let caseD (x_i:S_i) = 
+	let caseD (x_i:S_i) =
 	   Z:* -> (v: D (x_i)) -> (r1:Unit -> Z) -> ... -> (Init -> Z) -> (T_1 -> Z) ... (rk:T_n -> Z) -> Z => v X r1 .. rk
 
 *)
@@ -128,21 +128,21 @@ Warning: the token UUNIT is unused.
 (*
 
 
-	
-	datatype D (x_i:S_i) = 
+
+	datatype D (x_i:S_i) =
 		C_i
 		L_i of y_i_1:T_i_1...y_i_n:T_i_n
 
 	let rec D (x_i:S_i) : * = Z:* -> (Unit -> Z) -> ... -> (Unit -> Z) -> (y_i_1:T_i_1...y_i_n:T_i_n -> Z) ... (y_i_1:T_i_1...y_i_n:T_i_n -> Z) -> Z
 
-	let C_1 (x_i:S_i) : D (x_i) = 
+	let C_1 (x_i:S_i) : D (x_i) =
            fn  Z:* -> (f1:Unit -> Z) -> ... -> (..:Unit -> Z) -> (... -> Z) ... (... -> Z) -> Z => f1 unit
 
-	let L_1 (x_i:S_i) (y_k:T_k) : D (x_i) = 
-           fn  Z:* -> (..:Unit -> Z) -> ... -> (..:Unit -> Z) -> 
+	let L_1 (x_i:S_i) (y_k:T_k) : D (x_i) =
+           fn  Z:* -> (..:Unit -> Z) -> ... -> (..:Unit -> Z) ->
 	             (y_i_1:T_i_1...y_i_n:T_i_n -> Z) ... (y_i_1:T_i_1...y_i_n:T_i_n -> Z) -> Z => fj y_1_1..y_1_n
 
-	let caseD (x_i:S_i) = 
+	let caseD (x_i:S_i) =
 	   Z:* -> (v: D (x_i)) -> (r1:Unit -> Z) -> ... -> (Init -> Z) -> (r1: (y_i_1:T_i_1...y_i_n:T_i_n -> Z)) ... => v Z r1 .. rk
 
 *)
@@ -154,24 +154,24 @@ let make_datatype fi vars prims (name:string) (args:(string * ty) list) (constrs
   let spr = Buffer.add_string in
   let vars' = name::((List.map (fun (x,ty)->x) args)@vars) in
 
-  let rec pr_name_type_list pre (a:(string * ty) list) post vars = 
+  let rec pr_name_type_list pre (a:(string * ty) list) post vars =
     match a with
     | [] -> ()
-    | (x,s)::r -> 
+    | (x,s)::r ->
         spr buf (pre ^ x ^ ":"); string_of_tm buf vars s; spr buf post;
         pr_name_type_list pre r post (x::vars) in
 
-  let pr_name_list a = 
+  let pr_name_list a =
     List.iter (fun (x,s) -> spr buf (" " ^ x)) a in
-  
+
   let pr_fn name args result_ty vars =
-    spr buf ("" ^ name ^ ":("); pr_name_type_list "" args "->" vars; 
+    spr buf ("" ^ name ^ ":("); pr_name_type_list "" args "->" vars;
     spr buf ("" ^ result_ty ^ ")") in
 
   let rec pr_fns pre fns post vars =
     match fns with
     | [] -> ()
-    | (name, params)::r -> 
+    | (name, params)::r ->
         spr buf pre;
         (if params = [] then
           pr_fn (name^"fn") params "Unit->Z" vars
@@ -180,17 +180,17 @@ let make_datatype fi vars prims (name:string) (args:(string * ty) list) (constrs
         spr buf post;
         pr_fns pre r post vars in
 
-  spr buf ("let rec " ^ name); pr_name_type_list "(" args ")" vars; 
-  spr buf " : * = Z:*"; 
-  pr_fns "\n->" constrs "" vars'; spr buf "\n->Z;;\n\n"; 
+  spr buf ("let rec " ^ name); pr_name_type_list "(" args ")" vars;
+  spr buf " : * = Z:*";
+  pr_fns "\n->" constrs "" vars'; spr buf "\n->Z;;\n\n";
 
-  spr buf ("let case" ^ name); pr_name_type_list "(" args ")" vars; 
-  spr buf ("(v:" ^ name); pr_name_list args; spr buf ")= v;;\n\n"; 
+  spr buf ("let case" ^ name); pr_name_type_list "(" args ")" vars;
+  spr buf ("(v:" ^ name); pr_name_list args; spr buf ")= v;;\n\n";
 
   List.iter (fun (label, largs) ->
-    spr buf ("let " ^ label); pr_name_type_list "(" args ")" vars; 
-    pr_name_type_list "(" largs ")" vars'; spr buf "(Z:*)"; 
-    pr_fns "\n(" constrs ")" vars'; 
+    spr buf ("let " ^ label); pr_name_type_list "(" args ")" vars;
+    pr_name_type_list "(" largs ")" vars'; spr buf "(Z:*)";
+    pr_fns "\n(" constrs ")" vars';
     spr buf ("\n= " ^ label ^ "fn ");
     (if largs = [] then spr buf "unit");
     pr_name_list largs; spr buf ";;\n" ) constrs;
@@ -308,12 +308,12 @@ toplevel:
 | _1 = Datatype _2 = SEMISEMI _3 = toplevel
     {      (
 	    fun vars prims ->
-	      let (fi,name,params,constrs) = _1 vars prims in	
+	      let (fi,name,params,constrs) = _1 vars prims in
           let dt_str =
             make_datatype fi vars prims name params constrs
-          in 
+          in
           let (dt_cmds, vars') = (!toplevel_parse_thunk) dt_str vars prims in
-          let (cmds, vars'') = _3 vars' prims in  
+          let (cmds, vars'') = _3 vars' prims in
           (dt_cmds @ cmds, vars'')
       )}
 
@@ -323,7 +323,7 @@ command:
           let t = _1 vars prims in (Eval(tm_info t, t), vars) )}
 | _1 = Let
     {      ( fun vars prims ->
-          (* The parser generator has a bug/feature so I MUST deconstruct and 
+          (* The parser generator has a bug/feature so I MUST deconstruct and
              reconstruct this value. *)
           let (fi,x,tm) = _1 vars prims in
           Define (fi,x,tm), x::vars )}
@@ -348,7 +348,7 @@ Environment:
 
 NonEmptyEnvironment:
   _1 = Assumption
-    {               ( fun vars prims -> 
+    {               ( fun vars prims ->
                    let var, bind = _1 vars prims in
                    add_binding empty_ctx var bind )}
 | _1 = NonEmptyEnvironment _2 = COMMA _3 = Assumption
@@ -367,10 +367,10 @@ Assumption:
     {      ( fun vars prims ->
           let x = _1.v in
           let ty = _3 vars prims in
-          x, 
+          x,
           VarBind(
             make_prim_app_sequence _1.i vars "Refine:" []
-              [ty; 
+              [ty;
                TmFun(_1.i, x, ty, _5 (x::vars) prims)],
             _6 vars prims) )}
 
@@ -397,18 +397,18 @@ Let:
 
 Datatype:
   _1 = DATATYPE _2 = ID _3 = ParamSeq _4 = EQ _5 = ConstructorSeq
-    {                                         ( 
-    fun vars prims -> 
+    {                                         (
+    fun vars prims ->
       let params = _3 vars prims in
-      let vars' = _2.v::((List.map (fun (x,ty) -> x) params) @ vars) in 
-      (_1, _2.v, params, _5 vars' prims) 
+      let vars' = _2.v::((List.map (fun (x,ty) -> x) params) @ vars) in
+      (_1, _2.v, params, _5 vars' prims)
  )}
 
 ConstructorSeq:
   _1 = Constructor %prec VBAR
     {                               ( fun vars prims -> (_1 vars prims)::[] )}
 | _1 = Constructor _2 = VBAR _3 = ConstructorSeq
-    {                                     ( 
+    {                                     (
 	fun vars prims -> (_1 vars prims)::(_3 (vars) prims)
 	)}
 
@@ -430,13 +430,13 @@ Type:
 term:
   _1 = ID _2 = COLON _3 = ident_free_term _4 = DOT _5 = term
     {      ( fun vars prims ->
-          make_refinement _1.i  vars _1.v 
-            (_3 vars prims) 
+          make_refinement _1.i  vars _1.v
+            (_3 vars prims)
             (_5 (_1.v::vars) prims) )}
 | _1 = LCURLY _2 = ID _3 = COLON _4 = ident_free_term _5 = VBAR _6 = term _7 = RCURLY
     {      ( fun vars prims ->
-          make_refinement _2.i  vars _2.v 
-            (_4 vars prims) 
+          make_refinement _2.i  vars _2.v
+            (_4 vars prims)
             (_6 (_2.v::vars) prims) )}
 | _1 = ID _2 = COLON _3 = ident_free_term _4 = ARROW _5 = term %prec ABSTRACTION
     {      ( fun vars prims ->
@@ -454,7 +454,7 @@ ident_free_term:
            if List.mem _1.v vars then
              var_to_term fi vars _1.v
            else if List.mem _1.v prims then
-             tm_prim ~fi _1.v 
+             tm_prim ~fi _1.v
            else
              error fi ("Identifier " ^ _1.v ^
                  " not bound to variable or primitive") )}
@@ -463,7 +463,7 @@ ident_free_term:
           let x = _2.v in
           TmFun(_1, x, _4 vars prims, _6 (x::vars) prims) )}
 | _1 = Let _2 = IN _3 = term
-    {      ( fun vars prims -> 
+    {      ( fun vars prims ->
           let (fi,x,arg) = _1 vars prims in
           TmLet(fi, x, arg, _3 (x::vars) prims) )}
 | _1 = term _2 = ARROW _3 = term %prec ABSTRACTION
@@ -488,7 +488,7 @@ ident_free_term:
           let vars' =  (List.rev_map fst params) @ vars in
           let return = _3 vars' prims in
           let body = _5 vars' prims in
-              make_lambda_sequence _1 vars params ?ret:return body 
+              make_lambda_sequence _1 vars params ?ret:return body
       )}
 | _1 = REC _2 = ID _3 = ParamSeq _4 = MaybeTy _5 = DARROW _6 = term %prec ABSTRACTION
     {      ( fun vars prims ->
@@ -558,12 +558,12 @@ ident_free_term:
 | _1 = LCURLY _2 = LabelColonTyList _3 = RCURLY
     {      ( fun vars prims ->
           let labels, types = List.split (_2 vars prims) in
-          make_prim_app_sequence _1 vars "Record" labels types 
+          make_prim_app_sequence _1 vars "Record" labels types
       )}
 | _1 = LT _2 = LabelColonTyList _3 = GT
     {      ( fun vars prims ->
           let labels, types = List.split (_2 vars prims) in
-          make_prim_app_sequence _1 vars "Variant" labels types 
+          make_prim_app_sequence _1 vars "Variant" labels types
       )}
 | _1 = LT _2 = ID _3 = EQ _4 = term _5 = GT
     {      ( fun vars prims ->
@@ -578,7 +578,7 @@ ident_free_term:
             [_3 vars prims;
 	         _5 vars prims;
 	         TmFun(fi, "_", tm_prim ~fi "Dynamic", _7 ("_"::vars) prims);
-             TmFun(fi, "_", tm_prim ~fi "Dynamic", _9 ("_"::vars) prims) ] 
+             TmFun(fi, "_", tm_prim ~fi "Dynamic", _9 ("_"::vars) prims) ]
       )}
 | _1 = IF _2 = term _3 = THEN _4 = term _5 = ELSE _6 = term
     {      ( fun vars prims ->
@@ -596,7 +596,7 @@ ParamSeq:
   
     {      ( fun vars prims -> [] )}
 | _1 = Param _2 = ParamSeq
-    {      ( fun vars prims -> 
+    {      ( fun vars prims ->
           let x,ty = _1 vars prims in
           (x,ty) :: (_2 (x::vars) prims) )}
 

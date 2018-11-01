@@ -50,20 +50,20 @@ let fetch_and_create_state name =
   try
     Hashtbl.find observed_states name
   with
-    Not_found -> 
+    Not_found ->
       let s = Data_for_aorai.new_state name in
       Hashtbl.add observed_states name s; s
 ;;
 
 let prefetch_and_create_state name =
-    if (Hashtbl.mem prefetched_states name) || 
-      not (Hashtbl.mem observed_states name) 
+    if (Hashtbl.mem prefetched_states name) ||
+      not (Hashtbl.mem observed_states name)
     then
       begin
-	let s= fetch_and_create_state name in 
+	let s= fetch_and_create_state name in
 	Hashtbl.add prefetched_states name name;
 	s
-      end 
+      end
     else
       (fetch_and_create_state name)
 ;;
@@ -107,7 +107,7 @@ main
        match key with
            "init"   ->
              List.iter
-               (fun id -> 
+               (fun id ->
                  try
 	           (Hashtbl.find observed_states id).init <- True
                  with
@@ -135,16 +135,16 @@ main
         observed_states []
     in
     (try
-       Hashtbl.iter 
+       Hashtbl.iter
          (fun _ st -> if st.init=True then raise Exit) observed_states;
        Aorai_option.abort "Automaton does not declare an initial state"
      with Exit -> ());
-    if Hashtbl.length prefetched_states >0 then 
+    if Hashtbl.length prefetched_states >0 then
       begin
 	let r = Hashtbl.fold
-	  (fun s n _ -> 
+	  (fun s n _ ->
             s^"Error: the state '"^n^"' is used but never defined.\n")
-	  prefetched_states 
+	  prefetched_states
 	  ""
 	in
 	Aorai_option.abort "%s" r
@@ -193,9 +193,9 @@ state
                 { start=start_state; stop=stop_state;
 	          cross=cross;       numt=(-1) }::transitions
               in
-              let otherwise = 
-                match cross with 
-                  | Otherwise -> true 
+              let otherwise =
+                match cross with
+                  | Otherwise -> true
                   | Seq _ -> false
               in otherwise, trans
             end)
@@ -211,7 +211,7 @@ transitions  /*=>  [transition; ...] */
 
 
 transition:  /*=>  (guard, state) */
-  | LCURLY seq_elt RCURLY RARROW IDENTIFIER 
+  | LCURLY seq_elt RCURLY RARROW IDENTIFIER
       { (Seq $2, prefetch_and_create_state $5) }
   | OTHERWISE RARROW IDENTIFIER {(Otherwise, prefetch_and_create_state $3) }
   | RARROW IDENTIFIER { (Seq (to_seq PTrue), prefetch_and_create_state $2) }
@@ -231,28 +231,28 @@ guard:
   | single_cond { to_seq $1 }
   | LSQUARE non_empty_seq RSQUARE { $2 }
   | IDENTIFIER pre_cond LPAREN seq RPAREN post_cond
-      { let pre_cond = 
+      { let pre_cond =
           match $2 with
             | Behavior b -> PCall($1,Some b)
             | Pre c -> PAnd (PCall($1,None), c)
         in
-        let post_cond = 
+        let post_cond =
           match $6 with
             | None -> PReturn $1
             | Some c -> PAnd (PReturn $1,c)
         in
-        (to_seq pre_cond) @ $4 @ to_seq post_cond 
+        (to_seq pre_cond) @ $4 @ to_seq post_cond
       }
   | IDENTIFIER LPAREN non_empty_seq RPAREN post_cond
-      { let post_cond = 
+      { let post_cond =
           match $5 with
             | None -> PReturn $1
             | Some c -> PAnd (PReturn $1,c)
         in
-        (to_seq (PCall ($1, None))) @ $3 @ to_seq post_cond 
+        (to_seq (PCall ($1, None))) @ $3 @ to_seq post_cond
       }
   | IDENTIFIER LPAREN RPAREN post_cond
-      { let post_cond = 
+      { let post_cond =
           match $4 with
             | None -> PReturn $1
             | Some c -> PAnd (PReturn $1,c)
@@ -280,7 +280,7 @@ seq_elt:
       | l ->
         if is_no_repet (min,max) then
           l (* [ a; [b;c]; d] is equivalent to [a;b;c;d] *)
-        else [ { condition = None; nested = l; min_rep = min; max_rep = max } ] 
+        else [ { condition = None; nested = l; min_rep = min; max_rep = max } ]
   }
 ;
 

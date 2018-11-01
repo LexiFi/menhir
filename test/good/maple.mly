@@ -6,17 +6,17 @@
 (*
 Copyright © 2001-2002 François Thomasset, all rights reserved.
 Copying is covered by the GNU General Public License (GPL).
- 
+
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
 (at your option) any later version.
- 
+
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
- 
+
 $Revision: 1.1.1.1 $
 $Date: 2002/03/08 08:31:57 $
 
@@ -52,7 +52,7 @@ let convert_exprs_to_names exprs =
 %token <string> QUOTED_STRING
 %token SEMICOLON COLON ASSIGN DOUBLE_COLON
 %token PLUS SUBTRACT MULT
-%token AND NOT OR 
+%token AND NOT OR
 %token SLASH EXP CARET EXCLAM
 %token EQUAL LT GT LE GE NE
 %token AT ARROW REPEAT_COMPOSE SEQ ELLIPSE
@@ -63,7 +63,7 @@ let convert_exprs_to_names exprs =
 %token PROC QUIT READ SAVE STOP THEN TO WHILE UNION INTERSECT MINUS MOD
 %token <string> AMPOP
 %token <string> COMMENT
-%token EOF 
+%token EOF
 
 %nonassoc ASSIGN
 %left COMMA
@@ -83,10 +83,10 @@ let convert_exprs_to_names exprs =
 %left AMPOP
 %nonassoc PERCENT
 %left DOT
- 
+
 %start program
 %type <Maple.prog> program
- 
+
 %%
 program : statseq EOF { List.rev $1 } ;
 comments : comments COMMENT { $2 :: $1 }
@@ -118,7 +118,7 @@ stat    : nameseq ASSIGN exprseq { AssignStat ( { lhs_of_assign=$1; rhs=$3 } ) }
 	| READ expr { match $2 with
                       | ParenExpr ([e]) -> ReadStat (e)
 		      |	_ -> ReadStat ($2) ;
-		    } 
+		    }
 	| SAVE name_string { SaveStat ( [] , $2 ) }
 	| SAVE nameseq COMMA name_string { SaveStat ( $2 , $4 ) }
 	| ifpart FI { $1 }
@@ -170,8 +170,8 @@ for_without_name :
 		to_expr = fwf.to_expr;
 		while_expr = fwf.while_expr;
 		body = fwf.body
-	      }	
-	    } 
+	      }
+	    }
 	| for_without_from { $1 }
 for_without_from :
 	| BY expr TO expr for_body
@@ -251,7 +251,7 @@ for_in_stmt :
 			    in_body = List.rev $8
 			  }
 			 )
-	    } 
+	    }
 ifpart  : IF expr THEN statseq { IfThenElseStat ( { cond=$2;
 						    then_part = List.rev $4;
 						    alternatives = [];

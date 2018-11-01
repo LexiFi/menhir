@@ -90,7 +90,7 @@ let mkuminus name arg =
 
 (* Walid: when we have to guess a 'Keep', we should have a 'Guess' option *)
 let rec mktailexp = function
-    [] -> 
+    [] ->
       ghexp(Pexp_construct(Lident "[]", None, false,Keep))
   | e1 :: el ->
       let exp_el = mktailexp el in
@@ -98,9 +98,9 @@ let rec mktailexp = function
                loc_end = exp_el.pexp_loc.loc_end;
                loc_ghost = true}
       in
-      let arg = {pexp_desc = Pexp_tuple [e1; exp_el]; 
+      let arg = {pexp_desc = Pexp_tuple [e1; exp_el];
 		 pexp_loc = l; pexp_ext = None } in (* XXO *)
-      {pexp_desc = Pexp_construct(Lident "::", Some arg, false,Keep); 
+      {pexp_desc = Pexp_construct(Lident "::", Some arg, false,Keep);
        pexp_loc = l; pexp_ext = None } (* XXO *)
 
 let rec mktailpat = function
@@ -112,9 +112,9 @@ let rec mktailpat = function
                loc_end = pat_pl.ppat_loc.loc_end;
                loc_ghost = true}
       in
-      let arg = {ppat_desc = Ppat_tuple [p1; pat_pl]; 
+      let arg = {ppat_desc = Ppat_tuple [p1; pat_pl];
 		 ppat_loc = l; ppat_ext = None } in (* XXO *)
-      {ppat_desc = Ppat_construct(Lident "::", Some arg, false); 
+      {ppat_desc = Ppat_construct(Lident "::", Some arg, false);
        ppat_loc = l; ppat_ext = None } (* XXO *)
 
 let ghstrexp e =
@@ -138,36 +138,36 @@ let rec mkrangepat c1 c2 =
 exception ErrorInBangArg of string;;
 let error_bang_arg s = raise (ErrorInBangArg s)
 
-let mkoffshore_arg_string_map fields = 
-  let lst = ref [] in 
-  let lm = List.map (fun t -> match t with 
+let mkoffshore_arg_string_map fields =
+  let lst = ref [] in
+  let lm = List.map (fun t -> match t with
 			(Lident(s),expr) -> (
-			  match expr.pexp_desc with 
+			  match expr.pexp_desc with
 			      (Pexp_constant(Const_string s1)) ->
 				lst := !lst @ [(s,s1)]
-			    | _ ->  
-				 error_bang_arg ("Incorrect argument: " ^ 
+			    | _ ->
+				 error_bang_arg ("Incorrect argument: " ^
 					    "one of the argument values was " ^
 					    "not a string")
-				
+
 			)
 		       | _ -> error_bang_arg ("Incorrect argument; probably" ^
-					  "an argument field which is not" ^ 
+					  "an argument field which is not" ^
 					    " a string was used")
 		    ) in
     ignore(lm fields); !lst
 
-let mkoffShore_tree exten fields expr = 
-  match exten with 
+let mkoffShore_tree exten fields expr =
+  match exten with
       None ->
 	mkexp(Pexp_runoffshore_arg
 		(mkoffshore_arg_string_map(fields)
-		   , expr)) 
-    | Some (x) -> 
+		   , expr))
+    | Some (x) ->
 	(match x.pexp_desc with
-	     Pexp_ident(li) -> 
+	     Pexp_ident(li) ->
 	       let flist = Longident.flatten li in
-		 (match flist with 
+		 (match flist with
 		      ["Trx";"run_icc"]  ->
 			mkexp(Pexp_runoffshore_arg
 				([("lang","C")]@
@@ -185,12 +185,12 @@ let mkoffShore_tree exten fields expr =
 				([("lang","F")]@
 				 mkoffshore_arg_string_map(
 				   fields), expr))
-		    | _ -> 
+		    | _ ->
 			error_bang_arg("Bad argument option to .!{}")
 		 )
 	     | _ -> error_bang_arg("Bad argument option to .!{}")
 	)
-	  
+
 let syntax_error () =
   raise Syntaxerr.Escape_error
 
@@ -233,7 +233,7 @@ let bigarray_set arr arg newval =
                        ["", arr; "", c1; "", c2; "", c3; "", newval]))
   | coords ->
       mkexp(Pexp_apply(ghexp(Pexp_ident(bigarray_function "Genarray" "set")),
-                       ["", arr; 
+                       ["", arr;
                         "", ghexp(Pexp_array coords);
                         "", newval]))
 %}

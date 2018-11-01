@@ -24,7 +24,7 @@
  %}
 
 %token <string> WORD
-%token  LPAR 
+%token  LPAR
 %token  RPAR
 %token  COMMA
 %token EOF

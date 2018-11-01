@@ -1,10 +1,10 @@
 %{
-(*** 
+(***
  *** PARSER.MLY
  ***
  *** Copyright (c) 2003 The President and Fellows of Harvard College
  ***
- *** Parser for IBAL language 
+ *** Parser for IBAL language
  ***)
 
   open List
@@ -23,7 +23,7 @@
 
   let make_code : 'a code_form -> (int * int) code =
     fun c -> (c, tag ())
-    
+
   let make_decl : 'a decl_form -> (int * int) decl =
     fun d -> (d, tag ())
 
@@ -39,16 +39,16 @@
       then error "Uniform requires a positive integer"
       else let t = tag () in
       let p = 1.0 /. float_of_int n in
-      (Dist (Array.to_list 
+      (Dist (Array.to_list
 	       (Array.init n (fun i -> (p, (Integer i, t))))),
        t)
 
-  let make_anon_compound : ty list -> ty = 
+  let make_anon_compound : ty list -> ty =
     fun ts ->
       Compound (number_list ts)
 
   let tyvars : (string * tyvar) list ref = ref []
-      
+
   let clear_tyvars () = tyvars := []
 
   let new_tyvar_for_name x =
@@ -113,7 +113,7 @@
 %token ETYPE
 %token EDATA
 %token NOT
-%token AND 
+%token AND
 %token BAR
 %token SYMBOL
 %token BOOL
@@ -160,50 +160,50 @@
 top : expr                              { Code $1 }
     | decl                              { Decl $1 }
 
-expr : 
+expr :
     | expr1 { $1 }
     | expr2 { $1 }
     | expr3 { $1 }
     | expr4 { $1 }
 
-expr1 : 
+expr1 :
     | integer                          { make_code (Integer $1) }
 
-expr_nonint : 
+expr_nonint :
     | expr2 { $1 }
     | expr3 { $1 }
     | expr_nonint4 { $1 }
 
-expr2 : 
+expr2 :
      | longvar                          { make_code (Var $1) }
      | LPAREN expr RPAREN               { $2 }
      | expr2 LPAREN RPAREN                  { make_code (Appl ($1, [])) }
      | expr2 LPAREN expr RPAREN             { make_code (Appl ($1, [$3])) }
      | expr2 LPAREN expr COMMA exprs RPAREN { make_code (Appl ($1, $3 :: $5)) }
 
-expr3 : 
+expr3 :
      | string                           { make_code (Con $1) }
      | MINUS expr_nonint               { make_prim (int_unary_minus, [$2]) }
      | TRUE                             { make_code True }
-     | FALSE                            { make_code False } 
+     | FALSE                            { make_code False }
      | ulongvar opt_paren_exprs           { make_code (Cons ($1,$2)) }
      | IF expr THEN expr ELSE expr { make_code (If ($2,$4,$6)) }
      | CASE expr OF clauses        { make_code (Case ($2, $4)) }
      | DIST LSQUARE weighted_exprs RSQUARE { make_code (Dist $3) }
      | UNIFORM NATURAL                     { uniform_int $2 }
-     | FLIP POSFLOAT { make_code (Dist [ ($2, make_code (True)); 
+     | FLIP POSFLOAT { make_code (Dist [ ($2, make_code (True));
 				      (1.0 -. $2, make_code (False)) ]) }
      | LET pat EQUALS expr IN expr    { make_code (Let ($2,$4,$6)) }
-     | LET pat COLON type_expr EQUALS expr IN expr    
+     | LET pat COLON type_expr EQUALS expr IN expr
 	 { make_code (Let ($2, make_code (Typed ($6,quantify $4)), $8)) }
      | LET LIDENT LPAREN opt_vars RPAREN EQUALS expr IN expr
 	 { make_code (Let (Bind $2, make_code (Fix ($2, $4, $7)), $9)) }
      | LET LIDENT LPAREN opt_vars RPAREN COLON type_expr EQUALS expr IN expr
-	 { make_code (Let (Bind $2, 
-			   make_code (Typed (make_code (Fix ($2, $4, $9)), 
+	 { make_code (Let (Bind $2,
+			   make_code (Typed (make_code (Fix ($2, $4, $9)),
 					     quantify $7)), $11)) }
-     | LAMBDA LPAREN opt_vars RPAREN MAPSTO expr  { make_code (Lambda ($3,$6)) } 
-     | LAMBDA LIDENT MAPSTO expr  { make_code (Lambda ([$2],$4)) } 
+     | LAMBDA LPAREN opt_vars RPAREN MAPSTO expr  { make_code (Lambda ($3,$6)) }
+     | LAMBDA LIDENT MAPSTO expr  { make_code (Lambda ([$2],$4)) }
      | FIX LIDENT LPAREN opt_vars RPAREN MAPSTO expr { make_code (Fix ($2, $4, $7)) }
      | FIX LIDENT LIDENT MAPSTO expr { make_code (Fix ($2, [$3], $5)) }
       | LTUP opt_named_exprs RTUP       { make_code (Tuple $2) }
@@ -241,7 +241,7 @@ expr3 :
      | ERROR               { make_code (Error "") }
      | PRAGMA string IN expr { make_code (LetPragma ($2,$4)) }
 
-expr4 : 
+expr4 :
      | expr PLUS expr                   { make_prim (int_plus, [$1;$3]) }
      | expr MINUS expr                   { make_prim (int_minus, [$1;$3]) }
      | expr TIMES expr                   { make_prim (int_times, [$1;$3]) }
@@ -256,7 +256,7 @@ expr4 :
      | expr DOT LIDENT              { make_code (Dot ($1,$3)) }
      | expr COLON type_expr { clear_tyvars (); make_code (Typed ($1, quantify $3)) }
 
-expr_nonint4 : 
+expr_nonint4 :
      | expr_nonint PLUS expr                   { make_prim (int_plus, [$1;$3]) }
      | expr_nonint MINUS expr                   { make_prim (int_minus, [$1;$3]) }
      | expr_nonint TIMES expr                   { make_prim (int_times, [$1;$3]) }
@@ -273,7 +273,7 @@ expr_nonint4 :
 
 
 
-opt_decls :					{ [] }  
+opt_decls :					{ [] }
      | decls                                    { $1 }
 
 decls : decl opt_semicolon                 { [$1] }
@@ -290,26 +290,26 @@ let_decl :
 	 { ($1, make_code (Typed (make_code (Fix ($1,[$2],$6)), quantify $4))) }
 
 
-opt_given : 
+opt_given :
      |                { [] }
      | GIVEN longvars { $2 }
 
-decide_decl : 
+decide_decl :
      | DECIDE LIDENT values opt_given { ($2, ($3, $4)) }
 
-decl : 
+decl :
      | let_decl                          { make_decl (Vardef (fst $1, snd $1, true)) }
      | PRIVATE let_decl                  { make_decl (Vardef (fst $2, snd $2, false)) }
      | OBSERVE obs            { make_decl (Obs (fst $2, snd $2)) }
      | RETRACT longvar                 { make_decl (Retract $2) }
      | PRAGMA string                   { make_decl (Pragma $2) }
      | REWARD float                     { make_decl (Rew (make_code True, [(Any, $2)])) }
-     | REWARD CASE expr OF rew_clauses 
+     | REWARD CASE expr OF rew_clauses
 	 { make_decl (Rew ($3, $5)) }
      | PARAM param_decl                 { make_decl (make_param $2) }
      | decide_decl         { make_decl (Dec (fst $1, fst (snd $1), snd (snd $1), true)) }
      | PRIVATE decide_decl { make_decl (Dec (fst $2, fst (snd $2), snd (snd $2), false)) }
-     | TYPE UIDENT opt_paren_type_args EQUALS type_expr 
+     | TYPE UIDENT opt_paren_type_args EQUALS type_expr
 	 { clear_tyvars (); make_decl (Tydef ($2, $3, $5)) }
      | DATA UIDENT opt_paren_type_args EQUALS tycon_expr
 	 { clear_tyvars (); make_decl (Tycondef (new_name $2, $3, $5)) }
@@ -327,12 +327,12 @@ opt_paren_type_args : opt_type_args { $1 }
      | LSQUARE opt_type_args RSQUARE { $2 }
 
 opt_type_args : { [] }
-     | type_args { $1 } 
+     | type_args { $1 }
 
 type_args : new_type_var { [$1] }
      | new_type_var COMMA type_args { $1 :: $3 }
 
-param_decl : 
+param_decl :
      | ident EQUALS LSQUARE params RSQUARE 	 { ($1, $4) }
      | ident NATURAL  { ($1, make_list $2 0.0) }
 
@@ -342,7 +342,7 @@ param_decls : param_decl   { [$1] }
 type_expr : arrow_type_expr { $1 }
      | other_type_expr { $1 }
 
-arrow_type_expr : 
+arrow_type_expr :
      | arrow_type_exprs MAPSTO type_expr { Arrow ($1,$3,[]) }
 
 other_type_expr :
@@ -480,7 +480,7 @@ longvars : longvar                    { [$1] }
      | longvar COMMA longvars         { $1 :: $3 }
 
 string : QUOTE ident { $2 }
-     | STRING { $1 } 
+     | STRING { $1 }
 
 strings : string { [ $1 ] }
      | string COMMA strings { $1 :: $3 }

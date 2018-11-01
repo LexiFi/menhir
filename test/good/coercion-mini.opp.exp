@@ -19,12 +19,12 @@ open Positions
 open AstPositions
 open MiniAst
 
-let unclosed b e l1 l2 = 
+let unclosed b e l1 l2 =
   let l1 = lex_join (Parsing.rhs_start_pos l1) (Parsing.rhs_end_pos l1)
   and l2 = lex_join (Parsing.rhs_start_pos l2) (Parsing.rhs_end_pos l2)
   in
     raise (ParsingExceptions.Unclosed (b, e, l1, l2))
-			    
+
 
 let match_unit pos =
   PData (pos, [], "_Unit", [])
@@ -37,45 +37,45 @@ let infix (x,y) e1 e2 =
 
 let seq e1 e2 =
   let pos = joine e1 e2 in
-    EBinding (pos, BindValue (pos, [ pos, [], 
+    EBinding (pos, BindValue (pos, [ pos, [],
 				     match_unit (position e1), e1 ]), e2)
-     
-let fold_pair f ts = 
-  match ts with 
+
+let fold_pair f ts =
+  match ts with
     | a :: b :: q -> List.fold_left f (f a b) q
     | _ -> assert false
 
-let tuple2 pos t1 t2 = 
+let tuple2 pos t1 t2 =
   EDCon (pos, "_Tuple", [ t1; t2 ])
 
-let tuple pos = 
-  fold_pair (tuple2 pos) 
+let tuple pos =
+  fold_pair (tuple2 pos)
 
 let arrow_type pos t1 t2 =
   TypApp (pos, TypVar (pos, "->"), [ t1; t2 ])
 
-let tuple_type2 pos t1 t2 = 
+let tuple_type2 pos t1 t2 =
   TypApp (pos, TypVar (pos, "*"), [ t1; t2 ])
 
-let tuple_type pos = 
-  fold_pair (tuple_type2 pos)  
+let tuple_type pos =
+  fold_pair (tuple_type2 pos)
 
-let ref_type pos t = 
+let ref_type pos t =
   TypApp (pos, TypVar (pos, "ref"), [ t ])
 
-let tuple_pat2 pos t1 t2 = 
+let tuple_pat2 pos t1 t2 =
   PData (pos, [], "_Tuple", [ t1 ; t2 ])
 
-let tuple_pat pos = 
-  fold_pair (tuple_pat2 pos) 
+let tuple_pat pos =
+  fold_pair (tuple_pat2 pos)
 
-let assign pos e1 e2 = 
+let assign pos e1 e2 =
   EApp (pos, EApp (pos, EVar (pos, "_assign"), e1), e2)
 
-let deref pos e = 
+let deref pos e =
   EApp (pos, EVar (pos, "_deref"), e)
 
-let mkref pos e = 
+let mkref pos e =
   EApp (pos, EVar (pos, "_ref"), e)
 
 %}
@@ -203,15 +203,15 @@ type1:
 
 type0:
   _1 = type00s
-    {  ( 
+    {  (
     match _1 with
 	[] -> assert false
       | [ t ] -> t
-      | t :: q -> 
+      | t :: q ->
 	  TypApp (join (tposition t)
 		    (tlposition q),
 		    t,
-		    q) 
+		    q)
   )}
 | _1 = REF _2 = type0
     {            ( ref_type _1 _2 )}
@@ -221,9 +221,9 @@ type00:
     {                                                    ( TypVar (fst _1, snd _1) )}
 | _1 = LBRACE _2 = attributes _3 = RBRACE
     {      ( let pos = join _1 _3 in
-	TypApp (pos, TypVar (pos, "pi"), [ TypRowCons 
-					     (join _1 _3, 
-					      fst _2, 
+	TypApp (pos, TypVar (pos, "pi"), [ TypRowCons
+					     (join _1 _3,
+					      fst _2,
 					      snd _2) ])
       )}
 | _1 = LPAREN _2 = typ _3 = RPAREN
@@ -250,8 +250,8 @@ expression:
 
 expression400:
   _1 = BACKSLASH _2 = pattern _3 = DOT _4 = expression400
-    {( 
-  ELambda (join _1 (position _4), _2, _4) 
+    {(
+  ELambda (join _1 (position _4), _2, _4)
 )}
 | _1 = FORALL _2 = quantifiers _3 = DOT _4 = expression400
     {(
@@ -262,12 +262,12 @@ expression400:
   EExists (join _1 (position _4), snd (List.split _2), _4)
 )}
 | _1 = MATCH _2 = expression _3 = WITH _4 = clauses _5 = END
-    {( 
+    {(
   EMatch (join _1 _5, _2, List.rev _4)
 )}
 | _1 = binding _2 = IN _3 = expression400
-    {( 
-  EBinding (join (bposition _1) (position _3), _1, _3) 
+    {(
+  EBinding (join (bposition _1) (position _3), _1, _3)
 )}
 | _1 = expression300 _2 = SEMI _3 = expression400
     {                                                    ( seq _1 _3 )}
@@ -282,15 +282,15 @@ clauses:
 
 clause:
   _1 = pattern _2 = DARROW _3 = expression
-    {                                  ( (join 
+    {                                  ( (join
 							 (pposition _1)
 							 (position _3),
 						       _1, _3) )}
 
 expression300:
   _1 = expression50 _2 = DOT _3 = LID _4 = LEFTARROW _5 = expression100
-    {  ( 
-    ERecordUpdate (joine _1 _5, _1, snd _3, _5) 
+    {  (
+    ERecordUpdate (joine _1 _5, _1, snd _3, _5)
   )}
 | _1 = expression200
     {                                                    ( _1 )}
@@ -313,18 +313,18 @@ expression200:
 
 expression100:
   _1 = expression100 _2 = expression0
-    {  ( 
+    {  (
     match _1 with
 	EDCon (p, k, args) -> EDCon (p, k, args @ [ _2 ])
-      | _ -> EApp (joine _1 _2, _1, _2) 
+      | _ -> EApp (joine _1 _2, _1, _2)
   )}
 | _1 = expression50
     {                                                    ( _1 )}
 
 expression50:
   _1 = expression50 _2 = DOT _3 = LID
-    {  ( 
-    ERecordAccess (join (position _1) (fst _3), _1, snd _3) 
+    {  (
+    ERecordAccess (join (position _1) (fst _3), _1, snd _3)
   )}
 | _1 = expression10
     {                        ( _1 )}
@@ -334,49 +334,49 @@ expression10:
     {                       ( _1 )}
 | _1 = expression0 _2 = ASSIGN _3 = expression0
     {                                       ( assign (joine _1 _3)
-							 _1 _3 
+							 _1 _3
 						     )}
 | _1 = BANG _2 = expression0
-    {                           ( deref 
-							 (join _1 
+    {                           ( deref
+							 (join _1
 							    (position _2))
-							 _2 
+							 _2
 						     )}
 | _1 = REF _2 = expression0
-    {                          ( mkref 
-							 (join _1 
+    {                          ( mkref
+							 (join _1
 							    (position _2))
-							 _2 
+							 _2
 						     )}
 
 expression0:
   _1 = LID
     {                                                     ( EVar (fst _1, snd _1) )}
 | _1 = UID
-    {( 
-  EDCon (fst _1, snd _1, []) 
+    {(
+  EDCon (fst _1, snd _1, [])
 )}
 | _1 = LONGID
     {                                                     ( EVar (fst _1, snd _1) )}
 | _1 = ASSERT_FALSE
     {                               ( EAssertFalse (_1) )}
 | _1 = INTEGER
-    {                                                     ( EPrimApp 
-							 (fst _1, 
-							  PIntegerConstant 
-							    (snd _1), 
+    {                                                     ( EPrimApp
+							 (fst _1,
+							  PIntegerConstant
+							    (snd _1),
 							  []) )}
 | _1 = CHAR
-    {                                                     ( EPrimApp 
-							 (fst _1, 
-							  PCharConstant 
-							    (snd _1), 
+    {                                                     ( EPrimApp
+							 (fst _1,
+							  PCharConstant
+							    (snd _1),
 							  []) )}
 | _1 = LBRACE _2 = record_bindings _3 = RBRACE
     {                                                     ( ERecordExtend (
 							 join _1 _3,
 							 List.rev _2,
-							 ERecordEmpty undefined_position) 
+							 ERecordEmpty undefined_position)
 						     )}
 | _1 = LPAREN _2 = RPAREN
     {                                                     ( EPrimApp (
@@ -395,7 +395,7 @@ expression0:
   ECoerce (join _1 (tposition _6), _2, _4, _6)
 )}
 | _1 = LPAREN _2 = expression _3 = COLON _4 = typ _5 = RPAREN
-    {    ( ETypeConstraint (join _1 _5, 
+    {    ( ETypeConstraint (join _1 _5,
 		       _2, ([], _4)) )}
 | _1 = LPAREN _2 = expression _3 = COMMA _4 = expressions _5 = RPAREN
     {                                                     ( tuple (join _1 _5) (_2 :: _4) )}
@@ -427,14 +427,14 @@ bindings:
 binding:
   _1 = LET _2 = value_definitions
     {  (
-    BindValue (join _1 (vlposition _2), _2) 
+    BindValue (join _1 (vlposition _2), _2)
   )}
 | _1 = LET _2 = REC _3 = value_definitions
-    {                                                     ( BindRecValue 
+    {                                                     ( BindRecValue
 							 (join _1 (vlposition _3),
 							  _3) )}
 | _1 = TYPE _2 = type_definitions
-    {                                ( TypeDec (join _1 (tdlposition _2), 
+    {                                ( TypeDec (join _1 (tdlposition _2),
 								_2) )}
 
 type_definitions:
@@ -461,9 +461,9 @@ algebraic_datatype_definitions:
 
 algebraic_datatype_definition:
   _1 = UID _2 = COLON _3 = scheme
-    {                            ( (fst _1, snd _1, 
-							 snd (List.split 
-								(fst _3)), 
+    {                            ( (fst _1, snd _1,
+							 snd (List.split
+								(fst _3)),
 							 snd _3) )}
 
 scheme:
@@ -478,20 +478,20 @@ value_definitions:
 
 value_definition:
   _1 = forall _2 = pattern0 _3 = equal_expression
-    {                                                      ( (position _3, 
-							 snd (List.split _1), 
+    {                                                      ( (position _3,
+							 snd (List.split _1),
 							 _2, _3) )}
 
 equal_expression:
   _1 = EQUAL _2 = expression
     {                                                      ( _2 )}
 | _1 = COLON _2 = typ _3 = EQUAL _4 = expression
-    {      ( ETypeConstraint 
+    {      ( ETypeConstraint
 	  (join _1 (position _4), _4, ([], _2)) )}
 | _1 = pattern0 _2 = equal_expression
-    {                                                      ( ELambda 
-							  (join 
-							     (pposition _1) 
+    {                                                      ( ELambda
+							  (join
+							     (pposition _1)
 							     (position _2), _1, _2) )}
 
 pattern:
@@ -502,18 +502,18 @@ pattern3:
   _1 = pattern2
     {                                                       ( _1 )}
 | _1 = pattern3 _2 = COLON _3 = typ
-    {      ( PTypeConstraint 
-	  (join 
-	     (pposition _1) 
-	     (tposition _3), _1, ([], _3)) 
+    {      ( PTypeConstraint
+	  (join
+	     (pposition _1)
+	     (tposition _3), _1, ([], _3))
       )}
 
 pattern2:
   _1 = pattern1
     {                                                       ( _1 )}
 | _1 = LID _2 = AS _3 = pattern2
-    {                                                       ( PAlias 
-							   (join (fst _1) (pposition _3), 
+    {                                                       ( PAlias
+							   (join (fst _1) (pposition _3),
 							    snd _1, _3) )}
 
 pattern1:
@@ -528,18 +528,18 @@ pattern10:
   _1 = pattern0
     {           ( _1 )}
 | _1 = UID _2 = pattern1s
-    {      ( PData 
-	  (join (fst _1) (plposition _2), 
+    {      ( PData
+	  (join (fst _1) (plposition _2),
 	   [],
 	   snd _1,
-	   _2) 
+	   _2)
       )}
 | _1 = UID _2 = localvars _3 = pattern1s
-    {      ( PData 
-	  (join (fst _1) (plposition _3), 
+    {      ( PData
+	  (join (fst _1) (plposition _3),
 	   _2,
 	   snd _1,
-	   _3) 
+	   _3)
       )}
 
 pattern0:
@@ -554,13 +554,13 @@ pattern0:
 | _1 = INTEGER
     {                                                 ( let pos = fst _1
 						   and value = snd _1 in
-						     PPrimitive 
+						     PPrimitive
 						     (pos,
 						      PIntegerConstant value) )}
 | _1 = CHAR
     {                                              ( let pos = fst _1
 						   and value = snd _1 in
-						     PPrimitive 
+						     PPrimitive
 						     (pos,
 						      PCharConstant value)
 						 )}
@@ -569,7 +569,7 @@ pattern0:
 | _1 = LPAREN _2 = pattern _3 = RPAREN
     {                                                        ( _2 )}
 | _1 = LPAREN _2 = pattern _3 = COMMA _4 = patterns _5 = RPAREN
-    {( tuple_pat (join _1 _5) 
+    {( tuple_pat (join _1 _5)
     (_2 :: _4) )}
 
 localvars:

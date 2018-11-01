@@ -207,7 +207,7 @@ pattern:
 label_pattern_list:
     /* epsilon */					{ StringMap.empty }
   | IDENT EQUAL pattern					{ StringMap.singleton $1 $3 }
-  | IDENT EQUAL pattern SEMI label_pattern_list		{ 
+  | IDENT EQUAL pattern SEMI label_pattern_list		{
                                                           let label = $1
                                                           and lpmap = $5 in
 							  try

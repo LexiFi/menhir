@@ -44,7 +44,7 @@ open Naml_ast_util
 open Naml_ast_exn
 
 let make_infix_expr op e1 e2 =
-  let (op,p) = op in 
+  let (op,p) = op in
   let up = union_pos (pos_of_expr e1) (pos_of_expr e2) in
     ApplyExpr (VarExpr (([],op,p),p), [e1; e2], up)
 
@@ -56,7 +56,7 @@ let make_function_nest p a w e =
   let p = union_pos p (pos_of_expr e) in
   let e = match w with
       None -> e
-    | Some _ -> 
+    | Some _ ->
         let u = CConsConst (([],unit_sym,p),p) in
           MatchExpr (ConstExpr (u,p), [ConstPat (u,p), w, e], p) in
   let e, a = Mc_list_util.fold_map
@@ -74,7 +74,7 @@ let make_list_nil p = CConsConst (([],list_nil_sym,p), p)
 let make_list_cons_expr_aux cp h t p =
   ConsExpr (([], list_cons_sym, cp), TupleExpr ([h; t], p), p)
 
-let make_list_cons_expr cp h t = 
+let make_list_cons_expr cp h t =
   make_list_cons_expr_aux cp h t (union_pos (pos_of_expr h) (pos_of_expr t))
 
 let rec make_list_expr = function
@@ -119,7 +119,7 @@ let make_constrain_expr e t p =
 let string_to_list s =
   let rec tol i l =
     let i = i - 1 in
-      if i < 0 then 
+      if i < 0 then
         l
       else
         tol i (s.[i] :: l)
@@ -431,7 +431,7 @@ def:
 | _1 = TokModule _2 = TokType _3 = TokCapId _4 = TokEq _5 = module_type
     {                                                   ( ModtypeMod (fst _3, _5, union_pos _1 (pos_of_modtype _5)) )}
 | _1 = TokModule _2 = TokCapId _3 = module_args _4 = module_contrain_opt _5 = TokEq _6 = module_expr
-    {        ( let p = union_pos _1 (pos_of_modexp _6) in 
+    {        ( let p = union_pos _1 (pos_of_modexp _6) in
             ModMod (fst _2, make_functor_expr _3 (make_constrain_expr _6 _4 p) p, p) )}
 
 module_contrain_opt:
@@ -455,7 +455,7 @@ type_def:
     { (
 	    let (pl, p) = _1 in
 	    let (s, _) = _2 in
-	    let (t, r, p2) = _3 in 
+	    let (t, r, p2) = _3 in
 		pl, s, t, r, union_pos p p2
 	)}
 
@@ -493,7 +493,7 @@ constr_decl_list:
 | _1 = constr_decl_list _2 = TokAlt _3 = constr_decl
     { (
 	    let (s, t, p) = _3 in
-            let l, p2 = _1 in 
+            let l, p2 = _1 in
 	      l @ [s, t], union_pos p p2
 	)}
 
@@ -606,11 +606,11 @@ pattern:
 | _1 = pattern _2 = TokAs _3 = ident %prec prec_as
     {                                           ( let s,p = _3 in AsPat (_1, s, union_pos (pos_of_pattern _1) p) )}
 | _1 = pattern _2 = TokAs _3 = ident _4 = TokComma _5 = pattern_tuple %prec prec_as
-    {        ( let s,p = _3 in 
+    {        ( let s,p = _3 in
           let ap = AsPat (_1, s, union_pos (pos_of_pattern _1) p) in
             TuplePat (ap :: _5, union_pos p (pos_of_pattern (list_last _5))) )}
 | _1 = pattern _2 = TokAs _3 = ident _4 = TokCons _5 = pattern_no_tuple %prec prec_as
-    {        ( let s,p = _3 in 
+    {        ( let s,p = _3 in
           let ap = AsPat (_1, s, union_pos (pos_of_pattern _1) p) in
           let p2 = union_pos p (pos_of_pattern _5) in
             ConsPat (([],list_cons_sym,_4), TuplePat ([ap; _5], p2), p2) )}
@@ -621,7 +621,7 @@ pattern_no_tuple:
 | _1 = vpath_cap _2 = pattern_no_tuple %prec prec_pat_cons
     {                                                      ( let (_,_,p) = _1 in ConsPat (_1, _2, union_pos p (pos_of_pattern _2)) )}
 | _1 = pattern_no_tuple _2 = TokCons _3 = pattern_no_tuple %prec prec_pat_listcons
-    {        ( let p = union_pos (pos_of_pattern _1) (pos_of_pattern _3) in 
+    {        ( let p = union_pos (pos_of_pattern _1) (pos_of_pattern _3) in
             ConsPat (([],list_cons_sym,_2), TuplePat ([_1; _3], p), p) )}
 
 pattern_limited:
@@ -678,7 +678,7 @@ let_binding:
 | _1 = ident _2 = param_list _3 = TokEq _4 = expr
     {        ( let (s,p) = _1 in IdPat (s,p), make_function_nest p _2 None _4, union_pos p (pos_of_expr _4) )}
 | _1 = ident _2 = param_list _3 = TokIs _4 = type_expr _5 = TokEq _6 = expr
-    {        ( let (s,p) = _1 in 
+    {        ( let (s,p) = _1 in
           let p2 = union_pos p (pos_of_expr _6) in
             IdPat (s,p), make_function_nest p _2 None (TySpecExpr (_6, _4, p)), p )}
 
@@ -769,7 +769,7 @@ expr:
 | _1 = TokMatch _2 = expr _3 = TokWith _4 = pattern_match_list %prec prec_expr_n19
     { ( let (m, p) = _4 in MatchExpr (_2, m, union_pos _1 p) )}
 | _1 = TokFunction _2 = pattern_match_list %prec prec_expr_n19
-    { ( let (m, p) = _2 in 
+    { ( let (m, p) = _2 in
           let s = Symbol.new_symbol_string "x" in
           let e = MatchExpr (VarExpr (([],s,p),p), m, p) in
             FunExpr ([s], e, union_pos _1 p) )}

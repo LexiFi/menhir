@@ -1,15 +1,15 @@
 /*
  * bibtex2html - A BibTeX to HTML translator
  * Copyright (C) 1997 Jean-Christophe FILLIATRE
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * See the GNU General Public License version 2 for more details
  * (enclosed in the file GPL).
  */
@@ -23,7 +23,7 @@
 %}
 
 %token <string> IDENT STRING COMP
-%token <string> INT 
+%token <string> INT
 %token COLON AND OR NOT LPAR RPAR DOLLAR_KEY DOLLAR_TYPE EXISTS EOF
 
 %start condition_start
@@ -48,15 +48,15 @@ condition:
 ;
 
 atom:
-| cte COLON STRING           
+| cte COLON STRING
     { let s = Latex_accents.normalize true $3 in
     (*i
       Printf.printf "regexp = %s\n" s;
       i*)
     Match($1, Str.regexp_case_fold s) }
-| cte COMP cte               
+| cte COMP cte
     { Comp($1,$2,$3) }
-| EXISTS IDENT               
+| EXISTS IDENT
     { Exists(String.uppercase $2) }
 ;
 

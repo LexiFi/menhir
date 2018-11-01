@@ -20,7 +20,7 @@ Warning: the token THEN is unused.
   open Ast_types
   open Ast
 
-  let extend_loc l = 
+  let extend_loc l =
     Location.extend_loc !Jml_parser_base.cur_base l (symbol_end())
 
 %}
@@ -164,9 +164,9 @@ jml_specification:
 
 loop_annotation:
   _1 = LOOP_INVARIANT _2 = expr_semicolon _3 = assignable_clauses _4 = decreases_clause
-    {    ( 
+    {    (
       let m = _3 in
-      { loop_invariant = _2 ; 
+      { loop_invariant = _2 ;
 	loop_modifies = if m=[] then None else Some m;
 	typed_loop_modifies = None;
 	loop_decreases = _4} )}
@@ -211,8 +211,8 @@ additive_specification:
 
 generic_spec_case:
   _1 = spec_var_decls _2 = spec_header _3 = generic_spec_body
-    {    ( { generic_spec_var_decls = _1 ; 
-	  generic_spec_header = _2 ; 
+    {    ( { generic_spec_var_decls = _1 ;
+	  generic_spec_header = _2 ;
 	  generic_spec_body = _3 } )}
 
 spec_header:
@@ -341,18 +341,18 @@ generic_conjoinable_spec:
 behavior_conjoinable_spec:
   _1 = privacy _2 = BEHAVIOR _3 = spec_var_decls _4 = simple_spec_body
     {    ( Behavior(_1,
-	       { generic_spec_var_decls = _3 ; 
+	       { generic_spec_var_decls = _3 ;
 		 generic_spec_header = default_spec_header ;
 		 generic_spec_body = Simple_spec_body(_4) } ) )}
 | _1 = privacy _2 = EXCEPTIONAL_BEHAVIOR _3 = spec_var_decls _4 = exceptional_simple_spec_body
     {    ( Exceptional_behavior(_1,
-	       { exceptional_spec_var_decls = _3 ; 
-		 exceptional_spec_header = default_spec_header ; 
+	       { exceptional_spec_var_decls = _3 ;
+		 exceptional_spec_header = default_spec_header ;
 		 exceptional_spec_body = Simple_exceptional_spec_body(_4) } ) )}
 | _1 = privacy _2 = NORMAL_BEHAVIOR _3 = spec_var_decls _4 = normal_simple_spec_body
     {    ( Normal_behavior(_1,
-	       { normal_spec_var_decls = _3 ; 
-		 normal_spec_header = default_spec_header ; 
+	       { normal_spec_var_decls = _3 ;
+		 normal_spec_header = default_spec_header ;
 		 normal_spec_body = Simple_normal_spec_body(_4) } ) )}
 
 spec_var_decls:
@@ -591,39 +591,39 @@ primary_no_new_array:
 | _1 = BSRESULT
     {    ( let loc=_1 in mk_expr loc Result )}
 | _1 = BSOLD _2 = LEFTPAR _3 = expr _4 = RIGHTPAR
-    {    ( let loc=_1 and e = _3 in 
+    {    ( let loc=_1 and e = _3 in
       mk_expr (extend_loc loc) (Old(e)) )}
 | _1 = BSFRESH _2 = LEFTPAR _3 = expr _4 = RIGHTPAR
-    {    ( let loc=_1 and e = _3 in 
+    {    ( let loc=_1 and e = _3 in
       mk_expr (extend_loc loc) (Fresh(e)) )}
 | _1 = BSTYPE _2 = LEFTPAR _3 = type_expr _4 = RIGHTPAR
-    {    ( let loc=_1 and te = _3 in 
+    {    ( let loc=_1 and te = _3 in
       mk_expr (extend_loc loc) (Type(te)) )}
 | _1 = BSTYPEOF _2 = LEFTPAR _3 = expr _4 = RIGHTPAR
-    {    ( let loc=_1 and e = _3 in 
+    {    ( let loc=_1 and e = _3 in
       mk_expr (extend_loc loc) (Typeof(e)) )}
 | _1 = BSFPI _2 = LEFTPAR _3 = expr _4 = COMMA _5 = REAL _6 = COMMA _7 = REAL _8 = RIGHTPAR
     {    ( let loc = _1 and (_,f1) = _5 and (_,f2) = _7 in
       mk_expr (extend_loc loc) (Fpi(_3,f1,f2)) )}
 | _1 = LEFTPAR _2 = BSFORALL _3 = variable_declaration _4 = SEMICOLON _5 = expr _6 = SEMICOLON _7 = expr _8 = RIGHTPAR
-    {    ( let loc=_1 and (t,idl)=_3 in 
-      mk_expr 
-	(extend_loc loc) 
+    {    ( let loc=_1 and (t,idl)=_3 in
+      mk_expr
+	(extend_loc loc)
 	(Quantifier(Forall,t,idl,_5,_7)) )}
 | _1 = LEFTPAR _2 = BSFORALL _3 = variable_declaration _4 = SEMICOLON _5 = expr _6 = RIGHTPAR
-    {    ( let loc=_1 and (t,idl)=_3 in 
-      mk_expr 
-	(extend_loc loc) 
+    {    ( let loc=_1 and (t,idl)=_3 in
+      mk_expr
+	(extend_loc loc)
 	(Quantifier(Forall,t,idl,expr_true,_5)) )}
 | _1 = LEFTPAR _2 = BSEXISTS _3 = variable_declaration _4 = SEMICOLON _5 = expr _6 = SEMICOLON _7 = expr _8 = RIGHTPAR
-    {    ( let loc=_1 and (t,idl)=_3 in 
-      mk_expr 
-	(extend_loc loc) 
+    {    ( let loc=_1 and (t,idl)=_3 in
+      mk_expr
+	(extend_loc loc)
 	(Quantifier(Exists,t,idl,_5,_7)) )}
 | _1 = LEFTPAR _2 = BSEXISTS _3 = variable_declaration _4 = SEMICOLON _5 = expr _6 = RIGHTPAR
-    {    ( let loc=_1 and (t,idl)=_3 in 
-      mk_expr 
-	(extend_loc loc) 
+    {    ( let loc=_1 and (t,idl)=_3 in
+      mk_expr
+	(extend_loc loc)
 	(Quantifier(Exists,t,idl,mk_expr_no_loc (Lit(Bool(true))),_5)) )}
 | _1 = LEFTPAR _2 = expr_no_name _3 = RIGHTPAR
     {    ( _2 )}
@@ -633,23 +633,23 @@ primary_no_new_array:
     {    ( let (l,f)=_1 in mk_expr l (Field_access(f)) )}
 | _1 = ident _2 = LEFTPAR _3 = argument_list _4 = RIGHTPAR
     {    ( let (l,_) as id = _1 in
-      mk_expr 
-	(extend_loc l) 
+      mk_expr
+	(extend_loc l)
 	(Method_call(None,id,_3)) )}
 | _1 = name _2 = DOT _3 = ident _4 = LEFTPAR _5 = argument_list _6 = RIGHTPAR
     {    ( let e = expand_name _1 in
-      mk_expr 
-	(extend_loc e.expr_loc) 
+      mk_expr
+	(extend_loc e.expr_loc)
 	(Method_call(Some e,_3,_5)) )}
 | _1 = primary_expr _2 = DOT _3 = ident _4 = LEFTPAR _5 = argument_list _6 = RIGHTPAR
     {    ( let e = _1 in
-      mk_expr 
-	(extend_loc e.expr_loc) 
+      mk_expr
+	(extend_loc e.expr_loc)
 	(Method_call(Some e,_3,_5)) )}
 | _1 = NEW _2 = name _3 = LEFTPAR _4 = argument_list _5 = RIGHTPAR
     {    ( let l=_1 in
-      mk_expr 
-	(extend_loc l) 
+      mk_expr
+	(extend_loc l)
 	(Class_instance_creation(_2,_4)) )}
 | _1 = array_access
     {    ( _1 )}
@@ -673,12 +673,12 @@ array_access:
 array_creation_expression:
   _1 = NEW _2 = base_type _3 = array_dims
     {    ( let l = _1 in
-      mk_expr 
+      mk_expr
 	(extend_loc l)
 	(Array_creation(build_array_creation_expr (Base_type(_2)) _3)) )}
 | _1 = NEW _2 = name _3 = array_dims
     {    ( let l = _1 in
-      mk_expr 
+      mk_expr
 	(extend_loc l)
 	(Array_creation(build_array_creation_expr (Type_name(_2)) _3)) )}
 
@@ -711,93 +711,93 @@ expr_no_name:
     {    ( _1 )}
 | _1 = expr _2 = QUESTIONMARK _3 = expr _4 = COLON _5 = expr %prec IFEXPR
     {    ( let e1=_1 and e3=_5 in
-      mk_expr 
-	(merge_locs e1.expr_loc e3.expr_loc) 
+      mk_expr
+	(merge_locs e1.expr_loc e3.expr_loc)
 	(If_expr(e1,_3,e3)) )}
 | _1 = expr _2 = EQEQGT _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "==>" e2 )}
 | _1 = expr _2 = LTEQEQ _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "<==" e2 )}
 | _1 = expr _2 = LTEQEQGT _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "<==>" e2 )}
 | _1 = expr _2 = LTEQBANGEQGT _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "<=!=>" e2 )}
 | _1 = expr _2 = VERTICALBARVERTICALBAR _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "||" e2 )}
 | _1 = expr _2 = AMPERSANDAMPERSAND _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "&&" e2 )}
 | _1 = expr _2 = VERTICALBAR _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "|" e2 )}
 | _1 = expr _2 = CARET _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "^" e2 )}
 | _1 = expr _2 = AMPERSAND _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "&" e2 )}
 | _1 = expr _2 = EQOP _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 _2 e2 )}
 | _1 = expr _2 = COMP _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 _2 e2 )}
 | _1 = expr _2 = SHIFT _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 _2 e2 )}
 | _1 = expr _2 = PLUS _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "+" e2 )}
 | _1 = expr _2 = MINUS _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "-" e2 )}
 | _1 = expr _2 = STAR _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "*" e2 )}
 | _1 = expr _2 = SLASH _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "/" e2 )}
 | _1 = expr _2 = PERCENT _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "%" e2 )}
 | _1 = PLUS _2 = expr %prec UPLUS
     {    ( let l = _1 and e=_2 in
@@ -813,23 +813,23 @@ expr_no_name:
       mk_un (merge_locs l e.expr_loc) "~" e )}
 | _1 = LEFTPAR _2 = base_type _3 = RIGHTPAR _4 = expr %prec CAST
     {    ( let l=_1 and e=_4 in
-      mk_expr 
-	(merge_locs l e.expr_loc) 
+      mk_expr
+	(merge_locs l e.expr_loc)
 	(Cast(Base_type(_2),e)) )}
 | _1 = LEFTPAR _2 = array_type_expr _3 = RIGHTPAR _4 = primary_expr_or_name %prec CAST
     {    ( let l=_1 and e=_4 in
-      mk_expr 
-	(merge_locs l e.expr_loc) 
+      mk_expr
+	(merge_locs l e.expr_loc)
 	(Cast(Array_type_expr(_2),e)) )}
 | _1 = LEFTPAR _2 = name _3 = RIGHTPAR _4 = primary_expr_or_name %prec CAST
     {    ( let l=_1 and e=_4 in
-      mk_expr 
-	(merge_locs l e.expr_loc) 
+      mk_expr
+	(merge_locs l e.expr_loc)
 	(Cast(Type_name(_2),e)) )}
 | _1 = expr _2 = INSTANCEOF _3 = type_expr
     {    ( let e=_1 in
-      mk_expr 
-	(extend_loc e.expr_loc) 
+      mk_expr
+	(extend_loc e.expr_loc)
 	(Instanceof(e,_3)) )}
 
 parenthesized_name:

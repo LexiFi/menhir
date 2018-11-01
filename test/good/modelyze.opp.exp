@@ -8,7 +8,7 @@ File "modelyze.mly", line 64, characters 28-30:
 Warning: the token IN is unused.
 File "modelyze.mly", line 167, characters 10-15:
 Warning: the token MYAPP is unused.
-%{ 
+%{
 
   open Ustring.Op
   open Utils
@@ -20,22 +20,22 @@ Warning: the token MYAPP is unused.
 
   let mkpatinfo t1 t2 = mkinfo (pat_info t1) (pat_info t2)
 
-  let rec metastr n = if n = 0 then us"" else us"#" ^. metastr (n-1) 
+  let rec metastr n = if n = 0 then us"" else us"#" ^. metastr (n-1)
 
-  let mk_binop fi l op t1 t2 = 
+  let mk_binop fi l op t1 t2 =
     TmApp(fi,l,TmApp(fi,l,(TmVar(fi,Symtbl.add (us op),0)),t1,false),t2,false)
-  let mk_unop fi l op t1 = 
+  let mk_unop fi l op t1 =
     TmApp(fi,l,(TmVar(fi,Symtbl.add (us op),0)),t1,false)
 
-  let mk_binpat_op fi l op t1 t2 = 
+  let mk_binpat_op fi l op t1 t2 =
     PatSymApp(fi,PatSymApp(fi,PatExpr(fi,TmVar(fi,Symtbl.add (us op),0)),t1),t2)
 
-  let mk_unpat_op fi l op t1 = 
+  let mk_unpat_op fi l op t1 =
     PatSymApp(fi,PatExpr(fi,TmVar(fi,Symtbl.add (us op),0)),t1)
 
-  let wildcard = Symtbl.add (us"@@wildcard")  	  
+  let wildcard = Symtbl.add (us"@@wildcard")
 
-  let floatval v = TmConst(NoInfo,0,ConstReal(v)) 
+  let floatval v = TmConst(NoInfo,0,ConstReal(v))
 
 
 %}
@@ -182,7 +182,7 @@ top:
         TopNu(fi,_2,_4)::_5 )}
 | _1 = DEF _2 = IDENT _3 = COMMA _4 = revidentseq _5 = COLON _6 = ty _7 = top %prec DEFUK
     {      ( let fi = mkinfo _1.i (ty_info _6) in
-        let nulst = List.map (fun x -> TopNu(fi,x,_6)) (List.rev _4) in        
+        let nulst = List.map (fun x -> TopNu(fi,x,_6)) (List.rev _4) in
         TopNu(fi,_2.v,_6)::(List.append nulst _7) )}
 | _1 = TYPE _2 = IDENT _3 = top
     {      ( let fi = mkinfo _1.i _2.i in
@@ -192,8 +192,8 @@ top:
         TopNameType(fi,_2.v,_4)::_5 )}
 | _1 = INCLUDE _2 = IDENT _3 = top
     {      ( let fi = mkinfo _1.i _2.i in
-        let modname = _2.v |> Symtbl.get |> Ustring.to_latin1 
-                      |> String.lowercase |> us in                             
+        let modname = _2.v |> Symtbl.get |> Ustring.to_latin1
+                      |> String.lowercase |> us in
         TopInclude(fi,Symtbl.add (modname ^. us".moz"))::_3 )}
 
 identparen:
@@ -298,7 +298,7 @@ term:
         TmNu(fi,_1.l,_2,_4,_6) )}
 | _1 = DEF _2 = IDENT _3 = COMMA _4 = revidentseq _5 = COLON _6 = ty _7 = SEMI _8 = term
     {      ( let fi = mkinfo _1.i (ty_info _6) in
-        List.fold_left (fun a x -> TmNu(fi,_1.l,x,_6,a)) _8 
+        List.fold_left (fun a x -> TmNu(fi,_1.l,x,_6,a)) _8
                        (_2.v::(List.rev _4)) )}
 | _1 = IF _2 = term _3 = THEN _4 = term _5 = ELSE _6 = term
     {      ( let fi = mkinfo _1.i (tm_info _6) in
@@ -320,17 +320,17 @@ term:
        let op = mk_arrayop _3.i _3.v in
        TmArrayOp(fi,_1.l,op,List.rev _4) )}
 | _1 = MAP _2 = DOT _3 = IDENT _4 = op_atom_list_rev
-    {     ( let fi = if _4 = [] then mkinfo _1.i _3.i 
+    {     ( let fi = if _4 = [] then mkinfo _1.i _3.i
                 else mkinfo _1.i (tm_info (List.hd _4)) in
        let op = mk_mapop _3.i _3.v in
        TmMapOp(fi,_1.l,op,List.rev _4) )}
 | _1 = SET _2 = DOT _3 = IDENT _4 = op_atom_list_rev
-    {     ( let fi = if _4 = [] then mkinfo _1.i _3.i 
+    {     ( let fi = if _4 = [] then mkinfo _1.i _3.i
                 else mkinfo _1.i (tm_info (List.hd _4)) in
        let op = mk_setop _3.i _3.v in
        TmSetOp(fi,_1.l,op,List.rev _4) )}
 | _1 = DAESOLVER _2 = DOT _3 = IDENT _4 = op_atom_list_rev
-    {     ( let fi = if _4 = [] then mkinfo _1.i _3.i 
+    {     ( let fi = if _4 = [] then mkinfo _1.i _3.i
                 else mkinfo _1.i (tm_info (List.hd _4)) in
        let op = mk_daesolverop _3.i _3.v in
        TmDAESolverOp(fi,_1.l,op,List.rev _4) )}
@@ -478,7 +478,7 @@ pat_atom:
 	PatNil(fi) )}
 | _1 = LSQUARE _2 = revpatseq _3 = RSQUARE
     {      ( let fi = mkinfo _1.i _3.i in
-        List.fold_right (fun p a -> PatCons(fi,p,a)) 
+        List.fold_right (fun p a -> PatCons(fi,p,a))
           (List.rev _2) (PatNil(fi)) )}
 | _1 = SYM _2 = COLON _3 = tyatom
     {      ( PatSym(mkinfo _1.i (ty_info _3),TySym(ty_info _3, 0, _3)) )}
@@ -614,7 +614,7 @@ app_left:
   _1 = atom
     {      ( _1 )}
 | _1 = IDENTPAREN _2 = RPAREN
-    {      ( let t1 = TmVar(_1.i,_1.v,0) in 
+    {      ( let t1 = TmVar(_1.i,_1.v,0) in
         let t2 = TmConst(_2.i,0,ConstUnit) in
         TmApp(mkinfo _1.i _2.i,0,t1,t2,false) )}
 | _1 = IDENTPAREN _2 = revtmseq _3 = RPAREN

@@ -56,7 +56,7 @@ open Support.Pervasive
 open Syntax
 let rec addbinders tyT l = match l with
    [] -> tyT
- | (tyX,k)::rest -> tyT 
+ | (tyX,k)::rest -> tyT
 %}
 %start toplevel
 %token <Support.Error.info> ALL
@@ -194,7 +194,7 @@ AType:
     {      ( fun ctx ->
           if isnamebound ctx _1.v then
             TyVar(name2index _1.i ctx _1.v, ctxlength ctx)
-          else 
+          else
             TyId(_1.v) )}
 
 Term:
@@ -236,7 +236,7 @@ ATerm:
   _1 = LPAREN _2 = Term _3 = RPAREN
     {      ( _2 )}
 | _1 = LPAREN _2 = Term _3 = COMMA _4 = TermList _5 = COLON _6 = Type _7 = RPAREN
-    {                                                 ( fun ctx -> 
+    {                                                 ( fun ctx ->
           TmList(_1,_2 ctx :: _4 ctx ,_6 ctx))}
 | _1 = LCID
     {      ( fun ctx ->

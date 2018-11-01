@@ -475,7 +475,7 @@ qmf_unitary_formula: /* Term.term */
 qmf_boxed_formula: /* Term.term */
     boxoperator COLON qmf_unitary_formula { Appl($1,$3) }
 ;
-		   
+
 qmf_quantified_formula: /* Term.term */
     quantifier LBRKT qmf_variable_decls RBRKT COLON qmf_unitary_formula { multi_quantified $1 $3 $6 }
 ;
@@ -698,7 +698,7 @@ quantifier : /* Term.term */
 
 boxoperator : /* Term.term */
     BOX { Symbol(Signature.box) }
-  | DIAMOND { Symbol(Signature.diamond) }	  
+  | DIAMOND { Symbol(Signature.diamond) }
 ;
 
 apply_term : /* Term.term */

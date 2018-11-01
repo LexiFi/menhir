@@ -1,11 +1,11 @@
-%token <string> NAME 
+%token <string> NAME
 %token LBRACKET RBRACKET EOF QUOTE DOT
 %start main
 %type <Types.sexp> main
 
 %%
 
-main:  
+main:
   sexp   { $1 }
   ;
 
@@ -15,7 +15,7 @@ sexp:
 | QUOTE sexp { Types.Cons (Types.Atom "quote", Types.Cons($2, Types.Atom "nil")) }
 ;
 
-list:  
+list:
   LBRACKET RBRACKET { Types.Atom "nil" }
 | LBRACKET inside_list RBRACKET { $2 }
 ;

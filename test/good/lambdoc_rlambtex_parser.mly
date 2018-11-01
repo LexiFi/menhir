@@ -65,7 +65,7 @@ open Globalenv
 %token <string> BEGIN_PULLQUOTE
 %token <string> BEGIN_CUSTOM
 %token <string> BEGIN_EQUATION
-%token <string> BEGIN_PRINTOUT 
+%token <string> BEGIN_PRINTOUT
 %token <string> BEGIN_TABLE
 %token <string> BEGIN_FIGURE
 %token <string> BEGIN_ABSTRACT
@@ -189,7 +189,7 @@ simple_block:
     | SECTION inline_bundle                         {let (comm, level) = $1 in (comm, Ast.Section (level, $2))}
     | BIBLIOGRAPHY                                  {($1, Ast.Bibliography)}
     | NOTES                                         {($1, Ast.Notes)}
-    | TOC                                           {($1, Ast.Toc)} 
+    | TOC                                           {($1, Ast.Toc)}
     | TITLE inline_bundle                           {let (comm, level) = $1 in (comm, Ast.Title (level, $2))}
     | RULE                                          {($1, Ast.Rule)}
     | MACRODEF raw_bundle raw_bundle inline_bundle  {($1, Ast.Macrodef ($2, $3, $4))}

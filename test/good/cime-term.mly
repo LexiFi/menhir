@@ -17,7 +17,7 @@ $Id: term_parser.mly,v 1.2 2001/04/20 13:42:28 marche Exp $
 %}
 
 
-%token <string> PREFIX_IDENT POSTFIX_IDENT INFIX_IDENT 
+%token <string> PREFIX_IDENT POSTFIX_IDENT INFIX_IDENT
 %token COMMA SEMICOLON OPENPAR CLOSEPAR ARROW
 %token EOF
 
@@ -37,13 +37,13 @@ term_eof:
   term EOF { $1 }
 ;
 
-term : 
-  PREFIX_IDENT 
+term :
+  PREFIX_IDENT
    { (* printf "forme a\n"; *)
       try
         VAR (var_id_of_string $1)
-      with Not_found -> 
-        let f=(get_symbol_id $1) in 
+      with Not_found ->
+        let f=(get_symbol_id $1) in
         if (arity f)=0
         then TERM(f,[])
         else semantical_error ("Bad number of arguments for " ^ $1)

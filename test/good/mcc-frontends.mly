@@ -73,6 +73,6 @@ string_list_rev:
    TokString                  { [$1] }
  | string_list_rev TokComma TokString
                               { $3 :: $1 }
-   
+
 identifier:
    TokId                      { $1 }

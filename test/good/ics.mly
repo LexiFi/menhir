@@ -33,7 +33,7 @@ let name_of_rename = Name.of_string "v"
 %token TYPE SIGMA
 %token SOLVE HELP DEF PROP TOGGLE SET GET TRACE UNTRACE CMP FIND USE INV SOLUTION PARTITION MODEL
 %token SHOW SIGN DOM SYNTAX COMMANDS SPLIT SAT ECHO CHECK UNDO
-%token DISEQ CTXT 
+%token DISEQ CTXT
 %token IN NOTIN TT FF
 %token EOF QUOTE
 
@@ -50,20 +50,20 @@ let name_of_rename = Name.of_string "v"
 %token COLON COMMA DOT DDOT ASSIGN TO ENDMARKER BACKSLASH
 %token EMPTY FULL UNION INTER COMPL DIFF
 
-%token <string> BVCONST 
+%token <string> BVCONST
 %token <string * int> FRESH
 %token <int> FREE
 
 %token CONC SUB BWITE BWAND BWOR BWXOR BWIMP BWIFF BWNOT
-%token BVCONC 
+%token BVCONC
 %token EQUAL SUBSET
 %token TRUE FALSE
 %token PLUS MINUS TIMES DIVIDE EXPT
-%token LESS GREATER LESSOREQUAL GREATEROREQUAL  
+%token LESS GREATER LESSOREQUAL GREATEROREQUAL
 %token UNSIGNED APPLY LAMBDA S K I C
 %token WITH CONS CAR CDR NIL
 %token INL INR OUTL OUTR
-%token INJ OUT 
+%token INJ OUT
 %token HEAD TAIL LISTCONS
 %token PROPVAR DISJ XOR IMPL BIIMPL CONJ NEG
 %token IF THEN ELSE END
@@ -78,7 +78,7 @@ let name_of_rename = Name.of_string "v"
 %right UNION
 %right INTER, DIFF
 %nonassoc COMPL
-%left MINUS PLUS 
+%left MINUS PLUS
 %left DIVIDE
 %left TIMES
 %right EXPT
@@ -115,7 +115,7 @@ atomeof : atom EOF           { $1 }
 propeof : prop EOF           { $1 }
 commandseof : command EOF    { () }
 
-commands : 
+commands :
   command DOT     { () }
 | EOF             { raise End_of_file }
 ;
@@ -127,7 +127,7 @@ commandsequence :
 
 
 prop:
-  LBRA prop RBRA                  { $2 } 
+  LBRA prop RBRA                  { $2 }
 /* | LPAR prop RPAR                  { $2 } */
 | name                            { try Istate.prop_of $1 with Not_found -> Prop.mk_var $1 }
 | atom                            { Prop.mk_poslit $1 }
@@ -139,7 +139,7 @@ prop:
 | NEG prop %prec prec_unary       { Prop.mk_neg $2 }
 | IF prop THEN prop ELSE prop END { Prop.mk_ite $2 $4 $6 }
 ;
- 
+
 int: INTCONST  { $1 }
 
 rat:
@@ -149,7 +149,7 @@ rat:
 
 name: IDENT  { Name.of_string $1 }
 
-namelist:    
+namelist:
   name                { [$1] }
 | namelist COMMA name { $3 :: $1 }
 ;
@@ -178,7 +178,7 @@ var:
 	      | _ -> Term.Var.mk_var $1 Var.Cnstrnt.Unconstrained
 	  with
 	      Not_found -> Term.Var.mk_var $1 Var.Cnstrnt.Unconstrained }
-| name LCUR cnstrnt RCUR 
+| name LCUR cnstrnt RCUR
          { Term.Var.mk_var $1 $3 }
 ;
 
@@ -187,14 +187,14 @@ app: funsym LPAR termlist RPAR     { Term.App.mk_app $1 (List.rev $3) }
 
 funsym: name                       { Sym.Uninterp.make $1 }
 
-list: 
+list:
   term LISTCONS term            { Coproduct.mk_inj 1 (Product.mk_cons $1 $3) }
 | HEAD LPAR term RPAR           { Product.mk_car (Coproduct.mk_out 1 $3) }
 | TAIL LPAR term RPAR           { Product.mk_cdr (Coproduct.mk_out 1 $3) }
 | NIL                           { Coproduct.mk_inj 0 (Bitvector.mk_eps()) }
 ;
 
-apply: 
+apply:
   term APPLY term               { Apply.mk_apply $1 $3 }
 | S                             { Apply.mk_s () }
 | K                             { Apply.mk_k () }
@@ -206,15 +206,15 @@ apply:
 				    | [] -> assert false
 				    | [n] -> Apply.abstract n acc
 				    | n :: nl -> abstract_star (Apply.abstract n acc) nl
-				  in 
+				  in
 				  abstract_star body nl }
 ;
 
-boolean: 
+boolean:
   TRUE                          { Boolean.mk_true() }
 | FALSE                         { Boolean.mk_false() }
 ;
-     
+
 arith:
   rat                           { Arith.mk_num $1 }
 | term PLUS term                { Arith.mk_add $1 $3 }
@@ -255,40 +255,40 @@ propset:
 ;
 
 
-bv: 
+bv:
   BVCONST                     { Bitvector.mk_const (Bitv.from_string $1)  }
-| CONC LBRA INTCONST COMMA INTCONST RBRA LPAR term COMMA term RPAR  
+| CONC LBRA INTCONST COMMA INTCONST RBRA LPAR term COMMA term RPAR
                               { Bitvector.mk_conc $3 $5 $8 $10 }
-| SUB LBRA INTCONST COMMA INTCONST COMMA INTCONST RBRA LPAR term RPAR 
+| SUB LBRA INTCONST COMMA INTCONST COMMA INTCONST RBRA LPAR term RPAR
                               { Bitvector.mk_sub $3 $5 $7 $10 }
-| term BVCONC term  
+| term BVCONC term
      { match Istate.width_of $1, Istate.width_of $3 with
-	 | Some(n), Some(m) -> 
+	 | Some(n), Some(m) ->
 	     if n < 0 then
 	       raise (Invalid_argument ("Negative length of " ^ Term.to_string $1))
 	     else if m < 0 then
 	       raise (Invalid_argument ("Negative length of " ^ Term.to_string $3))
-	     else 
+	     else
 	       Bitvector.mk_conc n m $1 $3
-	 | Some _, _ -> 
+	 | Some _, _ ->
 	     raise (Invalid_argument (Term.to_string $3 ^ " not a bitvector."))
-	 | _ -> 
+	 | _ ->
 	     raise (Invalid_argument (Term.to_string $1 ^ " not a bitvector.")) }
-| term LBRA INTCONST COLON INTCONST RBRA 
+| term LBRA INTCONST COLON INTCONST RBRA
      { match Istate.width_of $1 with
-	 | Some(n) -> 
+	 | Some(n) ->
 	     if n < 0 then
 	       raise(Invalid_argument ("Negative length of " ^ Term.to_string $1))
 	     else if not(0 <= $3 && $3 <= $5 && $5 < n) then
 	       raise(Invalid_argument ("Invalid extraction from " ^ Term.to_string $1))
-	     else 
+	     else
 	       Bitvector.mk_sub n $3 $5 $1
-	 | None ->  
+	 | None ->
 	     raise (Invalid_argument (Term.to_string $1 ^ " not a bitvector.")) }
 ;
 
 
-atom: 
+atom:
   FF                       { Atom.mk_false }
 | TT                       { Atom.mk_true }
 | term EQUAL term          { Atom.mk_equal ($1, $3) }
@@ -305,7 +305,7 @@ dom:
 | REAL         { Dom.Real }
 ;
 
-cnstrnt: 
+cnstrnt:
   dom          { Var.Cnstrnt.Real($1) }
 | signature    { Var.Cnstrnt.Bitvector($1) }
 ;
@@ -335,7 +335,7 @@ command:
 | SIG namelist COLON cnstrnt{ Istate.do_typ ($2, $4) }
 | RESET                     { Istate.do_reset () }
 | SAVE name                 { Istate.do_save(Some($2)) }
-| SAVE                      { Istate.do_save(None) }        
+| SAVE                      { Istate.do_save(None) }
 | RESTORE name              { Istate.do_restore $2 }
 | REMOVE name               { Istate.do_remove $2 }
 | FORGET                    { Istate.do_forget() }
@@ -356,7 +356,7 @@ command:
 | DOM optname term          { Istate.do_dom ($2, $3) }
 | DISEQ optname term        { Istate.do_diseq ($2, $3) }
 | SPLIT optname             { Istate.do_split $2 }
-| SOLVE th term EQUAL term  { Istate.do_solve ($2, ($3, $5)) }		
+| SOLVE th term EQUAL term  { Istate.do_solve ($2, ($3, $5)) }
 | TRACE identlist           { Istate.do_trace $2 }
 | UNTRACE                   { Istate.do_untrace None }
 | UNTRACE identlist         { Istate.do_untrace (Some($2)) }
@@ -386,10 +386,10 @@ identlist :
   IDENT                     { [$1] }
 | identlist COMMA IDENT     { $3 :: $1 }
 ;
-		
+
 th: IDENT  { Th.of_string $1 } /* may raise [Invalid_argument]. */
 
-eqth : IDENT 
+eqth : IDENT
   { try Some(Th.of_string $1)
     with exc -> if $1 = "v" then None else raise exc }
 

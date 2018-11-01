@@ -31,7 +31,7 @@ primary_not_name
   |  NEW L_BRACKET expression R_BRACKET  { }
   ;
 
-array_access 
+array_access
   :  expression L_BRACKET primary_not_name R_BRACKET  { }
 
 expression

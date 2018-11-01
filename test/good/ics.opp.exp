@@ -420,7 +420,7 @@ apply:
 				    | [] -> assert false
 				    | [n] -> Apply.abstract n acc
 				    | n :: nl -> abstract_star (Apply.abstract n acc) nl
-				  in 
+				  in
 				  abstract_star body nl )}
 
 boolean:
@@ -494,27 +494,27 @@ bv:
     {                              ( Bitvector.mk_sub _3 _5 _7 _10 )}
 | _1 = term _2 = BVCONC _3 = term
     {     ( match Istate.width_of _1, Istate.width_of _3 with
-	 | Some(n), Some(m) -> 
+	 | Some(n), Some(m) ->
 	     if n < 0 then
 	       raise (Invalid_argument ("Negative length of " ^ Term.to_string _1))
 	     else if m < 0 then
 	       raise (Invalid_argument ("Negative length of " ^ Term.to_string _3))
-	     else 
+	     else
 	       Bitvector.mk_conc n m _1 _3
-	 | Some _, _ -> 
+	 | Some _, _ ->
 	     raise (Invalid_argument (Term.to_string _3 ^ " not a bitvector."))
-	 | _ -> 
+	 | _ ->
 	     raise (Invalid_argument (Term.to_string _1 ^ " not a bitvector.")) )}
 | _1 = term _2 = LBRA _3 = INTCONST _4 = COLON _5 = INTCONST _6 = RBRA
     {     ( match Istate.width_of _1 with
-	 | Some(n) -> 
+	 | Some(n) ->
 	     if n < 0 then
 	       raise(Invalid_argument ("Negative length of " ^ Term.to_string _1))
 	     else if not(0 <= _3 && _3 <= _5 && _5 < n) then
 	       raise(Invalid_argument ("Invalid extraction from " ^ Term.to_string _1))
-	     else 
+	     else
 	       Bitvector.mk_sub n _3 _5 _1
-	 | None ->  
+	 | None ->
 	     raise (Invalid_argument (Term.to_string _1 ^ " not a bitvector.")) )}
 
 atom:

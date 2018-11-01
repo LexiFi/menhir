@@ -9,7 +9,7 @@ $Id: java.mly,v 1.1 2005/08/23 11:15:13 fpottier Exp $
 ***************************************************************************/
 
 %{
-  
+
   open Location
   open Ast_types
   open Ast
@@ -19,12 +19,12 @@ $Id: java.mly,v 1.1 2005/08/23 11:15:13 fpottier Exp $
 
   let rec build_array_creation_expr t (l,n) =
     match l with
-      | [] -> 
+      | [] ->
 	  Implicit_array_creation(build_array_type t n)
       | a::b ->
 	  Explicit_array_creation(a,(build_array_creation_expr t (b,n)))
 
-  let extend_loc l = 
+  let extend_loc l =
     Location.extend_loc !Java_parser_base.cur_base l (symbol_end())
 
 %}
@@ -40,28 +40,28 @@ $Id: java.mly,v 1.1 2005/08/23 11:15:13 fpottier Exp $
 
 /* Literals */
 
-%token <Location.t * string> ID 
+%token <Location.t * string> ID
 %token <Location.t * int> INTEGER
 %token <Location.t * Why.float_repr> REAL
 %token <Location.t * string> STRING
 %token <Location.t * char> CHARACTER
-%token <Location.t> TRUE FALSE NULL THIS 
+%token <Location.t> TRUE FALSE NULL THIS
 
 /* Keywords */
 
 %token <Location.t> NEW SUPER
 %token ABSTRACT BOOLEAN BYTE BYVALUE CASE CAST CATCH
 %token CHAR CLASS CONST DEFAULT DOUBLE ELSE EXTENDS
-%token FINAL FINALLY FLOAT FUTURE GENERIC GOTO 
+%token FINAL FINALLY FLOAT FUTURE GENERIC GOTO
 %token IMPLEMENTS IMPORT INNER INSTANCEOF INT INTERFACE LONG
 %token NATIVE OPERATOR OUTER PACKAGE PRIVATE PROTECTED
-%token PUBLIC REST SHORT STATIC 
+%token PUBLIC REST SHORT STATIC
 %token THROWS TRANSIENT VAR VOID VOLATILE
-%token <Location.t> WHILE DO FOR IF SWITCH BREAK CONTINUE RETURN TRY SYNCHRONIZED THROW 
+%token <Location.t> WHILE DO FOR IF SWITCH BREAK CONTINUE RETURN TRY SYNCHRONIZED THROW
 
 /* Others symbols */
 
-%token <Location.t> LEFTPAR 
+%token <Location.t> LEFTPAR
 %token RIGHTPAR LEFTBRACE RIGHTBRACE LEFTBRACKET RIGHTBRACKET
 %token SEMICOLON COLON COMMA QUESTIONMARK DOT
 %token <string> DOC_COMMENT
@@ -76,16 +76,16 @@ $Id: java.mly,v 1.1 2005/08/23 11:15:13 fpottier Exp $
 /* Operators (see precedences below for details) */
 
 %token <string> ASSIGNOP
-%token EQ 
+%token EQ
 %token VERTICALBARVERTICALBAR
-%token AMPERSANDAMPERSAND  
-%token VERTICALBAR         
-%token CARET               
-%token AMPERSAND           
+%token AMPERSANDAMPERSAND
+%token VERTICALBAR
+%token CARET
+%token AMPERSAND
 %token <string> EQOP
-%token <string> COMP 
+%token <string> COMP
 %token <string> SHIFT
-%token <Location.t> PLUS MINUS 
+%token <Location.t> PLUS MINUS
 %token STAR SLASH PERCENT
 %token <Location.t> PLUSPLUS MINUSMINUS TILDA BANG
 
@@ -94,9 +94,9 @@ $Id: java.mly,v 1.1 2005/08/23 11:15:13 fpottier Exp $
 %nonassoc THEN
 %nonassoc ELSE
 
-%right EQ ASSIGNOP               
-  /*r ["="], ["*="],  ["/="], ["%="], ["+="], ["-="], ["<<="], [">>="], 
-  [">>>="], ["&="], ["^="] and ["|="] */ 
+%right EQ ASSIGNOP
+  /*r ["="], ["*="],  ["/="], ["%="], ["+="], ["-="], ["<<="], [">>="],
+  [">>>="], ["&="], ["^="] and ["|="] */
 %right IFEXPR QUESTIONMARK     /*r [" ? : "] */
 %left VERTICALBARVERTICALBAR  /*r conditional OR ["||"] */
 %left AMPERSANDAMPERSAND  /*r conditional AND ["&&"] */
@@ -133,15 +133,15 @@ package_declaration:
 import_declarations:
 | /* $\varepsilon$ */
     { [] }
-| IMPORT import_declaration SEMICOLON import_declarations 
+| IMPORT import_declaration SEMICOLON import_declarations
     { $2::$4 }
 ;
 
 
 import_declaration:
-| name DOT STAR 
+| name DOT STAR
     { Import_package($1) }
-| name 
+| name
     { Import_class_or_interface($1) }
 ;
 
@@ -159,7 +159,7 @@ type_declarations:
 doc_comment:
 | /* $\varepsilon$ */
     { "" }
-| DOC_COMMENT 
+| DOC_COMMENT
     { $1 }
 ;
 
@@ -171,7 +171,7 @@ jml_loop_annot:
 ;
 
 type_declaration:
-| doc_comment class_declaration 
+| doc_comment class_declaration
     { ($1,Class($2)) }
 | doc_comment interface_declaration
     { ($1,Interface($2)) }
@@ -180,7 +180,7 @@ type_declaration:
 /*s Class declarations */
 
 class_declaration:
-| modifiers CLASS ident extends_decl implements_decl 
+| modifiers CLASS ident extends_decl implements_decl
     LEFTBRACE field_declarations RIGHTBRACE
     { { class_modifiers = $1;
 	class_name = $3;
@@ -192,14 +192,14 @@ class_declaration:
 extends_decl:
 | /* $\varepsilon$ */
     { None }
-| EXTENDS name 
+| EXTENDS name
     { Some $2 }
 ;
 
 implements_decl:
 | /* $\varepsilon$ */
     { [] }
-| IMPLEMENTS name_comma_list 
+| IMPLEMENTS name_comma_list
     { $2 }
 ;
 
@@ -211,13 +211,13 @@ field_declarations:
 ;
 
 field_declaration:
-| doc_comment method_declaration 
+| doc_comment method_declaration
     { ($1,$2) }
-| doc_comment constructor_declaration 
+| doc_comment constructor_declaration
     { ($1,Constructor($2)) }
-| doc_comment variable_declaration 
+| doc_comment variable_declaration
     { ($1,Variable($2)) }
-| doc_comment static_initializer 
+| doc_comment static_initializer
     { ($1,Static_initializer($2)) }
 | doc_comment jml_declaration
     { ($1,Specification($2)) }
@@ -235,7 +235,7 @@ variable_declaration:
 | modifiers type_expr variable_declarators SEMICOLON
     { { variable_modifiers = $1 ;
 	variable_type = $2 ;
-	variable_decls = $3 } } 
+	variable_decls = $3 } }
 ;
 
 variable_declarators:
@@ -246,7 +246,7 @@ variable_declarators:
 ;
 
 variable_declarator:
-| variable_declarator_id 
+| variable_declarator_id
     { { variable_id = $1 ;
 	variable_initializer = None } }
 | variable_declarator_id EQ variable_initializer
@@ -258,7 +258,7 @@ variable_declarator_id:
 | ident
     { let (loc,id)=$1 in Simple_id(loc,id) }
 | variable_declarator_id LEFTBRACKET RIGHTBRACKET
-    { Array_id($1) } 
+    { Array_id($1) }
 
 variable_initializer:
 | expr
@@ -270,17 +270,17 @@ variable_initializer:
 variable_initializers:
 | /* $\varepsilon$ */
     { [] }
-| variable_initializer 
+| variable_initializer
     { [$1] }
 | variable_initializer COMMA variable_initializers
     { $1::$3 }
-; 
+;
 
 
 /*s static initializers */
 
 static_initializer:
-| STATIC block 
+| STATIC block
     { $2 }
 ;
 
@@ -288,33 +288,33 @@ static_initializer:
 /*s method declarations */
 
 method_declaration:
-| method_header method_body 
+| method_header method_body
     { Method($1,$2) }
 ;
 
 method_header:
-| method_specification modifiers type_expr method_declarator 
+| method_specification modifiers type_expr method_declarator
   throws_decl
     { { method_specification = $1 ;
 	method_modifiers = $2 ;
 	method_return_type = Some($3) ;
 	method_declarator = $4 ;
 	method_throws = $5 } }
-| modifiers type_expr method_declarator 
+| modifiers type_expr method_declarator
   throws_decl
     { { method_specification = default_method_specification ;
 	method_modifiers = $1 ;
 	method_return_type = Some($2) ;
 	method_declarator = $3 ;
 	method_throws = $4 } }
-| method_specification modifiers VOID method_declarator 
+| method_specification modifiers VOID method_declarator
   throws_decl
     { { method_specification = $1 ;
 	method_modifiers = $2 ;
 	method_return_type = None ;
 	method_declarator = $4 ;
 	method_throws = $5 } }
-| modifiers VOID method_declarator 
+| modifiers VOID method_declarator
   throws_decl
     { { method_specification = default_method_specification ;
 	method_modifiers = $1 ;
@@ -325,13 +325,13 @@ method_header:
 
 method_specification:
 | JML_METHOD_SPECIFICATION
-    { $1 } 
+    { $1 }
 | JML_METHOD_SPECIFICATION method_specification
     { concat_specs $1 $2 }
 ;
 
 method_declarator:
-| ident method_parameters 
+| ident method_parameters
     { Simple_method_declarator($1,$2) }
 | method_declarator LEFTBRACKET RIGHTBRACKET
     { Array_method_declarator($1) }
@@ -339,7 +339,7 @@ method_declarator:
 
 
 method_parameters:
-| LEFTPAR RIGHTPAR 
+| LEFTPAR RIGHTPAR
     { [] }
 | LEFTPAR parameter_comma_list RIGHTPAR
     { $2 }
@@ -353,7 +353,7 @@ parameter_comma_list:
 ;
 
 parameter:
-| type_expr ident 
+| type_expr ident
     { Simple_parameter($1,$2) }
 | parameter LEFTBRACKET RIGHTBRACKET
     { Array_parameter($1) }
@@ -366,8 +366,8 @@ throws_decl:
 ;
 
 method_body:
-| block 
-    { Some($1) } 
+| block
+    { Some($1) }
 | SEMICOLON
     { None }
 ;
@@ -375,7 +375,7 @@ method_body:
 /*s constructor declarations */
 
 constructor_declaration:
-| method_specification modifiers ident method_parameters 
+| method_specification modifiers ident method_parameters
   throws_decl constructor_body
     { { constr_specification = $1 ;
 	constr_modifiers = $2 ;
@@ -383,7 +383,7 @@ constructor_declaration:
 	constr_parameters = $4 ;
 	constr_throws = $5 ;
 	constr_body = $6 } }
-| modifiers ident method_parameters 
+| modifiers ident method_parameters
   throws_decl constructor_body
     { { constr_specification = default_method_specification ;
 	constr_modifiers = $1 ;
@@ -394,16 +394,16 @@ constructor_declaration:
 ;
 
 constructor_body:
-| LEFTBRACE explicit_constructor_invocation statements RIGHTBRACE   
+| LEFTBRACE explicit_constructor_invocation statements RIGHTBRACE
     { ($2,$3) }
-| LEFTBRACE statements RIGHTBRACE   
+| LEFTBRACE statements RIGHTBRACE
     { (Invoke_none,$2) }
 | SEMICOLON
     { (Invoke_none,[]) }
 /*
-| LEFTBRACE explicit_constructor_invocation RIGHTBRACE   
+| LEFTBRACE explicit_constructor_invocation RIGHTBRACE
     { ($2,[]) }
-| LEFTBRACE RIGHTBRACE   
+| LEFTBRACE RIGHTBRACE
     { (Invoke_none,[]) }
 ;
 */
@@ -425,7 +425,7 @@ argument_list:
 /*s interface declarations */
 
 interface_declaration:
-| modifiers INTERFACE ident extends_interfaces_decl 
+| modifiers INTERFACE ident extends_interfaces_decl
     LEFTBRACE interface_member_declarations RIGHTBRACE
     { { interface_modifiers = $1;
 	interface_name = $3;
@@ -436,7 +436,7 @@ interface_declaration:
 extends_interfaces_decl:
 | /* $\varepsilon$ */
     { [] }
-| EXTENDS name_comma_list 
+| EXTENDS name_comma_list
     { $2 }
 ;
 
@@ -460,28 +460,28 @@ interface_member_declaration:
 /*s type expressions */
 
 base_type:
-| SHORT 
+| SHORT
     { "short" }
-| BOOLEAN 
+| BOOLEAN
     { "boolean" }
-| BYTE 
+| BYTE
     { "byte" }
-| CHAR 
+| CHAR
     { "char" }
-| INT 
+| INT
     { "int" }
-| FLOAT 
+| FLOAT
     { "float" }
-| LONG 
+| LONG
     { "long" }
-| DOUBLE 
+| DOUBLE
     { "double" }
 ;
 
 type_expr:
-| name 
+| name
     { Type_name($1) }
-| base_type  
+| base_type
     { Base_type($1) }
 | array_type_expr
     { Array_type_expr($1) }
@@ -503,7 +503,7 @@ modifiers:
 | /* $\varepsilon$ */
     { [] }
 /*
-| modifier 
+| modifier
     { [$1] }
 */
 | modifier modifiers
@@ -516,7 +516,7 @@ modifier:
     { `FINAL }
 | PUBLIC
     { `PUBLIC }
-| PRIVATE 
+| PRIVATE
     { `PRIVATE }
 | PROTECTED
     { `PROTECTED }
@@ -530,22 +530,22 @@ modifier:
 | TRANSIENT
     { `TRANSIENT }
 | JML_PURE
-    { `PURE }  
+    { `PURE }
 | JML_SPEC_PUBLIC
-    { `SPEC_PUBLIC }  
+    { `SPEC_PUBLIC }
 ;
 
 /*s Statements */
 
 block:
-| LEFTBRACE statements RIGHTBRACE   
+| LEFTBRACE statements RIGHTBRACE
     { $2 }
 
 statements:
 | statement statements
-    { $1::$2 } 
+    { $1::$2 }
 | /* $\varepsilon$ */
-    { [] } 
+    { [] }
 ;
 
 /*s Statements */
@@ -554,30 +554,30 @@ local_variable_declaration:
 | type_expr variable_declarators
     { { variable_modifiers = [] ;
 	variable_type = $1 ;
-	variable_decls = $2 } } 
+	variable_decls = $2 } }
 ;
 
 statement:
 | annotated_statement { $1 }
 | jml_loop_annot WHILE LEFTPAR expr RIGHTPAR statement %prec WHILE
     { mk_statement (extend_loc $2) (While($1,$4,$6)) }
-| jml_loop_annot DO statement WHILE LEFTPAR expr RIGHTPAR 
-    { mk_statement (extend_loc $2) (Do($1,$3,$6)) } 
-| jml_loop_annot FOR LEFTPAR statement_expr_list SEMICOLON for_cond SEMICOLON 
-	statement_expr_list RIGHTPAR statement 
+| jml_loop_annot DO statement WHILE LEFTPAR expr RIGHTPAR
+    { mk_statement (extend_loc $2) (Do($1,$3,$6)) }
+| jml_loop_annot FOR LEFTPAR statement_expr_list SEMICOLON for_cond SEMICOLON
+	statement_expr_list RIGHTPAR statement
     { mk_statement (extend_loc $2) (For($1,$4,$6,$8,$10)) }
-| jml_loop_annot FOR LEFTPAR local_variable_declaration SEMICOLON for_cond SEMICOLON 
-	statement_expr_list RIGHTPAR statement 
+| jml_loop_annot FOR LEFTPAR local_variable_declaration SEMICOLON for_cond SEMICOLON
+	statement_expr_list RIGHTPAR statement
     { mk_statement (extend_loc $2) (For_decl($1,$4,$6,$8,$10)) }
 | JML_ASSERTION
     { mk_statement_no_loc (Jml_assert($1)) }
 ;
 
 annotated_statement:
-| JML_METHOD_SPECIFICATION other_statement 
-    { mk_statement $2.statement_loc 
+| JML_METHOD_SPECIFICATION other_statement
+    { mk_statement $2.statement_loc
 	(Annotated(to_statement_spec $1,$2)) }
-| other_statement 
+| other_statement
     { $1 }
 
 other_statement:
@@ -588,18 +588,18 @@ other_statement:
 | local_variable_declaration SEMICOLON
     { mk_statement_no_loc (Var_decl($1)) }
 | IF LEFTPAR expr RIGHTPAR statement %prec THEN
-    { mk_statement (extend_loc $1) 
+    { mk_statement (extend_loc $1)
 	(If_statement($3,$5,mk_statement_no_loc Skip)) }
 | IF LEFTPAR expr RIGHTPAR statement ELSE statement %prec ELSE
-    { mk_statement (extend_loc $1) 
+    { mk_statement (extend_loc $1)
 	(If_statement($3,$5,$7)) }
 | SWITCH LEFTPAR expr RIGHTPAR LEFTBRACE switch_block RIGHTBRACE
-    { mk_statement (extend_loc $1) 
+    { mk_statement (extend_loc $1)
 	(Switch($3,$6)) }
 | block
     { make_block($1) }
 | ident COLON statement
-    { mk_statement (extend_loc (fst $1)) (Label(snd $1,$3)) } 
+    { mk_statement (extend_loc (fst $1)) (Label(snd $1,$3)) }
 | BREAK SEMICOLON
     { mk_statement (extend_loc $1) (Break("")) }
 | BREAK ident SEMICOLON
@@ -639,10 +639,10 @@ for_cond:
     { mk_expr_no_loc (Lit(Bool(true))) }
 ;
 
-switch_block: 
+switch_block:
 | /* $\varepsilon$ */
     { [] }
-| switch_labels 
+| switch_labels
     { [($1,[])] }
 | switch_labels statement statements switch_block
     { ($1,$2::$3)::$4 }
@@ -693,23 +693,23 @@ primary_expr:
 ;
 
 primary_no_new_array:
-| INTEGER                    
+| INTEGER
     { let (loc,n)=$1 in mk_lit loc (Int(n)) }
-| REAL                    
+| REAL
     { let (loc,r)=$1 in mk_lit loc (Float(r)) }
-| TRUE                       
+| TRUE
     { let loc=$1 in mk_lit loc (Bool(true)) }
-| FALSE                      
-    { let loc=$1 in mk_lit loc (Bool(false)) } 
-| STRING                     
+| FALSE
+    { let loc=$1 in mk_lit loc (Bool(false)) }
+| STRING
     { let (loc,n)=$1 in mk_lit loc (String(n)) }
-| NULL                     
+| NULL
     { let loc=$1 in mk_lit loc Null }
-| CHARACTER                     
+| CHARACTER
     { let (loc,n)=$1 in mk_lit loc (Char(n)) }
 | THIS
     { let loc=$1 in mk_expr loc This }
-| LEFTPAR expr_no_name RIGHTPAR      
+| LEFTPAR expr_no_name RIGHTPAR
     { $2 }
 | LEFTPAR name RIGHTPAR
     { expand_name $2 }
@@ -717,26 +717,26 @@ primary_no_new_array:
     { let (loc,fa)=$1 in mk_expr loc (Field_access(fa)) }
 | ident LEFTPAR argument_list RIGHTPAR
     { let (l,_) as id = $1 in
-      mk_expr 
+      mk_expr
 	(extend_loc l)
-	(Method_call(None,id,$3)) } 
+	(Method_call(None,id,$3)) }
 | name DOT ident LEFTPAR argument_list RIGHTPAR
     { let n = expand_name $1 in
-      mk_expr 
+      mk_expr
 	(extend_loc n.expr_loc)
-	(Method_call(Some n,$3,$5)) } 
+	(Method_call(Some n,$3,$5)) }
 | primary_expr DOT ident LEFTPAR argument_list RIGHTPAR
     { let e = $1 in
-      mk_expr 
-	(extend_loc e.expr_loc) 
-	(Method_call(Some e,$3,$5)) } 
+      mk_expr
+	(extend_loc e.expr_loc)
+	(Method_call(Some e,$3,$5)) }
 | NEW name LEFTPAR argument_list RIGHTPAR
     { let l = $1 in
-      mk_expr 
+      mk_expr
 	(extend_loc l)
 	(Class_instance_creation($2,$4)) }
 | array_access
-    { let (l,a,b)=$1 in 
+    { let (l,a,b)=$1 in
       mk_expr l (Array_access(a,b)) }
 ;
 
@@ -752,12 +752,12 @@ array_access:
 array_creation_expression:
 | NEW base_type array_dims
     { let l = $1 in
-      mk_expr 
+      mk_expr
 	(extend_loc l)
 	(Array_creation(build_array_creation_expr (Base_type($2)) $3)) }
 | NEW name array_dims
     { let l = $1 in
-      mk_expr 
+      mk_expr
 	(extend_loc l)
 	(Array_creation(build_array_creation_expr (Type_name($2)) $3)) }
 ;
@@ -787,19 +787,19 @@ castable_expr:
 non_basic_cast:
 | LEFTPAR array_type_expr RIGHTPAR castable_expr %prec CAST
     { let l=$1 and e=$4 in
-      mk_expr 
-	(merge_locs l e.expr_loc) 
+      mk_expr
+	(merge_locs l e.expr_loc)
 	(Cast(Array_type_expr($2),e)) }
 | LEFTPAR name RIGHTPAR castable_expr %prec CAST
     { let l=$1 and e=$4 in
-      mk_expr 
-	(merge_locs l e.expr_loc) 
+      mk_expr
+	(merge_locs l e.expr_loc)
 	(Cast(Type_name($2),e)) }
 ;
 
 /*
 statement_expr:
-| expr 
+| expr
     { Expr($1) }
 ;
 */
@@ -812,7 +812,7 @@ statement_expr_list:
 ;
 
 statement_expr_ne_list:
-| expr 
+| expr
     { [mk_statement $1.expr_loc (Expr($1))] }
 | expr COMMA statement_expr_ne_list
     { (mk_statement $1.expr_loc (Expr($1)))::$3 }
@@ -831,107 +831,107 @@ expr_no_name:
 | name assign_op expr %prec ASSIGNOP
     { let n = $1 in
       let e = expand_name n in
-      mk_expr 
+      mk_expr
 	(extend_loc e.expr_loc)
 	(Assign_name(n,$2,$3)) }
 | field_access assign_op expr %prec ASSIGNOP
     { let (l,f) = $1 in
-      mk_expr 
-	(extend_loc l) 
+      mk_expr
+	(extend_loc l)
 	(Assign_field(f,$2,$3)) }
 | array_access assign_op expr %prec ASSIGNOP
-    { let (l,a,b)=$1 in 
-      mk_expr 
-	(extend_loc l) 
+    { let (l,a,b)=$1 in
+      mk_expr
+	(extend_loc l)
 	(Assign_array(a,b,$2,$3)) }
-| PLUSPLUS expr 
+| PLUSPLUS expr
     { let l=$1 and e=$2 in
       mk_prepost (merge_locs l e.expr_loc) `PREINCR e }
-| MINUSMINUS expr 
+| MINUSMINUS expr
     { let l=$1 and e=$2 in
       mk_prepost (merge_locs l e.expr_loc) `PREDECR e }
-| expr PLUSPLUS 
+| expr PLUSPLUS
     { let e = $1 and l=$2 in
       mk_prepost (merge_locs e.expr_loc l) `POSTINCR e }
-| expr MINUSMINUS 
+| expr MINUSMINUS
     { let e = $1 and l=$2 in
       mk_prepost (merge_locs e.expr_loc l) `POSTDECR e }
 | primary_expr
     { $1 }
 | expr QUESTIONMARK expr COLON expr %prec IFEXPR
     { let e1=$1 and e3=$5 in
-      mk_expr 
-	(merge_locs e1.expr_loc e3.expr_loc) 
+      mk_expr
+	(merge_locs e1.expr_loc e3.expr_loc)
 	(If_expr(e1,$3,e3)) }
-| expr VERTICALBARVERTICALBAR expr          
+| expr VERTICALBARVERTICALBAR expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "||" e2 }
-| expr AMPERSANDAMPERSAND expr          
+| expr AMPERSANDAMPERSAND expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "&&" e2 }
-| expr VERTICALBAR expr          
+| expr VERTICALBAR expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "|" e2 }
-| expr CARET expr          
+| expr CARET expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "^" e2 }
-| expr AMPERSAND expr          
+| expr AMPERSAND expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "&" e2 }
-| expr EQOP expr          
+| expr EQOP expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 $2 e2 }
-| expr COMP expr         
+| expr COMP expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 $2 e2 }
-| expr SHIFT expr         
+| expr SHIFT expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 $2 e2  }
-| expr PLUS expr          
+| expr PLUS expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "+" e2 }
-| expr MINUS expr         
+| expr MINUS expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "-" e2 }
-| expr STAR expr        
+| expr STAR expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "*" e2 }
-| expr SLASH expr        
+| expr SLASH expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "/" e2 }
-| expr PERCENT expr        
+| expr PERCENT expr
     { let e1=$1 and e2=$3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "%" e2 }
-| PLUS expr %prec UPLUS 
+| PLUS expr %prec UPLUS
     { let l = $1 and e=$2 in
       mk_un (merge_locs l e.expr_loc) "+" e }
-| MINUS expr %prec UMINUS 
+| MINUS expr %prec UMINUS
     { let l = $1 and e=$2 in
       mk_un (merge_locs l e.expr_loc) "-" e }
 | BANG expr
@@ -948,30 +948,30 @@ expr_no_name:
   is (id1)-id2  a cast of a unary minus, or a binary - ?
 
   solution:
-       
-  if id1 is a base type, it is a cast else it is a binary operation. 
-  it is enough because result of unary - cannot be casted to something 
-  else than a base type.    
 
-  moreover, we distinguish between cast to a type identifier 
+  if id1 is a base type, it is a cast else it is a binary operation.
+  it is enough because result of unary - cannot be casted to something
+  else than a base type.
+
+  moreover, we distinguish between cast to a type identifier
   "(name) expr" and a complex type expr, because of LALR constraint:
-  (name) can be both an expr and a cast, so it is factorised. 
+  (name) can be both an expr and a cast, so it is factorised.
 
 */
 | LEFTPAR base_type RIGHTPAR expr %prec CAST
     { let l=$1 and e=$4 in
-      mk_expr 
-	(merge_locs l e.expr_loc) 
+      mk_expr
+	(merge_locs l e.expr_loc)
 	(Cast(Base_type($2),e)) }
 | non_basic_cast
     { $1 }
-/* 
+/*
   instanceof operator
 */
 | expr INSTANCEOF type_expr
     { let e=$1 in
-      mk_expr 
-	(extend_loc e.expr_loc) 
+      mk_expr
+	(extend_loc e.expr_loc)
 	(Instanceof(e,$3)) }
 ;
 
@@ -983,7 +983,7 @@ expr_comma_list:
 ;
 
 assign_op:
-| EQ 
+| EQ
     { "=" }
 | ASSIGNOP
     { $1 }

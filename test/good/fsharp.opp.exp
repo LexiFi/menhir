@@ -58,34 +58,34 @@ open Range
 open Ast
 open Lib
 
-let mk_optional m xopt = 
-    match xopt with 
+let mk_optional m xopt =
+    match xopt with
     | None -> mksyn_lid_get m Env.lib_MFCore_path "None"
     | Some x  -> Expr_app(mksyn_lid_get m Env.lib_MFCore_path "Some",x,m)
 
-let mk_Do (strict,expr,m) = 
+let mk_Do (strict,expr,m) =
     Binding (None,
              (if strict then DoBinding else StandaloneExpression),
              false,false,[],emptyXMLDoc,None,
              (if strict then Pat_const(Const_unit,m) else Pat_wild m),
              BindingExpr([],None,expr),m)
 
-let mksyn_lazy_ty m ty = 
+let mksyn_lazy_ty m ty =
   Type_app((path_to_lid m Env.lazy_path @ [mksyn_id m "Lazy"]),[ty],m)
 
 let addAttribs attrs p =  Pat_attrib(p,attrs,range_of_synpat p)
 
-let computeOverloadQualifier attrs = 
-  let attrs = 
-      attrs |> chooseList (fun attr -> 
-          match attr with 
+let computeOverloadQualifier attrs =
+  let attrs =
+      attrs |> chooseList (fun attr ->
+          match attr with
           | (Attr(lid,(Expr_const(Const_string (s,_),_) | Expr_paren(Expr_const(Const_string (s,_),_),_)),_,_)) ->
-              begin match frontAndBack lid with 
+              begin match frontAndBack lid with
               | (_,{idText="OverloadID" | "OverloadIDAttribute"}) -> Some(s)
               | _ -> None
               end
           | _ -> None) in
-  match attrs with 
+  match attrs with
   | [x] -> Some x
   | [] -> None
   | _ -> failwith "Multiple OverloadID attributes"
@@ -95,11 +95,11 @@ let arbExpr() = Expr_const(Const_unit,lhs())
 
 let mksyn_lazy_status m e = Expr_recd(None,None, [ ((path_to_lid m Env.lazy_path, mksyn_id m "status"),e) ], m)
 
-let mksyn_lazy (e,m) = 
+let mksyn_lazy (e,m) =
   Expr_typed(mksyn_lazy_status m (Expr_app(mksyn_lid_get m Env.lazystatus_path "Delayed",mksyn_delay m e,m)),
              mksyn_lazy_ty m (Type_anon m),m)
 
-let mksyn_anon_constraint ty m = Type_anon_constraint(ty,m) 
+let mksyn_anon_constraint ty m = Type_anon_constraint(ty,m)
 
 let parse_error s = errorR(Error(s,curr_lex_range())) (* returning initiates error recovery *)
 let report_parse_warning s = warning(Error(s,curr_lex_range()))
@@ -108,46 +108,46 @@ let report_parse_error_at m s = errorR(Error(s,m))
 let report_parse_warning_at m s = warning(Error(s,m))
 
 (* OCaml generated parsers seem to create corrupted terms if parse error are raised when an "error" symbol is being shifted *)
-let raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m s = report_parse_error_at m s; raise Parsing.Parse_error 
+let raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m s = report_parse_error_at m s; raise Parsing.Parse_error
 
-let check_eof_error_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY res t = 
-  match t with 
+let check_eof_error_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY res t =
+  match t with
   | AT_ifdef_skip(_,m) -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m "end of file in #if section begun at or after here"
   | AT_string m ->  raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m "end of file in string begun at or before here"
   | AT_vstring m ->  raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m "end of file in verbatim string begun at or before here"
   | AT_comment (_,m) ->  raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m "end of file in comment begun at or before here"
   | AT_comment_string (_,m) -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m "end of file in string embedded in comment begun at or before here"
-  | AT_camlonly m -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m "end of file in IF-OCAML section begun at or before here" 
+  | AT_camlonly m -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m "end of file in IF-OCAML section begun at or before here"
   | AT_token -> res
 
-(* note: defns moved to ast.ml *)      
+(* note: defns moved to ast.ml *)
 let grabXML ()      = Ast.grabXML ()
 
-let mkClassMemberLocalBindings isStatic wholem attrs vis (_,isRec,isUse,declsPreAttrs) = 
-   let ignoredFreeAttrs,decls = declsPreAttrs attrs vis in 
+let mkClassMemberLocalBindings isStatic wholem attrs vis (_,isRec,isUse,declsPreAttrs) =
+   let ignoredFreeAttrs,decls = declsPreAttrs attrs vis in
    if nonNil ignoredFreeAttrs then warning(Error("attributes have been ignored in this construct",wholem));
    if isUse then warning(Error("'use' bindings are not permitted in implicit class constructors",wholem));
    ClassMemberDefn_let_bindings (decls,isStatic,isRec,wholem)
 
-let mkLocalBindings wholem (_,isRec,isUse,declsPreAttrs) body = 
-   let ignoredFreeAttrs,decls = declsPreAttrs [] None in 
+let mkLocalBindings wholem (_,isRec,isUse,declsPreAttrs) body =
+   let ignoredFreeAttrs,decls = declsPreAttrs [] None in
    if nonNil ignoredFreeAttrs then warning(Error("attributes have been ignored in this construct",wholem));
-   Expr_let (isRec,isUse,decls,body,wholem) 
+   Expr_let (isRec,isUse,decls,body,wholem)
 
-let mkDefnBindings wholem (_,isRec,isUse,declsPreAttrs) attrs vis attrsm = 
+let mkDefnBindings wholem (_,isRec,isUse,declsPreAttrs) attrs vis attrsm =
    if isUse then warning(Error("'use' bindings are treated as 'let' bindings in modules",wholem));
-   let freeAttrs,decls = declsPreAttrs attrs vis in 
-   let letDecls = [ Def_let (isRec,decls,wholem) ] in 
-   let attrDecls = if nonNil freeAttrs then [ Def_attributes (freeAttrs,attrsm) ] else [] in 
+   let freeAttrs,decls = declsPreAttrs attrs vis in
+   let letDecls = [ Def_let (isRec,decls,wholem) ] in
+   let attrDecls = if nonNil freeAttrs then [ Def_attributes (freeAttrs,attrsm) ] else [] in
    attrDecls @ letDecls
 
-let mkComprehensionBindings wholem (_,isRec,isUse,declsPreAttrs) rest = 
-   let ignoredFreeAttrs,decls = declsPreAttrs [] None in 
+let mkComprehensionBindings wholem (_,isRec,isUse,declsPreAttrs) rest =
+   let ignoredFreeAttrs,decls = declsPreAttrs [] None in
    if nonNil ignoredFreeAttrs then warning(Error("attributes have been ignored in this construct",wholem));
    if isRec then errorR(Error("recursive bindings are not permitted in comprehensions",wholem));
-   match decls with 
+   match decls with
    | [] -> error(Error("unexpected empty declarations",wholem))
-   | [Binding (vis,bindingKind,pseudo,mut,attrs,doc,memberInfo,pat,(BindingExpr(spatsL,rtyOpt,expr)),bindm)] -> 
+   | [Binding (vis,bindingKind,pseudo,mut,attrs,doc,memberInfo,pat,(BindingExpr(spatsL,rtyOpt,expr)),bindm)] ->
         if nonNil(attrs) && bindingKind = StandaloneExpression then error(Error("expressions may not have attributes",bindm));
         if isSome rtyOpt then warning(Error("this type attribute is currently ignored",bindm));
         if nonNil spatsL then error(Error("functions may not be defined in comprehensions",bindm));
@@ -161,10 +161,10 @@ let mkComprehensionBindings wholem (_,isRec,isUse,declsPreAttrs) rest =
 
 let id_of_pat m p = match p with Pat_as (Pat_wild _,id,false,_,_) -> id | _ -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m "A integer for loop must use a simple identifier"
 
-let checkForMultipleAugmentations m a1 a2 = 
+let checkForMultipleAugmentations m a1 a2 =
         if nonNil a1 && nonNil a2 then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m "at most one 'with' augmentation is permitted";
         a1 @ a2
-     
+
 %}
 %start implementationFile
 %start interaction
@@ -517,30 +517,30 @@ moduleSpec:
   _1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = specifications
     {    ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
       let m = (rhs2 3 4) in
-      (fun (path,_) -> 
-        let path2,_,xml,vis = _3 in 
-        let lid = path@path2 in 
+      (fun (path,_) ->
+        let path2,_,xml,vis = _3 in
+        let lid = path@path2 in
         NamedTopModuleSpec(ModuleSpec(lid,true, _4, xml,_1,vis,m)))  )}
 | _1 = specifications
-    {    ( let m = (rhs 1) in 
-      (fun (path,xml) -> 
-        match path with 
-        | [] -> AnonTopModuleSpec(_1, m)  
+    {    ( let m = (rhs 1) in
+      (fun (path,xml) ->
+        match path with
+        | [] -> AnonTopModuleSpec(_1, m)
         | _ -> AnonNamespaceFragmentSpec(path,false, _1, xml,[],m))  )}
 
 moduleImpl:
   _1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = exprOrDefinitions
     {    ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
-      let m = (rhs2 3 4) in 
-      (fun (path,_) -> 
-        let path2,isModule,xml,vis = _3 in 
-        let lid = path@path2 in 
+      let m = (rhs2 3 4) in
+      (fun (path,_) ->
+        let path2,isModule,xml,vis = _3 in
+        let lid = path@path2 in
         NamedTopModuleImpl(ModuleImpl(lid,isModule, _4, xml,_1,vis,m))) )}
 | _1 = exprOrDefinitions
-    {    ( let m = (rhs 1) in 
-      (fun (path,xml) -> 
-        match path with 
-        | [] -> AnonTopModuleImpl(_1,m)  
+    {    ( let m = (rhs 1) in
+      (fun (path,xml) ->
+        match path with
+        | [] -> AnonTopModuleImpl(_1,m)
         | _ -> AnonNamespaceFragmentImpl(path,false, _1, xml,[],m)) )}
 
 specifications:
@@ -592,7 +592,7 @@ moduleOrNamespaceDefn:
         mkDefnBindings (rhs 3) _3 _1 _2 (rhs 3)  )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = doBinding %prec decl_let
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
-        let letm = rhs 3 in 
+        let letm = rhs 3 in
         mkDefnBindings letm _3 _1 _2 (rhs 3) )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = TYPE _4 = tyconDefn _5 = tyconDefnList
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
@@ -605,12 +605,12 @@ moduleOrNamespaceDefn:
         [ Def_partial_tycon(_4,_5,rhs2 3 5) ] )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = exconDefn
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
-        let (ExconDefn(ExconCore(cas,a,b,c,d,d2),e,f)) = _3 in 
-        let ec = (ExconDefn(ExconCore(_1@cas,a,b,c,d,d2),e,f)) in 
+        let (ExconDefn(ExconCore(cas,a,b,c,d,d2),e,f)) = _3 in
+        let ec = (ExconDefn(ExconCore(_1@cas,a,b,c,d,d2),e,f)) in
         [ Def_exn(ec, rhs2 3 3) ] )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = opt_signature _5 = EQUALS _6 = namedModuleAbbrevBlock
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
-        let (path,isModule,xml,vis),mty,eqn = _3,_4,_6 in 
+        let (path,isModule,xml,vis),mty,eqn = _3,_4,_6 in
         if not isModule          then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) "namespaces must be declared at the head of a file";
         if isSome mty            then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) "a module abbreviation may not be given a constraint";
         if List.length path <> 1 then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) "a module abbreviation must be a simple name, not a path";
@@ -619,7 +619,7 @@ moduleOrNamespaceDefn:
         [ Def_module_abbrev(List.hd path,eqn,rhs2 3 6) ] )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = opt_signature _5 = EQUALS _6 = namedModuleDefnBlock
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
-        let attribs,(path,isModule,xml,vis),mty,def = _1,_3,_4,_6 in 
+        let attribs,(path,isModule,xml,vis),mty,def = _1,_3,_4,_6 in
         if not isModule          then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) "namespaces must be declared at the head of a file";
         if List.length path <> 1 then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) "a module definition must be a simple name, not a path";
         let info = ComponentInfo(attribs,TMK_Module,[],[],path,xml,false,vis,rhs 3) in
@@ -639,7 +639,7 @@ namedModuleDefnBlock:
 | _1 = OBLOCKBEGIN _2 = moduleOrNamespaceDefns _3 = OBLOCKEND
     {       ( _2 )}
 | _1 = OBLOCKBEGIN _2 = moduleOrNamespaceDefns _3 = recover
-    {       ( report_parse_error_at (rhs 1) "unclosed block in #light syntax";   
+    {       ( report_parse_error_at (rhs 1) "unclosed block in #light syntax";
          _2 )}
 | _1 = OBLOCKBEGIN _2 = error _3 = OBLOCKEND
     {       ( [] )}
@@ -650,7 +650,7 @@ wrappedNamedModuleDefn:
   _1 = structOrBegin _2 = exprOrDefinitions _3 = END
     {       ( _2 )}
 | _1 = structOrBegin _2 = exprOrDefinitions _3 = recover
-    {       ( report_parse_error_at (rhs 1) "unmatched 'begin' or 'struct'";  
+    {       ( report_parse_error_at (rhs 1) "unmatched 'begin' or 'struct'";
          _2 )}
 | _1 = structOrBegin _2 = error _3 = END
     {       ( [] )}
@@ -674,14 +674,14 @@ moduleOrNamespaceSpfn:
     {      ( _1 )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = colonOrEquals _5 = namedModuleAbbrevBlock
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
-        let path,isModule,xml,vis = _3 in 
+        let path,isModule,xml,vis = _3 in
         if not isModule          then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) "namespaces must be declared at the head of a file";
         if List.length path <> 1 then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) "a module abbreviation must be a simple name, not a path";
         if List.length _1 <> 0   then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 1) "ignorning attributes on module abbreviation";
         if isSome(vis)           then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 1) "ignorning visibility attribute on module abbreviation. Module abbreviations are always private";
         Spec_module_abbrev(List.hd path,_5,rhs2 3 5) )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = moduleIntro _4 = colonOrEquals _5 = moduleSpecBlock
-    {      ( let path,isModule,xml,vis = _3 in 
+    {      ( let path,isModule,xml,vis = _3 in
         if not isModule          then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) "namespaces must be declared at the head of a file";
         if List.length path <> 1 then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) "a module definition must be a simple name, not a path";
         let info = ComponentInfo(_1,TMK_Module,[],[],path,xml,false,vis,rhs 3) in
@@ -689,16 +689,16 @@ moduleOrNamespaceSpfn:
         Spec_module(info,_5,rhs2 3 5) )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = tyconSpfns
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
-        let (TyconSpfn(ComponentInfo(cas,k,a,cs,b,c,d,d2,d3),e,f,g)),rest = 
+        let (TyconSpfn(ComponentInfo(cas,k,a,cs,b,c,d,d2,d3),e,f,g)),rest =
            match _3 with
            | [] -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) "unexpected empty type definition list"
-           | h::t -> h,t in 
-        let tc = (TyconSpfn(ComponentInfo(_1@cas,k,a,cs,b,c,d,d2,d3),e,f,g))in 
+           | h::t -> h,t in
+        let tc = (TyconSpfn(ComponentInfo(_1@cas,k,a,cs,b,c,d,d2,d3),e,f,g))in
         Spec_tycon (tc::rest,rhs 3) )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = exconSpfn
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
-        let (ExconSpfn(ExconCore(cas,a,b,c,d,d2),e,f)) = _3 in 
-        let ec = (ExconSpfn(ExconCore(_1@cas,a,b,c,d,d2),e,f)) in 
+        let (ExconSpfn(ExconCore(cas,a,b,c,d,d2),e,f)) = _3 in
+        let ec = (ExconSpfn(ExconCore(_1@cas,a,b,c,d,d2),e,f)) in
         Spec_exn(ec, rhs 3) )}
 | _1 = OPEN _2 = path
     {              ( Spec_open (_2, rhs2 1 2) )}
@@ -706,10 +706,10 @@ moduleOrNamespaceSpfn:
 valSpfn:
   _1 = opt_attributes _2 = opt_decl_visibility _3 = VAL _4 = opt_attributes _5 = opt_inline _6 = opt_mutable _7 = opt_access _8 = nameop _9 = grab_doc _10 = opt_explicitValTyparDecls _11 = COLON _12 = topTypeWithTypeConstraints _13 = opt_literalValue
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
-        (let attr1,attr2,inlineFlag,mutableFlag,vis2,id,doc,explicitValTyparDecls,(ty,arity),konst = (_1),(_4),(_5),(_6),(_7),(_8),(_9),(_10),(_12),(_13) in 
+        (let attr1,attr2,inlineFlag,mutableFlag,vis2,id,doc,explicitValTyparDecls,(ty,arity),konst = (_1),(_4),(_5),(_6),(_7),(_8),(_9),(_10),(_12),(_13) in
         if attr2 <> [] then warning(Error("This syntactic location for attributes is deprecated. Attributes should be placed before 'val'",rhs 4));
-        let m = rhs2 3 12 in 
-        let valSpfn = ValSpfn((attr1@attr2),id,explicitValTyparDecls,ty,arity,inlineFlag,mutableFlag,doc, vis2,konst,m) in 
+        let m = rhs2 3 12 in
+        let valSpfn = ValSpfn((attr1@attr2),id,explicitValTyparDecls,ty,arity,inlineFlag,mutableFlag,doc, vis2,konst,m) in
         Spec_val(valSpfn,m))
       )}
 
@@ -751,10 +751,10 @@ attributeListElements:
 
 attribute:
   _1 = path _2 = opt_HIGH_PRECEDENCE_APP _3 = opt_argExprAfterType
-    {     ( let arg = match _3 with None -> mksyn_unit (lhs()) | Some e -> e in 
+    {     ( let arg = match _3 with None -> mksyn_unit (lhs()) | Some e -> e in
        Attr(_1,arg,None,lhs()) )}
 | _1 = attributeTarget _2 = COLON _3 = path _4 = opt_HIGH_PRECEDENCE_APP _5 = opt_argExprAfterType
-    {     ( let arg = match _5 with None -> mksyn_unit (lhs()) | Some e -> e in 
+    {     ( let arg = match _5 with None -> mksyn_unit (lhs()) | Some e -> e in
        Attr(_3,arg,Some _1,lhs()) )}
 
 attributeTarget:
@@ -790,28 +790,28 @@ tyconSpfn:
 
 tyconSpfnRhsBlock:
   _1 = OBLOCKBEGIN _2 = tyconSpfnRhs _3 = opt_OBLOCKSEP _4 = classSpfnMembers _5 = opt_classSpfn _6 = OBLOCKEND _7 = opt_classSpfn
-    {     ( let m = lhs() in 
-       (fun nameInfo -> 
+    {     ( let m = lhs() in
+       (fun nameInfo ->
            _2 nameInfo (checkForMultipleAugmentations m (_4 @ _5) _7)) )}
 | _1 = tyconSpfnRhs _2 = opt_classSpfn
-    {     ( let m = lhs() in 
-       (fun nameInfo -> 
+    {     ( let m = lhs() in
+       (fun nameInfo ->
            _1 nameInfo _2) )}
 
 tyconSpfnRhs:
   _1 = tyconDefnOrSpfnSimpleRepr
-    {     ( let m = lhs() in 
-       (fun nameInfo augmentation -> 
+    {     ( let m = lhs() in
+       (fun nameInfo augmentation ->
            TyconSpfn(nameInfo,TyconSpfnRepr_simple (_1,m),augmentation,m)) )}
 | _1 = tyconClassSpfn
-    {     ( let m = lhs() in 
-       (fun nameInfo augmentation -> 
+    {     ( let m = lhs() in
+       (fun nameInfo augmentation ->
            TyconSpfn(nameInfo,TyconSpfnRepr_class (fst _1,snd _1,m),augmentation,m)) )}
 | _1 = DELEGATE _2 = OF _3 = topType
-    {     ( let m = lhs() in 
+    {     ( let m = lhs() in
        let ty,arity = _3 in
-       let invoke = ClassMemberSpfn_binding(ValSpfn([],mksyn_id m "Invoke",inferredTyparDecls,ty,arity,false,false,emptyXMLDoc,None,None,m),abstractFlags None MemberKindMember,m) in 
-       (fun nameInfo augmentation -> 
+       let invoke = ClassMemberSpfn_binding(ValSpfn([],mksyn_id m "Invoke",inferredTyparDecls,ty,arity,false,false,emptyXMLDoc,None,None,m),abstractFlags None MemberKindMember,m) in
+       (fun nameInfo augmentation ->
            if nonNil augmentation then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m "augmentations are not permitted on delegate type definitions";
            TyconSpfn(nameInfo,TyconSpfnRepr_class (TyconDelegate (ty,arity),[invoke],m),[],m)) )}
 
@@ -877,14 +877,14 @@ classMemberSpfnGetSet:
 
 classMemberSpfnGetSetElements:
   _1 = identop
-    {    ( (let (id:ident) = _1 in 
-       if id.idText = "get" then MemberKindPropertyGet 
-       else if id.idText = "set" then MemberKindPropertySet 
+    {    ( (let (id:ident) = _1 in
+       if id.idText = "get" then MemberKindPropertyGet
+       else if id.idText = "set" then MemberKindPropertySet
        else raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 1) "'get', 'set' or 'get,set' required") )}
 | _1 = identop _2 = COMMA _3 = identop
-    {    ( let (id:ident) = _1 in 
-      if not ((id.idText = "get" && _3.idText = "set") or 
-              (id.idText = "set" && _3.idText = "get")) then 
+    {    ( let (id:ident) = _1 in
+      if not ((id.idText = "get" && _3.idText = "set") or
+              (id.idText = "set" && _3.idText = "get")) then
          raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs2 1 3) "'get', 'set' or 'get,set' required";
       MemberKindPropertyGetSet )}
 
@@ -892,8 +892,8 @@ classMemberSpfn:
   _1 = opt_attributes _2 = opt_decl_visibility _3 = memberSpecFlags _4 = opt_inline _5 = grab_doc _6 = opt_access _7 = nameop _8 = opt_explicitValTyparDecls _9 = COLON _10 = topTypeWithTypeConstraints _11 = classMemberSpfnGetSet _12 = opt_literalValue
     {     ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
        let inlineFlag,doc,vis2,id,explicitValTyparDecls,(ty,arity),optLiteralValue = _4,_5,_6,_7,_8,_10,_12 in
-       let m = rhs2 3 11 in 
-       let valSpfn = ValSpfn(_1,id,explicitValTyparDecls,ty,arity, inlineFlag,false,doc, vis2,optLiteralValue,m) in 
+       let m = rhs2 3 11 in
+       let valSpfn = ValSpfn(_1,id,explicitValTyparDecls,ty,arity, inlineFlag,false,doc, vis2,optLiteralValue,m) in
        ClassMemberSpfn_binding(valSpfn, _3 (computeOverloadQualifier _1) (_11 arity),m) )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = interfaceMember _4 = appType
     {     ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
@@ -911,7 +911,7 @@ classMemberSpfn:
     {     ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
        ClassMemberSpfn_tycon(_5,rhs2 3 5) )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = NEW _4 = grab_doc _5 = COLON _6 = topTypeWithTypeConstraints
-    {     ( let vis = _2 in 
+    {     ( let vis = _2 in
        let doc = _4 in
        let ty,arity = _6 in
        let m = rhs2 3 6 in
@@ -921,9 +921,9 @@ classMemberSpfn:
 
 componentInfo:
   _1 = opt_attributes _2 = grab_doc _3 = tyconNameAndTyparDecls _4 = opt_typeConstraints
-    {     ( startName(rhs 2); 
-       let a,b,c,tpcs1,vis = _3 in 
-       let tpcs2 = _4 in 
+    {     ( startName(rhs 2);
+       let a,b,c,tpcs1,vis = _3 in
+       let tpcs2 = _4 in
        ComponentInfo(_1,TMK_Tycon,a,(tpcs1 @ tpcs2),b,_2,c,vis,rhs2 3 3)  )}
 
 tyconDefnList:
@@ -939,7 +939,7 @@ tyconDefn:
 | _1 = componentInfo _2 = opt_HIGH_PRECEDENCE_APP _3 = simplePatterns _4 = opt_as _5 = EQUALS _6 = tyconDefnRhsBlock
     {     ( let spats, az,(tcDefRepr,members) = _3,_4,_6 in
        let memberCtorPattern = ClassMemberDefn_implicit_ctor (spats,az,rhs 1) in
-       let tcDefRepr = 
+       let tcDefRepr =
          match tcDefRepr with
          | TyconDefnRepr_class (k,cspec,m) -> TyconDefnRepr_class (k,memberCtorPattern::cspec,m)
          | _ -> report_parse_error_at (rhs 1) "Only class types may take value arguments"; tcDefRepr
@@ -948,10 +948,10 @@ tyconDefn:
 
 tyconDefnRhsBlock:
   _1 = OBLOCKBEGIN _2 = tyconDefnRhs _3 = opt_OBLOCKSEP _4 = classDefnMembers _5 = opt_classDefn _6 = OBLOCKEND _7 = opt_classDefn
-    {     ( let m = lhs() in 
+    {     ( let m = lhs() in
        _2 (checkForMultipleAugmentations m (_4 @ _5) _7) )}
 | _1 = tyconDefnRhs _2 = opt_classDefn
-    {     ( let m = lhs() in 
+    {     ( let m = lhs() in
        _1 _2 )}
 
 tyconDefnRhs:
@@ -960,11 +960,11 @@ tyconDefnRhs:
 | _1 = tyconClassDefn
     {     ( let m = lhs() in (fun augmentation -> TyconDefnRepr_class (fst _1,snd _1,m),augmentation) )}
 | _1 = DELEGATE _2 = OF _3 = topType
-    {     ( let m = lhs() in 
+    {     ( let m = lhs() in
        let ty,arity = _3 in
-       (fun augmentation -> 
-           let valSpfn = ValSpfn([],mksyn_id m "Invoke",inferredTyparDecls,ty,arity,false,false,emptyXMLDoc,None,None,m) in 
-           let invoke = ClassMemberDefn_slotsig(valSpfn,abstractFlags None MemberKindMember,m) in 
+       (fun augmentation ->
+           let valSpfn = ValSpfn([],mksyn_id m "Invoke",inferredTyparDecls,ty,arity,false,false,emptyXMLDoc,None,None,m) in
+           let invoke = ClassMemberDefn_slotsig(valSpfn,abstractFlags None MemberKindMember,m) in
            if nonNil augmentation then raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY m "augmentations are not permitted on delegate type definitions";
            TyconDefnRepr_class (TyconDelegate (ty,arity),[invoke],m),[]) )}
 
@@ -1018,39 +1018,39 @@ classDefnMemberGetSetElement:
 
 memberCore:
   _1 = opt_inline _2 = bindingPattern _3 = opt_topReturnTypeWithTypeConstraints _4 = EQUALS _5 = typedSeqExprBlock
-    {     (  let wholem = rhs2 2 5 in 
-        let bindm = rhs 2 in 
-        let rhsm = rhs 5 in 
-        let mpat = rhs 2 in 
-        let optReturnType = _3 in 
-        let bindingBuilder = _2 in 
-        (fun vis memflags attrs -> 
+    {     (  let wholem = rhs2 2 5 in
+        let bindm = rhs 2 in
+        let rhsm = rhs 5 in
+        let mpat = rhs 2 in
+        let optReturnType = _3 in
+        let bindingBuilder = _2 in
+        (fun vis memflags attrs ->
              [ ClassMemberDefn_member_binding (bindingBuilder vis _1 false bindm wholem optReturnType _5 rhsm [] attrs (Some (memflags (computeOverloadQualifier attrs) MemberKindMember)),bindm) ]) )}
 | _1 = opt_inline _2 = bindingPattern _3 = opt_topReturnTypeWithTypeConstraints _4 = classDefnMemberGetSet
-    {     ( let wholem = rhs2 2 4 in 
-       let bindm = rhs 2 in 
-       let propertyNameBindingBuilder = _2 in 
-       let optPropertyType = _3 in 
+    {     ( let wholem = rhs2 2 4 in
+       let bindm = rhs 2 in
+       let propertyNameBindingBuilder = _2 in
+       let optPropertyType = _3 in
        let mutableFlag = false in
-       (fun vis memflags attrs -> 
+       (fun vis memflags attrs ->
              _4 |> List.map (fun (optInline,bindingBuilder,optReturnType,expr,exprm) ->
-                   let optInline = _1 || optInline in 
-                   let overloadQualifier =  (computeOverloadQualifier attrs) in 
-                   
+                   let optInline = _1 || optInline in
+                   let overloadQualifier =  (computeOverloadQualifier attrs) in
+
                    let binding = bindingBuilder vis optInline mutableFlag bindm wholem optReturnType expr exprm [] attrs (Some (memflags overloadQualifier MemberKindMember)) in
-                   let (Binding (vis,_,pseudo,_,attrs,doc,memberInfo,pv,_,bindm)) = binding in 
-                   let memkind = 
-                         let getset = 
-                               let rec go p = 
-                                   match p with 
+                   let (Binding (vis,_,pseudo,_,attrs,doc,memberInfo,pv,_,bindm)) = binding in
+                   let memkind =
+                         let getset =
+                               let rec go p =
+                                   match p with
                                    | Pat_lid ([id],_,_,_,_) ->  id.idText
                                    | Pat_as (_,nm,_,_,_) ->  nm.idText
                                    | Pat_typed (p,_,_) ->  go p
                                    | Pat_attrib (p,_,_) ->  go p
                                   | _ -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY bindm "invalid declaration syntax"  in
-                               go pv in 
-                         if getset = "get" then MemberKindPropertyGet 
-                         else if getset = "set" then MemberKindPropertySet 
+                               go pv in
+                         if getset = "get" then MemberKindPropertyGet
+                         else if getset = "set" then MemberKindPropertySet
                          else raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY bindm "get and/or set required" in
 
 
@@ -1058,42 +1058,42 @@ memberCore:
                    (* we should apply it to the last argument, but at this point we've already pushed the patterns that *)
                    (* make up the arguments onto the RHS. So we just always give a warning. *)
 
-                   begin match optPropertyType with 
+                   begin match optPropertyType with
                    | Some _ -> warning(Error("type annotations on property getters and setters should be given after the 'get()' or 'set(v)', e.g. 'with get() : string = ...'",bindm))
                    | None -> ()
                    end;
-                   
-                   let optReturnType = 
-                       match (memkind, optReturnType) with 
+
+                   let optReturnType =
+                       match (memkind, optReturnType) with
                        | MemberKindPropertySet,_ -> optReturnType
                        | _, None -> optPropertyType
-                       | _ -> optReturnType in 
+                       | _ -> optReturnType in
 
                    (* REDO with the correct member kind *)
-                   let binding = bindingBuilder vis pseudo mutableFlag bindm wholem optReturnType expr exprm [] attrs (Some (memflags overloadQualifier memkind)) in 
-                   let (Binding (vis,_,pseudo,_,attrs,doc,memberInfo,pv,rhs_after_pats,bindm)) = binding in 
-                
-                   let arity = 
-                       match memberInfo with 
-                       | None -> 
-                           raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY bindm "unexpected empty memberInfo" 
-                       | Some (_,x,_) -> x in  
-                   let meminfo = Some (memflags overloadQualifier memkind, arity,None) in 
+                   let binding = bindingBuilder vis pseudo mutableFlag bindm wholem optReturnType expr exprm [] attrs (Some (memflags overloadQualifier memkind)) in
+                   let (Binding (vis,_,pseudo,_,attrs,doc,memberInfo,pv,rhs_after_pats,bindm)) = binding in
+
+                   let arity =
+                       match memberInfo with
+                       | None ->
+                           raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY bindm "unexpected empty memberInfo"
+                       | Some (_,x,_) -> x in
+                   let meminfo = Some (memflags overloadQualifier memkind, arity,None) in
 
                    (* Create the binding from the first lambda pattern in order to extract out the pattern of the *)
                    (* 'this' variable and hack it into the pattern for the get/set binding, replacing the get/set part *)
                    (* A little gross. *)
-                   let pv',doc' = 
+                   let pv',doc' =
                        let binding2 = propertyNameBindingBuilder vis optInline mutableFlag bindm bindm optReturnType expr exprm [] attrs (Some (memflags overloadQualifier MemberKindMember)) in
-                       let (Binding (_,_,_,_,_,doc2,_,pv2,_,_)) = binding2 in 
-                   
-                       let lid2 = 
-                           match pv2 with 
+                       let (Binding (_,_,_,_,_,doc2,_,pv2,_,_)) = binding2 in
+
+                       let lid2 =
+                           match pv2 with
                            | Pat_lid (lid,None,[],_,m) ->  lid
                            | p -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY bindm "invalid declaration syntax"  in
-                   
-                       let rec go p = 
-                           match p with 
+
+                       let rec go p =
+                           match p with
                            | Pat_lid ([id],tyargs,args,vis,m) ->  Pat_lid (lid2,tyargs,args,vis,m)
                            | Pat_as (p2,nm,_,vis,m) ->  Pat_lid (lid2,None,[],vis,m)
                            | Pat_typed (p,ty,m) ->  Pat_typed(go p,ty,m)
@@ -1120,7 +1120,7 @@ classDefnMember:
        [mkClassMemberLocalBindings false (rhs2 3 3) _1 _2 _3] )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = doBinding
     {      ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
-        let wholem = rhs 3 in 
+        let wholem = rhs 3 in
         [ mkClassMemberLocalBindings false (rhs 3 ) _1 _2 _3 ] )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = STATIC _4 = defnBindings
     {     ( if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
@@ -1156,10 +1156,10 @@ classDefnMember:
     {     (  if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
         [ ClassMemberDefn_field(_5 _1 true,rhs2 3 5) ] )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = NEW _4 = atomicPattern _5 = opt_as _6 = grab_doc _7 = EQUALS _8 = typedSeqExprBlock _9 = opt_ODECLEND
-    {     (  let m = rhs2 3 8 in 
+    {     (  let m = rhs2 3 8 in
         let expr = _8 in
-        let info = Some (ctorMemFlags (computeOverloadQualifier _1), TopValSynData([SynArgInfo.argdata_of_pat _4],SynArgInfo.unnamedRetVal), _5) in 
-        let vis = _2 in 
+        let info = Some (ctorMemFlags (computeOverloadQualifier _1), TopValSynData([SynArgInfo.argdata_of_pat _4],SynArgInfo.unnamedRetVal), _5) in
+        let vis = _2 in
         [ ClassMemberDefn_member_binding(Binding (None,NormalBinding,false,false,_1,_6,info, Pat_lid ([mksyn_id (rhs 3) "new"],Some noInferredTypars,[_4],vis,rhs 3),BindingExpr([],None,expr),m),m) ] )}
 | _1 = opt_attributes _2 = opt_decl_visibility _3 = STATIC _4 = TYPE _5 = tyconDefn
     {     (  if isSome _2 then errorR(Error("visibility declarations should come immediately prior to the identifier naming a construct",rhs 2));
@@ -1253,15 +1253,15 @@ tyconDefnOrSpfnSimpleRepr:
   _1 = typ
     {     ( TyconCore_abbrev (_1, lhs()) )}
 | _1 = unionRepr
-    {     ( if List.exists (function Choice1 _ -> true | _ -> false) _1 then 
+    {     ( if List.exists (function Choice1 _ -> true | _ -> false) _1 then
            TyconCore_enum (chooseList (function Choice1 data -> Some(data) | Choice2(UnionConstr(_,_,_,_,_,m)) -> errorR(Error("All enum fields must be given values",m)); None) _1,lhs())
-       else 
+       else
            TyconCore_funion (chooseList (function Choice2 data -> Some(data) | Choice1 _ -> failwith "huh?") _1,lhs()) )}
 | _1 = braceFieldDeclList
     {     ( TyconCore_recd (_1,lhs()) )}
 | _1 = LPAREN _2 = inlineAssemblyTyconRepr _3 = RPAREN
     {     (  libraryOnly (lhs());
-        matchPair 1 3;  
+        matchPair 1 3;
         _2 )}
 
 braceFieldDeclList:
@@ -1275,7 +1275,7 @@ braceFieldDeclList:
 inlineAssemblyTyconRepr:
   _1 = HASH _2 = STRING _3 = opt_HASH
     {     ( libraryOnly (lhs());
-       let lhsm = lhs() in 
+       let lhsm = lhs() in
        TyconCore_asm (parse_il_typ _2 (rhs 2),lhsm) )}
 
 classOrInterfaceOrStruct:
@@ -1298,8 +1298,8 @@ tyconNameAndTyparDecls:
 | _1 = opt_access _2 = prefixTyparDecls _3 = path
     {      (startName(rhs 3);  _2, _3,false,[],_1 )}
 | _1 = opt_access _2 = path _3 = postfixTyparDecls
-    {      ( startName(rhs 2); 
-        let tps,tpcs = _3 in 
+    {      ( startName(rhs 2);
+        let tps,tpcs = _3 in
         tps, _2,true,tpcs,_1 )}
 
 prefixTyparDecls:
@@ -1336,7 +1336,7 @@ explicitValTyparDeclsCore:
 
 explicitValTyparDecls:
   _1 = opt_HIGH_PRECEDENCE_TYAPP _2 = LESS _3 = explicitValTyparDeclsCore _4 = opt_typeConstraints _5 = GREATER
-    {      ( let tps,flex = _3 in 
+    {      ( let tps,flex = _3 in
          ValTyparDecls(tps,flex,_4) )}
 
 opt_explicitValTyparDecls:
@@ -1371,7 +1371,7 @@ typeConstraint:
 | _1 = typar _2 = COLON _3 = STRUCT
     {      ( WhereTyparIsValueType(_1,lhs()) )}
 | _1 = typar _2 = COLON _3 = IDENT _4 = STRUCT
-    {      ( if _3 <> "not" then report_parse_error_at (rhs 3) ("unexpected identifier: '"^ _3 ^"'");  
+    {      ( if _3 <> "not" then report_parse_error_at (rhs 3) ("unexpected identifier: '"^ _3 ^"'");
         WhereTyparIsReferenceType(_1,lhs()) )}
 | _1 = typar _2 = COLON _3 = NULL
     {      ( WhereTyparSupportsNull(_1,lhs()) )}
@@ -1382,7 +1382,7 @@ typeConstraint:
 | _1 = typar _2 = COLON _3 = DELEGATE _4 = typeArgs
     {      ( WhereTyparIsDelegate(_1,_4,lhs()) )}
 | _1 = typar _2 = COLON _3 = IDENT _4 = typeArgs
-    {      ( match _3 with 
+    {      ( match _3 with
         | "enum" -> WhereTyparIsEnum(_1,_4,lhs())
         | nm -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 3) ("unexpected identifier: '"^ nm ^"'") )}
 
@@ -1410,7 +1410,7 @@ attrUnionCaseDecl:
         startName(rhs 1); Choice2 (UnionConstr ( _1, _4,ConstrFullType _6,_3,_2,rhs2 4 6)) )}
 | _1 = opt_attributes _2 = opt_access _3 = grab_doc _4 = unionCaseName _5 = EQUALS _6 = constant _7 = opt_OBLOCKSEP
     {      ( if isSome _2 then errorR(Error("visibility declarations are not permitted on enumeration fields",rhs 2));
-        startName(rhs 1); 
+        startName(rhs 1);
         Choice1 (EnumConstr ( _1, _4,_6,_3,rhs2 4 6)) )}
 
 unionCaseName:
@@ -1453,8 +1453,8 @@ recdFieldDecl:
 
 fieldDecl:
   _1 = opt_mutable _2 = opt_access _3 = ident _4 = grab_doc _5 = COLON _6 = polyType
-    {     ( startName(rhs 3); 
-       let rhsm = rhs2 3 6 in 
+    {     ( startName(rhs 3);
+       let rhsm = rhs2 3 6 in
        (fun attrs stat -> Field(attrs, stat,Some _3,_6,_1,_4,_2,rhsm)) )}
 
 exconDefn:
@@ -1487,8 +1487,8 @@ openDecl:
 
 defnBindings:
   _1 = LET _2 = opt_rec _3 = localBindings
-    {      ( let letm = rhs 1 in 
-        let isUse,isRec,bindingsPreAttrs = _1,_2,_3 in 
+    {      ( let letm = rhs 1 in
+        let isUse,isRec,bindingsPreAttrs = _1,_2,_3 in
         (* the first binding swallow any attributes prior to the 'let' *)
         rhs 1,isRec,isUse,(fun attrs vis -> [],bindingsPreAttrs attrs vis) )}
 | _1 = cPrototype
@@ -1496,8 +1496,8 @@ defnBindings:
 
 doBinding:
   _1 = DO _2 = typedSeqExprBlock
-    {      ( let letm = rhs 1 in 
-        let wholem = rhs2 1 2 in 
+    {      ( let letm = rhs 1 in
+        let wholem = rhs2 1 2 in
         (* any attributes prior to the 'let' are left free, e.g. become top-level attributes *)
         (* associated with the module, 'main' function or assembly depending on their target *)
         letm,false,false,(fun attrs vis -> attrs,[mk_Do (true,_2,wholem)]) )}
@@ -1505,16 +1505,16 @@ doBinding:
 hardwhiteLetBindings:
   _1 = OLET _2 = opt_rec _3 = localBindings _4 = hardwhiteDefnBindingsTerminator
     {      ( _4 (rhs 1);  (* report unterminated error *)
-        let letm = rhs 1 in 
-        let isUse,isRec,bindingsPreAttrs = _1,_2,_3 in 
+        let letm = rhs 1 in
+        let isUse,isRec,bindingsPreAttrs = _1,_2,_3 in
         (* the first binding swallow any attributes prior to the 'let' *)
         letm,isRec,isUse,(fun attrs vis -> [],bindingsPreAttrs attrs vis) )}
 
 hardwhiteDoBinding:
   _1 = ODO _2 = typedSeqExprBlock _3 = hardwhiteDefnBindingsTerminator
     {      ( _3 (rhs 1);  (* report unterminated error *)
-        let letm = rhs 1 in 
-        let wholem = rhs2 1 2 in 
+        let letm = rhs 1 in
+        let wholem = rhs2 1 2 in
         (* any attributes prior to the 'let' are left free, e.g. become top-level attributes *)
         (* associated with the module, 'main' function or assembly depending on their target *)
         letm,false,false,(fun attrs vis -> attrs,[mk_Do (true,_2,wholem)]) )}
@@ -1533,12 +1533,12 @@ hardwhiteDefnBindingsTerminator:
 
 cPrototype:
   _1 = EXTERN _2 = cRetType _3 = opt_access _4 = ident _5 = opt_HIGH_PRECEDENCE_APP _6 = LPAREN _7 = cArgs _8 = RPAREN
-    {      ( let rty,vis,nm,args  = _2,_3,_4,_7 in 
-        let nmm = rhs 4 in 
-        let argsm = rhs 7 in 
+    {      ( let rty,vis,nm,args  = _2,_3,_4,_7 in
+        let nmm = rhs 4 in
+        let argsm = rhs 7 in
         let bindm = lhs() in
         let wholem = lhs() in
-        let rhsm = lhs() in 
+        let rhsm = lhs() in
         let rhsexpr = Expr_app(Expr_lid_get(false,[ident("failwith",rhsm)],rhsm),Expr_const(Const_string(Bytes.string_as_unicode_bytes "extern was not given a DllImport attribute",rhsm),rhsm),rhsm) in
         (fun attrs vis -> [], [mksyn_binding (grabXML(),Pat_lid ([nm],Some(noInferredTypars),[Pat_tuple(args,argsm)],vis,nmm)) vis false false bindm wholem (Some(rty)) rhsexpr rhsm [] attrs None]) )}
 
@@ -1582,9 +1582,9 @@ cRetType:
 
 localBindings:
   _1 = attr_localBinding _2 = more_localBindings
-    {      ( (fun attrs vis -> 
-           match _1 with 
-           | Some x -> (x attrs vis None true ::  _2) 
+    {      ( (fun attrs vis ->
+           match _1 with
+           | Some x -> (x attrs vis None true ::  _2)
            | None -> _2) )}
 
 more_localBindings:
@@ -1595,33 +1595,33 @@ more_localBindings:
 
 attr_localBinding:
   _1 = DO _2 = typedSeqExprBlock
-    {      ( let m = rhs2 1 2 in 
-        Some(fun _ _ _ isFirst -> 
+    {      ( let m = rhs2 1 2 in
+        Some(fun _ _ _ isFirst ->
           if isFirst then deprecated "Consider using 'let _ = expr in expr' or simply 'expr; expr' instead" m;
           mk_Do (true,_2,m)) )}
 | _1 = opt_attributes _2 = localBinding
-    {      ( Some(fun attrs vis memberInfo isFirst -> 
+    {      ( Some(fun attrs vis memberInfo isFirst ->
           _2 (attrs@_1) vis memberInfo) )}
 | _1 = error
     {      ( None )}
 
 localBinding:
   _1 = opt_inline _2 = opt_mutable _3 = bindingPattern _4 = opt_topReturnTypeWithTypeConstraints _5 = EQUALS _6 = typedExprWithStaticOptimizationsBlock
-    {      ( let bindm = rhs 3 in 
-        let wholem = rhs 6 in 
+    {      ( let bindm = rhs 3 in
+        let wholem = rhs 6 in
         let expr,opts = _6 in
-        let rhsm = rhs 6 in 
-        let optReturnType = _4 in 
-        let bindingBuilder = _3 in 
-        (fun attrs vis memberInfo -> 
+        let rhsm = rhs 6 in
+        let optReturnType = _4 in
+        let bindingBuilder = _3 in
+        (fun attrs vis memberInfo ->
             bindingBuilder vis _1 _2 bindm wholem optReturnType expr rhsm opts attrs memberInfo) )}
 | _1 = opt_inline _2 = opt_mutable _3 = bindingPattern _4 = opt_topReturnTypeWithTypeConstraints _5 = EQUALS _6 = error
-    {      ( let bindm = rhs 3 in 
-        let wholem = rhs2 3 5 in 
+    {      ( let bindm = rhs 3 in
+        let wholem = rhs2 3 5 in
         let rhsm = rhs 5 in
-        let optReturnType = _4 in 
-        let bindingBuilder = _3 in 
-        (fun attrs vis memberInfo -> 
+        let optReturnType = _4 in
+        let bindingBuilder = _3 in
+        (fun attrs vis memberInfo ->
             bindingBuilder vis _1 _2 bindm wholem optReturnType (arbExpr()) rhsm [] attrs memberInfo)  )}
 
 typedExprWithStaticOptimizationsBlock:
@@ -1702,7 +1702,7 @@ simplePattern:
 | _1 = QMARK _2 = ident
     {      ( startName(rhs 2); SPat_as (_2,false,true,rhs 2) )}
 | _1 = simplePattern _2 = COLON _3 = typeWithTypeConstraints
-    {      ( let lhsm = lhs() in 
+    {      ( let lhsm = lhs() in
         SPat_typed(_1,_3,lhsm) )}
 | _1 = attributes _2 = simplePattern %prec paren_pat_attribs
     {      ( let lhsm = lhs()  in
@@ -1789,16 +1789,16 @@ atomicPattern:
 | _1 = MINUS _2 = INT32
     {                ( Pat_const (Const_int32 (Int32.neg _2),lhs()) )}
 | _1 = ADJACENT_PREFIX_PLUS_MINUS_OP _2 = INT32
-    {      ( match _1 with 
-        | "-" -> Pat_const (Const_int32 (Int32.neg _2),lhs()) 
-        | "+" -> Pat_const (Const_int32 _2,lhs()) 
+    {      ( match _1 with
+        | "-" -> Pat_const (Const_int32 (Int32.neg _2),lhs())
+        | "+" -> Pat_const (Const_int32 _2,lhs())
         | _ -> report_parse_error_at (rhs 1) "syntax error";
                Pat_const (Const_int32 _2,lhs()) )}
 | _1 = QMARK _2 = ident
     {                ( Pat_opt_var(_2,lhs()) )}
 | _1 = atomicPatternLongIdent %prec prec_atompat_pathop
-    {      ( let vis,lid = _1 in 
-        if List.length lid > 1 or (let c= String.get (List.hd lid).idText 0 in Char.uppercase c = c)  
+    {      ( let vis,lid = _1 in
+        if List.length lid > 1 or (let c= String.get (List.hd lid).idText 0 in Char.uppercase c = c)
         then mksyn_pat_maybe_var lid vis (lhs())
         else mksyn_pat_var vis (List.hd lid) )}
 | _1 = constant
@@ -1834,7 +1834,7 @@ parenPattern:
 | _1 = conjParenPatternElements
     {      ( Pat_conjs(List.rev _1,rhs2 1 3) )}
 | _1 = parenPattern _2 = COLON _3 = typeWithTypeConstraints %prec paren_pat_colon
-    {      ( let lhsm = lhs() in 
+    {      ( let lhsm = lhs() in
         Pat_typed(_1,_3,lhsm) )}
 | _1 = attributes _2 = parenPattern %prec paren_pat_attribs
     {      ( let lhsm = lhs()  in
@@ -1842,7 +1842,7 @@ parenPattern:
 | _1 = parenPattern _2 = COLON_COLON _3 = parenPattern
     {      ( Pat_lid (mksyn_constr (rhs2 1 3) opname_Cons, None, [ Pat_tuple ([_1;_3],rhs2 1 3) ],None,lhs()) )}
 | _1 = parenPattern _2 = COLON_GREATER _3 = typ
-    {      ( let lhsm = lhs() in 
+    {      ( let lhsm = lhs() in
         Pat_typed(_1, mksyn_anon_constraint _3 lhsm,lhsm) )}
 | _1 = constrPattern
     {                  ( _1 )}
@@ -2060,10 +2060,10 @@ patternClauses:
   _1 = patternAndGuard _2 = patternResult %prec prec_pat_pat_action
     {     ( let pat,guard,patm = _1 in [Clause(pat,guard,_2,patm)]  )}
 | _1 = patternAndGuard _2 = patternResult _3 = BAR _4 = patternClauses
-    {     ( startName(rhs 3); (* hack - register as name so intellisense tells us the name '|' when this trigger fires *) 
+    {     ( startName(rhs 3); (* hack - register as name so intellisense tells us the name '|' when this trigger fires *)
        let pat,guard,patm = _1 in Clause(pat,guard,_2,patm) :: _4 )}
 | _1 = patternAndGuard _2 = patternResult _3 = BAR _4 = error
-    {     ( startName(rhs 3); (* hack - register as name so intellisense tells us the name '|' when this trigger fires *) 
+    {     ( startName(rhs 3); (* hack - register as name so intellisense tells us the name '|' when this trigger fires *)
        let pat,guard,patm = _1 in [Clause(pat,guard,_2,patm)] (* silent recovery *) )}
 | _1 = patternAndGuard _2 = patternResult _3 = error
     {     ( let pat,guard,patm = _1 in [Clause(pat,guard,_2,patm)] (* silent recovery *) )}
@@ -2120,7 +2120,7 @@ minusExpr:
 | _1 = AMP_AMP _2 = minusExpr
     {      ( Expr_addrof(false,_2,lhs()) )}
 | _1 = NEW _2 = appType _3 = opt_HIGH_PRECEDENCE_APP _4 = argExprAfterType
-    {      ( let arg = match _4 with (* None -> mksyn_unit (lhs()) | Some *) e -> e in 
+    {      ( let arg = match _4 with (* None -> mksyn_unit (lhs()) | Some *) e -> e in
         Expr_new(false,_2,arg,lhs()) )}
 | _1 = NEW _2 = appType _3 = opt_HIGH_PRECEDENCE_APP _4 = error
     {      ( Expr_new(false,_2,arbExpr(),lhs()) )}
@@ -2135,79 +2135,79 @@ appExpr:
   _1 = appExpr _2 = argExprNoHPA %prec expr_app
     {      ( Expr_app (_1,_2,lhs())  )}
 | _1 = argExpr
-    {      ( let arg,_ = _1 in 
+    {      ( let arg,_ = _1 in
         arg )}
 
 argExprNoHPA:
   _1 = argExpr
-    {      ( let arg,hpa = _1 in 
+    {      ( let arg,hpa = _1 in
         if hpa then report_parse_error_at (rhs 1) "Successive arguments should be separated by spaces or tupled, and arguments involving function or method applications should be parenthesized";
         arg )}
 
 argExpr:
   _1 = argExpr _2 = HIGH_PRECEDENCE_APP _3 = argExpr
-    {      ( let arg1,_ = _1 in 
-        let arg2,_ = _3 in 
+    {      ( let arg1,_ = _1 in
+        let arg2,_ = _3 in
         Expr_app (arg1,arg2,lhs()),true  )}
 | _1 = argExpr _2 = HIGH_PRECEDENCE_TYAPP _3 = typeArgsActual
-    {      ( let arg1,_ = _1 in 
+    {      ( let arg1,_ = _1 in
         Expr_tyapp (arg1,_3,lhs()),true  )}
 | _1 = PREFIX_OP _2 = argExpr
-    {      ( let arg2,hpa2 = _2 in 
+    {      ( let arg2,hpa2 = _2 in
         mksyn_prefix (lhs()) _1 arg2,hpa2 )}
 | _1 = argExpr _2 = DOT _3 = argExprQualification
-    {      ( let arg1,hpa1 = _1 in 
+    {      ( let arg1,hpa1 = _1 in
         _3 arg1 (lhs()) (rhs 2),hpa1 )}
 | _1 = QMARK _2 = nameop
     {      ( Expr_lid_get (true,[_2],rhs 2),false )}
 | _1 = nameop
     {      ( Expr_lid_get (false,[_1],rhs 1),false )}
 | _1 = LBRACK _2 = listExprElements _3 = RBRACK
-    {      ( matchPair 1 3; 
+    {      ( matchPair 1 3;
         _2 (lhs()) true,false )}
 | _1 = LBRACK _2 = listExprElements _3 = recover
-    {      ( report_parse_error_at (rhs 1) "unmatched '['"; 
+    {      ( report_parse_error_at (rhs 1) "unmatched '['";
         _2 (rhs2 1 2) true, false )}
 | _1 = LBRACK _2 = error _3 = RBRACK
-    {      ( matchPair 1 3; 
-        (* silent recovery *) 
+    {      ( matchPair 1 3;
+        (* silent recovery *)
         Expr_array_or_list(false,[ ], lhs()),false  )}
 | _1 = argExprAfterType
     {      ( _1,false )}
 
 argExprQualification:
   _1 = identop
-    {      ( let idm = rhs 1 in 
-        (fun e lhsm dotm -> 
-              qualifyNameIfAlongside dotm idm; 
+    {      ( let idm = rhs 1 in
+        (fun e lhsm dotm ->
+              qualifyNameIfAlongside dotm idm;
               mksyn_dot lhsm e _1) )}
 | _1 = recover
-    {      ( 
+    {      (
         (* silent recovery *) (fun e lhsm dotm -> qualifyName dotm dotm; e) )}
 | _1 = INT32
-    {      ( (fun e lhsm dotm -> 
+    {      ( (fun e lhsm dotm ->
             libraryOnly (lhs());
             qualifyName dotm dotm; mksyn_dotn lhsm e _1) )}
 | _1 = LPAREN _2 = COLON_COLON _3 = RPAREN _4 = DOT _5 = INT32
-    {      ( (fun e lhsm dotm -> 
+    {      ( (fun e lhsm dotm ->
             libraryOnly(lhs());
             Expr_constr_field_get (e,mksyn_constr lhsm opname_Cons,Int32.to_int _5,lhsm)) )}
 | _1 = LPAREN _2 = typedSeqExpr _3 = RPAREN
-    {      ( startParameters (rhspos 1); 
-        endParameters (rhspos 3); 
-        matchPair 1 3; 
-        (fun e lhsm dotm -> 
-            ocamlCompat "The expression form 'expr.(expr)' is for use when OCaml compatibility is enabled. In F# code you may use 'expr.[expr]'. A type annotation may be required to indicate the first expression is an array" (lhs()); 
+    {      ( startParameters (rhspos 1);
+        endParameters (rhspos 3);
+        matchPair 1 3;
+        (fun e lhsm dotm ->
+            ocamlCompat "The expression form 'expr.(expr)' is for use when OCaml compatibility is enabled. In F# code you may use 'expr.[expr]'. A type annotation may be required to indicate the first expression is an array" (lhs());
             qualifyName dotm dotm; mksyn_dot_lparen_get lhsm e _2) )}
 | _1 = LBRACK _2 = typedSeqExpr _3 = RBRACK
-    {      ( matchPair 1 3; 
-        (fun e lhsm dotm -> 
+    {      ( matchPair 1 3;
+        (fun e lhsm dotm ->
             qualifyName dotm dotm; mksyn_dot_lbrack_get lhsm e _2) )}
 | _1 = LBRACK _2 = optRange _3 = RBRACK
-    {      ( matchPair 1 3; 
+    {      ( matchPair 1 3;
         (fun e lhsm dotm -> qualifyName dotm dotm; mksyn_dot_lbrack_slice_get lhsm e _2) )}
 | _1 = LBRACK _2 = optRange _3 = COMMA _4 = optRange _5 = RBRACK %prec slice_comma
-    {      ( matchPair 1 5; 
+    {      ( matchPair 1 5;
         (fun e lhsm dotm -> qualifyName dotm dotm; mksyn_dot_lbrack_slice2_get lhsm e _2 _4) )}
 
 optRange:
@@ -2254,8 +2254,8 @@ beginEndExpr:
 
 quoteExpr:
   _1 = LQUOTE _2 = typedSeqExpr _3 = RQUOTE
-    {      ( matchPair 1 3; 
-        if _1 <> _3 then report_parse_error_at (rhs 1) ("mismatched quotation, beginning with '"^ fst _1 ^ "'");  
+    {      ( matchPair 1 3;
+        if _1 <> _3 then report_parse_error_at (rhs 1) ("mismatched quotation, beginning with '"^ fst _1 ^ "'");
         (Expr_quote(mksyn_item (lhs()) (compileOpName (fst _1)), snd _1,_2,lhs())) )}
 | _1 = LQUOTE _2 = typedSeqExpr _3 = recover
     {      ( report_parse_error_at (rhs 1) ("unmatched '"^fst _1^"'");  Expr_quote(mksyn_item (lhs()) (compileOpName (fst _1)),snd _1,_2,rhs2 1 2)  )}
@@ -2266,7 +2266,7 @@ arrayExpr:
   _1 = LBRACK_BAR _2 = listExprElements _3 = BAR_RBRACK
     {      (  matchPair 1 3; _2 (lhs()) false )}
 | _1 = LBRACK_BAR _2 = listExprElements _3 = recover
-    {      ( report_parse_error_at (rhs 1) "unmatched '[|'"; 
+    {      ( report_parse_error_at (rhs 1) "unmatched '[|'";
         _2 (rhs2 1 2) false )}
 | _1 = LBRACK_BAR _2 = error _3 = BAR_RBRACK
     {      (  matchPair 1 3; (* silent recovery *) Expr_array_or_list(true,[ ], lhs()) )}
@@ -2287,8 +2287,8 @@ parenExprBody:
 | _1 = TYPE _2 = typ
     {      (  (fun  m -> Expr_typeof(_2,m)) )}
 | _1 = staticallyKnownHeadTypars _2 = COLON _3 = LPAREN _4 = classMemberSpfn _5 = RPAREN _6 = LPAREN _7 = typedSeqExpr _8 = RPAREN
-    {      (  matchPair 3 5;  
-         matchPair 6 8; 
+    {      (  matchPair 3 5;
+         matchPair 6 8;
          (fun m -> Expr_trait_call(_1,_4,(match _7 with Expr_tuple(l,_) -> l | e -> [e]),m)) )}
 | _1 = typedSeqExpr
     {      ( (fun m -> Expr_paren(_1,m)) )}
@@ -2465,19 +2465,19 @@ monadicSingleLineQualifiersThenArrowThenExprR:
 | _1 = RARROW2 _2 = typedSeqExprBlockR
     {                               ( (fun m -> Comp_yieldm((true,false),_2)) )}
 | _1 = FOR _2 = forLoopBinder _3 = monadicSingleLineQualifiersThenArrowThenExprR %prec decl_let
-    {     ( let a2,b2= _2 in 
-       (fun m -> 
+    {     ( let a2,b2= _2 in
+       (fun m ->
            Comp_for(true,a2,b2,_3 m)) )}
 | _1 = monadicWhenCondition _2 = monadicSingleLineQualifiersThenArrowThenExprR %prec decl_let
-    {     ( (fun m -> 
+    {     ( (fun m ->
            Comp_cond(true,_1,_2 m,Comp_zero)) )}
 | _1 = FOR _2 = forLoopBinder _3 = OBLOCKSEP _4 = monadicSingleLineQualifiersThenArrowThenExprR %prec decl_let
-    {     ( let a2,b2= _2 in 
-       (fun m -> 
-           warning(Error("'for' binders and 'when' clauses in computation expressions should be either stacked (each on a separate line starting at the same column), or each should have a matching 'do', e.g. 'for x in <expr> do for y in <expr> -> ...'",m)); 
+    {     ( let a2,b2= _2 in
+       (fun m ->
+           warning(Error("'for' binders and 'when' clauses in computation expressions should be either stacked (each on a separate line starting at the same column), or each should have a matching 'do', e.g. 'for x in <expr> do for y in <expr> -> ...'",m));
            Comp_for(true,a2,b2,_4 m)) )}
 | _1 = monadicWhenCondition _2 = OBLOCKSEP _3 = monadicSingleLineQualifiersThenArrowThenExprR %prec decl_let
-    {     ( (fun m -> 
+    {     ( (fun m ->
            warning(Error("'for' binders and 'when' clauses in computation expressions should either be stacked (each on a separate line starting at the same column), or each should have a matching '->' or 'do', e.g. 'for x in <expr> do when <expr> -> ...'",m));
            Comp_cond(true,_1,_3 m,Comp_zero)) )}
 
@@ -2549,11 +2549,11 @@ recdExpr:
   
     {     ( (None,None, []) )}
 | _1 = INHERIT _2 = appType _3 = opt_HIGH_PRECEDENCE_APP _4 = opt_argExprAfterType _5 = recdExprBindings _6 = opt_seps
-    {     ( let arg = match _4 with None -> mksyn_unit (lhs()) | Some e -> e in 
+    {     ( let arg = match _4 with None -> mksyn_unit (lhs()) | Some e -> e in
        (Some(_2,arg,rhs2 2 4),None, _5) )}
 | _1 = appExpr _2 = EQUALS _3 = declExpr _4 = recdExprBindings _5 = opt_seps
-    {     ( match _1 with 
-       | Expr_lid_get(false,v,m) -> (None,None, (frontAndBack v,_3) :: List.rev _4) 
+    {     ( match _1 with
+       | Expr_lid_get(false,v,m) -> (None,None, (frontAndBack v,_3) :: List.rev _4)
        | _ -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 2) "field bindings must have the form 'id = expr;'" )}
 | _1 = appExpr _2 = WITH _3 = path _4 = EQUALS _5 = declExpr _6 = recdExprBindings _7 = opt_seps
     {     (  (None,Some _1,(frontAndBack _3,_5):: List.rev _6) )}
@@ -2572,8 +2572,8 @@ objExpr:
 
 objExprBaseCall:
   _1 = NEW _2 = appType _3 = opt_HIGH_PRECEDENCE_APP _4 = opt_argExprAfterType _5 = opt_as
-    {     ( startName(rhs 5); 
-       let argInfo = match _4 with None -> None | Some e -> Some(e,_5) in 
+    {     ( startName(rhs 5);
+       let argInfo = match _4 with None -> None | Some e -> Some(e,_5) in
        (_2, argInfo) )}
 
 opt_objExprBindings:
@@ -2588,13 +2588,13 @@ objExprBindings:
 | _1 = OWITH _2 = localBindings _3 = OEND
     {                             ( (_2 [] None) )}
 | _1 = WITH _2 = objectImplementationBlock _3 = opt_decl_end
-    {      ( _2 |> 
+    {      ( _2 |>
         (chooseList (function ClassMemberDefn_member_binding(b,m) -> Some b
                           | ClassMemberDefn_implicit_inherit (_, _, _, m)
                           | ClassMemberDefn_implicit_ctor (_, _, m)
-                          | ClassMemberDefn_let_bindings(_,_,_,m)                    
-                          | ClassMemberDefn_slotsig(_,_,m) 
-                          | ClassMemberDefn_interface(_,_,m) 
+                          | ClassMemberDefn_let_bindings(_,_,_,m)
+                          | ClassMemberDefn_slotsig(_,_,m)
+                          | ClassMemberDefn_interface(_,_,m)
                           | ClassMemberDefn_inherit(_,_,m)
                           | ClassMemberDefn_field(_,m)
                           | ClassMemberDefn_open(_,m)
@@ -2634,7 +2634,7 @@ anonMatchingExpr:
 | _1 = OFUNCTION _2 = opt_bar _3 = patternClauses _4 = OEND %prec expr_function
     {      ( mksyn_match_lambda false false (lhs()) _3 )}
 | _1 = OFUNCTION _2 = opt_bar _3 = patternClauses _4 = error _5 = OEND %prec expr_function
-    {      ( report_parse_error_at (rhs 1) "error in 'function' block"; 
+    {      ( report_parse_error_at (rhs 1) "error in 'function' block";
         mksyn_match_lambda false false (lhs()) _3 )}
 
 typeWithTypeConstraints:
@@ -2647,7 +2647,7 @@ topTypeWithTypeConstraints:
   _1 = topType
     {     ( _1 )}
 | _1 = topType _2 = WHEN _3 = typeConstraints
-    {     ( let ty,arity = _1 in 
+    {     ( let ty,arity = _1 in
         (* nb. it doesn't matter where the constraints go in the structure of the type. *)
         Type_with_global_constraints(ty,List.rev _3,lhs()), arity )}
 
@@ -2655,14 +2655,14 @@ opt_topReturnTypeWithTypeConstraints:
   
     {     ( None )}
 | _1 = COLON _2 = topTypeWithTypeConstraints
-    {     ( let ty,arity = _2 in 
+    {     ( let ty,arity = _2 in
        let arity = (match arity with TopValSynData([],rmdata)-> rmdata | _ -> SynArgInfo.unnamedRetVal) in
        Some ((ty,arity),rhs 2) )}
 
 topType:
   _1 = topTupleType _2 = RARROW _3 = topType
-    {     ( let dty,dmdata= _1 in 
-       let rty,(TopValSynData(dmdatas,rmdata)) = _3 in 
+    {     ( let dty,dmdata= _1 in
+       let rty,(TopValSynData(dmdatas,rmdata)) = _3 in
        Type_fun(dty,rty,lhs()), (TopValSynData(dmdata::dmdatas, rmdata)) )}
 | _1 = topTupleType
     {     ( let ty,rmdata = _1 in ty, (TopValSynData([],(match rmdata with [md] -> md | _ -> SynArgInfo.unnamedRetVal))) )}
@@ -2681,7 +2681,7 @@ topTupleTypeElements:
 
 topAppType:
   _1 = attributes _2 = appType _3 = COLON _4 = appType
-    {     ( match _2 with 
+    {     ( match _2 with
        | Type_app([id],_,_) -> _4,TopArgSynData(_1,false,Some id)
        | _ -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 2) "syntax error in labelled type argument"  )}
 | _1 = attributes _2 = QMARK _3 = ident _4 = COLON _5 = appType
@@ -2689,7 +2689,7 @@ topAppType:
 | _1 = attributes _2 = appType
     {     ( (_2,TopArgSynData(_1,false,None)) )}
 | _1 = appType _2 = COLON _3 = appType
-    {     ( match _1 with 
+    {     ( match _1 with
        | Type_app([id],_,_) -> _3,TopArgSynData([],false,Some id)
        | _ -> raise_parse_error_at_USE_ONLY_IF_NOT_IN_ERROR_RECOVERY (rhs 2) "syntax error in labelled type argument"  )}
 | _1 = QMARK _2 = ident _3 = COLON _4 = appType
@@ -2735,8 +2735,8 @@ appType:
 | _1 = atomType
     {      ( _1 )}
 | _1 = typar _2 = COLON_GREATER _3 = typ
-    {      (  let tp,typ = _1,_3 in 
-         let m = lhs() in 
+    {      (  let tp,typ = _1,_3 in
+         let m = lhs() in
          Type_with_global_constraints(Type_var (tp, rhs 1), [WhereTyparSubtypeOfType(tp,typ,m)],m)  )}
 | _1 = UNDERSCORE _2 = COLON_GREATER _3 = typ %prec COLON_GREATER
     {      (  matchPair 1 3; mksyn_anon_constraint _3 (lhs()) )}
@@ -2802,7 +2802,7 @@ typar:
     {     (  let id = mksyn_id (lhs()) (_2).idText in
         Typar(id ,NoStaticReq,false) )}
 | _1 = DOLLAR _2 = ident
-    {     (  libraryOnly (lhs()); 
+    {     (  libraryOnly (lhs());
         let id = mksyn_id (lhs()) (_2).idText in
         Typar(id,CompleteStaticReq,false) )}
 | _1 = staticallyKnownHeadTypar
@@ -2889,7 +2889,7 @@ operatorName:
 | _1 = DOT_DOT _2 = DOT_DOT
     {                    ( (* deprecated_op (lhs()); *) ".. .." )}
 | _1 = LQUOTE _2 = RQUOTE
-    {      ( if _1 <> _2 then report_parse_error_at (rhs 1) ("mismatched quotation operator name, beginning with '"^fst _1^"'");  
+    {      ( if _1 <> _2 then report_parse_error_at (rhs 1) ("mismatched quotation operator name, beginning with '"^fst _1^"'");
         fst _1 )}
 
 barNames:

@@ -50,11 +50,11 @@ expo:
   _1 = INT
     {       ( _1 )}
 | _1 = IDENT
-    {      ( 
+    {      (
 	try
-	  int_of_string(!current_signature#string_of_symbol _1)	  
+	  int_of_string(!current_signature#string_of_symbol _1)
 	with
-	    _ -> 
+	    _ ->
 	      raise (Syntax_error "invalid exponent")
       )}
 
@@ -76,9 +76,9 @@ rule:
 
 precedence_eof:
   _1 = precedence _2 = EOF
-    {  ( 
+    {  (
     let order = identity_ordering (Pervasives.compare : symbol_id -> symbol_id -> int)
-    in 
+    in
     let order = List.fold_left add_list order _1
     in compare order
   )}

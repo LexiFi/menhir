@@ -28,11 +28,11 @@ open Auxl
 open Value
 open Ids
 
-let mkl () = 
-   [ { Location.loc_start = symbol_start_pos ();  
+let mkl () =
+   [ { Location.loc_start = symbol_start_pos ();
        Location.loc_end = symbol_end_pos () } ]
 
-let mkp () = 
+let mkp () =
    symbol_start_pos ()
 
 (* let mkl x =  *)
@@ -40,9 +40,9 @@ let mkp () =
 (* 	   Location.loc_end=symbol_end_pos ()} in *)
 (*   (\* print_string (Location.pp_t l) ; flush stdout; *\)  *)
 (*   {desc=x; loc=l} *)
-    
-let parse_error s = 
-  raise (My_parse_error ("Parse error: " ^ s ^ " " 
+
+let parse_error s =
+  raise (My_parse_error ("Parse error: " ^ s ^ " "
 	   ^ Location.pp_position2 (Parsing.symbol_end_pos () )))
 
 
@@ -163,12 +163,12 @@ instructions:
 
 instruction:
   _1 = command
-    {                               ( {empty_raw_instructions with 
+    {                               ( {empty_raw_instructions with
 				     raw_commands = [_1]} )}
 | _1 = SHOW _2 = IDENT
-    {                                    ( let i = 
-                                            try int_of_string _2 
-                                            with Failure "int_of_string" -> parse_error ("Show expects a number, not " ^ _2) in 
+    {                                    ( let i =
+                                            try int_of_string _2
+                                            with Failure "int_of_string" -> parse_error ("Show expects a number, not " ^ _2) in
                                          {empty_raw_instructions with raw_show = Some i;} )}
 | _1 = SHOW _2 = ALL
     {                                     ( {empty_raw_instructions with raw_show = None;} )}
@@ -181,7 +181,7 @@ instruction:
                                                (e,List.map (fun (_,fin) -> (start,fin)) ts)
                                    in
                                    {empty_raw_instructions with
-                                    raw_constrain_rels = 
+                                    raw_constrain_rels =
                                     [ConsiderRel rel];} )}
 | _1 = CONSIDER _2 = prefixed_transition_sequence
     {                                          ( let rel =
@@ -192,7 +192,7 @@ instruction:
                                                (e,List.map (fun (_,fin) -> (start,fin)) ts)
                                    in
                                    {empty_raw_instructions with
-                                    raw_constrain_rels = 
+                                    raw_constrain_rels =
                                     [ConsiderRel rel];} )}
 | _1 = IGNORE _2 = transition_sequence
     {                               ( let rel =
@@ -203,7 +203,7 @@ instruction:
                                                (e,List.map (fun (_,fin) -> (start,fin)) ts)
                                    in
                                    {empty_raw_instructions with
-                                    raw_constrain_rels = 
+                                    raw_constrain_rels =
                                     [IgnoreRel rel];} )}
 | _1 = IGNORE _2 = prefixed_transition_sequence
     {                                        ( let rel =
@@ -214,7 +214,7 @@ instruction:
                                                (e,List.map (fun (_,fin) -> (start,fin)) ts)
                                    in
                                    {empty_raw_instructions with
-                                    raw_constrain_rels = 
+                                    raw_constrain_rels =
                                     [IgnoreRel rel];} )}
 | _1 = ADD _2 = transition_sequence
     {                               ( {empty_raw_instructions with
@@ -238,10 +238,10 @@ instruction:
     {                          ( {empty_raw_instructions with
                                      raw_mode = _1} )}
 | _1 = IGNORE _2 = checks
-    {      ( {empty_raw_instructions with 
+    {      ( {empty_raw_instructions with
 	 raw_checks = (List.map (fun c -> IgnoreCheck c) _2); } )}
 | _1 = CONSIDER _2 = checks
-    {      ( {empty_raw_instructions with 
+    {      ( {empty_raw_instructions with
 	 raw_checks = (List.map (fun c -> ConsiderCheck c) _2); } )}
 | _1 = DISPLAY_ACTION _2 = action_or_name_list
     {                                        ( {empty_raw_instructions with
@@ -257,7 +257,7 @@ instruction:
                                         raw_edge_instructions = [Raw_suppress_e (List.map (fun x -> (x,None)) _2)];} )}
 | _1 = DISPLAY_EDGE _2 = prefixed_transition_sequence
     {                                              ( let (start,ts) = _2 in
-                                           let e = 
+                                           let e =
                                              match ts with
                                              | (e,_) :: _ -> e
                                              | [] -> parse_error "Cannot happen: prefixed_transition_sequence w/o prefix"
@@ -266,7 +266,7 @@ instruction:
                                              raw_edge_instructions = [Raw_display_e [e,Some (_2)]];})}
 | _1 = SUPPRESS_EDGE _2 = prefixed_transition_sequence
     {                                               ( let (start,ts) = _2 in
-                                           let e = 
+                                           let e =
                                              match ts with
                                              | (e,_) :: _ -> e
                                              | [] -> parse_error "Cannot happen: prefixed_transition_sequence w/o prefix"
@@ -370,9 +370,9 @@ item:
 | _1 = IGNORE _2 = checks
     {                                       ( Ignore _2 )}
 | _1 = SHOW _2 = IDENT _3 = DOT
-    {                                       ( let i = 
-                                            try int_of_string _2 
-                                            with Failure "int_of_string" -> parse_error ("Show expects a number, not " ^ _2) in 
+    {                                       ( let i =
+                                            try int_of_string _2
+                                            with Failure "int_of_string" -> parse_error ("Show expects a number, not " ^ _2) in
                                          Show (Some i) )}
 | _1 = SHOW _2 = ALL _3 = DOT
     {                                       ( Show None )}
@@ -467,17 +467,17 @@ action:
 | _1 = IDENT _2 = SEMICOLON _3 = IDENT _4 = COLON _5 = U _6 = location
     {                                            ( Cmm.Unlock(_1,named_thread_id _3,_6) )}
 | _1 = IDENT _2 = SEMICOLON _3 = IDENT _4 = COLON _5 = R _6 = location _7 = EQUALS _8 = valu
-    {      ( match _5 with 
+    {      ( match _5 with
       | Nonatomic -> Cmm.Load (_1,named_thread_id _3,Cmm.NA,_6,_8)
-      | Atomic mo -> Cmm.Load (_1,named_thread_id _3,mo,_6,_8) 
+      | Atomic mo -> Cmm.Load (_1,named_thread_id _3,mo,_6,_8)
       | Mutex -> raise (Failure "parse error: R with mutex type"))}
 | _1 = IDENT _2 = SEMICOLON _3 = IDENT _4 = COLON _5 = W _6 = location _7 = EQUALS _8 = valu
-    {      ( match _5 with 
+    {      ( match _5 with
       | Nonatomic -> Cmm.Store (_1,named_thread_id _3,Cmm.NA,_6,_8)
       | Atomic mo -> Cmm.Store (_1,named_thread_id _3,mo,_6,_8)
       | Mutex -> raise (Failure "parse error: W with mutex type"))}
 | _1 = IDENT _2 = SEMICOLON _3 = IDENT _4 = COLON _5 = RMW _6 = location _7 = EQUALS _8 = valu _9 = SLASH _10 = valu
-    {      ( match _5 with 
+    {      ( match _5 with
       | Nonatomic -> raise (Failure "parse error: RMW with nonatomic order type")
       | Atomic mo -> Cmm.RMW (_1,named_thread_id _3,mo,_6,_8,_10)
       | Mutex -> raise (Failure "parse error: RMW with mutex type") )}
@@ -488,7 +488,7 @@ action:
         | Atomic mo -> Cmm.Blocked_rmw (_1,named_thread_id _3,_6)
         | Mutex -> raise (Failure "parse error: BRMW with mutex type") )}
 | _1 = IDENT _2 = SEMICOLON _3 = IDENT _4 = COLON _5 = F
-    {      ( match _5 with 
+    {      ( match _5 with
       | Nonatomic -> raise (Failure "parse error: F with nonatomic order type")
       | Atomic mo -> Cmm.Fence (_1,named_thread_id _3,mo)
       | Mutex -> raise (Failure "parse error: F with mutex type") )}

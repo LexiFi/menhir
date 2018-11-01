@@ -61,7 +61,7 @@ let int_expr pos i = IntExpr (pos, Rawint.of_int Rawint.Int32 true i)
 
 let make_unop sym expr =
    OpExpr (pos_of_expr expr, PreOp, sym, sym, [expr])
-   
+
 let make_binop expr1 sym expr2 =
    let pos = union_pos (pos_of_expr expr1) (pos_of_expr expr2) in
       OpExpr (pos, PreOp, sym, sym, [expr1; expr2])
@@ -135,7 +135,7 @@ let type_pointer pos ty 	= TypePointer(pos, StatusNormal, ty)
 let type_mutable pos ty 	= TypeRef(pos, StatusNormal, ty)
 let type_poly pos sym 		= TypePoly(pos, StatusNormal)
 let type_apply pos ty_list sym 	= TypeApply(pos, StatusNormal, sym, ty_list)
-      
+
 let type_boolean pos 		= TypeUnit(pos, StatusNormal, 2)
 let type_cstring pos 		= type_pointer pos (type_char pos)
 let type_fun pos ty_list ty 	= TypeFun(pos, StatusNormal, ty_list, ty)
@@ -155,7 +155,7 @@ let ctype_cstring pos		= TypePointer (pos, StatusConst, TypeChar (pos, StatusCon
 
 (*
  * Build expressions.
- *)	
+ *)
 let wrap_expr e =
     let pos = pos_of_expr e in
     SeqExpr (pos, [e; UnitExpr (pos, 1, 0)])
@@ -168,7 +168,7 @@ let make_apply_expr pos e el =
 
 let make_string_out_of_char_list char_list =
     let chars = List.map (fun c -> Char.code c) char_list in
-	Array.of_list chars 
+	Array.of_list chars
 
 let sym_of_var_expr = function
       VarExpr (_, sym, _) ->
@@ -177,7 +177,7 @@ let sym_of_var_expr = function
 
 let rec make_array_type pos conformant indices ty =
     let indices = List.rev indices in
-    List.fold_left (fun ty (e1, e2) -> 
+    List.fold_left (fun ty (e1, e2) ->
 	match conformant with
 	      true ->
 		type_conf_array pos ty (sym_of_var_expr e1) (sym_of_var_expr e2) (type_int32 pos)
@@ -196,17 +196,17 @@ let make_subscript_expr expr1 expr_list pos =
    let res = List.fold_left (fun e1 e2 -> make_binop e1 subscript_sym e2) expr1 expr_list in
       res
 
-let extract_expressions expr_option_list= 
+let extract_expressions expr_option_list=
     let exprs = List.filter (fun element ->
 	match element with
 	      Some e -> true
 	    | None -> false) expr_option_list in
-    let expr_list_list = List.map (fun a -> 
-	match a with 
-	      Some a -> a 
+    let expr_list_list = List.map (fun a ->
+	match a with
+	      Some a -> a
 	    | None -> raise (Invalid_argument "extract_expressions")) exprs in
 	List.flatten expr_list_list
-	    
+
 let rec make_enum_pattern ids =
     match ids with
 	  id :: [] ->
@@ -282,7 +282,7 @@ let make_proc_decl heading ie f_pos =
 	        VarDefs(tpos, [pos, StoreStatic, sym, fun_ty, InitExpr (spos, StringExpr (spos, prec, ia))]), tpos
 
 let make_case pos e elist else_expr =
-    let else_expr = 
+    let else_expr =
 	match else_expr with
 	      None ->
 		SeqExpr (pos, [])
@@ -408,7 +408,7 @@ let string_of_int_array ia =
 %token <Fc_parse_type.pos> TokClass
 %token <Fc_parse_type.pos> TokVar
 %token <Fc_parse_type.pos> TokLet
-%token <Fc_parse_type.pos> TokConst 
+%token <Fc_parse_type.pos> TokConst
 %token <Fc_parse_type.pos> TokProcedure
 %token <Fc_parse_type.pos> TokFunction
 %token <Fc_parse_type.pos> TokProgram
@@ -507,22 +507,22 @@ console:
     | program 			{ Some $1 }
     | unit_body 		{ Some $1 }
     | TokEof 			{ None }
- 
-program: 
+
+program:
       program_header uses_clause program_body
 				{ [$2] @ $3 }
     | program_header program_body
 				{ $2 }
- 
+
 bootstrap:
       block_list TokEof 	{ let exns = pop_exceptions (snd $1) in
-				  let _ = Fc_parse_state.pop_tenv() in 
+				  let _ = Fc_parse_state.pop_tenv() in
 				    exns :: fst $1
 				}
     | program_body		{ $1 }
     | TokEof 			{ [] }
 
-unit_body: 
+unit_body:
       unit_header uses_clause interface_body implementation_body statements TokDot
     				{ (([$2] @ $3) @ $4) @ (fst $5) }
     | unit_header interface_body implementation_body statements TokDot
@@ -536,11 +536,11 @@ unit_body:
 uses_clause:
       TokUses plain_identifier_list TokSemi
 				{ void_expr (union_pos $1 $3) }
-   
+
 unit_header:
       TokUnit identifier TokSemi
     				{ $2 }
- 
+
 function_declaration:
       function_heading TokSemi TokForward TokSemi
 				{ make_function_decl $1 None $4 }
@@ -583,12 +583,12 @@ interface_body_element:
     | procedure_declaration	{ [fst $1] }
     | type_def 			{ fst $1 }
     | variable_decl		{ [$1] }
-   
+
 implementation_body:
       TokImplementation block_list
     				{ fst $2 }
 
-program_header: 
+program_header:
       TokProgram identifier TokSemi
 				{ $2, [], union_pos $1 $3 }
     | TokProgram identifier TokLeftParen plain_identifier_list TokRightParen TokSemi
@@ -597,7 +597,7 @@ program_header:
 identifier:
       TokId 			{ $1 }
 
-plain_identifier_list: 
+plain_identifier_list:
       plain_identifier_list TokComma identifier
 				{ $1 @ [$3] }
     | identifier		{ [$1] }
@@ -670,14 +670,14 @@ program_body:
 body:
       block_list statements 	{ (fst $1) @ (wrap_expr_list (snd $2) (fst $2)), union_pos (snd $1) (snd $2) }
     | statements		{ wrap_expr_list (snd $1) (fst $1), snd $1 }
- 
+
 type_def:
       TokType type_definition_list
     				{ make_type_definition (union_pos $1 (snd $2)) $2 }
 
 type_definition_list:
       type_definition_list_rev	{ List.rev (fst $1), snd $1 }
-   
+
 type_definition_list_rev:
       type_definition_list_rev type_definition
     				{ (fst $2) :: (fst $1), union_pos (snd $2) (snd $1) }
@@ -685,7 +685,7 @@ type_definition_list_rev:
 
 type_definition:
     identifier TokEq type_denoter TokSemi
-				{ 
+				{
 				  let sym, p1 = $1 in
 				  let pos = union_pos p1 $4 in
 				    (p1, sym, TypeLambda(snd $3, StatusNormal, [], fst $3), None), pos
@@ -695,7 +695,7 @@ type_list:
       type_list TokSemi type_denoter
     				{ (fst $1) @ [fst $3], union_pos (snd $1) (snd $3) }
     | type_denoter 		{ [fst $1], snd $1 }
- 
+
 type_list_with_comma:
       type_list_with_comma TokComma type_denoter
     				{ (fst $1) @ [fst $3], union_pos (snd $1) (snd $3) }
@@ -707,7 +707,7 @@ type_denoter:
 parameter_type_denoter:
       ref_or_basic_parameter_type
     				{ $1 }
-ref_or_basic_type: 
+ref_or_basic_type:
       TokRef basic_type 	{ let pos = union_pos $1 (snd $2) in
     				  warn_if_not_pasqual pos "\"ref\"";
 				    type_pointer pos (fst $2), pos
@@ -720,7 +720,7 @@ ref_or_basic_type:
 				    type_pointer pos (fst $2), pos
 				}
     | basic_type		{ $1 }
-   
+
 ref_or_basic_parameter_type:
       TokRef basic_type 	{ let pos = union_pos $1 (snd $2) in
     				  warn_if_not_pasqual pos "\"ref\"";
@@ -760,7 +760,7 @@ tuple_type:
 basic_type:
       tuple_type		{ $1 }
     | type_identifier		{ $1 }
-    | identifier		{ type_apply (snd $1) [] (fst $1), snd $1 } 
+    | identifier		{ type_apply (snd $1) [] (fst $1), snd $1 }
     | TokPoly identifier	{ warn_if_not_pasqual (union_pos $1 (snd $2)) "polymorphic types";
 				  type_var (union_pos $1 (snd $2)) (fst $2), union_pos $1 (snd $2)
 				}
@@ -772,7 +772,7 @@ basic_type:
 basic_parameter_type:
       tuple_type		{ $1 }
     | type_identifier		{ $1 }
-    | identifier		{ type_apply (snd $1) [] (fst $1), snd $1 } 
+    | identifier		{ type_apply (snd $1) [] (fst $1), snd $1 }
     | TokPoly identifier	{ warn_if_not_pasqual (union_pos $1 (snd $2)) "polymorphic types";
 				  type_var (union_pos $1 (snd $2)) (fst $2), union_pos $1 (snd $2)
 				}
@@ -793,7 +793,7 @@ enum_type:
     				{ make_enum_type (union_pos $1 $3) $2, union_pos $1 $3 }
 
 array_type:
-      TokArray TokLeftBrack index_list TokRightBrack TokOf type_denoter 
+      TokArray TokLeftBrack index_list TokRightBrack TokOf type_denoter
 				{ make_array_type (union_pos $1 (snd $6)) false $3 (fst $6), union_pos $1 (snd $6) }
 
 conformant_array_type:
@@ -842,7 +842,7 @@ record_section_list:
       record_section_list TokSemi record_section
     				{ $1 @ $3 }
     | record_section 		{ $1 }
-   
+
 record_section:
       plain_identifier_list TokColon type_denoter
 				{ List.map (fun (sym, pos) -> pos, sym, fst $3) $1 }
@@ -857,7 +857,7 @@ constant_declaration:
 constant_declaration_list:
       constant_declaration_list TokSemi constant_decl_prim
     				{ $1 @ $3 }
-    | constant_decl_prim	{ $1 }  
+    | constant_decl_prim	{ $1 }
 
 constant_decl_prim:
       plain_identifier_list TokEq TokInt
@@ -867,8 +867,8 @@ constant_decl_prim:
 				}
     | plain_identifier_list TokEq TokMinus TokInt
     				{ List.map (fun (sym, pos) ->
-				    pos, VarPattern (pos, sym, sym, None), ctype_int pos, 
-					InitExpr (pos, 
+				    pos, VarPattern (pos, sym, sym, None), ctype_int pos,
+					InitExpr (pos,
 					    make_unop uMinusOp_sym (IntExpr (snd $4, fst $4)))) $1
 				}
     | plain_identifier_list TokEq TokFloat
@@ -878,8 +878,8 @@ constant_decl_prim:
 				}
     | plain_identifier_list TokEq TokMinus TokFloat
     				{ List.map (fun (sym, pos) ->
-				    pos, VarPattern (pos, sym, sym, None), ctype_float pos, 
-					InitExpr (pos, 
+				    pos, VarPattern (pos, sym, sym, None), ctype_float pos,
+					InitExpr (pos,
 					    make_unop uMinusOp_sym (FloatExpr (snd $4, fst $4)))) $1
 				}
     | plain_identifier_list TokEq TokString
@@ -891,7 +891,7 @@ constant_decl_prim:
 
 variable_decl:
       TokVar variable_declaration_list TokSemi
-				{ let vars = List.map (fun (pos, patt, ty, ie) -> 
+				{ let vars = List.map (fun (pos, patt, ty, ie) ->
 				    pos, StoreAuto, patt, ty, ie) $2 in
 					VarDefs(union_pos $1 $3, vars)
 				}
@@ -915,7 +915,7 @@ variable_init_declaration:
 				{ List.map (fun (patt, pos) -> pos, patt, type_float32 pos, InitExpr (snd $3, FloatExpr (pos, fst $3))) $1 }
     | var_pattern_list TokEq TokString
 				{ let prec, ia, spos = $3 in
-				    List.map (fun (patt, pos) -> pos, patt, type_cstring pos, InitExpr (spos, StringExpr (pos, prec, ia))) $1 
+				    List.map (fun (patt, pos) -> pos, patt, type_cstring pos, InitExpr (spos, StringExpr (pos, prec, ia))) $1
 				}
     | var_pattern_list TokColon type_denoter TokEq expression
 				{ List.map (fun (patt, pos) -> pos, patt, fst $3, InitExpr (pos_of_expr $5, $5)) $1 }
@@ -945,7 +945,7 @@ operator_symbol:
     | TokXor			{ xorOp_sym, $1 }
     | TokShl			{ lShiftOp_sym, $1 }
     | TokShr			{ rShiftOp_sym, $1 }
-    
+
 function_type:
       TokFunction TokLeftParen TokRightParen TokArrow type_denoter
     				{ let pos = union_pos $1 (snd $5) in
@@ -991,11 +991,11 @@ formal_parameters:
 				{ $1 @ $3 }
     | value_parameter_set	{ $1 }
     | var_parameter_set		{ $1 }
- 
+
 value_parameter_set:
       var_pattern_list TokColon parameter_type_denoter
     				{ List.map (fun (patt, pos) -> pos, patt, fst $3) $1 }
-  
+
 var_parameter_set:
       TokVar value_parameter_set
     				{ List.map (fun (pos, patt, ty) -> pos, patt, type_mutable pos ty) $2 }
@@ -1031,7 +1031,7 @@ pascal_var_parameter_set:
 
 pascal_function_parameters:
     | TokFunction plain_identifier_list TokColon parameter_type_denoter
-				{ List.map (fun (sym, pos) -> 
+				{ List.map (fun (sym, pos) ->
 				    pos, VarPattern (pos, sym, sym, None), TypeFun (pos, StatusNormal, [], fst $4)) $2
 				}
     | TokFunction plain_identifier_list TokLeftParen pascal_formal_parameters TokRightParen TokColon parameter_type_denoter
@@ -1133,12 +1133,12 @@ label_statement:
       identifier TokColon	{ LabelExpr (union_pos (snd $1) $2, fst $1) }
     | TokInt TokColon		{ LabelExpr (union_pos (snd $1) $2, goto_symbol_of_int $1) }
     | identifier TokColon nonempty_statement
-				{ SeqExpr (union_pos (snd $1) (pos_of_expr $3), 
+				{ SeqExpr (union_pos (snd $1) (pos_of_expr $3),
 				    LabelExpr (union_pos (snd $1) $2, fst $1)
 				    :: [$3])
 				}
     | TokInt TokColon nonempty_statement
-				{ SeqExpr (union_pos (snd $1) (pos_of_expr $3), 
+				{ SeqExpr (union_pos (snd $1) (pos_of_expr $3),
 				    LabelExpr (union_pos (snd $1) $2, goto_symbol_of_int $1)
 				    :: [$3])
 				}
@@ -1148,10 +1148,10 @@ case_statement:
 				{ make_case (union_pos $1 $5) $2 $4 None }
     | TokCase expression TokOf case_element_list TokElse statement_body TokEnd
 				{ make_case (union_pos $1 $7) $2 $4 (Some $6) }
-   
+
 case_element_list:
       case_element_list_rev	{ List.rev $1 }
-   
+
 case_element_list_rev:
       case_element_list_rev case_element
     				{ $2 :: $1 }
@@ -1237,7 +1237,7 @@ return_statement:
 
 break_statement:
       TokBreak			{ BreakExpr ($1) }
-    
+
 continue_statement:
       TokContinue 		{ ContinueExpr ($1) }
 
@@ -1266,11 +1266,11 @@ constant_relop_expression_list:
 				{ make_binop $1 commaOp_sym $3 }
 
 constant_relop_expression:
-      constant_simple_expression relop constant_simple_expression 
+      constant_simple_expression relop constant_simple_expression
 				{ make_binop $1 (fst $2) $3 }
-    | constant_simple_expression 
+    | constant_simple_expression
 				{ $1 }
-  
+
 constant_simple_expression:
       constant_add_term 	{ $1 }
     | constant_simple_expression logop constant_add_term
@@ -1280,10 +1280,10 @@ constant_add_term:
       constant_term 		{ $1 }
     | constant_add_term addop constant_term
 				{ make_binop $1 (fst $2) $3 }
- 
-constant_term: 
+
+constant_term:
       constant_factor 		{ $1 }
-    | constant_term mulop constant_factor 
+    | constant_term mulop constant_factor
 				{ make_binop $1 (fst $2) $3 }
 
 constant_factor:
@@ -1305,19 +1305,19 @@ constant_primary:
 constant_unsigned_constant:
       TokInt			{ IntExpr (snd $1, fst $1) }
     | character_string		{ let char_list, pos = $1 in
-				    StringExpr (pos, NormalPrecision, 
+				    StringExpr (pos, NormalPrecision,
 					make_string_out_of_char_list char_list)
     				}
     | TokChar			{ CharExpr (snd $1, rawint_of_int (Char.code (fst $1))) }
     | TokFloat 			{ FloatExpr (snd $1, fst $1) }
     | TokString			{ let prec, s, pos = $1 in StringExpr (pos, prec, s) }
-    | TokNil			{ UnitExpr ($1, 1, 0) } 
+    | TokNil			{ UnitExpr ($1, 1, 0) }
     | boolean_value		{ $1 }
 
 boolean_value:
       TokTrue 			{ UnitExpr ($1, 2, 1) }
     | TokFalse 			{ UnitExpr ($1, 2, 0) }
- 
+
 relop:
       TokLe 			{ leOp_sym, $1 }
     | TokLt 			{ ltOp_sym, $1 }
@@ -1332,25 +1332,25 @@ logop:
     | TokXor 			{ xorOp_sym, $1 }
     | TokShl 			{ lShiftOp_sym, $1 }
     | TokShr 			{ rShiftOp_sym, $1 }
- 
+
 addop:
       TokPlus 			{ plusOp_sym, $1 }
     | TokMinus 			{ minusOp_sym, $1 }
- 
+
 mulop:
       TokStar 			{ timesOp_sym, $1 }
     | TokSlash 			{ divOp_sym, $1 }
     | TokMod 			{ modOp_sym, $1 }
     | TokDiv 			{ intDivideOp_sym, $1 }
- 
+
 boolean_expression:
       expression 		{ $1 }
-   
+
 expression_list:
       expression_list_rev 	{ List.rev $1 }
-   
+
 expression_list_rev:
-      expression_list_rev TokComma expression 
+      expression_list_rev TokComma expression
     				{ $3 :: $1 }
     | expression 		{ [$1] }
 
@@ -1372,27 +1372,27 @@ relop_expression_list:
 				{ make_binop $1 commaOp_sym $3 }
 
 relop_expression:
-      simple_expression relop simple_expression 
+      simple_expression relop simple_expression
     				{ make_binop $1 (fst $2) $3 }
     | simple_expression 	{ $1 }
-  
+
 simple_expression:
       add_term 			{ $1 }
-    | simple_expression logop add_term 
+    | simple_expression logop add_term
 				{ make_binop $1 (fst $2) $3 }
 
 add_term:
       term 			{ $1 }
     | add_term addop term 	{ make_binop $1 (fst $2) $3 }
- 
-term: 
+
+term:
       factor 			{ $1 }
     | term mulop factor 	{ make_binop $1 (fst $2) $3 }
 
 factor:
       TokMinus factor 		{ make_unop uMinusOp_sym $2 }
     | exponentiation 		{ $1 }
- 
+
 /* BUG: Need exponentation */
 exponentiation:
 /*   primary TokStarStar exponentiation */
@@ -1412,7 +1412,7 @@ primary:
 
 unsigned_constant:
       TokInt 			{ IntExpr (snd $1, fst $1) }
-    | TokLeftParen expression TokRightParen 
+    | TokLeftParen expression TokRightParen
 				{ $2 }
     | character_string 		{ let char_list, pos = $1 in
 				    StringExpr (pos, NormalPrecision, make_string_out_of_char_list char_list)
@@ -1434,7 +1434,7 @@ component_variable:
     | field_designator		{ $1 }
 
 indexed_variable:
-      lvalue TokLeftBrack expression_list TokRightBrack 
+      lvalue TokLeftBrack expression_list TokRightBrack
 				{ make_subscript_expr $1 $3 (union_pos $2 $4)  }
 
 field_designator:
@@ -1450,7 +1450,7 @@ identified_variable:
  */
 character_string:
       character_string_rev	{ List.rev (fst $1), (snd $1) }
-   
+
 character_string_rev:
    character_string_rev TokChar { let chars, pos1 = $1 in
 				  let ch, pos2 = $2 in
@@ -1458,15 +1458,15 @@ character_string_rev:
 				}
 
 function_call:
-      unsigned_constant TokLeftParen expression_list TokRightParen 
+      unsigned_constant TokLeftParen expression_list TokRightParen
     				{ make_apply_expr (union_pos (pos_of_expr $1) $4) $1 $3 }
-    | type_identifier TokLeftParen expression TokRightParen 
+    | type_identifier TokLeftParen expression TokRightParen
 				{ CastExpr (union_pos (snd $1) $4, fst $1, $3) }
-    | TokSizeOf TokLeftParen expression TokRightParen 
+    | TokSizeOf TokLeftParen expression TokRightParen
 				{ SizeofExpr (union_pos $1 $4, $3) }
-    | TokSizeOf TokLeftParen type_identifier TokRightParen 
+    | TokSizeOf TokLeftParen type_identifier TokRightParen
 				{ SizeofType(union_pos $1 $4, fst $3) }
-    | unsigned_constant TokLeftParen TokRightParen 
+    | unsigned_constant TokLeftParen TokRightParen
 				{ warn_if_not_pasqual (union_pos (pos_of_expr $1) $3) "calling function with no parameters";
 				  make_apply_expr (union_pos (pos_of_expr $1) $3) $1 []
 				}

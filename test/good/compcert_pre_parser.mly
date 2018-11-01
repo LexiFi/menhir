@@ -621,7 +621,7 @@ asm_statement:
 
 asm_attributes:
 | /* empty */
-| CONST asm_attributes    
+| CONST asm_attributes
 | VOLATILE asm_attributes
     {}
 
@@ -688,7 +688,7 @@ function_definition_begin:
 	    | Some i -> declare_varname i
 	  ) l
     }
-| declaration_specifiers pointer? x=direct_declarator 
+| declaration_specifiers pointer? x=direct_declarator
   LPAREN params=identifier_list RPAREN in_context(declaration_list)
     { match x with
       | (_, Some _) -> $syntaxerror

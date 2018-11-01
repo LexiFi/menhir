@@ -53,7 +53,7 @@ let ck_dword_lr ptr_opt n op =
 
 let ck_dword_b ptr_opt op1 op2 =
   match ptr_opt with
-    None -> 
+    None ->
       (match op1 with
       	Prjr(_,_,_) | Prjl(_,_,_) ->
       	  (match op2 with
@@ -65,7 +65,7 @@ let ck_dword_b ptr_opt op1 op2 =
   | _ -> ()
 ;;
 
-(* Dave/Dan: The part for genop g, 
+(* Dave/Dan: The part for genop g,
  * if g is prefixed by a dword ptr, then the size should be 32 bits.
  * if g is prefixed by a byte ptr, then the size should be 8 bits.
  * if g is a 32 bit register or immediate address, the size should be 32 bits.
@@ -95,7 +95,7 @@ let mk_reg_coerce n (o,cs) =
 
 let mk_reg n o =
   match o with
-    Reg r -> r 
+    Reg r -> r
   | _ -> errn n "operand must be a register"; raise Gcdfec.Exit
 ;;
 
@@ -109,14 +109,14 @@ let mk_scale n =
 
 let mk_cc n s =
   match String.uppercase s with
-    "A" | "NBE" -> Above                  | "LE" | "NG" -> LessEq       
-  | "AE" | "NB" | "NC" -> AboveEq	  | "NE" | "NZ" -> NotEq        
-  | "B" | "NAE" | "C" -> Below		  | "NO" -> NotOverflow         
-  | "BE" | "NA" -> BelowEq		  | "NS" -> NotSign             
-  | "E" | "Z" -> Eq			  | "O" -> Overflow             
-  | "G" | "NLE" -> Greater		  | "PE" | "P" -> ParityEven    
-  | "GE" | "NL" -> GreaterEq		  | "PO" | "NP" -> ParityOdd    
-  | "L" | "NGE" -> Less			  | "S" -> Sign                 
+    "A" | "NBE" -> Above                  | "LE" | "NG" -> LessEq
+  | "AE" | "NB" | "NC" -> AboveEq	  | "NE" | "NZ" -> NotEq
+  | "B" | "NAE" | "C" -> Below		  | "NO" -> NotOverflow
+  | "BE" | "NA" -> BelowEq		  | "NS" -> NotSign
+  | "E" | "Z" -> Eq			  | "O" -> Overflow
+  | "G" | "NLE" -> Greater		  | "PE" | "P" -> ParityEven
+  | "GE" | "NL" -> GreaterEq		  | "PO" | "NP" -> ParityOdd
+  | "L" | "NGE" -> Less			  | "S" -> Sign
   | _ -> errn n "bad condition code"; raise Gcdfec.Exit
 ;;
 
@@ -157,7 +157,7 @@ let process_byte_list bis =
   g 0 bis
 ;;
 
-let do_rep ri = 
+let do_rep ri =
    ri,ref None
 
 type coercearg =
@@ -184,13 +184,13 @@ let is_decimal f =
   aux 0
 
 (* convert strings in hexadecimal format into floating-point values *)
-let process_f32 f = 
+let process_f32 f =
   try hex_to_f32 f
-  with Invalid_argument _ -> (err "bad 32-bit float literal."; 
+  with Invalid_argument _ -> (err "bad 32-bit float literal.";
 			      raise Gcdfec.Exit)
-let process_f64 f = 
+let process_f64 f =
   try hex_to_f64 f
-  with Invalid_argument _ -> (err "bad 32-bit float literal."; 
+  with Invalid_argument _ -> (err "bad 32-bit float literal.";
 			      raise Gcdfec.Exit)
 
 let rec make_tapps (o,cs) tcs =
@@ -199,8 +199,8 @@ let rec make_tapps (o,cs) tcs =
   | c::tcs -> make_tapps (o,(Tapp c)::cs) tcs
 ;;
 
-type kmu_item = 
-   MU of (identifier*kind) list 
+type kmu_item =
+   MU of (identifier*kind) list
  | PR of (identifier * identifier * kind * identifier * kind * con) list
 
 type int_item =
@@ -216,44 +216,44 @@ type int_item =
 let do_mu ikl kinds =
    (* create renaming dictionary kd, and rename first component of ikl *)
    let iikl,kd = List.fold_left (fun (ikl,d) (i,k) ->
-      let name = (id_new (id_to_string i)) in 
-      (i,name,k)::ikl, Dict.insert d i (kvar name)) ([], Dict.empty id_compare) ikl in 
+      let name = (id_new (id_to_string i)) in
+      (i,name,k)::ikl, Dict.insert d i (kvar name)) ([], Dict.empty id_compare) ikl in
    (* use dictionary to rename second component of ikl *)
-   let ikl = List.map (fun (oldi,newi,k) -> (newi, Talcon.ksubsts kd k)) iikl in 
+   let ikl = List.map (fun (oldi,newi,k) -> (newi, Talcon.ksubsts kd k)) iikl in
    let iil = List.map (fun (oldi,newi,k) -> (oldi,newi)) iikl in
    (* add abbreviations to kinds *)
    kinds := (List.fold_right (fun (oldi,newi) l ->
       (oldi,defkind(Kmu(ikl,newi))) ::l) iil (!kinds))
-	 
+
 (* rename both the kind variable, j, and the con variable f *)
-let do_pr l abbrevs = 
+let do_pr l abbrevs =
    (* create dictionary, and rename f&j in l
       Careful --- j could appear multiple times in l *)
-   let (_,l,kd,cd) = List.fold_left (fun (jd,l,kd,cd) (j,a,k,f,k',c) -> 
-      let newj = try Dict.lookup jd j with 
-	 Dict.Absent -> (id_new (id_to_string j)) in 
-      let newf = (id_new (id_to_string f)) in 
-      Dict.insert jd j newj, 
+   let (_,l,kd,cd) = List.fold_left (fun (jd,l,kd,cd) (j,a,k,f,k',c) ->
+      let newj = try Dict.lookup jd j with
+	 Dict.Absent -> (id_new (id_to_string j)) in
+      let newf = (id_new (id_to_string f)) in
+      Dict.insert jd j newj,
       (f, newj,a,k,newf,k',c)::l,
       Dict.insert kd j (kvar newj),
       Dict.insert cd f (cvar newf))
-	 (Dict.empty id_compare, [], 
-	    Dict.empty id_compare, Dict.empty id_compare) l in   
+	 (Dict.empty id_compare, [],
+	    Dict.empty id_compare, Dict.empty id_compare) l in
    (* substitute within k,k' and c *)
-   let ffl = List.map (fun (oldf, j,a,k,f,k',c) -> (oldf,f)) l in 
-   let l = List.map (fun (oldf, j,a,k,f,k',c) -> 
+   let ffl = List.map (fun (oldf, j,a,k,f,k',c) -> (oldf,f)) l in
+   let l = List.map (fun (oldf, j,a,k,f,k',c) ->
       (j,a,Talcon.ksubsts kd k, f, Talcon.ksubsts kd k',
-	 Talcon.substs (kd,cd) c)) l in 
+	 Talcon.substs (kd,cd) c)) l in
    abbrevs := (List.fold_right
-		    (fun (oldf,newf) ab -> 
-		       (oldf,defcon(Cpr(newf, l)))::ab) ffl (!abbrevs)) 
-	 
+		    (fun (oldf,newf) ab ->
+		       (oldf,defcon(Cpr(newf, l)))::ab) ffl (!abbrevs))
+
 let process_int_items is =
   let abbrevs = ref []
   and cons = ref []
-  and vals = ref [] 
+  and vals = ref []
 (* LX *)
-  and kinds = ref [] 
+  and kinds = ref []
 (* end LX *)
 in
   let rec loop is =
@@ -261,12 +261,12 @@ in
       [] -> ()
     | (INTabbrev (v,c))::is -> abbrevs := (v,c) :: !abbrevs; loop is
     | (INTcon lkcd)::is -> cons := lkcd :: !cons; loop is
-    | (INTval (l,c))::is -> vals := (l,c) :: !vals; loop is 
+    | (INTval (l,c))::is -> vals := (l,c) :: !vals; loop is
 (* LX *)
     | (INTkmuabbrev km)::is ->
 	 (match km with
 	    MU ikl -> do_mu ikl kinds
-	  | PR l -> do_pr l abbrevs);	       
+	  | PR l -> do_pr l abbrevs);
 	 loop is
     | (INTkindabbrev (a,b))::is -> kinds := (a,b) :: !kinds; loop is
 (* end LX *)
@@ -331,15 +331,15 @@ let process_mod_items items =
 (* Cyclone *)
   let templates = ref []
   and template_labels = ref None
-  and template_blocks = ref [] 
+  and template_blocks = ref []
 (* End Cyclone *)
 (* LX *)
   and kinds = ref []
   and kmus = ref []
-(* end LX *) 
+(* end LX *)
 in
   let code_block l is =
-    let (c,is) = 
+    let (c,is) =
       match is with
       	(IMPlabeltype c)::is -> (Some c,is)
       |	is -> (None,is)
@@ -351,7 +351,7 @@ in
     let is = loop is in
     ((l,c,Array.of_list (List.rev !insts)),is) in
   let data_block l is =
-    let (align,co,is) = 
+    let (align,co,is) =
       match is with
       |	(IMPlabeltype c)::(IMPalign n)::is -> (    n,Some c,is)
       |	(IMPalign n)::(IMPlabeltype c)::is -> (    n,Some c,is)
@@ -416,9 +416,9 @@ in
     | _,_ -> err "bad items"; raise Gcdfec.Exit
   in
   loop 0 items;
-  { import_refs=Array.of_list 
+  { import_refs=Array.of_list
       (List.map (function s -> Int_filename s) (List.rev !imports));
-    export_refs=Array.of_list 
+    export_refs=Array.of_list
       (List.map (function s -> Int_filename s) (List.rev !exports));
     pre_imp = { imp_abbrevs=Array.of_list (List.rev !abbrevs);
 (* LX *)
@@ -445,8 +445,8 @@ let process_coerce n (go,clist) =
 
 let process_coerce_in_list (go,clist) =
   match go with
-    CAnone -> 
-      err "can't coerce data inside virtual instruction list"; 
+    CAnone ->
+      err "can't coerce data inside virtual instruction list";
       raise Gcdfec.Exit
   | CAgc ((Reg r) as gop) -> Coerce (gop,clist)
   | CAgc ((Prjr (_,_,_)) as gop)-> Coerce (gop,clist)
@@ -498,13 +498,13 @@ let fpbinop_to_pop op =
 %token <Tal.kind> Tbk /* base kinds */
 
 %token T_begin_TAL T_end_TAL Tadc Tadd Tah Tal Talign TAll Tand
-%token Tarray Tasub Taupd Tax 
+%token Tarray Tasub Taupd Tax
 %token Tbh Tbl Tbool Tbp Tbswap Tbtagi Tbtagvar Tbx
 %token Tcall Tcbw Tcdq Tch Tcl Tclc Tcmc
 %token Tcmp Tcode Tcoerce Tcwd Tcwde Tcx
 %token Tdata Tdb Tdd Tdec Tdh Tdi Tdiv Tdl Tdw Tdword Tdx Tbyte
 %token Tend TExist Tfallthru Tfn
-%token Tidiv Timul Tinc Tint Tinto Tjecxz Tjmp Tjunk 
+%token Tidiv Timul Tinc Tint Tinto Tjecxz Tjmp Tjunk
 %token Tlabeltype Tlahf Tlea
 %token Tloopd Tlooped Tloopned Tmalloc Tmov Tmovsx Tmovzx
 %token Tmul Tneg Tnop Tnot
@@ -512,12 +512,12 @@ let fpbinop_to_pop op =
 %token TR TR16 Trcl Trcr Trdtsc Trec Tretn TRH TRL
 %token Trol Troll Trollsum Tror TS Tsahf Tsal Tsar Tsbb Tse
 %token Tshl Tshld Tshr Tshrd Tsi Tslot Tsp Tsptr Tstc Tsub Tsubsume Tsum
-%token Tsunpack 
+%token Tsunpack
 %token Ttal_struct Ttal_ends Ttapp Ttest TTm TT Ttype Ttypeof
 %token Tunpack Tunroll Tval Tvirtual Txchg Txor
 
 %token Tname Tnameobj Tforgetunique Tremovename Tforgetname TNm
-%token Ttagof Tamper Tamperlsb Tcap Tbang 
+%token Ttagof Tamper Tamperlsb Tcap Tbang
 
 /* Additions for Arithmetic and logical operators */
 %token Ttrue Tfalse
@@ -536,10 +536,10 @@ let fpbinop_to_pop op =
 %token <Tal.fpsomeargs> Tfpnone_or_reg
 %token <Tal.fpsomeargs> Tfcom
 %token <int> Tfpreg Tfpregq
-%token <Tal.fpsomeargs> Tfstsw 
+%token <Tal.fpsomeargs> Tfstsw
 %token <Tal.fpsomeargs> Tfpregs
 %token Tffree
-%token Tst Tword Tqword 
+%token Tst Tword Tqword
 %token Tfloat32 Tfloat64        /* float con of given size */
 %token Tdfloat32 Tdfloat64      /* float data of given size */
 
@@ -552,9 +552,9 @@ let fpbinop_to_pop op =
 /* End Cyclone */
 
 /* Additions for LX */
-%token Tinj 
+%token Tinj
 %token Tcase
-%token Tprfn 
+%token Tprfn
 %token Tletprod Tletroll Tvcase Tvoid
 %token Tkind Tkindrec Tandkind Tconrec Tandcon
 /* %token Tprnat %/
@@ -602,20 +602,20 @@ int_item:
 | Tval label Tcomma econ Teol {INTval ($2,$4)}
 /* LX */
 | Tkind Tlab kvar Tequal kind Trab Teol {INTkindabbrev ($3,$5)}
-| Tkindrec Tlab kvar Tequal kind Trab Teol andkinds  
+| Tkindrec Tlab kvar Tequal kind Trab Teol andkinds
      {INTkmuabbrev (MU(($3, $5)::$8)) }
 | Tconrec prcon andcons
      {INTkmuabbrev (PR($2::$3)) }
 ;
 
-prcon: 
+prcon:
  /*  < f : j -> k' = fn a : k . c > */
     Tlab tvar Tcolon kvar Tarrow kind Tequal Tfn tvar Tcolon kind Tdot con Trab Teol
-       /* (j,a,k,f,k') */     
+       /* (j,a,k,f,k') */
     { ($4, $9, $11, $2, $6, $13) }
-  
+
 andkinds: {[]} | andkind  andkinds { $1::$2 }
-andkind: Tandkind Tlab kvar Tequal kind Trab Teol { ($3, $5) }     
+andkind: Tandkind Tlab kvar Tequal kind Trab Teol { ($3, $5) }
 andcons: {[]} | Tandcon prcon andcons { $2::$3 }
 /* end LX */
 ;
@@ -666,7 +666,7 @@ imp_item:
 /* End Cyclone */
 /* LX */
 | Tkind Tlab kvar Tequal kind Trab Teol {IMPkindabbrev ($3,$5)}
-| Tkindrec Tlab kvar Tequal kind Trab Teol andkinds 
+| Tkindrec Tlab kvar Tequal kind Trab Teol andkinds
      {IMPkmuabbrev (MU(($3, $5)::$8)) }
 | Tconrec prcon andcons
      {IMPkmuabbrev (PR($2::$3)) }
@@ -704,7 +704,7 @@ instruction:
 | Tint Tnumber {Int (int32_to_int8 $2)}
 | Tinto {Into}
 | Tj coerce {Jcc ($1,mk_label_coerce 2 $2,None)}
-| Tj coerce Tvirtual Tlab instructionlist Trab 
+| Tj coerce Tvirtual Tlab instructionlist Trab
     {Jcc ($1, mk_label_coerce 2 $2, Some $5)}
 | Tjecxz coerce {Jecxz (mk_label_coerce 2 $2,None)}
 | Tjecxz coerce Tvirtual Tlab instructionlist Trab
@@ -716,10 +716,10 @@ instruction:
 | Tlooped coerce {Loopd (mk_label_coerce 2 $2,Some true)}
 | Tloopned coerce {Loopd (mk_label_coerce 2 $2,Some false)}
 | Tmov binop2 {Mov (fst $2,snd $2)}
-| Tmov binop_part   
-    { let ((g1,p1),(g2,p2)) = $2 in 
+| Tmov binop_part
+    { let ((g1,p1),(g2,p2)) = $2 in
     if p1<>p2 then err "Mov requires operands to have the same size.";
-    Movpart(false,g1,p1,g2,p2) 
+    Movpart(false,g1,p1,g2,p2)
     }
 | Tmovsx binop_part {let ((g1,p1),(g2,p2)) = $2 in Movpart(false,g1,p1,g2,p2) }
 | Tmovzx binop_part {let ((g1,p1),(g2,p2)) = $2 in Movpart(true ,g1,p1,g2,p2) }
@@ -777,7 +777,7 @@ instruction:
 | Tfpbin fpregs {let (b,i) = $2 in FPsomeargs ($1,FPstack2 (b,i))}
 | Tfpbin fpmem  {FPsomeargs ($1,$2)}
 | Tfpmem fpmem  {FPsomeargs ($1,$2)}
-| Tfpsst fpregs 
+| Tfpsst fpregs
     {let (b,i) = $2 in
      if b then (errn 3 "floating point operation requires 2nd arg ST"; Nop)
      else FPsomeargs ($1,FPstack2(b,i))}
@@ -814,7 +814,7 @@ instruction:
 /* LX specific instructions */
 | Tletprod Tlsb tvars Trsb Tcomma con { Letprod($3,$6) }
 | Tletroll tvar Tcomma con { Letroll($2,$4) }
-| Tvcase Tnumber Tcomma tvar Tcomma con Tcomma coerce { Vcase($2,$6,$4,$8) } 
+| Tvcase Tnumber Tcomma tvar Tcomma con Tcomma coerce { Vcase($2,$6,$4,$8) }
 /* end LX */
 
 ;
@@ -910,9 +910,9 @@ genop:
 | Tlsb coerce Trsb {process_prj $2 i32_0 None}
 | Tlsb coerce Tplus Tnumber Trsb {process_prj $2 $4 None}
 /* [r1 + s*r2 + c] */
-| Tlsb coerce Tplus Tnumber Tstar reg Trsb 
+| Tlsb coerce Tplus Tnumber Tstar reg Trsb
     {process_prj $2 i32_0 (Some (mk_scale $4,$6))}
-| Tlsb coerce Tplus Tnumber Tstar reg Tplus Tnumber Trsb 
+| Tlsb coerce Tplus Tnumber Tstar reg Tplus Tnumber Trsb
     {process_prj $2 $8 (Some (mk_scale $4,$6))}
 /* [r1 + r2 + c] */
 | Tlsb coerce Tplus reg Trsb
@@ -924,7 +924,7 @@ genop:
 genop_part:
   part { ( Reg (fst $1),snd $1) }
 ;
-  
+
 proofop:
   Tident Tlab conlist0 Trab { [(mk_id $1, $3)] }
 | Tident Tlab conlist0 Trab proofop { (mk_id $1, $3) :: $5 }
@@ -932,7 +932,7 @@ proofop:
 coerce:
   coerce1
     {let (go,clist) = $1 in
-    match go with 
+    match go with
       CAnone -> err "bad coercion"; raise Gcdfec.Exit
     | CAgc g -> (g,clist)
     | CAnc n -> err "bad name coercion"; raise Gcdfec.Exit }
@@ -947,7 +947,7 @@ coerce1:
 | Ttapp Tlb coerce1 Tcomma eannotation_list Trb {make_tapps $3 $5}
 | Troll Tlb econ Tcomma coerce1 Trb
     {let (o,cs) = $5 in (o,Roll $3::cs)}
-| Tunroll Tlb coerce1 Trb 
+| Tunroll Tlb coerce1 Trb
     {let (o,cs) = $3 in (o,Unroll ::cs)}
 | Tsum Tlb econ Tcomma coerce1 Trb
     {let (o,cs) = $5 in (o,Tosum $3::cs)}
@@ -961,7 +961,7 @@ coerce1:
     {let (o,cs) = $7 in (o,Slot ($3,$5)::cs)}
 | Tsubsume Tlb econ Tcomma coerce1 Trb
     {let (o,cs) = $5 in (o,Subsume $3::cs)}
-| Tforgetname Tlb coerce1 Trb 
+| Tforgetname Tlb coerce1 Trb
     {let (o,cs) = $3 in (o,Forgetname::cs)}
 | Tprove Tlb coerce1 Trb
     {let (o,cs) = $3 in (o,Prove::cs)}
@@ -981,7 +981,7 @@ regpart:
 part:
 | Tax  {(Eax,RPx)} | Tbx  {(Ebx,RPx)} | Tcx  {(Ecx,RPx)} | Tdx  {(Edx,RPx)}
 | Tsi  {(Esi,RPx)} | Tdi  {(Edi,RPx)} | Tbp  {(Ebp,RPx)} | Tsp  {(Esp,RPx)}
-| Tal  {(Eax,RPl)} | Tbl  {(Ebx,RPl)} | Tcl  {(Ecx,RPl)} | Tdl  {(Edx,RPl)} 
+| Tal  {(Eax,RPl)} | Tbl  {(Ebx,RPl)} | Tcl  {(Ecx,RPl)} | Tdl  {(Edx,RPl)}
 | Tah  {(Eax,RPh)} | Tbh  {(Ebx,RPh)} | Tch  {(Ecx,RPh)} | Tdh  {(Edx,RPh)}
 | TR16 Tlb Tident Trb {(Virt (mk_id $3),RPx)}
 | TRL Tlb Tident Trb {(Virt (mk_id $3),RPl)}
@@ -1107,16 +1107,16 @@ con4:
     {List.fold_right (fun (v,k) c -> defcon(Cforall (v,k,c))) ($3::$4) $7}
 | TAll Tlsb vck vcks Tbar con4 Trsb Tdot con4
     {match List.rev ($3::$4) with
-      (v,k)::vks -> 
-	List.fold_left (fun c (v,k) -> cforall v k c) 
+      (v,k)::vks ->
+	List.fold_left (fun c (v,k) -> cforall v k c)
 	  (cforall v k (cif $6 $9)) vks
-    | [] -> failwith "impossible"}    
+    | [] -> failwith "impossible"}
 | TExist Tlsb vck vcks Trsb Tdot con4
     {List.fold_right (fun (v,k) c -> cexist v k c) ($3::$4) $7}
 | TExist Tlsb vck vcks Tbar con4 Trsb Tdot con4
     {match List.rev ($3::$4) with
-      (v,k)::vks -> 
-	List.fold_left (fun c (v,k) -> cexist v k c) 
+      (v,k)::vks ->
+	List.fold_left (fun c (v,k) -> cexist v k c)
 	  (cexistp v k $6 $9) vks
     | [] -> failwith "impossible"}
 | Tcode con4     {defcon(Ccode $2)} /* FMS : con to con4 */
@@ -1187,11 +1187,11 @@ con100:
 | Tplus Tlsb conlist0 Trsb {defcon(Csum $3)}
 | Tarray Tlb con Tcomma con Trb {defcon (Carray ($3,$5))}
 | TS Tlb con Trb {defcon (Csing $3)}
-| Trep Tlb rep_item Trb {defcon (Cr ($3))} 
+| Trep Tlb rep_item Trb {defcon (Cr ($3))}
 | TNm Tlb con Trb {defcon (Cname $3)}
 | Ttagof Tlb con Trb {defcon (Ctagof $3)}
 | Tamperlsb conlist0 Trsb {defcon(Cjoin $2)}
-| Tcap Tlsb caplist Trsb 
+| Tcap Tlsb caplist Trsb
     {defcon(Ccap (Dict.inserts (Dict.empty id_compare) $3))}
 | Tse {defcon(Cempty)}
 | Tlb con Trb {$2}
@@ -1312,11 +1312,11 @@ rccs1:
 | Tfpreg Tquestion {ms_set_fpstack ms_empty (fpstack_hide_reg fpstack_empty $1)}
 | rccs1 Tcomma reg Tcolon con {ms_set_reg $1 $3 $5}
 | rccs1 Tcomma Tcap Tcolon con {ms_set_cap $1 $5}
-| rccs1 Tcomma Tfpreg 
+| rccs1 Tcomma Tfpreg
     {ms_set_fpstack $1 (fpstack_init_reg (ms_get_fpstack $1) $3)}
-| rccs1 Tcomma Tfpregq 
+| rccs1 Tcomma Tfpregq
     {ms_set_fpstack $1 (fpstack_hide_reg (ms_get_fpstack $1) $3)}
-| rccs1 Tcomma Tfpreg Tquestion 
+| rccs1 Tcomma Tfpreg Tquestion
     {ms_set_fpstack $1 (fpstack_hide_reg (ms_get_fpstack $1) $3)}
 ;
 
@@ -1356,7 +1356,7 @@ tvar:
 
 /* LX */
 tvars:
-  tvar {[ $1 ] } 
+  tvar {[ $1 ] }
 | tvar Tcomma tvars { $1 :: $3 }
 
 

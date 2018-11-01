@@ -1,15 +1,15 @@
 /*
  * The Caduceus certification tool
  * Copyright (C) 2003 Jean-Christophe Filliâtre - Claude Marché
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * See the GNU General Public License version 2 for more details
  * (enclosed in the file GPL).
  */
@@ -33,7 +33,7 @@
   let locate_i i x = { node = x; loc = loc_i i }
   let with_loc l x = { node = x; loc = l }
 
-  let error s = 
+  let error s =
     Creport.raise_located (loc ()) (AnyMessage ("Syntax error: " ^ s))
 
   let uns () = error "Unsupported C syntax"
@@ -44,13 +44,13 @@
   let vwarning s = if verbose then warning s
   let dwarning s = if debug then warning s
 
-  let no_loop_annot = 
-    { Clogic.invariant = None; 
+  let no_loop_annot =
+    { Clogic.invariant = None;
       Clogic.loop_assigns = None;
       Clogic.variant = None }
 
   let add_pre_loc lb = function
-    | Some (b,_) -> Loc.join (b,0) lb 
+    | Some (b,_) -> Loc.join (b,0) lb
     | _ -> lb
 
   let expr_of_statement s = match s.node with
@@ -60,8 +60,8 @@
 
   (* used only for parsing types *)
 
-  type specifier = 
-    | Stypedef 
+  type specifier =
+    | Stypedef
     | Sstorage of storage_class
     | Stype of cexpr ctype_node
     | Slong
@@ -72,7 +72,7 @@
     | Ssign of sign
     | Sstruct_decl of string option * fields
     | Sunion_decl of string option * fields
-	
+
   and specifiers = specifier list
 
   and declarator =
@@ -88,31 +88,31 @@
   (* interps a list of specifiers / declarators as a [ctype] *)
   (* TODO: short/long *)
 
-  let storage_class = 
+  let storage_class =
     let rec loop st = function
-      | [] -> 
+      | [] ->
 	  st
-      | Sstorage st' :: s when st = No_storage -> 
+      | Sstorage st' :: s when st = No_storage ->
 	  loop st' s
       | Sstorage st' :: s when st' = st ->
 	  warning "duplicate storage class"; loop st s
       | Sstorage st' :: _ ->
 	  error "multiple storage class"
-      | _ :: s -> 
+      | _ :: s ->
 	  loop st s
     in
     loop No_storage
 
   let sign =
     let rec loop so = function
-      | [] -> 
+      | [] ->
 	  so
-      | Ssign b' :: sp -> 
-	  (match so with 
+      | Ssign b' :: sp ->
+	  (match so with
 	     | None -> loop (Some b') sp
 	     | Some b when b = b' -> warning "duplicate (un)signed"; loop so sp
 	     | Some b -> error "both signed and unsigned")
-      | _ :: sp -> 
+      | _ :: sp ->
 	  loop so sp
     in
     loop None
@@ -126,25 +126,25 @@
 
   let length =
     let rec loop lo = function
-      | [] -> 
+      | [] ->
 	  lo
-      | (Sshort | Slong as s) :: sp -> 
-	  (match s, lo with 
-	     | Sshort, None -> 
+      | (Sshort | Slong as s) :: sp ->
+	  (match s, lo with
+	     | Sshort, None ->
 		 loop (Some Short) sp
-	     | Slong, None -> 
+	     | Slong, None ->
 		 loop (Some Long) sp
-	     | Sshort, Some Short -> 
+	     | Sshort, Some Short ->
 		 warning "duplicate short"; loop lo sp
-	     | Sshort, Some (Long | LongLong) | Slong, Some Short -> 
+	     | Sshort, Some (Long | LongLong) | Slong, Some Short ->
 		 error "both long and short specified"
-	     | Slong, Some Long -> 
+	     | Slong, Some Long ->
 		 loop (Some LongLong) sp
 	     | Slong, Some LongLong ->
 		 error "too long for caduceus"
-	     | _ -> 
+	     | _ ->
 		 assert false)
-      | _ :: sp -> 
+      | _ :: sp ->
 	  loop lo sp
     in
     loop None
@@ -155,47 +155,47 @@
     | Some Long, (CTint (s, _)) -> CTint (s, Cast.Long)
     | Some LongLong, (CTint (s, _)) -> CTint (s, Cast.LongLong)
     | Some Long, CTfloat Double -> CTfloat LongDouble
-    | Some _, CTfloat Float 
-    | Some Short, CTfloat _ -> 
+    | Some _, CTfloat Float
+    | Some Short, CTfloat _ ->
 	error "long or short specified with floating type"
-    | Some LongLong, CTfloat _ -> 
+    | Some LongLong, CTfloat _ ->
 	error "the only valid combination is `long double'"
     | Some _, _ -> ty
 
   (* debug *)
   let rec explain_type fmt = function
-    | CTfun (_, t) -> 
+    | CTfun (_, t) ->
 	fprintf fmt "function returning %a" explain_type t.ctype_node
-    | CTpointer t -> 
+    | CTpointer t ->
 	fprintf fmt "pointer on %a" explain_type t.ctype_node
-    | CTarray (t, _) -> 
+    | CTarray (t, _) ->
 	fprintf fmt "array[] of %a" explain_type t.ctype_node
-    | _ -> 
+    | _ ->
 	fprintf fmt "other"
 
   (* fresh names for anonymous structures *)
 
   let fresh_name =
     let r = ref (-1) in
-    function 
+    function
       | Some s -> s
       | None -> incr r; "anonymous_" ^ string_of_int !r
 
   (* Interpretation of type expression.
-     [gl] indicates a global declaration (implies the check for a type or 
+     [gl] indicates a global declaration (implies the check for a type or
      a storage class) *)
 
-  let rec interp_type gl specs decl = 
+  let rec interp_type gl specs decl =
     let st = storage_class specs in
     let cst = List.exists ((=) Sconst) specs in
     let vl = List.exists ((=) Svolatile) specs in
     let sg = sign specs in
     let lg = length specs in
     let rec base_type tyo = function
-      | [] -> 
-	  (match tyo with 
+      | [] ->
+	  (match tyo with
 	     | Some ty -> ty
-	     | None when gl && st = No_storage && sg = None && lg = None -> 
+	     | None when gl && st = No_storage && sg = None && lg = None ->
 		 error "data definition has no type or storage class"
 	     | None -> CTint (Signed, Int))
       | Stype t :: sp when tyo = None ->
@@ -213,7 +213,7 @@
       | Dpointer d -> full_type (Cast_misc.noattr (CTpointer ty)) d
       | Darray (d, so) -> full_type (Cast_misc.noattr (CTarray (ty, so))) d
       | Dfunction (d, pl) -> full_type (Cast_misc.noattr (CTfun (params pl, ty))) d
-    and params pl = 
+    and params pl =
       List.map (fun (s,d,x) -> (interp_type false s d, x)) pl
     and fields fl =
       List.map (fun (s,d,x,bf) -> (interp_type false s d, x, bf)) fl
@@ -222,7 +222,7 @@
     let bt = apply_sign sg bt in
     let bt = apply_length lg bt in
     let bt = { ctype_node = bt; ctype_storage = st;
-	       ctype_const = cst; ctype_volatile = vl } 
+	       ctype_const = cst; ctype_volatile = vl }
     in
     let ty = full_type bt decl in
     if debug then eprintf "%a@." explain_type ty.ctype_node;
@@ -237,9 +237,9 @@
     let l = loc() in
     if is_typedef specs then
       let interp = function
-	| (n,d), None -> 
+	| (n,d), None ->
 	    Ctypes.add n; Ctypedef (interp_type true specs d, n)
-	| (n,_), _ -> 
+	| (n,_), _ ->
 	    error ("typedef " ^ n ^ " is initialized")
       in
       List.map interp decls
@@ -274,27 +274,27 @@
     (* we first check that no parameter is initialized or occurs twice *)
     List.iter
       (fun d -> match d.node with
-	 | Cdecl (ty, x, None) -> 
-	     if not (List.mem x pids) then 
+	 | Cdecl (ty, x, None) ->
+	     if not (List.mem x pids) then
 	       error ("declaration for " ^ x ^ " but no such parameter");
 	     if Hashtbl.mem h x then error ("duplicate declaration for " ^ x);
 	     Hashtbl.add h x ty
 	 | Cdecl (_,x,_) -> error ("parameter " ^ x ^ " is initialized")
-	 | _ -> ()) 
+	 | _ -> ())
       decls;
     (* do it for all parameters *)
     List.map (fun (tx, x) -> (try Hashtbl.find h x with Not_found -> tx), x) pl
 
-  let function_declaration specs (id,d) decls = 
+  let function_declaration specs (id,d) decls =
     let ty = interp_type false specs d in
     match ty.ctype_node with
       | CTfun (pl, tyf) ->
-	  let pl = 
-	    if decls = [] then pl else old_style_params pl decls 
+	  let pl =
+	    if decls = [] then pl else old_style_params pl decls
 	  in
 	  List.iter (fun (_,x) -> Ctypes.remove x) pl;
 	  tyf, id, pl
-      | _ -> 
+      | _ ->
 	  raise Parsing.Parse_error
 
 %}
@@ -347,19 +347,19 @@ primary_expression
         ;
 
 postfix_expression
-        : primary_expression 
+        : primary_expression
             { $1 }
-        | postfix_expression LSQUARE expression RSQUARE 
+        | postfix_expression LSQUARE expression RSQUARE
 	    { locate (CEarrget ($1, $3)) }
-        | postfix_expression LPAR RPAR 
+        | postfix_expression LPAR RPAR
 	    { locate (CEcall ($1, [])) }
-        | postfix_expression LPAR argument_expression_list RPAR 
+        | postfix_expression LPAR argument_expression_list RPAR
 	    { locate (CEcall ($1, $3)) }
-        | postfix_expression DOT identifier/*ICI*/ 
+        | postfix_expression DOT identifier/*ICI*/
 	    { locate (CEdot ($1, $3)) }
-        | postfix_expression PTR_OP identifier/*ICI*/ 
+        | postfix_expression PTR_OP identifier/*ICI*/
 	    { locate (CEarrow ($1, $3)) }
-        | postfix_expression INC_OP 
+        | postfix_expression INC_OP
 	    { locate (CEincr (Upostfix_inc, $1)) }
         | postfix_expression DEC_OP
 	    { locate (CEincr (Upostfix_dec, $1)) }
@@ -376,7 +376,7 @@ unary_expression
         | DEC_OP unary_expression { locate (CEincr (Uprefix_dec, $2)) }
         | unary_operator cast_expression { locate (CEunary ($1, $2)) }
         | SIZEOF unary_expression { locate (CEsizeof_expr $2) }
-        | SIZEOF LPAR type_name RPAR 
+        | SIZEOF LPAR type_name RPAR
 	    { let s,d = $3 in locate (CEsizeof (interp_type false s d)) }
         ;
 
@@ -391,42 +391,42 @@ unary_operator
 
 cast_expression
         : unary_expression { $1 }
-        | LPAR type_name RPAR cast_expression 
+        | LPAR type_name RPAR cast_expression
 	    { let s,d = $2 in locate (CEcast (interp_type false s d, $4)) }
         ;
 
 multiplicative_expression
-        : cast_expression 
+        : cast_expression
             { $1 }
-        | multiplicative_expression STAR cast_expression 
+        | multiplicative_expression STAR cast_expression
 	    { locate (CEbinary ($1, Bmul, $3)) }
-        | multiplicative_expression SLASH cast_expression 
+        | multiplicative_expression SLASH cast_expression
 	    { locate (CEbinary ($1, Bdiv, $3)) }
-        | multiplicative_expression PERCENT cast_expression 
+        | multiplicative_expression PERCENT cast_expression
 	    { locate (CEbinary ($1, Bmod, $3)) }
         ;
 
 additive_expression
-        : multiplicative_expression 
+        : multiplicative_expression
            { $1 }
-        | additive_expression PLUS multiplicative_expression 
+        | additive_expression PLUS multiplicative_expression
 	    { locate (CEbinary ($1, Badd, $3)) }
-        | additive_expression MINUS multiplicative_expression 
+        | additive_expression MINUS multiplicative_expression
 	    { locate (CEbinary ($1, Bsub, $3)) }
         ;
 
 shift_expression
         : additive_expression { $1 }
-        | shift_expression LEFT_OP additive_expression 
+        | shift_expression LEFT_OP additive_expression
 	    { locate (CEbinary ($1, Bshift_left, $3)) }
-        | shift_expression RIGHT_OP additive_expression 
+        | shift_expression RIGHT_OP additive_expression
 	    { locate (CEbinary ($1, Bshift_right, $3)) }
         ;
 
 relational_expression
-        : shift_expression 
+        : shift_expression
             { $1 }
-        | relational_expression LT shift_expression 
+        | relational_expression LT shift_expression
 	    { locate (CEbinary ($1, Blt, $3)) }
         | relational_expression GT shift_expression
 	    { locate (CEbinary ($1, Bgt, $3)) }
@@ -437,60 +437,60 @@ relational_expression
         ;
 
 equality_expression
-        : relational_expression 
+        : relational_expression
             { $1 }
-        | equality_expression EQ_OP relational_expression 
+        | equality_expression EQ_OP relational_expression
 	    { locate (CEbinary ($1, Beq, $3)) }
-        | equality_expression NE_OP relational_expression 
+        | equality_expression NE_OP relational_expression
 	    { locate (CEbinary ($1, Bneq, $3)) }
         ;
 
 and_expression
-        : equality_expression 
+        : equality_expression
             { $1 }
-        | and_expression AMP equality_expression 
+        | and_expression AMP equality_expression
 	    { locate (CEbinary ($1, Bbw_and, $3)) }
         ;
 
 exclusive_or_expression
-        : and_expression 
+        : and_expression
             { $1 }
-        | exclusive_or_expression HAT and_expression 
+        | exclusive_or_expression HAT and_expression
 	    { locate (CEbinary ($1, Bbw_xor, $3)) }
         ;
 
 inclusive_or_expression
-        : exclusive_or_expression 
+        : exclusive_or_expression
             { $1 }
-        | inclusive_or_expression PIPE exclusive_or_expression 
+        | inclusive_or_expression PIPE exclusive_or_expression
 	    { locate (CEbinary ($1, Bbw_or, $3)) }
         ;
 
 logical_and_expression
-        : inclusive_or_expression 
+        : inclusive_or_expression
             { $1 }
-        | logical_and_expression AND_OP inclusive_or_expression 
+        | logical_and_expression AND_OP inclusive_or_expression
 	    { locate (CEbinary ($1, Band, $3)) }
         ;
 
 logical_or_expression
-        : logical_and_expression 
+        : logical_and_expression
             { $1 }
-        | logical_or_expression OR_OP logical_and_expression 
+        | logical_or_expression OR_OP logical_and_expression
 	    { locate (CEbinary ($1, Bor, $3)) }
         ;
 
 conditional_expression
-        : logical_or_expression 
+        : logical_or_expression
             { $1 }
-        | logical_or_expression QUESTION expression COLON conditional_expression 
+        | logical_or_expression QUESTION expression COLON conditional_expression
 	    { locate (CEcond ($1, $3, $5)) }
         ;
 
 assignment_expression
-        : conditional_expression 
+        : conditional_expression
             { $1 }
-        | unary_expression assignment_operator assignment_expression 
+        | unary_expression assignment_operator assignment_expression
 	    { locate (match $2 with
 			| Aequal -> CEassign ($1, $3)
 			| Amul -> CEassign_op ($1, Bmul, $3)
@@ -529,15 +529,15 @@ constant_expression
         ;
 
 declaration
-        : declaration_specifiers SEMICOLON 
+        : declaration_specifiers SEMICOLON
             { type_declarations $1 }
-        | declaration_specifiers init_declarator_list attributes_opt SEMICOLON 
+        | declaration_specifiers init_declarator_list attributes_opt SEMICOLON
 	    { List.map locate (declaration $1 $2) }
-        | SPEC 
-	  declaration_specifiers init_declarator_list attributes_opt SEMICOLON 
+        | SPEC
+	  declaration_specifiers init_declarator_list attributes_opt SEMICOLON
 	    { [locate (spec_declaration $1 $2 $3)] }
 	| DECL  /* ADDED FOR WHY */
-	    { let ofs,d = $1 in 
+	    { let ofs,d = $1 in
 	      List.map (fun d -> locate (Cspecdecl (ofs,d))) d }
         ;
 
@@ -566,9 +566,9 @@ init_declarator_list
         ;
 
 init_declarator
-        : declarator 
+        : declarator
             { $1, None }
-        | declarator EQUAL c_initializer 
+        | declarator EQUAL c_initializer
 	    { $1, Some $3 }
         ;
 
@@ -604,14 +604,14 @@ identifier
 	;
 
 struct_or_union_specifier
-        : struct_or_union identifier/*ICI*/ LBRACE struct_declaration_list RBRACE 
-            { if $1 then 
-		Sstruct_decl (Some $2, $4) 
-	      else 
+        : struct_or_union identifier/*ICI*/ LBRACE struct_declaration_list RBRACE
+            { if $1 then
+		Sstruct_decl (Some $2, $4)
+	      else
 		Sunion_decl (Some $2, $4) }
-        | struct_or_union LBRACE struct_declaration_list RBRACE 
+        | struct_or_union LBRACE struct_declaration_list RBRACE
 	    { if $1 then Sstruct_decl (None, $3) else Sunion_decl (None, $3) }
-        | struct_or_union identifier/*ICI*/ 
+        | struct_or_union identifier/*ICI*/
 	    { Stype (if $1 then CTstruct ($2, Tag) else CTunion ($2, Tag)) }
         ;
 
@@ -626,7 +626,7 @@ struct_declaration_list
         ;
 
 struct_declaration
-        : specifier_qualifier_list struct_declarator_list SEMICOLON 
+        : specifier_qualifier_list struct_declarator_list SEMICOLON
             { let s = $1 in List.map (fun ((id,d),bf) -> s,d,id,bf) $2 }
         ;
 
@@ -650,20 +650,20 @@ struct_declarator_list
         ;
 
 struct_declarator
-        : declarator 
+        : declarator
             { $1, None }
-        | COLON constant_expression 
+        | COLON constant_expression
 	    { ("_", Dsimple), Some $2 }
-        | declarator COLON constant_expression 
+        | declarator COLON constant_expression
 	    { $1, Some $3 }
         ;
 
 enum_specifier
-        : ENUM LBRACE enumerator_list RBRACE 
+        : ENUM LBRACE enumerator_list RBRACE
             { Stype (CTenum (fresh_name None, Decl $3)) }
-        | ENUM identifier/*ICI*/ LBRACE enumerator_list RBRACE 
+        | ENUM identifier/*ICI*/ LBRACE enumerator_list RBRACE
 	    { Stype (CTenum ($2, Decl $4)) }
-        | ENUM identifier/*ICI*/ 
+        | ENUM identifier/*ICI*/
 	    { Stype (CTenum ($2, Tag)) }
         ;
 
@@ -691,11 +691,11 @@ declarator
 direct_declarator
         : identifier
             { $1, Dsimple }
-        | LPAR declarator RPAR 
+        | LPAR declarator RPAR
 	    { $2 }
-        | direct_declarator LSQUARE constant_expression RSQUARE 
+        | direct_declarator LSQUARE constant_expression RSQUARE
 	    { let id,d = $1 in id, Darray (d, Some $3) }
-        | direct_declarator LSQUARE RSQUARE 
+        | direct_declarator LSQUARE RSQUARE
 	    { let id,d = $1 in id, Darray (d, None) }
         | direct_declarator LPAR parameter_type_list RPAR
 	    { let id,d = $1 in id, Dfunction (d, $3) }
@@ -714,10 +714,10 @@ loop_annot
 
 pointer
         : STAR { fun d -> Dpointer d }
-        | STAR type_qualifier_list 
+        | STAR type_qualifier_list
 	    { dwarning "ignored qualifiers"; fun d -> Dpointer d }
         | STAR pointer { fun d -> Dpointer ($2 d) }
-        | STAR type_qualifier_list pointer 
+        | STAR type_qualifier_list pointer
 	    { dwarning "ignored qualifiers"; fun d -> Dpointer ($3 d) }
         ;
 
@@ -739,11 +739,11 @@ parameter_list
         ;
 
 parameter_declaration
-        : declaration_specifiers declarator 
+        : declaration_specifiers declarator
             { let id,d = $2 in $1, d, id }
-        | declaration_specifiers abstract_declarator 
+        | declaration_specifiers abstract_declarator
 	    { $1, $2, "_" }
-        | declaration_specifiers 
+        | declaration_specifiers
 	    { ($1, Dsimple, "_") }
         ;
 
@@ -764,23 +764,23 @@ abstract_declarator
         ;
 
 direct_abstract_declarator
-        : LPAR abstract_declarator RPAR 
+        : LPAR abstract_declarator RPAR
             { $2 }
-        | LSQUARE RSQUARE 
+        | LSQUARE RSQUARE
 	    { Darray (Dsimple, None) }
-        | LSQUARE constant_expression RSQUARE 
+        | LSQUARE constant_expression RSQUARE
 	    { Darray (Dsimple, Some $2) }
-        | direct_abstract_declarator LSQUARE RSQUARE 
+        | direct_abstract_declarator LSQUARE RSQUARE
 	    { Darray ($1, None) }
-        | direct_abstract_declarator LSQUARE constant_expression RSQUARE 
+        | direct_abstract_declarator LSQUARE constant_expression RSQUARE
 	    { Darray ($1, Some $3) }
-        | LPAR RPAR 
+        | LPAR RPAR
 	    { Dfunction (Dsimple, []) }
-        | LPAR parameter_type_list RPAR 
+        | LPAR parameter_type_list RPAR
 	    { Dfunction (Dsimple, $2) }
-        | direct_abstract_declarator LPAR RPAR 
+        | direct_abstract_declarator LPAR RPAR
 	    { Dfunction ($1, []) }
-        | direct_abstract_declarator LPAR parameter_type_list RPAR 
+        | direct_abstract_declarator LPAR parameter_type_list RPAR
 	    { Dfunction ($1, $3) }
         ;
 
@@ -812,13 +812,13 @@ labeled_statement
         ;
 
 compound_statement
-        : compound_statement_LBRACE RBRACE 
+        : compound_statement_LBRACE RBRACE
             { Ctypes.pop (); [], [] }
-        | compound_statement_LBRACE statement_list RBRACE 
+        | compound_statement_LBRACE statement_list RBRACE
 	    { Ctypes.pop (); [], $2 }
-        | compound_statement_LBRACE declaration_list RBRACE 
+        | compound_statement_LBRACE declaration_list RBRACE
 	    { Ctypes.pop (); $2, [] }
-        | compound_statement_LBRACE declaration_list statement_list RBRACE 
+        | compound_statement_LBRACE declaration_list statement_list RBRACE
 	    { Ctypes.pop (); $2, $3 }
         ;
 
@@ -843,27 +843,27 @@ expression_statement
         ;
 
 selection_statement
-        : IF LPAR expression RPAR statement 
+        : IF LPAR expression RPAR statement
             { locate (CSif ($3, $5, locate CSnop)) }
-        | IF LPAR expression RPAR statement ELSE statement 
+        | IF LPAR expression RPAR statement ELSE statement
 	    { locate (CSif ($3, $5, $7)) }
-        | SWITCH LPAR expression RPAR statement 
+        | SWITCH LPAR expression RPAR statement
 	    { locate (CSswitch ($3, $5)) }
         ;
 
 iteration_statement
-        : loop_annot WHILE LPAR expression RPAR statement 
+        : loop_annot WHILE LPAR expression RPAR statement
             { locate (CSwhile ($1, $4, $6)) }
-        | loop_annot DO statement WHILE LPAR expression RPAR SEMICOLON 
+        | loop_annot DO statement WHILE LPAR expression RPAR SEMICOLON
 	    { locate (CSdowhile ($1, $3, $6)) }
-        | loop_annot FOR LPAR expression_statement expression_statement RPAR 
+        | loop_annot FOR LPAR expression_statement expression_statement RPAR
           statement
-	    { locate (CSfor ($1, expr_of_statement $4, expr_of_statement $5, 
+	    { locate (CSfor ($1, expr_of_statement $4, expr_of_statement $5,
 			     locate CEnop, $7)) }
-        | loop_annot 
-          FOR LPAR expression_statement expression_statement expression RPAR 
-          statement 
-	    { locate (CSfor ($1, expr_of_statement $4, expr_of_statement $5, 
+        | loop_annot
+          FOR LPAR expression_statement expression_statement expression RPAR
+          statement
+	    { locate (CSfor ($1, expr_of_statement $4, expr_of_statement $5,
 			     $6, $8)) }
         ;
 
@@ -897,11 +897,11 @@ function_definition
 	      let bl = locate_i 3 (CSblock $3) in
 	      locate (Cfundef (Some $1, ty, id, pl, bl)) }
         ;
-	      
+
 function_prototype
-        : declaration_specifiers declarator declaration_list 
+        : declaration_specifiers declarator declaration_list
             { Ctypes.push (); function_declaration $1 $2 $3 }
-        | declaration_specifiers declarator 
+        | declaration_specifiers declarator
 	    { Ctypes.push (); function_declaration $1 $2 [] }
         | declarator declaration_list
 	    { Ctypes.push (); function_declaration [] $1 $2 }
@@ -918,7 +918,7 @@ attributes_opt:
 
 attributes:
   attribute {}
-| attributes attribute {} 
+| attributes attribute {}
 ;
 
 attribute:

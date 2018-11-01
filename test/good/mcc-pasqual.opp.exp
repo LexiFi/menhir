@@ -57,7 +57,7 @@ let int_expr pos i = IntExpr (pos, Rawint.of_int Rawint.Int32 true i)
 
 let make_unop sym expr =
    OpExpr (pos_of_expr expr, PreOp, sym, sym, [expr])
-   
+
 let make_binop expr1 sym expr2 =
    let pos = union_pos (pos_of_expr expr1) (pos_of_expr expr2) in
       OpExpr (pos, PreOp, sym, sym, [expr1; expr2])
@@ -131,7 +131,7 @@ let type_pointer pos ty 	= TypePointer(pos, StatusNormal, ty)
 let type_mutable pos ty 	= TypeRef(pos, StatusNormal, ty)
 let type_poly pos sym 		= TypePoly(pos, StatusNormal)
 let type_apply pos ty_list sym 	= TypeApply(pos, StatusNormal, sym, ty_list)
-      
+
 let type_boolean pos 		= TypeUnit(pos, StatusNormal, 2)
 let type_cstring pos 		= type_pointer pos (type_char pos)
 let type_fun pos ty_list ty 	= TypeFun(pos, StatusNormal, ty_list, ty)
@@ -151,7 +151,7 @@ let ctype_cstring pos		= TypePointer (pos, StatusConst, TypeChar (pos, StatusCon
 
 (*
  * Build expressions.
- *)	
+ *)
 let wrap_expr e =
     let pos = pos_of_expr e in
     SeqExpr (pos, [e; UnitExpr (pos, 1, 0)])
@@ -164,7 +164,7 @@ let make_apply_expr pos e el =
 
 let make_string_out_of_char_list char_list =
     let chars = List.map (fun c -> Char.code c) char_list in
-	Array.of_list chars 
+	Array.of_list chars
 
 let sym_of_var_expr = function
       VarExpr (_, sym, _) ->
@@ -173,7 +173,7 @@ let sym_of_var_expr = function
 
 let rec make_array_type pos conformant indices ty =
     let indices = List.rev indices in
-    List.fold_left (fun ty (e1, e2) -> 
+    List.fold_left (fun ty (e1, e2) ->
 	match conformant with
 	      true ->
 		type_conf_array pos ty (sym_of_var_expr e1) (sym_of_var_expr e2) (type_int32 pos)
@@ -192,17 +192,17 @@ let make_subscript_expr expr1 expr_list pos =
    let res = List.fold_left (fun e1 e2 -> make_binop e1 subscript_sym e2) expr1 expr_list in
       res
 
-let extract_expressions expr_option_list= 
+let extract_expressions expr_option_list=
     let exprs = List.filter (fun element ->
 	match element with
 	      Some e -> true
 	    | None -> false) expr_option_list in
-    let expr_list_list = List.map (fun a -> 
-	match a with 
-	      Some a -> a 
+    let expr_list_list = List.map (fun a ->
+	match a with
+	      Some a -> a
 	    | None -> raise (Invalid_argument "extract_expressions")) exprs in
 	List.flatten expr_list_list
-	    
+
 let rec make_enum_pattern ids =
     match ids with
 	  id :: [] ->
@@ -278,7 +278,7 @@ let make_proc_decl heading ie f_pos =
 	        VarDefs(tpos, [pos, StoreStatic, sym, fun_ty, InitExpr (spos, StringExpr (spos, prec, ia))]), tpos
 
 let make_case pos e elist else_expr =
-    let else_expr = 
+    let else_expr =
 	match else_expr with
 	      None ->
 		SeqExpr (pos, [])
@@ -476,7 +476,7 @@ program:
 bootstrap:
   _1 = block_list _2 = TokEof
     {                         ( let exns = pop_exceptions (snd _1) in
-				  let _ = Fc_parse_state.pop_tenv() in 
+				  let _ = Fc_parse_state.pop_tenv() in
 				    exns :: fst _1
 				)}
 | _1 = program_body
@@ -677,7 +677,7 @@ type_definition_list_rev:
 
 type_definition:
   _1 = identifier _2 = TokEq _3 = type_denoter _4 = TokSemi
-    {    ( 
+    {    (
 				  let sym, p1 = _1 in
 				  let pos = union_pos p1 _4 in
 				    (p1, sym, TypeLambda(snd _3, StatusNormal, [], fst _3), None), pos
@@ -907,8 +907,8 @@ constant_decl_prim:
 				)}
 | _1 = plain_identifier_list _2 = TokEq _3 = TokMinus _4 = TokInt
     {        ( List.map (fun (sym, pos) ->
-				    pos, VarPattern (pos, sym, sym, None), ctype_int pos, 
-					InitExpr (pos, 
+				    pos, VarPattern (pos, sym, sym, None), ctype_int pos,
+					InitExpr (pos,
 					    make_unop uMinusOp_sym (IntExpr (snd _4, fst _4)))) _1
 				)}
 | _1 = plain_identifier_list _2 = TokEq _3 = TokFloat
@@ -918,8 +918,8 @@ constant_decl_prim:
 				)}
 | _1 = plain_identifier_list _2 = TokEq _3 = TokMinus _4 = TokFloat
     {        ( List.map (fun (sym, pos) ->
-				    pos, VarPattern (pos, sym, sym, None), ctype_float pos, 
-					InitExpr (pos, 
+				    pos, VarPattern (pos, sym, sym, None), ctype_float pos,
+					InitExpr (pos,
 					    make_unop uMinusOp_sym (FloatExpr (snd _4, fst _4)))) _1
 				)}
 | _1 = plain_identifier_list _2 = TokEq _3 = TokString
@@ -931,7 +931,7 @@ constant_decl_prim:
 
 variable_decl:
   _1 = TokVar _2 = variable_declaration_list _3 = TokSemi
-    {    ( let vars = List.map (fun (pos, patt, ty, ie) -> 
+    {    ( let vars = List.map (fun (pos, patt, ty, ie) ->
 				    pos, StoreAuto, patt, ty, ie) _2 in
 					VarDefs(union_pos _1 _3, vars)
 				)}
@@ -957,7 +957,7 @@ variable_init_declaration:
     {    ( List.map (fun (patt, pos) -> pos, patt, type_float32 pos, InitExpr (snd _3, FloatExpr (pos, fst _3))) _1 )}
 | _1 = var_pattern_list _2 = TokEq _3 = TokString
     {    ( let prec, ia, spos = _3 in
-				    List.map (fun (patt, pos) -> pos, patt, type_cstring pos, InitExpr (spos, StringExpr (pos, prec, ia))) _1 
+				    List.map (fun (patt, pos) -> pos, patt, type_cstring pos, InitExpr (spos, StringExpr (pos, prec, ia))) _1
 				)}
 | _1 = var_pattern_list _2 = TokColon _3 = type_denoter _4 = TokEq _5 = expression
     {    ( List.map (fun (patt, pos) -> pos, patt, fst _3, InitExpr (pos_of_expr _5, _5)) _1 )}
@@ -1176,12 +1176,12 @@ label_statement:
 | _1 = TokInt _2 = TokColon
     {                       ( LabelExpr (union_pos (snd _1) _2, goto_symbol_of_int _1) )}
 | _1 = identifier _2 = TokColon _3 = nonempty_statement
-    {    ( SeqExpr (union_pos (snd _1) (pos_of_expr _3), 
+    {    ( SeqExpr (union_pos (snd _1) (pos_of_expr _3),
 				    LabelExpr (union_pos (snd _1) _2, fst _1)
 				    :: [_3])
 				)}
 | _1 = TokInt _2 = TokColon _3 = nonempty_statement
-    {    ( SeqExpr (union_pos (snd _1) (pos_of_expr _3), 
+    {    ( SeqExpr (union_pos (snd _1) (pos_of_expr _3),
 				    LabelExpr (union_pos (snd _1) _2, goto_symbol_of_int _1)
 				    :: [_3])
 				)}
@@ -1372,7 +1372,7 @@ constant_unsigned_constant:
     {               ( IntExpr (snd _1, fst _1) )}
 | _1 = character_string
     {                        ( let char_list, pos = _1 in
-				    StringExpr (pos, NormalPrecision, 
+				    StringExpr (pos, NormalPrecision,
 					make_string_out_of_char_list char_list)
     				)}
 | _1 = TokChar

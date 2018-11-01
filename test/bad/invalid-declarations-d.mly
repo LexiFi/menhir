@@ -7,7 +7,7 @@
 %token BAZAR
 %left FOO BAR
 %right /* error */
-%nonassoc BAR QWD QWD QWD ASD QWD D QWD WQD QWD 
+%nonassoc BAR QWD QWD QWD ASD QWD D QWD WQD QWD
 %token BAR
 
 %%

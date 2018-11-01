@@ -502,7 +502,7 @@ global:
       let pardecl, isva = doOldParDecl $3 $5 in
       (* Make the function declarator *)
       doDeclaration None loc []
-        [(($1, PROTO(JUSTBASE, pardecl,isva), 
+        [(($1, PROTO(JUSTBASE, pardecl,isva),
            ["FC_OLDSTYLEPROTO",[]], loc), NO_INIT)]
     }
 /* (* Old style function prototype, but without any arguments *) */
@@ -900,7 +900,7 @@ block_element_list:
             { $1 @ $2 @ $3 }
 |   annot_list_opt pragma block_element_list            { $1 @ $3 }
 /*(* GCC accepts a label at the end of a block *)*/
-|   annot_list_opt id_or_typename_as_id COLON 
+|   annot_list_opt id_or_typename_as_id COLON
     { let loc = Parsing.rhs_start_pos 2, Parsing.rhs_end_pos 3 in
       $1 @ no_ghost [LABEL ($2, no_ghost_stmt (NOP loc), loc)] }
 ;
@@ -1771,5 +1771,5 @@ asmcloberlst_ne:
 ;
 asmlabels:
 | /* empty */                          { [] }
-| COLON local_label_names              { $2 } 
+| COLON local_label_names              { $2 }
 %%

@@ -12,7 +12,7 @@ $Id: parameterized_signatures_parser.mly,v 1.14 2002/04/23 08:36:53 marche Exp $
 
   open Parameterized_signatures
   open Parameterized_signatures_syntax
-  
+
 %}
 
 
@@ -43,7 +43,7 @@ signature_eof:
 
 signature:
   | elt {[$1]}
-  | elt SEMICOLON {[$1]} 
+  | elt SEMICOLON {[$1]}
   | elt SEMICOLON signature {$1::$3}
 ;
 
@@ -52,7 +52,7 @@ elt:
       {$1,$2,Abstract_constraint.True}
   | IDENT expr_l PIPE constr
       {$1,$2,$4}
-;      
+;
 
 /* This part deals with words. */
 
@@ -62,13 +62,13 @@ cword_eof:
 
 cword:
   | word
-      { ($1,Abstract_constraint.True) } 
+      { ($1,Abstract_constraint.True) }
   | word PIPE constr
       { ($1,$3) }
 ;
 
 word:
-  | /* epsilon */  
+  | /* epsilon */
     { [] }
   | factor word
     { $1::$2 }
@@ -77,14 +77,14 @@ word:
 ;
 
 word_no_simple:
-  | /* epsilon */  
+  | /* epsilon */
     { [] }
   | factor word
     { $1::$2 }
 ;
 
 factor:
-  | letter POWER expr 
+  | letter POWER expr
       { Exp([$1],$3) }
   | LPAR simple_word RPAR POWER expr
       { Exp($2,$5) }
@@ -94,22 +94,22 @@ factor:
       { Product($2,$3,$4,[$5]) }
 ;
 
-simple_word: 
-  | letter 
+simple_word:
+  | letter
       { [$1] }
   | simple_word letter
       { $1@[$2] }
 ;
 
 letter:
-  | IDENT expr_l 
+  | IDENT expr_l
       { ($1,$2) }
 ;
 
 /* This part deals with rules. */
 
 rules_eof:
-  | rules EOF 
+  | rules EOF
       { $1 }
 ;
 
@@ -126,18 +126,18 @@ rule:
   | word ARROW word PIPE constr
       { ($1,$3,$5) }
   | word ARROW word
-      { ($1,$3,Abstract_constraint.True) } 
+      { ($1,$3,Abstract_constraint.True) }
 ;
- 
+
 /* This part deals with formulae and expressions. */
 
 expr_l:
   | /* epsilon */
       { [] }
   | expr expr_l
-      { $1::$2 } 
+      { $1::$2 }
 ;
-  
+
 expr:
   | FORMULA {Poly_syntax.expr_of_string $1}
 ;

@@ -70,7 +70,7 @@ let rec make_case subject = function
   | [] ->
       prim PrimCaseNone
   | (CaseOne tag, e) :: rest ->
-      
+
       (* For convenience, we have made PrimCaseOne a binary primitive operation. This allows avoiding unnecessary
 	 $\eta$-expansions.
 

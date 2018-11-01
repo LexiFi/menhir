@@ -66,8 +66,8 @@ open Mod_front.EDule
 let symbol_rloc () =
   Error_rep.Location.int2t (Parsing.symbol_start()) (Parsing.symbol_end())
 
-let rhs_loc n = 
-  Error_rep.Location.int2t (Parsing.rhs_start n) (Parsing.rhs_end n)   
+let rhs_loc n =
+  Error_rep.Location.int2t (Parsing.rhs_start n) (Parsing.rhs_end n)
 
 let mktyp f = (symbol_rloc(), f)
 let mkvalu t = (symbol_rloc(), t)
@@ -82,16 +82,16 @@ let mkpat lt = let f = mktyp(F_x) in
 let mkint n =
   if n < 0 then failwith "Negative integers not implemented!"
   else
-    let i2pr i = 
-      mkvalu(T_comp (mkvalu(T_pr AtIndex.mNat), 
+    let i2pr i =
+      mkvalu(T_comp (mkvalu(T_pr AtIndex.mNat),
 		     mkvalu(T_pr i)))
     in
-    let rec n2con n = 
+    let rec n2con n =
       if n = 0 then
 	i2pr AtIndex.zero
       else
 	let acc = n2con (n - 1) in
-	mkvalu(T_appl (cons (AtIndex.arg_of_succ, acc) nil, 
+	mkvalu(T_appl (cons (AtIndex.arg_of_succ, acc) nil,
 		       i2pr AtIndex.succ))
     in
     n2con n
@@ -441,12 +441,12 @@ valu:
 | _1 = valu _2 = partial_arguments
     {      ( mkvalu(T_pappl (_2, _1)) )}
 | _1 = IF _2 = valu _3 = THEN _4 = valu _5 = ELSE _6 = valu
-    {      ( let case = 
-	  cons (AtIndex.tt, 
-		mkvalu(T_curry (cons (AtIndex.it, 
+    {      ( let case =
+	  cons (AtIndex.tt,
+		mkvalu(T_curry (cons (AtIndex.it,
 				      (mkwild(), mktyp(F_x))) nil, _4)))
-	 (cons (AtIndex.ff, 
-		mkvalu(T_curry (cons (AtIndex.it, 
+	 (cons (AtIndex.ff,
+		mkvalu(T_curry (cons (AtIndex.it,
 				      (mkwild(), mktyp(F_x))) nil, _6)))
 	  nil)
         in

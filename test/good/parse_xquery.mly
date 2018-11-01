@@ -10,7 +10,7 @@
 
 /* $Id: parse_xquery.mly,v 1.72 2007/11/16 21:16:52 mff Exp $ */
 
-/*  
+/*
  *  XQuery Parser
  */
 
@@ -157,7 +157,7 @@ let check_pragma_content content =
 %token DECLAREDEFAULTCOLLATION DECLARENAMESPACE DECLAREBASEURI MODULENAMESPACE INTERFACENAMESPACE
 %token DECLAREDEFAULTELEMENT DECLAREDEFAULTFUNCTION IMPORTSCHEMA IMPORTMODULE IMPORTINTERFACE IMPORTSERVICE
 %token NAMESPACE DEFAULTELEMENT
-%token DECLAREVALUEINDEX DECLARENAMEINDEX 
+%token DECLAREVALUEINDEX DECLARENAMEINDEX
 %token DECLAREFUNCTION EXTERNAL DECLAREUPDATINGFUNCTION
 %token DECLAREVARIABLE
 %token XQUERYVERSION
@@ -204,7 +204,7 @@ let check_pragma_content content =
 %token STAR MULT DIV IDIV MOD MINUS PLUS
 %token IPLUS ISTAR
 %token <Namespace_names.ncname> STARNCNAME NCNAMESTAR
-%token IN SATISFIES RETURN THEN ELSE TO WHERE 
+%token IN SATISFIES RETURN THEN ELSE TO WHERE
 %token INTERSECT UNION EXCEPT
 %token PRECEDES FOLLOWS
 %token CASE INSTANCEOF DEFAULT
@@ -222,7 +222,7 @@ let check_pragma_content content =
 %token INTO BEFORE AFTER
 %token WITH
 
-%token COPYDOLLAR MODIFY 
+%token COPYDOLLAR MODIFY
 
 /* XQuery! tokens */
 
@@ -272,7 +272,7 @@ let check_pragma_content content =
 
 /* Distributed XQuery (DXQ) */
 
-%token LETSERVER IMPLEMENT FROMSERVER ATSERVER FORSERVER BOX EVALCLOSURE DO 
+%token LETSERVER IMPLEMENT FROMSERVER ATSERVER FORSERVER BOX EVALCLOSURE DO
 
 /* Error or End of buffer/file */
 
@@ -397,36 +397,36 @@ librarymodule:
 ;
 
 moduledecl:
-  | MODULENAMESPACE NCNAME EQUALS STRING opt_interface SEMICOLON 
+  | MODULENAMESPACE NCNAME EQUALS STRING opt_interface SEMICOLON
       { ($2,$4,$5) }
 ;
 opt_interface:
   | /* empty */
       { None }
-  |  IMPLEMENT STRING 
+  |  IMPLEMENT STRING
       { Some ($2, None) }
-  |  IMPLEMENT STRING AT STRING 
+  |  IMPLEMENT STRING AT STRING
       { Some ($2, Some $4) }
 ;
 
 interface: opt_version interfacedecl prolog EOF
       { (* Woe is me --- hacking a global variable into the parser *)
         parsing_interface := false;
-	let infdecl = $2 and 
-            prolog = $3 
-	in 
+	let infdecl = $2 and
+            prolog = $3
+	in
 	if (prolog.pprolog_indices != []) then
 	  raise (Query (Parsing (Finfo.parsing_locinfo (),
 				 "Interface may not contain indices")))
 	else
-	  let interface_prolog = 
+	  let interface_prolog =
 	    { iprolog_xschemas = prolog.pprolog_xschemas;
 	      iprolog_contexts = prolog.pprolog_contexts;
 	      iprolog_funcvars = prolog.pprolog_funcvars;
 	    }
 	  in
-	  { pinterface_decl   = infdecl; 
-	    pinterface_prolog = interface_prolog 
+	  { pinterface_decl   = infdecl;
+	    pinterface_prolog = interface_prolog
 	  }
       }
 ;
@@ -434,7 +434,7 @@ interface: opt_version interfacedecl prolog EOF
 interfacedecl:
   | INTERFACENAMESPACE NCNAME EQUALS STRING SEMICOLON
       { parsing_interface := true;
-	($2,$4) 
+	($2,$4)
       }
 ;
 
@@ -524,7 +524,7 @@ setters_and_first_declaration_list:
   | DECLAREDEFAULTELEMENT NAMESPACE STRING SEMICOLON setters_and_first_declaration_list
       { let (nsd1,nsd,issds) = $5 in
         (nsd1,mkcontext_decl (EDefaultElementNamespaceDecl (NSUri $3)) :: nsd,issds) }
- 
+
   /* Default function namespace declaration */
 
   | DECLAREDEFAULTFUNCTION NAMESPACE STRING SEMICOLON setters_and_first_declaration_list
@@ -620,7 +620,7 @@ second_declaration_list:
 
   | DECLAREVARIABLE qname opt_type_declaration EXTERNAL SEMICOLON second_declaration_list
       { let (vfd,kd) = $6 in
-        let varname = match $2 with 
+        let varname = match $2 with
           | (NSPrefix nc, lcname) -> if (!parsing_interface) then (NSInterfacePrefix nc, lcname) else $2
 	  | _ -> if (!parsing_interface) then raise (Query(Parsing(Finfo.parsing_locinfo (),"Invalid QName"))) else $2
 	in
@@ -636,34 +636,34 @@ second_declaration_list:
           let expr = $5 in
           let newfd = mkfunction_def ($2,[],([],None),EFunctionUser expr, $1) in
 	    ((FunDef newfd) :: vfd, kd) }
-      
+
   | start_declare_fun FUNCTIONNAMELPAR paramlist RPAR LCURLY block RCURLY SEMICOLON second_declaration_list
       {   let (vfd,kd) = $9 in
           let (input_types,input_vars) = $3 in
           let expr = $6 in
           let newfd = mkfunction_def ($2,input_vars,(input_types,None),EFunctionUser expr, $1) in
 	    ((FunDef newfd) :: vfd, kd) }
-      
+
   | start_declare_fun FUNCTIONNAMELPAR RPAR AS sequencetype LCURLY block RCURLY SEMICOLON second_declaration_list
       {   let (vfd,kd) = $10 in
           let expr = $7 in
           let newfd = mkfunction_def ($2,[],([],Some $5),EFunctionUser expr, $1) in
 	    ((FunDef newfd) :: vfd, kd) }
-      
+
   | start_declare_fun FUNCTIONNAMELPAR paramlist RPAR AS sequencetype LCURLY block RCURLY SEMICOLON second_declaration_list
-      { 
+      {
 	let (vfd,kd) = $11 in
 	let (input_types,input_vars) = $3 in
 	let expr = $8 in
 	let newfd = mkfunction_def ($2,input_vars,(input_types,Some $6),EFunctionUser expr, $1) in
 	  ((FunDef newfd :: vfd), kd) }
-      
+
 /* External function declarations */
-	
+
   | start_declare_fun FUNCTIONNAMELPAR RPAR AS sequencetype EXTERNAL SEMICOLON second_declaration_list
       { let (vfd,kd) = $8 in
         let funkind = if (!parsing_interface) then EFunctionInterface else EFunctionBltIn in
-        let fname = match $2 with 
+        let fname = match $2 with
           | (NSPrefix nc, lcname) -> if (!parsing_interface) then (NSInterfacePrefix nc, lcname) else $2
 	  | _ -> if (!parsing_interface) then raise (Query(Parsing(Finfo.parsing_locinfo (),"Invalid QName"))) else $2
 	in
@@ -674,7 +674,7 @@ second_declaration_list:
       { let (vfd,kd) = $9 in
         let (input_types,input_vars) = $3 in
         let funkind = if (!parsing_interface) then EFunctionInterface else EFunctionBltIn in
-        let fname = match $2 with 
+        let fname = match $2 with
           | (NSPrefix nc, lcname) -> if (!parsing_interface) then (NSInterfacePrefix nc, lcname) else $2
 	  | _ -> if (!parsing_interface) then raise (Query(Parsing(Finfo.parsing_locinfo (),"Invalid QName"))) else $2
 	in
@@ -684,7 +684,7 @@ second_declaration_list:
   | start_declare_fun FUNCTIONNAMELPAR RPAR EXTERNAL SEMICOLON second_declaration_list
       { let (vfd,kd) = $6 in
         let funkind = if (!parsing_interface) then EFunctionInterface else EFunctionBltIn  in
-        let fname = match $2 with 
+        let fname = match $2 with
           | (NSPrefix nc, lcname) -> if (!parsing_interface) then (NSInterfacePrefix nc, lcname) else $2
 	  | _ -> if (!parsing_interface) then raise (Query(Parsing(Finfo.parsing_locinfo (),"Invalid QName"))) else $2
 	in
@@ -695,7 +695,7 @@ second_declaration_list:
       { let (vfd,kd) = $7 in
         let (input_types,input_vars) = $3 in
         let funkind = if (!parsing_interface) then EFunctionInterface else EFunctionBltIn in
-        let fname = match $2 with 
+        let fname = match $2 with
           | (NSPrefix nc, lcname) -> if (!parsing_interface) then (NSInterfacePrefix nc, lcname) else $2
 	  | _ -> if (!parsing_interface) then raise (Query(Parsing(Finfo.parsing_locinfo (),"Invalid QName"))) else $2
 	in
@@ -707,11 +707,11 @@ second_declaration_list:
   /*****************************************/
   | DECLARESERVER NCNAME IMPLEMENT NCNAME AT expr_single SEMICOLON second_declaration_list
       { let (vfd,kd) = $8 in
-        let serverdef = mkserver_decl ($2,$4,$6) 
+        let serverdef = mkserver_decl ($2,$4,$6)
 	in wrap_dxq (fun () -> ((ServerDef serverdef)::vfd, kd))
       }
   /* Option declarations --- NOOPs right now. */
-  | DECLAREOPTION qname STRING SEMICOLON second_declaration_list 
+  | DECLAREOPTION qname STRING SEMICOLON second_declaration_list
       { let (vfd,kd) = $5 in
         ((OptionDecl ($2,$3)) :: vfd,kd) }
 
@@ -942,9 +942,9 @@ expr_single:
       { wrap_dxq (fun () -> mkexpr (EExecute(false,$2,$4))) }
   | ATSERVER NCNAME DO expr_single
       { wrap_dxq (fun () -> mkexpr (EExecute(true,$2,$4))) }
-  | FORSERVER NCNAME IMPLEMENT NCNAME BOX expr_single 
+  | FORSERVER NCNAME IMPLEMENT NCNAME BOX expr_single
       { wrap_dxq (fun () -> mkexpr (EForServerClose($2,$4,$6))) }
-  | EVALCLOSURE expr_single 
+  | EVALCLOSURE expr_single
       { wrap_dxq (fun () -> mkexpr (EEvalClosure($2))) }
 ;
 
@@ -1079,17 +1079,17 @@ pathexpr:
   | SLASH
       { mkexpr ERoot }
   | SLASH relativepathexpr
-      { match $2.pexpr_desc with 
-        | EPath(PSlash(e1, e2)) -> 
+      { match $2.pexpr_desc with
+        | EPath(PSlash(e1, e2)) ->
             mkexpr (EPath(PSlash(mkexpr (EPath(PSlash(mkexpr ERoot, e1))), e2)))
-	| EPath(PSlashSlash(e1, e2)) -> 
+	| EPath(PSlashSlash(e1, e2)) ->
             mkexpr (EPath(PSlashSlash(mkexpr (EPath(PSlash(mkexpr ERoot, e1))), e2)))
 	| _ -> mkexpr (EPath (PSlash(mkexpr ERoot, $2))) }
   | SLASHSLASH relativepathexpr
-      { match $2.pexpr_desc with 
-        | EPath(PSlash(e1, e2)) -> 
+      { match $2.pexpr_desc with
+        | EPath(PSlash(e1, e2)) ->
             mkexpr(EPath(PSlash(mkexpr (EPath(PSlashSlash(mkexpr ERoot,e1))),e2)))
-	| EPath(PSlashSlash(e1, e2)) -> 
+	| EPath(PSlashSlash(e1, e2)) ->
             mkexpr(EPath(PSlashSlash(mkexpr (EPath(PSlashSlash(mkexpr ERoot,e1))),e2)))
 	| _ -> mkexpr (EPath (PSlashSlash(mkexpr ERoot, $2))) }
 ;
@@ -1116,12 +1116,12 @@ axisstepexpr:
         mkexpr (EPath(PAxis (axis,$2))) }
   | AXIS nodetest stepqualifiers
       { let axis = $1 in
-        let axis_expr = mkexpr (EPath(PAxis (axis,$2))) in 
+        let axis_expr = mkexpr (EPath(PAxis (axis,$2))) in
         mkexpr (EPath(PStepQualifiers (false,axis_expr,$3))) }
   | ATSIGN nodetest
       { mkexpr (EPath(PAxis (Attribute,$2))) }
   | ATSIGN nodetest stepqualifiers
-      { let axis_expr = mkexpr (EPath(PAxis (Attribute,$2))) in 
+      { let axis_expr = mkexpr (EPath(PAxis (Attribute,$2))) in
         mkexpr (EPath(PStepQualifiers (false,axis_expr,$3))) }
 ;
 
@@ -1142,7 +1142,7 @@ stepqualifiers:
 ;
 
 transform_copy_clause:
-  | COPYDOLLAR qname COLONEQUALS expr_single copyvar_clause 
+  | COPYDOLLAR qname COLONEQUALS expr_single copyvar_clause
       { (mkcopyvar_expr ($2, $4)) :: $5 }
 
 copyvar_clause:
@@ -1285,7 +1285,7 @@ primaryexpr:
 	  mkexpr (ESnap (Snap_Ordered_Deterministic, expr)) }
 
       /* XQueryP */
-  | LCURLY block RCURLY      
+  | LCURLY block RCURLY
       { wrap_p (fun () -> $2) }
 
 ;
@@ -1346,7 +1346,7 @@ block_decl_list:
       { [] }
 ;
 
-      
+
 /* Variable subrule */
 
 variable:
@@ -1438,7 +1438,7 @@ attributecontent:
 	else
 	  (mkexpr (EText $1)) :: [] }
   | ATTRIBUTETEXTLCURLY expr RCURLY attributecontent
-      { 
+      {
         (mkexpr (EText $1)) :: (mkexpr (EEnclosed (mkexpr (EList $2)))) :: $4
       }
 
@@ -1451,7 +1451,7 @@ attributecontent:
   | TEXTENTITYREF attributecontent
       { let (text,entityref) = $1 in
         let entity_ref_text = Parse_context.get_general_entity xquery_parse_context (Finfo.parsing_locinfo ()) entityref in
-	(mkexpr (EText text)) :: (mkexpr (EText entity_ref_text)) :: $2 } 
+	(mkexpr (EText text)) :: (mkexpr (EText entity_ref_text)) :: $2 }
 ;
 
 elementcontent:
@@ -1490,7 +1490,7 @@ elementcontent:
   | TEXTENTITYREF elementcontent
       { let (text,entityref) = $1 in
         let entity_ref_text = Parse_context.get_general_entity xquery_parse_context (Finfo.parsing_locinfo ()) entityref in
-        (mkexpr (EText text)) :: (mkexpr (EText entity_ref_text)) :: $2 } 
+        (mkexpr (EText text)) :: (mkexpr (EText entity_ref_text)) :: $2 }
 ;
 
 /* Maybe some whitespace */
@@ -1522,7 +1522,7 @@ start_declare_fun:
   | DECLAREUPDATINGFUNCTION
       { Updating }
   /* Events */
-/*  | DECLAREEVENT NCNAME 
+/*  | DECLAREEVENT NCNAME
       { raise (Failure "found event decl") } */
 ;
 
@@ -1530,10 +1530,10 @@ start_declare_fun:
 /*********/
 /* Types */
 /*********/
-  
+
 /* Syntax for types */
     /* Note: This is compliant with the latest consensus grammar - Jerome */
-	
+
 
 nillable:
   | /* Empty */
@@ -1644,9 +1644,9 @@ xtype:
   | qname
       { mkxtype (TAtomicRef $1) }
   | ELEMENT qname
-      { mkxtype (TElementRef $2) } 
+      { mkxtype (TElementRef $2) }
   | ELEMENT nameclass nillable xtype_specifier
-      { mkxtype (TElementLocal ($2, $3, $4)) } 
+      { mkxtype (TElementLocal ($2, $3, $4)) }
   | DOCUMENT LCURLY xtype RCURLY
       { mkxtype (TDocument $3) }
   | TEXT
@@ -1689,7 +1689,7 @@ sequencetype:
 ;
 
 item_occurrence:
-  | 
+  |
     { None }
   | ISTAR
       { Some(Occurrence.occurs 0, Occurrence.unbounded) }
@@ -1847,7 +1847,7 @@ typedefinition:
 
 schema_decl:
   | DECLARESCHEMALCURLY namespace_decls schema_decls type_decls RCURLY SEMICOLON
-      { let nss = $2 
+      { let nss = $2
         and schemas = $3
         and issds = $4 in
         fmkschema schemas nss issds }

@@ -3,7 +3,7 @@
 %token <int> INT
 %token <string> IDENT
 %token PLUS
-%token PARENG PAREND 
+%token PARENG PAREND
 %token FIN
 
 %left  PLUS
@@ -14,18 +14,18 @@
 %%
 
 main:
-	
+
         instruction {print_string "\ninstruction\n"; flush stdout}
-        
+
 	;
 
 expr:
 	/*	Constantes de types simples.	*/
-	INT 
+	INT
 	{
 		print_string "\nINT:"; print_int $1;flush stdout
 	}
-|expr PLUS expr 
+|expr PLUS expr
 	{
 	  print_string "\nPlus"
 	}

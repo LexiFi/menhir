@@ -39,7 +39,7 @@ header_def:
 
 coll_def:
   _1 = IMPORT _2 = FOR _3 = ID _4 = limport _5 = IMPORT
-    {      ( List.iter (fun x -> let (a,b,c,d) = x in 
+    {      ( List.iter (fun x -> let (a,b,c,d) = x in
 		     (if c <> "" then Hashtbl.add pure_def (_3,c) ("",d));
 		     Hashtbl.add pure_def (_3 , a) (b,d)) _4 )}
 
@@ -47,13 +47,13 @@ limport:
   _1 = END
     {      ( [] )}
 | _1 = ID _2 = idlist _3 = def _4 = SEP _5 = limport
-    {                            ( let (a,b) = _3 in 
+    {                            ( let (a,b) = _3 in
 			      let name = if a = "" then _1 else a in
 				(name,b,"",None) :: _5 )}
 | _1 = ID _2 = idlist _3 = def _4 = LINK _5 = def _6 = SEP _7 = limport
     {                                     ( let (a,b) = _3 in
 				       let name = if a = "" then _1 else a in
-				       let (c,d) = _5 in 
+				       let (c,d) = _5 in
 					 (name,b,c,Some d) :: _7 )}
 
 def:
@@ -73,12 +73,12 @@ idlist:
 
 let parse_it rgl s =
   try main rgl s with
-    | Parse_error -> 
+    | Parse_error ->
        prerr_string "error occured while parsing .fml file : ";
         prerr_string ((lexeme s) ^ " at position ");
         prerr_int (lexeme_end s );
         prerr_newline();
-       
+
     | Exit -> raise Exit
     | s -> prerr_endline "Unknown error\n"; raise s
 ;;

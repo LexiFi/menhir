@@ -18,18 +18,18 @@ $Id: term_parser.mly,v 1.21 2003/10/13 11:43:34 marche Exp $
 %}
 
 
-%token <string> PREFIX_IDENT POSTFIX_IDENT INFIX_IDENT 
+%token <string> PREFIX_IDENT POSTFIX_IDENT INFIX_IDENT
 %token <Variables.var_id> VAR_IDENT
-%token COMMA SEMICOLON OPENPAR CLOSEPAR ARROW 
-%token EQ GT LT GE LE NE AND OR NOT 
+%token COMMA SEMICOLON OPENPAR CLOSEPAR ARROW
+%token EQ GT LT GE LE NE AND OR NOT
 %token MUL LR_LEX RL_LEX
 %token EOF
 
 %left OR
 %left AND
 %nonassoc NOT
-%nonassoc EQ GT LT GE LE NE 
-%left INFIX_IDENT 
+%nonassoc EQ GT LT GE LE NE
+%left INFIX_IDENT
 %nonassoc POSTFIX_IDENT
 %nonassoc PREFIX_IDENT
 
@@ -60,22 +60,22 @@ term_eof:
   term EOF { $1 }
 ;
 
-term : 
-| VAR_IDENT                                
+term :
+| VAR_IDENT
     { make_var_term $1 }
 | PREFIX_IDENT
     { !check_make_term $1 [] }
-| PREFIX_IDENT term 
+| PREFIX_IDENT term
     { !check_make_term $1 [$2] }
 | PREFIX_IDENT OPENPAR term COMMA term_list CLOSEPAR  %prec POSTFIX_IDENT
     { !check_make_term $1 ($3::$5) }
 | term POSTFIX_IDENT
     { !check_make_term $2 [$1] }
-| OPENPAR term COMMA term_list CLOSEPAR POSTFIX_IDENT 
+| OPENPAR term COMMA term_list CLOSEPAR POSTFIX_IDENT
     { !check_make_term $6 ($2::$4) }
-| term INFIX_IDENT term 
+| term INFIX_IDENT term
     { !check_make_term $2 [$1;$3] }
-| OPENPAR term CLOSEPAR                    
+| OPENPAR term CLOSEPAR
     { $2 }
 ;
 
@@ -137,8 +137,8 @@ comp:
 | NE { Order_constraints.Ne }
 ;
 
-precedence_eof: precedence EOF   
-  { $1 } 
+precedence_eof: precedence EOF
+  { $1 }
 ;
 
 precedence:

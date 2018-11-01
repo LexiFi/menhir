@@ -3,24 +3,24 @@
 
 open Fsyaccast
 
-%} 
+%}
 
 %type <Fsyaccast.spec> spec
-%token <string>  IDENT 
-%token <Fsyaccast.code> HEADER CODE 
+%token <string>  IDENT
+%token <Fsyaccast.code> HEADER CODE
 %token BAR PERCENT_PERCENT  START LEFT RIGHT NONASSOC LESS GREATER COLON PREC SEMI EOF ERROR
 %token <string> TYPE
 %token <string option> TOKEN
 %start spec
 %left BAR
-%%      
+%%
 
 spec: headeropt decls PERCENT_PERCENT rules { List.fold_right (fun f x -> f x) $2 { header=$1;tokens=[];types=[];assoc=[];starts=[];rules=$4 } }
 headeropt: HEADER { $1 } | { "", Parsing.symbol_start_pos () }
 decls:  { [] } | decl decls { $1 :: $2 }
-decl: 
+decl:
     TOKEN idents { (fun x -> {x with tokens = x.tokens @ (List.map (fun x -> (x,$1)) $2)}) }
-  | TYPE idents   { (fun x -> {x with types = x.types @ (List.map (fun x -> (x,$1)) $2)} ) } 
+  | TYPE idents   { (fun x -> {x with types = x.types @ (List.map (fun x -> (x,$1)) $2)} ) }
   | START idents   { (fun x -> {x with starts = x.starts @ $2} ) }
   | LEFT idents   { (fun x -> {x with assoc = x.assoc @ [(List.map (fun x -> (x,LeftAssoc)) $2)]} ) }
   | RIGHT idents   { (fun x -> {x with assoc = x.assoc @ [(List.map (fun x -> (x,RightAssoc)) $2)]} ) }

@@ -21,7 +21,7 @@ $Id: word_parser.mly,v 1.8 2003/10/13 11:43:34 marche Exp $
 
 
 %token <String_signatures.symbol_id> IDENT
-%token SEMICOLON ARROW LPAR RPAR COMMA 
+%token SEMICOLON ARROW LPAR RPAR COMMA
 %token POWER EQ GT LT
 %token <int> INT
 %token EOF
@@ -37,34 +37,34 @@ $Id: word_parser.mly,v 1.8 2003/10/13 11:43:34 marche Exp $
 
 %%
 
-word_eof: 
-  word EOF { $1 } 
+word_eof:
+  word EOF { $1 }
 ;
-  
-word : 
+
+word :
   /* epsilon */
     { [] }
-| factor word                            
+| factor word
     { $1 @ $2 }
 ;
 
 factor:
-  IDENT             
+  IDENT
     { [$1] }
 | factor POWER expo
     { word_power $1 $3 }
-| LPAR word RPAR 
+| LPAR word RPAR
     { $2 }
 ;
 
 expo:
   INT  { $1 }
-| IDENT 
-      { 
+| IDENT
+      {
 	try
-	  int_of_string(!current_signature#string_of_symbol $1)	  
+	  int_of_string(!current_signature#string_of_symbol $1)
 	with
-	    _ -> 
+	    _ ->
 	      raise (Syntax_error "invalid exponent")
       }
 ;
@@ -72,11 +72,11 @@ expo:
 rule_set_eof: rule_set EOF { $1 } ;
 
 rule_set:
-  /* epsilon */           
+  /* epsilon */
     { [] }
-| rule    
+| rule
     { [$1] }
-| rule SEMICOLON rule_set 
+| rule SEMICOLON rule_set
     { $1::$3 }
 ;
 
@@ -85,13 +85,13 @@ rule:
 ;
 
 
-precedence_eof: precedence EOF   
-  { 
+precedence_eof: precedence EOF
+  {
     let order = identity_ordering (Pervasives.compare : symbol_id -> symbol_id -> int)
-    in 
+    in
     let order = List.fold_left add_list order $1
     in compare order
-  } 
+  }
 ;
 
 precedence:

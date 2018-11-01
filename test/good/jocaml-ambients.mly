@@ -21,7 +21,7 @@ open Syntax;;
 %right DOT
 %nonassoc DOLLAR
 /* highest precedence */
-  
+
 /* the entry point */
 %start main
 %type <Syntax.process> main
@@ -30,7 +30,7 @@ open Syntax;;
 main:
   proc SEMISEMI                         { $1 }
 ;
-  
+
 proc:
   proc PAR proc                         { Par ($1, $3) }
 | LPAREN proc RPAREN                    { $2 }
@@ -51,10 +51,10 @@ capa:
 | ident                                 { Name $1 }
 | STRING                                { Yell $1 }
 | capa DOT capa                         { Seq_capa ($1, $3) }
-  
+
 ident:
   IDENT                                 { Ident $1 }
 
 str:
   IDENT                                 { $1 }
-; 
+;

@@ -312,7 +312,7 @@ type0:
   | CHAR                                                { TEAbstract("char", []) }
   | FLOAT                                               { TEAbstract("float", []) }
   | INTCONST						{ match $1 with
-      	       	       	       	       	       	       	    0 -> TEBottom 
+      	       	       	       	       	       	       	    0 -> TEBottom
 							  | 1 -> TETop
 							  | _ -> failwith "Unexpected integer in type expression."
 							}
@@ -341,7 +341,7 @@ record_row:
   | IDENT COLON row_type SEMI record_row		{ let entries, rest = $5 in ($1, $3) :: entries, rest }
       /* A row consists of a series of label : row_type pairs, separated by semi-colons, followed by a row_type
          which represents all labels not explicitly named. */
-         
+
 ;
 
 variant_row:

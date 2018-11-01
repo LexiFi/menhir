@@ -5,7 +5,7 @@
 exp:
   term {}
 
-fa1: 
+fa1:
   LPAREN exp RPAREN {}
 | INT {}
 

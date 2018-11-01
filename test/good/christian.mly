@@ -1,4 +1,4 @@
-/* 
+/*
   Standard ASN.1 grammar
 
   X.680: Specification of basic notation
@@ -30,8 +30,8 @@ is stricly included in objectclassreference
 %token <string> Word
 */
 
-/* 
-UpRef is defined in X.681, 7.1 (objectclassreference): 
+/*
+UpRef is defined in X.681, 7.1 (objectclassreference):
 
   uppercase ([hyphen] (uppercase | digit))*
 
@@ -40,11 +40,11 @@ is strictly included in typereference
 %token <string> UpRef
 */
 
-/* 
-Upper can denote either 
+/*
+Upper can denote either
   1) typereference (X.680, 11.2):
 
-       uppercase ([hyphen] (letter | digit))*     
+       uppercase ([hyphen] (letter | digit))*
 
   2) objectsetreference (X.681, 7.3):
        typereference
@@ -63,7 +63,7 @@ Lower can denote either
 
        lowercase ([hyphen] (letter | digit))*
 
-  2) identifier (X.680, 11.3) 
+  2) identifier (X.680, 11.3)
 
   3) objectreference (X.681, 7.2):
        valuereference
@@ -220,7 +220,7 @@ LowerField can denote either
 
 %token EOF
 
-/* 
+/*
 The token DefinedSyntax holds the concrete syntax corresponding to an
 instance of production definedSyntax, which should be handled
 dynamically.
@@ -240,13 +240,13 @@ dynamically.
 
 %inline empty: {}
 
-main: 
-  moduleDefinition EOF 
+main:
+  moduleDefinition EOF
   {}
 
 /*------------------------- X.680 -------------------------*/
 
-moduleDefinition: 
+moduleDefinition:
   moduleIdentifier
   DEFINITIONS
     tagDefault
@@ -265,13 +265,13 @@ moduleIdentifier:
 definitiveIdentifier:
   LeftBrace definitiveObjIdComponentList RightBrace
   {}
-| empty                    
+| empty
   {}
 
 definitiveObjIdComponentList:
-  definitiveObjIdComponent                               
+  definitiveObjIdComponent
   {}
-| definitiveObjIdComponent definitiveObjIdComponentList  
+| definitiveObjIdComponent definitiveObjIdComponentList
   {}
 
 definitiveObjIdComponent:
@@ -282,21 +282,21 @@ definitiveObjIdComponent:
 | definitiveNameAndNumberForm
   {}
 
-definitiveNumberForm: 
+definitiveNumberForm:
   Number
   {}
 
 definitiveNameAndNumberForm:
-  Lower  /* identifier */  
-  LeftParen 
-    definitiveNumberForm 
-  RightParen  
+  Lower  /* identifier */
+  LeftParen
+    definitiveNumberForm
+  RightParen
   {}
 
 tagDefault:
   EXPLICIT TAGS
   {}
-| IMPLICIT TAGS   
+| IMPLICIT TAGS
   {}
 | AUTOMATIC TAGS
   {}
@@ -310,9 +310,9 @@ extensionDefault:
   {}
 
 moduleBody:
-  exports 
-  imports 
-  assignmentList  
+  exports
+  imports
+  assignmentList
   {}
 | empty
   {}
@@ -332,7 +332,7 @@ symbolsExported:
   {}
 
 imports:
-  IMPORTS symbolsImported SemiColon  
+  IMPORTS symbolsImported SemiColon
   {}
 | empty
   {}
@@ -354,7 +354,7 @@ symbolsFromModule:
   {}
 
 globalModuleReference:
-  Upper /* modulereference */ 
+  Upper /* modulereference */
   assignedIdentifier
   {}
 
@@ -417,8 +417,8 @@ definedType:
   {}
 
 externalTypeReference:
-  Upper /* modulereference */  
-  Dot 
+  Upper /* modulereference */
+  Dot
   Upper /* typereference */
   {}
 
@@ -444,12 +444,12 @@ externalValueReference:
   Upper /* modulereference */
   Dot
   Lower /* valuereference */
-  {} 
+  {}
 
 /* The following productions are not used formally.
 
 absoluteValueReference:
-  At Upper 
+  At Upper
   Dot itemSpec
   { (* modulereference *) }
 
@@ -496,7 +496,7 @@ valueSet:
   LeftBrace elementSetSpecs RightBrace
   {}
 
-type_x: 
+type_x:
   builtinType
   {}
 | referencedType
@@ -547,7 +547,7 @@ builtinType:
   {}
 
 namedType:
-  Lower /* identifier */ 
+  Lower /* identifier */
   type_x
   {}
 
@@ -593,7 +593,7 @@ builtinValue:
 | objectIdentifierValue
   {}
 | octetStringValue
-  {} 
+  {}
 | realValue
   {}
 | relativeOIDValue
@@ -644,7 +644,7 @@ namedNumber:
   Lower /* identifier */
   LeftParen signedNumber RightParen
   {}
-| Lower /* identifier */ 
+| Lower /* identifier */
   LeftParen definedValue RightParen
   {}
 
@@ -667,11 +667,11 @@ enumeratedType:
 enumerations:
   rootEnumeration
   {}
-| rootEnumeration Comma Ellipsis 
+| rootEnumeration Comma Ellipsis
   exceptionSpec
   {}
-| rootEnumeration Comma Ellipsis 
-  exceptionSpec Comma 
+| rootEnumeration Comma Ellipsis
+  exceptionSpec Comma
   additionalEnumeration
   {}
 
@@ -713,7 +713,7 @@ numericRealValue:
   RealNumber
   {}
 | Hyphen RealNumber /* RealNumber != 0 or 0.0 etc. */
-  {} 
+  {}
 | sequenceValue
   {}
 /*
@@ -806,9 +806,9 @@ sequenceType:
       optionalExtensionMarker
     RightBrace
   {}
-| SEQUENCE 
-    LeftBrace 
-      componentTypeLists 
+| SEQUENCE
+    LeftBrace
+      componentTypeLists
     RightBrace
   {}
 
@@ -825,11 +825,11 @@ optionalExtensionMarker:
   {}
 
 componentTypeLists:
-  rootComponentTypeList  
+  rootComponentTypeList
   {}
-| rootComponentTypeList Comma 
-  extensionAndException 
-  extensionAdditions 
+| rootComponentTypeList Comma
+  extensionAndException
+  extensionAdditions
   optionalExtensionMarker
   {}
 | rootComponentTypeList Comma
@@ -838,14 +838,14 @@ componentTypeLists:
   extensionEndMarker Comma
   rootComponentTypeList
   {}
-| extensionAndException 
-  extensionAdditions 
-  extensionEndMarker Comma 
+| extensionAndException
+  extensionAdditions
+  extensionEndMarker Comma
   rootComponentTypeList
   {}
 | extensionAndException
   extensionAdditions
-  optionalExtensionMarker   
+  optionalExtensionMarker
   {}
 
 rootComponentTypeList:
@@ -877,7 +877,7 @@ extensionAddition:
 extensionAdditionGroup:
   LeftDoubleBracket
     versionNumber
-   componentTypeList 
+   componentTypeList
   RightDoubleBracket
   {}
 
@@ -946,7 +946,7 @@ setType:
   SET LeftBrace RightBrace
    {}
 | SET LeftBrace
-        extensionAndException 
+        extensionAndException
         optionalExtensionMarker
       RightBrace
   {}
@@ -984,7 +984,7 @@ alternativeTypeLists:
   {}
 | rootAlternativeTypeList Comma
   extensionAndException
-  extensionAdditionAlternatives 
+  extensionAdditionAlternatives
   optionalExtensionMarker
   {}
 
@@ -1001,7 +1001,7 @@ extensionAdditionAlternatives:
 extensionAdditionAlternativesList:
   extensionAdditionAlternative
   {}
-| extensionAdditionAlternativesList Comma 
+| extensionAdditionAlternativesList Comma
   extensionAdditionAlternative
   {}
 
@@ -1012,9 +1012,9 @@ extensionAdditionAlternative:
   {}
 
 extensionAdditionAlternativesGroup:
-  LeftDoubleBracket 
-    versionNumber 
-    alternativeTypeList 
+  LeftDoubleBracket
+    versionNumber
+    alternativeTypeList
   RightDoubleBracket
   {}
 
@@ -1025,8 +1025,8 @@ alternativeTypeList:
   {}
 
 choiceValue:
-  Lower /* identifier */ 
-  Colon 
+  Lower /* identifier */
+  Colon
   value
   {}
 
@@ -1069,9 +1069,9 @@ embeddedPDVType:
   {}
 
 embeddedPDVValue:
-  sequenceValue 
+  sequenceValue
   {}
-/* 
+/*
 The associated type is defined in X.680 33.5 as
   SEQUENCE {
     identification CHOICE {
@@ -1086,7 +1086,7 @@ The associated type is defined in X.680 33.5 as
         transfer-syntax OBJECT IDENTIFIER
         },
       transfer-syntax OBJECT IDENTIFIER,
-      fixed NULL  
+      fixed NULL
      },
    data-value-descriptor ObjectDescriptor OPTIONAL,
    string-value OCTET STRING
@@ -1256,11 +1256,11 @@ charsDefn:
   {}
 
 quadruple:
-  LeftBrace 
-    group Comma 
-    plane Comma 
-    row Comma 
-    cell 
+  LeftBrace
+    group Comma
+    plane Comma
+    row Comma
+    cell
   RightBrace
   {}
 
@@ -1323,7 +1323,7 @@ SEQUENCE {
     fixed NULL,
   },
   data-value-descriptor ObjectDescriptor OPTIONAL,
-  string0value OCTET STRING  
+  string0value OCTET STRING
 } (WITH COMPONENTS {
      ...,
     data-value-descriptor ABSENT})
@@ -1559,7 +1559,7 @@ fullSpecification:
   {}
 
 partialSpecification:
-  LeftBrace 
+  LeftBrace
     Ellipsis Comma
     typeConstraints
   RightBrace
@@ -1570,7 +1570,7 @@ typeConstraints:
   {}
 | namedConstraint Comma typeConstraints
   {}
-  
+
 namedConstraint:
   Lower /* identifier */
   componentConstraint
@@ -1661,9 +1661,9 @@ fieldSpec:
   {}
 
 primitiveFieldName:
-  UpperField 
-  /* typefieldreference 
-     valuesetfieldreference 
+  UpperField
+  /* typefieldreference
+     valuesetfieldreference
      objectsetfieldreference */
   {}
 | LowerField /* valuefieldreference objectfieldreference */
@@ -1686,8 +1686,8 @@ typeOptionalitySpec:
 
 fixedTypeValueFieldSpec:
   LowerField /* valuefieldreference */
-  type_x 
-  UNIQUE? 
+  type_x
+  UNIQUE?
   valueOptionalitySpec?
   {}
 
@@ -1717,7 +1717,7 @@ valueSetOptionalitySpec:
 
 variableTypeValueSetFieldSpec:
   UpperField /* valuesetfieldreference */
-  fieldName 
+  fieldName
   valueSetOptionalitySpec?
   {}
 
@@ -1782,8 +1782,8 @@ definedObject:
   {}
 
 externalObjectReference:
-  Upper /* modulereference */ 
-  Dot 
+  Upper /* modulereference */
+  Dot
   Lower /* objectreference */
   {}
 
@@ -1987,7 +1987,7 @@ simpleTableConstraint:
   {}
 
 componentRelationConstraint:
-  LeftBrace definedObjectSet RightBrace 
+  LeftBrace definedObjectSet RightBrace
   LeftBrace separated_nonempty_list(Comma,atNotation) RightBrace
   {}
 
@@ -2055,7 +2055,7 @@ parameterizedValueSetTypeAssignment:
   {}
 
 parameterizedObjectClassAssignment:
-  Upper /* objectclassreference */ 
+  Upper /* objectclassreference */
   parameterList
   Assignment
   objectClass

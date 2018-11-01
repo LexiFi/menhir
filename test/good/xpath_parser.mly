@@ -45,12 +45,12 @@ step:
  | DOUBLEDOT  { dotdot }
 
 step2:
- | step2 LBRACKET expr RBRACKET { Condition ($1,$3) } 
- | node_test { $1 } 
+ | step2 LBRACKET expr RBRACKET { Condition ($1,$3) }
+ | node_test { $1 }
 
 axis_specifier:
- | AXIS { 
-     try Axis.of_string $1 
+ | AXIS {
+     try Axis.of_string $1
      with Not_found -> failwith ("Unknown axis :"^$1)
    }
  | AT { Attribute }
@@ -58,15 +58,15 @@ axis_specifier:
 
 node_test:
  | NAME_TEST  { Name $1 }
- | NODE_TYPE RPAREN { 
-     try TypeTest (Type_test.of_string $1) 
+ | NODE_TYPE RPAREN {
+     try TypeTest (Type_test.of_string $1)
      with Not_found -> failwith ("Unknown node type :"^$1)
    }
  | NODE_TYPE LITERAL RPAREN {
      match $1 with
        | "processing-instruction" ->
 	   TypeTest (Type_test.Pi_test (Some $2))
-       | _ -> failwith "Only processing-instruction tests accept argument" 
+       | _ -> failwith "Only processing-instruction tests accept argument"
    }
 
 
@@ -75,8 +75,8 @@ primary_expr:
    function_call   { $1 }
  | VAR             { Var $1 }
  | LPAREN expr RPAREN  { $2 }
- | LITERAL         { String_literal $1 } 
- | NUMBER          { Number_literal $1 } 
+ | LITERAL         { String_literal $1 }
+ | NUMBER          { Number_literal $1 }
 
 function_call:
    FUNCTION_NAME RPAREN  { Function ($1,[]) }
@@ -92,23 +92,23 @@ union_expr:
 
 path_expr:
    location_path    { path_expr $1 }
- | filter_expr      { $1 } 
- | filter_expr SLASH relative_location_path 
-     {  path_expr (Slash (expr $1,$3)) } 
- | filter_expr DOUBLESLASH relative_location_path 
+ | filter_expr      { $1 }
+ | filter_expr SLASH relative_location_path
+     {  path_expr (Slash (expr $1,$3)) }
+ | filter_expr DOUBLESLASH relative_location_path
      {  path_expr (double_slash (expr $1) $3) }
 
- 
+
 filter_expr:
-   primary_expr { $1 }  
- | filter_expr LBRACKET expr RBRACKET { path_expr (Condition (expr $1,$3)) } 
+   primary_expr { $1 }
+ | filter_expr LBRACKET expr RBRACKET { path_expr (Condition (expr $1,$3)) }
 
 
 expr:
-   or_expr         { $1 } 
+   or_expr         { $1 }
 
 or_expr:
-   and_expr        { $1 } 
+   and_expr        { $1 }
  | or_expr OR and_expr { Or($1,$3) }
 
 and_expr:
@@ -120,7 +120,7 @@ equality_expr:
  | equality_expr EQUAL relational_expr { Equal($1,$3) }
  | equality_expr NOTEQUAL relational_expr { NotEqual($1,$3) }
 
-relational_expr: 
+relational_expr:
    additive_expr    { $1 }
  | relational_expr LT additive_expr { Lower($1,$3) }
  | relational_expr GT additive_expr { Greater($1,$3) }

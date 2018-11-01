@@ -29,20 +29,20 @@ let fetch_and_create_state name =
   try
     Hashtbl.find observed_states name
   with
-    Not_found -> 
+    Not_found ->
       let s = Data_for_aorai.new_state name in
       Hashtbl.add observed_states name s; s
 ;;
 
 let prefetch_and_create_state name =
-    if (Hashtbl.mem prefetched_states name) || 
-      not (Hashtbl.mem observed_states name) 
+    if (Hashtbl.mem prefetched_states name) ||
+      not (Hashtbl.mem observed_states name)
     then
       begin
-	let s= fetch_and_create_state name in 
+	let s= fetch_and_create_state name in
 	Hashtbl.add prefetched_states name name;
 	s
-      end 
+      end
     else
       (fetch_and_create_state name)
 ;;
@@ -113,7 +113,7 @@ main:
        match key with
            "init"   ->
              List.iter
-               (fun id -> 
+               (fun id ->
                  try
 	           (Hashtbl.find observed_states id).init <- True
                  with
@@ -141,16 +141,16 @@ main:
         observed_states []
     in
     (try
-       Hashtbl.iter 
+       Hashtbl.iter
          (fun _ st -> if st.init=True then raise Exit) observed_states;
        Aorai_option.abort "Automaton does not declare an initial state"
      with Exit -> ());
-    if Hashtbl.length prefetched_states >0 then 
+    if Hashtbl.length prefetched_states >0 then
       begin
 	let r = Hashtbl.fold
-	  (fun s n _ -> 
+	  (fun s n _ ->
             s^"Error: the state '"^n^"' is used but never defined.\n")
-	  prefetched_states 
+	  prefetched_states
 	  ""
 	in
 	Aorai_option.abort "%s" r
@@ -202,9 +202,9 @@ state:
                 { start=start_state; stop=stop_state;
 	          cross=cross;       numt=(-1) }::transitions
               in
-              let otherwise = 
-                match cross with 
-                  | Otherwise -> true 
+              let otherwise =
+                match cross with
+                  | Otherwise -> true
                   | Seq _ -> false
               in otherwise, trans
             end)
@@ -245,28 +245,28 @@ guard:
 | _1 = LSQUARE _2 = non_empty_seq _3 = RSQUARE
     {                                  ( _2 )}
 | _1 = IDENTIFIER _2 = pre_cond _3 = LPAREN _4 = seq _5 = RPAREN _6 = post_cond
-    {      ( let pre_cond = 
+    {      ( let pre_cond =
           match _2 with
             | Behavior b -> PCall(_1,Some b)
             | Pre c -> PAnd (PCall(_1,None), c)
         in
-        let post_cond = 
+        let post_cond =
           match _6 with
             | None -> PReturn _1
             | Some c -> PAnd (PReturn _1,c)
         in
-        (to_seq pre_cond) @ _4 @ to_seq post_cond 
+        (to_seq pre_cond) @ _4 @ to_seq post_cond
       )}
 | _1 = IDENTIFIER _2 = LPAREN _3 = non_empty_seq _4 = RPAREN _5 = post_cond
-    {      ( let post_cond = 
+    {      ( let post_cond =
           match _5 with
             | None -> PReturn _1
             | Some c -> PAnd (PReturn _1,c)
         in
-        (to_seq (PCall (_1, None))) @ _3 @ to_seq post_cond 
+        (to_seq (PCall (_1, None))) @ _3 @ to_seq post_cond
       )}
 | _1 = IDENTIFIER _2 = LPAREN _3 = RPAREN _4 = post_cond
-    {      ( let post_cond = 
+    {      ( let post_cond =
           match _4 with
             | None -> PReturn _1
             | Some c -> PAnd (PReturn _1,c)
@@ -296,7 +296,7 @@ seq_elt:
       | l ->
         if is_no_repet (min,max) then
           l (* [ a; [b;c]; d] is equivalent to [a;b;c;d] *)
-        else [ { condition = None; nested = l; min_rep = min; max_rep = max } ] 
+        else [ { condition = None; nested = l; min_rep = min; max_rep = max } ]
   )}
 
 repetition:

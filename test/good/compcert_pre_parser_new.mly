@@ -216,7 +216,7 @@ declare_typename(nt):
    states have been duplicated. In these states, more information about the
    context is available, which allows better syntax error messages to be
    given.
-   
+
    By convention, a formal phantom parameter is named [phantom], so as to be
    easily recognizable. For clarity, we usually explicitly document which
    actual values it can take. *)

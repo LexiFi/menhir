@@ -55,8 +55,8 @@ decll:
 expr:
   | Lident paramlist                           { Eappl (pos $1, unpos $1, $2, EFall) }
   | Lident                                     { Eid (pos $1, unpos $1) }
-  | Lident Lputvar patom stmttail              { Eputvar (pos $1, unpos $1, $3, $4, EFall) } 
-  | Lident Lgetvar Lident stmttail             { Egetvar (pos $1, unpos $1, unpos $3, $4, EFall) } 
+  | Lident Lputvar patom stmttail              { Eputvar (pos $1, unpos $1, $3, $4, EFall) }
+  | Lident Lgetvar Lident stmttail             { Egetvar (pos $1, unpos $1, unpos $3, $4, EFall) }
   | stmt                                       { $1 }
 
 paramlist:
@@ -72,11 +72,11 @@ paramlisttail:
 
 stmt:
   | Llambda idlist stmttail                    { Elambda ($1,$2,$3,EFall) }
-  
+
 stmttail:
   | Lsemi eatom                                { $2 }
   | atom                                       { $1 }
-  
+
 idlist:
   | Lident idlist                              { last_pos := pos $1;(unpos $1)::$2 }
   |                                            { [] }

@@ -9,7 +9,7 @@ $Id: theory_parser.mly,v 1.4 2003/09/12 12:29:52 contejea Exp $
 ***************************************************************************/
 
 %{
-  
+
   open User_signatures
   open Term_algebra
 
@@ -18,7 +18,7 @@ $Id: theory_parser.mly,v 1.4 2003/09/12 12:29:52 contejea Exp $
 %token <User_signatures.symbol_id> IDENT
 %token <int> INT
 %token KW_ACU KW_ACI KW_AG KW_ACUN KW_BR
-%token COMMA SEMICOLON OPENPAR CLOSEPAR 
+%token COMMA SEMICOLON OPENPAR CLOSEPAR
 %token EOF
 
 %start theory
@@ -27,15 +27,15 @@ $Id: theory_parser.mly,v 1.4 2003/09/12 12:29:52 contejea Exp $
 %%
 
 theory:
-    EOF                    
+    EOF
       { [] }
-  | decl 
-      { 
+  | decl
+      {
         [$1]
       }
-  | decl SEMICOLON theory  
-      { 
-	$1 :: $3 
+  | decl SEMICOLON theory
+      {
+	$1 :: $3
       }
 ;
 
@@ -48,36 +48,36 @@ decl:
 ;
 
 acu:
-KW_ACU OPENPAR IDENT COMMA IDENT CLOSEPAR 
-  { 
+KW_ACU OPENPAR IDENT COMMA IDENT CLOSEPAR
+  {
     Theory.ACU($3,$5)
   }
 ;
 
 aci:
-KW_ACI OPENPAR IDENT CLOSEPAR 
-  { 
+KW_ACI OPENPAR IDENT CLOSEPAR
+  {
     Theory.ACI($3)
   }
 ;
 
 ag:
-KW_AG OPENPAR IDENT COMMA IDENT COMMA IDENT CLOSEPAR 
-  { 
+KW_AG OPENPAR IDENT COMMA IDENT COMMA IDENT CLOSEPAR
+  {
     Theory.AG($3,$5,$7)
   }
 ;
 
 acun:
-KW_ACUN OPENPAR IDENT COMMA IDENT COMMA INT CLOSEPAR 
-  { 
+KW_ACUN OPENPAR IDENT COMMA IDENT COMMA INT CLOSEPAR
+  {
     Theory.ACUN($3,$5,$7)
   }
 ;
 
 br:
-KW_BR OPENPAR IDENT COMMA IDENT COMMA IDENT COMMA IDENT CLOSEPAR 
-  { 
+KW_BR OPENPAR IDENT COMMA IDENT COMMA IDENT COMMA IDENT CLOSEPAR
+  {
     Theory.BR($3,$5,$7,$9)
   }
 ;

@@ -26,7 +26,7 @@ File "parser_cpp.mly", line 196, characters 17-33:
 Warning: the token Tunsigned_Constr is unused.
 %{
 (* Yoann Padioleau
- * 
+ *
  * Copyright (C) 2010-2014 Facebook
  * Copyright (C) 2008-2009 University of Urbana Champaign
  * Copyright (C) 2006-2007 Ecole des Mines de Nantes
@@ -35,7 +35,7 @@ Warning: the token Tunsigned_Constr is unused.
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License (GPL)
  * version 2 as published by the Free Software Foundation.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -548,17 +548,17 @@ primary_expr:
 
 primary_cplusplus_id:
   _1 = id_expression
-    {     ( let name = (None, fst _1, snd _1) in 
+    {     ( let name = (None, fst _1, snd _1) in
        mk_e (Id (name, noIdInfo())) []  )}
 | _1 = TColCol _2 = TIdent
-    {     ( let name = Some _1, noQscope, IdIdent _2 in 
+    {     ( let name = Some _1, noQscope, IdIdent _2 in
        mk_e (Id (name, noIdInfo())) [] )}
 | _1 = TColCol _2 = operator_function_id
     {     ( let qop = _2 in
-       let name = (Some _1, noQscope, qop) in 
+       let name = (Some _1, noQscope, qop) in
        mk_e (Id (name, noIdInfo())) [] )}
 | _1 = TColCol _2 = qualified_id
-    {     ( let name = (Some _1, fst _2, snd _2) in 
+    {     ( let name = (Some _1, fst _2, snd _2) in
        mk_e (Id (name, noIdInfo())) [] )}
 
 cast_operator_expr:
@@ -581,7 +581,7 @@ cast_constructor_expr:
   _1 = TIdent_TypedefConstr _2 = TOPar _3 = argument_list_opt _4 = TCPar
     {     ( let name = None, noQscope, IdIdent _1 in
        let ft = nQ, (TypeName name, noii) in
-       mk_e(ConstructedObject (ft, (_2, _3, _4))) noii  
+       mk_e(ConstructedObject (ft, (_2, _3, _4))) noii
      )}
 | _1 = basic_type_2 _2 = TOPar _3 = argument_list_opt _4 = TCPar
     {     ( let ft = nQ, _1 in
@@ -868,15 +868,15 @@ direct_d:
 | _1 = direct_d _2 = TOCro _3 = const_expr _4 = TCCro
     {     ( (fst _1, fun x->(snd _1) (nQ,(Array ((_2, Some _3, _4),x),noii))) )}
 | _1 = direct_d _2 = TOPar _3 = TCPar _4 = const_opt _5 = exn_spec_opt
-    {     ( (fst _1, fun x-> (snd _1) 
+    {     ( (fst _1, fun x-> (snd _1)
          (nQ, (FunctionType {
            ft_ret= x; ft_params = (_2, [], _3);
            ft_dots = None; ft_const = _4; ft_throw = _5; }, noii)))
      )}
 | _1 = direct_d _2 = TOPar _3 = parameter_type_list _4 = TCPar _5 = const_opt _6 = exn_spec_opt
-    {     ( (fst _1, fun x-> (snd _1) 
-          (nQ,(FunctionType { 
-            ft_ret = x; ft_params = (_2,fst _3,_4); 
+    {     ( (fst _1, fun x-> (snd _1)
+          (nQ,(FunctionType {
+            ft_ret = x; ft_params = (_2,fst _3,_4);
             ft_dots = snd _3; ft_const = _5; ft_throw = _6; }, noii)))
      )}
 
@@ -905,19 +905,19 @@ direct_abstract_declarator:
     {     ( fun x ->_1 (nQ, (Array ((_2, Some _3, _4), x), noii)) )}
 | _1 = TOPar _2 = TCPar
     {     ( fun x -> (nQ, (FunctionType {
-       ft_ret = x; ft_params = (_1,[],_2); 
+       ft_ret = x; ft_params = (_1,[],_2);
        ft_dots = None; ft_const = None; ft_throw = None;}, noii)) )}
 | _1 = TOPar _2 = parameter_type_list _3 = TCPar
     {     ( fun x -> (nQ, (FunctionType {
-         ft_ret = x; ft_params = (_1,fst _2,_3); 
+         ft_ret = x; ft_params = (_1,fst _2,_3);
          ft_dots = snd _2; ft_const = None; ft_throw = None; }, noii)) )}
 | _1 = direct_abstract_declarator _2 = TOPar _3 = TCPar _4 = const_opt _5 = exn_spec_opt
     {     ( fun x -> _1 (nQ, (FunctionType {
-         ft_ret = x; ft_params = (_2,[],_3); 
+         ft_ret = x; ft_params = (_2,[],_3);
          ft_dots = None; ft_const = _4; ft_throw = _5; }, noii)) )}
 | _1 = direct_abstract_declarator _2 = TOPar _3 = parameter_type_list _4 = TCPar _5 = const_opt _6 = exn_spec_opt
     {     ( fun x -> _1 (nQ, (FunctionType {
-         ft_ret = x; ft_params = (_2,fst _3,_4); 
+         ft_ret = x; ft_params = (_2,fst _3,_4);
          ft_dots = snd _3; ft_const = _5; ft_throw = _6; }, noii)) )}
 
 parameter_type_list:
@@ -934,23 +934,23 @@ parameter_decl:
          p_register = reg; p_val = None } )}
 | _1 = decl_spec _2 = abstract_declarator
     {     ( let (t_ret, reg) = type_and_register_from_decl _1 in
-       { p_name = None; p_type = _2 t_ret; 
+       { p_name = None; p_type = _2 t_ret;
          p_register = reg; p_val = None } )}
 | _1 = decl_spec
     {     ( let (t_ret, reg) = type_and_register_from_decl _1 in
        { p_name = None; p_type = t_ret; p_register = reg; p_val = None } )}
 | _1 = decl_spec _2 = declarator _3 = TEq _4 = assign_expr
-    {     ( let (t_ret, reg) = type_and_register_from_decl _1 in 
+    {     ( let (t_ret, reg) = type_and_register_from_decl _1 in
        let (name, ftyp) = fixNameForParam _2 in
-       { p_name = Some name; p_type = ftyp t_ret; 
+       { p_name = Some name; p_type = ftyp t_ret;
          p_register = reg; p_val = Some (_3, _4) } )}
 | _1 = decl_spec _2 = abstract_declarator _3 = TEq _4 = assign_expr
     {     ( let (t_ret, reg) = type_and_register_from_decl _1 in
-       { p_name = None; p_type = _2 t_ret; 
+       { p_name = None; p_type = _2 t_ret;
          p_register = reg; p_val = Some (_3, _4) } )}
 | _1 = decl_spec _2 = TEq _3 = assign_expr
     {     ( let (t_ret, reg) = type_and_register_from_decl _1 in
-       { p_name = None; p_type = t_ret; 
+       { p_name = None; p_type = t_ret;
          p_register = reg; p_val = Some(_2,_3) } )}
 
 parameter_list:
@@ -963,7 +963,7 @@ parameter_decl2:
   _1 = parameter_decl
     {                  ( _1 )}
 | _1 = TIdent
-    {     ( 
+    {     (
        let t = nQ, (TypeName (None, [], IdIdent _1), noii) in
        { p_name = None; p_type = t; p_val = None; p_register = None; }
      )}
@@ -1037,11 +1037,11 @@ direct_new_declarator:
 conversion_type_id:
   _1 = simple_type_specifier _2 = conversion_declarator
     {     ( let tx = addTypeD _1 nullDecl in
-       let (t_ret, _, _) = type_and_storage_from_decl tx in t_ret 
+       let (t_ret, _, _) = type_and_storage_from_decl tx in t_ret
      )}
 | _1 = simple_type_specifier %prec LOW_PRIORITY_RULE
     {     ( let tx = addTypeD _1 nullDecl in
-       let (t_ret, _, _) = type_and_storage_from_decl tx in t_ret 
+       let (t_ret, _, _) = type_and_storage_from_decl tx in t_ret
      )}
 
 conversion_declarator:
@@ -1053,7 +1053,7 @@ conversion_declarator:
 class_specifier:
   _1 = class_head _2 = TOBrace _3 = member_specification_opt _4 = TCBrace
     {     ( let (kind, nameopt, baseopt) = _1 in
-       { c_kind = kind; c_name = nameopt; 
+       { c_kind = kind; c_name = nameopt;
          c_inherit = baseopt; c_members = (_2, _3, _4) } )}
 
 class_head:
@@ -1138,20 +1138,20 @@ field_declaration:
 
 member_declarator:
   _1 = declarator
-    {     ( let (name, partialt) = _1 in (fun t_ret sto -> 
+    {     ( let (name, partialt) = _1 in (fun t_ret sto ->
        FieldDecl {
          v_namei = Some (name, None);
          v_type = partialt t_ret; v_storage = sto; })
      )}
 | _1 = declarator _2 = TEq _3 = const_expr
-    {     ( let (name, partialt) = _1 in (fun t_ret sto -> 
+    {     ( let (name, partialt) = _1 in (fun t_ret sto ->
        FieldDecl {
          v_namei = Some (name, Some (EqInit (_2, InitExpr _3)));
          v_type = partialt t_ret; v_storage = sto;
        })
      )}
 | _1 = declarator _2 = TCol _3 = const_expr
-    {     ( let (name, _partialt) = fixNameForParam _1 in (fun t_ret _stoTODO -> 
+    {     ( let (name, _partialt) = fixNameForParam _1 in (fun t_ret _stoTODO ->
        BitField (Some name, _2, t_ret, _3))
      )}
 | _1 = TCol _2 = const_expr
@@ -1211,7 +1211,7 @@ enumerator:
 
 simple_declaration:
   _1 = decl_spec _2 = TPtVirg
-    {     ( let (t_ret, sto, _inline) = type_and_storage_from_decl _1 in 
+    {     ( let (t_ret, sto, _inline) = type_and_storage_from_decl _1 in
        DeclList ([{v_namei = None; v_type = t_ret; v_storage = sto},noii],_2)
      )}
 | _1 = decl_spec _2 = init_declarator_list _3 = TPtVirg
@@ -1484,7 +1484,7 @@ cpp_directive:
   _1 = TInclude
     {     ( let (_include_str, filename, tok) = _1 in
        (* redo some lexing work :( *)
-       let inc_kind, path = 
+       let inc_kind, path =
          match () with
          | _ when filename =~ "^\"\\(.*\\)\"$" ->  Local, matched1 filename
          | _ when filename =~ "^\\<\\(.*\\)\\>$" -> Standard, matched1 filename
@@ -1512,8 +1512,8 @@ define_val:
        | _ -> raise Parsing.Parse_error
      )}
 | _1 = Tif _2 = TOPar _3 = expr _4 = TCPar _5 = id_expression
-    {     ( let name = (None, fst _5, snd _5) in 
-       DefinePrintWrapper (_1, (_2, _3, _4), name) 
+    {     ( let name = (None, fst _5, snd _5) in
+       DefinePrintWrapper (_1, (_2, _3, _4), name)
      )}
 | _1 = TOBrace_DefineInit _2 = initialize_list _3 = TCBrace _4 = comma_opt
     {    ( DefineInit (InitList (_1, List.rev _2, _3) (*$4*))  )}

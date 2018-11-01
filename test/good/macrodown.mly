@@ -58,7 +58,7 @@
 
   let rec omit_pre_spaces str =
     if String.sub str 0 1 = " "  then
-      omit_pre_spaces (String.sub str 1 ((String.length str) - 1)) 
+      omit_pre_spaces (String.sub str 1 ((String.length str) - 1))
 (*    else if String.sub str 0 1 = "\n" then
       (String.sub str 1 ((String.length str) - 1)) *)
     else

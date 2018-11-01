@@ -33,13 +33,13 @@ open Fp;;
 
   %start cmd
   %type <Fp.cmd> cmd
-  
+
   %start exp
   %type <Fp.expr> exp
-  
+
   %start fct
   %type <Fp.fct> fct
-  
+
   %%
 
 cmd :
@@ -52,7 +52,7 @@ cmd :
 | LSave Lstr Leol           { Save $2 }
 | Leol                      { None }
     ;
-  
+
 exp :
   LT                { T }
 | LF                { F }
@@ -96,8 +96,8 @@ list :
 
 fctlist :
     fct Lcom fctlist { $1 :: $3 }
-|   fct              { [ $1 ] }    
+|   fct              { [ $1 ] }
     ;
 
   %%
-  
+

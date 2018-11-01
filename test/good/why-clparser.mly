@@ -1,15 +1,15 @@
 /*
  * The Caduceus certification tool
  * Copyright (C) 2003 Jean-Christophe Filliâtre - Claude Marché
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * See the GNU General Public License version 2 for more details
  * (enclosed in the file GPL).
  */
@@ -26,12 +26,12 @@
   let info x = { Clogic.lexpr_node = x; lexpr_loc = loc () }
 
   type ghost_decl =
-    | Dsimple 
+    | Dsimple
     | Darray of ghost_decl * lexpr option
 
   let rec expr_of_lexpr e =
     match e.lexpr_node with
-      | PLconstant c -> 
+      | PLconstant c ->
 	  { Cast.node = Cast.CEconstant c ; Cast.loc = e.lexpr_loc }
       | _ -> Creport.error e.lexpr_loc "not a constant"
 
@@ -40,27 +40,27 @@
   let rec ghost_type ty gd =
     match gd with
       | Dsimple -> ty
-      | Darray(gd,size) -> 
-	    Cast_misc.noattr 
+      | Darray(gd,size) ->
+	    Cast_misc.noattr
 	      (Cast.CTarray (ghost_type ty gd, option_app expr_of_lexpr size))
 
   let ghost ty (id,gd,cinit) =
     let gty = ghost_type ty gd in
     LDghost(gty,id,cinit)
-    
-    
+
+
 %}
 
 %token <string> IDENTIFIER STRING_LITERAL TYPENAME
 %token <Clogic.constant> CONSTANT
 %token LPAR RPAR IF ELSE COLON COLONCOLON DOT DOTDOT AMP
 %token INT FLOAT LT GT LE GE EQ NE COMMA ARROW EQUAL
-%token FORALL EXISTS IFF IMPLIES AND OR NOT 
+%token FORALL EXISTS IFF IMPLIES AND OR NOT
 %token TRUE FALSE OLD AT RESULT BLOCK_LENGTH BASE_ADDR
 %token SEPARATED FULLSEPARATED VALID VALID_INDEX VALID_RANGE FRESH THEN
 %token QUESTION MINUS PLUS STAR SLASH PERCENT LSQUARE RSQUARE EOF
 %token INVARIANT VARIANT DECREASES FOR LABEL ASSERT SEMICOLON NULL
-%token REQUIRES ENSURES ASSIGNS LOOP_ASSIGNS NOTHING 
+%token REQUIRES ENSURES ASSIGNS LOOP_ASSIGNS NOTHING
 %token READS LOGIC PREDICATE AXIOM LBRACE RBRACE GHOST SET
 %token VOID CHAR SIGNED UNSIGNED SHORT LONG DOUBLE STRUCT ENUM UNION
 
@@ -75,7 +75,7 @@
 %left prec_relation LT GT LE GE EQ NE
 %left PLUS MINUS
 %left STAR SLASH PERCENT AMP
-%right prec_uminus 
+%right prec_uminus
 %right prec_cast
 %left DOT ARROW LSQUARE
 %right prec_par
@@ -105,11 +105,11 @@ lexpr:
 | FULLSEPARATED LPAR lexpr COMMA lexpr RPAR { info (PLfullseparated ($3,$5)) }
 | VALID LPAR lexpr RPAR { info (PLvalid ($3)) }
 | VALID_INDEX LPAR lexpr COMMA lexpr RPAR { info (PLvalid_index ($3,$5)) }
-| VALID_RANGE LPAR lexpr COMMA lexpr COMMA lexpr RPAR 
+| VALID_RANGE LPAR lexpr COMMA lexpr COMMA lexpr RPAR
       { info (PLvalid_range ($3,$5,$7)) }
 | FRESH LPAR lexpr RPAR { info (PLfresh ($3)) }
 /* terms */
-| NULL { info PLnull } 
+| NULL { info PLnull }
 | CONSTANT { info (PLconstant $1) }
 | lexpr PLUS lexpr { info (PLbinop ($1, Badd, $3)) }
 | lexpr MINUS lexpr { info (PLbinop ($1, Bsub, $3)) }
@@ -119,13 +119,13 @@ lexpr:
 | lexpr ARROW IDENTIFIER { info (PLarrow ($1, $3)) }
 | lexpr DOT IDENTIFIER { info (PLdot ($1, $3)) }
 | lexpr LSQUARE lexpr RSQUARE { info (PLarrget ($1, $3)) }
-| lexpr LSQUARE lexpr_option DOTDOT lexpr_option RSQUARE    
+| lexpr LSQUARE lexpr_option DOTDOT lexpr_option RSQUARE
    { info (PLrange ($1, $3, $5)) }
 | MINUS lexpr %prec prec_uminus { info (PLunop (Uminus, $2)) }
 | PLUS lexpr %prec prec_uminus { $2 }
 | STAR lexpr { info (PLunop (Ustar, $2)) }
 | AMP lexpr { info (PLunop (Uamp, $2)) }
-| lexpr QUESTION lexpr COLON lexpr %prec prec_question 
+| lexpr QUESTION lexpr COLON lexpr %prec prec_question
     { info (PLif ($1, $3, $5)) }
 | OLD LPAR lexpr RPAR { info (PLold $3) }
 | AT LPAR lexpr COMMA IDENTIFIER RPAR { info (PLat ($3, $5)) }
@@ -135,7 +135,7 @@ lexpr:
 /* both terms and predicates */
 | LPAR lexpr RPAR %prec prec_par { $2 }
 | IDENTIFIER { info (PLvar (Info.default_var_info $1)) }
-| IDENTIFIER LPAR lexpr_list RPAR 
+| IDENTIFIER LPAR lexpr_list RPAR
     { info (PLapp (Info.default_logic_info $1, $3)) }
 /* Cast. TODO: (identifier *) lexpr needs TYPENAME (see below) */
 | LPAR logic_type_not_id RPAR lexpr %prec prec_cast { info (PLcast ($2, $4)) }
@@ -171,11 +171,11 @@ logic_type_not_id:
 | SIGNED LONG    { LTint }       /** [long] */
 | LONG           { LTint }       /** [long] */
 | UNSIGNED LONG  { LTint }      /** [unsigned long] */
-| SIGNED LONG LONG { LTint }   /** [long long] (or [_int64] on 
+| SIGNED LONG LONG { LTint }   /** [long long] (or [_int64] on
 					   Microsoft Visual C) */
-| LONG LONG   { LTint }   /** [long long] (or [_int64] on 
+| LONG LONG   { LTint }   /** [long long] (or [_int64] on
 					   Microsoft Visual C) */
-| UNSIGNED LONG LONG { LTint }  /** [unsigned long long] 
+| UNSIGNED LONG LONG { LTint }  /** [unsigned long long]
                                 (or [unsigned _int64] on Microsoft Visual C) */
 | FLOAT       { LTfloat }
 | DOUBLE      { LTfloat }
@@ -195,7 +195,7 @@ stars:
 ;
 
 relation:
-  | LT    { Lt } 
+  | LT    { Lt }
   | GT    { Gt }
   | LE    { Le }
   | GE    { Ge }
@@ -224,18 +224,18 @@ post_condition:
 ;
 
 spec:
-  pre_condition effects post_condition decreases 
+  pre_condition effects post_condition decreases
     { { requires = $1; assigns = $2; ensures = $3; decreases = $4 } }
 ;
 
 loop_annot:
-  invariant loop_effects variant 
+  invariant loop_effects variant
     { { invariant = Some $1; loop_assigns = $2; variant = Some $3 } }
-| loop_effects variant 
+| loop_effects variant
     { { invariant = None; loop_assigns = $1; variant = Some $2 } }
-| invariant loop_effects 
+| invariant loop_effects
     { { invariant = Some $1; loop_assigns = $2; variant = None } }
-| ne_loop_effects 
+| ne_loop_effects
     { { invariant = None; loop_assigns = Some $1; variant = None } }
 ;
 
@@ -253,7 +253,7 @@ decreases:
 | DECREASES variant { Some $2 }
 ;
 
-annot: 
+annot:
   annotation EOF   { $1 }
 ;
 
@@ -264,7 +264,7 @@ annotation:
 | loop_annot       { Aloop_annot $1 }
 | ASSERT lexpr     { Acode_annot (Assert $2) }
 | LABEL IDENTIFIER { Acode_annot (Label $2) }
-| SET ghost_lvalue EQUAL lexpr 
+| SET ghost_lvalue EQUAL lexpr
                    { Acode_annot(GhostSet($2,$4)) }
 ;
 
@@ -297,24 +297,24 @@ location:
 ;
 
 decl:
-  LOGIC logic_type IDENTIFIER LPAR parameters RPAR 
+  LOGIC logic_type IDENTIFIER LPAR parameters RPAR
     { LDlogic (Info.default_logic_info $3, $2, $5, []) }
-| LOGIC logic_type IDENTIFIER LPAR parameters RPAR READS locations 
+| LOGIC logic_type IDENTIFIER LPAR parameters RPAR READS locations
     { LDlogic (Info.default_logic_info $3, $2, $5, $8) }
-| LOGIC logic_type IDENTIFIER LPAR parameters RPAR LBRACE lexpr RBRACE 
+| LOGIC logic_type IDENTIFIER LPAR parameters RPAR LBRACE lexpr RBRACE
     { LDlogic_def (Info.default_logic_info $3, $2, $5, $8) }
-| PREDICATE IDENTIFIER LPAR parameters RPAR 
+| PREDICATE IDENTIFIER LPAR parameters RPAR
     { LDpredicate_reads (Info.default_logic_info $2, $4, []) }
-| PREDICATE IDENTIFIER LPAR parameters RPAR READS locations 
+| PREDICATE IDENTIFIER LPAR parameters RPAR READS locations
     { LDpredicate_reads (Info.default_logic_info $2, $4, $7) }
-| PREDICATE IDENTIFIER LPAR parameters RPAR LBRACE lexpr RBRACE 
+| PREDICATE IDENTIFIER LPAR parameters RPAR LBRACE lexpr RBRACE
     { LDpredicate_def (Info.default_logic_info $2, $4, $7) }
 | AXIOM IDENTIFIER COLON lexpr { LDaxiom ($2, $4) }
 | INVARIANT IDENTIFIER COLON lexpr { LDinvariant ($2, $4) }
 ;
 
 ghost_decl:
-| GHOST type_specifier init_declarator_list 
+| GHOST type_specifier init_declarator_list
       { List.map (ghost $2) $3 }
 ;
 
@@ -349,9 +349,9 @@ init_declarator_list
         ;
 
 init_declarator
-        : declarator 
+        : declarator
             { let (id,d) = $1 in (id,d, None) }
-        | declarator EQUAL c_initializer 
+        | declarator EQUAL c_initializer
 	    { let (id,d) = $1 in (id,d, Some $3) }
         ;
 
@@ -363,9 +363,9 @@ declarator
 direct_declarator
         : IDENTIFIER
             { $1, Dsimple }
-        | direct_declarator LSQUARE lexpr RSQUARE 
+        | direct_declarator LSQUARE lexpr RSQUARE
 	    { let id,d = $1 in id, Darray (d, Some $3) }
-        | direct_declarator LSQUARE RSQUARE 
+        | direct_declarator LSQUARE RSQUARE
 	    { let id,d = $1 in id, Darray (d, None) }
         ;
 

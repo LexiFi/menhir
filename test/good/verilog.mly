@@ -579,7 +579,7 @@ preproc:	P_CELLDEFINE			        { P_CELLDEFINE }
 	|	P_ENDCELLDEFINE        			{ P_ENDCELLDEFINE }
         |       P_NOSUPPRESS_FAULTS        		{ P_NOSUPPRESS_FAULTS }
         |       P_ENDPROTECT        			{ P_ENDPROTECT }
-			
+
 
 //**********************************************************************
 // Module headers
@@ -595,7 +595,7 @@ primDecl:       PRIMITIVE ID modParE modPortsE SEMICOLON primItemList ENDPRIMITI
                 {
 		QUINTUPLE ( PRIMITIVE, ID $2, $3, TLIST $4, TLIST $6 )
 		}
-				
+
 primItemList:
 		primItem				{ [ $1 ] }
 	|	primItem primItemList			{ $1 :: $2 }
@@ -1177,9 +1177,9 @@ stmt:
 	|	readmem LPAREN expr COMMA varRefMem COMMA expr COMMA expr RPAREN SEMICOLON
 			{ QUINTUPLE ( D_READMEMB, $3, $5, $7, $9 ) }
 	|	P_MINUSGT varRefDotBit SEMICOLON
-			{ DOUBLE ( P_MINUSGT, $2 ) }	
+			{ DOUBLE ( P_MINUSGT, $2 ) }
 	|	DISABLE varRefDotBit SEMICOLON
-			{ DOUBLE ( DISABLE, $2 ) }	
+			{ DOUBLE ( DISABLE, $2 ) }
 	|	D_MONITOR  LPAREN monList RPAREN SEMICOLON
 			{ DOUBLE (D_MONITOR, TLIST $3); }
 	|	REPEAT LPAREN expr RPAREN stmtBlock	{ TRIPLE ( REPEAT, $3, $5 ) }
@@ -1684,7 +1684,7 @@ varRefDotBit:
 
 idDotted:
 		idArrayed 				{ $1 }
-	|	idDotted DOT idArrayed	 		
+	|	idDotted DOT idArrayed
 		{ match $1 with DOTTED items -> DOTTED (items @ [$3]) | _ -> DOTTED [$1;$3] }
 	;
 

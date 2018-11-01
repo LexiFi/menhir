@@ -191,9 +191,9 @@ out_integer_list:
          i :: ls, pos
    )}
 | _1 = TokInt
-    {          ( 
+    {          (
       let i, pos = _1 in
-         [i], pos 
+         [i], pos
    )}
 
 in_operand:
@@ -371,7 +371,7 @@ value_reg:
 
 in_operand_stack_index:
   _1 = TokLParen _2 = value_reg _3 = TokRParen
-    {                                 ( 
+    {                                 (
       let value, _ = _2 in
          value
    )}
@@ -435,7 +435,7 @@ inst_modifier:
 | _1 = TokIrrelevant
     {                 ( [InstIrrelevant _1] )}
 | _1 = TokIdent
-    {            ( 
+    {            (
       let ident, pos = _1 in
          [InstTag (ident, pos)]
    )}
@@ -525,14 +525,14 @@ io_input:
 
 io_input_list:
   _1 = io_input _2 = io_input_list
-    {                          ( 
+    {                          (
       let input, pos1 = _1 in
       let inputs, pos2 = _2 in
       let pos = union_pos pos1 pos2 in
          input :: inputs, pos
    )}
 | _1 = io_input
-    {            ( 
+    {            (
       let input, pos = _1 in
          [input], pos
    )}
@@ -561,14 +561,14 @@ io_output:
 
 io_output_list:
   _1 = io_output _2 = io_output_list
-    {                            ( 
+    {                            (
       let output, pos1 = _1 in
       let outputs, pos2 = _2 in
       let pos = union_pos pos1 pos2 in
          output :: outputs, pos
    )}
 | _1 = io_output
-    {             ( 
+    {             (
       let output, pos = _1 in
          [output], pos
    )}
@@ -657,7 +657,7 @@ clause_expr:
   _1 = TokLParen _2 = clause_expr _3 = TokRParen
     {                                   ( _2 )}
 | _1 = TokOCaml
-    {            ( 
+    {            (
       let ml, pos = _1 in
          ClauseML (ml, pos)
    )}
@@ -729,7 +729,7 @@ register_statement:
 
 register_list:
   _1 = register _2 = TokSemi _3 = register_list
-    {                                  ( 
+    {                                  (
       let r, pos1 = _1 in
       let regs, pos2 = _3 in
       let pos = union_pos pos1 pos2 in
@@ -880,14 +880,14 @@ transform:
 
 symbol_list:
   _1 = TokIdent _2 = TokComma _3 = symbol_list
-    {                                 ( 
+    {                                 (
       let ident, _ = _1 in
-         ident :: _3 
+         ident :: _3
    )}
 | _1 = TokIdent
-    {            ( 
+    {            (
       let ident, _ = _1 in
-         [ident] 
+         [ident]
    )}
 
 symbol_list_opt:

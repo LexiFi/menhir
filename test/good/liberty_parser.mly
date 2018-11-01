@@ -733,7 +733,7 @@
 // Generic octuple
 %token<token*token*token*token*token*token*token*token> OCTUPLE
 
-%left PLUS MINUS 
+%left PLUS MINUS
 %left MULT DIV
 %right UNARY
 
@@ -788,16 +788,16 @@ head :
 
 param_list:
 	| attr_val { [ $1 ] }
-        | param_list COMMA attr_val { $1 @ [ $3 ] } 
+        | param_list COMMA attr_val { $1 @ [ $3 ] }
 	;
 
 define:
-	KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI  
+	KW_DEFINE LPAR s_or_i COMMA s_or_i COMMA s_or_i RPAR SEMI
                 { QUADRUPLE(KW_DEFINE, $3, $5, $7) }
 
 define_group:
 	KW_DEFINE_GROUP LPAR s_or_i COMMA s_or_i RPAR SEMI
-            { TRIPLE(KW_DEFINE_GROUP,$3,$5) } 
+            { TRIPLE(KW_DEFINE_GROUP,$3,$5) }
 		;
 
 s_or_i:
@@ -819,7 +819,7 @@ attr_val_expr : STRING { STRING $1 }
 	| expr { $1 }
 	;
 
-expr: expr PLUS expr 
+expr: expr PLUS expr
            {
 	   TRIPLE(PLUS, $1, $3);
            }

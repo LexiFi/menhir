@@ -2,7 +2,7 @@
   open Javalib_pack
   open Javalib
 
-  type switchcase = 
+  type switchcase =
     | CaseIntWord of int * string
     | CaseIntInt of int * int
 
@@ -16,7 +16,7 @@
   let unescape s =
     Scanf.unescaped (String.sub s 1 ((String.length s)- 2))
 
-  let cbasic = function 
+  let cbasic = function
       | "boolean" -> "Z"
       | "byte"    -> "B"
       | "char"    -> "C"
@@ -94,7 +94,7 @@
 
     in
     let code = Array.create !pos JCode.OpInvalid in
-    List.iter (function 
+    List.iter (function
       | (p, JCode.OpInvalid) -> ()
       | (p, JCode.OpJsr(l)) -> code.(p) <- JCode.OpJsr(realloc p l)
       | (p, JCode.OpIf(a,l)) -> code.(p) <- JCode.OpIf(a,realloc p l)
@@ -396,7 +396,7 @@ implements :
 
 /* ---- Annotation specification */
 /* TODO */
-annotations : 
+annotations :
   | ann_cls_list { [] }
   | /* empty */ { [] }
 
@@ -673,7 +673,7 @@ inners :
 
     inner_spec :
       | DINNER CLASS access inner_name inner_inner inner_outer SEP
-        { 
+        {
           {
             ic_class_name = $5;
             ic_outer_class_name = $6;
@@ -743,7 +743,7 @@ methods :
             c_stack_map_java6 = None; (* TODO *)
             c_attributes = []; (* TODO *)
           }
-          in  
+          in
           let m = ConcreteMethod {
             cm_signature = ms;
             cm_class_method_signature = JBasics.make_cms !cn ms;
@@ -1261,7 +1261,7 @@ methods :
                   | "lload", _, 1 -> add 1 (JCode.OpLoad (`Long, 1))
                   | "lload", _, 2 -> add 1 (JCode.OpLoad (`Long, 2))
                   | "lload", _, 3 -> add 1 (JCode.OpLoad (`Long, 3))
-                  | "lload", "i", i -> add 2 (JCode.OpLoad (`Long, i)) 
+                  | "lload", "i", i -> add 2 (JCode.OpLoad (`Long, i))
                   | "lload", "I", n -> add 3 (JCode.OpLoad (`Long, n))
                   | "lstore", _, 0 -> add 1 (JCode.OpStore (`Long, 0))
                   | "lstore", _, 1 -> add 1 (JCode.OpStore (`Long, 1))
@@ -1287,7 +1287,7 @@ methods :
                     Printf.printf "InstNum(%S, %S, %S)\n" a b s;
                     assert false
                 }
-                | Insn Word { 
+                | Insn Word {
                   match(fst $1,snd $1, $2)with
                   (* A *)
                   | "anewarray", "class", o -> add 3 (JCode.OpNewArray (JBasics.TObject (JParseSignature.parse_objectType o)))
@@ -1379,7 +1379,7 @@ methods :
                     Printf.printf "InstWordWord(%S, %S, %S, %S)\n" a b (snd $1) s2;
                     assert false
                 }
-                | Insn Str { 
+                | Insn Str {
                   match(fst $1,snd $1, unescape $2)with
                   | "ldc", "constant", s -> add 2 (JCode.OpConst(`String (JBasics.make_jstr s)))
                   | a,b,s ->

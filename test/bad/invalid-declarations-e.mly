@@ -6,7 +6,7 @@
 %type<int> date time
 %token BAZAR
 %left FOO BAR
-%nonassoc BAR QWD QWD QWD ASD QWD D QWD WQD QWD 
+%nonassoc BAR QWD QWD QWD ASD QWD D QWD WQD QWD
 %token BAR
 
 %%

@@ -39,7 +39,7 @@ open Parsetree
 let mktyp d =
   { ptyp_desc = d; ptyp_loc = symbol_rloc() }
 let mktys typ tyc_list =
-  { ptys_type = typ; ptys_constraints = tyc_list; ptys_loc = symbol_rloc () } 
+  { ptys_type = typ; ptys_constraints = tyc_list; ptys_loc = symbol_rloc () }
 let mktyc d =
   { ptyc_desc = d; ptyc_loc = symbol_rloc() }
 let mkpat d =
@@ -192,7 +192,7 @@ let bigarray_set arr arg newval =
                        [arr; c1; c2; c3; newval]))
   | coords ->
       mkexp(Pexp_apply(ghexp(Pexp_ident(bigarray_function "Genarray" "set")),
-                       [arr; 
+                       [arr;
                         ghexp(Pexp_array coords);
                         newval]))
 %}
@@ -366,20 +366,20 @@ let bigarray_set arr arg newval =
 
 implementation:
   _1 = flows_declaration _2 = structure _3 = EOF
-    {      ( { pimp_structure = _2; 
+    {      ( { pimp_structure = _2;
 	  pimp_flows = _1;
 	  pimp_header_loc = rhs_loc 1
-	} 
+	}
       )}
 
 interface:
   _1 = flows_declaration _2 = affects _3 = raises _4 = signature _5 = EOF
-    {      ( { pint_signature = List.rev _4; 
+    {      ( { pint_signature = List.rev _4;
 	  pint_flows = _1;
 	  pint_pci = _2;
 	  pint_pcf = _3;
 	  pint_header_loc = rhs_locs 1 3
-	} 
+	}
       )}
 
 toplevel_phrase:
@@ -547,7 +547,7 @@ module_type:
 | _1 = SIG _2 = signature _3 = error
     {      ( unclosed "sig" 1 "end" 3 )}
 | _1 = FUNCTOR _2 = LPAREN _3 = UIDENT _4 = COLON _5 = module_type _6 = RPAREN _7 = module_type_arrow _8 = module_type %prec prec_fun
-    {      ( let lb, ub = _7 in 
+    {      ( let lb, ub = _7 in
         mkmty(Pmty_functor(_3, _5, lb, ub, _8, Some (rhs_loc 7)))
       )}
 | _1 = module_type _2 = WITH _3 = with_constraints
@@ -1150,10 +1150,10 @@ simple_extcore_type:
   _1 = simple_extcore_type2
     {      ( _1 )}
 | _1 = LPAREN _2 = extcore_type_comma_list _3 = RPAREN
-    {      ( 
+    {      (
 	match _2 with
 	  [sty] -> mktyp (Ptyp_paren sty)
-        | _ -> raise Parse_error 
+        | _ -> raise Parse_error
       )}
 
 simple_extcore_type2:
@@ -1206,10 +1206,10 @@ simple_core_type:
   _1 = simple_core_type2
     {      ( _1 )}
 | _1 = LPAREN _2 = core_type_comma_list _3 = RPAREN
-    {      ( 
+    {      (
 	match _2 with
 	  [sty] -> mktyp (Ptyp_paren sty)
-        | _ -> raise Parse_error 
+        | _ -> raise Parse_error
       )}
 
 simple_core_type2:

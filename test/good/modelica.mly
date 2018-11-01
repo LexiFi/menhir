@@ -30,9 +30,9 @@
 
 %token <int> INT
 %token <float> FLOAT
-%token <string> IDENT                                
+%token <string> IDENT
 %token <string> STRING
-%token DOTPOWER POWER PLUS MINUS TIMES DIV DOTPLUS DOTMINUS DOTTIMES DOTDIV 
+%token DOTPOWER POWER PLUS MINUS TIMES DIV DOTPLUS DOTMINUS DOTTIMES DOTDIV
 %token EOF
 
 %token ALGORITHM DISCRETE FALSE LOOP PURE AND EACH FINAL MODEL RECORD ANNOTATION ELSE
@@ -44,21 +44,21 @@
 %token <string> END_IDENT
 
 %right lowest /* lowest precedence */
-%nonassoc IDENT INT FLOAT STRING LPAREN RPAREN RBRACKET LBRACE RBRACE 
+%nonassoc IDENT INT FLOAT STRING LPAREN RPAREN RBRACKET LBRACE RBRACE
 
-%left COMMA 
-%left SEMICOLON 
+%left COMMA
+%left SEMICOLON
 %left COLON
 %right Not
 %left AND OR
-%left GT LT NEQ GEQ LEQ EQEQ 
+%left GT LT NEQ GEQ LEQ EQEQ
 %left PLUS MINUS DOTPLUS DOTMINUS     /* medium precedence */
 %right UMinus
 %right FUNCTION
 %left TIMES DIV DOTTIMES DOTDIV
 %left POWER DOTPOWER
 %nonassoc below_app
-%left app_prec     
+%left app_prec
 
 %left type_mod
 %left type_var
@@ -83,21 +83,21 @@
 
     (* merge the two sources of a modelica-style component definition (i.e. the declaration and the component_clause *)
     let declaration_to_def def_type def_options def_constraint = function
-        (def_name, None, None, def_if, def_rhs, comment) -> 
+        (def_name, None, None, def_if, def_rhs, comment) ->
            { commented = { def_name ; def_type ; def_options ; def_constraint ; def_rhs ; def_if ; } ;
              comment }
-      | (def_name, Some(dims), None, def_if, def_rhs, comment) -> 
+      | (def_name, Some(dims), None, def_if, def_rhs, comment) ->
            { commented = { def_name ; def_type = TArray { base_type = def_type ; dims } ;
                            def_options ; def_constraint ; def_rhs ; def_if ; } ;
              comment }
-      | (def_name, Some(dims), Some(modification), def_if, def_rhs, comment) -> 
+      | (def_name, Some(dims), Some(modification), def_if, def_rhs, comment) ->
            { commented = { def_name ; def_type = TArray { base_type = TMod { mod_type = def_type ; modification } ; dims } ;
                            def_options ; def_constraint ; def_rhs ; def_if ; } ;
              comment }
-      | (def_name, None, Some(modification), def_if, def_rhs, comment) -> 
-           { commented = { def_name ; def_type = TMod { mod_type = def_type ; modification } ; 
+      | (def_name, None, Some(modification), def_if, def_rhs, comment) ->
+           { commented = { def_name ; def_type = TMod { mod_type = def_type ; modification } ;
                            def_options ; def_constraint ; def_rhs ; def_if ; } ;
-             comment } 
+             comment }
 
      let mkloc x loc_start loc_end = {txt=x ; loc={Location.loc_start; Location.loc_end; Location.loc_ghost=false } }
 %}
@@ -111,7 +111,7 @@
 %start <Syntax.extend> modelica_extends
 %start <Syntax.definition list> modelica_definitions
 %start <Syntax.typedef> modelica_type_definition
-%start <Syntax.unit_> modelica_stored_definition                                  
+%start <Syntax.unit_> modelica_stored_definition
 %%
 
 modelica_stored_definition : within = option(within_clause) toplevel_defs = list(type_definition_clause) EOF { { within; toplevel_defs } }
@@ -120,11 +120,11 @@ modelica_definitions : defs = component_clauses EOF { defs }
 
 modelica_expr: e = expr EOF { e }
 
-modelica_stmt : s = statement EOF { s }                        
+modelica_stmt : s = statement EOF { s }
 
 modelica_type_definition : t = type_definition EOF { t }
-                              
-modelica_eq : eq = equation EOF { eq }                              
+
+modelica_eq : eq = equation EOF { eq }
 
 modelica_texpr : texpr = type_expression EOF { texpr }
 
@@ -140,14 +140,14 @@ expr : e = simple_expr { e }
      | IF condition = expr THEN then_ = expr else_if = list(else_if) ELSE else_=expr
        { no_attr (If { condition ; then_ ; else_if ; else_ }) }
      | start = simple_expr COLON first=simple_expr second=option(preceded(COLON, simple_expr))
-        { no_attr (Range (match second with Some end_ -> { start; step=Some first; end_ } 
+        { no_attr (Range (match second with Some end_ -> { start; step=Some first; end_ }
                                           | None -> {start; step=None; end_=first} ) )
-        }   
+        }
 
 simple_expr:
   | TRUE { no_attr (Bool(true)) }
   | FALSE { no_attr (Bool(false)) }
-  | i = INT 
+  | i = INT
         { no_attr (Int (i)) }
   | f = FLOAT
         { no_attr (Real (f)) }
@@ -159,7 +159,7 @@ simple_expr:
         { no_attr (Ide(x)) }
   | LPAREN e = expr RPAREN
         { e }
-  | LPAREN RPAREN { no_attr (OutputExpression [None]) } 
+  | LPAREN RPAREN { no_attr (OutputExpression [None]) }
   | LPAREN e=expr COMMA ps=patterns RPAREN { no_attr (OutputExpression ((Some e)::ps)) }
   | LPAREN COMMA ps=patterns RPAREN { no_attr (OutputExpression (None::ps)) }
 
@@ -170,7 +170,7 @@ simple_expr:
   | LBRACKET els = separated_nonempty_list(SEMICOLON, separated_nonempty_list(COMMA, expr)) RBRACKET
         { no_attr (MArray els) }
   | FUNCTION e = simple_expr
-        { no_attr (ExplicitClosure e) }           
+        { no_attr (ExplicitClosure e) }
   | END { no_attr (End) } %prec END
   | DER { no_attr (Der) }
   | INITIAL { no_attr (Initial) }
@@ -179,42 +179,42 @@ simple_expr:
 
   | fun_ = simple_expr LPAREN arguments = function_args RPAREN
         { let (args, named_args) = arguments in no_attr (App { fun_ ; args; named_args }) }
-                                                                      
-  | left = simple_expr PLUS right = simple_expr
-       { no_attr (Plus ( {left ; right} )) } 
-  | left = simple_expr MINUS right = simple_expr
-       { no_attr (Minus ( {left ; right} )) } 
-  | left = simple_expr TIMES right = simple_expr
-       { no_attr (Mul ( {left ; right} )) } 
-  | left = simple_expr DIV right = simple_expr
-       { no_attr (Div ( {left ; right} )) } 
-  | left = simple_expr POWER right = simple_expr
-       { no_attr (Pow ( {left ; right} )) } 
 
-       
+  | left = simple_expr PLUS right = simple_expr
+       { no_attr (Plus ( {left ; right} )) }
+  | left = simple_expr MINUS right = simple_expr
+       { no_attr (Minus ( {left ; right} )) }
+  | left = simple_expr TIMES right = simple_expr
+       { no_attr (Mul ( {left ; right} )) }
+  | left = simple_expr DIV right = simple_expr
+       { no_attr (Div ( {left ; right} )) }
+  | left = simple_expr POWER right = simple_expr
+       { no_attr (Pow ( {left ; right} )) }
+
+
   | left = simple_expr DOTPLUS right = simple_expr
-       { no_attr (DPlus ( {left ; right} )) } 
+       { no_attr (DPlus ( {left ; right} )) }
   | left = simple_expr DOTMINUS right = simple_expr
-       { no_attr (DMinus ( {left ; right} )) } 
+       { no_attr (DMinus ( {left ; right} )) }
   | left = simple_expr DOTTIMES right = simple_expr
-       { no_attr (DMul ( {left ; right} )) } 
+       { no_attr (DMul ( {left ; right} )) }
   | left = simple_expr DOTDIV right = simple_expr
-       { no_attr (DDiv ( {left ; right} )) } 
+       { no_attr (DDiv ( {left ; right} )) }
   | left = simple_expr DOTPOWER right = simple_expr
-       { no_attr (DPow ( {left ; right} )) } 
+       { no_attr (DPow ( {left ; right} )) }
 
   | left = simple_expr LT right = simple_expr
-       { no_attr (Lt ( {left ; right} )) } 
+       { no_attr (Lt ( {left ; right} )) }
   | left = simple_expr GT right = simple_expr
-       { no_attr (Gt ( {left ; right} )) } 
+       { no_attr (Gt ( {left ; right} )) }
   | left = simple_expr GEQ right = simple_expr
-       { no_attr (Geq ( {left ; right} )) } 
+       { no_attr (Geq ( {left ; right} )) }
   | left = simple_expr LEQ right = simple_expr
-       { no_attr (Leq ( {left ; right} )) } 
+       { no_attr (Leq ( {left ; right} )) }
   | left = simple_expr NEQ right = simple_expr
-       { no_attr (Neq ( {left ; right} )) } 
+       { no_attr (Neq ( {left ; right} )) }
   | left = simple_expr EQEQ right = simple_expr
-       { no_attr (Eq ( {left ; right} )) } 
+       { no_attr (Eq ( {left ; right} )) }
 
   | left = simple_expr AND right = simple_expr
        { no_attr (And ( {left ; right} )) }
@@ -229,12 +229,12 @@ simple_expr:
   | DOTMINUS e = simple_expr { no_attr (UDMinus e) } %prec UMinus
   | DOTPLUS e = simple_expr { no_attr (UDPlus e) } %prec UMinus
   | NOT e = simple_expr { no_attr (Not e) } %prec Not
-  
+
 
 else_if : ELSEIF guard=expr THEN elsethen = expr { {guard; elsethen} }
 
 index_range : IN e = expr { e }
-                                                 
+
 index : variable = ident range = option(index_range) { { variable ; range } }
 
 array_args : es=separated_list(COMMA, expr) { es }
@@ -244,17 +244,17 @@ array_args : es=separated_list(COMMA, expr) { es }
 function_args : e = expr COMMA fs = function_args { let (args, named_args) = fs in (e::args, named_args) }
               | e = expr { ([e], []) }
               | m = named_function_args { ([], m) }
-              | exp = expr FOR idxs = separated_nonempty_list(COMMA, index) { ([no_attr (Compr { exp ; idxs })], []) }  
-               
+              | exp = expr FOR idxs = separated_nonempty_list(COMMA, index) { ([no_attr (Compr { exp ; idxs })], []) }
+
 named_argument : argument_name=ident EQ argument=expr { {argument_name ; argument } }
 
 named_function_args : args=separated_nonempty_list (COMMA, named_argument) { args }
-                    | { [] }                                                            
+                    | { [] }
 
 annotation : ANNOTATION m=class_modification { m }
-                        
+
 comment : s=option(str) m=option(annotation) { { annotated_elem=s ; annotation=m} }
-                        
+
 statement : s=statement_body comment=comment SEMICOLON { {commented=s ; comment} }
 
 else_statements : ELSE else_ = list(statement) { else_ }
@@ -263,32 +263,32 @@ else_statements : ELSE else_ = list(statement) { else_ }
 elseif_statement : ELSEIF guard = expr THEN elsethen=list(statement) { { guard ; elsethen } }
 
 elsewhen_statement : ELSEWHEN guard = expr THEN elsethen=list(statement) { { guard ; elsethen } }
-                    
+
 component_reference : x = IDENT { no_attr (Ide x) }
                     | ASSERT { no_attr (Assert) }
-                    | DOT x = IDENT { no_attr (RootIde x) }                                                     
+                    | DOT x = IDENT { no_attr (RootIde x) }
                     | object_=component_reference DOT field=IDENT { no_attr (Proj { object_ ; field }) }
                     | lhs = component_reference LBRACKET indices=separated_nonempty_list(COMMA, expr) RBRACKET
                                                                                         { no_attr (ArrayAccess { lhs; indices }) }
 lexpr : r = component_reference { r }
       | LPAREN ps=patterns RPAREN { no_attr (OutputExpression ps) }
-                      
+
 patterns : p=option(lexpr) ps=list(preceded(COMMA, option(lexpr))) { p::ps }
 
 statement_body : procedure=component_reference LPAREN arguments = function_args RPAREN
-                 { let (pargs, pnamed_args) = arguments in Call { procedure ; pargs; pnamed_args } }                                                                 
+                 { let (pargs, pnamed_args) = arguments in Call { procedure ; pargs; pnamed_args } }
                | BREAK { Break }
 
                | RETURN { Return }
                | IF condition=expr THEN then_ = list(statement) else_if = list(elseif_statement) else_ = else_statements ENDIF
                     { IfStmt { condition; then_ ; else_if; else_ } }
                | WHEN condition=expr THEN then_ = list(statement) else_if = list(elsewhen_statement) ENDWHEN
-                    { WhenStmt { condition; then_ ; else_if; else_ = []} }                                                                                                                         
+                    { WhenStmt { condition; then_ ; else_if; else_ = []} }
                | FOR idx = list(index) LOOP body=list(statement) ENDFOR { ForStmt { idx; body } }
                | WHILE while_=expr LOOP while_body = list(statement) ENDWHILE { WhileStmt { while_; while_body } }
-               | target=lexpr COLONEQ source=expr { Assignment { target; source } }                       
+               | target=lexpr COLONEQ source=expr { Assignment { target; source } }
 
-                                               
+
 equation : commented=equation_body comment=comment SEMICOLON { { commented ; comment } }
 
 else_equations : ELSE else_ = list(equation) { else_ }
@@ -299,26 +299,26 @@ elseif_equation : ELSEIF guard = expr THEN elsethen=list(equation) { { guard ; e
 elsewhen_equation : ELSEWHEN guard = expr THEN elsethen=list(equation) { { guard ; elsethen } }
 
 equation_body : e = simple_expr { ExpEquation e }
-              | left = simple_expr EQ right = expr { SimpleEquation { left ; right } }                                              
+              | left = simple_expr EQ right = expr { SimpleEquation { left ; right } }
               | IF condition=expr THEN then_ = list(equation) else_if = list(elseif_equation) else_ = else_equations ENDIF
-                   { IfEquation { condition; then_ ; else_if; else_ } } 
+                   { IfEquation { condition; then_ ; else_if; else_ } }
               | WHEN condition=expr THEN then_ = list(equation) else_if = list(elsewhen_equation) ENDWHEN
-                   { WhenEquation { condition; then_ ; else_if; else_ = []} }                                                                                                                         
+                   { WhenEquation { condition; then_ ; else_if; else_ = []} }
               | FOR idx = list(index) LOOP body=list(equation) ENDFOR { ForEquation { idx; body } }
 
 variability : CONSTANT { Constant }
-            | PARAMETER { Parameter } 
+            | PARAMETER { Parameter }
             | DISCRETE { Discrete }
-                       
-connectivity : FLOW { Flow }
-             | STREAM { Stream } 
 
-causality : INPUT { Input }                      
-          | OUTPUT { Output } 
-                  
-type_expression : 
-                | x = separated_nonempty_list(DOT, ident) { TName x } 
-                | DOT x = separated_nonempty_list(DOT, ident) { TRootName x } 
+connectivity : FLOW { Flow }
+             | STREAM { Stream }
+
+causality : INPUT { Input }
+          | OUTPUT { Output }
+
+type_expression :
+                | x = separated_nonempty_list(DOT, ident) { TName x }
+                | DOT x = separated_nonempty_list(DOT, ident) { TRootName x }
                 | flag=variability flagged=type_expression { TVar { flag ; flagged } } %prec type_var
                 | flag=causality flagged=type_expression { TCau { flag ; flagged } } %prec type_caus
                 | flag=connectivity flagged=type_expression { TCon { flag ; flagged } } %prec type_conn
@@ -331,49 +331,49 @@ modification_arguments_head : m = modification_arguments { m }
                             | { { types = [] ; components = [] ; modifications = [] } }
 
 modification_arguments : REDECLARE redecl_each=flag(EACH) type_final=flag(FINAL) type_replaceable=flag(REPLACEABLE)
-                         partial=flag(PARTIAL) sort = type_sort 
-                         td_name=ident EQ type_exp = type_expression comment=comment cns = option(constraining_clause) 
+                         partial=flag(PARTIAL) sort = type_sort
+                         td_name=ident EQ type_exp = type_expression comment=comment cns = option(constraining_clause)
                          rest=modification_arguments_tail
-                         { { rest with types = { 
+                         { { rest with types = {
                                     redecl_each ;
-                                    redecl_type = { commented = { td_name ; sort ; 
-                                                                  type_options = { no_type_options with partial ; 
-                                                                                   type_final; type_replaceable } ; 
+                                    redecl_type = { commented = { td_name ; sort ;
+                                                                  type_options = { no_type_options with partial ;
+                                                                                   type_final; type_replaceable } ;
                                                                   type_exp ; cns} ;
-                                                    comment } 
+                                                    comment }
                                     } :: rest.types } }
-                       | redecl_each=flag(EACH) type_final=flag(FINAL) REPLACEABLE partial=flag(PARTIAL) sort = type_sort 
-                         td_name=ident EQ type_exp = type_expression comment=comment cns = option(constraining_clause) 
+                       | redecl_each=flag(EACH) type_final=flag(FINAL) REPLACEABLE partial=flag(PARTIAL) sort = type_sort
+                         td_name=ident EQ type_exp = type_expression comment=comment cns = option(constraining_clause)
                          rest=modification_arguments_tail
-                         { { rest with types = { 
+                         { { rest with types = {
                                     redecl_each ;
-                                    redecl_type = { commented = { td_name ; sort ; 
-                                                                  type_options = { no_type_options with partial ; 
-                                                                                   type_final; type_replaceable=true } ; 
+                                    redecl_type = { commented = { td_name ; sort ;
+                                                                  type_options = { no_type_options with partial ;
+                                                                                   type_final; type_replaceable=true } ;
                                                                   type_exp ; cns} ;
-                                                    comment } 
+                                                    comment }
                                     } :: rest.types } }
-                       | REDECLARE each=flag(EACH) final=flag(FINAL) replaceable=flag(REPLACEABLE) def=mod_component_clause 
+                       | REDECLARE each=flag(EACH) final=flag(FINAL) replaceable=flag(REPLACEABLE) def=mod_component_clause
                          rest=modification_arguments_tail
-                         { {rest with components = 
-                             { each ; def = { def with commented = 
-                                                       { def.commented with def_options = 
+                         { {rest with components =
+                             { each ; def = { def with commented =
+                                                       { def.commented with def_options =
                                                                             {def.commented.def_options with final; replaceable} };
                                             }
-                         }::rest.components} } 
-                       | each=flag(EACH) final=flag(FINAL) REPLACEABLE def=mod_component_clause 
+                         }::rest.components} }
+                       | each=flag(EACH) final=flag(FINAL) REPLACEABLE def=mod_component_clause
                          rest=modification_arguments_tail
-                         { {rest with components = 
-                             { each ; def = { def with commented = 
-                                                       { def.commented with def_options = 
+                         { {rest with components =
+                             { each ; def = { def with commented =
+                                                       { def.commented with def_options =
                                                                             {def.commented.def_options with final; replaceable=true} };
                                             }
-                         }::rest.components} } 
-                       | mod_each=flag(EACH) mod_final=flag(FINAL) mod_name = separated_nonempty_list(DOT, ident) 
-                         mod_value=option(modification) comment=comment 
+                         }::rest.components} }
+                       | mod_each=flag(EACH) mod_final=flag(FINAL) mod_name = separated_nonempty_list(DOT, ident)
+                         mod_value=option(modification) comment=comment
                          rest=modification_arguments_tail
-                         { let m = {commented={mod_name;mod_final;mod_each;mod_value};comment} in 
-                               { rest with modifications = m::rest.modifications } 
+                         { let m = {commented={mod_name;mod_final;mod_each;mod_value};comment} in
+                               { rest with modifications = m::rest.modifications }
                          }
 
 modification : EQ e=expr | COLONEQ e=expr { Rebind e }
@@ -388,11 +388,11 @@ mod_component_clause : scope=scope def_type = type_expression component=declarat
                        { declaration_to_def def_type {no_def_options with scope} def_constraint component }
 
 import : IMPORT name=separated_nonempty_list(DOT, ident) comment = comment { { commented = Unnamed name ; comment } }
-       | IMPORT local=ident EQ global=separated_nonempty_list(DOT, ident) comment = comment 
-         { { commented = NamedImport {global;local} ; comment } } 
+       | IMPORT local=ident EQ global=separated_nonempty_list(DOT, ident) comment = comment
+         { { commented = NamedImport {global;local} ; comment } }
        | IMPORT name=separated_nonempty_list(DOT, ident) DOTTIMES comment = comment { { commented = UnqualifiedImport name ; comment } }
-                                                                                    
-extends : EXTENDS ext_type = type_expression ext_annotation=option(annotation) { { ext_type ; ext_annotation } } 
+
+extends : EXTENDS ext_type = type_expression ext_annotation=option(annotation) { { ext_type ; ext_annotation } }
 
 flag (F) : F { true } | { false }
 
@@ -400,8 +400,8 @@ scope : INNER { Inner }
       | OUTER { Outer }
       | INNER OUTER { InnerOuter }
       | { Local }
-          
-type_prefix : final = flag(FINAL) replaceable = flag(REPLACEABLE) scope=scope                  
+
+type_prefix : final = flag(FINAL) replaceable = flag(REPLACEABLE) scope=scope
                 { { final ; scope ; replaceable } }
 
 array_subscripts : LBRACKET dims = separated_list(COMMA, expr) RBRACKET { dims }
@@ -412,56 +412,56 @@ decl_condition : IF cond=expr { cond }
 binder : EQ {} | COLONEQ {}
 
 decl_modification : m=option(class_modification) e=option(preceded(binder, expr)) { (m, e) }
-                      
-declaration : x = IDENT dims = option(array_subscripts) m=decl_modification cond=option(decl_condition) comment=comment 
-              { let (modification, rhs) = m in (x, dims, modification, cond, rhs, comment) } 
+
+declaration : x = IDENT dims = option(array_subscripts) m=decl_modification cond=option(decl_condition) comment=comment
+              { let (modification, rhs) = m in (x, dims, modification, cond, rhs, comment) }
 
 constraining_clause : CONSTRAINEDBY commented= type_expression comment=comment { { commented ; comment } }
-              
+
 component_clauses : defs = component_clause { defs }
-                  | defs = component_clause SEMICOLON defs2 = component_clauses { List.append defs defs2 } 
-                                                                  
+                  | defs = component_clause SEMICOLON defs2 = component_clauses { List.append defs defs2 }
+
 component_clause : def_options = type_prefix def_type = type_expression components=separated_nonempty_list(COMMA, declaration)
                    def_constraint=option(constraining_clause)
                      { List.map (declaration_to_def def_type def_options def_constraint) components }
 
 type_sort : CLASS { Class }
-           | PACKAGE {Package} 
-           | MODEL { Model } | BLOCK { Block } | CONNECTOR { Connector } | EXPANDABLE CONNECTOR { ExpandableConnector } 
-           | RECORD { Record } | FUNCTION { Function } | TYPE { Type } | OPERATOR { Operator } | OPERATOR RECORD { OperatorRecord } 
+           | PACKAGE {Package}
+           | MODEL { Model } | BLOCK { Block } | CONNECTOR { Connector } | EXPANDABLE CONNECTOR { ExpandableConnector }
+           | RECORD { Record } | FUNCTION { Function } | TYPE { Type } | OPERATOR { Operator } | OPERATOR RECORD { OperatorRecord }
            | OPERATOR FUNCTION { OperatorFunction }
-                     
+
 typedef_prefix : type_final = flag (FINAL) type_replaceable = flag(REPLACEABLE)
-                 encapsulated = flag(ENCAPSULATED) partial=flag(PARTIAL)                
+                 encapsulated = flag(ENCAPSULATED) partial=flag(PARTIAL)
                  { { type_final ; type_replaceable ; encapsulated ; partial } }
-                     
+
 
 enum_literal : commented=IDENT comment=comment { { commented ; comment } }
 
 composition_annotation : a = annotation SEMICOLON { a }
 
 type_definition : type_options = typedef_prefix sort = type_sort td_name=ident EQ type_exp = type_expression
-                  comment=comment cns = option(constraining_clause) 
+                  comment=comment cns = option(constraining_clause)
                   { { commented = Short { td_name ; sort ; type_options ; type_exp ; cns} ;  comment } }
 
-                | type_options = typedef_prefix sort = type_sort td_name=ident annotated_elem=option(str) type_exp=composition 
-                  annotation=option(composition_annotation) end_name=END_IDENT cns = option(constraining_clause) 
+                | type_options = typedef_prefix sort = type_sort td_name=ident annotated_elem=option(str) type_exp=composition
+                  annotation=option(composition_annotation) end_name=END_IDENT cns = option(constraining_clause)
                   { { commented = Composition { td_name ; sort ; type_options ; type_exp ; cns} ;  comment = {annotated_elem;annotation}}}
 
-                | type_options = typedef_prefix sort = type_sort EXTENDS td_name=ident modification=option(class_modification) 
+                | type_options = typedef_prefix sort = type_sort EXTENDS td_name=ident modification=option(class_modification)
                   annotated_elem=option(str) composition=composition annotation=option(composition_annotation) end_name=END_IDENT
-                  cns = option(constraining_clause) 
-                  { { commented = Extension { td_name ; sort ; type_options ; type_exp=(composition,modification) ; cns} ;  
+                  cns = option(constraining_clause)
+                  { { commented = Extension { td_name ; sort ; type_options ; type_exp=(composition,modification) ; cns} ;
                       comment = {annotated_elem;annotation}}}
 
-                | type_options = typedef_prefix sort = type_sort td_name=ident EQ ENUMERATION LPAREN type_exp=separated_nonempty_list(COMMA, enum_literal) RPAREN comment = comment cns = option(constraining_clause) 
+                | type_options = typedef_prefix sort = type_sort td_name=ident EQ ENUMERATION LPAREN type_exp=separated_nonempty_list(COMMA, enum_literal) RPAREN comment = comment cns = option(constraining_clause)
                   { { commented = Enumeration { td_name ; sort ; type_options ; type_exp ; cns} ;  comment } }
 
-                | type_options = typedef_prefix sort = type_sort td_name=ident EQ ENUMERATION LPAREN COLON RPAREN comment = comment cns = option(constraining_clause) 
+                | type_options = typedef_prefix sort = type_sort td_name=ident EQ ENUMERATION LPAREN COLON RPAREN comment = comment cns = option(constraining_clause)
                   { { commented = OpenEnumeration { td_name ; sort ; type_options ; type_exp = () ; cns} ;  comment } }
 
                 | type_options = typedef_prefix sort = type_sort td_name=ident EQ DER LPAREN der_name=separated_nonempty_list(DOT, ident)
-                  COMMA idents=separated_nonempty_list(COMMA, ident) RPAREN comment = comment cns = option(constraining_clause) 
+                  COMMA idents=separated_nonempty_list(COMMA, ident) RPAREN comment = comment cns = option(constraining_clause)
                   { { commented = DerSpec { td_name ; sort ; type_options ; type_exp = {der_name;idents} ; cns} ;  comment } }
 
 composition : c = public_composition_elements { c }
@@ -491,52 +491,52 @@ initial_algorithm_section : alg=algorithm rest=end_of_section
 cargo_sections : EQUATION rest = equation_section
                 { rest }
             | INITIAL_EQUATION rest = initial_equation_section
-                { rest } 
+                { rest }
             | ALGORITHM rest = algorithm_section
                 { rest }
             | INITIAL_ALGORITHM rest = initial_algorithm_section
-                { rest } 
+                { rest }
             | external_ = option ( composition_external ) { { empty_composition with cargo = { empty_behavior with external_ } } }
 
-public_composition_elements : 
-              import = import SEMICOLON rest = public_composition_elements 
-                { {rest with imports = import::rest.imports} } 
-            | extend = extends SEMICOLON rest = public_composition_elements 
+public_composition_elements :
+              import = import SEMICOLON rest = public_composition_elements
+                { {rest with imports = import::rest.imports} }
+            | extend = extends SEMICOLON rest = public_composition_elements
                 { {rest with public = { rest.public with extensions = extend::rest.public.extensions } } }
-            | defs = component_clause SEMICOLON rest = public_composition_elements 
+            | defs = component_clause SEMICOLON rest = public_composition_elements
                 { {rest with public = { rest.public with defs = defs @ rest.public.defs } } }
             | REDECLARE defs = component_clause SEMICOLON rest = public_composition_elements
                 { {rest with public = { rest.public with redeclared_defs = defs @ rest.public.redeclared_defs } } }
-            | typedef = type_definition SEMICOLON rest = public_composition_elements 
+            | typedef = type_definition SEMICOLON rest = public_composition_elements
                 { {rest with public = { rest.public with typedefs=typedef::rest.public.typedefs} } }
-            | REDECLARE typedef = type_definition SEMICOLON rest = public_composition_elements 
+            | REDECLARE typedef = type_definition SEMICOLON rest = public_composition_elements
                 { {rest with public = { rest.public with redeclared_types=typedef::rest.public.redeclared_types} } }
             | rest = cargo_sections { rest }
             | PROTECTED rest = protected_composition_elements { rest }
             | PUBLIC rest = public_composition_elements { rest }
 
-protected_composition_elements : 
-              import = import SEMICOLON rest = protected_composition_elements 
-                { {rest with imports = import::rest.imports} } 
-            | extend = extends SEMICOLON rest = protected_composition_elements 
+protected_composition_elements :
+              import = import SEMICOLON rest = protected_composition_elements
+                { {rest with imports = import::rest.imports} }
+            | extend = extends SEMICOLON rest = protected_composition_elements
                 { {rest with protected = { rest.protected with extensions = extend::rest.protected.extensions } } }
-            | defs = component_clause SEMICOLON rest = protected_composition_elements 
+            | defs = component_clause SEMICOLON rest = protected_composition_elements
                 { {rest with protected = { rest.protected with defs = defs @ rest.protected.defs } } }
             | REDECLARE defs = component_clause SEMICOLON rest = protected_composition_elements
                 { {rest with protected = { rest.protected with redeclared_defs = defs @ rest.protected.redeclared_defs } } }
-            | typedef = type_definition SEMICOLON rest = protected_composition_elements 
+            | typedef = type_definition SEMICOLON rest = protected_composition_elements
                 { {rest with protected = { rest.protected with typedefs=typedef::rest.protected.typedefs} } }
-            | REDECLARE typedef = type_definition SEMICOLON rest = protected_composition_elements 
+            | REDECLARE typedef = type_definition SEMICOLON rest = protected_composition_elements
                 { {rest with protected = { rest.protected with redeclared_types=typedef::rest.protected.redeclared_types} } }
             | rest = cargo_sections { rest }
             | PROTECTED rest = protected_composition_elements { rest }
             | PUBLIC rest = public_composition_elements { rest }
 
-composition_external :             
-            | EXTERNAL lang=STRING lhs=external_lhs ext_ident=IDENT 
+composition_external :
+            | EXTERNAL lang=STRING lhs=external_lhs ext_ident=IDENT
               LPAREN ext_args = separated_list(COMMA, expr) RPAREN annotation=option(annotation) SEMICOLON
                 { { annotated_elem = {lang ; ext_ident; ext_lhs=Some lhs; ext_args}; annotation} }
-            | EXTERNAL lang=STRING ext_ident=IDENT 
+            | EXTERNAL lang=STRING ext_ident=IDENT
               LPAREN ext_args = separated_list(COMMA, expr) RPAREN annotation=option(annotation) SEMICOLON
                 { { annotated_elem = {lang ; ext_ident; ext_lhs=None; ext_args}; annotation} }
 

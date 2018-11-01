@@ -1,14 +1,14 @@
 /* Yet another attempt to parse nicely.
    This parses to tree-structured preterms with remaining ambiguity as follows:
-   1. Commas might be either pair constructors 
-      (within parens inside terms) or and-constructors 
+   1. Commas might be either pair constructors
+      (within parens inside terms) or and-constructors
       (outside of propositions).
-   2. Identifiers are not resolved to syntactic classes 
+   2. Identifiers are not resolved to syntactic classes
       (e.g. atom, variable, term symbol).
-   These preterms are the input to typechecking, 
+   These preterms are the input to typechecking,
    Typechecking resolves identifiers to variables, symbols, or atoms
-   and translates propositions to goals/program clauses 
-   and translates terms to internal terms.  
+   and translates propositions to goals/program clauses
+   and translates terms to internal terms.
 */
 %{
 open Absyn;;
@@ -17,9 +17,9 @@ open Nstbl;;
 
 type quantifier = QForall | QExists | QNew;;
 
-let do_quantify q tvs e = 
-  let do_quantifier q (tv,st) e = 
-    match q with 
+let do_quantify q tvs e =
+  let do_quantifier q (tv,st) e =
+    match q with
       QForall -> Forall(tv,st,e)
     | QExists -> Exists(tv,st,e)
     | QNew -> New(tv,st,e)
@@ -27,9 +27,9 @@ let do_quantify q tvs e =
   List.fold_right (do_quantifier q) tvs e
 ;;
 
-let do_literal' s t = 
+let do_literal' s t =
   let n = String.length s in
-  let rec go i = 
+  let rec go i =
     if i = n then t
     else Cons(CharC(String.get s i), go (i+1))
   in go 0
@@ -43,47 +43,47 @@ type dcg_term = Nonterm of atomic | Char of char | Seq of dcg_term * dcg_term
 ;;
 
 
-let translate_dcg (hd,tl) t = 
-  let rec tr t x y = 
-    match t with 
+let translate_dcg (hd,tl) t =
+  let rec tr t x y =
+    match t with
       Char c -> Eq(Var x, Cons(CharC c, Var y))
     | Literal s -> Eq (Var x, do_literal' s (Var y))
-    | Seq (t1,t2) -> 
+    | Seq (t1,t2) ->
 	let w = Var.mkvar "W" in
 	And(tr t1 x w, tr t2 w y)
-    | Alt(t1,t2) -> 
+    | Alt(t1,t2) ->
 	Or(tr t1 x y, tr t2 x y)
-    | Goal(t) -> 
+    | Goal(t) ->
 	And(Eq(Var x,Var y), t)
-    | Nonterm (hd,tl) -> 
-	Atomic(hd,tl@[Var x; Var y]) 
-  in 
+    | Nonterm (hd,tl) ->
+	Atomic(hd,tl@[Var x; Var y])
+  in
   let x = Var.mkvar "X" in
   let y = Var.mkvar "Y" in
   Implies(tr t x y, Atomic(hd,tl@[Var x; Var y]))
 
 
-let mk_toplevel_decl rdecl = 
+let mk_toplevel_decl rdecl =
   {pos=None; rdecl = rdecl}
 ;;
 
 
-let mk_decl rdecl = 
+let mk_decl rdecl =
   {pos=Some (Pos.mk_pos (Lineno.filename()) (Lineno.lineno())); rdecl=rdecl}
 ;;
 
 exception Eof;;
 
 
-let rec kd_app ks k = 
+let rec kd_app ks k =
   match ks with
-    [] -> k 
+    [] -> k
   | k'::ks -> ArrowK (k',kd_app ks k)
 ;;
 
-let rec ty_app ts t = 
+let rec ty_app ts t =
   match ts with
-    [] -> t 
+    [] -> t
   | t'::ts -> ArrowTy (t',ty_app ts t)
 
 %}
@@ -93,20 +93,20 @@ let rec ty_app ts t =
 %token <Nstbl.path> QUAL_ID
 %token <char> CHAR
 %token USE TRACE QUIT OPEN TYPEQ HELP
-%token NAME_TYPE TYPE INFIXL INFIXR INFIXN NAMESPACE FUNC PRED CNST 
+%token NAME_TYPE TYPE INFIXL INFIXR INFIXN NAMESPACE FUNC PRED CNST
 %token LPAREN RPAREN LBRACK RBRACK LBRACE RBRACE
 %token QUESTION DOT COLON UNDERSCORE TILDE
 %token ARROW DCG_ARROW LARROW DARROW COMMA SEMI
-%token TRUE NOT CUT BAR HASH SLASH BACKSLASH EQ IS 
-%token FORALL EXISTS NEW 
-%token CONS 
-%token <string> INFIXL1 INFIXL2 INFIXL3 INFIXL4 INFIXL5 
+%token TRUE NOT CUT BAR HASH SLASH BACKSLASH EQ IS
+%token FORALL EXISTS NEW
+%token CONS
+%token <string> INFIXL1 INFIXL2 INFIXL3 INFIXL4 INFIXL5
 %token <string> INFIXL6 INFIXL7 INFIXL8 INFIXL9
-%token <string> INFIXR1 INFIXR2 INFIXR3 INFIXR4 INFIXR5 
+%token <string> INFIXR1 INFIXR2 INFIXR3 INFIXR4 INFIXR5
 %token <string> INFIXR6 INFIXR7 INFIXR8 INFIXR9
-%token <string> INFIXN1 INFIXN2 INFIXN3 INFIXN4 INFIXN5 
+%token <string> INFIXN1 INFIXN2 INFIXN3 INFIXN4 INFIXN5
 %token <string> INFIXN6 INFIXN7 INFIXN8 INFIXN9
-%token EOF 
+%token EOF
 
 %type <Absyn.decl list> parse parse_input_line
 
@@ -116,7 +116,7 @@ let rec ty_app ts t =
 %left INFIXL1
 %right INFIXR1
 %nonassoc INFIXN1
-%right ARROW DARROW 
+%right ARROW DARROW
 %left LARROW
 %nonassoc SLASH
 %nonassoc BAR
@@ -136,11 +136,11 @@ let rec ty_app ts t =
 %nonassoc INFIXN4
 %nonassoc EQ HASH IS
 /* 5 */
-%left INFIXL5 
+%left INFIXL5
 %right INFIXR5
 %nonassoc INFIXN5
 /* 6 */
-%left INFIXL6 
+%left INFIXL6
 %right INFIXR6
 %nonassoc INFIXN6
 %right CONS
@@ -157,7 +157,7 @@ let rec ty_app ts t =
 %right INFIXR9
 %nonassoc INFIXN9
 /* 10 */
-%right BACKSLASH 
+%right BACKSLASH
 
 %start parse
 %start parse_input_line
@@ -187,19 +187,19 @@ decl  : sig_decl                        { mk_decl $1}
       | directive                       { mk_decl $1}
       | infix_decl                      { mk_decl $1}
       | NAMESPACE ID LPAREN decls RPAREN
-                                        { mk_decl 
+                                        { mk_decl
 					     (NamespaceDecl($2,
 							    List.rev $4))
 					}
 ;
 
-sig_decl : 
+sig_decl :
         ID COLON kind                   { KindDecl($1,$3) }
       |	ID COLON ty                     { SymDecl($1,$3) }
       | PRED ID ty0s                    { PredDecl($2,List.rev $3) }
       |	CNST ID EQ ty                   { FuncDecl($2,[],$4) }
       | FUNC ID ty0s EQ ty              { FuncDecl($2,List.rev $3, $5) }
-      | TYPE ID vars EQ ty              { let rvs = $3 in 
+      | TYPE ID vars EQ ty              { let rvs = $3 in
                                           TypeDefn($2,List.rev rvs,$5) }
 ;
 
@@ -208,7 +208,7 @@ vars :                                  { [] }
       | vars ID                         { Var.mkvar' $2::$1 }
 ;
 
-kind : 
+kind :
        TYPE                             { TypeK }
      | NAME_TYPE                        { NameK }
      | kind ARROW kind                  { ArrowK($1,$3) }
@@ -236,9 +236,9 @@ prog: preterm                          { $1 }
 	  |  dcg_rule                  { $1 }
 ;
 
-dcg_rule :  app_or_qid DCG_ARROW dcg_term 
+dcg_rule :  app_or_qid DCG_ARROW dcg_term
                                        { translate_dcg $1 $3 }
-	  | app_or_qid DCG_ARROW dcg_term SLASH constr 
+	  | app_or_qid DCG_ARROW dcg_term SLASH constr
                                        { Constr(translate_dcg $1 $3,$5) }
 ;
 
@@ -284,14 +284,14 @@ qual_id : QUAL_ID                       { $1 }
 preterm0 : LPAREN preterm RPAREN        { $2 }
    | qual_id                            { Atomic($1,[]) }
    | const                              { $1 }
-   | LBRACK preterms_brack RBRACK       { List.fold_right 
-					    (fun x y -> 
-					      Cons(x,y)) 
+   | LBRACK preterms_brack RBRACK       { List.fold_right
+					    (fun x y ->
+					      Cons(x,y))
 					    (List.rev $2) Nil }
-   | LBRACK preterms_brack BAR preterm_brack RBRACK 
-                                        { List.fold_right 
-					    (fun x y -> 
-					      Cons(x,y)) 
+   | LBRACK preterms_brack BAR preterm_brack RBRACK
+                                        { List.fold_right
+					    (fun x y ->
+					      Cons(x,y))
 					    (List.rev $2) $4 }
    | LPAREN ID TILDE ID RPAREN preterm0 { Transpose(Var.mkvar' $2,
 						    Var.mkvar' $4,$6) }
@@ -307,7 +307,7 @@ preterm : quantifier qlist DOT preterm  { do_quantify $1 (List.rev $2) $4 }
    | preterm ARROW preterm BAR preterm  { Guard($1,$3,$5) }
    | preterm LARROW preterm             { Implies ($3,$1) }
 /* Ambiguous betweem "pair" and "and" commas */
-   | preterm COMMA preterm              { Pair($1,$3) } 
+   | preterm COMMA preterm              { Pair($1,$3) }
    | preterm SEMI preterm               { Or($1,$3) }
    | preterm SLASH constr               { Constr($1,$3) }
    | preterm HASH preterm               { Fresh($1,$3) }
@@ -319,15 +319,15 @@ preterm : quantifier qlist DOT preterm  { do_quantify $1 (List.rev $2) $4 }
    | infixl_preterm                     { $1 }
    | infixr_preterm                     { $1 }
    | infixn_preterm                     { $1 }
-   | app                                { let (h,tl) = $1 in 
+   | app                                { let (h,tl) = $1 in
                                           Atomic(h,List.rev tl) }
    | preterm0                           {$1}
 ;
 
 preterm_brack :
-     ID BACKSLASH preterm_brack         { Abs (Var.mkvar' $1,$3)} 
+     ID BACKSLASH preterm_brack         { Abs (Var.mkvar' $1,$3)}
    | preterm_brack CONS preterm_brack   { Cons($1,$3) }
-   | app                                { let (h,tl) = $1 in 
+   | app                                { let (h,tl) = $1 in
                                           Atomic(h,List.rev tl) }
    | preterm0                           { $1 }
 ;
@@ -371,23 +371,23 @@ infixn_preterm:
 ;
 
 app : qual_id preterm0                  { ($1,[$2]) }
-    | app preterm0                      { let (h,tl) = $1 in 
+    | app preterm0                      { let (h,tl) = $1 in
                                           (h,$2::tl) }
 ;
 
-app_or_qid : app                        { let (hd,tl) = $1 in 
+app_or_qid : app                        { let (hd,tl) = $1 in
 	                                  (hd,List.rev tl) }
     | qual_id                           { ($1,[]) }
 ;
 
 tyapp : qual_id ty0                     { ($1,[$2]) }
-      | tyapp ty0                       { let (ds,ss) = $1 in 
+      | tyapp ty0                       { let (ds,ss) = $1 in
                                           (ds,$2::ss) }
 ;
 
-ty : 
+ty :
        ty ARROW ty                      { ArrowTy($1,$3) }
-     | tyapp                            { let ds,ss = $1 in 
+     | tyapp                            { let ds,ss = $1 in
                                           DataTy(ds,List.rev ss) }
      | ty BACKSLASH ty                  { AbsTy($1,$3) }
      | ty0                              { $1 }

@@ -131,7 +131,7 @@ expression400:
   BACKSLASH pattern DOT expression400                           { ELambda ($2, $4) }
 | binding IN expression400                                      { EBinding ($1, $3) }
 | EXISTS quantifiers DOT expression400                          { EExists ($2, $4) }
-/* | FORALL quantifiers DOT expression400                          { EForall ($2, $4) } 
+/* | FORALL quantifiers DOT expression400                          { EForall ($2, $4) }
    This production has been suppressed to avoid redundancy with the [let forall] construct.
    This decision simplifies the code that deals with polymorphic recursion. */
 | expression300 SEMI expression400                              { seq $1 $3 }

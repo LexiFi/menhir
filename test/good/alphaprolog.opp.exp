@@ -5,9 +5,9 @@ open Nstbl;;
 
 type quantifier = QForall | QExists | QNew;;
 
-let do_quantify q tvs e = 
-  let do_quantifier q (tv,st) e = 
-    match q with 
+let do_quantify q tvs e =
+  let do_quantifier q (tv,st) e =
+    match q with
       QForall -> Forall(tv,st,e)
     | QExists -> Exists(tv,st,e)
     | QNew -> New(tv,st,e)
@@ -15,9 +15,9 @@ let do_quantify q tvs e =
   List.fold_right (do_quantifier q) tvs e
 ;;
 
-let do_literal' s t = 
+let do_literal' s t =
   let n = String.length s in
-  let rec go i = 
+  let rec go i =
     if i = n then t
     else Cons(CharC(String.get s i), go (i+1))
   in go 0
@@ -31,47 +31,47 @@ type dcg_term = Nonterm of atomic | Char of char | Seq of dcg_term * dcg_term
 ;;
 
 
-let translate_dcg (hd,tl) t = 
-  let rec tr t x y = 
-    match t with 
+let translate_dcg (hd,tl) t =
+  let rec tr t x y =
+    match t with
       Char c -> Eq(Var x, Cons(CharC c, Var y))
     | Literal s -> Eq (Var x, do_literal' s (Var y))
-    | Seq (t1,t2) -> 
+    | Seq (t1,t2) ->
 	let w = Var.mkvar "W" in
 	And(tr t1 x w, tr t2 w y)
-    | Alt(t1,t2) -> 
+    | Alt(t1,t2) ->
 	Or(tr t1 x y, tr t2 x y)
-    | Goal(t) -> 
+    | Goal(t) ->
 	And(Eq(Var x,Var y), t)
-    | Nonterm (hd,tl) -> 
-	Atomic(hd,tl@[Var x; Var y]) 
-  in 
+    | Nonterm (hd,tl) ->
+	Atomic(hd,tl@[Var x; Var y])
+  in
   let x = Var.mkvar "X" in
   let y = Var.mkvar "Y" in
   Implies(tr t x y, Atomic(hd,tl@[Var x; Var y]))
 
 
-let mk_toplevel_decl rdecl = 
+let mk_toplevel_decl rdecl =
   {pos=None; rdecl = rdecl}
 ;;
 
 
-let mk_decl rdecl = 
+let mk_decl rdecl =
   {pos=Some (Pos.mk_pos (Lineno.filename()) (Lineno.lineno())); rdecl=rdecl}
 ;;
 
 exception Eof;;
 
 
-let rec kd_app ks k = 
+let rec kd_app ks k =
   match ks with
-    [] -> k 
+    [] -> k
   | k'::ks -> ArrowK (k',kd_app ks k)
 ;;
 
-let rec ty_app ts t = 
+let rec ty_app ts t =
   match ts with
-    [] -> t 
+    [] -> t
   | t'::ts -> ArrowTy (t',ty_app ts t)
 
 %}
@@ -232,7 +232,7 @@ decl:
 | _1 = infix_decl
     {                                        ( mk_decl _1)}
 | _1 = NAMESPACE _2 = ID _3 = LPAREN _4 = decls _5 = RPAREN
-    {                                        ( mk_decl 
+    {                                        ( mk_decl
 					     (NamespaceDecl(_2,
 							    List.rev _4))
 					)}
@@ -249,7 +249,7 @@ sig_decl:
 | _1 = FUNC _2 = ID _3 = ty0s _4 = EQ _5 = ty
     {                                        ( FuncDecl(_2,List.rev _3, _5) )}
 | _1 = TYPE _2 = ID _3 = vars _4 = EQ _5 = ty
-    {                                        ( let rvs = _3 in 
+    {                                        ( let rvs = _3 in
                                           TypeDefn(_2,List.rev rvs,_5) )}
 
 vars:
@@ -373,14 +373,14 @@ preterm0:
 | _1 = const
     {                                        ( _1 )}
 | _1 = LBRACK _2 = preterms_brack _3 = RBRACK
-    {                                        ( List.fold_right 
-					    (fun x y -> 
-					      Cons(x,y)) 
+    {                                        ( List.fold_right
+					    (fun x y ->
+					      Cons(x,y))
 					    (List.rev _2) Nil )}
 | _1 = LBRACK _2 = preterms_brack _3 = BAR _4 = preterm_brack _5 = RBRACK
-    {                                        ( List.fold_right 
-					    (fun x y -> 
-					      Cons(x,y)) 
+    {                                        ( List.fold_right
+					    (fun x y ->
+					      Cons(x,y))
 					    (List.rev _2) _4 )}
 | _1 = LPAREN _2 = ID _3 = TILDE _4 = ID _5 = RPAREN _6 = preterm0
     {                                        ( Transpose(Var.mkvar' _2,
@@ -426,7 +426,7 @@ preterm:
 | _1 = infixn_preterm
     {                                        ( _1 )}
 | _1 = app
-    {                                        ( let (h,tl) = _1 in 
+    {                                        ( let (h,tl) = _1 in
                                           Atomic(h,List.rev tl) )}
 | _1 = preterm0
     {                                        (_1)}
@@ -437,7 +437,7 @@ preterm_brack:
 | _1 = preterm_brack _2 = CONS _3 = preterm_brack
     {                                        ( Cons(_1,_3) )}
 | _1 = app
-    {                                        ( let (h,tl) = _1 in 
+    {                                        ( let (h,tl) = _1 in
                                           Atomic(h,List.rev tl) )}
 | _1 = preterm0
     {                                        ( _1 )}
@@ -512,12 +512,12 @@ app:
   _1 = qual_id _2 = preterm0
     {                                        ( (_1,[_2]) )}
 | _1 = app _2 = preterm0
-    {                                        ( let (h,tl) = _1 in 
+    {                                        ( let (h,tl) = _1 in
                                           (h,_2::tl) )}
 
 app_or_qid:
   _1 = app
-    {                                        ( let (hd,tl) = _1 in 
+    {                                        ( let (hd,tl) = _1 in
 	                                  (hd,List.rev tl) )}
 | _1 = qual_id
     {                                        ( (_1,[]) )}
@@ -526,14 +526,14 @@ tyapp:
   _1 = qual_id _2 = ty0
     {                                        ( (_1,[_2]) )}
 | _1 = tyapp _2 = ty0
-    {                                        ( let (ds,ss) = _1 in 
+    {                                        ( let (ds,ss) = _1 in
                                           (ds,_2::ss) )}
 
 ty:
   _1 = ty _2 = ARROW _3 = ty
     {                                        ( ArrowTy(_1,_3) )}
 | _1 = tyapp
-    {                                        ( let ds,ss = _1 in 
+    {                                        ( let ds,ss = _1 in
                                           DataTy(ds,List.rev ss) )}
 | _1 = ty _2 = BACKSLASH _3 = ty
     {                                        ( AbsTy(_1,_3) )}

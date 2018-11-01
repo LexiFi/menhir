@@ -338,7 +338,7 @@ cmd_brace_block_e1: { Env.extend ~dyn:true state.env;
                 | UMINUS    { "-@", $1 }
                 | AREF      { "[]", $1 }
                 | ASET      { "[]=", $1 }
-                | BACK_REF2 { "`", $1 } 
+                | BACK_REF2 { "`", $1 }
 
         reswords: K__LINE__         { "__LINE__", $1 }
                 | K__FILE__         { "__FILE__", $1 }
@@ -408,7 +408,7 @@ cmd_brace_block_e1: { Env.extend ~dyn:true state.env;
                 | COLON3 CONSTANT OP_ASGN arg
                     { yyerror "constant re-assignment" }
                 | arg DOT2 arg
-                    { 
+                    {
 (* TODO
                       v1, v2 = val[0], val[2]
                       if v1.node_type == :lit and v2.node_type == :lit and Fixnum === v1.last and Fixnum === v2.last then
@@ -973,7 +973,7 @@ cmd_brace_block_e1: { Env.extend ~dyn:true state.env;
                 | string_contents string_content
                     { $1 @ [(fst $2)] }
 
-xstring_contents: none 
+xstring_contents: none
                     { [] }
                 | xstring_contents string_content
                     { $1 @ [(fst $2)] }
@@ -1134,7 +1134,7 @@ string_content_e2: { let ret = state.lex_strterm in
                 | LPAREN2
                     singleton_e1
                     expr opt_nl RPAREN
-                    { 
+                    {
 (* TODO
                       yyerror "Can't define single method for literals." if
                         result[0] == :lit

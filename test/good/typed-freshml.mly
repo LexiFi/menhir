@@ -110,7 +110,7 @@ boolean_expression:
     { FChoice (b1, b2) }
 | BNOT b = boolean_expression
     { FNot b }
-| x = ID 
+| x = ID
     { FVar x }
 | LPAR b = boolean_expression RPAR
     { b }

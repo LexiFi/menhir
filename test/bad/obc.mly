@@ -24,12 +24,12 @@ let rcsid = "$Id: obc.mly,v 1.1 2005/08/23 11:15:14 fpottier Exp $"
 
 /* punctuation */
 %token			SEMI DOT COLON LPAR RPAR COMMA SUB BUS LBRACE RBRACE
-%token			STAR UPARROW EQUAL MINUS PLUS ASSIGN VBAR DOTDOT 
+%token			STAR UPARROW EQUAL MINUS PLUS ASSIGN VBAR DOTDOT
 %token			BADTOK
 
 /* keywords */
-%token			ARRAY BEGIN CONST DO ELSE ELSIF END IF IMPORT IS OF 
-%token			FOR MODULE PROCEDURE RECORD REPEAT RETURN THEN TO TYPE 
+%token			ARRAY BEGIN CONST DO ELSE ELSIF END IF IMPORT IS OF
+%token			FOR MODULE PROCEDURE RECORD REPEAT RETURN THEN TO TYPE
 %token			UNTIL VAR WHILE NOT POINTER NIL WITH
 %token			CASE LOOP EXIT BY LOCAL ABSTRACT
 
@@ -48,7 +48,7 @@ let rcsid = "$Id: obc.mly,v 1.1 2005/08/23 11:15:14 fpottier Exp $"
 %start			program
 
 %{
-let parse_error msg = 
+let parse_error msg =
   syn_error "$ at token '$'" [fStr msg; fToken]
 
 let parse_error2 msg loc2 =
@@ -79,7 +79,7 @@ let make_call e =
 
 let fix e =
   match e.e_guts with
-      Decimal s -> 
+      Decimal s ->
 	makeExpr (Const (IntVal (Int32.of_string s), numtype), e.e_loc)
     | _ -> e
 
@@ -93,12 +93,12 @@ let neg e =
 let mkExpr e = makeExpr (e, lloc ())
 let mkTypexpr tx = makeTypexpr (tx, lloc ())
 %}
-    
+
 %%
 
-program :	
-    MODULE modname semi imports block opt_ident DOT	
-	{ check_end $2.x_name $6 (rloc 6); 
+program :
+    MODULE modname semi imports block opt_ident DOT
+	{ check_end $2.x_name $6 (rloc 6);
 	  Module ($2, $4, $5, ref []) } ;
 
 modname :
@@ -115,22 +115,22 @@ import :
     name			{ ($1, $1.x_name, ref 0) }
   | name ASSIGN IDENT		{ ($1, $3, ref 0) } ;
 
-block :	
+block :
     decls body END		{ Block ($1, $2, ref 0) } ;
 
 body :
     /* empty */			{ makeStmt (SkipStmt, no_loc) }
   | BEGIN stmts			{ $2 } ;
 
-decls :	
+decls :
     /* empty */			{ [] }
   | decls decl			{ $1 @ $2 } ;
 
-decl :	
+decl :
     CONST const_decls		{ $2 }
   | VAR var_decls		{ $2 }
-  | TYPE type_decls		{ $2 } 
-  | proc			{ [$1] } 
+  | TYPE type_decls		{ $2 }
+  | proc			{ [$1] }
   | error SEMI 			{ [] } ;
 
 const_decls :
@@ -144,7 +144,7 @@ type_decls :
     type_decl			{ [$1] }
   | type_decl type_decls	{ $1 :: $2 } ;
 
-type_decl :	
+type_decl :
     defid EQUAL typexpr semi 	{ TypeDecl ($1, $3) } ;
 
 var_decls :
@@ -155,7 +155,7 @@ var_decl :
     defids COLON typexpr semi	{ VarDecl (VarDef, $1, $3) } ;
 
 proc :
-    PROCEDURE defid params semi block opt_ident semi	
+    PROCEDURE defid params semi block opt_ident semi
       { check_end $2.x_name $6 (rloc 6);
         ProcDecl (Procedure, $2, $3, $5) }
   | PROCEDURE receiver defid params semi block opt_ident semi
@@ -166,14 +166,14 @@ proc :
       { let (Heading (ps, r)) = $5 in
         ProcDecl (AbsMeth, $4, Heading ($3::ps, r), NoBlock) }
   | PROCEDURE defid params IS STRING semi
-      { PrimDecl ($2, $3, $5) } 
+      { PrimDecl ($2, $3, $5) }
   | PROCEDURE error block opt_ident semi
       { DummyDecl } ;
 
 receiver :
-    LPAR defid COLON typename RPAR  
+    LPAR defid COLON typename RPAR
       { VarDecl(ParamDef, [$2], $4) }
-  | LPAR VAR defid COLON typename RPAR  
+  | LPAR VAR defid COLON typename RPAR
       { VarDecl(VParamDef, [$3], $5) } ;
 
 params :
@@ -181,11 +181,11 @@ params :
   | LPAR RPAR result		{ Heading ([], $3) }
   | LPAR formals RPAR result	{ Heading ($2, $4) } ;
 
-formals :	
+formals :
     formal			{ [$1] }
   | formal semi formals		{ $1 :: $3 } ;
 
-formal :	
+formal :
     defids COLON typexpr	{ VarDecl (ParamDef, $1, $3) }
   | VAR defids COLON typexpr	{ VarDecl (VParamDef, $2, $4) } ;
 
@@ -202,7 +202,7 @@ gracefully with missing and duplicated semicolons.  The nonterminal
 'stmts_a' generates sequences that (if non-empty) end with a
 semicolon, and 'stmts_b' generates non-empty sequences that do not end
 with a semicolon.  Missing semicolons are inserted before any
-statement that begins with a keyword. 
+statement that begins with a keyword.
 
 The salient fact is that the parser ends up with two states, one
 (linked to stmts_a) where it has sen a semicolon and is ready to see
@@ -216,12 +216,12 @@ stmts :
 stmts_a :
     /* empty */			{ [] }
   | stmts_a SEMI		{ $1 }
-  | stmts_b SEMI		{ $1 } 
+  | stmts_b SEMI		{ $1 }
   | stmts_b error SEMI		{ $1 } ;
 
 stmts_b :
-    stmts_a stmt0		{ makeStmt ($2, rloc 2) :: $1 } 
-  | stmts_a stmt1		{ makeStmt ($2, rloc 2) :: $1 } 
+    stmts_a stmt0		{ makeStmt ($2, rloc 2) :: $1 }
+  | stmts_a stmt1		{ makeStmt ($2, rloc 2) :: $1 }
   | stmts_b missing stmt1	{ makeStmt ($3, rloc 3) :: $1 } ;
 
 missing :
@@ -244,8 +244,8 @@ stmt1 :
   | LOOP stmts END		{ LoopStmt $2 }
   | EXIT			{ ExitStmt }
   | FOR designator ASSIGN expr TO expr by_part DO stmts END
-      { ForStmt ($2, $4, $6, $7, $9, ref dummy_def) } 
-  | WITH with_branches else_part END	
+      { ForStmt ($2, $4, $6, $7, $9, ref dummy_def) }
+  | WITH with_branches else_part END
       { WithStmt ($2, $3) }
   | LOCAL decls body END	{ LocalStmt ($2, $3) }
   | error			{ ErrStmt } ;
@@ -293,7 +293,7 @@ by_part :
 expr :
     simple %prec error		{ $1 }
   | simple RELOP simple		{ mkExpr (Binop ($2, $1, $3)) }
-  | simple EQUAL simple		{ mkExpr (Binop (Eq, $1, $3)) } 
+  | simple EQUAL simple		{ mkExpr (Binop (Eq, $1, $3)) }
   | simple IS qualid		{ mkExpr (TypeTest ($1, $3)) } ;
 
 simple :
@@ -314,16 +314,16 @@ factor :
   | DECIMAL			{ mkExpr (Decimal $1) }
   | FLOCON			{ mkExpr (Const (FloVal $1, realtype)) }
   | DBLCON			{ mkExpr (Const (FloVal $1, longreal)) }
-  | CHAR			{ mkExpr (Const (IntVal (Int32.of_int 
+  | CHAR			{ mkExpr (Const (IntVal (Int32.of_int
 					    (int_of_char $1)), character)) }
-  | STRING			{ mkExpr (String (save_string $1, 
+  | STRING			{ mkExpr (String (save_string $1,
 					    String.length $1)) }
   | NIL				{ mkExpr Nil }
   | designator %prec error	{ $1 }
   | LBRACE RBRACE		{ mkExpr (Set []) }
   | LBRACE elements RBRACE	{ mkExpr (Set $2) }
   | NOT factor			{ mkExpr (Monop (Not, fix $2)) }
-  | LPAR expr RPAR		{ $2 } 
+  | LPAR expr RPAR		{ $2 }
   | LPAR expr %prec error	{ parse_error2 "mismatched brackets" (rloc 1);
 				  raise Parse_error } ;
 
@@ -332,32 +332,32 @@ designator :
   | designator UPARROW		{ mkExpr (Deref $1) }
   | designator SUB exprs BUS	{ let sub a i = mkExpr (Sub (a, i)) in
 				  List.fold_left sub $1 $3 }
-  | designator SUB exprs %prec error	
+  | designator SUB exprs %prec error
       { parse_error2 "mismatched brackets" (rloc 2);
 	raise Parse_error }
   | designator DOT name		{ mkExpr (Select ($1, $3)) }
   | designator actuals		{ mkExpr (FuncCall ($1, $2)) } ;
 
-actuals :	
+actuals :
     LPAR RPAR			{ [] }
   | LPAR exprs RPAR		{ $2 }
-  | LPAR exprs %prec error	{ parse_error2 
-				    "mismatched brackets in procedure call" 
+  | LPAR exprs %prec error	{ parse_error2
+				    "mismatched brackets in procedure call"
 				    (rloc 1);
 				  raise Parse_error } ;
 
-exprs :	
+exprs :
     expr %prec error		{ [$1] }
   | expr COMMA exprs		{ $1 :: $3 } ;
 
-typexpr :	
+typexpr :
     typename			{ $1 }
   | LPAR defids RPAR		{ mkTypexpr (Enum $2) }
   | POINTER TO typexpr		{ mkTypexpr (Pointer $3) }
   | ARRAY exprs OF typexpr	{ let array n t = mkTypexpr (Array (n, t)) in
 				  List.fold_right array $2 $4 }
   | ARRAY OF typexpr		{ mkTypexpr (Flex $3) }
-  | absmark RECORD parent fields END	
+  | absmark RECORD parent fields END
 				{ mkTypexpr (Record ($1, $3, $4)) }
   | PROCEDURE params		{ mkTypexpr (Proc $2) } ;
 
@@ -376,15 +376,15 @@ fields :
     fieldlist			{ $1 }
   | fieldlist SEMI fields	{ $1 @ $3 } ;
 
-fieldlist :	
+fieldlist :
     /* empty */			{ [] }
   | defids COLON typexpr	{ [VarDecl (FieldDef, $1, $3)] } ;
 
-qualid :	
+qualid :
     IDENT %prec DOT		{ makeName (!current, $1, lloc ()) }
   | IDENT DOT IDENT		{ makeName ($1, $3, lloc ()) };
 
-name :	
+name :
     IDENT			{ makeName (!current, $1, lloc ()) } ;
 
 defids :

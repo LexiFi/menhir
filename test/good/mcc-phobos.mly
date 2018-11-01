@@ -312,7 +312,7 @@ term_option:
                                 To_extend (fst $2, $4)
                               }
    | TokOption                { raise (ParseError (snd $1, string_add ["Invalid option \""; fst $1; "\""])) }
-     
+
 /*
  * Preamble.
  */
@@ -605,7 +605,7 @@ term_param:
                                  | TyToken ->
                                        make_param (Token (fst $1))
                                  | TyVar ->
-                                       make_param (Var (fst $1)) 
+                                       make_param (Var (fst $1))
                                  | _ ->
                                        raise (ParseError (snd $3, "invalid parameter type"))
                               }

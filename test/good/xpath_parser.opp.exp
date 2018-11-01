@@ -83,8 +83,8 @@ step2:
 
 axis_specifier:
   _1 = AXIS
-    {        ( 
-     try Axis.of_string _1 
+    {        (
+     try Axis.of_string _1
      with Not_found -> failwith ("Unknown axis :"^_1)
    )}
 | _1 = AT
@@ -94,8 +94,8 @@ node_test:
   _1 = NAME_TEST
     {              ( Name _1 )}
 | _1 = NODE_TYPE _2 = RPAREN
-    {                    ( 
-     try TypeTest (Type_test.of_string _1) 
+    {                    (
+     try TypeTest (Type_test.of_string _1)
      with Not_found -> failwith ("Unknown node type :"^_1)
    )}
 | _1 = NODE_TYPE _2 = LITERAL _3 = RPAREN
@@ -103,7 +103,7 @@ node_test:
      match _1 with
        | "processing-instruction" ->
 	   TypeTest (Type_test.Pi_test (Some _2))
-       | _ -> failwith "Only processing-instruction tests accept argument" 
+       | _ -> failwith "Only processing-instruction tests accept argument"
    )}
 
 primary_expr:

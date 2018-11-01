@@ -24,12 +24,12 @@ let make_type  t = {
 
 let make_modifiers desc = {
   mo_location = Loc.get ();
-  mo_desc = desc 
+  mo_desc = desc
 }
 
 let make_annotation desc = {
   an_location = Loc.get ();
-  an_desc = desc 
+  an_desc = desc
 }
 
 let make_arg ?(annotations = []) ?ident t = {
@@ -41,32 +41,32 @@ let make_arg ?(annotations = []) ?ident t = {
 type def_sort =
     Content of content | Init of init
 
-let make_init annotation args = 
-  Init 
+let make_init annotation args =
+  Init
     {
      i_location = Loc.get ();
-     i_annot = annotation; 
-     i_args = args 
+     i_annot = annotation;
+     i_args = args
    }
 
 let make_field ?(modifiers = []) ?(annotations = []) t name =
-  List.iter (fun m -> match m.mo_desc with 
-    Istatic | Ifinal -> () 
+  List.iter (fun m -> match m.mo_desc with
+    Istatic | Ifinal -> ()
   | d -> raise (Syntax_error (Efield_modifiers m))) modifiers;
-  Content (Field 
+  Content (Field
     {
      f_location = Loc.get ();
      f_modifiers = modifiers;
-     f_annot = annotations; 
-     f_name = name; 
-     f_type = t 
+     f_annot = annotations;
+     f_name = name;
+     f_type = t
    })
 
-let make_method ?(modifiers = []) ?(annotations = []) rtype name args = 
-  List.iter (fun m -> match m.mo_desc with 
-    Istatic | Iabstract -> () 
+let make_method ?(modifiers = []) ?(annotations = []) rtype name args =
+  List.iter (fun m -> match m.mo_desc with
+    Istatic | Iabstract -> ()
   | d -> raise (Syntax_error (Emethod_modifiers m))) modifiers;
-  Content (Method 
+  Content (Method
     {
      m_location = Loc.get ();
      m_annot = annotations;
@@ -75,40 +75,40 @@ let make_method ?(modifiers = []) ?(annotations = []) rtype name args =
      m_return_type = rtype;
      m_args = args
    })
-    
+
 let filter_inits l = List.fold_left (fun l -> (function (Init d) -> d::l | _ -> l)) [] l
 let filter_contents l = List.fold_left (fun l -> (function (Content d) -> d::l | _ -> l)) [] l
 
-let make_def ?(modifiers = []) ?(annotations = []) ?(interface = false) name  ?super ?(implements = []) decls = 
+let make_def ?(modifiers = []) ?(annotations = []) ?(interface = false) name  ?super ?(implements = []) decls =
   let contents = filter_contents decls
   and inits = filter_inits decls in
 
 (*  let inits = (* ajout init par défaut ... non car conflit de nom *)
    if inits = [] && not interface then
    [{ i_location = Loc.get ();
-   i_annot = []; 
+   i_annot = [];
    i_args = [] }]
    else inits in *)
-  
+
   if interface then begin
-    List.iter (fun m -> match m.mo_desc with 
+    List.iter (fun m -> match m.mo_desc with
     | d -> raise (Syntax_error (Einterface_modifiers m))) modifiers;
     if inits != [] then  raise (Syntax_error (Enoinit (List.hd inits)));
-    List.iter (fun c -> 
-      match c with 
-      | Method m -> 
-	  if m.m_modifiers != [] then 
+    List.iter (fun c ->
+      match c with
+      | Method m ->
+	  if m.m_modifiers != [] then
 	    let m = List.hd m.m_modifiers in
 	    raise (Syntax_error (Einterfacemethod_modifiers m))
-      | Field f -> 
-	  if f.f_modifiers != [] then 
+      | Field f ->
+	  if f.f_modifiers != [] then
 	    let f = List.hd f.f_modifiers in
 	    raise (Syntax_error (Einterfacefield_modifiers f))
       ) contents;
   end
   else begin
-    List.iter (fun m -> match m.mo_desc with 
-      Iabstract -> () 
+    List.iter (fun m -> match m.mo_desc with
+      Iabstract -> ()
     | d -> raise (Syntax_error (Eclass_modifiers m))) modifiers
   end;
   {
@@ -138,7 +138,7 @@ let make_package name defs = {
 %token NAME CALLBACK
 
 %token VOID
-%token BOOLEAN 
+%token BOOLEAN
 %token BYTE SHORT CAMLINT INT LONG
 %token FLOAT DOUBLE
 %token CHAR STRING
@@ -152,7 +152,7 @@ let make_package name defs = {
 
 %token INIT
 
-%token <string> IDENT 
+%token <string> IDENT
 
 %token EOF
 
@@ -183,7 +183,7 @@ def:
 | annotations CLASS ident super def_body { make_def ~annotations:$1 $3 ~super:$4 $5 }
 | modifiers CLASS ident super def_body { make_def  ~modifiers:$1 $3 ~super:$4 $5 }
 | annotations modifiers CLASS ident super def_body { make_def ~modifiers:$2 ~annotations:$1 $4 ~super:$5 $6 }
- 
+
 | CLASS ident IMPLEMENTS interface_list def_body { make_def $2 ~implements:$4 $5 }
 | annotations CLASS ident IMPLEMENTS interface_list def_body { make_def ~annotations:$1 $3 ~implements:$5 $6 }
 | modifiers CLASS ident IMPLEMENTS interface_list def_body { make_def  ~modifiers:$1 $3 ~implements:$5 $6 }
@@ -198,15 +198,15 @@ def:
 
 | INTERFACE ident IMPLEMENTS interface_list def_body { make_def ~interface:true $2 ~implements:$4 $5 }
 | annotations INTERFACE ident IMPLEMENTS interface_list def_body { make_def ~annotations:$1 ~interface:true $3 ~implements:$5 $6 }
-    ;   
+    ;
 
 super:
 | EXTENDS qident { $2 }
 
 def_body:
 | LBRACE decls RBRACE { $2 }
-| LBRACE RBRACE { [] } 
-    ; 
+| LBRACE RBRACE { [] }
+    ;
 
 decls:
 | decl SEMI { [$1] }
@@ -226,13 +226,13 @@ fields:
 | annotations modifiers typ ident { make_field ~modifiers:$2 ~annotations:$1 $3 $4 }
 
 methods:
-| typ ident args  
+| typ ident args
       { make_method $1 $2 $3 }
-| annotations typ ident args  
+| annotations typ ident args
       { make_method ~annotations:$1 $2 $3 $4 }
-| modifiers typ ident args  
+| modifiers typ ident args
       { make_method ~modifiers:$1 $2 $3 $4 }
-| annotations modifiers typ ident args  
+| annotations modifiers typ ident args
       { make_method ~modifiers:$2 ~annotations:$1 $3 $4 $5 }
 
 inits:
@@ -274,7 +274,7 @@ typ:
     ;
 
 modifiers:
-| modifier { [$1] } 
+| modifier { [$1] }
 | modifier modifiers { $1::$2 }
 
 modifier:
@@ -309,7 +309,7 @@ ident_list:
 
 qident:
 | ident { make_qident [] $1 }
-| ident_list DOT ident { make_qident $1 $3 } 
+| ident_list DOT ident { make_qident $1 $3 }
 ;
 
 interface_list:

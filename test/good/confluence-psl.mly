@@ -176,7 +176,7 @@ let debug msg =
 %left  Brackl_aster Brackl_plus_brackr Brackl_equal Brackl_dash_gt
 %left  At
 %left  Union
-%left  Bang 
+%left  Bang
 // HDL operators have highest precedence.
 %right Question
 %left  Vl_bar_bar
@@ -514,7 +514,7 @@ clocked_sere
 
 clock_expression
   : Parenl Posedge identifier Parenr  { Ltl.posedge (fst $3) }
-  | Parenl Negedge identifier Parenr  { Ltl.negedge (fst $3) } 
+  | Parenl Negedge identifier Parenr  { Ltl.negedge (fst $3) }
   | Rose   Parenl  identifier Parenr  { Ltl.posedge (fst $3) }
   | Fell   Parenl  identifier Parenr  { Ltl.negedge (fst $3) }
   ;

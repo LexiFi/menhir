@@ -142,7 +142,7 @@ expr:
 
 
 /***  Patterns  ***/
-   
+
 
 /* in_pattern_expr
    out_pattern_expr
@@ -228,9 +228,9 @@ out_integer_list:
       let pos = union_pos pos1 pos2 in
          i :: ls, pos
    }
- | TokInt { 
+ | TokInt {
       let i, pos = $1 in
-         [i], pos 
+         [i], pos
    }
    ;
 
@@ -267,7 +267,7 @@ in_operand:
       let pos = union_pos $1 $2 in
          OpFPStack (value, pos)
    }
- | TokStar TokLParen in_operand_name TokComma in_operand_name TokComma 
+ | TokStar TokLParen in_operand_name TokComma in_operand_name TokComma
            value_reg TokComma value_reg TokRParen operand_modifier_list_opt {
       let ident_ptr, _ = $3 in
       let ident_reg, _ = $5 in
@@ -391,7 +391,7 @@ value_reg:
    ;
 
 in_operand_stack_index:
-   TokLParen value_reg TokRParen { 
+   TokLParen value_reg TokRParen {
       let value, _ = $2 in
          value
    }
@@ -447,7 +447,7 @@ inst_modifier:
          [InstEndscope (ident, pos)]
    }
  | TokIrrelevant { [InstIrrelevant $1] }
- | TokIdent { 
+ | TokIdent {
       let ident, pos = $1 in
          [InstTag (ident, pos)]
    }
@@ -520,7 +520,7 @@ input_output_statement:
    INPUT keyword, followed by an optional string identifier
    (the name), followed by an input pattern.  The pattern may
    be terminated by a WHEN clause to apply a clause to this
-   pattern.  At least one of these expressions must be present 
+   pattern.  At least one of these expressions must be present
    in any InputOutput.  */
 io_input:
    TokInput io_name TokColon in_pattern_list TokWhen clause_expr {
@@ -541,13 +541,13 @@ io_input:
    ;
 
 io_input_list:
-   io_input io_input_list { 
+   io_input io_input_list {
       let input, pos1 = $1 in
       let inputs, pos2 = $2 in
       let pos = union_pos pos1 pos2 in
          input :: inputs, pos
    }
- | io_input { 
+ | io_input {
       let input, pos = $1 in
          [input], pos
    }
@@ -562,7 +562,7 @@ io_name:
    ;
 
 /* io_output
-   Analagous to the above, this defines single Onput expression.  
+   Analagous to the above, this defines single Onput expression.
    This begins with the OUTPUT keyword, followed by an optional
    WHEN clause, followed by an output pattern.  At least one of
    these expressions must be present in any InputOutput.  Note
@@ -580,13 +580,13 @@ io_output:
    ;
 
 io_output_list:
-   io_output io_output_list { 
+   io_output io_output_list {
       let output, pos1 = $1 in
       let outputs, pos2 = $2 in
       let pos = union_pos pos1 pos2 in
          output :: outputs, pos
    }
- | io_output { 
+ | io_output {
       let output, pos = $1 in
          [output], pos
    }
@@ -639,7 +639,7 @@ plus_minus_op:
    TokPlus { PlusOp }
  | TokMinus { MinusOp }
    ;
-   
+
 logical_op:
    TokAmp { AndOp }
  | TokPipe { OrOp }
@@ -658,14 +658,14 @@ unary_op:
  | TokPow2 { UPow2Op, $1 }
  | TokLog2 { ULog2Op, $1 }
    ;
-   
+
 /* clause_expr
    Denotes a clause, as occurring after a WHEN keyword.  Clauses
    are simple boolean expressions which may, at their option, also
    invoke snippets of OCaml code.  */
 clause_expr:
    TokLParen clause_expr TokRParen { $2 }
- | TokOCaml { 
+ | TokOCaml {
       let ml, pos = $1 in
          ClauseML (ml, pos)
    }
@@ -742,9 +742,9 @@ register_statement:
          Registers (regs, pos)
    }
    ;
-   
+
 register_list:
-   register TokSemi register_list { 
+   register TokSemi register_list {
       let r, pos1 = $1 in
       let regs, pos2 = $3 in
       let pos = union_pos pos1 pos2 in
@@ -788,7 +788,7 @@ instruction_tags:
    TokIdent instruction_tags { $1 :: $2 }
  | { [] }
    ;
-   
+
 instruction_list:
    instruction TokSemi instruction_list {
       let Instruction (_, _, _, _, _, pos1) = $1 in
@@ -895,13 +895,13 @@ transform:
    ;
 
 symbol_list:
-   TokIdent TokComma symbol_list { 
+   TokIdent TokComma symbol_list {
       let ident, _ = $1 in
-         ident :: $3 
+         ident :: $3
    }
- | TokIdent { 
+ | TokIdent {
       let ident, _ = $1 in
-         [ident] 
+         [ident]
    }
    ;
 

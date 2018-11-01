@@ -7,31 +7,31 @@ open List
 open Sugartypes
 
 (* Generation of fresh type variables *)
-      
+
 let type_variable_counter = ref 0
-  
+
 let fresh_type_variable : subkind -> datatype =
-  function subkind -> 
+  function subkind ->
     incr type_variable_counter; TypeVar ("_" ^ string_of_int (!type_variable_counter), subkind)
-  
+
 let fresh_rigid_type_variable : subkind -> datatype =
-  function subkind -> 
+  function subkind ->
     incr type_variable_counter; RigidTypeVar ("_" ^ string_of_int (!type_variable_counter), subkind)
 
 let fresh_row_variable : subkind -> row_var =
-  function subkind -> 
+  function subkind ->
     incr type_variable_counter; `Open ("_" ^ string_of_int (!type_variable_counter), subkind)
 
 let fresh_rigid_row_variable : subkind -> row_var =
-  function subkind -> 
+  function subkind ->
     incr type_variable_counter; `OpenRigid ("_" ^ string_of_int (!type_variable_counter), subkind)
 
 let fresh_presence_variable : unit -> fieldspec =
-  function () -> 
+  function () ->
     incr type_variable_counter; `Var ("_" ^ string_of_int (!type_variable_counter))
-  
+
 let fresh_rigid_presence_variable : unit -> fieldspec =
-  function () -> 
+  function () ->
     incr type_variable_counter; `RigidVar ("_" ^ string_of_int (!type_variable_counter))
 
 let ensure_match (start, finish, _) (opening : string) (closing : string) = function
@@ -43,9 +43,9 @@ let pos () : Sugartypes.position = Parsing.symbol_start_pos (), Parsing.symbol_e
 
 let default_fixity = Num.num_of_int 9
 
-let annotate (signame, datatype) : _ -> binding = 
+let annotate (signame, datatype) : _ -> binding =
   let checksig (signame, _) name =
-    if signame <> name then 
+    if signame <> name then
       raise (ConcreteSyntaxError
                ("Signature for `" ^ signame ^ "' should precede definition of `"
                 ^ signame ^ "', not `"^ name ^"'.",
@@ -101,7 +101,7 @@ let make_tuple pos =
 let labels = List.map fst
 
 let parseRegexFlags f =
-  let rec asList f i l = 
+  let rec asList f i l =
     if (i == String.length f) then
       List.rev l
     else
@@ -361,7 +361,7 @@ nofun_declaration:
                                                                    `Foreign ((name, None, name_pos), _2, datatype _5), pos() )}
 | _1 = fixity _2 = perhaps_uinteger _3 = op _4 = SEMICOLON
     {                                                               ( let assoc, set = _1 in
-                                                                   set assoc (Num.int_of_num (from_option default_fixity _2)) (fst _3); 
+                                                                   set assoc (Num.int_of_num (from_option default_fixity _2)) (fst _3);
                                                                    (`Infix, pos()) )}
 | _1 = tlvarbinding _2 = SEMICOLON
     {                                                               ( let ((d,dpos),p,l), pos = _1
@@ -1244,7 +1244,7 @@ primary_datatype:
 | _1 = kinded_type_var
     {                                                               ( _1 )}
 | _1 = CONSTRUCTOR
-    {                                                               ( match _1 with 
+    {                                                               ( match _1 with
                                                                    | "Bool"    -> PrimitiveType `Bool
                                                                    | "Int"     -> PrimitiveType `Int
                                                                    | "Char"    -> PrimitiveType `Char

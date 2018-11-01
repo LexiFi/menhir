@@ -3,7 +3,7 @@
   let g x y z t = ()
 %}
 
-%token A B C 
+%token A B C
 %start prog
 %type<int> prog
 %%
@@ -17,7 +17,7 @@ a1: x=b
   f $startpos $endpos $startpos(x) $endpos(x)
 }
 
-%inline b: 
+%inline b:
 { g $startpos $endpos $startpos $endpos }
 
 /* case: host is not empty, inlined rule is empty. */
@@ -62,7 +62,7 @@ a6: x=d
 }
 
 /* case: host is not empty, inlined_rule is empty but we do not use startpos. */
-%inline f: 
+%inline f:
 {
   g $endpos $endpos $endpos $endpos
 }
@@ -72,7 +72,7 @@ a7: A x=f B
 }
 
 /* case: host is not empty, inlined_rule is empty but we do not use endpos. */
-%inline g: 
+%inline g:
 {
   g $startpos $startpos $startpos $startpos
 }

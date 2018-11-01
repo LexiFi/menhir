@@ -50,7 +50,7 @@ header:
 other_definitions:
     other_definitions Tand definition
         { $3::$1 }
-  |     
+  |
         { [] }
 ;
 definition:

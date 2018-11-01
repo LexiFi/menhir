@@ -850,7 +850,7 @@ import_ident_list:
 	 il @ [[id], none], union_pos ilp idp
       }
 
- | import_ident_list Comma Identifier Identifier Identifier 
+ | import_ident_list Comma Identifier Identifier Identifier
       {  let (s,_) = $4 in
 	 if Symbol.to_string s = "as"
 	    then

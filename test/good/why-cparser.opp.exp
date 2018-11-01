@@ -15,7 +15,7 @@
   let locate_i i x = { node = x; loc = loc_i i }
   let with_loc l x = { node = x; loc = l }
 
-  let error s = 
+  let error s =
     Creport.raise_located (loc ()) (AnyMessage ("Syntax error: " ^ s))
 
   let uns () = error "Unsupported C syntax"
@@ -26,13 +26,13 @@
   let vwarning s = if verbose then warning s
   let dwarning s = if debug then warning s
 
-  let no_loop_annot = 
-    { Clogic.invariant = None; 
+  let no_loop_annot =
+    { Clogic.invariant = None;
       Clogic.loop_assigns = None;
       Clogic.variant = None }
 
   let add_pre_loc lb = function
-    | Some (b,_) -> Loc.join (b,0) lb 
+    | Some (b,_) -> Loc.join (b,0) lb
     | _ -> lb
 
   let expr_of_statement s = match s.node with
@@ -42,8 +42,8 @@
 
   (* used only for parsing types *)
 
-  type specifier = 
-    | Stypedef 
+  type specifier =
+    | Stypedef
     | Sstorage of storage_class
     | Stype of cexpr ctype_node
     | Slong
@@ -54,7 +54,7 @@
     | Ssign of sign
     | Sstruct_decl of string option * fields
     | Sunion_decl of string option * fields
-	
+
   and specifiers = specifier list
 
   and declarator =
@@ -70,31 +70,31 @@
   (* interps a list of specifiers / declarators as a [ctype] *)
   (* TODO: short/long *)
 
-  let storage_class = 
+  let storage_class =
     let rec loop st = function
-      | [] -> 
+      | [] ->
 	  st
-      | Sstorage st' :: s when st = No_storage -> 
+      | Sstorage st' :: s when st = No_storage ->
 	  loop st' s
       | Sstorage st' :: s when st' = st ->
 	  warning "duplicate storage class"; loop st s
       | Sstorage st' :: _ ->
 	  error "multiple storage class"
-      | _ :: s -> 
+      | _ :: s ->
 	  loop st s
     in
     loop No_storage
 
   let sign =
     let rec loop so = function
-      | [] -> 
+      | [] ->
 	  so
-      | Ssign b' :: sp -> 
-	  (match so with 
+      | Ssign b' :: sp ->
+	  (match so with
 	     | None -> loop (Some b') sp
 	     | Some b when b = b' -> warning "duplicate (un)signed"; loop so sp
 	     | Some b -> error "both signed and unsigned")
-      | _ :: sp -> 
+      | _ :: sp ->
 	  loop so sp
     in
     loop None
@@ -108,25 +108,25 @@
 
   let length =
     let rec loop lo = function
-      | [] -> 
+      | [] ->
 	  lo
-      | (Sshort | Slong as s) :: sp -> 
-	  (match s, lo with 
-	     | Sshort, None -> 
+      | (Sshort | Slong as s) :: sp ->
+	  (match s, lo with
+	     | Sshort, None ->
 		 loop (Some Short) sp
-	     | Slong, None -> 
+	     | Slong, None ->
 		 loop (Some Long) sp
-	     | Sshort, Some Short -> 
+	     | Sshort, Some Short ->
 		 warning "duplicate short"; loop lo sp
-	     | Sshort, Some (Long | LongLong) | Slong, Some Short -> 
+	     | Sshort, Some (Long | LongLong) | Slong, Some Short ->
 		 error "both long and short specified"
-	     | Slong, Some Long -> 
+	     | Slong, Some Long ->
 		 loop (Some LongLong) sp
 	     | Slong, Some LongLong ->
 		 error "too long for caduceus"
-	     | _ -> 
+	     | _ ->
 		 assert false)
-      | _ :: sp -> 
+      | _ :: sp ->
 	  loop lo sp
     in
     loop None
@@ -137,47 +137,47 @@
     | Some Long, (CTint (s, _)) -> CTint (s, Cast.Long)
     | Some LongLong, (CTint (s, _)) -> CTint (s, Cast.LongLong)
     | Some Long, CTfloat Double -> CTfloat LongDouble
-    | Some _, CTfloat Float 
-    | Some Short, CTfloat _ -> 
+    | Some _, CTfloat Float
+    | Some Short, CTfloat _ ->
 	error "long or short specified with floating type"
-    | Some LongLong, CTfloat _ -> 
+    | Some LongLong, CTfloat _ ->
 	error "the only valid combination is `long double'"
     | Some _, _ -> ty
 
   (* debug *)
   let rec explain_type fmt = function
-    | CTfun (_, t) -> 
+    | CTfun (_, t) ->
 	fprintf fmt "function returning %a" explain_type t.ctype_node
-    | CTpointer t -> 
+    | CTpointer t ->
 	fprintf fmt "pointer on %a" explain_type t.ctype_node
-    | CTarray (t, _) -> 
+    | CTarray (t, _) ->
 	fprintf fmt "array[] of %a" explain_type t.ctype_node
-    | _ -> 
+    | _ ->
 	fprintf fmt "other"
 
   (* fresh names for anonymous structures *)
 
   let fresh_name =
     let r = ref (-1) in
-    function 
+    function
       | Some s -> s
       | None -> incr r; "anonymous_" ^ string_of_int !r
 
   (* Interpretation of type expression.
-     [gl] indicates a global declaration (implies the check for a type or 
+     [gl] indicates a global declaration (implies the check for a type or
      a storage class) *)
 
-  let rec interp_type gl specs decl = 
+  let rec interp_type gl specs decl =
     let st = storage_class specs in
     let cst = List.exists ((=) Sconst) specs in
     let vl = List.exists ((=) Svolatile) specs in
     let sg = sign specs in
     let lg = length specs in
     let rec base_type tyo = function
-      | [] -> 
-	  (match tyo with 
+      | [] ->
+	  (match tyo with
 	     | Some ty -> ty
-	     | None when gl && st = No_storage && sg = None && lg = None -> 
+	     | None when gl && st = No_storage && sg = None && lg = None ->
 		 error "data definition has no type or storage class"
 	     | None -> CTint (Signed, Int))
       | Stype t :: sp when tyo = None ->
@@ -195,7 +195,7 @@
       | Dpointer d -> full_type (Cast_misc.noattr (CTpointer ty)) d
       | Darray (d, so) -> full_type (Cast_misc.noattr (CTarray (ty, so))) d
       | Dfunction (d, pl) -> full_type (Cast_misc.noattr (CTfun (params pl, ty))) d
-    and params pl = 
+    and params pl =
       List.map (fun (s,d,x) -> (interp_type false s d, x)) pl
     and fields fl =
       List.map (fun (s,d,x,bf) -> (interp_type false s d, x, bf)) fl
@@ -204,7 +204,7 @@
     let bt = apply_sign sg bt in
     let bt = apply_length lg bt in
     let bt = { ctype_node = bt; ctype_storage = st;
-	       ctype_const = cst; ctype_volatile = vl } 
+	       ctype_const = cst; ctype_volatile = vl }
     in
     let ty = full_type bt decl in
     if debug then eprintf "%a@." explain_type ty.ctype_node;
@@ -219,9 +219,9 @@
     let l = loc() in
     if is_typedef specs then
       let interp = function
-	| (n,d), None -> 
+	| (n,d), None ->
 	    Ctypes.add n; Ctypedef (interp_type true specs d, n)
-	| (n,_), _ -> 
+	| (n,_), _ ->
 	    error ("typedef " ^ n ^ " is initialized")
       in
       List.map interp decls
@@ -256,27 +256,27 @@
     (* we first check that no parameter is initialized or occurs twice *)
     List.iter
       (fun d -> match d.node with
-	 | Cdecl (ty, x, None) -> 
-	     if not (List.mem x pids) then 
+	 | Cdecl (ty, x, None) ->
+	     if not (List.mem x pids) then
 	       error ("declaration for " ^ x ^ " but no such parameter");
 	     if Hashtbl.mem h x then error ("duplicate declaration for " ^ x);
 	     Hashtbl.add h x ty
 	 | Cdecl (_,x,_) -> error ("parameter " ^ x ^ " is initialized")
-	 | _ -> ()) 
+	 | _ -> ())
       decls;
     (* do it for all parameters *)
     List.map (fun (tx, x) -> (try Hashtbl.find h x with Not_found -> tx), x) pl
 
-  let function_declaration specs (id,d) decls = 
+  let function_declaration specs (id,d) decls =
     let ty = interp_type false specs d in
     match ty.ctype_node with
       | CTfun (pl, tyf) ->
-	  let pl = 
-	    if decls = [] then pl else old_style_params pl decls 
+	  let pl =
+	    if decls = [] then pl else old_style_params pl decls
 	  in
 	  List.iter (fun (_,x) -> Ctypes.remove x) pl;
 	  tyf, id, pl
-      | _ -> 
+      | _ ->
 	  raise Parsing.Parse_error
 
 %}
@@ -591,7 +591,7 @@ declaration:
 | _1 = SPEC _2 = declaration_specifiers _3 = init_declarator_list _4 = attributes_opt _5 = SEMICOLON
     {     ( [locate (spec_declaration _1 _2 _3)] )}
 | _1 = DECL
-    {     ( let ofs,d = _1 in 
+    {     ( let ofs,d = _1 in
 	      List.map (fun d -> locate (Cspecdecl (ofs,d))) d )}
 
 declaration_specifiers:
@@ -684,9 +684,9 @@ identifier:
 
 struct_or_union_specifier:
   _1 = struct_or_union _2 = identifier _3 = LBRACE _4 = struct_declaration_list _5 = RBRACE
-    {            ( if _1 then 
-		Sstruct_decl (Some _2, _4) 
-	      else 
+    {            ( if _1 then
+		Sstruct_decl (Some _2, _4)
+	      else
 		Sunion_decl (Some _2, _4) )}
 | _1 = struct_or_union _2 = LBRACE _3 = struct_declaration_list _4 = RBRACE
     {     ( if _1 then Sstruct_decl (None, _3) else Sunion_decl (None, _3) )}
@@ -962,10 +962,10 @@ iteration_statement:
 | _1 = loop_annot _2 = DO _3 = statement _4 = WHILE _5 = LPAR _6 = expression _7 = RPAR _8 = SEMICOLON
     {     ( locate (CSdowhile (_1, _3, _6)) )}
 | _1 = loop_annot _2 = FOR _3 = LPAR _4 = expression_statement _5 = expression_statement _6 = RPAR _7 = statement
-    {     ( locate (CSfor (_1, expr_of_statement _4, expr_of_statement _5, 
+    {     ( locate (CSfor (_1, expr_of_statement _4, expr_of_statement _5,
 			     locate CEnop, _7)) )}
 | _1 = loop_annot _2 = FOR _3 = LPAR _4 = expression_statement _5 = expression_statement _6 = expression _7 = RPAR _8 = statement
-    {     ( locate (CSfor (_1, expr_of_statement _4, expr_of_statement _5, 
+    {     ( locate (CSfor (_1, expr_of_statement _4, expr_of_statement _5,
 			     _6, _8)) )}
 
 jump_statement:

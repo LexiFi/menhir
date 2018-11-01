@@ -30,13 +30,13 @@ let make_node_decl name n =
 	; outputs = None }
 
 
-type general_formal = 
-	Typed of decl_formal 
-	| GuardRef of 
-                ( string ParserTypes.positioned 
-                * string list list 
-                * ParserTypes.guardmod list 
-                * string ParserTypes.positioned option 
+type general_formal =
+	Typed of decl_formal
+	| GuardRef of
+                ( string ParserTypes.positioned
+                * string list list
+                * ParserTypes.guardmod list
+                * string ParserTypes.positioned option
                 * string list )
 
 let rec comma_separate ll =
@@ -142,8 +142,8 @@ top_level_program:
 
 program:
   _1 = code_list
-    {  ( let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 
-		  in { cond_decl_list=List.rev cl 
+    {  ( let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
+		  in { cond_decl_list=List.rev cl
 		     ; atom_decl_list=List.rev al
 		     ; node_decl_list=List.rev nl
 		     ; mainfun_list=List.rev sl
@@ -159,57 +159,57 @@ program:
 
 code_list:
   _1 = code_list _2 = main_fn
-    { ( trace_thing "code_list"; 
+    { ( trace_thing "code_list";
 	  let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 in
-	  let findsrc s = 
+	  let findsrc s =
 		try List.find (fun n -> (strip_position s.sourcename) = (strip_position n.nodename)) nl
 		with Not_found -> raise (Heck ("could not find source declaration before definition for "^(strip_position s.sourcename)))
 	  in  match _2 with
-		(s,None) -> (s::sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl) 
+		(s,None) -> (s::sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl)
 	       |(s,Some e) -> (s::sl,e::el,erl,mil,cl,al,(make_node_decl e.exprname (findsrc s))::nl,mdl,pl,pdl,tl,odl) )}
 | _1 = code_list _2 = expr_part
-    { ( trace_thing "code_list"; 
+    { ( trace_thing "code_list";
 	  let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
 	  in  (sl,_2::el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl) )}
 | _1 = code_list _2 = err_def
-    { ( trace_thing "code_list"; 
+    { ( trace_thing "code_list";
 	  let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
 	  in  (sl,el,_2::erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl) )}
 | _1 = code_list _2 = mod_inst
-    { ( trace_thing "code_list"; 
+    { ( trace_thing "code_list";
 	  let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
 	  in  (sl,el,erl,_2::mil,cl,al,nl,mdl,pl,pdl,tl,odl) )}
 | _1 = code_list _2 = node_decl
     { ( trace_thing "code_list";
-          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 
+          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
           in sl,el,erl,mil,cl,al,_2::nl,mdl,pl,pdl,tl,odl )}
 | _1 = code_list _2 = atom_decl
     { ( trace_thing "code_list";
-          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 
+          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
 	  in sl,el,erl,mil,cl,_2::al,nl,mdl,pl,pdl,tl,odl )}
 | _1 = code_list _2 = cond_decl
     { ( trace_thing "code_list";
-          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 
+          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
 	  in sl,el,erl,mil,_2::cl,al,nl,mdl,pl,pdl,tl,odl )}
 | _1 = code_list _2 = mod_decl
     { ( trace_thing "code_list";
-          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 
+          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
 	  in sl,el,erl,mil,cl,al,nl,_2::mdl,pl,pdl,tl,odl )}
 | _1 = code_list _2 = plugin_decl
     { ( trace_thing "code_list";
-          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 
+          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
 	  in sl,el,erl,mil,cl,al,nl,mdl,_2::pl,pdl,tl,odl )}
 | _1 = code_list _2 = plugin_depends_decl
     { ( trace_thing "code_list";
-          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 
+          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
 	  in sl,el,erl,mil,cl,al,nl,mdl,pl,_2::pdl,tl,odl )}
 | _1 = code_list _2 = term_decl
     { ( trace_thing "code_list";
-          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 
+          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
 	  in  sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,_2::tl,odl )}
 | _1 = code_list _2 = guard_order_decl
     { ( trace_thing "code_list";
-          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1 
+          let sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,odl = _1
 	  in  sl,el,erl,mil,cl,al,nl,mdl,pl,pdl,tl,_2 @ odl )}
 | 
     { ( trace_thing "code_list";
@@ -238,7 +238,7 @@ guard_identification:
 
 mod_decl:
   _1 = mod_modifier_list _2 = MODULE _3 = namespaced_ident _4 = BEGIN _5 = program _6 = END
-    { ( trace_thing "mod_decl"; 
+    { ( trace_thing "mod_decl";
 	  { modulename=_3
 	  ; isstaticmodule=List.mem "static" _1
 	  ; programdef=_5 } )}
@@ -283,21 +283,21 @@ source_or_initial_or_door:
 
 main_fn:
   _1 = source_or_initial_or_door _2 = namespaced_ident _3 = SEMI
-    { ( trace_thing "main_fn"; 
+    { ( trace_thing "main_fn";
 	  ({ sourcename =_2
           ; sourcefunction=strip_position _2
-          ; successor=None 
+          ; successor=None
           ; runoncetype=_1
           }, None) )}
 | _1 = source_or_initial_or_door _2 = namespaced_ident _3 = PIPE _4 = ident_list _5 = SEMI
-    { ( trace_thing "main_fn"; 
+    { ( trace_thing "main_fn";
           let rhs_name =
 		let n,p1,p2 = _2
 		in  (((n^"_RHS"),p1,p2) : string positioned)
 	  in
 	  ( { sourcename=_2
             ; sourcefunction=strip_position _2
-            ; successor=(Some rhs_name) 
+            ; successor=(Some rhs_name)
             ; runoncetype=_1
             }
 	  , Some
@@ -310,7 +310,7 @@ main_fn:
 
 cond_decl:
   _1 = external_opt _2 = CONDITION _3 = namespaced_ident _4 = simple_arg_list _5 = ARROW _6 = BOOL _7 = SEMI
-    { ( trace_thing "cond_decl"; 
+    { ( trace_thing "cond_decl";
 	  { externalcond=_1; condname=_3; condfunction=strip_position _3; condinputs=_4 } )}
 
 atom_type:
@@ -339,12 +339,12 @@ atom_mod_opt_list:
 
 atom_decl:
   _1 = external_opt _2 = atom_type _3 = atom_mod_opt_list _4 = namespaced_ident _5 = simple_arg_list _6 = ARROW _7 = data_type _8 = SEMI
-    { ( trace_thing "atom_decl"; 
+    { ( trace_thing "atom_decl";
 	  { externalatom=_1
           ; atomname=_4
           ; atominputs=_5
           ; outputtype=_7
-          ; atomtype = _2 
+          ; atomtype = _2
           ; atommodifiers = _3
           } )}
 
@@ -362,7 +362,7 @@ guard_order_list:
   _1 = ident _2 = LESSTHAN _3 = ident
     {        ( [(_1,_3)] )}
 | _1 = ident _2 = LESSTHAN _3 = guard_order_list
-    {        ( let rhs = match _3 with 
+    {        ( let rhs = match _3 with
                         ((l,_)::_) -> l
                         | _ -> raise Not_found
           in  (_1,rhs)::_3 )}
@@ -375,25 +375,25 @@ node_target_arg_list:
 
 node_decl:
   _1 = external_opt _2 = NODE _3 = node_mod_list _4 = namespaced_ident _5 = arg_list _6 = ARROW _7 = node_target_arg_list _8 = SEMI
-    { ( trace_thing "node_decl"; 
+    { ( trace_thing "node_decl";
           let clean_cpp_uninterpreted args grefs =
                 let strargs = List.map (fun x -> strip_position x.name) args in
-                let strgargs = List.map 
-			(fun (x,_,_,xo,_) -> 
+                let strgargs = List.map
+			(fun (x,_,_,xo,_) ->
 				strip_position (match xo with
 							(Some x') -> x'
 							| _ -> x)) grefs in
 		let strgargs = "self"::strgargs in
-                let rec on_str_list' firstisarg firstisgarg strl = 
+                let rec on_str_list' firstisarg firstisgarg strl =
                         match strl with
                                 (h1::h2::tl) ->
                                         let h2isarg = List.mem h2 strargs in
 					let h2isgarg = (not h2isarg) &&
 						(List.mem h2 strgargs)
-                                        in  if firstisarg || firstisgarg || h2isarg || h2isgarg then 
-                                                (if firstisarg 
+                                        in  if firstisarg || firstisgarg || h2isarg || h2isgarg then
+                                                (if firstisarg
                                                  then Arg h1
-                                                 else if firstisgarg 
+                                                 else if firstisgarg
 						 then GArg h1
 						 else Context h1)
                                                 ::(on_str_list' h2isarg h2isgarg (h2::tl))
@@ -405,7 +405,7 @@ node_decl:
 					  then GArg x
 					  else Context x]
                         in
-                let on_str_list strl = 
+                let on_str_list strl =
                         match on_str_list' false false (""::strl) with
                                 ((Context "")::tl) -> tl
                                 | res -> res
@@ -419,9 +419,9 @@ node_decl:
 	  let filtguardref x =(match x with GuardRef i -> i | _ -> raise Not_found) in
 	  let ins = List.map filttyped ins in
 	  let grefs = List.map filtguardref grefs in
-          let grefs = 
+          let grefs =
 		let clean_cpp_un x = clean_cpp_uninterpreted ins grefs x
-		in  List.map (fun (guardname,arguments,modifiers,localgname,guardcond) -> 
+		in  List.map (fun (guardname,arguments,modifiers,localgname,guardcond) ->
                         { guardname = guardname
                         ; arguments = List.map clean_cpp_un arguments
                         ; modifiers = modifiers
@@ -440,7 +440,7 @@ node_decl:
           ; nodefunction=(strip_position _4)
           ; inputs=ins
           ; guardrefs=grefs
-          ; outputs= _7 } 
+          ; outputs= _7 }
 	)}
 
 node_mod_list:
@@ -475,12 +475,12 @@ data_type:
 
 star_list:
   _1 = star_list _2 = STAR
-    { ( let ses,_ = _1 in 
+    { ( let ses,_ = _1 in
 	  let _,pend = _2 in
 	  ses^"*", pend
 	)}
 | _1 = star_list _2 = AMPERSAND
-    { ( let ses,_ = _1 in 
+    { ( let ses,_ = _1 in
 	  let _,pend = _2 in
 	  ses^"&", pend
 	)}
@@ -529,7 +529,7 @@ raw_data_type:
 typed_item:
   _1 = data_type
     { ( let _,_,pend = _1.dctype in
-	  { ctypemod=_1.dctypemod; ctype=_1.dctype; name=("",pend,pend) } 
+	  { ctypemod=_1.dctypemod; ctype=_1.dctype; name=("",pend,pend) }
 	)}
 | _1 = data_type _2 = IDENTIFIER
     { ( { ctypemod=_1.dctypemod; ctype=_1.dctype; name=_2 } )}
@@ -554,7 +554,7 @@ typed_or_guardref_item:
 
 guardref_item:
   _1 = GUARD _2 = IDENTIFIER _3 = guardref_modifier_list _4 = LEFT_PAREN _5 = uninterpreted_cpp_code_comma_list _6 = RIGHT_PAREN _7 = as_named_opt _8 = if_condition_opt
-    { ( trace_thing "guardref_item"; 
+    { ( trace_thing "guardref_item";
 	  ( (*guardname= *) _2
           , (*arguments= *) _5
           , (*modifiers= *) _3
@@ -637,7 +637,7 @@ uninterpreted_cpp_code_fragment:
 
 uninterpreted_cpp_code_comma_list:
   _1 = uninterpreted_cpp_code
-    {        ( match _1 with 
+    {        ( match _1 with
                 [] -> []
                 | _ -> [_1] )}
 | _1 = uninterpreted_cpp_code _2 = COMMA _3 = uninterpreted_cpp_code_comma_list

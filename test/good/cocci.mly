@@ -73,9 +73,9 @@ module P = Parse_aux
 %token <Data.clt> TAndLog
 %token <Data.clt> TOr
 %token <Data.clt> TXor
-%token <Data.clt> TAnd 
+%token <Data.clt> TAnd
 %token <Data.clt> TEqEq TNotEq
-%token <Data.clt> TInf TSup TInfEq TSupEq 
+%token <Data.clt> TInf TSup TInfEq TSupEq
 %token <Data.clt> TShl TShr
 %token <Data.clt> TPlus TMinus
 %token <Data.clt> TMul TDiv TMod TTilde
@@ -102,19 +102,19 @@ module P = Parse_aux
 %left TAndLog
 %left TOr
 %left TXor
-%left TAnd 
+%left TAnd
 %left TEqEq TNotEq
-%left TInf TSup TInfEq TSupEq 
+%left TInf TSup TInfEq TSupEq
 %left TShl TShr
 %left TPlus TMinus
-%left TMul TDiv TMod 
+%left TMul TDiv TMod
 
 %type <unit> reinit
 
-%start minus_main 
+%start minus_main
 %type <Ast0_cocci.rule> minus_main
 
-%start plus_main 
+%start plus_main
 %type <Ast0_cocci.rule> plus_main
 
 %start rule_name
@@ -204,7 +204,7 @@ metadec:
 | TType
     { (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaTypeDecl(arity,name)) in
-      !Data.add_type_meta name pure; tok) } 
+      !Data.add_type_meta name pure; tok) }
 | TParameter
     { (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaParamDecl(arity,name)) in
@@ -212,7 +212,7 @@ metadec:
 | TParameter Tlist
     { (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaParamListDecl(arity,name)) in
-      !Data.add_paramlist_meta name pure; tok)} 
+      !Data.add_paramlist_meta name pure; tok)}
 | TError
     { (fun arity name pure check_meta ->
       let tok = check_meta(Ast.MetaErrDecl(arity,name)) in
@@ -384,7 +384,7 @@ ctype_qualif:
 /* have to inline everything to avoid conflicts? switch to proper
 declarations, statements, and expressions for the subterms */
 
-minus_body: 
+minus_body:
     f=loption(filespec) i=list(includes)
     b=loption(minus_function_decl_statement_or_expression)
     ew=loption(error_words)
@@ -392,7 +392,7 @@ minus_body:
       [] -> raise (Semantic_cocci.Semantic "minus slice can't be empty")
     | code -> Top_level.top_level code }
 
-plus_body: 
+plus_body:
     f=loption(filespec) i=list(includes)
     b=loption(plus_function_decl_statement_or_expression)
     ew=loption(error_words)
@@ -749,7 +749,7 @@ decl_var:
         [Ast0.wrap(Ast0.UnInit(s,fn t,id,P.clt2mcode ";" pv))] }
   | TDeclarerId TOPar eexpr_list_option TCPar TPtVirg
       { [Ast0.wrap(Ast0.MacroDecl(P.id2mcode $1,P.clt2mcode "(" $2,$3,
-				  P.clt2mcode ")" $4,P.clt2mcode ";" $5))] } 
+				  P.clt2mcode ")" $4,P.clt2mcode ";" $5))] }
   | s=ioption(storage)
     t=fn_ctype lp1=TOPar st=TMul d=d_ident rp1=TCPar
     lp2=TOPar p=decl_list(name_opt_decl) rp2=TCPar
@@ -983,7 +983,7 @@ unary_expr(r,pe):
                                    P.clt2mcode "(" lp,
                                    t,
                                    P.clt2mcode ")" rp)) }
-                                   
+
 
 unary_op: TAnd    { P.clt2mcode Ast.GetRef $1 }
 	| TMul    { P.clt2mcode Ast.DeRef $1 }
@@ -1101,7 +1101,7 @@ one_dec(decl):
 | TMetaParamList
     { let (nm,pure,clt) = $1 in
     Ast0.wrap(Ast0.MetaParamList(P.clt2mcode nm clt,pure)) }
- 
+
 comma_decls(dotter,decl):
   TComma dotter
     { function dot_builder ->
@@ -1388,7 +1388,7 @@ no_dot_start_dots(dots,grammar,when_grammar,simple_when_grammar,ender):
    /* empty */    { function dot_builder -> [] }
  | e=ender
        { function dot_builder -> [e] }
- | g=grammar d=dots_when(dots,when_grammar,simple_when_grammar) 
+ | g=grammar d=dots_when(dots,when_grammar,simple_when_grammar)
        r=no_dot_start_dots(dots,grammar,when_grammar,simple_when_grammar,ender)
        { function dot_builder -> g::(dot_builder d)::(r dot_builder) }
 

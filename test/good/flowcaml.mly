@@ -27,7 +27,7 @@ open Parsetree
 let mktyp d =
   { ptyp_desc = d; ptyp_loc = symbol_rloc() }
 let mktys typ tyc_list =
-  { ptys_type = typ; ptys_constraints = tyc_list; ptys_loc = symbol_rloc () } 
+  { ptys_type = typ; ptys_constraints = tyc_list; ptys_loc = symbol_rloc () }
 let mktyc d =
   { ptyc_desc = d; ptyc_loc = symbol_rloc() }
 let mkpat d =
@@ -180,7 +180,7 @@ let bigarray_set arr arg newval =
                        [arr; c1; c2; c3; newval]))
   | coords ->
       mkexp(Pexp_apply(ghexp(Pexp_ident(bigarray_function "Genarray" "set")),
-                       [arr; 
+                       [arr;
                         ghexp(Pexp_array coords);
                         newval]))
 %}
@@ -384,20 +384,20 @@ let bigarray_set arr arg newval =
 
 implementation:
     flows_declaration structure EOF
-      { { pimp_structure = $2; 
+      { { pimp_structure = $2;
 	  pimp_flows = $1;
 	  pimp_header_loc = rhs_loc 1
-	} 
+	}
       }
 ;
 interface:
     flows_declaration affects raises signature EOF
-      { { pint_signature = List.rev $4; 
+      { { pint_signature = List.rev $4;
 	  pint_flows = $1;
 	  pint_pci = $2;
 	  pint_pcf = $3;
 	  pint_header_loc = rhs_locs 1 3
-	} 
+	}
       }
 ;
 toplevel_phrase:
@@ -554,7 +554,7 @@ module_type:
       { unclosed "sig" 1 "end" 3 }
   | FUNCTOR LPAREN UIDENT COLON module_type RPAREN module_type_arrow module_type
     %prec prec_fun
-      { let lb, ub = $7 in 
+      { let lb, ub = $7 in
         mkmty(Pmty_functor($3, $5, lb, ub, $8, Some (rhs_loc 7)))
       }
   | module_type WITH with_constraints
@@ -567,7 +567,7 @@ module_type:
 module_type_arrow:
     MINUSGREATER
       { [], [] }
-  | MINUSBRACE level_comma_list BAR level_comma_list BRACEMINUSGREATER   
+  | MINUSBRACE level_comma_list BAR level_comma_list BRACEMINUSGREATER
       { $2, $4 }
 ;
 signature:
@@ -656,7 +656,7 @@ expr:
       { mkexp(Pexp_function([$2, fst $3, snd $3])) }
   | MATCH seq_expr WITH opt_bar match_cases %prec prec_match
       { mkexp(Pexp_match($2, List.rev $5)) }
-  | RAISE simple_exception_longident 
+  | RAISE simple_exception_longident
       { mkexp(Pexp_raise($2, None)) }
   | RAISE LPAREN constr_longident simple_expr RPAREN
       { mkexp(Pexp_raise($3, Some $4)) }
@@ -810,9 +810,9 @@ fun_binding:
       { mkexp(Pexp_function([$1, None, $2])) }
 ;
 match_cases:
-    pattern match_action                        
+    pattern match_action
       { [$1, fst $2, snd $2] }
-  | match_cases BAR pattern match_action        
+  | match_cases BAR pattern match_action
       { ($3, fst $4, snd $4) :: $1 }
 ;
 try_cases:
@@ -826,7 +826,7 @@ try_cases:
       { ($3, $5, Propagate (rhs_loc 6)) :: $1 }
 ;
 fun_def:
-    match_action                                
+    match_action
       { $1 }
   | simple_pattern fun_def
       { None, mkexp(Pexp_function([$1, fst $2, snd $2])) }
@@ -959,7 +959,7 @@ primitive_declaration:
 
 
 /* -------------------------------------------------------------------------
-   Type declarations 
+   Type declarations
  */
 
 type_declarations:
@@ -967,7 +967,7 @@ type_declarations:
   | type_declarations AND type_declaration      { $3 :: $1 }
 ;
 type_declaration:
-    opt_fun type_parameters LIDENT type_kind constraints 
+    opt_fun type_parameters LIDENT type_kind constraints
       { let repr, manifest = $4 in
         ($3, { ptype_params = $2;
 	       ptype_fun = $1;
@@ -1030,19 +1030,19 @@ type_parameter:
       { ($3, ($4, $1)) }
 ;
 type_parameter_list:
-    type_parameter                              
+    type_parameter
       { [$1] }
-  | type_parameter_list COMMA type_parameter    
+  | type_parameter_list COMMA type_parameter
       { $3 :: $1 }
 ;
 opt_kind:
-    /*empty*/                               
+    /*empty*/
       { Pak_var }
-  | COLON LEVEL                                       
+  | COLON LEVEL
       { Pak_level }
-  | COLON TYPE                                        
+  | COLON TYPE
       { Pak_type }
-  | COLON ROW LBRACKET opt_rowlabel_list RBRACKET     
+  | COLON ROW LBRACKET opt_rowlabel_list RBRACKET
       { Pak_row $4 }
 ;
 opt_variance:
@@ -1057,9 +1057,9 @@ opt_rowlabel_list:
   | rowlabel_list                               { $1 }
 ;
 rowlabel_list:
-    mod_longident                          
+    mod_longident
       { [ $1 ] }
-  | mod_longident COMMA rowlabel_list      
+  | mod_longident COMMA rowlabel_list
       { $1 :: $3 }
 ;
 constructor_declarations:
@@ -1146,10 +1146,10 @@ simple_extcore_type:
     simple_extcore_type2
       { $1 }
   | LPAREN extcore_type_comma_list RPAREN
-      { 
+      {
 	match $2 with
 	  [sty] -> mktyp (Ptyp_paren sty)
-        | _ -> raise Parse_error 
+        | _ -> raise Parse_error
       }
 ;
 simple_extcore_type2:
@@ -1169,7 +1169,7 @@ simple_extcore_type2:
       { mktyp(Ptyp_constr($4, List.rev $2)) }
 ;
 simple_extcore_type_or_tuple:
-    simple_extcore_type                            
+    simple_extcore_type
       { $1 }
   | simple_extcore_type STAR extcore_type_list
       { mktyp(Ptyp_tuple($1 :: List.rev $3)) }
@@ -1199,8 +1199,8 @@ core_type:
 core_type2:
     simple_core_type_or_tuple
       { $1 }
-  | core_type2 
-      MINUSBRACE core_type BAR core_type BAR core_type BRACEMINUSGREATER 
+  | core_type2
+      MINUSBRACE core_type BAR core_type BAR core_type BRACEMINUSGREATER
       core_type2 %prec prec_type_arrow
       { mktyp(Ptyp_arrow($1, $3, $5, $9, $7)) }
 ;
@@ -1208,10 +1208,10 @@ simple_core_type:
     simple_core_type2
       { $1 }
   | LPAREN core_type_comma_list RPAREN
-      { 
+      {
 	match $2 with
 	  [sty] -> mktyp (Ptyp_paren sty)
-        | _ -> raise Parse_error 
+        | _ -> raise Parse_error
       }
 ;
 simple_core_type2:
@@ -1450,7 +1450,7 @@ mod_longident:
 mod_ext_longident:
     UIDENT                                      { Lident $1 }
   | mod_ext_longident DOT UIDENT                { Ldot($1, $3) }
-  | mod_ext_longident LPAREN mod_ext_longident RPAREN 
+  | mod_ext_longident LPAREN mod_ext_longident RPAREN
                                                 { Lapply($1, $3) }
 ;
 mty_longident:
@@ -1458,7 +1458,7 @@ mty_longident:
   | mod_ext_longident DOT ident                 { Ldot($1, $3) }
 ;
 principal:
-    PREFIXOP LIDENT                             
+    PREFIXOP LIDENT
       { if $1 <> "!" then
 	raise (Syntaxerr.Error (Syntaxerr.Other (rhs_loc 1)));
 	$2 }

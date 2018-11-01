@@ -1,13 +1,13 @@
 /********************************************************
-   This file is part of jStar 
+   This file is part of jStar
 	src/parsing/jparser.mly
-   Release 
+   Release
         $Release$
-   Version 
+   Version
         $Rev$
    $Copyright$
-   
-   jStar is distributed under a BSD license,  see, 
+
+   jStar is distributed under a BSD license,  see,
       LICENSE.txt
  ********************************************************/
 /* ddino implementation of a parser for Jimple */
@@ -21,7 +21,7 @@ open Core
 open Jimple_global_types
 open Lexing
 open Load
-open Parsing 
+open Parsing
 open Printing
 open Psyntax
 open Spec
@@ -36,52 +36,52 @@ let newAnyVar x = AnyVar(0,x)
 
 let newEVar x = EVar(0,x)
 
-let newVar x = 
-  if x = "_" then freshe() 
-  else if String.get x 0 = '_' then newEVar (String.sub x 1 ((String.length x) -1)) 
+let newVar x =
+  if x = "_" then freshe()
+  else if String.get x 0 = '_' then newEVar (String.sub x 1 ((String.length x) -1))
   else newPVar x
 
 
 let msig_simp (mods,typ,name,args_list) =
   let args_list = List.map fst args_list in
-  (mods,typ,name,args_list) 
+  (mods,typ,name,args_list)
 
-let bind_spec_vars 
-    (mods,typ,name,args_list) 
+let bind_spec_vars
+    (mods,typ,name,args_list)
     {pre=pre;post=post;excep=excep} =
   (* Make substitution to normalise names *)
-  let subst = Psyntax.empty in 
-  let subst = Psyntax.add (newPVar("this")) (Arg_var(Support_syntax.this_var)) subst in 
+  let subst = Psyntax.empty in
+  let subst = Psyntax.add (newPVar("this")) (Arg_var(Support_syntax.this_var)) subst in
   (* For each name that is given convert to normalised param name. *)
-  let _,subst = 
-    List.fold_left 
-      (fun (n,subst) arg_opt -> 
+  let _,subst =
+    List.fold_left
+      (fun (n,subst) arg_opt ->
 	(n+1,
-	 match arg_opt with 
-	   ty,None -> subst 
-	 | ty,Some str -> 
-	     Psyntax.add 
-	       (newPVar(str)) 
-	       (Arg_var(Support_syntax.parameter_var n)) 
+	 match arg_opt with
+	   ty,None -> subst
+	 | ty,Some str ->
+	     Psyntax.add
+	       (newPVar(str))
+	       (Arg_var(Support_syntax.parameter_var n))
 	       subst
-	)) 
+	))
 	  (0,subst) args_list in
   {pre=subst_pform subst pre;
    post=subst_pform subst post;
    excep=ClassMap.map (subst_pform subst) excep}
 
 let mkDynamic (msig, specs, source_pos) =
-  let specs = List.map (bind_spec_vars msig) specs in 
+  let specs = List.map (bind_spec_vars msig) specs in
   let msig = msig_simp msig in
   Dynamic(msig, specs, source_pos)
 
 let mkStatic (msig, specs, source_pos) =
-  let specs = List.map (bind_spec_vars msig) specs in 
-  let msig = msig_simp msig in   
+  let specs = List.map (bind_spec_vars msig) specs in
+  let msig = msig_simp msig in
   Static(msig, specs, source_pos)
-  
 
-let location_to_string pos = 
+
+let location_to_string pos =
   Printf.sprintf "Line %d character %d" pos.pos_lnum  (pos.pos_cnum - pos.pos_bol + 1)
 
 let parse_error s =
@@ -95,7 +95,7 @@ let parse_warning s =
   Printf.printf "Warning %s (between %s and %s)\n" s (location_to_string start_pos) (location_to_string end_pos)
 
 let field_signature2str fs =
-  match fs with 
+  match fs with
   | Field_signature (c,t,n) ->  Pprinter.mkStrOfFieldSignature c t n
   | _ -> assert false
 
@@ -104,160 +104,160 @@ let field_signature2str fs =
 
 /* ============================================================= */
 /* tokens */
-%token <float> FLOAT_CONSTANT 
-%token <int> INTEGER_CONSTANT 
-%token <int> INTEGER_CONSTANT_LONG 
-%token <string> AT_IDENTIFIER 
+%token <float> FLOAT_CONSTANT
+%token <int> INTEGER_CONSTANT
+%token <int> INTEGER_CONSTANT_LONG
+%token <string> AT_IDENTIFIER
 %token <string> CORE_LABEL
-%token <string> FULL_IDENTIFIER 
-%token <string> IDENTIFIER 
-%token <string> QUOTED_NAME 
-%token <string> STRING_CONSTANT 
+%token <string> FULL_IDENTIFIER
+%token <string> IDENTIFIER
+%token <string> QUOTED_NAME
+%token <string> STRING_CONSTANT
 
 %token ABDUCTION
 %token ABS
 %token ABSRULE
 %token ABSTRACT
-%token AND 
-%token ANDALSO 
-%token ANNOTATION 
+%token AND
+%token ANDALSO
+%token ANNOTATION
 %token AS
 %token ASSIGN
 %token AXIOMS
 %token BANG
 %token BIMP
-%token BOOLEAN  
-%token BREAKPOINT  
-%token BYTE 
-%token CASE 
-%token CATCH 
-%token CHAR 
-%token CLASS 
-%token CLS 
-%token CMP 
-%token CMPEQ 
-%token CMPG 
-%token CMPGE 
-%token CMPGT 
-%token CMPL 
-%token CMPLE 
-%token CMPLT 
-%token CMPNE 
+%token BOOLEAN
+%token BREAKPOINT
+%token BYTE
+%token CASE
+%token CATCH
+%token CHAR
+%token CLASS
+%token CLS
+%token CMP
+%token CMPEQ
+%token CMPG
+%token CMPGE
+%token CMPGT
+%token CMPL
+%token CMPLE
+%token CMPLT
+%token CMPNE
 %token COLON
-%token COLON_EQUALS 
-%token COMMA 
+%token COLON_EQUALS
+%token COMMA
 %token CONSTRUCTOR
 %token DASHV
-%token DEFAULT 
+%token DEFAULT
 %token DEFINE
-%token DIV 
-%token DOT 
-%token DOUBLE 
+%token DIV
+%token DOT
+%token DOUBLE
 %token EMP
 %token EMPRULE
 %token END
 %token ENSURES
-%token ENTERMONITOR 
-%token ENUM 
+%token ENTERMONITOR
+%token ENUM
 %token EOF
-%token EQUALS 
+%token EQUALS
 %token EQUIV
-%token EXITMONITOR 
+%token EXITMONITOR
 %token EXPORT
 %token EXPORTS
-%token EXTENDS 
+%token EXTENDS
 %token FALSE
-%token FINAL 
-%token FLOAT 
+%token FINAL
+%token FLOAT
 %token FRAME
-%token FROM 
+%token FROM
 %token GARBAGE
-%token GOTO 
+%token GOTO
 %token IF
 %token IMP
-%token IMPLEMENTS 
+%token IMPLEMENTS
 %token IMPLICATION
-%token IMPORT 
+%token IMPORT
 %token INCONSISTENCY
-%token INSTANCEOF  
-%token INT 
-%token INTERFACE 
-%token INTERFACEINVOKE 
+%token INSTANCEOF
+%token INT
+%token INTERFACE
+%token INTERFACEINVOKE
 %token INVARIANT
-%token L_BRACE 
-%token L_BRACKET 
-%token L_PAREN 
+%token L_BRACE
+%token L_BRACKET
+%token L_PAREN
 %token LABEL
 %token LEADSTO
-%token LENGTHOF 
-%token LONG 
-%token LOOKUPSWITCH 
+%token LENGTHOF
+%token LONG
+%token LOOKUPSWITCH
 %token MAPSTO
-%token MINUS 
-%token MOD 
-%token MULT 
-%token NATIVE 
-%token NEG 
-%token NEW 
-%token NEWARRAY 
-%token NEWMULTIARRAY 
-%token NOP 
+%token MINUS
+%token MOD
+%token MULT
+%token NATIVE
+%token NEG
+%token NEW
+%token NEWARRAY
+%token NEWMULTIARRAY
+%token NOP
 %token NOTIN
 %token NOTINCONTEXT
-%token NULL 
-%token NULL_TYPE 
+%token NULL
+%token NULL_TYPE
 %token OLD
-%token OR 
-%token OROR 
+%token OR
+%token OROR
 %token ORTEXT
-%token PLUS 
+%token PLUS
 %token PRED
-%token PRIVATE 
-%token PROTECTED 
-%token PUBLIC 
+%token PRIVATE
+%token PROTECTED
+%token PUBLIC
 %token PUREGUARD
 %token PURERULE
-%token QUESTIONMARK 
+%token QUESTIONMARK
 %token QUOTE
-%token R_BRACE 
-%token R_BRACKET 
-%token R_PAREN 
+%token R_BRACE
+%token R_BRACKET
+%token R_PAREN
 %token REQUIRES
-%token RET 
-%token RETURN 
+%token RET
+%token RETURN
 %token REWRITERULE
 %token RULE
-%token SEMICOLON 
-%token SHL 
-%token SHORT 
-%token SHR 
+%token SEMICOLON
+%token SHL
+%token SHORT
+%token SHR
 %token SOURCE_POS_TAG
 %token SOURCE_POS_TAG_CLOSE
-%token SPECIALINVOKE 
+%token SPECIALINVOKE
 %token SPECIFICATION
 %token SPECTEST
-%token STATIC 
-%token STATICINVOKE 
-%token STRICTFP 
-%token SYNCHRONIZED 
-%token TABLESWITCH   
-%token THROW  
-%token THROWS 
-%token TO 
-%token TRANSIENT 
+%token STATIC
+%token STATICINVOKE
+%token STRICTFP
+%token SYNCHRONIZED
+%token TABLESWITCH
+%token THROW
+%token THROWS
+%token TO
+%token TRANSIENT
 %token TRUE
-%token UNDERSCORE 
-%token UNKNOWN 
-%token USHR 
+%token UNDERSCORE
+%token UNKNOWN
+%token USHR
 %token VDASH
-%token VIRTUALINVOKE 
-%token VOID 
-%token VOLATILE 
+%token VIRTUALINVOKE
+%token VOID
+%token VOLATILE
 %token WAND
 %token WHERE
-%token WITH 
+%token WITH
 %token WITHOUT
-%token XOR 
+%token XOR
 
 /* === associativity and precedence === */
 
@@ -270,22 +270,22 @@ let field_signature2str fs =
 %left OROR
 %left MULT
 %left AND
-%left XOR 
+%left XOR
 %left MOD
-%left CMP 
-%left CMPG 
-%left CMPL 
-%left CMPEQ 
+%left CMP
+%left CMPG
+%left CMPL
+%left CMPEQ
 %left CMPNE
 %left CMPGT
 %left CMPGE
 %left CMPLT
 %left CMPLE
-%left SHL 
-%left SHR 
-%left USHR 
+%left SHL
+%left SHR
+%left USHR
 %left PLUS
-%left MINUS 
+%left MINUS
 %left DIV
 
 
@@ -315,10 +315,10 @@ let field_signature2str fs =
 %type <Spec.spec> spec
 
 %start symb_question_file
-%type <Core.symb_question list> symb_question_file 
+%type <Core.symb_question list> symb_question_file
 
 %start symb_test_file
-%type <Core.symb_test list> symb_test_file 
+%type <Core.symb_test list> symb_test_file
 
 %% /* rules */
 
@@ -334,24 +334,24 @@ spec_file:
    | IMPORT  STRING_CONSTANT  SEMICOLON spec_file{ (ImportEntry $2) :: $4 }
    | classspec spec_file { (NormalEntry $1) :: $2 }
 
-classspec: 
+classspec:
    | file_type class_name extends_clause implements_clause L_BRACE apf_defines exports_clause axioms_clause methods_specs R_BRACE  { {class_or_interface=$1;classname=$2;extends=$3;implements=$4;apf=$6;exports=$7;axioms=$8;methodspecs=$9} }
 
 
-apf_defines: 
+apf_defines:
    | apf_define apf_defines { $1 :: $2 }
    | /*empty*/ { [] }
 
-eq_as: 
+eq_as:
    | EQUALS { (* Deprecated *)} /* TODO(rgrig): Warn? */
    | AS {}
 
 apf_define:
-   | EXPORT identifier L_PAREN lvariable paramlist_question_mark R_PAREN eq_as formula SEMICOLON  
+   | EXPORT identifier L_PAREN lvariable paramlist_question_mark R_PAREN eq_as formula SEMICOLON
        { let a=match $5 with | Some b -> b | None -> [] in ($2,$4,a,$8,true) }
-   | DEFINE identifier L_PAREN lvariable paramlist_question_mark R_PAREN eq_as formula SEMICOLON  
+   | DEFINE identifier L_PAREN lvariable paramlist_question_mark R_PAREN eq_as formula SEMICOLON
        { let a=match $5 with | Some b -> b | None -> [] in ($2,$4,a,$8,false) }
-			
+
 exports_clause:
    | EXPORTS L_BRACE named_implication_star R_BRACE WHERE L_BRACE exportLocal_predicate_def_star R_BRACE { Some ($3,$7) }
 	 | /*empty*/ {None}
@@ -380,7 +380,7 @@ methods_specs:
    | /*empty*/ { [] }
 
 spec:
-   | L_BRACE formula R_BRACE L_BRACE formula R_BRACE exp_posts  {  {pre=$2;post=$5;excep=$7} } 
+   | L_BRACE formula R_BRACE L_BRACE formula R_BRACE exp_posts  {  {pre=$2;post=$5;excep=$7} }
 specs:
    | spec ANDALSO specs  { $1 :: $3 }
    | spec  {[$1]}
@@ -407,8 +407,8 @@ exp_posts_npv:
 
 
 modifier:
-   | ABSTRACT      {Abstract} 
-   | FINAL         {Final} 
+   | ABSTRACT      {Abstract}
+   | FINAL         {Final}
    | NATIVE        {Native}
    | PUBLIC        {Public}
    | PROTECTED     {Protected}
@@ -424,9 +424,9 @@ modifier:
 file_type:
    | CLASS  { ClassFile }
    | INTERFACE { InterfaceFile }
-       
+
 extends_clause:
-   | EXTENDS class_name_list { $2 } /* stephan mult inh */ 
+   | EXTENDS class_name_list { $2 } /* stephan mult inh */
    | /* empty */ { [] }
 ;
 implements_clause:
@@ -437,15 +437,15 @@ file_body:
    | L_BRACE member_list_star R_BRACE {$2}
 ;
 class_name_list:
-   | class_name { [$1] } 
+   | class_name { [$1] }
    | class_name COMMA class_name_list {$1::$3}
 ;
 modifier_list_star:
-   | /* empty */ { [] } 
+   | /* empty */ { [] }
    | modifier  modifier_list_star {$1::$2}
 ;
 member_list_star:
-   | /* empty */ { [] } 
+   | /* empty */ { [] }
    | member  member_list_star {$1::$2}
 ;
 member:
@@ -456,7 +456,7 @@ member:
 ;
 jtype:
    | VOID {Void}
-   | nonvoid_type {Non_void($1)} 
+   | nonvoid_type {Non_void($1)}
 ;
 parameter_list:
    | parameter { [$1] }
@@ -493,14 +493,14 @@ ensures_clause:
    | /* empty */ { None }
 ;
 base_type_no_name:
-   | BOOLEAN {Boolean}  
-   | BYTE {Byte}     
-   | CHAR {Char}     
-   | SHORT {Short}   
-   | INT {Int}      
-   | LONG {Long}    
-   | FLOAT {Float}  
-   | DOUBLE {Double} 
+   | BOOLEAN {Boolean}
+   | BYTE {Byte}
+   | CHAR {Char}
+   | SHORT {Short}
+   | INT {Int}
+   | LONG {Long}
+   | FLOAT {Float}
+   | DOUBLE {Double}
    | NULL {Null_type}
 ;
 base_type:
@@ -508,16 +508,16 @@ base_type:
    | class_name {Class_name $1}
 ;
 integer_constant:
-   | INTEGER_CONSTANT { $1 } 
+   | INTEGER_CONSTANT { $1 }
 ;
 integer_constant_long:
-   | INTEGER_CONSTANT_LONG { $1 } 
+   | INTEGER_CONSTANT_LONG { $1 }
 ;
 float_constant:
-   | FLOAT_CONSTANT { $1 } 
+   | FLOAT_CONSTANT { $1 }
 ;
 string_constant:
-   | STRING_CONSTANT { $1 } 
+   | STRING_CONSTANT { $1 }
 ;
 quoted_name:
    | QUOTED_NAME { $1 }
@@ -537,9 +537,9 @@ identifier:
 /*  | RULE   { "rule" }
   | EMPRULE   { "emprule" }
   | PURERULE   { "purerule" }
-  | WITHOUT   { "without" }  
-  | NOTIN   { "notin" }  
-  | NOTINCONTEXT   { "notincontext" }  
+  | WITHOUT   { "without" }
+  | NOTIN   { "notin" }
+  | NOTINCONTEXT   { "notincontext" }
   | WHERE   { "where" }*/
 /*  | ORTEXT   { "or" }*/
 /*  | ABSRULE   { "abstraction" }*/
@@ -569,9 +569,9 @@ method_body:
    | L_BRACE declaration_or_statement_list_star catch_clause_list_star R_BRACE  {Some($2,$3)}
 ;
 source_pos_tag:
-   | SOURCE_POS_TAG COLON identifier COLON integer_constant identifier COLON integer_constant identifier COLON integer_constant identifier COLON integer_constant identifier COLON full_identifier SOURCE_POS_TAG_CLOSE 
+   | SOURCE_POS_TAG COLON identifier COLON integer_constant identifier COLON integer_constant identifier COLON integer_constant identifier COLON integer_constant identifier COLON full_identifier SOURCE_POS_TAG_CLOSE
    { {begin_line=$5; begin_column=$11; end_line=$8; end_column=$14} }
-; 
+;
 source_pos_tag_option:
    | /* empty */ { None }
    | source_pos_tag { Some($1) }
@@ -581,18 +581,18 @@ declaration_or_statement:
    | statement source_pos_tag_option { DOS_stm($1, $2) }
 ;
 declaration_or_statement_list_star:
-   | /* empty */ { [] } 
+   | /* empty */ { [] }
    | declaration_or_statement  declaration_or_statement_list_star {$1::$2}
 ;
 declaration:
    | jimple_type local_name_list SEMICOLON {Declaration($1,$2)}
 ;
 catch_clause_list_star:
-   | /* empty */ { [] } 
+   | /* empty */ { [] }
    | catch_clause  catch_clause_list_star {$1::$2}
 ;
 jimple_type:
-   | UNKNOWN {None} 
+   | UNKNOWN {None}
    | nonvoid_type {Some(Non_void($1))}
    | NULL_TYPE {None}
 ;
@@ -608,22 +608,22 @@ case_stmt_list_plus:
    | case_stmt case_stmt_list_plus { $1::$2 }
 ;
 statement:
-   | label_name COLON  {Label_stmt($1)}            
-   | BREAKPOINT SEMICOLON  {Breakpoint_stmt}   
-   | ENTERMONITOR immediate SEMICOLON {Entermonitor_stmt($2)} 
-   | EXITMONITOR immediate SEMICOLON  {Exitmonitor_stmt($2)}  
-   | TABLESWITCH L_PAREN immediate R_PAREN L_BRACE case_stmt_list_plus R_BRACE SEMICOLON {Tableswitch_stmt($3,$6)}  
-   | LOOKUPSWITCH L_PAREN immediate R_PAREN L_BRACE case_stmt_list_plus R_BRACE SEMICOLON {Lookupswitch_stmt($3,$6)} 
-   | local_name COLON_EQUALS at_identifier SEMICOLON {Identity_no_type_stmt($1,$3)}  
-   | local_name COLON_EQUALS at_identifier jtype SEMICOLON  {Identity_stmt($1,$3,$4)}     
-   | variable EQUALS expression SEMICOLON  {Assign_stmt($1,$3)}       
-   | IF bool_expr goto_stmt     {If_stmt($2,$3)}           
-   | goto_stmt {Goto_stmt($1)}         
-   | NOP SEMICOLON     {Nop_stmt}          
-   | RET immediate_question_mark SEMICOLON     {Ret_stmt($2)}          
-   | RETURN immediate_question_mark SEMICOLON  {Return_stmt($2)}       
-   | THROW immediate SEMICOLON     {Throw_stmt($2)}        
-   | invoke_expr SEMICOLON     {Invoke_stmt($1)}       
+   | label_name COLON  {Label_stmt($1)}
+   | BREAKPOINT SEMICOLON  {Breakpoint_stmt}
+   | ENTERMONITOR immediate SEMICOLON {Entermonitor_stmt($2)}
+   | EXITMONITOR immediate SEMICOLON  {Exitmonitor_stmt($2)}
+   | TABLESWITCH L_PAREN immediate R_PAREN L_BRACE case_stmt_list_plus R_BRACE SEMICOLON {Tableswitch_stmt($3,$6)}
+   | LOOKUPSWITCH L_PAREN immediate R_PAREN L_BRACE case_stmt_list_plus R_BRACE SEMICOLON {Lookupswitch_stmt($3,$6)}
+   | local_name COLON_EQUALS at_identifier SEMICOLON {Identity_no_type_stmt($1,$3)}
+   | local_name COLON_EQUALS at_identifier jtype SEMICOLON  {Identity_stmt($1,$3,$4)}
+   | variable EQUALS expression SEMICOLON  {Assign_stmt($1,$3)}
+   | IF bool_expr goto_stmt     {If_stmt($2,$3)}
+   | goto_stmt {Goto_stmt($1)}
+   | NOP SEMICOLON     {Nop_stmt}
+   | RET immediate_question_mark SEMICOLON     {Ret_stmt($2)}
+   | RETURN immediate_question_mark SEMICOLON  {Return_stmt($2)}
+   | THROW immediate SEMICOLON     {Throw_stmt($2)}
+   | invoke_expr SEMICOLON     {Invoke_stmt($1)}
 	 | L_BRACE lvariable_list R_BRACE COLON spec SEMICOLON {Spec_stmt($2,$5)}
 ;
 immediate_question_mark:
@@ -641,8 +641,8 @@ minus_question_mark:
    | /* emtpy */  { Positive }
 ;
 case_label:
-   | CASE minus_question_mark integer_constant  {Case_label($2,$3)} 
-   | DEFAULT     {Case_label_default}  
+   | CASE minus_question_mark integer_constant  {Case_label($2,$3)}
+   | DEFAULT     {Case_label_default}
 ;
 goto_stmt:
    | GOTO label_name SEMICOLON {$2}
@@ -651,19 +651,19 @@ catch_clause:
    | CATCH class_name FROM label_name TO label_name WITH label_name SEMICOLON {Catch_clause($2,$4,$6,$8)}
 ;
 expression:
-   | new_expr   {$1}         
-   | L_PAREN nonvoid_type R_PAREN immediate {Cast_exp($2,$4)}        
-   | immediate INSTANCEOF nonvoid_type  {Instanceof_exp($1,$3)}  
-   | invoke_expr     {Invoke_exp $1}      
+   | new_expr   {$1}
+   | L_PAREN nonvoid_type R_PAREN immediate {Cast_exp($2,$4)}
+   | immediate INSTANCEOF nonvoid_type  {Instanceof_exp($1,$3)}
+   | invoke_expr     {Invoke_exp $1}
    | reference {Reference_exp $1}
    | binop_expr {$1}
    | unop_expr {$1}
-   | immediate {Immediate_exp $1}   
+   | immediate {Immediate_exp $1}
 ;
 new_expr:
-   | NEW base_type  {New_simple_exp($2)} 
-   | NEWARRAY L_PAREN  nonvoid_type R_PAREN  fixed_array_descriptor {New_array_exp($3,$5)}  
-   | NEWMULTIARRAY  L_PAREN base_type R_PAREN array_descriptor_list_plus  {New_multiarray_exp($3,$5)}  
+   | NEW base_type  {New_simple_exp($2)}
+   | NEWARRAY L_PAREN  nonvoid_type R_PAREN  fixed_array_descriptor {New_array_exp($3,$5)}
+   | NEWMULTIARRAY  L_PAREN base_type R_PAREN array_descriptor_list_plus  {New_multiarray_exp($3,$5)}
 ;
 array_descriptor_list_plus:
    | array_descriptor { [$1] }
@@ -677,18 +677,18 @@ variable:
    |local_name {Var_name($1)}
 ;
 bool_expr:
-   |binop_expr     {$1} 
-   |unop_expr    {$1}  
+   |binop_expr     {$1}
+   |unop_expr    {$1}
 ;
 arg_list_question_mark:
    | arg_list { $1 }
    | /* empty */ { [] }
 ;
 invoke_expr:
-   |nonstatic_invoke local_name DOT method_signature L_PAREN arg_list_question_mark R_PAREN 
+   |nonstatic_invoke local_name DOT method_signature L_PAREN arg_list_question_mark R_PAREN
        {Invoke_nostatic_exp($1,$2,$4,$6)}
-   |STATICINVOKE method_signature L_PAREN  arg_list_question_mark R_PAREN  
-       {Invoke_static_exp($2,$4)}    
+   |STATICINVOKE method_signature L_PAREN  arg_list_question_mark R_PAREN
+       {Invoke_static_exp($2,$4)}
 ;
 binop_expr:
    |immediate binop immediate {Binop_exp($2,$1,$3)}
@@ -696,10 +696,10 @@ binop_expr:
 unop_expr:
    | unop immediate {Unop_exp($1,$2)}
 ;
-nonstatic_invoke:  
-   | SPECIALINVOKE      {Special_invoke}   
-   | VIRTUALINVOKE      {Virtual_invoke}   
-   | INTERFACEINVOKE    {Interface_invoke} 
+nonstatic_invoke:
+   | SPECIALINVOKE      {Special_invoke}
+   | VIRTUALINVOKE      {Virtual_invoke}
+   | INTERFACEINVOKE    {Interface_invoke}
 ;
 parameter_list_question_mark:
    | parameter_list { $1 }
@@ -718,15 +718,15 @@ method_signature_short:
        { $1,$2,$3,$5 }
 ;
 reference:
-   |array_ref  {$1} 
-   |field_ref  {$1} 
+   |array_ref  {$1}
+   |field_ref  {$1}
 ;
 array_ref:
   identifier fixed_array_descriptor {Array_ref($1,$2)}
 ;
 field_ref:
-   |local_name DOT field_signature     { Field_local_ref($1,$3)} 
-   |field_signature {Field_sig_ref($1)}   
+   |local_name DOT field_signature     { Field_local_ref($1,$3)}
+   |field_signature {Field_sig_ref($1)}
 ;
 field_signature:
     CMPLT class_name COLON jtype name CMPGT  {Field_signature($2,$4,$5)}
@@ -739,70 +739,70 @@ arg_list:
    | immediate COMMA arg_list { $1::$3 }
 ;
 immediate:
-   |local_name     { Immediate_local_name($1) }    
-   |constant    { Immediate_constant($1) } 
+   |local_name     { Immediate_local_name($1) }
+   |constant    { Immediate_constant($1) }
 ;
 constant:
-   | minus_question_mark integer_constant {Int_const($1,$2)} 
-   | minus_question_mark integer_constant_long {Int_const_long($1,$2)} 
+   | minus_question_mark integer_constant {Int_const($1,$2)}
+   | minus_question_mark integer_constant_long {Int_const_long($1,$2)}
    | minus_question_mark  float_constant  {Float_const($1,$2)}
-   | string_constant     {String_const($1)}  
-   | CLASS string_constant {Clzz_const($2)}    
-   | NULL {Null_const}    
+   | string_constant     {String_const($1)}
+   | CLASS string_constant {Clzz_const($2)}
+   | NULL {Null_const}
 ;
 binop_no_mult:
-   | AND {And}   
-   | OR  {Jparsetree.Or}    
-   | XOR {Xor}   
-   | MOD {Mod}   
-   | CMP {Cmp}   
-   | CMPG {Cmpg}  
-   | CMPL {Cmpl}  
-   | CMPEQ {Cmpeq} 
-   | CMPNE {Cmpne} 
-   | CMPGT {Cmpgt} 
-   | CMPGE {Cmpge} 
-   | CMPLT {Cmplt} 
-   | CMPLE {Cmple}   
-   | SHL {Shl}   
-   | SHR {Shr}   
-   | USHR {Ushr}  
-   | PLUS {Plus}  
-   | MINUS {Minus} 
-   | DIV {Div}   
+   | AND {And}
+   | OR  {Jparsetree.Or}
+   | XOR {Xor}
+   | MOD {Mod}
+   | CMP {Cmp}
+   | CMPG {Cmpg}
+   | CMPL {Cmpl}
+   | CMPEQ {Cmpeq}
+   | CMPNE {Cmpne}
+   | CMPGT {Cmpgt}
+   | CMPGE {Cmpge}
+   | CMPLT {Cmplt}
+   | CMPLE {Cmple}
+   | SHL {Shl}
+   | SHR {Shr}
+   | USHR {Ushr}
+   | PLUS {Plus}
+   | MINUS {Minus}
+   | DIV {Div}
 ;
 binop_val_no_multor:
-   | AND {And}   
-   | XOR {Xor}   
-   | MOD {Mod}   
-   | SHL {Shl}   
-   | SHR {Shr}   
-   | USHR {Ushr}  
-   | PLUS {Plus}  
-   | MINUS {Minus} 
-   | DIV {Div}   
-//   | OR  {Jparsetree.Or}    
+   | AND {And}
+   | XOR {Xor}
+   | MOD {Mod}
+   | SHL {Shl}
+   | SHR {Shr}
+   | USHR {Ushr}
+   | PLUS {Plus}
+   | MINUS {Minus}
+   | DIV {Div}
+//   | OR  {Jparsetree.Or}
 ;
 binop_cmp:
-   | CMP {Cmp}   
-   | CMPG {Cmpg}  
-   | CMPL {Cmpl}  
-   | CMPEQ {Cmpeq} 
-   | CMPNE {Cmpne} 
-   | CMPGT {Cmpgt} 
-   | CMPGE {Cmpge} 
-   | CMPLT {Cmplt} 
-   | CMPLE {Cmple}   
+   | CMP {Cmp}
+   | CMPG {Cmpg}
+   | CMPL {Cmpl}
+   | CMPEQ {Cmpeq}
+   | CMPNE {Cmpne}
+   | CMPGT {Cmpgt}
+   | CMPGE {Cmpge}
+   | CMPLT {Cmplt}
+   | CMPLE {Cmple}
 ;
-binop: 
-   |  binop_no_mult { $1 } 
+binop:
+   |  binop_no_mult { $1 }
    |  MULT { Mult }
 unop:
-   | LENGTHOF   {Lengthof} 
+   | LENGTHOF   {Lengthof}
    | NEG {Neg}
 ;
 class_name:
-   | quoted_name     {Quoted_clname $1} 
+   | quoted_name     {Quoted_clname $1}
    | identifier {Identifier_clname $1}
    | full_identifier {Full_identifier_clname $1}
 ;
@@ -843,13 +843,13 @@ lvariable_npv_list:
    | lvariable_npv_list_ne { $1 }
 ;
 
-fldlist: 
+fldlist:
    | identifier EQUALS jargument { [($1,$3)] }
    | /*empty*/ { [] }
    | identifier EQUALS jargument SEMICOLON fldlist  { ($1,$3) :: $5 }
 ;
 
-fldlist_npv: 
+fldlist_npv:
    | identifier EQUALS jargument_npv { [($1,$3)] }
    | /*empty*/ { [] }
    | identifier EQUALS jargument_npv SEMICOLON fldlist_npv  { ($1,$3) :: $5 }
@@ -860,7 +860,7 @@ paramlist_question_mark:
    | COMMA paramlist { Some $2 }
    | /* empty */ { None }
 ;
-paramlist: 
+paramlist:
    | identifier EQUALS lvariable { [($1,Arg_var $3)] }
    | /*empty*/ { [] }
    | identifier EQUALS lvariable SEMICOLON fldlist  { ($1,Arg_var $3) :: $5 }
@@ -872,10 +872,10 @@ paramlist:
 jargument_npv:
    | RETURN { Arg_var (newPVar(Spec.name_ret_v1)) }
    | lvariable_npv {Arg_var ($1)}
-   | identifier L_PAREN jargument_npv_list R_PAREN {Arg_op($1,$3) }        
-   | INTEGER_CONSTANT {Arg_string(string_of_int $1)} 
+   | identifier L_PAREN jargument_npv_list R_PAREN {Arg_op($1,$3) }
+   | INTEGER_CONSTANT {Arg_string(string_of_int $1)}
    | MINUS INTEGER_CONSTANT {Arg_string("-" ^(string_of_int $2))}
-   | STRING_CONSTANT {Arg_string($1)} 
+   | STRING_CONSTANT {Arg_string($1)}
    | field_signature {Arg_string(field_signature2str $1)}
    | L_BRACE fldlist_npv R_BRACE {mkArgRecord $2}
    | L_PAREN jargument_npv binop_val_no_multor jargument_npv R_PAREN { Arg_op(Support_syntax.bop_to_prover_arg $3, [$2;$4]) }
@@ -894,10 +894,10 @@ jargument_npv_list:
 jargument:
    | RETURN { Arg_var (newPVar(Spec.name_ret_v1)) }
    | lvariable {Arg_var ($1)}
-   | identifier L_PAREN jargument_list R_PAREN {Arg_op($1,$3) }        
-   | INTEGER_CONSTANT {Arg_string(string_of_int $1)} 
+   | identifier L_PAREN jargument_list R_PAREN {Arg_op($1,$3) }
+   | INTEGER_CONSTANT {Arg_string(string_of_int $1)}
    | MINUS INTEGER_CONSTANT {Arg_string("-" ^(string_of_int $2))}
-   | STRING_CONSTANT {Arg_string($1)} 
+   | STRING_CONSTANT {Arg_string($1)}
    | field_signature {Arg_string(field_signature2str $1)}
    | L_BRACE fldlist R_BRACE {mkArgRecord $2}
    | L_PAREN jargument binop_val_no_multor jargument R_PAREN { Arg_op(Support_syntax.bop_to_prover_arg $3, [$2;$4]) }
@@ -912,14 +912,14 @@ jargument_list:
 ;
 
 
-  
-formula: 
+
+formula:
    | /*empty*/  { [] }
    | EMP  { [] }
    | FALSE { mkFalse}
    | lvariable DOT jargument MAPSTO  jargument { [P_SPred("field", [Arg_var $1; $3; $5] )] }
-   | BANG identifier L_PAREN jargument_list R_PAREN { [P_PPred($2, $4)] } 
-   | identifier L_PAREN jargument_list R_PAREN 
+   | BANG identifier L_PAREN jargument_list R_PAREN { [P_PPred($2, $4)] }
+   | identifier L_PAREN jargument_list R_PAREN
        {if List.length $3 =1 then [P_SPred($1,$3 @ [mkArgRecord []])] else [P_SPred($1,$3)] }
    | full_identifier L_PAREN jargument_list R_PAREN {if List.length $3 =1 then [P_SPred($1,$3 @ [mkArgRecord []])] else [P_SPred($1,$3)] }
    | formula MULT formula { pconjunction $1 $3 }
@@ -930,13 +930,13 @@ formula:
    | jargument EQUALS jargument { Support_syntax.bop_to_prover_pred (Cmpeq) $1 $3 }
    | L_PAREN formula R_PAREN { $2 }
 
-formula_npv: 
+formula_npv:
    | /*empty*/ { [] }
    | EMP  { []}
    | FALSE { mkFalse}
    | lvariable_npv DOT jargument_npv MAPSTO  jargument_npv { [P_SPred("field", [Arg_var $1; $3; $5] )] }
-   | BANG identifier L_PAREN jargument_npv_list R_PAREN { [P_PPred($2, $4)] } 
-   | identifier L_PAREN jargument_npv_list R_PAREN 
+   | BANG identifier L_PAREN jargument_npv_list R_PAREN { [P_PPred($2, $4)] }
+   | identifier L_PAREN jargument_npv_list R_PAREN
        {if List.length $3 =1 then [P_SPred($1,$3 @ [mkArgRecord []])] else [P_SPred($1,$3)] }
    | full_identifier L_PAREN jargument_npv_list R_PAREN {if List.length $3 =1 then [P_SPred($1,$3 @ [mkArgRecord []])] else [P_SPred($1,$3)] }
    | formula_npv MULT formula_npv { pconjunction $1 $3 }
@@ -949,17 +949,17 @@ formula_npv:
 
 
 
-spatial_at: 
+spatial_at:
    | jargument DOT field_signature MAPSTO  jargument { P_SPred("field", [$1; Arg_string(field_signature2str $3); $5] ) }
-   | identifier L_PAREN jargument_list R_PAREN 
+   | identifier L_PAREN jargument_list R_PAREN
        {if List.length $3 =1 then P_SPred($1,$3 @ [mkArgRecord []]) else P_SPred($1,$3) }
    | full_identifier L_PAREN jargument_list R_PAREN {if List.length $3 =1 then P_SPred($1,$3 @ [mkArgRecord []]) else P_SPred($1,$3) }
 
-spatial_list_ne: 
+spatial_list_ne:
    | spatial_at MULT spatial_list_ne  { $1 :: $3 }
    | spatial_at    { [ $1 ] }
 
-spatial_list: 
+spatial_list:
    | spatial_list_ne { $1 }
    |    { [] }
 
@@ -996,10 +996,10 @@ without_simp:
 varterm:
    | lvariable_list { Var(vs_from_list $1) }
 
-clause: 
+clause:
    | varterm NOTINCONTEXT { NotInContext($1) }
    | varterm NOTIN jargument { NotInTerm($1,$3) }
-   | formula PUREGUARD{ PureGuard($1) }   /* TODO: check that the formula here is really pure */ 
+   | formula PUREGUARD{ PureGuard($1) }   /* TODO: check that the formula here is really pure */
 
 clause_list:
    | clause  { [$1] }
@@ -1011,28 +1011,28 @@ where:
 
 ifclause:
 /*   | IF plain_list { $2 }*/
-   | /* empty plain term */ { [] } 
+   | /* empty plain term */ { [] }
    | IF formula {$2}
 
 /* Need to do tests that simplified rules are fine for pure bits.*/
 equiv_rule:
-   | EQUIV identifier_op COLON formula WAND formula BIMP formula without_simp  { EquivRule($2,$4,$6,$8,$9) } 
-   | EQUIV identifier_op COLON formula IMP formula BIMP formula without_simp  { EquivRule($2,$4,$6,$8,$9) } 
-   | EQUIV identifier_op COLON formula IMP formula without_simp  { EquivRule($2,$4,$6,mkEmpty,$7) } 
-   | EQUIV identifier_op COLON formula BIMP formula without_simp  { EquivRule($2,mkEmpty,$4,$6,$7) } 
+   | EQUIV identifier_op COLON formula WAND formula BIMP formula without_simp  { EquivRule($2,$4,$6,$8,$9) }
+   | EQUIV identifier_op COLON formula IMP formula BIMP formula without_simp  { EquivRule($2,$4,$6,$8,$9) }
+   | EQUIV identifier_op COLON formula IMP formula without_simp  { EquivRule($2,$4,$6,mkEmpty,$7) }
+   | EQUIV identifier_op COLON formula BIMP formula without_simp  { EquivRule($2,mkEmpty,$4,$6,$7) }
 
 rule:
    |  CONSTRUCTOR identifier  { NormalEntry( ConsDecl($2) ) }
    |  IMPORT STRING_CONSTANT SEMICOLON  { ImportEntry($2) }
    |  RULE identifier_op COLON sequent without where IF sequent_list_or_list { NormalEntry(SeqRule($4,$8,$2,$5,$6)) }
-   |  REWRITERULE identifier_op COLON identifier L_PAREN jargument_list R_PAREN EQUALS jargument ifclause without_simp where 
+   |  REWRITERULE identifier_op COLON identifier L_PAREN jargument_list R_PAREN EQUALS jargument ifclause without_simp where
 	 { NormalEntry(RewriteRule({function_name=$4;
 				     arguments=$6;
 				     result=$9;
 				     guard={without_form=$11;rewrite_where=$12;if_form=$10};
 				     rewrite_name=$2;
 				     saturate=false})) }
-   |  REWRITERULE identifier_op MULT COLON identifier L_PAREN jargument_list R_PAREN EQUALS jargument ifclause without_simp where 
+   |  REWRITERULE identifier_op MULT COLON identifier L_PAREN jargument_list R_PAREN EQUALS jargument ifclause without_simp where
 	 { NormalEntry(RewriteRule({function_name=$5;
 				     arguments=$7;
 				     result=$10;
@@ -1042,7 +1042,7 @@ rule:
 				     rewrite_name=$2;
 				     saturate=true})) }
    |  ABSRULE identifier_op COLON formula LEADSTO formula where  { let seq=(mkEmpty,$4,mkEmpty,mkEmpty) in
-							       let wo=(mkEmpty,mkEmpty) in 
+							       let wo=(mkEmpty,mkEmpty) in
 							       let seq2=(mkEmpty,$6,mkEmpty,mkEmpty) in
 							       let seq_list=[[seq2]] in
 							       NormalEntry(SeqRule(seq,seq_list,$2,wo,$7)) }
@@ -1055,7 +1055,7 @@ rule_file:
 
 
 
-boolean: 
+boolean:
    | TRUE { true }
    | FALSE { false }
 ;
@@ -1066,7 +1066,7 @@ question:
    | IMPLICATION COLON formula_npv VDASH formula_npv {Implication($3,$5)}
    | INCONSISTENCY COLON formula_npv {Inconsistency($3)}
    | FRAME COLON formula_npv VDASH formula_npv {Frame($3,$5)}
-   | ABS COLON formula_npv {Abs($3)} 
+   | ABS COLON formula_npv {Abs($3)}
    | ABDUCTION COLON formula_npv VDASH formula_npv {Abduction($3,$5)}
 
 
@@ -1074,46 +1074,46 @@ test:
    | IMPLICATION COLON formula_npv VDASH formula_npv QUESTIONMARK boolean {TImplication($3,$5,$7)}
    | INCONSISTENCY COLON formula_npv QUESTIONMARK boolean {TInconsistency($3,$5)}
    | FRAME COLON formula_npv VDASH formula_npv QUESTIONMARK formula_npv {TFrame($3,$5,$7)}
-   | ABS COLON formula_npv QUESTIONMARK formula_npv {TAbs($3,$5)} 
+   | ABS COLON formula_npv QUESTIONMARK formula_npv {TAbs($3,$5)}
 
 
 
-question_file: 
+question_file:
    | EOF  { [] }
    | question question_file  {$1 :: $2}
 
 
-test_file: 
+test_file:
    | EOF  { [] }
    | test test_file  {$1 :: $2}
 
 
-symb_question_file: 
+symb_question_file:
    | EOF  { [] }
    | symb_question symb_question_file  {$1 :: $2}
-   
-   
-symb_test_file: 
+
+
+symb_test_file:
    | EOF  { [] }
    | symb_test symb_test_file  {$1 :: $2}
-   
 
-symb_question: 
+
+symb_question:
    | SPECIFICATION identifier COLON spec QUESTIONMARK core_stmt_list  {Specification($2,$4,$6)}
 
-symb_test: 
+symb_test:
    | SPECTEST identifier COLON spec QUESTIONMARK boolean core_stmt_list {SpecTest($2,$4,$7,$6)}
 
 core_stmt_list:
-   |  core_stmt SEMICOLON core_stmt_list  { $1 :: $3 } 
+   |  core_stmt SEMICOLON core_stmt_list  { $1 :: $3 }
    |  /* empty */  { [] }
 
-core_stmt: 
+core_stmt:
    |  END   { End }
    |  NOP  { Nop_stmt_core }
    |  ASSIGN core_assn_args spec L_PAREN jargument_npv_list R_PAREN
-         { Assignment_core($2, $3, $5) } 
-   |  GOTO label_list { Goto_stmt_core $2 } 
+         { Assignment_core($2, $3, $5) }
+   |  GOTO label_list { Goto_stmt_core $2 }
    |  LABEL IDENTIFIER  { Label_stmt_core $2 }
 
 core_assn_args:

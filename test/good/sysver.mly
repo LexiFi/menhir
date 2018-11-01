@@ -10,7 +10,7 @@
 %token PACKED // packed
 %token D_READMEMH // $readmemh
 %token IFF // iff
-%token TOKEN_NEWLINE // 
+%token TOKEN_NEWLINE //
 
 %token PRIMITIVE // primitive
 %token U_WIRE // uwire
@@ -574,6566 +574,6563 @@ x_digit: X_DIGIT { X_DIGIT $1 };
 /* */
 /* */
 /* */
-/* 
+/*
 
 
 
 
- Annex AFormal Syntax 
+ Annex AFormal Syntax
 
 
 
 
 
- 
+
 Annex A
- 
-
-Formal Syntax 
 
 
-
- 
-(Normative) 
-
-
- 
-The formal syntax of SystemVerilog is described using Backus-Naur Form (BNF). The conventions used are: 
+Formal Syntax
 
 
 
- 
-Keywords and punctuation are in 
+
+(Normative)
+
+
+
+The formal syntax of SystemVerilog is described using Backus-Naur Form (BNF). The conventions used are:
+
+
+
+
+Keywords and punctuation are in
 bold
  text.
 
 
- 
-Syntactic categories are named in non-bold text. 
+
+Syntactic categories are named in non-bold text.
 
 
- 
+
 A vertical bar (
- | 
+ |
 ) separates alternatives.
 
 
- 
+
 Square brackets (
- [ ] 
+ [ ]
 ) enclose optional items.
 
 
- 
+
 Braces (
- { } 
+ { }
 ) enclose items which can be repeated zero or more times.
 
 
 
- 
+
 The full syntax and semantics of Verilog and SystemVerilog are not described solely using BNF. The normative text description contained within the chapters of the IEEE 1364-2001 Verilog standard and this SystemVerilog document provide additional details on the syntax and semantics described in this BNF.
 
 
 
- 
-A.1 Source text 
+
+A.1 Source text
 
 
 
 
- 
-A.1.1 Library source text 
+
+A.1.1 Library source text
  */
 
 
- 
+
      /* library_text ::= { library_descriptions   } */
 
 
- 
-  
-	 
-	 
+
+
+
+
 	 /* library_descriptions ::= library_declaration | include_statement | config_declaration */
 
 
- 
-  
-	
 
-    
 
-   
-		 
 
-   
 
-    
+
+
+
+
+
+
+
+
 
  /* library_declaration ::= 'library' library_identifier file_path_spec { ','   file_path_spec   } [ '-incdir'   file_path_spec   { ','   file_path_spec   }   ] ';' */
 
 
- 
+
    /* file_path_spec ::= 'file_path' */
 
 
- 
-  
 
-  
+
+
+
 
  /* include_statement ::= 'include' '<' file_path_spec '>' ';' */
-/* 
+/*
 
 
 
 
- 
-A.1.2 Configuration source text 
+
+A.1.2 Configuration source text
  */
 
 
- 
-  
-	
 
-  
 
- 
-		 
-		   
-	
+
+
+
+
+
+
+
+
 
  /* config_declaration ::= 'config' config_identifier ';' design_statement { config_rule_statement   } 'endconfig' */
 
 
- 
-  
 
-   
-  
-   
+
+
+
+
+
 
  /* design_statement ::= 'design' { [ library_identifier   '.'   ]   cell_identifier   } ';' */
 
 
- 
-  
-	  
-	
- 
- 
-	
- 
- 
-	
- 
- 
-	
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  /* config_rule_statement ::= default_clause liblist_clause | inst_clause liblist_clause | inst_clause use_clause | cell_clause liblist_clause | cell_clause use_clause */
 
 
- 
-  
+
+
 
  /* default_clause ::= 'default' */
 
 
- 
-  
+
+
 
   /* inst_clause ::= 'instance' inst_name */
 
 
- 
-    
- 
+
+
+
   /* inst_name ::= topmodule_identifier { '.'   instance_identifier   } */
 
 
- 
-  
- 
-  
- 
+
+
+
+
+
   /* cell_clause ::= 'cell' [ library_identifier   '.'   ] cell_identifier */
 
 
- 
-  
+
+
 
   /* liblist_clause ::= 'liblist' { library_identifier   } */
 
 
- 
-  
 
-  
-  
-   
-  
+
+
+
+
+
+
  /* use_clause ::= 'use' [ library_identifier   '.'   ] cell_identifier [ ':'   'config'   ] */
-/* 
+/*
 
 
 
 
- 
-A.1.3 
- 
-Module and primitive source text 
+
+A.1.3
+
+Module and primitive source text
  */
 
 
- 
+
         /* source_text ::= [ timeunits_declaration   ] { description   } */
 
 
- 
-  
-	 
-	 
-	 
+
+
+
+
+
 	 /* description ::= module_declaration | udp_declaration | module_root_item | statement_or_null */
 
 
- 
-  
-	           
-		 
+
+
+
+
 
  /* module_nonansi_header ::= { attribute_instance   } module_keyword [ lifetime   ] module_identifier [ parameter_port_list   ] list_of_ports ';' */
 
 
- 
-  
-	           
-		   
+
+
+
+
 
  /* module_ansi_header ::= { attribute_instance   } module_keyword [ lifetime   ] module_identifier [ parameter_port_list   ] [ list_of_port_declarations   ] ';' */
 
 
- 
-  
-	       
-		
 
-  
 
-   
-	       
-		
 
-  
 
-   
-	        
-   
- 
-		      
 
-  
 
-   
-	
 
-  
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* module_declaration ::= module_nonansi_header [ timeunits_declaration   ] { module_item   } 'endmodule' [ ':'   module_identifier   ] | module_ansi_header [ timeunits_declaration   ] { non_port_module_item   } 'endmodule' [ ':'   module_identifier   ] | { attribute_instance   } module_keyword [ lifetime   ] module_identifier '(' '.*' ')' ';' [ timeunits_declaration   ] { module_item   } 'endmodule' [ ':'   module_identifier   ] | 'extern' module_nonansi_header | 'extern' module_ansi_header */
 
 
- 
-  
 
-  
+
+
+
 
  /* module_keyword ::= 'module' | 'macromodule' */
 
 
- 
-  
-	   
 
-     
-		    
+
+
+
+
+
 
  /* interface_nonansi_header ::= { attribute_instance   } 'interface' [ lifetime   ] interface_identifier [ parameter_port_list   ] list_of_ports ';' */
 
 
- 
-  
-	  
 
-     
-		      
+
+
+
+
+
 
  /* interface_ansi_header ::= { attribute_instance   } 'interface' [ lifetime   ] interface_identifier [ parameter_port_list   ] [ list_of_port_declarations   ] ';' */
 
 
- 
-  
-	       
-		
 
-  
 
-   
-	       
-		
 
-  
 
-   
-	   
 
-  
-   
- 
-		      
-	
 
-  
 
-   
-	
 
-  
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* interface_declaration ::= interface_nonansi_header [ timeunits_declaration   ] { interface_item   } 'endinterface' [ ':'   interface_identifier   ] | interface_ansi_header [ timeunits_declaration   ] { non_port_interface_item   } 'endinterface' [ ':'   interface_identifier   ] | { attribute_instance   } 'interface' interface_identifier '(' '.*' ')' ';' [ timeunits_declaration   ] { interface_item   } 'endinterface' [ ':'   interface_identifier   ] | 'extern' interface_nonansi_header | 'extern' interface_ansi_header */
 
 
- 
-  
-	   
 
-     
-		    
+
+
+
+
+
 
  /* program_nonansi_header ::= { attribute_instance   } 'program' [ lifetime   ] program_identifier [ parameter_port_list   ] list_of_ports ';' */
 
 
- 
-  
-	  
 
-     
-		      
+
+
+
+
+
 
  /* program_ansi_header ::= { attribute_instance   } 'program' [ lifetime   ] program_identifier [ parameter_port_list   ] [ list_of_port_declarations   ] ';' */
 
 
- 
-  
-	       
-		
 
-  
 
-   
-	       
-		
 
-  
 
-   
-	   
 
-  
-   
- 
-		      
-	
 
-  
 
-   
-	
 
-  
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* program_declaration ::= program_nonansi_header [ timeunits_declaration   ] { program_item   } 'endprogram' [ ':'   program_identifier   ] | program_ansi_header [ timeunits_declaration   ] { non_port_program_item   } 'endprogram' [ ':'   program_identifier   ] | { attribute_instance   } 'program' program_identifier '(' '.*' ')' ';' [ timeunits_declaration   ] { program_item   } 'endprogram' [ ':'   program_identifier   ] | 'extern' program_nonansi_header | 'extern' program_ansi_header */
 
 
- 
-  
-	    
 
-  
 
-        
-		 
 
-   
 
-       
-	
 
-  
+
+
+
+
+
+
+
+
+
+
 
   /* class_declaration ::= { attribute_instance   } [ 'virtual'   ] 'class' [ lifetime   ] class_identifier [ parameter_port_list   ] [ 'extends'   class_identifier   ] ';' [ timeunits_declaration   ] { class_item   } 'endclass' [ ':'   class_identifier   ] */
 
 
- 
-  
-	
 
-   
-	
 
-   
-	
 
-   
-	
 
-   
-	
 
-   
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
 
    /* timeunits_declaration ::= 'timeunit' time_literal ';' | 'timeprecision' time_literal ';' | 'timeunit' time_literal ';' 'timeprecision' time_literal ';' | 'timeprecision' time_literal ';' 'timeunit' time_literal ';' */
-/* 
+/*
 
 
 
 
- 
-A.1.4 
- 
-Module parameters and ports 
+
+A.1.4
+
+Module parameters and ports
  */
 
 
- 
-  
- 
-   
 
-   
+
+
+
+
+
 
  /* parameter_port_list ::= '#' '(' parameter_declaration { ','   parameter_declaration   } ')' */
 
 
- 
-  
 
-   
 
-   
+
+
+
+
 
  /* list_of_ports ::= '(' port { ','   port   } ')' */
 
 
- 
-  
-	
 
-   
 
-   
 
- 
-	
- 
+
+
+
+
+
+
+
+
  /* list_of_port_declarations ::= '(' port_declaration { ','   port_declaration   } ')' | '(' ')' */
 
 
- 
-  
-	    
-	    
-	    
-	    
+
+
+
+
+
+
 	    /* non_generic_port_declaration ::= { attribute_instance   } inout_declaration | { attribute_instance   } input_declaration | { attribute_instance   } output_declaration | { attribute_instance   } ref_declaration | { attribute_instance   } interface_port_declaration */
 
 
- 
-  
-	   
-	
 
-  
 
-    
+
+
+
+
+
+
 
  /* port ::= [ port_expression   ] | '.' port_identifier '(' [ port_expression   ] ')' */
 
 
- 
-  
-	 
-	
 
-   
 
-   
+
+
+
+
+
+
 
  /* port_expression ::= port_reference | { port_reference { ','   port_reference   } } */
 
 
- 
-  
-	  
 
-  
+
+
+
+
 
   /* port_reference ::= port_identifier [ [   constant_range_expression   ]   ] */
 
 
- 
-  
-	 
+
+
+
 	    /* port_declaration ::= non_generic_port_declaration | { attribute_instance   } generic_interface_port_declaration */
-/* 
+/*
 
 
 
 
- 
-A.1.5 
- 
-Module items 
+
+A.1.5
+
+Module items
  */
 
 
- 
-  
-	    
-	    
-	    
-	    
+
+
+
+
+
+
 	    /* module_common_item ::= { attribute_instance   } module_or_generate_item_declaration | { attribute_instance   } interface_instantiation | { attribute_instance   } program_instantiation | { attribute_instance   } concurrent_assertion_item | { attribute_instance   } bind_directive */
 
 
- 
-  
-	 
 
- 
+
+
+
+
 	 /* module_item ::= non_generic_port_declaration ';' | non_port_module_item */
 
 
- 
-  
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	 
-	   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* module_or_generate_item ::= { attribute_instance   } parameter_override | { attribute_instance   } continuous_assign | { attribute_instance   } gate_instantiation | { attribute_instance   } udp_instantiation | { attribute_instance   } module_instantiation | { attribute_instance   } initial_construct | { attribute_instance   } always_construct | { attribute_instance   } combinational_construct | { attribute_instance   } latch_construct | { attribute_instance   } ff_construct | { attribute_instance   } net_alias | { attribute_instance   } final_construct | module_common_item | { attribute_instance   } ';' */
 
 
- 
-  
-	    
-	    
-	 
-	 
-	 
+
+
+
+
+
+
+
 	 /* module_root_item ::= { attribute_instance   } module_instantiation | { attribute_instance   } local_parameter_declaration | interface_declaration | program_declaration | class_declaration | module_common_item */
 
 
- 
-  
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	
 
- 
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* module_or_generate_item_declaration ::= net_declaration | data_declaration | genvar_declaration | task_declaration | function_declaration | dpi_import_export | extern_constraint_declaration | extern_method_declaration | clocking_decl | 'default' 'clocking' clocking_identifier ';' */
 
 
- 
-  
-	    
-	    
-	 
-	    
 
- 
-	    
-	    
-	 
+
+
+
+
+
+
+
+
+
+
 	 /* non_port_module_item ::= { attribute_instance   } generated_module_instantiation | { attribute_instance   } local_parameter_declaration | module_or_generate_item | { attribute_instance   } parameter_declaration ';' | { attribute_instance   } specify_block | { attribute_instance   } specparam_declaration | class_declaration | module_declaration */
 
 
- 
-  
 
-  
+
+
+
 
  /* parameter_override ::= 'defparam' list_of_defparam_assignments ';' */
 
 
- 
-  
-	
 
-   
 
- 
-	
 
-   
+
+
+
+
+
+
+
 
  /* bind_directive ::= 'bind' module_identifier bind_instantiation ';' | 'bind' name_of_instance bind_instantiation ';' */
 
 
- 
-  
-	 
-	 
+
+
+
+
 	 /* bind_instantiation ::= program_instantiation | module_instantiation | interface_instantiation */
-/* 
+/*
 
 
 
 
- 
-A.1.6 
- 
-Interface items 
+
+A.1.6
+
+Interface items
  */
 
 
- 
-  
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
 
- 
-	 
-	    
-	    
-	    
-	   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* interface_or_generate_item ::= { attribute_instance   } continuous_assign | { attribute_instance   } initial_construct | { attribute_instance   } always_construct | { attribute_instance   } combinational_construct | { attribute_instance   } latch_construct | { attribute_instance   } ff_construct | { attribute_instance   } local_parameter_declaration | { attribute_instance   } parameter_declaration ';' | module_common_item | { attribute_instance   } modport_declaration | { attribute_instance   } extern_tf_declaration | { attribute_instance   } final_construct | { attribute_instance   } ';' */
 
 
- 
-  
-	
 
-  
-	
 
- 
 
- 
 
-  
+
+
+
+
+
+
+
+
 
  /* extern_tf_declaration ::= 'extern' method_prototype | 'extern' 'forkjoin' 'task' named_task_proto ';' */
 
 
- 
-  
-	 
 
- 
+
+
+
+
 	 /* interface_item ::= non_generic_port_declaration ';' | non_port_interface_item */
 
 
- 
-  
-    
-	    
-	 
-	 
-	 
+
+
+
+
+
+
+
 	 /* non_port_interface_item ::= { attribute_instance   } generated_interface_instantiation | { attribute_instance   } specparam_declaration | interface_or_generate_item | program_declaration | class_declaration | interface_declaration */
-/* 
+/*
 
 
 
 
- 
-A.1.7 
- 
-Program items 
+
+A.1.7
+
+Program items
  */
 
 
- 
-  
-	 
 
- 
+
+
+
+
 	 /* program_item ::= port_declaration ';' | non_port_program_item */
 
 
- 
-  
-	    
-	    
-	    
-	    
-	    
 
- 
-	    
-	    
+
+
+
+
+
+
+
+
+
+
 	 /* non_port_program_item ::= { attribute_instance   } continuous_assign | { attribute_instance   } module_or_generate_item_declaration | { attribute_instance   } specparam_declaration | { attribute_instance   } local_parameter_declaration | { attribute_instance   } parameter_declaration ';' | { attribute_instance   } initial_construct | { attribute_instance   } concurrent_assertion_item | class_declaration */
-/* 
+/*
 
 
 
 
- 
-A.1.8 
- 
-Class items 
+
+A.1.8
+
+Class items
  */
 
 
- 
+
 /* */
 
 
- 
-  
-	    
-	    
+
+
+
+
 	    /* class_item ::= { attribute_instance   } class_property | { attribute_instance   } class_method | { attribute_instance   } class_constraint */
 
 
- 
-  
-	    
-	
 
-       
 
-   
+
+
+
+
+
+
 
  /* class_property ::= { property_qualifier   } data_declaration | 'const' { class_item_qualifier   } data_type const_identifier [ '='   constant_expression   ] ';' */
 
 
- 
-  
-	    
-	    
-	
+
+
+
+
+
 
      /* class_method ::= { method_qualifier   } task_declaration | { method_qualifier   } function_declaration | 'extern' { method_qualifier   } method_prototype */
 
 
- 
-  
-	 
+
+
+
 	 /* class_constraint ::= constraint_prototype | constraint_declaration */
 
 
- 
 
-  
-	
 
- 
-	
 
- 
-	
+
+
+
+
+
+
+
 
  /* class_item_qualifier ::= 'static' | 'protected' | 'local' */
 
 
- 
 
-  
-	
 
- 
-	
 
- 
+
+
+
+
+
+
 	 /* property_qualifier ::= 'rand' | 'randc' | class_item_qualifier */
 
 
- 
 
-  
-	
 
- 
+
+
+
+
 	 /* method_qualifier ::= 'virtual' | class_item_qualifier */
 
 
- 
-  
-	
 
-  
 
- 
-	
 
-  
+
+
+
+
+
+
+
 
  /* method_prototype ::= 'task' named_task_proto ';' | 'function' named_function_proto ';' */
 
 
- 
-  
-	
 
-     
 
-  
-	
 
-     
+
+
+
+
+
+
+
 
   /* extern_method_declaration ::= 'function' [ lifetime   ] class_identifier '::' function_body_declaration | 'task' [ lifetime   ] class_identifier '::' task_body_declaration */
-/* 
+/*
 
 
 
 
- 
-A.1.9 
- 
-Constraints 
+
+A.1.9
+
+Constraints
  */
 
 
- 
-   
 
-  
 
-  
 
-    
+
+
+
+
+
 
  /* constraint_declaration ::= [ 'static'   ] 'constraint' constraint_identifier { { constraint_block   } } */
 
 
- 
-  
-	
 
-  
 
-  
 
- 
-	 
 
- 
 
-  
 
- 
 
- 
+
+
+
+
+
+
+
+
+
+
+
 	 /* constraint_block ::= 'solve' identifier_list 'before' identifier_list ';' | expression 'dist' { dist_list } ';' | constraint_expression */
 
 
- 
-  
-	 
 
- 
-	 
 
-  
-	
 
- 
 
-  
 
-   
+
+
+
+
+
+
+
+
+
+
 
    /* constraint_expression ::= expression ';' | expression '=>' constraint_set | 'if' '(' expression ')' constraint_set [ 'else'   constraint_set   ] */
 
 
- 
-  
-	 
-	
 
-    
+
+
+
+
+
 
  /* constraint_set ::= constraint_expression | { { constraint_expression   } } */
 
 
- 
-    
+
+
 
    /* dist_list ::= dist_item { ','   dist_item   } */
 
 
- 
-  
-	 
 
-  
-	 
+
+
+
+
+
 
   /* dist_item ::= value_range ':=' expression | value_range ':/' expression */
 
 
- 
-   
 
-  
+
+
+
 
   /* constraint_prototype ::= [ 'static'   ] 'constraint' constraint_identifier */
 
 
- 
-  
-	 
 
-  
 
-  
 
-  
 
-    
+
+
+
+
+
+
+
 
  /* extern_constraint_declaration ::= [ 'static'   ] 'constraint' class_identifier '::' constraint_identifier { { constraint_block   } } */
 
 
- 
-    
+
+
 
    /* identifier_list ::= identifier { ','   identifier   } */
-/* 
+/*
 
 
 
 
- 
-A.2 Declarations 
+
+A.2 Declarations
 
 
 
 
- 
-A.2.1 
- 
-Declaration types 
+
+A.2.1
+
+Declaration types
 
 
 
- 
-A.2.1.1 
- 
-Module parameter declarations 
+
+A.2.1.1
+
+Module parameter declarations
  */
 
 
- 
-  
-	
 
-           
 
- 
-	
 
- 
- 
- 
+
+
+
+
+
+
+
+
+
 
  /* local_parameter_declaration ::= 'localparam' [ signing   ] { packed_dimension   } [ range   ] list_of_param_assignments ';' | 'localparam' data_type list_of_param_assignments ';' */
 
 
- 
-  
-	
-
-           
-	
-
- 
- 
- 
-	
-
- 
 
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  /* parameter_declaration ::= 'parameter' [ signing   ] { packed_dimension   } [ range   ] list_of_param_assignments | 'parameter' data_type list_of_param_assignments | 'parameter' 'type' list_of_type_assignments */
 
 
- 
-  
-	
 
-     
+
+
+
+
 
  /* specparam_declaration ::= 'specparam' [ range   ] list_of_specparam_assignments ';' */
-/* 
+/*
 
 
 
 
- 
-A.2.1.2 
- 
-Port declarations 
+
+A.2.1.2
+
+Port declarations
  */
 
 
- 
-  
 
-	
-     
-	
+
+
+
+
+
 
    /* inout_declaration ::= 'inout' [ port_type   ] list_of_port_identifiers | 'inout' data_type list_of_variable_identifiers */
 
 
- 
- 
-	
 
-     
-	
+
+
+
+
+
 
    /* input_declaration ::= 'input' [ port_type   ] list_of_port_identifiers | 'input' data_type list_of_variable_identifiers */
 
 
- 
-  
-	
 
-     
-	
 
- 
- 
+
+
+
+
+
+
+
  /* output_declaration ::= 'output' [ port_type   ] list_of_port_identifiers | 'output' data_type list_of_variable_port_identifiers */
 
 
- 
-  
-	  
-	
- 
- 
- 
+
+
+
+
+
+
+
  /* interface_port_declaration ::= interface_identifier list_of_interface_identifiers | interface_identifier '.' modport_identifier list_of_interface_identifiers */
 
 
- 
-  
+
+
 
    /* ref_declaration ::= 'ref' data_type list_of_port_identifiers */
 
 
- 
-  
-	
 
-  
-	
 
- 
+
+
+
+
+
+
 
    /* generic_interface_port_declaration ::= 'interface' list_of_interface_identifiers | 'interface' '.' modport_identifier list_of_interface_identifiers */
-/* 
+/*
 
 
 
 
- 
-A.2.1.3 
- 
-Type declarations 
+
+A.2.1.3
+
+Type declarations
  */
 
 
- 
-  
-	 
-	 
+
+
+
+
 	 /* block_data_declaration ::= block_variable_declaration | constant_declaration | type_declaration */
 
 
- 
-  
 
-   
- 
+
+
+
+
 /* constant_declaration ::= 'const' data_type const_assignment ';' */
 
 
- 
-  
-	 
-	 
+
+
+
+
 	 /* data_declaration ::= variable_declaration | constant_declaration | type_declaration */
 
 
- 
-  
 
-  
+
+
+
 
  /* genvar_declaration ::= 'genvar' list_of_genvar_identifiers ';' */
 
 
- 
-  
-	    
-		    
 
- 
-	       
-		    
 
- 
-	  
 
-  
 
-     
-		        
 
- 
-	     
 
-  
 
-     
-		        
 
- 
-	
 
-       
-		    
 
- 
-	
 
-       
-		    
 
- 
-	
 
-     
 
-  
 
-     
-		        
 
- 
-	
 
-     
 
-  
 
-     
-		        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* net_declaration ::= net_type [ signing   ] [ delay3   ] list_of_net_identifiers ';' | net_type [ drive_strength   ] [ signing   ] [ delay3   ] list_of_net_decl_assignments ';' | net_type [ 'vectored'   |   'scalared'   ] [ signing   ] { packed_dimension   } range [ delay3   ] list_of_net_identifiers ';' | net_type [ drive_strength   ] [ 'vectored'   |   'scalared'   ] [ signing   ] { packed_dimension   } range [ delay3   ] list_of_net_decl_assignments ';' | 'trireg' [ charge_strength   ] [ signing   ] [ delay3   ] list_of_net_identifiers ';' | 'trireg' [ drive_strength   ] [ signing   ] [ delay3   ] list_of_net_decl_assignments ';' | 'trireg' [ charge_strength   ] [ 'vectored'   |   'scalared'   ] [ signing   ] { packed_dimension   } range [ delay3   ] list_of_net_identifiers ';' | 'trireg' [ drive_strength   ] [ 'vectored'   |   'scalared'   ] [ signing   ] { packed_dimension   } range [ delay3   ] list_of_net_decl_assignments ';' */
 
 
- 
-  
-	
 
-     
 
- 
-	
 
-  
 
-   
 
- 
-	
 
-  
 
-   
 
- 
-	
 
-      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* type_declaration ::= 'typedef' [ data_type   ] type_declaration_identifier ';' | 'typedef' hierarchical_identifier '.' type_identifier type_declaration_identifier ';' | 'typedef' [ 'class'   ] class_identifier ';' | 'typedef' class_identifier [ parameter_value_assignment   ] type_declaration_identifier ';' */
 
 
- 
-  
-	   
- 
- 
 
- 
-	 
- 
- 
+
+
+
+
+
+
+
+
+
 
  /* block_variable_declaration ::= [ lifetime   ] data_type list_of_variable_identifiers ';' | lifetime data_type list_of_variable_decl_assignments ';' */
 
 
- 
-  
-   
- 
- 
+
+
+
+
+
 
  /* variable_declaration ::= [ lifetime   ] data_type list_of_variable_identifiers_or_assignments ';' */
 
 
- 
-  
 
-  
+
+
+
 
  /* lifetime ::= 'static' | 'automatic' */
-/* 
+/*
 
 
 
 
 
- 
-A.2.2 
- 
-Declaration data types 
+
+A.2.2
+
+Declaration data types
 
 
 
- 
-A.2.2.1 
- 
-Net and variable types 
+
+A.2.2.1
+
+Net and variable types
  */
 
 
- 
+
        /* casting_type ::= simple_type | number | signing */
 
 
- 
-  
-	          
-	    
-	    
-	 
-	
 
- 
 
-    
 
-    
 
-    
-	
 
- 
 
-    
 
-    
 
-    
-	
 
-    
 
-    
 
- 
-	
 
-    
 
-    
 
- 
-	
 
-          
-		
 
-   
 
-    
 
-   
 
-    
 
- 
-	
 
- 
-	
 
- 
-	
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	 /* data_type ::= integer_vector_type [ signing   ] { packed_dimension   } [ range   ] | integer_atom_type [ signing   ] | type_declaration_identifier { packed_dimension   } | non_integer_type | 'struct' 'packed' [ signing   ] { { struct_union_member   } } { packed_dimension   } | 'union' 'packed' [ signing   ] { { struct_union_member   } } { packed_dimension   } | 'struct' [ signing   ] { { struct_union_member   } } | 'union' [ signing   ] { { struct_union_member   } } | 'enum' [ integer_type   [ signing   ]   { packed_dimension   }   ] { enum_identifier [ '='   constant_expression   ] { ','   enum_identifier   [ '='   constant_expression   ]   } } | 'string' | 'event' | 'chandle' | class_scope_type_identifier */
 
 
- 
- 
-	 
 
-   
 
-   
-	 
 
-   
+
+
+
+
+
+
+
 
    /* class_scope_type_identifier ::= class_identifier '::' { class_identifier   '::'   } type_declaration_identifier | class_identifier '::' { class_identifier   '::'   } class_identifier */
 
 
- 
+
      /* integer_type ::= integer_vector_type | integer_atom_type */
 
 
- 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
 
  /* integer_atom_type ::= 'byte' | 'shortint' | 'int' | 'longint' | 'integer' */
 
 
- 
-  
 
-  
 
-  
+
+
+
+
 
  /* integer_vector_type ::= 'bit' | 'logic' | 'reg' */
 
 
- 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
 
  /* non_integer_type ::= 'time' | 'shortreal' | 'real' | 'realtime' */
 
 
- 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
 
  /* net_type ::= 'supply0' | 'supply1' | 'tri' | 'triand' | 'trior' | 'tri0' | 'tri1' | 'wire' | 'wand' | 'wor' */
 
 
- 
-  
-	 
-	       
-	
 
-       
+
+
+
+
+
+
 	       /* port_type ::= data_type | net_type [ signing   ] { packed_dimension   } | 'trireg' [ signing   ] { packed_dimension   } | [ signing   ] { packed_dimension   } range */
 
 
- 
-  
 
-  
+
+
+
 
  /* signing ::= 'signed' | 'unsigned' */
 
 
- 
+
        /* simple_type ::= integer_type | non_integer_type | type_identifier */
 
 
- 
-     
- 
- 
 
- /* struct_union_member ::= { attribute_instance   } data_type list_of_variable_identifiers_or_assignments ';' */
-/* 
 
 
 
 
- 
-A.2.2.2 Strengths 
+ /* struct_union_member ::= { attribute_instance   } data_type list_of_variable_identifiers_or_assignments ';' */
+/*
+
+
+
+
+
+A.2.2.2 Strengths
  */
 
 
- 
-  
-	     
-	     
-	   
 
-  
-	   
 
-  
-	 
 
-    
-	 
+
+
+
+
+
+
+
+
+
+
+
 
     /* drive_strength ::= '(' strength0 ',' strength1 ')' | '(' strength1 ',' strength0 ')' | '(' strength0 ',' 'highz1' ')' | '(' strength1 ',' 'highz0' ')' | '(' 'highz0' ',' strength1 ')' | '(' 'highz1' ',' strength0 ')' */
 
 
- 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
 
  /* strength0 ::= 'supply0' | 'strong0' | 'pull0' | 'weak0' */
 
 
- 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
 
  /* strength1 ::= 'supply1' | 'strong1' | 'pull1' | 'weak1' */
 
 
- 
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
  /* charge_strength ::= '(' 'small' ')' | '(' 'medium' ')' | '(' 'large' ')' */
-/* 
+/*
 
 
 
 
- 
-A.2.2.3 Delays 
+
+A.2.2.3 Delays
  */
 
 
- 
-  
 
-   
- 
-   
 
-   
 
-    
+
+
+
+
+
+
+
 
  /* delay3 ::= '#' delay_value | '#' '(' mintypmax_expression [ ','   mintypmax_expression   [ ','   mintypmax_expression   ]   ] ')' */
 
 
- 
-  
 
-   
- 
-   
 
-   
+
+
+
+
+
+
 
  /* delay2 ::= '#' delay_value | '#' '(' mintypmax_expression [ ','   mintypmax_expression   ] ')' */
 
 
- 
-  
-	 
-	 
+
+
+
+
 	 /* delay_value ::= 'unsigned_number' | real_number | identifier */
-/* 
+/*
 
 
 
 
 
- 
-A.2.3 
- 
-Declaration lists 
+
+A.2.3
+
+Declaration lists
  */
 
 
- 
-    
+
+
 
    /* list_of_defparam_assignments ::= defparam_assignment { ','   defparam_assignment   } */
 
 
- 
-    
+
+
 
    /* list_of_genvar_identifiers ::= genvar_identifier { ','   genvar_identifier   } */
 
 
- 
-      
-		 
+
+
+
 
       /* list_of_interface_identifiers ::= interface_identifier { unpacked_dimension   } { ','   interface_identifier   { unpacked_dimension   }   } */
 
 
- 
-    
+
+
 
   /* list_of_modport_port_identifiers ::= port_identifier { ','   port_identifier   } */
 
 
- 
-    
+
+
 
    /* list_of_net_decl_assignments ::= net_decl_assignment { ','   net_decl_assignment   } */
 
 
- 
-      
-		 
+
+
+
 
       /* list_of_net_identifiers ::= net_identifier { unpacked_dimension   } { ','   net_identifier   { unpacked_dimension   }   } */
 
 
- 
-    
+
+
 
    /* list_of_param_assignments ::= param_assignment { ','   param_assignment   } */
 
 
- 
-      
-		 
+
+
+
 
       /* list_of_port_identifiers ::= port_identifier { unpacked_dimension   } { ','   port_identifier   { unpacked_dimension   }   } */
 
 
- 
-    
+
+
 
    /* list_of_udp_port_identifiers ::= port_identifier { ','   port_identifier   } */
 
 
- 
-    
+
+
 
    /* list_of_specparam_assignments ::= specparam_assignment { ','   specparam_assignment   } */
 
 
- 
-       
 
-   
-		 
 
-      
+
+
+
+
+
 
     /* list_of_tf_port_identifiers ::= port_identifier { unpacked_dimension   } [ '='   expression   ] { ','   port_identifier   { unpacked_dimension   }   [ '='   expression   ]   } */
 
 
- 
-     
 
-   
-		 
 
-    
+
+
+
+
+
 
     /* list_of_tf_variable_identifiers ::= port_identifier variable_dimension [ '='   expression   ] { ','   port_identifier   variable_dimension   [ '='   expression   ]   } */
 
 
- 
-    
+
+
 
    /* list_of_type_assignments ::= type_assignment { ','   type_assignment   } */
 
 
- 
-    
+
+
 
    /* list_of_variable_decl_assignments ::= variable_decl_assignment { ','   variable_decl_assignment   } */
 
 
- 
-    
-		 
+
+
+
 
     /* list_of_variable_identifiers ::= variable_identifier variable_dimension { ','   variable_identifier   variable_dimension   } */
 
 
- 
-  
-	 
+
+
+
 	 /* list_of_variable_identifiers_or_assignments ::= list_of_variable_decl_assignments | list_of_variable_identifiers */
 
 
- 
-     
 
-   
-		 
 
-    
+
+
+
+
+
 
     /* list_of_variable_port_identifiers ::= port_identifier variable_dimension [ '='   constant_expression   ] { ','   port_identifier   variable_dimension   [ '='   constant_expression   ]   } */
-/* 
+/*
 
 
 
 
- 
-A.2.4 
- 
-Declaration assignments 
+
+A.2.4
+
+Declaration assignments
  */
 
 
- 
-   
+
+
 
   /* const_assignment ::= const_identifier '=' constant_expression */
 
 
- 
-   
+
+
 
   /* defparam_assignment ::= hierarchical_parameter_identifier '=' constant_expression */
 
 
- 
-   
+
+
 
   /* net_decl_assignment ::= net_identifier '=' expression */
 
 
- 
-   
+
+
 
   /* param_assignment ::= parameter_identifier '=' constant_param_expression */
 
 
- 
-  
-	 
 
-  
+
+
+
+
 	 /* specparam_assignment ::= specparam_identifier '=' constant_mintypmax_expression | pulse_control_specparam */
 
 
- 
-   
+
+
 
   /* type_assignment ::= type_identifier '=' data_type */
 
 
- 
-  
-	
-
- 
- 
-   
-
-   
- 
- 
-	
 
 
 
- 
-		
- 
-   
 
-   
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  /* pulse_control_specparam ::= 'PATHPULSE$' '=' '(' reject_limit_value [ ','   error_limit_value   ] ')' ';' | 'PATHPULSE$' specify_input_terminal_descriptor '$' specify_output_terminal_descriptor '=' '(' reject_limit_value [ ','   error_limit_value   ] ')' ';' */
 
 
- 
+
    /* error_limit_value ::= limit_value */
 
 
- 
+
    /* reject_limit_value ::= limit_value */
 
 
- 
+
    /* limit_value ::= constant_mintypmax_expression */
 
 
- 
-  
-	     
 
-   
-	 
-    
-  
 
-  
 
-  
 
-  
-	    
- 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* variable_decl_assignment ::= variable_identifier [ variable_dimension   ] [ '='   constant_expression   ] | variable_identifier [ ] '=' 'new' [ constant_expression ] [ '('   variable_identifier   ')'   ] | class_identifier [ parameter_value_assignment   ] '=' 'new' [ '('   list_of_arguments   ')'   ] */
-/* 
+/*
 
 
 
 
- 
-A.2.5 Declaration ranges 
+
+A.2.5 Declaration ranges
  */
 
 
- 
-  
 
-  
 
-  
 
- 
-	
 
-  
+
+
+
+
+
+
+
 
  /* unpacked_dimension ::= [ dimension_constant_expression ':' dimension_constant_expression ] | [ dimension_constant_expression ] */
 
 
- 
 
-  
 
-	
-  
 
-  
 
- 
-	
- 
+
+
+
+
+
+
+
+
  /* packed_dimension ::= [ dimension_constant_expression ':' dimension_constant_expression ] | [ ] */
 
 
- 
-  
 
-  
 
-  
+
+
+
+
 
  /* range ::= [ msb_constant_expression ':' lsb_constant_expression ] */
 
 
- 
-  
-	
 
-  
 
- 
-	
-  
+
+
+
+
+
+
+
  /* associative_dimension ::= [ data_type ] | [ '*' ] */
 
 
- 
-  
-	   
-	
- 
- 
+
+
+
+
+
+
 	 /* variable_dimension ::= { unpacked_dimension   } | [ ] | associative_dimension */
 
 
- 
-  
-	 
-	 
- 
+
+
+
+
+
   /* dpi_dimension ::= variable_dimension | { [   ]   } */
-/* 
+/*
 
 
 
 
- 
-A.2.6 
- 
-Function declarations 
+
+A.2.6
+
+Function declarations
  */
 
 
- 
 
-  
-	       
-	 
-	    
-	 
-	
 
- 
 
-  
 
-   
 
-    
-	
 
-  
 
-  
 
-    
 
-    
-	
 
-       
-		
 
-              
 
- 
-	
 
- 
-	
 
- 
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* function_data_type ::= integer_vector_type { packed_dimension   } [ range   ] | integer_atom_type | type_declaration_identifier { packed_dimension   } | non_integer_type | 'struct' [ 'packed'   ] { { struct_union_member   } } { packed_dimension   } | 'union' [ 'packed'   ] { { struct_union_member   } } { packed_dimension   } | 'enum' [ integer_type   { packed_dimension   }   ] { enum_identifier [ '='   constant_expression   ] { ','   enum_identifier   [ '='   constant_expression   ]   } } | 'string' | 'chandle' | 'void' */
 
 
- 
-  
-	      
-		  
 
-   
 
- 
-	   
-	   
-	
 
-  
 
-   
-	      
-		  
 
-   
 
-  
 
- 
 
- 
-	   
-	   
-	
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
    /* function_body_declaration ::= [ signing   ] [ range_or_type   ] [ interface_identifier   '.'   ] function_identifier ';' { function_item_declaration   } { function_statement_or_null   } 'endfunction' [ ':'   function_identifier   ] | [ signing   ] [ range_or_type   ] [ interface_identifier   '.'   ] function_identifier '(' function_port_list ')' ';' { block_item_declaration   } { function_statement_or_null   } 'endfunction' [ ':'   function_identifier   ] */
 
 
- 
-  
-	
+
+
+
 
      /* function_declaration ::= 'function' [ lifetime   ] function_body_declaration */
 
 
- 
-  
-	 
-	    
 
- 
-	    
 
- 
-	    
 
- 
-	    
+
+
+
+
+
+
+
+
+
+
 
  /* function_item_declaration ::= block_item_declaration | { attribute_instance   } tf_input_declaration ';' | { attribute_instance   } tf_output_declaration ';' | { attribute_instance   } tf_inout_declaration ';' | { attribute_instance   } tf_ref_declaration ';' */
 
 
- 
-  
-	    
-	    
-	    
-	    
-	     
+
+
+
+
+
+
+
 	     /* function_port_item ::= { attribute_instance   } tf_input_declaration | { attribute_instance   } tf_output_declaration | { attribute_instance   } tf_inout_declaration | { attribute_instance   } tf_ref_declaration | { attribute_instance   } port_type list_of_tf_port_identifiers | { attribute_instance   } tf_data_type list_of_tf_variable_identifiers */
 
 
- 
-    
+
+
 
    /* function_port_list ::= function_port_item { ','   function_port_item   } */
 
 
- 
-      
 
-  
+
+
+
 
  /* named_function_proto ::= [ signing   ] function_data_type function_identifier '(' list_of_function_proto_formals ')' */
 
 
- 
-  
-	      
+
+
+
 
        /* list_of_function_proto_formals ::= [ { attribute_instance   }   function_proto_formal   { ','   { attribute_instance   }   function_proto_formal   }   ] */
 
 
- 
-  
-	 
-	 
-	 
+
+
+
+
+
 	 /* function_proto_formal ::= tf_input_declaration | tf_output_declaration | tf_inout_declaration | tf_ref_declaration */
 
 
- 
-  
-	    
+
+
+
 	 /* range_or_type ::= { packed_dimension   } range | function_data_type */
 
 
- 
-  
-	
- 
-      
 
-   
 
- 
-	
- 
-   
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* dpi_import_export ::= 'import' '"DPI"' [ dpi_import_property   ] [ 'c_identifier'   '='   ] dpi_function_proto ';' | 'export' '"DPI"' [ 'c_identifier'   '='   ] 'function' function_identifier ';' */
 
 
- 
-  
 
-  
+
+
+
 
  /* dpi_import_property ::= 'context' | 'pure' */
 
 
- 
-  
-	 
-	     
 
-  
+
+
+
+
+
 
  /* dpi_function_proto ::= named_function_proto | [ signing   ] function_data_type function_identifier '(' list_of_dpi_proto_formals ')' */
 
 
- 
-  
-	      
+
+
+
 
        /* list_of_dpi_proto_formals ::= [ { attribute_instance   }   dpi_proto_formal   { ','   { attribute_instance   }   dpi_proto_formal   }   ] */
 
 
- 
-  
-	     
+
+
+
 
      /* dpi_proto_formal ::= data_type [ port_identifier   dpi_dimension   { ','   port_identifier   dpi_dimension   }   ] */
-/* 
+/*
 
 
 
 
- 
-A.2.7 
- 
-Task declarations 
+
+A.2.7
+
+Task declarations
  */
 
 
- 
-  
-	  
 
-   
 
- 
-	   
-	   
-	
 
-  
 
-   
-	  
 
-   
 
-  
- 
- 
-	   
-	   
-	
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
    /* task_body_declaration ::= [ interface_identifier   '.'   ] task_identifier ';' { task_item_declaration   } { statement_or_null   } 'endtask' [ ':'   task_identifier   ] | [ interface_identifier   '.'   ] task_identifier '(' task_port_list ')' ';' { block_item_declaration   } { statement_or_null   } 'endtask' [ ':'   task_identifier   ] */
 
 
- 
-  
+
+
 
      /* task_declaration ::= 'task' [ lifetime   ] task_body_declaration */
 
 
- 
-  
-	 
-	    
 
- 
-	    
 
- 
-	    
 
- 
-	    
+
+
+
+
+
+
+
+
+
+
 
  /* task_item_declaration ::= block_item_declaration | { attribute_instance   } tf_input_declaration ';' | { attribute_instance   } tf_output_declaration ';' | { attribute_instance   } tf_inout_declaration ';' | { attribute_instance   } tf_ref_declaration ';' */
 
 
- 
-    
 
-   
-	  
+
+
+
+
 
    /* task_port_list ::= task_port_item { ','   task_port_item   } | list_of_port_identifiers { ','   task_port_item   } */
 
 
- 
-  
-	    
-	    
-	    
-	    
 
- 
-	     
+
+
+
+
+
+
+
+
 	     /* task_port_item ::= { attribute_instance   } tf_input_declaration | { attribute_instance   } tf_output_declaration | { attribute_instance   } tf_inout_declaration | { attribute_instance   } tf_ref_declaration ';' | { attribute_instance   } port_type list_of_tf_port_identifiers | { attribute_instance   } tf_data_type list_of_tf_variable_identifiers */
 
 
- 
-  
-	
 
-        
-	
+
+
+
+
+
 
    /* tf_input_declaration ::= 'input' [ signing   ] { packed_dimension   } list_of_tf_port_identifiers | 'input' tf_data_type list_of_tf_variable_identifiers */
 
 
- 
-  
-	
 
-        
-	
+
+
+
+
+
 
    /* tf_output_declaration ::= 'output' [ signing   ] { packed_dimension   } list_of_tf_port_identifiers | 'output' tf_data_type list_of_tf_variable_identifiers */
 
 
- 
-  
-	
 
-        
-	
+
+
+
+
+
 
    /* tf_inout_declaration ::= 'inout' [ signing   ] { packed_dimension   } list_of_tf_port_identifiers | 'inout' tf_data_type list_of_tf_variable_identifiers */
 
 
- 
-  
-	 
 
-  
+
+
+
+
 
    /* tf_ref_declaration ::= [ 'const'   ] 'ref' tf_data_type list_of_tf_variable_identifiers */
 
 
- 
-  
-	
-	
+
+
+
+
 
  /* tf_data_type ::= data_type | 'chandle' */
 
 
- 
-   
 
-   
 
-   
+
+
+
+
 
  /* named_task_proto ::= task_identifier '(' task_proto_formal { ','   task_proto_formal   } ')' */
 
 
- 
-  
-	 
-	 
-	 
+
+
+
+
+
 	 /* task_proto_formal ::= tf_input_declaration | tf_output_declaration | tf_inout_declaration | tf_ref_declaration */
-/* 
+/*
 
 
 
 
- 
-A.2.8 Block item declarations 
+
+A.2.8 Block item declarations
  */
 
 
- 
-  
-	    
-	    
-	    
+
+
+
+
+
 
  /* block_item_declaration ::= { attribute_instance   } block_data_declaration | { attribute_instance   } local_parameter_declaration | { attribute_instance   } parameter_declaration ';' */
-/* 
+/*
 
 
 
 
- 
-A.2.9 
- 
-Interface declarations 
+
+A.2.9
+
+Interface declarations
  */
 
 
- 
-  
 
-   
 
-   
+
+
+
+
 
  /* modport_declaration ::= 'modport' modport_item { ','   modport_item   } ';' */
 
 
- 
-   
 
-   
 
-   
+
+
+
+
 
  /* modport_item ::= modport_identifier '(' modport_ports_declaration { ','   modport_ports_declaration   } ')' */
 
 
- 
- 
-	 
-	 
+
+
+
+
 	 /* modport_ports_declaration ::= modport_simple_ports_declaration | modport_hierarchical_ports_declaration | modport_tf_ports_declaration */
 
 
- 
-  
-	
 
-  
-	
 
-  
-	
 
-  
-	
+
+
+
+
+
+
+
+
+
 
      /* modport_simple_ports_declaration ::= 'input' list_of_modport_port_identifiers | 'output' list_of_modport_port_identifiers | 'inout' list_of_modport_port_identifiers | 'ref' [ data_type   ] list_of_modport_port_identifiers */
 
 
- 
-  
-  
 
-  
 
-  
+
+
+
+
+
 
   /* modport_hierarchical_ports_declaration ::= interface_instance_identifier [ [   constant_expression   ]   ] '.' modport_identifier */
 
 
- 
-  
+
+
  /* modport_tf_ports_declaration ::= import_export modport_tf_port */
 
 
- 
-  
-	
 
-   
 
-   
-	
 
-   
 
-   
-	  
+
+
+
+
+
+
+
+
+
 
    /* modport_tf_port ::= 'task' named_task_proto { ','   named_task_proto   } | 'function' named_function_proto { ','   named_function_proto   } | task_or_function_identifier { ','   task_or_function_identifier   } */
 
 
- 
-  
 
-  
+
+
+
 
  /* import_export ::= 'import' | 'export' */
-/* 
+/*
 
 
 
 
- 
-A.2.10 
- 
-Assertion declarations 
+
+A.2.10
+
+Assertion declarations
  */
 
 
- 
-  
-	 
-	 
+
+
+
+
 	 /* concurrent_assertion_item ::= concurrent_assert_statement | concurrent_cover_statement | concurrent_assertion_item_declaration */
 
 
- 
-  
-	
+
+
+
 
   /* concurrent_assert_statement ::= [ block_identifier   ':'   ] assert_property_statement */
 
 
- 
-  
-	
+
+
+
 
   /* concurrent_cover_statement ::= [ block_identifier   ':'   ] cover_property_statement */
 
 
- 
- 
-	
 
- 
 
- 
 
-  
 
-  
-	
 
- 
 
- 
 
-  
+
+
+
+
+
+
+
+
+
+
+
 
   /* assert_property_statement ::= 'assert' 'property' '(' property_spec ')' action_block | 'assert' 'property' '(' property_instance ')' action_block */
 
 
- 
- 
-	
 
- 
 
- 
 
-  
 
-  
-	
 
- 
 
- 
 
-  
+
+
+
+
+
+
+
+
+
+
+
 
   /* cover_property_statement ::= 'cover' 'property' '(' property_spec ')' statement_or_null | 'cover' 'property' '(' property_instance ')' statement_or_null */
 
 
- 
-  
-	  
 
-  
+
+
+
+
 
   /* property_instance ::= property_identifier [ '('   actual_arg_list   ')'   ] */
 
 
- 
-  
-	 
+
+
+
 	 /* concurrent_assertion_item_declaration ::= property_declaration | sequence_declaration */
 
 
- 
-  
-	
 
-     
 
- 
-		   
-		 
 
- 
-	
 
-  
+
+
+
+
+
+
+
+
+
+
 
    /* property_declaration ::= 'property' property_identifier [ property_formal_list   ] ';' { assertion_variable_declaration   } property_spec ';' 'endproperty' [ ':'   property_identifier   ] */
 
 
- 
-  
-	
 
-   
 
-   
+
+
+
+
+
 
  /* property_formal_list ::= '(' formal_list_item { ','   formal_list_item   } ')' */
 
 
- 
-  
-	   
- 
-  
 
-  
 
-  
 
-   
-	 
-  
-  
 
-   
+
+
+
+
+
+
+
+
+
+
+
+
 
    /* property_spec ::= [ clocking_event   ] [ 'disable'   'iff'   ] '(' expression ')' [ 'not'   ] property_expr | [ 'disable'   'iff'   '('   expression   ')'   ] [ 'not'   ] multi_clock_property_expr */
 
 
- 
-  
-	 
-	 
 
-  
 
-   
-	 
 
-  
 
-   
-	
 
-  
+
+
+
+
+
+
+
+
+
+
+
 
  /* property_expr ::= sequence_expr | sequence_expr '|->' [ 'not'   ] sequence_expr | sequence_expr '|=>' [ 'not'   ] sequence_expr | '(' property_expr ')' */
 
 
- 
-  
-	 
-	 
 
-  
 
-   
-	
 
-  
+
+
+
+
+
+
+
+
 
  /* multi_clock_property_expr ::= multi_clock_sequence | multi_clock_sequence '|=>' [ 'not'   ] multi_clock_sequence | '(' multi_clock_property_expr ')' */
 
 
- 
-  
-	
 
-     
 
- 
-		   
-		 
 
- 
-	
 
-  
+
+
+
+
+
+
+
+
+
+
 
    /* sequence_declaration ::= 'sequence' sequence_identifier [ sequence_formal_list   ] ';' { assertion_variable_declaration   } sequence_spec ';' 'endsequence' [ ':'   sequence_identifier   ] */
 
 
- 
-  
-	
 
-   
 
-   
+
+
+
+
+
 
  /* sequence_formal_list ::= '(' formal_list_item { ','   formal_list_item   } ')' */
 
 
- 
-  
-	 
+
+
+
 	 /* sequence_spec ::= multi_clock_sequence | sequence_expr */
 
 
- 
- 
-	  
+
+
+
 
    /* multi_clock_sequence ::= clocked_sequence { '##'   clocked_sequence   } */
 
 
- 
- 
+
+
 	  /* clocked_sequence ::= clocking_event sequence_expr */
 
 
- 
-  
-	     
-	      
-	  
 
-      
-	
 
-  
 
-   
 
-    
-	    
-	
 
-  
 
-    
-	 
 
-  
-	 
 
-  
-	 
 
-  
-	
 
- 
 
-  
 
- 
-	 
 
-  
-	 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* sequence_expr ::= cycle_delay_range sequence_expr { cycle_delay_range   sequence_expr   } | sequence_expr cycle_delay_range sequence_expr { cycle_delay_range   sequence_expr   } | expression { ','   function_blocking_assignment   } [ boolean_abbrev   ] | '(' expression { ','   function_blocking_assignment   } ')' [ boolean_abbrev   ] | sequence_instance [ sequence_abbrev   ] | '(' sequence_expr ')' [ sequence_abbrev   ] | sequence_expr 'and' sequence_expr | sequence_expr 'intersect' sequence_expr | sequence_expr 'or' sequence_expr | 'first_match' '(' sequence_expr ')' | expression 'throughout' sequence_expr | sequence_expr 'within' sequence_expr */
 
 
- 
-  
-	
 
-  
-	
 
- 
 
-  
+
+
+
+
+
+
+
 
  /* cycle_delay_range ::= '##' constant_expression | '##' [ cycle_delay_const_range_expression ] */
 
 
- 
-  
-	  
 
-  
+
+
+
+
 
   /* sequence_instance ::= sequence_identifier [ '('   actual_arg_list   ')'   ] */
 
 
- 
-  
-  
+
+
+
 
    /* formal_list_item ::= formal_identifier [ '='   actual_arg_expr   ] */
 
 
- 
-  
-	
 
-   
 
-   
 
- 
-	
- 
-  
 
-  
 
-  
- 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* actual_arg_list ::= '(' actual_arg_expr { ','   actual_arg_expr   } ')' | '(' '.' formal_identifier '(' actual_arg_expr ')' { ','   '.'   formal_identifier   '('   actual_arg_expr   ')'   } ')' */
 
 
- 
-  
+
+
 	 /* actual_arg_expr ::= event_expression */
 
 
- 
-  
-	 
-	
+
+
+
+
 	/* boolean_abbrev ::= consecutive_repetition | non_consecutive_repetition | goto_repetition */
 
 
- 
+
    /* sequence_abbrev ::= consecutive_repetition */
 
 
- 
-  
 
-  
+
+
+
 
  /* consecutive_repetition ::= '[*' const_or_range_expression ] */
 
 
- 
-  
 
-  
+
+
+
 
  /* non_consecutive_repetition ::= '[*=' const_or_range_expression ] */
 
 
- 
-  
 
-  
+
+
+
 
  /* goto_repetition ::= '[*->' const_or_range_expression ] */
 
 
- 
-  
-	 
+
+
+
 	 /* const_or_range_expression ::= constant_expression | cycle_delay_const_range_expression */
 
 
- 
-  
-	 
 
-  
-	 
- 
+
+
+
+
+
+
  /* cycle_delay_const_range_expression ::= constant_expression ':' constant_expression | constant_expression ':' '$' */
 
 
- 
-  
+
+
 	   /* assertion_variable_declaration ::= data_type list_of_variable_identifiers ';' */
-/* 
+/*
 
 
 
 
- 
-A.3 Primitive instances 
+
+A.3 Primitive instances
 
 
 
 
- 
-A.3.1 Primitive instantiation and instances 
+
+A.3.1 Primitive instantiation and instances
  */
 
 
- 
-  
-	    
 
-   
 
- 
-	     
 
-   
 
- 
-	    
 
-   
 
- 
-	     
 
-   
 
- 
-	   
-		 
 
-   
 
- 
-	       
 
- 
-	   
 
-   
 
- 
-	
 
-    
 
-   
 
- 
-	
 
-    
 
-   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* gate_instantiation ::= cmos_switchtype [ delay3   ] cmos_switch_instance { ','   cmos_switch_instance   } ';' | enable_gatetype [ drive_strength   ] [ delay3   ] enable_gate_instance { ','   enable_gate_instance   } ';' | mos_switchtype [ delay3   ] mos_switch_instance { ','   mos_switch_instance   } ';' | n_input_gatetype [ drive_strength   ] [ delay2   ] n_input_gate_instance { ','   n_input_gate_instance   } ';' | n_output_gatetype [ drive_strength   ] [ delay2   ] n_output_gate_instance { ','   n_output_gate_instance   } ';' | pass_en_switchtype [ delay2   ] pass_enable_switch_instance { ','   pass_enable_switch_instance   } ';' | pass_switchtype pass_switch_instance { ','   pass_switch_instance   } ';' | 'pulldown' [ pulldown_strength   ] pull_gate_instance { ','   pull_gate_instance   } ';' | 'pullup' [ pullup_strength   ] pull_gate_instance { ','   pull_gate_instance   } ';' */
 
 
- 
-     
 
-  
 
-  
 
- 
-		 
 
-  
+
+
+
+
+
+
+
 
  /* cmos_switch_instance ::= [ name_of_gate_instance   ] '(' output_terminal ',' input_terminal ',' ncontrol_terminal ',' pcontrol_terminal ')' */
 
 
- 
-     
 
-  
 
-  
 
-  
+
+
+
+
+
 
  /* enable_gate_instance ::= [ name_of_gate_instance   ] '(' output_terminal ',' input_terminal ',' enable_terminal ')' */
 
 
- 
-     
 
-  
 
-  
 
-  
+
+
+
+
+
 
  /* mos_switch_instance ::= [ name_of_gate_instance   ] '(' output_terminal ',' input_terminal ',' enable_terminal ')' */
 
 
- 
-     
 
-  
 
-   
 
-   
+
+
+
+
+
 
  /* n_input_gate_instance ::= [ name_of_gate_instance   ] '(' output_terminal ',' input_terminal { ','   input_terminal   } ')' */
 
 
- 
-     
 
-   
 
-   
 
- 
-		 
+
+
+
+
+
+
 
  /* n_output_gate_instance ::= [ name_of_gate_instance   ] '(' output_terminal { ','   output_terminal   } ',' input_terminal ')' */
 
 
- 
-     
 
-  
 
-  
+
+
+
+
 
  /* pass_switch_instance ::= [ name_of_gate_instance   ] '(' inout_terminal ',' inout_terminal ')' */
 
 
- 
-     
 
-    
- 
 
-		 
+
+
+
+
+
 
  /* pass_enable_switch_instance ::= [ name_of_gate_instance   ] '(' inout_terminal ',' inout_terminal ',' enable_terminal ')' */
 
 
- 
-     
 
-  
+
+
+
 
  /* pull_gate_instance ::= [ name_of_gate_instance   ] '(' output_terminal ')' */
 
 
- 
+
       /* name_of_gate_instance ::= gate_instance_identifier { range   } */
-/* 
+/*
 
 
 
 
- 
-A.3.2 Primitive strengths 
+
+A.3.2 Primitive strengths
  */
 
 
- 
-  
-	
 
-  
 
-  
 
- 
-	
 
-  
 
-  
 
- 
-	
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* pulldown_strength ::= '(' strength0 ',' strength1 ')' | '(' strength1 ',' strength0 ')' | '(' strength0 ')' */
 
 
- 
-  
-	
 
-  
 
-  
 
- 
-	
 
-  
 
-  
 
- 
-	
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* pullup_strength ::= '(' strength0 ',' strength1 ')' | '(' strength1 ',' strength0 ')' | '(' strength1 ')' */
-/* 
+/*
 
 
 
 
- 
-A.3.3 Primitive terminals 
+
+A.3.3 Primitive terminals
  */
 
 
- 
+
    /* enable_terminal ::= expression */
 
 
- 
+
    /* inout_terminal ::= net_lvalue */
 
 
- 
+
    /* input_terminal ::= expression */
 
 
- 
+
    /* ncontrol_terminal ::= expression */
 
 
- 
+
    /* output_terminal ::= net_lvalue */
 
 
- 
+
    /* pcontrol_terminal ::= expression */
-/* 
+/*
 
 
 
 
- 
-A.3.4 Primitive gate and switch types 
+
+A.3.4 Primitive gate and switch types
  */
 
 
- 
-  
 
-  
+
+
+
 
  /* cmos_switchtype ::= 'cmos' | 'rcmos' */
 
 
- 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
 
  /* enable_gatetype ::= 'bufif0' | 'bufif1' | 'notif0' | 'notif1' */
 
 
- 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
 
  /* mos_switchtype ::= 'nmos' | 'pmos' | 'rnmos' | 'rpmos' */
 
 
- 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
 
  /* n_input_gatetype ::= 'and' | 'nand' | 'or' | 'nor' | 'xor' | 'xnor' */
 
 
- 
-  
 
-  
+
+
+
 
  /* n_output_gatetype ::= 'buf' | 'not' */
 
 
- 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
 
  /* pass_en_switchtype ::= 'tranif0' | 'tranif1' | 'rtranif1' | 'rtranif0' */
 
 
- 
-  
 
-  
+
+
+
 
  /* pass_switchtype ::= 'tran' | 'rtran' */
-/* 
+/*
 
 
 
 
- 
-A.4 Module, interface and generated instantiation 
+
+A.4 Module, interface and generated instantiation
 
 
 
 
- 
-A.4.1 Instantiation 
+
+A.4.1 Instantiation
 
 
 
- 
-A.4.1.1 
- 
-Module instantiation 
+
+A.4.1.1
+
+Module instantiation
  */
 
 
- 
-  
-	      
 
-   
+
+
+
+
 
  /* module_instantiation ::= module_identifier [ parameter_value_assignment   ] module_instance { ','   module_instance   } ';' */
 
 
- 
-  
- 
-  
+
+
+
+
 
  /* parameter_value_assignment ::= '#' '(' list_of_parameter_assignments ')' */
 
 
- 
-  
-	  
 
-   
-	  
+
+
+
+
+
 
    /* list_of_parameter_assignments ::= ordered_parameter_assignment { ','   ordered_parameter_assignment   } | named_parameter_assignment { ','   named_parameter_assignment   } */
 
 
- 
+
      /* ordered_parameter_assignment ::= expression | data_type */
 
 
- 
-  
-	
 
-  
 
-    
 
- 
-	
 
-  
 
-  
+
+
+
+
+
+
+
+
+
 
  /* named_parameter_assignment ::= '.' parameter_identifier '(' [ expression   ] ')' | '.' parameter_identifier '(' data_type ')' */
 
 
- 
-   
 
-    
+
+
+
 
  /* module_instance ::= name_of_instance '(' [ list_of_port_connections   ] ')' */
 
 
- 
+
       /* name_of_instance ::= module_instance_identifier { range   } */
 
 
- 
-  
-	  
 
-   
-	  
 
-   
-	  
 
-    
+
+
+
+
+
+
+
+
 
    /* list_of_port_connections ::= ordered_port_connection { ','   ordered_port_connection   } | dot_named_port_connection { ','   dot_named_port_connection   } | { named_port_connection   ','   } dot_star_port_connection { ','   named_port_connection   } */
 
 
- 
+
         /* ordered_port_connection ::= { attribute_instance   } [ expression   ] */
 
 
- 
-     
 
-  
 
-    
+
+
+
+
 
  /* named_port_connection ::= { attribute_instance   } '.' port_identifier '(' [ expression   ] ')' */
 
 
- 
-  
-	   
 
- 
+
+
+
+
 	 /* dot_named_port_connection ::= { attribute_instance   } '.' port_identifier | named_port_connection */
 
 
- 
-     
+
+
 
  /* dot_star_port_connection ::= { attribute_instance   } '.*' */
-/* 
+/*
 
 
 
 
- 
-A.4.1.2 
- 
-Interface instantiation 
+
+A.4.1.2
+
+Interface instantiation
  */
 
 
- 
-  
-	      
 
-   
+
+
+
+
 
  /* interface_instantiation ::= interface_identifier [ parameter_value_assignment   ] module_instance { ','   module_instance   } ';' */
-/* 
+/*
 
 
 
 
- 
-Program instantiation 
+
+Program instantiation
  */
 
 
- 
-  
-	      
 
-   
+
+
+
+
 
  /* program_instantiation ::= program_identifier [ parameter_value_assignment   ] program_instance { ','   program_instance   } ';' */
 
 
- 
-      
 
-    
+
+
+
 
  /* program_instance ::= program_instance_identifier { range   } '(' [ list_of_port_connections   ] ')' */
-/* 
+/*
 
 
 
 
 
- 
-A.4.2 Generated instantiation 
+
+A.4.2 Generated instantiation
 
 
 
- 
-A.4.2.1 Generated module instantiation 
+
+A.4.2.1 Generated module instantiation
  */
 
 
- 
-  
 
-    
+
+
+
 
  /* generated_module_instantiation ::= 'generate' { generate_module_item   } 'endgenerate' */
 
 
- 
-  
-	 
-	 
-	 
-	     
+
+
+
+
+
+
 	 /* generate_module_item ::= generate_module_conditional_statement | generate_module_case_statement | generate_module_loop_statement | [ generate_block_identifier   ':'   ] generate_module_block | module_or_generate_item */
 
 
- 
-  
-	
 
-      
+
+
+
+
 
    /* generate_module_conditional_statement ::= 'if' '(' constant_expression ')' generate_module_item [ 'else'   generate_module_item   ] */
 
 
- 
-  
-	
 
- 
 
-  
 
-    
+
+
+
+
+
+
 
  /* generate_module_case_statement ::= 'case' '(' constant_expression ')' genvar_module_case_item { genvar_module_case_item   } 'endcase' */
 
 
- 
-  
-	  
 
-   
 
-  
-	
 
-  
+
+
+
+
+
+
+
 
    /* genvar_module_case_item ::= constant_expression { ','   constant_expression   } ':' generate_module_item | 'default' [ ':'   ] generate_module_item */
 
 
- 
-  
-	
 
- 
 
-  
 
-  
 
-  
 
- 
+
+
+
+
+
+
+
+
 		 /* generate_module_loop_statement ::= 'for' '(' genvar_decl_assignment ';' constant_expression ';' genvar_assignment ')' generate_module_named_block */
 
 
- 
-  
-	   
-	  
+
+
+
+
 	  /* genvar_assignment ::= genvar_identifier assignment_operator constant_expression | inc_or_dec_operator genvar_identifier | genvar_identifier inc_or_dec_operator */
 
 
- 
-  
-	 
 
-   
+
+
+
+
 
   /* genvar_decl_assignment ::= [ 'genvar'   ] genvar_identifier '=' constant_expression */
 
 
- 
-  
-	
- 
-     
 
-     
-	 
+
+
+
+
+
+
+
 
   /* generate_module_named_block ::= 'begin' ':' generate_block_identifier { generate_module_item   } 'end' [ ':'   generate_block_identifier   ] | generate_block_identifier ':' generate_module_block */
 
 
- 
-  
-	
 
-  
 
-      
 
-  
+
+
+
+
+
+
 
    /* generate_module_block ::= 'begin' [ ':'   generate_block_identifier   ] { generate_module_item   } 'end' [ ':'   generate_block_identifier   ] */
-/* 
+/*
 
 
 
 
- 
-A.4.2.2 Generated interface instantiation 
+
+A.4.2.2 Generated interface instantiation
  */
 
 
- 
-  
 
-    
+
+
+
 
  /* generated_interface_instantiation ::= 'generate' { generate_interface_item   } 'endgenerate' */
 
 
- 
-  
-	 
-	 
-	 
-	     
+
+
+
+
+
+
 	 /* generate_interface_item ::= generate_interface_conditional_statement | generate_interface_case_statement | generate_interface_loop_statement | [ generate_block_identifier   ':'   ] generate_interface_block | interface_or_generate_item */
 
 
- 
-  
-	
 
-      
+
+
+
+
 
    /* generate_interface_conditional_statement ::= 'if' '(' constant_expression ')' generate_interface_item [ 'else'   generate_interface_item   ] */
 
 
- 
-  
-	
 
-        
+
+
+
+
 
  /* generate_interface_case_statement ::= 'case' '(' constant_expression ')' genvar_interface_case_item { genvar_interface_case_item   } 'endcase' */
 
 
- 
-  
-	  
 
-   
 
-  
-	
 
-  
+
+
+
+
+
+
+
 
    /* genvar_interface_case_item ::= constant_expression { ','   constant_expression   } ':' generate_interface_item | 'default' [ ':'   ] generate_interface_item */
 
 
- 
-  
-	
- 
-  
 
-  
 
-  
 
- 
+
+
+
+
+
+
+
+
 		 /* generate_interface_loop_statement ::= 'for' '(' genvar_decl_assignment ';' constant_expression ';' genvar_assignment ')' generate_interface_named_block */
 
 
- 
-  
-	
- 
-     
 
-     
-	 
+
+
+
+
+
+
+
 
   /* generate_interface_named_block ::= 'begin' ':' generate_block_identifier { generate_interface_item   } 'end' [ ':'   generate_block_identifier   ] | generate_block_identifier ':' generate_interface_block */
 
 
- 
-  
-	
 
-  
 
-   
-	   
-	
 
-  
+
+
+
+
+
+
+
+
 
    /* generate_interface_block ::= 'begin' [ ':'   generate_block_identifier   ] { generate_interface_item   } 'end' [ ':'   generate_block_identifier   ] */
-/* 
+/*
 
 
 
 
 
- 
-A.5 UDP declaration and instantiation 
+
+A.5 UDP declaration and instantiation
 
 
 
 
- 
-A.5.1 UDP declaration 
+
+A.5.1 UDP declaration
  */
 
 
- 
-  
-	   
 
-  
 
-  
- 
+
+
+
+
+
+
  /* udp_nonansi_declaration ::= { attribute_instance   } 'primitive' udp_identifier '(' udp_port_list ')' ';' */
 
 
- 
-  
-	   
 
-  
 
-  
- 
+
+
+
+
+
+
  /* udp_ansi_declaration ::= { attribute_instance   } 'primitive' udp_identifier '(' udp_declaration_port_list ')' ';' */
 
 
- 
-  
-	     
-		 
-	
 
- 
- 
-   
-	  
 
-  
 
-   
-	
 
-  
-	
 
-  
-	   
 
-  
-   
- 
-		    
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
    /* udp_declaration ::= udp_nonansi_declaration udp_port_declaration { udp_port_declaration   } udp_body 'endprimitive' [ ':'   udp_identifier   ] | udp_ansi_declaration udp_body 'endprimitive' [ ':'   udp_identifier   ] | 'extern' udp_nonansi_declaration | 'extern' udp_ansi_declaration | { attribute_instance   } 'primitive' udp_identifier '(' '.*' ')' ';' { udp_port_declaration   } udp_body 'endprimitive' [ ':'   udp_identifier   ] */
 
 
- 
-  
-	   
 
-  
 
-  
- 
- 
-		    
-		 
-	
 
- 
-	   
 
-  
 
-  
- 
- 
-		 
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* udp_declaration2 ::= { attribute_instance   } 'primitive' udp_identifier '(' udp_port_list ')' ';' udp_port_declaration { udp_port_declaration   } udp_body 'endprimitive' | { attribute_instance   } 'primitive' udp_identifier '(' udp_declaration_port_list ')' ';' udp_body 'endprimitive' */
-/* 
+/*
 
 
 
 
- 
-A.5.2 UDP ports 
+
+A.5.2 UDP ports
  */
 
 
- 
-   
 
-   
+
+
+
 
    /* udp_port_list ::= output_port_identifier ',' input_port_identifier { ','   input_port_identifier   } */
 
 
- 
-   
 
-   
+
+
+
 
    /* udp_declaration_port_list ::= udp_output_declaration ',' udp_input_declaration { ','   udp_input_declaration   } */
 
 
- 
-  
-	  
-	  
+
+
+
+
 	  /* udp_port_declaration ::= udp_output_declaration ';' | udp_input_declaration ';' | udp_reg_declaration ';' */
 
 
- 
-  
-	   
 
-  
-	   
 
- 
 
-   
+
+
+
+
+
+
+
 
    /* udp_output_declaration ::= { attribute_instance   } 'output' port_identifier | { attribute_instance   } 'output' 'reg' port_identifier [ '='   constant_expression   ] */
 
 
- 
-     
+
+
 
   /* udp_input_declaration ::= { attribute_instance   } 'input' list_of_udp_port_identifiers */
 
 
- 
-     
+
+
 
   /* udp_reg_declaration ::= { attribute_instance   } 'reg' variable_identifier */
-/* 
+/*
 
 
 
 
- 
-A.5.3 UDP body 
+
+A.5.3 UDP body
  */
 
 
- 
+
      /* udp_body ::= combinational_body | sequential_body */
 
 
- 
-  
 
-     
+
+
+
 
  /* combinational_body ::= 'table' combinational_entry { combinational_entry   } 'endtable' */
 
 
- 
-   
 
-  
+
+
+
 
  /* combinational_entry ::= level_input_list ':' 'output_symbol' ';' */
 
 
- 
-     
 
-     
+
+
+
 
  /* sequential_body ::= [ udp_initial_statement   ] 'table' sequential_entry { sequential_entry   } 'endtable' */
 
 
- 
-  
 
-  
 
-  
+
+
+
+
 
  /* udp_initial_statement ::= 'initial' output_port_identifier '=' init_val ';' */
 
 
- 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
 
  /* init_val ::= '1'b0' | '1'b1' | '1'bx' | '1'bX' | '1'B0' | '1'B1' | '1'Bx' | '1'BX' | '1' | '0' */
 
 
- 
-   
 
-  
 
-  
+
+
+
+
 
  /* sequential_entry ::= seq_input_list ':' current_state ':' next_state ';' */
 
 
- 
+
      /* seq_input_list ::= level_input_list | edge_input_list */
 
 
- 
+
       /* level_input_list ::= 'level_symbol' { 'level_symbol'   } */
 
 
- 
+
          /* edge_input_list ::= { 'level_symbol'   } edge_indicator { 'level_symbol'   } */
 
 
- 
-   
- 
+
+
+
     /* edge_indicator ::= '(' 'level_symbol' 'level_symbol' ')' | 'edge_symbol' */
 
 
- 
+
    /* current_state ::= 'level_symbol' */
 
 
- 
-    
+
+
 
  /* next_state ::= 'output_symbol' | - */
 
 
- 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
 
  /* 'output_symbol' ::= '0' | '1' | X | X */
 
 
- 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
 
  /* 'level_symbol' ::= '0' | '1' | x | X | '?' | B | B */
 
 
- 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
 
  /* 'edge_symbol' ::= R | R | F | F | P | P | N | N | '*' */
-/* 
+/*
 
 
 
 
- 
-A.5.4 UDP instantiation 
+
+A.5.4 UDP instantiation
  */
 
 
- 
-           
 
-   
+
+
+
 
  /* udp_instantiation ::= udp_identifier [ drive_strength   ] [ delay2   ] udp_instance { ','   udp_instance   } ';' */
 
 
- 
-        
 
-  
 
-   
 
-   
+
+
+
+
+
 
  /* udp_instance ::= [ 'name_of_udp_instance'   ] { range   } '(' output_terminal ',' input_terminal { ','   input_terminal   } ')' */
 
 
- 
+
       /* 'name_of_udp_instance' ::= udp_instance_identifier { range   } */
-/* 
+/*
 
 
 
 
- 
-A.6 Behavioral statements 
+
+A.6 Behavioral statements
 
 
 
 
- 
-A.6.1 Continuous assignment and net alias statements 
+
+A.6.1 Continuous assignment and net alias statements
  */
 
 
- 
-  
 
-	
-        
 
- 
-	
 
-     
+
+
+
+
+
+
+
 
  /* continuous_assign ::= 'assign' [ drive_strength   ] [ delay3   ] list_of_net_assignments ';' | 'assign' [ delay_control   ] list_of_variable_assignments ';' */
 
 
- 
-    
+
+
 
    /* list_of_net_assignments ::= net_assignment { ','   net_assignment   } */
 
 
- 
-    
+
+
 
    /* list_of_variable_assignments ::= variable_assignment { ','   variable_assignment   } */
 
 
- 
-  
 
-  
 
-  
+
+
+
+
 
  /* net_alias ::= 'alias' net_lvalue '=' net_lvalue ';' */
 
 
- 
-   
+
+
 
   /* net_assignment ::= net_lvalue '=' expression */
-/* 
+/*
 
 
 
 
- 
-A.6.2 
- 
-Procedural blocks and assignments 
+
+A.6.2
+
+Procedural blocks and assignments
  */
 
 
- 
-  
+
+
 
   /* initial_construct ::= 'initial' statement_or_null */
 
 
- 
-  
+
+
 
   /* always_construct ::= 'always' statement */
 
 
- 
-  
+
+
 
   /* combinational_construct ::= 'always_comb' statement */
 
 
- 
-  
+
+
 
   /* latch_construct ::= 'always_latch' statement */
 
 
- 
-  
+
+
 
   /* ff_construct ::= 'always_ff' statement */
 
 
- 
-  
+
+
 
   /* final_construct ::= 'final' function_statement */
 
 
- 
-  
-	 
 
- 
- 
- 
-	 
-  
-  
 
-  
 
-  
 
-  
-	    
- 
-  
 
-  
 
-  
-	 
- 
-  
- 
-  
 
-  
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	 /* blocking_assignment ::= variable_lvalue '=' delay_or_event_control expression | hierarchical_variable_identifier '=' 'new' [ constant_expression ] [ '('   variable_identifier   ')'   ] | class_identifier [ parameter_value_assignment   ] '=' 'new' [ '('   list_of_arguments   ')'   ] | class_identifier '.' 'randomize' [ '('   ')'   ] 'with' constraint_block ';' | operator_assignment */
 
 
- 
-  
- 
 
- 
+
+
+
+
  /* operator_assignment ::= variable_lvalue assignment_operator expression */
 
 
- 
-  
-	
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* assignment_operator ::= '=' | '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '|=' | '^=' | '<<=' | '>>=' | '<<<=' | '>>>=' */
 
 
- 
-   
+
+
 
      /* nonblocking_assignment ::= variable_lvalue '<=' [ delay_or_event_control   ] expression */
 
 
- 
-  
-	
 
-  
-	
 
-  
-	
 
-  
-	
 
-  
-	
 
-  
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* procedural_continuous_assignments ::= 'assign' variable_assignment | 'deassign' variable_lvalue | 'force' variable_assignment | 'force' net_assignment | 'release' variable_lvalue | 'release' net_lvalue */
 
 
- 
-   
+
+
 
   /* function_blocking_assignment ::= variable_lvalue '=' expression */
 
 
- 
-  
-	 
-	   
+
+
+
+
 
  /* function_statement_or_null ::= function_statement | { attribute_instance   } ';' */
 
 
- 
-  
-	 
+
+
+
 	 /* variable_assignment ::= operator_assignment | inc_or_dec_expression */
-/* 
+/*
 
 
 
 
- 
-A.6.3 
- 
-Parallel and sequential blocks 
+
+A.6.3
+
+Parallel and sequential blocks
  */
 
 
- 
-  
-	 
-	   
+
+
+
+
 
   /* action_block ::= statement_or_null | [ statement   ] 'else' statement_or_null */
 
 
- 
-  
-	
 
-  
 
-         
-	
 
-  
+
+
+
+
+
+
+
 
    /* function_seq_block ::= 'begin' [ ':'   block_identifier   { block_item_declaration   }   ] { function_statement_or_null   } 'end' [ ':'   block_identifier   ] */
 
 
- 
-  
-	
 
-  
 
-         
 
-	
-  
+
+
+
+
+
+
+
 
    /* seq_block ::= 'begin' [ ':'   block_identifier   ] { block_item_declaration   } { statement_or_null   } 'end' [ ':'   block_identifier   ] */
 
 
- 
-  
-	
 
-  
 
-         
-	  
+
+
+
+
+
+
 
    /* par_block ::= 'fork' [ ':'   block_identifier   ] { block_item_declaration   } { statement_or_null   } join_keyword [ ':'   block_identifier   ] */
 
 
- 
-  
 
-  
 
-  
+
+
+
+
 
  /* join_keyword ::= 'join' | 'join_any' | 'join_none' */
-/* 
+/*
 
 
 
 
- 
-A.6.4 
- 
-Statements 
+
+A.6.4
+
+Statements
  */
 
 
- 
-  
-	 
-	   
+
+
+
+
 
  /* statement_or_null ::= statement | { attribute_instance   } ';' */
 
 
- 
-    
+
+
 
    /* statement ::= [ block_identifier   ':'   ] statement_item */
 
 
- 
-  
-	    
 
- 
-	    
 
- 
-	    
 
- 
-	    
-	    
-	    
 
- 
-	    
 
- 
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
-	    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	    /* statement_item ::= { attribute_instance   } blocking_assignment ';' | { attribute_instance   } nonblocking_assignment ';' | { attribute_instance   } procedural_continuous_assignments ';' | { attribute_instance   } case_statement | { attribute_instance   } conditional_statement | { attribute_instance   } inc_or_dec_expression ';' | { attribute_instance   } function_call ';' | { attribute_instance   } disable_statement | { attribute_instance   } event_trigger | { attribute_instance   } loop_statement | { attribute_instance   } jump_statement | { attribute_instance   } par_block | { attribute_instance   } procedural_timing_control_statement | { attribute_instance   } seq_block | { attribute_instance   } system_task_enable | { attribute_instance   } task_enable | { attribute_instance   } wait_statement | { attribute_instance   } procedural_assertion_item | { attribute_instance   } clocking_drive */
 
 
- 
-    
+
+
 
    /* function_statement ::= [ block_identifier   ':'   ] function_statement_item */
 
 
- 
-  
-	    
 
- 
-	    
-	    
-	    
 
- 
-	    
 
- 
-	    
-	    
-	    
-	    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	    /* function_statement_item ::= { attribute_instance   } function_blocking_assignment ';' | { attribute_instance   } function_case_statement | { attribute_instance   } function_conditional_statement | { attribute_instance   } inc_or_dec_expression ';' | { attribute_instance   } function_call ';' | { attribute_instance   } function_loop_statement | { attribute_instance   } jump_statement | { attribute_instance   } function_seq_block | { attribute_instance   } disable_statement | { attribute_instance   } system_task_enable */
-/* 
+/*
 
 
 
 
- 
-A.6.5 
- 
-Timing control statements 
+
+A.6.5
+
+Timing control statements
  */
 
 
- 
-  
+
+
 	  /* procedural_timing_control_statement ::= procedural_timing_control statement_or_null */
 
 
- 
-  
-	 
-	 
-	
 
- 
 
-  
+
+
+
+
+
+
+
 
   /* delay_or_event_control ::= delay_control | event_control | 'repeat' '(' expression ')' event_control */
 
 
- 
-  
-	
 
-  
-	
- 
-  
+
+
+
+
+
+
+
 
  /* delay_control ::= '#' delay_value | '#' '(' mintypmax_expression ')' */
 
 
- 
-  
-	
 
-  
-	
- 
-  
 
- 
-	
 
- 
-	
- 
+
+
+
+
+
+
+
+
+
+
+
+
  /* event_control ::= '@' event_identifier | '@' '(' event_expression ')' | '@*' | '@' '(*)' */
 
 
- 
-  
-	     
 
-   
-	 
 
-  
-	 
+
+
+
+
+
+
+
 
   /* event_expression ::= [ edge_identifier   ] expression [ 'iff'   expression   ] | event_expression 'or' event_expression | event_expression ',' event_expression */
 
 
- 
-  
-	 
+
+
+
 	/* procedural_timing_control ::= delay_control | event_control */
 
 
- 
-  
-	
 
-    
 
- 
-	
- 
- 
-	
- 
+
+
+
+
+
+
+
+
+
+
  /* jump_statement ::= 'return' [ expression   ] ';' | 'break' ';' | 'continue' ';' */
 
 
- 
-  
-	
- 
-  
 
-  
-	
-  
- 
-	
 
- 
 
-   
 
-   
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* wait_statement ::= 'wait' '(' expression ')' statement_or_null | 'wait' 'fork' ';' | 'wait_order' '(' hierarchical_identifier [ ','   hierarchical_identifier   ] ')' action_block */
 
 
- 
-  
-	
-
-  
-
- 
 
 
-     
+
+
+
+
+
+
+
+
 
  /* event_trigger ::= '->' hierarchical_event_identifier ';' | '->>' [ delay_or_event_control   ] hierarchical_event_identifier ';' */
 
 
- 
-  
-	
 
-  
 
- 
-	
 
-  
 
- 
-	
-  
+
+
+
+
+
+
+
+
+
+
  /* disable_statement ::= 'disable' hierarchical_task_identifier ';' | 'disable' hierarchical_block_identifier ';' | 'disable' 'fork' ';' */
-/* 
+/*
 
 
 
 
- 
-A.6.6 
- 
-Conditional statements 
+
+A.6.6
+
+Conditional statements
  */
 
 
- 
-  
-	   
 
- 
 
-  
 
-   
 
-   
+
+
+
+
+
+
+
 	 /* conditional_statement ::= [ unique_priority   ] 'if' '(' expression ')' statement_or_null [ 'else'   statement_or_null   ] | if_else_if_statement */
 
 
- 
-  
-	   
 
- 
 
-  
 
-  
-		 
 
-    
 
- 
 
-  
 
-   
-		 
+
+
+
+
+
+
+
+
+
+
+
+
 
    /* if_else_if_statement ::= [ unique_priority   ] 'if' '(' expression ')' statement_or_null { 'else'   [ unique_priority   ]   'if'   '('   expression   ')'   statement_or_null   } [ 'else'   statement_or_null   ] */
 
 
- 
-  
-	   
 
- 
 
-  
 
-  
-		 
 
-   
+
+
+
+
+
+
+
+
 	 /* function_conditional_statement ::= [ unique_priority   ] 'if' '(' expression ')' function_statement_or_null [ 'else'   function_statement_or_null   ] | function_if_else_if_statement */
 
 
- 
-  
-	   
 
- 
 
-  
 
-  
-		 
 
-    
 
- 
 
-  
 
-   
-		 
+
+
+
+
+
+
+
+
+
+
+
+
 
    /* function_if_else_if_statement ::= [ unique_priority   ] 'if' '(' expression ')' function_statement_or_null { 'else'   [ unique_priority   ]   'if'   '('   expression   ')'   function_statement_or_null   } [ 'else'   function_statement_or_null   ] */
 
 
- 
-  
 
-  
+
+
+
 
  /* unique_priority ::= 'unique' | 'priority' */
-/* 
+/*
 
 
 
 
- 
-A.6.7 
- 
-Case statements 
+
+A.6.7
+
+Case statements
  */
 
 
- 
-  
-	   
- 
-  
 
-     
 
- 
-	   
- 
-  
 
-     
 
- 
-	   
- 
-  
 
-     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* case_statement ::= [ unique_priority   ] 'case' '(' expression ')' case_item { case_item   } 'endcase' | [ unique_priority   ] 'casez' '(' expression ')' case_item { case_item   } 'endcase' | [ unique_priority   ] 'casex' '(' expression ')' case_item { case_item   } 'endcase' */
 
 
- 
-  
-	  
 
-   
 
-  
-	
 
-  
+
+
+
+
+
+
+
 
    /* case_item ::= expression { ','   expression   } ':' statement_or_null | 'default' [ ':'   ] statement_or_null */
 
 
- 
-  
-	   
 
- 
 
-  
 
-     
 
- 
-	   
 
- 
 
-  
 
-     
 
- 
-	   
 
- 
 
-  
 
-     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* function_case_statement ::= [ unique_priority   ] 'case' '(' expression ')' function_case_item { function_case_item   } 'endcase' | [ unique_priority   ] 'casez' '(' expression ')' function_case_item { function_case_item   } 'endcase' | [ unique_priority   ] 'casex' '(' expression ')' function_case_item { function_case_item   } 'endcase' */
 
 
- 
-  
-	  
 
-   
 
-  
-	
 
-  
+
+
+
+
+
+
+
 
    /* function_case_item ::= expression { ','   expression   } ':' function_statement_or_null | 'default' [ ':'   ] function_statement_or_null */
-/* 
+/*
 
 
 
 
- 
-A.6.8 
- 
-Looping statements 
+
+A.6.8
+
+Looping statements
  */
 
 
- 
-  
-	
 
-  
-	
 
- 
 
-  
 
-  
-	
 
- 
 
-  
 
-  
-	
 
- 
 
-   
 
-   
 
-  
- 
 
-		  
 
-   
 
-  
-	
 
-  
 
- 
 
-  
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* function_loop_statement ::= 'forever' function_statement_or_null | 'repeat' '(' expression ')' function_statement_or_null | 'while' '(' expression ')' function_statement_or_null | 'for' '(' variable_decl_or_assignment { ','   variable_decl_or_assignment   } ';' expression ';' variable_assignment { ','   variable_assignment   } ')' function_statement_or_null | 'do' function_statement_or_null 'while' '(' expression ')' ';' */
 
 
- 
-  
-	
 
-  
-	
 
- 
 
-  
 
-  
-	
 
- 
 
-  
 
-  
-	
 
- 
 
-  
 
-  
 
-  
 
-  
-	
 
- 
 
-   
 
-   
 
-  
- 
 
-		  
 
-   
 
-  
-	
 
-  
 
- 
 
-  
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* loop_statement ::= 'forever' statement_or_null | 'repeat' '(' expression ')' statement_or_null | 'while' '(' expression ')' statement_or_null | 'for' '(' variable_decl_or_assignment ';' expression ';' variable_assignment ')' statement_or_null | 'for' '(' variable_decl_or_assignment { ','   variable_decl_or_assignment   } ';' expression ';' variable_assignment { ','   variable_assignment   } ')' statement_or_null | 'do' statement_or_null 'while' '(' expression ')' ';' */
 
 
- 
-  
-	  
+
+
+
 	 /* variable_decl_or_assignment ::= data_type list_of_variable_identifiers_or_assignments | variable_assignment */
-/* 
+/*
 
 
 
 
- 
-A.6.9 Task enable statements 
+
+A.6.9 Task enable statements
  */
 
 
- 
-    
 
-     
 
-     
 
-  
+
+
+
+
+
 
  /* system_task_enable ::= 'system_task_identifier' [ '('   [ expression   ]   { ','   [ expression   ]   }   ')'   ] ';' */
 
 
- 
-    
 
-  
 
-  
+
+
+
+
 
  /* task_enable ::= hierarchical_task_identifier [ '('   list_of_arguments   ')'   ] ';' */
-/* 
+/*
 
 
 
 
- 
-A.6.10 
- 
+
+A.6.10
+
 Assertion statements
  */
 
 
- 
-  
-	 
-	 
+
+
+
+
 	 /* procedural_assertion_item ::= assert_property_statement | cover_property_statement | immediate_assert_statement */
 
 
- 
-  
 
 
- 
 
-  
+
+
+
+
 
   /* immediate_assert_statement ::= 'assert' '(' expression ')' action_block */
-/* 
+/*
 
 
 
 
- 
-A.6.11 
- 
+
+A.6.11
+
 Clocking domain
  */
 
 
- 
-   
 
-  
 
-     
 
- 
-		   
-	
+
+
+
+
+
+
+
 
  /* clocking_decl ::= [ 'default'   ] 'clocking' [ clocking_identifier   ] clocking_event ';' { clocking_item   } 'endclocking' */
 
 
- 
-  
-	
 
-  
-	
- 
-  
+
+
+
+
+
+
+
 
  /* clocking_event ::= '@' identifier | '@' '(' event_expression ')' */
 
 
- 
-  
-	
 
-  
 
- 
-	  
 
- 
+
+
+
+
+
+
+
 	    /* clocking_item ::= 'default' default_skew ';' | clocking_direction list_of_clocking_decl_assign ';' | { attribute_instance   } concurrent_assertion_item_declaration */
 
 
- 
-  
-	
 
-  
-	
 
-  
-	
 
-  
+
+
+
+
+
+
+
+
 
   /* default_skew ::= 'input' clocking_skew | 'output' clocking_skew | 'input' clocking_skew 'output' clocking_skew */
 
 
- 
-  
-	
 
-    
-	
 
-    
-	
 
-    
 
-    
-	
+
+
+
+
+
+
+
+
+
+
 
  /* clocking_direction ::= 'input' [ clocking_skew   ] | 'output' [ clocking_skew   ] | 'input' [ clocking_skew   ] 'output' [ clocking_skew   ] | 'inout' */
 
 
- 
+
        /* list_of_clocking_decl_assign ::= clocking_decl_assign { ','   clocking_decl_assign   } */
 
 
- 
-    
+
+
 
    /* clocking_decl_assign ::= signal_identifier [ '='   hierarchical_identifier   ] */
 
 
- 
-  
-	    
+
+
+
 	 /* clocking_skew ::= edge_identifier [ delay_control   ] | delay_control */
 
 
- 
-  
-	 
 
-     
-	  
+
+
+
+
+
 
   /* clocking_drive ::= clockvar_expression '<=' [ cycle_delay   ] expression | cycle_delay clockvar_expression '<=' expression */
 
 
- 
-  
+
+
 
   /* cycle_delay ::= '##' expression */
 
 
- 
-   
+
+
 
   /* clockvar ::= clocking_identifier '.' identifier */
 
 
- 
-  
-	  
-	 
 
-  
+
+
+
+
+
 
  /* clockvar_expression ::= clockvar range | clockvar [ range_expression ] */
-/* 
+/*
 
 
 
 
- 
-A.7 Specify section 
+
+A.7 Specify section
 
 
 
 
- 
-A.7.1 Specify block declaration 
+
+A.7.1 Specify block declaration
  */
 
 
- 
-  
 
-    
+
+
+
 
  /* specify_block ::= 'specify' { specify_item   } 'endspecify' */
 
 
- 
-  
-	 
-	 
-	 
-	 
+
+
+
+
+
+
 	 /* specify_item ::= specparam_declaration | pulsestyle_declaration | showcancelled_declaration | path_declaration | system_timing_check */
 
 
- 
-  
-	
 
-  
 
- 
-	
 
-  
+
+
+
+
+
+
+
 
  /* pulsestyle_declaration ::= 'pulsestyle_onevent' list_of_path_outputs ';' | 'pulsestyle_ondetect' list_of_path_outputs ';' */
 
 
- 
-  
-	
 
-  
 
- 
-	
 
-  
+
+
+
+
+
+
+
 
  /* showcancelled_declaration ::= 'showcancelled' list_of_path_outputs ';' | 'noshowcancelled' list_of_path_outputs ';' */
-/* 
+/*
 
 
 
 
- 
-A.7.2 Specify path declarations 
+
+A.7.2 Specify path declarations
  */
 
 
- 
-  
-	 
 
- 
-	 
 
- 
-	 
+
+
+
+
+
+
+
 
  /* path_declaration ::= simple_path_declaration ';' | edge_sensitive_path_declaration ';' | state_dependent_path_declaration ';' */
 
 
- 
-  
-	 
 
-  
-	 
+
+
+
+
+
 
   /* simple_path_declaration ::= parallel_path_description '=' path_delay_value | full_path_description '=' path_delay_value */
 
 
- 
-  
-	
 
-     
 
-  
+
+
+
+
+
 
  /* parallel_path_description ::= '(' specify_input_terminal_descriptor [ polarity_operator   ] '=>' specify_output_terminal_descriptor ')' */
 
 
- 
-  
-	
 
-     
 
-  
+
+
+
+
+
 
  /* full_path_description ::= '(' list_of_path_inputs [ polarity_operator   ] '*>' list_of_path_outputs ')' */
 
 
- 
-  
-	  
+
+
+
 
    /* list_of_path_inputs ::= specify_input_terminal_descriptor { ','   specify_input_terminal_descriptor   } */
 
 
- 
-  
-	  
+
+
+
 
    /* list_of_path_outputs ::= specify_output_terminal_descriptor { ','   specify_output_terminal_descriptor   } */
-/* 
+/*
 
 
 
 
- 
-A.7.3 Specify block terminals 
+
+A.7.3 Specify block terminals
  */
 
 
- 
-  
-	  
 
-  
+
+
+
+
 
   /* specify_input_terminal_descriptor ::= input_identifier [ [   constant_range_expression   ]   ] */
 
 
- 
-  
-	  
 
-  
+
+
+
+
 
   /* specify_output_terminal_descriptor ::= output_identifier [ [   constant_range_expression   ]   ] */
 
 
- 
+
      /* input_identifier ::= input_port_identifier | inout_port_identifier */
 
 
- 
+
      /* output_identifier ::= output_port_identifier | inout_port_identifier */
-/* 
+/*
 
 
 
 
- 
-A.7.4 
- 
-Specify path delays 
+
+A.7.4
+
+Specify path delays
  */
 
 
- 
-  
-	 
-	
 
-  
+
+
+
+
+
 
  /* path_delay_value ::= list_of_path_delay_expressions | '(' list_of_path_delay_expressions ')' */
 
 
- 
-  
-	 
-	 
 
-  
-	 
 
-  
 
-  
-	 
 
-  
 
- 
- 
- 
-		 
 
-  
 
-  
-	 
 
-  
 
-  
- 
 
-		 
 
-  
 
-  
 
- 
-		 
 
-  
 
-  
 
- 
-		 
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* list_of_path_delay_expressions ::= t_path_delay_expression | trise_path_delay_expression ',' tfall_path_delay_expression | trise_path_delay_expression ',' tfall_path_delay_expression ',' tz_path_delay_expression | t01_path_delay_expression ',' t10_path_delay_expression ',' t0z_path_delay_expression ',' tz1_path_delay_expression ',' t1z_path_delay_expression ',' tz0_path_delay_expression | t01_path_delay_expression ',' t10_path_delay_expression ',' t0z_path_delay_expression ',' tz1_path_delay_expression ',' t1z_path_delay_expression ',' tz0_path_delay_expression ',' t0x_path_delay_expression ',' tx1_path_delay_expression ',' t1x_path_delay_expression ',' tx0_path_delay_expression ',' txz_path_delay_expression ',' tzx_path_delay_expression */
 
 
- 
+
    /* t_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* trise_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* tfall_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* tz_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* t01_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* t10_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* t0z_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* tz1_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* t1z_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* tz0_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* t0x_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* tx1_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* t1x_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* tx0_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* txz_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* tzx_path_delay_expression ::= path_delay_expression */
 
 
- 
+
    /* path_delay_expression ::= constant_mintypmax_expression */
 
 
- 
-  
-	 
 
-  
-	 
+
+
+
+
+
 
   /* edge_sensitive_path_declaration ::= parallel_edge_sensitive_path_description '=' path_delay_value | full_edge_sensitive_path_description '=' path_delay_value */
 
 
- 
-  
-	
 
-     
 
- 
-		    
 
-  
+
+
+
+
+
+
+
 
  /* parallel_edge_sensitive_path_description ::= '(' [ edge_identifier   ] specify_input_terminal_descriptor '=>' specify_output_terminal_descriptor [ polarity_operator   ] ':' data_source_expression ')' */
 
 
- 
-  
-	
 
-     
 
- 
-		    
 
-  
+
+
+
+
+
+
+
 
  /* full_edge_sensitive_path_description ::= '(' [ edge_identifier   ] list_of_path_inputs '*>' list_of_path_outputs [ polarity_operator   ] ':' data_source_expression ')' */
 
 
- 
+
    /* data_source_expression ::= expression */
 
 
- 
-  
 
-  
+
+
+
 
  /* edge_identifier ::= 'posedge' | 'negedge' */
 
 
- 
-  
-	
 
- 
 
-  
 
-  
-	
 
- 
 
-  
 
-  
-	
+
+
+
+
+
+
+
+
+
+
+
 
   /* state_dependent_path_declaration ::= 'if' '(' module_path_expression ')' simple_path_declaration | 'if' '(' module_path_expression ')' edge_sensitive_path_declaration | 'ifnone' simple_path_declaration */
 
 
- 
-  
 
-  
+
+
+
 
  /* polarity_operator ::= '+' | - */
-/* 
+/*
 
 
 
 
- 
-A.7.5 System timing checks 
+
+A.7.5 System timing checks
 
 
 
- 
-A.7.5.1 System timing check commands 
+
+A.7.5.1 System timing check commands
  */
 
 
- 
-  
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	 
+
+
+
+
+
+
+
+
+
+
+
+
+
 	 /* system_timing_check ::= $setup_timing_check | $hold_timing_check | $setuphold_timing_check | $recovery_timing_check | $removal_timing_check | $recrem_timing_check | $skew_timing_check | $timeskew_timing_check | $fullskew_timing_check | $period_timing_check | $width_timing_check | $nochange_timing_check */
 
 
- 
-  
-	
- 
-  
 
-  
 
-   
 
-     
- 
+
+
+
+
+
+
+
+
+
  /* $setup_timing_check ::= '$setup' '(' data_event ',' reference_event ',' timing_check_limit [ ','   [ notify_reg   ]   ] ')' ';' */
 
 
- 
-  
-	
- 
-  
 
-  
 
-   
 
-     
- 
+
+
+
+
+
+
+
+
+
  /* $hold_timing_check ::= '$hold' '(' reference_event ',' data_event ',' timing_check_limit [ ','   [ notify_reg   ]   ] ')' ';' */
 
 
- 
-  
-	
- 
-  
 
-  
 
-  
 
-  
-		 
 
-     
 
-     
 
-    
-		 
 
-     
 
-         
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  /* $setuphold_timing_check ::= '$setuphold' '(' reference_event ',' data_event ',' timing_check_limit ',' timing_check_limit [ ','   [ notify_reg   ]   [ ','   [ stamptime_condition   ]   [ ','   [ checktime_condition   ]   [ ','   [ delayed_reference   ]   [ ','   [ delayed_data   ]   ]   ]   ]   ]   ] ')' ';' */
 
 
- 
-  
-	
- 
-  
 
-  
 
-   
 
-     
- 
+
+
+
+
+
+
+
+
+
  /* $recovery_timing_check ::= '$recovery' '(' reference_event ',' data_event ',' timing_check_limit [ ','   [ notify_reg   ]   ] ')' ';' */
 
 
- 
-  
-	
- 
-  
 
-  
 
-   
 
-     
- 
+
+
+
+
+
+
+
+
+
  /* $removal_timing_check ::= '$removal' '(' reference_event ',' data_event ',' timing_check_limit [ ','   [ notify_reg   ]   ] ')' ';' */
 
 
- 
-  
-	
- 
-  
 
-  
 
-  
 
-  
-		 
 
-     
 
-     
 
-    
-		 
 
-     
 
-         
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
  /* $recrem_timing_check ::= '$recrem' '(' reference_event ',' data_event ',' timing_check_limit ',' timing_check_limit [ ','   [ notify_reg   ]   [ ','   [ stamptime_condition   ]   [ ','   [ checktime_condition   ]   [ ','   [ delayed_reference   ]   [ ','   [ delayed_data   ]   ]   ]   ]   ]   ] ')' ';' */
 
 
- 
-  
-	
- 
-  
 
-  
 
-   
 
-     
- 
+
+
+
+
+
+
+
+
+
  /* $skew_timing_check ::= '$skew' '(' reference_event ',' data_event ',' timing_check_limit [ ','   [ notify_reg   ]   ] ')' ';' */
 
 
- 
-  
-	
- 
-  
 
-  
 
-  
-		 
 
-     
 
-     
 
-       
- 
+
+
+
+
+
+
+
+
+
+
+
+
  /* $timeskew_timing_check ::= '$timeskew' '(' reference_event ',' data_event ',' timing_check_limit [ ','   [ notify_reg   ]   [ ','   [ event_based_flag   ]   [ ','   [ remain_active_flag   ]   ]   ]   ] ')' ';' */
 
 
- 
-  
-	
- 
-  
 
-  
 
-  
 
-  
-		 
 
-     
 
-     
 
-       
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
  /* $fullskew_timing_check ::= '$fullskew' '(' reference_event ',' data_event ',' timing_check_limit ',' timing_check_limit [ ','   [ notify_reg   ]   [ ','   [ event_based_flag   ]   [ ','   [ remain_active_flag   ]   ]   ]   ] ')' ';' */
 
 
- 
-  
-	
- 
-  
 
-   
 
-     
- 
+
+
+
+
+
+
+
+
  /* $period_timing_check ::= '$period' '(' controlled_reference_event ',' timing_check_limit [ ','   [ notify_reg   ]   ] ')' ';' */
 
 
- 
-  
-	
- 
-  
 
-  
 
-   
 
-     
- 
+
+
+
+
+
+
+
+
+
  /* $width_timing_check ::= '$width' '(' controlled_reference_event ',' timing_check_limit ',' threshold [ ','   [ notify_reg   ]   ] ')' ';' */
 
 
- 
-  
-	
- 
-  
 
-  
 
-  
 
- 
-		  
 
-     
- 
+
+
+
+
+
+
+
+
+
+
+
  /* $nochange_timing_check ::= '$nochange' '(' reference_event ',' data_event ',' start_edge_offset ',' end_edge_offset [ ','   [ notify_reg   ]   ] ')' ';' */
-/* 
+/*
 
 
 
 
- 
-A.7.5.2 System timing check command arguments 
+
+A.7.5.2 System timing check command arguments
  */
 
 
- 
+
    /* checktime_condition ::= mintypmax_expression */
 
 
- 
+
    /* controlled_reference_event ::= controlled_timing_check_event */
 
 
- 
+
    /* data_event ::= timing_check_event */
 
 
- 
-  
-	 
-	 
 
-  
+
+
+
+
+
 
  /* delayed_data ::= terminal_identifier | terminal_identifier [ constant_mintypmax_expression ] */
 
 
- 
-  
-	 
-	 
 
-  
+
+
+
+
+
 
  /* delayed_reference ::= terminal_identifier | terminal_identifier [ constant_mintypmax_expression ] */
 
 
- 
+
    /* end_edge_offset ::= mintypmax_expression */
 
 
- 
+
    /* event_based_flag ::= constant_expression */
 
 
- 
+
    /* notify_reg ::= variable_identifier */
 
 
- 
+
    /* reference_event ::= timing_check_event */
 
 
- 
+
    /* remain_active_flag ::= constant_mintypmax_expression */
 
 
- 
+
    /* stamptime_condition ::= mintypmax_expression */
 
 
- 
+
    /* start_edge_offset ::= mintypmax_expression */
 
 
- 
+
   /* threshold ::= constant_expression */
 
 
- 
+
    /* timing_check_limit ::= expression */
-/* 
+/*
 
 
 
 
- 
-A.7.5.3 System timing check event definitions 
+
+A.7.5.3 System timing check event definitions
  */
 
 
- 
-  
-	   
+
+
+
 
    /* timing_check_event ::= [ timing_check_event_control   ] specify_terminal_descriptor [ '&&&'   timing_check_condition   ] */
 
 
- 
-  
-	   
+
+
+
 
    /* controlled_timing_check_event ::= timing_check_event_control specify_terminal_descriptor [ '&&&'   timing_check_condition   ] */
 
 
- 
-  
-	
 
- 
-	
 
- 
+
+
+
+
+
+
 	 /* timing_check_event_control ::= 'posedge' | 'negedge' | edge_control_specifier */
 
 
- 
-  
-	 
+
+
+
 	 /* specify_terminal_descriptor ::= specify_input_terminal_descriptor | specify_output_terminal_descriptor */
 
 
- 
-  
 
- 
 
-   
 
-   
+
+
+
+
+
 
  /* edge_control_specifier ::= 'edge' [ edge_descriptor { ','   edge_descriptor   } ] */
 
 
- 
 
-  
 
-  
 
-  
- 
-  
- 
+
+
+
+
+
+
+
  /* edge_descriptor ::= '01' | '10' | 'z_or_x' zero_or_one | zero_or_one 'z_or_x' */
 
 
- 
-  
 
-  
+
+
+
 
  /* zero_or_one ::= '0' | '1' */
 
 
- 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
 
  /* 'z_or_x' ::= x | X | Z | Z */
 
 
- 
-  
-	 
-	
 
-  
+
+
+
+
+
 
  /* timing_check_condition ::= scalar_timing_check_condition | '(' scalar_timing_check_condition ')' */
 
 
- 
-  
-	 
-	
 
-  
-	 
- 
- 
-	 
 
-  
-	 
 
-  
-	 
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* scalar_timing_check_condition ::= expression | '~' expression | expression '==' scalar_constant | expression '===' scalar_constant | expression '!=' scalar_constant | expression '!==' scalar_constant */
 
 
- 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
 
  /* scalar_constant ::= '1'b0' | '1'b1' | '1'B0' | '1'B1' | ''b0' | ''b1' | ''B0' | ''B1' | '1' | '0' */
-/* 
+/*
 
 
 
 
 
- 
-A.8 Expressions 
+
+A.8 Expressions
 
 
 
 
- 
-A.8.1 
- 
-Concatenations 
+
+A.8.1
+
+Concatenations
  */
 
 
- 
-  
-	
 
-   
 
-   
 
- 
-	
 
-  
 
-   
 
-     
 
- 
-	
 
-  
 
-   
 
-     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* concatenation ::= { expression { ','   expression   } } | { struct_member_label ':' expression { ','   struct_member_label   ':'   expression   } } | { array_member_label ':' expression { ','   array_member_label   ':'   expression   } } */
 
 
- 
-  
-	
 
-   
 
-   
 
- 
-	
 
-  
 
-   
 
-     
 
- 
-	
 
-  
 
-   
 
-     
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* constant_concatenation ::= { constant_expression { ','   constant_expression   } } | { struct_member_label ':' constant_expression { ','   struct_member_label   ':'   constant_expression   } } | { array_member_label ':' constant_expression { ','   array_member_label   ':'   constant_expression   } } */
 
 
- 
-  
-	
 
- 
-	 
+
+
+
+
+
 	 /* struct_member_label ::= 'default' | type_identifier | variable_identifier */
 
 
- 
-  
-	
 
- 
-	 
+
+
+
+
+
 	/* array_member_label ::= 'default' | type_identifier | constant_expression */
 
 
- 
-  
 
-   
+
+
+
 
  /* constant_multiple_concatenation ::= { constant_expression constant_concatenation } */
 
 
- 
-  
 
-   
 
-   
+
+
+
+
 
  /* module_path_concatenation ::= { module_path_expression { ','   module_path_expression   } } */
 
 
- 
-  
 
-   
+
+
+
 
  /* module_path_multiple_concatenation ::= { constant_expression module_path_concatenation } */
 
 
- 
-  
 
-   
+
+
+
 
  /* multiple_concatenation ::= { constant_expression concatenation } */
-/* 
+/*
 
 
 
 
- 
-A.8.2 Function calls 
+
+A.8.2 Function calls
  */
 
 
- 
-      
-	  
 
-  
+
+
+
+
 
   /* constant_function_call ::= function_identifier { attribute_instance   } [ '('   list_of_constant_arguments   ')'   ] */
 
 
- 
-       
 
-  
+
+
+
 
   /* function_call ::= hierarchical_function_identifier { attribute_instance   } [ '('   list_of_arguments   ')'   ] */
 
 
- 
-  
-	    
 
-     
-	
 
-  
 
-    
 
-  
 
- 
 
-  
 
-    
+
+
+
+
+
+
+
+
+
+
+
 
   /* list_of_arguments ::= [ expression   ] { ','   [ expression   ]   } | '.' identifier '(' [ expression   ] ')' { ','   '.'   identifier   '('   [ expression   ]   ')'   } */
 
 
- 
-  
-	    
 
-     
-	
 
-  
 
-    
 
-  
 
- 
 
-  
 
-    
+
+
+
+
+
+
+
+
+
+
+
 
   /* list_of_constant_arguments ::= [ constant_expression   ] { ','   [ constant_expression   ]   } | '.' identifier '(' [ constant_expression   ] ')' { ','   '.'   identifier   '('   [ constant_expression   ]   ')'   } */
 
 
- 
-    
 
-   
 
-   
+
+
+
+
 
   /* system_function_call ::= 'system_function_identifier' [ '('   expression   { ','   expression   }   ')'   ] */
-/* 
+/*
 
 
 
 
- 
-A.8.3 
- 
-Expressions 
+
+A.8.3
+
+Expressions
  */
 
 
- 
+
    /* base_expression ::= expression */
 
 
- 
-  
-	     
+
+
+
 	     /* inc_or_dec_expression ::= inc_or_dec_operator { attribute_instance   } variable_lvalue | variable_lvalue { attribute_instance   } inc_or_dec_operator */
 
 
- 
-   
 
-     
+
+
+
 
   /* conditional_expression ::= expression1 '?' { attribute_instance   } expression2 ':' expression3 */
 
 
- 
+
    /* constant_base_expression ::= constant_expression */
 
 
- 
-  
-	 
-	     
-	      
-	 
 
-     
 
-  
+
+
+
+
+
+
+
+
 	 /* constant_expression ::= constant_primary | unary_operator { attribute_instance   } constant_primary | constant_expression binary_operator { attribute_instance   } constant_expression | constant_expression '?' { attribute_instance   } constant_expression ':' constant_expression | string_literal */
 
 
- 
-  
-	 
-	 
 
-  
+
+
+
+
+
 
   /* constant_mintypmax_expression ::= constant_expression | constant_expression ':' constant_expression ':' constant_expression */
 
 
- 
-  
+
+
 	 /* constant_param_expression ::= constant_expression */
 
 
- 
-  
-	 
-	 
 
-  
-	 
 
-  
-	 
+
+
+
+
+
+
+
+
 
   /* constant_range_expression ::= constant_expression | msb_constant_expression ':' lsb_constant_expression | constant_base_expression '+:' width_constant_expression | constant_base_expression '-:' width_constant_expression */
 
 
- 
+
    /* dimension_constant_expression ::= constant_expression */
 
 
- 
+
    /* expression1 ::= expression */
 
 
- 
+
    /* expression2 ::= expression */
 
 
- 
+
    /* expression3 ::= expression */
 
 
- 
-  
-	 
-	     
-	 
-	
 
-  
 
- 
-	      
-	 
-	 
+
+
+
+
+
+
+
+
+
+
+
 	 /* expression ::= primary | unary_operator { attribute_instance   } primary | inc_or_dec_expression | '(' operator_assignment ')' | expression binary_operator { attribute_instance   } expression | conditional_expression | string_literal | inside_expression */
 
 
- 
-   
+
+
 
   /* inside_expression ::= expression 'inside' range_list_or_array */
 
 
- 
-  
-	 
-	
 
-   
 
-   
+
+
+
+
+
+
 
  /* range_list_or_array ::= variable_identifier | { value_range { ','   value_range   } } */
 
 
- 
-  
-	 
-	
 
-  
 
-  
+
+
+
+
+
+
 
  /* value_range ::= expression | [ expression ':' expression ] */
 
 
- 
+
    /* lsb_constant_expression ::= constant_expression */
 
 
- 
-  
-	 
-	 
 
-  
+
+
+
+
+
 
   /* mintypmax_expression ::= expression | expression ':' expression ':' expression */
 
 
- 
-   
 
-    
-	 
+
+
+
+
 
   /* module_path_conditional_expression ::= module_path_expression '?' { attribute_instance   } module_path_expression ':' module_path_expression */
 
 
- 
-  
-	 
-	     
-	
- 
-    
-		 
+
+
+
+
+
+
+
+
 	 /* module_path_expression ::= module_path_primary | unary_module_path_operator { attribute_instance   } module_path_primary | module_path_expression binary_module_path_operator { attribute_instance   } module_path_expression | module_path_conditional_expression */
 
 
- 
-  
-	 
-	 
 
-  
+
+
+
+
+
 
   /* module_path_mintypmax_expression ::= module_path_expression | module_path_expression ':' module_path_expression ':' module_path_expression */
 
 
- 
+
    /* msb_constant_expression ::= constant_expression */
 
 
- 
-  
-	 
-	 
 
-  
-	 
 
-  
-	 
+
+
+
+
+
+
+
+
 
   /* range_expression ::= expression | msb_constant_expression ':' lsb_constant_expression | base_expression '+:' width_constant_expression | base_expression '-:' width_constant_expression */
 
 
- 
+
    /* width_constant_expression ::= constant_expression */
-/* 
+/*
 
 
 
 
- 
-A.8.4 
- 
-Primaries 
+
+A.8.4
+
+Primaries
  */
 
 
- 
-  
-	 
-	 
-	
 
-  
 
- 
-	 
-	 
-	 
-	 
-	 
-	 
 
- 
 
-  
 
- 
-	 
 
-  
-	 
 
-  
-	 
-	
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* constant_primary ::= constant_concatenation | constant_function_call | '(' constant_mintypmax_expression ')' | constant_multiple_concatenation | genvar_identifier | number | parameter_identifier | specparam_identifier | casting_type ''' '(' constant_expression ')' | casting_type ''' constant_concatenation | casting_type ''' constant_multiple_concatenation | time_literal | ''0' | ''1' | ''z' | ''Z' | ''x' | ''X' */
 
 
- 
-  
-	 
-	 
-	 
-	 
-	 
-	 
-	 
-	
 
-  
+
+
+
+
+
+
+
+
+
+
+
 
  /* module_path_primary ::= number | identifier | module_path_concatenation | module_path_multiple_concatenation | function_call | system_function_call | constant_function_call | '(' module_path_mintypmax_expression ')' */
 
 
- 
-  
-	 
-	   
 
-  
 
-   
 
-  
 
-  
-		 
 
-      
 
-   
 
-   
 
-   
-	 
-	 
-	 
-	 
-	 
-	 
 
-   
 
-   
-	
 
-  
 
- 
-	 
- 
-  
 
- 
-	
-  
-  
 
- 
-	 
- 
- 
-	 
- 
- 
-	 
-	
 
-  
 
-  
 
-  
 
-  
 
-  
 
- 
-	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* primary ::= number | implicit_class_handle hierarchical_identifier { [   expression   ]   } [ [   range_expression   ]   ] [ '.'   method_identifier   { attribute_instance   }   [ '('   expression   { ','   expression   }   ')'   ]   ] | concatenation | multiple_concatenation | function_call | system_function_call | constant_function_call | class_identifier '::' { class_identifier   '::'   } identifier | '(' mintypmax_expression ')' | casting_type ''' '(' expression ')' | 'void' ''' '(' function_call ')' | casting_type ''' concatenation | casting_type ''' multiple_concatenation | time_literal | ''0' | ''1' | ''z' | ''Z' | ''x' | ''X' | 'null' */
 
 
- 
 
-  
-	  
+
+
+
 	 /* time_literal ::= 'unsigned_number' 'time_unit' | fixed_point_number 'time_unit' */
 
 
- 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
 
  /* 'time_unit' ::= S | MS | US | NS | PS | FS | 'step' */
 
 
- 
 
-   
 
-    
+
+
+
 
   /* implicit_class_handle ::= [ 'this'   '.'   ] | [ 'super'   '.'   ] */
-/* 
+/*
 
 
 
 
- 
-A.8.5 Expression left-side values 
+
+A.8.5 Expression left-side values
  */
 
 
- 
-  
-	  
 
-  
 
-   
 
-  
 
- 
-	
 
-   
 
-   
+
+
+
+
+
+
+
+
+
+
 
  /* net_lvalue ::= hierarchical_net_identifier { [   constant_expression   ]   } [ [   constant_range_expression   ]   ] | { net_lvalue { ','   net_lvalue   } } */
 
 
- 
-  
-	  
 
-  
 
-   
 
-  
 
-  
-	
 
-   
 
-   
+
+
+
+
+
+
+
+
+
+
 
  /* variable_lvalue ::= hierarchical_variable_identifier { [   expression   ]   } [ [   range_expression   ]   ] | { variable_lvalue { ','   variable_lvalue   } } */
-/* 
+/*
 
 
 
 
- 
-A.8.6 
- 
-Operators 
+
+A.8.6
+
+Operators
  */
 
 
- 
-  
-	
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* unary_operator ::= '+' | - | '!' | '~' | '&' | '~&' | | | '~|' | '^' | '~^' | '^~' */
 
 
- 
-  
-	
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
- 
-	
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* binary_operator ::= '+' | - | '*' | '/' | '%' | '==' | '!=' | '===' | '!==' | '=?=' | '!?=' | '&&' | '||' | '**' | '<' | '<=' | '>' | '>=' | '&' | | | '^' | '^~' | '~^' | '>>' | '<<' | '>>>' | '<<<' */
 
 
- 
-  
 
-  
+
+
+
 
  /* inc_or_dec_operator ::= '++' | '--' */
 
 
- 
- 
 
- 
-          
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* unary_module_path_operator ::= '!' | '~' | '&' | '~&' | | | '~|' | '^' | '~^' | '^~' */
 
 
- 
- 
 
- 
-          
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* binary_module_path_operator ::= '==' | '!=' | '&&' | '||' | '&' | | | '^' | '^~' | '~^' */
-/* 
+/*
 
 
 
 
- 
-A.8.7 
- 
-Numbers 
+
+A.8.7
+
+Numbers
  */
 
 
- 
-  
-	 
-	 
-	 
-	 
+
+
+
+
+
+
 	 /* number ::= decimal_number | octal_number | binary_number | hex_number | real_number */
 
 
- 
-  
-	 
-	   
- 
- 
-	   
- 
-  
 
-  
-	   
- 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   /* decimal_number ::= 'unsigned_number' | [ size   ] 'decimal_base' 'unsigned_number' | [ size   ] 'decimal_base' 'x_digit' { '_'   } | [ size   ] 'decimal_base' 'z_digit' { '_'   } */
 
 
- 
-     
- 
+
+
+
  /* binary_number ::= [ size   ] 'binary_base' binary_value */
 
 
- 
-     
- 
+
+
+
  /* octal_number ::= [ size   ] 'octal_base' octal_value */
 
 
- 
-     
- 
+
+
+
  /* hex_number ::= [ size   ] 'hex_base' hex_value */
 
 
- 
-  
 
-  
+
+
+
 
  /* sign ::= '+' | - */
 
 
- 
+
    /* size ::= non_zero_unsigned_number */
 
 
- 
 
-    
+
+
 
    /* non_zero_unsigned_number ::= non_zero_decimal_digit { '_'   |   decimal_digit   } */
 
 
- 
 
-  
-	 
-	  
+
+
+
+
 
         /* real_number ::= fixed_point_number | 'unsigned_number' [ '.'   'unsigned_number'   ] 'exp' [ sign   ] 'unsigned_number' */
 
 
- 
 
-   
+
+
 
   /* fixed_point_number ::= 'unsigned_number' '.' 'unsigned_number' */
 
 
- 
-  
 
-  
+
+
+
 
  /* 'exp' ::= E | E */
 
 
- 
 
-    
+
+
 
     /* 'unsigned_number' ::= decimal_digit { '_'   |   decimal_digit   } */
 
 
- 
 
-    
+
+
 
     /* binary_value ::= binary_digit { '_'   |   binary_digit   } */
 
 
- 
 
-    
+
+
 
     /* octal_value ::= octal_digit { '_'   |   octal_digit   } */
 
 
- 
 
-    
+
+
 
     /* hex_value ::= 'hex_digit' { '_'   |   'hex_digit'   } */
 
 
- 
-
-  
 
 
 
@@ -7141,7 +7138,10 @@ Numbers
 
 
 
-  
+
+
+
+
 
 
 
@@ -7152,9 +7152,6 @@ Numbers
  /* 'decimal_base' ::= ''' [ s   |   S   ] D | ''' [ s   |   S   ] D */
 
 
- 
-
-  
 
 
 
@@ -7162,7 +7159,10 @@ Numbers
 
 
 
-  
+
+
+
+
 
 
 
@@ -7173,9 +7173,6 @@ Numbers
  /* 'binary_base' ::= ''' [ s   |   S   ] b | ''' [ s   |   S   ] B */
 
 
- 
-
-  
 
 
 
@@ -7183,7 +7180,10 @@ Numbers
 
 
 
-  
+
+
+
+
 
 
 
@@ -7194,9 +7194,6 @@ Numbers
  /* 'octal_base' ::= ''' [ s   |   S   ] O | ''' [ s   |   S   ] O */
 
 
- 
-
-  
 
 
 
@@ -7204,7 +7201,10 @@ Numbers
 
 
 
-  
+
+
+
+
 
 
 
@@ -7215,249 +7215,246 @@ Numbers
  /* 'hex_base' ::= ''' [ s   |   S   ] H | ''' [ s   |   S   ] H */
 
 
- 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
 
  /* non_zero_decimal_digit ::= '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' */
 
 
- 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
 
  /* decimal_digit ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' */
 
 
- 
-      
 
-  
+
+
+
 
  /* binary_digit ::= 'x_digit' | 'z_digit' | '0' | '1' */
 
 
- 
-      
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
 
  /* octal_digit ::= 'x_digit' | 'z_digit' | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' */
 
 
- 
-      
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
 
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
  /* 'hex_digit' ::= 'x_digit' | 'z_digit' | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | A | b | C | d | e | f | A | B | C | D | E | F */
 
 
- 
-  
 
-  
+
+
+
 
  /* 'x_digit' ::= x | X */
 
 
- 
-  
 
-  
 
-  
+
+
+
+
 
  /* 'z_digit' ::= z | Z | '?' */
-/* 
+/*
 
 
 
 
- 
-A.8.8 
- 
-Strings 
+
+A.8.8
+
+Strings
  */
 
 
- 
-  
 
-    
+
+
+
 
  /* string_literal ::= '"' { 'Any_ASCII_Characters'   } '"' */
-/* 
+/*
 
 
 
 
- 
-A.9 General 
+
+A.9 General
 
 
 
 
- 
-A.9.1 
- 
-Attributes 
+
+A.9.1
+
+Attributes
  */
 
 
- 
-  
 
-   
 
-   
+
+
+
+
 
  /* attribute_instance ::= '(*' attr_spec { ','   attr_spec   } '*)' */
 
 
- 
-  
-	 
 
-  
+
+
+
+
 	 /* attr_spec ::= attr_name '=' constant_expression | attr_name */
 
 
- 
+
    /* attr_name ::= identifier */
-/* 
+/*
 
 
 
 
- 
-A.9.2 Comments 
+
+A.9.2 Comments
  */
 
 
- 
-  
-	 
+
+
+
 	 /* comment ::= one_line_comment | block_comment */
 
 
- 
-  
+
+
 
    /* one_line_comment ::= '//' comment_text '\n' */
 
 
- 
-  
 
-  
+
+
+
 
  /* block_comment ::= '/' '*'  comment_text '*' '/'  */
 
 
- 
+
      /* comment_text ::= { 'Any_ASCII_character'   } */
-/* 
+/*
 
 
 
 
- 
-A.9.3 Identifiers 
+
+A.9.3 Identifiers
  */
 
 
- 
+
    /* block_identifier ::= identifier */
 
 
- 
-
-   
 
 
 
@@ -7465,7 +7462,10 @@ A.9.3 Identifiers
 
 
 
-    
+
+
+
+
 
 
 
@@ -7478,206 +7478,206 @@ A.9.3 Identifiers
    /* 'c_identifier' ::= [ "a" .. "z"   |   "A" .. "Z"   '_'   ] { [ "a" .. "z"   |   "A" .. "Z"   |   "'0'" .. "'9_'"   ]   } */
 
 
- 
+
    /* cell_identifier ::= identifier */
 
 
- 
+
    /* class_identifier ::= identifier */
 
 
- 
+
    /* clocking_identifier ::= identifier */
 
 
- 
+
    /* config_identifier ::= identifier */
 
 
- 
+
    /* constraint_identifier ::= identifier */
 
 
- 
+
    /* const_identifier ::= identifier */
 
 
- 
+
    /* enum_identifier ::= identifier */
 
 
- 
 
-  
-	  
 
-  
+
+
+
+
 
   /* escaped_hierarchical_identifier ::= escaped_hierarchical_branch { '.'   simple_hierarchical_branch   |   '.'   escaped_hierarchical_branch   } */
 
 
- 
-  
+
+
 
    /* escaped_identifier ::= '\' '{any_ASCII_character_except_white_space}' white_space */
 
 
- 
+
    /* event_identifier ::= identifier */
 
 
- 
+
    /* formal_identifier ::= identifier */
 
 
- 
+
    /* function_identifier ::= identifier */
 
 
- 
+
    /* gate_instance_identifier ::= identifier */
 
 
- 
+
    /* generate_block_identifier ::= identifier */
 
 
- 
+
    /* genvar_identifier ::= identifier */
 
 
- 
+
    /* hierarchical_block_identifier ::= hierarchical_identifier */
 
 
- 
+
    /* hierarchical_event_identifier ::= hierarchical_identifier */
 
 
- 
+
    /* hierarchical_function_identifier ::= hierarchical_identifier */
 
 
- 
-  
-	 
+
+
+
 	 /* hierarchical_identifier ::= simple_hierarchical_identifier | escaped_hierarchical_identifier */
 
 
- 
+
    /* hierarchical_parameter_identifier ::= hierarchical_identifier */
 
 
- 
+
    /* hierarchical_net_identifier ::= hierarchical_identifier */
 
 
- 
+
    /* hierarchical_variable_identifier ::= hierarchical_identifier */
 
 
- 
+
    /* hierarchical_task_identifier ::= hierarchical_identifier */
 
 
- 
-  
-	 
+
+
+
 	 /* identifier ::= 'simple_identifier' | escaped_identifier */
 
 
- 
+
    /* interface_identifier ::= identifier */
 
 
- 
+
    /* interface_instance_identifier ::= identifier */
 
 
- 
+
      /* inout_port_identifier ::= identifier */
 
 
- 
+
    /* input_port_identifier ::= identifier */
 
 
- 
+
    /* instance_identifier ::= identifier */
 
 
- 
+
    /* library_identifier ::= identifier */
 
 
- 
+
    /* method_identifier ::= identifier */
 
 
- 
+
    /* modport_identifier ::= identifier */
 
 
- 
+
    /* module_identifier ::= identifier */
 
 
- 
+
    /* module_instance_identifier ::= identifier */
 
 
- 
+
      /* net_identifier ::= identifier */
 
 
- 
+
    /* output_port_identifier ::= identifier */
 
 
- 
+
    /* parameter_identifier ::= identifier */
 
 
- 
+
    /* port_identifier ::= identifier */
 
 
- 
+
    /* program_identifier ::= identifier */
 
 
- 
+
    /* program_instance_identifier ::= identifier */
 
 
- 
+
    /* property_identifier ::= identifier */
 
 
- 
+
    /* sequence_identifier ::= identifier */
 
 
- 
+
    /* signal_identifier ::= identifier */
 
 
- 
 
-    
+
+
 
    /* simple_hierarchical_identifier ::= simple_hierarchical_branch [ '.'   escaped_identifier   ] */
 
 
- 
-
-   
 
 
 
 
 
-    
+
+
+
+
 
 
 
@@ -7688,15 +7688,10 @@ A.9.3 Identifiers
    /* 'simple_identifier' ::= [ ""a" .. "ZA"" .. "Z_"   ] { [ """a" .. "zA"" .. "Z0"" .. "'9_$'"   ]   } */
 
 
- 
+
    /* specparam_identifier ::= identifier */
 
 
- 
-
-  
-
- 
 
 
 
@@ -7704,7 +7699,12 @@ A.9.3 Identifiers
 
 
 
-   
+
+
+
+
+
+
 
 
 
@@ -7715,11 +7715,6 @@ A.9.3 Identifiers
    /* 'system_function_identifier' ::= '$' [ """a" .. "zA"" .. "Z0"" .. "'9_$'"   ']{'   [ """a" .. "zA"" .. "Z0"" .. "'9_$'"   ]   ] */
 
 
- 
-
-  
-
- 
 
 
 
@@ -7727,7 +7722,12 @@ A.9.3 Identifiers
 
 
 
-   
+
+
+
+
+
+
 
 
 
@@ -7738,168 +7738,168 @@ A.9.3 Identifiers
    /* 'system_task_identifier' ::= '$' [ """a" .. "zA"" .. "Z0"" .. "'9_$'"   ']{'   [ """a" .. "zA"" .. "Z0"" .. "'9_$'"   ]   ] */
 
 
- 
+
     /* task_or_function_identifier ::= task_identifier | function_identifier */
 
 
- 
+
    /* task_identifier ::= identifier */
 
 
- 
+
    /* terminal_identifier ::= identifier */
 
 
- 
+
    /* text_macro_identifier ::= 'simple_identifier' */
 
 
- 
+
    /* topmodule_identifier ::= identifier */
 
 
- 
+
       /* type_declaration_identifier ::= type_identifier { unpacked_dimension   } */
 
 
- 
+
    /* type_identifier ::= identifier */
 
 
- 
+
    /* udp_identifier ::= identifier */
 
 
- 
+
    /* udp_instance_identifier ::= identifier */
 
 
- 
+
    /* variable_identifier ::= identifier */
-/* 
+/*
 
 
 
 
- 
-A.9.4 Identifier branches 
+
+A.9.4 Identifier branches
  */
 
 
- 
 
-  
-	  
 
-  
 
-    
 
-   
 
-  
+
+
+
+
+
+
+
 
     /* simple_hierarchical_branch ::= 'simple_identifier' { [   'unsigned_number'   ]   } [ { '.'   'simple_identifier'   { [   'unsigned_number'   ]   }   }   ] */
 
 
- 
 
-  
-	  
 
-  
 
-    
 
-   
 
-  
+
+
+
+
+
+
+
 
     /* escaped_hierarchical_branch ::= escaped_identifier { [   'unsigned_number'   ]   } [ { '.'   escaped_identifier   { [   'unsigned_number'   ]   }   }   ] */
-/* 
+/*
 
 
 
 
- 
-A.9.5 White space 
+
+A.9.5 White space
  */
 
 
- 
-        
+
+
  /* white_space ::= 'space' | 'tab' | 'newline' | 'eof' */
-/* 
+/*
 
 
 
- 
-NOTES 
+
+NOTES
 
 
 
- 
-Embedded spaces are illegal. 
+
+Embedded spaces are illegal.
 
 
- 
-A simple_identifier, c_identifier, and arrayed_reference shall start with an alpha or underscore (_) character, shall have at least one character, and shall not have any spaces. 
+
+A simple_identifier, c_identifier, and arrayed_reference shall start with an alpha or underscore (_) character, shall have at least one character, and shall not have any spaces.
 
 
- 
-The period (.) in simple_hierarchical_identifier and simple_hierarchical_branch shall not be preceded or followed by white_space. 
+
+The period (.) in simple_hierarchical_identifier and simple_hierarchical_branch shall not be preceded or followed by white_space.
 
 
- 
-The period in escaped_hierarchical_identifier and escaped_hierarchical_branch shall be preceded by white_space, but shall not be followed by white_space. 
+
+The period in escaped_hierarchical_identifier and escaped_hierarchical_branch shall be preceded by white_space, but shall not be followed by white_space.
 
 
- 
-The $ character in a system_function_identifier or system_task_identifier shall not be followed by white_space. A system_function_identifier or system_task_identifier shall not be escaped. 
+
+The $ character in a system_function_identifier or system_task_identifier shall not be followed by white_space. A system_function_identifier or system_task_identifier shall not be escaped.
 
 
- 
-End of file. 
+
+End of file.
 
 
- 
+
 The unsigned number or fixed point number in time_literal shall not be followed by a white_space.
 
 
- 
+
 void functions, non integer type functions, and functions with a typedef type cannot have a signing declaration.
 
 
- 
+
 Open-array (  */
 
- 
-        
-
-
- 
-          
- 
-
-
- 
-       
-
-  
-
-      
-
-  
-
-    
-
-  
-
-    
 
 
 
- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* [ ] ')' form shall only be used 'with' dpi_proto_formal implicit_class_handle shall only appear 'within' the scope of a class_declaration 'or' extern_method_declaration '.' In any one declaration, only one of 'protected' 'or' 'local' is allowed, only one of 'rand' 'or' 'randc' is allowed, 'and' 'static' and/or 'virtual' can appear only once. */
 
 %inline library_declaration : LIBRARY arg3 = identifier arg4 = file_path_spec arg5 = library_declaration_5 arg6 = library_declaration_6 SEMICOLON { Globals.grdbg "library_declaration" (SEXTUPLE(LIBRARY, arg3, arg4, arg5, arg6, SEMICOLON);) }

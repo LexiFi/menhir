@@ -1,15 +1,15 @@
 /*
  * ocamlweb - A WEB-like tool for ocaml
  * Copyright (C) 1999-2001 Jean-Christophe FILLIÂTRE and Claude MARCHÉ
- * 
+ *
  * This software is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
  * License version 2, as published by the Free Software Foundation.
- * 
+ *
  * This software is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * 
+ *
  * See the GNU Library General Public License version 2 for more details
  * (enclosed in the file LGPL).
  */
@@ -22,7 +22,7 @@
 
   open Lex_syntax
   open Yacc_syntax
-    
+
   let dummy_loc =
     { start_pos = Lexing.dummy_pos;
       end_pos = Lexing.dummy_pos;
@@ -39,32 +39,32 @@
 %token Tor Tsemicolon Tcolon Tmark
 %token EOF
 
-%start yacc_definitions 
-%type <Yacc_syntax.yacc_definitions> yacc_definitions 
+%start yacc_definitions
+%type <Yacc_syntax.yacc_definitions> yacc_definitions
 
 %%
 
 /*s Start symbol for yacc description files */
 
-yacc_definitions: 
-  | header tokendecls Tmark rules header EOF 
-      { { header = $1 ; 
+yacc_definitions:
+  | header tokendecls Tmark rules header EOF
+      { { header = $1 ;
 	  decls = $2;
 	  rules = $4;
 	  trailer = $5 } }
 ;
 
 header :
-  | Taction          
+  | Taction
       { $1 }
-  | /* $\varepsilon$ */      
+  | /* $\varepsilon$ */
     { dummy_loc }
 ;
-      
+
 /*s Token declarations. */
-    
+
 tokendecls :
-  | tokendecl tokendecls   
+  | tokendecl tokendecls
     { $1::$2 }
   | /*epsilon*/
     { [] }
@@ -99,15 +99,15 @@ idlist:
 rules:
   | /* $\varepsilon$ */
     { [] }
-  | general_rule rules    
+  | general_rule rules
     { $1 :: $2 }
 ;
 
 /*
-  
-Ocamlyacc manual asks for a semicolon at end of each rules. But ocamlyacc 
-accepts if they are missing. We issue a warning for non conformity to 
-ocamlyacc documentation. 
+
+Ocamlyacc manual asks for a semicolon at end of each rules. But ocamlyacc
+accepts if they are missing. We issue a warning for non conformity to
+ocamlyacc documentation.
 
 */
 general_rule:
@@ -119,9 +119,9 @@ general_rule:
 ;
 
 rule :
-  | Tident Tcolon right_part 
+  | Tident Tcolon right_part
     { ($1,$3) }
-  | Tident Tcolon Tor right_part 
+  | Tident Tcolon Tor right_part
     { ($1,$4) }
 ;
 

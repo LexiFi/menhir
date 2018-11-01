@@ -39,7 +39,7 @@ let base_spec =
     EL.confopts = [];
     EL.all_target = None;
     EL.opt_target = None;
-    
+
     EL.specfile = "";
   }
 

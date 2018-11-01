@@ -13,9 +13,9 @@
     try
       let n = Listutils.index s !current_poly_vars
       in GenericPolynomials.var n
-    with 
+    with
 	Not_found ->
-          GenericPolynomials.cte 
+          GenericPolynomials.cte
 	    (Fd_polynomials.var (fd_var_id_of_string s))
 ;;
 
@@ -23,7 +23,7 @@
     try
       let n = Listutils.index s !current_poly_vars
       in IntPolynomials.var n
-    with 
+    with
 	Not_found -> raise (Syntax_error ("undefined variable "^s))
 ;;
 
@@ -72,8 +72,8 @@ gen_poly:
     {                           ( GenericPolynomials.mult _1 _3 )}
 | _1 = gen_poly _2 = EXP _3 = INT
     {    ( try
-	GenericPolynomials.power _1 (Num.int_of_num _3) 
-      with 
+	GenericPolynomials.power _1 (Num.int_of_num _3)
+      with
 	Failure("int_of_big_int") ->
 	  failwith "Exponent too large"
     )}
@@ -117,8 +117,8 @@ poly:
     {                           ( IntPolynomials.mult _1 _3 )}
 | _1 = poly _2 = EXP _3 = INT
     {    ( try
-	IntPolynomials.power _1 (Num.int_of_num _3) 
-      with 
+	IntPolynomials.power _1 (Num.int_of_num _3)
+      with
 	Failure("int_of_big_int") ->
 	  failwith "Exponent too large"
     )}

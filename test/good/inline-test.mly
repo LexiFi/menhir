@@ -1,7 +1,7 @@
 %token PLUS TIMES EOF
 %left PLUS
 %left TIMES
-%token<int> INT 
+%token<int> INT
 %start<int> prog
 %%
 

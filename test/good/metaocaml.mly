@@ -102,7 +102,7 @@ let mkuminus name arg =
 
 (* Walid: when we have to guess a 'Keep', we should have a 'Guess' option *)
 let rec mktailexp = function
-    [] -> 
+    [] ->
       ghexp(Pexp_construct(Lident "[]", None, false,Keep))
   | e1 :: el ->
       let exp_el = mktailexp el in
@@ -110,9 +110,9 @@ let rec mktailexp = function
                loc_end = exp_el.pexp_loc.loc_end;
                loc_ghost = true}
       in
-      let arg = {pexp_desc = Pexp_tuple [e1; exp_el]; 
+      let arg = {pexp_desc = Pexp_tuple [e1; exp_el];
 		 pexp_loc = l; pexp_ext = None } in (* XXO *)
-      {pexp_desc = Pexp_construct(Lident "::", Some arg, false,Keep); 
+      {pexp_desc = Pexp_construct(Lident "::", Some arg, false,Keep);
        pexp_loc = l; pexp_ext = None } (* XXO *)
 
 let rec mktailpat = function
@@ -124,9 +124,9 @@ let rec mktailpat = function
                loc_end = pat_pl.ppat_loc.loc_end;
                loc_ghost = true}
       in
-      let arg = {ppat_desc = Ppat_tuple [p1; pat_pl]; 
+      let arg = {ppat_desc = Ppat_tuple [p1; pat_pl];
 		 ppat_loc = l; ppat_ext = None } in (* XXO *)
-      {ppat_desc = Ppat_construct(Lident "::", Some arg, false); 
+      {ppat_desc = Ppat_construct(Lident "::", Some arg, false);
        ppat_loc = l; ppat_ext = None } (* XXO *)
 
 let ghstrexp e =
@@ -150,36 +150,36 @@ let rec mkrangepat c1 c2 =
 exception ErrorInBangArg of string;;
 let error_bang_arg s = raise (ErrorInBangArg s)
 
-let mkoffshore_arg_string_map fields = 
-  let lst = ref [] in 
-  let lm = List.map (fun t -> match t with 
+let mkoffshore_arg_string_map fields =
+  let lst = ref [] in
+  let lm = List.map (fun t -> match t with
 			(Lident(s),expr) -> (
-			  match expr.pexp_desc with 
+			  match expr.pexp_desc with
 			      (Pexp_constant(Const_string s1)) ->
 				lst := !lst @ [(s,s1)]
-			    | _ ->  
-				 error_bang_arg ("Incorrect argument: " ^ 
+			    | _ ->
+				 error_bang_arg ("Incorrect argument: " ^
 					    "one of the argument values was " ^
 					    "not a string")
-				
+
 			)
 		       | _ -> error_bang_arg ("Incorrect argument; probably" ^
-					  "an argument field which is not" ^ 
+					  "an argument field which is not" ^
 					    " a string was used")
 		    ) in
     ignore(lm fields); !lst
 
-let mkoffShore_tree exten fields expr = 
-  match exten with 
+let mkoffShore_tree exten fields expr =
+  match exten with
       None ->
 	mkexp(Pexp_runoffshore_arg
 		(mkoffshore_arg_string_map(fields)
-		   , expr)) 
-    | Some (x) -> 
+		   , expr))
+    | Some (x) ->
 	(match x.pexp_desc with
-	     Pexp_ident(li) -> 
+	     Pexp_ident(li) ->
 	       let flist = Longident.flatten li in
-		 (match flist with 
+		 (match flist with
 		      ["Trx";"run_icc"]  ->
 			mkexp(Pexp_runoffshore_arg
 				([("lang","C")]@
@@ -197,12 +197,12 @@ let mkoffShore_tree exten fields expr =
 				([("lang","F")]@
 				 mkoffshore_arg_string_map(
 				   fields), expr))
-		    | _ -> 
+		    | _ ->
 			error_bang_arg("Bad argument option to .!{}")
 		 )
 	     | _ -> error_bang_arg("Bad argument option to .!{}")
 	)
-	  
+
 let syntax_error () =
   raise Syntaxerr.Escape_error
 
@@ -245,7 +245,7 @@ let bigarray_set arr arg newval =
                        ["", arr; "", c1; "", c2; "", c3; "", newval]))
   | coords ->
       mkexp(Pexp_apply(ghexp(Pexp_ident(bigarray_function "Genarray" "set")),
-                       ["", arr; 
+                       ["", arr;
                         "", ghexp(Pexp_array coords);
                         "", newval]))
 %}
@@ -436,7 +436,7 @@ The precedences must be listed from low to high.
 /* Finally, the first tokens of simple_expr are above everything else. */
 %nonassoc BACKQUOTE BEGIN CHAR FALSE FLOAT INT INT32 INT64
           LBRACE LBRACELESS LBRACKET LBRACKETBAR LIDENT LPAREN
-          NEW NATIVEINT PREFIXOP STRING TRUE 
+          NEW NATIVEINT PREFIXOP STRING TRUE
           UIDENT EUIDENT UIDENTI EUIDENTI   /* XXO */
 
 /* Entry points */
@@ -912,7 +912,7 @@ expr:
   | FOR val_ident EQUAL seq_expr direction_flag seq_expr DO seq_expr DONE
       { mkexp(Pexp_for($2, $4, $6, $5, $8)) }
   /* Walid: See about adding ::^ and ~~:: and ~~::^.  */
-  | expr COLONCOLON expr 
+  | expr COLONCOLON expr
       { mkexp(Pexp_construct(Lident "::",
                              Some(ghexp(Pexp_tuple[$1;$3])),
                              false,Keep)) }
@@ -1137,25 +1137,25 @@ record_expr:
   | lbl_expr_list opt_semi                      { (None, List.rev $1) }
 ;
 record_expr_gcc:
-  RUN_GCC WITH lbl_expr_list opt_semi   
+  RUN_GCC WITH lbl_expr_list opt_semi
   { let q = Ldot((Lident "Trx"), "run_gcc") in
       (Some (ghexp( Pexp_ident(q))), List.rev $3) }
-  | RUN_GCC  
+  | RUN_GCC
       { let q = Ldot((Lident "Trx"), "run_gcc") in
-	  (Some (ghexp( Pexp_ident(q))), []) }      
+	  (Some (ghexp( Pexp_ident(q))), []) }
   | lbl_expr_list opt_semi                      { (None, List.rev $1) }
 ;
 record_expr_icc:
-  RUN_ICC WITH lbl_expr_list opt_semi 
+  RUN_ICC WITH lbl_expr_list opt_semi
   { let q = Ldot((Lident "Trx"), "run_icc") in
       (Some (ghexp( Pexp_ident(q))), List.rev $3) }
-  | RUN_ICC  
+  | RUN_ICC
       { let q = Ldot((Lident "Trx"), "run_icc") in
 	  (Some (ghexp( Pexp_ident(q))), []) }
   | lbl_expr_list opt_semi                      { (None, List.rev $1) }
 ;
 record_expr_f90:
-  RUN_F90 WITH lbl_expr_list opt_semi   
+  RUN_F90 WITH lbl_expr_list opt_semi
   { let q = Ldot((Lident "Trx"), "run_f90") in
       (Some (ghexp( Pexp_ident(q))), List.rev $3) }
    | RUN_F90
@@ -1573,8 +1573,8 @@ constr_longident:
   | FALSE                                       { Lident "false" }
   | TRUE                                        { Lident "true" }
 ;
-econstr_longident: 
-    emod_longident %prec below_DOT              { $1 } 
+econstr_longident:
+    emod_longident %prec below_DOT              { $1 }
 ;
 label_longident:
     LIDENT                                      { Lident $1 }
@@ -1593,12 +1593,12 @@ emod_longident:
     EUIDENT                                     { Lident $1 }
   | mod_longident DOT EUIDENT                   { Ldot($1, $3) }
 ;
-destr_longident:                   
-    UIDENTI                                     { Lident $1 }   
-  | mod_longident DOT UIDENTI                   { Ldot($1, $3)} 
-;                                                    
-edestr_longident:                  
-    EUIDENTI                                    { Lident $1 } 
+destr_longident:
+    UIDENTI                                     { Lident $1 }
+  | mod_longident DOT UIDENTI                   { Ldot($1, $3)}
+;
+edestr_longident:
+    EUIDENTI                                    { Lident $1 }
   | mod_longident DOT EUIDENTI                  { Ldot($1, $3) }
 ;
 mod_ext_longident:

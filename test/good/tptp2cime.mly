@@ -8,7 +8,7 @@ open Clauses;;
 %}
 
 
-%token <string> IDENT VRB FILE_NAME 
+%token <string> IDENT VRB FILE_NAME
 %token PLUS MOINS VIRGULE POINT POINT_VIRGULE QUOTE
 %token PARGAUCHE PARDROITE CROGAUCHE CRODROIT
 %token TOKEN_INCLUDE TOKEN_INPUT_CLAUSE EGAL
@@ -35,9 +35,9 @@ donnees:
 ;
 
 declaration:
-  keyword_include PARGAUCHE f_name PARDROITE POINT 
+  keyword_include PARGAUCHE f_name PARDROITE POINT
       { Abstract_include $3 }
-| keyword_input_clause PARGAUCHE ident VIRGULE ident VIRGULE clause PARDROITE POINT 
+| keyword_input_clause PARGAUCHE ident VIRGULE ident VIRGULE clause PARDROITE POINT
       { Abstract_clause $7 }
 ;
 keyword_include:
@@ -66,8 +66,8 @@ atom:
 ident:
   IDENT               { $1 }
 ;
-term : 
-  VRB { add_operator_to_cime_pb VARIABLE 0 DEFAULT $1; 
+term :
+  VRB { add_operator_to_cime_pb VARIABLE 0 DEFAULT $1;
         Var (var_id_of_string $1) }
 | IDENT { add_operator_to_cime_pb FREE 0 DEFAULT $1;
           Term ((get_symbol_id $1),[]) }

@@ -37,24 +37,24 @@ let monome_de_variable var =
 %token <string> IDENT PREFIX_IDENT INFIX_IDENT POSTFIX_IDENT STRING
 %token VIRGULE POINT_VIRGULE DEUX_POINTS GUILLEMET
 %token PARGAUCHE PARDROITE CROGAUCHE CRODROIT
-%token EGAL FLECHE 
+%token EGAL FLECHE
 %token TOKEN_USER
 %token TERMINAISON DP_TERMINATION
-%token OPERATEURS THEORIE UNIFICATION EQUATIONS ORDRE PROBLEMES CONJECTURES 
+%token OPERATEURS THEORIE UNIFICATION EQUATIONS ORDRE PROBLEMES CONJECTURES
 %token KW_END EOF
 %token MATCHING
 %token REDUIRE UNIFIER MATCHER COMPARER WITH LIBRE_UNIFIER
-%token TOKEN_VARIABLE TOKEN_AC TOKEN_C CONSTANTE UNAIRE BINAIRE 
+%token TOKEN_VARIABLE TOKEN_AC TOKEN_C CONSTANTE UNAIRE BINAIRE
 %token PREFIXE INFIXE POSTFIXE
-%token TOKEN_RPO TOKEN_RPS TOKEN_MAPO TOKEN_POLY 
-%token TOKEN_INTERACTIF SUPERIEUR INFERIEUR 
+%token TOKEN_RPO TOKEN_RPS TOKEN_MAPO TOKEN_POLY
+%token TOKEN_INTERACTIF SUPERIEUR INFERIEUR
 %token TOKEN_SEMI_INTERACTIF MUL TOKEN_LEXICO LRLEX RLLEX
 %token ONLY COMPLETE PLAIN TYPE
 %token TOKEN_INCLUDE
 %token INDUCTIVE
 
 %token PLUS MINUS EXP MULT
-%token <string> POLY_VAR 
+%token <string> POLY_VAR
 %token <int> INT
 
 %token SORTES AS SUBSORTES
@@ -98,32 +98,32 @@ declaration:
 | keyword_inductive equations           { Abstract_inductive $2 }
 ;
 keyword_operators:
-  OPERATEURS { 
+  OPERATEURS {
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Ident_lexer }
 ;
 keyword_conjectures:
-  CONJECTURES {  
+  CONJECTURES {
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer }
 ;
 keyword_inductive:
-  INDUCTIVE {  
+  INDUCTIVE {
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer }
 ;
 keyword_theory:
-  THEORIE {  
+  THEORIE {
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Ident_lexer }
 ;
 keyword_axioms:
-  EQUATIONS {  
+  EQUATIONS {
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer }
 ;
 keyword_problems:
-  PROBLEMES {  
+  PROBLEMES {
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer }
 ;
@@ -162,18 +162,18 @@ profile_list:
 
 profile:
   base_sorte {[$1]}
-| base_sorte  FLECHE profile {$1::$3}  
-    
+| base_sorte  FLECHE profile {$1::$3}
+
 ;
 decl_arite:
-  op_list_colon fix arity AS profile_list 
+  op_list_colon fix arity AS profile_list
     { let t,a = $3 in
         if $2=INFIX & a<>2
           then raise (Erreur_de_syntaxe "Infix symbols must be binary")
-          else 
+          else
 	  if (List.exists (fun x -> (List.length x-1)<>a) $5)
-	  then raise (Erreur_de_syntaxe "Profile must be compatible with arity")  
-	  else 
+	  then raise (Erreur_de_syntaxe "Profile must be compatible with arity")
+	  else
 	    begin
 	      (List.iter (definir_operateur t a $2 (List.map see_as_functional_sort $5)) $1);
 	      ($1,$2,$3)
@@ -183,11 +183,11 @@ decl_arite:
     { let t,a = $3 in
         if $2=INFIX & a<>2
           then raise (Erreur_de_syntaxe "Infix symbols must be binary")
-          else 
+          else
 (* a virer *)
 	  if (List.exists (fun x -> (List.length x-1)<>a) [])
-	  then raise (Erreur_de_syntaxe "Profile must be compatible with arity")  
-	  else 
+	  then raise (Erreur_de_syntaxe "Profile must be compatible with arity")
+	  else
 	    begin
 	      (List.iter (definir_operateur t a $2 (List.map see_as_functional_sort [])) $1);
 (* jusque la *)
@@ -204,12 +204,12 @@ fix:
 arity:
   arityaux       { etat_analyse.lexer_state <- Ident_lexer;$1 }
 ;
-arityaux: 
+arityaux:
   TOKEN_C        { (C,2) }
 | TOKEN_AC       { (AC,2) }
 | TOKEN_VARIABLE { (VARIABLE,0) }
 | CONSTANTE      { (FREE,0) }
-| UNAIRE         { (FREE,1) } 
+| UNAIRE         { (FREE,1) }
 | BINAIRE        { (FREE,2) }
 | INT            { (FREE,$1) }
 ;
@@ -230,7 +230,7 @@ ident:
 ;
 /*
 top_ident:
-  ident                         { $1 }       
+  ident                         { $1 }
 | TOP PARGAUCHE ident PARDROITE { string_of_symbol_id (top_copy (get_symbol_id $3)) }
 ;
 */
@@ -268,20 +268,20 @@ equations:
 | equation POINT_VIRGULE equations  { $1::$3 }
 ;
 equation:
-  term EGAL term                    { new pair_of_terms (flatten_term $1) 
+  term EGAL term                    { new pair_of_terms (flatten_term $1)
                                       	(flatten_term $3) }
 ;
 
 ordre_plus:
-  ordre { $1 }              
+  ordre { $1 }
 | TOKEN_SEMI_INTERACTIF PARGAUCHE ordre PARDROITE
         { SEMI_INTERACTIF($3) }
 ;
 
 ordre:
-  keyword_rpo PARGAUCHE precedence POINT_VIRGULE statuts PARDROITE	
+  keyword_rpo PARGAUCHE precedence POINT_VIRGULE statuts PARDROITE
     { RPO($3,$5) }
-| keyword_rpo PARGAUCHE precedence PARDROITE    
+| keyword_rpo PARGAUCHE precedence PARDROITE
     { RPO($3,[]) }
 | keyword_mapo PARGAUCHE precedence PARDROITE
     { MAPO($3,[]) }
@@ -289,36 +289,36 @@ ordre:
     { MAPO($3,$5) }
 | keyword_poly PARGAUCHE mu_value poly_decl_list PARDROITE
     { POLY($3,$4) }
-| TOKEN_INTERACTIF  				
+| TOKEN_INTERACTIF
     { ORDRE_INTERACTIF }
-| TOKEN_LEXICO PARGAUCHE ordre_List  		
+| TOKEN_LEXICO PARGAUCHE ordre_List
     { LEXICO($3) }
 | rps_header regle_list PARDROITE
     { Rps($1,$2) }
 ;
 rps_header:
     TOKEN_RPS PARGAUCHE ordre POINT_VIRGULE
-    {  
+    {
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Term_lexer;$3 }
 ;
 keyword_rpo:
-  TOKEN_RPO {  
+  TOKEN_RPO {
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer }
 ;
 keyword_mapo:
-  TOKEN_MAPO {  
+  TOKEN_MAPO {
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer }
 ;
 mu_value:
-  INT POINT_VIRGULE 
-             {  
+  INT POINT_VIRGULE
+             {
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer;$1 }
-| /* epsilon */ 
-             {  
+| /* epsilon */
+             {
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer;0 }
 ;
@@ -342,14 +342,14 @@ liste_ordonnee:
 ;
 poly_decl_list:
   poly_decl 			{ [$1] }
-| poly_decl POINT_VIRGULE poly_decl_list{ $1::$3 }		
+| poly_decl POINT_VIRGULE poly_decl_list{ $1::$3 }
 ;
 statuts:
   statut                  { [$1]   }
 | statut VIRGULE statuts  { $1::$3 }
 ;
 statut:
-  ident MUL  
+  ident MUL
     { (get_symbol_id $1),MULTISET
     }
 | ident lexstat
@@ -357,7 +357,7 @@ statut:
       	if not (is_free f)
       	  then semantical_error	"Only free symbols can have a lexicographic status"
       	  else f,$2
-    }  
+    }
 ;
 lexstat:
   LRLEX { LR_LEXICO }
@@ -368,15 +368,15 @@ problemes:
 | probleme POINT_VIRGULE problemes  { $1::$3 }
 ;
 probleme:
-  term EGAL term	
+  term EGAL term
     { EQUATION_A_PROUVER(flatten_term $1,flatten_term $3) }
-| REDUIRE term	
+| REDUIRE term
     { TERME_A_REDUIRE(flatten_term $2) }
-| unif_type UNIFIER term EGAL term 
+| unif_type UNIFIER term EGAL term
     { EQUATION_A_RESOUDRE($1,flatten_term $3,flatten_term $5) }
-| UNIFIER term EGAL term 
+| UNIFIER term EGAL term
     { EQUATION_A_RESOUDRE(Unif_type_default,flatten_term $2,flatten_term $4) }
-| MATCHER term EGAL term 
+| MATCHER term EGAL term
     { EQUATION_A_MATCHER(flatten_term $2,flatten_term $4) }
 | COMPARER term WITH term
     { TERMES_A_COMPARER(flatten_term $2,flatten_term $4) }
@@ -394,37 +394,37 @@ probleme:
 ;
 poly_decl:
   entete_poly EGAL poly
-    {  
+    {
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer;
       ($1,$3)
       }
 ;
 entete_poly:
-  CROGAUCHE poly_ident CRODROIT 
+  CROGAUCHE poly_ident CRODROIT
     { current_poly_vars := [];
       $2 }
-| CROGAUCHE poly_ident CRODROIT PARGAUCHE poly_var_list_end 
+| CROGAUCHE poly_ident CRODROIT PARGAUCHE poly_var_list_end
     { current_poly_vars := $5;
-      
+
       let test_simple list =
       	let rec build_simple = function
       	    ([],l)	-> l
       	  | ((a::s), l)	-> build_simple (s,Listutils.union l [a])
-      	in 
+      	in
 	  if ( (List.length list)=(List.length (build_simple (list,[]))) )
 	  then ()
-	  else 
-	    semantical_error 
+	  else
+	    semantical_error
 	      "Same variable symbols in polynomial declaration"
       in
       	test_simple !current_poly_vars;
-      	
+
       	let f = $2 in
 	  if (arity f)<>(List.length !current_poly_vars)
-	  then semantical_error 
+	  then semantical_error
 	    ((string_of_symbol_id $2)^" is supposed to be a "
-      	     ^(string_of_int (arity f))^"-ary operator")       
+      	     ^(string_of_int (arity f))^"-ary operator")
 	  else f
     }
 ;
@@ -439,9 +439,9 @@ poly_var_list_end:
 poly:
   POLY_VAR
     { monome_de_variable $1 }
-| INT   
+| INT
     { IntPolynomials.cte (Num.Int $1) }
-| PARGAUCHE poly PARDROITE 
+| PARGAUCHE poly PARDROITE
     { $2 }
 | poly PLUS poly
     { IntPolynomials.add $1 $3 }
@@ -449,18 +449,18 @@ poly:
     { IntPolynomials.sub $1 $3 }
 | MINUS poly %prec UMINUS
     { IntPolynomials.minus $2 }
-| poly MULT poly 
+| poly MULT poly
     { IntPolynomials.mult $1 $3 }
 | poly EXP INT
     { IntPolynomials.power $1 $3 }
 ;
-term : 
-  PREFIX_IDENT 
+term :
+  PREFIX_IDENT
    { (* printf "forme a\n"; *)
       try
         VAR (var_id_of_string $1)
-      with Not_found -> 
-        let f=(get_symbol_id $1) in 
+      with Not_found ->
+        let f=(get_symbol_id $1) in
         if (arity f)=0
         then TERM(f,[])
         else semantical_error ("Bad number of arguments for " ^ $1)

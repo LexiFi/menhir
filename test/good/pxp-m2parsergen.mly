@@ -113,7 +113,7 @@ simple_branch:
 patterns:
   pattern patterns
     { $1 :: $2 }
-| 
+|
     { [] }
 
 pattern:
@@ -136,15 +136,15 @@ pattern:
 symbol:
   Lname Colon Uname
     { U_symbol($3, Some $1) }
-| Lname Colon Lname Lparen actual_arguments 
+| Lname Colon Lname Lparen actual_arguments
     { L_symbol($3, $5, Some $1) }
-| Lname Colon Lbracket Lname Rbracket Lparen actual_arguments 
+| Lname Colon Lbracket Lname Rbracket Lparen actual_arguments
     { L_indirect($4, $7, Some $1) }
 | Uname
     { U_symbol($1, None) }
-| Lname Lparen actual_arguments 
+| Lname Lparen actual_arguments
     { L_symbol($1, $3, None) }
-| Lbracket Lname Rbracket Lparen actual_arguments 
+| Lbracket Lname Rbracket Lparen actual_arguments
     { L_indirect($2, $5, None) }
 
 
@@ -163,14 +163,14 @@ comma_actual_arguments:
 opt_error_handler:
   Error Code
     { Some $2 }
-| 
+|
     { None }
 
 %%
 
 (* ======================================================================
  * History:
- * 
+ *
  * $Log: parser.mly,v $
  * Revision 1.4  2000/05/09 00:03:22  gerd
  * 	Added [ ml_name ] symbols, where ml_name is an arbitrary
@@ -187,5 +187,5 @@ opt_error_handler:
  * Revision 1.1  2000/05/06 17:36:17  gerd
  * 	Initial revision.
  *
- * 
+ *
  *)

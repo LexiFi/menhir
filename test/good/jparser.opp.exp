@@ -33,7 +33,7 @@ open Core
 open Jimple_global_types
 open Lexing
 open Load
-open Parsing 
+open Parsing
 open Printing
 open Psyntax
 open Spec
@@ -48,52 +48,52 @@ let newAnyVar x = AnyVar(0,x)
 
 let newEVar x = EVar(0,x)
 
-let newVar x = 
-  if x = "_" then freshe() 
-  else if String.get x 0 = '_' then newEVar (String.sub x 1 ((String.length x) -1)) 
+let newVar x =
+  if x = "_" then freshe()
+  else if String.get x 0 = '_' then newEVar (String.sub x 1 ((String.length x) -1))
   else newPVar x
 
 
 let msig_simp (mods,typ,name,args_list) =
   let args_list = List.map fst args_list in
-  (mods,typ,name,args_list) 
+  (mods,typ,name,args_list)
 
-let bind_spec_vars 
-    (mods,typ,name,args_list) 
+let bind_spec_vars
+    (mods,typ,name,args_list)
     {pre=pre;post=post;excep=excep} =
   (* Make substitution to normalise names *)
-  let subst = Psyntax.empty in 
-  let subst = Psyntax.add (newPVar("this")) (Arg_var(Support_syntax.this_var)) subst in 
+  let subst = Psyntax.empty in
+  let subst = Psyntax.add (newPVar("this")) (Arg_var(Support_syntax.this_var)) subst in
   (* For each name that is given convert to normalised param name. *)
-  let _,subst = 
-    List.fold_left 
-      (fun (n,subst) arg_opt -> 
+  let _,subst =
+    List.fold_left
+      (fun (n,subst) arg_opt ->
 	(n+1,
-	 match arg_opt with 
-	   ty,None -> subst 
-	 | ty,Some str -> 
-	     Psyntax.add 
-	       (newPVar(str)) 
-	       (Arg_var(Support_syntax.parameter_var n)) 
+	 match arg_opt with
+	   ty,None -> subst
+	 | ty,Some str ->
+	     Psyntax.add
+	       (newPVar(str))
+	       (Arg_var(Support_syntax.parameter_var n))
 	       subst
-	)) 
+	))
 	  (0,subst) args_list in
   {pre=subst_pform subst pre;
    post=subst_pform subst post;
    excep=ClassMap.map (subst_pform subst) excep}
 
 let mkDynamic (msig, specs, source_pos) =
-  let specs = List.map (bind_spec_vars msig) specs in 
+  let specs = List.map (bind_spec_vars msig) specs in
   let msig = msig_simp msig in
   Dynamic(msig, specs, source_pos)
 
 let mkStatic (msig, specs, source_pos) =
-  let specs = List.map (bind_spec_vars msig) specs in 
-  let msig = msig_simp msig in   
+  let specs = List.map (bind_spec_vars msig) specs in
+  let msig = msig_simp msig in
   Static(msig, specs, source_pos)
-  
 
-let location_to_string pos = 
+
+let location_to_string pos =
   Printf.sprintf "Line %d character %d" pos.pos_lnum  (pos.pos_cnum - pos.pos_bol + 1)
 
 let parse_error s =
@@ -107,7 +107,7 @@ let parse_warning s =
   Printf.printf "Warning %s (between %s and %s)\n" s (location_to_string start_pos) (location_to_string end_pos)
 
 let field_signature2str fs =
-  match fs with 
+  match fs with
   | Field_signature (c,t,n) ->  Pprinter.mkStrOfFieldSignature c t n
   | _ -> assert false
 
@@ -1324,7 +1324,7 @@ rule:
 				     saturate=true})) )}
 | _1 = ABSRULE _2 = identifier_op _3 = COLON _4 = formula _5 = LEADSTO _6 = formula _7 = where
     {                                                                 ( let seq=(mkEmpty,_4,mkEmpty,mkEmpty) in
-							       let wo=(mkEmpty,mkEmpty) in 
+							       let wo=(mkEmpty,mkEmpty) in
 							       let seq2=(mkEmpty,_6,mkEmpty,mkEmpty) in
 							       let seq_list=[[seq2]] in
 							       NormalEntry(SeqRule(seq,seq_list,_2,wo,_7)) )}

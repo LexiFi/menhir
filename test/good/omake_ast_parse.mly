@@ -1163,7 +1163,7 @@ paren_arg_next:
 	  { $1 }
 	| paren_arg
 	  { $1 }
-	;	  
+	;
 
 paren_arg:
 	  TokLeftParen rev_paren_text TokRightParen

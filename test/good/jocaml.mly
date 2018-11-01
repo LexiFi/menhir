@@ -115,13 +115,13 @@ let unclosed opening_name opening_num closing_name closing_num =
                                            rhs_loc closing_num, closing_name)))
 
 let join_def ()=
-  mkexp (Pexp_apply 
+  mkexp (Pexp_apply
            (mkexp (Pexp_ident (Ldot (Lident "Join", "definition"))),
             [void ()]))
-    
-let mkloc l = 
-  let r = mkexp (Pexp_ident (Ldot (Lident "Join", "create_location"))) in 
-  mkexp (Pexp_apply (r, [mkexp Pexp_thismodule;  
+
+let mkloc l =
+  let r = mkexp (Pexp_ident (Ldot (Lident "Join", "create_location"))) in
+  mkexp (Pexp_apply (r, [mkexp Pexp_thismodule;
                                 mkexp (Pexp_function [void_pat (),l])]))
 
 let pexp_add list = function
@@ -143,7 +143,7 @@ let deconstr_record exp f =
                  arg],
                f (mkexp(Pexp_ident(Lident "*match*")))))
           | _ -> f exp
-          
+
 
 %}
 
@@ -255,7 +255,7 @@ let deconstr_record exp f =
 %token GREATERGREATER
 %token LBRACEBAR
 %token BARRBRACE
-%token LESSLESSGREATERGREATER 
+%token LESSLESSGREATERGREATER
 %token LESSGREATER
 %token LBRACERBRACE
 %token SPAWN
@@ -378,9 +378,9 @@ structure_tail:
   | SEMISEMI seq_expr structure_tail            { mkstrexp $2 :: $3 }
   | SEMISEMI structure_item structure_tail      { $2 :: $3 }
   | structure_item structure_tail               { $1 :: $2 }
-  | LET LOC loc_bindings structure_tail 
+  | LET LOC loc_bindings structure_tail
       { (mkstr (Pstr_location $3)):: $4 }
-  | SEMISEMI LET LOC loc_bindings structure_tail 
+  | SEMISEMI LET LOC loc_bindings structure_tail
       { (mkstr (Pstr_location $4)):: $5 }
 ;
 
@@ -561,15 +561,15 @@ expr0:
   | expr0 INFIXOP4 expr0
       { mkinfix $1 $2 $3 }
   | expr0 SUBTRACTIVE expr0
-      { mkinfix $1 $2 $3 } 
+      { mkinfix $1 $2 $3 }
   | expr0 STAR expr0
-      { mkinfix $1 "*" $3 } 
+      { mkinfix $1 "*" $3 }
   | expr0 EQUAL expr0
-      { mkinfix $1 "=" $3 } 
+      { mkinfix $1 "=" $3 }
   | expr0 LESS expr0
-      { mkinfix $1 "<" $3 } 
+      { mkinfix $1 "<" $3 }
   | expr0 GREATER expr0
-      { mkinfix $1 ">" $3 } 
+      { mkinfix $1 ">" $3 }
   | expr0 BARBAR expr0
       { mkinfix $1 "||" $3 }
   | expr0 AMPERSAND expr0
@@ -603,7 +603,7 @@ simple_expr:
       { mkexp(Pexp_constant $1) }
   | constr_longident
       { mkexp(Pexp_construct($1, None, false)) }
-  | VARTYPE 
+  | VARTYPE
       { mkexp Pexp_vartype }
   | RELOCINFO
       { mkexp(Pexp_thismodule) }
@@ -632,8 +632,8 @@ simple_expr:
   | LBRACE lbl_expr_list opt_semi RBRACE
       { mkexp(Pexp_record(0,List.rev $2)) }
   | LBRACE LBRACKET LIDENT RBRACKET lbl_expr_list opt_semi RBRACE
-      { 
-       let tag = 
+      {
+       let tag =
          try
            List.assoc $3 Tag.list
          with
@@ -673,7 +673,7 @@ simple_expr:
   | LPAREN SHARP label RPAREN
       { mkexp(Pexp_function [mkpat(Ppat_var "x"),
                 mkexp(Pexp_send(mkexp(Pexp_ident (Lident"x")), $3))]) }
-     
+
 ;
 
 simple_expr_list:
@@ -690,24 +690,24 @@ def_bindings:
 
 def_binding:
   LIDENT LBRACKET lident_comma_list
-  RBRACKET LBRACE simple_def_binding loc_init RBRACE  
+  RBRACKET LBRACE simple_def_binding loc_init RBRACE
     { (Some ($1, $7, Some $3)), List.rev $6 }
-|  LIDENT LBRACE simple_def_binding loc_init RBRACE  
+|  LIDENT LBRACE simple_def_binding loc_init RBRACE
     { (Some ($1, $4, None)), List.rev $3 }
 | simple_def_binding                        { None, List.rev $1 }
   ;
-  
+
 simple_def_binding:
     def_pattern            { [$1] }
   | simple_def_binding OR def_pattern            { $3 :: $1 }
   ;
-  
+
 def_pattern:
     join_pattern EQUAL process      { ($1,$3) }
 ;
 join_pattern:
     LIDENT simple_pattern      { mkpat(Ppat_channel ($1,$2,Sync)) }
-  | LIDENT PREFIXOP simple_pattern 
+  | LIDENT PREFIXOP simple_pattern
            { match $2 with
              "!" -> mkpat(Ppat_channel ($1,$3,Async))
            | _ -> syntax_error () }
@@ -745,7 +745,7 @@ loc_modules:
 ;
 
 loc_defs:
-    JOINDEF def_bindings { $2 }        
+    JOINDEF def_bindings { $2 }
   | /* nothing */        { [] }
 ;
 
@@ -757,7 +757,7 @@ to_ident:
 process:
                                              { mkexp(Pexp_null)}
   | process0                                 { $1 }
-  | process0 BAR process                      
+  | process0 BAR process
      { mkexp(Pexp_par(pexp_add (pexp_add [] $1) $3)) }
   | LET JOINDEF def_bindings IN process %prec prec_let
       { mkexp(Pexp_def(List.rev $3, $5)) }
@@ -771,14 +771,14 @@ process:
       { mkexp(Pexp_par(pexp_add (pexp_add [] $3) $6)) }
   | LBRACE BAR process RBRACE SEMI process
       { mkexp(Pexp_par(pexp_add (pexp_add [] $3) $6)) }
-  | proc_expr SEMI process     
-      { 
+  | proc_expr SEMI process
+      {
     match ($3).pexp_desc with
       Pexp_reply( { pexp_desc = Pexp_construct(Lident "()",_,_) },channel) ->
         mkexp( Pexp_reply($1,channel) )
     | _ ->
-        mkexp( Pexp_sequence($1,$3) ) 
-  } 
+        mkexp( Pexp_sequence($1,$3) )
+  }
  /* mkexp(Pexp_let(Nonrecursive,[mkpat(Ppat_any),$1],$3))  */
 ;
 
@@ -857,7 +857,7 @@ process0:
   | simple_chan_expr SHARP label simple_expr
     { mkexp(Pexp_call(mkexp(Pexp_send($1, $3)), $4, false)) }
   | IF expr THEN  process0 ELSE process0 %prec prec_if
-      { mkexp(Pexp_ifthenelse($2,$4,Some $6)) }    
+      { mkexp(Pexp_ifthenelse($2,$4,Some $6)) }
   | MATCH seq_expr WITH opt_bar join_match_cases %prec prec_match
       { mkexp(Pexp_match($2, List.rev $5)) }
   | LBRACERBRACE            { mkexp(Pexp_null) }
@@ -1051,7 +1051,7 @@ class_list:
 class_def:
         virtual_flag closed_flag
         class_type_parameters LIDENT simple_pattern_list self self_type EQUAL
-        constraints class_fields 
+        constraints class_fields
           { { pcl_name = $4; pcl_param = $3; pcl_args = List.rev $5;
               pcl_self = $6; pcl_self_ty = $7; pcl_cstr = List.rev $9;
               pcl_field = List.rev $10;
@@ -1101,7 +1101,7 @@ meth_binding:
    | type_constraint EQUAL seq_expr %prec prec_let
        { let (t, t') = $1 in (mkexp(Pexp_constraint($3, t, t')),0) }
    | simple_pattern meth_binding
-       { 
+       {
        let (s2,nparams) = $2
          in
          (mkexp(Pexp_function[$1,s2]),nparams+1) }
@@ -1396,7 +1396,7 @@ constr_ident:
   | FALSE                                       { "false" }
   | TRUE                                        { "true" }
 ;
-    
+
 val_longident:
     val_ident                                   { Lident $1 }
   | mod_longident DOT val_ident                 { Ldot($1, $3) }

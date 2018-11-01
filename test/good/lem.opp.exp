@@ -11,21 +11,21 @@ Warning: symbol semi_backtickstrings is unreachable from any of the start symbol
 File "lem.mly", line 1141, characters 0-25:
 Warning: symbol semi_backtickstrings_help is unreachable from any of the start symbol(s).
 %{
-(* 
-  There are 3 ambiguities that OCaml solves with the first letter case 
+(*
+  There are 3 ambiguities that OCaml solves with the first letter case
   distinction for identifiers:
    - In a long identifier a.b.c.d.e, which dots are record projections and
      which are module projections
-   - In type t = u, whether u should refer to an existing type constructor, or 
-     be defined as a nullary data constructor 
+   - In type t = u, whether u should refer to an existing type constructor, or
+     be defined as a nullary data constructor
    - In let x y = exp, whether a function x of 1 argument is declared, or if
      x y is taken to be a constructor pattern, so a value is bound for y.
 
    In the first case, I assume all module projections and let the type system
    disambiguate
 
-   In the other two cases I default to type constructor, and function respectively.  
-   I believe these should be the common case.  In the latter, parens allow the other 
+   In the other two cases I default to type constructor, and function respectively.
+   I believe these should be the common case.  In the latter, parens allow the other
    meaning, as in let (x y) = exp.  In the former, a bar allows the other
    meaning, as in type t = | u .
 
@@ -61,7 +61,7 @@ let pat_to_letfun p =
   match p with
     | Pat_l(P_app(Id([],v,_),(arg::args as a)),_) ->
         (v,a)
-    | Pat_l(_,l) -> 
+    | Pat_l(_,l) ->
         raise (Parse_error_locn(l,"Bad pattern for let binding of a function"))
 
 let get_target (s1,n) =
@@ -101,8 +101,8 @@ let star = Ulib.Text.of_latin1 "*"
 let mk_pre_x_l sk1 (sk2,id) sk3 l =
   if (sk2 = None || sk2 = Some []) && (sk3 = None || sk3 = Some []) then
     PreX_l(sk1,(None,id),None,l)
-  else if (sk2 = Some [Ws space] && 
-           sk3 = Some [Ws space] && 
+  else if (sk2 = Some [Ws space] &&
+           sk3 = Some [Ws space] &&
            (Ulib.Text.left id 1 = star ||
             Ulib.Text.right id 1 = star)) then
     PreX_l(sk1,(None,id),None,l)
@@ -869,11 +869,11 @@ cs:
 
 c2:
   _1 = id _2 = typ
-    {    ( 
+    {    (
       match _2 with
         | Typ_l(Typ_var(a_l),_) ->
-            C(_1,Avl(a_l)) 
-        | _ -> 
+            C(_1,Avl(a_l))
+        | _ ->
           raise (Parse_error_locn(loc (),"Invalid class constraint"))
     )}
 

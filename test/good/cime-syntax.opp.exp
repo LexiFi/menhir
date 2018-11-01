@@ -154,37 +154,37 @@ declaration:
 
 keyword_operators:
   _1 = OPERATEURS
-    {             ( 
+    {             (
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Ident_lexer )}
 
 keyword_conjectures:
   _1 = CONJECTURES
-    {              (  
+    {              (
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer )}
 
 keyword_inductive:
   _1 = INDUCTIVE
-    {            (  
+    {            (
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer )}
 
 keyword_theory:
   _1 = THEORIE
-    {          (  
+    {          (
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Ident_lexer )}
 
 keyword_axioms:
   _1 = EQUATIONS
-    {            (  
+    {            (
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer )}
 
 keyword_problems:
   _1 = PROBLEMES
-    {            (  
+    {            (
   etat_analyse.top_allowed <- false;
   etat_analyse.lexer_state <- Term_lexer )}
 
@@ -247,10 +247,10 @@ decl_arite:
     {    ( let t,a = _3 in
         if _2=INFIX & a<>2
           then raise (Erreur_de_syntaxe "Infix symbols must be binary")
-          else 
+          else
 	  if (List.exists (fun x -> (List.length x-1)<>a) _5)
-	  then raise (Erreur_de_syntaxe "Profile must be compatible with arity")  
-	  else 
+	  then raise (Erreur_de_syntaxe "Profile must be compatible with arity")
+	  else
 	    begin
 	      (List.iter (definir_operateur t a _2 (List.map see_as_functional_sort _5)) _1);
 	      (_1,_2,_3)
@@ -260,11 +260,11 @@ decl_arite:
     {    ( let t,a = _3 in
         if _2=INFIX & a<>2
           then raise (Erreur_de_syntaxe "Infix symbols must be binary")
-          else 
+          else
 (* a virer *)
 	  if (List.exists (fun x -> (List.length x-1)<>a) [])
-	  then raise (Erreur_de_syntaxe "Profile must be compatible with arity")  
-	  else 
+	  then raise (Erreur_de_syntaxe "Profile must be compatible with arity")
+	  else
 	    begin
 	      (List.iter (definir_operateur t a _2 (List.map see_as_functional_sort [])) _1);
 (* jusque la *)
@@ -365,7 +365,7 @@ equations:
 
 equation:
   _1 = term _2 = EGAL _3 = term
-    {                                    ( new pair_of_terms (flatten_term _1) 
+    {                                    ( new pair_of_terms (flatten_term _1)
                                       	(flatten_term _3) )}
 
 ordre_plus:
@@ -394,29 +394,29 @@ ordre:
 
 rps_header:
   _1 = TOKEN_RPS _2 = PARGAUCHE _3 = ordre _4 = POINT_VIRGULE
-    {    (  
+    {    (
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Term_lexer;_3 )}
 
 keyword_rpo:
   _1 = TOKEN_RPO
-    {            (  
+    {            (
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer )}
 
 keyword_mapo:
   _1 = TOKEN_MAPO
-    {             (  
+    {             (
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer )}
 
 mu_value:
   _1 = INT _2 = POINT_VIRGULE
-    {             (  
+    {             (
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer;_1 )}
 | 
-    {             (  
+    {             (
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer;0 )}
 
@@ -499,7 +499,7 @@ probleme:
 
 poly_decl:
   _1 = entete_poly _2 = EGAL _3 = poly
-    {    (  
+    {    (
   etat_analyse.top_allowed <- true;
   etat_analyse.lexer_state <- Ident_lexer;
       (_1,_3)
@@ -511,25 +511,25 @@ entete_poly:
       _2 )}
 | _1 = CROGAUCHE _2 = poly_ident _3 = CRODROIT _4 = PARGAUCHE _5 = poly_var_list_end
     {    ( current_poly_vars := _5;
-      
+
       let test_simple list =
       	let rec build_simple = function
       	    ([],l)	-> l
       	  | ((a::s), l)	-> build_simple (s,Listutils.union l [a])
-      	in 
+      	in
 	  if ( (List.length list)=(List.length (build_simple (list,[]))) )
 	  then ()
-	  else 
-	    semantical_error 
+	  else
+	    semantical_error
 	      "Same variable symbols in polynomial declaration"
       in
       	test_simple !current_poly_vars;
-      	
+
       	let f = _2 in
 	  if (arity f)<>(List.length !current_poly_vars)
-	  then semantical_error 
+	  then semantical_error
 	    ((string_of_symbol_id _2)^" is supposed to be a "
-      	     ^(string_of_int (arity f))^"-ary operator")       
+      	     ^(string_of_int (arity f))^"-ary operator")
 	  else f
     )}
 
@@ -567,8 +567,8 @@ term:
     {   ( (* printf "forme a\n"; *)
       try
         VAR (var_id_of_string _1)
-      with Not_found -> 
-        let f=(get_symbol_id _1) in 
+      with Not_found ->
+        let f=(get_symbol_id _1) in
         if (arity f)=0
         then TERM(f,[])
         else semantical_error ("Bad number of arguments for " ^ _1)

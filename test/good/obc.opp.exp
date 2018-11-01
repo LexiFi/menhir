@@ -13,7 +13,7 @@ open Print
 let rcsid = "$Id: obc.mly,v 1.1 2005/08/23 11:15:14 fpottier Exp $"
 %}
 %{
-let parse_error msg = 
+let parse_error msg =
   syn_error "$ at token '$'" [fStr msg; fToken]
 
 let parse_error2 msg loc2 =
@@ -44,7 +44,7 @@ let make_call e =
 
 let fix e =
   match e.e_guts with
-      Decimal s -> 
+      Decimal s ->
 	makeExpr (Const (IntVal (Int32.of_string s), numtype), e.e_loc)
     | _ -> e
 
@@ -134,7 +134,7 @@ let mkTypexpr tx = makeTypexpr (tx, lloc ())
 
 program:
   _1 = MODULE _2 = modname _3 = semi _4 = imports _5 = block _6 = opt_ident _7 = DOT
-    { ( check_end _2.x_name _6 (rloc 6); 
+    { ( check_end _2.x_name _6 (rloc 6);
 	  Module (_2, _4, _5, ref []) )}
 
 modname:
@@ -429,10 +429,10 @@ factor:
 | _1 = DBLCON
     {             ( mkExpr (Const (FloVal _1, longreal)) )}
 | _1 = CHAR
-    {           ( mkExpr (Const (IntVal (Int32.of_int 
+    {           ( mkExpr (Const (IntVal (Int32.of_int
 					    (int_of_char _1)), character)) )}
 | _1 = STRING
-    {             ( mkExpr (String (save_string _1, 
+    {             ( mkExpr (String (save_string _1,
 					    String.length _1)) )}
 | _1 = NIL
     {           ( mkExpr Nil )}
@@ -472,8 +472,8 @@ actuals:
 | _1 = LPAR _2 = exprs _3 = RPAR
     {                     ( _2 )}
 | _1 = LPAR _2 = exprs %prec error
-    {                           ( parse_error2 
-				    "mismatched brackets in procedure call" 
+    {                           ( parse_error2
+				    "mismatched brackets in procedure call"
 				    (rloc 1);
 				  raise Parse_error )}
 

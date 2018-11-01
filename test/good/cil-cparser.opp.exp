@@ -18,7 +18,7 @@ let parse_error msg : unit =       (* sm: c++-mode highlight hack: -> ' <- *)
 let print = print_string
 
 
-let currentLoc () = 
+let currentLoc () =
   let l, f, c = E.getPosition () in
   { lineno   = l; filename = f; byteno   = c; }
 
@@ -35,15 +35,15 @@ let smooth_expression lst =
 
 
 let currentFunctionName = ref "<outside any function>"
-    
+
 let announceFunctionName ((n, decl, _, _):name) =
   !Lexerhack.add_identifier n;
-  (* Start a context that includes the parameter names and the whole body. 
+  (* Start a context that includes the parameter names and the whole body.
    * Will pop when we finish parsing the function body *)
   !Lexerhack.push_context ();
   (* Go through all the parameter names and mark them as identifiers *)
   let rec findProto = function
-      PROTO (d, args, _) when isJUSTBASE d -> 
+      PROTO (d, args, _) when isJUSTBASE d ->
         List.iter (fun (_, (an, _, _, _)) -> !Lexerhack.add_identifier an) args
 
     | PROTO (d, _, _) -> findProto d
@@ -51,7 +51,7 @@ let announceFunctionName ((n, decl, _, _):name) =
     | PTR (_, d) -> findProto d
     | ARRAY (d, _, _) -> findProto d
     | _ -> parse_error "Cannot find the prototype in a function definition";
-           raise Parsing.Parse_error 
+           raise Parsing.Parse_error
 
   and isJUSTBASE = function
       JUSTBASE -> true
@@ -63,8 +63,8 @@ let announceFunctionName ((n, decl, _, _):name) =
 
 
 
-let applyPointer (ptspecs: attribute list list) (dt: decl_type)  
-       : decl_type = 
+let applyPointer (ptspecs: attribute list list) (dt: decl_type)
+       : decl_type =
   (* Outer specification first *)
   let rec loop = function
       [] -> dt
@@ -72,7 +72,7 @@ let applyPointer (ptspecs: attribute list list) (dt: decl_type)
   in
   loop ptspecs
 
-let doDeclaration (loc: cabsloc) (specs: spec_elem list) (nl: init_name list) : definition = 
+let doDeclaration (loc: cabsloc) (specs: spec_elem list) (nl: init_name list) : definition =
   if isTypedef specs then begin
     (* Tell the lexer about the new type names *)
     List.iter (fun ((n, _, _, _), _) -> !Lexerhack.add_type n) nl;
@@ -83,21 +83,21 @@ let doDeclaration (loc: cabsloc) (specs: spec_elem list) (nl: init_name list) : 
     else begin
       (* Tell the lexer about the new variable names *)
       List.iter (fun ((n, _, _, _), _) -> !Lexerhack.add_identifier n) nl;
-      DECDEF ((specs, nl), loc)  
+      DECDEF ((specs, nl), loc)
     end
 
 
 let doFunctionDef (loc: cabsloc)
                   (lend: cabsloc)
-                  (specs: spec_elem list) 
-                  (n: name) 
-                  (b: block) : definition = 
+                  (specs: spec_elem list)
+                  (n: name)
+                  (b: block) : definition =
   let fname = (specs, n) in
   FUNDEF (fname, b, loc, lend)
 
 
 let doOldParDecl (names: string list)
-                 ((pardefs: name_group list), (isva: bool)) 
+                 ((pardefs: name_group list), (isva: bool))
     : single_name list * bool =
   let findOneName n =
     (* Search in pardefs for the definition for this parameter *)
@@ -132,15 +132,15 @@ let rec intlist_to_string (str: int64 list):string =
   match str with
     [] -> ""  (* add nul-termination *)
   | value::rest ->
-      let this_char = 
-	if (compare value (Int64.of_int 255) > 0) 
+      let this_char =
+	if (compare value (Int64.of_int 255) > 0)
            || (compare value Int64.zero < 0)
 	then begin
 	  let msg = Printf.sprintf "cparser:intlist_to_string: character 0x%Lx too big" value in
 	  parse_error msg;
 	  raise Parsing.Parse_error
-	end 
-	else 
+	end
+	else
 	  String.make 1 (Char.chr (Int64.to_int value))
       in
       this_char ^ (intlist_to_string rest)
@@ -379,11 +379,11 @@ global:
 | _1 = PRAGMA _2 = attr _3 = SEMICOLON _4 = PRAGMA_EOL
     {                                   ( PRAGMA (_2, _1) )}
 | _1 = PRAGMA_LINE
-    {                                        ( PRAGMA (VARIABLE (fst _1), 
+    {                                        ( PRAGMA (VARIABLE (fst _1),
                                                   snd _1) )}
 | _1 = IDENT _2 = LPAREN _3 = old_parameter_list_ne _4 = RPAREN _5 = old_pardef_list _6 = SEMICOLON
     {                           ( (* Convert pardecl to new style *)
-                             let pardecl, isva = doOldParDecl _3 _5 in 
+                             let pardecl, isva = doOldParDecl _3 _5 in
                              (* Make the function declarator *)
                              doDeclaration (snd _1) []
                                [((fst _1, PROTO(JUSTBASE, pardecl,isva), [], cabslu),
@@ -443,7 +443,7 @@ postfix_expression:
     {   (CALL (fst _1, _3), snd _1)}
 | _1 = BUILTIN_VA_ARG _2 = LPAREN _3 = expression _4 = COMMA _5 = type_name _6 = RPAREN
     {                        ( let b, d = _5 in
-                          CALL (VARIABLE "__builtin_va_arg", 
+                          CALL (VARIABLE "__builtin_va_arg",
                                 [fst _3; TYPE_SIZEOF (b, d)]), _1 )}
 | _1 = postfix_expression _2 = DOT _3 = id_or_typename
     {          (MEMBEROF (fst _1, _3), snd _1)}
@@ -644,10 +644,10 @@ one_string:
   _1 = CST_STRING
     {                  (_1)}
 | _1 = FUNCTION__
-    {                                        ((Cabs.explodeStringToInts 
+    {                                        ((Cabs.explodeStringToInts
 					    !currentFunctionName), _1)}
 | _1 = PRETTY_FUNCTION__
-    {                                        ((Cabs.explodeStringToInts 
+    {                                        ((Cabs.explodeStringToInts
 					    !currentFunctionName), _1)}
 
 init_expression:
@@ -771,7 +771,7 @@ block_element_list:
 | _1 = statement _2 = block_element_list
     {                                         ( _1 :: _2 )}
 | _1 = IDENT _2 = COLON
-    {                                         ( [ LABEL (fst _1, NOP (snd _1), 
+    {                                         ( [ LABEL (fst _1, NOP (snd _1),
                                                     snd _1)] )}
 
 local_labels:
@@ -833,13 +833,13 @@ statement:
 | _1 = TRY _2 = block _3 = EXCEPT _4 = paren_comma_expression _5 = block
     {                        ( let b, _, _ = _2 in
                           let h, _, _ = _5 in
-                          if not !Cprint.msvcMode then 
+                          if not !Cprint.msvcMode then
                             parse_error "try/except in GCC code";
                           TRY_EXCEPT (b, COMMA (fst _4), h, _1) )}
 | _1 = TRY _2 = block _3 = FINALLY _4 = block
     {                        ( let b, _, _ = _2 in
                           let h, _, _ = _4 in
-                          if not !Cprint.msvcMode then 
+                          if not !Cprint.msvcMode then
                             parse_error "try/finally in GCC code";
                           TRY_FINALLY (b, h, _1) )}
 | _1 = error _2 = location _3 = SEMICOLON
@@ -966,12 +966,12 @@ struct_decl_list:
   
     {                                         ( [] )}
 | _1 = decl_spec_list _2 = SEMICOLON _3 = struct_decl_list
-    {                                         ( (fst _1, 
+    {                                         ( (fst _1,
                                             [(missingFieldDecl, None)]) :: _3 )}
 | _1 = SEMICOLON _2 = struct_decl_list
     {                                         ( _2 )}
 | _1 = decl_spec_list _2 = field_decl_list _3 = SEMICOLON _4 = struct_decl_list
-    {                                          ( (fst _1, _2) 
+    {                                          ( (fst _1, _2)
                                             :: _4 )}
 | _1 = error _2 = SEMICOLON _3 = struct_decl_list
     {                                          ( _3 )}
@@ -1036,8 +1036,8 @@ rest_par_list:
   
     {                                   ( ([], false) )}
 | _1 = parameter_decl _2 = rest_par_list1
-    {                                   ( let (params, isva) = _2 in 
-                                     (_1 :: params, isva) 
+    {                                   ( let (params, isva) = _2 in
+                                     (_1 :: params, isva)
                                    )}
 
 rest_par_list1:
@@ -1046,7 +1046,7 @@ rest_par_list1:
 | _1 = COMMA _2 = ELLIPSIS
     {                                        ( ([], true) )}
 | _1 = COMMA _2 = parameter_decl _3 = rest_par_list1
-    {                                        ( let (params, isva) = _3 in 
+    {                                        ( let (params, isva) = _3 in
                                           (_2 :: params, isva)
                                         )}
 
@@ -1091,7 +1091,7 @@ old_pardef_list:
     {                                          ( ([(fst _1, _2)], true) )}
 | _1 = decl_spec_list _2 = old_pardef _3 = SEMICOLON _4 = old_pardef_list
     {                                          ( let rest, isva = _4 in
-                                            ((fst _1, _2) :: rest, isva) 
+                                            ((fst _1, _2) :: rest, isva)
                                           )}
 
 old_pardef:
@@ -1119,7 +1119,7 @@ type_name:
                                    parse_error "attributes in type name";
                                    raise Parsing.Parse_error
                                  end;
-                                 (fst _1, d) 
+                                 (fst _1, d)
                                )}
 | _1 = decl_spec_list
     {                               ( (fst _1, JUSTBASE) )}
@@ -1155,7 +1155,7 @@ function_def:
   _1 = function_def_start _2 = block
     {          ( let (loc, specs, decl) = _1 in
             currentFunctionName := "<__FUNCTION__ used outside any functions>";
-            !Lexerhack.pop_context (); (* The context pushed by 
+            !Lexerhack.pop_context (); (* The context pushed by
                                     * announceFunctionName *)
             doFunctionDef loc (trd3 _2) specs decl (fst3 _2)
           )}
@@ -1171,7 +1171,7 @@ function_def_start:
                             )}
 | _1 = IDENT _2 = parameter_list_startscope _3 = rest_par_list _4 = RPAREN
     {                           ( let (params, isva) = _3 in
-                             let fdec = 
+                             let fdec =
                                (fst _1, PROTO(JUSTBASE, params, isva), [], snd _1) in
                              announceFunctionName fdec;
                              (* Default is int type *)
@@ -1183,17 +1183,17 @@ function_def_start:
                              let pardecl, isva = doOldParDecl _3 _5 in
                              (* Make the function declarator *)
                              let fdec = (fst _1,
-                                         PROTO(JUSTBASE, pardecl,isva), 
+                                         PROTO(JUSTBASE, pardecl,isva),
                                          [], snd _1) in
                              announceFunctionName fdec;
                              (* Default is int type *)
                              let defSpec = [SpecType Tint] in
-                             (snd _1, defSpec, fdec) 
+                             (snd _1, defSpec, fdec)
                             )}
 | _1 = IDENT _2 = LPAREN _3 = RPAREN
     {                           ( (* Make the function declarator *)
                              let fdec = (fst _1,
-                                         PROTO(JUSTBASE, [], false), 
+                                         PROTO(JUSTBASE, [], false),
                                          [], snd _1) in
                              announceFunctionName fdec;
                              (* Default is int type *)
@@ -1221,7 +1221,7 @@ attributes_with_asm:
 | _1 = attribute _2 = attributes_with_asm
     {                                        ( fst _1 :: _2 )}
 | _1 = ASM _2 = LPAREN _3 = string_constant _4 = RPAREN _5 = attributes
-    {                                        ( ("__asm__", 
+    {                                        ( ("__asm__",
 					   [CONSTANT(CONST_STRING (fst _3))]) :: _5 )}
 
 attribute_nocv:

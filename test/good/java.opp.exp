@@ -23,7 +23,7 @@ Warning: the token VAR is unused.
 File "java.mly", line 59, characters 33-41:
 Warning: the token VOLATILE is unused.
 %{
-  
+
   open Location
   open Ast_types
   open Ast
@@ -33,12 +33,12 @@ Warning: the token VOLATILE is unused.
 
   let rec build_array_creation_expr t (l,n) =
     match l with
-      | [] -> 
+      | [] ->
 	  Implicit_array_creation(build_array_type t n)
       | a::b ->
 	  Explicit_array_creation(a,(build_array_creation_expr t (b,n)))
 
-  let extend_loc l = 
+  let extend_loc l =
     Location.extend_loc !Java_parser_base.cur_base l (symbol_end())
 
 %}
@@ -530,7 +530,7 @@ statement:
 
 annotated_statement:
   _1 = JML_METHOD_SPECIFICATION _2 = other_statement
-    {    ( mk_statement _2.statement_loc 
+    {    ( mk_statement _2.statement_loc
 	(Annotated(to_statement_spec _1,_2)) )}
 | _1 = other_statement
     {    ( _1 )}
@@ -543,13 +543,13 @@ other_statement:
 | _1 = local_variable_declaration _2 = SEMICOLON
     {    ( mk_statement_no_loc (Var_decl(_1)) )}
 | _1 = IF _2 = LEFTPAR _3 = expr _4 = RIGHTPAR _5 = statement %prec THEN
-    {    ( mk_statement (extend_loc _1) 
+    {    ( mk_statement (extend_loc _1)
 	(If_statement(_3,_5,mk_statement_no_loc Skip)) )}
 | _1 = IF _2 = LEFTPAR _3 = expr _4 = RIGHTPAR _5 = statement _6 = ELSE _7 = statement %prec ELSE
-    {    ( mk_statement (extend_loc _1) 
+    {    ( mk_statement (extend_loc _1)
 	(If_statement(_3,_5,_7)) )}
 | _1 = SWITCH _2 = LEFTPAR _3 = expr _4 = RIGHTPAR _5 = LEFTBRACE _6 = switch_block _7 = RIGHTBRACE
-    {    ( mk_statement (extend_loc _1) 
+    {    ( mk_statement (extend_loc _1)
 	(Switch(_3,_6)) )}
 | _1 = block
     {    ( make_block(_1) )}
@@ -653,26 +653,26 @@ primary_no_new_array:
     {    ( let (loc,fa)=_1 in mk_expr loc (Field_access(fa)) )}
 | _1 = ident _2 = LEFTPAR _3 = argument_list _4 = RIGHTPAR
     {    ( let (l,_) as id = _1 in
-      mk_expr 
+      mk_expr
 	(extend_loc l)
 	(Method_call(None,id,_3)) )}
 | _1 = name _2 = DOT _3 = ident _4 = LEFTPAR _5 = argument_list _6 = RIGHTPAR
     {    ( let n = expand_name _1 in
-      mk_expr 
+      mk_expr
 	(extend_loc n.expr_loc)
 	(Method_call(Some n,_3,_5)) )}
 | _1 = primary_expr _2 = DOT _3 = ident _4 = LEFTPAR _5 = argument_list _6 = RIGHTPAR
     {    ( let e = _1 in
-      mk_expr 
-	(extend_loc e.expr_loc) 
+      mk_expr
+	(extend_loc e.expr_loc)
 	(Method_call(Some e,_3,_5)) )}
 | _1 = NEW _2 = name _3 = LEFTPAR _4 = argument_list _5 = RIGHTPAR
     {    ( let l = _1 in
-      mk_expr 
+      mk_expr
 	(extend_loc l)
 	(Class_instance_creation(_2,_4)) )}
 | _1 = array_access
-    {    ( let (l,a,b)=_1 in 
+    {    ( let (l,a,b)=_1 in
       mk_expr l (Array_access(a,b)) )}
 
 array_access:
@@ -686,12 +686,12 @@ array_access:
 array_creation_expression:
   _1 = NEW _2 = base_type _3 = array_dims
     {    ( let l = _1 in
-      mk_expr 
+      mk_expr
 	(extend_loc l)
 	(Array_creation(build_array_creation_expr (Base_type(_2)) _3)) )}
 | _1 = NEW _2 = name _3 = array_dims
     {    ( let l = _1 in
-      mk_expr 
+      mk_expr
 	(extend_loc l)
 	(Array_creation(build_array_creation_expr (Type_name(_2)) _3)) )}
 
@@ -718,13 +718,13 @@ castable_expr:
 non_basic_cast:
   _1 = LEFTPAR _2 = array_type_expr _3 = RIGHTPAR _4 = castable_expr %prec CAST
     {    ( let l=_1 and e=_4 in
-      mk_expr 
-	(merge_locs l e.expr_loc) 
+      mk_expr
+	(merge_locs l e.expr_loc)
 	(Cast(Array_type_expr(_2),e)) )}
 | _1 = LEFTPAR _2 = name _3 = RIGHTPAR _4 = castable_expr %prec CAST
     {    ( let l=_1 and e=_4 in
-      mk_expr 
-	(merge_locs l e.expr_loc) 
+      mk_expr
+	(merge_locs l e.expr_loc)
 	(Cast(Type_name(_2),e)) )}
 
 statement_expr_list:
@@ -749,18 +749,18 @@ expr_no_name:
   _1 = name _2 = assign_op _3 = expr %prec ASSIGNOP
     {    ( let n = _1 in
       let e = expand_name n in
-      mk_expr 
+      mk_expr
 	(extend_loc e.expr_loc)
 	(Assign_name(n,_2,_3)) )}
 | _1 = field_access _2 = assign_op _3 = expr %prec ASSIGNOP
     {    ( let (l,f) = _1 in
-      mk_expr 
-	(extend_loc l) 
+      mk_expr
+	(extend_loc l)
 	(Assign_field(f,_2,_3)) )}
 | _1 = array_access _2 = assign_op _3 = expr %prec ASSIGNOP
-    {    ( let (l,a,b)=_1 in 
-      mk_expr 
-	(extend_loc l) 
+    {    ( let (l,a,b)=_1 in
+      mk_expr
+	(extend_loc l)
 	(Assign_array(a,b,_2,_3)) )}
 | _1 = PLUSPLUS _2 = expr
     {    ( let l=_1 and e=_2 in
@@ -778,73 +778,73 @@ expr_no_name:
     {    ( _1 )}
 | _1 = expr _2 = QUESTIONMARK _3 = expr _4 = COLON _5 = expr %prec IFEXPR
     {    ( let e1=_1 and e3=_5 in
-      mk_expr 
-	(merge_locs e1.expr_loc e3.expr_loc) 
+      mk_expr
+	(merge_locs e1.expr_loc e3.expr_loc)
 	(If_expr(e1,_3,e3)) )}
 | _1 = expr _2 = VERTICALBARVERTICALBAR _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "||" e2 )}
 | _1 = expr _2 = AMPERSANDAMPERSAND _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "&&" e2 )}
 | _1 = expr _2 = VERTICALBAR _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "|" e2 )}
 | _1 = expr _2 = CARET _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "^" e2 )}
 | _1 = expr _2 = AMPERSAND _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "&" e2 )}
 | _1 = expr _2 = EQOP _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 _2 e2 )}
 | _1 = expr _2 = COMP _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 _2 e2 )}
 | _1 = expr _2 = SHIFT _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 _2 e2  )}
 | _1 = expr _2 = PLUS _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "+" e2 )}
 | _1 = expr _2 = MINUS _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "-" e2 )}
 | _1 = expr _2 = STAR _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "*" e2 )}
 | _1 = expr _2 = SLASH _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "/" e2 )}
 | _1 = expr _2 = PERCENT _3 = expr
     {    ( let e1=_1 and e2=_3 in
-      mk_bin 
-	(merge_locs e1.expr_loc e2.expr_loc) 
+      mk_bin
+	(merge_locs e1.expr_loc e2.expr_loc)
 	e1 "%" e2 )}
 | _1 = PLUS _2 = expr %prec UPLUS
     {    ( let l = _1 and e=_2 in
@@ -860,15 +860,15 @@ expr_no_name:
       mk_un (merge_locs l e.expr_loc) "~" e )}
 | _1 = LEFTPAR _2 = base_type _3 = RIGHTPAR _4 = expr %prec CAST
     {    ( let l=_1 and e=_4 in
-      mk_expr 
-	(merge_locs l e.expr_loc) 
+      mk_expr
+	(merge_locs l e.expr_loc)
 	(Cast(Base_type(_2),e)) )}
 | _1 = non_basic_cast
     {    ( _1 )}
 | _1 = expr _2 = INSTANCEOF _3 = type_expr
     {    ( let e=_1 in
-      mk_expr 
-	(extend_loc e.expr_loc) 
+      mk_expr
+	(extend_loc e.expr_loc)
 	(Instanceof(e,_3)) )}
 
 expr_comma_list:

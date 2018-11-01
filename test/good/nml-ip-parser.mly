@@ -36,10 +36,10 @@ let ghpat d point =
 
 let mkldot modname name =
   Ldot(symbol modname, symbol name)
-    
+
 let mkident modname name =
   mkexp(Pexp_ident(mkldot modname name))
-    
+
 let mkapply modname name arglst =
   mkexp(Pexp_apply((mkident modname name),arglst))
 
@@ -48,7 +48,7 @@ let ghident modname name point =
 
 let ghapply modname name arglst point =
   ghexp (Pexp_apply((ghident modname name point),arglst)) point
-    
+
 let mklazy e =
   let {loc_start = st} = symbol_loc () in
   let pat  = ghpat (Ppat_constant Const_unit) st in
@@ -72,7 +72,7 @@ let mkassert e =
          else mkexp(Pexp_ifthenelse (e, un, raiser))
 
 let mkinfix arg1 name arg2 =
-(*  
+(*
   if name == plussym then
     (match arg1 with
 	 {pexp_desc = Pexp_apply({pexp_desc = Pexp_ident(Lident op)},
@@ -112,7 +112,7 @@ let mkinfix arg1 name arg2 =
 	   (* a*b *)
 	   mkexp(Pexp_apply(mkoperator name 2, [arg1;arg2])))
   else
-*)    
+*)
     mkexp(Pexp_apply(mkoperator name 2, [arg1;arg2]))
 
 let mkuminus name arg =
@@ -183,7 +183,7 @@ let mklistpat tl patlst =
 	 | _ ->
 	     mkpat(Ppat_cons(pat,tl)))
     tl patlst
-    
+
 (* -- Haskell-style List Comprehensions -- *)
 let rec make_comprehension body gens initial =
   let rsltid = Symbol.symbol " rslt" in
@@ -275,7 +275,7 @@ let unclosed opening_name opening_num closing_name closing_num =
 %token CHARPAT RECORDPAT BOXPAT VECTORPAT
 %token HASHTABLEPAT STACKPAT QUEUEPAT WEAKARRAYPAT
 %token IN_CHANNELPAT, OUT_CHANNELPAT, DIR_HANDLEPAT
-  
+
 /* Precedences and associativities. Lower precedences come first. */
 
 %right prec_let                         /* let ... in ... */
@@ -344,7 +344,7 @@ top_expr:
       { mktoplet Recursive (List.rev $2) }
   | VAL let_bindings %prec prec_let
       { mktoplet Recursive (List.rev $2) }
-*/      
+*/
   | EXCEPTION UIDENT OF type_expr
       { mkstr(Pstr_exception($2,true)) }
   | EXCEPTION UIDENT
@@ -462,7 +462,7 @@ field_defn:
       { $1,Ip_types.Immutable }
   | MUTABLE LIDENT COLON type_expr
       { $2,Ip_types.Mutable }
-;  
+;
 lbl_type_list:
     field_defn  %prec prec_list
       { [$1] }
@@ -496,7 +496,7 @@ no_value_expr:
       { mkinfix $1 colonequalsym $3 }
   | ASSERT simple_expr %prec prec_appl
       { mkassert $2 }
-;      
+;
 value_expr:
     simple_expr
       { $1 }
@@ -526,7 +526,7 @@ value_expr:
       { mkexp(Pexp_where($2, None, None)) }
   | expr WHERE expr %prec prec_if
       { mkexp(Pexp_where($3, Some $1, None)) }
-      
+
   | MATCH expr WITH opt_bar match_cases %prec prec_match
       { mkexp(Pexp_match($2,List.rev $5)) }
   | MATCH expr_comma_list opt_comma WITH opt_bar match_cases %prec prec_match
@@ -567,22 +567,22 @@ value_expr:
       { mkuminus negsym $2 }
   | PLUS expr %prec prec_unary_minus
       { $2 }
-  | expr STAR expr 
+  | expr STAR expr
       { mkinfix $1 starsym $3 }
   | expr EQ expr
       { mkinfix $1 eqsym $3 }
   | expr BARBAR expr
       { mkexp(Pexp_scor($1,$3)) }
-/*      
+/*
   | expr OR expr
       { mkexp(Pexp_scor($1,$3)) }
-*/      
+*/
   | expr AMPERAMPER expr
       { mkexp(Pexp_scand($1,$3)) }
 /*
   | expr AND expr
       { mkexp(Pexp_scand($1,$3)) }
-*/  
+*/
   | LAZY simple_expr %prec prec_appl
       { mklazy $2 }
 ;
@@ -687,7 +687,7 @@ matrix_expr:
       { [mkexp(Pexp_list(List.rev $1))] }
   | matrix_expr SEMI expr_comma_list
       { mkexp(Pexp_list(List.rev $3)) :: $1 }
-;      
+;
 list_expr:
   | expr BARCOLON generator_list
       { make_comprehension $1 (List.rev $3)
@@ -778,7 +778,7 @@ lbl_expr_list:
       { ($3,$5) :: $1 }
 ;
 record_expr:
-    simple_expr WITH lbl_expr_list 
+    simple_expr WITH lbl_expr_list
       { mkexp(Pexp_record(Some $1, List.rev $3)) }
   | lbl_expr_list
       { match $1 with
@@ -854,7 +854,7 @@ operator:
   | INFIXOP3R                                   { $1 }
   | INFIXOP4R                                   { $1 }
   | INFIXOP5R                                   { $1 }
-; 
+;
 val_longident:
     val_ident                                   { Lident $1 }
   | UIDENT DOT val_ident                        { Dep.add $1;
@@ -941,7 +941,7 @@ param_tail:
       { $5 @ $2 }
   | AMPERKEY key_pattern
       { $2 }
-;      
+;
 pattern_comma_list:
     pattern_comma_list_element
       { [$1] }
@@ -1114,7 +1114,7 @@ opt_comma:
 opt_semi:
     /* empty */  { () }
   | SEMI         { () }
-;      
+;
 opt_bar:
     /* empty */                                 { () }
   | BAR                                         { () }

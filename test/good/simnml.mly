@@ -362,7 +362,7 @@ MemLocation:
 	MemLocBase
 		{ Irg.LOC_REF (Sem.get_loc_ref_type (fst $1), fst $1, snd $1, Irg.NONE, Irg.NONE) }
 |	MemLocBase BIT_LEFT Bit_Expr DOUBLE_DOT Bit_Expr GT
-		{ 
+		{
 		Irg.LOC_REF (Sem.get_loc_ref_type (fst $1), fst $1, snd $1, $3, $5) }
 ;
 
@@ -401,7 +401,7 @@ OpSpec:
 		{
 			Sem.check_image $2 $4;
 			Irg.param_unstack $4;
-			Irg.attr_unstack $6;			
+			Irg.attr_unstack $6;
 			($2, Irg.AND_OP ($2, $4, $6))
 		}
 |	OP LocatedID EQ Identifier_Or_List
@@ -806,7 +806,7 @@ Expr :
 			else
 				let dsp = fun _-> (print_string "Type : "; Irg.print_spec (Irg.get_symbol $1)) in
 				raise (Sem.SemErrorWithFun ((Printf.sprintf "Can't apply bitfield on %s" $1),dsp))
-			
+
 			(*if not (Irg.is_defined $1) then
 				raise (Sem.SemError (Printf.sprintf "\"%s\" is undefined\n" $1))
 			else if not (Sem.is_location $1) && not (Sem.is_loc_spe $1) && not (Sem.is_loc_mode $1) && not (Sem.is_expr_attr $1) then

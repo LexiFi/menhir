@@ -24,21 +24,21 @@ Warning: the token type_proj is unused.
 
     (* merge the two sources of a modelica-style component definition (i.e. the declaration and the component_clause *)
     let declaration_to_def def_type def_options def_constraint = function
-        (def_name, None, None, def_if, def_rhs, comment) -> 
+        (def_name, None, None, def_if, def_rhs, comment) ->
            { commented = { def_name ; def_type ; def_options ; def_constraint ; def_rhs ; def_if ; } ;
              comment }
-      | (def_name, Some(dims), None, def_if, def_rhs, comment) -> 
+      | (def_name, Some(dims), None, def_if, def_rhs, comment) ->
            { commented = { def_name ; def_type = TArray { base_type = def_type ; dims } ;
                            def_options ; def_constraint ; def_rhs ; def_if ; } ;
              comment }
-      | (def_name, Some(dims), Some(modification), def_if, def_rhs, comment) -> 
+      | (def_name, Some(dims), Some(modification), def_if, def_rhs, comment) ->
            { commented = { def_name ; def_type = TArray { base_type = TMod { mod_type = def_type ; modification } ; dims } ;
                            def_options ; def_constraint ; def_rhs ; def_if ; } ;
              comment }
-      | (def_name, None, Some(modification), def_if, def_rhs, comment) -> 
-           { commented = { def_name ; def_type = TMod { mod_type = def_type ; modification } ; 
+      | (def_name, None, Some(modification), def_if, def_rhs, comment) ->
+           { commented = { def_name ; def_type = TMod { mod_type = def_type ; modification } ;
                            def_options ; def_constraint ; def_rhs ; def_if ; } ;
-             comment } 
+             comment }
 
      let mkloc x loc_start loc_end = {txt=x ; loc={Location.loc_start; Location.loc_end; Location.loc_ghost=false } }
 %}
@@ -473,7 +473,7 @@ expr:
 | _1 = IF condition = expr _3 = THEN then_ = expr else_if = list_else_if_ _6 = ELSE else_ = expr
     {       ( no_attr (If { condition ; then_ ; else_if ; else_ }) )}
 | start = simple_expr _2 = COLON first = simple_expr second = option_preceded_COLON_simple_expr__
-    {        ( no_attr (Range (match second with Some end_ -> { start; step=Some first; end_ } 
+    {        ( no_attr (Range (match second with Some end_ -> { start; step=Some first; end_ }
                                           | None -> {start; step=None; end_=first} ) )
         )}
 
@@ -752,40 +752,40 @@ modification_arguments_head:
 
 modification_arguments:
   _1 = REDECLARE redecl_each = flag_EACH_ type_final = flag_FINAL_ type_replaceable = flag_REPLACEABLE_ partial = flag_PARTIAL_ sort = type_sort td_name = ident _8 = EQ type_exp = type_expression comment = comment cns = option_constraining_clause_ rest = modification_arguments_tail
-    {                         ( { rest with types = { 
+    {                         ( { rest with types = {
                                     redecl_each ;
-                                    redecl_type = { commented = { td_name ; sort ; 
-                                                                  type_options = { no_type_options with partial ; 
-                                                                                   type_final; type_replaceable } ; 
+                                    redecl_type = { commented = { td_name ; sort ;
+                                                                  type_options = { no_type_options with partial ;
+                                                                                   type_final; type_replaceable } ;
                                                                   type_exp ; cns} ;
-                                                    comment } 
+                                                    comment }
                                     } :: rest.types } )}
 | redecl_each = flag_EACH_ type_final = flag_FINAL_ _3 = REPLACEABLE partial = flag_PARTIAL_ sort = type_sort td_name = ident _7 = EQ type_exp = type_expression comment = comment cns = option_constraining_clause_ rest = modification_arguments_tail
-    {                         ( { rest with types = { 
+    {                         ( { rest with types = {
                                     redecl_each ;
-                                    redecl_type = { commented = { td_name ; sort ; 
-                                                                  type_options = { no_type_options with partial ; 
-                                                                                   type_final; type_replaceable=true } ; 
+                                    redecl_type = { commented = { td_name ; sort ;
+                                                                  type_options = { no_type_options with partial ;
+                                                                                   type_final; type_replaceable=true } ;
                                                                   type_exp ; cns} ;
-                                                    comment } 
+                                                    comment }
                                     } :: rest.types } )}
 | _1 = REDECLARE each = flag_EACH_ final = flag_FINAL_ replaceable = flag_REPLACEABLE_ def = mod_component_clause rest = modification_arguments_tail
-    {                         ( {rest with components = 
-                             { each ; def = { def with commented = 
-                                                       { def.commented with def_options = 
+    {                         ( {rest with components =
+                             { each ; def = { def with commented =
+                                                       { def.commented with def_options =
                                                                             {def.commented.def_options with final; replaceable} };
                                             }
                          }::rest.components} )}
 | each = flag_EACH_ final = flag_FINAL_ _3 = REPLACEABLE def = mod_component_clause rest = modification_arguments_tail
-    {                         ( {rest with components = 
-                             { each ; def = { def with commented = 
-                                                       { def.commented with def_options = 
+    {                         ( {rest with components =
+                             { each ; def = { def with commented =
+                                                       { def.commented with def_options =
                                                                             {def.commented.def_options with final; replaceable=true} };
                                             }
                          }::rest.components} )}
 | mod_each = flag_EACH_ mod_final = flag_FINAL_ mod_name = separated_nonempty_list_DOT_ident_ mod_value = option_modification_ comment = comment rest = modification_arguments_tail
-    {                         ( let m = {commented={mod_name;mod_final;mod_each;mod_value};comment} in 
-                               { rest with modifications = m::rest.modifications } 
+    {                         ( let m = {commented={mod_name;mod_final;mod_each;mod_value};comment} in
+                               { rest with modifications = m::rest.modifications }
                          )}
 
 modification:
@@ -939,7 +939,7 @@ type_definition:
 | type_options = typedef_prefix sort = type_sort td_name = ident annotated_elem = option_str_ type_exp = composition annotation = option_composition_annotation_ end_name = END_IDENT cns = option_constraining_clause_
     {                  ( { commented = Composition { td_name ; sort ; type_options ; type_exp ; cns} ;  comment = {annotated_elem;annotation}})}
 | type_options = typedef_prefix sort = type_sort _3 = EXTENDS td_name = ident modification = option_class_modification_ annotated_elem = option_str_ composition = composition annotation = option_composition_annotation_ end_name = END_IDENT cns = option_constraining_clause_
-    {                  ( { commented = Extension { td_name ; sort ; type_options ; type_exp=(composition,modification) ; cns} ;  
+    {                  ( { commented = Extension { td_name ; sort ; type_options ; type_exp=(composition,modification) ; cns} ;
                       comment = {annotated_elem;annotation}})}
 | type_options = typedef_prefix sort = type_sort td_name = ident _4 = EQ _5 = ENUMERATION _6 = LPAREN type_exp = separated_nonempty_list_COMMA_enum_literal_ _8 = RPAREN comment = comment cns = option_constraining_clause_
     {                  ( { commented = Enumeration { td_name ; sort ; type_options ; type_exp ; cns} ;  comment } )}

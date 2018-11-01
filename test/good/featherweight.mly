@@ -1,9 +1,9 @@
-/* Ghulam Mujtaba Lashari. 
+/* Ghulam Mujtaba Lashari.
    Final Project CSC-535 Spring 2001.
    FeatherWeight Java
 */
 
-/*  
+/*
  *  Yacc grammar for the parser.  The files parser.mli and parser.ml
  *  are generated automatically from parser.mly.
  */
@@ -36,7 +36,7 @@ open Syntax
 %token <Support.Error.info> COMMAND
 /* End keyword tokens */
 
-  
+
 /* Identifier and constant value tokens */
 %token <int Support.Error.withinfo> INTV
 %token <float Support.Error.withinfo> FLOATV
@@ -96,10 +96,10 @@ open Syntax
 
 /* The top level of a file is a sequence of commands, each terminated
    by a semicolon. */
-   
+
 toplevel :
 	classDecs COLON termDef
-	  { Program($1,$3) }	    
+	  { Program($1,$3) }
 
 classDecs :
     COMMAND
@@ -109,7 +109,7 @@ classDecs :
           let decls = $2 in
 	      decl::decls }
 
-/* we are cheating on two places to make parser work, 
+/* we are cheating on two places to make parser work,
    In Java File,
    1--you have to put a ";" after fields (if any)
    2--you have to put a ";" after method definitions (if any)
@@ -118,32 +118,32 @@ classDecs :
 
 classDec :
     CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef methodDefs RCURLY
-      { Class (Name($2.v), SuperName($4.v), $6, $7, $8) } 
+      { Class (Name($2.v), SuperName($4.v), $6, $7, $8) }
   | CLASS ID EXTENDS ID LCURLY fieldDefs constructorDef RCURLY
-      { Class (Name($2.v), SuperName($4.v), $6, $7, []) } 
+      { Class (Name($2.v), SuperName($4.v), $6, $7, []) }
   | CLASS ID EXTENDS ID LCURLY constructorDef methodDefs RCURLY
-      { Class (Name($2.v), SuperName($4.v), [], $6, $7) } 
+      { Class (Name($2.v), SuperName($4.v), [], $6, $7) }
   | CLASS ID EXTENDS ID LCURLY constructorDef RCURLY
-      { Class (Name($2.v), SuperName($4.v), [], $6, []) }     
+      { Class (Name($2.v), SuperName($4.v), [], $6, []) }
 
 fieldDefs :
 	SEMI
 	  { [] }
-  |	fieldDef SEMI fieldDefs  
+  |	fieldDef SEMI fieldDefs
 	  { let fDef = $1 in
 		  let fDefs = $3 in
 		  fDef::fDefs }
 
 fieldDef :
 	ID ID
-	  { Field(Type($1.v), Name($2.v)) }		  
-		  
+	  { Field(Type($1.v), Name($2.v)) }
+
 constructorDef :
 	ID LPAREN paramDefs RPAREN LCURLY SUPER LPAREN argDefs RPAREN SEMI fieldAssignmentDefs RCURLY
 	  { Constructor(Name($1.v), $3, SuperConstructorCall($8), $11) }
 
 paramDefs :
-    /* empty */ 	
+    /* empty */
      { [] }
   | paramDef
       { let pDef = $1 in
@@ -154,12 +154,12 @@ paramDefs :
           let pDefs = $3 in
           pDef::pDefs }
 
-paramDef : 
+paramDef :
     ID ID
       { Param (Type($1.v), Name($2.v)) }
 
 argDefs :
-    /* empty */ 
+    /* empty */
       {	[] }
   | argDef
       {	let aDef = $1 in
@@ -169,13 +169,13 @@ argDefs :
       {	let aDef = $1 in
 	  let aDefs = $3 in
 	  aDef::aDefs }
-	  
+
 argDef :
     ID
       { Arg($1.v) }
 
 fieldAssignmentDefs :
-   /* empty */  
+   /* empty */
       { [] }
  | fieldAssignmentDef fieldAssignmentDefs
       { let faDef = $1 in
@@ -187,7 +187,7 @@ fieldAssignmentDef :
       { FieldAssignment (Name($3.v), Value($5.v)) }
 
 
-methodDefs : 
+methodDefs :
      SEMI
       { [] }
   | methodDef methodDefs
@@ -202,7 +202,7 @@ methodDef :
 /* All terms except variable can be parenthesized or non-parenthesized. */
 termDef :
     TmVarDef
-      { $1 }	
+      { $1 }
   | TmFieldAccessDef
       { $1 }
   | TmMethodInvocationDef
@@ -212,7 +212,7 @@ termDef :
   | TmCastDef
       { $1 }
   | TmThis
-      { $1 }   
+      { $1 }
   | LPAREN TmFieldAccessDef RPAREN
       { $2 }
   | LPAREN TmMethodInvocationDef RPAREN
@@ -221,14 +221,14 @@ termDef :
       { $2 }
   | LPAREN TmCastDef RPAREN
       { $2 }
-       
+
 TmThis :
    THIS
-     { TmVar("this") }  
-      
+     { TmVar("this") }
+
 TmVarDef :
 	ID
-	  { TmVar($1.v) } 		  
+	  { TmVar($1.v) }
 
 TmFieldAccessDef :
 	termDef DOT ID
@@ -241,13 +241,13 @@ TmMethodInvocationDef :
 TmObjectCreationDef :
 	NEW ID LPAREN termDefs RPAREN
 	  { TmObjectCreation($2.v,$4) }
-	  
+
 TmCastDef :
 	LPAREN ID RPAREN termDef
 	  { TmCast($2.v,$4) }
-	  
+
 termDefs :
-    /* empty */ 	
+    /* empty */
       { [] }
   | termDef
       { let tDef = $1 in

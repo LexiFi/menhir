@@ -101,8 +101,8 @@ let unclosed opening_name opening_num closing_name closing_num =
   raise(Syntaxerr.Error(Syntaxerr.Unclosed(rhs_loc opening_num, opening_name,
                                            rhs_loc closing_num, closing_name)))
 
-let mkloc l = 
-  let r = mkexp (Pexp_ident (Ldot (Lident "Join", "create_location"))) in 
+let mkloc l =
+  let r = mkexp (Pexp_ident (Ldot (Lident "Join", "create_location"))) in
 	mkexp (Pexp_apply (r, [mkexp (Pexp_thismodule);l]))
 
 let pproc_add list = function
@@ -1015,7 +1015,7 @@ meth_binding:
 | _1 = type_constraint _2 = EQUAL _3 = seq_expr %prec prec_let
     {       ( let (t, t') = _1 in (mkexp(Pexp_constraint(_3, t, t')),0) )}
 | _1 = simple_pattern _2 = meth_binding
-    {       ( 
+    {       (
        let (s2,nparams) = _2
          in
          (mkexp(Pexp_function[_1,s2]),nparams+1) )}

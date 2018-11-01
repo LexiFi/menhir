@@ -27,8 +27,8 @@ let mesquite_error =
      "valid@ NEXUS@ command.@ You@ will@ have@ to@ remove@ it@ by@ hand.@ " ^
      "You@ can@ read@ their@ information@ about@ it@ here:@ http://mesquiteproject.org/mesquite_folder/docs/mesquite/otherPrograms.html")
 
-let parse_error s = 
-    try let b = (Parsing.symbol_start_pos ()) 
+let parse_error s =
+    try let b = (Parsing.symbol_start_pos ())
         and e = (Parsing.symbol_end_pos ()) in
         let b = string_of_int (b.Lexing.pos_cnum)
         and e = string_of_int (e.Lexing.pos_cnum) in
@@ -220,9 +220,9 @@ header:
     | NEXUS { () }
     ;
 block:
-    | BEGIN TAXA SEMICOLON mesquite_broken taxa ENDNEXUS SEMICOLON  
+    | BEGIN TAXA SEMICOLON mesquite_broken taxa ENDNEXUS SEMICOLON
         { P.Taxa $5 }
-    | BEGIN CHARACTERS SEMICOLON mesquite_broken characters ENDNEXUS SEMICOLON 
+    | BEGIN CHARACTERS SEMICOLON mesquite_broken characters ENDNEXUS SEMICOLON
         { P.Characters $5 }
     | BEGIN DATA SEMICOLON mesquite_broken characters ENDNEXUS SEMICOLON
         { P.Characters $5 }
@@ -230,9 +230,9 @@ block:
         { P.Unaligned $5 }
     | BEGIN TREES SEMICOLON mesquite_broken optional_translate tree_list ENDNEXUS SEMICOLON
         { P.Trees ($5,$6) }
-    | BEGIN NOTES SEMICOLON mesquite_broken notes ENDNEXUS SEMICOLON 
+    | BEGIN NOTES SEMICOLON mesquite_broken notes ENDNEXUS SEMICOLON
         { P.Notes $5 }
-    | BEGIN DISTANCES SEMICOLON mesquite_broken distances ENDNEXUS SEMICOLON 
+    | BEGIN DISTANCES SEMICOLON mesquite_broken distances ENDNEXUS SEMICOLON
         { P.Distances $5 }
     | BEGIN ASSUMPTIONS SEMICOLON mesquite_broken assumptions ENDNEXUS SEMICOLON
         { P.Assumptions $5 }
@@ -241,15 +241,15 @@ block:
     | BEGIN POY SEMICOLON poy_block ENDNEXUS SEMICOLON
         { P.Poy $4 }
 /* error states  -- some of these are necessary     */
-/*  | BEGIN TAXA SEMICOLON error ENDNEXUS SEMICOLON  
+/*  | BEGIN TAXA SEMICOLON error ENDNEXUS SEMICOLON
 /*      { P.Error $2 }
 /*  | BEGIN UNALIGNED SEMICOLON error ENDNEXUS SEMICOLON
 /*      { P.Error $2 }
 /*  | BEGIN SETS SEMICOLON error ENDNEXUS SEMICOLON */
 /*      { P.Error $2 }                              */
-    | BEGIN NOTES SEMICOLON error ENDNEXUS SEMICOLON 
+    | BEGIN NOTES SEMICOLON error ENDNEXUS SEMICOLON
         { P.Error $2 }
-    | BEGIN DISTANCES SEMICOLON error ENDNEXUS SEMICOLON 
+    | BEGIN DISTANCES SEMICOLON error ENDNEXUS SEMICOLON
         { P.Error $2 }
 /* This is to avoid processing unknown blocks       */
     | BEGIN IDENT error ENDNEXUS SEMICOLON
@@ -278,19 +278,19 @@ assumption_items:
     | optional_wtset                { P.WeightDef $1 }
     | optional_exset                { P.ExcludeSet $1 }
     | optional_ancstates            { P.AncestralDef $1 }
-    | error                         
+    | error
         { report_error "Assumption Block" (Parsing.symbol_start_pos ()) (Parsing.symbol_end_pos ());
           raise Parsing.Parse_error }
     ;
 
 set_in_block:
-    | CHARSET nexus_word optional_lparent optional_standard_or_vector optional_rparent EQUAL characterset_list 
+    | CHARSET nexus_word optional_lparent optional_standard_or_vector optional_rparent EQUAL characterset_list
         { $2, P.CharacterSet $7     }
-    | STATESET nexus_word optional_lparent optional_standard_or_vector optional_rparent EQUAL characterset_list 
+    | STATESET nexus_word optional_lparent optional_standard_or_vector optional_rparent EQUAL characterset_list
         { $2, P.StateSet $7         }
-    | TAXSET nexus_word optional_lparent optional_standard_or_vector optional_rparent EQUAL characterset_list 
-        { $2, P.TaxonSet $7         } 
-    | TREESET nexus_word optional_lparent optional_standard_or_vector optional_rparent EQUAL characterset_list 
+    | TAXSET nexus_word optional_lparent optional_standard_or_vector optional_rparent EQUAL characterset_list
+        { $2, P.TaxonSet $7         }
+    | TREESET nexus_word optional_lparent optional_standard_or_vector optional_rparent EQUAL characterset_list
         { $2, P.TreeSet $7          }
     | CHARPARTITION nexus_word partition_contents
         { $2, P.CharPartition $3    }
@@ -345,9 +345,9 @@ optional_user_type:
     ;
 user_type_definition:
     | EQUAL INTEGER numbers_and_chars { P.StepMatrix ($2, $3) }
-    | STEPMATRIX EQUAL INTEGER numbers_and_chars 
+    | STEPMATRIX EQUAL INTEGER numbers_and_chars
         { P.StepMatrix ($3, $4) }
-    | LPARENT STEPMATRIX RPARENT EQUAL INTEGER numbers_and_chars 
+    | LPARENT STEPMATRIX RPARENT EQUAL INTEGER numbers_and_chars
         { P.StepMatrix ($5, $6) }
     | CSTREE DATACSTREE { P.CSTree $2 }
     ;
@@ -387,11 +387,11 @@ do_star:
     ;
 
 optional_set_for_assumptions:
-    | do_star IDENT do_token EQUAL standard_type_set SEMICOLON 
+    | do_star IDENT do_token EQUAL standard_type_set SEMICOLON
         { ($1, $2, $3, P.Standard $5) }
-    | do_star IDENT STANDARD do_token EQUAL standard_type_set SEMICOLON 
+    | do_star IDENT STANDARD do_token EQUAL standard_type_set SEMICOLON
         { ($1, $2, $4, P.Standard $6) }
-    | do_star IDENT VECTOR do_token EQUAL vector_type_set SEMICOLON 
+    | do_star IDENT VECTOR do_token EQUAL vector_type_set SEMICOLON
         { ($1, $2, $4,P.Vector $6) }
     ;
 
@@ -412,11 +412,11 @@ vector_type_set:
     |                         { []          }
     ;
 optional_exset:
-    | EXSET do_star nexus_word EQUAL characterset_list SEMICOLON 
+    | EXSET do_star nexus_word EQUAL characterset_list SEMICOLON
         { ($2, $3, P.STDStandard $5) }
-    | EXSET do_star nexus_word STANDARD EQUAL characterset_list SEMICOLON 
+    | EXSET do_star nexus_word STANDARD EQUAL characterset_list SEMICOLON
         { ($2, $3, P.STDStandard $6) }
-    | EXSET do_star nexus_word VECTOR EQUAL vector_type_set SEMICOLON 
+    | EXSET do_star nexus_word VECTOR EQUAL vector_type_set SEMICOLON
         { ($2, $3, P.STDVector $6)   }
     ;
 
@@ -435,7 +435,7 @@ optional_distances_dimensions:
     | { None }
     ;
 notes:
-    | optional_text optional_picture 
+    | optional_text optional_picture
         { $1, $2 }
     ;
 optional_text:
@@ -444,9 +444,9 @@ optional_text:
     | { None }
     ;
 optional_picture:
-    | PICTURE optional_set_pair_list optional_pictureformat optional_encode SOURCE EQUAL source DATA SEMICOLON 
+    | PICTURE optional_set_pair_list optional_pictureformat optional_encode SOURCE EQUAL source DATA SEMICOLON
         { Some ($2, $3, $4, $7, $8) }
-    |   { None } 
+    |   { None }
     ;
 optional_set_pair_list:
     | set_pair optional_set_pair_list { $1 :: $2 }
@@ -499,9 +499,9 @@ optional_tree_prequel:
     | { None }
     ;
 poy_block:
-    | CHARACTERBRANCH charbranch_block poy_block 
+    | CHARACTERBRANCH charbranch_block poy_block
         { (P.CharacterBranch $2) :: $3}
-    | LIKELIHOOD model_block poy_block 
+    | LIKELIHOOD model_block poy_block
         { P.Likelihood $2 :: $3 }
     | GAPOPENING do_star nexus_word EQUAL standard_type_set SEMICOLON poy_block
         { (P.GapOpening ($2, $3, $5)) :: $7 }
@@ -651,11 +651,11 @@ pairs_list_float:
     | DASH  FLOAT SEMICOLON { [("-",(float_of_string $2))] }
     ;
 characters:
-    | DIMENSIONS optional_taxa_dimensions NCHAR EQUAL INTEGER SEMICOLON 
+    | DIMENSIONS optional_taxa_dimensions NCHAR EQUAL INTEGER SEMICOLON
      optional_format optional_eliminate optional_taxlabels
-     optional_charstatelabels optional_charlabels optional_statelabels 
-     DATA SEMICOLON 
-     { 
+     optional_charstatelabels optional_charlabels optional_statelabels
+     DATA SEMICOLON
+     {
          {
              P.char_taxon_dimensions = $2;
              P.char_char_dimensions = $5;
@@ -715,7 +715,7 @@ optional_format:
     ;
 format_items_list:
     | format_items format_items_list { $1 :: $2 }
-    | error format_items_list { 
+    | error format_items_list {
         report_error "Format list" (Parsing.symbol_start_pos ()) (Parsing.symbol_end_pos ());
         $2 }
     |           { [] }
@@ -740,7 +740,7 @@ format_items:
     | NOLABELS     { P.Labels false }
     | LABELS        { P.Labels true }
     | TRANSPOSE     { P.Transpose }
-    | INTERLEAVE    EQUAL { 
+    | INTERLEAVE    EQUAL {
         !P.print_error
         ("Many@ \"NEXUS\"@ files@ include@ in@ the@ CHARACTERS@ or@ DATA@ " ^
         "block@ the@ directives@ interleave=yes@ or@ interleave=no.@ " ^
@@ -802,7 +802,7 @@ optional_taxa_dimensions:
     |                       { None      }
     ;
 taxa:
-    | DIMENSIONS NTAX EQUAL INTEGER SEMICOLON TAXLABELS taxonlist SEMICOLON 
+    | DIMENSIONS NTAX EQUAL INTEGER SEMICOLON TAXLABELS taxonlist SEMICOLON
         { ($4, $7) }
     ;
 nexus_word :
@@ -812,7 +812,7 @@ nexus_word :
     | RNA           { $1 }
     ;
 
-nexus_ident : 
+nexus_ident :
     | nexus_word    { $1 }
     | INTEGER       { $1 }
     ;
@@ -826,9 +826,9 @@ characterset_list:
     | characterset                   { [$1]     }
     ;
 characterset:
-    | INTEGER DASH CHAR optional_step       
+    | INTEGER DASH CHAR optional_step
                         { P.Range (int_of_string $1, None, $4) }
-    | INTEGER DASH INTEGER optional_step    
+    | INTEGER DASH INTEGER optional_step
                         { P.Range (int_of_string $1, Some (int_of_string $3), $4) }
     | INTEGER           { P.Single (int_of_string $1) }
     | IDENT             { P.Name $1 }
@@ -855,7 +855,7 @@ single_tree:
     ;
 single_tree_list:
     | single_tree COMMA single_tree_list { $1 :: $3 }
-    | single_tree                        { [$1]     }   
+    | single_tree                        { [$1]     }
     ;
 optional_length:
     | COLON INTEGER { Some (float_of_string $2) }

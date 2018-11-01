@@ -541,28 +541,28 @@ interface:
   _1 = opt_version _2 = interfacedecl _3 = prolog _4 = EOF
     {      ( (* Woe is me --- hacking a global variable into the parser *)
         parsing_interface := false;
-	let infdecl = _2 and 
-            prolog = _3 
-	in 
+	let infdecl = _2 and
+            prolog = _3
+	in
 	if (prolog.pprolog_indices != []) then
 	  raise (Query (Parsing (Finfo.parsing_locinfo (),
 				 "Interface may not contain indices")))
 	else
-	  let interface_prolog = 
+	  let interface_prolog =
 	    { iprolog_xschemas = prolog.pprolog_xschemas;
 	      iprolog_contexts = prolog.pprolog_contexts;
 	      iprolog_funcvars = prolog.pprolog_funcvars;
 	    }
 	  in
-	  { pinterface_decl   = infdecl; 
-	    pinterface_prolog = interface_prolog 
+	  { pinterface_decl   = infdecl;
+	    pinterface_prolog = interface_prolog
 	  }
       )}
 
 interfacedecl:
   _1 = INTERFACENAMESPACE _2 = NCNAME _3 = EQUALS _4 = STRING _5 = SEMICOLON
     {      ( parsing_interface := true;
-	(_2,_4) 
+	(_2,_4)
       )}
 
 prolog:
@@ -681,7 +681,7 @@ second_declaration_list:
         ((VarDef newvd) :: vfd, kd) )}
 | _1 = DECLAREVARIABLE _2 = qname _3 = opt_type_declaration _4 = EXTERNAL _5 = SEMICOLON _6 = second_declaration_list
     {      ( let (vfd,kd) = _6 in
-        let varname = match _2 with 
+        let varname = match _2 with
           | (NSPrefix nc, lcname) -> if (!parsing_interface) then (NSInterfacePrefix nc, lcname) else _2
 	  | _ -> if (!parsing_interface) then raise (Query(Parsing(Finfo.parsing_locinfo (),"Invalid QName"))) else _2
 	in
@@ -706,7 +706,7 @@ second_declaration_list:
           let newfd = mkfunction_def (_2,[],([],Some _5),EFunctionUser expr, _1) in
 	    ((FunDef newfd) :: vfd, kd) )}
 | _1 = start_declare_fun _2 = FUNCTIONNAMELPAR _3 = paramlist _4 = RPAR _5 = AS _6 = sequencetype _7 = LCURLY _8 = block _9 = RCURLY _10 = SEMICOLON _11 = second_declaration_list
-    {      ( 
+    {      (
 	let (vfd,kd) = _11 in
 	let (input_types,input_vars) = _3 in
 	let expr = _8 in
@@ -715,7 +715,7 @@ second_declaration_list:
 | _1 = start_declare_fun _2 = FUNCTIONNAMELPAR _3 = RPAR _4 = AS _5 = sequencetype _6 = EXTERNAL _7 = SEMICOLON _8 = second_declaration_list
     {      ( let (vfd,kd) = _8 in
         let funkind = if (!parsing_interface) then EFunctionInterface else EFunctionBltIn in
-        let fname = match _2 with 
+        let fname = match _2 with
           | (NSPrefix nc, lcname) -> if (!parsing_interface) then (NSInterfacePrefix nc, lcname) else _2
 	  | _ -> if (!parsing_interface) then raise (Query(Parsing(Finfo.parsing_locinfo (),"Invalid QName"))) else _2
 	in
@@ -725,7 +725,7 @@ second_declaration_list:
     {      ( let (vfd,kd) = _9 in
         let (input_types,input_vars) = _3 in
         let funkind = if (!parsing_interface) then EFunctionInterface else EFunctionBltIn in
-        let fname = match _2 with 
+        let fname = match _2 with
           | (NSPrefix nc, lcname) -> if (!parsing_interface) then (NSInterfacePrefix nc, lcname) else _2
 	  | _ -> if (!parsing_interface) then raise (Query(Parsing(Finfo.parsing_locinfo (),"Invalid QName"))) else _2
 	in
@@ -734,7 +734,7 @@ second_declaration_list:
 | _1 = start_declare_fun _2 = FUNCTIONNAMELPAR _3 = RPAR _4 = EXTERNAL _5 = SEMICOLON _6 = second_declaration_list
     {      ( let (vfd,kd) = _6 in
         let funkind = if (!parsing_interface) then EFunctionInterface else EFunctionBltIn  in
-        let fname = match _2 with 
+        let fname = match _2 with
           | (NSPrefix nc, lcname) -> if (!parsing_interface) then (NSInterfacePrefix nc, lcname) else _2
 	  | _ -> if (!parsing_interface) then raise (Query(Parsing(Finfo.parsing_locinfo (),"Invalid QName"))) else _2
 	in
@@ -744,7 +744,7 @@ second_declaration_list:
     {      ( let (vfd,kd) = _7 in
         let (input_types,input_vars) = _3 in
         let funkind = if (!parsing_interface) then EFunctionInterface else EFunctionBltIn in
-        let fname = match _2 with 
+        let fname = match _2 with
           | (NSPrefix nc, lcname) -> if (!parsing_interface) then (NSInterfacePrefix nc, lcname) else _2
 	  | _ -> if (!parsing_interface) then raise (Query(Parsing(Finfo.parsing_locinfo (),"Invalid QName"))) else _2
 	in
@@ -752,7 +752,7 @@ second_declaration_list:
 	((FunDef newfd :: vfd), kd) )}
 | _1 = DECLARESERVER _2 = NCNAME _3 = IMPLEMENT _4 = NCNAME _5 = AT _6 = expr_single _7 = SEMICOLON _8 = second_declaration_list
     {      ( let (vfd,kd) = _8 in
-        let serverdef = mkserver_decl (_2,_4,_6) 
+        let serverdef = mkserver_decl (_2,_4,_6)
 	in wrap_dxq (fun () -> ((ServerDef serverdef)::vfd, kd))
       )}
 | _1 = DECLAREOPTION _2 = qname _3 = STRING _4 = SEMICOLON _5 = second_declaration_list
@@ -1037,17 +1037,17 @@ pathexpr:
 | _1 = SLASH
     {      ( mkexpr ERoot )}
 | _1 = SLASH _2 = relativepathexpr
-    {      ( match _2.pexpr_desc with 
-        | EPath(PSlash(e1, e2)) -> 
+    {      ( match _2.pexpr_desc with
+        | EPath(PSlash(e1, e2)) ->
             mkexpr (EPath(PSlash(mkexpr (EPath(PSlash(mkexpr ERoot, e1))), e2)))
-	| EPath(PSlashSlash(e1, e2)) -> 
+	| EPath(PSlashSlash(e1, e2)) ->
             mkexpr (EPath(PSlashSlash(mkexpr (EPath(PSlash(mkexpr ERoot, e1))), e2)))
 	| _ -> mkexpr (EPath (PSlash(mkexpr ERoot, _2))) )}
 | _1 = SLASHSLASH _2 = relativepathexpr
-    {      ( match _2.pexpr_desc with 
-        | EPath(PSlash(e1, e2)) -> 
+    {      ( match _2.pexpr_desc with
+        | EPath(PSlash(e1, e2)) ->
             mkexpr(EPath(PSlash(mkexpr (EPath(PSlashSlash(mkexpr ERoot,e1))),e2)))
-	| EPath(PSlashSlash(e1, e2)) -> 
+	| EPath(PSlashSlash(e1, e2)) ->
             mkexpr(EPath(PSlashSlash(mkexpr (EPath(PSlashSlash(mkexpr ERoot,e1))),e2)))
 	| _ -> mkexpr (EPath (PSlashSlash(mkexpr ERoot, _2))) )}
 
@@ -1071,12 +1071,12 @@ axisstepexpr:
         mkexpr (EPath(PAxis (axis,_2))) )}
 | _1 = AXIS _2 = nodetest _3 = stepqualifiers
     {      ( let axis = _1 in
-        let axis_expr = mkexpr (EPath(PAxis (axis,_2))) in 
+        let axis_expr = mkexpr (EPath(PAxis (axis,_2))) in
         mkexpr (EPath(PStepQualifiers (false,axis_expr,_3))) )}
 | _1 = ATSIGN _2 = nodetest
     {      ( mkexpr (EPath(PAxis (Attribute,_2))) )}
 | _1 = ATSIGN _2 = nodetest _3 = stepqualifiers
-    {      ( let axis_expr = mkexpr (EPath(PAxis (Attribute,_2))) in 
+    {      ( let axis_expr = mkexpr (EPath(PAxis (Attribute,_2))) in
         mkexpr (EPath(PStepQualifiers (false,axis_expr,_3))) )}
 
 otherstepexpr:
@@ -1309,7 +1309,7 @@ attributecontent:
 	else
 	  (mkexpr (EText _1)) :: [] )}
 | _1 = ATTRIBUTETEXTLCURLY _2 = expr _3 = RCURLY _4 = attributecontent
-    {      ( 
+    {      (
         (mkexpr (EText _1)) :: (mkexpr (EEnclosed (mkexpr (EList _2)))) :: _4
       )}
 | _1 = TEXTCHARREF _2 = attributecontent
@@ -1652,7 +1652,7 @@ typedefinition:
 
 schema_decl:
   _1 = DECLARESCHEMALCURLY _2 = namespace_decls _3 = schema_decls _4 = type_decls _5 = RCURLY _6 = SEMICOLON
-    {      ( let nss = _2 
+    {      ( let nss = _2
         and schemas = _3
         and issds = _4 in
         fmkschema schemas nss issds )}

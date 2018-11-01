@@ -112,13 +112,13 @@ let unclosed opening_name opening_num closing_name closing_num =
                                            rhs_loc closing_num, closing_name)))
 
 let join_def ()=
-  mkexp (Pexp_apply 
+  mkexp (Pexp_apply
            (mkexp (Pexp_ident (Ldot (Lident "Join", "definition"))),
             [void ()]))
-    
-let mkloc l = 
-  let r = mkexp (Pexp_ident (Ldot (Lident "Join", "create_location"))) in 
-  mkexp (Pexp_apply (r, [mkexp Pexp_thismodule;  
+
+let mkloc l =
+  let r = mkexp (Pexp_ident (Ldot (Lident "Join", "create_location"))) in
+  mkexp (Pexp_apply (r, [mkexp Pexp_thismodule;
                                 mkexp (Pexp_function [void_pat (),l])]))
 
 let pexp_add list = function
@@ -140,7 +140,7 @@ let deconstr_record exp f =
                  arg],
                f (mkexp(Pexp_ident(Lident "*match*")))))
           | _ -> f exp
-          
+
 
 %}
 %start implementation
@@ -633,8 +633,8 @@ simple_expr:
 | _1 = LBRACE _2 = lbl_expr_list _3 = opt_semi _4 = RBRACE
     {      ( mkexp(Pexp_record(0,List.rev _2)) )}
 | _1 = LBRACE _2 = LBRACKET _3 = LIDENT _4 = RBRACKET _5 = lbl_expr_list _6 = opt_semi _7 = RBRACE
-    {      ( 
-       let tag = 
+    {      (
+       let tag =
          try
            List.assoc _3 Tag.list
          with
@@ -779,12 +779,12 @@ process:
 | _1 = LBRACE _2 = BAR _3 = process _4 = RBRACE _5 = SEMI _6 = process
     {      ( mkexp(Pexp_par(pexp_add (pexp_add [] _3) _6)) )}
 | _1 = proc_expr _2 = SEMI _3 = process
-    {      ( 
+    {      (
     match (_3).pexp_desc with
       Pexp_reply( { pexp_desc = Pexp_construct(Lident "()",_,_) },channel) ->
         mkexp( Pexp_reply(_1,channel) )
     | _ ->
-        mkexp( Pexp_sequence(_1,_3) ) 
+        mkexp( Pexp_sequence(_1,_3) )
   )}
 
 join_match_cases:
@@ -1141,7 +1141,7 @@ meth_binding:
 | _1 = type_constraint _2 = EQUAL _3 = seq_expr %prec prec_let
     {       ( let (t, t') = _1 in (mkexp(Pexp_constraint(_3, t, t')),0) )}
 | _1 = simple_pattern _2 = meth_binding
-    {       ( 
+    {       (
        let (s2,nparams) = _2
          in
          (mkexp(Pexp_function[_1,s2]),nparams+1) )}

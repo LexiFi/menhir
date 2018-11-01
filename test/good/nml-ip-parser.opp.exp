@@ -37,10 +37,10 @@ let ghpat d point =
 
 let mkldot modname name =
   Ldot(symbol modname, symbol name)
-    
+
 let mkident modname name =
   mkexp(Pexp_ident(mkldot modname name))
-    
+
 let mkapply modname name arglst =
   mkexp(Pexp_apply((mkident modname name),arglst))
 
@@ -49,7 +49,7 @@ let ghident modname name point =
 
 let ghapply modname name arglst point =
   ghexp (Pexp_apply((ghident modname name point),arglst)) point
-    
+
 let mklazy e =
   let {loc_start = st} = symbol_loc () in
   let pat  = ghpat (Ppat_constant Const_unit) st in
@@ -73,7 +73,7 @@ let mkassert e =
          else mkexp(Pexp_ifthenelse (e, un, raiser))
 
 let mkinfix arg1 name arg2 =
-(*  
+(*
   if name == plussym then
     (match arg1 with
 	 {pexp_desc = Pexp_apply({pexp_desc = Pexp_ident(Lident op)},
@@ -113,7 +113,7 @@ let mkinfix arg1 name arg2 =
 	   (* a*b *)
 	   mkexp(Pexp_apply(mkoperator name 2, [arg1;arg2])))
   else
-*)    
+*)
     mkexp(Pexp_apply(mkoperator name 2, [arg1;arg2]))
 
 let mkuminus name arg =
@@ -184,7 +184,7 @@ let mklistpat tl patlst =
 	 | _ ->
 	     mkpat(Ppat_cons(pat,tl)))
     tl patlst
-    
+
 (* -- Haskell-style List Comprehensions -- *)
 let rec make_comprehension body gens initial =
   let rsltid = Symbol.symbol " rslt" in

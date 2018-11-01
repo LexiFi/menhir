@@ -6,8 +6,8 @@ let mesquite_error =
      "valid@ NEXUS@ command.@ You@ will@ have@ to@ remove@ it@ by@ hand.@ " ^
      "You@ can@ read@ their@ information@ about@ it@ here:@ http://mesquiteproject.org/mesquite_folder/docs/mesquite/otherPrograms.html")
 
-let parse_error s = 
-    try let b = (Parsing.symbol_start_pos ()) 
+let parse_error s =
+    try let b = (Parsing.symbol_start_pos ())
         and e = (Parsing.symbol_end_pos ()) in
         let b = string_of_int (b.Lexing.pos_cnum)
         and e = string_of_int (e.Lexing.pos_cnum) in
@@ -742,7 +742,7 @@ pairs_list_float:
 
 characters:
   _1 = DIMENSIONS _2 = optional_taxa_dimensions _3 = NCHAR _4 = EQUAL _5 = INTEGER _6 = SEMICOLON _7 = optional_format _8 = optional_eliminate _9 = optional_taxlabels _10 = optional_charstatelabels _11 = optional_charlabels _12 = optional_statelabels _13 = DATA _14 = SEMICOLON
-    {     ( 
+    {     (
          {
              P.char_taxon_dimensions = _2;
              P.char_char_dimensions = _5;
@@ -822,7 +822,7 @@ format_items_list:
   _1 = format_items _2 = format_items_list
     {                                     ( _1 :: _2 )}
 | _1 = error _2 = format_items_list
-    {                              ( 
+    {                              (
         report_error "Format list" (Parsing.symbol_start_pos ()) (Parsing.symbol_end_pos ());
         _2 )}
 | 
@@ -860,7 +860,7 @@ format_items:
 | _1 = TRANSPOSE
     {                    ( P.Transpose )}
 | _1 = INTERLEAVE _2 = EQUAL
-    {                          ( 
+    {                          (
         !P.print_error
         ("Many@ \"NEXUS\"@ files@ include@ in@ the@ CHARACTERS@ or@ DATA@ " ^
         "block@ the@ directives@ interleave=yes@ or@ interleave=no.@ " ^

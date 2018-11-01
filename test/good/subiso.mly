@@ -14,7 +14,7 @@
 (***********************************************************************)
 
 (*
- $Id: tparser.mly,v 1.1 2002/03/11 16:03:27 dicosmo Exp $                                                               
+ $Id: tparser.mly,v 1.1 2002/03/11 16:03:27 dicosmo Exp $
 *)
 
 open Types
@@ -51,6 +51,6 @@ type_binding_list:
 	  type_binding	{[$1]}
 	| type_binding_list AND type_binding	{$3 :: $1}
 ;
-type_binding:  
+type_binding:
 	       IDENT EQ texpr	{($1,$3)}
 ;

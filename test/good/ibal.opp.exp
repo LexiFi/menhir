@@ -7,12 +7,12 @@ Warning: the token LARROW is unused.
 File "ibal.mly", line 100, characters 7-15:
 Warning: the token NOTEQUAL is unused.
 %{
-(*** 
+(***
  *** PARSER.MLY
  ***
  *** Copyright (c) 2003 The President and Fellows of Harvard College
  ***
- *** Parser for IBAL language 
+ *** Parser for IBAL language
  ***)
 
   open List
@@ -31,7 +31,7 @@ Warning: the token NOTEQUAL is unused.
 
   let make_code : 'a code_form -> (int * int) code =
     fun c -> (c, tag ())
-    
+
   let make_decl : 'a decl_form -> (int * int) decl =
     fun d -> (d, tag ())
 
@@ -47,16 +47,16 @@ Warning: the token NOTEQUAL is unused.
       then error "Uniform requires a positive integer"
       else let t = tag () in
       let p = 1.0 /. float_of_int n in
-      (Dist (Array.to_list 
+      (Dist (Array.to_list
 	       (Array.init n (fun i -> (p, (Integer i, t))))),
        t)
 
-  let make_anon_compound : ty list -> ty = 
+  let make_anon_compound : ty list -> ty =
     fun ts ->
       Compound (number_list ts)
 
   let tyvars : (string * tyvar) list ref = ref []
-      
+
   let clear_tyvars () = tyvars := []
 
   let new_tyvar_for_name x =
@@ -220,7 +220,7 @@ expr3:
 | _1 = UNIFORM _2 = NATURAL
     {                                           ( uniform_int _2 )}
 | _1 = FLIP _2 = POSFLOAT
-    {                     ( make_code (Dist [ (_2, make_code (True)); 
+    {                     ( make_code (Dist [ (_2, make_code (True));
 				      (1.0 -. _2, make_code (False)) ]) )}
 | _1 = LET _2 = pat _3 = EQUALS _4 = expr _5 = IN _6 = expr
     {                                      ( make_code (Let (_2,_4,_6)) )}
@@ -229,8 +229,8 @@ expr3:
 | _1 = LET _2 = LIDENT _3 = LPAREN _4 = opt_vars _5 = RPAREN _6 = EQUALS _7 = expr _8 = IN _9 = expr
     {  ( make_code (Let (Bind _2, make_code (Fix (_2, _4, _7)), _9)) )}
 | _1 = LET _2 = LIDENT _3 = LPAREN _4 = opt_vars _5 = RPAREN _6 = COLON _7 = type_expr _8 = EQUALS _9 = expr _10 = IN _11 = expr
-    {  ( make_code (Let (Bind _2, 
-			   make_code (Typed (make_code (Fix (_2, _4, _9)), 
+    {  ( make_code (Let (Bind _2,
+			   make_code (Typed (make_code (Fix (_2, _4, _9)),
 					     quantify _7)), _11)) )}
 | _1 = LAMBDA _2 = LPAREN _3 = opt_vars _4 = RPAREN _5 = MAPSTO _6 = expr
     {                                                  ( make_code (Lambda (_3,_6)) )}

@@ -19,11 +19,11 @@ open Pascal_ast_util
 
 let make_unop op expr =
    UnOpExpr(op, expr, pos_of_expr expr)
-   
+
 let make_binop expr1 op expr2 =
    let pos = union_pos (pos_of_expr expr1) (pos_of_expr expr2) in
       BinOpExpr(op, expr1, expr2, pos)
-      
+
 let make_string_out_of_char_list charpos_list =
     "not yet implemented"
 
@@ -31,7 +31,7 @@ let rec make_case_statement expr1 case_expr_list else_expr pos =
    match case_expr_list with
       (head_case, head_what) :: l -> IfExpr(BinOpExpr(EqOp, expr1, head_case, pos), head_what, Some (make_case_statement expr1 l else_expr pos), pos)
     | _ -> SeqExpr([else_expr], pos)
-    
+
 %}
 %start console
 %start program
@@ -260,12 +260,12 @@ interface_body_element:
          FunDef(sym, sym_ty_pos_list, ty, SeqExpr([], pos), pos)
    )}
 | _1 = procedure_heading _2 = TokSemi
-    {                             ( 
+    {                             (
       let sym, sym_ty_pos_list = _1 in
          FunDef(sym, sym_ty_pos_list, TypeUnit(_2), SeqExpr([], _2), _2)
    )}
 | _1 = procedure_heading _2 = TokSemi _3 = directive _4 = TokSemi
-    {                                               ( 
+    {                                               (
       let sym, sym_ty_pos_list = _1 in
       let pos = union_pos _2 _4 in
          FunDef(sym, sym_ty_pos_list, TypeUnit(_2), SeqExpr([], pos), pos)
@@ -277,19 +277,19 @@ interface_body_element:
 
 implementation_body:
   _1 = TokImplementation _2 = block_list
-    {                                ( 
+    {                                (
       let expr_list, pos = _2 in
          expr_list
    )}
 
 program_header:
   _1 = TokProgram _2 = identifier _3 = TokSemi
-    {                                 ( 
+    {                                 (
       let sym, pos = _2 in
-         sym, pos, [], _3 
+         sym, pos, [], _3
    )}
 | _1 = TokProgram _2 = identifier _3 = TokLeftParen _4 = identifier_list _5 = TokRightParen _6 = TokSemi
-    {                                                                            ( 
+    {                                                                            (
       let sym, pos = _2 in
       let syms, pos = _4 in
          sym, pos, syms, pos
@@ -301,40 +301,40 @@ identifier:
 
 identifier_list:
   _1 = identifier_list_rev
-    {                       ( 
+    {                       (
       let syms, pos = _1 in
-         List.rev syms, pos 
+         List.rev syms, pos
    )}
 
 identifier_list_rev:
   _1 = identifier_list_rev _2 = TokComma _3 = identifier
-    {                                           ( 
+    {                                           (
       let syms, pos1 = _1 in
       let sym, pos2 = _3 in
          sym :: syms, union_pos pos1 pos2
    )}
 | _1 = identifier
-    {              ( 
-      let sym, pos = _1 in 
+    {              (
+      let sym, pos = _1 in
         [sym], pos
    )}
 
 block_list:
   _1 = block_list_rev
-    {                  ( 
+    {                  (
       let syms, pos = _1 in
          List.rev syms, pos
    )}
 
 block_list_rev:
   _1 = block_list_rev _2 = block
-    {                        ( 
+    {                        (
       let exps1, pos1 = _1 in
-      let exp2, pos2 = _2 in 
+      let exp2, pos2 = _2 in
          exp2 :: exps1, union_pos pos1 pos2
    )}
 | _1 = block
-    {         ( 
+    {         (
       let exp, pos = _1 in
          [exp], pos
    )}
@@ -351,7 +351,7 @@ block:
 
 body:
   _1 = block_list _2 = statements
-    {                         ( 
+    {                         (
       let exps, pos = _1 in
          exps @ [_2]
    )}
@@ -374,7 +374,7 @@ type_definition_list_rev:
 
 type_definition:
   _1 = identifier _2 = TokEq _3 = type_denoter _4 = TokSemi
-    {                                         ( 
+    {                                         (
       let sym, pos = _1 in
          sym, _3, union_pos pos _4
    )}
@@ -389,14 +389,14 @@ type_denoter:
 | _1 = TokTypeChar
     {                  ( TypeChar(_1) )}
 | _1 = identifier
-    {              ( 
-      let sym, pos = _1 in 
-         TypeVar(sym, pos) 
+    {              (
+      let sym, pos = _1 in
+         TypeVar(sym, pos)
    )}
 | _1 = new_type
     {            ( _1 )}
 | _1 = function_type_heading
-    {                         ( 
+    {                         (
       (* bogus position .... *)
       let sym_ty_pos_list, ty, pos = _1 in
       let ty_list = List.map (fun (sym, ty, pos) -> ty) sym_ty_pos_list in
@@ -439,7 +439,7 @@ index_list_rev:
 
 index:
   _1 = TokInt _2 = TokTwoDots _3 = TokInt
-    {                            ( 
+    {                            (
       let int1, pos1 = _1 in
       let int2, pos2 = _3 in
          IntExpr(int1, pos1), IntExpr(int2, pos2)
@@ -459,7 +459,7 @@ record_section_list:
 
 record_section:
   _1 = identifier_list _2 = TokColon _3 = type_denoter
-    {                                         ( 
+    {                                         (
       let syms, pos = _1 in
       let res = List.map (fun sym -> sym, _3, pos) syms in
          res
@@ -473,7 +473,7 @@ new_pointer_type:
 
 variable_decl:
   _1 = TokVar _2 = variable_declaration_list _3 = TokSemi
-    {                                            ( 
+    {                                            (
       let vars = List.map (fun (sym, ty, pos) -> sym, ty, None, pos) _2 in
          VarDefs(vars, union_pos _1 _3)
    )}
@@ -503,7 +503,7 @@ function_heading:
 | _1 = TokFunction _2 = identifier _3 = TokLeftParen _4 = formal_parameters _5 = TokRightParen _6 = TokColon _7 = type_denoter
     {                                                                                             (
       let sym, pos = _2 in
-      let symtypos_list = _4 in 
+      let symtypos_list = _4 in
          sym, symtypos_list, _7
    )}
 
@@ -580,21 +580,21 @@ procedure_decl:
 
 procedure_heading:
   _1 = TokProcedure _2 = identifier
-    {                           ( 
+    {                           (
       let sym, pos = _2 in
          sym, []
    )}
 | _1 = TokProcedure _2 = identifier _3 = TokLeftParen _4 = formal_parameters _5 = TokRightParen
-    {                                                                        ( 
+    {                                                                        (
       let sym, pos = _2 in
          sym, _4
    )}
 
 procedure_type_heading:
   _1 = TokProcedure _2 = identifier
-    {                           ( 
-      let sym, pos = _2 in 
-         [], union_pos _1 pos 
+    {                           (
+      let sym, pos = _2 in
+         [], union_pos _1 pos
    )}
 | _1 = TokProcedure _2 = TokLeftParen _3 = formal_parameters _4 = TokRightParen
     {                                                             ( _3, union_pos _1 _4 )}
@@ -605,29 +605,29 @@ procedure_body:
 
 statements:
   _1 = TokBegin _2 = statement_list _3 = TokEnd
-    {                                  ( 
+    {                                  (
       let exprs, pos = _2 in
          SeqExpr(exprs, pos)
    )}
 
 statement_list:
   _1 = statement_list_rev
-    {                      ( 
+    {                      (
       let explist, pos = _1 in
          List.rev explist, pos
    )}
 
 statement_list_rev:
   _1 = statement_list_rev _2 = statement
-    {                                ( 
+    {                                (
       let sts1, pos1 = _1 in
       let pos = union_pos pos1 (pos_of_expr _2) in
          _2 :: sts1, pos
    )}
 | _1 = statement
-    {             ( 
+    {             (
       let pos = pos_of_expr _1 in
-         [_1], pos 
+         [_1], pos
    )}
 
 statement:
@@ -755,7 +755,7 @@ for_statement:
     {                                                                                          (
       let pos = union_pos _1 _9 in
       let default_expr = IntExpr(1, pos) in
-      let sym, p = _2 in 
+      let sym, p = _2 in
       let init = AssignExpr(None, VarExpr(sym, p), _4, pos) in
       let test = BinOpExpr(GeOp, VarExpr(sym, p), _6, pos) in
       let step = AssignExpr(Some MinusOp, VarExpr(sym, p), IntExpr(1, pos), pos) in
@@ -810,27 +810,27 @@ constant_primary:
 
 constant_unsigned_constant:
   _1 = TokInt
-    {          ( 
+    {          (
       let i, pos = _1 in
          IntExpr(i, pos)
    )}
 | _1 = character_string
     {                    (
       let char_list, pos = _1 in
-      StringExpr(make_string_out_of_char_list char_list, pos) 
+      StringExpr(make_string_out_of_char_list char_list, pos)
    )}
 | _1 = TokChar
-    {           ( 
+    {           (
       let c, pos = _1 in
          CharExpr(c, pos)
    )}
 | _1 = TokFloat
-    {            ( 
+    {            (
       let f, pos = _1 in
          FloatExpr(f, pos)
    )}
 | _1 = TokString
-    {             ( 
+    {             (
       let s, pos = _1 in
          StringExpr(s, pos)
    )}
@@ -933,7 +933,7 @@ term:
 
 factor:
   _1 = sign _2 = factor
-    {               ( 
+    {               (
       match _1 with
          SiMinus -> make_unop UMinusOp _2
        | SiPlus -> _2
@@ -955,27 +955,27 @@ primary:
 
 unsigned_constant:
   _1 = TokInt
-    {          ( 
-      let i, pos = _1 in 
+    {          (
+      let i, pos = _1 in
          IntExpr(i, pos)
    )}
 | _1 = character_string
-    {                    ( 
+    {                    (
       let char_list, pos = _1 in
       StringExpr(make_string_out_of_char_list char_list, pos)
    )}
 | _1 = TokChar
-    {           ( 
+    {           (
       let c, pos = _1 in
          CharExpr(c, pos)
    )}
 | _1 = TokFloat
-    {            ( 
+    {            (
       let f, pos = _1 in
          FloatExpr(f, pos)
    )}
 | _1 = TokString
-    {             ( 
+    {             (
       let s, pos = _1 in
          StringExpr(s, pos)
    )}
@@ -991,8 +991,8 @@ unsigned_constant:
 | _1 = unsigned_constant _2 = TokHat
     {                            ( make_unop UHatOp _1 )}
 | _1 = identifier
-    {              ( 
-      let v, pos = _1 in 
+    {              (
+      let v, pos = _1 in
          VarExpr(v, pos)
    )}
 | _1 = identifier _2 = TokDot _3 = identifier
@@ -1027,14 +1027,14 @@ unsigned_constant:
 
 character_string:
   _1 = character_string_rev
-    {                        ( 
+    {                        (
       let chars, pos = _1 in
          List.rev chars, pos
    )}
 
 character_string_rev:
   _1 = character_string_rev _2 = TokChar
-    {                                ( 
+    {                                (
       let chars, pos1 = _1 in
 	      let ch, pos2 = _2 in
          ch :: chars, union_pos pos1 pos2
@@ -1043,7 +1043,7 @@ character_string_rev:
 function_call:
   _1 = identifier _2 = TokLeftParen _3 = expression_list _4 = TokRightParen
     {                                                         (
-      let sym, pos1 = _1 in 
+      let sym, pos1 = _1 in
       let pos = union_pos pos1 _4 in
          ApplyExpr(VarExpr(sym, pos1), _3, pos)
    )}

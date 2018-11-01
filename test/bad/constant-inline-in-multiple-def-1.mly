@@ -1,4 +1,4 @@
-%start<int> b 
+%start<int> b
 %%
 
 b: {}

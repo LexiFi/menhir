@@ -1,5 +1,5 @@
 %start<unit> s
-%token<unit> A 
+%token<unit> A
 %%
 
 s: x=a A y=b {

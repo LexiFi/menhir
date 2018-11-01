@@ -1,4 +1,4 @@
-/*  
+/*
  *  Yacc grammar for the parser.  The files parser.mli and parser.ml
  *  are generated automatically from parser.mly.
  */
@@ -9,7 +9,7 @@ open Support.Pervasive
 open Syntax
 let rec addbinders tyT l = match l with
    [] -> tyT
- | (tyX,k)::rest -> tyT 
+ | (tyX,k)::rest -> tyT
 %}   /* Removed TyAbs here. Dunno what this fn
 does anyway. */
 
@@ -86,7 +86,7 @@ does anyway. */
 /* ---------------------------------------------------------------------- */
 /* The starting production of the generated parser is the syntactic class
    toplevel.  The type that is returned when a toplevel is recognized is
-     Syntax.context -> (Syntax.command list * Syntax.context) 
+     Syntax.context -> (Syntax.command list * Syntax.context)
    that is, the parser returns to the user program a function that,
    when given a naming context, returns a fully parsed list of
    Syntax.commands and the new naming context that results when
@@ -96,7 +96,7 @@ does anyway. */
    they take a context as argument and return a fully parsed abstract
    syntax tree (and, if they involve any constructs that bind variables
    in some following phrase, a new context).
-   
+
 */
 
 %start toplevel
@@ -120,7 +120,7 @@ toplevel :
 /* A top-level command */
 Command :
     IMPORT STRINGV { fun ctx -> (Import($2.v)),ctx }
-  | Term 
+  | Term
       { fun ctx -> (let t = $1 ctx in Whred(tmInfo t,t)),ctx }
   | LPAREN NORMAL Term RPAREN
       { fun ctx -> (let t = $3 ctx in Eval(tmInfo t,t)),ctx }
@@ -133,7 +133,7 @@ Command :
 Binder :
     COLON Type
       { fun ctx -> VarBind ($2 ctx)}
-  | EQ Term 
+  | EQ Term
       { fun ctx -> TmAbbBind($2 ctx, None) }
   | EQ Term COLON Type
       {fun ctx -> TmAbbBind($2 ctx, Some($4 ctx)) }
@@ -143,13 +143,13 @@ Kind :
           KnPi($2.v,$4 ctx,$6 ctx1)}
   | ArrowKind {$1}
 
-ArrowKind : 
+ArrowKind :
   AppType ARROW ArrowKind   { fun ctx -> KnPi("_",$1 ctx, $3 ctx) }
 | AKind {$1 }
 
 AKind :
     STAR { fun ctx -> KnStar }
-  | LPAREN Kind RPAREN  { $2 } 
+  | LPAREN Kind RPAREN  { $2 }
 
 /* All type expressions */
 Type :
@@ -172,35 +172,35 @@ AppType :
 
 /* Atomic types are those that never need extra parentheses */
 AType :
-    LPAREN Type RPAREN  
-           { $2 } 
+    LPAREN Type RPAREN
+           { $2 }
   | PROP {fun ctx -> TyProp}
   | PRF LPAREN Term RPAREN {fun ctx -> TyPrf($3 ctx)}
-  | UCID 
+  | UCID
       { fun ctx ->
           if isnamebound ctx $1.v then
             TyVar(name2index $1.i ctx $1.v, ctxlength ctx)
-          else 
+          else
             TyId($1.v) }
 
 
 Term :
   | AppTerm
       { $1 }
-  | LAMBDA LCID COLON Type DOT Term 
+  | LAMBDA LCID COLON Type DOT Term
       { fun ctx ->
           let ctx1 = addname ctx $2.v in
           TmAbs($1, $2.v, $4 ctx, $6 ctx1) }
-  | ALL LCID COLON Type DOT Term 
+  | ALL LCID COLON Type DOT Term
       { fun ctx ->
           let ctx1 = addname ctx $2.v in
           TmAll($1, $2.v, $4 ctx, $6 ctx1) }
-  | LAMBDA USCORE COLON Type DOT Term 
+  | LAMBDA USCORE COLON Type DOT Term
       { fun ctx ->
           let ctx1 = addname ctx "_" in
           TmAbs($1, "_", $4 ctx, $6 ctx1) }
 
-PathTerm : 
+PathTerm :
   | PathTerm DOT TWO
       { fun ctx ->
           TmProj2($2, $1 ctx) }
@@ -219,15 +219,15 @@ AppTerm :
 
 /* Atomic terms are ones that never require extra parentheses */
 ATerm :
-    LPAREN Term RPAREN  
-      { $2 } 
-  | LPAREN Term COMMA TermList COLON Type RPAREN { fun ctx -> 
+    LPAREN Term RPAREN
+      { $2 }
+  | LPAREN Term COMMA TermList COLON Type RPAREN { fun ctx ->
           TmList($1,$2 ctx :: $4 ctx ,$6 ctx)}
-  | LCID 
+  | LCID
       { fun ctx ->
           TmVar($1.i, name2index $1.i ctx $1.v, ctxlength ctx) }
 
-TermList : 
+TermList :
    Term { fun ctx -> [$1 ctx] }
  | Term COMMA TermList { fun ctx -> $1 ctx :: $3 ctx}
 

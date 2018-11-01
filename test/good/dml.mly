@@ -178,7 +178,7 @@ union_decl:
 union_decls:
     union_decl AND union_decls		{ $1 :: $3 }
   | union_decl				{ [$1] }
-    
+
 
 open_tvar_para:
     tvar RPAREN				{ [TDvar (to_btv $1)] }
@@ -284,7 +284,7 @@ bool_index:
   | bool_index ind_bop1 bool_index	{ mk_infix_ind $1 $2 $3 }
   | LPAREN bool_index RPAREN		{ $2 }
 ;
-   
+
 index:
     int_index				{ $1 }
   | bool_index				{ $1 }
@@ -387,7 +387,7 @@ union_field_decl:
 					    uf_arg = $2;
                                             uf_res = [];
                                             uf_qua = [] } }
-  | IDENT LPAREN open_comma_index_list dtype_opt 
+  | IDENT LPAREN open_comma_index_list dtype_opt
 					{ { uf_nam = $1;
 					    uf_arg = $4;
                                             uf_res = $3;
@@ -397,7 +397,7 @@ union_field_decl:
 					    uf_arg = $3;
                                             uf_res = [];
                                             uf_qua = $1 } }
-  | uni_ivar_decls IDENT LPAREN open_comma_index_list dtype_opt 
+  | uni_ivar_decls IDENT LPAREN open_comma_index_list dtype_opt
 					{ { uf_nam = $2;
 					    uf_arg = $5;
                                             uf_res = $4;
@@ -510,7 +510,7 @@ comma_pattern_list:
 case_clause:
     pattern EQGT exp %prec prec_case	{ ($1, $3) }
 ;
-    
+
 case_clauses:
     case_clause BAR case_clauses  	{ $1 :: $3 }
   | case_clause			  	{ [$1] }

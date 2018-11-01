@@ -16,12 +16,12 @@ Warning: the token UNION is unused.
   let info x = { Clogic.lexpr_node = x; lexpr_loc = loc () }
 
   type ghost_decl =
-    | Dsimple 
+    | Dsimple
     | Darray of ghost_decl * lexpr option
 
   let rec expr_of_lexpr e =
     match e.lexpr_node with
-      | PLconstant c -> 
+      | PLconstant c ->
 	  { Cast.node = Cast.CEconstant c ; Cast.loc = e.lexpr_loc }
       | _ -> Creport.error e.lexpr_loc "not a constant"
 
@@ -30,15 +30,15 @@ Warning: the token UNION is unused.
   let rec ghost_type ty gd =
     match gd with
       | Dsimple -> ty
-      | Darray(gd,size) -> 
-	    Cast_misc.noattr 
+      | Darray(gd,size) ->
+	    Cast_misc.noattr
 	      (Cast.CTarray (ghost_type ty gd, option_app expr_of_lexpr size))
 
   let ghost ty (id,gd,cinit) =
     let gty = ghost_type ty gd in
     LDghost(gty,id,cinit)
-    
-    
+
+
 %}
 %start annot
 %token AMP

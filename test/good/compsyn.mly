@@ -9,7 +9,7 @@ let delunderscore strg = String.concat "" (Str.split (Str.regexp "['_']+") strg)
 ;;
 
 let string2base_number strg =
-	try 
+	try
 	let pos = String.index strg '\'' in
 		let b = String.get strg (pos+1)
 		and len = try
@@ -294,7 +294,7 @@ end
 
 %%
 source_text	:
-		description_list EOF		
+		description_list EOF
 			{
 				get_endpos $2;
 				$1
@@ -315,7 +315,7 @@ description	:
 ;
 
 module_def			:
-		KEY_MODULE IDENTIFIER list_of_ports_opt SEMICOLON module_item_optlist KEY_ENDMODULE		
+		KEY_MODULE IDENTIFIER list_of_ports_opt SEMICOLON module_item_optlist KEY_ENDMODULE
 			{
 				(*print_endline $2;*)
 				get_endpos $6;
@@ -329,7 +329,7 @@ list_of_ports_opt :
 ;
 
 list_of_ports	:
-		LPAREN  port comma_port_optlist RPAREN	
+		LPAREN  port comma_port_optlist RPAREN
 			{
 				get_endpos $4;
 				$2::$3
@@ -342,7 +342,7 @@ comma_port_optlist:
 ;
 
 comma_port	:
-		COMMA port	
+		COMMA port
 			{
 				$2
 			}
@@ -361,7 +361,7 @@ port_expression_opt	:
 
 port_expression:
 	port_reference				{[$1]}
-	| LBRACE port_reference	comma_port_reference_optlist	RBRACE		
+	| LBRACE port_reference	comma_port_reference_optlist	RBRACE
 		{
 			get_endpos $4;
 			$2::$3
@@ -435,7 +435,7 @@ range_or_type:
 ;
 
 task:
-	KEY_TASK IDENTIFIER SEMICOLON tf_declaration_optlist statement_or_null KEY_ENDTASK  
+	KEY_TASK IDENTIFIER SEMICOLON tf_declaration_optlist statement_or_null KEY_ENDTASK
 		{
 			get_endpos $6;
 			T_task($2,$4,$5)
@@ -464,7 +464,7 @@ initial_statement:
 ;
 
 specify_block:
-	KEY_SPECIFY specify_item_optlist KEY_ENDSPECIFY   
+	KEY_SPECIFY specify_item_optlist KEY_ENDSPECIFY
 		{
 			get_endpos $3;
 			T_specify_block($2)
@@ -486,7 +486,7 @@ specify_item:
 ;
 
 sdpd:
-	KEY_IF LPAREN expression RPAREN path_description SINGLEASSIGN path_delay_value SEMICOLON   
+	KEY_IF LPAREN expression RPAREN path_description SINGLEASSIGN path_delay_value SEMICOLON
 		{
 			get_endpos $8;
 			0
@@ -495,37 +495,37 @@ sdpd:
 
 
 system_timing_check:
-	DOLLOR_SETUP LPAREN timing_check_event COMMA timing_check_event COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON   
+	DOLLOR_SETUP LPAREN timing_check_event COMMA timing_check_event COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON
 	{
 		get_endpos $10;
 		0
 	}
-	| DOLLOR_HOLD LPAREN timing_check_event COMMA timing_check_event COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON   
+	| DOLLOR_HOLD LPAREN timing_check_event COMMA timing_check_event COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON
 	{
 		get_endpos $10;
 		0
 	}
-	| DOLLOR_PERIOD LPAREN controlled_timing_check_event COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON   
+	| DOLLOR_PERIOD LPAREN controlled_timing_check_event COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON
 	{
 		get_endpos $8;
 		0
 	}
-	| DOLLOR_WIDTH LPAREN controlled_timing_check_event COMMA timing_check_limit comma_constant_expression_comma_notify_register_opt RPAREN  SEMICOLON   
+	| DOLLOR_WIDTH LPAREN controlled_timing_check_event COMMA timing_check_limit comma_constant_expression_comma_notify_register_opt RPAREN  SEMICOLON
 	{
 		get_endpos $8;
 		0
 	}
-	| DOLLOR_SKEW LPAREN timing_check_event COMMA timing_check_event COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON   
+	| DOLLOR_SKEW LPAREN timing_check_event COMMA timing_check_event COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON
 	{
 		get_endpos $10;
 		0
 	}
-	| DOLLOR_RECOVERY LPAREN controlled_timing_check_event COMMA timing_check_event COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON   
+	| DOLLOR_RECOVERY LPAREN controlled_timing_check_event COMMA timing_check_event COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON
 	{
 		get_endpos $10;
 		0
 	}
-	| DOLLOR_SETUPHOLD LPAREN timing_check_event COMMA timing_check_event COMMA timing_check_limit COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON   
+	| DOLLOR_SETUPHOLD LPAREN timing_check_event COMMA timing_check_event COMMA timing_check_limit COMMA timing_check_limit comma_notify_register_opt RPAREN  SEMICOLON
 	{
 		get_endpos $12;
 		0
@@ -585,12 +585,12 @@ timing_check_event_control_opt:
 ;
 
 timing_check_event_control:
-	KEY_POSEDGE  
+	KEY_POSEDGE
 	{
 		get_endpos $1;
 		0
 	}
-	| KEY_NEGEDGE 
+	| KEY_NEGEDGE
 	{
 		get_endpos $1;
 		0
@@ -599,7 +599,7 @@ timing_check_event_control:
 ;
 
 edge_control_specifier:
-	KEY_EDGE LBRACKET edge_descriptor comma_edge_descriptor_optlist RBRACKET  
+	KEY_EDGE LBRACKET edge_descriptor comma_edge_descriptor_optlist RBRACKET
 	{
 		get_endpos $5;
 		0
@@ -622,12 +622,12 @@ comma_edge_descriptor:
 
 
 edge_sensitive_path_declaration:
-	KEY_IF_LPAREN_expression_RPAREN_opt LPAREN edge_identifier_opt specify_terminal_descriptor PATHTO LPAREN specify_terminal_descriptor polarity_operator QUESTION_MARK_COLON data_source_expression RPAREN RPAREN SINGLEASSIGN path_delay_value SEMICOLON 
+	KEY_IF_LPAREN_expression_RPAREN_opt LPAREN edge_identifier_opt specify_terminal_descriptor PATHTO LPAREN specify_terminal_descriptor polarity_operator QUESTION_MARK_COLON data_source_expression RPAREN RPAREN SINGLEASSIGN path_delay_value SEMICOLON
 	{
 		get_endpos $15;
 		0
 	}
-	| KEY_IF_LPAREN_expression_RPAREN_opt LPAREN edge_identifier_opt specify_terminal_descriptor PATHTOSTAR LPAREN list_of_path_input_outputs polarity_operator QUESTION_MARK_COLON data_source_expression RPAREN RPAREN  SINGLEASSIGN path_delay_value SEMICOLON 
+	| KEY_IF_LPAREN_expression_RPAREN_opt LPAREN edge_identifier_opt specify_terminal_descriptor PATHTOSTAR LPAREN list_of_path_input_outputs polarity_operator QUESTION_MARK_COLON data_source_expression RPAREN RPAREN  SINGLEASSIGN path_delay_value SEMICOLON
 	{
 		get_endpos $15;
 		0
@@ -658,12 +658,12 @@ edge_identifier_opt:
 ;
 
 edge_identifier:
-	KEY_POSEDGE  
+	KEY_POSEDGE
 	{
 		get_endpos $1;
 		0
 	}
-	| KEY_NEGEDGE 
+	| KEY_NEGEDGE
 	{
 		get_endpos $1;
 		0
@@ -671,12 +671,12 @@ edge_identifier:
 ;
 
 polarity_operator:
-	ADD  
+	ADD
 	{
 		get_endpos $1;
 		0
 	}
-	| SUB  
+	| SUB
 	{
 		get_endpos $1;
 		0
@@ -685,7 +685,7 @@ polarity_operator:
 
 KEY_IF_LPAREN_expression_RPAREN_opt:
 			{0}
-	| KEY_IF LPAREN expression RPAREN  
+	| KEY_IF LPAREN expression RPAREN
 	{
 		get_endpos $4;
 		0
@@ -693,12 +693,12 @@ KEY_IF_LPAREN_expression_RPAREN_opt:
 ;
 
 level_sensitive_path_declaration:
-	KEY_IF LPAREN conditional_port_expression RPAREN LPAREN specify_terminal_descriptor polarity_operator_opt PATHTO specify_terminal_descriptor RPAREN SINGLEASSIGN path_delay_value  SEMICOLON   
+	KEY_IF LPAREN conditional_port_expression RPAREN LPAREN specify_terminal_descriptor polarity_operator_opt PATHTO specify_terminal_descriptor RPAREN SINGLEASSIGN path_delay_value  SEMICOLON
 	{
 		get_endpos $13;
 		0
 	}
-	| KEY_IF LPAREN conditional_port_expression RPAREN LPAREN list_of_path_input_outputs polarity_operator_opt PATHTOSTAR list_of_path_input_outputs RPAREN SINGLEASSIGN path_delay_value SEMICOLON   
+	| KEY_IF LPAREN conditional_port_expression RPAREN LPAREN list_of_path_input_outputs polarity_operator_opt PATHTOSTAR list_of_path_input_outputs RPAREN SINGLEASSIGN path_delay_value SEMICOLON
 	{
 		get_endpos $13;
 		0
@@ -708,12 +708,12 @@ level_sensitive_path_declaration:
 
 specify_terminal_descriptor:
 	IDENTIFIER	{0}
-	| IDENTIFIER LBRACKET expression RBRACKET	
+	| IDENTIFIER LBRACKET expression RBRACKET
 	{
 		get_endpos $4;
 		0
 	}
-	| IDENTIFIER LBRACKET expression COLON expression RBRACKET	
+	| IDENTIFIER LBRACKET expression COLON expression RBRACKET
 	{
 		get_endpos $6;
 		0
@@ -730,7 +730,7 @@ conditional_port_expression:
 ;
 
 path_declaration:
-	path_description SINGLEASSIGN path_delay_value  SEMICOLON   
+	path_description SINGLEASSIGN path_delay_value  SEMICOLON
 	{
 		get_endpos $4;
 		0
@@ -738,12 +738,12 @@ path_declaration:
 ;
 
 path_description:
-	LPAREN specify_terminal_descriptor PATHTO specify_terminal_descriptor RPAREN   
+	LPAREN specify_terminal_descriptor PATHTO specify_terminal_descriptor RPAREN
 	{
 		get_endpos $5;
 		0
 	}
-	| LPAREN list_of_path_input_outputs PATHTOSTAR list_of_path_input_outputs RPAREN   
+	| LPAREN list_of_path_input_outputs PATHTOSTAR list_of_path_input_outputs RPAREN
 	{
 		get_endpos $5;
 		0
@@ -752,17 +752,17 @@ path_description:
 
 path_delay_value:
 	path_delay_expression   {0}
-	| LPAREN path_delay_expression COMMA path_delay_expression RPAREN   
+	| LPAREN path_delay_expression COMMA path_delay_expression RPAREN
 	{
 		get_endpos $5;
 		0
 	}
-	| LPAREN path_delay_expression COMMA path_delay_expression COMMA path_delay_expression RPAREN   
+	| LPAREN path_delay_expression COMMA path_delay_expression COMMA path_delay_expression RPAREN
 	{
 		get_endpos $7;
 		0
 	}
-	| LPAREN path_delay_expression COMMA path_delay_expression COMMA path_delay_expression COMMA path_delay_expression COMMA path_delay_expression COMMA path_delay_expression RPAREN   
+	| LPAREN path_delay_expression COMMA path_delay_expression COMMA path_delay_expression COMMA path_delay_expression COMMA path_delay_expression COMMA path_delay_expression RPAREN
 	{
 		get_endpos $13;
 		0
@@ -774,7 +774,7 @@ path_delay_expression:
 ;
 
 specparam_declaration:
-	KEY_SPECPARAM list_of_param_assignments  SEMICOLON   
+	KEY_SPECPARAM list_of_param_assignments  SEMICOLON
 	{
 		get_endpos $3;
 		0
@@ -783,7 +783,7 @@ specparam_declaration:
 
 
 parameter_override:
-	KEY_DEFPARAM list_of_param_assignments SEMICOLON   
+	KEY_DEFPARAM list_of_param_assignments SEMICOLON
 	{
 		get_endpos $3;
 		T_parameter_override($2)
@@ -812,7 +812,7 @@ name_of_UDP_instance_opt:
 ;
 */
 gate_declaration:
-	GATETYPE drive_strength_opt delay_opt gate_instance comma_gate_instance_optlist  SEMICOLON   
+	GATETYPE drive_strength_opt delay_opt gate_instance comma_gate_instance_optlist  SEMICOLON
 	{
 		get_endpos $6;
 		T_gate_declaration($1,$2,$3,($4::$5))
@@ -829,7 +829,7 @@ comma_gate_instance:
 ;
 
 gate_instance:
-	name_of_gate_instance_opt LPAREN terminal comma_terminal_optlist RPAREN   
+	name_of_gate_instance_opt LPAREN terminal comma_terminal_optlist RPAREN
 		{
 			get_endpos $5;
 			T_gate_instance($1,($3::$4))
@@ -862,7 +862,7 @@ drive_strength_opt:
 ;
 
 integer_declaration:
-	KEY_INTEGER list_of_register_variables SEMICOLON 
+	KEY_INTEGER list_of_register_variables SEMICOLON
 		{
 			get_endpos $3;
 			$2
@@ -870,7 +870,7 @@ integer_declaration:
 ;
 
 time_declaration:
-	KEY_TIME list_of_register_variables SEMICOLON 
+	KEY_TIME list_of_register_variables SEMICOLON
 		{
 			get_endpos $3;
 			$2
@@ -882,124 +882,124 @@ always_statement:
 ;
 
 statement:
-	blocking_assignment SEMICOLON  
+	blocking_assignment SEMICOLON
 		{
 			get_endpos $2;
 			T_blocking_assignment($1)
 		}
-	| non_blocking_assignment SEMICOLON   
+	| non_blocking_assignment SEMICOLON
 		{
 			get_endpos $2;
 			T_non_blocking_assignment($1)
 		}
-	| KEY_IF LPAREN expression RPAREN statement_or_null   
+	| KEY_IF LPAREN expression RPAREN statement_or_null
 		{
 			get_endpos $4;
 			T_if_statement($3,$5)
 		}
-	| KEY_IF LPAREN expression RPAREN statement_or_null KEY_ELSE statement_or_null   
+	| KEY_IF LPAREN expression RPAREN statement_or_null KEY_ELSE statement_or_null
 		{
 			get_endpos $6;
 			T_if_else_statement($3,$5,$7)
 		}
-	| KEY_CASE LPAREN expression RPAREN case_item_list KEY_ENDCASE   
+	| KEY_CASE LPAREN expression RPAREN case_item_list KEY_ENDCASE
 		{
 			get_endpos $6;
 			T_case_statement($3,$5)
 		}
-	| KEY_CASEZ LPAREN expression RPAREN case_item_list KEY_ENDCASE   
+	| KEY_CASEZ LPAREN expression RPAREN case_item_list KEY_ENDCASE
 		{
 			get_endpos $6;
 			T_casez_statement($3,$5)
 		}
-	| KEY_CASEX LPAREN expression RPAREN case_item_list KEY_ENDCASE   
+	| KEY_CASEX LPAREN expression RPAREN case_item_list KEY_ENDCASE
 		{
 			get_endpos $6;
 			T_casex_statement($3,$5)
 		}
-	| KEY_FOREVER statement   
+	| KEY_FOREVER statement
 		{
 			get_endpos $1;
 			T_forever_statement($2)
 		}
-	| KEY_REPEAT LPAREN expression RPAREN statement   
+	| KEY_REPEAT LPAREN expression RPAREN statement
 		{
 			get_endpos $4;
 			T_repeat_statement($3,$5)
 		}
-	| KEY_WHILE LPAREN expression RPAREN statement   
+	| KEY_WHILE LPAREN expression RPAREN statement
 		{
 			get_endpos $4;
 			T_while_statement($3,$5)
 		}
-	| KEY_FOR LPAREN assignment SEMICOLON expression SEMICOLON assignment RPAREN statement    
+	| KEY_FOR LPAREN assignment SEMICOLON expression SEMICOLON assignment RPAREN statement
 		{
 			get_endpos $8;
 			T_for_statement($3,$5,$7,$9)
 		}
 	| delay_control statement_or_null   {T_delay_statement($1,$2)}
 	| event_control statement_or_null   {T_event_statement($1,$2)}
-	| KEY_WAIT LPAREN expression RPAREN statement_or_null   
+	| KEY_WAIT LPAREN expression RPAREN statement_or_null
 		{
 			get_endpos $4;
 			T_wait_statement($3,$5)
 		}
-	| LEADTO name_of_event SEMICOLON   
+	| LEADTO name_of_event SEMICOLON
 		{
 			get_endpos $3;
 			T_leadto_event($2)
 		}
-	| KEY_BEGIN statement_optlist KEY_END  
+	| KEY_BEGIN statement_optlist KEY_END
 		{
 			get_endpos $3;
 			T_seq_block("",[],$2)
 		}   /*seq_block*/
-        | KEY_BEGIN COLON IDENTIFIER block_declaration_optlist statement_optlist KEY_END 
+        | KEY_BEGIN COLON IDENTIFIER block_declaration_optlist statement_optlist KEY_END
 		{
 			get_endpos $6;
 			T_seq_block($3,$4,$5)
 		} /*seq_block*/
-	| KEY_FORK statement_optlist KEY_JOIN   
+	| KEY_FORK statement_optlist KEY_JOIN
 		{
 			get_endpos $3;
 			T_par_block("",[],$2)
 		}
-	| KEY_FORK COLON IDENTIFIER block_declaration_optlist statement_optlist KEY_JOIN   
+	| KEY_FORK COLON IDENTIFIER block_declaration_optlist statement_optlist KEY_JOIN
 		{
 			get_endpos $6;
 			T_par_block($3,$4,$5)
 		}
-	| IDENTIFIER SEMICOLON   
+	| IDENTIFIER SEMICOLON
 		{
 			get_endpos $2;
 			T_task_enable($1,[])
 		}
-	| IDENTIFIER LPAREN expression comma_expression_optlist RPAREN SEMICOLON   
+	| IDENTIFIER LPAREN expression comma_expression_optlist RPAREN SEMICOLON
 		{
 			get_endpos $6;
 			T_task_enable($1,($3::$4))
 		}
-	| name_of_system_task SEMICOLON   
+	| name_of_system_task SEMICOLON
 		{
 			get_endpos $2;
 			T_system_task_enable($1,[])
 		}
-	| name_of_system_task LPAREN expression comma_expression_optlist RPAREN SEMICOLON   
+	| name_of_system_task LPAREN expression comma_expression_optlist RPAREN SEMICOLON
 		{
 			get_endpos $6;
 			T_system_task_enable($1,($3::$4))
 		}
-	| KEY_DISABLE IDENTIFIER SEMICOLON   
+	| KEY_DISABLE IDENTIFIER SEMICOLON
 		{
 			get_endpos $3;
 			T_disable_statement($2)
 		}  /*this maybe task or block*/
-	| KEY_FORCE assignment SEMICOLON   
+	| KEY_FORCE assignment SEMICOLON
 		{
 			get_endpos $3;
 			T_force_statement($2)
 		}
-	| KEY_RELEASE lvalue SEMICOLON   
+	| KEY_RELEASE lvalue SEMICOLON
 		{
 			get_endpos $3;
 			T_release_statement($2)
@@ -1026,7 +1026,7 @@ block_declaration:
 ;
 
 event_declaration:
-	KEY_EVENT name_of_event comma_name_of_event_optlist SEMICOLON   
+	KEY_EVENT name_of_event comma_name_of_event_optlist SEMICOLON
 		{
 			get_endpos $4;
 			T_event_declaration($2::$3)
@@ -1048,7 +1048,7 @@ name_of_event:
 
 
 real_declaration:
-	KEY_REAL list_of_variables SEMICOLON   
+	KEY_REAL list_of_variables SEMICOLON
 		{
 			get_endpos $3;
 			T_real_declaration($2)
@@ -1057,7 +1057,7 @@ real_declaration:
 
 
 parameter_declaration:
-	KEY_PARAMETER list_of_param_assignments SEMICOLON   
+	KEY_PARAMETER list_of_param_assignments SEMICOLON
 		{
 			get_endpos $3;
 			T_parameter_declaration($2)
@@ -1090,12 +1090,12 @@ name_of_system_task:
 ;
 
 event_control:
-	AT identifier  
+	AT identifier
 		{
 			get_endpos $1;
 			T_event_control_id($2)
 		}
-	| AT LPAREN event_expression_list RPAREN  
+	| AT LPAREN event_expression_list RPAREN
 		{
 			get_endpos $4;
 			T_event_control_evexp($3)
@@ -1129,7 +1129,7 @@ SCALAR_EVENT_EXPRESSION:
 	expression   {$1}
 ;
 
-delay_control: 
+delay_control:
 	JING expression   {T_delay_control($2)}
 /*        | JING LPAREN mintypmax_expression RPAREN   {0}
 this has been included in primary*/
@@ -1159,7 +1159,7 @@ non_blocking_assignment:
 ;
 statement_or_null:
 	statement	{$1}
-	| SEMICOLON	
+	| SEMICOLON
 		{
 			get_endpos $1;
 			T_statement_NOSPEC
@@ -1167,7 +1167,7 @@ statement_or_null:
 ;
 
 reg_declaration:
-	KEY_REG range_opt list_of_register_variables SEMICOLON   
+	KEY_REG range_opt list_of_register_variables SEMICOLON
 		{
 			get_endpos $4;
 			T_reg_declaration($2,$3)
@@ -1190,7 +1190,7 @@ comma_register_variable:
 
 register_variable:
 	IDENTIFIER	{T_register_variables_ID($1)}
-	| IDENTIFIER LBRACKET constant_expression COLON constant_expression RBRACKET   
+	| IDENTIFIER LBRACKET constant_expression COLON constant_expression RBRACKET
 		{
 			get_endpos $6;
 			T_register_variables_IDrange($1,$3,$5)
@@ -1216,7 +1216,7 @@ comma_module_instance:
 ;
 
 module_instance:
-	IDENTIFIER LPAREN list_of_module_connections RPAREN    
+	IDENTIFIER LPAREN list_of_module_connections RPAREN
 		{
 			get_endpos $4;
 			T_module_instance($1,$3)
@@ -1239,12 +1239,12 @@ comma_named_port_connection:
 ;
 
 named_port_connection:
-	DOT IDENTIFIER LPAREN  RPAREN   
+	DOT IDENTIFIER LPAREN  RPAREN
 		{
 			get_endpos $4;
 			T_named_port_connection($2,T_expression_NOSPEC(0))
 		}
-	| DOT IDENTIFIER LPAREN expression RPAREN   
+	| DOT IDENTIFIER LPAREN expression RPAREN
 		{
 			get_endpos $5;
 			T_named_port_connection($2,$4)
@@ -1271,7 +1271,7 @@ parameter_value_assignment_opt:
 ;
 
 parameter_value_assignment:
-	JING LPAREN expression comma_expression_optlist RPAREN   
+	JING LPAREN expression comma_expression_optlist RPAREN
 		{
 			get_endpos $5;
 			$3::$4
@@ -1280,22 +1280,22 @@ parameter_value_assignment:
 
 
 continuous_assign:
-	 KEY_ASSIGN delay_opt list_of_assignments SEMICOLON   
+	 KEY_ASSIGN delay_opt list_of_assignments SEMICOLON
 	 	{
 			get_endpos $4;
 			T_continuous_assign_assign(T_drive_strength_NOSPEC,$2,$3)
 		}
-	| KEY_ASSIGN drive_strength delay_opt list_of_assignments SEMICOLON   
+	| KEY_ASSIGN drive_strength delay_opt list_of_assignments SEMICOLON
 		{
 			get_endpos $5;
 			T_continuous_assign_assign($2,$3,$4)
 		}
-	| NETTYPE expandrange_opt delay_opt list_of_assignments SEMICOLON   
+	| NETTYPE expandrange_opt delay_opt list_of_assignments SEMICOLON
 		{
 			get_endpos $5;
 			T_continuous_assign_net($1,T_drive_strength_NOSPEC,$2,$3,$4)
 		}
-	| NETTYPE drive_strength expandrange_opt delay_opt list_of_assignments SEMICOLON   
+	| NETTYPE drive_strength expandrange_opt delay_opt list_of_assignments SEMICOLON
 		{
 			get_endpos $6;
 			T_continuous_assign_net($1,$2,$3,$4,$5)
@@ -1321,12 +1321,12 @@ assignment:
 
 lvalue :
 	identifier			{T_lvalue_id($1)}
-	| identifier LBRACKET expression RBRACKET 
+	| identifier LBRACKET expression RBRACKET
 		{
 			get_endpos $4;
 			T_lvalue_arrbit($1,$3)
 		}
-	| identifier LBRACKET constant_expression COLON constant_expression RBRACKET 
+	| identifier LBRACKET constant_expression COLON constant_expression RBRACKET
 		{
 			get_endpos $6;
 			T_lvalue_arrrange($1,$3,$5)
@@ -1374,30 +1374,30 @@ expression:
 primary:
 	number   {T_primary_num($1)}
 	| identifier		{T_primary_id($1)}
-	| identifier LBRACKET expression RBRACKET		
+	| identifier LBRACKET expression RBRACKET
 		{
 			get_endpos $4;
 			T_primary_arrbit($1,$3)
 		}
-	| identifier LBRACKET constant_expression COLON constant_expression RBRACKET  
+	| identifier LBRACKET constant_expression COLON constant_expression RBRACKET
 		{
 			get_endpos $6;
 			T_primary_arrrange($1,$3,$5)
 		}
 	| concatenation          {T_primary_concat($1)}
 	| multiple_concatenation  {$1}
-	| identifier LPAREN expression comma_expression_optlist RPAREN     
+	| identifier LPAREN expression comma_expression_optlist RPAREN
 		{
 			get_endpos $5;
 			T_primary_funcall($1,$3::$4)
 		}
-	| name_of_system_function LPAREN expression comma_expression_optlist RPAREN     
+	| name_of_system_function LPAREN expression comma_expression_optlist RPAREN
 		{
 			get_endpos $5;
 			T_primary_sysfuncall($1,$3::$4)
 		}
 	| name_of_system_function      {T_primary_sysfuncall($1,[])}
-	| LPAREN mintypmax_expression RPAREN   
+	| LPAREN mintypmax_expression RPAREN
 		{
 			get_endpos $3;
 			T_primary_minmaxexp($2)
@@ -1405,7 +1405,7 @@ primary:
 ;
 
 multiple_concatenation:
-	LBRACE expression LBRACE expression comma_expression_optlist RBRACE RBRACE 
+	LBRACE expression LBRACE expression comma_expression_optlist RBRACE RBRACE
 		{
 			get_endpos $7;
 			T_primary_multiconcat($2,$4::$5)
@@ -1413,7 +1413,7 @@ multiple_concatenation:
 ;
 
 concatenation:
-	LBRACE expression comma_expression_optlist RBRACE  
+	LBRACE expression comma_expression_optlist RBRACE
 		{
 			get_endpos $4;
 			$2::$3
@@ -1457,12 +1457,12 @@ dot_IDENTIFIER:
 ;
 
 drive_strength:
-	LPAREN STRENGTH0 COMMA STRENGTH1 RPAREN    
+	LPAREN STRENGTH0 COMMA STRENGTH1 RPAREN
 		{
 			get_endpos $5;
 			T_drive_strength($2,$4)
 		}
-	| LPAREN STRENGTH1 COMMA STRENGTH0 RPAREN   
+	| LPAREN STRENGTH1 COMMA STRENGTH0 RPAREN
 		{
 			get_endpos $5;
 			T_drive_strength($2,$4)
@@ -1472,33 +1472,33 @@ drive_strength:
 
 
 input_declaration:
-	KEY_INPUT range_opt list_of_variables SEMICOLON 
+	KEY_INPUT range_opt list_of_variables SEMICOLON
 		{
 			get_endpos $4;
 			T_input_declaration($2,$3)
 		}
 ;
 output_declaration:
-	KEY_OUTPUT range_opt list_of_variables SEMICOLON 
+	KEY_OUTPUT range_opt list_of_variables SEMICOLON
 		{
 			get_endpos $4;
 			T_output_declaration($2,$3)
 		}
 ;
 inout_declaration:
-	KEY_INOUT range_opt list_of_variables SEMICOLON 
+	KEY_INOUT range_opt list_of_variables SEMICOLON
 		{
 			get_endpos $4;
 			T_inout_declaration($2,$3)
 		}
 ;
 net_declaration:
-	NETTYPE expandrange_opt delay_opt list_of_variables SEMICOLON 
+	NETTYPE expandrange_opt delay_opt list_of_variables SEMICOLON
 		{
 			get_endpos $5;
 			T_net_declaration($1,T_charge_strength_NOSPEC,$2,$3,$4)
 		}
-	| NETTYPE charge_strength expandrange_opt delay_opt list_of_variables SEMICOLON 
+	| NETTYPE charge_strength expandrange_opt delay_opt list_of_variables SEMICOLON
 		{
 			get_endpos $6;
 			T_net_declaration($1,$2,$3,$4,$5)
@@ -1513,12 +1513,12 @@ delay_opt:
 delay:
 	 JING number	{T_delay_number($2)}
 	 | JING identifier {T_delay_id($2)}
-	 | JING LPAREN mintypmax_expression RPAREN   
+	 | JING LPAREN mintypmax_expression RPAREN
 	 	{
 			get_endpos $4;
 			T_delay_minmax1($3)
 		}
-	 | JING LPAREN mintypmax_expression COMMA mintypmax_expression COMMA mintypmax_expression RPAREN   
+	 | JING LPAREN mintypmax_expression COMMA mintypmax_expression COMMA mintypmax_expression RPAREN
 	 	{
 			get_endpos $8;
 			T_delay_minmax3($3,$5,$7)
@@ -1537,17 +1537,17 @@ expandrange:
 ;
 
 charge_strength:
-	LPAREN KEY_SMALL RPAREN  
+	LPAREN KEY_SMALL RPAREN
 		{
 			get_endpos $3;
 			T_charge_strength_SMALL
 		}
-	| LPAREN KEY_MEDIUM RPAREN  
+	| LPAREN KEY_MEDIUM RPAREN
 		{
 			get_endpos $3;
 			T_charge_strength_MEDIUM
 		}
-	| LPAREN KEY_LARGE RPAREN  
+	| LPAREN KEY_LARGE RPAREN
 		{
 			get_endpos $3;
 			T_charge_strength_LARGE
@@ -1560,7 +1560,7 @@ range_opt :
 ;
 
 range :
-	LBRACKET constant_expression COLON constant_expression RBRACKET   
+	LBRACKET constant_expression COLON constant_expression RBRACKET
 		{
 			get_endpos $5;
 			T_range($2,$4)
@@ -1571,7 +1571,7 @@ constant_expression:
 	expression		{$1}
 ;
 
-list_of_variables: 
+list_of_variables:
 		IDENTIFIER comma_IDENTIFIER_optlist	{$1::$2}
 ;
 

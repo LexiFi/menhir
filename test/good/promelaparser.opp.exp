@@ -4,7 +4,7 @@ open Bool3
 
 let observed_states=Hashtbl.create 1
 
-let to_seq c = 
+let to_seq c =
   [{ condition = Some c; nested = [];
     min_rep = Some (PCst (Logic_ptree.IntConstant "1"));
     max_rep = Some (PCst (Logic_ptree.IntConstant "1"));
@@ -43,12 +43,12 @@ let to_seq c =
 
 promela:
   _1 = PROMELA_NEVER _2 = PROMELA_LBRACE _3 = states _4 = PROMELA_RBRACE _5 = EOF
-    {                                                                 ( 
+    {                                                                 (
 	    let states=
-	      Hashtbl.fold (fun _ st l -> 
+	      Hashtbl.fold (fun _ st l ->
 		if st.acceptation=Undefined || st.init=Undefined then
 		  begin
-                    Aorai_option.abort 
+                    Aorai_option.abort
                       "Error: the state %s is used but never defined" st.name;
 		  end;
 		st::l
@@ -59,10 +59,10 @@ promela:
 | _1 = PROMELA_NEVER _2 = PROMELA_LBRACE _3 = states _4 = PROMELA_SEMICOLON _5 = PROMELA_RBRACE _6 = EOF
     {                               (
 	      let states=
-	        Hashtbl.fold (fun _ st l -> 
+	        Hashtbl.fold (fun _ st l ->
 		  if st.acceptation=Undefined || st.init=Undefined then
 		    begin
-                      Aorai_option.abort 
+                      Aorai_option.abort
                         "Error: the state %s is used but never defined" st.name;
 		    end;
 		  st::l
@@ -72,7 +72,7 @@ promela:
 
 states:
   _1 = states _2 = PROMELA_SEMICOLON _3 = state
-    {                                         ( 
+    {                                         (
 	    _1@_3
 	  )}
 | _1 = state
@@ -85,33 +85,33 @@ state:
 	  let (trl,force_final)=_2 in
 	    if force_final then
 	      begin
-		List.iter (fun s -> 
-		  try 
+		List.iter (fun s ->
+		  try
 		    (Hashtbl.find observed_states s.name).acceptation <- True
 		  with
-		    | Not_found -> assert false 
+		    | Not_found -> assert false
                 (* This state has to be in the hashtable -- by construction *)
 		) stl
 	      end;
 	    if trl=[] then
-	      trans 
+	      trans
 	    else
 	      let tr_list=
-		List.fold_left (fun l1 (cr,stop_st)  -> 
-		  List.fold_left (fun l2 st -> 
+		List.fold_left (fun l1 (cr,stop_st)  ->
+		  List.fold_left (fun l2 st ->
 		    {start=st;stop=stop_st;cross=Seq (to_seq cr);numt=(-1)}::l2
 		  ) l1 stl
-		) [] trl 
+		) [] trl
 	      in
 	        (List.rev tr_list)@trans
 	)}
 
 state_labels:
   _1 = label _2 = state_labels
-    {                             ( 
+    {                             (
 	    let (stl1,trl1)=_1 in
 	    let (stl2,trl2)=_2 in
-	      (stl1@stl2,trl1@trl2) 
+	      (stl1@stl2,trl1@trl2)
 	)}
 | _1 = label
     {         ( _1 )}
@@ -124,11 +124,11 @@ label:
 	    let trans = ref [] in
 	    (* Promela Label is a state. According to its name, we will try to give him its properties (init / accept) *)
 	    (* Firstly, if this state is still referenced, then we get it back. Else, we make a new "empty" state *)
-	    let old= 
-	      try  
+	    let old=
+	      try
 		Hashtbl.find observed_states _1
 	      with
-		| Not_found -> 
+		| Not_found ->
 		    let s = Data_for_aorai.new_state _1 in
 		    Hashtbl.add observed_states _1 s;
 		    s
@@ -136,29 +136,29 @@ label:
             (* Step 1 : setting up the acceptance status *)
 	    (* Default status : Non acceptation state *)
  	    old.acceptation <- False;
-	    
-	    (* Accept_all state means acceptance state with a 
+
+	    (* Accept_all state means acceptance state with a
                reflexive transition without cross condition *)
-	    (* This case is not exclusive with the following. 
+	    (* This case is not exclusive with the following.
                Acceptation status is set in this last. *)
-	    if (String.length _1>=10) && 
-              (String.compare (String.sub _1 0 10) "accept_all")=0 
-            then 
+	    if (String.length _1>=10) &&
+              (String.compare (String.sub _1 0 10) "accept_all")=0
+            then
 	      trans:=
                 {start=old;stop=old;cross=Seq (to_seq PTrue);numt=(-1)} ::
                 !trans;
-	    (* If the name includes accept then 
+	    (* If the name includes accept then
                this state is an acceptation one. *)
-	    if (String.length _1>=7) && 
-              (String.compare (String.sub _1 0 7) "accept_")=0 
+	    if (String.length _1>=7) &&
+              (String.compare (String.sub _1 0 7) "accept_")=0
             then
 	      old.acceptation <- True;
 
             (* Step 2 : setting up the init status *)
-	    (* If the state name ended with "_init" then 
+	    (* If the state name ended with "_init" then
                it is an initial state. Else, it is not. *)
-	    if (String.length _1>=5) && 
-              (String.compare (String.sub _1 ((String.length _1)-5) 5) 
+	    if (String.length _1>=5) &&
+              (String.compare (String.sub _1 ((String.length _1)-5) 5)
                  "_init" ) = 0
 	    then
 	      old.init <- True
@@ -191,7 +191,7 @@ transition:
 	    try
 	      Hashtbl.find observed_states _5
 	    with
-		Not_found -> 
+		Not_found ->
 		  let r = Data_for_aorai.new_state _5 in
 		  Hashtbl.add observed_states _5 r;
 		  r
