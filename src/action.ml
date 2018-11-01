@@ -55,7 +55,7 @@ let compose x a1 a2 =
      not necessary, as far as I can see, since every stretch that represents
      a semantic action is already parenthesized by the lexer. *)
   {
-    expr      = IL.ELet ([ IL.PVar x, a1.expr ], a2.expr);
+    expr      = CodeBits.blet ([ IL.PVar x, a1.expr ], a2.expr);
     keywords  = KeywordSet.union a1.keywords a2.keywords;
     filenames = a1.filenames @ a2.filenames;
   }
@@ -131,7 +131,7 @@ let rename f phi a =
   (* Construct a new semantic action, where [phi] is translated into
      a series of [let] bindings. *)
   let phi = List.map (fun (x, y) -> IL.PVar x, IL.EVar y) phi in
-  let expr = IL.ELet (phi, a.expr) in
+  let expr = CodeBits.blet (phi, a.expr) in
 
   {
     expr      = expr;

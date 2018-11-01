@@ -1139,44 +1139,28 @@ single_term_:
 | _1 = MINUS _2 = REAL
     {    ( Tconst (Number.ConstReal (mk_real_const true _2)) )}
 | l = single_term _1 = ARROW r = single_term
-    {let o =
-            ( Dterm.DTimplies )
-in
+    {let o =           ( Dterm.DTimplies ) in
     ( Tbinop (l, o, r) )}
 | l = single_term _1 = LRARROW r = single_term
-    {let o =
-            ( Dterm.DTiff )
-in
+    {let o =           ( Dterm.DTiff ) in
     ( Tbinop (l, o, r) )}
 | l = single_term _1 = OR r = single_term
-    {let o =
-            ( Dterm.DTor )
-in
+    {let o =           ( Dterm.DTor ) in
     ( Tbinop (l, o, r) )}
 | l = single_term _1 = BARBAR r = single_term
-    {let o =
-            ( Dterm.DTor_asym )
-in
+    {let o =           ( Dterm.DTor_asym ) in
     ( Tbinop (l, o, r) )}
 | l = single_term _1 = AND r = single_term
-    {let o =
-            ( Dterm.DTand )
-in
+    {let o =           ( Dterm.DTand ) in
     ( Tbinop (l, o, r) )}
 | l = single_term _1 = AMPAMP r = single_term
-    {let o =
-            ( Dterm.DTand_asym )
-in
+    {let o =           ( Dterm.DTand_asym ) in
     ( Tbinop (l, o, r) )}
 | l = single_term _1 = BY r = single_term
-    {let o =
-            ( Dterm.DTby )
-in
+    {let o =           ( Dterm.DTby ) in
     ( Tbinop (l, o, r) )}
 | l = single_term _1 = SO r = single_term
-    {let o =
-            ( Dterm.DTso )
-in
+    {let o =           ( Dterm.DTso ) in
     ( Tbinop (l, o, r) )}
 | l = single_term o' = OP1 r = single_term
     {let o =
@@ -1390,16 +1374,12 @@ match_cases_term_:
 
 match_case_seq_expr_:
   x = pattern _2 = ARROW y = seq_expr
-    {let mc =
-      ( (x, y) )
-in
+    {let mc =     ( (x, y) ) in
                                          ( mc )}
 
 match_case_term_:
   x = pattern _2 = ARROW y = term
-    {let mc =
-      ( (x, y) )
-in
+    {let mc =     ( (x, y) ) in
                                          ( mc )}
 
 quant_vars:
@@ -1801,45 +1781,33 @@ let _startpos = _startpos__1_ in
 | _1 = RAISE _2 = LEFTPAR _3 = uqualid _4 = option_expr_arg_ _5 = RIGHTPAR
     {    ( Eraise (_3, _4) )}
 | _1 = RETURN
-    {let _2 =
-      ( None )
-in
+    {let _2 =     ( None ) in
     ( let id = mk_id return_id _startpos__1_ _endpos__1_ in
       Eraise (Qident id, _2) )}
 | _1 = RETURN x = contract_expr
-    {let _2 =
-      ( Some x )
-in
+    {let _2 =     ( Some x ) in
     ( let id = mk_id return_id _startpos__1_ _endpos__1_ in
       Eraise (Qident id, _2) )}
 | _1 = BREAK
-    {let _2 =
-      ( None )
-in
+    {let _2 =     ( None ) in
     ( let id = match _2 with
         | Some id -> { id with id_str = id.id_str ^ break_id }
         | None -> mk_id break_id _startpos__1_ _endpos__1_ in
       Eraise (Qident id, None) )}
 | _1 = BREAK x = uident
-    {let _2 =
-      ( Some x )
-in
+    {let _2 =     ( Some x ) in
     ( let id = match _2 with
         | Some id -> { id with id_str = id.id_str ^ break_id }
         | None -> mk_id break_id _startpos__1_ _endpos__1_ in
       Eraise (Qident id, None) )}
 | _1 = CONTINUE
-    {let _2 =
-      ( None )
-in
+    {let _2 =     ( None ) in
     ( let id = match _2 with
         | Some id -> { id with id_str = id.id_str ^ continue_id }
         | None -> mk_id continue_id _startpos__1_ _endpos__1_ in
       Eraise (Qident id, None) )}
 | _1 = CONTINUE x = uident
-    {let _2 =
-      ( Some x )
-in
+    {let _2 =     ( Some x ) in
     ( let id = match _2 with
         | Some id -> { id with id_str = id.id_str ^ continue_id }
         | None -> mk_id continue_id _startpos__1_ _endpos__1_ in
@@ -1970,14 +1938,10 @@ loop_annotation:
 
 ext_match_cases:
   _2 = ext_match_cases1
-    {let _1 =
-      ( None )
-in
+    {let _1 =     ( None ) in
                                  ( _2 )}
 | x = BAR _2 = ext_match_cases1
-    {let _1 =
-      ( Some x )
-in
+    {let _1 =     ( Some x ) in
                                  ( _2 )}
 
 ext_match_cases1:
@@ -2511,62 +2475,42 @@ attr:
 
 bar_list1_exn_handler_:
   xl = separated_nonempty_list_BAR_exn_handler_
-    {let _1 =
-      ( None )
-in
+    {let _1 =     ( None ) in
                                                       ( xl )}
 | x = BAR xl = separated_nonempty_list_BAR_exn_handler_
-    {let _1 =
-      ( Some x )
-in
+    {let _1 =     ( Some x ) in
                                                       ( xl )}
 
 bar_list1_ind_case_:
   xl = separated_nonempty_list_BAR_ind_case_
-    {let _1 =
-      ( None )
-in
+    {let _1 =     ( None ) in
                                                       ( xl )}
 | x = BAR xl = separated_nonempty_list_BAR_ind_case_
-    {let _1 =
-      ( Some x )
-in
+    {let _1 =     ( Some x ) in
                                                       ( xl )}
 
 bar_list1_match_case_term__:
   xl = separated_nonempty_list_BAR_match_case_term__
-    {let _1 =
-      ( None )
-in
+    {let _1 =     ( None ) in
                                                       ( xl )}
 | x = BAR xl = separated_nonempty_list_BAR_match_case_term__
-    {let _1 =
-      ( Some x )
-in
+    {let _1 =     ( Some x ) in
                                                       ( xl )}
 
 bar_list1_raises_:
   xl = separated_nonempty_list_BAR_raises_
-    {let _1 =
-      ( None )
-in
+    {let _1 =     ( None ) in
                                                       ( xl )}
 | x = BAR xl = separated_nonempty_list_BAR_raises_
-    {let _1 =
-      ( Some x )
-in
+    {let _1 =     ( Some x ) in
                                                       ( xl )}
 
 bar_list1_type_case_:
   xl = separated_nonempty_list_BAR_type_case_
-    {let _1 =
-      ( None )
-in
+    {let _1 =     ( None ) in
                                                       ( xl )}
 | x = BAR xl = separated_nonempty_list_BAR_type_case_
-    {let _1 =
-      ( Some x )
-in
+    {let _1 =     ( Some x ) in
                                                       ( xl )}
 
 with_list1_inductive_decl_:
@@ -2643,30 +2587,22 @@ comma_list1_xsymbol_:
 
 comma_list0_alias_:
   xs = loption_separated_nonempty_list_COMMA_alias__
-    {let xl =
-      ( xs )
-in
+    {let xl =     ( xs ) in
                                 ( xl )}
 
 comma_list0_lqualid_:
   xs = loption_separated_nonempty_list_COMMA_lqualid__
-    {let xl =
-      ( xs )
-in
+    {let xl =     ( xs ) in
                                 ( xl )}
 
 comma_list0_single_term_:
   xs = loption_separated_nonempty_list_COMMA_single_term__
-    {let xl =
-      ( xs )
-in
+    {let xl =     ( xs ) in
                                 ( xl )}
 
 semicolon_list1_separated_pair_lqualid_EQUAL_expr__:
   x' = lqualid _2' = EQUAL y = expr
-    {let _2 =
-      ( None )
-in
+    {let _2 =     ( None ) in
 let x =
   let _2 = _2' in
   let x = x' in
@@ -2674,9 +2610,7 @@ let x =
 in
                                               ( [x] )}
 | x' = lqualid _2' = EQUAL y = expr x = SEMICOLON
-    {let _2 =
-      ( Some x )
-in
+    {let _2 =     ( Some x ) in
 let x =
   let _2 = _2' in
   let x = x' in
@@ -2693,9 +2627,7 @@ in
 
 semicolon_list1_separated_pair_lqualid_EQUAL_pattern__:
   x' = lqualid _2' = EQUAL y = pattern
-    {let _2 =
-      ( None )
-in
+    {let _2 =     ( None ) in
 let x =
   let _2 = _2' in
   let x = x' in
@@ -2703,9 +2635,7 @@ let x =
 in
                                               ( [x] )}
 | x' = lqualid _2' = EQUAL y = pattern x = SEMICOLON
-    {let _2 =
-      ( Some x )
-in
+    {let _2 =     ( Some x ) in
 let x =
   let _2 = _2' in
   let x = x' in
@@ -2722,9 +2652,7 @@ in
 
 semicolon_list1_separated_pair_lqualid_EQUAL_term__:
   x' = lqualid _2' = EQUAL y = term
-    {let _2 =
-      ( None )
-in
+    {let _2 =     ( None ) in
 let x =
   let _2 = _2' in
   let x = x' in
@@ -2732,9 +2660,7 @@ let x =
 in
                                               ( [x] )}
 | x' = lqualid _2' = EQUAL y = term x = SEMICOLON
-    {let _2 =
-      ( Some x )
-in
+    {let _2 =     ( Some x ) in
 let x =
   let _2 = _2' in
   let x = x' in
@@ -2751,9 +2677,7 @@ in
 
 semicolon_list1_type_field_:
   x = type_field
-    {let _2 =
-      ( None )
-in
+    {let _2 =     ( None ) in
                                               ( [x] )}
 | x = type_field x' = SEMICOLON
     {let _2 =

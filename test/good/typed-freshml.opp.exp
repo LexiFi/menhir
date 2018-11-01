@@ -282,23 +282,17 @@ raw_atomic_expression:
 | _1 = BNOT e = atomic_expression
     {    ( ECall (CPrim PrimBoolNot, e) )}
 | e1 = atomic_expression _1 = CMPEQ e2 = atomic_expression
-    {let p =
-      ( PrimAtomEquality )
-in
+    {let p =     ( PrimAtomEquality ) in
 let _endpos = _endpos_e2_ in
 let _startpos = _startpos_e1_ in
     ( ECall (CPrim p, Annotation.make (_startpos, _endpos) (EMulti [ e1; e2 ])) )}
 | e1 = atomic_expression _1 = BAND e2 = atomic_expression
-    {let p =
-      ( PrimBoolAnd )
-in
+    {let p =     ( PrimBoolAnd ) in
 let _endpos = _endpos_e2_ in
 let _startpos = _startpos_e1_ in
     ( ECall (CPrim p, Annotation.make (_startpos, _endpos) (EMulti [ e1; e2 ])) )}
 | e1 = atomic_expression _1 = BOR e2 = atomic_expression
-    {let p =
-      ( PrimBoolOr )
-in
+    {let p =     ( PrimBoolOr ) in
 let _endpos = _endpos_e2_ in
 let _startpos = _startpos_e1_ in
     ( ECall (CPrim p, Annotation.make (_startpos, _endpos) (EMulti [ e1; e2 ])) )}
@@ -356,9 +350,7 @@ typ:
 
 atomic_layout:
   t = typ
-    {let x =
-      ( None )
-in
+    {let x =     ( None ) in
     ( LComponent (x, t) )}
 | x' = ID _2 = COLON t = typ
     {let x =

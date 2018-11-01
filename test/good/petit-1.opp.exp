@@ -161,59 +161,37 @@ raw_expression:
 | _1 = MINUS e = expression %prec unary_minus
     {    ( EUnOp (UOpNeg, e) )}
 | e1 = expression _1 = PLUS e2 = expression
-    {let op =
-      ( OpAdd )
-in
+    {let op =     ( OpAdd ) in
     ( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = MINUS e2 = expression
-    {let op =
-      ( OpSub )
-in
+    {let op =     ( OpSub ) in
     ( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = TIMES e2 = expression
-    {let op =
-      ( OpMul )
-in
+    {let op =     ( OpMul ) in
     ( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = SLASH e2 = expression
-    {let op =
-      ( OpDiv )
-in
+    {let op =     ( OpDiv ) in
     ( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = LT e2 = expression
-    {let op =
-      ( OpLt )
-in
+    {let op =     ( OpLt ) in
     ( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = LE e2 = expression
-    {let op =
-      ( OpLe )
-in
+    {let op =     ( OpLe ) in
     ( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = GT e2 = expression
-    {let op =
-      ( OpGt )
-in
+    {let op =     ( OpGt ) in
     ( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = GE e2 = expression
-    {let op =
-      ( OpGe )
-in
+    {let op =     ( OpGe ) in
     ( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = EQ e2 = expression
-    {let op =
-      ( OpEq )
-in
+    {let op =     ( OpEq ) in
     ( EBinOp (op, e1, e2) )}
 | e1 = expression _1 = NE e2 = expression
-    {let op =
-      ( OpNe )
-in
+    {let op =     ( OpNe ) in
     ( EBinOp (op, e1, e2) )}
 | c = callee _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_expression__ _4 = RPAREN
-    {let actuals =
-      ( xs )
-in
+    {let actuals =     ( xs ) in
     ( EFunCall (Location.make _startpos_c_ _endpos_c_ c, actuals) )}
 | a = expression _2 = LBRACKET i = expression _4 = RBRACKET
     {    ( EArrayGet (a, i) )}
@@ -244,9 +222,7 @@ lvalue:
 
 instruction:
   c = callee _2 = LPAREN xs = loption_separated_nonempty_list_COMMA_expression__ _4 = RPAREN
-    {let actuals =
-      ( xs )
-in
+    {let actuals =     ( xs ) in
     ( IProcCall (Location.make _startpos_c_ _endpos_c_ c, actuals) )}
 | lvalue = lvalue _2 = COLONEQ e = expression
     {    ( (lvalue : LPP.expression -> LPP.instruction) e )}
@@ -265,9 +241,7 @@ let _startpos = _startpos__1_ in
 
 block:
   _1 = BEGIN xs = loption_separated_nonempty_list_SEMICOLON_instruction__ _3 = END
-    {let is =
-      ( xs )
-in
+    {let is =     ( xs ) in
     ( ISeq is )}
 
 instruction_or_block:
@@ -286,9 +260,7 @@ callee:
 
 procedure:
   _1 = FUNCTION f = ID _3 = LPAREN formals = separated_bindings _5 = RPAREN _6 = COLON t = typ _8 = SEMICOLON locals = variables body = block _11 = SEMICOLON
-    {let result =
-      ( Some t )
-in
+    {let result =     ( Some t ) in
     (
       f, {
         formals = formals;
@@ -298,9 +270,7 @@ in
       }
     )}
 | _1 = PROCEDURE f = ID _3 = LPAREN formals = separated_bindings _5 = RPAREN _7 = SEMICOLON locals = variables body = block _10 = SEMICOLON
-    {let result =
-      ( None )
-in
+    {let result =     ( None ) in
     (
       f, {
         formals = formals;
@@ -312,9 +282,7 @@ in
 
 separated_bindings:
   xs = loption_separated_nonempty_list_SEMICOLON_binding__
-    {let bindings =
-      ( xs )
-in
+    {let bindings =     ( xs ) in
     ( List.flatten bindings )}
 
 terminated_bindings:
