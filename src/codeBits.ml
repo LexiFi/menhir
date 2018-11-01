@@ -130,10 +130,14 @@ let rec simplify = function
 (* Building a [let] construct, with on-the-fly simplification. *)
 
 let blet (bindings, body) =
-  match simplify bindings with
-  | [] ->
+  let bindings = simplify bindings in
+  match bindings, body with
+  | [], _ ->
       body
-  | bindings ->
+  | [ PVar x1, e ], EVar x2 when x1 = x2 ->
+      (* Reduce [let x = e in x] to just [e]. *)
+      e
+  | _, _ ->
       ELet (bindings, body)
 
 let mlet formals actuals body =
