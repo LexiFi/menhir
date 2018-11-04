@@ -128,9 +128,11 @@ module Run (T: sig end) = struct
           write_optimized_int31 f k
         );
         fprintf f "\n    end;\n";
-        fprintf f "    surj := (fun n => match n return _ with ";
+        (* Pattern matching on int31 litterals will disappear when
+           native 63 bits integers will be introduced in Coq. *)
+        fprintf f "    surj := (fun n => match Int31.phi n return _ with ";
         iteri (fprintf f "\n    | %d => %s ");
-        fprintf f "\n    | _ => %s\n    end)%%int31;\n" (List.hd constrs);
+        fprintf f "\n    | _ => %s\n    end)%%Z;\n" (List.hd constrs);
         fprintf f "    inj_bound := %d%%int31 }.\n" (List.length constrs);
       end
     else
