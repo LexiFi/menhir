@@ -295,22 +295,6 @@ let assertnoerror : pattern * expr =
   PUnit,
   EApp (EVar "assert", [ EApp (EVar "not", [ ERecordAccess (EVar env, ferror) ]) ])
 
-let etuple = function
-  | [] ->
-      assert false
-  | [ e ] ->
-      e
-  | es ->
-      ETuple es
-
-let ptuple = function
-  | [] ->
-      assert false
-  | [ p ] ->
-      p
-  | ps ->
-      PTuple ps
-
 let trace (format : string) (args : expr list) : (pattern * expr) list =
   if Settings.trace then
     [ PUnit, EApp (EVar "Printf.fprintf", (EVar "stderr") :: (EStringConst (format ^"\n%!")) :: args) ]

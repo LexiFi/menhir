@@ -16,6 +16,11 @@
 
 open IL
 
+(* Tuples. *)
+
+val etuple: expr list -> expr
+val ptuple: pattern list -> pattern
+
 (* A list subject to a condition. (Be careful, though: the list is
    of course constructed even if the condition is false.) *)
 

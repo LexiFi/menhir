@@ -16,6 +16,24 @@
 
 open IL
 
+(* Tuples. *)
+
+let etuple = function
+  | [] ->
+      EUnit
+  | [ e ] ->
+      e
+  | es ->
+      ETuple es
+
+let ptuple = function
+  | [] ->
+      PUnit
+  | [ p ] ->
+      p
+  | ps ->
+      PTuple ps
+
 (* A list subject to a condition. *)
 
 let listif condition xs =
