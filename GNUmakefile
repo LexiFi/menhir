@@ -265,6 +265,11 @@ pin:
 unpin:
 	opam pin remove menhir
 
+.PHONY: reinstall
+reinstall:
+	$(MAKE) -C src bootstrap
+	opam reinstall --assume-built --working-dir menhir
+
 # -------------------------------------------------------------------------
 
 # Running the Markdown linter on our Markdown files.
