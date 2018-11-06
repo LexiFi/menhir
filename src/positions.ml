@@ -29,6 +29,9 @@ let value { value = v } =
 let position { position = p } =
   p
 
+let decompose { value; position } =
+  (value, position)
+
 let with_pos p v =
   {
     value     = v;

@@ -35,6 +35,9 @@ val value: 'a located -> 'a
     decorated value [dv]. *)
 val position: 'a located -> t
 
+(** [decompose dv] returns a pair of the value and position. *)
+val decompose: 'a located -> 'a * t
+
 (** [with_pos p v] decorates [v] with a position [p]. *)
 val with_pos : t -> 'a -> 'a located
 val with_cpos: Lexing.lexbuf -> 'a -> 'a located
