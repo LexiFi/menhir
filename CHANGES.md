@@ -1,6 +1,11 @@
 # Changes
 
-## 2018/10/31
+## 2018/11/06
+
+* In the Coq back-end, avoid pattern-matching at type `int31`,
+  which will disappear in future versions of Coq.
+  Instead, convert `int31` to `Z`, and perform pattern matching in `Z`.
+  (Reported by Vincent Laporte, implemented by Jacques-Henri Jourdan.)
 
 * Implement a more economical renaming scheme for OCaml variables
   during the elimination of `%inline` symbols. This leads to slightly
