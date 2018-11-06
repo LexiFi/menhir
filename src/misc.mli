@@ -185,6 +185,10 @@ module ListExtras : sig
   val hash: ('a -> int) -> 'a list -> int
 end
 
+(* A nice way of printing [n] in English, for concrete values of [n]. *)
+
+val count: int -> string
+
 (* A nice way of printing "nth" in English, for concrete values of [n]. *)
 
 val nth: int -> string

@@ -383,6 +383,12 @@ let nth = function
   | 3 -> "third"
   | i -> Printf.sprintf "%dth" i
 
+let count = function
+  | 1 -> "one"
+  | 2 -> "two"
+  | 3 -> "three"
+  | i -> Printf.sprintf "%d" i
+
 (* To keep compatibility with OCaml 4.02,
    we copy [Array.for_all], which appeared
    in 4.03. *)
