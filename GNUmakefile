@@ -267,8 +267,11 @@ unpin:
 
 .PHONY: reinstall
 reinstall:
-	$(MAKE) -C src bootstrap
-	opam reinstall --assume-built --working-dir menhir
+	opam reinstall -v --working-dir menhir
+# We do not use --assume-built,
+# as it would require first re-building everything using
+#   make PREFIX=`pwd`/src -f Makefile all
+# and that is time-consuming.
 
 # -------------------------------------------------------------------------
 
