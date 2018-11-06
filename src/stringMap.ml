@@ -28,3 +28,12 @@ let restrict domain map =
 
 let domain map =
   fold (fun key _ acu -> StringSet.add key acu) map StringSet.empty
+
+let multiple_add k v m =
+  let vs =
+    try
+      find k m
+    with Not_found ->
+      []
+  in
+  add k (v :: vs) m
