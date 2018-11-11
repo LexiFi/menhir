@@ -21,6 +21,8 @@ DEMOS := \
   calc-inspection \
   generate-printers \
   calc-dune \
+  calc-new-syntax-dune \
+  calc-ast-dune \
   calc-param-dune \
   calc-two-dune \
   calc-incremental-dune \

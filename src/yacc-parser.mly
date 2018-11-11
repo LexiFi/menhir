@@ -14,10 +14,11 @@
 /* This is the crude version of the parser. It is meant to be processed
    by ocamlyacc. Its existence is necessary for bootstrapping. It is kept
    in sync with [fancy-parser], with a few differences:
-   0.  [yacc-parser] produces dummy position information;
+   0. [yacc-parser] produces dummy position information;
    1. [fancy-parser] exploits many features of Menhir;
    2. [fancy-parser] performs slightly more refined error handling;
-   3. [fancy-parser] supports anonymous rules. */
+   3. [fancy-parser] supports anonymous rules.
+   4. [fancy-parser] supports the new rule syntax. */
 
 %{
 
@@ -33,8 +34,10 @@ open Positions
 %token <Stretch.t> HEADER
 %token <Stretch.ocamltype> OCAMLTYPE
 %token <Stretch.t Lazy.t> PERCENTPERCENT
-%token <Settings.dollars -> Syntax.identifier option array -> Action.t> ACTION
+%token <Syntax.raw_action> ACTION
 %token <Syntax.attribute> ATTRIBUTE GRAMMARATTRIBUTE
+/* For the new rule syntax: */
+%token LET TILDE UNDERSCORE COLONEQUAL EQUALEQUAL
 %start grammar
 %type <ParserAux.early_producer> producer
 %type <ParserAux.early_production> production

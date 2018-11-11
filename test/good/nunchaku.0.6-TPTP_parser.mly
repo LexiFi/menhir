@@ -469,8 +469,8 @@ defined_term:
   | t=defined_atomic_term { t }
 
 defined_atom:
-  | _=INTEGER { Utils.not_implemented "TPTP: cannot handle integer" }
-  | _=RATIONAL { Utils.not_implemented "TPTP: cannot handle rational" }
+  | INTEGER { Utils.not_implemented "TPTP: cannot handle integer" }
+  | RATIONAL { Utils.not_implemented "TPTP: cannot handle rational" }
   | REAL {
       let loc = L.mk_pos $startpos $endpos in
       Parsing_utils.parse_error_ ~loc "TPTP: cannot handle real numbers"

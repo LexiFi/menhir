@@ -436,6 +436,16 @@ rule main = parse
     { STAR }
 | "+"
     { PLUS }
+| "~"
+    { TILDE }
+| "_"
+    { UNDERSCORE }
+| ":="
+    { COLONEQUAL }
+| "=="
+    { EQUALEQUAL }
+| "let"
+    { LET }
 | (lowercase identchar *) as id
     { if Hashtbl.mem reserved id then
         error2 lexbuf "this is an OCaml reserved word."

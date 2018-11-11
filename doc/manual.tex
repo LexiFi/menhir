@@ -324,12 +324,20 @@ number and exit.
 
 \section{Lexical conventions}
 
-A semicolon character (\kw{;}) may appear after a declaration
-(\sref{sec:decls}), after a rule (\sref{sec:rules}), and after each producer
-inside a production (\sref{sec:producers}). All of these semicolons are
-optional. The semicolon character is not allowed to appear anywhere else. This
-is in contrast with \ocamlyacc, which views semicolons as insignificant,
-just like whitespace.
+A semicolon character (\kw{;}) \emph{may} appear after a declaration
+(\sref{sec:decls}).
+
+An old-style rule (\sref{sec:old:rules}) \emph{may} be terminated with a
+semicolon. Also, within an old-style rule, each producer
+(\sref{sec:producers}) \emph{may} be terminated with a semicolon.
+
+A new-style rule (\sref{sec:new:rules}) \emph{must not} be terminated with a
+semicolon. Within such a rule, the elements of a sequence \emph{must} be
+separated with semicolons.
+
+Semicolons are not allowed to appear anywhere except in the places mentioned
+above. This is in contrast with \ocamlyacc, which views semicolons as
+insignificant, just like whitespace.
 
 Identifiers (\nt{id}) coincide with \ocaml identifiers, except they are not
 allowed to contain the quote (\kw{'}) character. Following
@@ -353,6 +361,8 @@ must be fully qualified.
 
 \section{Syntax of grammar specifications}
 
+\newcommand{\modifier}{(\,\dquestion \metachoice \dplus \metachoice \dstar\kern-.3mm)}
+
 \begin{figure}
 \begin{center}
 \begin{tabular}{r@{}c@{}l}
@@ -375,13 +385,17 @@ must be fully qualified.
 && \dattribute \sepspacelist{\nt{actual}} \sepspacelist{\nt{attribute}} \\
 && \kw{\%} \nt{attribute} \\ % a grammar-wide attribute
 && \donerrorreduce \sepspacelist{\nt{lid}} \\
+\nt{attribute} \is
+    \kw{[@} \nt{name} \nt{payload} \kw{]}
+\\[4mm]
 
+\emph{old syntax} ---
 \nt{rule} \is
    \optional{\dpublic} \optional{\dinline}
    \nt{lid}
-   \optional{\dlpar\sepcommalist{\nt{id}}\drpar}
+   \oparams{\nt{id}}
    \deuxpoints
-   \optional{\barre} \seplist{\ \barre}{\nt{group}} \\
+   \precseplist\barre{\nt{group}} \\
 
 \nt{group} \is
    \seplist{\ \barre}{\nt{production}}
@@ -395,31 +409,86 @@ must be fully qualified.
    \optional{\nt{lid} \dequal} \nt{actual} \\
 
 \nt{actual} \is
-   \nt{id} \optional{\dlpar\sepcommalist{\nt{actual}}\drpar} \\
-&& \nt{actual} \optional{\dquestion \barre \dplus \barre \dstar} \\
+   \nt{id} \oparams{\nt{actual}} \\
+&& \nt{actual} \modifier \\
 && \seplist{\ \barre}{\nt{group}} % not really allowed everywhere
+\\[4mm]
+
+\emph{new syntax} ---
+\nt{rule} \is
+  \optional{\dpublic}
+  \dlet
+  \nt{lid}
+  \oparams{\nt{id}}
+  (\,\dcolonequal \metachoice \dequalequal\kern-.2mm)
+  \expression
 \\
+\expression \is
+  % a choice between sequence expressions:
+  \precseplist\barre\expression
+\\&&
+  % a sequence expression:
+  \optional{\pattern \dequal{}} \expression \dsemi \expression
+\\&&
+  % a symbol expression:
+  \nt{id} \oparams{\expression}
+\\&&
+  % a symbol expression:
+  \expression \modifier
+\\&&
+  % an action expression:
+  \daction
+  \optional {\dprec \nt{id}}
+    % %prec is in fact allowed to appear before the semantic action,
+    % but this is not documented.
+\\&&
+  % an action expression:
+  \dpfaction{\nt{\ocaml id}}
+  \optional {\dprec \nt{id}}
+\\
+\pattern \is
+  \nt{lid}
+\,\metachoice\,
+  \dunderscore
+\,\metachoice\,
+  \dtilde
+\,\metachoice\,
+  \tuple\pattern
 
-\nt{attribute} \is
-    \kw{[@} \nt{name} \nt{payload} \kw{]}
-
+% The places where attributes can be attached are not shown in this
+% figure. This is intentional; let's avoid pollution. Attributes are
+% described separately.
 \end{tabular}
 \end{center}
 \caption{Syntax of grammar specifications}
 \label{fig:syntax}
 \end{figure}
 
-The syntax of grammar specifications appears in \fref{fig:syntax}. (For
-compatibility with \ocamlyacc, some specifications that do not fully adhere to
-this syntax are also accepted.) Attributes are not documented in
-\fref{fig:syntax}: see \sref{sec:attributes}.
-
+The syntax of grammar specifications appears in \fref{fig:syntax}.
+The places where attributes can be attached are not shown; they
+are documented separately (\sref{sec:attributes}).
+%
+% (For compatibility with \ocamlyacc, some specifications that do not fully
+% adhere to this syntax are also accepted.)
+%
+A grammar specification begins with a sequence of declarations
+(\sref{sec:decls}), ended by a mandatory \percentpercent keyword.
+%
+Following this keyword, a sequence of rules is expected.
+Each rule defines a nonterminal symbol~\nt{lid},
+whose name must begin with a lowercase letter.
+%
+% In reality, in the old syntax, this is enforced only for start symbols.
+% In the new syntax, this is enforced for all symbols.
+%
+% A rule can also *extend* a symbol, but let's not mention that here.
+%
+A rule is expressed either in the ``old syntax'' (\sref{sec:old:rules}) or in the
+``new syntax'' (\sref{sec:new:rules}), which is slightly more elegant and
+powerful.
 
 \subsection{Declarations}
 \label{sec:decls}
-
-A specification file begins with a sequence of declarations, ended by a
-mandatory \percentpercent keyword.
 
 \subsubsection{Headers}
 \label{sec:decls:headers}
@@ -625,17 +694,11 @@ $\donerrorreduce\;\nt{lid}_1 \ldots \nt{lid}_n$, the symbols $\nt{lid}_1, \ldots
 \donerrorreduce declarations, and lower ``on-error-reduce-priority''
 than those listed in later \donerrorreduce declarations.
 
-\subsection{Rules}
-\label{sec:rules}
+\subsection{Rules---old syntax}
+\label{sec:old:rules}
 
-Following the mandatory \percentpercent keyword, a sequence of rules is
-expected. Each rule defines a nonterminal symbol~\nt{id}.
-%
-(It is recommended that the name of a nonterminal symbol begin with a lowercase
-letter, so it falls in the category \nt{lid}. This is in fact mandatory for the
-start symbols.)
 In its simplest
-form, a rule begins with the nonterminal symbol \nt{id},
+form, a rule begins with the nonterminal symbol \nt{lid},
 followed by a colon character (\deuxpoints),
 and continues with a sequence of production groups
 (\sref{sec:productiongroups}). Each production group is preceded with a
@@ -643,7 +706,7 @@ vertical bar character (\barre); the very first bar is optional. The meaning
 of the bar is choice: the nonterminal symbol \nt{id} develops to either of the
 production groups. We defer explanations of the keyword \dpublic
 (\sref{sec:split}), of the keyword \dinline (\sref{sec:inline}), and of the
-optional formal parameters $\dlpar\sepcommalist{\nt{id}}\drpar$
+optional formal parameters $\tuple{\nt{id}}$
 (\sref{sec:templates}).
 
 \subsubsection{Production groups}
@@ -721,7 +784,7 @@ keyword (\kw{\$1}, etc.).
 In its simplest form, an actual is just a terminal or nonterminal symbol
 $\nt{id}$. If it is a parameterized non-terminal symbol (see
 \sref{sec:templates}), then it should be applied:
-$\nt{id}\dlpar\sepcommalist{\nt{actual}}\drpar$.
+$\nt{id}\tuple{\nt{actual}}$.
 
 An actual may be followed with a modifier (\dquestion, \dplus, or
 \dstar). This is explained further on (see \sref{sec:templates} and
@@ -752,6 +815,206 @@ where the non-terminal symbol \nt{expression\_SEMICOLON} is chosen fresh and is 
 \newprod \basic{e} = \nt{expression}; \basic{SEMICOLON} \dpaction{\basic{e}}
 \end{tabular}
 \end{quote}
+
+\subsection{Rules---new syntax}
+\label{sec:new:rules}
+
+Please be warned that \textbf{the new syntax is considered experimental}
+and is subject to change in the future.
+% TEMPORARY à supprimer un jour...
+
+In its simplest form,
+a rule takes the form
+\dlet \nt{lid} \dcolonequal \expression.
+%
+Its left-hand side \nt{lid} is a nonterminal symbol;
+its right-hand side is an expression.
+%
+Such a rule defines an ordinary nonterminal symbol,
+while the alternate form
+\dlet \nt{lid} \dequalequal \expression
+defines an \dinline nonterminal symbol (\sref{sec:inline}),
+that is, a macro.
+%
+A rule can be preceded with the keyword \dpublic (\sref{sec:split})
+and can be parameterized with a tuple of formal parameters
+$\tuple{\nt{id}}$ (\sref{sec:templates}).
+%
+The various forms of expressions, listed in \fref{fig:syntax}, are:
+%
+\begin{itemize}
+\item
+  A \textbf{choice} between several expressions,
+  % \precseplist\barre\expression.
+  \optional{\barre}
+  \expressionsub{1} \barre ${}\ldots{}$ \barre\expressionsub{n}.
+  The leading bar is optional.
+
+\item
+  A \textbf{sequence} of two expressions,
+  \pattern \dequal \expressionsub{1} \dsemi \expressionsub{2}.
+  The semantic value produced by \expressionsub{1}
+  is decomposed according to the pattern \pattern.
+  The \ocaml variables introduced by \pattern
+  may appear in a semantic action
+  that ends the sequence \expressionsub{2}.
+
+\item
+  A sequence \dtilde \dequal \nt{id}${}_1$ \dsemi \expressionsub{2},
+  which is sugar for \nt{id}${}_1$ \dequal \nt{id}${}_1$ \dsemi
+  \expressionsub{2}.
+  This is a \textbf{pun}.
+  % This is a special case of the previous form,
+  % yet it receives special treatment; this is the
+  % only case where ~ represents a deterministically-chosen name.
+
+\item
+  A sequence \expressionsub{1} \dsemi \expressionsub{2},
+  which is sugar for
+  \dunderscore \dequal \expressionsub{1} \dsemi \expressionsub{2}.
+
+\item
+  A \textbf{symbol} \nt{id}, possibly applied to
+  a tuple of expressions
+  \dlpar \expressionsub{1},\ ${}\ldots{}$,\ \expressionsub{n} \drpar.
+  It is worth noting that such an expression \emph{can} form the
+  end of a sequence: \nt{id} at the end of a sequence stands for
+  \nt{x} \dequal \nt{id} \dsemi \dpaction{\nt{x}}
+  for some fresh variable \nt{x}.
+  Thus, a sequence need not end with a semantic action.
+
+\item
+  An expression followed with \dquestion, \dplus, or \dstar. This is sugar
+  for the previous form: see \sref{sec:templates} and \fref{fig:sugar}.
+
+\item
+  A \textbf{semantic action} \daction,
+  possibly followed with a precedence annotation \dprec \nt{id}.
+  This \ocaml code can refer to the variables that have been bound
+  earlier in the sequence that this semantic action ends.
+  These include all variables named by the user as well as all
+  variables introduced by a $\dtilde$ pattern as part of a pun.
+  % (but not variables introduced by deep ~ patterns)
+  The notation $\kw{\$}i$, where $i$ is an integer, is forbidden.
+
+\item
+  A \textbf{point-free semantic action} \dpfaction{\nt{\ocaml id}},
+  possibly followed with a precedence annotation \dprec~\nt{id}.
+  The \ocaml identifier \nt{id} must denote a function or a data
+  constructor. It is applied to a tuple of the variables that have
+  been bound earlier in the sequence that this semantic action ends.
+  Thus, $\dpfaction{\,\nt{id}\,}$ is sugar for
+  $\dpaction{\,\nt{id}\;\,(x_1, \ldots, x_n)\,}$,
+  where $x_1, \ldots, x_n$ are the variables bound earlier.
+  These include all variables named by the user as well as all
+  variables introduced by a $\dtilde$ pattern.
+
+\item
+  An identity semantic action \dpfidentityaction. This is sugar for
+  \dpfaction{\nt{identity}}, where \nt{identity} is \ocaml's
+  identity function.
+  Therefore, it is sugar for
+  $\dpaction{\,(x_1, \ldots, x_n)\,}$,
+  where $x_1, \ldots, x_n$ are the variables bound earlier.
+\end{itemize}
+
+\begin{comment}
+% fp: not sure if this paragraph is helpful.
+To some degree, an expression is analogous to an \ocaml expression: it returns
+an \ocaml value, and as a side effect, recognizes and consumes a fragment of
+the input. In particular, a sequence
+%
+\pattern \dequal \expressionsub{1} \dsemi \expressionsub{2}
+%
+is roughly analogous to an \ocaml sequence \verb+let p = e1 in e2+.
+% terminal symbol = recognize and consume one input symbol
+% nonterminal symbol = procedure call or macro invocation (if %inline)
+% semantic action = OCaml code insertion
+\end{comment}
+
+The syntax of expressions, as presented in \fref{fig:syntax}, seems more
+permissive than it really is. In reality, a choice cannot be nested inside a
+sequence;
+% (either on the left or on the right)
+a sequence cannot be nested in the left-hand side of a sequence; a semantic
+action cannot appear in the left-hand side of a sequence. (Thus, there is a
+stratification in three levels: choice expressions, sequence expressions, and
+atomic expressions, which corresponds roughly to the stratification of rules,
+productions, and producers in the old syntax.)
+%
+Furthermore, an expression between parentheses
+$\dlpar \expression \drpar$ is \emph{not} a valid expression.
+To surround an expression with parentheses, one must write either
+$\nt{midrule}\, \dlpar \expression \drpar$ or
+$\nt{endrule}\, \dlpar \expression \drpar$;
+see \sref{sec:library} and \fref{fig:standard}.
+
+When a complex expression (e.g., a choice or a sequence) is placed
+in parentheses, as in \nt{id}\,\dlpar\expression\drpar, this is
+equivalent to using $\nt{id}\,\dlpar\nt{s}\drpar$, where the fresh
+symbol~\nt{s} is declared as a synonym for this expression, via the
+declaration
+\dlet \nt{s} \dequalequal \expression.
+This idiom is also known as an anonymous rule (\sref{sec:actual}).
+
+\paragraph{Examples}
+
+As an example of a rule in the new syntax,
+the parameterized nonterminal symbol \nt{option},
+which is part of Menhir's standard library (\sref{sec:library}),
+can be defined as follows:
+%
+\begin{quote}
+  \begin{tabular}{l}
+    \dlet \nt{option}(\nt{x}) \dcolonequal \\
+    \quad \barre \phantom{\nt{x} \dequal \nt{x} \dsemi{}} \dpaction{\nt{None}} \\
+    \quad \barre          \nt{x} \dequal \nt{x} \dsemi{}  \dpaction{\nt{Some x}}
+  \end{tabular}
+\end{quote}
+%
+Using a pun, it can also be written as follows:
+%
+\begin{quote}
+  \begin{tabular}{l}
+    \dlet \nt{option}(\nt{x}) \dcolonequal \\
+    \quad \barre \phantom{\dtilde \dequal \nt{x} \dsemi{}} \dpaction{\nt{None}} \\
+    \quad \barre          \dtilde \dequal \nt{x} \dsemi{}  \dpaction{\nt{Some x}}
+  \end{tabular}
+\end{quote}
+%
+Using a pun and a point-free semantic action,
+it can also be expressed as follows:
+%
+\begin{quote}
+  \begin{tabular}{l}
+    \dlet \nt{option}(\nt{x}) \dcolonequal \\
+    \quad \barre \phantom{\dtilde \dequal \nt{x} \dsemi{}} \dpaction{\nt{None}} \\
+    \quad \barre          \dtilde \dequal \nt{x} \dsemi{}  \dpfaction{\nt{Some}}
+  \end{tabular}
+\end{quote}
+%
+As another example, the parameterized symbol $\nt{delimited}$,
+also part of Menhir's standard library (\sref{sec:library}),
+can be defined in the new syntax as follows:
+%
+\begin{quote}
+  \begin{tabular}{l}
+    \dlet \nt{delimited}(\nt{opening}, \nt{x}, \nt{closing}) \dequalequal \\
+    \quad \nt{opening} \dsemi
+          \dtilde \dequal \nt{x} \dsemi
+          \nt{closing} \dsemi
+          \dpfidentityaction
+  \end{tabular}
+\end{quote}
+%
+The use of $\dequalequal$ indicates that this is a macro,
+i.e., an \dinline nonterminal symbol (see \sref{sec:inline}).
+The identity semantic action \dpfidentityaction is here synonymous with
+\dpaction{\nt{x}}.
+
+Other illustrations of the new syntax can be found in
+the directories \distrib{demos/calc-new-syntax-dune}
+and \distrib{demos/calc-ast-dune}.
 
 \section{Advanced features}
 
@@ -850,7 +1113,7 @@ abstract: it stands for an arbitrary terminal or nonterminal symbol. The
 definition is made public, so \nt{option} can be referred to within client
 modules.
 
-A client that wishes to use \nt{option} simply refers to it, together with
+A client who wishes to use \nt{option} simply refers to it, together with
 an actual parameter -- a symbol that is intended to replace \basic{X}. For
 instance, here is how one might define a sequence of declarations, preceded
 with optional commas:

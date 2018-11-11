@@ -38,6 +38,12 @@ let from_stretch s = {
   keywords  = KeywordSet.of_list s.Stretch.stretch_keywords
 }
 
+let from_il_expr e = {
+  expr      = e;
+  filenames = [];
+  keywords  = KeywordSet.empty;
+}
+
 (* Defining a keyword in terms of other keywords. *)
 
 let define keyword keywords f action =
@@ -58,6 +64,15 @@ let compose x a1 a2 =
     expr      = CodeBits.blet ([ IL.PVar x, a1.expr ], a2.expr);
     keywords  = KeywordSet.union a1.keywords a2.keywords;
     filenames = a1.filenames @ a2.filenames;
+  }
+
+(* Binding an OCaml pattern to an OCaml variable in a semantic action. *)
+
+let bind p x a =
+  {
+    expr      = CodeBits.blet ([ p, IL.EVar x ], a.expr);
+    keywords  = a.keywords;
+    filenames = a.filenames;
   }
 
 (* Substitutions, represented as association lists.

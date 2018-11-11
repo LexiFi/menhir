@@ -20,6 +20,10 @@ type t
     feature is used during the processing of the %inline keyword. *)
 val compose : string -> t -> t -> t
 
+(** [bind p x a] binds the OCaml pattern [p] to the OCaml variable [x] in the
+   semantic action [a]. Therefore, it builds the action [let p = x in a]. *)
+val bind: IL.pattern -> string -> t -> t
+
 (* [define keyword keywords f action] defines away the keyword [keyword].
    It is removed from the set of keywords of this semantic action; the
    set [keywords] is added in its place. The body of the semantic action
@@ -65,6 +69,9 @@ val keywords: t -> KeywordSet.t
 
 (** [from_stretch s] builds an action out of a textual piece of code. *)
 val from_stretch: Stretch.t -> t
+
+(** [from_il_expr] converts an [IL] expression into a semantic action. *)
+val from_il_expr: IL.expr -> t
 
 (** Test whether the keyword [$syntaxerror] is used in the action. *)
 val has_syntaxerror: t -> bool

@@ -14,7 +14,7 @@
 (* This module provides utilities that are shared by the two versions
    of the parser. *)
 
-open Positions
+open Stretch
 open Syntax
 
 (* A few types used in the parser. *)
@@ -84,4 +84,14 @@ val override: Positions.t -> 'a option -> 'a option -> 'a option
 (* [producer_names producers] returns an array [names] such that
    [names.(idx) = None] if the (idx + 1)-th producer is unnamed
    and [names.(idx) = Some id] if it is called [id]. *)
+
 val producer_names: early_producers -> identifier option array
+
+(* Check that a stretch contains an OCaml lowercase or uppercase identifier,
+   and convert this stretch to a string. The stretch may be empty, too. *)
+
+val validate_pointfree_action: ocamltype -> Stretch.t option
+
+(* Test whether a string is a valid OCaml lowercase identifier. *)
+
+val valid_ocaml_identifier: identifier located -> bool

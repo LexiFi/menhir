@@ -19,6 +19,9 @@
    that declarations are organized in a more useful way and a number of
    well-formedness checks have been performed. *)
 
+type 'a located =
+    'a Positions.located
+
 (* ------------------------------------------------------------------------ *)
 
 (* Terminals and nonterminal symbols are strings. *)
@@ -77,7 +80,7 @@ type action =
    payload is an uninterpreted stretch of source text. *)
 
 type attribute =
-    string Positions.located * Stretch.t
+    string located * Stretch.t
 
 type attributes =
     attribute list
@@ -132,7 +135,7 @@ type token_properties =
    If there is one, it is a symbol name. See [ParserAux]. *)
 
 type branch_prec_annotation =
-    symbol Positions.located option
+    symbol located option
 
 (* ------------------------------------------------------------------------ *)
 
@@ -152,15 +155,19 @@ type on_error_reduce_level =
   branch_production_level (* we re-use the above type, to save code *)
 
 (* ------------------------------------------------------------------------ *)
+(* ------------------------------------------------------------------------ *)
+
+(* The old rule syntax. Although old, still used internally. The new syntax
+   is translated down to it. *)
 
 (* A parameter is either just a symbol or an application of a symbol to a
    nonempty tuple of parameters. Before anonymous rules have been eliminated,
    it can also be an anonymous rule, represented as a list of branches. *)
 
 type parameter =
-  | ParameterVar of symbol Positions.located
-  | ParameterApp of symbol Positions.located * parameters
-  | ParameterAnonymous of parameterized_branch list Positions.located
+  | ParameterVar of symbol located
+  | ParameterApp of symbol located * parameters
+  | ParameterAnonymous of parameterized_branch list located
 
 and parameters =
     parameter list
@@ -171,7 +178,7 @@ and parameters =
    it could be [e = expr], for instance. It carries a number of attributes. *)
 
 and producer =
-    identifier Positions.located * parameter * attributes
+    identifier located * parameter * attributes
 
 (* ------------------------------------------------------------------------ *)
 
@@ -201,6 +208,76 @@ type parameterized_rule =
       pr_branches          : parameterized_branch list;
     }
 
+(* ------------------------------------------------------------------------ *)
+(* ------------------------------------------------------------------------ *)
+
+(* The new rule syntax. *)
+
+(* In the user's eyes, this replaces the old rule syntax, which corresponds to
+   the types [parameter], [producer], [parameterized_branch], and
+   [parameterized_rule] above. *)
+
+(* Internally, the new rule syntax is translated down to the old rule syntax;
+   see [NewRuleSyntax]. This is done on the fly during parsing. *)
+
+type pattern =
+  | SemPatVar of identifier located
+  | SemPatWildcard
+  | SemPatTilde of Positions.t
+  | SemPatTuple of pattern list
+  (* Patterns: as in the manual. *)
+
+type raw_action =
+  Settings.dollars -> identifier option array -> action
+  (* Ugly type produced by the lexer for an ACTION token. *)
+
+type expression =
+  choice_expression located
+  (* A toplevel expression is a choice expression. *)
+
+and choice_expression =
+  | EChoice of branch list
+  (* A choice expression is a list of branches. *)
+
+and branch =
+  | Branch of seq_expression * branch_production_level
+  (* A branch is a sequence expression,
+     plus an ugly [branch_production_level]. *)
+
+and seq_expression =
+  raw_seq_expression located
+
+and raw_seq_expression =
+  | ECons of pattern * symbol_expression * seq_expression
+  | ESingleton of symbol_expression
+  | EAction of extended_action * branch_prec_annotation
+  (* A sequence is either a cons [p = e1; e2]
+     or a lone symbol expression [e]
+     or a semantic action. *)
+
+and symbol_expression =
+  | ESymbol of symbol located * expression list * attributes
+  (* A symbol expression is a symbol,
+     possibly accompanied with actual parameters and attributes. *)
+
+and extended_action =
+  | XATraditional of raw_action
+  | XAPointFree of Stretch.t
+  (* A semantic action is either traditional { ... } or point-free <id>.
+     In the latter case, [id] is either the empty string or an OCaml
+     identifier. *)
+
+type rule =
+  {
+    rule_public: bool;
+    rule_inline: bool;
+    rule_lhs: symbol located;
+    rule_attributes: attributes;
+    rule_formals: symbol located list;
+    rule_rhs: expression;
+  }
+
+(* ------------------------------------------------------------------------ *)
 (* ------------------------------------------------------------------------ *)
 
 (* A declaration. (Only before joining.) *)
@@ -251,10 +328,11 @@ type partial_grammar =
     {
       pg_filename          : filename;
       pg_postlude          : postlude option;
-      pg_declarations      : declaration Positions.located list;
+      pg_declarations      : declaration located list;
       pg_rules             : parameterized_rule list;
     }
 
+(* ------------------------------------------------------------------------ *)
 (* ------------------------------------------------------------------------ *)
 
 (* A grammar. (Only after joining.) *)
@@ -274,7 +352,7 @@ type partial_grammar =
       p_postludes          : postlude list;
       p_parameters         : Stretch.t list;
       p_start_symbols      : Positions.t StringMap.t;
-      p_types              : (parameter * Stretch.ocamltype Positions.located) list;
+      p_types              : (parameter * Stretch.ocamltype located) list;
       p_tokens             : token_properties StringMap.t;
       p_on_error_reduce    : (parameter * on_error_reduce_level) list;
       p_grammar_attributes : attributes;

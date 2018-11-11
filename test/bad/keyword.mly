@@ -2,5 +2,4 @@
   %start<unit> file
   %%
 
-  file : let=INT { ignore(let) }
-
+  file : with=INT { ignore(with) }

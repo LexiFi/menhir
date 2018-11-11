@@ -1,6 +1,16 @@
 # Changes
 
-## 2018/11/06
+## 2018/11/12
+
+* In `.mly` files, a new syntax for rules has been introduced, which is
+  slightly more pleasant than the old syntax. (A rule is the definition of a
+  nonterminal symbol.) The old syntax remains available; the user chooses
+  between the two syntaxes on a per-rule basis. The new syntax is fully
+  documented in the manual;
+  [a brief summary of the differences](doc/new-rule-syntax.md)
+  with respect to the old syntax is also available.
+  **The new syntax is considered experimental**
+  and is subject to change in the near future.
 
 * In the Coq back-end, avoid pattern-matching at type `int31`,
   which will disappear in future versions of Coq.

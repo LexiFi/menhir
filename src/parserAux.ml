@@ -12,6 +12,7 @@
 (******************************************************************************)
 
 open Positions
+open Stretch
 open Syntax
 
 type early_producer =
@@ -116,3 +117,26 @@ let producer_names (producers : early_producers) =
   producers
   |> List.map (fun (_, oid, _, _) -> Option.map Positions.value oid)
   |> Array.of_list
+
+(* Check that a stretch contains an OCaml lowercase or uppercase identifier,
+   and convert this stretch to a string. The stretch may be empty, too. *)
+
+let validate_pointfree_action (ty : ocamltype) : Stretch.t option =
+  match ty with
+  | Inferred _ ->
+      assert false
+  | Declared stretch ->
+      let s = stretch.stretch_raw_content in
+      if Lexpointfree.valid_pointfree_action (Lexing.from_string s) then
+        Some stretch
+      else
+        None
+
+(* Test whether a string is a valid OCaml lowercase identifier. *)
+
+(* [x] should be a LID, UID, or QID, produced by Menhir's main lexer.
+   Testing its first character should suffice, but we are more cautious
+   and validate it thoroughly. *)
+
+let valid_ocaml_identifier (x : identifier located) : bool =
+  Lexpointfree.valid_ocaml_identifier (Lexing.from_string (Positions.value x))

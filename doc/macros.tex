@@ -2,16 +2,29 @@
 
 \let\nt\textit % Nonterminal.
 \newcommand{\is}{& ${} ::= {}$ &}
+\newcommand{\newprod}{\\\hspace{1cm}\barre\hspace{2mm}}
+\newcommand{\phaprod}{\\\hspace{1cm}\phantom\barre\hspace{2mm}}
+% Options and choices.
 \newcommand{\optional}[1]{%
   \ifmmode [\,#1\,]%
   \else    $[\,\text{#1}\,]$%
   \fi
-} % Option.
+}
+\newcommand{\metachoice}{$\,\mid\,$}
+% Lists.
 \newcommand{\seplist}[2]{#2#1${}\ldots{}$#1#2}
 \newcommand{\sepspacelist}[1]{\seplist{\ }{#1}}
 \newcommand{\sepcommalist}[1]{\seplist{,\ }{#1}}
-\newcommand{\newprod}{\\\hspace{1cm}\barre\hspace{2mm}}
-\newcommand{\phaprod}{\\\hspace{1cm}\phantom\barre\hspace{2mm}}
+\newcommand{\precseplist}[2]{%
+  \optional{#1} \seplist{\ #1}{#2}%
+}
+% Optional parameters.
+\newcommand{\tuple}[1]{\dlpar\sepcommalist{#1}\drpar}
+\newcommand{\oparams}[1]{\optional{\tuple{#1}}}
+% Some nonterminal symbols used in the grammar.
+\newcommand{\expression}{\nt{expression}\xspace}
+\newcommand{\expressionsub}[1]{\nt{expression}${}_{#1}$}
+\newcommand{\pattern}{\nt{pattern}\xspace}
 
 % Concrete syntax.
 
@@ -35,15 +48,23 @@
 \newcommand{\dattribute}{\kw{\%attribute}\xspace}
 \newcommand{\dpaction}[1]{\kw{\{} #1 \kw{\}}\xspace}
 \newcommand{\daction}{\dpaction{\textit{\ocaml code}}\xspace}
+\newcommand{\dpfaction}[1]{\kw{<} #1 \kw{>}\xspace}
+\newcommand{\dpfidentityaction}{\kw{<>}\xspace}
 \newcommand{\dprec}{\kw{\%prec}\xspace}
-\newcommand{\dequal}{\kw{=}\xspace}
+\newcommand{\dequal}{\kw{\small =}\xspace}
 \newcommand{\dquestion}{\kw{?}\xspace}
 \newcommand{\dplus}{\raisebox{2pt}{\kw{\small +}}\xspace}
+\newcommand{\dcolonequal}{\kw{\small :=}\xspace}
+\newcommand{\dequalequal}{\kw{\small ==}\xspace}
 \newcommand{\dstar}{\kw{*}\xspace}
 \newcommand{\dlpar}{\kw{(}\,\xspace}
 \newcommand{\drpar}{\,\kw{)}\xspace}
 \newcommand{\eos}{\kw{\#}\xspace}
 \newcommand{\dnewline}{\kw{\textbackslash n}\xspace}
+\newcommand{\dlet}{\kw{let}\xspace}
+\newcommand{\dsemi}{\kw{;}\xspace}
+\newcommand{\dunderscore}{\kw{\_}\xspace}
+\newcommand{\dtilde}{\raisebox{-4pt}{\kw{\textasciitilde}}\xspace}
 
 % Stylistic conventions.
 
@@ -60,6 +81,7 @@
 \newcommand{\menhirlibconvert}{\repo{src/Convert.mli}{\texttt{MenhirLib.Convert}}\xspace}
 \newcommand{\menhirlibincrementalengine}{\repo{src/IncrementalEngine.ml}{\texttt{MenhirLib.IncrementalEngine}}\xspace}
 \newcommand{\standardmly}{\repo{src/standard.mly}{\texttt{standard.mly}}\xspace}
+\newcommand{\distrib}[1]{\repo{#1}{\texttt{#1}}}
 
 % Links to CompCert's repository.
 
@@ -96,10 +118,6 @@
 \newcommand{\automaton}{\texttt{.automaton}\xspace}
 \newcommand{\conflicts}{\texttt{.conflicts}\xspace}
 \newcommand{\dott}{\texttt{.dot}\xspace}
-
-% Files in the distribution.
-
-\newcommand{\distrib}[1]{\texttt{#1}}
 
 % Environments.
 
