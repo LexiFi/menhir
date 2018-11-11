@@ -280,9 +280,11 @@ reinstall:
 # For an explanation of mdl's error messages, see:
 # https://github.com/mivok/markdownlint/blob/master/docs/RULES.md
 
+MDFILES := *.md */*.md
+
 .PHONY: mdl
 mdl:
-	@ for f in *.md ; do \
+	@ for f in $(MDFILES) ; do \
 	  cp $$f $$f.bak && expand $$f.bak > $$f && rm $$f.bak ; \
 	done
-	@ mdl *.md */*.md
+	@ mdl $(MDFILES)
