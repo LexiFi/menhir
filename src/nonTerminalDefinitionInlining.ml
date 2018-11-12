@@ -97,19 +97,28 @@ let names (producers : producers) : StringSet.t =
     StringSet.add id ids
   ) StringSet.empty producers
 
+(* [fresh names x] returns a fresh name that is not in the set [names].
+   The new name is based on [x] in an unspecified way. *)
+let rec fresh names x =
+  if StringSet.mem x names then
+    let x =
+      (* Propose a new candidate name. A fairly arbitrary construction
+         can be used here; we just need it to produce an infinite sequence
+         of names, so that eventually we fall outside of [names]. We also
+         need it to produce reasonably concise names, as this construction
+         can be iterated several times in practice; I have observed up to
+         9 iterations in real-world grammars. *)
+      let x, n = ChopInlined.chop (Lexing.from_string x) in
+      let n = n + 1 in
+      Printf.sprintf "%s_inlined%d" x n
+    in
+    fresh names x
+  else
+    x
+
 (* Inline a grammar. The resulting grammar does not contain any definitions
    that can be inlined. *)
 let inline grammar =
-
-  (* This function returns a fresh name that begins with [prefix] (although
-     this is not essential!) and that is not in the set [names]. *)
-  let rec fresh names prefix =
-    if StringSet.mem prefix names then
-      let prefix = prefix ^ "'" in
-      fresh names prefix
-    else
-      prefix
-  in
 
   (* This table associates a color to each non terminal that can be expanded. *)
   let expanded_non_terminals =
@@ -162,11 +171,14 @@ let inline grammar =
     prefix, expand_rule nt p, nt, psym, suffix
 
   (* We have to rename the producers [producers] of the inlined production
-     if they clash with the names of the producers of the host branch [b]. *)
-  and rename_if_necessary b producers =
-
-    (* Compute the set of the names already in use in the host branch. *)
-    let used = names b.producers in
+     if they clash with the set [used] of the names used by the producers
+     of the host branch. (Note that [used] need not contain the name of the
+     producer that is inlined away.)
+     This function produces a pair of:
+     1. a substitution [phi], which represents the renaming that we have
+        performed, and which must be applied to the inner semantic action;
+     2. the renamed [producers]. *)
+  and rename (used : StringSet.t) producers: Action.subst * producers =
 
     (* Compute a renaming and the new names of the inlined producers. *)
     let phi, _used, producers' =
@@ -178,7 +190,7 @@ let inline grammar =
           StringSet.add x' used,
           { producer with producer_identifier = x' } :: producers
         else
-          (phi, used, producer :: producers)
+          (phi, StringSet.add x used, producer :: producers)
       ) ([], used, []) producers
     in
     phi, List.rev producers'
@@ -189,7 +201,9 @@ let inline grammar =
     try
       (* [c] is the identifier under which the callee is known. *)
       let prefix, p, nt, c, suffix = find_inline_producer b in
-      (* use_inline := true; *)
+      (* These are the names of the producers in the host branch,
+         minus the producer that is being inlined away. *)
+      let used = StringSet.union (names prefix) (names suffix) in
       (* Inline a branch of [nt] at position [prefix] ... [suffix] in
          the branch [b]. *)
       let inline_branch (pb : branch) : branch =
@@ -221,11 +235,11 @@ let inline grammar =
 
         (* Rename the producers of this branch if they conflict with
            the name of the host's producers. *)
-        let phi, inlined_producers = rename_if_necessary b pb.producers in
+        let phi, inlined_producers = rename used pb.producers in
 
         (* After inlining, the producers are as follows. *)
         let producers = prefix @ inlined_producers @ suffix in
-        (* For debugging: check each producer carries a unique name. *)
+        (* For debugging: check that each producer carries a unique name. *)
         let (_ : StringSet.t) = names producers in
 
         let index2id = index2id producers in

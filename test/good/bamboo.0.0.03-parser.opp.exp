@@ -127,11 +127,10 @@ file:
     {                              ( cs )}
 
 contract:
-  _1 = CONTRACT name = IDENT _1' = LPAR xs' = loption_separated_nonempty_list_COMMA_arg__ _3 = RPAR _4 = LBRACE css = list_case_ _6 = RBRACE
+  _1 = CONTRACT name = IDENT _1_inlined1 = LPAR xs = loption_separated_nonempty_list_COMMA_arg__ _3 = RPAR _4 = LBRACE css = list_case_ _6 = RBRACE
     {let args =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let xs =
-    let xs = xs' in
     let x =     ( xs ) in
         ( x )
   in
@@ -141,11 +140,10 @@ in
       ({ Syntax.contract_cases = css
        ; contract_name = name
        ; contract_arguments = args}) )}
-| _1 = EVENT name = IDENT _1' = LPAR xs' = loption_separated_nonempty_list_COMMA_event_arg__ _3 = RPAR _4 = SEMICOLON
+| _1 = EVENT name = IDENT _1_inlined1 = LPAR xs = loption_separated_nonempty_list_COMMA_event_arg__ _3 = RPAR _4 = SEMICOLON
     {let args =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let xs =
-    let xs = xs' in
     let x =     ( xs ) in
         ( x )
   in
@@ -170,11 +168,10 @@ block:
 case_header:
   _1 = DEFAULT
     {            ( Syntax.DefaultCaseHeader )}
-| _1 = CASE _2 = LPAR return_typ = typ name = IDENT _1' = LPAR xs' = loption_separated_nonempty_list_COMMA_arg__ _3 = RPAR _6 = RPAR
+| _1 = CASE _2 = LPAR return_typ = typ name = IDENT _1_inlined1 = LPAR xs = loption_separated_nonempty_list_COMMA_arg__ _3 = RPAR _6 = RPAR
     {let args =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let xs =
-    let xs = xs' in
     let x =     ( xs ) in
         ( x )
   in
@@ -186,12 +183,10 @@ in
       ; case_arguments = args
       }
     )}
-| _1 = CASE _2 = LPAR _3 = VOID name = IDENT _1' = LPAR xs' = loption_separated_nonempty_list_COMMA_arg__ _3' = RPAR _6 = RPAR
+| _1 = CASE _2 = LPAR _3 = VOID name = IDENT _1_inlined1 = LPAR xs = loption_separated_nonempty_list_COMMA_arg__ _3_inlined1 = RPAR _6 = RPAR
     {let args =
-  let _3 = _3' in
-  let _1 = _1' in
+  let (_3, _1) = (_3_inlined1, _1_inlined1) in
   let xs =
-    let xs = xs' in
     let x =     ( xs ) in
         ( x )
   in
@@ -257,9 +252,9 @@ sentence:
               )}
 | _1 = VOID _2 = SINGLE_EQ value = exp _4 = SEMICOLON
     {    ( Syntax.ExpSentence value )}
-| _1 = IF _2 = LPAR cond = exp _4 = RPAR s = sentence _6 = ELSE s' = sentence
+| _1 = IF _2 = LPAR cond = exp _4 = RPAR s = sentence _6 = ELSE s_inlined1 = sentence
     {let bodyF =
-  let s = s' in
+  let s = s_inlined1 in
                    ([s])
 in
 let bodyT =                  ([s]) in
@@ -272,9 +267,9 @@ let bodyT =                  ([s]) in
     {let bodyF =                  ([s]) in
 let bodyT =               (b) in
                                                                  ( Syntax.IfThenElse (cond, bodyT, bodyF) )}
-| _1 = IF _2 = LPAR cond = exp _4 = RPAR b = block _6 = ELSE b' = block
+| _1 = IF _2 = LPAR cond = exp _4 = RPAR b = block _6 = ELSE b_inlined1 = block
     {let bodyF =
-  let b = b' in
+  let b = b_inlined1 in
                 (b)
 in
 let bodyT =               (b) in
@@ -285,12 +280,11 @@ let bodyT =               (b) in
 | _1 = IF _2 = LPAR cond = exp _4 = RPAR b = block
     {let body =               (b) in
                                             ( Syntax.IfThenOnly (cond, body) )}
-| _1 = LOG name = IDENT _1' = LPAR xs' = loption_separated_nonempty_list_COMMA_exp__ _3 = RPAR _4 = SEMICOLON
+| _1 = LOG name = IDENT _1_inlined1 = LPAR xs = loption_separated_nonempty_list_COMMA_exp__ _3 = RPAR _4 = SEMICOLON
     {let lst =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let lst =
     let xs =
-      let xs = xs' in
       let x =     ( xs ) in
           ( x )
     in
@@ -346,11 +340,10 @@ exp:
     {    ( Syntax.IdentifierExp s, () )}
 | _1 = LPAR e = exp _3 = RPAR
     {    ( Syntax.ParenthExp e, () )}
-| s = IDENT _1 = LPAR xs' = loption_separated_nonempty_list_COMMA_exp__ _3 = RPAR
+| s = IDENT _1 = LPAR xs = loption_separated_nonempty_list_COMMA_exp__ _3 = RPAR
     {let lst =
   let lst =
     let xs =
-      let xs = xs' in
       let x =     ( xs ) in
           ( x )
     in
@@ -359,12 +352,11 @@ exp:
                       (lst)
 in
                               ( Syntax.FunctionCallExp {Syntax.call_head = s; call_args = lst }, () )}
-| _1 = DEPLOY s = IDENT _1' = LPAR xs' = loption_separated_nonempty_list_COMMA_exp__ _3 = RPAR m = msg_info
+| _1 = DEPLOY s = IDENT _1_inlined1 = LPAR xs = loption_separated_nonempty_list_COMMA_exp__ _3 = RPAR m = msg_info
     {let lst =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let lst =
     let xs =
-      let xs = xs' in
       let x =     ( xs ) in
           ( x )
     in
@@ -376,11 +368,10 @@ in
 | contr = exp _2 = DOT _3 = DEFAULT _4 = LPAR _5 = RPAR m = msg_info
     {    ( Syntax.SendExp { Syntax.send_head_contract = contr; send_head_method = None
                        ; send_args = []; send_msg_info = m }, () )}
-| contr = exp _2 = DOT mtd = IDENT _1 = LPAR xs' = loption_separated_nonempty_list_COMMA_exp__ _3 = RPAR m = msg_info
+| contr = exp _2 = DOT mtd = IDENT _1 = LPAR xs = loption_separated_nonempty_list_COMMA_exp__ _3 = RPAR m = msg_info
     {let lst =
   let lst =
     let xs =
-      let xs = xs' in
       let x =     ( xs ) in
           ( x )
     in

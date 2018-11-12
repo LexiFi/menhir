@@ -21,11 +21,8 @@ expr:
   i = INT
     {let e =     ( i ) in
     ( e )}
-| _1 = LPAREN e' = expr _3 = RPAREN
-    {let e =
-  let e = e' in
-      ( e )
-in
+| _1 = LPAREN e = expr _3 = RPAREN
+    {let e =     ( e ) in
     ( e )}
 | e1 = expr _2 = PLUS e2 = expr
     {let e =     ( e1 + e2 ) in
@@ -39,11 +36,8 @@ in
 | e1 = expr _2 = DIV e2 = expr
     {let e =     ( e1 / e2 ) in
     ( e )}
-| _1 = MINUS e' = expr %prec UMINUS
-    {let e =
-  let e = e' in
-      ( - e )
-in
+| _1 = MINUS e = expr %prec UMINUS
+    {let e =     ( - e ) in
     ( e )}
 
 %%

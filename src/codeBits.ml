@@ -164,14 +164,18 @@ let mlet formals actuals body =
 (* Simulating a [let/and] construct using tuples. *)
 
 let eletand (bindings, body) =
-  match bindings with
-  | [] ->
+  let bindings = simplify bindings in
+  match bindings, body with
+  | [], _ ->
       (* special case: zero bindings *)
       body
-  | [ _ ] ->
+  | [ PVar x1, e ], EVar x2 when x1 = x2 ->
+      (* Reduce [let x = e in x] to just [e]. *)
+      e
+  | [ _ ], _ ->
       (* special case: one binding *)
       ELet (bindings, body)
-  | _ :: _ :: _ ->
+  | _ :: _ :: _, _ ->
       (* general case: at least two bindings *)
       let pats, exprs = List.split bindings in
       ELet ([ PTuple pats, ETuple exprs ], body)

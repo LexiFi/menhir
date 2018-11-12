@@ -655,11 +655,8 @@ reversed_separated_nonempty_list_COMMA_core_type_:
   x = core_type
     {let xs =     ( [ x ] ) in
     ( xs )}
-| xs' = reversed_separated_nonempty_list_COMMA_core_type_ _2 = COMMA x = core_type
-    {let xs =
-  let xs = xs' in
-      ( x :: xs )
-in
+| xs = reversed_separated_nonempty_list_COMMA_core_type_ _2 = COMMA x = core_type
+    {let xs =     ( x :: xs ) in
     ( xs )}
 
 implementation:
@@ -679,11 +676,8 @@ toplevel_phrase:
     {                                         ( raise End_of_file )}
 
 top_structure:
-  _1' = top_structure_nodoc
+  _1 = top_structure_nodoc
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
                                 ( extra_str _startpos _endpos _1 )
@@ -703,11 +697,8 @@ top_structure_tail_nodoc:
     {      ( text_str _startpos__1_ @ _1 :: _2 )}
 
 use_file:
-  _1' = use_file_body _2 = EOF
+  _1 = use_file_body _2 = EOF
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
                                 ( extra_def _startpos _endpos _1 )
@@ -744,14 +735,10 @@ parse_pattern:
     {                ( _1 )}
 
 functor_arg:
-  _1' = LPAREN _2 = RPAREN
+  _1 = LPAREN _2 = RPAREN
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-                            ("*")
-  in
+  let _1 =                         ("*") in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -766,11 +753,9 @@ functor_arg:
       mkrhs _1 _loc )
 in
       ( _1, None )}
-| _1 = LPAREN _1' = functor_arg_name _3 = COLON _4 = module_type _5 = RPAREN
+| _1 = LPAREN _1_inlined1 = functor_arg_name _3 = COLON _4 = module_type _5 = RPAREN
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -821,13 +806,10 @@ let _sloc = (_symbolstartpos, _endpos) in
     {      ( _1 )}
 | _1 = module_expr _2 = attribute
     {      ( Mod.attr _1 _2 )}
-| _1' = mod_longident
+| _1 = mod_longident
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -843,33 +825,25 @@ let _sloc = (_symbolstartpos, _endpos) in
     in
         ( Pmod_ident _1 )
   in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkmod ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = module_expr _2 = paren_module_expr
+| _1 = module_expr _2 = paren_module_expr
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-        ( Pmod_apply(_1, _2) )
-  in
+  let _1 =     ( Pmod_apply(_1, _2) ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkmod ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = module_expr _2 = LPAREN _3 = RPAREN
+| _1 = module_expr _2 = LPAREN _3 = RPAREN
     {let _1 =
   let _1 =
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _endpos = _endpos__3_ in
     let _symbolstartpos = _startpos__1_ in
     let _sloc = (_symbolstartpos, _endpos) in
@@ -877,21 +851,15 @@ in
       Pmod_apply(_1, mkmod ~loc:_sloc (Pmod_structure [])) )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkmod ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = extension
+| _1 = extension
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-        ( Pmod_extension _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =     ( Pmod_extension _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -900,14 +868,10 @@ in
       ( _1 )}
 
 paren_module_expr:
-  _1' = LPAREN _2 = module_expr _3 = COLON _4 = module_type _5 = RPAREN
+  _1 = LPAREN _2 = module_expr _3 = COLON _4 = module_type _5 = RPAREN
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pmod_constraint(_2, _4) )
-  in
+  let _1 =       ( Pmod_constraint(_2, _4) ) in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -967,11 +931,8 @@ let _loc__1_ = (_startpos__1_, _endpos__1_) in
       ( unclosed "(" _loc__1_ ")" _loc__5_ )}
 
 structure:
-  _1' = structure_nodoc
+  _1 = structure_nodoc
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
                                 ( extra_str _startpos _endpos _1 )
@@ -1055,28 +1016,20 @@ let _sloc = (_symbolstartpos, _endpos) in
 module_binding_body:
   _1 = EQUAL _2 = module_expr
     {      ( _2 )}
-| _1' = COLON _2 = module_type _3 = EQUAL _4 = module_expr
+| _1 = COLON _2 = module_type _3 = EQUAL _4 = module_expr
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Pmod_constraint(_4, _2) )
-  in
+  let _1 =         ( Pmod_constraint(_4, _2) ) in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkmod ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = functor_arg _2 = module_binding_body
+| _1 = functor_arg _2 = module_binding_body
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Pmod_functor(fst _1, snd _1, _2) )
-  in
+  let _1 =         ( Pmod_functor(fst _1, snd _1, _2) ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -1085,11 +1038,9 @@ in
     ( _1 )}
 
 module_binding:
-  _1 = MODULE _2 = ext_attributes _1' = UIDENT _4 = module_binding_body _5 = post_item_attributes
+  _1 = MODULE _2 = ext_attributes _1_inlined1 = UIDENT _4 = module_binding_body _5 = post_item_attributes
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1117,11 +1068,9 @@ rec_module_bindings:
     {      ( let (l, ext) = _1 in (_2 :: l, ext) )}
 
 rec_module_binding:
-  _1 = MODULE _2 = ext_attributes _3 = REC _1' = UIDENT _5 = module_binding_body _6 = post_item_attributes
+  _1 = MODULE _2 = ext_attributes _3 = REC _1_inlined1 = UIDENT _5 = module_binding_body _6 = post_item_attributes
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1143,11 +1092,9 @@ let _sloc = (_symbolstartpos, _endpos) in
         Mb.mk _4 _5 ~attrs:(attrs@_6) ~loc:(make_loc _sloc) ~docs, ext )}
 
 and_module_binding:
-  _1 = AND _2 = attributes _1' = UIDENT _4 = module_binding_body _5 = post_item_attributes
+  _1 = AND _2 = attributes _1_inlined1 = UIDENT _4 = module_binding_body _5 = post_item_attributes
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1200,13 +1147,10 @@ let _loc__1_ = (_startpos__1_, _endpos__1_) in
       ( unclosed "(" _loc__1_ ")" _loc__3_ )}
 | _1 = module_type _2 = attribute
     {      ( Mty.attr _1 _2 )}
-| _1' = mty_longident
+| _1 = mty_longident
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -1222,50 +1166,35 @@ let _loc__1_ = (_startpos__1_, _endpos__1_) in
     in
           ( Pmty_ident _1 )
   in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkmty ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = module_type _2 = MINUSGREATER _3 = module_type %prec below_WITH
+| _1 = module_type _2 = MINUSGREATER _3 = module_type %prec below_WITH
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pmty_functor(mknoloc "_", Some _1, _3) )
-  in
+  let _1 =       ( Pmty_functor(mknoloc "_", Some _1, _3) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkmty ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = module_type _2 = WITH _3 = with_constraints
+| _1 = module_type _2 = WITH _3 = with_constraints
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pmty_with(_1, List.rev _3) )
-  in
+  let _1 =       ( Pmty_with(_1, List.rev _3) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkmty ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = extension
+| _1 = extension
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pmty_extension _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Pmty_extension _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -1274,11 +1203,8 @@ in
       ( _1 )}
 
 signature:
-  _1' = signature_nodoc
+  _1 = signature_nodoc
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
                                 ( extra_sig _startpos _endpos _1 )
@@ -1308,14 +1234,9 @@ let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
       ( let docs = symbol_docs _sloc in
         mksig ~loc:_sloc (Psig_extension (_1, (add_docs_attrs docs _2))) )}
-| _1' = floating_attribute
+| _1 = floating_attribute
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Psig_attribute _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Psig_attribute _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -1352,11 +1273,9 @@ signature_item_with_ext:
     {      ( let (l, ext) = _1 in (Psig_class_type (List.rev l), ext) )}
 
 open_statement:
-  _1 = OPEN _2 = override_flag _3 = ext_attributes _1' = mod_longident _5 = post_item_attributes
+  _1 = OPEN _2 = override_flag _3 = ext_attributes _1_inlined1 = mod_longident _5 = post_item_attributes
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1390,15 +1309,11 @@ let _sloc = (_symbolstartpos, _endpos) in
 module_declaration_body:
   _1 = COLON _2 = module_type
     {      ( _2 )}
-| _1' = functor_arg _2 = module_declaration_body
+| _1 = functor_arg _2 = module_declaration_body
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( let (name,typ) = _1 in
-        Pmty_functor(name, typ, _2) )
-  in
+  let _1 =       ( let (name,typ) = _1 in
+        Pmty_functor(name, typ, _2) ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -1407,11 +1322,9 @@ in
       ( _1 )}
 
 module_declaration:
-  _1 = MODULE _2 = ext_attributes _1' = UIDENT _4 = module_declaration_body _5 = post_item_attributes
+  _1 = MODULE _2 = ext_attributes _1_inlined1 = UIDENT _4 = module_declaration_body _5 = post_item_attributes
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1433,15 +1346,10 @@ let _sloc = (_symbolstartpos, _endpos) in
         Md.mk _3 _4 ~attrs:(attrs@_5) ~loc:(make_loc _sloc) ~docs, ext )}
 
 module_alias:
-  _1 = MODULE _2 = ext_attributes _1' = UIDENT _4 = EQUAL _1'' = mod_longident _6 = post_item_attributes
+  _1 = MODULE _2 = ext_attributes _1_inlined1 = UIDENT _4 = EQUAL _1_inlined2 = mod_longident _6 = post_item_attributes
     {let _5 =
-  let _endpos__1'_ = _endpos__1''_ in
-  let _startpos__1'_ = _startpos__1''_ in
-  let _1' = _1'' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2) in
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _endpos = _endpos__1_ in
     let _startpos = _startpos__1_ in
     let _loc = (_startpos, _endpos) in
@@ -1455,17 +1363,13 @@ module_alias:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
   in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
     ( Mty.alias ~loc:(make_loc _sloc) _1 )
 in
 let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1493,11 +1397,9 @@ rec_module_declarations:
     {      ( let (l, ext) = _1 in (_2 :: l, ext) )}
 
 rec_module_declaration:
-  _1 = MODULE _2 = ext_attributes _3 = REC _1' = UIDENT _5 = COLON _6 = module_type _7 = post_item_attributes
+  _1 = MODULE _2 = ext_attributes _3 = REC _1_inlined1 = UIDENT _5 = COLON _6 = module_type _7 = post_item_attributes
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1519,11 +1421,9 @@ let _sloc = (_symbolstartpos, _endpos) in
         Md.mk _4 _6 ~attrs:(attrs@_7) ~loc:(make_loc _sloc) ~docs, ext )}
 
 and_module_declaration:
-  _1 = AND _2 = attributes _1' = UIDENT _4 = COLON _5 = module_type _6 = post_item_attributes
+  _1 = AND _2 = attributes _1_inlined1 = UIDENT _4 = COLON _5 = module_type _6 = post_item_attributes
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1551,11 +1451,9 @@ module_type_declaration_body:
     {                              ( Some _2 )}
 
 module_type_declaration:
-  _1 = MODULE _2 = TYPE _3 = ext_attributes _1' = ident _5 = module_type_declaration_body _6 = post_item_attributes
+  _1 = MODULE _2 = TYPE _3 = ext_attributes _1_inlined1 = ident _5 = module_type_declaration_body _6 = post_item_attributes
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1583,11 +1481,9 @@ class_declarations:
     {      ( let (l, ext) = _1 in (_2 :: l, ext) )}
 
 class_declaration:
-  _1 = CLASS _2 = ext_attributes _3 = virtual_flag _4 = class_type_parameters _1' = LIDENT _6 = class_fun_binding _7 = post_item_attributes
+  _1 = CLASS _2 = ext_attributes _3 = virtual_flag _4 = class_type_parameters _1_inlined1 = LIDENT _6 = class_fun_binding _7 = post_item_attributes
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1611,11 +1507,9 @@ let _sloc = (_symbolstartpos, _endpos) in
         , ext )}
 
 and_class_declaration:
-  _1 = AND _2 = attributes _3 = virtual_flag _4 = class_type_parameters _1' = LIDENT _6 = class_fun_binding _7 = post_item_attributes
+  _1 = AND _2 = attributes _3 = virtual_flag _4 = class_type_parameters _1_inlined1 = LIDENT _6 = class_fun_binding _7 = post_item_attributes
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1640,28 +1534,20 @@ let _sloc = (_symbolstartpos, _endpos) in
 class_fun_binding:
   _1 = EQUAL _2 = class_expr
     {      ( _2 )}
-| _1' = COLON _2 = class_type _3 = EQUAL _4 = class_expr
+| _1 = COLON _2 = class_type _3 = EQUAL _4 = class_expr
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Pcl_constraint(_4, _2) )
-  in
+  let _1 =         ( Pcl_constraint(_4, _2) ) in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkclass ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = labeled_simple_pattern _2 = class_fun_binding
+| _1 = labeled_simple_pattern _2 = class_fun_binding
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( let (l,o,p) = _1 in Pcl_fun(l, o, p, _2) )
-  in
+  let _1 =       ( let (l,o,p) = _1 in Pcl_fun(l, o, p, _2) ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -1676,11 +1562,8 @@ class_type_parameters:
     {                                                ( List.rev _2 )}
 
 class_fun_def:
-  _1' = class_fun_def_desc
+  _1 = class_fun_def_desc
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -1707,11 +1590,9 @@ let _sloc = (_symbolstartpos, _endpos) in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
       ( class_of_let_bindings ~loc:_sloc _1 _3 )}
-| _1 = LET _2 = OPEN _3 = override_flag _4 = attributes _1' = mod_longident _6 = IN _7 = class_expr
+| _1 = LET _2 = OPEN _3 = override_flag _4 = attributes _1_inlined1 = mod_longident _6 = IN _7 = class_expr
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -1731,28 +1612,19 @@ let _sloc = (_symbolstartpos, _endpos) in
       ( mkclass ~loc:_sloc ~attrs:_4 (Pcl_open(_3, _5, _7)) )}
 | _1 = class_expr _2 = attribute
     {      ( Cl.attr _1 _2 )}
-| _1' = class_simple_expr _2 = simple_labeled_expr_list
+| _1 = class_simple_expr _2 = simple_labeled_expr_list
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Pcl_apply(_1, List.rev _2) )
-  in
+  let _1 =         ( Pcl_apply(_1, List.rev _2) ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkclass ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = extension
+| _1 = extension
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Pcl_extension _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =         ( Pcl_extension _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -1767,17 +1639,11 @@ class_simple_expr:
     {let _loc__3_ = (_startpos__3_, _endpos__3_) in
 let _loc__1_ = (_startpos__1_, _endpos__1_) in
       ( unclosed "(" _loc__1_ ")" _loc__3_ )}
-| _1' = LBRACKET tys = reversed_separated_nonempty_list_COMMA_core_type_ _3 = RBRACKET _1'' = class_longident
+| _1 = LBRACKET tys = reversed_separated_nonempty_list_COMMA_core_type_ _3 = RBRACKET _1_inlined1 = class_longident
     {let _1 =
   let _1 =
-    let _endpos__1'_ = _endpos__1''_ in
-    let _startpos__1'_ = _startpos__1''_ in
-    let _1' = _1'' in
-    let _1 = _1' in
     let _4 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
+      let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -1794,21 +1660,17 @@ let _loc__1_ = (_startpos__1_, _endpos__1_) in
     let _2 =     ( tys ) in
             ( Pcl_constr(_4, List.rev _2) )
   in
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _endpos__1_ = _endpos__1_inlined1_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkclass ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = class_longident
+| _1 = class_longident
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -1824,58 +1686,44 @@ in
     in
             ( Pcl_constr(_1, []) )
   in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkclass ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = OBJECT _2 = attributes _3 = class_structure _4 = error
+| _1 = OBJECT _2 = attributes _3 = class_structure _4 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__4_ = (_startpos__4_, _endpos__4_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
             ( unclosed "object" _loc__1_ "end" _loc__4_ )
   in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkclass ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LPAREN _2 = class_expr _3 = COLON _4 = class_type _5 = RPAREN
+| _1 = LPAREN _2 = class_expr _3 = COLON _4 = class_type _5 = RPAREN
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Pcl_constraint(_2, _4) )
-  in
+  let _1 =         ( Pcl_constraint(_2, _4) ) in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkclass ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LPAREN _2 = class_expr _3 = COLON _4 = class_type _5 = error
+| _1 = LPAREN _2 = class_expr _3 = COLON _4 = class_type _5 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__5_ = (_startpos__5_, _endpos__5_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
             ( unclosed "(" _loc__1_ ")" _loc__5_ )
   in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -1889,11 +1737,9 @@ let _sloc = (_symbolstartpos, _endpos) in
     ( mkclass ~loc:_sloc ~attrs:_2 (Pcl_structure _3) )}
 
 class_structure:
-  _1 = class_self_pattern _1' = class_fields
+  _1 = class_self_pattern _1_inlined1 = class_fields
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
                                  ( extra_cstr _startpos _endpos _1 )
@@ -1906,14 +1752,10 @@ class_self_pattern:
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
       ( reloc_pat ~loc:_sloc _2 )}
-| _1' = LPAREN _2 = pattern _3 = COLON _4 = core_type _5 = RPAREN
+| _1 = LPAREN _2 = pattern _3 = COLON _4 = core_type _5 = RPAREN
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_constraint(_2, _4) )
-  in
+  let _1 =       ( Ppat_constraint(_2, _4) ) in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -1971,14 +1813,9 @@ let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
       ( let docs = symbol_docs _sloc in
         mkcf ~loc:_sloc (Pcf_extension _1) ~attrs:_2 ~docs )}
-| _1' = floating_attribute
+| _1 = floating_attribute
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pcf_attribute _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Pcf_attribute _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -1987,11 +1824,9 @@ in
       ( _1 )}
 
 parent_binder:
-  _1 = AS _1' = LIDENT
+  _1 = AS _1_inlined1 = LIDENT
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2010,11 +1845,9 @@ in
     {          ( None )}
 
 value:
-  _1 = override_flag _2 = attributes _3 = MUTABLE _4 = VIRTUAL _1' = label _6 = COLON _7 = core_type
+  _1 = override_flag _2 = attributes _3 = MUTABLE _4 = VIRTUAL _1_inlined1 = label _6 = COLON _7 = core_type
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2030,11 +1863,9 @@ value:
 in
       ( if _1 = Override then syntax_error ();
         (_5, Mutable, Cfk_virtual _7), _2 )}
-| _1 = override_flag _2 = attributes _3 = VIRTUAL _4 = mutable_flag _1' = label _6 = COLON _7 = core_type
+| _1 = override_flag _2 = attributes _3 = VIRTUAL _4 = mutable_flag _1_inlined1 = label _6 = COLON _7 = core_type
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2050,11 +1881,9 @@ in
 in
       ( if _1 = Override then syntax_error ();
         (_5, _4, Cfk_virtual _7), _2 )}
-| _1 = override_flag _2 = attributes _3 = mutable_flag _1' = label _5 = EQUAL _6 = seq_expr
+| _1 = override_flag _2 = attributes _3 = mutable_flag _1_inlined1 = label _5 = EQUAL _6 = seq_expr
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2069,11 +1898,9 @@ in
       mkrhs _1 _loc )
 in
       ( (_4, _3, Cfk_concrete (_1, _6)), _2 )}
-| _1 = override_flag _2 = attributes _3 = mutable_flag _1' = label _5 = type_constraint _6 = EQUAL _7 = seq_expr
+| _1 = override_flag _2 = attributes _3 = mutable_flag _1_inlined1 = label _5 = type_constraint _6 = EQUAL _7 = seq_expr
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2087,7 +1914,7 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__4_ = _startpos__1'_ in
+let _startpos__4_ = _startpos__1_inlined1_ in
 let _endpos = _endpos__7_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -2105,11 +1932,9 @@ let _sloc = (_symbolstartpos, _endpos) in
       )}
 
 method_:
-  _1 = override_flag _2 = attributes _3 = PRIVATE _4 = VIRTUAL _1' = label _6 = COLON _7 = poly_type
+  _1 = override_flag _2 = attributes _3 = PRIVATE _4 = VIRTUAL _1_inlined1 = label _6 = COLON _7 = poly_type
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2125,11 +1950,9 @@ method_:
 in
       ( if _1 = Override then syntax_error ();
         (_5, Private, Cfk_virtual _7), _2 )}
-| _1 = override_flag _2 = attributes _3 = VIRTUAL _4 = private_flag _1' = label _6 = COLON _7 = poly_type
+| _1 = override_flag _2 = attributes _3 = VIRTUAL _4 = private_flag _1_inlined1 = label _6 = COLON _7 = poly_type
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2145,11 +1968,9 @@ in
 in
       ( if _1 = Override then syntax_error ();
         (_5, _4, Cfk_virtual _7), _2 )}
-| _1 = override_flag _2 = attributes _3 = private_flag _1' = label _5 = strict_binding
+| _1 = override_flag _2 = attributes _3 = private_flag _1_inlined1 = label _5 = strict_binding
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2167,11 +1988,9 @@ in
         let loc = Location.(e.pexp_loc.loc_start, e.pexp_loc.loc_end) in
         (_4, _3,
         Cfk_concrete (_1, ghexp ~loc (Pexp_poly (e, None)))), _2 )}
-| _1 = override_flag _2 = attributes _3 = private_flag _1' = label _5 = COLON _6 = poly_type _7 = EQUAL _8 = seq_expr
+| _1 = override_flag _2 = attributes _3 = private_flag _1_inlined1 = label _5 = COLON _6 = poly_type _7 = EQUAL _8 = seq_expr
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2189,11 +2008,9 @@ in
           let loc = (_startpos__6_, _endpos__8_) in
           ghexp ~loc (Pexp_poly(_8, Some _6)) in
         (_4, _3, Cfk_concrete (_1, poly_exp)), _2 )}
-| _1 = override_flag _2 = attributes _3 = private_flag _1' = label _5 = COLON _6 = TYPE _7 = lident_list _8 = DOT _9 = core_type _10 = EQUAL _11 = seq_expr
+| _1 = override_flag _2 = attributes _3 = private_flag _1_inlined1 = label _5 = COLON _6 = TYPE _7 = lident_list _8 = DOT _9 = core_type _10 = EQUAL _11 = seq_expr
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2207,7 +2024,7 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__4_ = _startpos__1'_ in
+let _startpos__4_ = _startpos__1_inlined1_ in
 let _endpos = _endpos__11_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -2234,56 +2051,40 @@ let _sloc = (_symbolstartpos, _endpos) in
 class_type:
   _1 = class_signature
     {      ( _1 )}
-| _1' = QUESTION _2 = LIDENT _3 = COLON _4 = simple_core_type_or_tuple _5 = MINUSGREATER _6 = class_type
+| _1 = QUESTION _2 = LIDENT _3 = COLON _4 = simple_core_type_or_tuple _5 = MINUSGREATER _6 = class_type
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Pcty_arrow(Optional _2 , _4, _6) )
-  in
+  let _1 =         ( Pcty_arrow(Optional _2 , _4, _6) ) in
   let _endpos__1_ = _endpos__6_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkcty ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = OPTLABEL _2 = simple_core_type_or_tuple _3 = MINUSGREATER _4 = class_type
+| _1 = OPTLABEL _2 = simple_core_type_or_tuple _3 = MINUSGREATER _4 = class_type
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Pcty_arrow(Optional _1, _2, _4) )
-  in
+  let _1 =         ( Pcty_arrow(Optional _1, _2, _4) ) in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkcty ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LIDENT _2 = COLON _3 = simple_core_type_or_tuple _4 = MINUSGREATER _5 = class_type
+| _1 = LIDENT _2 = COLON _3 = simple_core_type_or_tuple _4 = MINUSGREATER _5 = class_type
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Pcty_arrow(Labelled _1, _3, _5) )
-  in
+  let _1 =         ( Pcty_arrow(Labelled _1, _3, _5) ) in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkcty ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = simple_core_type_or_tuple _2 = MINUSGREATER _3 = class_type
+| _1 = simple_core_type_or_tuple _2 = MINUSGREATER _3 = class_type
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Pcty_arrow(Nolabel, _1, _3) )
-  in
+  let _1 =         ( Pcty_arrow(Nolabel, _1, _3) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -2292,17 +2093,11 @@ in
       ( _1 )}
 
 class_signature:
-  _1' = LBRACKET tys = reversed_separated_nonempty_list_COMMA_core_type_ _3 = RBRACKET _1'' = clty_longident
+  _1 = LBRACKET tys = reversed_separated_nonempty_list_COMMA_core_type_ _3 = RBRACKET _1_inlined1 = clty_longident
     {let _1 =
   let _1 =
-    let _endpos__1'_ = _endpos__1''_ in
-    let _startpos__1'_ = _startpos__1''_ in
-    let _1' = _1'' in
-    let _1 = _1' in
     let _4 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
+      let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -2319,21 +2114,17 @@ class_signature:
     let _2 =     ( tys ) in
             ( Pcty_constr (_4, List.rev _2) )
   in
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _endpos__1_ = _endpos__1_inlined1_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkcty ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = clty_longident
+| _1 = clty_longident
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -2349,22 +2140,15 @@ in
     in
             ( Pcty_constr (_1, []) )
   in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkcty ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = extension
+| _1 = extension
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Pcty_extension _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =         ( Pcty_extension _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -2382,11 +2166,9 @@ let _loc__1_ = (_startpos__1_, _endpos__1_) in
       ( unclosed "object" _loc__1_ "end" _loc__4_ )}
 | _1 = class_signature _2 = attribute
     {      ( Cty.attr _1 _2 )}
-| _1 = LET _2 = OPEN _3 = override_flag _4 = attributes _1' = mod_longident _6 = IN _7 = class_signature
+| _1 = LET _2 = OPEN _3 = override_flag _4 = attributes _1_inlined1 = mod_longident _6 = IN _7 = class_signature
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2406,11 +2188,9 @@ let _sloc = (_symbolstartpos, _endpos) in
       ( mkcty ~loc:_sloc ~attrs:_4 (Pcty_open(_3, _5, _7)) )}
 
 class_sig_body:
-  _1 = class_self_type _1' = class_sig_fields
+  _1 = class_self_type _1_inlined1 = class_sig_fields
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
                                  ( extra_csig _startpos _endpos _1 )
@@ -2450,11 +2230,9 @@ let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
       ( let docs = symbol_docs _sloc in
         mkctf ~loc:_sloc (Pctf_val _3) ~attrs:(_2@_4) ~docs )}
-| _1 = METHOD _2 = attributes _3 = private_virtual_flags _1' = label _5 = COLON _6 = poly_type _7 = post_item_attributes
+| _1 = METHOD _2 = attributes _3 = private_virtual_flags _1_inlined1 = label _5 = COLON _6 = poly_type _7 = post_item_attributes
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2486,14 +2264,9 @@ let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
       ( let docs = symbol_docs _sloc in
         mkctf ~loc:_sloc (Pctf_extension _1) ~attrs:_2 ~docs )}
-| _1' = floating_attribute
+| _1 = floating_attribute
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pctf_attribute _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Pctf_attribute _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -2502,11 +2275,9 @@ in
       ( _1 )}
 
 value_type:
-  _1 = VIRTUAL _2 = mutable_flag _1' = label _4 = COLON _5 = core_type
+  _1 = VIRTUAL _2 = mutable_flag _1_inlined1 = label _4 = COLON _5 = core_type
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2521,11 +2292,9 @@ value_type:
       mkrhs _1 _loc )
 in
       ( _3, _2, Virtual, _5 )}
-| _1 = MUTABLE _2 = virtual_flag _1' = label _4 = COLON _5 = core_type
+| _1 = MUTABLE _2 = virtual_flag _1_inlined1 = label _4 = COLON _5 = core_type
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2540,11 +2309,8 @@ in
       mkrhs _1 _loc )
 in
       ( _3, Mutable, _2, _5 )}
-| _1' = label _2 = COLON _3 = core_type
+| _1 = label _2 = COLON _3 = core_type
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2578,11 +2344,9 @@ class_descriptions:
     {      ( let (l, ext) = _1 in (_2 :: l, ext) )}
 
 class_description:
-  _1 = CLASS _2 = ext_attributes _3 = virtual_flag _4 = class_type_parameters _1' = LIDENT _6 = COLON _7 = class_type _8 = post_item_attributes
+  _1 = CLASS _2 = ext_attributes _3 = virtual_flag _4 = class_type_parameters _1_inlined1 = LIDENT _6 = COLON _7 = class_type _8 = post_item_attributes
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2606,11 +2370,9 @@ let _sloc = (_symbolstartpos, _endpos) in
         , ext )}
 
 and_class_description:
-  _1 = AND _2 = attributes _3 = virtual_flag _4 = class_type_parameters _1' = LIDENT _6 = COLON _7 = class_type _8 = post_item_attributes
+  _1 = AND _2 = attributes _3 = virtual_flag _4 = class_type_parameters _1_inlined1 = LIDENT _6 = COLON _7 = class_type _8 = post_item_attributes
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2639,11 +2401,9 @@ class_type_declarations:
     {      ( let (l, ext) = _1 in (_2 :: l, ext) )}
 
 class_type_declaration:
-  _1 = CLASS _2 = TYPE _3 = ext_attributes _4 = virtual_flag _5 = class_type_parameters _1' = LIDENT _7 = EQUAL _8 = class_signature _9 = post_item_attributes
+  _1 = CLASS _2 = TYPE _3 = ext_attributes _4 = virtual_flag _5 = class_type_parameters _1_inlined1 = LIDENT _7 = EQUAL _8 = class_signature _9 = post_item_attributes
     {let _6 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2667,11 +2427,9 @@ let _sloc = (_symbolstartpos, _endpos) in
         , ext )}
 
 and_class_type_declaration:
-  _1 = AND _2 = attributes _3 = virtual_flag _4 = class_type_parameters _1' = LIDENT _6 = EQUAL _7 = class_signature _8 = post_item_attributes
+  _1 = AND _2 = attributes _3 = virtual_flag _4 = class_type_parameters _1_inlined1 = LIDENT _6 = EQUAL _7 = class_signature _8 = post_item_attributes
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2698,14 +2456,10 @@ seq_expr:
     {                                  ( _1 )}
 | _1 = expr _2 = SEMI
     {                                  ( _1 )}
-| _1' = expr _2 = SEMI _3 = seq_expr
+| _1 = expr _2 = SEMI _3 = seq_expr
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-        ( Pexp_sequence(_1, _3) )
-  in
+  let _1 =     ( Pexp_sequence(_1, _3) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -2739,11 +2493,8 @@ labeled_simple_pattern:
     {      ( (Nolabel, None, _1) )}
 
 pattern_var:
-  _1' = pattern_var_
+  _1 = pattern_var_
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -2752,11 +2503,8 @@ in
       ( _1 )}
 
 pattern_var_:
-  _1' = LIDENT
+  _1 = LIDENT
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2791,11 +2539,8 @@ let _sloc = (_symbolstartpos, _endpos) in
         (lab, mkpat ~loc:_sloc (Ppat_constraint(pat, _3))) )}
 
 label_var:
-  _1' = LIDENT
+  _1 = LIDENT
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -2809,8 +2554,6 @@ label_var:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _endpos__1_ = _endpos__1'_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -2819,14 +2562,10 @@ let _sloc = (_symbolstartpos, _endpos) in
 let_pattern:
   _1 = pattern
     {      ( _1 )}
-| _1' = pattern _2 = COLON _3 = core_type
+| _1 = pattern _2 = COLON _3 = core_type
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_constraint(_1, _3) )
-  in
+  let _1 =       ( Ppat_constraint(_1, _3) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -2837,16 +2576,10 @@ in
 expr:
   _1 = simple_expr %prec below_HASH
     {      ( _1 )}
-| _1' = LET _2 = MODULE _3 = ext_attributes _1'' = UIDENT _5 = module_binding_body _6 = IN _7 = seq_expr
+| _1 = LET _2 = MODULE _3 = ext_attributes _1_inlined1 = UIDENT _5 = module_binding_body _6 = IN _7 = seq_expr
     {let _1 =
-  let _endpos__1'_ = _endpos__1''_ in
-  let _startpos__1'_ = _startpos__1''_ in
-  let _1' = _1'' in
-  let _1 = _1' in
   let _4 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
+    let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
     let _endpos = _endpos__1_ in
     let _startpos = _startpos__1_ in
     let _loc = (_startpos, _endpos) in
@@ -2863,34 +2596,23 @@ expr:
         ( Pexp_letmodule(_4, _5, _7), _3 )
 in
 let _endpos__1_ = _endpos__7_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = LET _2 = EXCEPTION _3 = ext_attributes _4 = let_exception_declaration _5 = IN _6 = seq_expr
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_letexception(_4, _6), _3 )
-in
+| _1 = LET _2 = EXCEPTION _3 = ext_attributes _4 = let_exception_declaration _5 = IN _6 = seq_expr
+    {let _1 =       ( Pexp_letexception(_4, _6), _3 ) in
 let _endpos__1_ = _endpos__6_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = LET _2 = OPEN _3 = override_flag _4 = ext_attributes _1'' = mod_longident _6 = IN _7 = seq_expr
+| _1 = LET _2 = OPEN _3 = override_flag _4 = ext_attributes _1_inlined1 = mod_longident _6 = IN _7 = seq_expr
     {let _1 =
-  let _endpos__1'_ = _endpos__1''_ in
-  let _startpos__1'_ = _startpos__1''_ in
-  let _1' = _1'' in
-  let _1 = _1' in
   let _5 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
+    let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
     let _endpos = _endpos__1_ in
     let _startpos = _startpos__1_ in
     let _loc = (_startpos, _endpos) in
@@ -2907,201 +2629,139 @@ let _sloc = (_symbolstartpos, _endpos) in
         ( Pexp_open(_3, _5, _7), _4 )
 in
 let _endpos__1_ = _endpos__7_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = FUNCTION _2 = ext_attributes _3 = opt_bar _4 = match_cases
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_function(List.rev _4), _2 )
-in
+| _1 = FUNCTION _2 = ext_attributes _3 = opt_bar _4 = match_cases
+    {let _1 =       ( Pexp_function(List.rev _4), _2 ) in
 let _endpos__1_ = _endpos__4_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = FUN _2 = ext_attributes _3 = labeled_simple_pattern _4 = fun_def
-    {let _1 =
-  let _1 = _1' in
-        ( let (l,o,p) = _3 in
-        Pexp_fun(l, o, p, _4), _2 )
-in
+| _1 = FUN _2 = ext_attributes _3 = labeled_simple_pattern _4 = fun_def
+    {let _1 =       ( let (l,o,p) = _3 in
+        Pexp_fun(l, o, p, _4), _2 ) in
 let _endpos__1_ = _endpos__4_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = FUN _2 = ext_attributes _3 = LPAREN _4 = TYPE _5 = lident_list _6 = RPAREN _7 = fun_def
+| _1 = FUN _2 = ext_attributes _3 = LPAREN _4 = TYPE _5 = lident_list _6 = RPAREN _7 = fun_def
     {let _1 =
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__7_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
         ( (mk_newtypes ~loc:_sloc _5 _7).pexp_desc, _2 )
 in
 let _endpos__1_ = _endpos__7_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = MATCH _2 = ext_attributes _3 = seq_expr _4 = WITH _5 = opt_bar _6 = match_cases
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_match(_3, List.rev _6), _2 )
-in
+| _1 = MATCH _2 = ext_attributes _3 = seq_expr _4 = WITH _5 = opt_bar _6 = match_cases
+    {let _1 =       ( Pexp_match(_3, List.rev _6), _2 ) in
 let _endpos__1_ = _endpos__6_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = TRY _2 = ext_attributes _3 = seq_expr _4 = WITH _5 = opt_bar _6 = match_cases
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_try(_3, List.rev _6), _2 )
-in
+| _1 = TRY _2 = ext_attributes _3 = seq_expr _4 = WITH _5 = opt_bar _6 = match_cases
+    {let _1 =       ( Pexp_try(_3, List.rev _6), _2 ) in
 let _endpos__1_ = _endpos__6_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = TRY _2 = ext_attributes _3 = seq_expr _4 = WITH _5 = error
-    {let _1 =
-  let _1 = _1' in
-        ( syntax_error() )
-in
+| _1 = TRY _2 = ext_attributes _3 = seq_expr _4 = WITH _5 = error
+    {let _1 =       ( syntax_error() ) in
 let _endpos__1_ = _endpos__5_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = IF _2 = ext_attributes _3 = seq_expr _4 = THEN _5 = expr _6 = ELSE _7 = expr
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_ifthenelse(_3, _5, Some _7), _2 )
-in
+| _1 = IF _2 = ext_attributes _3 = seq_expr _4 = THEN _5 = expr _6 = ELSE _7 = expr
+    {let _1 =       ( Pexp_ifthenelse(_3, _5, Some _7), _2 ) in
 let _endpos__1_ = _endpos__7_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = IF _2 = ext_attributes _3 = seq_expr _4 = THEN _5 = expr
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_ifthenelse(_3, _5, None), _2 )
-in
+| _1 = IF _2 = ext_attributes _3 = seq_expr _4 = THEN _5 = expr
+    {let _1 =       ( Pexp_ifthenelse(_3, _5, None), _2 ) in
 let _endpos__1_ = _endpos__5_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = WHILE _2 = ext_attributes _3 = seq_expr _4 = DO _5 = seq_expr _6 = DONE
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_while(_3, _5), _2 )
-in
+| _1 = WHILE _2 = ext_attributes _3 = seq_expr _4 = DO _5 = seq_expr _6 = DONE
+    {let _1 =       ( Pexp_while(_3, _5), _2 ) in
 let _endpos__1_ = _endpos__6_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = FOR _2 = ext_attributes _3 = pattern _4 = EQUAL _5 = seq_expr _6 = direction_flag _7 = seq_expr _8 = DO _9 = seq_expr _10 = DONE
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_for(_3, _5, _7, _6, _9), _2 )
-in
+| _1 = FOR _2 = ext_attributes _3 = pattern _4 = EQUAL _5 = seq_expr _6 = direction_flag _7 = seq_expr _8 = DO _9 = seq_expr _10 = DONE
+    {let _1 =       ( Pexp_for(_3, _5, _7, _6, _9), _2 ) in
 let _endpos__1_ = _endpos__10_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = ASSERT _2 = ext_attributes _3 = simple_expr %prec below_HASH
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_assert _3, _2 )
-in
+| _1 = ASSERT _2 = ext_attributes _3 = simple_expr %prec below_HASH
+    {let _1 =       ( Pexp_assert _3, _2 ) in
 let _endpos__1_ = _endpos__3_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = LAZY _2 = ext_attributes _3 = simple_expr %prec below_HASH
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_lazy _3, _2 )
-in
+| _1 = LAZY _2 = ext_attributes _3 = simple_expr %prec below_HASH
+    {let _1 =       ( Pexp_lazy _3, _2 ) in
 let _endpos__1_ = _endpos__3_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = OBJECT _2 = ext_attributes _3 = class_structure _4 = END
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_object _3, _2 )
-in
+| _1 = OBJECT _2 = ext_attributes _3 = class_structure _4 = END
+    {let _1 =       ( Pexp_object _3, _2 ) in
 let _endpos__1_ = _endpos__4_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = OBJECT _2 = ext_attributes _3 = class_structure _4 = error
+| _1 = OBJECT _2 = ext_attributes _3 = class_structure _4 = error
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _loc__4_ = (_startpos__4_, _endpos__4_) in
   let _loc__1_ = (_startpos__1_, _endpos__1_) in
         ( unclosed "object" _loc__1_ "end" _loc__4_ )
 in
 let _endpos__1_ = _endpos__4_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = expr _1'' = INFIXOP0 _3 = expr
+| _1 = expr _1_inlined1 = INFIXOP0 _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
-        let _1 = _1' in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3114,25 +2774,18 @@ let _sloc = (_symbolstartpos, _endpos) in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = INFIXOP1 _3 = expr
+| _1 = expr _1_inlined1 = INFIXOP1 _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
-        let _1 = _1' in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3145,25 +2798,18 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = INFIXOP2 _3 = expr
+| _1 = expr _1_inlined1 = INFIXOP2 _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
-        let _1 = _1' in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3176,25 +2822,18 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = INFIXOP3 _3 = expr
+| _1 = expr _1_inlined1 = INFIXOP3 _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
-        let _1 = _1' in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3207,25 +2846,18 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = INFIXOP4 _3 = expr
+| _1 = expr _1_inlined1 = INFIXOP4 _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
-        let _1 = _1' in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3238,28 +2870,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = PLUS _3 = expr
+| _1 = expr _1_inlined1 = PLUS _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                           ("+")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                  ("+") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3272,28 +2895,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = PLUSDOT _3 = expr
+| _1 = expr _1_inlined1 = PLUSDOT _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                              ("+.")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                     ("+.") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3306,28 +2920,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = PLUSEQ _3 = expr
+| _1 = expr _1_inlined1 = PLUSEQ _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                             ("+=")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                    ("+=") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3340,28 +2945,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = MINUS _3 = expr
+| _1 = expr _1_inlined1 = MINUS _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                            ("-")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                   ("-") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3374,28 +2970,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = MINUSDOT _3 = expr
+| _1 = expr _1_inlined1 = MINUSDOT _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                               ("-.")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                      ("-.") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3408,28 +2995,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = STAR _3 = expr
+| _1 = expr _1_inlined1 = STAR _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                           ("*")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                  ("*") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3442,28 +3020,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = PERCENT _3 = expr
+| _1 = expr _1_inlined1 = PERCENT _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                              ("%")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                     ("%") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3476,28 +3045,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = EQUAL _3 = expr
+| _1 = expr _1_inlined1 = EQUAL _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                            ("=")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                   ("=") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3510,28 +3070,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = LESS _3 = expr
+| _1 = expr _1_inlined1 = LESS _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                           ("<")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                  ("<") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3544,28 +3095,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = GREATER _3 = expr
+| _1 = expr _1_inlined1 = GREATER _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                              (">")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                     (">") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3578,28 +3120,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = OR _3 = expr
+| _1 = expr _1_inlined1 = OR _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                         ("or")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                ("or") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3612,28 +3145,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = BARBAR _3 = expr
+| _1 = expr _1_inlined1 = BARBAR _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                             ("||")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                    ("||") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3646,28 +3170,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = AMPERSAND _3 = expr
+| _1 = expr _1_inlined1 = AMPERSAND _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                                ("&")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                       ("&") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3680,28 +3195,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = AMPERAMPER _3 = expr
+| _1 = expr _1_inlined1 = AMPERAMPER _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                                 ("&&")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                        ("&&") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3714,28 +3220,19 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr _1'' = COLONEQUAL _3 = expr
+| _1 = expr _1_inlined1 = COLONEQUAL _3 = expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1'_ = _endpos__1''_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _1' = _1'' in
-      let _1 = _1' in
       let _2 =
-        let _1 =
-          let _1 = _1' in
-                                 (":=")
-        in
-        let _endpos__1_ = _endpos__1'_ in
-        let _startpos__1_ = _startpos__1'_ in
+        let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
+        let _1 =                        (":=") in
         let _endpos = _endpos__1_ in
         let _startpos = _startpos__1_ in
         let _loc = (_startpos, _endpos) in
@@ -3748,88 +3245,67 @@ in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = subtractive _2 = expr %prec prec_unary_minus
+| _1 = subtractive _2 = expr %prec prec_unary_minus
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _loc__1_ = (_startpos__1_, _endpos__1_) in
             ( mkuminus ~oploc:_loc__1_ _1 _2 )
     in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = additive _2 = expr %prec prec_unary_plus
+| _1 = additive _2 = expr %prec prec_unary_plus
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _loc__1_ = (_startpos__1_, _endpos__1_) in
             ( mkuplus ~oploc:_loc__1_ _1 _2 )
     in
                 ( _1 )
   in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = simple_expr _2 = simple_labeled_expr_list
+| _1 = simple_expr _2 = simple_labeled_expr_list
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-        ( Pexp_apply(_1, List.rev _2) )
-  in
+  let _1 =     ( Pexp_apply(_1, List.rev _2) ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = expr_comma_list %prec below_COMMA
+| _1 = expr_comma_list %prec below_COMMA
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-        ( Pexp_tuple(List.rev _1) )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =     ( Pexp_tuple(List.rev _1) ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = constr_longident _2 = simple_expr %prec below_HASH
+| _1 = constr_longident _2 = simple_expr %prec below_HASH
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -3846,21 +3322,16 @@ in
         ( Pexp_construct(_1, Some _2) )
   in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = name_tag _2 = simple_expr %prec below_HASH
+| _1 = name_tag _2 = simple_expr %prec below_HASH
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-        ( Pexp_variant(_1, Some _2) )
-  in
+  let _1 =     ( Pexp_variant(_1, Some _2) ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -3878,11 +3349,8 @@ let _symbolstartpos = _startpos__1_ in
 let _loc__2_ = (_startpos__2_, _endpos__2_) in
 let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp_cons ~loc:_sloc _loc__2_ (ghexp ~loc:_sloc (Pexp_tuple[_1;_3])) )}
-| _1' = label _2 = LESSMINUS _3 = expr
+| _1 = label _2 = LESSMINUS _3 = expr
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -3896,16 +3364,13 @@ let _sloc = (_symbolstartpos, _endpos) in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc (Pexp_setinstvar(_1, _3)) )}
-| _1 = simple_expr _2 = DOT _1' = label_longident _4 = LESSMINUS _5 = expr
+| _1 = simple_expr _2 = DOT _1_inlined1 = label_longident _4 = LESSMINUS _5 = expr
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -4070,61 +3535,44 @@ let _sloc = (_symbolstartpos, _endpos) in
     {let _loc__5_ = (_startpos__5_, _endpos__5_) in
 let _loc__3_ = (_startpos__3_, _endpos__3_) in
       ( unclosed "{" _loc__3_ "}" _loc__5_ )}
-| _1' = BEGIN _2 = ext_attributes _3 = seq_expr _4 = END
-    {let _1 =
-  let _1 = _1' in
-        ( let (ext, attrs) = _2 in
-        _3.pexp_desc, (ext, attrs @ _3.pexp_attributes) )
-in
+| _1 = BEGIN _2 = ext_attributes _3 = seq_expr _4 = END
+    {let _1 =       ( let (ext, attrs) = _2 in
+        _3.pexp_desc, (ext, attrs @ _3.pexp_attributes) ) in
 let _endpos__1_ = _endpos__4_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = BEGIN _2 = ext_attributes _3 = END
+| _1 = BEGIN _2 = ext_attributes _3 = END
     {let _1 =
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__3_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
         ( Pexp_construct (mkloc (Lident "()") (make_loc _sloc), None), _2 )
 in
 let _endpos__1_ = _endpos__3_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = BEGIN _2 = ext_attributes _3 = seq_expr _4 = error
+| _1 = BEGIN _2 = ext_attributes _3 = seq_expr _4 = error
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _loc__4_ = (_startpos__4_, _endpos__4_) in
   let _loc__1_ = (_startpos__1_, _endpos__1_) in
         ( unclosed "begin" _loc__1_ "end" _loc__4_ )
 in
 let _endpos__1_ = _endpos__4_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = NEW _2 = ext_attributes _1'' = class_longident
+| _1 = NEW _2 = ext_attributes _1_inlined1 = class_longident
     {let _1 =
-  let _endpos__1'_ = _endpos__1''_ in
-  let _startpos__1'_ = _startpos__1''_ in
-  let _1' = _1'' in
-  let _1 = _1' in
   let _3 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
+    let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
     let _endpos = _endpos__1_ in
     let _startpos = _startpos__1_ in
     let _loc = (_startpos, _endpos) in
@@ -4140,64 +3588,49 @@ let _sloc = (_symbolstartpos, _endpos) in
   in
         ( Pexp_new(_3), _2 )
 in
-let _endpos__1_ = _endpos__1''_ in
-let _startpos__1_ = _startpos__1'_ in
+let _endpos__1_ = _endpos__1_inlined1_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = LPAREN _2 = MODULE _3 = ext_attributes _4 = module_expr _5 = RPAREN
-    {let _1 =
-  let _1 = _1' in
-        ( Pexp_pack _4, _3 )
-in
+| _1 = LPAREN _2 = MODULE _3 = ext_attributes _4 = module_expr _5 = RPAREN
+    {let _1 =       ( Pexp_pack _4, _3 ) in
 let _endpos__1_ = _endpos__5_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = LPAREN _2 = MODULE _3 = ext_attributes _4 = module_expr _5 = COLON _6 = package_type _7 = RPAREN
+| _1 = LPAREN _2 = MODULE _3 = ext_attributes _4 = module_expr _5 = COLON _6 = package_type _7 = RPAREN
     {let _1 =
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__7_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
         ( Pexp_constraint (ghexp ~loc:_sloc (Pexp_pack _4), _6), _3 )
 in
 let _endpos__1_ = _endpos__7_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = LPAREN _2 = MODULE _3 = ext_attributes _4 = module_expr _5 = COLON _6 = error
+| _1 = LPAREN _2 = MODULE _3 = ext_attributes _4 = module_expr _5 = COLON _6 = error
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _loc__6_ = (_startpos__6_, _endpos__6_) in
   let _loc__1_ = (_startpos__1_, _endpos__1_) in
         ( unclosed "(" _loc__1_ ")" _loc__6_ )
 in
 let _endpos__1_ = _endpos__6_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
     ( let desc, attrs = _1 in
       mkexp_attrs ~loc:_sloc desc attrs )}
-| _1' = val_longident
+| _1 = val_longident
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4213,35 +3646,25 @@ let _sloc = (_symbolstartpos, _endpos) in
     in
           ( Pexp_ident (_1) )
   in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = constant
+| _1 = constant
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pexp_constant _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Pexp_constant _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = constr_longident %prec prec_constant_constructor
+| _1 = constr_longident %prec prec_constant_constructor
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4257,35 +3680,25 @@ in
     in
           ( Pexp_construct(_1, None) )
   in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = name_tag %prec prec_constant_constructor
+| _1 = name_tag %prec prec_constant_constructor
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pexp_variant(_1, None) )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Pexp_variant(_1, None) ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = PREFIXOP _2 = simple_expr
+| _1 = PREFIXOP _2 = simple_expr
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4296,23 +3709,17 @@ in
           ( Pexp_apply(_1, [Nolabel,_2]) )
   in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = BANG _2 = simple_expr
+| _1 = BANG _2 = simple_expr
     {let _1 =
   let _1 =
     let _1 =
-      let _1 =
-        let _1 = _1' in
-                    ("!")
-      in
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
+      let _1 =             ("!") in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4323,70 +3730,51 @@ in
           ( Pexp_apply(_1, [Nolabel,_2]) )
   in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LBRACELESS _2 = field_expr_list _3 = GREATERRBRACE
+| _1 = LBRACELESS _2 = field_expr_list _3 = GREATERRBRACE
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pexp_override _2 )
-  in
+  let _1 =       ( Pexp_override _2 ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LBRACELESS _2 = field_expr_list _3 = error
+| _1 = LBRACELESS _2 = field_expr_list _3 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
           ( unclosed "{<" _loc__1_ ">}" _loc__3_ )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LBRACELESS _2 = GREATERRBRACE
+| _1 = LBRACELESS _2 = GREATERRBRACE
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pexp_override [] )
-  in
+  let _1 =       ( Pexp_override [] ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = simple_expr _2 = DOT _1'' = label_longident
+| _1 = simple_expr _2 = DOT _1_inlined1 = label_longident
     {let _1 =
   let _1 =
-    let _endpos__1'_ = _endpos__1''_ in
-    let _startpos__1'_ = _startpos__1''_ in
-    let _1' = _1'' in
-    let _1 = _1' in
     let _3 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
+      let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4402,21 +3790,17 @@ in
     in
           ( Pexp_field(_1, _3) )
   in
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _endpos__1_ = _endpos__1_inlined1_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LPAREN _4 = seq_expr _5 = RPAREN
+| _1 = mod_longident _2 = DOT _3 = LPAREN _4 = seq_expr _5 = RPAREN
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4433,20 +3817,16 @@ in
           ( Pexp_open(Fresh, _1, _4) )
   in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LBRACELESS _4 = field_expr_list _5 = GREATERRBRACE
+| _1 = mod_longident _2 = DOT _3 = LBRACELESS _4 = field_expr_list _5 = GREATERRBRACE
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4460,7 +3840,6 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _startpos__1_ = _startpos__1'_ in
     let _endpos = _endpos__5_ in
     let _symbolstartpos = _startpos__1_ in
     let _sloc = (_symbolstartpos, _endpos) in
@@ -4468,40 +3847,31 @@ in
         Pexp_open(Fresh, _1, mkexp ~loc:_sloc (Pexp_override _4)) )
   in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LBRACELESS _4 = field_expr_list _5 = error
+| _1 = mod_longident _2 = DOT _3 = LBRACELESS _4 = field_expr_list _5 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__5_ = (_startpos__5_, _endpos__5_) in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( unclosed "{<" _loc__3_ ">}" _loc__5_ )
   in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = simple_expr _2 = HASH _1'' = label
+| _1 = simple_expr _2 = HASH _1_inlined1 = label
     {let _1 =
   let _1 =
-    let _endpos__1'_ = _endpos__1''_ in
-    let _startpos__1'_ = _startpos__1''_ in
-    let _1' = _1'' in
-    let _1 = _1' in
     let _3 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
+      let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4517,25 +3887,18 @@ in
     in
           ( Pexp_send(_1, _3) )
   in
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _endpos__1_ = _endpos__1_inlined1_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = simple_expr _1'' = HASHOP _3 = simple_expr
+| _1 = simple_expr _1_inlined1 = HASHOP _3 = simple_expr
     {let _1 =
   let _1 =
-    let _endpos__1'_ = _endpos__1''_ in
-    let _startpos__1'_ = _startpos__1''_ in
-    let _1' = _1'' in
-    let _1 = _1' in
     let _2 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
+      let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4546,41 +3909,28 @@ in
           ( mkinfix _1 _2 _3 )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = extension
+| _1 = extension
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pexp_extension _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Pexp_extension _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _1'' = LPAREN _2' = RPAREN
+| _1 = mod_longident _2 = DOT _1_inlined1 = LPAREN _2_inlined1 = RPAREN
     {let _1 =
   let _1 =
     let _3 =
-      let _endpos__2_ = _endpos__2'_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _2 = _2' in
-      let _1' = _1'' in
-      let _1 =
-        let _1 = _1' in
-                                                         (Lident "()")
-      in
+      let (_endpos__2_, _startpos__1_, _2, _1) = (_endpos__2_inlined1_, _startpos__1_inlined1_, _2_inlined1, _1_inlined1) in
+      let _1 =                                                  (Lident "()") in
       let _endpos__1_ = _endpos__2_ in
-      let _startpos__1_ = _startpos__1'_ in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4594,11 +3944,8 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _endpos__3_ = _endpos__2'_ in
+    let _endpos__3_ = _endpos__2_inlined1_ in
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4612,77 +3959,62 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _startpos__1_ = _startpos__1'_ in
     let _endpos = _endpos__3_ in
     let _symbolstartpos = _startpos__1_ in
     let _sloc = (_symbolstartpos, _endpos) in
           ( (* TODO: review the location of Pexp_construct *)
         Pexp_open(Fresh, _1, mkexp ~loc:_sloc (Pexp_construct(_3, None))) )
   in
-  let _endpos__1_ = _endpos__2'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _endpos__1_ = _endpos__2_inlined1_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LPAREN _4 = seq_expr _5 = error
+| _1 = mod_longident _2 = DOT _3 = LPAREN _4 = seq_expr _5 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__5_ = (_startpos__5_, _endpos__5_) in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( unclosed "(" _loc__3_ ")" _loc__5_ )
   in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LBRACE _2 = record_expr _3 = RBRACE
+| _1 = LBRACE _2 = record_expr _3 = RBRACE
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( let (exten, fields) = _2 in
-        Pexp_record(fields, exten) )
-  in
+  let _1 =       ( let (exten, fields) = _2 in
+        Pexp_record(fields, exten) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LBRACE _2 = record_expr _3 = error
+| _1 = LBRACE _2 = record_expr _3 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
           ( unclosed "{" _loc__1_ "}" _loc__3_ )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LBRACE _4 = record_expr _5 = RBRACE
+| _1 = mod_longident _2 = DOT _3 = LBRACE _4 = record_expr _5 = RBRACE
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4696,7 +4028,6 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _startpos__1_ = _startpos__1'_ in
     let _endpos = _endpos__5_ in
     let _symbolstartpos = _startpos__1_ in
     let _sloc = (_symbolstartpos, _endpos) in
@@ -4705,82 +4036,64 @@ in
         Pexp_open(Fresh, _1, mkexp ~loc:_sloc (Pexp_record(fields, exten))) )
   in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LBRACE _4 = record_expr _5 = error
+| _1 = mod_longident _2 = DOT _3 = LBRACE _4 = record_expr _5 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__5_ = (_startpos__5_, _endpos__5_) in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( unclosed "{" _loc__3_ "}" _loc__5_ )
   in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LBRACKETBAR _2 = expr_semi_list _3 = opt_semi _4 = BARRBRACKET
+| _1 = LBRACKETBAR _2 = expr_semi_list _3 = opt_semi _4 = BARRBRACKET
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pexp_array(List.rev _2) )
-  in
+  let _1 =       ( Pexp_array(List.rev _2) ) in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LBRACKETBAR _2 = expr_semi_list _3 = opt_semi _4 = error
+| _1 = LBRACKETBAR _2 = expr_semi_list _3 = opt_semi _4 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__4_ = (_startpos__4_, _endpos__4_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
           ( unclosed "[|" _loc__1_ "|]" _loc__4_ )
   in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LBRACKETBAR _2 = BARRBRACKET
+| _1 = LBRACKETBAR _2 = BARRBRACKET
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pexp_array [] )
-  in
+  let _1 =       ( Pexp_array [] ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LBRACKETBAR _4 = expr_semi_list _5 = opt_semi _6 = BARRBRACKET
+| _1 = mod_longident _2 = DOT _3 = LBRACKETBAR _4 = expr_semi_list _5 = opt_semi _6 = BARRBRACKET
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4794,7 +4107,6 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _startpos__1_ = _startpos__1'_ in
     let _endpos = _endpos__6_ in
     let _symbolstartpos = _startpos__1_ in
     let _sloc = (_symbolstartpos, _endpos) in
@@ -4802,20 +4114,16 @@ in
         Pexp_open(Fresh, _1, mkexp ~loc:_sloc (Pexp_array(List.rev _4))) )
   in
   let _endpos__1_ = _endpos__6_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LBRACKETBAR _4 = BARRBRACKET
+| _1 = mod_longident _2 = DOT _3 = LBRACKETBAR _4 = BARRBRACKET
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4829,7 +4137,6 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _startpos__1_ = _startpos__1'_ in
     let _endpos = _endpos__4_ in
     let _symbolstartpos = _startpos__1_ in
     let _sloc = (_symbolstartpos, _endpos) in
@@ -4837,69 +4144,57 @@ in
         Pexp_open(Fresh, _1, mkexp ~loc:_sloc (Pexp_array [])) )
   in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LBRACKETBAR _4 = expr_semi_list _5 = opt_semi _6 = error
+| _1 = mod_longident _2 = DOT _3 = LBRACKETBAR _4 = expr_semi_list _5 = opt_semi _6 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__6_ = (_startpos__6_, _endpos__6_) in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( unclosed "[|" _loc__3_ "|]" _loc__6_ )
   in
   let _endpos__1_ = _endpos__6_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LBRACKET _2 = expr_semi_list _3 = opt_semi _4 = RBRACKET
+| _1 = LBRACKET _2 = expr_semi_list _3 = opt_semi _4 = RBRACKET
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__4_ = (_startpos__4_, _endpos__4_) in
           ( fst (mktailexp _loc__4_ (List.rev _2)) )
   in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LBRACKET _2 = expr_semi_list _3 = opt_semi _4 = error
+| _1 = LBRACKET _2 = expr_semi_list _3 = opt_semi _4 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__4_ = (_startpos__4_, _endpos__4_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
           ( unclosed "[" _loc__1_ "]" _loc__4_ )
   in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LBRACKET _4 = expr_semi_list _5 = opt_semi _6 = RBRACKET
+| _1 = mod_longident _2 = DOT _3 = LBRACKET _4 = expr_semi_list _5 = opt_semi _6 = RBRACKET
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4913,7 +4208,6 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _startpos__1_ = _startpos__1'_ in
     let _endpos = _endpos__6_ in
     let _symbolstartpos = _startpos__1_ in
     let _loc__6_ = (_startpos__6_, _endpos__6_) in
@@ -4925,27 +4219,19 @@ in
         Pexp_open(Fresh, _1, list_exp) )
   in
   let _endpos__1_ = _endpos__6_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _1'' = LBRACKET _2' = RBRACKET
+| _1 = mod_longident _2 = DOT _1_inlined1 = LBRACKET _2_inlined1 = RBRACKET
     {let _1 =
   let _1 =
     let _3 =
-      let _endpos__2_ = _endpos__2'_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _2 = _2' in
-      let _1' = _1'' in
-      let _1 =
-        let _1 = _1' in
-                                                             (Lident "[]")
-      in
+      let (_endpos__2_, _startpos__1_, _2, _1) = (_endpos__2_inlined1_, _startpos__1_inlined1_, _2_inlined1, _1_inlined1) in
+      let _1 =                                                      (Lident "[]") in
       let _endpos__1_ = _endpos__2_ in
-      let _startpos__1_ = _startpos__1'_ in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4959,11 +4245,8 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _endpos__3_ = _endpos__2'_ in
+    let _endpos__3_ = _endpos__2_inlined1_ in
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -4977,44 +4260,37 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _startpos__1_ = _startpos__1'_ in
     let _endpos = _endpos__3_ in
     let _symbolstartpos = _startpos__1_ in
     let _sloc = (_symbolstartpos, _endpos) in
           ( (* TODO: review the location of Pexp_construct *)
         Pexp_open(Fresh, _1, mkexp ~loc:_sloc (Pexp_construct(_3, None))) )
   in
-  let _endpos__1_ = _endpos__2'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _endpos__1_ = _endpos__2_inlined1_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LBRACKET _4 = expr_semi_list _5 = opt_semi _6 = error
+| _1 = mod_longident _2 = DOT _3 = LBRACKET _4 = expr_semi_list _5 = opt_semi _6 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__6_ = (_startpos__6_, _endpos__6_) in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( unclosed "[" _loc__3_ "]" _loc__6_ )
   in
   let _endpos__1_ = _endpos__6_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LPAREN _4 = MODULE _5 = ext_attributes _6 = module_expr _7 = COLON _8 = package_type _9 = RPAREN
+| _1 = mod_longident _2 = DOT _3 = LPAREN _4 = MODULE _5 = ext_attributes _6 = module_expr _7 = COLON _8 = package_type _9 = RPAREN
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -5028,7 +4304,6 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _startpos__1_ = _startpos__1'_ in
     let _endpos = _endpos__9_ in
     let _symbolstartpos = _startpos__1_ in
     let _sloc = (_symbolstartpos, _endpos) in
@@ -5039,23 +4314,20 @@ in
         Pexp_open(Fresh, _1, modexp) )
   in
   let _endpos__1_ = _endpos__9_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkexp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LPAREN _4 = MODULE _5 = ext_attributes _6 = module_expr _7 = COLON _8 = error
+| _1 = mod_longident _2 = DOT _3 = LPAREN _4 = MODULE _5 = ext_attributes _6 = module_expr _7 = COLON _8 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__8_ = (_startpos__8_, _endpos__8_) in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( unclosed "(" _loc__3_ ")" _loc__8_ )
   in
   let _endpos__1_ = _endpos__8_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -5093,11 +4365,8 @@ let _sloc = (_symbolstartpos, _endpos) in
       ( (_1, mkexp ~loc:_sloc (Pexp_ident(mkrhs (Lident _1) _sloc))) )}
 
 lident_list:
-  _1' = LIDENT
+  _1 = LIDENT
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -5112,11 +4381,8 @@ lident_list:
       mkrhs _1 _loc )
 in
                                       ( [_1] )}
-| _1' = LIDENT _2 = lident_list
+| _1 = LIDENT _2 = lident_list
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -5133,28 +4399,21 @@ in
                                       ( _1 :: _2 )}
 
 let_binding_body:
-  _1' = val_ident _2 = strict_binding
+  _1 = val_ident _2 = strict_binding
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
                 ( mkpatvar ~loc:_loc _1 )
 in
       ( (_1, _2) )}
-| _1' = val_ident _2 = type_constraint _3 = EQUAL _4 = seq_expr
+| _1 = val_ident _2 = type_constraint _3 = EQUAL _4 = seq_expr
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
                 ( mkpatvar ~loc:_loc _1 )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -5170,33 +4429,25 @@ let _sloc = (_symbolstartpos, _endpos) in
         let patloc = (_startpos__1_, _endpos__2_) in
         (ghpat ~loc:patloc (Ppat_constraint(v, typ)),
          mkexp_constraint ~loc:_sloc _4 _2) )}
-| _1' = val_ident _2 = COLON _3 = typevar_list _4 = DOT _5 = core_type _6 = EQUAL _7 = seq_expr
+| _1 = val_ident _2 = COLON _3 = typevar_list _4 = DOT _5 = core_type _6 = EQUAL _7 = seq_expr
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
                 ( mkpatvar ~loc:_loc _1 )
 in
-let _startpos__1_ = _startpos__1'_ in
       ( let typloc = (_startpos__3_, _endpos__5_) in
         let patloc = (_startpos__1_, _endpos__5_) in
         (ghpat ~loc:patloc
            (Ppat_constraint(_1, ghtyp ~loc:typloc (Ptyp_poly(List.rev _3,_5)))),
          _7) )}
-| _1' = val_ident _2 = COLON _3 = TYPE _4 = lident_list _5 = DOT _6 = core_type _7 = EQUAL _8 = seq_expr
+| _1 = val_ident _2 = COLON _3 = TYPE _4 = lident_list _5 = DOT _6 = core_type _7 = EQUAL _8 = seq_expr
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
                 ( mkpatvar ~loc:_loc _1 )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__8_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -5272,14 +4523,10 @@ match_case:
 fun_def:
   _1 = MINUSGREATER _2 = seq_expr
     {      ( _2 )}
-| _1' = COLON _2 = simple_core_type _3 = MINUSGREATER _4 = seq_expr
+| _1 = COLON _2 = simple_core_type _3 = MINUSGREATER _4 = seq_expr
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Pexp_constraint (_4, _2) )
-  in
+  let _1 =       ( Pexp_constraint (_4, _2) ) in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -5321,11 +4568,8 @@ lbl_expr_list:
     {                   ( [_1] )}
 
 lbl_expr:
-  _1' = label_longident _2 = opt_type_constraint _3 = EQUAL _4 = expr
+  _1 = label_longident _2 = opt_type_constraint _3 = EQUAL _4 = expr
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -5339,16 +4583,12 @@ lbl_expr:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
       ( (_1, mkexp_opt_constraint ~loc:_sloc _4 _2) )}
-| _1' = label_longident _2 = opt_type_constraint
+| _1 = label_longident _2 = opt_type_constraint
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -5362,7 +4602,6 @@ let _sloc = (_symbolstartpos, _endpos) in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -5377,11 +4616,8 @@ field_expr_list:
     {                                    ( _1 :: _3 )}
 
 field_expr:
-  _1' = label _2 = EQUAL _3 = expr
+  _1 = label _2 = EQUAL _3 = expr
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -5396,11 +4632,8 @@ field_expr:
       mkrhs _1 _loc )
 in
       ( (_1, _3) )}
-| _1' = label
+| _1 = label
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -5414,8 +4647,6 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _endpos__1_ = _endpos__1'_ in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__1_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -5461,17 +4692,11 @@ let _sloc = (_symbolstartpos, _endpos) in
     {      ( Pat.attr _1 _2 )}
 | _1 = pattern_gen
     {      ( _1 )}
-| _1' = pattern _2 = AS _1'' = val_ident
+| _1 = pattern _2 = AS _1_inlined1 = val_ident
     {let _1 =
   let _1 =
-    let _endpos__1'_ = _endpos__1''_ in
-    let _startpos__1'_ = _startpos__1''_ in
-    let _1' = _1'' in
-    let _1 = _1' in
     let _3 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
+      let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -5487,81 +4712,65 @@ let _sloc = (_symbolstartpos, _endpos) in
     in
           ( Ppat_alias(_1, _3) )
   in
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _endpos__1_ = _endpos__1_inlined1_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = pattern _2 = AS _3 = error
+| _1 = pattern _2 = AS _3 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( expecting _loc__3_ "identifier" )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = pattern_comma_list %prec below_COMMA
+| _1 = pattern_comma_list %prec below_COMMA
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_tuple(List.rev _1) )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Ppat_tuple(List.rev _1) ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = pattern _2 = COLONCOLON _3 = error
+| _1 = pattern _2 = COLONCOLON _3 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( expecting _loc__3_ "pattern" )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = pattern _2 = BAR _3 = pattern
+| _1 = pattern _2 = BAR _3 = pattern
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_or(_1, _3) )
-  in
+  let _1 =       ( Ppat_or(_1, _3) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = pattern _2 = BAR _3 = error
+| _1 = pattern _2 = BAR _3 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( expecting _loc__3_ "pattern" )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -5580,17 +4789,11 @@ let _sloc = (_symbolstartpos, _endpos) in
     {      ( Pat.attr _1 _2 )}
 | _1 = pattern_gen
     {      ( _1 )}
-| _1' = pattern_no_exn _2 = AS _1'' = val_ident
+| _1 = pattern_no_exn _2 = AS _1_inlined1 = val_ident
     {let _1 =
   let _1 =
-    let _endpos__1'_ = _endpos__1''_ in
-    let _startpos__1'_ = _startpos__1''_ in
-    let _1' = _1'' in
-    let _1 = _1' in
     let _3 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
+      let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -5606,81 +4809,65 @@ let _sloc = (_symbolstartpos, _endpos) in
     in
           ( Ppat_alias(_1, _3) )
   in
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _endpos__1_ = _endpos__1_inlined1_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = pattern_no_exn _2 = AS _3 = error
+| _1 = pattern_no_exn _2 = AS _3 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( expecting _loc__3_ "identifier" )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = pattern_no_exn_comma_list %prec below_COMMA
+| _1 = pattern_no_exn_comma_list %prec below_COMMA
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_tuple(List.rev _1) )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Ppat_tuple(List.rev _1) ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = pattern_no_exn _2 = COLONCOLON _3 = error
+| _1 = pattern_no_exn _2 = COLONCOLON _3 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( expecting _loc__3_ "pattern" )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = pattern_no_exn _2 = BAR _3 = pattern
+| _1 = pattern_no_exn _2 = BAR _3 = pattern
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_or(_1, _3) )
-  in
+  let _1 =       ( Ppat_or(_1, _3) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = pattern_no_exn _2 = BAR _3 = error
+| _1 = pattern_no_exn _2 = BAR _3 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( expecting _loc__3_ "pattern" )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -5691,13 +4878,10 @@ in
 pattern_gen:
   _1 = simple_pattern
     {      ( _1 )}
-| _1' = constr_longident _2 = pattern %prec prec_constr_appl
+| _1 = constr_longident _2 = pattern %prec prec_constr_appl
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -5714,21 +4898,16 @@ pattern_gen:
             ( Ppat_construct(_1, Some _2) )
   in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = name_tag _2 = pattern %prec prec_constr_appl
+| _1 = name_tag _2 = pattern %prec prec_constr_appl
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-            ( Ppat_variant(_1, Some _2) )
-  in
+  let _1 =         ( Ppat_variant(_1, Some _2) ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -5742,13 +4921,10 @@ let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat_attrs ~loc:_sloc (Ppat_lazy _3) _2)}
 
 simple_pattern:
-  _1' = val_ident %prec below_EQUAL
+  _1 = val_ident %prec below_EQUAL
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -5764,8 +4940,6 @@ simple_pattern:
     in
           ( Ppat_var (_1) )
   in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -5783,11 +4957,9 @@ let _sloc = (_symbolstartpos, _endpos) in
       ( reloc_pat ~loc:_sloc _2 )}
 | _1 = simple_delimited_pattern
     {      ( _1 )}
-| _1 = LPAREN _2 = MODULE _3 = ext_attributes _1' = UIDENT _5 = RPAREN
+| _1 = LPAREN _2 = MODULE _3 = ext_attributes _1_inlined1 = UIDENT _5 = RPAREN
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -5805,11 +4977,9 @@ let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat_attrs ~loc:_sloc (Ppat_unpack _4) _3 )}
-| _1 = LPAREN _2 = MODULE _3 = ext_attributes _1' = UIDENT _5 = COLON _6 = package_type _7 = RPAREN
+| _1 = LPAREN _2 = MODULE _3 = ext_attributes _1_inlined1 = UIDENT _5 = COLON _6 = package_type _7 = RPAREN
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -5829,55 +4999,38 @@ let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat_attrs ~loc:_sloc
           (Ppat_constraint(mkpat ~loc:_sloc (Ppat_unpack _4), _6))
           _3 )}
-| _1' = UNDERSCORE
+| _1 = UNDERSCORE
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_any )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Ppat_any ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = signed_constant
+| _1 = signed_constant
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_constant _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Ppat_constant _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = signed_constant _2 = DOTDOT _3 = signed_constant
+| _1 = signed_constant _2 = DOTDOT _3 = signed_constant
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_interval (_1, _3) )
-  in
+  let _1 =       ( Ppat_interval (_1, _3) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = constr_longident
+| _1 = constr_longident
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -5893,39 +5046,26 @@ in
     in
           ( Ppat_construct(_1, None) )
   in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = name_tag
+| _1 = name_tag
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_variant(_1, None) )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Ppat_variant(_1, None) ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = HASH _1'' = type_longident
+| _1 = HASH _1_inlined1 = type_longident
     {let _1 =
   let _1 =
-    let _endpos__1'_ = _endpos__1''_ in
-    let _startpos__1'_ = _startpos__1''_ in
-    let _1' = _1'' in
-    let _1 = _1' in
     let _2 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
+      let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -5941,21 +5081,17 @@ in
     in
           ( Ppat_type (_2) )
   in
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _endpos__1_ = _endpos__1_inlined1_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = simple_delimited_pattern
+| _1 = mod_longident _2 = DOT _3 = simple_delimited_pattern
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -5972,27 +5108,19 @@ in
           ( Ppat_open(_1, _3) )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _1'' = LBRACKET _2' = RBRACKET
+| _1 = mod_longident _2 = DOT _1_inlined1 = LBRACKET _2_inlined1 = RBRACKET
     {let _1 =
   let _1 =
     let _3 =
-      let _endpos__2_ = _endpos__2'_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _2 = _2' in
-      let _1' = _1'' in
-      let _1 =
-        let _1 = _1' in
-                                                             (Lident "[]")
-      in
+      let (_endpos__2_, _startpos__1_, _2, _1) = (_endpos__2_inlined1_, _startpos__1_inlined1_, _2_inlined1, _1_inlined1) in
+      let _1 =                                                      (Lident "[]") in
       let _endpos__1_ = _endpos__2_ in
-      let _startpos__1_ = _startpos__1'_ in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -6006,11 +5134,8 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _endpos__3_ = _endpos__2'_ in
+    let _endpos__3_ = _endpos__2_inlined1_ in
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -6024,34 +5149,25 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _startpos__1_ = _startpos__1'_ in
     let _endpos = _endpos__3_ in
     let _symbolstartpos = _startpos__1_ in
     let _sloc = (_symbolstartpos, _endpos) in
         ( Ppat_open(_1, mkpat ~loc:_sloc (Ppat_construct(_3, None))) )
   in
-  let _endpos__1_ = _endpos__2'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _endpos__1_ = _endpos__2_inlined1_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _1'' = LPAREN _2' = RPAREN
+| _1 = mod_longident _2 = DOT _1_inlined1 = LPAREN _2_inlined1 = RPAREN
     {let _1 =
   let _1 =
     let _3 =
-      let _endpos__2_ = _endpos__2'_ in
-      let _startpos__1'_ = _startpos__1''_ in
-      let _2 = _2' in
-      let _1' = _1'' in
-      let _1 =
-        let _1 = _1' in
-                                                         (Lident "()")
-      in
+      let (_endpos__2_, _startpos__1_, _2, _1) = (_endpos__2_inlined1_, _startpos__1_inlined1_, _2_inlined1, _1_inlined1) in
+      let _1 =                                                  (Lident "()") in
       let _endpos__1_ = _endpos__2_ in
-      let _startpos__1_ = _startpos__1'_ in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -6065,11 +5181,8 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _endpos__3_ = _endpos__2'_ in
+    let _endpos__3_ = _endpos__2_inlined1_ in
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -6083,27 +5196,22 @@ in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
     in
-    let _startpos__1_ = _startpos__1'_ in
     let _endpos = _endpos__3_ in
     let _symbolstartpos = _startpos__1_ in
     let _sloc = (_symbolstartpos, _endpos) in
         ( Ppat_open(_1, mkpat ~loc:_sloc (Ppat_construct(_3, None))) )
   in
-  let _endpos__1_ = _endpos__2'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _endpos__1_ = _endpos__2_inlined1_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LPAREN _4 = pattern _5 = RPAREN
+| _1 = mod_longident _2 = DOT _3 = LPAREN _4 = pattern _5 = RPAREN
     {let _1 =
   let _1 =
     let _1 =
-      let _endpos__1_ = _endpos__1'_ in
-      let _startpos__1_ = _startpos__1'_ in
-      let _1 = _1' in
       let _endpos = _endpos__1_ in
       let _startpos = _startpos__1_ in
       let _loc = (_startpos, _endpos) in
@@ -6120,135 +5228,107 @@ in
           ( Ppat_open (_1, _4) )
   in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LPAREN _4 = pattern _5 = error
+| _1 = mod_longident _2 = DOT _3 = LPAREN _4 = pattern _5 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__5_ = (_startpos__5_, _endpos__5_) in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
           ( unclosed "(" _loc__3_ ")" _loc__5_  )
   in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = mod_longident _2 = DOT _3 = LPAREN _4 = error
+| _1 = mod_longident _2 = DOT _3 = LPAREN _4 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__4_ = (_startpos__4_, _endpos__4_) in
           ( expecting _loc__4_ "pattern" )
   in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LPAREN _2 = pattern _3 = error
+| _1 = LPAREN _2 = pattern _3 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
           ( unclosed "(" _loc__1_ ")" _loc__3_ )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LPAREN _2 = pattern _3 = COLON _4 = core_type _5 = RPAREN
+| _1 = LPAREN _2 = pattern _3 = COLON _4 = core_type _5 = RPAREN
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_constraint(_2, _4) )
-  in
+  let _1 =       ( Ppat_constraint(_2, _4) ) in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LPAREN _2 = pattern _3 = COLON _4 = core_type _5 = error
+| _1 = LPAREN _2 = pattern _3 = COLON _4 = core_type _5 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__5_ = (_startpos__5_, _endpos__5_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
           ( unclosed "(" _loc__1_ ")" _loc__5_ )
   in
   let _endpos__1_ = _endpos__5_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LPAREN _2 = pattern _3 = COLON _4 = error
+| _1 = LPAREN _2 = pattern _3 = COLON _4 = error
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__4_ = (_startpos__4_, _endpos__4_) in
           ( expecting _loc__4_ "type" )
   in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = LPAREN _2 = MODULE _3 = ext_attributes _4 = UIDENT _5 = COLON _6 = package_type _7 = error
+| _1 = LPAREN _2 = MODULE _3 = ext_attributes _4 = UIDENT _5 = COLON _6 = package_type _7 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__7_ = (_startpos__7_, _endpos__7_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
           ( unclosed "(" _loc__1_ ")" _loc__7_ )
   in
   let _endpos__1_ = _endpos__7_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = extension
+| _1 = extension
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_extension _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Ppat_extension _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -6257,112 +5337,86 @@ in
       ( _1 )}
 
 simple_delimited_pattern:
-  _1' = LBRACE _2 = lbl_pattern_list _3 = RBRACE
+  _1 = LBRACE _2 = lbl_pattern_list _3 = RBRACE
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( let (fields, closed) = _2 in
-        Ppat_record(fields, closed) )
-  in
+  let _1 =       ( let (fields, closed) = _2 in
+        Ppat_record(fields, closed) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = LBRACE _2 = lbl_pattern_list _3 = error
+| _1 = LBRACE _2 = lbl_pattern_list _3 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__3_ = (_startpos__3_, _endpos__3_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
           ( unclosed "{" _loc__1_ "}" _loc__3_ )
   in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = LBRACKET _2 = pattern_semi_list _3 = opt_semi _4 = RBRACKET
+| _1 = LBRACKET _2 = pattern_semi_list _3 = opt_semi _4 = RBRACKET
     {let _1 =
   let _1 =
-    let _1 = _1' in
     let _loc__4_ = (_startpos__4_, _endpos__4_) in
           ( fst (mktailpat _loc__4_ (List.rev _2)) )
   in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = LBRACKET _2 = pattern_semi_list _3 = opt_semi _4 = error
+| _1 = LBRACKET _2 = pattern_semi_list _3 = opt_semi _4 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__4_ = (_startpos__4_, _endpos__4_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
           ( unclosed "[" _loc__1_ "]" _loc__4_ )
   in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = LBRACKETBAR _2 = pattern_semi_list _3 = opt_semi _4 = BARRBRACKET
+| _1 = LBRACKETBAR _2 = pattern_semi_list _3 = opt_semi _4 = BARRBRACKET
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_array(List.rev _2) )
-  in
+  let _1 =       ( Ppat_array(List.rev _2) ) in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = LBRACKETBAR _2 = BARRBRACKET
+| _1 = LBRACKETBAR _2 = BARRBRACKET
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ppat_array [] )
-  in
+  let _1 =       ( Ppat_array [] ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkpat ~loc:_sloc _1 )
 in
     ( _1 )}
-| _1' = LBRACKETBAR _2 = pattern_semi_list _3 = opt_semi _4 = error
+| _1 = LBRACKETBAR _2 = pattern_semi_list _3 = opt_semi _4 = error
     {let _1 =
   let _1 =
-    let _endpos__1_ = _endpos__1'_ in
-    let _startpos__1_ = _startpos__1'_ in
-    let _1 = _1' in
     let _loc__4_ = (_startpos__4_, _endpos__4_) in
     let _loc__1_ = (_startpos__1_, _endpos__1_) in
           ( unclosed "[|" _loc__1_ "|]" _loc__4_ )
   in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -6405,11 +5459,8 @@ lbl_pattern_list:
     {      ( let (fields, closed) = _3 in _1 :: fields, closed )}
 
 lbl_pattern:
-  _1' = label_longident _2 = opt_pattern_type_constraint _3 = EQUAL _4 = pattern
+  _1 = label_longident _2 = opt_pattern_type_constraint _3 = EQUAL _4 = pattern
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6423,16 +5474,12 @@ lbl_pattern:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
      ( (_1, mkpat_opt_constraint ~loc:_sloc _4 _2) )}
-| _1' = label_longident _2 = opt_pattern_type_constraint
+| _1 = label_longident _2 = opt_pattern_type_constraint
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6446,7 +5493,6 @@ let _sloc = (_symbolstartpos, _endpos) in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -6461,11 +5507,9 @@ opt_pattern_type_constraint:
     {                ( None )}
 
 value_description:
-  _1 = VAL _2 = ext_attributes _1' = val_ident _4 = COLON _5 = core_type _6 = post_item_attributes
+  _1 = VAL _2 = ext_attributes _1_inlined1 = val_ident _4 = COLON _5 = core_type _6 = post_item_attributes
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6493,11 +5537,9 @@ primitive_declaration_body:
     {                                                ( fst _1 :: _2 )}
 
 primitive_declaration:
-  _1 = EXTERNAL _2 = ext_attributes _1' = val_ident _4 = COLON _5 = core_type _6 = EQUAL _7 = primitive_declaration_body _8 = post_item_attributes
+  _1 = EXTERNAL _2 = ext_attributes _1_inlined1 = val_ident _4 = COLON _5 = core_type _6 = EQUAL _7 = primitive_declaration_body _8 = post_item_attributes
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6526,11 +5568,9 @@ type_declarations:
     {      ( let (nonrec_flag, tys, ext) = _1 in (nonrec_flag, _2 :: tys, ext) )}
 
 type_declaration:
-  _1 = TYPE _2 = ext_attributes _3 = nonrec_flag _4 = optional_type_parameters _1' = LIDENT _6 = type_kind _7 = constraints _8 = post_item_attributes
+  _1 = TYPE _2 = ext_attributes _3 = nonrec_flag _4 = optional_type_parameters _1_inlined1 = LIDENT _6 = type_kind _7 = constraints _8 = post_item_attributes
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6557,11 +5597,9 @@ let _sloc = (_symbolstartpos, _endpos) in
         (_3, ty, ext) )}
 
 and_type_declaration:
-  _1 = AND _2 = attributes _3 = optional_type_parameters _1' = LIDENT _5 = type_kind _6 = constraints _7 = post_item_attributes
+  _1 = AND _2 = attributes _3 = optional_type_parameters _1_inlined1 = LIDENT _5 = type_kind _6 = constraints _7 = post_item_attributes
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6634,28 +5672,19 @@ optional_type_parameter_list:
     {                                                                  ( _3 :: _1 )}
 
 optional_type_variable:
-  _1' = QUOTE _2 = ident
+  _1 = QUOTE _2 = ident
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-                        ( Ptyp_var _2 )
-  in
+  let _1 =                     ( Ptyp_var _2 ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mktyp ~loc:_sloc _1 )
 in
       ( _1 )}
-| _1' = UNDERSCORE
+| _1 = UNDERSCORE
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-                        ( Ptyp_any )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =                     ( Ptyp_any ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -6676,14 +5705,10 @@ type_variance:
     {                                                ( Contravariant )}
 
 type_variable:
-  _1' = QUOTE _2 = ident
+  _1 = QUOTE _2 = ident
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-                          ( Ptyp_var _2 )
-  in
+  let _1 =                       ( Ptyp_var _2 ) in
   let _endpos__1_ = _endpos__2_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -6708,11 +5733,8 @@ constructor_declarations:
     {                                                         ( _2 :: _1 )}
 
 constructor_declaration:
-  _1' = constr_ident _2 = generalized_constructor_arguments _3 = attributes
+  _1 = constr_ident _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6726,7 +5748,6 @@ constructor_declaration:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -6735,11 +5756,9 @@ let _sloc = (_symbolstartpos, _endpos) in
       Type.constructor _1 ~args ?res ~attrs:_3 ~loc:(make_loc _sloc) ~info )}
 
 bar_constructor_declaration:
-  _1 = BAR _1' = constr_ident _3 = generalized_constructor_arguments _4 = attributes
+  _1 = BAR _1_inlined1 = constr_ident _3 = generalized_constructor_arguments _4 = attributes
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6763,11 +5782,9 @@ let _sloc = (_symbolstartpos, _endpos) in
 str_exception_declaration:
   _1 = sig_exception_declaration
     {                                                 ( _1 )}
-| _1 = EXCEPTION _2 = ext_attributes _1' = constr_ident _4 = EQUAL _1'' = constr_longident _6 = attributes _7 = post_item_attributes
+| _1 = EXCEPTION _2 = ext_attributes _1_inlined1 = constr_ident _4 = EQUAL _1_inlined2 = constr_longident _6 = attributes _7 = post_item_attributes
     {let _5 =
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1''_ in
-  let _1 = _1'' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6782,9 +5799,7 @@ str_exception_declaration:
       mkrhs _1 _loc )
 in
 let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6808,11 +5823,9 @@ let _sloc = (_symbolstartpos, _endpos) in
       , ext )}
 
 sig_exception_declaration:
-  _1 = EXCEPTION _2 = ext_attributes _1' = constr_ident _4 = generalized_constructor_arguments _5 = attributes _6 = post_item_attributes
+  _1 = EXCEPTION _2 = ext_attributes _1_inlined1 = constr_ident _4 = generalized_constructor_arguments _5 = attributes _6 = post_item_attributes
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6838,11 +5851,8 @@ let _sloc = (_symbolstartpos, _endpos) in
         , ext )}
 
 let_exception_declaration:
-  _1' = constr_ident _2 = generalized_constructor_arguments _3 = attributes
+  _1 = constr_ident _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6856,7 +5866,6 @@ let_exception_declaration:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -6888,11 +5897,9 @@ label_declarations:
     {                                                ( _1 :: _2 )}
 
 label_declaration:
-  _1 = mutable_flag _1' = label _3 = COLON _4 = poly_type_no_attr _5 = attributes
+  _1 = mutable_flag _1_inlined1 = label _3 = COLON _4 = poly_type_no_attr _5 = attributes
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6906,7 +5913,7 @@ label_declaration:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__2_ = _startpos__1'_ in
+let _startpos__2_ = _startpos__1_inlined1_ in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -6917,11 +5924,9 @@ let _sloc = (_symbolstartpos, _endpos) in
         Type.field _2 _4 ~mut:_1 ~attrs:_5 ~loc:(make_loc _sloc) ~info )}
 
 label_declaration_semi:
-  _1 = mutable_flag _1' = label _3 = COLON _4 = poly_type_no_attr _5 = attributes _6 = SEMI _7 = attributes
+  _1 = mutable_flag _1_inlined1 = label _3 = COLON _4 = poly_type_no_attr _5 = attributes _6 = SEMI _7 = attributes
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6935,7 +5940,7 @@ label_declaration_semi:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__2_ = _startpos__1'_ in
+let _startpos__2_ = _startpos__1_inlined1_ in
 let _endpos = _endpos__7_ in
 let _symbolstartpos = if _startpos__1_ != _endpos__1_ then
   _startpos__1_
@@ -6950,11 +5955,9 @@ let _sloc = (_symbolstartpos, _endpos) in
        Type.field _2 _4 ~mut:_1 ~attrs:(_5 @ _7) ~loc:(make_loc _sloc) ~info )}
 
 str_type_extension:
-  _1 = TYPE _2 = ext_attributes _3 = nonrec_flag _4 = optional_type_parameters _1' = type_longident _6 = PLUSEQ _7 = private_flag _8 = str_extension_constructors _9 = post_item_attributes
+  _1 = TYPE _2 = ext_attributes _3 = nonrec_flag _4 = optional_type_parameters _1_inlined1 = type_longident _6 = PLUSEQ _7 = private_flag _8 = str_extension_constructors _9 = post_item_attributes
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -6979,11 +5982,9 @@ let _sloc = (_symbolstartpos, _endpos) in
         , ext )}
 
 sig_type_extension:
-  _1 = TYPE _2 = ext_attributes _3 = nonrec_flag _4 = optional_type_parameters _1' = type_longident _6 = PLUSEQ _7 = private_flag _8 = sig_extension_constructors _9 = post_item_attributes
+  _1 = TYPE _2 = ext_attributes _3 = nonrec_flag _4 = optional_type_parameters _1_inlined1 = type_longident _6 = PLUSEQ _7 = private_flag _8 = sig_extension_constructors _9 = post_item_attributes
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7030,11 +6031,8 @@ sig_extension_constructors:
     {      ( _2 :: _1 )}
 
 extension_constructor_declaration:
-  _1' = constr_ident _2 = generalized_constructor_arguments _3 = attributes
+  _1 = constr_ident _2 = generalized_constructor_arguments _3 = attributes
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7048,7 +6046,6 @@ extension_constructor_declaration:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__3_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -7057,11 +6054,9 @@ let _sloc = (_symbolstartpos, _endpos) in
         Te.decl _1 ~args ?res ~attrs:_3 ~loc:(make_loc _sloc) ~info )}
 
 bar_extension_constructor_declaration:
-  _1 = BAR _1' = constr_ident _3 = generalized_constructor_arguments _4 = attributes
+  _1 = BAR _1_inlined1 = constr_ident _3 = generalized_constructor_arguments _4 = attributes
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7083,8 +6078,9 @@ let _sloc = (_symbolstartpos, _endpos) in
         Te.decl _2 ~args ?res ~attrs:_4 ~loc:(make_loc _sloc) ~info )}
 
 extension_constructor_rebind:
-  _1' = constr_ident _2 = EQUAL _1 = constr_longident _4 = attributes
+  _1 = constr_ident _2 = EQUAL _1_inlined1 = constr_longident _4 = attributes
     {let _3 =
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7099,9 +6095,6 @@ extension_constructor_rebind:
       mkrhs _1 _loc )
 in
 let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7115,7 +6108,6 @@ let _1 =
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -7123,11 +6115,9 @@ let _sloc = (_symbolstartpos, _endpos) in
         Te.rebind _1 _3 ~attrs:_4 ~loc:(make_loc _sloc) ~info )}
 
 bar_extension_constructor_rebind:
-  _1 = BAR _1' = constr_ident _3 = EQUAL _1'' = constr_longident _5 = attributes
+  _1 = BAR _1_inlined1 = constr_ident _3 = EQUAL _1_inlined2 = constr_longident _5 = attributes
     {let _4 =
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1''_ in
-  let _1 = _1'' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7142,9 +6132,7 @@ bar_extension_constructor_rebind:
       mkrhs _1 _loc )
 in
 let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7171,11 +6159,9 @@ with_constraints:
     {                                                ( _3 :: _1 )}
 
 with_constraint:
-  _1 = TYPE _2 = optional_type_parameters _1' = label_longident _4 = with_type_binder _5 = core_type_no_attr _6 = constraints
+  _1 = TYPE _2 = optional_type_parameters _1_inlined1 = label_longident _4 = with_type_binder _5 = core_type_no_attr _6 = constraints
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7201,11 +6187,9 @@ let _sloc = (_symbolstartpos, _endpos) in
               ~manifest:_5
               ~priv:_4
               ~loc:(make_loc _sloc))) )}
-| _1 = TYPE _2 = optional_type_parameters _1' = label_longident _4 = COLONEQUAL _5 = core_type_no_attr
+| _1 = TYPE _2 = optional_type_parameters _1_inlined1 = label_longident _4 = COLONEQUAL _5 = core_type_no_attr
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7229,11 +6213,9 @@ let _sloc = (_symbolstartpos, _endpos) in
               ~params:_2
               ~manifest:_5
               ~loc:(make_loc _sloc))) )}
-| _1 = MODULE _1' = mod_longident _3 = EQUAL _1'' = mod_ext_longident
+| _1 = MODULE _1_inlined1 = mod_longident _3 = EQUAL _1_inlined2 = mod_ext_longident
     {let _4 =
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1''_ in
-  let _1 = _1'' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7248,9 +6230,7 @@ let _sloc = (_symbolstartpos, _endpos) in
       mkrhs _1 _loc )
 in
 let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7265,11 +6245,9 @@ let _2 =
       mkrhs _1 _loc )
 in
       ( Pwith_module (_2, _4) )}
-| _1 = MODULE _1' = mod_longident _3 = COLONEQUAL _1'' = mod_ext_longident
+| _1 = MODULE _1_inlined1 = mod_longident _3 = COLONEQUAL _1_inlined2 = mod_ext_longident
     {let _4 =
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1''_ in
-  let _1 = _1'' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7284,9 +6262,7 @@ in
       mkrhs _1 _loc )
 in
 let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7309,11 +6285,9 @@ with_type_binder:
     {                   ( Private )}
 
 typevar_list:
-  _1 = QUOTE _1' = ident
+  _1 = QUOTE _1_inlined1 = ident
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7328,11 +6302,9 @@ typevar_list:
       mkrhs _1 _loc )
 in
                                                 ( [_2] )}
-| _1 = typevar_list _2 = QUOTE _1' = ident
+| _1 = typevar_list _2 = QUOTE _1_inlined1 = ident
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7351,14 +6323,10 @@ in
 poly_type:
   _1 = core_type
     {          ( _1 )}
-| _1' = typevar_list _2 = DOT _3 = core_type
+| _1 = typevar_list _2 = DOT _3 = core_type
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-              ( Ptyp_poly(List.rev _1, _3) )
-  in
+  let _1 =           ( Ptyp_poly(List.rev _1, _3) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -7369,14 +6337,10 @@ in
 poly_type_no_attr:
   _1 = core_type_no_attr
     {          ( _1 )}
-| _1' = typevar_list _2 = DOT _3 = core_type_no_attr
+| _1 = typevar_list _2 = DOT _3 = core_type_no_attr
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-              ( Ptyp_poly(List.rev _1, _3) )
-  in
+  let _1 =           ( Ptyp_poly(List.rev _1, _3) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -7393,14 +6357,10 @@ core_type:
 core_type_no_attr:
   _1 = core_type2 %prec MINUSGREATER
     {      ( _1 )}
-| _1' = core_type2 _2 = AS _3 = QUOTE _4 = ident
+| _1 = core_type2 _2 = AS _3 = QUOTE _4 = ident
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ptyp_alias(_1, _4) )
-  in
+  let _1 =       ( Ptyp_alias(_1, _4) ) in
   let _endpos__1_ = _endpos__4_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -7411,11 +6371,8 @@ in
 core_type2:
   _1 = simple_core_type_or_tuple
     {      ( _1 )}
-| _1' = core_type2_
+| _1 = core_type2_
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -7424,33 +6381,26 @@ in
       ( _1 )}
 
 core_type2_:
-  _1 = QUESTION _2 = LIDENT _3 = COLON _1' = core_type2 _5 = MINUSGREATER _6 = core_type2
+  _1 = QUESTION _2 = LIDENT _3 = COLON _1_inlined1 = core_type2 _5 = MINUSGREATER _6 = core_type2
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _1) = (_endpos__1_inlined1_, _1_inlined1) in
     ( extra_rhs_core_type _1 ~pos:_endpos__1_ )
 in
       ( Ptyp_arrow(Optional _2, _4, _6) )}
-| _1 = OPTLABEL _1' = core_type2 _3 = MINUSGREATER _4 = core_type2
+| _1 = OPTLABEL _1_inlined1 = core_type2 _3 = MINUSGREATER _4 = core_type2
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _1) = (_endpos__1_inlined1_, _1_inlined1) in
     ( extra_rhs_core_type _1 ~pos:_endpos__1_ )
 in
       ( Ptyp_arrow(Optional _1 , _2, _4) )}
-| _1 = LIDENT _2 = COLON _1' = core_type2 _4 = MINUSGREATER _5 = core_type2
+| _1 = LIDENT _2 = COLON _1_inlined1 = core_type2 _4 = MINUSGREATER _5 = core_type2
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _1) = (_endpos__1_inlined1_, _1_inlined1) in
     ( extra_rhs_core_type _1 ~pos:_endpos__1_ )
 in
       ( Ptyp_arrow(Labelled _1, _3, _5) )}
-| _1' = core_type2 _2 = MINUSGREATER _3 = core_type2
-    {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _1 = _1' in
-    ( extra_rhs_core_type _1 ~pos:_endpos__1_ )
-in
+| _1 = core_type2 _2 = MINUSGREATER _3 = core_type2
+    {let _1 =   ( extra_rhs_core_type _1 ~pos:_endpos__1_ ) in
       ( Ptyp_arrow(Nolabel, _1, _3) )}
 
 simple_core_type:
@@ -7465,11 +6415,8 @@ simple_core_type2:
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
       ( wrap_typ_attrs ~loc:_sloc (reloc_typ ~loc:_sloc _4) _3 )}
-| _1' = simple_core_type2_
+| _1 = simple_core_type2_
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -7482,11 +6429,8 @@ simple_core_type2_:
     {      ( Ptyp_var _2 )}
 | _1 = UNDERSCORE
     {      ( Ptyp_any )}
-| _1' = type_longident
+| _1 = type_longident
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7501,11 +6445,9 @@ simple_core_type2_:
       mkrhs _1 _loc )
 in
       ( Ptyp_constr(_1, []) )}
-| _1 = simple_core_type2 _1' = type_longident
+| _1 = simple_core_type2 _1_inlined1 = type_longident
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7520,11 +6462,9 @@ in
       mkrhs _1 _loc )
 in
       ( Ptyp_constr(_2, [_1]) )}
-| _1 = LPAREN x = core_type _3 = RPAREN _1' = type_longident
+| _1 = LPAREN x = core_type _3 = RPAREN _1_inlined1 = type_longident
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7543,11 +6483,9 @@ let _2 =
       ( tys )
 in
       ( Ptyp_constr(_4, List.rev _2) )}
-| _1 = LPAREN xs = reversed_separated_nonempty_list_COMMA_core_type_ _2' = COMMA x = core_type _3 = RPAREN _1' = type_longident
+| _1 = LPAREN xs = reversed_separated_nonempty_list_COMMA_core_type_ _2 = COMMA x = core_type _3 = RPAREN _1_inlined1 = type_longident
     {let _4 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7562,7 +6500,6 @@ in
       mkrhs _1 _loc )
 in
 let _2 =
-  let _2 = _2' in
   let tys =     ( x :: xs ) in
       ( tys )
 in
@@ -7571,11 +6508,9 @@ in
     {      ( let (f, c) = _2 in Ptyp_object (f, c) )}
 | _1 = LESS _2 = GREATER
     {      ( Ptyp_object ([], Closed) )}
-| _1 = HASH _1' = class_longident
+| _1 = HASH _1_inlined1 = class_longident
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7590,11 +6525,9 @@ in
       mkrhs _1 _loc )
 in
       ( Ptyp_class(_2, []) )}
-| _1 = simple_core_type2 _2 = HASH _1' = class_longident
+| _1 = simple_core_type2 _2 = HASH _1_inlined1 = class_longident
     {let _3 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7609,11 +6542,9 @@ in
       mkrhs _1 _loc )
 in
       ( Ptyp_class(_3, [_1]) )}
-| _1 = LPAREN x = core_type _3 = RPAREN _4 = HASH _1' = class_longident
+| _1 = LPAREN x = core_type _3 = RPAREN _4 = HASH _1_inlined1 = class_longident
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7632,11 +6563,9 @@ let _2 =
       ( tys )
 in
       ( Ptyp_class(_5, List.rev _2) )}
-| _1 = LPAREN xs = reversed_separated_nonempty_list_COMMA_core_type_ _2' = COMMA x = core_type _3 = RPAREN _4 = HASH _1' = class_longident
+| _1 = LPAREN xs = reversed_separated_nonempty_list_COMMA_core_type_ _2 = COMMA x = core_type _3 = RPAREN _4 = HASH _1_inlined1 = class_longident
     {let _5 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7651,7 +6580,6 @@ in
       mkrhs _1 _loc )
 in
 let _2 =
-  let _2 = _2' in
   let tys =     ( x :: xs ) in
       ( tys )
 in
@@ -7674,14 +6602,9 @@ in
     {      ( Ptyp_extension _1 )}
 
 package_type:
-  _1' = module_type
+  _1 = module_type
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ptyp_package (package_type_of_module_type _1) )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =       ( Ptyp_package (package_type_of_module_type _1) ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -7705,11 +6628,8 @@ let _sloc = (_symbolstartpos, _endpos) in
                        ( Rf.inherit_ ~loc:(make_loc _sloc) _1 )}
 
 tag_field:
-  _1' = name_tag _2 = OF _3 = opt_ampersand _4 = amper_type_list _5 = attributes
+  _1 = name_tag _2 = OF _3 = opt_ampersand _4 = amper_type_list _5 = attributes
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7723,18 +6643,14 @@ tag_field:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__5_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
       ( let info = symbol_info _endpos in
         let attrs = add_info_attrs info _5 in
         Rf.tag ~loc:(make_loc _sloc) ~attrs _1 _3 (List.rev _4) )}
-| _1' = name_tag _2 = attributes
+| _1 = name_tag _2 = attributes
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7748,7 +6664,6 @@ let _sloc = (_symbolstartpos, _endpos) in
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__2_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -7777,14 +6692,10 @@ name_tag_list:
 simple_core_type_or_tuple:
   _1 = simple_core_type
     {                     ( _1 )}
-| _1' = simple_core_type _2 = STAR _3 = core_type_list
+| _1 = simple_core_type _2 = STAR _3 = core_type_list
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-          ( Ptyp_tuple(_1 :: List.rev _3) )
-  in
+  let _1 =       ( Ptyp_tuple(_1 :: List.rev _3) ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
@@ -7818,11 +6729,8 @@ let _sloc = (_symbolstartpos, _endpos) in
     {                         ( [], Open )}
 
 field:
-  _1' = label _2 = COLON _3 = poly_type_no_attr _4 = attributes
+  _1 = label _2 = COLON _3 = poly_type_no_attr _4 = attributes
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7836,7 +6744,6 @@ field:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__4_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -7845,11 +6752,8 @@ let _sloc = (_symbolstartpos, _endpos) in
       Of.tag ~loc:(make_loc _sloc) ~attrs _1 _3 )}
 
 field_semi:
-  _1' = label _2 = COLON _3 = poly_type_no_attr _4 = attributes _5 = SEMI _6 = attributes
+  _1 = label _2 = COLON _3 = poly_type_no_attr _4 = attributes _5 = SEMI _6 = attributes
     {let _1 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -7863,7 +6767,6 @@ field_semi:
          and $symbolpos do not coincide.  *)
       mkrhs _1 _loc )
 in
-let _startpos__1_ = _startpos__1'_ in
 let _endpos = _endpos__6_ in
 let _symbolstartpos = _startpos__1_ in
 let _sloc = (_symbolstartpos, _endpos) in
@@ -8082,11 +6985,9 @@ let _sloc = (_symbolstartpos, _endpos) in
       mk_directive ~loc:_sloc dir arg )}
 
 toplevel_directive_:
-  _1 = HASH _1' = ident
+  _1 = HASH _1_inlined1 = ident
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -8101,11 +7002,9 @@ toplevel_directive_:
       mkrhs _1 _loc )
 in
     ( _2, None )}
-| _1 = HASH _1' = ident _3 = toplevel_directive_argument
+| _1 = HASH _1_inlined1 = ident _3 = toplevel_directive_argument
     {let _2 =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
   let _loc = (_startpos, _endpos) in
@@ -8329,28 +7228,19 @@ single_attr_id:
     {         ( "with" )}
 
 attr_id:
-  _1' = single_attr_id
+  _1 = single_attr_id
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-                         ( _1 )
-  in
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
+  let _1 =                      ( _1 ) in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in
       ( mkloc _1 (make_loc _sloc) )
 in
     ( _1 )}
-| _1' = single_attr_id _2 = DOT _3 = attr_id
+| _1 = single_attr_id _2 = DOT _3 = attr_id
     {let _1 =
-  let _1 =
-    let _1 = _1' in
-                                     ( _1 ^ "." ^ _3.txt )
-  in
+  let _1 =                                  ( _1 ^ "." ^ _3.txt ) in
   let _endpos__1_ = _endpos__3_ in
-  let _startpos__1_ = _startpos__1'_ in
   let _endpos = _endpos__1_ in
   let _symbolstartpos = _startpos__1_ in
   let _sloc = (_symbolstartpos, _endpos) in

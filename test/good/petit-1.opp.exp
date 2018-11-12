@@ -66,11 +66,8 @@
 loption_preceded_VAR_terminated_bindings__:
   
     {    ( [] )}
-| _1 = VAR x' = terminated_bindings
-    {let x =
-  let x = x' in
-      ( x )
-in
+| _1 = VAR x = terminated_bindings
+    {let x =     ( x ) in
     ( x )}
 
 loption_separated_nonempty_list_COMMA_expression__:
@@ -98,17 +95,11 @@ list_procedure_:
     {    ( x :: xs )}
 
 nonempty_list_terminated_binding_SEMICOLON__:
-  x' = binding _2 = SEMICOLON
-    {let x =
-  let x = x' in
-      ( x )
-in
+  x = binding _2 = SEMICOLON
+    {let x =     ( x ) in
     ( [ x ] )}
-| x' = binding _2 = SEMICOLON xs = nonempty_list_terminated_binding_SEMICOLON__
-    {let x =
-  let x = x' in
-      ( x )
-in
+| x = binding _2 = SEMICOLON xs = nonempty_list_terminated_binding_SEMICOLON__
+    {let x =     ( x ) in
     ( x :: xs )}
 
 separated_nonempty_list_COMMA_ID_:

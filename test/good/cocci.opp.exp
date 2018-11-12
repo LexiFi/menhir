@@ -349,21 +349,15 @@ list_mzl_statement__:
 list_pair_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__exp_decl_statement_list__:
   
     {    ( [] )}
-| x' = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ y = exp_decl_statement_list xs = list_pair_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__exp_decl_statement_list__
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+| x = dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement_ y = exp_decl_statement_list xs = list_pair_dots_when_TEllipsis_pre_post_decl_statement_or_expression_rule_elem_statement__exp_decl_statement_list__
+    {let x =     ( (x, y) ) in
     ( x :: xs )}
 
 list_pair_edots_when_TEllipsis_eexpr__dexpr__:
   
     {    ( [] )}
-| x' = edots_when_TEllipsis_eexpr_ y = dexpr xs = list_pair_edots_when_TEllipsis_eexpr__dexpr__
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+| x = edots_when_TEllipsis_eexpr_ y = dexpr xs = list_pair_edots_when_TEllipsis_eexpr__dexpr__
+    {let x =     ( (x, y) ) in
     ( x :: xs )}
 
 list_whens_pre_post_decl_statement_or_expression_rule_elem_statement__:
@@ -1339,9 +1333,9 @@ let s =     ( Some x ) in
 	    let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	    Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)))
 	  d )}
-| x = storage x' = const_vol i = pure_ident d = comma_list_d_ident_ pv = TPtVirg
+| x = storage x_inlined1 = const_vol i = pure_ident d = comma_list_d_ident_ pv = TPtVirg
     {let cv =
-  let x = x' in
+  let x = x_inlined1 in
       ( Some x )
 in
 let s =     ( Some x ) in
@@ -1374,9 +1368,9 @@ let s =     ( Some x ) in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       [Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv))] )}
-| x = storage x' = const_vol i = pure_ident d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage x_inlined1 = const_vol i = pure_ident d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
-  let x = x' in
+  let x = x_inlined1 in
       ( Some x )
 in
 let s =     ( Some x ) in

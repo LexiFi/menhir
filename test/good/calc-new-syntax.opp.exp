@@ -11,14 +11,14 @@
 %%
 
 fold_left_additive_op_multiplicative_expr_:
-  _1' = fold_left_multiplicative_op_atomic_expr_
-    {_1'}
-| sum = fold_left_additive_op_multiplicative_expr_ _1 = PLUS _1' = fold_left_multiplicative_op_atomic_expr_
-    {let elem = _1' in
+  _1 = fold_left_multiplicative_op_atomic_expr_
+    {_1}
+| sum = fold_left_additive_op_multiplicative_expr_ _1 = PLUS _1_inlined1 = fold_left_multiplicative_op_atomic_expr_
+    {let elem = _1_inlined1 in
 let op =            ( ( + ) ) in
                                                  ( op sum elem )}
-| sum = fold_left_additive_op_multiplicative_expr_ _1 = MINUS _1' = fold_left_multiplicative_op_atomic_expr_
-    {let elem = _1' in
+| sum = fold_left_additive_op_multiplicative_expr_ _1 = MINUS _1_inlined1 = fold_left_multiplicative_op_atomic_expr_
+    {let elem = _1_inlined1 in
 let op =            ( ( - ) ) in
                                                  ( op sum elem )}
 
@@ -33,20 +33,17 @@ fold_left_multiplicative_op_atomic_expr_:
                                                  ( op sum elem )}
 
 main:
-  _1' = fold_left_additive_op_multiplicative_expr_ _2 = EOL
-    {_1'}
+  _1 = fold_left_additive_op_multiplicative_expr_ _2 = EOL
+    {_1}
 
 atomic_expr:
   _1 = INT
     {_1}
-| _1' = LPAREN _1'' = fold_left_additive_op_multiplicative_expr_ _3 = RPAREN
-    {let _1' = _1'' in
-let _1 = _1' in
-let x = _1' in
+| _1 = LPAREN _1_inlined1 = fold_left_additive_op_multiplicative_expr_ _3 = RPAREN
+    {let x = _1_inlined1 in
     ( x )}
-| _1' = MINUS x = atomic_expr
-    {let _1 = _1' in
-let f =            ( (~- ) ) in
+| _1 = MINUS x = atomic_expr
+    {let f =            ( (~- ) ) in
                 ( f x )}
 
 %%

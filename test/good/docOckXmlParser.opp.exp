@@ -1081,22 +1081,16 @@ doc_error:
 doc:
   
     {    ( DocOckAttrs.empty )}
-| _1 = DOC elems = list_text_element_ tags' = list_tag_ _4 = CLOSE
-    {let tags =
-  let tags = tags' in
-        ( tags )
-in
+| _1 = DOC elems = list_text_element_ tags = list_tag_ _4 = CLOSE
+    {let tags =       ( tags ) in
 let text =       ( elems ) in
     ( Documentation.(Ok {text; tags}) )}
 | _1 = DOC err = doc_error _3 = CLOSE
     {    ( Documentation.Error err )}
 
 comment:
-  _1 = COMMENT elems = list_text_element_ tags' = list_tag_ _4 = CLOSE
-    {let tags =
-  let tags = tags' in
-        ( tags )
-in
+  _1 = COMMENT elems = list_text_element_ tags = list_tag_ _4 = CLOSE
+    {let tags =       ( tags ) in
 let text =       ( elems ) in
       ( Documentation.(Documentation (Ok {text; tags})) )}
 | _1 = COMMENT err = doc_error _3 = CLOSE

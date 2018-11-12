@@ -327,31 +327,22 @@ option_pat_arg_:
 option_preceded_AS_uident__:
   
     {    ( None )}
-| _1 = AS x' = uident
-    {let x =
-  let x = x' in
-      ( x )
-in
+| _1 = AS x = uident
+    {let x =     ( x ) in
     ( Some x )}
 
 option_preceded_EQUAL_term__:
   
     {    ( None )}
-| _1 = EQUAL x' = term
-    {let x =
-  let x = x' in
-      ( x )
-in
+| _1 = EQUAL x = term
+    {let x =     ( x ) in
     ( Some x )}
 
 option_preceded_WITH_lqualid__:
   
     {    ( None )}
-| _1 = WITH x' = lqualid
-    {let x =
-  let x = x' in
-      ( x )
-in
+| _1 = WITH x = lqualid
+    {let x =     ( x ) in
     ( Some x )}
 
 boption_IMPORT_:
@@ -1162,11 +1153,8 @@ single_term_:
 | l = single_term _1 = SO r = single_term
     {let o =           ( Dterm.DTso ) in
     ( Tbinop (l, o, r) )}
-| l = single_term o' = OP1 r = single_term
+| l = single_term o = OP1 r = single_term
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
               ( mk_id (Ident.op_infix o)    _startpos _endpos )
@@ -1200,31 +1188,22 @@ in
               ( mk_id (Ident.op_infix ">")  _startpos _endpos )
 in
     ( Tinfix (l, o, r) )}
-| l = single_term o' = OP2 r = single_term
+| l = single_term o = OP2 r = single_term
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
               ( mk_id (Ident.op_infix o)    _startpos _endpos )
 in
     ( Tidapp (Qident o, [l; r]) )}
-| l = single_term o' = OP3 r = single_term
+| l = single_term o = OP3 r = single_term
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
               ( mk_id (Ident.op_infix o)    _startpos _endpos )
 in
     ( Tidapp (Qident o, [l; r]) )}
-| l = single_term o' = OP4 r = single_term
+| l = single_term o = OP4 r = single_term
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
               ( mk_id (Ident.op_infix o)    _startpos _endpos )
@@ -1295,11 +1274,8 @@ term_arg_:
     {                            ( Ttrue )}
 | _1 = FALSE
     {                            ( Tfalse )}
-| o' = OPPREF a = term_arg
+| o = OPPREF a = term_arg
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
                ( mk_id (Ident.op_prefix o)  _startpos _endpos )
@@ -1311,11 +1287,8 @@ in
 term_dot_:
   _1 = lqualid
     {                            ( Tident _1 )}
-| o' = OPPREF a = term_dot
+| o = OPPREF a = term_dot
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
                ( mk_id (Ident.op_prefix o)  _startpos _endpos )
@@ -1592,11 +1565,8 @@ single_expr_:
     {    ( Econst (Number.ConstInt (mk_int_const true _2)) )}
 | _1 = MINUS _2 = REAL
     {    ( Econst (Number.ConstReal (mk_real_const true _2)) )}
-| l = single_expr o' = OP1 r = single_expr
+| l = single_expr o = OP1 r = single_expr
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
               ( mk_id (Ident.op_infix o)    _startpos _endpos )
@@ -1630,31 +1600,22 @@ in
               ( mk_id (Ident.op_infix ">")  _startpos _endpos )
 in
     ( Einfix (l,o,r) )}
-| l = single_expr o' = OP2 r = single_expr
+| l = single_expr o = OP2 r = single_expr
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
               ( mk_id (Ident.op_infix o)    _startpos _endpos )
 in
     ( Eidapp (Qident o, [l;r]) )}
-| l = single_expr o' = OP3 r = single_expr
+| l = single_expr o = OP3 r = single_expr
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
               ( mk_id (Ident.op_infix o)    _startpos _endpos )
 in
     ( Eidapp (Qident o, [l;r]) )}
-| l = single_expr o' = OP4 r = single_expr
+| l = single_expr o = OP4 r = single_expr
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
               ( mk_id (Ident.op_infix o)    _startpos _endpos )
@@ -1840,11 +1801,8 @@ expr_arg_:
     {                            ( Etrue )}
 | _1 = FALSE
     {                            ( Efalse )}
-| o' = OPPREF a = expr_arg
+| o = OPPREF a = expr_arg
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
                ( mk_id (Ident.op_prefix o)  _startpos _endpos )
@@ -1856,11 +1814,8 @@ in
 expr_dot_:
   _1 = lqualid
     {                            ( Eident _1 )}
-| o' = OPPREF a = expr_dot
+| o = OPPREF a = expr_dot
     {let o =
-  let _endpos_o_ = _endpos_o'_ in
-  let _startpos_o_ = _startpos_o'_ in
-  let o = o' in
   let _endpos = _endpos_o_ in
   let _startpos = _startpos_o_ in
                ( mk_id (Ident.op_prefix o)  _startpos _endpos )
@@ -2601,76 +2556,76 @@ comma_list0_single_term_:
                                 ( xl )}
 
 semicolon_list1_separated_pair_lqualid_EQUAL_expr__:
-  x' = lqualid _2' = EQUAL y = expr
+  x = lqualid _2_inlined1 = EQUAL y = expr
     {let _2 =     ( None ) in
 let x =
-  let _2 = _2' in
-  let x = x' in
+  let _2 = _2_inlined1 in
       ( (x, y) )
 in
                                               ( [x] )}
-| x' = lqualid _2' = EQUAL y = expr x = SEMICOLON
-    {let _2 =     ( Some x ) in
+| x = lqualid _2_inlined1 = EQUAL y = expr x_inlined1 = SEMICOLON
+    {let _2 =
+  let x = x_inlined1 in
+      ( Some x )
+in
 let x =
-  let _2 = _2' in
-  let x = x' in
+  let _2 = _2_inlined1 in
       ( (x, y) )
 in
                                               ( [x] )}
-| x' = lqualid _2' = EQUAL y = expr _2 = SEMICOLON xl = semicolon_list1_separated_pair_lqualid_EQUAL_expr__
+| x = lqualid _2_inlined1 = EQUAL y = expr _2 = SEMICOLON xl = semicolon_list1_separated_pair_lqualid_EQUAL_expr__
     {let x =
-  let _2 = _2' in
-  let x = x' in
+  let _2 = _2_inlined1 in
       ( (x, y) )
 in
                                               ( x :: xl )}
 
 semicolon_list1_separated_pair_lqualid_EQUAL_pattern__:
-  x' = lqualid _2' = EQUAL y = pattern
+  x = lqualid _2_inlined1 = EQUAL y = pattern
     {let _2 =     ( None ) in
 let x =
-  let _2 = _2' in
-  let x = x' in
+  let _2 = _2_inlined1 in
       ( (x, y) )
 in
                                               ( [x] )}
-| x' = lqualid _2' = EQUAL y = pattern x = SEMICOLON
-    {let _2 =     ( Some x ) in
+| x = lqualid _2_inlined1 = EQUAL y = pattern x_inlined1 = SEMICOLON
+    {let _2 =
+  let x = x_inlined1 in
+      ( Some x )
+in
 let x =
-  let _2 = _2' in
-  let x = x' in
+  let _2 = _2_inlined1 in
       ( (x, y) )
 in
                                               ( [x] )}
-| x' = lqualid _2' = EQUAL y = pattern _2 = SEMICOLON xl = semicolon_list1_separated_pair_lqualid_EQUAL_pattern__
+| x = lqualid _2_inlined1 = EQUAL y = pattern _2 = SEMICOLON xl = semicolon_list1_separated_pair_lqualid_EQUAL_pattern__
     {let x =
-  let _2 = _2' in
-  let x = x' in
+  let _2 = _2_inlined1 in
       ( (x, y) )
 in
                                               ( x :: xl )}
 
 semicolon_list1_separated_pair_lqualid_EQUAL_term__:
-  x' = lqualid _2' = EQUAL y = term
+  x = lqualid _2_inlined1 = EQUAL y = term
     {let _2 =     ( None ) in
 let x =
-  let _2 = _2' in
-  let x = x' in
+  let _2 = _2_inlined1 in
       ( (x, y) )
 in
                                               ( [x] )}
-| x' = lqualid _2' = EQUAL y = term x = SEMICOLON
-    {let _2 =     ( Some x ) in
+| x = lqualid _2_inlined1 = EQUAL y = term x_inlined1 = SEMICOLON
+    {let _2 =
+  let x = x_inlined1 in
+      ( Some x )
+in
 let x =
-  let _2 = _2' in
-  let x = x' in
+  let _2 = _2_inlined1 in
       ( (x, y) )
 in
                                               ( [x] )}
-| x' = lqualid _2' = EQUAL y = term _2 = SEMICOLON xl = semicolon_list1_separated_pair_lqualid_EQUAL_term__
+| x = lqualid _2_inlined1 = EQUAL y = term _2 = SEMICOLON xl = semicolon_list1_separated_pair_lqualid_EQUAL_term__
     {let x =
-  let _2 = _2' in
-  let x = x' in
+  let _2 = _2_inlined1 in
       ( (x, y) )
 in
                                               ( x :: xl )}
@@ -2679,9 +2634,9 @@ semicolon_list1_type_field_:
   x = type_field
     {let _2 =     ( None ) in
                                               ( [x] )}
-| x = type_field x' = SEMICOLON
+| x = type_field x_inlined1 = SEMICOLON
     {let _2 =
-  let x = x' in
+  let x = x_inlined1 in
       ( Some x )
 in
                                               ( [x] )}

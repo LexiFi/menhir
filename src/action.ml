@@ -144,9 +144,11 @@ let rename f phi a =
   let phi = !phi in
 
   (* Construct a new semantic action, where [phi] is translated into
-     a series of [let] bindings. *)
+     a set of *simultaneous* [let] bindings. (We cannot use a series
+     of nested [let] bindings, as that would cause a capture if the
+     domain and codomain of [phi] have a nonempty intersection.) *)
   let phi = List.map (fun (x, y) -> IL.PVar x, IL.EVar y) phi in
-  let expr = CodeBits.blet (phi, a.expr) in
+  let expr = CodeBits.eletand (phi, a.expr) in
 
   {
     expr      = expr;

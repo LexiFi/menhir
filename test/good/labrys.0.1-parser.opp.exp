@@ -180,21 +180,16 @@ body:
     {      ( ParseTree.Value x )}
 | typeAlias = typeAlias
     {      ( ParseTree.Type typeAlias )}
-| _1 = Foreign cname = String name' = LowerName _4 = Colon ty = typeExpr
+| _1 = Foreign cname = String name = LowerName _4 = Colon ty = typeExpr
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
 in
       ( ParseTree.Foreign (cname, name, ty) )}
-| _1 = Foreign cname = String _1' = Underscore _4 = Colon ty = typeExpr
+| _1 = Foreign cname = String _1_inlined1 = Underscore _4 = Colon ty = typeExpr
     {let name =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
         ( (loc _startpos _endpos, `Underscore) )
@@ -216,21 +211,16 @@ in
 instanceName:
   
     {    ( None )}
-| _1 = LBracket name' = LowerName _3 = RBracket
+| _1 = LBracket name = LowerName _3 = RBracket
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
 in
       ( Some name )}
-| _1 = LBracket _1' = Underscore _3 = RBracket
+| _1 = LBracket _1_inlined1 = Underscore _3 = RBracket
     {let name =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
         ( (loc _startpos _endpos, `Underscore) )
@@ -244,53 +234,43 @@ exceptionArgs:
     {    ( [] )}
 
 let_case:
-  _1 = Let name' = LowerName x = args_let_aux_
+  _1 = Let name = LowerName x = args_let_aux_
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
 in
 let r =     ( ParseTree.NonRec ) in
       ( (name, r, x) )}
-| _1 = Let _1' = Underscore x = args_let_aux_
+| _1 = Let _1_inlined1 = Underscore x = args_let_aux_
     {let name =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
         ( (loc _startpos _endpos, `Underscore) )
 in
 let r =     ( ParseTree.NonRec ) in
       ( (name, r, x) )}
-| _1 = Let _1' = Rec name' = LowerName x = args_let_aux_
+| _1 = Let _1_inlined1 = Rec name = LowerName x = args_let_aux_
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
 in
 let r =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
           ( ParseTree.Rec )
 in
       ( (name, r, x) )}
-| _1 = Let _1' = Rec _1'' = Underscore x = args_let_aux_
+| _1 = Let _1_inlined1 = Rec _1_inlined2 = Underscore x = args_let_aux_
     {let name =
-  let _endpos__1_ = _endpos__1''_ in
-  let _startpos__1_ = _startpos__1''_ in
-  let _1 = _1'' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined2_, _startpos__1_inlined2_, _1_inlined2) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
         ( (loc _startpos _endpos, `Underscore) )
 in
 let r =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
           ( ParseTree.Rec )
 in
       ( (name, r, x) )}
@@ -299,21 +279,15 @@ let_aux:
   _2 = Equal t = term
     {let ty =     ( None ) in
       ( (ty, t) )}
-| _1 = Colon eff = typeExpr _3 = Hash ty' = typeExpr _2 = Equal t = term
+| _1 = Colon eff = typeExpr _3 = Hash ty = typeExpr _2 = Equal t = term
     {let ty =
-  let ty =
-    let ty = ty' in
-          ( (ty, Some eff) )
-  in
+  let ty =       ( (ty, Some eff) ) in
         ( Some ty )
 in
       ( (ty, t) )}
-| _1 = Colon ty' = typeExpr _2 = Equal t = term
+| _1 = Colon ty = typeExpr _2 = Equal t = term
     {let ty =
-  let ty =
-    let ty = ty' in
-          ( (ty, None) )
-  in
+  let ty =       ( (ty, None) ) in
         ( Some ty )
 in
       ( (ty, t) )}
@@ -330,21 +304,15 @@ lambda_aux:
   _2 = Arrow t = term
     {let ty =     ( None ) in
       ( (ty, t) )}
-| _1 = Colon eff = typeExprProtectedPermissive _3 = Hash ty' = typeExprProtectedPermissive _2 = Arrow t = term
+| _1 = Colon eff = typeExprProtectedPermissive _3 = Hash ty = typeExprProtectedPermissive _2 = Arrow t = term
     {let ty =
-  let ty =
-    let ty = ty' in
-          ( (ty, Some eff) )
-  in
+  let ty =       ( (ty, Some eff) ) in
         ( Some ty )
 in
       ( (ty, t) )}
-| _1 = Colon ty' = typeExprProtectedPermissive _2 = Arrow t = term
+| _1 = Colon ty = typeExprProtectedPermissive _2 = Arrow t = term
     {let ty =
-  let ty =
-    let ty = ty' in
-          ( (ty, None) )
-  in
+  let ty =       ( (ty, None) ) in
         ( Some ty )
 in
       ( (ty, t) )}
@@ -362,21 +330,13 @@ let _startpos = _startpos_x_ in
     {let _endpos = _endpos_y_ in
 let _startpos = _startpos_x_ in
       ( (loc _startpos _endpos, ParseTree.Seq (x, y)) )}
-| t = termProtectedPermissive _1 = Colon eff = typeExpr _3 = Hash ty' = typeExpr
-    {let ty =
-  let ty = ty' in
-        ( (ty, Some eff) )
-in
-let _endpos_ty_ = _endpos_ty'_ in
+| t = termProtectedPermissive _1 = Colon eff = typeExpr _3 = Hash ty = typeExpr
+    {let ty =       ( (ty, Some eff) ) in
 let _endpos = _endpos_ty_ in
 let _startpos = _startpos_t_ in
       ( (loc _startpos _endpos, ParseTree.Annot (t, ty)) )}
-| t = termProtectedPermissive _1 = Colon ty' = typeExpr
-    {let ty =
-  let ty = ty' in
-        ( (ty, None) )
-in
-let _endpos_ty_ = _endpos_ty'_ in
+| t = termProtectedPermissive _1 = Colon ty = typeExpr
+    {let ty =       ( (ty, None) ) in
 let _endpos = _endpos_ty_ in
 let _startpos = _startpos_t_ in
       ( (loc _startpos _endpos, ParseTree.Annot (t, ty)) )}
@@ -474,21 +434,16 @@ tyclassAppArg:
     {                  ( ParseTree.TyClassVariable x )}
 
 arg:
-  _1 = LParen name' = LowerName _3 = Colon ty = typeExpr _5 = RParen
+  _1 = LParen name = LowerName _3 = Colon ty = typeExpr _5 = RParen
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
 in
       ( ParseTree.VArg (name, ty) )}
-| _1 = LParen _1' = Underscore _3 = Colon ty = typeExpr _5 = RParen
+| _1 = LParen _1_inlined1 = Underscore _3 = Colon ty = typeExpr _5 = RParen
     {let name =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
         ( (loc _startpos _endpos, `Underscore) )
@@ -498,21 +453,16 @@ in
     {      ( ParseTree.TArg ty )}
 | _1 = LParen _2 = RParen
     {      ( ParseTree.Unit )}
-| _1 = LQMarkParen name' = LowerName _3 = Colon tyclass = tyclass _5 = RParen
+| _1 = LQMarkParen name = LowerName _3 = Colon tyclass = tyclass _5 = RParen
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
 in
       ( ParseTree.TyClassArg (name, tyclass) )}
-| _1 = LQMarkParen _1' = Underscore _3 = Colon tyclass = tyclass _5 = RParen
+| _1 = LQMarkParen _1_inlined1 = Underscore _3 = Colon tyclass = tyclass _5 = RParen
     {let name =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
         ( (loc _startpos _endpos, `Underscore) )
@@ -592,17 +542,12 @@ typeExprClosed:
     {let _endpos = _endpos_name_ in
 let _startpos = _startpos_name_ in
       ( (loc _startpos _endpos, ParseTree.Ty name) )}
-| name' = LowerName
+| name = LowerName
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
 in
-let _endpos_name_ = _endpos_name'_ in
-let _startpos_name_ = _startpos_name'_ in
 let _endpos = _endpos_name_ in
 let _startpos = _startpos_name_ in
       ( (loc _startpos _endpos, ParseTree.TyVar name) )}
@@ -612,8 +557,7 @@ let _startpos = _startpos_name_ in
   let _startpos = _startpos__1_ in
         ( (loc _startpos _endpos, `Underscore) )
 in
-let _endpos_name_ = _endpos__1_ in
-let _startpos_name_ = _startpos__1_ in
+let (_endpos_name_, _startpos_name_) = (_endpos__1_, _startpos__1_) in
 let _endpos = _endpos_name_ in
 let _startpos = _startpos_name_ in
       ( (loc _startpos _endpos, ParseTree.TyVar name) )}
@@ -671,8 +615,7 @@ kind:
 eff:
   xs = loption_separated_nonempty_list_Comma_typeExpr__
     {let eff =     ( xs ) in
-let _endpos_eff_ = _endpos_xs_ in
-let _startpos_eff_ = _startpos_xs_ in
+let (_endpos_eff_, _startpos_eff_) = (_endpos_xs_, _startpos_xs_) in
 let _endpos = _endpos_eff_ in
 let _startpos = _startpos_eff_ in
                                            ( (loc _startpos _endpos, eff) )}
@@ -693,11 +636,8 @@ kindopt:
     {                   ( Some k )}
 
 kind_and_name:
-  name' = LowerName
+  name = LowerName
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
@@ -710,21 +650,16 @@ in
         ( (loc _startpos _endpos, `Underscore) )
 in
       ( (name, None) )}
-| _1 = LParen name' = LowerName _3 = Colon k = kind _5 = RParen
+| _1 = LParen name = LowerName _3 = Colon k = kind _5 = RParen
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
 in
       ( (name, Some k) )}
-| _1 = LParen _1' = Underscore _3 = Colon k = kind _5 = RParen
+| _1 = LParen _1_inlined1 = Underscore _3 = Colon k = kind _5 = RParen
     {let name =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
         ( (loc _startpos _endpos, `Underscore) )
@@ -732,41 +667,31 @@ in
       ( (name, Some k) )}
 
 kind_and_name_in_value:
-  _1 = LBrace name' = LowerName _3 = RBrace
+  _1 = LBrace name = LowerName _3 = RBrace
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
 in
       ( (name, None) )}
-| _1 = LBrace _1' = Underscore _3 = RBrace
+| _1 = LBrace _1_inlined1 = Underscore _3 = RBrace
     {let name =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
         ( (loc _startpos _endpos, `Underscore) )
 in
       ( (name, None) )}
-| _1 = LBrace name' = LowerName _3 = Colon k = kind _5 = RBrace
+| _1 = LBrace name = LowerName _3 = Colon k = kind _5 = RBrace
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
 in
       ( (name, Some k) )}
-| _1 = LBrace _1' = Underscore _3 = Colon k = kind _5 = RBrace
+| _1 = LBrace _1_inlined1 = Underscore _3 = Colon k = kind _5 = RBrace
     {let name =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
         ( (loc _startpos _endpos, `Underscore) )
@@ -778,11 +703,8 @@ pattern:
     {      ( (p, t) )}
 
 patClosed:
-  name' = LowerName
+  name = LowerName
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
@@ -807,11 +729,8 @@ patNonStrictlyUnclosed:
     {let _endpos = _endpos_args_ in
 let _startpos = _startpos_name_ in
       ( ParseTree.TyConstr (loc _startpos _endpos, name, args) )}
-| p = patProtectedPermissive _2 = As name' = LowerName
+| p = patProtectedPermissive _2 = As name = LowerName
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
@@ -848,21 +767,16 @@ pat:
     {                    ( p )}
 
 letSig:
-  _1 = Let name' = LowerName _3 = Colon ty = typeExpr
+  _1 = Let name = LowerName _3 = Colon ty = typeExpr
     {let name =
-  let _endpos_name_ = _endpos_name'_ in
-  let _startpos_name_ = _startpos_name'_ in
-  let name = name' in
   let _endpos = _endpos_name_ in
   let _startpos = _startpos_name_ in
         ( (loc _startpos _endpos, `NewLowerName name) )
 in
       ( (name, ty) )}
-| _1 = Let _1' = Underscore _3 = Colon ty = typeExpr
+| _1 = Let _1_inlined1 = Underscore _3 = Colon ty = typeExpr
     {let name =
-  let _endpos__1_ = _endpos__1'_ in
-  let _startpos__1_ = _startpos__1'_ in
-  let _1 = _1' in
+  let (_endpos__1_, _startpos__1_, _1) = (_endpos__1_inlined1_, _startpos__1_inlined1_, _1_inlined1) in
   let _endpos = _endpos__1_ in
   let _startpos = _startpos__1_ in
         ( (loc _startpos _endpos, `Underscore) )

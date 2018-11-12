@@ -57,7 +57,8 @@ val type2scheme: typ -> typescheme
 
 val pat2var: pattern -> string
 
-(* Building a [let] construct, with on-the-fly simplification. *)
+(* Building a [let] construct, with on-the-fly simplification. These two
+   functions construct a nested sequence of [let] definitions. *)
 
 val blet: (pattern * expr) list * expr -> expr
 val mlet: pattern list -> expr list -> expr -> expr

@@ -177,11 +177,8 @@ option_block_:
 option_first_NICKNAME_COLON__:
   
     {    ( None )}
-| x' = NICKNAME _2 = COLON
-    {let x =
-  let x = x' in
-             ( x )
-in
+| x = NICKNAME _2 = COLON
+    {let x =            ( x ) in
     ( Some x )}
 
 option_module_decl_:
@@ -211,14 +208,11 @@ option_sigExt_:
 loption_brackets_comma_sep_decl___:
   
     {    ( [] )}
-| _1 = LBRACKET xs' = loption_separated_nonempty_list_COMMA_decl__ _3 = RBRACKET
+| _1 = LBRACKET xs = loption_separated_nonempty_list_COMMA_decl__ _3 = RBRACKET
     {let x =
   let x =
     let x =
-      let xs =
-        let xs = xs' in
-            ( xs )
-      in
+      let xs =     ( xs ) in
           ( xs )
     in
         ( x )
@@ -360,24 +354,18 @@ cmd:
   c = named_cmd
     {let _2 =     ( None ) in
  ( c )}
-| c = named_cmd x' = EXPECT y = NUMBER
+| c = named_cmd x = EXPECT y = NUMBER
     {let _2 =
-  let x =
-    let x = x' in
-        ( (x, y) )
-  in
+  let x =     ( (x, y) ) in
       ( Some x )
 in
  ( c )}
 | b = block_cmd
     {let _2 =     ( None ) in
  ( b )}
-| b = block_cmd x' = EXPECT y = NUMBER
+| b = block_cmd x = EXPECT y = NUMBER
     {let _2 =
-  let x =
-    let x = x' in
-        ( (x, y) )
-  in
+  let x =     ( (x, y) ) in
       ( Some x )
 in
  ( b )}
@@ -417,12 +405,9 @@ expr:
     {let _endpos = _endpos_e_ in
 let _startpos = _startpos_e_ in
  ( make_expr (Location.make _startpos _endpos) e )}
-| _1 = LPAREN x' = expr _3 = RPAREN
+| _1 = LPAREN x = expr _3 = RPAREN
     {let e =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
  ( e )}
@@ -539,51 +524,51 @@ let neg =  ( false ) in
     {let op =  ( CEq ) in
 let neg =  ( false ) in
  ( EComp (e1, (if neg then negate op else op), e2) )}
-| e1 = expr _1 = NOT _1' = IN e2 = expr
+| e1 = expr _1 = NOT _1_inlined1 = IN e2 = expr
     {let op =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( CIn )
 in
 let neg =  ( true ) in
  ( EComp (e1, (if neg then negate op else op), e2) )}
-| e1 = expr _1 = NOT _1' = GT e2 = expr
+| e1 = expr _1 = NOT _1_inlined1 = GT e2 = expr
     {let op =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( CGt )
 in
 let neg =  ( true ) in
  ( EComp (e1, (if neg then negate op else op), e2) )}
-| e1 = expr _1 = NOT _1' = GTE e2 = expr
+| e1 = expr _1 = NOT _1_inlined1 = GTE e2 = expr
     {let op =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( CGte )
 in
 let neg =  ( true ) in
  ( EComp (e1, (if neg then negate op else op), e2) )}
-| e1 = expr _1 = NOT _1' = LT e2 = expr
+| e1 = expr _1 = NOT _1_inlined1 = LT e2 = expr
     {let op =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( CLt )
 in
 let neg =  ( true ) in
  ( EComp (e1, (if neg then negate op else op), e2) )}
-| e1 = expr _1 = NOT _1' = LTE e2 = expr
+| e1 = expr _1 = NOT _1_inlined1 = LTE e2 = expr
     {let op =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( CLte )
 in
 let neg =  ( true ) in
  ( EComp (e1, (if neg then negate op else op), e2) )}
-| e1 = expr _1 = NOT _1' = NEQ e2 = expr
+| e1 = expr _1 = NOT _1_inlined1 = NEQ e2 = expr
     {let op =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( CNeq )
 in
 let neg =  ( true ) in
  ( EComp (e1, (if neg then negate op else op), e2) )}
-| e1 = expr _1 = NOT _1' = EQ e2 = expr
+| e1 = expr _1 = NOT _1_inlined1 = EQ e2 = expr
     {let op =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( CEq )
 in
 let neg =  ( true ) in
@@ -740,12 +725,9 @@ block_or_bar:
     { ( [e] )}
 
 block:
-  _1 = LBRACE x' = list_expr_ _3 = RBRACE
+  _1 = LBRACE x = list_expr_ _3 = RBRACE
     {let exprs =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
  ( exprs )}
@@ -776,9 +758,9 @@ let is_disjoint_variables =  ( true ) in
 let is_variable =  ( false ) in
  ( Ast.Expr.make_decl ~is_variable ~is_disjoint_variables
      ~names ~is_disjoint_ranges ~range )}
-| _1 = DISJ xs = separated_nonempty_list_COMMA_IDENT_ _4 = COLON _1' = DISJ range = expr
+| _1 = DISJ xs = separated_nonempty_list_COMMA_IDENT_ _4 = COLON _1_inlined1 = DISJ range = expr
     {let is_disjoint_ranges =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( true )
 in
 let names =     ( xs ) in
@@ -793,9 +775,9 @@ let is_disjoint_variables =  ( false ) in
 let is_variable =  ( true ) in
  ( Ast.Expr.make_decl ~is_variable ~is_disjoint_variables
      ~names ~is_disjoint_ranges ~range )}
-| _1 = VAR xs = separated_nonempty_list_COMMA_IDENT_ _4 = COLON _1' = DISJ range = expr
+| _1 = VAR xs = separated_nonempty_list_COMMA_IDENT_ _4 = COLON _1_inlined1 = DISJ range = expr
     {let is_disjoint_ranges =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( true )
 in
 let names =     ( xs ) in
@@ -803,24 +785,24 @@ let is_disjoint_variables =  ( false ) in
 let is_variable =  ( true ) in
  ( Ast.Expr.make_decl ~is_variable ~is_disjoint_variables
      ~names ~is_disjoint_ranges ~range )}
-| _1 = VAR _1' = DISJ xs = separated_nonempty_list_COMMA_IDENT_ _4 = COLON range = expr
+| _1 = VAR _1_inlined1 = DISJ xs = separated_nonempty_list_COMMA_IDENT_ _4 = COLON range = expr
     {let is_disjoint_ranges =  ( false ) in
 let names =     ( xs ) in
 let is_disjoint_variables =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( true )
 in
 let is_variable =  ( true ) in
  ( Ast.Expr.make_decl ~is_variable ~is_disjoint_variables
      ~names ~is_disjoint_ranges ~range )}
-| _1 = VAR _1' = DISJ xs = separated_nonempty_list_COMMA_IDENT_ _4 = COLON _1'' = DISJ range = expr
+| _1 = VAR _1_inlined1 = DISJ xs = separated_nonempty_list_COMMA_IDENT_ _4 = COLON _1_inlined2 = DISJ range = expr
     {let is_disjoint_ranges =
-  let _1 = _1'' in
+  let _1 = _1_inlined2 in
    ( true )
 in
 let names =     ( xs ) in
 let is_disjoint_variables =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( true )
 in
 let is_variable =  ( true ) in
@@ -905,9 +887,9 @@ funDecl:
     { ( make_func ~name ~params ~body ~returns )}
 
 enumDecl:
-  _1 = ENUM name = IDENT _1' = LBRACE xs = separated_nonempty_list_COMMA_IDENT_ _3 = RBRACE
+  _1 = ENUM name = IDENT _1_inlined1 = LBRACE xs = separated_nonempty_list_COMMA_IDENT_ _3 = RBRACE
     {let cases =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let x =
     let x =     ( xs ) in
         ( x )
@@ -917,27 +899,20 @@ in
  ( make_enum ~name ~cases )}
 
 sigDecl:
-  qual = sigQual _3 = SIG xs = separated_nonempty_list_COMMA_IDENT_ extends = option_sigExt_ _1 = LBRACE x' = right_flexible_list_COMMA_decl_ _3' = RBRACE fact = option_block_
+  qual = sigQual _3 = SIG xs = separated_nonempty_list_COMMA_IDENT_ extends = option_sigExt_ _1 = LBRACE x = right_flexible_list_COMMA_decl_ _3_inlined1 = RBRACE fact = option_block_
     {let fields =
-  let _3 = _3' in
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let _3 = _3_inlined1 in
+  let x =     ( x ) in
       ( x )
 in
 let names =     ( xs ) in
 let is_variable =  ( false ) in
  ( make_signature ~is_variable ~is_abstract:(fst qual) ~mult:(snd qual)
      ~names ~extends ~fields ~fact )}
-| _1 = VAR qual = sigQual _3 = SIG xs = separated_nonempty_list_COMMA_IDENT_ extends = option_sigExt_ _1' = LBRACE x' = right_flexible_list_COMMA_decl_ _3' = RBRACE fact = option_block_
+| _1 = VAR qual = sigQual _3 = SIG xs = separated_nonempty_list_COMMA_IDENT_ extends = option_sigExt_ _1_inlined1 = LBRACE x = right_flexible_list_COMMA_decl_ _3_inlined1 = RBRACE fact = option_block_
     {let fields =
-  let _3 = _3' in
-  let _1 = _1' in
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let (_3, _1) = (_3_inlined1, _1_inlined1) in
+  let x =     ( x ) in
       ( x )
 in
 let names =     ( xs ) in
@@ -975,25 +950,25 @@ let is_abstract =  ( false ) in
     {let mult =     ( None ) in
 let is_abstract =  ( true ) in
      ( (is_abstract, mult))}
-| _1 = ABSTRACT _1' = LONE
+| _1 = ABSTRACT _1_inlined1 = LONE
     {let mult =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let x =  ( `Lone ) in
       ( Some x )
 in
 let is_abstract =  ( true ) in
      ( (is_abstract, mult))}
-| _1 = ABSTRACT _1' = ONE
+| _1 = ABSTRACT _1_inlined1 = ONE
     {let mult =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let x =  ( `One ) in
       ( Some x )
 in
 let is_abstract =  ( true ) in
      ( (is_abstract, mult))}
-| _1 = ABSTRACT _1' = SOME
+| _1 = ABSTRACT _1_inlined1 = SOME
     {let mult =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let x =  ( `Some ) in
       ( Some x )
 in

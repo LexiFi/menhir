@@ -246,33 +246,22 @@ option_modification_:
 option_preceded_COLON_simple_expr__:
   
     {    ( None )}
-| _1 = COLON x' = simple_expr
-    {let x =
-  let x = x' in
-      ( x )
-in
+| _1 = COLON x = simple_expr
+    {let x =     ( x ) in
     ( Some x )}
 
 option_preceded_binder_expr__:
   
     {    ( None )}
-| _1' = EQ x' = expr
+| _1 = EQ x = expr
     {let x =
-  let x = x' in
-  let _1 =
-    let _1 = _1' in
-                ()
-  in
+  let _1 =             () in
       ( x )
 in
     ( Some x )}
-| _1' = COLONEQ x' = expr
+| _1 = COLONEQ x = expr
     {let x =
-  let x = x' in
-  let _1 =
-    let _1 = _1' in
-                             ()
-  in
+  let _1 =                          () in
       ( x )
 in
     ( Some x )}
@@ -346,11 +335,8 @@ list_index_:
 list_preceded_COMMA_option_lexpr___:
   
     {    ( [] )}
-| _1 = COMMA x' = option_lexpr_ xs = list_preceded_COMMA_option_lexpr___
-    {let x =
-  let x = x' in
-      ( x )
-in
+| _1 = COMMA x = option_lexpr_ xs = list_preceded_COMMA_option_lexpr___
+    {let x =     ( x ) in
     ( x :: xs )}
 
 list_statement_:
@@ -955,45 +941,27 @@ composition:
 equation_section:
   equation = equation rest = equation_section
     {                     ( {rest with cargo = { rest.cargo with equations = equation::rest.cargo.equations } } )}
-| _1 = PUBLIC rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                       ( rest )
-in
+| _1 = PUBLIC rest = public_composition_elements
+    {let rest =                                                                      ( rest ) in
                                          ( rest )}
-| _1 = PROTECTED rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                          ( rest )
-in
+| _1 = PROTECTED rest = public_composition_elements
+    {let rest =                                                                         ( rest ) in
                                          ( rest )}
-| rest' = cargo_sections
-    {let rest =
-  let rest = rest' in
-                                                   ( rest )
-in
+| rest = cargo_sections
+    {let rest =                                                  ( rest ) in
                                          ( rest )}
 
 initial_equation_section:
   equation = equation rest = initial_equation_section
     {                             ( {rest with cargo = { rest.cargo with initial_equations = equation::rest.cargo.initial_equations } } )}
-| _1 = PUBLIC rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                       ( rest )
-in
+| _1 = PUBLIC rest = public_composition_elements
+    {let rest =                                                                      ( rest ) in
                                                  ( rest )}
-| _1 = PROTECTED rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                          ( rest )
-in
+| _1 = PROTECTED rest = public_composition_elements
+    {let rest =                                                                         ( rest ) in
                                                  ( rest )}
-| rest' = cargo_sections
-    {let rest =
-  let rest = rest' in
-                                                   ( rest )
-in
+| rest = cargo_sections
+    {let rest =                                                  ( rest ) in
                                                  ( rest )}
 
 algorithm:
@@ -1001,79 +969,43 @@ algorithm:
     {                                           ( stmts )}
 
 algorithm_section:
-  alg = algorithm _1 = PUBLIC rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                       ( rest )
-in
+  alg = algorithm _1 = PUBLIC rest = public_composition_elements
+    {let rest =                                                                      ( rest ) in
                       ( {rest with cargo = { rest.cargo with algorithms = alg::rest.cargo.algorithms } } )}
-| alg = algorithm _1 = PROTECTED rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                          ( rest )
-in
+| alg = algorithm _1 = PROTECTED rest = public_composition_elements
+    {let rest =                                                                         ( rest ) in
                       ( {rest with cargo = { rest.cargo with algorithms = alg::rest.cargo.algorithms } } )}
-| alg = algorithm rest' = cargo_sections
-    {let rest =
-  let rest = rest' in
-                                                   ( rest )
-in
+| alg = algorithm rest = cargo_sections
+    {let rest =                                                  ( rest ) in
                       ( {rest with cargo = { rest.cargo with algorithms = alg::rest.cargo.algorithms } } )}
-| _1 = PUBLIC rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                       ( rest )
-in
+| _1 = PUBLIC rest = public_composition_elements
+    {let rest =                                                                      ( rest ) in
                                           ( rest )}
-| _1 = PROTECTED rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                          ( rest )
-in
+| _1 = PROTECTED rest = public_composition_elements
+    {let rest =                                                                         ( rest ) in
                                           ( rest )}
-| rest' = cargo_sections
-    {let rest =
-  let rest = rest' in
-                                                   ( rest )
-in
+| rest = cargo_sections
+    {let rest =                                                  ( rest ) in
                                           ( rest )}
 
 initial_algorithm_section:
-  alg = algorithm _1 = PUBLIC rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                       ( rest )
-in
+  alg = algorithm _1 = PUBLIC rest = public_composition_elements
+    {let rest =                                                                      ( rest ) in
                               ( {rest with cargo = { rest.cargo with initial_algorithms = alg::rest.cargo.initial_algorithms } } )}
-| alg = algorithm _1 = PROTECTED rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                          ( rest )
-in
+| alg = algorithm _1 = PROTECTED rest = public_composition_elements
+    {let rest =                                                                         ( rest ) in
                               ( {rest with cargo = { rest.cargo with initial_algorithms = alg::rest.cargo.initial_algorithms } } )}
-| alg = algorithm rest' = cargo_sections
-    {let rest =
-  let rest = rest' in
-                                                   ( rest )
-in
+| alg = algorithm rest = cargo_sections
+    {let rest =                                                  ( rest ) in
                               ( {rest with cargo = { rest.cargo with initial_algorithms = alg::rest.cargo.initial_algorithms } } )}
-| _1 = PUBLIC rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                       ( rest )
-in
+| _1 = PUBLIC rest = public_composition_elements
+    {let rest =                                                                      ( rest ) in
                                                   ( rest )}
-| _1 = PROTECTED rest' = public_composition_elements
-    {let rest =
-  let rest = rest' in
-                                                                          ( rest )
-in
+| _1 = PROTECTED rest = public_composition_elements
+    {let rest =                                                                         ( rest ) in
                                                   ( rest )}
-| rest' = cargo_sections
-    {let rest =
-  let rest = rest' in
-                                                   ( rest )
-in
+| rest = cargo_sections
+    {let rest =                                                  ( rest ) in
                                                   ( rest )}
 
 cargo_sections:

@@ -441,11 +441,8 @@ option_order_type_:
 option_pair_CONSTRAINT_IDENT__:
   
     {    ( None )}
-| x' = CONSTRAINT y = IDENT
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+| x = CONSTRAINT y = IDENT
+    {let x =     ( (x, y) ) in
     ( Some x )}
 
 option_parameter_default_:
@@ -463,11 +460,8 @@ option_parameter_mode_:
 option_preceded_ELSE_expr__:
   
     {    ( None )}
-| _1 = ELSE x' = expr
-    {let x =
-  let x = x' in
-      ( x )
-in
+| _1 = ELSE x = expr
+    {let x =     ( x ) in
     ( Some x )}
 
 option_routine_extra_:
@@ -491,13 +485,10 @@ option_select_type_:
 option_sequence_IDENT__:
   
     {    ( None )}
-| _1 = LPAREN l' = separated_nonempty_list_COMMA_IDENT_ _2 = RPAREN
+| _1 = LPAREN l = separated_nonempty_list_COMMA_IDENT_ _2 = RPAREN
     {let x =
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -567,11 +558,8 @@ list_join_source_:
 list_preceded_compound_op_select_core__:
   
     {    ( [] )}
-| _1 = compound_op x' = select_core xs = list_preceded_compound_op_select_core__
-    {let x =
-  let x = x' in
-      ( x )
-in
+| _1 = compound_op x = select_core xs = list_preceded_compound_op_select_core__
+    {let x =     ( x ) in
     ( x :: xs )}
 
 list_reference_action_clause_:
@@ -653,26 +641,20 @@ separated_nonempty_list_COMMA_proc_parameter_:
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_sequence_expr__:
-  _1 = LPAREN l' = separated_nonempty_list_COMMA_expr_ _2 = RPAREN
+  _1 = LPAREN l = separated_nonempty_list_COMMA_expr_ _2 = RPAREN
     {let x =
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
 in
     ( [ x ] )}
-| _1 = LPAREN l' = separated_nonempty_list_COMMA_expr_ _2' = RPAREN _2 = COMMA xs = separated_nonempty_list_COMMA_sequence_expr__
+| _1 = LPAREN l = separated_nonempty_list_COMMA_expr_ _2_inlined1 = RPAREN _2 = COMMA xs = separated_nonempty_list_COMMA_sequence_expr__
     {let x =
-  let _2 = _2' in
+  let _2 = _2_inlined1 in
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -692,16 +674,12 @@ separated_nonempty_list_COMMA_source_:
     {    ( x :: xs )}
 
 separated_nonempty_list_COMMA_terminated_expr_option_order_type___:
-  x' = expr _2 = option_order_type_
-    {let x =
-  let x = x' in
-      ( x )
-in
+  x = expr _2 = option_order_type_
+    {let x =     ( x ) in
     ( [ x ] )}
-| x' = expr _2' = option_order_type_ _2 = COMMA xs = separated_nonempty_list_COMMA_terminated_expr_option_order_type___
+| x = expr _2_inlined1 = option_order_type_ _2 = COMMA xs = separated_nonempty_list_COMMA_terminated_expr_option_order_type___
     {let x =
-  let _2 = _2' in
-  let x = x' in
+  let _2 = _2_inlined1 in
       ( x )
 in
     ( x :: xs )}
@@ -741,26 +719,26 @@ let _2 =     ( Some x ) in
               (
                 Create (name,`Schema schema)
               )}
-| _1 = CREATE x = temporary _3 = TABLE x' = if_not_exists name = IDENT schema = table_definition
+| _1 = CREATE x = temporary _3 = TABLE x_inlined1 = if_not_exists name = IDENT schema = table_definition
     {let _4 =
-  let x = x' in
+  let x = x_inlined1 in
       ( Some x )
 in
 let _2 =     ( Some x ) in
               (
                 Create (name,`Schema schema)
               )}
-| _1 = CREATE _1' = TABLE name = IDENT _4 = AS select = maybe_parenth_select_stmt_
+| _1 = CREATE _1_inlined1 = TABLE name = IDENT _4 = AS select = maybe_parenth_select_stmt_
     {let _2 =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
                              ( )
 in
               (
                 Create (name,`Select select)
               )}
-| _1 = CREATE _1' = VIEW name = IDENT _4 = AS select = maybe_parenth_select_stmt_
+| _1 = CREATE _1_inlined1 = VIEW name = IDENT _4 = AS select = maybe_parenth_select_stmt_
     {let _2 =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
                              ( )
 in
               (
@@ -775,15 +753,11 @@ in
     {              (
                 Drop name
               )}
-| _1 = CREATE _2 = option_UNIQUE_ _3 = INDEX _4 = option_if_not_exists_ name = table_name _6 = ON table = table_name _1' = LPAREN l' = separated_nonempty_list_COMMA_index_column_ _2' = RPAREN
+| _1 = CREATE _2 = option_UNIQUE_ _3 = INDEX _4 = option_if_not_exists_ name = table_name _6 = ON table = table_name _1_inlined1 = LPAREN l = separated_nonempty_list_COMMA_index_column_ _2_inlined1 = RPAREN
     {let cols =
-  let _2 = _2' in
-  let _1 = _1' in
+  let (_2, _1) = (_2_inlined1, _1_inlined1) in
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -810,9 +784,9 @@ in
               (
                 Update (table,ss,w,o,lim)
               )}
-| _1 = update_cmd l = separated_nonempty_list_COMMA_source_ _3 = SET l' = separated_nonempty_list_COMMA_set_column_ w = option_where_
+| _1 = update_cmd l = separated_nonempty_list_COMMA_source_ _3 = SET l_inlined1 = separated_nonempty_list_COMMA_set_column_ w = option_where_
     {let ss =
-  let l = l' in
+  let l = l_inlined1 in
                                                         ( l )
 in
 let tables =                                                       ( l ) in
@@ -827,15 +801,11 @@ let tables =                                                       ( l ) in
     {              (
                 Set (name, e)
               )}
-| _1 = CREATE _2 = option_or_replace_ _3 = FUNCTION name = IDENT _1' = LPAREN l' = separated_nonempty_list_COMMA_func_parameter_ _2' = RPAREN _6 = RETURNS ret = sql_type _8 = option_routine_extra_ _9 = option_AS_ _10 = routine_body _11 = option_routine_extra_
+| _1 = CREATE _2 = option_or_replace_ _3 = FUNCTION name = IDENT _1_inlined1 = LPAREN l = separated_nonempty_list_COMMA_func_parameter_ _2_inlined1 = RPAREN _6 = RETURNS ret = sql_type _8 = option_routine_extra_ _9 = option_AS_ _10 = routine_body _11 = option_routine_extra_
     {let params =
-  let _2 = _2' in
-  let _1 = _1' in
+  let (_2, _1) = (_2_inlined1, _1_inlined1) in
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -844,15 +814,11 @@ in
                 Function.add (List.length params) (Ret ret) name;
                 CreateRoutine (name, Some ret, params)
               )}
-| _1 = CREATE _2 = option_or_replace_ _3 = PROCEDURE name = IDENT _1' = LPAREN l' = separated_nonempty_list_COMMA_proc_parameter_ _2' = RPAREN _6 = option_routine_extra_ _7 = option_AS_ _8 = routine_body _9 = option_routine_extra_
+| _1 = CREATE _2 = option_or_replace_ _3 = PROCEDURE name = IDENT _1_inlined1 = LPAREN l = separated_nonempty_list_COMMA_proc_parameter_ _2_inlined1 = RPAREN _6 = option_routine_extra_ _7 = option_AS_ _8 = routine_body _9 = option_routine_extra_
     {let params =
-  let _2 = _2' in
-  let _1 = _1' in
+  let (_2, _1) = (_2_inlined1, _1_inlined1) in
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -923,12 +889,9 @@ index_column:
     {                                                            ( name )}
 
 table_definition:
-  _1 = LPAREN l' = separated_nonempty_list_COMMA_column_def1_ _2 = table_def_done
+  _1 = LPAREN l = separated_nonempty_list_COMMA_column_def1_ _2 = table_def_done
     {let t =
-  let l =
-    let l = l' in
-                                                          ( l )
-  in
+  let l =                                                       ( l ) in
                                            ( l )
 in
                                                           ( List.filter_map (function `Attr a -> Some a | `Constraint _ | `Index _ -> None) t )}
@@ -977,14 +940,11 @@ qualified_join:
 join_cond:
   _1 = ON e = expr
     {                     ( `Search e )}
-| _1 = USING _1' = LPAREN l' = separated_nonempty_list_COMMA_IDENT_ _2 = RPAREN
+| _1 = USING _1_inlined1 = LPAREN l = separated_nonempty_list_COMMA_IDENT_ _2 = RPAREN
     {let l =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -1041,15 +1001,15 @@ select_row_locking:
     {      ( )}
 
 for_update_or_share:
-  _1 = FOR _1' = UPDATE _3 = option_update_or_share_of_ _4 = option_NOWAIT_ _5 = option_with_lock_
+  _1 = FOR _1_inlined1 = UPDATE _3 = option_update_or_share_of_ _4 = option_NOWAIT_ _5 = option_with_lock_
     {let _2 =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
                              ( )
 in
                                                                    ( )}
-| _1 = FOR _1' = SHARE _3 = option_update_or_share_of_ _4 = option_NOWAIT_ _5 = option_with_lock_
+| _1 = FOR _1_inlined1 = SHARE _3 = option_update_or_share_of_ _4 = option_NOWAIT_ _5 = option_with_lock_
     {let _2 =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
                              ( )
 in
                                                                    ( )}
@@ -1082,11 +1042,8 @@ limit:
     {               ( fst _1 )}
 
 order:
-  _1 = ORDER _2 = BY l' = separated_nonempty_list_COMMA_terminated_expr_option_order_type___
-    {let l =
-  let l = l' in
-                                                        ( l )
-in
+  _1 = ORDER _2 = BY l = separated_nonempty_list_COMMA_terminated_expr_option_order_type___
+    {let l =                                                       ( l ) in
                                                        ( l )}
 
 order_type:
@@ -1146,15 +1103,11 @@ maybe_parenth_select_stmt_:
 alter_action:
   _1 = ADD _2 = option_COLUMN_ col = maybe_parenth_column_def_ pos = alter_pos
     {                                                                      ( `Add (col,pos) )}
-| _1 = ADD _2 = index_type _3 = option_IDENT_ _1' = LPAREN l' = separated_nonempty_list_COMMA_IDENT_ _2' = RPAREN
+| _1 = ADD _2 = index_type _3 = option_IDENT_ _1_inlined1 = LPAREN l = separated_nonempty_list_COMMA_IDENT_ _2_inlined1 = RPAREN
     {let _4 =
-  let _2 = _2' in
-  let _1 = _1' in
+  let (_2, _1) = (_2_inlined1, _1_inlined1) in
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -1204,14 +1157,11 @@ column_def1:
     {                          ( `Attr c )}
 | _1 = option_pair_CONSTRAINT_IDENT__ c = table_constraint_1
     {                                                          ( `Constraint c )}
-| _1 = INDEX _1' = LPAREN l' = separated_nonempty_list_COMMA_index_column_ _2 = RPAREN
+| _1 = INDEX _1_inlined1 = LPAREN l = separated_nonempty_list_COMMA_index_column_ _2 = RPAREN
     {let cols =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -1251,15 +1201,11 @@ default_value:
 table_constraint_1:
   _1 = some_key _2 = option_IDENT_ _3 = key_arg
     {                                ( [] )}
-| _1 = FOREIGN _2 = KEY _3 = option_IDENT_ _1' = LPAREN l' = separated_nonempty_list_COMMA_IDENT_ _2' = RPAREN _5 = REFERENCES _6 = IDENT _7 = option_sequence_IDENT__ _8 = list_reference_action_clause_
+| _1 = FOREIGN _2 = KEY _3 = option_IDENT_ _1_inlined1 = LPAREN l = separated_nonempty_list_COMMA_IDENT_ _2_inlined1 = RPAREN _5 = REFERENCES _6 = IDENT _7 = option_sequence_IDENT__ _8 = list_reference_action_clause_
     {let _4 =
-  let _2 = _2' in
-  let _1 = _1' in
+  let (_2, _1) = (_2_inlined1, _1_inlined1) in
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -1269,15 +1215,15 @@ in
     {                                 ( [] )}
 
 reference_action_clause:
-  _1 = ON _1' = DELETE _3 = reference_action
+  _1 = ON _1_inlined1 = DELETE _3 = reference_action
     {let _2 =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
                              ( )
 in
                                              ( )}
-| _1 = ON _1' = UPDATE _3 = reference_action
+| _1 = ON _1_inlined1 = UPDATE _3 = reference_action
     {let _2 =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
                              ( )
 in
                                              ( )}
@@ -1305,14 +1251,10 @@ some_key:
 key_arg:
   _1 = LPAREN _2 = VALUE _3 = RPAREN
     {                                               ( )}
-| _1' = LPAREN l' = separated_nonempty_list_COMMA_IDENT_ _2 = RPAREN
+| _1 = LPAREN l = separated_nonempty_list_COMMA_IDENT_ _2 = RPAREN
     {let _1 =
-  let _1 = _1' in
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -1398,14 +1340,11 @@ expr:
     {                                         ( v )}
 | v = datetime_value
     {                                         ( v )}
-| e1 = expr _2 = mnot_IN_ _1 = LPAREN l' = separated_nonempty_list_COMMA_expr_ _2' = RPAREN
+| e1 = expr _2 = mnot_IN_ _1 = LPAREN l = separated_nonempty_list_COMMA_expr_ _2_inlined1 = RPAREN
     {let l =
-  let _2 = _2' in
+  let _2 = _2_inlined1 in
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -1493,11 +1432,8 @@ single_literal_value:
     {                  ( Value Float )}
 
 expr_list:
-  l' = separated_nonempty_list_COMMA_expr_
-    {let l =
-  let l = l' in
-                                                        ( l )
-in
+  l = separated_nonempty_list_COMMA_expr_
+    {let l =                                                       ( l ) in
                           ( l )}
 
 func_params:
@@ -1597,15 +1533,11 @@ sql_type_flavor:
     {                        ( Blob )}
 | _1 = option_NATIONAL_ _2 = text _3 = option_VARYING_ _4 = option_charset_ _5 = option_collate_
     {                                                           ( Text )}
-| _1 = ENUM _1' = LPAREN l' = separated_nonempty_list_COMMA_TEXT_ _2' = RPAREN _3 = option_charset_ _4 = option_collate_
+| _1 = ENUM _1_inlined1 = LPAREN l = separated_nonempty_list_COMMA_TEXT_ _2 = RPAREN _3 = option_charset_ _4 = option_collate_
     {let _2 =
-  let _2 = _2' in
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let l =
-    let l =
-      let l = l' in
-                                                            ( l )
-    in
+    let l =                                                       ( l ) in
                                              ( l )
   in
                                              ( l )
@@ -1645,27 +1577,27 @@ text:
     {                                                        ( )}
 
 charset:
-  _1 = CHARSET _1' = IDENT
+  _1 = CHARSET _1_inlined1 = IDENT
     {let _2 =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
                              ( )
 in
                                                                                              ( )}
-| _1 = CHARSET _1' = BINARY
+| _1 = CHARSET _1_inlined1 = BINARY
     {let _2 =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
                              ( )
 in
                                                                                              ( )}
-| _1 = CHARACTER _2 = SET _1' = IDENT
+| _1 = CHARACTER _2 = SET _1_inlined1 = IDENT
     {let _3 =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
                              ( )
 in
                                                                                              ( )}
-| _1 = CHARACTER _2 = SET _1' = BINARY
+| _1 = CHARACTER _2 = SET _1_inlined1 = BINARY
     {let _3 =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
                              ( )
 in
                                                                                              ( )}

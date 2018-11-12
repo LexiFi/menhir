@@ -250,17 +250,11 @@ pattern:
 sterm:
   _1 = QID
     {                             ( let (l,md,id)=_1 in PreQId(l,mk_name md id) )}
-| _1' = UNDERSCORE
-    {let _1 =
-  let _1 = _1' in
-                 ( (_1, mk_ident "_") )
-in
+| _1 = UNDERSCORE
+    {let _1 =                ( (_1, mk_ident "_") ) in
                              ( PreId (fst _1,snd _1) )}
-| _1' = ID
-    {let _1 =
-  let _1 = _1' in
-         ( _1 )
-in
+| _1 = ID
+    {let _1 =        ( _1 ) in
                              ( PreId (fst _1,snd _1) )}
 | _1 = LEFTPAR _2 = term _3 = RIGHTPAR
     {                             ( _2 )}
@@ -274,46 +268,28 @@ aterm:
 term:
   t = aterm
     {      ( t )}
-| _1' = UNDERSCORE _2 = COLON _3 = aterm _4 = ARROW _5 = term
-    {let _1 =
-  let _1 = _1' in
-                 ( (_1, mk_ident "_") )
-in
+| _1 = UNDERSCORE _2 = COLON _3 = aterm _4 = ARROW _5 = term
+    {let _1 =                ( (_1, mk_ident "_") ) in
       ( PrePi (fst _1,Some (snd _1), _3, _5) )}
-| _1' = ID _2 = COLON _3 = aterm _4 = ARROW _5 = term
-    {let _1 =
-  let _1 = _1' in
-         ( _1 )
-in
+| _1 = ID _2 = COLON _3 = aterm _4 = ARROW _5 = term
+    {let _1 =        ( _1 ) in
       ( PrePi (fst _1,Some (snd _1), _3, _5) )}
 | _1 = LEFTPAR _2 = ID _3 = COLON _4 = aterm _5 = RIGHTPAR _6 = ARROW _7 = term
     {      ( PrePi (fst _2,Some (snd _2), _4 ,_7) )}
 | _1 = term _2 = ARROW _3 = term
     {let _startpos = _startpos__1_ in
       ( PrePi (Lexer.loc_of_pos _startpos,None,_1,_3) )}
-| _1' = UNDERSCORE _2 = FATARROW _3 = term
-    {let _1 =
-  let _1 = _1' in
-                 ( (_1, mk_ident "_") )
-in
+| _1 = UNDERSCORE _2 = FATARROW _3 = term
+    {let _1 =                ( (_1, mk_ident "_") ) in
       (PreLam (fst _1, snd _1, None, _3))}
-| _1' = ID _2 = FATARROW _3 = term
-    {let _1 =
-  let _1 = _1' in
-         ( _1 )
-in
+| _1 = ID _2 = FATARROW _3 = term
+    {let _1 =        ( _1 ) in
       (PreLam (fst _1, snd _1, None, _3))}
-| _1' = UNDERSCORE _2 = COLON _3 = aterm _4 = FATARROW _5 = term
-    {let _1 =
-  let _1 = _1' in
-                 ( (_1, mk_ident "_") )
-in
+| _1 = UNDERSCORE _2 = COLON _3 = aterm _4 = FATARROW _5 = term
+    {let _1 =                ( (_1, mk_ident "_") ) in
       (PreLam (fst _1, snd _1, Some _3, _5))}
-| _1' = ID _2 = COLON _3 = aterm _4 = FATARROW _5 = term
-    {let _1 =
-  let _1 = _1' in
-         ( _1 )
-in
+| _1 = ID _2 = COLON _3 = aterm _4 = FATARROW _5 = term
+    {let _1 =        ( _1 ) in
       (PreLam (fst _1, snd _1, Some _3, _5))}
 
 %%

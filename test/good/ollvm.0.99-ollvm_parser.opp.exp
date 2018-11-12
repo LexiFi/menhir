@@ -340,21 +340,15 @@ option_const_:
 option_preceded_COMMA_align__:
   
     {    ( None )}
-| _1 = COMMA x' = align
-    {let x =
-  let x = x' in
-      ( x )
-in
+| _1 = COMMA x = align
+    {let x =     ( x ) in
     ( Some x )}
 
 option_preceded_COMMA_alloca_opt__:
   
     {    ( None )}
-| _1 = COMMA x' = alloca_opt
-    {let x =
-  let x = x' in
-      ( x )
-in
+| _1 = COMMA x = alloca_opt
+    {let x =     ( x ) in
     ( Some x )}
 
 option_preceded_COMMA_separated_list_COMMA_global_attr___:
@@ -370,11 +364,8 @@ in
 option_terminated_LABEL_nonempty_list_EOL___:
   
     {    ( None )}
-| x' = LABEL _2 = nonempty_list_EOL_
-    {let x =
-  let x = x' in
-      ( x )
-in
+| x = LABEL _2 = nonempty_list_EOL_
+    {let x =     ( x ) in
     ( Some x )}
 
 loption_separated_nonempty_list_COMMA_METADATA_ID__:
@@ -470,12 +461,9 @@ list_global_attr_:
 list_pair_terminated_LABEL_nonempty_list_EOL___nonempty_list_terminated_instr_nonempty_list_EOL_____:
   
     {    ( [] )}
-| x' = LABEL _2 = nonempty_list_EOL_ y = nonempty_list_terminated_instr_nonempty_list_EOL___ xs = list_pair_terminated_LABEL_nonempty_list_EOL___nonempty_list_terminated_instr_nonempty_list_EOL_____
+| x = LABEL _2 = nonempty_list_EOL_ y = nonempty_list_terminated_instr_nonempty_list_EOL___ xs = list_pair_terminated_LABEL_nonempty_list_EOL___nonempty_list_terminated_instr_nonempty_list_EOL_____
     {let x =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( (x, y) )
 in
     ( x :: xs )}
@@ -489,11 +477,8 @@ list_param_attr_:
 list_preceded_COMMA_tvalue__:
   
     {    ( [] )}
-| _1 = COMMA x' = tvalue xs = list_preceded_COMMA_tvalue__
-    {let x =
-  let x = x' in
-      ( x )
-in
+| _1 = COMMA x = tvalue xs = list_preceded_COMMA_tvalue__
+    {let x =     ( x ) in
     ( x :: xs )}
 
 list_switch_table_entry_:
@@ -505,11 +490,8 @@ list_switch_table_entry_:
 list_terminated_toplevelentry_nonempty_list_EOL___:
   
     {    ( [] )}
-| x' = toplevelentry _2 = nonempty_list_EOL_ xs = list_terminated_toplevelentry_nonempty_list_EOL___
-    {let x =
-  let x = x' in
-      ( x )
-in
+| x = toplevelentry _2 = nonempty_list_EOL_ xs = list_terminated_toplevelentry_nonempty_list_EOL___
+    {let x =     ( x ) in
     ( x :: xs )}
 
 nonempty_list_EOL_:
@@ -525,17 +507,11 @@ nonempty_list_fn_attr_:
     {    ( x :: xs )}
 
 nonempty_list_terminated_instr_nonempty_list_EOL___:
-  x' = instr _2 = nonempty_list_EOL_
-    {let x =
-  let x = x' in
-      ( x )
-in
+  x = instr _2 = nonempty_list_EOL_
+    {let x =     ( x ) in
     ( [ x ] )}
-| x' = instr _2 = nonempty_list_EOL_ xs = nonempty_list_terminated_instr_nonempty_list_EOL___
-    {let x =
-  let x = x' in
-      ( x )
-in
+| x = instr _2 = nonempty_list_EOL_ xs = nonempty_list_terminated_instr_nonempty_list_EOL___
+    {let x =     ( x ) in
     ( x :: xs )}
 
 separated_nonempty_list_COMMA_INTEGER_:
@@ -1114,10 +1090,9 @@ instr:
     {    ( INSTR_Conversion (c, t1, v, t2) )}
 | _1 = option_KW_GETELEMENTPTR_ _2 = KW_INBOUNDS ptr = tvalue idx = list_preceded_COMMA_tvalue__
     {    ( INSTR_GetElementPtr (ptr, idx) )}
-| _1 = option_KW_TAIL_ _2 = KW_CALL _3 = option_cconv_ _4 = list_param_attr_ f = tident _1' = LPAREN xs = loption_separated_nonempty_list_COMMA_call_arg__ _3' = RPAREN _7 = list_fn_attr_
+| _1 = option_KW_TAIL_ _2 = KW_CALL _3 = option_cconv_ _4 = list_param_attr_ f = tident _1_inlined1 = LPAREN xs = loption_separated_nonempty_list_COMMA_call_arg__ _3_inlined1 = RPAREN _7 = list_fn_attr_
     {let a =
-  let _3 = _3' in
-  let _1 = _1' in
+  let (_3, _1) = (_3_inlined1, _1_inlined1) in
   let x =     ( xs ) in
       ( x )
 in

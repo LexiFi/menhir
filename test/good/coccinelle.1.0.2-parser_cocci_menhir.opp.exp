@@ -654,11 +654,8 @@ list_mzl_struct_decl_one__:
 list_pair_edots_when_TEllipsis_eexpr__dexpr__:
   
     {    ( [] )}
-| x' = edots_when_TEllipsis_eexpr_ y = dexpr xs = list_pair_edots_when_TEllipsis_eexpr__dexpr__
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+| x = edots_when_TEllipsis_eexpr_ y = dexpr xs = list_pair_edots_when_TEllipsis_eexpr__dexpr__
+    {let x =     ( (x, y) ) in
     ( x :: xs )}
 
 list_whenppdecs_:
@@ -1158,9 +1155,9 @@ let kindfn =     ( (fun arity name pure check_meta constraints ->
       let tok = check_meta(Ast.MetaErrDecl(arity,name)) in
       !Data.add_err_meta name constraints pure; tok) ) in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure l = option_TLocal_ _2 = TIdExpression l' = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure l = option_TLocal_ _2 = TIdExpression l_inlined1 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l' in
+  let l = l_inlined1 in
                                            ( l )
 in
 let kindfn =
@@ -1175,9 +1172,9 @@ let kindfn =
 	  check_meta(Ast.MetaLocalIdExpDecl(arity,name,ty))) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure l = option_TLocal_ _2 = TIdExpression x = meta_exp_type l' = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure l = option_TLocal_ _2 = TIdExpression x = meta_exp_type l_inlined1 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l' in
+  let l = l_inlined1 in
                                            ( l )
 in
 let kindfn =
@@ -1192,9 +1189,9 @@ let kindfn =
 	  check_meta(Ast.MetaLocalIdExpDecl(arity,name,ty))) )
 in
     ( P.create_metadec_with_constraints ar ispure kindfn ids )}
-| ar = arity ispure = pure l = option_TLocal_ _2 = TIdExpression m = nonempty_list_TMul_ l' = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
+| ar = arity ispure = pure l = option_TLocal_ _2 = TIdExpression m = nonempty_list_TMul_ l_inlined1 = separated_nonempty_list_TComma_pure_ident_or_meta_ident_with_econstraint_re_or_not_eqe_or_sub__ _5 = TMPtVirg
     {let ids =
-  let l = l' in
+  let l = l_inlined1 in
                                            ( l )
 in
 let kindfn =     ( (fun arity name pure check_meta constraints ->
@@ -1948,12 +1945,9 @@ arg_list_decl_:
 in
      ( let (args,vararg) = cleanup_arglist arglist in
        ((Ast0.wrap (Ast0.DOTS args)), vararg) )}
-| xs' = reverse_separated_nonempty_llist_TComma_argorellipsis_one_arg_decl___
+| xs = reverse_separated_nonempty_llist_TComma_argorellipsis_one_arg_decl___
     {let arglist =
-  let xs =
-    let xs = xs' in
-        ( xs )
-  in
+  let xs =     ( xs ) in
       ( xs )
 in
      ( let (args,vararg) = cleanup_arglist arglist in
@@ -1967,12 +1961,9 @@ arg_list_name_opt_decl_:
 in
      ( let (args,vararg) = cleanup_arglist arglist in
        ((Ast0.wrap (Ast0.DOTS args)), vararg) )}
-| xs' = reverse_separated_nonempty_llist_TComma_argorellipsis_one_arg_name_opt_decl___
+| xs = reverse_separated_nonempty_llist_TComma_argorellipsis_one_arg_name_opt_decl___
     {let arglist =
-  let xs =
-    let xs = xs' in
-        ( xs )
-  in
+  let xs =     ( xs ) in
       ( xs )
 in
      ( let (args,vararg) = cleanup_arglist arglist in
@@ -2082,9 +2073,9 @@ let s =     ( Some x ) in
 	     (s @ i @ t, id,
 	      P.clt2mcode "(" lp, args, vararg, P.clt2mcode ")" rp,
 	      P.clt2mcode ";" pt)) )}
-| x = storage x' = Tinline t = ctype id = fn_ident lp = TOPar arglist = arg_list_name_opt_decl_ rp = TCPar pt = TPtVirg
+| x = storage x_inlined1 = Tinline t = ctype id = fn_ident lp = TOPar arglist = arg_list_name_opt_decl_ rp = TCPar pt = TPtVirg
     {let i =
-  let x = x' in
+  let x = x_inlined1 in
       ( Some x )
 in
 let s =     ( Some x ) in
@@ -2373,10 +2364,10 @@ let s =     ( Some x ) in
 	      P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	    Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)))
 	  d )}
-| x = storage x' = const_vol i = pure_ident_or_symbol l = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
+| x = storage x_inlined1 = const_vol i = pure_ident_or_symbol l = separated_nonempty_list_TComma_d_ident_ pv = TPtVirg
     {let d =                                          ( l ) in
 let cv =
-  let x = x' in
+  let x = x_inlined1 in
       ( Some x )
 in
 let s =     ( Some x ) in
@@ -2410,9 +2401,9 @@ let s =     ( Some x ) in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       [Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv))] )}
-| x = storage x' = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage x_inlined1 = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
-  let x = x' in
+  let x = x_inlined1 in
       ( Some x )
 in
 let s =     ( Some x ) in
@@ -2528,9 +2519,9 @@ let s =     ( Some x ) in
       ( let (id,fn) = d in
         let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
 	Ast0.wrap(Ast0.UnInit(s,fn idtype,id,P.clt2mcode ";" pv)) )}
-| x = storage x' = const_vol i = pure_ident_or_symbol d = d_ident pv = TPtVirg
+| x = storage x_inlined1 = const_vol i = pure_ident_or_symbol d = d_ident pv = TPtVirg
     {let cv =
-  let x = x' in
+  let x = x_inlined1 in
       ( Some x )
 in
 let s =     ( Some x ) in
@@ -2561,9 +2552,9 @@ let s =     ( Some x ) in
       let idtype = P.make_cv cv (Ast0.wrap (Ast0.TypeName(P.id2mcode i))) in
       Ast0.wrap(Ast0.Init(s,fn idtype,id,P.clt2mcode "=" q,e,
 			   P.clt2mcode ";" pv)) )}
-| x = storage x' = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
+| x = storage x_inlined1 = const_vol i = pure_ident_or_symbol d = d_ident q = TEq e = initialize pv = TPtVirg
     {let cv =
-  let x = x' in
+  let x = x_inlined1 in
       ( Some x )
 in
 let s =     ( Some x ) in
@@ -3786,11 +3777,8 @@ idcstr:
 		   (function mv -> Ast.MetaIdDecl(Ast.NONE,mv)) in
 	       ([],[i])
 	   | (None,i) -> ([i],[])) )}
-| _1 = TOBrace l' = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _3 = TCBrace
-    {let l =
-  let l = l' in
-                                           ( l )
-in
+| _1 = TOBrace l = separated_nonempty_list_TComma_pure_ident_or_meta_ident_ _3 = TCBrace
+    {let l =                                          ( l ) in
   ( (if !Data.in_iso
 	   then failwith "constraints not allowed in iso file");
 	   (if !Data.in_generating
@@ -3831,11 +3819,8 @@ not_eqe:
 	   then failwith "constraints not allowed in a generated rule file");
 	   [Ast0.wrap(Ast0.Ident(Ast0.wrap(Ast0.Id(P.id2mcode i))))]
 	 )}
-| _1 = TNotEq _2 = TOBrace l' = separated_nonempty_list_TComma_pure_ident_ _4 = TCBrace
-    {let l =
-  let l = l' in
-                                           ( l )
-in
+| _1 = TNotEq _2 = TOBrace l = separated_nonempty_list_TComma_pure_ident_ _4 = TCBrace
+    {let l =                                          ( l ) in
   ( (if !Data.in_iso
 	   then failwith "constraints not allowed in iso file");
 	   (if !Data.in_generating
@@ -3853,11 +3838,8 @@ not_ceq:
 	   (if !Data.in_generating
 	   then failwith "constraints not allowed in a generated rule file");
 	   [i] )}
-| _1 = TNotEq _2 = TOBrace l' = separated_nonempty_list_TComma_ident_or_const_ _4 = TCBrace
-    {let l =
-  let l = l' in
-                                           ( l )
-in
+| _1 = TNotEq _2 = TOBrace l = separated_nonempty_list_TComma_ident_or_const_ _4 = TCBrace
+    {let l =                                          ( l ) in
   ( (if !Data.in_iso
 	   then failwith "constraints not allowed in iso file");
 	   (if !Data.in_generating
@@ -3874,11 +3856,8 @@ sub:
 	     P.check_inherited_constraint i
 	       (function mv -> Ast.MetaExpDecl(Ast.NONE,mv,None)) in
 	   [i] )}
-| _1 = TSub _2 = TOBrace l' = separated_nonempty_list_TComma_meta_ident_ _4 = TCBrace
-    {let l =
-  let l = l' in
-                                           ( l )
-in
+| _1 = TSub _2 = TOBrace l = separated_nonempty_list_TComma_meta_ident_ _4 = TCBrace
+    {let l =                                          ( l ) in
   ( (if !Data.in_iso
 	   then failwith "constraints not allowed in iso file");
 	   (if !Data.in_generating
@@ -3908,11 +3887,8 @@ not_pos:
 	     P.check_inherited_constraint i
 	       (function mv -> Ast.MetaPosDecl(Ast.NONE,mv)) in
 	   [i] )}
-| _1 = TNotEq _2 = TOBrace l' = separated_nonempty_list_TComma_meta_ident_ _4 = TCBrace
-    {let l =
-  let l = l' in
-                                           ( l )
-in
+| _1 = TNotEq _2 = TOBrace l = separated_nonempty_list_TComma_meta_ident_ _4 = TCBrace
+    {let l =                                          ( l ) in
   ( (if !Data.in_iso
 	   then failwith "constraints not allowed in iso file");
 	   (if !Data.in_generating
@@ -4255,41 +4231,30 @@ minus_start:
     {    ( List.map (function x -> Ast0.wrap(Ast0.OTHER(x))) _1 )}
 
 toplevel_seq_startne_toplevel_after_dots_init_:
-  a' = TEllipsis w = list_whenppdecs_ b = toplevel_after_dots_init
-    {let a =
-  let a = a' in
-      ( Ast0.wrap(Ast0.Dots(P.clt2mcode "..." a, List.concat w)) )
-in
+  a = TEllipsis w = list_whenppdecs_ b = toplevel_after_dots_init
+    {let a =     ( Ast0.wrap(Ast0.Dots(P.clt2mcode "..." a, List.concat w)) ) in
                                              ( a::b )}
-| a' = TOEllipsis w = list_whenppdecs_ b' = nest_start c = TCEllipsis b = toplevel_after_dots_init
+| a = TOEllipsis w = list_whenppdecs_ b_inlined1 = nest_start c = TCEllipsis b = toplevel_after_dots_init
     {let a =
-  let b = b' in
-  let a = a' in
+  let b = b_inlined1 in
       ( Ast0.wrap(Ast0.Nest(P.clt2mcode "<..." a, b,
 			  P.clt2mcode "...>" c, List.concat w, false)) )
 in
                                               ( a::b )}
-| a' = TPOEllipsis w = list_whenppdecs_ b' = nest_start c = TPCEllipsis b = toplevel_after_dots_init
+| a = TPOEllipsis w = list_whenppdecs_ b_inlined1 = nest_start c = TPCEllipsis b = toplevel_after_dots_init
     {let a =
-  let b = b' in
-  let a = a' in
+  let b = b_inlined1 in
       ( Ast0.wrap(Ast0.Nest(P.clt2mcode "<+..." a, b,
 			  P.clt2mcode "...+>" c, List.concat w, true)) )
 in
                                               ( a::b )}
-| a' = TOEllipsis w = list_whenppdecs_ b = nest_start c = TCEllipsis
-    {let a =
-  let a = a' in
-      ( Ast0.wrap(Ast0.Nest(P.clt2mcode "<..." a, b,
-			  P.clt2mcode "...>" c, List.concat w, false)) )
-in
+| a = TOEllipsis w = list_whenppdecs_ b = nest_start c = TCEllipsis
+    {let a =     ( Ast0.wrap(Ast0.Nest(P.clt2mcode "<..." a, b,
+			  P.clt2mcode "...>" c, List.concat w, false)) ) in
                                        ( [a] )}
-| a' = TPOEllipsis w = list_whenppdecs_ b = nest_start c = TPCEllipsis
-    {let a =
-  let a = a' in
-      ( Ast0.wrap(Ast0.Nest(P.clt2mcode "<+..." a, b,
-			  P.clt2mcode "...+>" c, List.concat w, true)) )
-in
+| a = TPOEllipsis w = list_whenppdecs_ b = nest_start c = TPCEllipsis
+    {let a =     ( Ast0.wrap(Ast0.Nest(P.clt2mcode "<+..." a, b,
+			  P.clt2mcode "...+>" c, List.concat w, true)) ) in
                                        ( [a] )}
 | _1 = expr _2 = toplevel_after_exp
     {                                     ( (Ast0.wrap(Ast0.Exp(_1)))::_2 )}
@@ -4685,11 +4650,8 @@ whens_when_start_rule_elem_statement_any_strict_:
     {      ( [Ast0.WhenNot (P.clt2mcode "when" t, P.clt2mcode "!=" e, w)] )}
 | t = TWhen e = TEq w = rule_elem_statement _4 = TLineEnd
     {      ( [Ast0.WhenAlways (P.clt2mcode "when" t, P.clt2mcode "=" e, w)] )}
-| t = TWhen l' = separated_nonempty_list_TComma_any_strict_ _3 = TLineEnd
-    {let l =
-  let l = l' in
-                                           ( l )
-in
+| t = TWhen l = separated_nonempty_list_TComma_any_strict_ _3 = TLineEnd
+    {let l =                                          ( l ) in
       ( List.map (function x -> Ast0.WhenModifier(P.clt2mcode "when" t,x)) l )}
 | t = TWhenTrue ee = TNotEq e = eexpr _4 = TLineEnd
     {      ( [Ast0.WhenNotTrue (P.clt2mcode "when" t, P.clt2mcode "!=" ee, e)] )}

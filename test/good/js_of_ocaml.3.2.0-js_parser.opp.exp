@@ -164,11 +164,8 @@ option_label_:
 option_pair_default_clause_list_case_clause___:
   
     {    ( None )}
-| x' = default_clause y = list_case_clause_
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+| x = default_clause y = list_case_clause_
+    {let x =     ( (x, y) ) in
     ( Some x )}
 
 option_variable_:
@@ -214,31 +211,19 @@ separated_nonempty_list_T_COMMA_assignment_expression_:
     {    ( x :: xs )}
 
 separated_nonempty_list_T_COMMA_pair_variable_option_initializer____:
-  x' = variable y = option_initializer__
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+  x = variable y = option_initializer__
+    {let x =     ( (x, y) ) in
     ( [ x ] )}
-| x' = variable y = option_initializer__ _2 = T_COMMA xs = separated_nonempty_list_T_COMMA_pair_variable_option_initializer____
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+| x = variable y = option_initializer__ _2 = T_COMMA xs = separated_nonempty_list_T_COMMA_pair_variable_option_initializer____
+    {let x =     ( (x, y) ) in
     ( x :: xs )}
 
 separated_nonempty_list_T_COMMA_pair_variable_option_initializer_no_in___:
-  x' = variable y = option_initializer_no_in_
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+  x = variable y = option_initializer_no_in_
+    {let x =     ( (x, y) ) in
     ( [ x ] )}
-| x' = variable y = option_initializer_no_in_ _2 = T_COMMA xs = separated_nonempty_list_T_COMMA_pair_variable_option_initializer_no_in___
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+| x = variable y = option_initializer_no_in_ _2 = T_COMMA xs = separated_nonempty_list_T_COMMA_pair_variable_option_initializer_no_in___
+    {let x =     ( (x, y) ) in
     ( x :: xs )}
 
 separated_nonempty_list_T_COMMA_variable_:
@@ -377,9 +362,9 @@ if_statement:
      ( (J.If_statement (condition, t, None), J.Pi pi) )}
 
 do_while_statement:
-  pi = T_DO body = statement _3 = T_WHILE _1 = T_LPAREN item = expression _3' = T_RPAREN
+  pi = T_DO body = statement _3 = T_WHILE _1 = T_LPAREN item = expression _3_inlined1 = T_RPAREN
     {let condition =
-  let _3 = _3' in
+  let _3 = _3_inlined1 in
                                                            ( item )
 in
     ( (J.Do_while_statement (body, condition), J.Pi pi) )}
@@ -419,19 +404,18 @@ return_statement:
     {                           ( (J.Return_statement _2, J.Pi pi) )}
 
 with_statement:
-  _1 = T_WITH _1' = T_LPAREN item = expression _3' = T_RPAREN _3 = statement
+  _1 = T_WITH _1_inlined1 = T_LPAREN item = expression _3_inlined1 = T_RPAREN _3 = statement
     {let _2 =
-  let _3 = _3' in
-  let _1 = _1' in
+  let (_3, _1) = (_3_inlined1, _1_inlined1) in
                                                            ( item )
 in
                                               ( assert false )}
 
 switch_statement:
-  pi = T_SWITCH _1 = T_LPAREN item = expression _3' = T_RPAREN _3 = T_LCURLY x = list_case_clause_ y = option_pair_default_clause_list_case_clause___ _5 = T_RCURLY
+  pi = T_SWITCH _1 = T_LPAREN item = expression _3_inlined1 = T_RPAREN _3 = T_LCURLY x = list_case_clause_ y = option_pair_default_clause_list_case_clause___ _5 = T_RCURLY
     {let pair =     ( (x, y) ) in
 let subject =
-  let _3 = _3' in
+  let _3 = _3_inlined1 in
                                                            ( item )
 in
    ( let switch = match pair with
@@ -452,9 +436,9 @@ try_statement:
     {                                ( (J.Try_statement (_2, None, Some _3), J.Pi pi) )}
 
 catch:
-  _1 = T_CATCH _1' = T_LPAREN item = variable _3 = T_RPAREN y = block
+  _1 = T_CATCH _1_inlined1 = T_LPAREN item = variable _3 = T_RPAREN y = block
     {let pair =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let x =                                                          ( item ) in
       ( (x, y) )
 in

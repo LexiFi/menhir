@@ -264,11 +264,8 @@ option_fsTypeArgs_:
 option_pair_hasSort_simpleTerm__:
   
     {    ( None )}
-| x' = hasSort y = simpleTerm
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+| x = hasSort y = simpleTerm
+    {let x =     ( (x, y) ) in
     ( Some x )}
 
 option_string_:
@@ -287,11 +284,8 @@ boption_SQUIGGLY_RARROW_:
 boption___anonymous_0_:
   
     {    ( false )}
-| _1' = PRAGMALIGHT _2 = STRING
-    {let _1 =
-  let _1 = _1' in
-                                          ( )
-in
+| _1 = PRAGMALIGHT _2 = STRING
+    {let _1 =                                         ( ) in
     ( true )}
 
 loption_separated_nonempty_list_COMMA_appTerm__:
@@ -440,17 +434,11 @@ separated_nonempty_list_AND_letbinding_:
     {    ( x :: xs )}
 
 separated_nonempty_list_AND_pair_option_FSDOC__typeDecl__:
-  x' = option_FSDOC_ y = typeDecl
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+  x = option_FSDOC_ y = typeDecl
+    {let x =     ( (x, y) ) in
     ( [ x ] )}
-| x' = option_FSDOC_ y = typeDecl _2 = AND xs = separated_nonempty_list_AND_pair_option_FSDOC__typeDecl__
-    {let x =
-  let x = x' in
-      ( (x, y) )
-in
+| x = option_FSDOC_ y = typeDecl _2 = AND xs = separated_nonempty_list_AND_pair_option_FSDOC__typeDecl__
+    {let x =     ( (x, y) ) in
     ( x :: xs )}
 
 separated_nonempty_list_BAR_tuplePattern_:
@@ -532,11 +520,8 @@ inputFragment:
       )}
 
 pragma:
-  _1 = PRAGMA_SET_OPTIONS s' = STRING
-    {let s =
-  let s = s' in
-               ( s )
-in
+  _1 = PRAGMA_SET_OPTIONS s = STRING
+    {let s =              ( s ) in
       ( SetOptions s )}
 | _1 = PRAGMA_RESET_OPTIONS s_opt = option_string_
     {      ( ResetOptions s_opt )}
@@ -684,10 +669,10 @@ effectDecl:
 subEffect:
   src_eff = quident _2 = SQUIGGLY_RARROW tgt_eff = quident _4 = EQUALS lift = simpleTerm
     {      ( { msource = src_eff; mdest = tgt_eff; lift_op = NonReifiableLift lift } )}
-| src_eff = quident _2 = SQUIGGLY_RARROW tgt_eff = quident _4 = LBRACE x = IDENT _2' = EQUALS y = simpleTerm _7 = RBRACE
+| src_eff = quident _2 = SQUIGGLY_RARROW tgt_eff = quident _4 = LBRACE x = IDENT _2_inlined1 = EQUALS y = simpleTerm _7 = RBRACE
     {let lift2_opt =     ( None ) in
 let lift1 =
-  let _2 = _2' in
+  let _2 = _2_inlined1 in
       ( (x, y) )
 in
      (
@@ -710,10 +695,9 @@ in
           in
           { msource = src_eff; mdest = tgt_eff; lift_op = ReifiableLift (lift, lift_wp) }
      )}
-| src_eff = quident _2 = SQUIGGLY_RARROW tgt_eff = quident _4 = LBRACE x = IDENT _2' = EQUALS y = simpleTerm _1 = SEMICOLON id = IDENT _2'' = EQUALS y' = simpleTerm _7 = RBRACE
+| src_eff = quident _2 = SQUIGGLY_RARROW tgt_eff = quident _4 = LBRACE x = IDENT _2_inlined1 = EQUALS y = simpleTerm _1 = SEMICOLON id = IDENT _2_inlined2 = EQUALS y_inlined1 = simpleTerm _7 = RBRACE
     {let lift2_opt =
-  let y = y' in
-  let _2 = _2'' in
+  let (y, _2) = (y_inlined1, _2_inlined2) in
   let x =
     let x =                                                           (id) in
         ( (x, y) )
@@ -721,7 +705,7 @@ in
       ( Some x )
 in
 let lift1 =
-  let _2 = _2' in
+  let _2 = _2_inlined1 in
       ( (x, y) )
 in
      (
@@ -853,107 +837,65 @@ atomicPattern:
     {                                     ( pat )}
 | tv = tvar
     {                              ( mk_pattern (PatTvar (tv, None)) (rhs parseState 1) )}
-| _1 = LPAREN op' = OPPREFIX _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| _1 = LPAREN op = OPPREFIX _3 = RPAREN
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = OPINFIX3 _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| _1 = LPAREN op = OPINFIX3 _3 = RPAREN
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = OPINFIX4 _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| _1 = LPAREN op = OPINFIX4 _3 = RPAREN
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = OPINFIX0a _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0a _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = OPINFIX0b _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0b _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = OPINFIX0c _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0c _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = OPINFIX0d _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0d _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = OPINFIX1 _3 = RPAREN
+| _1 = LPAREN op = OPINFIX1 _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = OPINFIX2 _3 = RPAREN
+| _1 = LPAREN op = OPINFIX2 _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = PIPE_RIGHT _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident("|>", rhs parseState 1) )
-in
+| _1 = LPAREN op = PIPE_RIGHT _3 = RPAREN
+    {let op =      ( mk_ident("|>", rhs parseState 1) ) in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = COLON_EQUALS _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident(":=", rhs parseState 1) )
-in
+| _1 = LPAREN op = COLON_EQUALS _3 = RPAREN
+    {let op =      ( mk_ident(":=", rhs parseState 1) ) in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = COLON_COLON _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident("::", rhs parseState 1) )
-in
+| _1 = LPAREN op = COLON_COLON _3 = RPAREN
+    {let op =      ( mk_ident("::", rhs parseState 1) ) in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = OP_MIXFIX_ASSIGNMENT _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident(op, rhs parseState 1) )
-in
+| _1 = LPAREN op = OP_MIXFIX_ASSIGNMENT _3 = RPAREN
+    {let op =      ( mk_ident(op, rhs parseState 1) ) in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
-| _1 = LPAREN op' = OP_MIXFIX_ACCESS _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident(op, rhs parseState 1) )
-in
+| _1 = LPAREN op = OP_MIXFIX_ACCESS _3 = RPAREN
+    {let op =      ( mk_ident(op, rhs parseState 1) ) in
       ( mk_pattern (PatOp op) (rhs2 parseState 1 3) )}
 | _1 = UNDERSCORE
     {      ( mk_pattern PatWild (rhs parseState 1) )}
@@ -1011,12 +953,9 @@ aqualified_lident_:
       ( (x, y) )
 in
                                                   ( x )}
-| x' = aqualUniverses y = lident
+| x = aqualUniverses y = lident
     {let x =
-  let x =
-    let x = x' in
-        ( Some x )
-  in
+  let x =     ( Some x ) in
       ( (x, y) )
 in
                                                   ( x )}
@@ -1028,12 +967,9 @@ aqualified_lidentOrUnderscore_:
       ( (x, y) )
 in
                                                   ( x )}
-| x' = aqualUniverses y = lidentOrUnderscore
+| x = aqualUniverses y = lidentOrUnderscore
     {let x =
-  let x =
-    let x = x' in
-        ( Some x )
-  in
+  let x =     ( Some x ) in
       ( (x, y) )
 in
                                                   ( x )}
@@ -1076,57 +1012,39 @@ lidentOrOperator:
 | _1 = LPAREN op = OPINFIX4 _3 = RPAREN
     {let id =      ( mk_ident (op, rhs parseState 1) ) in
     ( {id with idText = compile_op' id.idText id.idRange} )}
-| _1 = LPAREN op' = OPINFIX0a _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0a _3 = RPAREN
     {let id =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
     ( {id with idText = compile_op' id.idText id.idRange} )}
-| _1 = LPAREN op' = OPINFIX0b _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0b _3 = RPAREN
     {let id =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
     ( {id with idText = compile_op' id.idText id.idRange} )}
-| _1 = LPAREN op' = OPINFIX0c _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0c _3 = RPAREN
     {let id =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
     ( {id with idText = compile_op' id.idText id.idRange} )}
-| _1 = LPAREN op' = OPINFIX0d _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0d _3 = RPAREN
     {let id =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
     ( {id with idText = compile_op' id.idText id.idRange} )}
-| _1 = LPAREN op' = OPINFIX1 _3 = RPAREN
+| _1 = LPAREN op = OPINFIX1 _3 = RPAREN
     {let id =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
     ( {id with idText = compile_op' id.idText id.idRange} )}
-| _1 = LPAREN op' = OPINFIX2 _3 = RPAREN
+| _1 = LPAREN op = OPINFIX2 _3 = RPAREN
     {let id =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
     ( {id with idText = compile_op' id.idText id.idRange} )}
@@ -1191,36 +1109,36 @@ noSeqTerm:
     {           ( t )}
 | e = tmIff _2 = SUBTYPE t = tmIff tactic_opt = option___anonymous_6_
     {      ( mk_term (Ascribed(e,{t with level=Expr},tactic_opt)) (rhs2 parseState 1 4) Expr )}
-| e1 = atomicTermNotQUident _1 = DOT_LPAREN e = term _3' = RPAREN _3 = LARROW e3 = noSeqTerm
+| e1 = atomicTermNotQUident _1 = DOT_LPAREN e = term _3_inlined1 = RPAREN _3 = LARROW e3 = noSeqTerm
     {let op_expr =
-  let _3 = _3' in
+  let _3 = _3_inlined1 in
                                ( mk_ident (".()", rhs parseState 1), e, rhs2 parseState 1 3 )
 in
       (
         let (op, e2, _) = op_expr in
         mk_term (Op({op with idText = op.idText ^ "<-"}, [ e1; e2; e3 ])) (rhs2 parseState 1 4) Expr
       )}
-| e1 = atomicTermNotQUident _1 = DOT_LBRACK e = term _3' = RBRACK _3 = LARROW e3 = noSeqTerm
+| e1 = atomicTermNotQUident _1 = DOT_LBRACK e = term _3_inlined1 = RBRACK _3 = LARROW e3 = noSeqTerm
     {let op_expr =
-  let _3 = _3' in
+  let _3 = _3_inlined1 in
                                ( mk_ident (".[]", rhs parseState 1), e, rhs2 parseState 1 3 )
 in
       (
         let (op, e2, _) = op_expr in
         mk_term (Op({op with idText = op.idText ^ "<-"}, [ e1; e2; e3 ])) (rhs2 parseState 1 4) Expr
       )}
-| e1 = atomicTermNotQUident _1 = DOT_LBRACK_BAR e = term _3' = RBRACE _3 = LARROW e3 = noSeqTerm
+| e1 = atomicTermNotQUident _1 = DOT_LBRACK_BAR e = term _3_inlined1 = RBRACE _3 = LARROW e3 = noSeqTerm
     {let op_expr =
-  let _3 = _3' in
+  let _3 = _3_inlined1 in
                                    ( mk_ident (".[||]", rhs parseState 1), e, rhs2 parseState 1 3 )
 in
       (
         let (op, e2, _) = op_expr in
         mk_term (Op({op with idText = op.idText ^ "<-"}, [ e1; e2; e3 ])) (rhs2 parseState 1 4) Expr
       )}
-| e1 = atomicTermNotQUident _1 = DOT_LENS_PAREN_LEFT e = term _3' = LENS_PAREN_RIGHT _3 = LARROW e3 = noSeqTerm
+| e1 = atomicTermNotQUident _1 = DOT_LENS_PAREN_LEFT e = term _3_inlined1 = LENS_PAREN_RIGHT _3 = LARROW e3 = noSeqTerm
     {let op_expr =
-  let _3 = _3' in
+  let _3 = _3_inlined1 in
                                                   ( mk_ident (".(||)", rhs parseState 1), e, rhs2 parseState 1 3 )
 in
       (
@@ -1348,9 +1266,9 @@ patternBranch:
         in
         (focus, (pat, when_opt, e))
       )}
-| pat = disjunctivePattern _1 = WHEN e' = tmFormula focus = maybeFocusArrow e = term
+| pat = disjunctivePattern _1 = WHEN e_inlined1 = tmFormula focus = maybeFocusArrow e = term
     {let when_opt =
-  let e = e' in
+  let e = e_inlined1 in
                            ( Some e )
 in
       (
@@ -1501,41 +1419,23 @@ tmEqWith_appTerm_:
     {      ( mk_term (Op(mk_ident(":=", rhs parseState 2), [e1; e2])) (rhs2 parseState 1 3) Un)}
 | e1 = tmEqWith_appTerm_ _2 = PIPE_RIGHT e2 = tmEqWith_appTerm_
     {      ( mk_term (Op(mk_ident("|>", rhs parseState 2), [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_appTerm_ op' = OPINFIX0a e2 = tmEqWith_appTerm_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_appTerm_ op = OPINFIX0a e2 = tmEqWith_appTerm_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_appTerm_ op' = OPINFIX0b e2 = tmEqWith_appTerm_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_appTerm_ op = OPINFIX0b e2 = tmEqWith_appTerm_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_appTerm_ op' = OPINFIX0c e2 = tmEqWith_appTerm_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_appTerm_ op = OPINFIX0c e2 = tmEqWith_appTerm_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_appTerm_ op' = OPINFIX0d e2 = tmEqWith_appTerm_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_appTerm_ op = OPINFIX0d e2 = tmEqWith_appTerm_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_appTerm_ op' = OPINFIX1 e2 = tmEqWith_appTerm_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_appTerm_ op = OPINFIX1 e2 = tmEqWith_appTerm_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_appTerm_ op' = OPINFIX2 e2 = tmEqWith_appTerm_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_appTerm_ op = OPINFIX2 e2 = tmEqWith_appTerm_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
 | e1 = tmEqWith_appTerm_ _2 = MINUS e2 = tmEqWith_appTerm_
     {      ( mk_term (Op(mk_ident("-", rhs parseState 2), [e1; e2])) (rhs2 parseState 1 3) Un)}
@@ -1559,41 +1459,23 @@ tmEqWith_tmRefinement_:
     {      ( mk_term (Op(mk_ident(":=", rhs parseState 2), [e1; e2])) (rhs2 parseState 1 3) Un)}
 | e1 = tmEqWith_tmRefinement_ _2 = PIPE_RIGHT e2 = tmEqWith_tmRefinement_
     {      ( mk_term (Op(mk_ident("|>", rhs parseState 2), [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_tmRefinement_ op' = OPINFIX0a e2 = tmEqWith_tmRefinement_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_tmRefinement_ op = OPINFIX0a e2 = tmEqWith_tmRefinement_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_tmRefinement_ op' = OPINFIX0b e2 = tmEqWith_tmRefinement_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_tmRefinement_ op = OPINFIX0b e2 = tmEqWith_tmRefinement_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_tmRefinement_ op' = OPINFIX0c e2 = tmEqWith_tmRefinement_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_tmRefinement_ op = OPINFIX0c e2 = tmEqWith_tmRefinement_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_tmRefinement_ op' = OPINFIX0d e2 = tmEqWith_tmRefinement_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_tmRefinement_ op = OPINFIX0d e2 = tmEqWith_tmRefinement_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_tmRefinement_ op' = OPINFIX1 e2 = tmEqWith_tmRefinement_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_tmRefinement_ op = OPINFIX1 e2 = tmEqWith_tmRefinement_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
-| e1 = tmEqWith_tmRefinement_ op' = OPINFIX2 e2 = tmEqWith_tmRefinement_
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| e1 = tmEqWith_tmRefinement_ op = OPINFIX2 e2 = tmEqWith_tmRefinement_
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [e1; e2])) (rhs2 parseState 1 3) Un)}
 | e1 = tmEqWith_tmRefinement_ _2 = MINUS e2 = tmEqWith_tmRefinement_
     {      ( mk_term (Op(mk_ident("-", rhs parseState 2), [e1; e2])) (rhs2 parseState 1 3) Un)}
@@ -1769,107 +1651,65 @@ atomicTermNotQUident:
     {               ( mk_term (Const c) (rhs parseState 1) Expr )}
 | x = opPrefixTerm_atomicTermNotQUident_
     {    ( x )}
-| _1 = LPAREN op' = OPPREFIX _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| _1 = LPAREN op = OPPREFIX _3 = RPAREN
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = OPINFIX3 _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| _1 = LPAREN op = OPINFIX3 _3 = RPAREN
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = OPINFIX4 _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident (op, rhs parseState 1) )
-in
+| _1 = LPAREN op = OPINFIX4 _3 = RPAREN
+    {let op =      ( mk_ident (op, rhs parseState 1) ) in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = OPINFIX0a _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0a _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = OPINFIX0b _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0b _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = OPINFIX0c _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0c _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = OPINFIX0d _3 = RPAREN
+| _1 = LPAREN op = OPINFIX0d _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = OPINFIX1 _3 = RPAREN
+| _1 = LPAREN op = OPINFIX1 _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = OPINFIX2 _3 = RPAREN
+| _1 = LPAREN op = OPINFIX2 _3 = RPAREN
     {let op =
-  let op =
-    let op = op' in
-         ( mk_ident (op, rhs parseState 1) )
-  in
+  let op =      ( mk_ident (op, rhs parseState 1) ) in
        ( op )
 in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = PIPE_RIGHT _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident("|>", rhs parseState 1) )
-in
+| _1 = LPAREN op = PIPE_RIGHT _3 = RPAREN
+    {let op =      ( mk_ident("|>", rhs parseState 1) ) in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = COLON_EQUALS _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident(":=", rhs parseState 1) )
-in
+| _1 = LPAREN op = COLON_EQUALS _3 = RPAREN
+    {let op =      ( mk_ident(":=", rhs parseState 1) ) in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = COLON_COLON _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident("::", rhs parseState 1) )
-in
+| _1 = LPAREN op = COLON_COLON _3 = RPAREN
+    {let op =      ( mk_ident("::", rhs parseState 1) ) in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = OP_MIXFIX_ASSIGNMENT _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident(op, rhs parseState 1) )
-in
+| _1 = LPAREN op = OP_MIXFIX_ASSIGNMENT _3 = RPAREN
+    {let op =      ( mk_ident(op, rhs parseState 1) ) in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
-| _1 = LPAREN op' = OP_MIXFIX_ACCESS _3 = RPAREN
-    {let op =
-  let op = op' in
-       ( mk_ident(op, rhs parseState 1) )
-in
+| _1 = LPAREN op = OP_MIXFIX_ACCESS _3 = RPAREN
+    {let op =      ( mk_ident(op, rhs parseState 1) ) in
       ( mk_term (Op(op, [])) (rhs2 parseState 1 3) Un )}
 | _1 = LENS_PAREN_LEFT e0 = tmEq _3 = COMMA el = separated_nonempty_list_COMMA_tmEq_ _5 = LENS_PAREN_RIGHT
     {      ( mkDTuple (e0::el) (rhs2 parseState 1 5) )}
@@ -2130,9 +1970,9 @@ reverse_left_flexible_nonempty_list_BAR_patternBranch_:
   x = patternBranch
     {let _1 =     ( None ) in
    ( [x] )}
-| x' = BAR x = patternBranch
+| x_inlined1 = BAR x = patternBranch
     {let _1 =
-  let x = x' in
+  let x = x_inlined1 in
       ( Some x )
 in
    ( [x] )}

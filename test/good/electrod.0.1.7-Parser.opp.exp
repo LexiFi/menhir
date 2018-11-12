@@ -207,17 +207,17 @@ in
    ( (disj, ids, range) )
 in
     ( [ x ] )}
-| xs' = separated_nonempty_list_COMMA_plain_id_ _3 = COLON range = expr _2 = COMMA xs = separated_nonempty_list_COMMA_ae_decl_
+| xs_inlined1 = separated_nonempty_list_COMMA_plain_id_ _3 = COLON range = expr _2 = COMMA xs = separated_nonempty_list_COMMA_ae_decl_
     {let x =
-  let xs = xs' in
+  let xs = xs_inlined1 in
   let ids =     ( xs ) in
   let disj =  ( false ) in
    ( (disj, ids, range) )
 in
     ( x :: xs )}
-| _1 = DISJ xs' = separated_nonempty_list_COMMA_plain_id_ _3 = COLON range = expr _2 = COMMA xs = separated_nonempty_list_COMMA_ae_decl_
+| _1 = DISJ xs_inlined1 = separated_nonempty_list_COMMA_plain_id_ _3 = COLON range = expr _2 = COMMA xs = separated_nonempty_list_COMMA_ae_decl_
     {let x =
-  let xs = xs' in
+  let xs = xs_inlined1 in
   let ids =     ( xs ) in
   let disj =  ( true ) in
    ( (disj, ids, range) )
@@ -234,9 +234,9 @@ separated_nonempty_list_COMMA_let_decl_:
   id = PLAIN_ID _2 = EQ e = expr
     {let x =  ( (Raw_ident.ident id _startpos_id_ _endpos_id_, e) ) in
     ( [ x ] )}
-| id = PLAIN_ID _2' = EQ e = expr _2 = COMMA xs = separated_nonempty_list_COMMA_let_decl_
+| id = PLAIN_ID _2_inlined1 = EQ e = expr _2 = COMMA xs = separated_nonempty_list_COMMA_let_decl_
     {let x =
-  let _2 = _2' in
+  let _2 = _2_inlined1 in
    ( (Raw_ident.ident id _startpos_id_ _endpos_id_, e) )
 in
     ( x :: xs )}
@@ -266,25 +266,22 @@ paragraph:
     ( R.ParInv f )}
 
 universe:
-  _1 = UNIV _2 = COLON _1' = LBRACE x' = list_urelements_ _3 = RBRACE
+  _1 = UNIV _2 = COLON _1_inlined1 = LBRACE x = list_urelements_ _3 = RBRACE
     {let _4 =     ( None ) in
 let urelts_list =
-  let _1 = _1' in
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let _1 = _1_inlined1 in
+  let x =     ( x ) in
       ( x )
 in
  ( urelts_list )}
-| _1 = UNIV _2 = COLON _1' = LBRACE x' = list_urelements_ _3 = RBRACE x = SEMI
-    {let _4 =     ( Some x ) in
+| _1 = UNIV _2 = COLON _1_inlined1 = LBRACE x = list_urelements_ _3 = RBRACE x_inlined1 = SEMI
+    {let _4 =
+  let x = x_inlined1 in
+      ( Some x )
+in
 let urelts_list =
-  let _1 = _1' in
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let _1 = _1_inlined1 in
+  let x =     ( x ) in
       ( x )
 in
  ( urelts_list )}
@@ -358,12 +355,9 @@ bound:
     { ( R.buniv )}
 | id = PLAIN_ID
     {  ( R.bref (Raw_ident.ident id _startpos_id_ _endpos_id_) )}
-| _1 = LPAREN x' = bound _3 = RPAREN
+| _1 = LPAREN x = bound _3 = RPAREN
     {let b =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
  ( b )}
@@ -371,12 +365,9 @@ in
     { ( R.bprod b1 mult b2 )}
 | b1 = bound _2 = PLUS b2 = bound
     { ( R.bunion b1 b2  )}
-| _1 = LBRACE x' = list_element_ _3 = RBRACE
+| _1 = LBRACE x = list_element_ _3 = RBRACE
     {let elts =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
   ( R.belts elts )}
@@ -396,12 +387,9 @@ element:
     {  ( R.etuple [at] )}
 
 tuple:
-  _1 = LPAREN x' = nonempty_list_atom_ _3 = RPAREN
+  _1 = LPAREN x = nonempty_list_atom_ _3 = RPAREN
     {let ats =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
   ( ats )}
@@ -432,23 +420,20 @@ insts:
     {  ( assignments )}
 
 inst:
-  id = PLAIN_ID _2 = EQ _1 = LBRACE x' = list_tuple_ _3 = RBRACE
+  id = PLAIN_ID _2 = EQ _1 = LBRACE x = list_tuple_ _3 = RBRACE
     {let _4 =     ( None ) in
 let tuples =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
  ( (Raw_ident.ident id _startpos_id_ _endpos_id_, tuples) )}
-| id = PLAIN_ID _2 = EQ _1 = LBRACE x' = list_tuple_ _3 = RBRACE x = SEMI
-    {let _4 =     ( Some x ) in
+| id = PLAIN_ID _2 = EQ _1 = LBRACE x = list_tuple_ _3 = RBRACE x_inlined1 = SEMI
+    {let _4 =
+  let x = x_inlined1 in
+      ( Some x )
+in
 let tuples =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
  ( (Raw_ident.ident id _startpos_id_ _endpos_id_, tuples) )}
@@ -458,12 +443,9 @@ syms:
     {      ( sy )}
 
 bracketed_symmetry:
-  _1 = LBRACKET x' = symmetry _3 = RBRACKET _2 = option_SEMI_
+  _1 = LBRACKET x = symmetry _3 = RBRACKET _2 = option_SEMI_
     {let sy =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
  (sy)}
@@ -473,12 +455,9 @@ symmetry:
     {  (syms1, syms2)}
 
 sym_element:
-  _1 = LPAREN x' = nonempty_list_atom_ _3 = RPAREN
+  _1 = LPAREN x = nonempty_list_atom_ _3 = RPAREN
     {let atoms =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
   (List.hd atoms, List.tl atoms)}
@@ -655,9 +634,9 @@ let _endpos = _endpos_f2_ in
 let _startpos = _startpos_f1_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.lbinary f1 op f2 )}
-| _1 = ALL xs = separated_nonempty_list_COMMA_ae_decl_ _1' = BAR f = formula
+| _1 = ALL xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = BAR f = formula
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( [f] )
 in
 let _endpos_block_ = _endpos_f_ in
@@ -668,15 +647,12 @@ let _endpos = _endpos_block_ in
 let _startpos = _startpos_q_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.quant q decls block )}
-| _1 = ALL xs = separated_nonempty_list_COMMA_ae_decl_ _1' = LBRACE x' = specification _3 = RBRACE
+| _1 = ALL xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = LBRACE x = specification _3 = RBRACE
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let block =
     let fs =
-      let x =
-        let x = x' in
-            ( x )
-      in
+      let x =     ( x ) in
           ( x )
     in
      (  fs )
@@ -691,9 +667,9 @@ let _endpos = _endpos_block_ in
 let _startpos = _startpos_q_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.quant q decls block )}
-| _1 = SOME xs = separated_nonempty_list_COMMA_ae_decl_ _1' = BAR f = formula
+| _1 = SOME xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = BAR f = formula
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( [f] )
 in
 let _endpos_block_ = _endpos_f_ in
@@ -704,15 +680,12 @@ let _endpos = _endpos_block_ in
 let _startpos = _startpos_q_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.quant q decls block )}
-| _1 = SOME xs = separated_nonempty_list_COMMA_ae_decl_ _1' = LBRACE x' = specification _3 = RBRACE
+| _1 = SOME xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = LBRACE x = specification _3 = RBRACE
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let block =
     let fs =
-      let x =
-        let x = x' in
-            ( x )
-      in
+      let x =     ( x ) in
           ( x )
     in
      (  fs )
@@ -727,9 +700,9 @@ let _endpos = _endpos_block_ in
 let _startpos = _startpos_q_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.quant q decls block )}
-| _1 = NO xs = separated_nonempty_list_COMMA_ae_decl_ _1' = BAR f = formula
+| _1 = NO xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = BAR f = formula
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( [f] )
 in
 let _endpos_block_ = _endpos_f_ in
@@ -740,15 +713,12 @@ let _endpos = _endpos_block_ in
 let _startpos = _startpos_q_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.quant q decls block )}
-| _1 = NO xs = separated_nonempty_list_COMMA_ae_decl_ _1' = LBRACE x' = specification _3 = RBRACE
+| _1 = NO xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = LBRACE x = specification _3 = RBRACE
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let block =
     let fs =
-      let x =
-        let x = x' in
-            ( x )
-      in
+      let x =     ( x ) in
           ( x )
     in
      (  fs )
@@ -763,9 +733,9 @@ let _endpos = _endpos_block_ in
 let _startpos = _startpos_q_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.quant q decls block )}
-| _1 = ONE xs = separated_nonempty_list_COMMA_ae_decl_ _1' = BAR f = formula
+| _1 = ONE xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = BAR f = formula
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( [f] )
 in
 let _endpos_block_ = _endpos_f_ in
@@ -776,15 +746,12 @@ let _endpos = _endpos_block_ in
 let _startpos = _startpos_q_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.quant q decls block )}
-| _1 = ONE xs = separated_nonempty_list_COMMA_ae_decl_ _1' = LBRACE x' = specification _3 = RBRACE
+| _1 = ONE xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = LBRACE x = specification _3 = RBRACE
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let block =
     let fs =
-      let x =
-        let x = x' in
-            ( x )
-      in
+      let x =     ( x ) in
           ( x )
     in
      (  fs )
@@ -799,9 +766,9 @@ let _endpos = _endpos_block_ in
 let _startpos = _startpos_q_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.quant q decls block )}
-| _1 = LONE xs = separated_nonempty_list_COMMA_ae_decl_ _1' = BAR f = formula
+| _1 = LONE xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = BAR f = formula
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( [f] )
 in
 let _endpos_block_ = _endpos_f_ in
@@ -812,15 +779,12 @@ let _endpos = _endpos_block_ in
 let _startpos = _startpos_q_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.quant q decls block )}
-| _1 = LONE xs = separated_nonempty_list_COMMA_ae_decl_ _1' = LBRACE x' = specification _3 = RBRACE
+| _1 = LONE xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = LBRACE x = specification _3 = RBRACE
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let block =
     let fs =
-      let x =
-        let x = x' in
-            ( x )
-      in
+      let x =     ( x ) in
           ( x )
     in
      (  fs )
@@ -835,9 +799,9 @@ let _endpos = _endpos_block_ in
 let _startpos = _startpos_q_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.quant q decls block )}
-| _1 = LET xs = separated_nonempty_list_COMMA_let_decl_ _1' = BAR f = formula
+| _1 = LET xs = separated_nonempty_list_COMMA_let_decl_ _1_inlined1 = BAR f = formula
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
    ( [f] )
 in
 let _endpos_block_ = _endpos_f_ in
@@ -846,15 +810,12 @@ let _endpos = _endpos_block_ in
 let _startpos = _startpos__1_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.let_ decls block)}
-| _1 = LET xs = separated_nonempty_list_COMMA_let_decl_ _1' = LBRACE x' = specification _3 = RBRACE
+| _1 = LET xs = separated_nonempty_list_COMMA_let_decl_ _1_inlined1 = LBRACE x = specification _3 = RBRACE
     {let block =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let block =
     let fs =
-      let x =
-        let x = x' in
-            ( x )
-      in
+      let x =     ( x ) in
           ( x )
     in
      (  fs )
@@ -877,29 +838,22 @@ let _startpos = _startpos_f_ in
 let _startpos = _startpos_f_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.lbinary f G.impl t  )}
-| _1 = LBRACE x' = specification _3 = RBRACE
+| _1 = LBRACE x = specification _3 = RBRACE
     {let f =
   let fs =
-    let x =
-      let x = x' in
-          ( x )
-    in
+    let x =     ( x ) in
         ( x )
   in
    (  fs )
 in
-let _endpos_f_ = _endpos__3_ in
-let _startpos_f_ = _startpos__1_ in
+let (_endpos_f_, _startpos_f_) = (_endpos__3_, _startpos__1_) in
 let _endpos = _endpos_f_ in
 let _startpos = _startpos_f_ in
  ( G.fml (Location.from_positions _startpos _endpos)
     @@ G.block f )}
-| _1 = LPAREN x' = formula _3 = RPAREN
+| _1 = LPAREN x = formula _3 = RPAREN
     {let f =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
      ( f )}
@@ -1012,11 +966,11 @@ let _endpos = _endpos_args_ in
 let _startpos = _startpos_exp_ in
  ( exp_no_arity (Location.from_positions _startpos _endpos)
     @@ G.boxjoin exp args )}
-| _1 = LBRACE xs = separated_nonempty_list_COMMA_ae_decl_ _1' = BAR f = formula _3 = RBRACE
+| _1 = LBRACE xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = BAR f = formula _3 = RBRACE
     {let compr =
   let x =
     let x =
-      let _1 = _1' in
+      let _1 = _1_inlined1 in
       let block =  ( [f] ) in
       let decls =     ( xs ) in
            ( G.compr decls block )
@@ -1025,25 +979,20 @@ let _startpos = _startpos_exp_ in
   in
       ( x )
 in
-let _endpos_compr_ = _endpos__3_ in
-let _startpos_compr_ = _startpos__1_ in
+let (_endpos_compr_, _startpos_compr_) = (_endpos__3_, _startpos__1_) in
 let _endpos = _endpos_compr_ in
 let _startpos = _startpos_compr_ in
  ( exp_no_arity (Location.from_positions _startpos _endpos)
     @@ compr)}
-| _1 = LBRACE xs = separated_nonempty_list_COMMA_ae_decl_ _1' = LBRACE x' = specification _3' = RBRACE _3 = RBRACE
+| _1 = LBRACE xs = separated_nonempty_list_COMMA_ae_decl_ _1_inlined1 = LBRACE x = specification _3_inlined1 = RBRACE _3 = RBRACE
     {let compr =
   let x =
     let x =
-      let _3 = _3' in
-      let _1 = _1' in
+      let (_3, _1) = (_3_inlined1, _1_inlined1) in
       let block =
         let block =
           let fs =
-            let x =
-              let x = x' in
-                  ( x )
-            in
+            let x =     ( x ) in
                 ( x )
           in
            (  fs )
@@ -1057,8 +1006,7 @@ let _startpos = _startpos_compr_ in
   in
       ( x )
 in
-let _endpos_compr_ = _endpos__3_ in
-let _startpos_compr_ = _startpos__1_ in
+let (_endpos_compr_, _startpos_compr_) = (_endpos__3_, _startpos__1_) in
 let _endpos = _endpos_compr_ in
 let _startpos = _startpos_compr_ in
  ( exp_no_arity (Location.from_positions _startpos _endpos)
@@ -1068,12 +1016,9 @@ let _startpos = _startpos_compr_ in
 let _startpos = _startpos_e_ in
  ( exp_no_arity (Location.from_positions _startpos _endpos)
     @@ G.prime e)}
-| _1 = LPAREN x' = expr _3 = RPAREN
+| _1 = LPAREN x = expr _3 = RPAREN
     {let e =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
      ( e )}
@@ -1089,13 +1034,10 @@ let _startpos = _startpos_n_ in
 let _startpos = _startpos__1_ in
   ( G.iexp (Location.from_positions _startpos _endpos)
     @@ G.card e  )}
-| _1 = NEG _1' = LBRACKET x' = iexpr _3 = RBRACKET
+| _1 = NEG _1_inlined1 = LBRACKET x = iexpr _3 = RBRACKET
     {let e =
-  let _1 = _1' in
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let _1 = _1_inlined1 in
+  let x =     ( x ) in
       ( x )
 in
 let _endpos_e_ = _endpos__3_ in
@@ -1103,9 +1045,9 @@ let _endpos = _endpos_e_ in
 let _startpos = _startpos__1_ in
   ( G.iexp (Location.from_positions _startpos _endpos)
     @@ G.(iunary neg e) )}
-| _1 = ADD _1' = LBRACKET e1 = iexpr _2 = COMMA e2 = iexpr _3 = RBRACKET
+| _1 = ADD _1_inlined1 = LBRACKET e1 = iexpr _2 = COMMA e2 = iexpr _3 = RBRACKET
     {let e =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let x =
     let x =   ( (e1, e2) ) in
         ( x )
@@ -1119,9 +1061,9 @@ let _startpos = _startpos__1_ in
         let (e1, e2) = e in
         G.iexp (Location.from_positions _startpos _endpos)
     @@ G.(ibinary e1 add e2)  )}
-| _1 = SUB _1' = LBRACKET e1 = iexpr _2 = COMMA e2 = iexpr _3 = RBRACKET
+| _1 = SUB _1_inlined1 = LBRACKET e1 = iexpr _2 = COMMA e2 = iexpr _3 = RBRACKET
     {let e =
-  let _1 = _1' in
+  let _1 = _1_inlined1 in
   let x =
     let x =   ( (e1, e2) ) in
         ( x )
@@ -1135,12 +1077,9 @@ let _startpos = _startpos__1_ in
     let (e1, e2) = e in
     G.iexp (Location.from_positions _startpos _endpos)
     @@ G.(ibinary e1 sub e2)  )}
-| _1 = LPAREN x' = iexpr _3 = RPAREN
+| _1 = LPAREN x = iexpr _3 = RPAREN
     {let e =
-  let x =
-    let x = x' in
-        ( x )
-  in
+  let x =     ( x ) in
       ( x )
 in
          ( e )}

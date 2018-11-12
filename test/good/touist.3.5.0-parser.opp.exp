@@ -114,11 +114,8 @@ option_for_statement_:
 option_when_cond_:
   
     {    ( None )}
-| _1 = WHEN x' = expr
-    {let x =
-  let x = x' in
-                                 ( x )
-in
+| _1 = WHEN x = expr
+    {let x =                                ( x ) in
     ( Some x )}
 
 nonempty_list_affect_or_formula_qbf__:
@@ -247,11 +244,8 @@ let _startpos = _startpos_v_ in
 expr:
   b = var
     {          (b)}
-| x' = INT
+| x = INT
     {let x =
-  let _endpos_x_ = _endpos_x'_ in
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
                      (Loc (Int x,(_startpos,_endpos)))
@@ -265,81 +259,64 @@ let _startpos = _startpos__1_ in
     {let _endpos = _endpos__3_ in
 let _startpos = _startpos__1_ in
                                    (Loc (Card s,(_startpos,_endpos)))}
-| x' = FLOAT
+| x = FLOAT
     {let x =
-  let _endpos_x_ = _endpos_x'_ in
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
                          (Loc (Float x,(_startpos,_endpos)))
 in
             (x)}
-| _1 = LPAREN x' = expr _3 = RPAREN
+| _1 = LPAREN x = expr _3 = RPAREN
     {let x =
-  let x = x' in
   let _endpos = _endpos__3_ in
   let _startpos = _startpos__1_ in
                                                (Loc (Paren x,(_startpos,_endpos)))
 in
                          ( x )}
-| x' = expr _2 = ADD y = expr
+| x = expr _2 = ADD y = expr
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Add (x,y),(_startpos,_endpos)))
 in
                          ( x )}
-| x' = expr _2 = SUB y = expr %prec sub_prec
+| x = expr _2 = SUB y = expr %prec sub_prec
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Sub (x,y),(_startpos,_endpos)))
 in
                          ( x )}
-| _1 = SUB x' = expr %prec neg_prec
+| _1 = SUB x = expr %prec neg_prec
     {let x =
-  let _endpos_x_ = _endpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos__1_ in
                           (Loc (Neg x,(_startpos,_endpos))     )
 in
                          ( x )}
-| x' = expr _2 = MUL y = expr
+| x = expr _2 = MUL y = expr
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Mul (x,y),(_startpos,_endpos)))
 in
                          ( x )}
-| x' = expr _2 = DIV y = expr
+| x = expr _2 = DIV y = expr
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Div (x,y),(_startpos,_endpos)))
 in
                          ( x )}
-| x' = expr _2 = MOD y = expr
+| x = expr _2 = MOD y = expr
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Mod (x,y),(_startpos,_endpos)))
 in
                          ( x )}
-| _1 = ABS x' = expr _3 = RPAREN
+| _1 = ABS x = expr _3 = RPAREN
     {let x =
-  let x = x' in
   let _endpos = _endpos__3_ in
   let _startpos = _startpos__1_ in
                                 (Loc (Abs x,(_startpos,_endpos)))
@@ -682,10 +659,9 @@ in
                            (f)
 in
            (f)}
-| _1 = BIGAND v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f' = formula_simple _8 = END
+| _1 = BIGAND v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f = formula_simple _8 = END
     {let f =
   let f =
-    let f = f' in
     let _endpos = _endpos__8_ in
     let _startpos = _startpos__1_ in
         (Loc (Bigand (v,s,c,f),(_startpos,_endpos)))
@@ -693,10 +669,9 @@ in
                            (f)
 in
            (f)}
-| _1 = BIGOR v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f' = formula_simple _8 = END
+| _1 = BIGOR v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f = formula_simple _8 = END
     {let f =
   let f =
-    let f = f' in
     let _endpos = _endpos__8_ in
     let _startpos = _startpos__1_ in
         (Loc (Bigor (v,s,c,f),(_startpos,_endpos)))
@@ -734,23 +709,14 @@ in
                            (f)
 in
            (f)}
-| f' = let_affect_expr_formula_simple_
-    {let f =
-  let f = f' in
-                           (f)
-in
+| f = let_affect_expr_formula_simple_
+    {let f =                          (f) in
            (f)}
-| _1 = NEWLINE f' = formula_simple %prec newlineBefore
-    {let f =
-  let f = f' in
-                  ( NewlineBefore f )
-in
+| _1 = NEWLINE f = formula_simple %prec newlineBefore
+    {let f =                 ( NewlineBefore f ) in
            (f)}
-| f' = formula_simple _2 = NEWLINE
-    {let f =
-  let f = f' in
-                  ( NewlineAfter f )
-in
+| f = formula_simple _2 = NEWLINE
+    {let f =                 ( NewlineAfter f ) in
            (f)}
 | f = prop
     {           (f)}
@@ -842,10 +808,9 @@ in
                            (f)
 in
            (f)}
-| _1 = BIGAND v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f' = formula_qbf _8 = END
+| _1 = BIGAND v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f = formula_qbf _8 = END
     {let f =
   let f =
-    let f = f' in
     let _endpos = _endpos__8_ in
     let _startpos = _startpos__1_ in
         (Loc (Bigand (v,s,c,f),(_startpos,_endpos)))
@@ -853,10 +818,9 @@ in
                            (f)
 in
            (f)}
-| _1 = BIGOR v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f' = formula_qbf _8 = END
+| _1 = BIGOR v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f = formula_qbf _8 = END
     {let f =
   let f =
-    let f = f' in
     let _endpos = _endpos__8_ in
     let _startpos = _startpos__1_ in
         (Loc (Bigor (v,s,c,f),(_startpos,_endpos)))
@@ -894,23 +858,14 @@ in
                            (f)
 in
            (f)}
-| f' = let_affect_expr_formula_qbf_
-    {let f =
-  let f = f' in
-                           (f)
-in
+| f = let_affect_expr_formula_qbf_
+    {let f =                          (f) in
            (f)}
-| _1 = NEWLINE f' = formula_qbf %prec newlineBefore
-    {let f =
-  let f = f' in
-                  ( NewlineBefore f )
-in
+| _1 = NEWLINE f = formula_qbf %prec newlineBefore
+    {let f =                 ( NewlineBefore f ) in
            (f)}
-| f' = formula_qbf _2 = NEWLINE
-    {let f =
-  let f = f' in
-                  ( NewlineAfter f )
-in
+| f = formula_qbf _2 = NEWLINE
+    {let f =                 ( NewlineAfter f ) in
            (f)}
 | f = prop
     {           (f)}
@@ -1022,10 +977,9 @@ in
                            (f)
 in
                ( f )}
-| _1 = BIGAND v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f' = formula_smt _8 = END
+| _1 = BIGAND v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f = formula_smt _8 = END
     {let f =
   let f =
-    let f = f' in
     let _endpos = _endpos__8_ in
     let _startpos = _startpos__1_ in
         (Loc (Bigand (v,s,c,f),(_startpos,_endpos)))
@@ -1033,10 +987,9 @@ in
                            (f)
 in
                ( f )}
-| _1 = BIGOR v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f' = formula_smt _8 = END
+| _1 = BIGOR v = comma_list_var_ _3 = IN s = comma_list_expr_ c = option_when_cond_ _6 = COLON f = formula_smt _8 = END
     {let f =
   let f =
-    let f = f' in
     let _endpos = _endpos__8_ in
     let _startpos = _startpos__1_ in
         (Loc (Bigor (v,s,c,f),(_startpos,_endpos)))
@@ -1074,23 +1027,14 @@ in
                            (f)
 in
                ( f )}
-| f' = let_affect_expr_formula_smt_
-    {let f =
-  let f = f' in
-                           (f)
-in
+| f = let_affect_expr_formula_smt_
+    {let f =                          (f) in
                ( f )}
-| _1 = NEWLINE f' = formula_smt %prec newlineBefore
-    {let f =
-  let f = f' in
-                  ( NewlineBefore f )
-in
+| _1 = NEWLINE f = formula_smt %prec newlineBefore
+    {let f =                 ( NewlineBefore f ) in
                ( f )}
-| f' = formula_smt _2 = NEWLINE
-    {let f =
-  let f = f' in
-                  ( NewlineAfter f )
-in
+| f = formula_smt _2 = NEWLINE
+    {let f =                 ( NewlineAfter f ) in
                ( f )}
 | f = expr_smt
     {               ( f )}
@@ -1104,128 +1048,99 @@ expr_smt:
     {           ( Bottom )}
 | x = var
     {          (x)}
-| x' = INT
+| x = INT
     {let x =
-  let _endpos_x_ = _endpos_x'_ in
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
                      (Loc (Int x,(_startpos,_endpos)))
 in
                          (x)}
-| x' = FLOAT
+| x = FLOAT
     {let x =
-  let _endpos_x_ = _endpos_x'_ in
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos_x_ in
                          (Loc (Float x,(_startpos,_endpos)))
 in
                          (x)}
-| x' = expr_smt _2 = LT y = expr_smt
+| x = expr_smt _2 = LT y = expr_smt
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Lesser_than (x,y),(_startpos,_endpos)) )
 in
                          (x)}
-| x' = expr_smt _2 = LE y = expr_smt
+| x = expr_smt _2 = LE y = expr_smt
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Lesser_or_equal (x,y),(_startpos,_endpos)) )
 in
                          (x)}
-| x' = expr_smt _2 = GT y = expr_smt
+| x = expr_smt _2 = GT y = expr_smt
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Greater_than (x,y),(_startpos,_endpos)) )
 in
                          (x)}
-| x' = expr_smt _2 = GE y = expr_smt
+| x = expr_smt _2 = GE y = expr_smt
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Greater_or_equal (x,y),(_startpos,_endpos)) )
 in
                          (x)}
-| x' = expr_smt _2 = ADD y = expr_smt
+| x = expr_smt _2 = ADD y = expr_smt
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Add (x,y),(_startpos,_endpos)))
 in
                          (x)}
-| x' = expr_smt _2 = SUB y = expr_smt %prec sub_prec
+| x = expr_smt _2 = SUB y = expr_smt %prec sub_prec
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Sub (x,y),(_startpos,_endpos)))
 in
                          (x)}
-| _1 = SUB x' = expr_smt %prec neg_prec
+| _1 = SUB x = expr_smt %prec neg_prec
     {let x =
-  let _endpos_x_ = _endpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_x_ in
   let _startpos = _startpos__1_ in
                           (Loc (Neg x,(_startpos,_endpos))     )
 in
                          (x)}
-| x' = expr_smt _2 = MUL y = expr_smt
+| x = expr_smt _2 = MUL y = expr_smt
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Mul (x,y),(_startpos,_endpos)))
 in
                          (x)}
-| x' = expr_smt _2 = DIV y = expr_smt
+| x = expr_smt _2 = DIV y = expr_smt
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Div (x,y),(_startpos,_endpos)))
 in
                          (x)}
-| x' = expr_smt _2 = EQUAL y = expr_smt
+| x = expr_smt _2 = EQUAL y = expr_smt
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Equal (x,y),(_startpos,_endpos)) )
 in
                          (x)}
-| x' = expr_smt _2 = NOTEQUAL y = expr_smt
+| x = expr_smt _2 = NOTEQUAL y = expr_smt
     {let x =
-  let _startpos_x_ = _startpos_x'_ in
-  let x = x' in
   let _endpos = _endpos_y_ in
   let _startpos = _startpos_x_ in
                           (Loc (Not_equal (x,y),(_startpos,_endpos)) )
 in
                          (x)}
-| _1 = LPAREN x' = expr_smt _3 = RPAREN
+| _1 = LPAREN x = expr_smt _3 = RPAREN
     {let x =
-  let x = x' in
   let _endpos = _endpos__3_ in
   let _startpos = _startpos__1_ in
                                                (Loc (Paren x,(_startpos,_endpos)))
