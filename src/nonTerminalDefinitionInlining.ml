@@ -82,9 +82,19 @@ let check_no_producer_attributes producer =
          A use of it cannot carry an attribute."
         (producer_symbol producer)
 
+(* [names producers] is the set of names of the producers [producers].
+   The name of a producer is the OCaml variable that is used to name the
+   semantic value. *)
+
+(* At the same time, this function checks that no two producers carry the
+   same name. This check should never fail if we have performed appropriate
+   renamings. It is a debugging aid. *)
+
 let names (producers : producers) : StringSet.t =
-  List.fold_left (fun s producer ->
-    StringSet.add (producer_identifier producer) s
+  List.fold_left (fun ids producer ->
+    let id = producer_identifier producer in
+    assert (not (StringSet.mem id ids));
+    StringSet.add id ids
   ) StringSet.empty producers
 
 (* Inline a grammar. The resulting grammar does not contain any definitions
@@ -182,7 +192,7 @@ let inline grammar =
       (* use_inline := true; *)
       (* Inline a branch of [nt] at position [prefix] ... [suffix] in
          the branch [b]. *)
-      let inline_branch pb =
+      let inline_branch (pb : branch) : branch =
 
         (* 2015/11/18. The interaction of %prec and %inline is not documented.
            It used to be the case that we would disallow marking a production
@@ -215,6 +225,9 @@ let inline grammar =
 
         (* After inlining, the producers are as follows. *)
         let producers = prefix @ inlined_producers @ suffix in
+        (* For debugging: check each producer carries a unique name. *)
+        let (_ : StringSet.t) = names producers in
+
         let index2id = index2id producers in
 
         let prefix = List.length prefix
