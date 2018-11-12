@@ -1,5 +1,10 @@
 # Parser Construction With Menhir: A Couple Appetizers
 
+This post is a shameless advertisement for Menhir,
+a parser generator for OCaml.
+It illustrates Menhir's new input syntax,
+which was introduced on November 12, 2018.
+
 ## Ingredients
 
 Suppose I have the following terminal symbols:
@@ -389,6 +394,15 @@ Yes, **LR(1) parsers can produce good syntax error messages**.
 
 ## References
 
-The full source code of these two demos can be found
-[here](../demos/calc-new-syntax-dune/parser.mly) and
-[there](../demos/calc-ast-dune/parser.mly).
+The full source code of
+[the first demo](https://gitlab.inria.fr/fpottier/menhir/blob/master/demos/calc-new-syntax-dune/parser.mly)
+and
+[the second demo](https://gitlab.inria.fr/fpottier/menhir/blob/master/demos/calc-ast-dune/parser.mly)
+is available online.
+
+[A summary of the changes](https://gitlab.inria.fr/fpottier/menhir/blob/master/doc/new-rule-syntax-summary.md)
+between the old and new syntaxes
+is also available.
+
+The syntax of Menhir is of course also documented in the
+[reference manual](http://gallium.inria.fr/~fpottier/menhir/manual.html#sec5).
