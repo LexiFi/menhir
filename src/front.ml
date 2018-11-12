@@ -172,7 +172,7 @@ let grammar =
 
 let grammar =
   if Settings.inline then begin
-    let grammar, (_ : bool) = NonTerminalDefinitionInlining.inline grammar in
+    let grammar = NonTerminalDefinitionInlining.inline grammar in
     (* 2018/05/23 Removed the warning that was issued when %inline was used
        but --infer was turned off. Most people should use ocamlbuild or dune
        anyway. *)

@@ -101,8 +101,6 @@ let inline grammar =
       prefix
   in
 
-  let use_inline = ref false in
-
   (* This table associates a color to each non terminal that can be expanded. *)
   let expanded_non_terminals =
     Hashtbl.create 13
@@ -181,7 +179,7 @@ let inline grammar =
     try
       (* [c] is the identifier under which the callee is known. *)
       let prefix, p, nt, c, suffix = find_inline_producer b in
-      use_inline := true;
+      (* use_inline := true; *)
       (* Inline a branch of [nt] at position [prefix] ... [suffix] in
          the branch [b]. *)
       let inline_branch pb =
@@ -368,4 +366,4 @@ let inline grammar =
       rules = StringMap.filter (fun _ r -> not r.inline_flag) expanded_rules;
       types = StringMap.filter (fun k _ -> useful k) grammar.types;
       on_error_reduce = StringMap.filter (fun k _ -> useful_warn k) grammar.on_error_reduce;
-  }, !use_inline
+  }
