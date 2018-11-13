@@ -56,6 +56,9 @@ type branch = {
     branch_production_level : branch_production_level
   }
 
+type branches =
+  branch list
+
 (* ------------------------------------------------------------------------ *)
 
 (* A rule consists mainly of several branches. In contrast with the surface
@@ -64,7 +67,7 @@ type branch = {
 (* The [%inline] flag is no longer relevant after [NonTerminalInlining]. *)
 
 type rule = {
-    branches    : branch list;
+    branches    : branches;
     positions   : Positions.t list;
     inline_flag : bool;
     attributes  : attributes;
