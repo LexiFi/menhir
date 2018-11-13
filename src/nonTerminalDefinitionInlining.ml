@@ -151,6 +151,15 @@ let is_inline_nonterminal grammar symbol : bool =
       (* This is a terminal symbol. *)
       false
 
+(* [find grammar symbol] looks up the definition of [symbol], which must be
+   a valid nonterminal symbol. *)
+
+let find grammar symbol : rule =
+  try
+    StringMap.find symbol grammar.rules
+  with Not_found ->
+    assert false
+
 (* [find_inlining_site grammar (prefix, suffix)] traverses a list of producers
    that is already decomposed as [List.rev prefix @ suffix]. It looks for the
    first nonterminal symbol that can be inlined away. If it does not find one,
@@ -352,9 +361,12 @@ let inline grammar =
         return caller
     | Some ((_prefix, producer, _suffix) as site) ->
         let symbol = producer_symbol producer in
-        let rule = StringMap.find symbol grammar.rules in (* cannot fail *)
-        let rule = expand_rule symbol rule in
+        let rule = expand_symbol symbol in
         inline_branches caller site rule.branches >>= expand_branch
+
+  and expand_symbol symbol : rule =
+    let rule = find grammar symbol in
+    expand_rule symbol rule
 
   (* Expand a rule if necessary. *)
   and expand_rule k r =
@@ -387,7 +399,7 @@ let inline grammar =
   let rules =
     grammar.rules
     |> StringMap.filter (fun _ r -> not r.inline_flag)
-    |> StringMap.mapi expand_rule
+    |> StringMap.mapi (fun symbol _rule -> expand_symbol symbol) (* a little wasteful, but simple *)
   in
 
   let useful (k : string) : bool =
