@@ -285,7 +285,7 @@ let inline grammar =
 
         let endp =
           if inlined_producers > 0 then
-            (* If the inner production is non-epsilon, things are easy, then its end
+            (* If the inner production is non-epsilon, things are easy: its end
                position is the end position of its last element. *)
             RightNamed (index2id (prefix + inlined_producers - 1)), WhereEnd
           else
