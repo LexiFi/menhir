@@ -15,9 +15,6 @@ open Keyword
 open UnparameterizedSyntax
 open ListMonad
 
-(* This exception will be raised when a branch does not need inlining. *)
-exception NoInlining
-
 (* Color are used to detect cycles. *)
 type 'a color =
   | BeingExpanded
@@ -158,10 +155,14 @@ let is_inline_nonterminal grammar symbol : bool =
    first nonterminal symbol that can be inlined away. If it does not find one,
    it raises [NoInlining]. If it does find one, it returns a decomposition of
    the whole list of producers under the form [prefix @ producer :: suffix]. *)
-let rec find_inlining_site grammar (prefix, suffix) =
+
+type site =
+  producers * producer * producers
+
+let rec find_inlining_site grammar (prefix, suffix : producers * producers) : site option =
   match suffix with
   | [] ->
-      raise NoInlining
+      None
   | producer :: suffix ->
       let symbol = producer_symbol producer in
       if is_inline_nonterminal grammar symbol then begin
@@ -170,7 +171,7 @@ let rec find_inlining_site grammar (prefix, suffix) =
            this symbol does not carry any attributes either. Thus, we need
            not worry about propagating these attributes through inlining. *)
         check_no_producer_attributes producer;
-        List.rev prefix, producer, suffix
+        Some (List.rev prefix, producer, suffix)
       end
       else
         find_inlining_site grammar (producer :: prefix, suffix)
@@ -200,9 +201,11 @@ let inline grammar =
   (* Inline the non terminals that can be inlined in [caller]. We use the
      ListMonad to combine the results. *)
   let rec expand_branch (caller : branch) : branch ListMonad.m =
-    try
+    match find_inlining_site grammar ([], caller.producers) with
+    | None ->
+        return caller
+    | Some (prefix, producer, suffix) ->
       (* [c] is the identifier under which the callee is known inside the caller. *)
-      let prefix, producer, suffix = find_inlining_site grammar ([], caller.producers) in
       let nt = producer_symbol producer in
       let p = StringMap.find nt grammar.rules in (* cannot fail *)
       let c = producer_identifier producer in
@@ -211,7 +214,7 @@ let inline grammar =
          minus the producer that is being inlined away. *)
       let used = StringSet.union (names prefix) (names suffix) in
       (* Inline a branch of [nt] at position [prefix] ... [suffix] in
-         the branch [b]. *)
+         the branch [caller]. *)
       let inline_branch (callee : branch) : branch =
 
         (* 2015/11/18. The interaction of %prec and %inline is not documented.
@@ -341,9 +344,6 @@ let inline grammar =
         }
       in
       List.map inline_branch p.branches >>= expand_branch
-
-    with NoInlining ->
-      return caller
 
   (* Expand a rule if necessary. *)
   and expand_rule k r =
