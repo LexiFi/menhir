@@ -205,14 +205,7 @@ let inline grammar =
     | None ->
         return caller
     | Some (prefix, producer, suffix) ->
-      (* [c] is the identifier under which the callee is known inside the caller. *)
-      let nt = producer_symbol producer in
-      let p = StringMap.find nt grammar.rules in (* cannot fail *)
-      let c = producer_identifier producer in
-      let p = expand_rule nt p in
-      (* These are the names of the producers in the host branch,
-         minus the producer that is being inlined away. *)
-      let used = StringSet.union (names prefix) (names suffix) in
+
       (* Inline a branch of [nt] at position [prefix] ... [suffix] in
          the branch [caller]. *)
       let inline_branch (callee : branch) : branch =
@@ -225,14 +218,17 @@ let inline grammar =
         callee.branch_prec_annotation |> Option.iter (fun callee_prec ->
           (* The callee has a %prec annotation. *)
           (* Check condition 1. *)
-          if List.length suffix > 0 then
+          if List.length suffix > 0 then begin
+            let nt = producer_symbol producer in
             Error.error [ Positions.position callee_prec; caller.branch_position ]
               "this production carries a %%prec annotation,\n\
                and the nonterminal symbol %s is marked %%inline.\n\
                For this reason, %s can be used only in tail position."
-              nt nt;
+              nt nt
+          end;
           (* Check condition 2. *)
           caller.branch_prec_annotation |> Option.iter (fun caller_prec ->
+            let nt = producer_symbol producer in
             Error.error [ Positions.position callee_prec; Positions.position caller_prec ]
               "this production carries a %%prec annotation,\n\
                and the nonterminal symbol %s is marked %%inline.\n\
@@ -242,6 +238,9 @@ let inline grammar =
           )
         );
 
+        (* These are the names of the producers in the host branch,
+           minus the producer that is being inlined away. *)
+        let used = StringSet.union (names prefix) (names suffix) in
         (* Rename the producers of this branch if they conflict with
            the name of the host's producers. *)
         let phi, inlined_producers = rename used callee.producers in
@@ -317,6 +316,9 @@ let inline grammar =
             Before, WhereEnd
         in
 
+        (* [c] is the identifier under which the callee is known inside the caller. *)
+        let c = producer_identifier producer in
+
         (* Rename the outer and inner semantic action. *)
         let outer_action =
           Action.rename (rename_sw_outer (c, startp, endp)) [] caller.action
@@ -343,6 +345,9 @@ let inline grammar =
           branch_prec_annotation;
         }
       in
+      let nt = producer_symbol producer in
+      let p = StringMap.find nt grammar.rules in (* cannot fail *)
+      let p = expand_rule nt p in
       List.map inline_branch p.branches >>= expand_branch
 
   (* Expand a rule if necessary. *)
