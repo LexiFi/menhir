@@ -16,11 +16,6 @@ open Keyword
 open UnparameterizedSyntax
 open ListMonad
 
-(* Color are used to detect cycles. *)
-type 'a color =
-  | BeingExpanded
-  | Expanded of 'a
-
 (* [index2id] converts a 0-based index (into a list of producers) to
    an identifier (the name of the producer). *)
 
@@ -335,48 +330,35 @@ let inline_branches caller site (callees : branches) : branches =
    that can be inlined. *)
 let inline grammar =
 
-  (* This table associates a color to each non terminal that can be expanded. *)
-  let expanded_non_terminals =
-    Hashtbl.create 13
-  in
-
-  let expanded_state k =
-    Hashtbl.find expanded_non_terminals k
-  in
-
-  let mark_as_being_expanded k =
-    Hashtbl.add expanded_non_terminals k BeingExpanded
-  in
-
-  let mark_as_expanded k r =
-    Hashtbl.replace expanded_non_terminals  k (Expanded r);
-    r
-  in
-
   (* Inline the non terminals that can be inlined in [caller]. We use the
      ListMonad to combine the results. *)
-  let rec expand_branch (caller : branch) : branch ListMonad.m =
+  let rec expand_branch expand_symbol (caller : branch) : branch ListMonad.m =
     match find_inlining_site grammar ([], caller.producers) with
     | None ->
         return caller
     | Some ((_prefix, producer, _suffix) as site) ->
         let symbol = producer_symbol producer in
         let rule = expand_symbol symbol in
-        inline_branches caller site rule.branches >>= expand_branch
+        inline_branches caller site rule.branches >>= expand_branch expand_symbol
+  in
 
-  and expand_symbol symbol : rule =
+  let expand_symbol expand_symbol symbol : rule =
     let rule = find grammar symbol in
+    { rule with branches = rule.branches >>= expand_branch expand_symbol }
+  in
+
+  let expand_symbol : Syntax.symbol -> rule =
+    Memoize.String.defensive_fix expand_symbol
+  in
+
+  let expand_symbol symbol =
     try
-      (match expanded_state symbol with
-         | BeingExpanded ->
-             Error.error
-               rule.positions
-               "there is a cycle in the definition of %s." symbol
-         | Expanded r ->
-             r)
-    with Not_found ->
-      mark_as_being_expanded symbol;
-      mark_as_expanded symbol { rule with branches = rule.branches >>= expand_branch }
+      expand_symbol symbol
+    with Memoize.String.Cycle (_, symbol) ->
+      let rule = find grammar symbol in
+      Error.error rule.positions
+        "there is a cycle in the definition of %s." symbol
+      (* TEMPORARY we can now give a better message. *)
   in
 
   (* If we are in Coq mode, %inline is forbidden. *)
