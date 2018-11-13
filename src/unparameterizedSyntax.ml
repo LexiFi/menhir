@@ -58,7 +58,7 @@ type branch = {
 
 (* ------------------------------------------------------------------------ *)
 
-(* A rule consists mainly of several brahches. In contrast with the surface
+(* A rule consists mainly of several branches. In contrast with the surface
    syntax, it has no parameters. *)
 
 (* The [%inline] flag is no longer relevant after [NonTerminalInlining]. *)
