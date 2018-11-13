@@ -116,6 +116,31 @@ let rec fresh names x =
   else
     x
 
+(* We have to rename the producers [producers] of the inlined production
+   if they clash with the set [used] of the names used by the producers
+   of the host branch. (Note that [used] need not contain the name of the
+   producer that is inlined away.)
+   This function produces a pair of:
+   1. a substitution [phi], which represents the renaming that we have
+      performed, and which must be applied to the inner semantic action;
+   2. the renamed [producers]. *)
+let rename (used : StringSet.t) producers: Action.subst * producers =
+
+  (* Compute a renaming and the new names of the inlined producers. *)
+  let phi, _used, producers' =
+    List.fold_left (fun (phi, used, producers) producer ->
+      let x = producer_identifier producer in
+      if StringSet.mem x used then
+        let x' = fresh used x in
+        (x, x') :: phi,
+        StringSet.add x' used,
+        { producer with producer_identifier = x' } :: producers
+      else
+        (phi, StringSet.add x used, producer :: producers)
+    ) ([], used, []) producers
+  in
+  phi, List.rev producers'
+
 (* Inline a grammar. The resulting grammar does not contain any definitions
    that can be inlined. *)
 let inline grammar =
@@ -169,31 +194,6 @@ let inline grammar =
   let rec find_inline_producer b =
     let prefix, nt, p, psym, suffix = chop_inline ([], b.producers) in
     prefix, expand_rule nt p, nt, psym, suffix
-
-  (* We have to rename the producers [producers] of the inlined production
-     if they clash with the set [used] of the names used by the producers
-     of the host branch. (Note that [used] need not contain the name of the
-     producer that is inlined away.)
-     This function produces a pair of:
-     1. a substitution [phi], which represents the renaming that we have
-        performed, and which must be applied to the inner semantic action;
-     2. the renamed [producers]. *)
-  and rename (used : StringSet.t) producers: Action.subst * producers =
-
-    (* Compute a renaming and the new names of the inlined producers. *)
-    let phi, _used, producers' =
-      List.fold_left (fun (phi, used, producers) producer ->
-        let x = producer_identifier producer in
-        if StringSet.mem x used then
-          let x' = fresh used x in
-          (x, x') :: phi,
-          StringSet.add x' used,
-          { producer with producer_identifier = x' } :: producers
-        else
-          (phi, StringSet.add x used, producer :: producers)
-      ) ([], used, []) producers
-    in
-    phi, List.rev producers'
 
   (* Inline the non terminals that can be inlined in [b]. We use the
      ListMonad to combine the results. *)
