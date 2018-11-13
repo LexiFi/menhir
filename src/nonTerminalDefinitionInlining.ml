@@ -176,6 +176,151 @@ let rec find_inlining_site grammar (prefix, suffix : producers * producers) : si
       else
         find_inlining_site grammar (producer :: prefix, suffix)
 
+(* Inline the branch [callee] into the branch [caller] at the site
+   determined by [prefix, producer, suffix]. *)
+
+let inline_branch caller (prefix, producer, suffix) (callee : branch) : branch =
+
+  (* 2015/11/18. The interaction of %prec and %inline is not documented.
+     It used to be the case that we would disallow marking a production
+     both %inline and %prec. Now, we allow it, but we check that (1) it
+     is inlined at the last position of the host production and (2) the
+     host production does not already have a %prec annotation. *)
+  callee.branch_prec_annotation |> Option.iter (fun callee_prec ->
+    (* The callee has a %prec annotation. *)
+    (* Check condition 1. *)
+    if List.length suffix > 0 then begin
+      let nt = producer_symbol producer in
+      Error.error [ Positions.position callee_prec; caller.branch_position ]
+        "this production carries a %%prec annotation,\n\
+         and the nonterminal symbol %s is marked %%inline.\n\
+         For this reason, %s can be used only in tail position."
+        nt nt
+    end;
+    (* Check condition 2. *)
+    caller.branch_prec_annotation |> Option.iter (fun caller_prec ->
+      let nt = producer_symbol producer in
+      Error.error [ Positions.position callee_prec; Positions.position caller_prec ]
+        "this production carries a %%prec annotation,\n\
+         and the nonterminal symbol %s is marked %%inline.\n\
+         For this reason, %s cannot be used in a production\n\
+         which itself carries a %%prec annotation."
+        nt nt
+    )
+  );
+
+  (* These are the names of the producers in the host branch,
+     minus the producer that is being inlined away. *)
+  let used = StringSet.union (names prefix) (names suffix) in
+  (* Rename the producers of this branch if they conflict with
+     the name of the host's producers. *)
+  let phi, inlined_producers = rename used callee.producers in
+
+  (* After inlining, the producers are as follows. *)
+  let producers = prefix @ inlined_producers @ suffix in
+  (* For debugging: check that each producer carries a unique name. *)
+  let (_ : StringSet.t) = names producers in
+
+  let index2id = index2id producers in
+
+  let prefix = List.length prefix
+  and inlined_producers = List.length inlined_producers in
+
+  (* Define how the start and end positions of the inner production should
+     be computed once it is inlined into the outer production. These
+     definitions of [startp] and [endp] are then used to transform
+     [$startpos] and [$endpos] in the inner production and to transform
+     [$startpos(x)] and [$endpos(x)] in the outer production. *)
+
+  (* 2015/11/04. We ensure that positions are computed in the same manner,
+     regardless of whether inlining is performed. *)
+
+  let startp =
+    if inlined_producers > 0 then
+      (* If the inner production is non-epsilon, things are easy. The start
+         position of the inner production is the start position of its first
+         element. *)
+      RightNamed (index2id prefix), WhereStart
+    else if prefix > 0 then
+      (* If the inner production is epsilon, we are supposed to compute the
+         end position of whatever comes in front of it. If the prefix is
+         nonempty, then this is the end position of the last symbol in the
+         prefix. *)
+      RightNamed (index2id (prefix - 1)), WhereEnd
+    else
+      (* If the inner production is epsilon and the prefix is empty, then
+         we need to look up the end position stored in the top stack cell.
+         This is the reason why we need the keyword [$endpos($0)]. It is
+         required in this case to preserve the semantics of $startpos and
+         $endpos. *)
+      Before, WhereEnd
+
+    (* Note that, to contrary to intuition perhaps, we do NOT have that
+       if the prefix is empty, then the start position of the inner
+       production is the start production of the outer production.
+       This is true only if the inner production is non-epsilon. *)
+
+  in
+
+  let endp =
+    if inlined_producers > 0 then
+      (* If the inner production is non-epsilon, things are easy: its end
+         position is the end position of its last element. *)
+      RightNamed (index2id (prefix + inlined_producers - 1)), WhereEnd
+    else
+      (* If the inner production is epsilon, then its end position is equal
+         to its start position. *)
+      startp
+
+  in
+
+  (* We must also transform [$endpos($0)] if it used by the inner
+     production. It refers to the end position of the stack cell
+     that comes before the inner production. So, if the prefix is
+     non-empty, then it translates to the end position of the last
+     element of the prefix. Otherwise, it translates to [$endpos($0)]. *)
+
+  let beforeendp =
+    if prefix > 0 then
+      RightNamed (index2id (prefix - 1)), WhereEnd
+    else
+      Before, WhereEnd
+  in
+
+  (* [c] is the identifier under which the callee is known inside the caller. *)
+  let c = producer_identifier producer in
+
+  (* Rename the outer and inner semantic action. *)
+  let outer_action =
+    Action.rename (rename_sw_outer (c, startp, endp)) [] caller.action
+  and action' =
+    Action.rename (rename_sw_inner beforeendp) phi callee.action
+  in
+
+  (* 2015/11/18. If the callee has a %prec annotation (which implies
+     the caller does not have one, and the callee appears in tail
+     position in the caller) then the annotation is inherited. This
+     seems reasonable, but remains undocumented. *)
+  let branch_prec_annotation =
+    match callee.branch_prec_annotation with
+    | (Some _) as annotation ->
+        assert (caller.branch_prec_annotation = None);
+        annotation
+    | None ->
+        caller.branch_prec_annotation
+  in
+
+  { caller with
+    producers;
+    action = Action.compose c action' outer_action;
+    branch_prec_annotation;
+  }
+
+(* Inline a list of branches [callees] into the branch [caller] at [site]. *)
+
+let inline_branches caller site (callees : branches) : branches =
+  List.map (inline_branch caller site) callees
+
 (* Inline a grammar. The resulting grammar does not contain any definitions
    that can be inlined. *)
 let inline grammar =
@@ -204,151 +349,11 @@ let inline grammar =
     match find_inlining_site grammar ([], caller.producers) with
     | None ->
         return caller
-    | Some (prefix, producer, suffix) ->
-
-      (* Inline a branch of [nt] at position [prefix] ... [suffix] in
-         the branch [caller]. *)
-      let inline_branch (callee : branch) : branch =
-
-        (* 2015/11/18. The interaction of %prec and %inline is not documented.
-           It used to be the case that we would disallow marking a production
-           both %inline and %prec. Now, we allow it, but we check that (1) it
-           is inlined at the last position of the host production and (2) the
-           host production does not already have a %prec annotation. *)
-        callee.branch_prec_annotation |> Option.iter (fun callee_prec ->
-          (* The callee has a %prec annotation. *)
-          (* Check condition 1. *)
-          if List.length suffix > 0 then begin
-            let nt = producer_symbol producer in
-            Error.error [ Positions.position callee_prec; caller.branch_position ]
-              "this production carries a %%prec annotation,\n\
-               and the nonterminal symbol %s is marked %%inline.\n\
-               For this reason, %s can be used only in tail position."
-              nt nt
-          end;
-          (* Check condition 2. *)
-          caller.branch_prec_annotation |> Option.iter (fun caller_prec ->
-            let nt = producer_symbol producer in
-            Error.error [ Positions.position callee_prec; Positions.position caller_prec ]
-              "this production carries a %%prec annotation,\n\
-               and the nonterminal symbol %s is marked %%inline.\n\
-               For this reason, %s cannot be used in a production\n\
-               which itself carries a %%prec annotation."
-              nt nt
-          )
-        );
-
-        (* These are the names of the producers in the host branch,
-           minus the producer that is being inlined away. *)
-        let used = StringSet.union (names prefix) (names suffix) in
-        (* Rename the producers of this branch if they conflict with
-           the name of the host's producers. *)
-        let phi, inlined_producers = rename used callee.producers in
-
-        (* After inlining, the producers are as follows. *)
-        let producers = prefix @ inlined_producers @ suffix in
-        (* For debugging: check that each producer carries a unique name. *)
-        let (_ : StringSet.t) = names producers in
-
-        let index2id = index2id producers in
-
-        let prefix = List.length prefix
-        and inlined_producers = List.length inlined_producers in
-
-        (* Define how the start and end positions of the inner production should
-           be computed once it is inlined into the outer production. These
-           definitions of [startp] and [endp] are then used to transform
-           [$startpos] and [$endpos] in the inner production and to transform
-           [$startpos(x)] and [$endpos(x)] in the outer production. *)
-
-        (* 2015/11/04. We ensure that positions are computed in the same manner,
-           regardless of whether inlining is performed. *)
-
-        let startp =
-          if inlined_producers > 0 then
-            (* If the inner production is non-epsilon, things are easy. The start
-               position of the inner production is the start position of its first
-               element. *)
-            RightNamed (index2id prefix), WhereStart
-          else if prefix > 0 then
-            (* If the inner production is epsilon, we are supposed to compute the
-               end position of whatever comes in front of it. If the prefix is
-               nonempty, then this is the end position of the last symbol in the
-               prefix. *)
-            RightNamed (index2id (prefix - 1)), WhereEnd
-          else
-            (* If the inner production is epsilon and the prefix is empty, then
-               we need to look up the end position stored in the top stack cell.
-               This is the reason why we need the keyword [$endpos($0)]. It is
-               required in this case to preserve the semantics of $startpos and
-               $endpos. *)
-            Before, WhereEnd
-
-          (* Note that, to contrary to intuition perhaps, we do NOT have that
-             if the prefix is empty, then the start position of the inner
-             production is the start production of the outer production.
-             This is true only if the inner production is non-epsilon. *)
-
-        in
-
-        let endp =
-          if inlined_producers > 0 then
-            (* If the inner production is non-epsilon, things are easy: its end
-               position is the end position of its last element. *)
-            RightNamed (index2id (prefix + inlined_producers - 1)), WhereEnd
-          else
-            (* If the inner production is epsilon, then its end position is equal
-               to its start position. *)
-            startp
-
-        in
-
-        (* We must also transform [$endpos($0)] if it used by the inner
-           production. It refers to the end position of the stack cell
-           that comes before the inner production. So, if the prefix is
-           non-empty, then it translates to the end position of the last
-           element of the prefix. Otherwise, it translates to [$endpos($0)]. *)
-
-        let beforeendp =
-          if prefix > 0 then
-            RightNamed (index2id (prefix - 1)), WhereEnd
-          else
-            Before, WhereEnd
-        in
-
-        (* [c] is the identifier under which the callee is known inside the caller. *)
-        let c = producer_identifier producer in
-
-        (* Rename the outer and inner semantic action. *)
-        let outer_action =
-          Action.rename (rename_sw_outer (c, startp, endp)) [] caller.action
-        and action' =
-          Action.rename (rename_sw_inner beforeendp) phi callee.action
-        in
-
-        (* 2015/11/18. If the callee has a %prec annotation (which implies
-           the caller does not have one, and the callee appears in tail
-           position in the caller) then the annotation is inherited. This
-           seems reasonable, but remains undocumented. *)
-        let branch_prec_annotation =
-          match callee.branch_prec_annotation with
-          | (Some _) as annotation ->
-              assert (caller.branch_prec_annotation = None);
-              annotation
-          | None ->
-              caller.branch_prec_annotation
-        in
-
-        { caller with
-          producers;
-          action = Action.compose c action' outer_action;
-          branch_prec_annotation;
-        }
-      in
-      let nt = producer_symbol producer in
-      let p = StringMap.find nt grammar.rules in (* cannot fail *)
-      let p = expand_rule nt p in
-      List.map inline_branch p.branches >>= expand_branch
+    | Some ((_prefix, producer, _suffix) as site) ->
+        let symbol = producer_symbol producer in
+        let rule = StringMap.find symbol grammar.rules in (* cannot fail *)
+        let rule = expand_rule symbol rule in
+        inline_branches caller site rule.branches >>= expand_branch
 
   (* Expand a rule if necessary. *)
   and expand_rule k r =
