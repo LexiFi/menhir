@@ -192,8 +192,9 @@ let inline grammar =
   in
 
   let rec find_inline_producer b =
-    let prefix, nt, p, psym, suffix = chop_inline ([], b.producers) in
-    prefix, expand_rule nt p, nt, psym, suffix
+    let prefix, nt, p, c, suffix = chop_inline ([], b.producers) in
+    let p = expand_rule nt p in
+    prefix, p, nt, c, suffix
 
   (* Inline the non terminals that can be inlined in [b]. We use the
      ListMonad to combine the results. *)
