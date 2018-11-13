@@ -366,21 +366,17 @@ let inline grammar =
 
   and expand_symbol symbol : rule =
     let rule = find grammar symbol in
-    expand_rule symbol rule
-
-  (* Expand a rule if necessary. *)
-  and expand_rule k r =
     try
-      (match expanded_state k with
+      (match expanded_state symbol with
          | BeingExpanded ->
              Error.error
-               r.positions
-               "there is a cycle in the definition of %s." k
+               rule.positions
+               "there is a cycle in the definition of %s." symbol
          | Expanded r ->
              r)
     with Not_found ->
-      mark_as_being_expanded k;
-      mark_as_expanded k { r with branches = r.branches >>= expand_branch }
+      mark_as_being_expanded symbol;
+      mark_as_expanded symbol { rule with branches = rule.branches >>= expand_branch }
   in
 
   (* If we are in Coq mode, %inline is forbidden. *)
