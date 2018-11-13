@@ -383,8 +383,10 @@ let inline grammar =
 
   (* To expand a grammar, we expand all its rules and remove
      the %inline rules. *)
-  let expanded_rules =
-    StringMap.mapi expand_rule grammar.rules
+  let rules =
+    grammar.rules
+    |> StringMap.filter (fun _ r -> not r.inline_flag)
+    |> StringMap.mapi expand_rule
   in
 
   let useful (k : string) : bool =
@@ -406,7 +408,7 @@ let inline grammar =
   in
 
   { grammar with
-      rules = StringMap.filter (fun _ r -> not r.inline_flag) expanded_rules;
+      rules;
       types = StringMap.filter (fun k _ -> useful k) grammar.types;
       on_error_reduce = StringMap.filter (fun k _ -> useful_warn k) grammar.on_error_reduce;
   }
