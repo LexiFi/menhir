@@ -141,30 +141,39 @@ let rename (used : StringSet.t) producers: Action.subst * producers =
   in
   phi, List.rev producers'
 
+(* [is_inline_nonterminal grammar symbol] tells whether [symbol] is a nonterminal
+   symbol (as opposed to a terminal symbol) and is marked %inline. *)
+
+let is_inline_nonterminal grammar symbol : bool =
+  match StringMap.find symbol grammar.rules with
+  | rule ->
+      (* This is a nonterminal symbol. Test its %inline flag. *)
+      rule.inline_flag
+  | exception Not_found ->
+      (* This is a terminal symbol. *)
+      false
+
 (* [find_inlining_site grammar (prefix, suffix)] traverses a list of producers
    that is already decomposed as [List.rev prefix @ suffix]. It looks for the
    first nonterminal symbol that can be inlined away. If it does not find one,
-   it raises [NoInlining]. *)
+   it raises [NoInlining]. If it does find one, it returns a decomposition of
+   the whole list of producers under the form [prefix @ producer :: suffix]. *)
 let rec find_inlining_site grammar (prefix, suffix) =
   match suffix with
   | [] ->
       raise NoInlining
-  | x :: xs ->
-      let nt = producer_symbol x
-      and id = producer_identifier x in
-      match StringMap.find nt grammar.rules with
-      | r when r.inline_flag ->
-          (* We have checked earlier than an %inline symbol does not carry
-             any attributes. In addition, we now check that the use site of
-             this symbol does not carry any attributes either. Thus, we need
-             not worry about propagating these attributes through inlining. *)
-          check_no_producer_attributes x;
-          (* We inline the rule [r] into [b] between [prefix] and [xs]. *)
-          List.rev prefix, nt, r, id, xs
-      | _ ->
-          find_inlining_site grammar (x :: prefix, xs)
-      | exception Not_found ->
-          find_inlining_site grammar (x :: prefix, xs)
+  | producer :: suffix ->
+      let symbol = producer_symbol producer in
+      if is_inline_nonterminal grammar symbol then begin
+        (* We have checked earlier than an %inline symbol does not carry
+           any attributes. In addition, we now check that the use site of
+           this symbol does not carry any attributes either. Thus, we need
+           not worry about propagating these attributes through inlining. *)
+        check_no_producer_attributes producer;
+        List.rev prefix, producer, suffix
+      end
+      else
+        find_inlining_site grammar (producer :: prefix, suffix)
 
 (* Inline a grammar. The resulting grammar does not contain any definitions
    that can be inlined. *)
@@ -193,7 +202,10 @@ let inline grammar =
   let rec expand_branch (b : branch) : branch ListMonad.m =
     try
       (* [c] is the identifier under which the callee is known. *)
-      let prefix, nt, p, c, suffix = find_inlining_site grammar ([], b.producers) in
+      let prefix, producer, suffix = find_inlining_site grammar ([], b.producers) in
+      let nt = producer_symbol producer in
+      let p = StringMap.find nt grammar.rules in (* cannot fail *)
+      let c = producer_identifier producer in
       let p = expand_rule nt p in
       (* These are the names of the producers in the host branch,
          minus the producer that is being inlined away. *)
