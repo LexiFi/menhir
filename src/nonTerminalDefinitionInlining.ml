@@ -11,6 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
+let position = Positions.position
 open Keyword
 open UnparameterizedSyntax
 open ListMonad
@@ -74,7 +75,7 @@ let check_no_producer_attributes producer =
       ()
   | (id, _payload) :: _attributes ->
       Error.error
-        [Positions.position id]
+        [position id]
         "the nonterminal symbol %s is declared %%inline.\n\
          A use of it cannot carry an attribute."
         (producer_symbol producer)
@@ -191,7 +192,7 @@ let inline_branch caller (prefix, producer, suffix) (callee : branch) : branch =
     (* Check condition 1. *)
     if List.length suffix > 0 then begin
       let nt = producer_symbol producer in
-      Error.error [ Positions.position callee_prec; caller.branch_position ]
+      Error.error [ position callee_prec; caller.branch_position ]
         "this production carries a %%prec annotation,\n\
          and the nonterminal symbol %s is marked %%inline.\n\
          For this reason, %s can be used only in tail position."
@@ -200,7 +201,7 @@ let inline_branch caller (prefix, producer, suffix) (callee : branch) : branch =
     (* Check condition 2. *)
     caller.branch_prec_annotation |> Option.iter (fun caller_prec ->
       let nt = producer_symbol producer in
-      Error.error [ Positions.position callee_prec; Positions.position caller_prec ]
+      Error.error [ position callee_prec; position caller_prec ]
         "this production carries a %%prec annotation,\n\
          and the nonterminal symbol %s is marked %%inline.\n\
          For this reason, %s cannot be used in a production\n\
