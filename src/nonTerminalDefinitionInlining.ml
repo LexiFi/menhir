@@ -163,12 +163,12 @@ let inline grammar =
     r
   in
 
-  (* [chop_inline (prefix, suffix)] traverses the producers of the branch [b],
-     which already are decomposed under the form [List.rev prefix @ suffix].
+  (* [find_inlining_site (prefix, suffix)] traverses the producers of the branch
+     [b], which already are decomposed under the form [List.rev prefix @ suffix].
      It looks for the first nonterminal symbol that can be inlined away. If it
      finds one, it inlines its branches into [b], which is why this function
      can return several branches. Otherwise, it raises [NoInlining]. *)
-  let rec chop_inline (prefix, suffix) =
+  let rec find_inlining_site (prefix, suffix) =
     match suffix with
     | [] ->
         raise NoInlining
@@ -187,9 +187,9 @@ let inline grammar =
             List.rev prefix, nt, r, id, xs
           end
           else
-            chop_inline (x :: prefix, xs)
+            find_inlining_site (x :: prefix, xs)
         with Not_found ->
-          chop_inline (x :: prefix, xs)
+          find_inlining_site (x :: prefix, xs)
   in
 
   (* Inline the non terminals that can be inlined in [b]. We use the
@@ -197,7 +197,7 @@ let inline grammar =
   let rec expand_branch (b : branch) : branch ListMonad.m =
     try
       (* [c] is the identifier under which the callee is known. *)
-      let prefix, nt, p, c, suffix = chop_inline ([], b.producers) in
+      let prefix, nt, p, c, suffix = find_inlining_site ([], b.producers) in
       let p = expand_rule nt p in
       (* These are the names of the producers in the host branch,
          minus the producer that is being inlined away. *)
