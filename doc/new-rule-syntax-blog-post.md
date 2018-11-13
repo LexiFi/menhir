@@ -3,21 +3,29 @@
 This post is a shameless advertisement for Menhir,
 a parser generator for OCaml.
 It illustrates Menhir's new input syntax,
-which was introduced on November 12, 2018.
+which was introduced on November 13, 2018.
+The code fragments shown below are excerpts
+of valid `.mly` files.
 
 ## Ingredients
 
-Suppose I have the following terminal symbols:
+Suppose I would like to parse and evaluate our good old friends, the
+arithmetic expressions. For instance, the string `"(3 + 4) * 5 - 9"`
+should be accepted and evaluated to the value `26`.
+
+I assume that I have a lexical that can chop up this string into a
+stream of basic tokens, or terminal symbols. My alphabet of terminal
+is the following:
 
 ```
 %token<int> INT
 %token PLUS MINUS TIMES DIV LPAREN RPAREN EOL
 ```
 
-Based on this alphabet, I would like to define the syntax of our good old
-friends, the arithmetic expressions. This exercise may seem old and tired, but
-let me try and see if I can add some new spice and style to it. In fact, let
-me do it twice, in two slightly different ways.
+Based on this alphabet, I wish define the syntax of (and obtain a parser for)
+arithmetic expressions. This exercise may seem old and tired, but let me try
+and see if I can add some new spice and style to it. In fact, let me do it
+twice, in two slightly different ways.
 
 So, how would you like your arithmetic expressions cooked?
 
@@ -215,15 +223,18 @@ in parentheses: although parentheses are a necessary feature of the concrete
 syntax, there is no need to record them in the abstract syntax.
 
 In an abstract syntax tree, I would like every subtree to be annotated with
-its location in the input text. To achieve this, I use a traditional
-technique: I define two types, `expr` and `raw_expr`, in a mutually recursive
-manner. An expression is a raw expression annotated with a location (a pair of
-a start position and an end position). A raw expression is an integer literal,
-an application of a unary operator to an expression, or an application of a
-binary operator to two expressions. Thus, like a cake, an abstract syntax tree
-has layered structure: one layer of location information, one layer of
-structural information, one layer of location information, one layer of
-structural information, and so on.
+its location in the input text. This would be important, in a real-world
+programming language implementation, in order to produce error messages carry
+a source code location.
+
+To achieve this, I use a traditional technique: I define two types, `expr` and
+`raw_expr`, in a mutually recursive manner. An expression is a raw expression
+annotated with a location (a pair of a start position and an end position). A
+raw expression is an integer literal, an application of a unary operator to an
+expression, or an application of a binary operator to two expressions. Thus,
+like a cake, an abstract syntax tree has layered structure: one layer of
+location information, one layer of structural information, one layer of
+location information, one layer of structural information, and so on.
 
 Let me now move on to the description of the parser. This time, I am
 eventually interested in producing an abstract syntax tree.
