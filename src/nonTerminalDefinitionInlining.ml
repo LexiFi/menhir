@@ -163,10 +163,11 @@ let inline grammar =
     r
   in
 
-  (* [find_inline_producer b] traverses the producers of the branch [b] and
-     looks for the first nonterminal symbol that can be inlined. If it finds
-     one, it inlines its branches into [b], which is why this function can
-     return several branches. Otherwise, it raises [NoInlining]. *)
+  (* [chop_inline (prefix, suffix)] traverses the producers of the branch [b],
+     which already are decomposed under the form [List.rev prefix @ suffix].
+     It looks for the first nonterminal symbol that can be inlined away. If it
+     finds one, it inlines its branches into [b], which is why this function
+     can return several branches. Otherwise, it raises [NoInlining]. *)
   let rec chop_inline (prefix, suffix) =
     match suffix with
     | [] ->
@@ -191,17 +192,13 @@ let inline grammar =
           chop_inline (x :: prefix, xs)
   in
 
-  let rec find_inline_producer b =
-    let prefix, nt, p, c, suffix = chop_inline ([], b.producers) in
-    let p = expand_rule nt p in
-    prefix, p, nt, c, suffix
-
   (* Inline the non terminals that can be inlined in [b]. We use the
      ListMonad to combine the results. *)
-  and expand_branch (b : branch) : branch ListMonad.m =
+  let rec expand_branch (b : branch) : branch ListMonad.m =
     try
       (* [c] is the identifier under which the callee is known. *)
-      let prefix, p, nt, c, suffix = find_inline_producer b in
+      let prefix, nt, p, c, suffix = chop_inline ([], b.producers) in
+      let p = expand_rule nt p in
       (* These are the names of the producers in the host branch,
          minus the producer that is being inlined away. *)
       let used = StringSet.union (names prefix) (names suffix) in
