@@ -82,7 +82,10 @@ module ForType
   (T : TYPE)
      : MEMOIZER with type key = T.t
 
-(* [Int] is an integer memoizer. *)
+(* Memoizers for some common types. *)
 
 module Int
      : MEMOIZER with type key = int
+
+module String
+     : MEMOIZER with type key = string

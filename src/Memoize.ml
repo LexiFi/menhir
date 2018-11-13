@@ -64,6 +64,10 @@ module INT = struct
   type t = int
 end
 
+module STRING = struct
+  type t = string
+end
+
 module TrivialHashedType (T : TYPE) = struct
   include T
   let equal = (=)
@@ -224,3 +228,6 @@ module ForType (T : TYPE) =
 
 module Int =
   ForType(INT)
+
+module String =
+  ForType(STRING)
