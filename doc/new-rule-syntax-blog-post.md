@@ -13,7 +13,7 @@ Suppose I would like to parse and evaluate our good old friends, the
 arithmetic expressions. For instance, the string `"(3 + 4) * 5 - 9"`
 should be accepted and evaluated to the value `26`.
 
-I assume that I have a lexical that can chop up this string into a
+I assume that I have a lexical analyzer that can chop up this string into a
 stream of basic tokens, or terminal symbols. My alphabet of terminal
 is the following:
 
@@ -22,7 +22,7 @@ is the following:
 %token PLUS MINUS TIMES DIV LPAREN RPAREN EOL
 ```
 
-Based on this alphabet, I wish define the syntax of (and obtain a parser for)
+Based on this alphabet, I wish to define the syntax of (and obtain a parser for)
 arithmetic expressions. This exercise may seem old and tired, but let me try
 and see if I can add some new spice and style to it. In fact, let me do it
 twice, in two slightly different ways.
@@ -224,7 +224,7 @@ syntax, there is no need to record them in the abstract syntax.
 
 In an abstract syntax tree, I would like every subtree to be annotated with
 its location in the input text. This would be important, in a real-world
-programming language implementation, in order to produce error messages carry
+programming language implementation, in order to produce error messages that carry
 a source code location.
 
 To achieve this, I use a traditional technique: I define two types, `expr` and
