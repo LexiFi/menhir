@@ -239,16 +239,19 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
      between %prec and %inline. *)
   check_prec_inline caller producer nsuffix callee;
 
-  (* These are the names of the producers in the host branch,
-     minus the producer that is being inlined away. *)
+  (* Compute the names of the producers in the host branch (the caller), minus
+     the one that is being inlined away. Rename the producers of the inlined
+     branch (the callee), if necessary, so as to avoid a clash with this set.
+     The goal is to guarantee that, after inlining, all producers in the newly
+     constructed branch have unique names. *)
   let used = StringSet.union (names prefix) (names suffix) in
-  (* Rename the producers of this branch if they conflict with
-     the name of the host's producers. *)
   let phi, inlined_producers = rename used callee.producers in
 
-  (* After inlining, the producers are as follows. *)
+  (* Construct (the producers of) the new branch. The prefix and suffix of the
+     caller are preserved. In the middle, [producer] disappears and is replaced
+     with [inlined_producers]. For debugging purposes, check that each producer
+     in the new branch carries a unique name. *)
   let producers = prefix @ inlined_producers @ suffix in
-  (* For debugging: check that each producer carries a unique name. *)
   let (_ : StringSet.t) = names producers in
 
   let name = producers |> Array.of_list |> Array.map producer_identifier in
