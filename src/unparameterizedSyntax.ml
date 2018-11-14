@@ -143,3 +143,21 @@ let ocamltype_of_start_symbol grammar symbol : Stretch.ocamltype =
   with Not_found ->
     (* Every start symbol should have a type. *)
     assert false
+
+(* [is_inline_symbol grammar symbol] tells whether [symbol] is a nonterminal
+   symbol (as opposed to a terminal symbol) and is marked %inline. *)
+
+let is_inline_symbol grammar symbol : bool =
+  match StringMap.find symbol grammar.rules with
+  | rule ->
+      (* This is a nonterminal symbol. Test its %inline flag. *)
+      rule.inline_flag
+  | exception Not_found ->
+      (* This is a terminal symbol. *)
+      false
+
+(* [is_inline_symbol grammar producer] tells whether [producer] represents a
+   nonterminal symbol (as opposed to a terminal) and is marked %inline. *)
+
+let is_inline_producer grammar producer =
+  is_inline_symbol grammar (producer_symbol producer)

@@ -40,6 +40,18 @@ let rec search (p : 'a -> bool) (i : int) (xs : 'a list) : (int * 'a) option =
 
 (* -------------------------------------------------------------------------- *)
 
+(* [find grammar symbol] looks up the definition of [symbol], which must be
+   a valid nonterminal symbol, in the grammar [grammar]. *)
+
+let find grammar symbol : rule =
+  try
+    StringMap.find symbol grammar.rules
+  with Not_found ->
+    (* This cannot happen. *)
+    assert false
+
+(* -------------------------------------------------------------------------- *)
+
 (* [rename_sw_outer] transforms the keywords in the outer production (the
    caller) during inlining. It replaces [$startpos(x)] and [$endpos(x)], where
    [x] is the name of the callee, with [startpx] and [endpx], respectively. *)
@@ -149,30 +161,6 @@ let rename (used : StringSet.t) producers: Action.subst * producers =
     ) ([], used, []) producers
   in
   phi, List.rev producers'
-
-(* [is_inline_nonterminal grammar symbol] tells whether [symbol] is a nonterminal
-   symbol (as opposed to a terminal symbol) and is marked %inline. *)
-
-let is_inline_nonterminal grammar symbol : bool =
-  match StringMap.find symbol grammar.rules with
-  | rule ->
-      (* This is a nonterminal symbol. Test its %inline flag. *)
-      rule.inline_flag
-  | exception Not_found ->
-      (* This is a terminal symbol. *)
-      false
-
-let is_inline_producer grammar producer =
-  is_inline_nonterminal grammar (producer_symbol producer)
-
-(* [find grammar symbol] looks up the definition of [symbol], which must be
-   a valid nonterminal symbol. *)
-
-let find grammar symbol : rule =
-  try
-    StringMap.find symbol grammar.rules
-  with Not_found ->
-    assert false
 
 (* Inline the branch [callee] into the branch [caller] at the site
    determined by [prefix, producer, suffix]. *)
