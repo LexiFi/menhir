@@ -417,11 +417,32 @@ module Inline (G : sig val grammar: grammar end) = struct
 
   open G
 
+  let is_inline_symbol =
+    is_inline_symbol grammar
+
   let is_inline_producer =
     is_inline_producer grammar
 
   let find =
     find grammar
+
+  (* In [--coq] mode, %inline is forbidden. There are two reasons for this.
+     One technical reason is that inlining requires constructing composite
+     semantic actions (using [Action.compose], etc.) and this construction is
+     currently OCaml-specific. (This could be rather easily changed, though.)
+     A more philosophical reason is that we don't want to have a large gap
+     between the grammar written by the user in the .mly file and the grammar
+     written by Menhir in the .v file. The latter grammar is the reference
+     grammar, the one with respect to which the generated parser is proved
+     correct. *)
+
+  let () =
+    if Settings.coq then
+      StringMap.iter (fun _ rule ->
+        if rule.inline_flag then
+          Error.error rule.positions
+            "%%inline is not supported by the Coq back-end."
+      ) grammar.rules
 
   (* This is [expand_branches], parameterized by its companion function,
      [expand_symbol]. The parameter [i], an integer, is used to perform
@@ -494,49 +515,47 @@ module Inline (G : sig val grammar: grammar end) = struct
       end;
       Error.error rule.positions "%s" (Buffer.contents b)
 
-  (* If we are in Coq mode, %inline is forbidden. *)
-  let _ =
-    if Settings.coq then
-      StringMap.iter
-        (fun _ r ->
-           if r.inline_flag then
-             Error.error r.positions
-               "%%inline is not supported by the Coq back-end.")
-        grammar.rules
+  (* The rules of the transformed grammar are obtained by keeping only
+     non-%inline symbols and expanding their rules. *)
 
-  (* To expand a grammar, we expand all its rules and remove
-     the %inline rules. *)
   let rules =
     grammar.rules
-    |> StringMap.filter (fun _ r -> not r.inline_flag)
-    |> StringMap.mapi (fun symbol _rule -> expand_symbol symbol) (* a little wasteful, but simple *)
+    |> StringMap.filter (fun _ rule -> not rule.inline_flag)
+    |> StringMap.mapi (fun symbol _rule -> expand_symbol symbol)
 
-  let useful (k : string) : bool =
-    try
-      not (StringMap.find k grammar.rules).inline_flag
-    with Not_found ->
-      true (* could be: assert false? *)
+  (* Drop %type declarations that concern %inline symbols. *)
 
-  (* Remove %on_error_reduce declarations for symbols that are expanded away,
-     and warn about them, at the same time. *)
-  let useful_warn (k : string) : bool =
-    let u = useful k in
-    if not u then
-      Error.grammar_warning []
-        "the declaration %%on_error_reduce %s\n\
-          has no effect, since this symbol is marked %%inline and is expanded away." k;
-    u
+  let keep symbol _rule : bool =
+    not (is_inline_symbol symbol)
 
   let types =
-    StringMap.filter (fun k _ -> useful k) grammar.types
+    StringMap.filter keep grammar.types
+
+  (* Drop %on_error_reduce declarations that concern %inline symbols. At the
+     same time, display a warning, as this seems strange: these declarations
+     are useless. *)
+
+  let keep_or_warn (symbol : string) _rule : bool =
+    let keep = keep symbol _rule in
+    if not keep then
+      Error.grammar_warning []
+        "the declaration %%on_error_reduce %s\n\
+         has no effect: this symbol is marked %%inline and is expanded away." symbol;
+    keep
 
   let on_error_reduce =
-    StringMap.filter (fun k _ -> useful_warn k) grammar.on_error_reduce
+    StringMap.filter keep_or_warn grammar.on_error_reduce
+
+  (* We are done. *)
 
   let grammar =
     { grammar with rules; types; on_error_reduce }
 
 end
+
+(* -------------------------------------------------------------------------- *)
+
+(* Re-package the above functor as a function. *)
 
 let inline grammar =
   let module I = Inline(struct let grammar = grammar end) in
