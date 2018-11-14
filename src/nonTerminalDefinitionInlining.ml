@@ -181,6 +181,9 @@ let rec find_inlining_site grammar (prefix, suffix : producers * producers) : si
       else
         find_inlining_site grammar (producer :: prefix, suffix)
 
+let find_inlining_site grammar (caller : branch) =
+  find_inlining_site grammar ([], caller.producers)
+
 (* Inline the branch [callee] into the branch [caller] at the site
    determined by [prefix, producer, suffix]. *)
 
@@ -328,7 +331,7 @@ let inline_branches caller site (callees : branches) : branches =
 
 (* A getter and transformer for branches. *)
 
-let branches rule =
+let get_branches rule =
   rule.branches
 
 let transform_branches f rule =
@@ -338,21 +341,25 @@ let transform_branches f rule =
    that can be inlined. *)
 let inline grammar =
 
-  (* Inline the non terminals that can be inlined in [caller]. We use the
-     ListMonad to combine the results. *)
-  let rec expand_branch expand_symbol (caller : branch) : branches =
-    match find_inlining_site grammar ([], caller.producers) with
-    | None ->
-        return caller
-    | Some ((_prefix, producer, _suffix) as site) ->
-        let symbol = producer_symbol producer in
-        expand_symbol symbol
-        |> branches
-        |> inline_branches caller site
-        |> expand_branches expand_symbol
-
-  and expand_branches expand_symbol branches : branches =
-    branches >>= expand_branch expand_symbol
+  let rec expand_branches expand_symbol branches : branches =
+    (* For each branch [caller] in the list [branches], *)
+    branches >>= fun (caller : branch) ->
+      (* Find if there is an inlining site in the branch [caller]. *)
+      match find_inlining_site grammar caller with
+      | None ->
+          (* There is none; we are done. *)
+          return caller
+      | Some ((_prefix, producer, _suffix) as site) ->
+          (* There is one. This is an occurrence of a nonterminal symbol
+             [symbol] that is marked %inline. We look up its (expanded)
+             definition (via a recursive call to [expand_symbol]), yielding
+             a set of branches, which we inline into the branch [caller].
+             Then, we continue looking for inlining sites. *)
+          let symbol = producer_symbol producer in
+          expand_symbol symbol
+          |> get_branches
+          |> inline_branches caller site
+          |> expand_branches expand_symbol
   in
 
   let expand_symbol expand_symbol symbol : rule =
