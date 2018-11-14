@@ -15,6 +15,8 @@ let position = Positions.position
 open Keyword
 open UnparameterizedSyntax
 open ListMonad
+let drop = MenhirLib.General.drop
+let take = MenhirLib.General.take
 
 (* [search p i xs] searches the list [xs] for an element [x] that satisfies [p].
    If successful, then it returns a pair of 1. [i] plus the offset of [x] in the
@@ -184,8 +186,8 @@ let inline_branch caller (site : site) (callee : branch) : branch =
   let ncaller = List.length caller.producers in
   let nsuffix = ncaller - (i + 1) in
 
-  let prefix = MenhirLib.General.take nprefix caller.producers
-  and suffix = MenhirLib.General.drop (nprefix + 1) caller.producers in
+  let prefix = take nprefix caller.producers
+  and suffix = drop (nprefix + 1) caller.producers in
 
   (* 2015/11/18. The interaction of %prec and %inline is not documented.
      It used to be the case that we would disallow marking a production
@@ -338,15 +340,18 @@ let transform_branches f rule =
    that can be inlined. *)
 let inline grammar =
 
-  let rec expand_branches expand_symbol branches : branches =
+  let rec expand_branches expand_symbol i branches : branches =
     (* For each branch [caller] in the list [branches], *)
     branches >>= fun (caller : branch) ->
-      (* Search for an inlining site in the branch [caller]. *)
-      match search (is_inline_producer grammar) 0 caller.producers with
+      (* Search for an inlining site in the branch [caller]. We begin the
+         search at position [i], as we know that every inlining site left
+         of this position has been dealt with already. *)
+      let producers = drop i caller.producers in
+      match search (is_inline_producer grammar) i producers with
       | None ->
           (* There is none; we are done. *)
           return caller
-      | Some ((_i, producer) as site) ->
+      | Some ((i, producer) as site) ->
           (* There is one. This is an occurrence of a nonterminal symbol
              [symbol] that is marked %inline. We look up its (expanded)
              definition (via a recursive call to [expand_symbol]), yielding
@@ -357,12 +362,12 @@ let inline grammar =
           expand_symbol symbol
           |> get_branches
           |> inline_branches caller site
-          |> expand_branches expand_symbol
+          |> expand_branches expand_symbol i
   in
 
   let expand_symbol expand_symbol symbol : rule =
     find grammar symbol
-    |> transform_branches (expand_branches expand_symbol)
+    |> transform_branches (expand_branches expand_symbol 0)
   in
 
   let expand_symbol : Syntax.symbol -> rule =
