@@ -101,6 +101,16 @@ let producer_attributes { producer_attributes } = producer_attributes
 
 (* -------------------------------------------------------------------------- *)
 
+(* A getter and a transformer for the field [branches] of the type [rule]. *)
+
+let get_branches rule =
+  rule.branches
+
+let transform_branches f rule =
+  { rule with branches = f rule.branches }
+
+(* -------------------------------------------------------------------------- *)
+
 (* [tokens grammar] is a list of all (real) tokens in the grammar
    [grammar]. The special tokens "#" and "error" are not included.
    Pseudo-tokens (used in %prec declarations, but never declared

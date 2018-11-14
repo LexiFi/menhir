@@ -102,6 +102,21 @@ let check_prec_inline caller producer nsuffix callee =
 
 (* -------------------------------------------------------------------------- *)
 
+(* 2015/11/18. If the callee has a %prec annotation (which implies that the
+   caller does not have one, and that the callee appears in tail position in
+   the caller) then the annotation is inherited. This seems reasonable, but
+   remains undocumented. *)
+
+let propagate_prec_annotation caller callee =
+  match callee.branch_prec_annotation with
+  | (Some _) as annotation ->
+      assert (caller.branch_prec_annotation = None);
+      annotation
+  | None ->
+      caller.branch_prec_annotation
+
+(* -------------------------------------------------------------------------- *)
+
 (* [names producers] is the set of names of the producers [producers]. The
    name of a producer is the OCaml variable that is used to name its semantic
    value. *)
@@ -314,8 +329,10 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
   and suffix = drop (nprefix + 1) caller.producers in
 
   (* Apply the (undocumented) restrictions that concern the interaction
-     between %prec and %inline. *)
+     between %prec and %inline. Then, (possibly) propagate a %prec
+     annotation. *)
   check_prec_inline caller producer nsuffix callee;
+  let branch_prec_annotation = propagate_prec_annotation caller callee in
 
   (* Compute the names of the producers in the host branch (the caller), minus
      the one that is being inlined away. Rename the producers of the inlined
@@ -341,48 +358,38 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
     define_positions name nprefix ncallee
   in
 
-  (* Get the name of the producer that we wish to inline away. *)
+  (* Apply appropriate renamings to the semantic actions of the caller and
+     callee, then compose them using a [let] binding. If [x] is the name of
+     the producer that we wish to inline away, then the variable [x] in the
+     caller's semantic action should refer to the semantic value produced by
+     the callee's semantic action. *)
 
   let x = producer_identifier producer in
-
-  (* Rename the outer and inner semantic action. *)
-  let outer_action =
-    Action.rename (rename_sw_outer (x, startp, endp)) [] caller.action
-  and action' =
+  let caller_action, callee_action =
+    Action.rename (rename_sw_outer (x, startp, endp)) [] caller.action,
     Action.rename (rename_sw_inner beforeendp) phi callee.action
   in
+  let action = Action.compose x callee_action caller_action in
 
-  (* 2015/11/18. If the callee has a %prec annotation (which implies
-     the caller does not have one, and the callee appears in tail
-     position in the caller) then the annotation is inherited. This
-     seems reasonable, but remains undocumented. *)
-  let branch_prec_annotation =
-    match callee.branch_prec_annotation with
-    | (Some _) as annotation ->
-        assert (caller.branch_prec_annotation = None);
-        annotation
-    | None ->
-        caller.branch_prec_annotation
-  in
+  (* We are done! Build a new branch. *)
 
-  { caller with
+  let { branch_position; branch_production_level; _ } = caller in
+  {
+    branch_position;
     producers;
-    action = Action.compose x action' outer_action;
+    action;
     branch_prec_annotation;
+    branch_production_level;
   }
 
-(* Inline a list of branches [callees] into the branch [caller] at [site]. *)
+(* -------------------------------------------------------------------------- *)
+
+(* Inlining a list of branches [callees] into the branch [caller] at [site]. *)
 
 let inline_branches caller site (callees : branches) : branches =
   List.map (inline_branch caller site) callees
 
-(* A getter and transformer for branches. *)
-
-let get_branches rule =
-  rule.branches
-
-let transform_branches f rule =
-  { rule with branches = f rule.branches }
+(* -------------------------------------------------------------------------- *)
 
 (* Inline a grammar. The resulting grammar does not contain any definitions
    that can be inlined. *)
