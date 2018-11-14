@@ -16,6 +16,17 @@ open Keyword
 open UnparameterizedSyntax
 open ListMonad
 
+(* [search p i xs] searches the list [xs] for an element [x] that satisfies [p].
+   If successful, then it returns a pair of 1. [i] plus the offset of [x] in the
+   list, and 2. the element [x]. *)
+
+let rec search (p : 'a -> bool) i (xs : 'a list) : (int * 'a) option =
+  match xs with
+  | [] ->
+      None
+  | x :: xs ->
+      if p x then Some (i, x) else search p (i+1) xs
+
 (* [index2id] converts a 0-based index (into a list of producers) to
    an identifier (the name of the producer). *)
 
@@ -159,33 +170,22 @@ let find grammar symbol : rule =
   with Not_found ->
     assert false
 
-(* [find_inlining_site grammar (prefix, suffix)] traverses a list of producers
-   that is already decomposed as [List.rev prefix @ suffix]. It looks for the
-   first nonterminal symbol that can be inlined away. If it does not find one,
-   it raises [NoInlining]. If it does find one, it returns a decomposition of
-   the whole list of producers under the form [prefix @ producer :: suffix]. *)
-
-type site =
-  producers * producer * producers
-
-let rec find_inlining_site grammar (prefix, suffix : producers * producers) : site option =
-  match suffix with
-  | [] ->
-      None
-  | producer :: suffix ->
-      if is_inline_producer grammar producer then begin
-        Some (List.rev prefix, producer, suffix)
-      end
-      else
-        find_inlining_site grammar (producer :: prefix, suffix)
-
-let find_inlining_site grammar (caller : branch) =
-  find_inlining_site grammar ([], caller.producers)
-
 (* Inline the branch [callee] into the branch [caller] at the site
    determined by [prefix, producer, suffix]. *)
 
-let inline_branch caller (prefix, producer, suffix) (callee : branch) : branch =
+type site =
+  int * producer
+
+let inline_branch caller (site : site) (callee : branch) : branch =
+
+  let (i, producer) = site in
+
+  let nprefix = i in
+  let ncaller = List.length caller.producers in
+  let nsuffix = ncaller - (i + 1) in
+
+  let prefix = MenhirLib.General.take nprefix caller.producers
+  and suffix = MenhirLib.General.drop (nprefix + 1) caller.producers in
 
   (* 2015/11/18. The interaction of %prec and %inline is not documented.
      It used to be the case that we would disallow marking a production
@@ -195,7 +195,7 @@ let inline_branch caller (prefix, producer, suffix) (callee : branch) : branch =
   callee.branch_prec_annotation |> Option.iter (fun callee_prec ->
     (* The callee has a %prec annotation. *)
     (* Check condition 1. *)
-    if List.length suffix > 0 then begin
+    if nsuffix > 0 then begin
       let nt = producer_symbol producer in
       Error.error [ position callee_prec; caller.branch_position ]
         "this production carries a %%prec annotation,\n\
@@ -229,8 +229,7 @@ let inline_branch caller (prefix, producer, suffix) (callee : branch) : branch =
 
   let index2id = index2id producers in
 
-  let prefix = List.length prefix
-  and inlined_producers = List.length inlined_producers in
+  let inlined_producers = List.length inlined_producers in
 
   (* Define how the start and end positions of the inner production should
      be computed once it is inlined into the outer production. These
@@ -246,13 +245,13 @@ let inline_branch caller (prefix, producer, suffix) (callee : branch) : branch =
       (* If the inner production is non-epsilon, things are easy. The start
          position of the inner production is the start position of its first
          element. *)
-      RightNamed (index2id prefix), WhereStart
-    else if prefix > 0 then
+      RightNamed (index2id nprefix), WhereStart
+    else if nprefix > 0 then
       (* If the inner production is epsilon, we are supposed to compute the
          end position of whatever comes in front of it. If the prefix is
          nonempty, then this is the end position of the last symbol in the
          prefix. *)
-      RightNamed (index2id (prefix - 1)), WhereEnd
+      RightNamed (index2id (nprefix - 1)), WhereEnd
     else
       (* If the inner production is epsilon and the prefix is empty, then
          we need to look up the end position stored in the top stack cell.
@@ -272,7 +271,7 @@ let inline_branch caller (prefix, producer, suffix) (callee : branch) : branch =
     if inlined_producers > 0 then
       (* If the inner production is non-epsilon, things are easy: its end
          position is the end position of its last element. *)
-      RightNamed (index2id (prefix + inlined_producers - 1)), WhereEnd
+      RightNamed (index2id (nprefix + inlined_producers - 1)), WhereEnd
     else
       (* If the inner production is epsilon, then its end position is equal
          to its start position. *)
@@ -287,8 +286,8 @@ let inline_branch caller (prefix, producer, suffix) (callee : branch) : branch =
      element of the prefix. Otherwise, it translates to [$endpos($0)]. *)
 
   let beforeendp =
-    if prefix > 0 then
-      RightNamed (index2id (prefix - 1)), WhereEnd
+    if nprefix > 0 then
+      RightNamed (index2id (nprefix - 1)), WhereEnd
     else
       Before, WhereEnd
   in
@@ -342,12 +341,12 @@ let inline grammar =
   let rec expand_branches expand_symbol branches : branches =
     (* For each branch [caller] in the list [branches], *)
     branches >>= fun (caller : branch) ->
-      (* Find if there is an inlining site in the branch [caller]. *)
-      match find_inlining_site grammar caller with
+      (* Search for an inlining site in the branch [caller]. *)
+      match search (is_inline_producer grammar) 0 caller.producers with
       | None ->
           (* There is none; we are done. *)
           return caller
-      | Some ((_prefix, producer, _suffix) as site) ->
+      | Some ((_i, producer) as site) ->
           (* There is one. This is an occurrence of a nonterminal symbol
              [symbol] that is marked %inline. We look up its (expanded)
              definition (via a recursive call to [expand_symbol]), yielding
