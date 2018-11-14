@@ -326,25 +326,38 @@ let inline_branch caller (prefix, producer, suffix) (callee : branch) : branch =
 let inline_branches caller site (callees : branches) : branches =
   List.map (inline_branch caller site) callees
 
+(* A getter and transformer for branches. *)
+
+let branches rule =
+  rule.branches
+
+let transform_branches f rule =
+  { rule with branches = f rule.branches }
+
 (* Inline a grammar. The resulting grammar does not contain any definitions
    that can be inlined. *)
 let inline grammar =
 
   (* Inline the non terminals that can be inlined in [caller]. We use the
      ListMonad to combine the results. *)
-  let rec expand_branch expand_symbol (caller : branch) : branch ListMonad.m =
+  let rec expand_branch expand_symbol (caller : branch) : branches =
     match find_inlining_site grammar ([], caller.producers) with
     | None ->
         return caller
     | Some ((_prefix, producer, _suffix) as site) ->
         let symbol = producer_symbol producer in
-        let rule = expand_symbol symbol in
-        inline_branches caller site rule.branches >>= expand_branch expand_symbol
+        expand_symbol symbol
+        |> branches
+        |> inline_branches caller site
+        |> expand_branches expand_symbol
+
+  and expand_branches expand_symbol branches : branches =
+    branches >>= expand_branch expand_symbol
   in
 
   let expand_symbol expand_symbol symbol : rule =
-    let rule = find grammar symbol in
-    { rule with branches = rule.branches >>= expand_branch expand_symbol }
+    find grammar symbol
+    |> transform_branches (expand_branches expand_symbol)
   in
 
   let expand_symbol : Syntax.symbol -> rule =
