@@ -39,6 +39,13 @@ let rec search (p : 'a -> bool) (i : int) (xs : 'a list) : (int * 'a) option =
   | x :: xs ->
       if p x then Some (i, x) else search p (i+1) xs
 
+(* [search_at p i xs] searches the list [xs] for an element [x] that satisfies
+   [p]. The search begins at index [i] in the list. If successful, then it
+   returns a pair of: - the offset of [x] in the list, and - the element [x]. *)
+
+let search_at p i xs =
+  search p i (drop i xs)
+
 (* -------------------------------------------------------------------------- *)
 
 (* [find grammar symbol] looks up the definition of [symbol], which must be
@@ -391,9 +398,37 @@ let inline_branches caller site (callees : branches) : branches =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Inline a grammar. The resulting grammar does not contain any definitions
-   that can be inlined. *)
-let inline grammar =
+(* For greater syntactic convenience, the main function is written as a
+   functor, and re-packaged as a function at the very end. *)
+
+(* Roughly speaking, the transformation is implemented by two mutually
+   recursive functions. [expand_branches] transforms a list of branches into a
+   list of (expanded) branches; [expand_symbol] maps a nonterminal symbol
+   (which may or may not be marked %inline) to its definition in the
+   transformed grammar, an (expanded) rule. In order to avoid duplication of
+   work, we memoize [expand_symbol]. Thus, the expansion of each symbol is
+   computed at most once. (Expansions are demanded top-down, but are computed
+   bottom-up.) Memoization is implemented without pain by using a ready-made
+   fixed point combinator, [Memoize.defensive_fix]. Furthermore, this find
+   point combinator dynamically detects cycles of %inline nonterminal symbols,
+   allowing us to avoid divergence and display a nice error message. *)
+
+module Inline (G : sig val grammar: grammar end) = struct
+
+  open G
+
+  let is_inline_producer =
+    is_inline_producer grammar
+
+  let find =
+    find grammar
+
+  (* This is [expand_branches], parameterized by its companion function,
+     [expand_symbol]. The parameter [i], an integer, is used to perform
+     a left-to-right sweep: the precondition of [expand_branches] is that
+     there are no inlining sites at indices less than [i] in [branches].
+     Thus, we can begin searching at index [i]. (Beginning to search at
+     index 0 would work, too, but would cause redundant searches.) *)
 
   let rec expand_branches expand_symbol i branches : branches =
     (* For each branch [caller] in the list [branches], *)
@@ -401,8 +436,7 @@ let inline grammar =
       (* Search for an inlining site in the branch [caller]. We begin the
          search at position [i], as we know that every inlining site left
          of this position has been dealt with already. *)
-      let producers = drop i caller.producers in
-      match search (is_inline_producer grammar) i producers with
+      match search_at is_inline_producer i caller.producers with
       | None ->
           (* There is none; we are done. *)
           return caller
@@ -418,26 +452,33 @@ let inline grammar =
           |> get_branches
           |> inline_branches caller site
           |> expand_branches expand_symbol i
-  in
+
+  (* This is [expand_symbol], parameterized by itself. *)
 
   let expand_symbol expand_symbol symbol : rule =
-    find grammar symbol
+    (* Find the rule that defines this symbol. Then, transform this rule
+       by applying [expand_branches] to its branches. The left-to-right
+       sweep begins at index 0. *)
+    find symbol
     |> transform_branches (expand_branches expand_symbol 0)
-  in
+
+  (* Apply [defensive_fix] to obtain a closed function [expand_symbol]. *)
 
   let expand_symbol : Syntax.symbol -> rule =
     Memoize.String.defensive_fix expand_symbol
-  in
+
+  (* Wrap [expand_symbol] in an exception handler, so that, when a cycle
+     of %inline nonterminal symbols is detected, a good error message is
+     displayed. *)
 
   let expand_symbol symbol =
     try
       expand_symbol symbol
     with Memoize.String.Cycle (_, symbol) ->
-      let rule = find grammar symbol in
+      let rule = find symbol in
       Error.error rule.positions
         "there is a cycle in the definition of %s." symbol
       (* TEMPORARY we can now give a better message. *)
-  in
 
   (* If we are in Coq mode, %inline is forbidden. *)
   let _ =
@@ -448,7 +489,6 @@ let inline grammar =
              Error.error r.positions
                "%%inline is not supported by the Coq back-end.")
         grammar.rules
-  in
 
   (* To expand a grammar, we expand all its rules and remove
      the %inline rules. *)
@@ -456,14 +496,12 @@ let inline grammar =
     grammar.rules
     |> StringMap.filter (fun _ r -> not r.inline_flag)
     |> StringMap.mapi (fun symbol _rule -> expand_symbol symbol) (* a little wasteful, but simple *)
-  in
 
   let useful (k : string) : bool =
     try
       not (StringMap.find k grammar.rules).inline_flag
     with Not_found ->
       true (* could be: assert false? *)
-  in
 
   (* Remove %on_error_reduce declarations for symbols that are expanded away,
      and warn about them, at the same time. *)
@@ -474,10 +512,18 @@ let inline grammar =
         "the declaration %%on_error_reduce %s\n\
           has no effect, since this symbol is marked %%inline and is expanded away." k;
     u
-  in
 
-  { grammar with
-      rules;
-      types = StringMap.filter (fun k _ -> useful k) grammar.types;
-      on_error_reduce = StringMap.filter (fun k _ -> useful_warn k) grammar.on_error_reduce;
-  }
+  let types =
+    StringMap.filter (fun k _ -> useful k) grammar.types
+
+  let on_error_reduce =
+    StringMap.filter (fun k _ -> useful_warn k) grammar.on_error_reduce
+
+  let grammar =
+    { grammar with rules; types; on_error_reduce }
+
+end
+
+let inline grammar =
+  let module I = Inline(struct let grammar = grammar end) in
+  I.grammar
