@@ -7,7 +7,7 @@
   nonterminal symbol.) The old syntax remains available; the user chooses
   between the two syntaxes on a per-rule basis. The new syntax is fully
   documented in the manual;
-  [a brief summary of the differences](doc/new-rule-syntax.md)
+  [a brief summary of the differences](doc/new-rule-syntax-summary.md)
   with respect to the old syntax is also available.
   **The new syntax is considered experimental**
   and is subject to change in the near future.
