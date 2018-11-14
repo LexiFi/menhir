@@ -62,7 +62,8 @@ let rename_sw_inner beforeendp (subject, where) : (subject * where) option =
       assert false
 
 (* This auxiliary function checks that a use site of an %inline symbol does
-   not carry any attributes. *)
+   not carry any attributes. This condition guarantees that we need not worry
+   about propagating these attributes through inlining. *)
 
 let check_no_producer_attributes producer =
   match producer_attributes producer with
@@ -146,6 +147,9 @@ let is_inline_nonterminal grammar symbol : bool =
       (* This is a terminal symbol. *)
       false
 
+let is_inline_producer grammar producer =
+  is_inline_nonterminal grammar (producer_symbol producer)
+
 (* [find grammar symbol] looks up the definition of [symbol], which must be
    a valid nonterminal symbol. *)
 
@@ -169,13 +173,7 @@ let rec find_inlining_site grammar (prefix, suffix : producers * producers) : si
   | [] ->
       None
   | producer :: suffix ->
-      let symbol = producer_symbol producer in
-      if is_inline_nonterminal grammar symbol then begin
-        (* We have checked earlier than an %inline symbol does not carry
-           any attributes. In addition, we now check that the use site of
-           this symbol does not carry any attributes either. Thus, we need
-           not worry about propagating these attributes through inlining. *)
-        check_no_producer_attributes producer;
+      if is_inline_producer grammar producer then begin
         Some (List.rev prefix, producer, suffix)
       end
       else
@@ -355,6 +353,7 @@ let inline grammar =
              definition (via a recursive call to [expand_symbol]), yielding
              a set of branches, which we inline into the branch [caller].
              Then, we continue looking for inlining sites. *)
+          check_no_producer_attributes producer;
           let symbol = producer_symbol producer in
           expand_symbol symbol
           |> get_branches
