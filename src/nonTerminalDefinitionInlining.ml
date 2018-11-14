@@ -13,6 +13,7 @@
 
 let position = Positions.position
 open Keyword
+type sw = Action.sw
 open UnparameterizedSyntax
 open ListMonad
 let drop = MenhirLib.General.drop
@@ -52,45 +53,9 @@ let find grammar symbol : rule =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [rename_sw_outer] transforms the keywords in the outer production (the
-   caller) during inlining. It replaces [$startpos(x)] and [$endpos(x)], where
-   [x] is the name of the callee, with [startpx] and [endpx], respectively. *)
-
-let rename_sw_outer (x, startpx, endpx) (subject, where) : (subject * where) option =
-  match subject, where with
-  | Before, _ ->
-      None
-  | RightNamed x', _ ->
-      if x' = x then
-        match where with
-        | WhereStart -> Some startpx
-        | WhereEnd   -> Some endpx
-        | WhereSymbolStart -> assert false (* has been expanded away *)
-      else
-        None
-  | Left, _ ->
-      (* [$startpos], [$endpos], and [$symbolstartpos] have been expanded away
-         earlier; see [KeywordExpansion]. *)
-      assert false
-
-(* [rename_sw_inner] transforms the keywords in the inner production (the callee)
-   during inlining. It replaces [$endpos($0)] with [beforeendp]. *)
-
-let rename_sw_inner beforeendp (subject, where) : (subject * where) option =
-  match subject, where with
-  | Before, _ ->
-      assert (where = WhereEnd);
-      Some beforeendp
-  | RightNamed _, _ ->
-      None
-  | Left, _ ->
-      (* [$startpos] and [$endpos] have been expanded away earlier; see
-         [KeywordExpansion]. *)
-      assert false
-
-(* This auxiliary function checks that a use site of an %inline symbol does
-   not carry any attributes. This condition guarantees that we need not worry
-   about propagating these attributes through inlining. *)
+(* [check_no_producer_attributes] checks that a producer, which represents a
+   use site of an %inline symbol, does not carry any attributes. This ensures
+   that we need not worry about propagating attributes through inlining. *)
 
 let check_no_producer_attributes producer =
   match producer_attributes producer with
@@ -103,13 +68,15 @@ let check_no_producer_attributes producer =
          A use of it cannot carry an attribute."
         (producer_symbol producer)
 
-(* [names producers] is the set of names of the producers [producers].
-   The name of a producer is the OCaml variable that is used to name the
-   semantic value. *)
+(* -------------------------------------------------------------------------- *)
 
-(* At the same time, this function checks that no two producers carry the
-   same name. This check should never fail if we have performed appropriate
-   renamings. It is a debugging aid. *)
+(* [names producers] is the set of names of the producers [producers]. The
+   name of a producer is the OCaml variable that is used to name its semantic
+   value. *)
+
+(* This function checks on the fly that no two producers carry the same name.
+   This check should never fail if we have performed appropriate renamings.
+   It is a debugging aid. *)
 
 let names (producers : producers) : StringSet.t =
   List.fold_left (fun ids producer ->
@@ -118,24 +85,32 @@ let names (producers : producers) : StringSet.t =
     StringSet.add id ids
   ) StringSet.empty producers
 
+(* -------------------------------------------------------------------------- *)
+
+(* [new_candidate x] is a candidate fresh name, which is based on [x] in an
+   unspecified way. A fairly arbitrary construction can be used here; we just
+   need it to produce an infinite sequence of names, so that eventually we are
+   certain to be able to escape any finite set of unavailable names. We also
+   need this construction to produce reasonably concise names, as it can be
+   iterated several times in practice; I have observed up to 9 iterations in
+   real-world grammars. *)
+
+(* Here, the idea is to add a suffix of the form _inlined['0'-'9']+ to the
+   name [x], if it does not already include such a suffix. If [x] already
+   carries such a suffix, then we increment the integer number. *)
+
+let new_candidate x =
+  let x, n = ChopInlined.chop (Lexing.from_string x) in
+  Printf.sprintf "%s_inlined%d" x (n + 1)
+
 (* [fresh names x] returns a fresh name that is not in the set [names].
-   The new name is based on [x] in an unspecified way. *)
+   The new name is obtained by iterating [new_candidate] until we fall
+   outside the set [names]. *)
+
 let rec fresh names x =
-  if StringSet.mem x names then
-    let x =
-      (* Propose a new candidate name. A fairly arbitrary construction
-         can be used here; we just need it to produce an infinite sequence
-         of names, so that eventually we fall outside of [names]. We also
-         need it to produce reasonably concise names, as this construction
-         can be iterated several times in practice; I have observed up to
-         9 iterations in real-world grammars. *)
-      let x, n = ChopInlined.chop (Lexing.from_string x) in
-      let n = n + 1 in
-      Printf.sprintf "%s_inlined%d" x n
-    in
-    fresh names x
-  else
-    x
+  if StringSet.mem x names then fresh names (new_candidate x) else x
+
+(* -------------------------------------------------------------------------- *)
 
 (* We have to rename the producers [producers] of the inlined production
    if they clash with the set [used] of the names used by the producers
@@ -145,6 +120,7 @@ let rec fresh names x =
    1. a substitution [phi], which represents the renaming that we have
       performed, and which must be applied to the inner semantic action;
    2. the renamed [producers]. *)
+
 let rename (used : StringSet.t) producers: Action.subst * producers =
 
   (* Compute a renaming and the new names of the inlined producers. *)
@@ -161,6 +137,46 @@ let rename (used : StringSet.t) producers: Action.subst * producers =
     ) ([], used, []) producers
   in
   phi, List.rev producers'
+
+(* -------------------------------------------------------------------------- *)
+
+(* [rename_sw_outer] transforms the keywords in the outer production (the
+   caller) during inlining. It replaces [$startpos(x)] and [$endpos(x)], where
+   [x] is the name of the callee, with [startpx] and [endpx], respectively. *)
+
+let rename_sw_outer (x, startpx, endpx) (sw : sw) : sw option =
+  match sw with
+  | Before, _ ->
+      None
+  | RightNamed x', where ->
+      if x' = x then
+        match where with
+        | WhereStart -> Some startpx
+        | WhereEnd   -> Some endpx
+        | WhereSymbolStart -> assert false (* has been expanded away *)
+      else
+        None
+  | Left, _ ->
+      (* [$startpos], [$endpos], and [$symbolstartpos] have been expanded away
+         earlier; see [KeywordExpansion]. *)
+      assert false
+
+(* -------------------------------------------------------------------------- *)
+
+(* [rename_sw_inner] transforms the keywords in the inner production (the callee)
+   during inlining. It replaces [$endpos($0)] with [beforeendp]. *)
+
+let rename_sw_inner beforeendp (sw : sw) : sw option =
+  match sw with
+  | Before, where ->
+      assert (where = WhereEnd);
+      Some beforeendp
+  | RightNamed _, _ ->
+      None
+  | Left, _ ->
+      (* [$startpos] and [$endpos] have been expanded away earlier; see
+         [KeywordExpansion]. *)
+      assert false
 
 (* Inline the branch [callee] into the branch [caller] at the site
    determined by [prefix, producer, suffix]. *)
