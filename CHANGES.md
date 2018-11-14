@@ -1,6 +1,6 @@
 # Changes
 
-## 2018/11/12
+## 2018/11/13
 
 * In `.mly` files, a new syntax for rules has been introduced, which is
   slightly more pleasant than the old syntax. (A rule is the definition of a
