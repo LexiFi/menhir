@@ -18,25 +18,27 @@ open ListMonad
 let drop = MenhirLib.General.drop
 let take = MenhirLib.General.take
 
-(* [search p i xs] searches the list [xs] for an element [x] that satisfies [p].
-   If successful, then it returns a pair of 1. [i] plus the offset of [x] in the
-   list, and 2. the element [x]. *)
+(* -------------------------------------------------------------------------- *)
 
-let rec search (p : 'a -> bool) i (xs : 'a list) : (int * 'a) option =
+(* Throughout this file, branches (productions) are represented as lists of
+   producers. We consider it acceptable to perform operations whose cost is
+   linear in the length of a production, even when (with more complicated
+   code) it would be possible to eliminate this cost. *)
+
+(* -------------------------------------------------------------------------- *)
+
+(* [search p i xs] searches the list [xs] for an element [x] that satisfies [p].
+   If successful, then it returns a pair of: - [i] plus the offset of [x] in the
+   list, and - the element [x]. *)
+
+let rec search (p : 'a -> bool) (i : int) (xs : 'a list) : (int * 'a) option =
   match xs with
   | [] ->
       None
   | x :: xs ->
       if p x then Some (i, x) else search p (i+1) xs
 
-(* [index2id] converts a 0-based index (into a list of producers) to
-   an identifier (the name of the producer). *)
-
-let index2id producers i =
-  try
-    producer_identifier (List.nth producers i)
-  with Failure _ ->
-    assert false (* should not happen *)
+(* -------------------------------------------------------------------------- *)
 
 (* [rename_sw_outer] transforms the keywords in the outer production (the
    caller) during inlining. It replaces [$startpos(x)] and [$endpos(x)], where
@@ -229,7 +231,7 @@ let inline_branch caller (site : site) (callee : branch) : branch =
   (* For debugging: check that each producer carries a unique name. *)
   let (_ : StringSet.t) = names producers in
 
-  let index2id = index2id producers in
+  let name = producers |> Array.of_list |> Array.map producer_identifier in
 
   let inlined_producers = List.length inlined_producers in
 
@@ -247,13 +249,13 @@ let inline_branch caller (site : site) (callee : branch) : branch =
       (* If the inner production is non-epsilon, things are easy. The start
          position of the inner production is the start position of its first
          element. *)
-      RightNamed (index2id nprefix), WhereStart
+      RightNamed name.(nprefix), WhereStart
     else if nprefix > 0 then
       (* If the inner production is epsilon, we are supposed to compute the
          end position of whatever comes in front of it. If the prefix is
          nonempty, then this is the end position of the last symbol in the
          prefix. *)
-      RightNamed (index2id (nprefix - 1)), WhereEnd
+      RightNamed (name.(nprefix - 1)), WhereEnd
     else
       (* If the inner production is epsilon and the prefix is empty, then
          we need to look up the end position stored in the top stack cell.
@@ -273,7 +275,7 @@ let inline_branch caller (site : site) (callee : branch) : branch =
     if inlined_producers > 0 then
       (* If the inner production is non-epsilon, things are easy: its end
          position is the end position of its last element. *)
-      RightNamed (index2id (nprefix + inlined_producers - 1)), WhereEnd
+      RightNamed (name.(nprefix + inlined_producers - 1)), WhereEnd
     else
       (* If the inner production is epsilon, then its end position is equal
          to its start position. *)
@@ -289,7 +291,7 @@ let inline_branch caller (site : site) (callee : branch) : branch =
 
   let beforeendp =
     if nprefix > 0 then
-      RightNamed (index2id (nprefix - 1)), WhereEnd
+      RightNamed (name.(nprefix - 1)), WhereEnd
     else
       Before, WhereEnd
   in

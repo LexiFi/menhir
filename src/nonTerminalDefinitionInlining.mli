@@ -13,6 +13,7 @@
 
 open UnparameterizedSyntax
 
-(** [inline g] traverses the grammar [g] and inlines the nonterminal symbol
-    definitions that are marked [%inline]. *)
+(** [inline g] traverses the grammar [g] and inlines away the nonterminal
+    symbols whose definitions are marked [%inline]. The result is a grammar
+    where no symbols are marked [%inline]. *)
 val inline: grammar -> grammar
