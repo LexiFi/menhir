@@ -1,5 +1,11 @@
 # Changes
 
+## 2018/11/XX
+
+* When a cycle of `%inline` nonterminal symbols is encountered,
+  the error message now shows the entire cycle,
+  as opposed to just one symbol that participates in the cycle.
+
 ## 2018/11/13
 
 * In `.mly` files, a new syntax for rules has been introduced, which is

@@ -474,11 +474,25 @@ module Inline (G : sig val grammar: grammar end) = struct
   let expand_symbol symbol =
     try
       expand_symbol symbol
-    with Memoize.String.Cycle (_, symbol) ->
+    with Memoize.String.Cycle (symbols, symbol) ->
       let rule = find symbol in
-      Error.error rule.positions
-        "there is a cycle in the definition of %s." symbol
-      (* TEMPORARY we can now give a better message. *)
+      let b = Buffer.create 128 in
+      Printf.bprintf b "there is a cycle of %%inline nonterminal symbols:\n";
+      begin match symbols with
+      | [] ->
+          assert false
+      | head :: [] ->
+          assert (head = symbol);
+          Printf.bprintf b "  %s refers to itself." symbol
+      | head :: next :: symbols ->
+          assert (head = symbol);
+          Printf.bprintf b "  %s refers to %s,\n" head next;
+          List.iter (fun symbol ->
+            Printf.bprintf b "  which refers to %s,\n" symbol
+          ) symbols;
+          Printf.bprintf b "  which refers back to %s." symbol
+      end;
+      Error.error rule.positions "%s" (Buffer.contents b)
 
   (* If we are in Coq mode, %inline is forbidden. *)
   let _ =
