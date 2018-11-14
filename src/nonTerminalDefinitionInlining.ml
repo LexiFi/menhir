@@ -70,6 +70,38 @@ let check_no_producer_attributes producer =
 
 (* -------------------------------------------------------------------------- *)
 
+(* 2015/11/18. The interaction of %prec and %inline is not documented.
+   It used to be the case that we would disallow marking a production
+   both %inline and %prec. Now, we allow it, but we check that (1) it
+   is inlined at the last position of the host production and (2) the
+   host production does not already have a %prec annotation. *)
+
+let check_prec_inline caller producer nsuffix callee =
+  callee.branch_prec_annotation |> Option.iter (fun callee_prec ->
+    (* The callee has a %prec annotation. *)
+    (* Check condition 1. *)
+    if nsuffix > 0 then begin
+      let symbol = producer_symbol producer in
+      Error.error [ position callee_prec; caller.branch_position ]
+        "this production carries a %%prec annotation,\n\
+         and the nonterminal symbol %s is marked %%inline.\n\
+         For this reason, %s can be used only in tail position."
+        symbol symbol
+    end;
+    (* Check condition 2. *)
+    caller.branch_prec_annotation |> Option.iter (fun caller_prec ->
+      let symbol = producer_symbol producer in
+      Error.error [ position callee_prec; position caller_prec ]
+        "this production carries a %%prec annotation,\n\
+         and the nonterminal symbol %s is marked %%inline.\n\
+         For this reason, %s cannot be used in a production\n\
+         which itself carries a %%prec annotation."
+        symbol symbol
+    )
+  )
+
+(* -------------------------------------------------------------------------- *)
+
 (* [names producers] is the set of names of the producers [producers]. The
    name of a producer is the OCaml variable that is used to name its semantic
    value. *)
@@ -203,36 +235,9 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
   let prefix = take nprefix caller.producers
   and suffix = drop (nprefix + 1) caller.producers in
 
-  (* Get the name and symbol of the producer that we wish to inline away. *)
-
-  let x = producer_identifier producer
-  and symbol = producer_symbol producer in
-
-  (* 2015/11/18. The interaction of %prec and %inline is not documented.
-     It used to be the case that we would disallow marking a production
-     both %inline and %prec. Now, we allow it, but we check that (1) it
-     is inlined at the last position of the host production and (2) the
-     host production does not already have a %prec annotation. *)
-  callee.branch_prec_annotation |> Option.iter (fun callee_prec ->
-    (* The callee has a %prec annotation. *)
-    (* Check condition 1. *)
-    if nsuffix > 0 then begin
-      Error.error [ position callee_prec; caller.branch_position ]
-        "this production carries a %%prec annotation,\n\
-         and the nonterminal symbol %s is marked %%inline.\n\
-         For this reason, %s can be used only in tail position."
-        symbol symbol
-    end;
-    (* Check condition 2. *)
-    caller.branch_prec_annotation |> Option.iter (fun caller_prec ->
-      Error.error [ position callee_prec; position caller_prec ]
-        "this production carries a %%prec annotation,\n\
-         and the nonterminal symbol %s is marked %%inline.\n\
-         For this reason, %s cannot be used in a production\n\
-         which itself carries a %%prec annotation."
-        symbol symbol
-    )
-  );
+  (* Apply the (undocumented) restrictions that concern the interaction
+     between %prec and %inline. *)
+  check_prec_inline caller producer nsuffix callee;
 
   (* These are the names of the producers in the host branch,
      minus the producer that is being inlined away. *)
@@ -311,6 +316,9 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
       Before, WhereEnd
   in
 
+  (* Get the name of the producer that we wish to inline away. *)
+
+  let x = producer_identifier producer in
 
   (* Rename the outer and inner semantic action. *)
   let outer_action =
