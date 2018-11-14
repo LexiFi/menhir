@@ -112,19 +112,17 @@ let rec fresh names x =
 
 (* -------------------------------------------------------------------------- *)
 
-(* We have to rename the producers [producers] of the inlined production
-   if they clash with the set [used] of the names used by the producers
-   of the host branch. (Note that [used] need not contain the name of the
-   producer that is inlined away.)
-   This function produces a pair of:
-   1. a substitution [phi], which represents the renaming that we have
-      performed, and which must be applied to the inner semantic action;
-   2. the renamed [producers]. *)
+(* [rename used producers] renames the producers [producers] of the inlined
+   branch (the callee) if necessary to avoid a clash with the set [used] of
+   the names used by the producers of the host branch (the caller). This set
+   need not contain the name of the producer that is inlined away. *)
+
+(* This function produces a pair of: 1. a substitution [phi], which represents
+   the renaming that we have performed, and which must be applied to the
+   semantic action of the callee; 2. the renamed [producers]. *)
 
 let rename (used : StringSet.t) producers: Action.subst * producers =
-
-  (* Compute a renaming and the new names of the inlined producers. *)
-  let phi, _used, producers' =
+  let phi, _used, producers =
     List.fold_left (fun (phi, used, producers) producer ->
       let x = producer_identifier producer in
       if StringSet.mem x used then
@@ -136,7 +134,7 @@ let rename (used : StringSet.t) producers: Action.subst * producers =
         (phi, StringSet.add x used, producer :: producers)
     ) ([], used, []) producers
   in
-  phi, List.rev producers'
+  phi, List.rev producers
 
 (* -------------------------------------------------------------------------- *)
 
@@ -178,22 +176,37 @@ let rename_sw_inner beforeendp (sw : sw) : sw option =
          [KeywordExpansion]. *)
       assert false
 
-(* Inline the branch [callee] into the branch [caller] at the site
-   determined by [prefix, producer, suffix]. *)
+(* -------------------------------------------------------------------------- *)
+
+(* [inline_branch caller site callee] inlines the branch [callee] into the
+   branch [caller] at the site [site]. By convention, a site is a pair of an
+   integer index -- the index [i] of the producer that must be inlined away --
+   and a producer [producer] -- the producer itself. This is redundant, as
+   [producer] can be recovered based on [caller] and [i], but convenient. *)
 
 type site =
   int * producer
 
-let inline_branch caller (site : site) (callee : branch) : branch =
+let inline_branch caller (i, producer : site) (callee : branch) : branch =
 
-  let (i, producer) = site in
+  (* The host branch (the caller) is divided into three sections: a prefix
+     of length [nprefix], the producer that we wish to inline away, and a
+     suffix of length [nsuffix]. *)
+
+  (* Compute the length of the prefix and suffix. *)
 
   let nprefix = i in
-  let ncaller = List.length caller.producers in
-  let nsuffix = ncaller - (i + 1) in
+  let nsuffix = List.length caller.producers - (i + 1) in
+
+  (* Construct the prefix and suffix. *)
 
   let prefix = take nprefix caller.producers
   and suffix = drop (nprefix + 1) caller.producers in
+
+  (* Get the name and symbol of the producer that we wish to inline away. *)
+
+  let x = producer_identifier producer
+  and symbol = producer_symbol producer in
 
   (* 2015/11/18. The interaction of %prec and %inline is not documented.
      It used to be the case that we would disallow marking a production
@@ -204,22 +217,20 @@ let inline_branch caller (site : site) (callee : branch) : branch =
     (* The callee has a %prec annotation. *)
     (* Check condition 1. *)
     if nsuffix > 0 then begin
-      let nt = producer_symbol producer in
       Error.error [ position callee_prec; caller.branch_position ]
         "this production carries a %%prec annotation,\n\
          and the nonterminal symbol %s is marked %%inline.\n\
          For this reason, %s can be used only in tail position."
-        nt nt
+        symbol symbol
     end;
     (* Check condition 2. *)
     caller.branch_prec_annotation |> Option.iter (fun caller_prec ->
-      let nt = producer_symbol producer in
       Error.error [ position callee_prec; position caller_prec ]
         "this production carries a %%prec annotation,\n\
          and the nonterminal symbol %s is marked %%inline.\n\
          For this reason, %s cannot be used in a production\n\
          which itself carries a %%prec annotation."
-        nt nt
+        symbol symbol
     )
   );
 
@@ -300,12 +311,10 @@ let inline_branch caller (site : site) (callee : branch) : branch =
       Before, WhereEnd
   in
 
-  (* [c] is the identifier under which the callee is known inside the caller. *)
-  let c = producer_identifier producer in
 
   (* Rename the outer and inner semantic action. *)
   let outer_action =
-    Action.rename (rename_sw_outer (c, startp, endp)) [] caller.action
+    Action.rename (rename_sw_outer (x, startp, endp)) [] caller.action
   and action' =
     Action.rename (rename_sw_inner beforeendp) phi callee.action
   in
@@ -325,7 +334,7 @@ let inline_branch caller (site : site) (callee : branch) : branch =
 
   { caller with
     producers;
-    action = Action.compose c action' outer_action;
+    action = Action.compose x action' outer_action;
     branch_prec_annotation;
   }
 
