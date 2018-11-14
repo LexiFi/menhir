@@ -35,8 +35,6 @@
   the grammar. This makes it slightly easier to read grammars.
   (Contributed by Perry E. Metzger.)
 
-## 2018/10/25
-
 * Until today, the semicolon character `;` was insignificant: it was
   considered as whitespace by Menhir. It is now accepted only in a
   few specific places, namely: after a declaration; after a rule;
