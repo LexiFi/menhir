@@ -170,6 +170,84 @@ let rename (used : StringSet.t) producers: Action.subst * producers =
 
 (* -------------------------------------------------------------------------- *)
 
+(* [define_positions] defines how the start and end positions of the callee
+   should be computed once it is inlined into the caller. This information is
+   used to transform [$startpos] and [$endpos] in the callee and to transform
+   [$startpos(x)] and [$endpos(x)] in the caller. *)
+
+(* 2015/11/04. We ensure that positions are computed in the same manner,
+   regardless of whether inlining is performed. *)
+
+(* The arguments of this function are as follows:
+
+   [name]       an array of the names of the producers of the new branch
+   [nprefix]    the length of the prefix of the caller, up to the inlining site
+   [ncallee]    the length of the callee
+
+   The results are as follows:
+
+   [startp]     how to transform $startpos in the callee
+   [endp]       how to transform $endpos in the callee
+   [beforeendp] how to transform $endpos($0) in the callee
+
+ *)
+
+let define_positions (name : string array) nprefix ncallee : sw * sw * sw =
+
+  let startp =
+    if ncallee > 0 then
+      (* If the inner production is non-epsilon, things are easy. The start
+         position of the inner production is the start position of its first
+         element. *)
+      RightNamed name.(nprefix), WhereStart
+    else if nprefix > 0 then
+      (* If the inner production is epsilon, we are supposed to compute the
+         end position of whatever comes in front of it. If the prefix is
+         nonempty, then this is the end position of the last symbol in the
+         prefix. *)
+      RightNamed (name.(nprefix - 1)), WhereEnd
+    else
+      (* If the inner production is epsilon and the prefix is empty, then
+         we need to look up the end position stored in the top stack cell.
+         This is the reason why we need the keyword [$endpos($0)]. It is
+         required in this case to preserve the semantics of $startpos and
+         $endpos. *)
+      Before, WhereEnd
+
+    (* Note that, to contrary to intuition perhaps, we do NOT have that
+       if the prefix is empty, then the start position of the inner
+       production is the start production of the outer production.
+       This is true only if the inner production is non-epsilon. *)
+
+  in
+
+  let endp =
+    if ncallee > 0 then
+      (* If the inner production is non-epsilon, things are easy: its end
+         position is the end position of its last element. *)
+      RightNamed (name.(nprefix + ncallee - 1)), WhereEnd
+    else
+      (* If the inner production is epsilon, then its end position is equal
+         to its start position. *)
+      startp
+
+  (* We must also transform [$endpos($0)] if it used by the inner
+     production. It refers to the end position of the stack cell
+     that comes before the inner production. So, if the prefix is
+     non-empty, then it translates to the end position of the last
+     element of the prefix. Otherwise, it translates to [$endpos($0)]. *)
+
+  and beforeendp =
+    if nprefix > 0 then
+      RightNamed (name.(nprefix - 1)), WhereEnd
+    else
+      Before, WhereEnd
+
+  in
+  startp, endp, beforeendp
+
+(* -------------------------------------------------------------------------- *)
+
 (* [rename_sw_outer] transforms the keywords in the outer production (the
    caller) during inlining. It replaces [$startpos(x)] and [$endpos(x)], where
    [x] is the name of the callee, with [startpx] and [endpx], respectively. *)
@@ -254,69 +332,13 @@ let inline_branch caller (i, producer : site) (callee : branch) : branch =
   let producers = prefix @ inlined_producers @ suffix in
   let (_ : StringSet.t) = names producers in
 
-  let name = producers |> Array.of_list |> Array.map producer_identifier in
+  (* Find out how the start and end positions of the callee should be computed
+     once it is inlined into the caller. *)
 
-  let inlined_producers = List.length inlined_producers in
-
-  (* Define how the start and end positions of the inner production should
-     be computed once it is inlined into the outer production. These
-     definitions of [startp] and [endp] are then used to transform
-     [$startpos] and [$endpos] in the inner production and to transform
-     [$startpos(x)] and [$endpos(x)] in the outer production. *)
-
-  (* 2015/11/04. We ensure that positions are computed in the same manner,
-     regardless of whether inlining is performed. *)
-
-  let startp =
-    if inlined_producers > 0 then
-      (* If the inner production is non-epsilon, things are easy. The start
-         position of the inner production is the start position of its first
-         element. *)
-      RightNamed name.(nprefix), WhereStart
-    else if nprefix > 0 then
-      (* If the inner production is epsilon, we are supposed to compute the
-         end position of whatever comes in front of it. If the prefix is
-         nonempty, then this is the end position of the last symbol in the
-         prefix. *)
-      RightNamed (name.(nprefix - 1)), WhereEnd
-    else
-      (* If the inner production is epsilon and the prefix is empty, then
-         we need to look up the end position stored in the top stack cell.
-         This is the reason why we need the keyword [$endpos($0)]. It is
-         required in this case to preserve the semantics of $startpos and
-         $endpos. *)
-      Before, WhereEnd
-
-    (* Note that, to contrary to intuition perhaps, we do NOT have that
-       if the prefix is empty, then the start position of the inner
-       production is the start production of the outer production.
-       This is true only if the inner production is non-epsilon. *)
-
-  in
-
-  let endp =
-    if inlined_producers > 0 then
-      (* If the inner production is non-epsilon, things are easy: its end
-         position is the end position of its last element. *)
-      RightNamed (name.(nprefix + inlined_producers - 1)), WhereEnd
-    else
-      (* If the inner production is epsilon, then its end position is equal
-         to its start position. *)
-      startp
-
-  in
-
-  (* We must also transform [$endpos($0)] if it used by the inner
-     production. It refers to the end position of the stack cell
-     that comes before the inner production. So, if the prefix is
-     non-empty, then it translates to the end position of the last
-     element of the prefix. Otherwise, it translates to [$endpos($0)]. *)
-
-  let beforeendp =
-    if nprefix > 0 then
-      RightNamed (name.(nprefix - 1)), WhereEnd
-    else
-      Before, WhereEnd
+  let startp, endp, beforeendp =
+    let name = producers |> Array.of_list |> Array.map producer_identifier in
+    let ncallee = List.length callee.producers in
+    define_positions name nprefix ncallee
   in
 
   (* Get the name of the producer that we wish to inline away. *)
