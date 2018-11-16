@@ -82,7 +82,7 @@ let () =
       write B.program
     else
       let module B = CodeBackend.Run (struct end) in
-      write (Inliner.inline B.program)
+      write (CodeInliner.inline B.program)
 
 (* Write the interface file. *)
 
