@@ -670,12 +670,12 @@ module Production = struct
   let (_ : int) = StringMap.fold (fun nonterminal { branches } k ->
     let nt = Nonterminal.lookup nonterminal in
     let k' = List.fold_left (fun k branch ->
-      let symbols = Array.of_list branch.producers in
-      let rhs = Array.map producer_symbol symbols in
+      let producers = Array.of_list branch.producers in
+      let rhs = Array.map producer_symbol producers in
       table.(k) <- (nt, rhs);
-      identifiers.(k) <- Array.map producer_identifier symbols;
+      identifiers.(k) <- Array.map producer_identifier producers;
       actions.(k) <- Some branch.action;
-      rhs_attributes.(k) <- Array.map producer_attributes symbols;
+      rhs_attributes.(k) <- Array.map producer_attributes producers;
       production_level.(k) <- branch.branch_production_level;
       prec_decl.(k) <- branch.branch_prec_annotation;
       positions.(k) <- [ branch.branch_position ];
