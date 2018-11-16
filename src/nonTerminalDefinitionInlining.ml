@@ -124,23 +124,6 @@ let propagate_prec_annotation caller callee =
 
 (* -------------------------------------------------------------------------- *)
 
-(* [names producers] is the set of names of the producers [producers]. The
-   name of a producer is the OCaml variable that is used to name its semantic
-   value. *)
-
-(* This function checks on the fly that no two producers carry the same name.
-   This check should never fail if we have performed appropriate renamings.
-   It is a debugging aid. *)
-
-let names (producers : producers) : StringSet.t =
-  List.fold_left (fun ids producer ->
-    let id = producer_identifier producer in
-    assert (not (StringSet.mem id ids));
-    StringSet.add id ids
-  ) StringSet.empty producers
-
-(* -------------------------------------------------------------------------- *)
-
 (* [new_candidate x] is a candidate fresh name, which is based on [x] in an
    unspecified way. A fairly arbitrary construction can be used here; we just
    need it to produce an infinite sequence of names, so that eventually we are

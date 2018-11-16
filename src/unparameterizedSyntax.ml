@@ -171,3 +171,20 @@ let is_inline_symbol grammar symbol : bool =
 
 let is_inline_producer grammar producer =
   is_inline_symbol grammar (producer_symbol producer)
+
+(* -------------------------------------------------------------------------- *)
+
+(* [names producers] is the set of names of the producers [producers]. The
+   name of a producer is the OCaml variable that is used to name its semantic
+   value. *)
+
+(* This function checks on the fly that no two producers carry the same name.
+   This check should never fail if we have performed appropriate renamings.
+   It is a debugging aid. *)
+
+let names (producers : producers) : StringSet.t =
+  List.fold_left (fun ids producer ->
+    let id = producer_identifier producer in
+    assert (not (StringSet.mem id ids));
+    StringSet.add id ids
+  ) StringSet.empty producers
