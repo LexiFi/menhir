@@ -11,7 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open UnparameterizedSyntax
+open BasicSyntax
 open Keyword
 open IL
 open CodeBits

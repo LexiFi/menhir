@@ -15,7 +15,7 @@ open Printf
 open Positions
 open Syntax
 open Stretch
-open UnparameterizedSyntax
+open BasicSyntax
 open Settings
 
 (* When the original grammar is split over several files, it may be IMPOSSIBLE

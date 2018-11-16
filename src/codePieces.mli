@@ -135,4 +135,4 @@ val errorval: expr
 
 val basics: string
 
-val mbasics: UnparameterizedSyntax.grammar -> structure
+val mbasics: BasicSyntax.grammar -> structure

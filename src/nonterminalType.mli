@@ -33,7 +33,7 @@ val tnonterminalgadtdata: string -> string
    performed already. This definition is produced only in [--inspection]
    mode. *)
 
-val nonterminalgadtdef: UnparameterizedSyntax.grammar -> IL.interface
+val nonterminalgadtdef: BasicSyntax.grammar -> IL.interface
 
 (* When in [--(raw-)depend] mode, we are asked to produce a mock [.mli] file
    before [--infer] has run, which means that we are usually not able to

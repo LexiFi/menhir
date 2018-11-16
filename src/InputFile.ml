@@ -25,7 +25,7 @@
 
 (* 2016/08/25: in principle, the order in which file names appear on the
    command line (when there are several of them) does not matter. It is
-   however used in [UnparameterizedPrinter] (see the problem description
+   however used in [BasicPrinter] (see the problem description
    there). For this reason, we define a type [input_file] which includes
    the file's name as well as its index on the command line. *)
 
@@ -52,7 +52,7 @@ let compare_input_files file1 file2 =
   Pervasives.compare file1.input_file_index file2.input_file_index
     (* Ideally, this function should NOT be used, as it reflects the
        order of the input files on the command line. As of 2016/08/25,
-       it is used by [UnparameterizedPrinter], for lack of a better
+       it is used by [BasicPrinter], for lack of a better
        solution. *)
 
 let current_input_file =

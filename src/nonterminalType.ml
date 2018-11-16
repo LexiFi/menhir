@@ -11,7 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open UnparameterizedSyntax
+open BasicSyntax
 open IL
 
 (* This is the conventional name of the nonterminal GADT, which describes the
@@ -41,7 +41,7 @@ let nonterminalgadtdef grammar =
 
       (* The ordering of this list matters. We want the data constructors
          to respect the internal ordering (as determined by [nonterminals]
-         in [UnparameterizedSyntax]) of the nonterminal symbols. This may
+         in [BasicSyntax]) of the nonterminal symbols. This may
          be exploited in the table back-end to allow an unsafe conversion
          of a data constructor to an integer code. See [n2i] in
          [InspectionTableInterpreter]. *)

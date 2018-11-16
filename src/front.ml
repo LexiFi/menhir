@@ -75,7 +75,7 @@ let sorts =
 (* Expand away all applications of parameterized nonterminal symbols, so as
    to obtain a grammar without parameterized nonterminal symbols. *)
 
-let grammar : UnparameterizedSyntax.grammar =
+let grammar : BasicSyntax.grammar =
   let module S = SelectiveExpansion in
   (* First, perform a selective expansion: expand away all parameters of
      higher sort, keeping the parameters of sort [*]. This process always
@@ -190,7 +190,7 @@ let grammar =
 let () =
   match Settings.preprocess_mode with
   | Settings.PMOnlyPreprocess mode ->
-      UnparameterizedPrinter.print mode stdout grammar;
+      BasicPrinter.print mode stdout grammar;
       exit 0
   | Settings.PMNormal ->
       ()

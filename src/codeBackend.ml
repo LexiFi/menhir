@@ -1624,7 +1624,7 @@ let initenvdef =
 (* ------------------------------------------------------------------------ *)
 (* Here is complete code for the parser. *)
 
-open UnparameterizedSyntax
+open BasicSyntax
 
 let grammar =
   Front.grammar

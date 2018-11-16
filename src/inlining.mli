@@ -11,7 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open UnparameterizedSyntax
+open BasicSyntax
 
 (** [inline g] traverses the grammar [g] and inlines away the nonterminal
     symbols whose definitions are marked [%inline]. The result is a grammar

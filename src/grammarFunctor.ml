@@ -11,14 +11,14 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open UnparameterizedSyntax
+open BasicSyntax
 open Syntax
 open Positions
 
 module Make (G : sig
 
   (* An abstract syntax tree for the grammar. *)
-  val grammar: UnparameterizedSyntax.grammar
+  val grammar: BasicSyntax.grammar
 
   (* This flag indicates whether it is OK to produce warnings, verbose
      information, etc., when this functor is invoked. If it is set to

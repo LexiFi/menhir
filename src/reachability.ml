@@ -11,7 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open UnparameterizedSyntax
+open BasicSyntax
 
 let rec visit grammar visited symbol =
   try

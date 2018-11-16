@@ -54,12 +54,12 @@ val tokengadtdata: string -> string
 (* The definitions of the token type and of the token GADT, for use by the
    code generators. Each of these lists defines zero or one type. *)
 
-val tokentypedef: UnparameterizedSyntax.grammar -> IL.interface
-val tokengadtdef: UnparameterizedSyntax.grammar -> IL.interface
+val tokentypedef: BasicSyntax.grammar -> IL.interface
+val tokengadtdef: BasicSyntax.grammar -> IL.interface
 
 (* If [--only-tokens] is set, then [produce_tokentypes] writes the type
    definitions to the [.ml] and [.mli] files and stops Menhir. Otherwise,
    it does nothing. *)
 
-val produce_tokentypes: UnparameterizedSyntax.grammar -> unit
+val produce_tokentypes: BasicSyntax.grammar -> unit
 

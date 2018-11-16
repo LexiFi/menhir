@@ -15,7 +15,7 @@ let value = Positions.value
 (* The source. *)
 module S = Syntax
 (* The target. *)
-module T = UnparameterizedSyntax
+module T = BasicSyntax
 
 (* -------------------------------------------------------------------------- *)
 

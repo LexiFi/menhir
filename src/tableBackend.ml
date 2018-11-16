@@ -969,7 +969,7 @@ let versiondef = {
 
 (* Let's put everything together. *)
 
-open UnparameterizedSyntax
+open BasicSyntax
 
 let grammar =
   Front.grammar

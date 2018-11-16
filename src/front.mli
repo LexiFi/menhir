@@ -18,7 +18,7 @@
    inference. This yields the grammar that the back-end works with (often
    through the interface provided by module [Grammar]). *)
 
-val grammar: UnparameterizedSyntax.grammar
+val grammar: BasicSyntax.grammar
 
 (* This flag tells whether the semantic actions have been type-checked. It is
    set if and only if either [--infer] or [--infer-read-reply] is in use. Note

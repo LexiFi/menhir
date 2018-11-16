@@ -95,7 +95,7 @@ module Run (T: sig end) = struct
           | _ -> ())
         (Production.rhs prod));
 
-    if Front.grammar.UnparameterizedSyntax.parameters <> [] then
+    if Front.grammar.BasicSyntax.parameters <> [] then
       Error.error [] "the Coq back-end does not support %%parameter."
 
   (* Optimized because if we extract some constants to the right caml term,
@@ -509,7 +509,7 @@ module Run (T: sig end) = struct
   let write_all f =
     if not Settings.coq_no_actions then
       List.iter (fun s -> fprintf f "%s\n\n" s.Stretch.stretch_content)
-        Front.grammar.UnparameterizedSyntax.preludes;
+        Front.grammar.BasicSyntax.preludes;
 
     fprintf f "From Coq.Lists Require Import List.\n";
     fprintf f "From Coq.Numbers.Cyclic.Int31 Require Import Int31.\n";
@@ -525,5 +525,5 @@ module Run (T: sig end) = struct
 
     if not Settings.coq_no_actions then
       List.iter (fun stretch -> fprintf f "\n\n%s" stretch.Stretch.stretch_raw_content)
-        Front.grammar.UnparameterizedSyntax.postludes
+        Front.grammar.BasicSyntax.postludes
 end

@@ -13,7 +13,7 @@
 
 open Syntax
 open Stretch
-open UnparameterizedSyntax
+open BasicSyntax
 open IL
 open CodeBits
 open TokenType

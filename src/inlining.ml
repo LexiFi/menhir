@@ -14,7 +14,7 @@
 let position = Positions.position
 open Keyword
 type sw = Action.sw
-open UnparameterizedSyntax
+open BasicSyntax
 open ListMonad
 let drop = MenhirLib.General.drop
 let take = MenhirLib.General.take

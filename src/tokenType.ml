@@ -15,7 +15,7 @@
    the [token] type. In particular, if [--only-tokens] was specified,
    it emits the type definition and exits. *)
 
-open UnparameterizedSyntax
+open BasicSyntax
 open IL
 open CodeBits
 
@@ -111,7 +111,7 @@ let tokengadtdef grammar =
         TDefSum (
           (* The ordering of this list matters. We want the data constructors
              to respect the internal ordering (as determined by [typed_tokens]
-             in [UnparameterizedSyntax]) of the terminal symbols. This may be
+             in [BasicSyntax]) of the terminal symbols. This may be
              exploited in the table back-end to allow an unsafe conversion
              of a data constructor to an integer code. See [t2i] in
              [InspectionTableInterpreter]. *)

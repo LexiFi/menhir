@@ -49,7 +49,7 @@ rule lex = parse
   | (lowercase identchar *) as lid
       { try
           let nt = Nonterminal.lookup lid in
-          if StringSet.mem lid Front.grammar.UnparameterizedSyntax.start_symbols then
+          if StringSet.mem lid Front.grammar.BasicSyntax.start_symbols then
             NONTERMINAL (nt, lexbuf.lex_start_p, lexbuf.lex_curr_p)
           else
             error2 lexbuf "\"%s\" is not a start symbol." lid

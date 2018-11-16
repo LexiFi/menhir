@@ -15,5 +15,5 @@
    of nonterminals that are reachable, via productions, from the
    start nonterminals. *)
 
-val trim: UnparameterizedSyntax.grammar -> UnparameterizedSyntax.grammar
+val trim: BasicSyntax.grammar -> BasicSyntax.grammar
 

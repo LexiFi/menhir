@@ -11,7 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open UnparameterizedSyntax
+open BasicSyntax
 open Grammar
 open Cmly_format
 
