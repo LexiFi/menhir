@@ -262,10 +262,10 @@ and symbol_expression =
 
 and extended_action =
   | XATraditional of raw_action
-  | XAPointFree of Stretch.t
-  (* A semantic action is either traditional { ... } or point-free <id>.
-     In the latter case, [id] is either the empty string or an OCaml
-     identifier. *)
+  | XAPointFree of Stretch.t option
+  (* A semantic action is either traditional { ... } or point-free.
+     There are two forms of point-free actions, <> and <id>.
+     In the latter case, [id] is an OCaml identifier. *)
 
 type rule =
   {

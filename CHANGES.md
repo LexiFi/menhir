@@ -2,6 +2,10 @@
 
 ## 2018/11/XX
 
+* Relax the syntax of point-free actions to allow `< >` (with arbitrary
+  whitespace inside the angle brackets) instead of just `<>`.
+  (Suggested by Lélio Brun.)
+
 * When a cycle of `%inline` nonterminal symbols is encountered,
   the error message now shows the entire cycle,
   as opposed to just one symbol that participates in the cycle.

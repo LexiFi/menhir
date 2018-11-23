@@ -69,6 +69,9 @@ let unparenthesize (s : string) : string =
 let unparenthesize (s : Stretch.t) : Stretch.t =
   { s with stretch_content = unparenthesize s.stretch_content }
 
+let unparenthesize (o : Stretch.t option) : Stretch.t option =
+  Option.map unparenthesize o
+
 %}
 
 /* ------------------------------------------------------------------------- */
@@ -623,12 +626,12 @@ action:
     { XATraditional action }
 | action = OCAMLTYPE
     { match ParserAux.validate_pointfree_action action with
-      | Some s ->
-          XAPointFree (unparenthesize s)
-      | None ->
+      | os ->
+          XAPointFree (unparenthesize os)
+      | exception Lexpointfree.InvalidPointFreeAction ->
           Error.error [Positions.import $loc]
             "A point-free semantic action must consist \
-             of a single OCaml identifier."
+             of a single OCaml identifier." (* or whitespace *)
     }
 
 /* Patterns. */

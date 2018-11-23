@@ -87,8 +87,9 @@ val override: Positions.t -> 'a option -> 'a option -> 'a option
 
 val producer_names: early_producers -> identifier option array
 
-(* Check that a stretch contains an OCaml lowercase or uppercase identifier,
-   and convert this stretch to a string. The stretch may be empty, too. *)
+(* Check that a stretch represents valid content for a point-free semantic
+   action, i.e., either just whitespace, or an OCaml lowercase or uppercase
+   identifier. May raise [Lexpointfree.InvalidPointFreeAction]. *)
 
 val validate_pointfree_action: ocamltype -> Stretch.t option
 

@@ -11,7 +11,6 @@
 (*                                                                            *)
 (******************************************************************************)
 
-open Stretch
 open Syntax
 
 (* Because the main function, [NewRuleSyntax.rule], is called by the stage 2
@@ -388,11 +387,14 @@ and production_aux
         pr_branch_production_level = level;
       }
 
-  | EAction (XAPointFree id, prec) ->
-      (* A point-free semantic action, containing the OCaml identifier [id]
+  | EAction (XAPointFree oid, prec) ->
+      (* A point-free semantic action, containing an OCaml identifier [id]
          between angle brackets. This is syntactic sugar for a traditional
          semantic action containing an application of [id] to a tuple of the
          semantic values that have been assigned a name by the user. *)
+
+      (* As a special case, if [oid] is [None], then we must not build
+         an application node -- we simply build a tuple. *)
 
      (* [id] is actually a stretch, not just a string, and this matters when
         there is an OCaml error (e.g., [id] is undeclared, or ill-typed).
@@ -407,15 +409,12 @@ and production_aux
       (* We abuse the abstract syntax of IL and build an application node,
          regardless of whether [id] a (possibly qualified) value, a (possibly
          qualified) data constructor, a polymorphic variant constructor, etc. *)
-      (* As a special case, if [id] is the empty string, then we do not build
-         an application node. Although it would be correctly printed, doing
-         this would defeat some IL optimizations and produce redundant [let]
-         constructs. *)
       let e =
-        if String.length id.stretch_raw_content = 0 then
-          tuple
-        else
-          IL.EApp (IL.ETextual id, [tuple])
+        match oid with
+        | Some id ->
+            IL.EApp (IL.ETextual id, [tuple])
+        | None ->
+            tuple
       in
       (* Build a traditional semantic action. *)
       let action = Action.from_il_expr e in

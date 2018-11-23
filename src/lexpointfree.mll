@@ -11,6 +11,12 @@
 (*                                                                            *)
 (******************************************************************************)
 
+{
+
+  exception InvalidPointFreeAction
+
+}
+
 (* See [ParserAux.validate_pointfree_action]. *)
 
 let lowercase = ['a'-'z' '\223'-'\246' '\248'-'\255' '_']
@@ -28,13 +34,16 @@ let op         =
 
 let whitespace = [ ' ' '\t' '\n' ]
 
-rule valid_pointfree_action = parse
+rule validate_pointfree_action = parse
 | whitespace* (lowercase | uppercase | '`') (identchar | '.')* whitespace* eof
 | whitespace* '(' op ')' whitespace* eof
-| eof
+    (* We have got a nonempty point-free action: <id>. *)
     { true }
-| _
+| whitespace* eof
+    (* We have got an empty point-free action: <>. *)
     { false }
+| _
+    { raise InvalidPointFreeAction }
 
 (* See [ParserAux.valid_ocaml_identifier]. *)
 
@@ -42,4 +51,5 @@ and valid_ocaml_identifier = parse
 | lowercase identchar* eof
     { true }
 | _
+| eof
     { false }

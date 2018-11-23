@@ -127,7 +127,7 @@ let validate_pointfree_action (ty : ocamltype) : Stretch.t option =
       assert false
   | Declared stretch ->
       let s = stretch.stretch_raw_content in
-      if Lexpointfree.valid_pointfree_action (Lexing.from_string s) then
+      if Lexpointfree.validate_pointfree_action (Lexing.from_string s) then
         Some stretch
       else
         None
