@@ -1,17 +1,155 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <title>Plain HTML site</title>
-    <link rel="stylesheet" href="style.css">
-  </head>
-  <body>
+<?xml version="1.0" encoding="UTF8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" lang="en">
 
-    <h1>Hello World!</h1>
+<head>
+  <style type="text/css">
+    body { padding: 40px 40px; }
+    tt { font-family:monospace,monospace; font-size:1em; font-weight:800; }
+    li { margin-bottom: 10px; }
+    img.displayed { display: block; margin-left: auto; margin-right: auto }
+  </style>
+  <meta charset="utf-8">
+  <title>Menhir</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-    <p>
-      This is a simple page.
-    </p>
+<body>
 
-  </body>
+<!--------------------------------------------------------------------------->
+
+<img src="affichage.jpg" alt="Your dearest desire: a menhir" class="displayed"/>
+
+<h1>Menhir</h1>
+
+<p>
+Menhir is an LR(1) parser generator for
+<a href="http://ocaml.org/">OCaml</a>:
+it compiles LR(1) grammars down to OCaml code.
+</p>
+
+<p>
+Menhir replaces
+<a href="http://caml.inria.fr/pub/docs/manual-ocaml/lexyacc.html#sec278">ocamlyacc</a>.
+Legacy grammars can be compiled by Menhir,
+with a few caveats, described in the
+<a href="doc/manual.html">reference manual</a>
+(<a href="doc/manual.html">HTML</a>;
+<a href="doc/manual.pdf">PDF</a>).
+</p>
+
+<p>
+Menhir is available through <a href="http://opam.ocaml.org/">opam</a>,
+OCaml's package manager. Type <tt>opam
+install menhir</tt>.
+</p>
+
+<p>
+Menhir's source code is hosted in this
+<a href="https://gitlab.inria.fr/fpottier/menhir/">repository</a>
+(<a href="https://gitlab.inria.fr/fpottier/menhir/tags">releases</a>;
+ <a href="https://gitlab.inria.fr/fpottier/menhir/blob/master/CHANGES.md">changes</a>).
+</p>
+
+<p>
+There is a
+<a href="https://sympa.inria.fr/sympa/info/menhir">mailing list</a>
+for announcements of new releases and discussion of problems, bugs,
+feature requests, and so on. Only subscribers can post.
+</p>
+
+<p>
+Menhir has been designed and implemented by
+<a href="http://gallium.inria.fr/~fpottier/">François Pottier</a> and
+<a href="http://www.pps.jussieu.fr/~yrg/">Yann Régis-Gianas</a>.
+</p>
+
+<p>Menhir has many features that make it superior to the traditional
+yacc-style parser generators that many people are familiar with.</p>
+
+<ul>
+  <li>
+
+    Menhir is not restricted to LALR(1) grammars. It accepts <b>LR(1)</b>
+    grammars, thus avoiding certain artificial conflicts. When a grammar lies
+    outside this class, Menhir <b>explains conflicts</b> in terms of the
+    grammar, not just in terms of the automaton. Menhir's explanations are
+    believed to be understandable by mere humans.
+
+  </li><li>
+
+    Menhir allows the definition of a nonterminal symbol to be
+    <b>parameterized</b>. A formal parameter can be instantiated with a
+    terminal symbol, a nonterminal symbol, or an anonymous rule.
+    A <b>library</b> of standard parameterized definitions, including options,
+    sequences, and lists, is bundled with Menhir. EBNF syntax is supported:
+    the modifiers <tt>?</tt>, <tt>+</tt>, and <tt>*</tt> are
+    sugar for options, nonempty lists, and arbitrary lists.
+    Parameterized definitions are expanded away in a straightforward way.
+
+  </li><li>
+
+    Menhir's <b><tt>&percnt;inline</tt></b> keyword allows indicating that
+    a nonterminal symbol should be replaced with its definition at every
+    use site. This offers a second macro-expansion mechanism.
+    Together, these expansion mechanisms help write concise and elegant
+    grammars, while avoiding LR(1) conflicts. In other words, they extend
+    Menhir's expressive power <b>far beyond LR(1)</b>,
+    while retaining the attractive features of LR(1):
+    determinism, performance, guaranteed unambiguity.
+
+  </li><li>
+
+    In <tt>--table</tt> mode only, Menhir supports <b>incremental parsing</b>.
+    This means that the state of the parser can be saved at any point (at no
+    cost) and that parsing can later be resumed from a saved state.
+    Furthermore, Menhir offers an <b>inspection API</b> which allows the
+    parser's current state and stack to be examined by the user. This opens
+    the door to a variety of advanced uses, including error explanation, error
+    recovery, context-dependent lexical analysis, and so on.
+
+  </li><li>
+
+    Menhir offers a set of tools for building a (complete, irredundant)
+    set of invalid input sentences, mapping each such sentence to a hand-written
+    error message, and maintaining this mapping as the grammar evolves.
+    Thus, <b>a generated parser can produce good syntax error messages</b>.
+
+  </li><li>
+
+    Menhir has a <a href="https://coq.inria.fr">Coq</a> back-end, which
+    produces parsers whose correctness and completeness with respect to the
+    grammar can be <b>verified by Coq</b>.
+
+  </li><li>
+
+    Menhir offers an <b>interpreter</b> that helps debug grammars interactively.
+
+  </li><li>
+
+    Menhir allows grammar specifications to be <b>split</b> over multiple files.
+    It also allows several grammars to share a single set of tokens.
+
+  </li><li>
+
+    Menhir produces <b>reentrant</b> parsers.
+
+  </li><li>
+
+    Menhir is able to produce parsers that are <b>parameterized</b> by OCaml modules.
+
+  </li><li>
+
+    Instead of referring to semantic values via keywords: <tt>$1</tt>, <tt>$2</tt>,
+    etc., Menhir allows semantic values to be explicitly <b>named</b>. In fact,
+    Menhir now has
+    <a href="https://gitlab.inria.fr/fpottier/menhir/blob/master/doc/new-rule-syntax-blog-post.md">fairly nice syntax</a>
+    for describing grammars.
+
+  </li>
+</ul>
+
+</body>
 </html>

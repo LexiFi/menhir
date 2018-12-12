@@ -2200,12 +2200,12 @@ This mechanism allows associating pairs of positions with terminal symbols. If
 desired, \menhir automatically extends it to nonterminal symbols as well. That
 is, it offers a mechanism for associating pairs of positions with terminal or
 nonterminal symbols. This is done by making a set of keywords available to
-semantic actions (\fref{fig:pos}). Note that these keywords are
+semantic actions (\fref{fig:pos}). These keywords are
 \emph{not} available outside of a semantic action:
 in particular, they cannot be used within an \ocaml header.
-Note also that \ocaml's standard library module \texttt{Parsing} is
-deprecated. The functions that it offers \emph{can} be called, but will return
-dummy positions.
+
+\ocaml's standard library module \texttt{Parsing} is deprecated. The functions
+that it offers \emph{can} be called, but will return dummy positions.
 
 We remark that, if the current production has an empty right-hand side, then
 \verb+$startpos+ and \verb+$endpos+ are equal, and (by convention) are the end
@@ -4350,16 +4350,28 @@ value (i.e., either \texttt{true} or \texttt{false}), which indicates whether
 % TEMPORARY idéalement, il faudrait documenter la différence de comportement
 % sur les réductions par défaut (sur des symboles autres que #).
 
+Roughly speaking, Menhir is 90\% compatible with \ocamlyacc. Legacy \ocamlyacc
+grammar specifications are accepted and compiled by Menhir. The resulting
+parsers run and produce correct parse trees. However, parsers that explicitly
+invoke functions in the module \texttt{Parsing} behave slightly incorrectly.
+For instance, the functions that provide access to positions return a dummy
+position when invoked by a Menhir parser. Porting a grammar specification from
+ocamlyacc to Menhir requires replacing all calls to \texttt{Parsing} with new
+Menhir-specific keywords (\sref{sec:positions}).
+
 Here is an incomplete list of the differences between \ocamlyacc and \menhir.
 The list is roughly sorted by decreasing order of importance.
 
 \begin{itemize}
 
-\item \menhir allows the definition of a nonterminal symbol to be parameterized by other
-      (terminal or nonterminal) symbols (\sref{sec:templates}). Furthermore, it offers a library of
-      standard parameterized definitions (\sref{sec:library}), including options,
-      sequences, and lists. It offers some support for EBNF syntax,
-      via the \dquestion, \dplus, and \dstar modifiers.
+\item \menhir allows the definition of a nonterminal symbol to be
+  parameterized (\sref{sec:templates}). A formal parameter can be instantiated
+  with a terminal symbol, a nonterminal symbol, or an anonymous rule
+  (\sref{sec:actual}). A library of standard parameterized definitions
+  (\sref{sec:library}), including options, sequences, and lists, is bundled
+  with Menhir. EBNF syntax is supported: the modifiers \dquestion, \dplus, and
+  \dstar are sugar for options, nonempty lists, and arbitrary lists
+  (\fref{fig:sugar}).
 
 \item \ocamlyacc only accepts LALR(1) grammars. \menhir accepts LR(1) grammars,
       thus avoiding certain artificial conflicts.
@@ -4374,6 +4386,10 @@ The list is roughly sorted by decreasing order of importance.
 \item \menhir offers an incremental API (in \otable mode only) (\sref{sec:incremental}). This
           means that the state of the parser can be saved at any point (at no
           cost) and that parsing can later be resumed from a saved state.
+
+\item \menhir offers a set of tools for building a (complete, irredundant)
+  set of invalid input sentences, mapping each such sentence to a (hand-written)
+  error message, and maintaining this set as the grammar evolves (\sref{sec:errors:new}).
 
 \item In \ocoq mode, \menhir produces a parser whose correctness and
   completeness with respect to the grammar can be checked by Coq (\sref{sec:coq}).
@@ -4434,9 +4450,9 @@ The list is roughly sorted by decreasing order of importance.
 % \item \ocamlyacc allows nonterminal start symbols to start with an uppercase
 %       letter, and produces invalid \ocaml code in that case. \menhir disallows this.
 
-\item \ocamlyacc ignores semicolons and commas everywhere. \menhir also ignores
-      semicolons everywhere, but treats commas as significant. Commas are optional
-      within \dtoken declarations.
+\item \ocamlyacc ignores semicolons and commas everywhere. \menhir regards
+      semicolons and commas as significant, and allows them, or requires them,
+      in certain well-defined places.
 
 % \item \ocamlyacc ignores multiple definitions of a token, even when two of them are at
 %       different types. \menhir rejects this.

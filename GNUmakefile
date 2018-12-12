@@ -104,12 +104,12 @@ headache:
 
 BRANCH := release-branch-$(DATE)
 
-# The documentation files $(DOC) are copied to the directory $(LOG) on the
-# master branch, for the record. This allows us to easily access all of the
-# documentation for earlier versions of Menhir.
+# The documentation files $(DOC) are copied to the directory $(RELEASE) on the
+# master branch. They are also copied to the directory $(WWW).
 
 DOC     := doc/manual.pdf doc/manual.html doc/manual*.png
 RELEASE := releases/$(DATE)
+WWW     := www
 
 # Prior to making a release, one should run [make test],
 # then [make pin] and [make -C demos].
@@ -187,8 +187,12 @@ release:
 	@ git checkout master
 # Commit a copy of the manual *in the master branch* in releases/.
 	@ echo "Committing a copy of the documentation..."
-	@ cd $(RELEASE)/doc && git add -f *
-	@ git commit -m "Saved documentation for release $(DATE)."
+	@ cd $(RELEASE) && git add -f $(DOC)
+	@ echo "Publishing the documentation online..."
+	@ cd $(WWW) && git rm -rf doc
+	@ cd $(WWW) && cp -r ../$(RELEASE)/doc .
+	@ cd $(WWW) && git add $(DOC)
+	@ git commit -m "Saved and published documentation for release $(DATE)."
 # Done.
 	@ echo "Done."
 	@ echo "If happy, please type:"
