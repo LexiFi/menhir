@@ -161,7 +161,7 @@ let print_semantic_action f g branch =
               let prop = StringMap.find symbol g.tokens in
               prop.tk_ocamltype = None
             with Not_found ->
-              false
+              symbol = "error"
           in
           (* Define the variable [id] as a synonym for [$(i+1)]. *)
           (* As an exception to this rule, if [symbol] is a terminal symbol

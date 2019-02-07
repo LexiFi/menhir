@@ -1,6 +1,6 @@
 # Changes
 
-## 2018/11/XX
+## 2019/02/XX
 
 * Relax the syntax of point-free actions to allow `< >` (with arbitrary
   whitespace inside the angle brackets) instead of just `<>`.
@@ -9,6 +9,11 @@
 * When a cycle of `%inline` nonterminal symbols is encountered,
   the error message now shows the entire cycle,
   as opposed to just one symbol that participates in the cycle.
+
+* Fix the treatment of the `error` token when printing the grammar for
+  `ocamlyacc`. Its semantic value must not be referred to; a unit value
+  must be used instead. The switch `--only-preprocess-for-ocamlyacc`
+  remains undocumented. (Reported by kris.)
 
 ## 2018/11/13
 
