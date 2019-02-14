@@ -15,6 +15,7 @@
 From Coq Require Import Streams List Syntax Equality.
 From MenhirLib Require Import Alphabet.
 From MenhirLib Require Grammar Automaton Interpreter.
+From Coq.ssr Require Import ssreflect.
 
 Module Make(Import A:Automaton.T) (Import Inter:Interpreter.T A).
 
@@ -27,7 +28,7 @@ Section Init.
 
 Variable init:initstate.
 
-(** [word_has_stack_semantics] relates a word with a state, stating that the
+(** [word_has_stack_semantics] relates a word with a stack, stating that the
     word is a concatenation of words that have the semantic values stored in
     the stack. **)
 Inductive word_has_stack_semantics:
@@ -38,183 +39,117 @@ Inductive word_has_stack_semantics:
       word_has_stack_semantics wordq stackq ->
 
     forall (wordt:list token) (s:noninitstate)
-           (semantic_valuet:_),
-      inhabited (parse_tree (last_symb_of_non_init_state s) wordt semantic_valuet) ->
+           (pt:parse_tree (last_symb_of_non_init_state s) wordt),
 
     word_has_stack_semantics
-       (wordq++wordt) (existT noninitstate_type s semantic_valuet::stackq).
-
-Lemma pop_invariant_converter:
-  forall A symbols_to_pop symbols_popped,
-  arrows_left (map symbol_semantic_type (rev_append symbols_to_pop symbols_popped)) A =
-  arrows_left (map symbol_semantic_type symbols_popped)
-    (arrows_right A (map symbol_semantic_type symbols_to_pop)).
-Proof.
-intros.
-unfold arrows_right, arrows_left.
-rewrite rev_append_rev, map_app, map_rev, fold_left_app.
-apply f_equal.
-rewrite <- fold_left_rev_right, rev_involutive.
-reflexivity.
-Qed.
+       (wordq++wordt) (existT noninitstate_type s (pt_sem pt)::stackq).
 
 (** [pop] preserves the invariant **)
-Lemma pop_invariant:
-  forall (symbols_to_pop symbols_popped:list symbol)
-         (stack_cur:stack)
-         (A:Type)
-         (action:arrows_left (map symbol_semantic_type (rev_append symbols_to_pop symbols_popped)) A),
-  forall word_stack word_popped,
-  forall sem_popped,
-    word_has_stack_semantics word_stack stack_cur ->
-    inhabited (parse_tree_list symbols_popped word_popped sem_popped) ->
-    let action' := eq_rect _ (fun x=>x) action _ (pop_invariant_converter _ _ _) in
-    match pop symbols_to_pop stack_cur (uncurry action' sem_popped) with
-      | OK (stack_new, sem) =>
-          exists word1res word2res sem_full,
-            (word_stack = word1res ++ word2res)%list /\
-            word_has_stack_semantics word1res stack_new /\
-            sem = uncurry action sem_full /\
-            inhabited (
-              parse_tree_list (rev_append symbols_to_pop symbols_popped) (word2res++word_popped) sem_full)
-      | Err => True
-    end.
+Lemma pop_spec_ptl A symbols_to_pop action word_stk stk (res : A) stk' :
+  pop_spec symbols_to_pop stk action stk' res ->
+  word_has_stack_semantics word_stk stk ->
+  exists word_stk' word_res (ptl:parse_tree_list symbols_to_pop word_res),
+    (word_stk' ++ word_res = word_stk)%list /\
+    word_has_stack_semantics word_stk' stk' /\
+    ptl_sem ptl action = res.
 Proof.
-induction symbols_to_pop; intros; unfold pop; fold pop.
-exists word_stack, ([]:list token), sem_popped; intuition.
-f_equal.
-apply JMeq_eq, JMeq_eqrect with (P:=(fun x => x)).
-destruct stack_cur as [|[]]; eauto.
-destruct (compare_eqdec (last_symb_of_non_init_state x) a); eauto.
-destruct e; simpl.
-dependent destruction H.
-destruct H0, H1. apply (Cons_ptl X), inhabits in X0.
-specialize (IHsymbols_to_pop _ _ _ action0 _ _ _ H X0).
-match goal with
-  IHsymbols_to_pop:match ?p1 with Err => _ | OK _ => _ end |- match ?p2 with Err => _ | OK _ => _ end =>
-    replace p2 with p1; [destruct p1 as [|[]]|]; intuition
-end.
-destruct IHsymbols_to_pop as [word1res [word2res [sem_full []]]]; intuition; subst.
-exists word1res.
-eexists.
-exists sem_full.
-intuition.
-rewrite <- app_assoc; assumption.
-simpl; f_equal; f_equal.
-apply JMeq_eq.
-etransitivity.
-apply JMeq_eqrect with (P:=(fun x => x)).
-symmetry.
-apply JMeq_eqrect with (P:=(fun x => x)).
+  intros Hspec. revert word_stk.
+  induction Hspec as [stk sem|symbols_to_pop st stk action sem stk' res Hspec IH];
+    intros word_stk Hword_stk.
+  - exists word_stk, [], Nil_ptl. rewrite -app_nil_end. eauto.
+  - inversion Hword_stk. simpl_existTs. subst.
+    edestruct IH as (word_stk' & word_res & ptl & ? & Hword_stk'' & ?); [eassumption|].
+    subst. eexists word_stk', (word_res ++ _)%list, (Cons_ptl ptl _).
+    split; [|split]=>//. rewrite app_assoc //.
 Qed.
 
 (** [reduce_step] preserves the invariant **)
-Lemma reduce_step_invariant (stack:stack) (prod:production):
-  forall word buffer, word_has_stack_semantics word stack ->
-  match reduce_step init stack prod buffer with
-    | OK (Accept_sr sem buffer_new) =>
-      buffer = buffer_new /\
-      inhabited (parse_tree (NT (start_nt init)) word sem)
-    | OK (Progress_sr stack_new buffer_new) =>
-      buffer = buffer_new /\
-      word_has_stack_semantics word stack_new
-    | Err | OK Fail_sr => True
+Lemma reduce_step_invariant (stk:stack) (prod:production) Hv Hi word buffer :
+  word_has_stack_semantics word stk ->
+  match reduce_step init stk prod buffer Hv Hi with
+  | Accept_sr sem buffer_new =>
+    exists pt : parse_tree (NT (start_nt init)) word,
+    buffer = buffer_new /\ pt_sem pt = sem
+  | Progress_sr stk' buffer_new =>
+    buffer = buffer_new /\ word_has_stack_semantics word stk'
+  | Fail_sr => True
   end.
-Proof with eauto.
-intros.
-unfold reduce_step.
-pose proof (pop_invariant (prod_rhs_rev prod) [] stack (symbol_semantic_type (NT (prod_lhs prod)))).
-revert H0.
-generalize (pop_invariant_converter (symbol_semantic_type (NT (prod_lhs prod))) (prod_rhs_rev prod) []).
-rewrite <- rev_alt.
-intros.
-specialize (H0 (prod_action prod) _ [] () H (inhabits Nil_ptl)).
-match goal with H0:let action' := ?a in _ |- _ => replace a with (prod_action' prod) in H0 end.
-simpl in H0.
-destruct (pop (prod_rhs_rev prod) stack (prod_action' prod)) as [|[]]; intuition.
-destruct H0 as [word1res [word2res [sem_full]]]; intuition.
-destruct H4; apply Non_terminal_pt, inhabits in X.
-match goal with X:inhabited (parse_tree _ _ ?u) |- _ => replace u with s0 in X end.
-clear sem_full H2.
-simpl; destruct (goto_table (state_of_stack init s) (prod_lhs prod)) as [[]|]; intuition; subst.
-rewrite app_nil_r in X; revert s0 X; rewrite e0; intro; simpl.
-constructor...
-destruct s; intuition.
-destruct (compare_eqdec (prod_lhs prod) (start_nt init)); intuition.
-rewrite app_nil_r in X.
-rewrite <- e0.
-inversion H0.
-destruct X; constructor...
-apply JMeq_eq.
-etransitivity.
-apply JMeq_eqrect with (P:=(fun x => x)).
-symmetry.
-apply JMeq_eqrect with (P:=(fun x => x)).
+Proof.
+  intros Hword_stk. unfold reduce_step.
+  match goal with
+  | |- context [pop_state_valid init ?stp stk ?x1 ?x2 ?x3 ?x4 ?x5] =>
+    generalize (pop_state_valid init stp stk x1 x2 x3 x4 x5)
+  end.
+  destruct pop as [stk' sem] eqn:Hpop=>/= Hv'.
+  apply pop_spec_ok in Hpop. apply pop_spec_ptl with (word_stk := word) in Hpop=>//.
+  destruct Hpop as (word1 & word2 & ptl & <- & Hword1 & <-).
+  match goal with | |- context [proj2 Hv ?x1 ?x2] => generalize (proj2 Hv x1 x2) end.
+  destruct goto_table as [[st' EQ]|].
+  - intros _. split=>//.
+    change (ptl_sem ptl (prod_action prod)) with (pt_sem (Non_terminal_pt prod ptl)).
+    generalize (Non_terminal_pt prod ptl). rewrite ->EQ. intros pt. by constructor.
+  - intros Hstk'. destruct Hword1; [|by destruct Hstk'].
+    destruct reduce_step_subproof0. exists (Non_terminal_pt prod ptl). by split.
 Qed.
 
 (** [step] preserves the invariant **)
-Lemma step_invariant (stack:stack) (buffer:Stream token):
-  forall buffer_tmp,
-  (exists word_old,
-    buffer = word_old ++ buffer_tmp /\
-    word_has_stack_semantics word_old stack) ->
-  match step init stack buffer_tmp with
-    | OK (Accept_sr sem buffer_new) =>
-      exists word_new,
-        buffer = word_new ++ buffer_new /\
-        inhabited (parse_tree (NT (start_nt init)) word_new sem)
-    | OK (Progress_sr stack_new buffer_new) =>
-      exists word_new,
-        buffer = word_new ++ buffer_new /\
-        word_has_stack_semantics word_new stack_new
-    | Err | OK Fail_sr => True
+Lemma step_invariant stk word (buffer:Stream token) safe Hi :
+  word_has_stack_semantics word stk ->
+  match step safe init stk buffer Hi with
+  | Accept_sr sem buffer_new =>
+    exists word_new (pt:parse_tree (NT (start_nt init)) word_new),
+      word ++ buffer = word_new ++ buffer_new /\
+      pt_sem pt = sem
+  | Progress_sr stk_new buffer_new =>
+    exists word_new,
+      word ++ buffer = word_new ++ buffer_new /\
+      word_has_stack_semantics word_new stk_new
+  | Fail_sr => True
   end.
-Proof with eauto.
-intros.
-destruct H, H.
-unfold step.
-destruct (action_table (state_of_stack init stack)).
-pose proof (reduce_step_invariant stack p x buffer_tmp).
-destruct (reduce_step init stack p buffer_tmp) as [|[]]; intuition; subst...
-destruct buffer_tmp.
-unfold Streams.hd.
-destruct t.
-destruct (l x0); intuition.
-exists (x ++ [existT (fun t => symbol_semantic_type (T t)) x0 s])%list.
-split.
-now rewrite <- app_str_app_assoc; intuition.
-apply Cons_stack_whss; intuition.
-destruct e; simpl.
-now exact (inhabits (Terminal_pt _ _)).
-match goal with |- (match reduce_step init stack p ?buff with Err => _ | OK _ => _ end) =>
-  pose proof (reduce_step_invariant stack p x buff);
-  destruct (reduce_step init stack p buff) as [|[]]; intuition; subst
-end...
+Proof.
+  intros Hword_stk. unfold step.
+  generalize (reduce_ok safe (state_of_stack init stk)).
+  destruct action_table as [prod|awt].
+  - intros Hv. apply (reduce_step_invariant stk prod Hv Hi word buffer) in Hword_stk.
+    destruct reduce_step=>//.
+    + destruct Hword_stk as (pt & <- & <-); eauto.
+    + destruct Hword_stk as [<- ?]; eauto.
+  - destruct buffer as [[term sem] buffer]=>/=.
+    move=> /(_ term) Hv. destruct (awt term) as [st EQ|prod|]=>//.
+    + eexists _. split; [by apply app_str_app_assoc with (l2 := [_])|].
+      change sem with (pt_sem (Terminal_pt term sem)) at 2.
+      generalize (Terminal_pt term sem).
+      unfold token.
+      generalize [existT (fun t => symbol_semantic_type (T t)) term sem].
+      rewrite -> EQ=>word' pt /=. by constructor.
+    + apply (reduce_step_invariant stk prod Hv Hi word
+                 (Cons (existT _ term sem) buffer)) in Hword_stk.
+      destruct reduce_step=>//.
+      * destruct Hword_stk as (pt & <- & <-); eauto.
+      * destruct Hword_stk as [<- ?]; eauto.
 Qed.
 
 (** The interpreter is correct : if it returns a semantic value, then the input
     word has this semantic value.
 **)
-Theorem parse_correct buffer n_steps:
-  match parse init buffer n_steps with
-    | OK (Parsed_pr sem buffer_new) =>
-      exists word_new,
-        buffer = word_new ++ buffer_new /\
-        inhabited (parse_tree (NT (start_nt init)) word_new sem)
-    | _ => True
+Theorem parse_correct safe buffer n_steps:
+  match parse safe init buffer n_steps with
+  | Parsed_pr sem buffer_new =>
+    exists word_new (pt:parse_tree (NT (start_nt init)) word_new),
+      buffer = word_new ++ buffer_new /\
+      pt_sem pt = sem
+  | _ => True
   end.
 Proof.
-unfold parse.
-assert (exists w, buffer = w ++ buffer /\ word_has_stack_semantics w []).
-exists ([]:list token); intuition.
-now apply Nil_stack_whss.
-revert H.
-generalize ([]:stack), buffer at 2 3.
-induction n_steps; simpl; intuition.
-pose proof (step_invariant _ _ _ H).
-destruct (step init s buffer0); simpl; intuition.
-destruct s0; intuition.
-apply IHn_steps; intuition.
+  unfold parse.
+  change buffer with ([] ++ buffer) at 2. revert buffer. generalize Nil_stack_whss.
+  generalize (parse_subproof init).
+  generalize (@nil token). generalize (@nil (sigT noninitstate_type)).
+  induction n_steps as [|n_steps IH]=>//= stk word Hi Hword_stk buffer.
+  apply step_invariant with (buffer := buffer) (safe := safe) (Hi := Hi) in Hword_stk.
+  generalize (step_stack_invariant_preserved safe init stk (buffer) Hi).
+  destruct step as [| |stk' buffer']=>//. clear Hi. move=> /(_ _ _ eq_refl) Hi.
+  destruct Hword_stk as (word' & -> & Hword'). by eapply IH.
 Qed.
 
 End Init.

@@ -78,13 +78,13 @@ Module Type T.
      and semantic action. The semantic actions are given in the form
      of curryfied functions, that take arguments in the reverse order. **)
   Parameter prod_lhs: production -> nonterminal.
+  (* The RHS of a production is given in reversed order, so that symbols  *)
   Parameter prod_rhs_rev: production -> list symbol.
   Parameter prod_action:
     forall p:production,
-      arrows_left
-        (map symbol_semantic_type (rev (prod_rhs_rev p)))
-        (symbol_semantic_type (NT (prod_lhs p))).
-
+      arrows_right
+        (symbol_semantic_type (NT (prod_lhs p)))
+        (map symbol_semantic_type (prod_rhs_rev p)).
 End T.
 
 Module Defs(Import G:T).
@@ -92,71 +92,67 @@ Module Defs(Import G:T).
   (** A token is a terminal and a semantic value for this terminal. **)
   Definition token := {t:terminal & symbol_semantic_type (T t)}.
 
-  (** A grammar creates a relation between word of tokens and semantic values.
-     This relation is parametrized by the head symbol. It defines the
-     "semantics" of the grammar. This relation is defined by a notion of
-     parse tree. **)
-  Inductive parse_tree:
-    forall (head_symbol:symbol) (word:list token)
-      (semantic_value:symbol_semantic_type head_symbol), Type :=
 
-  (** A single token has its semantic value as semantic value, for the
-     corresponding terminal as head symbol. **)
+  (** The semantics of a grammar is defined in two stages. First, we
+    define the notion of parse tree, which represents one way of
+    recognizing a word with a head symbol. Semantic values are stored
+    at the leaves.
+
+      This notion is defined in two mutually recursive flavours:
+    either for a single head symbol, or for a list of head symbols. *)
+  Inductive parse_tree:
+    forall (head_symbol:symbol) (word:list token), Type :=
+
+  (** Parse tree for a terminal symbol. *)
   | Terminal_pt:
     forall (t:terminal) (sem:symbol_semantic_type (T t)),
-      parse_tree (T t)
-      [existT (fun t => symbol_semantic_type (T t)) t sem] sem
+      parse_tree (T t) [existT (fun t => symbol_semantic_type (T t)) t sem]
 
-  (** Given a production, if a word has a list of semantic values for the
-     right hand side as head symbols, then this word has the semantic value
-     given by the semantic action of the production for the left hand side
-     as head symbol.**)
+  (** Parse tree for a non-terminal symbol.  *)
   | Non_terminal_pt:
-    forall {p:production} {word:list token}
-      {semantic_values:tuple (map symbol_semantic_type (rev (prod_rhs_rev p)))},
-      parse_tree_list (rev (prod_rhs_rev p)) word semantic_values ->
-      parse_tree (NT (prod_lhs p)) word (uncurry (prod_action p) semantic_values)
+    forall (prod:production) {word:list token},
+      parse_tree_list (prod_rhs_rev prod) word ->
+      parse_tree (NT (prod_lhs prod)) word
 
-  (** Basically the same relation as before, but for list of head symbols (ie.
-     We are building a forest of syntax trees. It is mutually recursive with the
-     previous relation **)
+  (* Note : the list head_symbols_rev is reversed. *)
   with parse_tree_list:
-    forall (head_symbols:list symbol) (word:list token)
-      (semantic_values:tuple (map symbol_semantic_type head_symbols)),
-      Type :=
+    forall (head_symbols_rev:list symbol) (word:list token), Type :=
 
-  (** The empty word has [()] as semantic for [[]] as head symbols list **)
-  | Nil_ptl: parse_tree_list [] [] ()
+  | Nil_ptl: parse_tree_list [] []
 
-  (** The cons of the semantic value for one head symbol and for a list of head
-     symbols **)
   | Cons_ptl:
-  (** The semantic for the head **)
-    forall {head_symbolt:symbol} {wordt:list token}
-      {semantic_valuet:symbol_semantic_type head_symbolt},
-      parse_tree head_symbolt wordt semantic_valuet ->
+    forall {head_symbolsq:list symbol} {wordq:list token},
+      parse_tree_list head_symbolsq wordq ->
 
-  (** and the semantic for the tail **)
-    forall {head_symbolsq:list symbol} {wordq:list token}
-      {semantic_valuesq:tuple (map symbol_semantic_type head_symbolsq)},
-      parse_tree_list head_symbolsq wordq semantic_valuesq ->
+    forall {head_symbolt:symbol} {wordt:list token},
+      parse_tree head_symbolt wordt ->
 
-  (** give the semantic of the cons **)
-      parse_tree_list
-        (head_symbolt::head_symbolsq)
-        (wordt++wordq)
-        (semantic_valuet, semantic_valuesq).
+      parse_tree_list (head_symbolt::head_symbolsq) (wordq++wordt).
 
+  (** We can now finish the definition of the semantics of a grammar,
+    by giving the semantic value assotiated with a parse tree. *)
+  Fixpoint pt_sem {head_symbol word} (tree:parse_tree head_symbol word) :
+    symbol_semantic_type head_symbol :=
+    match tree with
+    | Terminal_pt _ sem => sem
+    | Non_terminal_pt prod ptl => ptl_sem ptl (prod_action prod)
+    end
+  with ptl_sem {A head_symbols word} (tree:parse_tree_list head_symbols word) :
+    arrows_right A (map symbol_semantic_type head_symbols) -> A :=
+    match tree with
+    | Nil_ptl => fun act => act
+    | Cons_ptl q t => fun act => ptl_sem q (act (pt_sem t))
+    end.
 
-  Fixpoint pt_size {head_symbol word sem} (tree:parse_tree head_symbol word sem) :=
+  Fixpoint pt_size {head_symbol word} (tree:parse_tree head_symbol word) :=
     match tree with
       | Terminal_pt _ _ => 1
-      | Non_terminal_pt l => S (ptl_size l)
+      | Non_terminal_pt _ l => S (ptl_size l)
     end
-  with ptl_size {head_symbols word sems} (tree:parse_tree_list head_symbols word sems) :=
+  with ptl_size {head_symbols word} (tree:parse_tree_list head_symbols word) :=
     match tree with
       | Nil_ptl => 0
-      | Cons_ptl t q =>
+      | Cons_ptl q t =>
          pt_size t + ptl_size q
     end.
 End Defs.

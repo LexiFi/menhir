@@ -12,8 +12,7 @@
 (*                                                                     *)
 (* *********************************************************************)
 
-From MenhirLib Require Grammar Automaton Interpreter_safe
-                       Interpreter_correct Interpreter_complete.
+From MenhirLib Require Grammar Automaton Interpreter_correct Interpreter_complete.
 From Coq Require Import Syntax.
 
 Module Make(Export Aut:Automaton.T).
@@ -21,68 +20,55 @@ Export Aut.Gram.
 Export Aut.GramDefs.
 
 Module Import Inter := Interpreter.Make Aut.
-Module Safe := Interpreter_safe.Make Aut Inter.
 Module Correct := Interpreter_correct.Make Aut Inter.
 Module Complete := Interpreter_complete.Make Aut Inter.
 
 Definition complete_validator:unit->bool := Complete.Valid.is_complete.
-Definition safe_validator:unit->bool := Safe.Valid.is_safe.
+Definition safe_validator:unit->bool := ValidSafe.is_safe.
 Definition parse (safe:safe_validator ()=true) init n_steps buffer : parse_result init:=
-  Safe.parse_with_safe (Safe.Valid.is_safe_correct safe) init buffer n_steps.
+  parse (ValidSafe.is_safe_correct safe) init buffer n_steps.
 
 (** Correction theorem. **)
 Theorem parse_correct
   (safe:safe_validator ()= true) init n_steps buffer:
   match parse safe init n_steps buffer with
     | Parsed_pr sem buffer_new =>
-      exists word,
-        buffer = word ++ buffer_new /\ inhabited (parse_tree (NT (start_nt init)) word sem)
+      exists word (pt : parse_tree (NT (start_nt init)) word),
+        buffer = word ++ buffer_new /\
+        pt_sem pt = sem
     | _ => True
   end.
-Proof.
-unfold parse, Safe.parse_with_safe.
-pose proof (Correct.parse_correct init buffer n_steps).
-generalize (Safe.parse_no_err (Safe.Valid.is_safe_correct safe) init buffer n_steps).
-destruct (Inter.parse init buffer n_steps); intros.
-now destruct (n (eq_refl _)).
-now destruct p; trivial.
-Qed.
+Proof. apply Correct.parse_correct. Qed.
 
 (** Completeness theorem. **)
 Theorem parse_complete
-  (safe:safe_validator () = true) init n_steps word buffer_end sem:
+  (safe:safe_validator () = true) init n_steps word buffer_end:
   complete_validator () = true ->
-  forall tree:parse_tree (NT (start_nt init)) word sem,
+  forall tree:parse_tree (NT (start_nt init)) word,
   match parse safe init n_steps (word ++ buffer_end) with
-    | Fail_pr => False
-    | Parsed_pr sem_res buffer_end_res =>
-      sem_res = sem /\ buffer_end_res = buffer_end /\ pt_size tree <= n_steps
-    | Timeout_pr => n_steps < pt_size tree
+  | Fail_pr => False
+  | Parsed_pr sem_res buffer_end_res =>
+    sem_res = pt_sem tree /\ buffer_end_res = buffer_end /\ pt_size tree <= n_steps
+  | Timeout_pr => n_steps < pt_size tree
   end.
 Proof.
-intros.
-unfold parse, Safe.parse_with_safe.
-pose proof (Complete.parse_complete (Complete.Valid.is_complete_correct H) init _ buffer_end _ tree n_steps).
-generalize (Safe.parse_no_err (Safe.Valid.is_safe_correct safe) init (word ++ buffer_end) n_steps).
-destruct (Inter.parse init (word ++ buffer_end) n_steps); intros.
-now destruct (n eq_refl).
-now exact H0.
+  intros. now apply Complete.parse_complete, Complete.Valid.is_complete_correct.
 Qed.
 
 (** Unambiguity theorem. **)
 Theorem unambiguity:
   safe_validator () = true -> complete_validator () = true -> inhabited token ->
   forall init word,
-  forall sem1 (tree1:parse_tree (NT (start_nt init)) word sem1),
-  forall sem2 (tree2:parse_tree (NT (start_nt init)) word sem2),
-  sem1 = sem2.
+  forall (tree1 tree2:parse_tree (NT (start_nt init)) word),
+    pt_sem tree1 = pt_sem tree2.
 Proof.
-intros.
-destruct H1.
-pose proof (parse_complete H init (pt_size tree1) word (Streams.const X) sem1) H0 tree1.
-pose proof (parse_complete H init (pt_size tree1) word (Streams.const X) sem2) H0 tree2.
-destruct (parse H init (pt_size tree1) (word ++ Streams.const X)); intuition.
-rewrite <- H3, H1; reflexivity.
+  intros Hsafe Hcomp [tok] init word tree1 tree2.
+  assert (Hcomp1 := parse_complete Hsafe init (pt_size tree1) word (Streams.const tok)
+                      Hcomp tree1).
+  assert (Hcomp2 := parse_complete Hsafe init (pt_size tree1) word (Streams.const tok)
+                      Hcomp tree2).
+  destruct parse; auto with exfalso zarith.
+  destruct Hcomp1 as [-> _], Hcomp2 as [-> _]. reflexivity.
 Qed.
 
 End Make.

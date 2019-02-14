@@ -61,8 +61,8 @@ Fixpoint first_word_set (word:list symbol) :=
     | t::q =>
       if nullable_symb t then
         TerminalSet.union (first_symb_set t) (first_word_set q)
-        else
-          first_symb_set t
+      else
+        first_symb_set t
   end.
 
 (** Small helper for finding the part of an item that is after the dot. **)
@@ -157,29 +157,28 @@ Qed.
 (** The nullable predicate is a fixpoint : it is correct. **)
 Definition nullable_stable:=
   forall p:production,
-    nullable_word (rev (prod_rhs_rev p)) = true ->
+    nullable_word (prod_rhs_rev p) = true ->
     nullable_nterm (prod_lhs p) = true.
 
 Definition is_nullable_stable (_:unit) :=
   forallb (fun p:production =>
-    implb (nullable_word (rev' (prod_rhs_rev p))) (nullable_nterm (prod_lhs p)))
+    implb (nullable_word (prod_rhs_rev p)) (nullable_nterm (prod_lhs p)))
     all_list.
 
 Property is_nullable_stable_correct :
   is_nullable_stable () = true -> nullable_stable.
 Proof.
-unfold is_nullable_stable, nullable_stable.
-intros.
-rewrite forallb_forall in H.
-specialize (H p (all_list_forall p)).
-unfold rev' in H; rewrite <- rev_alt in H.
-rewrite H0 in H; intuition.
+  unfold is_nullable_stable, nullable_stable.
+  intros.
+  rewrite forallb_forall in H.
+  specialize (H p (all_list_forall p)).
+  rewrite H0 in H; intuition.
 Qed.
 
 (** The first predicate is a fixpoint : it is correct. **)
 Definition first_stable:=
   forall (p:production),
-    TerminalSet.Subset (first_word_set (rev (prod_rhs_rev p)))
+    TerminalSet.Subset (first_word_set (rev' (prod_rhs_rev p)))
                        (first_nterm_set (prod_lhs p)).
 
 Definition is_first_stable (_:unit) :=
@@ -191,19 +190,18 @@ Definition is_first_stable (_:unit) :=
 Property is_first_stable_correct :
   is_first_stable () = true -> first_stable.
 Proof.
-unfold is_first_stable, first_stable.
-intros.
-rewrite forallb_forall in H.
-specialize (H p (all_list_forall p)).
-unfold rev' in H; rewrite <- rev_alt in H.
-apply TerminalSet.subset_2; intuition.
+  unfold is_first_stable, first_stable.
+  intros.
+  rewrite forallb_forall in H.
+  specialize (H p (all_list_forall p)).
+  apply TerminalSet.subset_2; intuition.
 Qed.
 
 (** The initial state has all the S=>.u items, where S is the start non-terminal **)
 Definition start_future :=
   forall (init:initstate) (t:terminal) (p:production),
     prod_lhs p = start_nt init ->
-    state_has_future init p (rev (prod_rhs_rev p)) t.
+    state_has_future init p (rev' (prod_rhs_rev p)) t.
 
 Definition is_start_future items_map :=
   forallb (fun init =>
@@ -217,20 +215,18 @@ Definition is_start_future items_map :=
 Property is_start_future_correct :
   is_start_future (items_map ()) = true -> start_future.
 Proof.
-unfold is_start_future, start_future.
-intros.
-rewrite forallb_forall in H.
-specialize (H init (all_list_forall _)).
-rewrite forallb_forall in H.
-specialize (H p (all_list_forall _)).
-rewrite <- compare_eqb_iff in H0.
-rewrite H0 in H.
-rewrite forallb_forall in H.
-specialize (H t (all_list_forall _)).
-exists 0.
-split.
-apply rev_alt.
-apply TerminalSet.mem_2; eauto.
+  unfold is_start_future, start_future.
+  intros.
+  rewrite forallb_forall in H.
+  specialize (H init (all_list_forall _)).
+  rewrite forallb_forall in H.
+  specialize (H p (all_list_forall _)).
+  rewrite <- compare_eqb_iff in H0.
+  rewrite H0 in H.
+  rewrite forallb_forall in H.
+  specialize (H t (all_list_forall _)).
+  exists 0. split; [now trivial|].
+  apply TerminalSet.mem_2; eauto.
 Qed.
 
 (** If a state contains an item of the form A->_.av[[b]], where a is a
@@ -372,13 +368,7 @@ Definition non_terminal_goto :=
         match goto_table s1 nt with
           | Some (exist _ s2 _) =>
             state_has_future s2 prod q lookahead
-          | None =>
-            forall prod fut lookahead,
-            state_has_future s1 prod fut lookahead ->
-            match fut with
-              | NT nt'::_ => nt <> nt'
-              | _ => True
-            end
+          | None => False
         end
       | _ => True
     end.
@@ -390,12 +380,7 @@ Definition is_non_terminal_goto items_map :=
         match goto_table s1 nt with
           | Some (exist _ s2 _) =>
             TerminalSet.subset lset (find_items_map items_map s2 prod (S pos))
-          | None => forallb_items items_map (fun s1' prod' pos' _ =>
-            (implb (compare_eqb s1 s1')
-            match future_of_prod prod' pos' with
-              | NT nt' :: _ => negb (compare_eqb nt nt')
-              | _ => true
-            end)%bool)
+          | None => false
         end
       | _ => true
     end).
@@ -410,26 +395,18 @@ apply (forallb_items_spec _ H _ _ _ _ H0 (fun st prod fut look =>
                                               | NT nt :: q =>
                                                 match goto_table st nt with
                                                   | Some _ => _
-                                                  | None =>
-                                                    forall p f l, state_has_future st p f l -> (_:Prop)
+                                                  | None => False
                                                 end
                                               | _ => _
                                             end)).
 intros.
 destruct (future_of_prod prod0 pos) as [|[]] eqn:?; intuition.
-destruct (goto_table st n) as [[]|].
+destruct (goto_table st n) as [[]|]; [|congruence].
 exists (S pos).
 split.
 unfold future_of_prod in *.
 rewrite Heql; reflexivity.
 apply (TerminalSet.subset_2 H2); intuition.
-intros.
-remember st in H2; revert Heqs.
-apply (forallb_items_spec _ H2 _ _ _ _ H3 (fun st' prod fut look => s = st' -> match fut return Prop with [] => _ | _ => _ end)); intros.
-rewrite <- compare_eqb_iff in H6; rewrite H6 in H5.
-destruct (future_of_prod prod1 pos0) as [|[]]; intuition.
-rewrite <- compare_eqb_iff in H7; rewrite H7 in H5.
-discriminate.
 Qed.
 
 Definition start_goto :=
@@ -464,7 +441,7 @@ Definition non_terminal_closed :=
           prod_lhs p = nt ->
           TerminalSet.In lookahead2 (first_word_set q) \/
           lookahead2 = lookahead /\ nullable_word q = true ->
-            state_has_future s1 p (rev (prod_rhs_rev p)) lookahead2
+            state_has_future s1 p (rev' (prod_rhs_rev p)) lookahead2
       | _ => True
     end.
 
@@ -485,29 +462,28 @@ Definition is_non_terminal_closed items_map :=
 Property is_non_terminal_closed_correct:
   is_non_terminal_closed (items_map ()) = true -> non_terminal_closed.
 Proof.
-unfold is_non_terminal_closed, non_terminal_closed.
-intros.
-apply (forallb_items_spec _ H _ _ _ _ H0 (fun st prod fut look =>
-                                            match fut with
-                                              | NT nt :: q => forall p l, _ -> _ -> state_has_future st _ _ _
-                                              | _ => _
-                                            end)).
-intros.
-destruct (future_of_prod prod0 pos); intuition.
-destruct s; eauto; intros.
-rewrite forallb_forall in H2.
-specialize (H2 p (all_list_forall p)).
-rewrite <- compare_eqb_iff in H3.
-rewrite H3 in H2.
-rewrite Bool.andb_true_iff in H2.
-destruct H2.
-exists 0.
-split.
-apply rev_alt.
-destruct H4 as [|[]]; subst.
-apply (TerminalSet.subset_2 H5); intuition.
-rewrite H6 in H2.
-apply (TerminalSet.subset_2 H2); intuition.
+  unfold is_non_terminal_closed, non_terminal_closed.
+  intros.
+  apply (forallb_items_spec _ H _ _ _ _ H0 (fun st prod fut look =>
+                                              match fut with
+                                                | NT nt :: q => forall p l, _ -> _ -> state_has_future st _ _ _
+                                                | _ => _
+                                              end)).
+  intros.
+  destruct (future_of_prod prod0 pos); intuition.
+  destruct s; eauto; intros.
+  rewrite forallb_forall in H2.
+  specialize (H2 p (all_list_forall p)).
+  rewrite <- compare_eqb_iff in H3.
+  rewrite H3 in H2.
+  rewrite Bool.andb_true_iff in H2.
+  destruct H2.
+  exists 0.
+  split; [now trivial|].
+  destruct H4 as [|[]]; subst.
+  apply (TerminalSet.subset_2 H5); intuition.
+  rewrite H6 in H2.
+  apply (TerminalSet.subset_2 H2); intuition.
 Qed.
 
 (** The automaton is complete **)

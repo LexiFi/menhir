@@ -37,6 +37,13 @@ Fixpoint uncurry {args:list Type} {res:Type}:
       (@uncurry q _ f t) d
   end res.
 
+Lemma arrows_left_right_map_rev_append A B l1 l2 (f : B -> Type) :
+  arrows_left (map f (rev_append l1 l2)) A =
+  arrows_left (map f l2) (arrows_right A (map f l1)).
+Proof.
+  revert l2. induction l1 as [|C l1 IH]; intros l2; [|simpl; rewrite IH]; reflexivity.
+Qed.
+
 Lemma JMeq_eqrect:
   forall (U:Type) (a b:U) (P:U -> Type) (x:P a) (e:a=b),
     eq_rect a P x b e ~= x.

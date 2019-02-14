@@ -12,7 +12,8 @@
 (*                                                                     *)
 (* *********************************************************************)
 
-From Coq Require Import Streams ProofIrrelevance Equality List Syntax Arith.
+From Coq Require Import Streams Equality List Syntax Arith.
+From Coq.ssr Require Import ssreflect.
 From MenhirLib Require Import Alphabet.
 From MenhirLib Require Grammar Automaton Interpreter Validator_complete.
 
@@ -23,8 +24,10 @@ Module Import Valid := Validator_complete.Make A.
 
 Section Completeness_Proof.
 
+Hypothesis safe: Inter.ValidSafe.safe.
 Hypothesis complete: complete.
 
+(* Properties of the automaton deduced from completeness validation. *)
 Proposition nullable_stable: nullable_stable.
 Proof. pose proof complete; unfold Valid.complete in H; intuition. Qed.
 Proposition first_stable: first_stable.
@@ -43,633 +46,741 @@ Proposition non_terminal_closed: non_terminal_closed.
 Proof. pose proof complete; unfold Valid.complete in H; intuition. Qed.
 
 (** If the nullable predicate has been validated, then it is correct. **)
-Lemma nullable_correct:
-  forall head sem word, word = [] ->
-    parse_tree head word sem -> nullable_symb head = true
-with nullable_correct_list:
-  forall heads sems word, word = [] ->
-    parse_tree_list heads word sems -> nullable_word heads = true.
-Proof with eauto.
-intros.
-destruct X.
-congruence.
-apply nullable_stable...
-intros.
-destruct X; simpl...
-apply andb_true_intro.
-apply app_eq_nil in H; destruct H; split...
+Lemma nullable_correct head word :
+  word = [] -> parse_tree head word -> nullable_symb head = true
+with nullable_correct_list heads word :
+  word = [] ->
+  parse_tree_list heads word -> nullable_word heads = true.
+Proof.
+  - destruct 2=>//. eauto using nullable_stable.
+  - intros Hword. destruct 1=>//=. destruct (app_eq_nil _ _ Hword).
+    eauto using andb_true_intro.
+Qed.
+
+(** Auxiliary lemma for first_correct.  *)
+Lemma first_word_set_app t word1 word2 :
+  TerminalSet.In t (first_word_set (word1 ++ word2)) <->
+  TerminalSet.In t (first_word_set word1) \/
+  TerminalSet.In t (first_word_set word2) /\ nullable_word (rev word1) = true.
+Proof.
+  induction word1 as [|s word1 IH]=>/=.
+  - split; [tauto|]. move=>[/TerminalSet.empty_1 ?|[? _]]//.
+  - rewrite /nullable_word forallb_app /=. destruct nullable_symb=>/=.
+    + rewrite Bool.andb_true_r. split.
+      * move=>/TerminalSet.union_1. rewrite IH.
+        move=>[?|[?|[??]]]; auto using TerminalSet.union_2, TerminalSet.union_3.
+      * destruct IH.
+        move=>[/TerminalSet.union_1 [?|?]|[??]];
+        auto using TerminalSet.union_2, TerminalSet.union_3.
+    + rewrite Bool.andb_false_r. intuition.
 Qed.
 
 (** If the first predicate has been validated, then it is correct. **)
-Lemma first_correct:
-  forall head sem word t q, word = t::q ->
-  parse_tree head word sem ->
+Lemma first_correct head word t q :
+  word = t::q ->
+  parse_tree head word ->
   TerminalSet.In (projT1 t) (first_symb_set head)
-with first_correct_list:
-  forall heads sems word t q, word = t::q ->
-  parse_tree_list heads word sems ->
-  TerminalSet.In (projT1 t) (first_word_set heads).
-Proof with eauto.
-intros.
-destruct X.
-inversion H; subst.
-apply TerminalSet.singleton_2, compare_refl...
-apply first_stable...
-intros.
-destruct X.
-congruence.
-simpl.
-case_eq wordt; intros.
-erewrite nullable_correct...
-apply TerminalSet.union_3.
-subst...
-rewrite H0 in *; inversion H; destruct H2.
-destruct (nullable_symb head_symbolt)...
-apply TerminalSet.union_2...
+with first_correct_list heads word t q :
+  word = t::q ->
+  parse_tree_list heads word ->
+  TerminalSet.In (projT1 t) (first_word_set (rev' heads)).
+Proof.
+  - intros Hword. destruct 1=>//.
+    + inversion Hword. subst. apply TerminalSet.singleton_2, compare_refl.
+    + eapply first_stable. eauto.
+  - intros Hword. destruct 1 as [|symq wordq ptl symt wordt pt]=>//=.
+    rewrite /rev' -rev_alt /= first_word_set_app /= rev_involutive rev_alt.
+    destruct wordq; [right|left].
+    + destruct nullable_symb; eauto using TerminalSet.union_2, nullable_correct_list.
+    + inversion Hword. subst. fold (rev' symq). eauto.
+Qed.
+
+(** A PTL is compatible with a stack if the top of the stack contains
+  data representing to this PTL. *)
+Fixpoint ptl_stack_compat {symbs word}
+         (stk0 : stack) (ptl : parse_tree_list symbs word) (stk : stack) : Prop :=
+  match ptl with
+  | Nil_ptl => stk0 = stk
+  | @Cons_ptl _ _ ptl sym _ pt =>
+    match stk with
+    | [] => False
+    | existT _ _ sem::stk =>
+      ptl_stack_compat stk0 ptl stk /\
+      exists e,
+        sem = eq_rect _ symbol_semantic_type (pt_sem pt) _ e
+    end
+  end.
+
+(** .. and when a PTL is compatible with a stack, then calling the pop
+  function return the semantic value of this PTL. *)
+Lemma pop_stack_compat_pop_spec {A symbs word}
+    (ptl:parse_tree_list symbs word) (stk:stack) (stk0:stack) action :
+  ptl_stack_compat stk0 ptl stk ->
+  pop_spec symbs stk action stk0 (ptl_sem (A:=A) ptl action).
+Proof.
+  revert stk. induction ptl=>stk /= Hstk.
+  - subst. constructor.
+  - destruct stk as [|[st sem] stk]=>//. destruct Hstk as [Hstk [??]]. subst.
+    simpl. constructor. eauto.
 Qed.
 
 Variable init: initstate.
+
+(** In order to prove compleness, we first fix a word to be parsed
+  together with the content of the parser at the end of the parsing. *)
 Variable full_word: list token.
 Variable buffer_end: Stream token.
-Variable full_sem: symbol_semantic_type (NT (start_nt init)).
 
+(** Completeness is proved by following the traversal of the parse
+  tree which is performed by the parser. Each step of parsing
+  correspond to one step of traversal. In order to represent the state
+  of the traversal, we define the notion of "dotted" parse tree, which
+  is a parse tree with one dot on one of its node. The place of the
+  dot represents the place of the next action to be executed.
+
+  Such a dotted parse tree is decomposed into two part: a "regular"
+  parse tree, which is the parse tree placed under the dot, and a
+  "parse tree zipper", which is the part of the parse tree placed
+  above the dot. Therefore, a parse tree zipper is a parse tree with a
+  hole. Moreover, for easier manipulation, a parse tree zipper is
+  represented "upside down". That is, the root of the parse tree is
+  actually a leaf of the zipper, while the root of the zipper is the
+  hole.
+ *)
 Inductive pt_zipper:
-  forall (hole_symb:symbol) (hole_word:list token)
-         (hole_sem:symbol_semantic_type hole_symb), Type :=
+  forall (hole_symb:symbol) (hole_word:list token), Type :=
 | Top_ptz:
-  pt_zipper (NT (start_nt init)) (full_word) (full_sem)
+  pt_zipper (NT (start_nt init)) full_word
 | Cons_ptl_ptz:
-  forall {head_symbolt:symbol}
-    {wordt:list token}
-    {semantic_valuet:symbol_semantic_type head_symbolt},
+  forall {head_symbolsq:list symbol} {wordq:list token},
+    parse_tree_list head_symbolsq wordq ->
 
-  forall {head_symbolsq:list symbol}
-    {wordq:list token}
-    {semantic_valuesq:tuple (map symbol_semantic_type head_symbolsq)},
-    parse_tree_list head_symbolsq wordq semantic_valuesq ->
+  forall {head_symbolt:symbol} {wordt:list token},
 
-    ptl_zipper (head_symbolt::head_symbolsq) (wordt++wordq)
-      (semantic_valuet,semantic_valuesq) ->
-
-    pt_zipper head_symbolt wordt semantic_valuet
+    ptl_zipper (head_symbolt::head_symbolsq) (wordq++wordt) ->
+    pt_zipper head_symbolt wordt
 with ptl_zipper:
-  forall (hole_symbs:list symbol) (hole_word:list token)
-         (hole_sems:tuple (map symbol_semantic_type hole_symbs)), Type :=
+  forall (hole_symbs:list symbol) (hole_word:list token), Type :=
 | Non_terminal_pt_ptlz:
-  forall {p:production} {word:list token}
-    {semantic_values:tuple (map symbol_semantic_type (rev (prod_rhs_rev p)))},
-    pt_zipper (NT (prod_lhs p)) word (uncurry (prod_action p) semantic_values) ->
-    ptl_zipper (rev (prod_rhs_rev p)) word semantic_values
+  forall {p:production} {word:list token},
+    pt_zipper (NT (prod_lhs p)) word ->
+    ptl_zipper (prod_rhs_rev p) word
 
 | Cons_ptl_ptlz:
-  forall {head_symbolt:symbol}
-    {wordt:list token}
-    {semantic_valuet:symbol_semantic_type head_symbolt},
-    parse_tree head_symbolt wordt semantic_valuet ->
+  forall {head_symbolsq:list symbol} {wordq:list token},
 
-  forall {head_symbolsq:list symbol}
-    {wordq:list token}
-    {semantic_valuesq:tuple (map symbol_semantic_type head_symbolsq)},
+  forall {head_symbolt:symbol} {wordt:list token},
+    parse_tree head_symbolt wordt ->
 
-  ptl_zipper (head_symbolt::head_symbolsq) (wordt++wordq)
-    (semantic_valuet,semantic_valuesq) ->
+  ptl_zipper (head_symbolt::head_symbolsq) (wordq++wordt) ->
 
-  ptl_zipper head_symbolsq wordq semantic_valuesq.
+  ptl_zipper head_symbolsq wordq.
 
-Fixpoint ptlz_cost {hole_symbs hole_word hole_sems}
-  (ptlz:ptl_zipper hole_symbs hole_word hole_sems) :=
-  match ptlz with
-    | Non_terminal_pt_ptlz ptz =>
-      ptz_cost ptz
-    | Cons_ptl_ptlz pt ptlz' =>
-      ptlz_cost ptlz'
-  end
-with ptz_cost {hole_symb hole_word hole_sem}
-  (ptz:pt_zipper hole_symb hole_word hole_sem) :=
-  match ptz with
-    | Top_ptz => 0
-    | Cons_ptl_ptz ptl ptlz' =>
-      1 + ptl_size ptl + ptlz_cost ptlz'
-  end.
-
+(** A dotted parse tree is the combination of a parse tree zipper with
+  a parse tree. It can be intwo flavors, depending on which is the next
+  action to be executed (shift or reduce). *)
 Inductive pt_dot: Type :=
-| Reduce_ptd: ptl_zipper [] [] () -> pt_dot
-| Shift_ptd:
-  forall (term:terminal) (sem: symbol_semantic_type (T term))
-    {symbolsq wordq semsq},
-    parse_tree_list symbolsq wordq semsq ->
-    ptl_zipper (T term::symbolsq) (existT (fun t => symbol_semantic_type (T t)) term sem::wordq) (sem, semsq) ->
+| Reduce_ptd: forall {prod word},
+    parse_tree_list (prod_rhs_rev prod) word ->
+    pt_zipper (NT (prod_lhs prod)) word ->
+    pt_dot
+| Shift_ptd: forall (term : terminal)
+                    (sem : symbol_semantic_type (T term)) {symbolsq wordq},
+    parse_tree_list symbolsq wordq ->
+    ptl_zipper (T term::symbolsq) (wordq++[existT _ term sem]) ->
     pt_dot.
 
-Definition ptd_cost (ptd:pt_dot) :=
-  match ptd with
-    | Reduce_ptd ptlz => ptlz_cost ptlz
-    | Shift_ptd _ _ ptl ptlz => 1 + ptl_size ptl + ptlz_cost ptlz
+(** We can compute the full semantic value of a parse tree when
+  represented as a dotted ptd. *)
+
+Fixpoint ptlz_sem {hole_symbs hole_word}
+         (ptlz:ptl_zipper hole_symbs hole_word) :
+         (forall A, arrows_right A (map symbol_semantic_type hole_symbs) -> A) ->
+         (symbol_semantic_type (NT (start_nt init))) :=
+  match ptlz with
+  | @Non_terminal_pt_ptlz prod _ ptz =>
+    fun k => ptz_sem ptz (k _ (prod_action prod))
+  | Cons_ptl_ptlz pt ptlz =>
+    fun k => ptlz_sem ptlz (fun _ f => k _ (f (pt_sem pt)))
+  end
+with ptz_sem {hole_symb hole_word}
+             (ptz:pt_zipper hole_symb hole_word):
+  symbol_semantic_type hole_symb -> symbol_semantic_type (NT (start_nt init)) :=
+  match ptz with
+  | Top_ptz => fun sem => sem
+  | Cons_ptl_ptz ptl ptlz =>
+    fun sem => ptlz_sem ptlz (fun _ f => ptl_sem ptl (f sem))
   end.
 
-Fixpoint ptlz_buffer {hole_symbs hole_word hole_sems}
-  (ptlz:ptl_zipper hole_symbs hole_word hole_sems): Stream token :=
+Definition ptd_sem (ptd : pt_dot) :=
+  match ptd with
+  | @Reduce_ptd prod _ ptl ptz =>
+    ptz_sem ptz (ptl_sem ptl (prod_action prod))
+  | Shift_ptd term sem ptl ptlz =>
+    ptlz_sem ptlz (fun _ f => ptl_sem ptl (f sem))
+  end.
+
+(** The buffer associated with a dotted parse tree corresponds to the
+  buffer left to be read by the parser when at the state represented
+  by the dotted parse tree. *)
+Fixpoint ptlz_buffer {hole_symbs hole_word}
+         (ptlz:ptl_zipper hole_symbs hole_word): Stream token :=
   match ptlz with
-    | Non_terminal_pt_ptlz ptz =>
-      ptz_buffer ptz
-    | Cons_ptl_ptlz _ ptlz' =>
-      ptlz_buffer ptlz'
+  | Non_terminal_pt_ptlz ptz =>
+    ptz_buffer ptz
+  | @Cons_ptl_ptlz _ _ _ wordt _ ptlz' =>
+    wordt ++ ptlz_buffer ptlz'
   end
-with ptz_buffer {hole_symb hole_word hole_sem}
-  (ptz:pt_zipper hole_symb hole_word hole_sem): Stream token :=
+with ptz_buffer {hole_symb hole_word}
+                (ptz:pt_zipper hole_symb hole_word): Stream token :=
   match ptz with
-    | Top_ptz => buffer_end
-    | @Cons_ptl_ptz _ _ _ _ wordq _ ptl ptlz' =>
-      wordq++ptlz_buffer ptlz'
+  | Top_ptz => buffer_end
+  | Cons_ptl_ptz _ ptlz =>
+    ptlz_buffer ptlz
   end.
 
 Definition ptd_buffer (ptd:pt_dot) :=
   match ptd with
-    | Reduce_ptd ptlz => ptlz_buffer ptlz
-    | @Shift_ptd term sem _ wordq _ _ ptlz =>
-      Cons (existT (fun t => symbol_semantic_type (T t)) term sem)
-           (wordq ++ ptlz_buffer ptlz)
+  | Reduce_ptd _ ptz => ptz_buffer ptz
+  | @Shift_ptd term sem _ wordq _ ptlz =>
+    Cons (existT _ term sem) (ptlz_buffer ptlz)
   end.
 
-Fixpoint ptlz_prod {hole_symbs hole_word hole_sems}
-  (ptlz:ptl_zipper hole_symbs hole_word hole_sems): production :=
+(** We are now ready to define the main invariant of the proof of
+  completeness: we need to specify when a stack is compatible with a
+  dotted parse tree. Informally, a stack is compatible with a dotted
+  parse tree when it is the concatenation stack fragments which are
+  compatible with each of the partially recognized productions
+  appearing in the parse tree zipper. Moreover, the head of each of
+  these stack fragment contains a state which has an item predicted by
+  the corresponding zipper.
+
+  More formally, the compatibility relation first needs the following
+  auxiliary definitions: *)
+Fixpoint ptlz_prod {hole_symbs hole_word}
+         (ptlz:ptl_zipper hole_symbs hole_word): production :=
   match ptlz with
-    | @Non_terminal_pt_ptlz prod _ _ _ => prod
-    | Cons_ptl_ptlz _ ptlz' =>
-      ptlz_prod ptlz'
+  | @Non_terminal_pt_ptlz prod _ _ => prod
+  | Cons_ptl_ptlz _ ptlz' => ptlz_prod ptlz'
   end.
 
-Fixpoint ptlz_past {hole_symbs hole_word hole_sems}
-  (ptlz:ptl_zipper hole_symbs hole_word hole_sems): list symbol :=
+Fixpoint ptlz_future {hole_symbs hole_word}
+  (ptlz:ptl_zipper hole_symbs hole_word): list symbol :=
   match ptlz with
-    | Non_terminal_pt_ptlz _ => []
-    | @Cons_ptl_ptlz s _ _ _ _ _ _ ptlz' => s::ptlz_past ptlz'
+  | Non_terminal_pt_ptlz _ => []
+  | @Cons_ptl_ptlz _ _ s _ _ ptlz' => s::ptlz_future ptlz'
   end.
 
-Lemma ptlz_past_ptlz_prod:
-  forall hole_symbs hole_word hole_sems
-    (ptlz:ptl_zipper hole_symbs hole_word hole_sems),
-  rev_append hole_symbs (ptlz_past ptlz) = prod_rhs_rev (ptlz_prod ptlz).
-Proof.
-fix ptlz_past_ptlz_prod 4.
-destruct ptlz; simpl.
-rewrite <- rev_alt, rev_involutive; reflexivity.
-apply (ptlz_past_ptlz_prod _ _ _ ptlz).
-Qed.
-
-Definition ptlz_state_compat {hole_symbs hole_word hole_sems}
-  (ptlz:ptl_zipper hole_symbs hole_word hole_sems)
-  (state:state): Prop :=
-  state_has_future state (ptlz_prod ptlz) hole_symbs
-    (projT1 (Streams.hd (ptlz_buffer ptlz))).
-
-Fixpoint ptlz_stack_compat {hole_symbs hole_word hole_sems}
-  (ptlz:ptl_zipper hole_symbs hole_word hole_sems)
-  (stack:stack): Prop :=
-  ptlz_state_compat ptlz (state_of_stack init stack) /\
+Fixpoint ptlz_lookahead {hole_symbs hole_word}
+  (ptlz:ptl_zipper hole_symbs hole_word) : terminal :=
   match ptlz with
-    | Non_terminal_pt_ptlz ptz =>
-      ptz_stack_compat ptz stack
-    | @Cons_ptl_ptlz _ _ sem _ _ _ _ ptlz' =>
-      match stack with
-        | [] => False
-        | existT _ _ sem'::stackq =>
-          ptlz_stack_compat ptlz' stackq /\
-          sem ~= sem'
-      end
-  end
-with ptz_stack_compat {hole_symb hole_word hole_sem}
-  (ptz:pt_zipper hole_symb hole_word hole_sem)
-  (stack:stack): Prop :=
+  | Non_terminal_pt_ptlz ptz => projT1 (Streams.hd (ptz_buffer ptz))
+  | Cons_ptl_ptlz _ ptlz' => ptlz_lookahead ptlz'
+  end.
+
+Fixpoint ptz_stack_compat {hole_symb hole_word}
+         (stk : stack) (ptz : pt_zipper hole_symb hole_word) : Prop :=
   match ptz with
-    | Top_ptz => stack = []
-    | Cons_ptl_ptz _ ptlz' =>
-      ptlz_stack_compat ptlz' stack
+  | Top_ptz => stk = []
+  | Cons_ptl_ptz ptl ptlz =>
+    exists stk0,
+      state_has_future (state_of_stack init stk) (ptlz_prod ptlz)
+                       (hole_symb::ptlz_future ptlz) (ptlz_lookahead ptlz) /\
+      ptl_stack_compat stk0 ptl stk /\
+      ptlz_stack_compat stk0 ptlz
+  end
+with ptlz_stack_compat {hole_symbs hole_word}
+     (stk : stack) (ptlz : ptl_zipper hole_symbs hole_word) : Prop :=
+  match ptlz with
+  | Non_terminal_pt_ptlz ptz => ptz_stack_compat stk ptz
+  | Cons_ptl_ptlz _ ptlz => ptlz_stack_compat stk ptlz
   end.
 
-Lemma ptlz_stack_compat_ptlz_state_compat:
-  forall hole_symbs hole_word hole_sems
-    (ptlz:ptl_zipper hole_symbs hole_word hole_sems)
-    (stack:stack),
-    ptlz_stack_compat ptlz stack -> ptlz_state_compat ptlz (state_of_stack init stack).
-Proof.
-destruct ptlz; simpl; intuition.
-Qed.
-
-Definition ptd_stack_compat (ptd:pt_dot) (stack:stack): Prop :=
+Definition ptd_stack_compat (ptd:pt_dot) (stk:stack): Prop :=
   match ptd with
-    | Reduce_ptd ptlz => ptlz_stack_compat ptlz stack
-    | Shift_ptd _ _ _ ptlz => ptlz_stack_compat ptlz stack
+  | @Reduce_ptd prod _ ptl ptz =>
+    exists stk0,
+      state_has_future (state_of_stack init stk) prod []
+                       (projT1 (Streams.hd (ptz_buffer ptz))) /\
+      ptl_stack_compat stk0 ptl stk /\
+      ptz_stack_compat stk0 ptz
+  | Shift_ptd term _ ptl ptlz =>
+    exists stk0,
+      state_has_future (state_of_stack init stk) (ptlz_prod ptlz)
+                       (T term :: ptlz_future ptlz) (ptlz_lookahead ptlz) /\
+      ptl_stack_compat stk0 ptl stk /\
+      ptlz_stack_compat stk0 ptlz
   end.
 
-Fixpoint build_pt_dot {hole_symbs hole_word hole_sems}
-    (ptl:parse_tree_list hole_symbs hole_word hole_sems)
-    (ptlz:ptl_zipper hole_symbs hole_word hole_sems)
-    :pt_dot :=
-  match ptl in parse_tree_list hole_symbs hole_word hole_sems
-    return ptl_zipper hole_symbs hole_word hole_sems -> _
+Lemma ptz_stack_compat_cons_state_has_future {symbsq wordq symbt wordt} stk
+      (ptl : parse_tree_list symbsq wordq)
+      (ptlz : ptl_zipper (symbt :: symbsq) (wordq ++ wordt)) :
+  ptz_stack_compat stk (Cons_ptl_ptz ptl ptlz) ->
+  state_has_future (state_of_stack init stk) (ptlz_prod ptlz)
+                   (symbt::ptlz_future ptlz) (ptlz_lookahead ptlz).
+Proof. move=>[stk0 [? [? ?]]] //. Qed.
+
+Lemma ptlz_future_ptlz_prod hole_symbs hole_word
+      (ptlz:ptl_zipper hole_symbs hole_word) :
+  rev_append (ptlz_future ptlz) hole_symbs = prod_rhs_rev (ptlz_prod ptlz).
+Proof. induction ptlz=>//=. Qed.
+
+Lemma ptlz_future_first {symbs word} (ptlz : ptl_zipper symbs word) :
+  TerminalSet.In (projT1 (Streams.hd (ptlz_buffer ptlz)))
+    (first_word_set (ptlz_future ptlz)) \/
+  projT1 (Streams.hd (ptlz_buffer ptlz)) = ptlz_lookahead ptlz /\
+  nullable_word (ptlz_future ptlz) = true.
+Proof.
+  induction ptlz as [|??? [|tok] pt ptlz IH]; [by auto| |]=>/=.
+  - rewrite (nullable_correct _ _ eq_refl pt).
+    destruct IH as [|[??]]; [left|right]=>/=; auto using TerminalSet.union_3.
+  - left. destruct nullable_symb; eauto using TerminalSet.union_2, first_correct.
+Qed.
+
+(** We now want to define what is the next dotted parse tree which is
+  to be handled after one action. Such dotted parse is built in two
+  steps: Not only we have to perform the action by completing the
+  parse tree, but we also have to prepare for the following step by
+  moving the dot down to place it in front of the next action to be
+  performed.
+*)
+Fixpoint build_pt_dot_from_pt {symb word}
+         (pt : parse_tree symb word) (ptz : pt_zipper symb word)
+  : pt_dot :=
+  match pt in parse_tree symb word
+    return pt_zipper symb word -> pt_dot
   with
-    | Nil_ptl => fun ptlz =>
-      Reduce_ptd ptlz
-    | Cons_ptl pt ptl' =>
-      match pt in parse_tree hole_symb hole_word hole_sem
-        return ptl_zipper (hole_symb::_) (hole_word++_) (hole_sem,_) -> _
+  | Terminal_pt term sem =>
+    fun ptz =>
+      let X :=
+          match ptz in pt_zipper symb word
+            return match symb with T term => True | NT _ => False end ->
+                   { symbsq & { wordq & (parse_tree_list symbsq wordq *
+                                ptl_zipper (symb :: symbsq) (wordq ++ word))%type } }
+          with
+          | Top_ptz => fun F => False_rect _ F
+          | Cons_ptl_ptz ptl ptlz => fun _ =>
+            existT _ _ (existT _ _ (ptl, ptlz))
+          end I
+      in
+      Shift_ptd term sem (fst (projT2 (projT2 X))) (snd (projT2 (projT2 X)))
+  | Non_terminal_pt prod ptl => fun ptz =>
+    let is_notnil :=
+      match ptl in parse_tree_list w _
+        return option (match w return Prop with [] => False | _ => True end)
       with
-        | Terminal_pt term sem => fun ptlz =>
-          Shift_ptd term sem ptl' ptlz
-        | Non_terminal_pt ptl'' => fun ptlz =>
-          build_pt_dot ptl''
-            (Non_terminal_pt_ptlz (Cons_ptl_ptz ptl' ptlz))
+      | Nil_ptl => None
+      | _ => Some I
       end
-  end ptlz.
-
-Lemma build_pt_dot_cost:
-  forall hole_symbs hole_word hole_sems
-    (ptl:parse_tree_list hole_symbs hole_word hole_sems)
-    (ptlz:ptl_zipper hole_symbs hole_word hole_sems),
-    ptd_cost (build_pt_dot ptl ptlz) = ptl_size ptl + ptlz_cost ptlz.
-Proof.
-fix build_pt_dot_cost 4.
-destruct ptl; intros.
-reflexivity.
-destruct p.
-reflexivity.
-simpl; rewrite build_pt_dot_cost.
-simpl; rewrite <- plus_n_Sm, Nat.add_assoc; reflexivity.
-Qed.
-
-Lemma build_pt_dot_buffer:
-  forall hole_symbs hole_word hole_sems
-    (ptl:parse_tree_list hole_symbs hole_word hole_sems)
-    (ptlz:ptl_zipper hole_symbs hole_word hole_sems),
-    ptd_buffer (build_pt_dot ptl ptlz) = hole_word ++ ptlz_buffer ptlz.
-Proof.
-fix build_pt_dot_buffer 4.
-destruct ptl; intros.
-reflexivity.
-destruct p.
-reflexivity.
-simpl; rewrite build_pt_dot_buffer.
-apply app_str_app_assoc.
-Qed.
-
-Lemma ptd_stack_compat_build_pt_dot:
-  forall hole_symbs hole_word hole_sems
-    (ptl:parse_tree_list hole_symbs hole_word hole_sems)
-    (ptlz:ptl_zipper hole_symbs hole_word hole_sems)
-    (stack:stack),
-  ptlz_stack_compat ptlz stack ->
-  ptd_stack_compat (build_pt_dot ptl ptlz) stack.
-Proof.
-fix ptd_stack_compat_build_pt_dot 4.
-destruct ptl; intros.
-eauto.
-destruct p.
-eauto.
-simpl.
-apply ptd_stack_compat_build_pt_dot.
-split.
-apply ptlz_stack_compat_ptlz_state_compat, non_terminal_closed in H.
-apply H; clear H; eauto.
-destruct wordq.
-right; split.
-eauto.
-eapply nullable_correct_list; eauto.
-left.
-eapply first_correct_list; eauto.
-eauto.
-Qed.
-
-Program Fixpoint pop_ptlz {hole_symbs hole_word hole_sems}
-  (ptl:parse_tree_list hole_symbs hole_word hole_sems)
-  (ptlz:ptl_zipper hole_symbs hole_word hole_sems):
-    { word:_ & { sem:_ &
-      (pt_zipper (NT (prod_lhs (ptlz_prod ptlz))) word sem *
-       parse_tree (NT (prod_lhs (ptlz_prod ptlz))) word sem)%type } } :=
-  match ptlz in ptl_zipper hole_symbs hole_word hole_sems
-    return parse_tree_list hole_symbs hole_word hole_sems ->
-    { word:_ & { sem:_ &
-      (pt_zipper (NT (prod_lhs (ptlz_prod ptlz))) word sem *
-       parse_tree (NT (prod_lhs (ptlz_prod ptlz))) word sem)%type } }
+    in
+    match is_notnil with
+    | None => Reduce_ptd ptl ptz
+    | Some H => build_pt_dot_from_pt_rec ptl H (Non_terminal_pt_ptlz ptz)
+    end
+  end ptz
+with build_pt_dot_from_pt_rec {symbs word}
+       (ptl : parse_tree_list symbs word)
+       (Hsymbs : match symbs with [] => False | _ => True end)
+       (ptlz : ptl_zipper symbs word)
+  : pt_dot :=
+  match ptl in parse_tree_list symbs word
+    return match symbs with [] => False | _ => True end ->
+           ptl_zipper symbs word ->
+           pt_dot
   with
-    | @Non_terminal_pt_ptlz prod word sem ptz => fun ptl =>
-      let sem := uncurry (prod_action prod) sem in
-      existT _ word (existT _ sem (ptz, Non_terminal_pt ptl))
-    | Cons_ptl_ptlz pt ptlz' => fun ptl =>
-      pop_ptlz (Cons_ptl pt ptl) ptlz'
+  | Nil_ptl => fun Hsymbs _ => False_rect _ Hsymbs
+  | Cons_ptl ptl' pt => fun _ =>
+    match ptl' in parse_tree_list symbsq wordq
+      return parse_tree_list symbsq wordq ->
+             ptl_zipper (_ :: symbsq) (wordq ++ _) ->
+             pt_dot
+    with
+    | Nil_ptl => fun _ ptlz =>
+      build_pt_dot_from_pt pt (Cons_ptl_ptz Nil_ptl ptlz)
+    | _ => fun ptl' ptlz =>
+      build_pt_dot_from_pt_rec ptl' I (Cons_ptl_ptlz pt ptlz)
+    end ptl'
+  end Hsymbs ptlz.
+
+Definition build_pt_dot_from_ptl {symbs word}
+         (ptl : parse_tree_list symbs word)
+         (ptlz : ptl_zipper symbs word)
+  : pt_dot :=
+  match ptlz in ptl_zipper symbs word
+    return parse_tree_list symbs word -> pt_dot
+  with
+  | Non_terminal_pt_ptlz ptz => fun ptl =>
+    Reduce_ptd ptl ptz
+  | Cons_ptl_ptlz pt ptlz => fun ptl =>
+    build_pt_dot_from_pt pt (Cons_ptl_ptz ptl ptlz)
   end ptl.
 
-Lemma pop_ptlz_cost:
-  forall hole_symbs hole_word hole_sems
-    (ptl:parse_tree_list hole_symbs hole_word hole_sems)
-    (ptlz:ptl_zipper hole_symbs hole_word hole_sems),
-  let 'existT _ word (existT _ sem (ptz, pt)) := pop_ptlz ptl ptlz in
-  ptlz_cost ptlz = ptz_cost ptz.
-Proof.
-fix pop_ptlz_cost 5.
-destruct ptlz.
-reflexivity.
-simpl; apply pop_ptlz_cost.
-Qed.
-
-Lemma pop_ptlz_buffer:
-  forall hole_symbs hole_word hole_sems
-    (ptl:parse_tree_list hole_symbs hole_word hole_sems)
-    (ptlz:ptl_zipper hole_symbs hole_word hole_sems),
-  let 'existT _ word (existT _ sem (ptz, pt)) := pop_ptlz ptl ptlz in
-  ptlz_buffer ptlz = ptz_buffer ptz.
-Proof.
-fix pop_ptlz_buffer 5.
-destruct ptlz.
-reflexivity.
-simpl; apply pop_ptlz_buffer.
-Qed.
-
-Lemma pop_ptlz_pop_stack_compat_converter:
-  forall A hole_symbs hole_word hole_sems (ptlz:ptl_zipper hole_symbs hole_word hole_sems),
-  arrows_left (map symbol_semantic_type (rev (prod_rhs_rev (ptlz_prod ptlz)))) A =
-  arrows_left (map symbol_semantic_type hole_symbs)
-    (arrows_right A (map symbol_semantic_type (ptlz_past ptlz))).
-Proof.
-intros.
-rewrite <- ptlz_past_ptlz_prod.
-unfold arrows_right, arrows_left.
-rewrite rev_append_rev, map_rev, map_app, map_rev, <- fold_left_rev_right, rev_involutive, fold_right_app.
-rewrite fold_left_rev_right.
-reflexivity.
-Qed.
-
-Lemma pop_ptlz_pop_stack_compat:
-  forall hole_symbs hole_word hole_sems
-    (ptl:parse_tree_list hole_symbs hole_word hole_sems)
-    (ptlz:ptl_zipper hole_symbs hole_word hole_sems)
-    (stack:stack),
-
-    ptlz_stack_compat ptlz stack ->
-
-    let action' :=
-      eq_rect _ (fun x=>x) (prod_action (ptlz_prod ptlz)) _
-      (pop_ptlz_pop_stack_compat_converter _ _ _ _ _)
-    in
-    let 'existT _ word (existT _ sem (ptz, pt)) := pop_ptlz ptl ptlz in
-      match pop (ptlz_past ptlz) stack (uncurry action' hole_sems) with
-        | OK (stack', sem') =>
-           ptz_stack_compat ptz stack' /\ sem = sem'
-        | Err => True
-      end.
-Proof.
-Opaque AlphabetComparable AlphabetComparableUsualEq.
-fix pop_ptlz_pop_stack_compat 5.
-destruct ptlz. intros; simpl.
-split.
-apply H.
-eapply (f_equal (fun X => uncurry X semantic_values)).
-apply JMeq_eq, JMeq_sym, JMeq_eqrect with (P:=fun x => x).
-simpl; intros; destruct stack0.
-destruct (proj2 H).
-simpl in H; destruct H.
-destruct s as (state, sem').
-destruct H0.
-specialize (pop_ptlz_pop_stack_compat _ _ _ (Cons_ptl p ptl) ptlz _ H0).
-destruct (pop_ptlz (Cons_ptl p ptl) ptlz) as [word [sem []]].
-destruct (compare_eqdec (last_symb_of_non_init_state state) head_symbolt); intuition.
-eapply JMeq_sym, JMeq_trans, JMeq_sym, JMeq_eq in H1; [|apply JMeq_eqrect with (e:=e)].
-rewrite <- H1.
-simpl in pop_ptlz_pop_stack_compat.
-erewrite proof_irrelevance with (p1:=pop_ptlz_pop_stack_compat_converter _ _ _ _ _).
-apply pop_ptlz_pop_stack_compat.
-Transparent AlphabetComparable AlphabetComparableUsualEq.
-Qed.
-
-Definition next_ptd (ptd:pt_dot): option pt_dot :=
+Definition next_ptd (ptd:pt_dot) : option pt_dot :=
   match ptd with
-    | Shift_ptd term sem ptl ptlz =>
-      Some (build_pt_dot ptl (Cons_ptl_ptlz (Terminal_pt term sem) ptlz))
-    | Reduce_ptd ptlz =>
-      let 'existT _ _ (existT _ _ (ptz, pt)) := pop_ptlz Nil_ptl ptlz in
-      match ptz in pt_zipper sym _ _ return parse_tree sym _ _ -> _ with
-        | Top_ptz => fun pt => None
-        | Cons_ptl_ptz ptl ptlz' =>
-          fun pt => Some (build_pt_dot ptl (Cons_ptl_ptlz pt ptlz'))
-      end pt
+  | Shift_ptd term sem ptl ptlz =>
+    Some (build_pt_dot_from_ptl (Cons_ptl ptl (Terminal_pt term sem)) ptlz)
+  | Reduce_ptd ptl ptz =>
+    match ptz in pt_zipper symb word
+      return parse_tree symb word -> _
+    with
+    | Top_ptz => fun _ => None
+    | Cons_ptl_ptz ptl' ptlz => fun pt =>
+      Some (build_pt_dot_from_ptl (Cons_ptl ptl' pt) ptlz)
+    end (Non_terminal_pt _ ptl)
   end.
 
-Lemma next_ptd_cost:
-  forall ptd,
-    match next_ptd ptd with
-      | None => ptd_cost ptd = 0
-      | Some ptd' => ptd_cost ptd = S (ptd_cost ptd')
-    end.
+(** We prove that these functions behave well w.r.t. semantic values. *)
+Lemma sem_build_from_pt {symb word}
+      (pt : parse_tree symb word) (ptz : pt_zipper symb word)  :
+  ptz_sem ptz (pt_sem pt)
+  = ptd_sem (build_pt_dot_from_pt pt ptz)
+with sem_build_from_pt_rec {symbs word}
+     (ptl : parse_tree_list symbs word) (ptlz : ptl_zipper symbs word)
+     Hsymbs :
+  ptlz_sem ptlz (fun _ f => ptl_sem ptl f)
+  = ptd_sem (build_pt_dot_from_pt_rec ptl Hsymbs ptlz).
 Proof.
-destruct ptd. unfold next_ptd.
-pose proof (pop_ptlz_cost _ _ _ Nil_ptl p).
-destruct (pop_ptlz Nil_ptl p) as [word[sem[[]]]].
-assumption.
-rewrite build_pt_dot_cost.
-assumption.
-simpl; rewrite build_pt_dot_cost; reflexivity.
+  - destruct pt as [term sem|prod word ptl]=>/=.
+    + revert ptz.
+      generalize [existT (fun t => symbol_semantic_type (T t)) term sem].
+      revert sem. generalize I.
+      change True with (match T term with T term => True | NT _ => False end) at 1.
+      generalize (T term) => symb HT sem word ptz. by destruct ptz.
+    + match goal with
+      | |- context [match ?X with Some H => _ | None => _ end] => destruct X=>//
+      end.
+      by rewrite -sem_build_from_pt_rec.
+  - destruct ptl; [contradiction|].
+    specialize (sem_build_from_pt_rec _ _ ptl)=>/=. destruct ptl.
+    + by rewrite -sem_build_from_pt.
+    + by rewrite -sem_build_from_pt_rec.
 Qed.
 
-Lemma reduce_step_next_ptd:
-  forall (ptlz:ptl_zipper [] [] ()) (stack:stack),
-    ptlz_stack_compat ptlz stack ->
-    match reduce_step init stack (ptlz_prod ptlz) (ptlz_buffer ptlz) with
-      | OK Fail_sr =>
-        False
-      | OK (Accept_sr sem buffer) =>
-        sem = full_sem /\ buffer = buffer_end /\ next_ptd (Reduce_ptd ptlz) = None
-      | OK (Progress_sr stack buffer) =>
-        match next_ptd (Reduce_ptd ptlz) with
-          | None => False
-          | Some ptd =>
-            ptd_stack_compat ptd stack /\ buffer = ptd_buffer ptd
-        end
-      | Err =>
-        True
-    end.
+Lemma sem_build_from_ptl {symbs word}
+      (ptl : parse_tree_list symbs word) (ptlz : ptl_zipper symbs word) :
+  ptlz_sem ptlz (fun _ f => ptl_sem ptl f)
+  = ptd_sem (build_pt_dot_from_ptl ptl ptlz).
+Proof. destruct ptlz=>//=. by rewrite -sem_build_from_pt. Qed.
+
+Lemma sem_next_ptd (ptd : pt_dot) :
+  match next_ptd ptd with
+  | None => True
+  | Some ptd' => ptd_sem ptd = ptd_sem ptd'
+  end.
 Proof.
-intros.
-unfold reduce_step, next_ptd.
-apply pop_ptlz_pop_stack_compat with (ptl:=Nil_ptl) in H.
-pose proof (pop_ptlz_buffer _ _ _ Nil_ptl ptlz).
-destruct (pop_ptlz Nil_ptl ptlz) as [word [sem [ptz pt]]].
-rewrite H0; clear H0.
-revert H.
-match goal with
-  |- match ?p1 with Err => _ | OK _ => _ end -> match bind2 ?p2 _ with Err => _ | OK _ => _ end =>
-  replace p1 with p2; [destruct p2 as [|[]];  intros|]
-end.
-assumption.
-simpl.
-destruct H; subst.
-generalize dependent s0.
-generalize (prod_lhs (ptlz_prod ptlz)); clear ptlz stack0.
-dependent destruction ptz; intros.
-simpl in H; subst; simpl.
-pose proof start_goto; unfold Valid.start_goto in H; rewrite H.
-destruct (compare_eqdec (start_nt init) (start_nt init)); intuition.
-apply JMeq_eq, JMeq_eqrect with (P:=fun nt => symbol_semantic_type (NT nt)).
-pose proof (ptlz_stack_compat_ptlz_state_compat _ _ _ _ _ H).
-apply non_terminal_goto in H0.
-destruct (goto_table (state_of_stack init s) n) as [[]|]; intuition.
-apply ptd_stack_compat_build_pt_dot; simpl; intuition.
-symmetry; apply JMeq_eqrect with (P:=symbol_semantic_type).
-symmetry; apply build_pt_dot_buffer.
-destruct s; intuition.
-simpl in H; apply ptlz_stack_compat_ptlz_state_compat in H.
-destruct (H0 _ _ _ H eq_refl).
-generalize (pop_ptlz_pop_stack_compat_converter (symbol_semantic_type (NT (prod_lhs (ptlz_prod ptlz)))) _ _ _ ptlz).
-pose proof (ptlz_past_ptlz_prod _ _ _ ptlz); simpl in H.
-rewrite H; clear H.
-intro; f_equal; simpl.
-apply JMeq_eq.
-etransitivity.
-apply JMeq_eqrect with (P:=fun x => x).
-symmetry.
-apply JMeq_eqrect with (P:=fun x => x).
+  destruct ptd as [prod word ptl ptz|term sem symbs word ptl ptlz] =>/=.
+  - change (ptl_sem ptl (prod_action prod))
+      with (pt_sem (Non_terminal_pt prod ptl)).
+    generalize (Non_terminal_pt prod ptl). clear ptl.
+    destruct ptz as [|?? ptl ?? ptlz]=>// pt. by rewrite -sem_build_from_ptl.
+  - by rewrite -sem_build_from_ptl.
 Qed.
 
-Lemma step_next_ptd:
-  forall (ptd:pt_dot) (stack:stack),
-    ptd_stack_compat ptd stack ->
-    match step init stack (ptd_buffer ptd) with
-      | OK Fail_sr =>
-        False
-      | OK (Accept_sr sem buffer) =>
-        sem = full_sem /\ buffer = buffer_end /\ next_ptd ptd = None
-      | OK (Progress_sr stack buffer) =>
-        match next_ptd ptd with
-          | None => False
-          | Some ptd =>
-            ptd_stack_compat ptd stack /\ buffer = ptd_buffer ptd
-        end
-      | Err =>
-        True
-    end.
+(** We prove that these functions behave well w.r.t. xxx_buffer. *)
+Lemma ptd_buffer_build_from_pt {symb word}
+      (pt : parse_tree symb word) (ptz : pt_zipper symb word) :
+  word ++ ptz_buffer ptz = ptd_buffer (build_pt_dot_from_pt pt ptz)
+with ptd_buffer_build_from_pt_rec {symbs word}
+     (ptl : parse_tree_list symbs word) (ptlz : ptl_zipper symbs word)
+     Hsymbs :
+  word ++ ptlz_buffer ptlz = ptd_buffer (build_pt_dot_from_pt_rec ptl Hsymbs ptlz).
 Proof.
-intros.
-destruct ptd.
-pose proof (ptlz_stack_compat_ptlz_state_compat _ _ _ _ _ H).
-apply end_reduce in H0.
-unfold step.
-destruct (action_table (state_of_stack init stack0)).
-rewrite H0 by reflexivity.
-apply reduce_step_next_ptd; assumption.
-simpl; destruct (Streams.hd (ptlz_buffer p)); simpl in H0.
-destruct (l x); intuition; rewrite H1.
-apply reduce_step_next_ptd; assumption.
-pose proof (ptlz_stack_compat_ptlz_state_compat _ _ _ _ _ H).
-apply terminal_shift in H0.
-unfold step.
-destruct (action_table (state_of_stack init stack0)); intuition.
-simpl; destruct (Streams.hd (ptlz_buffer p0)) as [] eqn:?.
-destruct (l term); intuition.
-apply ptd_stack_compat_build_pt_dot; simpl; intuition.
-unfold ptlz_state_compat; simpl; destruct Heqt; assumption.
-symmetry; apply JMeq_eqrect with (P:=symbol_semantic_type).
-rewrite build_pt_dot_buffer; reflexivity.
+  - destruct pt as [term sem|prod word ptl]=>/=.
+    + f_equal. revert ptz.
+      generalize [existT (fun t => symbol_semantic_type (T t)) term sem].
+      revert sem. generalize I.
+      change True with (match T term with T term => True | NT _ => False end) at 1.
+      generalize (T term) => symb HT sem word ptz. by destruct ptz.
+    + match goal with
+      | |- context [match ?X with Some H => _ | None => _ end] => destruct X eqn:EQ
+      end.
+      * by rewrite -ptd_buffer_build_from_pt_rec.
+      * rewrite [X in X ++_](_ : word = []) //. clear -EQ. by destruct ptl.
+  - destruct ptl as [|?? ptl ?? pt]; [contradiction|].
+    specialize (ptd_buffer_build_from_pt_rec _ _ ptl).
+    destruct ptl.
+    + by rewrite /= -ptd_buffer_build_from_pt.
+    + by rewrite -ptd_buffer_build_from_pt_rec //= app_str_app_assoc.
 Qed.
 
+Lemma ptd_buffer_build_from_ptl {symbs word}
+      (ptl : parse_tree_list symbs word) (ptlz : ptl_zipper symbs word) :
+  ptlz_buffer ptlz = ptd_buffer (build_pt_dot_from_ptl ptl ptlz).
+Proof.
+  destruct ptlz as [|???? pt]=>//=. by rewrite -ptd_buffer_build_from_pt.
+Qed.
+
+(** We prove that these functions behave well w.r.t. xxx_stack_compat. *)
+Lemma ptd_stack_compat_build_from_pt {symb word}
+      (pt : parse_tree symb word) (ptz : pt_zipper symb word)
+      (stk: stack) :
+  ptz_stack_compat stk ptz ->
+  ptd_stack_compat (build_pt_dot_from_pt pt ptz) stk
+with ptd_stack_compat_build_from_pt_rec {symbs word}
+     (ptl : parse_tree_list symbs word) (ptlz : ptl_zipper symbs word)
+     (stk : stack) Hsymbs :
+  ptlz_stack_compat stk ptlz ->
+  state_has_future (state_of_stack init stk) (ptlz_prod ptlz)
+                   (rev' (prod_rhs_rev (ptlz_prod ptlz))) (ptlz_lookahead ptlz) ->
+  ptd_stack_compat (build_pt_dot_from_pt_rec ptl Hsymbs ptlz) stk.
+Proof.
+  - intros Hstk. destruct pt as [term sem|prod word ptl]=>/=.
+    + revert ptz Hstk.
+      generalize [existT (fun t => symbol_semantic_type (T t)) term sem].
+      revert sem. generalize I.
+      change True with (match T term with T term => True | NT _ => False end) at 1.
+      generalize (T term) => symb HT sem word ptz. by destruct ptz.
+    + assert (state_has_future (state_of_stack init stk) prod
+               (rev' (prod_rhs_rev prod)) (projT1 (Streams.hd (ptz_buffer ptz)))).
+      { revert ptz Hstk. remember (NT (prod_lhs prod)) eqn:EQ=>ptz.
+        destruct ptz as [|?? ptl0 ?? ptlz0].
+        - intros ->. apply start_future. congruence.
+        - subst. intros (stk0 & Hfut & _). apply non_terminal_closed in Hfut.
+          apply Hfut, ptlz_future_first=>//. }
+      match goal with
+      | |- context [match ?X with Some H => _ | None => _ end] => destruct X eqn:EQ
+      end.
+      * by apply ptd_stack_compat_build_from_pt_rec.
+      * exists stk. destruct ptl=>//.
+  - intros Hstk Hfut. destruct ptl as [|?? ptl ?? pt]; [contradiction|].
+    specialize (ptd_stack_compat_build_from_pt_rec _ _ ptl). destruct ptl.
+    + eapply ptd_stack_compat_build_from_pt=>//. exists stk.
+      split; [|split]=>//; [].
+      by rewrite -ptlz_future_ptlz_prod rev_append_rev /rev' -rev_alt
+                 rev_app_distr rev_involutive in Hfut.
+    + by apply ptd_stack_compat_build_from_pt_rec.
+Qed.
+
+Lemma ptd_stack_compat_build_from_ptl {symbs word}
+      (ptl : parse_tree_list symbs word) (ptlz : ptl_zipper symbs word)
+      (stk stk0: stack) :
+  ptlz_stack_compat stk0 ptlz ->
+  ptl_stack_compat stk0 ptl stk ->
+  state_has_future (state_of_stack init stk) (ptlz_prod ptlz)
+                   (ptlz_future ptlz) (ptlz_lookahead ptlz) ->
+  ptd_stack_compat (build_pt_dot_from_ptl ptl ptlz) stk.
+Proof.
+  intros Hstk0 Hstk Hfut. destruct ptlz=>/=.
+  - eauto.
+  - apply ptd_stack_compat_build_from_pt=>/=. eauto.
+Qed.
+
+(** We can now proceed by proving that the invariant is preserved by
+  each step of parsing. We also prove that each step of parsing
+  follows next_ptd.
+
+  We start with reduce steps: *)
+Lemma reduce_step_next_ptd (prod : production) (word : list token)
+      (ptl : parse_tree_list (prod_rhs_rev prod) word)
+      (ptz : pt_zipper (NT (prod_lhs prod)) word)
+      (stk : stack)
+      Hval Hi :
+  ptd_stack_compat (Reduce_ptd ptl ptz) stk ->
+  match next_ptd (Reduce_ptd ptl ptz) with
+  | None =>
+    reduce_step init stk prod (ptz_buffer ptz) Hval Hi =
+      Accept_sr (ptd_sem (Reduce_ptd ptl ptz)) buffer_end
+  | Some ptd =>
+    exists stk',
+      reduce_step init stk prod (ptz_buffer ptz) Hval Hi =
+        Progress_sr stk' (ptd_buffer ptd) /\
+      ptd_stack_compat ptd stk'
+  end.
+Proof.
+  intros (stk0 & _ & Hstk & Hstk0).
+  apply pop_stack_compat_pop_spec with (action := prod_action prod) in Hstk.
+  rewrite <-pop_spec_ok with (Hp := reduce_step_subproof init stk prod Hval Hi) in Hstk.
+  unfold reduce_step.
+  match goal with
+  | |- context [pop_state_valid init ?A stk ?B ?C ?D ?E ?F] =>
+    generalize (pop_state_valid init A stk B C D E F)
+  end.
+  rewrite Hstk /=. intros Hv. generalize (proj2 Hval (state_of_stack init stk0) Hv).
+  clear Hval Hstk Hi Hv stk.
+  assert (Hgoto := fun fut prod' =>
+    non_terminal_goto (state_of_stack init stk0) prod' (NT (prod_lhs prod)::fut)).
+  simpl in Hgoto.
+  destruct goto_table as [[st Hst]|] eqn:Hgoto'.
+  - intros _.
+    assert (match ptz with Top_ptz => False | _ => True end).
+    { revert ptz Hst Hstk0 Hgoto'.
+      generalize (eq_refl (NT (prod_lhs prod))).
+      generalize (NT (prod_lhs prod)) at 1 3 5.
+      intros nt Hnt ptz. destruct ptz=>//. injection Hnt=> <- /= Hst -> /=.
+      pose proof (start_goto init). congruence. }
+    clear Hgoto'.
+
+    change (ptl_sem ptl (prod_action prod))
+      with (pt_sem (Non_terminal_pt prod ptl)).
+    generalize (Non_terminal_pt prod ptl). clear ptl.
+    destruct ptz as [|?? ptl ? ? ptlz]=>// pt.
+
+    subst=>/=. eexists _. split.
+    + f_equal. apply ptd_buffer_build_from_ptl.
+    + destruct Hstk0 as (stk0' & Hfut & Hstk0' & Hstk0).
+      apply (ptd_stack_compat_build_from_ptl _ _ _ stk0'); auto; [].
+      split=>//. by exists eq_refl.
+  - intros Hv.
+    generalize (reduce_step_subproof0 _ prod _ (ptl_sem ptl (prod_action _)) Hv).
+    intros EQnt. clear Hv Hgoto'.
+
+    change (ptl_sem ptl (prod_action prod))
+      with (pt_sem (Non_terminal_pt prod ptl)).
+    generalize (Non_terminal_pt prod ptl). clear ptl. destruct ptz.
+    + intros pt. f_equal. rewrite -Eqdep.Eq_rect_eq.eq_rect_eq //.
+    + edestruct Hgoto. eapply ptz_stack_compat_cons_state_has_future, Hstk0.
+Qed.
+
+Lemma step_next_ptd (ptd : pt_dot) (stk : stack) Hi :
+  ptd_stack_compat ptd stk ->
+  match next_ptd ptd with
+  | None =>
+    step safe init stk (ptd_buffer ptd) Hi =
+      Accept_sr (ptd_sem ptd) buffer_end
+  | Some ptd' =>
+    exists stk',
+      step safe init stk (ptd_buffer ptd) Hi =
+        Progress_sr stk' (ptd_buffer ptd') /\
+      ptd_stack_compat ptd' stk'
+  end.
+Proof.
+  intros Hstk. unfold step.
+  generalize (reduce_ok safe (state_of_stack init stk)).
+  destruct ptd as [prod word ptl ptz|term sem symbs word ptl ptlz].
+  - assert (Hfut : state_has_future (state_of_stack init stk) prod []
+                                    (projT1 (Streams.hd (ptz_buffer ptz)))).
+    { destruct Hstk as (? & ? & ?)=>//. }
+    assert (Hact := end_reduce _ _ _ _ Hfut eq_refl).
+    destruct action_table as [?|awt]=>Hval /=.
+    + subst. by apply reduce_step_next_ptd.
+    + destruct Streams.hd as [term sem]. simpl in Hact.
+      generalize (Hval term). clear Hval. destruct (awt term)=>//. subst.
+      intros Hval. by apply reduce_step_next_ptd.
+  - destruct Hstk as (stk0 & Hfut & Hstk & Hstk0).
+    assert (Hact := terminal_shift _ _ _ _ Hfut). simpl in Hact. clear Hfut.
+    destruct action_table as [?|awt]=>//= /(_ term).
+    destruct awt as [st' EQ| |]=>// _. eexists. split.
+    + f_equal. rewrite -ptd_buffer_build_from_ptl //.
+    + apply (ptd_stack_compat_build_from_ptl _ _ _ stk0); simpl; eauto.
+Qed.
+
+(** The parser is defined by recursion over a fuel parameter. In the
+  completeness proof, we need to predict how much fuel is going to be
+  needed in order to prove that enough fuel gives rise to a successful
+  parsing.
+
+  To do so, of a dotted parse tree, which is the number of actions
+  left to be executed before complete parsing when the current state
+  is represented by the dotted parse tree. *)
+Fixpoint ptlz_cost {hole_symbs hole_word}
+         (ptlz:ptl_zipper hole_symbs hole_word) :=
+  match ptlz with
+  | Non_terminal_pt_ptlz ptz => ptz_cost ptz
+  | Cons_ptl_ptlz pt ptlz' => pt_size pt + ptlz_cost ptlz'
+  end
+with ptz_cost {hole_symb hole_word} (ptz:pt_zipper hole_symb hole_word) :=
+  match ptz with
+  | Top_ptz => 0
+  | Cons_ptl_ptz ptl ptlz' => 1 + ptlz_cost ptlz'
+  end.
+
+Definition ptd_cost (ptd:pt_dot) :=
+  match ptd with
+  | Reduce_ptd ptl ptz => ptz_cost ptz
+  | Shift_ptd _ _ ptl ptlz => 1 + ptlz_cost ptlz
+  end.
+
+Lemma ptd_cost_build_from_pt {symb word}
+      (pt : parse_tree symb word) (ptz : pt_zipper symb word) :
+  pt_size pt + ptz_cost ptz = S (ptd_cost (build_pt_dot_from_pt pt ptz))
+with ptd_cost_build_from_pt_rec {symbs word}
+     (ptl : parse_tree_list symbs word) (ptlz : ptl_zipper symbs word)
+     Hsymbs :
+  ptl_size ptl + ptlz_cost ptlz = ptd_cost (build_pt_dot_from_pt_rec ptl Hsymbs ptlz).
+Proof.
+  - destruct pt as [term sem|prod word ptl']=>/=.
+    + revert ptz. generalize [existT (fun t => symbol_semantic_type (T t)) term sem].
+      revert sem. generalize I.
+      change True with (match T term with T term => True | NT _ => False end) at 1.
+      generalize (T term) => symb HT sem word ptz. by destruct ptz.
+    + match goal with
+      | |- context [match ?X with Some H => _ | None => _ end] => destruct X eqn:EQ
+      end.
+      * rewrite -ptd_cost_build_from_pt_rec /= plus_n_Sm //.
+      * simpl. by destruct ptl'.
+  - destruct ptl as [|?? ptl ?? pt]; [contradiction|].
+    specialize (ptd_cost_build_from_pt_rec _ _ ptl). destruct ptl.
+    + apply eq_add_S. rewrite -ptd_cost_build_from_pt /=. ring.
+    + rewrite -ptd_cost_build_from_pt_rec //=. ring.
+Qed.
+
+Lemma ptd_cost_build_from_ptl {symbs word}
+      (ptl : parse_tree_list symbs word) (ptlz : ptl_zipper symbs word) :
+  ptlz_cost ptlz = ptd_cost (build_pt_dot_from_ptl ptl ptlz).
+Proof.
+  destruct ptlz=>//. apply eq_add_S. rewrite -ptd_cost_build_from_pt /=. ring.
+Qed.
+
+Lemma next_ptd_cost ptd:
+  match next_ptd ptd with
+  | None => ptd_cost ptd = 0
+  | Some ptd' => ptd_cost ptd = S (ptd_cost ptd')
+  end.
+Proof.
+  destruct ptd as [prod word ptl ptz|term sem symbq wordq ptl ptlz] =>/=.
+  - generalize (Non_terminal_pt prod ptl). clear ptl.
+    destruct ptz as [|?? ptl ?? ptlz]=>// pt. by rewrite -ptd_cost_build_from_ptl.
+  - by rewrite -ptd_cost_build_from_ptl.
+Qed.
+
+(** We prove the completeness of the parser main loop. *)
 Lemma parse_fix_complete:
-  forall (ptd:pt_dot) (stack:stack) (n_steps:nat),
-    ptd_stack_compat ptd stack ->
-    match parse_fix init stack (ptd_buffer ptd) n_steps with
-      | OK (Parsed_pr sem_res buffer_end_res) =>
-        sem_res = full_sem /\ buffer_end_res = buffer_end /\
-         S (ptd_cost ptd) <= n_steps
-      | OK Fail_pr => False
-      | OK Timeout_pr => n_steps < S (ptd_cost ptd)
-      | Err => True
+  forall (ptd : pt_dot) (stk : stack) (n_steps : nat) Hi,
+    ptd_stack_compat ptd stk ->
+    match parse_fix safe init stk (ptd_buffer ptd) n_steps Hi with
+    | Timeout_pr => n_steps < S (ptd_cost ptd)
+    | Parsed_pr sem buff =>
+      sem = ptd_sem ptd /\ buff = buffer_end /\ S (ptd_cost ptd) <= n_steps
+    | Fail_pr => False
     end.
 Proof.
-fix parse_fix_complete 3.
-destruct n_steps; intros; simpl.
-apply Nat.lt_0_succ.
-apply step_next_ptd in H.
-pose proof (next_ptd_cost ptd).
-destruct (step init stack0 (ptd_buffer ptd)) as [|[]]; simpl; intuition.
-rewrite H3 in H0; rewrite H0.
-apply le_n_S, Nat.le_0_l.
-destruct (next_ptd ptd); intuition; subst.
-eapply parse_fix_complete with (n_steps:=n_steps) in H1.
-rewrite H0.
-destruct (parse_fix init s (ptd_buffer p) n_steps) as [|[]]; try assumption.
-apply lt_n_S; assumption.
-destruct H1 as [H1 []]; split; [|split]; try assumption.
-apply le_n_S; assumption.
+  intros ptd stk n_steps. revert ptd stk.
+  induction n_steps as [|n_steps IH]=>/= ptd stk Hi Hstk.
+  - apply Nat.lt_0_succ.
+  - generalize (step_stack_invariant_preserved safe init stk (ptd_buffer ptd) Hi).
+    assert (Hstep := step_next_ptd ptd stk Hi Hstk).
+    assert (Hcost := next_ptd_cost ptd).
+    assert (Hsem := sem_next_ptd ptd).
+    destruct next_ptd as [ptd'|].
+    + destruct Hstep as (stk' & -> & Hptd')=>/(_ _ _ eq_refl) Hi'.
+      specialize (IH ptd' stk' Hi' Hptd'). destruct parse_fix=>//.
+      * apply lt_n_S. by rewrite Hcost.
+      * by rewrite -Nat.succ_le_mono Hcost Hsem.
+    + rewrite Hstep Hcost=>_. auto with arith.
 Qed.
 
-Variable full_pt: parse_tree (NT (start_nt init)) full_word full_sem.
+(** We now prove the top-level parsing function. The only thing that
+  is left to be done is the initialization. To do so, we define the
+  initial dotted parse tree, depending on a full (top-level) parse tree. *)
 
-Definition init_ptd :=
-  match full_pt in parse_tree head full_word full_sem return
-    pt_zipper head full_word full_sem ->
-    match head return Type with | T _ => unit | NT _ => pt_dot end
-  with
-    | Terminal_pt _ _ => fun _ => ()
-    | Non_terminal_pt ptl =>
-      fun top => build_pt_dot ptl (Non_terminal_pt_ptlz top)
-  end Top_ptz.
-
-Lemma init_ptd_compat:
-  ptd_stack_compat init_ptd [].
-Proof.
-unfold init_ptd.
-assert (ptz_stack_compat Top_ptz []) by reflexivity.
-pose proof (start_future init); revert H0.
-generalize dependent Top_ptz.
-generalize dependent full_word.
-generalize full_sem.
-generalize (start_nt init).
-dependent destruction full_pt0.
-intros.
-apply ptd_stack_compat_build_pt_dot; simpl; intuition.
-apply H0; reflexivity.
-Qed.
-
-Lemma init_ptd_cost:
-  S (ptd_cost init_ptd) = pt_size full_pt.
-Proof.
-unfold init_ptd.
-assert (ptz_cost Top_ptz = 0) by reflexivity.
-generalize dependent Top_ptz.
-generalize dependent full_word.
-generalize full_sem.
-generalize (start_nt init).
-dependent destruction full_pt0.
-intros.
-rewrite build_pt_dot_cost; simpl.
-rewrite H, Nat.add_0_r; reflexivity.
-Qed.
-
-Lemma init_ptd_buffer:
-  ptd_buffer init_ptd = full_word ++ buffer_end.
-Proof.
-unfold init_ptd.
-assert (ptz_buffer Top_ptz = buffer_end) by reflexivity.
-generalize dependent Top_ptz.
-generalize dependent full_word.
-generalize full_sem.
-generalize (start_nt init).
-dependent destruction full_pt0.
-intros.
-rewrite build_pt_dot_buffer; simpl.
-rewrite H; reflexivity.
-Qed.
+Variable full_pt : parse_tree (NT (start_nt init)) full_word.
 
 Theorem parse_complete n_steps:
-  match parse init (full_word ++ buffer_end) n_steps with
-    | OK (Parsed_pr sem_res buffer_end_res) =>
-      sem_res = full_sem /\ buffer_end_res = buffer_end /\
-       pt_size full_pt <= n_steps
-    | OK Fail_pr => False
-    | OK Timeout_pr => n_steps < pt_size full_pt
-    | Err => True
+  match parse safe init (full_word ++ buffer_end) n_steps with
+  | Parsed_pr sem buff =>
+    sem = pt_sem full_pt /\ buff = buffer_end /\ pt_size full_pt <= n_steps
+  | Timeout_pr => n_steps < pt_size full_pt
+  | Fail_pr => False
   end.
 Proof.
-pose proof (parse_fix_complete init_ptd [] n_steps init_ptd_compat).
-rewrite init_ptd_buffer, init_ptd_cost in H.
-apply H.
+  assert (Hstk : ptd_stack_compat (build_pt_dot_from_pt full_pt Top_ptz) []) by
+      by apply ptd_stack_compat_build_from_pt.
+  unfold parse.
+  assert (Hparse := parse_fix_complete _ _ n_steps (parse_subproof init) Hstk).
+  rewrite -ptd_buffer_build_from_pt -ptd_cost_build_from_pt in Hparse.
+  destruct parse_fix=>//.
+  - by rewrite -plus_n_O in Hparse.
+  - by rewrite -plus_n_O -sem_build_from_pt in Hparse.
 Qed.
 
 End Completeness_Proof.

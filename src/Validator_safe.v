@@ -46,6 +46,14 @@ Inductive prefix: list symbol -> list symbol -> Prop :=
   | prefix_nil: forall l, prefix [] l
   | prefix_cons: forall l1 l2 x, prefix l1 l2 -> prefix (x::l1) (x::l2).
 
+(** [prefix] is associative **)
+Lemma prefix_ass:
+  forall (l1 l2 l3:list symbol), prefix l1 l2 -> prefix l2 l3 -> prefix l1 l3.
+Proof.
+  intros l1 l2 l3 H1 H2. revert l3 H2.
+  induction H1; [now constructor|]. inversion 1. subst. constructor. eauto.
+Qed.
+
 Fixpoint is_prefix (l1 l2:list symbol):=
   match l1, l2 with
     | [], _ => true
@@ -158,6 +166,18 @@ Inductive prefix_pred: list (state->bool) -> list (state->bool) -> Prop :=
   | prefix_pred_cons: forall l1 l2 f1 f2,
      (forall x, implb (f2 x) (f1 x) = true) ->
      prefix_pred l1 l2 -> prefix_pred (f1::l1) (f2::l2).
+
+(** [prefix_pred] is associative **)
+Lemma prefix_pred_ass:
+  forall (l1 l2 l3:list (state->bool)),
+  prefix_pred l1 l2 -> prefix_pred l2 l3 -> prefix_pred l1 l3.
+Proof.
+  intros l1 l2 l3 H1 H2. revert l3 H2.
+  induction H1 as [|l1 l2 f1 f2 Hf2f1]; [now constructor|].
+  intros l3. inversion 1 as [|??? f3 Hf3f2]. subst. constructor; [|now eauto].
+  intros x. specialize (Hf3f2 x). specialize (Hf2f1 x).
+  repeat destruct (_ x); auto.
+Qed.
 
 Fixpoint is_prefix_pred (l1 l2:list (state->bool)) :=
   match l1, l2 with
