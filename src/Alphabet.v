@@ -12,8 +12,7 @@
 (*                                                                     *)
 (* *********************************************************************)
 
-From Coq Require Import Int31 Cyclic31 Omega List Syntax
-                        Relations RelationClasses.
+From Coq Require Import Int31 Cyclic31 Omega List Syntax Relations RelationClasses.
 
 Local Obligation Tactic := intros.
 
@@ -134,14 +133,6 @@ destruct (compare x y); intuition; discriminate.
 destruct H.
 rewrite compare_refl; intuition.
 Qed.
-
-(** [Comparable] provides a decidable equality. **)
-Definition compare_eqdec {A:Type} {C:Comparable A} {U:ComparableUsualEq C} (x y:A):
-  {x = y} + {x <> y}.
-Proof.
-destruct (compare x y) as [] eqn:?; [left; apply compare_eq; intuition | ..];
-  right; intro; destruct H; rewrite compare_refl in Heqc; discriminate.
-Defined.
 
 Instance NComparableUsualEq : ComparableUsualEq natComparable := Nat.compare_eq.
 

@@ -67,8 +67,10 @@ Proof.
                       Hcomp tree1).
   assert (Hcomp2 := parse_complete Hsafe init (pt_size tree1) word (Streams.const tok)
                       Hcomp tree2).
-  destruct parse; auto with exfalso zarith.
-  destruct Hcomp1 as [-> _], Hcomp2 as [-> _]. reflexivity.
+  destruct parse.
+  - destruct Hcomp1.
+  - exfalso. eapply PeanoNat.Nat.lt_irrefl, Hcomp1.
+  - destruct Hcomp1 as [-> _], Hcomp2 as [-> _]. reflexivity.
 Qed.
 
 End Make.

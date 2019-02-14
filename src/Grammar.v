@@ -13,7 +13,7 @@
 (* *********************************************************************)
 
 From Coq Require Import List Syntax Orders.
-From MenhirLib Require Import Alphabet Tuples.
+From MenhirLib Require Import Alphabet.
 
 (** The terminal non-terminal alphabets of the grammar. **)
 Module Type Alphs.
@@ -61,9 +61,11 @@ Module Symbol(Import A:Alphs).
 
 End Symbol.
 
-Module Type T.
-  Export Tuples.
+(** A curryfied function with multiple parameters **)
+Definition arrows_right: Type -> list Type -> Type :=
+  fold_right (fun A B => A -> B).
 
+Module Type T.
   Include Alphs <+ Symbol.
 
   (** [symbol_semantic_type] maps a symbols to the type of its semantic

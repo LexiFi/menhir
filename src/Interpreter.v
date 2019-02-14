@@ -13,14 +13,72 @@
 (* *********************************************************************)
 
 From Coq Require Import Streams List Syntax.
-From Coq.Program Require Import Equality.
 From Coq.ssr Require Import ssreflect.
 From MenhirLib Require Automaton.
-From MenhirLib Require Import Alphabet.
+From MenhirLib Require Import Alphabet Grammar.
 From MenhirLib Require Import Validator_safe.
 
 Module Make(Import A:Automaton.T).
 Module Import ValidSafe := Validator_safe.Make A.
+
+(** A few helpers for dependent types. *)
+
+(** Decidable propositions. *)
+Class Decidable (P : Prop) := decide : {P} + {~P}.
+Arguments decide _ {_}.
+
+(** A [Comparable] type has decidable equality. *)
+Instance comparable_decidable_eq T `{Comparable T, ComparableUsualEq T} (x y : T) :
+  Decidable (x = y).
+Proof.
+  unfold Decidable.
+  destruct (compare x y) eqn:EQ; [left; apply compare_eq; intuition | ..];
+    right; intros ->; by rewrite compare_refl in EQ.
+Defined.
+
+Instance list_decidable_eq T :
+  (forall x y : T, Decidable (x = y)) ->
+  (forall l1 l2 : list T, Decidable (l1 = l2)).
+Proof. unfold Decidable. decide equality. Defined.
+
+Ltac subst_existT :=
+  repeat
+    match goal with
+    | _ => progress subst
+    | H : @existT ?A ?P ?x ?y1 = @existT ?A ?P ?x ?y2 |- _ =>
+      let DEC := fresh in
+      assert (DEC : forall u1 u2 : A, Decidable (u1 = u2)) by apply _;
+      apply Eqdep_dec.inj_pair2_eq_dec in H; [|by apply DEC];
+      clear DEC
+    end.
+
+(** The interpreter is written using dependent types. In order to
+  avoid reducing proof terms while executing the parser, we thunk all
+  the propositions behind an arrow.
+  Note that thunkP is still in Prop so that it is erased by
+  extraction.
+ *)
+Definition thunkP (P : Prop) : Prop := True -> P.
+
+(** Sometimes, we actually need a reduced proof in a program (for
+  example when using an equality to cast a value). In that case,
+  instead of reducing the proof we already have, we reprove the
+  assertion by using decidability. *)
+Definition reprove {P} `{Decidable P} (p : thunkP P) : P :=
+  match decide P with
+  | left p => p
+  | right np => False_ind _ (np (p I))
+  end.
+
+(** Combination of reprove with eq_rect. *)
+Definition cast {T : Type} (F : T -> Type) {x y : T} (eq : thunkP (x = y))
+                `{Decidable (x = y)}:
+                F x -> F y :=
+  fun a => eq_rect x F a y (reprove eq).
+
+Lemma cast_eq T F (x : T) (eq : thunkP (x = x)) `{forall x y, Decidable (x = y)} a :
+  cast F eq a = a.
+Proof. by rewrite /cast -Eqdep_dec.eq_rect_eq_dec. Qed.
 
 (** Some operations on streams **)
 
@@ -107,30 +165,30 @@ with stack_invariant_next: stack -> Prop :=
     values using [sem_popped] as an accumulator and discards the popped
     states.**)
 Fixpoint pop (symbols_to_pop:list symbol) {A:Type} (stk:stack) :
-  prefix symbols_to_pop (symb_stack_of_stack stk) ->
+  thunkP (prefix symbols_to_pop (symb_stack_of_stack stk)) ->
   forall (action:arrows_right A (map symbol_semantic_type symbols_to_pop)),
     stack * A.
 unshelve refine
   (match symbols_to_pop
       return
-         prefix symbols_to_pop (symb_stack_of_stack stk) ->
+         (thunkP (prefix symbols_to_pop (symb_stack_of_stack stk))) ->
          forall (action:arrows_right A (map _ symbols_to_pop)), stack * A
    with
      | [] => fun _ action => (stk, action)
      | t::q => fun Hp action =>
        match stk
-          return prefix (t::q) (symb_stack_of_stack stk) -> stack * A
+          return thunkP (prefix (t::q) (symb_stack_of_stack stk)) -> stack * A
        with
          | existT _ state_cur sem::stack_rec => fun Hp =>
-           let sem_conv := eq_rect _ symbol_semantic_type sem _ _ in
+           let sem_conv := cast symbol_semantic_type _ sem in
            pop q _ stack_rec _ (action sem_conv)
          | [] => fun Hp => False_rect _ _
        end Hp
    end).
 Proof.
-  - simpl in Hp. clear -Hp. abstract now inversion Hp.
-  - simpl in Hp. clear -Hp. abstract now inversion Hp.
-  - simpl in Hp. clear -Hp. abstract now inversion Hp.
+  - simpl in Hp. clear -Hp. abstract (intros _ ; specialize (Hp I); now inversion Hp).
+  - clear -Hp. abstract (specialize (Hp I); now inversion Hp).
+  - simpl in Hp. clear -Hp. abstract (intros _ ; specialize (Hp I); now inversion Hp).
 Defined.
 
 (* Equivalent declarative specification for pop, so that we avoid
@@ -154,11 +212,13 @@ Proof.
   induction symbols_to_pop as [|t symbols_to_pop IH]=>stk Hp action /=.
   - split.
     + intros [= <- <-]. constructor.
-    + intros H. inversion H. simpl_existTs. by subst.
+    + intros H. inversion H. by subst_existT.
   - destruct stk as [|[st sem]]=>/=; [by destruct pop_subproof0|].
-    destruct pop_subproof=>/=. rewrite IH. split.
+    remember (pop_subproof t symbols_to_pop stk st Hp) as EQ eqn:eq. clear eq.
+    generalize EQ. revert Hp action. rewrite <-(EQ I)=>Hp action ?.
+    rewrite cast_eq. rewrite IH. split.
     + intros. by constructor.
-    + intros H. inversion H. simpl_existTs. by subst.
+    + intros H. inversion H. by subst_existT.
 Qed.
 
 
@@ -218,28 +278,29 @@ Inductive step_result :=
    - execute the action of the production
    - follows the goto for the produced non terminal symbol **)
 Definition reduce_step stk prod (buffer : Stream token)
-        (Hval : valid_for_reduce (state_of_stack stk) prod)
+        (Hval : thunkP (valid_for_reduce (state_of_stack stk) prod))
         (Hi : stack_invariant stk)
   : step_result.
 refine
   ((let '(stk', sem) as ss := pop (prod_rhs_rev prod) stk _ (prod_action prod)
-      return state_valid_after_pop (state_of_stack (fst ss)) _ _ -> _
+      return thunkP (state_valid_after_pop (state_of_stack (fst ss)) _ _) -> _
     in fun Hval' =>
     match goto_table (state_of_stack stk') (prod_lhs prod) as goto
-      return (goto = _ -> _) -> _
+      return (thunkP (goto = _ -> _ : Prop)) -> _
     with
     | Some (exist _ state_new e) => fun _ =>
       let sem := eq_rect _ _ sem _ e in
       Progress_sr (existT noninitstate_type state_new sem::stk') buffer
     | None => fun Hval =>
-      let sem := eq_rect _ (fun symb => symbol_semantic_type symb) sem _ _ in
+      let sem := cast symbol_semantic_type _ sem in
       Accept_sr sem buffer
-    end (proj2 Hval _ Hval'))
-   (pop_state_valid _ _ _ _ _ _ _)).
+    end (fun _ => proj2 (Hval I) _ (Hval' I)))
+   (fun _ => pop_state_valid _ _ _ _ _ _ _)).
 Proof.
   - clear -Hi Hval.
-    abstract (destruct Hi; eapply prefix_ass; [apply Hval|eassumption]).
-  - clear -Hval. abstract (f_equal; specialize (Hval eq_refl); destruct stk' as [|[]]=>//).
+    abstract (intros _; destruct Hi; eapply prefix_ass; [by apply Hval|eassumption]).
+  - clear -Hval.
+    abstract (intros _; f_equal; specialize (Hval I eq_refl); destruct stk' as [|[]]=>//).
   - clear -Hi. abstract by destruct Hi.
 Defined.
 
@@ -256,7 +317,7 @@ Proof.
   destruct pop as [stk0 sem]=>/=. simpl in Hi'. intros Hv'.
   assert (Hgoto1:=goto_head_symbs (state_of_stack stk0) (prod_lhs prod)).
   assert (Hgoto2:=goto_past_state (state_of_stack stk0) (prod_lhs prod)).
-  match goal with | |- context [proj2 Hv ?s ?H] => generalize (proj2 Hv s H) end.
+  match goal with | |- context [fun _ : True => ?X] => generalize X end.
   destruct goto_table as [[state_new e]|] eqn:EQgoto=>//.
   intros _ [= <- <-]. constructor=>/=.
   - constructor. eapply prefix_ass. apply Hgoto1. by destruct Hi'.
@@ -269,10 +330,11 @@ Qed.
 (** One step of parsing. **)
 Definition step stk buffer (Hi : stack_invariant stk): step_result :=
   match action_table (state_of_stack stk) as a return
-    match a return Prop with
-    | Default_reduce_act prod => _
-    | Lookahead_act awt => _
-    end -> _
+    thunkP
+      match a return Prop with
+      | Default_reduce_act prod => _
+      | Lookahead_act awt => _
+      end -> _
   with
   | Default_reduce_act prod => fun Hv =>
     reduce_step stk prod buffer Hv Hi
@@ -280,7 +342,7 @@ Definition step stk buffer (Hi : stack_invariant stk): step_result :=
     match Streams.hd buffer with
     | existT _ term sem =>
       match awt term as a return
-        match a return Prop with Reduce_act p => _ | _ => _ end -> _
+        thunkP match a return Prop with Reduce_act p => _ | _ => _ end -> _
       with
       | Shift_act state_new e => fun _ =>
         let sem_conv := eq_rect _ symbol_semantic_type sem _ e in
@@ -290,9 +352,9 @@ Definition step stk buffer (Hi : stack_invariant stk): step_result :=
         reduce_step stk prod buffer Hv Hi
       | Fail_act => fun _ =>
         Fail_sr
-      end (Hv term)
+      end (fun _ => Hv I term)
     end
-  end (reduce_ok _).
+  end (fun _ => reduce_ok _).
 
 Lemma step_stack_invariant_preserved stk buffer Hi stk' buffer':
   step stk buffer Hi = Progress_sr stk' buffer' ->

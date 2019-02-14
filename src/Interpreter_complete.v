@@ -12,10 +12,10 @@
 (*                                                                     *)
 (* *********************************************************************)
 
-From Coq Require Import Streams Equality List Syntax Arith.
+From Coq Require Import Streams List Syntax Arith.
 From Coq.ssr Require Import ssreflect.
-From MenhirLib Require Import Alphabet.
-From MenhirLib Require Grammar Automaton Interpreter Validator_complete.
+From MenhirLib Require Import Alphabet Grammar.
+From MenhirLib Require Automaton Interpreter Validator_complete.
 
 Module Make(Import A:Automaton.T) (Import Inter:Interpreter.T A).
 Module Import Valid := Validator_complete.Make A.
@@ -72,7 +72,7 @@ Proof.
       * destruct IH.
         move=>[/TerminalSet.union_1 [?|?]|[??]];
         auto using TerminalSet.union_2, TerminalSet.union_3.
-    + rewrite Bool.andb_false_r. intuition.
+    + rewrite Bool.andb_false_r. by intuition.
 Qed.
 
 (** If the first predicate has been validated, then it is correct. **)
@@ -595,7 +595,7 @@ Proof.
   | |- context [pop_state_valid init ?A stk ?B ?C ?D ?E ?F] =>
     generalize (pop_state_valid init A stk B C D E F)
   end.
-  rewrite Hstk /=. intros Hv. generalize (proj2 Hval (state_of_stack init stk0) Hv).
+  rewrite Hstk /=. intros Hv. generalize (proj2 (Hval I) (state_of_stack init stk0) Hv).
   clear Hval Hstk Hi Hv stk.
   assert (Hgoto := fun fut prod' =>
     non_terminal_goto (state_of_stack init stk0) prod' (NT (prod_lhs prod)::fut)).
@@ -621,13 +621,13 @@ Proof.
       apply (ptd_stack_compat_build_from_ptl _ _ _ stk0'); auto; [].
       split=>//. by exists eq_refl.
   - intros Hv.
-    generalize (reduce_step_subproof0 _ prod _ (ptl_sem ptl (prod_action _)) Hv).
+    generalize (reduce_step_subproof0 _ prod _ (ptl_sem ptl (prod_action _)) (fun _ => Hv)).
     intros EQnt. clear Hv Hgoto'.
 
     change (ptl_sem ptl (prod_action prod))
       with (pt_sem (Non_terminal_pt prod ptl)).
     generalize (Non_terminal_pt prod ptl). clear ptl. destruct ptz.
-    + intros pt. f_equal. rewrite -Eqdep.Eq_rect_eq.eq_rect_eq //.
+    + intros pt. f_equal. by rewrite cast_eq.
     + edestruct Hgoto. eapply ptz_stack_compat_cons_state_has_future, Hstk0.
 Qed.
 

@@ -12,7 +12,7 @@
 (*                                                                     *)
 (* *********************************************************************)
 
-From Coq Require Import Streams List Syntax Equality.
+From Coq Require Import Streams List Syntax.
 From MenhirLib Require Import Alphabet.
 From MenhirLib Require Grammar Automaton Interpreter.
 From Coq.ssr Require Import ssreflect.
@@ -57,7 +57,7 @@ Proof.
   induction Hspec as [stk sem|symbols_to_pop st stk action sem stk' res Hspec IH];
     intros word_stk Hword_stk.
   - exists word_stk, [], Nil_ptl. rewrite -app_nil_end. eauto.
-  - inversion Hword_stk. simpl_existTs. subst.
+  - inversion Hword_stk. subst_existT.
     edestruct IH as (word_stk' & word_res & ptl & ? & Hword_stk'' & ?); [eassumption|].
     subst. eexists word_stk', (word_res ++ _)%list, (Cons_ptl ptl _).
     split; [|split]=>//. rewrite app_assoc //.
@@ -83,13 +83,16 @@ Proof.
   destruct pop as [stk' sem] eqn:Hpop=>/= Hv'.
   apply pop_spec_ok in Hpop. apply pop_spec_ptl with (word_stk := word) in Hpop=>//.
   destruct Hpop as (word1 & word2 & ptl & <- & Hword1 & <-).
-  match goal with | |- context [proj2 Hv ?x1 ?x2] => generalize (proj2 Hv x1 x2) end.
+  match goal with | |- context [proj2 (Hv I) ?x1 ?x2] => generalize (proj2 (Hv I) x1 x2) end.
   destruct goto_table as [[st' EQ]|].
   - intros _. split=>//.
     change (ptl_sem ptl (prod_action prod)) with (pt_sem (Non_terminal_pt prod ptl)).
     generalize (Non_terminal_pt prod ptl). rewrite ->EQ. intros pt. by constructor.
   - intros Hstk'. destruct Hword1; [|by destruct Hstk'].
-    destruct reduce_step_subproof0. exists (Non_terminal_pt prod ptl). by split.
+    generalize (reduce_step_subproof0 init prod [] (ptl_sem ptl (prod_action prod))
+                                      (fun _ : True => Hstk')).
+    simpl in Hstk'. rewrite -Hstk' // => EQ. rewrite cast_eq.
+    exists (Non_terminal_pt prod ptl). by split.
 Qed.
 
 (** [step] preserves the invariant **)
@@ -110,7 +113,8 @@ Proof.
   intros Hword_stk. unfold step.
   generalize (reduce_ok safe (state_of_stack init stk)).
   destruct action_table as [prod|awt].
-  - intros Hv. apply (reduce_step_invariant stk prod Hv Hi word buffer) in Hword_stk.
+  - intros Hv.
+    apply (reduce_step_invariant stk prod (fun _ => Hv) Hi word buffer) in Hword_stk.
     destruct reduce_step=>//.
     + destruct Hword_stk as (pt & <- & <-); eauto.
     + destruct Hword_stk as [<- ?]; eauto.
@@ -122,7 +126,7 @@ Proof.
       unfold token.
       generalize [existT (fun t => symbol_semantic_type (T t)) term sem].
       rewrite -> EQ=>word' pt /=. by constructor.
-    + apply (reduce_step_invariant stk prod Hv Hi word
+    + apply (reduce_step_invariant stk prod (fun _ => Hv) Hi word
                  (Cons (existT _ term sem) buffer)) in Hword_stk.
       destruct reduce_step=>//.
       * destruct Hword_stk as (pt & <- & <-); eauto.
