@@ -244,15 +244,6 @@ export:
 
 # This entry assumes that [make release] has been run on the same day.
 
-# You need a version of opam-publish that supports --subdirectory:
-#   git clone git@github.com:fpottier/opam-publish.git
-#   cd opam-publish
-#   git checkout 1.3
-#   opam pin add opam-publish `pwd` -k git
-
-# The following command should have been run once:
-#   opam publish repo add opam-coq-archive coq/opam-coq-archive
-
 # The package name.
 THIS     := menhir
 THIS_COQ_MENHIRLIB := coq-menhirlib
@@ -278,8 +269,25 @@ opam:
 # of opam
 	@ cp $(THIS_COQ_MENHIRLIB).opam $(THIS_COQ_MENHIRLIB).patched.opam
 	@ sed -i 's/"menhir" { = "dev" }/"menhir" { = "$(DATE)" }/g' $(THIS_COQ_MENHIRLIB).patched.opam
-	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) $(THIS_COQ_MENHIRLIB).patched.opam $(ARCHIVE)
-	@ rm $(THIS_COQ_MENHIRLIB).patched.opam
+
+# FIXME : we should use opam-publish 1.x for coq-menhirlib but
+# opam-publish 2.x for Menhir...
+
+# You need a version of opam-publish that supports --subdirectory:
+#   git clone git@github.com:fpottier/opam-publish.git
+#   cd opam-publish
+#   git checkout 1.3
+#   opam pin add opam-publish `pwd` -k git
+# FIXME : does not work with opam 2.0 repositories...
+
+# The following command should have been run once:
+#   opam publish repo add opam-coq-archive coq/opam-coq-archive
+
+#	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) $(THIS_COQ_MENHIRLIB).patched.opam $(ARCHIVE)
+#	@ rm $(THIS_COQ_MENHIRLIB).patched.opam
+
+	@ echo "Please submit by hand the opam package for coq-menhirlib."
+	@ echo "When using so, please use the patched file $(THIS_COQ_MENHIRLIB).patched.opam"
 
 # -------------------------------------------------------------------------
 
