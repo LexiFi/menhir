@@ -32,6 +32,7 @@ fi
 
 TEMPDIR=`mktemp -d /tmp/menhir-test.XXXXXX`
 INSTALL=$TEMPDIR/install
+COQCONTRIB=$INSTALL/coq-contrib
 
 cp $TARBALL $TEMPDIR
 
@@ -42,7 +43,9 @@ echo "   * Compiling and installing."
 mkdir $INSTALL
 (cd $TEMPDIR/$PACKAGE &&
   make PREFIX=$INSTALL USE_OCAMLFIND=true &&
-  make PREFIX=$INSTALL USE_OCAMLFIND=true install
+  make PREFIX=$INSTALL USE_OCAMLFIND=true install &&
+  make -C coq-menhirlib all &&
+  make -C coq-menhirlib CONTRIB=$COQCONTRIB install
 ) > $TEMPDIR/install.log 2>&1 || (cat $TEMPDIR/install.log; exit 1)
 
 echo "   * Building the demos."
@@ -53,6 +56,7 @@ echo "   * Building the demos."
 echo "   * Uninstalling."
 (cd $TEMPDIR/$PACKAGE &&
   make PREFIX=$INSTALL USE_OCAMLFIND=true uninstall
+  make -C coq-menhirlib CONTRIB=$COQCONTRIB uninstall
 ) > $TEMPDIR/uninstall.log 2>&1 || (cat $TEMPDIR/uninstall.log; exit 1)
 
 rm -rf $TEMPDIR

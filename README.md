@@ -15,6 +15,13 @@ For manual installation, see [INSTALLATION.md](INSTALLATION.md).
 
 Some instructions for developers can be found in [HOWTO.md](HOWTO.md).
 
+## The Coq backend support library coq-menhirlib
+
+The support library for the Coq backend of Menhir can be found in the
+coq-menhirlib directory. It can be installed using
+`opam install coq-menhirlib`, when the opam Coq "released" repository
+is set up.
+
 ## Authors
 
 * [François Pottier](Francois.Pottier@inria.fr)

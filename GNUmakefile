@@ -143,10 +143,11 @@ release:
 # Remove subdirectories that do not need to (or must not) be distributed.
 	@ make --quiet -C test clean
 	@ make --quiet -C quicktest clean
+	@ make --quiet -C coq-menhirlib clean
 	@ git rm -rf attic headers quicktest releases src/attic test --quiet
 # Remove files that do not need to (or must not) be distributed.
 # Keep check-tarball.sh because it is used below.
-	@ git rm GNUmakefile HOWTO.md TODO* menhir.opam --quiet
+	@ git rm GNUmakefile HOWTO.md TODO* *.opam --quiet
 # Hardcode the version number in the files that mention it. These
 # include version.ml, StaticVersion.{ml,mli}, version.tex, META.
 	@ echo let version = \"$(DATE)\" > src/version.ml
@@ -243,8 +244,18 @@ export:
 
 # This entry assumes that [make release] has been run on the same day.
 
+# You need a version of opam-publish that supports --subdirectory:
+#   git clone git@github.com:fpottier/opam-publish.git
+#   cd opam-publish
+#   git checkout 1.3
+#   opam pin add opam-publish `pwd` -k git
+
+# The following command should have been run once:
+#   opam publish repo add opam-coq-archive coq/opam-coq-archive
+
 # The package name.
 THIS     := menhir
+THIS_COQ_MENHIRLIB := coq-menhirlib
 
 # The repository URL (https).
 REPO     := https://gitlab.inria.fr/fpottier/$(THIS)
@@ -252,10 +263,16 @@ REPO     := https://gitlab.inria.fr/fpottier/$(THIS)
 # The archive URL (https).
 ARCHIVE  := $(REPO)/repository/$(DATE)/archive.tar.gz
 
+# Additional options for coq-menhirlib
+COQ_MENHIRLIB_PUBLISH_OPTIONS := \
+  --repo opam-coq-archive \
+  --subdirectory released \
+
 .PHONY: opam
 opam:
 # Publish an opam description.
 	@ opam publish -v $(DATE) $(THIS) $(ARCHIVE) .
+	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) $(THIS_COQ_MENHIRLIB) $(ARCHIVE) .
 
 # -------------------------------------------------------------------------
 
@@ -263,7 +280,7 @@ opam:
 
 .PHONY: pin
 pin:
-	opam pin add menhir .
+	opam pin add menhir.dev .
 
 .PHONY: unpin
 unpin:
