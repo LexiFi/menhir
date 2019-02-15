@@ -271,14 +271,14 @@ COQ_MENHIRLIB_PUBLISH_OPTIONS := \
 .PHONY: opam
 opam:
 # Publish an opam description for menhir.
-	@ opam publish -v $(DATE) $(THIS).opam
+	@ opam publish -v $(DATE) $(THIS).opam $(ARCHIVE)
 
 # Publish an opam description for coq-menhirlib
 # We first patch the opam file to add the strong dependency to the same version
 # of opam
 	@ cp $(THIS_COQ_MENHIRLIB).opam $(THIS_COQ_MENHIRLIB).patched.opam
 	@ sed -i 's/"menhir" { = "dev" }/"menhir" { = "$(DATE)" }/g' $(THIS_COQ_MENHIRLIB).patched.opam
-	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) $(THIS_COQ_MENHIRLIB).patched.opam
+	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) $(THIS_COQ_MENHIRLIB).patched.opam $(ARCHIVE)
 	@ rm $(THIS_COQ_MENHIRLIB).patched.opam
 
 # -------------------------------------------------------------------------
