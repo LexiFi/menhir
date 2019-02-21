@@ -27,12 +27,14 @@ module Run (T: sig end) = struct
     | Symbol.N nt -> sprintf "NT %s" (print_nterm nt)
     | Symbol.T t -> sprintf "T %s" (print_term t)
 
+  exception No_type
+
   let print_type ty =
     if Settings.coq_no_actions then
       "unit"
     else
       match ty with
-        | None -> raise Not_found (* fpottier: argh! *)
+        | None -> raise No_type
         | Some t -> match t with
             | Stretch.Declared s -> s.Stretch.stretch_content
             | Stretch.Inferred _ -> assert false (* We cannot infer coq types *)
@@ -121,7 +123,7 @@ module Run (T: sig end) = struct
     if List.length constrs > 0 then
       begin
         let iteri f = ignore (List.fold_left (fun k x -> f k x; succ k) 0 constrs) in
-        fprintf f "Program Instance %sNum : Numbered %s :=\n" name name;
+        fprintf f "Program Instance %sNum : MenhirLib.Alphabet.Numbered %s :=\n" name name;
         fprintf f "  { inj := fun x => match x return _ with ";
         iteri (fun k constr ->
           fprintf f "\n    | %s => " constr;
@@ -137,7 +139,7 @@ module Run (T: sig end) = struct
       end
     else
       begin
-        fprintf f "Program Instance %sAlph : Alphabet %s :=\n" name name;
+        fprintf f "Program Instance %sAlph : MenhirLib.Alphabet.Alphabet %s :=\n" name name;
         fprintf f "  { AlphabetComparable := {| compare := fun x y =>\n";
         fprintf f "      match x, y return comparison with end |};\n";
         fprintf f "    AlphabetEnumerable := {| all_list := [] |} }.";
@@ -147,12 +149,12 @@ module Run (T: sig end) = struct
     write_inductive_alphabet f "terminal" (
       Terminal.fold (fun t l -> if Terminal.pseudo t then l else print_term t::l)
         []);
-    fprintf f "Instance TerminalAlph : Alphabet terminal := _.\n\n"
+    fprintf f "Instance TerminalAlph : MenhirLib.Alphabet.Alphabet terminal := _.\n\n"
 
   let write_nonterminals f =
     write_inductive_alphabet f "nonterminal" (
       Nonterminal.foldx (fun nt l -> (print_nterm nt)::l) []);
-    fprintf f "Instance NonTerminalAlph : Alphabet nonterminal := _.\n\n"
+    fprintf f "Instance NonTerminalAlph : MenhirLib.Alphabet.Alphabet nonterminal := _.\n\n"
 
   let write_symbol_semantic_type f =
     fprintf f "Definition terminal_semantic_type (t:terminal) : Type:=\n";
@@ -161,7 +163,7 @@ module Run (T: sig end) = struct
       if not (Terminal.pseudo terminal) then
         fprintf f "  | %s => %s%%type\n"
           (print_term terminal)
-          (try print_type (Terminal.ocamltype terminal) with Not_found -> "unit")
+          (try print_type (Terminal.ocamltype terminal) with No_type -> "unit")
     );
     fprintf f "  end.\n\n";
 
@@ -182,17 +184,19 @@ module Run (T: sig end) = struct
   let write_productions f =
     write_inductive_alphabet f "production" (
       Production.foldx (fun prod l -> (print_prod prod)::l) []);
-    fprintf f "Instance ProductionAlph : Alphabet production := _.\n\n"
+    fprintf f "Instance ProductionAlph : MenhirLib.Alphabet.Alphabet production := _.\n\n"
 
   let write_productions_contents f =
     fprintf f "Definition prod_contents (p:production) :\n";
     fprintf f "  { p:nonterminal * list symbol &\n";
-    fprintf f "    arrows_left (map symbol_semantic_type (rev (snd p)))\n";
-    fprintf f "                (symbol_semantic_type (NT (fst p))) }\n";
+    fprintf f "    MenhirLib.Grammar.arrows_right\n";
+    fprintf f "      (symbol_semantic_type (NT (fst p)))\n";
+    fprintf f "      (map symbol_semantic_type (snd p)) }\n";
     fprintf f " :=\n";
     fprintf f "  let box := existT (fun p =>\n";
-    fprintf f "    arrows_left (map symbol_semantic_type (rev (snd p)))\n";
-    fprintf f "                (symbol_semantic_type (NT (fst p))))\n";
+    fprintf f "    MenhirLib.Grammar.arrows_right\n";
+    fprintf f "      (symbol_semantic_type (NT (fst p)))\n";
+    fprintf f "      (map symbol_semantic_type (snd p)) )\n";
     fprintf f "  in\n";
     fprintf f "  match p with\n";
     Production.iterx (fun prod ->
@@ -207,7 +211,7 @@ module Run (T: sig end) = struct
         fprintf f "    (fun %s =>\n"
           (String.concat " " (List.rev (Array.to_list (Production.identifiers prod))));
       if Settings.coq_no_actions then
-        fprintf f "()"
+        fprintf f "tt"
       else
         Printer.print_expr f (Action.to_il_expr (Production.action prod));
       fprintf f "\n)\n");
@@ -243,27 +247,27 @@ module Run (T: sig end) = struct
     fprintf f "  end.\n\n"
 
   let write_grammar f =
-    fprintf f "Module Import Gram <: Grammar.T.\n\n";
+    fprintf f "Module Import Gram <: MenhirLib.Grammar.T.\n\n";
     fprintf f "Local Obligation Tactic := let x := fresh in intro x; case x; reflexivity.\n\n";
     write_terminals f;
     write_nonterminals f;
-    fprintf f "Include Grammar.Symbol.\n\n";
+    fprintf f "Include MenhirLib.Grammar.Symbol.\n\n";
     write_symbol_semantic_type f;
     write_productions f;
     write_productions_contents f;
-    fprintf f "Include Grammar.Defs.\n\n";
+    fprintf f "Include MenhirLib.Grammar.Defs.\n\n";
     fprintf f "End Gram.\n\n"
 
   let write_nis f =
     write_inductive_alphabet f "noninitstate" (
       lr1_foldx_nonfinal (fun l node -> (print_nis node)::l) []);
-    fprintf f "Instance NonInitStateAlph : Alphabet noninitstate := _.\n\n"
+    fprintf f "Instance NonInitStateAlph : MenhirLib.Alphabet.Alphabet noninitstate := _.\n\n"
 
   let write_init f =
     write_inductive_alphabet f "initstate" (
       ProductionMap.fold (fun _prod node l ->
         (print_init node)::l) Lr1.entry []);
-    fprintf f "Instance InitStateAlph : Alphabet initstate := _.\n\n"
+    fprintf f "Instance InitStateAlph : MenhirLib.Alphabet.Alphabet initstate := _.\n\n"
 
   let write_start_nt f =
     fprintf f "Definition start_nt (init:initstate) : nonterminal :=\n";
@@ -435,7 +439,7 @@ module Run (T: sig end) = struct
     fprintf f "Extract Constant items_of_state => \"fun _ -> assert false\".\n\n"
 
   let write_automaton f =
-    fprintf f "Module Aut <: Automaton.T.\n\n";
+    fprintf f "Module Aut <: MenhirLib.Automaton.T.\n\n";
     fprintf f "Local Obligation Tactic := let x := fresh in intro x; case x; reflexivity.\n\n";
     fprintf f "Module Gram := Gram.\n";
     fprintf f "Module GramDefs := Gram.\n\n";
@@ -443,7 +447,7 @@ module Run (T: sig end) = struct
     write_nis f;
     write_last_symb f;
     write_init f;
-    fprintf f "Include Automaton.Types.\n\n";
+    fprintf f "Include MenhirLib.Automaton.Types.\n\n";
     write_start_nt f;
     write_actions f;
     write_gotos f;
@@ -452,27 +456,18 @@ module Run (T: sig end) = struct
     write_items f;
     fprintf f "End Aut.\n\n"
 
-  let from_menhirlib f =
-    match Settings.coq_lib_path with
-    | None ->
-        ()
-    | Some path ->
-        fprintf f "From %s " path
-
   let write_theorems f =
-    from_menhirlib f; fprintf f "Require Import Main.\n\n";
-
-    fprintf f "Module Parser := Main.Make Aut.\n";
+    fprintf f "Module Parser := MenhirLib.Main.Make Aut.\n";
 
     fprintf f "Theorem safe:\n";
-    fprintf f "  Parser.safe_validator () = true.\n";
-    fprintf f "Proof eq_refl true<:Parser.safe_validator () = true.\n\n";
+    fprintf f "  Parser.safe_validator tt = true.\n";
+    fprintf f "Proof eq_refl true<:Parser.safe_validator tt = true.\n\n";
 
     if not Settings.coq_no_complete then
       begin
         fprintf f "Theorem complete:\n";
-        fprintf f "  Parser.complete_validator () = true.\n";
-        fprintf f "Proof eq_refl true<:Parser.complete_validator () = true.\n\n";
+        fprintf f "  Parser.complete_validator tt = true.\n";
+        fprintf f "Proof eq_refl true<:Parser.complete_validator tt = true.\n\n";
       end;
 
     Lr1.fold_entry (fun _prod node startnt _t () ->
@@ -480,29 +475,31 @@ module Run (T: sig end) = struct
           fprintf f "Definition %s := Parser.parse safe Aut.%s.\n\n"
             funName (print_init node);
 
+
+
           fprintf f "Theorem %s_correct iterator buffer:\n" funName;
           fprintf f "  match %s iterator buffer with\n" funName;
           fprintf f "  | Parser.Inter.Parsed_pr sem buffer_new =>\n";
-          fprintf f "    exists word,\n";
-          fprintf f "      buffer = Parser.Inter.app_str word buffer_new /\\\n";
-          fprintf f "      inhabited (Gram.parse_tree (%s) word sem)\n" (print_symbol (Symbol.N startnt));
+          fprintf f "      exists word (tree : Gram.parse_tree (%s) word),\n"
+            (print_symbol (Symbol.N startnt));
+          fprintf f "        buffer = Parser.Inter.app_str word buffer_new /\\\n";
+          fprintf f "        Gram.pt_sem tree = sem\n";
           fprintf f "  | _ => True\n";
           fprintf f "  end.\n";
           fprintf f "Proof. apply Parser.parse_correct. Qed.\n\n";
 
           if not Settings.coq_no_complete then
             begin
-              fprintf f "Theorem %s_complete (iterator:nat) word buffer_end (output:%s):\n"
-                funName (print_type (Nonterminal.ocamltype startnt));
-              fprintf f "  forall tree:Gram.parse_tree (%s) word output,\n" (print_symbol (Symbol.N startnt));
+              fprintf f "Theorem %s_complete (iterator:nat) word buffer_end:\n" funName;
+              fprintf f "  forall tree : Gram.parse_tree (%s) word,\n" (print_symbol (Symbol.N startnt));
               fprintf f "  match %s iterator (Parser.Inter.app_str word buffer_end) with\n" funName;
               fprintf f "  | Parser.Inter.Fail_pr => False\n";
               fprintf f "  | Parser.Inter.Parsed_pr output_res buffer_end_res =>\n";
-              fprintf f "    output_res = output /\\ buffer_end_res = buffer_end  /\\\n";
-              fprintf f "    le (Gram.pt_size tree) iterator\n";
+              fprintf f "      output_res = Gram.pt_sem tree /\\\n";
+              fprintf f "      buffer_end_res = buffer_end /\\ le (Gram.pt_size tree) iterator\n";
               fprintf f "  | Parser.Inter.Timeout_pr => lt iterator (Gram.pt_size tree)\n";
               fprintf f "  end.\n";
-              fprintf f "Proof. apply Parser.parse_complete with (init:=Aut.%s); exact complete. Qed.\n\n" (print_init node);
+              fprintf f "Proof. apply Parser.parse_complete with (init:=Aut.%s); exact complete. Qed.\n" (print_init node);
             end
     ) ()
 
@@ -511,14 +508,16 @@ module Run (T: sig end) = struct
       List.iter (fun s -> fprintf f "%s\n\n" s.Stretch.stretch_content)
         Front.grammar.BasicSyntax.preludes;
 
-    fprintf f "From Coq.Lists Require Import List.\n";
+    fprintf f "From Coq.Lists Require List.\n";
     fprintf f "From Coq.Numbers.Cyclic.Int31 Require Import Int31.\n";
-    fprintf f "From Coq.Program Require Import Syntax.\n";
-    from_menhirlib f; fprintf f "Require Import Tuples.\n";
-    from_menhirlib f; fprintf f "Require Import Alphabet.\n";
-    from_menhirlib f; fprintf f "Require Grammar.\n";
-    from_menhirlib f; fprintf f "Require Automaton.\n\n";
+    fprintf f "From MenhirLib Require Main.\n";
+    fprintf f "From MenhirLib Require Version.\n";
+    fprintf f "Import List.ListNotations.\n\n";
+
+    fprintf f "Definition version_check : unit := MenhirLib.Version.require_%s.\n\n" Version.version;
+
     fprintf f "Unset Elimination Schemes.\n\n";
+
     write_grammar f;
     write_automaton f;
     write_theorems f;

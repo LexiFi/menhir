@@ -160,6 +160,8 @@ release:
 	@ git add src/StaticVersion.ml src/StaticVersion.mli
 	@ echo '\gdef\menhirversion{$(DATE)}' > doc/version.tex
 	@ git add doc/version.tex
+	@ echo 'Definition require_$(DATE).' >> coq-menhirlib/src/Version.v
+	@ git add coq-menhirlib/src/Version.v
 # Compile the documentation.
 	@ echo "Building the documentation..."
 	@ make --quiet -C doc clean >/dev/null

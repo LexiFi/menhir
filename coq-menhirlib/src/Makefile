@@ -7,12 +7,15 @@ export
 
 .PHONY: all clean install uninstall
 
-all:
+_CoqProject:
 	@ $(MAKE) -f Makefile.coq --no-print-directory _CoqProject
+
+all: _CoqProject
 	@ $(MAKE) -f Makefile.coq --no-print-directory all
 
 clean:
 	@ $(MAKE) -f Makefile.coq --no-print-directory clean
+	@ rm -f _CoqProject
 
 CONTRIB := $(shell $(COQBIN)coqc -where)/user-contrib
 TARGET  := $(CONTRIB)/MenhirLib
