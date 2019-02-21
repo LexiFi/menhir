@@ -147,7 +147,7 @@ release:
 	@ git rm -rf attic headers quicktest releases src/attic test --quiet
 # Remove files that do not need to (or must not) be distributed.
 # Keep check-tarball.sh because it is used below.
-	@ git rm GNUmakefile HOWTO.md TODO* *.opam --quiet
+	@ git rm GNUmakefile HOWTO.md TODO* *.opam coq-menhirlib/descr --quiet
 # Hardcode the version number in the files that mention it. These
 # include version.ml, StaticVersion.{ml,mli}, version.tex, META.
 	@ echo let version = \"$(DATE)\" > src/version.ml
@@ -278,11 +278,11 @@ opam:
 #   cd opam-publish
 #   git checkout 1.3
 #   opam pin add opam-publish `pwd` -k git
-# FIXME : does not work with opam 2.0 repositories...
 
 # The following command should have been run once:
 #   opam publish repo add opam-coq-archive coq/opam-coq-archive
 
+# FIXME : does not work with opam 2.0 repositories...
 #	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) $(THIS_COQ_MENHIRLIB).patched.opam $(ARCHIVE)
 #	@ rm $(THIS_COQ_MENHIRLIB).patched.opam
 
