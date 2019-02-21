@@ -72,9 +72,9 @@ Definition reprove {P} `{Decidable P} (p : thunkP P) : P :=
 
 (** Combination of reprove with eq_rect. *)
 Definition cast {T : Type} (F : T -> Type) {x y : T} (eq : thunkP (x = y))
-                `{Decidable (x = y)}:
+                {DEC : unit -> Decidable (x = y)}:
                 F x -> F y :=
-  fun a => eq_rect x F a y (reprove eq).
+  fun a => eq_rect x F a y (@reprove _ (DEC ()) eq).
 
 Lemma cast_eq T F (x : T) (eq : thunkP (x = x)) `{forall x y, Decidable (x = y)} a :
   cast F eq a = a.
