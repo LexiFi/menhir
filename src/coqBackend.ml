@@ -15,6 +15,17 @@ open Printf
 open Grammar
 
 module Run (T: sig end) = struct
+  let from_menhirlib f =
+    match Settings.coq_lib_path with
+    | None ->
+        ()
+    | Some path ->
+        fprintf f "From %s " path
+
+  let menhirlib_path =
+    match Settings.coq_lib_path with
+    | None -> ""
+    | Some path -> path ^ "."
 
   let print_term t =
     assert (not (Terminal.pseudo t));
@@ -123,7 +134,7 @@ module Run (T: sig end) = struct
     if List.length constrs > 0 then
       begin
         let iteri f = ignore (List.fold_left (fun k x -> f k x; succ k) 0 constrs) in
-        fprintf f "Program Instance %sNum : MenhirLib.Alphabet.Numbered %s :=\n" name name;
+        fprintf f "Program Instance %sNum : %sAlphabet.Numbered %s :=\n" name menhirlib_path name;
         fprintf f "  { inj := fun x => match x return _ with ";
         iteri (fun k constr ->
           fprintf f "\n    | %s => " constr;
@@ -139,7 +150,7 @@ module Run (T: sig end) = struct
       end
     else
       begin
-        fprintf f "Program Instance %sAlph : MenhirLib.Alphabet.Alphabet %s :=\n" name name;
+        fprintf f "Program Instance %sAlph : %sAlphabet.Alphabet %s :=\n" name menhirlib_path name;
         fprintf f "  { AlphabetComparable := {| compare := fun x y =>\n";
         fprintf f "      match x, y return comparison with end |};\n";
         fprintf f "    AlphabetEnumerable := {| all_list := [] |} }.";
@@ -149,12 +160,12 @@ module Run (T: sig end) = struct
     write_inductive_alphabet f "terminal" (
       Terminal.fold (fun t l -> if Terminal.pseudo t then l else print_term t::l)
         []);
-    fprintf f "Instance TerminalAlph : MenhirLib.Alphabet.Alphabet terminal := _.\n\n"
+    fprintf f "Instance TerminalAlph : %sAlphabet.Alphabet terminal := _.\n\n" menhirlib_path
 
   let write_nonterminals f =
     write_inductive_alphabet f "nonterminal" (
       Nonterminal.foldx (fun nt l -> (print_nterm nt)::l) []);
-    fprintf f "Instance NonTerminalAlph : MenhirLib.Alphabet.Alphabet nonterminal := _.\n\n"
+    fprintf f "Instance NonTerminalAlph : %sAlphabet.Alphabet nonterminal := _.\n\n" menhirlib_path
 
   let write_symbol_semantic_type f =
     fprintf f "Definition terminal_semantic_type (t:terminal) : Type:=\n";
@@ -184,17 +195,17 @@ module Run (T: sig end) = struct
   let write_productions f =
     write_inductive_alphabet f "production" (
       Production.foldx (fun prod l -> (print_prod prod)::l) []);
-    fprintf f "Instance ProductionAlph : MenhirLib.Alphabet.Alphabet production := _.\n\n"
+    fprintf f "Instance ProductionAlph : %sAlphabet.Alphabet production := _.\n\n" menhirlib_path
 
   let write_productions_contents f =
     fprintf f "Definition prod_contents (p:production) :\n";
     fprintf f "  { p:nonterminal * list symbol &\n";
-    fprintf f "    MenhirLib.Grammar.arrows_right\n";
+    fprintf f "    %sGrammar.arrows_right\n" menhirlib_path;
     fprintf f "      (symbol_semantic_type (NT (fst p)))\n";
     fprintf f "      (map symbol_semantic_type (snd p)) }\n";
     fprintf f " :=\n";
     fprintf f "  let box := existT (fun p =>\n";
-    fprintf f "    MenhirLib.Grammar.arrows_right\n";
+    fprintf f "    %sGrammar.arrows_right\n" menhirlib_path;
     fprintf f "      (symbol_semantic_type (NT (fst p)))\n";
     fprintf f "      (map symbol_semantic_type (snd p)) )\n";
     fprintf f "  in\n";
@@ -247,27 +258,27 @@ module Run (T: sig end) = struct
     fprintf f "  end.\n\n"
 
   let write_grammar f =
-    fprintf f "Module Import Gram <: MenhirLib.Grammar.T.\n\n";
+    fprintf f "Module Import Gram <: %sGrammar.T.\n\n" menhirlib_path;
     fprintf f "Local Obligation Tactic := let x := fresh in intro x; case x; reflexivity.\n\n";
     write_terminals f;
     write_nonterminals f;
-    fprintf f "Include MenhirLib.Grammar.Symbol.\n\n";
+    fprintf f "Include %sGrammar.Symbol.\n\n" menhirlib_path;
     write_symbol_semantic_type f;
     write_productions f;
     write_productions_contents f;
-    fprintf f "Include MenhirLib.Grammar.Defs.\n\n";
+    fprintf f "Include %sGrammar.Defs.\n\n" menhirlib_path;
     fprintf f "End Gram.\n\n"
 
   let write_nis f =
     write_inductive_alphabet f "noninitstate" (
       lr1_foldx_nonfinal (fun l node -> (print_nis node)::l) []);
-    fprintf f "Instance NonInitStateAlph : MenhirLib.Alphabet.Alphabet noninitstate := _.\n\n"
+    fprintf f "Instance NonInitStateAlph : %sAlphabet.Alphabet noninitstate := _.\n\n" menhirlib_path
 
   let write_init f =
     write_inductive_alphabet f "initstate" (
       ProductionMap.fold (fun _prod node l ->
         (print_init node)::l) Lr1.entry []);
-    fprintf f "Instance InitStateAlph : MenhirLib.Alphabet.Alphabet initstate := _.\n\n"
+    fprintf f "Instance InitStateAlph : %sAlphabet.Alphabet initstate := _.\n\n" menhirlib_path
 
   let write_start_nt f =
     fprintf f "Definition start_nt (init:initstate) : nonterminal :=\n";
@@ -439,7 +450,7 @@ module Run (T: sig end) = struct
     fprintf f "Extract Constant items_of_state => \"fun _ -> assert false\".\n\n"
 
   let write_automaton f =
-    fprintf f "Module Aut <: MenhirLib.Automaton.T.\n\n";
+    fprintf f "Module Aut <: %sAutomaton.T.\n\n" menhirlib_path;
     fprintf f "Local Obligation Tactic := let x := fresh in intro x; case x; reflexivity.\n\n";
     fprintf f "Module Gram := Gram.\n";
     fprintf f "Module GramDefs := Gram.\n\n";
@@ -447,7 +458,7 @@ module Run (T: sig end) = struct
     write_nis f;
     write_last_symb f;
     write_init f;
-    fprintf f "Include MenhirLib.Automaton.Types.\n\n";
+    fprintf f "Include %sAutomaton.Types.\n\n" menhirlib_path;
     write_start_nt f;
     write_actions f;
     write_gotos f;
@@ -457,7 +468,7 @@ module Run (T: sig end) = struct
     fprintf f "End Aut.\n\n"
 
   let write_theorems f =
-    fprintf f "Module Parser := MenhirLib.Main.Make Aut.\n";
+    fprintf f "Module Parser := %sMain.Make Aut.\n" menhirlib_path;
 
     fprintf f "Theorem safe:\n";
     fprintf f "  Parser.safe_validator tt = true.\n";
@@ -510,11 +521,11 @@ module Run (T: sig end) = struct
 
     fprintf f "From Coq.Lists Require List.\n";
     fprintf f "From Coq.Numbers.Cyclic.Int31 Require Import Int31.\n";
-    fprintf f "From MenhirLib Require Main.\n";
-    fprintf f "From MenhirLib Require Version.\n";
+    from_menhirlib f; fprintf f "Require Main.\n";
+    from_menhirlib f; fprintf f "Require Version.\n";
     fprintf f "Import List.ListNotations.\n\n";
 
-    fprintf f "Definition version_check : unit := MenhirLib.Version.require_%s.\n\n" Version.version;
+    fprintf f "Definition version_check : unit := %sVersion.require_%s.\n\n" menhirlib_path Version.version;
 
     fprintf f "Unset Elimination Schemes.\n\n";
 
