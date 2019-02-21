@@ -28,7 +28,7 @@ Class Decidable (P : Prop) := decide : {P} + {~P}.
 Arguments decide _ {_}.
 
 (** A [Comparable] type has decidable equality. *)
-Instance comparable_decidable_eq T `{Comparable T, ComparableUsualEq T} (x y : T) :
+Instance comparable_decidable_eq T `{ComparableUsualEq T} (x y : T) :
   Decidable (x = y).
 Proof.
   unfold Decidable.
