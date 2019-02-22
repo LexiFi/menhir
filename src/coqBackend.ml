@@ -118,7 +118,7 @@ module Run (T: sig end) = struct
     fprintf f "Definition %s := %s'.\n\n" name name;
     if List.length constrs > 0 then
       begin
-        let iteri f = ignore (List.fold_left (fun k x -> f k x; succ k) 0 constrs) in
+        let iteri f = ignore (List.fold_left (fun k x -> f k x; succ k) 1 constrs) in
         fprintf f "Program Instance %sNum : %sAlphabet.Numbered %s :=\n" name menhirlib_path name;
         fprintf f "  { inj := fun x => match x return _ with ";
         iteri (fun k constr -> fprintf f "\n    | %s => %d%%positive" constr k);
@@ -502,6 +502,7 @@ module Run (T: sig end) = struct
         Front.grammar.BasicSyntax.preludes;
 
     fprintf f "From Coq.Lists Require List.\n";
+    fprintf f "From Coq.Numbers Require Import BinNums.\n";
     from_menhirlib f; fprintf f "Require Main.\n";
     from_menhirlib f; fprintf f "Require Version.\n";
     fprintf f "Import List.ListNotations.\n\n";

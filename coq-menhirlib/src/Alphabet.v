@@ -171,7 +171,7 @@ Class Numbered (A:Type) := {
   surj : positive -> A;
   surj_inj_compat : forall x, surj (inj x) = x;
   inj_bound : positive;
-  inj_bound_spec : forall x, (inj x <= inj_bound)%positive
+  inj_bound_spec : forall x, (inj x < Pos.succ inj_bound)%positive
 }.
 
 Instance NumberedAlphabet {A:Type} (N:Numbered A) : Alphabet A :=
@@ -192,6 +192,7 @@ Proof.
     generalize (inj_bound_spec x). generalize (inj x). clear x. intros x.
     match goal with |- ?Hx -> In ?s (fst ?p) =>
       assert ((Hx -> In s (fst p)) /\ snd p = Pos.succ inj_bound); [|now intuition] end.
+    rewrite Pos.lt_succ_r.
     induction inj_bound as [|y [IH1 IH2]] using Pos.peano_ind;
       (split; [intros Hx|]); simpl.
     + rewrite (Pos.le_antisym _ _ Hx); auto using Pos.le_1_l.
