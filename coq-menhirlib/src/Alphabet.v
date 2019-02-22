@@ -174,32 +174,36 @@ Class Numbered (A:Type) := {
   inj_bound_spec : forall x, (inj x < Pos.succ inj_bound)%positive
 }.
 
-Instance NumberedAlphabet {A:Type} (N:Numbered A) : Alphabet A :=
+Program Instance NumberedAlphabet {A:Type} (N:Numbered A) : Alphabet A :=
   { AlphabetComparable := {| compare := fun x y => Pos.compare (inj x) (inj y) |};
     AlphabetFinite :=
       {| all_list := fst (Pos.iter
                            (fun '(l, p) => (surj p::l, Pos.succ p))
                            ([], 1%positive) inj_bound) |} }.
-Proof.
-  - intros ??. now rewrite <- Pos.compare_antisym.
-  - intros x y z [].
-    + rewrite !Pos.compare_eq_iff. congruence.
-    + rewrite !Pos.compare_lt_iff. apply Pos.lt_trans.
-    + rewrite !Pos.compare_gt_iff. eauto using Pos.lt_trans.
-  - intros x y. unfold compare. rewrite Pos.compare_eq_iff. intros Hxy.
-    rewrite <-(surj_inj_compat x), <-(surj_inj_compat y). congruence.
-  - intros x. rewrite <-(surj_inj_compat x).
-    generalize (inj_bound_spec x). generalize (inj x). clear x. intros x.
-    match goal with |- ?Hx -> In ?s (fst ?p) =>
-      assert ((Hx -> In s (fst p)) /\ snd p = Pos.succ inj_bound); [|now intuition] end.
-    rewrite Pos.lt_succ_r.
-    induction inj_bound as [|y [IH1 IH2]] using Pos.peano_ind;
-      (split; [intros Hx|]); simpl.
-    + rewrite (Pos.le_antisym _ _ Hx); auto using Pos.le_1_l.
-    + auto.
-    + rewrite Pos.iter_succ. destruct Pos.iter; simpl in *. subst.
-      rewrite Pos.le_lteq in Hx. destruct Hx as [?%Pos.lt_succ_r| ->]; now auto.
-    + rewrite Pos.iter_succ. destruct Pos.iter. simpl in IH2. subst. reflexivity.
+Next Obligation. simpl. now rewrite <- Pos.compare_antisym. Qed.
+Next Obligation.
+  match goal with c : comparison |- _ => destruct c end.
+  - rewrite Pos.compare_eq_iff in *. congruence.
+  - rewrite Pos.compare_lt_iff in *. eauto using Pos.lt_trans.
+  - rewrite Pos.compare_gt_iff in *. eauto using Pos.lt_trans.
+Qed.
+Next Obligation.
+  intros x y. unfold compare. rewrite Pos.compare_eq_iff. intros Hxy.
+  rewrite <-(surj_inj_compat x), <-(surj_inj_compat y). congruence.
+Qed.
+Next Obligation.
+  rewrite <-(surj_inj_compat x).
+  generalize (inj_bound_spec x). generalize (inj x). clear x. intros x.
+  match goal with |- ?Hx -> In ?s (fst ?p) =>
+    assert ((Hx -> In s (fst p)) /\ snd p = Pos.succ inj_bound); [|now intuition] end.
+  rewrite Pos.lt_succ_r.
+  induction inj_bound as [|y [IH1 IH2]] using Pos.peano_ind;
+    (split; [intros Hx|]); simpl.
+  - rewrite (Pos.le_antisym _ _ Hx); auto using Pos.le_1_l.
+  - auto.
+  - rewrite Pos.iter_succ. destruct Pos.iter; simpl in *. subst.
+    rewrite Pos.le_lteq in Hx. destruct Hx as [?%Pos.lt_succ_r| ->]; now auto.
+  - rewrite Pos.iter_succ. destruct Pos.iter. simpl in IH2. subst. reflexivity.
 Qed.
 
 (** Previous class instances for [option A] **)
