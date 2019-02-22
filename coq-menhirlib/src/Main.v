@@ -12,7 +12,7 @@
 (*                                                                     *)
 (* *********************************************************************)
 
-From MenhirLib Require Grammar Automaton Interpreter_correct Interpreter_complete.
+Require Grammar Automaton Interpreter_correct Interpreter_complete.
 From Coq Require Import Syntax.
 
 Module Make(Export Aut:Automaton.T).

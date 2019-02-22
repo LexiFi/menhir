@@ -12,8 +12,8 @@
 (*                                                                     *)
 (* *********************************************************************)
 
-From MenhirLib Require Grammar.
-From MenhirLib Require Export Alphabet.
+Require Grammar.
+Require Export Alphabet.
 From Coq Require Import Orders.
 From Coq Require Export List Syntax.
 

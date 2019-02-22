@@ -13,7 +13,7 @@
 (* *********************************************************************)
 
 From Coq Require Import List Syntax Orders.
-From MenhirLib Require Import Alphabet.
+Require Import Alphabet.
 
 (** The terminal non-terminal alphabets of the grammar. **)
 Module Type Alphs.

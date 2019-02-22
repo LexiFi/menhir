@@ -1,7 +1,6 @@
 PWD := $(shell pwd)
 
-COQINCLUDE := \
-  -Q $(PWD) MenhirLib \
+COQINCLUDE := -R $(PWD) MenhirLib \
 
 export
 

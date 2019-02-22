@@ -13,8 +13,8 @@
 (* *********************************************************************)
 
 From Coq Require Import Streams List Syntax.
-From MenhirLib Require Import Alphabet.
-From MenhirLib Require Grammar Automaton Interpreter.
+Require Import Alphabet.
+Require Grammar Automaton Interpreter.
 From Coq.ssr Require Import ssreflect.
 
 Module Make(Import A:Automaton.T) (Import Inter:Interpreter.T A).

@@ -14,8 +14,8 @@
 
 From Coq Require Import Streams List Syntax Arith.
 From Coq.ssr Require Import ssreflect.
-From MenhirLib Require Import Alphabet Grammar.
-From MenhirLib Require Automaton Interpreter Validator_complete.
+Require Import Alphabet Grammar.
+Require Automaton Interpreter Validator_complete.
 
 Module Make(Import A:Automaton.T) (Import Inter:Interpreter.T A).
 Module Import Valid := Validator_complete.Make A.

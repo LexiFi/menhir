@@ -13,8 +13,8 @@
 (* *********************************************************************)
 
 From Coq Require Import List Syntax.
-From MenhirLib Require Automaton.
-From MenhirLib Require Import Alphabet.
+Require Automaton.
+Require Import Alphabet.
 
 Module Make(Import A:Automaton.T).
 
