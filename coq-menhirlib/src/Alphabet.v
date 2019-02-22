@@ -12,7 +12,7 @@
 (*                                                                     *)
 (* *********************************************************************)
 
-From Coq Require Import Int31 Cyclic31 Omega List Syntax Relations RelationClasses.
+From Coq Require Import Omega List Syntax Relations RelationClasses.
 
 Local Obligation Tactic := intros.
 
@@ -165,76 +165,40 @@ Class Alphabet (A:Type) := {
 
 (** The [Numbered] class provides a conveniant way to build [Alphabet] instances,
    with a good computationnal complexity. It is mainly a injection from it to
-   [Int31] **)
+   [positive] **)
 Class Numbered (A:Type) := {
-  inj : A -> int31;
-  surj : int31 -> A;
+  inj : A -> positive;
+  surj : positive -> A;
   surj_inj_compat : forall x, surj (inj x) = x;
-  inj_bound : int31;
-  inj_bound_spec : forall x, (phi (inj x) < phi inj_bound)%Z
+  inj_bound : positive;
+  inj_bound_spec : forall x, (inj x <= inj_bound)%positive
 }.
 
-Program Instance NumberedAlphabet {A:Type} (N:Numbered A) : Alphabet A :=
-  { AlphabetComparable :=
-      {| compare := fun x y => compare31 (inj x) (inj y) |};
+Instance NumberedAlphabet {A:Type} (N:Numbered A) : Alphabet A :=
+  { AlphabetComparable := {| compare := fun x y => Pos.compare (inj x) (inj y) |};
     AlphabetFinite :=
-      {| all_list := fst (iter_int31 inj_bound _
-        (fun p => (cons (surj (snd p)) (fst p), incr (snd p))) ([], 0%int31)) |} }.
-Next Obligation. apply Zcompare_antisym. Qed.
-Next Obligation.
-destruct c. unfold compare31 in *.
-rewrite Z.compare_eq_iff in *. congruence.
-eapply Zcompare_Lt_trans. apply H. apply H0.
-eapply Zcompare_Gt_trans. apply H. apply H0.
-Qed.
-Next Obligation.
-intros x y H. unfold compare, compare31 in H.
-rewrite Z.compare_eq_iff in *.
-rewrite <- surj_inj_compat, <- phi_inv_phi with (inj y), <- H.
-rewrite phi_inv_phi, surj_inj_compat; reflexivity.
-Qed.
-Next Obligation.
-rewrite iter_int31_iter_nat.
-pose proof (inj_bound_spec x).
-match goal with |- In x (fst ?p) => destruct p as [] eqn:? end.
-replace inj_bound with i in H.
-revert l i Heqp x H.
-induction (Z.abs_nat (phi inj_bound)); intros.
-inversion Heqp; clear Heqp; subst.
-rewrite spec_0 in H. pose proof (phi_bounded (inj x)). omega.
-simpl in Heqp.
-destruct nat_rect; specialize (IHn _ _ (eq_refl _) x); simpl in *.
-inversion Heqp. subst. clear Heqp.
-rewrite phi_incr in H.
-pose proof (phi_bounded i0).
-pose proof (phi_bounded (inj x)).
-destruct (Z_lt_le_dec (Z.succ (phi i0)) (2 ^ Z.of_nat size)%Z).
-rewrite Zmod_small in H by omega.
-apply Zlt_succ_le, Zle_lt_or_eq in H.
-destruct H; simpl; auto. left.
-rewrite <- surj_inj_compat, <- phi_inv_phi with (inj x), H, phi_inv_phi; reflexivity.
-replace (Z.succ (phi i0)) with (2 ^ Z.of_nat size)%Z in H by omega.
-rewrite Z_mod_same_full in H.
-exfalso; omega.
-rewrite <- phi_inv_phi with i, <- phi_inv_phi with inj_bound; f_equal.
-pose proof (phi_bounded inj_bound); pose proof (phi_bounded i).
-rewrite <- Z.abs_eq with (phi i), <- Z.abs_eq with (phi inj_bound) by omega.
-clear H H0 H1.
-do 2 rewrite <- Zabs2Nat.id_abs.
-f_equal.
-revert l i Heqp.
-assert (Z.abs_nat (phi inj_bound) < Z.abs_nat (2^31)).
-apply Zabs_nat_lt, phi_bounded.
-induction (Z.abs_nat (phi inj_bound)); intros.
-inversion Heqp; reflexivity.
-inversion Heqp; clear H1 H2 Heqp.
-match goal with |- _ (_ (_ (snd ?p))) = _ => destruct p end.
-pose proof (phi_bounded i0).
-erewrite <- IHn, <- Zabs2Nat.inj_succ in H |- *; eauto; try omega.
-rewrite phi_incr, Zmod_small; intuition; try omega.
-apply inj_lt in H.
-pose proof Z.le_le_succ_r.
-do 2 rewrite Zabs2Nat.id_abs, Z.abs_eq in H; now eauto.
+      {| all_list := fst (Pos.iter
+                           (fun '(l, p) => (surj p::l, Pos.succ p))
+                           ([], 1%positive) inj_bound) |} }.
+Proof.
+  - intros ??. now rewrite <- Pos.compare_antisym.
+  - intros x y z [].
+    + rewrite !Pos.compare_eq_iff. congruence.
+    + rewrite !Pos.compare_lt_iff. apply Pos.lt_trans.
+    + rewrite !Pos.compare_gt_iff. eauto using Pos.lt_trans.
+  - intros x y. unfold compare. rewrite Pos.compare_eq_iff. intros Hxy.
+    rewrite <-(surj_inj_compat x), <-(surj_inj_compat y). congruence.
+  - intros x. rewrite <-(surj_inj_compat x).
+    generalize (inj_bound_spec x). generalize (inj x). clear x. intros x.
+    match goal with |- ?Hx -> In ?s (fst ?p) =>
+      assert ((Hx -> In s (fst p)) /\ snd p = Pos.succ inj_bound); [|now intuition] end.
+    induction inj_bound as [|y [IH1 IH2]] using Pos.peano_ind;
+      (split; [intros Hx|]); simpl.
+    + rewrite (Pos.le_antisym _ _ Hx); auto using Pos.le_1_l.
+    + auto.
+    + rewrite Pos.iter_succ. destruct Pos.iter; simpl in *. subst.
+      rewrite Pos.le_lteq in Hx. destruct Hx as [?%Pos.lt_succ_r| ->]; now auto.
+    + rewrite Pos.iter_succ. destruct Pos.iter. simpl in IH2. subst. reflexivity.
 Qed.
 
 (** Previous class instances for [option A] **)
@@ -246,22 +210,18 @@ Program Instance OptionComparable {A:Type} (C:Comparable A) : Comparable (option
         | Some _, None => Gt
         | Some x, Some y => compare x y
       end }.
+Next Obligation. destruct x, y; intuition. apply compare_antisym. Qed.
 Next Obligation.
-destruct x, y; intuition.
-apply compare_antisym.
-Qed.
-Next Obligation.
-destruct x, y, z; try now intuition;
-try (rewrite <- H in H0; discriminate).
-apply (compare_trans _ _ _ _ H H0).
+  destruct x, y, z; try now intuition;
+    try (rewrite <- H in H0; discriminate).
+  apply (compare_trans _ _ _ _ H H0).
 Qed.
 
 Instance OptionComparableUsualEq {A:Type} {C:Comparable A} (U:ComparableUsualEq C) :
   ComparableUsualEq (OptionComparable C).
 Proof.
-intros x y.
-destruct x, y; intuition; try discriminate.
-rewrite (compare_eq a a0); intuition.
+  intros [] []; simpl; try reflexivity; try discriminate.
+  intros ->%compare_eq. reflexivity.
 Qed.
 
 Program Instance OptionFinite {A:Type} (E:Finite A) : Finite (option A) :=

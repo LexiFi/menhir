@@ -111,21 +111,6 @@ module Run (T: sig end) = struct
     if Front.grammar.BasicSyntax.parameters <> [] then
       Error.error [] "the Coq back-end does not support %%parameter."
 
-  (* Optimized because if we extract some constants to the right caml term,
-     the ocaml inlining+constant unfolding replaces that by the actual constant *)
-  let rec write_optimized_int31 f n =
-    match n with
-      | 0 -> fprintf f "Int31.On"
-      | 1 -> fprintf f "Int31.In"
-      | k when k land 1 = 0 ->
-        fprintf f "(twice ";
-        write_optimized_int31 f (n lsr 1);
-        fprintf f ")"
-      | _ ->
-        fprintf f "(twice_plus_one ";
-        write_optimized_int31 f (n lsr 1);
-        fprintf f ")"
-
   let write_inductive_alphabet f name constrs =
     fprintf f "Inductive %s' : Set :=" name;
     List.iter (fprintf f "\n| %s") constrs;
@@ -136,17 +121,14 @@ module Run (T: sig end) = struct
         let iteri f = ignore (List.fold_left (fun k x -> f k x; succ k) 0 constrs) in
         fprintf f "Program Instance %sNum : %sAlphabet.Numbered %s :=\n" name menhirlib_path name;
         fprintf f "  { inj := fun x => match x return _ with ";
-        iteri (fun k constr ->
-          fprintf f "\n    | %s => " constr;
-          write_optimized_int31 f k
-        );
+        iteri (fun k constr -> fprintf f "\n    | %s => %d%%positive" constr k);
         fprintf f "\n    end;\n";
         (* Pattern matching on int31 litterals will disappear when
            native 63 bits integers will be introduced in Coq. *)
-        fprintf f "    surj := (fun n => match Int31.phi n return _ with ";
-        iteri (fprintf f "\n    | %d => %s ");
+        fprintf f "    surj := (fun n => match n return _ with ";
+        iteri (fprintf f "\n    | %d%%positive => %s ");
         fprintf f "\n    | _ => %s\n    end)%%Z;\n" (List.hd constrs);
-        fprintf f "    inj_bound := %d%%int31 }.\n" (List.length constrs);
+        fprintf f "    inj_bound := %d%%positive }.\n" (List.length constrs);
       end
     else
       begin
@@ -520,7 +502,6 @@ module Run (T: sig end) = struct
         Front.grammar.BasicSyntax.preludes;
 
     fprintf f "From Coq.Lists Require List.\n";
-    fprintf f "From Coq.Numbers.Cyclic.Int31 Require Import Int31.\n";
     from_menhirlib f; fprintf f "Require Main.\n";
     from_menhirlib f; fprintf f "Require Version.\n";
     fprintf f "Import List.ListNotations.\n\n";
