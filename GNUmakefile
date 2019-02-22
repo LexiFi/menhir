@@ -82,10 +82,12 @@ MENHIRLIB_FILES   := $(shell for m in $(MENHIRLIB_MODULES) ; do \
 # in MenhirLib carry the "library" license, while every other file
 # carries the "regular" license.
 
-HEADACHE := headache
-SRCHEAD  := $(CURRENT)/headers/regular-header
-LIBHEAD  := $(CURRENT)/headers/library-header
-FIND     := $(shell if command -v gfind >/dev/null ; then echo gfind ; else echo find ; fi)
+HEADACHE        := headache
+SRCHEAD         := $(CURRENT)/headers/regular-header
+LIBHEAD         := $(CURRENT)/headers/library-header
+COQLIBHEAD      := $(CURRENT)/headers/coq-library-header
+HEADACHECOQCONF := $(CURRENT)/headers/headache-coq.conf
+FIND            := $(shell if command -v gfind >/dev/null ; then echo gfind ; else echo find ; fi)
 
 .PHONY: headache
 headache:
@@ -93,6 +95,9 @@ headache:
 	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
 	@ for file in src/standard.mly $(MENHIRLIB_FILES) ; do \
 	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
+	  done
+	@ for file in coq-menhirlib/src/*.v ; do \
+	    $(HEADACHE) -h $(COQLIBHEAD) -c $(HEADACHECOQCONF) $$file ; \
 	  done
 
 # -------------------------------------------------------------------------
