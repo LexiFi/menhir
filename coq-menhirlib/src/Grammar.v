@@ -40,22 +40,22 @@ Module Symbol(Import A:Alphs).
       AlphabetFinite := {| all_list :=
         map T all_list++map NT all_list |} }.
   Next Obligation.
-  destruct x; destruct y; intuition; apply compare_antisym.
+    destruct x; destruct y; intuition; apply compare_antisym.
   Qed.
   Next Obligation.
-  destruct x; destruct y; destruct z; intuition; try discriminate.
-  apply (compare_trans _ t0); intuition.
-  apply (compare_trans _ n0); intuition.
+    destruct x; destruct y; destruct z; intuition; try discriminate.
+    apply (compare_trans _ t0); intuition.
+    apply (compare_trans _ n0); intuition.
   Qed.
   Next Obligation.
-  intros x y.
-  destruct x; destruct y; try discriminate; intros.
-  rewrite (compare_eq t t0); intuition.
-  rewrite (compare_eq n n0); intuition.
-  Qed.
+    intros x y.
+    destruct x; destruct y; try discriminate; intros.
+    rewrite (compare_eq t t0); now intuition.
+    rewrite (compare_eq n n0); now intuition.
+  Defined.
   Next Obligation.
-  rewrite in_app_iff.
-  destruct x; [left | right]; apply in_map; apply all_list_forall.
+    rewrite in_app_iff.
+    destruct x; [left | right]; apply in_map; apply all_list_forall.
   Qed.
 
 End Symbol.

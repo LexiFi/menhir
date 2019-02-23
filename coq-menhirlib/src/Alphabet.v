@@ -111,8 +111,8 @@ try assumption.
 apply (compare_trans _ _ _ _ H H0).
 Qed.
 
-(** Special case of comparable, where equality is usual equality. **)
-Class ComparableUsualEq {A:Type} (C: Comparable A) :=
+(** Special case of comparable, where equality is Leibniz equality. **)
+Class ComparableLeibnizEq {A:Type} (C: Comparable A) :=
   compare_eq : forall x y, compare x y = Eq -> x = y.
 
 (** Boolean equality for a [Comparable]. **)
@@ -122,7 +122,7 @@ Definition compare_eqb {A:Type} {C:Comparable A} (x y:A) :=
     | _ => false
   end.
 
-Theorem compare_eqb_iff {A:Type} {C:Comparable A} {U:ComparableUsualEq C} :
+Theorem compare_eqb_iff {A:Type} {C:Comparable A} {U:ComparableLeibnizEq C} :
   forall x y, compare_eqb x y = true <-> x = y.
 Proof.
 unfold compare_eqb.
@@ -133,13 +133,13 @@ destruct H.
 rewrite compare_refl; intuition.
 Qed.
 
-Instance NComparableUsualEq : ComparableUsualEq natComparable := Nat.compare_eq.
+Instance NComparableLeibnizEq : ComparableLeibnizEq natComparable := Nat.compare_eq.
 
-(** A pair of ComparableUsualEq is ComparableUsualEq **)
-Instance PairComparableUsualEq
-  {A:Type} {CA:Comparable A} (UA:ComparableUsualEq CA)
-  {B:Type} {CB:Comparable B} (UB:ComparableUsualEq CB) :
-    ComparableUsualEq (PairComparable CA CB).
+(** A pair of ComparableLeibnizEq is ComparableLeibnizEq **)
+Instance PairComparableLeibnizEq
+  {A:Type} {CA:Comparable A} (UA:ComparableLeibnizEq CA)
+  {B:Type} {CB:Comparable B} (UB:ComparableLeibnizEq CB) :
+    ComparableLeibnizEq (PairComparable CA CB).
 Proof.
 intros x y; destruct x, y; simpl.
 pose proof (compare_eq a a0); pose proof (compare_eq b b0).
@@ -155,10 +155,10 @@ Class Finite (A:Type) := {
   all_list_forall : forall x:A, In x all_list
 }.
 
-(** An alphabet is both [ComparableUsualEq] and [Finite]. **)
+(** An alphabet is both [ComparableLeibnizEq] and [Finite]. **)
 Class Alphabet (A:Type) := {
   AlphabetComparable :> Comparable A;
-  AlphabetComparableUsualEq :> ComparableUsualEq AlphabetComparable;
+  AlphabetComparableLeibnizEq :> ComparableLeibnizEq AlphabetComparable;
   AlphabetFinite :> Finite A
 }.
 
@@ -187,9 +187,19 @@ Next Obligation.
   - rewrite Pos.compare_gt_iff in *. eauto using Pos.lt_trans.
 Qed.
 Next Obligation.
-  intros x y. unfold compare. rewrite Pos.compare_eq_iff. intros Hxy.
-  rewrite <-(surj_inj_compat x), <-(surj_inj_compat y). congruence.
-Qed.
+  intros x y. unfold compare. intros Hxy.
+  assert (Hxy' : inj x = inj y).
+  (* We do not use [Pos.compare_eq_iff] directly to make sure the
+     proof is executable. *)
+  { destruct (Pos.eq_dec (inj x) (inj y)) as [|[]]; [now auto|].
+    now apply Pos.compare_eq_iff. }
+  (* Using rewrite here leads to non-executable proofs. *)
+  transitivity (surj (inj x)).
+  { apply eq_sym, surj_inj_compat. }
+  transitivity (surj (inj y)); cycle 1.
+  { apply surj_inj_compat. }
+  apply f_equal, Hxy'.
+Defined.
 Next Obligation.
   rewrite <-(surj_inj_compat x).
   generalize (inj_bound_spec x). generalize (inj x). clear x. intros x.
@@ -204,38 +214,6 @@ Next Obligation.
     rewrite Pos.le_lteq in Hx. destruct Hx as [?%Pos.lt_succ_r| ->]; now auto.
   - rewrite Pos.iter_succ. destruct Pos.iter. simpl in IH2. subst. reflexivity.
 Qed.
-
-(** Previous class instances for [option A] **)
-Program Instance OptionComparable {A:Type} (C:Comparable A) : Comparable (option A) :=
-  { compare := fun x y =>
-      match x, y return comparison with
-        | None, None => Eq
-        | None, Some _ => Lt
-        | Some _, None => Gt
-        | Some x, Some y => compare x y
-      end }.
-Next Obligation. destruct x, y; intuition. apply compare_antisym. Qed.
-Next Obligation.
-  destruct x, y, z; try now intuition;
-    try (rewrite <- H in H0; discriminate).
-  apply (compare_trans _ _ _ _ H H0).
-Qed.
-
-Instance OptionComparableUsualEq {A:Type} {C:Comparable A} (U:ComparableUsualEq C) :
-  ComparableUsualEq (OptionComparable C).
-Proof.
-  intros [] []; simpl; try reflexivity; try discriminate.
-  intros ->%compare_eq. reflexivity.
-Qed.
-
-Program Instance OptionFinite {A:Type} (E:Finite A) : Finite (option A) :=
-  { all_list := None :: map Some all_list }.
-Next Obligation.
-destruct x; intuition.
-right.
-apply in_map.
-apply all_list_forall.
-Defined.
 
 (** Definitions of [FSet]/[FMap] from [Comparable] **)
 Require Import OrderedTypeAlt.

@@ -135,7 +135,7 @@ module Run (T: sig end) = struct
         fprintf f "Program Instance %sAlph : %sAlphabet.Alphabet %s :=\n" name menhirlib_path name;
         fprintf f "  { AlphabetComparable := {| compare := fun x y =>\n";
         fprintf f "      match x, y return comparison with end |};\n";
-        fprintf f "    AlphabetEnumerable := {| all_list := [] |} }.";
+        fprintf f "    AlphabetEnumerable := {| all_list := []%%list |} }.";
       end
 
   let write_terminals f =
@@ -184,17 +184,17 @@ module Run (T: sig end) = struct
     fprintf f "  { p:nonterminal * list symbol &\n";
     fprintf f "    %sGrammar.arrows_right\n" menhirlib_path;
     fprintf f "      (symbol_semantic_type (NT (fst p)))\n";
-    fprintf f "      (map symbol_semantic_type (snd p)) }\n";
+    fprintf f "      (List.map symbol_semantic_type (snd p)) }\n";
     fprintf f " :=\n";
     fprintf f "  let box := existT (fun p =>\n";
     fprintf f "    %sGrammar.arrows_right\n" menhirlib_path;
     fprintf f "      (symbol_semantic_type (NT (fst p)))\n";
-    fprintf f "      (map symbol_semantic_type (snd p)) )\n";
+    fprintf f "      (List.map symbol_semantic_type (snd p)) )\n";
     fprintf f "  in\n";
     fprintf f "  match p with\n";
     Production.iterx (fun prod ->
       fprintf f "  | %s => box\n" (print_prod prod);
-      fprintf f "    (%s, [%s])\n"
+      fprintf f "    (%s, [%s]%%list)\n"
         (print_nterm (Production.nt prod))
         (String.concat "; "
            (List.map print_symbol (List.rev (Array.to_list (Production.rhs prod)))));
@@ -236,7 +236,7 @@ module Run (T: sig end) = struct
         if !first then first := false else fprintf f "; ";
         fprintf f "%s" (print_term t)
         ) firstSet;
-      fprintf f "]\n");
+      fprintf f "]%%list\n");
     fprintf f "  end.\n\n"
 
   let write_grammar f =
@@ -335,7 +335,7 @@ module Run (T: sig end) = struct
           (Invariant.fold (fun l _ symb _ -> print_symbol symb::l)
              [] (Invariant.stack node)))
       in
-      fprintf f "  | %s => [%s]\n" (print_nis node) s);
+      fprintf f "  | %s => [%s]%%list\n" (print_nis node) s);
     fprintf f "  end.\n";
     fprintf f "Extract Constant past_symb_of_non_init_state => \"fun _ -> assert false\".\n\n"
 
@@ -370,7 +370,7 @@ module Run (T: sig end) = struct
           (Invariant.fold (fun accu _ _ states -> get_stateset_id states::accu)
             [] (Invariant.stack node))
       in
-      bprintf b "  | %s => [ %s ]\n" (print_nis node) s);
+      bprintf b "  | %s => [ %s ]%%list\n" (print_nis node) s);
     bprintf b "  end.\n";
     Buffer.output_buffer f b;
     fprintf f "Extract Constant past_state_of_non_init_state => \"fun _ -> assert false\".\n\n"
@@ -399,7 +399,7 @@ module Run (T: sig end) = struct
                 else fprintf f "; ";
                 fprintf f "%s" (print_term lookahead)
               ) lookaheadset;
-              fprintf f "].\nExtract Inlined Constant %s => \"assert false\".\n\n" id;
+              fprintf f "]%%list.\nExtract Inlined Constant %s => \"assert false\".\n\n" id;
               id
         in
         let b = Buffer.create 256 in
@@ -416,7 +416,7 @@ module Run (T: sig end) = struct
                         (print_prod prod) pos (get_lookaheadset_id lookaheads);
             end
           )  (Lr0.closure (Lr0.export (Lr1.state node)));
-          bprintf b " ].\n";
+          bprintf b " ]%%list.\n";
           bprintf b "Extract Inlined Constant items_of_state_%d => \"assert false\".\n\n" (Lr1.number node)
         );
         Buffer.output_buffer f b;
@@ -428,7 +428,7 @@ module Run (T: sig end) = struct
         fprintf f "  end.\n";
       end
     else
-      fprintf f "Definition items_of_state (s:state): list item := [].\n";
+      fprintf f "Definition items_of_state (s:state): list item := []%%list.\n";
     fprintf f "Extract Constant items_of_state => \"fun _ -> assert false\".\n\n"
 
   let write_automaton f =
