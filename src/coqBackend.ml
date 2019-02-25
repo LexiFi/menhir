@@ -462,47 +462,47 @@ module Run (T: sig end) = struct
     fprintf f "End Aut.\n\n"
 
   let write_theorems f =
-    fprintf f "Module Parser := %sMain.Make Aut.\n" menhirlib_path;
+    fprintf f "Module MenhirLibParser := %sMain.Make Aut.\n" menhirlib_path;
 
     fprintf f "Theorem safe:\n";
-    fprintf f "  Parser.safe_validator tt = true.\n";
-    fprintf f "Proof eq_refl true<:Parser.safe_validator tt = true.\n\n";
+    fprintf f "  MenhirLibParser.safe_validator tt = true.\n";
+    fprintf f "Proof eq_refl true<:MenhirLibParser.safe_validator tt = true.\n\n";
 
     if not Settings.coq_no_complete then
       begin
         fprintf f "Theorem complete:\n";
-        fprintf f "  Parser.complete_validator tt = true.\n";
-        fprintf f "Proof eq_refl true<:Parser.complete_validator tt = true.\n\n";
+        fprintf f "  MenhirLibParser.complete_validator tt = true.\n";
+        fprintf f "Proof eq_refl true<:MenhirLibParser.complete_validator tt = true.\n\n";
       end;
 
     Lr1.fold_entry (fun _prod node startnt _t () ->
           let funName = Nonterminal.print true startnt in
-          fprintf f "Definition %s : nat -> Streams.Stream token -> Parser.Inter.parse_result %s := Parser.parse safe Aut.%s.\n\n"
+          fprintf f "Definition %s : nat -> Streams.Stream token -> MenhirLibParser.Inter.parse_result %s := MenhirLibParser.parse safe Aut.%s.\n\n"
             funName (print_type (Nonterminal.ocamltype startnt)) (print_init node);
 
           fprintf f "Theorem %s_correct (iterator : nat) (buffer : Streams.Stream token):\n" funName;
           fprintf f "  match %s iterator buffer with\n" funName;
-          fprintf f "  | Parser.Inter.Parsed_pr sem buffer_new =>\n";
+          fprintf f "  | MenhirLibParser.Inter.Parsed_pr sem buffer_new =>\n";
           fprintf f "      exists word (tree : Gram.parse_tree (%s) word),\n"
             (print_symbol (Symbol.N startnt));
-          fprintf f "        buffer = Parser.Inter.app_str word buffer_new /\\\n";
+          fprintf f "        buffer = MenhirLibParser.Inter.app_str word buffer_new /\\\n";
           fprintf f "        Gram.pt_sem tree = sem\n";
           fprintf f "  | _ => True\n";
           fprintf f "  end.\n";
-          fprintf f "Proof. apply Parser.parse_correct with (init:=Aut.%s). Qed.\n\n" (print_init node);
+          fprintf f "Proof. apply MenhirLibParser.parse_correct with (init:=Aut.%s). Qed.\n\n" (print_init node);
 
           if not Settings.coq_no_complete then
             begin
               fprintf f "Theorem %s_complete (iterator : nat) (word : list token) (buffer_end : Streams.Stream token) :\n" funName;
               fprintf f "  forall tree : Gram.parse_tree (%s) word,\n" (print_symbol (Symbol.N startnt));
-              fprintf f "  match %s iterator (Parser.Inter.app_str word buffer_end) with\n" funName;
-              fprintf f "  | Parser.Inter.Fail_pr => False\n";
-              fprintf f "  | Parser.Inter.Parsed_pr output_res buffer_end_res =>\n";
+              fprintf f "  match %s iterator (MenhirLibParser.Inter.app_str word buffer_end) with\n" funName;
+              fprintf f "  | MenhirLibParser.Inter.Fail_pr => False\n";
+              fprintf f "  | MenhirLibParser.Inter.Parsed_pr output_res buffer_end_res =>\n";
               fprintf f "      output_res = Gram.pt_sem tree /\\\n";
               fprintf f "      buffer_end_res = buffer_end /\\ le (Gram.pt_size tree) iterator\n";
-              fprintf f "  | Parser.Inter.Timeout_pr => lt iterator (Gram.pt_size tree)\n";
+              fprintf f "  | MenhirLibParser.Inter.Timeout_pr => lt iterator (Gram.pt_size tree)\n";
               fprintf f "  end.\n";
-              fprintf f "Proof. apply Parser.parse_complete with (init:=Aut.%s); exact complete. Qed.\n" (print_init node);
+              fprintf f "Proof. apply MenhirLibParser.parse_complete with (init:=Aut.%s); exact complete. Qed.\n" (print_init node);
             end
     ) ()
 
