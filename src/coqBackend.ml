@@ -515,7 +515,7 @@ module Run (T: sig end) = struct
     fprintf f "From Coq.Numbers Require Import BinNums.\n";
     from_menhirlib f; fprintf f "Require Main.\n";
     if not Settings.coq_no_version_check then
-      begin from_menhirlib f; fprintf f "Require Version.\n" end
+      begin from_menhirlib f; fprintf f "Require Version.\n" end;
     fprintf f "Import List.ListNotations.\n\n";
 
     if not Settings.coq_no_version_check then
