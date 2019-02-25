@@ -514,10 +514,12 @@ module Run (T: sig end) = struct
     fprintf f "From Coq.Lists Require List.\n";
     fprintf f "From Coq.Numbers Require Import BinNums.\n";
     from_menhirlib f; fprintf f "Require Main.\n";
-    from_menhirlib f; fprintf f "Require Version.\n";
+    if not Settings.coq_no_version_check then
+      from_menhirlib f; fprintf f "Require Version.\n";
     fprintf f "Import List.ListNotations.\n\n";
 
-    fprintf f "Definition version_check : unit := %sVersion.require_%s.\n\n" menhirlib_path Version.version;
+    if not Settings.coq_no_version_check then
+      fprintf f "Definition version_check : unit := %sVersion.require_%s.\n\n" menhirlib_path Version.version;
 
     fprintf f "Unset Elimination Schemes.\n\n";
 

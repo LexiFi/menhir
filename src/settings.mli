@@ -163,6 +163,10 @@ val inspection : bool
 
 val coq : bool
 
+(* Whether to generate a version check for MenhirLib in the generated parser. *)
+
+val coq_no_version_check : bool
+
 (* Whether the coq description must contain completeness proofs. *)
 
 val coq_no_complete : bool
