@@ -124,10 +124,10 @@ module Run (T: sig end) = struct
       begin
         let iteri f = ignore (List.fold_left (fun k x -> f k x; succ k) 1 constrs) in
         fprintf f "Program Instance %sNum : %sAlphabet.Numbered %s :=\n" name menhirlib_path name;
-        fprintf f "  { inj := fun x => match x return _ with ";
+        fprintf f "  { inj := fun x => match x return _ with";
         iteri (fun k constr -> fprintf f "\n    | %s => %d%%positive" constr k);
         fprintf f "\n    end;\n";
-        fprintf f "    surj := (fun n => match n return _ with ";
+        fprintf f "    surj := (fun n => match n return _ with";
         iteri (fprintf f "\n    | %d%%positive => %s ");
         fprintf f "\n    | _ => %s\n    end)%%Z;\n" (List.hd constrs);
         fprintf f "    inj_bound := %d%%positive }.\n" (List.length constrs);
@@ -477,10 +477,8 @@ module Run (T: sig end) = struct
 
     Lr1.fold_entry (fun _prod node startnt _t () ->
           let funName = Nonterminal.print true startnt in
-          fprintf f "Definition %s := Parser.parse safe Aut.%s.\n\n"
-            funName (print_init node);
-
-
+          fprintf f "Definition %s : nat -> Streams.Stream token -> Parser.Inter.parse_result %s := Parser.parse safe Aut.%s.\n\n"
+            funName (print_type (Nonterminal.ocamltype startnt)) (print_init node);
 
           fprintf f "Theorem %s_correct (iterator : nat) (buffer : Streams.Stream token):\n" funName;
           fprintf f "  match %s iterator buffer with\n" funName;
@@ -491,7 +489,7 @@ module Run (T: sig end) = struct
           fprintf f "        Gram.pt_sem tree = sem\n";
           fprintf f "  | _ => True\n";
           fprintf f "  end.\n";
-          fprintf f "Proof. apply Parser.parse_correct. Qed.\n\n";
+          fprintf f "Proof. apply Parser.parse_correct with (init:=Aut.%s). Qed.\n\n" (print_init node);
 
           if not Settings.coq_no_complete then
             begin

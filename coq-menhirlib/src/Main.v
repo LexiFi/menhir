@@ -24,7 +24,8 @@ Module Complete := Interpreter_complete.Make Aut Inter.
 
 Definition complete_validator:unit->bool := Complete.Valid.is_complete.
 Definition safe_validator:unit->bool := ValidSafe.is_safe.
-Definition parse (safe:safe_validator ()=true) init n_steps buffer : parse_result init:=
+Definition parse (safe:safe_validator ()=true) init n_steps buffer :
+  parse_result (symbol_semantic_type (NT (start_nt init))):=
   parse (ValidSafe.is_safe_correct safe) init buffer n_steps.
 
 (** Correction theorem. **)

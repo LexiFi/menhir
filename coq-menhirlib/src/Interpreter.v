@@ -386,13 +386,18 @@ Qed.
     a failure (the automaton has rejected the input word), either a timeout
     (the automaton has spent all the given [n_steps]), either a parsed semantic
     value with a rest of the input buffer.
+
+    Note that we do not make parse_result depend on start_nt for the result
+    type, so that this inductive is extracted without the use of Obj.t in OCaml.
 **)
-Inductive parse_result :=
+Inductive parse_result {A : Type} :=
   | Fail_pr: parse_result
   | Timeout_pr: parse_result
-  | Parsed_pr: symbol_semantic_type (NT (start_nt init)) -> Stream token -> parse_result.
+  | Parsed_pr: A -> Stream token -> parse_result.
+Global Arguments parse_result _ : clear implicits.
 
-Fixpoint parse_fix stk buffer n_steps (Hi : stack_invariant stk): parse_result:=
+Fixpoint parse_fix stk buffer n_steps (Hi : stack_invariant stk):
+  parse_result (symbol_semantic_type (NT (start_nt init))) :=
   match n_steps return _ with
   | O => Timeout_pr
   | S it =>
@@ -406,7 +411,8 @@ Fixpoint parse_fix stk buffer n_steps (Hi : stack_invariant stk): parse_result:=
     end (step_stack_invariant_preserved _ _ _)
   end.
 
-Definition parse (buffer : Stream token) (n_steps : nat): parse_result.
+Definition parse (buffer : Stream token) (n_steps : nat):
+  parse_result (symbol_semantic_type (NT (start_nt init))).
 refine (parse_fix [] buffer n_steps _).
 Proof.
   abstract (repeat constructor; intros; by destruct singleton_state_pred).
@@ -414,13 +420,9 @@ Defined.
 
 End Interpreter.
 
-Arguments Fail_sr [init].
-Arguments Accept_sr [init] _ _.
-Arguments Progress_sr [init] _ _.
-
-Arguments Fail_pr [init].
-Arguments Timeout_pr [init].
-Arguments Parsed_pr [init] _ _.
+Arguments Fail_sr {init}.
+Arguments Accept_sr {init} _ _.
+Arguments Progress_sr {init} _ _.
 
 End Make.
 
