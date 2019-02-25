@@ -12,6 +12,9 @@
   efficient extraction of int31 is no longer needed. This required
   some refactoring of the type of parse trees.
 
+* Instead of being a dependent pair of a terminal and a semantic
+  values, tokens are now a user-defined (inductive) type.
+
 ## 2018/08/27
 
 * Avoid an undocumented mode of use of the `fix` tactic,

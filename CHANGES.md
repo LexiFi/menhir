@@ -15,6 +15,17 @@
   must be used instead. The switch `--only-preprocess-for-ocamlyacc`
   remains undocumented. (Reported by kris.)
 
+* Coq backend: multiple change to stay up-to-date with respect to
+  coq-menhirlib. See its corresponding CHANGES.md file.
+
+* Coq backend: The generated parser now contains a dedicated inductive
+  type for tokens. This prevents the use of Obj.magic in client code
+  when the parser is used via extraction.
+
+* Coq backend: The generated parser checks that the version of
+  MenhirLib matches. This check can be disabled with
+  --coq-no-version-check.
+
 ## 2018/11/13
 
 * In `.mly` files, a new syntax for rules has been introduced, which is
