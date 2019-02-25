@@ -117,16 +117,14 @@ Proof.
     destruct reduce_step=>//.
     + destruct Hword_stk as (pt & <- & <-); eauto.
     + destruct Hword_stk as [<- ?]; eauto.
-  - destruct buffer as [[term sem] buffer]=>/=.
-    move=> /(_ term) Hv. destruct (awt term) as [st EQ|prod|]=>//.
+  - destruct buffer as [tok buffer]=>/=.
+    move=> /(_ (token_term tok)) Hv. destruct (awt (token_term tok)) as [st EQ|prod|]=>//.
     + eexists _. split; [by apply app_str_app_assoc with (l2 := [_])|].
-      change sem with (pt_sem (Terminal_pt term sem)) at 2.
-      generalize (Terminal_pt term sem).
-      unfold token.
-      generalize [existT (fun t => symbol_semantic_type (T t)) term sem].
+      change (token_sem tok) with (pt_sem (Terminal_pt tok)).
+      generalize (Terminal_pt tok). generalize [tok].
       rewrite -> EQ=>word' pt /=. by constructor.
     + apply (reduce_step_invariant stk prod (fun _ => Hv) Hi word
-                 (Cons (existT _ term sem) buffer)) in Hword_stk.
+                                   (Cons tok buffer)) in Hword_stk.
       destruct reduce_step=>//.
       * destruct Hword_stk as (pt & <- & <-); eauto.
       * destruct Hword_stk as [<- ?]; eauto.

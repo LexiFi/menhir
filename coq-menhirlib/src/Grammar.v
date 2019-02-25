@@ -86,13 +86,17 @@ Module Type T.
       arrows_right
         (symbol_semantic_type (NT (prod_lhs p)))
         (map symbol_semantic_type (prod_rhs_rev p)).
+
+  (** Tokens are the atomic elements of the input stream: they contain
+     a terminal and a semantic value of the type corresponding to this
+     terminal. *)
+  Parameter token : Type.
+  Parameter token_term : token -> terminal.
+  Parameter token_sem :
+    forall tok : token, symbol_semantic_type (T (token_term tok)).
 End T.
 
 Module Defs(Import G:T).
-
-  (** A token is a terminal and a semantic value for this terminal. **)
-  Definition token := {t:terminal & symbol_semantic_type (T t)}.
-
 
   (** The semantics of a grammar is defined in two stages. First, we
     define the notion of parse tree, which represents one way of
@@ -106,8 +110,7 @@ Module Defs(Import G:T).
 
   (** Parse tree for a terminal symbol. *)
   | Terminal_pt:
-    forall (t:terminal) (sem:symbol_semantic_type (T t)),
-      parse_tree (T t) [existT (fun t => symbol_semantic_type (T t)) t sem]
+    forall (tok:token), parse_tree (T (token_term tok)) [tok]
 
   (** Parse tree for a non-terminal symbol.  *)
   | Non_terminal_pt:
@@ -135,7 +138,7 @@ Module Defs(Import G:T).
   Fixpoint pt_sem {head_symbol word} (tree:parse_tree head_symbol word) :
     symbol_semantic_type head_symbol :=
     match tree with
-    | Terminal_pt _ sem => sem
+    | Terminal_pt tok => token_sem tok
     | Non_terminal_pt prod ptl => ptl_sem ptl (prod_action prod)
     end
   with ptl_sem {A head_symbols word} (tree:parse_tree_list head_symbols word) :
@@ -147,7 +150,7 @@ Module Defs(Import G:T).
 
   Fixpoint pt_size {head_symbol word} (tree:parse_tree head_symbol word) :=
     match tree with
-      | Terminal_pt _ _ => 1
+      | Terminal_pt _ => 1
       | Non_terminal_pt _ l => S (ptl_size l)
     end
   with ptl_size {head_symbols word} (tree:parse_tree_list head_symbols word) :=

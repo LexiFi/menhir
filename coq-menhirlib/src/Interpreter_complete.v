@@ -78,11 +78,11 @@ Qed.
 Lemma first_correct head word t q :
   word = t::q ->
   parse_tree head word ->
-  TerminalSet.In (projT1 t) (first_symb_set head)
+  TerminalSet.In (token_term t) (first_symb_set head)
 with first_correct_list heads word t q :
   word = t::q ->
   parse_tree_list heads word ->
-  TerminalSet.In (projT1 t) (first_word_set (rev' heads)).
+  TerminalSet.In (token_term t) (first_word_set (rev' heads)).
 Proof.
   - intros Hword. destruct 1=>//.
     + inversion Hword. subst. apply TerminalSet.singleton_2, compare_refl.
@@ -183,10 +183,9 @@ Inductive pt_dot: Type :=
     parse_tree_list (prod_rhs_rev prod) word ->
     pt_zipper (NT (prod_lhs prod)) word ->
     pt_dot
-| Shift_ptd: forall (term : terminal)
-                    (sem : symbol_semantic_type (T term)) {symbolsq wordq},
+| Shift_ptd: forall (tok : token) {symbolsq wordq},
     parse_tree_list symbolsq wordq ->
-    ptl_zipper (T term::symbolsq) (wordq++[existT _ term sem]) ->
+    ptl_zipper (T (token_term tok)::symbolsq) (wordq++[tok]) ->
     pt_dot.
 
 (** We can compute the full semantic value of a parse tree when
@@ -215,8 +214,8 @@ Definition ptd_sem (ptd : pt_dot) :=
   match ptd with
   | @Reduce_ptd prod _ ptl ptz =>
     ptz_sem ptz (ptl_sem ptl (prod_action prod))
-  | Shift_ptd term sem ptl ptlz =>
-    ptlz_sem ptlz (fun _ f => ptl_sem ptl (f sem))
+  | Shift_ptd tok ptl ptlz =>
+    ptlz_sem ptlz (fun _ f => ptl_sem ptl (f (token_sem tok)))
   end.
 
 (** The buffer associated with a dotted parse tree corresponds to the
@@ -241,8 +240,7 @@ with ptz_buffer {hole_symb hole_word}
 Definition ptd_buffer (ptd:pt_dot) :=
   match ptd with
   | Reduce_ptd _ ptz => ptz_buffer ptz
-  | @Shift_ptd term sem _ wordq _ ptlz =>
-    Cons (existT _ term sem) (ptlz_buffer ptlz)
+  | @Shift_ptd tok _ wordq _ ptlz => Cons tok (ptlz_buffer ptlz)
   end.
 
 (** We are now ready to define the main invariant of the proof of
@@ -273,7 +271,7 @@ Fixpoint ptlz_future {hole_symbs hole_word}
 Fixpoint ptlz_lookahead {hole_symbs hole_word}
   (ptlz:ptl_zipper hole_symbs hole_word) : terminal :=
   match ptlz with
-  | Non_terminal_pt_ptlz ptz => projT1 (Streams.hd (ptz_buffer ptz))
+  | Non_terminal_pt_ptlz ptz => token_term (Streams.hd (ptz_buffer ptz))
   | Cons_ptl_ptlz _ ptlz' => ptlz_lookahead ptlz'
   end.
 
@@ -300,13 +298,13 @@ Definition ptd_stack_compat (ptd:pt_dot) (stk:stack): Prop :=
   | @Reduce_ptd prod _ ptl ptz =>
     exists stk0,
       state_has_future (state_of_stack init stk) prod []
-                       (projT1 (Streams.hd (ptz_buffer ptz))) /\
+                       (token_term (Streams.hd (ptz_buffer ptz))) /\
       ptl_stack_compat stk0 ptl stk /\
       ptz_stack_compat stk0 ptz
-  | Shift_ptd term _ ptl ptlz =>
+  | Shift_ptd tok ptl ptlz =>
     exists stk0,
       state_has_future (state_of_stack init stk) (ptlz_prod ptlz)
-                       (T term :: ptlz_future ptlz) (ptlz_lookahead ptlz) /\
+                       (T (token_term tok) :: ptlz_future ptlz) (ptlz_lookahead ptlz) /\
       ptl_stack_compat stk0 ptl stk /\
       ptlz_stack_compat stk0 ptlz
   end.
@@ -325,9 +323,9 @@ Lemma ptlz_future_ptlz_prod hole_symbs hole_word
 Proof. induction ptlz=>//=. Qed.
 
 Lemma ptlz_future_first {symbs word} (ptlz : ptl_zipper symbs word) :
-  TerminalSet.In (projT1 (Streams.hd (ptlz_buffer ptlz)))
+  TerminalSet.In (token_term (Streams.hd (ptlz_buffer ptlz)))
     (first_word_set (ptlz_future ptlz)) \/
-  projT1 (Streams.hd (ptlz_buffer ptlz)) = ptlz_lookahead ptlz /\
+  token_term (Streams.hd (ptlz_buffer ptlz)) = ptlz_lookahead ptlz /\
   nullable_word (ptlz_future ptlz) = true.
 Proof.
   induction ptlz as [|??? [|tok] pt ptlz IH]; [by auto| |]=>/=.
@@ -349,7 +347,7 @@ Fixpoint build_pt_dot_from_pt {symb word}
   match pt in parse_tree symb word
     return pt_zipper symb word -> pt_dot
   with
-  | Terminal_pt term sem =>
+  | Terminal_pt tok =>
     fun ptz =>
       let X :=
           match ptz in pt_zipper symb word
@@ -362,7 +360,7 @@ Fixpoint build_pt_dot_from_pt {symb word}
             existT _ _ (existT _ _ (ptl, ptlz))
           end I
       in
-      Shift_ptd term sem (fst (projT2 (projT2 X))) (snd (projT2 (projT2 X)))
+      Shift_ptd tok (fst (projT2 (projT2 X))) (snd (projT2 (projT2 X)))
   | Non_terminal_pt prod ptl => fun ptz =>
     let is_notnil :=
       match ptl in parse_tree_list w _
@@ -416,8 +414,8 @@ Definition build_pt_dot_from_ptl {symbs word}
 
 Definition next_ptd (ptd:pt_dot) : option pt_dot :=
   match ptd with
-  | Shift_ptd term sem ptl ptlz =>
-    Some (build_pt_dot_from_ptl (Cons_ptl ptl (Terminal_pt term sem)) ptlz)
+  | Shift_ptd tok ptl ptlz =>
+    Some (build_pt_dot_from_ptl (Cons_ptl ptl (Terminal_pt tok)) ptlz)
   | Reduce_ptd ptl ptz =>
     match ptz in pt_zipper symb word
       return parse_tree symb word -> _
@@ -439,12 +437,11 @@ with sem_build_from_pt_rec {symbs word}
   ptlz_sem ptlz (fun _ f => ptl_sem ptl f)
   = ptd_sem (build_pt_dot_from_pt_rec ptl Hsymbs ptlz).
 Proof.
-  - destruct pt as [term sem|prod word ptl]=>/=.
-    + revert ptz.
-      generalize [existT (fun t => symbol_semantic_type (T t)) term sem].
-      revert sem. generalize I.
-      change True with (match T term with T term => True | NT _ => False end) at 1.
-      generalize (T term) => symb HT sem word ptz. by destruct ptz.
+  - destruct pt as [tok|prod word ptl]=>/=.
+    + revert ptz. generalize [tok].
+      generalize (token_sem tok). generalize I.
+      change True with (match T (token_term tok) with T _ => True | NT _ => False end) at 1.
+      generalize (T (token_term tok)) => symb HT sem word ptz. by destruct ptz.
     + match goal with
       | |- context [match ?X with Some H => _ | None => _ end] => destruct X=>//
       end.
@@ -467,7 +464,7 @@ Lemma sem_next_ptd (ptd : pt_dot) :
   | Some ptd' => ptd_sem ptd = ptd_sem ptd'
   end.
 Proof.
-  destruct ptd as [prod word ptl ptz|term sem symbs word ptl ptlz] =>/=.
+  destruct ptd as [prod word ptl ptz|tok symbs word ptl ptlz] =>/=.
   - change (ptl_sem ptl (prod_action prod))
       with (pt_sem (Non_terminal_pt prod ptl)).
     generalize (Non_terminal_pt prod ptl). clear ptl.
@@ -484,12 +481,11 @@ with ptd_buffer_build_from_pt_rec {symbs word}
      Hsymbs :
   word ++ ptlz_buffer ptlz = ptd_buffer (build_pt_dot_from_pt_rec ptl Hsymbs ptlz).
 Proof.
-  - destruct pt as [term sem|prod word ptl]=>/=.
-    + f_equal. revert ptz.
-      generalize [existT (fun t => symbol_semantic_type (T t)) term sem].
-      revert sem. generalize I.
-      change True with (match T term with T term => True | NT _ => False end) at 1.
-      generalize (T term) => symb HT sem word ptz. by destruct ptz.
+  - destruct pt as [tok|prod word ptl]=>/=.
+    + f_equal. revert ptz. generalize [tok].
+      generalize (token_sem tok). generalize I.
+      change True with (match T (token_term tok) with T _ => True | NT _ => False end) at 1.
+      generalize (T (token_term tok)) => symb HT sem word ptz. by destruct ptz.
     + match goal with
       | |- context [match ?X with Some H => _ | None => _ end] => destruct X eqn:EQ
       end.
@@ -523,14 +519,12 @@ with ptd_stack_compat_build_from_pt_rec {symbs word}
                    (rev' (prod_rhs_rev (ptlz_prod ptlz))) (ptlz_lookahead ptlz) ->
   ptd_stack_compat (build_pt_dot_from_pt_rec ptl Hsymbs ptlz) stk.
 Proof.
-  - intros Hstk. destruct pt as [term sem|prod word ptl]=>/=.
-    + revert ptz Hstk.
-      generalize [existT (fun t => symbol_semantic_type (T t)) term sem].
-      revert sem. generalize I.
-      change True with (match T term with T term => True | NT _ => False end) at 1.
-      generalize (T term) => symb HT sem word ptz. by destruct ptz.
+  - intros Hstk. destruct pt as [tok|prod word ptl]=>/=.
+    + revert ptz Hstk. generalize [tok]. generalize (token_sem tok). generalize I.
+      change True with (match T (token_term tok) with T _ => True | NT _ => False end) at 1.
+      generalize (T (token_term tok)) => symb HT sem word ptz. by destruct ptz.
     + assert (state_has_future (state_of_stack init stk) prod
-               (rev' (prod_rhs_rev prod)) (projT1 (Streams.hd (ptz_buffer ptz)))).
+               (rev' (prod_rhs_rev prod)) (token_term (Streams.hd (ptz_buffer ptz)))).
       { revert ptz Hstk. remember (NT (prod_lhs prod)) eqn:EQ=>ptz.
         destruct ptz as [|?? ptl0 ?? ptlz0].
         - intros ->. apply start_future. congruence.
@@ -645,19 +639,19 @@ Lemma step_next_ptd (ptd : pt_dot) (stk : stack) Hi :
 Proof.
   intros Hstk. unfold step.
   generalize (reduce_ok safe (state_of_stack init stk)).
-  destruct ptd as [prod word ptl ptz|term sem symbs word ptl ptlz].
+  destruct ptd as [prod word ptl ptz|tok symbs word ptl ptlz].
   - assert (Hfut : state_has_future (state_of_stack init stk) prod []
-                                    (projT1 (Streams.hd (ptz_buffer ptz)))).
+                                    (token_term (Streams.hd (ptz_buffer ptz)))).
     { destruct Hstk as (? & ? & ?)=>//. }
     assert (Hact := end_reduce _ _ _ _ Hfut eq_refl).
     destruct action_table as [?|awt]=>Hval /=.
     + subst. by apply reduce_step_next_ptd.
-    + destruct Streams.hd as [term sem]. simpl in Hact.
+    + set (term := token_term (Streams.hd (ptz_buffer ptz))) in *.
       generalize (Hval term). clear Hval. destruct (awt term)=>//. subst.
       intros Hval. by apply reduce_step_next_ptd.
   - destruct Hstk as (stk0 & Hfut & Hstk & Hstk0).
     assert (Hact := terminal_shift _ _ _ _ Hfut). simpl in Hact. clear Hfut.
-    destruct action_table as [?|awt]=>//= /(_ term).
+    destruct action_table as [?|awt]=>//= /(_ (token_term tok)).
     destruct awt as [st' EQ| |]=>// _. eexists. split.
     + f_equal. rewrite -ptd_buffer_build_from_ptl //.
     + apply (ptd_stack_compat_build_from_ptl _ _ _ stk0); simpl; eauto.
@@ -686,7 +680,7 @@ with ptz_cost {hole_symb hole_word} (ptz:pt_zipper hole_symb hole_word) :=
 Definition ptd_cost (ptd:pt_dot) :=
   match ptd with
   | Reduce_ptd ptl ptz => ptz_cost ptz
-  | Shift_ptd _ _ ptl ptlz => 1 + ptlz_cost ptlz
+  | Shift_ptd _ ptl ptlz => 1 + ptlz_cost ptlz
   end.
 
 Lemma ptd_cost_build_from_pt {symb word}
@@ -697,11 +691,10 @@ with ptd_cost_build_from_pt_rec {symbs word}
      Hsymbs :
   ptl_size ptl + ptlz_cost ptlz = ptd_cost (build_pt_dot_from_pt_rec ptl Hsymbs ptlz).
 Proof.
-  - destruct pt as [term sem|prod word ptl']=>/=.
-    + revert ptz. generalize [existT (fun t => symbol_semantic_type (T t)) term sem].
-      revert sem. generalize I.
-      change True with (match T term with T term => True | NT _ => False end) at 1.
-      generalize (T term) => symb HT sem word ptz. by destruct ptz.
+  - destruct pt as [tok|prod word ptl']=>/=.
+    + revert ptz. generalize [tok]. generalize (token_sem tok). generalize I.
+      change True with (match T (token_term tok) with T _ => True | NT _ => False end) at 1.
+      generalize (T (token_term tok)) => symb HT sem word ptz. by destruct ptz.
     + match goal with
       | |- context [match ?X with Some H => _ | None => _ end] => destruct X eqn:EQ
       end.
@@ -726,7 +719,7 @@ Lemma next_ptd_cost ptd:
   | Some ptd' => ptd_cost ptd = S (ptd_cost ptd')
   end.
 Proof.
-  destruct ptd as [prod word ptl ptz|term sem symbq wordq ptl ptlz] =>/=.
+  destruct ptd as [prod word ptl ptz|tok symbq wordq ptl ptlz] =>/=.
   - generalize (Non_terminal_pt prod ptl). clear ptl.
     destruct ptz as [|?? ptl ?? ptlz]=>// pt. by rewrite -ptd_cost_build_from_ptl.
   - by rewrite -ptd_cost_build_from_ptl.

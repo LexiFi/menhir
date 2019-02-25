@@ -331,26 +331,30 @@ Definition step stk buffer (Hi : stack_invariant stk): step_result :=
     thunkP
       match a return Prop with
       | Default_reduce_act prod => _
-      | Lookahead_act awt => _
+      | Lookahead_act awt => forall t : terminal,
+        match awt t with
+        | Reduce_act p => _
+        | _ => True
+        end
       end -> _
   with
   | Default_reduce_act prod => fun Hv =>
     reduce_step stk prod buffer Hv Hi
   | Lookahead_act awt => fun Hv =>
     match Streams.hd buffer with
-    | existT _ term sem =>
-      match awt term as a return
+    | tok =>
+      match awt (token_term tok) as a return
         thunkP match a return Prop with Reduce_act p => _ | _ => _ end -> _
       with
       | Shift_act state_new e => fun _ =>
-        let sem_conv := eq_rect _ symbol_semantic_type sem _ e in
+        let sem_conv := eq_rect _ symbol_semantic_type (token_sem tok) _ e in
         Progress_sr (existT noninitstate_type state_new sem_conv::stk)
                     (Streams.tl buffer)
       | Reduce_act prod => fun Hv =>
         reduce_step stk prod buffer Hv Hi
       | Fail_act => fun _ =>
         Fail_sr
-      end (fun _ => Hv I term)
+      end (fun _ => Hv I (token_term tok))
     end
   end (fun _ => reduce_ok _).
 
@@ -364,7 +368,7 @@ Proof.
   assert (Hshift2 := shift_past_state (state_of_stack stk)).
   destruct action_table as [prod|awt]=>/=.
   - eauto using reduce_step_stack_invariant_preserved.
-  - destruct (Streams.hd buffer) as [term sem].
+  - set (term := token_term (Streams.hd buffer)).
     generalize (Hred term). clear Hred. intros Hred.
     specialize (Hshift1 term). specialize (Hshift2 term).
     destruct (awt term) as [state_new e|prod|]=>//.
@@ -403,8 +407,7 @@ Fixpoint parse_fix stk buffer n_steps (Hi : stack_invariant stk): parse_result:=
   end.
 
 Definition parse (buffer : Stream token) (n_steps : nat): parse_result.
-refine
-  (parse_fix [] buffer n_steps _).
+refine (parse_fix [] buffer n_steps _).
 Proof.
   abstract (repeat constructor; intros; by destruct singleton_state_pred).
 Defined.

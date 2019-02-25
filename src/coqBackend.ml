@@ -38,17 +38,13 @@ module Run (T: sig end) = struct
     | Symbol.N nt -> sprintf "NT %s" (print_nterm nt)
     | Symbol.T t -> sprintf "T %s" (print_term t)
 
-  exception No_type
-
   let print_type ty =
-    if Settings.coq_no_actions then
-      "unit"
-    else
-      match ty with
-        | None -> raise No_type
-        | Some t -> match t with
-            | Stretch.Declared s -> s.Stretch.stretch_content
-            | Stretch.Inferred _ -> assert false (* We cannot infer coq types *)
+    if Settings.coq_no_actions then "unit"
+    else match ty with
+         | None -> "unit"
+         | Some t -> match t with
+                     | Stretch.Declared s -> s.Stretch.stretch_content
+                     | Stretch.Inferred _ -> assert false (* We cannot infer coq types *)
 
   let is_final_state node =
     match Default.has_default_reduction node with
@@ -111,6 +107,14 @@ module Run (T: sig end) = struct
     if Front.grammar.BasicSyntax.parameters <> [] then
       Error.error [] "the Coq back-end does not support %%parameter."
 
+  let write_tokens f =
+    fprintf f "Inductive token : Type :=";
+    Terminal.iter_real (fun term ->
+        fprintf f "\n| %s : %s%%type -> token"
+                (Terminal.print term) (print_type (Terminal.ocamltype term))
+    );
+    fprintf f ".\n\n"
+
   let write_inductive_alphabet f name constrs =
     fprintf f "Inductive %s' : Set :=" name;
     List.iter (fprintf f "\n| %s") constrs;
@@ -123,8 +127,6 @@ module Run (T: sig end) = struct
         fprintf f "  { inj := fun x => match x return _ with ";
         iteri (fun k constr -> fprintf f "\n    | %s => %d%%positive" constr k);
         fprintf f "\n    end;\n";
-        (* Pattern matching on int31 litterals will disappear when
-           native 63 bits integers will be introduced in Coq. *)
         fprintf f "    surj := (fun n => match n return _ with ";
         iteri (fprintf f "\n    | %d%%positive => %s ");
         fprintf f "\n    | _ => %s\n    end)%%Z;\n" (List.hd constrs);
@@ -152,11 +154,9 @@ module Run (T: sig end) = struct
   let write_symbol_semantic_type f =
     fprintf f "Definition terminal_semantic_type (t:terminal) : Type:=\n";
     fprintf f "  match t with\n";
-    Terminal.iter (fun terminal ->
-      if not (Terminal.pseudo terminal) then
+    Terminal.iter_real (fun terminal ->
         fprintf f "  | %s => %s%%type\n"
-          (print_term terminal)
-          (try print_type (Terminal.ocamltype terminal) with No_type -> "unit")
+          (print_term terminal) (print_type (Terminal.ocamltype terminal))
     );
     fprintf f "  end.\n\n";
 
@@ -172,6 +172,20 @@ module Run (T: sig end) = struct
     fprintf f "  match s with\n";
     fprintf f "  | T t => terminal_semantic_type t\n";
     fprintf f "  | NT nt => nonterminal_semantic_type nt\n";
+    fprintf f "  end.\n\n"
+
+  let write_token_term f =
+    fprintf f "Definition token_term (tok : token) : terminal :=\n";
+    fprintf f "  match tok with\n";
+    Terminal.iter_real (fun terminal ->
+        fprintf f "  | %s _ => %s\n" (Terminal.print terminal) (print_term terminal));
+    fprintf f "  end.\n\n"
+
+  let write_token_sem f =
+    fprintf f "Definition token_sem (tok : token) : symbol_semantic_type (T (token_term tok)) :=\n";
+    fprintf f "  match tok with\n";
+    Terminal.iter_real (fun terminal ->
+        fprintf f "  | %s x => x\n" (Terminal.print terminal));
     fprintf f "  end.\n\n"
 
   let write_productions f =
@@ -246,6 +260,9 @@ module Run (T: sig end) = struct
     write_nonterminals f;
     fprintf f "Include %sGrammar.Symbol.\n\n" menhirlib_path;
     write_symbol_semantic_type f;
+    fprintf f "Definition token := token.\n\n";
+    write_token_term f;
+    write_token_sem f;
     write_productions f;
     write_productions_contents f;
     fprintf f "Include %sGrammar.Defs.\n\n" menhirlib_path;
@@ -282,20 +299,15 @@ module Run (T: sig end) = struct
           fprintf f "Lookahead_act (fun terminal:terminal =>\n";
           fprintf f "    match terminal return lookahead_action terminal with\n";
           let has_fail = ref false in
-          Terminal.iter (fun t ->
-            if not (Terminal.pseudo t) then
-              begin
-                try
-                  let target = SymbolMap.find (Symbol.T t) (Lr1.transitions node) in
-                  fprintf f "    | %s => Shift_act %s (eq_refl _)\n" (print_term t) (print_nis target)
-                with Not_found ->
-                  try
-                    let prod =
-                      Misc.single (TerminalMap.find t (Lr1.reductions node))
-                    in
-                    fprintf f "    | %s => Reduce_act %s\n" (print_term t) (print_prod prod)
-                  with Not_found -> has_fail := true
-              end);
+          Terminal.iter_real (fun t ->
+            try
+              let target = SymbolMap.find (Symbol.T t) (Lr1.transitions node) in
+              fprintf f "    | %s => Shift_act %s (eq_refl _)\n" (print_term t) (print_nis target)
+            with Not_found ->
+              try
+                let prod = Misc.single (TerminalMap.find t (Lr1.reductions node)) in
+                fprintf f "    | %s => Reduce_act %s\n" (print_term t) (print_prod prod)
+              with Not_found -> has_fail := true);
           if !has_fail then
             fprintf f "    | _ => Fail_act\n";
           fprintf f "    end)\n"
@@ -470,7 +482,7 @@ module Run (T: sig end) = struct
 
 
 
-          fprintf f "Theorem %s_correct iterator buffer:\n" funName;
+          fprintf f "Theorem %s_correct (iterator : nat) (buffer : Streams.Stream token):\n" funName;
           fprintf f "  match %s iterator buffer with\n" funName;
           fprintf f "  | Parser.Inter.Parsed_pr sem buffer_new =>\n";
           fprintf f "      exists word (tree : Gram.parse_tree (%s) word),\n"
@@ -483,7 +495,7 @@ module Run (T: sig end) = struct
 
           if not Settings.coq_no_complete then
             begin
-              fprintf f "Theorem %s_complete (iterator:nat) word buffer_end:\n" funName;
+              fprintf f "Theorem %s_complete (iterator : nat) (word : list token) (buffer_end : Streams.Stream token) :\n" funName;
               fprintf f "  forall tree : Gram.parse_tree (%s) word,\n" (print_symbol (Symbol.N startnt));
               fprintf f "  match %s iterator (Parser.Inter.app_str word buffer_end) with\n" funName;
               fprintf f "  | Parser.Inter.Fail_pr => False\n";
@@ -511,6 +523,7 @@ module Run (T: sig end) = struct
 
     fprintf f "Unset Elimination Schemes.\n\n";
 
+    write_tokens f;
     write_grammar f;
     write_automaton f;
     write_theorems f;
