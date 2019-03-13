@@ -477,15 +477,15 @@ module Run (T: sig end) = struct
 
     Lr1.fold_entry (fun _prod node startnt _t () ->
           let funName = Nonterminal.print true startnt in
-          fprintf f "Definition %s : nat -> Streams.Stream token -> MenhirLibParser.Inter.parse_result %s := MenhirLibParser.parse safe Aut.%s.\n\n"
+          fprintf f "Definition %s : nat -> MenhirLibParser.Inter.buffer -> MenhirLibParser.Inter.parse_result %s := MenhirLibParser.parse safe Aut.%s.\n\n"
             funName (print_type (Nonterminal.ocamltype startnt)) (print_init node);
 
-          fprintf f "Theorem %s_correct (iterator : nat) (buffer : Streams.Stream token):\n" funName;
+          fprintf f "Theorem %s_correct (iterator : nat) (buffer : MenhirLibParser.Inter.buffer):\n" funName;
           fprintf f "  match %s iterator buffer with\n" funName;
           fprintf f "  | MenhirLibParser.Inter.Parsed_pr sem buffer_new =>\n";
           fprintf f "      exists word (tree : Gram.parse_tree (%s) word),\n"
             (print_symbol (Symbol.N startnt));
-          fprintf f "        buffer = MenhirLibParser.Inter.app_str word buffer_new /\\\n";
+          fprintf f "        buffer = MenhirLibParser.Inter.app_buf word buffer_new /\\\n";
           fprintf f "        Gram.pt_sem tree = sem\n";
           fprintf f "  | _ => True\n";
           fprintf f "  end.\n";
@@ -493,9 +493,9 @@ module Run (T: sig end) = struct
 
           if not Settings.coq_no_complete then
             begin
-              fprintf f "Theorem %s_complete (iterator : nat) (word : list token) (buffer_end : Streams.Stream token) :\n" funName;
+              fprintf f "Theorem %s_complete (iterator : nat) (word : list token) (buffer_end : MenhirLibParser.Inter.buffer) :\n" funName;
               fprintf f "  forall tree : Gram.parse_tree (%s) word,\n" (print_symbol (Symbol.N startnt));
-              fprintf f "  match %s iterator (MenhirLibParser.Inter.app_str word buffer_end) with\n" funName;
+              fprintf f "  match %s iterator (MenhirLibParser.Inter.app_buf word buffer_end) with\n" funName;
               fprintf f "  | MenhirLibParser.Inter.Fail_pr => False\n";
               fprintf f "  | MenhirLibParser.Inter.Parsed_pr output_res buffer_end_res =>\n";
               fprintf f "      output_res = Gram.pt_sem tree /\\\n";

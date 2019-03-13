@@ -11,7 +11,7 @@
 (*                                                                          *)
 (****************************************************************************)
 
-From Coq Require Import Streams List Syntax.
+From Coq Require Import List Syntax.
 From Coq.ssr Require Import ssreflect.
 Require Automaton.
 Require Import Alphabet Grammar Validator_safe.
@@ -78,19 +78,25 @@ Lemma cast_eq T F (x : T) (eq : thunkP (x = x)) `{forall x y, Decidable (x = y)}
   cast F eq a = a.
 Proof. by rewrite /cast -Eqdep_dec.eq_rect_eq_dec. Qed.
 
-(** Some operations on streams **)
+(** Input buffers and operations on them. **)
+CoInductive buffer : Type :=
+  Buf_cons { buf_head : token; buf_tail : buffer }.
 
-(** Concatenation of a list and a stream **)
-Fixpoint app_str {A:Type} (l:list A) (s:Stream A) :=
+Delimit Scope buffer_scope with buf.
+Bind Scope buffer_scope with buffer.
+
+Infix "::" := Buf_cons (at level 60, right associativity) : buffer_scope.
+
+(** Concatenation of a list and an input buffer **)
+Fixpoint app_buf (l:list token) (buf:buffer) :=
   match l with
-    | nil => s
-    | cons t q => Cons t (app_str q s)
+    | nil => buf
+    | cons t q => (t :: app_buf q buf)%buf
   end.
+Infix "++" := app_buf (at level 60, right associativity) : buffer_scope.
 
-Infix "++" := app_str (right associativity, at level 60).
-
-Lemma app_str_app_assoc {A:Type} (l1 l2:list A) (s:Stream A) :
-  l1 ++ (l2 ++ s) = (l1 ++ l2) ++ s.
+Lemma app_buf_assoc (l1 l2:list token) (buf:buffer) :
+  (l1 ++ (l2 ++ buf) = (l1 ++ l2) ++ buf)%buf.
 Proof. induction l1 as [|?? IH]=>//=. rewrite IH //. Qed.
 
 (** The type of a non initial state: the type of semantic values associated
@@ -268,14 +274,14 @@ Qed.
     bogus and has perfomed a forbidden action. **)
 Inductive step_result :=
   | Fail_sr: step_result
-  | Accept_sr: symbol_semantic_type (NT (start_nt init)) -> Stream token -> step_result
-  | Progress_sr: stack -> Stream token -> step_result.
+  | Accept_sr: symbol_semantic_type (NT (start_nt init)) -> buffer -> step_result
+  | Progress_sr: stack -> buffer -> step_result.
 
 (** [reduce_step] does a reduce action :
    - pops some elements from the stack
    - execute the action of the production
    - follows the goto for the produced non terminal symbol **)
-Definition reduce_step stk prod (buffer : Stream token)
+Definition reduce_step stk prod (buffer : buffer)
         (Hval : thunkP (valid_for_reduce (state_of_stack stk) prod))
         (Hi : stack_invariant stk)
   : step_result.
@@ -341,7 +347,7 @@ Definition step stk buffer (Hi : stack_invariant stk): step_result :=
   | Default_reduce_act prod => fun Hv =>
     reduce_step stk prod buffer Hv Hi
   | Lookahead_act awt => fun Hv =>
-    match Streams.hd buffer with
+    match buf_head buffer with
     | tok =>
       match awt (token_term tok) as a return
         thunkP match a return Prop with Reduce_act p => _ | _ => _ end -> _
@@ -349,7 +355,7 @@ Definition step stk buffer (Hi : stack_invariant stk): step_result :=
       | Shift_act state_new e => fun _ =>
         let sem_conv := eq_rect _ symbol_semantic_type (token_sem tok) _ e in
         Progress_sr (existT noninitstate_type state_new sem_conv::stk)
-                    (Streams.tl buffer)
+                    (buf_tail buffer)
       | Reduce_act prod => fun Hv =>
         reduce_step stk prod buffer Hv Hi
       | Fail_act => fun _ =>
@@ -368,7 +374,7 @@ Proof.
   assert (Hshift2 := shift_past_state (state_of_stack stk)).
   destruct action_table as [prod|awt]=>/=.
   - eauto using reduce_step_stack_invariant_preserved.
-  - set (term := token_term (Streams.hd buffer)).
+  - set (term := token_term (buf_head buffer)).
     generalize (Hred term). clear Hred. intros Hred.
     specialize (Hshift1 term). specialize (Hshift2 term).
     destruct (awt term) as [state_new e|prod|]=>//.
@@ -393,7 +399,7 @@ Qed.
 Inductive parse_result {A : Type} :=
   | Fail_pr: parse_result
   | Timeout_pr: parse_result
-  | Parsed_pr: A -> Stream token -> parse_result.
+  | Parsed_pr: A -> buffer -> parse_result.
 Global Arguments parse_result _ : clear implicits.
 
 Fixpoint parse_fix stk buffer n_steps (Hi : stack_invariant stk):
@@ -402,7 +408,7 @@ Fixpoint parse_fix stk buffer n_steps (Hi : stack_invariant stk):
   | O => Timeout_pr
   | S it =>
     match step stk buffer Hi as r
-          return (forall stk' (buffer' : Stream token), r = _ -> _) -> _
+          return (forall stk' buffer', r = _ -> _) -> _
     with
     | Fail_sr => fun _ => Fail_pr
     | Accept_sr t buffer_new => fun _ => Parsed_pr t buffer_new
@@ -411,7 +417,7 @@ Fixpoint parse_fix stk buffer n_steps (Hi : stack_invariant stk):
     end (step_stack_invariant_preserved _ _ _)
   end.
 
-Definition parse (buffer : Stream token) (n_steps : nat):
+Definition parse (buffer : buffer) (n_steps : nat):
   parse_result (symbol_semantic_type (NT (start_nt init))).
 refine (parse_fix [] buffer n_steps _).
 Proof.

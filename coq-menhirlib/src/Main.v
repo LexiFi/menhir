@@ -34,7 +34,7 @@ Theorem parse_correct
   match parse safe init n_steps buffer with
     | Parsed_pr sem buffer_new =>
       exists word (pt : parse_tree (NT (start_nt init)) word),
-        buffer = word ++ buffer_new /\
+        buffer = (word ++ buffer_new)%buf /\
         pt_sem pt = sem
     | _ => True
   end.
@@ -63,10 +63,11 @@ Theorem unambiguity:
     pt_sem tree1 = pt_sem tree2.
 Proof.
   intros Hsafe Hcomp [tok] init word tree1 tree2.
-  assert (Hcomp1 := parse_complete Hsafe init (pt_size tree1) word (Streams.const tok)
-                      Hcomp tree1).
-  assert (Hcomp2 := parse_complete Hsafe init (pt_size tree1) word (Streams.const tok)
-                      Hcomp tree2).
+  pose (buf_end := cofix buf_end := (tok :: buf_end)%buf).
+  assert (Hcomp1 := parse_complete Hsafe init (pt_size tree1) word buf_end
+                                   Hcomp tree1).
+  assert (Hcomp2 := parse_complete Hsafe init (pt_size tree1) word buf_end
+                                   Hcomp tree2).
   destruct parse.
   - destruct Hcomp1.
   - exfalso. eapply PeanoNat.Nat.lt_irrefl, Hcomp1.

@@ -11,7 +11,7 @@
 (*                                                                          *)
 (****************************************************************************)
 
-From Coq Require Import Streams List Syntax.
+From Coq Require Import List Syntax.
 Require Import Alphabet.
 Require Grammar Automaton Interpreter.
 From Coq.ssr Require Import ssreflect.
@@ -95,16 +95,16 @@ Proof.
 Qed.
 
 (** [step] preserves the invariant **)
-Lemma step_invariant stk word (buffer:Stream token) safe Hi :
+Lemma step_invariant stk word buffer safe Hi :
   word_has_stack_semantics word stk ->
   match step safe init stk buffer Hi with
   | Accept_sr sem buffer_new =>
     exists word_new (pt:parse_tree (NT (start_nt init)) word_new),
-      word ++ buffer = word_new ++ buffer_new /\
+      (word ++ buffer = word_new ++ buffer_new)%buf /\
       pt_sem pt = sem
   | Progress_sr stk_new buffer_new =>
     exists word_new,
-      word ++ buffer = word_new ++ buffer_new /\
+      (word ++ buffer = word_new ++ buffer_new)%buf /\
       word_has_stack_semantics word_new stk_new
   | Fail_sr => True
   end.
@@ -119,12 +119,12 @@ Proof.
     + destruct Hword_stk as [<- ?]; eauto.
   - destruct buffer as [tok buffer]=>/=.
     move=> /(_ (token_term tok)) Hv. destruct (awt (token_term tok)) as [st EQ|prod|]=>//.
-    + eexists _. split; [by apply app_str_app_assoc with (l2 := [_])|].
+    + eexists _. split; [by apply app_buf_assoc with (l2 := [_])|].
       change (token_sem tok) with (pt_sem (Terminal_pt tok)).
       generalize (Terminal_pt tok). generalize [tok].
       rewrite -> EQ=>word' pt /=. by constructor.
-    + apply (reduce_step_invariant stk prod (fun _ => Hv) Hi word
-                                   (Cons tok buffer)) in Hword_stk.
+    + apply (reduce_step_invariant stk prod (fun _ => Hv) Hi word (tok::buffer))
+        in Hword_stk.
       destruct reduce_step=>//.
       * destruct Hword_stk as (pt & <- & <-); eauto.
       * destruct Hword_stk as [<- ?]; eauto.
@@ -137,18 +137,18 @@ Theorem parse_correct safe buffer n_steps:
   match parse safe init buffer n_steps with
   | Parsed_pr sem buffer_new =>
     exists word_new (pt:parse_tree (NT (start_nt init)) word_new),
-      buffer = word_new ++ buffer_new /\
+      buffer = (word_new ++ buffer_new)%buf /\
       pt_sem pt = sem
   | _ => True
   end.
 Proof.
   unfold parse.
-  change buffer with ([] ++ buffer) at 2. revert buffer. generalize Nil_stack_whss.
+  change buffer with ([] ++ buffer)%buf at 2. revert buffer. generalize Nil_stack_whss.
   generalize (parse_subproof init).
   generalize (@nil token). generalize (@nil (sigT noninitstate_type)).
   induction n_steps as [|n_steps IH]=>//= stk word Hi Hword_stk buffer.
-  apply step_invariant with (buffer := buffer) (safe := safe) (Hi := Hi) in Hword_stk.
-  generalize (step_stack_invariant_preserved safe init stk (buffer) Hi).
+  apply (step_invariant _ _ buffer safe Hi) in Hword_stk.
+  generalize (step_stack_invariant_preserved safe init stk buffer Hi).
   destruct step as [| |stk' buffer']=>//. clear Hi. move=> /(_ _ _ eq_refl) Hi.
   destruct Hword_stk as (word' & -> & Hword'). by eapply IH.
 Qed.

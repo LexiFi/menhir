@@ -6,6 +6,8 @@ export
 
 .PHONY: all clean install uninstall
 
+all:
+
 _CoqProject:
 	@ $(MAKE) -f Makefile.coq --no-print-directory _CoqProject
 

@@ -11,7 +11,7 @@
 (*                                                                          *)
 (****************************************************************************)
 
-From Coq Require Import Streams List Syntax Arith.
+From Coq Require Import List Syntax Arith.
 From Coq.ssr Require Import ssreflect.
 Require Import Alphabet Grammar.
 Require Automaton Interpreter Validator_complete.
@@ -128,7 +128,7 @@ Variable init: initstate.
 (** In order to prove compleness, we first fix a word to be parsed
   together with the content of the parser at the end of the parsing. *)
 Variable full_word: list token.
-Variable buffer_end: Stream token.
+Variable buffer_end: buffer.
 
 (** Completeness is proved by following the traversal of the parse
   tree which is performed by the parser. Each step of parsing
@@ -222,7 +222,7 @@ Definition ptd_sem (ptd : pt_dot) :=
   buffer left to be read by the parser when at the state represented
   by the dotted parse tree. *)
 Fixpoint ptlz_buffer {hole_symbs hole_word}
-         (ptlz:ptl_zipper hole_symbs hole_word): Stream token :=
+         (ptlz:ptl_zipper hole_symbs hole_word): buffer :=
   match ptlz with
   | Non_terminal_pt_ptlz ptz =>
     ptz_buffer ptz
@@ -230,7 +230,7 @@ Fixpoint ptlz_buffer {hole_symbs hole_word}
     wordt ++ ptlz_buffer ptlz'
   end
 with ptz_buffer {hole_symb hole_word}
-                (ptz:pt_zipper hole_symb hole_word): Stream token :=
+                (ptz:pt_zipper hole_symb hole_word): buffer :=
   match ptz with
   | Top_ptz => buffer_end
   | Cons_ptl_ptz _ ptlz =>
@@ -240,7 +240,7 @@ with ptz_buffer {hole_symb hole_word}
 Definition ptd_buffer (ptd:pt_dot) :=
   match ptd with
   | Reduce_ptd _ ptz => ptz_buffer ptz
-  | @Shift_ptd tok _ wordq _ ptlz => Cons tok (ptlz_buffer ptlz)
+  | @Shift_ptd tok _ wordq _ ptlz => (tok::ptlz_buffer ptlz)%buf
   end.
 
 (** We are now ready to define the main invariant of the proof of
@@ -271,7 +271,7 @@ Fixpoint ptlz_future {hole_symbs hole_word}
 Fixpoint ptlz_lookahead {hole_symbs hole_word}
   (ptlz:ptl_zipper hole_symbs hole_word) : terminal :=
   match ptlz with
-  | Non_terminal_pt_ptlz ptz => token_term (Streams.hd (ptz_buffer ptz))
+  | Non_terminal_pt_ptlz ptz => token_term (buf_head (ptz_buffer ptz))
   | Cons_ptl_ptlz _ ptlz' => ptlz_lookahead ptlz'
   end.
 
@@ -298,7 +298,7 @@ Definition ptd_stack_compat (ptd:pt_dot) (stk:stack): Prop :=
   | @Reduce_ptd prod _ ptl ptz =>
     exists stk0,
       state_has_future (state_of_stack init stk) prod []
-                       (token_term (Streams.hd (ptz_buffer ptz))) /\
+                       (token_term (buf_head (ptz_buffer ptz))) /\
       ptl_stack_compat stk0 ptl stk /\
       ptz_stack_compat stk0 ptz
   | Shift_ptd tok ptl ptlz =>
@@ -323,9 +323,9 @@ Lemma ptlz_future_ptlz_prod hole_symbs hole_word
 Proof. induction ptlz=>//=. Qed.
 
 Lemma ptlz_future_first {symbs word} (ptlz : ptl_zipper symbs word) :
-  TerminalSet.In (token_term (Streams.hd (ptlz_buffer ptlz)))
+  TerminalSet.In (token_term (buf_head (ptlz_buffer ptlz)))
     (first_word_set (ptlz_future ptlz)) \/
-  token_term (Streams.hd (ptlz_buffer ptlz)) = ptlz_lookahead ptlz /\
+  token_term (buf_head (ptlz_buffer ptlz)) = ptlz_lookahead ptlz /\
   nullable_word (ptlz_future ptlz) = true.
 Proof.
   induction ptlz as [|??? [|tok] pt ptlz IH]; [by auto| |]=>/=.
@@ -475,11 +475,11 @@ Qed.
 (** We prove that these functions behave well w.r.t. xxx_buffer. *)
 Lemma ptd_buffer_build_from_pt {symb word}
       (pt : parse_tree symb word) (ptz : pt_zipper symb word) :
-  word ++ ptz_buffer ptz = ptd_buffer (build_pt_dot_from_pt pt ptz)
+  (word ++ ptz_buffer ptz)%buf = ptd_buffer (build_pt_dot_from_pt pt ptz)
 with ptd_buffer_build_from_pt_rec {symbs word}
      (ptl : parse_tree_list symbs word) (ptlz : ptl_zipper symbs word)
      Hsymbs :
-  word ++ ptlz_buffer ptlz = ptd_buffer (build_pt_dot_from_pt_rec ptl Hsymbs ptlz).
+  (word ++ ptlz_buffer ptlz)%buf = ptd_buffer (build_pt_dot_from_pt_rec ptl Hsymbs ptlz).
 Proof.
   - destruct pt as [tok|prod word ptl]=>/=.
     + f_equal. revert ptz. generalize [tok].
@@ -490,12 +490,12 @@ Proof.
       | |- context [match ?X with Some H => _ | None => _ end] => destruct X eqn:EQ
       end.
       * by rewrite -ptd_buffer_build_from_pt_rec.
-      * rewrite [X in X ++_](_ : word = []) //. clear -EQ. by destruct ptl.
+      * rewrite [X in (X ++ _)%buf](_ : word = []) //. clear -EQ. by destruct ptl.
   - destruct ptl as [|?? ptl ?? pt]; [contradiction|].
     specialize (ptd_buffer_build_from_pt_rec _ _ ptl).
     destruct ptl.
     + by rewrite /= -ptd_buffer_build_from_pt.
-    + by rewrite -ptd_buffer_build_from_pt_rec //= app_str_app_assoc.
+    + by rewrite -ptd_buffer_build_from_pt_rec //= app_buf_assoc.
 Qed.
 
 Lemma ptd_buffer_build_from_ptl {symbs word}
@@ -524,7 +524,7 @@ Proof.
       change True with (match T (token_term tok) with T _ => True | NT _ => False end) at 1.
       generalize (T (token_term tok)) => symb HT sem word ptz. by destruct ptz.
     + assert (state_has_future (state_of_stack init stk) prod
-               (rev' (prod_rhs_rev prod)) (token_term (Streams.hd (ptz_buffer ptz)))).
+               (rev' (prod_rhs_rev prod)) (token_term (buf_head (ptz_buffer ptz)))).
       { revert ptz Hstk. remember (NT (prod_lhs prod)) eqn:EQ=>ptz.
         destruct ptz as [|?? ptl0 ?? ptlz0].
         - intros ->. apply start_future. congruence.
@@ -641,12 +641,12 @@ Proof.
   generalize (reduce_ok safe (state_of_stack init stk)).
   destruct ptd as [prod word ptl ptz|tok symbs word ptl ptlz].
   - assert (Hfut : state_has_future (state_of_stack init stk) prod []
-                                    (token_term (Streams.hd (ptz_buffer ptz)))).
+                                    (token_term (buf_head (ptz_buffer ptz)))).
     { destruct Hstk as (? & ? & ?)=>//. }
     assert (Hact := end_reduce _ _ _ _ Hfut eq_refl).
     destruct action_table as [?|awt]=>Hval /=.
     + subst. by apply reduce_step_next_ptd.
-    + set (term := token_term (Streams.hd (ptz_buffer ptz))) in *.
+    + set (term := token_term (buf_head (ptz_buffer ptz))) in *.
       generalize (Hval term). clear Hval. destruct (awt term)=>//. subst.
       intros Hval. by apply reduce_step_next_ptd.
   - destruct Hstk as (stk0 & Hfut & Hstk & Hstk0).
