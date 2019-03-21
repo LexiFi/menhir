@@ -283,7 +283,7 @@ Inductive step_result :=
    - follows the goto for the produced non terminal symbol **)
 Definition reduce_step stk prod (buffer : buffer)
         (Hval : thunkP (valid_for_reduce (state_of_stack stk) prod))
-        (Hi : stack_invariant stk)
+        (Hi : thunkP (stack_invariant stk))
   : step_result.
 refine
   ((let '(stk', sem) as ss := pop (prod_rhs_rev prod) stk _ (prod_action prod)
@@ -302,7 +302,7 @@ refine
    (fun _ => pop_state_valid _ _ _ _ _ _ _)).
 Proof.
   - clear -Hi Hval.
-    abstract (intros _; destruct Hi; eapply prefix_ass; [by apply Hval|eassumption]).
+    abstract (intros _; destruct Hi=>//; eapply prefix_ass; [by apply Hval|eassumption]).
   - clear -Hval.
     abstract (intros _; f_equal; specialize (Hval I eq_refl); destruct stk' as [|[]]=>//).
   - clear -Hi. abstract by destruct Hi.
@@ -315,7 +315,7 @@ Proof.
   unfold reduce_step.
   match goal with
   | |- context [pop ?symbols_to_pop stk ?Hp ?action] =>
-    assert (Hi':=pop_preserves_invariant symbols_to_pop stk Hp _ action Hi);
+    assert (Hi':=pop_preserves_invariant symbols_to_pop stk Hp _ action (Hi I));
     generalize (pop_state_valid symbols_to_pop stk Hp _ action)
   end.
   destruct pop as [stk0 sem]=>/=. simpl in Hi'. intros Hv'.
@@ -332,7 +332,7 @@ Proof.
 Qed.
 
 (** One step of parsing. **)
-Definition step stk buffer (Hi : stack_invariant stk): step_result :=
+Definition step stk buffer (Hi : thunkP (stack_invariant stk)): step_result :=
   match action_table (state_of_stack stk) as a return
     thunkP
       match a return Prop with
@@ -383,43 +383,52 @@ Proof.
       * unfold state_stack_of_stack; simpl; constructor.
         -- intros ?. by destruct singleton_state_pred.
         -- eapply prefix_pred_ass. apply Hshift2. by destruct Hi.
-      * by constructor.
+      * constructor; by apply Hi.
     + eauto using reduce_step_stack_invariant_preserved.
 Qed.
 
-(** The parsing use a [nat] parameter [n_steps], so that we do not have to prove
-    terminaison, which is difficult. So the result of a parsing is either
-    a failure (the automaton has rejected the input word), either a timeout
-    (the automaton has spent all the given [n_steps]), either a parsed semantic
-    value with a rest of the input buffer.
+(** The parsing use a [nat] fuel parameter [log_n_steps], so that we
+    do not have to prove terminaison, which is difficult.
 
-    Note that we do not make parse_result depend on start_nt for the result
-    type, so that this inductive is extracted without the use of Obj.t in OCaml.
-**)
+    Note that [log_n_steps] is *not* the fuel in the conventionnal
+    sense: this parameter contains the logarithm (in base 2) of the
+    number of steps to perform. Hence, a value of, e.g., 50 will
+    usually be enough to ensure termination. *)
+Fixpoint parse_fix stk buffer (log_n_steps : nat) (Hi : thunkP (stack_invariant stk)):
+  { sr : step_result |
+    forall stk' buffer', sr = Progress_sr stk' buffer' -> stack_invariant stk' } :=
+  match log_n_steps with
+  | O => exist _ (step stk buffer Hi)
+                 (step_stack_invariant_preserved _ _ Hi)
+  | S log_n_steps =>
+    match parse_fix stk buffer log_n_steps Hi with
+    | exist _ (Progress_sr stk buffer) Hi' =>
+      parse_fix stk buffer log_n_steps (fun _ => Hi' _ buffer eq_refl)
+    | sr => sr
+    end
+  end.
+
+(** The final result of a parsing is either a failure (the automaton
+    has rejected the input word), either a timeout (the automaton has
+    spent all the given [2^log_n_steps]), either a parsed semantic value
+    with a rest of the input buffer.
+
+    Note that we do not make parse_result depend on start_nt for the
+    result type, so that this inductive is extracted without the use
+    of Obj.t in OCaml.  **)
 Inductive parse_result {A : Type} :=
   | Fail_pr: parse_result
   | Timeout_pr: parse_result
   | Parsed_pr: A -> buffer -> parse_result.
 Global Arguments parse_result _ : clear implicits.
 
-Fixpoint parse_fix stk buffer n_steps (Hi : stack_invariant stk):
-  parse_result (symbol_semantic_type (NT (start_nt init))) :=
-  match n_steps return _ with
-  | O => Timeout_pr
-  | S it =>
-    match step stk buffer Hi as r
-          return (forall stk' buffer', r = _ -> _) -> _
-    with
-    | Fail_sr => fun _ => Fail_pr
-    | Accept_sr t buffer_new => fun _ => Parsed_pr t buffer_new
-    | Progress_sr s buffer_new => fun Hi =>
-      parse_fix s buffer_new it (Hi s _ eq_refl)
-    end (step_stack_invariant_preserved _ _ _)
-  end.
-
-Definition parse (buffer : buffer) (n_steps : nat):
+Definition parse (buffer : buffer) (log_n_steps : nat):
   parse_result (symbol_semantic_type (NT (start_nt init))).
-refine (parse_fix [] buffer n_steps _).
+refine (match proj1_sig (parse_fix [] buffer log_n_steps _) with
+        | Fail_sr => Fail_pr
+        | Accept_sr sem buffer' => Parsed_pr sem buffer'
+        | Progress_sr _ _ => Timeout_pr
+        end).
 Proof.
   abstract (repeat constructor; intros; by destruct singleton_state_pred).
 Defined.

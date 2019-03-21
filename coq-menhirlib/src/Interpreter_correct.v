@@ -130,11 +130,34 @@ Proof.
       * destruct Hword_stk as [<- ?]; eauto.
 Qed.
 
+(** [step] preserves the invariant **)
+Lemma parse_fix_invariant stk word buffer safe log_n_steps Hi :
+  word_has_stack_semantics word stk ->
+  match proj1_sig (parse_fix safe init stk buffer log_n_steps Hi) with
+  | Accept_sr sem buffer_new =>
+    exists word_new (pt:parse_tree (NT (start_nt init)) word_new),
+      (word ++ buffer = word_new ++ buffer_new)%buf /\
+      pt_sem pt = sem
+  | Progress_sr stk_new buffer_new =>
+    exists word_new,
+      (word ++ buffer = word_new ++ buffer_new)%buf /\
+      word_has_stack_semantics word_new stk_new
+  | Fail_sr => True
+  end.
+Proof.
+  revert stk word buffer Hi.
+  induction log_n_steps as [|log_n_steps IH]=>/= stk word buffer Hi Hstk;
+    [by apply step_invariant|].
+  assert (IH1 := IH stk word buffer Hi Hstk).
+  destruct parse_fix as [[] Hi']=>/=; try by apply IH1.
+  destruct IH1 as (word' & -> & Hstk')=>//. by apply IH.
+Qed.
+
 (** The interpreter is correct : if it returns a semantic value, then the input
     word has this semantic value.
 **)
-Theorem parse_correct safe buffer n_steps:
-  match parse safe init buffer n_steps with
+Theorem parse_correct safe buffer log_n_steps:
+  match parse safe init buffer log_n_steps with
   | Parsed_pr sem buffer_new =>
     exists word_new (pt:parse_tree (NT (start_nt init)) word_new),
       buffer = (word_new ++ buffer_new)%buf /\
@@ -143,14 +166,9 @@ Theorem parse_correct safe buffer n_steps:
   end.
 Proof.
   unfold parse.
-  change buffer with ([] ++ buffer)%buf at 2. revert buffer. generalize Nil_stack_whss.
-  generalize (parse_subproof init).
-  generalize (@nil token). generalize (@nil (sigT noninitstate_type)).
-  induction n_steps as [|n_steps IH]=>//= stk word Hi Hword_stk buffer.
-  apply (step_invariant _ _ buffer safe Hi) in Hword_stk.
-  generalize (step_stack_invariant_preserved safe init stk buffer Hi).
-  destruct step as [| |stk' buffer']=>//. clear Hi. move=> /(_ _ _ eq_refl) Hi.
-  destruct Hword_stk as (word' & -> & Hword'). by eapply IH.
+  assert (Hparse := parse_fix_invariant [] [] buffer safe log_n_steps
+                                        (parse_subproof init)).
+  destruct proj1_sig=>//. apply Hparse. constructor.
 Qed.
 
 End Init.

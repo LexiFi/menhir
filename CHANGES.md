@@ -26,6 +26,11 @@
   MenhirLib matches. This check can be disabled with
   --coq-no-version-check.
 
+* Coq backend: The fuel parameter is now given as the *logarithm* of
+  the maximum number of steps to perform. Therefore, using e.g., 50
+  makes sure we will not run out of fuel in any reasonnable
+  computation time.
+
 ## 2018/11/13
 
 * In `.mly` files, a new syntax for rules has been introduced, which is

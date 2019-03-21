@@ -480,8 +480,8 @@ module Run (T: sig end) = struct
           fprintf f "Definition %s : nat -> MenhirLibParser.Inter.buffer -> MenhirLibParser.Inter.parse_result %s := MenhirLibParser.parse safe Aut.%s.\n\n"
             funName (print_type (Nonterminal.ocamltype startnt)) (print_init node);
 
-          fprintf f "Theorem %s_correct (iterator : nat) (buffer : MenhirLibParser.Inter.buffer):\n" funName;
-          fprintf f "  match %s iterator buffer with\n" funName;
+          fprintf f "Theorem %s_correct (log_fuel : nat) (buffer : MenhirLibParser.Inter.buffer):\n" funName;
+          fprintf f "  match %s log_fuel buffer with\n" funName;
           fprintf f "  | MenhirLibParser.Inter.Parsed_pr sem buffer_new =>\n";
           fprintf f "      exists word (tree : Gram.parse_tree (%s) word),\n"
             (print_symbol (Symbol.N startnt));
@@ -493,14 +493,14 @@ module Run (T: sig end) = struct
 
           if not Settings.coq_no_complete then
             begin
-              fprintf f "Theorem %s_complete (iterator : nat) (word : list token) (buffer_end : MenhirLibParser.Inter.buffer) :\n" funName;
+              fprintf f "Theorem %s_complete (log_fuel : nat) (word : list token) (buffer_end : MenhirLibParser.Inter.buffer) :\n" funName;
               fprintf f "  forall tree : Gram.parse_tree (%s) word,\n" (print_symbol (Symbol.N startnt));
-              fprintf f "  match %s iterator (MenhirLibParser.Inter.app_buf word buffer_end) with\n" funName;
+              fprintf f "  match %s log_fuel (MenhirLibParser.Inter.app_buf word buffer_end) with\n" funName;
               fprintf f "  | MenhirLibParser.Inter.Fail_pr => False\n";
               fprintf f "  | MenhirLibParser.Inter.Parsed_pr output_res buffer_end_res =>\n";
               fprintf f "      output_res = Gram.pt_sem tree /\\\n";
-              fprintf f "      buffer_end_res = buffer_end /\\ le (Gram.pt_size tree) iterator\n";
-              fprintf f "  | MenhirLibParser.Inter.Timeout_pr => lt iterator (Gram.pt_size tree)\n";
+              fprintf f "      buffer_end_res = buffer_end /\\ (Gram.pt_size tree <= PeanoNat.Nat.pow 2 log_fuel)%%nat\n";
+              fprintf f "  | MenhirLibParser.Inter.Timeout_pr => (PeanoNat.Nat.pow 2 log_fuel < Gram.pt_size tree)%%nat\n";
               fprintf f "  end.\n";
               fprintf f "Proof. apply MenhirLibParser.parse_complete with (init:=Aut.%s); exact complete. Qed.\n" (print_init node);
             end

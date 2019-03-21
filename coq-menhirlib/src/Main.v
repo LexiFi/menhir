@@ -12,7 +12,7 @@
 (****************************************************************************)
 
 Require Grammar Automaton Interpreter_correct Interpreter_complete.
-From Coq Require Import Syntax.
+From Coq Require Import Syntax Arith.
 
 Module Make(Export Aut:Automaton.T).
 Export Aut.Gram.
@@ -24,14 +24,14 @@ Module Complete := Interpreter_complete.Make Aut Inter.
 
 Definition complete_validator:unit->bool := Complete.Valid.is_complete.
 Definition safe_validator:unit->bool := ValidSafe.is_safe.
-Definition parse (safe:safe_validator ()=true) init n_steps buffer :
+Definition parse (safe:safe_validator ()=true) init log_n_steps buffer :
   parse_result (symbol_semantic_type (NT (start_nt init))):=
-  parse (ValidSafe.is_safe_correct safe) init buffer n_steps.
+  parse (ValidSafe.is_safe_correct safe) init buffer log_n_steps.
 
 (** Correction theorem. **)
 Theorem parse_correct
-  (safe:safe_validator ()= true) init n_steps buffer:
-  match parse safe init n_steps buffer with
+  (safe:safe_validator ()= true) init log_n_steps buffer:
+  match parse safe init log_n_steps buffer with
     | Parsed_pr sem buffer_new =>
       exists word (pt : parse_tree (NT (start_nt init)) word),
         buffer = (word ++ buffer_new)%buf /\
@@ -42,14 +42,15 @@ Proof. apply Correct.parse_correct. Qed.
 
 (** Completeness theorem. **)
 Theorem parse_complete
-  (safe:safe_validator () = true) init n_steps word buffer_end:
+  (safe:safe_validator () = true) init log_n_steps word buffer_end:
   complete_validator () = true ->
   forall tree:parse_tree (NT (start_nt init)) word,
-  match parse safe init n_steps (word ++ buffer_end) with
+  match parse safe init log_n_steps (word ++ buffer_end) with
   | Fail_pr => False
   | Parsed_pr sem_res buffer_end_res =>
-    sem_res = pt_sem tree /\ buffer_end_res = buffer_end /\ pt_size tree <= n_steps
-  | Timeout_pr => n_steps < pt_size tree
+    sem_res = pt_sem tree /\ buffer_end_res = buffer_end /\
+    pt_size tree <= 2^log_n_steps
+  | Timeout_pr => 2^log_n_steps < pt_size tree
   end.
 Proof.
   intros. now apply Complete.parse_complete, Complete.Valid.is_complete_correct.
@@ -70,7 +71,8 @@ Proof.
                                    Hcomp tree2).
   destruct parse.
   - destruct Hcomp1.
-  - exfalso. eapply PeanoNat.Nat.lt_irrefl, Hcomp1.
+  - exfalso. eapply PeanoNat.Nat.lt_irrefl. etransitivity; [|apply Hcomp1].
+    eapply Nat.pow_gt_lin_r. constructor.
   - destruct Hcomp1 as [-> _], Hcomp2 as [-> _]. reflexivity.
 Qed.
 

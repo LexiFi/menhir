@@ -3881,11 +3881,12 @@ The proof of termination of an LR(1) parser in the case of invalid input seems
 far from obvious. We did not find such a proof in the literature. In an
 application such as CompCert~\cite{compcert}, this question is not considered
 crucial. For this reason, we did not formally establish the termination of the
-parser. Instead, we use the ``fuel'' technique. The parser takes an additional
-parameter of type \verb+nat+ that indicates the maximum number of steps the
-parser is allowed to perform. In practice, after extracting the code to
-\ocaml, one can use the standard trick of passing an infinite amount of fuel,
-defined in \ocaml by \verb+let rec inf = S inf+.
+parser. Instead, in order to satisfy Coq's termination requirements, we use
+the ``fuel'' technique: the parser takes an additional parameter
+\verb+log_fuel+ of type \verb+nat+ such that $2^{\verb+log_fuel+}$ is the
+maximum number of steps the parser is allowed to perform. In practice, one
+can use a value of e.g., 40 or 50 to make sure the parser will never run out
+of fuel in a reasonnable time.
 
 Parsing can have three different outcomes, represented by the type
 \verb+parse_result+.

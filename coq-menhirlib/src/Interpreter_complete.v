@@ -426,6 +426,16 @@ Definition next_ptd (ptd:pt_dot) : option pt_dot :=
     end (Non_terminal_pt _ ptl)
   end.
 
+Fixpoint next_ptd_iter (ptd:pt_dot) (log_n_steps:nat) : option pt_dot :=
+  match log_n_steps with
+  | O => next_ptd ptd
+  | S log_n_steps =>
+    match next_ptd_iter ptd log_n_steps with
+    | None => None
+    | Some ptd => next_ptd_iter ptd log_n_steps
+    end
+  end.
+
 (** We prove that these functions behave well w.r.t. semantic values. *)
 Lemma sem_build_from_pt {symb word}
       (pt : parse_tree symb word) (ptz : pt_zipper symb word)  :
@@ -470,6 +480,18 @@ Proof.
     generalize (Non_terminal_pt prod ptl). clear ptl.
     destruct ptz as [|?? ptl ?? ptlz]=>// pt. by rewrite -sem_build_from_ptl.
   - by rewrite -sem_build_from_ptl.
+Qed.
+
+Lemma sem_next_ptd_iter (ptd : pt_dot) (log_n_steps : nat) :
+  match next_ptd_iter ptd log_n_steps with
+  | None => True
+  | Some ptd' => ptd_sem ptd = ptd_sem ptd'
+  end.
+Proof.
+  revert ptd.
+  induction log_n_steps as [|log_n_steps IH]; [by apply sem_next_ptd|]=>/= ptd.
+  assert (IH1 := IH ptd). destruct next_ptd_iter as [ptd'|]=>//.
+  specialize (IH ptd'). destruct next_ptd_iter=>//. congruence.
 Qed.
 
 (** We prove that these functions behave well w.r.t. xxx_buffer. *)
@@ -657,6 +679,30 @@ Proof.
     + apply (ptd_stack_compat_build_from_ptl _ _ _ stk0); simpl; eauto.
 Qed.
 
+(** We prove the completeness of the parser main loop. *)
+Lemma parse_fix_next_ptd_iter (ptd : pt_dot) (stk : stack) (log_n_steps : nat) Hi :
+  ptd_stack_compat ptd stk ->
+  match next_ptd_iter ptd log_n_steps with
+  | None =>
+    proj1_sig (parse_fix safe init stk (ptd_buffer ptd) log_n_steps Hi) =
+      Accept_sr (ptd_sem ptd) buffer_end
+  | Some ptd' =>
+    exists stk',
+      proj1_sig (parse_fix safe init stk (ptd_buffer ptd) log_n_steps Hi) =
+        Progress_sr stk' (ptd_buffer ptd') /\
+      ptd_stack_compat ptd' stk'
+  end.
+Proof.
+  revert ptd stk Hi.
+  induction log_n_steps as [|log_n_steps IH]; [by apply step_next_ptd|].
+  move => /= ptd stk Hi Hstk. assert (IH1 := IH ptd stk Hi Hstk).
+  assert (EQsem := sem_next_ptd_iter ptd log_n_steps).
+  destruct parse_fix as [sr Hi']. simpl in IH1.
+  destruct next_ptd_iter as [ptd'|].
+  - rewrite EQsem. destruct IH1 as (stk' & -> & Hstk'). by apply IH.
+  - by subst.
+Qed.
+
 (** The parser is defined by recursion over a fuel parameter. In the
   completeness proof, we need to predict how much fuel is going to be
   needed in order to prove that enough fuel gives rise to a successful
@@ -725,30 +771,19 @@ Proof.
   - by rewrite -ptd_cost_build_from_ptl.
 Qed.
 
-(** We prove the completeness of the parser main loop. *)
-Lemma parse_fix_complete:
-  forall (ptd : pt_dot) (stk : stack) (n_steps : nat) Hi,
-    ptd_stack_compat ptd stk ->
-    match parse_fix safe init stk (ptd_buffer ptd) n_steps Hi with
-    | Timeout_pr => n_steps < S (ptd_cost ptd)
-    | Parsed_pr sem buff =>
-      sem = ptd_sem ptd /\ buff = buffer_end /\ S (ptd_cost ptd) <= n_steps
-    | Fail_pr => False
-    end.
+Lemma next_ptd_iter_cost ptd log_n_steps :
+  match next_ptd_iter ptd log_n_steps with
+  | None => ptd_cost ptd < 2^log_n_steps
+  | Some ptd' => ptd_cost ptd = 2^log_n_steps + ptd_cost ptd'
+  end.
 Proof.
-  intros ptd stk n_steps. revert ptd stk.
-  induction n_steps as [|n_steps IH]=>/= ptd stk Hi Hstk.
-  - apply Nat.lt_0_succ.
-  - generalize (step_stack_invariant_preserved safe init stk (ptd_buffer ptd) Hi).
-    assert (Hstep := step_next_ptd ptd stk Hi Hstk).
-    assert (Hcost := next_ptd_cost ptd).
-    assert (Hsem := sem_next_ptd ptd).
-    destruct next_ptd as [ptd'|].
-    + destruct Hstep as (stk' & -> & Hptd')=>/(_ _ _ eq_refl) Hi'.
-      specialize (IH ptd' stk' Hi' Hptd'). destruct parse_fix=>//.
-      * apply lt_n_S. by rewrite Hcost.
-      * by rewrite -Nat.succ_le_mono Hcost Hsem.
-    + rewrite Hstep Hcost=>_. auto with arith.
+  revert ptd. induction log_n_steps as [|log_n_steps IH]=>ptd /=.
+  - assert (Hptd := next_ptd_cost ptd). destruct next_ptd=>//. by rewrite Hptd.
+  - rewrite Nat.add_0_r. assert (IH1 := IH ptd). destruct next_ptd_iter as [ptd'|].
+    + specialize (IH ptd'). destruct next_ptd_iter as [ptd''|].
+      * by rewrite IH1 IH -!plus_assoc.
+      * rewrite IH1. by apply plus_lt_compat_l.
+    + by apply lt_plus_trans.
 Qed.
 
 (** We now prove the top-level parsing function. The only thing that
@@ -757,22 +792,26 @@ Qed.
 
 Variable full_pt : parse_tree (NT (start_nt init)) full_word.
 
-Theorem parse_complete n_steps:
-  match parse safe init (full_word ++ buffer_end) n_steps with
+Theorem parse_complete log_n_steps:
+  match parse safe init (full_word ++ buffer_end) log_n_steps with
   | Parsed_pr sem buff =>
-    sem = pt_sem full_pt /\ buff = buffer_end /\ pt_size full_pt <= n_steps
-  | Timeout_pr => n_steps < pt_size full_pt
+    sem = pt_sem full_pt /\ buff = buffer_end /\ pt_size full_pt <= 2^log_n_steps
+  | Timeout_pr => 2^log_n_steps < pt_size full_pt
   | Fail_pr => False
   end.
 Proof.
   assert (Hstk : ptd_stack_compat (build_pt_dot_from_pt full_pt Top_ptz) []) by
       by apply ptd_stack_compat_build_from_pt.
   unfold parse.
-  assert (Hparse := parse_fix_complete _ _ n_steps (parse_subproof init) Hstk).
-  rewrite -ptd_buffer_build_from_pt -ptd_cost_build_from_pt in Hparse.
-  destruct parse_fix=>//.
-  - by rewrite -plus_n_O in Hparse.
-  - by rewrite -plus_n_O -sem_build_from_pt in Hparse.
+  assert (Hparse := parse_fix_next_ptd_iter _ _ log_n_steps (parse_subproof init) Hstk).
+  rewrite -ptd_buffer_build_from_pt -sem_build_from_pt /= in Hparse.
+  assert (Hcost := next_ptd_iter_cost (build_pt_dot_from_pt full_pt Top_ptz) log_n_steps).
+  destruct next_ptd_iter.
+  - destruct Hparse as (? & -> & ?). apply (f_equal S) in Hcost.
+    rewrite -ptd_cost_build_from_pt Nat.add_0_r in Hcost. rewrite Hcost.
+    apply le_lt_n_Sm, le_plus_l.
+  - rewrite Hparse. split; [|split]=>//. apply lt_le_S in Hcost.
+    by rewrite -ptd_cost_build_from_pt Nat.add_0_r in Hcost.
 Qed.
 
 End Completeness_Proof.
