@@ -15,20 +15,20 @@
   must be used instead. The switch `--only-preprocess-for-ocamlyacc`
   remains undocumented. (Reported by kris.)
 
-* Coq backend: multiple change to stay up-to-date with respect to
-  coq-menhirlib. See its corresponding CHANGES.md file.
+* Coq back-end: multiple changes to stay up-to-date with respect to
+  coq-menhirlib. See `CHANGES.md` there.
 
-* Coq backend: The generated parser now contains a dedicated inductive
-  type for tokens. This prevents the use of Obj.magic in client code
+* Coq back-end: the generated parser now contains a dedicated inductive
+  type for tokens. This removes the need for `Obj.magic` in client code
   when the parser is used via extraction.
 
-* Coq backend: The generated parser checks that the version of
+* Coq back-end: the generated parser checks that the version of
   MenhirLib matches. This check can be disabled with
-  --coq-no-version-check.
+  `--coq-no-version-check`.
 
-* Coq backend: The fuel parameter is now given as the *logarithm* of
+* Coq back-end: the fuel parameter is now given as the *logarithm* of
   the maximum number of steps to perform. Therefore, using e.g., 50
-  makes sure we will not run out of fuel in any reasonnable
+  makes sure we will not run out of fuel in any reasonable
   computation time.
 
 ## 2018/11/13
@@ -356,7 +356,7 @@
 
 ## 2016/05/04
 
-* In the Coq backend, split the largest definitions into smaller
+* In the Coq back-end, split the largest definitions into smaller
   ones. This circumvents a limitation of vm_compute on 32 bit
   machines. This also enables us to perform sharing between
   definitions, so that the generated files are much smaller.
@@ -608,7 +608,7 @@
 
 ## 2014/02/18
 
-* In the Coq backend, use `'` instead of `_` as separator in identifiers.
+* In the Coq back-end, use `'` instead of `_` as separator in identifiers.
   Also, correct a serious bug that was inadvertently introduced on
   2013/03/01 (r319).
 
