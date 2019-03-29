@@ -11,9 +11,10 @@
 (*                                                                          *)
 (****************************************************************************)
 
-From Coq Require Import List Syntax.
+From Coq Require Import List Syntax Derive.
+From Coq.ssr Require Import ssreflect.
 Require Automaton.
-Require Import Alphabet.
+Require Import Alphabet Validator_classes.
 
 Module Make(Import A:Automaton.T).
 
@@ -36,8 +37,8 @@ Module StateProdPosMap := FMapAVL.Make StateProdPosOrderedType.
 (** Nullable predicate for symbols and list of symbols. **)
 Definition nullable_symb (symbol:symbol) :=
   match symbol with
-    | NT nt => nullable_nterm nt
-    | _ => false
+  | NT nt => nullable_nterm nt
+  | _ => false
   end.
 
 Definition nullable_word (word:list symbol) :=
@@ -50,26 +51,26 @@ Definition first_nterm_set (nterm:nonterminal) :=
 
 Definition first_symb_set (symbol:symbol) :=
   match symbol with
-    | NT nt => first_nterm_set nt
-    | T t => TerminalSet.singleton t
+  | NT nt => first_nterm_set nt
+  | T t => TerminalSet.singleton t
   end.
 
 Fixpoint first_word_set (word:list symbol) :=
   match word with
-    | [] => TerminalSet.empty
-    | t::q =>
-      if nullable_symb t then
-        TerminalSet.union (first_symb_set t) (first_word_set q)
-      else
-        first_symb_set t
+  | [] => TerminalSet.empty
+  | t::q =>
+    if nullable_symb t then
+      TerminalSet.union (first_symb_set t) (first_word_set q)
+    else
+      first_symb_set t
   end.
 
 (** Small helper for finding the part of an item that is after the dot. **)
 Definition future_of_prod prod dot_pos : list symbol :=
   (fix loop n lst :=
     match n with
-      | O => lst
-      | S x => match loop x lst with [] => [] | _::q => q end
+    | O => lst
+    | S x => match loop x lst with [] => [] | _::q => q end
     end)
   dot_pos (rev' (prod_rhs_rev prod)).
 
@@ -83,18 +84,23 @@ Definition items_map (_:unit): StateProdPosMap.t TerminalSet.t :=
         in
         let old :=
           match StateProdPosMap.find key acc with
-            | Some x => x | None => TerminalSet.empty
+          | Some x => x | None => TerminalSet.empty
           end
         in
         StateProdPosMap.add key (TerminalSet.union data old) acc
     ) (items_of_state state) acc
   ) all_list (StateProdPosMap.empty TerminalSet.t).
 
+(** We need to avoid computing items_map each time we need it. To that
+  purpose, we declare a typeclass specifying that some map is equal to
+  items_map. *)
+Class IsItemsMap m := is_items_map : m = items_map ().
+
 (** Accessor. **)
 Definition find_items_map items_map state prod dot_pos : TerminalSet.t :=
   match StateProdPosMap.find (state, prod, dot_pos) items_map with
-    | None => TerminalSet.empty
-    | Some x => x
+  | None => TerminalSet.empty
+  | Some x => x
   end.
 
 Definition state_has_future state prod (fut:list symbol) (lookahead:terminal) :=
@@ -108,71 +114,158 @@ Definition forallb_items items_map (P:state -> production -> nat -> TerminalSet.
     match key with (st, p, pos) => (acc && P st p pos set)%bool end
   ) items_map true.
 
-Lemma forallb_items_spec :
-  forall p, forallb_items (items_map ()) p = true ->
-  forall st prod fut lookahead, state_has_future st prod fut lookahead ->
-  forall P:state -> production -> list symbol -> terminal -> Prop,
-  (forall st prod pos set lookahead,
-    TerminalSet.In lookahead set -> p st prod pos set = true ->
-      P st prod (future_of_prod prod pos) lookahead) ->
-   P st prod fut lookahead.
+(** Typeclass instances for synthetizing the validator. *)
+
+Instance is_validator_subset S1 S2 :
+  IsValidator (TerminalSet.Subset S1 S2) (TerminalSet.subset S1 S2).
+Proof. intros ?. by apply TerminalSet.subset_2. Qed.
+
+(* While the specification of the validator always quantify over
+   possible lookahead tokens individually, the validator usually
+   handles lookahead sets directly instead, for better performances.
+
+   For instance, the validator for [state_has_future], which speaks
+   about one single lookahead token is a subset operation:
+*)
+Lemma is_validator_state_has_future_subset st prod pos lookahead lset im fut :
+  TerminalSet.In lookahead lset ->
+  fut = future_of_prod prod pos ->
+  IsItemsMap im ->
+  IsValidator (state_has_future st prod fut lookahead)
+              (TerminalSet.subset lset (find_items_map im st prod pos)).
 Proof.
-intros.
-unfold forallb_items in H.
-rewrite StateProdPosMap.fold_1 in H.
-destruct H0; destruct H0.
-specialize (H1 st prod x _ _ H2).
-destruct H0.
-apply H1.
-unfold find_items_map in *.
-pose proof (@StateProdPosMap.find_2 _ (items_map ()) (st, prod, x)).
-destruct (StateProdPosMap.find (st, prod, x) (items_map ())); [ |destruct (TerminalSet.empty_1 H2)].
-specialize (H0 _ (eq_refl _)).
-pose proof (StateProdPosMap.elements_1 H0).
-revert H.
-generalize true at 1.
-induction H3.
-destruct H.
-destruct y.
-simpl in H3; destruct H3.
-pose proof (compare_eq (st, prod, x) k H).
-destruct H3.
-simpl.
-generalize (p st prod x t).
-induction l; simpl; intros.
-rewrite Bool.andb_true_iff in H3.
-intuition.
-destruct a; destruct k; destruct p0.
-simpl in H3.
-replace (b0 && b && p s p0 n t0)%bool with (b0 && p s p0 n t0 && b)%bool in H3.
-apply (IHl _ _ H3).
-destruct b, b0, (p s p0 n t0); reflexivity.
-intro.
-apply IHInA.
+  intros ? -> -> HSS%TerminalSet.subset_2. exists pos. split=>//. by apply HSS.
+Qed.
+(* We do not declare this lemma as an instance, and use [Hint Extern]
+   instead, because the typeclass mechanism has trouble instantiating
+   some evars if we do not explicitely call [eassumption]. *)
+Hint Extern 2 (IsValidator (state_has_future _ _ _ _) _) =>
+  eapply is_validator_state_has_future_subset; [eassumption|eassumption || reflexivity|]
+: typeclass_instances.
+
+(* As said previously, we manipulate lookahead terminal sets instead of
+  lookahead individually. Hence, when we quantify over a lookahead set
+  in the specification, we do not do anything in the executable
+  validator.
+
+  This instance is used for [non_terminal_closed]. *)
+Instance is_validator_forall_lookahead_set lset P b:
+  (forall lookahead, TerminalSet.In lookahead lset -> IsValidator (P lookahead) b) ->
+  IsValidator (forall lookahead, TerminalSet.In lookahead lset -> P lookahead) b.
+Proof. unfold IsValidator. firstorder. Qed.
+
+
+(* Dually, we sometimes still need to explicitelly iterate over a
+  lookahead set. This is what this lemma allows.
+  Used only in [end_reduce]. *)
+Lemma is_validator_iterate_lset P b lookahead lset :
+  TerminalSet.In lookahead lset ->
+  IsValidator P (b lookahead) ->
+  IsValidator P (TerminalSet.fold (fun lookahead acc =>
+    if acc then b lookahead else false) lset true).
+Proof.
+  intros Hlset%TerminalSet.elements_1 Hval Val. apply Hval.
+  revert Val. rewrite TerminalSet.fold_1. generalize true at 1. clear -Hlset.
+  induction Hlset as [? l <-%compare_eq|? l ? IH]=> /= b' Val.
+  - destruct (b lookahead). by destruct b'. exfalso. by induction l; destruct b'.
+  - eauto.
+Qed.
+Hint Extern 100 (IsValidator _ _) =>
+  match goal with
+  | H : TerminalSet.In ?lookahead ?lset |- _ =>
+    eapply (is_validator_iterate_lset _ (fun lookahead => _) _ _ H); clear H
+  end
+: typeclass_instances.
+
+(* We often quantify over all the items of all the states of the
+   automaton. This lemma and the accompanying [Hint Resolve]
+   declaration allow generating the corresponding executable
+   validator.
+
+   Note that it turns out that, in all the uses of this pattern, the
+   first thing we do for each item is pattern-matching over the
+   future. This lemma also embbed this pattern-matching, which makes
+   it possible to get the hypothesis [fut' = future_of_prod prod (S pos)]
+   in the non-nil branch.
+
+   Moreover, note, again, that while the specification quantifies over
+   lookahead terminals individually, the code provides lookahead sets
+   instead. *)
+Lemma is_validator_forall_items P1 b1 P2 b2 im :
+  IsItemsMap im ->
+
+  (forall st prod lookahead lset pos,
+      TerminalSet.In lookahead lset ->
+      [] = future_of_prod prod pos ->
+      IsValidator (P1 st prod lookahead) (b1 st prod pos lset)) ->
+
+  (forall st prod pos lookahead lset s fut',
+      TerminalSet.In lookahead lset ->
+      fut' = future_of_prod prod (S pos) ->
+      IsValidator (P2 st prod lookahead s fut') (b2 st prod pos lset s fut')) ->
+
+  IsValidator (forall st prod fut lookahead,
+                  state_has_future st prod fut lookahead ->
+                  match fut with
+                  | [] => P1 st prod lookahead
+                  | s :: fut' => P2 st prod lookahead s fut'
+                  end)
+              (forallb_items im (fun st prod pos lset =>
+                 match future_of_prod prod pos with
+                 | [] => b1 st prod pos lset
+                 | s :: fut' => b2 st prod pos lset s fut'
+                 end)).
+Proof.
+  intros -> Hval1 Hval2 Val st prod fut lookahead (pos & -> & Hlookahead).
+  rewrite /forallb_items StateProdPosMap.fold_1 in Val.
+  assert (match future_of_prod prod pos with
+          | [] => b1 st prod pos (find_items_map (items_map ()) st prod pos)
+          | s :: fut' => b2 st prod pos (find_items_map (items_map ()) st prod pos) s fut'
+          end = true).
+  - unfold find_items_map in *.
+    assert (Hfind := @StateProdPosMap.find_2 _ (items_map ()) (st, prod, pos)).
+    destruct StateProdPosMap.find as [lset|]; [|by edestruct (TerminalSet.empty_1); eauto].
+    specialize (Hfind _ eq_refl). apply StateProdPosMap.elements_1 in Hfind.
+    revert Val. generalize true at 1.
+    induction Hfind as [[? ?] l [?%compare_eq ?]|??? IH]=>?.
+    + simpl in *; subst.
+      match goal with |- _ -> ?X = true => destruct X end=>//.
+      rewrite Bool.andb_false_r. clear. induction l as [|[[[??]?]?] l IH]=>//.
+    + apply IH.
+  - destruct future_of_prod eqn:EQ. by eapply Hval1; eauto.
+    eapply Hval2 with (pos := pos); eauto; [].
+    revert EQ. unfold future_of_prod=>-> //.
+Qed.
+(* We need a hint for expplicitely instantiating b1 and b2 with lambdas. *)
+Hint Extern 0 (IsValidator
+                 (forall st prod fut lookahead,
+                     state_has_future st prod fut lookahead -> _)
+                 _) =>
+    eapply (is_validator_forall_items _ (fun st prod pos lset => _)
+                                      _ (fun st prod pos lset s fut' => _))
+  : typeclass_instances.
+
+(* Used in [start_future] only. *)
+Instance is_validator_forall_state_has_future im st prod :
+  IsItemsMap im ->
+  IsValidator
+    (forall look, state_has_future st prod (rev' (prod_rhs_rev prod)) look)
+    (let lookaheads := find_items_map im st prod 0 in
+     forallb (fun t => TerminalSet.mem t lookaheads) all_list).
+Proof.
+  move=> -> /forallb_forall Val look.
+  specialize (Val look (all_list_forall _)). exists 0. split=>//.
+  by apply TerminalSet.mem_2.
 Qed.
 
 (** * Validation for completeness **)
 
 (** The nullable predicate is a fixpoint : it is correct. **)
-Definition nullable_stable:=
+Definition nullable_stable :=
   forall p:production,
-    nullable_word (prod_rhs_rev p) = true ->
-    nullable_nterm (prod_lhs p) = true.
-
-Definition is_nullable_stable (_:unit) :=
-  forallb (fun p:production =>
-    implb (nullable_word (prod_rhs_rev p)) (nullable_nterm (prod_lhs p)))
-    all_list.
-
-Property is_nullable_stable_correct :
-  is_nullable_stable () = true -> nullable_stable.
-Proof.
-  unfold is_nullable_stable, nullable_stable.
-  intros.
-  rewrite forallb_forall in H.
-  specialize (H p (all_list_forall p)).
-  rewrite H0 in H; intuition.
-Qed.
+    if nullable_word (prod_rhs_rev p) then
+      nullable_nterm (prod_lhs p) = true
+    else True.
 
 (** The first predicate is a fixpoint : it is correct. **)
 Definition first_stable:=
@@ -180,53 +273,12 @@ Definition first_stable:=
     TerminalSet.Subset (first_word_set (rev' (prod_rhs_rev p)))
                        (first_nterm_set (prod_lhs p)).
 
-Definition is_first_stable (_:unit) :=
-  forallb (fun p:production =>
-    TerminalSet.subset (first_word_set (rev' (prod_rhs_rev p)))
-                       (first_nterm_set (prod_lhs p)))
-    all_list.
-
-Property is_first_stable_correct :
-  is_first_stable () = true -> first_stable.
-Proof.
-  unfold is_first_stable, first_stable.
-  intros.
-  rewrite forallb_forall in H.
-  specialize (H p (all_list_forall p)).
-  apply TerminalSet.subset_2; intuition.
-Qed.
-
 (** The initial state has all the S=>.u items, where S is the start non-terminal **)
 Definition start_future :=
-  forall (init:initstate) (t:terminal) (p:production),
+  forall (init:initstate) (p:production),
     prod_lhs p = start_nt init ->
+  forall (t:terminal),
     state_has_future init p (rev' (prod_rhs_rev p)) t.
-
-Definition is_start_future items_map :=
-  forallb (fun init =>
-    forallb (fun prod =>
-      if compare_eqb (prod_lhs prod) (start_nt init) then
-        let lookaheads := find_items_map items_map init prod 0 in
-          forallb (fun t => TerminalSet.mem t lookaheads) all_list
-        else
-          true) all_list) all_list.
-
-Property is_start_future_correct :
-  is_start_future (items_map ()) = true -> start_future.
-Proof.
-  unfold is_start_future, start_future.
-  intros.
-  rewrite forallb_forall in H.
-  specialize (H init (all_list_forall _)).
-  rewrite forallb_forall in H.
-  specialize (H p (all_list_forall _)).
-  rewrite <- compare_eqb_iff in H0.
-  rewrite H0 in H.
-  rewrite forallb_forall in H.
-  specialize (H t (all_list_forall _)).
-  exists 0. split; [now trivial|].
-  apply TerminalSet.mem_2; eauto.
-Qed.
 
 (** If a state contains an item of the form A->_.av[[b]], where a is a
     terminal, then reading an a does a [Shift_act], to a state containing
@@ -235,51 +287,18 @@ Definition terminal_shift :=
   forall (s1:state) prod fut lookahead,
     state_has_future s1 prod fut lookahead ->
     match fut with
-      | T t::q =>
-        match action_table s1 with
-          | Lookahead_act awp =>
-            match awp t with
-              | Shift_act s2 _ =>
-                state_has_future s2 prod q lookahead
-              | _ => False
-            end
-          | _ => False
+    | T t::q =>
+      match action_table s1 with
+      | Lookahead_act awp =>
+        match awp t with
+        | Shift_act s2 _ =>
+          state_has_future s2 prod q lookahead
+        | _ => False
         end
-      | _ => True
+      | _ => False
+      end
+    | _ => True
     end.
-
-Definition is_terminal_shift items_map :=
-  forallb_items items_map (fun s1 prod pos lset =>
-    match future_of_prod prod pos with
-      | T t::_ =>
-        match action_table s1 with
-          | Lookahead_act awp =>
-            match awp t with
-              | Shift_act s2 _ =>
-                TerminalSet.subset lset (find_items_map items_map s2 prod (S pos))
-              | _ => false
-            end
-          | _ => false
-        end
-      | _ => true
-    end).
-
-Property is_terminal_shift_correct :
-  is_terminal_shift (items_map ()) = true -> terminal_shift.
-Proof.
-unfold is_terminal_shift, terminal_shift.
-intros.
-apply (forallb_items_spec _ H _ _ _ _ H0 (fun _ _ fut look => _)).
-intros.
-destruct (future_of_prod prod0 pos) as [|[]] eqn:?; intuition.
-destruct (action_table st); intuition.
-destruct (l0 t); intuition.
-exists (S pos).
-split.
-unfold future_of_prod in *.
-rewrite Heql; reflexivity.
-apply (TerminalSet.subset_2 H2); intuition.
-Qed.
 
 (** If a state contains an item of the form A->_.[[a]], then either we do a
     [Default_reduce_act] of the corresponding production, either a is a
@@ -288,73 +307,34 @@ Qed.
 Definition end_reduce :=
   forall (s:state) prod fut lookahead,
     state_has_future s prod fut lookahead ->
-    fut = [] ->
-    match action_table s with
+    match fut with
+    | [] =>
+      match action_table s with
       | Default_reduce_act p => p = prod
       | Lookahead_act awt =>
         match awt lookahead with
-          | Reduce_act p => p = prod
-          | _ => False
+        | Reduce_act p => p = prod
+        | _ => False
         end
+      end
+    | _ => True
     end.
 
 Definition is_end_reduce items_map :=
   forallb_items items_map (fun s prod pos lset =>
     match future_of_prod prod pos with
-      | [] =>
-        match action_table s with
-          | Default_reduce_act p => compare_eqb p prod
-          | Lookahead_act awt =>
-            TerminalSet.fold (fun lookahead acc =>
-              match awt lookahead with
-                | Reduce_act p => (acc && compare_eqb p prod)%bool
-                | _ => false
-              end) lset true
-        end
-        | _ => true
-      end).
-
-Property is_end_reduce_correct :
-  is_end_reduce (items_map ()) = true -> end_reduce.
-Proof.
-unfold is_end_reduce, end_reduce.
-intros.
-revert H1.
-apply (forallb_items_spec _ H _ _ _ _ H0 (fun st prod fut look => _ ->
-                                            match action_table st with
-                                              | Default_reduce_act p => p = prod
-                                              | _ => _
-                                            end)).
-intros.
-rewrite H3 in H2.
-destruct (action_table st); intuition.
-apply compare_eqb_iff; intuition.
-rewrite TerminalSet.fold_1 in H2.
-revert H2.
-generalize true at 1.
-pose proof (TerminalSet.elements_1 H1).
-induction H2.
-pose proof (compare_eq _ _ H2).
-destruct H4.
-simpl.
-assert (fold_left
-     (fun (a : bool) (e : TerminalSet.elt) =>
-       match l e with
-         | Shift_act _ _ => false
-         | Reduce_act p => (a && compare_eqb p prod0)%bool
-         | Fail_act => false
-       end) l0 false = true -> False).
-induction l0; intuition.
-apply IHl0.
-simpl in H4.
-destruct (l a); intuition.
-destruct (l lookahead0); intuition.
-apply compare_eqb_iff.
-destruct (compare_eqb p prod0); intuition.
-destruct b; intuition.
-simpl; intros.
-eapply IHInA; eauto.
-Qed.
+    | [] =>
+      match action_table s with
+      | Default_reduce_act p => compare_eqb p prod
+      | Lookahead_act awt =>
+        TerminalSet.fold (fun lookahead acc =>
+          match awt lookahead with
+          | Reduce_act p => (acc && compare_eqb p prod)%bool
+          | _ => false
+          end) lset true
+      end
+    | _ => true
+    end).
 
 (** If a state contains an item of the form A->_.Bv[[b]], where B is a
     non terminal, then the goto table says we have to go to a state containing
@@ -363,153 +343,52 @@ Definition non_terminal_goto :=
   forall (s1:state) prod fut lookahead,
     state_has_future s1 prod fut lookahead ->
     match fut with
-      | NT nt::q =>
-        match goto_table s1 nt with
-          | Some (exist _ s2 _) =>
-            state_has_future s2 prod q lookahead
-          | None => False
-        end
-      | _ => True
+    | NT nt::q =>
+      match goto_table s1 nt with
+      | Some (exist _ s2 _) =>
+        state_has_future s2 prod q lookahead
+      | None => False
+      end
+    | _ => True
     end.
 
-Definition is_non_terminal_goto items_map :=
-  forallb_items items_map (fun s1 prod pos lset =>
-    match future_of_prod prod pos with
-      | NT nt::_ =>
-        match goto_table s1 nt with
-          | Some (exist _ s2 _) =>
-            TerminalSet.subset lset (find_items_map items_map s2 prod (S pos))
-          | None => false
-        end
-      | _ => true
-    end).
-
-Property is_non_terminal_goto_correct :
-  is_non_terminal_goto (items_map ()) = true -> non_terminal_goto.
-Proof.
-unfold is_non_terminal_goto, non_terminal_goto.
-intros.
-apply (forallb_items_spec _ H _ _ _ _ H0 (fun st prod fut look =>
-                                            match fut with
-                                              | NT nt :: q =>
-                                                match goto_table st nt with
-                                                  | Some _ => _
-                                                  | None => False
-                                                end
-                                              | _ => _
-                                            end)).
-intros.
-destruct (future_of_prod prod0 pos) as [|[]] eqn:?; intuition.
-destruct (goto_table st n) as [[]|]; [|congruence].
-exists (S pos).
-split.
-unfold future_of_prod in *.
-rewrite Heql; reflexivity.
-apply (TerminalSet.subset_2 H2); intuition.
-Qed.
-
 Definition start_goto :=
-  forall (init:initstate), goto_table init (start_nt init) = None.
-
-Definition is_start_goto (_:unit) :=
-  forallb (fun (init:initstate) =>
+  forall (init:initstate),
     match goto_table init (start_nt init) with
-      | Some _ => false
-      | None => true
-    end) all_list.
-
-Definition is_start_goto_correct:
-  is_start_goto () = true -> start_goto.
-Proof.
-unfold is_start_goto, start_goto.
-rewrite forallb_forall.
-intros.
-specialize (H init (all_list_forall _)).
-destruct (goto_table init (start_nt init)); congruence.
-Qed.
+    | None => True
+    | Some _ => False
+    end.
 
 (** Closure property of item sets : if a state contains an item of the form
     A->_.Bv[[b]], then for each production B->u and each terminal a of
     first(vb), the state contains an item of the form B->_.u[[a]] **)
 Definition non_terminal_closed :=
-  forall (s1:state) prod fut lookahead,
+  forall s1 prod fut lookahead,
     state_has_future s1 prod fut lookahead ->
     match fut with
-      | NT nt::q =>
-        forall (p:production) (lookahead2:terminal),
-          prod_lhs p = nt ->
-          TerminalSet.In lookahead2 (first_word_set q) \/
-          lookahead2 = lookahead /\ nullable_word q = true ->
-            state_has_future s1 p (rev' (prod_rhs_rev p)) lookahead2
+    | NT nt::q =>
+      forall p, prod_lhs p = nt ->
+        (if nullable_word q then
+           state_has_future s1 p (future_of_prod p 0) lookahead
+         else True) /\
+        (forall lookahead2,
+           TerminalSet.In lookahead2 (first_word_set q) ->
+             state_has_future s1 p (future_of_prod p 0) lookahead2)
       | _ => True
     end.
-
-Definition is_non_terminal_closed items_map :=
-  forallb_items items_map (fun s1 prod pos lset =>
-    match future_of_prod prod pos with
-        | NT nt::q =>
-          forallb (fun p =>
-            if compare_eqb (prod_lhs p) nt then
-              let lookaheads := find_items_map items_map s1 p 0 in
-              (implb (nullable_word q) (TerminalSet.subset lset lookaheads)) &&
-              TerminalSet.subset (first_word_set q) lookaheads
-            else true
-          )%bool all_list
-        | _ => true
-    end).
-
-Property is_non_terminal_closed_correct:
-  is_non_terminal_closed (items_map ()) = true -> non_terminal_closed.
-Proof.
-  unfold is_non_terminal_closed, non_terminal_closed.
-  intros.
-  apply (forallb_items_spec _ H _ _ _ _ H0 (fun st prod fut look =>
-                                              match fut with
-                                                | NT nt :: q => forall p l, _ -> _ -> state_has_future st _ _ _
-                                                | _ => _
-                                              end)).
-  intros.
-  destruct (future_of_prod prod0 pos); intuition.
-  destruct s; eauto; intros.
-  rewrite forallb_forall in H2.
-  specialize (H2 p (all_list_forall p)).
-  rewrite <- compare_eqb_iff in H3.
-  rewrite H3 in H2.
-  rewrite Bool.andb_true_iff in H2.
-  destruct H2.
-  exists 0.
-  split; [now trivial|].
-  destruct H4 as [|[]]; subst.
-  apply (TerminalSet.subset_2 H5); intuition.
-  rewrite H6 in H2.
-  apply (TerminalSet.subset_2 H2); intuition.
-Qed.
 
 (** The automaton is complete **)
 Definition complete :=
   nullable_stable /\ first_stable /\ start_future /\ terminal_shift
   /\ end_reduce /\ non_terminal_goto /\ start_goto /\ non_terminal_closed.
 
-Definition is_complete (_:unit) :=
-  let items_map := items_map () in
-  (is_nullable_stable () && is_first_stable () && is_start_future items_map &&
-    is_terminal_shift items_map && is_end_reduce items_map && is_start_goto () &&
-    is_non_terminal_goto items_map && is_non_terminal_closed items_map)%bool.
+Derive is_complete_0
+SuchThat (forall im, IsItemsMap im -> IsValidator complete (is_complete_0 im))
+As complete_0_is_validator.
+Proof. intros im. subst is_complete_0. instantiate (1:=fun im => _). apply _. Qed.
 
-Property is_complete_correct:
-  is_complete () = true -> complete.
-Proof.
-unfold is_complete, complete.
-repeat rewrite Bool.andb_true_iff.
-intuition.
-apply is_nullable_stable_correct; assumption.
-apply is_first_stable_correct; assumption.
-apply is_start_future_correct; assumption.
-apply is_terminal_shift_correct; assumption.
-apply is_end_reduce_correct; assumption.
-apply is_non_terminal_goto_correct; assumption.
-apply is_start_goto_correct; assumption.
-apply is_non_terminal_closed_correct; assumption.
-Qed.
+Definition is_complete (_:unit) := is_complete_0 (items_map ()).
+Lemma complete_is_validator : IsValidator complete (is_complete ()).
+Proof. by apply complete_0_is_validator. Qed.
 
 End Make.

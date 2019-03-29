@@ -82,14 +82,13 @@ Proof.
   destruct pop as [stk' sem] eqn:Hpop=>/= Hv'.
   apply pop_spec_ok in Hpop. apply pop_spec_ptl with (word_stk := word) in Hpop=>//.
   destruct Hpop as (word1 & word2 & ptl & <- & Hword1 & <-).
-  match goal with | |- context [proj2 (Hv I) ?x1 ?x2] => generalize (proj2 (Hv I) x1 x2) end.
+  generalize (reduce_step_subproof1 init stk prod Hv stk' (fun _ : True => Hv')).
   destruct goto_table as [[st' EQ]|].
   - intros _. split=>//.
     change (ptl_sem ptl (prod_action prod)) with (pt_sem (Non_terminal_pt prod ptl)).
     generalize (Non_terminal_pt prod ptl). rewrite ->EQ. intros pt. by constructor.
   - intros Hstk'. destruct Hword1; [|by destruct Hstk'].
-    generalize (reduce_step_subproof0 init prod [] (ptl_sem ptl (prod_action prod))
-                                      (fun _ : True => Hstk')).
+    generalize (reduce_step_subproof0 init prod [] (fun _ : True => Hstk')).
     simpl in Hstk'. rewrite -Hstk' // => EQ. rewrite cast_eq.
     exists (Non_terminal_pt prod ptl). by split.
 Qed.

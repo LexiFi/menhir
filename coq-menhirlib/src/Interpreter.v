@@ -287,10 +287,15 @@ Definition reduce_step stk prod (buffer : buffer)
   : step_result.
 refine
   ((let '(stk', sem) as ss := pop (prod_rhs_rev prod) stk _ (prod_action prod)
-      return thunkP (state_valid_after_pop (state_of_stack (fst ss)) _ _) -> _
+      return thunkP (state_valid_after_pop (state_of_stack (fst ss)) _
+                               (head_states_of_state (state_of_stack stk))) -> _
     in fun Hval' =>
     match goto_table (state_of_stack stk') (prod_lhs prod) as goto
-      return (thunkP (goto = _ -> _ : Prop)) -> _
+      return (thunkP (goto = None ->
+                      match state_of_stack stk' with
+                      | Init i => prod_lhs prod = start_nt i
+                      | Ninit _ => False
+                      end)) -> _
     with
     | Some (exist _ state_new e) => fun _ =>
       let sem := eq_rect _ _ sem _ e in
@@ -298,13 +303,15 @@ refine
     | None => fun Hval =>
       let sem := cast symbol_semantic_type _ sem in
       Accept_sr sem buffer
-    end (fun _ => proj2 (Hval I) _ (Hval' I)))
+    end (fun _ => _))
    (fun _ => pop_state_valid _ _ _ _ _ _ _)).
 Proof.
   - clear -Hi Hval.
-    abstract (intros _; destruct Hi=>//; eapply prefix_ass; [by apply Hval|eassumption]).
+    abstract (intros _; destruct Hi=>//; eapply prefix_trans; [by apply Hval|eassumption]).
   - clear -Hval.
     abstract (intros _; f_equal; specialize (Hval I eq_refl); destruct stk' as [|[]]=>//).
+  - simpl in Hval'. clear -Hval Hval'.
+    abstract (move : Hval => /(_ I) [_ /(_ _ (Hval' I))] Hval2 Hgoto; by rewrite Hgoto in Hval2).
   - clear -Hi. abstract by destruct Hi.
 Defined.
 
@@ -324,10 +331,10 @@ Proof.
   match goal with | |- context [fun _ : True => ?X] => generalize X end.
   destruct goto_table as [[state_new e]|] eqn:EQgoto=>//.
   intros _ [= <- <-]. constructor=>/=.
-  - constructor. eapply prefix_ass. apply Hgoto1. by destruct Hi'.
+  - constructor. eapply prefix_trans. apply Hgoto1. by destruct Hi'.
   - unfold state_stack_of_stack; simpl; constructor.
     + intros ?. by destruct singleton_state_pred.
-    + eapply prefix_pred_ass. apply Hgoto2. by destruct Hi'.
+    + eapply prefix_pred_trans. apply Hgoto2. by destruct Hi'.
   - by constructor.
 Qed.
 
@@ -379,10 +386,10 @@ Proof.
     specialize (Hshift1 term). specialize (Hshift2 term).
     destruct (awt term) as [state_new e|prod|]=>//.
     + intros [= <- <-]. constructor=>/=.
-      * constructor. eapply prefix_ass. apply Hshift1. by destruct Hi.
+      * constructor. eapply prefix_trans. apply Hshift1. by destruct Hi.
       * unfold state_stack_of_stack; simpl; constructor.
         -- intros ?. by destruct singleton_state_pred.
-        -- eapply prefix_pred_ass. apply Hshift2. by destruct Hi.
+        -- eapply prefix_pred_trans. apply Hshift2. by destruct Hi.
       * constructor; by apply Hi.
     + eauto using reduce_step_stack_invariant_preserved.
 Qed.

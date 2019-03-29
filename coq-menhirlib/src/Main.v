@@ -26,7 +26,7 @@ Definition complete_validator:unit->bool := Complete.Valid.is_complete.
 Definition safe_validator:unit->bool := ValidSafe.is_safe.
 Definition parse (safe:safe_validator ()=true) init log_n_steps buffer :
   parse_result (symbol_semantic_type (NT (start_nt init))):=
-  parse (ValidSafe.is_safe_correct safe) init buffer log_n_steps.
+  parse (ValidSafe.safe_is_validator safe) init buffer log_n_steps.
 
 (** Correction theorem. **)
 Theorem parse_correct
@@ -53,7 +53,7 @@ Theorem parse_complete
   | Timeout_pr => 2^log_n_steps < pt_size tree
   end.
 Proof.
-  intros. now apply Complete.parse_complete, Complete.Valid.is_complete_correct.
+  intros. now apply Complete.parse_complete, Complete.Valid.complete_is_validator.
 Qed.
 
 (** Unambiguity theorem. **)

@@ -51,7 +51,8 @@ with nullable_correct_list heads word :
   word = [] ->
   parse_tree_list heads word -> nullable_word heads = true.
 Proof.
-  - destruct 2=>//. eauto using nullable_stable.
+  - destruct 2=>//. assert (Hnull := nullable_stable prod).
+    erewrite nullable_correct_list in Hnull; eauto.
   - intros Hword. destruct 1=>//=. destruct (app_eq_nil _ _ Hword).
     eauto using andb_true_intro.
 Qed.
@@ -551,7 +552,10 @@ Proof.
         destruct ptz as [|?? ptl0 ?? ptlz0].
         - intros ->. apply start_future. congruence.
         - subst. intros (stk0 & Hfut & _). apply non_terminal_closed in Hfut.
-          apply Hfut, ptlz_future_first=>//. }
+          specialize (Hfut prod eq_refl).
+          destruct (ptlz_future_first ptlz0) as [Hfirst|[Hfirst Hnull]].
+          + destruct Hfut as [_ Hfut]. auto.
+          + destruct Hfut as [Hfut _]. by rewrite Hnull -Hfirst in Hfut. }
       match goal with
       | |- context [match ?X with Some H => _ | None => _ end] => destruct X eqn:EQ
       end.
@@ -610,7 +614,8 @@ Proof.
   | |- context [pop_state_valid init ?A stk ?B ?C ?D ?E ?F] =>
     generalize (pop_state_valid init A stk B C D E F)
   end.
-  rewrite Hstk /=. intros Hv. generalize (proj2 (Hval I) (state_of_stack init stk0) Hv).
+  rewrite Hstk /=. intros Hv.
+  generalize (reduce_step_subproof1 init stk prod Hval stk0 (fun _ : True => Hv)).
   clear Hval Hstk Hi Hv stk.
   assert (Hgoto := fun fut prod' =>
     non_terminal_goto (state_of_stack init stk0) prod' (NT (prod_lhs prod)::fut)).
@@ -621,8 +626,8 @@ Proof.
     { revert ptz Hst Hstk0 Hgoto'.
       generalize (eq_refl (NT (prod_lhs prod))).
       generalize (NT (prod_lhs prod)) at 1 3 5.
-      intros nt Hnt ptz. destruct ptz=>//. injection Hnt=> <- /= Hst -> /=.
-      pose proof (start_goto init). congruence. }
+      intros nt Hnt ptz. destruct ptz=>//. injection Hnt=> <- /= Hst -> /= Hg.
+      assert (Hsg := start_goto init). by rewrite Hg in Hsg. }
     clear Hgoto'.
 
     change (ptl_sem ptl (prod_action prod))
@@ -635,8 +640,7 @@ Proof.
     + destruct Hstk0 as (stk0' & Hfut & Hstk0' & Hstk0).
       apply (ptd_stack_compat_build_from_ptl _ _ _ stk0'); auto; [].
       split=>//. by exists eq_refl.
-  - intros Hv.
-    generalize (reduce_step_subproof0 _ prod _ (ptl_sem ptl (prod_action _)) (fun _ => Hv)).
+  - intros Hv. generalize (reduce_step_subproof0 _ prod _ (fun _ => Hv)).
     intros EQnt. clear Hv Hgoto'.
 
     change (ptl_sem ptl (prod_action prod))
@@ -665,7 +669,7 @@ Proof.
   - assert (Hfut : state_has_future (state_of_stack init stk) prod []
                                     (token_term (buf_head (ptz_buffer ptz)))).
     { destruct Hstk as (? & ? & ?)=>//. }
-    assert (Hact := end_reduce _ _ _ _ Hfut eq_refl).
+    assert (Hact := end_reduce _ _ _ _ Hfut).
     destruct action_table as [?|awt]=>Hval /=.
     + subst. by apply reduce_step_next_ptd.
     + set (term := token_term (buf_head (ptz_buffer ptz))) in *.
