@@ -3512,6 +3512,18 @@ suffices to (1)~use \olisterrors to produce a complete set of sentences,
 which one stores in \nt{filename1}, then (2)~use \ocompareerrors to
 compare \nt{filename1} and \nt{filename2}.
 
+In the case of a grammar that evolves fairly often, it can take significant
+human time and effort to update the \messages file and ensure correctness,
+irredundancy, and completeness. A way of reducing this effort is to abandon
+completeness. This implies that the auto-generated \verb+message+ function can
+raise \verb+Not_found+ and that a generic ``syntax error'' message must be
+produced in that case. We prefer to discourage this approach, as it implies
+that the end user is exposed to a mixture of specific and generic syntax error
+messages, and there is no guarantee that the specific (hand-written) messages
+will appear in \emph{all} situations where there are expected to appear.
+Instead, we recommend waiting for the grammar to become stable and enforcing
+completeness.
+
 The command \oupdateerrors \nt{filename} is used to update the auto-generated
 comments in the \messages file \nt{filename}. It is typically used after a
 change in the grammar (or in the command line options that affect the
