@@ -45,6 +45,7 @@ clean:
 # The version number is automatically set to the current date,
 # unless DATE is defined on the command line.
 DATE     := $(shell /bin/date +%Y%m%d)
+DATEDASH := $(shell /bin/date +%Y-%m-%d)
 
 PACKAGE  := menhir-$(DATE)
 CURRENT  := $(shell pwd)
@@ -282,10 +283,13 @@ COQ_MENHIRLIB_PUBLISH_OPTIONS := \
 opam:
 # Publish an opam description for menhir.
 	@ opam publish -v $(DATE) $(THIS).opam $(ARCHIVE)
-# Patch coq-menhirlib.opam to add a strong dependency on Menhir
-# with the exact same version number.
+# Patch coq-menhirlib.opam.
+# We replace the string DATEDASH with $(DATEDASH).
+# We replace the string DATE with $(DATE).
 	@ cat $(THAT).opam \
-	  | sed -e 's/"menhir" { = "dev" }/"menhir" { = "$(DATE)" }/g' > $(THAT).patched.opam
+	  | sed -e 's/DATEDASH/$(DATEDASH)/g' \
+	  | sed -e 's/DATE/$(DATE)/g' \
+	  > $(THAT).patched.opam
 # Publish an opam description for coq-menhirlib.
 	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) $(THAT).patched.opam $(ARCHIVE)
 	@ rm $(THAT).patched.opam
