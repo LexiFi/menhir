@@ -25,12 +25,12 @@ OPAMYES=true opam install ocamlfind ocamlbuild coq
 
 if ocamlfind query menhirLib >/dev/null 2>/dev/null ; then
   if opam list -i menhir 2>/dev/null | grep -v -e "^#" | grep menhir ; then
-    echo "Warning: menhir is already installed." ;
-    read -p "Can I remove it [Enter/^C]?" -n 1 -r ;
+    echo "Warning: menhir is already installed. Removing it..." ;
+#   read -p "Can I remove it [Enter/^C]?" -n 1 -r ;
     opam remove menhir ;
   else
-    echo "Warning: menhirLib is already installed." ;
-    read -p "Can I remove it [Enter/^C]?" -n 1 -r ;
+    echo "Warning: menhirLib is already installed. Removing it..." ;
+#   read -p "Can I remove it [Enter/^C]?" -n 1 -r ;
     ocamlfind remove menhirLib ;
     ocamlfind remove menhirSdk || true ;
   fi ;
