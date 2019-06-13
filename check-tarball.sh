@@ -12,7 +12,16 @@ TARBALL=$PACKAGE.tar.gz
 # is what we do. For this reason, we must first check that ocamlfind does not
 # already have some version of menhirLib and menhirSdk.
 
-# We could also create a fresh opam switch, but that would be time-consuming.
+# We use a dedicated opam switch where it is permitted to uninstall/reinstall
+# Menhir.
+
+CURRENT=`opam switch show`
+echo "The current opam switch is $CURRENT. Now switching to test-menhir..."
+opam switch test-menhir 2>/dev/null || opam switch create test-menhir 4.07.1
+eval $(opam env)
+OPAMYES=true opam install ocamlfind ocamlbuild coq
+
+# Uninstall Menhir if it is installed.
 
 if ocamlfind query menhirLib >/dev/null 2>/dev/null ; then
   if opam list -i menhir 2>/dev/null | grep -v -e "^#" | grep menhir ; then
@@ -60,3 +69,8 @@ echo "   * Uninstalling."
 ) > $TEMPDIR/uninstall.log 2>&1 || (cat $TEMPDIR/uninstall.log; exit 1)
 
 rm -rf $TEMPDIR
+
+# Move back to the original switch.
+
+echo "Switching back to $CURRENT..."
+opam switch $CURRENT
