@@ -284,8 +284,8 @@ opam:
 	@ opam publish -v $(DATE) $(THIS).opam $(ARCHIVE)
 # Patch coq-menhirlib.opam to add a strong dependency on Menhir
 # with the exact same version number.
-	@ cp $(THAT).opam $(THAT).patched.opam
-	@ sed -i 's/"menhir" { = "dev" }/"menhir" { = "$(DATE)" }/g' $(THAT).patched.opam
+	@ cat $(THAT).opam \
+	  | sed -e 's/"menhir" { = "dev" }/"menhir" { = "$(DATE)" }/g' > $(THAT).patched.opam
 # Publish an opam description for coq-menhirlib.
 	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) $(THAT).patched.opam $(ARCHIVE)
 	@ rm $(THAT).patched.opam
