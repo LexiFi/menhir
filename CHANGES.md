@@ -1,6 +1,6 @@
 # Changes
 
-## 2019/02/XX
+## 2019/06/13
 
 * Relax the syntax of point-free actions to allow `< >` (with arbitrary
   whitespace inside the angle brackets) instead of just `<>`.
