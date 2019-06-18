@@ -1,19 +1,19 @@
 # Changes
 
-## 2019/02/XX
+## 2019/06/13
 
 * The Coq development is now free of any axiom (it used to use axiom
-  K), and the parsers can now be executed directly within Coq, without
+  `K`), and the parsers can now be executed directly within Coq, without
   using extraction.
 
 * The parser interpreter is now written using dependent types, so that
   no dynamic checks are needed anymore at parsing time. When running
   the extracted code, this should give a performance boost. Moreover,
-  efficient extraction of int31 is no longer needed. This required
+  efficient extraction of `int31` is no longer needed. This required
   some refactoring of the type of parse trees.
 
-* Instead of being a dependent pair of a terminal and a semantic
-  values, tokens are now a user-defined (inductive) type.
+* Instead of a dependent pair of a terminal and a semantic
+  value, tokens are now a user-defined (inductive) type.
 
 ## 2018/08/27
 

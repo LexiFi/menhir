@@ -16,7 +16,7 @@
   remains undocumented. (Reported by kris.)
 
 * Coq back-end: multiple changes to stay up-to-date with respect to
-  coq-menhirlib. See `CHANGES.md` there.
+  coq-menhirlib. See [coq-menhirlib/CHANGES.md](coq-menhirlib/CHANGES.md).
 
 * Coq back-end: the generated parser now contains a dedicated inductive
   type for tokens. This removes the need for `Obj.magic` in client code
