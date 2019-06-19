@@ -398,7 +398,7 @@ and exprk k f e =
         else
           fprintf f "(%d)" k
     | EStringConst s ->
-        fprintf f "\"%s\"" (String.escaped s)
+        fprintf f "\"%s\"" (Compatibility.String.escaped s)
     | ETuple [] ->
         assert false
     | ETuple [ e ] ->
