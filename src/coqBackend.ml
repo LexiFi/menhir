@@ -128,7 +128,7 @@ module Run (T: sig end) = struct
         iteri (fun k constr -> fprintf f "\n    | %s => %d%%positive" constr k);
         fprintf f "\n    end;\n";
         fprintf f "    surj := (fun n => match n return _ with";
-        iteri (fprintf f "\n    | %d%%positive => %s ");
+        iteri (fprintf f "\n    | %d%%positive => %s");
         fprintf f "\n    | _ => %s\n    end)%%Z;\n" (List.hd constrs);
         fprintf f "    inj_bound := %d%%positive }.\n" (List.length constrs);
       end
@@ -512,7 +512,7 @@ module Run (T: sig end) = struct
         Front.grammar.BasicSyntax.preludes;
 
     fprintf f "From Coq.Lists Require List.\n";
-    fprintf f "From Coq.Numbers Require Import BinNums.\n";
+    fprintf f "From Coq.PArith Require Import BinPos.\n";
     from_menhirlib f; fprintf f "Require Main.\n";
     if not Settings.coq_no_version_check then
       begin from_menhirlib f; fprintf f "Require Version.\n" end;
