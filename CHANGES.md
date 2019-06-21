@@ -1,5 +1,11 @@
 # Changes
 
+## 2019/06/20
+
+* When compiled with OCaml 4.02.3, Menhir could produce OCaml code
+  containing invalid string literals. This was due to a problem in
+  `String.escaped`. Fixed. (Reported by ELLIOTCABLE.)
+
 ## 2019/06/13
 
 * Relax the syntax of point-free actions to allow `< >` (with arbitrary

@@ -277,7 +277,7 @@ ARCHIVE  := $(REPO)/repository/$(DATE)/archive.tar.gz
 # Additional options for coq-menhirlib.
 COQ_MENHIRLIB_PUBLISH_OPTIONS := \
   --repo coq/opam-coq-archive \
-  --packages-directory packages/released \
+  --packages-directory released/packages \
 
 .PHONY: opam
 opam:
