@@ -301,7 +301,7 @@ let flags () =
   (* -noassert (if enabled by tag) *)
   flag ["ocaml"; "compile"; "noassert"] (S [A "-noassert"]);
   (* nazi warnings *)
-  flag ["ocaml"; "compile"; "my_warnings"] (S[A "-w"; A "@1..60-4-9-41-44-60"])
+  flag ["ocaml"; "compile"; "my_warnings"] (S[A "-w"; A "@1..66-4-9-41-44-60"])
 
 (* ---------------------------------------------------------------------------- *)
 
