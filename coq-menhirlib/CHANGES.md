@@ -1,6 +1,6 @@
 # Changes
 
-## 2019/06/22
+## 2019/06/26
 
 * Fix compatibility with Coq 8.7 and Coq 8.9:
     - In Coq 8.7, in the syntax { x : T & T' } for the sigT types,
