@@ -1,5 +1,9 @@
 # Changes
 
+## XXXXXXXX
+
+* Fix compatibility with Coq 8.10, and some warnings.
+
 ## 2019/06/26
 
 * Fix compatibility with Coq 8.7 and Coq 8.9:
