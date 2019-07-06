@@ -31,7 +31,7 @@ Proof. done. Qed.
 
 Instance is_validator_and P1 b1 P2 b2 `{IsValidator P1 b1} `{IsValidator P2 b2}:
   IsValidator (P1 /\ P2) (if b1 then b2 else false).
-Proof. split; destruct b1, b2; by apply is_validator. Qed.
+Proof. by split; destruct b1, b2; apply is_validator. Qed.
 
 Instance is_validator_comparable_leibniz_eq A (C:Comparable A) (x y : A) :
   ComparableLeibnizEq C ->
