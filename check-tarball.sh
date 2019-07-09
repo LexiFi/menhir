@@ -15,11 +15,9 @@ TARBALL=$PACKAGE.tar.gz
 # We use a dedicated opam switch where it is permitted to uninstall/reinstall
 # Menhir.
 
-CURRENT=`opam switch show`
-echo "The current opam switch is $CURRENT. Now switching to test-menhir..."
-opam switch test-menhir 2>/dev/null || opam switch create test-menhir 4.07.1
-eval $(opam env)
-OPAMYES=true opam install ocamlfind ocamlbuild coq
+echo "Now switching to test-menhir..."
+eval $(opam env --set-switch --switch test-menhir)
+OPAMYES=true opam install ocamlfind ocamlbuild coq dune
 
 # Uninstall Menhir if it is installed.
 
@@ -59,7 +57,7 @@ mkdir $INSTALL
 
 echo "   * Building the demos."
 (cd $TEMPDIR/$PACKAGE &&
-  make MENHIR=$INSTALL/bin/menhir -C demos
+  make MENHIR=$INSTALL/bin/menhir COQINCLUDES="-R $COQCONTRIB/MenhirLib MenhirLib" -C demos
 ) > $TEMPDIR/demos.log 2>&1 || (cat $TEMPDIR/demos.log; exit 1)
 
 echo "   * Uninstalling."
@@ -69,8 +67,3 @@ echo "   * Uninstalling."
 ) > $TEMPDIR/uninstall.log 2>&1 || (cat $TEMPDIR/uninstall.log; exit 1)
 
 rm -rf $TEMPDIR
-
-# Move back to the original switch.
-
-echo "Switching back to $CURRENT..."
-opam switch $CURRENT

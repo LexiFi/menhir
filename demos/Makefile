@@ -28,6 +28,7 @@ DEMOS := \
   calc-incremental-dune \
   calc-inspection-dune \
   generate-printers-dune \
+  coq-minicalc
 
 .PHONY: all clean test
 
