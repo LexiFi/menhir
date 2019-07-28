@@ -14,7 +14,7 @@ SHELL := /usr/bin/env bash
 # ROOTDIR    (default: `pwd`)
 # COQBIN     (default: empty)
 # COQINCLUDE (default: empty)
-# V          (default: *.v)
+# VV         (default: *.v)
 # V_AUX      (default: undefined/empty)
 # SERIOUS    (default: 1)
 #            (if 0, we produce .vio files)
@@ -35,23 +35,23 @@ ifndef ROOTDIR
 	ROOTDIR := $(shell pwd)
 endif
 
-ifndef V
-	V := $(wildcard $(ROOTDIR)/*.v)
+ifndef VV
+	VV := $(wildcard $(ROOTDIR)/*.v)
 endif
 
-# Typically, $(V) should list only the .v files that we are ultimately
+# Typically, $(VV) should list only the .v files that we are ultimately
 # interested in checking. $(V_AUX) should list every other .v file in the
-# project. $(VD) is obtained from $(V) and $(V_AUX), so [make] sees all
+# project. $(VD) is obtained from $(VV) and $(V_AUX), so [make] sees all
 # dependencies and can rebuild files anywhere in the project, if needed, and
 # only if needed.
 
 ifndef VD
-	VD  := $(patsubst %.v,%.v.d,$(V) $(V_AUX))
+	VD  := $(patsubst %.v,%.v.d,$(VV) $(V_AUX))
 endif
 
-VIO := $(patsubst %.v,%.vio,$(V))
-VQ  := $(patsubst %.v,%.vq,$(V))
-VO  := $(patsubst %.v,%.vo,$(V))
+VIO := $(patsubst %.v,%.vio,$(VV))
+VQ  := $(patsubst %.v,%.vq,$(VV))
+VO  := $(patsubst %.v,%.vo,$(VV))
 
 SERIOUS := 1
 
@@ -188,7 +188,7 @@ ide: _CoqProject
 # In a multi-directory setting, it is not entirely clear how to find the
 # files that we wish to remove.
 
-# One approach would be to view $(V) as the authoritative list of source files
+# One approach would be to view $(VV) as the authoritative list of source files
 # and remove just the derived files $(VO), etc.
 
 # Another approach is to scan all subdirectories of $(ROOTDIR) and remove all
