@@ -265,7 +265,7 @@ let create (state : Lr0.lr1state) : node =
 (* ------------------------------------------------------------------------ *)
 
 (* Materializing a transition turns its target state into a (fresh or
-   existing). There are three scenarios: the proposed new state can be
+   existing) node. There are three scenarios: the proposed new state can be
    subsumed by an existing state, compatible with an existing state, or
    neither. *)
 
