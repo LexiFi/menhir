@@ -107,7 +107,7 @@ let follow_state (msg : string) (node : node) (print : bool) =
 
 (* The following two mutually recursive functions are invoked when the state
    associated with an existing node grows. The node's descendants are examined
-   and grown into a fixpoint is reached.
+   and grown until a fixpoint is reached.
 
    This work is performed in an eager manner: we do not attempt to build any
    new transitions until all existing nodes have been suitably grown. Indeed,
