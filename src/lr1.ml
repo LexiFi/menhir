@@ -169,7 +169,7 @@ let rec grow node state =
         In this situation, the assertions above require succ(A', S)
         to be compatible with A'. However, this is not necessarily
         the case. By monotonicity of succ, we do have succ(A, S) <=
-        succ(A', S). But nothing says that succ(A', S) are related
+        succ(A', S). But nothing says that succ(A', S) and A' are related
         with respect to inclusion, or even Pager-compatible. The
         grammar in boris-mini.mly shows that they are not.
 
