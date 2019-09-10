@@ -167,6 +167,13 @@ val best: ('a -> 'a -> bool) -> 'a list -> 'a option
 
 val levels: ('a -> 'a -> int) -> 'a list -> 'a list list
 
+(* Suppose [xs] is an arbitrary list of elements. Then [trim (<=) xs] is the
+   sublist of the elements of [xs] that are maximal with respect to the
+   partial order [<=]. In other words, it is a sublist where every element
+   that is less than some other element has been removed. *)
+
+val trim: ('a -> 'a -> bool) -> 'a list -> 'a list
+
 (* Assuming that the list [xs] is sorted with respect to the ordering [cmp],
    [dup cmp xs] returns a duplicate element of the list [xs], if one exists. *)
 
