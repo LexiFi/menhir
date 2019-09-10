@@ -16,6 +16,9 @@ open Auxiliary
 let create_expected =
   ref false
 
+let extra =
+  ref ""
+
 let verbosity =
   ref 0
 
@@ -25,6 +28,8 @@ let usage =
 let spec = Arg.align [
   "--create-expected", Arg.Set create_expected,
                        " recreate the expected-output files";
+  "--extra-flags",     Arg.String (fun flags -> extra := flags),
+                       "<string> specify extra flags for Menhir";
   "--verbosity",       Arg.Int ((:=) verbosity),
                        " set the verbosity level (0-2)";
 ]
@@ -34,6 +39,9 @@ let () =
 
 let create_expected =
   !create_expected
+
+let extra =
+  !extra
 
 let verbosity =
   !verbosity
@@ -194,7 +202,7 @@ let process_negative_test basenames : unit =
   (* The output is stored in this file. *)
   let result = id ^ ".result" in
 
-  (* Extra flags. *)
+  (* Flags. *)
   let flags = id ^ ".flags" in
   let flags =
     if file_exists (bad_slash flags) then sprintf "`cat %s`" flags else ""
@@ -203,7 +211,7 @@ let process_negative_test basenames : unit =
   (* Run Menhir in the directory bad/. *)
   let cmd = sep (
     "cd" :: bad :: "&&" ::
-    menhir :: base :: flags :: mlys basenames @ sprintf ">%s" result :: "2>&1" :: []
+    menhir :: base :: flags :: extra :: mlys basenames @ sprintf ">%s" result :: "2>&1" :: []
   ) in
   if command cmd = 0 then
     fail id "menhir should not accept %s.\n" (thisfile basenames);
@@ -228,7 +236,7 @@ let process_negative_test basenames : unit =
 
 (*
   Conventions:
-  The file %.flags   (if it exists) stores extra flags for Menhir.
+  The file %.flags   (if it exists) stores flags for Menhir.
   The file %.opp.out stores the output of menhir --only-preprocess.
   The file %.opp.exp stores its expected output.
   The file %.out     stores the output of menhir.
@@ -244,7 +252,7 @@ let process_positive_test basenames : unit =
   (* A --base option is needed for groups of several files. *)
   let base = if length basenames > 1 then sprintf "--base %s" id else "" in
 
-  (* Extra flags. *)
+  (* Flags. *)
   let flags = id ^ ".flags" in
   let flags =
     if file_exists (good_slash flags) then sprintf "`cat %s`" flags else ""
@@ -254,7 +262,7 @@ let process_positive_test basenames : unit =
   let oppout = id ^ ".opp.out" in
   let cmd = sep (
     "cd" :: good :: "&&" ::
-    menhir :: "--only-preprocess" :: base :: flags
+    menhir :: "--only-preprocess" :: base :: flags :: extra
            :: mlys basenames @ sprintf ">%s" oppout :: "2>&1" :: []
   ) in
   if command cmd <> 0 then begin
@@ -277,7 +285,7 @@ let process_positive_test basenames : unit =
   let out = id ^ ".out" in
   let cmd = sep (
     "cd" :: good :: "&&" ::
-    menhir :: "--explain -lg 2 -la 2 -lc 2" :: base :: flags
+    menhir :: "--explain -lg 2 -la 2 -lc 2" :: base :: flags :: extra
            :: mlys basenames @ sprintf ">%s" out :: "2>&1" :: []
   ) in
   if command cmd <> 0 then begin
