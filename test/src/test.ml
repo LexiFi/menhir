@@ -285,7 +285,7 @@ let process_positive_test basenames : unit =
   let out = id ^ ".out" in
   let cmd = sep (
     "cd" :: good :: "&&" ::
-    menhir :: "--explain -lg 2 -la 2 -lc 2" :: base :: flags :: extra
+    menhir :: base :: flags :: extra :: "--explain -lg 2 -la 2 -lc 2"
            :: mlys basenames @ sprintf ">%s" out :: "2>&1" :: []
   ) in
   if command cmd <> 0 then begin
