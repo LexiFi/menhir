@@ -244,6 +244,25 @@ let outgoing_edges node : node SymbolMap.t =
 let outgoing_symbols node : Symbol.t list =
   SymbolMap.domain (InfiniteArray.get _transitions node)
 
+(* Efficient access to the predecessors of an LR(0) state requires building
+   a reversed graph. This is done on the first invocation of the function
+   [predecessors]. Our measurements show that it typically takes less than
+   0.01s anyway. *)
+
+let predecessors : node list array Lazy.t =
+  lazy (
+    let predecessors = Array.make n [] in
+    for source = 0 to n-1 do
+      SymbolMap.iter (fun _symbol (target, _) ->
+        predecessors.(target) <- source :: predecessors.(target)
+      ) (InfiniteArray.get _transitions source)
+    done;
+    predecessors
+  )
+
+let incoming_edges (c : node) : node list =
+  (Lazy.force predecessors).(c)
+
 (* ------------------------------------------------------------------------ *)
 (* Help for building the LR(1) automaton. *)
 
