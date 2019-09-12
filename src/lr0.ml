@@ -236,6 +236,14 @@ let items node : Item.Set.t =
 let incoming_symbol node : Symbol.t option =
   InfiniteArray.get incoming node
 
+let outgoing_edges node : node SymbolMap.t =
+  SymbolMap.map
+    (fun (target, _) -> target)
+    (InfiniteArray.get _transitions node)
+
+let outgoing_symbols node : Symbol.t list =
+  SymbolMap.domain (InfiniteArray.get _transitions node)
+
 (* ------------------------------------------------------------------------ *)
 (* Help for building the LR(1) automaton. *)
 
@@ -330,12 +338,6 @@ let transitions
   SymbolMap.map (fun ((k, sr) : symbolic_transition_target) ->
     ((k, Array.map (interpret state) sr) : lr1state)
   ) (InfiniteArray.get _transitions k)
-
-let outgoing_symbols
-    (k : node)
-    : Symbol.t list =
-
-  SymbolMap.domain (InfiniteArray.get _transitions k)
 
 let transition
     symbol
