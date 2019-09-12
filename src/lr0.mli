@@ -40,7 +40,7 @@ val items: node -> Item.Set.t
 
 (* The incoming symbol of an LR(0) node is the symbol carried by all of the
    edges that enter this node. A node has zero incoming edges (and, thus, no
-   incoming symbol) if and only if it is a start node.. *)
+   incoming symbol) if and only if it is a start node. *)
 
 val incoming_symbol: node -> Symbol.t option
 
