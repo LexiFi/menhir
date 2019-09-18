@@ -80,6 +80,14 @@ val incoming_symbol: node -> Symbol.t option
 
 val predecessors: node -> node list
 
+(* A view of the backward (reverse) edges as a graph. *)
+
+module BackwardEdges : sig
+  type nonrec node = node
+  type label = unit
+  val foreach_outgoing_edge: node -> (label -> node -> unit) -> unit
+end
+
 (* This provides access to a node's transitions and reductions. *)
 
 val transitions: node -> node SymbolMap.t
@@ -135,14 +143,6 @@ val targets: ('a -> node list -> node -> 'a) -> 'a -> Symbol.t -> 'a
    are the tokens involved in the conflicts at that node. *)
 
 val conflicts: (TerminalSet.t -> node -> unit) -> unit
-
-(* [reverse_dfs goal] performs a reverse depth-first search through
-   the automaton, starting at node [goal], and marking the nodes
-   traversed. It returns a function that tells whether a node is
-   marked, that is, whether a path leads from that node to the goal
-   node. *)
-
-val reverse_dfs: node -> (node -> bool)
 
 (* ------------------------------------------------------------------------- *)
 (* Modifications of the automaton. *)

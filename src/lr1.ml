@@ -764,31 +764,6 @@ let () =
   end
 
 (* ------------------------------------------------------------------------ *)
-(* [reverse_dfs goal] performs a reverse depth-first search through
-   the automaton, starting at node [goal], and marking the nodes
-   traversed. It returns a function that tells whether a node is
-   marked, that is, whether a path leads from that node to the goal
-   node. *)
-
-let reverse_dfs goal =
-
-  let mark = Mark.fresh() in
-
-  let marked node =
-    Mark.same node.mark mark
-  in
-
-  let rec visit node =
-     if not (marked node) then begin
-       node.mark <- mark;
-       List.iter visit node.predecessors
-     end
-  in
-
-  visit goal;
-  marked
-
-(* ------------------------------------------------------------------------ *)
 (* Iterating over all nodes that are targets of edges carrying a
    certain symbol. The sources of the corresponding edges are also
    provided. *)
@@ -832,6 +807,13 @@ let conflicts f =
 
 let predecessors node =
   node.predecessors
+
+module BackwardEdges = struct
+  type nonrec node = node
+  type label = unit
+  let foreach_outgoing_edge node f =
+    List.iter (fun node -> f () node) (predecessors node)
+end
 
 (* ------------------------------------------------------------------------ *)
 

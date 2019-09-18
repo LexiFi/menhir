@@ -33,8 +33,19 @@ end) = struct
      show that this can involve one tenth to one half of all nodes.
      This optimization seems minor, but is easy to implement. *)
 
-  let relevant =
-    Lr1.reverse_dfs X.goal
+  let relevant : Lr1.node -> bool =
+    let module G = struct
+      include Lr1.BackwardEdges
+      let foreach_root f =
+        f X.goal
+    end in
+    let module M = DFS.MarkArray(Lr1) in
+    let module D = struct
+      let discover _node = ()
+      let traverse _source _label _target = ()
+    end in
+    let module R = DFS.Run(G)(M)(D) in
+    M.is_marked
 
   (* Second, all of the states that we shall consider are restricted
      to the set of tokens of interest. This is an important idea: by
@@ -222,4 +233,3 @@ end) = struct
     Lr0.export goal.state
 
 end
-
