@@ -58,9 +58,9 @@ type node = {
 
     mutable predecessors: node list;
 
-    (* Transient marks are used during construction and traversal. *)
+    (* Transient marks are used during construction. *)
 
-    mutable mark: Mark.t;
+    mutable mark: bool;
 
     (* (New as of 2012/01/23.) This flag records whether a shift/reduce
        conflict in this node was solved in favor of neither (%nonassoc).
@@ -239,7 +239,7 @@ let create (state : Lr0.lr1state) : node =
     conflict_tokens = TerminalSet.empty;
     raw_number = Misc.postincrement num;
     number = 0; (* temporary placeholder *)
-    mark = Mark.none;
+    mark = false;
     predecessors = [];
     forbid_default_reduction = false;
   } in
@@ -476,11 +476,9 @@ let silently_solved =
 
 let () =
 
-  let marked = Mark.fresh() in
-
   let rec visit node =
-    if not (Mark.same node.mark marked) then begin
-      node.mark <- marked;
+    if not node.mark then begin
+      node.mark <- true;
       nodes := node :: !nodes;
 
       (* Number this node. *)
@@ -659,7 +657,7 @@ let () =
 
       SymbolMap.iter (fun symbol son ->
         son.predecessors <- node :: son.predecessors;
-        if not (Mark.same son.mark marked) then
+        if not son.mark then
           record_incoming symbol son;
         visit son
       ) node.transitions
