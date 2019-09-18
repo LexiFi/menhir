@@ -433,11 +433,9 @@ let lookup_incoming symbol =
   with Not_found ->
     []
 
-let record_incoming osymbol target =
-  Option.iter (fun symbol ->
-    let targets = lookup_incoming symbol in
-    incoming := SymbolMap.add symbol (target :: targets) !incoming
-  ) osymbol
+let record_incoming symbol target =
+  let targets = lookup_incoming symbol in
+  incoming := SymbolMap.add symbol (target :: targets) !incoming
 
 (* ------------------------------------------------------------------------ *)
 (* We now perform one depth-first traversal of the automaton,
@@ -480,11 +478,10 @@ let () =
 
   let marked = Mark.fresh() in
 
-  let rec visit osymbol node =
+  let rec visit node =
     if not (Mark.same node.mark marked) then begin
       node.mark <- marked;
       nodes := node :: !nodes;
-      record_incoming osymbol node;
 
       (* Number this node. *)
 
@@ -662,12 +659,14 @@ let () =
 
       SymbolMap.iter (fun symbol son ->
         son.predecessors <- node :: son.predecessors;
-        visit (Some symbol) son
+        if not (Mark.same son.mark marked) then
+          record_incoming symbol son;
+        visit son
       ) node.transitions
     end
   in
 
-  ProductionMap.iter (fun _ node -> visit None node) entry
+  ProductionMap.iter (fun _ node -> visit node) entry
 
 let nodes =
   List.rev !nodes (* list is now sorted by increasing node numbers *)
