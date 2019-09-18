@@ -422,7 +422,8 @@ let () =
 (* ------------------------------------------------------------------------ *)
 
 (* A mapping of symbols to lists of nodes that admit this incoming
-   symbol. This mapping is constructed by [visit] below. *)
+   symbol. This mapping is constructed during the depth-first search
+   below. *)
 
 let incoming : node list SymbolMap.t ref =
   ref SymbolMap.empty
@@ -442,6 +443,17 @@ let record_incoming symbol target =
    recording predecessor edges, numbering nodes, sorting nodes
    according to their incoming symbol, building reduction tables, and
    finding out which nodes have conflicts. *)
+
+(* A view of the LR(1) automaton as a graph. *)
+
+module ForwardEdges = struct
+  type nonrec node = node
+  type label = Symbol.t
+  let foreach_outgoing_edge node f =
+    SymbolMap.iter f node.transitions
+  let foreach_root f =
+    ProductionMap.iter (fun _prod node -> f node) entry
+end
 
 (* A count of all nodes. *)
 
@@ -476,9 +488,19 @@ let silently_solved =
 
 let () =
 
-  let rec visit node =
-    if not node.mark then begin
-      node.mark <- true;
+  let module M = struct
+    let mark node = node.mark <- true
+    let is_marked node = node.mark
+  end in
+
+  let module D = struct
+
+    let traverse source symbol target =
+      target.predecessors <- source :: target.predecessors;
+      if not (M.is_marked target) then
+        record_incoming symbol target
+
+    let discover node =
       nodes := node :: !nodes;
 
       (* Number this node. *)
@@ -648,23 +670,12 @@ let () =
           incr shift_reduce;
         if !has_reduce_reduce then
           incr reduce_reduce
-      end;
+      end
 
-      (* Continue the depth-first traversal. Record predecessors edges
-         as we go. No ancestor appears twice in a list of
-         predecessors, because two nodes cannot be related by two
-         edges that carry distinct symbols. *)
+  end in
 
-      SymbolMap.iter (fun symbol son ->
-        son.predecessors <- node :: son.predecessors;
-        if not son.mark then
-          record_incoming symbol son;
-        visit son
-      ) node.transitions
-    end
-  in
-
-  ProductionMap.iter (fun _ node -> visit node) entry
+  let module R = DFS.Run(ForwardEdges)(M)(D) in
+  ()
 
 let nodes =
   List.rev !nodes (* list is now sorted by increasing node numbers *)
