@@ -606,3 +606,27 @@ let restrict toks (k, toksr) =
   k, Array.map (fun toksri ->
     TerminalSet.inter toksri toks
   ) toksr
+
+(* A (state-local, possibly nondeterministic) reduction table maps
+   terminal symbols to lists of productions. *)
+
+type reductions =
+  Production.index list TerminalMap.t
+
+(* [add_reduction prod tok reductions] adds a reduction of [prod] on [tok]
+   to the table [reductions]. *)
+
+let add_reduction prod tok reductions =
+  let prods =
+    try
+      TerminalMap.lookup tok reductions
+    with Not_found ->
+      []
+  in
+  TerminalMap.add tok (prod :: prods) reductions
+
+(* [add_reductions prod toks reductions] adds a reduction of [prod] on every
+   token in the set [toks] to the table [reductions]. *)
+
+let add_reductions prod toks reductions =
+  TerminalSet.fold (add_reduction prod) toks reductions

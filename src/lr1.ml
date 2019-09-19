@@ -509,18 +509,6 @@ let () =
       num := number + 1;
       node.number <- number;
 
-      (* Insertion of a new reduce action into the table of reductions. *)
-
-      let addl prod tok reductions =
-        let prods =
-          try
-            TerminalMap.lookup tok reductions
-          with Not_found ->
-            []
-        in
-        TerminalMap.add tok (prod :: prods) reductions
-      in
-
       (* Build the reduction table. Here, we gather all potential
          reductions, without attempting to solve shift/reduce
          conflicts on the fly, because that would potentially hide
@@ -529,7 +517,7 @@ let () =
 
       let reductions =
         List.fold_left (fun reductions (toks, prod) ->
-          TerminalSet.fold (addl prod) toks reductions
+          Lr0.add_reductions prod toks reductions
         ) TerminalMap.empty (Lr0.reductions node.state)
       in
 

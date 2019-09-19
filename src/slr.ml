@@ -64,23 +64,6 @@ let make_slr_state (s : Lr0.node) : Lr0.concretelr1state =
     Item.Map.add item follow_nt accu
   ) s Item.Map.empty
 
-(* Insertion of a new reduce action into the table of reductions. Copied
-   from [Lr1] (boo, hiss). *)
-
-let addl prod tok reductions =
-  let prods =
-    try
-      TerminalMap.lookup tok reductions
-    with Not_found ->
-      []
-  in
-  TerminalMap.add tok (prod :: prods) reductions
-
-(* Same thing, for a set of tokens. *)
-
-let addl prod toks reductions =
-  TerminalSet.fold (addl prod) toks reductions
-
 (* The following function turns a closed LR(1) state into a map of terminal
    symbols to reduction actions. Copied from a related function in [Lr0]. *)
 
@@ -88,7 +71,7 @@ let reductions (s : Lr0.concretelr1state) : Production.index list TerminalMap.t 
   Item.Map.fold (fun item toks reductions ->
     match Item.classify item with
     | Item.Reduce prod ->
-        addl prod toks reductions
+        Lr0.add_reductions prod toks reductions
     | Item.Shift _ ->
         reductions
   ) s TerminalMap.empty

@@ -139,3 +139,19 @@ val restrict: TerminalSet.t -> lr1state -> lr1state
 val print_concrete: string -> concretelr1state -> string
 val print:          string ->         lr1state -> string
 val print_closure:  string ->         lr1state -> string
+
+(* A (state-local, possibly nondeterministic) reduction table maps
+   terminal symbols to lists of productions. *)
+
+type reductions =
+  Production.index list TerminalMap.t
+
+(* [add_reduction prod tok reductions] adds a reduction of [prod] on [tok]
+   to the table [reductions]. *)
+
+val add_reduction: Production.index -> Terminal.t -> reductions -> reductions
+
+(* [add_reductions prod toks reductions] adds a reduction of [prod] on every
+   token in the set [toks] to the table [reductions]. *)
+
+val add_reductions: Production.index -> TerminalSet.t -> reductions -> reductions
