@@ -91,18 +91,15 @@ end
 (* This provides access to a node's transitions and reductions. *)
 
 val transitions: node -> node SymbolMap.t
+
 val reductions: node -> Production.index list TerminalMap.t
+  (* or: node -> Lr0.reductions *)
 
 (* (New as of 2012/01/23.) This tells whether a shift/reduce conflict
    in this node was solved in favor of neither (%nonassoc). This implies
    that one must forbid a default reduction at this node. *)
 
 val forbid_default_reduction: node -> bool
-
-(* This inverts a mapping of tokens to productions into a mapping of
-   productions to sets of tokens. *)
-
-val invert : ProductionMap.key list TerminalMap.t -> TerminalSet.t ProductionMap.t
 
 (* [has_beforeend s] tests whether the state [s] can reduce a production
    whose semantic action uses [$endpos($0)]. Note that [$startpos] and

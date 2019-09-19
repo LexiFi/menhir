@@ -1085,7 +1085,7 @@ let rundef s : valdef =
           (* There is a reduction for these tokens. *)
           TerminalSet.union toks covered,
           reducebranch toks prod s :: branches
-        ) (Lr1.invert reductions) (TerminalSet.empty, [])
+        ) (Lr0.invert reductions) (TerminalSet.empty, [])
       in
 
       let covered, branches =

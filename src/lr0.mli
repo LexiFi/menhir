@@ -163,3 +163,8 @@ val add_reductions: Production.index -> TerminalSet.t -> reductions -> reduction
 (* A table of the reductions at a state. *)
 
 val reductions_table: lr1state -> reductions
+
+(* [invert] inverts a reduction table (that is, a mapping of tokens to lists of
+   productions), producing a mapping of productions to sets of tokens. *)
+
+val invert : reductions -> TerminalSet.t ProductionMap.t

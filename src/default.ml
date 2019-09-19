@@ -64,7 +64,7 @@ let has_default_reduction, count =
       None
     else
 
-      let reduction = ProductionMap.is_singleton (Lr1.invert (Lr1.reductions s)) in
+      let reduction = ProductionMap.is_singleton (Lr0.invert (Lr1.reductions s)) in
       match reduction with
       | Some _ ->
           if SymbolMap.purelynonterminal (Lr1.transitions s)

@@ -635,3 +635,22 @@ let reductions_table state =
   List.fold_left (fun reductions (toks, prod) ->
     add_reductions prod toks reductions
   ) TerminalMap.empty (reductions state)
+
+(* This inverts a mapping of tokens to productions into a mapping of
+   productions to sets of tokens. *)
+
+(* This is needed, in [CodeBackend], to avoid producing two (or more)
+   separate branches that call the same [reduce] function. Instead,
+   we generate just one branch, guarded by a [POr] pattern. *)
+
+let invert reductions : TerminalSet.t ProductionMap.t =
+  TerminalMap.fold (fun tok prods inverse ->
+    let prod = Misc.single prods in
+    let toks =
+      try
+        ProductionMap.lookup prod inverse
+      with Not_found ->
+        TerminalSet.empty
+    in
+    ProductionMap.add prod (TerminalSet.add tok toks) inverse
+  ) reductions ProductionMap.empty
