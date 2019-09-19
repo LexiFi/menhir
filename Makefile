@@ -52,7 +52,6 @@ libdir	        := $(PREFIX)/share/menhir
 mandir          := $(PREFIX)/share/man/man1
 MANS            := doc/menhir.1
 DOCS            := doc/manual.pdf doc/manual.html doc/manual*.png demos
-MLYLIB          := src/standard.mly
 
 # ----------------------------------------------------------------------------
 
@@ -181,7 +180,6 @@ install:
 	install $(BUILDDIR)/menhir.$(TARGET) $(bindir)/menhir$(EXE)
 # Install Menhir's standard library.
 	mkdir -p $(libdir)
-	install -m 644 $(MLYLIB) $(libdir)
 # Install MenhirLib and MenhirSdk.
 	@if `$(BUILDDIR)/menhir.$(TARGET) --suggest-ocamlfind | tr -d '\r'` ; then \
 	  echo 'Installing MenhirLib and MenhirSdk via ocamlfind.' ; \
