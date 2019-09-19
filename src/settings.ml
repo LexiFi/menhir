@@ -448,7 +448,7 @@ let () =
 (* Export the settings. *)
 
 let stdlib_filename =
-  !stdlib_path ^ "/standard.mly"
+  "<standard.mly>"
 
 let filenames =
   StringSet.elements !filenames
@@ -466,12 +466,6 @@ let base =
         exit 1
   else
     !base
-
-let filenames =
-  if !no_stdlib || !coq then
-    filenames
-  else
-    stdlib_filename :: filenames
 
 let token_type_mode =
   !token_type_mode
@@ -547,6 +541,9 @@ let () =
     fprintf stderr "Error: --inspection requires --table.\n";
     exit 1
   end
+
+let no_stdlib =
+  !no_stdlib
 
 let coq =
   !coq

@@ -17,6 +17,16 @@
 
 (* Reading a grammar from a file. *)
 
+let load_grammar_from_contents filename contents =
+  InputFile.with_file_contents contents (fun () ->
+    let open Lexing in
+    let lexbuf = Lexing.from_string contents in
+    lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
+    (* the grammar: *)
+    { (Driver.grammar Lexer.main lexbuf)
+      with Syntax.pg_filename = filename }
+  )
+
 let load_partial_grammar filename : Syntax.partial_grammar =
   let validExt = if Settings.coq then ".vy" else ".mly" in
   if not (Filename.check_suffix filename validExt) then
@@ -27,14 +37,7 @@ let load_partial_grammar filename : Syntax.partial_grammar =
   try
 
     let contents = IO.read_whole_file filename in
-    InputFile.with_file_contents contents (fun () ->
-      let open Lexing in
-      let lexbuf = Lexing.from_string contents in
-      lexbuf.lex_curr_p <- { lexbuf.lex_curr_p with pos_fname = filename };
-      (* the grammar: *)
-      { (Driver.grammar Lexer.main lexbuf)
-        with Syntax.pg_filename = filename }
-    )
+    load_grammar_from_contents filename contents
 
   with Sys_error msg ->
     Error.error [] "%s" msg
@@ -44,7 +47,15 @@ let load_partial_grammar filename : Syntax.partial_grammar =
 (* Read all of the grammar files that are named on the command line. *)
 
 let grammars : Syntax.partial_grammar list =
-  List.map load_partial_grammar Settings.filenames
+  let grammars () = List.map load_partial_grammar Settings.filenames in
+  if Settings.no_stdlib || Settings.coq then
+    grammars ()
+  else begin
+    InputFile.new_input_file Settings.stdlib_filename;
+    let standard_grammar =
+      load_grammar_from_contents Settings.stdlib_filename Standard_mly.contents in
+    standard_grammar :: grammars ()
+  end
 
 let () =
   Time.tick "Lexing and parsing"

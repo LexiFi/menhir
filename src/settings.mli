@@ -159,6 +159,10 @@ val table : bool
 
 val inspection : bool
 
+(* Whether the standard menhir library should be used. *)
+
+val no_stdlib : bool
+
 (* Whether to generate a coq description of the grammar and automaton. *)
 
 val coq : bool
