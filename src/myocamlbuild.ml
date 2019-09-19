@@ -173,6 +173,24 @@ let generic_compile_errors (check_completeness : bool) =
 
 (* ---------------------------------------------------------------------------- *)
 
+(* This rule allows to embed a text file verbatim inside an OCaml module. The
+   OCaml module contains a single value [contents] containing the contents
+   of the text file. *)
+
+let embed_text_files input output =
+  rule
+    "embed a text file inside an OCaml module"
+    ~prod:output
+    ~dep:input
+    (fun env _ ->
+      let ic = open_in_bin (env input) in
+      let contents = really_input_string ic (in_channel_length ic) in
+      close_in ic;
+      Echo(["let contents = \""; String.escaped contents; "\""], env output)
+    )
+
+(* ---------------------------------------------------------------------------- *)
+
 (* This rule generates a .messages file [messages] from an .mly file
    [grammar]. *)
 
@@ -280,6 +298,8 @@ let parser_configuration () =
        grammar is small enough. *)
     generic_completeness_check()
   end
+  ;
+  embed_text_files "%.mly" "%_mly.ml"
 
 (* ---------------------------------------------------------------------------- *)
 
