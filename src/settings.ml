@@ -188,20 +188,6 @@ let filenames =
 let no_stdlib =
   ref false
 
-(* By default, [stdlib_path] is [Installation.libdir], that is, the directory
-   that was specified when Menhir was compiled. This is overridden by the
-   environment variable $MENHIR_STDLIB, if it is defined, and by the --stdlib
-   command line option, if present. *)
-
-let stdlib_path =
-  ref Installation.libdir
-
-let () =
-  try
-    stdlib_path := Sys.getenv "MENHIR_STDLIB"
-  with Not_found ->
-    ()
-
 let insert name =
   filenames := StringSet.add name !filenames
 
@@ -356,7 +342,7 @@ let options = Arg.align [
                           " Print grammar with unit actions & tokens";
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
   "--raw-depend", Arg.Unit enable_raw_depend, " Invoke ocamldep and echo its raw output";
-  "--stdlib", Arg.Set_string stdlib_path, "<directory> Specify where the standard library lies";
+  "--stdlib", Arg.String ignore, "<directory> Specify where the standard library lies (ignored)";
   "--strict", Arg.Set strict, " Warnings about the grammar are errors";
   "--suggest-comp-flags", Arg.Unit (fun () -> suggestion := SuggestCompFlags),
                           " Suggest compilation flags for ocaml{c,opt}";

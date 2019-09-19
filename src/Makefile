@@ -51,7 +51,7 @@ stage1:
 .PHONY: update
 update: stage1
 	cp parserMessages.messages parserMessages.messages.bak
-	_stage1/menhir.$(TARGET) $(BASEFLAGS) --stdlib . \
+	_stage1/menhir.$(TARGET) $(BASEFLAGS) \
 	  --update-errors parserMessages.messages.bak \
 	  fancy-parser.mly \
 	  > parserMessages.messages
@@ -86,8 +86,7 @@ BASEFLAGS := \
 
 FLAGS := \
   $(BASEFLAGS) \
-  -v \
-  --stdlib $(SRC) \
+  -v
 
 .PHONY: stage2
 stage2:
