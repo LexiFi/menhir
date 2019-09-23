@@ -8,6 +8,9 @@
 # The following demos require menhirSdk and OCaml >= 4.03:
 #   generate-printers
 
+# The following demos require coq-menhirlib:
+#   coq-minicalc
+
 # The demos whose name ends in -dune require dune 1.4.
 # If dune is absent, attempting to build these demos
 # succeeds without actually doing anything.
