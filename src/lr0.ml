@@ -630,3 +630,8 @@ let add_reduction prod tok reductions =
 
 let add_reductions prod toks reductions =
   TerminalSet.fold (add_reduction prod) toks reductions
+
+let reductions_table state =
+  List.fold_left (fun reductions (toks, prod) ->
+    add_reductions prod toks reductions
+  ) TerminalMap.empty (reductions state)

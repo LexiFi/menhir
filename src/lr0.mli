@@ -80,10 +80,14 @@ val core: lr1state -> node
 
 val start: node -> lr1state
 
-(* Information about the transitions and reductions at a state. *)
+(* Information about the transitions at a state. *)
 
 val transitions: lr1state -> lr1state SymbolMap.t
 val transition: Symbol.t -> lr1state -> lr1state
+
+(* Information about the reductions at a state. *)
+
+(* See also [reductions_table] further on. *)
 
 val reductions: lr1state -> (TerminalSet.t * Production.index) list
 
@@ -155,3 +159,7 @@ val add_reduction: Production.index -> Terminal.t -> reductions -> reductions
    token in the set [toks] to the table [reductions]. *)
 
 val add_reductions: Production.index -> TerminalSet.t -> reductions -> reductions
+
+(* A table of the reductions at a state. *)
+
+val reductions_table: lr1state -> reductions
