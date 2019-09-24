@@ -62,10 +62,14 @@ let grammars : Syntax.partial_grammar list =
        [Settings.stdlib_filename]. This file name can appear in generated
        parsers, because Menhir produces # directives that point back to
        source (.mly) files. *)
-    load_grammar_from_contents
-      Settings.stdlib_filename
-      Standard_mly.contents ::
-    grammars()
+    (* Note that the [let] construct below is required in order to ensure
+       that the standard library is read first. *)
+    let standard_library =
+      load_grammar_from_contents
+        Settings.stdlib_filename
+        Standard_mly.contents
+    in
+    standard_library :: grammars()
 
 let () =
   Time.tick "Lexing and parsing"
