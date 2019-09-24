@@ -71,7 +71,7 @@ MENHIRLIB_FILES   := $(shell for m in $(MENHIRLIB_MODULES) ; do \
 # Propagating an appropriate header into every file.
 
 # This requires a version of headache that supports UTF-8; please use
-# https://github.com/fpottier/headache
+# https://github.com/Frama-C/headache
 
 # This used to be done at release time and not in the repository, but
 # it is preferable to do in it the repository too, for two reasons: 1-
