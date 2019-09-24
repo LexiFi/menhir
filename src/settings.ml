@@ -342,7 +342,7 @@ let options = Arg.align [
                           " Print grammar with unit actions & tokens";
   "--only-tokens", Arg.Unit tokentypeonly, " Generate token type definition only, no code";
   "--raw-depend", Arg.Unit enable_raw_depend, " Invoke ocamldep and echo its raw output";
-  "--stdlib", Arg.String ignore, "<directory> Specify where the standard library lies (ignored)";
+  "--stdlib", Arg.String ignore, "<directory> Ignored (deprecated)";
   "--strict", Arg.Set strict, " Warnings about the grammar are errors";
   "--suggest-comp-flags", Arg.Unit (fun () -> suggestion := SuggestCompFlags),
                           " Suggest compilation flags for ocaml{c,opt}";
