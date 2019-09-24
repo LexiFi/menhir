@@ -4,11 +4,13 @@
 
 * Build Menhir's standard library into the Menhir executable instead of
   storing it in a separate file `standard.mly`. This removes the need to
-  hardcode the path to this file into the Menhir executable. This also
-  removes the need for the command line switch `--stdlib`, which remains
-  supported but is now ignored, and for the environment variable
-  `$MENHIR_STDLIB`, which is now ignored. (Suggested and implemented
-  by Nicolás Ojeda Bär.)
+  hardcode the path to this file into the Menhir executable. This also removes
+  the need for the command line switch `--stdlib`, which remains supported but
+  is now ignored, and for the environment variable `$MENHIR_STDLIB`, which is
+  now ignored. A positive side effect of this change is that the full path of
+  the file `standard.mly` no longer appears in generated parsers; this removes
+  a source of spurious variation. (Suggested and implemented by Nicolás Ojeda
+  Bär.)
 
 ## 2019/06/20
 
