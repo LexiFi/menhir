@@ -18,6 +18,7 @@
 (* Reading a grammar from a file. *)
 
 let load_grammar_from_contents filename contents =
+  InputFile.new_input_file filename;
   InputFile.with_file_contents contents (fun () ->
     let open Lexing in
     let lexbuf = Lexing.from_string contents in
@@ -27,35 +28,44 @@ let load_grammar_from_contents filename contents =
       with Syntax.pg_filename = filename }
   )
 
-let load_partial_grammar filename : Syntax.partial_grammar =
+let check_filename filename =
   let validExt = if Settings.coq then ".vy" else ".mly" in
   if not (Filename.check_suffix filename validExt) then
     Error.error []
       "argument file names should end in %s. \"%s\" is not accepted."
-      validExt filename;
-  InputFile.new_input_file filename;
-  try
+      validExt filename
 
+let load_grammar_from_file filename : Syntax.partial_grammar =
+  check_filename filename;
+  try
     let contents = IO.read_whole_file filename in
     load_grammar_from_contents filename contents
-
   with Sys_error msg ->
     Error.error [] "%s" msg
 
 (* ------------------------------------------------------------------------- *)
 
-(* Read all of the grammar files that are named on the command line. *)
+(* Read all of the grammar files that are named on the command line, plus the
+   standard library, unless suppressed by [--no-stdlib] or [--coq]. *)
+
+let grammars () : Syntax.partial_grammar list =
+  List.map load_grammar_from_file Settings.filenames
 
 let grammars : Syntax.partial_grammar list =
-  let grammars () = List.map load_partial_grammar Settings.filenames in
   if Settings.no_stdlib || Settings.coq then
-    grammars ()
-  else begin
-    InputFile.new_input_file Settings.stdlib_filename;
-    let standard_grammar =
-      load_grammar_from_contents Settings.stdlib_filename Standard_mly.contents in
-    standard_grammar :: grammars ()
-  end
+    grammars()
+  else
+    (* As 20190924, the standard library is no longer actually read from a
+       file. Instead, its text is built into the Menhir executable: it is
+       found in the string [Standard_mly.contents]. We parse it just as if
+       it had been read from a file, and pretend that the file name is
+       [Settings.stdlib_filename]. This file name can appear in generated
+       parsers, because Menhir produces # directives that point back to
+       source (.mly) files. *)
+    load_grammar_from_contents
+      Settings.stdlib_filename
+      Standard_mly.contents ::
+    grammars()
 
 let () =
   Time.tick "Lexing and parsing"
