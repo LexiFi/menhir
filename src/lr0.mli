@@ -85,6 +85,11 @@ val start: node -> lr1state
 val transitions: lr1state -> lr1state SymbolMap.t
 val transition: Symbol.t -> lr1state -> lr1state
 
+(* [transition_tokens transitions] returns the set of tokens (terminal symbols)
+   that are labels of outgoing transitions in the table [transitions]. *)
+
+val transition_tokens: 'target SymbolMap.t -> TerminalSet.t
+
 (* Information about the reductions at a state. *)
 
 (* See also [reductions_table] further on. *)
@@ -168,6 +173,11 @@ val reductions_table: lr1state -> reductions
    productions), producing a mapping of productions to sets of tokens. *)
 
 val invert : reductions -> TerminalSet.t ProductionMap.t
+
+(* [reduction_tokens reductions] returns the domain of the reductions table
+   [table], in the form of a set of tokens. *)
+
+val reduction_tokens: reductions -> TerminalSet.t
 
 (* [has_eos_conflict transitions reductions] tells whether a state has
    an end-of-stream conflict, that is, a reduction action on [#] and

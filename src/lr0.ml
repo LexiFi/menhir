@@ -371,6 +371,16 @@ let transition
   in
   (k, Array.map (interpret state) sr)
 
+(* [transition_tokens transitions] returns the set of tokens (terminal symbols)
+   that are labels of outgoing transitions in the table [transitions]. *)
+
+let transition_tokens transitions =
+  SymbolMap.fold (fun symbol _target toks ->
+    match symbol with
+    | Symbol.T tok -> TerminalSet.add tok toks
+    | Symbol.N _   -> toks
+  ) transitions TerminalSet.empty
+
 (* Equality of states. *)
 
 let equal ((k1, toksr1) as state1) ((k2, toksr2) as state2) =
@@ -635,6 +645,14 @@ let reductions_table state =
   List.fold_left (fun reductions (toks, prod) ->
     add_reductions prod toks reductions
   ) TerminalMap.empty (reductions state)
+
+(* [reduction_tokens reductions] returns the domain of the reductions table
+   [table], in the form of a set of tokens. *)
+
+let reduction_tokens reductions =
+  TerminalMap.fold (fun tok _prods toks ->
+      TerminalSet.add tok toks
+  ) reductions TerminalSet.empty
 
 (* This inverts a mapping of tokens to productions into a mapping of
    productions to sets of tokens. *)
