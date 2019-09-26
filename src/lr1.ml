@@ -839,72 +839,60 @@ let default_conflict_resolution () =
     Error.warning [] "%d reduce/reduce conflicts were arbitrarily resolved."
       !reduce_reduce;
 
-  (* Now, ensure that states that have a reduce action at the
-     pseudo-token "#" have no other action. *)
+  (* Now, detect and remove end-of-stream conflicts. If a state has both a
+     reduce action at [#] and some other (shift or reduce) action, this is
+     an end-of-stream conflict. This conflict is resolved by suppressing
+     the reduce action at [#]. *)
 
   let ambiguities = ref 0 in
 
-  fold (fun () node ->
+  iter begin fun node ->
+    let transitions = transitions node
+    and reductions = reductions node in
 
-    try
+    if Lr0.has_eos_conflict transitions reductions then begin
+
+      (* Suppress the reduce action at [#]. *)
       let prods, reductions =
-        TerminalMap.lookup_and_remove Terminal.sharp (reductions node)
-      in
+        TerminalMap.lookup_and_remove Terminal.sharp reductions in
+      set_reductions node reductions;
+      (* We can assume that there is only one reduction on [#]. *)
       let prod = Misc.single prods in
 
-      (* This node has a reduce action at "#". Determine whether there
-         exist other actions. If there exist any other actions,
-         suppress this reduce action, and signal an ambiguity.
+      (* Count this end-of-stream conflict. *)
+      incr ambiguities;
 
-         We signal an ambiguity even in the case where all actions at
-         this node call for reducing a single production. Indeed, in
-         that case, even though we know that this production must be
-         reduced, we do not know whether we should first discard the
-         current token (and call the lexer). *)
+      (* Signal this end-of-stream conflict in the .automaton file. *)
+      if Settings.dump then begin
 
-      let has_ambiguity = ref false in
-      let toks = ref TerminalSet.empty in
+        (* Compute the tokens involved in the transitions and remaining
+           reductions. *)
+        let toks =
+          TerminalSet.union
+            (Lr0.transition_tokens transitions)
+            (Lr0.reduction_tokens reductions)
+        in
 
-      TerminalMap.iter (fun tok _prods ->
-        set_reductions node reductions;
-        has_ambiguity := true;
-        toks := TerminalSet.add tok !toks
-      ) reductions;
+        (* Emit a message. *)
+        Printf.fprintf (Lazy.force out)
+          "State %d has an end-of-stream conflict. There is a tension between\n\
+           (1) %s\n\
+           without even requesting a lookahead token, and\n\
+           (2) checking whether the lookahead token is %s%s,\n\
+           which would require some other action.\n\n"
+          (number node)
+          (match Production.classify prod with
+          | Some nt ->
+              Printf.sprintf "accepting %s" (Nonterminal.print false nt)
+          | None ->
+              Printf.sprintf "reducing production %s" (Production.print prod))
+          (if TerminalSet.cardinal toks > 1 then "one of " else "")
+          (TerminalSet.print toks)
 
-      SymbolMap.iter (fun symbol _ ->
-        match symbol with
-        | Symbol.N _ ->
-            ()
-        | Symbol.T tok ->
-            set_reductions node reductions;
-            has_ambiguity := true;
-            toks := TerminalSet.add tok !toks
-      ) (transitions node);
-
-      if !has_ambiguity then begin
-        incr ambiguities;
-        if Settings.dump then begin
-          Printf.fprintf (Lazy.force out)
-            "State %d has an end-of-stream conflict. There is a tension between\n\
-             (1) %s\n\
-             without even requesting a lookahead token, and\n\
-             (2) checking whether the lookahead token is %s%s,\n\
-             which would require some other action.\n\n"
-            (number node)
-            (match Production.classify prod with
-            | Some nt ->
-                Printf.sprintf "accepting %s" (Nonterminal.print false nt)
-            | None ->
-                Printf.sprintf "reducing production %s" (Production.print prod))
-            (if TerminalSet.cardinal !toks > 1 then "one of " else "")
-            (TerminalSet.print !toks)
-        end
       end
 
-    with Not_found ->
-      ()
-
-  ) ();
+    end
+  end;
 
   if !ambiguities = 1 then
     Error.grammar_warning [] "one state has an end-of-stream conflict."
