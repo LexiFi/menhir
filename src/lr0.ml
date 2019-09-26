@@ -654,3 +654,21 @@ let invert reductions : TerminalSet.t ProductionMap.t =
     in
     ProductionMap.add prod (TerminalSet.add tok toks) inverse
   ) reductions ProductionMap.empty
+
+(* [has_eos_conflict transitions reductions] tells whether a state has
+   an end-of-stream conflict, that is, a reduction action on [#] and
+   at least one other (shift or reduce) action. *)
+
+let has_eos_conflict transitions reductions =
+  match TerminalMap.lookup_and_remove Terminal.sharp reductions with
+  | exception Not_found ->
+      (* There is no reduction action on [#], thus no conflict. *)
+      false
+  | prods, reductions ->
+      (* There is at least one reduction action on [#]. *)
+      (* If there are two reduction actions on [#], then we have a conflict. *)
+      List.length prods > 1 ||
+      (* If there only one reduction on [#], then we have a conflict if and
+         only if either there exists another shift or reduce action. *)
+      not (TerminalMap.is_empty reductions) ||
+      SymbolMap.exists (fun symbol _ -> Symbol.is_terminal symbol) transitions

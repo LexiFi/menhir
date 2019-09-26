@@ -168,3 +168,9 @@ val reductions_table: lr1state -> reductions
    productions), producing a mapping of productions to sets of tokens. *)
 
 val invert : reductions -> TerminalSet.t ProductionMap.t
+
+(* [has_eos_conflict transitions reductions] tells whether a state has
+   an end-of-stream conflict, that is, a reduction action on [#] and
+   at least one other (shift or reduce) action. *)
+
+val has_eos_conflict: 'target SymbolMap.t -> reductions -> bool
