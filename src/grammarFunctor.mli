@@ -289,6 +289,8 @@ module Symbol : sig
     | N of Nonterminal.t
     | T of Terminal.t
 
+  val is_terminal: t -> bool
+
   (* [lookup] maps an identifier to a symbol, or raises [Not_found]. *)
 
   val lookup : string -> t

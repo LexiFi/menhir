@@ -442,6 +442,13 @@ module Symbol = struct
     | N of Nonterminal.t
     | T of Terminal.t
 
+  let is_terminal sym =
+    match sym with
+    | N _ ->
+        false
+    | T _ ->
+        true
+
   let compare sym1 sym2 =
     match sym1, sym2 with
     | N nt1, N nt2 ->
