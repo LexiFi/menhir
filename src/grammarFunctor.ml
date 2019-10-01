@@ -563,6 +563,11 @@ module SymbolMap = struct
       symbol :: accu
     ) m []
 
+  let init f xs =
+    List.fold_left (fun accu x ->
+      add x (f x) accu
+    ) empty xs
+
   let purelynonterminal m =
     fold (fun symbol _ accu ->
       accu && Symbol.nonterminal symbol
