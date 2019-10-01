@@ -1,17 +1,17 @@
 # Changes
 
-## XXXXXXXX
+## 2019/09/24
 
 * Fix compatibility with Coq 8.10, and some warnings.
 
 ## 2019/06/26
 
 * Fix compatibility with Coq 8.7 and Coq 8.9:
-    - In Coq 8.7, in the syntax { x : T & T' } for the sigT types,
-      it was not possible to omit the type T.
+    - In Coq 8.7, in the syntax `{ x : T & T' }` for the `sigT` types,
+      it was not possible to omit the type `T`.
     - An anomaly in Coq 8.7 has been worked around.
     - In Coq 8.9, the numeral notation for positives moved from
-      Coq.Numbers.BinNums to Coq.PArith.BinPos.
+      `Coq.Numbers.BinNums` to `Coq.PArith.BinPos`.
 
 ## 2019/06/13
 
