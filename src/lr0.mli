@@ -184,3 +184,4 @@ val reduction_tokens: reductions -> TerminalSet.t
    at least one other (shift or reduce) action. *)
 
 val has_eos_conflict: 'target SymbolMap.t -> reductions -> bool
+val has_eos_conflict_lr1state: lr1state -> bool

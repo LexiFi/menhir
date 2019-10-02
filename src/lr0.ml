@@ -690,3 +690,8 @@ let has_eos_conflict transitions reductions =
          only if either there exists another shift or reduce action. *)
       not (TerminalMap.is_empty reductions) ||
       SymbolMap.exists (fun symbol _ -> Symbol.is_terminal symbol) transitions
+
+let has_eos_conflict_lr1state (state : lr1state) =
+  has_eos_conflict
+    (transitions state)
+    (reductions_table state)
