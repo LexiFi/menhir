@@ -11,14 +11,35 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module constructs an LR(1) automaton for the grammar described by the
-   module [Grammar]. *)
+open Grammar
 
-(* In this construction, precedence declarations are not taken into account.
-   Thus, conflicts are not resolved; no transitions or reductions are removed
-   in order to resolve conflicts. As a result, every node is reachable from
-   some entry node. *)
+(* The output signature of several LR(1) automaton construction algorithms. *)
 
-open LR1Sigs
+module type LR1_AUTOMATON = sig
 
-module Run () : LR1_AUTOMATON
+  (* An abstract type of nodes, that is, states in the LR(1) automaton. *)
+
+  type node
+
+  (* The number of nodes. *)
+
+  val n: int
+
+  (* Nodes are numbered from 0 to [n-1]. *)
+
+  val number: node -> int
+  val node: int -> node
+
+  (* To each start production corresponds an entry node. *)
+
+  val entry : node ProductionMap.t
+
+  (* Each node carries outgoing transitions towards other nodes. *)
+
+  val transitions: node -> node SymbolMap.t
+
+  (* Each node represents an LR(1) state, that is, a set of LR(1) items. *)
+
+  val state: node -> Lr0.lr1state
+
+end
