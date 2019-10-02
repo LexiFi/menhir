@@ -423,6 +423,28 @@ let subsume ((k1, toksr1) as state1) ((k2, toksr2) as state2) =
   in
   loop (Array.length toksr1)
 
+(* A memoizer for the type [lr1state]. This code is simple-minded, but its
+   efficiency is sufficient: 10000 states are numbered in about 0.01s. *)
+
+module M =
+  Memoize.ForOrderedType(struct
+    type t = lr1state
+    let compare s1 s2 =
+      let c = core s1 - core s2 in
+      if c <> 0 then c else compare s1 s2
+  end)
+
+(* A facility for assigning unique numbers to LR(1) states. *)
+
+let new_numbering () =
+  let m = ref 0 in
+  let number : lr1state -> int =
+    M.memoize (fun (_ : lr1state) -> Misc.postincrement m)
+  and current () =
+    !m
+  in
+  number, current
+
 (* This function determines whether two (core-equivalent) states are
    compatible, according to a criterion that is close to Pager's weak
    compatibility criterion.

@@ -114,6 +114,13 @@ val compare: lr1state -> lr1state -> int
 
 val subsume: lr1state -> lr1state -> bool
 
+(* A facility for assigning unique numbers to LR(1) states. The call
+   [new_numbering] returns a pair of functions [number, current], where
+   [number] maps LR(1) states to unique (freshly assigned) numbers and
+   [current] returns the next available number. *)
+
+val new_numbering: unit -> (lr1state -> int) * (unit -> int)
+
 (* A slightly modified version of Pager's weak compatibility
    criterion. The two states must have the same core. *)
 
