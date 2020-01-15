@@ -32,10 +32,6 @@
 x   removes some (shift or reduce) actions, hence may suppress the shortest
    path. *)
 
-(* NOTE: THIS FILE IS COMPILED WITH -noassert BY DEFAULT. If you would like
-   the assertions to be tested at runtime, change that in the file _tags.
-   The performance impact of the assertions is about 10%. *)
-
 (* ------------------------------------------------------------------------ *)
 
 (* To delay the side effects performed by this module, we wrap everything in

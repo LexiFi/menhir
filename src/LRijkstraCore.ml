@@ -17,9 +17,11 @@
    principle, we work with real terminal symbols only. However, we encode
    [any] as [#] -- see below. *)
 
-(* NOTE: THIS FILE IS COMPILED WITH -noassert BY DEFAULT. If you would like
-   the assertions to be tested at runtime, change that in the file _tags.
-   The performance impact of the assertions is about 10%. *)
+(* NOTE: Because he performance impact of the assertions in this file is about
+   10%, they are turned off by default. Change the value of [debug] to [true]
+   if you wish to enable assertions. *)
+
+let debug = false
 
 open Grammar
 open Default
@@ -58,7 +60,7 @@ let foreach_terminal_not_causing_an_error s f =
          reduction. *)
       TerminalMap.iter (fun z _ ->
         (* A reduction on [#] is always a default reduction. (See [lr1.ml].) *)
-        assert (not (Terminal.equal z Terminal.sharp));
+        if debug then assert (not (Terminal.equal z Terminal.sharp));
         if Terminal.non_error z then
           f z
       ) (Lr1.reductions s);
@@ -67,7 +69,7 @@ let foreach_terminal_not_causing_an_error s f =
       SymbolMap.iter (fun sym _ ->
         match sym with
         | Symbol.T z ->
-            assert (not (Terminal.equal z Terminal.sharp));
+            if debug then assert (not (Terminal.equal z Terminal.sharp));
             if Terminal.non_error z then
               f z
         | Symbol.N _ ->
@@ -196,15 +198,15 @@ let w_position  =
   Sys.word_size - 1 - (w_word + w_lookahead) (* 25, on a 64-bit machine *)
 
 let identity (fact : fact) : int =
-  assert (fact <> dummy);
+  if debug then assert (fact <> dummy);
   fact lsr (w_word + w_lookahead)
 
 let position (fact : fact) : Trie.trie =
-  assert (fact <> dummy);
+  if debug then assert (fact <> dummy);
   Trie.decode (identity fact)
 
 let word (fact : fact) : W.word =
-  assert (fact <> dummy);
+  if debug then assert (fact <> dummy);
   (fact lsr w_lookahead) land (1 lsl w_word - 1)
 
 let lookahead (fact : fact) : Terminal.t =
@@ -214,8 +216,10 @@ let mkfact position (word : W.word) lookahead =
   let position : int = Trie.encode position
   and word : int = word
   and lookahead : int = Terminal.t2i lookahead in
-  assert (0 <= position && 0 <= word && 0 <= lookahead);
-  assert (lookahead < 1 lsl w_lookahead);
+  if debug then begin
+    assert (0 <= position && 0 <= word && 0 <= lookahead);
+    assert (lookahead < 1 lsl w_lookahead);
+  end;
   if position < 1 lsl w_position && word < 1 lsl w_word then
     (* [lsl] binds tighter than [lor] *)
     (position lsl w_word lor word) lsl w_lookahead lor lookahead
@@ -234,9 +238,11 @@ let mkfact position (word : W.word) lookahead =
 
 let mkfact p w l =
   let fact = mkfact p w l in
-  assert (word fact == w);      (* round-trip property *)
-  assert (lookahead fact == l); (* round-trip property *)
-  assert (position fact == p);  (* round-trip property *)
+  if debug then begin
+    assert (word fact == w);      (* round-trip property *)
+    assert (lookahead fact == l); (* round-trip property *)
+    assert (position fact == p);  (* round-trip property *)
+  end;
   fact
 
 (* Two invariants reduce the number of facts that we consider:
@@ -267,8 +273,10 @@ let invariant2 position _word lookahead =
    lookahead assumption [z] -- which can be [any]. *)
 
 let compatible z a =
-  assert (Terminal.non_error z);
-  assert (Terminal.real a);
+  if debug then begin
+    assert (Terminal.non_error z);
+    assert (Terminal.real a);
+  end;
   z = any || z = a
 
 (* ------------------------------------------------------------------------ *)
@@ -297,9 +305,11 @@ let q =
 
 let enqueue position word lookahead =
   (* [lookahead] can be [any], but cannot be [error] *)
-  assert (Terminal.non_error lookahead);
-  assert (invariant1 position word lookahead);
-  assert (invariant2 position word lookahead);
+  if debug then begin
+    assert (Terminal.non_error lookahead);
+    assert (invariant1 position word lookahead);
+    assert (invariant2 position word lookahead);
+  end;
   (* The length of [word] serves as the priority of this fact. *)
   let priority = W.length word in
   (* Encode and enqueue this fact. *)
@@ -394,12 +404,12 @@ end = struct
     MySet.Make(struct
       type t = fact
       let compare fact1 fact2 =
-        assert (lookahead fact1 = lookahead fact2);
+        if debug then assert (lookahead fact1 = lookahead fact2);
         (* Compare the two positions first. This can be done without going
            through [Trie.decode], by directly comparing the two integer
            identities. *)
         let c = Pervasives.compare (identity fact1) (identity fact2) in
-        assert (c = Trie.compare (position fact1) (position fact2));
+        if debug then assert (c = Trie.compare (position fact1) (position fact2));
         if c <> 0 then c else
         let z = lookahead fact1 in
         let a1 = W.first (word fact1) z
@@ -435,7 +445,7 @@ end = struct
     end
 
   let query current z f =
-    assert (not (Terminal.equal z any));
+    if debug then assert (not (Terminal.equal z any));
     (* If the state [current] is solid then the facts that concern it are
        stored in the column [any], and all of them are compatible with [z].
        Otherwise, they are stored in all columns except [any], and only
@@ -527,12 +537,12 @@ end = struct
   let count = ref 0
 
   let register s nt w z =
-    assert (Terminal.real z);
+    if debug then assert (Terminal.real z);
     let i = index s in
     let m = table.(i) in
     let a = W.first w z in
     (* Note that looking at [a] in state [s] cannot cause an error. *)
-    assert (not (causes_an_error s a));
+    if debug then assert (not (causes_an_error s a));
     let key = pack nt a z in
     if H.mem m key then
       false
@@ -556,7 +566,7 @@ end = struct
       let i = index s in
       let m = table.(i) in
       foreach (fun z ->
-        assert (Terminal.real z);
+        if debug then assert (Terminal.real z);
         let key = pack nt a z in
         match H.find m key with
         | w -> f w z
@@ -581,7 +591,7 @@ end
    queue for later examination. *)
 
 let new_edge s nt w z =
-  assert (Terminal.real z);
+  if debug then assert (Terminal.real z);
   if E.register s nt w z then
     let sym = Symbol.N nt in
     (* Query [F] for existing facts which could be extended by following
@@ -589,7 +599,7 @@ let new_edge s nt w z =
        is [s] and whose lookahead assumption is compatible with [a]. For
        each such fact, ... *)
     F.query s (W.first w z) (fun fact ->
-      assert (compatible (lookahead fact) (W.first w z));
+      if debug then assert (compatible (lookahead fact) (W.first w z));
       (* ... try to take one step in the trie along an edge labeled [nt]. *)
       match Trie.step sym (position fact) with
       | position ->
@@ -599,7 +609,7 @@ let new_edge s nt w z =
              That's fine, since our lookahead assumption is [z]. In order to
              satisfy invariant 1, we must check that [z] does not cause an
              error in this state. *)
-          assert (not (is_solid (Trie.current position)));
+          if debug then assert (not (is_solid (Trie.current position)));
           if not (causes_an_error (Trie.current position) z) then
             let word = W.append (word fact) w in
             enqueue position word z
@@ -658,9 +668,11 @@ let new_fact fact =
         (* 1a. The transition exists in the trie, and [sym] is in fact a
            terminal symbol [t]. We note that [t] cannot be the [error] token,
            because the trie does not have any edges labeled [error]. *)
-        assert (Lr1.Node.compare (Trie.current child) target = 0);
-        assert (is_solid target);
-        assert (Terminal.non_error t);
+        if debug then begin
+          assert (Lr1.Node.compare (Trie.current child) target = 0);
+          assert (is_solid target);
+          assert (Terminal.non_error t);
+        end;
 
         (* If the lookahead assumption [lookahead] is compatible with
            [t], then we derive a new fact, where one more edge has been taken,
@@ -680,8 +692,10 @@ let new_fact fact =
 
         (* 1b. The transition exists in the trie, and [sym] is in fact a
            nonterminal symbol [nt]. *)
-        assert (Lr1.Node.compare (Trie.current child) target = 0);
-        assert (not (is_solid target));
+        if debug then begin
+          assert (Lr1.Node.compare (Trie.current child) target = 0);
+          assert (not (is_solid target));
+        end;
 
         (* We need to know how this nonterminal edge can be taken. We query
            [E] for a word [w] that allows us to take this edge. In general,
@@ -698,7 +712,7 @@ let new_fact fact =
 
         let foreach = foreach_terminal_not_causing_an_error target in
         E.query current nt lookahead foreach (fun w z ->
-          assert (compatible lookahead (W.first w z));
+          if debug then assert (compatible lookahead (W.first w z));
           let word = W.append word w in
           enqueue child word z
         )
@@ -797,7 +811,7 @@ let () =
    [foreach_terminal]. We also restrict it to the case where [a] is real. *)
 
 let query s nt a =
-  assert (Terminal.real a);
+  if debug then assert (Terminal.real a);
   E.query s nt a foreach_terminal
 
 (* Expose some numbers. *)
