@@ -8,7 +8,7 @@ Makefile.coq:
 Parser.v : Parser.vy
 	$(MENHIR) $(MENHIRFLAGS) $<
 
-include Makefile.coq
+-include Makefile.coq
 
 clean::
 	rm -f Parser.v
