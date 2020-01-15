@@ -27,7 +27,7 @@ let process (line : string) =
   let linebuf = Lexing.from_string line in
   try
     (* Run the parser on this line of input. *)
-    Printf.printf "%f\n%!" (FloatParser.main Lexer.token linebuf)
+    Printf.printf "%.6f\n%!" (FloatParser.main Lexer.token linebuf)
   with
   | Lexer.Error msg ->
       Printf.fprintf stderr "%s%!" msg
@@ -47,7 +47,6 @@ let rec repeat channel =
   process optional_line;
   if continue then
     repeat channel
-  
+
 let () =
   repeat (Lexing.from_channel stdin)
-

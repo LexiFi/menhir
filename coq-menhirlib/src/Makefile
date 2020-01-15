@@ -2,17 +2,15 @@ PWD := $(shell pwd)
 
 COQINCLUDE := -R $(PWD) MenhirLib \
 
-export
+export COQINCLUDE
 
 .PHONY: all clean install uninstall
 
-all:
+all: _CoqProject
+	@ $(MAKE) -f Makefile.coq --no-print-directory all
 
 _CoqProject:
 	@ $(MAKE) -f Makefile.coq --no-print-directory _CoqProject
-
-all: _CoqProject
-	@ $(MAKE) -f Makefile.coq --no-print-directory all
 
 clean:
 	@ $(MAKE) -f Makefile.coq --no-print-directory clean
@@ -24,8 +22,8 @@ clean:
 # A nonempty value can be used to perform a dummy installation
 # in a different location.
 
-CONTRIB := $(shell $(COQBIN)coqc -where)/user-contrib
-TARGET  := $(DESTDIR)$(CONTRIB)/MenhirLib
+CONTRIB = $(shell $(COQBIN)coqc -where)/user-contrib
+TARGET  = $(DESTDIR)$(CONTRIB)/MenhirLib
 
 install: all
 	rm -rf $(TARGET)

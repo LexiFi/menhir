@@ -30,4 +30,4 @@ loop:
 	latexmk -pdf -pvc manual
 
 clean:
-	rm -f `cat .gitignore`
+	@ rm -f `cat .gitignore`

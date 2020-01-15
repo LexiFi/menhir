@@ -9,14 +9,13 @@ homepage: "http://gitlab.inria.fr/fpottier/menhir"
 dev-repo: "git+https://gitlab.inria.fr/fpottier/menhir.git"
 bug-reports: "menhir@inria.fr"
 build: [
-  [make "-f" "Makefile" "PREFIX=%{prefix}%" "USE_OCAMLFIND=true" "docdir=%{doc}%/menhir" "libdir=%{lib}%/menhir" "mandir=%{man}%/man1"]
+  ["dune" "build" "@install" "-j" jobs]
 ]
 install: [
-  [make "-f" "Makefile" "install" "PREFIX=%{prefix}%" "docdir=%{doc}%/menhir" "libdir=%{lib}%/menhir" "mandir=%{man}%/man1"]
+  ["dune" "install" "-j" jobs]
 ]
 depends: [
-  "ocaml" {>= "4.02"}
-  "ocamlfind" {build}
-  "ocamlbuild" {build}
+  "ocaml" {>= "4.02.3"}
+  "dune" {>= "2.0.0"}
 ]
 synopsis: "An LR(1) parser generator"

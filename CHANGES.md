@@ -1,5 +1,18 @@
 # Changes
 
+## 2020/01/21
+
+* There used to be a distinction between two slightly different ways of
+  installing Menhir, namely with and without `ocamlfind`. This distinction
+  disappears. The command line switch `--suggest-ocamlfind` is deprecated
+  and causes Menhir to print `false`.
+
+* Menhir is now built and installed by dune. This should make life easier
+  for developers: in particular, `make test` and `make speed` can be run
+  straight away and do not requiring installing Menhir first. This should
+  also make compilation much faster on multi-core machines. (Contributed
+  by Nicolás Ojeda Bär, to whom many thanks are due.)
+
 ## 2019/09/24
 
 * Build Menhir's standard library into the Menhir executable instead of

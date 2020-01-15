@@ -1,20 +1,9 @@
-.PHONY: all clean test
+.PHONY: all test
 
-MENHIR          := menhir
-
-MENHIRFLAGS     := --infer
-
-OCAMLBUILD      := ocamlbuild -use-ocamlfind -use-menhir -menhir "$(MENHIR) $(MENHIRFLAGS)"
-
-MAIN            := calc
+DUNEBUILD := dune build --no-print-directory
 
 all:
-	$(OCAMLBUILD) $(MAIN).native
+	@ $(DUNEBUILD) @all
 
-clean:
-	rm -f *~ .*~
-	$(OCAMLBUILD) -clean
-
-test: all
-	@echo "The following command should print 42.000000:"
-	echo "(1 + 2 * 10) * 2" | ./$(MAIN).native
+test:
+	@ $(DUNEBUILD) --force --display short @test

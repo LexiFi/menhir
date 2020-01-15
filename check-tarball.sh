@@ -8,38 +8,26 @@ IFS=$'\n\t'
 PACKAGE="$1"
 TARBALL=$PACKAGE.tar.gz
 
-# Some of the demos assume Menhir has been installed using ocamlfind, so that
-# is what we do. For this reason, we must first check that ocamlfind does not
-# already have some version of menhirLib and menhirSdk.
-
 # We use a dedicated opam switch where it is permitted to uninstall/reinstall
 # Menhir.
 
 echo "Now switching to test-menhir..."
 eval $(opam env --set-switch --switch test-menhir)
-OPAMYES=true opam install ocamlfind ocamlbuild coq dune
+OPAMYES=true opam install coq dune
 
 # Uninstall Menhir if it is installed.
 
-if ocamlfind query menhirLib >/dev/null 2>/dev/null ; then
-  if opam list -i menhir 2>/dev/null | grep -v -e "^#" | grep menhir ; then
-    echo "Warning: menhir is already installed. Removing it..." ;
+echo "Removing menhir if already installed..."
 #   read -p "Can I remove it [Enter/^C]?" -n 1 -r ;
-    opam remove menhir ;
-  else
-    echo "Warning: menhirLib is already installed. Removing it..." ;
-#   read -p "Can I remove it [Enter/^C]?" -n 1 -r ;
-    ocamlfind remove menhirLib ;
-    ocamlfind remove menhirSdk || true ;
-  fi ;
-fi
+opam remove menhir || /bin/true
 
-# Create a temporary directory; extract, build, and install the package into
-# it; build the demos using the installed binary.
+# Create a temporary directory; extract into it.
+# Build and install; then uninstall.
 
 TEMPDIR=`mktemp -d /tmp/menhir-test.XXXXXX`
 INSTALL=$TEMPDIR/install
 COQCONTRIB=$INSTALL/coq-contrib
+DUNE=dune
 
 cp $TARBALL $TEMPDIR
 
@@ -49,20 +37,15 @@ echo "   * Extracting. "
 echo "   * Compiling and installing."
 mkdir $INSTALL
 (cd $TEMPDIR/$PACKAGE &&
-  make PREFIX=$INSTALL USE_OCAMLFIND=true &&
-  make PREFIX=$INSTALL USE_OCAMLFIND=true install &&
+  $DUNE build @install &&
+  $DUNE install --prefix=$INSTALL menhir &&
   make -C coq-menhirlib all &&
   make -C coq-menhirlib CONTRIB=$COQCONTRIB install
 ) > $TEMPDIR/install.log 2>&1 || (cat $TEMPDIR/install.log; exit 1)
 
-echo "   * Building the demos."
-(cd $TEMPDIR/$PACKAGE &&
-  make MENHIR=$INSTALL/bin/menhir COQINCLUDES="-R $COQCONTRIB/MenhirLib MenhirLib" -C demos
-) > $TEMPDIR/demos.log 2>&1 || (cat $TEMPDIR/demos.log; exit 1)
-
 echo "   * Uninstalling."
 (cd $TEMPDIR/$PACKAGE &&
-  make PREFIX=$INSTALL USE_OCAMLFIND=true uninstall
+  $DUNE uninstall --prefix=$INSTALL menhir
   make -C coq-menhirlib CONTRIB=$COQCONTRIB uninstall
 ) > $TEMPDIR/uninstall.log 2>&1 || (cat $TEMPDIR/uninstall.log; exit 1)
 

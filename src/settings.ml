@@ -353,7 +353,7 @@ let options = Arg.align [
   "--suggest-menhirLib", Arg.Unit (fun () -> suggestion := SuggestWhereIsMenhirLibSource),
                          " Suggest where is MenhirLib";
   "--suggest-ocamlfind", Arg.Unit (fun () -> suggestion := SuggestUseOcamlfind),
-                         " Show if Menhir was installed using ocamlfind";
+                         " (deprecated)";
   "--table", Arg.Set table, " Use the table-based back-end";
   "--timings", Arg.Set timings, " Display internal timings";
   "--trace", Arg.Set trace, " Generate tracing instructions";
@@ -395,8 +395,7 @@ let () =
 
 (* If [--table] is not passed, no flags are necessary. If [--table] is
    passed, then [MenhirLib] needs to be visible (at compile time) and
-   linked in (at link time). This is done either via [ocamlfind], if
-   it was available at installation time, or manually. *)
+   linked in (at link time). *)
 
 (* The compilation flags are in fact meant to be used both at compile-
    and link-time. *)
@@ -407,27 +406,17 @@ let () =
       ()
   | SuggestCompFlags ->
       if !table then
-        if Installation.ocamlfind then
-          printf "-package menhirLib\n%!"
-        else
-          printf "-I %s\n%!" Installation.libdir;
+        printf "-I %s\n%!" (Installation.libdir());
       exit 0
   | SuggestLinkFlags extension ->
       if !table then
-        if Installation.ocamlfind then
-          printf "-linkpkg\n%!"
-        else
-          printf "menhirLib.%s\n%!" extension;
+        printf "menhirLib.%s\n%!" extension;
       exit 0
   | SuggestWhereIsMenhirLibSource ->
-      if Installation.ocamlfind then
-        let _ = Sys.command "ocamlfind query menhirLib" in
-        ()
-      else
-        printf "%s\n%!" Installation.libdir;
+      printf "%s\n%!" (Installation.libdir());
       exit 0
   | SuggestUseOcamlfind ->
-      printf "%b\n" Installation.ocamlfind;
+      printf "false\n";
       exit 0
 
 (* ------------------------------------------------------------------------- *)

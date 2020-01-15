@@ -1,213 +1,348 @@
-# This is the main Makefile that is shipped as part of the source package.
+# -------------------------------------------------------------------------
 
-# Keep in mind that the hierarchy that is shipped is not identical to the
-# hierarchy within the git repository. Some sub-directories are not shipped.
-# The documentation (manual.pdf, menhir.1) is pre-built and stored at the root.
+# Compilation and installation rules.
 
-# This Makefile can also be used directly in the repository. In that case,
-# the documentation and demos are not installed.
+.PHONY: all install uninstall clean
 
-# The hierarchy that is shipped includes:
-#   demos
-#   menhir.1
-#   manual.pdf
-#   manual.html
-#   src
-#   Makefile (this one)
+all:
+	@ dune build @install
+# note: @install is smaller than @all,
+#       as it does not include the tests nor the stage3 executable.
 
-# ----------------------------------------------------------------------------
+uninstall:
+	@ dune uninstall
 
-# The following variables must/can be configured.
+clean::
+	@ dune clean
 
-ifndef PREFIX
-  $(error Please define PREFIX)
-endif
+install: all
+	@ dune install
 
-ifndef TARGET
-  TARGET := native
-endif
+# -------------------------------------------------------------------------
 
-# ----------------------------------------------------------------------------
+# The rest of this Makefile helps perform tests and prepare releases.
+# These commands are intended to be used by Menhir's developers.
 
-# By default, we attempt to use ocamlfind (if present in the PATH), but it
-# is possible to prevent that externally by setting USE_OCAMLFIND to false.
+# Require bash.
+SHELL := bash
+# Prevent the built-in bash cd from displaying information.
+export CDPATH=
 
-# USE_OCAMLFIND is used only at build time (i.e., by "make all"). At
-# (un)installation time, instead, we query menhir using --suggest-ocamlfind.
-# This should protect us against people who pass USE_OCAMLFIND at build time
-# and forget to pass it at (un)installation time.
+# -------------------------------------------------------------------------
 
-ifndef USE_OCAMLFIND
-  USE_OCAMLFIND = ocamlfind ocamlc -v >/dev/null 2>&1
-endif
+# Testing.
 
-# ----------------------------------------------------------------------------
-# Installation paths.
-# These may be overridden from outside; e.g., our opam package description
-# provides its own values of docdir, libdir, and mandir.
+# [make test] runs the tests found in the test/ and demos/ directories.
 
-bindir          := $(PREFIX)/bin
-docdir		:= $(PREFIX)/share/doc/menhir
-libdir	        := $(PREFIX)/share/menhir
-mandir          := $(PREFIX)/share/man/man1
-MANS            := doc/menhir.1
-DOCS            := doc/manual.pdf doc/manual.html doc/manual*.png demos
+.PHONY: test
+test:
+	@ dune build --display short @test
 
-# ----------------------------------------------------------------------------
+# [make speed] runs the speed test in test/dynamic/speed.
 
-# The following incantations should work on both Windows and Unix,
-# and allow us to abstract away the differences.
+.PHONY: speed
+speed:
+	@ dune build --force --no-buffer @speed
 
-# The extension of object files.
-OBJ := $(shell ocamlc -config | sed -n '/^ext_obj:/p' | sed 's/ext_obj: //')
-# The extension of executable files.
-# Note: the field "ext_exe" seems to have appeared in OCaml 4.05.
-# With earlier versions of OCaml, this incantation defines $(EXE)
-# as the empty string, which could be a problem under Windows.
-EXE := $(shell ocamlc -config | sed -n '/^ext_exe:/p' | sed 's/ext_exe: //')
-# The OS type.
-OS_TYPE := $(shell ocamlc -config | sed -n '/^os_type:/p' | sed 's/os_type: //')
+# [make versions] compiles and tests Menhir under many versions of
+# OCaml, whose list is specified in the file dune-workspace.versions.
 
-# The path $(installation_libdir), which is recorded in src/installation.ml (see
-# below), must sometimes be translated using cygpath.
+# This requires appropriate opam switches to exist. A missing switch
+# can be created like this:
+#   opam switch create 4.03.0
 
-# This one is tricky. To summarize, if I understood correctly, we can assume
-# that Cygwin always exists when Menhir is compiled and installed (because
-# executing a Makefile, like this one, requires Cygwin), but we cannot assume
-# that Menhir will be executed under Cygwin. If the OCaml compiler is
-# configured to produce a Cygwin executable, then, yes, Cygwin is there at
-# execution time, so path translation is not necessary (and should not be
-# performed). On the other hand, if the OCaml compiler is configured to
-# produce a native Windows executable, then Cygwin is not there at execution
-# time and path translation is required. In summary, path translation must be
-# performed if "os_type" is "Win32" or "Win64", and must not be performed if
-# "os_type" is "Cygwin" or "Unix".
+.PHONY: versions
+versions:
+	@ dune build --workspace dune-workspace.versions @all @test
 
-ifeq ($(OS_TYPE),$(filter $(OS_TYPE),Win32 Win64))
-  installation_libdir := $(shell cygpath -m $(libdir) || echo $(libdir))
-else
-  installation_libdir := $(libdir)
-endif
+# -------------------------------------------------------------------------
+
+# Cleaning up.
+
+clean::
+	@ find . -name "*~" -exec rm '{}' \;
+	@ for i in demos doc ; do \
+	  $(MAKE) -C $$i $@ ; \
+	done
+
+# -------------------------------------------------------------------------
+
+# Distribution.
+
+# The version number is automatically set to the current date,
+# unless DATE is defined on the command line.
+DATE     := $(shell /bin/date +%Y%m%d)
+DATEDASH := $(shell /bin/date +%Y-%m-%d)
+
+PACKAGE  := menhir-$(DATE)
+CURRENT  := $(shell pwd)
+TARBALL  := $(CURRENT)/$(PACKAGE).tar.gz
 
 # -------------------------------------------------------------------------
 
 # The names of the modules in MenhirLib are obtained by reading the
 # non-comment lines in menhirLib.mlpack.
 
-MENHIRLIB_MODULES := $(shell grep -ve "^[ \t\n\r]*\#" src/menhirLib.mlpack)
+MENHIRLIB_MODULES := \
+  $(shell grep -ve "^[ \t\n\r]*\#" lib/pack/menhirLib.mlpack)
 
-# ----------------------------------------------------------------------------
+# The names of the source files in MenhirLib are obtained by adding
+# an .ml or .mli extension to the module name. (We assume that the
+# first letter of the file name is a capital letter.)
 
-# The directories where things are built.
-
-# For Menhir and MenhirLib.
-BUILDDIR := src/_stage2
-# For MenhirSdk.
-SDKDIR   := src/_sdk
-
-# ----------------------------------------------------------------------------
-
-# Compilation.
-
-.PHONY: all install uninstall
-
-all:
-# Installation time settings are recorded within src/installation.ml.
-# This file is recreated every time so as to avoid becoming stale.
-	@ rm -f src/installation.ml
-	@ echo "let libdir = \"$(installation_libdir)\"" > src/installation.ml
-	@ if $(USE_OCAMLFIND) ; then \
-	  echo "let ocamlfind = true" >> src/installation.ml ; \
-	else \
-	  echo "let ocamlfind = false" >> src/installation.ml ; \
-	fi
-# Compile the Menhir executable.
-# This causes MenhirLib to be compiled, too, as it is used inside Menhir.
-# Compile MenhirSdk.
-	@ $(MAKE) -C src bootstrap sdk
-# The source file menhirLib.ml is created by concatenating all of the source
-# files that make up MenhirLib. This file is not needed to compile Menhir or
-# MenhirLib. It is installed at the same time as MenhirLib and is copied by
-# Menhir when the user requests a self-contained parser (one that is not
-# dependent on MenhirLib).
-	@ echo "Creating menhirLib.ml"
-	@ rm -f $(BUILDDIR)/menhirLib.ml
-	@ for m in $(MENHIRLIB_MODULES) ; do \
-	  echo "module $$m = struct" >> $(BUILDDIR)/menhirLib.ml ; \
-	  cat src/$$m.ml >> $(BUILDDIR)/menhirLib.ml ; \
-	  echo "end" >> $(BUILDDIR)/menhirLib.ml ; \
-	done
-# The source file menhirLib.mli is created in the same way. If a module
-# does not have an .mli file, then we assume that its .ml file contains
-# type (and module type) definitions only, so we copy it instead of the
-# (non-existent) .mli file.
-	@ echo "Creating menhirLib.mli"
-	@ rm -f $(BUILDDIR)/menhirLib.mli
-	@ for m in $(MENHIRLIB_MODULES) ; do \
-	  echo "module $$m : sig" >> $(BUILDDIR)/menhirLib.mli ; \
-	  if [ -f src/$$m.mli ] ; then \
-	    cat src/$$m.mli >> $(BUILDDIR)/menhirLib.mli ; \
-	  else \
-	    cat src/$$m.ml >> $(BUILDDIR)/menhirLib.mli ; \
-	  fi ; \
-	  echo "end" >> $(BUILDDIR)/menhirLib.mli ; \
-	done
+MENHIRLIB_FILES   := \
+  $(shell for m in $(MENHIRLIB_MODULES) ; do \
+    ls lib/$$m.{ml,mli} 2>/dev/null ; \
+  done)
 
 # -------------------------------------------------------------------------
 
-# The files that should be installed as part of menhirLib.
+# Propagating an appropriate header into every file.
 
-MENHIRLIB       := menhirLib.mli menhirLib.ml menhirLib.cmi menhirLib.cmo
-ifneq ($(TARGET),byte)
-MENHIRLIB       := $(MENHIRLIB) menhirLib.cmx menhirLib.cmxs menhirLib$(OBJ)
-endif
+# This requires a version of headache that supports UTF-8; please use
+# https://github.com/Frama-C/headache
+
+# This used to be done at release time and not in the repository, but
+# it is preferable to do in it the repository too, for two reasons: 1-
+# the repository is (or will be) publicly accessible; and 2- this makes
+# it easier to understand the line numbers that we sometimes receive as
+# part of bug reports.
+
+# Menhir's standard library (standard.mly) as well as the source files
+# in MenhirLib carry the "library" license, while every other file
+# carries the "regular" license.
+
+HEADACHE        := headache
+SRCHEAD         := $(CURRENT)/headers/regular-header
+LIBHEAD         := $(CURRENT)/headers/library-header
+COQLIBHEAD      := $(CURRENT)/headers/coq-library-header
+HEADACHECOQCONF := $(CURRENT)/headers/headache-coq.conf
+FIND            := $(shell if command -v gfind >/dev/null ; then echo gfind ; else echo find ; fi)
+
+.PHONY: headache
+headache:
+	@ cd src && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
+	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
+	@ cd sdk && $(FIND) . -regex ".*\.ml\(i\|y\|l\)?" \
+	    -exec $(HEADACHE) -h $(SRCHEAD) "{}" ";"
+	@ for file in src/standard.mly $(MENHIRLIB_FILES) ; do \
+	    $(HEADACHE) -h $(LIBHEAD) $$file ; \
+	  done
+	@ for file in coq-menhirlib/src/*.v ; do \
+	    $(HEADACHE) -h $(COQLIBHEAD) -c $(HEADACHECOQCONF) $$file ; \
+	  done
 
 # -------------------------------------------------------------------------
 
-# The files that should be installed as part of menhirSdk.
+# Creating a release.
 
-MENHIRSDK       := menhirSdk.cmi menhirSdk.cmo
-ifneq ($(TARGET),byte)
-MENHIRSDK       := $(MENHIRSDK) menhirSdk.cmx menhirSdk.cmxs menhirSdk$(OBJ)
-endif
+# A release commit is created off the main branch, on the side, and tagged.
+# Indeed, some files need to be changed or removed for a release.
 
-# ----------------------------------------------------------------------------
-# Installation.
+BRANCH := release-branch-$(DATE)
 
-install:
-# Install the executable.
-	mkdir -p $(bindir)
-	install $(BUILDDIR)/menhir.$(TARGET) $(bindir)/menhir$(EXE)
-# Install Menhir's standard library.
-	mkdir -p $(libdir)
-# Install MenhirLib and MenhirSdk.
-	@if `$(BUILDDIR)/menhir.$(TARGET) --suggest-ocamlfind | tr -d '\r'` ; then \
-	  echo 'Installing MenhirLib and MenhirSdk via ocamlfind.' ; \
-	  cp -f src/menhirLib.META META ; \
-	  ocamlfind install menhirLib META $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) ; \
-	  cp -f src/menhirSdk.META META ; \
-	  ocamlfind install menhirSdk META $(patsubst %,$(SDKDIR)/%,$(MENHIRSDK)) ; \
-	  rm -f META ; \
-	else \
-	  echo 'Installing MenhirLib and MenhirSdk manually.' ; \
-	  install -m 644 $(patsubst %,$(BUILDDIR)/%,$(MENHIRLIB)) $(libdir) ; \
-	  install -m 644 $(patsubst %,$(SDKDIR)/%,$(MENHIRSDK)) $(libdir) ; \
+# The documentation files $(DOC) are copied to the directory $(RELEASE) on the
+# master branch. They are also copied to the directory $(WWW).
+
+DOC     := doc/manual.pdf doc/manual.html doc/manual*.png
+RELEASE := releases/$(DATE)
+WWW     := www
+
+# Prior to making a release, please make sure that `CHANGES.md` has been
+# properly updated. Run [make test] and [make versions] to make sure that
+# Menhir can be compiled and passes all tests under all supported versions of
+# OCaml. Run [make speed] and have a look at the performance figures to make
+# sure that they are in the right ballpark. Finally, test the opam package by
+# running [make pin]. (You may wish to run [make pin] in a dedicated switch,
+# so as avoid clobbering your regular installation of Menhir.)
+
+.PHONY: release
+release:
+# Check if this is the master branch.
+	@ if [ "$$(git symbolic-ref --short HEAD)" != "master" ] ; then \
+	  echo "Error: this is not the master branch." ; \
+	  git branch ; \
+	  exit 1 ; \
 	fi
-# Install the documentation. (If building from the repository, the documentation
-# may be absent.)
-	if [ -f doc/manual.pdf ] ; then \
-	  mkdir -p $(docdir) $(mandir) ; \
-	  cp -r $(DOCS) $(docdir) ; \
-	  cp -r $(MANS) $(mandir) ; \
-	fi
+# Check if everything has been committed.
+	@ if [ -n "$$(git status --porcelain)" ] ; then \
+	    echo "Error: there remain uncommitted changes." ; \
+	    git status ; \
+	    exit 1 ; \
+	  fi
+# Check the current package description.
+	@ opam lint
+# Create a fresh git branch and switch to it.
+	@ echo "Preparing a release commit on a fresh release branch..."
+	@ git checkout -b $(BRANCH)
+# Remove subdirectories that do not need to (or must not) be distributed.
+	@ make --quiet -C coq-menhirlib clean
+	@ git rm -rf attic headers demos releases src/attic test --quiet
+# Remove files that do not need to (or must not) be distributed.
+# Keep check-tarball.sh because it is used below.
+	@ git rm Makefile HOWTO.md TODO* *.opam coq-menhirlib/descr --quiet
+# Hardcode Menhir's version number in the files that need it.
+	@ sed -i.bak 's/unreleased/$(DATE)/' dune-project
+	@ rm -f dune-project.bak
+	@ git add dune-project
+	@ echo '\gdef\menhirversion{$(DATE)}' > doc/version.tex
+	@ git add doc/version.tex
+	@ echo 'Definition require_$(DATE) := tt.' >> coq-menhirlib/src/Version.v
+	@ git add coq-menhirlib/src/Version.v
+# Compile the documentation.
+	@ echo "Building the documentation..."
+	@ make --quiet -C doc clean >/dev/null
+	@ make --quiet -C doc all   >/dev/null
+	@ git add -f $(DOC)
+	@ echo '(include dune.manual)' >> doc/dune
+	@ git add doc/dune
+# Commit.
+	@ echo "Committing..."
+	@ git commit -m "Release $(DATE)." --quiet
+# Check that the build and installation seem to work.
+# We build our own archive, which is not necessarily identical to the one
+# that gitlab creates for us once we publish our release. This should be
+# good enough.
+	@ echo "Creating an archive..."
+	@ git archive --prefix=$(PACKAGE)/ --format=tar.gz --output=$(TARBALL) HEAD
+	@ echo "Checking that this archive can be compiled and installed..."
+	@ ./check-tarball.sh $(PACKAGE)
+	@ echo "Removing this archive..."
+	@ rm $(TARBALL)
+# Create a git tag.
+	@ git tag -a $(DATE) -m "Release $(DATE)."
+# Save a copy of the manual.
+	@ mkdir -p $(RELEASE)/doc
+	@ cp $(DOC) $(RELEASE)/doc
+# Switch back to the master branch.
+	@ echo "Switching back to the master branch..."
+	@ git checkout master
+# Commit a copy of the manual *in the master branch* in releases/.
+	@ echo "Committing a copy of the documentation..."
+	@ cd $(RELEASE) && git add -f $(DOC)
+	@ echo "Publishing the documentation online..."
+	@ cd $(WWW) && git rm -rf doc
+	@ cd $(WWW) && cp -r ../$(RELEASE)/doc .
+	@ cd $(WWW) && git add $(DOC)
+	@ git commit -m "Saved and published documentation for release $(DATE)."
+# Done.
+	@ echo "Done."
+	@ echo "If happy, please type:"
+	@ echo "  \"make publish\"   to push this release to gitlab.inria.fr"
+	@ echo "  \"make export\"    to upload the manual to yquem.inria.fr"
+	@ echo "  \"make opam\"      to create a new opam package"
+	@ echo "Otherwise, please type:"
+	@ echo "  \"make undo\"      to undo this release"
 
-uninstall:
-	@if `$(bindir)/menhir$(EXE) --suggest-ocamlfind | tr -d '\r'` ; then \
-	  echo 'Un-installing MenhirLib and MenhirSdk via ocamlfind.' ; \
-	  ocamlfind remove menhirLib ; \
-	  ocamlfind remove menhirSdk ; \
-	fi
-	rm -rf $(bindir)/menhir$(EXE)
-	rm -rf $(libdir)
-	rm -rf $(docdir)
-	rm -rf $(mandir)/$(MANS)
+.PHONY: publish
+publish:
+# Push the new branch and tag to gitlab.inria.fr.
+	@ git push origin $(BRANCH)
+	@ git push --tags
+
+.PHONY: undo
+undo:
+# Delete the new branch and tag.
+	@ git branch -D $(BRANCH)
+	@ git tag -d $(DATE)
+# Delete the new commit on the master branch.
+	@ git reset --hard HEAD~1
+
+# -------------------------------------------------------------------------
+
+# Copying the documentation to François' page on yquem.
+
+# I would have like to serve these files on gitlab.inria.fr,
+# but I don't know how to make them look like native .html
+# and .pdf files.
+# Also, I don't know how to obtain a stable URL that always
+# points to the latest released version of the documentation.
+
+RSYNC   := scp -p -C
+TARGET  := yquem.inria.fr:public_html/menhir/
+PAGE    := /home/fpottier/dev/page
+
+# This assumes that [make release] has been run.
+
+.PHONY: export
+export:
+# Copy the documentation to yquem.
+	$(RSYNC) $(RELEASE)/doc/* $(TARGET)
+
+# -------------------------------------------------------------------------
+
+# Publishing a new version of the opam packages.
+
+# This entry assumes that [make release] has been run on the same day.
+
+# There are two opam packages: one for menhir (part of the OCaml opam
+# repository) and one for coq-menhirlib (part of the Coq opam repository).
+
+# You need a version of opam-publish that supports --packages-directory:
+#   git clone git@github.com:fpottier/opam-publish.git
+#   cd opam-publish
+#   git checkout 2.0
+#   opam pin add opam-publish.dev .
+
+# The following command should have been run once:
+#   opam publish repo add opam-coq-archive coq/opam-coq-archive
+
+# The package name.
+THIS     := menhir
+THAT     := coq-menhirlib
+
+# Menhir's repository URL (https).
+REPO     := https://gitlab.inria.fr/fpottier/$(THIS)
+
+# The archive URL (https).
+ARCHIVE  := $(REPO)/repository/$(DATE)/archive.tar.gz
+
+# Additional options for coq-menhirlib.
+COQ_MENHIRLIB_PUBLISH_OPTIONS := \
+  --repo coq/opam-coq-archive \
+  --packages-directory released/packages \
+
+.PHONY: opam
+opam:
+# Publish an opam description for menhir.
+	@ opam publish -v $(DATE) $(THIS).opam $(ARCHIVE)
+# Patch coq-menhirlib.opam.
+# We replace the string DATEDASH with $(DATEDASH).
+# We replace the string DATE with $(DATE).
+	@ cat $(THAT).opam \
+	  | sed -e 's/DATEDASH/$(DATEDASH)/g' \
+	  | sed -e 's/DATE/$(DATE)/g' \
+	  > $(THAT).patched.opam
+# Publish an opam description for coq-menhirlib.
+	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) $(THAT).patched.opam $(ARCHIVE)
+	@ rm $(THAT).patched.opam
+
+# -------------------------------------------------------------------------
+
+# Re-installing locally. This can overwrite an existing local installation.
+
+.PHONY: pin
+pin:
+	opam pin add menhir.dev .
+
+.PHONY: unpin
+unpin:
+	opam pin remove menhir
+
+# -------------------------------------------------------------------------
+
+# Running the Markdown linter on our Markdown files.
+
+# For an explanation of mdl's error messages, see:
+# https://github.com/mivok/markdownlint/blob/master/docs/RULES.md
+
+# We use the command [expand] to expand tabs to spaces.
+
+MDFILES = $(shell find . -name "*.md" | grep -v _build)
+
+.PHONY: mdl
+mdl:
+	@ for f in $(MDFILES) ; do \
+	  cp $$f $$f.bak && expand $$f.bak > $$f && rm $$f.bak ; \
+	done
+	@ mdl $(MDFILES)
