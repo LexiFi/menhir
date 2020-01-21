@@ -266,7 +266,7 @@ let compare_tokens (_token, prop) (_token', prop') =
   | PrecedenceLevel _, UndefinedPrecedence ->
       1
   | PrecedenceLevel (m, v, _, _), PrecedenceLevel (m', v', _, _) ->
-      compare_pairs InputFile.compare_input_files Pervasives.compare (m, v) (m', v')
+      compare_pairs InputFile.compare_input_files Generic.compare (m, v) (m', v')
 
 let print_tokens f g =
   (* Print the %token declarations. *)
@@ -345,7 +345,7 @@ let print_branch f g branch =
 let compare_branch_production_levels bpl bpl' =
   match bpl, bpl' with
   | ProductionLevel (m, l), ProductionLevel (m', l') ->
-      compare_pairs InputFile.compare_input_files Pervasives.compare (m, l) (m', l')
+      compare_pairs InputFile.compare_input_files Generic.compare (m, l) (m', l')
 
 let compare_branches (b : branch) (b' : branch) =
   compare_branch_production_levels b.branch_production_level b'.branch_production_level
