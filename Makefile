@@ -187,7 +187,7 @@ release:
 	@ git add dune-project
 	@ echo '\gdef\menhirversion{$(DATE)}' > doc/version.tex
 	@ git add doc/version.tex
-	@ echo 'Definition require_$(DATE) := tt.' >> coq-menhirlib/src/Version.v
+	@ echo 'Definition require_$(DATE) := tt.' > coq-menhirlib/src/Version.v
 	@ git add coq-menhirlib/src/Version.v
 # Compile the documentation.
 	@ echo "Building the documentation..."
