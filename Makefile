@@ -287,12 +287,11 @@ export:
 # The following command should have been run once:
 #   opam publish repo add opam-coq-archive coq/opam-coq-archive
 
-# The package name.
-THIS     := menhir
-THAT     := coq-menhirlib
+# An abbreviation.
+COQLIB   := coq-menhirlib
 
 # Menhir's repository URL (https).
-REPO     := https://gitlab.inria.fr/fpottier/$(THIS)
+REPO     := https://gitlab.inria.fr/fpottier/menhir
 
 # The archive URL (https).
 ARCHIVE  := $(REPO)/repository/$(DATE)/archive.tar.gz
@@ -304,18 +303,19 @@ COQ_MENHIRLIB_PUBLISH_OPTIONS := \
 
 .PHONY: opam
 opam:
-# Publish an opam description for menhir.
-	@ opam publish -v $(DATE) $(THIS).opam $(ARCHIVE)
+# Publish opam descriptions for menhirLib, menhirSdk, menhir.
+	@ opam publish -v $(DATE) menhirLib.opam menhirSdk.opam menhir.opam $(ARCHIVE)
 # Patch coq-menhirlib.opam.
 # We replace the string DATEDASH with $(DATEDASH).
 # We replace the string DATE with $(DATE).
-	@ cat $(THAT).opam \
+	@ cat $(COQLIB).opam \
 	  | sed -e 's/DATEDASH/$(DATEDASH)/g' \
 	  | sed -e 's/DATE/$(DATE)/g' \
-	  > $(THAT).patched.opam
+	  > $(COQLIB).patched.opam
 # Publish an opam description for coq-menhirlib.
-	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) $(THAT).patched.opam $(ARCHIVE)
-	@ rm $(THAT).patched.opam
+	@ opam publish -v $(DATE) $(COQ_MENHIRLIB_PUBLISH_OPTIONS) \
+	    $(COQLIB).patched.opam $(ARCHIVE)
+	@ rm $(COQLIB).patched.opam
 
 # -------------------------------------------------------------------------
 
@@ -323,11 +323,13 @@ opam:
 
 .PHONY: pin
 pin:
-	opam pin add menhir.dev .
+	opam pin --yes add menhirLib.dev . && \
+	opam pin --yes add menhirSdk.dev . && \
+	opam pin --yes add menhir.dev .
 
 .PHONY: unpin
 unpin:
-	opam pin remove menhir
+	opam pin --yes remove menhirLib menhirSdk menhir
 
 # -------------------------------------------------------------------------
 
