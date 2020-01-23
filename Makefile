@@ -180,7 +180,10 @@ release:
 	@ git rm -rf attic headers demos releases src/attic test --quiet
 # Remove files that do not need to (or must not) be distributed.
 # Keep check-tarball.sh because it is used below.
-	@ git rm Makefile HOWTO.md TODO* *.opam coq-menhirlib/descr --quiet
+	@ git rm \
+	    Makefile dune-workspace.versions \
+	    HOWTO.md TODO* \
+	    *.opam coq-menhirlib/descr --quiet
 # Hardcode Menhir's version number in the files that need it.
 	@ sed -i.bak 's/unreleased/$(DATE)/' dune-project
 	@ rm -f dune-project.bak
