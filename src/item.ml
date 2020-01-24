@@ -20,24 +20,54 @@ open Grammar
    production and the index of the bullet in the production's
    right-hand side. *)
 
-(* Both integers are packed into a single integer, using 7 bits for
-   the bullet position and the rest (usually 24 bits) for the
-   production index. These widths could be adjusted. *)
+(* Both integers are packed into a single integer, using 10 bits for
+   the bullet position and the rest (21 bits on a 32-bit architecture,
+   53 bits on a 64-bit architecture) for the production index. This
+   means that the length of a production must be at most 1023. This
+   means that the number of productions must be at most:
+   - 2^21, that is about 2 million, on a 32-bit architecture;
+   - 2^53, that is practically unlimited, on a 64-bit architecture. *)
 
-(* The function [export] is duplicated in [TableInterpreter]. Do not
-   modify it; or modify it here and there in a consistent manner. *)
+(* These static limits could be adjusted if necessary. It would also be
+   possible to dynamically adjust the limits depending on the grammar
+   at hand. In practice, the need for this has not been felt. *)
+
+(* WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING *)
+
+(* The constant [low_bits], [low_limits] and the function [export] are
+   duplicated in [lib/InspectionTableInterpreter.ml]. Do not modify them,
+   or modify them here and there in a consistent manner. *)
 
 type t = int
 
-let import (prod, pos) =
-  assert (pos < 128);
-  (Production.p2i prod) lsl 7 + pos
+let low_bits =
+  10 (* have you read the above warning? *)
+
+let low_limit =
+  1 lsl low_bits
 
 let export t =
-  (Production.i2p (t lsr 7), t mod 128)
+  (Production.i2p (t lsr low_bits), t mod low_limit)
+
+let import (prod, pos) =
+  assert (pos < low_limit);
+  (Production.p2i prod) lsl low_bits + pos
 
 let marshal (item : t) : int =
   item
+
+(* In order to guarantee that the assertion in [import] cannot fail,
+   we check up front that every production is reasonably short. *)
+
+let () =
+  Production.iter (fun index ->
+    let length = Production.length index in
+    if low_limit <= length then
+      Error.error
+        (Production.positions index)
+        "The length of this production is %d, which exceeds the limit of %d."
+        length (low_limit - 1)
+  )
 
 (* Comparison. *)
 
@@ -394,4 +424,3 @@ module Closure (L : Lookahead.S) = struct
   (* End of closure computation *)
 
 end
-

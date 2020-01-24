@@ -168,8 +168,14 @@ module Make
   type item =
       int * int
 
+  let low_bits =
+    10
+
+  let low_limit =
+    1 lsl low_bits
+
   let export t : item =
-    (t lsr 7, t mod 128)
+    (t lsr low_bits, t mod low_limit)
 
   let items s =
     (* Map [s] to its LR(0) core. *)

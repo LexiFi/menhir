@@ -3595,6 +3595,17 @@
    (chdir ../good (run menhir --explain -lg 2 -la 2 -lc 2 %{deps})))))
 (rule (alias parser_raw)
  (action (diff ../good/parser_raw.exp parser_raw.out)))
+(rule (target partest.opp.out) (deps ../good/partest.mly)
+ (action
+  (with-outputs-to %{target}
+   (chdir ../good (run menhir --only-preprocess %{deps})))))
+(rule (alias partest)
+ (action (diff ../good/partest.opp.exp partest.opp.out)))
+(rule (target partest.out) (deps ../good/partest.mly)
+ (action
+  (with-outputs-to %{target}
+   (chdir ../good (run menhir --explain -lg 2 -la 2 -lc 2 %{deps})))))
+(rule (alias partest) (action (diff ../good/partest.exp partest.out)))
 (rule (target permutation.opp.out) (deps ../good/permutation.mly)
  (action
   (with-outputs-to %{target}
@@ -4701,6 +4712,14 @@
  (action
   (diff ../bad/constant-inline-in-multiple-def-1.expected
    constant-inline-in-multiple-def-1.result)))
+(rule (target crazy_long_production.result)
+ (deps ../bad/crazy_long_production.mly)
+ (action
+  (with-outputs-to %{target}
+   (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
+(rule (alias crazy_long_production)
+ (action
+  (diff ../bad/crazy_long_production.expected crazy_long_production.result)))
 (rule (target cyclic-parameterized-definition.result)
  (deps ../bad/cyclic-parameterized-definition.mly)
  (action
@@ -5591,9 +5610,9 @@
   (alias condition_parser) (alias confluence) (alias confluence-fnf)
   (alias confluence-psl) (alias constant-arity-in-multiple-def-1)
   (alias constant-inline-in-multiple-def-1) (alias couac)
-  (alias cppo_ocamlbuild.1.6.0-cppo_parser) (alias cubicle.1.1.2-parser)
-  (alias cudf.0.9-cudf_type_parser) (alias cutdown)
-  (alias cyclic-parameterized-definition) (alias dario)
+  (alias cppo_ocamlbuild.1.6.0-cppo_parser) (alias crazy_long_production)
+  (alias cubicle.1.1.2-parser) (alias cudf.0.9-cudf_type_parser)
+  (alias cutdown) (alias cyclic-parameterized-definition) (alias dario)
   (alias datalog.0.5.2-topDownParser) (alias dbforge.2.0.1-sqml_parser)
   (alias debian-formats.0.1.1-DF822_parser) (alias declaration-error-a)
   (alias declaration-error-b) (alias dedukti.2.6.0-menhir_parser)
@@ -5694,7 +5713,7 @@
   (alias parameterized-start) (alias parameterized-start-weird)
   (alias parentheses) (alias parse_xquery) (alias parser_cocci_menhir)
   (alias parser_cpp) (alias parser_css) (alias parser_java) (alias parser_js)
-  (alias parser_php) (alias parser_raw) (alias permutation)
+  (alias parser_php) (alias parser_raw) (alias partest) (alias permutation)
   (alias permutation-growth) (alias petit-1) (alias photos) (alias phpparser)
   (alias pippijn) (alias positional-identifier-clash) (alias pre_parser)
   (alias prec-inline-non-tail) (alias prec-inline-prec) (alias prec_inline)

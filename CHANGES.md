@@ -1,5 +1,10 @@
 # Changes
 
+## 2020/XX/XX
+
+* Increase the maximum length of a production, which used to be 127,
+  up to 1023. Display a polite error message if this length is exceeded.
+
 ## 2020/01/21
 
 * There used to be a distinction between two slightly different ways of
