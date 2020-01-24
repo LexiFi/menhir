@@ -92,16 +92,21 @@ type inputs = input list
 type sexp =
   | A of string
   | L of sexp list
+  | Lnewline of sexp list
 
 let rec print_sexp ppf = function
   | A s ->
       Format.pp_print_string ppf s
   | L l ->
-      Format.fprintf ppf "@[<1>(%a)@]"
+      Format.fprintf ppf "@[<2>(%a)@]"
+        (Format.pp_print_list ~pp_sep:Format.pp_print_space print_sexp) l
+  | Lnewline l ->
+      Format.fprintf ppf "@[<v 2>(%a)@]"
         (Format.pp_print_list ~pp_sep:Format.pp_print_space print_sexp) l
 
 let print_sexp sexp =
-  Format.printf "@[<v>%a@,@]" print_sexp sexp
+  Format.printf "@[<v>%a@,@]" print_sexp sexp;
+  Format.print_newline()
 
 (* -------------------------------------------------------------------------- *)
 
@@ -247,7 +252,7 @@ let run (inputs : inputs) =
   print_sexp
     (L[A"alias";
        L[A"name"; A"test"];
-       L(A"deps" :: List.map (fun id -> L[A"alias"; A id]) ids)])
+       Lnewline(A"deps" :: List.map (fun id -> L[A"alias"; A id]) ids)])
 
 (* -------------------------------------------------------------------------- *)
 
