@@ -55,9 +55,14 @@ speed:
 versions:
 	@ dune build --workspace dune-workspace.versions @all @test
 
-# [make expected] updates the contents of the reference files (those
+# [make expected] updates the contents of *all* reference files (those
 # that contain the expected output of every test). This command should
 # be run only when you trust that every test produces correct output.
+
+# [make expected] can *update* existing reference files, but will not
+# *create* them when they do not exist. Also, it updates *all* files;
+# it cannot be used to refresh a few specific files. Both of these
+# limitations can be worked around by using the script [promote.sh].
 
 .PHONY: expected
 expected:
