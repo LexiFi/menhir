@@ -180,7 +180,7 @@ let logG, logA, logC =
   ref 0, ref 0, ref 0
 
 let timings =
-  ref false
+  ref None
 
 let filenames =
   ref StringSet.empty
@@ -355,7 +355,8 @@ let options = Arg.align [
   "--suggest-ocamlfind", Arg.Unit (fun () -> suggestion := SuggestUseOcamlfind),
                          " (deprecated)";
   "--table", Arg.Set table, " Use the table-based back-end";
-  "--timings", Arg.Set timings, " Display internal timings";
+  "--timings", Arg.Unit (fun () -> timings := Some stderr), " Output internal timings to stderr";
+  "--timings-to", Arg.String (fun filename -> timings := Some (open_out filename)), "<filename> Output internal timings to <filename>";
   "--trace", Arg.Set trace, " Generate tracing instructions";
   "--unused-precedence-levels", Arg.Set ignore_all_unused_precedence_levels, " Do not warn about unused precedence levels";
   "--unused-token", Arg.String ignore_unused_token, "<token> Do not warn that <token> is unused";

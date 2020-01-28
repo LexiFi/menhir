@@ -124,7 +124,7 @@ val logC: int (* diagnostics on the generated code *)
 
 (* Whether tasks should be timed. *)
 
-val timings: bool
+val timings: out_channel option
 
 (* The base name that should be used for the files that we create.
    This name can contain a path. *)
