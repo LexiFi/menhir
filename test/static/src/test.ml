@@ -144,6 +144,9 @@ let chdir directory action =
 let expecting_failure action =
   L[A"with-accepted-exit-codes"; L[A"not"; A"0"]; action]
 
+let possibly_expecting_failure positive action =
+  if positive then action else expecting_failure action
+
 (* -------------------------------------------------------------------------- *)
 
 (* Calling conventions for Menhir. *)
@@ -174,92 +177,78 @@ let extra source id =
 let menhir base flags =
   L(A"run" :: A"menhir" :: base @ flags @ [A"%{deps}"])
 
+(* Constructing (and printing) a pair of rules to run Menhir and compare its
+   output against an expected-output file.
+
+   [id]         name of the phony target
+   [positive]   positive or negative test?
+   [source]     directory where the .mly files reside
+   [basenames]  base names of the .mly files
+   [output]     name of the output file
+   [expected]   name of the expected-output file
+   [flags]      flags for Menhir
+
+ *)
+
+let run_and_compare id positive source basenames output expected flags =
+  (* Run Menhir. *)
+  print (rule
+    output
+    (source // mlys basenames)
+    (targeted (chdir source (
+      possibly_expecting_failure positive (
+        menhir (base basenames) flags
+  )))));
+  (* Check that the output coincides with what was expected. *)
+  print (phony id (
+    diff (source/expected) output
+  ))
+
 (* -------------------------------------------------------------------------- *)
 
 (* Running a negative test. *)
 
+(* This test takes place in the directory [bad]. *)
+
+(* The file %.flags   (if it exists) stores flags for Menhir.
+   The file %.result     stores the output of menhir.
+   The file %.expected     stores its expected output. *)
+
 let process_negative_test basenames : unit =
-
-  (* This test takes place in the directory [bad]. *)
-  let source = bad in
-
-  (* The base name of this test. *)
-  let id = id basenames in
-
-  (* The output and expected-output files. *)
-  let output = id ^ ".result"
-  and expected = id ^ ".expected" in
-
-  (* The flags. *)
-  let flags = extra source id in
-
   (* Run menhir. *)
-  rule
-    output
-    (source // mlys basenames)
-    (targeted (chdir source (
-      expecting_failure (
-        menhir (base basenames) flags))))
-  |> print;
-
-  (* Check that the output coincides with what was expected. *)
-  phony id (diff (source/expected) output) |> print
+  let source = bad in
+  let id = id basenames in
+  let output = id ^ ".result" in
+  let expected = id ^ ".expected" in
+  let flags = extra source id in
+  run_and_compare id false source basenames output expected flags
 
 (* -------------------------------------------------------------------------- *)
 
 (* Running a positive test. *)
 
-(*
-  Conventions:
-  The file %.flags   (if it exists) stores flags for Menhir.
-  The file %.opp.out stores the output of menhir --only-preprocess.
-  The file %.opp.exp stores its expected output.
-  The file %.out     stores the output of menhir.
-  The file %.exp     stores its expected output.
- *)
+(* This test takes place in the directory [good]. *)
+
+(* The file %.flags   (if it exists) stores flags for Menhir.
+   The file %.opp.out stores the output of menhir --only-preprocess.
+   The file %.opp.exp stores its expected output.
+   The file %.out     stores the output of menhir.
+   The file %.exp     stores its expected output. *)
 
 let process_positive_test basenames : unit =
-
-  (* This test takes place in the directory [good]. *)
   let source = good in
-
-  (* The base name of this test. *)
   let id = id basenames in
-
-  (* The flags. *)
   let flags = extra source id in
-
-  (* The output and expected-output files. *)
-  let output = id ^ ".opp.out"
-  and expected = id ^ ".opp.exp" in
-
   (* Run menhir --only-preprocess. *)
-  rule
-    output
-    (source // mlys basenames)
-    (targeted (chdir source (
-      menhir (base basenames) (A"--only-preprocess" :: flags))))
-  |> print;
-
-  (* Check that the output coincides with what was expected. *)
-  phony id (diff (source/expected) output) |> print;
-
-  (* The output and expected-output files. *)
-  let output = id ^ ".out"
-  and expected = id ^ ".exp" in
-
+  let output = id ^ ".opp.out" in
+  let expected = id ^ ".opp.exp" in
+  run_and_compare id true source basenames output expected
+    (A"--only-preprocess" :: flags);
   (* Run menhir. *)
-  rule
-    output
-    (source // mlys basenames)
-    (targeted (chdir source (
-      menhir (base basenames) (
-        A"--explain" :: A"-lg" :: A"2" :: A"-la" :: A"2" :: A"-lc" :: A"2" ::
-        flags))))
-  |> print;
-
-  (* Check that the output coincides with what was expected. *)
-  phony id (diff (source/expected) output) |> print
+  let output = id ^ ".out" in
+  let expected = id ^ ".exp" in
+  run_and_compare id true source basenames output expected
+    (atoms ["--explain"; "-lg"; "2"; "-la"; "2"; "-lc"; "2"] @ flags)
 
 (* -------------------------------------------------------------------------- *)
 
