@@ -3,6 +3,8 @@
 
 (* Note: the contents of the .conflicts and .automaton files are not tested. *)
 
+(* Note: no test in bad/ should have the same name as a test in good/. *)
+
 (* -------------------------------------------------------------------------- *)
 
 open Sys
@@ -211,15 +213,15 @@ let run_and_compare id positive source basenames output expected flags =
 (* This test takes place in the directory [bad]. *)
 
 (* The file %.flags   (if it exists) stores flags for Menhir.
-   The file %.result     stores the output of menhir.
-   The file %.expected     stores its expected output. *)
+   The file %.out     stores the output of menhir.
+   The file %.exp     stores its expected output. *)
 
 let process_negative_test basenames : unit =
   (* Run menhir. *)
   let source = bad in
   let id = id basenames in
-  let output = id ^ ".result" in
-  let expected = id ^ ".expected" in
+  let output = id ^ ".out" in
+  let expected = id ^ ".exp" in
   let flags = extra source id in
   run_and_compare id false source basenames output expected flags
 

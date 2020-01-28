@@ -27,7 +27,7 @@ do
     # A negative test.
     echo "Promoting $name..."
     # Create the expected-output file if it is missing.
-    touch test/static/$name.expected
+    touch test/static/$name.exp
     base=${name#bad/}
     # Ask dune to update the expected-output file.
     dune build @$base --auto-promote

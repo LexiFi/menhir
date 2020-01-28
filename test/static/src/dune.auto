@@ -6076,47 +6076,61 @@
 
 (rule (alias zyvaflo) (action (diff ../good/zyvaflo.exp zyvaflo.out)))
 
-(rule (target arity-error.result) (deps ../bad/arity-error.mly)
+(rule (target arity-error.out) (deps ../bad/arity-error.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias arity-error)
-  (action (diff ../bad/arity-error.expected arity-error.result)))
+  (action (diff ../bad/arity-error.exp arity-error.out)))
 
-(rule (target arity-self.result) (deps ../bad/arity-self.mly)
+(rule (target arity-self.out) (deps ../bad/arity-self.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias arity-self)
-  (action (diff ../bad/arity-self.expected arity-self.result)))
+  (action (diff ../bad/arity-self.exp arity-self.out)))
 
-(rule (target arity-split.result) (deps ../bad/arity-split.mly)
+(rule (target arity-split.out) (deps ../bad/arity-split.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias arity-split)
-  (action (diff ../bad/arity-split.expected arity-split.result)))
+  (action (diff ../bad/arity-split.exp arity-split.out)))
 
-(rule (target bad-arity.result) (deps ../bad/bad-arity.mly)
+(rule (target bad-arity.out) (deps ../bad/bad-arity.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
-(rule (alias bad-arity)
-  (action (diff ../bad/bad-arity.expected bad-arity.result)))
+(rule (alias bad-arity) (action (diff ../bad/bad-arity.exp bad-arity.out)))
 
-(rule (target bad-dollar.result) (deps ../bad/bad-dollar.mly)
+(rule (target bad-dollar.out) (deps ../bad/bad-dollar.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias bad-dollar)
-  (action (diff ../bad/bad-dollar.expected bad-dollar.result)))
+  (action (diff ../bad/bad-dollar.exp bad-dollar.out)))
 
-(rule (target calc-no-dollars.result) (deps ../bad/calc-no-dollars.mly)
+(rule (target bad_obc.out) (deps ../bad/bad_obc.mly)
+  (action
+    (with-outputs-to %{target}
+      (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
+
+(rule (alias bad_obc) (action (diff ../bad/bad_obc.exp bad_obc.out)))
+
+(rule (target bad_uppercase.out) (deps ../bad/bad_uppercase.mly)
+  (action
+    (with-outputs-to %{target}
+      (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
+
+(rule (alias bad_uppercase)
+  (action (diff ../bad/bad_uppercase.exp bad_uppercase.out)))
+
+(rule (target calc-no-dollars.out) (deps ../bad/calc-no-dollars.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad
@@ -6124,9 +6138,9 @@
           (run menhir %{read-lines:../bad/calc-no-dollars.flags} %{deps}))))))
 
 (rule (alias calc-no-dollars)
-  (action (diff ../bad/calc-no-dollars.expected calc-no-dollars.result)))
+  (action (diff ../bad/calc-no-dollars.exp calc-no-dollars.out)))
 
-(rule (target constant-arity-in-multiple-def-1.result)
+(rule (target constant-arity-in-multiple-def-1.out)
   (deps ../bad/constant-arity-in-multiple-def-1.mly
     ../bad/constant-arity-in-multiple-def-2.mly)
   (action
@@ -6137,10 +6151,10 @@
 
 (rule (alias constant-arity-in-multiple-def-1)
   (action
-    (diff ../bad/constant-arity-in-multiple-def-1.expected
-      constant-arity-in-multiple-def-1.result)))
+    (diff ../bad/constant-arity-in-multiple-def-1.exp
+      constant-arity-in-multiple-def-1.out)))
 
-(rule (target constant-inline-in-multiple-def-1.result)
+(rule (target constant-inline-in-multiple-def-1.out)
   (deps ../bad/constant-inline-in-multiple-def-1.mly
     ../bad/constant-inline-in-multiple-def-2.mly)
   (action
@@ -6151,20 +6165,19 @@
 
 (rule (alias constant-inline-in-multiple-def-1)
   (action
-    (diff ../bad/constant-inline-in-multiple-def-1.expected
-      constant-inline-in-multiple-def-1.result)))
+    (diff ../bad/constant-inline-in-multiple-def-1.exp
+      constant-inline-in-multiple-def-1.out)))
 
-(rule (target crazy_long_production.result)
+(rule (target crazy_long_production.out)
   (deps ../bad/crazy_long_production.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias crazy_long_production)
-  (action
-    (diff ../bad/crazy_long_production.expected crazy_long_production.result)))
+  (action (diff ../bad/crazy_long_production.exp crazy_long_production.out)))
 
-(rule (target cyclic-parameterized-definition.result)
+(rule (target cyclic-parameterized-definition.out)
   (deps ../bad/cyclic-parameterized-definition.mly)
   (action
     (with-outputs-to %{target}
@@ -6172,30 +6185,26 @@
 
 (rule (alias cyclic-parameterized-definition)
   (action
-    (diff ../bad/cyclic-parameterized-definition.expected
-      cyclic-parameterized-definition.result)))
+    (diff ../bad/cyclic-parameterized-definition.exp
+      cyclic-parameterized-definition.out)))
 
-(rule (target declaration-error-a.result)
-  (deps ../bad/declaration-error-a.mly)
+(rule (target declaration-error-a.out) (deps ../bad/declaration-error-a.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias declaration-error-a)
-  (action
-    (diff ../bad/declaration-error-a.expected declaration-error-a.result)))
+  (action (diff ../bad/declaration-error-a.exp declaration-error-a.out)))
 
-(rule (target declaration-error-b.result)
-  (deps ../bad/declaration-error-b.mly)
+(rule (target declaration-error-b.out) (deps ../bad/declaration-error-b.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias declaration-error-b)
-  (action
-    (diff ../bad/declaration-error-b.expected declaration-error-b.result)))
+  (action (diff ../bad/declaration-error-b.exp declaration-error-b.out)))
 
-(rule (target dont-use-private-symbol-1.result)
+(rule (target dont-use-private-symbol-1.out)
   (deps ../bad/dont-use-private-symbol-1.mly
     ../bad/dont-use-private-symbol-2.mly)
   (action
@@ -6206,142 +6215,135 @@
 
 (rule (alias dont-use-private-symbol-1)
   (action
-    (diff ../bad/dont-use-private-symbol-1.expected
-      dont-use-private-symbol-1.result)))
+    (diff ../bad/dont-use-private-symbol-1.exp dont-use-private-symbol-1.out)))
 
-(rule (target double-equals.result) (deps ../bad/double-equals.mly)
+(rule (target double-equals.out) (deps ../bad/double-equals.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias double-equals)
-  (action (diff ../bad/double-equals.expected double-equals.result)))
+  (action (diff ../bad/double-equals.exp double-equals.out)))
 
-(rule (target duplicate-formal.result) (deps ../bad/duplicate-formal.mly)
+(rule (target duplicate-formal.out) (deps ../bad/duplicate-formal.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias duplicate-formal)
-  (action (diff ../bad/duplicate-formal.expected duplicate-formal.result)))
+  (action (diff ../bad/duplicate-formal.exp duplicate-formal.out)))
 
-(rule (target epsilon-cycle.result) (deps ../bad/epsilon-cycle.mly)
+(rule (target epsilon-cycle.out) (deps ../bad/epsilon-cycle.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias epsilon-cycle)
-  (action (diff ../bad/epsilon-cycle.expected epsilon-cycle.result)))
+  (action (diff ../bad/epsilon-cycle.exp epsilon-cycle.out)))
 
-(rule (target error-reserved.result) (deps ../bad/error-reserved.mly)
+(rule (target error-reserved.out) (deps ../bad/error-reserved.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias error-reserved)
-  (action (diff ../bad/error-reserved.expected error-reserved.result)))
+  (action (diff ../bad/error-reserved.exp error-reserved.out)))
 
-(rule (target expansion-capture.result) (deps ../bad/expansion-capture.mly)
+(rule (target expansion-capture.out) (deps ../bad/expansion-capture.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias expansion-capture)
-  (action (diff ../bad/expansion-capture.expected expansion-capture.result)))
+  (action (diff ../bad/expansion-capture.exp expansion-capture.out)))
 
-(rule (target forbidden-dollar.result) (deps ../bad/forbidden-dollar.mly)
+(rule (target forbidden-dollar.out) (deps ../bad/forbidden-dollar.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias forbidden-dollar)
-  (action (diff ../bad/forbidden-dollar.expected forbidden-dollar.result)))
+  (action (diff ../bad/forbidden-dollar.exp forbidden-dollar.out)))
 
-(rule (target forbidden-dollar-bis.result)
+(rule (target forbidden-dollar-bis.out)
   (deps ../bad/forbidden-dollar-bis.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias forbidden-dollar-bis)
-  (action
-    (diff ../bad/forbidden-dollar-bis.expected forbidden-dollar-bis.result)))
+  (action (diff ../bad/forbidden-dollar-bis.exp forbidden-dollar-bis.out)))
 
-(rule (target forbidden-pos.result) (deps ../bad/forbidden-pos.mly)
+(rule (target forbidden-pos.out) (deps ../bad/forbidden-pos.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias forbidden-pos)
-  (action (diff ../bad/forbidden-pos.expected forbidden-pos.result)))
+  (action (diff ../bad/forbidden-pos.exp forbidden-pos.out)))
 
-(rule (target ill-sorted-attribute.result)
+(rule (target ill-sorted-attribute.out)
   (deps ../bad/ill-sorted-attribute.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias ill-sorted-attribute)
-  (action
-    (diff ../bad/ill-sorted-attribute.expected ill-sorted-attribute.result)))
+  (action (diff ../bad/ill-sorted-attribute.exp ill-sorted-attribute.out)))
 
-(rule (target inline-attribute-def.result)
+(rule (target inline-attribute-def.out)
   (deps ../bad/inline-attribute-def.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias inline-attribute-def)
-  (action
-    (diff ../bad/inline-attribute-def.expected inline-attribute-def.result)))
+  (action (diff ../bad/inline-attribute-def.exp inline-attribute-def.out)))
 
-(rule (target inline-attribute-use.result)
+(rule (target inline-attribute-use.out)
   (deps ../bad/inline-attribute-use.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias inline-attribute-use)
-  (action
-    (diff ../bad/inline-attribute-use.expected inline-attribute-use.result)))
+  (action (diff ../bad/inline-attribute-use.exp inline-attribute-use.out)))
 
-(rule (target inline-cycle.result) (deps ../bad/inline-cycle.mly)
+(rule (target inline-cycle.out) (deps ../bad/inline-cycle.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias inline-cycle)
-  (action (diff ../bad/inline-cycle.expected inline-cycle.result)))
+  (action (diff ../bad/inline-cycle.exp inline-cycle.out)))
 
-(rule (target inline-cycle-complex.result)
+(rule (target inline-cycle-complex.out)
   (deps ../bad/inline-cycle-complex.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias inline-cycle-complex)
-  (action
-    (diff ../bad/inline-cycle-complex.expected inline-cycle-complex.result)))
+  (action (diff ../bad/inline-cycle-complex.exp inline-cycle-complex.out)))
 
-(rule (target inline-cycle-long.result) (deps ../bad/inline-cycle-long.mly)
+(rule (target inline-cycle-long.out) (deps ../bad/inline-cycle-long.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias inline-cycle-long)
-  (action (diff ../bad/inline-cycle-long.expected inline-cycle-long.result)))
+  (action (diff ../bad/inline-cycle-long.exp inline-cycle-long.out)))
 
-(rule (target inline-minimal-cycle.result)
+(rule (target inline-minimal-cycle.out)
   (deps ../bad/inline-minimal-cycle.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias inline-minimal-cycle)
-  (action
-    (diff ../bad/inline-minimal-cycle.expected inline-minimal-cycle.result)))
+  (action (diff ../bad/inline-minimal-cycle.exp inline-minimal-cycle.out)))
 
-(rule (target invalid-declarations-a.result)
+(rule (target invalid-declarations-a.out)
   (deps ../bad/invalid-declarations-a.mly)
   (action
     (with-outputs-to %{target}
@@ -6349,10 +6351,9 @@
 
 (rule (alias invalid-declarations-a)
   (action
-    (diff ../bad/invalid-declarations-a.expected
-      invalid-declarations-a.result)))
+    (diff ../bad/invalid-declarations-a.exp invalid-declarations-a.out)))
 
-(rule (target invalid-declarations-b.result)
+(rule (target invalid-declarations-b.out)
   (deps ../bad/invalid-declarations-b.mly)
   (action
     (with-outputs-to %{target}
@@ -6360,10 +6361,9 @@
 
 (rule (alias invalid-declarations-b)
   (action
-    (diff ../bad/invalid-declarations-b.expected
-      invalid-declarations-b.result)))
+    (diff ../bad/invalid-declarations-b.exp invalid-declarations-b.out)))
 
-(rule (target invalid-declarations-c.result)
+(rule (target invalid-declarations-c.out)
   (deps ../bad/invalid-declarations-c.mly)
   (action
     (with-outputs-to %{target}
@@ -6371,10 +6371,9 @@
 
 (rule (alias invalid-declarations-c)
   (action
-    (diff ../bad/invalid-declarations-c.expected
-      invalid-declarations-c.result)))
+    (diff ../bad/invalid-declarations-c.exp invalid-declarations-c.out)))
 
-(rule (target invalid-declarations-d.result)
+(rule (target invalid-declarations-d.out)
   (deps ../bad/invalid-declarations-d.mly)
   (action
     (with-outputs-to %{target}
@@ -6382,10 +6381,9 @@
 
 (rule (alias invalid-declarations-d)
   (action
-    (diff ../bad/invalid-declarations-d.expected
-      invalid-declarations-d.result)))
+    (diff ../bad/invalid-declarations-d.exp invalid-declarations-d.out)))
 
-(rule (target invalid-declarations-e.result)
+(rule (target invalid-declarations-e.out)
   (deps ../bad/invalid-declarations-e.mly)
   (action
     (with-outputs-to %{target}
@@ -6393,10 +6391,9 @@
 
 (rule (alias invalid-declarations-e)
   (action
-    (diff ../bad/invalid-declarations-e.expected
-      invalid-declarations-e.result)))
+    (diff ../bad/invalid-declarations-e.exp invalid-declarations-e.out)))
 
-(rule (target invalid-point-free-action.result)
+(rule (target invalid-point-free-action.out)
   (deps ../bad/invalid-point-free-action.mly)
   (action
     (with-outputs-to %{target}
@@ -6404,42 +6401,39 @@
 
 (rule (alias invalid-point-free-action)
   (action
-    (diff ../bad/invalid-point-free-action.expected
-      invalid-point-free-action.result)))
+    (diff ../bad/invalid-point-free-action.exp invalid-point-free-action.out)))
 
-(rule (target invalid-token-in-prec.result)
+(rule (target invalid-token-in-prec.out)
   (deps ../bad/invalid-token-in-prec.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias invalid-token-in-prec)
-  (action
-    (diff ../bad/invalid-token-in-prec.expected invalid-token-in-prec.result)))
+  (action (diff ../bad/invalid-token-in-prec.exp invalid-token-in-prec.out)))
 
-(rule (target jh.result) (deps ../bad/jh.mly)
-  (action
-    (with-outputs-to %{target}
-      (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
-
-(rule (alias jh) (action (diff ../bad/jh.expected jh.result)))
-
-(rule (target jh-three.result) (deps ../bad/jh-three.mly)
+(rule (target jh.out) (deps ../bad/jh.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
-(rule (alias jh-three)
-  (action (diff ../bad/jh-three.expected jh-three.result)))
+(rule (alias jh) (action (diff ../bad/jh.exp jh.out)))
 
-(rule (target jh-two.result) (deps ../bad/jh-two.mly)
+(rule (target jh-three.out) (deps ../bad/jh-three.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
-(rule (alias jh-two) (action (diff ../bad/jh-two.expected jh-two.result)))
+(rule (alias jh-three) (action (diff ../bad/jh-three.exp jh-three.out)))
 
-(rule (target join-param-1.result)
+(rule (target jh-two.out) (deps ../bad/jh-two.mly)
+  (action
+    (with-outputs-to %{target}
+      (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
+
+(rule (alias jh-two) (action (diff ../bad/jh-two.exp jh-two.out)))
+
+(rule (target join-param-1.out)
   (deps ../bad/join-param-1.mly ../bad/join-param-2.mly)
   (action
     (with-outputs-to %{target}
@@ -6448,24 +6442,24 @@
           (run menhir --base join-param-1 %{deps}))))))
 
 (rule (alias join-param-1)
-  (action (diff ../bad/join-param-1.expected join-param-1.result)))
+  (action (diff ../bad/join-param-1.exp join-param-1.out)))
 
-(rule (target keyword.result) (deps ../bad/keyword.mly)
+(rule (target keyword.out) (deps ../bad/keyword.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
-(rule (alias keyword) (action (diff ../bad/keyword.expected keyword.result)))
+(rule (alias keyword) (action (diff ../bad/keyword.exp keyword.out)))
 
-(rule (target keyword-in-header.result) (deps ../bad/keyword-in-header.mly)
+(rule (target keyword-in-header.out) (deps ../bad/keyword-in-header.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias keyword-in-header)
-  (action (diff ../bad/keyword-in-header.expected keyword-in-header.result)))
+  (action (diff ../bad/keyword-in-header.exp keyword-in-header.out)))
 
-(rule (target location-keyword-errors.result)
+(rule (target location-keyword-errors.out)
   (deps ../bad/location-keyword-errors.mly)
   (action
     (with-outputs-to %{target}
@@ -6473,42 +6467,41 @@
 
 (rule (alias location-keyword-errors)
   (action
-    (diff ../bad/location-keyword-errors.expected
-      location-keyword-errors.result)))
+    (diff ../bad/location-keyword-errors.exp location-keyword-errors.out)))
 
-(rule (target lots-of-errors-a.result) (deps ../bad/lots-of-errors-a.mly)
+(rule (target lots-of-errors-a.out) (deps ../bad/lots-of-errors-a.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias lots-of-errors-a)
-  (action (diff ../bad/lots-of-errors-a.expected lots-of-errors-a.result)))
+  (action (diff ../bad/lots-of-errors-a.exp lots-of-errors-a.out)))
 
-(rule (target lots-of-errors-b.result) (deps ../bad/lots-of-errors-b.mly)
+(rule (target lots-of-errors-b.out) (deps ../bad/lots-of-errors-b.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias lots-of-errors-b)
-  (action (diff ../bad/lots-of-errors-b.expected lots-of-errors-b.result)))
+  (action (diff ../bad/lots-of-errors-b.exp lots-of-errors-b.out)))
 
-(rule (target lots-of-errors-c.result) (deps ../bad/lots-of-errors-c.mly)
+(rule (target lots-of-errors-c.out) (deps ../bad/lots-of-errors-c.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias lots-of-errors-c)
-  (action (diff ../bad/lots-of-errors-c.expected lots-of-errors-c.result)))
+  (action (diff ../bad/lots-of-errors-c.exp lots-of-errors-c.out)))
 
-(rule (target lowercase-token.result) (deps ../bad/lowercase-token.mly)
+(rule (target lowercase-token.out) (deps ../bad/lowercase-token.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias lowercase-token)
-  (action (diff ../bad/lowercase-token.expected lowercase-token.result)))
+  (action (diff ../bad/lowercase-token.exp lowercase-token.out)))
 
-(rule (target missing-percentpercent.result)
+(rule (target missing-percentpercent.out)
   (deps ../bad/missing-percentpercent.mly)
   (action
     (with-outputs-to %{target}
@@ -6516,20 +6509,17 @@
 
 (rule (alias missing-percentpercent)
   (action
-    (diff ../bad/missing-percentpercent.expected
-      missing-percentpercent.result)))
+    (diff ../bad/missing-percentpercent.exp missing-percentpercent.out)))
 
-(rule (target multiple-precedence.result)
-  (deps ../bad/multiple-precedence.mly)
+(rule (target multiple-precedence.out) (deps ../bad/multiple-precedence.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias multiple-precedence)
-  (action
-    (diff ../bad/multiple-precedence.expected multiple-precedence.result)))
+  (action (diff ../bad/multiple-precedence.exp multiple-precedence.out)))
 
-(rule (target multiple-producers-with-same-name.result)
+(rule (target multiple-producers-with-same-name.out)
   (deps ../bad/multiple-producers-with-same-name.mly)
   (action
     (with-outputs-to %{target}
@@ -6537,10 +6527,10 @@
 
 (rule (alias multiple-producers-with-same-name)
   (action
-    (diff ../bad/multiple-producers-with-same-name.expected
-      multiple-producers-with-same-name.result)))
+    (diff ../bad/multiple-producers-with-same-name.exp
+      multiple-producers-with-same-name.out)))
 
-(rule (target multiple-symbol-definition.result)
+(rule (target multiple-symbol-definition.out)
   (deps ../bad/multiple-symbol-definition.mly)
   (action
     (with-outputs-to %{target}
@@ -6548,18 +6538,18 @@
 
 (rule (alias multiple-symbol-definition)
   (action
-    (diff ../bad/multiple-symbol-definition.expected
-      multiple-symbol-definition.result)))
+    (diff ../bad/multiple-symbol-definition.exp
+      multiple-symbol-definition.out)))
 
-(rule (target multiple-token.result) (deps ../bad/multiple-token.mly)
+(rule (target multiple-token.out) (deps ../bad/multiple-token.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias multiple-token)
-  (action (diff ../bad/multiple-token.expected multiple-token.result)))
+  (action (diff ../bad/multiple-token.exp multiple-token.out)))
 
-(rule (target multiple-type-definition.result)
+(rule (target multiple-type-definition.out)
   (deps ../bad/multiple-type-definition.mly)
   (action
     (with-outputs-to %{target}
@@ -6567,10 +6557,9 @@
 
 (rule (alias multiple-type-definition)
   (action
-    (diff ../bad/multiple-type-definition.expected
-      multiple-type-definition.result)))
+    (diff ../bad/multiple-type-definition.exp multiple-type-definition.out)))
 
-(rule (target multiple-type-definition-modules-1.result)
+(rule (target multiple-type-definition-modules-1.out)
   (deps ../bad/multiple-type-definition-modules-1.mly
     ../bad/multiple-type-definition-modules-2.mly)
   (action
@@ -6581,10 +6570,10 @@
 
 (rule (alias multiple-type-definition-modules-1)
   (action
-    (diff ../bad/multiple-type-definition-modules-1.expected
-      multiple-type-definition-modules-1.result)))
+    (diff ../bad/multiple-type-definition-modules-1.exp
+      multiple-type-definition-modules-1.out)))
 
-(rule (target new-syntax-parentheses.result)
+(rule (target new-syntax-parentheses.out)
   (deps ../bad/new-syntax-parentheses.mly)
   (action
     (with-outputs-to %{target}
@@ -6592,10 +6581,9 @@
 
 (rule (alias new-syntax-parentheses)
   (action
-    (diff ../bad/new-syntax-parentheses.expected
-      new-syntax-parentheses.result)))
+    (diff ../bad/new-syntax-parentheses.exp new-syntax-parentheses.out)))
 
-(rule (target new-syntax-parentheses-bis.result)
+(rule (target new-syntax-parentheses-bis.out)
   (deps ../bad/new-syntax-parentheses-bis.mly)
   (action
     (with-outputs-to %{target}
@@ -6603,36 +6591,33 @@
 
 (rule (alias new-syntax-parentheses-bis)
   (action
-    (diff ../bad/new-syntax-parentheses-bis.expected
-      new-syntax-parentheses-bis.result)))
+    (diff ../bad/new-syntax-parentheses-bis.exp
+      new-syntax-parentheses-bis.out)))
 
-(rule (target no-start-and-inline.result)
-  (deps ../bad/no-start-and-inline.mly)
+(rule (target no-start-and-inline.out) (deps ../bad/no-start-and-inline.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias no-start-and-inline)
-  (action
-    (diff ../bad/no-start-and-inline.expected no-start-and-inline.result)))
+  (action (diff ../bad/no-start-and-inline.exp no-start-and-inline.out)))
 
-(rule (target no-start-symbol.result) (deps ../bad/no-start-symbol.mly)
+(rule (target no-start-symbol.out) (deps ../bad/no-start-symbol.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias no-start-symbol)
-  (action (diff ../bad/no-start-symbol.expected no-start-symbol.result)))
+  (action (diff ../bad/no-start-symbol.exp no-start-symbol.out)))
 
-(rule (target no-tokens.result) (deps ../bad/no-tokens.mly)
+(rule (target no-tokens.out) (deps ../bad/no-tokens.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
-(rule (alias no-tokens)
-  (action (diff ../bad/no-tokens.expected no-tokens.result)))
+(rule (alias no-tokens) (action (diff ../bad/no-tokens.exp no-tokens.out)))
 
-(rule (target non-terminal-multiple-branch-groups.result)
+(rule (target non-terminal-multiple-branch-groups.out)
   (deps ../bad/non-terminal-multiple-branch-groups.mly)
   (action
     (with-outputs-to %{target}
@@ -6640,10 +6625,10 @@
 
 (rule (alias non-terminal-multiple-branch-groups)
   (action
-    (diff ../bad/non-terminal-multiple-branch-groups.expected
-      non-terminal-multiple-branch-groups.result)))
+    (diff ../bad/non-terminal-multiple-branch-groups.exp
+      non-terminal-multiple-branch-groups.out)))
 
-(rule (target non-terminal-multiple-definitions.result)
+(rule (target non-terminal-multiple-definitions.out)
   (deps ../bad/non-terminal-multiple-definitions.mly)
   (action
     (with-outputs-to %{target}
@@ -6651,10 +6636,10 @@
 
 (rule (alias non-terminal-multiple-definitions)
   (action
-    (diff ../bad/non-terminal-multiple-definitions.expected
-      non-terminal-multiple-definitions.result)))
+    (diff ../bad/non-terminal-multiple-definitions.exp
+      non-terminal-multiple-definitions.out)))
 
-(rule (target non-terminals-tokens-overlap-1.result)
+(rule (target non-terminals-tokens-overlap-1.out)
   (deps ../bad/non-terminals-tokens-overlap-1.mly
     ../bad/non-terminals-tokens-overlap-2.mly)
   (action
@@ -6665,10 +6650,10 @@
 
 (rule (alias non-terminals-tokens-overlap-1)
   (action
-    (diff ../bad/non-terminals-tokens-overlap-1.expected
-      non-terminals-tokens-overlap-1.result)))
+    (diff ../bad/non-terminals-tokens-overlap-1.exp
+      non-terminals-tokens-overlap-1.out)))
 
-(rule (target non-terminals-tokens-overlap-other-case-1.result)
+(rule (target non-terminals-tokens-overlap-other-case-1.out)
   (deps ../bad/non-terminals-tokens-overlap-other-case-1.mly
     ../bad/non-terminals-tokens-overlap-other-case-2.mly)
   (action
@@ -6680,10 +6665,10 @@
 
 (rule (alias non-terminals-tokens-overlap-other-case-1)
   (action
-    (diff ../bad/non-terminals-tokens-overlap-other-case-1.expected
-      non-terminals-tokens-overlap-other-case-1.result)))
+    (diff ../bad/non-terminals-tokens-overlap-other-case-1.exp
+      non-terminals-tokens-overlap-other-case-1.out)))
 
-(rule (target non-terminals-tokens-overlap-simple.result)
+(rule (target non-terminals-tokens-overlap-simple.out)
   (deps ../bad/non-terminals-tokens-overlap-simple.mly)
   (action
     (with-outputs-to %{target}
@@ -6691,28 +6676,27 @@
 
 (rule (alias non-terminals-tokens-overlap-simple)
   (action
-    (diff ../bad/non-terminals-tokens-overlap-simple.expected
-      non-terminals-tokens-overlap-simple.result)))
+    (diff ../bad/non-terminals-tokens-overlap-simple.exp
+      non-terminals-tokens-overlap-simple.out)))
 
-(rule (target nonlinear-pattern.result) (deps ../bad/nonlinear-pattern.mly)
+(rule (target nonlinear-pattern.out) (deps ../bad/nonlinear-pattern.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias nonlinear-pattern)
-  (action (diff ../bad/nonlinear-pattern.expected nonlinear-pattern.result)))
+  (action (diff ../bad/nonlinear-pattern.exp nonlinear-pattern.out)))
 
-(rule (target nonlinear-pattern-pun.result)
+(rule (target nonlinear-pattern-pun.out)
   (deps ../bad/nonlinear-pattern-pun.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias nonlinear-pattern-pun)
-  (action
-    (diff ../bad/nonlinear-pattern-pun.expected nonlinear-pattern-pun.result)))
+  (action (diff ../bad/nonlinear-pattern-pun.exp nonlinear-pattern-pun.out)))
 
-(rule (target nonlinear-pattern-tuple.result)
+(rule (target nonlinear-pattern-tuple.out)
   (deps ../bad/nonlinear-pattern-tuple.mly)
   (action
     (with-outputs-to %{target}
@@ -6720,59 +6704,49 @@
 
 (rule (alias nonlinear-pattern-tuple)
   (action
-    (diff ../bad/nonlinear-pattern-tuple.expected
-      nonlinear-pattern-tuple.result)))
+    (diff ../bad/nonlinear-pattern-tuple.exp nonlinear-pattern-tuple.out)))
 
-(rule (target nonsense.result) (deps ../bad/nonsense.mly)
+(rule (target nonsense.out) (deps ../bad/nonsense.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
-(rule (alias nonsense)
-  (action (diff ../bad/nonsense.expected nonsense.result)))
+(rule (alias nonsense) (action (diff ../bad/nonsense.exp nonsense.out)))
 
-(rule (target not-well-founded-rec.result)
+(rule (target not-well-founded-rec.out)
   (deps ../bad/not-well-founded-rec.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias not-well-founded-rec)
-  (action
-    (diff ../bad/not-well-founded-rec.expected not-well-founded-rec.result)))
+  (action (diff ../bad/not-well-founded-rec.exp not-well-founded-rec.out)))
 
-(rule (target obc.result) (deps ../bad/obc.mly)
-  (action
-    (with-outputs-to %{target}
-      (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
-
-(rule (alias obc) (action (diff ../bad/obc.expected obc.result)))
-
-(rule (target obscene-dollar.result) (deps ../bad/obscene-dollar.mly)
+(rule (target obscene-dollar.out) (deps ../bad/obscene-dollar.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias obscene-dollar)
-  (action (diff ../bad/obscene-dollar.expected obscene-dollar.result)))
+  (action (diff ../bad/obscene-dollar.exp obscene-dollar.out)))
 
-(rule (target ocaml-keyword.result) (deps ../bad/ocaml-keyword.mly)
+(rule (target ocaml-keyword.out) (deps ../bad/ocaml-keyword.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias ocaml-keyword)
-  (action (diff ../bad/ocaml-keyword.expected ocaml-keyword.result)))
+  (action (diff ../bad/ocaml-keyword.exp ocaml-keyword.out)))
 
-(rule (target occurs-check.result) (deps ../bad/occurs-check.mly)
+(rule (target occurs-check.out) (deps ../bad/occurs-check.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias occurs-check)
-  (action (diff ../bad/occurs-check.expected occurs-check.result)))
+  (action (diff ../bad/occurs-check.exp occurs-check.out)))
 
-(rule (target on-error-reduce-ill-kinded.result)
+(rule (target on-error-reduce-ill-kinded.out)
   (deps ../bad/on-error-reduce-ill-kinded.mly)
   (action
     (with-outputs-to %{target}
@@ -6780,10 +6754,10 @@
 
 (rule (alias on-error-reduce-ill-kinded)
   (action
-    (diff ../bad/on-error-reduce-ill-kinded.expected
-      on-error-reduce-ill-kinded.result)))
+    (diff ../bad/on-error-reduce-ill-kinded.exp
+      on-error-reduce-ill-kinded.out)))
 
-(rule (target on-error-reduce-nonexistent.result)
+(rule (target on-error-reduce-nonexistent.out)
   (deps ../bad/on-error-reduce-nonexistent.mly)
   (action
     (with-outputs-to %{target}
@@ -6791,10 +6765,10 @@
 
 (rule (alias on-error-reduce-nonexistent)
   (action
-    (diff ../bad/on-error-reduce-nonexistent.expected
-      on-error-reduce-nonexistent.result)))
+    (diff ../bad/on-error-reduce-nonexistent.exp
+      on-error-reduce-nonexistent.out)))
 
-(rule (target on-error-reduce-nonexistent-argument.result)
+(rule (target on-error-reduce-nonexistent-argument.out)
   (deps ../bad/on-error-reduce-nonexistent-argument.mly)
   (action
     (with-outputs-to %{target}
@@ -6802,27 +6776,25 @@
 
 (rule (alias on-error-reduce-nonexistent-argument)
   (action
-    (diff ../bad/on-error-reduce-nonexistent-argument.expected
-      on-error-reduce-nonexistent-argument.result)))
+    (diff ../bad/on-error-reduce-nonexistent-argument.exp
+      on-error-reduce-nonexistent-argument.out)))
 
-(rule (target option.result) (deps ../bad/option.mly)
+(rule (target option.out) (deps ../bad/option.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
-(rule (alias option) (action (diff ../bad/option.expected option.result)))
+(rule (alias option) (action (diff ../bad/option.exp option.out)))
 
-(rule (target parameterized-start.result)
-  (deps ../bad/parameterized-start.mly)
+(rule (target parameterized-start.out) (deps ../bad/parameterized-start.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias parameterized-start)
-  (action
-    (diff ../bad/parameterized-start.expected parameterized-start.result)))
+  (action (diff ../bad/parameterized-start.exp parameterized-start.out)))
 
-(rule (target parameterized-start-weird.result)
+(rule (target parameterized-start-weird.out)
   (deps ../bad/parameterized-start-weird.mly)
   (action
     (with-outputs-to %{target}
@@ -6830,18 +6802,17 @@
 
 (rule (alias parameterized-start-weird)
   (action
-    (diff ../bad/parameterized-start-weird.expected
-      parameterized-start-weird.result)))
+    (diff ../bad/parameterized-start-weird.exp parameterized-start-weird.out)))
 
-(rule (target parentheses.result) (deps ../bad/parentheses.mly)
+(rule (target parentheses.out) (deps ../bad/parentheses.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias parentheses)
-  (action (diff ../bad/parentheses.expected parentheses.result)))
+  (action (diff ../bad/parentheses.exp parentheses.out)))
 
-(rule (target positional-identifier-clash.result)
+(rule (target positional-identifier-clash.out)
   (deps ../bad/positional-identifier-clash.mly)
   (action
     (with-outputs-to %{target}
@@ -6849,28 +6820,27 @@
 
 (rule (alias positional-identifier-clash)
   (action
-    (diff ../bad/positional-identifier-clash.expected
-      positional-identifier-clash.result)))
+    (diff ../bad/positional-identifier-clash.exp
+      positional-identifier-clash.out)))
 
-(rule (target prec-inline-non-tail.result)
+(rule (target prec-inline-non-tail.out)
   (deps ../bad/prec-inline-non-tail.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias prec-inline-non-tail)
-  (action
-    (diff ../bad/prec-inline-non-tail.expected prec-inline-non-tail.result)))
+  (action (diff ../bad/prec-inline-non-tail.exp prec-inline-non-tail.out)))
 
-(rule (target prec-inline-prec.result) (deps ../bad/prec-inline-prec.mly)
+(rule (target prec-inline-prec.out) (deps ../bad/prec-inline-prec.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias prec-inline-prec)
-  (action (diff ../bad/prec-inline-prec.expected prec-inline-prec.result)))
+  (action (diff ../bad/prec-inline-prec.exp prec-inline-prec.out)))
 
-(rule (target producer-with-a-positional-name.result)
+(rule (target producer-with-a-positional-name.out)
   (deps ../bad/producer-with-a-positional-name.mly)
   (action
     (with-outputs-to %{target}
@@ -6878,28 +6848,26 @@
 
 (rule (alias producer-with-a-positional-name)
   (action
-    (diff ../bad/producer-with-a-positional-name.expected
-      producer-with-a-positional-name.result)))
+    (diff ../bad/producer-with-a-positional-name.exp
+      producer-with-a-positional-name.out)))
 
-(rule (target production-group.result) (deps ../bad/production-group.mly)
+(rule (target production-group.out) (deps ../bad/production-group.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias production-group)
-  (action (diff ../bad/production-group.expected production-group.result)))
+  (action (diff ../bad/production-group.exp production-group.out)))
 
-(rule (target recursive-recognize.result)
-  (deps ../bad/recursive-recognize.mly)
+(rule (target recursive-recognize.out) (deps ../bad/recursive-recognize.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias recursive-recognize)
-  (action
-    (diff ../bad/recursive-recognize.expected recursive-recognize.result)))
+  (action (diff ../bad/recursive-recognize.exp recursive-recognize.out)))
 
-(rule (target reference-to-pseudo-token.result)
+(rule (target reference-to-pseudo-token.out)
   (deps ../bad/reference-to-pseudo-token.mly)
   (action
     (with-outputs-to %{target}
@@ -6907,36 +6875,34 @@
 
 (rule (alias reference-to-pseudo-token)
   (action
-    (diff ../bad/reference-to-pseudo-token.expected
-      reference-to-pseudo-token.result)))
+    (diff ../bad/reference-to-pseudo-token.exp reference-to-pseudo-token.out)))
 
-(rule (target resync-on-action-prec.result)
+(rule (target resync-on-action-prec.out)
   (deps ../bad/resync-on-action-prec.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias resync-on-action-prec)
-  (action
-    (diff ../bad/resync-on-action-prec.expected resync-on-action-prec.result)))
+  (action (diff ../bad/resync-on-action-prec.exp resync-on-action-prec.out)))
 
-(rule (target rule-error.result) (deps ../bad/rule-error.mly)
+(rule (target rule-error.out) (deps ../bad/rule-error.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias rule-error)
-  (action (diff ../bad/rule-error.expected rule-error.result)))
+  (action (diff ../bad/rule-error.exp rule-error.out)))
 
-(rule (target sloc-with-param.result) (deps ../bad/sloc-with-param.mly)
+(rule (target sloc-with-param.out) (deps ../bad/sloc-with-param.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias sloc-with-param)
-  (action (diff ../bad/sloc-with-param.expected sloc-with-param.result)))
+  (action (diff ../bad/sloc-with-param.exp sloc-with-param.out)))
 
-(rule (target symbolstartpos-with-param.result)
+(rule (target symbolstartpos-with-param.out)
   (deps ../bad/symbolstartpos-with-param.mly)
   (action
     (with-outputs-to %{target}
@@ -6944,50 +6910,49 @@
 
 (rule (alias symbolstartpos-with-param)
   (action
-    (diff ../bad/symbolstartpos-with-param.expected
-      symbolstartpos-with-param.result)))
+    (diff ../bad/symbolstartpos-with-param.exp symbolstartpos-with-param.out)))
 
-(rule (target syntax-let.result) (deps ../bad/syntax-let.mly)
+(rule (target syntax-let.out) (deps ../bad/syntax-let.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias syntax-let)
-  (action (diff ../bad/syntax-let.expected syntax-let.result)))
+  (action (diff ../bad/syntax-let.exp syntax-let.out)))
 
-(rule (target syntax-let-foo.result) (deps ../bad/syntax-let-foo.mly)
+(rule (target syntax-let-foo.out) (deps ../bad/syntax-let-foo.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias syntax-let-foo)
-  (action (diff ../bad/syntax-let-foo.expected syntax-let-foo.result)))
+  (action (diff ../bad/syntax-let-foo.exp syntax-let-foo.out)))
 
-(rule (target syntax-public-let.result) (deps ../bad/syntax-public-let.mly)
+(rule (target syntax-public-let.out) (deps ../bad/syntax-public-let.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias syntax-public-let)
-  (action (diff ../bad/syntax-public-let.expected syntax-public-let.result)))
+  (action (diff ../bad/syntax-public-let.exp syntax-public-let.out)))
 
-(rule (target terminal-type.result) (deps ../bad/terminal-type.mly)
+(rule (target terminal-type.out) (deps ../bad/terminal-type.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias terminal-type)
-  (action (diff ../bad/terminal-type.expected terminal-type.result)))
+  (action (diff ../bad/terminal-type.exp terminal-type.out)))
 
-(rule (target token-alias-clash.result) (deps ../bad/token-alias-clash.mly)
+(rule (target token-alias-clash.out) (deps ../bad/token-alias-clash.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias token-alias-clash)
-  (action (diff ../bad/token-alias-clash.expected token-alias-clash.result)))
+  (action (diff ../bad/token-alias-clash.exp token-alias-clash.out)))
 
-(rule (target token-has-multiple-definition.result)
+(rule (target token-has-multiple-definition.out)
   (deps ../bad/token-has-multiple-definition.mly)
   (action
     (with-outputs-to %{target}
@@ -6995,10 +6960,10 @@
 
 (rule (alias token-has-multiple-definition)
   (action
-    (diff ../bad/token-has-multiple-definition.expected
-      token-has-multiple-definition.result)))
+    (diff ../bad/token-has-multiple-definition.exp
+      token-has-multiple-definition.out)))
 
-(rule (target token-has-multiple-definition-modules-1.result)
+(rule (target token-has-multiple-definition-modules-1.out)
   (deps ../bad/token-has-multiple-definition-modules-1.mly
     ../bad/token-has-multiple-definition-modules-2.mly)
   (action
@@ -7009,26 +6974,25 @@
 
 (rule (alias token-has-multiple-definition-modules-1)
   (action
-    (diff ../bad/token-has-multiple-definition-modules-1.expected
-      token-has-multiple-definition-modules-1.result)))
+    (diff ../bad/token-has-multiple-definition-modules-1.exp
+      token-has-multiple-definition-modules-1.out)))
 
-(rule (target two-prec.result) (deps ../bad/two-prec.mly)
+(rule (target two-prec.out) (deps ../bad/two-prec.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
-(rule (alias two-prec)
-  (action (diff ../bad/two-prec.expected two-prec.result)))
+(rule (alias two-prec) (action (diff ../bad/two-prec.exp two-prec.out)))
 
-(rule (target type-ill-kinded.result) (deps ../bad/type-ill-kinded.mly)
+(rule (target type-ill-kinded.out) (deps ../bad/type-ill-kinded.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias type-ill-kinded)
-  (action (diff ../bad/type-ill-kinded.expected type-ill-kinded.result)))
+  (action (diff ../bad/type-ill-kinded.exp type-ill-kinded.out)))
 
-(rule (target type-of-nonexistent-symbol.result)
+(rule (target type-of-nonexistent-symbol.out)
   (deps ../bad/type-of-nonexistent-symbol.mly)
   (action
     (with-outputs-to %{target}
@@ -7036,19 +7000,18 @@
 
 (rule (alias type-of-nonexistent-symbol)
   (action
-    (diff ../bad/type-of-nonexistent-symbol.expected
-      type-of-nonexistent-symbol.result)))
+    (diff ../bad/type-of-nonexistent-symbol.exp
+      type-of-nonexistent-symbol.out)))
 
-(rule (target unclosed-attribute.result) (deps ../bad/unclosed-attribute.mly)
+(rule (target unclosed-attribute.out) (deps ../bad/unclosed-attribute.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias unclosed-attribute)
-  (action
-    (diff ../bad/unclosed-attribute.expected unclosed-attribute.result)))
+  (action (diff ../bad/unclosed-attribute.exp unclosed-attribute.out)))
 
-(rule (target unclosed-attribute-variant.result)
+(rule (target unclosed-attribute-variant.out)
   (deps ../bad/unclosed-attribute-variant.mly)
   (action
     (with-outputs-to %{target}
@@ -7056,46 +7019,44 @@
 
 (rule (alias unclosed-attribute-variant)
   (action
-    (diff ../bad/unclosed-attribute-variant.expected
-      unclosed-attribute-variant.result)))
+    (diff ../bad/unclosed-attribute-variant.exp
+      unclosed-attribute-variant.out)))
 
-(rule (target unclosed-brace.result) (deps ../bad/unclosed-brace.mly)
+(rule (target unclosed-brace.out) (deps ../bad/unclosed-brace.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias unclosed-brace)
-  (action (diff ../bad/unclosed-brace.expected unclosed-brace.result)))
+  (action (diff ../bad/unclosed-brace.exp unclosed-brace.out)))
 
-(rule (target unclosed-brace-brace.result)
+(rule (target unclosed-brace-brace.out)
   (deps ../bad/unclosed-brace-brace.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias unclosed-brace-brace)
-  (action
-    (diff ../bad/unclosed-brace-brace.expected unclosed-brace-brace.result)))
+  (action (diff ../bad/unclosed-brace-brace.exp unclosed-brace-brace.out)))
 
-(rule (target unclosed-brace-paren.result)
+(rule (target unclosed-brace-paren.out)
   (deps ../bad/unclosed-brace-paren.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias unclosed-brace-paren)
-  (action
-    (diff ../bad/unclosed-brace-paren.expected unclosed-brace-paren.result)))
+  (action (diff ../bad/unclosed-brace-paren.exp unclosed-brace-paren.out)))
 
-(rule (target unclosed-prologue.result) (deps ../bad/unclosed-prologue.mly)
+(rule (target unclosed-prologue.out) (deps ../bad/unclosed-prologue.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias unclosed-prologue)
-  (action (diff ../bad/unclosed-prologue.expected unclosed-prologue.result)))
+  (action (diff ../bad/unclosed-prologue.exp unclosed-prologue.out)))
 
-(rule (target undeclared-token-alias.result)
+(rule (target undeclared-token-alias.out)
   (deps ../bad/undeclared-token-alias.mly)
   (action
     (with-outputs-to %{target}
@@ -7103,10 +7064,9 @@
 
 (rule (alias undeclared-token-alias)
   (action
-    (diff ../bad/undeclared-token-alias.expected
-      undeclared-token-alias.result)))
+    (diff ../bad/undeclared-token-alias.exp undeclared-token-alias.out)))
 
-(rule (target undefined-non-terminal-reference.result)
+(rule (target undefined-non-terminal-reference.out)
   (deps ../bad/undefined-non-terminal-reference.mly)
   (action
     (with-outputs-to %{target}
@@ -7114,36 +7074,34 @@
 
 (rule (alias undefined-non-terminal-reference)
   (action
-    (diff ../bad/undefined-non-terminal-reference.expected
-      undefined-non-terminal-reference.result)))
+    (diff ../bad/undefined-non-terminal-reference.exp
+      undefined-non-terminal-reference.out)))
 
-(rule (target undefined-position.result) (deps ../bad/undefined-position.mly)
+(rule (target undefined-position.out) (deps ../bad/undefined-position.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias undefined-position)
-  (action
-    (diff ../bad/undefined-position.expected undefined-position.result)))
+  (action (diff ../bad/undefined-position.exp undefined-position.out)))
 
-(rule (target undefined-producer.result) (deps ../bad/undefined-producer.mly)
+(rule (target undefined-producer.out) (deps ../bad/undefined-producer.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias undefined-producer)
-  (action
-    (diff ../bad/undefined-producer.expected undefined-producer.result)))
+  (action (diff ../bad/undefined-producer.exp undefined-producer.out)))
 
-(rule (target undefined-start.result) (deps ../bad/undefined-start.mly)
+(rule (target undefined-start.out) (deps ../bad/undefined-start.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias undefined-start)
-  (action (diff ../bad/undefined-start.expected undefined-start.result)))
+  (action (diff ../bad/undefined-start.exp undefined-start.out)))
 
-(rule (target unification-error-at-toplevel.result)
+(rule (target unification-error-at-toplevel.out)
   (deps ../bad/unification-error-at-toplevel.mly)
   (action
     (with-outputs-to %{target}
@@ -7151,10 +7109,10 @@
 
 (rule (alias unification-error-at-toplevel)
   (action
-    (diff ../bad/unification-error-at-toplevel.expected
-      unification-error-at-toplevel.result)))
+    (diff ../bad/unification-error-at-toplevel.exp
+      unification-error-at-toplevel.out)))
 
-(rule (target unification-error-in-args.result)
+(rule (target unification-error-in-args.out)
   (deps ../bad/unification-error-in-args.mly)
   (action
     (with-outputs-to %{target}
@@ -7162,10 +7120,9 @@
 
 (rule (alias unification-error-in-args)
   (action
-    (diff ../bad/unification-error-in-args.expected
-      unification-error-in-args.result)))
+    (diff ../bad/unification-error-in-args.exp unification-error-in-args.out)))
 
-(rule (target unification-error-in-depth.result)
+(rule (target unification-error-in-depth.out)
   (deps ../bad/unification-error-in-depth.mly)
   (action
     (with-outputs-to %{target}
@@ -7173,10 +7130,10 @@
 
 (rule (alias unification-error-in-depth)
   (action
-    (diff ../bad/unification-error-in-depth.expected
-      unification-error-in-depth.result)))
+    (diff ../bad/unification-error-in-depth.exp
+      unification-error-in-depth.out)))
 
-(rule (target unification-error-not-at-toplevel.result)
+(rule (target unification-error-not-at-toplevel.out)
   (deps ../bad/unification-error-not-at-toplevel.mly)
   (action
     (with-outputs-to %{target}
@@ -7184,10 +7141,10 @@
 
 (rule (alias unification-error-not-at-toplevel)
   (action
-    (diff ../bad/unification-error-not-at-toplevel.expected
-      unification-error-not-at-toplevel.result)))
+    (diff ../bad/unification-error-not-at-toplevel.exp
+      unification-error-not-at-toplevel.out)))
 
-(rule (target unknown_symbol_in_attribute.result)
+(rule (target unknown_symbol_in_attribute.out)
   (deps ../bad/unknown_symbol_in_attribute.mly)
   (action
     (with-outputs-to %{target}
@@ -7195,10 +7152,10 @@
 
 (rule (alias unknown_symbol_in_attribute)
   (action
-    (diff ../bad/unknown_symbol_in_attribute.expected
-      unknown_symbol_in_attribute.result)))
+    (diff ../bad/unknown_symbol_in_attribute.exp
+      unknown_symbol_in_attribute.out)))
 
-(rule (target unknown_symbol_in_on_error_reduce.result)
+(rule (target unknown_symbol_in_on_error_reduce.out)
   (deps ../bad/unknown_symbol_in_on_error_reduce.mly)
   (action
     (with-outputs-to %{target}
@@ -7206,10 +7163,10 @@
 
 (rule (alias unknown_symbol_in_on_error_reduce)
   (action
-    (diff ../bad/unknown_symbol_in_on_error_reduce.expected
-      unknown_symbol_in_on_error_reduce.result)))
+    (diff ../bad/unknown_symbol_in_on_error_reduce.exp
+      unknown_symbol_in_on_error_reduce.out)))
 
-(rule (target unknown_symbol_in_type.result)
+(rule (target unknown_symbol_in_type.out)
   (deps ../bad/unknown_symbol_in_type.mly)
   (action
     (with-outputs-to %{target}
@@ -7217,18 +7174,17 @@
 
 (rule (alias unknown_symbol_in_type)
   (action
-    (diff ../bad/unknown_symbol_in_type.expected
-      unknown_symbol_in_type.result)))
+    (diff ../bad/unknown_symbol_in_type.exp unknown_symbol_in_type.out)))
 
-(rule (target unspecified-start.result) (deps ../bad/unspecified-start.mly)
+(rule (target unspecified-start.out) (deps ../bad/unspecified-start.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias unspecified-start)
-  (action (diff ../bad/unspecified-start.expected unspecified-start.result)))
+  (action (diff ../bad/unspecified-start.exp unspecified-start.out)))
 
-(rule (target unspecified-start-type.result)
+(rule (target unspecified-start-type.out)
   (deps ../bad/unspecified-start-type.mly)
   (action
     (with-outputs-to %{target}
@@ -7236,32 +7192,23 @@
 
 (rule (alias unspecified-start-type)
   (action
-    (diff ../bad/unspecified-start-type.expected
-      unspecified-start-type.result)))
+    (diff ../bad/unspecified-start-type.exp unspecified-start-type.out)))
 
-(rule (target uppercase.result) (deps ../bad/uppercase.mly)
-  (action
-    (with-outputs-to %{target}
-      (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
-
-(rule (alias uppercase)
-  (action (diff ../bad/uppercase.expected uppercase.result)))
-
-(rule (target uppercase-start.result) (deps ../bad/uppercase-start.mly)
+(rule (target uppercase-start.out) (deps ../bad/uppercase-start.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias uppercase-start)
-  (action (diff ../bad/uppercase-start.expected uppercase-start.result)))
+  (action (diff ../bad/uppercase-start.exp uppercase-start.out)))
 
-(rule (target use-index-not-id.result) (deps ../bad/use-index-not-id.mly)
+(rule (target use-index-not-id.out) (deps ../bad/use-index-not-id.mly)
   (action
     (with-outputs-to %{target}
       (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
 
 (rule (alias use-index-not-id)
-  (action (diff ../bad/use-index-not-id.expected use-index-not-id.result)))
+  (action (diff ../bad/use-index-not-id.exp use-index-not-id.out)))
 
 (alias (name test)
   (deps
@@ -7291,6 +7238,8 @@
     (alias attributes-expansion)
     (alias bad-arity)
     (alias bad-dollar)
+    (alias bad_obc)
+    (alias bad_uppercase)
     (alias bamboo.0.0.03-parser)
     (alias bare-bones)
     (alias batsh.0.0.6-parser_yacc)
