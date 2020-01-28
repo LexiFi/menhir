@@ -111,9 +111,13 @@ let print sexp =
 
 (* Constructing a standard [make]-like rule. *)
 
-let rule (target : string) (deps : string list) (action : sexp) =
+let target (targets : string list) =
+  let keyword = if length targets = 1 then "target" else "targets" in
+  L (atom keyword :: atoms targets)
+
+let rule (targets : string list) (deps : string list) (action : sexp) =
   L[A"rule";
-    L[A"target"; A target];
+    target targets;
     L(A"deps" :: atoms deps);
     L[A"action"; action]
   ]
@@ -131,10 +135,10 @@ let phony (alias : string) (action : sexp) =
 let diff (expected : string) (actual : string) =
   L[A"diff"; A expected; A actual]
 
-(* Redirecting the output channels of an action towards its target. *)
+(* Redirecting the output channels of an action towards a file. *)
 
-let targeted action =
-  L[A"with-outputs-to"; A"%{target}"; action]
+let redirect filename action =
+  L[A"with-outputs-to"; A filename; action]
 
 (* Changing the working directory of an action. *)
 
@@ -186,18 +190,22 @@ let menhir base flags =
    [positive]   positive or negative test?
    [source]     directory where the .mly files reside
    [basenames]  base names of the .mly files
-   [output]     name of the output file
+   [outputs]    names of the output files
    [expected]   name of the expected-output file
    [flags]      flags for Menhir
 
- *)
+   There can be several output files in the list [outputs], in
+   which case all of them are declared to [dune] as targets.
+   The first element of this list is considered the main output
+   file and is compared with the expected-output file. *)
 
-let run_and_compare id positive source basenames output expected flags =
+let run_and_compare id positive source basenames outputs expected flags =
+  let output = hd outputs in
   (* Run Menhir. *)
   print (rule
-    output
+    outputs
     (source // mlys basenames)
-    (targeted (chdir source (
+    (redirect output (chdir source (
       possibly_expecting_failure positive (
         menhir (base basenames) flags
   )))));
@@ -210,11 +218,17 @@ let run_and_compare id positive source basenames output expected flags =
 
 (* Running a negative test. *)
 
-(* This test takes place in the directory [bad]. *)
+(* The input files for this test are in the directory [bad].
 
-(* The file %.flags   (if it exists) stores flags for Menhir.
-   The file %.out     stores the output of menhir.
-   The file %.exp     stores its expected output. *)
+   The file %.flags   (if it exists) stores flags for Menhir.
+   The file %.exp     stores the expected output. *)
+
+(* The output files for this test are in the current directory, that is,
+   actually, in the clone of the current directory that dune creates for us,
+   namely [_build/default/test/static/src]. We do not have a choice; dune
+   does not allow declaring targets elsewhere than in the current directory.
+
+   The file %.out     stores the output of Menhir. *)
 
 let process_negative_test basenames : unit =
   (* Run menhir. *)
@@ -223,24 +237,29 @@ let process_negative_test basenames : unit =
   let output = id ^ ".out" in
   let expected = id ^ ".exp" in
   let flags = extra source id in
-  run_and_compare id false source basenames output expected flags
+  run_and_compare id false source basenames [output] expected flags
 
 (* -------------------------------------------------------------------------- *)
 
 (* Running a positive test. *)
 
-(* This test takes place in the directory [good]. *)
+(* The input files for this test are in the directory [good].
 
-(* The file %.flags   (if it exists) stores flags for Menhir.
-   The file %.opp.out stores the output of menhir --only-preprocess.
+   The file %.flags   (if it exists) stores flags for Menhir.
    The file %.opp.exp stores its expected output.
-   The file %.out     stores the output of menhir.
-   The file %.exp     stores its expected output.
- *)
+   The file %.exp     stores its expected output. *)
 
-(* The file %.out.timings stores performance data, which of course is
-   not perfectly reproducible, therefore is not compared against a
-   reference. *)
+(* The output files for this test are in the current directory, that is,
+   actually, in the clone of the current directory that dune creates for us,
+   namely [_build/default/test/static/src]. We do not have a choice; dune
+   does not allow declaring targets elsewhere than in the current directory.
+
+   The file %.opp.out stores the output of menhir --only-preprocess.
+   The file %.out     stores the output of menhir.
+   The file %.out.timings stores performance data.
+
+   Because the performance data is not perfectly reproducible,
+   it is not compared against a reference. *)
 
 let process_positive_test basenames : unit =
   let source = good in
@@ -249,19 +268,19 @@ let process_positive_test basenames : unit =
   (* Run menhir --only-preprocess. *)
   let output = id ^ ".opp.out" in
   let expected = id ^ ".opp.exp" in
-  run_and_compare id true source basenames output expected (atoms [
+  run_and_compare id true source basenames [output] expected (atoms [
     "--only-preprocess";
   ] @ flags);
   (* Run menhir. *)
   let output = id ^ ".out" in
   let expected = id ^ ".exp" in
   let timings = id ^ ".out.timings" in
-  run_and_compare id true source basenames output expected (atoms [
+  run_and_compare id true source basenames [output;timings] expected (atoms [
     "--explain";
     "-lg"; "2";
     "-la"; "2";
     "-lc"; "2";
-    "--timings-to"; timings;
+    "--timings-to"; (up / "src" / timings);
   ] @ flags)
 
 (* -------------------------------------------------------------------------- *)
