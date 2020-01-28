@@ -14,8 +14,8 @@ open Auxiliary
 
 (* Settings. *)
 
-let extra =
-  ref ""
+let extra : string list ref =
+  ref []
 
 let verbosity =
   ref 0
@@ -24,7 +24,7 @@ let usage =
   sprintf "Usage: %s\n" argv.(0)
 
 let spec = Arg.align [
-  "--extra-flags",     Arg.String (fun flags -> extra := flags),
+  "--extra-flags",     Arg.String (fun flag -> extra := flag :: !extra),
                        "<string> specify extra flags for Menhir";
   "--verbosity",       Arg.Int ((:=) verbosity),
                        " set the verbosity level (0-2)";
@@ -33,8 +33,8 @@ let spec = Arg.align [
 let () =
   Arg.parse spec (fun _ -> ()) usage
 
-let extra =
-  !extra
+let extra : string list =
+  List.rev !extra
 
 let verbosity =
   !verbosity
@@ -94,6 +94,12 @@ type sexp =
   | L of sexp list
   | Lnewline of sexp list
 
+let atom sexp =
+  A sexp
+
+let atoms =
+  List.map atom
+
 let rec print_sexp ppf = function
   | A s ->
       Format.pp_print_string ppf s
@@ -110,15 +116,65 @@ let print_sexp sexp =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Constructing a standard [make]-like rule. *)
+
+let rule (target : string) (deps : string list) (action : sexp) =
+  L[A"rule";
+    L[A"target"; A target];
+    L(A"deps" :: atoms deps);
+    L[A"action"; action]
+  ]
+
+let print_rule target deps action =
+  print_sexp (rule target deps action)
+
+(* Constructing a phony rule, that is, a rule whose target is an alias. *)
+
+let phony (alias : string) (action : sexp) =
+  L[A"rule";
+    L[A"alias"; A alias];
+    L[A"action"; action]
+  ]
+
+let print_phony alias action =
+  print_sexp (phony alias action)
+
+(* Constructing a diff action. *)
+
+let diff (expected : string) (actual : string) =
+  L[A"diff"; A expected; A actual]
+
+(* -------------------------------------------------------------------------- *)
+
+(* Calling conventions for Menhir. *)
+
+(* A --base option is needed for groups of several files. *)
+
+let base basenames =
+  if length basenames > 1 then
+    let id = id basenames in
+    [A"--base"; A id]
+  else
+    []
+
+(* The Menhir command. *)
+
+(* This command is meant to be used inside a rule. *)
+
+let menhir base flags =
+  L(A"run" :: A"menhir" :: base @ flags @ [A"%{deps}"])
+
+(* -------------------------------------------------------------------------- *)
+
 (* Running a negative test. *)
 
 let process_negative_test basenames : unit =
 
-  (* Display an information message. *)
+  (* Compute the name of this test. *)
   let id = id basenames in
 
   (* A --base option is needed for groups of several files. *)
-  let base = if length basenames > 1 then [A"--base"; A id] else [] in
+  let base = base basenames in
 
   (* The output is stored in this file. *)
   let result = id ^ ".result" in
@@ -126,7 +182,7 @@ let process_negative_test basenames : unit =
   (* Flags. *)
   let flags = id ^ ".flags" in
   let flags =
-    let extra = if extra = "" then [] else [A extra] in
+    let extra = atoms extra in
     if file_exists (bad_slash flags) then
       A(sprintf "%%{read-lines:%s}" (bad_slash flags)) :: extra
     else
@@ -134,22 +190,19 @@ let process_negative_test basenames : unit =
   in
 
   (* Run Menhir in the directory bad/. *)
-  print_sexp
-    (L[A"rule";
-       L[A"target"; A result];
-       L(A"deps" :: List.map (fun mly -> A(bad_slash mly)) (mlys basenames));
-       L[A"action";
-         L[A"with-outputs-to"; A "%{target}";
-           L[A"chdir"; A bad;
-             L[A"with-accepted-exit-codes"; L[A"not"; A"0"];
-               L(A"run" :: A"menhir" :: base @ flags @ [A"%{deps}"])]]]]]);
+  print_rule
+    result
+    (List.map bad_slash (mlys basenames))
+    (L[A"with-outputs-to"; A "%{target}";
+       L[A"chdir"; A bad;
+         L[A"with-accepted-exit-codes"; L[A"not"; A"0"];
+           menhir base flags]]]);
 
   (* Check that the output coincides with what was expected. *)
   let expected = id ^ ".expected" in
-  print_sexp
-    (L[A"rule";
-       L[A"alias"; A id];
-       L[A"action"; L[A"diff"; A(bad_slash expected); A result]]])
+  print_phony
+    id
+    (diff (bad_slash expected) result)
 
 (* -------------------------------------------------------------------------- *)
 
@@ -166,16 +219,16 @@ let process_negative_test basenames : unit =
 
 let process_positive_test basenames : unit =
 
-  (* Display an information message. *)
+  (* Compute the name of this test. *)
   let id = id basenames in
 
   (* A --base option is needed for groups of several files. *)
-  let base = if length basenames > 1 then [A"--base"; A id] else [] in
+  let base = base basenames in
 
   (* Flags. *)
   let flags = id ^ ".flags" in
   let flags =
-    let extra = if extra = "" then [] else [A extra] in
+    let extra = atoms extra in
     if file_exists (good_slash flags) then
       A(sprintf "%%{read-lines:%s}" (good_slash flags)) :: extra
     else
@@ -184,45 +237,35 @@ let process_positive_test basenames : unit =
 
   (* Run menhir --only-preprocess. *)
   let oppout = id ^ ".opp.out" in
-  print_sexp
-    (L[A"rule";
-       L[A"target"; A oppout];
-       L(A"deps" :: List.map (fun mly -> A(good_slash mly)) (mlys basenames));
-       L[A"action";
-         L[A"with-outputs-to"; A"%{target}";
-           L[A"chdir"; A good;
-             L(A"run" :: A"menhir" :: A"--only-preprocess" :: base @ flags @
-               [A"%{deps}"])]]]]);
+  print_rule
+    oppout
+    (List.map good_slash (mlys basenames))
+    (L[A"with-outputs-to"; A"%{target}";
+       L[A"chdir"; A good;
+         menhir base (A"--only-preprocess" :: flags)]]);
 
   (* Check that the output coincides with what was expected. *)
   let oppexp = id ^ ".opp.exp" in
-  print_sexp
-    (L[A"rule";
-       L[A"alias"; A id];
-       L[A"action";
-         L[A"diff"; A(good_slash oppexp); A oppout]]]);
+  print_phony
+    id
+    (diff (good_slash oppexp) oppout);
 
   (* Run menhir. *)
   let out = id ^ ".out" in
-  print_sexp
-    (L[A"rule";
-       L[A"target"; A out];
-       L(A"deps" :: List.map (fun mly -> A(good_slash mly)) (mlys basenames));
-       L[A"action";
-         L[A"with-outputs-to"; A"%{target}";
-           L[A"chdir"; A good;
-             L(A"run" :: A"menhir" ::
-               A"--explain" :: A"-lg" :: A"2" :: A"-la" :: A"2" :: A"-lc" :: A"2" ::
-               base @ flags @
-               [A"%{deps}"])]]]]);
+  print_rule
+    out
+    (List.map good_slash (mlys basenames))
+    (L[A"with-outputs-to"; A"%{target}";
+       L[A"chdir"; A good;
+         menhir base (
+           A"--explain" :: A"-lg" :: A"2" :: A"-la" :: A"2" :: A"-lc" :: A"2" ::
+           flags)]]);
 
   (* Check that the output coincides with what was expected. *)
   let exp = id ^ ".exp" in
-  print_sexp
-    (L[A"rule";
-       L[A"alias"; A id];
-       L[A"action";
-         L[A"diff"; A(good_slash exp); A out]]])
+  print_phony
+    id
+    (diff (good_slash exp) out)
 
 (* -------------------------------------------------------------------------- *)
 
