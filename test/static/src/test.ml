@@ -235,7 +235,12 @@ let process_negative_test basenames : unit =
    The file %.opp.out stores the output of menhir --only-preprocess.
    The file %.opp.exp stores its expected output.
    The file %.out     stores the output of menhir.
-   The file %.exp     stores its expected output. *)
+   The file %.exp     stores its expected output.
+ *)
+
+(* The file %.out.timings stores performance data, which of course is
+   not perfectly reproducible, therefore is not compared against a
+   reference. *)
 
 let process_positive_test basenames : unit =
   let source = good in
@@ -244,13 +249,20 @@ let process_positive_test basenames : unit =
   (* Run menhir --only-preprocess. *)
   let output = id ^ ".opp.out" in
   let expected = id ^ ".opp.exp" in
-  run_and_compare id true source basenames output expected
-    (A"--only-preprocess" :: flags);
+  run_and_compare id true source basenames output expected (atoms [
+    "--only-preprocess";
+  ] @ flags);
   (* Run menhir. *)
   let output = id ^ ".out" in
   let expected = id ^ ".exp" in
-  run_and_compare id true source basenames output expected
-    (atoms ["--explain"; "-lg"; "2"; "-la"; "2"; "-lc"; "2"] @ flags)
+  let timings = id ^ ".out.timings" in
+  run_and_compare id true source basenames output expected (atoms [
+    "--explain";
+    "-lg"; "2";
+    "-la"; "2";
+    "-lc"; "2";
+    "--timings-to"; timings;
+  ] @ flags)
 
 (* -------------------------------------------------------------------------- *)
 
