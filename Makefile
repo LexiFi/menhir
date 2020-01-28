@@ -38,6 +38,29 @@ export CDPATH=
 test:
 	@ dune build --display short @test
 
+# [make timings] extracts the performance data gathered by [make test].
+# Be careful: this data is not high quality, and is machine-dependent.
+
+# We select just one line in the performance data printed by [menhir
+# --timings-to <filename>]. The variable $field indicates which field
+# we are interested in.
+
+.PHONY: timings
+timings: test
+	@ \
+	field="Construction of the LR(1) automaton" ; \
+	( \
+	  echo "name,states,time" && \
+	  cd _build/default/test/static/src && \
+	  for f in *.out.timings ; do \
+	    name=$${f%.out.timings} ; \
+	    states=`sed -n -e "s/^Built an LR(1) automaton with \([0-9]\+\) states./\1/p" $${f%.timings}` ; \
+	    time=`sed -n -e "s/^$$field: \(.*\)/\1/p" $$f` ; \
+	    echo "$$name,$$states,$$time" ; \
+	  done \
+	) > timings.csv
+	@ ./timings.r
+
 # [make speed] runs the speed test in test/dynamic/speed.
 
 .PHONY: speed
