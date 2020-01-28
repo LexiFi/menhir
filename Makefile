@@ -45,21 +45,37 @@ test:
 # --timings-to <filename>]. The variable $field indicates which field
 # we are interested in.
 
+# On MacOS, we require gsed instead of sed.
+
+SED=$(shell if [[ "$$OSTYPE" == "darwin"* ]] ; then echo gsed ; else echo sed ; fi)
+
 .PHONY: timings
 timings: test
-	@ \
-	field="Construction of the LR(1) automaton" ; \
+	@ echo "Collecting data (using $(SED))..."
+	@ field="Construction of the LR(1) automaton" ; \
 	( \
 	  echo "name,states,time" && \
 	  cd _build/default/test/static/src && \
 	  for f in *.out.timings ; do \
 	    name=$${f%.out.timings} ; \
-	    states=`sed -n -e "s/^Built an LR(1) automaton with \([0-9]\+\) states./\1/p" $${f%.timings}` ; \
-	    time=`sed -n -e "s/^$$field: \(.*\)/\1/p" $$f` ; \
+	    states=`$(SED) -n -e "s/^Built an LR(1) automaton with \([0-9]\+\) states./\1/p" $${f%.timings}` ; \
+	    time=`$(SED) -n -e "s/^$$field: \(.*\)s/\1/p" $$f` ; \
 	    echo "$$name,$$states,$$time" ; \
 	  done \
 	) > timings.csv
+
+clean::
+	@ rm -f timings.csv
+
+# [make plot] uses Rscript to plot the data extracted by [make timings].
+
+.PHONY: plot
+plot:
+	@ echo "Running R..."
 	@ ./timings.r
+
+clean::
+	@ rm -f states-time.pdf
 
 # [make speed] runs the speed test in test/dynamic/speed.
 

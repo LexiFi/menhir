@@ -2,18 +2,10 @@
 
 require(ggplot2)
 
-# Our working directory.
-pwd <- "."
-
 # Load our data.
-mydata <- read.csv(paste(pwd, "timings.csv", sep="/"))
+mydata <- read.csv("timings.csv")
 # Restrict ourselves to a subset of the data.
-mydata <- subset(mydata, time >= 0.25)
-
-# A function which saves a plot to a PDF file.
-save <- function(filename) {
-  ggsave(paste(pwd, filename, sep="/"), width=12, height=8, units="cm")
-}
+mydata <- subset(mydata, time >= 0.1)
 
 # A function that creates a scatter plot. Data on the X and Y axes
 # is determined by the argument [xy]. The scale is logarithmic.
@@ -27,6 +19,6 @@ plotloglog <- function(xy, lx, ly) {
     ylab(ly)
 }
 
-# Scatter plots.
-plotloglog(aes(x=states, y=time), "# states", "time (seconds)")
-save("states-time.pdf")
+# Plot.
+myplot <- plotloglog(aes(x=states, y=time), "# states", "time (seconds)")
+ggsave("states-time.pdf", myplot, width=12, height=8, units="cm")
