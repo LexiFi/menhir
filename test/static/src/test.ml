@@ -1,14 +1,22 @@
-open Sys
-open Array
-open List
-open Filename
-open Printf
-open Auxiliary
-
 (* This script produces the file [dune.auto], which describes the tests we
    would like dune to execute. *)
 
 (* Note: the contents of the .conflicts and .automaton files are not tested. *)
+
+(* -------------------------------------------------------------------------- *)
+
+open Sys
+open Array
+open List
+open Printf
+open Auxiliary
+
+let up =
+  Filename.parent_dir_name
+let (/) =
+  Filename.concat
+let (//) directory filenames =
+  map (fun filename -> directory/filename) filenames
 
 (* -------------------------------------------------------------------------- *)
 
@@ -17,43 +25,29 @@ open Auxiliary
 let extra : string list ref =
   ref []
 
-let verbosity =
-  ref 0
-
 let usage =
   sprintf "Usage: %s\n" argv.(0)
 
 let spec = Arg.align [
   "--extra-flags",     Arg.String (fun flag -> extra := flag :: !extra),
                        "<string> specify extra flags for Menhir";
-  "--verbosity",       Arg.Int ((:=) verbosity),
-                       " set the verbosity level (0-2)";
 ]
 
 let () =
   Arg.parse spec (fun _ -> ()) usage
 
 let extra : string list =
-  List.rev !extra
-
-let verbosity =
-  !verbosity
+  rev !extra
 
 (* -------------------------------------------------------------------------- *)
 
 (* Paths. *)
 
 let good =
-  Filename.concat Filename.parent_dir_name "good"
-
-let good_slash filename =
-  Filename.concat good filename
+  up / "good"
 
 let bad =
-  Filename.concat Filename.parent_dir_name "bad"
-
-let bad_slash filename =
-  Filename.concat bad filename
+  up / "bad"
 
 (* -------------------------------------------------------------------------- *)
 
@@ -62,9 +56,6 @@ let bad_slash filename =
 let id basenames =
   (* A name for a nonempty group of test files. *)
   hd basenames
-
-let thisfile basenames =
-  if length basenames > 1 then "these input files" else "this input file"
 
 let mly basename =
   basename ^ ".mly"
@@ -98,20 +89,20 @@ let atom sexp =
   A sexp
 
 let atoms =
-  List.map atom
+  map atom
 
-let rec print_sexp ppf = function
+let rec print ppf = function
   | A s ->
       Format.pp_print_string ppf s
   | L l ->
       Format.fprintf ppf "@[<2>(%a)@]"
-        (Format.pp_print_list ~pp_sep:Format.pp_print_space print_sexp) l
+        (Format.pp_print_list ~pp_sep:Format.pp_print_space print) l
   | Lnewline l ->
       Format.fprintf ppf "@[<v 2>(%a)@]"
-        (Format.pp_print_list ~pp_sep:Format.pp_print_space print_sexp) l
+        (Format.pp_print_list ~pp_sep:Format.pp_print_space print) l
 
-let print_sexp sexp =
-  Format.printf "@[<v>%a@,@]" print_sexp sexp;
+let print sexp =
+  Format.printf "@[<v>%a@,@]" print sexp;
   Format.print_newline()
 
 (* -------------------------------------------------------------------------- *)
@@ -125,9 +116,6 @@ let rule (target : string) (deps : string list) (action : sexp) =
     L[A"action"; action]
   ]
 
-let print_rule target deps action =
-  print_sexp (rule target deps action)
-
 (* Constructing a phony rule, that is, a rule whose target is an alias. *)
 
 let phony (alias : string) (action : sexp) =
@@ -136,13 +124,25 @@ let phony (alias : string) (action : sexp) =
     L[A"action"; action]
   ]
 
-let print_phony alias action =
-  print_sexp (phony alias action)
-
 (* Constructing a diff action. *)
 
 let diff (expected : string) (actual : string) =
   L[A"diff"; A expected; A actual]
+
+(* Redirecting the output channels of an action towards its target. *)
+
+let targeted action =
+  L[A"with-outputs-to"; A"%{target}"; action]
+
+(* Changing the working directory of an action. *)
+
+let chdir directory action =
+  L[A"chdir"; A directory; action]
+
+(* Expressing the fact that an action is expected to fail. *)
+
+let expecting_failure action =
+  L[A"with-accepted-exit-codes"; L[A"not"; A"0"]; action]
 
 (* -------------------------------------------------------------------------- *)
 
@@ -157,6 +157,16 @@ let base basenames =
   else
     []
 
+(* The extra flags passed to Menhir are those found in a local .flags file,
+   if there is one, plus those passed to us via --extra-flags. *)
+
+let extra source id =
+  let flags_file = source / id ^ ".flags" in
+  if file_exists flags_file then
+    A(sprintf "%%{read-lines:%s}" flags_file) :: atoms extra
+  else
+    atoms extra
+
 (* The Menhir command. *)
 
 (* This command is meant to be used inside a rule. *)
@@ -170,39 +180,30 @@ let menhir base flags =
 
 let process_negative_test basenames : unit =
 
-  (* Compute the name of this test. *)
+  (* This test takes place in the directory [bad]. *)
+  let source = bad in
+
+  (* The base name of this test. *)
   let id = id basenames in
 
-  (* A --base option is needed for groups of several files. *)
-  let base = base basenames in
+  (* The output and expected-output files. *)
+  let output = id ^ ".result"
+  and expected = id ^ ".expected" in
 
-  (* The output is stored in this file. *)
-  let result = id ^ ".result" in
+  (* The flags. *)
+  let flags = extra source id in
 
-  (* Flags. *)
-  let flags = id ^ ".flags" in
-  let flags =
-    let extra = atoms extra in
-    if file_exists (bad_slash flags) then
-      A(sprintf "%%{read-lines:%s}" (bad_slash flags)) :: extra
-    else
-      extra
-  in
-
-  (* Run Menhir in the directory bad/. *)
-  print_rule
-    result
-    (List.map bad_slash (mlys basenames))
-    (L[A"with-outputs-to"; A "%{target}";
-       L[A"chdir"; A bad;
-         L[A"with-accepted-exit-codes"; L[A"not"; A"0"];
-           menhir base flags]]]);
+  (* Run menhir. *)
+  rule
+    output
+    (source // mlys basenames)
+    (targeted (chdir source (
+      expecting_failure (
+        menhir (base basenames) flags))))
+  |> print;
 
   (* Check that the output coincides with what was expected. *)
-  let expected = id ^ ".expected" in
-  print_phony
-    id
-    (diff (bad_slash expected) result)
+  phony id (diff (source/expected) output) |> print
 
 (* -------------------------------------------------------------------------- *)
 
@@ -219,53 +220,46 @@ let process_negative_test basenames : unit =
 
 let process_positive_test basenames : unit =
 
-  (* Compute the name of this test. *)
+  (* This test takes place in the directory [good]. *)
+  let source = good in
+
+  (* The base name of this test. *)
   let id = id basenames in
 
-  (* A --base option is needed for groups of several files. *)
-  let base = base basenames in
+  (* The flags. *)
+  let flags = extra source id in
 
-  (* Flags. *)
-  let flags = id ^ ".flags" in
-  let flags =
-    let extra = atoms extra in
-    if file_exists (good_slash flags) then
-      A(sprintf "%%{read-lines:%s}" (good_slash flags)) :: extra
-    else
-      extra
-  in
+  (* The output and expected-output files. *)
+  let output = id ^ ".opp.out"
+  and expected = id ^ ".opp.exp" in
 
   (* Run menhir --only-preprocess. *)
-  let oppout = id ^ ".opp.out" in
-  print_rule
-    oppout
-    (List.map good_slash (mlys basenames))
-    (L[A"with-outputs-to"; A"%{target}";
-       L[A"chdir"; A good;
-         menhir base (A"--only-preprocess" :: flags)]]);
+  rule
+    output
+    (source // mlys basenames)
+    (targeted (chdir source (
+      menhir (base basenames) (A"--only-preprocess" :: flags))))
+  |> print;
 
   (* Check that the output coincides with what was expected. *)
-  let oppexp = id ^ ".opp.exp" in
-  print_phony
-    id
-    (diff (good_slash oppexp) oppout);
+  phony id (diff (source/expected) output) |> print;
+
+  (* The output and expected-output files. *)
+  let output = id ^ ".out"
+  and expected = id ^ ".exp" in
 
   (* Run menhir. *)
-  let out = id ^ ".out" in
-  print_rule
-    out
-    (List.map good_slash (mlys basenames))
-    (L[A"with-outputs-to"; A"%{target}";
-       L[A"chdir"; A good;
-         menhir base (
-           A"--explain" :: A"-lg" :: A"2" :: A"-la" :: A"2" :: A"-lc" :: A"2" ::
-           flags)]]);
+  rule
+    output
+    (source // mlys basenames)
+    (targeted (chdir source (
+      menhir (base basenames) (
+        A"--explain" :: A"-lg" :: A"2" :: A"-la" :: A"2" :: A"-lc" :: A"2" ::
+        flags))))
+  |> print;
 
   (* Check that the output coincides with what was expected. *)
-  let exp = id ^ ".exp" in
-  print_phony
-    id
-    (diff (good_slash exp) out)
+  phony id (diff (source/expected) output) |> print
 
 (* -------------------------------------------------------------------------- *)
 
@@ -289,13 +283,13 @@ let id input =
 (* [run] runs a bunch of tests in parallel. *)
 
 let run (inputs : inputs) =
-  List.iter process inputs;
-  let ids = List.map id inputs in
-  let ids = List.sort_uniq compare ids in
-  print_sexp
+  iter process inputs;
+  let ids = map id inputs in
+  let ids = sort_uniq compare ids in
+  print
     (L[A"alias";
        L[A"name"; A"test"];
-       Lnewline(A"deps" :: List.map (fun id -> L[A"alias"; A id]) ids)])
+       Lnewline(A"deps" :: map (fun id -> L[A"alias"; A id]) ids)])
 
 (* -------------------------------------------------------------------------- *)
 
@@ -309,7 +303,7 @@ let inputs directory : filename list list =
      readdir directory
   |> to_list
   |> filter (has_suffix ".mly")
-  |> map chop_extension
+  |> map Filename.chop_extension
   |> sort compare
   |> groups equal_up_to_numeric_suffix
 
