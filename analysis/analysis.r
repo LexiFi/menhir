@@ -3,7 +3,7 @@
 require(ggplot2)
 
 # Load our data.
-mydata <- read.csv("timings.csv")
+mydata <- read.csv("data.csv")
 # Restrict ourselves to a subset of the data.
 mydata <- subset(mydata, time >= 0.1)
 
@@ -20,5 +20,5 @@ plotloglog <- function(xy, lx, ly) {
 }
 
 # Plot.
-myplot <- plotloglog(aes(x=states, y=time), "# states", "time (seconds)")
-ggsave("states-time.pdf", myplot, width=12, height=8, units="cm")
+myplot <- plotloglog(aes(x=lr1states, y=time), "# LR(1) states", "time (seconds)")
+ggsave("lr1states-time.pdf", myplot, width=12, height=8, units="cm")

@@ -38,44 +38,40 @@ export CDPATH=
 test:
 	@ dune build --display short @test
 
-# [make timings] extracts the performance data gathered by [make test].
-# Be careful: this data is not high quality, and is machine-dependent.
-
-# We select just one line in the performance data printed by [menhir
-# --timings-to <filename>]. The variable $field indicates which field
-# we are interested in.
+# [make data] extracts statistics and performance data out of the files
+# produced by [make test]. Be careful: the timing data is not high quality,
+# and is machine-dependent. The data is written to analysis/data.csv.
 
 # On MacOS, we require gsed instead of sed.
-
 SED=$(shell if [[ "$$OSTYPE" == "darwin"* ]] ; then echo gsed ; else echo sed ; fi)
 
-.PHONY: timings
-timings: test
-	@ echo "Collecting data (using $(SED))..."
-	@ field="Construction of the LR(1) automaton" ; \
+.PHONY: data
+data: test
+	@ echo "Collecting data (using $(SED))..." && \
 	( \
-	  echo "name,states,time" && \
+	  echo "name,lr1states,time" && \
 	  cd _build/default/test/static/src && \
-	  for f in *.out.timings ; do \
-	    name=$${f%.out.timings} ; \
-	    states=`$(SED) -n -e "s/^Built an LR(1) automaton with \([0-9]\+\) states./\1/p" $${f%.timings}` ; \
-	    time=`$(SED) -n -e "s/^$$field: \(.*\)s/\1/p" $$f` ; \
-	    echo "$$name,$$states,$$time" ; \
+	  for timings in *.out.timings ; do \
+	    name=$${timings%.out.timings} ; \
+	    out=$$name.out ; \
+	    lr1states=`$(SED) -n -e "s/^Built an LR(1) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
+	    time=`$(SED) -n -e "s/^Construction of the LR(1) automaton: \(.*\)s/\1/p" $$timings` ; \
+	    echo "$$name,$$lr1states,$$time" ; \
 	  done \
-	) > timings.csv
+	) > analysis/data.csv
 
 clean::
-	@ rm -f timings.csv
+	@ rm -f analysis/data.csv
 
-# [make plot] uses Rscript to plot the data extracted by [make timings].
+# [make plot] uses Rscript to plot the data extracted by [make data].
 
 .PHONY: plot
 plot:
 	@ echo "Running R..."
-	@ ./timings.r
+	@ cd analysis && ./analysis.r
 
 clean::
-	@ rm -f states-time.pdf
+	@ rm -f analysis/*.pdf
 
 # [make speed] runs the speed test in test/dynamic/speed.
 
