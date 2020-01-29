@@ -17,5 +17,4 @@
 include GrammarFunctor.Make(struct
   let grammar = Front.grammar
   let verbose = true
-end)
-
+end)()

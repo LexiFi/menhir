@@ -28,7 +28,7 @@ module Make (G : sig
      [false], then only serious errors can be signaled. *)
   val verbose: bool
 
-end) : sig
+end) () : sig
 
 (* ------------------------------------------------------------------------ *)
 (* Nonterminals. *)

@@ -25,7 +25,7 @@ module Make (G : sig
      [false], then only serious errors can be signaled. *)
   val verbose: bool
 
-end) = struct
+end) () = struct
 
   open G
 
@@ -403,7 +403,9 @@ end
 
 module TerminalSet = struct
 
-  include SparseBitSet
+  (* 2020/01/29: use [BoundedBitSet] instead of [SparseBitSet]. *)
+
+  include BoundedBitSet.Make(Terminal)()
 
   let print toks =
     Misc.separated_iter_to_string Terminal.print " " (fun f -> iter f toks)
