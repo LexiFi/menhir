@@ -49,14 +49,17 @@ SED=$(shell if [[ "$$OSTYPE" == "darwin"* ]] ; then echo gsed ; else echo sed ; 
 data: test
 	@ echo "Collecting data (using $(SED))..." && \
 	( \
-	  echo "name,lr1states,time" && \
+	  echo "name,terminals,nonterminals,lr0states,lr1states,lr1time" && \
 	  cd _build/default/test/static/src && \
 	  for timings in *.out.timings ; do \
 	    name=$${timings%.out.timings} ; \
 	    out=$$name.out ; \
+	    terminals=`$(SED) -n -e "s/^Grammar has \([0-9]\+\) terminal symbols./\1/p" $$out` ; \
+	    nonterminals=`$(SED) -n -e "s/^Grammar has \([0-9]\+\) nonterminal symbols, among which [0-9]\+ start symbols./\1/p" $$out` ; \
+	    lr0states=`$(SED) -n -e "s/^Built an LR(0) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
 	    lr1states=`$(SED) -n -e "s/^Built an LR(1) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
-	    time=`$(SED) -n -e "s/^Construction of the LR(1) automaton: \(.*\)s/\1/p" $$timings` ; \
-	    echo "$$name,$$lr1states,$$time" ; \
+	    lr1time=`$(SED) -n -e "s/^Construction of the LR(1) automaton: \(.*\)s/\1/p" $$timings` ; \
+	    echo "$$name,$$terminals,$$nonterminals,$$lr0states,$$lr1states,$$lr1time" ; \
 	  done \
 	) > analysis/data.csv
 
