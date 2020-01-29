@@ -18,7 +18,8 @@
 (* We select an implementation based on [n]. If [n] is less than or equal to
    [AtomicBitSet.bound], then we can use a single-word bit set, which requires
    no memory allocation. If [n] is less than or equal to [DWordBitSet.bound],
-   then we can use a double-word bit set. Otherwise, we fall back on
+   then we can use a double-word bit set. And so on, up to quad-word bit sets,
+   which are about as far as I am willing to go. Otherwise, we fall back on
    [SparseBitSet], which can represent integers of unbounded magnitude. *)
 
 (* The functor [Make] must take a dummy argument [()] in order to indicate
@@ -42,6 +43,8 @@ end) ()
       (module AtomicBitSet : S)
     else if N.n <= DWordBitSet.bound then
       (module DWordBitSet : S)
+    else if N.n <= QWordBitSet.bound then
+      (module QWordBitSet : S)
     else
       (module SparseBitSet : S)
     : S)
