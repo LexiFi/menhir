@@ -39,8 +39,10 @@ test:
 	@ dune build --display short @test
 
 # [make data] extracts statistics and performance data out of the files
-# produced by [make test]. Be careful: the timing data is not high quality,
-# and is machine-dependent. The data is written to analysis/data.csv.
+# produced by [make test]. Be careful: the timing data is definitely not high
+# quality, because every test is run only once and because the tests are run
+# in parallel on a heavily-loaded machine. Furthermore, this data is
+# machine-dependent. The data is written to analysis/data.csv.
 
 # On MacOS, we require gsed instead of sed.
 SED=$(shell if [[ "$$OSTYPE" == "darwin"* ]] ; then echo gsed ; else echo sed ; fi)
