@@ -11,8 +11,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This is a stripped down version of [GSet] that describes both [Patricia]
-   and [CompressedBitSet]. The full version of [GSet] is in [AlphaLib]. *)
+(* This signature describes several implementations of sets, including
+   [Patricia], [AtomicBitSet], and [SparseBitSet]. *)
 
 module type S = sig
 
@@ -112,4 +112,3 @@ module type S = sig
   val subset: (t -> t -> bool)
 
 end
-

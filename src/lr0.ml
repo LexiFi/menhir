@@ -23,7 +23,7 @@ module InfiniteArray =
    terminal symbols and of a number of set variables. Set variables as
    encoded as integers. *)
 
-module VarSet = CompressedBitSet
+module VarSet = SparseBitSet
 
 module SymbolicLookahead = struct
 

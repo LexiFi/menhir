@@ -403,7 +403,7 @@ end
 
 module TerminalSet = struct
 
-  include CompressedBitSet
+  include SparseBitSet
 
   let print toks =
     Misc.separated_iter_to_string Terminal.print " " (fun f -> iter f toks)

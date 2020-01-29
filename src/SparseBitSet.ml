@@ -11,10 +11,11 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* A compressed (or should we say sparse?) bit set is a list of pairs
-   of integers. The first component of every pair is an index, while
-   the second component is a bit field. The list is sorted by order
-   of increasing indices. *)
+(* This data structure implements sets of integers (of unbounded magnitude). *)
+
+(* A sparse bit set is a list of pairs of integers. The first component of
+   every pair is an index, while the second component is a bit field. The list
+   is sorted by order of increasing indices. *)
 
 type t =
   | N
@@ -235,4 +236,3 @@ let rec disjoint s1 s2 =
         disjoint qs1 s2
       else
         disjoint s1 qs2
-
