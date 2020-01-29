@@ -34,9 +34,9 @@ let bit i =
 
 (* -------------------------------------------------------------------------- *)
 
-(* The function [tib x] computes the base-2 logarithm of [x]. We may assume
-   that [x] is a power of two, that is, a single bit is set. This function
-   is so named because it is the inverse of [bit]: [tib (bit i) = i]. *)
+(* [tib x] is the base-2 logarithm of [x]. We may assume that [x] is a power
+   of two, that is, a single bit is set. The function [tib] is so named
+   because it is the inverse of [bit]: [tib (bit i) = i]. *)
 
 (* It would be nice if we could use gcc's __builtin_clz to do this.
    See caml_z.c in the library zarith. *)
@@ -83,6 +83,40 @@ let () =
 
 (* -------------------------------------------------------------------------- *)
 
+(* [pop x] is the population count, that is, the number of bits that are set
+   in [x]. *)
+
+(* Again, it would be nice if we could use gcc's __builtin_popcount. *)
+
+let b0 = 0x55555555
+let b1 = 0x33333333
+let b2 = 0xf0f0f0f
+
+let pop32 x =
+  (* Count the bits inside each byte, in parallel. *)
+  (* https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetParallel *)
+  let x = x         - (x lsr 1) land b0 in
+  let x = x land b1 + (x lsr 2) land b1 in
+  let x = x land b2 + (x lsr 4) land b2 in
+  (* Add up the four counts found in the four bytes. Each of these counts is
+     at most 8, so the sum is at most 32, and fits in a byte. *)
+  let x = x + x lsr 8 in
+  let x = x + x lsr 16 in
+  x land 0xff
+
+let pop64 x =
+  pop32 x + pop32 (x lsr 32)
+    (* Because [pop32] examines only the lower 32 bits, we pass [x] [pop32]
+       without bothering to mask off the higher 32 bits. *)
+
+let pop x =
+  match Sys.word_size with
+  | 32 -> pop32 x
+  | 64 -> pop64 x
+  | _ -> assert false
+
+(* -------------------------------------------------------------------------- *)
+
 (* Operations. *)
 
 let empty =
@@ -122,7 +156,8 @@ let is_singleton s =
   s land (s - 1) = 0
 
 let cardinal s =
-  fold (fun _ m -> m + 1) s 0
+  pop s
+  (* or: fold (fun _ m -> m + 1) s 0 *)
 
 let elements s =
   (* Note: the list is produced in decreasing order. *)
