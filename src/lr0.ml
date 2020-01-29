@@ -23,30 +23,32 @@ module InfiniteArray =
    terminal symbols and of a number of set variables. Set variables as
    encoded as integers. *)
 
+module VarSet = CompressedBitSet
+
 module SymbolicLookahead = struct
 
   type t =
-    TerminalSet.t * CompressedBitSet.t
+    TerminalSet.t * VarSet.t
 
   let constant toks =
-    (toks, CompressedBitSet.empty)
+    (toks, VarSet.empty)
 
   let empty =
     constant TerminalSet.empty
 
   let union (toks1, vars1) ((toks2, vars2) as s2) =
     let toks = TerminalSet.union toks1 toks2
-    and vars = CompressedBitSet.union vars1 vars2 in
+    and vars = VarSet.union vars1 vars2 in
     if toks2 == toks && vars2 == vars then
       s2
     else
       (toks, vars)
 
   let variable (var : int) : t =
-    (TerminalSet.empty, CompressedBitSet.singleton var)
+    (TerminalSet.empty, VarSet.singleton var)
 
   let project (toks, vars) =
-    assert (CompressedBitSet.is_empty vars);
+    assert (VarSet.is_empty vars);
     toks
 
 end
@@ -333,7 +335,7 @@ let interpret
     : TerminalSet.t =
 
   assert (well_formed state);
-  CompressedBitSet.fold (fun var toks ->
+  VarSet.fold (fun var toks ->
     assert (var >= 0 && var < Array.length toksr);
     TerminalSet.union toksr.(var) toks
   ) vars toks
