@@ -234,7 +234,7 @@ let emit, rules =
 
 let mangle : label -> nonterminal =
   let ensure_fresh = Misc.new_claim() in
-  let module M = Memoize.ForHashedType(Label) in
+  let module M = Fix.Memoize.ForHashedType(Label) in
   M.memoize (fun label ->
     let name = mangle label in
     ensure_fresh (Misc.normalize name);

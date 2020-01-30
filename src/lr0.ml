@@ -427,7 +427,7 @@ let subsume ((k1, toksr1) as state1) ((k2, toksr2) as state2) =
    efficiency is sufficient: 10000 states are numbered in about 0.01s. *)
 
 module M =
-  Memoize.ForOrderedType(struct
+  Fix.Memoize.ForOrderedType(struct
     type t = lr1state
     let compare s1 s2 =
       let c = core s1 - core s2 in

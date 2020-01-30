@@ -112,7 +112,7 @@ let make_gensym () : unit -> string =
 
 let make_name () : int -> string =
   let gensym = make_gensym() in
-  Memoize.Int.memoize (fun _x -> gensym())
+  Fix.Memoize.Int.memoize (fun _x -> gensym())
 
 (* -------------------------------------------------------------------------- *)
 

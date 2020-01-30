@@ -469,7 +469,7 @@ module Inline (G : sig val grammar: grammar end) = struct
   (* Apply [defensive_fix] to obtain a closed function [expand_symbol]. *)
 
   let expand_symbol : Syntax.symbol -> rule =
-    Memoize.String.defensive_fix expand_symbol
+    Fix.Memoize.String.defensive_fix expand_symbol
 
   (* Wrap [expand_symbol] in an exception handler, so that, when a cycle
      of %inline nonterminal symbols is detected, a good error message is
@@ -478,7 +478,7 @@ module Inline (G : sig val grammar: grammar end) = struct
   let expand_symbol symbol =
     try
       expand_symbol symbol
-    with Memoize.String.Cycle (symbols, symbol) ->
+    with Fix.Memoize.String.Cycle (symbols, symbol) ->
       let rule = find symbol in
       let b = Buffer.create 128 in
       Printf.bprintf b "there is a cycle of %%inline nonterminal symbols:\n";

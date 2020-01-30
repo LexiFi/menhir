@@ -1,223 +1,16 @@
 (******************************************************************************)
 (*                                                                            *)
-(*                                   Menhir                                   *)
+(*                                    Fix                                     *)
 (*                                                                            *)
 (*                       François Pottier, Inria Paris                        *)
-(*              Yann Régis-Gianas, PPS, Université Paris Diderot              *)
 (*                                                                            *)
 (*  Copyright Inria. All rights reserved. This file is distributed under the  *)
-(*  terms of the GNU General Public License version 2, as described in the    *)
-(*  file LICENSE.                                                             *)
+(*  terms of the GNU Library General Public License version 2, with a         *)
+(*  special exception on linking, as described in the file LICENSE.           *)
 (*                                                                            *)
 (******************************************************************************)
 
-(* -------------------------------------------------------------------------- *)
-
-(* Maps. *)
-
-(* We require imperative maps, that is, maps that can be updated in place.
-   An implementation of persistent maps, such as the one offered by ocaml's
-   standard library, can easily be turned into an implementation of imperative
-   maps, so this is a weak requirement. *)
-
-module type IMPERATIVE_MAPS = sig
-  type key
-  type 'data t
-  val create: unit -> 'data t
-  val clear: 'data t -> unit
-  val add: key -> 'data -> 'data t -> unit
-  val find: key -> 'data t -> 'data
-  val iter: (key -> 'data -> unit) -> 'data t -> unit
-end
-
-(* -------------------------------------------------------------------------- *)
-
-(* Properties. *)
-
-(* Properties must form a partial order, equipped with a least element, and
-   must satisfy the ascending chain condition: every monotone sequence
-   eventually stabilizes. *)
-
-(* [is_maximal] determines whether a property [p] is maximal with respect to
-   the partial order. Only a conservative check is required: in any event, it
-   is permitted for [is_maximal p] to return [false]. If [is_maximal p]
-   returns [true], then [p] must have no upper bound other than itself. In
-   particular, if properties form a lattice, then [p] must be the top
-   element. This feature, not described in the paper, enables a couple of
-   minor optimizations. *)
-
-module type PROPERTY = sig
-  type property
-  val bottom: property
-  val equal: property -> property -> bool
-  val is_maximal: property -> bool
-end
-
-(* -------------------------------------------------------------------------- *)
-
-(* The dynamic dependency graph. *)
-
-(* An edge from [node1] to [node2] means that [node1] depends on [node2], or
-   (equivalently) that [node1] observes [node2]. Then, an update of the
-   current property at [node2] causes a signal to be sent to [node1]. A node
-   can observe itself. *)
-
-(* This module could be placed in a separate file, but is included here in
-   order to make [Fix] self-contained. *)
-
-module Graph : sig
-
-  (* This module provides a data structure for maintaining and modifying
-     a directed graph. Each node is allowed to carry a piece of client
-     data. There are functions for creating a new node, looking up a
-     node's data, looking up a node's predecessors, and setting or
-     clearing a node's successors (all at once). *)
-  type 'data node
-
-  (* [create data] creates a new node, with no incident edges, with
-     client information [data]. Time complexity: constant. *)
-  val create: 'data -> 'data node
-
-  (* [data node] returns the client information associated with
-     the node [node]. Time complexity: constant. *)
-  val data: 'data node -> 'data
-
-  (* [predecessors node] returns a list of [node]'s predecessors.
-     Amortized time complexity: linear in the length of the output
-     list. *)
-  val predecessors: 'data node -> 'data node list
-
-  (* [set_successors src dsts] creates an edge from the node [src] to
-     each of the nodes in the list [dsts]. Duplicate elements in the
-     list [dsts] are removed, so that no duplicate edges are created. It
-     is assumed that [src] initially has no successors. Time complexity:
-     linear in the length of the input list. *)
-  val set_successors: 'data node -> 'data node list -> unit
-
-  (* [clear_successors node] removes all of [node]'s outgoing edges.
-     Time complexity: linear in the number of edges that are removed. *)
-  val clear_successors: 'data node -> unit
-
-  (* That's it. *)
-end
-= struct
-
-  (* Using doubly-linked adjacency lists, one could implement [predecessors]
-     in worst-case linear time with respect to the length of the output list,
-     [set_successors] in worst-case linear time with respect to the length of
-     the input list, and [clear_successors] in worst-case linear time with
-     respect to the number of edges that are removed. We use a simpler
-     implementation, based on singly-linked adjacency lists, with deferred
-     removal of edges. It achieves the same complexity bounds, except
-     [predecessors] only offers an amortized complexity bound. This is good
-     enough for our purposes, and, in practice, is more efficient by a
-     constant factor. This simplification was suggested by Arthur
-     Charguéraud. *)
-
-  type 'data node = {
-
-    (* The client information associated with this node. *)
-
-    data: 'data;
-
-    (* This node's incoming and outgoing edges. *)
-
-    mutable outgoing: 'data edge list;
-    mutable incoming: 'data edge list;
-
-    (* A transient mark, always set to [false], except when checking
-       against duplicate elements in a successor list. *)
-
-    mutable marked: bool;
-
-  }
-
-  and 'data edge = {
-
-    (* This edge's nodes. Edges are symmetric: source and destination
-       are not distinguished. Thus, an edge appears both in the outgoing
-       edge list of its source node and in the incoming edge list of its
-       destination node. This allows edges to be easily marked as
-       destroyed. *)
-
-    node1: 'data node;
-    node2: 'data node;
-
-    (* Edges that are destroyed are marked as such, but are not
-       immediately removed from the adjacency lists. *)
-
-    mutable destroyed: bool;
-
-  }
-
-  let create (data : 'data) : 'data node = {
-    data = data;
-    outgoing = [];
-    incoming = [];
-    marked = false;
-  }
-
-  let data (node : 'data node) : 'data =
-    node.data
-
-  (* [follow src edge] returns the node that is connected to [src]
-     by [edge]. Time complexity: constant. *)
-
-  let follow src edge =
-    if edge.node1 == src then
-      edge.node2
-    else begin
-      assert (edge.node2 == src);
-      edge.node1
-    end
-
-  (* The [predecessors] function removes edges that have been marked
-     destroyed. The cost of removing these has already been paid for,
-     so the amortized time complexity of [predecessors] is linear in
-     the length of the output list. *)
-
-  let predecessors (node : 'data node) : 'data node list =
-    let predecessors = List.filter (fun edge -> not edge.destroyed) node.incoming in
-    node.incoming <- predecessors;
-    List.map (follow node) predecessors
-
-  (* [link src dst] creates a new edge from [src] to [dst], together
-     with its reverse edge. Time complexity: constant. *)
-
-  let link (src : 'data node) (dst : 'data node) : unit =
-    let edge = {
-      node1 = src;
-      node2 = dst;
-      destroyed = false;
-    } in
-    src.outgoing <- edge :: src.outgoing;
-    dst.incoming <- edge :: dst.incoming
-
-  let set_successors (src : 'data node) (dsts : 'data node list) : unit =
-    assert (src.outgoing = []);
-    let rec loop = function
-      | [] ->
-          ()
-      | dst :: dsts ->
-          if dst.marked then
-            loop dsts (* skip duplicate elements *)
-          else begin
-            dst.marked <- true;
-            link src dst;
-            loop dsts;
-            dst.marked <- false
-          end
-    in
-    loop dsts
-
-  let clear_successors (node : 'data node) : unit =
-    List.iter (fun edge ->
-      assert (not edge.destroyed);
-      edge.destroyed <- true;
-    ) node.outgoing;
-    node.outgoing <- []
-
-end
+open Sigs
 
 (* -------------------------------------------------------------------------- *)
 
@@ -246,13 +39,18 @@ type equations =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Data. *)
+(* The dependency graph. *)
 
-(* Each node in the dependency graph carries information about a fixed
-   variable [v]. *)
+(* An edge from [node1] to [node2] in the dynamic dependency graph means that
+   [node1] depends on [node2], or (equivalently) that [node1] observes
+   [node2]. Then, an update of the current property at [node2] causes a signal
+   to be sent to [node1]. A node can observe itself. *)
 
 type node =
     data Graph.node
+
+(* Each node in the dependency graph corresponds to a specific variable [v],
+   and carries data about it. *)
 
 and data = {
 
@@ -376,7 +174,6 @@ let freeze () =
 
 (* Workset processing. *)
 
-
 (* [solve node] re-evaluates the right-hand side at [node]. If this leads to
    a change, then the current property is updated, and [node] emits a signal
    towards its observers. *)
@@ -418,24 +215,29 @@ let rec solve (node : node) : unit =
       M.find v permanent
     with Not_found ->
       let subject = node_for v in
+      (* IFPAPER
+      subjects := subject :: !subjects;
+      property subject
+      ELSE *)
       let p = property subject in
       if not (P.is_maximal p) then
         subjects := subject :: !subjects;
       p
+      (* END *)
   in
 
   (* Give control to the client. *)
   let new_property = data.rhs request in
 
-  (* From now on, prevent any invocation of this instance of [request]
+  (* From now on, prevent any invocation of this instance of [request] by
      the client. *)
   alive := false;
 
   (* At this point, [node] has no subjects, as noted above. Thus, the
-     precondition of [set_successors] is met. We can install [data.subjects]
+     precondition of [set_successors] is met. We can install [subjects]
      as the new set of subjects for this node. *)
 
-  (* If we have gathered no subjects in the list [data.subjects], then
+  (* If we have gathered no subjects in the list [subjects], then
      this node must have stabilized. If [new_property] is maximal,
      then this node must have stabilized. *)
 
@@ -453,8 +255,12 @@ let rec solve (node : node) : unit =
      enforce the property that no node in the transient table has a maximal
      value, hence the call to [is_maximal] above would become useless. *)
 
+  (* IFPAPER
+  Graph.set_successors node !subjects;
+  ELSE *)
   if not (!subjects = [] || P.is_maximal new_property) then
     Graph.set_successors node !subjects;
+  (* END *)
 
   (* If the updated value differs from the previous value, record
      the updated value and send a signal to all observers of [node]. *)
@@ -495,7 +301,7 @@ and node_for (v : variable) : node =
        recursively is mandatory, otherwise [solve] might loop, creating
        an infinite number of nodes for the same variable. *)
     M.add v node transient;
-    solve node; (* or: Workset.insert node *)
+    solve node; (*k or: Workset.insert node *)
     node
 
 (* -------------------------------------------------------------------------- *)
@@ -527,3 +333,22 @@ end
 in LFP.get
 
 end
+
+(* -------------------------------------------------------------------------- *)
+
+(* Special cases, for easier use. *)
+
+module ForOrderedType
+  (T : OrderedType)
+  (P : PROPERTY)
+     = Make(Glue.PersistentMapsToImperativeMaps(Map.Make(T)))(P)
+
+module ForHashedType
+  (T : HashedType)
+  (P : PROPERTY)
+     = Make(Glue.HashTablesAsImperativeMaps(T))(P)
+
+module ForType
+  (T : TYPE)
+  (P : PROPERTY)
+     = ForHashedType(Glue.TrivialHashedType(T))(P)

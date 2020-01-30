@@ -1,127 +1,16 @@
 (******************************************************************************)
 (*                                                                            *)
-(*                                   Menhir                                   *)
+(*                                    Fix                                     *)
 (*                                                                            *)
 (*                       François Pottier, Inria Paris                        *)
-(*              Yann Régis-Gianas, PPS, Université Paris Diderot              *)
 (*                                                                            *)
 (*  Copyright Inria. All rights reserved. This file is distributed under the  *)
-(*  terms of the GNU General Public License version 2, as described in the    *)
-(*  file LICENSE.                                                             *)
+(*  terms of the GNU Library General Public License version 2, with a         *)
+(*  special exception on linking, as described in the file LICENSE.           *)
 (*                                                                            *)
 (******************************************************************************)
 
-(* Sigs. *)
-
-module type TYPE = sig
-  type t
-end
-
-module type PERSISTENT_MAPS = sig
-  type key
-  type 'data t
-  val empty: 'data t
-  val add: key -> 'data -> 'data t -> 'data t
-  val find: key -> 'data t -> 'data
-  val iter: (key -> 'data -> unit) -> 'data t -> unit
-end
-
-module type IMPERATIVE_MAPS = sig
-  type key
-  type 'data t
-  val create: unit -> 'data t
-  val add: key -> 'data -> 'data t -> unit
-  val find: key -> 'data t -> 'data
-  val clear: 'data t -> unit
-  val iter: (key -> 'data -> unit) -> 'data t -> unit
-end
-
-module type MEMOIZER = sig
-  (* A type of keys. *)
-  type key
-  (* A memoization combinator for this type. *)
-  val memoize: (key -> 'a) -> (key -> 'a)
-  (* A recursive memoization combinator for this type. *)
-  val fix: ((key -> 'a) -> (key -> 'a)) -> (key -> 'a)
-  (* [defensive_fix] works like [fix], except it additionally detects circular
-     dependencies, which can arise if the second-order function supplied by
-     the user does not follow a well-founded recursion pattern. When the user
-     invokes [f x], where [f] is the function returned by [defensive_fix], if
-     a cyclic dependency is detected, then [Cycle (zs, z)] is raised, where
-     the list [zs] begins with [z] and continues with a series of intermediate
-     keys, leading back to [z]. Note that undetected divergence remains
-     possible; this corresponds to an infinite dependency chain, without a
-     cycle. *)
-  exception Cycle of key list * key
-  val defensive_fix: ((key -> 'a) -> (key -> 'a)) -> (key -> 'a)
-end
-
-(* -------------------------------------------------------------------------- *)
-
-(* Glue. *)
-
-module INT = struct
-  type t = int
-end
-
-module STRING = struct
-  type t = string
-end
-
-module TrivialHashedType (T : TYPE) = struct
-  include T
-  let equal = (=)
-  let hash = Hashtbl.hash
-end
-
-module PersistentMapsToImperativeMaps (M : PERSISTENT_MAPS) = struct
-
-  type key =
-    M.key
-
-  type 'data t =
-    'data M.t ref
-
-  let create () =
-    ref M.empty
-
-  let clear t =
-    t := M.empty
-
-  let add k d t =
-    t := M.add k d !t
-
-  let find k t =
-    M.find k !t
-
-  let iter f t =
-    M.iter f !t
-
-end
-
-module Adapt (T : Hashtbl.S) = struct
-
-  include T
-    (* types:  [key], ['data t] *)
-    (* values: [clear], [iter]  *)
-
-  let create () =
-    T.create 1023
-
-  let add key data table =
-    T.add table key data
-
-  let find table key =
-    T.find key table
-
-end
-
-module HashTablesAsImperativeMaps (H : Hashtbl.HashedType) =
-  Adapt(Hashtbl.Make(H))
-
-(* -------------------------------------------------------------------------- *)
-
-(* Memoize. *)
+open Sigs
 
 (* [rev_take accu n xs] is [accu @ rev (take n xs)], where [take n xs]
    takes the first [n] elements of the list [xs]. The length of [xs] must
@@ -149,13 +38,22 @@ module Make (M : IMPERATIVE_MAPS) = struct
      [let memoize f = fix (fun _ x -> f x)]. The following direct definition is
      perhaps easier to understand and may give rise to more efficient code. *)
 
-  let memoize (f : key -> 'a) : key -> 'a =
+  type 'a t =
+    'a M.t
+
+  let visibly_memoize (f : key -> 'a) : (key -> 'a) * 'a t =
     let table = M.create() in
-    fun x ->
+    let f x =
       try
 	M.find x table
       with Not_found ->
         add x (f x) table
+    in
+    f, table
+
+  let memoize (f : key -> 'a) : key -> 'a =
+    let f, _table = visibly_memoize f in
+    f
 
   let fix (ff : (key -> 'a) -> (key -> 'a)) : key -> 'a =
     let table = M.create() in
@@ -217,17 +115,20 @@ module Make (M : IMPERATIVE_MAPS) = struct
 
 end
 
-module ForOrderedType (T : Map.OrderedType) =
-  Make(PersistentMapsToImperativeMaps(Map.Make(T)))
+module ForOrderedType (T : OrderedType) =
+  Make(Glue.PersistentMapsToImperativeMaps(Map.Make(T)))
 
-module ForHashedType (T : Hashtbl.HashedType) =
-  Make(HashTablesAsImperativeMaps(T))
+module ForHashedType (T : HashedType) =
+  Make(Glue.HashTablesAsImperativeMaps(T))
 
 module ForType (T : TYPE) =
-  ForHashedType(TrivialHashedType(T))
+  ForHashedType(Glue.TrivialHashedType(T))
+
+module Char =
+  ForType(Glue.CHAR)
 
 module Int =
-  ForType(INT)
+  ForType(Glue.INT)
 
 module String =
-  ForType(STRING)
+  ForType(Glue.STRING)
