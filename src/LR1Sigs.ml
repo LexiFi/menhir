@@ -34,7 +34,9 @@ module type LR1_AUTOMATON = sig
 
   val entry : node ProductionMap.t
 
-  (* Each node carries outgoing transitions towards other nodes. *)
+  (* Each node carries outgoing transitions towards other nodes. (Note to
+     implementors of the signature [LR1_AUTOMATON]: there is no need to
+     memoize this function; this is done a posteriori, in [Lr1].) *)
 
   val transitions: node -> node SymbolMap.t
 
