@@ -413,8 +413,8 @@ let runpushes s =
    difference, for instance, if production [prod] is never reduced, or
    if the top stack cell is in fact nonexistent. *)
 
-let (shiftreduce : Production.index -> bool), shiftreducecount =
-  Production.tabulateb (fun prod ->
+let shiftreduce : Production.index -> bool =
+  Production.tabulate (fun prod ->
 
     (* Check that this production pops at least one stack cell. *)
 
@@ -429,6 +429,9 @@ let (shiftreduce : Production.index -> bool), shiftreducecount =
     ) (Lr1.production_where prod) true
 
   )
+
+let shiftreducecount =
+  Production.sum (fun prod -> if shiftreduce prod then 1 else 0)
 
 let () =
   Error.logC 1 (fun f ->

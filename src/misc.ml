@@ -39,12 +39,12 @@ let tabulate n f =
   let a = Array.init n f in
   Array.get a
 
-let tabulateb n f =
-  let a = Array.init n f in
-  Array.get a,
-  Array.fold_left (fun count element ->
-    if element then count + 1 else count
-  ) 0 a
+let sum n (f : int -> int) : int =
+  let sum = ref 0 in
+  for x = 0 to n - 1 do
+    sum := !sum + f x
+  done;
+  !sum
 
 (* [tabulatef number fold n dummy f] returns a function that is extensionally
    equal to [f], but relies on an internal array. Arguments to [f] are of type

@@ -36,14 +36,9 @@ val mapd: ('a -> 'b * 'b) -> 'a list -> 'b list
 
 val tabulate: int -> (int -> 'a) -> (int -> 'a)
 
-(* Tabulating a function using an internal array. [tabulateb n f]
-   returns a function that is extensionally equal to [f], but relies
-   on an internal array. Arguments to [f] are of type [int] and are
-   supposed to lie in the range [0..n). The result type of [f] is
-   assumed to be of type [bool]. [tabulateb] also returns the number
-   of points where [f] is [true]. *)
+(* [sum n f] computes the sum [f 0 + f 1 + ... + f (n-1)]. *)
 
-val tabulateb: int -> (int -> bool) -> (int -> bool) * int
+val sum: int -> (int -> int) -> int
 
 (* [tabulateo number fold n f] returns a function that is
    extensionally equal to [f], but relies on an internal

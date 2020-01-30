@@ -822,13 +822,13 @@ module Production = struct
     let nt, rhs = table.(prod) in
     Printf.sprintf "%s -> %s" (Nonterminal.print false nt) (Symbol.printao 0 rhs)
 
-  (* Tabulation. *)
+  (* Tabulation and sum. *)
 
   let tabulate f =
     Misc.tabulate n f
 
-  let tabulateb f =
-    Misc.tabulateb n f
+  let sum f =
+    Misc.sum n f
 
   (* This array allows recording, for each %prec declaration, whether it is
      ever useful. This allows us to emit a warning about useless %prec
