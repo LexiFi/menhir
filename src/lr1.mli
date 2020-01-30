@@ -123,6 +123,11 @@ val fold: ('a -> node -> 'a) -> 'a -> 'a
 val iter: (node -> unit) -> unit
 val map: (node -> 'a) -> 'a list
 
+(* Tabulation and sum of a function over nodes. *)
+
+val tabulate: (node -> 'a) -> (node -> 'a)
+val sum: (node -> int) -> int
+
 (* Iteration over non-start nodes *)
 val foldx: ('a -> node -> 'a) -> 'a -> 'a
 val iterx: (node -> unit) -> unit

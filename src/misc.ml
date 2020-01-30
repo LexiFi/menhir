@@ -46,16 +46,6 @@ let sum n (f : int -> int) : int =
   done;
   !sum
 
-let tabulatef number fold n dummy f =
-  let a = Array.make n dummy in
-  let () = fold (fun () element ->
-    a.(number element) <- f element
-  ) () in
-  let get element =
-    a.(number element)
-  in
-  get
-
 type 'a iter = ('a -> unit) -> unit
 
 let separated_iter_to_string printer separator iter =

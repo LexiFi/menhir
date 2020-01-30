@@ -40,20 +40,6 @@ val tabulate: int -> (int -> 'a) -> (int -> 'a)
 
 val sum: int -> (int -> int) -> int
 
-(* [tabulatef number fold n dummy f] returns a function that is extensionally
-   equal to [f], but relies on an internal array. Arguments to [f] are of type
-   ['a] and are mapped by [number] into the range [0..n). [fold] allows
-   folding over the domain of [f]. [dummy] is used to initialize the internal
-   array. Its value has no impact if [fold] is surjective. *)
-
-val tabulatef:
-  ('a -> int) ->
-  ((unit -> 'a -> unit) -> unit -> unit) ->
-  int ->
-  'b ->
-  ('a -> 'b) ->
-  ('a -> 'b)
-
 (* [separated_list_to_string printer sep l] converts [l] into a string
    representation built by using [printer] on each element and [sep] as
    a separator. *)

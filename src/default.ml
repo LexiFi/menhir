@@ -58,7 +58,7 @@ module C = Conflict (* artificial dependency; ensures that [Conflict] runs first
    reductions, as they seem to be beneficial when explaining syntax errors. *)
 
 let has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) option =
-  Misc.tabulatef Lr1.number Lr1.fold Lr1.n None (fun s ->
+  Lr1.tabulate (fun s ->
     if Lr1.forbid_default_reduction s then
       None
     else
@@ -74,9 +74,9 @@ let has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) optio
 
 let () =
   let count =
-    Lr1.fold (fun accu s ->
-      if has_default_reduction s = None then accu else accu + 1
-    ) 0
+    Lr1.sum (fun s ->
+      if has_default_reduction s = None then 0 else 1
+    )
   in
   Error.logC 1 (fun f ->
     Printf.fprintf f

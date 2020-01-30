@@ -503,6 +503,12 @@ let iterx f =
     | Some _ -> f node
   )
 
+let tabulate (f : node -> 'a) =
+  Misc.tabulate n f
+
+let sum (f : node -> int) =
+  Misc.sum n f
+
 (* -------------------------------------------------------------------------- *)
 
 (* We build a map of each symbol to the (reachable) nodes that have this
