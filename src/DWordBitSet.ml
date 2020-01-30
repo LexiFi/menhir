@@ -83,7 +83,7 @@ let fold f s accu =
       accu
   | D (hi, lo) ->
       let accu = A.fold f lo accu in
-      let accu = A.fold (fun i accu -> f (i + A.bound) accu) hi accu in
+      let accu = A.fold_delta A.bound f hi accu in
       accu
 
 let iter f s =
@@ -92,7 +92,7 @@ let iter f s =
       ()
   | D (hi, lo) ->
       A.iter f lo;
-      A.iter (fun i -> f (i + A.bound)) hi
+      A.iter_delta A.bound f hi
 
 let is_singleton s =
   match s with

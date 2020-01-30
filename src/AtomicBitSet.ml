@@ -134,6 +134,22 @@ let add i s =
 let remove i s =
   (lnot (bit i)) land s
 
+let rec fold_delta delta f s accu =
+  if s = 0 then
+    accu
+  else
+    let x = s land (-s) in
+    let s = s lxor x in (* or: s - x *)
+    let accu = f (delta + tib x) accu in
+    fold_delta delta f s accu
+
+let rec iter_delta delta f s =
+  if s <> 0 then
+    let x = s land (-s) in
+    let s = s lxor x in (* or: s - x *)
+    f (delta + tib x);
+    iter_delta delta f s
+
 let rec fold f s accu =
   if s = 0 then
     accu

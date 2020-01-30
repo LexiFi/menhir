@@ -109,11 +109,7 @@ let rec fold f s accu =
   | N ->
       accu
   | C (addr, ss, qs) ->
-      let accu =
-        A.fold (fun offset accu ->
-          f (addr + offset) accu
-        ) ss accu
-      in
+      let accu = A.fold_delta addr f ss accu in
       fold f qs accu
 
 let rec iter f s =
@@ -121,9 +117,7 @@ let rec iter f s =
   | N ->
       ()
   | C (addr, ss, qs) ->
-      A.iter (fun offset ->
-        f (addr + offset)
-      ) ss;
+      A.iter_delta addr f ss;
       iter f qs
 
 let is_singleton s =

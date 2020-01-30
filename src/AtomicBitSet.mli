@@ -18,3 +18,10 @@
 val bound: int
 
 include GSet.S with type element = int
+
+(* [iter_delta] and [fold_delta] are slightly generalized variants of [iter]
+   and [fold]. They add the constant [delta] on the fly to each set element
+   before presenting this set element to the user function [f]. *)
+
+val iter_delta: int -> (element -> unit) -> t -> unit
+val fold_delta: int -> (element -> 'b -> 'b) -> t -> 'b -> 'b

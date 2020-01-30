@@ -116,9 +116,9 @@ let fold f s accu =
       accu
   | Q (hhi, hlo, lhi, llo) ->
       let accu = A.fold f llo accu in
-      let accu = A.fold (fun i accu -> f (i + quarter) accu) lhi accu in
-      let accu = A.fold (fun i accu -> f (i + middle) accu) hlo accu in
-      let accu = A.fold (fun i accu -> f (i + quarter3) accu) hhi accu in
+      let accu = A.fold_delta quarter f lhi accu in
+      let accu = A.fold_delta middle f hlo accu in
+      let accu = A.fold_delta quarter3 f hhi accu in
       accu
 
 let iter f s =
@@ -127,9 +127,9 @@ let iter f s =
       ()
   | Q (hhi, hlo, lhi, llo) ->
       A.iter f llo;
-      A.iter (fun i -> f (i + quarter)) lhi;
-      A.iter (fun i -> f (i + middle)) hlo;
-      A.iter (fun i -> f (i + quarter3)) hhi
+      A.iter_delta quarter f lhi;
+      A.iter_delta middle f hlo;
+      A.iter_delta quarter3 f hhi
 
 let is_singleton s =
   match s with
