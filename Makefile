@@ -44,26 +44,32 @@ test:
 # in parallel on a heavily-loaded machine. Furthermore, this data is
 # machine-dependent. The data is written to analysis/data.csv.
 
+# A test that caused a TIMEOUT is excluded from the data.
+
 # On MacOS, we require gsed instead of sed.
 SED=$(shell if [[ "$$OSTYPE" == "darwin"* ]] ; then echo gsed ; else echo sed ; fi)
 
 .PHONY: data
 data: test
 	@ echo "Collecting data (using $(SED))..." && \
-	( \
-	  echo "name,terminals,nonterminals,lr0states,lr1states,lr1time" && \
-	  cd _build/default/test/static/src && \
-	  for timings in *.out.timings ; do \
+	  echo "name,terminals,nonterminals,lr0states,lr1states,lr1time" > analysis/data.csv && \
+	  successful=0 && timedout=0 && \
+	  for timings in _build/default/test/static/src/*.out.timings ; do \
 	    name=$${timings%.out.timings} ; \
 	    out=$$name.out ; \
-	    terminals=`$(SED) -n -e "s/^Grammar has \([0-9]\+\) terminal symbols./\1/p" $$out` ; \
-	    nonterminals=`$(SED) -n -e "s/^Grammar has \([0-9]\+\) nonterminal symbols, among which [0-9]\+ start symbols./\1/p" $$out` ; \
-	    lr0states=`$(SED) -n -e "s/^Built an LR(0) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
-	    lr1states=`$(SED) -n -e "s/^Built an LR(1) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
-	    lr1time=`$(SED) -n -e "s/^Construction of the LR(1) automaton: \(.*\)s/\1/p" $$timings` ; \
-	    echo "$$name,$$terminals,$$nonterminals,$$lr0states,$$lr1states,$$lr1time" ; \
-	  done \
-	) > analysis/data.csv
+	    if grep --quiet "TIMEOUT after" $$out ; then \
+	      ((timedout++)) ; \
+	    else \
+	      ((successful++)) ; \
+	      terminals=`$(SED) -n -e "s/^Grammar has \([0-9]\+\) terminal symbols./\1/p" $$out` ; \
+	      nonterminals=`$(SED) -n -e "s/^Grammar has \([0-9]\+\) nonterminal symbols, among which [0-9]\+ start symbols./\1/p" $$out` ; \
+	      lr0states=`$(SED) -n -e "s/^Built an LR(0) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
+	      lr1states=`$(SED) -n -e "s/^Built an LR(1) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
+	      lr1time=`$(SED) -n -e "s/^Construction of the LR(1) automaton: \(.*\)s/\1/p" $$timings` ; \
+	      echo "$$name,$$terminals,$$nonterminals,$$lr0states,$$lr1states,$$lr1time" >> analysis/data.csv ; \
+	    fi \
+	  done && \
+	echo "$$successful successful tests; $$timedout timed out tests."
 
 clean::
 	@ rm -f analysis/data.csv

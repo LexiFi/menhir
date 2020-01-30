@@ -96,12 +96,21 @@ let atoms =
 let rec print ppf = function
   | A s ->
       Format.pp_print_string ppf s
-  | L l ->
-      Format.fprintf ppf "@[<2>(%a)@]"
-        (Format.pp_print_list ~pp_sep:Format.pp_print_space print) l
-  | Lnewline l ->
-      Format.fprintf ppf "@[<v 2>(%a)@]"
-        (Format.pp_print_list ~pp_sep:Format.pp_print_space print) l
+  | L es ->
+      Format.fprintf ppf "@[<2>(%a)@]" print_list es
+  | Lnewline es ->
+      Format.fprintf ppf "@[<v 2>(%a)@]" print_list es
+
+and print_list ppf es =
+  Format.pp_print_list ~pp_sep:Format.pp_print_space print ppf es
+
+let show_list es =
+  let ppf = Format.str_formatter in
+  List.iter (fun e ->
+    Format.fprintf ppf " ";
+    print ppf e
+  ) es;
+  Format.flush_str_formatter()
 
 let print sexp =
   Format.printf "@[<v>%a@,@]" print sexp;
@@ -176,12 +185,33 @@ let extra source id =
   else
     atoms extra
 
-(* The Menhir command. *)
+(* The Menhir command, for use inside a rule, with an optional timeout. *)
 
-(* This command is meant to be used inside a rule. *)
+(* If the [timeout] parameter is [true], we assume that a [timeout] command
+   exists on the system, and we use it to limit Menhir's execution time. This
+   is normally not necessary, but can be useful when testing experimental
+   extensions of Menhir. This should be used for positive tests only. *)
 
-let menhir base flags =
-  L(A"run" :: A"menhir" :: base @ flags @ [A"%{deps}"])
+let threshold =
+  60 (* in seconds *)
+
+let menhir_args base flags =
+  base @ flags @ A"%{deps}" :: []
+
+let menhir (timeout : bool) base flags =
+  if timeout then
+    (* We must use a [system] action. *)
+    let command =
+      sprintf
+        "timeout %d %%{bin:menhir}%s || echo 'TIMEOUT after %d seconds.'"
+          threshold
+          (show_list (menhir_args base flags))
+          threshold
+    in
+    L[A"system"; A (sprintf "\"%s\"" command)]
+  else
+    (* We can use a [run] action. *)
+    L(A"run" :: A"menhir" :: menhir_args base flags)
 
 (* Constructing (and printing) a pair of rules to run Menhir and compare its
    output against an expected-output file.
@@ -201,13 +231,14 @@ let menhir base flags =
 
 let run_and_compare id positive source basenames outputs expected flags =
   let output = hd outputs in
+  let timeout = positive in (* set up a timeout for positive tests *)
   (* Run Menhir. *)
   print (rule
     outputs
     (source // mlys basenames)
     (redirect output (chdir source (
       possibly_expecting_failure positive (
-        menhir (base basenames) flags
+        menhir timeout (base basenames) flags
   )))));
   (* Check that the output coincides with what was expected. *)
   print (phony id (
