@@ -57,13 +57,11 @@ module C = Conflict (* artificial dependency; ensures that [Conflict] runs first
    terminate properly. From 2015/09/25 on, we again always allow default
    reductions, as they seem to be beneficial when explaining syntax errors. *)
 
-let has_default_reduction, count =
-  Misc.tabulateo Lr1.number Lr1.fold Lr1.n (fun s ->
-
+let has_default_reduction : Lr1.node -> (Production.index * TerminalSet.t) option =
+  Misc.tabulatef Lr1.number Lr1.fold Lr1.n None (fun s ->
     if Lr1.forbid_default_reduction s then
       None
     else
-
       let reduction = ProductionMap.is_singleton (Lr0.invert (Lr1.reductions s)) in
       match reduction with
       | Some _ ->
@@ -72,10 +70,14 @@ let has_default_reduction, count =
           else None
       | None ->
           reduction
-
   )
 
 let () =
+  let count =
+    Lr1.fold (fun accu s ->
+      if has_default_reduction s = None then accu else accu + 1
+    ) 0
+  in
   Error.logC 1 (fun f ->
     Printf.fprintf f
        "%d out of %d states have a default reduction.\n"

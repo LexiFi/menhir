@@ -46,12 +46,6 @@ let sum n (f : int -> int) : int =
   done;
   !sum
 
-(* [tabulatef number fold n dummy f] returns a function that is extensionally
-   equal to [f], but relies on an internal array. Arguments to [f] are of type
-   ['a] and are mapped by [number] into the range [0..n). [fold] allows
-   folding over the domain of [f]. [dummy] is used to initialize the internal
-   array. Its value has no impact if [fold] is surjective. *)
-
 let tabulatef number fold n dummy f =
   let a = Array.make n dummy in
   let () = fold (fun () element ->
@@ -61,22 +55,6 @@ let tabulatef number fold n dummy f =
     a.(number element)
   in
   get
-
-let tabulateo number fold n f =
-  let c = ref 0 in
-  let get =
-    tabulatef number fold n None (fun element ->
-      let image = f element in
-      begin match image with
-      | Some _ ->
-          incr c
-      | None ->
-          ()
-      end;
-      image
-    )
-  in
-  get, !c
 
 type 'a iter = ('a -> unit) -> unit
 
