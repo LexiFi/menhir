@@ -7,6 +7,15 @@ Warning: one state has reduce/reduce conflicts.
 ** Tokens of interest: R_BRACKET
 ** Goal state: 14
 */
+
+(* This problem, which remained ignored for many years, has been
+   re-discovered as issue #21. *)
+
+(* This is an example where Menhir's implementation of Pager's
+   algorithm produces two distinct conflicts, but the canonical
+   automaton has only one conflict. So one of the two conflicts
+   cannot be explained. *)
+
 %{ %}
 
 %token EOF

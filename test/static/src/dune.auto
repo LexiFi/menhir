@@ -3509,6 +3509,48 @@
   (action
     (diff ../good/inliningWithSideEffects.exp inliningWithSideEffects.out)))
 
+(rule (target issue21_longer.opp.out) (deps ../good/issue21_longer.mly)
+  (action
+    (with-outputs-to issue21_longer.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias issue21_longer)
+  (action (diff ../good/issue21_longer.opp.exp issue21_longer.opp.out)))
+
+(rule (targets issue21_longer.out issue21_longer.out.timings)
+  (deps ../good/issue21_longer.mly)
+  (action
+    (with-outputs-to issue21_longer.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/issue21_longer.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias issue21_longer)
+  (action (diff ../good/issue21_longer.exp issue21_longer.out)))
+
+(rule (target issue21_shorter.opp.out) (deps ../good/issue21_shorter.mly)
+  (action
+    (with-outputs-to issue21_shorter.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias issue21_shorter)
+  (action (diff ../good/issue21_shorter.opp.exp issue21_shorter.opp.out)))
+
+(rule (targets issue21_shorter.out issue21_shorter.out.timings)
+  (deps ../good/issue21_shorter.mly)
+  (action
+    (with-outputs-to issue21_shorter.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/issue21_shorter.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias issue21_shorter)
+  (action (diff ../good/issue21_shorter.exp issue21_shorter.out)))
+
 (rule (target jasmc.opp.out) (deps ../good/jasmc.mly)
   (action
     (with-outputs-to jasmc.opp.out
@@ -9028,6 +9070,8 @@
     (alias invalid-declarations-e)
     (alias invalid-point-free-action)
     (alias invalid-token-in-prec)
+    (alias issue21_longer)
+    (alias issue21_shorter)
     (alias jasmc)
     (alias java)
     (alias jh)
