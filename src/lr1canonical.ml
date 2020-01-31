@@ -141,47 +141,28 @@ let mu : lr0state -> P.property =
 type node =
   int
 
-let (number : lr1state -> node), (current : unit -> node) =
-  Lr0.new_numbering()
+module N =
+  Fix.Numbering.ForOrderedType(Lr0.Lr1StateAsOrderedType)
+  (* This yields [N.encode : lr1state -> node]
+            and  [N.current : unit -> node]. *)
 
 let start =
   Array.make Lr0.n 0 (* dummy *)
+    (* TEMPORARY get rid of this array? *)
 
-let n =
+let () =
   Misc.iteri Lr0.n (fun c ->
-    start.(c) <- current();
-    P.iter (fun s -> ignore (number s)) (mu c)
-  );
-  current()
+    start.(c) <- N.current();
+    P.iter (fun s -> ignore (N.encode s)) (mu c)
+  )
 
-let finish c =
-  if c + 1 < Lr0.n then
-    start.(c + 1)
-  else
-    n
-
-(* -------------------------------------------------------------------------- *)
-
-(* Expose the states of the LR(1) automaton. *)
-
-(* Manufacture a dummy state so as to initialize the [state] array. Ouch. *)
-let dummy : lr1state =
-  let _prod, c = ProductionMap.choose Lr0.entry in
-  Lr0.start c
+include N.Done()
+  (* This defines [n : int],
+                  [encode : lr1state -> node],
+                  [decode : node -> lr1state]. *)
 
 let state : node -> lr1state =
-  (* Initialize an array of states. *)
-  let state = Array.make n dummy in
-  (* Populate this array. *)
-  Misc.iteri Lr0.n (fun c ->
-    mu c
-    |> P.iter (fun s ->
-         let i = number s in
-         state.(i) <- s
-       )
-  );
-  (* Provide read-only access to this array. *)
-  Array.get state
+  decode
 
 (* -------------------------------------------------------------------------- *)
 
@@ -191,7 +172,6 @@ let entry : node ProductionMap.t =
   ProductionMap.map (fun (c : Lr0.node) ->
     (* Exactly one state in the canonical LR(1) automaton corresponds to the
        LR(0) state [c]. *)
-    assert (start.(c) + 1 = finish c);
     start.(c)
   ) Lr0.entry
 
@@ -200,7 +180,7 @@ let entry : node ProductionMap.t =
 (* Expose the transitions of the LR(1) automaton. *)
 
 let transition symbol (i : node) : node =
-  number (Lr0.transition symbol (state i))
+  encode (Lr0.transition symbol (state i))
 
 let outgoing_symbols (i : node) =
   Lr0.outgoing_symbols (Lr0.core (state i))

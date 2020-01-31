@@ -275,6 +275,23 @@ let incoming_edges (c : node) : node list =
 type lr1state =
     node * TerminalSet.t array
 
+(* A view of the type [lr1state] as an ordered type. This can be used in
+   conjuction with [Fix.Memoize], [Fix.Numbering], etc. E.g. a numbering
+   facility based on this mechanism is able to number 10000 states in
+   about 0.01s. *)
+
+module Lr1StateAsOrderedType = struct
+  type t = lr1state
+  let compare (k1, toksr1) (k2, toksr2) =
+    let c = k1 - k2 in
+    if c <> 0 then c
+    else Generic.compare toksr1 toksr2
+      (* In principle, we should use [Array.compare TerminalSet.compare],
+         but the function [Array.compare] does not exist, and we happen
+         to know that [TerminalSet.compare] is OCaml's generic comparison,
+         so the whole comparison can be carried using generic comparison. *)
+end
+
 (* An encoded LR(1) state can be turned into a concrete representation,
    that is, a mapping of items to concrete lookahead sets. *)
 
@@ -422,28 +439,6 @@ let subsume ((k1, toksr1) as state1) ((k2, toksr2) as state2) =
       (TerminalSet.subset toksr1.(i) toksr2.(i)) && (loop i)
   in
   loop (Array.length toksr1)
-
-(* A memoizer for the type [lr1state]. This code is simple-minded, but its
-   efficiency is sufficient: 10000 states are numbered in about 0.01s. *)
-
-module M =
-  Fix.Memoize.ForOrderedType(struct
-    type t = lr1state
-    let compare s1 s2 =
-      let c = core s1 - core s2 in
-      if c <> 0 then c else compare s1 s2
-  end)
-
-(* A facility for assigning unique numbers to LR(1) states. *)
-
-let new_numbering () =
-  let m = ref 0 in
-  let number : lr1state -> int =
-    M.memoize (fun (_ : lr1state) -> Misc.postincrement m)
-  and current () =
-    !m
-  in
-  number, current
 
 (* This function determines whether two (core-equivalent) states are
    compatible, according to a criterion that is close to Pager's weak

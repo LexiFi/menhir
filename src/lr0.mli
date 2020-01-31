@@ -59,6 +59,13 @@ val outgoing_symbols: node -> Symbol.t list
 
 type lr1state
 
+(* A view of the type [lr1state] as an ordered type. *)
+
+module Lr1StateAsOrderedType : sig
+  type t = lr1state
+  val compare: t -> t -> int
+end
+
 (* An encoded LR(1) state can be turned into a concrete representation,
    that is, a mapping of items to concrete lookahead sets. *)
 
@@ -113,13 +120,6 @@ val compare: lr1state -> lr1state -> int
    sets are (pointwise) in the subset relation. *)
 
 val subsume: lr1state -> lr1state -> bool
-
-(* A facility for assigning unique numbers to LR(1) states. The call
-   [new_numbering] returns a pair of functions [number, current], where
-   [number] maps LR(1) states to unique (freshly assigned) numbers and
-   [current] returns the next available number. *)
-
-val new_numbering: unit -> (lr1state -> int) * (unit -> int)
 
 (* A slightly modified version of Pager's weak compatibility
    criterion. The two states must have the same core. *)
