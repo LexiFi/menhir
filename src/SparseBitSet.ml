@@ -204,24 +204,17 @@ let choose s =
       assert (not (A.is_empty ss));
       addr + A.choose ss
 
-let rec compare s1 s2 =
-  match s1, s2 with
-      N, N ->  0
-    | _, N ->  1
-    | N, _ -> -1
-    | C (addr1, ss1, qs1), C (addr2, ss2, qs2) ->
-        if addr1 < addr2 then -1
-        else if addr1 > addr2 then 1
-        else
-          let c = A.compare ss1 ss2 in
-          if c <> 0 then c
-          else compare qs1 qs2
+let compare =
+  (* We violate the [AtomicBitSet] abstraction a tiny little bit and use
+     OCaml's generic comparison. We can do so because our representation
+     is canonical. *)
+  compare (* this is [Generic.compare] *)
 
-let equal s1 s2 =
-  (* We could use [compare s1 s2 = 0]. *)
-  (* Instead, we violate the [AtomicBitSet] abstraction a tiny little bit
-     and use generic equality. *)
-  s1 = s2
+let equal =
+  (* We violate the [AtomicBitSet] abstraction a tiny little bit and use
+     OCaml's generic equality. We can do so because our representation
+     is canonical. *)
+  (=)
 
 let rec disjoint s1 s2 =
   match s1, s2 with
