@@ -134,25 +134,15 @@ let mu : lr0state -> P.property =
    to each of them. We build the mapping of states to numbers and the reverse
    mapping of numbers to states. *)
 
-(* For every LR(0) state [c], the indices [start.(c)] and [finish c] delimit a
-   semi-open interval. The indices within this interval correspond to the
-   LR(1) states whose core is [c]. *)
-
 type node =
   int
 
 module N =
   Fix.Numbering.ForOrderedType(Lr0.Lr1StateAsOrderedType)
-  (* This yields [N.encode : lr1state -> node]
-            and  [N.current : unit -> node]. *)
-
-let start =
-  Array.make Lr0.n 0 (* dummy *)
-    (* TEMPORARY get rid of this array? *)
+  (* This yields [N.encode : lr1state -> node]. *)
 
 let () =
   Misc.iteri Lr0.n (fun c ->
-    start.(c) <- N.current();
     P.iter (fun s -> ignore (N.encode s)) (mu c)
   )
 
@@ -161,18 +151,20 @@ include N.Done()
                   [encode : lr1state -> node],
                   [decode : node -> lr1state]. *)
 
+(* -------------------------------------------------------------------------- *)
+
+(* Expose the mapping of nodes to LR(1) states. *)
+
 let state : node -> lr1state =
   decode
 
 (* -------------------------------------------------------------------------- *)
 
-(* Expose the entry states of the LR(1) automaton. *)
+(* Expose the entry nodes of the LR(1) automaton. *)
 
 let entry : node ProductionMap.t =
-  ProductionMap.map (fun (c : Lr0.node) ->
-    (* Exactly one state in the canonical LR(1) automaton corresponds to the
-       LR(0) state [c]. *)
-    start.(c)
+  ProductionMap.map (fun (c : lr0state) ->
+    encode (Lr0.start c)
   ) Lr0.entry
 
 (* -------------------------------------------------------------------------- *)
@@ -192,7 +184,7 @@ let transitions (i : node) : node SymbolMap.t =
 
 (* -------------------------------------------------------------------------- *)
 
-(* Expose the numbering of the states of the LR(1) automaton. *)
+(* Expose the bijection between nodes and numbers. *)
 
 let number (i : node) : int =
   i
