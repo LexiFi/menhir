@@ -109,12 +109,6 @@ val reductions: lr1state -> (TerminalSet.t * Production.index) list
 
 val equal: lr1state -> lr1state -> bool
 
-(* A total order on states. The two states must have the same core.
-   This is an arbitrary total order; it has nothing to do with set
-   inclusion, which is a partial order; see [subsume] below. *)
-
-val compare: lr1state -> lr1state -> int
-
 (* Subsumption between states. The two states must have the same
    core. Then, one subsumes the other if and only if their lookahead
    sets are (pointwise) in the subset relation. *)

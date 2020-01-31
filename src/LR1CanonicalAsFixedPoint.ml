@@ -46,10 +46,7 @@ module P = struct
 
   module S = struct
 
-    include Set.Make(struct
-      type t = lr1state
-      let compare = Lr0.compare
-    end)
+    include Set.Make(Lr0.Lr1StateAsOrderedType)
 
     (* [map] is part of the output of [Set.Make] since 4.04 only, so we have
        to define it by hand. *)

@@ -413,20 +413,6 @@ let equal ((k1, toksr1) as state1) ((k2, toksr2) as state2) =
   in
   loop (Array.length toksr1)
 
-(* A total order on states. *)
-
-let compare ((k1, toksr1) as state1) ((k2, toksr2) as state2) =
-  assert (k1 = k2 && well_formed state1 && well_formed state2);
-  let rec loop i =
-    if i = 0 then
-      0
-    else
-      let i = i - 1 in
-      let c = TerminalSet.compare toksr1.(i) toksr2.(i) in
-      if c <> 0 then c else loop i
-  in
-  loop (Array.length toksr1)
-
 (* Subsumption between states. *)
 
 let subsume ((k1, toksr1) as state1) ((k2, toksr2) as state2) =
