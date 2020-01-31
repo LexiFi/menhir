@@ -12,6 +12,7 @@
 (******************************************************************************)
 
 open Grammar
+open LR1Sigs
 
 (* This module first constructs an LR(1) automaton by using [Lr1construction].
    Then, this automaton is further transformed (in place), in three steps:
@@ -42,10 +43,32 @@ let () =
 
 (* -------------------------------------------------------------------------- *)
 
+(* Select a construction algorithm based on the command-line settings. *)
+
+module type ALGORITHM = sig
+  module Run () : LR1_AUTOMATON
+end
+
+let algo : (module ALGORITHM) =
+  Settings.(match construction_mode with
+  | ModeCanonical ->
+      (module LR1CanonicalAsTraversal : ALGORITHM)
+  | ModeInclusionOnly
+  | ModePager ->
+      (module LR1Pager : ALGORITHM)
+  | ModeLALR ->
+      (module Lr1construction : ALGORITHM)
+  )
+
+module Algorithm =
+  (val algo : ALGORITHM)
+
+(* -------------------------------------------------------------------------- *)
+
 (* Run the construction algorithm. *)
 
 module Raw =
-  Lr1construction.Run()
+  Algorithm.Run()
 
 let () =
   Error.logA 1 (fun f ->
