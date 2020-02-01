@@ -31,6 +31,12 @@ let fold f o accu =
   | Some x ->
       f x accu
 
+let force = function
+  | Some x ->
+      x
+  | None ->
+      assert false
+
 let project = function
   | Some x ->
       x
