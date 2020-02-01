@@ -14,7 +14,8 @@
 open Grammar
 open LR1Sigs
 
-(* This module first constructs an LR(1) automaton by using [Lr1construction].
+(* This module first constructs an LR(1) automaton by using an appropriate
+   construction method (LALR, Pager, canonical).
    Then, this automaton is further transformed (in place), in three steps:
 
    - Silent conflict resolution (without warnings),
@@ -57,7 +58,7 @@ let algo : (module ALGORITHM) =
   | ModePager ->
       (module LR1Pager : ALGORITHM)
   | ModeLALR ->
-      (module Lr1construction : ALGORITHM)
+      (module LALR : ALGORITHM)
   )
 
 module Algorithm =

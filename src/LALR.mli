@@ -11,7 +11,7 @@
 (*                                                                            *)
 (******************************************************************************)
 
-(* This module constructs an LR(1) automaton for the grammar described by the
+(* This module constructs an LALR automaton for the grammar described by the
    module [Grammar]. *)
 
 (* In this construction, precedence declarations are not taken into account.
