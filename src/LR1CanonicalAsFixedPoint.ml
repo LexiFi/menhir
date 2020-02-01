@@ -14,14 +14,9 @@
 (* This module formulates the construction of the canonical LR(1) automaton as
    a least fixed point computation. *)
 
-(* It is currently *not* used; the code in [Lr1construction] also constructs
-   the canonical LR(1) automaton when [--canonical] is passed on the command
-   line. *)
-
-(* The code in this module has been tested and seems correct. Furthermore, it
-   appears to be roughly as efficient as the code in [Lr1construction]. There
-   are some outliers, though; sometimes one is 2x faster than the other,
-   sometimes it is the converse. *)
+(* It is currently *not* used; the code in [LR1CanonicalAsTraversal] is used
+   instead when [--canonical] is passed on the command line, as it is about
+   twice faster. *)
 
 (* This formulation may be deemed somewhat naive: because a "variable" is an
    LR(0) state and a "property" is a set of LR(1) states, every time the
