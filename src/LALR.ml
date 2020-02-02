@@ -85,8 +85,17 @@ let follow_state (msg : string) (node : node) (print : bool) =
 let queue : node Queue.t =
   Queue.create()
 
+(* The Boolean array [queued] keeps track of which nodes are in the queue and
+   allows us to avoid enqueueing a node when it is already in the queue. *)
+
+let queued : bool array =
+  Array.make n false
+
 let schedule node =
-  Queue.add node queue
+  if not queued.(node) then begin
+    queued.(node) <- true;
+    Queue.add node queue
+  end
 
 (* -------------------------------------------------------------------------- *)
 
@@ -143,7 +152,14 @@ let () =
 (* As a long as the queue is nonempty, examine the nodes in it. *)
 
 let () =
-  Misc.qiter examine queue
+  try
+    while true do
+      let node = Queue.take queue in
+      queued.(node) <- false;
+      examine node
+    done
+  with Queue.Empty ->
+    ()
 
 (* -------------------------------------------------------------------------- *)
 
