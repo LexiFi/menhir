@@ -78,28 +78,29 @@ let follow_state (msg : string) (node : node) (print : bool) =
 
 (* -------------------------------------------------------------------------- *)
 
-(* A queue of pending nodes, whose outgoing transitions must be reexamined. *)
+(* A stack of pending nodes, whose outgoing transitions must be reexamined. *)
 
-(* Invariant: if a node is in the queue, then [states.(node)] is not [None]. *)
+(* Invariant: if a node is in the stack, then [states.(node)] is not [None]. *)
 
-let queue : node Queue.t =
-  Queue.create()
+let stack : node Stack.t =
+  Stack.create()
 
-(* The Boolean array [queued] keeps track of which nodes are in the queue and
-   allows us to avoid enqueueing a node when it is already in the queue. *)
+(* The Boolean array [dirty] keeps track of which nodes are in the stack and
+   allows us to avoid pushing a node onto the stack when it is already in the
+   stack. *)
 
-let queued : bool array =
+let dirty : bool array =
   Array.make n false
 
 let schedule node =
-  if not queued.(node) then begin
-    queued.(node) <- true;
-    Queue.add node queue
+  if not dirty.(node) then begin
+    dirty.(node) <- true;
+    Stack.push node stack
   end
 
 (* -------------------------------------------------------------------------- *)
 
-(* [examine] examines a node that has just been taken out of the queue. Its
+(* [examine] examines a node that has just been taken out of the stack. Its
    outgoing transitions are inspected. If a successor node is newly discovered
    or updated, then it is scheduled or rescheduled for examination. *)
 
@@ -141,7 +142,7 @@ and inspect node state =
 
 (* The actual construction process. *)
 
-(* Populate the queue with the entry nodes. *)
+(* Populate the stack with the entry nodes. *)
 
 let () =
   ProductionMap.iter (fun _prod node ->
@@ -149,16 +150,16 @@ let () =
     schedule node
   ) Lr0.entry
 
-(* As a long as the queue is nonempty, examine the nodes in it. *)
+(* As long as the stack is nonempty, examine the nodes in it. *)
 
 let () =
   try
     while true do
-      let node = Queue.take queue in
-      queued.(node) <- false;
+      let node = Stack.pop stack in
+      dirty.(node) <- false;
       examine node
     done
-  with Queue.Empty ->
+  with Stack.Empty ->
     ()
 
 (* -------------------------------------------------------------------------- *)
