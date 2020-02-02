@@ -260,7 +260,7 @@ release:
 	@ git checkout -b $(BRANCH)
 # Remove subdirectories that do not need to (or must not) be distributed.
 	@ make --quiet -C coq-menhirlib clean
-	@ git rm -rf attic headers demos releases src/attic test --quiet
+	@ git rm -rf attic headers demos releases test --quiet
 # Remove files that do not need to (or must not) be distributed.
 # Keep check-tarball.sh because it is used below.
 	@ git rm \
