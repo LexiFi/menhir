@@ -4666,6 +4666,29 @@
 
 (rule (alias mezzo) (action (diff ../good/mezzo.exp mezzo.out)))
 
+(rule (target mezzo_inclusion_only.opp.out)
+  (deps ../good/mezzo_inclusion_only.mly)
+  (action
+    (with-outputs-to mezzo_inclusion_only.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{read-lines:../good/mezzo_inclusion_only.flags} %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias mezzo_inclusion_only)
+  (action
+    (diff ../good/mezzo_inclusion_only.opp.exp mezzo_inclusion_only.opp.out)))
+
+(rule (targets mezzo_inclusion_only.out mezzo_inclusion_only.out.timings)
+  (deps ../good/mezzo_inclusion_only.mly)
+  (action
+    (with-outputs-to mezzo_inclusion_only.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/mezzo_inclusion_only.out.timings %{read-lines:../good/mezzo_inclusion_only.flags} %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias mezzo_inclusion_only)
+  (action (diff ../good/mezzo_inclusion_only.exp mezzo_inclusion_only.out)))
+
 (rule (target miniCparser.opp.out) (deps ../good/miniCparser.mly)
   (action
     (with-outputs-to miniCparser.opp.out
@@ -9136,6 +9159,7 @@
     (alias memcad.1.0.0-mc_parser)
     (alias metaocaml)
     (alias mezzo)
+    (alias mezzo_inclusion_only)
     (alias miniCparser)
     (alias miniMLparser)
     (alias missing-percentpercent)
