@@ -82,7 +82,8 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
-(* Properties. *)
+(* The signature [PROPERTY] is used by [Fix.Make], the least fixed point
+   computation algorithm. *)
 
 (* The type [property] must form a partial order. It must be equipped with a
    least element [bottom] and with an equality test [equal]. (In the function
@@ -103,6 +104,16 @@ module type PROPERTY = sig
   val bottom: property
   val equal: property -> property -> bool
   val is_maximal: property -> bool
+end
+
+(* -------------------------------------------------------------------------- *)
+
+(* The signature [SEMI_LATTICE] is used by [Fix.DataFlow]. *)
+
+module type SEMI_LATTICE = sig
+  type property
+  val leq: property -> property -> bool
+  val join: property -> property -> property
 end
 
 (* -------------------------------------------------------------------------- *)
@@ -191,12 +202,44 @@ end
 
 (* -------------------------------------------------------------------------- *)
 
+(* The signature [SOLUTION] is used to describe the result of [Fix.DataFlow]. *)
+
+module type SOLUTION = sig
+  type variable
+  type property
+  val solution: variable -> property
+end
+
+(* -------------------------------------------------------------------------- *)
+
 (* Directed, rooted graphs. *)
 
 module type GRAPH = sig
   type t
   val foreach_root: (t -> unit) -> unit
   val foreach_successor: t -> (t -> unit) -> unit
+end
+
+(* -------------------------------------------------------------------------- *)
+
+(* The signature [DATA_FLOW_GRAPH] is used to describe a data flow analysis
+   problem. It is used to describe the input to [Fix.DataFlow]. *)
+
+(* The function [foreach_root] describes the root nodes of the data flow graph
+   as well as the properties associated with them. *)
+
+(* The function [foreach_successor] describes the edges of the data flow graph
+   as well as the manner in which a property at the source of an edge is
+   transformed into a property at the target. *)
+
+module type DATA_FLOW_GRAPH = sig
+  type variable
+  type property
+  val foreach_root:
+    (variable -> property -> unit) -> unit
+  val foreach_successor:
+    variable -> property ->
+    (variable -> property -> unit) -> unit
 end
 
 (* -------------------------------------------------------------------------- *)

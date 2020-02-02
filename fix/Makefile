@@ -103,3 +103,18 @@ release:
 publish:
 # Publish an opam description.
 	@ opam publish -v $(DATE) $(THIS) $(ARCHIVE) .
+
+MENHIR_WORKING_COPY=$(HOME)/dev/menhir
+
+.PHONY: menhir
+menhir:
+# Check if this is the menhir branch.
+	@ if [ "$$(git symbolic-ref --short HEAD)" != "menhir" ] ; then \
+	  echo "Error: this is not the menhir branch." ; \
+	  git branch ; \
+	  exit 1 ; \
+	fi
+# Copy our source files to the Menhir repository.
+	@ (cd .. && cp -r fix $(MENHIR_WORKING_COPY))
+# Remove a number of unneeded subdirectories.
+	@ (cd $(MENHIR_WORKING_COPY)/fix && rm -rf .git demos misc)

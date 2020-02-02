@@ -46,6 +46,9 @@ type equations =
    [node2]. Then, an update of the current property at [node2] causes a signal
    to be sent to [node1]. A node can observe itself. *)
 
+module Graph =
+  CoreDependencyGraph
+
 type node =
     data Graph.node
 

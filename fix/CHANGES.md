@@ -1,5 +1,13 @@
 # CHANGES
 
+## 2020/02/XX
+
+* New module `DataFlow`, which performs a forward data flow analysis over a
+  directed graph. (Such a computation could previously be performed by using
+  the generic solver `Fix.Make`, but it was somewhat awkward to write, as it
+  required access to predecessors. The new algorithm is easier to use and is
+  more efficient.)
+
 ## 2020/01/31
 
 * In `Gensym`, new abstract type `generator`,

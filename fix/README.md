@@ -12,6 +12,12 @@ Type `opam install fix`.
 At the top of an OCaml module, declare `open Fix`.
 This gives you access to the following submodules:
 
+* [`DataFlow`](src/DataFlow.ml) performs a forward data flow analysis
+  over a directed graph. Like [`Fix`](src/Core.mli), it computes the
+  least function of type `variable -> property` that satisfies a fixed
+  point equation. It is less widely applicable than `Fix`, but, when
+  it is applicable, it is easier to use and more efficient than `Fix`.
+
 * [`Gensym`](src/Gensym.mli) offers a simple facility
   for **generating fresh integer identifiers**.
 

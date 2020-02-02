@@ -30,6 +30,7 @@ module GraphNumbering = GraphNumbering
 module Tabulate       = Tabulate
 module Gensym         = Gensym
 module HashCons       = HashCons
+module DataFlow       = DataFlow
 
 module Prop = struct
   (* A number of ready-made implementations of the signature [PROPERTY]. *)
