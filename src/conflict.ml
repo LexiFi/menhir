@@ -341,6 +341,24 @@ let explain_reduce_item
     derivation
 
 (* -------------------------------------------------------------------------- *)
+(* A counter of how many conflicts could *not* be explained. *)
+
+(* When this counter is nonzero, we display a message on the standard output
+   channel. This can help us detect regressions via [make test]. *)
+
+let unexplainable =
+  ref 0
+
+let log_unexplainable () =
+  if !unexplainable > 0 then
+    Error.logA 2 (fun f ->
+      Printf.fprintf f
+        "%d conflict%s could not be explained.\n"
+        !unexplainable
+        (if !unexplainable > 1 then "s" else "")
+    )
+
+(* -------------------------------------------------------------------------- *)
 (* Putting it all together. *)
 
 let () =
@@ -495,6 +513,7 @@ let () =
          or because [--lalr] was enabled and we have unexplainable LALR conflicts.
          Anyway, send the error message to the .conflicts file and continue. *)
 
+      incr unexplainable;
       Printf.fprintf out "\n\
         ** Conflict (unexplainable) in state %d.\n\
         ** Token%s involved: %s\n\
@@ -512,6 +531,7 @@ let () =
       )
 
     );
+    log_unexplainable();
     Time.tick "Explaining conflicts"
 
   end
