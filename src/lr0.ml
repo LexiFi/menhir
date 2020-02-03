@@ -464,6 +464,27 @@ let subsume ((k1, toksr1) as state1) ((k2, toksr2) as state2) =
    some conflict at [t] can be explained. This was not true when using
    Pager's original criterion. *)
 
+(* A word of caution: reasoning about compatibility is tricky and often
+   counter-intuitive. Here is a list of properties and non-properties:
+
+   - Compatibility is reflexive and symmetric.
+
+   - Compatibility is *not* transitive.
+
+   - If two states A and B are in the subumption relation (i.e., one is a
+     subset of the other), then A and B are compatible.
+
+   - Compatibility is *not* monotonic. That is, it is *not* the case that if
+     two states A and B are incompatible, then two larger states A' and B'
+     must be incompatible as well. (The fact that the state A U B is
+     compatible with itself shows that this is false.) In the contrapositive,
+     it is *not* the case that if A and B are compatible, then two smaller
+     states A' and B' must be compatible as well.
+
+   - Compatibility is preserved by union of compatible states. That is, if
+     A and B are compatible, then C is compatible with (A U B) if and only
+     if C is compatible with both A and B. *)
+
 let compatible (k1, toksr1) (k2, toksr2) =
   assert (k1 = k2);
   let n = Array.length toksr1 in
