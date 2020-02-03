@@ -53,7 +53,7 @@ end
 let algo : (module ALGORITHM) =
   Settings.(match construction_mode with
   | ModeCanonical ->
-      (module LR1CanonicalAsTraversal : ALGORITHM)
+      (module LR1Canonical : ALGORITHM)
   | ModeInclusionOnly
   | ModePager ->
       (module LR1Pager : ALGORITHM)

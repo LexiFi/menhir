@@ -20,13 +20,12 @@
    could create artificial (unexplainable) conflicts; see issue #21 at
    https://gitlab.inria.fr/fpottier/menhir/issues/21 . *)
 
-(* This code can be viewed as a variant of [LR1CanonicalAsTraversal]. However,
-   there, the algorithm is just a traversal of a well-defined graph, whereas
-   here, the situation is more complex. Indeed, when the algorithm asks the
-   question:
+(* This code can be viewed as a variant of [LR1Canonical]. However, there, the
+   algorithm is just a traversal of a well-defined graph, whereas here, the
+   situation is more complex. Indeed, when the algorithm asks the question:
 
    * What state should be the target of the transition labeled [symbol] out of
-     the state [state]?
+   the state [state]?
 
    the answer *depends on which states have been discovered so far*. In fact,
    the answer to this question can involve an arbitrary choice, as there are
@@ -79,7 +78,7 @@ module Run () = struct
 
 (* Give an implicit definition of the graph that we wish to traverse. *)
 
-(* This section is identical to the one found in [LR1CanonicalAsTraversal]. *)
+(* This section is identical to the one found in [LR1Canonical]. *)
 
 module G = struct
 
@@ -366,8 +365,8 @@ end
 (* Traversing the graph [G'] yields a numbering of its vertices, which are
    the states of the final LR(1) automaton. *)
 
-(* The remainder of this file is identical to [LR1CanonicalAsTraversal],
-   except for one use of [redirect] in the definition of [transition]. *)
+(* The remainder of this file is identical to [LR1Canonical], except for one
+   use of [redirect] in the definition of [transition]. *)
 
 type node =
   int

@@ -14,14 +14,15 @@
 (* This module formulates the construction of the canonical LR(1) automaton as
    a least fixed point computation. *)
 
-(* It is currently *not* used; the code in [LR1CanonicalAsTraversal] is used
-   instead when [--canonical] is passed on the command line, as it is about
-   twice faster. *)
+(* It is currently *not* used; the code in [LR1Canonical] is used instead when
+   [--canonical] is passed on the command line. It is about twice faster. *)
 
 (* This formulation may be deemed somewhat naive: because a "variable" is an
    LR(0) state and a "property" is a set of LR(1) states, every time the
    algorithm revisits an LR(0) state [s], it recomputes *all* of the LR(1)
-   states that correspond to [s]. *)
+   states that correspond to [s]. This could possibly be remedied by using
+   [Fix.DataFlow] instead of [Fix.Make], but the code in [LR1Canonical] is
+   more efficient still. *)
 
 type lr0state =
   Lr0.node
