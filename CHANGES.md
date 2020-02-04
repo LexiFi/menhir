@@ -2,8 +2,35 @@
 
 ## 2020/XX/XX
 
+* Re-implement Menhir's default algorithm for constructing LR(1) automata,
+  namely Pager's algorithm. This closes issue #21 (reported by Andrej Bauer),
+  a bug that would sometimes cause unexplainable conflicts to appear, because
+  states were merged too aggressively. This also removes an unreported bug
+  that would cause the automaton to have too many states, because states were
+  *not* merged aggressively enough. In summary, the old and new construction
+  algorithms differ: in many cases, the resulting automaton is unchanged, but
+  in some cases, the automaton produced by the new algorithm may have slightly
+  more or slightly fewer states.
+
+* Re-implement Menhir's algorithm for constructing automata in `--no-pager`
+  mode. In this (undocumented) mode, Menhir does not merge any states, but
+  allows itself to redirect a transition from a state `s` to a *larger* state
+  `s'`. This method yields an automaton whose states form a subset of the
+  states of the canonical LR(1) automaton. It usually has significantly fewer
+  states than the canonical automaton, and significantly more states than the
+  automaton produced by Pager's algorithm. The new construction method removes
+  an unreported bug that would cause the automaton to have too many states.
+  The automaton produced by the new algorithm will usually have significantly
+  fewer states than the automaton produced by the previous algorithm.
+
+* Re-implement Menhir's algorithms for constructing automata in `--lalr` and
+  `--canonical` modes. The previous algorithms were correct, as far as we
+  know, so the output of the new algorithms is the same, up to a possible
+  renumbering of the states. The new algorithms are slightly faster.
+
 * Increase the maximum length of a production, which used to be 127,
   up to 1023. Display a polite error message if this length is exceeded.
+  (Problem reported by Andreas Abel.)
 
 * The new switch `--timings-to <filename>` causes internal timing
   information to be written to the file `<filename>`.
