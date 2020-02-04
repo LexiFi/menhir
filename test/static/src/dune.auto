@@ -1591,6 +1591,34 @@
 (rule (alias compcert_pre_parser)
   (action (diff ../good/compcert_pre_parser.exp compcert_pre_parser.out)))
 
+(rule (target compcert_pre_parser_canonical.opp.out)
+  (deps ../good/compcert_pre_parser_canonical.mly)
+  (action
+    (with-outputs-to compcert_pre_parser_canonical.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{read-lines:../good/compcert_pre_parser_canonical.flags} %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias compcert_pre_parser_canonical)
+  (action
+    (diff ../good/compcert_pre_parser_canonical.opp.exp
+      compcert_pre_parser_canonical.opp.out)))
+
+(rule
+  (targets compcert_pre_parser_canonical.out
+    compcert_pre_parser_canonical.out.timings)
+  (deps ../good/compcert_pre_parser_canonical.mly)
+  (action
+    (with-outputs-to compcert_pre_parser_canonical.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/compcert_pre_parser_canonical.out.timings %{read-lines:../good/compcert_pre_parser_canonical.flags} %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias compcert_pre_parser_canonical)
+  (action
+    (diff ../good/compcert_pre_parser_canonical.exp
+      compcert_pre_parser_canonical.out)))
+
 (rule (target compcert_pre_parser_new.opp.out)
   (deps ../good/compcert_pre_parser_new.mly)
   (action
@@ -4665,6 +4693,27 @@
           "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/mezzo.out.timings %{read-lines:../good/mezzo.flags} %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
 
 (rule (alias mezzo) (action (diff ../good/mezzo.exp mezzo.out)))
+
+(rule (target mezzo_canonical.opp.out) (deps ../good/mezzo_canonical.mly)
+  (action
+    (with-outputs-to mezzo_canonical.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{read-lines:../good/mezzo_canonical.flags} %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias mezzo_canonical)
+  (action (diff ../good/mezzo_canonical.opp.exp mezzo_canonical.opp.out)))
+
+(rule (targets mezzo_canonical.out mezzo_canonical.out.timings)
+  (deps ../good/mezzo_canonical.mly)
+  (action
+    (with-outputs-to mezzo_canonical.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/mezzo_canonical.out.timings %{read-lines:../good/mezzo_canonical.flags} %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias mezzo_canonical)
+  (action (diff ../good/mezzo_canonical.exp mezzo_canonical.out)))
 
 (rule (target mezzo_inclusion_only.opp.out)
   (deps ../good/mezzo_inclusion_only.mly)
@@ -8979,6 +9028,7 @@
     (alias coercion-mini)
     (alias cohttp.1.2.0-accept_parser)
     (alias compcert_pre_parser)
+    (alias compcert_pre_parser_canonical)
     (alias compcert_pre_parser_new)
     (alias compsyn)
     (alias condition_parser)
@@ -9159,6 +9209,7 @@
     (alias memcad.1.0.0-mc_parser)
     (alias metaocaml)
     (alias mezzo)
+    (alias mezzo_canonical)
     (alias mezzo_inclusion_only)
     (alias miniCparser)
     (alias miniMLparser)
