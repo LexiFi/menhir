@@ -216,7 +216,6 @@ Examples of well-formed producers:
 
 grammar: PERCENTPERCENT UID COLON UID LPAREN UID TYPE
 grammar: PERCENTPERCENT UID COLON UID LPAREN UID STAR TYPE
-grammar: PERCENTPERCENT UID COLON UID LPAREN LID TYPE
 
 Ill-formed production.
 Maybe you meant to close a parenthesis at this point?
@@ -274,7 +273,6 @@ grammar: PERCENTPERCENT UID COLON PREC TYPE
 grammar: PERCENTPERCENT UID COLON UID LPAREN ACTION PREC TYPE
 grammar: PERCENTPERCENT UID COLON ACTION PREC TYPE
 grammar: PERCENTPERCENT LET LID COLONEQUAL PREC EOF
-grammar: PERCENTPERCENT LET LID COLONEQUAL ACTION PREC EOF
 
 # Conflate old rule syntax and new rule syntax.
 
@@ -282,17 +280,6 @@ Ill-formed %prec annotation.
 A symbol is expected at this point.
 Examples of well-formed annotations:
   expr: MINUS e = expr %prec UMINUS { -e }
-
-# ----------------------------------------------------------------------------
-
-grammar: PERCENTPERCENT UID COLON UID LPAREN TYPE
-grammar: PERCENTPERCENT UID COLON UID LPAREN UID COMMA TYPE
-
-Ill-formed rule.
-A comma-delimited list of actual parameters is expected at this point.
-Examples of well-formed rules:
-  call: f = callee LPAREN args = separated_list(COMMA, expr) RPAREN { f, args }
-  list(X): { [] } | x = X; xs = list(X) { x :: xs }
 
 # ----------------------------------------------------------------------------
 
@@ -327,6 +314,7 @@ Examples of well-formed rules:
 # ----------------------------------------------------------------------------
 
 grammar: TYPE OCAMLTYPE UID LPAREN UID LPAREN TYPE
+grammar: PERCENTPERCENT UID COLON UID LPAREN UID COMMA TYPE
 grammar: PERCENTPERCENT UID COLON UID LPAREN UID LPAREN TYPE
 
 Ill-formed list of actual parameters.
@@ -565,7 +553,6 @@ another rule.
 
 grammar: PERCENTPERCENT LET LID COLONEQUAL UID LPAREN TYPE
 grammar: PERCENTPERCENT LET LID COLONEQUAL UID LPAREN UID LPAREN TYPE
-grammar: PERCENTPERCENT LET LID COLONEQUAL UNDERSCORE EQUAL UID LPAREN TYPE
 
 A comma-separated list of expressions is expected at this point.
 
