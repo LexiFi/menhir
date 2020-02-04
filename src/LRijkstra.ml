@@ -271,12 +271,10 @@ let () =
     Printf.eprintf
       "%d graph nodes explored by forward search.\n\
        %d out of %d states are reachable.\n\
-       Found %d states where an error can occur.\n\
-       Maximum size reached by the major heap: %dM\n%!"
+       Found %d states where an error can occur.\n%!"
     !explored
     (Lr1.NodeSet.cardinal !reachable) Lr1.n
     (Lr1.NodeSet.cardinal !domain)
-    max_heap_size
   end
 
 (* ------------------------------------------------------------------------ *)

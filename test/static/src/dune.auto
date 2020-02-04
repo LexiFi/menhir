@@ -845,7 +845,7 @@
     (with-outputs-to calc.opp.out
       (chdir ../good
         (system
-          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+          "timeout 60 %{bin:menhir} --only-preprocess %{read-lines:../good/calc.flags} %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
 
 (rule (alias calc) (action (diff ../good/calc.opp.exp calc.opp.out)))
 
@@ -854,7 +854,7 @@
     (with-outputs-to calc.out
       (chdir ../good
         (system
-          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/calc.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/calc.out.timings %{read-lines:../good/calc.flags} %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
 
 (rule (alias calc) (action (diff ../good/calc.exp calc.out)))
 
@@ -1594,7 +1594,7 @@
     (with-outputs-to compcert_pre_parser.opp.out
       (chdir ../good
         (system
-          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+          "timeout 60 %{bin:menhir} --only-preprocess %{read-lines:../good/compcert_pre_parser.flags} %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
 
 (rule (alias compcert_pre_parser)
   (action
@@ -1606,7 +1606,7 @@
     (with-outputs-to compcert_pre_parser.out
       (chdir ../good
         (system
-          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/compcert_pre_parser.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/compcert_pre_parser.out.timings %{read-lines:../good/compcert_pre_parser.flags} %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
 
 (rule (alias compcert_pre_parser)
   (action (diff ../good/compcert_pre_parser.exp compcert_pre_parser.out)))
