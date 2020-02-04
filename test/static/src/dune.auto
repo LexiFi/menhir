@@ -247,6 +247,26 @@
 
 (rule (alias amalthea) (action (diff ../good/amalthea.exp amalthea.out)))
 
+(rule (target andromeda.opp.out) (deps ../good/andromeda.mly)
+  (action
+    (with-outputs-to andromeda.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias andromeda)
+  (action (diff ../good/andromeda.opp.exp andromeda.opp.out)))
+
+(rule (targets andromeda.out andromeda.out.timings)
+  (deps ../good/andromeda.mly)
+  (action
+    (with-outputs-to andromeda.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/andromeda.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias andromeda) (action (diff ../good/andromeda.exp andromeda.out)))
+
 (rule (target anonymous.opp.out) (deps ../good/anonymous.mly)
   (action
     (with-outputs-to anonymous.opp.out
@@ -8959,6 +8979,7 @@
     (alias alphaCaml-demos-poplmark)
     (alias alphaprolog)
     (alias amalthea)
+    (alias andromeda)
     (alias anonymous)
     (alias anonymous-nested)
     (alias anonymous-param)
