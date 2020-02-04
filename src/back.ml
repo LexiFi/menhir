@@ -58,12 +58,6 @@ let () =
   if Settings.cmly then
     Cmly_write.write (Settings.base ^ ".cmly")
 
-(* The following DEAD code forces [Cmly_read] to be typechecked. *)
-let () =
-  if false then
-    let module R = Cmly_read.Read (struct let filename = "" end) in
-    ()
-
 (* Construct the code, using either the table-based or the code-based
    back-end, and pass it on to the printer. (This continuation-passing
    style is imposed by the fact that there is no conditional in ocaml's
