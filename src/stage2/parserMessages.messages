@@ -189,6 +189,15 @@ grammar: PERCENTPERCENT UID COLON UID SEMI TYPE
 grammar: PERCENTPERCENT UID COLON LID TYPE
 grammar: PERCENTPERCENT UID COLON LID EQUAL TYPE
 grammar: PERCENTPERCENT UID COLON LID EQUAL UID PLUS TYPE
+# The following sentences are tricky. In front of us could be many things
+# (comma, closing parenthesis, identifier, modifier, %prec keyword, etc.).
+# We don't know which symbol we expect to reduce towards (e.g., it could be
+# [actual] or [lax_actual]).
+#
+# Let's just back up to a safe level of abstraction and say that this is an
+# ill-formed production.
+grammar: PERCENTPERCENT UID COLON UID LPAREN UID TYPE
+grammar: PERCENTPERCENT UID COLON UID LPAREN UID STAR TYPE
 
 Ill-formed production.
 A production is a sequence of producers, followed with a semantic action.
@@ -202,33 +211,6 @@ Examples of well-formed producers:
   es = list(e = expr SEMI { e })
   xs = list(x = var { Some x } | WILDCARD { None })
   expr [@cost 0]
-
-# The following sentences are tricky. In front of us could be many things
-# (comma, closing parenthesis, identifier, modifier, %prec keyword, etc.).
-# We don't know which symbol we expect to reduce towards (e.g., it could be
-# [actual] or [lax_actual]).
-
-# Let's just back up to a safe level of abstraction and say that this is an
-# ill-formed production.
-
-# As RPAREN is in the lookahead set, we may suggest that a parenthesis could
-# be closed.
-
-grammar: PERCENTPERCENT UID COLON UID LPAREN UID TYPE
-grammar: PERCENTPERCENT UID COLON UID LPAREN UID STAR TYPE
-
-Ill-formed production.
-Maybe you meant to close a parenthesis at this point?
-A production is a sequence of producers, followed with a semantic action.
-Examples of well-formed producers:
-  expr
-  option(COMMA)
-  separated_list(COMMA, expr)
-  e = expr
-  ds = declaration*
-  es = list(terminated(expr, SEMI))
-  es = list(e = expr SEMI { e })
-  xs = list(x = var { Some x } | WILDCARD { None })
 
 # ----------------------------------------------------------------------------
 
