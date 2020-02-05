@@ -52,7 +52,7 @@ SED=$(shell if [[ "$$OSTYPE" == "darwin"* ]] ; then echo gsed ; else echo sed ; 
 .PHONY: data
 data: test
 	@ echo "Collecting data (using $(SED))..." && \
-	  echo "name,terminals,nonterminals,lr0states,lr1states,lr1time" > analysis/data.csv && \
+	  echo "name,mode,terminals,nonterminals,lr0states,lr1states,lr1time" > analysis/data.csv && \
 	  directory=_build/default/test/static/src && \
 	  successful=0 && timedout=0 && \
 	  for timings in $$directory/*.out.timings ; do \
@@ -63,12 +63,13 @@ data: test
 	      ((timedout++)) ; \
 	    else \
 	      ((successful++)) ; \
+	      mode=`$(SED) -n -e "s/^The construction mode is \([a-z\-]\+\)./\1/p" $$out` ; \
 	      terminals=`$(SED) -n -e "s/^Grammar has \([0-9]\+\) terminal symbols./\1/p" $$out` ; \
 	      nonterminals=`$(SED) -n -e "s/^Grammar has \([0-9]\+\) nonterminal symbols, among which [0-9]\+ start symbols./\1/p" $$out` ; \
 	      lr0states=`$(SED) -n -e "s/^Built an LR(0) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
 	      lr1states=`$(SED) -n -e "s/^Built an LR(1) automaton with \([0-9]\+\) states./\1/p" $$out` ; \
 	      lr1time=`$(SED) -n -e "s/^Construction of the LR(1) automaton: \(.*\)s/\1/p" $$timings` ; \
-	      echo "$$name,$$terminals,$$nonterminals,$$lr0states,$$lr1states,$$lr1time" >> analysis/data.csv ; \
+	      echo "$$name,$$mode,$$terminals,$$nonterminals,$$lr0states,$$lr1states,$$lr1time" >> analysis/data.csv ; \
 	    fi \
 	  done && \
 	echo "$$successful successful tests; $$timedout timed out tests."

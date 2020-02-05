@@ -50,19 +50,31 @@ module type ALGORITHM = sig
   module Run () : LR1_AUTOMATON
 end
 
-let algo : (module ALGORITHM) =
+let algo, mode =
   Settings.(match construction_mode with
   | ModeCanonical ->
-      (module LR1Canonical : ALGORITHM)
-  | ModeInclusionOnly
+      (module LR1Canonical : ALGORITHM),
+      "canonical"
+  | ModeInclusionOnly ->
+      (module LR1Pager : ALGORITHM),
+      "no-pager"
   | ModePager ->
-      (module LR1Pager : ALGORITHM)
+      (module LR1Pager : ALGORITHM),
+      "pager"
   | ModeLALR ->
-      (module LALR : ALGORITHM)
+      (module LALR : ALGORITHM),
+      "lalr"
   )
 
 module Algorithm =
   (val algo : ALGORITHM)
+
+let () =
+  Error.logA 1 (fun f ->
+    Printf.fprintf f
+      "The construction mode is %s.\n"
+      mode
+  )
 
 (* -------------------------------------------------------------------------- *)
 
