@@ -349,7 +349,6 @@ undo:
 
 RSYNC   := scp -p -C
 TARGET  := yquem.inria.fr:public_html/menhir/
-PAGE    := /home/fpottier/dev/page
 
 # This assumes that [make release] has been run.
 
