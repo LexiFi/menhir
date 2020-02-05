@@ -240,7 +240,7 @@ WWW     := www
 # OCaml. Run [make speed] and have a look at the performance figures to make
 # sure that they are in the right ballpark. Finally, test the opam package by
 # running [make pin]. (You may wish to run [make pin] in a dedicated switch,
-# so as avoid clobbering your regular installation of Menhir.)
+# so as to avoid clobbering your regular installation of Menhir.)
 
 .PHONY: release
 release:
