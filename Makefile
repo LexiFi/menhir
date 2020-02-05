@@ -53,10 +53,12 @@ SED=$(shell if [[ "$$OSTYPE" == "darwin"* ]] ; then echo gsed ; else echo sed ; 
 data: test
 	@ echo "Collecting data (using $(SED))..." && \
 	  echo "name,terminals,nonterminals,lr0states,lr1states,lr1time" > analysis/data.csv && \
+	  directory=_build/default/test/static/src && \
 	  successful=0 && timedout=0 && \
-	  for timings in _build/default/test/static/src/*.out.timings ; do \
+	  for timings in $$directory/*.out.timings ; do \
 	    name=$${timings%.out.timings} ; \
 	    out=$$name.out ; \
+	    name=`basename $$name` ; \
 	    if grep --quiet "TIMEOUT after" $$out ; then \
 	      ((timedout++)) ; \
 	    else \
