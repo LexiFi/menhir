@@ -120,6 +120,14 @@ versions:
 	  done) > dune-workspace.versions
 	@ dune build --workspace dune-workspace.versions @all @test
 
+.PHONY: dune
+dune:
+	@ for v in $(VERSIONS) ; do \
+	    opam switch $$v && \
+	    eval $$(opam env) && \
+	    opam install --yes dune.2.2.0 ; \
+	  done
+
 # [make expected] updates the contents of *all* reference files (those
 # that contain the expected output of every test). This command should
 # be run only when you trust that every test produces correct output.
