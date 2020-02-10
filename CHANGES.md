@@ -1,6 +1,6 @@
 # Changes
 
-## 2020/XX/XX
+## 2020/02/10
 
 * Re-implement Menhir's default algorithm for constructing LR(1) automata,
   namely Pager's algorithm. This closes issue #21 (reported by Andrej Bauer),
