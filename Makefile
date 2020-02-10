@@ -122,11 +122,13 @@ versions:
 
 .PHONY: dune
 dune:
-	@ for v in $(VERSIONS) ; do \
+	@ current=`opam switch show` ; \
+	  for v in $(VERSIONS) ; do \
 	    opam switch $$v && \
 	    eval $$(opam env) && \
 	    opam install --yes dune.2.2.0 ; \
-	  done
+	  done ; \
+	  opam switch $$current
 
 # [make expected] updates the contents of *all* reference files (those
 # that contain the expected output of every test). This command should
