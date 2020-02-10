@@ -107,7 +107,7 @@ VERSIONS := \
   4.08.1 \
   4.09.0 \
   4.09.0+bytecode-only \
-  4.10.0+rc1 \
+  ocaml-variants.4.10.0+rc1 \
 
 .PHONY: versions
 versions:
