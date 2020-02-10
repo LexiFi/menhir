@@ -96,6 +96,11 @@ speed:
 # [make versions] compiles and tests Menhir under many versions of
 # OCaml, whose list is specified in the file dune-workspace.versions.
 
+# Note: [make test] can fail on an unusually slow or unusually fast
+# machine due to the choice of an arbitrary timeout value to stop
+# certain very-long-running tests. E.g., a bytecode-only switch is
+# usually too slow to complete certain tests in time.
+
 # This requires appropriate opam switches to exist. A missing switch
 # can be created like this:
 #   opam switch create 4.03.0
