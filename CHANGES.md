@@ -35,7 +35,7 @@
 * The new switch `--timings-to <filename>` causes internal timing
   information to be written to the file `<filename>`.
 
-* A version of the library `fix` is now vendored (included inside) Menhir.
+* A version of the library `fix` is now vendored (included) inside Menhir.
   This should have no impact for end users, but implies that `dune` 2.2.0
   or later is required.
 
