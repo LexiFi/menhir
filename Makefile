@@ -94,7 +94,7 @@ speed:
 	@ dune build --force --no-buffer @speed
 
 # [make versions] compiles and tests Menhir under many versions of
-# OCaml, whose list is specified in the file dune-workspace.versions.
+# OCaml, whose list is specified below.
 
 # Note: [make test] can fail on an unusually slow or unusually fast
 # machine due to the choice of an arbitrary timeout value to stop
@@ -115,7 +115,7 @@ VERSIONS := \
   4.08.1 \
   4.09.0 \
   4.09.0+bytecode-only \
-  ocaml-variants.4.10.0+rc1 \
+  4.10.0 \
 
 .PHONY: versions
 versions:
