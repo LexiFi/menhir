@@ -65,35 +65,21 @@ let () =
 
 (* Run. *)
 
-let wrap token =
-  (token, Lexing.dummy_pos, Lexing.dummy_pos)
+open Lexing
 
 let () =
-  Random.init !seed
-
-(* Copied from MenhirLib in order to avoid a dependency on it. *)
-let traditional2revised parser =
-  fun (lexer : unit -> 'token) ->
-    let lexbuf : Lexing.lexbuf =
-      Lexing.from_string ""
-    in
-    let lexer (lexbuf : Lexing.lexbuf) : 'raw_token =
-      let (token, startp, endp) = lexer() in
-      lexbuf.Lexing.lex_start_p <- startp;
-      lexbuf.Lexing.lex_curr_p <- endp;
-      token
-    in
-    parser lexer lexbuf
-
-let () =
-  let tks : token stream = produce !size in
-  let tks = fresh (map wrap tks) in
+  Random.init !seed;
+  let tokens : token stream = produce !size in
+  let tokens : token imperative_stream = fresh tokens in
   if !dry_run then begin
-    let _ = find (fun _ -> false) tks in
+    let _ = find (fun _ -> false) tokens in
     printf "Done.\n"
   end
   else begin
-    let i : int = traditional2revised Parser.main tks in
+    let lexbuf = from_string "" in
+    lexbuf.lex_start_p <- dummy_pos;
+    lexbuf.lex_curr_p <- dummy_pos;
+    let lexer _lexbuf = tokens() in
+    let i : int = Parser.main lexer lexbuf in
     printf "%d\n%!" i
   end
-
