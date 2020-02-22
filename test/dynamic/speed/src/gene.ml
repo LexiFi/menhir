@@ -67,19 +67,37 @@ let () =
 
 open Lexing
 
-let () =
+let tokens : token array =
   Random.init !seed;
-  let tokens : token stream = produce !size in
-  let tokens : token imperative_stream = fresh tokens in
+  produce !size
+  |> to_array
+
+let () =
+  Gc.major()
+
+let () =
   if !dry_run then begin
-    let _ = find (fun _ -> false) tokens in
-    printf "Done.\n"
+    printf "Done.\n";
+    exit 0
   end
-  else begin
-    let lexbuf = from_string "" in
-    lexbuf.lex_start_p <- dummy_pos;
-    lexbuf.lex_curr_p <- dummy_pos;
-    let lexer _lexbuf = tokens() in
-    let i : int = Parser.main lexer lexbuf in
-    printf "%d\n%!" i
+
+let lexer lexbuf =
+  let pos = lexbuf.lex_curr_pos in
+  if pos < Array.length tokens then begin
+    let token = tokens.(pos) in
+    lexbuf.lex_curr_pos <- pos + 1;
+    token
   end
+  else
+    raise End_of_file
+
+let new_lexbuf () =
+  let lexbuf = from_string "" in
+  lexbuf.lex_start_p <- dummy_pos;
+  lexbuf.lex_curr_p <- dummy_pos;
+  lexbuf.lex_curr_pos <- 0;
+  lexbuf
+
+let () =
+  printf "%d\n%!"
+    (Parser.main lexer (new_lexbuf()))
