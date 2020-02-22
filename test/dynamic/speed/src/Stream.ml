@@ -41,6 +41,19 @@ let rec map f xs () =
   | More (x, xs) ->
       More (f x, map f xs)
 
+let rec list_cat_rev (xs : 'a list) (ys : 'a stream) : 'a list =
+  match ys() with
+  | Done ->
+      xs
+  | More (y, ys) ->
+      list_cat_rev (y :: xs) ys
+
+let to_list (ys : 'a stream) : 'a list =
+  List.rev (list_cat_rev [] ys)
+
+let to_array (ys : 'a stream) : 'a array =
+  Array.of_list (to_list ys)
+
 (* A finite or infinite imperative stream. By convention, end-of-stream is
    signaled via an exception. *)
 
@@ -71,4 +84,3 @@ let find (p : 'a -> bool) (xs : 'a imperative_stream) : 'a option =
     loop()
   with End_of_file ->
     None
-
