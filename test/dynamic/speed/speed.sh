@@ -18,19 +18,17 @@ rm -f src/*.time
 for size in 1000000 5000000 10000000 ; do
   echo "Test size: $size"
 
-  # Dry run (measures the random generation time).
-  echo Dry run:
-  $TIME -f "%U" src/code/gene.exe --size $size --dry-run 2> src/dry.time
-  cat src/dry.time
+  # echo Dry run:
+  # $TIME -f "%U" src/code/gene.exe --size $size --dry-run
 
   # Run the code back-end.
   echo Code back-end:
-  $TIME -f "%U" src/code/gene.exe --size $size > src/code.out 2> src/code.time
+  src/code/gene.exe --size $size > src/code.out 2> src/code.time
   cat src/code.time
 
   # Run the table back-end.
   echo Table back-end:
-  $TIME -f "%U" src/table/gene.exe --size $size > src/table.out 2> src/table.time
+  src/table/gene.exe --size $size > src/table.out 2> src/table.time
   cat src/table.time
 
   # Avoid a gross mistake.
@@ -45,8 +43,18 @@ for size in 1000000 5000000 10000000 ; do
 
   # Run the ocamlyacc parser.
   echo "ocamlyacc:"
-  $TIME -f "%U" src/ocamlyacc/gene.exe --size $size > src/ocamlyacc.out 2> src/ocamlyacc.time
+  src/ocamlyacc/gene.exe --size $size > src/ocamlyacc.out 2> src/ocamlyacc.time
   cat src/ocamlyacc.time
+
+  # Avoid another mistake.
+  if ! diff -q src/code.out src/ocamlyacc.out ; then
+    echo CAUTION: Menhir and ocamlyacc disagree!
+    echo Menhir:
+    cat src/code.out
+    echo ocamlyacc:
+    cat src/ocamlyacc.out
+    exit 1
+  fi
 
   # Compute some statistics.
   ocaml speed.ml

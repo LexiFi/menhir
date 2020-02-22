@@ -43,6 +43,11 @@ let dry_run =
 let seed =
   ref 61112962
 
+(* [--runs] allows the desired number of runs to be set via the command line. *)
+
+let runs =
+  ref 10
+
 (* [--size] allows the size of the randomly-generated expression to be
    set via the command line. *)
 
@@ -52,6 +57,7 @@ let size =
 let options = Arg.align [
   "--dry-run", Arg.Set dry_run, "Run only the generator, not the parser";
   "--seed", Arg.Set_int seed, sprintf "<seed> Set the random seed (%d)" !seed;
+  "--runs", Arg.Set_int runs, sprintf "<runs> Set the number of runs (%d)" !runs;
   "--size", Arg.Set_int size, sprintf "<size> Set the size of the test (%d)" !size;
 ]
 
@@ -76,10 +82,8 @@ let () =
   Gc.major()
 
 let () =
-  if !dry_run then begin
-    printf "Done.\n";
+  if !dry_run then
     exit 0
-  end
 
 let lexer lexbuf =
   let pos = lexbuf.lex_curr_pos in
@@ -99,5 +103,14 @@ let new_lexbuf () =
   lexbuf
 
 let () =
-  printf "%d\n%!"
-    (Parser.main lexer (new_lexbuf()))
+  (* Running the parser several times in succession (without re-generating the
+     random data, and without explicitly invoking the GC between runs) should
+     allow us to obtain slightly more stable timings. *)
+  let chrono = Time.fresh() in
+  Time.chrono chrono (fun () ->
+    for _run = 0 to !runs do
+      printf "%d\n%!"
+        (Parser.main lexer (new_lexbuf()))
+    done
+  );
+  Time.display stderr chrono

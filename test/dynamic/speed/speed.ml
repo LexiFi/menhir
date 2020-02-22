@@ -7,31 +7,18 @@ let read f =
   close_in c;
   float_of_string s
 
-let dry =
-  read "src/dry.time"
 let code =
   read "src/code.time"
 let table =
   read "src/table.time"
 let ocamlyacc =
-  try
-    Some (read "src/ocamlyacc.time")
-  with Sys_error _ ->
-    None
-
-let optionally o f =
-  match o with Some x -> f x | None -> ()
+  read "src/ocamlyacc.time"
 
 let () =
-  printf "Test input generation takes %.2f seconds.\n" dry;
-  printf "Parsing with the code back-end takes %.2f seconds.\n" (code -. dry);
-  printf "Parsing with the table back-end takes %.2f seconds.\n" (table -. dry);
-  optionally ocamlyacc (fun ocamlyacc ->
-    printf "Parsing with ocamlyacc takes %.2f seconds.\n" (ocamlyacc -. dry);
-  );
-  printf "The table back-end is %.1f times slower than the code back-end.\n" ((table -. dry) /. (code -. dry));
-  optionally ocamlyacc (fun ocamlyacc ->
-    printf "ocamlyacc is %.1f times slower than the code back-end.\n" ((ocamlyacc -. dry) /. (code -. dry));
-    printf "ocamlyacc is %.1f times faster than the table back-end.\n" ((table -. dry) /. (ocamlyacc -. dry));
-  );
+  printf "Parsing with the code back-end takes %.2f seconds.\n" code;
+  printf "Parsing with the table back-end takes %.2f seconds.\n" table;
+  printf "Parsing with ocamlyacc takes %.2f seconds.\n" ocamlyacc;
+  printf "The table back-end is %.1f times slower than the code back-end.\n" (table /. code);
+  printf "ocamlyacc is %.1f times slower than the code back-end.\n" (ocamlyacc /. code);
+  printf "ocamlyacc is %.1f times faster than the table back-end.\n" (table /. ocamlyacc);
   flush stdout
