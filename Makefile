@@ -278,13 +278,14 @@ release:
 	@ git checkout -b $(BRANCH)
 # Remove subdirectories that do not need to (or must not) be distributed.
 	@ make --quiet -C coq-menhirlib clean
-	@ git rm -rf attic headers demos releases test --quiet
+	@ git rm -rf analysis attic demos headers releases test www --quiet
 # Remove files that do not need to (or must not) be distributed.
 # Keep check-tarball.sh because it is used below.
-	@ git rm \
+	@ git rm --quiet \
 	    Makefile \
-	    HOWTO.md TODO* \
-	    *.opam coq-menhirlib/descr --quiet
+	    promote.sh \
+	    *.md TODO* \
+	    *.opam coq-menhirlib/descr
 # Hardcode Menhir's version number in the files that need it.
 	@ sed -i.bak 's/unreleased/$(DATE)/' dune-project
 	@ rm -f dune-project.bak
