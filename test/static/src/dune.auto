@@ -2050,29 +2050,26 @@
 
 (rule (alias dml) (action (diff ../good/dml.exp dml.out)))
 
-(rule (target dns.1.0.1-zone_parser.opp.out)
-  (deps ../good/dns.1.0.1-zone_parser.mly)
+(rule (target dns_zone_parser.opp.out) (deps ../good/dns_zone_parser.mly)
   (action
-    (with-outputs-to dns.1.0.1-zone_parser.opp.out
+    (with-outputs-to dns_zone_parser.opp.out
       (chdir ../good
         (system
           "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
 
-(rule (alias dns.1.0.1-zone_parser)
-  (action
-    (diff ../good/dns.1.0.1-zone_parser.opp.exp
-      dns.1.0.1-zone_parser.opp.out)))
+(rule (alias dns_zone_parser)
+  (action (diff ../good/dns_zone_parser.opp.exp dns_zone_parser.opp.out)))
 
-(rule (targets dns.1.0.1-zone_parser.out dns.1.0.1-zone_parser.out.timings)
-  (deps ../good/dns.1.0.1-zone_parser.mly)
+(rule (targets dns_zone_parser.out dns_zone_parser.out.timings)
+  (deps ../good/dns_zone_parser.mly)
   (action
-    (with-outputs-to dns.1.0.1-zone_parser.out
+    (with-outputs-to dns_zone_parser.out
       (chdir ../good
         (system
-          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/dns.1.0.1-zone_parser.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/dns_zone_parser.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
 
-(rule (alias dns.1.0.1-zone_parser)
-  (action (diff ../good/dns.1.0.1-zone_parser.exp dns.1.0.1-zone_parser.out)))
+(rule (alias dns_zone_parser)
+  (action (diff ../good/dns_zone_parser.exp dns_zone_parser.out)))
 
 (rule (target doc-ock-xml.1.2.1-docOckXmlParser.opp.out)
   (deps ../good/doc-ock-xml.1.2.1-docOckXmlParser.mly)
@@ -9462,7 +9459,7 @@
     (alias dedukti.2.6.0-menhir_parser)
     (alias diy.5.01-ARMParser)
     (alias dml)
-    (alias dns.1.0.1-zone_parser)
+    (alias dns_zone_parser)
     (alias doc-ock-xml.1.2.1-docOckXmlParser)
     (alias docOckXmlParser)
     (alias dolmen.0.2-parseDimacs)
