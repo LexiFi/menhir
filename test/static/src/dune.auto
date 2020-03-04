@@ -715,31 +715,26 @@
 (rule (alias bodin_inlined)
   (action (diff ../good/bodin_inlined.exp bodin_inlined.out)))
 
-(rule (target boomerang.1.1.0-bparser.opp.out)
-  (deps ../good/boomerang.1.1.0-bparser.mly)
+(rule (target boomerang-bparser.opp.out) (deps ../good/boomerang-bparser.mly)
   (action
-    (with-outputs-to boomerang.1.1.0-bparser.opp.out
+    (with-outputs-to boomerang-bparser.opp.out
       (chdir ../good
         (system
           "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
 
-(rule (alias boomerang.1.1.0-bparser)
-  (action
-    (diff ../good/boomerang.1.1.0-bparser.opp.exp
-      boomerang.1.1.0-bparser.opp.out)))
+(rule (alias boomerang-bparser)
+  (action (diff ../good/boomerang-bparser.opp.exp boomerang-bparser.opp.out)))
 
-(rule
-  (targets boomerang.1.1.0-bparser.out boomerang.1.1.0-bparser.out.timings)
-  (deps ../good/boomerang.1.1.0-bparser.mly)
+(rule (targets boomerang-bparser.out boomerang-bparser.out.timings)
+  (deps ../good/boomerang-bparser.mly)
   (action
-    (with-outputs-to boomerang.1.1.0-bparser.out
+    (with-outputs-to boomerang-bparser.out
       (chdir ../good
         (system
-          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/boomerang.1.1.0-bparser.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/boomerang-bparser.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
 
-(rule (alias boomerang.1.1.0-bparser)
-  (action
-    (diff ../good/boomerang.1.1.0-bparser.exp boomerang.1.1.0-bparser.out)))
+(rule (alias boomerang-bparser)
+  (action (diff ../good/boomerang-bparser.exp boomerang-bparser.out)))
 
 (rule (target boris-mini.opp.out) (deps ../good/boris-mini.mly)
   (action
@@ -9395,7 +9390,7 @@
     (alias bison-mysterious-conflict)
     (alias bodin)
     (alias bodin_inlined)
-    (alias boomerang.1.1.0-bparser)
+    (alias boomerang-bparser)
     (alias boris-mini)
     (alias boris-mini-no-eos)
     (alias bran)
