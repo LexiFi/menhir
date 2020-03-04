@@ -52,6 +52,43 @@ let formals : formal array =
   |> List.concat
   |> Array.of_list
 
+(* If [nt/i] is a formal parameter, we may need to find the rule that defines
+   the symbol [nt] as well as the name of the [i]-th formal parameter in this
+   rule. *)
+
+let info ((nt, i) : formal) : parameterized_rule * symbol =
+  let rule = try StringMap.find nt g.p_rules with Not_found -> assert false in
+  let x  = try List.nth rule.pr_parameters i with Failure _ -> assert false in
+  rule, x
+
+(* -------------------------------------------------------------------------- *)
+
+(* For each formal parameter [nt/i], we want to know whether this parameter is
+   actually used, that is, whether it occurs in the right-hand side. *)
+
+(* Note that we look for syntactic occurrences *anywhere* in the right-hand
+   side. We do *not* ignore occurrences that appear as the actual argument
+   of a parameterized symbol that happens to ignore its argument... That
+   would probably require a fixed point computation, and might be unsound:
+   expansion might diverge as soon as there is a syntactic occurrence
+   in the right-hand side. *)
+
+let used_in_producer x ((_, param, _) : producer) =
+  Parameters.occurs x param
+
+let used_in_branch x (branch : parameterized_branch) =
+  List.exists (used_in_producer x) branch.pr_producers
+
+let used (formal : formal) : bool =
+  let rule, x = info formal in
+  List.exists (used_in_branch x) rule.pr_branches
+
+(* Memoize this function. *)
+
+let used : formal -> bool =
+  let module M = Fix.Memoize.ForType(struct type t = formal end) in
+  M.memoize used
+
 (* -------------------------------------------------------------------------- *)
 
 (* The graph edges are as follows. First, for every rule of the following form:
@@ -97,6 +134,10 @@ let formals : formal array =
    then we must create an edge of F/i to G/j, and this edge is safe if and
    only if the context K is empty, i.e., X occurs at depth 0 in K[x]. *)
 
+(* As an exception to the previous rule, if it is known that the parameterized
+   symbol G does not use its [j]-th parameter, then the edge of F/i to G/j
+   should not be created, nor should the applications inside K be inspected. *)
+
 (* The code below has quadratic complexity because [Parameters.occurs_deep]
    is expensive. In principle, we could achieve linear complexity by first
    annotating subterm (bottom-up) with a Boolean flag that indicates whether
@@ -116,15 +157,19 @@ let rec successors_parameter (f : edge -> formal -> unit) x (param : parameter) 
   | ParameterApp (sym, params) ->
       let nt = value sym in
       List.iteri (fun i param ->
-        (* Check, recursively, the applications that appear inside [param]. *)
-        successors_parameter f x param;
-        (* If [x] occurs in the [i]-th actual parameter of this application,
-           then there is an edge to the formal [nt, i]. Whether it is a safe
-           or dangerous edge depends on whether [x] occurs shallow or deep. *)
-        if Parameters.occurs_shallow x param then
-          f Safe (nt, i)
-        else if Parameters.occurs_deep x param then
-          f Dangerous (nt, i)
+        (* If it is known that [nt] does not use its [i]-th parameter, then
+           there is nothing to do here. *)
+        if used (nt, i) then begin
+          (* Check, recursively, the applications that appear inside [param]. *)
+          successors_parameter f x param;
+          (* If [x] occurs in the [i]-th actual parameter of this application,
+             then there is an edge to the formal [nt, i]. Whether it is a safe
+             or dangerous edge depends on whether [x] occurs shallow or deep. *)
+          if Parameters.occurs_shallow x param then
+            f Safe (nt, i)
+          else if Parameters.occurs_deep x param then
+            f Dangerous (nt, i)
+        end
       ) params
   | ParameterAnonymous _ ->
       assert false
@@ -135,9 +180,8 @@ let successors_producer f x ((_, param, _) : producer) =
 let successors_branch f x (branch : parameterized_branch) =
   List.iter (successors_producer f x) branch.pr_producers
 
-let successors f ((nt, i) : formal) =
-  let rule = try StringMap.find nt g.p_rules with Not_found -> assert false in
-  let x  = try List.nth rule.pr_parameters i with Failure _ -> assert false in
+let successors f (formal : formal) =
+  let rule, x = info formal in
   List.iter (successors_branch f x) rule.pr_branches
 
 (* -------------------------------------------------------------------------- *)

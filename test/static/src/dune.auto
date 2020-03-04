@@ -2378,6 +2378,48 @@
 (rule (alias execparser)
   (action (diff ../good/execparser.exp execparser.out)))
 
+(rule (target expansion_ok.opp.out) (deps ../good/expansion_ok.mly)
+  (action
+    (with-outputs-to expansion_ok.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias expansion_ok)
+  (action (diff ../good/expansion_ok.opp.exp expansion_ok.opp.out)))
+
+(rule (targets expansion_ok.out expansion_ok.out.timings)
+  (deps ../good/expansion_ok.mly)
+  (action
+    (with-outputs-to expansion_ok.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/expansion_ok.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias expansion_ok)
+  (action (diff ../good/expansion_ok.exp expansion_ok.out)))
+
+(rule (target expansion_unused.opp.out) (deps ../good/expansion_unused.mly)
+  (action
+    (with-outputs-to expansion_unused.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias expansion_unused)
+  (action (diff ../good/expansion_unused.opp.exp expansion_unused.opp.out)))
+
+(rule (targets expansion_unused.out expansion_unused.out.timings)
+  (deps ../good/expansion_unused.mly)
+  (action
+    (with-outputs-to expansion_unused.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/expansion_unused.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias expansion_unused)
+  (action (diff ../good/expansion_unused.exp expansion_unused.out)))
+
 (rule (target featherweight.opp.out) (deps ../good/featherweight.mly)
   (action
     (with-outputs-to featherweight.opp.out
@@ -6755,6 +6797,27 @@
 
 (rule (alias self) (action (diff ../good/self.exp self.out)))
 
+(rule (target self_ground.opp.out) (deps ../good/self_ground.mly)
+  (action
+    (with-outputs-to self_ground.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias self_ground)
+  (action (diff ../good/self_ground.opp.exp self_ground.opp.out)))
+
+(rule (targets self_ground.out self_ground.out.timings)
+  (deps ../good/self_ground.mly)
+  (action
+    (with-outputs-to self_ground.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/self_ground.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias self_ground)
+  (action (diff ../good/self_ground.exp self_ground.out)))
+
 (rule (target sibylfs-lem.0.4.0-parser.opp.out)
   (deps ../good/sibylfs-lem.0.4.0-parser.mly)
   (action
@@ -9430,6 +9493,8 @@
     (alias execparser)
     (alias expansion-capture)
     (alias expansion_diverges)
+    (alias expansion_ok)
+    (alias expansion_unused)
     (alias expression)
     (alias expression-expected)
     (alias expressions)
@@ -9714,6 +9779,7 @@
     (alias sage)
     (alias scilabParser)
     (alias self)
+    (alias self_ground)
     (alias semantic)
     (alias semibar)
     (alias semibarcomma)
