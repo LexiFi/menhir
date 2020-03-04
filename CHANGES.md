@@ -1,5 +1,11 @@
 # Changes
 
+## 2020/03/04
+
+* Fix the static check that is performed prior to expanding the parameterized
+  nonterminal symbols. The previous check was incorrect: it would sometimes
+  accept a grammar whose expansion would diverge.
+
 ## 2020/02/11
 
 * Re-implement Menhir's default algorithm for constructing LR(1) automata,

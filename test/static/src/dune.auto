@@ -8133,6 +8133,14 @@
 (rule (alias expansion-capture)
   (action (diff ../bad/expansion-capture.exp expansion-capture.out)))
 
+(rule (target expansion_diverges.out) (deps ../bad/expansion_diverges.mly)
+  (action
+    (with-outputs-to expansion_diverges.out
+      (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
+
+(rule (alias expansion_diverges)
+  (action (diff ../bad/expansion_diverges.exp expansion_diverges.out)))
+
 (rule (target expression.out) (deps ../bad/expression.mly)
   (action
     (with-outputs-to expression.out
@@ -9421,6 +9429,7 @@
     (alias error-reserved)
     (alias execparser)
     (alias expansion-capture)
+    (alias expansion_diverges)
     (alias expression)
     (alias expression-expected)
     (alias expressions)

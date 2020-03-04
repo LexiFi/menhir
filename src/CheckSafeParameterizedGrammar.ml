@@ -73,23 +73,54 @@ let formals : formal array =
    there is a "dangerous" edge from the formal parameter F/i to the formal G/j.
    This reflects the fact that there is a flow from F/i to G/j. This flow is
    "dangerous" in the sense that it is size-increasing: X is transformed to
-   H(..., X, ...). *)
+   H(..., X, ...). In this example, there should also be a safe edge from the
+   formal F/i to the formal H/k.
+
+   More generally, an occurrence of X in the right-hand side can occur deeply
+   nested in a context K:
+
+     F(..., X, ...):
+        ... K[X] ...
+
+   In that case, we must create as many edges as the context K is deep, and
+   all of these edges should be dangerous, except the one that corresponds
+   to the innermost layer of K, which is safe.
+
+   Another way of putting this is, when the left-hand side is:
+
+     F(..., X, ...):           # where X is the i-th formal parameter of F
+
+   and the right-hand side contains a possibly-nested occurrence of:
+
+       G(..., K[X], ...)       # where K[X] is the j-th actual parameter of G
+
+   then we must create an edge of F/i to G/j, and this edge is safe if and
+   only if the context K is empty, i.e., X occurs at depth 0 in K[x]. *)
+
+(* The code below has quadratic complexity because [Parameters.occurs_deep]
+   is expensive. In principle, we could achieve linear complexity by first
+   annotating subterm (bottom-up) with a Boolean flag that indicates whether
+   [x] occurs (shallowly/deeply) in it; that would allow us to implement
+   [occurs_deep] in constant time. However, in practice, quadratic complexity
+   is probably good enough. *)
 
 type edge =
   | Safe
   | Dangerous
 
-let successors_parameter (f : edge -> formal -> unit) x (param : parameter) =
+let rec successors_parameter (f : edge -> formal -> unit) x (param : parameter) =
   match param with
   | ParameterVar _ ->
       (* This is not an application. No successors. *)
       ()
   | ParameterApp (sym, params) ->
       let nt = value sym in
-      (* If [x] occurs in the [i]-th actual parameter of this application,
-         then there is an edge to the formal [nt, i]. Whether it is a safe
-         or dangerous edge depends on whether [x] occurs shallow or deep. *)
       List.iteri (fun i param ->
+        (* Check, recursively, the applications that appear inside [param]. *)
+        successors_parameter f x param;
+        (* If [x] occurs in the [i]-th actual parameter of this application,
+           then there is an edge to the formal [nt, i]. Whether it is a safe
+           or dangerous edge depends on whether [x] occurs shallow or deep. *)
         if Parameters.occurs_shallow x param then
           f Safe (nt, i)
         else if Parameters.occurs_deep x param then
