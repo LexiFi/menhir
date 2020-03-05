@@ -7821,6 +7821,62 @@
 (rule (alias zenon.0.8.4-parsecoq)
   (action (diff ../good/zenon.0.8.4-parsecoq.exp zenon.0.8.4-parsecoq.out)))
 
+(rule (target zipperposition.1.5-Parse_dk.opp.out)
+  (deps ../good/zipperposition.1.5-Parse_dk.mly)
+  (action
+    (with-outputs-to zipperposition.1.5-Parse_dk.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias zipperposition.1.5-Parse_dk)
+  (action
+    (diff ../good/zipperposition.1.5-Parse_dk.opp.exp
+      zipperposition.1.5-Parse_dk.opp.out)))
+
+(rule
+  (targets zipperposition.1.5-Parse_dk.out
+    zipperposition.1.5-Parse_dk.out.timings)
+  (deps ../good/zipperposition.1.5-Parse_dk.mly)
+  (action
+    (with-outputs-to zipperposition.1.5-Parse_dk.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/zipperposition.1.5-Parse_dk.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias zipperposition.1.5-Parse_dk)
+  (action
+    (diff ../good/zipperposition.1.5-Parse_dk.exp
+      zipperposition.1.5-Parse_dk.out)))
+
+(rule (target zipperposition.1.5-Parse_tptp.opp.out)
+  (deps ../good/zipperposition.1.5-Parse_tptp.mly)
+  (action
+    (with-outputs-to zipperposition.1.5-Parse_tptp.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias zipperposition.1.5-Parse_tptp)
+  (action
+    (diff ../good/zipperposition.1.5-Parse_tptp.opp.exp
+      zipperposition.1.5-Parse_tptp.opp.out)))
+
+(rule
+  (targets zipperposition.1.5-Parse_tptp.out
+    zipperposition.1.5-Parse_tptp.out.timings)
+  (deps ../good/zipperposition.1.5-Parse_tptp.mly)
+  (action
+    (with-outputs-to zipperposition.1.5-Parse_tptp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/zipperposition.1.5-Parse_tptp.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias zipperposition.1.5-Parse_tptp)
+  (action
+    (diff ../good/zipperposition.1.5-Parse_tptp.exp
+      zipperposition.1.5-Parse_tptp.out)))
+
 (rule (target zipperposition.1.5-Parse_zf.opp.out)
   (deps ../good/zipperposition.1.5-Parse_zf.mly)
   (action
@@ -7848,6 +7904,34 @@
   (action
     (diff ../good/zipperposition.1.5-Parse_zf.exp
       zipperposition.1.5-Parse_zf.out)))
+
+(rule (target zipperposition.1.5-Tip_parser.opp.out)
+  (deps ../good/zipperposition.1.5-Tip_parser.mly)
+  (action
+    (with-outputs-to zipperposition.1.5-Tip_parser.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias zipperposition.1.5-Tip_parser)
+  (action
+    (diff ../good/zipperposition.1.5-Tip_parser.opp.exp
+      zipperposition.1.5-Tip_parser.opp.out)))
+
+(rule
+  (targets zipperposition.1.5-Tip_parser.out
+    zipperposition.1.5-Tip_parser.out.timings)
+  (deps ../good/zipperposition.1.5-Tip_parser.mly)
+  (action
+    (with-outputs-to zipperposition.1.5-Tip_parser.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/zipperposition.1.5-Tip_parser.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias zipperposition.1.5-Tip_parser)
+  (action
+    (diff ../good/zipperposition.1.5-Tip_parser.exp
+      zipperposition.1.5-Tip_parser.out)))
 
 (rule (target zyvaall.opp.out) (deps ../good/zyvaall.mly)
   (action
@@ -9863,7 +9947,10 @@
     (alias yaparser)
     (alias zenon)
     (alias zenon.0.8.4-parsecoq)
+    (alias zipperposition.1.5-Parse_dk)
+    (alias zipperposition.1.5-Parse_tptp)
     (alias zipperposition.1.5-Parse_zf)
+    (alias zipperposition.1.5-Tip_parser)
     (alias zyvaall)
     (alias zyvaflo)))
 
