@@ -1,7 +1,5 @@
-
 Require Import Parser Lexer List String PeanoNat.
 Import MenhirLibParser.Inter.
-Import ListNotations.
 Open Scope string_scope.
 
 (** Lexer + Parser for little arithmetic expressions *)
