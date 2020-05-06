@@ -1,5 +1,10 @@
 # Changes
 
+## 2020/05/03
+
+* Import ListNotations wherever it is necessary so that we do not rely
+  on it being exported by Program.
+
 ## 2019/09/24
 
 * Fix compatibility with Coq 8.10, and some warnings.
