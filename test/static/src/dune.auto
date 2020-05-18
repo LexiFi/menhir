@@ -6220,6 +6220,24 @@
 
 (rule (alias petit-1) (action (diff ../good/petit-1.exp petit-1.out)))
 
+(rule (target petr4.opp.out) (deps ../good/petr4.mly)
+  (action
+    (with-outputs-to petr4.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias petr4) (action (diff ../good/petr4.opp.exp petr4.opp.out)))
+
+(rule (targets petr4.out petr4.out.timings) (deps ../good/petr4.mly)
+  (action
+    (with-outputs-to petr4.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/petr4.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias petr4) (action (diff ../good/petr4.exp petr4.out)))
+
 (rule (target photos.opp.out) (deps ../good/photos.mly)
   (action
     (with-outputs-to photos.opp.out
@@ -9819,6 +9837,7 @@
     (alias permutation)
     (alias permutation-growth)
     (alias petit-1)
+    (alias petr4)
     (alias photos)
     (alias phpparser)
     (alias pippijn)
