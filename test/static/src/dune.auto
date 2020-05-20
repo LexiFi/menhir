@@ -6923,6 +6923,25 @@
     (diff ../good/simple-if-conflict-no-eos.exp
       simple-if-conflict-no-eos.out)))
 
+(rule (target solidity.opp.out) (deps ../good/solidity.mly)
+  (action
+    (with-outputs-to solidity.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias solidity)
+  (action (diff ../good/solidity.opp.exp solidity.opp.out)))
+
+(rule (targets solidity.out solidity.out.timings) (deps ../good/solidity.mly)
+  (action
+    (with-outputs-to solidity.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/solidity.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias solidity) (action (diff ../good/solidity.exp solidity.out)))
+
 (rule (target spike.opp.out) (deps ../good/spike.mly)
   (action
     (with-outputs-to spike.opp.out
@@ -9884,6 +9903,7 @@
     (alias simple-if-conflict)
     (alias simple-if-conflict-no-eos)
     (alias sloc-with-param)
+    (alias solidity)
     (alias spike)
     (alias split-public-symbol)
     (alias split-public-symbol-with-renaming)
