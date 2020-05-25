@@ -1,10 +1,16 @@
 # Changes
 
-## 2020/03/04
+## 2020/05/25
+
+* Fix a problem that could arise when an open polymorphic variant, such as
+  ```[> `A ]```, was used in a `%type` or `%start` declaration. A type that
+  was too general could possibly be inferred. This could in turn lead to an
+  incorrect compilation of pattern matching and to a segmentation fault.
+  (Problem reported by Joe.)
 
 * Fix the static check that is performed prior to expanding the parameterized
   nonterminal symbols. The previous check was incorrect: it would sometimes
-  accept a grammar whose expansion would diverge.
+  accept a grammar whose expansion would diverge. (Fix by Yann Régis-Gianas.)
 
 ## 2020/02/11
 
