@@ -55,8 +55,19 @@ let mliname =
 (* ------------------------------------------------------------------------- *)
 (* Code production. *)
 
-(* [nttype nt] is the type of the nonterminal [nt], as currently
-   known. *)
+(* [tokentype grammar symbol] returns the type of the terminal symbol
+   [symbol], if [symbol] is indeed a terminal symbol. Otherwise, it
+   raises [Not_found]. *)
+
+let tokentype grammar symbol =
+  let props = StringMap.find symbol grammar.tokens in
+  match props.tk_ocamltype with
+  | None ->
+      tunit
+  | Some ocamltype ->
+      TypTextual ocamltype
+
+(* [nttype nt] is the type of the nonterminal [nt], as currently known. *)
 
 let nttype grammar nt =
    try
@@ -96,13 +107,7 @@ let actiondef grammar symbol branch =
       in
       let t =
         try
-          let props = StringMap.find symbol grammar.tokens in
-          (* Symbol is a terminal. *)
-          match props.tk_ocamltype with
-          | None ->
-              tunit
-          | Some ocamltype ->
-              TypTextual ocamltype
+          tokentype grammar symbol
         with Not_found ->
           (* Symbol is a nonterminal. *)
           nttype grammar symbol
