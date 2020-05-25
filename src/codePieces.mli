@@ -22,10 +22,6 @@ open Grammar
 
 (* Naming conventions. *)
 
-(* The type variable associated with a nonterminal [nt]. *)
-
-val ntvar : Nonterminal.t -> string
-
 (* The variable that holds the environment. This is a parameter to all
    functions. We do not make it a global variable because we wish to
    preserve re-entrancy. *)

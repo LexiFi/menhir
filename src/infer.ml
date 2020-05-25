@@ -26,7 +26,7 @@ open TokenType
    cannot clash with OCaml keywords. *)
 
 let ntvar symbol =
-  Printf.sprintf "tv_%s" (Misc.normalize symbol)
+  TypVar (Printf.sprintf "tv_%s" (Misc.normalize symbol))
 
 (* The term variable associated with a nonterminal symbol. Its name begins
    with a prefix which ensures that it begins with a lowercase letter and
@@ -73,7 +73,7 @@ let nttype grammar nt =
    try
      TypTextual (StringMap.find nt grammar.types)
    with Not_found ->
-     TypVar (ntvar nt)
+     ntvar nt
 
 (* [is_standard] determines whether a branch derives from a standard
    library definition. The method, based on a file name, is somewhat

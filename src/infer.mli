@@ -16,7 +16,7 @@ open BasicSyntax
 (* [ntvar symbol] is the name of the type variable associated with a
    nonterminal symbol. *)
 
-val ntvar: string -> string
+val ntvar: string -> IL.typ
 
 (* [infer grammar] analyzes the grammar [grammar] and returns a new
    grammar, augmented with a [%type] declaration for every nonterminal

@@ -87,7 +87,7 @@ let semvtypent nt =
          can't happen. However, running type inference is only an
          option, so we still have to deal with that case. *)
 
-      TypVar (ntvar nt)
+      ntvar nt
 
   | Some ocamltype ->
 
