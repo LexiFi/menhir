@@ -53,6 +53,61 @@ let mliname =
   base ^ ".mli"
 
 (* ------------------------------------------------------------------------- *)
+(* The type of a nonterminal symbol. *)
+
+(* 2020/05/25. We must be careful how we process the type information given to
+   us by the user via [%type] and [%start] annotations. Duplicating this
+   information without care can be unsound: e.g., some OCaml types, such as
+   the open polymorphic variant type [> `A ], contain implicit type variables.
+   When such a type annotation is duplicated, the two copies are unrelated:
+   this can cause us to infer a type that is too general (issue #37).
+
+   To avoid this issue, part of the solution is to enforce sharing by using a
+   type variable everywhere (one per nonterminal symbol).
+
+   At first sight, it looks as though we could use this type variable
+   everywhere, and use the user-provided type annotation exactly once.
+   However, another OCaml feature, type-directed disambiguation, depends on
+   explicit type information, and does not always make a correct choice if
+   this information is not immediately available (prior to unification).
+
+   Thus, whenever we need to annotate an expression or a pattern with the type
+   of a nonterminal symbol, we must annotate it *both* with the type variable
+   that corresponds to this symbol (so as to enforce sharing) and with the
+   user-provided type, if there is one (so as to allow type-directed
+   disambiguation).
+
+   Also, when reading the types inferred by the OCaml type-checker, we must
+   read every type, even in the cases where a type was already provided by
+   the user. Indeed, the type inferred by OCaml may be more specific than the
+   type provided by the user. E.g., the user may declare the type [> `A ],
+   while OCaml may infer the type [> `A | `B ]. *)
+
+(* [usertype grammar nt] is the type provided by the user for the nonterminal
+   symbol [nt], if there is one. *)
+
+let usertype grammar nt =
+   try
+     Some (TypTextual (StringMap.find nt grammar.types))
+   with Not_found ->
+     None
+
+(* [annotate_expr grammar e nt] annotates the expression [e] with type
+   information associated with the nonterminal symbol [nt]. We annotate [e]
+   with the type variable [ntvar nt], and additionally annotate it with the
+   type [usertype grammar nt], if it exists. *)
+
+let annotate_expr grammar e nt =
+  let e = annotate e (ntvar nt) in
+  let e = Option.fold (fun t e -> annotate e t) (usertype grammar nt) e in
+  e
+
+let annotate_pat grammar p nt =
+  let p = PAnnot (p, ntvar nt) in
+  let p = Option.fold (fun t p -> PAnnot (p, t)) (usertype grammar nt) p in
+  p
+
+(* ------------------------------------------------------------------------- *)
 (* Code production. *)
 
 (* [tokentype grammar symbol] returns the type of the terminal symbol
@@ -66,14 +121,6 @@ let tokentype grammar symbol =
       tunit
   | Some ocamltype ->
       TypTextual ocamltype
-
-(* [nttype nt] is the type of the nonterminal [nt], as currently known. *)
-
-let nttype grammar nt =
-   try
-     TypTextual (StringMap.find nt grammar.types)
-   with Not_found ->
-     ntvar nt
 
 (* [is_standard] determines whether a branch derives from a standard
    library definition. The method, based on a file name, is somewhat
@@ -105,14 +152,14 @@ let actiondef grammar symbol branch =
         Printf.sprintf "_endofs_%s_" id,
         Printf.sprintf "_loc_%s_" id
       in
-      let t =
+      let pid =
         try
-          tokentype grammar symbol
+          PAnnot (PVar id, tokentype grammar symbol)
         with Not_found ->
           (* Symbol is a nonterminal. *)
-          nttype grammar symbol
+          annotate_pat grammar (PVar id) symbol
       in
-      PAnnot (PVar id, t) ::
+      pid ::
       PAnnot (PVar startp, tposition) ::
       PAnnot (PVar endp, tposition) ::
       PAnnot (PVar starto, tint) ::
@@ -144,9 +191,9 @@ let actiondef grammar symbol branch =
      semantic action. *)
 
   let body =
-    annotate
+    annotate_expr grammar
       (Action.to_il_expr branch.action)
-      (nttype grammar symbol)
+      symbol
   in
 
   match formals with
@@ -174,13 +221,13 @@ let program grammar =
     ) grammar.rules ([], [])
   in
 
-  (* Create entry points whose types are the unknowns that we are
-     looking for. *)
+  (* Create entry points whose types are the unknowns that we are looking for.
+     Mentioning just the type variable [ntvar nt] suffices here. *)
 
   let ps, ts =
-    StringMap.fold (fun symbol _ (ps, ts) ->
-      PVar (encode (Misc.normalize symbol)) :: ps,
-      nttype grammar symbol :: ts
+    StringMap.fold (fun nt _ (ps, ts) ->
+      PVar (encode (Misc.normalize nt)) :: ps,
+      ntvar nt :: ts
     ) grammar.rules ([], [])
   in
 
@@ -349,12 +396,9 @@ let read_reply (output : string) grammar =
              are out of date. Fail gracefully. *)
           Error.error [] "found no inferred type for %s." symbol
       in
-      if StringMap.mem symbol grammar.types then
-        (* If there was a declared type, keep it. *)
-        types
-      else
-        (* Otherwise, insert the inferred type. *)
-        StringMap.add symbol ocamltype types
+      (* Regardless of whether there was or wasn't a declared type,
+         use the type inferred by the OCaml type-checker. *)
+      StringMap.add symbol ocamltype types
     ) grammar.rules grammar.types
   in
 
