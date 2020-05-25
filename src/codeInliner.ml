@@ -174,7 +174,7 @@ let inline_valdefs (defs : valdef list) : valdef list =
   let rec annotate formals body typ =
     match formals, typ with
     | [], _ ->
-        [], EAnnot (body, type2scheme typ)
+        [], CodeBits.annotate body typ
     | formal :: formals, TypArrow (targ, tres) ->
         let formals, body = annotate formals body tres in
         PAnnot (formal, targ) :: formals, body

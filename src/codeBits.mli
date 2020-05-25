@@ -53,6 +53,10 @@ val tvar: string -> typ
 val scheme: string list -> typ -> typescheme
 val type2scheme: typ -> typescheme
 
+(* Constraining an expression to have a (monomorphic) type. *)
+
+val annotate: expr -> typ -> expr
+
 (* Projecting out of a [PVar] pattern. *)
 
 val pat2var: pattern -> string

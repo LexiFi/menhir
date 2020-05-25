@@ -191,7 +191,7 @@ let reducecellcasts prod i symbol casts =
   (* Cast: [let id = ((Obj.magic id) : t) in ...]. *)
   (
     PVar id,
-    EAnnot (EMagic (EVar id), type2scheme t)
+    annotate (EMagic (EVar id)) t
   ) :: casts
 
 (* 2015/11/04. The start and end positions of an epsilon production are obtained
@@ -260,7 +260,7 @@ let reducebody prod =
     Production.action prod
   in
   let act =
-    EAnnot (Action.to_il_expr action, type2scheme (semvtypent nt))
+    annotate (Action.to_il_expr action) (semvtypent nt)
   in
 
   EComment (
@@ -697,7 +697,7 @@ let monolithic_entry_point state nt t =
     and lexbuf = "lexbuf" in
     EFun (
       [ PVar lexer; PVar lexbuf ],
-      EAnnot (
+      annotate (
         EMagic (
           EApp (
             EVar entry, [
@@ -706,9 +706,9 @@ let monolithic_entry_point state nt t =
               EVar lexbuf
             ]
           )
-        ),
-        type2scheme (TypTextual t)
+        )
       )
+      (TypTextual t)
     )
   )
 
@@ -732,7 +732,7 @@ let incremental_entry_point state nt t =
        to the standard error channel. *)
     EFun (
       [ PVar initial ],
-      EAnnot (
+      annotate (
         EMagic (
           EApp (
             EVar start, [
@@ -740,9 +740,9 @@ let incremental_entry_point state nt t =
               EVar initial;
             ]
           )
-        ),
-        type2scheme (checkpoint (TypTextual t))
+        )
       )
+      (checkpoint (TypTextual t))
     )
   )
 

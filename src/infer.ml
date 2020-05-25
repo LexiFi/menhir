@@ -144,10 +144,9 @@ let actiondef grammar symbol branch =
      semantic action. *)
 
   let body =
-    EAnnot (
-      Action.to_il_expr branch.action,
-      type2scheme (nttype grammar symbol)
-    )
+    annotate
+      (Action.to_il_expr branch.action)
+      (nttype grammar symbol)
   in
 
   match formals with
@@ -188,7 +187,7 @@ let program grammar =
   let def = {
     valpublic = true;
     valpat = PTuple ps;
-    valval = ELet (bindings1 @ bindings2, EAnnot (bottom, type2scheme (TypTuple ts)))
+    valval = ELet (bindings1 @ bindings2, annotate bottom (TypTuple ts))
   }
   in
 

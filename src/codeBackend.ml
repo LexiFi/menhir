@@ -1239,7 +1239,7 @@ let reducebody prod =
       Production.action prod
     in
     let act =
-      EAnnot (Action.to_il_expr action, type2scheme (semvtypent nt))
+      annotate (Action.to_il_expr action) (semvtypent nt)
     in
 
     tracecomment
@@ -1586,10 +1586,9 @@ let discarddef = {
   valpublic = false;
   valpat = PVar discard;
   valval =
-    EAnnot (
-      discardbody,
-      type2scheme (arrow tenv tenv)
-    )
+    annotate
+      discardbody
+      (arrow tenv tenv)
 }
 
 (* This is [initenv], used to allocate a fresh parser environment.
@@ -1605,7 +1604,7 @@ let initenvdef =
     valpublic = false;
     valpat = PVar initenv;
     valval =
-      EAnnot (
+      annotate (
         EFun ( [ PVar lexer; PVar lexbuf ],
           blet (
             (* We do not have a dummy token at hand, so we forge one. *)
@@ -1619,9 +1618,9 @@ let initenvdef =
             ]
             )
           )
-        ),
-        type2scheme (marrow [ tlexer; tlexbuf ] tenv)
-      )
+        )
+       )
+       (marrow [ tlexer; tlexbuf ] tenv)
   }
 
 (* ------------------------------------------------------------------------ *)

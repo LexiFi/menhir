@@ -124,6 +124,11 @@ let scheme qs t =
 let type2scheme t =
   scheme [] t
 
+(* Constraining an expression to have a (monomorphic) type. *)
+
+let annotate e t =
+  EAnnot (e, type2scheme t)
+
 let pat2var = function
   | PVar x ->
       x

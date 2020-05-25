@@ -190,7 +190,7 @@ let destructuretokendef name codomain bindsemv branch = {
   valpublic = false;
   valpat = PVar name;
   valval =
-    EAnnot (
+    annotate (
       EFun ([ PVar token ],
         EMatch (EVar token,
           Terminal.fold (fun tok branches ->
@@ -201,9 +201,9 @@ let destructuretokendef name codomain bindsemv branch = {
                 branchbody = branch tok } :: branches
           ) []
         )
-      ),
-      type2scheme (arrow TokenType.ttoken codomain)
+      )
     )
+    (arrow TokenType.ttoken codomain)
 }
 
 (* ------------------------------------------------------------------------ *)
