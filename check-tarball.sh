@@ -11,9 +11,17 @@ TARBALL=$PACKAGE.tar.gz
 # We use a dedicated opam switch where it is permitted to uninstall/reinstall
 # Menhir.
 
+if opam switch list | grep 'test-menhir' >/dev/null ; then
+  echo "The switch test-menhir already exists." ;
+else
+  echo "Creating switch test-menhir..." ;
+  opam switch create test-menhir 4.10.0 ;
+  echo "Installing required packages..." ;
+  opam install --yes dune visitors coq ;
+fi
+
 echo "Now switching to test-menhir..."
 eval $(opam env --set-switch --switch test-menhir)
-OPAMYES=true opam install coq dune
 
 # Uninstall Menhir if it is installed.
 
