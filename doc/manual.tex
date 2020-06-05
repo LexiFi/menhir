@@ -513,9 +513,9 @@ file. Here are two problems that people commonly run into:
   module \verb+Foo+, will not work. You must write \verb+%type<Foo.t> bar+.
 \item Declaring a module alias that affects a (declared or inferred) type. For
   instance, writing \verb+module F = Foo+ in the header and declaring
-  \verb+%type<Foo.t> bar+ will not work (from
-  2020/05/25 on). The reason is, OCaml infers that the symbol \verb+bar+ has
-  type \verb+F.t+, and Menhir relies on this information without realizing
+  \verb+%type<Foo.t> bar+ may not work (from
+  2020/05/25 on). The reason is, OCaml may infer that the symbol \verb+bar+ has
+  type \verb+F.t+, and Menhir will rely on this information without realizing
   that \verb+F+ is a local name, so in the end, the \mli file contains a
   reference to \verb+F.t+ that does not make sense.
 \end{itemize}
