@@ -502,6 +502,24 @@ their order is preserved. However, when two headers originate in distinct
 grammar specification files, the order in which they are copied to the \ml
 file is unspecified.
 
+It is important to note that the header is copied by \menhir only to the \ml
+file, \emph{not} to the \mli file. Therefore, it should not contain
+declarations that affect the meaning of the types that appear in the \mli
+file. Here are two problems that people commonly run into:
+\begin{itemize}
+\item Placing an \kw{open} directive that is required for a \dtype declaration
+  to make sense. For instance, writing \verb+open Foo+ in the header and
+  declaring \verb+%type<t> bar+, where the type \verb+t+ is defined in the
+  module \verb+Foo+, will not work. You must write \verb+%type<Foo.t> bar+.
+\item Declaring a module alias that affects a (declared or inferred) type. For
+  instance, writing \verb+module F = Foo+ in the header and declaring
+  \verb+%type<Foo.t> bar+ will not work (from
+  2020/05/25 on). The reason is, OCaml infers that the symbol \verb+bar+ has
+  type \verb+F.t+, and Menhir relies on this information without realizing
+  that \verb+F+ is a local name, so in the end, the \mli file contains a
+  reference to \verb+F.t+ that does not make sense.
+\end{itemize}
+
 \subsubsection{Parameters}
 \label{sec:parameter}
 
