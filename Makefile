@@ -357,7 +357,7 @@ undo:
 
 # Copying the documentation to François' page on yquem.
 
-# I would have like to serve these files on gitlab.inria.fr,
+# I would like to serve these files on gitlab.inria.fr,
 # but I don't know how to make them look like native .html
 # and .pdf files.
 # Also, I don't know how to obtain a stable URL that always
