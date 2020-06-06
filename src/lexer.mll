@@ -289,9 +289,13 @@ let mk_stretch pos1 pos2 parenthesize monsters =
 
 (* OCaml's reserved words. *)
 
-let reserved =
+let table words =
   let table = Hashtbl.create 149 in
-  List.iter (fun word -> Hashtbl.add table word ()) [
+  List.iter (fun word -> Hashtbl.add table word ()) words;
+  table
+
+let reserved =
+  table [
     "and";
     "as";
     "assert";
@@ -348,8 +352,32 @@ let reserved =
     "lsl";
     "lsr";
     "asr";
-  ];
+  ]
+
+(* ------------------------------------------------------------------------ *)
+
+(* Menhir's percent-directives. *)
+
+let table directives =
+  let table = Hashtbl.create 149 in
+  List.iter (fun (word, token) -> Hashtbl.add table word token) directives;
   table
+
+let directives =
+  table [
+    "token", TOKEN;
+    "type", TYPE;
+    "left", LEFT;
+    "right", RIGHT;
+    "nonassoc", NONASSOC;
+    "start", START;
+    "prec", PREC;
+    "public", PUBLIC;
+    "parameter", PARAMETER;
+    "inline", INLINE;
+    "attribute", PERCENTATTRIBUTE;
+    "on_error_reduce", ON_ERROR_REDUCE;
+  ]
 
 }
 
@@ -392,30 +420,9 @@ let syntaxerror =
 (* The lexer. *)
 
 rule main = parse
-| "%token"
-    { TOKEN }
-| "%type"
-    { TYPE }
-| "%left"
-    { LEFT }
-| "%right"
-    { RIGHT }
-| "%nonassoc"
-    { NONASSOC }
-| "%start"
-    { START }
-| "%prec"
-    { PREC }
-| "%public"
-    { PUBLIC }
-| "%parameter"
-    { PARAMETER }
-| "%inline"
-    { INLINE }
-| "%attribute"
-    { PERCENTATTRIBUTE }
-| "%on_error_reduce"
-    { ON_ERROR_REDUCE }
+| "%" (identchar+ as directive)
+    { try Hashtbl.find directives directive
+      with Not_found -> error2 lexbuf "unknown directive: %s." directive }
 | "%%"
     { (* The token [PERCENTPERCENT] carries a stretch that contains
          everything that follows %% in the input file. This string

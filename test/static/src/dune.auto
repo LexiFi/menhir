@@ -8776,6 +8776,16 @@
 
 (rule (alias no-tokens) (action (diff ../bad/no-tokens.exp no-tokens.out)))
 
+(rule (target no_space_after_directive.out)
+  (deps ../bad/no_space_after_directive.mly)
+  (action
+    (with-outputs-to no_space_after_directive.out
+      (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
+
+(rule (alias no_space_after_directive)
+  (action
+    (diff ../bad/no_space_after_directive.exp no_space_after_directive.out)))
+
 (rule (target non-terminal-is-expected.out)
   (deps ../bad/non-terminal-is-expected.mly)
   (action
@@ -9802,6 +9812,7 @@
     (alias no-start-symbol)
     (alias no-tokens)
     (alias no_future)
+    (alias no_space_after_directive)
     (alias non-terminal-is-expected)
     (alias non-terminal-multiple-branch-groups)
     (alias non-terminal-multiple-definitions)
