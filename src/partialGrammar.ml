@@ -603,6 +603,37 @@ let check_inline_attribute prule =
   | false, _ ->
       ()
 
+let reserved =
+  [ "error" ]
+
+let check_identifier_reference mark_token_as_used grammar prule is_prec s p =
+  if not is_prec && List.mem s prule.pr_parameters then
+    (* A parameter of this rule. *)
+    ()
+  else if not is_prec && List.mem s reserved then
+    (* A reserved token. *)
+    mark_token_as_used s
+  else if not is_prec && StringMap.mem s grammar.p_rules then
+    (* A nonterminal symbol. *)
+    ()
+  else match StringMap.find s grammar.p_tokens with
+    | prop ->
+        (* A token or pseudo-token. Mark it as used. *)
+        mark_token_as_used s;
+        if not is_prec && not prop.tk_is_declared then
+          (* A pseudo-token, declared by %left, %right or %nonassoc,
+             cannot be used as a normal identifier. It can be only in
+             a %prec annotation. *)
+          Error.error [ p ]
+            "The symbol %s has not been declared by %%token,\n\
+             so cannot be used here." s
+    | exception Not_found ->
+        (* An unknown symbol. *)
+        if is_prec then
+          Error.error [ p ] "The terminal symbol %s is undefined." s
+        else
+          Error.error [ p ] "The symbol %s is undefined." s
+
 let check_parameterized_grammar_is_well_defined grammar =
 
   (* Every start symbol is defined and has a %type declaration. *)
@@ -620,8 +651,6 @@ let check_parameterized_grammar_is_well_defined grammar =
   (* Every %type definition refers to well-defined (terminal or nonterminal)
      symbols and has, at its head, a nonterminal symbol. *)
   (* Same check for %on_error_reduce definitions. *)
-
-  let reserved = [ "error" ] in
 
   let rec check (kind : string) (must_be_nonterminal : bool) (p : Syntax.parameter) =
     (* Destructure head and arguments. *)
@@ -658,19 +687,13 @@ let check_parameterized_grammar_is_well_defined grammar =
   let mark_token_as_used token =
     used_tokens := StringSet.add token !used_tokens
   in
-  let check_identifier_reference grammar prule s p =
-    (* Mark the symbol as a used token if this is a token. *)
-    if StringMap.mem s grammar.p_tokens then
-      mark_token_as_used s;
-
-    if not (StringMap.mem s grammar.p_rules
-           || StringMap.mem s grammar.p_tokens
-           || List.mem s prule.pr_parameters
-           || List.mem s reserved) then
-      Error.error [ p ] "%s is undefined." s
-  in
     StringMap.iter
       (fun k prule ->
+
+         let check_identifier_reference =
+           check_identifier_reference
+             mark_token_as_used grammar prule
+         in
 
          (* The formal parameters of each rule must have distinct names. *)
          prule.pr_parameters
@@ -700,36 +723,17 @@ let check_parameterized_grammar_is_well_defined grammar =
                in
 
                  (* Check that the producer is defined somewhere. *)
-                 check_identifier_reference grammar prule s p;
-                 StringMap.iter (check_identifier_reference grammar prule)
+                 check_identifier_reference false s p;
+                 StringMap.iter (check_identifier_reference false)
                    (List.fold_left Parameters.identifiers StringMap.empty parameters);
 
-                 (* If this producer seems to be a reference to a token, make sure it
-                    is a real token, as opposed to a pseudo-token introduced in a
-                    priority declaration. *)
-                 (try
-                    if not ((StringMap.find s grammar.p_tokens).tk_is_declared
-                           || List.mem s reserved) then
-                      Error.errorp symbol
-                        "%s has not been declared as a token." s
-                  with Not_found -> ());
                  already_seen
 
             ) StringSet.empty producers);
 
-            match pr_branch_prec_annotation with
-
-              | None -> ()
-
-              | Some terminal ->
-                  check_identifier_reference grammar prule
-                    terminal.value terminal.position;
-
-                  (* Furthermore, the symbol following %prec must be a valid
-                     token identifier. *)
-                  if not (StringMap.mem terminal.value grammar.p_tokens) then
-                    Error.errorp terminal
-                      "%s is undefined." terminal.value)
+           Option.iter (fun terminal ->
+             check_identifier_reference true terminal.value terminal.position
+           ) pr_branch_prec_annotation)
 
          prule.pr_branches;
 

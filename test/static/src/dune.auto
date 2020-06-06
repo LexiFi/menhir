@@ -8444,6 +8444,14 @@
 (rule (alias inline-minimal-cycle)
   (action (diff ../bad/inline-minimal-cycle.exp inline-minimal-cycle.out)))
 
+(rule (target int-of-string.out) (deps ../bad/int-of-string.mly)
+  (action
+    (with-outputs-to int-of-string.out
+      (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
+
+(rule (alias int-of-string)
+  (action (diff ../bad/int-of-string.exp int-of-string.out)))
+
 (rule (target invalid-declarations-a.out)
   (deps ../bad/invalid-declarations-a.mly)
   (action
@@ -9463,6 +9471,14 @@
 (rule (alias use-index-not-id)
   (action (diff ../bad/use-index-not-id.exp use-index-not-id.out)))
 
+(rule (target use_pseudo_token.out) (deps ../bad/use_pseudo_token.mly)
+  (action
+    (with-outputs-to use_pseudo_token.out
+      (chdir ../bad (with-accepted-exit-codes (not 0) (run menhir %{deps}))))))
+
+(rule (alias use_pseudo_token)
+  (action (diff ../bad/use_pseudo_token.exp use_pseudo_token.out)))
+
 (alias (name test)
   (deps
     (alias JSParse)
@@ -9676,6 +9692,7 @@
     (alias inlined-dollar)
     (alias inlining-capture)
     (alias inliningWithSideEffects)
+    (alias int-of-string)
     (alias invalid-declarations-a)
     (alias invalid-declarations-b)
     (alias invalid-declarations-c)
@@ -9971,6 +9988,7 @@
     (alias uppercase)
     (alias uppercase-start)
     (alias use-index-not-id)
+    (alias use_pseudo_token)
     (alias useless-priorities)
     (alias useless-pseudo-token)
     (alias verilog)
