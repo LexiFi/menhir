@@ -30,6 +30,18 @@ let error2 lexbuf =
 
 (* ------------------------------------------------------------------------ *)
 
+(* [int_of_string] raises [Failure] if its argument is too large. This is
+   not a problem in practice, but causes false positives when fuzzing
+   Menhir. We hide the problem by failing gracefully. *)
+
+let int_of_string (pos : Lexing.position) i =
+  try
+    int_of_string i
+  with Failure _ ->
+    error1 pos "unreasonably large integer."
+
+(* ------------------------------------------------------------------------ *)
+
 (* This wrapper saves the current lexeme start, invokes its argument,
    and restores it. This allows transmitting better positions to the
    parser. *)
@@ -187,7 +199,7 @@ let position pos
   let subject, check =
     match i, x with
     | Some i, None ->
-        let ii = int_of_string i in (* cannot fail *)
+        let ii = int_of_string (start_of_position pos) i in
         if ii = 0 && where = WhereEnd then
           (* [$endpos($0)] *)
           Before, none
@@ -569,7 +581,8 @@ and action percent openingpos monsters = parse
     { let _, monsters = parentheses (lexeme_start_p lexbuf) monsters lexbuf in
       action percent openingpos monsters lexbuf }
 | '$' (['0'-'9']+ as i)
-    { let monster = dollar (cpos lexbuf) (int_of_string i) in
+    { let i = int_of_string (lexeme_start_p lexbuf) i in
+      let monster = dollar (cpos lexbuf) i in
       action percent openingpos (monster :: monsters) lexbuf }
 | poskeyword
     { let monster = position (cpos lexbuf) where flavor i x in
@@ -612,7 +625,8 @@ and parentheses openingpos monsters = parse
     { let _, monsters = action false (lexeme_start_p lexbuf) monsters lexbuf in
       parentheses openingpos monsters lexbuf }
 | '$' (['0'-'9']+ as i)
-    { let monster = dollar (cpos lexbuf) (int_of_string i) in
+    { let i = int_of_string (lexeme_start_p lexbuf) i in
+      let monster = dollar (cpos lexbuf) i in
       parentheses openingpos (monster :: monsters) lexbuf }
 | poskeyword
     { let monster = position (cpos lexbuf) where flavor i x in
