@@ -419,6 +419,13 @@ and exprk k f e =
   else
     fprintf f "(%a)" expr e
 
+(* When printing a stretch, the string [content] includes padding (that is,
+   whitespace) to as to preserve the column numbers of the source file,
+   whereas the string [raw_content] does not. When [X.locate_stretches]
+   is [None], the parameter [raw] controls the choice between them. When
+   [X.locate_stretches] is [Some _], we ignore [raw] and force the use of
+   the [content] string, so as to have correct column numbers. *)
+
 and stretch raw f stretch =
   let content = stretch.Stretch.stretch_content
   and raw_content = stretch.Stretch.stretch_raw_content in
@@ -427,6 +434,8 @@ and stretch raw f stretch =
       sharp f stretch.Stretch.stretch_linenum stretch.Stretch.stretch_filename;
       output_string f content;
       line := !line + stretch.Stretch.stretch_linecount;
+      (* The addition [_ + 2] anticipates the effect on the line
+         counter of the directive that we are just about to print. *)
       sharp f (!line + 2) basename;
       output_substring f whitespace 0 !indentation
   | None ->

@@ -272,6 +272,10 @@ let mk_stretch pos1 pos2 parenthesize monsters =
      into other code without ambiguity. *)
   let content =
     if parenthesize then
+      (* If [parenthesize] is true then we are at the beginning of a semantic
+         action, just after the opening brace. This guarantees that we cannot
+         be at the beginning of a line, so the subtraction [_ - 1] below
+         cannot produce a negative result. *)
       (String.make (pos1.pos_cnum - pos1.pos_bol - 1) ' ') ^ "(" ^ content ^ ")"
     else
       (String.make (pos1.pos_cnum - pos1.pos_bol) ' ') ^ content
