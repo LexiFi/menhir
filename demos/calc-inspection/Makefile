@@ -1,6 +1,6 @@
 .PHONY: all test
 
-DUNEBUILD := dune build --no-print-directory
+DUNEBUILD := dune build
 
 all:
 	@ $(DUNEBUILD) @all
