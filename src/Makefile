@@ -2,4 +2,4 @@
 
 .PHONY: all
 all:
-	@ make -C .. $@
+	@ dune build @check
