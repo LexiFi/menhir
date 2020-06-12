@@ -468,6 +468,9 @@ and pat0 f = function
       fprintf f "_"
   | PVar x ->
       var f x
+  | PVarLocated x ->
+      (* Turn [x] on the fly into a stretch and print that. *)
+      stretch true f (Lexer.stretch_of_id x)
   | PData (d, []) ->
       var f d
   | PTuple [] ->

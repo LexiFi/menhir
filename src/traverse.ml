@@ -47,6 +47,9 @@ class virtual ['env] env = object(self)
         env
     | PVar id ->
         self#pvar env id
+    | PVarLocated id ->
+        let id = Positions.value id in
+        self#pvar env id
     | PTuple ps
     | POr ps
     | PData (_, ps) ->
@@ -546,4 +549,3 @@ class virtual ['env, 'a] fold = object (self)
     List.fold_left (self#valdef env) accu defs
 
 end
-

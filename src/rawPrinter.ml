@@ -181,6 +181,9 @@ and pat = function
       node "pwildcard" []
   | PVar x ->
       node "pvar" [ string x ]
+  | PVarLocated x ->
+      let x = Positions.value x in
+      node "pvar" [ string x ]
   | PTuple ps ->
       node "ptuple" (pats ps)
   | PAnnot (p, t) ->

@@ -14,7 +14,12 @@
 (* This module provides a number of tiny functions that help produce
    [IL] code. *)
 
+open Positions
 open IL
+
+(* A smart constructor for [PVarLocated]. *)
+
+val pvarlocated: string located -> pattern
 
 (* Tuples. *)
 

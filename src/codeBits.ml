@@ -16,6 +16,17 @@
 
 open IL
 
+(* A smart constructor for [PVarLocated]. *)
+
+let pvarlocated id =
+  let x, pos = Positions.decompose id in
+  let pos1 = Positions.start_of_position pos
+  and pos2 = Positions.end_of_position pos in
+  if pos1 == Lexing.dummy_pos || pos2 == Lexing.dummy_pos then
+    PVar x
+  else
+    PVarLocated id
+
 (* Tuples. *)
 
 let etuple = function

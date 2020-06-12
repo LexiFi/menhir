@@ -11,6 +11,8 @@
 (*                                                                            *)
 (******************************************************************************)
 
+open Positions
+
 (* Abstract syntax of the language used for code production. *)
 
 type interface =
@@ -219,6 +221,8 @@ and pattern =
 
   (* Variable. *)
   | PVar of string
+  | PVarLocated of string located
+      (* The positions must not be dummies. Use [pvarlocated]. *)
 
   (* Data deconstruction. Tuples of length 1 are considered nonexistent,
      that is, [PTuple [p]] is considered the same pattern as [p]. *)
