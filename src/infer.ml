@@ -144,7 +144,8 @@ let actiondef grammar symbol branch =
   let formals =
     List.fold_left (fun formals producer ->
       let symbol = producer_symbol producer
-      and id = producer_identifier producer in
+      and lid = producer_identifier_located producer in
+      let id = Positions.value lid in
       let startp, endp, starto, endo, loc =
         Printf.sprintf "_startpos_%s_" id,
         Printf.sprintf "_endpos_%s_" id,
@@ -153,11 +154,19 @@ let actiondef grammar symbol branch =
         Printf.sprintf "_loc_%s_" id
       in
       let pid =
+        (* We use [PVarLocated] in preference to [PVar] so that this binding
+           can be accurately in the source file (not in the generated file)
+           by the OCaml compiler. This is important when a variable declared
+           by the user turns out to be unused in a semantic action. We want
+           the unused-variable warning (or error) to be correctly located. *)
+        pvarlocated lid
+      in
+      let pid =
         try
-          PAnnot (PVar id, tokentype grammar symbol)
+          PAnnot (pid, tokentype grammar symbol)
         with Not_found ->
           (* Symbol is a nonterminal. *)
-          annotate_pat grammar (PVar id) symbol
+          annotate_pat grammar pid symbol
       in
       pid ::
       PAnnot (PVar startp, tposition) ::
