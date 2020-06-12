@@ -289,6 +289,27 @@ let mk_stretch pos1 pos2 parenthesize monsters =
     stretch_keywords = Misc.map_opt (fun monster -> monster.keyword) monsters
   })
 
+(* Creating a stretch from a located identifier. (This does not require the
+   input file to be currently opened.) In this variant, [parenthesize] is
+   false, [monsters] is empty. *)
+
+let stretch_of_id (id : string located) =
+  let raw_content, pos = Positions.decompose id in
+  let pos1 = Positions.start_of_position pos
+  and pos2 = Positions.end_of_position pos
+  and filename = Positions.filename_of_position pos in
+  assert (pos1 != Lexing.dummy_pos);
+  let padding = pos1.pos_cnum - pos1.pos_bol in
+  let content = String.make padding ' ' ^ raw_content in
+  Stretch.({
+    stretch_filename = filename;
+    stretch_linenum = pos1.pos_lnum;
+    stretch_linecount = pos2.pos_lnum - pos1.pos_lnum;
+    stretch_content = content;
+    stretch_raw_content = raw_content;
+    stretch_keywords = []
+  })
+
 (* ------------------------------------------------------------------------ *)
 
 (* OCaml's reserved words. *)
