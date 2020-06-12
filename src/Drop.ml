@@ -33,7 +33,7 @@ let drop_parameter (param : S.parameter) : S.symbol =
 
 let drop_producer ((id, param, attrs) : S.producer) : T.producer =
   {
-    T.producer_identifier = value id;
+    T.producer_identifier = id;
     T.producer_symbol     = drop_parameter param;
     T.producer_attributes = attrs
   }

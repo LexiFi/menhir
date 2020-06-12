@@ -31,11 +31,12 @@ open Syntax
 
 (* ------------------------------------------------------------------------ *)
 
-(* A producer is a pair of identifier and a symbol. In concrete syntax, it
-   could be [e = expr], for instance. It carries a number of attributes. *)
+(* A producer is a pair of a (located) identifier and a symbol. In concrete
+   syntax, it could be [e = expr], for instance. It carries a number of
+   attributes. *)
 
 type producer = {
-    producer_identifier : identifier;
+    producer_identifier : identifier located;
     producer_symbol     : symbol;
     producer_attributes : attributes;
   }
@@ -95,9 +96,17 @@ type grammar =  {
 
 (* Accessors for the type [producer]. *)
 
-let producer_identifier { producer_identifier } = producer_identifier
-let producer_symbol { producer_symbol } = producer_symbol
-let producer_attributes { producer_attributes } = producer_attributes
+let producer_identifier { producer_identifier } : identifier =
+  Positions.value producer_identifier
+
+let producer_identifier_located { producer_identifier } : identifier located =
+  producer_identifier
+
+let producer_symbol { producer_symbol } =
+  producer_symbol
+
+let producer_attributes { producer_attributes } =
+  producer_attributes
 
 (* -------------------------------------------------------------------------- *)
 

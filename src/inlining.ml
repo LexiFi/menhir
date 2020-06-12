@@ -161,12 +161,14 @@ let rec fresh names x =
 let rename (used : StringSet.t) producers: Action.subst * producers =
   let phi, _used, producers =
     List.fold_left (fun (phi, used, producers) producer ->
-      let x = producer_identifier producer in
+      let id = producer_identifier_located producer in
+      let x = Positions.value id in
       if StringSet.mem x used then
         let x' = fresh used x in
+        let id' = Positions.map (fun _x -> x') id in
         (x, x') :: phi,
         StringSet.add x' used,
-        { producer with producer_identifier = x' } :: producers
+        { producer with producer_identifier = id' } :: producers
       else
         (phi, StringSet.add x used, producer :: producers)
     ) ([], used, []) producers
