@@ -1,5 +1,12 @@
 # Changes
 
+## 2020/06/12
+
+* When a semantic value is unused in a semantic action, the warning (or error)
+  should now be correctly reported in the `.mly` file, not in a generated
+  `.ml` file. (This works only when `--infer` is enabled, because we are lazy.
+  If you use `dune`, this works out of the box.)
+
 ## 2020/05/25
 
 * Fix a problem that could arise when an open polymorphic variant, such as
