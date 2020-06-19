@@ -1,5 +1,13 @@
 # Changes
 
+## 2020/06/19
+
+* Fix the suggestions printed by `--suggest-link-flags-byte` and
+  `--suggest-link-flags-opt` so as to suggest `menhirLib.cma` or
+  `menhirLib.cmxa` instead of `menhirLib.cmo` or `menhirLib.cmx`. This change
+  should have been made on 2020/01/21, when we switched to automated
+  installation via `opam` and `dune`.
+
 ## 2020/06/12
 
 * When a semantic value is unused in a semantic action, the warning (or error)
