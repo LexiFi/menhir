@@ -346,9 +346,9 @@ let options = Arg.align [
   "--strict", Arg.Set strict, " Warnings about the grammar are errors";
   "--suggest-comp-flags", Arg.Unit (fun () -> suggestion := SuggestCompFlags),
                           " Suggest compilation flags for ocaml{c,opt}";
-  "--suggest-link-flags-byte", Arg.Unit (fun () -> suggestion := SuggestLinkFlags "cmo"),
+  "--suggest-link-flags-byte", Arg.Unit (fun () -> suggestion := SuggestLinkFlags "cma"),
                                " Suggest link flags for ocamlc";
-  "--suggest-link-flags-opt", Arg.Unit (fun () -> suggestion := SuggestLinkFlags "cmx"),
+  "--suggest-link-flags-opt", Arg.Unit (fun () -> suggestion := SuggestLinkFlags "cmxa"),
                               " Suggest link flags for ocamlopt";
   "--suggest-menhirLib", Arg.Unit (fun () -> suggestion := SuggestWhereIsMenhirLibSource),
                          " Suggest where is MenhirLib";
