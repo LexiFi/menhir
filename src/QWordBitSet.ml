@@ -102,17 +102,21 @@ let remove i s =
   | Q (hhi, hlo, lhi, llo) ->
       if i < middle then
         if i < quarter then
-          construct hhi hlo lhi (A.remove i llo)
+          let llo' = A.remove i llo in
+          if llo == llo' then s else construct hhi hlo lhi llo'
         else
           let i = i - quarter in
-          construct hhi hlo (A.remove i lhi) llo
+          let lhi' = A.remove i lhi in
+          if lhi == lhi' then s else construct hhi hlo lhi' llo
       else
         let i = i - middle in
         if i < quarter then
-          construct hhi (A.remove i hlo) lhi llo
+          let hlo' = A.remove i hlo in
+          if hlo == hlo' then s else construct hhi hlo' lhi llo
         else
           let i = i - quarter in
-          construct (A.remove i hhi) hlo lhi llo
+          let hhi' = A.remove i hhi in
+          if hhi == hhi' then s else construct hhi' hlo lhi llo
 
 let fold f s accu =
   match s with
