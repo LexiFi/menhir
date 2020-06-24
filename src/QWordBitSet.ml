@@ -194,8 +194,12 @@ let union s1 s2 =
   | s, E ->
       s
   | Q (hhi1, hlo1, lhi1, llo1), Q (hhi2, hlo2, lhi2, llo2) ->
-      Q (A.union hhi1 hhi2, A.union hlo1 hlo2,
-         A.union lhi1 lhi2, A.union llo1 llo2)
+      let hhi = A.union hhi1 hhi2
+      and hlo = A.union hlo1 hlo2
+      and lhi = A.union lhi1 lhi2
+      and llo = A.union llo1 llo2 in
+      if hhi == hhi2 && hlo == hlo2 && lhi == lhi2 && llo == llo2 then s2
+      else Q (hhi, hlo, lhi, llo)
 
 let inter s1 s2 =
   match s1, s2 with

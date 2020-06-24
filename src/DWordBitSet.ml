@@ -144,7 +144,9 @@ let union s1 s2 =
   | s, E ->
       s
   | D (hi1, lo1), D (hi2, lo2) ->
-      D (A.union hi1 hi2, A.union lo1 lo2)
+      let hi = A.union hi1 hi2
+      and lo = A.union lo1 lo2 in
+      if hi == hi2 && lo == lo2 then s2 else D (hi, lo)
 
 let inter s1 s2 =
   match s1, s2 with
