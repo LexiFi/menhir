@@ -176,7 +176,14 @@
   est-il bien le bug connu? peut-on le corriger? ne suffirait-il pas de
   passer sous silence les conflits qui ont lieu dans une partie inaccessible
   de l'automate? (Avoid reporting conflicts in unreachable states. See e.g.
-  petr4.mly, perhaps other examples.)
+  belloeil.mly.) (Once this is done, the test suite
+  could be improved to test that we never have "unexplainable conflicts".)
+
+* BUG: solving a shift/reduce conflict in favor of reduction can
+  cut a path that was required in order to explain another conflict.
+  (see e.g. belloeil.mly) (et le reduced_parser.mly d'Adrien Guatto)
+  (also check the parser.mly sent by Andrej Bauer on 2016/01/21)
+  Or just give up on explaining the conflict in this case.
 
 * Implémenter un test de détection de boucles. Si la grammaire contient une
   boucle, elle est infiniment ambiguë. Pour le test, calculer tous les
@@ -197,12 +204,6 @@
 * éviter "Warning: 22 conflicts ..." car emacs prend "Warning" pour un
   nom de fichier; d'après Damien, il devrait suffire que la phrase après
   les deux points ne commence pas par un nombre.
-
-* BUG: solving a shift/reduce conflict in favor of reduction can
-  cut a path that was required in order to explain another conflict.
-  (see e.g. belloeil.mly) (et le reduced_parser.mly d'Adrien Guatto)
-  (also check the parser.mly sent by Andrej Bauer on 2016/01/21)
-  Or just give up on explaining the conflict in this case.
 
 * dans le dump de l'automate, rajouter les transitions qui ont
   ete supprimees par resolution de conflits. Afficher aussi les
