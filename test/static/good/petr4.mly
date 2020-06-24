@@ -1,4 +1,3 @@
-(* menhir 20200211 reports one unexplainable conflict in this grammar. *)
 (* Origin: https://github.com/cornell-netlab/petr4/blob/master/lib/parser.mly *)
 
 (* Copyright 2019-present Cornell University

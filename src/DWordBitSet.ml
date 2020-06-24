@@ -63,9 +63,11 @@ let add i s =
       singleton i
   | D (hi, lo) ->
       if i < A.bound then
-        D (hi, A.add i lo)
+        let lo' = A.add i lo in
+        if lo == lo' then s else D (hi, lo')
       else
-        D (A.add (i - A.bound) hi, lo)
+        let hi' = A.add (i - A.bound) hi in
+        if hi == hi' then s else D (hi', lo)
 
 let remove i s =
   match s with

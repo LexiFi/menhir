@@ -79,17 +79,21 @@ let add i s =
   | Q (hhi, hlo, lhi, llo) ->
       if i < middle then
         if i < quarter then
-          Q (hhi, hlo, lhi, A.add i llo)
+          let llo' = A.add i llo in
+          if llo == llo' then s else Q (hhi, hlo, lhi, llo')
         else
           let i = i - quarter in
-          Q (hhi, hlo, A.add i lhi, llo)
+          let lhi' = A.add i lhi in
+          if lhi == lhi' then s else Q (hhi, hlo, lhi', llo)
       else
         let i = i - middle in
         if i < quarter then
-          Q (hhi, A.add i hlo, lhi, llo)
+          let hlo' = A.add i hlo in
+          if hlo == hlo' then s else Q (hhi, hlo', lhi, llo)
         else
           let i = i - quarter in
-          Q (A.add i hhi, hlo, lhi, llo)
+          let hhi' = A.add i hhi in
+          if hhi == hhi' then s else Q (hhi', hlo, lhi, llo)
 
 let remove i s =
   match s with
