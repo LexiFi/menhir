@@ -1,5 +1,11 @@
 # Changes
 
+## 2020/06/24
+
+* Fix a bug introduced on 2020/02/11 that causes all reduce/reduce conflicts
+  to be mistakenly declared unexplainable, provided the grammar has at least
+  62 terminal symbols. (Reported by Joe.)
+
 ## 2020/06/19
 
 * Fix the suggestions printed by `--suggest-link-flags-byte` and
