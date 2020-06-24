@@ -3772,6 +3772,27 @@
 (rule (alias jocaml-new-parser)
   (action (diff ../good/jocaml-new-parser.exp jocaml-new-parser.out)))
 
+(rule (target joe_parser2.opp.out) (deps ../good/joe_parser2.mly)
+  (action
+    (with-outputs-to joe_parser2.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias joe_parser2)
+  (action (diff ../good/joe_parser2.opp.exp joe_parser2.opp.out)))
+
+(rule (targets joe_parser2.out joe_parser2.out.timings)
+  (deps ../good/joe_parser2.mly)
+  (action
+    (with-outputs-to joe_parser2.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/joe_parser2.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias joe_parser2)
+  (action (diff ../good/joe_parser2.exp joe_parser2.out)))
+
 (rule (target jparser.opp.out) (deps ../good/jparser.mly)
   (action
     (with-outputs-to jparser.opp.out
@@ -9723,6 +9744,7 @@
     (alias jocaml)
     (alias jocaml-ambients)
     (alias jocaml-new-parser)
+    (alias joe_parser2)
     (alias join-param-1)
     (alias jparser)
     (alias js_of_ocaml.3.2.0-js_parser)
