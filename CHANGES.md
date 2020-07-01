@@ -1,5 +1,11 @@
 # Changes
 
+## 2020/07/XX
+
+* Turn off a costly internal well-formedness assertion.
+  This allows a 30% speedup in the construction of large automata
+  and in the conflict explanation process. (Reported by Joe.)
+
 ## 2020/06/24
 
 * Fix a bug introduced on 2020/02/11 that causes all reduce/reduce conflicts
