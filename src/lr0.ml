@@ -327,9 +327,15 @@ let print_closure leading state =
 let core (k, _) =
   k
 
-(* A sanity check. *)
+(* A sanity check. This well-formedness check is quite costly, due to the
+   use of [Item.Set.cardinal]. Therefore, it is enabled only when [debug]
+   is [true]. *)
+
+let debug =
+  false
 
 let well_formed (k, toksr) =
+  not debug ||
   Array.length toksr = Item.Set.cardinal (InfiniteArray.get states k)
 
 (* An LR(1) start state is the combination of an LR(0) start state
