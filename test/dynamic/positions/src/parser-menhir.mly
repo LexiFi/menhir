@@ -8,10 +8,10 @@
 %left TIMES DIV         /* medium precedence */
 %nonassoc UMINUS        /* highest precedence */
 
-%type<Aux.annotations> annotations
-%start<Aux.main> main
+%type<Auxiliary.annotations> annotations
+%start<Auxiliary.main> main
 
-%{ open Aux %}
+%{ open Auxiliary %}
 
 %%
 

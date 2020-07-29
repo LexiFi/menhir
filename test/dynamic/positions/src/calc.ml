@@ -8,7 +8,7 @@ let process (line : string) =
        We construct a tree and print it afterwards (instead of printing
        within the semantic actions) because %inline reorders side effects,
        and that would prevent us from comparing the positions. *)
-    Aux.Print.main (Parser.main Lexer.token linebuf)
+    Auxiliary.Print.main (Parser.main Lexer.token linebuf)
   with
   | Lexer.Error msg ->
       Printf.fprintf stderr "%s%!" msg

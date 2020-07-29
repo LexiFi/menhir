@@ -8,8 +8,8 @@
 %left TIMES DIV         /* medium precedence */
 %nonassoc UMINUS        /* highest precedence */
 
-%type<Aux.annotations> annotations
-%type<Aux.main> main
+%type<Auxiliary.annotations> annotations
+%type<Auxiliary.main> main
 %start main
 
 /* For now, we do not use [Parsing.symbol_start_pos()] because it performs
@@ -18,7 +18,7 @@
    [Parsing.symbol_start_pos()] for epsilon productions and
    [Parsing.rhs_start_pos 1] for non-epsilon productions. */
 
-%{ open Aux %}
+%{ open Auxiliary %}
 
 %%
 
