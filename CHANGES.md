@@ -2,6 +2,9 @@
 
 ## 2020/07/XX
 
+* Document the problem caused by placing a module alias declaration
+  in an `.mly` file. (See *Questions and Answers* in the manual.)
+
 * Turn off a costly internal well-formedness assertion.
   This allows a 30% speedup in the construction of large automata
   and in the conflict explanation process. (Reported by Joe.)
