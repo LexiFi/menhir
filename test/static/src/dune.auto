@@ -5446,6 +5446,27 @@
 (rule (alias ocaml-testasmcomp-cmm)
   (action (diff ../good/ocaml-testasmcomp-cmm.exp ocaml-testasmcomp-cmm.out)))
 
+(rule (target ocaml_lua_parser.opp.out) (deps ../good/ocaml_lua_parser.mly)
+  (action
+    (with-outputs-to ocaml_lua_parser.opp.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --only-preprocess %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias ocaml_lua_parser)
+  (action (diff ../good/ocaml_lua_parser.opp.exp ocaml_lua_parser.opp.out)))
+
+(rule (targets ocaml_lua_parser.out ocaml_lua_parser.out.timings)
+  (deps ../good/ocaml_lua_parser.mly)
+  (action
+    (with-outputs-to ocaml_lua_parser.out
+      (chdir ../good
+        (system
+          "timeout 60 %{bin:menhir} --explain -lg 2 -la 2 -lc 2 --timings-to ../src/ocaml_lua_parser.out.timings %{deps} || echo 'TIMEOUT after 60 seconds.'")))))
+
+(rule (alias ocaml_lua_parser)
+  (action (diff ../good/ocaml_lua_parser.exp ocaml_lua_parser.out)))
+
 (rule (target ocaml_parser_menhir.opp.out)
   (deps ../good/ocaml_parser_menhir.mly)
   (action
@@ -9861,6 +9882,7 @@
     (alias ocaml-protoc.1.2.0-pb_parsing_parser)
     (alias ocaml-test-Lex)
     (alias ocaml-testasmcomp-cmm)
+    (alias ocaml_lua_parser)
     (alias ocaml_parser_menhir)
     (alias ocamldoc-odoc)
     (alias ocamldoc-odoc_text)
