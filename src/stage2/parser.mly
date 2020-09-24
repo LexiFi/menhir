@@ -15,7 +15,7 @@
    It is kept in sync with [Parser], but exercises menhir's features. */
 
 /* As of 2014/12/02, the $previouserror keyword and the --error-recovery
-   mode no longer exists. Thus, we replace all calls to [Error.signal]
+   mode no longer exist. Thus, we replace all calls to [Error.signal]
    with calls to [Error.error], and report just one error. */
 
 /* ------------------------------------------------------------------------- */
