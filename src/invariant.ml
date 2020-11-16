@@ -76,8 +76,8 @@ let stack_height (node : Lr1.node) : int =
    prefixes. This extra information, however, was useless; computing it was a
    waste of time. Hence, as of 2012/08/25, the height of the stack prefix and
    the symbols that it contains are predicted (see above), and the least fixed
-   computation is used only to populate these prefixes of predictable length
-   with state information. *)
+   point computation is used only to populate these prefixes of predictable
+   length with state information. *)
 
 (* By the way, this least fixed point analysis remains the most costly
    computation throughout this module. *)
